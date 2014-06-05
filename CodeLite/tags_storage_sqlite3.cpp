@@ -1609,3 +1609,36 @@ void TagsStorageSQLite::GetTagsByPartName(const wxString& partname, std::vector<
         CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
     }
 }
+
+void TagsStorageSQLite::SplitSymbols(const wxArrayString& symbols, wxArrayString& symbolsFound, wxArrayString& symbolsNotFound)
+{
+    try {
+        if ( symbols.IsEmpty() )
+            return;
+        // an example query
+        // SELECT distinct name FROM 'main'.'tags' where name in ('LoadList') 
+        
+        // Split the input vector into arrays of up to 500 elements each
+        std::vector<wxArrayString> v;
+        wxArrayString tmp;
+        for(size_t i=0; i<symbols.GetCount(); ++i) {
+            tmp.Add(symbols.Item(i));
+            if ( tmp.GetCount() % 500 == 0 ) {
+                v.push_back( tmp );
+                tmp.Clear();
+            }
+        }
+        
+        if ( !tmp.IsEmpty() ) {
+            v.push_back( tmp );
+            tmp.Clear();
+        }
+        
+        for(size_t i=0; i<v.size(); ++i) {
+            
+        }
+        
+    } catch (wxSQLite3Exception &e) {
+        CL_DEBUG("SplitSymbols error: %s", e.GetMessage());
+    }
+}

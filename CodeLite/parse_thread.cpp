@@ -34,15 +34,20 @@
 #include "istorage.h"
 #include <wx/stopwatch.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/ffile.h>
+#include "cpp_scanner.h"
+#include <set>
+#include "cl_command_event.h"
+
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
 #define TEST_DESTROY() {\
-		if( TestDestroy() ) {\
-			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );\
-			return;\
-		}\
-	}
+        if( TestDestroy() ) {\
+            DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> received 'TestDestroy()'") ) );\
+            return;\
+        }\
+    }
 
 // ClientData is set to wxString* which must be deleted by the handler
 const wxEventType wxEVT_PARSE_THREAD_MESSAGE              = XRCID("parse_thread_update_status_bar");
@@ -63,8 +68,11 @@ const wxEventType wxEVT_PARSE_INCLUDE_STATEMENTS_DONE     = XRCID("wxEVT_PARSE_I
 // Send a "Ready" event
 const wxEventType wxEVT_PARSE_THREAD_READY     = XRCID("wxEVT_PARSE_THREAD_READY");
 
+// Event type: clCommandEvent
+const wxEventType wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS = XRCID("wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS");
+
 ParseThread::ParseThread()
-	: WorkerThread()
+    : WorkerThread()
 {
 }
 
@@ -74,118 +82,121 @@ ParseThread::~ParseThread()
 
 void ParseThread::ProcessRequest(ThreadRequest * request)
 {
-	// request is delete by the parent WorkerThread after this method is completed
-	ParseRequest *req = (ParseRequest*)request;
+    // request is delete by the parent WorkerThread after this method is completed
+    ParseRequest *req = (ParseRequest*)request;
 
-	switch (req->getType()) {
-	case ParseRequest::PR_PARSEINCLUDES:
-		ProcessIncludes( req );
-		break;
-	default:
-	case ParseRequest::PR_FILESAVED:
-		ProcessSimple( req );
-		break;
-	case ParseRequest::PR_PARSE_AND_STORE:
-		ProcessParseAndStore( req );
-		break;
-	case ParseRequest::PR_DELETE_TAGS_OF_FILES:
-		ProcessDeleteTagsOfFiles( req );
-		break;
-	case ParseRequest::PR_PARSE_FILE_NO_INCLUDES:
-		ProcessSimpleNoIncludes( req );
-		break;
+    switch (req->getType()) {
+    case ParseRequest::PR_PARSEINCLUDES:
+        ProcessIncludes( req );
+        break;
+    default:
+    case ParseRequest::PR_FILESAVED:
+        ProcessSimple( req );
+        break;
+    case ParseRequest::PR_PARSE_AND_STORE:
+        ProcessParseAndStore( req );
+        break;
+    case ParseRequest::PR_DELETE_TAGS_OF_FILES:
+        ProcessDeleteTagsOfFiles( req );
+        break;
+    case ParseRequest::PR_PARSE_FILE_NO_INCLUDES:
+        ProcessSimpleNoIncludes( req );
+        break;
     case ParseRequest::PR_PARSE_INCLUDE_STATEMENTS:
         ProcessIncludeStatements( req );
         break;
-	}
-    
+    case ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS:
+        ProcessColourRequest( req );
+        break;
+    }
+
     // Allways notify when ready
     DoNotifyReady(req->_evtHandler);
 }
 
 void ParseThread::ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db)
 {
-	wxArrayString arrFiles;
-	GetFileListToParse(filename, arrFiles);
-	int initalCount = arrFiles.GetCount();
+    wxArrayString arrFiles;
+    GetFileListToParse(filename, arrFiles);
+    int initalCount = arrFiles.GetCount();
 
-	TEST_DESTROY();
+    TEST_DESTROY();
 
-	DEBUG_MESSAGE( wxString::Format(wxT("Files that need parse %u"), (unsigned int)arrFiles.GetCount()) ) ;
-	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, db);
-	DEBUG_MESSAGE( wxString::Format(wxT("Actual files that need parse %u"), (unsigned int)arrFiles.GetCount()) );
+    DEBUG_MESSAGE( wxString::Format(wxT("Files that need parse %u"), (unsigned int)arrFiles.GetCount()) ) ;
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, db);
+    DEBUG_MESSAGE( wxString::Format(wxT("Actual files that need parse %u"), (unsigned int)arrFiles.GetCount()) );
 
-	ParseAndStoreFiles(req, arrFiles, initalCount, db);
+    ParseAndStoreFiles(req, arrFiles, initalCount, db);
 }
 
 TagTreePtr ParseThread::DoTreeFromTags(const wxString& tags, int &count)
 {
-	return TagsManagerST::Get()->TreeFromTags(tags, count);
+    return TagsManagerST::Get()->TreeFromTags(tags, count);
 }
 
 void ParseThread::DoStoreTags(const wxString& tags, const wxString &filename, int &count, ITagsStoragePtr db)
 {
-	TagTreePtr ttp = DoTreeFromTags(tags, count);
-	db->Begin();
-	db->DeleteByFileName( wxFileName(), filename, false);
-	db->Store(ttp, wxFileName(), false);
-	db->Commit();
+    TagTreePtr ttp = DoTreeFromTags(tags, count);
+    db->Begin();
+    db->DeleteByFileName( wxFileName(), filename, false);
+    db->Store(ttp, wxFileName(), false);
+    db->Commit();
 }
 
 void ParseThread::SetCrawlerEnabeld(bool b)
 {
-	wxCriticalSectionLocker locker ( m_cs );
-	m_crawlerEnabled = b;
+    wxCriticalSectionLocker locker ( m_cs );
+    m_crawlerEnabled = b;
 }
 
 void ParseThread::SetSearchPaths(const wxArrayString& paths, const wxArrayString &exlucdePaths)
 {
-	wxCriticalSectionLocker locker( m_cs );
-	m_searchPaths.Clear();
-	m_excludePaths.Clear();
-	for (size_t i=0; i<paths.GetCount(); i++) {
-		m_searchPaths.Add( paths.Item(i).c_str() );
-	}
+    wxCriticalSectionLocker locker( m_cs );
+    m_searchPaths.Clear();
+    m_excludePaths.Clear();
+    for (size_t i=0; i<paths.GetCount(); i++) {
+        m_searchPaths.Add( paths.Item(i).c_str() );
+    }
 
-	for (size_t i=0; i<exlucdePaths.GetCount(); i++) {
-		m_excludePaths.Add( exlucdePaths.Item(i).c_str() );
-	}
+    for (size_t i=0; i<exlucdePaths.GetCount(); i++) {
+        m_excludePaths.Add( exlucdePaths.Item(i).c_str() );
+    }
 }
 
 bool ParseThread::IsCrawlerEnabled()
 {
-	wxCriticalSectionLocker locker( m_cs );
-	return m_crawlerEnabled;
+    wxCriticalSectionLocker locker( m_cs );
+    return m_crawlerEnabled;
 }
 
 void ParseThread::GetSearchPaths(wxArrayString& paths, wxArrayString &excludePaths)
 {
-	wxCriticalSectionLocker locker( m_cs );
-	for (size_t i=0; i<m_searchPaths.GetCount(); i++) {
-		paths.Add( m_searchPaths.Item(i).c_str() );
-	}
+    wxCriticalSectionLocker locker( m_cs );
+    for (size_t i=0; i<m_searchPaths.GetCount(); i++) {
+        paths.Add( m_searchPaths.Item(i).c_str() );
+    }
 
-	for (size_t i=0; i<m_excludePaths.GetCount(); i++) {
-		excludePaths.Add( m_excludePaths.Item(i).c_str() );
-	}
+    for (size_t i=0; i<m_excludePaths.GetCount(); i++) {
+        excludePaths.Add( m_excludePaths.Item(i).c_str() );
+    }
 }
 
 void ParseThread::ProcessIncludes(ParseRequest* req)
 {
-	DEBUG_MESSAGE( wxString::Format(wxT("ProcessIncludes -> started")) ) ;
-    
+    DEBUG_MESSAGE( wxString::Format(wxT("ProcessIncludes -> started")) ) ;
+
     std::set<std::string> *newSet = new std::set<std::string>();
-	FindIncludedFiles(req, newSet);
+    FindIncludedFiles(req, newSet);
 
 #ifdef PARSE_THREAD_DBG
-	std::set<std::string>::iterator iter = newSet->begin();
-	for(; iter != newSet->end(); iter++) {
-		wxString fileN((*iter).c_str(), wxConvUTF8);
-		DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> %s"), fileN.c_str() ) );
-	}
+    std::set<std::string>::iterator iter = newSet->begin();
+    for(; iter != newSet->end(); iter++) {
+        wxString fileN((*iter).c_str(), wxConvUTF8);
+        DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> %s"), fileN.c_str() ) );
+    }
 #endif
 
-	// collect the results
+    // collect the results
     if ( req->_evtHandler ) {
         wxCommandEvent event(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE);
         event.SetClientData(newSet);
@@ -196,321 +207,321 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 
 void ParseThread::ProcessSimple(ParseRequest* req)
 {
-	wxString      dbfile = req->getDbfile();
-	wxString      file   = req->getFile();
+    wxString      dbfile = req->getDbfile();
+    wxString      file   = req->getFile();
 
-	// Skip binary file
-	if(TagsManagerST::Get()->IsBinaryFile(file)) {
-		DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), file.c_str()) );
-		return;
-	}
+    // Skip binary file
+    if(TagsManagerST::Get()->IsBinaryFile(file)) {
+        DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), file.c_str()) );
+        return;
+    }
 
-	// convert the file to tags
-	TagsManager *tagmgr = TagsManagerST::Get();
-	ITagsStoragePtr db(new TagsStorageSQLite());
-	db->OpenDatabase( dbfile );
+    // convert the file to tags
+    TagsManager *tagmgr = TagsManagerST::Get();
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase( dbfile );
 
-	//convert the file content into tags
-	wxString tags;
-	wxString file_name(req->getFile());
-	tagmgr->SourceToTags(file_name, tags);
+    //convert the file content into tags
+    wxString tags;
+    wxString file_name(req->getFile());
+    tagmgr->SourceToTags(file_name, tags);
 
-	int count;
-	DoStoreTags(tags, file_name, count, db);
+    int count;
+    DoStoreTags(tags, file_name, count, db);
 
-	db->Begin();
-	///////////////////////////////////////////
-	// update the file retag timestamp
-	///////////////////////////////////////////
-	db->InsertFileEntry(file, (int)time(NULL));
+    db->Begin();
+    ///////////////////////////////////////////
+    // update the file retag timestamp
+    ///////////////////////////////////////////
+    db->InsertFileEntry(file, (int)time(NULL));
 
-	////////////////////////////////////////////////
-	// Parse and store the macros found in this file
-	////////////////////////////////////////////////
-	PPTable::Instance()->Clear();
-	PPScan( file, true );
-	db->StoreMacros( PPTable::Instance()->GetTable() );
-	PPTable::Instance()->Clear();
+    ////////////////////////////////////////////////
+    // Parse and store the macros found in this file
+    ////////////////////////////////////////////////
+    PPTable::Instance()->Clear();
+    PPScan( file, true );
+    db->StoreMacros( PPTable::Instance()->GetTable() );
+    PPTable::Instance()->Clear();
 
-	db->Commit();
+    db->Commit();
 
-	// Parse the saved file to get a list of files to include
-	ParseIncludeFiles(req, file, db );
+    // Parse the saved file to get a list of files to include
+    ParseIncludeFiles(req, file, db );
 
-	// If there is no event handler set to handle this comaprison
-	// results, then nothing more to be done
-	if (req->_evtHandler ) {
-		wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
-		req->_evtHandler->AddPendingEvent(clearCacheEvent);
-        
-     	wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-		retaggingCompletedEvent.SetClientData( NULL );
-		req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
-        
-	}
+    // If there is no event handler set to handle this comaprison
+    // results, then nothing more to be done
+    if (req->_evtHandler ) {
+        wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
+        req->_evtHandler->AddPendingEvent(clearCacheEvent);
+
+        wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+        retaggingCompletedEvent.SetClientData( NULL );
+        req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
+
+    }
 }
 
 void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& arrFiles)
 {
-	if ( !this->IsCrawlerEnabled() ) {
-		return;
-	}
+    if ( !this->IsCrawlerEnabled() ) {
+        return;
+    }
 
-	{
-		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
+    {
+        wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
 
-		wxArrayString includePaths, excludePaths;
-		GetSearchPaths( includePaths, excludePaths );
-        
+        wxArrayString includePaths, excludePaths;
+        GetSearchPaths( includePaths, excludePaths );
+
         fcFileOpener::Instance()->ClearResults();
-		fcFileOpener::Instance()->ClearSearchPath();
-		for(size_t i=0; i<includePaths.GetCount(); i++) {
-			fcFileOpener::Instance()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
-		}
+        fcFileOpener::Instance()->ClearSearchPath();
+        for(size_t i=0; i<includePaths.GetCount(); i++) {
+            fcFileOpener::Instance()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
+        }
 
-		for(size_t i=0; i<excludePaths.GetCount(); i++) {
-			fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
-		}
+        for(size_t i=0; i<excludePaths.GetCount(); i++) {
+            fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
+        }
 
-		// Invoke the crawler
-		const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
+        // Invoke the crawler
+        const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
 
-		// Skip binary files
-		if(TagsManagerST::Get()->IsBinaryFile(filename)) {
-			DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), filename.c_str()) );
-			return;
-		}
+        // Skip binary files
+        if(TagsManagerST::Get()->IsBinaryFile(filename)) {
+            DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), filename.c_str()) );
+            return;
+        }
 
-		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
-		crawlerScan( cfile.data() );
+        // Before using the 'crawlerScan' we lock it, since it is not mt-safe
+        crawlerScan( cfile.data() );
 
-	}
+    }
 
-	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
-	std::set<std::string>::iterator iter = fileSet.begin();
-	for (; iter != fileSet.end(); iter++ ) {
-		wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
-		fn.MakeAbsolute();
-		if ( arrFiles.Index(fn.GetFullPath()) == wxNOT_FOUND ) {
-			arrFiles.Add(fn.GetFullPath());
-		}
-	}
+    std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
+    std::set<std::string>::iterator iter = fileSet.begin();
+    for (; iter != fileSet.end(); iter++ ) {
+        wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
+        fn.MakeAbsolute();
+        if ( arrFiles.Index(fn.GetFullPath()) == wxNOT_FOUND ) {
+            arrFiles.Add(fn.GetFullPath());
+        }
+    }
 }
 
 void ParseThread::ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db)
 {
-	// Loop over the files and parse them
-	int totalSymbols (0);
-	DEBUG_MESSAGE(wxString::Format(wxT("Parsing and saving files to database....")));
-	for (size_t i=0; i<arrFiles.GetCount(); i++) {
+    // Loop over the files and parse them
+    int totalSymbols (0);
+    DEBUG_MESSAGE(wxString::Format(wxT("Parsing and saving files to database....")));
+    for (size_t i=0; i<arrFiles.GetCount(); i++) {
 
-		// give a shutdown request a chance
-		TEST_DESTROY();
+        // give a shutdown request a chance
+        TEST_DESTROY();
 
-		wxString tags;  // output
-		TagsManagerST::Get()->SourceToTags(arrFiles.Item(i), tags);
+        wxString tags;  // output
+        TagsManagerST::Get()->SourceToTags(arrFiles.Item(i), tags);
 
-		if ( tags.IsEmpty() == false ) {
-			DoStoreTags(tags, arrFiles.Item(i), totalSymbols, db);
-		}
-	}
+        if ( tags.IsEmpty() == false ) {
+            DoStoreTags(tags, arrFiles.Item(i), totalSymbols, db);
+        }
+    }
 
-	DEBUG_MESSAGE(wxString(wxT("Done")));
+    DEBUG_MESSAGE(wxString(wxT("Done")));
 
-	// Update the retagging timestamp
-	TagsManagerST::Get()->UpdateFilesRetagTimestamp(arrFiles, db);
+    // Update the retagging timestamp
+    TagsManagerST::Get()->UpdateFilesRetagTimestamp(arrFiles, db);
 
-	if ( req->_evtHandler ) {
-		wxCommandEvent e(wxEVT_PARSE_THREAD_MESSAGE);
-		wxString message;
-		if(initalCount != -1)
-			message << wxT("INFO: Found ") << initalCount << wxT(" system include files. ");
-		message << arrFiles.GetCount() << wxT(" needed to be parsed. Stored ") << totalSymbols << wxT(" new tags to the database");
+    if ( req->_evtHandler ) {
+        wxCommandEvent e(wxEVT_PARSE_THREAD_MESSAGE);
+        wxString message;
+        if(initalCount != -1)
+            message << wxT("INFO: Found ") << initalCount << wxT(" system include files. ");
+        message << arrFiles.GetCount() << wxT(" needed to be parsed. Stored ") << totalSymbols << wxT(" new tags to the database");
 
-		e.SetClientData(new wxString(message.c_str()));
-		req->_evtHandler->AddPendingEvent( e );
+        e.SetClientData(new wxString(message.c_str()));
+        req->_evtHandler->AddPendingEvent( e );
 
-		// if we added new symbols to the database, send an even to the main thread
-		// to clear the tags cache
-		if(totalSymbols) {
-			wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
-			req->_evtHandler->AddPendingEvent(clearCacheEvent);
-		}
-	}
+        // if we added new symbols to the database, send an even to the main thread
+        // to clear the tags cache
+        if(totalSymbols) {
+            wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
+            req->_evtHandler->AddPendingEvent(clearCacheEvent);
+        }
+    }
 }
 
 void ParseThread::ProcessDeleteTagsOfFiles(ParseRequest* req)
 {
-	DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile")));
-	if(req->_workspaceFiles.empty())
-		return;
+    DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile")));
+    if(req->_workspaceFiles.empty())
+        return;
 
-	wxString dbfile = req->getDbfile();
-	ITagsStoragePtr db(new TagsStorageSQLite());
+    wxString dbfile = req->getDbfile();
+    ITagsStoragePtr db(new TagsStorageSQLite());
 
-	db->OpenDatabase( dbfile );
-	db->Begin();
+    db->OpenDatabase( dbfile );
+    db->Begin();
 
-	wxArrayString file_array;
+    wxArrayString file_array;
 
-	for (size_t i=0; i<req->_workspaceFiles.size(); i++) {
-		wxString filename(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
-		db->DeleteByFileName(wxFileName(),filename, false);
-		file_array.Add(filename);
-	}
+    for (size_t i=0; i<req->_workspaceFiles.size(); i++) {
+        wxString filename(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
+        db->DeleteByFileName(wxFileName(),filename, false);
+        file_array.Add(filename);
+    }
 
-	db->DeleteFromFiles(file_array);
-	db->Commit();
-	DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile - completed")));
+    db->DeleteFromFiles(file_array);
+    db->Commit();
+    DEBUG_MESSAGE(wxString(wxT("ParseThread::ProcessDeleteTagsOfFile - completed")));
 }
 
 void ParseThread::ProcessParseAndStore(ParseRequest* req)
 {
-	wxString dbfile = req->getDbfile();
+    wxString dbfile = req->getDbfile();
 
-	// convert the file to tags
-	double maxVal = (double)req->_workspaceFiles.size();
-	if ( maxVal == 0.0 ) {
-		return;
-	}
+    // convert the file to tags
+    double maxVal = (double)req->_workspaceFiles.size();
+    if ( maxVal == 0.0 ) {
+        return;
+    }
 
-	// we report every 10%
-	double reportingPoint = maxVal / 100.0;
-	reportingPoint = ceil( reportingPoint );
-	if(reportingPoint == 0.0) {
-		reportingPoint = 1.0;
-	}
+    // we report every 10%
+    double reportingPoint = maxVal / 100.0;
+    reportingPoint = ceil( reportingPoint );
+    if(reportingPoint == 0.0) {
+        reportingPoint = 1.0;
+    }
 
-	ITagsStoragePtr db(new TagsStorageSQLite());
-	db->OpenDatabase( dbfile );
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase( dbfile );
 
-	// We commit every 10 files
-	db->Begin();
-	int    precent               (0);
-	int    lastPercentageReported(0);
+    // We commit every 10 files
+    db->Begin();
+    int    precent               (0);
+    int    lastPercentageReported(0);
 
-	PPTable::Instance()->Clear();
+    PPTable::Instance()->Clear();
 
-	for (size_t i=0; i<maxVal; i++) {
+    for (size_t i=0; i<maxVal; i++) {
 
-		// give a shutdown request a chance
-		if( TestDestroy() ) {
-			// Do an ordered shutdown:
-			// rollback any transaction
-			// and close the database
-			db->Rollback();
-			return;
-		}
+        // give a shutdown request a chance
+        if( TestDestroy() ) {
+            // Do an ordered shutdown:
+            // rollback any transaction
+            // and close the database
+            db->Rollback();
+            return;
+        }
 
-		wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
+        wxFileName curFile(wxString(req->_workspaceFiles.at(i).c_str(), wxConvUTF8));
 
-		// Skip binary files
-		if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath())) {
-			DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), curFile.GetFullPath().c_str()) );
-			continue;
-		}
+        // Skip binary files
+        if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath())) {
+            DEBUG_MESSAGE( wxString::Format(wxT("Skipping binary file %s"), curFile.GetFullPath().c_str()) );
+            continue;
+        }
 
-		// Send notification to the main window with our progress report
-		precent = (int)((i / maxVal) * 100);
+        // Send notification to the main window with our progress report
+        precent = (int)((i / maxVal) * 100);
 
-		if( req->_evtHandler && lastPercentageReported !=  precent) {
-			lastPercentageReported = precent;
-			wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
-			retaggingProgressEvent.SetInt( (int)precent );
-			req->_evtHandler->AddPendingEvent(retaggingProgressEvent);
+        if( req->_evtHandler && lastPercentageReported !=  precent) {
+            lastPercentageReported = precent;
+            wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
+            retaggingProgressEvent.SetInt( (int)precent );
+            req->_evtHandler->AddPendingEvent(retaggingProgressEvent);
 
-		} else if(lastPercentageReported !=  precent) {
-			wxPrintf(wxT("parsing: %%%d completed\n"), precent);
-		}
+        } else if(lastPercentageReported !=  precent) {
+            wxPrintf(wxT("parsing: %%%d completed\n"), precent);
+        }
 
-		TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
-		PPScan( curFile.GetFullPath(), false );
+        TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
+        PPScan( curFile.GetFullPath(), false );
 
-		db->Store(tree, wxFileName(), false);
-		if(db->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
-			db->UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
-		}
+        db->Store(tree, wxFileName(), false);
+        if(db->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
+            db->UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
+        }
 
-		if ( i % 50 == 0 ) {
-			// Commit what we got so far
-			db->Commit();
-			// Start a new transaction
-			db->Begin();
-		}
-	}
+        if ( i % 50 == 0 ) {
+            // Commit what we got so far
+            db->Commit();
+            // Start a new transaction
+            db->Begin();
+        }
+    }
 
-	// Process the macros
-	PPTable::Instance()->Squeeze();
-	const std::map<wxString, PPToken>& table = PPTable::Instance()->GetTable();
+    // Process the macros
+    PPTable::Instance()->Squeeze();
+    const std::map<wxString, PPToken>& table = PPTable::Instance()->GetTable();
 
-	// Store the macros
-	db->StoreMacros( table );
+    // Store the macros
+    db->StoreMacros( table );
 
-	// Commit whats left
-	db->Commit();
+    // Commit whats left
+    db->Commit();
 
-	// Clear the results
-	PPTable::Instance()->Clear();
-    
+    // Clear the results
+    PPTable::Instance()->Clear();
+
     /// Send notification to the main window with our progress report
-	if( req->_evtHandler ) {
-		wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-		std::vector<std::string> *arrFiles = new std::vector<std::string>;
-		*arrFiles = req->_workspaceFiles;
-		retaggingCompletedEvent.SetClientData( arrFiles );
-		req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
-	}
+    if( req->_evtHandler ) {
+        wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+        std::vector<std::string> *arrFiles = new std::vector<std::string>;
+        *arrFiles = req->_workspaceFiles;
+        retaggingCompletedEvent.SetClientData( arrFiles );
+        req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
+    }
 }
 
 void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<std::string>* newSet)
 {
-	wxArrayString searchPaths, excludePaths, filteredFileList;
-	GetSearchPaths( searchPaths, excludePaths );
+    wxArrayString searchPaths, excludePaths, filteredFileList;
+    GetSearchPaths( searchPaths, excludePaths );
 
-	DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %u"), (unsigned int)req->_workspaceFiles.size()) ) ;
+    DEBUG_MESSAGE( wxString::Format(wxT("Initial workspace files count is %u"), (unsigned int)req->_workspaceFiles.size()) ) ;
 
-	for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
-		wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
-		wxFileName fn(name);
-		fn.MakeAbsolute();
+    for(size_t i=0; i<req->_workspaceFiles.size(); i++) {
+        wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
+        wxFileName fn(name);
+        fn.MakeAbsolute();
 
-		if(TagsManagerST::Get()->IsBinaryFile(fn.GetFullPath()))
-			continue;
+        if(TagsManagerST::Get()->IsBinaryFile(fn.GetFullPath()))
+            continue;
 
-		filteredFileList.Add( fn.GetFullPath() );
-	}
+        filteredFileList.Add( fn.GetFullPath() );
+    }
 
-	wxArrayString arrFiles;
+    wxArrayString arrFiles;
 
-	// Clear the results once
-	{
-		// Before using the 'crawlerScan' we lock it, since it is not mt-safe
-		wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
+    // Clear the results once
+    {
+        // Before using the 'crawlerScan' we lock it, since it is not mt-safe
+        wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
 
-		fcFileOpener::Instance()->ClearResults();
-		fcFileOpener::Instance()->ClearSearchPath();
+        fcFileOpener::Instance()->ClearResults();
+        fcFileOpener::Instance()->ClearSearchPath();
 
-		for(size_t i=0; i<searchPaths.GetCount(); i++) {
-			const wxCharBuffer path = _C(searchPaths.Item(i));
-			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
-			fcFileOpener::Instance()->AddSearchPath(path.data());
-		}
+        for(size_t i=0; i<searchPaths.GetCount(); i++) {
+            const wxCharBuffer path = _C(searchPaths.Item(i));
+            DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
+            fcFileOpener::Instance()->AddSearchPath(path.data());
+        }
 
-		for(size_t i=0; i<excludePaths.GetCount(); i++) {
-			const wxCharBuffer path = _C(excludePaths.Item(i));
-			DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
-			fcFileOpener::Instance()->AddExcludePath(path.data());
-		}
+        for(size_t i=0; i<excludePaths.GetCount(); i++) {
+            const wxCharBuffer path = _C(excludePaths.Item(i));
+            DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
+            fcFileOpener::Instance()->AddExcludePath(path.data());
+        }
 
-		for(size_t i=0; i<filteredFileList.GetCount(); i++) {
-			const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
-			crawlerScan(cfile.data());
-			if( TestDestroy() ) {
-				return;
-			}
-		}
+        for(size_t i=0; i<filteredFileList.GetCount(); i++) {
+            const wxCharBuffer cfile = filteredFileList.Item(i).mb_str(wxConvUTF8);
+            crawlerScan(cfile.data());
+            if( TestDestroy() ) {
+                return;
+            }
+        }
         newSet->insert(fcFileOpener::Instance()->GetResults().begin(), fcFileOpener::Instance()->GetResults().end());
-	}
+    }
 }
 
 //--------------------------------------------------------------------------------------
@@ -518,34 +529,34 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<std::string>* ne
 //--------------------------------------------------------------------------------------
 void ParseRequest::setDbFile(const wxString& dbfile)
 {
-	_dbfile = dbfile.c_str();
+    _dbfile = dbfile.c_str();
 }
 
 void ParseRequest::setTags(const wxString& tags)
 {
-	_tags = tags.c_str();
+    _tags = tags.c_str();
 }
 
 ParseRequest::ParseRequest(const ParseRequest& rhs)
 {
-	if (this == &rhs) {
-		return;
-	}
-	*this = rhs;
+    if (this == &rhs) {
+        return;
+    }
+    *this = rhs;
 }
 
-ParseRequest &ParseRequest::operator =(const ParseRequest& rhs)
+ParseRequest & ParseRequest::operator =(const ParseRequest& rhs)
 {
-	setFile  (rhs._file.c_str()  );
-	setDbFile(rhs._dbfile.c_str());
-	setTags  (rhs._tags          );
-	setType  (rhs._type          );
-	return *this;
+    setFile  (rhs._file.c_str()  );
+    setDbFile(rhs._dbfile.c_str());
+    setTags  (rhs._tags          );
+    setType  (rhs._type          );
+    return *this;
 }
 
 void ParseRequest::setFile(const wxString& file)
 {
-	_file = file.c_str();
+    _file = file.c_str();
 }
 
 ParseRequest::~ParseRequest()
@@ -557,46 +568,46 @@ static ParseThread* gs_theParseThread = NULL;
 
 void ParseThreadST::Free()
 {
-	if(gs_theParseThread) {
-		delete gs_theParseThread;
-	}
-	gs_theParseThread = NULL;
+    if(gs_theParseThread) {
+        delete gs_theParseThread;
+    }
+    gs_theParseThread = NULL;
 }
 
 ParseThread* ParseThreadST::Get()
 {
-	if(gs_theParseThread == NULL)
-		gs_theParseThread = new ParseThread;
-	return gs_theParseThread;
+    if(gs_theParseThread == NULL)
+        gs_theParseThread = new ParseThread;
+    return gs_theParseThread;
 }
 
 void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
 {
-	std::vector<std::string> files  = req->_workspaceFiles;
-	wxString                 dbfile = req->getDbfile();
+    std::vector<std::string> files  = req->_workspaceFiles;
+    wxString                 dbfile = req->getDbfile();
 
-	// Filter binary files
-	std::vector<std::string> filteredFiles;
-	wxArrayString filesArr;
-	for(size_t i=0; i<files.size(); i++) {
-		wxString filename = wxString(files.at(i).c_str(), wxConvUTF8);
-		if(TagsManagerST::Get()->IsBinaryFile(filename))
-			continue;
-		filesArr.Add(filename);
-	}
-	
-	// convert the file to tags
-	ITagsStoragePtr db(new TagsStorageSQLite());
-	db->OpenDatabase( dbfile );
-	
-	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(filesArr, db);
-	ParseAndStoreFiles(req, filesArr, -1, db);
-	
-	if( req->_evtHandler ) {
-		wxCommandEvent e(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-		e.SetClientData(NULL);
-		req->_evtHandler->AddPendingEvent(e);
-	}
+    // Filter binary files
+    std::vector<std::string> filteredFiles;
+    wxArrayString filesArr;
+    for(size_t i=0; i<files.size(); i++) {
+        wxString filename = wxString(files.at(i).c_str(), wxConvUTF8);
+        if(TagsManagerST::Get()->IsBinaryFile(filename))
+            continue;
+        filesArr.Add(filename);
+    }
+
+    // convert the file to tags
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase( dbfile );
+
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(filesArr, db);
+    ParseAndStoreFiles(req, filesArr, -1, db);
+
+    if( req->_evtHandler ) {
+        wxCommandEvent e(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+        e.SetClientData(NULL);
+        req->_evtHandler->AddPendingEvent(e);
+    }
 }
 
 void ParseThread::ProcessIncludeStatements(ParseRequest* req)
@@ -613,21 +624,64 @@ void ParseThread::ProcessIncludeStatements(ParseRequest* req)
         const fcFileOpener::List_t& incls = fcFileOpener::Instance()->GetIncludeStatements();
         matches->insert(matches->end(), incls.begin(), incls.end());
     }
-    
+
     if ( req->_evtHandler ) {
         wxCommandEvent event(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE);
         event.SetClientData(matches);
         event.SetInt(req->_uid);
         req->_evtHandler->AddPendingEvent(event);
-	}
+    }
 }
 
 void ParseThread::DoNotifyReady(wxEvtHandler* caller)
 {
-     if ( m_notifiedWindow ) {
+    if ( m_notifiedWindow ) {
         wxCommandEvent event(wxEVT_PARSE_THREAD_READY);
         event.SetClientData(caller);
         m_notifiedWindow->AddPendingEvent(event);
     }
 }
 
+void ParseThread::ProcessColourRequest(ParseRequest* req)
+{
+    CppScanner scanner;
+    // read the file content
+    wxFFile fp(req->getFile(), "rb");
+    if ( fp.IsOpened() ) {
+        wxString content;
+        fp.ReadAll( &content );
+        fp.Close();
+        
+        // lex the file and collect all tokens of type IDENTIFIER
+        scanner.SetText( content.mb_str(wxConvUTF8).data() );
+        std::set<wxString> tokens;
+        
+        int type = scanner.yylex();
+        
+        while ( type != 0 ) {
+            if ( type == IDENTIFIER ) {
+                tokens.insert( scanner.YYText() );
+            }
+        }
+        
+        // Convert the set into array
+        wxArrayString tokensArr;
+        std::set<wxString>::iterator iter = tokens.begin();
+        for(; iter != tokens.end(); ++iter ) {
+            tokensArr.Add( *iter );
+        }
+        tokensArr.Sort();
+        
+        // Open the database
+        ITagsStoragePtr db(new TagsStorageSQLite());
+        db->OpenDatabase( req->getDbfile() );
+        
+        // send the reply back to the caller
+        if ( req->_evtHandler ) {
+            clCommandEvent event(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS);
+            event.SetStrings( tokensArr );
+            event.SetFileName( req->getFile() );
+            req->_evtHandler->AddPendingEvent( event );
+        }
+    }
+}

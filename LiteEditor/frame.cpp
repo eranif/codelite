@@ -4658,6 +4658,9 @@ void clMainFrame::OnCheckForUpdate(wxCommandEvent& e)
 void clMainFrame::OnShowActiveProjectSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
+    if ( !WorkspaceST::Get()->IsOpen() ) {
+        return;
+    }
     GetWorkspaceTab()->OpenProjectSettings();
 }
 

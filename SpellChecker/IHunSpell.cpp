@@ -24,7 +24,7 @@
 
 #include "scGlobals.h"
 #include "IHunSpell.h"
-#include "correctspellingdlg.h"
+#include "CorrectSpellingDlg.h"
 #include "spellcheck.h"
 // ------------------------------------------------------------
 #define MIN_TOKEN_LEN 3

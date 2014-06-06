@@ -1,60 +1,75 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 2.6.2)
 
-add_subdirectory(hunspell)
+find_library(LIBHUNSPELL
+         NAMES libhunspell.so
+         HINTS  /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu /usr/lib/i386-linux-gnu)
 
-# set the plugin name here
-set( PLUGIN_NAME "SpellCheck")
+find_path(  HUNSPELL_H
+            NAMES hunspell.h
+            HINTS  /usr/include /usr/local/include /usr/include/hunspell /usr/local/include/hunspell)
 
-# Our project is called 'plugin' this is how it will be called in
-# visual studio, and in our makefiles. 
-project( ${PLUGIN_NAME} )
+if ( LIBHUNSPELL STREQUAL "LIBHUNSPELL-NOTFOUND" OR HUNSPELL_H STREQUAL "HUNSPELL_H-NOTFOUND" )
+    message("    **")
+    message("    ** NOTICE ** Could not locate libhunspell. SpellChecker plugin will not be build")
+    message("    ** NOTICE ** Try installing libhunspell-dev package")
+    message("    **")
+else ()
+    # set the plugin name here
+    set( PLUGIN_NAME "SpellCheck")
+    message("-- Found libhunspell: ${LIBHUNSPELL}, ${HUNSPELL_H}")
+    
+    # Our project is called 'plugin' this is how it will be called in
+    # visual studio, and in our makefiles. 
+    project( ${PLUGIN_NAME} )
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
+    # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
+    find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 
-# wxWidgets include (this will do all the magic to configure everything)
-include( "${wxWidgets_USE_FILE}" )
+    # wxWidgets include (this will do all the magic to configure everything)
+    include( "${wxWidgets_USE_FILE}" )
 
-# Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" 
-                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
-                    "${CL_SRC_ROOT}/CodeLite" 
-                    "${CL_SRC_ROOT}/PCH" 
-                    "${CL_SRC_ROOT}/Interfaces"
-                    "${CL_SRC_ROOT}/SpellChecker/hunspell")
+    # Include paths
+    include_directories("${CL_SRC_ROOT}/SpellChecker" "${CL_SRC_ROOT}/Plugin" 
+                        "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
+                        "${CL_SRC_ROOT}/CodeLite" 
+                        "${CL_SRC_ROOT}/PCH" 
+                        "${CL_SRC_ROOT}/Interfaces"
+                        "${HUNSPELL_H}"
+                        )
 
-add_definitions(-DWXUSINGDLL_WXSQLITE3)
-add_definitions(-DWXUSINGDLL_CL)
-add_definitions(-DWXUSINGDLL_SDK)
+    add_definitions(-DWXUSINGDLL_WXSQLITE3)
+    add_definitions(-DWXUSINGDLL_CL)
+    add_definitions(-DWXUSINGDLL_SDK)
 
-if ( USE_PCH )
-    add_definitions(-include "${CL_PCH_FILE}")
-    add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+    if ( USE_PCH )
+        add_definitions(-include "${CL_PCH_FILE}")
+        add_definitions(-Winvalid-pch)
+    endif ( USE_PCH )
 
-# Add RPATH
-set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+    # Add RPATH
+    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 
-FILE(GLOB SRCS "*.cpp")
+    FILE(GLOB SRCS "*.cpp")
 
-# Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+    # Define the output
+    add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
-# Remove the "lib" prefix from the plugin name
-set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} libhunspell)
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin)
+    # Remove the "lib" prefix from the plugin name
+    set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+    target_link_libraries(${PLUGIN_NAME} ${LIBHUNSPELL})
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin)
 
-# Make sure that the plugin will not start build before 'plugin.so' is ready
-add_dependencies(${PLUGIN_NAME} plugin)
-add_dependencies(${PLUGIN_NAME} libhunspell)
+    # Make sure that the plugin will not start build before 'plugin.so' is ready
+    add_dependencies(${PLUGIN_NAME} plugin)
+    add_dependencies(${PLUGIN_NAME} libhunspell)
 
-install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
-install(
-  DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
-  DESTINATION ${CL_PREFIX}/share/codelite
-  USE_SOURCE_PERMISSIONS
-  PATTERN ".svn" EXCLUDE
-  PATTERN ".git" EXCLUDE
-)
+    install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
+    install(
+      DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
+      DESTINATION ${CL_PREFIX}/share/codelite
+      USE_SOURCE_PERMISSIONS
+      PATTERN ".svn" EXCLUDE
+      PATTERN ".git" EXCLUDE
+    )
+endif() 

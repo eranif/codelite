@@ -27,8 +27,8 @@
 
 #include "res/spellcheck16.b2c"
 #include "res/spellcheck22.b2c"
-#include "res/contcheck16.b2c"
-#include "res/contcheck22.b2c"
+#include "res/contCheck16.b2c"
+#include "res/contCheck22.b2c"
 
 static SpellCheck* thePlugin = NULL;
 #define SPC_BASEID  10000

@@ -32,6 +32,7 @@
     <File Name="replist.cxx"/>
     <File Name="license.hunspell"/>
     <File Name="license.myspell"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Settings Type="Static Library">

@@ -12,6 +12,7 @@
     <File Name="outline.cpp"/>
     <File Name="outline_tab.h"/>
     <File Name="outline_tab.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="outline_symbol_tree.h"/>

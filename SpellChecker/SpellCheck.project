@@ -38,6 +38,7 @@
     <File Name="spellcheckeroptions.h"/>
     <File Name="wxcrafter.cpp"/>
     <File Name="wxcrafter_bitmaps.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="spellcheck.h"/>

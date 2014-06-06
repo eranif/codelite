@@ -12,6 +12,7 @@
 #include "SpellCheckerSettings.h"
 #include "IHunSpell.h"
 #include <windowattrmanager.h>
+
 // ------------------------------------------------------------
 SpellCheckerSettings::SpellCheckerSettings( wxWindow* parent ) : SpellCheckerSettings_base( parent )
 {
@@ -28,6 +29,7 @@ SpellCheckerSettings::SpellCheckerSettings( wxWindow* parent ) : SpellCheckerSet
     m_pDirPicker->GetTextCtrl()->SetBackgroundColour( wxColour( 255, 255, 230 ) );
     WindowAttrManager::Load(this, "SpellCheckerSettings");
 }
+
 // ------------------------------------------------------------
 void SpellCheckerSettings::OnInitDialog( wxInitDialogEvent& event )
 {

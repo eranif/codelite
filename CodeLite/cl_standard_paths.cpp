@@ -46,3 +46,19 @@ void clStandardPaths::SetUserDataDir(const wxString& path)
 {
     m_path = path;
 }
+
+wxString clStandardPaths::GetPluginsDirectory() const
+{
+#ifdef __WXGTK__
+    wxString pluginsDir = PLUGINS_DIR;
+#else
+    wxString pluginsDir = GetDataDir();
+#endif
+    
+    return pluginsDir;
+}
+
+wxString clStandardPaths::GetDataDir() const
+{
+    return wxStandardPaths::Get().GetDataDir();
+}

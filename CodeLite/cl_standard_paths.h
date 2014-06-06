@@ -25,6 +25,19 @@ public:
      */
     void SetUserDataDir(const wxString& path);
     
+    /**
+     * @brief return the path to the plugins folder
+     */
+    wxString GetPluginsDirectory() const;
+    
+    /**
+     * @brief Return the location of the applications global, i.e. not user-specific, data files.
+     * Example return values:
+        Unix: prefix/share/appinfo
+        Windows: the directory where the executable file is located
+        Mac: appinfo.app/Contents/SharedSupport bundle subdirectory
+     */
+    wxString GetDataDir() const;
 };
 
 #endif // CLSTANDARDPATHS_H

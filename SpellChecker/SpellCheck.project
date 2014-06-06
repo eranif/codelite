@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="SpellCheck">
+  <Plugins>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+		"name":	"ReleaseUnicode",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}, {
+		"name":	"WinDebugUnicode",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}, {
+		"name":	"WinReleaseUnicode",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}]]]>
+    </Plugin>
+  </Plugins>
   <VirtualDirectory Name="src">
     <File Name="spellcheck.cpp"/>
     <File Name="spellcheckeroptions.cpp"/>
@@ -29,10 +61,16 @@
   <Dependencies Name="ReleaseUnicode">
     <Project Name="hunspell"/>
   </Dependencies>
+  <Dependencies Name="WinReleaseUnicode">
+    <Project Name="hunspell"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>
@@ -91,27 +129,27 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
-        <IncludePath Value="..\CodeLite/Interfaces"/>
-        <IncludePath Value="..\CodeLite/CodeLite"/>
-        <IncludePath Value="..\CodeLite/Plugin"/>
-        <IncludePath Value="..\CodeLite/sqlite3"/>
-        <IncludePath Value="..\CodeLite/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../CodeLite/Interfaces"/>
+        <IncludePath Value="../CodeLite/CodeLite"/>
+        <IncludePath Value="../CodeLite/Plugin"/>
+        <IncludePath Value="../CodeLite/sqlite3"/>
+        <IncludePath Value="../CodeLite/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
-        <LibraryPath Value="..\CodeLite/lib/gcc_lib"/>
+        <LibraryPath Value="../CodeLite/lib/gcc_lib"/>
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/SpellCheck.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/SpellChecker.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -163,7 +201,7 @@
         <Library Value="wxscintilla"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/SpellCheck.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/$(ProjectName)-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -173,7 +211,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName)-dbg.dll" ..\Runtime\plugins</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>
@@ -251,7 +291,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="hunspell"/>
-  </Dependencies>
 </CodeLite_Project>

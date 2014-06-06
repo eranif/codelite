@@ -103,7 +103,7 @@ Source: "..\Runtime\plugins\CMakePlugin.dll"; DestDir: "{app}\plugins"; Flags: i
 Source: "..\Runtime\plugins\CodeLiteDiff.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\LLDBDebugger.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\wxcrafter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\plugins\SpellChecker.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\SpellCheck.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 
 Source: "..\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

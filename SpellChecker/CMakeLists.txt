@@ -48,6 +48,8 @@ target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L
 
 # Make sure that the plugin will not start build before 'plugin.so' is ready
 add_dependencies(${PLUGIN_NAME} plugin)
+add_dependencies(${PLUGIN_NAME} libhunspell)
+
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
 install(
   DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics

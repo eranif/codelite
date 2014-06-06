@@ -140,7 +140,7 @@ private:
 
     void       DoStoreTags   (const wxString &tags, const wxString &filename, int &count, ITagsStoragePtr db);
     TagTreePtr DoTreeFromTags(const wxString &tags, int &count);
-    void DoNotifyReady(wxEvtHandler *caller);
+    void DoNotifyReady(wxEvtHandler* caller, int requestType);
 
 private:
 

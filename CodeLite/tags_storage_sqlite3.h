@@ -592,10 +592,11 @@ public:
     void GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags);
     
     /**
-     * @brief accept list of symbols and split it into 2 lists: symbols that exist in the database and those 
-     * which don't exist in the database
+     * @brief this function takes as input argument array of symbols and removes from it all the 
+     * symbols that are not part of the workspace. A symbol must be in the tags database and its type
+     * should be in the 'kinds' array
      */
-    void SplitSymbols(const wxArrayString& symbols, wxArrayString& symbolsFound, wxArrayString &symbolsNotFound);
+    void RemoveNonWorkspaceSymbols(wxArrayString& symbols, const wxArrayString &kinds);
 
 };
 

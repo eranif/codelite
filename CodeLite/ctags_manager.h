@@ -824,6 +824,7 @@ public:
     wxString WrapLines(const wxString &str);
 
     void GetVariables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
+    void GetVariables(const wxFileName &filename, wxArrayString &locals);
     void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
 
 protected:

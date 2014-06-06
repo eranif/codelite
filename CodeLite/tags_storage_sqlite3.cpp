@@ -1610,11 +1610,20 @@ void TagsStorageSQLite::GetTagsByPartName(const wxString& partname, std::vector<
     }
 }
 
-void TagsStorageSQLite::SplitSymbols(const wxArrayString& symbols, wxArrayString& symbolsFound, wxArrayString& symbolsNotFound)
+void TagsStorageSQLite::RemoveNonWorkspaceSymbols(wxArrayString& symbols, const wxArrayString& kinds)
 {
     try {
-        if ( symbols.IsEmpty() )
+        wxArrayString workspaceSymbols;
+        
+        if ( symbols.IsEmpty() ) {
             return;
+        }
+        
+        if ( kinds.IsEmpty() ) {
+            symbols.Clear();
+            return;
+        }
+        
         // an example query
         // SELECT distinct name FROM 'main'.'tags' where name in ('LoadList') 
         
@@ -1635,8 +1644,32 @@ void TagsStorageSQLite::SplitSymbols(const wxArrayString& symbols, wxArrayString
         }
         
         for(size_t i=0; i<v.size(); ++i) {
+            wxString sql;
+            sql << "SELECT distinct name FROM tags where name in (";
+            for(size_t n=0; n<v.at(i).GetCount(); ++n) { 
+                sql << "'" << v.at(i).Item(n) << "',";
+            }
             
+            // remove the last comma
+            sql.RemoveLast();
+            sql << ") AND KIND IN (";
+            
+            for(size_t n=0; n<kinds.GetCount(); ++n) {
+                sql << "'" << kinds.Item(n) << "',";
+            }
+            // remove the last comma
+            sql.RemoveLast();
+            sql << ")";
+            
+            // Run the query
+            wxSQLite3ResultSet res = m_db->ExecuteQuery( sql );
+            while ( res.NextRow() ) {
+                workspaceSymbols.Add( res.GetString(0) );
+            }
         }
+        
+        workspaceSymbols.Sort();
+        symbols.swap( workspaceSymbols );
         
     } catch (wxSQLite3Exception &e) {
         CL_DEBUG("SplitSymbols error: %s", e.GetMessage());

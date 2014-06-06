@@ -259,6 +259,7 @@ protected:
     void AddToRecentlyOpenedWorkspaces(const wxString &fileName);
     
     void OnAddWorkspaceToRecentlyUsedList(wxCommandEvent &e);
+    void OnParserThreadSuggestColourTokens(clCommandEvent &event);
     
 
     //--------------------------- Workspace Projects Mgmt -----------------------------
@@ -641,20 +642,7 @@ public:
      * @param tty [output] the terminal TTY
      * @return true on success, false otherwise
      */
-    bool StartTTY( const wxString &title, wxString &tty ) {
-#ifndef __WXMSW__
-        m_debuggerTerminal.Clear();
-        m_debuggerTerminal.Launch(title);
-        if ( m_debuggerTerminal.IsValid() ) {
-            tty = m_debuggerTerminal.GetTty();
-        }
-        return m_debuggerTerminal.IsValid();
-#else
-        wxUnusedVar( title );
-        wxUnusedVar( tty );
-        return false;
-#endif
-    }
+    bool StartTTY( const wxString &title, wxString &tty );
     
     void UpdateDebuggerPane();
 

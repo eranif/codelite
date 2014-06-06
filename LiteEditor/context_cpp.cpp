@@ -75,6 +75,7 @@
 #include "event_notifier.h"
 #include "SelectProjectsDlg.h"
 #include "globals.h"
+#include <parse_thread.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -177,7 +178,7 @@ ContextCpp::ContextCpp(LEditor *container)
     , m_rclickMenu(NULL)
 {
     Initialize();
-    
+
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
 }
 
@@ -572,10 +573,10 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
         wxString word = rCtrl.GetWordAtCaret();
         if (word.IsEmpty() == false) {
             PrependMenuItemSeparator(menu);
-            
+
             menuItemText << _("Add Forward Declaration for \"") << word << "\"";
             PrependMenuItem(menu, menuItemText, XRCID("add_forward_decl"));
-            
+
             menuItemText.Clear();
             menuItemText <<_("Add Include File for \"") << word << wxT("\"");
             PrependMenuItem(menu, menuItemText, XRCID("add_include_file"));
@@ -590,13 +591,13 @@ void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
     CHECK_JS_RETURN_VOID();
     wxUnusedVar(e);
     LEditor &rCtrl = GetCtrl();
-    
+
     //get expression
     int pos = rCtrl.GetCurrentPos();
 
     if (IsCommentOrString(pos))
         return;
-        
+
     // get the scope
     wxString text = rCtrl.GetTextRange(0, rCtrl.GetCurrentPos());
 
@@ -608,14 +609,14 @@ void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
             return;
         }
     }
-    
+
     int lineNumber = wxNOT_FOUND;
     wxString lineToAdd;
     TagsManagerST::Get()->InsertForwardDeclaration(word, text, lineToAdd, lineNumber);
     if ( lineNumber == wxNOT_FOUND ) {
         // Append it to the end of the file
         rCtrl.AppendText( rCtrl.GetEolString() + lineToAdd );
-        
+
     } else {
         int pos = rCtrl.PositionFromLine(lineNumber);
         rCtrl.InsertText(pos, lineToAdd + rCtrl.GetEolString());
@@ -718,20 +719,20 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
                 int lineStartPos = GetCtrl().PositionFromLine( GetCtrl().GetCurrentLine() );
                 if ( lineStartPos > caretpos )
                     return false;
-                
+
                 wxString partialLine = GetCtrl().GetTextRange(lineStartPos, caretpos);
-                
+
                 // Get the partial file name (up to the caret)
                 size_t where = partialLine.find_first_of("<\"");
                 if ( where == wxString::npos )
                     return false;
                 ++where; // Skip the < or " character found
-                
+
                 partialLine = partialLine.Mid(where);
                 partialLine = partialLine.AfterLast('/');
                 *fileNameUpToCaret = partialLine;
             }
-            
+
             if (fileName) {
                 *fileName = reIncludeFile.GetMatch(tmpLine1, 1);
             }
@@ -930,7 +931,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
         exts.Add(wxT("hxx"));
         exts.Add(wxT("hh"));
         exts.Add(wxT("h++"));
-        
+
     } else {
         //try to find a implementation file
         exts.Add("cpp");
@@ -945,7 +946,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
     wxArrayString file_options;
     for (size_t i=0; i<exts.GetCount(); i++) {
         otherFile.SetExt(exts.Item(i));
-        
+
         if ( otherFile.Exists() ) {
             file_options.Add( otherFile.GetFullPath() );
         }
@@ -954,19 +955,19 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
     if ( file_options.GetCount() > 1 ) {
         // More than one option
         file_to_open = ::wxGetSingleChoice(_("Multiple candidates found. Select a file to open:"), _("Swap Header/Source Implementation"), file_options, 0);
-        
+
         if ( file_to_open.IsEmpty() )
             // Cancel clicked
             return;
-        
+
         TryOpenFile(file_to_open, false);
         return;
-        
+
     } else {
         if ( TryOpenFile(file_to_open, false) )
             return;
     }
-    
+
     // if that failed, now look in entire workspace
     for (size_t i=0; i<exts.GetCount(); i++) {
         otherFile.SetExt(exts.Item(i));
@@ -1934,96 +1935,22 @@ void ContextCpp::OnFileSaved()
 
         wxArrayString varList;
         wxArrayString projectTags;
-
-        LEditor &rCtrl = GetCtrl();
         VALIDATE_WORKSPACE();
 
         // if there is nothing to color, go ahead and return
         if ( !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) && !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) ) {
             return;
         }
-
-        // wxSTC_C_WORD2
-        if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) {
-
-            // get list of all tags from the workspace
-            TagsManagerST::Get()->GetAllTagsNames(projectTags);
-        }
-        // wxSTC_C_GLOBALCLASS
-        if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) {
-            //---------------------------------------------------------------------
-            // Colour local variables
-            //---------------------------------------------------------------------
-            PERF_BLOCK("Getting Locals") {
-
-                const wxCharBuffer patbuf = _C(rCtrl.GetText());
-
-                // collect list of variables
-                TagsManagerST::Get()->GetVariables( patbuf.data(), var_list, ignoreTokens, false);
-
-            }
-
-            // list all functions of this file
-            std::vector< TagEntryPtr > tags;
-            TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
-
-            PERF_BLOCK("Adding Functions") {
-
-                VariableList::iterator viter = var_list.begin();
-                for (; viter != var_list.end(); viter++ ) {
-                    Variable vv = *viter;
-                    varList.Add(_U(vv.m_name.c_str()));
-                }
-
-                // parse all function's arguments and add them as well
-                for (size_t i=0; i<tags.size(); i++) {
-                    wxString sig = tags.at(i)->GetSignature();
-                    const wxCharBuffer cb = _C(sig);
-                    VariableList vars_list;
-                    TagsManagerST::Get()->GetVariables(cb.data(), vars_list, ignoreTokens, true);
-                    VariableList::iterator it = vars_list.begin();
-                    for (; it != vars_list.end(); it++ ) {
-                        Variable var = *it;
-                        wxString name = _U(var.m_name.c_str());
-                        if (varList.Index(name) == wxNOT_FOUND) {
-                            // add it
-                            varList.Add(name);
-                        }
-                    }
-                }
-
-            }
-        }
-        PERF_BLOCK("Setting Keywords") {
-
-            size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
-            if (cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
-                wxString flatStr;
-                for (size_t i=0; i< projectTags.GetCount(); i++) {
-                    // add only entries that does not appear in the variable list
-                    //if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
-                    flatStr << projectTags.Item(i) << wxT(" ");
-                }
-                rCtrl.SetKeyWords(1, flatStr);
-            } else {
-                rCtrl.SetKeyWords(1, wxEmptyString);
-            }
-
-            if (cc_flags & CC_COLOUR_VARS) {
-                // convert it to space delimited string
-                wxString varFlatStr;
-                for (size_t i=0; i< varList.GetCount(); i++) {
-                    varFlatStr << varList.Item(i) << wxT(" ");
-                }
-                rCtrl.SetKeyWords(3, varFlatStr);
-            } else {
-                rCtrl.SetKeyWords(3, wxEmptyString);
-            }
-        }
-
+        
+        // Start a colour request
+        ParseRequest *parsingRequest = new ParseRequest( ManagerST::Get() );
+        parsingRequest->setDbFile( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath() );
+        parsingRequest->setType( ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS );
+        parsingRequest->setFile( GetCtrl().GetFileName().GetFullPath() );
+        ParseThreadST::Get()->Add( parsingRequest );
+        
         // Update preprocessor visualization
         ManagerST::Get()->UpdatePreprocessorFile( &GetCtrl() );
-
     }
 }
 
@@ -2295,36 +2222,36 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
     // Save all files before refactoring
     if (!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
         return;
-    
-    // Get list of projects to work on 
+
+    // Get list of projects to work on
     SelectProjectsDlg projectSelectorDlg(EventNotifier::Get()->TopFrame());
     if ( projectSelectorDlg.ShowModal() != wxID_OK ) {
         return;
     }
-    
+
     wxArrayString projects = projectSelectorDlg.GetProjects();
     if ( projects.IsEmpty() ) {
         return;
     }
-    
+
     wxArrayString filesArr;
     for ( size_t i=0; i<projects.GetCount(); ++i ) {
         ManagerST::Get()->GetProjectFiles(projects.Item ( i ), filesArr );
     }
-    
+
     // Convert the array into wxFileList_t
     wxFileList_t files;
     files.reserve( filesArr.GetCount() );
     for( size_t i=0; i<filesArr.GetCount(); ++i ) {
         files.push_back( wxFileName(filesArr.Item(i) ) );
     }
-    
+
     // Invoke the RefactorEngine
     if ( !RefactoringEngine::Instance()->IsCacheInitialized() ) {
         ::wxMessageBox(_("Refactoring engine is still caching workspace info. Try again in a few seconds"), "codelite", wxOK|wxICON_WARNING);
         return;
     }
-    
+
     RefactoringEngine::Instance()->RenameGlobalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos+1), word_start, files);
 
     if(RefactoringEngine::Instance()->GetCandidates().empty() && RefactoringEngine::Instance()->GetPossibleCandidates().empty())
@@ -3053,13 +2980,13 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
     // Save all files before 'find usage'
     if (!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
         return;
-    
+
     // Invoke the RefactorEngine
     if ( !RefactoringEngine::Instance()->IsCacheInitialized() ) {
         ::wxMessageBox(_("Refactoring engine is still caching workspace info. Try again in a few seconds"), "codelite", wxOK|wxICON_WARNING);
         return;
     }
-    
+
     // Get list of files to search in
     wxFileList_t files;
     ManagerST::Get()->GetWorkspaceFiles(files, true);
@@ -3209,4 +3136,36 @@ void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
     menu.Append(XRCID("find_decl"), _("Go to Declaration"));
     menu.Append(XRCID("find_impl"), _("Go to Implementation"));
     editor->PopupMenu( &menu );
+}
+
+void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
+{
+    LEditor& ctrl = GetCtrl();
+    size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
+    if (cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
+        wxString flatStr;
+        for (size_t i=0; i< workspaceTokens.GetCount(); i++) {
+            // add only entries that does not appear in the variable list
+            //if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
+            flatStr << workspaceTokens.Item(i) << wxT(" ");
+        }
+        ctrl.SetKeyWords(1, flatStr);
+    } else {
+        ctrl.SetKeyWords(1, wxEmptyString);
+    }
+    ctrl.SetKeyWords(3, wxEmptyString);
+    
+    wxArrayString localTokens;
+    TagsManagerST::Get()->GetVariables( ctrl.GetFileName(), localTokens);
+    
+    if (cc_flags & CC_COLOUR_VARS) {
+        // convert it to space delimited string
+        wxString varFlatStr;
+        for (size_t i=0; i< localTokens.GetCount(); i++) {
+            varFlatStr << localTokens.Item(i) << wxT(" ");
+        }
+        ctrl.SetKeyWords(3, varFlatStr);
+    } else {
+        ctrl.SetKeyWords(3, wxEmptyString);
+    }
 }

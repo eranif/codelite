@@ -3064,3 +3064,24 @@ void TagsManager::InsertForwardDeclaration(const wxString& classname, const wxSt
     lineToAdd << classname << ";";
     line = GetLanguage()->GetBestLineForForwardDecl(fileContent);
 }
+
+void TagsManager::GetVariables(const wxFileName& filename, wxArrayString& locals)
+{
+    wxFFile fp(filename.GetFullPath(), "rb");
+    if ( !fp.IsOpened() )
+        return;
+        
+    wxString content;
+    fp.ReadAll( &content );
+    fp.Close();
+    
+    VariableList li;
+    std::map<std::string, std::string> ignoreMap;
+    wxCharBuffer cb = content.mb_str(wxConvUTF8);
+    get_variables(cb.data(), li, ignoreMap, false);
+    
+    VariableList::iterator iter = li.begin();
+    for(; iter != li.end(); ++iter ) {
+        locals.Add(iter->m_name);
+    }
+}

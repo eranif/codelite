@@ -5220,9 +5220,14 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
         // we are in shutdown progress, dont do anything
         return;
     }
-
+    
     wxUnusedVar(e);
     SetStatusMessage(wxEmptyString, 0);
+    
+    if ( e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS )
+        // no need to trigger another UpdateColour
+        return;
+
     LEditor *editor = GetMainBook()->GetActiveEditor();
     if (editor) {
         editor->UpdateColours();

@@ -38,6 +38,7 @@
 #include "cpp_scanner.h"
 #include <set>
 #include "cl_command_event.h"
+#include <tags_options_data.h>
 
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
@@ -111,7 +112,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
     }
 
     // Allways notify when ready
-    DoNotifyReady(req->_evtHandler);
+    DoNotifyReady(req->_evtHandler, req->getType());
 }
 
 void ParseThread::ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db)
@@ -633,11 +634,12 @@ void ParseThread::ProcessIncludeStatements(ParseRequest* req)
     }
 }
 
-void ParseThread::DoNotifyReady(wxEvtHandler* caller)
+void ParseThread::DoNotifyReady(wxEvtHandler* caller, int requestType)
 {
     if ( m_notifiedWindow ) {
         wxCommandEvent event(wxEVT_PARSE_THREAD_READY);
         event.SetClientData(caller);
+        event.SetInt( requestType );
         m_notifiedWindow->AddPendingEvent(event);
     }
 }
@@ -662,6 +664,8 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
             if ( type == IDENTIFIER ) {
                 tokens.insert( scanner.YYText() );
             }
+            type = scanner.yylex();
+            
         }
         
         // Convert the set into array
@@ -670,13 +674,41 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
         for(; iter != tokens.end(); ++iter ) {
             tokensArr.Add( *iter );
         }
-        tokensArr.Sort();
         
+        // did we find anything?
+        if ( tokensArr.IsEmpty() )
+            return;
+            
+        tokensArr.Sort();
         // Open the database
         ITagsStoragePtr db(new TagsStorageSQLite());
         db->OpenDatabase( req->getDbfile() );
         
-        // send the reply back to the caller
+        wxArrayString kinds;
+        const size_t colourOptions = TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags();
+        if ( colourOptions & CC_COLOUR_CLASS )
+            kinds.Add("class");
+        if ( colourOptions & CC_COLOUR_ENUM )
+            kinds.Add("enum");
+        if ( colourOptions & CC_COLOUR_ENUMERATOR )
+            kinds.Add("enumerator");
+        if ( colourOptions & CC_COLOUR_FUNCTION )
+            kinds.Add("prototype");
+        if ( colourOptions & CC_COLOUR_MACRO )
+            kinds.Add("macro");
+        if ( colourOptions & CC_COLOUR_MEMBER )
+            kinds.Add("member");
+        if ( colourOptions & CC_COLOUR_NAMESPACE )
+            kinds.Add("namespace");
+        if ( colourOptions & CC_COLOUR_PROTOTYPE )
+            kinds.Add("prototype");
+        if ( colourOptions & CC_COLOUR_STRUCT )
+            kinds.Add("struct");
+        if ( colourOptions & CC_COLOUR_TYPEDEF )
+            kinds.Add("typedef");
+
+        db->RemoveNonWorkspaceSymbols(tokensArr, kinds);
+        
         if ( req->_evtHandler ) {
             clCommandEvent event(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS);
             event.SetStrings( tokensArr );

@@ -178,6 +178,14 @@ public:
 
     //override this method if you wish to provide context based right click menu
     virtual wxMenu *GetMenu() ;
+    
+    /**
+     * @brief colour tokens in the current editor
+     * @param workspaceTokens list of token that are associated with the workspace
+     */
+    virtual void ColourContextTokens( const wxArrayString& workspaceTokens ) {
+        wxUnusedVar(workspaceTokens);
+    }
 };
 
 typedef SmartPtr<ContextBase> ContextBasePtr;

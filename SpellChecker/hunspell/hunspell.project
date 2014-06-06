@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="hunspell">
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="hunspell">
+    <File Name="affentry.cxx"/>
+    <File Name="w_char.hxx"/>
+    <File Name="suggestmgr.hxx"/>
+    <File Name="suggestmgr.cxx"/>
+    <File Name="phonet.hxx"/>
+    <File Name="phonet.cxx"/>
+    <File Name="langnum.hxx"/>
+    <File Name="hunzip.hxx"/>
+    <File Name="hunzip.cxx"/>
+    <File Name="hunspell.hxx"/>
+    <File Name="hunspell.h"/>
+    <File Name="hunspell.cxx"/>
+    <File Name="htypes.hxx"/>
+    <File Name="hashmgr.hxx"/>
+    <File Name="hashmgr.cxx"/>
+    <File Name="filemgr.hxx"/>
+    <File Name="filemgr.cxx"/>
+    <File Name="dictmgr.hxx"/>
+    <File Name="dictmgr.cxx"/>
+    <File Name="csutil.hxx"/>
+    <File Name="csutil.cxx"/>
+    <File Name="baseaffix.hxx"/>
+    <File Name="atypes.hxx"/>
+    <File Name="affixmgr.hxx"/>
+    <File Name="affixmgr.cxx"/>
+    <File Name="affentry.hxx"/>
+    <File Name="replist.cxx"/>
+    <File Name="license.hunspell"/>
+    <File Name="license.myspell"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Settings Type="Static Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+        <Preprocessor Value="UNICODE"/>
+        <Preprocessor Value="HUNSPELL_STATIC"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="./lib/libhunspellD.a" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+        <Preprocessor Value="UNICODE"/>
+        <Preprocessor Value="HUNSPELL_STATIC"/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="./lib/libhunspell.a" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <Dependencies Name="Release"/>
+</CodeLite_Project>

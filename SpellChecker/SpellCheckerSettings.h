@@ -45,12 +45,10 @@ public:
     const wxString& GetDictionaryFileName() const {
         return m_dictionaryFileName;
     }
-    void            SetDictionaryFileName( const wxString& dictionaryFileName ) {
+    void SetDictionaryFileName( const wxString& dictionaryFileName ) {
         this->m_dictionaryFileName = dictionaryFileName;
     }
-    void            SetDictionaryPath( const wxString& dictionaryPath ) {
-        this->m_dictionaryPath = dictionaryPath;
-    }
+    void SetDictionaryPath( const wxString& dictionaryPath );
     void            SetHunspell( IHunSpell* pHunspell ) {
         this->m_pHunspell = pHunspell;
     }

@@ -115,4 +115,10 @@ SpellCheckerSettings::~SpellCheckerSettings()
     WindowAttrManager::Save(this, "SpellCheckerSettings");
 }
 
+void SpellCheckerSettings::SetDictionaryPath(const wxString& dictionaryPath)
+{
+    this->m_dictionaryPath = dictionaryPath;
+    FillLanguageList();
+}
+
 // ------------------------------------------------------------

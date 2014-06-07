@@ -101,6 +101,7 @@ void SpellCheckerSettings::FillLanguageList()
     if( !m_dictionaryPath.IsEmpty() ) {
         wxArrayString lang;
         m_pHunspell->GetAvailableLanguageKeyNames( m_dictionaryPath, lang );
+        m_pLanguageList->Clear();
         m_pLanguageList->Append( lang );
     }
 }

@@ -17,8 +17,8 @@
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/checkbox.h>
 #include <wx/button.h>
+#include <wx/checkbox.h>
 
 class NewKeyShortcutBaseDlg : public wxDialog
 {
@@ -28,6 +28,7 @@ protected:
     wxStaticText* m_staticTextAction;
     wxStaticText* m_staticText10;
     wxTextCtrl* m_textCtrl1;
+    wxButton* m_buttonClear;
     wxStaticText* m_staticText12;
     wxCheckBox* m_checkBoxCtrl;
     wxCheckBox* m_checkBoxAlt;
@@ -37,6 +38,8 @@ protected:
 
 protected:
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set New Key Accelerator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

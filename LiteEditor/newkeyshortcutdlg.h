@@ -45,6 +45,8 @@ class NewKeyShortcutDlg : public NewKeyShortcutBaseDlg
     };
     
 protected:
+    virtual void OnClear(wxCommandEvent& event);
+    virtual void OnClearUI(wxUpdateUIEvent& event);
     void OnKeyDown( wxKeyEvent& event );
     wxString ToString(wxKeyEvent &e);
     NewKeyShortcutDlg::KeyboardShortcut FromString( const wxString &accelString );

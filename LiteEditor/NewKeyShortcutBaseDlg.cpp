@@ -33,7 +33,7 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer5);
     
-    wxFlexGridSizer* flexGridSizer8 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer8 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer8->SetFlexibleDirection( wxBOTH );
     flexGridSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer8->AddGrowableCol(1);
@@ -48,6 +48,8 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer8->Add(m_staticTextAction, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
+    flexGridSizer8->Add(0, 0, 1, wxALL, 5);
+    
     m_staticText10 = new wxStaticText(m_panel1, wxID_ANY, _("Key:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer8->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
@@ -57,6 +59,11 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     m_textCtrl1->SetFocus();
     
     flexGridSizer8->Add(m_textCtrl1, 0, wxALL|wxEXPAND, 5);
+    
+    m_buttonClear = new wxButton(m_panel1, wxID_CLEAR, _("Clear"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonClear->SetToolTip(_("Clear the keyboard shortcut"));
+    
+    flexGridSizer8->Add(m_buttonClear, 0, wxALL, 5);
     
     m_staticText12 = new wxStaticText(m_panel1, wxID_ANY, _("Modifiers:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -101,11 +108,15 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     Centre();
     // Connect events
     m_textCtrl1->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewKeyShortcutBaseDlg::OnKeyDown), NULL, this);
+    m_buttonClear->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnClear), NULL, this);
+    m_buttonClear->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewKeyShortcutBaseDlg::OnClearUI), NULL, this);
     
 }
 
 NewKeyShortcutBaseDlg::~NewKeyShortcutBaseDlg()
 {
     m_textCtrl1->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewKeyShortcutBaseDlg::OnKeyDown), NULL, this);
+    m_buttonClear->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnClear), NULL, this);
+    m_buttonClear->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewKeyShortcutBaseDlg::OnClearUI), NULL, this);
     
 }

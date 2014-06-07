@@ -123,13 +123,13 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
 {
     wxString text;
 
-    int flags = e.GetModifiers();
-    if ( flags & wxMOD_ALT )
-        text += wxT("Alt-");
-    if ( flags & wxMOD_CONTROL )
-        text += wxT("Ctrl-");
-    if ( flags & wxMOD_SHIFT )
-        text += wxT("Shift-");
+    // int flags = e.GetModifiers();
+    // if ( flags & wxMOD_ALT )
+    //     text += wxT("Alt-");
+    // if ( flags & wxMOD_CONTROL )
+    //     text += wxT("Ctrl-");
+    // if ( flags & wxMOD_SHIFT )
+    //     text += wxT("Shift-");
 
     const int code = e.GetKeyCode();
 
@@ -143,7 +143,7 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
         size_t n;
         for ( n = 0; n < WXSIZEOF(wxKeyNames); n++ ) {
             const wxKeyName& kn = wxKeyNames[n];
-            if ( code == kn.code ) {
+            if ( code == kn.code && kn.code != WXK_COMMAND) {
                 text << wxGetTranslation(kn.name);
                 break;
             }
@@ -203,4 +203,19 @@ wxString NewKeyShortcutDlg::GetAccel() const
         accel.RemoveLast();
     }
     return accel;
+}
+
+void NewKeyShortcutDlg::OnClear(wxCommandEvent& event)
+{
+    // Clear the modifiers checkboxs
+    m_checkBoxAlt->SetValue(false);
+    m_checkBoxCtrl->SetValue(false);
+    m_checkBoxShift->SetValue(false);
+    
+    m_textCtrl1->ChangeValue("");
+}
+
+void NewKeyShortcutDlg::OnClearUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_checkBoxAlt->IsChecked() || m_checkBoxCtrl->IsChecked() || m_checkBoxShift->IsChecked() || !m_textCtrl1->IsEmpty() );
 }

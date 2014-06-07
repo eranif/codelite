@@ -4745,6 +4745,9 @@ wxString LEditor::GetFirstSelection()
                 return wxStyledTextCtrl::GetTextRange(startPos, endPos);
             }
         }
+        // default
+        return wxEmptyString;
+        
     } else {
         return wxStyledTextCtrl::GetSelectedText();
     }

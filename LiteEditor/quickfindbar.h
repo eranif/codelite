@@ -42,7 +42,8 @@ protected:
     virtual void OnCheckBoxRegex(wxCommandEvent& event);
     virtual void OnCheckWild(wxCommandEvent& event);
     void     ShowReplaceControls(bool show = true);
-    void     DoSearch(bool fwd, bool incr);
+    void     DoSearch(bool fwd, bool incr, bool addSelection = false);
+    wxString DoGetSelectedText();
     void     DoMarkAll();
     wchar_t* DoGetSearchStringPtr();
 

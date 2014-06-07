@@ -115,10 +115,11 @@ wchar_t* QuickFindBar::DoGetSearchStringPtr()
     return pinput;
 }
 
-void QuickFindBar::DoSearch(bool fwd, bool incr)
+void QuickFindBar::DoSearch(bool fwd, bool incr, bool addSelection)
 {
     if (!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty())
         return;
+
     m_flags = 0;
     if ( m_checkBoxCase->IsChecked()    ) m_flags |= wxSD_MATCHCASE;
     if ( m_checkBoxRegex->IsChecked()   ) m_flags |= wxSD_REGULAREXPRESSION;
@@ -147,7 +148,12 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 
     m_findWhat->SetBackgroundColour( EditorConfigST::Get()->GetCurrentOutputviewBgColour() );
     m_findWhat->Refresh();
-    m_sci->SetSelection(pos, pos+len);
+    if ( addSelection && m_sci->GetSelections() ) {
+        m_sci->AddSelection(pos, pos+len);
+    } else {
+        m_sci->ClearSelections();
+        m_sci->SetSelection(pos, pos+len);
+    }
 
     // Ensure that the found string is visible (i.e. its line isn't folded away)
     // and that the user can see it without having to scroll
@@ -160,7 +166,6 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 
 void QuickFindBar::OnHide(wxCommandEvent &e)
 {
-
     // Kill any "...continued from start" statusbar message
     clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
 
@@ -171,17 +176,18 @@ void QuickFindBar::OnHide(wxCommandEvent &e)
 void QuickFindBar::OnNext(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    DoSearch(true, false);
+    DoSearch(true, false, m_checkBoxMultipleSelections->IsChecked());
 }
 
 void QuickFindBar::OnPrev(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    DoSearch(false, false);
+    DoSearch(false, false, m_checkBoxMultipleSelections->IsChecked());
 }
 
 void QuickFindBar::OnText(wxCommandEvent& e)
 {
+    e.Skip();
     wxUnusedVar(e);
     DoSearch(true, true);
 }
@@ -279,17 +285,28 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
         return;
 
     // if there is no selection, invoke search
-    wxString selectionText = m_sci->GetSelectedText();
-    wxString find          = m_findWhat->GetValue();
-    wxString replaceWith   = m_replaceWith->GetValue();
-
+    int nNumSelections = m_sci->GetSelections();
 #ifndef __WXMAC__
     int re_flags = wxRE_ADVANCED;
 #else
     int re_flags = wxRE_DEFAULT;
 #endif
 
-    bool caseSearch        = m_flags & wxSD_MATCHCASE;
+    bool caseSearch = m_flags & wxSD_MATCHCASE;
+    wxString selectionText;
+    if ( nNumSelections == 1 ) {
+        selectionText = m_sci->GetSelectedText();
+        
+    } else if ( nNumSelections > 1 ) {
+        selectionText = DoGetSelectedText();
+    }
+    
+    if ( selectionText.IsEmpty() )
+        return;
+
+    wxString find          = m_findWhat->GetValue();
+    wxString replaceWith   = m_replaceWith->GetValue();
+    
     if ( !caseSearch ) {
         selectionText.MakeLower();
         find.MakeLower();
@@ -304,7 +321,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
 
     } else if(m_flags & wxSD_REGULAREXPRESSION) {
         // regular expression search
-        wxString selectedText = m_sci->GetSelectedText();
+        wxString selectedText = selectionText;
 
         // handle back references (\1 \2 etc)
         if( m_sci && selectedText.IsEmpty() == false) {
@@ -316,19 +333,43 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
             if(re.IsValid() && re.Matches(selectedText)) {
                 re.Replace(&selectedText, replaceWith);
             }
-
-            m_sci->ReplaceSelection(selectedText);
+            
+            m_sci->BeginUndoAction();
+            for(int i=0; i<nNumSelections; ++i) {
+                int nStart = m_sci->GetSelectionNStart(i);
+                int nEnd   = m_sci->GetSelectionNEnd(i);
+                if ( nEnd > nStart ) {
+                    m_sci->Replace(nStart, nEnd, selectedText);
+                }
+            }
+            m_sci->EndUndoAction();
+            m_sci->ClearSelections();
         }
 
         // and search again
-        DoSearch(true, true);
+        if ( nNumSelections == 1 ) {
+            DoSearch(true, true);
+        }
+        
     } else {
-        // Normal replacement
-        m_sci->ReplaceSelection(replaceWith);
-
+        
+        m_sci->BeginUndoAction();
+        for(int i=0; i<nNumSelections; ++i) {
+            int nStart = m_sci->GetSelectionNStart(i);
+            int nEnd   = m_sci->GetSelectionNEnd(i);
+            if ( nEnd > nStart ) {
+                m_sci->Replace(nStart, nEnd, replaceWith);
+            }
+        }
+        m_sci->EndUndoAction();
+        m_sci->ClearSelections();
+        
         // and search again
-        DoSearch(true, true);
+        if ( nNumSelections == 1 ) {
+            DoSearch(true, true);
+        }
     }
+
 }
 
 void QuickFindBar::OnReplaceUI(wxUpdateUIEvent& e)
@@ -421,6 +462,15 @@ bool QuickFindBar::Show(const wxString& findWhat)
 bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 {
     bool res = wxPanel::Show(s);
+    if ( s && m_sci ) {
+        // Delete the indicators
+        m_sci->SetIndicatorCurrent(1);
+        m_sci->IndicatorClearRange(0, m_sci->GetLength());
+
+        m_sci->SetIndicatorCurrent(2);
+        m_sci->IndicatorClearRange(0, m_sci->GetLength());
+    }
+
     if (res) {
         GetParent()->GetSizer()->Layout();
     }
@@ -431,19 +481,25 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         // nothing to do
 
     } else if (!s) {
+        // hiding
         m_sci->SetFocus();
 
-    } else if (findWhat.IsEmpty() == false) {
+    } else if ( !findWhat.IsEmpty() ) {
+        
         m_findWhat->SetValue(findWhat);
         m_findWhat->SelectAll();
         m_findWhat->SetFocus();
         PostCommandEvent(this, m_findWhat);
 
     } else {
-        wxString findWhat = m_sci->GetSelectedText().BeforeFirst(wxT('\n'));
-        if (!findWhat.IsEmpty()) {
-            m_findWhat->SetValue(m_sci->GetSelectedText().BeforeFirst(wxT('\n')));
+        if ( m_sci->GetSelections() > 1 ) {
+            
         }
+        wxString findWhat = DoGetSelectedText().BeforeFirst(wxT('\n'));
+        if (!findWhat.IsEmpty()) {
+            m_findWhat->ChangeValue( findWhat );
+        }
+        
         m_findWhat->SelectAll();
         m_findWhat->SetFocus();
         PostCommandEvent(this, m_findWhat);
@@ -457,9 +513,9 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-    wxString selectedText = m_sci->GetSelectedText();
+    wxString selectedText = DoGetSelectedText();
     if (selectedText.IsEmpty() == false) {
-        m_findWhat->SetValue(selectedText);
+        m_findWhat->ChangeValue( selectedText );
         m_findWhat->SelectAll();
     }
 
@@ -471,9 +527,9 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
     CHECK_FOCUS_WIN();
 
     // Highlighted text takes precedence over the current search string
-    wxString selectedText = m_sci->GetSelectedText();
+    wxString selectedText = DoGetSelectedText();
     if (selectedText.IsEmpty() == false) {
-        m_findWhat->SetValue(selectedText);
+        m_findWhat->ChangeValue(selectedText);
         m_findWhat->SelectAll();
     }
 
@@ -484,7 +540,7 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
 {
     CHECK_FOCUS_WIN();
 
-    wxString selection( m_sci->GetSelectedText() );
+    wxString selection( DoGetSelectedText() );
     if (selection.IsEmpty()) {
         // select the word
         long pos   = m_sci->GetCurrentPos();
@@ -499,7 +555,7 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
     if (selection.IsEmpty())
         return;
 
-    m_findWhat->SetValue(selection);
+    m_findWhat->ChangeValue( selection );
     DoSearch(true, false);
 }
 
@@ -507,7 +563,7 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 {
     CHECK_FOCUS_WIN();
 
-    wxString selection( m_sci->GetSelectedText() );
+    wxString selection( DoGetSelectedText() );
     if (selection.IsEmpty()) {
         // select the word
         long pos   = m_sci->GetCurrentPos();
@@ -522,10 +578,9 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
     if (selection.IsEmpty())
         return;
 
-    m_findWhat->SetValue(selection);
+    m_findWhat->ChangeValue( selection );
     DoSearch(false, false);
 }
-
 
 void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)
 {
@@ -713,5 +768,26 @@ void QuickFindBar::OnCheckWild(wxCommandEvent& event)
     // regex and wildcard can not co-exist
     if ( event.IsChecked() ) {
         m_checkBoxRegex->SetValue( false );
+    }
+}
+
+wxString QuickFindBar::DoGetSelectedText()
+{
+    if ( !m_sci ) {
+        return wxEmptyString;
+    }
+    
+    if ( m_sci->GetSelections() > 1 ) {
+        for(int i=0; i<m_sci->GetSelections(); ++i) {
+            int selStart = m_sci->GetSelectionNStart(i);
+            int selEnd   = m_sci->GetSelectionNEnd(i);
+            if ( selEnd > selStart ) {
+                return m_sci->GetTextRange(selStart, selEnd);
+            }
+        }
+        return wxEmptyString;
+        
+    } else {
+        return m_sci->GetSelectedText();
     }
 }

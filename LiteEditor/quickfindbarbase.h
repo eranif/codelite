@@ -15,15 +15,16 @@
 #include <wx/sizer.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/statline.h>
 #include <wx/checkbox.h>
 
 class QuickFindBarBase : public wxPanel
 {
-protected:
+public:
     enum {
         ID_TOOL_CLOSE = 1001,
         ID_TOOL_HIGHLIGHT_MATCHES = 1002,
@@ -39,20 +40,20 @@ protected:
     wxStaticText* m_replaceStaticText;
     wxTextCtrl* m_replaceWith;
     wxAuiToolBar* m_toolBarReplace;
-    wxStaticLine* m_staticLine38;
     wxCheckBox* m_checkBoxCase;
     wxCheckBox* m_checkBoxWord;
     wxCheckBox* m_checkBoxRegex;
     wxCheckBox* m_checkBoxWildcard;
+    wxCheckBox* m_checkBoxMultipleSelections;
 
 protected:
     virtual void OnHide(wxCommandEvent& event) { event.Skip(); }
     virtual void OnText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNext(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPrev(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnNext(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHighlightMatches(wxCommandEvent& event) { event.Skip(); }
     virtual void OnHighlightMatchesUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
@@ -61,7 +62,7 @@ protected:
     virtual void OnCheckWild(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxBORDER_THEME);
+    QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW);
     virtual ~QuickFindBarBase();
 };
 

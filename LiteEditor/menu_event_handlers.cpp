@@ -264,7 +264,7 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
     LEditor *editor = dynamic_cast<LEditor*>(owner);
     if ( editor ) {
         if ( event.GetId() == wxID_FIND ) {
-            clMainFrame::Get()->GetMainBook()->ShowQuickBar( editor ? editor->GetSelectedText() : "" );
+            clMainFrame::Get()->GetMainBook()->ShowQuickBar( editor->GetFirstSelection() );
 
         } else if ( event.GetId() == wxID_REPLACE ) {
             editor->DoFindAndReplace(true);

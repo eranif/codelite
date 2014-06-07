@@ -773,6 +773,12 @@ public:
      * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
      */
     void ShowRichTooltip(const wxString& tip, int pos = wxNOT_FOUND);
+    
+    /**
+     * @brief return the first selection (in case there are multiple selections enabled)
+     */
+    wxString GetFirstSelection();
+    
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------
 

@@ -179,6 +179,16 @@ Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
         } else if ( GetTool("AS").IsEmpty() ) {
             SetTool("AS", "as");
         }
+
+        // For backward compatibility, if the compiler / linker options are empty - add them
+        if ( IsGnuCompatibleCompiler() && m_compilerOptions.empty() ) {
+            AddDefaultGnuComplierOptions();
+        }
+
+        if ( IsGnuCompatibleCompiler() && m_linkerOptions.empty() ) {
+            AddDefaultGnuLinkerOptions();
+        }
+
     } else {
         // Create a default compiler: g++
         m_name = "";
@@ -209,6 +219,9 @@ Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
             AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)", 1, 3);
             AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1, 3);
             AddPattern(eWarningPattern, "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?", 2, 4);
+            
+            AddDefaultGnuComplierOptions();
+            AddDefaultGnuLinkerOptions();
             
         } else {
             
@@ -470,4 +483,64 @@ void Compiler::SetTool(const wxString& toolname, const wxString& cmd)
         m_tools.erase(toolname);
     }
     m_tools.insert(std::make_pair(toolname, cmd));
+}
+
+void Compiler::AddCompilerOption(const wxString& name, const wxString& desc)
+{
+    CmpCmdLineOption option;
+    option.help = desc;
+    option.name = name;
+    m_compilerOptions.erase( name );
+    m_compilerOptions.insert( std::make_pair(name, option) );
+}
+
+void Compiler::AddLinkerOption(const wxString& name, const wxString& desc)
+{
+    CmpCmdLineOption option;
+    option.help = desc;
+    option.name = name;
+    m_linkerOptions.erase( name );
+    m_linkerOptions.insert( std::make_pair(name, option) );
+}
+
+bool Compiler::IsGnuCompatibleCompiler() const
+{
+    return  m_compilerFamily.IsEmpty()                  ||
+            m_compilerFamily == COMPILER_FAMILY_CLANG   || 
+            m_compilerFamily == COMPILER_FAMILY_GCC     || 
+            m_compilerFamily == COMPILER_FAMILY_MINGW;
+}
+
+void Compiler::AddDefaultGnuComplierOptions()
+{
+    // Add GCC / CLANG default compiler options
+    AddCompilerOption("-O",                         "Optimize generated code. (for speed)");
+    AddCompilerOption("-O1",                        "Optimize more (for speed)");
+    AddCompilerOption("-O2",                        "Optimize even more (for speed)");
+    AddCompilerOption("-O3",                        "Optimize fully (for speed)");
+    AddCompilerOption("-Os",                        "Optimize generated code (for size)");
+    AddCompilerOption("-O0",                        "Optimize for debugging");
+    AddCompilerOption("-W",                         "Enable standard compiler warnings");
+    AddCompilerOption("-Wall",                      "Enable all compiler warnings");
+    AddCompilerOption("-Wfatal-errors",             "Stop compiling after first error");
+    AddCompilerOption("-Wmain",                     "Warn if main() is not conformant");
+    AddCompilerOption("-ansi",                      "In C mode, support all ISO C90 programs. In C++ mode, remove GNU extensions that conflict with ISO C++");
+    AddCompilerOption("-fexpensive-optimizations",  "Expensive optimizations");
+    AddCompilerOption("-fopenmp",                   "Enable OpenMP (compilation)");
+    AddCompilerOption("-g",                         "Produce debugging information");
+    AddCompilerOption("-pedantic",                  "Enable warnings demanded by strict ISO C and ISO C++");
+    AddCompilerOption("-pedantic-errors",           "Treat as errors the warnings demanded by strict ISO C and ISO C++");
+    AddCompilerOption("-pg",                        "Profile code when executed");
+    AddCompilerOption("-w",                         "Inhibit all warning messages");
+    AddCompilerOption("-std=c99",                   "Enable ANSI C99 features");
+    AddCompilerOption("-std=c++11",                 "Enable C++11 features");
+}
+
+void Compiler::AddDefaultGnuLinkerOptions()
+{
+    // Linker options
+    AddLinkerOption("-fopenmp",   "Enable OpenMP (linkage)");
+    AddLinkerOption("-mwindows",  "Prevent a useless terminal console appearing with MSWindows GUI programs");
+    AddLinkerOption("-pg",        "Profile code when executed");
+    AddLinkerOption("-s",         "Remove all symbol table and relocation information from the executable");
 }

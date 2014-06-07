@@ -34,7 +34,7 @@
 
 /**
  * \ingroup LiteEditor
- * This class represenets a compiler entry in the configuration file
+ * This class represents a compiler entry in the configuration file
  *
  * \version 1.0
  * first version
@@ -84,7 +84,9 @@ public:
 private:
     void AddCmpFileType(const wxString &extension, CmpFileKind type, const wxString &compile_line);
     void AddPattern(int type, const wxString &pattern, int fileNameIndex, int lineNumberIndex);
-
+    void AddDefaultGnuComplierOptions();
+    void AddDefaultGnuLinkerOptions();
+    
 protected:
     wxString                                      m_name;
     std::map<wxString, wxString>                  m_switches;
@@ -112,7 +114,12 @@ public:
 
     Compiler(wxXmlNode *node, Compiler::eRegexType regexType = Compiler::kRegexGNU );
     virtual ~Compiler();
-
+    
+    /**
+     * @brief return true if this compiler is compatible with GNU compilers
+     */
+    bool IsGnuCompatibleCompiler() const;
+    
     wxXmlNode *ToXml() const;
     void SetTool(const wxString &toolname, const wxString &cmd);
     void SetSwitch(const wxString &switchName, const wxString &switchValue);
@@ -142,7 +149,10 @@ public:
     Compiler::ConstIterator SwitchesEnd() const {
         return m_switches.end();
     }
-
+    
+    void AddCompilerOption(const wxString &name, const wxString &desc);
+    void AddLinkerOption(const wxString &name, const wxString &desc);
+    
     //---------------------------------------------------
     //setters/getters
     //---------------------------------------------------

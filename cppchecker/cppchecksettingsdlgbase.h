@@ -21,6 +21,7 @@
 #include <wx/checklst.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
+#include <wx/spinctrl.h>
 #include <wx/listbox.h>
 #include <wx/statline.h>
 #include <wx/textctrl.h>
@@ -35,6 +36,8 @@ protected:
     wxButton* m_buttonAllChecks;
     wxButton* m_buttonClearChecks;
     wxCheckBox* m_cbOptionForce;
+    wxCheckBox* m_cbJobs;
+    wxSpinCtrl* m_spinCtrlJobs;
     wxCheckBox* m_cbCheckConfig;
     wxPanel* m_ExcludePanel;
     wxStaticText* m_staticText1;
@@ -79,6 +82,7 @@ protected:
     virtual void OnChecksTickAllUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnChecksUntickAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChecksUntickAllUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnJobsUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRemoveFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRemoveFileUI(wxUpdateUIEvent& event) { event.Skip(); }

@@ -21,6 +21,8 @@ CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSetting
 	m_checkListExtraWarnings->Check(7, settings->GetC99Standards());
 	m_checkListExtraWarnings->Check(8, settings->GetCpp11Standards());
 	m_cbOptionForce->SetValue(settings->GetForce());
+    m_cbJobs->SetValue(settings->GetJobs() > 1);
+    m_spinCtrlJobs->SetValue(settings->GetJobs());        
 
 	m_listBoxExcludelist->Append(settings->GetExcludeFiles());
 	
@@ -69,6 +71,11 @@ void CppCheckSettingsDialog::OnBtnOK(wxCommandEvent& e)
 	m_settings->SetC99Standards(m_checkListExtraWarnings->IsChecked(7));
 	m_settings->SetCpp11Standards(m_checkListExtraWarnings->IsChecked(8));
 	m_settings->SetForce(m_cbOptionForce->IsChecked());
+    if (m_cbJobs->IsChecked()) {
+        m_settings->SetJobs(m_spinCtrlJobs->GetValue());
+    } else {
+        m_settings->SetJobs(1);
+    }
 	m_settings->SetCheckConfig(m_cbCheckConfig->IsChecked());
 	
 	m_settings->SetExcludeFiles(m_listBoxExcludelist->GetStrings());
@@ -278,6 +285,11 @@ void CppCheckSettingsDialog::OnChecksUntickAllUI(wxUpdateUIEvent& e)
 		}
 	}
 	e.Enable(false);
+}
+
+void CppCheckSettingsDialog::OnJobsUpdateUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_cbJobs->IsChecked());
 }
 
 void CppCheckSettingsDialog::OnRemoveFileUI(wxUpdateUIEvent& e)

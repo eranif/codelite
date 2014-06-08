@@ -43,6 +43,7 @@ void CppCheckSettings::Serialize(Archive& arch)
 	arch.Write(wxT("option.c99Standards"),    m_C99Standards);
 	arch.Write(wxT("option.cpp11Standards"),  m_Cpp11Standards);
 	arch.Write(wxT("option.force"),           m_Force);
+    arch.Write(wxT("option.jobs"),            m_Jobs);
 
 	arch.Write(wxT("m_excludeFiles"),         m_excludeFiles);
 
@@ -77,6 +78,7 @@ void CppCheckSettings::DeSerialize(Archive& arch)
 	arch.Read(wxT("option.c99Standards"),    m_C99Standards);
 	arch.Read(wxT("option.cpp11Standards"),  m_Cpp11Standards);
 	arch.Read(wxT("option.force"),           m_Force);
+	arch.Read(wxT("option.jobs"),            m_Jobs);
 	
 	arch.Read(wxT("m_excludeFiles"),         m_excludeFiles);
 	
@@ -163,6 +165,9 @@ wxString CppCheckSettings::GetOptions() const
 	}
 	if (GetForce()) {
 		options << wxT("--force ");
+	}
+	if (GetJobs() > 1) {
+		options << wxT("-j") << GetJobs();
 	}
 	if (GetCheckConfig()) {
 		options << wxT("--check-config "); // Though this turns off other checks, afaict it does not harm to emit them

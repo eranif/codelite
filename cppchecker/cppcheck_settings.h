@@ -27,6 +27,7 @@ class CppCheckSettings : public SerializedObject
 	bool          m_C99Standards;
 	bool          m_Cpp11Standards;
 	bool          m_Force;
+	int           m_Jobs;
 	bool          m_CheckConfig;
 	wxArrayString m_excludeFiles;
 	StrStrMap     m_SuppressedWarnings0;     // The items unchecked in the checklistbox
@@ -73,6 +74,9 @@ public:
 	bool GetForce() const {
 		return m_Force;
 	}
+	int GetJobs() const {
+		return m_Jobs;
+	}
 	bool GetCheckConfig() const {
 		return m_CheckConfig;
 	}
@@ -111,6 +115,7 @@ public:
 	void SetC99Standards(bool C99Standards)       { m_C99Standards = C99Standards; }
 	void SetCpp11Standards(bool Cpp11Standards)   { m_Cpp11Standards = Cpp11Standards; }
 	void SetForce(bool Force)                     { m_Force = Force; }
+	void SetJobs(int jobs)                        { m_Jobs = jobs; }
 	void SetCheckConfig(bool checkconfig)         { m_CheckConfig = checkconfig; }
 	void SetExcludeFiles(const wxArrayString& excludeFiles) {
 		m_excludeFiles = excludeFiles;

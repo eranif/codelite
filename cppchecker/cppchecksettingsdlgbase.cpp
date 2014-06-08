@@ -82,11 +82,28 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     boxSizer36->Add(m_cbOptionForce, 0, wxALL|wxEXPAND, 5);
     
+    wxBoxSizer* boxSizer38 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer36->Add(boxSizer38, 0, 0, 5);
+    
+    m_cbJobs = new wxCheckBox(m_ChecksPanel, wxID_ANY, _("Multiple jobs (-j)"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_cbJobs->SetValue(false);
+    m_cbJobs->SetToolTip(_("Tell Cppcheck to use 'n' CPUs. NB this is incompatable with 'unusedFunction', and may give false-positive warnings for e.g. 'Unmatched suppression' ."));
+    
+    boxSizer38->Add(m_cbJobs, 0, wxALL|wxEXPAND, 5);
+    
+    m_spinCtrlJobs = new wxSpinCtrl(m_ChecksPanel, wxID_ANY, wxT("1"), wxDefaultPosition, wxSize(50,-1), wxSP_ARROW_KEYS);
+    m_spinCtrlJobs->SetToolTip(_("Number of jobs to try to run in parallel"));
+    m_spinCtrlJobs->SetRange(1, 100);
+    m_spinCtrlJobs->SetValue(1);
+    
+    boxSizer38->Add(m_spinCtrlJobs, 0, wxALL, 5);
+    
     m_cbCheckConfig = new wxCheckBox(m_ChecksPanel, wxID_ANY, _("Check configuration (turns off other checks)"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_cbCheckConfig->SetValue(false);
     m_cbCheckConfig->SetToolTip(_("Pass --check-config to Cppchecker. This is useful if you get a 'Cppcheck cannot find all the include files' warning: it lets you see which #include aren't being located. However it turns off other checks."));
     
-    boxSizer36->Add(m_cbCheckConfig, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer36->Add(m_cbCheckConfig, 0, wxALL|wxEXPAND, 5);
     
     m_ExcludePanel = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_ExcludePanel, _("Exclude"), false);
@@ -330,6 +347,7 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     m_buttonAllChecks->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnChecksTickAllUI), NULL, this);
     m_buttonClearChecks->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnChecksUntickAll), NULL, this);
     m_buttonClearChecks->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnChecksUntickAllUI), NULL, this);
+    m_spinCtrlJobs->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnJobsUpdateUI), NULL, this);
     m_buttonAdd->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnAddFile), NULL, this);
     m_buttonRemove->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnRemoveFile), NULL, this);
     m_buttonRemove->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnRemoveFileUI), NULL, this);
@@ -366,6 +384,7 @@ CppCheckSettingsDialogBase::~CppCheckSettingsDialogBase()
     m_buttonAllChecks->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnChecksTickAllUI), NULL, this);
     m_buttonClearChecks->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnChecksUntickAll), NULL, this);
     m_buttonClearChecks->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnChecksUntickAllUI), NULL, this);
+    m_spinCtrlJobs->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnJobsUpdateUI), NULL, this);
     m_buttonAdd->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnAddFile), NULL, this);
     m_buttonRemove->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnRemoveFile), NULL, this);
     m_buttonRemove->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnRemoveFileUI), NULL, this);

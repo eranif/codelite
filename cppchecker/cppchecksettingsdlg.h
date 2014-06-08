@@ -24,6 +24,7 @@ protected:
 	virtual void OnChecksUntickAll(wxCommandEvent& e);
 	virtual void OnChecksTickAllUI(wxUpdateUIEvent& e);
 	virtual void OnChecksUntickAllUI(wxUpdateUIEvent& e);
+    virtual void OnJobsUpdateUI(wxUpdateUIEvent& event);
 
 	// Exclude-files page
 	virtual void OnAddFile     (wxCommandEvent& e);

@@ -742,6 +742,10 @@ bool Workspace::RemoveFile(const wxString &vdFullPath, const wxString &fileName,
 BuildConfigPtr Workspace::GetProjBuildConf(const wxString &projectName, const wxString &confName) const
 {
     BuildMatrixPtr matrix = GetBuildMatrix();
+    if ( !matrix ) {
+        return NULL;
+    }
+    
     wxString projConf(confName);
 
     if (projConf.IsEmpty()) {

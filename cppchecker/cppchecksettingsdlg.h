@@ -42,6 +42,12 @@ protected:
 	virtual void OnSuppressTickAllUI(wxUpdateUIEvent& e);
 	virtual void OnSuppressUntickAllUI(wxUpdateUIEvent& e);
 
+	// Extra include dirs page
+    virtual void OnIncludeDirsUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnAddIncludeDir(wxCommandEvent& event);
+    virtual void OnRemoveIncludeDir(wxCommandEvent& event);
+    virtual void OnRemoveIncludeDirUI(wxUpdateUIEvent& event);
+
 	// Definitions page
 	virtual void OnAddDefinition(wxCommandEvent& e);
 	virtual void OnRemoveDefinition(wxCommandEvent& e);

@@ -3,6 +3,7 @@
 #include <wx/msgdlg.h>
 #include <wx/filedlg.h>
 #include <wx/textdlg.h>
+#include <wx/dirdlg.h>
 
 CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSettings* settings, IConfigTool *conf, const wxString& defaultpath, bool showDefsTab)
 		: CppCheckSettingsDialogBase(parent)
@@ -41,7 +42,11 @@ CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSetting
 		m_checkListSuppress->Check(index, false);
 		m_SuppressionsKeys.Add((*iter).first);
 	}
-    
+
+    m_listBoxIncludeDirs->Append(settings->GetIncludeDirs());
+    m_checkBoxSuppressSystemIncludes->SetValue(settings->GetSuppressSystemIncludes());
+    m_checkBoxSerialiseIncludeDirs->SetValue(settings->GetSaveIncludeDirs());
+
     if (showDefsTab) {
         m_listBoxDefinelist->Append(settings->GetDefinitions());
         m_listBoxUndefineList->Append(settings->GetUndefines());
@@ -64,11 +69,16 @@ void CppCheckSettingsDialog::OnBtnOK(wxCommandEvent& e)
 	m_settings->SetC99Standards(m_checkListExtraWarnings->IsChecked(7));
 	m_settings->SetCpp11Standards(m_checkListExtraWarnings->IsChecked(8));
 	m_settings->SetForce(m_cbOptionForce->IsChecked());
+	m_settings->SetCheckConfig(m_cbCheckConfig->IsChecked());
 	
 	m_settings->SetExcludeFiles(m_listBoxExcludelist->GetStrings());
 
 	m_settings->SetSuppressedWarnings(m_checkListSuppress, m_SuppressionsKeys);
 	m_settings->SetSaveSuppressedWarnings(m_checkBoxSerialise->IsChecked());
+
+	m_settings->SetIncludeDirs(m_listBoxIncludeDirs->GetStrings());
+	m_settings->SetSuppressSystemIncludes(m_checkBoxSuppressSystemIncludes->IsChecked());
+	m_settings->SetSaveIncludeDirs(m_checkBoxSerialiseIncludeDirs->IsChecked());
 
     m_settings->SetDefinitions(m_listBoxDefinelist->GetStrings());
     m_settings->SetUndefines(m_listBoxUndefineList->GetStrings());
@@ -186,6 +196,24 @@ void CppCheckSettingsDialog::OnSuppressUntickAll(wxCommandEvent& WXUNUSED(e))
 	}
 }
 
+
+void CppCheckSettingsDialog::OnAddIncludeDir(wxCommandEvent& WXUNUSED(e))
+{
+	wxDirDialog dlg(this, _("Select the path containing include files"));
+    if (dlg.ShowModal() == wxID_OK) {
+        m_listBoxIncludeDirs->Append(dlg.GetPath());
+    }
+}
+
+void CppCheckSettingsDialog::OnRemoveIncludeDir(wxCommandEvent& WXUNUSED(e))
+{
+	int sel = m_listBoxIncludeDirs->GetSelection();
+	if ( sel != wxNOT_FOUND ) {
+		m_listBoxIncludeDirs->Delete((unsigned int)sel);
+	}
+}
+
+
 void CppCheckSettingsDialog::OnAddDefinition(wxCommandEvent& WXUNUSED(e))
 {
 	wxString newitem = wxGetTextFromUser("Enter a definition e.g. 'FOO' or 'BAR=1' (not '-DFoo')", "CodeLite", "", this);
@@ -198,7 +226,7 @@ void CppCheckSettingsDialog::OnRemoveDefinition(wxCommandEvent& WXUNUSED(e))
 {
 	int sel = m_listBoxDefinelist->GetSelection();
 	if ( sel != wxNOT_FOUND ) {
-		m_listBoxDefinelist->Delete((unsigned int) sel);
+		m_listBoxDefinelist->Delete((unsigned int)sel);
 	}
 }
 
@@ -287,6 +315,22 @@ void CppCheckSettingsDialog::OnSuppressUntickAllUI(wxUpdateUIEvent& e)
 		}
 	}
 	e.Enable(false);
+}
+
+void CppCheckSettingsDialog::OnIncludeDirsUpdateUI(wxUpdateUIEvent& event)
+{
+	bool enable(false);
+    int index = m_checkListExtraWarnings->FindString(_("Missing includes"));
+    if (index != wxNOT_FOUND) {
+        enable = m_checkListExtraWarnings->IsChecked(index);
+    }
+    // Only enable the IncludeDirs panel if the "Missing includes" warning is enabled
+    event.Enable(enable);
+}
+
+void CppCheckSettingsDialog::OnRemoveIncludeDirUI(wxUpdateUIEvent& event)
+{
+	event.Enable( m_listBoxIncludeDirs->GetSelection() != wxNOT_FOUND );
 }
 
 void CppCheckSettingsDialog::OnRemoveDefinitionUI(wxUpdateUIEvent& e)

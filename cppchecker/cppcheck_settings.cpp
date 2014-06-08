@@ -57,6 +57,11 @@ void CppCheckSettings::Serialize(Archive& arch)
 		// Saving nothing would lose the original values; so save the cached originals
 		arch.Write(wxT("SuppressedWarningsStrings0"), m_SuppressedWarningsOrig0);
 		arch.Write(wxT("SuppressedWarningsStrings1"), m_SuppressedWarningsOrig1);
+	}	
+    
+    if (m_saveIncludeDirs) {
+		arch.Write(wxT("ExtraIncludeDirs"), m_IncludeDirs);
+		arch.Write(wxT("SuppressSystemIncludes"), m_SuppressSystemIncludes);
 	}
 }
 
@@ -77,6 +82,11 @@ void CppCheckSettings::DeSerialize(Archive& arch)
 	
 	arch.Read(wxT("SuppressedWarningsStrings0"), m_SuppressedWarnings0);	// Unchecked ones
 	arch.Read(wxT("SuppressedWarningsStrings1"), m_SuppressedWarnings1);	// Checked ones
+    
+
+	arch.Read(wxT("ExtraIncludeDirs"), m_IncludeDirs);
+	arch.Read(wxT("SuppressSystemIncludes"), m_SuppressSystemIncludes);
+	m_saveIncludeDirs = m_IncludeDirs.GetCount() > 0; // If there are saved dirs, this must have been set last time
 }
 
 void CppCheckSettings::SetDefaultSuppressedWarnings()
@@ -154,12 +164,27 @@ wxString CppCheckSettings::GetOptions() const
 	if (GetForce()) {
 		options << wxT("--force ");
 	}
+	if (GetCheckConfig()) {
+		options << wxT("--check-config "); // Though this turns off other checks, afaict it does not harm to emit them
+	}
 
 	// Now add any ticked suppressedwarnings
 	std::map<wxString, wxString>::const_iterator iter = m_SuppressedWarnings1.begin();
 	for (; iter != m_SuppressedWarnings1.end(); ++iter) {
 		options << wxT(" --suppress=") << (*iter).first;
 	}
+
+    // IncludeDirs
+    for (size_t n=0; n < m_IncludeDirs.GetCount(); ++n) {
+        wxString item = m_IncludeDirs.Item(n);
+        item.Trim().Trim(false);
+        if (!item.empty()) {
+            options << " -I" << item;
+        }
+    }
+    if (m_SuppressSystemIncludes) {
+        options << wxT(" --suppress=") << "missingIncludeSystem";
+    }
 
     // (Un)Definitions
     for (size_t n=0; n < m_definitions.GetCount(); ++n) {

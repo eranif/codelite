@@ -72,11 +72,21 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     bSizer611->Add(m_buttonClearChecks, 0, wxALL, 5);
     
+    wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
+    
+    bSizer3->Add(boxSizer36, 0, wxALL|wxEXPAND, 10);
+    
     m_cbOptionForce = new wxCheckBox(m_ChecksPanel, wxID_ANY, _("Force checking unlimited numbers of configurations"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_cbOptionForce->SetValue(false);
     m_cbOptionForce->SetToolTip(_("By default the maximum number of configurations checked per file is 12. If that might not be enough, tick this box."));
     
-    bSizer3->Add(m_cbOptionForce, 0, wxALL|wxEXPAND, 10);
+    boxSizer36->Add(m_cbOptionForce, 0, wxALL|wxEXPAND, 5);
+    
+    m_cbCheckConfig = new wxCheckBox(m_ChecksPanel, wxID_ANY, _("Check configuration (turns off other checks)"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_cbCheckConfig->SetValue(false);
+    m_cbCheckConfig->SetToolTip(_("Pass --check-config to Cppchecker. This is useful if you get a 'Cppcheck cannot find all the include files' warning: it lets you see which #include aren't being located. However it turns off other checks."));
+    
+    boxSizer36->Add(m_cbCheckConfig, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
     m_ExcludePanel = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_ExcludePanel, _("Exclude"), false);
@@ -116,13 +126,13 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     bSizer6->Add(m_buttonClearList, 0, wxALL, 5);
     
-    m_SupressPanel = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    m_notebook1->AddPage(m_SupressPanel, _("Suppress"), false);
+    m_SuppressPanel = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_notebook1->AddPage(m_SuppressPanel, _("Suppress"), false);
     
     wxBoxSizer* bSizer81 = new wxBoxSizer(wxVERTICAL);
-    m_SupressPanel->SetSizer(bSizer81);
+    m_SuppressPanel->SetSizer(bSizer81);
     
-    m_staticText11 = new wxStaticText(m_SupressPanel, wxID_ANY, _("Types of warnings NOT to display:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText11 = new wxStaticText(m_SuppressPanel, wxID_ANY, _("Types of warnings NOT to display:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer81->Add(m_staticText11, 0, wxALL, 5);
     
@@ -131,7 +141,7 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     bSizer81->Add(bSizer51, 1, wxEXPAND, 5);
     
     wxArrayString m_checkListSuppressArr;
-    m_checkListSuppress = new wxCheckListBox(m_SupressPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_checkListSuppressArr, wxLB_SINGLE);
+    m_checkListSuppress = new wxCheckListBox(m_SuppressPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_checkListSuppressArr, wxLB_SINGLE);
     
     bSizer51->Add(m_checkListSuppress, 1, wxALL|wxEXPAND, 5);
     
@@ -139,33 +149,79 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     bSizer51->Add(bSizer61, 0, wxEXPAND, 5);
     
-    m_buttonAddSuppression = new wxButton(m_SupressPanel, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonAddSuppression = new wxButton(m_SuppressPanel, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonAddSuppression->SetToolTip(_("Add an extra check to suppress. You'll need to know its id..."));
     
     bSizer61->Add(m_buttonAddSuppression, 0, wxALL, 5);
     
-    m_buttonRemoveSuppression = new wxButton(m_SupressPanel, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonRemoveSuppression = new wxButton(m_SuppressPanel, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonRemoveSuppression->SetToolTip(_("Remove the selected suppression from the list"));
     
     bSizer61->Add(m_buttonRemoveSuppression, 0, wxALL, 5);
     
     bSizer61->Add(0, 0, 0, wxTOP, 15);
     
-    m_buttonSuppressAll = new wxButton(m_SupressPanel, wxID_ANY, _("Tick All"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonSuppressAll = new wxButton(m_SuppressPanel, wxID_ANY, _("Tick All"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonSuppressAll->SetToolTip(_("Tick all the boxes"));
     
     bSizer61->Add(m_buttonSuppressAll, 0, wxALL, 5);
     
-    m_buttonClearSuppressions = new wxButton(m_SupressPanel, wxID_ANY, _("Untick All"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonClearSuppressions = new wxButton(m_SuppressPanel, wxID_ANY, _("Untick All"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonClearSuppressions->SetToolTip(_("Untick all the boxes"));
     
     bSizer61->Add(m_buttonClearSuppressions, 0, wxALL, 5);
     
-    m_checkBoxSerialise = new wxCheckBox(m_SupressPanel, wxID_ANY, _("Remember these settings"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxSerialise = new wxCheckBox(m_SuppressPanel, wxID_ANY, _("Remember these settings"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxSerialise->SetValue(false);
     m_checkBoxSerialise->SetToolTip(_("If ticked, these settings will be saved and be applied in the future. Otherwise the warnings will be back when you restart CodeLite, which may be what you should want."));
     
     bSizer81->Add(m_checkBoxSerialise, 0, wxALL, 10);
+    
+    m_IncludeDirs = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_notebook1->AddPage(m_IncludeDirs, _("Include Dirs"), false);
+    
+    wxBoxSizer* bSizer812 = new wxBoxSizer(wxVERTICAL);
+    m_IncludeDirs->SetSizer(bSizer812);
+    
+    m_staticText113 = new wxStaticText(m_IncludeDirs, wxID_ANY, _("If the 'Missing Includes' check is enabled, add here any extra\ndirectories where Cppcheck should search for #includes"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    bSizer812->Add(m_staticText113, 0, wxALL, 5);
+    
+    wxBoxSizer* bSizer514 = new wxBoxSizer(wxHORIZONTAL);
+    
+    bSizer812->Add(bSizer514, 1, wxEXPAND, 5);
+    
+    wxArrayString m_listBoxIncludeDirsArr;
+    m_listBoxIncludeDirs = new wxListBox(m_IncludeDirs, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxIncludeDirsArr, wxLB_SINGLE);
+    
+    bSizer514->Add(m_listBoxIncludeDirs, 1, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* bSizer616 = new wxBoxSizer(wxVERTICAL);
+    
+    bSizer514->Add(bSizer616, 0, wxEXPAND, 5);
+    
+    m_buttonAddIncludeDir = new wxButton(m_IncludeDirs, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonAddIncludeDir->SetToolTip(_("Add the full path to a directory to search for #includes"));
+    
+    bSizer616->Add(m_buttonAddIncludeDir, 0, wxALL, 5);
+    
+    m_buttonRemoveIncludeDir = new wxButton(m_IncludeDirs, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    bSizer616->Add(m_buttonRemoveIncludeDir, 0, wxALL, 5);
+    
+    bSizer616->Add(0, 0, 0, wxTOP, 15);
+    
+    m_checkBoxSuppressSystemIncludes = new wxCheckBox(m_IncludeDirs, wxID_ANY, _("Suppress warnings about 'system' includes"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxSuppressSystemIncludes->SetValue(true);
+    m_checkBoxSuppressSystemIncludes->SetToolTip(_("If ticked, the 'missingIncludeSystem' suppression is passed to Cppcheck. This stops it complaining about a missing #include <foo>, while still detecting a missing #include \"bar\""));
+    
+    bSizer812->Add(m_checkBoxSuppressSystemIncludes, 0, wxALL, 10);
+    
+    m_checkBoxSerialiseIncludeDirs = new wxCheckBox(m_IncludeDirs, wxID_ANY, _("Remember these settings"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxSerialiseIncludeDirs->SetValue(false);
+    m_checkBoxSerialiseIncludeDirs->SetToolTip(_("If ticked, these settings will be saved and be applied in the future. Otherwise the warnings will be back when you restart CodeLite, which may be what you want."));
+    
+    bSizer812->Add(m_checkBoxSerialiseIncludeDirs, 0, wxALL, 10);
     
     m_DefinesPanel = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_DefinesPanel, _("Command-line Definitions"), false);
@@ -286,6 +342,10 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     m_buttonSuppressAll->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnSuppressTickAllUI), NULL, this);
     m_buttonClearSuppressions->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnSuppressUntickAll), NULL, this);
     m_buttonClearSuppressions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnSuppressUntickAllUI), NULL, this);
+    m_IncludeDirs->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnIncludeDirsUpdateUI), NULL, this);
+    m_buttonAddIncludeDir->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnAddIncludeDir), NULL, this);
+    m_buttonRemoveIncludeDir->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnRemoveIncludeDir), NULL, this);
+    m_buttonRemoveIncludeDir->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnRemoveIncludeDirUI), NULL, this);
     m_buttonAdd1824->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnAddDefinition), NULL, this);
     m_buttonRemove1925->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnRemoveDefinition), NULL, this);
     m_buttonRemove1925->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnRemoveDefinitionUI), NULL, this);
@@ -318,6 +378,10 @@ CppCheckSettingsDialogBase::~CppCheckSettingsDialogBase()
     m_buttonSuppressAll->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnSuppressTickAllUI), NULL, this);
     m_buttonClearSuppressions->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnSuppressUntickAll), NULL, this);
     m_buttonClearSuppressions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnSuppressUntickAllUI), NULL, this);
+    m_IncludeDirs->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnIncludeDirsUpdateUI), NULL, this);
+    m_buttonAddIncludeDir->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnAddIncludeDir), NULL, this);
+    m_buttonRemoveIncludeDir->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnRemoveIncludeDir), NULL, this);
+    m_buttonRemoveIncludeDir->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnRemoveIncludeDirUI), NULL, this);
     m_buttonAdd1824->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnAddDefinition), NULL, this);
     m_buttonRemove1925->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnRemoveDefinition), NULL, this);
     m_buttonRemove1925->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnRemoveDefinitionUI), NULL, this);

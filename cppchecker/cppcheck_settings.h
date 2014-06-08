@@ -27,12 +27,16 @@ class CppCheckSettings : public SerializedObject
 	bool          m_C99Standards;
 	bool          m_Cpp11Standards;
 	bool          m_Force;
+	bool          m_CheckConfig;
 	wxArrayString m_excludeFiles;
 	StrStrMap     m_SuppressedWarnings0;     // The items unchecked in the checklistbox
 	StrStrMap     m_SuppressedWarnings1;     // The checked ones
 	StrStrMap     m_SuppressedWarningsOrig0; // Ditto, containing the original values
 	StrStrMap     m_SuppressedWarningsOrig1;
 	bool          m_saveSuppressedWarnings;
+    wxArrayString m_IncludeDirs;
+	bool          m_SuppressSystemIncludes;
+	bool          m_saveIncludeDirs;
 	wxArrayString m_definitions;
 	wxArrayString m_undefines;
 
@@ -69,6 +73,9 @@ public:
 	bool GetForce() const {
 		return m_Force;
 	}
+	bool GetCheckConfig() const {
+		return m_CheckConfig;
+	}
 	const wxArrayString& GetExcludeFiles() const {
 		return m_excludeFiles;
 	}
@@ -77,6 +84,15 @@ public:
 	}
 	const StrStrMap* GetSuppressedWarningsStrings1() const {
 		return &m_SuppressedWarnings1;
+	}
+	const wxArrayString& GetIncludeDirs() const {
+		return m_IncludeDirs;
+	}
+	bool GetSuppressSystemIncludes() const {
+		return m_SuppressSystemIncludes;
+	}
+	bool GetSaveIncludeDirs() const {
+		return m_saveIncludeDirs;
 	}
 	const wxArrayString& GetDefinitions() const {
 		return m_definitions;
@@ -95,6 +111,7 @@ public:
 	void SetC99Standards(bool C99Standards)       { m_C99Standards = C99Standards; }
 	void SetCpp11Standards(bool Cpp11Standards)   { m_Cpp11Standards = Cpp11Standards; }
 	void SetForce(bool Force)                     { m_Force = Force; }
+	void SetCheckConfig(bool checkconfig)         { m_CheckConfig = checkconfig; }
 	void SetExcludeFiles(const wxArrayString& excludeFiles) {
 		m_excludeFiles = excludeFiles;
 	}
@@ -103,6 +120,11 @@ public:
 	void SetSuppressedWarnings(wxCheckListBox* clb, const wxArrayString& keys);
 	void SetSaveSuppressedWarnings(bool save) { m_saveSuppressedWarnings = save; }
 	void SetDefaultSuppressedWarnings();
+
+	void SetIncludeDirs(const wxArrayString& dirs) { m_IncludeDirs = dirs; }
+	void SetSuppressSystemIncludes(bool suppress) { m_SuppressSystemIncludes = suppress; }
+	void SetSaveIncludeDirs(bool save) { m_saveIncludeDirs = save; }
+
 	void SetDefinitions(const wxArrayString& definitions) {
 		m_definitions = definitions;
 	}

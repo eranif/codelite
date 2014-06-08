@@ -250,6 +250,22 @@ cp ../lib/ZoomNavigator.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/SFTP.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/CMakePlugin.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/CodeLiteDiff.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/SpellCheck.dylib ./codelite.app/Contents/SharedSupport/plugins/
+
+## Copy hunspell dylib to its proper location
+echo cp ../../sdk/hunspell/lib/osx/libhunspell-1.3.dylib ./codelite.app/Contents/SharedSupport/
+cp ../../sdk/hunspell/lib/osx/libhunspell-1.3.dylib ./codelite.app/Contents/SharedSupport/
+
+## Fix hunspell dylib
+hunspell_dylib_orig_path=`otool -L ./codelite.app/Contents/SharedSupport/plugins/SpellCheck.dylib |grep hunspell|awk '{print $1}'`
+if [ ! -z ${hunspell_dylib_orig_path} ]; then
+    echo install_name_tool -change ${hunspell_dylib_orig_path} @executable_path/../SharedSupport/libhunspell-1.3.dylib ./codelite.app/Contents/SharedSupport/plugins/SpellCheck.dylib
+    install_name_tool -change ${hunspell_dylib_orig_path} @executable_path/../SharedSupport/libhunspell-1.3.dylib ./codelite.app/Contents/SharedSupport/plugins/SpellCheck.dylib
+fi
+
+## Copy hunspell default dictionaries
+mkdir -p ./codelite.app/Contents/SharedSupport/dics
+cp ../../SpellChecker/dics/* ./codelite.app/Contents/SharedSupport/dics
 
 ## Fix LLDB
 echo "Installing LLDBDebugger..."

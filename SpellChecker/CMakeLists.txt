@@ -9,12 +9,17 @@ find_path(  HUNSPELL_H
             NAMES hunspell.h
             HINTS  /usr/include /usr/local/include /usr/include/hunspell /usr/local/include/hunspell)
 
-if ( LIBHUNSPELL STREQUAL "LIBHUNSPELL-NOTFOUND" OR HUNSPELL_H STREQUAL "HUNSPELL_H-NOTFOUND" )
+if ( (LIBHUNSPELL STREQUAL "LIBHUNSPELL-NOTFOUND" OR HUNSPELL_H STREQUAL "HUNSPELL_H-NOTFOUND") AND NOT APPLE )
     message("    **")
     message("    ** NOTICE ** Could not locate libhunspell. SpellChecker plugin will not be build")
     message("    ** NOTICE ** Try installing libhunspell-dev package")
     message("    **")
 else ()
+    if ( APPLE) 
+        set(LIBHUNSPELL ${CL_SRC_ROOT}/sdk/hunspell/lib/osx/libhunspell-1.3.dylib)
+        set(HUNSPELL_H ${CL_SRC_ROOT}/sdk/hunspell/include/)
+    endif()
+    
     # set the plugin name here
     set( PLUGIN_NAME "SpellCheck")
     message("-- Found libhunspell: ${LIBHUNSPELL}, ${HUNSPELL_H}")

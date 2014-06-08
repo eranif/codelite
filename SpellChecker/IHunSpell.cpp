@@ -494,12 +494,18 @@ int IHunSpell::CheckCppType( IEditor* pEditor )
 
         if( m_parseValues[i].second == kString ) {      // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
             wxRegEx re( s_wsRegEx, wxRE_ADVANCED );
-
+            // to ensure that \\n will not get captured by the regex, we temporarily replace it
+            text.Replace(s_DOUBLE_BACKSLASH, s_PLACE_HOLDER);
+            
             if( re.Matches( text ) ) {
                 re.ReplaceAll( &text, wxT( "  " ) );
                 del = s_cppDelimiters;
             }
+            
+            // restore 
+            text.Replace(s_PLACE_HOLDER, s_DOUBLE_BACKSLASH);
         }
+        
         tkz.SetString( text, del );
 
         while( tkz.HasMoreTokens() ) {
@@ -574,11 +580,13 @@ int IHunSpell::MarkErrors( IEditor* pEditor )
 
         if( m_parseValues[i].second == kString ) {  // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
             wxRegEx re( s_wsRegEx, wxRE_ADVANCED );
-
+            // to ensure that \\n will not get captured by the regex, we temporarily replace it
+            text.Replace(s_DOUBLE_BACKSLASH, s_PLACE_HOLDER);
             if( re.Matches( text ) ) {
                 re.ReplaceAll( &text, wxT( "  " ) );
                 del = s_cppDelimiters;
             }
+            text.Replace(s_PLACE_HOLDER, s_DOUBLE_BACKSLASH);
         }
         tkz.SetString( text, del );
 

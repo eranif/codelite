@@ -24,6 +24,8 @@ static const wxString s_wsRegEx( wxT( "(\\\\[^\\\\])" ) );
 static const wxString s_doCheckID(wxT("do_spell_check"));
 static const wxString s_contCheckID(wxT("do_continuous_check"));
 
-
+static const wxString s_PLACE_HOLDER     = "@#)(";
+static const wxString s_DOUBLE_BACKSLASH = "\\\\";
+        
 //------------------------------------------------------------
 

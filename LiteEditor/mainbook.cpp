@@ -701,7 +701,7 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 {
     // turn the 'saving all' flag on so we could 'Veto' all focus events
     LEditor::Vec_t editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
     std::vector<std::pair<wxFileName, bool> > files;
     size_t n = 0;
@@ -726,6 +726,9 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
             }
         }
     }
+    // And notify the plugins to save their tabs (this function only cover editors)
+    clCommandEvent saveAllEvent(wxEVT_SAVE_ALL_EDITORS);
+    EventNotifier::Get()->AddPendingEvent( saveAllEvent );
     return res;
 }
 

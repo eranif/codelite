@@ -543,5 +543,13 @@
 // Event type: clCompilerEvent
 #define wxEVT_COMPILER_LIST_UPDATED 3600
 
+// ++++--------------
+
+// User clicked on the 'Save All Editors' button
+// Editors will be saved, however, if a plugin has a tab which is not an editor
+// save it as well
+// event type: clCommandEvent
+#define wxEVT_SAVE_ALL_EDITORS 3610
+
 #endif // CODELITE_EVENTS_H
 

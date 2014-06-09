@@ -628,7 +628,7 @@ bool EditorConfig::DoSave() const
     if (m_transcation) {
         return true;
     }
-    return m_doc->Save(m_fileName.GetFullPath());
+    return ::SaveXmlToFile(m_doc, m_fileName.GetFullPath() );
 }
 
 //--------------------------------------------------

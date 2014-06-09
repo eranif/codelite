@@ -66,6 +66,7 @@ class WXDLLIMPEXP_SDK BuildSettingsConfig
 protected:
     wxXmlNode* GetCompilerNode(const wxString& name) const;
     void DoUpdateCompilers();
+    bool SaveXmlFile();
     
 public:
     BuildSettingsConfig();

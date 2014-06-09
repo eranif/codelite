@@ -73,6 +73,7 @@
 #include <wx/stc/stc.h>
 #include "cpp_scanner.h"
 #include "macros.h"
+#include <wx/sstream.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -562,7 +563,10 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 {
     wxFFile file(fileName, wxT("w+b"));
-
+    if ( !file.IsOpened() ) {
+        return false;
+    }
+    
     //first try the Utf8
     return file.Write(content, wxConvUTF8) == content.Length();
 }
@@ -2005,4 +2009,16 @@ wxString& WrapWithQuotes(wxString& str)
         str.Prepend("\"").Append("\"");
     }
     return str;
+}
+
+bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
+{
+    CHECK_PTR_RET_FALSE(doc);
+    
+    wxString content;
+    wxStringOutputStream sos( &content );
+    if ( doc->Save( sos ) ) {
+        return ::WriteFileUTF8( filename, content );
+    }
+    return false;
 }

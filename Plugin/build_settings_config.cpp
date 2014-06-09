@@ -32,6 +32,8 @@
 #include <event_notifier.h>
 #include <cl_command_event.h>
 #include "codelite_events.h"
+#include <wx/sstream.h>
+#include <globals.h>
 
 
 BuildSettingsConfig::BuildSettingsConfig()
@@ -104,7 +106,7 @@ void BuildSettingsConfig::SetCompiler(CompilerPtr cmp)
         node->AddChild(cmp->ToXml());
     }
 
-    m_doc->Save(m_fileName.GetFullPath());
+    SaveXmlFile();
     DoUpdateCompilers();
 }
 
@@ -171,7 +173,7 @@ void BuildSettingsConfig::DeleteCompiler(const wxString &name)
     if(node) {
         node->GetParent()->RemoveChild(node);
         delete node;
-        m_doc->Save(m_fileName.GetFullPath());
+        SaveXmlFile();
         DoUpdateCompilers();
     }
 }
@@ -185,7 +187,7 @@ void BuildSettingsConfig::SetBuildSystem(BuilderConfigPtr bs)
         delete node;
     }
     m_doc->GetRoot()->AddChild(bs->ToXml());
-    m_doc->Save(m_fileName.GetFullPath());
+    SaveXmlFile();
     DoUpdateCompilers();
 }
 
@@ -251,7 +253,7 @@ void BuildSettingsConfig::DeleteAllCompilers(bool notify)
         wxDELETE(node);
         node = GetCompilerNode("");
     }
-    m_doc->Save(m_fileName.GetFullPath());
+    SaveXmlFile();
     m_compilers.clear();
     
     if ( notify ) {
@@ -270,7 +272,7 @@ void BuildSettingsConfig::SetCompilers(const std::vector<CompilerPtr>& compilers
             cmpsNode->AddChild(compilers.at(i)->ToXml());
         }
     }
-    m_doc->Save(m_fileName.GetFullPath());
+    SaveXmlFile();
     DoUpdateCompilers();
 
     clCommandEvent event(wxEVT_COMPILER_LIST_UPDATED);
@@ -301,6 +303,11 @@ void BuildSettingsConfig::DoUpdateCompilers()
         CompilerPtr pCompiler( new Compiler(GetCompilerNode(compilers.Item(i) ) ) );
         m_compilers.insert( std::make_pair(compilers.Item(i), pCompiler) );
     }
+}
+
+bool BuildSettingsConfig::SaveXmlFile()
+{
+    return ::SaveXmlToFile( m_doc, m_fileName.GetFullPath() );
 }
 
 static BuildSettingsConfig* gs_buildSettingsInstance = NULL;

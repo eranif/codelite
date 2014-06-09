@@ -263,4 +263,47 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path) throw (clException)
     return pattr;
 }
 
+void clSFTP::CreateFile(const wxString& remoteFullPath, const wxString &content) throw (clException)
+{
+    // Create the path to the file
+    Mkpath(wxFileName(remoteFullPath).GetPath());
+    Write(content, remoteFullPath);
+}
+
+void clSFTP::Mkpath(const wxString& remoteDirFullpath) throw (clException)
+{
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+    
+    wxFileName fn(remoteDirFullpath, "");
+    if ( !fn.IsAbsolute()  ){
+        throw clException("Mkpath: path must be absolute");
+    }
+    
+    const wxArrayString& dirs = fn.GetDirs();
+    wxString curdir;
+    
+    curdir << "/";
+    for(size_t i=0; i<dirs.GetCount(); ++i) {
+        curdir << dirs.Item(i);
+        sftp_attributes attr = sftp_stat(m_sftp, curdir.mb_str(wxConvISO8859_1).data());
+        if ( !attr ) {
+            // directory does not exists
+            CreateDir(curdir);
+            
+        } else {
+            // directory already exists
+            sftp_attributes_free( attr );
+        }
+        curdir << "/";
+    }
+}
+
+void clSFTP::CreateFile(const wxString& remoteFullPath, const wxFileName& localFile) throw (clException)
+{
+    Mkpath(wxFileName(remoteFullPath).GetPath());
+    Write(localFile, remoteFullPath);
+}
+
 #endif // USE_SFTP

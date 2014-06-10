@@ -11,8 +11,11 @@ BEGIN_EVENT_TABLE(SvnBlameEditor, wxStyledTextCtrl)
     EVT_CONTEXT_MENU(SvnBlameEditor::OnContextMenu)
 END_EVENT_TABLE()
 
-SvnBlameEditor::SvnBlameEditor(wxWindow *win)
-    : wxStyledTextCtrl(win)
+SvnBlameEditor::SvnBlameEditor(wxWindow *parent, wxWindowID id,
+                               const wxPoint& pos,
+                               const wxSize& size, long style,
+                               const wxString& name)
+    : wxStyledTextCtrl(parent, id, pos, size, style, name)
 {
     Initialize();
 }
@@ -24,18 +27,6 @@ SvnBlameEditor::~SvnBlameEditor()
 void SvnBlameEditor::Initialize()
 {
     // Initialize some styles
-    StyleClearAll();
-    SetLexer(wxSTC_LEX_NULL);
-
-    wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-
-    for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
-        StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-        StyleSetForeground(i, *wxBLACK);
-        StyleSetFont(i, font);
-    }
-
     SetMarginType (0, wxSTC_MARGIN_TEXT  );
     SetMarginType (1, wxSTC_MARGIN_NUMBER);
     SetMarginWidth(1, 4 + 5*TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9")));

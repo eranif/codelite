@@ -780,7 +780,10 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
     if(LoginIfNeeded(event, files.Item(0), loginString) == false) {
         return;
     }
-
+    
+    if ( files.GetCount() != 1)
+        return;
+        
     GetConsole()->EnsureVisible();
     command << GetSvnExeName() << wxT(" blame ") << loginString;
     for(size_t i=0 ; i<files.GetCount(); i++) {
@@ -788,7 +791,7 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
     }
 
     GetConsole()->AppendText(command + wxT("\n"));
-    m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this), this);
+    m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this, files.Item(0)), this);
 }
 
 void Subversion2::OnGetCompileLine(clBuildEvent& event)

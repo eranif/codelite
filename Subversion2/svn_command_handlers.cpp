@@ -13,6 +13,7 @@
 #include "imanager.h"
 #include "ieditor.h"
 #include "event_notifier.h"
+#include <SvnBlameFrame.h>
 
 void SvnCommitHandler::Process(const wxString& output)
 {
@@ -180,8 +181,8 @@ void SvnBlameHandler::Process(const wxString& output)
 
     GetPlugin()->GetConsole()->AppendText(_("Loading Svn blame dialog...\n"));
     GetPlugin()->GetConsole()->AppendText(wxT("--------\n"));
-    SvnBlameDialog dlg(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), output);
-    dlg.ShowModal();
+    SvnBlameFrame *blameFrame = new SvnBlameFrame(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), m_filename, output);
+    blameFrame->Show();
 }
 
 void SvnRepoListHandler::Process(const wxString& output)

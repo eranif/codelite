@@ -75,6 +75,8 @@
     <File Name="svn_select_local_repo_dlg.h"/>
     <File Name="SvnCommitDialog.h"/>
     <File Name="SvnCommitDialog.cpp"/>
+    <File Name="SvnBlameFrame.h"/>
+    <File Name="SvnBlameFrame.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>

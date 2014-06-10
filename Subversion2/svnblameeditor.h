@@ -30,25 +30,29 @@
 #include <vector>
 
 struct BlameLineInfo {
-	wxString revision;
-	int      style;
+    wxString revision;
+    int      style;
 };
 
-class SvnBlameEditor : public wxStyledTextCtrl {
-	std::vector<BlameLineInfo> m_lineInfo;
-	int                        m_lineNumber;
-protected:
-	void Initialize();
+class SvnBlameEditor : public wxStyledTextCtrl
+{
+    std::vector<BlameLineInfo> m_lineInfo;
+    int                        m_lineNumber;
 
 public:
-	SvnBlameEditor(wxWindow *win);
-	virtual ~SvnBlameEditor();
+    // Provide full ctro so we could use this class with wxCrafter properly
+    SvnBlameEditor(wxWindow *parent, wxWindowID id=wxID_ANY,
+                   const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxDefaultSize, long style = 0,
+                   const wxString& name = wxSTCNameStr);
+    virtual ~SvnBlameEditor();
 
-	void SetText(const wxString &text);
+    void SetText(const wxString &text);
+    void Initialize();
 
-	DECLARE_EVENT_TABLE()
-	void OnContextMenu      (wxContextMenuEvent &event);
-	void OnHighlightRevision(wxCommandEvent &event);
+    DECLARE_EVENT_TABLE()
+    void OnContextMenu      (wxContextMenuEvent &event);
+    void OnHighlightRevision(wxCommandEvent &event);
 };
 
 #endif // SVNBLAMEEDITOR_H

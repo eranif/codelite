@@ -33,168 +33,182 @@
 // Commit Handler
 //----------------------------------------------------
 
-class SvnCommitHandler : public SvnDefaultCommandHandler {
+class SvnCommitHandler : public SvnDefaultCommandHandler
+{
 public:
-	SvnCommitHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
-	virtual ~SvnCommitHandler(){};
+    SvnCommitHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
+    virtual ~SvnCommitHandler() {};
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 // Update Handler
 //----------------------------------------------------
 
-class SvnUpdateHandler : public SvnDefaultCommandHandler {
+class SvnUpdateHandler : public SvnDefaultCommandHandler
+{
 
 public:
-	SvnUpdateHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
-	virtual ~SvnUpdateHandler(){};
+    SvnUpdateHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
+    virtual ~SvnUpdateHandler() {};
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 // Diff Handler
 //----------------------------------------------------
 
-class SvnDiffHandler : public SvnDefaultCommandHandler {
+class SvnDiffHandler : public SvnDefaultCommandHandler
+{
 
 public:
-	SvnDiffHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
-	virtual ~SvnDiffHandler(){};
+    SvnDiffHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
+    virtual ~SvnDiffHandler() {};
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 // Patch Handler
 //----------------------------------------------------
 
-class SvnPatchHandler : public SvnDefaultCommandHandler {
-	bool     delFileWhenDone;
-	wxString patchFile;
+class SvnPatchHandler : public SvnDefaultCommandHandler
+{
+    bool     delFileWhenDone;
+    wxString patchFile;
 public:
-	SvnPatchHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner, bool d, const wxString &pf) 
-	: SvnDefaultCommandHandler(plugin, commandId, owner) 
-	, delFileWhenDone(d)
-	, patchFile(pf)
-	{};
-	virtual ~SvnPatchHandler(){};
+    SvnPatchHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner, bool d, const wxString &pf)
+        : SvnDefaultCommandHandler(plugin, commandId, owner)
+        , delFileWhenDone(d)
+        , patchFile(pf)
+    {};
+    virtual ~SvnPatchHandler() {};
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 // Dry-Run Patch Handler
 //----------------------------------------------------
 
-class SvnPatchDryRunHandler : public SvnDefaultCommandHandler {
-	bool     delFileWhenDone;
-	wxString patchFile;
-	
-public:
-	SvnPatchDryRunHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner, bool d, const wxString &pf) 
-	: SvnDefaultCommandHandler(plugin, commandId, owner) 
-	, delFileWhenDone(d)
-	, patchFile(pf)
-	{}
-	virtual ~SvnPatchDryRunHandler(){};
+class SvnPatchDryRunHandler : public SvnDefaultCommandHandler
+{
+    bool     delFileWhenDone;
+    wxString patchFile;
 
 public:
-	virtual void Process(const wxString &output);
+    SvnPatchDryRunHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner, bool d, const wxString &pf)
+        : SvnDefaultCommandHandler(plugin, commandId, owner)
+        , delFileWhenDone(d)
+        , patchFile(pf)
+    {}
+    virtual ~SvnPatchDryRunHandler() {};
+
+public:
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 //Svn version handler
 //----------------------------------------------------
 
-class SvnVersionHandler : public SvnDefaultCommandHandler {
+class SvnVersionHandler : public SvnDefaultCommandHandler
+{
 
 public:
-	SvnVersionHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
-	virtual ~SvnVersionHandler(){};
+    SvnVersionHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
+    virtual ~SvnVersionHandler() {};
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 //Svn Log handler
 //----------------------------------------------------
 
-class SvnLogHandler : public SvnDefaultCommandHandler {
-	bool     m_compact;
-	wxString m_url;
+class SvnLogHandler : public SvnDefaultCommandHandler
+{
+    bool     m_compact;
+    wxString m_url;
 
 protected:
-	wxString Compact(const wxString &message);
+    wxString Compact(const wxString &message);
 public:
-	SvnLogHandler(Subversion2 *plugin, const wxString &url, bool compact, int commandId, wxEvtHandler *owner)
-	: SvnDefaultCommandHandler(plugin, commandId, owner)
-	, m_compact(compact)
-	, m_url(url)
-	{}
+    SvnLogHandler(Subversion2 *plugin, const wxString &url, bool compact, int commandId, wxEvtHandler *owner)
+        : SvnDefaultCommandHandler(plugin, commandId, owner)
+        , m_compact(compact)
+        , m_url(url)
+    {}
 
-	virtual ~SvnLogHandler(){}
+    virtual ~SvnLogHandler() {}
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 // Svn Checkout handler
 //----------------------------------------------------
 
-class SvnCheckoutHandler : public SvnDefaultCommandHandler {
+class SvnCheckoutHandler : public SvnDefaultCommandHandler
+{
 public:
-	SvnCheckoutHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner){};
-	virtual ~SvnCheckoutHandler(){};
+    SvnCheckoutHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner) {};
+    virtual ~SvnCheckoutHandler() {};
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 // Svn blame handler
 //----------------------------------------------------
 
-class SvnBlameHandler : public SvnCommandHandler {
+class SvnBlameHandler : public SvnCommandHandler
+{
+    wxString m_filename;
 public:
-	SvnBlameHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner) : SvnCommandHandler(plugin, commandId, owner){};
-	virtual ~SvnBlameHandler(){};
+    SvnBlameHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner, const wxString &filename) 
+        : SvnCommandHandler(plugin, commandId, owner) 
+        , m_filename(filename)
+    {}
+    virtual ~SvnBlameHandler() {};
 
 public:
-	virtual void Process(const wxString &output);
+    virtual void Process(const wxString &output);
 };
 
 //----------------------------------------------------
 // Svn Repo List handler
 //----------------------------------------------------
 
-class SvnRepoListHandler : public SvnDefaultCommandHandler {
+class SvnRepoListHandler : public SvnDefaultCommandHandler
+{
     ProjectPtr m_proj;
     wxString m_workDir;
     bool m_excludeBin;
     wxString m_excludeExtensions;
-    
-public:
-	SvnRepoListHandler(Subversion2 *plugin, 
-                       ProjectPtr proj, const wxString& workDir, bool excludeBin, const wxString& excludeExtensions,
-                       int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner)
-                       , m_proj(proj)
-                       , m_workDir(workDir)
-                       , m_excludeBin(excludeBin)
-                       , m_excludeExtensions(excludeExtensions)
-                       {};
-	virtual ~SvnRepoListHandler(){};
 
 public:
-	virtual void Process(const wxString &output);
+    SvnRepoListHandler(Subversion2 *plugin,
+                       ProjectPtr proj, const wxString& workDir, bool excludeBin, const wxString& excludeExtensions,
+                       int commandId, wxEvtHandler *owner) : SvnDefaultCommandHandler(plugin, commandId, owner)
+        , m_proj(proj)
+        , m_workDir(workDir)
+        , m_excludeBin(excludeBin)
+        , m_excludeExtensions(excludeExtensions)
+    {};
+    virtual ~SvnRepoListHandler() {};
+
+public:
+    virtual void Process(const wxString &output);
 };
 
 #endif // SVNCOMMITHANDLER_H

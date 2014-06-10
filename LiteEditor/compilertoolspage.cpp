@@ -1,6 +1,8 @@
 #include "compilertoolspage.h"
 #include "build_settings_config.h"
 #include "compiler.h"
+#include "macros.h"
+#include "globals.h"
 
 CompilerToolsPage::CompilerToolsPage( wxWindow* parent, const wxString &cmpname )
     : CompilerToolsBase( parent )
@@ -27,4 +29,19 @@ void CompilerToolsPage::Save(CompilerPtr cmp)
     cmp->SetTool(wxT("ResourceCompiler"),       m_pgPropResourceCompiler->GetValueAsString());
     cmp->SetTool("MAKE",                        m_pgPropMAKE->GetValueAsString());
     cmp->SetTool("AS",                          m_pgPropAS->GetValueAsString());
+}
+
+void CompilerToolsPage::OnCustomEditorButtonClicked(wxCommandEvent& event)
+{
+    wxPGProperty* prop = m_pgMgr92->GetSelectedProperty();
+    CHECK_PTR_RET(prop);
+    
+    wxString oldValue = prop->GetValueAsString();
+    wxFileName fn(oldValue);
+    
+    wxString newPath = ::wxFileSelector(_("Select a file"), fn.GetPath());
+    if ( !newPath.IsEmpty() ) {
+        ::WrapWithQuotes( newPath );
+        prop->SetValueFromString( newPath );
+    }
 }

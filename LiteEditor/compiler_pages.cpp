@@ -162,47 +162,52 @@ CompilerToolsBase::CompilerToolsBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgProp94 = m_pgMgr92->Append(  new wxPropertyCategory( _("Tools") ) );
     m_pgProp94->SetHelpString(wxT(""));
     
-    m_pgPropCXX = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("C++ Compiler"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropCXX, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropCXX = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("C++ Compiler"), wxPG_LABEL, wxT("")) );
     m_pgPropCXX->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CXX)"));
+    m_pgPropCXX->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropCC = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("C Compiler"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropCC, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropCC = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("C Compiler"), wxPG_LABEL, wxT("")) );
     m_pgPropCC->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"));
+    m_pgPropCC->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropAS = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Assembler Name"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropAS, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropAS = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Assembler Name"), wxPG_LABEL, wxT("")) );
     m_pgPropAS->SetHelpString(_("The assembler tool path. This tool is referred in the Makefile as $(AS)"));
+    m_pgPropAS->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Linker"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropLD, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Linker"), wxPG_LABEL, wxT("")) );
     m_pgPropLD->SetHelpString(_("The linker tool. Usually similar to the 'C++ Compiler' tool path"));
+    m_pgPropLD->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropSharedObjectLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Shared Object Linker"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropSharedObjectLD, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropSharedObjectLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Shared Object Linker"), wxPG_LABEL, wxT("")) );
     m_pgPropSharedObjectLD->SetHelpString(_("The tool to create shared objects"));
+    m_pgPropSharedObjectLD->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropAR = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Archive"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropAR, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropAR = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Archive"), wxPG_LABEL, wxT("")) );
     m_pgPropAR->SetHelpString(_("The static archive tool \"ar\". This tool is referred in the Makefile as $(AR)"));
+    m_pgPropAR->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropResourceCompiler = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Resource Compiler"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropResourceCompiler, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropResourceCompiler = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Resource Compiler"), wxPG_LABEL, wxT("")) );
     m_pgPropResourceCompiler->SetHelpString(_("The resource compiler. (Windows only)"));
+    m_pgPropResourceCompiler->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropMAKE = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Make"), wxPG_LABEL, wxT("")) );
-    m_pgMgr92->SetPropertyAttribute(m_pgPropMAKE, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropMAKE = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Make"), wxPG_LABEL, wxT("")) );
     m_pgPropMAKE->SetHelpString(_("The Make tool. on Windows / MinGW this is usually mingw32-make.exe while on other OSs its simply 'make'"));
+    m_pgPropMAKE->SetEditor( wxT("TextCtrlAndButton") );
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_pgMgr92->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerToolsBase::OnCustomEditorButtonClicked), NULL, this);
+    
 }
 
 CompilerToolsBase::~CompilerToolsBase()
 {
+    m_pgMgr92->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerToolsBase::OnCustomEditorButtonClicked), NULL, this);
+    
 }
 
 CompilerSwitchesBase::CompilerSwitchesBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

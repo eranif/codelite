@@ -44,6 +44,8 @@ public:
 	/** Constructor */
 	CompilerToolsPage( wxWindow* parent, const wxString &cmpname );
 	virtual void Save(CompilerPtr cmp);
+protected:
+    virtual void OnCustomEditorButtonClicked(wxCommandEvent& event);
 };
 
 #endif // __compilertoolspage__

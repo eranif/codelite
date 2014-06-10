@@ -11075,7 +11075,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxDEFAULT_FRAME_STYLE"],
+			"m_styles":	["wxDEFAULT_FRAME_STYLE", "wxFRAME_NO_TASKBAR", "wxFRAME_FLOAT_ON_PARENT"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",

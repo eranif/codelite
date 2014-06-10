@@ -57,8 +57,6 @@
     <File Name="subversion_view.cpp"/>
     <File Name="svn_checkout_dialog.cpp"/>
     <File Name="svn_checkout_dialog.h"/>
-    <File Name="svnblamedialog.h"/>
-    <File Name="svnblamedialog.cpp"/>
     <File Name="svnblameeditor.h"/>
     <File Name="svnblameeditor.cpp"/>
     <File Name="diff_dialog.cpp"/>

@@ -11,6 +11,9 @@ BEGIN_EVENT_TABLE(SvnBlameEditor, wxStyledTextCtrl)
     EVT_CONTEXT_MENU(SvnBlameEditor::OnContextMenu)
 END_EVENT_TABLE()
 
+#define MARGIN_STYLE_START 48
+#define MARGIN_FIRST_STYLE 49
+
 SvnBlameEditor::SvnBlameEditor(wxWindow *parent, wxWindowID id,
                                const wxPoint& pos,
                                const wxSize& size, long style,
@@ -34,20 +37,20 @@ void SvnBlameEditor::Initialize()
     SetMarginWidth(3, 0);
     SetMarginWidth(4, 0);
     SetTabWidth(4);
-
+    
     // Define some colors to use
-    StyleSetBackground(1,  DrawingUtils::LightColour(wxT("GREEN"),      7.0));
-    StyleSetBackground(2,  DrawingUtils::LightColour(wxT("BLUE"),       7.0));
-    StyleSetBackground(3,  DrawingUtils::LightColour(wxT("ORANGE"),     7.0));
-    StyleSetBackground(4,  DrawingUtils::LightColour(wxT("YELLOW"),     7.0));
-    StyleSetBackground(5,  DrawingUtils::LightColour(wxT("PURPLE"),     7.0));
-    StyleSetBackground(6,  DrawingUtils::LightColour(wxT("RED"),        7.0));
-    StyleSetBackground(7,  DrawingUtils::LightColour(wxT("BROWN"),      7.0));
-    StyleSetBackground(8,  DrawingUtils::LightColour(wxT("LIGHT GREY"), 7.0));
-    StyleSetBackground(9,  DrawingUtils::LightColour(wxT("SIENNA"),     7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 1,  DrawingUtils::LightColour(wxT("GREEN"),      7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 2,  DrawingUtils::LightColour(wxT("BLUE"),       7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 3,  DrawingUtils::LightColour(wxT("ORANGE"),     7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 4,  DrawingUtils::LightColour(wxT("YELLOW"),     7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 5,  DrawingUtils::LightColour(wxT("PURPLE"),     7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 6,  DrawingUtils::LightColour(wxT("RED"),        7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 7,  DrawingUtils::LightColour(wxT("BROWN"),      7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 8,  DrawingUtils::LightColour(wxT("LIGHT GREY"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 9,  DrawingUtils::LightColour(wxT("SIENNA"),     7.0));
 
-    StyleSetBackground(10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    StyleSetForeground(10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    StyleSetBackground(MARGIN_STYLE_START + 10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    StyleSetForeground(MARGIN_STYLE_START + 10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 }
 
 void SvnBlameEditor::SetText(const wxString& text)
@@ -56,7 +59,7 @@ void SvnBlameEditor::SetText(const wxString& text)
     int xx, yy;
     int marginWidth(0);
 
-    int s_style(1);
+    int s_style(MARGIN_FIRST_STYLE);
     std::map<wxString, int> authorsColorsMap;
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -87,8 +90,8 @@ void SvnBlameEditor::SetText(const wxString& text)
         } else {
             style = s_style;
             s_style ++;
-            if (s_style > 9)
-                s_style = 1;
+            if (s_style > (MARGIN_STYLE_START+9) )
+                s_style = MARGIN_FIRST_STYLE;
             authorsColorsMap[author] = style;
         }
 

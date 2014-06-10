@@ -317,7 +317,7 @@ protected:
 protected:
 
 public:
-    SvnBlameFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Blame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE);
+    SvnBlameFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Blame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_NO_TASKBAR|wxFRAME_FLOAT_ON_PARENT);
     virtual ~SvnBlameFrameBase();
 };
 

@@ -1,5 +1,4 @@
 #include <wx/app.h>
-#include "svnblamedialog.h"
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include "svn_console.h"
@@ -13,7 +12,7 @@
 #include "imanager.h"
 #include "ieditor.h"
 #include "event_notifier.h"
-#include <SvnBlameFrame.h>
+#include "SvnBlameFrame.h"
 
 void SvnCommitHandler::Process(const wxString& output)
 {

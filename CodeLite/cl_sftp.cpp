@@ -276,11 +276,13 @@ void clSFTP::Mkpath(const wxString& remoteDirFullpath) throw (clException)
         throw clException("SFTP is not initialized");
     }
     
-    wxFileName fn(remoteDirFullpath, "");
-    if ( !fn.IsAbsolute()  ){
+    wxString tmpPath = remoteDirFullpath;
+    tmpPath.Replace("\\", "/");
+    if ( !tmpPath.StartsWith("/") ) {
         throw clException("Mkpath: path must be absolute");
     }
     
+    wxFileName fn(remoteDirFullpath, "");
     const wxArrayString& dirs = fn.GetDirs();
     wxString curdir;
     

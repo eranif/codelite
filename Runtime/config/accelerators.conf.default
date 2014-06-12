@@ -57,8 +57,8 @@ find_in_files|Search|Find In Files...|Ctrl-Shift-F
 wxID_FIND|Search|Find...|Ctrl-F
 wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3
-find_next_at_caret|Search|Find Word At Caret|Ctrl-F3
-find_previous_at_caret|Search|Find Word At Caret Backward|Ctrl-Shift-F3
+find_next_at_caret|Search|Find Word At Caret|
+find_previous_at_caret|Search|Find Word At Caret Backward|
 grep_current_file|Search|Grep Selection in the Current File|Ctrl-Shift-G
 grep_current_workspace|Search|Grep Selection in the Workspace|
 incremental_search|Search|Incremental Search|Ctrl-F
@@ -155,3 +155,5 @@ add_include_file|C++|Add Include File|Ctrl-Shift-I
 insert_breakpoint|C++|Toggle Breakpoint|F9
 toggle_bookmark|C++|Toggle Bookmark|Ctrl-B
 retag_file|C++|Re-Tag File|
+select_next|Search|Select Next|Ctrl-F3
+select_previous|Search|Select Previous|Ctrl-Shift-F3

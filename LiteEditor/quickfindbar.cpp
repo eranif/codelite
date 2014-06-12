@@ -69,6 +69,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_lastTextPtr(NULL)
     , m_themeHelper(this)
 {
+    m_findWhat->SetHint(_("Find what..."));
+    m_replaceWith->SetHint(_("Replace with..."));
     Hide();
     DoShowControls();
 
@@ -196,9 +198,8 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
     switch (e.GetKeyCode()) {
     case WXK_ESCAPE: {
-        wxCommandEvent cmd(wxEVT_COMMAND_TOOL_CLICKED, ID_TOOL_CLOSE);
-        cmd.SetEventObject(m_auibarClose);
-        m_auibarClose->GetEventHandler()->AddPendingEvent(cmd);
+        wxCommandEvent dummy;
+        OnHide( dummy );
         break;
     }
     default:
@@ -216,9 +217,11 @@ void QuickFindBar::OnEnter(wxCommandEvent& e)
     wxUnusedVar(e);
 
     bool shift = wxGetKeyState(WXK_SHIFT);
-    wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, shift ? ID_TOOL_PREV : ID_TOOL_NEXT);
-    evt.SetEventObject(this);
-    GetEventHandler()->AddPendingEvent(evt);
+    if ( shift ) {
+        OnPrev( e );
+    } else {
+        OnNext( e );
+    }
 }
 
 void QuickFindBar::OnCopy(wxCommandEvent& e)
@@ -403,19 +406,7 @@ void QuickFindBar::OnReplaceEnter(wxCommandEvent& e)
 
 void QuickFindBar::ShowReplaceControls(bool show)
 {
-    if ( show && !m_replaceWith->IsShown()) {
-        m_replaceWith->Show();
-        m_toolBarReplace->Show();
-        m_replaceStaticText->Show();
-        GetSizer()->Layout();
-
-    } else if ( !show && m_replaceWith->IsShown()) {
-        m_replaceWith->Show(false);
-        m_toolBarReplace->Show(false);
-        m_replaceStaticText->Show(false);
-        GetSizer()->Layout();
-
-    }
+    wxUnusedVar( show );
 }
 
 void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
@@ -648,8 +639,7 @@ void QuickFindBar::DoMarkAll()
 
 void QuickFindBar::OnHighlightMatches(wxCommandEvent& event)
 {
-    bool checked;
-    checked = m_auibarFind->GetToolToggled(ID_TOOL_HIGHLIGHT_MATCHES);
+    bool checked = m_checkBoxHighlight->IsChecked();
     LEditor* editor = dynamic_cast<LEditor*>(m_sci);
     if (checked && editor) {
         editor->SetFindBookmarksActive(true);

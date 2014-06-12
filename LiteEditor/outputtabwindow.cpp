@@ -182,7 +182,7 @@ void OutputTabWindow::CreateGUIControls()
 
     // Add the find bar
     m_findBar = new QuickFindBar(this);
-    m_findBar->Connect(m_findBar->GetCloseButtonId(), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OutputTabWindow::OnHideSearchBar), NULL, this);
+    m_findBar->Connect(m_findBar->GetCloseButtonId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputTabWindow::OnHideSearchBar), NULL, this);
     m_findBar->SetEditor(m_sci);
 
     mainSizer->Add(m_findBar, 0, wxEXPAND);

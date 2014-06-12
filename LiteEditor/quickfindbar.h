@@ -37,6 +37,12 @@ class QuickFindBar : public QuickFindBarBase
     wxString      m_lastText;
     wchar_t*      m_lastTextPtr;
     ThemeHandlerHelper m_themeHelper;
+public:
+    enum {
+        ID_TOOL_REPLACE = 1000,
+        ID_TOOL_CLOSE,
+        ID_TOOL_FIND,
+    };
     
 protected:
     virtual void OnCheckBoxRegex(wxCommandEvent& event);

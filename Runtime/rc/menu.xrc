@@ -292,6 +292,12 @@
             <object class="wxMenuItem" name="wxID_REPLACE">
                 <label>&amp;Replace...</label>
             </object>
+            <object class="wxMenuItem" name="select_next">
+                <label>Select Next &amp;Occurrence</label>
+            </object>
+            <object class="wxMenuItem" name="select_previous">
+                <label>Select Previous Occu&amp;rrence</label>
+            </object>
             <object class="wxMenuItem" name="find_next">
                 <label>Find &amp;Next</label>
             </object>

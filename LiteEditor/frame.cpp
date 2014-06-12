@@ -340,6 +340,8 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 
     EVT_UPDATE_UI(wxID_FIND,                        clMainFrame::OnIncrementalSearchUI )
     EVT_UPDATE_UI(wxID_REPLACE,                     clMainFrame::OnFileExistUpdateUI   )
+    EVT_UPDATE_UI(XRCID("select_previous"),         clMainFrame::OnFileExistUpdateUI   )
+    EVT_UPDATE_UI(XRCID("select_next"),             clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_next"),               clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_previous"),           clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_next_at_caret"),      clMainFrame::OnFileExistUpdateUI   )

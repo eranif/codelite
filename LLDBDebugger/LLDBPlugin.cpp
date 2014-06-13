@@ -308,7 +308,8 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 //////////////////////////////////////////////////////////////////////
                 TerminateTerminal();
                 
-                if ( !bldConf->IsGUIProgram() && !(wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS) ) {
+                bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
+                if ( !bldConf->IsGUIProgram() && !isWindows ) {
                     ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), m_terminalTTY, m_terminalPID);
                     
                     if ( m_terminalPID != wxNOT_FOUND ) {
@@ -347,7 +348,10 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
                     LLDBCommand startCommand;
                     startCommand.FillEnvFromMemory();
-                    startCommand.SetExecutable( execToDebug.GetFullPath() );
+                    
+                    // If the current platform is Windows, use the executable as it appears in the project settings
+                    startCommand.SetExecutable( isWindows ? exepath : execToDebug.GetFullPath() );
+                    
                     startCommand.SetCommandArguments( args );
                     startCommand.SetWorkingDirectory( wd );
                     startCommand.SetRedirectTTY( m_terminalTTY );

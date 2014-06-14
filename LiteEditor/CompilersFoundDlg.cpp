@@ -66,6 +66,7 @@ CompilersFoundDlg::CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::C
         cols.push_back( compiler->GetInstallationPath() );
         m_dataviewModel->AppendItem(parent, cols, new CompilersFoundDlgItemData(compiler));
         if ( m_defaultCompilers.count(compiler->GetCompilerFamily()) == 0 ) {
+            compiler->SetIsDefault(true); // Per family
             m_defaultCompilers.insert( std::make_pair(compiler->GetCompilerFamily(), compiler) );
             MSWUpdateToolchain(compiler);
         }
@@ -90,6 +91,7 @@ void CompilersFoundDlg::OnItemActivated(wxDataViewEvent& event)
     CompilerPtr compiler = GetCompiler(event.GetItem());
     if ( compiler ) {
         m_defaultCompilers.erase( compiler->GetCompilerFamily() );
+        compiler->SetIsDefault(true);
         m_defaultCompilers.insert( std::make_pair(compiler->GetCompilerFamily(), compiler) );
         m_dataview->UnselectAll();
         m_dataview->CallAfter( &wxDataViewCtrl::Refresh, true, (const wxRect*)NULL );

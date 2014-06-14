@@ -325,3 +325,21 @@ BuildSettingsConfig* BuildSettingsConfigST::Get()
         gs_buildSettingsInstance = new BuildSettingsConfig;
     return gs_buildSettingsInstance;
 }
+
+CompilerPtr BuildSettingsConfig::GetDefaultCompiler(const wxString& compilerFamilty) const
+{
+    CompilerPtr defaultComp;
+    std::map<wxString, CompilerPtr>::const_iterator iter = m_compilers.begin();
+    for(; iter != m_compilers.end(); ++iter ) {
+        if ( iter->second->GetCompilerFamily() == compilerFamilty ) {
+            if ( !defaultComp ) {
+                // keep the first one, just incase
+                defaultComp = iter->second;
+            }
+            if ( iter->second->IsDefault() ) {
+                return iter->second;
+            }
+        }
+    }
+    return defaultComp;
+}

@@ -98,7 +98,11 @@ public:
      * Set or update a given compiler using its name as the index
      */
     void SetCompiler(CompilerPtr cmp);
-
+    
+    /**
+     * @brief return the default compiler for a given family
+     */
+    CompilerPtr GetDefaultCompiler(const wxString &compilerFamilty) const;
     /**
      * Find and return compiler by name
      */

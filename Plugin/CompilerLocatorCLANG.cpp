@@ -1,6 +1,9 @@
 #include "CompilerLocatorCLANG.h"
 #include <globals.h>
 #include "procutils.h"
+#include "includepathlocator.h"
+#include "build_settings_config.h"
+
 #ifdef __WXMSW__
 #   include <wx/msw/registry.h>
 #endif
@@ -57,6 +60,24 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
         m_compilers.push_back( compiler );
         clang.RemoveLastDir();
         AddTools(compiler, clang.GetPath());
+        
+        // Update the toolchain (if Windows)
+#ifdef __WXMSW__
+        CompilerPtr defaultMinGWCmp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_MINGW);
+        if ( defaultMinGWCmp ) {
+            compiler->SetTool("MAKE", defaultMinGWCmp->GetTool("MAKE"));
+            compiler->SetTool("ResourceCompiler", defaultMinGWCmp->GetTool("ResourceCompiler"));
+            
+            // Update the include paths
+            IncludePathLocator locator(NULL);
+            wxArrayString includePaths, excludePaths;
+            locator.Locate(includePaths, excludePaths, false, defaultMinGWCmp->GetTool("CXX"));
+            
+            // Convert the include paths to semi colon separated list
+            wxString mingwIncludePaths = wxJoin(includePaths, ';');
+            compiler->SetGlobalIncludePath( mingwIncludePaths );
+        }
+#endif
         return compiler;
     }
     return NULL;

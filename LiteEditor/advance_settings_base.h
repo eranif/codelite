@@ -34,7 +34,7 @@ protected:
     virtual void OnApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    AdvancedDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Advanced"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    AdvancedDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AdvancedDlgBase();
 };
 

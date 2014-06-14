@@ -9,6 +9,7 @@
 #include <workspace.h>
 #include <build_config.h>
 #include <cl_aui_notebook_art.h>
+#include <wx/wupdlock.h>
 
 CompilerMainPage::CompilerMainPage(wxWindow* parent)
     : CompilerMainPageBase(parent)
@@ -584,6 +585,7 @@ void CompilerMainPage::EditSwitch()
 void CompilerMainPage::InitializeSwitches()
 {
     // Clear content
+    wxWindowUpdateLocker locker( m_listSwitches );
     m_listSwitches->DeleteAllItems();
     m_selSwitchName.Clear();
     m_selSwitchValue.Clear();
@@ -605,6 +607,8 @@ void CompilerMainPage::SaveSwitches()
 void CompilerMainPage::InitializeFileTypes()
 {
     //populate the list control
+    wxWindowUpdateLocker locker( m_listCtrlFileTypes );
+    
     m_listCtrlFileTypes->DeleteAllItems();
     CHECK_PTR_RET(m_compiler);
     
@@ -681,6 +685,7 @@ void CompilerMainPage::SaveAdvancedPage()
 void CompilerMainPage::InitializeCompilerOptions()
 {
     m_selectedCmpOption = -1;
+    wxWindowUpdateLocker locker( m_listCompilerOptions );
     m_listCompilerOptions->DeleteAllItems();
     
     CHECK_PTR_RET(m_compiler);
@@ -713,6 +718,7 @@ void CompilerMainPage::SaveComilerOptions()
 void CompilerMainPage::InitializeLinkerOptions()
 {
     m_selectedLnkOption = -1;
+    wxWindowUpdateLocker locker( m_listLinkerOptions );
     m_listLinkerOptions->DeleteAllItems();
     CHECK_PTR_RET(m_compiler);
     

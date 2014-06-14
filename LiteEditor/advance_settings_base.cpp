@@ -51,6 +51,9 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer2->AddButton(m_buttonOK);
+    
+    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer2->AddButton(m_buttonApply);
     m_stdBtnSizer2->Realize();
     
     SetSizeHints(-1,-1);
@@ -61,6 +64,8 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
     // Connect events
     m_buttonRestoreDefaults->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnRestoreDefaults), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL, this);
+    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL, this);
+    m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AdvancedDlgBase::OnApplyUI), NULL, this);
     
 }
 
@@ -68,5 +73,7 @@ AdvancedDlgBase::~AdvancedDlgBase()
 {
     m_buttonRestoreDefaults->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnRestoreDefaults), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL, this);
+    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL, this);
+    m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AdvancedDlgBase::OnApplyUI), NULL, this);
     
 }

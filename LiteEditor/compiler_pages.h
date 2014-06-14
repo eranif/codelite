@@ -10,188 +10,25 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
-#include <wx/listctrl.h>
-#include <wx/button.h>
+#include <wx/textctrl.h>
 #include <wx/statline.h>
+#include <wx/button.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/panel.h>
+#include <wx/listbox.h>
+#include <wx/aui/auibook.h>
+#include <wx/imaglist.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
-#include <wx/textctrl.h>
+#include <wx/listctrl.h>
 #include <wx/checkbox.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
-
-class CompilerPatternsBase : public wxPanel
-{
-protected:
-    wxStaticText* m_staticText161;
-    wxListCtrl* m_listErrPatterns;
-    wxButton* m_btnAddErrPattern;
-    wxButton* m_btnDelErrPattern;
-    wxButton* m_btnUpdateErrPattern;
-    wxStaticLine* m_staticline5;
-    wxStaticText* m_staticText17;
-    wxListCtrl* m_listWarnPatterns;
-    wxButton* m_btnAddWarnPattern;
-    wxButton* m_btnDelWarnPattern;
-    wxButton* m_btnUpdateWarnPattern;
-
-protected:
-    virtual void OnErrItemActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnBtnAddErrPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnBtnDelErrPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnErrorPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnBtnUpdateErrPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWarnItemActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnBtnAddWarnPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnBtnDelWarnPattern(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWarningPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnBtnUpdateWarnPattern(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    CompilerPatternsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~CompilerPatternsBase();
-};
-
-
-class CompilerToolsBase : public wxPanel
-{
-protected:
-    wxPropertyGridManager* m_pgMgr92;
-    wxPGProperty* m_pgProp94;
-    wxPGProperty* m_pgPropCXX;
-    wxPGProperty* m_pgPropCC;
-    wxPGProperty* m_pgPropAS;
-    wxPGProperty* m_pgPropLD;
-    wxPGProperty* m_pgPropSharedObjectLD;
-    wxPGProperty* m_pgPropAR;
-    wxPGProperty* m_pgPropResourceCompiler;
-    wxPGProperty* m_pgPropMAKE;
-
-protected:
-    virtual void OnCustomEditorButtonClicked(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    CompilerToolsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~CompilerToolsBase();
-};
-
-
-class CompilerSwitchesBase : public wxPanel
-{
-protected:
-    wxStaticText* m_staticText8;
-    wxListCtrl* m_listSwitches;
-
-protected:
-    virtual void OnItemActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnItemSelected(wxListEvent& event) { event.Skip(); }
-
-public:
-    CompilerSwitchesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~CompilerSwitchesBase();
-};
-
-
-class CompilerFileTypesBase : public wxPanel
-{
-protected:
-    wxStaticText* m_staticText23;
-    wxListCtrl* m_listCtrlFileTypes;
-    wxButton* m_buttonNewFileType;
-    wxButton* m_buttonDeleteFileType;
-
-protected:
-    virtual void OnFileTypeActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnFileTypeDeSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnFileTypeSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnNewFileType(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteFileType(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    CompilerFileTypesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~CompilerFileTypesBase();
-};
-
-
-class CompilerAdvanceBase : public wxPanel
-{
-protected:
-    wxStaticText* m_staticText18;
-    wxStaticText* m_staticText141;
-    wxTextCtrl* m_textCtrlGlobalIncludePath;
-    wxButton* m_button67;
-    wxStaticText* m_staticText16;
-    wxTextCtrl* m_textCtrlGlobalLibPath;
-    wxButton* m_button69;
-    wxStaticText* m_staticText19;
-    wxStaticText* m_staticText3;
-    wxTextCtrl* m_textObjectExtension;
-    wxStaticText* m_staticText24;
-    wxTextCtrl* m_textDependExtension;
-    wxStaticText* m_staticText25;
-    wxTextCtrl* m_textPreprocessExtension;
-    wxCheckBox* m_checkBoxGenerateDependenciesFiles;
-    wxCheckBox* m_checkBoxObjectNameSameAsFileName;
-    wxCheckBox* m_checkBoxReadObjectsFromFile;
-
-protected:
-    virtual void OnEditIncludePaths(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEditLibraryPaths(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    CompilerAdvanceBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~CompilerAdvanceBase();
-};
-
-
-class CompilerCompilerOptionsBase : public wxPanel
-{
-protected:
-    wxStaticText* m_staticText23;
-    wxListCtrl* m_listCompilerOptions;
-    wxButton* m_buttonCompilerOption;
-    wxButton* m_buttonDeleteCompilerOption;
-
-protected:
-    virtual void OnCompilerOptionActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnCompilerOptionDeSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnCompilerOptionSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnNewCompilerOption(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteCompilerOption(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    CompilerCompilerOptionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~CompilerCompilerOptionsBase();
-};
-
-
-class CompilerLinkerOptionsBase : public wxPanel
-{
-protected:
-    wxStaticText* m_staticText23;
-    wxListCtrl* m_listLinkerOptions;
-    wxButton* m_buttonLinkerOption;
-    wxButton* m_buttonDeleteLinkerOption;
-
-protected:
-    virtual void OnLinkerOptionActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnLinkerOptionDeSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnLinkerOptionSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnNewLinkerOption(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteLinkerOption(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    CompilerLinkerOptionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~CompilerLinkerOptionsBase();
-};
-
 
 class CompilerOptionDlgBase : public wxDialog
 {
@@ -251,6 +88,109 @@ protected:
 public:
     NewCompilerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Compiler"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewCompilerDlgBase();
+};
+
+
+class CompilerMainPageBase : public wxPanel
+{
+protected:
+    wxListBox* m_listBoxCompilers;
+    wxAuiNotebook* m_auiBook;
+    wxPanel* m_panelTools;
+    wxPropertyGridManager* m_pgMgr92;
+    wxPGProperty* m_pgProp94;
+    wxPGProperty* m_pgPropCXX;
+    wxPGProperty* m_pgPropCC;
+    wxPGProperty* m_pgPropAS;
+    wxPGProperty* m_pgPropLD;
+    wxPGProperty* m_pgPropSharedObjectLD;
+    wxPGProperty* m_pgPropAR;
+    wxPGProperty* m_pgPropResourceCompiler;
+    wxPGProperty* m_pgPropMAKE;
+    wxPanel* m_panelPatterns;
+    wxStaticText* m_staticText161;
+    wxListCtrl* m_listErrPatterns;
+    wxButton* m_btnAddErrPattern;
+    wxButton* m_btnDelErrPattern;
+    wxButton* m_btnUpdateErrPattern;
+    wxStaticText* m_staticText17;
+    wxListCtrl* m_listWarnPatterns;
+    wxButton* m_btnAddWarnPattern;
+    wxButton* m_btnDelWarnPattern;
+    wxButton* m_btnUpdateWarnPattern;
+    wxPanel* m_panelComilerOptions;
+    wxStaticText* m_staticText23_O;
+    wxListCtrl* m_listCompilerOptions;
+    wxButton* m_buttonCompilerOption;
+    wxButton* m_buttonDeleteCompilerOption;
+    wxPanel* m_panelLinkerOptions;
+    wxStaticText* m_staticText23_L;
+    wxListCtrl* m_listLinkerOptions;
+    wxButton* m_buttonLinkerOption;
+    wxButton* m_buttonDeleteLinkerOption;
+    wxPanel* m_panelCompilerSwitches;
+    wxStaticText* m_staticText8;
+    wxListCtrl* m_listSwitches;
+    wxPanel* m_panelFileTypes;
+    wxStaticText* m_staticText23;
+    wxListCtrl* m_listCtrlFileTypes;
+    wxButton* m_buttonNewFileType;
+    wxButton* m_buttonDeleteFileType;
+    wxPanel* m_panelAdvanced;
+    wxStaticText* m_staticText18;
+    wxStaticText* m_staticText141;
+    wxTextCtrl* m_textCtrlGlobalIncludePath;
+    wxButton* m_button67;
+    wxStaticText* m_staticText16;
+    wxTextCtrl* m_textCtrlGlobalLibPath;
+    wxButton* m_button69;
+    wxStaticText* m_staticText19;
+    wxStaticText* m_staticText3;
+    wxTextCtrl* m_textObjectExtension;
+    wxStaticText* m_staticText24;
+    wxTextCtrl* m_textDependExtension;
+    wxStaticText* m_staticText25;
+    wxTextCtrl* m_textPreprocessExtension;
+    wxCheckBox* m_checkBoxGenerateDependenciesFiles;
+    wxCheckBox* m_checkBoxObjectNameSameAsFileName;
+    wxCheckBox* m_checkBoxReadObjectsFromFile;
+
+protected:
+    virtual void OnCompilerSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCustomEditorButtonClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnErrItemActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnBtnAddErrPattern(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBtnDelErrPattern(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnErrorPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBtnUpdateErrPattern(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWarnItemActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnBtnAddWarnPattern(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBtnDelWarnPattern(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWarningPatternSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBtnUpdateWarnPattern(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCompilerOptionActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnCompilerOptionDeSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnCompilerOptionSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnNewCompilerOption(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteCompilerOption(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnLinkerOptionActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnLinkerOptionDeSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnLinkerOptionSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnNewLinkerOption(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteLinkerOption(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnFileTypeActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnFileTypeDeSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnFileTypeSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnNewFileType(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteFileType(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditIncludePaths(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditLibraryPaths(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    CompilerMainPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    virtual ~CompilerMainPageBase();
 };
 
 #endif

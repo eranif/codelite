@@ -46,6 +46,7 @@
 #include "advance_settings_base.h"
 #include <ICompilerLocator.h>
 #include <CompilersDetectorManager.h>
+#include <CompilerMainPage.h>
 
 ///////////////////////////////////////////////////////////////////////////
 class BuildTabSetting;
@@ -68,12 +69,15 @@ class AdvancedDlg : public AdvancedDlgBase
     std::map<wxString, std::vector<ICompilerSubPage*> > m_compilerPagesMap;
     
 protected:
-    wxPanel* m_compilersPage;
+    virtual void OnApply(wxCommandEvent& event);
+    virtual void OnApplyUI(wxUpdateUIEvent& event);
+    wxPanel* m_compilersMainPanel;
+    CompilerMainPage* m_compilersPage;
+    
     wxStaticText* m_staticText1;
     wxButton* m_buttonNewCompiler;
     wxButton* m_buttonAutoDetect;
     wxStaticLine* m_staticline2;
-    wxTreebook* m_compilersNotebook;
     wxStaticLine* m_staticline10;
     BuildPage *m_buildPage;
     BuildTabSetting *m_buildSettings;
@@ -90,7 +94,6 @@ protected:
 
     void LoadCompilers();
     bool CreateNewCompiler(const wxString &name, const wxString &copyFrom);
-    void AddCompiler(CompilerPtr cmp, bool selected);
     bool DeleteCompiler(const wxString &name);
     void SaveCompilers();
     void OnCompilersDetected(const ICompilerLocator::CompilerVec_t& compilers);

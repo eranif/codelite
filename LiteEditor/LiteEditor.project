@@ -292,21 +292,7 @@
       <File Name="editcmpfileinfobase.cpp"/>
       <File Name="editcmpfileinfobase.h"/>
       <File Name="editcmpfileinfodlg.cpp"/>
-      <File Name="compilertoolspage.h"/>
-      <File Name="compileradvancepage.cpp"/>
-      <File Name="compileradvancepage.h"/>
-      <File Name="compilerfiletypespage.cpp"/>
-      <File Name="compilerfiletypespage.h"/>
-      <File Name="compilerpatternspage.cpp"/>
-      <File Name="compilerpatternspage.h"/>
-      <File Name="compilerswitchespage.cpp"/>
-      <File Name="compilerswitchespage.h"/>
-      <File Name="compilertoolspage.cpp"/>
       <File Name="addoptioncheckdlgbase.h"/>
-      <File Name="compilercompileroptionspage.cpp"/>
-      <File Name="compilercompileroptionspage.h"/>
-      <File Name="compilerlinkeroptionspage.cpp"/>
-      <File Name="compilerlinkeroptionspage.h"/>
       <File Name="addoptioncheckdlg.cpp"/>
       <File Name="addoptioncheckdlg.h"/>
       <File Name="addoptioncheckdlgbase.cpp"/>
@@ -318,6 +304,8 @@
       <File Name="CompilersFoundDlg.cpp"/>
       <File Name="CompilersModifiedDlg.h"/>
       <File Name="CompilersModifiedDlg.cpp"/>
+      <File Name="CompilerMainPage.h"/>
+      <File Name="CompilerMainPage.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>

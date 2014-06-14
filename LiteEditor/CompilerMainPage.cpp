@@ -3,13 +3,15 @@
 #include <build_settings_config.h>
 #include <globals.h>
 #include <windowattrmanager.h>
-#include <editcmpfileinfodlg.h>
+#include "editcmpfileinfodlg.h"
 #include <EditDlg.h>
 #include <event_notifier.h>
 #include <workspace.h>
 #include <build_config.h>
 #include <cl_aui_notebook_art.h>
 #include <wx/wupdlock.h>
+#include <wx/msgdlg.h>
+#include <wx/textdlg.h>
 
 CompilerMainPage::CompilerMainPage(wxWindow* parent)
     : CompilerMainPageBase(parent)

@@ -46,7 +46,7 @@
 #include "advance_settings_base.h"
 #include <ICompilerLocator.h>
 #include <CompilersDetectorManager.h>
-#include <CompilerMainPage.h>
+#include "CompilerMainPage.h"
 
 ///////////////////////////////////////////////////////////////////////////
 class BuildTabSetting;

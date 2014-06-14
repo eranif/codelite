@@ -8,6 +8,9 @@ class CompilerLocatorMSVCBase : public ICompilerLocator
 public:
     CompilerLocatorMSVCBase();
     virtual ~CompilerLocatorMSVCBase();
+    virtual CompilerPtr Locate(const wxString &folder) {
+        return NULL;
+    }
     
 protected:
     void AddTools(const wxString &masterFolder, const wxString &name);

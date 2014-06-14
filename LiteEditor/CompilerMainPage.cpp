@@ -12,6 +12,7 @@
 #include <wx/wupdlock.h>
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
+#include "advanced_settings.h"
 
 CompilerMainPage::CompilerMainPage(wxWindow* parent)
     : CompilerMainPageBase(parent)
@@ -814,4 +815,9 @@ void CompilerPatternDlg::OnSubmit( wxCommandEvent& event )
         return;
     }
     EndModal(wxID_OK);
+}
+
+void CompilerMainPage::OnAddCompilers(wxCommandEvent& event)
+{
+    wxGetTopLevelParent(this)->CallAfter( &AdvancedDlg::OnAutoDetectCompilers, m_button222 );
 }

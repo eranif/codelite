@@ -66,23 +66,14 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
     wxBoxSizer* bSizer4;
     bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 
-    m_staticText1 = new wxStaticText( m_compilersMainPanel, wxID_ANY, _("Create New Compiler:"), wxDefaultPosition, wxDefaultSize, 0 );
-    bSizer4->Add( m_staticText1, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
-    m_buttonNewCompiler = new wxButton( m_compilersMainPanel, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
-    bSizer4->Add( m_buttonNewCompiler, 0, wxALL|wxALIGN_RIGHT, 5 );
-
-    m_buttonAutoDetect = new wxButton( m_compilersMainPanel, wxID_ANY, _("Auto Detect Compilers..."), wxDefaultPosition, wxDefaultSize, 0 );
-    bSizer4->Add( m_buttonAutoDetect, 0, wxALL|wxALIGN_RIGHT, 5 );
-
     bSizer5->Add( bSizer4, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
 
     m_compilersPage = new CompilerMainPage(m_compilersMainPanel);
     bSizer5->Add( m_compilersPage, 1, wxALL|wxEXPAND, 5 );
-    
+
     m_compilersMainPanel->SetSizer( bSizer5 );
     m_compilersMainPanel->Layout();
-    
+
     m_notebook->AddPage( m_compilersMainPanel, _("Compilers"), true );
     m_buildSettings = new BuildTabSetting(m_notebook);
     m_notebook->AddPage(m_buildSettings, _("Build Output Appearance"), false);
@@ -93,14 +84,11 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
     m_rightclickMenu = wxXmlResource::Get()->LoadMenu(wxT("delete_compiler_menu"));
 
     LoadCompilers();
-    
-    m_buttonNewCompiler->Bind(wxEVT_BUTTON, &AdvancedDlg::OnButtonNewClicked, this);
-    m_buttonAutoDetect->Bind(wxEVT_BUTTON, &AdvancedDlg::OnAutoDetectCompilers, this);
-    
+
     // center the dialog
     Centre();
     this->Layout();
-    
+
     WindowAttrManager::Load(this, wxT("BuildSettingsDlg"), NULL);
 }
 
@@ -115,9 +103,8 @@ AdvancedDlg::~AdvancedDlg()
     WindowAttrManager::Save(this, wxT("BuildSettingsDlg"), NULL);
 }
 
-void AdvancedDlg::OnButtonNewClicked(wxCommandEvent &event)
+void AdvancedDlg::OnButtonNewClicked()
 {
-    wxUnusedVar(event);
     NewCompilerDlg dlg(this);
     if ( dlg.ShowModal() == wxID_OK ) {
         CreateNewCompiler(dlg.GetCompilerName(), dlg.GetMasterCompiler());
@@ -194,7 +181,7 @@ bool AdvancedDlg::CreateNewCompiler (const wxString& name, const wxString& copyF
         wxMessageBox ( _( "A compiler with this name already exists" ), _( "Error" ), wxOK | wxICON_HAND );
         return false;
     }
-    
+
     CompilerPtr cmp;
     if ( !copyFrom.IsEmpty() ) {
         cmp = BuildSettingsConfigST::Get()->GetCompiler ( copyFrom );
@@ -242,11 +229,35 @@ void AdvancedDlg::OnRestoreDefaults(wxCommandEvent&)
     }
 }
 
-void AdvancedDlg::OnAutoDetectCompilers(wxCommandEvent&)
+#define ID_MENU_AUTO_DETECT_COMPILERS 1001
+#define ID_MENU_ADD_COMPILER_BY_PATH  1002
+#define ID_MENU_CLONE_COMPILER        1003
+
+void AdvancedDlg::OnAutoDetectCompilers( wxButton* btn )
 {
     // Launch the auto detect compilers code
-    if ( m_compilersDetector.Locate() ) {
-        CallAfter( &AdvancedDlg::OnCompilersDetected, m_compilersDetector.GetCompilersFound() );
+
+    wxMenu menu;
+    menu.Append(ID_MENU_ADD_COMPILER_BY_PATH,  _("Add an existing compiler"));
+    menu.Append(ID_MENU_CLONE_COMPILER,        _("Clone a compiler"));
+    menu.AppendSeparator();
+    menu.Append(ID_MENU_AUTO_DETECT_COMPILERS, _("Scan computer for installed compilers"));
+
+    // Menu will be shown in client coordinates
+    wxRect size = btn->GetSize();
+    wxPoint menuPos(0, size.GetHeight());
+
+    int res = btn->GetPopupMenuSelectionFromUser( menu, menuPos );
+    if ( res == ID_MENU_AUTO_DETECT_COMPILERS ) {
+        if ( m_compilersDetector.Locate() ) {
+            CallAfter( &AdvancedDlg::OnCompilersDetected, m_compilersDetector.GetCompilersFound() );
+        }
+
+    } else if ( res == ID_MENU_CLONE_COMPILER ) {
+        CallAfter( &AdvancedDlg::OnButtonNewClicked );
+
+    } else if ( res == ID_MENU_ADD_COMPILER_BY_PATH ) {
+        CallAfter( &AdvancedDlg::OnAddExistingCompiler );
     }
 }
 
@@ -256,7 +267,7 @@ void AdvancedDlg::OnCompilersDetected(const ICompilerLocator::CompilerVec_t& com
     if ( dlg.ShowModal() == wxID_OK ) {
         // Replace the current compilers with a new one
         BuildSettingsConfigST::Get()->SetCompilers( compilers );
-        
+
         // Dismiss this dialog and reload it
         wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("advance_settings"));
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
@@ -272,4 +283,36 @@ void AdvancedDlg::OnApply(wxCommandEvent& event)
 void AdvancedDlg::OnApplyUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_compilersPage->IsDirty() );
+}
+
+void AdvancedDlg::OnAddExistingCompiler()
+{
+    wxString folder = ::wxDirSelector(_("Select the compiler folder"));
+    if ( folder.IsEmpty() ) {
+        return;
+    }
+
+    CompilerPtr cmp = m_compilersDetector.Locate( folder );
+    if ( cmp ) {
+        // We found new compiler
+        // Prompt the user to give it a name
+        while ( true ) {
+            wxString name = ::wxGetTextFromUser(_("Compiler Name:"), _("Set a name to the compiler"), cmp->GetName());
+            if ( name.IsEmpty() ) {
+                return;
+            }
+            // Add the compiler
+            if ( BuildSettingsConfigST::Get()->IsCompilerExist(name) ) {
+                continue;
+            }
+            cmp->SetName( name );
+            break;
+        }
+        
+        // Save the new compiler
+        BuildSettingsConfigST::Get()->SetCompiler( cmp );
+        
+        // Reload the dialog
+        LoadCompilers();
+    }
 }

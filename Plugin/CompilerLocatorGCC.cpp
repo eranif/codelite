@@ -11,11 +11,50 @@ CompilerLocatorGCC::~CompilerLocatorGCC()
 {
 }
 
+CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
+{
+    m_compilers.clear();
+    wxFileName gcc(folder, "gcc");
+    wxFileName tmpfn(folder, "");
+    
+    wxString name;
+    if( tmpfn.GetDirCount() > 1 && tmpfn.GetDirs().Last() == "bin" ) {
+        tmpfn.RemoveLastDir();
+        name = tmpfn.GetDirs().Last();
+    }
+    
+#ifdef __WXMSW__
+    gcc.SetExt("exe");
+#endif
+
+    bool found = gcc.FileExists();
+    if ( ! found ) {
+        // try to see if we have a bin folder here
+        gcc.AppendDir("bin");
+        found = gcc.FileExists();
+    }
+    
+    if ( found ) {
+        CompilerPtr compiler( new Compiler(NULL) );
+        compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
+        
+        // get the compiler version
+        compiler->SetName( name.IsEmpty() ? "GCC" : name );
+        compiler->SetGenerateDependeciesFile(true);
+        m_compilers.push_back( compiler );
+        
+        // we path the bin folder
+        AddTools(compiler, gcc.GetPath());
+        return compiler;
+    }
+    return NULL;
+}
+
 bool CompilerLocatorGCC::Locate()
 {
     // Locate GCC under /usr/bin
     m_compilers.clear();
-    
+
     wxArrayString gcc_versions;
     gcc_versions.Add(""); // Default gcc
     gcc_versions.Add("4.2");
@@ -26,13 +65,13 @@ bool CompilerLocatorGCC::Locate()
     gcc_versions.Add("4.7");
     gcc_versions.Add("4.8");
     gcc_versions.Add("4.9");
-    
+
     for(size_t i=0; i<gcc_versions.GetCount(); ++i) {
         wxString suffix = gcc_versions.Item(i);
         if ( !suffix.IsEmpty() ) {
             suffix.Prepend("-");
         }
-        
+
         wxFileName gccFile("/usr/bin", "gcc" + suffix);
         if ( gccFile.FileExists() ) {
             // add this compiler
@@ -49,7 +88,7 @@ bool CompilerLocatorGCC::Locate()
             AddTools(compiler, "/usr/bin", gcc_versions.Item(i));
         }
     }
-    
+
     // XCode GCC is installed under /Applications/Xcode.app/Contents/Developer/usr/bin
     wxFileName xcodeGcc("/Applications/Xcode.app/Contents/Developer/usr/bin", "gcc");
     if ( xcodeGcc.FileExists() ) {
@@ -60,28 +99,29 @@ bool CompilerLocatorGCC::Locate()
         m_compilers.push_back( compiler );
         AddTools(compiler, xcodeGcc.GetPath());
     }
-    
+
     return !m_compilers.empty();
 }
 
-void CompilerLocatorGCC::AddTools(CompilerPtr compiler, 
-                                  const wxString& binFolder, 
+
+void CompilerLocatorGCC::AddTools(CompilerPtr compiler,
+                                  const wxString& binFolder,
                                   const wxString& suffix)
 {
     wxFileName masterPath(binFolder, "");
     wxString defaultBinFolder = "/usr/bin";
     compiler->SetCompilerFamily("GNU GCC");
     compiler->SetInstallationPath( binFolder );
-    
+
     CL_DEBUG("Found GNU GCC compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());
     wxFileName toolFile(binFolder, "");
-    
+
     // ++++-----------------------------------------------------------------
-    // With XCode installation, only 
+    // With XCode installation, only
     // g++, gcc, and make are installed under the Xcode installation folder
     // the rest (mainly ar and as) are taken from /usr/bin
     // ++++-----------------------------------------------------------------
-    
+
     toolFile.SetFullName("g++");
     AddTool(compiler, "CXX", toolFile.GetFullPath(), suffix);
     AddTool(compiler, "LinkerName", toolFile.GetFullPath(), suffix);
@@ -98,18 +138,18 @@ void CompilerLocatorGCC::AddTools(CompilerPtr compiler,
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
     AddTool(compiler, "MAKE", toolFile.GetFullPath(), "", makeExtraArgs);
-    
+
     // ++++-----------------------------------------------------------------
     // From this point on, we use /usr/bin only
     // ++++-----------------------------------------------------------------
-    
+
     toolFile.AssignDir( defaultBinFolder );
     toolFile.SetFullName("ar");
     AddTool(compiler, "AR", toolFile.GetFullPath(), "", "rcu");
 
     toolFile.SetFullName("windres");
     AddTool(compiler, "ResourceCompiler", "", "");
-    
+
     toolFile.SetFullName("as");
     AddTool(compiler, "AS", toolFile.GetFullPath(), "");
 }
@@ -126,3 +166,4 @@ void CompilerLocatorGCC::AddTool(CompilerPtr compiler, const wxString& toolname,
     compiler->SetTool(toolname, tool);
     CL_DEBUG("Adding tool: %s => %s", toolname, tool);
 }
+

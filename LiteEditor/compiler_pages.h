@@ -94,6 +94,7 @@ public:
 class CompilerMainPageBase : public wxPanel
 {
 protected:
+    wxButton* m_button222;
     wxListBox* m_listBoxCompilers;
     wxAuiNotebook* m_auiBook;
     wxPanel* m_panelTools;
@@ -156,6 +157,7 @@ protected:
     wxCheckBox* m_checkBoxReadObjectsFromFile;
 
 protected:
+    virtual void OnAddCompilers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCompilerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCustomEditorButtonClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnErrItemActivated(wxListEvent& event) { event.Skip(); }

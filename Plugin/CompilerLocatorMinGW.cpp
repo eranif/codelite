@@ -4,6 +4,7 @@
 #include <wx/tokenzr.h>
 #include <globals.h>
 #include "file_logger.h"
+#include "procutils.h"
 
 #ifdef __WXMSW__
 #   include <wx/msw/registry.h>
@@ -16,6 +17,41 @@ CompilerLocatorMinGW::CompilerLocatorMinGW()
 
 CompilerLocatorMinGW::~CompilerLocatorMinGW()
 {
+}
+
+CompilerPtr CompilerLocatorMinGW::Locate(const wxString& folder)
+{
+    m_compilers.clear();
+    wxFileName gcc(folder, "gcc");
+#ifdef __WXMSW__
+    gcc.SetExt("exe");
+#endif
+
+    bool found = gcc.FileExists();
+    if ( ! found ) {
+        // try to see if we have a bin folder here
+        gcc.AppendDir("bin");
+        found = gcc.FileExists();
+    }
+    
+    if ( found ) {
+        AddTools(gcc.GetPath(), GetGCCVersion(gcc.GetFullPath() ));
+        return *m_compilers.begin();
+    }
+    return NULL;
+}
+
+wxString CompilerLocatorMinGW::GetGCCVersion(const wxString& gccBinary)
+{
+    wxString command;
+    wxArrayString stdoutArr;
+    command << gccBinary << " --version";
+    ProcUtils::SafeExecuteCommand(command, stdoutArr);
+    if ( !stdoutArr.IsEmpty() ) {
+        wxString versionString = stdoutArr.Item(0).Trim().Trim(false);
+        return versionString;
+    }
+    return "";
 }
 
 bool CompilerLocatorMinGW::Locate()

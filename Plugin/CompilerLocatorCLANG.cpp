@@ -18,7 +18,7 @@ bool CompilerLocatorCLANG::Locate()
 {
     m_compilers.clear();
     MSWLocate();
-    
+
     // POSIX locate
     wxFileName clang("/usr/bin", "clang");
     if ( clang.FileExists() ) {
@@ -34,6 +34,34 @@ bool CompilerLocatorCLANG::Locate()
     return true;
 }
 
+CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
+{
+    m_compilers.clear();
+    wxFileName clang(folder, "clang");
+#ifdef __WXMSW__
+    clang.SetExt("exe");
+#endif
+    bool found = clang.FileExists();
+    if ( ! found ) {
+        // try to see if we have a bin folder here
+        clang.AppendDir("bin");
+        found = clang.FileExists();
+    }
+    
+    if ( found ) {
+        CompilerPtr compiler( new Compiler(NULL) );
+        compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
+        // get the compiler version
+        compiler->SetName( GetCompilerFullName(clang.GetFullPath() ) );
+        compiler->SetGenerateDependeciesFile(true);
+        m_compilers.push_back( compiler );
+        clang.RemoveLastDir();
+        AddTools(compiler, clang.GetPath());
+        return compiler;
+    }
+    return NULL;
+}
+
 void CompilerLocatorCLANG::MSWLocate()
 {
 #ifdef __WXMSW__
@@ -46,7 +74,7 @@ void CompilerLocatorCLANG::MSWLocate()
             found = true;
             reg.QueryValue("DisplayIcon",    llvmInstallPath);
             reg.QueryValue("DisplayVersion", llvmVersion);
-            
+
             CompilerPtr compiler( new Compiler(NULL) );
             compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
             compiler->SetGenerateDependeciesFile(true);
@@ -62,7 +90,7 @@ void CompilerLocatorCLANG::MSWLocate()
         if ( reg.Exists() ) {
             reg.QueryValue("DisplayIcon",    llvmInstallPath);
             reg.QueryValue("DisplayVersion", llvmVersion);
-            
+
             CompilerPtr compiler( new Compiler(NULL) );
             compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
             compiler->SetGenerateDependeciesFile(true);
@@ -113,7 +141,7 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
 #endif
     toolFile.SetName("llvm-as");
     AddTool(compiler, "AS", toolFile.GetFullPath());
-    
+
     wxString makeExtraArgs;
     if ( wxThread::GetCPUCount() > 1 ) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();

@@ -82,6 +82,7 @@ class CompilerMainPage : public CompilerMainPageBase
     long m_selectedLnkOption;
 
 protected:
+    virtual void OnAddCompilers(wxCommandEvent& event);
     virtual void OnCompilerSelected(wxCommandEvent& event);
     void Initialize();
     

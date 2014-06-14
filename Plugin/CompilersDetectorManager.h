@@ -3,6 +3,7 @@
 
 #include <ICompilerLocator.h>
 #include "codelite_exports.h"
+#include "compiler.h"
 
 class WXDLLIMPEXP_SDK CompilersDetectorManager
 {
@@ -26,6 +27,7 @@ public:
         return m_detectors;
     }
     bool Locate();
+    CompilerPtr Locate(const wxString &folder);
 };
 
 #endif // COMPILERSDETECTORMANAGER_H

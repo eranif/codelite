@@ -21,14 +21,31 @@
         wxMemoryFSHandler::AddFile(name, data, size)
 #endif
 
-static size_t xml_res_size_0 = 108;
+static size_t xml_res_size_0 = 162;
 static unsigned char xml_res_file_0[] = {
+137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
+0,31,243,255,97,0,0,0,6,98,75,71,68,0,255,0,255,0,255,160,189,167,147,0,
+0,0,87,73,68,65,84,56,141,237,207,193,13,64,64,20,6,225,239,68,87,162,12,
+122,145,232,194,81,11,212,67,35,123,194,73,226,32,187,75,28,77,242,142,
+51,249,31,63,159,179,98,79,220,18,11,212,8,17,57,160,74,173,104,177,221,
+200,27,154,220,87,250,155,64,151,43,159,140,23,121,120,42,67,137,25,19,
+138,55,129,159,76,14,254,166,34,84,230,222,57,167,0,0,0,0,73,69,78,68,174,
+66,96,130};
+
+static size_t xml_res_size_1 = 231;
+static unsigned char xml_res_file_1[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
 47,47,119,119,119,46,119,120,119,105,110,100,111,119,115,46,111,114,103,
 47,119,120,120,114,99,34,32,118,101,114,115,105,111,110,61,34,50,46,51,
-46,48,46,49,34,47,62,10};
+46,48,46,49,34,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,
+61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,97,114,114,
+111,119,45,100,111,119,110,45,49,54,34,62,99,111,109,112,105,108,101,114,
+95,112,97,103,101,95,112,108,117,103,105,110,95,98,105,116,109,97,112,115,
+46,99,112,112,36,114,101,115,95,97,114,114,111,119,45,100,111,119,110,45,
+49,54,46,112,110,103,60,47,111,98,106,101,99,116,62,10,60,47,114,101,115,
+111,117,114,99,101,62,10};
 
 void wxCAD0CInitBitmapResources()
 {
@@ -43,6 +60,7 @@ void wxCAD0CInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/compiler_page_plugin_bitmaps.cpp$_home_eran_devl_codelite_LiteEditor_compiler_page_plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/compiler_page_plugin_bitmaps.cpp$_home_eran_devl_codelite_LiteEditor_compiler_page_plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/compiler_page_plugin_bitmaps.cpp$res_arrow-down-16.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/compiler_page_plugin_bitmaps.cpp$C__src_codelite_LiteEditor_compiler_page_plugin_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/compiler_page_plugin_bitmaps.cpp$C__src_codelite_LiteEditor_compiler_page_plugin_bitmaps.xrc"));
 }

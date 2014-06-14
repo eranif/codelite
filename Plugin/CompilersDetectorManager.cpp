@@ -43,3 +43,16 @@ bool CompilersDetectorManager::Locate()
     }
     return !m_compilersFound.empty();
 }
+
+CompilerPtr CompilersDetectorManager::Locate(const wxString& folder)
+{
+    m_compilersFound.clear();
+    ICompilerLocator::Vect_t::iterator iter = m_detectors.begin();
+    for(; iter != m_detectors.end(); ++iter ) {
+        CompilerPtr comp = (*iter)->Locate( folder );
+        if ( comp ) {
+            return comp;
+        }
+    }
+    return NULL;
+}

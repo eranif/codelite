@@ -75,8 +75,6 @@ protected:
     CompilerMainPage* m_compilersPage;
     
     wxStaticText* m_staticText1;
-    wxButton* m_buttonNewCompiler;
-    wxButton* m_buttonAutoDetect;
     wxStaticLine* m_staticline2;
     wxStaticLine* m_staticline10;
     BuildPage *m_buildPage;
@@ -85,8 +83,8 @@ protected:
     CompilersDetectorManager m_compilersDetector;
     
 protected:
-    void OnButtonNewClicked(wxCommandEvent &);
-    void OnAutoDetectCompilers(wxCommandEvent &);
+    void OnButtonNewClicked();
+    void OnAddExistingCompiler();
     void OnButtonOKClicked(wxCommandEvent &);
     void OnRestoreDefaults(wxCommandEvent &);
     void OnDeleteCompiler(wxCommandEvent &);
@@ -101,6 +99,7 @@ protected:
 public:
     AdvancedDlg( wxWindow* parent, size_t selected_page, int id = wxID_ANY, wxString title = _("Build Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
     ~AdvancedDlg();
+    void OnAutoDetectCompilers(wxButton* btn);
 };
 
 #endif //__advanced_settings__

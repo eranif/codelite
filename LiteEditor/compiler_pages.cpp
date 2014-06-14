@@ -252,17 +252,29 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer114 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer114 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer114);
+    
+    m_button222 = new wxButton(this, wxID_ANY, _("Add Compilers"), wxDefaultPosition, wxSize(-1,-1), 0);
+    #if wxVERSION_NUMBER >= 2904
+    m_button222->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("arrow-down-16")), wxRIGHT);
+    m_button222->SetBitmapMargins(1,1);
+    #endif
+    
+    boxSizer114->Add(m_button222, 0, wxALL|wxALIGN_RIGHT, 5);
+    
+    wxBoxSizer* boxSizer220 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer114->Add(boxSizer220, 0, wxEXPAND, 5);
     
     wxArrayString m_listBoxCompilersArr;
     m_listBoxCompilers = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxCompilersArr, wxLB_SINGLE);
     
-    boxSizer114->Add(m_listBoxCompilers, 0, wxALL|wxEXPAND, 5);
+    boxSizer220->Add(m_listBoxCompilers, 0, wxALL|wxEXPAND, 5);
     
     m_auiBook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_NB_TOP|wxAUI_NB_WINDOWLIST_BUTTON|wxBK_DEFAULT);
     
-    boxSizer114->Add(m_auiBook, 1, wxALL|wxEXPAND, 5);
+    boxSizer220->Add(m_auiBook, 1, wxALL|wxEXPAND, 5);
     
     m_panelTools = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelTools, _("Tools"), true);
@@ -639,6 +651,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     }
     Centre(wxBOTH);
     // Connect events
+    m_button222->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
     m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
     m_pgMgr92->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
     m_listErrPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
@@ -677,6 +690,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
 CompilerMainPageBase::~CompilerMainPageBase()
 {
+    m_button222->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
     m_listBoxCompilers->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
     m_pgMgr92->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
     m_listErrPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);

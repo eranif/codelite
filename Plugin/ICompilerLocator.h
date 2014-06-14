@@ -5,6 +5,7 @@
 #include <wx/sharedptr.h>
 #include <vector>
 #include "codelite_exports.h"
+#include "compiler.h"
 
 #define COMPILER_FAMILY_CLANG "LLVM/Clang"
 #define COMPILER_FAMILY_MINGW "MinGW"
@@ -29,6 +30,11 @@ public:
      * @brief locate the compiler
      */
     virtual bool Locate() = 0;
+    
+    /**
+     * @brief locate a compiler in a directory
+     */
+    virtual CompilerPtr Locate(const wxString &folder) = 0;
     
     /**
      * @brief return the compiler

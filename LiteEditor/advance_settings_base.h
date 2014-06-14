@@ -14,13 +14,13 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/notebook.h>
+#include <wx/aui/auibook.h>
 #include <wx/button.h>
 
 class AdvancedDlgBase : public wxDialog
 {
 protected:
-    wxNotebook* m_notebook;
+    wxAuiNotebook* m_notebook;
     wxButton* m_buttonRestoreDefaults;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_buttonCancel;

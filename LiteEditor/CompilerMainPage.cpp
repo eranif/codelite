@@ -8,6 +8,7 @@
 #include <event_notifier.h>
 #include <workspace.h>
 #include <build_config.h>
+#include <cl_aui_notebook_art.h>
 
 CompilerMainPage::CompilerMainPage(wxWindow* parent)
     : CompilerMainPageBase(parent)
@@ -17,6 +18,8 @@ CompilerMainPage::CompilerMainPage(wxWindow* parent)
     , m_selectedCmpOption(-1)
     , m_selectedLnkOption(-1)
 {
+    m_auiBook->SetArtProvider(new clAuiGlossyTabArt());
+    
     // =============-----------------------------
     // Patterns page initialization
     // =============-----------------------------

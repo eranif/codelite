@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	19,
+		"m_objCounter":	21,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterMQKEsvInitBitmapResources",
 		"m_bitmapsFile":	"advance_settings_liteeditor_bitmaps.cpp",
@@ -142,12 +142,12 @@
 						}],
 					"m_events":	[],
 					"m_children":	[{
-							"m_type":	4442,
+							"m_type":	4456,
 							"proportion":	1,
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxBK_DEFAULT"],
+							"m_styles":	["wxAUI_NB_TOP", "wxBK_DEFAULT"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -156,7 +156,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"-1,-1"
+									"m_value":	"250,250"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",

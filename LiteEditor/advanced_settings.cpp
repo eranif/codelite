@@ -45,6 +45,7 @@
 #include "NewCompilerDlg.h"
 #include <CompilersDetectorManager.h>
 #include "CompilersFoundDlg.h"
+#include <cl_aui_notebook_art.h>
 
 BEGIN_EVENT_TABLE(AdvancedDlg, AdvancedDlgBase)
     EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
@@ -56,6 +57,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
     : AdvancedDlgBase( parent )
     , m_rightclickMenu(NULL)
 {
+    m_notebook->SetArtProvider(new clAuiGlossyTabArt);
     m_compilersMainPanel = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
     wxBoxSizer* bSizer5;

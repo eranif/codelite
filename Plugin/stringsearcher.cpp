@@ -252,7 +252,7 @@ bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wch
 {
     // adjust startOffset due to it is in bytes but should be in chars
     int iSO = startOffset;
-    while (iSO > 0 && (int)UTF8Length(input, iSO) > startOffset) iSO--;
+    while (iSO > 0 && (int)clUTF8Length(input, iSO) > startOffset) iSO--;
     startOffset = iSO;
 
     bool bResult = false;
@@ -269,11 +269,11 @@ bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wch
     
     // correct search Pos and Length owing to non plain ASCII multibyte characters
     if ( bResult ) {
-        pos = UTF8Length(input, posInChars);
+        pos = clUTF8Length(input, posInChars);
         if (flags & wxSD_REGULAREXPRESSION) {
-            matchLen = UTF8Length(input, posInChars + matchLenInChars) - pos;
+            matchLen = clUTF8Length(input, posInChars + matchLenInChars) - pos;
         } else {
-            matchLen = UTF8Length(find_what, matchLenInChars);
+            matchLen = clUTF8Length(find_what, matchLenInChars);
         }
     }
     return bResult;
@@ -284,4 +284,3 @@ bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wch
     int posInChars(0), matchLenInChars(0);
     return StringFindReplacer::Search(input, startOffset, find_what, flags, pos, matchLen, posInChars, matchLenInChars);
 }
-

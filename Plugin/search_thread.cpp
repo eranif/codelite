@@ -308,8 +308,8 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 
             // Notify our match
             // correct search Pos and Length owing to non plain ASCII multibyte characters
-            iCorrectedCol = UTF8Length(line.c_str(), col);
-            iCorrectedLen = UTF8Length(line.c_str(), col+len) - iCorrectedCol;
+            iCorrectedCol = clUTF8Length(line.c_str(), col);
+            iCorrectedLen = clUTF8Length(line.c_str(), col+len) - iCorrectedCol;
             SearchResult result;
             result.SetPosition(lineOffset + col);
             result.SetColumnInChars((int)col);
@@ -425,8 +425,8 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const i
 
             // Notify our match
             // correct search Pos and Length owing to non plain ASCII multibyte characters
-            iCorrectedCol = UTF8Length(line.c_str(), col);
-            iCorrectedLen = UTF8Length(findString.c_str(), findString.Length());
+            iCorrectedCol = clUTF8Length(line.c_str(), col);
+            iCorrectedLen = clUTF8Length(findString.c_str(), findString.Length());
             SearchResult result;
             result.SetPosition(lineOffset + col);
             result.SetColumnInChars(col);

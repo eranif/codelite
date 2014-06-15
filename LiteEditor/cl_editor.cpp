@@ -2514,7 +2514,7 @@ bool LEditor::ReplaceAll()
         }
 
         m_findReplaceDlg->IncReplacedCount();
-        offset = pos + UTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
+        offset = pos + clUTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
     }
 
     if ( replaceInSelectionOnly ) {
@@ -4286,7 +4286,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
                     pattern = pattern.BeforeFirst ( wxT ( '(' ) );
                 }
 
-                if ( StringFindReplacer::Search ( pattern.wc_str(), UTF8Length ( pattern.wc_str(), pattern.Len() ), display_name.wc_str(), flags, pos1, match_len1 ) ) {
+                if ( StringFindReplacer::Search ( pattern.wc_str(), clUTF8Length ( pattern.wc_str(), pattern.Len() ), display_name.wc_str(), flags, pos1, match_len1 ) ) {
 
                     // select only the word
                     // Check that pos1 is *not* 0 otherwise will get into an infinite loop
@@ -4383,7 +4383,7 @@ bool LEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replace
         txt.Remove(posInChars, match_lenInChars);
         txt.insert(posInChars, replaceWith);
         matchCount++;
-        offset = pos + UTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
+        offset = pos + clUTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
     }
 
     // replace the buffer

@@ -277,6 +277,14 @@
             <object class="wxMenuItem" name="toggle_panes">
                 <label>&amp;Toggle All Panes</label>
             </object>
+            <object class="wxMenuItem" name="hide_status_bar">
+                <label>Show Status Bar</label>
+                <checkable>1</checkable>
+            </object>
+            <object class="wxMenuItem" name="hide_tool_bar">
+                <label>Show ToolBar</label>
+                <checkable>1</checkable>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         </object>
 
@@ -293,10 +301,10 @@
                 <label>&amp;Replace...</label>
             </object>
             <object class="wxMenuItem" name="select_next">
-                <label>Select Next &amp;Occurrence</label>
+                <label>Select Next Occurrence</label>
             </object>
             <object class="wxMenuItem" name="select_previous">
-                <label>Select Previous Occu&amp;rrence</label>
+                <label>Select Previous Occurrence</label>
             </object>
             <object class="wxMenuItem" name="find_next">
                 <label>Find &amp;Next</label>

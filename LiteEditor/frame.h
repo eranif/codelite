@@ -406,6 +406,10 @@ protected:
     void OnToggleMainTBars(wxCommandEvent &event);
     void OnTogglePluginTBars(wxCommandEvent &event);
     void OnTogglePanes(wxCommandEvent &event);
+    void OnShowStatusBar(wxCommandEvent &event);
+    void OnShowStatusBarUI(wxUpdateUIEvent &event);
+    void OnShowToolbar(wxCommandEvent& event);
+    void OnShowToolbarUI(wxUpdateUIEvent& event);
     void OnProjectNewWorkspace(wxCommandEvent &event);
     void OnProjectNewProject(wxCommandEvent &event);
     void OnReloadWorkspace(wxCommandEvent &event);
@@ -487,7 +491,6 @@ protected:
     void OnDebugCmdUI(wxUpdateUIEvent &e);
     void OnDebuggerSettings(wxCommandEvent &e);
     void OnLinkClicked(wxHtmlLinkEvent &e);
-    void OnLoadLastSessionUI(wxUpdateUIEvent &event);
     void OnLoadSession(wxCommandEvent &e);
     void OnShowWelcomePage(wxCommandEvent &event);
     void OnShowWelcomePageUI(wxUpdateUIEvent &event);

@@ -287,6 +287,10 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("toogle_main_toolbars"),     clMainFrame::OnToggleMainTBars)
     EVT_MENU(XRCID("toogle_plugin_toolbars"),   clMainFrame::OnTogglePluginTBars)
     EVT_MENU(XRCID("toggle_panes"),             clMainFrame::OnTogglePanes)
+    EVT_MENU(XRCID("hide_status_bar"),          clMainFrame::OnShowStatusBar)
+    EVT_UPDATE_UI(XRCID("hide_status_bar"),     clMainFrame::OnShowStatusBarUI)
+    EVT_MENU(XRCID("hide_tool_bar"),            clMainFrame::OnShowToolbar)
+    EVT_UPDATE_UI(XRCID("hide_tool_bar"),       clMainFrame::OnShowToolbarUI)
     EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchCommandEvent)
 
     EVT_UPDATE_UI(XRCID("word_wrap"),           clMainFrame::DispatchUpdateUIEvent)
@@ -1045,12 +1049,11 @@ void clMainFrame::CreateGUIControls(void)
         UpdateBuildTools();
     }
 
-#if wxVERSION_NUMBER >= 2900
     // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
     SendSizeEvent(wxSEND_EVENT_POST);
+    
     // Ditto the workspace pane auinotebook
     GetWorkspacePane()->SendSizeEvent(wxSEND_EVENT_POST);
-#endif
 }
 
 void clMainFrame::CreateViewAsSubMenu()
@@ -3461,8 +3464,16 @@ void clMainFrame::CompleteInitialization()
 
     // Start the Zombie Reaper thread
     m_zombieReaper.Start();
-
 #endif
+
+    // Hide / Show status/tool bar
+    if ( GetToolBar() && !clConfig::Get().Read("ShowToolBar", true) ) {
+        GetToolBar()->Hide();
+    }
+    
+    if ( !clConfig::Get().Read("ShowStatusBar", true) ) {
+        GetStatusBar()->Hide();
+    }
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
@@ -5495,11 +5506,6 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
 void clMainFrame::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-//    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-//    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-//    SetBackgroundColour( bgColour );
-//    SetForegroundColour( fgColour );
-//    Refresh();
 }
 
 void clMainFrame::OnChangeActiveBookmarkType(wxCommandEvent& e)
@@ -5526,3 +5532,34 @@ void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e)
     e.Enable( GetMainBook()->GetActiveEditor() != NULL );
 }
 
+
+void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
+{
+    GetStatusBar()->Show( event.IsChecked() );
+    SendSizeEvent();
+    clConfig::Get().Write("ShowStatusBar", event.IsChecked());
+}
+
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event)
+{
+    event.Check( clConfig::Get().Read("ShowStatusBar", true) );
+}
+
+void clMainFrame::OnShowToolbar(wxCommandEvent& event)
+{
+    // Hide the _native_ toolbar
+    if ( GetToolBar() ) {
+        GetToolBar()->Show( event.IsChecked() );
+        SendSizeEvent();
+        clConfig::Get().Write("ShowToolBar", event.IsChecked());
+    }
+}
+
+void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
+{
+    if ( !GetToolBar() ) {
+        event.Enable( false );
+    } else {
+        event.Check( clConfig::Get().Read("ShowToolBar", true) );
+    }
+}

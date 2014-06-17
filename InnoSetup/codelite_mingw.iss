@@ -11,7 +11,7 @@ DefaultDirName={reg:HKLM\Software\codelite\settings,InstalPath|{pf}\CodeLite}
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-mingw4.8.1
+OutputBaseFilename=codelite-6.0.1-mingw4.8.1
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -40,7 +40,7 @@ Source: "..\Runtime\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion; 
 Source: "..\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 
-;; ---- wxWidgets DLLs 
+;; ---- wxWidgets DLLs
 Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxbase30u_gcc_cl.dll";         DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxbase30u_net_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxbase30u_xml_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor

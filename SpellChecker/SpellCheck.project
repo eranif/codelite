@@ -191,15 +191,13 @@
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="./hunspell/lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libhunspelld.a"/>
-        <Library Value="wxmsw30ud_stc"/>
-        <Library Value="wxscintilla"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ConfigurationName)/$(ProjectName)-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>

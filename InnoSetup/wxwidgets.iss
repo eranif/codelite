@@ -2,13 +2,13 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=wxWidgets 3.0.0
-AppVerName=wxWidgets 3.0.0
+AppName=wxWidgets 3.0.1
+AppVerName=wxWidgets 3.0.1
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
-DefaultDirName={sd}\wxWidgets-3.0.0
-DefaultGroupName=wxWidgets-3.0.0
+DefaultDirName={sd}\wxWidgets-3.0.1
+DefaultGroupName=wxWidgets-3.0.1
 OutputDir=.
 OutputBaseFilename=wxwidgets-3.0-tdm-gcc-481-32-devel
 ChangesEnvironment=yes
@@ -29,10 +29,10 @@ Name: modifypath; Description: Add wxWidgets directory to your PATH environment 
 Name: "eng"; MessagesFile: "compiler:Default.isl"
 
 [Components]
-Name: "wxWidgets"; Description: "wxWidgets, Cross-Platform GUI Library (v3.0.0)"; Types: full; Flags: fixed
+Name: "wxWidgets"; Description: "wxWidgets, Cross-Platform GUI Library (v3.0.1)"; Types: full; Flags: fixed
 
 [Files]
-Source: "..\Runtime\wxWidgets-3.0.0\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion ; Components: wxWidgets
+Source: "..\Runtime\wxWidgets-3.0.1\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion ; Components: wxWidgets
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\lib\gcc_dll"; Flags: ignoreversion; Components: wxWidgets
 
 [Icons] 

@@ -159,3 +159,4 @@ select_next|Search|Select Next Occurrence|Ctrl-F3
 select_previous|Search|Select Previous Occurrence|Ctrl-Shift-F3
 hide_status_bar|View|Show Status Bar|
 hide_tool_bar|View|Show ToolBar|
+minimal_view|View|Toggle Minimal View|

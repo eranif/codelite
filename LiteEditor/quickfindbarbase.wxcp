@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	51,
+		"m_objCounter":	52,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafteryhjh4ZInitBitmapResources",
 		"m_bitmapsFile":	"quickfindbarbase_liteeditor_bitmaps.cpp",
@@ -22,7 +22,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"-1,-1"
+					"m_value":	"400,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -128,7 +128,7 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxLEFT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL", "wxALIGN_CENTER_VERTICAL"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL", "wxALIGN_CENTER_VERTICAL"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -641,7 +641,7 @@
 							"gbSpan":	",",
 							"gbPosition":	",",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxEXPAND", "wxALIGN_TOP"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -744,6 +744,10 @@
 											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Text Hint",
+											"m_value":	"<Type to start a search>"
 										}, {
 											"type":	"string",
 											"m_label":	"Max Length:",
@@ -850,6 +854,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Text Hint",
+											"m_value":	"<Type any replacement string>"
+										}, {
+											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
 										}, {
@@ -862,13 +870,6 @@
 											"m_value":	false
 										}],
 									"m_events":	[{
-											"m_eventName":	"wxEVT_UPDATE_UI",
-											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
-											"m_functionNameAndSignature":	"OnUpdateUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event",
-											"m_noBody":	false
-										}, {
 											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",

@@ -69,8 +69,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_lastTextPtr(NULL)
     , m_themeHelper(this)
 {
-    m_findWhat->SetHint(_("Find what..."));
-    m_replaceWith->SetHint(_("Replace with..."));
     Hide();
     DoShowControls();
 

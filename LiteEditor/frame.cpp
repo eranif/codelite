@@ -291,6 +291,8 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("hide_status_bar"),     clMainFrame::OnShowStatusBarUI)
     EVT_MENU(XRCID("hide_tool_bar"),            clMainFrame::OnShowToolbar)
     EVT_UPDATE_UI(XRCID("hide_tool_bar"),       clMainFrame::OnShowToolbarUI)
+    EVT_MENU(XRCID("minimal_view"),             clMainFrame::OnMinimalView)
+    
     EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchCommandEvent)
 
     EVT_UPDATE_UI(XRCID("word_wrap"),           clMainFrame::DispatchUpdateUIEvent)
@@ -927,13 +929,13 @@ void clMainFrame::CreateGUIControls(void)
 
     // Add the explorer pane
     m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
-    m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().MinimizeButton().MaximizeButton().Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
+    m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().CaptionVisible(false).MinimizeButton().MaximizeButton().Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
     RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
     //add the debugger locals tree, make it hidden by default
     m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
     m_mgr.AddPane(m_debuggerPane,
-                  wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton().Hide().MaximizeButton());
+                  wxAuiPaneInfo().CaptionVisible(false).Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton().Hide().MaximizeButton());
     RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
     m_mainBook = new MainBook(this);
@@ -942,7 +944,7 @@ void clMainFrame::CreateGUIControls(void)
 
     m_outputPane = new OutputPane(this, wxT("Output View"));
     wxAuiPaneInfo paneInfo;
-    m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(true).MinimizeButton().Show().BestSize(wxSize(400, 200)).MaximizeButton());
+    m_mgr.AddPane(m_outputPane, paneInfo.CaptionVisible(false).Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).MinimizeButton().Show().BestSize(wxSize(400, 200)).MaximizeButton());
     RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
     long show_nav(1);
@@ -3474,6 +3476,11 @@ void clMainFrame::CompleteInitialization()
     if ( !clConfig::Get().Read("ShowStatusBar", true) ) {
         GetStatusBar()->Hide();
     }
+    
+    {
+        wxCommandEvent dummy;
+        OnMinimalView(dummy);
+    }
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
@@ -4913,7 +4920,7 @@ void clMainFrame::UpdateAUI()
     wxAuiPaneInfo& paneInfo = m_mgr.GetPane(wxT("Output View"));
 
     if (paneInfo.IsOk()) {
-        paneInfo.CaptionVisible(true);
+        paneInfo.CaptionVisible(false);
         m_mgr.Update();
     }
 }
@@ -5542,7 +5549,7 @@ void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 
 void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event)
 {
-    event.Check( clConfig::Get().Read("ShowStatusBar", true) );
+    event.Check( GetStatusBar()->IsShown() );
 }
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
@@ -5560,6 +5567,45 @@ void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
     if ( !GetToolBar() ) {
         event.Enable( false );
     } else {
-        event.Check( clConfig::Get().Read("ShowToolBar", true) );
+        event.Check( GetToolBar()->IsShown() );
     }
+}
+
+void clMainFrame::OnMinimalView(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    // load the current state
+    bool isMinimalView = clConfig::Get().Read("MinimalView", false);
+    isMinimalView = !isMinimalView;
+    
+    if ( isMinimalView ) { 
+        // Hide all panes
+        GetStatusBar()->Show( false );
+        if ( GetToolBar() ) {
+            GetToolBar()->Show( false );
+        }
+        
+        wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
+        for(size_t i=0; i<panes.GetCount(); ++i) {
+            if ( panes.Item(i).IsOk() && panes.Item(i).HasCloseButton() ) {
+                panes.Item(i).CaptionVisible(false);
+            }
+        }
+        m_mgr.Update();
+        
+    } else {
+        // Hide all panes
+        GetStatusBar()->Show( true );
+        if ( GetToolBar() ) {
+            GetToolBar()->Show( true );
+        }
+        wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
+        for(size_t i=0; i<panes.GetCount(); ++i) {
+            if ( panes.Item(i).IsOk() && panes.Item(i).HasCloseButton() ) {
+                panes.Item(i).CaptionVisible(true);
+            }
+        }
+        m_mgr.Update();
+    }
+    clConfig::Get().Write("MinimalView", isMinimalView);
 }

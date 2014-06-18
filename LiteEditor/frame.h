@@ -410,6 +410,7 @@ protected:
     void OnShowStatusBarUI(wxUpdateUIEvent &event);
     void OnShowToolbar(wxCommandEvent& event);
     void OnShowToolbarUI(wxUpdateUIEvent& event);
+    void OnMinimalView(wxCommandEvent& event);
     void OnProjectNewWorkspace(wxCommandEvent &event);
     void OnProjectNewProject(wxCommandEvent &event);
     void OnReloadWorkspace(wxCommandEvent &event);

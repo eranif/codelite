@@ -42,9 +42,6 @@
   <Project Name="CMakePlugin" Path="CMakePlugin/CMakePlugin.project" Active="No"/>
   <Project Name="CodeLiteDiff" Path="CodeLiteDiff/CodeLiteDiff.project" Active="No"/>
   <Project Name="LLDBDebugger" Path="LLDBDebugger/LLDBDebugger.project" Active="No"/>
-  <Environment>
-    <![CDATA[]]>
-  </Environment>
   <Project Name="SpellCheck" Path="SpellChecker/SpellCheck.project" Active="No"/>
   <Project Name="hunspell" Path="SpellChecker/hunspell/hunspell.project" Active="No"/>
   <BuildMatrix>
@@ -283,4 +280,7 @@
       <Project Name="hunspell" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
+  <Environment>
+    <![CDATA[]]>
+  </Environment>
 </CodeLite_Workspace>

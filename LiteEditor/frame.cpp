@@ -291,8 +291,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("hide_status_bar"),     clMainFrame::OnShowStatusBarUI)
     EVT_MENU(XRCID("hide_tool_bar"),            clMainFrame::OnShowToolbar)
     EVT_UPDATE_UI(XRCID("hide_tool_bar"),       clMainFrame::OnShowToolbarUI)
-    EVT_MENU(XRCID("minimal_view"),             clMainFrame::OnMinimalView)
-    
     EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchCommandEvent)
 
     EVT_UPDATE_UI(XRCID("word_wrap"),           clMainFrame::DispatchUpdateUIEvent)
@@ -3468,10 +3466,6 @@ void clMainFrame::CompleteInitialization()
     m_zombieReaper.Start();
 #endif
 
-    {
-        wxCommandEvent dummy;
-        OnMinimalView(dummy);
-    }
     // Hide / Show status/tool bar
     if ( GetToolBar() && !clConfig::Get().Read("ShowToolBar", true) ) {
         GetToolBar()->Hide();
@@ -3480,6 +3474,8 @@ void clMainFrame::CompleteInitialization()
     if ( !clConfig::Get().Read("ShowStatusBar", true) ) {
         GetStatusBar()->Hide();
     }
+    
+    ShowOrHideCaptions();
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
@@ -5570,20 +5566,12 @@ void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
     }
 }
 
-void clMainFrame::OnMinimalView(wxCommandEvent& event)
+void clMainFrame::ShowOrHideCaptions()
 {
-    wxUnusedVar(event);
     // load the current state
-    bool isMinimalView = clConfig::Get().Read("MinimalView", false);
-    isMinimalView = !isMinimalView;
+    bool showCaptions = EditorConfigST::Get()->GetOptions()->IsShowDockingWindowCaption();
     
-    if ( isMinimalView ) { 
-        // Hide all panes
-        GetStatusBar()->Show( false );
-        if ( GetToolBar() ) {
-            GetToolBar()->Show( false );
-        }
-        
+    if ( !showCaptions ) { 
         wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
         for(size_t i=0; i<panes.GetCount(); ++i) {
             if ( panes.Item(i).IsOk() && panes.Item(i).HasCloseButton() ) {
@@ -5593,11 +5581,6 @@ void clMainFrame::OnMinimalView(wxCommandEvent& event)
         m_mgr.Update();
         
     } else {
-        // Hide all panes
-        GetStatusBar()->Show( true );
-        if ( GetToolBar() ) {
-            GetToolBar()->Show( true );
-        }
         wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
         for(size_t i=0; i<panes.GetCount(); ++i) {
             if ( panes.Item(i).IsOk() && panes.Item(i).HasCloseButton() ) {
@@ -5606,7 +5589,5 @@ void clMainFrame::OnMinimalView(wxCommandEvent& event)
         }
         m_mgr.Update();
     }
-    clConfig::Get().Write("MinimalView",   isMinimalView);
-    clConfig::Get().Write("ShowToolBar",   !isMinimalView);
-    clConfig::Get().Write("ShowStatusBar", !isMinimalView);
+    PostSizeEvent();
 }

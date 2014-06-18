@@ -938,7 +938,8 @@ void MainBook::ApplySettingsChanges()
     }
 
     clMainFrame::Get()->UpdateAUI();
-
+    clMainFrame::Get()->ShowOrHideCaptions();
+    
     // Last: reposition the findBar
     DoPositionFindBar(2);
 }

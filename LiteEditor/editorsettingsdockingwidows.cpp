@@ -24,6 +24,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
     m_checkBoxDontFoldSearchResults->SetValue        (options->GetDontAutoFoldResults());
     m_checkBoxShowDebugOnRun->SetValue               (options->GetShowDebugOnRun());
     m_radioBoxHint->SetSelection                     (options->GetDockingStyle());
+    m_checkBoxHideCaptions->SetValue                 (!options->IsShowDockingWindowCaption());
 
     int tabStyle (0); // Glossy
     m_startingFlags = OptionsConfig::TabGlossy;
@@ -60,7 +61,8 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetDontAutoFoldResults( m_checkBoxDontFoldSearchResults->IsChecked() );
     options->SetShowDebugOnRun( m_checkBoxShowDebugOnRun->IsChecked() );
     options->SetDockingStyle( m_radioBoxHint->GetSelection() );
-
+    options->SetShowDockingWindowCaption( !m_checkBoxHideCaptions->IsChecked() );
+    
     size_t flags(options->GetOptions());
     m_endFlags = 0;
     // set the tab control options:

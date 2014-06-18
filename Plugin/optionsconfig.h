@@ -59,6 +59,7 @@ public:
         Opt_Disable_Multiselect      = 0x00080000,
         Opt_Disable_Multipaste       = 0x00100000,
         Opt_AllowCaretAfterEndOfLine = 0x00200000,
+        Opt_HideDockingWindowCaption = 0x00400000,
     };
 
 protected:
@@ -570,6 +571,19 @@ public:
     const wxColour& GetDebuggerMarkerLine() const {
         return m_debuggerMarkerLine;
     }
+    
+    bool SetShowDockingWindowCaption(bool show) {
+        if ( !show ) {
+            m_options |= Opt_HideDockingWindowCaption;
+        } else {
+            m_options &= Opt_HideDockingWindowCaption;
+        }
+    }
+    
+    bool IsShowDockingWindowCaption() const {
+        return !(m_options & Opt_HideDockingWindowCaption);
+    }
+    
     /**
      * Return an XML representation of this object
      * \return XML node

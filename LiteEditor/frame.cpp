@@ -3468,6 +3468,10 @@ void clMainFrame::CompleteInitialization()
     m_zombieReaper.Start();
 #endif
 
+    {
+        wxCommandEvent dummy;
+        OnMinimalView(dummy);
+    }
     // Hide / Show status/tool bar
     if ( GetToolBar() && !clConfig::Get().Read("ShowToolBar", true) ) {
         GetToolBar()->Hide();
@@ -3475,11 +3479,6 @@ void clMainFrame::CompleteInitialization()
     
     if ( !clConfig::Get().Read("ShowStatusBar", true) ) {
         GetStatusBar()->Hide();
-    }
-    
-    {
-        wxCommandEvent dummy;
-        OnMinimalView(dummy);
     }
 }
 
@@ -5607,5 +5606,7 @@ void clMainFrame::OnMinimalView(wxCommandEvent& event)
         }
         m_mgr.Update();
     }
-    clConfig::Get().Write("MinimalView", isMinimalView);
+    clConfig::Get().Write("MinimalView",   isMinimalView);
+    clConfig::Get().Write("ShowToolBar",   !isMinimalView);
+    clConfig::Get().Write("ShowStatusBar", !isMinimalView);
 }

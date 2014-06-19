@@ -821,5 +821,6 @@ void CompilerPatternDlg::OnSubmit( wxCommandEvent& event )
 
 void CompilerMainPage::OnAddCompilers(wxCommandEvent& event)
 {
-    wxGetTopLevelParent(this)->CallAfter( &AdvancedDlg::OnAutoDetectCompilers, m_button222 );
+    AdvancedDlg *dlg = dynamic_cast<AdvancedDlg*>(wxGetTopLevelParent(this));
+    dlg->OnAutoDetectCompilers( m_button222 );
 }

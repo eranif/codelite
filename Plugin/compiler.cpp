@@ -65,6 +65,12 @@ Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
     if (node) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
         m_compilerFamily = XmlUtils::ReadString(node, "CompilerFamily");
+        
+        if ( m_compilerFamily == "GNU GCC" ) {
+            // fix wrong name 
+            m_compilerFamily = COMPILER_FAMILY_GCC;
+        }
+        
         m_isDefault = XmlUtils::ReadBool(node, "IsDefault");
         
         if (!node->HasProp(wxT("GenerateDependenciesFiles"))) {
@@ -603,7 +609,7 @@ wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
 wxArrayString Compiler::POSIXGetIncludePaths() const
 {
     wxString command;
-    command << GetTool("CXX") << "%s -v -x c++ /dev/null -fsyntax-only";
+    command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
 
     wxString outputStr = ::wxShellExec(command, wxEmptyString);
     

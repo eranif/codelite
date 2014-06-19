@@ -110,7 +110,7 @@ void CompilerLocatorGCC::AddTools(CompilerPtr compiler,
 {
     wxFileName masterPath(binFolder, "");
     wxString defaultBinFolder = "/usr/bin";
-    compiler->SetCompilerFamily("GNU GCC");
+    compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
     compiler->SetInstallationPath( binFolder );
 
     CL_DEBUG("Found GNU GCC compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());

@@ -40,6 +40,7 @@
 #include <build_settings_config.h>
 #include <compiler.h>
 #include <ICompilerLocator.h>
+#include <wx/msgdlg.h>
 
 //---------------------------------------------------------
 
@@ -379,8 +380,10 @@ void TagsOptionsDlg::OnSuggestSearchPaths(wxCommandEvent& event)
     wxUnusedVar(event);
 
 #ifdef __WXMSW__
+    // Use MinGW compiler for Windows by default
     CompilerPtr comp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_MINGW);
 #else
+    // Otherwise, use GCC
     CompilerPtr comp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_GCC);
 #endif
     wxArrayString paths;
@@ -392,15 +395,16 @@ void TagsOptionsDlg::OnSuggestSearchPaths(wxCommandEvent& event)
     for(size_t i=0; i<paths.GetCount(); i++) {
         suggestedPaths << paths.Item(i) << wxT("\n");
     }
-
+    
     suggestedPaths.Trim().Trim(false);
-    if(m_textCtrlClangSearchPaths->GetValue().Contains(suggestedPaths) == false) {
-        wxString newVal = m_textCtrlClangSearchPaths->GetValue();
-        newVal.Trim().Trim(false);
-        if(newVal.IsEmpty() == false)
-            newVal << wxT("\n");
-        newVal << suggestedPaths;
-        m_textCtrlClangSearchPaths->SetValue(newVal);
+    if ( !suggestedPaths.IsEmpty() ) {
+        if ( ::wxMessageBox(_("Accepting this suggestion will replace your old search path with these paths\nContinue?"), 
+                            "CodeLite", 
+                            wxYES_NO|wxYES_DEFAULT|wxCANCEL|wxICON_QUESTION) != wxYES ) {
+            return;
+        }
+        m_textCtrlClangSearchPaths->Clear();
+        m_textCtrlClangSearchPaths->ChangeValue( suggestedPaths );
     }
 }
 

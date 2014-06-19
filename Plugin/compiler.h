@@ -112,6 +112,7 @@ protected:
 private:
     wxString GetGCCVersion() const;
     wxString GetIncludePath(const wxString &pathSuffix) const;
+    wxArrayString POSIXGetIncludePaths() const;
     
 public:
     typedef std::map<wxString, wxString>::const_iterator ConstIterator;

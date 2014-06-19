@@ -32,6 +32,8 @@
 #include <ICompilerLocator.h>
 #include <wx/regex.h>
 #include <procutils.h>
+#include "globals.h"
+#include <wx/tokenzr.h>
 
 Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
     : m_objectNameIdenticalToFileName(false)
@@ -564,9 +566,9 @@ wxArrayString Compiler::GetDefaultIncludePaths() const
         defaultPaths.Add( GetIncludePath("include") );
         defaultPaths.Add( GetIncludePath("lib/gcc/mingw32/" + ver + "/include-fixed") );
 
-    } else if ( GetCompilerFamily() == COMPILER_FAMILY_CLANG ) {
+    } else if ( GetCompilerFamily() == COMPILER_FAMILY_CLANG || GetCompilerFamily() == COMPILER_FAMILY_GCC) {
 #ifndef __WXMSW__
-        
+        defaultPaths = POSIXGetIncludePaths();
 #endif
     }
     return defaultPaths;
@@ -598,3 +600,42 @@ wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
     return fn.GetPath();
 }
 
+wxArrayString Compiler::POSIXGetIncludePaths() const
+{
+    wxString command;
+    command << GetTool("CXX") << "%s -v -x c++ /dev/null -fsyntax-only";
+
+    wxString outputStr = ::wxShellExec(command, wxEmptyString);
+    
+    wxArrayString arr;
+    wxArrayString outputArr = ::wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
+    
+    // Analyze the output
+    bool collect(false);
+    for(size_t i=0; i<outputArr.GetCount(); i++) {
+        if(outputArr[i].Contains(wxT("#include <...> search starts here:"))) {
+            collect = true;
+            continue;
+        }
+
+        if(outputArr[i].Contains(wxT("End of search list."))) {
+            break;
+        }
+
+        if(collect) {
+
+            wxString file = outputArr.Item(i).Trim().Trim(false);
+
+            // on Mac, (framework directory) appears also,
+            // but it is harmless to use it under all OSs
+            file.Replace(wxT("(framework directory)"), wxT(""));
+            file.Trim().Trim(false);
+
+            wxFileName includePath(file, "");
+            includePath.Normalize();
+
+            arr.Add( includePath.GetPath() );
+        }
+    }
+    return arr;
+}

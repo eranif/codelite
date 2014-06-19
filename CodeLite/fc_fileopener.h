@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <list>
 #include "codelite_exports.h"
+#include <wx/string.h>
 
 typedef struct yy_buffer_state *BufferState;
 struct fcState {

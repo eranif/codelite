@@ -30,6 +30,7 @@
 #include "codelite_exports.h"
 #include <map>
 #include <list>
+#include <wx/arrstr.h>
 
 
 /**

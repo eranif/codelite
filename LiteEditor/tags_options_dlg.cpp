@@ -37,6 +37,9 @@
 #include "globals.h"
 #include "includepathlocator.h"
 #include "clang_code_completion.h"
+#include <build_settings_config.h>
+#include <compiler.h>
+#include <ICompilerLocator.h>
 
 //---------------------------------------------------------
 
@@ -374,10 +377,17 @@ void TagsOptionsDlg::OnParse(wxCommandEvent& event)
 void TagsOptionsDlg::OnSuggestSearchPaths(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    IncludePathLocator locator(PluginManager::Get());
-    wxArrayString paths, excludes;
-    locator.Locate(paths, excludes, false);
 
+#ifdef __WXMSW__
+    CompilerPtr comp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_MINGW);
+#else
+    CompilerPtr comp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_GCC);
+#endif
+    wxArrayString paths;
+    if ( comp ) {
+        paths = comp->GetDefaultIncludePaths();
+    }
+    
     wxString suggestedPaths;
     for(size_t i=0; i<paths.GetCount(); i++) {
         suggestedPaths << paths.Item(i) << wxT("\n");

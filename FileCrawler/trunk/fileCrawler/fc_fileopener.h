@@ -6,62 +6,72 @@
 #include <set>
 #include <stdio.h>
 #include <list>
+#include "codelite_exports.h"
 
-#ifndef WXDLLIMPEXP_CL
-
-#ifdef WXMAKINGDLL_CL
-#    define WXDLLIMPEXP_CL __declspec(dllexport)
-#elif defined(WXUSINGDLL_CL)
-#    define WXDLLIMPEXP_CL __declspec(dllimport)
-#else // not making nor using DLL
-#    define WXDLLIMPEXP_CL
-#endif
-
-#endif
+typedef struct yy_buffer_state *BufferState;
+struct fcState {
+    BufferState buffer;
+    wxString    filename;
+};
 
 class WXDLLIMPEXP_CL fcFileOpener
 {
 public:
-    typedef std::list<std::string>   List_t;
-    typedef std::set<std::string>    Set_t;
-    typedef std::vector<std::string> Vector_t;
+    typedef std::list<wxString>   List_t;
+    typedef std::set<wxString>    Set_t;
+    typedef std::vector<wxString> Vector_t;
+    typedef std::list<fcState>    Stack_t;
 
 protected:
     static fcFileOpener* ms_instance       ;
 
-    Vector_t _searchPath       ;
-    Vector_t _excludePaths     ;
-    Set_t    _matchedfiles     ;
-    Set_t    _scannedfiles     ;
-    int      _depth            ;
-    int      _maxDepth         ;
-    Set_t    _namespaces       ;
-    Set_t    _namespaceAliases ;
-    List_t   _includeStatements;
-
-private:
-    bool IsPathExist(const std::string &path);
-    bool IsExcludePathExist(const std::string &path);
-    static void normalize_path( std::string &path );
-    FILE *try_open(const std::string &path, const std::string &name);
+    fcFileOpener::Vector_t _searchPath       ;
+    fcFileOpener::Vector_t _excludePaths     ;
+    fcFileOpener::Set_t    _matchedfiles     ;
+    fcFileOpener::Set_t    _scannedfiles     ;
+    int                    _depth            ;
+    int                    _maxDepth         ;
+    fcFileOpener::Set_t    _namespaces       ;
+    fcFileOpener::Set_t    _namespaceAliases ;
+    fcFileOpener::List_t   _includeStatements;
+    fcFileOpener::Stack_t  _states;
+    wxString               _cwd;
 
 public:
-    static fcFileOpener* Instance();
+    static fcFileOpener* Get();
     static void Release();
 
-    static std::string extract_path(const std::string &filePath);
+    FILE* try_open(const wxString &path, const wxString &name, wxString &filepath);
 
-    void AddSearchPath(const std::string &path);
-    void AddExcludePath(const std::string &path);
-    FILE *OpenFile(const std::string &include_path);
+    // Flex buffer states
+    BufferState PopBufferState();
+    void PushBufferState(BufferState buffer, const wxString &filename);
+    bool IsStateStackEmpty() const {
+        return _states.empty();
+    }
 
-    void ClearResults()    {
+    void SetCwd(const wxString& _cwd) {
+        this->_cwd = _cwd;
+    }
+    void AddSearchPath(const wxString &path);
+    void AddExcludePath(const wxString &path);
+
+    /**
+     * @brief open a file based on the include paths and return a pointer to it.
+     * @param include_path the string as appears inside the #include statement
+     * @param filepath [output] the file that was opened
+     */
+    FILE *OpenFile(const wxString &include_path, wxString &filepath);
+
+    void ClearResults() {
         _matchedfiles.clear();
         _scannedfiles.clear();
         _namespaces.clear();
         _namespaceAliases.clear();
         _includeStatements.clear();
         _depth = 0;
+        _cwd.Clear();
+        _states.clear();
     }
 
     void ClearSearchPath() {
@@ -93,13 +103,13 @@ public:
     }
 
     // getters
-    const Set_t& GetResults() const {
+    const fcFileOpener::Set_t& GetResults() const {
         return _matchedfiles;
     }
 
     ////////////////////////////////////////////////////
     // Using namespace support
-    const Set_t& GetNamespaces() const {
+    const fcFileOpener::Set_t& GetNamespaces() const {
         return _namespaces;
     }
 
@@ -110,7 +120,7 @@ public:
 
     ////////////////////////////////////////////////////
     // Namespace aliasing
-    const Set_t& GetNamespaceAliases() const {
+    const fcFileOpener::Set_t& GetNamespaceAliases() const {
         return _namespaceAliases;
     }
     void ClearNamespaceAliases() {
@@ -119,8 +129,8 @@ public:
     void AddNamespaceAlias(const char* alias) {
         _namespaceAliases.insert(alias);
     }
-    void AddIncludeStatement(const std::string& statement);
-    const List_t& GetIncludeStatements() const {
+    void AddIncludeStatement(const wxString& statement);
+    const fcFileOpener::List_t& GetIncludeStatements() const {
         return _includeStatements;
     }
 private:

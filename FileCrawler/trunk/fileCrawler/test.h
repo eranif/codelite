@@ -12,6 +12,9 @@
 #ifndef _WX_TREECTRL_H_BASE_
 #define _WX_TREECTRL_H_BASE_
 
+#include "fc_fileopener.h"
+#include "crawler_include.h"
+
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------

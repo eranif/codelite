@@ -108,12 +108,20 @@ protected:
     wxString                                      m_compilerFamily;
     bool                                          m_isDefault;
     wxString                                      m_installationPath;
+private:
+    wxString GetGCCVersion() const;
+    wxString GetIncludePath(const wxString &pathSuffix) const;
     
 public:
     typedef std::map<wxString, wxString>::const_iterator ConstIterator;
 
     Compiler(wxXmlNode *node, Compiler::eRegexType regexType = Compiler::kRegexGNU );
     virtual ~Compiler();
+    
+    /**
+     * @brief return the compiler default include paths
+     */
+    wxArrayString GetDefaultIncludePaths() const;
     
     /**
      * @brief return true if this compiler is compatible with GNU compilers

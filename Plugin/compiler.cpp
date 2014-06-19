@@ -30,6 +30,8 @@
 #include "build_system.h"
 #include "build_settings_config.h"
 #include <ICompilerLocator.h>
+#include <wx/regex.h>
+#include <procutils.h>
 
 Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
     : m_objectNameIdenticalToFileName(false)
@@ -544,3 +546,55 @@ void Compiler::AddDefaultGnuLinkerOptions()
     AddLinkerOption("-pg",        "Profile code when executed");
     AddLinkerOption("-s",         "Remove all symbol table and relocation information from the executable");
 }
+
+wxArrayString Compiler::GetDefaultIncludePaths() const
+{
+    wxArrayString defaultPaths;
+    if ( GetCompilerFamily() == COMPILER_FAMILY_MINGW ) {
+        wxString ver = GetGCCVersion();
+        if ( ver.IsEmpty() ) {
+            return defaultPaths;
+        }
+        
+        // FIXME : support 64 bit compilers
+        defaultPaths.Add( GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++") );
+        defaultPaths.Add( GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/mingw32") );
+        defaultPaths.Add( GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/backward") );
+        defaultPaths.Add( GetIncludePath("lib/gcc/mingw32/" + ver + "/include") );
+        defaultPaths.Add( GetIncludePath("include") );
+        defaultPaths.Add( GetIncludePath("lib/gcc/mingw32/" + ver + "/include-fixed") );
+
+    } else if ( GetCompilerFamily() == COMPILER_FAMILY_CLANG ) {
+#ifndef __WXMSW__
+        
+#endif
+    }
+    return defaultPaths;
+}
+
+wxString Compiler::GetGCCVersion() const
+{
+    // Get the compiler version
+    static wxRegEx reVersion("([0-9]+\\.[0-9]+\\.[0-9]+)");
+    wxString command;
+    command << GetTool("CXX") << " --version";
+    wxArrayString out;
+    ProcUtils::SafeExecuteCommand(command, out);
+    if ( out.IsEmpty() ) {
+        return "";
+    }
+    
+    if ( reVersion.Matches( out.Item(0) ) ) {
+        return reVersion.GetMatch( out.Item(0) );
+    }
+    return "";
+}
+
+wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
+{
+    wxString fullpath;
+    fullpath << GetInstallationPath() << "/" << pathSuffix;
+    wxFileName fn(fullpath, "");
+    return fn.GetPath();
+}
+

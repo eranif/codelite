@@ -186,11 +186,11 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 {
     DEBUG_MESSAGE( wxString::Format(wxT("ProcessIncludes -> started")) ) ;
 
-    std::set<std::string> *newSet = new std::set<std::string>();
+    std::set<wxString> *newSet = new std::set<wxString>();
     FindIncludedFiles(req, newSet);
 
 #ifdef PARSE_THREAD_DBG
-    std::set<std::string>::iterator iter = newSet->begin();
+    std::set<wxString>::iterator iter = newSet->begin();
     for(; iter != newSet->end(); iter++) {
         wxString fileN((*iter).c_str(), wxConvUTF8);
         DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> %s"), fileN.c_str() ) );
@@ -274,14 +274,14 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
         wxArrayString includePaths, excludePaths;
         GetSearchPaths( includePaths, excludePaths );
 
-        fcFileOpener::Instance()->ClearResults();
-        fcFileOpener::Instance()->ClearSearchPath();
+        fcFileOpener::Get()->ClearResults();
+        fcFileOpener::Get()->ClearSearchPath();
         for(size_t i=0; i<includePaths.GetCount(); i++) {
-            fcFileOpener::Instance()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
+            fcFileOpener::Get()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
         }
 
         for(size_t i=0; i<excludePaths.GetCount(); i++) {
-            fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
+            fcFileOpener::Get()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
         }
 
         // Invoke the crawler
@@ -298,10 +298,10 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 
     }
 
-    std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
-    std::set<std::string>::iterator iter = fileSet.begin();
+    std::set<wxString> fileSet = fcFileOpener::Get()->GetResults();
+    std::set<wxString>::iterator iter = fileSet.begin();
     for (; iter != fileSet.end(); iter++ ) {
-        wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
+        wxFileName fn( *iter );
         fn.MakeAbsolute();
         if ( arrFiles.Index(fn.GetFullPath()) == wxNOT_FOUND ) {
             arrFiles.Add(fn.GetFullPath());
@@ -474,7 +474,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
     }
 }
 
-void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<std::string>* newSet)
+void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSet)
 {
     wxArrayString searchPaths, excludePaths, filteredFileList;
     GetSearchPaths( searchPaths, excludePaths );
@@ -499,19 +499,19 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<std::string>* ne
         // Before using the 'crawlerScan' we lock it, since it is not mt-safe
         wxCriticalSectionLocker locker( TagsManagerST::Get()->m_crawlerLocker );
 
-        fcFileOpener::Instance()->ClearResults();
-        fcFileOpener::Instance()->ClearSearchPath();
+        fcFileOpener::Get()->ClearResults();
+        fcFileOpener::Get()->ClearSearchPath();
 
         for(size_t i=0; i<searchPaths.GetCount(); i++) {
             const wxCharBuffer path = _C(searchPaths.Item(i));
             DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()) );
-            fcFileOpener::Instance()->AddSearchPath(path.data());
+            fcFileOpener::Get()->AddSearchPath(path.data());
         }
 
         for(size_t i=0; i<excludePaths.GetCount(); i++) {
             const wxCharBuffer path = _C(excludePaths.Item(i));
             DEBUG_MESSAGE( wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()) );
-            fcFileOpener::Instance()->AddExcludePath(path.data());
+            fcFileOpener::Get()->AddExcludePath(path.data());
         }
 
         for(size_t i=0; i<filteredFileList.GetCount(); i++) {
@@ -521,7 +521,7 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<std::string>* ne
                 return;
             }
         }
-        newSet->insert(fcFileOpener::Instance()->GetResults().begin(), fcFileOpener::Instance()->GetResults().end());
+        newSet->insert(fcFileOpener::Get()->GetResults().begin(), fcFileOpener::Get()->GetResults().end());
     }
 }
 
@@ -618,11 +618,11 @@ void ParseThread::ProcessIncludeStatements(ParseRequest* req)
         wxString file = req->getFile();
         // Retrieve the "include" files on this file only
         wxCriticalSectionLocker locker(TagsManagerST::Get()->m_crawlerLocker);
-        fcFileOpener::Instance()->ClearResults();
-        fcFileOpener::Instance()->ClearSearchPath();
+        fcFileOpener::Get()->ClearResults();
+        fcFileOpener::Get()->ClearSearchPath();
         crawlerScan(file.mb_str(wxConvUTF8).data());
 
-        const fcFileOpener::List_t& incls = fcFileOpener::Instance()->GetIncludeStatements();
+        const fcFileOpener::List_t& incls = fcFileOpener::Get()->GetIncludeStatements();
         matches->insert(matches->end(), incls.begin(), incls.end());
     }
 

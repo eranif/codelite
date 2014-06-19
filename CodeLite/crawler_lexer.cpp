@@ -542,9 +542,9 @@ char *yytext;
 #define YY_FATAL_ERROR(msg)
 
 #include <list>
+#include <wx/filename.h>
 #include "crawler_include.h"
 
-std::list<YY_BUFFER_STATE> include_stack;
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -814,7 +814,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 { /* got the namespace */
-	fcFileOpener::Instance()->AddNamespace(yytext);
+	fcFileOpener::Get()->AddNamespace(yytext);
 	BEGIN(INITIAL);
 }
 	YY_BREAK
@@ -828,7 +828,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-{fcFileOpener::Instance()->AddNamespaceAlias(yytext);}
+{fcFileOpener::Get()->AddNamespaceAlias(yytext);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
@@ -849,32 +849,28 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 { /* got the include file name */
+    // Open the new file
+    FILE * new_file(NULL);
+    
+    // keep the include statement
+    fcFileOpener::Get()->AddIncludeStatement( yytext );
+    wxString filepath;
+    if ( fcFileOpener::Get()->getDepth() < fcFileOpener::Get()->getMaxDepth() ) {
+        new_file = fcFileOpener::Get()->OpenFile( yytext, filepath );
+    }
 
-		// Open the new file
-		FILE * new_file(NULL);
+    if ( ! new_file ) {
+        // We got some error
+        BEGIN(INITIAL);
+
+    } else {
+        // keep the current buffer
+        fc_in = new_file;
+        fcFileOpener::Get()->PushBufferState( YY_CURRENT_BUFFER, filepath );
         
-        // keep the include statement
-        fcFileOpener::Instance()->AddIncludeStatement( yytext );
-        
-        if ( fcFileOpener::Instance()->getDepth() < fcFileOpener::Instance()->getMaxDepth() ) {
-			new_file = fcFileOpener::Instance()->OpenFile(yytext);
-		}
-
-		if ( ! new_file ) {
-			// We got some error
-			BEGIN(INITIAL);
-
-		} else {
-			// keep the current buffer
-			fc_in = new_file;
-			include_stack.push_back(YY_CURRENT_BUFFER);
-			yy_switch_to_buffer( yy_create_buffer( new_file, YY_BUF_SIZE ) );
-			BEGIN(INITIAL);
-
-			// since we are moving into another file, increase the current
-			// depth by 1
-			fcFileOpener::Instance()->incDepth();
-		}
+        yy_switch_to_buffer( yy_create_buffer( new_file, YY_BUF_SIZE ) );
+        BEGIN(INITIAL);
+    }
 }
 	YY_BREAK
 case 15:
@@ -903,31 +899,27 @@ case YY_STATE_EOF(c_comment):
 case YY_STATE_EOF(cpp_comment):
 case YY_STATE_EOF(using_namespace):
 {
-	if ( include_stack.empty() == false ) {
+    if ( !fcFileOpener::Get()->IsStateStackEmpty() ) {
 
-		if ( YY_CURRENT_BUFFER->yy_input_file ) {
-			fclose( YY_CURRENT_BUFFER->yy_input_file );
-			YY_CURRENT_BUFFER->yy_input_file = NULL;
-		}
+        if ( YY_CURRENT_BUFFER->yy_input_file ) {
+            fclose( YY_CURRENT_BUFFER->yy_input_file );
+            YY_CURRENT_BUFFER->yy_input_file = NULL;
+        }
 
-		yy_delete_buffer    ( YY_CURRENT_BUFFER    );
-		yy_switch_to_buffer ( include_stack.back() );
-		include_stack.pop_back();
+        yy_delete_buffer    ( YY_CURRENT_BUFFER    );
+        yy_switch_to_buffer ( fcFileOpener::Get()->PopBufferState() );
+        
+    } else {
 
-		// reduce the current depth
-		fcFileOpener::Instance()->decDepth();
+        if ( YY_CURRENT_BUFFER->yy_input_file ) {
+            fclose( YY_CURRENT_BUFFER->yy_input_file );
+            YY_CURRENT_BUFFER->yy_input_file = NULL;
 
-	} else {
+        }
 
-		if ( YY_CURRENT_BUFFER->yy_input_file ) {
-			fclose( YY_CURRENT_BUFFER->yy_input_file );
-			YY_CURRENT_BUFFER->yy_input_file = NULL;
-
-		}
-
-		yy_delete_buffer    ( YY_CURRENT_BUFFER    );
-		yyterminate();
-	}
+        yy_delete_buffer    ( YY_CURRENT_BUFFER    );
+        yyterminate();
+    }
 }
 	YY_BREAK
 case 19:
@@ -1823,20 +1815,29 @@ int yywrap() {
 
 int crawlerScan( const char* filePath )
 {
-	BEGIN INITIAL;
-	fc_lineno = 1;
-	FILE* fp = fopen(filePath, "r");
-	if ( fp == NULL ) {
-		//printf("%s\n", strerror(errno));
-		// failed to open input file...
-		return -1;
-	}
+    BEGIN INITIAL;
+    fc_lineno = 1;
+    
+    wxFileName fn(filePath);
+    if ( fn.IsRelative() ) {
+        fn.MakeAbsolute();
+    }
+    
+    FILE* fp = fopen(fn.GetFullPath().mb_str(wxConvUTF8).data(), "r");
+    if ( fp == NULL ) {
+        //printf("%s\n", strerror(errno));
+        // failed to open input file...
+        return -1;
+    }
+    
+    // set the initial search directory
+    fcFileOpener::Get()->SetCwd( fn.GetPath() );
+    
+    yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
+    fc_in = fp;
+    int rc = fc_lex();
+    yy_delete_buffer( YY_CURRENT_BUFFER );
 
-	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
-	fc_in = fp;
-	int rc = fc_lex();
-	yy_delete_buffer    ( YY_CURRENT_BUFFER    );
-
-	return rc;
+    return rc;
 }
 

@@ -3678,8 +3678,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
     clMainFrame::Get()->SetStatusMessage(_("Retagging..."), 0);
 
     wxBusyCursor busyCursor;
-    std::set<std::string> *fileSet = (std::set<std::string>*)event.GetClientData();
-//	fprintf(stderr, "fileSet size=%d\n", fileSet->size());
+    std::set<wxString> *fileSet = (std::set<wxString>*)event.GetClientData();
 
     wxArrayString projects;
     GetProjectList ( projects );
@@ -3696,17 +3695,17 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
     // files
     for (size_t i=0; i<projectFiles.size(); i++) {
         wxString fn( projectFiles.at(i).GetFullPath() );
-        fileSet->insert( fn.mb_str(wxConvUTF8).data() );
+        fileSet->insert( fn );
     }
 
 //	fprintf(stderr, "Parsing the following files\n");
     // recreate the list in the form of vector (the API requirs vector)
     projectFiles.clear();
-    std::set<std::string>::iterator iter = fileSet->begin();
+    std::set<wxString>::iterator iter = fileSet->begin();
     projectFiles.reserve( fileSet->size() );
 
-    for (; iter != fileSet->end(); iter++ ) {
-        wxFileName fn( iter->c_str() );
+    for (; iter != fileSet->end(); ++iter) {
+        wxFileName fn( *iter );
         if ( fn.IsRelative() ) {
             fn.MakeAbsolute();
         }

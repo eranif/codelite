@@ -167,7 +167,7 @@ private:
     void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
     void ParseAndStoreFiles(ParseRequest *req, const wxArrayString &arrFiles, int initalCount, ITagsStoragePtr db);
 
-    void FindIncludedFiles(ParseRequest *req, std::set<std::string> *newSet);
+    void FindIncludedFiles(ParseRequest *req, std::set<wxString> *newSet);
 };
 
 class WXDLLIMPEXP_CL ParseThreadST

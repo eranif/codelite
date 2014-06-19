@@ -305,7 +305,7 @@ wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileO
 
     fcFileOpener::List_t::const_iterator iter = includes.begin();
     for(; iter != includes.end(); ++iter) {
-        wxString displayName(iter->c_str(), wxConvUTF8);
+        wxString displayName( *iter );
         AppendItem(item, displayName, 16, 16, new MyTreeItemData(displayName, displayName) );
     }
     return item;

@@ -1761,19 +1761,19 @@ void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes
         {
             wxCriticalSectionLocker locker( GetTagsManager()->m_crawlerLocker );
 
-            fcFileOpener::Instance()->ClearResults();
-            fcFileOpener::Instance()->ClearSearchPath();
+            fcFileOpener::Get()->ClearResults();
+            fcFileOpener::Get()->ClearSearchPath();
             for(size_t i=0; i<includePaths.GetCount(); i++) {
-                fcFileOpener::Instance()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
+                fcFileOpener::Get()->AddSearchPath( includePaths.Item(i).mb_str(wxConvUTF8).data() );
             }
 
             // Invoke the crawler
             const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
             crawlerScan( cfile.data() );
 
-            std::set<std::string>::iterator iter = fcFileOpener::Instance()->GetNamespaces().begin();
-            for(; iter != fcFileOpener::Instance()->GetNamespaces().end(); iter++) {
-                this->m_additionalScopes.push_back( wxString(iter->c_str(), wxConvUTF8) );
+            std::set<wxString>::iterator iter = fcFileOpener::Get()->GetNamespaces().begin();
+            for(; iter != fcFileOpener::Get()->GetNamespaces().end(); ++iter) {
+                this->m_additionalScopes.push_back( *iter );
             }
         }
 

@@ -270,7 +270,10 @@ void AdvancedDlg::OnCompilersDetected(const ICompilerLocator::CompilerVec_t& com
     if ( dlg.ShowModal() == wxID_OK ) {
         // Replace the current compilers with a new one
         BuildSettingsConfigST::Get()->SetCompilers( compilers );
-
+        
+        // update the code completion search paths
+        clMainFrame::Get()->CallAfter( &clMainFrame::UpdateParserSearchPathsFromDefaultCompiler );
+        
         // Dismiss this dialog and reload it
         wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("advance_settings"));
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);

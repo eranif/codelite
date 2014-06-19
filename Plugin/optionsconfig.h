@@ -572,7 +572,7 @@ public:
         return m_debuggerMarkerLine;
     }
     
-    bool SetShowDockingWindowCaption(bool show) {
+    void SetShowDockingWindowCaption(bool show) {
         if ( !show ) {
             m_options |= Opt_HideDockingWindowCaption;
         } else {

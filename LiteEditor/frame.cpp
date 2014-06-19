@@ -1598,6 +1598,7 @@ void clMainFrame::LocateCompilersIfNeeded()
             if ( dlg.ShowModal() == wxID_OK ) {
                 // Replace the current compilers with a new one
                 BuildSettingsConfigST::Get()->SetCompilers( compilersFound );
+                CallAfter( &clMainFrame::UpdateParserSearchPathsFromDefaultCompiler );
             }
         }
     }
@@ -2752,55 +2753,10 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     // enable/disable plugins toolbar functionality
     PluginManager::Get()->EnableToolbars();
 
-    // Check that the user has some paths set in the parser
-    clConfig ccConfig("code-completion.conf");
-    ccConfig.ReadItem( &m_tagsOptionsData );
-
-
+    UpdateParserSearchPathsFromDefaultCompiler();
+    
     /////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////
-    bool isUpdateRequired = (m_tagsOptionsData.GetVersion() != TagsOptionsData::CURRENT_VERSION);
-    if ( isUpdateRequired ) {
-
-        // Since the version numbers aren't the same
-        // we should merge the new settings with the old ones
-        TagsOptionsData tmp;
-        m_tagsOptionsData.Merge( tmp );
-
-        // Try to locate the paths automatically
-        wxArrayString paths;
-        wxArrayString excludePaths;
-        IncludePathLocator locator(PluginManager::Get());
-        locator.Locate( paths, excludePaths );
-
-        wxArrayString curExcludePaths = m_tagsOptionsData.GetParserExcludePaths();
-        wxArrayString curIncluePaths  = m_tagsOptionsData.GetParserSearchPaths();
-
-        excludePaths = ccConfig.MergeArrays(curExcludePaths, excludePaths);
-        paths = ccConfig.MergeArrays(curIncluePaths, paths);
-        m_tagsOptionsData.SetParserExcludePaths( excludePaths );
-        m_tagsOptionsData.SetParserSearchPaths( paths );
-        m_tagsOptionsData.SetVersion( TagsOptionsData::CURRENT_VERSION );
-
-        //-----------------------
-        // clang
-        //-----------------------
-
-        wxArrayString clangSearchPaths = m_tagsOptionsData.GetClangSearchPathsArray();
-        IncludePathLocator clangLocator(PluginManager::Get());
-
-        wxArrayString clang_paths, clang_excludes;
-        clangLocator.Locate(clang_paths, clang_excludes, false);
-
-        clang_paths = ccConfig.MergeArrays(clang_paths, clangSearchPaths);
-        m_tagsOptionsData.SetClangSearchPathsArray( clang_paths );
-
-        ccConfig.WriteItem( &m_tagsOptionsData );
-
-
-
-    }
-
     //clear navigation queue
     if (GetMainBook()->GetCurrentPage() == 0) {
         NavMgr::Get()->Clear();
@@ -2833,6 +2789,44 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     CallAfter( &clMainFrame::LocateCompilersIfNeeded );
     
     event.Skip();
+}
+
+void clMainFrame::UpdateParserSearchPathsFromDefaultCompiler()
+{
+    // Check that the user has some paths set in the parser
+    clConfig ccConfig("code-completion.conf");
+    ccConfig.ReadItem( &m_tagsOptionsData );
+
+    // Since the version numbers aren't the same
+    // we should merge the new settings with the old ones
+    TagsOptionsData tmp;
+    m_tagsOptionsData.Merge( tmp );
+
+    // Try to locate the paths automatically
+    CompilerPtr pCompiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(wxEmptyString);
+    if ( !pCompiler )
+        return;
+
+    wxArrayString paths;
+    paths = pCompiler->GetDefaultIncludePaths();
+    
+    wxArrayString curExcludePaths = m_tagsOptionsData.GetParserExcludePaths();
+    wxArrayString curIncluePaths  = m_tagsOptionsData.GetParserSearchPaths();
+
+    wxArrayString mergedPaths = ccConfig.MergeArrays(curIncluePaths, paths);
+    m_tagsOptionsData.SetParserExcludePaths( curExcludePaths );
+    m_tagsOptionsData.SetParserSearchPaths( mergedPaths );
+    m_tagsOptionsData.SetVersion( TagsOptionsData::CURRENT_VERSION );
+
+    //-----------------------
+    // clang
+    //-----------------------
+
+    wxArrayString clangSearchPaths = m_tagsOptionsData.GetClangSearchPathsArray();
+    mergedPaths = ccConfig.MergeArrays(paths, clangSearchPaths);
+    m_tagsOptionsData.SetClangSearchPathsArray( mergedPaths );
+    ccConfig.WriteItem( &m_tagsOptionsData );
+
 }
 
 void clMainFrame::OnFileCloseAll(wxCommandEvent &event)
@@ -5552,17 +5546,34 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
     // Hide the _native_ toolbar
     if ( GetToolBar() ) {
         GetToolBar()->Show( event.IsChecked() );
-        SendSizeEvent();
-        clConfig::Get().Write("ShowToolBar", event.IsChecked());
+    } else {
+        wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
+        for(size_t i=0; i<panes.GetCount(); ++i) {
+            if ( panes.Item(i).IsOk() && panes.Item(i).IsToolbar() ) {
+                panes.Item(i).Show( event.IsChecked() );
+            }
+        }
+        m_mgr.Update();
     }
+    SendSizeEvent();
+    clConfig::Get().Write("ShowToolBar", event.IsChecked());
 }
 
 void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
 {
-    if ( !GetToolBar() ) {
-        event.Enable( false );
-    } else {
+    if ( GetToolBar() ) {
         event.Check( GetToolBar()->IsShown() );
+    } else {
+        
+        bool atLeastOneTBIsVisible = false;
+        wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
+        for(size_t i=0; i<panes.GetCount(); ++i) {
+            if ( panes.Item(i).IsOk() && panes.Item(i).IsToolbar() && panes.Item(i).IsShown()) {
+                atLeastOneTBIsVisible = true;
+                break;
+            }
+        }
+        event.Check( atLeastOneTBIsVisible );
     }
 }
 
@@ -5574,20 +5585,18 @@ void clMainFrame::ShowOrHideCaptions()
     if ( !showCaptions ) { 
         wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
         for(size_t i=0; i<panes.GetCount(); ++i) {
-            if ( panes.Item(i).IsOk() && panes.Item(i).HasCloseButton() ) {
+            if ( panes.Item(i).IsOk() && !panes.Item(i).IsToolbar() ) {
                 panes.Item(i).CaptionVisible(false);
             }
         }
-        m_mgr.Update();
-        
     } else {
         wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
         for(size_t i=0; i<panes.GetCount(); ++i) {
-            if ( panes.Item(i).IsOk() && panes.Item(i).HasCloseButton() ) {
+            if ( panes.Item(i).IsOk() && !panes.Item(i).IsToolbar() ) {
                 panes.Item(i).CaptionVisible(true);
             }
         }
-        m_mgr.Update();
     }
+    m_mgr.Update();
     PostSizeEvent();
 }

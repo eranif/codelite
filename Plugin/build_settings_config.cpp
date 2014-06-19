@@ -34,6 +34,7 @@
 #include "codelite_events.h"
 #include <wx/sstream.h>
 #include <globals.h>
+#include "ICompilerLocator.h"
 
 
 BuildSettingsConfig::BuildSettingsConfig()
@@ -328,10 +329,18 @@ BuildSettingsConfig* BuildSettingsConfigST::Get()
 
 CompilerPtr BuildSettingsConfig::GetDefaultCompiler(const wxString& compilerFamilty) const
 {
+#ifdef __WXMSW__
+    wxString DEFAULT_COMPILER = COMPILER_FAMILY_MINGW;
+#else
+    wxString DEFAULT_COMPILER = COMPILER_FAMILY_GCC;
+#endif
+
     CompilerPtr defaultComp;
+    wxString family = compilerFamilty.IsEmpty() ? DEFAULT_COMPILER : compilerFamilty;
+    
     std::map<wxString, CompilerPtr>::const_iterator iter = m_compilers.begin();
     for(; iter != m_compilers.end(); ++iter ) {
-        if ( iter->second->GetCompilerFamily() == compilerFamilty ) {
+        if ( iter->second->GetCompilerFamily() == family ) {
             if ( !defaultComp ) {
                 // keep the first one, just incase
                 defaultComp = iter->second;

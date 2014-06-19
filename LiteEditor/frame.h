@@ -131,7 +131,13 @@ protected:
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
-
+    
+    /**
+     * @brief update the parser (code completion) search paths using the 
+     * default compiler as the input provider
+     */
+    void UpdateParserSearchPathsFromDefaultCompiler();
+    
     DockablePaneMenuManager *GetDockablePaneMenuManager() {
         return m_DPmenuMgr;
     }

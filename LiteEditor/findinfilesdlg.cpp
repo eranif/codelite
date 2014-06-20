@@ -34,6 +34,7 @@
 #include "findresultstab.h"
 #include "replaceinfilespanel.h"
 #include "windowattrmanager.h"
+#include <algorithm>
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString &dataName)
     : FindInFilesDialogBase(parent, wxID_ANY)
@@ -158,23 +159,27 @@ void FindInFilesDialog::DoSetFileMask()
     EventNotifier::Get()->ProcessEvent(getFileMaskEvent);
 
     // Get the output
-    wxArrayString fileTypes = m_data.GetFileMask();
-    m_pluginFileMask = getFileMaskEvent.GetStrings();
-    if( !fileTypes.IsEmpty() ) {
+    wxArrayString fileTypes   = m_data.GetFileMask();
+    wxArrayString pluginsMask = getFileMaskEvent.GetStrings();
+    
+    // sort and merge arrays
+    fileTypes.Sort();
+    pluginsMask.Sort();
+    wxArrayString mergedArr;
+    std::merge(fileTypes.begin(), fileTypes.end(), pluginsMask.begin(), pluginsMask.end(), std::back_inserter( mergedArr ) );
+    wxArrayString::iterator iter = std::unique(mergedArr.begin(), mergedArr.end());
+    
+    // remove the non unique parts
+    mergedArr.resize( std::distance(mergedArr.begin(), iter) );
+    
+    // Create a single mask array
+    m_fileTypes->Clear();
+    if( !mergedArr.IsEmpty() ) {
+        m_fileTypes->Append(mergedArr);
         
-        m_fileTypes->Clear();
-        m_fileTypes->Append(m_pluginFileMask);
-        m_fileTypes->Append(fileTypes);
-        
-        int where = wxNOT_FOUND;
-        if ( !m_pluginFileMask.IsEmpty() ) {
+        int where = m_fileTypes->FindString(m_data.GetSelectedMask());
+        if(where == wxNOT_FOUND) {
             where = 0;
-            
-        } else {
-            where = m_fileTypes->FindString(m_data.GetSelectedMask());
-            if(where == wxNOT_FOUND) {
-                where = 0;
-            }
         }
         m_fileTypes->SetSelection( where );
     }

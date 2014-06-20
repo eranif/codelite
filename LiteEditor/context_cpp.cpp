@@ -979,7 +979,13 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
     // We failed to locate matched file, offer the user to create one
     // check to see if user already provided an answer
     otherFile.SetExt(exts.Item(0));
-    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("No matched file was found, would you like to create one?"), "CreateSwappedFile");
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("No matched file was found, would you like to create one?"), 
+                                                          "CreateSwappedFile",
+                                                          _("Create"),
+                                                          _("Don't Create"),
+                                                          _("Remember my answer and don't ask me again"),
+                                                          wxYES_NO|wxCANCEL|wxICON_QUESTION|wxCANCEL_DEFAULT
+                                                          );
     if ( res == wxID_YES ) {
         DoCreateFile(otherFile);
     }

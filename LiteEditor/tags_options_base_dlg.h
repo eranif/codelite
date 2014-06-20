@@ -74,6 +74,7 @@ protected:
     wxBannerWindow* m_banner34;
     wxTextCtrl* m_textCtrlCtagsSearchPaths;
     wxButton* m_buttonAddSearchPath;
+    wxButton* m_buttonCtagsSuggest;
     wxPanel* m_panel40;
     wxBannerWindow* m_banner44;
     wxTextCtrl* m_textCtrlCtagsExcludePaths;
@@ -113,6 +114,7 @@ protected:
     virtual void OnColourWorkspaceUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnAutoShowWordAssitUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnAddSearchPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSuggestCtags(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddExcludePath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnParse(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFileSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }

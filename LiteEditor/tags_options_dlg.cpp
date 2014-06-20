@@ -378,7 +378,22 @@ void TagsOptionsDlg::OnParse(wxCommandEvent& event)
 void TagsOptionsDlg::OnSuggestSearchPaths(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    DoSuggest(m_textCtrlClangSearchPaths);
+}
 
+wxArrayString TagsOptionsDlg::GetCTagsSearchPaths() const
+{
+    return wxStringTokenize(m_textCtrlCtagsSearchPaths->GetValue(), wxT("\r\n"), wxTOKEN_STRTOK);
+}
+
+void TagsOptionsDlg::OnSuggestCtags(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoSuggest(m_textCtrlCtagsSearchPaths);
+}
+
+void TagsOptionsDlg::DoSuggest(wxTextCtrl* textCtrl)
+{
 #ifdef __WXMSW__
     // Use MinGW compiler for Windows by default
     CompilerPtr comp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_MINGW);
@@ -398,17 +413,12 @@ void TagsOptionsDlg::OnSuggestSearchPaths(wxCommandEvent& event)
     
     suggestedPaths.Trim().Trim(false);
     if ( !suggestedPaths.IsEmpty() ) {
-        if ( ::wxMessageBox(_("Accepting this suggestion will replace your old search path with these paths\nContinue?"), 
+        if ( ::wxMessageBox(_("Accepting this suggestion will replace your old search paths with these paths\nContinue?"), 
                             "CodeLite", 
                             wxYES_NO|wxYES_DEFAULT|wxCANCEL|wxICON_QUESTION) != wxYES ) {
             return;
         }
-        m_textCtrlClangSearchPaths->Clear();
-        m_textCtrlClangSearchPaths->ChangeValue( suggestedPaths );
+        textCtrl->Clear();
+        textCtrl->ChangeValue( suggestedPaths );
     }
-}
-
-wxArrayString TagsOptionsDlg::GetCTagsSearchPaths() const
-{
-    return wxStringTokenize(m_textCtrlCtagsSearchPaths->GetValue(), wxT("\r\n"), wxTOKEN_STRTOK);
 }

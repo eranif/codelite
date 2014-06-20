@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	"../LiteEditor/",
-		"m_objCounter":	48,
+		"m_objCounter":	50,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC6B32InitBitmapResources",
 		"m_bitmapsFile":	"tags_options_base_dlg_formbuilder_bitmaps.cpp",
@@ -86,12 +86,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"tags_options_dlg"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"TagsOptionsDlg"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"tags_options_dlg"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -528,6 +528,10 @@
 																			"type":	"string",
 																			"m_label":	"Value:",
 																			"m_value":	"50"
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Text Hint",
+																			"m_value":	""
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Max Length:",
@@ -1514,6 +1518,10 @@
 																			"m_value":	"1000"
 																		}, {
 																			"type":	"string",
+																			"m_label":	"Text Hint",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
 																			"m_label":	"Max Length:",
 																			"m_value":	"0"
 																		}, {
@@ -1873,7 +1881,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -1954,7 +1963,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2035,7 +2045,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2116,7 +2127,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2197,7 +2209,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2278,7 +2291,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2359,7 +2373,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2440,7 +2455,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2521,7 +2537,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2602,7 +2619,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2683,7 +2701,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -2764,7 +2783,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnColourWorkspaceUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}]
@@ -3121,7 +3141,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnAutoShowWordAssitUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -3206,7 +3227,8 @@
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnAutoShowWordAssitUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -3839,6 +3861,10 @@
 																									"m_value":	""
 																								}, {
 																									"type":	"string",
+																									"m_label":	"Text Hint",
+																									"m_value":	""
+																								}, {
+																									"type":	"string",
 																									"m_label":	"Max Length:",
 																									"m_value":	"0"
 																								}, {
@@ -3952,6 +3978,11 @@
 																											"m_label":	"Bitmap File:",
 																											"m_path":	""
 																										}, {
+																											"type":	"choice",
+																											"m_label":	"Direction",
+																											"m_selection":	0,
+																											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+																										}, {
 																											"type":	"string",
 																											"m_label":	"Margins:",
 																											"m_value":	"2,2"
@@ -3961,7 +3992,103 @@
 																											"m_eventClass":	"wxCommandEvent",
 																											"m_eventHandler":	"wxCommandEventHandler",
 																											"m_functionNameAndSignature":	"OnAddSearchPath(wxCommandEvent& event)",
-																											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																											"m_noBody":	false
+																										}],
+																									"m_children":	[]
+																								}, {
+																									"m_type":	4400,
+																									"proportion":	0,
+																									"border":	5,
+																									"gbSpan":	"1,1",
+																									"gbPosition":	"0,0",
+																									"m_styles":	[],
+																									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+																									"m_properties":	[{
+																											"type":	"winid",
+																											"m_label":	"ID:",
+																											"m_winid":	"wxID_ANY"
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Size:",
+																											"m_value":	"-1,-1"
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Minimum Size:",
+																											"m_value":	"-1,-1"
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Name:",
+																											"m_value":	"m_buttonCtagsSuggest"
+																										}, {
+																											"type":	"multi-string",
+																											"m_label":	"Tooltip:",
+																											"m_value":	"Suggest search paths based on the installed compilers"
+																										}, {
+																											"type":	"colour",
+																											"m_label":	"Bg Colour:",
+																											"colour":	"<Default>"
+																										}, {
+																											"type":	"colour",
+																											"m_label":	"Fg Colour:",
+																											"colour":	"<Default>"
+																										}, {
+																											"type":	"font",
+																											"m_label":	"Font:",
+																											"m_value":	""
+																										}, {
+																											"type":	"bool",
+																											"m_label":	"Hidden",
+																											"m_value":	false
+																										}, {
+																											"type":	"bool",
+																											"m_label":	"Disabled",
+																											"m_value":	false
+																										}, {
+																											"type":	"bool",
+																											"m_label":	"Focused",
+																											"m_value":	false
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Class Name:",
+																											"m_value":	""
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Include File:",
+																											"m_value":	""
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Style:",
+																											"m_value":	""
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Label:",
+																											"m_value":	"Suggest"
+																										}, {
+																											"type":	"bool",
+																											"m_label":	"Default Button",
+																											"m_value":	false
+																										}, {
+																											"type":	"bitmapPicker",
+																											"m_label":	"Bitmap File:",
+																											"m_path":	""
+																										}, {
+																											"type":	"choice",
+																											"m_label":	"Direction",
+																											"m_selection":	0,
+																											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+																										}, {
+																											"type":	"string",
+																											"m_label":	"Margins:",
+																											"m_value":	"2,2"
+																										}],
+																									"m_events":	[{
+																											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+																											"m_eventClass":	"wxCommandEvent",
+																											"m_eventHandler":	"wxCommandEventHandler",
+																											"m_functionNameAndSignature":	"OnSuggestCtags(wxCommandEvent& event)",
+																											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																											"m_noBody":	false
 																										}],
 																									"m_children":	[]
 																								}]
@@ -4258,6 +4385,10 @@
 																									"m_value":	""
 																								}, {
 																									"type":	"string",
+																									"m_label":	"Text Hint",
+																									"m_value":	""
+																								}, {
+																									"type":	"string",
 																									"m_label":	"Max Length:",
 																									"m_value":	"0"
 																								}, {
@@ -4371,6 +4502,11 @@
 																											"m_label":	"Bitmap File:",
 																											"m_path":	""
 																										}, {
+																											"type":	"choice",
+																											"m_label":	"Direction",
+																											"m_selection":	0,
+																											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+																										}, {
 																											"type":	"string",
 																											"m_label":	"Margins:",
 																											"m_value":	"2,2"
@@ -4380,7 +4516,8 @@
 																											"m_eventClass":	"wxCommandEvent",
 																											"m_eventHandler":	"wxCommandEventHandler",
 																											"m_functionNameAndSignature":	"OnAddExcludePath(wxCommandEvent& event)",
-																											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																											"m_noBody":	false
 																										}],
 																									"m_children":	[]
 																								}]
@@ -4686,6 +4823,10 @@
 																			"m_value":	""
 																		}, {
 																			"type":	"string",
+																			"m_label":	"Text Hint",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
 																			"m_label":	"Max Length:",
 																			"m_value":	"0"
 																		}, {
@@ -4891,6 +5032,10 @@
 																					"m_value":	""
 																				}, {
 																					"type":	"string",
+																					"m_label":	"Text Hint",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
 																					"m_label":	"Max Length:",
 																					"m_value":	"0"
 																				}, {
@@ -4981,6 +5126,11 @@
 																					"m_label":	"Bitmap File:",
 																					"m_path":	""
 																				}, {
+																					"type":	"choice",
+																					"m_label":	"Direction",
+																					"m_selection":	0,
+																					"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Margins:",
 																					"m_value":	"2,2"
@@ -4990,13 +5140,15 @@
 																					"m_eventClass":	"wxCommandEvent",
 																					"m_eventHandler":	"wxCommandEventHandler",
 																					"m_functionNameAndSignature":	"OnParse(wxCommandEvent& event)",
-																					"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																					"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																					"m_noBody":	false
 																				}, {
 																					"m_eventName":	"wxEVT_UPDATE_UI",
 																					"m_eventClass":	"wxUpdateUIEvent",
 																					"m_eventHandler":	"wxUpdateUIEventHandler",
 																					"m_functionNameAndSignature":	"OnFileSelectedUI(wxUpdateUIEvent& event)",
-																					"m_description":	"Process a wxEVT_UPDATE_UI event"
+																					"m_description":	"Process a wxEVT_UPDATE_UI event",
+																					"m_noBody":	false
 																				}],
 																			"m_children":	[]
 																		}]
@@ -5239,6 +5391,10 @@
 																						}, {
 																							"type":	"string",
 																							"m_label":	"Value:",
+																							"m_value":	""
+																						}, {
+																							"type":	"string",
+																							"m_label":	"Text Hint",
 																							"m_value":	""
 																						}, {
 																							"type":	"string",
@@ -5749,6 +5905,10 @@
 																							"m_value":	""
 																						}, {
 																							"type":	"string",
+																							"m_label":	"Text Hint",
+																							"m_value":	""
+																						}, {
+																							"type":	"string",
 																							"m_label":	"Max Length:",
 																							"m_value":	"0"
 																						}, {
@@ -6022,7 +6182,8 @@
 															"m_eventClass":	"wxUpdateUIEvent",
 															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnClangCCEnabledUI(wxUpdateUIEvent& event)",
-															"m_description":	"Process a wxEVT_UPDATE_UI event"
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
 														}],
 													"m_children":	[{
 															"m_type":	4441,
@@ -6249,7 +6410,8 @@
 																							"m_eventClass":	"wxUpdateUIEvent",
 																							"m_eventHandler":	"wxUpdateUIEventHandler",
 																							"m_functionNameAndSignature":	"OnClangCCEnabledUI(wxUpdateUIEvent& event)",
-																							"m_description":	"Process a wxEVT_UPDATE_UI event"
+																							"m_description":	"Process a wxEVT_UPDATE_UI event",
+																							"m_noBody":	false
 																						}],
 																					"m_children":	[]
 																				}]
@@ -6487,6 +6649,10 @@
 																									"m_value":	""
 																								}, {
 																									"type":	"string",
+																									"m_label":	"Text Hint",
+																									"m_value":	""
+																								}, {
+																									"type":	"string",
 																									"m_label":	"Max Length:",
 																									"m_value":	"0"
 																								}, {
@@ -6503,7 +6669,8 @@
 																									"m_eventClass":	"wxUpdateUIEvent",
 																									"m_eventHandler":	"wxUpdateUIEventHandler",
 																									"m_functionNameAndSignature":	"OnClangCCEnabledUI(wxUpdateUIEvent& event)",
-																									"m_description":	"Process a wxEVT_UPDATE_UI event"
+																									"m_description":	"Process a wxEVT_UPDATE_UI event",
+																									"m_noBody":	false
 																								}],
 																							"m_children":	[]
 																						}, {
@@ -6583,6 +6750,11 @@
 																									"m_label":	"Bitmap File:",
 																									"m_path":	""
 																								}, {
+																									"type":	"choice",
+																									"m_label":	"Direction",
+																									"m_selection":	0,
+																									"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+																								}, {
 																									"type":	"string",
 																									"m_label":	"Margins:",
 																									"m_value":	"2,2"
@@ -6592,13 +6764,15 @@
 																									"m_eventClass":	"wxCommandEvent",
 																									"m_eventHandler":	"wxCommandEventHandler",
 																									"m_functionNameAndSignature":	"OnSuggestSearchPaths(wxCommandEvent& event)",
-																									"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																									"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																									"m_noBody":	false
 																								}, {
 																									"m_eventName":	"wxEVT_UPDATE_UI",
 																									"m_eventClass":	"wxUpdateUIEvent",
 																									"m_eventHandler":	"wxUpdateUIEventHandler",
 																									"m_functionNameAndSignature":	"OnClangCCEnabledUI(wxUpdateUIEvent& event)",
-																									"m_description":	"Process a wxEVT_UPDATE_UI event"
+																									"m_description":	"Process a wxEVT_UPDATE_UI event",
+																									"m_noBody":	false
 																								}],
 																							"m_children":	[]
 																						}]
@@ -6830,7 +7004,8 @@
 																							"m_eventClass":	"wxUpdateUIEvent",
 																							"m_eventHandler":	"wxUpdateUIEventHandler",
 																							"m_functionNameAndSignature":	"OnClangCCEnabledUI(wxUpdateUIEvent& event)",
-																							"m_description":	"Process a wxEVT_UPDATE_UI event"
+																							"m_description":	"Process a wxEVT_UPDATE_UI event",
+																							"m_noBody":	false
 																						}],
 																					"m_children":	[]
 																				}, {
@@ -6910,6 +7085,11 @@
 																							"m_label":	"Bitmap File:",
 																							"m_path":	""
 																						}, {
+																							"type":	"choice",
+																							"m_label":	"Direction",
+																							"m_selection":	0,
+																							"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+																						}, {
 																							"type":	"string",
 																							"m_label":	"Margins:",
 																							"m_value":	"2,2"
@@ -6919,13 +7099,15 @@
 																							"m_eventClass":	"wxCommandEvent",
 																							"m_eventHandler":	"wxCommandEventHandler",
 																							"m_functionNameAndSignature":	"OnClearClangCache(wxCommandEvent& event)",
-																							"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																							"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																							"m_noBody":	false
 																						}, {
 																							"m_eventName":	"wxEVT_UPDATE_UI",
 																							"m_eventClass":	"wxUpdateUIEvent",
 																							"m_eventHandler":	"wxUpdateUIEventHandler",
 																							"m_functionNameAndSignature":	"OnClearClangCacheUI(wxUpdateUIEvent& event)",
-																							"m_description":	"Process a wxEVT_UPDATE_UI event"
+																							"m_description":	"Process a wxEVT_UPDATE_UI event",
+																							"m_noBody":	false
 																						}],
 																					"m_children":	[]
 																				}, {
@@ -7185,6 +7367,11 @@
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
 											"m_value":	"2,2"
@@ -7194,7 +7381,8 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnButtonOK(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -7273,6 +7461,11 @@
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 										}, {
 											"type":	"string",
 											"m_label":	"Margins:",

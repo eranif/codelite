@@ -40,7 +40,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer19->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer12 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer12 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer12->SetFlexibleDirection( wxBOTH );
     flexGridSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer12->AddGrowableCol(1);
@@ -52,6 +52,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     flexGridSizer12->Add(m_staticText14, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_spinCtrlNumberOfCCItems = new wxTextCtrl(m_paneDisplayAndBehavior, wxID_ANY, wxT("50"), wxDefaultPosition, wxSize(-1, -1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_spinCtrlNumberOfCCItems->SetHint(wxT(""));
+    #endif
     
     flexGridSizer12->Add(m_spinCtrlNumberOfCCItems, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
     
@@ -88,7 +91,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer19->Add(sbSizer15, 0, wxALL|wxEXPAND, 5);
     
-    wxGridSizer* gSizer2 = new wxGridSizer(  3, 1, 0, 0);
+    wxGridSizer* gSizer2 = new wxGridSizer(3, 1, 0, 0);
     
     sbSizer15->Add(gSizer2, 1, wxEXPAND, 5);
     
@@ -129,6 +132,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     bSizer11->Add(m_staticText72, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_spinCtrlMaxItemToColour = new wxTextCtrl(m_paneColouring, wxID_ANY, wxT("1000"), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2);
+    #if wxVERSION_NUMBER >= 3000
+    m_spinCtrlMaxItemToColour->SetHint(wxT(""));
+    #endif
     
     bSizer11->Add(m_spinCtrlMaxItemToColour, 0, wxALL, 5);
     
@@ -147,7 +153,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     sbSizer4->Add(m_checkColourProjTags, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -223,7 +229,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer17->Add(sbSizer7, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
@@ -305,6 +311,11 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer8->Add(m_buttonAddSearchPath, 0, wxALL|wxEXPAND, 5);
     
+    m_buttonCtagsSuggest = new wxButton(m_panel38, wxID_ANY, _("Suggest"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonCtagsSuggest->SetToolTip(_("Suggest search paths based on the installed compilers"));
+    
+    bSizer8->Add(m_buttonCtagsSuggest, 0, wxALL, 5);
+    
     m_panel40 = new wxPanel(m_notebook36, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook36->AddPage(m_panel40, _("Exclude Paths"), false);
     
@@ -350,7 +361,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
     m_panelCtagsAdvanced->SetSizer(bSizer6);
     
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
@@ -362,6 +373,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textFileSpec = new wxTextCtrl(m_panelCtagsAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textFileSpec->SetHint(wxT(""));
+    #endif
     
     fgSizer2->Add(m_textFileSpec, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -378,6 +392,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     bSizer14->Add(bSizer15, 1, wxEXPAND, 5);
     
     m_textCtrlFilesList = new wxTextCtrl(m_panelCtagsAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlFilesList->SetHint(wxT(""));
+    #endif
     
     bSizer15->Add(m_textCtrlFilesList, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -474,7 +491,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* bSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer20);
     
-    wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer(  0, 1, 0, 0);
+    wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer(0, 1, 0, 0);
     fgSizer5->SetFlexibleDirection( wxBOTH );
     fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer5->AddGrowableCol(0);
@@ -522,7 +539,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* bSizer21 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer21);
     
-    wxFlexGridSizer* fgSizerClangCache = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizerClangCache = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizerClangCache->SetFlexibleDirection( wxBOTH );
     fgSizerClangCache->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizerClangCache->AddGrowableCol(1);
@@ -592,6 +609,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_staticTextMinWordLen->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI), NULL, this);
     m_sliderMinWordLen->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI), NULL, this);
     m_buttonAddSearchPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnAddSearchPath), NULL, this);
+    m_buttonCtagsSuggest->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnSuggestCtags), NULL, this);
     m_buttonAddExcludePath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnAddExcludePath), NULL, this);
     m_buttonParse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnParse), NULL, this);
     m_buttonParse->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnFileSelectedUI), NULL, this);
@@ -624,6 +642,7 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
     m_staticTextMinWordLen->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI), NULL, this);
     m_sliderMinWordLen->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI), NULL, this);
     m_buttonAddSearchPath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnAddSearchPath), NULL, this);
+    m_buttonCtagsSuggest->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnSuggestCtags), NULL, this);
     m_buttonAddExcludePath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnAddExcludePath), NULL, this);
     m_buttonParse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnParse), NULL, this);
     m_buttonParse->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnFileSelectedUI), NULL, this);

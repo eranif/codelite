@@ -43,7 +43,9 @@ class TagsOptionsDlg : public TagsOptionsBaseDlg
     void SetColouringFlag(CodeCompletionColourOpts flag, bool set);
     void CopyData();
 protected:
+    virtual void OnSuggestCtags(wxCommandEvent& event);
     wxArrayString GetCTagsSearchPaths() const;
+    void DoSuggest(wxTextCtrl* textCtrl);
     
 protected:
     virtual void OnAddExcludePath(wxCommandEvent& event);

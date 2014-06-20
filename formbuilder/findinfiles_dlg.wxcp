@@ -64,7 +64,7 @@
 				}, {
 					"type":	"bool",
 					"m_label":	"Focused",
-					"m_value":	false
+					"m_value":	true
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -92,23 +92,44 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"findinfilesdlg"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"FindInFilesDialog"
 				}, {
 					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"findinfilesdlg"
+				}, {
+					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	"../codelite-icons/toolbars/16/search/find-in-files.png"
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[{
 					"m_eventName":	"wxEVT_CLOSE_WINDOW",
 					"m_eventClass":	"wxCloseEvent",
 					"m_eventHandler":	"wxCloseEventHandler",
 					"m_functionNameAndSignature":	"OnClose(wxCloseEvent& event)",
-					"m_description":	"Process a close event. This event applies to wxFrame and wxDialog classes"
+					"m_description":	"Process a close event. This event applies to wxFrame and wxDialog classes",
+					"m_noBody":	false
 				}],
 			"m_children":	[{
 					"m_type":	4401,
@@ -301,7 +322,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Focused",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -317,6 +338,10 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"ComboBox Choices:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Text Hint",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -568,9 +593,14 @@
 													"m_label":	"Default Button",
 													"m_value":	false
 												}, {
-													"type":	"filePicker",
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
+												}, {
+													"type":	"choice",
+													"m_label":	"Direction",
+													"m_selection":	0,
+													"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 												}, {
 													"type":	"string",
 													"m_label":	"Margins:",
@@ -581,7 +611,8 @@
 													"m_eventClass":	"wxCommandEvent",
 													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnAddPath(wxCommandEvent& event)",
-													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+													"m_noBody":	false
 												}],
 											"m_children":	[]
 										}]
@@ -798,9 +829,14 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	"../icons/clear-all.png"
+														}, {
+															"type":	"choice",
+															"m_label":	"Direction",
+															"m_selection":	0,
+															"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 														}, {
 															"type":	"string",
 															"m_label":	"Margins:",
@@ -811,13 +847,15 @@
 															"m_eventClass":	"wxCommandEvent",
 															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnRemovePath(wxCommandEvent& event)",
-															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
 															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnRemovePathUI(wxUpdateUIEvent& event)",
-															"m_description":	"Process a wxEVT_UPDATE_UI event"
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
 														}],
 													"m_children":	[]
 												}, {
@@ -893,9 +931,14 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	"../icons/delete-line.png"
+														}, {
+															"type":	"choice",
+															"m_label":	"Direction",
+															"m_selection":	0,
+															"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 														}, {
 															"type":	"string",
 															"m_label":	"Margins:",
@@ -906,13 +949,15 @@
 															"m_eventClass":	"wxCommandEvent",
 															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnClearPaths(wxCommandEvent& event)",
-															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
 															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnClearPathsUI(wxUpdateUIEvent& event)",
-															"m_description":	"Process a wxEVT_UPDATE_UI event"
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
 														}],
 													"m_children":	[]
 												}]
@@ -1060,6 +1105,10 @@
 											"type":	"multi-string",
 											"m_label":	"ComboBox Choices:",
 											"m_value":	"*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
+										}, {
+											"type":	"string",
+											"m_label":	"Text Hint",
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Selection:",
@@ -1431,12 +1480,16 @@
 													"m_label":	"Label:",
 													"m_value":	"General"
 												}, {
-													"type":	"filePicker",
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
 												}, {
 													"type":	"bool",
 													"m_label":	"Selected",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Null Page",
 													"m_value":	false
 												}],
 											"m_events":	[],
@@ -1578,13 +1631,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	false
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4415,
@@ -1659,13 +1706,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	false
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4415,
@@ -1740,13 +1781,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	false
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4415,
@@ -1821,13 +1856,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	false
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4415,
@@ -1902,13 +1931,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	true
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}]
 														}]
@@ -1982,12 +2005,16 @@
 													"m_label":	"Label:",
 													"m_value":	"C++"
 												}, {
-													"type":	"filePicker",
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
 												}, {
 													"type":	"bool",
 													"m_label":	"Selected",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Null Page",
 													"m_value":	false
 												}],
 											"m_events":	[],
@@ -2129,13 +2156,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	false
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4415,
@@ -2210,13 +2231,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	false
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4415,
@@ -2291,13 +2306,7 @@
 																			"m_label":	"Value:",
 																			"m_value":	false
 																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}],
+																	"m_events":	[],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4415,
@@ -2373,17 +2382,12 @@
 																			"m_value":	false
 																		}],
 																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
-																		}, {
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}]
@@ -2484,7 +2488,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Focused",
-											"m_value":	true
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -2506,9 +2510,14 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
@@ -2518,14 +2527,16 @@
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
-											"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_functionNameAndSignature":	"OnFind(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnFindWhatUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2601,9 +2612,14 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
@@ -2613,14 +2629,16 @@
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
-											"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_functionNameAndSignature":	"OnReplace(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnFindWhatUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2696,9 +2714,14 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
@@ -2708,8 +2731,9 @@
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
-											"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_functionNameAndSignature":	"OnStop(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2785,9 +2809,14 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
@@ -2797,8 +2826,9 @@
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
-											"m_functionNameAndSignature":	"OnClick(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_functionNameAndSignature":	"OnButtonClose(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}]

@@ -35,15 +35,18 @@ class FindInFilesDialog : public FindInFilesDialogBase
     wxArrayString   m_pluginFileMask;
     
 protected:
+    virtual void OnButtonClose(wxCommandEvent& event);
+    virtual void OnFind(wxCommandEvent& event);
+    virtual void OnReplace(wxCommandEvent& event);
+    virtual void OnStop(wxCommandEvent& event);
     void       DoSearch();
     void       DoSearchReplace();
     void       DoSaveSearchPaths();
     SearchData DoGetSearchData();
     void       DoSaveOpenFiles();
     void       DoSetFileMask();
-
+    
     // Event Handlers
-    virtual void OnClick(wxCommandEvent &event);
     virtual void OnClose(wxCloseEvent &event);
     virtual void OnAddPath( wxCommandEvent& event );
     virtual void OnRemovePath( wxCommandEvent& event );
@@ -54,7 +57,8 @@ protected:
     virtual void OnFindWhatUI( wxUpdateUIEvent& event );
 
     void OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event);
-
+    size_t GetSearchFlags();
+    
 public:
     FindInFilesDialog(wxWindow* parent, const wxString &dataName);
     virtual ~FindInFilesDialog();

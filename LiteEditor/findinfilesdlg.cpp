@@ -123,6 +123,24 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString &dataName)
 
 FindInFilesDialog::~FindInFilesDialog()
 {
+    // Update the data
+    m_data.SetFlags( GetSearchFlags() );
+    m_data.SetFindString( m_findString->GetValue() );
+    m_data.SetEncoding  ( m_choiceEncoding->GetStringSelection() );
+    m_data.SetSearchScope(m_dirPicker->GetCurrentSelection());
+    wxString value = m_fileTypes->GetValue();
+    value.Trim().Trim(false);
+    
+    wxArrayString masks = m_fileTypes->GetStrings();
+    if ( masks.Index(value) == wxNOT_FOUND ) {
+        masks.Insert(value, 0);
+    }
+    
+    m_data.SetSelectedMask( value );
+    m_data.SetFileMask( masks );
+    
+    m_data.SetSearchPaths( m_dirPicker->GetValues() );
+    
     clConfig::Get().WriteItem( &m_data );
     WindowAttrManager::Save(this, "FindInFilesDialog", NULL);
 }
@@ -166,11 +184,8 @@ void FindInFilesDialog::DoSearchReplace()
 {
     SearchData data = DoGetSearchData();
     data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetReplaceResultsTab());
-
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
-
-    DoSaveSearchPaths();
     Close();
 }
 
@@ -182,8 +197,6 @@ void FindInFilesDialog::DoSearch()
     // check to see if we require to save the files
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
-
-    DoSaveSearchPaths();
     Close();
 }
 
@@ -260,116 +273,6 @@ SearchData FindInFilesDialog::DoGetSearchData()
     data.UseNewTab(m_checkBoxSeparateTab->IsChecked());
     data.SetExtensions(m_fileTypes->GetValue());
     return data;
-}
-
-void FindInFilesDialog::OnClick(wxCommandEvent &event)
-{
-    wxObject *btnClicked = event.GetEventObject();
-    size_t flags = m_data.GetFlags();
-
-    wxString findWhat = m_findString->GetValue();
-    findWhat = findWhat.Trim().Trim(false);
-
-    m_data.SetFindString( m_findString->GetValue() );
-    m_data.SetEncoding  ( m_choiceEncoding->GetStringSelection() );
-
-    wxString value = m_fileTypes->GetValue();
-    value.Trim().Trim(false);
-
-    wxArrayString fileMask = m_fileTypes->GetStrings();
-    wxArrayString fileMaskFiltered;
-    
-    // Remove the plugins mask before we save it
-    for(size_t i=0; i<fileMask.GetCount(); ++i) {
-        if ( m_pluginFileMask.Index(fileMask.Item(i)) == wxNOT_FOUND ) {
-            // not part of the plugin mask => keep it
-            fileMaskFiltered.Add( fileMask.Item(i) );
-        }
-    }
-    fileMaskFiltered.swap( fileMask );
-    m_data.SetSearchScope(m_dirPicker->GetCurrentSelection());
-
-    m_data.SetFileMask( fileMask );
-    if(value.IsEmpty() == false)
-        m_data.SetSelectedMask(value);
-
-    if (btnClicked == m_stop) {
-        SearchThreadST::Get()->StopSearch();
-
-    } else if (btnClicked == m_find) {
-        if ( findWhat.IsEmpty() ) {
-            return;
-        }
-        DoSearch();
-
-    } else if (btnClicked == m_replaceAll) {
-        if ( findWhat.IsEmpty() ) {
-            return;
-        }
-        DoSearchReplace();
-
-    } else if (btnClicked == m_cancel) {
-        Close();
-
-    } else if (btnClicked == m_matchCase) {
-        if (m_matchCase->IsChecked()) {
-            flags |= wxFRD_MATCHCASE;
-        } else {
-            flags &= ~(wxFRD_MATCHCASE);
-        }
-    } else if (btnClicked == m_matchWholeWord) {
-        if (m_matchWholeWord->IsChecked()) {
-            flags |= wxFRD_MATCHWHOLEWORD;
-        } else {
-            flags &= ~(wxFRD_MATCHWHOLEWORD);
-        }
-    } else if (btnClicked == m_regualrExpression) {
-        if (m_regualrExpression->IsChecked()) {
-            flags |= wxFRD_REGULAREXPRESSION;
-        } else {
-            flags &= ~(wxFRD_REGULAREXPRESSION);
-        }
-    } else if (btnClicked == m_printScope) {
-        if (m_printScope->IsChecked()) {
-            flags |= wxFRD_DISPLAYSCOPE;
-        } else {
-            flags &= ~(wxFRD_DISPLAYSCOPE);
-        }
-    } else if (btnClicked == m_checkBoxSeparateTab) {
-        if (m_checkBoxSeparateTab->IsChecked()) {
-            flags |= wxFRD_SEPARATETAB_DISPLAY;
-        } else {
-            flags &= ~(wxFRD_SEPARATETAB_DISPLAY);
-        }
-    } else if (btnClicked == m_checkBoxSaveFilesBeforeSearching) {
-        if (m_checkBoxSaveFilesBeforeSearching->IsChecked()) {
-            flags |= wxFRD_SAVE_BEFORE_SEARCH;
-        } else {
-            flags &= ~(wxFRD_SAVE_BEFORE_SEARCH);
-        }
-    } else if (btnClicked == m_checkBoxSkipMatchesFoundInComments) {
-        if(m_checkBoxSkipMatchesFoundInComments->IsChecked()) {
-            flags |= wxFRD_SKIP_COMMENTS;
-        } else {
-            flags &= ~wxFRD_SKIP_COMMENTS;
-        }
-
-    } else if (btnClicked == m_checkBoxSkipMatchesFoundInStrings) {
-        if(m_checkBoxSkipMatchesFoundInStrings->IsChecked()) {
-            flags |= wxFRD_SKIP_STRINGS;
-        } else {
-            flags &= ~wxFRD_SKIP_STRINGS;
-        }
-    } else if (btnClicked == m_checkBoxHighlighStringComments) {
-        if(m_checkBoxHighlighStringComments->IsChecked()) {
-            flags |= wxFRD_COLOUR_COMMENTS;
-        } else {
-            flags &= ~wxFRD_COLOUR_COMMENTS;
-        }
-    }
-
-    // Set the updated flags
-    m_data.SetFlags(flags);
 }
 
 void FindInFilesDialog::OnClose(wxCloseEvent &e)
@@ -455,4 +358,41 @@ void FindInFilesDialog::OnFindWhatUI(wxUpdateUIEvent& event)
 void FindInFilesDialog::OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_checkBoxSkipMatchesFoundInComments->IsChecked() == false);
+}
+
+void FindInFilesDialog::OnFind(wxCommandEvent& event)
+{
+    wxUnusedVar( event );
+    DoSearch();
+}
+
+void FindInFilesDialog::OnReplace(wxCommandEvent& event)
+{
+    wxUnusedVar( event );
+    DoSearchReplace();
+}
+
+void FindInFilesDialog::OnStop(wxCommandEvent& event)
+{
+    SearchThreadST::Get()->StopSearch();
+}
+
+void FindInFilesDialog::OnButtonClose(wxCommandEvent& event)
+{
+    Destroy();
+}
+
+size_t FindInFilesDialog::GetSearchFlags()
+{
+    size_t flags = 0;
+    if ( m_matchCase->IsChecked() )                          flags |= wxFRD_MATCHCASE;
+    if ( m_matchWholeWord->IsChecked())                      flags |= wxFRD_MATCHWHOLEWORD;
+    if ( m_regualrExpression->IsChecked())                   flags |= wxFRD_REGULAREXPRESSION;
+    if ( m_printScope->IsChecked())                          flags |= wxFRD_DISPLAYSCOPE;
+    if ( m_checkBoxSeparateTab->IsChecked() )                flags |= wxFRD_SEPARATETAB_DISPLAY;
+    if ( m_checkBoxSaveFilesBeforeSearching->IsChecked() )   flags |= wxFRD_SAVE_BEFORE_SEARCH;
+    if ( m_checkBoxSkipMatchesFoundInComments->IsChecked() ) flags |= wxFRD_SKIP_COMMENTS;
+    if ( m_checkBoxSkipMatchesFoundInStrings->IsChecked() )  flags |= wxFRD_SKIP_STRINGS;
+    if ( m_checkBoxHighlighStringComments->IsChecked() )     flags |= wxFRD_COLOUR_COMMENTS;
+    return flags;
 }

@@ -218,6 +218,10 @@ void ClangCodeCompletion::OnBuildStarting(clBuildEvent& e)
         wxString cxx = bldConf->GetCompiler()->GetTool(wxT("CXX"));
         wxString cc  = bldConf->GetCompiler()->GetTool(wxT("CC"));
         
+        // CMake does not handle backslahses pretty well...
+        cxx.Replace("\\", "/");
+        cc.Replace("\\", "/");
+        
         cxx.Prepend(wxT("codelite-cc "));
         cc.Prepend(wxT("codelite-cc "));
         

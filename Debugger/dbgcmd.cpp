@@ -771,7 +771,7 @@ bool DbgCmdStackList::ProcessOutput(const wxString &line)
     wxString remainder(tmpLine);
     StackEntryArray stackArray;
     while (true) {
-        tmpLine		= tmpLine.AfterFirst(wxT('{'));
+        tmpLine = tmpLine.AfterFirst(wxT('{'));
         if (tmpLine.IsEmpty()) {
             break;
         }
@@ -785,8 +785,13 @@ bool DbgCmdStackList::ProcessOutput(const wxString &line)
 
         tmpLine = remainder;
     }
-
-    m_observer->UpdateStackList(stackArray);
+    
+    // Send it as an event
+    clCommandEvent evt(wxEVT_DEBUGGER_LIST_FRAMES);
+    DebuggerEventData* data = new DebuggerEventData();
+    data->m_stack.swap( stackArray );
+    evt.SetClientObject( data );
+    EventNotifier::Get()->AddPendingEvent( evt );
     return true;
 }
 

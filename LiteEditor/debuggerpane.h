@@ -30,7 +30,7 @@
 #include <wx/imaglist.h>
 #include "cl_config.h"
 
-class ListCtrlPanel;
+class DebuggerCallstackView;
 class LocalsTable;
 class WatchesTable;
 class BreakpointDlg;
@@ -110,7 +110,7 @@ private:
     LocalsTable *           m_localsTable;
     wxString                m_caption;
     WatchesTable *          m_watchesTable;
-    ListCtrlPanel *         m_frameList;
+    DebuggerCallstackView *         m_frameList;
     BreakpointDlg *         m_breakpoints;
     ThreadListPanel*        m_threads;
     MemoryView *            m_memory;
@@ -138,7 +138,7 @@ public:
     WatchesTable *       GetWatchesTable  () {
         return m_watchesTable;
     }
-    ListCtrlPanel *      GetFrameListView () {
+    DebuggerCallstackView *      GetFrameListView () {
         return m_frameList;
     }
     BreakpointDlg *      GetBreakpointView() {

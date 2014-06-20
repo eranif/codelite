@@ -72,7 +72,7 @@ void DebuggerPane::OnPageChanged(NotebookEvent &event)
 {
     if (m_initDone && DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning()) {
         if (event.GetEventObject() == m_book) {
-            ManagerST::Get()->UpdateDebuggerPane();
+            ManagerST::Get()->CallAfter( &Manager::UpdateDebuggerPane );
         } else {
             event.Skip();
         }
@@ -157,11 +157,11 @@ void DebuggerPane::CreateGUIControls()
     bmp  = wxXmlResource::Get()->LoadBitmap(wxT("frames"));
     if( IS_DETACHED(name) ) {
         DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
-        m_frameList = new ListCtrlPanel(cp);
+        m_frameList = new DebuggerCallstackView(cp);
         cp->SetChildNoReparent(m_frameList);
 
     } else {
-        m_frameList = new ListCtrlPanel(m_book);
+        m_frameList = new DebuggerCallstackView(m_book);
         m_book->AddPage(m_frameList, name, false, bmp);
     }
 

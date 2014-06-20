@@ -44,6 +44,9 @@
   <Project Name="LLDBDebugger" Path="LLDBDebugger/LLDBDebugger.project" Active="No"/>
   <Project Name="SpellCheck" Path="SpellChecker/SpellCheck.project" Active="No"/>
   <Project Name="hunspell" Path="SpellChecker/hunspell/hunspell.project" Active="No"/>
+  <Environment>
+    <![CDATA[]]>
+  </Environment>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
@@ -280,7 +283,4 @@
       <Project Name="hunspell" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
-  <Environment>
-    <![CDATA[]]>
-  </Environment>
 </CodeLite_Workspace>

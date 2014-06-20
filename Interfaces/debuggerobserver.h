@@ -63,7 +63,6 @@ enum DebuggerUpdateReason {
     DBG_UR_LOCALS,                  // Local variables are available
     DBG_UR_FUNC_ARGS,               // Function arguments are available
     DBG_UR_EXPRESSION,              // A requested expression evaluation has completed and is available
-    DBG_UR_UPDATE_STACK_LIST,       // Stack List is available
     DBG_UR_REMOTE_TARGET_CONNECTED, // Remove target is now connected
     DBG_UR_RECONCILE_BPTS,          // Reconcile breakpoints is needed
     DBG_UR_BP_HIT,                  // Breakpoint was hit
@@ -258,17 +257,6 @@ public:
         e.m_updateReason = DBG_UR_EXPRESSION;
         e.m_expression = expression;
         e.m_evaluated= evaluated;
-        DebuggerUpdate( e );
-    }
-
-    /**
-     * @brief update the call stack
-     * @param stackArray an array of StackEntry items
-     */
-    void UpdateStackList(const StackEntryArray &stackArray) {
-        DebuggerEventData e;
-        e.m_updateReason = DBG_UR_UPDATE_STACK_LIST;
-        e.m_stack = stackArray;
         DebuggerUpdate( e );
     }
 

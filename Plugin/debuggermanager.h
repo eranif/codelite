@@ -68,6 +68,9 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR;
 // sent by the debugger when 'ListRegisters' function completed
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS;
 
+// Call stack
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_FRAMES;
+
 //extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS;
 //extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT;
 

@@ -32,14 +32,16 @@
 #include <memory>
 #include "globals.h"
 #include <wx/wupdlock.h>
+#include "event_notifier.h"
 
-ListCtrlPanel::ListCtrlPanel ( wxWindow* parent )
+DebuggerCallstackView::DebuggerCallstackView ( wxWindow* parent )
     : ListCtrlPanelBase ( parent )
     , m_currLevel(0)
 {
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_LIST_FRAMES, clCommandEventHandler(DebuggerCallstackView::OnUpdateBacktrace), NULL, this);
 }
 
-void ListCtrlPanel::OnItemActivated(wxDataViewEvent& event)
+void DebuggerCallstackView::OnItemActivated(wxDataViewEvent& event)
 {
     int row = m_dvListCtrl->ItemToRow(event.GetItem());
 
@@ -60,7 +62,7 @@ void ListCtrlPanel::OnItemActivated(wxDataViewEvent& event)
     }
 }
 
-void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
+void DebuggerCallstackView::Update ( const StackEntryArray &stackArr )
 {
     Clear();
     m_stack.insert(m_stack.end(), stackArr.begin(), stackArr.end());
@@ -91,13 +93,13 @@ void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
     }
 }
 
-void ListCtrlPanel::SetCurrentLevel(const int level)
+void DebuggerCallstackView::SetCurrentLevel(const int level)
 {
     // Set m_currLevel to level, or 0 if level is out of bounds
     m_currLevel = (level >=0 && level < m_dvListCtrl->GetItemCount()) ? level : 0;
 }
 
-void ListCtrlPanel::Clear()
+void DebuggerCallstackView::Clear()
 {
     m_stack.clear();
     for(int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
@@ -111,17 +113,17 @@ void ListCtrlPanel::Clear()
     }
     m_dvListCtrl->DeleteAllItems();
 }
-void ListCtrlPanel::OnMenu(wxDataViewEvent& event)
+void DebuggerCallstackView::OnMenu(wxDataViewEvent& event)
 {
     // Popup the menu
     wxMenu menu;
 
     menu.Append(XRCID("stack_copy_backtrace"),  _("Copy Backtrace to Clipboard"));
-    menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(ListCtrlPanel::OnCopyBacktrace), NULL, this);
+    menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DebuggerCallstackView::OnCopyBacktrace), NULL, this);
     m_dvListCtrl->PopupMenu( &menu );
 }
 
-void ListCtrlPanel::OnCopyBacktrace(wxCommandEvent& event)
+void DebuggerCallstackView::OnCopyBacktrace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString trace;
@@ -133,5 +135,11 @@ void ListCtrlPanel::OnCopyBacktrace(wxCommandEvent& event)
               << m_stack.at(i).line << wxT("\n");
     }
     trace.RemoveLast();
-    CopyToClipboard( trace );
+    ::CopyToClipboard( trace );
+}
+
+void DebuggerCallstackView::OnUpdateBacktrace(clCommandEvent& e)
+{
+    e.Skip();
+    Update( static_cast<DebuggerEventData*>(e.GetClientObject())->m_stack );
 }

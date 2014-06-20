@@ -5592,7 +5592,8 @@ void clMainFrame::ShowOrHideCaptions()
     } else {
         wxAuiPaneInfoArray &panes = m_mgr.GetAllPanes();
         for(size_t i=0; i<panes.GetCount(); ++i) {
-            if ( panes.Item(i).IsOk() && !panes.Item(i).IsToolbar() ) {
+            // Editor is the center pane - don't add it a caption
+            if ( panes.Item(i).IsOk() && !panes.Item(i).IsToolbar() && panes.Item(i).name != "Editor" ) {
                 panes.Item(i).CaptionVisible(true);
             }
         }

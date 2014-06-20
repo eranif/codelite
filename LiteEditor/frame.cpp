@@ -57,6 +57,7 @@
 #include "NewProjectWizard.h"
 #include <CompilersDetectorManager.h>
 #include "CompilersFoundDlg.h"
+#include <wx/stc/stc.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2744,6 +2745,10 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     // it must be called *after* the frame constuction
     // add new version notification updater
     long updatePaths(1);
+    
+    wxLogMessage( wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
+    wxLogMessage( wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStarupDirectory().c_str()));
+    wxLogMessage( "Using "  + wxStyledTextCtrl::GetLibraryVersionInfo().ToString() );
 
     EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
     if ( clConfig::Get().Read("CheckForNewVersion", true) ) {

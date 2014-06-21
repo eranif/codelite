@@ -94,10 +94,7 @@ CMakeProjectMenu::OnCMakeListsOpen(wxCommandEvent& event)
 void
 CMakeProjectMenu::OnExport(wxCommandEvent& event)
 {
-    CMakeGenerator::Generate(
-        m_plugin->GetSelectedProject(),
-        m_plugin->GetSelectedBuildConfig()
-    );
+    CMakeGenerator::Generate(m_plugin->GetSelectedProject(), true);
 }
 
 /* ************************************************************************ */

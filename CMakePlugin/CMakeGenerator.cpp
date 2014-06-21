@@ -24,6 +24,7 @@
 
 // Declarations
 #include "CMakeGenerator.h"
+#include "fileextmanager.h"
 
 // wxWidgets
 #include <wx/tokenzr.h>
@@ -86,9 +87,24 @@ static void WriteContent(const wxFileName& filename, const wxString& content)
 /* CLASSES                                                                  */
 /* ************************************************************************ */
 
-void
+bool
 CMakeGenerator::Generate(Workspace* workspace)
 {
+    if ( !workspace )
+        return false;
+    
+    // Export all projects
+    wxArrayString projectsArr;
+    workspace->GetProjectList( projectsArr );
+    
+    for(size_t i=0; i<projectsArr.GetCount(); ++i) {
+        ProjectPtr pProj = workspace->GetProject(projectsArr.Item(i));
+        Generate( pProj, false );
+    }
+    
+    // ====----------------------------
+    // Now generate the workspace
+    // ====----------------------------
     // Get workspace directory.
     const wxFileName workspaceDir = workspace->GetWorkspaceFileName().
         GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
@@ -97,7 +113,7 @@ CMakeGenerator::Generate(Workspace* workspace)
     const wxFileName filename(workspaceDir.GetPath(), CMakePlugin::CMAKELISTS_FILE);
 
     if (!CheckExists(filename))
-        return;
+        return false;
 
     // File content
     wxString content;
@@ -150,97 +166,126 @@ CMakeGenerator::Generate(Workspace* workspace)
             continue;
 
         // Write
-        content << "add_subdirectory(" << fullpath.GetPath() << ")\n";
+        wxString projectDir = fullpath.GetPath();
+        if ( projectDir.IsEmpty() ) projectDir = ".";
+        content << "add_subdirectory(" << projectDir << ")\n";
     }
 
     // Write result
     WriteContent(filename, content);
+    return true;
 }
 
 /* ************************************************************************ */
 
-void
-CMakeGenerator::Generate(ProjectPtr project, BuildConfigPtr configuration,
-    CompilerPtr compiler)
+bool
+CMakeGenerator::Generate(ProjectPtr project, bool topProject)
 {
     wxASSERT(project);
-    wxASSERT(configuration);
-
     // Get project directory
-    const wxFileName projectDir = project->GetFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
-
+    wxString projectDir = project->GetFileName().GetPath();
+    
+    // Get the project build configuration and compiler
+    BuildConfigPtr buildConf = project->GetBuildConfiguration();
+    
+    // Sanity
+    if ( !buildConf || buildConf->IsCustomBuild() ) {
+        // no build config or custom build?
+        return false;
+    }
+    
+    CompilerPtr compiler = buildConf->GetCompiler();
+    if ( !compiler ) {
+        return false;
+    }
+    
+    wxFileName projectPath = project->GetFileName();
+    wxArrayString depsPaths;
+    wxArrayString depsProjectNames;
+    if ( topProject ) {
+        wxArrayString depsProjects = project->GetDependencies( buildConf->GetName() );
+        for(size_t i=0; i<depsProjects.GetCount(); ++i) {
+            ProjectPtr pProj = WorkspaceST::Get()->GetProject( depsProjects.Item(i) );
+            if ( pProj ) {
+                if ( Generate( pProj, false ) ) {
+                    wxString depProjFilePath = pProj->GetFileName().GetFullPath();
+                    wxFileName fnDepProj( depProjFilePath );
+                    fnDepProj.MakeRelativeTo( projectPath.GetPath() );
+                    wxString relPath = fnDepProj.GetPath(false, wxPATH_UNIX);
+                    
+                    // Keep the project path relative to current project
+                    depsPaths.Add( relPath );
+                    
+                    // Keep the project name
+                    depsProjectNames.Add( pProj->GetName() );
+                }
+            }
+        }
+    }
+    
     // Output file name
-    const wxFileName filename(projectDir.GetPath(), CMakePlugin::CMAKELISTS_FILE);
+    wxFileName filename(projectDir, CMakePlugin::CMAKELISTS_FILE);
 
     if (!CheckExists(filename))
-        return;
-
+        return false;
+    
     // File content
     wxString content;
 
-    // TODO custom version
-    content << "cmake_minimum_required(VERSION 2.6.2)\n\n";
+    content << "cmake_minimum_required(VERSION 2.8.11)\n\n";
 
     // Print project name
     content << "project(" << project->GetName() << ")\n\n";
-
+    
+    // Add the dependencies first
+    if ( !depsPaths.IsEmpty() ) {
+        content << "# Add the build order directories\n";
+    }
+    
+    for(size_t i=0; i<depsPaths.GetCount(); ++i) {
+        content << "add_subdirectory( " << depsPaths.Item(i) << " )\n";
+    }
+    content << "\n\n";
+    
     // Add include directories
     {
-        wxString includes = configuration->GetIncludePath();
-
-        // Get includes from project
-        wxArrayString project_includes = project->GetIncludePaths();
-
-        // Add projects includes
-        includes << ";" << wxJoin(project_includes, ';');
-
-        if (compiler) {
-            // Append global include paths
-            includes << ";" << compiler->GetGlobalIncludePath();
+        // Get the incldue paths for the project. This also includes any 
+        // includes from $(shell ...) commands
+        wxArrayString includes = project->GetIncludePaths(true);
+        content << "include_directories(\n";
+        for(size_t i=0; i<includes.GetCount(); ++i) {
+            
+            wxString &includePath = includes.Item(i);
+            includePath.Replace("\\", "/");
+            includePath.Trim(false).Trim();
+            if ( includePath.IsEmpty() ) {
+                continue;
+            }
+            content << "    " << includes.Item(i) << "\n";
         }
-
-        // Trim all whitespaces
-        includes.Trim().Trim(false);
-
-        // Ignore empty include paths
-        if (!includes.IsEmpty()) {
-            // Separators
-            includes.Replace(";", "\n    ");
-            // Replace Windows backslashes
-            includes.Replace("\\", "/");
-
-            content << "include_directories(\n    " << includes << "\n)\n\n";
-        }
+        content << "\n)\n\n";
     }
 
     // Add preprocessor definitions
     {
-        wxString defines = configuration->GetPreprocessor();
-
-        defines.Trim().Trim(false);
-        defines.Replace(";", "\n    -D");
-
-        if (!defines.IsEmpty())
-        {
-            content << "add_definitions(\n    -D" << defines << "\n)\n\n";
-        }
-    }
-
-    // Add compiler options
-    {
-        wxString buildOpts = configuration->GetCompileOptions();
-
-        buildOpts.Trim().Trim(false);
-        buildOpts.Replace(";", " ");
-
-        if (!buildOpts.IsEmpty()) {
-            content << "set(CMAKE_CXXFLAGS \"${CMAKE_CXXFLAGS} " << buildOpts << "\")\n\n";
+        wxArrayString defines = project->GetPreProcessors(false);
+        if ( !defines.IsEmpty() ) {
+            content << "add_definitions(\n";
+            for(size_t i=0; i<defines.GetCount(); ++i) {
+                wxString &pp = defines.Item(i);
+                pp.Trim().Trim(false);
+                if ( pp.IsEmpty() ) {
+                    continue;
+                }
+                content << "    -D" << pp << "\n";
+            }
+            content << ")\n\n";
         }
     }
 
     // Add linker options
     {
-        wxString links = configuration->GetLinkOptions();
+        wxString links = buildConf->GetLinkOptions();
 
         links.Trim().Trim(false);
         links.Replace(";", " ");
@@ -253,7 +298,7 @@ CMakeGenerator::Generate(ProjectPtr project, BuildConfigPtr configuration,
 
     // Add libraries paths
     {
-        wxString lib_paths = configuration->GetLibPath();
+        wxString lib_paths = buildConf->GetLibPath();
         wxString lib_switch = "-L";
 
         // Get switch from compiler
@@ -279,43 +324,89 @@ CMakeGenerator::Generate(ProjectPtr project, BuildConfigPtr configuration,
         content << "set(CMAKE_LDFLAGS \"${CMAKE_LDFLAGS} " << lib_paths << "\")\n\n";
     }
 
-    // Write sources
+    wxArrayString cppSources, cSources;
+    // Write sources 
+    // Get files in the project
+    std::vector<wxFileName> files;
+    project->GetFiles(files);
+
     {
-        content << "set(SRCS\n";
-
-        // Get files in the project
-        std::vector<wxFileName> files;
-        project->GetFiles(files, true);
-
-        for (size_t i = 0; i < files.size(); i++) {
-            wxFileName src_filename = files.at(i);
-            src_filename.MakeRelativeTo(project->GetFileName().GetPath());
-
-            // Store file name into SRCS
-            content << "    " << src_filename.GetFullPath(wxPATH_UNIX) << "\n";
+        
+        for (size_t i = 0; i < files.size(); ++i) {
+            
+            wxString sourceFile = files.at(i).GetFullPath();
+            
+            // CMake does not handle backslash properly
+            sourceFile.Replace("\\", "/"); 
+            if ( FileExtManager::GetType(sourceFile) == FileExtManager::TypeSourceCpp) {
+                cppSources.Add( sourceFile );
+            } else if ( FileExtManager::GetType(sourceFile) == FileExtManager::TypeSourceC ) {
+                cSources.Add( sourceFile );
+            }
+            
         }
-
-        content << ")\n\n";
+        
+        if ( !cSources.IsEmpty() ) {
+            content << "# Define the C sources\n";
+            content << "set ( C_SRCS\n";
+            for(size_t i=0; i<cSources.GetCount(); ++i) {
+                content << "    " << cSources.Item(i) << "\n";
+            }
+            content << ")\n\n";
+        }
+        
+        if ( !cppSources.IsEmpty() ) {
+            content << "# Define the CXX sources\n";
+            content << "set ( CXX_SRCS\n";
+            for(size_t i=0; i<cppSources.GetCount(); ++i) {
+                content << "    " << cppSources.Item(i) << "\n";
+            }
+            content << ")\n\n";
+        }
+    }
+    
+    // Add CXX compiler options
+    {
+        wxArrayString buildOptsArr = project->GetCXXCompilerOptions();
+        if ( !buildOptsArr.IsEmpty() && !cppSources.IsEmpty() ) {
+            content << "set_source_files_properties(\n    ${CXX_SRCS} PROPERTIES COMPILE_FLAGS \n    \"";
+            for(size_t i=0; i<buildOptsArr.GetCount(); ++i) {
+                content << " " << buildOptsArr.Item(i) ;
+            }
+            content << "\")\n\n";
+        }
+    }
+    
+    // Add C compiler options
+    {
+        wxArrayString buildOptsArr = project->GetCCompilerOptions();
+        if ( !buildOptsArr.IsEmpty() && !cSources.IsEmpty() ) {
+            content << "set_source_files_properties(\n    ${C_SRCS} PROPERTIES COMPILE_FLAGS \n    \"";
+            for(size_t i=0; i<buildOptsArr.GetCount(); ++i) {
+                content << " " << buildOptsArr.Item(i) ;
+            }
+            content << "\")\n\n";
+        }
     }
 
     // Get project type
     {
-        ProjectSettingsPtr settings = project->GetSettings();
-
-        wxString type = settings->GetProjectType(configuration->GetName());
+        wxString type = buildConf->GetProjectType();
 
         if (type == Project::EXECUTABLE) {
-            content << "add_executable(" << project->GetName() << " ${SRCS})\n\n";
+            content << "add_executable(" << project->GetName() << " ${CXX_SRCS} ${C_SRCS})\n\n";
+            
         } else if (type == Project::DYNAMIC_LIBRARY) {
-            content << "add_library(" << project->GetName() << " SHARED ${SRCS})\n\n";
+            content << "add_library(" << project->GetName() << " SHARED ${CXX_SRCS} ${C_SRCS})\n\n";
+            
         } else {
-            content << "add_library(" << project->GetName() << " ${SRCS})\n\n";
+            content << "add_library(" << project->GetName() << " ${CXX_SRCS} ${C_SRCS})\n\n";
         }
     }
-
+    
     // Add link libraries
     {
-        wxString libs = configuration->GetLibraries();
+        wxString libs = buildConf->GetLibraries();
 
         libs.Trim().Trim(false);
 
@@ -326,9 +417,19 @@ CMakeGenerator::Generate(ProjectPtr project, BuildConfigPtr configuration,
                 libs << "\n)\n\n";
         }
     }
-
+    
+    // And setup the deps
+    // Set up a dependecy between the this project and the subproject
+    if ( !depsProjectNames.IsEmpty() ) {
+        content << "# Setup dependencies\n";
+    }
+    for(size_t i=0; i<depsProjectNames.GetCount(); ++i) {
+        content << "add_dependencies( " << project->GetName() << " " << depsProjectNames.Item(i) << " )\n";
+    }
+    
     // Write result
     WriteContent(filename, content);
+    return true;
 }
 
 /* ************************************************************************ */

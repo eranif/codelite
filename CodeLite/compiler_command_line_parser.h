@@ -19,6 +19,7 @@ protected:
     wxArrayString m_includesWithPrefix;
     wxArrayString m_framworks;
     wxString      m_standard;
+    wxArrayString m_otherOptions;
 
     int           m_argc;
     char **       m_argv;
@@ -35,9 +36,12 @@ public:
     const wxString& GetStandard() const {
         return m_standard;
     }
-    
+
     wxString GetStandardWithPrefix() const ;
-    
+
+    const wxArrayString& GetOtherOptions() const {
+        return m_otherOptions;
+    }
     const wxArrayString& GetFramworks() const {
         return m_framworks;
     }

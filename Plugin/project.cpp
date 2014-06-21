@@ -42,6 +42,9 @@
 #include <wx/ffile.h>
 #include "cl_command_event.h"
 #include "environmentconfig.h"
+#include "compiler_command_line_parser.h"
+#include <algorithm>
+#include "wxArrayStringAppender.h"
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
@@ -51,58 +54,9 @@ static wxStringMap_t s_backticks;
 
 #define EXCLUDE_FROM_BUILD_FOR_CONFIG "ExcludeProjConfig"
 
-static wxArrayString Explode(const wxString& in)
-{
-
-#define StateNormal   0
-#define StateInString 1
-
-    wxString inputString(in);
-    inputString.Trim().Trim(false);
-
-    int state(StateNormal);
-    wxArrayString tokens;
-    wxString      token;
-
-    if(inputString.IsEmpty())
-        return tokens;
-
-    for (size_t i=0; i<inputString.Length(); i++) {
-        wxChar ch = inputString.GetChar(i);
-        switch (ch) {
-        case wxT('"'):
-            if (state == StateNormal) {
-                state = StateInString;
-
-            } else if (state == StateInString) {
-                state = StateNormal;
-            }
-            if(token.IsEmpty() == false)
-                tokens.Add(token);
-            token.Clear();
-            break;
-        case wxT(' '):
-            if(state == StateNormal) {
-                if(token.IsEmpty() == false)
-                    tokens.Add(token);
-                token.Clear();
-
-            } else {
-                token << ch;
-            }
-            break;
-        default:
-            token << ch;
-            break;
-        }
-    }
-
-    if(token.IsEmpty() == false)
-        tokens.Add(token);
-
-    return tokens;
-}
-
+// ============---------------------
+// Project class
+// ============---------------------
 
 Project::Project()
     : m_tranActive(false)
@@ -1232,18 +1186,19 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
 wxArrayString Project::GetIncludePaths(bool clearCache)
 {
     wxArrayString paths;
+    
     BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if(!matrix) {
         return paths;
     }
+    
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
-
+    
     wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
     BuildConfigPtr buildConf = GetWorkspace()->GetProjBuildConf(this->GetName(), projectSelConf);
     
     // for non custom projects, take the settings from the build configuration
     if(buildConf && !buildConf->IsCustomBuild()) {
-        
         // Apply the environment
         EnvSetter es(NULL, NULL, GetName());
         
@@ -1291,24 +1246,20 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
     return paths;
 }
 
+wxArrayString Project::DoBacktickToPreProcessors(const wxString& backtick)
+{
+    wxArrayString paths;
+    wxString cmpOption = DoExpandBacktick( backtick );
+    CompilerCommandLineParser cclp(cmpOption);
+    return cclp.GetMacros();
+}
+
 wxArrayString Project::DoBacktickToIncludePath(const wxString& backtick)
 {
     wxArrayString paths;
     wxString cmpOption = DoExpandBacktick( backtick );
-    wxArrayString options = Explode(cmpOption);
-    for(size_t i=0; i<options.GetCount(); i++) {
-        options.Item(i).Trim().Trim(false);
-        if(options.Item(i).StartsWith(wxT("-I"))) {
-            options.Item(i).Remove(0, 2);
-            wxFileName fn(options.Item(i), "");
-            if(fn.IsRelative()) {
-                // Convert to absolute path
-                fn.MakeAbsolute(GetFileName().GetPath());
-            }
-            paths.Add(fn.GetPath());
-        }
-    }
-    return paths;
+    CompilerCommandLineParser cclp(cmpOption, GetFileName().GetPath());
+    return cclp.GetIncludes();
 }
 
 void Project::DoDeleteVDFromCache(const wxString& vd)
@@ -1683,7 +1634,8 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
 {
     wxString tmp;
     wxString cmpOption = backtick;
-
+    cmpOption.Trim().Trim(false);
+    
     // Expand backticks / $(shell ...) syntax supported by codelite
     if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
         cmpOption = tmp;
@@ -1703,7 +1655,7 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
             cmpOption = s_backticks.find(cmpOption)->second;
         }
     }
-    cmpOption.Trim().Trim(false);
+    
     return cmpOption;
 }
 
@@ -1816,4 +1768,108 @@ void Project::ReplaceCompilers(wxStringMap_t& compilers)
 void Project::DoUpdateProjectSettings()
 {
     m_settings.Reset( new ProjectSettings(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Settings"))) );
+}
+
+wxArrayString Project::GetPreProcessors(bool clearCache)
+{
+    wxArrayString pps;
+    BuildConfigPtr buildConf = GetBuildConfiguration();
+    // for non custom projects, take the settings from the build configuration
+    if(buildConf && !buildConf->IsCustomBuild()) {
+        
+        // Apply the environment
+        EnvSetter es(NULL, NULL, GetName());
+        
+        if ( clearCache ) {
+            s_backticks.clear();
+        }
+        
+        // Get the pre-processors and add them to the array
+        wxString projectPPS = buildConf->GetPreprocessor();
+        wxArrayString projectPPSArr = ::wxStringTokenize(projectPPS, wxT(";"), wxTOKEN_STRTOK);
+        for(size_t i=0; i<projectPPSArr.GetCount(); i++) {
+            projectPPSArr.Item(i).Trim();
+            if ( pps.Index(projectPPSArr.Item(i)) != wxNOT_FOUND )
+                continue;
+            pps.Add( projectPPSArr.Item(i) );
+        }
+
+        // get the compiler options and add them
+        wxString projectCompileOptions = buildConf->GetCompileOptions();
+        wxArrayString projectCompileOptionsArr = wxStringTokenize(projectCompileOptions, wxT(";"), wxTOKEN_STRTOK);
+        for(size_t i=0; i<projectCompileOptionsArr.GetCount(); i++) {
+
+            wxString cmpOption (projectCompileOptionsArr.Item(i));
+            cmpOption.Trim().Trim(false);
+
+            // expand backticks, if the option is not a backtick the value remains
+            // unchanged
+            wxArrayString pparr = DoBacktickToPreProcessors(cmpOption);
+            if ( !pparr.IsEmpty() ) {
+                pps.insert(pps.end(), pparr.begin(), pparr.end());
+            }
+        }
+    }
+    return pps;
+}
+
+wxArrayString Project::GetCXXCompilerOptions(bool clearCache, bool noDefines, bool noIncludePaths)
+{
+    return DoGetCompilerOptions(true, clearCache, noDefines, noIncludePaths);
+}
+
+wxArrayString Project::GetCCompilerOptions(bool clearCache, bool noDefines, bool noIncludePaths)
+{
+    return DoGetCompilerOptions(false, clearCache, noDefines, noIncludePaths);
+}
+
+wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bool noDefines, bool noIncludePaths)
+{
+    wxArrayString options;
+    BuildConfigPtr buildConf = GetBuildConfiguration();
+    // for non custom projects, take the settings from the build configuration
+    if(buildConf && !buildConf->IsCustomBuild()) {
+
+        // Apply the environment
+        EnvSetter es(NULL, NULL, GetName());
+        
+        if ( clearCache ) {
+            s_backticks.clear();
+        }
+        
+        // Get the switches from 
+        wxString optionsStr = cxxOptions ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
+        
+        wxArrayString optionsArr = wxStringTokenize(optionsStr, wxT(";"), wxTOKEN_STRTOK);
+        for(size_t i=0; i<optionsArr.GetCount(); ++i) {
+            wxString cmpOption( optionsArr.Item(i) );
+            cmpOption.Trim().Trim(false);
+            if ( cmpOption.IsEmpty() )
+                continue;
+            
+            wxString expandedCmpOption = DoExpandBacktick( cmpOption );
+            if ( expandedCmpOption != cmpOption ) {
+                // this was indeed a backtick
+                CompilerCommandLineParser cclp(expandedCmpOption, GetFileName().GetPath());
+                const wxArrayString& opts = cclp.GetOtherOptions();
+                options.insert(options.end(), opts.begin(), opts.end());
+                
+            } else {
+                options.Add( cmpOption );
+            }
+        }
+        
+        if ( !noDefines ) {
+            wxArrayString macros = GetPreProcessors();
+            std::for_each(macros.begin(), macros.end(), wxArrayStringAppender(macros, "-D", true));
+            options.insert(options.end(), macros.begin(), macros.end());
+        }
+        
+        if ( !noIncludePaths ) {
+            wxArrayString includes = GetIncludePaths();
+            std::for_each(includes.begin(), includes.end(), wxArrayStringAppender(includes, "-I", true));
+            options.insert(options.end(), includes.begin(), includes.end());
+        }
+    }
+    return options;
 }

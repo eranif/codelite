@@ -213,6 +213,8 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 if ( stds.IsEmpty() == false ) {
                     m_standard = stds;
                 }
+            } else {
+                m_otherOptions.Add( opt );
             }
         }
     }

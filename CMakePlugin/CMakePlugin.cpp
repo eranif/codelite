@@ -143,8 +143,6 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 static wxString CreateArguments(const CMakeProjectSettings& settings,
                                 const CMakeConfiguration& configuration)
 {
-    const wxString& sourceDir = settings.sourceDirectory;
-    const wxString& buildDir = settings.buildDirectory;
     wxArrayString args;
 
     // Get generator

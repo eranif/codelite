@@ -54,20 +54,19 @@ public:
      *
      * @param workspace Exported workspace.
      */
-    static void Generate(Workspace* workspace);
+    static bool Generate(Workspace* workspace);
 
 
     /**
-     * @brief Generate CMakeLists.txt file for given project and
-     * configuration.
+     * @brief Generate CMakeLists.txt file for given project 
+     * This function always generte it for the build configuration that matches
+     * to the workspace configuration
      *
      * @param project       Project.
-     * @param configuration Build configuration.
-     * @param compiler      Optional compiler.
+     * @param topProject    When set to true, generator will generate CMakeLists.txt file
+     * for all dependencies as well
      */
-    static void Generate(ProjectPtr project,
-                         BuildConfigPtr configuration,
-                         CompilerPtr compiler = NULL);
+    static bool Generate(ProjectPtr project, bool topProject);
 
 };
 

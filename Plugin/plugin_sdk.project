@@ -81,6 +81,7 @@
     <File Name="queuecommand.cpp"/>
     <File Name="queuecommand.h"/>
     <File Name="shell_command.h"/>
+    <File Name="wxArrayStringAppender.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
     <File Name="xmlutils.cpp"/>

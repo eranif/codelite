@@ -192,6 +192,7 @@ private:
     
 private:
     void DoUpdateProjectSettings();
+    wxArrayString DoGetCompilerOptions(bool cxxOptions, bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
     
 public:
     // -----------------------------------------
@@ -614,7 +615,24 @@ public:
      * project settings
      */
     wxArrayString GetIncludePaths(bool clearCache = false);
-
+    
+    /**
+     * @brief return the pre-processors for this project.
+     * The PreProcessors returned are from the build configuration
+     * that matches the current workspace configuration
+     */
+    wxArrayString GetPreProcessors(bool clearCache = false);
+    
+    /**
+     * @brief return the compiler. Optionally ommit the defines/include paths
+     */
+    wxArrayString GetCXXCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    
+    /**
+     * @brief return the C compiler. Optionally ommit the defines/include paths
+     */
+    wxArrayString GetCCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    
     /**
      * @brief return the compilation line for a C++ file in the project. This function returns the same
      * compilation line for all CXX or C files. So instead of hardcoding the file name it uses a placeholder for the file
@@ -676,6 +694,7 @@ private:
 
     void DoDeleteVDFromCache(const wxString &vd);
     wxArrayString DoBacktickToIncludePath(const wxString &backtick);
+    wxArrayString DoBacktickToPreProcessors(const wxString &backtick);
     wxString DoExpandBacktick(const wxString &backtick) const;
     void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
     wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);

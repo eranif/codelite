@@ -268,7 +268,7 @@ CMakeProjectSettingsPanelBase::CMakeProjectSettingsPanelBase(wxWindow* parent, w
     flexGridSizer->Add(m_staticTextBuildDir, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 0);
     
     m_dirPickerBuildDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
-    m_dirPickerBuildDir->SetToolTip(_("Directory where the project will be built. Path is relative to $(ProjectPath)."));
+    m_dirPickerBuildDir->SetToolTip(_("Directory where the project will be built. Path is relative to $(WorkspacePath)."));
     
     flexGridSizer->Add(m_dirPickerBuildDir, 0, wxALL|wxEXPAND, 0);
     
@@ -294,6 +294,9 @@ CMakeProjectSettingsPanelBase::CMakeProjectSettingsPanelBase(wxWindow* parent, w
     m_comboBoxBuildTypeArr.Add(wxT("MinSizeRel"));
     m_comboBoxBuildType = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_comboBoxBuildTypeArr, 0);
     m_comboBoxBuildType->SetToolTip(_("When is selected pass -DCMAKE_BUILD_TYPE to cmake."));
+    #if wxVERSION_NUMBER >= 3000
+    m_comboBoxBuildType->SetHint(wxT(""));
+    #endif
     
     flexGridSizer->Add(m_comboBoxBuildType, 0, wxALL|wxEXPAND, 0);
     

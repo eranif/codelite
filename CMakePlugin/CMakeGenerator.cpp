@@ -25,7 +25,6 @@
 // Declarations
 #include "CMakeGenerator.h"
 #include "fileextmanager.h"
-#include <wx/richmsgdlg.h>
 
 // wxWidgets
 #include <wx/tokenzr.h>
@@ -35,6 +34,7 @@
 
 // Plugin
 #include "CMakePlugin.h"
+#include "globals.h"
 
 /* ************************************************************************ */
 /* FUNCTIONS                                                                */
@@ -52,24 +52,18 @@ static bool CheckExists(const wxFileName& filename)
 {
     // Output file exists, overwrite?
     if (filename.Exists()) {
-        static wxStandardID sAnswer = wxID_NONE;
-        if ( sAnswer != wxID_NONE ) {
-            return sAnswer == wxID_YES;
-        }
-        
         wxString msg;
         msg << CMakePlugin::CMAKELISTS_FILE 
             << " exists. Overwrite?\n" 
             << "(" 
             << filename.GetFullPath() 
             << ")";
-        wxRichMessageDialog dlg(NULL, msg, "CodeLite", wxYES_NO | wxCANCEL| wxCENTER | wxICON_QUESTION | wxYES_DEFAULT);
-        dlg.ShowCheckBox(_("Remember my answer and don't annoy me again"));
-        dlg.SetYesNoCancelLabels(_("Overwrite"), _("Don't Overwrite"), _("Cancel"));
-        int answer = dlg.ShowModal();
-        if ( dlg.IsCheckBoxChecked() ) {
-            sAnswer = static_cast<wxStandardID>(answer);
-        }
+        wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(   msg, 
+                                                                    "CMakePluginOverwriteDlg", 
+                                                                    _("Overwrite"), 
+                                                                    _("Don't Overwrite"),
+                                                                    _("Remember my answer and don't annoy me again"),
+                                                                    wxYES_NO | wxCANCEL| wxCENTER | wxICON_QUESTION | wxYES_DEFAULT);
         return (answer == wxID_YES);
     }
     

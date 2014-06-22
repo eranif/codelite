@@ -3143,35 +3143,42 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
 {
     wxUnusedVar(e);
     
-    // Let the plugin know that we are about to start debugging
-    clDebugEvent dbgEvent(wxEVT_DBG_UI_START_OR_CONT);
-    if ( WorkspaceST::Get()->IsOpen() ) {
-        // Pass as much as info as we can (i.e. project name and the selected debugger)
-        dbgEvent.SetProjectName( WorkspaceST::Get()->GetActiveProjectName() );
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf( dbgEvent.GetProjectName() , "" );
-        if ( bldConf ) {
-            dbgEvent.SetDebuggerName( bldConf->GetDebuggerType() );
-        }
+    bool isBuiltinDebuggerRunning = DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning();
+    
+    if ( !WorkspaceST::Get()->IsOpen() ) {
+        // We hae no workspace opened and yet we got here. 
+        // this can mean one of two:
+        // 1. A non C++ workspace is opened - so we initiate the debugger start command
+        // 2. User wishes to run QuickDebug// Let the plugin know that we are about to start debugging
+        clDebugEvent dbgEvent(wxEVT_DBG_UI_START);
+        if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) 
+            // the event was processed by one of the plugins, there is nothing left to
+            // be done here
+            return;
+        
+        // Note:
+        // The second scenario (launch QuickDebug) is handled later on this function
     }
     
-    // If a built-in debugger is already running, don't fire an event to the 
-    // plugins
-    // We know that it is a built-in debugger if 'dbgr' is not NULL
-    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if ( !(dbgr && dbgr->IsRunning()) ) {
-        if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) {
-            return;
+    if ( !isBuiltinDebuggerRunning ) {
+        // Let the plugin know that we are about to start debugging
+        clDebugEvent dbgEvent(wxEVT_DBG_UI_CONTINUE);
+        ProjectPtr activeProject = WorkspaceST::Get()->GetActiveProject();
+        if ( activeProject ) {
+            BuildConfigPtr buildConfig = activeProject->GetBuildConfiguration();
+            if ( buildConfig ) {
+                dbgEvent.SetDebuggerName( buildConfig->GetDebuggerType() );
+            }
         }
+        if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) return;
     }
     
     Manager *mgr = ManagerST::Get();
-    
-    if (dbgr && dbgr->IsRunning()) {
-        
-        // Debugger is already running -> probably a continue command
+    if ( isBuiltinDebuggerRunning ) {
+        // Debugger is already running -> continue command
         mgr->DbgContinue();
         
-    } else if (mgr->IsWorkspaceOpen()) {
+    } else if ( mgr->IsWorkspaceOpen() ) {
 
         if (WorkspaceST::Get()->GetActiveProjectName().IsEmpty()) {
             wxLogMessage(_("Attempting to debug workspace with no active project? Ignoring."));

@@ -484,7 +484,8 @@
 // If a plugin wishes to override codelite's default debugger (gdb)
 // it simply needs to connect the event and avoid calling 'event.Skip();
 //----------------------------------------------------------------------
-#define wxEVT_DBG_UI_START_OR_CONT              3547 // Start the debugger or continue
+#define wxEVT_DBG_UI_START                      3547 // Start
+#define wxEVT_DBG_UI_CONTINUE                   3548 // Continue
 #define wxEVT_DBG_UI_STOP                       3549 // Stop the debugger
 #define wxEVT_DBG_UI_STEP_IN                    3550 // Step into function
 #define wxEVT_DBG_UI_STEP_OUT                   3551 // Step out of current frame

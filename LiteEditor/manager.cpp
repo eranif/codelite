@@ -2181,7 +2181,23 @@ void Manager::DbgStart ( long attachPid )
     ProjectPtr          proj;
     DebuggerStartupInfo startup_info;
     long                PID ( -1 );
-
+    
+    if ( attachPid == -1 ) {
+        // Start debugger ( when attachPid != -1 it means we are attaching to process )
+        // Let the plugin know that we are about to start debugging
+        clDebugEvent dbgEvent(wxEVT_DBG_UI_START);
+        ProjectPtr activeProject = WorkspaceST::Get()->GetActiveProject();
+        if ( activeProject ) {
+            dbgEvent.SetProjectName( activeProject->GetName() );
+            BuildConfigPtr buildConfig = activeProject->GetBuildConfiguration();
+            if ( buildConfig ) {
+                dbgEvent.SetDebuggerName( buildConfig->GetDebuggerType() );
+                dbgEvent.SetConfigurationName( buildConfig->GetName() );
+            }
+        }
+        if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) return;
+    }
+    
 #if defined(__WXGTK__)
     wxString where;
     wxString terminal;

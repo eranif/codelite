@@ -905,6 +905,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
     wxString cwd = proj->GetFileName().GetPath();
     if (OS_WINDOWS) {
         text << wxT("\t") << wxT("$(RM) ") << imd << "*$(ObjectSuffix)" << wxT("\n");
+        text << wxT("\t") << wxT("$(RM) ") << imd << "*$(DependSuffix)" << wxT("\n");
         //delete the output file as well
         wxString exeExt(wxEmptyString);
         if (proj->GetSettings()->GetProjectType(bldConf->GetName()) == Project::EXECUTABLE) {
@@ -927,6 +928,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
         }
     } else {
         text << wxT("\t") << wxT("$(RM) ") << imd << "*$(ObjectSuffix)" << wxT("\n");
+        text << wxT("\t") << wxT("$(RM) ") << imd << "*$(DependSuffix)" << wxT("\n");
         
         //delete the output file as well
         text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)\n");

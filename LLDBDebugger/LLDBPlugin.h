@@ -68,6 +68,7 @@ protected:
     // UI debugger events
     void OnIsDebugger(clDebugEvent& event);
     void OnDebugStart(clDebugEvent& event);
+    void OnDebugContinue(clDebugEvent& event);
     void OnDebugNext(clDebugEvent& event);
     void OnDebugStop(clDebugEvent& event);
     void OnDebugIsRunning(clDebugEvent& event);

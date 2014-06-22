@@ -86,7 +86,8 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     
     // UI events
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBPlugin::OnDebugStart), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_START, clDebugEventHandler(LLDBPlugin::OnDebugStart), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_CONTINUE, clDebugEventHandler(LLDBPlugin::OnDebugContinue), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBPlugin::OnDebugNext), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(LLDBPlugin::OnDebugStepIn), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBPlugin::OnDebugStepOut), NULL, this);
@@ -125,7 +126,8 @@ void LLDBPlugin::UnPlug()
     
     // UI events
     EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBPlugin::OnIsDebugger), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBPlugin::OnDebugStart), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_START, clDebugEventHandler(LLDBPlugin::OnDebugStart), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_CONTINUE, clDebugEventHandler(LLDBPlugin::OnDebugContinue), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBPlugin::OnDebugNext), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STOP, clDebugEventHandler(LLDBPlugin::OnDebugStop), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBPlugin::OnDebugIsRunning), NULL, this);
@@ -228,153 +230,158 @@ void LLDBPlugin::TerminateTerminal()
     m_terminalTTY.Clear();
 }
 
+void LLDBPlugin::OnDebugContinue(clDebugEvent& event)
+{
+    event.Skip();
+    if ( m_connector.IsRunning() ) {
+        // we are the active debugger
+        CL_DEBUG("CODELITE>> continue...");
+        m_connector.Continue();
+        event.Skip(false);
+    }
+}
+
 void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 {
-    if ( !m_connector.IsRunning() ) {
+    if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
+        event.Skip();
+        return;
+    }
+    
+    CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
+    {
+        // Get the executable to debug
+        wxString errMsg;
+        ProjectPtr pProject = WorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
+        if ( !pProject ) {
+            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
+            return;
+        }
+
+        DirSaver ds;
+        ::wxSetWorkingDirectory ( pProject->GetFileName().GetPath() );
         
-        if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
-            event.Skip();
+        // Load LLDB settings
+        LLDBSettings settings;
+        settings.Load();
+        
+        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( pProject->GetName(), wxEmptyString );
+        if ( !bldConf ) {
+            ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
             return;
         }
         
-        CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
-        {
-            // Get the executable to debug
-            wxString errMsg;
-            ProjectPtr pProject = WorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
-            if ( !pProject ) {
-                ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
+        // Launch codelite-lldb now. 
+        // Choose wether we need to debug a local or remote target
+        
+        
+        // Honour the project settings
+        if ( bldConf->GetIsDbgRemoteTarget() ) {
+            long nPort(wxNOT_FOUND);
+            bldConf->GetDbgHostPort().ToCLong( &nPort );
+            settings.SetProxyIp( bldConf->GetDbgHostName() );
+            settings.SetProxyPort( nPort );
+            settings.EnableFlag( kLLDBOptionUseRemoteProxy, true );
+        }
+
+        if ( !settings.IsUsingRemoteProxy() ) {
+            // Not using a remote proxy, launch the debug server
+            if ( !m_connector.LaunchLocalDebugServer() ) {
                 return;
-            }
-
-            DirSaver ds;
-            ::wxSetWorkingDirectory ( pProject->GetFileName().GetPath() );
-            
-            // Load LLDB settings
-            LLDBSettings settings;
-            settings.Load();
-            
-            BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( pProject->GetName(), wxEmptyString );
-            if ( !bldConf ) {
-                ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
-                return;
-            }
-            
-            // Launch codelite-lldb now. 
-            // Choose wether we need to debug a local or remote target
-            
-            
-            // Honour the project settings
-            if ( bldConf->GetIsDbgRemoteTarget() ) {
-                long nPort(wxNOT_FOUND);
-                bldConf->GetDbgHostPort().ToCLong( &nPort );
-                settings.SetProxyIp( bldConf->GetDbgHostName() );
-                settings.SetProxyPort( nPort );
-                settings.EnableFlag( kLLDBOptionUseRemoteProxy, true );
-            }
-
-            if ( !settings.IsUsingRemoteProxy() ) {
-                // Not using a remote proxy, launch the debug server
-                if ( !m_connector.LaunchLocalDebugServer() ) {
-                    return;
-                }
-            }
-
-            // Determine the executable to debug, working directory and arguments
-            EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString());
-            wxString exepath = bldConf->GetCommand();
-            wxString args;
-            wxString wd;
-            // Get the debugging arguments.
-            if(bldConf->GetUseSeparateDebugArgs()) {
-                args = bldConf->GetDebugArgs();
-            } else {
-                args = bldConf->GetCommandArguments();
-            }
-
-            wd      = ::ExpandVariables ( bldConf->GetWorkingDirectory(), pProject, m_mgr->GetActiveEditor() );
-            exepath = ::ExpandVariables ( exepath, pProject, m_mgr->GetActiveEditor() );
-
-            {
-                DirSaver ds;
-                ::wxSetWorkingDirectory(wd);
-                wxFileName execToDebug( exepath );
-                if ( execToDebug.IsRelative() ) {
-                    execToDebug.MakeAbsolute();
-                }
-                
-                //////////////////////////////////////////////////////////////////////
-                // Launch terminal for IO redirection
-                //////////////////////////////////////////////////////////////////////
-                TerminateTerminal();
-                
-                bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
-                if ( !bldConf->IsGUIProgram() && !isWindows ) {
-                    ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), m_terminalTTY, m_terminalPID);
-                    
-                    if ( m_terminalPID != wxNOT_FOUND ) {
-                        CL_DEBUG("Successfully launched terminal");
-                    
-                    } else {
-                        // Failed to launch it...
-                        DoCleanup();
-                        ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
-                        return;
-                    }
-                }
-                
-                CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
-                CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
-                
-                //////////////////////////////////////////////////////////////////////
-                // Initiate the connection to codelite-lldb
-                //////////////////////////////////////////////////////////////////////
-                
-                LLDBConnectReturnObject retObj;
-                if ( m_connector.Connect(retObj, settings, 5) ) {
-                    
-                    // Get list of breakpoints and add them ( we will apply them later on )
-                    BreakpointInfo::Vec_t gdbBps;
-                    m_mgr->GetAllBreakpoints(gdbBps);
-                    
-                    // remove all breakpoints from previous session
-                    m_connector.DeleteAllBreakpoints();
-
-                    // apply the serialized breakpoints
-                    m_connector.AddBreakpoints( gdbBps );
-
-                    // Setup pivot folder if needed
-                    SetupPivotFolder( retObj );
-
-                    LLDBCommand startCommand;
-                    startCommand.FillEnvFromMemory();
-                    
-                    // If the current platform is Windows, use the executable as it appears in the project settings
-                    startCommand.SetExecutable( isWindows ? exepath : execToDebug.GetFullPath() );
-                    
-                    startCommand.SetCommandArguments( args );
-                    startCommand.SetWorkingDirectory( wd );
-                    startCommand.SetRedirectTTY( m_terminalTTY );
-                    m_connector.Start( startCommand );
-                    
-                } else {
-                    // Failed to connect, notify and perform cleanup
-                    DoCleanup();
-                    wxString message;
-                    message << _("Could not connect to codelite-lldb at '") 
-                            << (settings.IsUsingRemoteProxy() ? settings.GetTcpConnectString() : m_connector.GetConnectString()) 
-                            << "'";
-                    ::wxMessageBox(message, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
-                    return;
-                }
             }
         }
-        CL_DEBUG("LLDB: Working directory is restored to: " + ::wxGetCwd());
 
-    } else {
-        CL_DEBUG("CODELITE>> continue...");
-        m_connector.Continue();
+        // Determine the executable to debug, working directory and arguments
+        EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString());
+        wxString exepath = bldConf->GetCommand();
+        wxString args;
+        wxString wd;
+        // Get the debugging arguments.
+        if(bldConf->GetUseSeparateDebugArgs()) {
+            args = bldConf->GetDebugArgs();
+        } else {
+            args = bldConf->GetCommandArguments();
+        }
+
+        wd      = ::ExpandVariables ( bldConf->GetWorkingDirectory(), pProject, m_mgr->GetActiveEditor() );
+        exepath = ::ExpandVariables ( exepath, pProject, m_mgr->GetActiveEditor() );
+
+        {
+            DirSaver ds;
+            ::wxSetWorkingDirectory(wd);
+            wxFileName execToDebug( exepath );
+            if ( execToDebug.IsRelative() ) {
+                execToDebug.MakeAbsolute();
+            }
+            
+            //////////////////////////////////////////////////////////////////////
+            // Launch terminal for IO redirection
+            //////////////////////////////////////////////////////////////////////
+            TerminateTerminal();
+            
+            bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
+            if ( !bldConf->IsGUIProgram() && !isWindows ) {
+                ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), m_terminalTTY, m_terminalPID);
+                
+                if ( m_terminalPID != wxNOT_FOUND ) {
+                    CL_DEBUG("Successfully launched terminal");
+                
+                } else {
+                    // Failed to launch it...
+                    DoCleanup();
+                    ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+                    return;
+                }
+            }
+            
+            CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
+            CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
+            
+            //////////////////////////////////////////////////////////////////////
+            // Initiate the connection to codelite-lldb
+            //////////////////////////////////////////////////////////////////////
+            
+            LLDBConnectReturnObject retObj;
+            if ( m_connector.Connect(retObj, settings, 5) ) {
+                
+                // Get list of breakpoints and add them ( we will apply them later on )
+                BreakpointInfo::Vec_t gdbBps;
+                m_mgr->GetAllBreakpoints(gdbBps);
+                
+                // remove all breakpoints from previous session
+                m_connector.DeleteAllBreakpoints();
+
+                // apply the serialized breakpoints
+                m_connector.AddBreakpoints( gdbBps );
+
+                // Setup pivot folder if needed
+                SetupPivotFolder( retObj );
+
+                LLDBCommand startCommand;
+                startCommand.FillEnvFromMemory();
+                
+                // If the current platform is Windows, use the executable as it appears in the project settings
+                startCommand.SetExecutable( isWindows ? exepath : execToDebug.GetFullPath() );
+                
+                startCommand.SetCommandArguments( args );
+                startCommand.SetWorkingDirectory( wd );
+                startCommand.SetRedirectTTY( m_terminalTTY );
+                m_connector.Start( startCommand );
+                
+            } else {
+                // Failed to connect, notify and perform cleanup
+                DoCleanup();
+                wxString message;
+                message << _("Could not connect to codelite-lldb at '") 
+                        << (settings.IsUsingRemoteProxy() ? settings.GetTcpConnectString() : m_connector.GetConnectString()) 
+                        << "'";
+                ::wxMessageBox(message, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+                return;
+            }
+        }
     }
+    CL_DEBUG("LLDB: Working directory is restored to: " + ::wxGetCwd());
+
 }
 
 void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
@@ -1073,3 +1080,4 @@ void LLDBPlugin::SetupPivotFolder(const LLDBConnectReturnObject& ret)
     // Now that we got the pivot - start the network thread
     m_connector.StartNetworkThread();
 }
+

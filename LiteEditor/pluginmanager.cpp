@@ -829,3 +829,11 @@ void PluginManager::SavePerspective(const wxString& perspectiveName)
 {
     ManagerST::Get()->GetPerspectiveManager().SavePerspective(perspectiveName, true);
 }
+
+void PluginManager::ProcessEditEvent(wxCommandEvent& e, IEditor* editor)
+{
+    LEditor* lEditor = dynamic_cast<LEditor*>( editor );
+    if ( lEditor ) {
+        lEditor->OnMenuCommand( e );
+    }
+}

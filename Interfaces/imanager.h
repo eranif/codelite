@@ -474,6 +474,13 @@ public:
      */
     virtual void SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints) = 0;
     
+    /**
+     * @brief process a standard edit event ( wxID_COPY, wxID_PASTE etc)
+     * @param e the event to process
+     * @param editor the editor
+     */
+    virtual void ProcessEditEvent(wxCommandEvent& e, IEditor* editor) = 0;
+    
     // ----------------------------------------------
     // Perspective management
     // ----------------------------------------------

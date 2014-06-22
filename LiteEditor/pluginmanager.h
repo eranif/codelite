@@ -147,6 +147,7 @@ public:
     virtual void                    SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints);
     virtual void                    LoadPerspective(const wxString &perspectiveName);
     virtual void                    SavePerspective(const wxString &perspectiveName);
+    virtual void                    ProcessEditEvent(wxCommandEvent &e, IEditor* editor);
     //------------------------------------
     //End of IManager interface
     //------------------------------------

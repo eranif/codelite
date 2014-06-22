@@ -111,6 +111,7 @@ Source: "..\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignorevers
 Source: "..\lib\gcc_lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\clang\lib\liblibclang.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
+Source: "..\sdk\clang\lib\clang-format.exe"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\libssh\lib\libssh.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

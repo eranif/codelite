@@ -385,6 +385,7 @@ void LLDBConnector::Start(const LLDBCommand& runCommand)
     LLDBCommand startCommand;
     startCommand.SetExecutable( runCommand.GetExecutable() );
     startCommand.SetCommandType( kCommandStart );
+    startCommand.SetWorkingDirectory( runCommand.GetWorkingDirectory() );
     
     // send the settings as well
     LLDBSettings settings;

@@ -435,11 +435,20 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         char **penv = command.GetEnvArray();
 
         std::string tty_c;
+        std::string workingDirectory;
         if ( !command.GetRedirectTTY().IsEmpty() ) {
             tty_c = command.GetRedirectTTY().mb_str(wxConvUTF8).data();
         }
+        
+        if ( !command.GetWorkingDirectory().IsEmpty() ) {
+            workingDirectory = command.GetWorkingDirectory().mb_str(wxConvUTF8).data();
+        }
+        
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
         wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
+
+        const char *pwd = workingDirectory.empty() ? NULL : workingDirectory.c_str();
+        wxPrintf("codelite-lldb: target working directory is set to: %s\n", pwd ? pwd : "NULL");
 
         // wxPrintf("codelite-lldb: Environment is set to:\n");
         // print_c_array( (const char**)penv );
@@ -465,7 +474,7 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
                                       ptty,
                                       ptty,
                                       ptty,
-                                      NULL,
+                                      pwd,
                                       lldb::eLaunchFlagLaunchInSeparateProcessGroup|lldb::eLaunchFlagStopAtEntry,
                                       true,
                                       lldbError);

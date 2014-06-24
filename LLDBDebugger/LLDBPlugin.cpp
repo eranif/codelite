@@ -364,7 +364,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 startCommand.SetExecutable( isWindows ? exepath : execToDebug.GetFullPath() );
                 
                 startCommand.SetCommandArguments( args );
-                startCommand.SetWorkingDirectory( wd );
+                // Since we called 'wxSetWorkingDirectory' earlier, wxGetCwd() should give use the 
+                // correct working directory for the debugger
+                startCommand.SetWorkingDirectory( ::wxGetCwd() );
                 startCommand.SetRedirectTTY( m_terminalTTY );
                 m_connector.Start( startCommand );
                 

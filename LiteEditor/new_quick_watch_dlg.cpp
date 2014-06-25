@@ -37,11 +37,11 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
     WindowAttrManager::Load(this, "DebuggerTooltip", NULL);
     m_timer2 = new wxTimer(this);
     m_mousePosTimer = new wxTimer(this);
-	
-	if (GetSize().x < 100 || GetSize().y < 100 ) {
-		SetSize( wxRect(GetPosition(), wxSize(100, 100) ) );
-	}
-	
+
+    if (GetSize().x < 100 || GetSize().y < 100 ) {
+        SetSize( wxRect(GetPosition(), wxSize(100, 100) ) );
+    }
+
     Connect(m_timer2->GetId(),        wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
     Connect(m_mousePosTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnCheckMousePosTimer), NULL, this);
     m_panelStatusBar->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(DisplayVariableDlg::OnCaptureLost), NULL, this);
@@ -261,14 +261,15 @@ void DisplayVariableDlg::ShowDialog(bool center)
         wxPopupWindow::Show();
     }
 
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(editor) {
-#ifndef __WXMAC__
-        clMainFrame::Get()->Raise();
-#endif
-        editor->SetFocus();
-        editor->SetActive();
-    }
+//    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+//    if(editor) {
+//#ifndef __WXMAC__
+//        clMainFrame::Get()->Raise();
+//#endif
+//        editor->SetFocus();
+//        editor->SetActive();
+//    }
+    m_treeCtrl->SetFocus();
     m_mousePosTimer->Start(200);
 }
 
@@ -392,7 +393,7 @@ void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
         } else if (e.GetId() == XRCID("tip_copy_value")) {
             wxString itemText = m_treeCtrl->GetItemText(item);
             itemText = itemText.AfterFirst(wxT('='));
-            CopyToClipboard( itemText );
+            CopyToClipboard( itemText.Trim().Trim(true) );
 
         } else if (e.GetId() == XRCID("edit_item")) {
             DoEditItem(item);

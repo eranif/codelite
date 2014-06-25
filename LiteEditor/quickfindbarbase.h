@@ -36,7 +36,11 @@ protected:
     virtual void OnText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFindFocus(wxFocusEvent& event) { event.Skip(); }
+    virtual void OnFindKillFocus(wxFocusEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceFocus(wxFocusEvent& event) { event.Skip(); }
+    virtual void OnReplcaeKillFocus(wxFocusEvent& event) { event.Skip(); }
 
 public:
     QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,-1), long style = wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW);

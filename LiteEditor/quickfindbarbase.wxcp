@@ -747,7 +747,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Text Hint",
-											"m_value":	"<Type to start a search>"
+											"m_value":	"Type to start a search..."
 										}, {
 											"type":	"string",
 											"m_label":	"Max Length:",
@@ -781,6 +781,20 @@
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnEnter(wxCommandEvent& event)",
 											"m_description":	"Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
+											"m_noBody":	false
+										}, {
+											"m_eventName":	"wxEVT_SET_FOCUS",
+											"m_eventClass":	"wxFocusEvent",
+											"m_eventHandler":	"wxFocusEventHandler",
+											"m_functionNameAndSignature":	"OnFindFocus(wxFocusEvent& event)",
+											"m_description":	"Process a wxEVT_SET_FOCUS event",
+											"m_noBody":	false
+										}, {
+											"m_eventName":	"wxEVT_KILL_FOCUS",
+											"m_eventClass":	"wxFocusEvent",
+											"m_eventHandler":	"wxFocusEventHandler",
+											"m_functionNameAndSignature":	"OnFindKillFocus(wxFocusEvent& event)",
+											"m_description":	"Process a wxEVT_KILL_FOCUS event",
 											"m_noBody":	false
 										}],
 									"m_children":	[]
@@ -855,7 +869,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Text Hint",
-											"m_value":	"<Type any replacement string>"
+											"m_value":	"Type any replacement string..."
 										}, {
 											"type":	"string",
 											"m_label":	"Max Length:",
@@ -882,6 +896,20 @@
 											"m_eventHandler":	"wxKeyEventHandler",
 											"m_functionNameAndSignature":	"OnKeyDown(wxKeyEvent& event)",
 											"m_description":	"Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+											"m_noBody":	false
+										}, {
+											"m_eventName":	"wxEVT_SET_FOCUS",
+											"m_eventClass":	"wxFocusEvent",
+											"m_eventHandler":	"wxFocusEventHandler",
+											"m_functionNameAndSignature":	"OnReplaceFocus(wxFocusEvent& event)",
+											"m_description":	"Process a wxEVT_SET_FOCUS event",
+											"m_noBody":	false
+										}, {
+											"m_eventName":	"wxEVT_KILL_FOCUS",
+											"m_eventClass":	"wxFocusEvent",
+											"m_eventHandler":	"wxFocusEventHandler",
+											"m_functionNameAndSignature":	"OnReplcaeKillFocus(wxFocusEvent& event)",
+											"m_description":	"Process a wxEVT_KILL_FOCUS event",
 											"m_noBody":	false
 										}],
 									"m_children":	[]

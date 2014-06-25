@@ -77,7 +77,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_findWhat->SetToolTip(_("Hit ENTER to search, or Shift + ENTER to search backward"));
     m_findWhat->SetFocus();
     #if wxVERSION_NUMBER >= 3000
-    m_findWhat->SetHint(_("<Type to start a search>"));
+    m_findWhat->SetHint(_("Type to start a search..."));
     #endif
     
     fgSizer113->Add(m_findWhat, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
@@ -85,7 +85,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_replaceWith = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
     m_replaceWith->SetToolTip(_("Type the replacement string and hit ENTER to perform the replacement"));
     #if wxVERSION_NUMBER >= 3000
-    m_replaceWith->SetHint(_("<Type any replacement string>"));
+    m_replaceWith->SetHint(_("Type any replacement string..."));
     #endif
     
     fgSizer113->Add(m_replaceWith, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
@@ -103,8 +103,12 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_findWhat->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickFindBarBase::OnText), NULL, this);
     m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
     m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
+    m_findWhat->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnFindFocus), NULL, this);
+    m_findWhat->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnFindKillFocus), NULL, this);
     m_replaceWith->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     m_replaceWith->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
+    m_replaceWith->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnReplaceFocus), NULL, this);
+    m_replaceWith->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnReplcaeKillFocus), NULL, this);
     
 }
 
@@ -117,7 +121,11 @@ QuickFindBarBase::~QuickFindBarBase()
     m_findWhat->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickFindBarBase::OnText), NULL, this);
     m_findWhat->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
     m_findWhat->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
+    m_findWhat->Disconnect(wxEVT_SET_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnFindFocus), NULL, this);
+    m_findWhat->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnFindKillFocus), NULL, this);
     m_replaceWith->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     m_replaceWith->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
+    m_replaceWith->Disconnect(wxEVT_SET_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnReplaceFocus), NULL, this);
+    m_replaceWith->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(QuickFindBarBase::OnReplcaeKillFocus), NULL, this);
     
 }

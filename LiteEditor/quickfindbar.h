@@ -30,13 +30,19 @@
 #include "theme_handler_helper.h"
 
 class wxStyledTextCtrl;
+class QFBEventHandler;
 class QuickFindBar : public QuickFindBarBase
 {
+    friend class QFBEventHandler;
+    
     wxStyledTextCtrl  *m_sci;
-    size_t        m_flags;
-    wxString      m_lastText;
-    wchar_t*      m_lastTextPtr;
+    size_t             m_flags;
+    wxString           m_lastText;
+    wchar_t*           m_lastTextPtr;
     ThemeHandlerHelper m_themeHelper;
+    wxTextCtrl*        m_focusedTextControl;
+    QFBEventHandler*   m_frameEventHandler;
+    
 public:
     enum {
         ID_TOOL_REPLACE = 1000,
@@ -45,6 +51,10 @@ public:
     };
     
 protected:
+    virtual void OnReplaceFocus(wxFocusEvent& event);
+    virtual void OnReplcaeKillFocus(wxFocusEvent& event);
+    virtual void OnFindFocus(wxFocusEvent& event);
+    virtual void OnFindKillFocus(wxFocusEvent& event);
     virtual void OnCheckBoxRegex(wxCommandEvent& event);
     virtual void OnCheckWild(wxCommandEvent& event);
     void     ShowReplaceControls(bool show = true);

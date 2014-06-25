@@ -1648,7 +1648,16 @@ void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
     
 #else
     // Non Windows machines
-    static wxString SLEEP_COMMAND = "sleep 85765";
+    
+    // generate a random value to differntiate this instance of codelite
+    // from other instances
+    time_t curtime = time(NULL);
+    int randomSeed = (curtime % 947);
+    wxString secondsToSleep;
+    
+    secondsToSleep << ( 85765 + randomSeed );
+    wxString SLEEP_COMMAND;
+    SLEEP_COMMAND << "sleep " << secondsToSleep;
     
 #if defined(__WXMAC__)
     wxString consoleCommand;

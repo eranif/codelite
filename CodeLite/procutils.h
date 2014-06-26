@@ -66,6 +66,11 @@ public:
      * \param output
      */
     static void SafeExecuteCommand(const wxString &command, wxArrayString &output);
+    
+    /**
+     * @brief execute a command and return its output as plain string
+     */
+    static wxString SafeExecuteCommand(const wxString &command);
 };
 
 #endif // PROCUTILS_H

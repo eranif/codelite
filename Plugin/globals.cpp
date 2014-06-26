@@ -90,8 +90,6 @@ const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 // --------------------------------------------------------
 class clInternalEventHandlerData : public wxClientData
 {
-
-
     wxObject*     m_this;
     clEventFunc_t m_funcPtr;
     wxClientData* m_arg;
@@ -762,6 +760,27 @@ time_t GetFileModificationTime(const wxString &filename)
     return buff.st_mtime;
 }
 
+bool clIsCygwinEnvironment()
+{
+#ifdef __WXMSW__
+    static bool isCygwin  = false;
+    static bool firstTime = true;
+    
+    if ( firstTime ) {
+        firstTime = false;
+        wxString out = ProcUtils::SafeExecuteCommand("uname -s");
+        if ( out.IsEmpty() ) {
+            isCygwin = false;
+        } else {
+            isCygwin = out.StartsWith("CYGWIN_NT");
+        }
+    }
+    return isCygwin;
+#else
+    return false;
+#endif
+}
+
 void WrapInShell(wxString& cmd)
 {
     wxString command;
@@ -773,6 +792,7 @@ void WrapInShell(wxString& cmd)
     command << shell << wxT(" /c \"");
     command << cmd << wxT("\"");
     cmd = command;
+
 #else
     command << wxT("/bin/sh -c '");
     // escape any single quoutes

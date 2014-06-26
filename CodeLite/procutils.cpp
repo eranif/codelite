@@ -541,3 +541,19 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
     ProcUtils::ExecuteCommand(command, output);
 #endif
 }
+
+wxString ProcUtils::SafeExecuteCommand(const wxString& command)
+{
+    wxString strOut;
+    wxArrayString arr;
+    SafeExecuteCommand(command, arr);
+    
+    for(size_t i=0; i<arr.GetCount(); ++i) {
+        strOut << arr.Item(i) << "\n";
+    }
+    
+    if ( !strOut.IsEmpty() ) {
+        strOut.RemoveLast();
+    }
+    return strOut;
+}

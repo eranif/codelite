@@ -152,16 +152,32 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
 
     toolFile.SetName("clang");
     AddTool(compiler, "CC", toolFile.GetFullPath());
-
+    
+    // Add the archive tool
     toolFile.SetName("llvm-ar");
-    AddTool(compiler, "AR", toolFile.GetFullPath(), "rcu");
+    if ( toolFile.FileExists() ) {
+        AddTool(compiler, "AR", toolFile.GetFullPath(), "rcu");
+        
+    } else {
+        toolFile.SetName("ar");
+        AddTool(compiler, "AR", toolFile.GetFullPath(), "rcu");
+    }
+    
 #ifdef __WXMSW__
     AddTool(compiler, "ResourceCompiler", "windres.exe");
 #else
     AddTool(compiler, "ResourceCompiler", "");
 #endif
+
+    // Add the assembler tool
     toolFile.SetName("llvm-as");
-    AddTool(compiler, "AS", toolFile.GetFullPath());
+    if ( toolFile.FileExists() ) {
+        AddTool(compiler, "AS", toolFile.GetFullPath());
+        
+    } else {
+        toolFile.SetName("as");
+        AddTool(compiler, "AS", toolFile.GetFullPath());
+    }
 
     wxString makeExtraArgs;
     if ( wxThread::GetCPUCount() > 1 ) {

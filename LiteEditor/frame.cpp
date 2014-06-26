@@ -2749,7 +2749,10 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     wxLogMessage( wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
     wxLogMessage( wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStarupDirectory().c_str()));
     wxLogMessage( "Using "  + wxStyledTextCtrl::GetLibraryVersionInfo().ToString() );
-
+    if ( ::clIsCygwinEnvironment() ) {
+        wxLogMessage( "Running under Cygwin environment" );
+    }
+    
     EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
     if ( clConfig::Get().Read("CheckForNewVersion", true) ) {
         JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));

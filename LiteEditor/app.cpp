@@ -581,14 +581,13 @@ bool CodeLiteApp::OnInit()
     wxSetEnv(wxT("PATH"), oldpath + pathsep + execfpath.GetPath());
     wxString newpath;
     wxGetEnv(wxT("PATH"), &newpath);
-
-    // Don't show the splash screen when opening codelite to view
-    // a file, this is done to reduce the load time
-//    if(parser.GetParamCount() > 0)
-//        showSplash = false;
     
-    //CompilerLocatorMinGW mg;
-    //mg.Locate();
+    if ( ::clIsCygwinEnvironment() ) {
+        // Under Cygwin, override the makedir command with 
+        // the Linux one (mkdir -p)
+        ::wxSetEnv("MakeDirCommand", "mkdir -p");
+    }
+    
     // Create the main application window
     clMainFrame::Initialize( parser.GetParamCount() == 0 );
     m_pMainFrame = clMainFrame::Get();

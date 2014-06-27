@@ -67,7 +67,7 @@ else ()
 
     # Make sure that the plugin will not start build before 'plugin.so' is ready
     add_dependencies(${PLUGIN_NAME} plugin)
-    add_dependencies(${PLUGIN_NAME} libhunspell)
+    #add_dependencies(${PLUGIN_NAME} libhunspell)
 
     install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
     install(

@@ -50,6 +50,12 @@ public:
         ID_TOOL_FIND,
     };
     
+    enum {
+        kSearchForward      = 0x00000001,
+        kSearchIncremental  = 0x00000002,
+        kSearchMultiSelect  = 0x00000004,
+    };
+    
 protected:
     virtual void OnReplaceFocus(wxFocusEvent& event);
     virtual void OnReplcaeKillFocus(wxFocusEvent& event);
@@ -58,7 +64,7 @@ protected:
     virtual void OnCheckBoxRegex(wxCommandEvent& event);
     virtual void OnCheckWild(wxCommandEvent& event);
     void     ShowReplaceControls(bool show = true);
-    void     DoSearch(bool fwd, bool incr, bool addSelection = false);
+    void     DoSearch( size_t searchFlags );
     wxString DoGetSelectedText();
     void     DoMarkAll();
     wchar_t* DoGetSearchStringPtr();

@@ -130,7 +130,7 @@ wchar_t* QuickFindBar::DoGetSearchStringPtr()
     return pinput;
 }
 
-void QuickFindBar::DoSearch(bool fwd, bool incr, bool addSelection)
+void QuickFindBar::DoSearch(size_t searchFlags)
 {
     if (!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty())
         return;
@@ -147,7 +147,11 @@ void QuickFindBar::DoSearch(bool fwd, bool incr, bool addSelection)
         return;
     int start = -1, stop = -1;
     m_sci->GetSelection(&start, &stop);
-
+    
+    bool fwd          = searchFlags & kSearchForward;
+    bool addSelection = searchFlags & kSearchMultiSelect;
+    bool incr         = searchFlags & kSearchIncremental;
+    
     int offset = !fwd || incr ? start : stop;
     int flags = m_flags | (fwd ? 0 : wxSD_SEARCH_BACKWARD);
     int pos = 0, len = 0;
@@ -191,20 +195,25 @@ void QuickFindBar::OnHide(wxCommandEvent &e)
 void QuickFindBar::OnNext(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    DoSearch(true, false, m_checkBoxMultipleSelections->IsChecked());
+    size_t flags = kSearchForward;
+    if ( m_checkBoxMultipleSelections->IsChecked() )
+        flags |= kSearchMultiSelect;
+    DoSearch( flags );
 }
 
 void QuickFindBar::OnPrev(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    DoSearch(false, false, m_checkBoxMultipleSelections->IsChecked());
+    size_t flags = 0;
+    if ( m_checkBoxMultipleSelections->IsChecked() )
+        flags |= kSearchMultiSelect;
+    DoSearch( flags );
 }
 
 void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
-    wxUnusedVar(e);
-    DoSearch(true, true);
+    CallAfter( &QuickFindBar::DoSearch, kSearchForward|kSearchIncremental );
 }
 
 void QuickFindBar::OnKeyDown(wxKeyEvent& e)
@@ -321,7 +330,8 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
 
     // do we got a match?
     if ((selectionText != find) && !(m_flags & wxSD_REGULAREXPRESSION)) {
-        DoSearch(true, true);
+        size_t flags = kSearchForward|kSearchIncremental;
+        DoSearch(flags);
 
     } else if(m_flags & wxSD_REGULAREXPRESSION) {
         // regular expression search
@@ -352,7 +362,8 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
 
         // and search again
         if ( nNumSelections == 1 ) {
-            DoSearch(true, true);
+            size_t flags = kSearchForward|kSearchIncremental;
+            DoSearch(flags);
         }
         
     } else {
@@ -370,10 +381,10 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
         
         // and search again
         if ( nNumSelections == 1 ) {
-            DoSearch(true, true);
+            size_t flags = kSearchForward|kSearchIncremental;
+            DoSearch(flags);
         }
     }
-
 }
 
 void QuickFindBar::OnReplaceUI(wxUpdateUIEvent& e)
@@ -522,7 +533,7 @@ void QuickFindBar::OnFindNext(wxCommandEvent& e)
         m_findWhat->SelectAll();
     }
 
-    DoSearch(true, false);
+    DoSearch( kSearchForward );
 }
 
 void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
@@ -536,7 +547,7 @@ void QuickFindBar::OnFindPrevious(wxCommandEvent& e)
         m_findWhat->SelectAll();
     }
 
-    DoSearch(false, false);
+    DoSearch( 0 );
 }
 
 void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
@@ -559,7 +570,7 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
         return;
 
     m_findWhat->ChangeValue( selection );
-    DoSearch(true, false);
+    DoSearch( kSearchForward );
 }
 
 void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
@@ -582,7 +593,7 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
         return;
 
     m_findWhat->ChangeValue( selection );
-    DoSearch(false, false);
+    DoSearch( 0 );
 }
 
 void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)

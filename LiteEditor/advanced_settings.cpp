@@ -70,7 +70,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
     bSizer5->Add( m_compilersPage, 1, wxALL|wxEXPAND, 5 );
 
     m_compilersMainPanel->SetSizer( bSizer5 );
-    m_compilersMainPanel->Layout();
+    //m_compilersMainPanel->Layout();
 
     m_notebook->AddPage( m_compilersMainPanel, _("Compilers"), true );
     m_buildSettings = new BuildTabSetting(m_notebook);

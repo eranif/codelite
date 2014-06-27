@@ -439,7 +439,9 @@ wxString Compiler::GetTool(const wxString &name) const
     if(name == wxT("CC") && iter->second.empty()) {
         return GetTool(wxT("CXX"));
     }
-    return iter->second;
+    wxString tool = iter->second;
+    tool.Replace("\\", "/");
+    return tool;
 }
 
 bool Compiler::GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo &ft)

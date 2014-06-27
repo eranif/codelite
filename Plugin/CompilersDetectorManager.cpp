@@ -6,6 +6,7 @@
 #include "CompilerLocatorMSVC11.h"  // VS 2012
 #include "CompilerLocatorMSVC12.h"  // VS 2013
 #include "CompilerLocatorCLANG.h"
+#include "CompilerLocatorCygwin.h"
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
@@ -16,6 +17,7 @@ CompilersDetectorManager::CompilersDetectorManager()
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC10()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC11()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC12()) );
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorCygwin()) );
     
 #elif defined(__WXGTK__)
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorGCC()) );

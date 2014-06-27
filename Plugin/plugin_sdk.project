@@ -580,5 +580,7 @@
     <File Name="CompilerLocatorCLANG.cpp"/>
     <File Name="CompilerLocatorMSVC9.h"/>
     <File Name="CompilerLocatorMSVC9.cpp"/>
+    <File Name="CompilerLocatorCygwin.h"/>
+    <File Name="CompilerLocatorCygwin.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

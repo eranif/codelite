@@ -65,7 +65,6 @@ public:
 
 class AdvancedDlg : public AdvancedDlgBase
 {
-    DECLARE_EVENT_TABLE()
     std::map<wxString, std::vector<ICompilerSubPage*> > m_compilerPagesMap;
     
 protected:
@@ -87,7 +86,6 @@ protected:
     void OnAddExistingCompiler();
     void OnButtonOKClicked(wxCommandEvent &);
     void OnRestoreDefaults(wxCommandEvent &);
-    void OnDeleteCompiler(wxCommandEvent &);
     void OnContextMenu(wxContextMenuEvent &e);
 
     void LoadCompilers();

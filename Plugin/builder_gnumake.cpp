@@ -1215,13 +1215,20 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     
     text << wxT("ObjectsFileList        :=\"") << fnObjectsFileName.GetFullPath() << wxT("\"\n");
     text << wxT("PCHCompileFlags        :=") << bldConf->GetPchCompileFlags() << wxT("\n");
-
-    if (OS_WINDOWS) {
-        text << wxT("MakeDirCommand         :=") << wxT("makedir") << wxT("\n");
+    
+    wxString mkdirCommand = cmp->GetTool("MakeDirCommand");
+    if ( !mkdirCommand.IsEmpty() ) {
+        // use the compiler defined one
+        text << wxT("MakeDirCommand         :=") << mkdirCommand << wxT("\n");
+        
     } else {
-        text << wxT("MakeDirCommand         :=") << wxT("mkdir -p") << wxT("\n");
+        if (OS_WINDOWS) {
+            text << wxT("MakeDirCommand         :=") << wxT("makedir") << wxT("\n");
+        } else {
+            text << wxT("MakeDirCommand         :=") << wxT("mkdir -p") << wxT("\n");
+        }
     }
-
+    
     wxString buildOpts = bldConf->GetCompileOptions();
     buildOpts.Replace(wxT(";"), wxT(" "));
 

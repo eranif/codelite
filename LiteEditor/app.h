@@ -55,7 +55,8 @@ private: // Methods
     void     DoCopyGdbPrinters();
     void     MSWReadRegistry();
     wxString DoFindMenuFile(const wxString& installDirectory, const wxString &requiredVersion);
-
+    void     AdjustPathForCygwinIfNeeded();
+    
 #ifdef __WXMSW__
     HINSTANCE m_handler;
 #endif

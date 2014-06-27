@@ -82,6 +82,10 @@ class CompilerMainPage : public CompilerMainPageBase
     long m_selectedLnkOption;
 
 protected:
+    virtual void OnValueChanged(wxPropertyGridEvent& event);
+    virtual void OnRenameCompiler(wxCommandEvent &event);
+    virtual void OnDeleteCompiler(wxCommandEvent &event);
+    virtual void OnContextMenu(wxContextMenuEvent& event);
     virtual void OnAddCompilers(wxCommandEvent& event);
     virtual void OnCompilerSelected(wxCommandEvent& event);
     void Initialize();

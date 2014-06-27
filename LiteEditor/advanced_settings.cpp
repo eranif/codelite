@@ -47,12 +47,7 @@
 #include "CompilersFoundDlg.h"
 #include <cl_aui_notebook_art.h>
 
-BEGIN_EVENT_TABLE(AdvancedDlg, AdvancedDlgBase)
-    EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
-END_EVENT_TABLE()
-
 ///////////////////////////////////////////////////////////////////////////
-
 AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxString title, wxPoint pos, wxSize size, int style )
     : AdvancedDlgBase( parent )
     , m_rightclickMenu(NULL)
@@ -135,30 +130,6 @@ void AdvancedDlg::OnButtonOKClicked(wxCommandEvent &event)
         }
     }
     EndModal(wxID_OK);
-}
-
-void AdvancedDlg::OnDeleteCompiler(wxCommandEvent & event)
-{
-    wxUnusedVar(event);
-
-//    int sel = m_compilersNotebook->GetSelection();
-//
-//    if (sel != wxNOT_FOUND) {
-//        wxString name = m_compilersNotebook->GetPageText((size_t)sel);
-//        if (DeleteCompiler(name)) {
-//            m_compilersNotebook->DeletePage((size_t)sel);
-//
-//            std::map<wxString, std::vector<ICompilerSubPage*> >::iterator iter = m_compilerPagesMap.find(name);
-//            if(iter != m_compilerPagesMap.end()) {
-//                m_compilerPagesMap.erase(iter);
-//            }
-//
-//            if(m_compilersNotebook->GetPageCount()) {
-//                m_compilersNotebook->ExpandNode(0);
-//                m_compilersNotebook->SetSelection(1);
-//            }
-//        }
-//    }
 }
 
 void AdvancedDlg::SaveCompilers()

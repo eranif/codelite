@@ -2310,8 +2310,13 @@ void Manager::DbgStart ( long attachPid )
                 }
             }
             dinfo.path = userDebuggr;
+        } else if ( bldConf->GetCompiler() && !bldConf->GetCompiler()->GetTool("Debugger").IsEmpty() ) {
+            // User specified a different compiler for this compiler - use it
+            userDebuggr = bldConf->GetCompiler()->GetTool("Debugger");
+            CL_DEBUG("Debugger is set to: '%s'", userDebuggr);
         }
     }
+    
     // read the console command
     dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
     dbgr->SetDebuggerInformation ( dinfo );

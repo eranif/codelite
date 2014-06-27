@@ -48,6 +48,7 @@
 #include "cl_config.h"
 #include "globals.h"
 #include <CompilerLocatorMinGW.h>
+#include <wx/regex.h>
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -345,7 +346,7 @@ bool CodeLiteApp::OnInit()
     // this is  needed because python complies the files and in most cases the user
     // running codelite has no write permissions to /usr/share/codelite/...
     DoCopyGdbPrinters();
-
+    
     // Since GCC 4.8.2 gcc has a default colored output
     // which breaks codelite output parsing
     // to disable this, we need to set GCC_COLORS to an empty
@@ -406,7 +407,8 @@ bool CodeLiteApp::OnInit()
         wxMkdir(homeDir + wxT("/config/"));
         wxMkdir(homeDir + wxT("/tabgroups/"));
     }
-
+    
+    
     wxString installPath( MacGetBasePath() );
     ManagerST::Get()->SetInstallDir( installPath );
     //copy the settings from the global location if needed
@@ -500,7 +502,7 @@ bool CodeLiteApp::OnInit()
     // Set the log file verbosity
     FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
     CL_DEBUG(wxT("Starting codelite..."));
-
+    
     // check for single instance
     if ( !IsSingleInstance(parser, ManagerST::Get()->GetOriginalCwd()) ) {
         return false;
@@ -582,12 +584,9 @@ bool CodeLiteApp::OnInit()
     wxString newpath;
     wxGetEnv(wxT("PATH"), &newpath);
     
-    if ( ::clIsCygwinEnvironment() ) {
-        // Under Cygwin, override the makedir command with 
-        // the Linux one (mkdir -p)
-        ::wxSetEnv("MakeDirCommand", "mkdir -p");
-    }
-    
+    // If running under Cygwin terminal, adjust the environment variables
+    AdjustPathForCygwinIfNeeded();
+
     // Create the main application window
     clMainFrame::Initialize( parser.GetParamCount() == 0 );
     m_pMainFrame = clMainFrame::Get();
@@ -839,19 +838,47 @@ void CodeLiteApp::DoCopyGdbPrinters()
     ::CopyDir(printersInstallDir.GetFullPath(), targetDir.GetFullPath());
 }
 
-//void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
-//{
-//    CodeCompletionBox::Get().CancelTip();
-//    if(e.GetActive()) {
-//
-//        if(clMainFrame::Get()) {
-//            SetTopWindow(clMainFrame::Get());
-//        }
-//
-//        if(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsWorkspaceClosing()) {
-//            // Retag the workspace the light way
-//            ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
-//        }
-//
-//    }
-//}
+void CodeLiteApp::AdjustPathForCygwinIfNeeded()
+{
+#ifdef __WXMSW__
+    CL_DEBUG("AdjustPathForCygwinIfNeeded called");
+    if ( !::clIsCygwinEnvironment() ) {
+        CL_DEBUG("Not running under Cygwin - nothing be done");
+        return;
+    }
+    
+    // Running under Cygwin
+    // Adjust the PATH environment variable
+    wxString pathEnv;
+    ::wxGetEnv("PATH", &pathEnv);
+    
+    // Always add the default paths
+    wxArrayString paths;
+    paths.Add("/usr/local/bin");
+    paths.Add("/usr/bin");
+    paths.Add("/usr/sbin");
+    paths.Add("/bin");
+    paths.Add("/sbin");
+    
+    // Append the paths from the environment variables
+    wxArrayString userPaths = ::wxStringTokenize(pathEnv, ";", wxTOKEN_STRTOK);
+    paths.insert(paths.end(), userPaths.begin(), userPaths.end());
+    
+    wxString fixedPath;
+    for(size_t i=0; i<paths.GetCount(); ++i) {
+        wxString &curpath = paths.Item(i);
+        static wxRegEx reCygdrive("/cygdrive/([A-Za-Z])");
+        if ( reCygdrive.Matches(curpath) ) {
+            // Get the drive letter
+            wxString volume = reCygdrive.GetMatch(curpath, 1);
+            volume << ":";
+            reCygdrive.Replace( &curpath, volume );
+        }
+        
+        fixedPath << curpath << ";";
+    }
+
+    CL_DEBUG("Setting PATH environment variable to:\n%s", fixedPath);
+    ::wxSetEnv("PATH", fixedPath);
+#endif
+}

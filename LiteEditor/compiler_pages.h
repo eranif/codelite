@@ -98,7 +98,7 @@ protected:
     wxListBox* m_listBoxCompilers;
     wxAuiNotebook* m_auiBook;
     wxPanel* m_panelTools;
-    wxPropertyGridManager* m_pgMgr92;
+    wxPropertyGridManager* m_pgMgrTools;
     wxPGProperty* m_pgProp94;
     wxPGProperty* m_pgPropCXX;
     wxPGProperty* m_pgPropCC;
@@ -108,6 +108,8 @@ protected:
     wxPGProperty* m_pgPropAR;
     wxPGProperty* m_pgPropResourceCompiler;
     wxPGProperty* m_pgPropMAKE;
+    wxPGProperty* m_pgPropMkdir;
+    wxPGProperty* m_pgPropDebugger;
     wxPanel* m_panelPatterns;
     wxStaticText* m_staticText161;
     wxListCtrl* m_listErrPatterns;
@@ -159,7 +161,9 @@ protected:
 protected:
     virtual void OnAddCompilers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCompilerSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxContextMenuEvent& event) { event.Skip(); }
     virtual void OnCustomEditorButtonClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnErrItemActivated(wxListEvent& event) { event.Skip(); }
     virtual void OnBtnAddErrPattern(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBtnDelErrPattern(wxCommandEvent& event) { event.Skip(); }

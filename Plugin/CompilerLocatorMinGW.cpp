@@ -148,7 +148,13 @@ bool CompilerLocatorMinGW::Locate()
             wxFileName gccComp( pathArray.Item(i), "gcc.exe" );
             if ( gccComp.GetDirs().Last() == "bin" && gccComp.Exists() ) {
                 // We found gcc.exe
-                AddTools( gccComp.GetPath() );
+                wxString pathToGcc = gccComp.GetPath();
+                pathToGcc.MakeLower();
+                
+                // Don't mix cygwin and mingw
+                if ( !pathToGcc.Contains("cygwin") ) {
+                    AddTools( gccComp.GetPath() );
+                }
             }
         }
     }
@@ -204,6 +210,9 @@ void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& n
     if ( wxThread::GetCPUCount() > 1 ) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
+    
+    // This is needed under MinGW
+    makeExtraArgs <<  " SHELL=cmd.exe ";
     
     if ( toolFile.FileExists() ) {
         AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);

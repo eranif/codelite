@@ -7,10 +7,11 @@
 #include "codelite_exports.h"
 #include "compiler.h"
 
-#define COMPILER_FAMILY_CLANG "LLVM/Clang"
-#define COMPILER_FAMILY_MINGW "MinGW"
-#define COMPILER_FAMILY_GCC   "GCC"
-#define COMPILER_FAMILY_VC    "Visual C++"
+#define COMPILER_FAMILY_CLANG  "LLVM/Clang"
+#define COMPILER_FAMILY_MINGW  "MinGW"
+#define COMPILER_FAMILY_GCC    "GCC"
+#define COMPILER_FAMILY_VC     "Visual C++"
+#define COMPILER_FAMILY_CYGWIN "Cygwin"
 
 class WXDLLIMPEXP_SDK ICompilerLocator
 {

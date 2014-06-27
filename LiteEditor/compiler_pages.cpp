@@ -268,7 +268,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     boxSizer114->Add(boxSizer220, 0, wxEXPAND, 5);
     
     wxArrayString m_listBoxCompilersArr;
-    m_listBoxCompilers = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxCompilersArr, wxLB_SINGLE);
+    m_listBoxCompilers = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxCompilersArr, wxLB_SORT|wxLB_SINGLE);
     
     boxSizer220->Add(m_listBoxCompilers, 0, wxALL|wxEXPAND, 5);
     
@@ -282,49 +282,57 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     m_panelTools->SetSizer(boxSizer2);
     
-    wxArrayString m_pgMgr92Arr;
-    wxUnusedVar(m_pgMgr92Arr);
-    wxArrayInt m_pgMgr92IntArr;
-    wxUnusedVar(m_pgMgr92IntArr);
-    m_pgMgr92 = new wxPropertyGridManager(m_panelTools, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxPG_DESCRIPTION|wxPG_HIDE_MARGIN|wxPG_BOLD_MODIFIED);
+    wxArrayString m_pgMgrToolsArr;
+    wxUnusedVar(m_pgMgrToolsArr);
+    wxArrayInt m_pgMgrToolsIntArr;
+    wxUnusedVar(m_pgMgrToolsIntArr);
+    m_pgMgrTools = new wxPropertyGridManager(m_panelTools, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxPG_DESCRIPTION|wxPG_HIDE_MARGIN|wxPG_BOLD_MODIFIED);
     
-    boxSizer2->Add(m_pgMgr92, 1, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(m_pgMgrTools, 1, wxALL|wxEXPAND, 5);
     
-    m_pgProp94 = m_pgMgr92->Append(  new wxPropertyCategory( _("Tools") ) );
+    m_pgProp94 = m_pgMgrTools->Append(  new wxPropertyCategory( _("Tools") ) );
     m_pgProp94->SetHelpString(wxT(""));
     
-    m_pgPropCXX = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("C++ Compiler"), wxPG_LABEL, wxT("")) );
+    m_pgPropCXX = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("C++ Compiler"), wxPG_LABEL, wxT("")) );
     m_pgPropCXX->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CXX)"));
     m_pgPropCXX->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropCC = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("C Compiler"), wxPG_LABEL, wxT("")) );
+    m_pgPropCC = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("C Compiler"), wxPG_LABEL, wxT("")) );
     m_pgPropCC->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"));
     m_pgPropCC->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropAS = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Assembler Name"), wxPG_LABEL, wxT("")) );
+    m_pgPropAS = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Assembler Name"), wxPG_LABEL, wxT("")) );
     m_pgPropAS->SetHelpString(_("The assembler tool path. This tool is referred in the Makefile as $(AS)"));
     m_pgPropAS->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Linker"), wxPG_LABEL, wxT("")) );
+    m_pgPropLD = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Linker"), wxPG_LABEL, wxT("")) );
     m_pgPropLD->SetHelpString(_("The linker tool. Usually similar to the 'C++ Compiler' tool path"));
     m_pgPropLD->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropSharedObjectLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Shared Object Linker"), wxPG_LABEL, wxT("")) );
+    m_pgPropSharedObjectLD = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Shared Object Linker"), wxPG_LABEL, wxT("")) );
     m_pgPropSharedObjectLD->SetHelpString(_("The tool to create shared objects"));
     m_pgPropSharedObjectLD->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropAR = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Archive"), wxPG_LABEL, wxT("")) );
+    m_pgPropAR = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Archive"), wxPG_LABEL, wxT("")) );
     m_pgPropAR->SetHelpString(_("The static archive tool \"ar\". This tool is referred in the Makefile as $(AR)"));
     m_pgPropAR->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropResourceCompiler = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Resource Compiler"), wxPG_LABEL, wxT("")) );
+    m_pgPropResourceCompiler = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Resource Compiler"), wxPG_LABEL, wxT("")) );
     m_pgPropResourceCompiler->SetHelpString(_("The resource compiler. (Windows only)"));
     m_pgPropResourceCompiler->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropMAKE = m_pgMgr92->AppendIn( m_pgProp94,  new wxStringProperty( _("Make"), wxPG_LABEL, wxT("")) );
+    m_pgPropMAKE = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Make"), wxPG_LABEL, wxT("")) );
     m_pgPropMAKE->SetHelpString(_("The Make tool. on Windows / MinGW this is usually mingw32-make.exe while on other OSs its simply 'make'"));
     m_pgPropMAKE->SetEditor( wxT("TextCtrlAndButton") );
-    m_pgMgr92->GetGrid()->SetSplitterPosition(150, 0);
+    
+    m_pgPropMkdir = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("mkdir"), wxPG_LABEL, wxT("")) );
+    m_pgPropMkdir->SetHelpString(_("Set the 'mkdir' for your OS.\nLeave it empty to use the defualt for your OS"));
+    m_pgPropMkdir->SetEditor( wxT("TextCtrlAndButton") );
+    
+    m_pgPropDebugger = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Gdb"), wxPG_LABEL, wxT("")) );
+    m_pgPropDebugger->SetHelpString(_("On various platform (e.g. Cygwin) it is recommended to use their own sepcial gdb executable rather than the global one\nYou can specify one here, or leave this empty to use the default"));
+    m_pgPropDebugger->SetEditor( wxT("TextCtrlAndButton") );
+    m_pgMgrTools->GetGrid()->SetSplitterPosition(150, 0);
     m_panelPatterns = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelPatterns, _("Patterns"), false);
     
@@ -653,7 +661,9 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     // Connect events
     m_button222->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
     m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
-    m_pgMgr92->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
+    m_listBoxCompilers->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu), NULL, this);
+    m_pgMgrTools->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
+    m_pgMgrTools->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL, this);
     m_listErrPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
     m_btnAddErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
     m_btnDelErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);
@@ -692,7 +702,9 @@ CompilerMainPageBase::~CompilerMainPageBase()
 {
     m_button222->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
     m_listBoxCompilers->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
-    m_pgMgr92->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
+    m_listBoxCompilers->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu), NULL, this);
+    m_pgMgrTools->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
+    m_pgMgrTools->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL, this);
     m_listErrPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
     m_btnAddErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
     m_btnDelErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);

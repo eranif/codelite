@@ -261,15 +261,14 @@ void DisplayVariableDlg::ShowDialog(bool center)
         wxPopupWindow::Show();
     }
 
-//    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-//    if(editor) {
-//#ifndef __WXMAC__
-//        clMainFrame::Get()->Raise();
-//#endif
-//        editor->SetFocus();
-//        editor->SetActive();
-//    }
-    m_treeCtrl->SetFocus();
+    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(editor) {
+#ifndef __WXMAC__
+        clMainFrame::Get()->Raise();
+#endif
+        editor->SetFocus();
+        editor->SetActive();
+    }
     m_mousePosTimer->Start(200);
 }
 

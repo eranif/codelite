@@ -48,6 +48,7 @@ static std::vector<std::string>  sg_currentArrayString;
 %token GDB_FRAME
 %token GDB_ESCAPED_STRING
 %token GDB_LOCALS
+%token GDB_VARIABLES
 %token GDB_INTEGER
 %token GDB_OCTAL
 %token GDB_HEX
@@ -117,7 +118,9 @@ child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN 
                     sg_attributes.clear();
                 }
                 /* ^done,locals=[{name="pcls",type="ChildClass *",value="0x0"},{name="s",type="string *",value="0x3e2550"}] */
+                /* ^done,variables=[{name="pcls",type="ChildClass *",value="0x0"},{name="s",type="string *",value="0x3e2550"}] */
                 | '^' GDB_DONE ',' GDB_LOCALS '=' list_open locals list_close
+                | '^' GDB_DONE ',' GDB_VARIABLES '=' list_open locals list_close
                 /* ^done,locals={varobj={exp="str",value="{...}",name="var6",numchild="1",type="string",typecode="STRUCT",dynamic_type="",in_scope="true",block_start_addr="0x00001e84",block_end_addr="0x00001f38"},varobj={exp="anotherLocal",value="2",name="var7",numchild="0",type="int",typecode="INT",dynamic_type="",in_scope="true",block_start_addr="0x00001e84",block_end_addr="0x00001f38"}} */
                 | '^' GDB_DONE ',' GDB_LOCALS '=' list_open mac_locals list_close
                 /*^done,stack-args=[frame={level="0",args=[{name="argc",type="int",value="1"},{name="argv",type="char **",value="0x3e2570"}]}]*/

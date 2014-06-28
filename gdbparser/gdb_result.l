@@ -82,6 +82,7 @@ connected                                                  {RETURN_VAL(GDB_CONNE
 error                                                      {RETURN_VAL(GDB_ERROR);}
 exit                                                       {RETURN_VAL(GDB_EXIT);}
 stack-args                                                 {RETURN_VAL(GDB_STACK_ARGS);}
+variables                                                  {RETURN_VAL(GDB_VARIABLES);}
 register-names                                             {RETURN_VAL(GDB_REGISTER_NAMES);}
 value                                                      {RETURN_VAL(GDB_VALUE);}
 name                                                       {RETURN_VAL(GDB_NAME);}

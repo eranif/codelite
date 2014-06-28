@@ -49,9 +49,7 @@ const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE     = ::wxNewEventType();
 const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR = ::wxNewEventType();
 const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS     = ::wxNewEventType();
 const wxEventType wxEVT_DEBUGGER_LIST_FRAMES        = ::wxNewEventType();
-
-//const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS    = ::wxNewEventType();
-//const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT  = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED     = ::wxNewEventType();
 
 DebuggerMgr::DebuggerMgr()
 {

@@ -10,6 +10,7 @@
 #include <wx/xrc/xmlres.h>
 #include "frame.h"
 #include "drawingutils.h"
+#include "event_notifier.h"
 
 BEGIN_EVENT_TABLE(LocalsTable, DebuggerTreeListCtrlBase)
     EVT_MENU(XRCID("Change_Value"), LocalsTable::OnEditValue)
@@ -28,6 +29,8 @@ LocalsTable::LocalsTable(wxWindow *parent)
     m_DBG_USERR        = DBG_USERR_LOCALS;
     m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;
     m_LIST_CHILDS      = LIST_LOCALS_CHILDS;
+    
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected), NULL, this);
 }
 
 LocalsTable::~LocalsTable()
@@ -453,4 +456,14 @@ void LocalsTable::UpdateFuncReturnValue(const wxString& retValueGdbId)
     wxTreeEvent evt;
     evt.SetItem(item);
     OnItemExpanding(evt);
+}
+
+void LocalsTable::OnStackSelected(clCommandEvent& event)
+{
+    event.Skip();
+    Clear();
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if ( dbgr && dbgr->IsRunning() ) {
+        dbgr->QueryLocals();
+    }
 }

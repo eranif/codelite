@@ -797,13 +797,8 @@ bool DbgCmdStackList::ProcessOutput(const wxString &line)
 
 bool DbgCmdSelectFrame::ProcessOutput(const wxString &line)
 {
-    wxUnusedVar(line);
-
-    DebuggerEventData e;
-    e.m_updateReason  = DBG_UR_GOT_CONTROL;
-    e.m_controlReason = DBG_END_STEPPING;
-    e.m_frameInfo.function = wxEmptyString;
-    m_observer->DebuggerUpdate( e );
+    clCommandEvent evt(wxEVT_DEBUGGER_FRAME_SELECTED);
+    EventNotifier::Get()->AddPendingEvent( evt );
     return true;
 }
 

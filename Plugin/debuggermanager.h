@@ -71,8 +71,8 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS;
 // Call stack
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_FRAMES;
 
-//extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS;
-//extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT;
+// frame selected (user double clicked a stack entry)
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED;
 
 class WXDLLIMPEXP_SDK DebuggerMgr
 {

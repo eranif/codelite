@@ -465,5 +465,6 @@ void LocalsTable::OnStackSelected(clCommandEvent& event)
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if ( dbgr && dbgr->IsRunning() ) {
         dbgr->QueryLocals();
+        dbgr->QueryFileLine();
     }
 }

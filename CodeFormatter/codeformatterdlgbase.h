@@ -43,12 +43,19 @@ protected:
     wxTextCtrl* m_textCtrlUserFlags;
     wxPanel* m_panelPreview;
     wxStyledTextCtrl* m_textCtrlPreview;
+    wxStdDialogButtonSizer* m_stdBtnSizer30;
     wxButton* m_buttonOK;
-    wxButton* m_buttonClose;
+    wxButton* m_buttonApply;
+    wxButton* m_buttonCancel;
     wxButton* m_buttonHelp;
 
 protected:
     virtual void OnAStylePropertyChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnCustomAstyleFlags(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnHelp(wxCommandEvent& event) { event.Skip(); }
 
 public:
     CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

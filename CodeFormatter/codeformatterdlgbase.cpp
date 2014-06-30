@@ -210,18 +210,22 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     bSizerMain->Add(bSizerButtons, 0, wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOK->SetDefault();
+    m_stdBtnSizer30 = new wxStdDialogButtonSizer();
     
-    bSizerButtons->Add(m_buttonOK, 0, wxALL, 5);
+    bSizerButtons->Add(m_stdBtnSizer30, 0, wxALL, 5);
     
-    m_buttonClose = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer30->AddButton(m_buttonOK);
     
-    bSizerButtons->Add(m_buttonClose, 0, wxALL, 5);
+    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer30->AddButton(m_buttonApply);
     
-    m_buttonHelp = new wxButton(this, wxID_ANY, _("&Help"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer30->AddButton(m_buttonCancel);
     
-    bSizerButtons->Add(m_buttonHelp, 0, wxALL, 5);
+    m_buttonHelp = new wxButton(this, wxID_HELP, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer30->AddButton(m_buttonHelp);
+    m_stdBtnSizer30->Realize();
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -230,11 +234,21 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     Centre(wxBOTH);
     // Connect events
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnAStylePropertyChanged), NULL, this);
+    m_textCtrlUserFlags->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
+    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);
+    m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatterBaseDlg::OnApplyUI), NULL, this);
+    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);
+    m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnHelp), NULL, this);
     
 }
 
 CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 {
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnAStylePropertyChanged), NULL, this);
+    m_textCtrlUserFlags->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);
+    m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatterBaseDlg::OnApplyUI), NULL, this);
+    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);
+    m_buttonHelp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnHelp), NULL, this);
     
 }

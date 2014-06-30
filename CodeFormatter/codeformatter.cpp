@@ -261,6 +261,7 @@ void CodeFormatter::AstyleFormat(const wxString &input, const wxString &options,
 
 void CodeFormatter::OnFormatOptions(wxCommandEvent &e)
 {
+    wxUnusedVar(e);
     //load options from settings file
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
@@ -270,13 +271,8 @@ void CodeFormatter::OnFormatOptions(wxCommandEvent &e)
     sampleFile << m_mgr->GetStartupDirectory() << wxT("/astyle.sample");
     ReadFileWithConversion(sampleFile, content);
 
-    CodeFormatterDlg dlg(NULL, this, fmtroptions, content);
-    if (dlg.ShowModal() == wxID_OK) {
-        //update the settings on the configuration file
-        fmtroptions = dlg.GetOptions();
-        m_mgr->GetConfigTool()->WriteObject(wxT("FormatterOptions"), &fmtroptions);
-    }
-    wxUnusedVar(e);
+    CodeFormatterDlg dlg(NULL, m_mgr, this, fmtroptions, content);
+    dlg.ShowModal();
 }
 
 void CodeFormatter::OnFormatUI(wxUpdateUIEvent &e)

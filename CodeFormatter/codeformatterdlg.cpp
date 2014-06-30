@@ -30,10 +30,12 @@
 #include "editor_config.h"
 #include "lexer_configuration.h"
 
-CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, const FormatOptions& opts, const wxString &sampleCode )
+CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, IManager* mgr, CodeFormatter *cf, const FormatOptions& opts, const wxString &sampleCode )
     : CodeFormatterBaseDlg( parent )
     , m_cf(cf)
     , m_sampleCode(sampleCode)
+    , m_isDirty(false)
+    , m_mgr(mgr)
 {
     m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
     
@@ -41,9 +43,6 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, const F
     Centre();
 
     m_options = opts;
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnOK), NULL, this);
-    m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnHelp), NULL, this);
-
     m_textCtrlPreview->SetText(m_sampleCode);
     GetSizer()->Fit(this);
     InitDialog();
@@ -90,10 +89,7 @@ void CodeFormatterDlg::InitDialog()
 
 void CodeFormatterDlg::OnOK(wxCommandEvent &e)
 {
-    wxUnusedVar(e);
-    //Save the options
-    m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
-    EditorConfigST::Get()->SaveLongValue(wxT("CodeFormatterDlgSashPos"), m_splitterSettingsPreview->GetSashPosition());
+    OnApply( e );
     EndModal(wxID_OK);
 }
 
@@ -120,6 +116,8 @@ CodeFormatterDlg::~CodeFormatterDlg()
 
 void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
 {
+    m_isDirty = true;
+    
     size_t options (0);
     // Build the options
     
@@ -155,5 +153,22 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     m_options.SetOption( options );
     
     CallAfter( &CodeFormatterDlg::UpdatePreview );
-    
+}
+
+void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_isDirty );
+}
+
+void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
+{
+    event.Skip();
+    m_isDirty = true;
+}
+
+void CodeFormatterDlg::OnApply(wxCommandEvent& event)
+{
+    m_isDirty = false;
+    m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
+    m_mgr->GetConfigTool()->WriteObject(wxT("FormatterOptions"), &m_options);
 }

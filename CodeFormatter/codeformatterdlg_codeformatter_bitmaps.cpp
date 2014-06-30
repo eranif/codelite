@@ -43,6 +43,6 @@ void wxCrafterGgLOZbInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_david_devel_git_CL_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_david_devel_git_CL_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$C__src_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$C__src_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"));
 }

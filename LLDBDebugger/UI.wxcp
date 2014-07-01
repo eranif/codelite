@@ -1240,6 +1240,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Text Hint",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
 										}, {
@@ -1327,6 +1331,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Value:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Text Hint",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -1499,6 +1507,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Value:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Text Hint",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -4089,11 +4101,11 @@
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",
-													"colour":	"Tooltip"
+													"colour":	"(251,234,160)"
 												}, {
 													"type":	"colour",
 													"m_label":	"Fg Colour:",
-													"colour":	"TooltipText"
+													"colour":	"(33,33,33)"
 												}, {
 													"type":	"font",
 													"m_label":	"Font:",
@@ -4811,6 +4823,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Value:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Text Hint",
 											"m_value":	""
 										}, {
 											"type":	"string",

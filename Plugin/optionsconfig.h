@@ -573,11 +573,11 @@ public:
     }
     
     void SetShowDockingWindowCaption(bool show) {
-        EnableOption(Opt_HideDockingWindowCaption, show);
+        EnableOption(Opt_HideDockingWindowCaption, !show);
     }
     
     bool IsShowDockingWindowCaption() const {
-        return HasOption(Opt_HideDockingWindowCaption);
+        return !HasOption(Opt_HideDockingWindowCaption);
     }
     
     /**

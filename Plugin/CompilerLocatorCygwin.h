@@ -27,8 +27,9 @@
 #define COMPILERLOCATORCYGWIN_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
+#include "codelite_exports.h"
 
-class CompilerLocatorCygwin : public ICompilerLocator
+class WXDLLIMPEXP_SDK CompilerLocatorCygwin : public ICompilerLocator
 {
 public:
     CompilerLocatorCygwin();

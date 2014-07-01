@@ -212,9 +212,10 @@ SearchData FindInFilesDialog::DoGetSearchData()
     if (m_findString->GetValue().IsEmpty() == false) {
         findStr = m_findString->GetValue();
     }
-
+    
     data.SetFindString       (findStr);
-
+    
+    m_data.SetFlags( GetSearchFlags() );
     size_t flags = m_data.GetFlags();
 
     // If the 'Skip comments' is ON, remove the

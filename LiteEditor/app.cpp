@@ -49,6 +49,7 @@
 #include "globals.h"
 #include <CompilerLocatorMinGW.h>
 #include <wx/regex.h>
+#include "CompilerLocatorCygwin.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -847,6 +848,13 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
         return;
     }
     
+    wxString cygwinRootDir;
+    CompilerLocatorCygwin cygwin;
+    if ( cygwin.Locate() ) {
+        // this will return the base folder for cygwin (e.g. D:\cygwin)
+        cygwinRootDir = (*cygwin.GetCompilers().begin())->GetInstallationPath();
+    }
+    
     // Running under Cygwin
     // Adjust the PATH environment variable
     wxString pathEnv;
@@ -854,6 +862,12 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
     
     // Always add the default paths
     wxArrayString paths;
+    if ( !cygwinRootDir.IsEmpty() ) {
+        wxFileName cygwinBinFolder(cygwinRootDir, "" );
+        cygwinBinFolder.AppendDir("bin");
+        paths.Add(cygwinBinFolder.GetPath());
+    }
+    
     paths.Add("/usr/local/bin");
     paths.Add("/usr/bin");
     paths.Add("/usr/sbin");

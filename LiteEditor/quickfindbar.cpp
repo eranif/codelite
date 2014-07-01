@@ -34,6 +34,7 @@
 #include "quickfindbar.h"
 #include "event_notifier.h"
 #include "plugin.h"
+#include "cl_config.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -62,25 +63,6 @@ void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
 #endif
 }
 
-class QFBEventHandler : public wxEvtHandler
-{
-    QuickFindBar* m_bar;
-public:
-    QFBEventHandler(QuickFindBar* bar) : m_bar(bar)
-    {
-        wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnCopy),      NULL, m_bar);
-        wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnPaste),     NULL, m_bar);
-        wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnSelectAll), NULL, m_bar);
-    }
-    
-    virtual ~QFBEventHandler()
-    {
-        wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnCopy),      NULL, m_bar);
-        wxTheApp->Disconnect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnPaste),     NULL, m_bar);
-        wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnSelectAll), NULL, m_bar);
-    }
-};
-
 QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     : QuickFindBarBase(parent, id)
     , m_sci(NULL)
@@ -88,11 +70,9 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_lastTextPtr(NULL)
     , m_themeHelper(this)
     , m_focusedTextControl(NULL)
-    , m_frameEventHandler(NULL)
+    , m_eventsConnected(false)
 {
     Hide();
-    DoShowControls();
-    
     GetSizer()->Fit(this);
     wxTheApp->Connect(XRCID("find_next"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext),          NULL, this);
     wxTheApp->Connect(XRCID("find_previous"),          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPrevious),      NULL, this);
@@ -237,7 +217,11 @@ void QuickFindBar::OnUpdateUI(wxUpdateUIEvent &e)
 void QuickFindBar::OnEnter(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-
+    
+    if ( !m_findWhat->IsEmpty() ) {
+        clConfig::Get().AddQuickFindSearchItem( m_findWhat->GetValue() );
+    }
+    
     bool shift = wxGetKeyState(WXK_SHIFT);
     if ( shift ) {
         OnPrev( e );
@@ -327,7 +311,11 @@ void QuickFindBar::OnReplace(wxCommandEvent& e)
 
     if (find.IsEmpty())
         return;
-
+    
+    if ( !replaceWith.IsEmpty() ) {
+        clConfig::Get().AddQuickFindReplaceItem(replaceWith);
+    }
+    
     // do we got a match?
     if ((selectionText != find) && !(m_flags & wxSD_REGULAREXPRESSION)) {
         size_t flags = kSearchForward|kSearchIncremental;
@@ -416,11 +404,6 @@ void QuickFindBar::OnReplaceEnter(wxCommandEvent& e)
     GetEventHandler()->AddPendingEvent(evt);
 }
 
-void QuickFindBar::ShowReplaceControls(bool show)
-{
-    wxUnusedVar( show );
-}
-
 void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
 {
     m_sci = sci;
@@ -428,29 +411,11 @@ void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
         DoShow(false, "");
         return;
     }
-    DoShowControls();
 }
 
 int QuickFindBar::GetCloseButtonId()
 {
     return ID_TOOL_CLOSE;
-}
-
-void QuickFindBar::OnToggleReplaceControls(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    long v(m_replaceWith->IsShown() ? 0 : 1);
-    EditorConfigST::Get()->SaveLongValue(wxT("QuickFindBarShowReplace"), v);
-    DoShowControls();
-}
-
-void QuickFindBar::DoShowControls()
-{
-    long v(1);
-    EditorConfigST::Get()->GetLongValue(wxT("QuickFindBarShowReplace"), v);
-    ShowReplaceControls(/*showReplaceControls*/);
-    Refresh();
-    GetParent()->GetSizer()->Layout();
 }
 
 bool QuickFindBar::Show(const wxString& findWhat)
@@ -466,14 +431,11 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 {
     bool res = wxPanel::Show(s);
     
-    if ( s && !m_frameEventHandler ) {
-        m_frameEventHandler = new QFBEventHandler(this);
-        clMainFrame::Get()->PushEventHandler( m_frameEventHandler );
+    if ( s && !m_eventsConnected ) {
+        BindEditEvents( true );
         
-    } else if ( m_frameEventHandler ) {
-        // pop but don't delete it
-        clMainFrame::Get()->PopEventHandler();
-        wxDELETE(m_frameEventHandler);
+    } else if ( m_eventsConnected ) {
+        BindEditEvents( false );
     }
     
     if ( s && m_sci ) {
@@ -488,8 +450,6 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
     if (res) {
         GetParent()->GetSizer()->Layout();
     }
-
-    DoShowControls();
 
     if (!m_sci) {
         // nothing to do
@@ -594,20 +554,6 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
 
     m_findWhat->ChangeValue( selection );
     DoSearch( 0 );
-}
-
-void QuickFindBar::OnToggleReplaceControlsUI(wxUpdateUIEvent& event)
-{
-    if (ManagerST::Get()->IsShutdownInProgress()) {
-        event.Enable(false);
-
-    } else  if (!m_sci || m_sci->GetReadOnly()) {
-        event.Enable(false);
-
-    } else {
-        event.Enable(true);
-        event.Check(m_replaceWith->IsShown());
-    }
 }
 
 void QuickFindBar::DoMarkAll()
@@ -725,11 +671,6 @@ void QuickFindBar::OnQuickFindCommandEvent(wxCommandEvent& event)
 
 QuickFindBar::~QuickFindBar()
 {
-    if ( m_frameEventHandler ) {
-        clMainFrame::Get()->PopEventHandler(false);
-    }
-    wxDELETE(m_frameEventHandler);
-    
     wxTheApp->Disconnect(XRCID("find_next"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNext),          NULL, this);
     wxTheApp->Disconnect(XRCID("find_previous"),          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPrevious),      NULL, this);
     wxTheApp->Disconnect(XRCID("find_next_at_caret"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNextCaret),     NULL, this);
@@ -826,4 +767,56 @@ void QuickFindBar::OnReplcaeKillFocus(wxFocusEvent& event)
 {
     event.Skip();
     m_focusedTextControl = NULL;
+}
+
+void QuickFindBar::BindEditEvents(bool bind)
+{
+    if ( bind ) {
+        clMainFrame::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnCopy,      this, wxID_COPY);
+        clMainFrame::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnPaste,     this, wxID_PASTE);
+        clMainFrame::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnSelectAll, this, wxID_SELECTALL);
+        clMainFrame::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnUndo,      this, wxID_UNDO);
+        clMainFrame::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnRedo,      this, wxID_REDO);
+        m_eventsConnected = true;
+        
+    } else {
+        clMainFrame::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnCopy,      this, wxID_COPY);
+        clMainFrame::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnPaste,     this, wxID_PASTE);
+        clMainFrame::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnSelectAll, this, wxID_SELECTALL);
+        clMainFrame::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnUndo,      this, wxID_UNDO);
+        clMainFrame::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnRedo,      this, wxID_REDO);
+        m_eventsConnected = false;
+    }
+}
+
+void QuickFindBar::OnRedo(wxCommandEvent& e)
+{
+    e.Skip(false);
+    if ( m_findWhat->HasFocus() ) {
+        if ( m_findWhat->CanRedo() ) {
+            m_findWhat->Redo();
+        }
+    } else if ( m_replaceWith->HasFocus() ) {
+        if ( m_replaceWith->CanRedo() ) {
+            m_replaceWith->Redo();
+        }
+    } else {
+        e.Skip(true);
+    }
+}
+
+void QuickFindBar::OnUndo(wxCommandEvent& e)
+{
+    e.Skip(false);
+    if ( m_findWhat->HasFocus() ) {
+        if ( m_findWhat->CanUndo() ) {
+            m_findWhat->Undo();
+        }
+    } else if ( m_replaceWith->HasFocus() ) {
+        if ( m_replaceWith->CanUndo() ) {
+            m_replaceWith->Undo();
+        }
+    } else {
+        e.Skip(true);
+    }
 }

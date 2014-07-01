@@ -33,15 +33,13 @@ class wxStyledTextCtrl;
 class QFBEventHandler;
 class QuickFindBar : public QuickFindBarBase
 {
-    friend class QFBEventHandler;
-    
     wxStyledTextCtrl  *m_sci;
     size_t             m_flags;
     wxString           m_lastText;
     wchar_t*           m_lastTextPtr;
     ThemeHandlerHelper m_themeHelper;
     wxTextCtrl*        m_focusedTextControl;
-    QFBEventHandler*   m_frameEventHandler;
+    bool               m_eventsConnected;
     
 public:
     enum {
@@ -55,6 +53,8 @@ public:
         kSearchIncremental  = 0x00000002,
         kSearchMultiSelect  = 0x00000004,
     };
+private:
+    void BindEditEvents(bool bind);
     
 protected:
     virtual void OnReplaceFocus(wxFocusEvent& event);
@@ -63,16 +63,16 @@ protected:
     virtual void OnFindKillFocus(wxFocusEvent& event);
     virtual void OnCheckBoxRegex(wxCommandEvent& event);
     virtual void OnCheckWild(wxCommandEvent& event);
-    void     ShowReplaceControls(bool show = true);
     void     DoSearch( size_t searchFlags );
     wxString DoGetSelectedText();
     void     DoMarkAll();
     wchar_t* DoGetSearchStringPtr();
 
     wxTextCtrl *GetFocusedControl();
-    void DoShowControls();
 
     // General events
+    void OnUndo         (wxCommandEvent  &e);
+    void OnRedo         (wxCommandEvent  &e);
     void OnCopy         (wxCommandEvent  &e);
     void OnPaste        (wxCommandEvent  &e);
     void OnSelectAll    (wxCommandEvent  &e);
@@ -90,8 +90,6 @@ protected:
     void OnUpdateUI     (wxUpdateUIEvent &e);
     void OnReplaceUI    (wxUpdateUIEvent &e);
     void OnReplaceEnter (wxCommandEvent &e);
-    void OnToggleReplaceControls( wxCommandEvent& event );
-    void OnToggleReplaceControlsUI(wxUpdateUIEvent& event);
     void OnHighlightMatches(wxCommandEvent& event);
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);

@@ -43,7 +43,6 @@ protected:
     bool          m_autoAppear;
     bool          m_autoAppearErrors;
     bool          m_errorsFirstLine;
-    QuickFindBar *m_findBar;
     wxBoxSizer *  m_hSizer;
     ThemeHandlerHelper* m_themeHelper;
     
@@ -51,14 +50,12 @@ protected:
     static void InitStyle   (wxStyledTextCtrl *sci, int lexer, bool folding);
 
     void CreateGUIControls();
-    void SetThisPaneIsSticky(bool stickiness);
 
     virtual void AppendText(const wxString &text);
     virtual bool IsFocused();
 
     //Event handlers
     virtual void OnOutputScrolls  (wxCommandEvent   &e);
-    virtual void OnSearchOutput   (wxCommandEvent   &e);
     virtual void OnClearAll       (wxCommandEvent   &e);
     virtual void OnWordWrap       (wxCommandEvent   &e);
     virtual void OnCollapseAll    (wxCommandEvent   &e);
@@ -68,7 +65,6 @@ protected:
 
 
     virtual void OnOutputScrollsUI(wxUpdateUIEvent  &e);
-    virtual void OnSearchOutputUI (wxUpdateUIEvent  &e);
     virtual void OnClearAllUI     (wxUpdateUIEvent  &e);
     virtual void OnWordWrapUI     (wxUpdateUIEvent  &e);
     virtual void OnCollapseAllUI  (wxUpdateUIEvent  &e);
@@ -78,7 +74,6 @@ protected:
     virtual void OnHotspotClicked (wxStyledTextEvent &e);
     virtual void OnMarginClick    (wxStyledTextEvent &e);
     virtual void OnEditUI         (wxUpdateUIEvent  &e);
-    virtual void OnHideSearchBar  (wxCommandEvent   &e);
     virtual void OnThemeChanged   (wxCommandEvent   &e);
     
     DECLARE_EVENT_TABLE()
@@ -87,7 +82,6 @@ public:
     OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name);
     ~OutputTabWindow();
 
-    bool IsThisPaneSticky();
     virtual void Clear();
     const wxString &GetCaption() const {
         return m_name;

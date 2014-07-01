@@ -37,14 +37,12 @@
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
     EVT_MENU(XRCID("scroll_on_output"),      OutputTabWindow::OnOutputScrolls)
-    EVT_MENU(XRCID("search_output"),         OutputTabWindow::OnSearchOutput)
     EVT_MENU(XRCID("clear_all_output"),      OutputTabWindow::OnClearAll)
     EVT_MENU(XRCID("word_wrap_output"),      OutputTabWindow::OnWordWrap)
     EVT_MENU(XRCID("collapse_all"),          OutputTabWindow::OnCollapseAll)
     EVT_MENU(XRCID("repeat_output"),         OutputTabWindow::OnRepeatOutput)
     EVT_MENU(XRCID("hold_pane_open"),        OutputTabWindow::OnToggleHoldOpen)
     EVT_UPDATE_UI(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrollsUI)
-    EVT_UPDATE_UI(XRCID("search_output"),    OutputTabWindow::OnSearchOutputUI)
     EVT_UPDATE_UI(XRCID("clear_all_output"), OutputTabWindow::OnClearAllUI)
     EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
     EVT_UPDATE_UI(XRCID("collapse_all"),     OutputTabWindow::OnCollapseAllUI)
@@ -64,7 +62,6 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
     , m_autoAppear(true)
     , m_autoAppearErrors(false)
     , m_errorsFirstLine(false)
-    , m_findBar(NULL)
 {
     CreateGUIControls();
     wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
@@ -181,13 +178,7 @@ void OutputTabWindow::CreateGUIControls()
     InitStyle(m_sci, wxSTC_LEX_CONTAINER, false);
 
     // Add the find bar
-    m_findBar = new QuickFindBar(this);
-    m_findBar->Connect(m_findBar->GetCloseButtonId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputTabWindow::OnHideSearchBar), NULL, this);
-    m_findBar->SetEditor(m_sci);
-
-    mainSizer->Add(m_findBar, 0, wxEXPAND);
     mainSizer->Add(m_hSizer, 1, wxEXPAND|wxALL, 0);
-
     BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 
     //Create the toolbar
@@ -241,7 +232,6 @@ void OutputTabWindow::CreateGUIControls()
 #endif
 
     // Hide the find bar by default
-    m_findBar->Hide();
     m_hSizer->Layout();
 }
 
@@ -431,30 +421,6 @@ void OutputTabWindow::OnToggleHoldOpen(wxCommandEvent &e)
     if (book && (sel=book->GetSelection()) != Notebook::npos) {
         EditorConfigST::Get()->SetPaneStickiness(book->GetPageText(sel), e.IsChecked());
     }
-}
-
-void OutputTabWindow::OnSearchOutput(wxCommandEvent& e)
-{
-    if(m_findBar->IsShown()) {
-        m_findBar->Hide();
-
-    } else {
-        m_findBar->Show();
-
-    }
-    GetSizer()->Layout();
-}
-
-void OutputTabWindow::OnSearchOutputUI(wxUpdateUIEvent& e)
-{
-    e.Enable(m_sci && m_sci->GetLength() > 0);
-    e.Check (m_findBar->IsShown());
-}
-
-void OutputTabWindow::OnHideSearchBar(wxCommandEvent& e)
-{
-    m_findBar->Hide();
-    GetSizer()->Layout();
 }
 
 void OutputTabWindow::OnThemeChanged(wxCommandEvent& e)

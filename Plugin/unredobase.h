@@ -103,7 +103,7 @@ public:
     virtual void ProcessOpenCommand();
 
     void PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool undoing);
-    void DoPopulateUnRedoMenu(wxMenu& menu, bool undoing);
+    virtual void DoPopulateUnRedoMenu(wxMenu& menu, bool undoing);
 
     void PrepareLabelledStatesMenu(wxMenu* menu);
     void PopulateLabelledStatesMenu(wxMenu* menu);

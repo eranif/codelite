@@ -834,13 +834,14 @@ void QuickFindBar::OnOptions(wxCommandEvent& event)
         menuPos.y += m_buttonOptions->GetSize().GetHeight();
 
         wxSize displaySize = ::wxGetDisplaySize();
-        //wxShowEffect effect = wxSHOW_EFFECT_SLIDE_TO_BOTTOM;
         if ( menuPos.y + menuSize.GetHeight() > displaySize.GetHeight() ) {
             // Place the menu on top of the button
             menuPos.y -= m_buttonOptions->GetSize().GetHeight();
             menuPos.y -= menuSize.GetHeight();
-            //effect = wxSHOW_EFFECT_SLIDE_TO_TOP;
         }
+        
+        // Toggle the button
+        m_buttonOptions->SetValue( true );
         GetOptionsMenu()->Move( menuPos );
         GetOptionsMenu()->Popup( m_findWhat );
     }
@@ -852,4 +853,9 @@ QuickFindBarOptionsMenu* QuickFindBar::GetOptionsMenu()
         m_optionsWindow = new QuickFindBarOptionsMenu(clMainFrame::Get(), this);
     }
     return m_optionsWindow;
+}
+
+void QuickFindBar::OnOptionsMenuDismissed()
+{
+    m_buttonOptions->SetValue( false );
 }

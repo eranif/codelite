@@ -13,6 +13,7 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/tglbtn.h>
 #include <wx/button.h>
 #include <wx/splitter.h>
 #include <wx/combobox.h>
@@ -23,7 +24,7 @@
 class QuickFindBarBase : public wxPanel
 {
 protected:
-    wxButton* m_buttonOptions;
+    wxBitmapToggleButton* m_buttonOptions;
     wxSplitterWindow* m_splitter73;
     wxPanel* m_splitterPage77;
     wxComboBox* m_findWhat;

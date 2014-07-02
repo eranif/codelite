@@ -9,7 +9,12 @@ class QuickFindBarOptionsMenu : public QuickFindBarOptionsMenuBase
 public:
     QuickFindBarOptionsMenu( wxWindow* parent, QuickFindBar* qfb );
     virtual ~QuickFindBarOptionsMenu();
-
+    
+    /**
+     * @brief callback when we get dismissed
+     */
+    virtual void OnDismiss();
+    
     wxCheckBox* GetCheckBoxCase() {
         return m_checkBoxCase;
     }

@@ -92,6 +92,7 @@ protected:
     void OnReplaceUI    (wxUpdateUIEvent &e);
     void OnReplaceEnter (wxCommandEvent &e);
     void OnHighlightMatches(const wxCommandEvent& event);
+    void OnOptionsMenuDismissed();
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);

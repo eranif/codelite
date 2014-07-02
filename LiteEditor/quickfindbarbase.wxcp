@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	85,
+		"m_objCounter":	87,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafteryhjh4ZInitBitmapResources",
 		"m_bitmapsFile":	"quickfindbarbase_liteeditor_bitmaps.cpp",
@@ -122,12 +122,12 @@
 						}],
 					"m_events":	[],
 					"m_children":	[{
-							"m_type":	4400,
+							"m_type":	4513,
 							"proportion":	0,
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxBU_EXACTFIT", "wxBORDER_NONE"],
+							"m_styles":	["wxBU_EXACTFIT"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -148,7 +148,7 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
-									"m_value":	"Open search options..."
+									"m_value":	"Search options menu..."
 								}, {
 									"type":	"colour",
 									"m_label":	"Bg Colour:",
@@ -186,33 +186,20 @@
 									"m_label":	"Style:",
 									"m_value":	""
 								}, {
-									"type":	"string",
-									"m_label":	"Label:",
-									"m_value":	""
-								}, {
-									"type":	"bool",
-									"m_label":	"Default Button",
-									"m_value":	false
-								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
 									"m_path":	"res/menu.png"
 								}, {
-									"type":	"choice",
-									"m_label":	"Direction",
-									"m_selection":	0,
-									"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
-								}, {
-									"type":	"string",
-									"m_label":	"Margins:",
-									"m_value":	"2,2"
+									"type":	"bool",
+									"m_label":	"Checked",
+									"m_value":	false
 								}],
 							"m_events":	[{
-									"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+									"m_eventName":	"wxEVT_COMMAND_TOGGLEBUTTON_CLICKED",
 									"m_eventClass":	"wxCommandEvent",
 									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnOptions(wxCommandEvent& event)",
-									"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+									"m_description":	"Handles a toggle button click event.",
 									"m_noBody":	false
 								}],
 							"m_children":	[]

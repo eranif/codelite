@@ -25,3 +25,9 @@ void QuickFindBarOptionsMenu::OnHighlightMatches(wxCommandEvent& event)
 {
     m_bar->CallAfter( &QuickFindBar::OnHighlightMatches, event );
 }
+
+void QuickFindBarOptionsMenu::OnDismiss()
+{
+    // We got dismissed - untoggle the button
+    m_bar->CallAfter( &QuickFindBar::OnOptionsMenuDismissed );
+}

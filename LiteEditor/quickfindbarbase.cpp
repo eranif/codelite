@@ -26,12 +26,9 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
-    m_buttonOptions = new wxButton(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT|wxBORDER_NONE);
-    #if wxVERSION_NUMBER >= 2904
-    m_buttonOptions->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("menu")), wxLEFT);
-    m_buttonOptions->SetBitmapMargins(2,2);
-    #endif
-    m_buttonOptions->SetToolTip(_("Open search options..."));
+    m_buttonOptions = new wxBitmapToggleButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("menu")), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_buttonOptions->SetToolTip(_("Search options menu..."));
+    m_buttonOptions->SetValue(false);
     
     mainSizer->Add(m_buttonOptions, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -77,7 +74,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     }
     Centre(wxBOTH);
     // Connect events
-    m_buttonOptions->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnOptions), NULL, this);
+    m_buttonOptions->Connect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnOptions), NULL, this);
     m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
     m_findWhat->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickFindBarBase::OnText), NULL, this);
     m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
@@ -88,7 +85,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
 
 QuickFindBarBase::~QuickFindBarBase()
 {
-    m_buttonOptions->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnOptions), NULL, this);
+    m_buttonOptions->Disconnect(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnOptions), NULL, this);
     m_findWhat->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
     m_findWhat->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickFindBarBase::OnText), NULL, this);
     m_findWhat->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);

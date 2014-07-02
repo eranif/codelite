@@ -1,6 +1,7 @@
 #ifndef CLSTRINGHISTORY_H
 #define CLSTRINGHISTORY_H
-
+#include <wx/string.h>
+#include <wx/arrstr.h>
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK clStringHistory

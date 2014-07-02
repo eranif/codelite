@@ -29,8 +29,8 @@
 #include "quickfindbarbase.h"
 #include "theme_handler_helper.h"
 
+class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;
-class QFBEventHandler;
 class QuickFindBar : public QuickFindBarBase
 {
     wxStyledTextCtrl  *m_sci;
@@ -38,16 +38,17 @@ class QuickFindBar : public QuickFindBarBase
     wxString           m_lastText;
     wchar_t*           m_lastTextPtr;
     ThemeHandlerHelper m_themeHelper;
-    wxTextCtrl*        m_focusedTextControl;
     bool               m_eventsConnected;
-    
+    QuickFindBarOptionsMenu* m_optionsWindow;
+
+    friend class QuickFindBarOptionsMenu;
 public:
     enum {
         ID_TOOL_REPLACE = 1000,
         ID_TOOL_CLOSE,
         ID_TOOL_FIND,
     };
-    
+
     enum {
         kSearchForward      = 0x00000001,
         kSearchIncremental  = 0x00000002,
@@ -55,20 +56,20 @@ public:
     };
 private:
     void BindEditEvents(bool bind);
+    void DoUpdateSearchHistory();
+    void DoUpdateReplaceHistory();
+
+    QuickFindBarOptionsMenu* GetOptionsMenu();
     
 protected:
-    virtual void OnReplaceFocus(wxFocusEvent& event);
-    virtual void OnReplcaeKillFocus(wxFocusEvent& event);
-    virtual void OnFindFocus(wxFocusEvent& event);
-    virtual void OnFindKillFocus(wxFocusEvent& event);
-    virtual void OnCheckBoxRegex(wxCommandEvent& event);
-    virtual void OnCheckWild(wxCommandEvent& event);
+    virtual void OnOptions(wxCommandEvent& event);
+    virtual void OnReplaceKeyDown(wxKeyEvent& event);
+    virtual void OnCheckBoxRegex(const wxCommandEvent& event);
+    virtual void OnCheckWild(const wxCommandEvent& event);
     void     DoSearch( size_t searchFlags );
     wxString DoGetSelectedText();
     void     DoMarkAll();
     wchar_t* DoGetSearchStringPtr();
-
-    wxTextCtrl *GetFocusedControl();
 
     // General events
     void OnUndo         (wxCommandEvent  &e);
@@ -90,7 +91,7 @@ protected:
     void OnUpdateUI     (wxUpdateUIEvent &e);
     void OnReplaceUI    (wxUpdateUIEvent &e);
     void OnReplaceEnter (wxCommandEvent &e);
-    void OnHighlightMatches(wxCommandEvent& event);
+    void OnHighlightMatches(const wxCommandEvent& event);
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);

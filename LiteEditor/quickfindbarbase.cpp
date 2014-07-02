@@ -26,7 +26,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
-    m_buttonOptions = new wxButton(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_buttonOptions = new wxButton(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT|wxBORDER_NONE);
     #if wxVERSION_NUMBER >= 2904
     m_buttonOptions->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("menu")), wxLEFT);
     m_buttonOptions->SetBitmapMargins(2,2);
@@ -110,9 +110,9 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent,long s
     wxBoxSizer* boxSizer60 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer60);
     
-    m_panel71 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel71 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
     
-    boxSizer60->Add(m_panel71, 1, wxALL|wxEXPAND, 5);
+    boxSizer60->Add(m_panel71, 1, wxEXPAND, 5);
     
     wxGridSizer* gridSizer49 = new wxGridSizer(0, 2, 0, 0);
     m_panel71->SetSizer(gridSizer49);

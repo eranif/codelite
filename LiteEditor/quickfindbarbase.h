@@ -61,7 +61,7 @@ protected:
     virtual void OnCheckWild(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    QuickFindBarOptionsMenuBase(wxWindow* parent, long style = wxBORDER_SIMPLE);
+    QuickFindBarOptionsMenuBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~QuickFindBarOptionsMenuBase();
 };
 

@@ -25,44 +25,33 @@
 
 #include "csscopeconfdata.h"
 #include <wx/stdpaths.h>
-CScopeConfData::CScopeConfData()
-		: m_cscopeFilepath(wxT(""))
-		, m_scanScope(SCOPE_ENTIRE_WORKSPACE)
-		, m_rebuildDb(false)
-		, m_buildRevertedIndex(false)
-{
-#ifdef __WXMSW__
-	// try the executable path
-	wxFileName codelitePath( wxStandardPaths::Get().GetExecutablePath() );
-	wxString   exePath;
-	exePath << codelitePath.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) << wxT("cscope.exe");
+#include "cl_standard_paths.h"
 
-	if( wxFileName::FileExists(exePath) ) {
-		m_cscopeFilepath = exePath;
-	} else {
-		m_cscopeFilepath = wxT("cscope.exe");
-	}
-#else
-	m_cscopeFilepath = wxT("cscope");
-#endif
+CScopeConfData::CScopeConfData()
+    : m_cscopeFilepath( wxT( "" ) )
+    , m_scanScope( SCOPE_ENTIRE_WORKSPACE )
+    , m_rebuildDb( false )
+    , m_buildRevertedIndex( false )
+{
+    m_cscopeFilepath = clStandardPaths::Get().GetBinaryFullPath("cscope");
 }
 
 CScopeConfData::~CScopeConfData()
 {
 }
 
-void CScopeConfData::DeSerialize(Archive& arch)
+void CScopeConfData::DeSerialize( Archive& arch )
 {
-	arch.Read(wxT("m_cscopeFilepath"), m_cscopeFilepath);
-	arch.Read(wxT("m_scanScope"), m_scanScope);
-	arch.Read(wxT("m_rebuildDb"), m_rebuildDb);
-	arch.Read(wxT("m_buildRevertedIndex"), m_buildRevertedIndex);
+    arch.Read( wxT( "m_cscopeFilepath" ), m_cscopeFilepath );
+    arch.Read( wxT( "m_scanScope" ), m_scanScope );
+    arch.Read( wxT( "m_rebuildDb" ), m_rebuildDb );
+    arch.Read( wxT( "m_buildRevertedIndex" ), m_buildRevertedIndex );
 }
 
-void CScopeConfData::Serialize(Archive& arch)
+void CScopeConfData::Serialize( Archive& arch )
 {
-	arch.Write(wxT("m_cscopeFilepath"), m_cscopeFilepath);
-	arch.Write(wxT("m_scanScope"), m_scanScope);
-	arch.Write(wxT("m_rebuildDb"), m_rebuildDb);
-	arch.Write(wxT("m_buildRevertedIndex"), m_buildRevertedIndex);
+    arch.Write( wxT( "m_cscopeFilepath" ), m_cscopeFilepath );
+    arch.Write( wxT( "m_scanScope" ), m_scanScope );
+    arch.Write( wxT( "m_rebuildDb" ), m_rebuildDb );
+    arch.Write( wxT( "m_buildRevertedIndex" ), m_buildRevertedIndex );
 }

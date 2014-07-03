@@ -407,6 +407,10 @@ if ( USE_PCH )
     add_subdirectory(PCH)
 endif ( USE_PCH )
 
+if ( APPLE )
+    add_definitions( -mmacosx-version-min=10.7 )
+endif()
+
 add_subdirectory(sqlite3)
 add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/wxshapeframework)
@@ -470,6 +474,7 @@ add_subdirectory(codelite_echo)
 if (USE_CLANG)
     add_subdirectory(codelite_clang)
 endif(USE_CLANG)
+
 
 ##
 ## Setup the proper dependencies

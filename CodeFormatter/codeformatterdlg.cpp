@@ -47,7 +47,7 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, IManager* mgr, CodeFormatt
     GetSizer()->Fit(this);
     InitDialog();
     UpdatePreview();
-
+    ExpandCollapsUneededOptions();
     WindowAttrManager::Load(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
 }
 
@@ -85,6 +85,26 @@ void CodeFormatterDlg::InitDialog()
     if ( lexer ) {
         lexer->Apply( m_textCtrlPreview, true );
     }
+    
+    // Select the proper engine
+    m_pgPropEngine->SetValueFromInt( (int) m_options.GetEngine() );
+
+    m_pgClangFormatExePath->SetValue( m_options.GetClangFormatExe() );
+    if ( m_options.GetClangFormatOptions() & kClangFormatChromium ) {
+        m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatChromium, wxPG_FULL_VALUE );
+        
+    } else if ( m_options.GetClangFormatOptions() & kClangFormatMozilla ) {
+        m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatMozilla, wxPG_FULL_VALUE );
+        
+    } else if ( m_options.GetClangFormatOptions() & kClangFormatWebKit ) {
+        m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatWebKit, wxPG_FULL_VALUE );
+        
+    } else if ( m_options.GetClangFormatOptions() & kClangFormatGoogle ) {
+        m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatGoogle, wxPG_FULL_VALUE );
+        
+    } else if ( m_options.GetClangFormatOptions() & kClangFormatLLVM ) {
+        m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatLLVM, wxPG_FULL_VALUE );
+    }
 }
 
 void CodeFormatterDlg::OnOK(wxCommandEvent &e)
@@ -103,7 +123,7 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent &e)
 void CodeFormatterDlg::UpdatePreview()
 {
     wxString output;
-    m_cf->AstyleFormat(m_sampleCode, m_options.ToString(), output);
+    m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
     m_textCtrlPreview->SetEditable(true);
     m_textCtrlPreview->SetText(output);
     m_textCtrlPreview->SetEditable(false);
@@ -152,6 +172,16 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     options |= m_pgPropIndentation->GetValue().GetInteger();
     m_options.SetOption( options );
     
+    // Save the selected engine
+    m_options.SetEngine( (FormatterEngine) m_pgPropEngine->GetValue().GetInteger() );
+    
+    // Save clang options
+    size_t clangOptions(0);
+    clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
+    m_options.SetClangFormatOptions( clangOptions );
+    
+    // Check the active engine
+    ExpandCollapsUneededOptions();
     CallAfter( &CodeFormatterDlg::UpdatePreview );
 }
 
@@ -171,4 +201,17 @@ void CodeFormatterDlg::OnApply(wxCommandEvent& event)
     m_isDirty = false;
     m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
     m_mgr->GetConfigTool()->WriteObject(wxT("FormatterOptions"), &m_options);
+}
+
+void CodeFormatterDlg::ExpandCollapsUneededOptions()
+{
+    wxString engine = m_pgPropEngine->GetValueAsString();
+    if ( engine == "AStyle" ) {
+        m_pgMgr->Collapse( m_pgPropClangFormat );
+        m_pgMgr->Expand( m_pgPropAstyleOptions );
+        
+    } else {
+        m_pgMgr->Expand( m_pgPropClangFormat );
+        m_pgMgr->Collapse( m_pgPropAstyleOptions );
+    }
 }

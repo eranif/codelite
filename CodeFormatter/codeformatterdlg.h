@@ -49,7 +49,8 @@ protected:
     void OnHelp(wxCommandEvent &e);
     void InitDialog();
     void UpdatePreview();
-
+    void ExpandCollapsUneededOptions();
+    
 public:
     /** Constructor */
     CodeFormatterDlg( wxWindow* parent, 

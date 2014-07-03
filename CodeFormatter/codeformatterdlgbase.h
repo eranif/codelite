@@ -33,11 +33,15 @@ protected:
     wxSplitterWindow* m_splitter16;
     wxPanel* m_splitterPage20;
     wxPropertyGridManager* m_pgMgr;
+    wxPGProperty* m_pgPropEngine;
     wxPGProperty* m_pgPropAstyleOptions;
     wxPGProperty* m_pgPropPreDefinedStyles;
     wxPGProperty* m_pgPropBrackets;
     wxPGProperty* m_pgPropIndentation;
     wxPGProperty* m_pgPropFormatting;
+    wxPGProperty* m_pgPropClangFormat;
+    wxPGProperty* m_pgClangFormatExePath;
+    wxPGProperty* m_pgPropClangFormatStyle;
     wxPanel* m_splitterPage24;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlUserFlags;
@@ -58,7 +62,7 @@ protected:
     virtual void OnHelp(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,500), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CodeFormatterBaseDlg();
 };
 

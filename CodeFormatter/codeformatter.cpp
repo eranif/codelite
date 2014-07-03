@@ -188,7 +188,7 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
     //execute the formatter
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-    wxString options = fmtroptions.ToString();
+    wxString options = fmtroptions.AstyleOptionsAsString();
 
     //determine indentation method and amount
     bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
@@ -314,7 +314,7 @@ void CodeFormatter::OnFormatString(wxCommandEvent& e)
     //execute the formatter
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-    wxString options = fmtroptions.ToString();
+    wxString options = fmtroptions.AstyleOptionsAsString();
 
     //determine indentation method and amount
     bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();

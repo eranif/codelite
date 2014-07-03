@@ -64,19 +64,49 @@ enum AstyleOptions {
     AS_ALL_FORMAT_OPTIONS       = AS_BREAK_BLOCKS|AS_PAD_PARENTHESIS|AS_BREAK_BLOCKS_ALL|AS_PAD_PARENTHESIS_OUT|AS_BREAK_ELSEIF|AS_PAD_PARENTHESIS_IN|AS_PAD_OPER|AS_UNPAD_PARENTHESIS|AS_ONE_LINE_KEEP_STATEMENT|AS_FILL_EMPTY_LINES|AS_ONE_LINE_KEEP_BLOCKS,
 };
 
+enum FormatterEngine {
+    kFormatEngineAStyle,
+    kFormatEngineClangFormat,
+};
+
+enum ClangFormatStyle {
+    kClangFormatLLVM     = 0x00000001,
+    kClangFormatGoogle   = 0x00000002,
+    kClangFormatWebKit   = 0x00000004,
+    kClangFormatChromium = 0x00000010,
+    kClangFormatMozilla  = 0x00000020,
+};
+
 class FormatOptions : public SerializedObject
 {
     size_t m_options;
+    size_t m_clangFormatOptions;
     wxString m_customFlags;
+    FormatterEngine m_engine;
+    wxString m_clangFormatExe;
 
 public:
     FormatOptions();
     virtual ~FormatOptions();
 
-    wxString ToString() const;
-
+    wxString AstyleOptionsAsString() const;
+    wxString ClangFormatOptionsAsString() const;
     void Serialize(Archive &arch);
     void DeSerialize(Archive &arch);
+
+    void SetClangFormatExe(const wxString& clangFormatExe) {
+        this->m_clangFormatExe = clangFormatExe;
+    }
+    const wxString& GetClangFormatExe() const {
+        return m_clangFormatExe;
+    }
+    FormatterEngine GetEngine() const {
+        return m_engine;
+    }
+
+    void SetEngine(FormatterEngine engine) {
+        m_engine = engine;
+    }
 
     size_t GetOptions() const {
         return m_options;
@@ -89,6 +119,12 @@ public:
     }
     const wxString& GetCustomFlags() const {
         return m_customFlags;
+    }
+    void SetClangFormatOptions(size_t clangFormatOptions) {
+        this->m_clangFormatOptions = clangFormatOptions;
+    }
+    size_t GetClangFormatOptions() const {
+        return m_clangFormatOptions;
     }
 };
 

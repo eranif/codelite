@@ -57,6 +57,15 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     boxSizer26->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
     
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("AStyle"));
+    m_pgMgrArr.Add(_("clang-format"));
+    m_pgMgrIntArr.Add(kFormatEngineAStyle);
+    m_pgMgrIntArr.Add(kFormatEngineClangFormat);
+    m_pgPropEngine = m_pgMgr->Append(  new wxEnumProperty( _("Formatter Tool"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropEngine->SetHelpString(_("Select the formatter tool to use"));
+    
     m_pgPropAstyleOptions = m_pgMgr->Append(  new wxPropertyCategory( _("AStyle Options") ) );
     m_pgPropAstyleOptions->SetHelpString(wxT(""));
     
@@ -131,6 +140,28 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(AS_ONE_LINE_KEEP_BLOCKS);
     m_pgPropFormatting = m_pgMgr->AppendIn( m_pgPropAstyleOptions,  new wxFlagsProperty( _("Formatting"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropFormatting->SetHelpString(_("Select one or more formatting option from the list below"));
+    
+    m_pgPropClangFormat = m_pgMgr->Append(  new wxPropertyCategory( _("ClangFormat Options") ) );
+    m_pgPropClangFormat->SetHelpString(wxT(""));
+    
+    m_pgClangFormatExePath = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
+    m_pgMgr->SetPropertyAttribute(m_pgClangFormatExePath, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
+    
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("LLVM"));
+    m_pgMgrArr.Add(_("Google"));
+    m_pgMgrArr.Add(_("Chromium"));
+    m_pgMgrArr.Add(_("Mozilla"));
+    m_pgMgrArr.Add(_("WebKit"));
+    m_pgMgrIntArr.Add(kClangFormatLLVM);
+    m_pgMgrIntArr.Add(kClangFormatGoogle);
+    m_pgMgrIntArr.Add(kClangFormatWebKit);
+    m_pgMgrIntArr.Add(kClangFormatChromium);
+    m_pgMgrIntArr.Add(kClangFormatMozilla);
+    m_pgPropClangFormatStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
     
     m_splitterPage24 = new wxPanel(m_splitter16, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter16->SplitHorizontally(m_splitterPage20, m_splitterPage24, 0);
@@ -226,7 +257,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer30->AddButton(m_buttonHelp);
     m_stdBtnSizer30->Realize();
     
-    SetSizeHints(-1,-1);
+    SetSizeHints(400,500);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

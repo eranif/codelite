@@ -40,7 +40,7 @@ protected:
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,-1), long style = wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW);
+    QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,-1), long style = wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW|wxBORDER_STATIC);
     virtual ~QuickFindBarBase();
 };
 

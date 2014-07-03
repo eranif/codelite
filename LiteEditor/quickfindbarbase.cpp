@@ -26,13 +26,14 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
-    m_buttonOptions = new wxBitmapToggleButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("menu")), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_buttonOptions = new wxBitmapToggleButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("menu")), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT|wxBORDER_NONE);
     m_buttonOptions->SetToolTip(_("Search options menu..."));
     m_buttonOptions->SetValue(false);
     
     mainSizer->Add(m_buttonOptions, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_splitter73 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter73->SetToolTip(_("Resize the quick find bar"));
     m_splitter73->SetSashGravity(0.5);
     m_splitter73->SetMinimumPaneSize(10);
     
@@ -51,7 +52,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_findWhat->SetHint(_("Type to start a search..."));
     #endif
     
-    boxSizer83->Add(m_findWhat, 0, wxALL|wxEXPAND, 5);
+    boxSizer83->Add(m_findWhat, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_splitterPage81 = new wxPanel(m_splitter73, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter73->SplitVertically(m_splitterPage77, m_splitterPage81, 0);
@@ -66,7 +67,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_replaceWith->SetHint(_("Type any replacement string..."));
     #endif
     
-    boxSizer85->Add(m_replaceWith, 0, wxALL|wxEXPAND, 5);
+    boxSizer85->Add(m_replaceWith, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     SetSizeHints(400,-1);
     if ( GetSizer() ) {

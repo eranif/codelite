@@ -87,6 +87,11 @@ QuickFindBar::QuickFindBar( wxWindow* parent, wxWindowID id )
     // Initialize the list with the history
     m_findWhat->Append( clConfig::Get().GetQuickFindSearchItems() );
     m_replaceWith->Append( clConfig::Get().GetQuickFindReplaceItems() );
+
+    int sashPos = clConfig::Get().Read("QuickFindBarSashPos", wxNOT_FOUND);
+    if ( sashPos != wxNOT_FOUND ) {
+        m_splitter73->SetSashPosition( sashPos );
+    }
 }
 
 bool QuickFindBar::Show( bool show )
@@ -674,6 +679,8 @@ QuickFindBar::~QuickFindBar()
     wxTheApp->Disconnect( XRCID( "find_next_at_caret" ),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( QuickFindBar::OnFindNextCaret ),     NULL, this );
     wxTheApp->Disconnect( XRCID( "find_previous_at_caret" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( QuickFindBar::OnFindPreviousCaret ), NULL, this );
     EventNotifier::Get()->Disconnect( wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler( QuickFindBar::OnReleaseEditor ), NULL, this );
+
+    clConfig::Get().Write("QuickFindBarSashPos", m_splitter73->GetSashPosition());
 }
 
 void QuickFindBar::OnReleaseEditor( wxCommandEvent& e )
@@ -860,4 +867,5 @@ QuickFindBarOptionsMenu* QuickFindBar::GetOptionsMenu()
 void QuickFindBar::OnOptionsMenuDismissed()
 {
     m_buttonOptions->SetValue( false );
+    m_findWhat->SetFocus();
 }

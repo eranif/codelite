@@ -121,7 +121,7 @@ wchar_t* QuickFindBar::DoGetSearchStringPtr()
     return pinput;
 }
 
-void QuickFindBar::DoSearch( size_t searchFlags )
+void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
 {
     if ( !m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty() )
         return;
@@ -143,7 +143,12 @@ void QuickFindBar::DoSearch( size_t searchFlags )
     bool addSelection = searchFlags & kSearchMultiSelect;
     bool incr         = searchFlags & kSearchIncremental;
 
-    int offset = !fwd || incr ? start : stop;
+    int offset;
+    if ( posToSearchFrom != wxNOT_FOUND ) {
+        offset = posToSearchFrom;
+    } else {
+        offset = (!fwd || incr) ? start : stop;
+    }
     int flags = m_flags | ( fwd ? 0 : wxSD_SEARCH_BACKWARD );
     int pos = 0, len = 0;
 
@@ -204,7 +209,7 @@ void QuickFindBar::OnPrev( wxCommandEvent &e )
 void QuickFindBar::OnText( wxCommandEvent& e )
 {
     e.Skip();
-    CallAfter( &QuickFindBar::DoSearch, kSearchForward|kSearchIncremental );
+    CallAfter( &QuickFindBar::DoSearch, kSearchForward|kSearchIncremental, -1 );
 }
 
 void QuickFindBar::OnKeyDown( wxKeyEvent& e )
@@ -332,6 +337,8 @@ void QuickFindBar::OnReplace( wxCommandEvent& e )
         DoUpdateReplaceHistory();
     }
 
+    int nextSearchOffset = m_sci->GetSelectionStart() + replaceWith.Length();
+
     // do we got a match?
     if ( ( selectionText != find ) && !( m_flags & wxSD_REGULAREXPRESSION ) ) {
         size_t flags = kSearchForward|kSearchIncremental;
@@ -367,7 +374,7 @@ void QuickFindBar::OnReplace( wxCommandEvent& e )
         // and search again
         if ( nNumSelections == 1 ) {
             size_t flags = kSearchForward|kSearchIncremental;
-            DoSearch( flags );
+            DoSearch( flags, nextSearchOffset );
         }
 
     } else {
@@ -386,7 +393,7 @@ void QuickFindBar::OnReplace( wxCommandEvent& e )
         // and search again
         if ( nNumSelections == 1 ) {
             size_t flags = kSearchForward|kSearchIncremental;
-            DoSearch( flags );
+            DoSearch( flags, nextSearchOffset );
         }
     }
 }

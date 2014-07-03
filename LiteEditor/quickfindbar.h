@@ -66,7 +66,7 @@ protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
     virtual void OnCheckBoxRegex(const wxCommandEvent& event);
     virtual void OnCheckWild(const wxCommandEvent& event);
-    void     DoSearch( size_t searchFlags );
+    void     DoSearch( size_t searchFlags, int posToSearchFrom = wxNOT_FOUND );
     wxString DoGetSelectedText();
     void     DoMarkAll();
     wchar_t* DoGetSearchStringPtr();

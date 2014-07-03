@@ -225,5 +225,6 @@
     <VirtualDirectory Name="resources">
       <File Name="cppcheckreportbasepage_cppchecker_bitmaps.cpp"/>
     </VirtualDirectory>
+    <File Name="cppchecksettingsdlg.wxcp"/>
   </VirtualDirectory>
 </CodeLite_Project>

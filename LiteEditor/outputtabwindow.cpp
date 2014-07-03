@@ -207,12 +207,6 @@ void OutputTabWindow::CreateGUIControls()
                   bmpLoader->LoadBitmap(wxT("output-pane/16/clear")),
                   _("Clear All"));
 
-    m_tb->AddTool(XRCID("search_output"),
-                  _("Find..."),
-                  bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")),
-                  _("Find..."),
-                  wxITEM_CHECK);
-
     m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"),
                   wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
                   _("Fold All Results"));

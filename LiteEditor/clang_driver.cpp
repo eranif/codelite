@@ -807,17 +807,8 @@ void ClangDriver::GetMacros(IEditor *editor)
     FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), projectPath, pchFile);
 
     wxString cmd;
-#ifdef __WXMAC__
-    wxFileName exePath(wxStandardPaths::Get().GetDataDir(), wxT(""));
-#else
-    wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-#endif
-    exePath.SetFullName(wxT("codelite-clang"));
 
-#ifdef __WXMSW__
-    exePath.SetExt(wxT("exe"));
-#endif
-
+    wxFileName exePath( clStandardPaths::Get().GetBinaryFullPath("codelite-clang") );
     wxFileName outputFolder(pchFile);
     // Select the compilation args
     FileExtManager::FileType type = FileExtManager::TypeSourceCpp; // Default is C++

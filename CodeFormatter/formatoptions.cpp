@@ -23,12 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "formatoptions.h"
+#include "clClangFormatLocator.h"
 
 FormatOptions::FormatOptions()
     : m_options(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kFormatEngineAStyle)
     , m_clangFormatOptions(kClangFormatLLVM)
 {
+    if ( m_clangFormatExe.IsEmpty() ) {
+        clClangFormatLocator locator;
+        locator.Locate( m_clangFormatExe );
+    }
 }
 
 FormatOptions::~FormatOptions()
@@ -50,11 +55,11 @@ void FormatOptions::DeSerialize(Archive &arch)
 
 void FormatOptions::Serialize(Archive &arch)
 {
-    arch.Write(wxT("m_options"), m_options);
-    arch.Write(wxT("m_customFlags"), m_customFlags);
+    arch.Write(wxT("m_options"),            m_options);
+    arch.Write(wxT("m_customFlags"),        m_customFlags);
     arch.Write("m_engine", static_cast<int>(m_engine));
-    arch.Write("m_clangFormatOptions", m_clangFormatOptions);
-    arch.Write("m_clangFormatExe", m_clangFormatExe);
+    arch.Write("m_clangFormatOptions",      m_clangFormatOptions);
+    arch.Write("m_clangFormatExe",          m_clangFormatExe);
 }
 
 wxString FormatOptions::AstyleOptionsAsString() const

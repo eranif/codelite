@@ -38,6 +38,7 @@
 #include "LLDBSettings.h"
 #include "globals.h"
 #include "LLDBRemoteHandshakePacket.h"
+#include "cl_standard_paths.h"
 
 #ifndef __WXMSW__
 #   include <sys/wait.h>
@@ -492,17 +493,13 @@ bool LLDBConnector::LaunchLocalDebugServer()
     
 #ifdef __WXMAC__
     // set the LLDB_DEBUGSERVER_PATH env variable
-    wxFileName debugserver(wxStandardPaths::Get().GetExecutablePath());
-    debugserver.SetFullName( "debugserver" );
-    debugserver.RemoveLastDir();
-    debugserver.AppendDir("SharedSupport");
+    wxFileName debugserver( clStandardPaths::Get().GetBinaryFullPath("debugserver") );
     om["LLDB_DEBUGSERVER_PATH"] = debugserver.GetFullPath();
 #endif
 
     EnvSetter es(NULL, &om);
     
-    wxFileName fnCodeLiteLLDB(wxStandardPaths::Get().GetExecutablePath());
-    fnCodeLiteLLDB.SetFullName( "codelite-lldb" );
+    wxFileName fnCodeLiteLLDB( clStandardPaths::Get().GetBinaryFullPath("codelite-lldb") );
     
     wxString command;
     command << fnCodeLiteLLDB.GetFullPath() << " -s " << GetDebugServerPath();

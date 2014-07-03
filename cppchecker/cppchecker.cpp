@@ -523,19 +523,7 @@ wxString CppCheckPlugin::DoGetCommand()
 {
     // Linux / Mac way: spawn the process and execute the command
     wxString cmd, path;
-#if defined (__WXMAC__)
-    path = wxStandardPaths::Get().GetDataDir();
-
-#else // Linux / Windows
-    wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
-    path = exePath.GetPath();
-
-#endif
-
-    path << wxFileName::GetPathSeparator() << wxT("codelite_cppcheck");
-#ifdef __WXMSW__
-    path << wxT(".exe");
-#endif
+    path = clStandardPaths::Get().GetBinaryFullPath("codelite_cppcheck");
 
     wxString fileList = DoGenerateFileList();
     if(fileList.IsEmpty())

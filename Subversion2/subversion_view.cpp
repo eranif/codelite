@@ -991,11 +991,7 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
         command << " diff \"" << data->GetFilepath() << "\" --diff-cmd=";
         // We dont have proper echo on windows that can be used here, so 
         // we provide our own batch script wrapper
-        wxFileName echoTool(wxStandardPaths::Get().GetExecutablePath());
-        echoTool.SetFullName("codelite-echo");
-#ifdef __WXMSW__
-        echoTool.SetExt("exe");
-#endif
+        wxFileName echoTool( clStandardPaths::Get().GetBinaryFullPath("codelite-echo") );
         command << "\"" << echoTool.GetFullPath() << "\"";
         
         wxArrayString lines;

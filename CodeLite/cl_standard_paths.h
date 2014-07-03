@@ -63,6 +63,21 @@ public:
         Mac: appinfo.app/Contents/SharedSupport bundle subdirectory
      */
     wxString GetDataDir() const;
+
+    // Under MSW, OSX and GTK the bin folder is the same directory as the
+    // main executable (codelite{.exe})
+    // Typically this function returns:
+    // MSW: /path/to/codelite.exe
+    // GTK: /usr/bin
+    // OSX: /path/to/codelite.app/Contents/MacOS
+    wxString GetBinFolder() const;
+
+    /**
+     * @brief return the full path for an executable. This function
+     * usually returns: GetBinFolder() + "/" + toolname + ".exe"
+     * @note the .exe and "/" are platform dependant
+     */
+    wxString GetBinaryFullPath(const wxString &toolname) const;
 };
 
 #endif // CLSTANDARDPATHS_H

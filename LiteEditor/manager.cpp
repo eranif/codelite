@@ -3523,7 +3523,7 @@ void Manager::DoRestartCodeLite()
 
 void Manager::SetCodeLiteLauncherPath(const wxString& path)
 {
-    m_codeliteLauncher = wxFileName(path, wxT("codelite_launcher"));
+    m_codeliteLauncher = path;
 }
 
 void Manager::OnRestart(wxCommandEvent& event)

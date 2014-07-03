@@ -38,6 +38,8 @@
   <VirtualDirectory Name="Source Files">
     <File Name="codeformatter.cpp"/>
     <File Name="formatoptions.cpp"/>
+    <File Name="clClangFormatLocator.h"/>
+    <File Name="clClangFormatLocator.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="codeformatter.h"/>

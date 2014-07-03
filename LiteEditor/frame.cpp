@@ -58,6 +58,7 @@
 #include <CompilersDetectorManager.h>
 #include "CompilersFoundDlg.h"
 #include <wx/stc/stc.h>
+#include "cl_standard_paths.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -962,15 +963,8 @@ void clMainFrame::CreateGUIControls(void)
     TagsManager *tagsManager = TagsManagerST::Get();
 
     //start ctags process
-#if defined (__WXMAC__)
-    // On Mac OSX, search the codelite_indexer in the correct path
-    tagsManager->SetCodeLiteIndexerPath(wxStandardPaths::Get().GetDataDir());
-#else
-    // set the path to codelite_indexer
-    wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
-    tagsManager->SetCodeLiteIndexerPath(exePath.GetPath());
-    ManagerST::Get()->SetCodeLiteLauncherPath(exePath.GetPath());
-#endif
+    TagsManagerST::Get()->SetCodeLiteIndexerPath( clStandardPaths::Get().GetBinaryFullPath("codelite_indexer") );
+    ManagerST::Get()->SetCodeLiteLauncherPath( clStandardPaths::Get().GetBinaryFullPath("codelite_launcher") );
     tagsManager->StartCodeLiteIndexer();
 
     //--------------------------------------------------------------------------------------

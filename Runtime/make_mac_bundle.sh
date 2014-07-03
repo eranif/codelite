@@ -37,14 +37,14 @@ fix_non_plugins_depends() {
     sos2=`ls ./codelite.app/Contents/SharedSupport/plugins/*.dylib`
     sos3=`ls ./codelite.app/Contents/SharedSupport/debuggers/*.dylib`
     file_list="${dylibs} ${sos2} ${sos3} ./codelite.app/Contents/MacOS/codelite "
-    
+
     ## add codelite-lldb if it exists
     if test -f ./codelite.app/Contents/MacOS/codelite-lldb ; then
         file_list="${file_list} ./codelite.app/Contents/MacOS/codelite-lldb"
     fi
 
     for SO in ${file_list}
-    do   
+    do
     orig_path=`otool -L ${SO}  | grep ${search_string} | awk '{print $1;}'`
     if [ ! -z ${orig_path} ]; then
         ## Loop over the files, and update the path of the wx library
@@ -58,24 +58,28 @@ fix_non_plugins_depends() {
 }
 
 fix_codelite_clang_deps() {
-    if test -f ./codelite.app/Contents/SharedSupport/codelite-clang ; then
-        orig_path=`otool -L ./codelite.app/Contents/SharedSupport/codelite-clang  | grep libwx_* | awk '{print $1;}'`
+    echo "fix_codelite_clang_deps..."
+    if test -f ./codelite.app/Contents/MacOS/codelite-clang ; then
+        echo otool -L ./codelite.app/Contents/MacOS/codelite-clang  | grep libwx_* | awk '{print $1;}'
+        orig_path=`otool -L ./codelite.app/Contents/MacOS/codelite-clang  | grep libwx_* | awk '{print $1;}'`
 
         ## Loop over the files, and update the path of the wx library
         for path in ${orig_path}
         do
             new_path=`echo ${path} | xargs basename`
-            install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/codelite-clang
+            echo install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/MacOS/codelite-clang
+            install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/MacOS/codelite-clang
         done
-        echo install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/SharedSupport/codelite-clang
-        install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/SharedSupport/codelite-clang
+        echo install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/MacOS/codelite-clang
+        install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/MacOS/codelite-clang
     fi
+    echo "fix_codelite_clang_deps... done"
 }
 
 fix_codelite_lldb_deps() {
     if test -f ./codelite.app/Contents/MacOS/codelite-lldb ; then
         orig_path=`otool -L ./codelite.app/Contents/MacOS/codelite-lldb  | grep libwx_* | awk '{print $1;}'`
-        
+
         ## Fix wxWidgets dependencies
         ## Loop over the files, and update the path of the wx library
         for path in ${orig_path}
@@ -86,34 +90,34 @@ fix_codelite_lldb_deps() {
 
         echo install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/MacOS/codelite-lldb
         install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/MacOS/codelite-lldb
-        
+
         ## Fix libcodelite, libplugin and libwxsqlite
-        
+
     fi
 }
 
 
 fix_codelite_indexer_deps() {
 
-    orig_path=`otool -L ./codelite.app/Contents/SharedSupport/codelite_indexer  | grep libwx_* | awk '{print $1;}'`
+    orig_path=`otool -L ./codelite.app/Contents/MacOS/codelite_indexer  | grep libwx_* | awk '{print $1;}'`
 
     ## Loop over the files, and update the path of the wx library
     for path in ${orig_path}
     do
         new_path=`echo ${path} | xargs basename`
-        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/codelite_indexer
+        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/MacOS/codelite_indexer
     done
 }
 
 fix_codelite_make_deps() {
 
-    orig_path=`otool -L ./codelite.app/Contents/SharedSupport/codelite-make  | grep libwx_* | awk '{print $1;}'`
+    orig_path=`otool -L ./codelite.app/Contents/MacOS/codelite-make  | grep libwx_* | awk '{print $1;}'`
 
     ## Loop over the files, and update the path of the wx library
     for path in ${orig_path}
     do
         new_path=`echo ${path} | xargs basename`
-        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/codelite-make
+        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/MacOS/codelite-make
     done
 }
 
@@ -188,6 +192,7 @@ cp ../bin/codelite-terminal  ./codelite.app/Contents/MacOS/codelite-terminal.app
 cp ../../codelite_terminal/Info.plist ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/
 
 ## Fix clang
+echo ../../sdk/clang/lib/libclang.dylib ./codelite.app/Contents/MacOS/
 cp ../../sdk/clang/lib/libclang.dylib ./codelite.app/Contents/MacOS/
 echo install_name_tool -change @rpath/libclang.dylib @executable_path/libclang.dylib ./codelite.app/Contents/MacOS/codelite
 install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/MacOS/codelite
@@ -277,8 +282,8 @@ cp ../bin/codelite-lldb  ./codelite.app/Contents/MacOS/
 fix_codelite_lldb_deps
 
 ## Copy Apple's debugserver (its signed)
-echo cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
-cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
+echo cp ../../Runtime/debugserver  ./codelite.app/Contents/MacOS/
+cp ../../Runtime/debugserver  ./codelite.app/Contents/MacOS/
 
 cp ../../sdk/lldb/unix/lib/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/
 install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/plugins/LLDBDebugger.dylib
@@ -295,17 +300,16 @@ cp ../lib/libwxsqlite3.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/libdatabaselayersqlite.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/libwxshapeframework.dylib ./codelite.app/Contents/MacOS/
 
-cp ../bin/codelite_indexer  ./codelite.app/Contents/SharedSupport/
+cp ../bin/codelite_indexer  ./codelite.app/Contents/MacOS/
 
 if test -f ../bin/codelite-clang ; then
-    cp ../bin/codelite-clang  ./codelite.app/Contents/SharedSupport/
+    cp ../bin/codelite-clang  ./codelite.app/Contents/MacOS/
 fi
 
 cp ../bin/codelite-cc  ./codelite.app/Contents/MacOS/
 cp ../bin/codelite-echo  ./codelite.app/Contents/MacOS/
-cp ../bin/codelite-make  ./codelite.app/Contents/SharedSupport/
-cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
-cp ../../Runtime/./OpenTerm   ./codelite.app/Contents/SharedSupport/
+cp ../bin/codelite-make  ./codelite.app/Contents/MacOS/
+cp ../bin/codelite_cppcheck ./codelite.app/Contents/MacOS/
 cp ../../Runtime/plugins/resources/*.*  ./codelite.app/Contents/SharedSupport/plugins/resources/
 
 ## Copy the locale files
@@ -325,7 +329,7 @@ fix_codelite_clang_deps
 fix_shared_object_depends libwx_
 
 ## the blow fixes the paths embedded in the executable located under codelite.app/Contents/MacOS/
-## the function fix_non_plugins_depends accepts search string 
+## the function fix_non_plugins_depends accepts search string
 fix_non_plugins_depends lib/liblibcodelite.dylib
 fix_non_plugins_depends lib/libplugin.dylib
 fix_non_plugins_depends lib/libwxsqlite3.dylib

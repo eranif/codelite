@@ -332,10 +332,7 @@ void TagsManager::RestartCodeLiteIndexer()
 
 void TagsManager::SetCodeLiteIndexerPath(const wxString& path)
 {
-    m_codeliteIndexerPath = wxFileName(path, wxT("codelite_indexer"));
-#ifdef __WXMSW__
-    m_codeliteIndexerPath.SetExt(wxT("exe"));
-#endif
+    m_codeliteIndexerPath = path;
 }
 
 void TagsManager::OnIndexerTerminated(wxCommandEvent& event)

@@ -47,6 +47,7 @@ copy codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-echo.exe "%TARGET_DIR%\CodeLite\" /Y
 copy ..\sdk\clang\lib\libclang.dll "%TARGET_DIR%\CodeLite\" /Y
+copy ..\sdk\clang\lib\clang-format.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
 copy ..\sdk\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\" /Y
 copy makedir.exe "%TARGET_DIR%\CodeLite\" /Y
 copy le_exec.exe "%TARGET_DIR%\CodeLite\" /Y

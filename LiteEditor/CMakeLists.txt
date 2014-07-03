@@ -103,6 +103,16 @@ install(FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm DESTINATION ${CL_PREFIX}/bin
 install(FILES ${CL_SRC_ROOT}/Runtime/clg++ DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 install(FILES ${CL_SRC_ROOT}/Runtime/clgcc DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 
+# Install clang-format
+# We name it codelite-clang-format to avoid collision with any official installation
+if ( UNIX AND NOT APPLE )
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        install(FILES ${CL_SRC_ROOT}/sdk/clang/Linux/x86_64/bin/codelite-clang-format DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+    else()
+        install(FILES ${CL_SRC_ROOT}/sdk/clang/Linux/i386/bin/codelite-clang-format DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+    endif()
+endif()
+
 ## codelite icons
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite-icons-fresh-farm.zip DESTINATION ${CL_PREFIX}/share/codelite)
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite-icons-dark.zip DESTINATION ${CL_PREFIX}/share/codelite)

@@ -60,7 +60,7 @@ wxString clStandardPaths::GetUserDataDir() const
 #else
     // Release mode
     return wxStandardPaths::Get().GetUserDataDir();
-    
+
 #endif
 #else // Windows / OSX
     return wxStandardPaths::Get().GetUserDataDir();
@@ -79,11 +79,27 @@ wxString clStandardPaths::GetPluginsDirectory() const
 #else
     wxString pluginsDir = GetDataDir();
 #endif
-    
+
     return pluginsDir;
 }
 
 wxString clStandardPaths::GetDataDir() const
 {
     return wxStandardPaths::Get().GetDataDir();
+}
+
+wxString clStandardPaths::GetBinFolder() const
+{
+    wxFileName fnExe( wxStandardPaths::Get().GetExecutablePath() );
+    return fnExe.GetPath();
+}
+
+wxString clStandardPaths::GetBinaryFullPath(const wxString& toolname) const
+{
+    wxFileName binary( GetBinFolder(), toolname );
+    binary.SetExt( wxEmptyString );
+#ifdef __WXMSW__
+    binary.SetExt( "exe" );
+#endif
+    return binary.GetFullPath();
 }

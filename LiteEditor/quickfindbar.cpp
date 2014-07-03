@@ -84,7 +84,9 @@ QuickFindBar::QuickFindBar( wxWindow* parent, wxWindowID id )
     EventNotifier::Get()->Connect( wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler( QuickFindBar::OnReleaseEditor ), NULL, this );
     Connect( QUICKFIND_COMMAND_EVENT, wxCommandEventHandler( QuickFindBar::OnQuickFindCommandEvent ), NULL, this );
 
-    DoUpdateSearchHistory();
+    // Initialize the list with the history
+    m_findWhat->Append( clConfig::Get().GetQuickFindSearchItems() );
+    m_replaceWith->Append( clConfig::Get().GetQuickFindReplaceItems() );
 }
 
 bool QuickFindBar::Show( bool show )

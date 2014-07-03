@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	38,
+		"m_objCounter":	40,
 		"m_includeFiles":	["formatoptions.h"],
 		"m_bitmapFunction":	"wxCrafterGgLOZbInitBitmapResources",
 		"m_bitmapsFile":	"codeformatterdlg_codeformatter_bitmaps.cpp",
@@ -156,7 +156,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	""
+									"m_value":	"400,-1"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -385,11 +385,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Sash Gravity:",
-															"m_value":	"0.5"
+															"m_value":	"1"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Pane Size:",
-															"m_value":	"10"
+															"m_value":	"100"
 														}, {
 															"type":	"string",
 															"m_label":	"Sash Position:",
@@ -553,6 +553,10 @@
 																					"type":	"integer",
 																					"m_label":	"Sash Position:",
 																					"m_value":	-1
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Set Splitter Left:",
+																					"m_value":	false
 																				}],
 																			"m_events":	[{
 																					"m_eventName":	"wxEVT_PG_CHANGED",
@@ -1192,7 +1196,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
-											"m_value":	""
+											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Minimum Size:",
@@ -1285,7 +1289,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",
-															"m_value":	"300,-1"
+															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",

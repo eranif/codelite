@@ -27,7 +27,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizerMain = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerMain);
     
-    m_splitterSettingsPreview = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitterSettingsPreview = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(400,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
     m_splitterSettingsPreview->SetSashGravity(0);
     m_splitterSettingsPreview->SetMinimumPaneSize(50);
     
@@ -39,8 +39,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_panelSettings->SetSizer(bSizerSettings);
     
     m_splitter16 = new wxSplitterWindow(m_panelSettings, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
-    m_splitter16->SetSashGravity(0.5);
-    m_splitter16->SetMinimumPaneSize(10);
+    m_splitter16->SetSashGravity(1);
+    m_splitter16->SetMinimumPaneSize(100);
     
     bSizerSettings->Add(m_splitter16, 1, wxEXPAND, 5);
     
@@ -131,7 +131,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(AS_ONE_LINE_KEEP_BLOCKS);
     m_pgPropFormatting = m_pgMgr->AppendIn( m_pgPropAstyleOptions,  new wxFlagsProperty( _("Formatting"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropFormatting->SetHelpString(_("Select one or more formatting option from the list below"));
-    m_pgMgr->GetGrid()->SetSplitterLeft(true);
+    
     m_splitterPage24 = new wxPanel(m_splitter16, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter16->SplitHorizontally(m_splitterPage20, m_splitterPage24, 0);
     
@@ -152,7 +152,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     bCustomSettingsSizer->Add(m_textCtrlUserFlags, 1, wxALL|wxEXPAND, 5);
     
-    m_panelPreview = new wxPanel(m_splitterSettingsPreview, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panelPreview = new wxPanel(m_splitterSettingsPreview, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitterSettingsPreview->SplitVertically(m_panelSettings, m_panelPreview, 250);
     
     wxBoxSizer* bPreviewSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -204,7 +204,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlPreview->SetKeyWords(4, wxT(""));
     
     bPreviewSizer->Add(m_textCtrlPreview, 1, wxALL|wxEXPAND, 5);
-    m_textCtrlPreview->SetMinSize(wxSize(300,-1));
     
     wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
     

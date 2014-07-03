@@ -1,5 +1,6 @@
 #include "clClangFormatLocator.h"
 #include "cl_standard_paths.h"
+#include <wx/filename.h>
 
 clClangFormatLocator::clClangFormatLocator()
 {

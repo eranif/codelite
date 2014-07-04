@@ -42,7 +42,9 @@ if (UNIX AND NOT APPLE)
     endif()
 
 endif (UNIX AND NOT APPLE)
+if (NOT MINGW)
 add_definitions(-fPIC)
+endif (NOT MINGW)
 
 if ( USE_PCH )
     add_definitions(-include "${CL_PCH_FILE}")

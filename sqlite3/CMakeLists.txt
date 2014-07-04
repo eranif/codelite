@@ -11,6 +11,8 @@ FILE(GLOB SRCS "*.c")
  
 # Define the output
 add_library(sqlite3lib STATIC  ${SRCS})
+if (UNIX)
 SET_TARGET_PROPERTIES( sqlite3lib  PROPERTIES COMPILE_FLAGS -fPIC)
+endif ()
 
 #install(TARGETS sqlite3 DESTINATION ${PLUGINS_DIR})

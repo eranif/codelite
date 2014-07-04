@@ -1,2 +1,10 @@
 - Allow multiple file open in open-resource dialog
-- New 'Find Bar'
+- Allow open <file>:<line> in open-resource dialog
+- Code Formatter: prompt the user when he clicks OK/Apply and clang-format tool could not be found
+- Code Formatter: support selection formatting with clang-format
+- Code Formatter: clang-format should respect the following:
+   - Indent with TABS/Spaces (as set in the editor settings)
+   - Indent width
+   - EOL
+
+

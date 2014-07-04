@@ -5,11 +5,11 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelite-terminal)
 
-if ( UNIX AND NOT APPLE )
+if ( UNIX OR MINGW AND NOT APPLE )
     find_package(wxWidgets COMPONENTS std stc aui REQUIRED)
 else ( UNIX AND NOT APPLE )
     find_package(wxWidgets REQUIRED)
-endif ( UNIX AND NOT APPLE )
+endif ( UNIX OR MINGW AND NOT APPLE )
 
 # Add RPATH
 if ( UNIX )
@@ -18,7 +18,7 @@ endif ( UNIX )
 
 # we need wxWidgets flags to be set only for the c++ files, so we do it like this
 # by setting the CMAKE_CXX_FLAGS
-execute_process(COMMAND ${CL_WX_CONFIG} --debug=no --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND sh ${CL_WX_CONFIG} --debug=no --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WX_CXX_FLAGS}")
 
 add_definitions(-DNDEBUG)

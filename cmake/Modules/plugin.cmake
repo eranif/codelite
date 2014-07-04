@@ -19,7 +19,7 @@ function( CL_PLUGIN PLUGIN_NAME )
         ## Windows
         set( MINGW 1 )
         set( CMAKE_FIND_LIBRARY_PREFIXES lib)
-        set( CMAKE_FIND_LIBRARY_SUFFIXES .a)
+        set( CMAKE_FIND_LIBRARY_SUFFIXES .a .dll.a)
         find_package(wxWidgets COMPONENTS std aui propgrid stc richtext ribbon REQUIRED)
         
     else( NOT UNIX )

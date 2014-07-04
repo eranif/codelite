@@ -28,7 +28,7 @@ if (UNIX)
         set(ADDITIONAL_LIBRARIES "-ldl")
     endif ( )
 else (UNIX)
-    ## Windows??
+    set(ADDITIONAL_LIBRARIES "-lws2_32")
 endif (UNIX)
 
 ## Macros

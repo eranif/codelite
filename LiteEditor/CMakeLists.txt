@@ -61,7 +61,9 @@ if ( USE_CLANG )
 endif( USE_CLANG )
 
 # Add RPATH
+if (UNIX)
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 FILE(GLOB SRCS "*.cpp")
 

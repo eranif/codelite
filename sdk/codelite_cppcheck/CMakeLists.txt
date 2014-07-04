@@ -9,7 +9,9 @@ project(codelitegcc)
 include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/lib" "${CL_SRC_ROOT}/sdk/codelite_cppcheck/cli")
 
 # Add RPATH
+if(UNIX)
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/externals/tinyxml")
 FILE(GLOB SRCS "cli/*.cpp" "lib/*.cpp" "externals/*/*.cpp")

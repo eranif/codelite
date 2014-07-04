@@ -66,7 +66,9 @@ add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 add_definitions(-DDBL_USE_SQLITE)
 # Add RPATH
+if (UNIX)
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 FILE(GLOB SRCS "*.cpp")
 

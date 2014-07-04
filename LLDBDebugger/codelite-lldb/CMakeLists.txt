@@ -9,7 +9,9 @@ else ( APPLE )
 endif ( APPLE )
 
 # Add RPATH
+if (UNIX)
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 FILE(GLOB SRC "*.cpp")
 include_directories(${CL_SRC_ROOT}/LLDBDebugger)

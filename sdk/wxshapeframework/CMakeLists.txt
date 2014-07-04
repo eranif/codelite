@@ -25,7 +25,9 @@ endif ( USE_PCH )
 include_directories("${CL_SRC_ROOT}/sdk/wxshapeframework/include" "${CL_SRC_ROOT}/sdk/wxshapeframework/src")
 
 # Add RPATH
-SET (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+if (UNIX)
+set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 FILE(GLOB SRCS "src/*.cpp" "src/wxxmlserializer/*.cpp")
 

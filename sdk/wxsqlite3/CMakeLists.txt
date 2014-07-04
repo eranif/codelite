@@ -24,7 +24,9 @@ endif ( USE_PCH )
 include_directories(./include ../../sqlite3)
 
 # Add RPATH
-SET (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+if (UNIX)
+set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 # For convenience we define the sources as a variable. You can add 
 # header files and cpp/c files and CMake will sort them out

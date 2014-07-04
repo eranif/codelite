@@ -34,4 +34,9 @@ FILE(GLOB SRCS "src/*.cpp" "src/wxxmlserializer/*.cpp")
 # Define the output
 add_library(wxshapeframework SHARED ${SRCS})
 target_link_libraries(wxshapeframework ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+
+if (NOT MINGW)
 install(TARGETS wxshapeframework DESTINATION ${PLUGINS_DIR})
+else ()
+install(TARGETS wxshapeframework RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+endif()

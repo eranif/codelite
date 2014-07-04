@@ -90,4 +90,8 @@ else()
     target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
 endif()
 
+if (NOT MINGW)
 install(TARGETS plugin DESTINATION ${PLUGINS_DIR})
+else ()
+install(TARGETS plugin RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+endif()

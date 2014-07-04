@@ -35,4 +35,9 @@ set(SRCS src/wxsqlite3.cpp)
 # Define the output
 add_library(wxsqlite3 SHARED ${SRCS})
 target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib)
+
+if (NOT MINGW)
 install(TARGETS wxsqlite3 DESTINATION ${PLUGINS_DIR})
+else ()
+install(TARGETS wxsqlite3 RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+endif()

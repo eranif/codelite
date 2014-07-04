@@ -138,7 +138,9 @@ install(FILES ${CL_SRC_ROOT}/Runtime/config/accelerators.conf.default DESTINATIO
 install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default DESTINATION ${CL_PREFIX}/share/codelite/config)
 install(FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.gtk DESTINATION ${CL_PREFIX}/share/codelite/config RENAME debuggers.xml.default)
 install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk DESTINATION ${CL_PREFIX}/share/codelite/config RENAME codelite.xml.default)
+if ( UNIX AND NOT APPLE )
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CL_PREFIX}/share/applications)
+endif (  UNIX AND NOT APPLE )
 
 install(
   DIRECTORY ${CL_SRC_ROOT}/Runtime/plugins/resources

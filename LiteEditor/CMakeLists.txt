@@ -68,7 +68,12 @@ endif (UNIX)
 FILE(GLOB SRCS "*.cpp")
 
 # Define the output
-add_executable(codelite ${SRCS})
+if (MINGW)
+    add_definitions(-DWINDRES)
+    add_executable(codelite ${SRCS} code_parser.rc)
+else()
+    add_executable(codelite ${SRCS})
+endif()
 
 set( ADDITIONAL_LIBRARIES "" )
 

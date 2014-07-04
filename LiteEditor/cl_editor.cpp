@@ -67,6 +67,7 @@
 #include "findresultstab.h"
 #include "bookmark_manager.h"
 #include "clang_code_completion.h"
+#include <wx/wupdlock.h>
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -2731,6 +2732,7 @@ void LEditor::ReloadFile()
 
 void LEditor::SetEditorText(const wxString &text)
 {
+    wxWindowUpdateLocker locker(this);
     HideCompletionBox();
     SetText(text);
 

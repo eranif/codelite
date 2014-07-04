@@ -76,6 +76,8 @@
 #include "SelectProjectsDlg.h"
 #include "globals.h"
 #include <parse_thread.h>
+#include "cl_command_event.h"
+#include "codelite_events.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -1923,10 +1925,10 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 void ContextCpp::DoFormatEditor(LEditor *editor)
 {
-    wxCommandEvent formatEvent(XRCID("wxEVT_CF_FORMAT_STRING"));
-    formatEvent.SetString( editor->GetText() );
+    clSourceFormatEvent formatEvent(wxEVT_FORMAT_STRING);
+    formatEvent.SetInputString( editor->GetText() );
     EventNotifier::Get()->ProcessEvent( formatEvent );
-    editor->SetText( formatEvent.GetString() );
+    editor->SetText( formatEvent.GetFormattedString() );
 }
 
 void ContextCpp::OnFileSaved()

@@ -376,7 +376,7 @@ bool UnixProcessImpl::Write(const wxString& buff)
     return bytes == (int)tmpbuf.length();
 }
 
-IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IProcessCreateFlags flags, const wxString& workingDirectory, IProcessCallback *cb)
+IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDirectory, IProcessCallback *cb)
 {
     wxUnusedVar(flags);
 
@@ -440,9 +440,11 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
         proc->m_callback = cb;
         proc->SetReadHandle  (master);
         proc->SetWriteHandler(master);
-
         proc->SetPid( rc );
-        proc->StartReaderThread();
+
+        if ( !(prc->m_flags & IProcessCreateSync) ) {
+            proc->StartReaderThread();
+        }
         return proc;
     }
 }

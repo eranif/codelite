@@ -42,6 +42,8 @@
 #include "newwxprojectdlg.h"
 #include <algorithm>
 #include "PluginWizard.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 
 static wxString MI_NEW_WX_PROJECT      = wxT("Create new wxWidgets project...");
 static wxString MI_NEW_CODELITE_PLUGIN = wxT("Create new CodeLite plugin...");
@@ -338,12 +340,10 @@ void WizardsPlugin::DoCreateNewPlugin()
         content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
         
         // Notify the formatter plugin to format the plugin source files
-        wxCommandEvent evtFormat(XRCID("wxEVT_CF_FORMAT_STRING"));
-        
-        // format the content
-        evtFormat.SetString(content);
+        clSourceFormatEvent evtFormat(wxEVT_FORMAT_STRING);
+        evtFormat.SetInputString( content );
         EventNotifier::Get()->ProcessEvent( evtFormat );
-        content = evtFormat.GetString();
+        content = evtFormat.GetFormattedString();
         
         // Write it down
         file.Open(srcFile.GetFullPath(), wxT("w+b"));

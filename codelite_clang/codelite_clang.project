@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="codelite_clang" InternalType="Console">
   <Plugins>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+		"name":	"Windows_Debug",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}, {
+		"name":	"Windows_Release",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}]]]>
+    </Plugin>
     <Plugin Name="qmake">
       <![CDATA[00020001N0013Windows_Debug0000000000000001N0015Windows_Release000000000000]]>
     </Plugin>
@@ -19,9 +40,10 @@
     <File Name="y.tab.h"/>
   </VirtualDirectory>
   <Dependencies Name="Release"/>
+  <Dependencies Name="Windows_Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
-      <Compiler Options="" C_Options="">
+      <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="">
@@ -30,7 +52,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug_Linux_32" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="../sdk/clang/Linux/i386/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes)" Required="yes">
@@ -38,11 +60,12 @@
         <Library Value="libclang.so"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="parse-macros &quot;/home/eran/devl/codelite/LiteEditor/clang_driver.cpp&quot; &quot;/home/eran/devl/codelite/LiteEditor/.clang&quot; -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/i686-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/4.4.6/include -I/usr/lib/gcc/i686-linux-gnu/4.4.6/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include -I/home/eran/devl/codelite -I/home/eran/devl/codelite/ -I/home/eran/devl/codelite/CodeLite -I/home/eran/devl/codelite/CodeLite/ -I/home/eran/devl/codelite/Debugger -I/home/eran/devl/codelite/Debugger/ -I/home/eran/devl/codelite/Interfaces -I/home/eran/devl/codelite/Interfaces/ -I/home/eran/devl/codelite/PCH -I/home/eran/devl/codelite/PCH/ -I/home/eran/devl/codelite/Plugin -I/home/eran/devl/codelite/Plugin/ -I/home/eran/devl/codelite/sdk/clang/Linux/i386/include -I/home/eran/devl/codelite/sdk/clang/Linux/i386/include/ -I/home/eran/devl/codelite/sdk/codelite_indexer/network -I/home/eran/devl/codelite/sdk/codelite_indexer/network/ -I/home/eran/devl/codelite/sdk/databaselayer/include/wx/dblayer/include -I/home/eran/devl/codelite/sdk/databaselayer/include/wx/dblayer/include/ -I/home/eran/devl/codelite/sdk/databaselayer/src/sqlite3 -I/home/eran/devl/codelite/sdk/databaselayer/src/sqlite3/ -I/home/eran/devl/codelite/sdk/wxscintilla/include -I/home/eran/devl/codelite/sdk/wxscintilla/include/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/include -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/include/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexers -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexers/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexlib -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexlib/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/src -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/src/ -I/home/eran/devl/codelite/sdk/wxshapeframework/include -I/home/eran/devl/codelite/sdk/wxshapeframework/include/ -I/home/eran/devl/codelite/sdk/wxshapeframework/src -I/home/eran/devl/codelite/sdk/wxshapeframework/src/ -I/home/eran/devl/codelite/sdk/wxsqlite3/include -I/home/eran/devl/codelite/sdk/wxsqlite3/include/ -I/home/eran/devl/codelite/sdk/wxsqlite3/sqlite3/include -I/home/eran/devl/codelite/sdk/wxsqlite3/sqlite3/include/ -I/usr/include/atk-1.0 -I/usr/include/atk-1.0/ -I/usr/include/cairo -I/usr/include/cairo/ -I/usr/include/freetype2 -I/usr/include/freetype2/ -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/gdk-pixbuf-2.0/ -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/include/glib-2.0/ -I/usr/include/gtk-2.0 -I/usr/include/gtk-2.0/ -I/usr/include/libpng12 -I/usr/include/libpng12/ -I/usr/include/pango-1.0 -I/usr/include/pango-1.0/ -I/usr/include/pixman-1 -I/usr/include/pixman-1/ -I/usr/include/wx-2.8 -I/usr/include/wx-2.8/ -I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/i386-linux-gnu/glib-2.0/include/ -I/usr/lib/i386-linux-gnu/gtk-2.0/include -I/usr/lib/i386-linux-gnu/gtk-2.0/include/ -I/usr/lib/wx/include/gtk2-unicode-debug-2.8 -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/lib/wx/include/gtk2-unicode-release-2.8/ -Ilibctags -DASTYLE_LIB -DGTK -DHAS_LIBCLANG -DHAVE_CONFIG_H -DINSTALL_DIR=&quot;/home/eran/root/share/codelite&quot; -DINSTALL_DIR=&quot;/usr/share/codelite&quot; -DLINK_LEXERS -DPLUGINS_DIR=&quot;/home/eran/root/lib/codelite&quot; -DPLUGINS_DIR=&quot;/usr/lib/codelite&quot; -DREGEXP_UNICODE -DSCI_LEXER -DYY_NEVER_INTERACTIVE=1 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXDEBUG__ -D__WXGTK__ -D__WX__" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="parse-macros &quot;/home/eran/devl/codelite/LiteEditor/clang_driver.cpp&quot; &quot;/home/eran/devl/codelite/LiteEditor/.clang&quot; -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/i686-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/i686-linux-gnu/4.4.6/include -I/usr/lib/gcc/i686-linux-gnu/4.4.6/include-fixed -I/usr/include/i386-linux-gnu -I/usr/include -I/home/eran/devl/codelite -I/home/eran/devl/codelite/ -I/home/eran/devl/codelite/CodeLite -I/home/eran/devl/codelite/CodeLite/ -I/home/eran/devl/codelite/Debugger -I/home/eran/devl/codelite/Debugger/ -I/home/eran/devl/codelite/Interfaces -I/home/eran/devl/codelite/Interfaces/ -I/home/eran/devl/codelite/PCH -I/home/eran/devl/codelite/PCH/ -I/home/eran/devl/codelite/Plugin -I/home/eran/devl/codelite/Plugin/ -I/home/eran/devl/codelite/sdk/clang/Linux/i386/include -I/home/eran/devl/codelite/sdk/clang/Linux/i386/include/ -I/home/eran/devl/codelite/sdk/codelite_indexer/network -I/home/eran/devl/codelite/sdk/codelite_indexer/network/ -I/home/eran/devl/codelite/sdk/databaselayer/include/wx/dblayer/include -I/home/eran/devl/codelite/sdk/databaselayer/include/wx/dblayer/include/ -I/home/eran/devl/codelite/sdk/databaselayer/src/sqlite3 -I/home/eran/devl/codelite/sdk/databaselayer/src/sqlite3/ -I/home/eran/devl/codelite/sdk/wxscintilla/include -I/home/eran/devl/codelite/sdk/wxscintilla/include/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/include -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/include/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexers -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexers/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexlib -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/lexlib/ -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/src -I/home/eran/devl/codelite/sdk/wxscintilla/src/scintilla/src/ -I/home/eran/devl/codelite/sdk/wxshapeframework/include -I/home/eran/devl/codelite/sdk/wxshapeframework/include/ -I/home/eran/devl/codelite/sdk/wxshapeframework/src -I/home/eran/devl/codelite/sdk/wxshapeframework/src/ -I/home/eran/devl/codelite/sdk/wxsqlite3/include -I/home/eran/devl/codelite/sdk/wxsqlite3/include/ -I/home/eran/devl/codelite/sdk/wxsqlite3/sqlite3/include -I/home/eran/devl/codelite/sdk/wxsqlite3/sqlite3/include/ -I/usr/include/atk-1.0 -I/usr/include/atk-1.0/ -I/usr/include/cairo -I/usr/include/cairo/ -I/usr/include/freetype2 -I/usr/include/freetype2/ -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/gdk-pixbuf-2.0/ -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/include/glib-2.0/ -I/usr/include/gtk-2.0 -I/usr/include/gtk-2.0/ -I/usr/include/libpng12 -I/usr/include/libpng12/ -I/usr/include/pango-1.0 -I/usr/include/pango-1.0/ -I/usr/include/pixman-1 -I/usr/include/pixman-1/ -I/usr/include/wx-2.8 -I/usr/include/wx-2.8/ -I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/i386-linux-gnu/glib-2.0/include/ -I/usr/lib/i386-linux-gnu/gtk-2.0/include -I/usr/lib/i386-linux-gnu/gtk-2.0/include/ -I/usr/lib/wx/include/gtk2-unicode-debug-2.8 -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/lib/wx/include/gtk2-unicode-release-2.8/ -Ilibctags -DASTYLE_LIB -DGTK -DHAS_LIBCLANG -DHAVE_CONFIG_H -DINSTALL_DIR=&quot;/home/eran/root/share/codelite&quot; -DINSTALL_DIR=&quot;/usr/share/codelite&quot; -DLINK_LEXERS -DPLUGINS_DIR=&quot;/home/eran/root/lib/codelite&quot; -DPLUGINS_DIR=&quot;/usr/lib/codelite&quot; -DREGEXP_UNICODE -DSCI_LEXER -DYY_NEVER_INTERACTIVE=1 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXDEBUG__ -D__WXGTK__ -D__WX__" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/i386/lib:$(LD_LIBRARY_PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -70,7 +93,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Debug_Linux_64" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="../sdk/clang/Linux/x86_64/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes)" Required="yes">
@@ -78,13 +101,14 @@
         <Library Value="libclang.so"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="parse-macros /home/eran/main.cpp /tmp -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/x86_64-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -ferror-limit=1000 -w -nobuiltininc -I/usr/include/gtk-2.0 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="parse-macros /home/eran/main.cpp /tmp -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/x86_64-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -ferror-limit=1000 -w -nobuiltininc -I/usr/include/gtk-2.0 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)
       
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -112,19 +136,20 @@
       </Completion>
     </Configuration>
     <Configuration Name="Windows_Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="../sdk/clang/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes)" Required="yes">
         <LibraryPath Value="../sdk/clang/lib"/>
-        <Library Value="liblibclang.dll"/>
+        <Library Value="libclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Debug" Command="./codelite-clang.exe" CommandArguments="parse-macros &quot;C:\src\codelitegit\LiteEditor\app.cpp&quot; &quot;C:\src\codelitegit\.clang&quot; -Ic:\mingw-4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include-fixed -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++ -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\backward -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\mingw32 -ID:\src\wx294\lib\gcc_dll\mswud\ -ID:\src\wx294\include\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\CodeLite\ -IC:\src\codelitegit\sdk\wxsqlite3\include\ -IC:\src\codelitegit\sdk\wxscintilla\include\ -IC:\src\codelitegit\Plugin\ -IC:\src\codelitegit\Interfaces\ -IC:\src\codelitegit\sdk\clang\include\ -DHAVE_W32API_H -D__WXMSW__ -D__WXDEBUG__ -D_UNICODE -DWXUSINGDLL -DWXUSINGDLL_SDK -DWXUSINGDLL_CL -DWXUSINGDLL_SCI -DHAS_LIBCLANG" UseSeparateDebugArgs="yes" DebugArguments="parse-macros &quot;C:\src\codelitegit\LiteEditor\app.cpp&quot; &quot;C:\src\codelitegit\.clang&quot; -Ic:\mingw-4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include-fixed -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++ -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\backward -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\mingw32 -ID:\src\wx294\lib\gcc_dll\mswud\ -ID:\src\wx294\include\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\CodeLite\ -IC:\src\codelitegit\sdk\wxsqlite3\include\ -IC:\src\codelitegit\sdk\wxscintilla\include\ -IC:\src\codelitegit\Plugin\ -IC:\src\codelitegit\Interfaces\ -IC:\src\codelitegit\sdk\clang\include\ -DHAVE_W32API_H -D__WXMSW__ -D__WXDEBUG__ -D_UNICODE -DWXUSINGDLL -DWXUSINGDLL_SDK -DWXUSINGDLL_CL -DWXUSINGDLL_SCI -DHAS_LIBCLANG" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="wxWidgets-29">
+      <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Debug" Command="./codelite-clang.exe" CommandArguments="parse-macros &quot;C:\src\codelitegit\LiteEditor\app.cpp&quot; &quot;C:\src\codelitegit\.clang&quot; -Ic:\mingw-4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include-fixed -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++ -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\backward -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\mingw32 -ID:\src\wx294\lib\gcc_dll\mswud\ -ID:\src\wx294\include\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\CodeLite\ -IC:\src\codelitegit\sdk\wxsqlite3\include\ -IC:\src\codelitegit\sdk\wxscintilla\include\ -IC:\src\codelitegit\Plugin\ -IC:\src\codelitegit\Interfaces\ -IC:\src\codelitegit\sdk\clang\include\ -DHAVE_W32API_H -D__WXMSW__ -D__WXDEBUG__ -D_UNICODE -DWXUSINGDLL -DWXUSINGDLL_SDK -DWXUSINGDLL_CL -DWXUSINGDLL_SCI -DHAS_LIBCLANG" UseSeparateDebugArgs="yes" DebugArguments="parse-macros &quot;C:\src\codelitegit\LiteEditor\app.cpp&quot; &quot;C:\src\codelitegit\.clang&quot; -Ic:\mingw-4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include-fixed -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++ -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\backward -Ic:\mingw-4.7.1\lib\gcc\mingw32\4.7.1\include\c++\mingw32 -ID:\src\wx294\lib\gcc_dll\mswud\ -ID:\src\wx294\include\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\LiteEditor\ -IC:\src\codelitegit\CodeLite\ -IC:\src\codelitegit\sdk\wxsqlite3\include\ -IC:\src\codelitegit\sdk\wxscintilla\include\ -IC:\src\codelitegit\Plugin\ -IC:\src\codelitegit\Interfaces\ -IC:\src\codelitegit\sdk\clang\include\ -DHAVE_W32API_H -D__WXMSW__ -D__WXDEBUG__ -D_UNICODE -DWXUSINGDLL -DWXUSINGDLL_SDK -DWXUSINGDLL_CL -DWXUSINGDLL_SCI -DHAS_LIBCLANG" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -152,19 +177,20 @@
       </Completion>
     </Configuration>
     <Configuration Name="Windows_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options="-O2" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="../sdk/clang/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=no --libs --unicode=yes);-O2" Required="yes">
         <LibraryPath Value="../sdk/clang/lib"/>
-        <Library Value="liblibclang.dll"/>
+        <Library Value="libclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -192,5 +218,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Windows_Release"/>
 </CodeLite_Project>

@@ -577,5 +577,26 @@
 // event type: clCommandEvent
 #define wxEVT_SAVE_ALL_EDITORS 3610
 
+//----------------------------------------------------------------------
+// Source Code Format events
+//----------------------------------------------------------------------
+
+// Format an input string
+// Event type: clSourceFormatEvent
+// Use clSourceFormatEvent.SetInputString() / GetFormattedString()
+// to get and set the string to format
+// Note that the plugin should be "smart" enough to indent the file
+// by its type
+// Call event.Skip(false) to mark this event as completed
+#define wxEVT_FORMAT_STRING    3620
+
+// Format a file
+// Event type: clSourceFormatEvent
+// Use event.SetFileName() to pass the file name to be formatted
+// Note that the plugin should be "smart" enough to indent the file
+// by its type
+// Call event.Skip(false) to mark this event as completed
+#define wxEVT_FORMAT_FILE      3621
+
 #endif // CODELITE_EVENTS_H
 

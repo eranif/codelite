@@ -26,13 +26,40 @@
 #define CODEFORMATTER_H
 
 #include "plugin.h"
+#include "cl_command_event.h"
+#include "formatoptions.h"
 
 class CodeFormatter : public IPlugin
 {
 protected:
     void DoFormatFile(IEditor *editor);
+    
     int DoGetGlobalEOL() const;
     wxString DoGetGlobalEOLString() const;
+private:
+    bool DoClangFormat(const wxFileName& filename, wxString& formattedOutput, int &cursorPosition, int startOffset, int length, const FormatOptions& options);
+    
+public:
+    /**
+     * @brief format a file using clang-foramt tool. Optioanlly, you can format a portion of
+     * the file by passing startOffset and length.
+     * @param filename The file to parse
+     * @param formattedOutput formatted output string
+     * @param cursorPosition [input/output] the initial cursor position before the parsing started. the function will update it
+     * to its proper location after the parsing is compeleted
+     * @param startOffset start of chunk to format
+     * @param length chunk length
+     */
+    bool ClangFormat(const wxFileName& filename, wxString& formattedOutput, int &cursorPosition, int startOffset = wxNOT_FOUND, int length = wxNOT_FOUND);
+    /**
+     * @brief same as the above, but work on a buffer instead
+     */
+    bool ClangFormat(const wxString& content, wxString& formattedOutput, int& cursorPosition, int startOffset = wxNOT_FOUND, int length = wxNOT_FOUND);
+
+    /**
+     * @brief same as the above, but work on a buffer instead
+     */
+    bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
 
 public:
     CodeFormatter(IManager *manager);
@@ -50,12 +77,8 @@ public:
     void OnFormatUI(wxUpdateUIEvent &e);
     void OnFormatOptionsUI(wxUpdateUIEvent &e);
 
-    // Mainly for plugins that needs to format a source string
-    // without having to go through the file system
-    void OnFormatString(wxCommandEvent &e);
-    
-    // Format file (the file name is passed in the GetString() option)
-    void OnFormatFile(wxCommandEvent &e);
+    void OnFormatString(clSourceFormatEvent &e);
+    void OnFormatFile(clSourceFormatEvent &e);
 };
 
 #endif //CODEFORMATTER_H

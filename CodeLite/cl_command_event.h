@@ -49,32 +49,32 @@ protected:
     bool                      m_answer;
 
 public:
-    clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clCommandEvent(const clCommandEvent& event);
-    clCommandEvent& operator=(const clCommandEvent& src);
+    clCommandEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clCommandEvent( const clCommandEvent& event );
+    clCommandEvent& operator=( const clCommandEvent& src );
     virtual ~clCommandEvent();
 
     // Hides wxCommandEvent::Set{Get}ClientObject
-    void SetClientObject(wxClientData* clientObject) ;
+    void SetClientObject( wxClientData* clientObject ) ;
 
     wxClientData *GetClientObject() const ;
 
     virtual wxEvent *Clone() const;
 
-    void SetAnswer(bool answer) {
+    void SetAnswer( bool answer ) {
         this->m_answer = answer;
     }
     bool IsAnswer() const {
         return m_answer;
     }
 
-    void SetFileName(const wxString& fileName) {
+    void SetFileName( const wxString& fileName ) {
         this->m_fileName = fileName;
     }
     const wxString& GetFileName() const {
         return m_fileName;
     }
-    void SetStrings(const wxArrayString& strings) {
+    void SetStrings( const wxArrayString& strings ) {
         this->m_strings = strings;
     }
     const wxArrayString& GetStrings() const {
@@ -85,7 +85,7 @@ public:
     }
 };
 
-typedef void (wxEvtHandler::*clCommandEventFunction)(clCommandEvent&);
+typedef void ( wxEvtHandler::*clCommandEventFunction )( clCommandEvent& );
 #define clCommandEventHandler(func) \
     wxEVENT_HANDLER_CAST(clCommandEventFunction, func)
 
@@ -101,13 +101,13 @@ class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
     TagEntryPtr         m_tagEntry;
 
 public:
-    clCodeCompletionEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clCodeCompletionEvent(const clCodeCompletionEvent& event);
-    clCodeCompletionEvent& operator=(const clCodeCompletionEvent& src);
+    clCodeCompletionEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clCodeCompletionEvent( const clCodeCompletionEvent& event );
+    clCodeCompletionEvent& operator=( const clCodeCompletionEvent& src );
     virtual ~clCodeCompletionEvent();
     virtual wxEvent *Clone() const;
 
-    void SetTagEntry(TagEntryPtr tag) {
+    void SetTagEntry( TagEntryPtr tag ) {
         this->m_tagEntry = tag;
     }
 
@@ -119,20 +119,20 @@ public:
         return m_tagEntry;
     }
 
-    void SetInsideCommentOrString(bool insideCommentOrString) {
+    void SetInsideCommentOrString( bool insideCommentOrString ) {
         this->m_insideCommentOrString = insideCommentOrString;
     }
 
     bool IsInsideCommentOrString() const {
         return m_insideCommentOrString;
     }
-    void SetTags(const TagEntryPtrVector_t& tags) {
+    void SetTags( const TagEntryPtrVector_t& tags ) {
         this->m_tags = tags;
     }
     const TagEntryPtrVector_t& GetTags() const {
         return m_tags;
     }
-    void SetEditor(wxObject* editor) {
+    void SetEditor( wxObject* editor ) {
         this->m_editor = editor;
     }
     /**
@@ -141,7 +141,7 @@ public:
     wxObject* GetEditor() {
         return m_editor;
     }
-    void SetWord(const wxString& word) {
+    void SetWord( const wxString& word ) {
         this->m_word = word;
     }
 
@@ -151,7 +151,7 @@ public:
     const wxString& GetWord() const {
         return m_word;
     }
-    void SetPosition(int position) {
+    void SetPosition( int position ) {
         this->m_position = position;
     }
     /**
@@ -160,7 +160,7 @@ public:
     int GetPosition() const {
         return m_position;
     }
-    void SetTooltip(const wxString& tooltip) {
+    void SetTooltip( const wxString& tooltip ) {
         this->m_tooltip = tooltip;
     }
     const wxString& GetTooltip() const {
@@ -168,7 +168,7 @@ public:
     }
 };
 
-typedef void (wxEvtHandler::*clCodeCompletionEventFunction)(clCodeCompletionEvent&);
+typedef void ( wxEvtHandler::*clCodeCompletionEventFunction )( clCodeCompletionEvent& );
 #define clCodeCompletionEventHandler(func) \
     wxEVENT_HANDLER_CAST(clCodeCompletionEventFunction, func)
 
@@ -181,30 +181,30 @@ class WXDLLIMPEXP_CL clColourEvent : public clCommandEvent
     bool      m_isActiveTab;
 
 public:
-    clColourEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clColourEvent(const clColourEvent& event);
-    clColourEvent& operator=(const clColourEvent& src);
+    clColourEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clColourEvent( const clColourEvent& event );
+    clColourEvent& operator=( const clColourEvent& src );
     virtual ~clColourEvent();
     virtual wxEvent *Clone() const {
-        return new clColourEvent(*this);
+        return new clColourEvent( *this );
     };
 
-    void SetBorderColour(const wxColour& borderColour) {
+    void SetBorderColour( const wxColour& borderColour ) {
         this->m_borderColour = borderColour;
     }
     const wxColour& GetBorderColour() const {
         return m_borderColour;
     }
-    void SetPage(wxWindow* page) {
+    void SetPage( wxWindow* page ) {
         this->m_page = page;
     }
     wxWindow* GetPage() {
         return m_page;
     }
-    void SetBgColour(const wxColour& bgColour) {
+    void SetBgColour( const wxColour& bgColour ) {
         this->m_bgColour = bgColour;
     }
-    void SetFgColour(const wxColour& fgColour) {
+    void SetFgColour( const wxColour& fgColour ) {
         this->m_fgColour = fgColour;
     }
     const wxColour& GetBgColour() const {
@@ -213,7 +213,7 @@ public:
     const wxColour& GetFgColour() const {
         return m_fgColour;
     }
-    void SetIsActiveTab(bool isActiveTab) {
+    void SetIsActiveTab( bool isActiveTab ) {
         this->m_isActiveTab = isActiveTab;
     }
     bool IsActiveTab() const {
@@ -221,7 +221,7 @@ public:
     }
 };
 
-typedef void (wxEvtHandler::*clColourEventFunction)(clColourEvent&);
+typedef void ( wxEvtHandler::*clColourEventFunction )( clColourEvent& );
 #define clColourEventHandler(func) \
     wxEVENT_HANDLER_CAST(clColourEventFunction, func)
 
@@ -235,30 +235,30 @@ class WXDLLIMPEXP_CL clBuildEvent : public clCommandEvent
     bool     m_projectOnly;
 
 public:
-    clBuildEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clBuildEvent(const clBuildEvent& event);
-    clBuildEvent& operator=(const clBuildEvent& src);
+    clBuildEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clBuildEvent( const clBuildEvent& event );
+    clBuildEvent& operator=( const clBuildEvent& src );
     virtual ~clBuildEvent();
     virtual wxEvent *Clone() const {
-        return new clBuildEvent(*this);
+        return new clBuildEvent( *this );
     };
 
-    void SetProjectOnly(bool projectOnly) {
+    void SetProjectOnly( bool projectOnly ) {
         this->m_projectOnly = projectOnly;
     }
     bool IsProjectOnly() const {
         return m_projectOnly;
     }
-    void SetCommand(const wxString& command) {
+    void SetCommand( const wxString& command ) {
         this->m_command = command;
     }
     const wxString& GetCommand() const {
         return m_command;
     }
-    void SetConfigurationName(const wxString& configurationName) {
+    void SetConfigurationName( const wxString& configurationName ) {
         this->m_configurationName = configurationName;
     }
-    void SetProjectName(const wxString& projectName) {
+    void SetProjectName( const wxString& projectName ) {
         this->m_projectName = projectName;
     }
     const wxString& GetConfigurationName() const {
@@ -269,7 +269,7 @@ public:
     }
 };
 
-typedef void (wxEvtHandler::*clBuildEventFunction)(clBuildEvent&);
+typedef void ( wxEvtHandler::*clBuildEventFunction )( clBuildEvent& );
 #define clBuildEventHandler(func) \
     wxEVENT_HANDLER_CAST(clBuildEventFunction, func)
 
@@ -288,34 +288,34 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     wxString m_startupCommands;     // wxEVT_DBG_UI_QUICK_DEBUG
 
 public:
-    clDebugEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clDebugEvent(const clDebugEvent& event);
-    clDebugEvent& operator=(const clDebugEvent& other);
+    clDebugEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clDebugEvent( const clDebugEvent& event );
+    clDebugEvent& operator=( const clDebugEvent& other );
 
     virtual ~clDebugEvent();
     virtual wxEvent *Clone() const {
-        return new clDebugEvent(*this);
+        return new clDebugEvent( *this );
     };
 
-    void SetDebuggerName(const wxString& debuggerName) {
+    void SetDebuggerName( const wxString& debuggerName ) {
         this->m_debuggerName = debuggerName;
     }
     const wxString& GetDebuggerName() const {
         return m_debuggerName;
     }
-    void SetArguments(const wxString& arguments) {
+    void SetArguments( const wxString& arguments ) {
         this->m_arguments = arguments;
     }
-    void SetCoreFile(const wxString& coreFile) {
+    void SetCoreFile( const wxString& coreFile ) {
         this->m_coreFile = coreFile;
     }
-    void SetExecutableName(const wxString& executableName) {
+    void SetExecutableName( const wxString& executableName ) {
         this->m_executableName = executableName;
     }
-    void SetStartupCommands(const wxString& startupCommands) {
+    void SetStartupCommands( const wxString& startupCommands ) {
         this->m_startupCommands = startupCommands;
     }
-    void SetWorkingDirectory(const wxString& workingDirectory) {
+    void SetWorkingDirectory( const wxString& workingDirectory ) {
         this->m_workingDirectory = workingDirectory;
     }
     const wxString& GetArguments() const {
@@ -333,10 +333,10 @@ public:
     const wxString& GetWorkingDirectory() const {
         return m_workingDirectory;
     }
-    void SetConfigurationName(const wxString& configurationName) {
+    void SetConfigurationName( const wxString& configurationName ) {
         this->m_configurationName = configurationName;
     }
-    void SetProjectName(const wxString& projectName) {
+    void SetProjectName( const wxString& projectName ) {
         this->m_projectName = projectName;
     }
     const wxString& GetConfigurationName() const {
@@ -347,7 +347,7 @@ public:
     }
 };
 
-typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
+typedef void ( wxEvtHandler::*clDebugEventFunction )( clDebugEvent& );
 #define clDebugEventHandler(func) \
     wxEVENT_HANDLER_CAST(clDebugEventFunction, func)
 
@@ -375,15 +375,15 @@ protected:
     wxString m_projectFolder;
     wxString m_templateName;
 public:
-    clNewProjectEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clNewProjectEvent(const clNewProjectEvent& event);
-    clNewProjectEvent& operator=(const clNewProjectEvent& src);
+    clNewProjectEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clNewProjectEvent( const clNewProjectEvent& event );
+    clNewProjectEvent& operator=( const clNewProjectEvent& src );
     virtual ~clNewProjectEvent();
     virtual wxEvent *Clone() const {
-        return new clNewProjectEvent(*this);
+        return new clNewProjectEvent( *this );
     };
 
-    void SetTemplates(const clNewProjectEvent::Template::Vec_t& templates) {
+    void SetTemplates( const clNewProjectEvent::Template::Vec_t& templates ) {
         this->m_templates = templates;
     }
     const clNewProjectEvent::Template::Vec_t& GetTemplates() const {
@@ -393,16 +393,16 @@ public:
         return m_templates;
     }
 
-    void SetDebugger(const wxString& debugger) {
+    void SetDebugger( const wxString& debugger ) {
         this->m_debugger = debugger;
     }
-    void SetProjectFolder(const wxString& projectFolder) {
+    void SetProjectFolder( const wxString& projectFolder ) {
         this->m_projectFolder = projectFolder;
     }
-    void SetProjectName(const wxString& projectName) {
+    void SetProjectName( const wxString& projectName ) {
         this->m_projectName = projectName;
     }
-    void SetToolchain(const wxString& toolchain) {
+    void SetToolchain( const wxString& toolchain ) {
         this->m_toolchain = toolchain;
     }
     const wxString& GetDebugger() const {
@@ -417,7 +417,7 @@ public:
     const wxString& GetToolchain() const {
         return m_toolchain;
     }
-    void SetTemplateName(const wxString& templateName) {
+    void SetTemplateName( const wxString& templateName ) {
         this->m_templateName = templateName;
     }
     const wxString& GetTemplateName() const {
@@ -425,7 +425,7 @@ public:
     }
 };
 
-typedef void (wxEvtHandler::*clNewProjectEventFunction)(clNewProjectEvent&);
+typedef void ( wxEvtHandler::*clNewProjectEventFunction )( clNewProjectEvent& );
 #define clNewProjectEventHandler(func) \
     wxEVENT_HANDLER_CAST(clNewProjectEventFunction, func)
 
@@ -436,17 +436,51 @@ typedef void (wxEvtHandler::*clNewProjectEventFunction)(clNewProjectEvent&);
 class WXDLLIMPEXP_CL clCompilerEvent : public clCommandEvent
 {
 public:
-    clCompilerEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clCompilerEvent(const clCompilerEvent& event);
-    clCompilerEvent& operator=(const clCompilerEvent& src);
+    clCompilerEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clCompilerEvent( const clCompilerEvent& event );
+    clCompilerEvent& operator=( const clCompilerEvent& src );
     virtual ~clCompilerEvent();
     virtual wxEvent *Clone() const {
-        return new clCompilerEvent(*this);
-    } 
+        return new clCompilerEvent( *this );
+    }
 };
 
-typedef void (wxEvtHandler::*clCompilerEventFunction)(clCompilerEvent&);
+typedef void ( wxEvtHandler::*clCompilerEventFunction )( clCompilerEvent& );
 #define clCompilerEventHandler(func) \
     wxEVENT_HANDLER_CAST(clCompilerEventFunction, func)
-    
+
+//---------------------------------------------------------------
+// Source formatting event
+//---------------------------------------------------------------
+class WXDLLIMPEXP_CL clSourceFormatEvent : public clCommandEvent
+{
+    wxString m_inputString;
+    wxString m_formattedString;
+
+public:
+    clSourceFormatEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 );
+    clSourceFormatEvent( const clSourceFormatEvent& event );
+    clSourceFormatEvent& operator=( const clSourceFormatEvent& src );
+    virtual ~clSourceFormatEvent();
+    virtual wxEvent *Clone() const {
+        return new clSourceFormatEvent( *this );
+    }
+    void SetFormattedString( const wxString& formattedString ) {
+        this->m_formattedString = formattedString;
+    }
+    void SetInputString( const wxString& inputString ) {
+        this->m_inputString = inputString;
+    }
+    const wxString& GetFormattedString() const {
+        return m_formattedString;
+    }
+    const wxString& GetInputString() const {
+        return m_inputString;
+    }
+};
+
+typedef void ( wxEvtHandler::*clSourceFormatEventFunction )( clSourceFormatEvent& );
+#define clSourceFormatEventHandler(func) \
+    wxEVENT_HANDLER_CAST(clSourceFormatEventFunction, func)
+
 #endif // CLCOMMANDEVENT_H

@@ -42,6 +42,8 @@ protected:
     wxPGProperty* m_pgPropClangFormat;
     wxPGProperty* m_pgClangFormatExePath;
     wxPGProperty* m_pgPropClangFormatStyle;
+    wxPGProperty* m_pgPropClangBraceBreakStyle;
+    wxPGProperty* m_pgPropClangFormattingOptions;
     wxPanel* m_splitterPage24;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlUserFlags;
@@ -62,7 +64,7 @@ protected:
     virtual void OnHelp(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,500), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CodeFormatterBaseDlg();
 };
 

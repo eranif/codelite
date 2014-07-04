@@ -28,7 +28,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     this->SetSizer(bSizerMain);
     
     m_splitterSettingsPreview = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(400,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
-    m_splitterSettingsPreview->SetSashGravity(0);
+    m_splitterSettingsPreview->SetSashGravity(0.5);
     m_splitterSettingsPreview->SetMinimumPaneSize(50);
     
     bSizerMain->Add(m_splitterSettingsPreview, 1, wxEXPAND, 5);
@@ -152,9 +152,9 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("LLVM"));
     m_pgMgrArr.Add(_("Google"));
+    m_pgMgrArr.Add(_("WebKit"));
     m_pgMgrArr.Add(_("Chromium"));
     m_pgMgrArr.Add(_("Mozilla"));
-    m_pgMgrArr.Add(_("WebKit"));
     m_pgMgrIntArr.Add(kClangFormatLLVM);
     m_pgMgrIntArr.Add(kClangFormatGoogle);
     m_pgMgrIntArr.Add(kClangFormatWebKit);
@@ -162,6 +162,60 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(kClangFormatMozilla);
     m_pgPropClangFormatStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
+    
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("Linux"));
+    m_pgMgrArr.Add(_("Attach"));
+    m_pgMgrArr.Add(_("Stroustrup"));
+    m_pgMgrArr.Add(_("Allman"));
+    m_pgMgrArr.Add(_("GNU"));
+    m_pgMgrIntArr.Add(kLinux);
+    m_pgMgrIntArr.Add(kAttach);
+    m_pgMgrIntArr.Add(kStroustrup);
+    m_pgMgrIntArr.Add(kAllman);
+    m_pgMgrIntArr.Add(kGNU);
+    m_pgPropClangBraceBreakStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Brace breaking style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropClangBraceBreakStyle->SetHelpString(_("The brace breaking style to use."));
+    
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("Align Escaped Newlines Left"));
+    m_pgMgrArr.Add(_("Align Trailing Comments"));
+    m_pgMgrArr.Add(_("Allow All Parameters Of Declaration On Next Line"));
+    m_pgMgrArr.Add(_("Allow Short Blocks On A Single Line"));
+    m_pgMgrArr.Add(_("Allow Short Loops On A Single Line"));
+    m_pgMgrArr.Add(_("Allow Short If Statements On A SingleLine"));
+    m_pgMgrArr.Add(_("Always Break Before Multiline Strings"));
+    m_pgMgrArr.Add(_("Always Break Template Declarations"));
+    m_pgMgrArr.Add(_("Bin Pack Parameters"));
+    m_pgMgrArr.Add(_("Break Before Binary Operators"));
+    m_pgMgrArr.Add(_("Break Before Ternary Operators"));
+    m_pgMgrArr.Add(_("Break Constructor Initializers Before Comma"));
+    m_pgMgrArr.Add(_("Indent Case Labels"));
+    m_pgMgrArr.Add(_("Indent Function DeclarationAfterType"));
+    m_pgMgrArr.Add(_("Space Before Assignment Operators"));
+    m_pgMgrArr.Add(_("Space Before Parentheses"));
+    m_pgMgrArr.Add(_("Spaces In Parentheses"));
+    m_pgMgrIntArr.Add(kAlignEscapedNewlinesLeft);
+    m_pgMgrIntArr.Add(kAlignTrailingComments);
+    m_pgMgrIntArr.Add(kAllowAllParametersOfDeclarationOnNextLine);
+    m_pgMgrIntArr.Add(kAllowShortBlocksOnASingleLine);
+    m_pgMgrIntArr.Add(kAllowShortLoopsOnASingleLine);
+    m_pgMgrIntArr.Add(kAllowShortIfStatementsOnASingleLine);
+    m_pgMgrIntArr.Add(kAlwaysBreakBeforeMultilineStrings);
+    m_pgMgrIntArr.Add(kAlwaysBreakTemplateDeclarations);
+    m_pgMgrIntArr.Add(kBinPackParameters);
+    m_pgMgrIntArr.Add(kBreakBeforeBinaryOperators);
+    m_pgMgrIntArr.Add(kBreakBeforeTernaryOperators);
+    m_pgMgrIntArr.Add(kBreakConstructorInitializersBeforeComma);
+    m_pgMgrIntArr.Add(kIndentCaseLabels);
+    m_pgMgrIntArr.Add(kIndentFunctionDeclarationAfterType);
+    m_pgMgrIntArr.Add(kSpaceBeforeAssignmentOperators);
+    m_pgMgrIntArr.Add(kSpaceBeforeParens);
+    m_pgMgrIntArr.Add(kSpacesInParentheses);
+    m_pgPropClangFormattingOptions = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFlagsProperty( _("Clang Formatting Options"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropClangFormattingOptions->SetHelpString(wxT(""));
     
     m_splitterPage24 = new wxPanel(m_splitter16, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter16->SplitHorizontally(m_splitterPage20, m_splitterPage24, 0);
@@ -184,7 +238,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     bCustomSettingsSizer->Add(m_textCtrlUserFlags, 1, wxALL|wxEXPAND, 5);
     
     m_panelPreview = new wxPanel(m_splitterSettingsPreview, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitterSettingsPreview->SplitVertically(m_panelSettings, m_panelPreview, 250);
+    m_splitterSettingsPreview->SplitVertically(m_panelSettings, m_panelPreview, 0);
     
     wxBoxSizer* bPreviewSizer = new wxBoxSizer(wxHORIZONTAL);
     m_panelPreview->SetSizer(bPreviewSizer);
@@ -194,16 +248,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlPreview->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_textCtrlPreview->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
     m_textCtrlPreview->SetMarginSensitive(4, true);
-    m_textCtrlPreview->SetMarginWidth    (4, 16);
+    m_textCtrlPreview->SetMarginWidth    (4, 0);
     
-    m_textCtrlPreview->SetProperty(wxT("fold"),wxT("1"));
-    m_textCtrlPreview->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN,    wxSTC_MARK_ARROWDOWN);
-    m_textCtrlPreview->MarkerDefine(wxSTC_MARKNUM_FOLDER,        wxSTC_MARK_ARROW);
-    m_textCtrlPreview->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB,     wxSTC_MARK_BACKGROUND);
-    m_textCtrlPreview->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_BACKGROUND);
-    m_textCtrlPreview->MarkerDefine(wxSTC_MARKNUM_FOLDEREND,     wxSTC_MARK_ARROW);
-    m_textCtrlPreview->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
-    m_textCtrlPreview->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
     // Configure the tracker margin
     m_textCtrlPreview->SetMarginWidth(1, 0);
     
@@ -214,9 +260,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlPreview->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
-    int m_textCtrlPreview_PixelWidth = 4 + 5 *m_textCtrlPreview->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
     m_textCtrlPreview->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_textCtrlPreview->SetMarginWidth(0,m_textCtrlPreview_PixelWidth);
+    m_textCtrlPreview->SetMarginWidth(0,0);
     
     // Configure the line symbol margin
     m_textCtrlPreview->SetMarginType(3, wxSTC_MARGIN_FORE);
@@ -257,7 +302,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer30->AddButton(m_buttonHelp);
     m_stdBtnSizer30->Realize();
     
-    SetSizeHints(400,500);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

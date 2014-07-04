@@ -34,7 +34,7 @@ class IProcess;
 #   include "unixprocess_impl.h"
 #endif
 
-IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, IProcessCreateFlags flags, const wxString &workingDir)
+IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, size_t flags, const wxString &workingDir)
 {
 #ifdef __WXMSW__
     wxString errMsg;
@@ -44,13 +44,23 @@ IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, IProcess
 #endif
 }
 
-IProcess* CreateAsyncProcessCB(wxEvtHandler *parent, IProcessCallback* cb, const wxString& cmd, IProcessCreateFlags flags, const wxString &workingDir)
+IProcess* CreateAsyncProcessCB(wxEvtHandler *parent, IProcessCallback* cb, const wxString& cmd, size_t flags, const wxString &workingDir)
 {
 #ifdef __WXMSW__
     wxString errMsg;
     return WinProcessImpl::Execute(parent, cmd, errMsg, flags, workingDir, cb);
 #else
     return UnixProcessImpl::Execute(parent, cmd, flags, workingDir, cb);
+#endif
+}
+
+IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& workingDir)
+{
+#ifdef __WXMSW__
+    wxString errMsg;
+    return WinProcessImpl::Execute(NULL, cmd, errMsg, flags|IProcessCreateSync, workingDir);
+#else
+    return UnixProcessImpl::Execute(NULL, cmd, flags|IProcessCreateSync, workingDir);
 #endif
 }
 
@@ -68,4 +78,12 @@ void IProcess::SetProcessExitCode(int pid, int exitCode)
 {
     wxUnusedVar(pid);
     wxUnusedVar(exitCode);
+}
+
+void IProcess::WaitForTerminate(wxString& output)
+{
+    wxString buff;
+    while ( Read(buff) ) {
+        output << buff;
+    }
 }

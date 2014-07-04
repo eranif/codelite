@@ -28,6 +28,8 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/tokenzr.h>
 #include "globals.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 
 ClassGenerateDialog::ClassGenerateDialog(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pItems, IManager* pMgr):_ClassGenerateDialog(parent)
 {
@@ -606,8 +608,8 @@ void ClassGenerateDialog::OnBtnBrowseClick(wxCommandEvent& event)
 
 void ClassGenerateDialog::FormatFile(wxString& content)
 {
-    wxCommandEvent evt(XRCID("wxEVT_CF_FORMAT_STRING"));
-    evt.SetString( content );
+    clSourceFormatEvent evt(wxEVT_FORMAT_STRING);
+    evt.SetInputString( content );
     EventNotifier::Get()->ProcessEvent( evt );
-    content = evt.GetString();
+    content = evt.GetFormattedString();
 }

@@ -70,20 +70,49 @@ enum FormatterEngine {
 };
 
 enum ClangFormatStyle {
-    kClangFormatLLVM     = 0x00000001,
-    kClangFormatGoogle   = 0x00000002,
-    kClangFormatWebKit   = 0x00000004,
-    kClangFormatChromium = 0x00000010,
-    kClangFormatMozilla  = 0x00000020,
+    kClangFormatLLVM                            = 0x00000001,
+    kClangFormatGoogle                          = 0x00000002,
+    kClangFormatWebKit                          = 0x00000004,
+    kClangFormatChromium                        = 0x00000008,
+    kClangFormatMozilla                         = 0x00000010,
+    kAlignEscapedNewlinesLeft                   = 0x00000020,
+    kAlignTrailingComments                      = 0x00000040,
+    kAllowAllParametersOfDeclarationOnNextLine  = 0x00000080,
+    kAllowShortBlocksOnASingleLine              = 0x00000100,
+    kAllowShortLoopsOnASingleLine               = 0x00000200,
+    kAllowShortIfStatementsOnASingleLine        = 0x00000400,
+    kAlwaysBreakBeforeMultilineStrings          = 0x00000800,
+    kAlwaysBreakTemplateDeclarations            = 0x00001000,
+    kBinPackParameters                          = 0x00002000,
+    kBreakBeforeBinaryOperators                 = 0x00004000,
+    kBreakBeforeTernaryOperators                = 0x00008000,
+    kBreakConstructorInitializersBeforeComma    = 0x00010000,
+    kIndentCaseLabels                           = 0x00020000,
+    kIndentFunctionDeclarationAfterType         = 0x00040000,
+    kSpaceBeforeAssignmentOperators             = 0x00080000,
+    kSpaceBeforeParens                          = 0x00100000,
+    kSpacesInParentheses                        = 0x00200000,
+};
+enum ClangBreakBeforeBraceOpt {
+    kLinux      = 0x00000001,
+    kAttach     = 0x00000002,
+    kStroustrup = 0x00000004,
+    kAllman     = 0x00000008,
+    kGNU        = 0x00000010,
 };
 
 class FormatOptions : public SerializedObject
 {
-    size_t m_options;
+    size_t m_astyleOptions;
     size_t m_clangFormatOptions;
+    size_t m_clangBreakBeforeBrace;
     wxString m_customFlags;
     FormatterEngine m_engine;
     wxString m_clangFormatExe;
+
+private:
+    wxString ClangFlagToBool( ClangFormatStyle flag ) const;
+    wxString ClangBreakBeforeBrace() const;
 
 public:
     FormatOptions();
@@ -91,10 +120,10 @@ public:
 
     wxString AstyleOptionsAsString() const;
     wxString ClangFormatOptionsAsString() const;
-    void Serialize(Archive &arch);
-    void DeSerialize(Archive &arch);
+    void Serialize( Archive &arch );
+    void DeSerialize( Archive &arch );
 
-    void SetClangFormatExe(const wxString& clangFormatExe) {
+    void SetClangFormatExe( const wxString& clangFormatExe ) {
         this->m_clangFormatExe = clangFormatExe;
     }
     const wxString& GetClangFormatExe() const {
@@ -104,23 +133,29 @@ public:
         return m_engine;
     }
 
-    void SetEngine(FormatterEngine engine) {
+    void SetClangBreakBeforeBrace( size_t clangBreakBeforeBrace ) {
+        this->m_clangBreakBeforeBrace = clangBreakBeforeBrace;
+    }
+    size_t GetClangBreakBeforeBrace() const {
+        return m_clangBreakBeforeBrace;
+    }
+    void SetEngine( FormatterEngine engine ) {
         m_engine = engine;
     }
 
     size_t GetOptions() const {
-        return m_options;
+        return m_astyleOptions;
     }
-    void SetOption(size_t options) {
-        m_options = options;
+    void SetOption( size_t options ) {
+        m_astyleOptions = options;
     }
-    void SetCustomFlags(const wxString& customFlags) {
+    void SetCustomFlags( const wxString& customFlags ) {
         this->m_customFlags = customFlags;
     }
     const wxString& GetCustomFlags() const {
         return m_customFlags;
     }
-    void SetClangFormatOptions(size_t clangFormatOptions) {
+    void SetClangFormatOptions( size_t clangFormatOptions ) {
         this->m_clangFormatOptions = clangFormatOptions;
     }
     size_t GetClangFormatOptions() const {

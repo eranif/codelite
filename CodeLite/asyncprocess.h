@@ -30,11 +30,13 @@
 #include <wx/event.h>
 #include "codelite_exports.h"
 #include <map>
+#include <wx/sharedptr.h>
 
 enum IProcessCreateFlags {
     IProcessCreateDefault             = 0x0000001, // Default: create process with no console window
     IProcessCreateConsole             = 0x0000002, // Create with console window shown
-    IProcessCreateWithHiddenConsole   = 0x0000004  // Create process with a hidden console
+    IProcessCreateWithHiddenConsole   = 0x0000004, // Create process with a hidden console
+    IProcessCreateSync                = 0x0000008, // Create a synchronous process (i.e. there is no background thread that performs the reads)
 };
 
 class WXDLLIMPEXP_CL IProcess;
@@ -61,7 +63,9 @@ protected:
     int                       m_pid;
     bool                      m_hardKill;
     IProcessCallback*         m_callback;
-
+public:
+    typedef wxSharedPtr<IProcess> Ptr_t;
+    
 public:
     IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_hardKill(false), m_callback(NULL) {}
     virtual ~IProcess() {}
@@ -83,6 +87,12 @@ public:
 
     // Write to the process stdin
     virtual bool Write(const wxString& buff) = 0;
+
+    /**
+     * @brief wait for process to terminate and return all its output to the caller
+     * Note that this function is blocking
+     */
+    virtual void WaitForTerminate(wxString &output);
 
     /**
      * @brief this method is mostly needed on MSW where writing a password
@@ -130,7 +140,17 @@ public:
  * @param workingDir set the working directory of the executed process
  * @return
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, IProcessCreateFlags flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, size_t flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+
+/**
+ * @brief create synchronus process
+ * @param cmd command to execute
+ * @param flags process creation flags
+ * @param workingDir working directory for the new process
+ * @return IPorcess handle on succcess
+ */
+WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+
 /**
  * @brief start process
  * @brief cb callback object. Instead of events, OnProcessOutput and OnProcessTerminated will be called respectively
@@ -140,6 +160,7 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString
  * @param workingDir set the working directory of the executed process
  * @return
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcessCB(wxEvtHandler *parent, IProcessCallback* cb, const wxString& cmd, IProcessCreateFlags flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcessCB(wxEvtHandler *parent, IProcessCallback* cb, const wxString& cmd, size_t flags = IProcessCreateDefault, const wxString &workingDir = wxEmptyString);
+
 
 #endif // I_PROCESS_H

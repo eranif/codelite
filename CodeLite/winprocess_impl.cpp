@@ -73,7 +73,7 @@ public:
 };
 
 /*static*/
-IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, IProcessCreateFlags flags, const wxString &workingDir, IProcessCallback* cb)
+IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, size_t flags, const wxString &workingDir, IProcessCallback* cb)
 {
     SECURITY_ATTRIBUTES saAttr;
     BOOL                fSuccess;
@@ -260,7 +260,10 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
     }
     
     prc->SetPid( prc->dwProcessId );
-    prc->StartReaderThread();
+
+    if ( !(prc->m_flags & IProcessCreateSync) ) {
+        prc->StartReaderThread();
+    }
     return prc;
 }
 

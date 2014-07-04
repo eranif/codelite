@@ -45,7 +45,7 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_strings.insert(m_strings.end(), src.m_strings.begin(), src.m_strings.end());
     m_fileName = src.m_fileName;
     m_answer = src.m_answer;
-    
+
     // Copy wxCommandEvent members here
     m_eventType  = src.m_eventType;
     m_id         = src.m_id;
@@ -264,5 +264,32 @@ clCompilerEvent::clCompilerEvent(wxEventType commandType, int winid)
 clCompilerEvent& clCompilerEvent::operator=(const clCompilerEvent& src)
 {
     clCommandEvent::operator =(src);
+    return *this;
+}
+
+// --------------------------------------------------------------
+// Source formatting event
+// --------------------------------------------------------------
+
+clSourceFormatEvent::clSourceFormatEvent(const clSourceFormatEvent& event)
+{
+    *this = event;
+}
+
+clSourceFormatEvent::clSourceFormatEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+
+clSourceFormatEvent::~clSourceFormatEvent()
+{
+}
+
+clSourceFormatEvent& clSourceFormatEvent::operator=(const clSourceFormatEvent& src)
+{
+    clCommandEvent::operator =(src);
+    m_formattedString = src.m_formattedString;
+    m_inputString = src.m_inputString;
     return *this;
 }

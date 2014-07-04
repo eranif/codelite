@@ -39,7 +39,7 @@ class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
     ProcessReaderThread *m_thr;
     HANDLE               m_hRead;
     char                 m_buffer[65537];
-    IProcessCreateFlags  m_flags;
+    size_t               m_flags;
 
 protected:
     void StartReaderThread();
@@ -51,7 +51,7 @@ public:
     virtual ~WinProcessImpl();
 
     // Create process asynchronously and return a process object
-    static IProcess* Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, IProcessCreateFlags flags = IProcessCreateDefault,const wxString &workingDir = wxEmptyString, IProcessCallback* cb = NULL);
+    static IProcess* Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, size_t flags = IProcessCreateDefault,const wxString &workingDir = wxEmptyString, IProcessCallback* cb = NULL);
 
     /**
      * @brief read data from stdout, if no data is available, return

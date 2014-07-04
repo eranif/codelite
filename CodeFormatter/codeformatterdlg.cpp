@@ -85,10 +85,14 @@ void CodeFormatterDlg::InitDialog()
     if ( lexer ) {
         lexer->Apply( m_textCtrlPreview, true );
     }
+    m_textCtrlPreview->SetViewWhiteSpace( wxSTC_WS_VISIBLEALWAYS );
     
     // Select the proper engine
     m_pgPropEngine->SetValueFromInt( (int) m_options.GetEngine() );
 
+    //------------------------------------------------------------------
+    // Clang options
+    //------------------------------------------------------------------
     m_pgClangFormatExePath->SetValue( m_options.GetClangFormatExe() );
     if ( m_options.GetClangFormatOptions() & kClangFormatChromium ) {
         m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatChromium, wxPG_FULL_VALUE );
@@ -105,6 +109,8 @@ void CodeFormatterDlg::InitDialog()
     } else if ( m_options.GetClangFormatOptions() & kClangFormatLLVM ) {
         m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatLLVM, wxPG_FULL_VALUE );
     }
+    m_pgPropClangFormattingOptions->SetValue( (int)m_options.GetClangFormatOptions() );
+    m_pgPropClangBraceBreakStyle->SetValue( (int) m_options.GetClangBreakBeforeBrace() );
 }
 
 void CodeFormatterDlg::OnOK(wxCommandEvent &e)
@@ -113,17 +119,42 @@ void CodeFormatterDlg::OnOK(wxCommandEvent &e)
     EndModal(wxID_OK);
 }
 
+#define ID_ASTYLE_HELP        1309
+#define ID_CLANG_FORMAST_HELP 1310
+
 void CodeFormatterDlg::OnHelp(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    static wxString helpUrl(wxT("http://astyle.sourceforge.net/astyle.html"));
-    wxLaunchDefaultBrowser(helpUrl);
+    static wxString astyleHelpUrl     (wxT("http://astyle.sourceforge.net/astyle.html"));
+    static wxString clangFormatHelpUrl(wxT("http://clang.llvm.org/docs/ClangFormatStyleOptions.html"));
+
+    wxMenu menu;
+    menu.Append(ID_ASTYLE_HELP,         _("AStyle help page"));
+    menu.Append(ID_CLANG_FORMAST_HELP,  _("clang-format help page"));
+
+    wxRect size = m_buttonHelp->GetSize();
+    wxPoint menuPos(0, size.GetHeight());
+
+    int res = m_buttonHelp->GetPopupMenuSelectionFromUser( menu, menuPos );
+    if ( res == ID_ASTYLE_HELP ) {
+        ::wxLaunchDefaultBrowser(astyleHelpUrl);
+
+    } else if ( res == ID_CLANG_FORMAST_HELP ) {
+        ::wxLaunchDefaultBrowser(clangFormatHelpUrl);
+    }
 }
 
 void CodeFormatterDlg::UpdatePreview()
 {
+    FormatterEngine engine = (FormatterEngine) m_pgPropEngine->GetValue().GetInteger();
     wxString output;
-    m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
+    if ( engine == kFormatEngineAStyle ) {
+        m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
+        
+    } else {
+        m_cf->ClangPreviewFormat(m_sampleCode, output, m_options);
+        
+    }
     m_textCtrlPreview->SetEditable(true);
     m_textCtrlPreview->SetText(output);
     m_textCtrlPreview->SetEditable(false);
@@ -178,7 +209,10 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     // Save clang options
     size_t clangOptions(0);
     clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
+    clangOptions |= m_pgPropClangFormattingOptions->GetValue().GetInteger();
     m_options.SetClangFormatOptions( clangOptions );
+    m_options.SetClangBreakBeforeBrace( m_pgPropClangBraceBreakStyle->GetValue().GetInteger() );
+    m_options.SetClangFormatExe( m_pgClangFormatExePath->GetValueAsString() );
     
     // Check the active engine
     ExpandCollapsUneededOptions();
@@ -201,6 +235,7 @@ void CodeFormatterDlg::OnApply(wxCommandEvent& event)
     m_isDirty = false;
     m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
     m_mgr->GetConfigTool()->WriteObject(wxT("FormatterOptions"), &m_options);
+    UpdatePreview();
 }
 
 void CodeFormatterDlg::ExpandCollapsUneededOptions()

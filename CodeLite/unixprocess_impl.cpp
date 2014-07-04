@@ -327,7 +327,8 @@ bool UnixProcessImpl::Read(wxString& buff)
 
     int errCode(0);
     errno = 0;
-
+    
+    buff.Clear();
     int rc = select(GetReadHandle()+1, &rs, NULL, NULL, &timeout);
     errCode = errno;
     if ( rc == 0 ) {
@@ -339,7 +340,6 @@ bool UnixProcessImpl::Read(wxString& buff)
         char buffer[BUFF_SIZE+1]; // our read buffer
         memset(buffer, 0, sizeof(buffer));
         if(read(GetReadHandle(), buffer, sizeof(buffer)) > 0) {
-            buff.Empty();
             buffer[BUFF_SIZE] = 0; // allways place a terminator
 
             // Remove coloring chars from the incomnig buffer
@@ -351,7 +351,7 @@ bool UnixProcessImpl::Read(wxString& buff)
                 convBuff = wxString::From8BitData(buffer);
             }
 
-            buff.Append( convBuff );
+            buff = convBuff;
             return true;
         }
         return false;

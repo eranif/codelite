@@ -39,6 +39,8 @@
 #include "json_node.h"
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include "file_logger.h"
+#include "procutils.h"
 
 extern "C" EXPORT char* STDCALL
 AStyleMain( const char* pSourceIn,
@@ -457,12 +459,20 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename, wxString& formatte
         command << " -cursor=" << cursorPosition;
     }
     command << " " << file;
-
+    
+    // Wrap the command in the local shell
+    ::WrapInShell( command );
+    
+    // Log the command
+    CL_DEBUG("CodeForamtter: running:\n%s\n", command);
+    
     // Execute clang-format and reand the output
+    formattedOutput.Clear();
     IProcess::Ptr_t clangFormatProc( ::CreateSyncProcess( command, IProcessCreateDefault|IProcessCreateWithHiddenConsole ) );
     CHECK_PTR_RET_FALSE( clangFormatProc );
     clangFormatProc->WaitForTerminate( formattedOutput );
-
+    CL_DEBUG("clang-format returned with:\n%s\n", formattedOutput);
+    
     // The first line contains the cursor position
     if ( cursorPosition != wxNOT_FOUND ) {
         wxString metadata = formattedOutput.BeforeFirst('\n');

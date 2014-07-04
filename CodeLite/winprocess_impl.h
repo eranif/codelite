@@ -39,7 +39,6 @@ class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
     ProcessReaderThread *m_thr;
     HANDLE               m_hRead;
     char                 m_buffer[65537];
-    size_t               m_flags;
 
 protected:
     void StartReaderThread();

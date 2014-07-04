@@ -63,11 +63,12 @@ protected:
     int                       m_pid;
     bool                      m_hardKill;
     IProcessCallback*         m_callback;
+    size_t                    m_flags; // The creation flags
 public:
     typedef wxSharedPtr<IProcess> Ptr_t;
     
 public:
-    IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_hardKill(false), m_callback(NULL) {}
+    IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_hardKill(false), m_callback(NULL), m_flags(0) {}
     virtual ~IProcess() {}
 
 public:

@@ -441,8 +441,9 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         proc->SetReadHandle  (master);
         proc->SetWriteHandler(master);
         proc->SetPid( rc );
-
-        if ( !(prc->m_flags & IProcessCreateSync) ) {
+        proc->m_flags = flags; // Keep the creation flags
+        
+        if ( !(proc->m_flags & IProcessCreateSync) ) {
             proc->StartReaderThread();
         }
         return proc;

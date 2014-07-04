@@ -29,6 +29,7 @@
 #include "lexer_configuration.h"
 #include "editor_config.h"
 #include "lexer_configuration.h"
+#include <wx/menu.h>
 
 CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, IManager* mgr, CodeFormatter *cf, const FormatOptions& opts, const wxString &sampleCode )
     : CodeFormatterBaseDlg( parent )

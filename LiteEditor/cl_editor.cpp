@@ -2669,6 +2669,7 @@ wxString LEditor::GetBookmarkTooltip(const int lineno)
 
 void LEditor::ReloadFile()
 {
+    wxWindowUpdateLocker locker(this);
     SetReloadingFile( true );
 
     HideCompletionBox();

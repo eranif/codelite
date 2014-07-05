@@ -144,24 +144,12 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropClangFormat = m_pgMgr->Append(  new wxPropertyCategory( _("ClangFormat Options") ) );
     m_pgPropClangFormat->SetHelpString(wxT(""));
     
-    m_pgClangFormatExePath = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
-    m_pgMgr->SetPropertyAttribute(m_pgClangFormatExePath, wxPG_FILE_WILDCARD, wxT(""));
-    m_pgClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
+    m_pgPropClangFormatExePath = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
+    m_pgMgr->SetPropertyAttribute(m_pgPropClangFormatExePath, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
     
-    m_pgMgrArr.Clear();
-    m_pgMgrIntArr.Clear();
-    m_pgMgrArr.Add(_("LLVM"));
-    m_pgMgrArr.Add(_("Google"));
-    m_pgMgrArr.Add(_("WebKit"));
-    m_pgMgrArr.Add(_("Chromium"));
-    m_pgMgrArr.Add(_("Mozilla"));
-    m_pgMgrIntArr.Add(kClangFormatLLVM);
-    m_pgMgrIntArr.Add(kClangFormatGoogle);
-    m_pgMgrIntArr.Add(kClangFormatWebKit);
-    m_pgMgrIntArr.Add(kClangFormatChromium);
-    m_pgMgrIntArr.Add(kClangFormatMozilla);
-    m_pgPropClangFormatStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
-    m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
+    m_pgPropColumnLimit = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxIntProperty( _("Column Limit"), wxPG_LABEL, 0) );
+    m_pgPropColumnLimit->SetHelpString(_("The column limit\nA column limit of 0 means that there is no column limit.\nIn this case, clang-format will respect the input's line breaking decisions within statements unless they contradict other rules"));
     
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
@@ -177,6 +165,21 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(kGNU);
     m_pgPropClangBraceBreakStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Brace breaking style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropClangBraceBreakStyle->SetHelpString(_("The brace breaking style to use."));
+    
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("LLVM"));
+    m_pgMgrArr.Add(_("Google"));
+    m_pgMgrArr.Add(_("WebKit"));
+    m_pgMgrArr.Add(_("Chromium"));
+    m_pgMgrArr.Add(_("Mozilla"));
+    m_pgMgrIntArr.Add(kClangFormatLLVM);
+    m_pgMgrIntArr.Add(kClangFormatGoogle);
+    m_pgMgrIntArr.Add(kClangFormatWebKit);
+    m_pgMgrIntArr.Add(kClangFormatChromium);
+    m_pgMgrIntArr.Add(kClangFormatMozilla);
+    m_pgPropClangFormatStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
     
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
@@ -227,9 +230,20 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     boxSizer28->Add(bCustomSettingsSizer, 1, wxEXPAND, 0);
     
-    m_staticText3 = new wxStaticText(m_splitterPage24, wxID_ANY, _("Custom user settings:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
     
-    bCustomSettingsSizer->Add(m_staticText3, 0, wxALL|wxEXPAND, 5);
+    bCustomSettingsSizer->Add(boxSizer57, 0, wxEXPAND, 5);
+    
+    m_staticText59 = new wxStaticText(m_splitterPage24, wxID_ANY, _("AStyle Only:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText59Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText59Font.SetWeight(wxFONTWEIGHT_BOLD);
+    m_staticText59->SetFont(m_staticText59Font);
+    
+    boxSizer57->Add(m_staticText59, 0, wxALL, 5);
+    
+    m_staticText3 = new wxStaticText(m_splitterPage24, wxID_ANY, _("Custom user settings"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    boxSizer57->Add(m_staticText3, 0, wxALL|wxEXPAND, 5);
     
     m_textCtrlUserFlags = new wxTextCtrl(m_splitterPage24, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
     wxFont m_textCtrlUserFlagsFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Sans"));

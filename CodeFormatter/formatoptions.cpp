@@ -24,16 +24,18 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "formatoptions.h"
 #include "clClangFormatLocator.h"
+#include "editor_config.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kFormatEngineAStyle)
-    , m_clangFormatOptions(kClangFormatWebKit|kAlignTrailingComments|kBreakConstructorInitializersBeforeComma|kSpaceBeforeAssignmentOperators)
+    , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma | kSpaceBeforeAssignmentOperators)
     , m_clangBreakBeforeBrace(kLinux)
+    , m_clangColumnLimit(0) // No limit
 {
-    if ( m_clangFormatExe.IsEmpty() ) {
+    if(m_clangFormatExe.IsEmpty()) {
         clClangFormatLocator locator;
-        locator.Locate( m_clangFormatExe );
+        locator.Locate(m_clangFormatExe);
     }
 }
 
@@ -41,7 +43,7 @@ FormatOptions::~FormatOptions()
 {
 }
 
-void FormatOptions::DeSerialize(Archive &arch)
+void FormatOptions::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_options"), m_astyleOptions);
     arch.Read(wxT("m_customFlags"), m_customFlags);
@@ -54,21 +56,23 @@ void FormatOptions::DeSerialize(Archive &arch)
 
     wxString clangFormat;
     arch.Read("m_clangFormatExe", clangFormat);
-    if ( !clangFormat.IsEmpty() ) {
-        m_clangFormatExe.swap( clangFormat );
+    if(!clangFormat.IsEmpty()) {
+        m_clangFormatExe.swap(clangFormat);
     }
-    
+
     arch.Read("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
+    arch.Read("m_clangColumnLimit", m_clangColumnLimit);
 }
 
-void FormatOptions::Serialize(Archive &arch)
+void FormatOptions::Serialize(Archive& arch)
 {
-    arch.Write(wxT("m_options"),            m_astyleOptions);
-    arch.Write(wxT("m_customFlags"),        m_customFlags);
+    arch.Write(wxT("m_options"), m_astyleOptions);
+    arch.Write(wxT("m_customFlags"), m_customFlags);
     arch.Write("m_engine", static_cast<int>(m_engine));
-    arch.Write("m_clangFormatOptions",      m_clangFormatOptions);
-    arch.Write("m_clangFormatExe",          m_clangFormatExe);
-    arch.Write("m_clangBreakBeforeBrace",   m_clangBreakBeforeBrace);
+    arch.Write("m_clangFormatOptions", m_clangFormatOptions);
+    arch.Write("m_clangFormatExe", m_clangFormatExe);
+    arch.Write("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
+    arch.Write("m_clangColumnLimit", m_clangColumnLimit);
 }
 
 wxString FormatOptions::AstyleOptionsAsString() const
@@ -76,88 +80,88 @@ wxString FormatOptions::AstyleOptionsAsString() const
     //by default use tabs as indentation with size 4
     wxString options;
 
-    if (m_astyleOptions & AS_ANSI) {
+    if(m_astyleOptions & AS_ANSI) {
         options << wxT(" --style=ansi ");
     }
-    if (m_astyleOptions & AS_GNU) {
+    if(m_astyleOptions & AS_GNU) {
         options << wxT(" --style=gnu ");
     }
-    if (m_astyleOptions & AS_KR) {
+    if(m_astyleOptions & AS_KR) {
         options << wxT(" --style=kr ");
     }
-    if (m_astyleOptions & AS_LINUX) {
+    if(m_astyleOptions & AS_LINUX) {
         options << wxT(" --style=linux ");
     }
-    if (m_astyleOptions & AS_JAVA) {
+    if(m_astyleOptions & AS_JAVA) {
         options << wxT(" --style=java ");
     }
-    if (m_astyleOptions & AS_BRACKETS_BREAK) {
+    if(m_astyleOptions & AS_BRACKETS_BREAK) {
         options << wxT(" -b ");
     }
-    if (m_astyleOptions & AS_BRACKETS_ATTACH) {
+    if(m_astyleOptions & AS_BRACKETS_ATTACH) {
         options << wxT(" -a ");
     }
-    if (m_astyleOptions & AS_BRACKETS_LINUX) {
+    if(m_astyleOptions & AS_BRACKETS_LINUX) {
         options << wxT(" -l ");
     }
-    if (m_astyleOptions & AS_BRACKETS_BREAK_CLOSING) {
+    if(m_astyleOptions & AS_BRACKETS_BREAK_CLOSING) {
         options << wxT(" -y ");
     }
-    if (m_astyleOptions & AS_INDENT_CLASS) {
+    if(m_astyleOptions & AS_INDENT_CLASS) {
         options << wxT(" -C ");
     }
-    if (m_astyleOptions & AS_INDENT_SWITCHES) {
+    if(m_astyleOptions & AS_INDENT_SWITCHES) {
         options << wxT(" -S ");
     }
-    if (m_astyleOptions & AS_INDENT_CASE) {
+    if(m_astyleOptions & AS_INDENT_CASE) {
         options << wxT(" -K ");
     }
-    if (m_astyleOptions & AS_INDENT_BLOCKS) {
+    if(m_astyleOptions & AS_INDENT_BLOCKS) {
         options << wxT(" -B ");
     }
-    if (m_astyleOptions & AS_INDENT_NAMESPACES) {
+    if(m_astyleOptions & AS_INDENT_NAMESPACES) {
         options << wxT(" -N ");
     }
-    if (m_astyleOptions & AS_INDENT_LABELS) {
+    if(m_astyleOptions & AS_INDENT_LABELS) {
         options << wxT(" -L ");
     }
-    if (m_astyleOptions & AS_INDENT_PREPROCESSORS) {
+    if(m_astyleOptions & AS_INDENT_PREPROCESSORS) {
         options << wxT(" -w ");
     }
-    if (m_astyleOptions & AS_MAX_INSTATEMENT_INDENT) {
+    if(m_astyleOptions & AS_MAX_INSTATEMENT_INDENT) {
         options << wxT(" -M ");
     }
-    if (m_astyleOptions & AS_BREAK_BLOCKS) {
+    if(m_astyleOptions & AS_BREAK_BLOCKS) {
         options << wxT(" -f ");
     }
-    if (m_astyleOptions & AS_BREAK_BLOCKS_ALL) {
+    if(m_astyleOptions & AS_BREAK_BLOCKS_ALL) {
         options << wxT(" -F ");
     }
-    if (m_astyleOptions & AS_BREAK_ELSEIF) {
+    if(m_astyleOptions & AS_BREAK_ELSEIF) {
         options << wxT(" -e ");
     }
-    if (m_astyleOptions & AS_PAD_OPER) {
+    if(m_astyleOptions & AS_PAD_OPER) {
         options << wxT(" -p ");
     }
-    if (m_astyleOptions & AS_PAD_PARENTHESIS) {
+    if(m_astyleOptions & AS_PAD_PARENTHESIS) {
         options << wxT(" -P ");
     }
-    if (m_astyleOptions & AS_PAD_PARENTHESIS_OUT) {
+    if(m_astyleOptions & AS_PAD_PARENTHESIS_OUT) {
         options << wxT(" -d ");
     }
-    if (m_astyleOptions & AS_PAD_PARENTHESIS_IN) {
+    if(m_astyleOptions & AS_PAD_PARENTHESIS_IN) {
         options << wxT(" -D ");
     }
-    if (m_astyleOptions & AS_ONE_LINE_KEEP_STATEMENT) {
+    if(m_astyleOptions & AS_ONE_LINE_KEEP_STATEMENT) {
         options << wxT(" -o ");
     }
-    if (m_astyleOptions & AS_ONE_LINE_KEEP_BLOCKS) {
+    if(m_astyleOptions & AS_ONE_LINE_KEEP_BLOCKS) {
         options << wxT(" -O ");
     }
-    if (m_astyleOptions & AS_FILL_EMPTY_LINES) {
+    if(m_astyleOptions & AS_FILL_EMPTY_LINES) {
         options << wxT(" -E ");
     }
-    if (m_astyleOptions & AS_UNPAD_PARENTHESIS) {
+    if(m_astyleOptions & AS_UNPAD_PARENTHESIS) {
         options << wxT(" -U ");
     }
     if(m_customFlags.IsEmpty() == false) {
@@ -170,43 +174,47 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
 {
     wxString options;
     options << " -style=\"{ BasedOnStyle: ";
-    if ( m_clangFormatOptions & kClangFormatChromium ) {
+    if(m_clangFormatOptions & kClangFormatChromium) {
         options << "Chromium";
-    } else if ( m_clangFormatOptions & kClangFormatGoogle ) {
+    } else if(m_clangFormatOptions & kClangFormatGoogle) {
         options << "Google";
-    } else if ( m_clangFormatOptions & kClangFormatLLVM ) {
+    } else if(m_clangFormatOptions & kClangFormatLLVM) {
         options << "LLVM";
-    } else if ( m_clangFormatOptions & kClangFormatMozilla ) {
+    } else if(m_clangFormatOptions & kClangFormatMozilla) {
         options << "Mozilla";
-    } else if ( m_clangFormatOptions & kClangFormatWebKit ) {
+    } else if(m_clangFormatOptions & kClangFormatWebKit) {
         options << "WebKit";
     }
 
-    options << ", AlignEscapedNewlinesLeft: "                       << ClangFlagToBool(kAlignEscapedNewlinesLeft);
-    options << ", AlignTrailingComments : "                         << ClangFlagToBool(kAlignTrailingComments);
-    options << ", AllowAllParametersOfDeclarationOnNextLine : "     << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
-    options << ", AllowShortBlocksOnASingleLine : "                 << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
-    options << ", AllowShortLoopsOnASingleLine : "                  << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
-    options << ", AllowShortIfStatementsOnASingleLine : "           << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
-    options << ", AlwaysBreakBeforeMultilineStrings : "             << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
-    options << ", AlwaysBreakTemplateDeclarations : "               << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
-    options << ", BinPackParameters : "                             << ClangFlagToBool(kBinPackParameters);
-    options << ", BreakBeforeBinaryOperators : "                    << ClangFlagToBool(kBreakBeforeBinaryOperators);
-    options << ", BreakBeforeTernaryOperators : "                   << ClangFlagToBool(kBreakBeforeTernaryOperators);
-    options << ", BreakConstructorInitializersBeforeComma : "       << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
-    options << ", IndentCaseLabels : "                              << ClangFlagToBool(kIndentCaseLabels);
-    options << ", IndentFunctionDeclarationAfterType : "            << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
-    options << ", SpaceBeforeAssignmentOperators : "                << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
-    options << ", SpaceBeforeParens : "                             << ( m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
-    options << ", SpacesInParentheses : "                           << ClangFlagToBool(kSpacesInParentheses);
-    options << ", BreakBeforeBraces : "                             << ClangBreakBeforeBrace();
+    // add tab width and space vs tabs based on the global editor settings
+    options << ClangGlobalSettings();
+
+    options << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
+    options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
+    options << ", AllowAllParametersOfDeclarationOnNextLine : " << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
+    options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
+    options << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
+    options << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
+    options << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
+    options << ", AlwaysBreakTemplateDeclarations : " << ClangFlagToBool(kAlwaysBreakTemplateDeclarations);
+    options << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
+    options << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
+    options << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
+    options << ", BreakConstructorInitializersBeforeComma : " << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
+    options << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
+    options << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
+    options << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
+    options << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
+    options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
+    options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
+    options << ", ColumnLimit : " << m_clangColumnLimit;
     options << " }\" ";
     return options;
 }
 
 wxString FormatOptions::ClangFlagToBool(ClangFormatStyle flag) const
 {
-    if ( m_clangFormatOptions & flag )
+    if(m_clangFormatOptions & flag)
         return "true";
     else
         return "false";
@@ -214,16 +222,27 @@ wxString FormatOptions::ClangFlagToBool(ClangFormatStyle flag) const
 
 wxString FormatOptions::ClangBreakBeforeBrace() const
 {
-    if ( m_clangBreakBeforeBrace & kStroustrup ) {
+    if(m_clangBreakBeforeBrace & kStroustrup) {
         return "Stroustrup";
-    } else if ( m_clangBreakBeforeBrace & kAllman ) {
+    } else if(m_clangBreakBeforeBrace & kAllman) {
         return "Allman";
-    } else if ( m_clangBreakBeforeBrace & kGNU ) {
+    } else if(m_clangBreakBeforeBrace & kGNU) {
         return "GNU";
-    } else if ( m_clangBreakBeforeBrace & kAttach ) {
+    } else if(m_clangBreakBeforeBrace & kAttach) {
         return "Attach";
     } else {
         // the default
         return "Linux";
     }
+}
+
+wxString FormatOptions::ClangGlobalSettings() const
+{
+    int tabWidth = EditorConfigST::Get()->GetOptions()->GetTabWidth();
+    bool useTabs = EditorConfigST::Get()->GetOptions()->GetIndentUsesTabs();
+    
+    wxString options;
+    options << ", TabWidth: " << tabWidth;
+    options << ", UseTab: " << ( useTabs ? "ForIndentation" : "Never" );
+    return options;
 }

@@ -40,11 +40,13 @@ protected:
     wxPGProperty* m_pgPropIndentation;
     wxPGProperty* m_pgPropFormatting;
     wxPGProperty* m_pgPropClangFormat;
-    wxPGProperty* m_pgClangFormatExePath;
-    wxPGProperty* m_pgPropClangFormatStyle;
+    wxPGProperty* m_pgPropClangFormatExePath;
+    wxPGProperty* m_pgPropColumnLimit;
     wxPGProperty* m_pgPropClangBraceBreakStyle;
+    wxPGProperty* m_pgPropClangFormatStyle;
     wxPGProperty* m_pgPropClangFormattingOptions;
     wxPanel* m_splitterPage24;
+    wxStaticText* m_staticText59;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlUserFlags;
     wxPanel* m_panelPreview;

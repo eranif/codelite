@@ -39,7 +39,7 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, IManager* mgr, CodeFormatt
     , m_mgr(mgr)
 {
     m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-    
+
     // center the dialog
     Centre();
 
@@ -58,7 +58,7 @@ void CodeFormatterDlg::InitDialog()
     long indentOptions = m_options.GetOptions() & AS_ALL_INDENT_OPTIONS;
     m_pgPropIndentation->SetValue( indentOptions );
     m_pgPropFormatting->SetValue( formatOptions );
-    
+
     // Bracket options
     if ( m_options.GetOptions() & AS_BRACKETS_BREAK_CLOSING )
         m_pgPropBrackets->SetValue("Break closing");
@@ -68,7 +68,7 @@ void CodeFormatterDlg::InitDialog()
         m_pgPropBrackets->SetValue("Attach");
     else if ( m_options.GetOptions() & AS_BRACKETS_LINUX )
         m_pgPropBrackets->SetValue("Linux");
-    
+
     // Styles
     if ( m_options.GetOptions() & AS_GNU )
         m_pgPropPreDefinedStyles->SetValue("GNU");
@@ -80,38 +80,39 @@ void CodeFormatterDlg::InitDialog()
         m_pgPropPreDefinedStyles->SetValue("Linux");
     else if ( m_options.GetOptions() & AS_ANSI )
         m_pgPropPreDefinedStyles->SetValue("ANSI");
-        
+
     m_textCtrlPreview->SetLexer(wxSTC_LEX_CPP);
     LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("C++");
     if ( lexer ) {
         lexer->Apply( m_textCtrlPreview, true );
     }
     m_textCtrlPreview->SetViewWhiteSpace( wxSTC_WS_VISIBLEALWAYS );
-    
+
     // Select the proper engine
     m_pgPropEngine->SetValueFromInt( (int) m_options.GetEngine() );
 
     //------------------------------------------------------------------
     // Clang options
     //------------------------------------------------------------------
-    m_pgClangFormatExePath->SetValue( m_options.GetClangFormatExe() );
+    m_pgPropClangFormatExePath->SetValue( m_options.GetClangFormatExe() );
     if ( m_options.GetClangFormatOptions() & kClangFormatChromium ) {
         m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatChromium, wxPG_FULL_VALUE );
-        
+
     } else if ( m_options.GetClangFormatOptions() & kClangFormatMozilla ) {
         m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatMozilla, wxPG_FULL_VALUE );
-        
+
     } else if ( m_options.GetClangFormatOptions() & kClangFormatWebKit ) {
         m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatWebKit, wxPG_FULL_VALUE );
-        
+
     } else if ( m_options.GetClangFormatOptions() & kClangFormatGoogle ) {
         m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatGoogle, wxPG_FULL_VALUE );
-        
+
     } else if ( m_options.GetClangFormatOptions() & kClangFormatLLVM ) {
         m_pgPropClangFormatStyle->SetValueFromInt( kClangFormatLLVM, wxPG_FULL_VALUE );
     }
     m_pgPropClangFormattingOptions->SetValue( (int)m_options.GetClangFormatOptions() );
     m_pgPropClangBraceBreakStyle->SetValue( (int) m_options.GetClangBreakBeforeBrace() );
+    m_pgPropColumnLimit->SetValue( (int)m_options.GetClangColumnLimit() );
 }
 
 void CodeFormatterDlg::OnOK(wxCommandEvent &e)
@@ -151,10 +152,10 @@ void CodeFormatterDlg::UpdatePreview()
     wxString output;
     if ( engine == kFormatEngineAStyle ) {
         m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
-        
+
     } else {
         m_cf->ClangPreviewFormat(m_sampleCode, output, m_options);
-        
+
     }
     m_textCtrlPreview->SetEditable(true);
     m_textCtrlPreview->SetText(output);
@@ -169,10 +170,10 @@ CodeFormatterDlg::~CodeFormatterDlg()
 void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
 {
     m_isDirty = true;
-    
+
     size_t options (0);
     // Build the options
-    
+
     // Brakcets: Break closing;Attach;Linux;Break;None
     wxString brackets = m_pgPropBrackets->GetValueAsString();
     if ( brackets == "Break closing" ) {
@@ -184,7 +185,7 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     } else if ( brackets == "Break" ) {
         options |= AS_BRACKETS_BREAK;
     }
-    
+
     // PreDefined styles
     // GNU;Java;K&R;Linux;ANSI
     wxString predefStyle = m_pgPropPreDefinedStyles->GetValueAsString();
@@ -199,21 +200,22 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     } else if ( predefStyle == "ANSI" ) {
         options |= AS_ANSI;
     }
-    
+
     options |= m_pgPropFormatting->GetValue().GetInteger();
     options |= m_pgPropIndentation->GetValue().GetInteger();
     m_options.SetOption( options );
-    
+
     // Save the selected engine
     m_options.SetEngine( (FormatterEngine) m_pgPropEngine->GetValue().GetInteger() );
-    
+
     // Save clang options
     size_t clangOptions(0);
     clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
     clangOptions |= m_pgPropClangFormattingOptions->GetValue().GetInteger();
     m_options.SetClangFormatOptions( clangOptions );
     m_options.SetClangBreakBeforeBrace( m_pgPropClangBraceBreakStyle->GetValue().GetInteger() );
-    m_options.SetClangFormatExe( m_pgClangFormatExePath->GetValueAsString() );
+    m_options.SetClangFormatExe( m_pgPropClangFormatExePath->GetValueAsString() );
+    m_options.SetClangColumnLimit( m_pgPropColumnLimit->GetValue().GetInteger() );
     
     // Check the active engine
     ExpandCollapsUneededOptions();
@@ -245,7 +247,7 @@ void CodeFormatterDlg::ExpandCollapsUneededOptions()
     if ( engine == "AStyle" ) {
         m_pgMgr->Collapse( m_pgPropClangFormat );
         m_pgMgr->Expand( m_pgPropAstyleOptions );
-        
+
     } else {
         m_pgMgr->Expand( m_pgPropClangFormat );
         m_pgMgr->Collapse( m_pgPropAstyleOptions );

@@ -186,6 +186,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrArr.Add(_("Align Escaped Newlines Left"));
     m_pgMgrArr.Add(_("Align Trailing Comments"));
     m_pgMgrArr.Add(_("Allow All Parameters Of Declaration On Next Line"));
+    m_pgMgrArr.Add(_("Allow Short Functions On A Single Line"));
     m_pgMgrArr.Add(_("Allow Short Blocks On A Single Line"));
     m_pgMgrArr.Add(_("Allow Short Loops On A Single Line"));
     m_pgMgrArr.Add(_("Allow Short If Statements On A SingleLine"));
@@ -203,6 +204,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(kAlignEscapedNewlinesLeft);
     m_pgMgrIntArr.Add(kAlignTrailingComments);
     m_pgMgrIntArr.Add(kAllowAllParametersOfDeclarationOnNextLine);
+    m_pgMgrIntArr.Add(kAllowShortFunctionsOnASingleLine);
     m_pgMgrIntArr.Add(kAllowShortBlocksOnASingleLine);
     m_pgMgrIntArr.Add(kAllowShortLoopsOnASingleLine);
     m_pgMgrIntArr.Add(kAllowShortIfStatementsOnASingleLine);

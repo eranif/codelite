@@ -192,6 +192,7 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
     options << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
     options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
     options << ", AllowAllParametersOfDeclarationOnNextLine : " << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
+    options << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
     options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
     options << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
     options << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
@@ -208,6 +209,7 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
     options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
     options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
     options << ", ColumnLimit : " << m_clangColumnLimit;
+    
     options << " }\" ";
     return options;
 }

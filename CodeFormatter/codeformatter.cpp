@@ -343,7 +343,7 @@ void CodeFormatter::OnFormatString( clSourceFormatEvent& e )
         output << DoGetGlobalEOLString();
 
     } else if ( fmtroptions.GetEngine() == kFormatEngineClangFormat ) {
-        ::wxMessageBox( _( "String formatting is not yet supported by clang-format!" ), "CodeLite", wxICON_ERROR|wxOK|wxCENTER );
+        ClangPreviewFormat(str, output, fmtroptions);
         output.swap( str );
 
     } else {

@@ -1321,11 +1321,11 @@
 																								}, {
 																									"type":	"multi-string",
 																									"m_label":	"Choices:",
-																									"m_value":	"Align Escaped Newlines Left;Align Trailing Comments;Allow All Parameters Of Declaration On Next Line;Allow Short Blocks On A Single Line;Allow Short Loops On A Single Line;Allow Short If Statements On A SingleLine;Always Break Before Multiline Strings;Always Break Template Declarations;Bin Pack Parameters;Break Before Binary Operators;Break Before Ternary Operators;Break Constructor Initializers Before Comma;Indent Case Labels;Indent Function DeclarationAfterType;Space Before Assignment Operators;Space Before Parentheses;Spaces In Parentheses"
+																									"m_value":	"Align Escaped Newlines Left;Align Trailing Comments;Allow All Parameters Of Declaration On Next Line;Allow Short Functions On A Single Line;Allow Short Blocks On A Single Line;Allow Short Loops On A Single Line;Allow Short If Statements On A SingleLine;Always Break Before Multiline Strings;Always Break Template Declarations;Bin Pack Parameters;Break Before Binary Operators;Break Before Ternary Operators;Break Constructor Initializers Before Comma;Indent Case Labels;Indent Function DeclarationAfterType;Space Before Assignment Operators;Space Before Parentheses;Spaces In Parentheses;"
 																								}, {
 																									"type":	"multi-string",
 																									"m_label":	"Array Integer Values",
-																									"m_value":	"kAlignEscapedNewlinesLeft;kAlignTrailingComments;kAllowAllParametersOfDeclarationOnNextLine;kAllowShortBlocksOnASingleLine;kAllowShortLoopsOnASingleLine;kAllowShortIfStatementsOnASingleLine;kAlwaysBreakBeforeMultilineStrings;kAlwaysBreakTemplateDeclarations;kBinPackParameters;kBreakBeforeBinaryOperators;kBreakBeforeTernaryOperators;kBreakConstructorInitializersBeforeComma;kIndentCaseLabels;kIndentFunctionDeclarationAfterType;kSpaceBeforeAssignmentOperators;kSpaceBeforeParens;kSpacesInParentheses"
+																									"m_value":	"kAlignEscapedNewlinesLeft;kAlignTrailingComments;kAllowAllParametersOfDeclarationOnNextLine;kAllowShortFunctionsOnASingleLine;kAllowShortBlocksOnASingleLine;kAllowShortLoopsOnASingleLine;kAllowShortIfStatementsOnASingleLine;kAlwaysBreakBeforeMultilineStrings;kAlwaysBreakTemplateDeclarations;kBinPackParameters;kBreakBeforeBinaryOperators;kBreakBeforeTernaryOperators;kBreakConstructorInitializersBeforeComma;kIndentCaseLabels;kIndentFunctionDeclarationAfterType;kSpaceBeforeAssignmentOperators;kSpaceBeforeParens;kSpacesInParentheses"
 																								}, {
 																									"type":	"bool",
 																									"m_label":	"Bool Value",

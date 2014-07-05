@@ -192,11 +192,29 @@ void CodeFormatter::DoFormatFile( IEditor *editor )
     m_mgr->GetConfigTool()->ReadObject( wxT( "FormatterOptions" ), &fmtroptions );
     if ( fmtroptions.GetEngine() == kFormatEngineClangFormat ) {
 
+        int from = wxNOT_FOUND,
+            length = wxNOT_FOUND;
         wxString formattedOutput;
-        ClangFormat(editor->GetFileName(), formattedOutput, curpos);
+        if ( editor->GetSelectionStart() != wxNOT_FOUND ) {
+            // we got a selection, only format it
+            from = editor->GetSelectionStart();
+            length = editor->GetSelectionEnd() - from;
+            if ( length <= 0 ) {
+                from = wxNOT_FOUND;
+                length = wxNOT_FOUND;
+            }
+        }
+
+        ClangFormat(editor->GetFileName(), formattedOutput, curpos, from, length);
+
+        int firstVisibleLine = editor->GetSTC()->GetFirstVisibleLine();
         
         editor->SetEditorText( formattedOutput );
         editor->SetCaretAt( curpos );
+
+        if ( firstVisibleLine != wxNOT_FOUND ) {
+            editor->GetSTC()->SetFirstVisibleLine( firstVisibleLine );
+        }
 
     } else {
         // AStyle
@@ -456,6 +474,10 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename, wxString& formatte
     command << options.ClangFormatOptionsAsString();
     if ( cursorPosition != wxNOT_FOUND ) {
         command << " -cursor=" << cursorPosition;
+    }
+
+    if ( startOffset != wxNOT_FOUND && length != wxNOT_FOUND ) {
+        command << " -offset=" << startOffset << " -length=" << length;
     }
     command << " " << file;
     

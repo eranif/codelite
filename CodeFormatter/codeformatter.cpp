@@ -344,7 +344,6 @@ void CodeFormatter::OnFormatString( clSourceFormatEvent& e )
 
     } else if ( fmtroptions.GetEngine() == kFormatEngineClangFormat ) {
         ClangPreviewFormat(str, output, fmtroptions);
-        output.swap( str );
 
     } else {
         // ??

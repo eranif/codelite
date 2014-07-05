@@ -41,6 +41,7 @@
 #include <wx/filename.h>
 #include "file_logger.h"
 #include "procutils.h"
+#include "clSTCLineKeeper.h"
 
 extern "C" EXPORT char* STDCALL
 AStyleMain( const char* pSourceIn,
@@ -207,14 +208,9 @@ void CodeFormatter::DoFormatFile( IEditor *editor )
 
         ClangFormat(editor->GetFileName(), formattedOutput, curpos, from, length);
 
-        int firstVisibleLine = editor->GetSTC()->GetFirstVisibleLine();
-        
+        clSTCLineKeeper lk( editor );
         editor->SetEditorText( formattedOutput );
         editor->SetCaretAt( curpos );
-
-        if ( firstVisibleLine != wxNOT_FOUND ) {
-            editor->GetSTC()->SetFirstVisibleLine( firstVisibleLine );
-        }
 
     } else {
         // AStyle
@@ -268,11 +264,13 @@ void CodeFormatter::DoFormatFile( IEditor *editor )
                 editor->ReplaceSelection( output );
 
             } else {
+                clSTCLineKeeper lk( editor );
                 editor->SetEditorText( output );
                 editor->SetCaretAt( curpos );
             }
         }
     }
+    
     // Notify that a file was indented
     wxCommandEvent evt( wxEVT_CODEFORMATTER_INDENT_COMPLETED );
     evt.SetString( editor->GetFileName().GetFullPath() );

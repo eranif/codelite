@@ -30,6 +30,7 @@
 #include "editor_config.h"
 #include "lexer_configuration.h"
 #include <wx/menu.h>
+#include "clSTCLineKeeper.h"
 
 CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, IManager* mgr, CodeFormatter *cf, const FormatOptions& opts, const wxString &sampleCode )
     : CodeFormatterBaseDlg( parent )
@@ -158,7 +159,11 @@ void CodeFormatterDlg::UpdatePreview()
 
     }
     m_textCtrlPreview->SetEditable(true);
-    m_textCtrlPreview->SetText(output);
+
+    {
+        clSTCLineKeeper lk( m_textCtrlPreview );
+        m_textCtrlPreview->SetText(output);
+    }
     m_textCtrlPreview->SetEditable(false);
 }
 

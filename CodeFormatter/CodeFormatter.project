@@ -40,6 +40,8 @@
     <File Name="formatoptions.cpp"/>
     <File Name="clClangFormatLocator.h"/>
     <File Name="clClangFormatLocator.cpp"/>
+    <File Name="clSTCLineKeeper.h"/>
+    <File Name="clSTCLineKeeper.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="codeformatter.h"/>

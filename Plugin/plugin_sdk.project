@@ -62,6 +62,8 @@
     <File Name="unredobase.h"/>
     <File Name="CompileCommandsCreateor.h"/>
     <File Name="CompileCommandsCreateor.cpp"/>
+    <File Name="clSTCLineKeeper.cpp"/>
+    <File Name="clSTCLineKeeper.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

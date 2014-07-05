@@ -7,8 +7,9 @@
  */
 #include <wx/stc/stc.h>
 #include "ieditor.h"
+#include "codelite_exports.h"
 
-class clSTCLineKeeper
+class WXDLLIMPEXP_SDK clSTCLineKeeper
 {
     wxStyledTextCtrl* m_stc;
     int m_firstVisibleLine;

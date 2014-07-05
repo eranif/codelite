@@ -25,11 +25,18 @@ endif ( USE_PCH )
 include_directories("${CL_SRC_ROOT}/sdk/wxshapeframework/include" "${CL_SRC_ROOT}/sdk/wxshapeframework/src")
 
 # Add RPATH
-SET (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+if (UNIX)
+set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 FILE(GLOB SRCS "src/*.cpp" "src/wxxmlserializer/*.cpp")
 
 # Define the output
 add_library(wxshapeframework SHARED ${SRCS})
 target_link_libraries(wxshapeframework ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+
+if (NOT MINGW)
 install(TARGETS wxshapeframework DESTINATION ${PLUGINS_DIR})
+else ()
+install(TARGETS wxshapeframework RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+endif()

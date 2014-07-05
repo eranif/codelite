@@ -15,18 +15,22 @@ find_package(wxWidgets COMPONENTS core base REQUIRED)
 #include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
 
 # Add RPATH
+if (UNIX)
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
 
 # we need wxWidgets flags to be set only for the c++ files, so we do it like this
 # by setting the CMAKE_CXX_FLAGS
-execute_process(COMMAND ${CL_WX_CONFIG} --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND sh ${CL_WX_CONFIG} --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WX_CXX_FLAGS}")
 
 # prepare list of files
 FILE(GLOB SRCS "*.cpp" "libctags/*.c" "network/*.cpp")
 
+if (UNIX)
 # we require this macro to be set to true
 add_definitions(-DHAVE_CONFIG_H)
+endif (UNIX)
 
 # and finally prepare list of includes directories
 include_directories("${CL_SRC_ROOT}/sdk/codelite_indexer/libctags")

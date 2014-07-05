@@ -8,8 +8,16 @@ project(codelitegcc)
 # Include paths
 include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/lib" "${CL_SRC_ROOT}/sdk/codelite_cppcheck/cli")
 
+set( ADDITIONAL_LIBRARIES "" )
+
 # Add RPATH
+if(UNIX)
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
+
+if(WIN32)
+set(ADDITIONAL_LIBRARIES "-lshlwapi")
+endif(WIN32)
 
 include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/externals/tinyxml")
 FILE(GLOB SRCS "cli/*.cpp" "lib/*.cpp" "externals/*/*.cpp")
@@ -25,7 +33,7 @@ endif()
 
 # Define the output
 add_executable(codelite_cppcheck ${SRCS})
-target_link_libraries(codelite_cppcheck ${LINKER_OPTIONS})
+target_link_libraries(codelite_cppcheck ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES})
 
 install(TARGETS codelite_cppcheck DESTINATION ${CL_PREFIX}/bin)
 

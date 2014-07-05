@@ -59,13 +59,15 @@ if (UNIX)
     else ( )
         set(ADDITIONAL_LIBRARIES "-ldl")
     endif ( )
-endif (UNIX)
+elseif (WIN32)
+    set(ADDITIONAL_LIBRARIES "-luxtheme")
+endif ( )
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 
 # Add RPATH
-# Add RPATH
+if(NOT MINGW)
 if ( WXC_APP )
     string( REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR})
     set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}:${PLUGINS_DIR}")
@@ -74,6 +76,7 @@ else ( WXC_APP )
     set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
     message( "-- libplugin.so is using RPATH set to ${PLUGINS_DIR}")
 endif ( WXC_APP )
+endif()
 
 FILE(GLOB SRCS "*.cpp")
 
@@ -87,4 +90,8 @@ else()
     target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
 endif()
 
+if (NOT MINGW)
 install(TARGETS plugin DESTINATION ${PLUGINS_DIR})
+else ()
+install(TARGETS plugin RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+endif()

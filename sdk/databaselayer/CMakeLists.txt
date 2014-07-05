@@ -24,7 +24,10 @@ if(WIN32)
 endif(WIN32)
 
 # Add RPATH
-SET (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+if (UNIX)
+set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif (UNIX)
+
 FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
 
 if ( WITH_MYSQL )

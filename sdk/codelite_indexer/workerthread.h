@@ -1,9 +1,9 @@
 #ifndef __workerthread__
 #define __workerthread__
 
+#include "network/named_pipe.h"
 #include "ethread.h"
 #include "equeue.h"
-#include "network/named_pipe.h"
 
 // ---------------------------------------------
 // parsing thread

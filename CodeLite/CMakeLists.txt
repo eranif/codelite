@@ -28,7 +28,7 @@ if (UNIX)
         set(ADDITIONAL_LIBRARIES "-ldl")
     endif ( )
 else (UNIX)
-    ## Windows??
+    set(ADDITIONAL_LIBRARIES "-lws2_32")
 endif (UNIX)
 
 ## Macros
@@ -44,6 +44,7 @@ endif ( USE_PCH )
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 
 # Add RPATH
+if (NOT MINGW)
 if ( WXC_APP )
     string( REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR}) 
     set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}:${PLUGINS_DIR}")
@@ -52,6 +53,7 @@ else ( WXC_APP )
     set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
     message( "-- libcodelite.so is using RPATH set to ${PLUGINS_DIR}")
 endif ( WXC_APP )
+endif (NOT MINGW)
 FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp")
 
 # Define the output
@@ -61,5 +63,9 @@ if (UNIX AND NOT APPLE )
 else (UNIX AND NOT APPLE)
     target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB} ${ADDITIONAL_LIBRARIES} -lz -lcrypto)
 endif ( UNIX AND NOT APPLE )
-install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
 
+if (NOT MINGW)
+install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
+else ()
+install(TARGETS libcodelite RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+endif()

@@ -5,18 +5,20 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelite-terminal)
 
-if ( UNIX AND NOT APPLE )
+if ( UNIX OR MINGW AND NOT APPLE )
     find_package(wxWidgets COMPONENTS std stc aui REQUIRED)
 else ( UNIX AND NOT APPLE )
     find_package(wxWidgets REQUIRED)
-endif ( UNIX AND NOT APPLE )
+endif ( UNIX OR MINGW AND NOT APPLE )
 
 # Add RPATH
+if ( UNIX )
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+endif ( UNIX )
 
 # we need wxWidgets flags to be set only for the c++ files, so we do it like this
 # by setting the CMAKE_CXX_FLAGS
-execute_process(COMMAND ${CL_WX_CONFIG} --debug=no --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND sh ${CL_WX_CONFIG} --debug=no --cxxflags OUTPUT_VARIABLE WX_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WX_CXX_FLAGS}")
 
 add_definitions(-DNDEBUG)
@@ -25,7 +27,16 @@ add_definitions(-DNDEBUG)
 FILE(GLOB SRCS "*.cpp")
 
 # Define the output
-add_executable(codelite-terminal ${SRCS})
+if (MINGW)
+    add_definitions(-DWINDRES)
+    execute_process(COMMAND sh ${CL_WX_CONFIG} --debug=no --rescomp OUTPUT_VARIABLE WX_RC_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX REPLACE "windres" "" WX_RC_FLAGS ${WX_RC_FLAGS})
+    set (CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} ${WX_RC_FLAGS}")
+    add_executable(codelite-terminal ${SRCS} win_resources.rc)
+else()
+    add_executable(codelite-terminal ${SRCS})
+endif()
+
 set ( UTIL_LIB "" )
 if ( UNIX )
     set( UTIL_LIB "-lutil")

@@ -206,7 +206,9 @@ void CodeFormatter::DoFormatFile( IEditor *editor )
             }
         }
 
-        ClangFormat(editor->GetFileName(), formattedOutput, curpos, from, length);
+        // Make sure we format the editor string and _not_ the file (there might be some newly added lines
+        // the could be missing ...)
+        ClangFormat(editor->GetSTC()->GetText(), formattedOutput, curpos, from, length);
 
         clSTCLineKeeper lk( editor );
         editor->SetEditorText( formattedOutput );

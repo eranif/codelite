@@ -151,6 +151,8 @@ public:
         return m_findReplaceData;
     }
 
+    void SetLineVisible(int lineno);
+    
     void SetReloadingFile(const bool& reloadingFile) {
         this->m_reloadingFile = reloadingFile;
     }

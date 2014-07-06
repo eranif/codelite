@@ -168,16 +168,16 @@ LEditor::LEditor(wxWindow* parent)
     , m_findBookmarksActive      (false)
 {
     m_commandsProcessor.SetParent(this);
-    
+
     ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSTC_MARK_SMALLRECT;
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
     ms_bookmarkShapes[wxT("Small Arrow")]       = wxSTC_MARK_ARROW;
     ms_bookmarkShapes[wxT("Circle")]            = wxSTC_MARK_CIRCLE;
-    
+
     SetSyntaxHighlight();
     CmdKeyClear(wxT('D'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
     Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(LEditor::OnDwellStart), NULL, this);
-    
+
     // Initialise the breakpt-marker array
     FillBPtoMarkerArray();
 
@@ -192,12 +192,12 @@ LEditor::LEditor(wxWindow* parent)
     // Create the various tip windows
     m_functionTip = new clEditorTipWindow(this);
     m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
-    
+
     m_deltas = new EditorDeltasHolder;
     EventNotifier::Get()->Connect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(LEditor::OnFileFormatStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(LEditor::OnFileFormatDone), NULL, this);
-    
+
     Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnChangeActiveBookmarkType), this, XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
 }
 
@@ -206,11 +206,11 @@ LEditor::~LEditor()
     EventNotifier::Get()->Disconnect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(LEditor::OnFileFormatStarting), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(LEditor::OnFileFormatDone), NULL, this);
-    
+
     Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnChangeActiveBookmarkType), this, XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
 
     delete m_deltas;
-    
+
     if ( this->HasCapture() ) {
         this->ReleaseMouse();
     }
@@ -328,7 +328,7 @@ void LEditor::SetProperties()
     m_disableSemicolonShift     = options->GetDisableSemicolonShift();
     SetMultipleSelection( !options->HasOption(OptionsConfig::Opt_Disable_Multiselect ) );
     SetMultiPaste( options->HasOption(OptionsConfig::Opt_Disable_Multipaste ) ? 0 : 1 );
-    
+
     if (!m_hightlightMatchedBraces) {
         wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
         SetHighlightGuide(0);
@@ -378,7 +378,7 @@ void LEditor::SetProperties()
     SetCaretLineVisible(options->GetHighlightCaretLine());
     SetCaretLineBackground(options->GetCaretLineColour());
     SetCaretLineBackAlpha( 30 );
-    
+
     //MarkerSetAlpha(smt_bookmark, 30);
 
     SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
@@ -555,7 +555,7 @@ void LEditor::SetProperties()
     //indentation settings
     SetTabIndents(true);
     SetBackSpaceUnIndents (true);
-    
+
     // Should we use spaces or tabs for indenting?
     // Usually we will ask the configuration, however
     // when using Makefile we _must_ use the TABS
@@ -755,7 +755,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     case ':':
         m_context->AutoIndent(event.GetKey());
         break;
-        
+
     case ')':
         // Remove one tip from the queue. If the queue new size is 0
         // the tooltip is then cancelled
@@ -804,23 +804,23 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     default:
         break;
     }
-    
+
     // Check for code completion strings
     wxChar charTyped = event.GetKey();
-    // get the previous char. Note that the current position is already *after* the 
+    // get the previous char. Note that the current position is already *after* the
     // current char, so we need to go back 2 chars
     wxChar firstChar = SafeGetChar( GetCurrentPos() -2 );
-    
+
     wxString strTyped, strTyped2;
     strTyped << charTyped;
     strTyped2 << firstChar << charTyped;
-    
-    if ( (GetContext()->GetCompletionTriggerStrings().count( strTyped ) || GetContext()->GetCompletionTriggerStrings().count( strTyped2 )) 
+
+    if ( (GetContext()->GetCompletionTriggerStrings().count( strTyped ) || GetContext()->GetCompletionTriggerStrings().count( strTyped2 ))
           && !GetContext()->IsCommentOrString(GetCurrentPos())) {
         // this char should trigger a code completion
         CodeComplete();
     }
-    
+
     if (matchChar && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
         if ( matchChar == ')' && m_autoAddNormalBraces) {
             // Only add a close brace if the next char is whitespace
@@ -1233,7 +1233,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
     // Make sure we can open the file for writing
     wxString tmp_file;
-    
+
 #if HAS_LIBCLANG
 #ifdef __WXMSW__
     // There is a bug in clang that locks the file
@@ -1376,7 +1376,7 @@ void LEditor::CompleteWord(bool onlyRefresh)
     evt.SetPosition(GetCurrentPosition());
     evt.SetEditor( this );
     evt.SetInsideCommentOrString( m_context->IsCommentOrString( PositionBefore( GetCurrentPos() ) ) ) ;
-    
+
     evt.SetEventObject(this);
 
     if(EventNotifier::Get()->ProcessEvent(evt)) {
@@ -1467,17 +1467,17 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         if (MarkerGet(line) & mmt_all_breakpoints) {
             tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
         }
-        
+
         else if (MarkerGet(line) & mmt_all_bookmarks) {
             tooltip = GetBookmarkTooltip(line);
         }
-        
+
         // Compiler marker takes precedence over any other tooltip on that margin
         if ( (MarkerGet(line) & mmt_compiler) && m_compilerMessagesMap.count(line) ) {
             // Get the compiler tooltip
             tooltip = m_compilerMessagesMap.find(line)->second;
         }
-        
+
         wxString tmpTip = tooltip;
         tmpTip.Trim().Trim(false);
 
@@ -1829,7 +1829,7 @@ void LEditor::SetActive()
 {
     // ensure that the top level window parent of this editor is 'Raised'
     DoUpdateTLWTitle(true);
-    
+
     // if the find and replace dialog is opened, set ourself
     // as the event owners
     if ( m_findReplaceDlg ) {
@@ -2286,7 +2286,7 @@ void LEditor::ToggleTopmostFoldsInSelection()
            }
        }
    }
- 
+
     // make sure the caret is visible. If it was hidden, place it at the first visible line
     int curpos = GetCurrentPos();
     if (expanded && curpos != wxNOT_FOUND) {
@@ -2367,7 +2367,7 @@ void LEditor::StoreMarkersToArray(wxArrayString& bookmarks)
             int mask = (1 << type);
             if (MarkerGet(line) & mask) {
                 // We need to serialise both the line and BM type. To keep things simple in sessionmanager, just merge their strings
-                bookmarks.Add(wxString::Format("%d:%d", line, type)); 
+                bookmarks.Add(wxString::Format("%d:%d", line, type));
             }
         }
     }
@@ -2397,7 +2397,7 @@ void LEditor::DelAllMarkers(int which_type)
     // Otherwise just the specified type, which will usually be the 'find' bookmark
     if (which_type > 0) {
         MarkerDeleteAll(which_type);
-    } else if (which_type == 0) { 
+    } else if (which_type == 0) {
         MarkerDeleteAll(GetActiveBookmarkType());
     } else {
         for (size_t bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
@@ -2627,7 +2627,7 @@ void LEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
     if ((requested + smt_FIRST_BMK_TYPE -1) != smt_find_bookmark) {
         SetFindBookmarksActive(false);
     }
-    
+
     clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
 }
 
@@ -2643,7 +2643,7 @@ wxString LEditor::GetBookmarkTooltip(const int lineno)
         wxString suffix = label.Lower().Contains("bookmark") ? "" : " bookmark";
         active = "<b>" + label + suffix + "</b>";
     }
-    
+
     for (int bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
         if (bmt != GetActiveBookmarkType()) {
             if (linebits & (1 << bmt)) {
@@ -2894,7 +2894,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
     IDebugger *   dbgr                = DebuggerMgr::Get().GetActiveDebugger();
     bool          dbgTipIsShown       = ManagerST::Get()->GetDebuggerTip()->IsShown();
     bool          keyIsControl        = event.GetKeyCode() == WXK_CONTROL;
-    
+
     if ( keyIsControl ) {
         // Debugger tooltip is shown when clicking 'Control/CMD'
         // while the mouse is over a word
@@ -3041,7 +3041,7 @@ void LEditor::OnRightDown(wxMouseEvent& event)
         if (pos != wxNOT_FOUND) {
             DoSetCaretAt(pos);
         }
-        
+
         clCodeCompletionEvent event(wxEVT_CC_SHOW_QUICK_NAV_MENU);
         event.SetEditor(this);
         event.SetPosition(pos);
@@ -3137,7 +3137,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
     menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 
     BreakpointInfo &bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), GetCurrentLine()+1);
-    
+
     // What we show depends on whether there's already a bp here (or several)
     if ( !bp.IsNull() ) {
 
@@ -3166,7 +3166,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 
     PopupMenu(&menu, pt.x, pt.y);
     m_popupIsOn = false;
-    
+
     if ( ToHereId ) {
         menu.Disconnect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
     }
@@ -3210,9 +3210,9 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
     if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
-        
+
     } else {
-        
+
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
         wxString message( _("Breakpoint successfully added") ), prefix;
         if (is_temp) {
@@ -3261,7 +3261,7 @@ void LEditor::ToggleBreakpoint(int lineno)
     if (lineno == -1) {
         lineno = GetCurrentLine()+1;
     }
-    
+
     // Does any of the plugins want to handle this?
     clDebugEvent dbgEvent(wxEVT_DBG_UI_TOGGLE_BREAKPOINT);
     dbgEvent.SetInt( lineno );
@@ -3269,32 +3269,32 @@ void LEditor::ToggleBreakpoint(int lineno)
     if ( EventNotifier::Get()->ProcessEvent( dbgEvent ) ) {
         return;
     }
-    
+
     const BreakpointInfo &bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), lineno);
-    
+
     if ( bp.IsNull() ) {
         // This will (always?) be from a margin mouse-click, so assume it's a standard breakpt that's wanted
         AddBreakpoint(lineno);
-        
+
     } else {
         DelBreakpoint(lineno);
-        
+
     }
 }
 
 void LEditor::SetWarningMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
-        
+
         // Keep the text message
         if ( m_compilerMessagesMap.count(lineno) ) {
             m_compilerMessagesMap.erase(lineno);
         }
         m_compilerMessagesMap.insert( std::make_pair(lineno, annotationText) );
-        
+
         BuildTabSettingsData options;
         EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
-        
+
         if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks) {
             MarkerAdd(lineno, smt_warning);
         }
@@ -3310,13 +3310,13 @@ void LEditor::SetWarningMarker(int lineno, const wxString& annotationText)
 void LEditor::SetErrorMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
-        
+
         // Keep the text message
         if ( m_compilerMessagesMap.count(lineno) ) {
             m_compilerMessagesMap.erase(lineno);
         }
         m_compilerMessagesMap.insert( std::make_pair(lineno, annotationText) );
-        
+
         BuildTabSettingsData options;
         EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 
@@ -4134,16 +4134,16 @@ void LEditor::OnChange(wxStyledTextEvent& event)
             CLCommand::Ptr_t currentOpen = GetCommandsProcessor().GetOpenCommand();
             if (!currentOpen) {
                 GetCommandsProcessor().StartNewTextCommand(isInsert ? CLC_insert : CLC_delete);
-            } 
+            }
             // We need to cope with a selection being deleted by typing; this results in 0x2012 followed immediately by 0x11 i.e. with no intervening wxSTC_STARTACTION
               else if (isInsert && currentOpen->GetCommandType() != CLC_insert) {
                 GetCommandsProcessor().ProcessOpenCommand();
                 GetCommandsProcessor().StartNewTextCommand(CLC_insert);
-                
+
             } else if (isDelete && currentOpen->GetCommandType() != CLC_delete) {
                 GetCommandsProcessor().ProcessOpenCommand();
                 GetCommandsProcessor().StartNewTextCommand(CLC_delete);
-                
+
             }
 
             wxCHECK_RET(GetCommandsProcessor().HasOpenCommand(), "Trying to add to a non-existent or closed command");
@@ -4306,6 +4306,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 
                 if (res && (line >= 0) && !again) {
                     SetEnsureCaretIsVisible(pos);
+                    SetLineVisible( LineFromPosition(pos) );
                 }
             }
 
@@ -4416,10 +4417,10 @@ void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
     IndicatorClearRange(0, GetLength());
 
     int selStart = GetSelectionStart();
-    
+
     for (size_t i=0; i<matches->size(); i++) {
         std::pair<int, int> p = matches->at(i);
-        
+
         // Dont highlight the current selection
         if ( p.first != selStart ) {
             IndicatorFillRange(p.first, p.second);
@@ -4643,7 +4644,7 @@ void LEditor::DoSaveMarkers()
             if (MarkerGet(nLine) & mask) {
                 m_savedMarkers.push_back(std::make_pair(nFoundLine, type));
             }
-        }    
+        }
         nFoundLine = MarkerNext(nFoundLine+1, mmt_all_bookmarks);
     }
 }
@@ -4659,7 +4660,7 @@ void LEditor::InitializeAnnotations()
     StyleSetBackground(ANNOTATION_STYLE_ERROR, wxColour(244, 220, 220));
     StyleSetForeground(ANNOTATION_STYLE_ERROR, *wxBLACK);
     StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, (StyleGetSizeFractional(wxSTC_STYLE_DEFAULT)*4)/5);
-    
+
     // default all line style
     AnnotationSetVisible(wxSTC_ANNOTATION_STANDARD);
 }
@@ -4667,12 +4668,12 @@ void LEditor::InitializeAnnotations()
 void LEditor::ToggleBreakpointEnablement()
 {
     int lineno = GetCurrentLine()+1;
-    
+
     BreakptMgr* bm = ManagerST::Get()->GetBreakpointsMgr();
     BreakpointInfo bp = bm->GetBreakpoint(GetFileName().GetFullPath(), lineno);
     if ( bp.IsNull() )
         return;
-    
+
     if ( !bm->DelBreakpointByLineno(bp.file, bp.lineno) )
         return;
 
@@ -4690,7 +4691,7 @@ void LEditor::DoUpdateTLWTitle(bool raise)
     if ( tlw && raise ) {
         tlw->Raise();
     }
-    
+
     if ( !IsDetached() ) {
         clMainFrame::Get()->SetFrameTitle(this);
 
@@ -4746,8 +4747,22 @@ wxString LEditor::GetFirstSelection()
         }
         // default
         return wxEmptyString;
-        
+
     } else {
         return wxStyledTextCtrl::GetSelectedText();
+    }
+}
+
+void LEditor::SetLineVisible(int lineno)
+{
+    int offsetFromTop = 10;
+    if ( lineno != wxNOT_FOUND ) {
+        // try this: set the first visible line to be -10 lines from
+        // the requested lineNo
+        lineno -= offsetFromTop;
+        if ( lineno < 0 ) {
+            lineno = 0;
+        }
+        SetFirstVisibleLine( lineno );
     }
 }

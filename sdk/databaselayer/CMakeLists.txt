@@ -31,8 +31,8 @@ endif (UNIX)
 FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
 
 if ( WITH_MYSQL )
-    find_library(LIBMYSQLCLIENT NAMES libmysqlclient.so)
-    find_path(MYSQLCLIENT_INCLUDE NAMES mysql.h PATH_SUFFIXES mysql)
+    find_library(LIBMYSQLCLIENT NAMES mysql mysqlclient mariadb mariadbclient)
+    find_path(MYSQLCLIENT_INCLUDE NAMES mysql.h PATH_SUFFIXES mysql mariadb)
     
     if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND") 
         message( FATAL_ERROR "-- Could not locate libmysqlclient.so" )

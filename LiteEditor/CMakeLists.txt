@@ -105,12 +105,14 @@ endif()
 set (EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
 install(TARGETS codelite DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+if (UNIX)
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite_exec DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite_fix_files DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite_kill_children DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 install(FILES ${CL_SRC_ROOT}/Runtime/clg++ DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 install(FILES ${CL_SRC_ROOT}/Runtime/clgcc DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+endif (UNIX)
 
 # Install clang-format
 # We name it codelite-clang-format to avoid collision with any official installation

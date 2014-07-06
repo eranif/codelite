@@ -598,5 +598,18 @@
 // Call event.Skip(false) to mark this event as completed
 #define wxEVT_FORMAT_FILE      3621
 
+//----------------------------------------------------------------------
+// Context menu events
+//----------------------------------------------------------------------
+
+// codelite is about to show the context menu for the
+// editor
+// Event type: clContextMenuEvent
+#define wxEVT_CONTEXT_MENU_EDITOR_SHOWING 3630
+
+// editor context menu was dismissed
+// Event type: clContextMenuEvent
+#define wxEVT_CONTEXT_MENU_EDITOR_DISMISSED 3631
+
 #endif // CODELITE_EVENTS_H
 

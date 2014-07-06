@@ -47,41 +47,32 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_answer = src.m_answer;
 
     // Copy wxCommandEvent members here
-    m_eventType  = src.m_eventType;
-    m_id         = src.m_id;
-    m_cmdString  = src.m_cmdString;
+    m_eventType = src.m_eventType;
+    m_id = src.m_id;
+    m_cmdString = src.m_cmdString;
     m_commandInt = src.m_commandInt;
-    m_extraLong  = src.m_extraLong;
+    m_extraLong = src.m_extraLong;
     return *this;
 }
 
-clCommandEvent::~clCommandEvent()
-{
-    m_ptr.reset();
-}
+clCommandEvent::~clCommandEvent() { m_ptr.reset(); }
 
 wxEvent* clCommandEvent::Clone() const
 {
-    clCommandEvent *new_event = new clCommandEvent(*this);
+    clCommandEvent* new_event = new clCommandEvent(*this);
     return new_event;
 }
 
-void clCommandEvent::SetClientObject(wxClientData* clientObject)
-{
-    m_ptr = clientObject;
-}
+void clCommandEvent::SetClientObject(wxClientData* clientObject) { m_ptr = clientObject; }
 
-wxClientData* clCommandEvent::GetClientObject() const
-{
-    return m_ptr.get();
-}
+wxClientData* clCommandEvent::GetClientObject() const { return m_ptr.get(); }
 
 // ---------------------------------
 // Code Completion event
 // ---------------------------------
 wxEvent* clCodeCompletionEvent::Clone() const
 {
-    clCodeCompletionEvent *new_event = new clCodeCompletionEvent(*this);
+    clCodeCompletionEvent* new_event = new clCodeCompletionEvent(*this);
     return new_event;
 }
 
@@ -102,9 +93,7 @@ clCodeCompletionEvent::clCodeCompletionEvent(wxEventType commandType, int winid)
 {
 }
 
-clCodeCompletionEvent::~clCodeCompletionEvent()
-{
-}
+clCodeCompletionEvent::~clCodeCompletionEvent() {}
 
 clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEvent& src)
 {
@@ -125,10 +114,7 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
 // clColourEvent
 // ------------------------------------------------
 
-clColourEvent::clColourEvent(const clColourEvent& event)
-{
-    *this = event;
-}
+clColourEvent::clColourEvent(const clColourEvent& event) { *this = event; }
 
 clColourEvent::clColourEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -137,18 +123,16 @@ clColourEvent::clColourEvent(wxEventType commandType, int winid)
 {
 }
 
-clColourEvent::~clColourEvent()
-{
-}
+clColourEvent::~clColourEvent() {}
 
 clColourEvent& clColourEvent::operator=(const clColourEvent& src)
 {
     // Call parent operator =
     clCommandEvent::operator=(src);
-    m_bgColour     = src.m_bgColour;
-    m_fgColour     = src.m_fgColour;
-    m_page         = src.m_page;
-    m_isActiveTab  = src.m_isActiveTab;
+    m_bgColour = src.m_bgColour;
+    m_fgColour = src.m_fgColour;
+    m_page = src.m_page;
+    m_isActiveTab = src.m_isActiveTab;
     m_borderColour = src.m_borderColour;
     return *this;
 }
@@ -157,10 +141,7 @@ clColourEvent& clColourEvent::operator=(const clColourEvent& src)
 // clBuildEvent
 // ------------------------------------------------
 
-clBuildEvent::clBuildEvent(const clBuildEvent& event)
-{
-    *this = event;
-}
+clBuildEvent::clBuildEvent(const clBuildEvent& event) { *this = event; }
 
 clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -168,9 +149,7 @@ clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
 {
 }
 
-clBuildEvent::~clBuildEvent()
-{
-}
+clBuildEvent::~clBuildEvent() {}
 
 clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
 {
@@ -191,26 +170,22 @@ clDebugEvent::clDebugEvent(wxEventType commandType, int winid)
 {
 }
 
-clDebugEvent::~clDebugEvent()
-{
-}
+clDebugEvent::~clDebugEvent() {}
 
-clDebugEvent::clDebugEvent(const clDebugEvent& event)
-{
-    *this = event;
-}
+clDebugEvent::clDebugEvent(const clDebugEvent& event) { *this = event; }
 
 clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
 {
-    clCommandEvent::operator =(other);
-    m_debuggerName      = other.m_debuggerName;
-    m_projectName       = other.m_projectName;
+    clCommandEvent::operator=(other);
+    m_debuggerName = other.m_debuggerName;
+    m_projectName = other.m_projectName;
     m_configurationName = other.m_configurationName;
-    m_executableName    = other.m_executableName;      // This will be set for wxEVT_DBG_UI_QUICK_DEBUG and wxEVT_DBG_UI_CORE_FILE
-    m_coreFile          = other.m_coreFile;            // wxEVT_DBG_UI_CORE_FILE
-    m_workingDirectory  = other.m_workingDirectory;    // wxEVT_DBG_UI_CORE_FILE, wxEVT_DBG_UI_QUICK_DEBUG
-    m_arguments         = other.m_arguments;           // wxEVT_DBG_UI_QUICK_DEBUG
-    m_startupCommands   = other.m_startupCommands;     // wxEVT_DBG_UI_QUICK_DEBUG
+    m_executableName =
+        other.m_executableName;    // This will be set for wxEVT_DBG_UI_QUICK_DEBUG and wxEVT_DBG_UI_CORE_FILE
+    m_coreFile = other.m_coreFile; // wxEVT_DBG_UI_CORE_FILE
+    m_workingDirectory = other.m_workingDirectory; // wxEVT_DBG_UI_CORE_FILE, wxEVT_DBG_UI_QUICK_DEBUG
+    m_arguments = other.m_arguments;               // wxEVT_DBG_UI_QUICK_DEBUG
+    m_startupCommands = other.m_startupCommands;   // wxEVT_DBG_UI_QUICK_DEBUG
     return *this;
 }
 
@@ -223,18 +198,13 @@ clNewProjectEvent::clNewProjectEvent(wxEventType commandType, int winid)
 {
 }
 
-clNewProjectEvent::clNewProjectEvent(const clNewProjectEvent& event)
-{
-    *this = event;
-}
+clNewProjectEvent::clNewProjectEvent(const clNewProjectEvent& event) { *this = event; }
 
-clNewProjectEvent::~clNewProjectEvent()
-{
-}
+clNewProjectEvent::~clNewProjectEvent() {}
 
 clNewProjectEvent& clNewProjectEvent::operator=(const clNewProjectEvent& other)
 {
-    clCommandEvent::operator =(other);
+    clCommandEvent::operator=(other);
     m_templates = other.m_templates;
     m_toolchain = other.m_toolchain;
     m_debugger = other.m_debugger;
@@ -247,14 +217,9 @@ clNewProjectEvent& clNewProjectEvent::operator=(const clNewProjectEvent& other)
 // --------------------------------------------------------------
 // Compiler event
 // --------------------------------------------------------------
-clCompilerEvent::~clCompilerEvent()
-{
-}
+clCompilerEvent::~clCompilerEvent() {}
 
-clCompilerEvent::clCompilerEvent(const clCompilerEvent& event)
-{
-    *this = event;
-}
+clCompilerEvent::clCompilerEvent(const clCompilerEvent& event) { *this = event; }
 
 clCompilerEvent::clCompilerEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -263,7 +228,7 @@ clCompilerEvent::clCompilerEvent(wxEventType commandType, int winid)
 
 clCompilerEvent& clCompilerEvent::operator=(const clCompilerEvent& src)
 {
-    clCommandEvent::operator =(src);
+    clCommandEvent::operator=(src);
     return *this;
 }
 
@@ -271,25 +236,38 @@ clCompilerEvent& clCompilerEvent::operator=(const clCompilerEvent& src)
 // Source formatting event
 // --------------------------------------------------------------
 
-clSourceFormatEvent::clSourceFormatEvent(const clSourceFormatEvent& event)
-{
-    *this = event;
-}
+clSourceFormatEvent::clSourceFormatEvent(const clSourceFormatEvent& event) { *this = event; }
 
 clSourceFormatEvent::clSourceFormatEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
 }
 
-
-clSourceFormatEvent::~clSourceFormatEvent()
-{
-}
+clSourceFormatEvent::~clSourceFormatEvent() {}
 
 clSourceFormatEvent& clSourceFormatEvent::operator=(const clSourceFormatEvent& src)
 {
-    clCommandEvent::operator =(src);
+    clCommandEvent::operator=(src);
     m_formattedString = src.m_formattedString;
     m_inputString = src.m_inputString;
     return *this;
 }
+
+//-------------------------------------------------------------------------
+// clContextMenuEvent
+//-------------------------------------------------------------------------
+
+clContextMenuEvent::clContextMenuEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+clContextMenuEvent::clContextMenuEvent(const clContextMenuEvent& event) { *this = event; }
+clContextMenuEvent& clContextMenuEvent::operator=(const clContextMenuEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_editor = src.m_editor;
+    m_menu = src.m_menu;
+    return *this;
+}
+
+clContextMenuEvent::~clContextMenuEvent() {}

@@ -39,60 +39,60 @@
 #include "plugin.h"
 #include "spellcheckeroptions.h"
 #include <wx/timer.h>
+#include "cl_command_event.h"
 //------------------------------------------------------------
 class IHunSpell;
 class SpellCheck : public IPlugin
 {
 public:
-	wxString GetCurrentWspPath() const { return m_currentWspPath; }
+    wxString GetCurrentWspPath() const { return m_currentWspPath; }
 
-	void     SetCheckContinuous( bool value );
-	bool     GetCheckContinuous() const { return m_checkContinuous; }
-	bool     IsTag( const wxString& token );
-	IEditor* GetEditor();
-	wxMenu*  CreateSubMenu();
+    void SetCheckContinuous(bool value);
+    bool GetCheckContinuous() const { return m_checkContinuous; }
+    bool IsTag(const wxString& token);
+    IEditor* GetEditor();
+    wxMenu* CreateSubMenu();
 
-	SpellCheck( IManager* manager );
-	~SpellCheck();
+    SpellCheck(IManager* manager);
+    ~SpellCheck();
 
-	// --------------------------------------------
-	// Abstract methods
-	// --------------------------------------------
-	virtual clToolBar* CreateToolBar( wxWindow* parent );
-	virtual void       CreatePluginMenu( wxMenu* pluginsMenu );
-	virtual void       HookPopupMenu( wxMenu* menu, MenuType type );
-	virtual void       UnHookPopupMenu( wxMenu* menu, MenuType type );
-	virtual void       UnPlug();
+    // --------------------------------------------
+    // Abstract methods
+    // --------------------------------------------
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
+    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
+    virtual void UnPlug();
 
-	void OnSettings( wxCommandEvent& e );
-	void OnCheck( wxCommandEvent& e );
-	void OnContinousCheck( wxCommandEvent& e );
-	void OnContextMenu( wxCommandEvent& e );
-	void OnTimer( wxTimerEvent& e );
-	void OnWspLoaded( wxCommandEvent& e );
-	void OnWspClosed( wxCommandEvent& e );
+    void OnSettings(wxCommandEvent& e);
+    void OnCheck(wxCommandEvent& e);
+    void OnContinousCheck(wxCommandEvent& e);
+    void OnContextMenu(wxCommandEvent& e);
+    void OnTimer(wxTimerEvent& e);
+    void OnWspLoaded(wxCommandEvent& e);
+    void OnWspClosed(wxCommandEvent& e);
+    void OnEditorContextMenuShowing(clContextMenuEvent& e);
+    void OnEditorContextMenuDismissed(clContextMenuEvent& e);
 
-	wxMenuItem*         m_sepItem;
-	wxEvtHandler*       m_topWin;
-	SpellCheckerOptions m_options;
-	wxWindow* GetTopWnd() { return m_mgr->GetTheApp()->GetTopWindow(); }
-	enum
-	{
-		IDM_BASE = 20500,
-		IDM_SETTINGS
-	};
+    wxMenuItem* m_sepItem;
+    wxEvtHandler* m_topWin;
+    SpellCheckerOptions m_options;
+    wxWindow* GetTopWnd() { return m_mgr->GetTheApp()->GetTopWindow(); }
+    enum { IDM_BASE = 20500, IDM_SETTINGS };
 
 protected:
-	void Init();
-	void LoadSettings();
-	void SaveSettings();
+    void Init();
+    void LoadSettings();
+    void SaveSettings();
+    void ClearIndicatorsFromEditors();
 
-	bool m_checkContinuous;
-	IHunSpell*    m_pEngine;
-	wxTimer       m_timer;
-	wxString      m_currentWspPath;
-	wxAuiToolBar* m_pToolbar;
-	wxMenu*       m_pSubMenu;
+protected:
+    bool m_checkContinuous;
+    IHunSpell* m_pEngine;
+    wxTimer m_timer;
+    wxString m_currentWspPath;
+    wxAuiToolBar* m_pToolbar;
 };
 //------------------------------------------------------------
 #endif // SpellCheck

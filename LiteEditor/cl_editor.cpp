@@ -68,6 +68,8 @@
 #include "bookmark_manager.h"
 #include "clang_code_completion.h"
 #include <wx/wupdlock.h>
+#include "cl_command_event.h"
+#include "codelite_events.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -2871,8 +2873,23 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
         m_pluginInitializedRMenu = true;
     }
 
+    {
+        // Notify about menu is about to be shown
+        clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR_SHOWING);
+        menuEvent.SetEditor(this);
+        menuEvent.SetMenu( m_rightClickMenu );
+        EventNotifier::Get()->ProcessEvent( menuEvent );
+    }
     //Popup the menu
     PopupMenu(m_rightClickMenu);
+
+    {
+        // notify that the menu was dismissed
+        clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR_DISMISSED);
+        menuEvent.SetEditor(this);
+        menuEvent.SetMenu( m_rightClickMenu );
+        EventNotifier::Get()->ProcessEvent( menuEvent );
+    }
 
     m_popupIsOn = false;
 

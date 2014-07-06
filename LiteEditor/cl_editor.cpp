@@ -890,17 +890,6 @@ void LEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/,
     m_preserveSelection = preserveSelection;
 }
 
-//void LEditor::OnScnPainted(wxStyledTextEvent &event)
-//{
-//    event.Skip();
-//    if (m_positionToEnsureVisible == wxNOT_FOUND) {
-//        return;
-//    }
-//    CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"), m_positionToEnsureVisible, m_preserveSelection ? wxT("true"):wxT("false")));
-//    DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
-//    m_positionToEnsureVisible = wxNOT_FOUND;
-//}
-
 void LEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 {
     int start = -1, end = -1;
@@ -4749,13 +4738,15 @@ wxString LEditor::GetFirstSelection()
 void LEditor::MakeFirstLineInEditor(int lineNo)
 {
     int offsetFromTop = 10;
-    if ( lineNo != wxNOT_FOUND ) {
+    int topLine = lineNo;
+    if ( topLine != wxNOT_FOUND ) {
         // try this: set the first visible line to be -10 lines from
         // the requested lineNo
-        lineNo -= offsetFromTop;
-        if ( lineNo < 0 ) {
-            lineNo = 0;
+        topLine -= offsetFromTop;
+        if ( topLine < 0 ) {
+            topLine = 0;
         }
-        SetFirstVisibleLine( lineNo );
+        SetFirstVisibleLine( topLine );
+        EnsureVisible( lineNo );
     }
 }

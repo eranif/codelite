@@ -108,7 +108,7 @@ BEGIN_EVENT_TABLE(LEditor, wxStyledTextCtrl)
     EVT_STC_DWELLEND               (wxID_ANY, LEditor::OnDwellEnd)
     EVT_STC_START_DRAG             (wxID_ANY, LEditor::OnDragStart)
     EVT_STC_DO_DROP                (wxID_ANY, LEditor::OnDragEnd)
-    EVT_STC_PAINTED                (wxID_ANY, LEditor::OnScnPainted)
+    //EVT_STC_PAINTED                (wxID_ANY, LEditor::OnScnPainted)
     EVT_STC_UPDATEUI               (wxID_ANY, LEditor::OnSciUpdateUI)
     EVT_STC_SAVEPOINTREACHED       (wxID_ANY, LEditor::OnSavePoint)
     EVT_STC_SAVEPOINTLEFT          (wxID_ANY, LEditor::OnSavePoint)
@@ -884,28 +884,22 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
 
 void LEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/, bool forceDelay /*=false*/)
 {
-    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    if (forceDelay || (opts && opts->GetWordWrap()) )  {
-        // If the text may be word-wrapped, don't EnsureVisible immediately but from the
-        // paintevent handler, so that scintilla has time to take word-wrap into account
-        m_positionToEnsureVisible = pos;
-        m_preserveSelection = preserveSelection;
-    } else {
-        DoEnsureCaretIsVisible(pos, preserveSelection);
-        m_positionToEnsureVisible = wxNOT_FOUND;
-    }
+    // Always use CallAfter( ) to avoid any problems with paint events 
+    // when the view is 'word wrapped'
+    CallAfter( &LEditor::MakeFirstLineInEditor, LineFromPos(pos) );
+    m_preserveSelection = preserveSelection;
 }
 
-void LEditor::OnScnPainted(wxStyledTextEvent &event)
-{
-    event.Skip();
-    if (m_positionToEnsureVisible == wxNOT_FOUND) {
-        return;
-    }
-    CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"), m_positionToEnsureVisible, m_preserveSelection ? wxT("true"):wxT("false")));
-    DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
-    m_positionToEnsureVisible = wxNOT_FOUND;
-}
+//void LEditor::OnScnPainted(wxStyledTextEvent &event)
+//{
+//    event.Skip();
+//    if (m_positionToEnsureVisible == wxNOT_FOUND) {
+//        return;
+//    }
+//    CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"), m_positionToEnsureVisible, m_preserveSelection ? wxT("true"):wxT("false")));
+//    DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
+//    m_positionToEnsureVisible = wxNOT_FOUND;
+//}
 
 void LEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 {
@@ -4749,5 +4743,19 @@ wxString LEditor::GetFirstSelection()
         
     } else {
         return wxStyledTextCtrl::GetSelectedText();
+    }
+}
+
+void LEditor::MakeFirstLineInEditor(int lineNo)
+{
+    int offsetFromTop = 10;
+    if ( lineNo != wxNOT_FOUND ) {
+        // try this: set the first visible line to be -10 lines from
+        // the requested lineNo
+        lineNo -= offsetFromTop;
+        if ( lineNo < 0 ) {
+            lineNo = 0;
+        }
+        SetFirstVisibleLine( lineNo );
     }
 }

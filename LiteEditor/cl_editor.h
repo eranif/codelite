@@ -146,7 +146,10 @@ public:
     static bool                                 m_ccShowItemsComments;
     static bool                                 m_ccInitialized;
     typedef std::vector<LEditor*> Vec_t;
+    
 public:
+    void MakeFirstLineInEditor(int lineNo);
+    
     static FindReplaceData &GetFindReplaceData() {
         return m_findReplaceData;
     }
@@ -851,7 +854,7 @@ private:
     void OnDwellStart(wxStyledTextEvent& event);
     void OnDwellEnd(wxStyledTextEvent& event);
     void OnCallTipClick(wxStyledTextEvent& event);
-    void OnScnPainted(wxStyledTextEvent &event);
+    //void OnScnPainted(wxStyledTextEvent &event);
     void OnSciUpdateUI(wxStyledTextEvent &event);
     void OnFindDialog(wxCommandEvent &event);
     void OnContextMenu(wxContextMenuEvent &event);

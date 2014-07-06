@@ -474,6 +474,10 @@
 															"m_value":	""
 														}, {
 															"type":	"string",
+															"m_label":	"Text Hint",
+															"m_value":	""
+														}, {
+															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
 														}, {
@@ -590,6 +594,11 @@
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
 											"m_value":	"2,2"
@@ -686,6 +695,11 @@
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
@@ -3175,6 +3189,11 @@
 													"m_label":	"Bitmap File:",
 													"m_path":	""
 												}, {
+													"type":	"choice",
+													"m_label":	"Direction",
+													"m_selection":	0,
+													"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+												}, {
 													"type":	"string",
 													"m_label":	"Margins:",
 													"m_value":	"2,2"
@@ -3264,6 +3283,11 @@
 													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
+												}, {
+													"type":	"choice",
+													"m_label":	"Direction",
+													"m_selection":	0,
+													"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 												}, {
 													"type":	"string",
 													"m_label":	"Margins:",
@@ -3380,6 +3404,11 @@
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
 											"m_value":	"2,2"
@@ -3469,6 +3498,11 @@
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Direction",
+											"m_selection":	0,
+											"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 										}, {
 											"type":	"string",
 											"m_label":	"Margins:",
@@ -5317,7 +5351,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	"Select the active porject"
+																	"m_value":	"Select the active project"
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
@@ -7004,6 +7038,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Text Hint",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	"0"
 												}, {
@@ -7192,6 +7230,10 @@
 															"m_value":	""
 														}, {
 															"type":	"string",
+															"m_label":	"Text Hint",
+															"m_value":	""
+														}, {
+															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
 														}, {
@@ -7288,6 +7330,11 @@
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
+														}, {
+															"type":	"choice",
+															"m_label":	"Direction",
+															"m_selection":	0,
+															"m_options":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
 														}, {
 															"type":	"string",
 															"m_label":	"Margins:",

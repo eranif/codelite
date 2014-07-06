@@ -586,11 +586,11 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
     if (position != wxNOT_FOUND) {
         editor->SetEnsureCaretIsVisible(position, preserveSelection);
-        DoSetFirstVisibleLine(editor, editor->LineFromPosition( position ));
+        editor->MakeFirstLineInEditor( editor->LineFromPosition( position ) );
 
     } else if (lineno != wxNOT_FOUND) {
         editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno), preserveSelection);
-        DoSetFirstVisibleLine(editor, lineno);
+        editor->MakeFirstLineInEditor( lineno );
     }
 
     if (m_reloadingDoRaise) {
@@ -1262,23 +1262,4 @@ void MainBook::CloseAllButThisVoid(wxWindow* win)
 void MainBook::CloseAllVoid(bool cancellable)
 {
     CloseAll(cancellable);
-}
-
-void MainBook::DoSetFirstVisibleLine(LEditor* editor, int lineNo)
-{
-    int offsetFromTop = 10;
-//    int nLinesOnScreen = editor->LinesOnScreen();
-//    if ( nLinesOnScreen < 20 ) {
-//        offsetFromTop = (nLinesOnScreen / 2);
-//    }
-    
-    if ( lineNo != wxNOT_FOUND ) {
-        // try this: set the first visible line to be -10 lines from
-        // the requested lineNo
-        lineNo -= offsetFromTop;
-        if ( lineNo < 0 ) {
-            lineNo = 0;
-        }
-        editor->SetFirstVisibleLine( lineNo );
-    }
 }

@@ -7,13 +7,22 @@
 // -----------------------------------------------------------
 class clMakeGeneratorApp : public wxAppConsole
 {
-    wxString  m_workspaceFile;
-    wxString  m_project;
-    wxString  m_workingDirectory;
-    wxString  m_configuration;
-    bool      m_verbose;
-    bool      m_executeCommand;
-    int       m_exitCode;
+public:
+    enum eCommandType {
+        kBuild,
+        kClean,
+        kRebuild
+    };
+    
+protected:
+    wxString     m_workspaceFile;
+    wxString     m_project;
+    wxString     m_workingDirectory;
+    wxString     m_configuration;
+    bool         m_verbose;
+    bool         m_executeCommand;
+    int          m_exitCode;
+    eCommandType m_commandType;
     
 protected:
     bool DoParseCommandLine(wxCmdLineParser& parser);

@@ -14,6 +14,7 @@ static const wxCmdLineEntryDesc g_cmdDesc[] = {
     { wxCMD_LINE_SWITCH, "h", "help", "show this help message", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
     { wxCMD_LINE_OPTION, "w", "workspace", "codelite workspace file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
     { wxCMD_LINE_OPTION, "c", "config", "configuration name to generate", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
+    { wxCMD_LINE_OPTION, "d", "command", "which command to run? possible values: build, clean or rebuild. The default is to build"},
     { wxCMD_LINE_OPTION, "p", "project",  "project to build, if non given codelite will build the active project", wxCMD_LINE_VAL_STRING },
     { wxCMD_LINE_SWITCH, "v", "verbose",  "Run in verbose move and print all log lines to the stdout/stderr" },
     { wxCMD_LINE_SWITCH, "e", "execute",  "Instead of printing the command line, execute it" },
@@ -24,6 +25,7 @@ clMakeGeneratorApp::clMakeGeneratorApp()
     : m_verbose(false)
     , m_executeCommand(false)
     , m_exitCode(0)
+    , m_commandType(kBuild)
 {
 }
 
@@ -109,7 +111,19 @@ bool clMakeGeneratorApp::OnInit()
     }
 
     wxString commandToRun;
-    commandToRun = builder.GetBuildCommand(m_project, m_configuration);
+    switch ( m_commandType ) {
+    case kBuild:
+        commandToRun = builder.GetBuildCommand(m_project, m_configuration);
+        break;
+    case kClean:
+        commandToRun = builder.GetCleanCommand(m_project, m_configuration);
+        break;
+    case kRebuild:
+        commandToRun = builder.GetCleanCommand(m_project, m_configuration);
+        // append the build command
+        commandToRun << " && " << builder.GetCleanCommand(m_project, m_configuration);
+        break;
+    }
 
     wxString workspace_path = fnWorkspace.GetPath();
     if ( workspace_path.Contains(" ") || workspace_path.Contains("\t") ) {
@@ -153,7 +167,21 @@ bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
     if ( parser.Found("e") ) {
         m_executeCommand = true;
     }
-
+    
+    wxString command;
+    if ( parser.Found("d", &command) ) {
+        if ( command == "build" ) {
+            m_commandType = kBuild;
+        } else if ( command == "rebuild" ) {
+            m_commandType = kRebuild;
+        } else if ( command == "clean" ) {
+            m_commandType = kClean;
+        } else {
+            parser.Usage();
+            return false;
+        }
+    }
+    
     parser.Found("p", &m_project);
     m_verbose = (parser.FoundSwitch("v") == wxCMD_SWITCH_ON);
     m_workingDirectory = ::wxGetCwd();
@@ -202,6 +230,7 @@ void clMakeGeneratorApp::DoExecCommand(const wxString& command)
 {
     wxString cmd = command;
     WrapInShell( cmd );
+    wxPrintf(cmd + "\n");
     m_exitCode = ::wxExecute( cmd, wxEXEC_SYNC|wxEXEC_NOHIDE|wxEXEC_SHOW_CONSOLE);
     CallAfter( &clMakeGeneratorApp::DoExitApp );
 }

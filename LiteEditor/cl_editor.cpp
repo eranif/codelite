@@ -1798,10 +1798,6 @@ void LEditor::BraceMatch(long pos)
         wxStyledTextCtrl::BraceBadLight(pos);
     }
     SetHighlightGuide(indentCol);
-
-//#ifdef __WXMAC__
-//	Refresh();
-//#endif
 }
 
 void LEditor::BraceMatch(const bool& bSelRegion)

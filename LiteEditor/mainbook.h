@@ -86,6 +86,9 @@ private:
     void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clCommandEvent &e);
     void OnWorkspaceReloadEnded(clCommandEvent &e);
+    
+    void DoSetFirstVisibleLine(LEditor* editor, int lineNo);
+    
 public:
     MainBook(wxWindow *parent);
     ~MainBook();

@@ -240,11 +240,11 @@ wxString FormatOptions::ClangBreakBeforeBrace() const
 
 wxString FormatOptions::ClangGlobalSettings() const
 {
-    int tabWidth = EditorConfigST::Get()->GetOptions()->GetTabWidth();
+    int indentWidth = EditorConfigST::Get()->GetOptions()->GetIndentWidth();
     bool useTabs = EditorConfigST::Get()->GetOptions()->GetIndentUsesTabs();
     
     wxString options;
-    options << ", TabWidth: " << tabWidth;
+    options << ", IndentWidth: " << indentWidth;
     options << ", UseTab: " << ( useTabs ? "ForIndentation" : "Never" );
     return options;
 }

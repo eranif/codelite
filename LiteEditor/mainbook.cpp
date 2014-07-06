@@ -39,6 +39,7 @@
 #include "theme_handler.h"
 #include "editorframe.h"
 #include "FilesModifiedDlg.h"
+#include <wx/regex.h>
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -505,6 +506,19 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 {
     wxFileName fileName(file_name);
     fileName.MakeAbsolute();
+
+#ifdef __WXMSW__
+    // Handle cygwin paths
+    wxString curpath = fileName.GetFullPath();
+    static wxRegEx reCygdrive("/cygdrive/([A-Za-z])");
+    if ( reCygdrive.Matches(curpath) ) {
+        // Replace the /cygdrive/c with volume C:
+        wxString volume = reCygdrive.GetMatch(curpath, 1);
+        volume << ":";
+        reCygdrive.Replace(&curpath, volume);
+        fileName = curpath;
+    }
+#endif
 
     if(IsFileExists(fileName) == false) {
         wxLogMessage(wxT("Failed to open: %s: No such file or directory"), fileName.GetFullPath().c_str());

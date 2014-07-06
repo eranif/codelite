@@ -881,7 +881,7 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
     wxString fixedPath;
     for(size_t i=0; i<paths.GetCount(); ++i) {
         wxString &curpath = paths.Item(i);
-        static wxRegEx reCygdrive("/cygdrive/([A-Za-Z])");
+        static wxRegEx reCygdrive("/cygdrive/([A-Za-z])");
         if ( reCygdrive.Matches(curpath) ) {
             // Get the drive letter
             wxString volume = reCygdrive.GetMatch(curpath, 1);

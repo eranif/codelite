@@ -879,7 +879,7 @@ bool DbgGdb::ListFrames()
 bool DbgGdb::SetFrame( int frame )
 {
     wxString command;
-    command << wxT( "-stack-select-frame " ) << frame;
+    command << wxT( "frame " ) << frame;
     return WriteCommand( command, new DbgCmdSelectFrame( m_observer ) );
 }
 

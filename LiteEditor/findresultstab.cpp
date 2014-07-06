@@ -768,7 +768,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxStyledText
                 if ( lineNumber ) {
                     lineNumber--;
                 }
-                editor->GetSTC()->ScrollToLine(lineNumber);
+                editor->SetLineVisible(lineNumber);
                 editor->SetSelection(position, position + resultLength);
 
 #ifdef __WXGTK__

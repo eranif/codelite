@@ -4748,5 +4748,8 @@ void LEditor::MakeFirstLineInEditor(int lineNo)
         }
         SetFirstVisibleLine( topLine );
         EnsureVisible( lineNo );
+
+        // get the focus
+        SetActive();
     }
 }

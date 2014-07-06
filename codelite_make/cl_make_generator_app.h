@@ -13,7 +13,8 @@ class clMakeGeneratorApp : public wxAppConsole
     wxString  m_configuration;
     bool      m_verbose;
     bool      m_executeCommand;
-
+    int       m_exitCode;
+    
 protected:
     bool DoParseCommandLine(wxCmdLineParser& parser);
     void DoExecCommand(const wxString &command);

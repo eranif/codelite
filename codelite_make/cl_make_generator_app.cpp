@@ -23,6 +23,7 @@ static const wxCmdLineEntryDesc g_cmdDesc[] = {
 clMakeGeneratorApp::clMakeGeneratorApp()
     : m_verbose(false)
     , m_executeCommand(false)
+    , m_exitCode(0)
 {
 }
 
@@ -55,7 +56,7 @@ bool clMakeGeneratorApp::OnInit()
         fnWorkspace.MakeAbsolute(m_workingDirectory);
     }
 
-    Info(wxString() << "-- Generting makefile for workspace file " << fnWorkspace.GetFullPath());
+    Info(wxString() << "-- Generating makefile for workspace file " << fnWorkspace.GetFullPath());
     wxString errmsg;
     if ( !WorkspaceST::Get()->OpenWorkspace(fnWorkspace.GetFullPath(), errmsg) ) {
         Error(wxString() << "Error while loading workspace: " << fnWorkspace.GetFullPath() << ". " << errmsg);
@@ -65,7 +66,10 @@ bool clMakeGeneratorApp::OnInit()
     if ( m_project.IsEmpty() ) {
         m_project = WorkspaceST::Get()->GetActiveProjectName();
     }
-
+    
+    // Set the active project to the configuration set the by the user
+    WorkspaceST::Get()->GetBuildMatrix()->SetSelectedConfigurationName( m_configuration );
+    
     // Which makefile should we create?
     BuilderGnuMake builder;
     ProjectPtr project = WorkspaceST::Get()->FindProjectByName(m_project, errmsg);
@@ -113,8 +117,6 @@ bool clMakeGeneratorApp::OnInit()
     }
 
     Info("-- Makefile generation completed successfully!");
-    Info("-- To use the makefile, run the following commands from a terminal:");
-
     wxString command;
     command << "cd " << workspace_path << " && " << commandToRun;
 
@@ -122,6 +124,7 @@ bool clMakeGeneratorApp::OnInit()
         CallAfter( &clMakeGeneratorApp::DoExecCommand, command );
 
     } else {
+        Info("-- To use the makefile, run the following commands from a terminal:");
         Out( command );
         CallAfter( &clMakeGeneratorApp::DoExitApp);
     }
@@ -160,6 +163,8 @@ bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
 void clMakeGeneratorApp::DoExitApp()
 {
     ExitMainLoop();
+    // Force an exit here
+    exit(m_exitCode);
 }
 
 // Log functions
@@ -197,6 +202,6 @@ void clMakeGeneratorApp::DoExecCommand(const wxString& command)
 {
     wxString cmd = command;
     WrapInShell( cmd );
-    ::wxExecute( cmd, wxEXEC_SYNC|wxEXEC_NOHIDE|wxEXEC_SHOW_CONSOLE);
+    m_exitCode = ::wxExecute( cmd, wxEXEC_SYNC|wxEXEC_NOHIDE|wxEXEC_SHOW_CONSOLE);
     CallAfter( &clMakeGeneratorApp::DoExitApp );
 }

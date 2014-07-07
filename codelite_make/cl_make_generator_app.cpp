@@ -121,7 +121,7 @@ bool clMakeGeneratorApp::OnInit()
     case kRebuild:
         commandToRun = builder.GetCleanCommand(m_project, m_configuration);
         // append the build command
-        commandToRun << " && " << builder.GetCleanCommand(m_project, m_configuration);
+        commandToRun << " && " << builder.GetBuildCommand(m_project, m_configuration);
         break;
     }
 

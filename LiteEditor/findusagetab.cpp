@@ -159,7 +159,7 @@ void FindUsageTab::DoOpenResult(const CppToken& token)
     if (!token.getFilename().empty()) {
         LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile( token.getFilename() , wxEmptyString, token.getLineNumber());
         if(editor) {
-            editor->GotoLine(token.getLineNumber());
+            editor->SetLineVisible(token.getLineNumber());
             editor->ScrollToColumn(0);
             editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
         }

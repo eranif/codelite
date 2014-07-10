@@ -4781,5 +4781,7 @@ void LEditor::SetLineVisible(int lineno)
             lineno = 0;
         }
         SetFirstVisibleLine( lineno );
+        // If the line is hidden - expand it
+        EnsureVisible( lineno );
     }
 }

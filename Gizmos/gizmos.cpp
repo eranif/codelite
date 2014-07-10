@@ -406,7 +406,7 @@ void WizardsPlugin::OnNewClass(wxCommandEvent &e)
 
 void WizardsPlugin::DoCreateNewClass()
 {
-    NewClassDlg *dlg = new NewClassDlg(NULL, m_mgr);
+    NewClassDlg *dlg = new NewClassDlg(EventNotifier::Get()->TopFrame(), m_mgr);
     if (dlg->ShowModal() == wxID_OK) {
         //do something with the information here
         NewClassInfo info;

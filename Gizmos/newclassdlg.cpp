@@ -93,9 +93,10 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 
     //m_textCtrlFileName->Enable( false );
     GetSizer()->Layout();
-    Centre();
     m_textClassName->SetFocus();
+
     WindowAttrManager::Load(this, wxT("NewClassDlg"), m_mgr->GetConfigTool());
+    Centre();
     
     // override the default size
     GetSizer()->Fit(this);

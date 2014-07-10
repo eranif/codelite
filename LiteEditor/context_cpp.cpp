@@ -687,7 +687,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
     }
 
     //check to see if this file is a workspace file
-    AddIncludeFileDlg *dlg = new AddIncludeFileDlg(NULL, choice, rCtrl.GetText(), FindLineToAddInclude());
+    AddIncludeFileDlg *dlg = new AddIncludeFileDlg(clMainFrame::Get(), choice, rCtrl.GetText(), FindLineToAddInclude());
     if (dlg->ShowModal() == wxID_OK) {
         //add the line to the current document
         wxString lineToAdd = dlg->GetLineToAdd();

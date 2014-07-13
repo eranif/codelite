@@ -83,7 +83,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
         m_splitterH->SetSashPosition(sashPos);
     }
     
-    LexerConfPtr textLexer = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
     if ( textLexer ) {
         textLexer->Apply( m_stcMessage );
     }
@@ -130,13 +130,13 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
         m_splitterV->SetSashPosition(sashHPos);
     }
     
-    LexerConfPtr diffLexer = EditorConfigST::Get()->GetLexer("Diff");
+    LexerConf::Ptr_t diffLexer = EditorConfigST::Get()->GetLexer("Diff");
     if ( diffLexer ) {
         m_stcDiff->SetLexer(wxSTC_LEX_DIFF);
         diffLexer->Apply( m_stcDiff );
     }
     
-    LexerConfPtr textLexer = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
     if ( textLexer ) {
         textLexer->Apply( m_stcMessage );
     }

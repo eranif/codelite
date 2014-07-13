@@ -208,7 +208,7 @@ void CppCheckReportPage::SetMessage(const wxString& msg)
 void CppCheckReportPage::DoInitStyle()
 {
     m_stc->SetReadOnly(true);
-	LexerConfPtr config = EditorConfigST::Get()->GetLexer("text");
+	LexerConf::Ptr_t config = EditorConfigST::Get()->GetLexer("text");
 	if ( config ) {
 		config->Apply( m_stc, true );
 		m_stc->HideSelection(true);

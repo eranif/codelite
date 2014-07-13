@@ -31,7 +31,7 @@
 EditDlg::EditDlg(wxWindow* parent, const wxString &text)
     : EditDlgBase(parent)
 {
-    LexerConfPtr lex = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
     lex->Apply( m_stc10 );
     m_stc10->SetText( text );
     WindowAttrManager::Load(this, "EditDlg");

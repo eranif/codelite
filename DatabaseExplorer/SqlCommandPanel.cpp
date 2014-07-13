@@ -59,7 +59,7 @@ END_EVENT_TABLE()
 SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const wxString& dbName, const wxString& dbTable)
     : _SqlCommandPanel(parent)
 {
-    LexerConfPtr lexerSQL = EditorConfigST::Get()->GetLexer("SQL");
+    LexerConf::Ptr_t lexerSQL = EditorConfigST::Get()->GetLexer("SQL");
     if ( lexerSQL ) {
         lexerSQL->Apply(m_scintillaSQL, true);
 

@@ -76,7 +76,7 @@ void ContextBase::AutoIndent(const wxChar &ch)
     }
 }
 
-void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
+void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr)
 {
     lexPtr->Apply( &GetCtrl() );
 }
@@ -218,7 +218,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
         } else if ( GetActiveKeywordSet() != wxNOT_FOUND ) {
 
             // the default action is to use the lexer keywords
-            LexerConfPtr lexPtr;
+            LexerConf::Ptr_t lexPtr;
             // Read the configuration file
             if (EditorConfigST::Get()->IsOk()) {
                 lexPtr = EditorConfigST::Get()->GetLexer( GetName() );

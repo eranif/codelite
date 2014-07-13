@@ -86,7 +86,7 @@ ZoomText::~ZoomText()
 void ZoomText::UpdateLexer(const wxString& filename)
 {
     m_filename = filename;
-    LexerConfPtr lexer = EditorConfigST::Get()->GetLexerForFile(filename);
+    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(filename);
     if ( !lexer ) {
         lexer = EditorConfigST::Get()->GetLexer("Text");
     }

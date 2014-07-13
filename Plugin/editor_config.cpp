@@ -143,12 +143,12 @@ wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
     return NULL;
 }
 
-LexerConfPtr EditorConfig::GetLexerForFile(const wxString& filename)
+LexerConf::Ptr_t EditorConfig::GetLexerForFile(const wxString& filename)
 {
     return ColoursAndFontsManager::Get().GetLexerForFile(filename);
 }
 
-LexerConfPtr EditorConfig::GetLexer(const wxString& lexerName)
+LexerConf::Ptr_t EditorConfig::GetLexer(const wxString& lexerName)
 {
     return ColoursAndFontsManager::Get().GetLexer(lexerName);
 }

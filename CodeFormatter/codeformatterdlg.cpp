@@ -83,7 +83,7 @@ void CodeFormatterDlg::InitDialog()
         m_pgPropPreDefinedStyles->SetValue("ANSI");
 
     m_textCtrlPreview->SetLexer(wxSTC_LEX_CPP);
-    LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("C++");
+    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer("C++");
     if ( lexer ) {
         lexer->Apply( m_textCtrlPreview, true );
     }

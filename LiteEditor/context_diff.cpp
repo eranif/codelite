@@ -52,7 +52,7 @@ ContextBase* ContextDiff::NewInstance(LEditor* container)
 
 void ContextDiff::ApplySettings()
 {
-	LexerConfPtr lexPtr;
+	LexerConf::Ptr_t lexPtr;
 	if (EditorConfigST::Get()->IsOk()) {
 		lexPtr = EditorConfigST::Get()->GetLexer(GetName());
 	}

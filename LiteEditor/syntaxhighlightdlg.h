@@ -41,7 +41,7 @@ class wxTreebook;
 class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 {
     bool m_isModified;
-    LexerConfPtr m_lexer;
+    LexerConf::Ptr_t m_lexer;
     
 protected:
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event);

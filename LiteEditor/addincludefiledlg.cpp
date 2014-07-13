@@ -50,7 +50,7 @@ AddIncludeFileDlg::AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath
     UpdateLineToAdd();
     
     // Initialise the preview window
-    LexerConfPtr cppLex = EditorConfigST::Get()->GetLexer("C++");
+    LexerConf::Ptr_t cppLex = EditorConfigST::Get()->GetLexer("C++");
     cppLex->Apply( m_textCtrlPreview, true );
     
     //---------------------------------------------------------

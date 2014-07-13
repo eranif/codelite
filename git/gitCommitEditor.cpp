@@ -37,7 +37,7 @@ GitCommitEditor::GitCommitEditor(wxWindow* parent, wxWindowID id, const wxPoint 
 
 void GitCommitEditor::InitStyles()
 {
-    LexerConfPtr diffLexer = EditorConfigST::Get()->GetLexer("Diff");
+    LexerConf::Ptr_t diffLexer = EditorConfigST::Get()->GetLexer("Diff");
     if ( diffLexer ) {
         diffLexer->Apply( this );
         this->SetLexer(wxSTC_LEX_DIFF);

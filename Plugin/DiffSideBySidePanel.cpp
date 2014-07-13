@@ -191,10 +191,10 @@ void DiffSideBySidePanel::PrepareViews()
         useRightSideLexer = true;
     }
 
-    LexerConfPtr leftLexer  = EditorConfigST::Get()->GetLexerForFile(useRightSideLexer ? fnRight.GetFullName() : fnLeft.GetFullName());
+    LexerConf::Ptr_t leftLexer  = EditorConfigST::Get()->GetLexerForFile(useRightSideLexer ? fnRight.GetFullName() : fnLeft.GetFullName());
     wxASSERT(leftLexer);
 
-    LexerConfPtr rightLexer = EditorConfigST::Get()->GetLexerForFile(fnRight.GetFullName());
+    LexerConf::Ptr_t rightLexer = EditorConfigST::Get()->GetLexerForFile(fnRight.GetFullName());
     wxASSERT(rightLexer);
 
     leftLexer->Apply( m_stcLeft, true );

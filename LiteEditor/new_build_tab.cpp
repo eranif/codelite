@@ -991,7 +991,7 @@ wxString NewBuildTab::GetBuildContent() const
 wxFont NewBuildTab::DoGetFont() const
 {
     wxFont font = wxNullFont;
-    LexerConfPtr lexerConf = EditorConfigST::Get()->GetLexer("C++");
+    LexerConf::Ptr_t lexerConf = EditorConfigST::Get()->GetLexer("C++");
     if ( lexerConf ) {
         font = lexerConf->GetFontForSyle(wxSTC_C_DEFAULT);
     }

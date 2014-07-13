@@ -44,7 +44,7 @@ ContextBase *ContextGeneric::NewInstance(LEditor *container)
 
 void ContextGeneric::ApplySettings()
 {
-    LexerConfPtr lexPtr;
+    LexerConf::Ptr_t lexPtr;
     if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }

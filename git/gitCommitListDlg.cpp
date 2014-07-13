@@ -52,12 +52,12 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     , m_git(git)
     , m_workingDir(workingDir)
 {
-    LexerConfPtr lex = EditorConfigST::Get()->GetLexer("diff");
+    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
     if ( lex ) {
         lex->Apply( m_stcDiff, true );
     }
     
-    LexerConfPtr textLex = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t textLex = EditorConfigST::Get()->GetLexer("text");
     textLex->Apply( m_stcCommitMessage, true );
     
     clConfig conf("git.conf");

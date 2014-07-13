@@ -834,7 +834,7 @@ wxString DbViewerPanel::CreatePanelName(View* v, PanelType type)
 
 void DbViewerPanel::InitStyledTextCtrl(wxStyledTextCtrl *sci)
 {
-    LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("SQL");
+    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer("SQL");
     if ( lexer ) {
         lexer->Apply( sci, true );
     }

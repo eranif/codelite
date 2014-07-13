@@ -32,7 +32,7 @@ CCVirtualListCtrl::CCVirtualListCtrl(wxWindow* parent, wxWindowID id, const wxPo
 {
     // set the colors based on the C++ lexer using the "Default" style
     
-    LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("C++");
+    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer("C++");
     if ( lexer ) {
 #ifdef __WXGTK__
         SetBackgroundStyle(wxBG_STYLE_CUSTOM);

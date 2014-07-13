@@ -33,7 +33,7 @@
 #include "syntaxhighlightbasedlg.h"
 
 ///////////////////////////////////////////////////////////////////////////
-LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos, wxSize size, int style )
+LexerPage::LexerPage( wxWindow* parent, LexerConf::Ptr_t lexer, int id, wxPoint pos, wxSize size, int style )
     : LexerPageBase(parent, id, pos, wxSize(1, 1), style)
     , m_lexer(lexer)
     , m_selection(0)

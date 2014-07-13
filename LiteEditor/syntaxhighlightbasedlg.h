@@ -70,7 +70,6 @@ protected:
     wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
     wxStaticText* m_staticText911;
     wxColourPickerCtrl* m_colourPickerOutputPanesBgColour;
-    wxButton* m_buttonDefaults;
     wxStdDialogButtonSizer* m_stdBtnSizer10;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
@@ -93,7 +92,6 @@ protected:
     virtual void OnEditKeyWordsButton4(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelTextChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnOutputViewColourChanged(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnRestoreDefaults(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonApply(wxCommandEvent& event) { event.Skip(); }

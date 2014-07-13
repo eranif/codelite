@@ -100,7 +100,7 @@ ShellTab::~ShellTab()
 
 void ShellTab::InitStyle(wxStyledTextCtrl* sci)
 {
-    LexerConfPtr text = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t text = EditorConfigST::Get()->GetLexer("text");
     text->Apply(sci);
 }
 

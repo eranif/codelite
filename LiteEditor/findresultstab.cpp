@@ -185,7 +185,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
     wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
     wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
 
-    LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
+    LexerConf::Ptr_t cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
     if(cppLexer) {
         font = cppLexer->GetFontForSyle(wxSTC_C_DEFAULT);
         bold = font;

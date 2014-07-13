@@ -11,6 +11,7 @@
 #include "cl_command_event.h"
 #include "json_node.h"
 #include "file_logger.h"
+#include <algorithm>
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()
@@ -36,6 +37,15 @@ void ColoursAndFontsManager::Load()
     m_lexersMap.clear();
     m_initialized = true;
 
+    // Always load first the installation lexers
+    wxFileName defaultLexersPath(clStandardPaths::Get().GetDataDir(), "");
+    defaultLexersPath.AppendDir("lexers");
+    LoadNewXmls(defaultLexersPath.GetPath());
+
+    //+++----------------------------------
+    // Now handle user lexers
+    //+++----------------------------------
+
     // Check to see if we have the new configuration files format (we break them from the unified XML file)
     // The naming convention used is:
     // lexer_<language>_<theme-name>.xml
@@ -43,6 +53,8 @@ void ColoursAndFontsManager::Load()
     cppLexerDefault.AppendDir("lexers");
 
     if(cppLexerDefault.FileExists()) {
+        // We found the old lexer style here (single XML file for all the lexers)
+        // Merge them with the installation lexers
         CL_DEBUG("Migrating old lexers XML files ...");
         LoadOldXmls(cppLexerDefault.GetPath());
 
@@ -53,13 +65,6 @@ void ColoursAndFontsManager::Load()
             CL_DEBUG("Using user lexer XML files from %s ...", cppLexerDefault.GetPath());
             // this function loads and delete the old xml files so they won't be located
             // next time we search for them
-            LoadNewXmls(cppLexerDefault.GetPath());
-
-        } else {
-            // load them from the installation folder
-            cppLexerDefault.SetPath(clStandardPaths::Get().GetDataDir());
-            cppLexerDefault.AppendDir("lexers");
-            CL_DEBUG("Using installation lexer XML files from %s ...", cppLexerDefault.GetPath());
             LoadNewXmls(cppLexerDefault.GetPath());
         }
     }
@@ -136,13 +141,29 @@ void ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexerName.IsEmpty())
         return;
 
-    LexerConfPtr lexer(new LexerConf);
+    LexerConf::Ptr_t lexer(new LexerConf);
     lexer->FromXml(node);
 
     if(m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
     }
-    m_lexersMap.find(lexerName)->second.push_back(lexer);
+
+    ColoursAndFontsManager::Vec_t& vec = m_lexersMap.find(lexerName)->second;
+
+    // Locate an instance with this name and theme in
+    // both the m_alllexers and vector for this lexer
+    // name
+    ColoursAndFontsManager::Vec_t::iterator iter =
+        std::find_if(vec.begin(), vec.end(), LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
+    if(iter != vec.end()) {
+        vec.erase(iter);
+    }
+    iter = std::find_if(
+        m_allLexers.begin(), m_allLexers.end(), LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
+    if(iter != m_allLexers.end()) {
+        m_allLexers.erase(iter);
+    }
+    vec.push_back(lexer);
     m_allLexers.push_back(lexer);
 }
 
@@ -160,15 +181,15 @@ wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString&
     return themes;
 }
 
-LexerConfPtr ColoursAndFontsManager::GetLexer(const wxString& lexerName, const wxString& theme) const
+LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, const wxString& theme) const
 {
     ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.find(lexerName.Lower());
     if(iter == m_lexersMap.end())
         return NULL;
 
     // Locate the requested theme
-    LexerConfPtr firstLexer(NULL);
-    LexerConfPtr defaultLexer(NULL);
+    LexerConf::Ptr_t firstLexer(NULL);
+    LexerConf::Ptr_t defaultLexer(NULL);
 
     if(theme.IsEmpty()) {
         // return the active theme
@@ -225,7 +246,7 @@ wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
 {
     wxArrayString names;
     for(size_t i = 0; i < m_allLexers.size(); ++i) {
-        LexerConfPtr lexer = m_allLexers.at(i);
+        LexerConf::Ptr_t lexer = m_allLexers.at(i);
         if(names.Index(lexer->GetName()) == wxNOT_FOUND) {
             names.Add(lexer->GetName());
         }
@@ -233,14 +254,14 @@ wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
     return names;
 }
 
-LexerConfPtr ColoursAndFontsManager::GetLexerForFile(const wxString& filename) const
+LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filename) const
 {
     wxFileName fnFileName(filename);
     wxString fileNameLowercase = fnFileName.GetFullName();
     fileNameLowercase.MakeLower();
 
-    LexerConfPtr defaultLexer(NULL);
-    LexerConfPtr firstLexer(NULL);
+    LexerConf::Ptr_t defaultLexer(NULL);
+    LexerConf::Ptr_t firstLexer(NULL);
 
     // Scan the list of lexers, locate the active lexer for it and return it
     ColoursAndFontsManager::Vec_t::const_iterator iter = m_allLexers.begin();
@@ -285,7 +306,7 @@ void ColoursAndFontsManager::Clear()
     m_lexersMap.clear();
 }
 
-void ColoursAndFontsManager::Save(LexerConfPtr lexer)
+void ColoursAndFontsManager::Save(LexerConf::Ptr_t lexer)
 {
     wxXmlDocument doc;
     doc.SetRoot(lexer->ToXml());
@@ -303,7 +324,7 @@ void ColoursAndFontsManager::SetActiveTheme(const wxString& lexerName, const wxS
 {
     wxArrayString themes = GetAvailableThemesForLexer(lexerName);
     for(size_t i = 0; i < themes.GetCount(); ++i) {
-        LexerConfPtr lexer = GetLexer(lexerName, themes.Item(i));
+        LexerConf::Ptr_t lexer = GetLexer(lexerName, themes.Item(i));
         if(lexer && lexer->GetName() == lexerName) {
             lexer->SetIsActive(lexer->GetThemeName() == themeName);
             Save(lexer);

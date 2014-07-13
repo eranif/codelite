@@ -62,7 +62,7 @@ protected:
     void SetName(const wxString &name) {
         m_name = name;
     }
-    void DoApplySettings(LexerConfPtr lexPtr);
+    void DoApplySettings(LexerConf::Ptr_t lexPtr);
     void PrependMenuItem(wxMenu* menu, const wxString &text, wxObjectEventFunction func, int eventId = -1);
     void PrependMenuItem(wxMenu* menu, const wxString &text, int id);
     void PrependMenuItemSeparator(wxMenu* menu);

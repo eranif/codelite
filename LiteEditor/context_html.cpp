@@ -54,7 +54,7 @@ void ContextHtml::AddMenuDynamicContent(wxMenu* menu)
 void ContextHtml::ApplySettings()
 {
     SetName(wxT("Html"));
-    LexerConfPtr lexPtr;
+    LexerConf::Ptr_t lexPtr;
     if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }

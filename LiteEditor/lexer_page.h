@@ -43,7 +43,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 class LexerPage : public LexerPageBase
 {
-	LexerConfPtr             m_lexer;
+	LexerConf::Ptr_t             m_lexer;
 	std::list<StyleProperty> m_propertyList;
 	int                      m_selection;
 	bool                     m_isModified;
@@ -72,7 +72,7 @@ protected:
 	std::list<StyleProperty>::iterator GetSelectedStyle();
 
 public:
-	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );
+	LexerPage( wxWindow* parent, LexerConf::Ptr_t lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );
 	void SaveSettings();
 	
 	void GetTextSelectionValues(wxString& colourstring, int& alpha) const;

@@ -1970,7 +1970,7 @@ void ContextCpp::ApplySettings()
     SetName(wxT("C++"));
 
     // Set the key words and the lexer
-    LexerConfPtr lexPtr;
+    LexerConf::Ptr_t lexPtr;
     // Read the configuration file
     if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(wxT("C++"));
@@ -2401,7 +2401,7 @@ void ContextCpp::OnUserTypedXChars(const wxString &word)
 
 void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr>& tags)
 {
-    LexerConfPtr lexPtr;
+    LexerConf::Ptr_t lexPtr;
     // Read the configuration file
     if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(this->GetName());

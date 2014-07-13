@@ -45,7 +45,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, const wxString& repoDir)
     m_splitterMain->SetSashPosition(data.GetGitCommitDlgVSashPos());
     
     WindowAttrManager::Load(this, wxT("GitCommitDlg"), NULL);
-    LexerConfPtr lex = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
     lex->Apply(m_stcCommitMessage);
 }
 

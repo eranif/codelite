@@ -80,7 +80,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
 
     wxSize size;
     
-    LexerConfPtr cppLex = EditorConfigST::Get()->GetLexer("C++");
+    LexerConf::Ptr_t cppLex = EditorConfigST::Get()->GetLexer("C++");
     if ( cppLex ) {
         // use the lexer default font
         m_codeFont = cppLex->GetFontForSyle(0);

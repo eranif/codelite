@@ -160,7 +160,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     , m_git(git)
 {
     // set the font to fit the C++ lexer default font
-    LexerConfPtr lexCpp = EditorConfigST::Get()->GetLexer("c++");
+    LexerConf::Ptr_t lexCpp = EditorConfigST::Get()->GetLexer("c++");
     if ( lexCpp ) {
         wxFont font = lexCpp->GetFontForSyle(wxSTC_C_DEFAULT);
         for( int i=0; i<wxSTC_STYLE_MAX; ++i ){

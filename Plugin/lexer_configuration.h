@@ -30,9 +30,10 @@
 #include "attribute_style.h"
 #include "wx/xml/xml.h"
 #include <wx/font.h>
-#include "smart_ptr.h"
 #include "codelite_exports.h"
 #include <wx/stc/stc.h>
+#include <wx/sharedptr.h>
+#include <smart_ptr.h>
 
 class WXDLLIMPEXP_SDK LexerConf
 {
@@ -44,6 +45,25 @@ class WXDLLIMPEXP_SDK LexerConf
     bool m_styleWithinPreProcessor;
     wxString m_themeName;
     bool m_isActive;
+public:
+    typedef SmartPtr<LexerConf> Ptr_t;
+    
+public:
+    struct FindByNameAndTheme
+    {
+        wxString m_name;
+        wxString m_theme;
+        FindByNameAndTheme(const wxString& name, const wxString& theme)
+            : m_name(name)
+            , m_theme(theme)
+        {
+        }
+
+        bool operator()(LexerConf::Ptr_t lexer) const
+        {
+            return lexer->GetName() == m_name && lexer->GetThemeName() == m_theme;
+        }
+    };
 
 public:
     // Return an xml representation from this object
@@ -56,22 +76,10 @@ public:
     LexerConf();
     virtual ~LexerConf();
 
-    void SetIsActive(bool isActive)
-    {
-        this->m_isActive = isActive;
-    }
-    void SetThemeName(const wxString& themeName)
-    {
-        this->m_themeName = themeName;
-    }
-    bool IsActive() const
-    {
-        return m_isActive;
-    }
-    const wxString& GetThemeName() const
-    {
-        return m_themeName;
-    }
+    void SetIsActive(bool isActive) { this->m_isActive = isActive; }
+    void SetThemeName(const wxString& themeName) { this->m_themeName = themeName; }
+    bool IsActive() const { return m_isActive; }
+    const wxString& GetThemeName() const { return m_themeName; }
     /**
      * @brief apply the current lexer configuration on an input
      * wxStyledTextCtrl
@@ -82,92 +90,59 @@ public:
      * Get the lexer ID, which should be in sync with values of Scintilla
      * \return
      */
-    int GetLexerId() const
-    {
-        return m_lexerId;
-    }
+    int GetLexerId() const { return m_lexerId; }
 
     void SetStyleWithinPreProcessor(bool styleWithinPreProcessor)
     {
         this->m_styleWithinPreProcessor = styleWithinPreProcessor;
     }
 
-    bool GetStyleWithinPreProcessor() const
-    {
-        return m_styleWithinPreProcessor;
-    }
+    bool GetStyleWithinPreProcessor() const { return m_styleWithinPreProcessor; }
 
     /**
      * Set the lexer ID
      * \param id
      */
-    void SetLexerId(int id)
-    {
-        m_lexerId = id;
-    }
+    void SetLexerId(int id) { m_lexerId = id; }
 
     /**
      * Return the lexer description as described in the XML file
      */
-    const wxString& GetName() const
-    {
-        return m_name;
-    }
+    const wxString& GetName() const { return m_name; }
     /**
      * Return the lexer keywords
      * \return
      */
-    const wxString& GetKeyWords(int set) const
-    {
-        return m_keyWords[set];
-    }
+    const wxString& GetKeyWords(int set) const { return m_keyWords[set]; }
 
-    void SetKeyWords(const wxString& keywords, int set)
-    {
-        m_keyWords[set] = keywords;
-    }
+    void SetKeyWords(const wxString& keywords, int set) { m_keyWords[set] = keywords; }
 
     /**
      * File patterns that this lexer should apply to
      */
-    const wxString& GetFileSpec() const
-    {
-        return m_extension;
-    }
+    const wxString& GetFileSpec() const { return m_extension; }
     /**
      * Return a list of the lexer properties
      * \return
      */
-    const StyleProperty::List_t& GetLexerProperties() const
-    {
-        return m_properties;
-    }
+    const StyleProperty::List_t& GetLexerProperties() const { return m_properties; }
 
     /**
      * Return a list of the lexer properties
      * \return
      */
-    StyleProperty::List_t& GetLexerProperties()
-    {
-        return m_properties;
-    }
+    StyleProperty::List_t& GetLexerProperties() { return m_properties; }
 
     /**
      * Set the lexer properties
      * \param &properties
      */
-    void SetProperties(StyleProperty::List_t& properties)
-    {
-        m_properties = properties;
-    }
+    void SetProperties(StyleProperty::List_t& properties) { m_properties = properties; }
     /**
      * Set file spec for the lexer
      * \param &spec
      */
-    void SetFileSpec(const wxString& spec)
-    {
-        m_extension = spec;
-    }
+    void SetFileSpec(const wxString& spec) { m_extension = spec; }
 
     /**
      * @brief return the font for a given style id
@@ -175,7 +150,5 @@ public:
      */
     wxFont GetFontForSyle(int styleId) const;
 };
-
-typedef SmartPtr<LexerConf> LexerConfPtr;
 
 #endif // LEXER_CONFIGURATION_H

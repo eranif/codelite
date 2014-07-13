@@ -147,16 +147,16 @@ public:
     /**
      * Find lexer configuration and return a pointer to a LexerConf object
      * \param lexer lexer name (e.g. Cpp, Java, Default etc..)
-     * \return LexerConfPtr
+     * \return LexerConf::Ptr_t
      */
-    LexerConfPtr GetLexer(const wxString& lexer);
+    LexerConf::Ptr_t GetLexer(const wxString& lexer);
 
     /**
      * @brief return the proper lexer based on the file's extension
      * @param filename
      * @return the file's lexer or the "Text" lexer
      */
-    LexerConfPtr GetLexerForFile(const wxString& filename);
+    LexerConf::Ptr_t GetLexerForFile(const wxString& filename);
     
     /**
      * Get the outputview's foreground colour, which is global to a theme

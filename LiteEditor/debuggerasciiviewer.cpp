@@ -44,7 +44,7 @@ DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
     : DebuggerAsciiViewerBase( parent )
 {
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), NULL, this);
-    LexerConfPtr cpp_lexer = EditorConfigST::Get()->GetLexer("C++");
+    LexerConf::Ptr_t cpp_lexer = EditorConfigST::Get()->GetLexer("C++");
     if ( cpp_lexer ) {
         cpp_lexer->Apply( m_textView );
         m_textView->SetLexer(wxSTC_LEX_CPP);
@@ -178,7 +178,7 @@ void DebuggerAsciiViewer::OnThemeColourChanged(wxCommandEvent& e)
     e.Skip();
     
     // Re-apply C++ lexer
-    LexerConfPtr cpp_lexer = EditorConfigST::Get()->GetLexer("C++");
+    LexerConf::Ptr_t cpp_lexer = EditorConfigST::Get()->GetLexer("C++");
     if ( cpp_lexer ) {
         cpp_lexer->Apply( m_textView );
     }

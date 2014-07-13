@@ -67,7 +67,7 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
     EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(DebuggerDisassemblyTab::OnDebuggerStopped), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED, wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), NULL, this);
-    LexerConfPtr lex = EditorConfigST::Get()->GetLexer("Assembly");
+    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("Assembly");
     if ( lex ) {
         lex->Apply( m_stc, true );
     }

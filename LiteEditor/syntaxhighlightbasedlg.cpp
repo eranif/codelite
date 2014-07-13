@@ -47,7 +47,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_panelSyntaxHighlight->SetSizer(boxSizer21);
     
     wxArrayString m_listBoxArr;
-    m_listBox = new wxListBox(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxArr, wxLB_SINGLE);
+    m_listBox = new wxListBox(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxArr, wxLB_SORT|wxLB_SINGLE);
     
     boxSizer21->Add(m_listBox, 0, wxALL|wxEXPAND, 5);
     
@@ -268,18 +268,11 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     
     wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(boxSizer19, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonDefaults = new wxButton(this, wxID_ANY, _("Defaults..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonDefaults->SetToolTip(_("Restore all lexers to default values"));
-    
-    boxSizer19->Add(m_buttonDefaults, 0, wxALL|wxALIGN_LEFT, 5);
-    
-    boxSizer19->Add(0, 0, 1, wxALL, 5);
+    bSizer1->Add(boxSizer19, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_stdBtnSizer10 = new wxStdDialogButtonSizer();
     
-    boxSizer19->Add(m_stdBtnSizer10, 0, wxALL, 5);
+    boxSizer19->Add(m_stdBtnSizer10, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOk->SetDefault();
@@ -318,7 +311,6 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_colourPickerSelTextBgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged), NULL, this);
     m_colourPickerOutputPanesFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_colourPickerOutputPanesBgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
-    m_buttonDefaults->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK), NULL, this);
     m_buttonCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonCancel), NULL, this);
     m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonApply), NULL, this);
@@ -348,7 +340,6 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_colourPickerSelTextBgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged), NULL, this);
     m_colourPickerOutputPanesFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_colourPickerOutputPanesBgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
-    m_buttonDefaults->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
     m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK), NULL, this);
     m_buttonCancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonCancel), NULL, this);
     m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonApply), NULL, this);

@@ -109,6 +109,7 @@ void SyntaxHighlightDlg::Clear()
 
     // Text Selection page
     m_colourPickerSelTextBgColour->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    m_isModified = false;
 }
 
 void SyntaxHighlightDlg::LoadLexer(const wxString& themeName)
@@ -121,6 +122,7 @@ void SyntaxHighlightDlg::LoadLexer(const wxString& themeName)
 
     m_lexer = ColoursAndFontsManager::Get().GetLexer(lexer, themeName);
     CreateLexerPage();
+    m_isModified = false;
 }
 
 void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
@@ -128,12 +130,12 @@ void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
     event.Skip();
     wxString themeName = m_choiceLexerThemes->GetStringSelection();
     LoadLexer(themeName);
+    m_isModified = true;
 }
 
 void SyntaxHighlightDlg::SaveChanges()
 {
     // Save all lexers once
-    m_isModified = false;
     // Update the lexer
     ColoursAndFontsManager::Get().Save(m_lexer);
 
@@ -148,15 +150,7 @@ void SyntaxHighlightDlg::SaveChanges()
 
     wxString newBg = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
     EditorConfigST::Get()->SetCurrentOutputviewBgColour(newBg);
-
-    //    // Check for conditions for sending the THEME_CHANGED event
-    //    wxString curSelTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") :
-    //    m_themes->GetStringSelection();
-    //
-    //    if((oldBg != newBg) || (oldFg != newFg) || (m_startingTheme != curSelTheme)) {
-    //        wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
-    //        EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
-    //    }
+    m_isModified = false;
 }
 
 SyntaxHighlightDlg::~SyntaxHighlightDlg() { WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL); }

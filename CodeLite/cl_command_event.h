@@ -41,7 +41,6 @@ enum {
 /// a wxCommandEvent that takes ownership of the clientData
 class WXDLLIMPEXP_CL clCommandEvent : public wxCommandEvent
 {
-
 protected:
     wxSharedPtr<wxClientData> m_ptr;
     wxArrayString m_strings;

@@ -34,64 +34,35 @@
 #include "wx_xml_compatibility.h"
 #include "event_notifier.h"
 #include "cl_standard_paths.h"
-#include "LexerConfManager.h"
+#include "ColoursAndFontsManager.h"
 
 //-------------------------------------------------------------------------------------------
-SimpleLongValue::SimpleLongValue()
-{
-}
+SimpleLongValue::SimpleLongValue() {}
 
-SimpleLongValue::~SimpleLongValue()
-{
-}
+SimpleLongValue::~SimpleLongValue() {}
 
-void SimpleLongValue::Serialize(Archive& arch)
-{
-    arch.Write(wxT("m_value"), m_value);
-}
+void SimpleLongValue::Serialize(Archive& arch) { arch.Write(wxT("m_value"), m_value); }
 
-void SimpleLongValue::DeSerialize(Archive& arch)
-{
-    arch.Read(wxT("m_value"), m_value);
-}
+void SimpleLongValue::DeSerialize(Archive& arch) { arch.Read(wxT("m_value"), m_value); }
 
 //-------------------------------------------------------------------------------------------
-SimpleStringValue::SimpleStringValue()
-{
-}
+SimpleStringValue::SimpleStringValue() {}
 
-SimpleStringValue::~SimpleStringValue()
-{
-}
+SimpleStringValue::~SimpleStringValue() {}
 
-void SimpleStringValue::Serialize(Archive& arch)
-{
-    arch.Write(wxT("m_value"), m_value);
-}
+void SimpleStringValue::Serialize(Archive& arch) { arch.Write(wxT("m_value"), m_value); }
 
-void SimpleStringValue::DeSerialize(Archive& arch)
-{
-    arch.Read(wxT("m_value"), m_value);
-}
+void SimpleStringValue::DeSerialize(Archive& arch) { arch.Read(wxT("m_value"), m_value); }
 
 //-------------------------------------------------------------------------------------------
 
 EditorConfig::EditorConfig()
     : m_transcation(false)
-    , m_activeThemeLexers(NULL)
 {
     m_doc = new wxXmlDocument();
 }
 
-EditorConfig::~EditorConfig()
-{
-    delete m_doc;
-    std::map<wxString, LexersInfo*>::iterator iter = m_lexers.begin();
-    for(; iter != m_lexers.end(); iter++) {
-        delete iter->second;
-    }
-    m_lexers.clear();
-}
+EditorConfig::~EditorConfig() { wxDELETE(m_doc); }
 
 bool EditorConfig::DoLoadDefaultSettings()
 {
@@ -151,7 +122,7 @@ bool EditorConfig::Load()
     }
 
     // load CodeLite lexers
-    //LoadLexers(false);
+    // LoadLexers(false);
 
     // make sure that the file name is set to .xml and not .default
     m_fileName = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
@@ -160,30 +131,7 @@ bool EditorConfig::Load()
 
 void EditorConfig::SaveLexers()
 {
-    std::map<wxString, LexersInfo*>::iterator iter = m_lexers.begin();
-    for(; iter != m_lexers.end(); iter++) {
-        wxFileName fn(iter->second->filename);
-        wxString userLexer(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("lexers") +
-                           wxFileName::GetPathSeparator() + fn.GetFullName());
-
-        wxXmlDocument doc;
-        wxXmlNode* node = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("Lexers"));
-        node->AddProperty(wxT("Theme"), iter->second->theme);
-        node->AddProperty(wxT("OutputView_Fg_Colour"), iter->second->outputpane_fg_colour);
-        node->AddProperty(wxT("OutputView_Bg_Colour"), iter->second->outputpane_bg_colour);
-        doc.SetRoot(node);
-
-        std::map<wxString, LexerConfPtr>::iterator it = iter->second->lexers.begin();
-        for(; it != iter->second->lexers.end(); it++) {
-            node->AddChild(it->second->ToXml());
-        }
-        doc.Save(userLexer);
-    }
-
-    wxString nodeName = wxT("Lexers");
-    wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
-    evt.SetString(nodeName);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    ColoursAndFontsManager::Get().Save();
 }
 
 wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
@@ -197,30 +145,22 @@ wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
 
 LexerConfPtr EditorConfig::GetLexerForFile(const wxString& filename)
 {
-    return LexerConfManager::Get().GetLexerForFile(filename);
+    return ColoursAndFontsManager::Get().GetLexerForFile(filename);
 }
 
 LexerConfPtr EditorConfig::GetLexer(const wxString& lexerName)
 {
-    return LexerConfManager::Get().GetLexer(lexerName);
+    return ColoursAndFontsManager::Get().GetLexer(lexerName);
 }
 
 wxString EditorConfig::GetCurrentOutputviewFgColour() const
 {
-    if(m_activeThemeLexers == NULL || m_activeThemeLexers->outputpane_fg_colour.IsEmpty()) {
-        return DrawingUtils::GetTextCtrlTextColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
-    }
-
-    return m_activeThemeLexers->outputpane_fg_colour;
+    return ColoursAndFontsManager::Get().GetGlobalFgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
 }
 
 wxString EditorConfig::GetCurrentOutputviewBgColour() const
 {
-    if(m_activeThemeLexers == NULL || m_activeThemeLexers->outputpane_bg_colour.IsEmpty()) {
-        return DrawingUtils::GetTextCtrlBgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
-    }
-
-    return m_activeThemeLexers->outputpane_bg_colour;
+    return ColoursAndFontsManager::Get().GetGlobalBgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
 }
 
 OptionsConfigPtr EditorConfig::GetOptions() const
@@ -406,173 +346,7 @@ void EditorConfig::SaveStringValue(const wxString& key, const wxString& value)
     WriteObject(key, &data);
 }
 
-void EditorConfig::UpgradeUserLexer(const wxString& userLexer, const wxString& installedLexer)
-{
-    wxXmlDocument userdoc(userLexer), srcdoc(installedLexer);
-    if(userdoc.IsOk() && srcdoc.IsOk()) {
-        wxXmlNode* userroot = userdoc.GetRoot();
-        wxXmlNode* srcroot = srcdoc.GetRoot();
-        if(userroot && srcroot) {
-            bool dirty(false);
-
-            // Iterate through the lexers, looking for novelties
-            wxXmlNode* child = srcroot->GetChildren();
-            while(child) {
-                wxString name = child->GetAttribute("Name", "");
-                wxXmlNode* usernode = XmlUtils::FindNodeByName(userroot, "Lexer", name);
-                if(!usernode) {
-                    usernode = XmlUtils::FindNodeByName(userroot, "Lexer", name.Lower());
-                    if(usernode) {
-                        // Lexers used to have lower-case names. Upgrade the spelling for compatibility; it shouldn't
-                        // break anything
-                        wxXmlAttribute* attrib = usernode->GetAttributes();
-                        while(attrib) {
-                            if(attrib->GetName() == "Name") {
-                                attrib->SetValue(name);
-                                dirty = true;
-                                break;
-                            }
-                            attrib = attrib->GetNext();
-                        }
-                    }
-                }
-
-                if(!usernode) {
-                    // Found a missing lexer, so copy it across
-                    userroot->AddChild(new wxXmlNode(*child));
-                    dirty = true;
-                } else {
-                    // This lexer is already present, but check for any missing attributes
-                    wxXmlNode* properties = XmlUtils::FindFirstByTagName(child, "Properties");
-                    wxXmlNode* userproperties = XmlUtils::FindFirstByTagName(usernode, "Properties");
-                    if(properties && userproperties) {
-                        wxXmlNode* property = properties->GetChildren();
-                        while(property) {
-                            if(!XmlUtils::FindNodeByName(
-                                   userproperties, "Property", property->GetAttribute("Name", ""))) {
-                                // Found a missing attribute
-                                userproperties->AddChild(new wxXmlNode(*property));
-                                dirty = true;
-                            }
-                            property = property->GetNext();
-                        }
-                    }
-                }
-                child = child->GetNext();
-            }
-
-            if(dirty) {
-                userdoc.Save(userLexer);
-            }
-        }
-    }
-}
-
-void EditorConfig::LoadLexers(bool loadDefault)
-{
-    m_lexers.clear();
-
-    wxString theme = GetStringValue(wxT("LexerTheme"));
-    if(theme.IsEmpty()) {
-        theme = wxT("Default");
-        SaveStringValue(wxT("LexerTheme"), wxT("Default"));
-    }
-
-    // when this function is called, the working directory is located at the
-    // startup directory
-    DirSaver ds;
-    wxSetWorkingDirectory(wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + wxT("lexers"));
-
-    wxString cwd = ::wxGetCwd();
-
-    // load all lexer configuration files
-    wxArrayString files;
-    wxDir::GetAllFiles(cwd, &files, wxT("*.xml"), wxDIR_FILES);
-    wxString path_(cwd + wxFileName::GetPathSeparator());
-
-    LexersInfo* pLexersInfo = NULL;
-    m_lexers.clear();
-
-    for(size_t i = 0; i < files.GetCount(); i++) {
-        wxString fileToLoad(files.Item(i));
-
-        // try to locate a file with the same name but with the user extension
-        wxFileName fn(files.Item(i));
-
-        wxString userLexer(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("lexers") +
-                           wxFileName::GetPathSeparator() + fn.GetFullName());
-
-        if(wxFileName::FileExists(userLexer)) {
-            if(!loadDefault) {
-                // First try to merge any new lexers or new properties into the user's one, without overwriting any
-                // user-set preferences
-                UpgradeUserLexer(userLexer, fileToLoad);
-                fileToLoad = userLexer;
-
-            } else {
-                ::wxRemoveFile(userLexer);
-            }
-        }
-
-        // Load the lexers
-        wxXmlDocument doc(fileToLoad);
-        if(doc.IsOk()) {
-            // we found our lexers XML file
-            wxXmlNode* root = doc.GetRoot();
-            if(root) {
-                wxString themeName = root->GetPropVal(wxT("Theme"), wxT("Default"));
-                wxString ovFgColour = root->GetPropVal(wxT("OutputView_Fg_Colour"), wxT(""));
-                wxString ovBgColour = root->GetPropVal(wxT("OutputView_Bg_Colour"), wxT(""));
-                pLexersInfo = new LexersInfo;
-                pLexersInfo->filename = fileToLoad;
-                pLexersInfo->theme = themeName;
-                if(ovFgColour.IsEmpty()) {
-                    pLexersInfo->outputpane_fg_colour =
-                        DrawingUtils::GetOutputPaneFgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
-                } else {
-                    pLexersInfo->outputpane_fg_colour = ovFgColour;
-                }
-                if(ovBgColour.IsEmpty()) {
-                    pLexersInfo->outputpane_bg_colour =
-                        DrawingUtils::GetOutputPaneBgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
-                } else {
-                    pLexersInfo->outputpane_bg_colour = ovBgColour;
-                }
-
-                wxXmlNode* child = root->GetChildren();
-                while(child) {
-                    LexerConfPtr lexer(new LexerConf());
-                    lexer->FromXml(child);
-
-                    if(!lexer->GetName().IsEmpty()) {
-                        pLexersInfo->lexers[lexer->GetName()] = lexer;
-                    }
-                    child = child->GetNext();
-                }
-                m_lexers[themeName] = pLexersInfo;
-            }
-        }
-    }
-
-    // Set the selected theme
-    if(m_lexers.find(theme) == m_lexers.end()) {
-        // the requested theme does not exist, we use the first that we can find
-        if(m_lexers.empty()) {
-            // Create an empty theme lexers map
-            m_activeThemeLexers = new LexersInfo;
-            return;
-        }
-        m_activeThemeLexers = m_lexers.begin()->second;
-
-    } else {
-        m_activeThemeLexers = m_lexers.find(theme)->second;
-    }
-}
-
-void EditorConfig::Begin()
-{
-    m_transcation = true;
-}
+void EditorConfig::Begin() { m_transcation = true; }
 
 void EditorConfig::Save()
 {
@@ -591,13 +365,9 @@ bool EditorConfig::DoSave() const
 //--------------------------------------------------
 // Simple rectangle class wrapper
 //--------------------------------------------------
-SimpleRectValue::SimpleRectValue()
-{
-}
+SimpleRectValue::SimpleRectValue() {}
 
-SimpleRectValue::~SimpleRectValue()
-{
-}
+SimpleRectValue::~SimpleRectValue() {}
 
 void SimpleRectValue::DeSerialize(Archive& arch)
 {
@@ -616,15 +386,7 @@ void SimpleRectValue::Serialize(Archive& arch)
     arch.Write(wxT("Size"), m_rect.GetSize());
 }
 
-void EditorConfig::SetInstallDir(const wxString& instlDir)
-{
-    m_installDir = instlDir;
-}
-
-wxArrayString EditorConfig::GetLexersThemes()
-{
-    return wxArrayString();
-}
+void EditorConfig::SetInstallDir(const wxString& instlDir) { m_installDir = instlDir; }
 
 bool EditorConfig::GetPaneStickiness(const wxString& caption)
 {
@@ -698,6 +460,17 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
     Save();
 }
 
+void EditorConfig::SetCurrentOutputviewFgColour(const wxString& colourstring)
+{
+    ColoursAndFontsManager::Get().SetGlobalFgColour(colourstring);
+}
+
+void EditorConfig::SetCurrentOutputviewBgColour(const wxString& colourstring)
+{
+    ColoursAndFontsManager::Get().SetGlobalBgColour(colourstring);
+}
+
+// Singleton
 static EditorConfig* gs_EditorConfig = NULL;
 void EditorConfigST::Free()
 {

@@ -611,5 +611,9 @@
 // Event type: clContextMenuEvent
 #define wxEVT_CONTEXT_MENU_EDITOR_DISMISSED 3631
 
+// User modified the colours and font of the IDE
+// event type: clCommandEvent
+#define wxEVT_CMD_COLOURS_FONTS_UPDATED  3640
+
 #endif // CODELITE_EVENTS_H
 

@@ -31,6 +31,7 @@
 #include <vector>
 #include "cl_calltip.h"
 #include "codelite_exports.h"
+#include "cl_command_event.h"
 
 class WXDLLIMPEXP_SDK clEditorTipWindow : public wxPanel
 {
@@ -80,7 +81,7 @@ public:
     void OnPaint  (wxPaintEvent &e);
     void OnEraseBg(wxEraseEvent &e);
     void OnLeftDown(wxMouseEvent &e);
-    void OnEditoConfigChanged(wxCommandEvent &e);
+    void OnEditoConfigChanged(clCommandEvent &e);
 };
 
 #endif // CLFUNCTIONTIPWINDOW_H

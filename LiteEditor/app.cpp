@@ -4,7 +4,7 @@
 // copyright            : (C) 2008 by Eran Ifrah
 // file name            : app.cpp
 //
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 // A
 //              _____           _      _     _ _
 //             /  __ \         | |    | |   (_) |
@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- 
+
 #include "precompiled_header.h"
 #include "cl_registry.h"
 #include "file_logger.h"
@@ -50,7 +50,7 @@
 #include <CompilerLocatorMinGW.h>
 #include <wx/regex.h>
 #include "CompilerLocatorCygwin.h"
-#include "LexerConfManager.h"
+#include "ColoursAndFontsManager.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -348,7 +348,7 @@ bool CodeLiteApp::OnInit()
     // this is  needed because python complies the files and in most cases the user
     // running codelite has no write permissions to /usr/share/codelite/...
     DoCopyGdbPrinters();
-    
+
     // Since GCC 4.8.2 gcc has a default colored output
     // which breaks codelite output parsing
     // to disable this, we need to set GCC_COLORS to an empty
@@ -409,8 +409,8 @@ bool CodeLiteApp::OnInit()
         wxMkdir(homeDir + wxT("/config/"));
         wxMkdir(homeDir + wxT("/tabgroups/"));
     }
-    
-    
+
+
     wxString installPath( MacGetBasePath() );
     ManagerST::Get()->SetInstallDir( installPath );
     //copy the settings from the global location if needed
@@ -489,7 +489,7 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
-    LexerConfManager::Get().Load();
+    ColoursAndFontsManager::Get().Load();
 
 #ifdef __WXGTK__
     bool redirect = clConfig::Get().Read("RedirectLogOutput", true);
@@ -506,7 +506,7 @@ bool CodeLiteApp::OnInit()
     // Set the log file verbosity
     FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
     CL_DEBUG(wxT("Starting codelite..."));
-    
+
     // check for single instance
     if ( !IsSingleInstance(parser, ManagerST::Get()->GetOriginalCwd()) ) {
         return false;
@@ -587,7 +587,7 @@ bool CodeLiteApp::OnInit()
     wxSetEnv(wxT("PATH"), oldpath + pathsep + execfpath.GetPath());
     wxString newpath;
     wxGetEnv(wxT("PATH"), &newpath);
-    
+
     // If running under Cygwin terminal, adjust the environment variables
     AdjustPathForCygwinIfNeeded();
 
@@ -850,19 +850,19 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
         CL_DEBUG("Not running under Cygwin - nothing be done");
         return;
     }
-    
+
     wxString cygwinRootDir;
     CompilerLocatorCygwin cygwin;
     if ( cygwin.Locate() ) {
         // this will return the base folder for cygwin (e.g. D:\cygwin)
         cygwinRootDir = (*cygwin.GetCompilers().begin())->GetInstallationPath();
     }
-    
+
     // Running under Cygwin
     // Adjust the PATH environment variable
     wxString pathEnv;
     ::wxGetEnv("PATH", &pathEnv);
-    
+
     // Always add the default paths
     wxArrayString paths;
     if ( !cygwinRootDir.IsEmpty() ) {
@@ -870,17 +870,17 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
         cygwinBinFolder.AppendDir("bin");
         paths.Add(cygwinBinFolder.GetPath());
     }
-    
+
     paths.Add("/usr/local/bin");
     paths.Add("/usr/bin");
     paths.Add("/usr/sbin");
     paths.Add("/bin");
     paths.Add("/sbin");
-    
+
     // Append the paths from the environment variables
     wxArrayString userPaths = ::wxStringTokenize(pathEnv, ";", wxTOKEN_STRTOK);
     paths.insert(paths.end(), userPaths.begin(), userPaths.end());
-    
+
     wxString fixedPath;
     for(size_t i=0; i<paths.GetCount(); ++i) {
         wxString &curpath = paths.Item(i);
@@ -891,7 +891,7 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
             volume << ":";
             reCygdrive.Replace( &curpath, volume );
         }
-        
+
         fixedPath << curpath << ";";
     }
 

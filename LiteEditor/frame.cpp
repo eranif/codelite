@@ -59,7 +59,7 @@
 #include "CompilersFoundDlg.h"
 #include <wx/stc/stc.h>
 #include "cl_standard_paths.h"
-#include "LexerConfManager.h"
+#include "ColoursAndFontsManager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1199,7 +1199,7 @@ void clMainFrame::CreateViewAsSubMenu()
 
         // load all lexers
         // load generic lexers
-        wxArrayString lexerNames = LexerConfManager::Get().GetAllLexersNames();
+        wxArrayString lexerNames = ColoursAndFontsManager::Get().GetAllLexersNames();
         for(size_t i = 0; i < lexerNames.GetCount(); ++i) {
             item = new wxMenuItem(submenu, minId, lexerNames.Item(i), wxEmptyString, wxITEM_CHECK);
             m_viewAsMap[minId] = lexerNames.Item(i);

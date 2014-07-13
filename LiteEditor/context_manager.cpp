@@ -30,7 +30,7 @@
 #include "context_html.h"
 #include "generic_context.h"
 #include "editor_config.h"
-#include "LexerConfManager.h"
+#include "ColoursAndFontsManager.h"
 
 ContextManager::ContextManager()
 {
@@ -75,7 +75,7 @@ void ContextManager::Initialize()
     m_contextPool["html"] = new ContextHtml();
 
     // load generic lexers
-    wxArrayString names = LexerConfManager::Get().GetAllLexersNames();
+    wxArrayString names = ColoursAndFontsManager::Get().GetAllLexersNames();
     for(size_t i = 0; i < names.GetCount(); ++i) {
         if(m_contextPool.find(names.Item(i)) == m_contextPool.end()) {
             m_contextPool[names.Item(i)] = new ContextGeneric(names.Item(i));

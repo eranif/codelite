@@ -128,11 +128,6 @@ private:
     bool DoLoadDefaultSettings();
 
 public:
-
-    //load lexers again, based on the active theme
-    void LoadLexers(bool loadDefault);
-    wxArrayString GetLexersThemes();
-
     void Init(const wxChar *revision, const wxChar* version) {
         this->m_svnRevision  = revision;
         this->m_version      = version;
@@ -209,20 +204,12 @@ public:
     /**
      * Store in the current LexersInfo, the outputview's foreground colour as it's global to a theme
      */
-    void SetCurrentOutputviewFgColour(const wxString& colourstring) {
-        if (m_activeThemeLexers) {
-            m_activeThemeLexers->outputpane_fg_colour = colourstring;
-        }
-    }
+    void SetCurrentOutputviewFgColour(const wxString& colourstring) ;
 
     /**
      * Store in the current LexersInfo, the outputview's background colour as it's global to a theme
      */
-    void SetCurrentOutputviewBgColour(const wxString& colourstring) {
-        if (m_activeThemeLexers) {
-            m_activeThemeLexers->outputpane_bg_colour = colourstring;
-        }
-    }
+    void SetCurrentOutputviewBgColour(const wxString& colourstring) ;
 
     /**
      * save lexers settings
@@ -311,14 +298,6 @@ public:
      * \param stickiness true if the pane should stay open
      */
     void SetPaneStickiness(const wxString& caption, bool stickiness);
-
-protected:
-    /**
-     * \brief Update the user's lexer with any novel lexers or attributes
-     * \param userLexer the current lexer, which may contain user prefs
-     * \param installedLexer the equivalent unaltered lexer from the CodeLite installation
-     */
-    void UpgradeUserLexer(const wxString& userLexer, const wxString& installedLexer);
 
 private:
     EditorConfig();

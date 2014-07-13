@@ -37,7 +37,7 @@
 #include "event_notifier.h"
 #include <wx/wupdlock.h>
 #include "context_manager.h"
-#include "LexerConfManager.h"
+#include "ColoursAndFontsManager.h"
 #include <algorithm>
 #include "free_text_dialog.h"
 #include <wx/wupdlock.h>
@@ -48,7 +48,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
 {
     // Get list of available lexers
     LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
-    wxArrayString lexers = LexerConfManager::Get().GetAllLexersNames();
+    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
     int sel = 0;
     if(editor) {
         sel = lexers.Index(editor->GetContext()->GetName().Lower());
@@ -61,6 +61,11 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
         m_listBox->SetSelection(sel);
         LoadLexer(""); // Load the default active theme
     }
+
+    // Load the global colours
+    m_colourPickerOutputPanesFgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalFgColour());
+    m_colourPickerOutputPanesBgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalBgColour());
+    m_isModified = false;
     WindowAttrManager::Load(this, wxT("SyntaxHighlightDlgAttr"), NULL);
 }
 
@@ -93,8 +98,6 @@ void SyntaxHighlightDlg::Clear()
     m_globalFontPicker->SetSelectedFont(wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT));
     m_globalBgColourPicker->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     m_fileSpec->Clear();
-    m_colourPickerOutputPanesFgColour->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-    m_colourPickerOutputPanesBgColour->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
     // Customize page
     m_properties->Clear();
@@ -116,12 +119,8 @@ void SyntaxHighlightDlg::LoadLexer(const wxString& themeName)
     if(lexer.IsEmpty())
         return;
 
-    m_lexer = LexerConfManager::Get().GetLexer(lexer, themeName);
+    m_lexer = ColoursAndFontsManager::Get().GetLexer(lexer, themeName);
     CreateLexerPage();
-
-    // The outputview colours are global to all a theme's lexors, so are dealt with separately
-    m_colourPickerOutputPanesFgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewFgColour()));
-    m_colourPickerOutputPanesBgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour()));
 }
 
 void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
@@ -136,10 +135,10 @@ void SyntaxHighlightDlg::SaveChanges()
     // Save all lexers once
     m_isModified = false;
     // Update the lexer
-    LexerConfManager::Get().Save(m_lexer);
+    ColoursAndFontsManager::Get().Save(m_lexer);
 
     // Update the active theme for the lexer
-    LexerConfManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
+    ColoursAndFontsManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
 
     wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     wxString oldBg = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
@@ -160,10 +159,7 @@ void SyntaxHighlightDlg::SaveChanges()
     //    }
 }
 
-SyntaxHighlightDlg::~SyntaxHighlightDlg()
-{
-    WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL);
-}
+SyntaxHighlightDlg::~SyntaxHighlightDlg() { WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL); }
 
 void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
 {
@@ -443,7 +439,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
 
     // Fill the themes for this lexer
     m_choiceLexerThemes->Clear();
-    wxArrayString themes = LexerConfManager::Get().GetAvailableThemesForLexer(m_lexer->GetName());
+    wxArrayString themes = ColoursAndFontsManager::Get().GetAvailableThemesForLexer(m_lexer->GetName());
     int sel = themes.Index(m_lexer->GetThemeName());
     if(sel == -1) {
         sel = 0;
@@ -468,11 +464,8 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
         SaveChanges();
     }
     m_isModified = false;
-    m_lexer = LexerConfManager::Get().GetLexer(lexerName);
+    m_lexer = ColoursAndFontsManager::Get().GetLexer(lexerName);
     LoadLexer("");
 }
 
-void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_isModified);
-}
+void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isModified); }

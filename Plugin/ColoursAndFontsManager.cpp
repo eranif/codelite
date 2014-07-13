@@ -1,4 +1,4 @@
-#include "LexerConfManager.h"
+#include "ColoursAndFontsManager.h"
 #include "cl_standard_paths.h"
 #include <wx/filename.h>
 #include <wx/dir.h>
@@ -6,23 +6,28 @@
 #include <wx/xml/xml.h>
 #include "editor_config.h"
 #include "globals.h"
+#include "event_notifier.h"
+#include <codelite_events.h>
+#include "cl_command_event.h"
+#include "json_node.h"
 
-LexerConfManager::LexerConfManager()
+class clCommandEvent;
+ColoursAndFontsManager::ColoursAndFontsManager()
     : m_initialized(false)
 {
+    m_globalBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    m_globalFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 }
 
-LexerConfManager::~LexerConfManager()
-{
-}
+ColoursAndFontsManager::~ColoursAndFontsManager() {}
 
-LexerConfManager& LexerConfManager::Get()
+ColoursAndFontsManager& ColoursAndFontsManager::Get()
 {
-    static LexerConfManager s_theManager;
+    static ColoursAndFontsManager s_theManager;
     return s_theManager;
 }
 
-void LexerConfManager::Load()
+void ColoursAndFontsManager::Load()
 {
     if(m_initialized)
         return;
@@ -54,9 +59,18 @@ void LexerConfManager::Load()
             LoadNewXmls(cppLexerDefault.GetPath());
         }
     }
+
+    // Load the global settings
+    if(GetConfigFile().FileExists()) {
+        JSONRoot root(GetConfigFile());
+        if(root.isOk()) {
+            m_globalBgColour = root.toElement().namedObject("m_globalBgColour").toColour(m_globalBgColour);
+            m_globalFgColour = root.toElement().namedObject("m_globalFgColour").toColour(m_globalFgColour);
+        }
+    }
 }
 
-void LexerConfManager::LoadNewXmls(const wxString& path)
+void ColoursAndFontsManager::LoadNewXmls(const wxString& path)
 {
     // load all XML files
     wxArrayString files;
@@ -72,7 +86,7 @@ void LexerConfManager::LoadNewXmls(const wxString& path)
     }
 }
 
-void LexerConfManager::LoadOldXmls(const wxString& path)
+void ColoursAndFontsManager::LoadOldXmls(const wxString& path)
 {
     // Convert the old XML format to a per lexer format
     wxArrayString files;
@@ -111,7 +125,7 @@ void LexerConfManager::LoadOldXmls(const wxString& path)
     Save();
 }
 
-void LexerConfManager::DoAddLexer(wxXmlNode* node)
+void ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
 {
     wxString lexerName = XmlUtils::ReadString(node, "Name");
     lexerName.MakeLower();
@@ -122,29 +136,29 @@ void LexerConfManager::DoAddLexer(wxXmlNode* node)
     lexer->FromXml(node);
 
     if(m_lexersMap.count(lexerName) == 0) {
-        m_lexersMap.insert(std::make_pair(lexerName, LexerConfManager::Vec_t()));
+        m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
     }
     m_lexersMap.find(lexerName)->second.push_back(lexer);
     m_allLexers.push_back(lexer);
 }
 
-wxArrayString LexerConfManager::GetAvailableThemesForLexer(const wxString& lexerName) const
+wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString& lexerName) const
 {
-    LexerConfManager::Map_t::const_iterator iter = m_lexersMap.find(lexerName.Lower());
+    ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.find(lexerName.Lower());
     if(iter == m_lexersMap.end())
         return wxArrayString();
 
     wxArrayString themes;
-    const LexerConfManager::Vec_t& lexers = iter->second;
+    const ColoursAndFontsManager::Vec_t& lexers = iter->second;
     for(size_t i = 0; i < lexers.size(); ++i) {
         themes.Add(lexers.at(i)->GetThemeName());
     }
     return themes;
 }
 
-LexerConfPtr LexerConfManager::GetLexer(const wxString& lexerName, const wxString& theme) const
+LexerConfPtr ColoursAndFontsManager::GetLexer(const wxString& lexerName, const wxString& theme) const
 {
-    LexerConfManager::Map_t::const_iterator iter = m_lexersMap.find(lexerName.Lower());
+    ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.find(lexerName.Lower());
     if(iter == m_lexersMap.end())
         return NULL;
 
@@ -154,7 +168,7 @@ LexerConfPtr LexerConfManager::GetLexer(const wxString& lexerName, const wxStrin
 
     if(theme.IsEmpty()) {
         // return the active theme
-        const LexerConfManager::Vec_t& lexers = iter->second;
+        const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
 
             if(!firstLexer) {
@@ -178,7 +192,7 @@ LexerConfPtr LexerConfManager::GetLexer(const wxString& lexerName, const wxStrin
             return NULL;
 
     } else {
-        const LexerConfManager::Vec_t& lexers = iter->second;
+        const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
             if(lexers.at(i)->GetThemeName() == theme) {
                 return lexers.at(i);
@@ -188,18 +202,22 @@ LexerConfPtr LexerConfManager::GetLexer(const wxString& lexerName, const wxStrin
     }
 }
 
-void LexerConfManager::Save()
+void ColoursAndFontsManager::Save()
 {
-    LexerConfManager::Map_t::const_iterator iter = m_lexersMap.begin();
+    ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
     for(; iter != m_lexersMap.end(); ++iter) {
-        const LexerConfManager::Vec_t& lexers = iter->second;
+        const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
             Save(lexers.at(i));
         }
     }
+
+    SaveGlobalSettings();
+    clCommandEvent event(wxEVT_CMD_COLOURS_FONTS_UPDATED);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
-wxArrayString LexerConfManager::GetAllLexersNames() const
+wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
 {
     wxArrayString names;
     for(size_t i = 0; i < m_allLexers.size(); ++i) {
@@ -211,14 +229,14 @@ wxArrayString LexerConfManager::GetAllLexersNames() const
     return names;
 }
 
-LexerConfPtr LexerConfManager::GetLexerForFile(const wxString& filename) const
+LexerConfPtr ColoursAndFontsManager::GetLexerForFile(const wxString& filename) const
 {
     wxFileName fnFileName(filename);
     wxString fileNameLowercase = fnFileName.GetFullName();
     fileNameLowercase.MakeLower();
 
     // Scan the list of lexers, locate the active lexer for it and return it
-    LexerConfManager::Vec_t::const_iterator iter = m_allLexers.begin();
+    ColoursAndFontsManager::Vec_t::const_iterator iter = m_allLexers.begin();
     for(; iter != m_allLexers.end(); ++iter) {
         if(!(*iter)->IsActive()) {
             continue;
@@ -235,19 +253,19 @@ LexerConfPtr LexerConfManager::GetLexerForFile(const wxString& filename) const
     return GetLexer("text");
 }
 
-void LexerConfManager::Reload()
+void ColoursAndFontsManager::Reload()
 {
     Clear();
     Load();
 }
 
-void LexerConfManager::Clear()
+void ColoursAndFontsManager::Clear()
 {
     m_allLexers.clear();
     m_lexersMap.clear();
 }
 
-void LexerConfManager::Save(LexerConfPtr lexer)
+void ColoursAndFontsManager::Save(LexerConfPtr lexer)
 {
     wxXmlDocument doc;
     doc.SetRoot(lexer->ToXml());
@@ -259,7 +277,7 @@ void LexerConfManager::Save(LexerConfPtr lexer)
     ::SaveXmlToFile(&doc, xmlFile.GetFullPath());
 }
 
-void LexerConfManager::SetActiveTheme(const wxString& lexerName, const wxString& themeName)
+void ColoursAndFontsManager::SetActiveTheme(const wxString& lexerName, const wxString& themeName)
 {
     wxArrayString themes = GetAvailableThemesForLexer(lexerName);
     for(size_t i = 0; i < themes.GetCount(); ++i) {
@@ -269,4 +287,24 @@ void LexerConfManager::SetActiveTheme(const wxString& lexerName, const wxString&
             Save(lexer);
         }
     }
+}
+
+wxFileName ColoursAndFontsManager::GetConfigFile() const
+{
+    wxFileName fnSettings(clStandardPaths::Get().GetUserDataDir(), "ColoursAndFonts.conf");
+    fnSettings.AppendDir("config");
+    return fnSettings;
+}
+
+void ColoursAndFontsManager::SaveGlobalSettings()
+{
+    // save the global settings
+    JSONRoot root(cJSON_Object);
+    root.toElement().addProperty("m_globalBgColour", m_globalBgColour).addProperty("m_globalFgColour",
+                                                                                   m_globalFgColour);
+    wxFileName fnSettings = GetConfigFile();
+    root.save(fnSettings.GetFullPath());
+
+    wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
+    EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
 }

@@ -615,7 +615,7 @@
                 <label>Global &amp;Editor Preferences...</label>
             </object>
 			<object class="wxMenuItem" name="syntax_highlight">
-                <label>Syntax Highlight and &amp;Fonts...</label>
+                <label>Colours and &amp;Fonts...</label>
             </object>
 			<object class="wxMenuItem" name="configure_accelerators">
                 <label>Keyboard &amp;shortcuts...</label>

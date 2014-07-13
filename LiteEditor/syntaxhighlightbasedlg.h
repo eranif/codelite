@@ -14,10 +14,10 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/listbox.h>
-#include <wx/panel.h>
 #include <wx/notebook.h>
+#include <wx/panel.h>
 #include <wx/imaglist.h>
+#include <wx/listbox.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
@@ -31,10 +31,12 @@
 class SyntaxHighlightBaseDlg : public wxDialog
 {
 protected:
+    wxNotebook* m_notebook76;
+    wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
     wxNotebook* m_notebook2;
-    wxPanel* m_panel4;
+    wxPanel* m_panelGlobalSettings;
     wxStaticText* m_staticText70;
     wxChoice* m_choiceLexerThemes;
     wxStaticText* m_staticText6;
@@ -43,11 +45,7 @@ protected:
     wxColourPickerCtrl* m_globalBgColourPicker;
     wxStaticText* m_staticText8;
     wxTextCtrl* m_fileSpec;
-    wxStaticText* m_staticText91;
-    wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
-    wxStaticText* m_staticText911;
-    wxColourPickerCtrl* m_colourPickerOutputPanesBgColour;
-    wxPanel* m_panel6;
+    wxPanel* m_panelCustomize;
     wxListBox* m_properties;
     wxStaticText* m_staticText2;
     wxFontPickerCtrl* m_fontPicker;
@@ -64,9 +62,14 @@ protected:
     wxButton* m_button7;
     wxButton* m_button8;
     wxButton* m_button9;
-    wxPanel* m_panel8;
+    wxPanel* m_panelTextSelection;
     wxStaticText* m_staticText9;
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
+    wxPanel* m_panelGlobalColours;
+    wxStaticText* m_staticText91;
+    wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
+    wxStaticText* m_staticText911;
+    wxColourPickerCtrl* m_colourPickerOutputPanesBgColour;
     wxButton* m_buttonDefaults;
     wxStdDialogButtonSizer* m_stdBtnSizer10;
     wxButton* m_buttonOk;
@@ -79,7 +82,6 @@ protected:
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOutputViewColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEolFilled(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStyleWithinPreprocessor(wxCommandEvent& event) { event.Skip(); }
@@ -90,6 +92,7 @@ protected:
     virtual void OnEditKeyWordsButton3(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditKeyWordsButton4(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelTextChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnOutputViewColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnRestoreDefaults(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
@@ -97,7 +100,7 @@ protected:
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight and Fonts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
 };
 

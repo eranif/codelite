@@ -88,7 +88,7 @@ void LexerConf::FromXml(wxXmlNode* element)
             m_extension = node->GetNodeContent();
 
             // Make sure that C++ lexer includes the hxx and h++ header extension
-            if(m_lexerId == wxSTC_LEX_CPP) { // C++ lexer
+            if(m_name == "c++") { // C++ lexer
                 if(!m_extension.Contains("*.hxx")) {
                     m_extension =
                         "*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++";

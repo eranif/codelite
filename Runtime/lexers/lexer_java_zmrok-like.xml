@@ -5,7 +5,7 @@
   <KeyWords2/>
   <KeyWords3/>
   <KeyWords4/>
-  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++</Extensions>
+  <Extensions>*.java</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#141414" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#141414" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>

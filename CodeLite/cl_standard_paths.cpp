@@ -77,9 +77,10 @@ wxString clStandardPaths::GetPluginsDirectory() const
 #ifdef __WXGTK__
     wxString pluginsDir = PLUGINS_DIR;
 #else
-    wxString pluginsDir = GetDataDir();
+    wxFileName path(GetDataDir(), "");
+    path.AppendDir("plugins");
+    wxString pluginsDir = path.GetPath();
 #endif
-
     return pluginsDir;
 }
 

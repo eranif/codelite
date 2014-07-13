@@ -40,24 +40,41 @@ class wxTreebook;
 /** Implementing SyntaxHighlightBaseDlg */
 class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 {
-    wxChoice* m_themes;
-    wxTreebook *m_lexersBook;
-    wxString m_startingTheme;
-
+    bool m_isModified;
+    LexerConfPtr m_lexer;
+    
 protected:
+    virtual void OnButtonApplyUI(wxUpdateUIEvent& event);
+    virtual void OnLexerSelected(wxCommandEvent& event);
+    virtual void OnColourChanged(wxColourPickerEvent& event);
+    virtual void OnEditKeyWordsButton0(wxCommandEvent& event);
+    virtual void OnEditKeyWordsButton1(wxCommandEvent& event);
+    virtual void OnEditKeyWordsButton2(wxCommandEvent& event);
+    virtual void OnEditKeyWordsButton3(wxCommandEvent& event);
+    virtual void OnEditKeyWordsButton4(wxCommandEvent& event);
+    virtual void OnEolFilled(wxCommandEvent& event);
+    virtual void OnFontChanged(wxFontPickerEvent& event);
+    virtual void OnItemSelected(wxCommandEvent& event);
+    virtual void OnOutputViewColourChanged(wxColourPickerEvent& event);
+    virtual void OnSelTextChanged(wxColourPickerEvent& event);
+    virtual void OnStyleWithinPreprocessor(wxCommandEvent& event);
+    virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
+    virtual void OnText(wxCommandEvent& event);
+    
     // Handlers for SyntaxHighlightBaseDlg events.
     void OnButtonOK( wxCommandEvent& event );
     void OnButtonCancel( wxCommandEvent& event );
     void OnButtonApply( wxCommandEvent& event );
     void OnThemeChanged(wxCommandEvent& event);
     void OnRestoreDefaults(wxCommandEvent &e);
-    void OnTextSelApplyToAll(wxCommandEvent& event);
 
-    wxPanel *CreateSyntaxHighlightPage();
-    void LoadLexers(const wxString& theme);
-    wxPanel *CreateLexerPage(wxWindow *parent, LexerConfPtr lexer);
+    void LoadLexer(const wxString &themeName);
     void SaveChanges();
-
+    void Clear();
+    void CreateLexerPage();
+    StyleProperty::List_t::iterator GetSelectedStyle();
+    void EditKeyWords(int set);
+    
 public:
     /** Constructor */
     SyntaxHighlightDlg( wxWindow* parent );

@@ -64,6 +64,8 @@
     <File Name="CompileCommandsCreateor.cpp"/>
     <File Name="clSTCLineKeeper.cpp"/>
     <File Name="clSTCLineKeeper.h"/>
+    <File Name="LexerConfManager.h"/>
+    <File Name="LexerConfManager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

@@ -53,6 +53,7 @@
 #include "FileExplorerTab.h"
 #include "clang_code_completion.h"
 #include "debugger.h"
+#include "cl_standard_paths.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -130,14 +131,8 @@ void PluginManager::Load()
     else if( pp == CodeLiteApp::PP_FromList )
         allowedPlugins = app->GetAllowedPlugins();
 
-#ifdef __WXGTK__
-    wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
-#else
-    wxString pluginsDir(ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ));
-#endif
-
+    wxString pluginsDir = clStandardPaths::Get().GetPluginsDirectory();
     if ( wxDir::Exists(pluginsDir) ) {
-
         //get list of dlls
         wxArrayString files;
         wxDir::GetAllFiles( pluginsDir, &files, fileSpec, wxDIR_FILES );

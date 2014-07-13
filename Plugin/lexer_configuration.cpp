@@ -32,17 +32,17 @@
 #include "drawingutils.h"
 
 #ifdef __WXMSW__
-#   define DEFAULT_FACE_NAME "Consolas"
-#   define DEFAULT_FONT_SIZE 11
+#define DEFAULT_FACE_NAME "Consolas"
+#define DEFAULT_FONT_SIZE 11
 #elif defined(__WXMAC__)
-#   define DEFAULT_FACE_NAME "monaco"
-#   define DEFAULT_FONT_SIZE 12
+#define DEFAULT_FACE_NAME "monaco"
+#define DEFAULT_FONT_SIZE 12
 #else // GTK, FreeBSD etc
-#   define DEFAULT_FACE_NAME "monospace"
-#   define DEFAULT_FONT_SIZE 11
+#define DEFAULT_FACE_NAME "monospace"
+#define DEFAULT_FONT_SIZE 11
 #endif
 
-static bool StringTolBool(const wxString &s)
+static bool StringTolBool(const wxString& s)
 {
     bool res = s.CmpNoCase(wxT("Yes")) == 0 ? true : false;
     return res;
@@ -50,27 +50,30 @@ static bool StringTolBool(const wxString &s)
 
 LexerConf::LexerConf()
     : m_styleWithinPreProcessor(true)
+    , m_isActive(false)
 {
 }
 
-void LexerConf::FromXml(wxXmlNode *element)
+void LexerConf::FromXml(wxXmlNode* element)
 {
-    if( element ) {
-        m_lexerId = XmlUtils::ReadLong(element, wxT("Id"), 0);
-
-        // read the lexer name
+    if(element) {
         m_name = element->GetPropVal(wxT("Name"), wxEmptyString);
         m_name.MakeLower();
         
-        m_styleWithinPreProcessor = element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;
+        m_lexerId = XmlUtils::ReadLong(element, wxT("Id"), 0);
+        m_themeName = XmlUtils::ReadString(element, "Theme", "Default");
+        m_isActive = XmlUtils::ReadBool(element, "IsActive", false);
+
+        m_styleWithinPreProcessor =
+            element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;
 
         // load key words
-        wxXmlNode *node = NULL;
-        for(int i=0; i<10; ++i) {
+        wxXmlNode* node = NULL;
+        for(int i = 0; i < 10; ++i) {
             wxString tagName = "KeyWords";
             tagName << i;
             node = XmlUtils::FindFirstByTagName(element, tagName);
-            if( node ) {
+            if(node) {
                 wxString content = node->GetNodeContent();
                 content.Replace("\r", "");
                 content.Replace("\n", " ");
@@ -78,22 +81,23 @@ void LexerConf::FromXml(wxXmlNode *element)
                 m_keyWords[i] = content;
             }
         }
-        
+
         // load extensions
         node = XmlUtils::FindFirstByTagName(element, wxT("Extensions"));
-        if( node ) {
+        if(node) {
             m_extension = node->GetNodeContent();
-            
+
             // Make sure that C++ lexer includes the hxx and h++ header extension
-            if ( m_lexerId == wxSTC_LEX_CPP ) { // C++ lexer
-                if ( !m_extension.Contains("*.hxx") ) {
-                    m_extension = "*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++";
+            if(m_lexerId == wxSTC_LEX_CPP) { // C++ lexer
+                if(!m_extension.Contains("*.hxx")) {
+                    m_extension =
+                        "*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++";
                 }
             }
-            
+
             // Make sure that CMake includes the CMakeLists.txt file
-            if ( m_lexerId == wxSTC_LEX_CMAKE ) {
-                if ( !m_extension.Contains("CMakeLists.txt") ) {
+            if(m_lexerId == wxSTC_LEX_CMAKE) {
+                if(!m_extension.Contains("CMakeLists.txt")) {
                     m_extension = "*.cmake;*.CMAKE;*CMakeLists.txt";
                 }
             }
@@ -102,33 +106,38 @@ void LexerConf::FromXml(wxXmlNode *element)
         // load properties
         // Search for <properties>
         node = XmlUtils::FindFirstByTagName(element, wxT("Properties"));
-        if( node ) {
+        if(node) {
             // We found the element, read the attributes
             wxXmlNode* prop = node->GetChildren();
-            while( prop ) {
+            while(prop) {
                 if(prop->GetName() == wxT("Property")) {
                     // Read the font attributes
-                    wxString Name      = XmlUtils::ReadString(prop, wxT("Name"), wxT("DEFAULT"));
-                    wxString bold      = XmlUtils::ReadString(prop, wxT("Bold"), wxT("no"));
-                    wxString italic    = XmlUtils::ReadString(prop, wxT("Italic"), wxT("no"));
-                    wxString eolFill   = XmlUtils::ReadString(prop, wxT("EolFilled"), wxT("no"));
+                    wxString Name = XmlUtils::ReadString(prop, wxT("Name"), wxT("DEFAULT"));
+                    wxString bold = XmlUtils::ReadString(prop, wxT("Bold"), wxT("no"));
+                    wxString italic = XmlUtils::ReadString(prop, wxT("Italic"), wxT("no"));
+                    wxString eolFill = XmlUtils::ReadString(prop, wxT("EolFilled"), wxT("no"));
                     wxString underline = XmlUtils::ReadString(prop, wxT("Underline"), wxT("no"));
                     wxString strikeout = XmlUtils::ReadString(prop, wxT("Strikeout"), wxT("no"));
-                    wxString face      = XmlUtils::ReadString(prop, wxT("Face"), wxT("Courier"));
-                    wxString colour    = XmlUtils::ReadString(prop, wxT("Colour"), wxT("black"));
-                    wxString bgcolour  = XmlUtils::ReadString(prop, wxT("BgColour"), wxT("white"));
-                    long fontSize      = XmlUtils::ReadLong  (prop, wxT("Size"), 10);
-                    long propId        = XmlUtils::ReadLong  (prop, wxT("Id"), 0);
-                    long alpha         = XmlUtils::ReadLong  (prop, wxT("Alpha"), 50);
+                    wxString face = XmlUtils::ReadString(prop, wxT("Face"), wxT("Courier"));
+                    wxString colour = XmlUtils::ReadString(prop, wxT("Colour"), wxT("black"));
+                    wxString bgcolour = XmlUtils::ReadString(prop, wxT("BgColour"), wxT("white"));
+                    long fontSize = XmlUtils::ReadLong(prop, wxT("Size"), 10);
+                    long propId = XmlUtils::ReadLong(prop, wxT("Id"), 0);
+                    long alpha = XmlUtils::ReadLong(prop, wxT("Alpha"), 50);
 
-                    StyleProperty property = StyleProperty(propId, colour, bgcolour, fontSize, Name, face,
+                    StyleProperty property = StyleProperty(propId,
+                                                           colour,
+                                                           bgcolour,
+                                                           fontSize,
+                                                           Name,
+                                                           face,
                                                            StringTolBool(bold),
                                                            StringTolBool(italic),
                                                            StringTolBool(underline),
                                                            StringTolBool(eolFill),
                                                            alpha);
 
-                    m_properties.push_back( property );
+                    m_properties.push_back(property);
                 }
                 prop = prop->GetNext();
             }
@@ -140,49 +149,52 @@ LexerConf::~LexerConf()
 {
 }
 
-wxXmlNode *LexerConf::ToXml() const
+wxXmlNode* LexerConf::ToXml() const
 {
-    //convert the lexer back xml node
-    wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Lexer"));
-    //set the lexer name
+    // convert the lexer back xml node
+    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Lexer"));
+    // set the lexer name
     node->AddProperty(wxT("Name"), GetName());
+    node->AddProperty("Theme", GetThemeName());
+    node->AddProperty("IsActive", IsActive() ? "Yes" : "No");
+
     node->AddProperty(wxT("StylingWithinPreProcessor"), BoolToString(m_styleWithinPreProcessor));
     wxString strId;
     strId << GetLexerId();
     node->AddProperty(wxT("Id"), strId);
 
-    //set the keywords node
-    wxXmlNode *keyWords0 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords0"));
+    // set the keywords node
+    wxXmlNode* keyWords0 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords0"));
     XmlUtils::SetNodeContent(keyWords0, GetKeyWords(0));
     node->AddChild(keyWords0);
 
-    wxXmlNode *keyWords1 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords1"));
+    wxXmlNode* keyWords1 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords1"));
     XmlUtils::SetNodeContent(keyWords1, GetKeyWords(1));
     node->AddChild(keyWords1);
 
-    wxXmlNode *keyWords2 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords2"));
+    wxXmlNode* keyWords2 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords2"));
     XmlUtils::SetNodeContent(keyWords2, GetKeyWords(2));
     node->AddChild(keyWords2);
 
-    wxXmlNode *keyWords3 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords3"));
+    wxXmlNode* keyWords3 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords3"));
     XmlUtils::SetNodeContent(keyWords3, GetKeyWords(3));
     node->AddChild(keyWords3);
 
-    wxXmlNode *keyWords4 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords4"));
+    wxXmlNode* keyWords4 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords4"));
     XmlUtils::SetNodeContent(keyWords4, GetKeyWords(4));
     node->AddChild(keyWords4);
 
-    //set the extensions node
-    wxXmlNode *extesions = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Extensions"));
+    // set the extensions node
+    wxXmlNode* extesions = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Extensions"));
     XmlUtils::SetNodeContent(extesions, GetFileSpec());
     node->AddChild(extesions);
 
-    //set the properties
-    wxXmlNode *properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Properties"));
+    // set the properties
+    wxXmlNode* properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Properties"));
     std::list<StyleProperty>::const_iterator iter = m_properties.begin();
-    for(; iter != m_properties.end(); iter ++) {
+    for(; iter != m_properties.end(); iter++) {
         StyleProperty p = (*iter);
-        wxXmlNode *property = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Property"));
+        wxXmlNode* property = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Property"));
 
         strId.Clear();
         strId << p.GetId();
@@ -205,26 +217,31 @@ wxXmlNode *LexerConf::ToXml() const
         property->AddProperty(wxT("Size"), strSize);
         properties->AddChild(property);
     }
-    node->AddChild( properties );
+    node->AddChild(properties);
     return node;
 }
 
 wxFont LexerConf::GetFontForSyle(int styleId) const
 {
-    StylePropertyList::const_iterator iter = m_properties.begin();
-    for( ; iter != m_properties.end(); ++iter ) {
-        if ( iter->GetId() == styleId ) {
-            
-            int fontSize( iter->GetFontSize() );
+    StyleProperty::List_t::const_iterator iter = m_properties.begin();
+    for(; iter != m_properties.end(); ++iter) {
+        if(iter->GetId() == styleId) {
+
+            int fontSize(iter->GetFontSize());
             wxString face = iter->GetFaceName();
-            if ( face.IsEmpty() ) {
+            if(face.IsEmpty()) {
                 // defaults
                 fontSize = DEFAULT_FONT_SIZE;
                 face = DEFAULT_FACE_NAME;
             }
 
-            wxFontInfo fontInfo = wxFontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(iter->GetItalic()).Bold(iter->IsBold()).Underlined(iter->GetUnderlined()).FaceName(face);
-            wxFont     font(fontInfo);
+            wxFontInfo fontInfo = wxFontInfo(fontSize)
+                                      .Family(wxFONTFAMILY_TELETYPE)
+                                      .Italic(iter->GetItalic())
+                                      .Bold(iter->IsBold())
+                                      .Underlined(iter->GetUnderlined())
+                                      .FaceName(face);
+            wxFont font(fontInfo);
             return font;
         }
     }
@@ -241,23 +258,23 @@ static wxColor GetInactiveColor(const wxColor& col)
 #endif
 }
 
-#define CL_LINE_MODIFIED_STYLE      200
-#define CL_LINE_SAVED_STYLE         201
+#define CL_LINE_MODIFIED_STYLE 200
+#define CL_LINE_SAVED_STYLE 201
 void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
-    ctrl->SetLexer( GetLexerId() );
+    ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
     // Define the styles for the editing margin
-    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("FOREST GREEN")));
+    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("FOREST GREEN")));
     ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
-    
+
     // by default indicators are set to be opaque rounded box
     ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
 
-    //ctrl->IndicatorSetAlpha(1, 80);
-    //ctrl->IndicatorSetAlpha(2, 80);
+    // ctrl->IndicatorSetAlpha(1, 80);
+    // ctrl->IndicatorSetAlpha(2, 80);
 
     bool tooltip(false);
 
@@ -269,7 +286,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     wxFont defaultFont;
     bool foundDefaultStyle = false;
     std::list<StyleProperty>::iterator iter = styles.begin();
-    for (; iter != styles.end(); iter++) {
+    for(; iter != styles.end(); iter++) {
         if(iter->GetId() == 0) {
             defaultFont = wxFont(iter->GetFontSize(),
                                  wxFONTFAMILY_TELETYPE,
@@ -282,28 +299,28 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
     }
 
-    if ( foundDefaultStyle && defaultFont.IsOk() ) {
-        for(int i=0; i<256; i++) {
+    if(foundDefaultStyle && defaultFont.IsOk()) {
+        for(int i = 0; i < 256; i++) {
             ctrl->StyleSetFont(i, defaultFont);
         }
     }
 
     iter = styles.begin();
-    for (; iter != styles.end(); ++iter) {
+    for(; iter != styles.end(); ++iter) {
 
-        StyleProperty sp        = (*iter);
-        int           size      = sp.GetFontSize();
-        wxString      face      = sp.GetFaceName();
-        bool          bold      = sp.IsBold();
-        bool          italic    = sp.GetItalic();
-        bool          underline = sp.GetUnderlined();
-        //int           alpha     = sp.GetAlpha();
+        StyleProperty sp = (*iter);
+        int size = sp.GetFontSize();
+        wxString face = sp.GetFaceName();
+        bool bold = sp.IsBold();
+        bool italic = sp.GetItalic();
+        bool underline = sp.GetUnderlined();
+        // int           alpha     = sp.GetAlpha();
         // handle special cases
-        switch ( sp.GetId() ) {
+        switch(sp.GetId()) {
         case WHITE_SPACE_ATTR_ID: {
             // whitespace colour. We dont allow changing the background colour, only the foreground colour
             wxColour whitespaceColour = sp.GetFgColour();
-            if ( whitespaceColour.IsOk() ) {
+            if(whitespaceColour.IsOk()) {
                 ctrl->SetWhitespaceForeground(true, whitespaceColour);
             }
             break;
@@ -322,26 +339,31 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         case CARET_ATTR_ID: {
             // caret colour
             wxColour caretColour = sp.GetFgColour();
-            if ( !caretColour.IsOk() ) {
+            if(!caretColour.IsOk()) {
                 caretColour = *wxBLACK;
             }
-            ctrl->SetCaretForeground( caretColour );
+            ctrl->SetCaretForeground(caretColour);
             break;
         }
         default: {
-            
+
             wxString faceName = face;
-            int fontSize( size );
-            if ( face.IsEmpty() ) {
+            int fontSize(size);
+            if(face.IsEmpty()) {
                 // defaults
                 fontSize = DEFAULT_FONT_SIZE;
                 faceName = DEFAULT_FACE_NAME;
             }
 
-            wxFontInfo fontInfo = wxFontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(italic).Bold(bold).Underlined(underline).FaceName(faceName);
-            wxFont     font(fontInfo);
+            wxFontInfo fontInfo = wxFontInfo(fontSize)
+                                      .Family(wxFONTFAMILY_TELETYPE)
+                                      .Italic(italic)
+                                      .Bold(bold)
+                                      .Underlined(underline)
+                                      .FaceName(faceName);
+            wxFont font(fontInfo);
 
-            if (sp.GetId() == 0) { //default
+            if(sp.GetId() == 0) { // default
                 ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
                 ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT, size);
                 ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT, (*iter).GetFgColour());
@@ -349,8 +371,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 // Inactive state is greater by 64 from its counterpart
                 wxColor inactiveColor = GetInactiveColor((*iter).GetFgColour());
                 ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT + 64, inactiveColor);
-                ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT + 64,       font);
-                ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT + 64,       size);
+                ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT + 64, font);
+                ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT + 64, size);
 
                 ctrl->StyleSetBackground(wxSTC_STYLE_DEFAULT, (*iter).GetBgColour());
                 ctrl->StyleSetSize(wxSTC_STYLE_LINENUMBER, size);
@@ -360,7 +382,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 // test the background colour of the editor, if it is considered "dark"
                 // set the indicator to be hollow rectanlgle
                 StyleProperty sp = (*iter);
-                if ( DrawingUtils::IsDark(sp.GetBgColour()) ) {
+                if(DrawingUtils::IsDark(sp.GetBgColour())) {
                     ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
                     ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
                 }
@@ -393,8 +415,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 // Inactive state is greater by 64 from its counterpart
                 wxColor inactiveColor = GetInactiveColor(iter->GetFgColour());
                 ctrl->StyleSetForeground(sp.GetId() + 64, inactiveColor);
-                ctrl->StyleSetFont(sp.GetId() + 64,       font);
-                ctrl->StyleSetSize(sp.GetId() + 64,       size);
+                ctrl->StyleSetFont(sp.GetId() + 64, font);
+                ctrl->StyleSetSize(sp.GetId() + 64, size);
 
                 ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
             }
@@ -404,12 +426,12 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     }
 
     // set the calltip font
-    if( !tooltip ) {
+    if(!tooltip) {
         wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
         ctrl->StyleSetFont(wxSTC_STYLE_CALLTIP, font);
     }
-    
-    if ( applyKeywords ) {
+
+    if(applyKeywords) {
         ctrl->SetKeyWords(0, GetKeyWords(0));
         ctrl->SetKeyWords(1, GetKeyWords(1));
         ctrl->SetKeyWords(2, GetKeyWords(2));

@@ -36,44 +36,64 @@
 
 class WXDLLIMPEXP_SDK LexerConf
 {
-    StylePropertyList m_properties;
-    int               m_lexerId;
-    wxString          m_name;
-    wxString          m_extension;
-    wxString          m_keyWords[10];
-    bool              m_styleWithinPreProcessor;
-
+    StyleProperty::List_t m_properties;
+    int m_lexerId;
+    wxString m_name;
+    wxString m_extension;
+    wxString m_keyWords[10];
+    bool m_styleWithinPreProcessor;
+    wxString m_themeName;
+    bool m_isActive;
 
 public:
     // Return an xml representation from this object
-    wxXmlNode *ToXml() const;
+    wxXmlNode* ToXml() const;
 
     // Parse lexer object from xml node
-    void FromXml(wxXmlNode *node);
+    void FromXml(wxXmlNode* node);
 
 public:
     LexerConf();
     virtual ~LexerConf();
-    
+
+    void SetIsActive(bool isActive)
+    {
+        this->m_isActive = isActive;
+    }
+    void SetThemeName(const wxString& themeName)
+    {
+        this->m_themeName = themeName;
+    }
+    bool IsActive() const
+    {
+        return m_isActive;
+    }
+    const wxString& GetThemeName() const
+    {
+        return m_themeName;
+    }
     /**
      * @brief apply the current lexer configuration on an input
      * wxStyledTextCtrl
      */
     void Apply(wxStyledTextCtrl* ctrl, bool applyKeywords = false);
-    
+
     /**
      * Get the lexer ID, which should be in sync with values of Scintilla
      * \return
      */
-    int GetLexerId() const {
+    int GetLexerId() const
+    {
         return m_lexerId;
     }
 
-    void SetStyleWithinPreProcessor(bool styleWithinPreProcessor) {
+    void SetStyleWithinPreProcessor(bool styleWithinPreProcessor)
+    {
         this->m_styleWithinPreProcessor = styleWithinPreProcessor;
     }
 
-    bool GetStyleWithinPreProcessor() const {
+    bool GetStyleWithinPreProcessor() const
+    {
         return m_styleWithinPreProcessor;
     }
 
@@ -81,56 +101,74 @@ public:
      * Set the lexer ID
      * \param id
      */
-    void SetLexerId(int id) {
+    void SetLexerId(int id)
+    {
         m_lexerId = id;
     }
 
     /**
      * Return the lexer description as described in the XML file
      */
-    const wxString &GetName() const {
+    const wxString& GetName() const
+    {
         return m_name;
     }
     /**
      * Return the lexer keywords
      * \return
      */
-    const wxString &GetKeyWords(int set) const {
+    const wxString& GetKeyWords(int set) const
+    {
         return m_keyWords[set];
     }
 
-    void SetKeyWords(const wxString &keywords, int set) {
+    void SetKeyWords(const wxString& keywords, int set)
+    {
         m_keyWords[set] = keywords;
     }
 
     /**
      * File patterns that this lexer should apply to
      */
-    const wxString &GetFileSpec() const {
+    const wxString& GetFileSpec() const
+    {
         return m_extension;
     }
     /**
      * Return a list of the lexer properties
      * \return
      */
-    const StylePropertyList &GetLexerProperties() const {
+    const StyleProperty::List_t& GetLexerProperties() const
+    {
         return m_properties;
     }
+
+    /**
+     * Return a list of the lexer properties
+     * \return
+     */
+    StyleProperty::List_t& GetLexerProperties()
+    {
+        return m_properties;
+    }
+
     /**
      * Set the lexer properties
      * \param &properties
      */
-    void SetProperties(StylePropertyList &properties) {
+    void SetProperties(StyleProperty::List_t& properties)
+    {
         m_properties = properties;
     }
     /**
      * Set file spec for the lexer
      * \param &spec
      */
-    void SetFileSpec(const wxString &spec) {
+    void SetFileSpec(const wxString& spec)
+    {
         m_extension = spec;
     }
-    
+
     /**
      * @brief return the font for a given style id
      * @return return wxNullFont if error occured or could locate the style

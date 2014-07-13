@@ -102,15 +102,6 @@ public:
     }
 };
 
-typedef std::map<wxString, LexerConfPtr> ThemeLexersMap;
-struct LexersInfo {
-    ThemeLexersMap lexers;
-    wxString       filename;
-    wxString       theme;
-    wxString       outputpane_fg_colour;  // Here because they're global to this theme, not per lexor
-    wxString       outputpane_bg_colour;
-};
-
 /**
  * \ingroup LiteEditor
  * \brief EditorConfig a singleton class that manages the liteeditor.xml configuration file
@@ -127,12 +118,10 @@ class WXDLLIMPEXP_SDK EditorConfig : public IConfigTool
     friend class EditorConfigST;
     wxXmlDocument*                      m_doc;
     wxFileName                          m_fileName;
-    std::map<wxString, LexersInfo*>     m_lexers;
     bool                                m_transcation;
     wxString                            m_svnRevision;
     wxString                            m_version;
     wxString                            m_installDir;
-    LexersInfo*                         m_activeThemeLexers;
 
 private:
     bool DoSave() const;
@@ -150,8 +139,6 @@ public:
     }
 
 public:
-    typedef std::map<wxString, LexerConfPtr>::const_iterator ConstIterator;
-
     void Begin();
     void Save();
 
@@ -187,16 +174,6 @@ public:
      * \return the colour as a wxString
      */
     wxString GetCurrentOutputviewBgColour() const;
-
-    /**
-     * Return iterator to the begin of the undelying lexer mapping
-      */
-    ConstIterator LexerBegin();
-
-    /**
-     * Return iterator to the end of the undelying lexer mapping
-     */
-    ConstIterator LexerEnd();
 
     /**
      * Test if this configuration is loaded properly

@@ -50,6 +50,7 @@
 #include <CompilerLocatorMinGW.h>
 #include <wx/regex.h>
 #include "CompilerLocatorCygwin.h"
+#include "LexerConfManager.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -487,6 +488,8 @@ bool CodeLiteApp::OnInit()
         CL_ERROR(wxT("Failed to load configuration file: %s/config/codelite.xml"), wxGetCwd().c_str());
         return false;
     }
+
+    LexerConfManager::Get().Load();
 
 #ifdef __WXGTK__
     bool redirect = clConfig::Get().Read("RedirectLogOutput", true);

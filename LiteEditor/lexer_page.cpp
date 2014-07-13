@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
+#if 0
 #include "lexer_page.h"
 #include "lexer_configuration.h"
 #include "attribute_style.h"
@@ -338,3 +339,5 @@ void LexerPage::SetTextSelectionValues(const wxString& colourstring, int alpha)
     m_colourPickerSelTextBgColour->SetColour(colourstring);
 
 }
+
+#endif

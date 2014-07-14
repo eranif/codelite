@@ -13,6 +13,8 @@
 #include "file_logger.h"
 #include <algorithm>
 #include "macros.h"
+#include <wx/settings.h>
+#include <wx/tokenzr.h>
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()

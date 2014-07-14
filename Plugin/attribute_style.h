@@ -46,6 +46,8 @@
 
 #define LINE_NUMBERS_ATTR_ID 33
 
+#define STYLE_PROPERTY_NULL_ID -999
+
 class StyleProperty
 {
     int m_id;
@@ -61,7 +63,6 @@ class StyleProperty
     int m_alpha;
 public:
     typedef std::list<StyleProperty> List_t;
-
     struct FindByName {
         wxString m_name;
         FindByName(const wxString &name) : m_name(name) {}
@@ -69,6 +70,15 @@ public:
             return m_name == other.GetName();
         }
     };
+
+    struct FindByID {
+        int m_id;
+        FindByID(int id) : m_id(id) {}
+        bool operator()(const StyleProperty& other) const {
+            return m_id == other.GetId();
+        }
+    };
+
 public:
     StyleProperty(int id,
                   const wxString& fgColour,
@@ -131,6 +141,10 @@ public:
     {
     }
 
+    bool IsNull() const {
+        return m_id == STYLE_PROPERTY_NULL_ID;
+    }
+    
     void SetAlpha(int alpha)
     {
         this->m_alpha = alpha;

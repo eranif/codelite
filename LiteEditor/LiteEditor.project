@@ -133,8 +133,6 @@
       <File Name="listctrlpanel.cpp"/>
       <File Name="close_all_dlg.cpp"/>
       <File Name="close_all_dlg.h"/>
-      <File Name="lexer_page.h"/>
-      <File Name="lexer_page.cpp"/>
       <File Name="free_text_dialog.h"/>
       <File Name="free_text_dialog.cpp"/>
       <File Name="add_option_dialog.cpp"/>
@@ -249,6 +247,8 @@
       <File Name="filechecklistbase.wxcp"/>
       <File Name="FilesModifiedDlg.h"/>
       <File Name="FilesModifiedDlg.cpp"/>
+      <File Name="NewThemeDialog.cpp"/>
+      <File Name="NewThemeDialog.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

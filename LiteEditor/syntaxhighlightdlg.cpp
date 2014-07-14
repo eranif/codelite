@@ -41,6 +41,7 @@
 #include <algorithm>
 #include "free_text_dialog.h"
 #include <wx/wupdlock.h>
+#include "NewThemeDialog.h"
 
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)
@@ -137,8 +138,15 @@ void SyntaxHighlightDlg::SaveChanges()
 {
     // Save all lexers once
     // Update the lexer
-    ColoursAndFontsManager::Get().Save(m_lexer);
+    CHECK_PTR_RET(m_lexer);
 
+    // Make sure we got a valid text selection
+    // foreground colour
+    StyleProperty& selProp = m_lexer->GetProperty(SEL_TEXT_ATTR_ID);
+    if(!selProp.IsNull()) {
+        selProp.SetFgColour(m_colourPickerSelTextFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+    }
+    ColoursAndFontsManager::Get().Save(m_lexer);
     // Update the active theme for the lexer
     ColoursAndFontsManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
 
@@ -150,32 +158,11 @@ void SyntaxHighlightDlg::SaveChanges()
 
     wxString newBg = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
     EditorConfigST::Get()->SetCurrentOutputviewBgColour(newBg);
+
     m_isModified = false;
 }
 
 SyntaxHighlightDlg::~SyntaxHighlightDlg() { WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL); }
-
-void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
-{
-    // if(wxMessageBox(_("Are you sure you want to load all default syntax highlight settings and lose all your
-    // changes?"),
-    //                 _("CodeLite"),
-    //                 wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTER,
-    //                 this) != wxYES) {
-    //     return;
-    // }
-    //
-    // // restore the default lexers
-    // EditorConfigST::Get()->LoadLexers(true);
-    // clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
-    //
-    // wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-    // clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-    //
-    // // Update the context manager
-    // ContextManager::Get()->Initialize();
-    // EndModal(wxID_OK);
-}
 
 void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
 {
@@ -339,7 +326,11 @@ void SyntaxHighlightDlg::OnSelTextChanged(wxColourPickerEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
     event.Skip();
-    m_isModified = true;
+    StyleProperty& selProp = m_lexer->GetProperty(SEL_TEXT_ATTR_ID);
+    if(!selProp.IsNull()) {
+        m_isModified = true;
+        selProp.SetBgColour(event.GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+    }
 }
 
 void SyntaxHighlightDlg::OnStyleWithinPreprocessor(wxCommandEvent& event)
@@ -411,7 +402,6 @@ void SyntaxHighlightDlg::CreateLexerPage()
                              bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
                              false,
                              face);
-        // initialEolFilled = p.GetEolFilled();
     }
     initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();
 
@@ -425,6 +415,8 @@ void SyntaxHighlightDlg::CreateLexerPage()
 
     // Update selected text properties
     m_colourPickerSelTextBgColour->SetColour(selTextProperties.GetBgColour());
+    m_colourPickerSelTextFgColour->SetColour(selTextProperties.GetFgColour());
+    m_checkBoxCustomSelectionFgColour->SetValue(m_lexer->IsUseCustomTextSelectionFgColour());
 
     if(m_propertyList.empty()) {
         m_fontPicker->Enable(false);
@@ -463,3 +455,42 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
 }
 
 void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isModified); }
+
+void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_checkBoxCustomSelectionFgColour->IsChecked());
+}
+
+void SyntaxHighlightDlg::OnSelTextFgChanged(wxColourPickerEvent& event)
+{
+    CHECK_PTR_RET(m_lexer);
+    event.Skip();
+    StyleProperty& selProp = m_lexer->GetProperty(SEL_TEXT_ATTR_ID);
+    if(!selProp.IsNull()) {
+        m_isModified = true;
+        selProp.SetFgColour(event.GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+    }
+}
+
+void SyntaxHighlightDlg::OnUseCustomFgTextColour(wxCommandEvent& event)
+{
+    CHECK_PTR_RET(m_lexer);
+    event.Skip();
+    m_isModified = true;
+    m_lexer->SetUseCustomTextSelectionFgColour(event.IsChecked());
+}
+
+void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)
+{
+    // Create new theme
+    CHECK_PTR_RET(m_lexer);
+    NewThemeDialog dlg(this, m_lexer);
+    if(dlg.ShowModal() == wxID_OK) {
+        // Create new XML and load it
+        LexerConf::Ptr_t newLexer =
+            ColoursAndFontsManager::Get().CopyTheme(dlg.GetLexerName(), dlg.GetThemeName(), dlg.GetBaseTheme());
+        if(newLexer) {
+            LoadLexer(newLexer->GetName());
+        }
+    }
+}

@@ -12,6 +12,7 @@
 #include "json_node.h"
 #include "file_logger.h"
 #include <algorithm>
+#include "macros.h"
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()
@@ -134,12 +135,12 @@ void ColoursAndFontsManager::LoadOldXmls(const wxString& path)
     Save();
 }
 
-void ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
+LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
 {
     wxString lexerName = XmlUtils::ReadString(node, "Name");
     lexerName.MakeLower();
     if(lexerName.IsEmpty())
-        return;
+        return NULL;
 
     LexerConf::Ptr_t lexer(new LexerConf);
     lexer->FromXml(node);
@@ -165,6 +166,7 @@ void ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     }
     vec.push_back(lexer);
     m_allLexers.push_back(lexer);
+    return lexer;
 }
 
 wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString& lexerName) const
@@ -350,4 +352,21 @@ void ColoursAndFontsManager::SaveGlobalSettings()
 
     wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
     EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
+}
+
+LexerConf::Ptr_t
+ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme)
+{
+    LexerConf::Ptr_t sourceLexer = GetLexer(lexerName, sourceTheme);
+    CHECK_PTR_RET_NULL(sourceLexer);
+
+    wxXmlNode* sourceLexerXml = sourceLexer->ToXml();
+    LexerConf::Ptr_t newLexer(new LexerConf());
+    newLexer->FromXml(sourceLexerXml);
+
+    // Update the theme name
+    newLexer->SetThemeName(themeName);
+
+    // Add it
+    return DoAddLexer(newLexer->ToXml());
 }

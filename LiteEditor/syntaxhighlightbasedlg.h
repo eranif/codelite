@@ -14,6 +14,11 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
+#include <wx/toolbar.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
@@ -31,6 +36,7 @@
 class SyntaxHighlightBaseDlg : public wxDialog
 {
 protected:
+    wxAuiToolBar* m_auibar;
     wxNotebook* m_notebook76;
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
@@ -65,6 +71,10 @@ protected:
     wxPanel* m_panelTextSelection;
     wxStaticText* m_staticText9;
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
+    wxStaticText* m_staticText94;
+    wxCheckBox* m_checkBoxCustomSelectionFgColour;
+    wxStaticText* m_staticText84;
+    wxColourPickerCtrl* m_colourPickerSelTextFgColour;
     wxPanel* m_panelGlobalColours;
     wxStaticText* m_staticText91;
     wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
@@ -76,6 +86,7 @@ protected:
     wxButton* m_buttonApply;
 
 protected:
+    virtual void OnNewTheme(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
@@ -91,6 +102,9 @@ protected:
     virtual void OnEditKeyWordsButton3(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditKeyWordsButton4(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelTextChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnUseCustomFgTextColour(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTextSelFgUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSelTextFgChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnOutputViewColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
@@ -100,6 +114,29 @@ protected:
 public:
     SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
+};
+
+
+class NewThemeDialogBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText127;
+    wxTextCtrl* m_textCtrlName;
+    wxStaticText* m_staticText131;
+    wxChoice* m_choiceLanguage;
+    wxStaticText* m_staticText135;
+    wxChoice* m_choiceBaseTheme;
+    wxStdDialogButtonSizer* m_stdBtnSizer117;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
+
+protected:
+    virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~NewThemeDialogBase();
 };
 
 #endif

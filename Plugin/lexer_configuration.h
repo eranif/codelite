@@ -45,9 +45,11 @@ class WXDLLIMPEXP_SDK LexerConf
     bool m_styleWithinPreProcessor;
     wxString m_themeName;
     bool m_isActive;
+    bool m_useCustomTextSelectionFgColour;
+
 public:
     typedef SmartPtr<LexerConf> Ptr_t;
-    
+
 public:
     struct FindByNameAndTheme
     {
@@ -76,6 +78,11 @@ public:
     LexerConf();
     virtual ~LexerConf();
 
+    void SetUseCustomTextSelectionFgColour(bool useCustomTextSelectionFgColour)
+    {
+        this->m_useCustomTextSelectionFgColour = useCustomTextSelectionFgColour;
+    }
+    bool IsUseCustomTextSelectionFgColour() const { return m_useCustomTextSelectionFgColour; }
     void SetIsActive(bool isActive) { this->m_isActive = isActive; }
     void SetThemeName(const wxString& themeName) { this->m_themeName = themeName; }
     bool IsActive() const { return m_isActive; }
@@ -132,6 +139,13 @@ public:
      * \return
      */
     StyleProperty::List_t& GetLexerProperties() { return m_properties; }
+
+    /**
+     * @brief return property. Check for IsNull() to make sure we got a valid property
+     * @param propertyId
+     * @return
+     */
+    StyleProperty& GetProperty(int propertyId);
 
     /**
      * Set the lexer properties

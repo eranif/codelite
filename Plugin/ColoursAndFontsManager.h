@@ -26,7 +26,7 @@ private:
 
     void LoadNewXmls(const wxString& path);
     void LoadOldXmls(const wxString& path);
-    void DoAddLexer(wxXmlNode* node);
+    LexerConf::Ptr_t DoAddLexer(wxXmlNode* node);
     void Clear();
     wxFileName GetConfigFile() const;
     void SaveGlobalSettings();
@@ -36,6 +36,15 @@ public:
 
     const wxColour& GetGlobalBgColour() const { return m_globalBgColour; }
     const wxColour& GetGlobalFgColour() const { return m_globalFgColour; }
+
+    /**
+     * @brief create new theme for a lexer by copying an existing theme 'sourceTheme'
+     * @param lexerName the lexer name
+     * @param themeName the new theme name
+     * @param sourceTheme source theme to copy the attributes from
+     */
+    LexerConf::Ptr_t CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme);
+
     void SetGlobalBgColour(const wxColour& globalBgColour)
     {
         this->m_globalBgColour = globalBgColour;

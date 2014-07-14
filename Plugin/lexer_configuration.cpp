@@ -30,6 +30,7 @@
 #include "macros.h"
 #include "wx_xml_compatibility.h"
 #include "drawingutils.h"
+#include <algorithm>
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -51,6 +52,7 @@ static bool StringTolBool(const wxString& s)
 LexerConf::LexerConf()
     : m_styleWithinPreProcessor(true)
     , m_isActive(false)
+    , m_useCustomTextSelectionFgColour(false)
 {
 }
 
@@ -59,10 +61,11 @@ void LexerConf::FromXml(wxXmlNode* element)
     if(element) {
         m_name = element->GetPropVal(wxT("Name"), wxEmptyString);
         m_name.MakeLower();
-        
+
         m_lexerId = XmlUtils::ReadLong(element, wxT("Id"), 0);
         m_themeName = XmlUtils::ReadString(element, "Theme", "Default");
         m_isActive = XmlUtils::ReadBool(element, "IsActive", false);
+        m_useCustomTextSelectionFgColour = XmlUtils::ReadBool(element, "UseCustomTextSelFgColour ", m_useCustomTextSelectionFgColour);
 
         m_styleWithinPreProcessor =
             element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;
@@ -145,9 +148,7 @@ void LexerConf::FromXml(wxXmlNode* element)
     }
 }
 
-LexerConf::~LexerConf()
-{
-}
+LexerConf::~LexerConf() {}
 
 wxXmlNode* LexerConf::ToXml() const
 {
@@ -157,6 +158,7 @@ wxXmlNode* LexerConf::ToXml() const
     node->AddProperty(wxT("Name"), GetName());
     node->AddProperty("Theme", GetThemeName());
     node->AddProperty("IsActive", IsActive() ? "Yes" : "No");
+    node->AddAttribute("UseCustomTextSelFgColour", IsUseCustomTextSelectionFgColour() ? "Yes" : "No");
 
     node->AddProperty(wxT("StylingWithinPreProcessor"), BoolToString(m_styleWithinPreProcessor));
     wxString strId;
@@ -330,12 +332,18 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             ctrl->SetFoldMarginColour(true, sp.GetBgColour());
             ctrl->SetFoldMarginHiColour(true, sp.GetFgColour());
             break;
-        case SEL_TEXT_ATTR_ID:
+        case SEL_TEXT_ATTR_ID: {
             // selection colour
             if(wxColour(sp.GetBgColour()).IsOk()) {
                 ctrl->SetSelBackground(true, sp.GetBgColour());
             }
+            if(IsUseCustomTextSelectionFgColour() && wxColour(sp.GetFgColour()).IsOk()) {
+                ctrl->SetSelForeground(true, sp.GetFgColour());
+            } else {
+                ctrl->SetSelForeground(false, wxNullColour);
+            }
             break;
+        }
         case CARET_ATTR_ID: {
             // caret colour
             wxColour caretColour = sp.GetFgColour();
@@ -438,4 +446,16 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetKeyWords(3, GetKeyWords(3));
         ctrl->SetKeyWords(4, GetKeyWords(4));
     }
+}
+
+StyleProperty& LexerConf::GetProperty(int propertyId)
+{
+    StyleProperty::List_t::iterator iter =
+        std::find_if(m_properties.begin(), m_properties.end(), StyleProperty::FindByID(propertyId));
+    if(iter == m_properties.end()) {
+        static StyleProperty NullProperty;
+        NullProperty.SetId(STYLE_PROPERTY_NULL_ID);
+        return NullProperty;
+    }
+    return *iter;
 }

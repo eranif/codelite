@@ -42,8 +42,12 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 {
     bool m_isModified;
     LexerConf::Ptr_t m_lexer;
-    
+
 protected:
+    virtual void OnNewTheme(wxCommandEvent& event);
+    virtual void OnSelTextFgChanged(wxColourPickerEvent& event);
+    virtual void OnUseCustomFgTextColour(wxCommandEvent& event);
+    virtual void OnTextSelFgUI(wxUpdateUIEvent& event);
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event);
     virtual void OnLexerSelected(wxCommandEvent& event);
     virtual void OnColourChanged(wxColourPickerEvent& event);
@@ -60,13 +64,12 @@ protected:
     virtual void OnStyleWithinPreprocessor(wxCommandEvent& event);
     virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
     virtual void OnText(wxCommandEvent& event);
-    
+
     // Handlers for SyntaxHighlightBaseDlg events.
     void OnButtonOK( wxCommandEvent& event );
     void OnButtonCancel( wxCommandEvent& event );
     void OnButtonApply( wxCommandEvent& event );
     void OnThemeChanged(wxCommandEvent& event);
-    void OnRestoreDefaults(wxCommandEvent &e);
 
     void LoadLexer(const wxString &themeName);
     void SaveChanges();
@@ -74,7 +77,7 @@ protected:
     void CreateLexerPage();
     StyleProperty::List_t::iterator GetSelectedStyle();
     void EditKeyWords(int set);
-    
+
 public:
     /** Constructor */
     SyntaxHighlightDlg( wxWindow* parent );

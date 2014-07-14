@@ -589,4 +589,8 @@
     <File Name="CompilerLocatorCygwin.h"/>
     <File Name="CompilerLocatorCygwin.cpp"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="Zip">
+    <File Name="clZip.h"/>
+    <File Name="clZip.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

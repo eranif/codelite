@@ -59,7 +59,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     }
     m_listBox->Append(lexers);
     if(!m_listBox->IsEmpty()) {
-        m_listBox->SetSelection(sel);
+        m_listBox->Select(sel);
         LoadLexer(""); // Load the default active theme
     }
 

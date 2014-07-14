@@ -27,7 +27,6 @@
 
 #include <wx/panel.h>
 #include "quickfindbarbase.h"
-#include "theme_handler_helper.h"
 
 class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;
@@ -37,7 +36,6 @@ class QuickFindBar : public QuickFindBarBase
     size_t             m_flags;
     wxString           m_lastText;
     wchar_t*           m_lastTextPtr;
-    ThemeHandlerHelper m_themeHelper;
     bool               m_eventsConnected;
     QuickFindBarOptionsMenu* m_optionsWindow;
 

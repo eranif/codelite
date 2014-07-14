@@ -26,7 +26,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
-    m_buttonOptions = new wxBitmapToggleButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("menu")), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT|wxBORDER_NONE);
+    m_buttonOptions = new wxBitmapToggleButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("menu")), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
     m_buttonOptions->SetToolTip(_("Search options menu..."));
     m_buttonOptions->SetValue(false);
     

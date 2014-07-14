@@ -308,6 +308,7 @@ void ColoursAndFontsManager::Clear()
 {
     m_allLexers.clear();
     m_lexersMap.clear();
+    m_initialized = false;
 }
 
 void ColoursAndFontsManager::Save(LexerConf::Ptr_t lexer)

@@ -78,6 +78,16 @@ public:
      * @note the .exe and "/" are platform dependant
      */
     wxString GetBinaryFullPath(const wxString &toolname) const;
+    
+    /**
+     * @brief return the user lexers directory
+     */
+    wxString GetUserLexersDir() const;
+
+    /**
+     * @brief return the default (installation) lexers directory
+     */
+    wxString GetLexersDir() const;
 };
 
 #endif // CLSTANDARDPATHS_H

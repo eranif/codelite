@@ -7,19 +7,14 @@
 #include <wx/stream.h>
 #include <wx/filename.h>
 
-class WXDLLIMPEXP_SDK clZip
+class WXDLLIMPEXP_SDK clZipReader
 {
-    wxZipOutputStream *m_zip;
-    wxFileOutputStream *m_file;
-public:
-    clZip();
-    ~clZip();
+    wxFileInputStream *m_file;
+    wxZipInputStream *m_zip;
     
-    /**
-     * @brief add file to the zip archive
-     * @param file
-     */
-    void Add(const wxFileName& file);
+public:
+    clZipReader(const wxFileName& zipfile);
+    ~clZipReader();
     
     /**
      * @brief extract filename into 'path' (directory)

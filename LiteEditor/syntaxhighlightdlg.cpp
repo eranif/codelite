@@ -42,6 +42,9 @@
 #include "free_text_dialog.h"
 #include <wx/wupdlock.h>
 #include "NewThemeDialog.h"
+#include <wx/filedlg.h>
+#include "clZipWriter.h"
+#include "clZipReader.h"
 
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)
@@ -493,4 +496,35 @@ void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)
             LoadLexer(newLexer->GetName());
         }
     }
+}
+
+void SyntaxHighlightDlg::OnExport(wxCommandEvent& event)
+{
+    wxString path = ::wxFileSelector(
+        _("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    if(path.IsEmpty())
+        return;
+    clZipWriter zw(path);
+    zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), "lexer_*.xml");
+    zw.Close();
+
+    ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
+}
+
+void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
+{
+    wxString path = ::wxFileSelector(_("Save as"), "", "", "", wxFileSelectorDefaultWildcardStr, wxFD_OPEN);
+    if(path.IsEmpty())
+        return;
+    wxFileName fn(path);
+    clZipReader zr(fn);
+    zr.Extract("*", clStandardPaths::Get().GetUserLexersDir());
+    
+    // reload the settings
+    ColoursAndFontsManager::Get().Reload();
+    EndModal(wxID_OK);
+    
+    // relaunch the dialog
+    wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
 }

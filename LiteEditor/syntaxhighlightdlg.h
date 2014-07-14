@@ -44,6 +44,8 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
     LexerConf::Ptr_t m_lexer;
 
 protected:
+    virtual void OnImport(wxCommandEvent& event);
+    virtual void OnExport(wxCommandEvent& event);
     virtual void OnNewTheme(wxCommandEvent& event);
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event);
     virtual void OnUseCustomFgTextColour(wxCommandEvent& event);

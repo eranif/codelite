@@ -66,7 +66,7 @@ void LexerConf::FromXml(wxXmlNode* element)
         m_themeName = XmlUtils::ReadString(element, "Theme", "Default");
         m_isActive = XmlUtils::ReadBool(element, "IsActive", false);
         m_useCustomTextSelectionFgColour =
-            XmlUtils::ReadBool(element, "UseCustomTextSelFgColour ", m_useCustomTextSelectionFgColour);
+            XmlUtils::ReadBool(element, "UseCustomTextSelFgColour", m_useCustomTextSelectionFgColour);
 
         m_styleWithinPreProcessor =
             element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;

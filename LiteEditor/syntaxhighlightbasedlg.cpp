@@ -42,6 +42,10 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     bSizer1->Add(m_auibar, 0, wxEXPAND, 5);
     
     m_auibar->AddTool(wxID_NEW, _("New Theme..."), wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("New Theme..."), _("New Theme..."), NULL);
+    
+    m_auibar->AddTool(wxID_SAVE, _("Export"), wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Export syntax highlight settings to zip file"), _("Export syntax highlight settings to zip file"), NULL);
+    
+    m_auibar->AddTool(wxID_OPEN, _("Import Settings"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Import settings from zip archive"), _("Import settings from zip archive"), NULL);
     m_auibar->Realize();
     
     m_notebook76 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -55,7 +59,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_panelSyntaxHighlight->SetSizer(boxSizer21);
     
     wxArrayString m_listBoxArr;
-    m_listBox = new wxListBox(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxArr, wxLB_SORT|wxLB_SINGLE);
+    m_listBox = new wxListBox(m_panelSyntaxHighlight, wxID_ANY, wxDefaultPosition, wxSize(150,-1), m_listBoxArr, wxLB_SORT|wxLB_SINGLE);
     
     boxSizer21->Add(m_listBox, 0, wxALL|wxEXPAND, 5);
     
@@ -322,6 +326,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     Centre(wxBOTH);
     // Connect events
     this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnNewTheme), NULL, this);
+    this->Connect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExport), NULL, this);
+    this->Connect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
     m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
     m_choiceLexerThemes->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
     m_globalFontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);
@@ -356,6 +362,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
 {
     this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnNewTheme), NULL, this);
+    this->Disconnect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExport), NULL, this);
+    this->Disconnect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
     m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
     m_choiceLexerThemes->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
     m_globalFontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);

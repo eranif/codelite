@@ -104,3 +104,17 @@ wxString clStandardPaths::GetBinaryFullPath(const wxString& toolname) const
 #endif
     return binary.GetFullPath();
 }
+
+wxString clStandardPaths::GetLexersDir() const
+{
+    wxFileName fn(GetDataDir(), "");
+    fn.AppendDir("lexers");
+    return fn.GetPath();
+}
+
+wxString clStandardPaths::GetUserLexersDir() const
+{
+    wxFileName fn(GetUserDataDir(), "");
+    fn.AppendDir("lexers");
+    return fn.GetPath();
+}

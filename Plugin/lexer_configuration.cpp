@@ -65,7 +65,8 @@ void LexerConf::FromXml(wxXmlNode* element)
         m_lexerId = XmlUtils::ReadLong(element, wxT("Id"), 0);
         m_themeName = XmlUtils::ReadString(element, "Theme", "Default");
         m_isActive = XmlUtils::ReadBool(element, "IsActive", false);
-        m_useCustomTextSelectionFgColour = XmlUtils::ReadBool(element, "UseCustomTextSelFgColour ", m_useCustomTextSelectionFgColour);
+        m_useCustomTextSelectionFgColour =
+            XmlUtils::ReadBool(element, "UseCustomTextSelFgColour ", m_useCustomTextSelectionFgColour);
 
         m_styleWithinPreProcessor =
             element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;
@@ -340,7 +341,9 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             if(IsUseCustomTextSelectionFgColour() && wxColour(sp.GetFgColour()).IsOk()) {
                 ctrl->SetSelForeground(true, sp.GetFgColour());
             } else {
-                ctrl->SetSelForeground(false, wxNullColour);
+                // provide a "dummy" selection colour (we pass 'false' so it does not matter
+                // which colour we use here)
+                ctrl->SetSelForeground(false, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
             }
             break;
         }

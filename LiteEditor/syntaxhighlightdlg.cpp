@@ -45,6 +45,7 @@
 #include <wx/filedlg.h>
 #include "clZipWriter.h"
 #include "clZipReader.h"
+#include <wx/choicdlg.h>
 
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)
@@ -500,12 +501,26 @@ void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnExport(wxCommandEvent& event)
 {
+    // Get list of choices
+    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
+    wxArrayInt choices;
+    if(::wxGetSelectedChoices(
+           choices, _("Select which lexers you wish to export"), _("Export Lexers"), lexers, this) == wxNOT_FOUND) {
+        return;
+    }
+
+    // Select the 'save' path
     wxString path = ::wxFileSelector(
         _("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
     if(path.IsEmpty())
         return;
+
     clZipWriter zw(path);
-    zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), "lexer_*.xml");
+    for(size_t i=0; i<choices.GetCount(); ++i) {
+        wxString file;
+        file << "lexer_" << lexers.Item(choices.Item(i)).Lower() << "_*.xml";
+        zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), file);
+    }
     zw.Close();
 
     ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
@@ -513,17 +528,18 @@ void SyntaxHighlightDlg::OnExport(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
 {
-    wxString path = ::wxFileSelector(_("Save as"), "", "", "", wxFileSelectorDefaultWildcardStr, wxFD_OPEN);
+    wxString path = ::wxFileSelector(_("Save as"), "", "", "", "Zip Files (*.zip)|*.zip", wxFD_OPEN);
     if(path.IsEmpty())
         return;
+
     wxFileName fn(path);
     clZipReader zr(fn);
     zr.Extract("*", clStandardPaths::Get().GetUserLexersDir());
-    
+
     // reload the settings
     ColoursAndFontsManager::Get().Reload();
     EndModal(wxID_OK);
-    
+
     // relaunch the dialog
     wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);

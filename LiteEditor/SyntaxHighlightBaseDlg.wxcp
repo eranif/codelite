@@ -1,14 +1,14 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 141,
+  "m_objCounter": 146,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterqEa5vvInitBitmapResources",
   "m_bitmapsFile": "syntaxhighlightbasedlg_liteeditor_bitmaps.cpp",
   "m_GenerateCodeTypes": 4984201,
   "m_outputFileName": "syntaxhighlightbasedlg",
   "m_firstWindowId": 1000,
-  "m_useEnum": false,
+  "m_useEnum": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -269,7 +269,7 @@
           }, {
            "type": "choice",
            "m_label": "Kind:",
-           "m_selection": 0,
+           "m_selection": 4,
            "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
           }, {
            "type": "bool",
@@ -277,14 +277,135 @@
            "m_value": true
           }],
          "m_events": [{
-           "m_eventName": "wxEVT_COMMAND_TOOL_CLICKED",
-           "m_eventClass": "wxCommandEvent",
-           "m_eventHandler": "wxCommandEventHandler",
-           "m_functionNameAndSignature": "OnExport(wxCommandEvent& event)",
-           "m_description": "Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+           "m_eventName": "wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN",
+           "m_eventClass": "wxAuiToolBarEvent",
+           "m_eventHandler": "wxAuiToolBarEventHandler",
+           "m_functionNameAndSignature": "OnToolExportAll(wxAuiToolBarEvent& event)",
+           "m_description": "Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event",
            "m_noBody": false
           }],
-         "m_children": []
+         "m_children": [{
+           "m_type": 4458,
+           "proportion": 0,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "m_menu142"
+            }, {
+             "type": "string",
+             "m_label": "Label:",
+             "m_value": "Menu"
+            }],
+           "m_events": [],
+           "m_children": [{
+             "m_type": 4459,
+             "proportion": 0,
+             "border": 5,
+             "gbSpan": "1,1",
+             "gbPosition": "0,0",
+             "m_styles": [],
+             "m_sizerFlags": [],
+             "m_properties": [{
+               "type": "winid",
+               "m_label": "ID:",
+               "m_winid": "ID_EXPORT_ALL"
+              }, {
+               "type": "string",
+               "m_label": "Name:",
+               "m_value": "m_menuItemExportAll"
+              }, {
+               "type": "string",
+               "m_label": "Label:",
+               "m_value": "Export All"
+              }, {
+               "type": "string",
+               "m_label": "Shortcut:",
+               "m_value": ""
+              }, {
+               "type": "string",
+               "m_label": "Help String:",
+               "m_value": "Export All"
+              }, {
+               "type": "bitmapPicker",
+               "m_label": "Bitmap File:",
+               "m_path": ""
+              }, {
+               "type": "choice",
+               "m_label": "Kind:",
+               "m_selection": 0,
+               "m_options": ["normal", "checkable", "radio", "separator"]
+              }, {
+               "type": "bool",
+               "m_label": "Checked",
+               "m_value": false
+              }],
+             "m_events": [{
+               "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+               "m_eventClass": "wxCommandEvent",
+               "m_eventHandler": "wxCommandEventHandler",
+               "m_functionNameAndSignature": "OnExportAll(wxCommandEvent& event)",
+               "m_description": "Menu item has been clicked",
+               "m_noBody": false
+              }],
+             "m_children": []
+            }, {
+             "m_type": 4459,
+             "proportion": 0,
+             "border": 5,
+             "gbSpan": "1,1",
+             "gbPosition": "0,0",
+             "m_styles": [],
+             "m_sizerFlags": [],
+             "m_properties": [{
+               "type": "winid",
+               "m_label": "ID:",
+               "m_winid": "ID_EXPORT_SELECTIVE"
+              }, {
+               "type": "string",
+               "m_label": "Name:",
+               "m_value": "m_menuItemExportSelective"
+              }, {
+               "type": "string",
+               "m_label": "Label:",
+               "m_value": "Export..."
+              }, {
+               "type": "string",
+               "m_label": "Shortcut:",
+               "m_value": ""
+              }, {
+               "type": "string",
+               "m_label": "Help String:",
+               "m_value": "Export specific lexers"
+              }, {
+               "type": "bitmapPicker",
+               "m_label": "Bitmap File:",
+               "m_path": ""
+              }, {
+               "type": "choice",
+               "m_label": "Kind:",
+               "m_selection": 0,
+               "m_options": ["normal", "checkable", "radio", "separator"]
+              }, {
+               "type": "bool",
+               "m_label": "Checked",
+               "m_value": false
+              }],
+             "m_events": [{
+               "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+               "m_eventClass": "wxCommandEvent",
+               "m_eventHandler": "wxCommandEventHandler",
+               "m_functionNameAndSignature": "OnExportSelective(wxCommandEvent& event)",
+               "m_description": "Menu item has been clicked",
+               "m_noBody": false
+              }],
+             "m_children": []
+            }]
+          }]
         }, {
          "m_type": 4462,
          "proportion": 0,

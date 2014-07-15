@@ -544,3 +544,30 @@ void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
     wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
 }
+
+void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event)
+{
+    OnExport(event);
+}
+
+void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
+{
+    // Get list of choices
+    wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
+    // Select the 'save' path
+    wxString path = ::wxFileSelector(
+        _("Save as"), "", "MySettings.zip", "", wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    if(path.IsEmpty())
+        return;
+
+    clZipWriter zw(path);
+    zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), "lexer_*.xml");
+    zw.Close();
+
+    ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
+}
+
+void SyntaxHighlightDlg::OnToolExportAll(wxAuiToolBarEvent& event)
+{
+    OnExportAll(event);
+}

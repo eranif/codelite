@@ -35,8 +35,17 @@
 
 class SyntaxHighlightBaseDlg : public wxDialog
 {
+public:
+    enum {
+        ID_EXPORT_ALL = 1001,
+        ID_EXPORT_SELECTIVE = 1002,
+    };
 protected:
     wxAuiToolBar* m_auibar;
+    std::map<int, wxMenu*> m_dropdownMenus;
+    wxMenu* m_menu142;
+    wxMenuItem* m_menuItemExportAll;
+    wxMenuItem* m_menuItemExportSelective;
     wxNotebook* m_notebook76;
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
@@ -85,9 +94,13 @@ protected:
     wxButton* m_buttonCancel;
     wxButton* m_buttonApply;
 
+    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
+
 protected:
     virtual void OnNewTheme(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnExport(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnToolExportAll(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnExportAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnExportSelective(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImport(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }

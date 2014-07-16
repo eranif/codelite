@@ -38,6 +38,7 @@ class NewWorkspaceDlg : public NewWorkspaceBase
 	wxString m_workspacePath;
 	
 protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event);
 	// Handlers for NewWorkspaceBase events.
 	void OnWorkspacePathUpdated( wxCommandEvent& event );
 	void OnWorkspaceDirPicker( wxCommandEvent& event );

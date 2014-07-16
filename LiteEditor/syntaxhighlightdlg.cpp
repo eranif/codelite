@@ -52,18 +52,21 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     , m_isModified(false)
 {
     // Get list of available lexers
+    wxString lexerName;
     LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
     wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
     int sel = 0;
     if(editor) {
-        sel = lexers.Index(editor->GetContext()->GetName().Lower());
-        if(sel == wxNOT_FOUND) {
-            sel = 0;
-        }
+        lexerName = editor->GetContext()->GetName().Lower();
     }
+    
     m_listBox->Append(lexers);
     if(!m_listBox->IsEmpty()) {
-        m_listBox->Select(sel);
+        if ( lexerName.IsEmpty() ) {
+            m_listBox->Select(0);
+        } else {
+            m_listBox->SetStringSelection(lexerName);
+        }
         LoadLexer(""); // Load the default active theme
     }
 
@@ -102,7 +105,7 @@ void SyntaxHighlightDlg::Clear()
     m_choiceLexerThemes->Clear();
     m_globalFontPicker->SetSelectedFont(wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT));
     m_globalBgColourPicker->SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    m_fileSpec->Clear();
+    m_fileSpec->ChangeValue("");
 
     // Customize page
     m_properties->Clear();
@@ -361,9 +364,9 @@ void SyntaxHighlightDlg::OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event)
 void SyntaxHighlightDlg::OnText(wxCommandEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
-
     event.Skip();
     m_isModified = true;
+    m_lexer->SetFileSpec(m_fileSpec->GetValue());
 }
 
 void SyntaxHighlightDlg::CreateLexerPage()
@@ -414,7 +417,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
     m_bgColourPicker->SetColour(wxColour(bgInitialColor));
     m_globalFontPicker->SetSelectedFont(initialFont);
     m_globalBgColourPicker->SetColour(wxColour(bgInitialColor));
-    m_fileSpec->SetValue(m_lexer->GetFileSpec());
+    m_fileSpec->ChangeValue(m_lexer->GetFileSpec());
     m_styleWithinPreProcessor->SetValue(initialStyleWithinPreProcessor);
 
     // Update selected text properties

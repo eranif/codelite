@@ -147,6 +147,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     LexerConf::Ptr_t lexer(new LexerConf);
     lexer->FromXml(node);
 
+    // Hack: fix Java lexer which is using the same
+    // file extensions as C++...
+    if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
+        lexer->SetFileSpec("*.java");
+    }
+    
     if(m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
     }
@@ -358,7 +364,7 @@ void ColoursAndFontsManager::SaveGlobalSettings()
 }
 
 LexerConf::Ptr_t
-ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme)
+    ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme)
 {
     LexerConf::Ptr_t sourceLexer = GetLexer(lexerName, sourceTheme);
     CHECK_PTR_RET_NULL(sourceLexer);

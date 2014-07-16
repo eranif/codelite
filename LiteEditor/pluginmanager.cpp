@@ -55,7 +55,7 @@
 #include "debugger.h"
 #include "cl_standard_paths.h"
 
-PluginManager *PluginManager::Get()
+PluginManager* PluginManager::Get()
 {
     static PluginManager theManager;
     return &theManager;
@@ -64,17 +64,17 @@ PluginManager *PluginManager::Get()
 void PluginManager::UnLoad()
 {
     std::map<wxString, IPlugin*>::iterator plugIter = m_plugins.begin();
-    for (; plugIter != m_plugins.end(); plugIter++) {
-        IPlugin *plugin = plugIter->second;
+    for(; plugIter != m_plugins.end(); plugIter++) {
+        IPlugin* plugin = plugIter->second;
         plugin->UnPlug();
         delete plugin;
     }
 
 #if wxVERSION_NUMBER < 2900
     std::list<clDynamicLibrary*>::iterator iter = m_dl.begin();
-    for ( ; iter != m_dl.end(); iter++ ) {
-        ( *iter )->Detach();
-        delete ( *iter );
+    for(; iter != m_dl.end(); iter++) {
+        (*iter)->Detach();
+        delete (*iter);
     }
 #endif
 
@@ -82,9 +82,7 @@ void PluginManager::UnLoad()
     m_plugins.clear();
 }
 
-PluginManager::~PluginManager()
-{
-}
+PluginManager::~PluginManager() {}
 
 PluginManager::PluginManager()
     : m_bmpLoader(NULL)
@@ -100,7 +98,7 @@ PluginManager::PluginManager()
 void PluginManager::Load()
 {
     wxString ext;
-#if defined (__WXGTK__)
+#if defined(__WXGTK__)
     ext = wxT("so");
 
 #elif defined(__WXMAC__)
@@ -110,82 +108,84 @@ void PluginManager::Load()
     ext = wxT("dll");
 #endif
 
-    wxString fileSpec( wxT( "*." ) + ext );
+    wxString fileSpec(wxT("*.") + ext);
     clConfig conf("plugins.conf");
 
-    conf.ReadItem( &m_pluginsData );
+    conf.ReadItem(&m_pluginsData);
 
-    //set the managers
-    //this code assures us that the shared objects will see the same instances as the application
-    //does
-    LanguageST::Get()->SetTagsManager( GetTagsManager() );
-    TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
+    // set the managers
+    // this code assures us that the shared objects will see the same instances as the application
+    // does
+    LanguageST::Get()->SetTagsManager(GetTagsManager());
+    TagsManagerST::Get()->SetLanguage(LanguageST::Get());
 
     // Plugin loading policy
-    CodeLiteApp* app = static_cast<CodeLiteApp*>( GetTheApp() );
+    CodeLiteApp* app = static_cast<CodeLiteApp*>(GetTheApp());
     CodeLiteApp::PluginPolicy pp = app->GetPluginLoadPolicy();
     wxArrayString allowedPlugins;
-    if( pp == CodeLiteApp::PP_None )
+    if(pp == CodeLiteApp::PP_None)
         return;
 
-    else if( pp == CodeLiteApp::PP_FromList )
+    else if(pp == CodeLiteApp::PP_FromList)
         allowedPlugins = app->GetAllowedPlugins();
 
     wxString pluginsDir = clStandardPaths::Get().GetPluginsDirectory();
-    if ( wxDir::Exists(pluginsDir) ) {
-        //get list of dlls
+    if(wxDir::Exists(pluginsDir)) {
+        // get list of dlls
         wxArrayString files;
-        wxDir::GetAllFiles( pluginsDir, &files, fileSpec, wxDIR_FILES );
+        wxDir::GetAllFiles(pluginsDir, &files, fileSpec, wxDIR_FILES);
 
         // Sort the plugins by A-Z
         std::sort(files.begin(), files.end());
-        for ( size_t i=0; i<files.GetCount(); i++ ) {
+        for(size_t i = 0; i < files.GetCount(); i++) {
 
-            wxString fileName( files.Item( i ) );
+            wxString fileName(files.Item(i));
 #if defined(__WXMSW__) && !defined(NDEBUG)
 
             // Under MSW loading a release plugin while in debug mode will cause a crash
-            if ( !fileName.EndsWith("-dbg.dll") ) {
+            if(!fileName.EndsWith("-dbg.dll")) {
                 continue;
             }
 #elif defined(__WXMSW__)
 
             // filter debug plugins
-            if ( fileName.EndsWith("-dbg.dll") ) {
+            if(fileName.EndsWith("-dbg.dll")) {
                 continue;
             }
 #endif
 
-            clDynamicLibrary *dl = new clDynamicLibrary();
-            if ( !dl->Load( fileName ) ) {
-                CL_ERROR( wxT( "Failed to load plugin's dll: " ) + fileName );
-                if (!dl->GetError().IsEmpty()) {
+            clDynamicLibrary* dl = new clDynamicLibrary();
+            if(!dl->Load(fileName)) {
+                CL_ERROR(wxT("Failed to load plugin's dll: ") + fileName);
+                if(!dl->GetError().IsEmpty()) {
                     CL_ERROR(dl->GetError());
                 }
                 continue;
             }
 
-            bool success( false );
-            GET_PLUGIN_INFO_FUNC pfnGetPluginInfo = ( GET_PLUGIN_INFO_FUNC )dl->GetSymbol( wxT( "GetPluginInfo" ), &success );
-            if ( !success ) {
+            bool success(false);
+            GET_PLUGIN_INFO_FUNC pfnGetPluginInfo = (GET_PLUGIN_INFO_FUNC)dl->GetSymbol(wxT("GetPluginInfo"), &success);
+            if(!success) {
                 continue;
             }
 
             // load the plugin version method
             // if the methods does not exist, handle it as if it has value of 100 (lowest version API)
             int interface_version(100);
-            GET_PLUGIN_INTERFACE_VERSION_FUNC pfnInterfaceVersion = (GET_PLUGIN_INTERFACE_VERSION_FUNC) dl->GetSymbol(wxT("GetPluginInterfaceVersion"), &success);
-            if ( success ) {
+            GET_PLUGIN_INTERFACE_VERSION_FUNC pfnInterfaceVersion =
+                (GET_PLUGIN_INTERFACE_VERSION_FUNC)dl->GetSymbol(wxT("GetPluginInterfaceVersion"), &success);
+            if(success) {
                 interface_version = pfnInterfaceVersion();
             } else {
                 CL_WARNING(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
-                if (!dl->GetError().IsEmpty()) {
+                if(!dl->GetError().IsEmpty()) {
                     CL_WARNING(dl->GetError());
                 }
             }
 
-            if ( interface_version != PLUGIN_INTERFACE_VERSION ) {
-                CL_WARNING(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"),
+            if(interface_version != PLUGIN_INTERFACE_VERSION) {
+                CL_WARNING(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface "
+                                                "version is '%d', CodeLite interface version is '%d'"),
                                             fileName.c_str(),
                                             interface_version,
                                             PLUGIN_INTERFACE_VERSION));
@@ -206,51 +206,59 @@ void PluginManager::Load()
             }
 
             // Add the plugin information
-            m_pluginsData.AddPlugin( pluginInfo );
+            m_pluginsData.AddPlugin(pluginInfo);
 
             // Can we load it?
-            if ( !m_pluginsData.CanLoad( pluginInfo.GetName()) ) {
-                CL_WARNING( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" is not enabled") );
+            if(!m_pluginsData.CanLoad(pluginInfo.GetName())) {
+                CL_WARNING(wxT("Plugin ") + pluginInfo.GetName() + wxT(" is not enabled"));
                 continue;
             }
 
             // try and load the plugin
-            GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
-            if ( !success ) {
+            GET_PLUGIN_CREATE_FUNC pfn = (GET_PLUGIN_CREATE_FUNC)dl->GetSymbol(wxT("CreatePlugin"), &success);
+            if(!success) {
                 CL_WARNING(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
-                if (!dl->GetError().IsEmpty()) {
+                if(!dl->GetError().IsEmpty()) {
                     CL_WARNING(dl->GetError());
                 }
 
-                m_pluginsData.DisablePlugin( pluginInfo.GetName() );
+                m_pluginsData.DisablePlugin(pluginInfo.GetName());
                 continue;
             }
 
             // Construct the plugin
-            IPlugin *plugin = pfn( ( IManager* )this );
-            CL_DEBUG( wxT( "Loaded plugin: " ) + plugin->GetLongName() );
+            IPlugin* plugin = pfn((IManager*)this);
+            CL_DEBUG(wxT("Loaded plugin: ") + plugin->GetLongName());
             m_plugins[plugin->GetShortName()] = plugin;
 
             // Load the toolbar
-            clToolBar *tb = plugin->CreateToolBar( (wxWindow*)clMainFrame::Get() );
-            if ( tb ) {
+            clToolBar* tb = plugin->CreateToolBar((wxWindow*)clMainFrame::Get());
+            if(tb) {
 #if USE_AUI_TOOLBAR
                 // When using AUI toolbars, use our own custom art-provider
                 tb->SetArtProvider(new CLMainAuiTBArt());
 #endif
-                clMainFrame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top().Row(1) );
+                clMainFrame::Get()->GetDockingManager().AddPane(tb,
+                                                                wxAuiPaneInfo()
+                                                                    .Name(plugin->GetShortName())
+                                                                    .LeftDockable(true)
+                                                                    .RightDockable(true)
+                                                                    .Caption(plugin->GetShortName())
+                                                                    .ToolbarPane()
+                                                                    .Top()
+                                                                    .Row(0));
 
-                //Add menu entry at the 'View->Toolbars' menu for this toolbar
+                // Add menu entry at the 'View->Toolbars' menu for this toolbar
                 wxMenuItem* item = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("toolbars_menu"));
-                if (item) {
+                if(item) {
                     wxMenu* submenu = NULL;
                     submenu = item->GetSubMenu();
-                    //add the new toolbar entry at the end of this menu
+                    // add the new toolbar entry at the end of this menu
 
                     int id = wxNewId();
                     wxString text(plugin->GetShortName());
                     text << _(" ToolBar");
-                    wxMenuItem *newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
+                    wxMenuItem* newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
                     submenu->Append(newItem);
                     clMainFrame::Get()->RegisterToolbar(id, plugin->GetShortName());
                 }
@@ -259,40 +267,34 @@ void PluginManager::Load()
             // Let the plugin plug its menu in the 'Plugins' menu at the menu bar
             // the create menu will be placed as a sub menu of the 'Plugin' menu
             wxMenu* pluginsMenu = NULL;
-            wxMenuItem* menuitem = clMainFrame::Get()->GetMenuBar()->FindItem( XRCID("manage_plugins"), &pluginsMenu );
-            if ( menuitem && pluginsMenu ) {
-                plugin->CreatePluginMenu( pluginsMenu );
+            wxMenuItem* menuitem = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("manage_plugins"), &pluginsMenu);
+            if(menuitem && pluginsMenu) {
+                plugin->CreatePluginMenu(pluginsMenu);
             }
 
             // Keep the dynamic load library
-            m_dl.push_back( dl );
+            m_dl.push_back(dl);
         }
         clMainFrame::Get()->GetDockingManager().Update();
 
-        //save the plugins data
-        conf.WriteItem( &m_pluginsData );
+        // save the plugins data
+        conf.WriteItem(&m_pluginsData);
     }
 }
 
-IEditor *PluginManager::GetActiveEditor()
-{
-    return (IEditor*) clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
-}
+IEditor* PluginManager::GetActiveEditor() { return (IEditor*)clMainFrame::Get()->GetMainBook()->GetActiveEditor(true); }
 
-IConfigTool* PluginManager::GetConfigTool()
-{
-    return EditorConfigST::Get();
-}
+IConfigTool* PluginManager::GetConfigTool() { return EditorConfigST::Get(); }
 
-void PluginManager::HookPopupMenu( wxMenu *menu, MenuType type )
+void PluginManager::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     // Hook each menu once!
     std::set<MenuType>::iterator it = m_menusToBeHooked.find(type);
     if(it != m_menusToBeHooked.end()) {
         // Call 'HookPopupMenu'
         std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-        for ( ; iter != m_plugins.end(); iter++ ) {
-            iter->second->HookPopupMenu( menu, type );
+        for(; iter != m_plugins.end(); iter++) {
+            iter->second->HookPopupMenu(menu, type);
         }
 
         // remove this menu entry from the set to avoid
@@ -303,15 +305,14 @@ void PluginManager::HookPopupMenu( wxMenu *menu, MenuType type )
             // instances of that menu (each editor holds a copy of the menu)
             // LEditor itself will make sure to call this method only once
             m_menusToBeHooked.erase(it);
-
         }
     }
 }
 
-TreeItemInfo PluginManager::GetSelectedTreeItemInfo( TreeType type )
+TreeItemInfo PluginManager::GetSelectedTreeItemInfo(TreeType type)
 {
     TreeItemInfo info;
-    switch ( type ) {
+    switch(type) {
     case TreeFileExplorer:
         return clMainFrame::Get()->GetFileExplorer()->GetFileTree()->GetSelectedItemInfo();
     case TreeFileView:
@@ -321,9 +322,9 @@ TreeItemInfo PluginManager::GetSelectedTreeItemInfo( TreeType type )
     }
 }
 
-wxTreeCtrl *PluginManager::GetTree(TreeType type)
+wxTreeCtrl* PluginManager::GetTree(TreeType type)
 {
-    switch ( type ) {
+    switch(type) {
     case TreeFileExplorer:
         return clMainFrame::Get()->GetFileExplorer()->GetFileTree()->Tree()->GetTreeCtrl();
     case TreeFileView:
@@ -333,20 +334,14 @@ wxTreeCtrl *PluginManager::GetTree(TreeType type)
     }
 }
 
-Notebook* PluginManager::GetOutputPaneNotebook()
-{
-    return clMainFrame::Get()->GetOutputPane()->GetNotebook();
-}
+Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->GetOutputPane()->GetNotebook(); }
 
-Notebook *PluginManager::GetWorkspacePaneNotebook()
-{
-    return clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
-}
+Notebook* PluginManager::GetWorkspacePaneNotebook() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
 
-bool PluginManager::OpenFile(const wxString &fileName, const wxString &projectName, int lineno)
+bool PluginManager::OpenFile(const wxString& fileName, const wxString& projectName, int lineno)
 {
     if(clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno)) {
-        LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+        LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
         if(editor) {
             editor->SetActive();
         }
@@ -355,44 +350,30 @@ bool PluginManager::OpenFile(const wxString &fileName, const wxString &projectNa
     return false;
 }
 
-wxString PluginManager::GetStartupDirectory() const
-{
-    return ManagerST::Get()->GetStarupDirectory();
-}
+wxString PluginManager::GetStartupDirectory() const { return ManagerST::Get()->GetStarupDirectory(); }
 
-void PluginManager::AddProject(const wxString &path)
-{
-    ManagerST::Get()->AddProject(path);
-}
+void PluginManager::AddProject(const wxString& path) { ManagerST::Get()->AddProject(path); }
 
-bool PluginManager::IsWorkspaceOpen() const
-{
-    return ManagerST::Get()->IsWorkspaceOpen();
-}
+bool PluginManager::IsWorkspaceOpen() const { return ManagerST::Get()->IsWorkspaceOpen(); }
 
-TagsManager *PluginManager::GetTagsManager()
-{
-    return TagsManagerST::Get();
-}
+TagsManager* PluginManager::GetTagsManager() { return TagsManagerST::Get(); }
 
-Workspace *PluginManager::GetWorkspace()
-{
-    return WorkspaceST::Get();
-}
+Workspace* PluginManager::GetWorkspace() { return WorkspaceST::Get(); }
 
-bool PluginManager::AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths)
+bool PluginManager::AddFilesToVirtualFolder(wxTreeItemId& item, wxArrayString& paths)
 {
     return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolder(item, paths);
 }
 
-bool PluginManager::AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths)
+bool PluginManager::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayString& paths)
 {
     return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolder(vdFullPath, paths);
 }
 
-bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString &vdFullPath, wxArrayString &paths)
+bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths)
 {
-    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(vdFullPath, paths);
+    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(vdFullPath,
+                                                                                                      paths);
 }
 
 void PluginManager::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)
@@ -402,72 +383,48 @@ void PluginManager::RedefineProjFiles(ProjectPtr proj, const wxString& path, std
 
 int PluginManager::GetToolbarIconSize()
 {
-    //for now return 24 by default
+    // for now return 24 by default
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    if (options) {
+    if(options) {
         return options->GetIconsSize();
     }
     return 24;
 }
 
-wxAuiManager* PluginManager::GetDockingManager()
-{
-    return &clMainFrame::Get()->GetDockingManager();
-}
+wxAuiManager* PluginManager::GetDockingManager() { return &clMainFrame::Get()->GetDockingManager(); }
 
-EnvironmentConfig* PluginManager::GetEnv()
-{
-    return EnvironmentConfig::Instance();
-}
+EnvironmentConfig* PluginManager::GetEnv() { return EnvironmentConfig::Instance(); }
 
-JobQueue* PluginManager::GetJobQueue()
-{
-    return JobQueueSingleton::Instance();
-}
+JobQueue* PluginManager::GetJobQueue() { return JobQueueSingleton::Instance(); }
 wxString PluginManager::GetProjectExecutionCommand(const wxString& projectName, wxString& wd)
 {
     return ManagerST::Get()->GetProjectExecutionCommand(projectName, wd, false);
 }
 
-wxApp* PluginManager::GetTheApp()
-{
-    return wxTheApp;
-}
+wxApp* PluginManager::GetTheApp() { return wxTheApp; }
 
 void PluginManager::ReloadWorkspace()
 {
     wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent( evt );
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);
 }
 
 IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.find(pluginName);
-    if (iter != m_plugins.end()) {
+    if(iter != m_plugins.end()) {
         return iter->second;
     }
     return NULL;
 }
 
-wxEvtHandler *PluginManager::GetOutputWindow()
-{
-    return clMainFrame::Get()->GetOutputPane()->GetOutputWindow();
-}
+wxEvtHandler* PluginManager::GetOutputWindow() { return clMainFrame::Get()->GetOutputPane()->GetOutputWindow(); }
 
-bool PluginManager::SaveAll()
-{
-    return clMainFrame::Get()->GetMainBook()->SaveAll(true, false);
-}
+bool PluginManager::SaveAll() { return clMainFrame::Get()->GetMainBook()->SaveAll(true, false); }
 
-wxString PluginManager::GetInstallDirectory() const
-{
-    return ManagerST::Get()->GetInstallDir();
-}
+wxString PluginManager::GetInstallDirectory() const { return ManagerST::Get()->GetInstallDir(); }
 
-IKeyboard* PluginManager::GetKeyboardManager()
-{
-    return &m_keyboardMgr;
-}
+IKeyboard* PluginManager::GetKeyboardManager() { return &m_keyboardMgr; }
 
 bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName)
 {
@@ -477,8 +434,8 @@ bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxS
 OptionsConfigPtr PluginManager::GetEditorSettings()
 {
     // First try to use LEditor::GetOptions, as it takes account of local preferences
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (editor) {
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(editor) {
         return editor->GetOptions();
     }
     // Failing that...
@@ -487,8 +444,8 @@ OptionsConfigPtr PluginManager::GetEditorSettings()
 
 void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name, int pos)
 {
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (editor) {
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(editor) {
         editor->FindAndSelectV(pattern, name, pos, NavMgr::Get());
         editor->SetActive();
     }
@@ -496,8 +453,8 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name,
 
 TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl)
 {
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(!editor)
         return NULL;
     return editor->GetContext()->GetTagAtCaret(scoped, impl);
 }
@@ -505,10 +462,10 @@ TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl)
 bool PluginManager::AllowToolbar()
 {
     long v;
-    if (EditorConfigST::Get()->GetLongValue(wxT("UseSingleToolbar"), v)) {
+    if(EditorConfigST::Get()->GetLongValue(wxT("UseSingleToolbar"), v)) {
         return v ? false : true;
     } else {
-        // entry does not exist
+// entry does not exist
 #ifdef __WXMAC__
         return false;
 #else
@@ -520,118 +477,78 @@ bool PluginManager::AllowToolbar()
 void PluginManager::EnableToolbars()
 {
     // In case, plugins are now allowed to insert toolbars, disable the toolbars_menu item
-    if (AllowToolbar() == false) {
-        int ii = clMainFrame::Get()->GetMenuBar()->FindMenu( wxT( "View" ) );
-        if ( ii != wxNOT_FOUND ) {
-            wxMenu *viewMenu = clMainFrame::Get()->GetMenuBar()->GetMenu( ii );
-            wxMenuItem *item = viewMenu->FindItem( XRCID("toolbars_menu") );
-            if (item) {
+    if(AllowToolbar() == false) {
+        int ii = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("View"));
+        if(ii != wxNOT_FOUND) {
+            wxMenu* viewMenu = clMainFrame::Get()->GetMenuBar()->GetMenu(ii);
+            wxMenuItem* item = viewMenu->FindItem(XRCID("toolbars_menu"));
+            if(item) {
                 item->Enable(false);
             }
         }
     }
 }
 
-void PluginManager::SetStatusMessage(const wxString &msg, int col, int seconds_to_live /*=wxID_ANY*/)
+void PluginManager::SetStatusMessage(const wxString& msg, int col, int seconds_to_live /*=wxID_ANY*/)
 {
     clMainFrame::Get()->SetStatusMessage(msg, col, seconds_to_live);
 }
 
-void PluginManager::ProcessCommandQueue()
-{
-    ManagerST::Get()->ProcessCommandQueue();
-}
+void PluginManager::ProcessCommandQueue() { ManagerST::Get()->ProcessCommandQueue(); }
 
-void PluginManager::PushQueueCommand(const QueueCommand& cmd)
-{
-    ManagerST::Get()->PushQueueCommand(cmd);
-}
+void PluginManager::PushQueueCommand(const QueueCommand& cmd) { ManagerST::Get()->PushQueueCommand(cmd); }
 
-void PluginManager::StopAndClearQueue()
-{
-    ManagerST::Get()->StopBuild();
-}
+void PluginManager::StopAndClearQueue() { ManagerST::Get()->StopBuild(); }
 
-bool PluginManager::IsBuildInProgress() const
-{
-    return ManagerST::Get()->IsBuildInProgress();
-}
+bool PluginManager::IsBuildInProgress() const { return ManagerST::Get()->IsBuildInProgress(); }
 
-bool PluginManager::IsBuildEndedSuccessfully() const
-{
-    return ManagerST::Get()->IsBuildEndedSuccessfully();
-}
+bool PluginManager::IsBuildEndedSuccessfully() const { return ManagerST::Get()->IsBuildEndedSuccessfully(); }
 
 wxString PluginManager::GetProjectNameByFile(const wxString& fullPathFileName)
 {
     return ManagerST::Get()->GetProjectNameByFile(fullPathFileName);
 }
 
-BuildManager* PluginManager::GetBuildManager()
-{
-    return BuildManagerST::Get();
-}
+BuildManager* PluginManager::GetBuildManager() { return BuildManagerST::Get(); }
 
-BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager()
-{
-    return BuildSettingsConfigST::Get();
-}
+BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager() { return BuildSettingsConfigST::Get(); }
 
-bool PluginManager::ClosePage(const wxString &text)
-{
-    return clMainFrame::Get()->GetMainBook()->ClosePage(text);
-}
+bool PluginManager::ClosePage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->ClosePage(text); }
 
-wxWindow *PluginManager::FindPage(const wxString &text)
-{
-    return clMainFrame::Get()->GetMainBook()->FindPage(text);
-}
+wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
-bool PluginManager::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
+bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxBitmap& bmp, bool selected)
 {
     return clMainFrame::Get()->GetMainBook()->AddPage(win, text, bmp, selected);
 }
 
-bool PluginManager::SelectPage(wxWindow *win)
-{
-    return clMainFrame::Get()->GetMainBook()->SelectPage(win);
-}
+bool PluginManager::SelectPage(wxWindow* win) { return clMainFrame::Get()->GetMainBook()->SelectPage(win); }
 
-bool PluginManager::OpenFile(const BrowseRecord& rec)
-{
-    return clMainFrame::Get()->GetMainBook()->OpenFile(rec);
-}
+bool PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::Get()->GetMainBook()->OpenFile(rec); }
 
-NavMgr* PluginManager::GetNavigationMgr()
-{
-    return NavMgr::Get();
-}
+NavMgr* PluginManager::GetNavigationMgr() { return NavMgr::Get(); }
 
-void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString &projectName, const wxString &configName)
+void
+PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-    for ( ; iter != m_plugins.end(); iter++ ) {
-        iter->second->HookProjectSettingsTab( book, projectName, configName );
+    for(; iter != m_plugins.end(); iter++) {
+        iter->second->HookProjectSettingsTab(book, projectName, configName);
     }
 }
 
-void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString &projectName, const wxString &configName)
+void
+PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-    for ( ; iter != m_plugins.end(); iter++ ) {
-        iter->second->UnHookProjectSettingsTab( book, projectName, configName );
+    for(; iter != m_plugins.end(); iter++) {
+        iter->second->UnHookProjectSettingsTab(book, projectName, configName);
     }
 }
 
-IEditor* PluginManager::NewEditor()
-{
-    return clMainFrame::Get()->GetMainBook()->NewEditor();
-}
+IEditor* PluginManager::NewEditor() { return clMainFrame::Get()->GetMainBook()->NewEditor(); }
 
-bool PluginManager::IsShutdownInProgress() const
-{
-    return ManagerST::Get()->IsShutdownInProgress();
-}
+bool PluginManager::IsShutdownInProgress() const { return ManagerST::Get()->IsShutdownInProgress(); }
 
 BitmapLoader* PluginManager::GetStdIcons()
 {
@@ -641,7 +558,7 @@ BitmapLoader* PluginManager::GetStdIcons()
     return m_bmpLoader;
 }
 
-wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName, bool isCppFile)
+wxArrayString PluginManager::GetProjectCompileFlags(const wxString& projectName, bool isCppFile)
 {
     if(IsWorkspaceOpen() == false)
         return wxArrayString();
@@ -660,7 +577,7 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
 
     // Now that we got the selected workspace configuration, extract the related project configuration
-    ProjectPtr proj =  GetWorkspace()->FindProjectByName(projectName, errMsg);
+    ProjectPtr proj = GetWorkspace()->FindProjectByName(projectName, errMsg);
     if(!proj) {
         return args;
     }
@@ -671,14 +588,14 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
         // Get the include paths and add them
         wxString projectIncludePaths = dependProjbldConf->GetIncludePath();
         wxArrayString projectIncludePathsArr = wxStringTokenize(projectIncludePaths, wxT(";"), wxTOKEN_STRTOK);
-        for(size_t i=0; i<projectIncludePathsArr.GetCount(); i++) {
-            args.Add( wxString::Format(wxT("-I%s"), projectIncludePathsArr[i].c_str()) );
+        for(size_t i = 0; i < projectIncludePathsArr.GetCount(); i++) {
+            args.Add(wxString::Format(wxT("-I%s"), projectIncludePathsArr[i].c_str()));
         }
         // get the compiler options and add them
         wxString projectCompileOptions = dependProjbldConf->GetCompileOptions();
         wxArrayString projectCompileOptionsArr = wxStringTokenize(projectCompileOptions, wxT(";"), wxTOKEN_STRTOK);
-        for(size_t i=0; i<projectCompileOptionsArr.GetCount(); i++) {
-            wxString cmpOption (projectCompileOptionsArr.Item(i));
+        for(size_t i = 0; i < projectCompileOptionsArr.GetCount(); i++) {
+            wxString cmpOption(projectCompileOptionsArr.Item(i));
             cmpOption.Trim().Trim(false);
             wxString tmp;
             // Expand backticks / $(shell ...) syntax supported by codelite
@@ -692,10 +609,10 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
                     // Expand the backticks into their value
                     wxArrayString outArr;
                     // Apply the environment before executing the command
-                    EnvSetter setter( EnvironmentConfig::Instance(), NULL, projectName );
+                    EnvSetter setter(EnvironmentConfig::Instance(), NULL, projectName);
                     ProcUtils::SafeExecuteCommand(cmpOption, outArr);
                     wxString expandedValue;
-                    for(size_t j=0; j<outArr.size(); j++) {
+                    for(size_t j = 0; j < outArr.size(); j++) {
                         expandedValue << outArr.Item(j) << wxT(" ");
                     }
                     m_backticks[cmpOption] = expandedValue;
@@ -704,13 +621,13 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
                     cmpOption = m_backticks.find(cmpOption)->second;
                 }
             }
-            args.Add( cmpOption );
+            args.Add(cmpOption);
         }
         // get the compiler preprocessor and add them as well
         wxString projectPreps = dependProjbldConf->GetPreprocessor();
         wxArrayString projectPrepsArr = wxStringTokenize(projectPreps, wxT(";"), wxTOKEN_STRTOK);
-        for(size_t i=0; i<projectPrepsArr.GetCount(); i++) {
-            args.Add( wxString::Format(wxT("-D%s"), projectPrepsArr[i].c_str()) );
+        for(size_t i = 0; i < projectPrepsArr.GetCount(); i++) {
+            args.Add(wxString::Format(wxT("-D%s"), projectPrepsArr[i].c_str()));
         }
     }
     return args;
@@ -718,25 +635,14 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
 
 void PluginManager::AddEditorPage(wxWindow* page, const wxString& name)
 {
-    clMainFrame::Get()->GetMainBook()->AddPage(page, name,wxNullBitmap,true);
+    clMainFrame::Get()->GetMainBook()->AddPage(page, name, wxNullBitmap, true);
 }
 
-wxPanel* PluginManager::GetEditorPaneNotebook()
-{
-    return clMainFrame::Get()->GetMainBook();
-}
+wxPanel* PluginManager::GetEditorPaneNotebook() { return clMainFrame::Get()->GetMainBook(); }
 
+wxWindow* PluginManager::GetActivePage() { return clMainFrame::Get()->GetMainBook()->GetCurrentPage(); }
 
-wxWindow* PluginManager::GetActivePage()
-{
-    return clMainFrame::Get()->GetMainBook()->GetCurrentPage();
-}
-
-
-wxWindow* PluginManager::GetPage(size_t page)
-{
-    return clMainFrame::Get()->GetMainBook()->GetPage(page);
-}
+wxWindow* PluginManager::GetPage(size_t page) { return clMainFrame::Get()->GetMainBook()->GetPage(page); }
 
 wxString PluginManager::GetPageTitle(wxWindow* win) const
 {
@@ -762,56 +668,52 @@ void PluginManager::EnableClangCodeCompletion(bool b)
 {
 #if HAS_LIBCLANG
     ClangCodeCompletion::Instance()->ClearCache();
-    TagsOptionsData &options = clMainFrame::Get()->GetTagsOptions();
+    TagsOptionsData& options = clMainFrame::Get()->GetTagsOptions();
     size_t clang_flags = options.GetClangOptions();
-    
-    if ( b ) {
+
+    if(b) {
         clang_flags |= CC_CLANG_ENABLED;
     } else {
         clang_flags &= ~CC_CLANG_ENABLED;
     }
-    
-    options.SetClangOptions( clang_flags );
-    TagsManagerST::Get()->SetCtagsOptions( options );
-    
+
+    options.SetClangOptions(clang_flags);
+    TagsManagerST::Get()->SetCtagsOptions(options);
+
 #else
     wxUnusedVar(b);
 #endif
 }
 
-size_t PluginManager::GetPageCount() const
-{
-    return clMainFrame::Get()->GetMainBook()->GetPageCount();
-}
+size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainBook()->GetPageCount(); }
 
 size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
 {
     LEditor::Vec_t tmpEditors;
     size_t flags = MainBook::kGetAll_IncludeDetached;
-    if ( inOrder ) { flags |= MainBook::kGetAll_RetainOrder; }
-    
-    clMainFrame::Get()->GetMainBook()->GetAllEditors( tmpEditors, flags );
-    editors.insert(editors.end(), tmpEditors.begin(), tmpEditors.end() );
+    if(inOrder) {
+        flags |= MainBook::kGetAll_RetainOrder;
+    }
+
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(tmpEditors, flags);
+    editors.insert(editors.end(), tmpEditors.begin(), tmpEditors.end());
     return editors.size();
 }
 
 size_t PluginManager::GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints)
 {
     breakpoints.clear();
-    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints( breakpoints );
+    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(breakpoints);
     return breakpoints.size();
 }
 
-void PluginManager::DeleteAllBreakpoints()
-{
-    ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
-}
+void PluginManager::DeleteAllBreakpoints() { ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); }
 
 void PluginManager::SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints)
 {
     ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
-    for(size_t i=0; i<breakpoints.size(); ++i) {
-        ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint( breakpoints.at(i) );
+    for(size_t i = 0; i < breakpoints.size(); ++i) {
+        ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint(breakpoints.at(i));
     }
 }
 
@@ -827,8 +729,8 @@ void PluginManager::SavePerspective(const wxString& perspectiveName)
 
 void PluginManager::ProcessEditEvent(wxCommandEvent& e, IEditor* editor)
 {
-    LEditor* lEditor = dynamic_cast<LEditor*>( editor );
-    if ( lEditor ) {
-        lEditor->OnMenuCommand( e );
+    LEditor* lEditor = dynamic_cast<LEditor*>(editor);
+    if(lEditor) {
+        lEditor->OnMenuCommand(e);
     }
 }

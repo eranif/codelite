@@ -97,9 +97,6 @@ struct ssh_session_struct {
     int openssh;
     uint32_t send_seq;
     uint32_t recv_seq;
-/* status flags */
-    int closed;
-    int closed_by_except;
 
     int connected;
     /* !=0 when the user got a session handle */
@@ -129,6 +126,15 @@ struct ssh_session_struct {
     enum ssh_channel_request_state_e global_req_state;
     struct ssh_agent_state_struct *agent_state;
     struct ssh_auth_auto_state_struct *auth_auto_state;
+
+    /*
+     * RFC 4253, 7.1: if the first_kex_packet_follows flag was set in
+     * the received SSH_MSG_KEXINIT, but the guess was wrong, this
+     * field will be set such that the following guessed packet will
+     * be ignored.  Once that packet has been received and ignored,
+     * this field is cleared.
+     */
+    int first_kex_follows_guess_wrong;
 
     ssh_buffer in_hashbuf;
     ssh_buffer out_hashbuf;
@@ -178,6 +184,7 @@ struct ssh_session_struct {
         char *knownhosts;
         char *wanted_methods[10];
         char *ProxyCommand;
+        char *custombanner;
         unsigned long timeout; /* seconds */
         unsigned long timeout_usec;
         unsigned int port;
@@ -186,7 +193,13 @@ struct ssh_session_struct {
         int ssh2;
         int ssh1;
         char compressionlevel;
+        char *gss_server_identity;
+        char *gss_client_identity;
+        int gss_delegate_creds;
     } opts;
+    /* counters */
+    ssh_counter socket_counter;
+    ssh_counter raw_counter;
 };
 
 /** @internal

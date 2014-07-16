@@ -44,6 +44,9 @@
 #endif
 #include "libssh/ecdh.h"
 #include "libssh/kex.h"
+#include "libssh/curve25519.h"
+
+#define DIGEST_MAX_LEN 64
 
 enum ssh_key_exchange_e {
   /* diffie-hellman-group1-sha1 */
@@ -51,7 +54,9 @@ enum ssh_key_exchange_e {
   /* diffie-hellman-group14-sha1 */
   SSH_KEX_DH_GROUP14_SHA1,
   /* ecdh-sha2-nistp256 */
-  SSH_KEX_ECDH_SHA2_NISTP256
+  SSH_KEX_ECDH_SHA2_NISTP256,
+  /* curve25519-sha256@libssh.org */
+  SSH_KEX_CURVE25519_SHA256_LIBSSH_ORG
 };
 
 struct ssh_crypto_struct {
@@ -60,6 +65,11 @@ struct ssh_crypto_struct {
     EC_KEY *ecdh_privkey;
     ssh_string ecdh_client_pubkey;
     ssh_string ecdh_server_pubkey;
+#endif
+#ifdef HAVE_CURVE25519
+    ssh_curve25519_privkey curve25519_privkey;
+    ssh_curve25519_pubkey curve25519_client_pubkey;
+    ssh_curve25519_pubkey curve25519_server_pubkey;
 #endif
     ssh_string dh_server_signature; /* information used by dh_handshake. */
     size_t digest_len; /* len of all the fields below */
@@ -71,8 +81,10 @@ struct ssh_crypto_struct {
     unsigned char *encryptkey;
     unsigned char *encryptMAC;
     unsigned char *decryptMAC;
-    unsigned char hmacbuf[EVP_MAX_MD_SIZE];
+    unsigned char hmacbuf[DIGEST_MAX_LEN];
     struct ssh_cipher_struct *in_cipher, *out_cipher; /* the cipher structures/objects */
+    enum ssh_hmac_e in_hmac, out_hmac; /* the MAC algorithms used */
+
     ssh_string server_pubkey;
     const char *server_pubkey_type;
     int do_compress_out; /* idem */

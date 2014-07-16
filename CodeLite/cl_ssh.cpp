@@ -75,16 +75,28 @@ void clSSH::Connect() throw(clException)
 
 bool clSSH::AuthenticateServer(wxString &message) throw (clException)
 {
-    int state = -1, hlen = 0;
+    int state = -1;
     unsigned char *hash = NULL;
     char *hexa = NULL;
 
     message.Clear();
     state = ssh_is_server_known(m_session);
+
+#if LIBSSH_VERSION_INT < SSH_VERSION_INT(0, 6, 3)
+    int hlen = 0;
     hlen = ssh_get_pubkey_hash(m_session, &hash);
     if (hlen < 0) {
         throw clException("Unable to obtain server public key!");
     }
+#else
+    size_t hlen = 0;
+    ssh_key key = NULL;
+    ssh_get_publickey(m_session, &key);
+    ssh_get_publickey_hash(key, SSH_PUBLICKEY_HASH_SHA1, &hash, &hlen);
+    if (hlen == 0) {
+        throw clException("Unable to obtain server public key!");
+    }
+#endif
 
     switch (state) {
     case SSH_SERVER_KNOWN_OK:

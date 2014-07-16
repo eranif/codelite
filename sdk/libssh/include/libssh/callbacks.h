@@ -166,7 +166,7 @@ typedef struct ssh_callbacks_struct *ssh_callbacks;
  * @param user User that wants to authenticate
  * @param password Password used for authentication
  * @param userdata Userdata to be passed to the callback function.
- * @returns SSH_AUTH_OK Authentication is accepted.
+ * @returns SSH_AUTH_SUCCESS Authentication is accepted.
  * @returns SSH_AUTH_PARTIAL Partial authentication, more authentication means are needed.
  * @returns SSH_AUTH_DENIED Authentication failed.
  */
@@ -179,7 +179,7 @@ typedef int (*ssh_auth_password_callback) (ssh_session session, const char *user
  * @param session Current session handler
  * @param user User that wants to authenticate
  * @param userdata Userdata to be passed to the callback function.
- * @returns SSH_AUTH_OK Authentication is accepted.
+ * @returns SSH_AUTH_SUCCESS Authentication is accepted.
  * @returns SSH_AUTH_PARTIAL Partial authentication, more authentication means are needed.
  * @returns SSH_AUTH_DENIED Authentication failed.
  */
@@ -191,7 +191,7 @@ typedef int (*ssh_auth_none_callback) (ssh_session session, const char *user, vo
  * @param user Username of the user (can be spoofed)
  * @param principal Authenticated principal of the user, including realm.
  * @param userdata Userdata to be passed to the callback function.
- * @returns SSH_AUTH_OK Authentication is accepted.
+ * @returns SSH_AUTH_SUCCESS Authentication is accepted.
  * @returns SSH_AUTH_PARTIAL Partial authentication, more authentication means are needed.
  * @returns SSH_AUTH_DENIED Authentication failed.
  * @warning Implementations should verify that parameter user matches in some way the principal.
@@ -209,7 +209,7 @@ typedef int (*ssh_auth_gssapi_mic_callback) (ssh_session session, const char *us
  * 							SSH_PUBLICKEY_STATE_VALID if the signature is valid. Others values should be
  * 							replied with a SSH_AUTH_DENIED.
  * @param userdata Userdata to be passed to the callback function.
- * @returns SSH_AUTH_OK Authentication is accepted.
+ * @returns SSH_AUTH_SUCCESS Authentication is accepted.
  * @returns SSH_AUTH_PARTIAL Partial authentication, more authentication means are needed.
  * @returns SSH_AUTH_DENIED Authentication failed.
  */
@@ -495,6 +495,8 @@ LIBSSH_API int ssh_set_callbacks(ssh_session session, ssh_callbacks cb);
  * @param len the length of the data
  * @param is_stderr is 0 for stdout or 1 for stderr
  * @param userdata Userdata to be passed to the callback function.
+ * @returns number of bytes processed by the callee. The remaining bytes will
+ * be sent in the next callback message, when more data is available.
  */
 typedef int (*ssh_channel_data_callback) (ssh_session session,
                                            ssh_channel channel,
@@ -788,14 +790,21 @@ struct ssh_threads_callbacks_struct {
 };
 
 /**
- * @brief sets the thread callbacks necessary if your program is using
- * libssh in a multithreaded fashion. This function must be called first,
- * outside of any threading context (in your main() for instance), before
- * ssh_init().
- * @param cb pointer to a ssh_threads_callbacks_struct structure, which contains
- * the different callbacks to be set.
+ * @brief Set the thread callbacks structure.
+ *
+ * This is necessary if your program is using libssh in a multithreaded fashion.
+ * This function must be called first, outside of any threading context (in your
+ * main() function for instance), before you call ssh_init().
+ *
+ * @param[in] cb   A pointer to a ssh_threads_callbacks_struct structure, which
+ *                 contains the different callbacks to be set.
+ *
+ * @returns        Always returns SSH_OK.
+ *
  * @see ssh_threads_callbacks_struct
  * @see SSH_THREADS_PTHREAD
+ * @bug libgcrypt 1.6 and bigger backend does not support custom callback.
+ *      Using anything else than pthreads here will fail.
  */
 LIBSSH_API int ssh_threads_set_callbacks(struct ssh_threads_callbacks_struct
     *cb);
@@ -809,9 +818,13 @@ LIBSSH_API int ssh_threads_set_callbacks(struct ssh_threads_callbacks_struct
 LIBSSH_API struct ssh_threads_callbacks_struct *ssh_threads_get_pthread(void);
 
 /**
- * @brief returns a pointer on the noop threads callbacks, to be used with
- * ssh_threads_set_callbacks. These callbacks do nothing and are being used by
- * default.
+ * @brief Get the noop threads callbacks structure
+ *
+ * This can be used with ssh_threads_set_callbacks. These callbacks do nothing
+ * and are being used by default.
+ *
+ * @return Always returns a valid pointer to the noop callbacks structure.
+ *
  * @see ssh_threads_set_callbacks
  */
 LIBSSH_API struct ssh_threads_callbacks_struct *ssh_threads_get_noop(void);

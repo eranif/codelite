@@ -36,10 +36,12 @@ FilesModifiedDlg::~FilesModifiedDlg()
 
 void FilesModifiedDlg::OnChoose(wxCommandEvent& event)
 {
+    event.StopPropagation();
     CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_CHOOSE );
 }
 
 void FilesModifiedDlg::OnLoad(wxCommandEvent& event)
 {
+    event.StopPropagation();
     CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_LOAD );
 }

@@ -42,10 +42,10 @@ BuildConfig::BuildConfig(wxXmlNode *node)
     : m_commonConfig(node)
     , m_useSeparateDebugArgs(false)
     , m_pchInCommandLine(false)
-    , m_useSeparatePCHFlags(false)
     , m_clangC11(false)
     , m_isGUIProgram(false)
     , m_isProjectEnabled(true)
+    , m_pchPolicy(BuildConfig::kPCHPolicyReplace)
 {
     if ( node ) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
@@ -96,8 +96,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
             m_compilerRequired = XmlUtils::ReadBool(compile, wxT("Required"), true);
             m_precompiledHeader = XmlUtils::ReadString(compile, wxT("PreCompiledHeader"));
             m_pchInCommandLine  = XmlUtils::ReadBool(compile, wxT("PCHInCommandLine"), false);
-            m_useSeparatePCHFlags = XmlUtils::ReadBool(compile, wxT("UseDifferentPCHFlags"), false);
             m_pchCompileFlags = XmlUtils::ReadString(compile, wxT("PCHFlags"));
+            m_pchPolicy = (ePCHPolicy)XmlUtils::ReadLong(compile, "PCHFlagsPolicy", m_pchPolicy);
         }
 
         wxXmlNode *linker = XmlUtils::FindFirstByTagName(node, wxT("Linker"));
@@ -318,8 +318,8 @@ wxXmlNode *BuildConfig::ToXml() const
         compile->AddProperty(wxT("Required"),          BoolToString(m_compilerRequired));
         compile->AddProperty(wxT("PreCompiledHeader"), m_precompiledHeader);
         compile->AddProperty(wxT("PCHInCommandLine"),  BoolToString(m_pchInCommandLine));
-        compile->AddProperty(wxT("UseDifferentPCHFlags"), BoolToString(m_useSeparatePCHFlags));
         compile->AddProperty(wxT("PCHFlags"), m_pchCompileFlags);
+        compile->AddProperty("PCHFlagsPolicy", wxString() << (int)m_pchPolicy);
     }
 
     wxXmlNode *link = XmlUtils::FindFirstByTagName(node, wxT("Linker"));

@@ -84,6 +84,11 @@ public:
     static const wxString APPEND_TO_GLOBAL_SETTINGS;
     static const wxString PREPEND_GLOBAL_SETTINGS;
     typedef std::map<wxString, wxString> StringMap_t;
+    
+    enum ePCHPolicy {
+        kPCHPolicyReplace = 0,
+        kPCHPolicyAppend  = 1,
+    };
 
 private:
     BuildConfigCommon m_commonConfig;
@@ -130,7 +135,6 @@ private:
     wxString          m_debugArgs;
     wxString          m_envvars;
     bool              m_pchInCommandLine;
-    bool              m_useSeparatePCHFlags;
     wxString          m_pchCompileFlags;
     wxString          m_clangPPFlags;   // clang only pre-processors (useful when using a custom makefile)
     wxString          m_clangCmpFlags;  // clang only compilation flags C++ (useful when using a custom makefile)
@@ -141,6 +145,7 @@ private:
     wxArrayString     m_debuggerSearchPaths;
     bool              m_isGUIProgram;
     bool              m_isProjectEnabled;
+    ePCHPolicy        m_pchPolicy;
 
 public:
     BuildConfig(wxXmlNode *node);
@@ -151,7 +156,12 @@ public:
     //--------------------------------
     // Setters / Getters
     //--------------------------------
-
+    void SetPCHFlagsPolicy(BuildConfig::ePCHPolicy policy) {
+        this->m_pchPolicy = policy;
+    }
+    BuildConfig::ePCHPolicy GetPCHFlagsPolicy() const {
+        return this->m_pchPolicy;
+    }
     void SetIsProjectEnabled(bool isProjectEnabled) {
         this->m_isProjectEnabled = isProjectEnabled;
     }
@@ -221,12 +231,6 @@ public:
         m_commonConfig.SetAssemblerOptions(options);
     }
 
-    void SetUseSeparatePCHFlags(bool useSeparatePCHFlags) {
-        this->m_useSeparatePCHFlags = useSeparatePCHFlags;
-    }
-    bool GetUseSeparatePCHFlags() const {
-        return m_useSeparatePCHFlags;
-    }
     void SetPchInCommandLine(bool pchInCommandLine) {
         this->m_pchInCommandLine = pchInCommandLine;
     }

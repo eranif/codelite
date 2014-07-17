@@ -33,8 +33,11 @@
 #include "manager.h"
 #include <wx/filedlg.h>
 
-PSCompilerPage::PSCompilerPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp )
-    : PSCompilerPageBase( parent )
+PSCompilerPage::PSCompilerPage(wxWindow* parent,
+                               const wxString& projectName,
+                               ProjectSettingsDlg* dlg,
+                               PSGeneralPage* gp)
+    : PSCompilerPageBase(parent)
     , m_dlg(dlg)
     , m_projectName(projectName)
     , m_gp(gp)
@@ -46,14 +49,15 @@ void PSCompilerPage::Load(BuildConfigPtr buildConf)
 {
     m_checkCompilerNeeded->SetValue(!buildConf->IsCompilerRequired());
     m_pgPropCppOpts->SetValueFromString(buildConf->GetCompileOptions());
-    m_pgPropIncludePaths->SetValueFromString( buildConf->GetIncludePath() );
-    m_pgPropPreProcessors->SetValueFromString( buildConf->GetPreprocessor() );
-    m_pgPropPreCmpHeaderFile->SetValue( buildConf->GetPrecompiledHeader() );
+    m_pgPropIncludePaths->SetValueFromString(buildConf->GetIncludePath());
+    m_pgPropPreProcessors->SetValueFromString(buildConf->GetPreprocessor());
+    m_pgPropPreCmpHeaderFile->SetValue(buildConf->GetPrecompiledHeader());
     m_pgPropCOpts->SetValue(buildConf->GetCCompileOptions());
     SelectChoiceWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
-    m_pgPropIncludePCH->SetValue( buildConf->GetPchInCommandLine() );
-    m_pgPropPCHCompileLine->SetValue( buildConf->GetPchCompileFlags() );
+    m_pgPropIncludePCH->SetValue(buildConf->GetPchInCommandLine());
+    m_pgPropPCHCompileLine->SetValue(buildConf->GetPchCompileFlags());
     m_pgPropAssembler->SetValue(buildConf->GetAssmeblerOptions());
+    m_pgPropPCHPolicy->SetValue((int)buildConf->GetPCHFlagsPolicy());
 }
 
 void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -65,36 +69,30 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
     buildConf->SetPrecompiledHeader(m_pgPropPreCmpHeaderFile->GetValueAsString());
     buildConf->SetCCompileOptions(m_pgPropCOpts->GetValueAsString());
     buildConf->SetPchInCommandLine(m_pgPropIncludePCH->GetValue().GetBool());
-    buildConf->SetUseSeparatePCHFlags(!m_pgPropPCHCompileLine->GetValueAsString().IsEmpty());
     buildConf->SetPchCompileFlags(m_pgPropPCHCompileLine->GetValueAsString());
     buildConf->SetAssmeblerOptions(m_pgPropAssembler->GetValueAsString());
-    buildConf->SetBuildCmpWithGlobalSettings( m_pgPropBehaviorWithGlobalSettings->GetValueAsString() );
+    buildConf->SetBuildCmpWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings->GetValueAsString());
+    buildConf->SetPCHFlagsPolicy((BuildConfig::ePCHPolicy)m_pgPropPCHPolicy->GetValue().GetInteger());
 }
 
 void PSCompilerPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
-    for( ; !iter.AtEnd(); ++iter ) {
-        if ( iter.GetProperty() && !iter.GetProperty()->IsCategory() ) {
+    for(; !iter.AtEnd(); ++iter) {
+        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
     m_checkCompilerNeeded->SetValue(false);
 }
 
-void PSCompilerPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable( m_dlg->IsProjectEnabled() );
-}
+void PSCompilerPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }
 
-void PSCompilerPage::OnPropertyChanged(wxPropertyGridEvent& event)
-{
-    m_dlg->SetIsDirty(true);
-}
+void PSCompilerPage::OnPropertyChanged(wxPropertyGridEvent& event) { m_dlg->SetIsDirty(true); }
 
 void PSCompilerPage::OnUpdateUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_dlg->IsCustomBuildEnabled() && !m_checkCompilerNeeded->IsChecked());
+    event.Enable(!m_dlg->IsCustomBuildEnabled() && !m_checkCompilerNeeded->IsChecked());
 }
 
 void PSCompilerPage::OnCustomEditorClicked(wxCommandEvent& event)
@@ -102,31 +100,28 @@ void PSCompilerPage::OnCustomEditorClicked(wxCommandEvent& event)
     wxPGProperty* prop = m_pgMgr->GetSelectedProperty();
     CHECK_PTR_RET(prop);
     m_dlg->SetIsDirty(true);
-    
-    if ( prop == m_pgPropPreProcessors || prop == m_pgPropIncludePaths || prop == m_pgPropAssembler ) {
+
+    if(prop == m_pgPropPreProcessors || prop == m_pgPropIncludePaths || prop == m_pgPropAssembler) {
         wxString value = prop->GetValueAsString();
-        if ( PopupAddOptionDlg(value) ) {
-            prop->SetValueFromString( value );
+        if(PopupAddOptionDlg(value)) {
+            prop->SetValueFromString(value);
         }
 
-    } else if ( prop == m_pgPropCppOpts || prop == m_pgPropCOpts ) {
+    } else if(prop == m_pgPropCppOpts || prop == m_pgPropCOpts) {
         wxString value = prop->GetValueAsString();
         wxString cmpName = m_gp->GetCompiler();
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-        if (PopupAddOptionCheckDlg(value, _("Compiler options"), cmp->GetCompilerOptions())) {
-            prop->SetValueFromString( value );
+        if(PopupAddOptionCheckDlg(value, _("Compiler options"), cmp->GetCompilerOptions())) {
+            prop->SetValueFromString(value);
         }
-    } else if ( prop == m_pgPropPreCmpHeaderFile ) {
+    } else if(prop == m_pgPropPreCmpHeaderFile) {
         wxFileName curvalue = prop->GetValueAsString();
         wxString program = ::wxFileSelector(_("Choose a file"), curvalue.GetPath());
-        if ( !program.IsEmpty() ) {
+        if(!program.IsEmpty()) {
             program.Replace("\\", "/");
-            prop->SetValue( program );
+            prop->SetValue(program);
         }
     }
 }
 
-void PSCompilerPage::OnCompilerNeeded(wxCommandEvent& event)
-{
-    m_dlg->SetIsDirty(true);
-}
+void PSCompilerPage::OnCompilerNeeded(wxCommandEvent& event) { m_dlg->SetIsDirty(true); }

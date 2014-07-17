@@ -55,7 +55,6 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     wxString lexerName;
     LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
     wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
-    int sel = 0;
     if(editor) {
         lexerName = editor->GetContext()->GetName().Lower();
     }

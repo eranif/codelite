@@ -3936,7 +3936,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
         // if workspace or project was modified, don't prompt for
         // file(s) reload
         if(!m_theFrame->ReloadExternallyModifiedProjectFiles()) {
-            m_theFrame->GetMainBook()->ReloadExternallyModified(true);
+            m_theFrame->GetMainBook()->CallAfter(&MainBook::ReloadExternallyModified, true);
         }
 
         // Notify plugins that we got the focus.

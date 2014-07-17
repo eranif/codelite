@@ -46,8 +46,6 @@ void FileExtManager::Init()
         m_map[wxT("hxx") ] = TypeHeader;
         m_map[wxT("hh")  ] = TypeHeader;
         m_map[wxT("h++") ] = TypeHeader;
-        m_map[wxT("inc") ] = TypeHeader;
-        m_map[wxT("incl")] = TypeHeader;
         m_map[wxT("inl") ] = TypeHeader;
 
         m_map[wxT("rc")  ] = TypeResource;
@@ -72,6 +70,7 @@ void FileExtManager::Init()
         m_map[wxT("xrc")] = TypeXRC;
         m_map[wxT("css")] = TypeCSS;
         m_map[wxT("js")]  = TypeJS;
+        m_map[wxT("javascript")]  = TypeJS;
         m_map[wxT("py")]  = TypePython;
 
         m_map[wxT("exe")] = TypeExe;
@@ -113,7 +112,7 @@ void FileExtManager::Init()
         m_map[wxT("sql")]     = TypeSQL;
         m_map[wxT("phpwsp")]  = TypeWorkspacePHP;
         m_map[wxT("phptags")] = TypeWorkspacePHPTags;
-        
+
         m_map["s"] = TypeAsm;
     }
 }
@@ -140,4 +139,16 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
         return defaultType;
     }
     return iter->second;
+}
+
+bool FileExtManager::IsCxxFile(const wxString& filename)
+{
+    FileType ft = GetType(filename);
+    return ft == TypeSourceC || ft == TypeSourceCpp || ft == TypeHeader;
+}
+
+bool FileExtManager::IsJavascriptFile(const wxString& filename)
+{
+    FileType ft = GetType(filename);
+    return ft == TypeJS;
 }

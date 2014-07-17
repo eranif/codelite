@@ -77,6 +77,22 @@ private:
 
 public:
     static FileType GetType(const wxString &filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
-    static void     Init();
+    static void Init();
+
+    /**
+     * @brief return true if the file is a C/C++ file
+     */
+    static bool IsCxxFile(const wxString& filename);
+    static bool IsCxxFile(const wxFileName& filename) {
+        return IsCxxFile(filename.GetFullName());
+    }
+
+    /**
+     * @brief return true if a file is a JavaScript file
+     */
+    static bool IsJavascriptFile(const wxString& filename);
+    static bool IsJavascriptFile(const wxFileName& filename) {
+        return IsJavascriptFile(filename.GetFullName());
+    }
 };
 #endif // __fileextmanager__

@@ -220,7 +220,11 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
     // execute the formatter
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
-    if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
+
+    // We allow ClangFormat to work only when the source file is known to be
+    // a C/C++ source file or JavaScript (these are the types of files that clang-format can handle properly)
+    if(fmtroptions.GetEngine() == kFormatEngineClangFormat &&
+       (FileExtManager::IsCxxFile(editor->GetFileName()) || FileExtManager::IsJavascriptFile(editor->GetFileName()))) {
 
         int from = wxNOT_FOUND, length = wxNOT_FOUND;
         wxString formattedOutput;

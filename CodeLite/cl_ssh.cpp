@@ -82,7 +82,7 @@ bool clSSH::AuthenticateServer(wxString &message) throw (clException)
     message.Clear();
     state = ssh_is_server_known(m_session);
 
-#if LIBSSH_VERSION_INT < SSH_VERSION_INT(0, 6, 3)
+#if LIBSSH_VERSION_INT < SSH_VERSION_INT(0, 6, 1)
     int hlen = 0;
     hlen = ssh_get_pubkey_hash(m_session, &hash);
     if (hlen < 0) {

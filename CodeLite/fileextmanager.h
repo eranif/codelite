@@ -26,6 +26,7 @@
 #ifndef __fileextmanager__
 #define __fileextmanager__
 
+#include <wx/filename.h>
 #include <wx/string.h>
 #include <map>
 #include "codelite_exports.h"

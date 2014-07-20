@@ -18,9 +18,6 @@ public:
     wxCheckBox* GetCheckBoxCase() {
         return m_checkBoxCase;
     }
-    wxCheckBox* GetCheckBoxHighlight() {
-        return m_checkBoxHighlight;
-    }
     wxCheckBox* GetCheckBoxMultipleSelections() {
         return m_checkBoxMultipleSelections;
     }
@@ -37,6 +34,5 @@ public:
 protected:
     virtual void OnCheckBoxRegex( wxCommandEvent& event );
     virtual void OnCheckWild( wxCommandEvent& event );
-    virtual void OnHighlightMatches( wxCommandEvent& event );
 };
 #endif // QUICKFINDBAROPTIONSMENU_H

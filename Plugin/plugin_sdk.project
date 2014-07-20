@@ -595,4 +595,14 @@
     <File Name="clZipWriter.h"/>
     <File Name="clZipWriter.cpp"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="wxFlatButtonBar">
+    <File Name="wxFlatButton.cpp"/>
+    <File Name="wxFlatButton.h"/>
+    <File Name="wxFlatButton.wxcp"/>
+    <File Name="wxFlatButtonBar.cpp"/>
+    <File Name="wxFlatButtonBar.h"/>
+    <File Name="wxFlatButtonBase.cpp"/>
+    <File Name="wxFlatButtonBase.h"/>
+    <File Name="wxFlatButtonBaseBitmaps.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

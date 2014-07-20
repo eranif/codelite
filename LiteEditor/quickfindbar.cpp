@@ -37,21 +37,22 @@
 #include "cl_config.h"
 #include "QuickFindBarOptionsMenu.h"
 #include <wx/gdicmn.h>
+#include "wxFlatButtonBar.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
-#define CHECK_FOCUS_WIN()                                                                                              \
-    {                                                                                                                  \
-        wxWindow* focus = wxWindow::FindFocus();                                                                       \
-        if(focus != m_sci && focus != m_findWhat) {                                                                    \
-            e.Skip();                                                                                                  \
-            return;                                                                                                    \
-        }                                                                                                              \
-                                                                                                                       \
-        if(!m_sci || m_sci->GetLength() == 0) {                                                                        \
-            e.Skip();                                                                                                  \
-            return;                                                                                                    \
-        }                                                                                                              \
+#define CHECK_FOCUS_WIN()                           \
+    {                                               \
+        wxWindow* focus = wxWindow::FindFocus();    \
+        if(focus != m_sci && focus != m_findWhat) { \
+            e.Skip();                               \
+            return;                                 \
+        }                                           \
+                                                    \
+        if(!m_sci || m_sci->GetLength() == 0) {     \
+            e.Skip();                               \
+            return;                                 \
+        }                                           \
     }
 
 void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
@@ -73,6 +74,59 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_eventsConnected(false)
     , m_optionsWindow(NULL)
 {
+    wxFlatButtonBar* bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal);
+    GetSizer()->Add(bar, 1, wxEXPAND | wxALL, 2);
+    QuickFindBarImages images;
+    m_optionsButton = bar->AddButton(wxEmptyString, images.Bitmap("m_bmpMenu"), wxSize(24, -1));
+    m_optionsButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnOptions, this);
+    m_optionsButton->SetTogglable(true); // Toggle button
+    m_optionsButton->SetToolTip(_("Open search menu options..."));
+    
+    wxFlatButton* btnMarker = bar->AddButton("", images.Bitmap("marker-16"), wxSize(24, -1));
+    btnMarker->SetTogglable(true);
+    btnMarker->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHighlightMatches, this);
+    btnMarker->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnHighlightMatchesUI, this);
+    btnMarker->SetToolTip(_("Highlight Occurances"));
+
+    // Add the controls
+    //=======----------------------
+    // Find what:
+    //=======----------------------
+    wxArrayString m_findWhatArr;
+    m_findWhat =
+        new wxComboBox(bar, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_findWhatArr, wxTE_PROCESS_ENTER);
+    m_findWhat->SetToolTip(_("Hit ENTER to search, or Shift + ENTER to search backward"));
+    m_findWhat->SetFocus();
+    m_findWhat->SetHint(_("Type to start a search..."));
+    bar->AddControl(m_findWhat, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
+
+    wxFlatButton* btnNext = bar->AddButton("", images.Bitmap("arrow-down-16"), wxSize(24, -1));
+    btnNext->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnButtonNext, this);
+    btnNext->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonNextUI, this);
+    btnNext->SetToolTip(_("Find Next"));
+
+    wxFlatButton* btnPrev = bar->AddButton("", images.Bitmap("arrow-up-16"), wxSize(24, -1));
+    btnPrev->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnButtonPrev, this);
+    btnPrev->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonPrevUI, this);
+    btnPrev->SetToolTip(_("Find Previous"));
+
+    //=======----------------------
+    // Replace with:
+    //=======----------------------
+    wxArrayString m_replaceWithArr;
+    m_replaceWith =
+        new wxComboBox(bar, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_replaceWithArr, wxTE_PROCESS_ENTER);
+    m_replaceWith->SetToolTip(_("Type the replacement string and hit ENTER to perform the replacement"));
+    m_replaceWith->SetHint(_("Type any replacement string..."));
+    bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
+
+    // Connect the events
+    m_findWhat->Bind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBar::OnEnter, this);
+    m_findWhat->Bind(wxEVT_COMMAND_TEXT_UPDATED, &QuickFindBar::OnText, this);
+    m_findWhat->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
+    m_replaceWith->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnReplaceKeyDown, this);
+    m_replaceWith->Bind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBar::OnReplace, this);
+
     Hide();
     GetSizer()->Fit(this);
     wxTheApp->Connect(
@@ -100,11 +154,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Initialize the list with the history
     m_findWhat->Append(clConfig::Get().GetQuickFindSearchItems());
     m_replaceWith->Append(clConfig::Get().GetQuickFindReplaceItems());
-
-    int sashPos = clConfig::Get().Read("QuickFindBarSashPos", wxNOT_FOUND);
-    if(sashPos != wxNOT_FOUND) {
-        m_splitter73->SetSashPosition(sashPos);
-    }
 }
 
 bool QuickFindBar::Show(bool show)
@@ -624,9 +673,9 @@ void QuickFindBar::DoMarkAll()
     editor->EnsureCaretVisible();
 }
 
-void QuickFindBar::OnHighlightMatches(const wxCommandEvent& event)
+void QuickFindBar::OnHighlightMatches(wxFlatButtonEvent& e)
 {
-    bool checked = GetOptionsMenu()->GetCheckBoxHighlight()->IsChecked();
+    bool checked = e.IsChecked();
     LEditor* editor = dynamic_cast<LEditor*>(m_sci);
     if(checked && editor) {
         editor->SetFindBookmarksActive(true);
@@ -708,8 +757,6 @@ QuickFindBar::~QuickFindBar()
                          this);
     EventNotifier::Get()->Disconnect(
         wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
-
-    clConfig::Get().Write("QuickFindBarSashPos", m_splitter73->GetSashPosition());
 }
 
 void QuickFindBar::OnReleaseEditor(wxCommandEvent& e)
@@ -865,24 +912,25 @@ void QuickFindBar::DoUpdateReplaceHistory()
     }
 }
 
-void QuickFindBar::OnOptions(wxCommandEvent& event)
+void QuickFindBar::OnOptions(wxFlatButtonEvent& event)
 {
-    if(!GetOptionsMenu()->IsShown()) {
-        wxSize menuSize = GetOptionsMenu()->GetSize();
-        wxPoint menuPos(m_buttonOptions->GetScreenPosition());
-        menuPos.y += m_buttonOptions->GetSize().GetHeight();
+    if(event.IsChecked()) {
+        if(!GetOptionsMenu()->IsShown()) {
+            wxSize menuSize = GetOptionsMenu()->GetSize();
+            wxPoint menuPos(m_optionsButton->GetScreenPosition());
+            menuPos.y += m_optionsButton->GetSize().GetHeight();
 
-        wxSize displaySize = ::wxGetDisplaySize();
-        if(menuPos.y + menuSize.GetHeight() > displaySize.GetHeight()) {
-            // Place the menu on top of the button
-            menuPos.y -= m_buttonOptions->GetSize().GetHeight();
-            menuPos.y -= menuSize.GetHeight();
+            wxSize displaySize = ::wxGetDisplaySize();
+            if(menuPos.y + menuSize.GetHeight() > displaySize.GetHeight()) {
+                // Place the menu on top of the button
+                menuPos.y -= m_optionsButton->GetSize().GetHeight();
+                menuPos.y -= menuSize.GetHeight();
+            }
+
+            // Toggle the button
+            GetOptionsMenu()->Move(menuPos);
+            GetOptionsMenu()->Popup(m_findWhat);
         }
-
-        // Toggle the button
-        m_buttonOptions->SetValue(true);
-        GetOptionsMenu()->Move(menuPos);
-        GetOptionsMenu()->Popup(m_findWhat);
     }
 }
 
@@ -896,6 +944,11 @@ QuickFindBarOptionsMenu* QuickFindBar::GetOptionsMenu()
 
 void QuickFindBar::OnOptionsMenuDismissed()
 {
-    m_buttonOptions->SetValue(false);
+    m_optionsButton->Check(false);
     m_findWhat->SetFocus();
 }
+
+void QuickFindBar::OnButtonNext(wxFlatButtonEvent& e) { OnNext(e); }
+void QuickFindBar::OnButtonPrev(wxFlatButtonEvent& e) { OnPrev(e); }
+void QuickFindBar::OnButtonNextUI(wxUpdateUIEvent& e) { e.Enable(!m_findWhat->GetValue().IsEmpty()); }
+void QuickFindBar::OnButtonPrevUI(wxUpdateUIEvent& e) { e.Enable(!m_findWhat->GetValue().IsEmpty()); }

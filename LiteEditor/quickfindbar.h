@@ -28,6 +28,7 @@
 #include <wx/panel.h>
 #include "quickfindbarbase.h"
 #include "wxFlatButton.h"
+#include <wx/combobox.h>
 
 class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;

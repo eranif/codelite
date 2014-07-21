@@ -11,7 +11,7 @@ wxFlatButtonBar::wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme th
     // Colours - dark theme
     SetBgColour(wxFlatButton::GetBarBgColour(theme));
     SetPenColour(wxFlatButton::GetBarBgColour(theme));
-    m_mainSizer->Add(2, 0, 0, wxEXPAND, 0);
+    AddSpacer(2);
 }
 
 wxFlatButtonBar::~wxFlatButtonBar() {}
@@ -44,3 +44,8 @@ wxWindow* wxFlatButtonBar::AddControl(wxWindow* window, int proportion, int flag
 }
 
 void wxFlatButtonBar::OnIdle(wxIdleEvent& event) { event.Skip(); }
+
+void wxFlatButtonBar::AddSpacer(int size)
+{
+    m_mainSizer->Add(size, 0, 0, wxEXPAND, 0);
+}

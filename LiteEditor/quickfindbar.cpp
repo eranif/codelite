@@ -40,18 +40,18 @@
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
-#define CHECK_FOCUS_WIN()                                                                                              \
-    {                                                                                                                  \
-        wxWindow* focus = wxWindow::FindFocus();                                                                       \
-        if(focus != m_sci && focus != m_findWhat) {                                                                    \
-            e.Skip();                                                                                                  \
-            return;                                                                                                    \
-        }                                                                                                              \
-                                                                                                                       \
-        if(!m_sci || m_sci->GetLength() == 0) {                                                                        \
-            e.Skip();                                                                                                  \
-            return;                                                                                                    \
-        }                                                                                                              \
+#define CHECK_FOCUS_WIN()                           \
+    {                                               \
+        wxWindow* focus = wxWindow::FindFocus();    \
+        if(focus != m_sci && focus != m_findWhat) { \
+            e.Skip();                               \
+            return;                                 \
+        }                                           \
+                                                    \
+        if(!m_sci || m_sci->GetLength() == 0) {     \
+            e.Skip();                               \
+            return;                                 \
+        }                                           \
     }
 
 void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
@@ -120,16 +120,17 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_findWhat->SetHint(_("Type to start a search..."));
     buttonsBar->AddControl(m_findWhat, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
 
+    buttonsBar->AddSpacer(2);
     wxFlatButton* btnNext = buttonsBar->AddButton(_("Find"), wxNullBitmap, wxSize(100, -1), wxBORDER_SIMPLE);
     btnNext->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnButtonNext, this);
     btnNext->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonNextUI, this);
     btnNext->SetToolTip(_("Find Next"));
-    
+
     wxFlatButton* btnPrev = buttonsBar->AddButton(_("Find Prev"), wxNullBitmap, wxSize(100, -1), wxBORDER_SIMPLE);
     btnPrev->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnButtonPrev, this);
     btnPrev->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonPrevUI, this);
     btnPrev->SetToolTip(_("Find Previous"));
-    
+
     wxFlatButton* btnAll = buttonsBar->AddButton(_("Find All"), wxNullBitmap, wxSize(100, -1), wxBORDER_SIMPLE);
     btnAll->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnFindAll, this);
     btnAll->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonPrevUI, this);
@@ -694,12 +695,12 @@ void QuickFindBar::DoMarkAll(bool useIndicators)
             if(count) {
                 // we already have the main selection, add secondary selections
                 editor->AddSelection(matchStart, matchEnd);
-                firstMatchPos = matchStart;
 
             } else {
                 // clear and set the first selection
                 editor->ClearSelections();
                 editor->SetSelection(matchStart, matchEnd);
+                firstMatchPos = matchStart;
             }
         }
         ++count;
@@ -714,6 +715,11 @@ void QuickFindBar::DoMarkAll(bool useIndicators)
 
     if(firstMatchPos != wxNOT_FOUND) {
         editor->SetLineVisible(editor->LineFromPos(firstMatchPos));
+    }
+
+    if(!useIndicators) {
+        // Hide the bar
+        Show(false);
     }
 }
 

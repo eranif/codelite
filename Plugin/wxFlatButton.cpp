@@ -88,13 +88,17 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         }
 
     } else {
-        SetPenNormalColour("rgb(178, 178, 178)");
-        SetBgColour("rgb(238, 238, 238)");
+        wxColour paneColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        wxColour bgColour = paneColour.ChangeLightness(150);
+        wxColour penColour = paneColour.ChangeLightness(90);
+
+        SetPenNormalColour(penColour);
+        SetBgColour(bgColour);
 
         SetPenPressedColour("rgb(90, 90, 90)");
         SetBgPressedColour("rgb(120, 120, 120)");
 
-        SetBgHoverColour("rgb(238, 238, 238)");
+        SetBgHoverColour(bgColour);
         m_penHoverColourInner = "WHITE";
         m_penHoverOuterColour = "TURQUOISE";
         SetTextColour("rgb(15, 15, 15)");

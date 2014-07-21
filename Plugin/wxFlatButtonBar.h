@@ -36,6 +36,11 @@ public:
      * @return
      */
     wxWindow* AddControl(wxWindow* window, int proportion = 0, int flags = wxEXPAND|wxALL);
+
+    /**
+     * @brief add a spacer
+     */
+    void AddSpacer(int size);
     
 protected:
     virtual void OnIdle(wxIdleEvent& event);

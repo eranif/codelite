@@ -127,28 +127,37 @@ QuickFindBarImages::QuickFindBarImages()
     {
         wxBitmap bmp;
         wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrow-down-16"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("arrow-down-16"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrow-up-16"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("arrow-up-16"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("marker-16"));
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
         m_bitmaps.insert( std::make_pair(wxT("marker-16"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("case-sensitive"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("case-sensitive"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("word"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("word"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("regex"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("regex"), bmp ) );
     }
     
 }

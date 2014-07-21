@@ -29,7 +29,7 @@ wxFlatButtonEvent& wxFlatButtonEvent::operator=(const wxFlatButtonEvent& src)
 //++++++++---------------------------------
 #define X_SPACER 5
 #define Y_SPACER 3
-#define BTN_RADIUS 0.5
+#define BTN_RADIUS 0
 
 wxFlatButton::wxFlatButton(wxWindow* parent,
                            const wxString& label,
@@ -67,7 +67,8 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
 
     // Colours - dark theme
     if(m_theme == kThemeDark) {
-        SetPenColour("rgb(125, 125, 125)");
+        SetPenNormalColour("rgb(48, 48, 48)");
+        SetPenPressedColour("rgb(125, 125, 125)");
         SetBgPressedColour("rgb(48, 48, 48)");
         SetBgColour("rgb(65, 65, 65)");
         m_penHoverColourInner = "rgb(160, 160, 160)";
@@ -79,7 +80,8 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         }
 
     } else {
-        SetPenColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+        SetPenNormalColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+        SetPenPressedColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
         SetBgPressedColour("rgb(173, 173, 173)");
         SetBgColour("rgb(178, 178, 178)");
         SetBgHoverColour("rgb(238, 238, 238)");
@@ -211,12 +213,14 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
     }
     case kStateNormal: {
         // do nothing
+        gdc.SetPen(GetPenNormalColour());
+        gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
         break;
     }
     case kStatePressed: {
         // Pressed
         gdc.SetBrush(GetBgColour());
-        gdc.SetPen(GetPenColour());
+        gdc.SetPen(GetPenPressedColour());
         gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
 
         // gdc.SetBrush(GetBgPressedColour());

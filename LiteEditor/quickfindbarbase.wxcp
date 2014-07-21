@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 95,
+  "m_objCounter": 101,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafteryhjh4ZInitBitmapResources",
   "m_bitmapsFile": "quickfindbarbase_liteeditor_bitmaps.cpp",
@@ -790,49 +790,68 @@
      "m_properties": [{
        "type": "string",
        "m_label": "Name:",
-       "m_value": "arrow-down-16"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/quickfindbar/arrow-down.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "arrow-up-16"
-      }, {
-       "type": "filePicker",
-       "m_label": "Bitmap File:",
-       "m_path": "res/quickfindbar/arrow-up.png"
-      }],
-     "m_events": [],
-     "m_children": []
-    }, {
-     "m_type": 4482,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
        "m_value": "marker-16"
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
        "m_path": "res/quickfindbar/marker-16.png"
+      }],
+     "m_events": [],
+     "m_children": []
+    }, {
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "case-sensitive"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "res/quickfindbar/case-sensitive.png"
+      }],
+     "m_events": [],
+     "m_children": []
+    }, {
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "word"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "res/quickfindbar/word.png"
+      }],
+     "m_events": [],
+     "m_children": []
+    }, {
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "regex"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "res/quickfindbar/regex.png"
       }],
      "m_events": [],
      "m_children": []

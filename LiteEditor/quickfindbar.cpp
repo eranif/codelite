@@ -81,7 +81,24 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_optionsButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnOptions, this);
     m_optionsButton->SetTogglable(true); // Toggle button
     m_optionsButton->SetToolTip(_("Open search menu options..."));
-    
+
+    // Add the 'case sensitive' button
+    m_caseSensitive = bar->AddButton("", images.Bitmap("case-sensitive"), wxSize(24, -1));
+    m_caseSensitive->SetTogglable(true);
+    m_caseSensitive->SetToolTip(_("Case sensitive match"));
+
+    // Add the 'case sensitive' button
+    m_wholeWord = bar->AddButton("", images.Bitmap("word"), wxSize(24, -1));
+    m_wholeWord->SetTogglable(true);
+    m_wholeWord->SetToolTip(_("Match a whole word"));
+
+    // Regex or Wild card syntax?
+    m_regexOrWildMenu = new wxMenu;
+    m_regexOrWildMenu->Append(ID_MENU_REGEX, _("Regular expression"), _("Regular expression"), wxITEM_RADIO);
+    m_regexOrWildMenu->Append(ID_MENU_WILDCARD, _("Wildcard syntax"), _("Wildcard syntax"), wxITEM_RADIO);
+    m_regexOrWildButton = bar->AddButton("", images.Bitmap("regex"), wxSize(24, -1));
+    m_regexOrWildButton->SetPopupWindow(m_regexOrWildMenu);
+
     wxFlatButton* btnMarker = bar->AddButton("", images.Bitmap("marker-16"), wxSize(24, -1));
     btnMarker->SetTogglable(true);
     btnMarker->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHighlightMatches, this);
@@ -100,12 +117,12 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_findWhat->SetHint(_("Type to start a search..."));
     bar->AddControl(m_findWhat, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
 
-    wxFlatButton* btnNext = bar->AddButton("", images.Bitmap("arrow-down-16"), wxSize(24, -1));
+    wxFlatButton* btnNext = bar->AddButton(_("Find"), wxNullBitmap, wxSize(100, -1));
     btnNext->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnButtonNext, this);
     btnNext->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonNextUI, this);
     btnNext->SetToolTip(_("Find Next"));
 
-    wxFlatButton* btnPrev = bar->AddButton("", images.Bitmap("arrow-up-16"), wxSize(24, -1));
+    wxFlatButton* btnPrev = bar->AddButton(_("Find Prev"), wxNullBitmap, wxSize(100, -1));
     btnPrev->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnButtonPrev, this);
     btnPrev->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonPrevUI, this);
     btnPrev->SetToolTip(_("Find Previous"));
@@ -118,7 +135,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
         new wxComboBox(bar, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_replaceWithArr, wxTE_PROCESS_ENTER);
     m_replaceWith->SetToolTip(_("Type the replacement string and hit ENTER to perform the replacement"));
     m_replaceWith->SetHint(_("Type any replacement string..."));
-    bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
+    m_replaceWith->Hide();
+    // bar->AddControl(m_replaceWith, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL);
 
     // Connect the events
     m_findWhat->Bind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBar::OnEnter, this);

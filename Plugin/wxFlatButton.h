@@ -58,7 +58,8 @@ protected:
     wxColour m_bgColour;
     wxColour m_bgHoverColour;
     wxColour m_bgPressedColour;
-    wxColour m_penColour;
+    wxColour m_penPressedColour;
+    wxColour m_penNormalColour;
     wxColour m_penHoverColourInner;
     wxColour m_penHoverOuterColour;
     wxColour m_textColour;
@@ -151,8 +152,10 @@ public:
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
     const wxColour& GetBgColour() const { return m_bgColour; }
     void SetTextColour(const wxColour& textColour) { this->m_textColour = textColour; }
-    void SetPenColour(const wxColour& penColour) { this->m_penColour = penColour; }
-    const wxColour& GetPenColour() const { return m_penColour; }
+    void SetPenNormalColour(const wxColour& penNormalColour) { this->m_penNormalColour = penNormalColour; }
+    void SetPenPressedColour(const wxColour& penPressedColour) { this->m_penPressedColour = penPressedColour; }
+    const wxColour& GetPenNormalColour() const { return m_penNormalColour; }
+    const wxColour& GetPenPressedColour() const { return m_penPressedColour; }
     const wxColour& GetTextColour() const { return m_textColour; }
     void SetBgPressedColour(const wxColour& bgPressedColour) { this->m_bgPressedColour = bgPressedColour; }
     const wxColour& GetBgPressedColour() const { return m_bgPressedColour; }

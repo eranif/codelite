@@ -16,7 +16,7 @@ wxFlatButtonBar::~wxFlatButtonBar() {}
 wxFlatButton* wxFlatButtonBar::AddButton(const wxString& label, const wxBitmap& bmp, const wxSize& size)
 {
     wxFlatButton* button = new wxFlatButton(this, label, m_theme, bmp, size);
-    m_mainSizer->Add(button, 0, wxEXPAND | wxTOP|wxBOTTOM, 1);
+    m_mainSizer->Add(button, 0, wxEXPAND | wxTOP|wxBOTTOM|wxLEFT, 1);
     return button;
 }
 

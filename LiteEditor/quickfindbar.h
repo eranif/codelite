@@ -43,6 +43,12 @@ class QuickFindBar : public QuickFindBarBase
     wxComboBox* m_findWhat;
     wxComboBox* m_replaceWith;
     wxFlatButton* m_optionsButton;
+    wxFlatButton* m_caseSensitive;
+    wxFlatButton* m_wholeWord;
+    wxFlatButton* m_regexOrWildButton;
+    wxMenu* m_regexOrWildMenu;
+    bool m_regex;
+    bool m_wildCard;
     friend class QuickFindBarOptionsMenu;
 
 public:
@@ -50,6 +56,11 @@ public:
         ID_TOOL_REPLACE = 1000,
         ID_TOOL_CLOSE,
         ID_TOOL_FIND,
+    };
+
+    enum {
+        ID_MENU_REGEX = 2000,
+        ID_MENU_WILDCARD,
     };
 
     enum {
@@ -89,8 +100,8 @@ protected:
     void OnPrev(wxCommandEvent& e);
     void OnButtonNext(wxFlatButtonEvent& e);
     void OnButtonPrev(wxFlatButtonEvent& e);
-    void OnButtonNextUI(wxUpdateUIEvent &e);
-    void OnButtonPrevUI(wxUpdateUIEvent &e);
+    void OnButtonNextUI(wxUpdateUIEvent& e);
+    void OnButtonPrevUI(wxUpdateUIEvent& e);
     void OnText(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
     void OnEnter(wxCommandEvent& e);

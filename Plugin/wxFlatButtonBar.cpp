@@ -27,7 +27,7 @@ void wxFlatButtonBar::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
     dc.SetBrush(GetBgColour());
-    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+    dc.SetPen(GetBgColour());
     dc.DrawRectangle(GetClientRect());
 }
 

@@ -376,7 +376,7 @@ wxColour wxFlatButton::GetBarBgColour(wxFlatButton::eTheme theme)
     if(theme == wxFlatButton::kThemeDark) {
         return wxColour("rgb(87, 87, 87)");
     } else {
-        return wxColour("rgb(214, 214, 214");
+        return wxColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     }
 }
 

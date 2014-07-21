@@ -36,22 +36,10 @@ protected:
 public:
     enum eTheme { kThemeDark, kThemeNormal };
     static wxColour GetBarBgColour(wxFlatButton::eTheme theme)
-    {
-        if(theme == wxFlatButton::kThemeDark) {
-            return wxColour("rgb(87, 87, 87)");
-        } else {
-            return wxColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        }
-    }
+    ;
 
     static wxColour GetBarTextColour(wxFlatButton::eTheme theme)
-    {
-        if(theme == wxFlatButton::kThemeDark) {
-            return *wxWHITE;
-        } else {
-            return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        }
-    }
+    ;
     typedef wxVector<wxFlatButton> Vec_t;
 
 protected:
@@ -76,7 +64,8 @@ protected:
     bool m_isChecked;
     wxMenu* m_contextMenu;
     bool m_isDisabled;
-
+    int m_style;
+    
     // Helpers
     void GetGCDC(wxAutoBufferedPaintDC& dc, wxGCDC& gdc);
     void DoActivate();
@@ -90,7 +79,8 @@ public:
                  const wxString& label,
                  const wxFlatButton::eTheme theme = wxFlatButton::kThemeDark,
                  const wxBitmap& bmp = wxNullBitmap,
-                 const wxSize& size = wxDefaultSize);
+                 const wxSize& size = wxDefaultSize,
+                 int flags = 0);
     virtual ~wxFlatButton();
     /**
      * @brief set this button a toggle button

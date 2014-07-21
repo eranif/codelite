@@ -10,9 +10,16 @@ class WXDLLIMPEXP_SDK wxFlatButtonBar : public wxFlatButtonBarBase
     wxFlatButton::eTheme m_theme;
     wxColour m_penColour;
     wxColour m_bgColour;
-
+    int m_style;
+    
 public:
-    wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme theme);
+    /**
+     * @brief construct a button bar
+     * @param parent the parent window
+     * @param theme the theme. Can be Dark or Normal
+     * @param flags bar style flags. Only supported flag is wxNO_BORDER or 0
+     */
+    wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme theme, int flags = 0);
     virtual ~wxFlatButtonBar();
 
     wxFlatButton*
@@ -22,7 +29,7 @@ public:
      * @param bmp
      * @param size
      */
-    AddButton(const wxString& label, const wxBitmap& bmp = wxNullBitmap, const wxSize& size = wxDefaultSize);
+    AddButton(const wxString& label, const wxBitmap& bmp = wxNullBitmap, const wxSize& size = wxDefaultSize, int style = 0);
 
     /**
      * @brief add control to the bar

@@ -81,12 +81,13 @@ private:
     void BindEditEvents(bool bind);
     void DoUpdateSearchHistory();
     void DoUpdateReplaceHistory();
-
+    size_t DoGetSearchFlags();
+    
 protected:
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
     void DoSearch(size_t searchFlags, int posToSearchFrom = wxNOT_FOUND);
     wxString DoGetSelectedText();
-    void DoMarkAll();
+    void DoMarkAll(bool useIndicators = true);
     wchar_t* DoGetSearchStringPtr();
 
     // General events
@@ -103,6 +104,7 @@ protected:
     void OnPrev(wxCommandEvent& e);
     void OnButtonNext(wxFlatButtonEvent& e);
     void OnButtonPrev(wxFlatButtonEvent& e);
+    void OnFindAll(wxFlatButtonEvent& e);
     void OnButtonNextUI(wxUpdateUIEvent& e);
     void OnButtonPrevUI(wxUpdateUIEvent& e);
     void OnText(wxCommandEvent& e);

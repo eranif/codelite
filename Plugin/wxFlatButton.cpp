@@ -34,13 +34,14 @@ wxFlatButtonEvent& wxFlatButtonEvent::operator=(const wxFlatButtonEvent& src)
 //++++++++---------------------------------
 #define X_SPACER 5
 #define Y_SPACER 3
-#define BTN_RADIUS 0
+#define BTN_RADIUS 3
 
 wxFlatButton::wxFlatButton(wxWindow* parent,
                            const wxString& label,
                            const wxFlatButton::eTheme theme,
                            const wxBitmap& bmp,
-                           const wxSize& size)
+                           const wxSize& size,
+                           int style)
     : wxFlatButtonBase(parent)
     , m_theme(theme)
     , m_state(kStateNormal)
@@ -51,6 +52,7 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
     , m_isChecked(false)
     , m_contextMenu(NULL)
     , m_isDisabled(false)
+    , m_style(style)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
 
@@ -75,9 +77,10 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         SetPenNormalColour("rgb(48, 48, 48)");
         SetPenPressedColour("rgb(125, 125, 125)");
         SetBgPressedColour("rgb(48, 48, 48)");
+        SetBgHoverColour("rgb(80, 80, 80)");
         SetBgColour("rgb(65, 65, 65)");
         m_penHoverColourInner = "rgb(160, 160, 160)";
-        m_penHoverOuterColour = "rgb(80, 80, 80)";
+        m_penHoverOuterColour = GetPenNormalColour();
         SetTextColour("rgb(248, 248, 242)");
         SetTextColourDisabled("rgb(109, 109, 109)");
         if(m_bmp.IsOk()) {
@@ -85,14 +88,16 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         }
 
     } else {
-        SetPenNormalColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-        SetPenPressedColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-        SetBgPressedColour("rgb(173, 173, 173)");
-        SetBgColour("rgb(178, 178, 178)");
+        SetPenNormalColour("rgb(178, 178, 178)");
+        SetBgColour("rgb(238, 238, 238)");
+
+        SetPenPressedColour("rgb(90, 90, 90)");
+        SetBgPressedColour("rgb(120, 120, 120)");
+
         SetBgHoverColour("rgb(238, 238, 238)");
-        m_penHoverColourInner = *wxWHITE;
-        m_penHoverOuterColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
-        SetTextColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+        m_penHoverColourInner = "WHITE";
+        m_penHoverOuterColour = "TURQUOISE";
+        SetTextColour("rgb(15, 15, 15)");
         SetTextColourDisabled(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
         if(m_bmp.IsOk()) {
             m_bmpDisabled = m_bmp.ConvertToDisabled();
@@ -218,13 +223,14 @@ void wxFlatButton::OnPaint(wxPaintEvent& event)
     }
     case kStateNormal: {
         // do nothing
+        gdc.SetBrush(GetBgColour());
         gdc.SetPen(GetPenNormalColour());
         gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
         break;
     }
     case kStatePressed: {
         // Pressed
-        gdc.SetBrush(GetBgColour());
+        gdc.SetBrush(GetBgPressedColour());
         gdc.SetPen(GetPenPressedColour());
         gdc.DrawRoundedRectangle(clientRect, BTN_RADIUS);
 
@@ -342,13 +348,13 @@ void wxFlatButton::DoShowContextMenu()
     }
     wxPoint pt = GetClientRect().GetBottomLeft();
     pt.y += 1;
-    
+
     // Notify about menu is about to be shown
     wxFlatButtonEvent event(wxEVT_CMD_FLATBUTTON_MENU_SHOWING);
     event.SetMenu(m_contextMenu);
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
-    
+
     PopupMenu(m_contextMenu, pt);
     m_state = kStateNormal;
     m_isChecked = false;
@@ -363,4 +369,22 @@ bool wxFlatButton::Enable(bool enable)
     m_isDisabled = !enable;
     Refresh();
     return wxFlatButtonBase::Enable(enable);
+}
+
+wxColour wxFlatButton::GetBarBgColour(wxFlatButton::eTheme theme)
+{
+    if(theme == wxFlatButton::kThemeDark) {
+        return wxColour("rgb(87, 87, 87)");
+    } else {
+        return wxColour("rgb(214, 214, 214");
+    }
+}
+
+wxColour wxFlatButton::GetBarTextColour(wxFlatButton::eTheme theme)
+{
+    if(theme == wxFlatButton::kThemeDark) {
+        return *wxWHITE;
+    } else {
+        return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    }
 }

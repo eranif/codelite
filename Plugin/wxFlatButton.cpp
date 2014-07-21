@@ -8,8 +8,11 @@
 //++++++++---------------------------------
 
 wxDEFINE_EVENT(wxEVT_CMD_FLATBUTTON_CLICK, wxFlatButtonEvent);
+wxDEFINE_EVENT(wxEVT_CMD_FLATBUTTON_MENU_SHOWING, wxFlatButtonEvent);
+
 wxFlatButtonEvent::wxFlatButtonEvent(wxEventType commandType, int winid)
     : wxCommandEvent(commandType, winid)
+    , m_menu(NULL)
 {
 }
 
@@ -21,6 +24,8 @@ wxFlatButtonEvent& wxFlatButtonEvent::operator=(const wxFlatButtonEvent& src)
     m_cmdString = src.m_cmdString;
     m_commandInt = src.m_commandInt;
     m_extraLong = src.m_extraLong;
+    // this members
+    m_menu = src.m_menu;
     return *this;
 }
 
@@ -337,6 +342,13 @@ void wxFlatButton::DoShowContextMenu()
     }
     wxPoint pt = GetClientRect().GetBottomLeft();
     pt.y += 1;
+    
+    // Notify about menu is about to be shown
+    wxFlatButtonEvent event(wxEVT_CMD_FLATBUTTON_MENU_SHOWING);
+    event.SetMenu(m_contextMenu);
+    event.SetEventObject(this);
+    GetEventHandler()->ProcessEvent(event);
+    
     PopupMenu(m_contextMenu, pt);
     m_state = kStateNormal;
     m_isChecked = false;

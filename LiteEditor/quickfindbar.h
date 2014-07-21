@@ -34,6 +34,14 @@ class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;
 class QuickFindBar : public QuickFindBarBase
 {
+public:
+    enum eRegexType {
+        kRegexNone,
+        kRegexWildcard,
+        kRegexPosix,
+    };
+
+protected:
     wxStyledTextCtrl* m_sci;
     size_t m_flags;
     wxString m_lastText;
@@ -42,13 +50,12 @@ class QuickFindBar : public QuickFindBarBase
     QuickFindBarOptionsMenu* m_optionsWindow;
     wxComboBox* m_findWhat;
     wxComboBox* m_replaceWith;
-    wxFlatButton* m_optionsButton;
     wxFlatButton* m_caseSensitive;
     wxFlatButton* m_wholeWord;
     wxFlatButton* m_regexOrWildButton;
     wxMenu* m_regexOrWildMenu;
-    bool m_regex;
-    bool m_wildCard;
+    eRegexType m_regexType;
+    
     friend class QuickFindBarOptionsMenu;
 
 public:
@@ -61,6 +68,7 @@ public:
     enum {
         ID_MENU_REGEX = 2000,
         ID_MENU_WILDCARD,
+        ID_MENU_NO_REGEX,
     };
 
     enum {
@@ -74,13 +82,8 @@ private:
     void DoUpdateSearchHistory();
     void DoUpdateReplaceHistory();
 
-    QuickFindBarOptionsMenu* GetOptionsMenu();
-
 protected:
-    virtual void OnOptions(wxFlatButtonEvent& event);
     virtual void OnReplaceKeyDown(wxKeyEvent& event);
-    virtual void OnCheckBoxRegex(const wxCommandEvent& event);
-    virtual void OnCheckWild(const wxCommandEvent& event);
     void DoSearch(size_t searchFlags, int posToSearchFrom = wxNOT_FOUND);
     wxString DoGetSelectedText();
     void DoMarkAll();
@@ -110,7 +113,10 @@ protected:
     void OnReplaceUI(wxUpdateUIEvent& e);
     void OnReplaceEnter(wxCommandEvent& e);
     void OnHighlightMatches(wxFlatButtonEvent& e);
-    void OnOptionsMenuDismissed();
+    void OnRegularExpMenu(wxFlatButtonEvent& e);
+    void OnUseRegex(wxCommandEvent& e);
+    void OnNoRegex(wxCommandEvent& e);
+    void OnUseWildcards(wxCommandEvent& e);
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);

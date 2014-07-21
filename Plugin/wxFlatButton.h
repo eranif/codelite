@@ -12,6 +12,7 @@
 #include <wx/popupwin.h>
 #include <wx/vector.h>
 #include "codelite_exports.h"
+#include <wx/menu.h>
 
 //++++++++---------------------------------
 // wxFlatButton
@@ -184,16 +185,21 @@ protected:
 
 class wxFlatButtonEvent : public wxCommandEvent
 {
+    wxMenu* m_menu;
+
 public:
     wxFlatButtonEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     wxFlatButtonEvent(const wxFlatButtonEvent& event) { *this = event; }
     virtual ~wxFlatButtonEvent() {}
     wxFlatButtonEvent& operator=(const wxFlatButtonEvent& src);
     virtual wxEvent* Clone() const { return new wxFlatButtonEvent(*this); }
+    void SetMenu(wxMenu* menu) { this->m_menu = menu; }
+    wxMenu* GetMenu() { return m_menu; }
 };
 
 typedef void (wxEvtHandler::*wxFlatButtonEventFunction)(wxFlatButtonEvent&);
 #define wxFlatButtonEventHandler(func) wxEVENT_HANDLER_CAST(wxFlatButtonEventFunction, func)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CMD_FLATBUTTON_CLICK, wxFlatButtonEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CMD_FLATBUTTON_MENU_SHOWING, wxFlatButtonEvent);
 #endif // WXFLATBUTTON_H

@@ -35,7 +35,6 @@
 #include "event_notifier.h"
 #include "plugin.h"
 #include "cl_config.h"
-#include "QuickFindBarOptionsMenu.h"
 #include <wx/gdicmn.h>
 #include "wxFlatButtonBar.h"
 
@@ -73,14 +72,11 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_lastTextPtr(NULL)
     , m_eventsConnected(false)
     , m_optionsWindow(NULL)
+    , m_regexType(kRegexNone)
 {
     wxFlatButtonBar* bar = new wxFlatButtonBar(this, wxFlatButton::kThemeNormal);
     GetSizer()->Add(bar, 1, wxEXPAND | wxALL, 2);
     QuickFindBarImages images;
-    m_optionsButton = bar->AddButton(wxEmptyString, images.Bitmap("m_bmpMenu"), wxSize(24, -1));
-    m_optionsButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnOptions, this);
-    m_optionsButton->SetTogglable(true); // Toggle button
-    m_optionsButton->SetToolTip(_("Open search menu options..."));
 
     // Add the 'case sensitive' button
     m_caseSensitive = bar->AddButton("", images.Bitmap("case-sensitive"), wxSize(24, -1));
@@ -94,11 +90,17 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     // Regex or Wild card syntax?
     m_regexOrWildMenu = new wxMenu;
-    m_regexOrWildMenu->Append(ID_MENU_REGEX, _("Regular expression"), _("Regular expression"), wxITEM_RADIO);
-    m_regexOrWildMenu->Append(ID_MENU_WILDCARD, _("Wildcard syntax"), _("Wildcard syntax"), wxITEM_RADIO);
+    m_regexOrWildMenu->Append(ID_MENU_NO_REGEX, _("None"), _("None"), wxITEM_CHECK);
+    m_regexOrWildMenu->Append(ID_MENU_REGEX, _("Regular expression"), _("Regular expression"), wxITEM_CHECK);
+    m_regexOrWildMenu->Append(ID_MENU_WILDCARD, _("Wildcard syntax"), _("Wildcard syntax"), wxITEM_CHECK);
+    
     m_regexOrWildButton = bar->AddButton("", images.Bitmap("regex"), wxSize(24, -1));
     m_regexOrWildButton->SetPopupWindow(m_regexOrWildMenu);
-
+    m_regexOrWildButton->Bind(wxEVT_CMD_FLATBUTTON_MENU_SHOWING, &QuickFindBar::OnRegularExpMenu, this);
+    m_regexOrWildMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnUseRegex, this, ID_MENU_REGEX);
+    m_regexOrWildMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnUseWildcards, this, ID_MENU_WILDCARD);
+    m_regexOrWildMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnNoRegex, this, ID_MENU_NO_REGEX);
+    
     wxFlatButton* btnMarker = bar->AddButton("", images.Bitmap("marker-16"), wxSize(24, -1));
     btnMarker->SetTogglable(true);
     btnMarker->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHighlightMatches, this);
@@ -207,13 +209,13 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
         return;
 
     m_flags = 0;
-    if(GetOptionsMenu()->GetCheckBoxCase()->IsChecked())
+    if(m_caseSensitive->IsChecked())
         m_flags |= wxSD_MATCHCASE;
-    if(GetOptionsMenu()->GetCheckBoxRegex()->IsChecked())
+    if(m_regexType == kRegexPosix)
         m_flags |= wxSD_REGULAREXPRESSION;
-    if(GetOptionsMenu()->GetCheckBoxWildcard()->IsChecked())
+    if(m_regexType == kRegexWildcard)
         m_flags |= wxSD_WILDCARD;
-    if(GetOptionsMenu()->GetCheckBoxWord()->IsChecked())
+    if(m_wholeWord->IsChecked())
         m_flags |= wxSD_MATCHWHOLEWORD;
 
     wxString find = m_findWhat->GetValue();
@@ -276,8 +278,8 @@ void QuickFindBar::OnNext(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     size_t flags = kSearchForward;
-    if(GetOptionsMenu()->GetCheckBoxMultipleSelections()->IsChecked())
-        flags |= kSearchMultiSelect;
+//    if(GetOptionsMenu()->GetCheckBoxMultipleSelections()->IsChecked())
+//        flags |= kSearchMultiSelect;
     DoSearch(flags);
 }
 
@@ -285,8 +287,8 @@ void QuickFindBar::OnPrev(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     size_t flags = 0;
-    if(GetOptionsMenu()->GetCheckBoxMultipleSelections()->IsChecked())
-        flags |= kSearchMultiSelect;
+//    if(GetOptionsMenu()->GetCheckBoxMultipleSelections()->IsChecked())
+//        flags |= kSearchMultiSelect;
     DoSearch(flags);
 }
 
@@ -807,22 +809,6 @@ bool QuickFindBar::ShowForPlugins()
     }
 }
 
-void QuickFindBar::OnCheckBoxRegex(const wxCommandEvent& event)
-{
-    // regex and wildcard can not co-exist
-    if(event.IsChecked()) {
-        GetOptionsMenu()->GetCheckBoxWildcard()->SetValue(false);
-    }
-}
-
-void QuickFindBar::OnCheckWild(const wxCommandEvent& event)
-{
-    // regex and wildcard can not co-exist
-    if(event.IsChecked()) {
-        GetOptionsMenu()->GetCheckBoxRegex()->SetValue(false);
-    }
-}
-
 wxString QuickFindBar::DoGetSelectedText()
 {
     if(!m_sci) {
@@ -930,43 +916,31 @@ void QuickFindBar::DoUpdateReplaceHistory()
     }
 }
 
-void QuickFindBar::OnOptions(wxFlatButtonEvent& event)
-{
-    if(event.IsChecked()) {
-        if(!GetOptionsMenu()->IsShown()) {
-            wxSize menuSize = GetOptionsMenu()->GetSize();
-            wxPoint menuPos(m_optionsButton->GetScreenPosition());
-            menuPos.y += m_optionsButton->GetSize().GetHeight();
-
-            wxSize displaySize = ::wxGetDisplaySize();
-            if(menuPos.y + menuSize.GetHeight() > displaySize.GetHeight()) {
-                // Place the menu on top of the button
-                menuPos.y -= m_optionsButton->GetSize().GetHeight();
-                menuPos.y -= menuSize.GetHeight();
-            }
-
-            // Toggle the button
-            GetOptionsMenu()->Move(menuPos);
-            GetOptionsMenu()->Popup(m_findWhat);
-        }
-    }
-}
-
-QuickFindBarOptionsMenu* QuickFindBar::GetOptionsMenu()
-{
-    if(!m_optionsWindow) {
-        m_optionsWindow = new QuickFindBarOptionsMenu(clMainFrame::Get(), this);
-    }
-    return m_optionsWindow;
-}
-
-void QuickFindBar::OnOptionsMenuDismissed()
-{
-    m_optionsButton->Check(false);
-    m_findWhat->SetFocus();
-}
-
 void QuickFindBar::OnButtonNext(wxFlatButtonEvent& e) { OnNext(e); }
 void QuickFindBar::OnButtonPrev(wxFlatButtonEvent& e) { OnPrev(e); }
 void QuickFindBar::OnButtonNextUI(wxUpdateUIEvent& e) { e.Enable(!m_findWhat->GetValue().IsEmpty()); }
 void QuickFindBar::OnButtonPrevUI(wxUpdateUIEvent& e) { e.Enable(!m_findWhat->GetValue().IsEmpty()); }
+
+void QuickFindBar::OnRegularExpMenu(wxFlatButtonEvent& e)
+{
+    e.Skip();
+    wxMenu *menu = e.GetMenu();
+    menu->FindItem(ID_MENU_REGEX)->Check(m_regexType == kRegexPosix);
+    menu->FindItem(ID_MENU_WILDCARD)->Check(m_regexType == kRegexWildcard);
+    menu->FindItem(ID_MENU_NO_REGEX)->Check(m_regexType == kRegexNone);
+}
+
+void QuickFindBar::OnUseRegex(wxCommandEvent& e)
+{
+    m_regexType = kRegexPosix;
+}
+
+void QuickFindBar::OnUseWildcards(wxCommandEvent& e)
+{
+    m_regexType = kRegexWildcard;
+}
+
+void QuickFindBar::OnNoRegex(wxCommandEvent& e)
+{
+    m_regexType = kRegexNone;
+}

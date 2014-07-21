@@ -30,7 +30,7 @@
     <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#000000" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#D0D0D0" BgColour="#757575" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="grey" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFF00" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FF0000" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>

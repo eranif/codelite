@@ -107,8 +107,6 @@ extern const char* ConditionalBreakptDisabled[];
 const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR = XRCID("remove_match_indicator");
 const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT = ::wxNewEventType();
 
-#define MARKER_WORD_HIGHLIGHT 2
-
 BEGIN_EVENT_TABLE(LEditor, wxStyledTextCtrl)
 EVT_STC_CHARADDED(wxID_ANY, LEditor::OnCharAdded)
 EVT_STC_MARGINCLICK(wxID_ANY, LEditor::OnMarginClick)
@@ -1782,7 +1780,7 @@ void LEditor::RecalcHorizontalScrollbar()
             endLine--;
 
         for(int i = startLine; i <= endLine; i++) {
-            int visibleLine = (int)DocLineFromVisible(i); // get actual visible line, folding may offset lines
+            int visibleLine = (int)DocLineFromVisible(i);      // get actual visible line, folding may offset lines
             int endPosition = GetLineEndPosition(visibleLine); // get character position from begin
             int beginPosition = PositionFromLine(visibleLine); // and end of line
 

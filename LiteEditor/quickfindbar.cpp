@@ -97,6 +97,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_regexOrWildButton = buttonsBar->AddButton("", images.Bitmap("regex"), wxSize(24, -1));
     m_regexOrWildButton->SetPopupWindow(m_regexOrWildMenu);
     m_regexOrWildButton->Bind(wxEVT_CMD_FLATBUTTON_MENU_SHOWING, &QuickFindBar::OnRegularExpMenu, this);
+    m_regexOrWildButton->SetToolTip(_("Use regular expression"));
+
     m_regexOrWildMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnUseRegex, this, ID_MENU_REGEX);
     m_regexOrWildMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnUseWildcards, this, ID_MENU_WILDCARD);
     m_regexOrWildMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &QuickFindBar::OnNoRegex, this, ID_MENU_NO_REGEX);
@@ -105,7 +107,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnMarker->SetTogglable(true);
     btnMarker->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHighlightMatches, this);
     btnMarker->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnHighlightMatchesUI, this);
-    btnMarker->SetToolTip(_("Highlight Occurances"));
+    btnMarker->SetToolTip(_("Highlight Occurences"));
 
     // Add the controls
     //=======----------------------
@@ -214,6 +216,10 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
 {
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty())
         return;
+
+    // Clear all search markers
+    m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+    m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
     m_flags = DoGetSearchFlags();
 

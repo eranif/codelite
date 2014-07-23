@@ -720,6 +720,7 @@ void QuickFindBar::DoMarkAll(bool useIndicators)
     }
 
     if(firstMatchPos != wxNOT_FOUND) {
+        editor->SetMainSelection(0);
         editor->SetLineVisible(editor->LineFromPos(firstMatchPos));
     }
 

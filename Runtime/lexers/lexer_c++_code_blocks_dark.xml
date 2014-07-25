@@ -7,32 +7,32 @@
   <KeyWords4/>
   <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="1" Name="Common C style comment" Bold="no" Face="" Colour="#566E67" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="2" Name="Common C++ style comment" Bold="no" Face="" Colour="#566E67" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="3" Name="Doxygen C style comment" Bold="no" Face="" Colour="#566E67" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#F34AFF" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="5" Name="C++ keyword" Bold="yes" Face="" Colour="#47ABF0" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="6" Name="String" Bold="no" Face="" Colour="#4D63EB" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="7" Name="Character" Bold="no" Face="" Colour="#4D63EB" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="8" Name="Uuid" Bold="no" Face="" Colour="#F34AFF" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="12" Name="Open string" Bold="no" Face="" Colour="#4D63EB" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="15" Name="Doxygen C++ style comment" Bold="no" Face="" Colour="#566E67" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#7C9E94" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#7C9E94" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="16" Name="Workspace tags" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="19" Name="Local variables" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#928C75" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#1C1E23" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#D1D1D1" BgColour="#344863" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#131518" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="cyan" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="cyan" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="0" Name="Default" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Common C style comment" Bold="no" Italic="no" Face="" Colour="#566E67" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="Common C++ style comment" Bold="no" Italic="no" Face="" Colour="#566E67" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="Doxygen C style comment" Bold="no" Italic="no" Face="" Colour="#566E67" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="Number" Bold="no" Italic="no" Face="" Colour="#F34AFF" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="C++ keyword" Bold="yes" Italic="no" Face="" Colour="#47ABF0" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="6" Name="String" Bold="no" Italic="no" Face="" Colour="#4D63EB" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="7" Name="Character" Bold="no" Italic="no" Face="" Colour="#4D63EB" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="8" Name="Uuid" Bold="no" Italic="no" Face="" Colour="#F34AFF" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="10" Name="Operator" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="11" Name="Identifier" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="12" Name="Open string" Bold="no" Italic="no" Face="" Colour="#4D63EB" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="15" Name="Doxygen C++ style comment" Bold="no" Italic="no" Face="" Colour="#566E67" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="17" Name="Doxygen keyword" Bold="no" Italic="no" Face="" Colour="#7C9E94" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="18" Name="Doxygen keyword error" Bold="no" Italic="no" Face="" Colour="#7C9E94" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="16" Name="Workspace tags" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="19" Name="Local variables" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Italic="no" Face="" Colour="#928C75" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Italic="no" Face="" Colour="#1C1E23" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#344863" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Italic="no" Face="" Colour="#0E0F11" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Italic="no" Face="" Colour="yellow" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Italic="no" Face="" Colour="red" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Italic="no" Face="" Colour="#0E0F11" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Italic="no" Face="" Colour="#D1D1D1" BgColour="#1C1E23" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
   </Properties>
 </Lexer>

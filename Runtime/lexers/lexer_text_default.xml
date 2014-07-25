@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Lexer Name="text" Theme="Default" IsActive="Yes" StylingWithinPreProcessor="yes" Id="1">
+<Lexer Name="text" Theme="Default" IsActive="Yes" UseCustomTextSelFgColour="No" StylingWithinPreProcessor="yes" Id="1">
   <KeyWords0/>
   <KeyWords1/>
   <KeyWords2/>

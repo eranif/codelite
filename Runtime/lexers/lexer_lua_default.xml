@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Lexer Name="lua" Theme="Default" IsActive="Yes" StylingWithinPreProcessor="yes" Id="15">
+<Lexer Name="lua" Theme="Default" IsActive="Yes" UseCustomTextSelFgColour="No" StylingWithinPreProcessor="yes" Id="15">
   <KeyWords0>if elseif else then end do while nil true false in for and or function local not repeat return until</KeyWords0>
   <KeyWords1/>
   <KeyWords2/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Lexer Name="batch" Theme="DarkTheme" IsActive="No" StylingWithinPreProcessor="yes" Id="12">
+<Lexer Name="batch" Theme="DarkTheme" IsActive="No" UseCustomTextSelFgColour="No" StylingWithinPreProcessor="yes" Id="12">
   <KeyWords0>rem set if exist errorlevel for in do break call chcp cd chdir choice cls country ctty date del erase dir echo exit goto loadfix loadhigh mkdir md move path pause prompt rename ren rmdir rd shift time type ver verify vol com con lpt nul color copy defined else not start off</KeyWords0>
   <KeyWords1/>
   <KeyWords2/>

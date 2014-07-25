@@ -325,6 +325,14 @@ void ColoursAndFontsManager::Save(LexerConf::Ptr_t lexer)
     wxString filename;
     wxString themeName = lexer->GetThemeName().Lower();
     themeName.Replace(" ", "_");
+    themeName.Replace("::", "_");
+    themeName.Replace("(", "_");
+    themeName.Replace(")", "_");
+    themeName.Replace(":", "_");
+    themeName.Replace(",", "_");
+    themeName.Replace(".", "_");
+    themeName.Replace(";", "_");
+    
     filename << "lexer_" << lexer->GetName().Lower() << "_" << themeName << ".xml";
     wxFileName xmlFile(clStandardPaths::Get().GetUserDataDir(), filename);
     xmlFile.AppendDir("lexers");

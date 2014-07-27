@@ -39,6 +39,8 @@ public:
     enum {
         ID_EXPORT_ALL = 1001,
         ID_EXPORT_SELECTIVE = 1002,
+        ID_MENU_ECLIPSE_WEBSITE = 1003,
+        ID_TOOL_IMPORT_ECLIPSE_THEME = 1004,
     };
 protected:
     wxAuiToolBar* m_auibar;
@@ -46,6 +48,8 @@ protected:
     wxMenu* m_menu142;
     wxMenuItem* m_menuItemExportAll;
     wxMenuItem* m_menuItemExportSelective;
+    wxMenu* m_menu151;
+    wxMenuItem* m_menuItem153;
     wxNotebook* m_notebook76;
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
@@ -103,6 +107,8 @@ protected:
     virtual void OnExportSelective(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImport(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRestoreDefaults(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnImportEclipseTheme(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnLoadEclipseThemeWebsite(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }

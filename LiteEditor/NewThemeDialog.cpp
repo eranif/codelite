@@ -29,7 +29,7 @@ void NewThemeDialog::DoInitialize(LexerConf::Ptr_t lexer)
 
     // Populate the fields
     wxArrayString allLexers = ColoursAndFontsManager::Get().GetAllLexersNames();
-    int sel = allLexers.Index(lexer->GetName());
+//    int sel = allLexers.Index(lexer->GetName());
     m_choiceLanguage->Append(allLexers);
     m_choiceLanguage->SetStringSelection(lexer->GetName());
 

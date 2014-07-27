@@ -66,6 +66,10 @@
     <File Name="clSTCLineKeeper.h"/>
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
+    <File Name="EclipseThemeImporterBase.h"/>
+    <File Name="EclipseThemeImporterBase.cpp"/>
+    <File Name="EclipseCXXThemeImporter.h"/>
+    <File Name="EclipseCXXThemeImporter.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

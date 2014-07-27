@@ -44,6 +44,8 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
     LexerConf::Ptr_t m_lexer;
 
 protected:
+    virtual void OnLoadEclipseThemeWebsite(wxCommandEvent& event);
+    virtual void OnImportEclipseTheme(wxCommandEvent& event);
     virtual void OnRestoreDefaults(wxCommandEvent& event);
     virtual void OnExportAll(wxCommandEvent& event);
     virtual void OnToolExportAll(wxAuiToolBarEvent& event);

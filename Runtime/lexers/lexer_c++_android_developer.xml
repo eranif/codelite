@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="c++" Theme="Android Developer" IsActive="No" UseCustomTextSelFgColour="Yes" StylingWithinPreProcessor="yes" Id="3">
+  <KeyWords0>and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default delete do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed sizeof static static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq alignas alignof char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local</KeyWords0>
+  <KeyWords1>abstract boolean break byte case catch char class const continue debugger default delete do double else enum export extends final finally float for function goto if implements import in instanceof int interface long native new package private protected public return short static super switch synchronized this throw throws transient try typeof var void volatile while with</KeyWords1>
+  <KeyWords2>a addindex addtogroup anchor arg attention author b brief bug c callgraph callergraph category class code cond copybrief copydetails copydoc 	date def defgroup deprecated details dir  dontinclude dot dotfile e else elseif em endcode endcond enddot endhtmlonly endif endlatexonly endlink endmanonly endmsc endverbatim 	endxmlonly  enum example exception extends  file fn headerfile hideinitializer htmlinclude htmlonly if ifnot image implements include includelineno ingroup internal invariant 	interface  latexonly li line link mainpage manonly memberof msc n name namespace nosubgrouping note overload p package page par paragraph param post pre private privatesection property 	protected  protectedsection protocol public publicsection ref relates relatesalso remarks return retval sa section see showinitializer since skip skipline struct 	subpage  subsection subsubsection test throw todo tparam typedef union until var verbatim verbinclude version warning weakgroup xmlonly xrefitem</KeyWords2>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Common C style comment" Bold="no" Face="" Colour="#C7DD0C" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="Common C++ style comment" Bold="no" Face="" Colour="#C7DD0C" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="Doxygen C style comment" Bold="no" Face="" Colour="#CCDF32" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#7FB347" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="C++ keyword" Bold="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FFC600" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="7" Name="Character" Bold="no" Face="" Colour="#FFC600" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="8" Name="Uuid" Bold="no" Face="" Colour="#7FB347" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="12" Name="Open string" Bold="no" Face="" Colour="#FFC600" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="15" Name="Doxygen C++ style comment" Bold="no" Face="" Colour="#CCDF32" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#D9E577" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#D9E577" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="16" Name="Workspace tags" Bold="no" Face="" Colour="#D25252" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="19" Name="Local variables" Bold="no" Face="" Colour="#79ABFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#D0D0D0" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="yellow" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#8E8E8E" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#1E1E1E" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#D0D0D0" BgColour="#000000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="white" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#8E8E8E" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+  </Properties>
+</Lexer>

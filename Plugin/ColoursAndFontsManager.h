@@ -106,6 +106,11 @@ public:
      * This is done by deleting the user defined XML files and
      */
     void RestoreDefaults();
+    
+    /**
+     * @brief import an eclipse theme into codelite
+     */
+    bool ImportEclipseTheme(const wxString &eclipseXml, wxString &outputFile);
 };
 
 #endif // LEXERCONFMANAGER_H

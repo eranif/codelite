@@ -566,7 +566,7 @@ bool WriteFileUTF8(const wxString& fileName, const wxString& content)
     }
     
     //first try the Utf8
-    return file.Write(content, wxConvUTF8) == content.Length();
+    return file.Write(content, wxConvUTF8);
 }
 
 bool CompareFileWithString(const wxString& filePath, const wxString& str)

@@ -56,9 +56,20 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
         m_dropdownMenus.insert(std::make_pair( m_toolbarItemSave->GetId(), m_menu142) );
     }
     
-    m_auibar->AddTool(wxID_OPEN, _("Import Settings"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Import settings from zip archive"), _("Import settings from zip archive"), NULL);
+    m_auibar->AddTool(wxID_OPEN, _("Import settings from a zip archive"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Import settings from a zip archive"), _("Import settings from a zip archive"), NULL);
     
-    m_auibar->AddTool(wxID_REVERT, _("Reload Default Lexers"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert")), wxNullBitmap, wxITEM_NORMAL, _("Reload Default Lexers"), _("Reload Default Lexers"), NULL);
+    m_auibar->AddTool(wxID_REVERT, _("Revert to default settings"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert")), wxNullBitmap, wxITEM_NORMAL, _("Revert to default settings"), _("Revert to default settings"), NULL);
+    
+    m_auibar->AddTool(ID_TOOL_IMPORT_ECLIPSE_THEME, _("Import Eclipse Theme"), wxXmlResource::Get()->LoadBitmap(wxT("eclipse")), wxNullBitmap, wxITEM_NORMAL, _("Import Eclipse Theme"), _("Import Eclipse Theme"), NULL);
+    wxAuiToolBarItem* m_toolbarItem150 = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
+    if (m_toolbarItem150) {
+        m_toolbarItem150->SetHasDropDown(true);
+        m_menu151 = new wxMenu;
+        m_menuItem153 = new wxMenuItem(m_menu151, ID_MENU_ECLIPSE_WEBSITE, _("Load eclipse theme website"), _("Load eclipse theme website"), wxITEM_NORMAL);
+        m_menu151->Append(m_menuItem153);
+        
+        m_dropdownMenus.insert(std::make_pair( m_toolbarItem150->GetId(), m_menu151) );
+    }
     m_auibar->Realize();
     
     m_notebook76 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -344,6 +355,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     this->Connect(m_menuItemExportSelective->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportSelective), NULL, this);
     this->Connect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
     this->Connect(wxID_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
+    this->Connect(ID_TOOL_IMPORT_ECLIPSE_THEME, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnImportEclipseTheme), NULL, this);
+    this->Connect(m_menuItem153->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLoadEclipseThemeWebsite), NULL, this);
     m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
     m_choiceLexerThemes->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
     m_globalFontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);
@@ -384,6 +397,8 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     this->Disconnect(m_menuItemExportSelective->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportSelective), NULL, this);
     this->Disconnect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
     this->Disconnect(wxID_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
+    this->Disconnect(ID_TOOL_IMPORT_ECLIPSE_THEME, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnImportEclipseTheme), NULL, this);
+    this->Disconnect(m_menuItem153->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLoadEclipseThemeWebsite), NULL, this);
     m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
     m_choiceLexerThemes->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
     m_globalFontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);

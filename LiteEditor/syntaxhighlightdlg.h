@@ -44,6 +44,7 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
     LexerConf::Ptr_t m_lexer;
 
 protected:
+    virtual void OnRestoreDefaults(wxCommandEvent& event);
     virtual void OnExportAll(wxCommandEvent& event);
     virtual void OnToolExportAll(wxAuiToolBarEvent& event);
     virtual void OnExportSelective(wxCommandEvent& event);

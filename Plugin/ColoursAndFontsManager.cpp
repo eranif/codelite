@@ -24,7 +24,9 @@ ColoursAndFontsManager::ColoursAndFontsManager()
     m_globalFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 }
 
-ColoursAndFontsManager::~ColoursAndFontsManager() {}
+ColoursAndFontsManager::~ColoursAndFontsManager()
+{
+}
 
 ColoursAndFontsManager& ColoursAndFontsManager::Get()
 {
@@ -152,7 +154,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
         lexer->SetFileSpec("*.java");
     }
-    
+
     if(m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
     }
@@ -332,7 +334,7 @@ void ColoursAndFontsManager::Save(LexerConf::Ptr_t lexer)
     themeName.Replace(",", "_");
     themeName.Replace(".", "_");
     themeName.Replace(";", "_");
-    
+
     filename << "lexer_" << lexer->GetName().Lower() << "_" << themeName << ".xml";
     wxFileName xmlFile(clStandardPaths::Get().GetUserDataDir(), filename);
     xmlFile.AppendDir("lexers");
@@ -372,7 +374,7 @@ void ColoursAndFontsManager::SaveGlobalSettings()
 }
 
 LexerConf::Ptr_t
-    ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme)
+ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme)
 {
     LexerConf::Ptr_t sourceLexer = GetLexer(lexerName, sourceTheme);
     CHECK_PTR_RET_NULL(sourceLexer);
@@ -386,4 +388,21 @@ LexerConf::Ptr_t
 
     // Add it
     return DoAddLexer(newLexer->ToXml());
+}
+
+void ColoursAndFontsManager::RestoreDefaults()
+{
+    wxArrayString files;
+    wxDir::GetAllFiles(clStandardPaths::Get().GetUserLexersDir(), &files, "lexer_*.xml");
+    
+    // First we delete the user settings
+    {
+        wxLogNull noLog;
+        for(size_t i = 0; i < files.GetCount(); ++i) {
+            ::wxRemoveFile(files.Item(i));
+        }
+    }
+    
+    // Now, we simply reload the settings
+    Reload();
 }

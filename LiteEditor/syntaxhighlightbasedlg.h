@@ -102,6 +102,7 @@ protected:
     virtual void OnExportAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExportSelective(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImport(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRestoreDefaults(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }

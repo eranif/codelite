@@ -58,10 +58,10 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     if(editor) {
         lexerName = editor->GetContext()->GetName().Lower();
     }
-    
+
     m_listBox->Append(lexers);
     if(!m_listBox->IsEmpty()) {
-        if ( lexerName.IsEmpty() ) {
+        if(lexerName.IsEmpty()) {
             m_listBox->Select(0);
         } else {
             m_listBox->SetStringSelection(lexerName);
@@ -168,7 +168,10 @@ void SyntaxHighlightDlg::SaveChanges()
     m_isModified = false;
 }
 
-SyntaxHighlightDlg::~SyntaxHighlightDlg() { WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL); }
+SyntaxHighlightDlg::~SyntaxHighlightDlg()
+{
+    WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL);
+}
 
 void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
 {
@@ -460,7 +463,10 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
     LoadLexer("");
 }
 
-void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isModified); }
+void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_isModified);
+}
 
 void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event)
 {
@@ -506,8 +512,8 @@ void SyntaxHighlightDlg::OnExport(wxCommandEvent& event)
     // Get list of choices
     wxArrayString lexers = ColoursAndFontsManager::Get().GetAllLexersNames();
     wxArrayInt choices;
-    if(::wxGetSelectedChoices(
-           choices, _("Select which lexers you wish to export"), _("Export Lexers"), lexers, this) == wxNOT_FOUND) {
+    if(::wxGetSelectedChoices(choices, _("Select which lexers you wish to export"), _("Export Lexers"), lexers, this) ==
+       wxNOT_FOUND) {
         return;
     }
 
@@ -518,7 +524,7 @@ void SyntaxHighlightDlg::OnExport(wxCommandEvent& event)
         return;
 
     clZipWriter zw(path);
-    for(size_t i=0; i<choices.GetCount(); ++i) {
+    for(size_t i = 0; i < choices.GetCount(); ++i) {
         wxString file;
         file << "lexer_" << lexers.Item(choices.Item(i)).Lower() << "_*.xml";
         zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), file);
@@ -572,4 +578,21 @@ void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
 void SyntaxHighlightDlg::OnToolExportAll(wxAuiToolBarEvent& event)
 {
     OnExportAll(event);
+}
+void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
+{
+    // Ask for confirmation
+    if(::wxMessageBox(_("Are you sure you want to restore colours to factory defaults?\nBy choosing 'Yes', you will "
+                        "lose your modifications"),
+                      _("Confirm"),
+                      wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER,
+                      this) == wxYES) {
+        // Restore defaults
+        ColoursAndFontsManager::Get().RestoreDefaults();
+        // Dismiss the dialog
+        EndModal(wxID_OK);
+        // and reload it
+        wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
+    }
 }

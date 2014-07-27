@@ -57,6 +57,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     }
     
     m_auibar->AddTool(wxID_OPEN, _("Import Settings"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Import settings from zip archive"), _("Import settings from zip archive"), NULL);
+    
+    m_auibar->AddTool(wxID_REVERT, _("Reload Default Lexers"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert")), wxNullBitmap, wxITEM_NORMAL, _("Reload Default Lexers"), _("Reload Default Lexers"), NULL);
     m_auibar->Realize();
     
     m_notebook76 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -341,6 +343,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     this->Connect(m_menuItemExportAll->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportAll), NULL, this);
     this->Connect(m_menuItemExportSelective->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportSelective), NULL, this);
     this->Connect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
+    this->Connect(wxID_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
     m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
     m_choiceLexerThemes->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
     m_globalFontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);
@@ -380,6 +383,7 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     this->Disconnect(m_menuItemExportAll->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportAll), NULL, this);
     this->Disconnect(m_menuItemExportSelective->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnExportSelective), NULL, this);
     this->Disconnect(wxID_OPEN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnImport), NULL, this);
+    this->Disconnect(wxID_REVERT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnRestoreDefaults), NULL, this);
     m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
     m_choiceLexerThemes->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnThemeChanged), NULL, this);
     m_globalFontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnFontChanged), NULL, this);

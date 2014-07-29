@@ -74,6 +74,8 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
     if (EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
         m_spinCtrlHighlightAlpha->SetValue(alpha);
     }
+
+    m_clearHighlitWords->SetValue(options->GetClearHighlitWordsOnFind());
 }
 
 
@@ -99,6 +101,7 @@ void EditorSettingsBookmarksPanel::Save(OptionsConfigPtr options)
 
     EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_highlightColor->GetColour().GetAsString());
     EditorConfigST::Get()->SaveLongValue(wxT("WordHighlightAlpha"), (long)m_spinCtrlHighlightAlpha->GetValue());
+    options->SetClearHighlitWordsOnFind(m_clearHighlitWords->IsChecked());
 }
 
 void EditorSettingsBookmarksPanel::ChangeSelection(int index)

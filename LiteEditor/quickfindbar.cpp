@@ -217,9 +217,11 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
     if(!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty())
         return;
 
-    // Clear all search markers
-    m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
-    m_sci->IndicatorClearRange(0, m_sci->GetLength());
+    // Clear all search markers if desired
+    if (EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
+        m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+        m_sci->IndicatorClearRange(0, m_sci->GetLength());
+    }
 
     m_flags = DoGetSearchFlags();
 
@@ -537,8 +539,10 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         m_sci->SetIndicatorCurrent(1);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
 
-        m_sci->SetIndicatorCurrent(2);
-        m_sci->IndicatorClearRange(0, m_sci->GetLength());
+        if (EditorConfigST::Get()->GetOptions()->GetClearHighlitWordsOnFind()) {
+            m_sci->SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
+            m_sci->IndicatorClearRange(0, m_sci->GetLength());
+        }
     }
 
     if(res) {

@@ -1037,7 +1037,7 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 
     if(!hasSelection) {
         // remove indicators
-        SetIndicatorCurrent(2);
+        SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
         int last = IndicatorEnd(2, 0);
         if(last != wxNOT_FOUND) {
             IndicatorClearRange(0, GetLength());
@@ -2499,7 +2499,7 @@ void LEditor::DelAllMarkers(int which_type)
     SetIndicatorCurrent(1);
     IndicatorClearRange(0, GetLength());
 
-    SetIndicatorCurrent(2);
+    SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
     IndicatorClearRange(0, GetLength());
 
     SetIndicatorCurrent(HYPERLINK_INDICATOR);
@@ -3770,7 +3770,7 @@ void LEditor::HighlightWord(bool highlight)
     if(highlight) {
         DoHighlightWord();
     } else {
-        SetIndicatorCurrent(2);
+        SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
         IndicatorClearRange(0, GetLength());
     }
 }

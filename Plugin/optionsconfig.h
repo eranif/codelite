@@ -73,6 +73,7 @@ protected:
     wxString       m_bookmarkFgColours;
     wxString       m_bookmarkLabels;
     bool           m_highlightCaretLine;
+    bool           m_clearHighlitWordsOnFind;
     bool           m_displayLineNumbers;
     bool           m_showIndentationGuidelines;
     wxColour       m_caretLineColour;
@@ -353,6 +354,10 @@ public:
 
     wxString GetBookmarkLabel(size_t index) const;
 
+    bool GetClearHighlitWordsOnFind() const {
+        return m_clearHighlitWordsOnFind;
+    }
+
     bool GetHighlightCaretLine() const {
         return m_highlightCaretLine;
     }
@@ -390,6 +395,10 @@ public:
     void SetBookmarkBgColour(wxColour c, size_t index);
     
     void SetBookmarkLabel(const wxString& label, size_t index);
+
+    void SetClearHighlitWordsOnFind(bool b) {
+        m_clearHighlitWordsOnFind = b;
+    }
 
     void SetHighlightCaretLine(bool b) {
         m_highlightCaretLine = b;

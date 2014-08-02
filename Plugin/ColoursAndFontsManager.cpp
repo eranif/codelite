@@ -117,6 +117,8 @@ void ColoursAndFontsManager::LoadOldXmls(const wxString& path)
         wxXmlNode* lexers = doc.GetRoot();
         wxXmlNode* child = lexers->GetChildren();
         wxString themeName = XmlUtils::ReadString(lexers, "Theme", "Default");
+        themeName = themeName.Capitalize();
+        
         while(child) {
             if(child->GetName() == "Lexer") {
                 // Assign theme to this lexer
@@ -145,7 +147,13 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
 
     LexerConf::Ptr_t lexer(new LexerConf);
     lexer->FromXml(node);
-
+    
+    // ensure that the theme name is capitalized - this helps
+    // when displaying the content in a wxListBox sorted
+    wxString themeName = lexer->GetThemeName();
+    themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
+    lexer->SetThemeName( themeName );
+    
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
@@ -186,6 +194,9 @@ wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString&
     for(size_t i = 0; i < lexers.size(); ++i) {
         themes.Add(lexers.at(i)->GetThemeName());
     }
+    
+    // sort the list
+    themes.Sort();
     return themes;
 }
 
@@ -257,6 +268,7 @@ wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
             names.Add(lexer->GetName());
         }
     }
+    names.Sort();
     return names;
 }
 

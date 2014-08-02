@@ -165,7 +165,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     bSizer51->Add(bSizer8, 1, wxEXPAND, 5);
     
     wxArrayString m_propertiesArr;
-    m_properties = new wxListBox(m_panelCustomize, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_propertiesArr, 0);
+    m_properties = new wxListBox(m_panelCustomize, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_propertiesArr, wxLB_SORT|wxLB_SINGLE);
     
     bSizer8->Add(m_properties, 0, wxALL|wxEXPAND, 5);
     

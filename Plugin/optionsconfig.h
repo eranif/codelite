@@ -111,6 +111,7 @@ protected:
     bool           m_hideOutputPaneNotIfCscope;
     bool           m_hideOutputPaneNotIfGit;
     bool           m_hideOutputPaneNotIfDebug;
+    bool           m_hideOutputPaneNotIfMemCheck;
     bool           m_findBarAtBottom;
     bool           m_TrimLine;
     bool           m_AppendLF;
@@ -321,6 +322,12 @@ public:
     }
     const bool& GetHideOutputPaneNotIfDebug() const {
         return m_hideOutputPaneNotIfDebug;
+    }
+    void SetHideOutputPaneNotIfMemCheck(const bool& HideOutpuPaneNotIfMemCheck) {
+        this->m_hideOutputPaneNotIfMemCheck = HideOutpuPaneNotIfMemCheck;
+    }
+    const bool& GetHideOutputPaneNotIfMemCheck() const {
+        return m_hideOutputPaneNotIfMemCheck;
     }
     void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
         this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;

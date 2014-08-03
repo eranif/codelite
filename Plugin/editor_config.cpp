@@ -417,6 +417,8 @@ bool EditorConfig::GetPaneStickiness(const wxString& caption)
         return GetOptions()->GetHideOutputPaneNotIfCscope();
     } else if(caption == _("git")) {
         return GetOptions()->GetHideOutputPaneNotIfGit();
+    } else if(caption == _("MemCheck")) {
+        return GetOptions()->GetHideOutputPaneNotIfMemCheck();
     }
 
     // How did we get here?
@@ -452,6 +454,8 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
         options->SetHideOutputPaneNotIfCscope(stickiness);
     } else if(caption == _("git")) {
         options->SetHideOutputPaneNotIfGit(stickiness);
+    } else if(caption == _("MemCheck")) {
+        options->SetHideOutputPaneNotIfMemCheck(stickiness);
     } else {
         return;
     }

@@ -205,35 +205,35 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     if(type == MenuTypeEditor) {
         // items for the editor context menu
-        if(!menu->FindItem(XRCID("memcheck_MenuTypeEditor"))) {
-            wxMenu* subMenu = new wxMenu();
-            wxMenuItem* item(NULL);
-
-            item = new wxMenuItem(
-                subMenu, XRCID("memcheck_check_popup_editor"), wxT("&Run MemCheck"), wxEmptyString, wxITEM_NORMAL);
-            item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
-            subMenu->Append(item);
-
-            item = new wxMenuItem(subMenu,
-                                  XRCID("memcheck_import"),
-                                  wxT("&Load MemCheck log from file..."),
-                                  wxEmptyString,
-                                  wxITEM_NORMAL);
-            item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import")));
-            subMenu->Append(item);
-
-            subMenu->AppendSeparator();
-
-            item =
-                new wxMenuItem(subMenu, XRCID("memcheck_settings"), wxT("&Settings..."), wxEmptyString, wxITEM_NORMAL);
-            item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_settings")));
-            subMenu->Append(item);
-
-            item = new wxMenuItem(
-                menu, XRCID("memcheck_MenuTypeEditor"), wxT("MemCheck"), wxEmptyString, wxITEM_NORMAL, subMenu);
-            item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
-            menu->Append(item);
-        }
+        // if(!menu->FindItem(XRCID("memcheck_MenuTypeEditor"))) {
+        //     wxMenu* subMenu = new wxMenu();
+        //     wxMenuItem* item(NULL);
+        // 
+        //     item = new wxMenuItem(
+        //         subMenu, XRCID("memcheck_check_popup_editor"), wxT("&Run MemCheck"), wxEmptyString, wxITEM_NORMAL);
+        //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
+        //     subMenu->Append(item);
+        // 
+        //     item = new wxMenuItem(subMenu,
+        //                           XRCID("memcheck_import"),
+        //                           wxT("&Load MemCheck log from file..."),
+        //                           wxEmptyString,
+        //                           wxITEM_NORMAL);
+        //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import")));
+        //     subMenu->Append(item);
+        // 
+        //     subMenu->AppendSeparator();
+        // 
+        //     item =
+        //         new wxMenuItem(subMenu, XRCID("memcheck_settings"), wxT("&Settings..."), wxEmptyString, wxITEM_NORMAL);
+        //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_settings")));
+        //     subMenu->Append(item);
+        // 
+        //     item = new wxMenuItem(
+        //         menu, XRCID("memcheck_MenuTypeEditor"), wxT("MemCheck"), wxEmptyString, wxITEM_NORMAL, subMenu);
+        //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
+        //     menu->Append(item);
+        // }
     } else if(type == MenuTypeFileExplorer) {
         // items for the file explorer context menu
     } else if(type == MenuTypeFileView_Workspace) {

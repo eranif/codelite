@@ -1,0 +1,8 @@
+method "getSuppRuleName" should be in memcheck processor, not in MemcheckError
+
+suggestion:
+syntax highlight and folding for supp files
+highlight entries from my workspace - needs dedicated wxDVC model, not the one from wxCrafter
+empty log on unsuccesfull run ?
+toggle full path in locations ?
+

@@ -47,6 +47,7 @@
   <Environment>
     <![CDATA[]]>
   </Environment>
+  <Project Name="MemCheck" Path="MemCheck/MemCheck.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
@@ -86,6 +87,7 @@
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
@@ -125,6 +127,7 @@
       <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -164,6 +167,7 @@
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
@@ -203,6 +207,7 @@
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -242,6 +247,7 @@
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -281,6 +287,7 @@
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -450,6 +450,11 @@ if ( NOT NO_CPP_PLUGINS )
     add_subdirectory(cppchecker)
     add_subdirectory(cscope)
     add_subdirectory(wxformbuilder)
+    
+if ( UNIX AND NOT APPLE )
+    ## Add valgrind plugin
+    add_subdirectory(MemCheck)
+endif ( UNIX AND NOT APPLE )
 
     if ( BUILD_WXC )
         add_subdirectory(wxcrafter)

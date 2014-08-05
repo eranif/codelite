@@ -513,7 +513,12 @@ public:
      */
     void GetFiles(const wxString &partialName, std::vector<FileEntryPtr> &files);
     void GetFiles(const wxString &partialName, std::vector<wxFileName> &files);
-
+    /**
+     * @brief this function is for supporting CC inside an include statement
+     * line
+     */
+    void GetFilesForCC(const wxString& userTyped, wxArrayString& matches);
+    
     /**
      * Return function that is close to current line number and matches
      * file name

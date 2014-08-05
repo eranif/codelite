@@ -319,6 +319,12 @@ public:
     void GetFiles(const wxString &partialName, std::vector<FileEntryPtr> &files);
 
     /**
+     * @brief this function is for supporting CC inside an include statement
+     * line
+     */
+    virtual void GetFilesForCC(const wxString& userTyped, wxArrayString& matches);
+    
+    /**
      * @brief return list of files from the database
      * @param files vector of database record
      */

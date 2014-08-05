@@ -344,7 +344,13 @@ public:
      * @param files vector of database record
      */
     virtual void GetFiles(std::vector<FileEntryPtr> &files) = 0;
-
+    
+    /**
+     * @brief this function is for supporting CC inside an include statement
+     * line
+     */
+    virtual void GetFilesForCC(const wxString& userTyped, wxArrayString& matches) = 0;
+    
     /**
      * @brief for transactional storage, provide begin/commit/rollback methods
      */

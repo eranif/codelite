@@ -3082,3 +3082,8 @@ void TagsManager::GetVariables(const wxFileName& filename, wxArrayString& locals
         locals.Add(iter->m_name);
     }
 }
+
+void TagsManager::GetFilesForCC(const wxString& userTyped, wxArrayString& matches)
+{
+    GetDatabase()->GetFilesForCC(userTyped, matches);
+}

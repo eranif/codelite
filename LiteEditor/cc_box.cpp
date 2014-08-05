@@ -70,6 +70,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
     , m_startPos(wxNOT_FOUND)
     , m_editor(parent)
     , m_tipWindow(NULL)
+    , m_displayingFileList(false)
 {
     Hide();
     m_constructing = true;
@@ -170,6 +171,8 @@ void CCBox::Show(const TagEntryPtrVector_t& tags, const wxString& word, bool isK
         return;
     }
     m_tags = tags;
+
+    m_displayingFileList = (m_tags.at(0)->GetKind() == "FileCpp") || (m_tags.at(0)->GetKind() == "FileHeader");
     m_owner = owner;
     m_isKeywordsList = isKeywordsList;
     Show(word);
@@ -362,6 +365,7 @@ void CCBox::Show(const wxString& word)
 {
     // keep the initial word
     m_initialWord = word;
+    m_displayingFileList = false;
 
     wxString lastName;
     size_t i(0);
@@ -373,12 +377,12 @@ void CCBox::Show(const wxString& word)
     CCItemInfo item;
 
     clWindowUpdateLocker locker(m_listCtrl);
-
     m_listCtrl->DeleteAllItems();
 
     // Get the associated editor
     wxStringSet_t uniqueTags;
-    if(m_tags.empty() == false) {
+    if(!m_tags.empty()) {
+        m_displayingFileList = (m_tags.at(0)->GetKind() == "FileCpp") || (m_tags.at(0)->GetKind() == "FileHeader");
         _tags.reserve(m_tags.size());
         for(; i < m_tags.size(); i++) {
             TagEntryPtr tag = m_tags.at(i);
@@ -459,12 +463,12 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
         m_editor->CallTipCancel();
         // setup the insertion point start and end
         int insertPos = wxNOT_FOUND;
-        if(m_initialWord.IsEmpty()) {
-            insertPos = m_editor->WordStartPosition(m_editor->GetCurrentPos(), true);
-        } else {
+        if(!m_initialWord.IsEmpty() && m_displayingFileList) {
             insertPos = m_editor->GetCurrentPos() - m_initialWord.length();
+        } else {
+            insertPos = m_editor->WordStartPosition(m_editor->GetCurrentPos(), true);
         }
-        int endPos = m_editor->GetCurrentPos(); // m_editor->WordEndPosition(m_editor->GetCurrentPos(), true);
+        int endPos = m_editor->GetCurrentPos();
 
         m_editor->SetSelection(insertPos, endPos);
         m_editor->ReplaceSelection(word);
@@ -508,7 +512,6 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
                 if(!tips.empty()) {
                     m_editor->GetFunctionTip()->SelectSignature(tips.at(0).str);
                 }
-            
 
                 wxString tipContent = m_editor->GetContext()->CallTipContent();
                 int where = tipContent.Find(wxT(" : "));

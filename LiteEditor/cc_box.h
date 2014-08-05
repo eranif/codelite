@@ -70,7 +70,8 @@ class CCBox : public CCBoxBase
     bool m_isKeywordsList;
     CCBoxTipWindow* m_tipWindow;
     wxString m_initialWord;
-
+    bool m_displayingFileList;
+    
 public:
     void OnTipClickedDown(wxCommandEvent& event);
     void OnTipClickedUp(wxCommandEvent& event);

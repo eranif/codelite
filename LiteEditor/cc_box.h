@@ -50,49 +50,50 @@ class CCBoxTipWindow;
 /** Implementing CCBoxBase */
 class CCBox : public CCBoxBase
 {
-    int                      m_selectedItem;
+    int m_selectedItem;
     std::vector<TagEntryPtr> m_tags;
-    bool                     m_showFullDecl;
-    int                      m_height;
-    bool                     m_autoHide;
-    bool                     m_insertSingleChoice;
-    std::map<wxString, int>  m_userImages;
-    wxEvtHandler *           m_owner;
-    bool                     m_constructing;
-    bool                     m_hideExtInfoPane;
-    CommentParseResult       m_comments;
-    int                      m_startPos;
-    bool                     m_isTipBgDark;
-    CCItemInfo               m_currentItem;
-    LEditor*                 m_editor;
-    wxTimer*                 m_refreshListTimer;
-    wxTimer*                 m_tipTimer;
-    bool                     m_isKeywordsList;
-    CCBoxTipWindow*          m_tipWindow;
+    bool m_showFullDecl;
+    int m_height;
+    bool m_autoHide;
+    bool m_insertSingleChoice;
+    std::map<wxString, int> m_userImages;
+    wxEvtHandler* m_owner;
+    bool m_constructing;
+    bool m_hideExtInfoPane;
+    CommentParseResult m_comments;
+    int m_startPos;
+    bool m_isTipBgDark;
+    CCItemInfo m_currentItem;
+    LEditor* m_editor;
+    wxTimer* m_refreshListTimer;
+    wxTimer* m_tipTimer;
+    bool m_isKeywordsList;
+    CCBoxTipWindow* m_tipWindow;
+    wxString m_initialWord;
 
 public:
-    void OnTipClickedDown(wxCommandEvent &event);
-    void OnTipClickedUp(wxCommandEvent &event);
-    
+    void OnTipClickedDown(wxCommandEvent& event);
+    void OnTipClickedUp(wxCommandEvent& event);
+
 protected:
     // Handlers for CCBoxBase events.
-    void OnItemActivated( wxListEvent& event );
-    void OnItemDeSelected( wxListEvent& event );
-    void OnItemSelected( wxListEvent& event );
-    void OnClose(wxCommandEvent &e);
+    void OnItemActivated(wxListEvent& event);
+    void OnItemDeSelected(wxListEvent& event);
+    void OnItemSelected(wxListEvent& event);
+    void OnClose(wxCommandEvent& e);
 
-    void OnDisplayTooltip(wxTimerEvent &event);
-    void OnRefreshList(wxTimerEvent &event);
-    void Display(LEditor *editor);
-    void SortTags(std::vector<CCItemInfo> &tags, const wxString &userTyped);
-    
+    void OnDisplayTooltip(wxTimerEvent& event);
+    void OnRefreshList(wxTimerEvent& event);
+    void Display(LEditor* editor);
+    void SortTags(std::vector<CCItemInfo>& tags, const wxString& userTyped);
+
 protected:
     // helper methods
     int GetImageId(TagEntryPtr entry);
     void SelectItem(long item);
-    void PostSelectItem(long item);    
-    void Show(const wxString &word);
-    void DoInsertSelection(const wxString &word, bool triggerTip = true);
+    void PostSelectItem(long item);
+    void Show(const wxString& word);
+    void DoInsertSelection(const wxString& word, bool triggerTip = true);
     void DoFormatDescriptionPage(const CCItemInfo& tag);
     void DoShowTagTip();
     void DoFilterCompletionEntries(CCItemInfo& item);
@@ -103,48 +104,34 @@ public:
     virtual ~CCBox();
 
     void HideCCBox();
-    void Show(const TagEntryPtrVector_t &tags, const wxString &word, bool isKeywordsList, wxEvtHandler *owner = NULL);
+    void Show(const TagEntryPtrVector_t& tags, const wxString& word, bool isKeywordsList, wxEvtHandler* owner = NULL);
     void InsertSelection();
 
     // can this window have focus? (no)
-    bool AcceptsFocus() const {
-        return false;
-    }
+    bool AcceptsFocus() const { return false; }
 
     void OnDismiss();
-    bool SelectWord(const wxString &word);
+    bool SelectWord(const wxString& word);
     void Next();
     void Previous();
 
-    //Setters
-    void SetAutoHide(const bool& autoHide) {
-        this->m_autoHide = autoHide;
-    }
-    void SetInsertSingleChoice(const bool& insertSingleChoice) {
-        this->m_insertSingleChoice = insertSingleChoice;
-    }
-    //Getters
-    const bool& GetAutoHide() const {
-        return m_autoHide;
-    }
-    const bool& GetInsertSingleChoice() const {
-        return m_insertSingleChoice;
-    }
+    // Setters
+    void SetAutoHide(const bool& autoHide) { this->m_autoHide = autoHide; }
+    void SetInsertSingleChoice(const bool& insertSingleChoice) { this->m_insertSingleChoice = insertSingleChoice; }
+    // Getters
+    const bool& GetAutoHide() const { return m_autoHide; }
+    const bool& GetInsertSingleChoice() const { return m_insertSingleChoice; }
 
     /**
      * @brief register new user image fot TagEntry kind
      * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())
      * @param bmp 16x16 bitmap
      */
-    void RegisterImageForKind(const wxString &kind, const wxBitmap &bmp);
+    void RegisterImageForKind(const wxString& kind, const wxBitmap& bmp);
     void NextPage();
     void PreviousPage();
-    void SetEditor(LEditor* editor) {
-        this->m_editor = editor;
-    }
-    LEditor* GetEditor() {
-        return m_editor;
-    }
+    void SetEditor(LEditor* editor) { this->m_editor = editor; }
+    LEditor* GetEditor() { return m_editor; }
 };
 
 #endif // __cc_box__

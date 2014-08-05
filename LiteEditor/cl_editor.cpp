@@ -3666,25 +3666,24 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags,
 
     // If the number of elements exceeds the maximum query result,
     // alert the user
-    int limit(TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit());
-
-    int ccTooManyMatches(0);
-    ccTooManyMatches = clConfig::Get().GetAnnoyingDlgAnswer("CodeCompletionTooManyMatches", 0);
-    if(tags.size() >= (size_t)limit && !ccTooManyMatches) {
-        wxString msg =
-            wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can "
-                               "increase the number of displayed items from the menu: 'Settings | Tags Settings'"),
-                             (unsigned int)tags.size());
-        clMainFrame::Get()->GetMainBook()->ShowMessage(
-            msg,
-            true,
-            PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
-            ButtonDetails(),
-            ButtonDetails(),
-            ButtonDetails(),
-            CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
-    }
-
+    // int limit(TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit());
+    // 
+    // int ccTooManyMatches(0);
+    // ccTooManyMatches = clConfig::Get().GetAnnoyingDlgAnswer("CodeCompletionTooManyMatches", 0);
+    // if(tags.size() >= (size_t)limit && !ccTooManyMatches) {
+    //     wxString msg =
+    //         wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can "
+    //                            "increase the number of displayed items from the menu: 'Settings | Tags Settings'"),
+    //                          (unsigned int)tags.size());
+    //     clMainFrame::Get()->GetMainBook()->ShowMessage(
+    //         msg,
+    //         true,
+    //         PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
+    //         ButtonDetails(),
+    //         ButtonDetails(),
+    //         ButtonDetails(),
+    //         CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
+    // }
     CodeCompletionBox::Get().Display(this, tags, word, !autoRefreshList, owner);
 }
 
@@ -3701,23 +3700,23 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags,
 
     // If the number of elements exceeds the maximum query result,
     // alert the user
-    int limit(TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit());
-    int ccTooManyMatches(0);
-    ccTooManyMatches = clConfig::Get().GetAnnoyingDlgAnswer("CodeCompletionTooManyMatches", 0);
-    if(tags.size() >= (size_t)limit && !ccTooManyMatches) {
-        wxString msg =
-            wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can "
-                               "increase the number of displayed items from the menu: 'Settings | Tags Settings'"),
-                             (unsigned int)tags.size());
-        clMainFrame::Get()->GetMainBook()->ShowMessage(
-            msg,
-            true,
-            PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
-            ButtonDetails(),
-            ButtonDetails(),
-            ButtonDetails(),
-            CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
-    }
+    // int limit(TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit());
+    // int ccTooManyMatches(0);
+    // ccTooManyMatches = clConfig::Get().GetAnnoyingDlgAnswer("CodeCompletionTooManyMatches", 0);
+    // if(tags.size() >= (size_t)limit && !ccTooManyMatches) {
+    //     wxString msg =
+    //         wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can "
+    //                            "increase the number of displayed items from the menu: 'Settings | Tags Settings'"),
+    //                          (unsigned int)tags.size());
+    //     clMainFrame::Get()->GetMainBook()->ShowMessage(
+    //         msg,
+    //         true,
+    //         PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
+    //         ButtonDetails(),
+    //         ButtonDetails(),
+    //         ButtonDetails(),
+    //         CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
+    // }
 
     CodeCompletionBox::Get().Display(this, tags, word, tags.at(0)->GetKind() == wxT("cpp_keyword"), NULL);
 }

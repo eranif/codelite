@@ -218,13 +218,13 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
       <File Name="cppcheckreportbasepage_cppchecker_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="cppchecksettingsdlg.wxcp"/>
   </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

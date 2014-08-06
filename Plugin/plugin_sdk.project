@@ -335,9 +335,6 @@
     <File Name="my_sftp_tree_model.cpp"/>
     <File Name="my_sftp_tree_model.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Custom"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="Diff">
     <VirtualDirectory Name="dtl">
       <File Name="dtl/Diff.hpp"/>
@@ -568,7 +565,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="Compilers">
     <File Name="ICompilerLocator.h"/>
     <File Name="ICompilerLocator.cpp"/>
@@ -609,4 +605,8 @@
     <File Name="wxFlatButtonBase.h"/>
     <File Name="wxFlatButtonBaseBitmaps.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Custom"/>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

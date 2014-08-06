@@ -368,9 +368,6 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="SocketAPI">
     <File Name="SocketAPI/clSocketBase.cpp"/>
     <File Name="SocketAPI/clSocketBase.h"/>
@@ -379,4 +376,7 @@
     <File Name="SocketAPI/clSocketServer.cpp"/>
     <File Name="SocketAPI/clSocketServer.h"/>
   </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

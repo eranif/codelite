@@ -157,13 +157,13 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29">
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
+  <Dependencies Name="Win_wxWidgets_29">
     <Project Name="sqlite3"/>
   </Dependencies>
 </CodeLite_Project>

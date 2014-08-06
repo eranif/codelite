@@ -57,14 +57,6 @@
   <VirtualDirectory Name="res">
     <File Name="wxcrafter.wxcp"/>
   </VirtualDirectory>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode">
-    <Project Name="hunspell"/>
-  </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="hunspell"/>
-  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -290,4 +282,12 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode">
+    <Project Name="hunspell"/>
+  </Dependencies>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode">
+    <Project Name="hunspell"/>
+  </Dependencies>
 </CodeLite_Project>

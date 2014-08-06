@@ -29,9 +29,12 @@
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kFormatEngineAStyle)
-    , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma | kSpaceBeforeAssignmentOperators)
+    , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
+                           kSpaceBeforeAssignmentOperators |
+                           kAlignEscapedNewlinesLeft |
+                           kAllowShortFunctionsOnASingleLine)
     , m_clangBreakBeforeBrace(kLinux)
-    , m_clangColumnLimit(0) // No limit
+    , m_clangColumnLimit(120) // No limit
 {
     if(m_clangFormatExe.IsEmpty()) {
         clClangFormatLocator locator;
@@ -39,9 +42,7 @@ FormatOptions::FormatOptions()
     }
 }
 
-FormatOptions::~FormatOptions()
-{
-}
+FormatOptions::~FormatOptions() {}
 
 void FormatOptions::DeSerialize(Archive& arch)
 {
@@ -77,7 +78,7 @@ void FormatOptions::Serialize(Archive& arch)
 
 wxString FormatOptions::AstyleOptionsAsString() const
 {
-    //by default use tabs as indentation with size 4
+    // by default use tabs as indentation with size 4
     wxString options;
 
     if(m_astyleOptions & AS_ANSI) {
@@ -191,7 +192,8 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
 
     options << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
     options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
-    options << ", AllowAllParametersOfDeclarationOnNextLine : " << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
+    options << ", AllowAllParametersOfDeclarationOnNextLine : "
+            << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
     options << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
     options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
     options << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
@@ -201,7 +203,8 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
     options << ", BinPackParameters : " << ClangFlagToBool(kBinPackParameters);
     options << ", BreakBeforeBinaryOperators : " << ClangFlagToBool(kBreakBeforeBinaryOperators);
     options << ", BreakBeforeTernaryOperators : " << ClangFlagToBool(kBreakBeforeTernaryOperators);
-    options << ", BreakConstructorInitializersBeforeComma : " << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
+    options << ", BreakConstructorInitializersBeforeComma : "
+            << ClangFlagToBool(kBreakConstructorInitializersBeforeComma);
     options << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
     options << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
     options << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
@@ -209,7 +212,7 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
     options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
     options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
     options << ", ColumnLimit : " << m_clangColumnLimit;
-    
+
     options << " }\" ";
     return options;
 }
@@ -242,9 +245,9 @@ wxString FormatOptions::ClangGlobalSettings() const
 {
     int indentWidth = EditorConfigST::Get()->GetOptions()->GetIndentWidth();
     bool useTabs = EditorConfigST::Get()->GetOptions()->GetIndentUsesTabs();
-    
+
     wxString options;
     options << ", IndentWidth: " << indentWidth;
-    options << ", UseTab: " << ( useTabs ? "ForIndentation" : "Never" );
+    options << ", UseTab: " << (useTabs ? "ForIndentation" : "Never");
     return options;
 }

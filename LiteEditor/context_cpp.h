@@ -194,6 +194,13 @@ private:
      * @param editor
      */
     void DoFormatEditor(LEditor *editor);
+    
+    /**
+     * @brief return position of the first C++ comment style on a line
+     * the line number is calculated from the 'from' value
+     * @return position or wxNOT_FOUND when not found
+     */
+    int GetFirstCxxCommentPos(LEditor& editor, int from);
 };
 
 #endif // CONTEXT_CPP_H

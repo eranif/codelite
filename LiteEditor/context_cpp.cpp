@@ -1146,6 +1146,18 @@ void ContextCpp::OnCommentSelection(wxCommandEvent& event)
     editor.ChooseCaretX();
 }
 
+int ContextCpp::GetFirstCxxCommentPos(LEditor& editor, int from)
+{
+    int lineNu = editor.LineFromPos(from);
+    int lastPos = from + editor.LineLength(lineNu);
+    for(int i = from; from < lastPos; ++i) {
+        if(editor.GetStyleAt(i) == wxSTC_C_COMMENTLINE) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
 void ContextCpp::OnCommentLine(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -1167,10 +1179,16 @@ void ContextCpp::OnCommentLine(wxCommandEvent& event)
         start = editor.PositionFromLine(line_start);
         if(doingComment) {
             editor.InsertText(start, wxT("//"));
-        } else if(editor.GetStyleAt(start) == wxSTC_C_COMMENTLINE) {
-            editor.SetAnchor(start);
-            editor.SetCurrentPos(editor.PositionAfter(editor.PositionAfter(start)));
-            editor.DeleteBackNotLine();
+
+        } else {
+            int firstCommentPos = GetFirstCxxCommentPos(editor, start);
+            if(firstCommentPos != wxNOT_FOUND) {
+                if(editor.GetStyleAt(firstCommentPos) == wxSTC_C_COMMENTLINE) {
+                    editor.SetAnchor(firstCommentPos);
+                    editor.SetCurrentPos(editor.PositionAfter(editor.PositionAfter(firstCommentPos)));
+                    editor.DeleteBackNotLine();
+                }
+            }
         }
     }
     editor.EndUndoAction();

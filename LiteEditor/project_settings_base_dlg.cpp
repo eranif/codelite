@@ -407,9 +407,6 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     m_textCtrlDebuggerPath = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     m_textCtrlDebuggerPath->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlDebuggerPath->SetHint(wxT(""));
-    #endif
     
     boxSizer35->Add(m_textCtrlDebuggerPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -481,7 +478,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     bSizer192->Add(m_checkBoxDbgRemote, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    wxFlexGridSizer* fgSizer61 = new wxFlexGridSizer(1, 4, 0, 0);
+    wxFlexGridSizer* fgSizer61 = new wxFlexGridSizer(1, 5, 0, 0);
     fgSizer61->SetFlexibleDirection( wxBOTH );
     fgSizer61->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer61->AddGrowableCol(1);
@@ -493,9 +490,6 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     fgSizer61->Add(m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrl1DbgHost = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrl1DbgHost->SetHint(wxT(""));
-    #endif
     
     fgSizer61->Add(m_textCtrl1DbgHost, 0, wxALL|wxEXPAND, 5);
     
@@ -504,11 +498,13 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     fgSizer61->Add(m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlDbgPort = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlDbgPort->SetHint(wxT(""));
-    #endif
     
     fgSizer61->Add(m_textCtrlDbgPort, 0, wxALL, 5);
+    
+    m_checkBoxDbgRemoteExt = new wxCheckBox(m_panelDebugger, wxID_ANY, _("Extended Protocol"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxDbgRemoteExt->SetValue(false);
+    
+    fgSizer61->Add(m_checkBoxDbgRemoteExt, 0, wxALL, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -531,6 +527,8 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_staticText32->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
     m_textCtrlDbgPort->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_textCtrlDbgPort->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
+    m_checkBoxDbgRemoteExt->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
+    m_checkBoxDbgRemoteExt->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     
 }
 
@@ -551,6 +549,8 @@ PSDebuggerPageBase::~PSDebuggerPageBase()
     m_staticText32->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
     m_textCtrlDbgPort->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_textCtrlDbgPort->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
+    m_checkBoxDbgRemoteExt->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
+    m_checkBoxDbgRemoteExt->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     
 }
 
@@ -787,9 +787,6 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     bSizer23->Add(m_staticText33, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlCustomBuildWD = new wxTextCtrl(m_customBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlCustomBuildWD->SetHint(wxT(""));
-    #endif
     
     bSizer23->Add(m_textCtrlCustomBuildWD, 1, wxALL|wxEXPAND, 5);
     
@@ -995,9 +992,6 @@ PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID 
     m_textDepsFont.SetFamily(wxFONTFAMILY_TELETYPE);
     #endif
     m_textDeps->SetFont(m_textDepsFont);
-    #if wxVERSION_NUMBER >= 3000
-    m_textDeps->SetHint(wxT(""));
-    #endif
     
     fgSizer5->Add(m_textDeps, 0, wxALL|wxEXPAND, 5);
     
@@ -1177,9 +1171,6 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
     flexGridSizer53->Add(m_staticTextTargetName, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlTargetName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlTargetName->SetHint(wxT(""));
-    #endif
     
     flexGridSizer53->Add(m_textCtrlTargetName, 1, wxALL|wxEXPAND, 5);
     

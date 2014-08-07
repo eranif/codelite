@@ -573,6 +573,7 @@ protected:
     EnvironmentConfig * m_env;
     wxString            m_name;
     bool                m_isRemoteDebugging;
+    bool                m_isRemoteExtended;
     wxString            m_debuggeeProjectName;
 
 public:
@@ -614,6 +615,14 @@ public:
 
     bool GetIsRemoteDebugging() const {
         return m_isRemoteDebugging;
+    }
+
+    void SetIsRemoteExtended(bool isRemoteExtended) {
+        this->m_isRemoteExtended = isRemoteExtended;
+    }
+
+    bool GetIsRemoteExtended() const {
+        return m_isRemoteExtended;
     }
 
     /**

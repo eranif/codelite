@@ -269,7 +269,10 @@ bool DbgGdb::Run( const wxString &args, const wxString &comm )
         // attach to the remote gdb server
         wxString cmd;
         //cmd << wxT("-target-select remote ") << comm << wxT(" ") << args;
-        cmd << wxT( "target remote " ) << comm << wxT( " " ) << args;
+        if ( GetIsRemoteExtended() )
+            cmd << wxT( "target extended-remote " ) << comm << wxT( " " ) << args;
+        else
+            cmd << wxT( "target remote " ) << comm << wxT( " " ) << args;
         return WriteCommand( cmd, new DbgCmdHandlerRemoteDebugging( m_observer, this ) );
 
     }
@@ -286,6 +289,7 @@ void DbgGdb::DoCleanup()
     m_attachedMode = false;
 
     SetIsRemoteDebugging( false );
+    SetIsRemoteExtended( false );
     EmptyQueue();
     m_gdbOutputArr.Clear();
     m_bpList.clear();

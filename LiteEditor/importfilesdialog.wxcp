@@ -547,7 +547,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Label:",
-         "m_value": "Files extension to import:"
+         "m_value": "Files extension to import (semicolon delimited):"
         }, {
          "type": "string",
          "m_label": "Wrap:",

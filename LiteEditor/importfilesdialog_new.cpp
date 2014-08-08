@@ -51,7 +51,7 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     
     m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 20, wxALIGN_LEFT);
     m_dataview->AppendIconTextColumn(_("Folder"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 500, wxALIGN_LEFT);
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Files extension to import:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Files extension to import (semicolon delimited):"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     mainSizer->Add(m_staticText1, 0, wxALL|wxEXPAND, 5);
     

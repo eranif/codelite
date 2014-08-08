@@ -174,6 +174,7 @@ protected:
     wxTextCtrl* m_textCtrl1DbgHost;
     wxStaticText* m_staticText32;
     wxTextCtrl* m_textCtrlDbgPort;
+    wxCheckBox* m_checkBoxDbgRemoteExt;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }

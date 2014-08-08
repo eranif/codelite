@@ -2358,6 +2358,7 @@ void Manager::DbgStart(long attachPid)
 
     // Set the 'Is remote debugging' flag'
     dbgr->SetIsRemoteDebugging(bldConf && bldConf->GetIsDbgRemoteTarget() && PID == wxNOT_FOUND);
+    dbgr->SetIsRemoteExtended(bldConf && bldConf->GetIsDbgRemoteExtended() && PID == wxNOT_FOUND);
 
     if(proj) {
         dbgr->SetProjectName(proj->GetName());

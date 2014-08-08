@@ -121,6 +121,7 @@ private:
     wxString          m_debuggerStartupCmds;
     wxString          m_debuggerPostRemoteConnectCmds;
     bool              m_isDbgRemoteTarget;
+    bool              m_isDbgRemoteExtended;
     wxString          m_dbgHostName;
     wxString          m_dbgHostPort;
     StringMap_t       m_customTargets;
@@ -503,6 +504,14 @@ public:
     const wxString& GetDbgHostPort() const {
         return m_dbgHostPort;
     }
+
+    void SetIsDbgRemoteExtended(const bool& isDbgRemoteExtended) {
+        this->m_isDbgRemoteExtended = isDbgRemoteExtended;
+    }
+    const bool& GetIsDbgRemoteExtended() const {
+        return m_isDbgRemoteExtended;
+    }
+
 
     void SetCustomTargets(const BuildConfig::StringMap_t& customTargets) {
         this->m_customTargets = customTargets;

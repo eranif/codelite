@@ -58,6 +58,7 @@ void PSDebuggerPage::Load(BuildConfigPtr buildConf)
     m_textCtrl1DbgHost->ChangeValue(buildConf->GetDbgHostName());
     m_textCtrlDbgPort->ChangeValue(buildConf->GetDbgHostPort());
     m_textCtrlDebuggerPath->ChangeValue(buildConf->GetDebuggerPath());
+    m_checkBoxDbgRemoteExt->SetValue(buildConf->GetIsDbgRemoteExtended());
 
     const wxArrayString &searchPaths = buildConf->GetDebuggerSearchPaths();
     for(size_t i=0; i<searchPaths.GetCount(); ++i) {
@@ -75,6 +76,7 @@ void PSDebuggerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
     buildConf->SetDbgHostName(m_textCtrl1DbgHost->GetValue());
     buildConf->SetDbgHostPort(m_textCtrlDbgPort->GetValue());
     buildConf->SetDebuggerPath(m_textCtrlDebuggerPath->GetValue());
+    buildConf->SetIsDbgRemoteExtended(m_checkBoxDbgRemoteExt->IsChecked());
 
     wxArrayString searchPaths;
     int nCount = m_dvListCtrlDebuggerSearchPaths->GetItemCount();

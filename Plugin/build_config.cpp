@@ -119,6 +119,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
             m_dbgHostName = XmlUtils::ReadString(debugger, wxT("RemoteHostName"));
             m_dbgHostPort = XmlUtils::ReadString(debugger, wxT("RemoteHostPort"));
             m_debuggerPath = XmlUtils::ReadString(debugger, wxT("DebuggerPath"));
+            m_isDbgRemoteExtended = XmlUtils::ReadBool(debugger, wxT("IsExtended"));
 
             wxXmlNode *child = debugger->GetChildren();
             while (child) {
@@ -266,6 +267,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
         m_preprocessFileCommand = wxEmptyString;
         m_debuggerStartupCmds = wxEmptyString;
         m_debuggerPostRemoteConnectCmds = wxEmptyString;
+        m_isDbgRemoteExtended = false;
         m_isDbgRemoteTarget = false;
         m_useSeparateDebugArgs = false;
         m_debugArgs = wxEmptyString;
@@ -351,6 +353,7 @@ wxXmlNode *BuildConfig::ToXml() const
     debugger->AddProperty(wxT("RemoteHostName"), m_dbgHostName);
     debugger->AddProperty(wxT("RemoteHostPort"), m_dbgHostPort);
     debugger->AddProperty(wxT("DebuggerPath"), m_debuggerPath);
+    debugger->AddProperty(wxT("IsExtended"), BoolToString(m_isDbgRemoteExtended));
 
     wxXmlNode *envNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Environment"));
     envNode->AddProperty(wxT("EnvVarSetName"),  GetEnvVarSet());

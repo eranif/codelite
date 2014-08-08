@@ -59,10 +59,8 @@ BOOL CtrlHandler( DWORD fdwCtrlType )
 }
 #endif
 
-#if defined(__WXGTK__) || defined (__WXMAC__)
 #include <sys/types.h>
 #include <signal.h>
-#endif
 
 #if 0
 #    define DBG_LOG 1
@@ -227,14 +225,38 @@ bool DbgGdb::Start( const DebugSessionInfo& si)
     m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
     m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), si.cwd.c_str() ) );
     m_observer->UpdateAddLine( wxString::Format( wxT( "Starting debugger  : %s" ), cmd.c_str() ) );
+#ifdef __WXMSW__
+    // When using remote debugging on Windows we need a console window, as this is the only
+    // mechanism to send a Ctrl-C event and signal a SIGINT to interrupt the target.
+    bool needs_console = GetIsRemoteDebugging() | m_info.showTerminal;
+#else
+    bool needs_console = m_info.showTerminal;
+#endif
     m_gdbProcess = CreateAsyncProcess( this,
                                        cmd,
                                        // show console?
-                                       m_info.showTerminal ? IProcessCreateConsole : IProcessCreateDefault,
+                                       needs_console ? IProcessCreateConsole : IProcessCreateDefault,
                                        si.cwd );
     if ( !m_gdbProcess ) {
         return false;
     }
+#ifdef __WXMSW__
+    if ( GetIsRemoteDebugging() ) {
+        // This doesn't really make sense, but AttachConsole fails without it...
+        AllocConsole();
+        FreeConsole(); // Disconnect any existing console window.
+
+        if ( !AttachConsole( m_gdbProcess->GetPid() ) )
+            m_observer->UpdateAddLine( wxString::Format(wxT("AttachConsole returned error %d"), GetLastError()));
+
+        // We can at least make the window invisible if the user doesn't want to see it.
+        if ( !m_info.showTerminal )
+            SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, 0, 0, 0, 0, SWP_HIDEWINDOW);
+
+        // Finally we ignore SIGINT so we don't get killed by our own signal
+        signal(SIGINT, SIG_IGN);
+    }
+#endif
     m_gdbProcess->SetHardKill( true );
     DoInitializeGdb( si );
     return true;
@@ -520,7 +542,7 @@ bool DbgGdb::Interrupt()
         m_observer->UpdateAddLine( wxString::Format( wxT( "Interrupting debugee process: %ld" ), m_debuggeePid ) );
 
 #ifdef __WXMSW__
-        if ( DebugBreakProcessFunc ) {
+        if ( !GetIsRemoteDebugging() && DebugBreakProcessFunc ) {
             // we have DebugBreakProcess
             HANDLE process = OpenProcess( PROCESS_ALL_ACCESS, FALSE, ( DWORD )m_debuggeePid );
             BOOL res = DebugBreakProcessFunc( process );
@@ -528,6 +550,12 @@ bool DbgGdb::Interrupt()
             return res == TRUE;
         }
 
+        if ( GetIsRemoteDebugging() ) {
+            // We need to send GDB a Ctrl-C event.  Using DebugBreakProcess just leaves
+			// it unresponsive.
+            return GenerateConsoleCtrlEvent( CTRL_C_EVENT, 0 );
+        }
+ 
         // on Windows version < XP we need to find a solution for interrupting the
         // debuggee process
         return false;

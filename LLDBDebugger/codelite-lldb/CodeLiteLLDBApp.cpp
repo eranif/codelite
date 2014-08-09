@@ -724,6 +724,7 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
     lldb::SBFrame frame = m_target.GetProcess().GetSelectedThread().GetSelectedFrame();
     if ( !frame.IsValid() ) {
         NotifyLocals(locals);
+        return;
     }
 
     // get list of locals

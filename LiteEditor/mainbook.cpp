@@ -83,7 +83,9 @@ void MainBook::CreateGuiControls()
 
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-    m_book->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
+
+    wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
+    m_book->SetRightClickMenu(contextMenu);
 
     sz->Add(m_book, 1, wxEXPAND);
 
@@ -233,8 +235,7 @@ void MainBook::OnWorkspaceClosed(wxCommandEvent& e)
 
 bool MainBook::AskUserToSave(LEditor* editor)
 {
-    if(!editor || !editor->GetModify() || editor->GetFileName().FileExists() == false)
-        return true;
+    if(!editor || !editor->GetModify() || editor->GetFileName().FileExists() == false) return true;
 
     // unsaved changes
     wxString msg;
@@ -463,8 +464,7 @@ wxWindow* MainBook::FindPage(const wxString& text)
             return editor;
         }
 
-        if(m_book->GetPageText(i) == text)
-            return m_book->GetPage(i);
+        if(m_book->GetPageText(i) == text) return m_book->GetPage(i);
     }
     return NULL;
 }
@@ -480,8 +480,7 @@ LEditor* MainBook::NewEditor()
     // A Nice trick: hide the notebook, open the editor
     // and then show it
     bool hidden(false);
-    if(m_book->GetPageCount() == 0)
-        hidden = GetSizer()->Hide(m_book);
+    if(m_book->GetPageCount() == 0) hidden = GetSizer()->Hide(m_book);
 
     LEditor* editor = new LEditor(m_book);
     editor->SetFileName(fileName);
@@ -492,8 +491,7 @@ LEditor* MainBook::NewEditor()
 #endif
 
     // SHow the notebook
-    if(hidden)
-        GetSizer()->Show(m_book);
+    if(hidden) GetSizer()->Show(m_book);
 
     editor->SetActive();
     return editor;
@@ -565,8 +563,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
         // A Nice trick: hide the notebook, open the editor
         // and then show it
         bool hidden(false);
-        if(m_book->GetPageCount() == 0)
-            hidden = GetSizer()->Hide(m_book);
+        if(m_book->GetPageCount() == 0) hidden = GetSizer()->Hide(m_book);
 
         editor = new LEditor(m_book);
         editor->Create(projName, fileName);
@@ -589,8 +586,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
         MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
 
         // SHow the notebook
-        if(hidden)
-            GetSizer()->Show(m_book);
+        if(hidden) GetSizer()->Show(m_book);
 
         if(position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {
             // try to find something interesting in the file to put the caret at
@@ -656,8 +652,7 @@ bool MainBook::AddPage(wxWindow* win,
                        bool selected,
                        size_t insert_at_index /*=wxNOT_FOUND*/)
 {
-    if(m_book->GetPageIndex(win) != Notebook::npos)
-        return false;
+    if(m_book->GetPageIndex(win) != Notebook::npos) return false;
 
     long MaxBuffers = clConfig::Get().Read("MaxOpenedTabs", 15);
     bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
@@ -721,8 +716,7 @@ bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName, bool> >& files,
                                const wxString& caption,
                                bool cancellable)
 {
-    if(files.empty())
-        return true;
+    if(files.empty()) return true;
 
     FileCheckList dlg(clMainFrame::Get(), wxID_ANY, title);
     dlg.SetCaption(caption);
@@ -742,8 +736,7 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
     std::vector<std::pair<wxFileName, bool> > files;
     size_t n = 0;
     for(size_t i = 0; i < editors.size(); i++) {
-        if(!editors[i]->GetModify())
-            continue;
+        if(!editors[i]->GetModify()) continue;
 
         if(!includeUntitled && !editors[i]->GetFileName().FileExists())
             continue; // don't save new documents that have not been saved to disk yet
@@ -771,8 +764,7 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 
 void MainBook::ReloadExternallyModified(bool prompt)
 {
-    if(m_isWorkspaceReloading)
-        return;
+    if(m_isWorkspaceReloading) return;
 
     LEditor::Vec_t editors;
     GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
@@ -799,8 +791,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
         }
     }
     editors.resize(n);
-    if(n == 0)
-        return;
+    if(n == 0) return;
 
     if(prompt) {
 
@@ -956,8 +947,7 @@ bool MainBook::CloseAll(bool cancellable)
 wxString MainBook::GetPageTitle(wxWindow* page) const
 {
     size_t selection = m_book->GetPageIndex(page);
-    if(selection != Notebook::npos)
-        return m_book->GetPageText(selection);
+    if(selection != Notebook::npos) return m_book->GetPageText(selection);
     return wxEmptyString;
 }
 
@@ -1137,8 +1127,7 @@ void MainBook::OnClosePage(NotebookEvent& e)
         return;
     }
     wxWindow* page = m_book->GetPage((size_t)where);
-    if(page)
-        ClosePage(page);
+    if(page) ClosePage(page);
 }
 
 void MainBook::DoPositionFindBar(int where)
@@ -1282,7 +1271,6 @@ void MainBook::CloseAllVoid(bool cancellable) { CloseAll(cancellable); }
 
 FilesModifiedDlg* MainBook::GetFilesModifiedDlg()
 {
-    if ( !m_filesModifiedDlg )
-        m_filesModifiedDlg = new FilesModifiedDlg(clMainFrame::Get());
+    if(!m_filesModifiedDlg) m_filesModifiedDlg = new FilesModifiedDlg(clMainFrame::Get());
     return m_filesModifiedDlg;
 }

@@ -52,6 +52,12 @@ public:
      */
     void ClearSelections();
     
+    /**
+     * @brief return a wxFileName that represents the current selected item
+     * If multiple selections are made, return the first one
+     */
+    bool GetSelection(wxFileName& path);
+    
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
@@ -63,6 +69,7 @@ protected:
     virtual void OnTagNode(wxCommandEvent &event);
     virtual void OnKeyDown( wxTreeEvent &event );
     virtual void OnOpenShell(wxCommandEvent &event);
+    virtual void OnOpenExplorer(wxCommandEvent &event);
     virtual void OnOpenWidthDefaultApp(wxCommandEvent &e);
     
     void DoOpenItem(const wxString& path);

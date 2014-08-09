@@ -716,6 +716,9 @@
 		<object class="wxMenuItem" name="open_shell_from_filepath">
             <label>Open Shell at File Path</label>
         </object>
+        <object class="wxMenuItem" name="open_file_explorer">
+            <label>Open File Explorer at File Path</label>
+        </object>
     </object>
 
     <object class="wxMenu" name="editor_right_click">
@@ -1158,20 +1161,23 @@
 			</object>
 		</object>
 
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_file">
             <label>&amp;Open</label>
         </object>
         <object class="wxMenuItem" name="open_file_in_text_editor">
             <label>Open in &amp;editor</label>
         </object>
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_with_default_application">
             <label>Open With &amp;Default Application</label>
         </object>
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="open_shell">
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="open_shell">
             <label>Open Shell here</label>
+        </object>
+        <object class="wxMenuItem" name="open_file_explorer">
+            <label>Open File Explorer here</label>
         </object>
 	</object>
 </resource>

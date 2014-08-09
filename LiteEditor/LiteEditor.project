@@ -690,6 +690,7 @@
     <File Name="DebuggerDisassemblyTab.h"/>
     <File Name="DebuggerDisassemblyTab.cpp"/>
     <File Name="memoryviewbase.wxcp"/>
+    <File Name="../formbuilder/quickdebug.wxcp"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="UnixCodeLite">
@@ -871,6 +872,7 @@
       <File Name="filechecklistbase_liteeditor_bitmaps.cpp"/>
       <File Name="CompilersFoundDlg_liteeditor_bitmaps.cpp"/>
       <File Name="new_workspace_dlg_liteeditor_bitmaps.cpp"/>
+      <File Name="quickdebug_formbuilder_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

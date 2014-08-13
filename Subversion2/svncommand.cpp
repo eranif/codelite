@@ -31,6 +31,7 @@
 #include "subversion2.h"
 #include <wx/aui/framemanager.h>
 #include "imanager.h"
+#include "file_logger.h"
 
 BEGIN_EVENT_TABLE(SvnCommand, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommand::OnProcessOutput)
@@ -91,6 +92,7 @@ void SvnCommand::OnProcessOutput(wxCommandEvent& event)
         m_output.Append(ped->GetData().c_str());
         delete ped;
     }
+    CL_DEBUG("Subversion:\n%s", m_output);
 }
 
 void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
@@ -101,7 +103,7 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
     }
 
     if (m_handler) {
-
+        CL_DEBUG("Subversion output:\n%s", m_output);
         if(m_handler->TestLoginRequired(m_output)) {
             // re-issue the last command but this time with login dialog
             m_handler->GetPlugin()->GetConsole()->AppendText(_("Authentication failed. Retrying...\n"));

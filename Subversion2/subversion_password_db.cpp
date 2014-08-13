@@ -30,57 +30,59 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include "cl_standard_paths.h"
+#include "xor_string.h"
 
 SubversionPasswordDb::SubversionPasswordDb()
 {
-	// disable logging
-	wxLog::EnableLogging(false);
-	wxString configDir(clStandardPaths::Get().GetUserDataDir());
-	wxMkdir(configDir);
-	
-	configDir << wxFileName::GetPathSeparator() << wxT("subversion");
-	wxMkdir(configDir);
-	
-	wxLog::EnableLogging(true);
-	
-	configDir << wxFileName::GetPathSeparator() << wxT("passwords.ini");
-	m_fileConfig = new wxFileConfig(wxEmptyString, wxEmptyString, configDir, wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
+    // disable logging
+    wxFileName passwordIni(clStandardPaths::Get().GetUserDataDir(), "passwords.ini");
+    passwordIni.AppendDir("subversion");
+    wxFileName::Mkdir(passwordIni.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+    m_fileConfig = new wxFileConfig(
+        wxEmptyString, wxEmptyString, passwordIni.GetFullPath(), wxEmptyString, wxCONFIG_USE_LOCAL_FILE);
 }
 
 SubversionPasswordDb::~SubversionPasswordDb()
 {
-	m_fileConfig->Flush();
-	delete m_fileConfig;
+    m_fileConfig->Flush();
+    wxDELETE(m_fileConfig);
 }
 
 bool SubversionPasswordDb::GetLogin(const wxString& url, wxString& user, wxString& password)
 {
-	wxString escapedUrl(wxMD5::GetDigest(url));
-	if(m_fileConfig->HasGroup(escapedUrl) == false)
-		return false;
-	
-	m_fileConfig->Read(escapedUrl + wxT("/user"),     &user);
-	m_fileConfig->Read(escapedUrl + wxT("/password"), &password);
-	return true;
+    wxString escapedUrl(wxMD5::GetDigest(url));
+    if(m_fileConfig->HasGroup(escapedUrl) == false)
+        return false;
+    
+    // read and decrypt the password/username
+    m_fileConfig->Read(escapedUrl + wxT("/user"), &user);
+    XORString userXor(user);
+    user = userXor.Decrypt();
+    
+    m_fileConfig->Read(escapedUrl + wxT("/password"), &password);
+    XORString passXor(password);
+    password = passXor.Decrypt();
+    return true;
 }
 
 void SubversionPasswordDb::SetLogin(const wxString& url, const wxString& user, const wxString& password)
 {
-	wxString escapedUrl(wxMD5::GetDigest(url));
-	if(m_fileConfig->HasGroup(escapedUrl)) {
-		m_fileConfig->DeleteGroup(escapedUrl);
-	}
-	
-	m_fileConfig->Write(escapedUrl + wxT("/user"),     user);
-	m_fileConfig->Write(escapedUrl + wxT("/password"), password);
-	m_fileConfig->Flush();
+    wxString escapedUrl(wxMD5::GetDigest(url));
+    if(m_fileConfig->HasGroup(escapedUrl)) {
+        m_fileConfig->DeleteGroup(escapedUrl);
+    }
+
+    m_fileConfig->Write(escapedUrl + wxT("/user"), XORString(user).Encrypt());
+    m_fileConfig->Write(escapedUrl + wxT("/password"), XORString(password).Encrypt());
+    m_fileConfig->Flush();
 }
 
 void SubversionPasswordDb::DeleteLogin(const wxString& url)
 {
-	wxString escapedUrl(wxMD5::GetDigest(url));
-	if(m_fileConfig->HasGroup(escapedUrl)) {
-		m_fileConfig->DeleteGroup(escapedUrl);
-	}
-	m_fileConfig->Flush();
+    wxString escapedUrl(wxMD5::GetDigest(url));
+    if(m_fileConfig->HasGroup(escapedUrl)) {
+        m_fileConfig->DeleteGroup(escapedUrl);
+    }
+    m_fileConfig->Flush();
 }

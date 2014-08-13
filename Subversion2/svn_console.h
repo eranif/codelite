@@ -38,8 +38,9 @@ struct SvnConsoleCommand {
     wxString           cmd;
     wxString           workingDirectory;
     bool               printProcessOutput;
-
-    SvnConsoleCommand() : handler(NULL), printProcessOutput(true) {}
+    bool               showConsole;
+    
+    SvnConsoleCommand() : handler(NULL), printProcessOutput(true), showConsole(false) {}
     ~SvnConsoleCommand() {}
     void clean() {
         this->handler = NULL;
@@ -69,14 +70,22 @@ protected:
     void OnThemeChanged             (wxCommandEvent &e);
     
     void DoInitializeFontsAndColours();
-    void DoExecute(const wxString &cmd, SvnCommandHandler *handler, const wxString &workingDirectory, bool printProcessOutput);
+    void DoExecute(const wxString& cmd,
+                   SvnCommandHandler* handler,
+                   const wxString& workingDirectory,
+                   bool printProcessOutput,
+                   bool showConsole = false);
     void DoProcessNextCommand();
 
 public:
     SvnConsole(wxWindow *parent, Subversion2* plugin);
     virtual ~SvnConsole();
 
-    void Execute(const wxString &cmd, const wxString &workingDirectory, SvnCommandHandler *handler, bool printProcessOutput = true);
+    void Execute(const wxString& cmd,
+                 const wxString& workingDirectory,
+                 SvnCommandHandler* handler,
+                 bool printProcessOutput = true,
+                 bool showConsole = false);
     void ExecuteURL(const wxString &cmd, const wxString &url, SvnCommandHandler *handler, bool printProcessOutput = true);
     void Clear  ();
     void Stop   ();

@@ -574,6 +574,8 @@
     <File Name="CompilersDetectorManager.cpp"/>
     <File Name="CompilerLocatorGCC.h"/>
     <File Name="CompilerLocatorGCC.cpp"/>
+    <File Name="CompilerLocatorCrossGCC.h"/>
+    <File Name="CompilerLocatorCrossGCC.cpp"/>
     <File Name="CompilerLocatorMSVC10.cpp"/>
     <File Name="CompilerLocatorMSVC10.h"/>
     <File Name="CompilerLocatorMSVCBase.h"/>

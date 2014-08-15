@@ -45,7 +45,7 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 
 protected:
     virtual void OnLoadEclipseThemeWebsite(wxCommandEvent& event);
-    virtual void OnImportEclipseTheme(wxCommandEvent& event);
+    virtual void OnImportEclipseTheme(wxAuiToolBarEvent& event);
     virtual void OnRestoreDefaults(wxCommandEvent& event);
     virtual void OnExportAll(wxCommandEvent& event);
     virtual void OnToolExportAll(wxAuiToolBarEvent& event);

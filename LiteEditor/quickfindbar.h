@@ -29,6 +29,7 @@
 #include "quickfindbarbase.h"
 #include "wxFlatButton.h"
 #include <wx/combobox.h>
+#include "wxFlatButtonBar.h"
 
 class QuickFindBarOptionsMenu;
 class wxStyledTextCtrl;
@@ -50,9 +51,12 @@ protected:
     QuickFindBarOptionsMenu* m_optionsWindow;
     wxComboBox* m_findWhat;
     wxComboBox* m_replaceWith;
+    wxFlatButtonBar* m_bar;
     wxFlatButton* m_caseSensitive;
     wxFlatButton* m_wholeWord;
     wxFlatButton* m_regexOrWildButton;
+    wxFlatButton* m_showReplaceControls;
+    wxFlatButton* m_buttonReplace;
     wxMenu* m_regexOrWildMenu;
     eRegexType m_regexType;
     
@@ -109,6 +113,9 @@ protected:
     void OnButtonPrevUI(wxUpdateUIEvent& e);
     void OnText(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
+    void OnShowReplaceControls(wxFlatButtonEvent& e);
+    void OnButtonReplace(wxFlatButtonEvent& e);
+    void OnButtonReplaceUI(wxUpdateUIEvent& e);
     void OnEnter(wxCommandEvent& e);
     void OnReplace(wxCommandEvent& e);
     void OnUpdateUI(wxUpdateUIEvent& e);

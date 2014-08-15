@@ -594,7 +594,7 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
     }
 }
 
-void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
+void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
 {
     wxString eclipseThemeXml =
         ::wxFileSelector(_("Select eclipse XML theme file"), "", "", "", "Eclipse Theme Files (*.xml)|*.xml");

@@ -23,7 +23,6 @@
 class QuickFindBarBase : public wxPanel
 {
 protected:
-    wxBoxSizer* mainSizer;
 
 protected:
 
@@ -36,9 +35,7 @@ public:
 class QuickFindBarOptionsMenuBase : public wxPopupTransientWindow
 {
 protected:
-    wxBoxSizer* boxSizer60;
     wxPanel* m_panel71;
-    wxGridSizer* gridSizer49;
     wxCheckBox* m_checkBoxCase;
     wxCheckBox* m_checkBoxRegex;
     wxCheckBox* m_checkBoxWord;

@@ -23,7 +23,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    mainSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
     SetSizeHints(400,-1);
@@ -47,14 +47,14 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent,long s
         bBitmapLoaded = true;
     }
     
-    boxSizer60 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer60 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer60);
     
     m_panel71 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
     
     boxSizer60->Add(m_panel71, 1, wxEXPAND, 5);
     
-    gridSizer49 = new wxGridSizer(0, 2, 0, 0);
+    wxGridSizer* gridSizer49 = new wxGridSizer(0, 2, 0, 0);
     m_panel71->SetSizer(gridSizer49);
     
     m_checkBoxCase = new wxCheckBox(m_panel71, wxID_ANY, _("Case Sensitive"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -158,6 +158,15 @@ QuickFindBarImages::QuickFindBarImages()
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
         m_bitmaps.insert( std::make_pair(wxT("regex"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("replace-controls"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("replace-controls"), bmp ) );
     }
     
 }

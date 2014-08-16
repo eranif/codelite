@@ -50,6 +50,7 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include "globals.h"
+#include "file_logger.h"
 
 static CppCheckPlugin* thePlugin = NULL;
 
@@ -392,6 +393,7 @@ void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
     m_cppcheckProcess = NULL;
 
     m_view->PrintStatusMessage();
+    m_view->GotoFirstError();
 }
 
 void CppCheckPlugin::OnSettingsItem(wxCommandEvent& WXUNUSED(e)) { DoSettingsItem(); }
@@ -562,19 +564,32 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
     wxString cmd, path;
     path = clStandardPaths::Get().GetBinaryFullPath("codelite_cppcheck");
     ::WrapWithQuotes(path);
-    
+
     wxString fileList = DoGenerateFileList();
     if(fileList.IsEmpty())
         return wxT("");
-    
-    
+
     // build the command
     cmd << path << " ";
     cmd << m_settings.GetOptions();
-    // TODO:: Append here project specifc settings (include paths/macros)
+
+    // Append here project specifc search paths
+    wxArrayString projectSearchPaths = proj->GetIncludePaths();
+    for(size_t i = 0; i < projectSearchPaths.GetCount(); ++i) {
+        wxFileName fnIncPath(projectSearchPaths.Item(i), "");
+        wxString includePath = fnIncPath.GetPath(true);
+        ::WrapWithQuotes(includePath);
+        cmd << " -I" << includePath;
+    }
+    
+    wxArrayString projMacros = proj->GetPreProcessors();
+    for(size_t i = 0; i < projMacros.GetCount(); ++i) {
+        cmd << " -D" << projMacros.Item(i);
+    }
     
     cmd << wxT(" --file-list=");
     cmd << wxT("\"") << fileList << wxT("\"");
+    CL_DEBUG("cppcheck command: %s", cmd);
     return cmd;
 }
 

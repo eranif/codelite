@@ -41,40 +41,46 @@ extern const wxEventType wxEVT_CPPCHECK_ASK_STOP;
 class IManager;
 class CppCheckPlugin;
 
-/** Implementing CppCheckReportBasePage */
 class CppCheckReportPage : public CppCheckReportBasePage
 {
-    IManager*           m_mgr;
-    CppCheckPlugin*     m_plugin;
-
+    IManager* m_mgr;
+    CppCheckPlugin* m_plugin;
+    
 protected:
+    virtual void OnDownUI(wxUpdateUIEvent& event);
+    virtual void OnUpUI(wxUpdateUIEvent& event);
+    virtual void OnDown(wxCommandEvent& event);
+    virtual void OnUp(wxCommandEvent& event);
     virtual void OnStyleNeeded(wxStyledTextEvent& event);
-    //static int ColorLine ( int, const char *text, size_t &start, size_t &len );
+    // static int ColorLine ( int, const char *text, size_t &start, size_t &len );
 
 protected:
     // Handlers for CppCheckReportBasePage events.
 
-    void OnClearReport   ( wxCommandEvent& event );
-    void OnStopChecking  ( wxCommandEvent& event );
-    void OnStopCheckingUI(wxUpdateUIEvent &event);
-    void OnClearReportUI (wxUpdateUIEvent &event);
-    void OnThemeChanged  (wxCommandEvent &e);
-    
+    void OnClearReport(wxCommandEvent& event);
+    void OnStopChecking(wxCommandEvent& event);
+    void OnStopCheckingUI(wxUpdateUIEvent& event);
+    void OnClearReportUI(wxUpdateUIEvent& event);
+    void OnThemeChanged(wxCommandEvent& e);
+
     // Scintilla events
-    void OnOpenFile             (wxStyledTextEvent& e);
+    void OnOpenFile(wxStyledTextEvent& e);
     void DoInitStyle();
-    
+    bool FindNextMarker(bool gotoMatch = true);
+    bool FindPrevMarker(bool gotoMatch = true);
+
 public:
     /** Constructor */
     CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheckPlugin* plugin);
     virtual ~CppCheckReportPage();
 
-    void   Clear        ();
+    void Clear();
     size_t GetErrorCount() const;
-    void   AppendLine   (const wxString &line);
-    void   PrintStatusMessage();
-    void   SetGaugeRange(int range);
-    void   SetMessage(const wxString &msg);
+    void AppendLine(const wxString& line);
+    void PrintStatusMessage();
+    void SetGaugeRange(int range);
+    void SetMessage(const wxString& msg);
+    void GotoFirstError();
 };
 
 #endif // __cppcheckreportpage__

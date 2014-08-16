@@ -3,19 +3,34 @@
         <object class="wxMenu" name="file_tool_or_menuitem">
             <label>&amp;File</label>
             <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="new_file">
-                <label>&amp;New File</label>
+            <object class="wxMenu" name="wxID_ANY">
+                <label>&amp;New</label>
+                <object class="wxMenuItem" name="new_file">
+                    <label>&amp;New Empty File</label>
+                </object>
+                <object class="wxMenuItem" name="new_workspace">
+                    <label>New &amp;Workspace</label>
+                </object>
+                <object class="wxMenuItem" name="new_project">
+                    <label>New &amp;Project</label>
+                </object>
             </object>
-            <object class="wxMenuItem" name="open_file">
-                <label>&amp;Open File...</label>
+            <object class="wxMenu" name="wxID_ANY">
+                <label>&amp;Open</label>
+                <object class="wxMenuItem" name="open_file">
+                    <label>&amp;Open File...</label>
+                </object>
+                <object class="wxMenuItem" name="switch_to_workspace">
+                    <label>Open &amp;Workspace...</label>
+                </object>
             </object>
-			<object class="wxMenuItem" name="refresh_file">
-				<label>&amp;Reload File</label>
-			</object>
+            <object class="wxMenuItem" name="refresh_file">
+                <label>&amp;Reload File</label>
+            </object>
             <object class="wxMenuItem" name="load_tab_group">
                 <label>Load a group of tabs</label>
             </object>
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="save_file">
                 <label>&amp;Save File</label>
             </object>

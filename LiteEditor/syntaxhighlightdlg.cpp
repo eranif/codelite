@@ -535,7 +535,7 @@ void SyntaxHighlightDlg::OnExport(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
 {
-    wxString path = ::wxFileSelector(_("Save as"), "", "", "", "Zip Files (*.zip)|*.zip", wxFD_OPEN);
+    wxString path = ::wxFileSelector(_("Select file"), "", "", "", "Zip Files (*.zip)|*.zip", wxFD_OPEN);
     if(path.IsEmpty()) return;
 
     wxFileName fn(path);

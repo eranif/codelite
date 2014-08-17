@@ -515,7 +515,8 @@ void MemCheckPlugin::OnMemCheckUI(wxUpdateUIEvent& event)
 void MemCheckPlugin::StopProcess()
 {
     if(m_process) {
-        m_process->Terminate();
+        wxKill(m_process->GetPid(), wxSIGINT);
+        //m_process->Terminate();
     }
 }
 

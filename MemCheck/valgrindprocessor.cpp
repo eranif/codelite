@@ -76,9 +76,10 @@ bool ValgrindMemcheckProcessor::Process(const wxString & outputLogFileName)
     CL_DEBUG(PLUGIN_PREFIX("Processing file '%s'", m_outputLogFileName));
 
     wxXmlDocument doc;
-    if (!doc.Load(m_outputLogFileName) || doc.GetRoot()->GetName() != wxT("valgrindoutput"))
+    if (!doc.Load(m_outputLogFileName) || doc.GetRoot()->GetName() != wxT("valgrindoutput")) {
+        CL_WARNING("Error while loading file '%s'", m_outputLogFileName);
         return false;
-
+    }
     m_errorList.clear();
 
     int i = 0;

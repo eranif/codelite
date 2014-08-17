@@ -83,7 +83,7 @@ MemCheckOutputView::~MemCheckOutputView()
 
 void MemCheckOutputView::LoadErrors()
 {
-    // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::LoadErrors()"));
+    CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::LoadErrors()"));
 
     if(m_mgr->IsWorkspaceOpen())
         m_workspacePath =

@@ -50,8 +50,6 @@ protected:
     static void InitStyle   (wxStyledTextCtrl *sci, int lexer, bool folding);
 
     void CreateGUIControls();
-
-    virtual void AppendText(const wxString &text);
     virtual bool IsFocused();
 
     //Event handlers
@@ -89,5 +87,6 @@ public:
     wxStyledTextCtrl* GetSci() {
         return m_sci;
     }
+    virtual void AppendText(const wxString &text);
 };
 #endif // __outputtabwindow__

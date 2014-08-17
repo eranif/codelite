@@ -95,6 +95,15 @@ MemCheckIcons16::MemCheckIcons16()
         m_bitmaps.insert( std::make_pair(wxT("memcheck_current"), bmp ) );
     }
     
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_stop"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("memcheck_stop"), bmp ) );
+    }
+    
 }
 
 MemCheckIcons16::~MemCheckIcons16()
@@ -127,6 +136,15 @@ MemCheckIcons24::MemCheckIcons24()
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
         m_bitmaps.insert( std::make_pair(wxT("memcheck_import_24"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_stop_24"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("memcheck_stop_24"), bmp ) );
     }
     
 }

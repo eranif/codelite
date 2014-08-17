@@ -84,7 +84,14 @@ protected:
      * @param event
      */
     void OnCheckAtiveProject(wxCommandEvent& event);
-
+    
+    /**
+     * @brief stop the currently running process
+     * @param event
+     */
+    void OnStopProcess(wxCommandEvent &event);
+    
+    void OnStopProcessUI(wxUpdateUIEvent &event);
     /**
      * @brief User wants test some project in workspace tree.
      * @param event

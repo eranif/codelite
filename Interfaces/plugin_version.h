@@ -26,7 +26,8 @@
 #ifndef PLUGIN_VERSION_H
 #define PLUGIN_VERSION_H
 
-// Interface version is calcualted as follows: MAJOR * 1000 + MINOR * 100, e.g. codelite 4.1 => 4100, codelite 5.0 => 5000
+// Interface version is calcualted as follows: MAJOR * 1000 + MINOR * 100, e.g. codelite 4.1 => 4100, codelite 5.0 =>
+// 5000
 #define PLUGIN_INTERFACE_VERSION 6100
 
 #endif // PLUGIN_VERSION_H

@@ -59,20 +59,17 @@ class wxAuiManager;
 class TreeItemInfo
 {
 public:
-    wxTreeItemId  m_item;
-    wxFileName    m_fileName; //< FileName where available (FileView & File Explorer trees)
-    wxString      m_text;     //< Tree item text (all)
-    int           m_itemType; //< For FileView items (FileView only)
-    wxArrayString m_paths;    //< For file explorer which supports multiple selection (File Explorer tree only)
+    wxTreeItemId m_item;
+    wxFileName m_fileName; //< FileName where available (FileView & File Explorer trees)
+    wxString m_text;       //< Tree item text (all)
+    int m_itemType;        //< For FileView items (FileView only)
+    wxArrayString m_paths; //< For file explorer which supports multiple selection (File Explorer tree only)
 };
 
 //---------------------------
 // List of available trees
 //---------------------------
-enum TreeType {
-    TreeFileView = 0,
-    TreeFileExplorer
-};
+enum TreeType { TreeFileView = 0, TreeFileExplorer };
 
 //------------------------------------------------------------------
 // Defines the interface of the manager
@@ -91,12 +88,13 @@ public:
     IManager() {}
     virtual ~IManager() {}
 
-    //return the current editor
+    // return the current editor
     /**
      * @brief return the active editor
-     * @return pointer to the current editor, or NULL incase the active editor is not of type LEditor or no active editor open
+     * @return pointer to the current editor, or NULL incase the active editor is not of type LEditor or no active
+     * editor open
      */
-    virtual IEditor *GetActiveEditor() = 0;
+    virtual IEditor* GetActiveEditor() = 0;
     /**
      * @brief open file and make it the active editor
      * @param fileName the file to open - use absolute path
@@ -104,20 +102,21 @@ public:
      * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
      * @return true if file opened
      */
-    virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
+    virtual bool
+        OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
 
     /**
      * @brief Open file using browsing record
      * @param rec browsing record
      * @return true on success false otherwise
      */
-    virtual bool OpenFile(const BrowseRecord &rec) = 0;
+    virtual bool OpenFile(const BrowseRecord& rec) = 0;
 
     /**
      * @brief return a pointer to the configuration tool
      * @sa IConfigTool
      */
-    virtual IConfigTool *GetConfigTool() = 0;
+    virtual IConfigTool* GetConfigTool() = 0;
 
     /**
      * @brief return TreeItemInfo for the selected tree item
@@ -131,14 +130,14 @@ public:
      * @param type the type of tree
      * @sa TreeType
      */
-    virtual wxTreeCtrl *GetTree(TreeType type) = 0;
+    virtual wxTreeCtrl* GetTree(TreeType type) = 0;
 
     /**
      * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
      * @return pointer to Notebook
      * @sa Notebook
      */
-    virtual Notebook *GetWorkspacePaneNotebook() = 0;
+    virtual Notebook* GetWorkspacePaneNotebook() = 0;
 
     /**
      * @brief return a pointer to the output pane notebook (the one with the 'output' title)
@@ -146,9 +145,14 @@ public:
      * @sa Notebook
      */
     virtual Notebook* GetOutputPaneNotebook() = 0;
-
+    
+    /**
+     * @brief append text to the 'Output' pane in the output view
+     */
+    virtual void AppendOutputText(const wxString& text) = 0;
+    
     virtual wxPanel* GetEditorPaneNotebook() = 0;
-    virtual void AddEditorPage(wxWindow *page, const wxString& name) = 0;
+    virtual void AddEditorPage(wxWindow* page, const wxString& name) = 0;
     virtual wxWindow* GetActivePage() = 0;
     virtual wxWindow* GetPage(size_t page) = 0;
 
@@ -168,7 +172,7 @@ public:
      * @brief add project to the workspace
      * @param path full path to the project to add
      */
-    virtual void AddProject(const wxString & path) = 0;
+    virtual void AddProject(const wxString& path) = 0;
 
     /**
      * @brief return true of a workspace is already open
@@ -180,12 +184,12 @@ public:
      * @return a pointer to the tags manager
      * @sa TagsManager
      */
-    virtual TagsManager *GetTagsManager() = 0;
+    virtual TagsManager* GetTagsManager() = 0;
     /**
      * @brief return a pointer to the workspace manager
      * @sa Workspace
      */
-    virtual Workspace *GetWorkspace() = 0;
+    virtual Workspace* GetWorkspace() = 0;
 
     /**
      * @brief add files to a virtual folder in the project
@@ -193,7 +197,7 @@ public:
      * @param paths an array of files to add
      * @return true on sucesss, false otherwise
      */
-    virtual bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths) = 0;
+    virtual bool AddFilesToVirtualFolder(wxTreeItemId& item, wxArrayString& paths) = 0;
 
     /**
      * @brief add files to a virtual folder in the project
@@ -201,7 +205,7 @@ public:
      * @param paths an array of files to add
      * @return true on sucesss, false otherwise
      */
-    virtual bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths) = 0;
+    virtual bool AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayString& paths) = 0;
 
     /**
      * @brief Add a pair of cpp/h files to the :src/include folders, if these exist
@@ -249,12 +253,12 @@ public:
      * @brief return a pointer to the environment manager
      * @sa EnvironmentConfig
      */
-    virtual EnvironmentConfig *GetEnv() = 0;
+    virtual EnvironmentConfig* GetEnv() = 0;
     /**
      * @brief return a pointer to the job queue manager
      * @return job queue manager
      */
-    virtual JobQueue *GetJobQueue() = 0;
+    virtual JobQueue* GetJobQueue() = 0;
 
     /**
      * @brief return the project execution command as set in the project's settings
@@ -262,12 +266,12 @@ public:
      * @param wd starting dirctory
      * @return the execution command or wxEmptyString if the project does not exist
      */
-    virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd) = 0;
+    virtual wxString GetProjectExecutionCommand(const wxString& projectName, wxString& wd) = 0;
 
     /**
      * @brief return the application
      */
-    virtual wxApp *GetTheApp() = 0;
+    virtual wxApp* GetTheApp() = 0;
 
     /**
      * @brief reload the current workspace, this function does not do anything if a workspace is not opened
@@ -279,12 +283,12 @@ public:
      * @param pluginName plugin to search
      * @return pointer to the plugin or NULL if it is not loaded
      */
-    virtual IPlugin *GetPlugin(const wxString &pluginName) = 0;
+    virtual IPlugin* GetPlugin(const wxString& pluginName) = 0;
 
     /**
      * @brief output window for receiving async cmd events
      */
-    virtual wxEvtHandler *GetOutputWindow() = 0;
+    virtual wxEvtHandler* GetOutputWindow() = 0;
 
     /**
      * @brief save all modified files
@@ -294,7 +298,7 @@ public:
     /**
      * @brief return the keyboard manager
      */
-    virtual IKeyboard *GetKeyboardManager() = 0;
+    virtual IKeyboard* GetKeyboardManager() = 0;
 
     /**
      * @brief return the editor's settings object
@@ -320,7 +324,7 @@ public:
      * @param col the statusbar pane to use
      * @param seconds_to_live how many seconds to display it for; 0 == forever; -1 == use the default
      */
-    virtual void SetStatusMessage(const wxString &msg, int col, int seconds_to_live = wxID_ANY) = 0;
+    virtual void SetStatusMessage(const wxString& msg, int col, int seconds_to_live = wxID_ANY) = 0;
 
     /**
      * @brief start processing commands from the queue
@@ -332,7 +336,7 @@ public:
      * a separated process. The queue will not start processing, until a call to ProcessCommandQueue() is issued
      * @param cmd command to process
      */
-    virtual void PushQueueCommand(const QueueCommand &cmd) = 0;
+    virtual void PushQueueCommand(const QueueCommand& cmd) = 0;
 
     /**
      * @brief stop the current process execution and clear all commands from the queue
@@ -360,51 +364,50 @@ public:
      * @param fullPathFileName file to search
      * @return project name or wxEmptyString if the search failed
      */
-    virtual wxString GetProjectNameByFile( const wxString &fullPathFileName ) = 0;
+    virtual wxString GetProjectNameByFile(const wxString& fullPathFileName) = 0;
 
     /**
      * @brief accessor to singleton object in the application
      */
-    virtual BuildManager *GetBuildManager() = 0;
+    virtual BuildManager* GetBuildManager() = 0;
 
     /**
      * @brief accessor to singleton object in the application
      */
-    virtual BuildSettingsConfig *GetBuildSettingsConfigManager() = 0;
+    virtual BuildSettingsConfig* GetBuildSettingsConfigManager() = 0;
 
     /**
      * @brief return the singleton object of the navigation manager
      */
-    virtual NavMgr *GetNavigationMgr() = 0;
+    virtual NavMgr* GetNavigationMgr() = 0;
 
-    void SetStatusMessage(const wxString &msg) {
-        SetStatusMessage(msg, 0);
-    }
+    void SetStatusMessage(const wxString& msg) { SetStatusMessage(msg, 0); }
 
     /**
      * @brief close the named page in the mainbook
      */
-    virtual bool ClosePage(const wxString &text) = 0;
+    virtual bool ClosePage(const wxString& text) = 0;
 
     /**
      * @brief return named window in mainbook
      */
-    virtual wxWindow *FindPage(const wxString &text) = 0;
+    virtual wxWindow* FindPage(const wxString& text) = 0;
 
     /**
      * @brief add a page to the mainbook
      */
-    virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false) = 0;
+    virtual bool
+        AddPage(wxWindow* win, const wxString& text, const wxBitmap& bmp = wxNullBitmap, bool selected = false) = 0;
 
     /**
      * @brief select a window in mainbook
      */
-    virtual bool SelectPage(wxWindow *win) = 0;
+    virtual bool SelectPage(wxWindow* win) = 0;
 
     /**
      * @brief set the page's title
      */
-    virtual void SetPageTitle(wxWindow* win, const wxString &title) = 0;
+    virtual void SetPageTitle(wxWindow* win, const wxString& title) = 0;
 
     /**
      * @brief set the page's title
@@ -415,7 +418,7 @@ public:
      * @brief open new editor "untitiled"
      * @return pointer to the editor
      */
-    virtual IEditor *NewEditor() = 0;
+    virtual IEditor* NewEditor() = 0;
 
     /**
      * @brief return the default icons loader class
@@ -425,8 +428,8 @@ public:
     /**
      * @brief return the compilation flags for a file in a given project
      */
-    virtual wxArrayString GetProjectCompileFlags(const wxString &projectName, bool isCppFile) = 0;
-    
+    virtual wxArrayString GetProjectCompileFlags(const wxString& projectName, bool isCppFile) = 0;
+
     /**
      * @brief return the selected project item. Note that this is different than
      * returning the *active* project. A selected project, is the project that it is
@@ -438,23 +441,23 @@ public:
      * @brief search the mainbook for an editor representing a given filename
      * return IEditor* or NULL if no match was found
      */
-    virtual IEditor* FindEditor(const wxString &filename) const = 0;
-    
+    virtual IEditor* FindEditor(const wxString& filename) const = 0;
+
     /**
      * @brief enable/disable clang code completion
      */
     virtual void EnableClangCodeCompletion(bool b) = 0;
-    
+
     /**
      * @brief return the number of pages in the main editor
      */
     virtual size_t GetPageCount() const = 0;
-    
+
     /**
      * @brief return list of all open editors
      */
     virtual size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false) = 0;
-    
+
     // ---------------------------------------------
     // Breakpoint management
     // ---------------------------------------------
@@ -462,40 +465,40 @@ public:
      * @brief return a vector of all the current breakpoints set by the user
      */
     virtual size_t GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints) = 0;
-    
+
     /**
      * @brief delete all breakpoints assigned by the user
      */
     virtual void DeleteAllBreakpoints() = 0;
-    
+
     /**
      * @brief set breakpoints (override any existing breakpoints)
      * this function also refreshes the editors markers
      */
     virtual void SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints) = 0;
-    
+
     /**
      * @brief process a standard edit event ( wxID_COPY, wxID_PASTE etc)
      * @param e the event to process
      * @param editor the editor
      */
     virtual void ProcessEditEvent(wxCommandEvent& e, IEditor* editor) = 0;
-    
+
     // ----------------------------------------------
     // Perspective management
     // ----------------------------------------------
-    
+
     /**
      * @brief load perspective by name. If no such perspective exists
      * this function does nothing
      */
-    virtual void LoadPerspective(const wxString &perspectiveName)  = 0;
-    
+    virtual void LoadPerspective(const wxString& perspectiveName) = 0;
+
     /**
      * @brief Save the current perspective by name
      * this function also makes sure that the 'Perspective' menu is updated
      */
-    virtual void SavePerspective(const wxString &perspectiveName) = 0;
+    virtual void SavePerspective(const wxString& perspectiveName) = 0;
 };
 
-#endif //IMANAGER_H
+#endif // IMANAGER_H

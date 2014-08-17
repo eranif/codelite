@@ -529,7 +529,7 @@ bool PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::Get(
 NavMgr* PluginManager::GetNavigationMgr() { return NavMgr::Get(); }
 
 void
-PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
+    PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
     for(; iter != m_plugins.end(); iter++) {
@@ -537,8 +537,9 @@ PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& proj
     }
 }
 
-void
-PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
+void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book,
+                                             const wxString& projectName,
+                                             const wxString& configName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
     for(; iter != m_plugins.end(); iter++) {
@@ -733,4 +734,9 @@ void PluginManager::ProcessEditEvent(wxCommandEvent& e, IEditor* editor)
     if(lEditor) {
         lEditor->OnMenuCommand(e);
     }
+}
+
+void PluginManager::AppendOutputText(const wxString& text) 
+{
+    clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(text);
 }

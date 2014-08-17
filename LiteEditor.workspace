@@ -126,7 +126,7 @@
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -165,7 +165,7 @@
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>

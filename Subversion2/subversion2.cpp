@@ -59,6 +59,7 @@
 #include <wx/fileconf.h>
 #include <wx/msgdlg.h>
 #include "cl_standard_paths.h"
+#include <wx/regex.h>
 
 static Subversion2* thePlugin = NULL;
 
@@ -149,6 +150,7 @@ Subversion2::Subversion2(IManager* manager)
     , m_blameCommand(this)
     , m_svnClientVersion(0.0)
     , m_skipRemoveFilesDlg(false)
+    , m_clientVersion(1700) // 1.7.0 (1*1000 + 7*100 + 0)
 {
     m_longName = _("Subversion plugin for codelite2.0 based on the svn command line tool");
     m_shortName = wxT("Subversion2");
@@ -492,6 +494,7 @@ void Subversion2::DoInitialize()
     ProcUtils::ExecuteCommand(command, output);
 
     DoGetSvnVersion();
+    DoGetSvnClientVersion();
     RecreateLocalSvnConfigFile();
 }
 
@@ -586,8 +589,10 @@ void Subversion2::OnUpdate(wxCommandEvent& event)
         return;
     }
     bool nonInteractive = GetNonInteractiveMode(event);
-    command << GetSvnExeName(nonInteractive) << loginString << wxT(" update --force-interactive ")
-            << DoGetFileExplorerFilesAsString();
+    command << GetSvnExeName(nonInteractive) << loginString << wxT(" update ");
+    AddCommandLineOption(command, kOpt_ForceInteractive);
+    command << DoGetFileExplorerFilesAsString();
+    
     // Execute the command, but with console visible
     GetConsole()->Execute(
         command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this, event.GetId(), this), true, true);
@@ -628,19 +633,18 @@ void Subversion2::OnPatch(wxCommandEvent& event) { Patch(false, DoGetFileExplore
 wxString Subversion2::GetSvnExeName(bool nonInteractive)
 {
     SvnSettingsData ssd = GetSettings();
-    wxString executeable;
-    bool encloseQuotations = false;
+
     wxString exeName = ssd.GetExecutable();
     exeName.Trim().Trim(false);
-    encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
-    if(encloseQuotations) {
-        executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" ");
-    } else {
-        executeable << ssd.GetExecutable() << wxT(" ");
-    }
+    ::WrapWithQuotes(exeName);
 
-    executeable << wxT(" --config-dir \"") << GetUserConfigDir() << wxT("\" ");
-    return executeable;
+    exeName << " --config-dir";
+
+    wxString configDir = GetUserConfigDir();
+    ::WrapWithQuotes(configDir);
+
+    exeName << " " << configDir;
+    return exeName;
 }
 
 wxString Subversion2::DoGetFileExplorerFilesAsString()
@@ -768,8 +772,7 @@ void Subversion2::Patch(bool dryRun, const wxString& workingDirectory, wxEvtHand
             // execute the command
             wxString command;
             command << wxT("patch -l -p0 ");
-            if(dryRun)
-                command << wxT(" --dry-run  ");
+            if(dryRun) command << wxT(" --dry-run  ");
             command << wxT(" -i \"") << patchFile << wxT("\"");
 
             SvnCommandHandler* handler(NULL);
@@ -910,8 +913,7 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
     wxString command;
     wxString loginString;
 
-    if(files.GetCount() == 0)
-        return;
+    if(files.GetCount() == 0) return;
 
     /*bool nonInteractive = unused var commented out*/
     GetNonInteractiveMode(event);
@@ -919,8 +921,7 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
         return;
     }
 
-    if(files.GetCount() != 1)
-        return;
+    if(files.GetCount() != 1) return;
 
     GetConsole()->EnsureVisible();
     command << GetSvnExeName() << wxT(" blame ") << loginString;
@@ -934,14 +935,12 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
 
 void Subversion2::OnGetCompileLine(clBuildEvent& event)
 {
-    if(!(GetSettings().GetFlags() & SvnExposeRevisionMacro))
-        return;
+    if(!(GetSettings().GetFlags() & SvnExposeRevisionMacro)) return;
 
     wxString macroName(GetSettings().GetRevisionMacroName());
     macroName.Trim().Trim(false);
 
-    if(macroName.IsEmpty())
-        return;
+    if(macroName.IsEmpty()) return;
 
     wxString workingDirectory = m_subversionView->GetRootDir();
     workingDirectory.Trim().Trim(false);
@@ -990,8 +989,7 @@ bool Subversion2::IsPathUnderSvn(const wxString& path)
 {
     SvnInfo svnInfo;
     DoGetSvnInfoSync(svnInfo, path);
-    if(svnInfo.m_url.IsEmpty())
-        return false;
+    if(svnInfo.m_url.IsEmpty()) return false;
     return true;
     /*
     wxFileName fn(path);
@@ -1088,8 +1086,7 @@ void Subversion2::DoLockFile(const wxString& workingDirectory,
     wxString command;
     wxString loginString;
 
-    if(fullpaths.empty())
-        return;
+    if(fullpaths.empty()) return;
 
     if(LoginIfNeeded(event, workingDirectory, loginString) == false) {
         return;
@@ -1170,8 +1167,7 @@ void Subversion2::OnRename(wxCommandEvent& event)
     wxFileName oldname(DoGetFileExplorerItemFullPath());
 
     wxString newname = wxGetTextFromUser(_("New name:"), _("Svn rename..."), oldname.GetFullName());
-    if(newname.IsEmpty() || newname == oldname.GetFullName())
-        return;
+    if(newname.IsEmpty() || newname == oldname.GetFullName()) return;
 
     DoRename(DoGetFileExplorerItemPath(), oldname.GetFullName(), newname, event);
 }
@@ -1188,8 +1184,7 @@ void Subversion2::DoRename(const wxString& workingDirectory,
         return;
     }
 
-    if(oldname.IsEmpty() || newname.IsEmpty() || workingDirectory.IsEmpty())
-        return;
+    if(oldname.IsEmpty() || newname.IsEmpty() || workingDirectory.IsEmpty()) return;
 
     bool nonInteractive = GetNonInteractiveMode(event);
     command << GetSvnExeName(nonInteractive) << loginString << wxT(" rename --force ") << oldname << wxT(" ")
@@ -1218,8 +1213,7 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
     SvnCommitDialog dlg(EventNotifier::Get()->TopFrame(), files, svnInfo.m_sourceUrl, this, workingDirectory);
     if(dlg.ShowModal() == wxID_OK) {
         wxArrayString actualFiles = dlg.GetPaths();
-        if(actualFiles.IsEmpty())
-            return;
+        if(actualFiles.IsEmpty()) return;
 
         for(size_t i = 0; i < actualFiles.GetCount(); i++) {
             command << wxT("\"") << actualFiles.Item(i) << wxT("\" ");
@@ -1579,4 +1573,47 @@ void Subversion2::OnRevertToRevision(wxCommandEvent& event)
             << DoGetFileExplorerFilesAsString();
     GetConsole()->Execute(
         command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
+}
+
+void Subversion2::DoGetSvnClientVersion()
+{
+    static wxRegEx reSvnClient("svn, version ([0-9]+)\\.([0-9]+)\\.([0-9]+)");
+    wxString svnVersionCommand;
+    svnVersionCommand << GetSvnExeName() << " --version";
+
+#ifndef __WXMSW__
+    // Hide stderr
+    svnVersionCommand << " 2> /dev/null";
+#endif
+
+    wxString versionOutput = ProcUtils::SafeExecuteCommand(svnVersionCommand);
+    if(versionOutput.IsEmpty()) return;
+
+    versionOutput = versionOutput.BeforeFirst('\n');
+    if(reSvnClient.IsValid() && reSvnClient.Matches(versionOutput)) {
+        long major, minor, patch;
+        wxString sMajor = reSvnClient.GetMatch(versionOutput, 1);
+        wxString sMinor = reSvnClient.GetMatch(versionOutput, 2);
+        wxString sPatch = reSvnClient.GetMatch(versionOutput, 3);
+
+        sMajor.ToCLong(&major);
+        sMinor.ToCLong(&minor);
+        sPatch.ToCLong(&patch);
+
+        m_clientVersion = major * 1000 + minor * 100 + patch;
+
+        GetConsole()->AppendText(wxString() << "-- Svn client version: " << m_clientVersion << "\n");
+        GetConsole()->AppendText(wxString() << "-- " << versionOutput << "\n");
+    }
+}
+
+void Subversion2::AddCommandLineOption(wxString& command, Subversion2::eCommandLineOption opt)
+{
+    switch(opt) {
+    case kOpt_ForceInteractive:
+        if(m_clientVersion >= 1800) {
+            command << " --force-interactive ";
+        }
+        break;
+    }
 }

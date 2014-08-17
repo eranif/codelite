@@ -676,7 +676,8 @@ void SubversionView::OnUpdate(wxCommandEvent& event)
         return;
     }
     bool nonInteractive = m_plugin->GetNonInteractiveMode(event);
-    command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" update --force-interactive ");
+    command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" update ");
+    m_plugin->AddCommandLineOption(command, Subversion2::kOpt_ForceInteractive);
 
     if(m_selectionInfo.m_selectionType != SvnTreeData::SvnNodeTypeRoot) {
         // Concatenate list of files to be updated

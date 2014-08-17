@@ -135,7 +135,7 @@ void SvnVersionHandler::Process(const wxString& output)
         double version(0.0);
         strVersion.ToDouble(&version);
 
-        GetPlugin()->GetConsole()->AppendText(wxString::Format(wxT("== Svn client version: %s ==\n"), strVersion.c_str()));
+        GetPlugin()->GetConsole()->AppendText(wxString::Format(wxT("-- Svn client version: %s\n"), strVersion.c_str()));
         GetPlugin()->SetSvnClientVersion(version);
     }
 }

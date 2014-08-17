@@ -248,7 +248,7 @@ void MemCheckOutputView::AddTree(const wxDataViewItem& parentItem, MemCheckError
         flags |= MC_IT_OMIT_DUPLICATIONS;
     if(m_plugin->GetSettings()->GetOmitSuppressed())
         flags |= MC_IT_OMIT_SUPPRESSED;
-    
+
     wxBitmap bmpLocation = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_location"));
     MemCheckIterTools::LocationListIterator it = MemCheckIterTools::Factory(error.locations, m_workspacePath, flags);
     for(; it != error.locations.end(); ++it) {
@@ -256,10 +256,9 @@ void MemCheckOutputView::AddTree(const wxDataViewItem& parentItem, MemCheckError
         cols.clear();
         cols.push_back(variantBitmap);
         cols.push_back(wxVariant(false));
-        cols.push_back(MemCheckDVCErrorsModel::CreateIconTextVariant(
-            location.func, bmpLocation));
+        cols.push_back(MemCheckDVCErrorsModel::CreateIconTextVariant(location.func, bmpLocation));
         cols.push_back(wxVariant(location.getFile(m_workspacePath)));
-        
+
         wxString strLine;
         strLine << location.line;
         cols.push_back(strLine);
@@ -1041,3 +1040,5 @@ void MemCheckOutputView::Clear()
     m_dataViewCtrlErrorsModel->Clear();
     m_listCtrlErrors->DeleteAllItems();
 }
+void MemCheckOutputView::OnStop(wxCommandEvent& event) { m_plugin->StopProcess(); }
+void MemCheckOutputView::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->IsRunning()); }

@@ -157,6 +157,8 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     
     m_auibar223->AddTool(XRCID("memcheck_import"), _("Load MemCheck log from file."), wxXmlResource::Get()->LoadBitmap(wxT("document_import")), wxNullBitmap, wxITEM_NORMAL, _("Load MemCheck log from file."), wxT(""), NULL);
     
+    m_auibar223->AddTool(ID_TOOL_STOP_PROCESS, _("Stop Process"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Stop Process"), _("Stop Process"), NULL);
+    
     m_auibar223->AddSeparator();
     
     m_auibar223->AddTool(XRCID("memcheck_expand_all"), _("Expand all"), wxXmlResource::Get()->LoadBitmap(wxT("expand")), wxNullBitmap, wxITEM_NORMAL, _("Expand all"), wxT(""), NULL);
@@ -353,6 +355,8 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     }
     Centre(wxBOTH);
     // Connect events
+    this->Connect(ID_TOOL_STOP_PROCESS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnStop), NULL, this);
+    this->Connect(ID_TOOL_STOP_PROCESS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnStopUI), NULL, this);
     this->Connect(XRCID("memcheck_expand_all"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnExpandAll), NULL, this);
     this->Connect(XRCID("memcheck_expand_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
     this->Connect(XRCID("memcheck_next"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnJumpToNext), NULL, this);
@@ -404,6 +408,8 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
 
 MemCheckOutputViewBase::~MemCheckOutputViewBase()
 {
+    this->Disconnect(ID_TOOL_STOP_PROCESS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnStop), NULL, this);
+    this->Disconnect(ID_TOOL_STOP_PROCESS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnStopUI), NULL, this);
     this->Disconnect(XRCID("memcheck_expand_all"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnExpandAll), NULL, this);
     this->Disconnect(XRCID("memcheck_expand_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
     this->Disconnect(XRCID("memcheck_next"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnJumpToNext), NULL, this);

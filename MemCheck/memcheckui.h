@@ -85,6 +85,10 @@ public:
 
 class MemCheckOutputViewBase : public wxPanel
 {
+public:
+    enum {
+        ID_TOOL_STOP_PROCESS = 1001,
+    };
 protected:
     wxAuiToolBar* m_auibar223;
     wxNotebook* m_notebookOutputView;
@@ -118,6 +122,8 @@ protected:
     wxButton* m_buttonSuppressSelected;
 
 protected:
+    virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStopUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnExpandAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMemCheckUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnJumpToNext(wxCommandEvent& event) { event.Skip(); }

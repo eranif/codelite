@@ -22,6 +22,8 @@
 #include "memcheckui.h"
 #include "memcheck.h"
 #include "memchecksettings.h"
+#include "asyncprocess.h"
+#include "processreaderthread.h"
 
 static MemCheckPlugin* thePlugin = NULL;
 
@@ -46,10 +48,15 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 
 extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
+BEGIN_EVENT_TABLE(MemCheckPlugin, wxEvtHandler)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  MemCheckPlugin::OnProcessOutput)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, MemCheckPlugin::OnProcessTerminated)
+END_EVENT_TABLE()
+
 MemCheckPlugin::MemCheckPlugin(IManager* manager)
     : IPlugin(manager)
     , m_memcheckProcessor(NULL)
-    , m_checkProcess(NULL)
+    , m_process(NULL)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin constructor"));
     m_longName = wxT("Detects memory management problems. Uses Valgrind - memcheck skin.");
@@ -135,7 +142,7 @@ MemCheckPlugin::~MemCheckPlugin()
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin destroyed"));
     wxDELETE(m_memcheckProcessor);
     wxDELETE(m_settings);
-    wxDELETE(m_checkProcess);
+    wxDELETE(m_process);
 }
 
 clToolBar* MemCheckPlugin::CreateToolBar(wxWindow* parent)
@@ -208,12 +215,12 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
         // if(!menu->FindItem(XRCID("memcheck_MenuTypeEditor"))) {
         //     wxMenu* subMenu = new wxMenu();
         //     wxMenuItem* item(NULL);
-        // 
+        //
         //     item = new wxMenuItem(
         //         subMenu, XRCID("memcheck_check_popup_editor"), wxT("&Run MemCheck"), wxEmptyString, wxITEM_NORMAL);
         //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
         //     subMenu->Append(item);
-        // 
+        //
         //     item = new wxMenuItem(subMenu,
         //                           XRCID("memcheck_import"),
         //                           wxT("&Load MemCheck log from file..."),
@@ -221,14 +228,15 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
         //                           wxITEM_NORMAL);
         //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import")));
         //     subMenu->Append(item);
-        // 
+        //
         //     subMenu->AppendSeparator();
-        // 
+        //
         //     item =
-        //         new wxMenuItem(subMenu, XRCID("memcheck_settings"), wxT("&Settings..."), wxEmptyString, wxITEM_NORMAL);
+        //         new wxMenuItem(subMenu, XRCID("memcheck_settings"), wxT("&Settings..."), wxEmptyString,
+        //         wxITEM_NORMAL);
         //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_settings")));
         //     subMenu->Append(item);
-        // 
+        //
         //     item = new wxMenuItem(
         //         menu, XRCID("memcheck_MenuTypeEditor"), wxT("MemCheck"), wxEmptyString, wxITEM_NORMAL, subMenu);
         //     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
@@ -390,7 +398,7 @@ void MemCheckPlugin::OnWorkspaceClosed(wxCommandEvent& event)
 
 bool MemCheckPlugin::IsReady(wxUpdateUIEvent& event)
 {
-    bool ready = !m_mgr->IsBuildInProgress() && !(m_checkProcess && m_checkProcess->IsBusy());
+    bool ready = !m_mgr->IsBuildInProgress() && m_process == NULL;
     int id = event.GetId();
     if(id == XRCID("memcheck_check_active_project")) {
         ready &= !m_mgr->GetWorkspace()->GetActiveProjectName().IsEmpty();
@@ -404,7 +412,7 @@ void MemCheckPlugin::ApplySettings(bool loadLastErrors)
     m_memcheckProcessor = new ValgrindMemcheckProcessor(GetSettings());
     if(loadLastErrors) {
         m_outputView->LoadErrors();
-        
+
     } else {
         m_outputView->Clear();
     }
@@ -449,7 +457,7 @@ void MemCheckPlugin::OnCheckPopupEditor(wxCommandEvent& event)
 
 void MemCheckPlugin::CheckProject(const wxString& projectName)
 {
-    if(m_checkProcess && m_checkProcess->IsBusy())
+    if(m_process)
         return; // a process is already running
 
     wxString errMsg;
@@ -459,39 +467,11 @@ void MemCheckPlugin::CheckProject(const wxString& projectName)
     wxString wd;
     wxString command = m_mgr->GetProjectExecutionCommand(projectName, wd);
 
-    m_checkProcess = new AsyncExeCmd(m_mgr->GetOutputWindow());
-
     DirSaver ds;
     EnvSetter envGuard(m_mgr->GetEnv());
     wxSetWorkingDirectory(path);
     wxSetWorkingDirectory(wd);
-
-    m_checkProcess->Execute(m_memcheckProcessor->GetExecutionCommand(command), true, true);
-
-    if(m_checkProcess->GetProcess()) {
-        m_checkProcess->GetProcess()->Connect(
-            wxEVT_END_PROCESS, wxProcessEventHandler(MemCheckPlugin::OnCheckProcessEnd), NULL, this);
-    }
-}
-
-void MemCheckPlugin::OnCheckProcessEnd(wxProcessEvent& event)
-{
-    // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::OnCheckProcessEnd()"));
-
-    m_checkProcess->ProcessEnd(event);
-    m_checkProcess->GetProcess()->Disconnect(
-        wxEVT_END_PROCESS, wxProcessEventHandler(MemCheckPlugin::OnCheckProcessEnd), NULL, this);
-    wxDELETE(m_checkProcess);
-
-    if(event.GetExitCode() == 0) {
-        wxWindowDisabler disableAll;
-        wxBusyInfo wait(wxT(BUSY_MESSAGE));
-        m_mgr->GetTheApp()->Yield();
-
-        m_memcheckProcessor->Process();
-        m_outputView->LoadErrors();
-        SwitchToMyPage();
-    }
+    m_process = ::CreateAsyncProcess(this, m_memcheckProcessor->GetExecutionCommand(command));
 }
 
 void MemCheckPlugin::OnImportLog(wxCommandEvent& event)
@@ -530,4 +510,33 @@ void MemCheckPlugin::OnMemCheckUI(wxUpdateUIEvent& event)
 {
     CHECK_CL_SHUTDOWN()
     event.Enable(IsReady(event));
+}
+
+void MemCheckPlugin::StopProcess()
+{
+    if(m_process) {
+        m_process->Terminate();
+    }
+}
+
+void MemCheckPlugin::OnProcessOutput(wxCommandEvent& event)
+{
+    ProcessEventData *ped = (ProcessEventData*)event.GetClientData();
+    wxDELETE(ped);
+    // ??
+}
+
+void MemCheckPlugin::OnProcessTerminated(wxCommandEvent& event)
+{
+    ProcessEventData *ped = (ProcessEventData*)event.GetClientData();
+    wxDELETE(ped);
+    wxDELETE(m_process);
+    
+    wxWindowDisabler disableAll;
+    wxBusyInfo wait(wxT(BUSY_MESSAGE));
+    m_mgr->GetTheApp()->Yield();
+
+    m_memcheckProcessor->Process();
+    m_outputView->LoadErrors();
+    SwitchToMyPage();
 }

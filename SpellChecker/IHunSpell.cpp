@@ -56,7 +56,7 @@
 // ------------------------------------------------------------
 IHunSpell::IHunSpell()
 {
-    m_pSpell  = NULL;
+    m_pSpell = NULL;
     m_pPlugIn = NULL;
     m_dictionary.Empty();
     m_dicPath.Empty();
@@ -69,239 +69,219 @@ IHunSpell::~IHunSpell()
 {
     CloseEngine();
 
-    if( m_pSpellDlg != NULL )
-        m_pSpellDlg->Destroy();
+    if(m_pSpellDlg != NULL) m_pSpellDlg->Destroy();
 }
 // ------------------------------------------------------------
 bool IHunSpell::InitEngine()
 {
     // check if we are already initialized
-    if( m_pSpell != NULL )
-        return true;
+    if(m_pSpell != NULL) return true;
 
     // check base path
-    if( !m_dicPath.IsEmpty() && !wxEndsWithPathSeparator( m_dicPath ) )
-        m_dicPath += wxFILE_SEP_PATH;
+    if(!m_dicPath.IsEmpty() && !wxEndsWithPathSeparator(m_dicPath)) m_dicPath += wxFILE_SEP_PATH;
     // load user dict
-    LoadUserDict( m_userDictPath + s_userDict );
+    LoadUserDict(m_userDictPath + s_userDict);
     // create dictionary path
-    wxString dict = m_dicPath + m_dictionary + wxT( ".aff" );
-    wxString aff  = m_dicPath + m_dictionary + wxT( ".dic" );
+    wxString dict = m_dicPath + m_dictionary + wxT(".aff");
+    wxString aff = m_dicPath + m_dictionary + wxT(".dic");
 
-    wxCharBuffer affBuffer =  dict.mb_str();
-    wxCharBuffer dicBuffer =  aff.mb_str();
+    wxCharBuffer affBuffer = dict.mb_str();
+    wxCharBuffer dicBuffer = aff.mb_str();
 
-    wxFileName fna( aff );
+    wxFileName fna(aff);
 
-    if( !fna.FileExists() ) {
-        ::wxMessageBox( _( "Could not find aff file!" ) );
+    if(!fna.FileExists()) {
+        ::wxMessageBox(_("Could not find aff file!"));
         return false;
     }
-    wxFileName fnd( dict );
+    wxFileName fnd(dict);
 
-    if( !fnd.FileExists() ) {
-        ::wxMessageBox( _( "Could not find dictionary file!" ) );
+    if(!fnd.FileExists()) {
+        ::wxMessageBox(_("Could not find dictionary file!"));
         return false;
     }
     // so far ok, init engine
-    m_pSpell = Hunspell_create( affBuffer, dicBuffer );
+    m_pSpell = Hunspell_create(affBuffer, dicBuffer);
 
     return true;
 
-    ::wxMessageBox( _( "Could not initialize spelling engine!" ) );
+    ::wxMessageBox(_("Could not initialize spelling engine!"));
     return false;
 }
 // ------------------------------------------------------------
 void IHunSpell::CloseEngine()
 {
-    if( m_pSpell != NULL ) {
-        Hunspell_destroy( m_pSpell );
-        SaveUserDict( m_userDictPath + s_userDict );
+    if(m_pSpell != NULL) {
+        Hunspell_destroy(m_pSpell);
+        SaveUserDict(m_userDictPath + s_userDict);
     }
     m_pSpell = NULL;
 }
 // ------------------------------------------------------------
-int IHunSpell::CheckWord( const wxString& word )
-{
-    return Hunspell_spell( m_pSpell, word );
-}
+int IHunSpell::CheckWord(const wxString& word) { return Hunspell_spell(m_pSpell, word); }
 // ------------------------------------------------------------
-wxArrayString IHunSpell::GetSuggestions( const wxString& misspelled )
+wxArrayString IHunSpell::GetSuggestions(const wxString& misspelled)
 {
     wxArrayString suggestions;
     suggestions.Empty();
 
-    if( m_pSpell ) {
+    if(m_pSpell) {
         char** wlst;
 
         wxCharBuffer misspelledBuffer = misspelled.mb_str();
-        int ns = Hunspell_suggest( m_pSpell, &wlst, misspelledBuffer );
+        int ns = Hunspell_suggest(m_pSpell, &wlst, misspelledBuffer);
 
-        for( int i = 0; i < ns; i++ )
-            suggestions.Add( wxString( wlst[i] ) );
-        Hunspell_free_list( m_pSpell, &wlst, ns );
+        for(int i = 0; i < ns; i++)
+            suggestions.Add(wxString(wlst[i]));
+        Hunspell_free_list(m_pSpell, &wlst, ns);
     }
 
     return suggestions;
 }
 // ------------------------------------------------------------
-void IHunSpell::CheckCppSpelling( const wxString& check )
+void IHunSpell::CheckCppSpelling(const wxString& check)
 {
     IEditor* pEditor = m_pPlugIn->GetEditor();
 
-    if( !pEditor )
-        return;
+    if(!pEditor) return;
 
-    int      offset = 0;
-    int      retVal = kNoSpellingError;
-    wxString text   = check + wxT( " " );
+    int offset = 0;
+    int retVal = kNoSpellingError;
+    wxString text = check + wxT(" ");
     m_parseValues.clear();
     wxStyledTextCtrl* pTextCtrl = pEditor->GetSTC();
 
     // check if engine is initialized, if not do so
-    if( !InitEngine() )
-        return;
+    if(!InitEngine()) return;
 
     // check for dialog and create if necessary
-    if( !m_pPlugIn->GetCheckContinuous() ) {
-        if( m_pSpellDlg == NULL ) {
-            m_pSpellDlg = new CorrectSpellingDlg( NULL );
+    if(!m_pPlugIn->GetCheckContinuous()) {
+        if(m_pSpellDlg == NULL) {
+            m_pSpellDlg = new CorrectSpellingDlg(NULL);
         }
 
-        m_pSpellDlg->SetPHs( this );
+        m_pSpellDlg->SetPHs(this);
     }
     posLen query;
 
-    for( int i = 0; i  < pEditor->GetLength(); i++ ) {
-        switch( pTextCtrl->GetStyleAt( i ) ) {
+    for(int i = 0; i < pEditor->GetLength(); i++) {
+        switch(pTextCtrl->GetStyleAt(i)) {
         case SCT_STRING: {
             query.first = i;
 
-            while( pTextCtrl->GetStyleAt( i++ ) == SCT_STRING ) ;
+            while(pTextCtrl->GetStyleAt(i++) == SCT_STRING)
+                ;
             query.second = i;
 
-            if( IsScannerType( kString ) )
-                m_parseValues.push_back( make_pair( query, kString ) );
-        }
-        break;
+            if(IsScannerType(kString)) m_parseValues.push_back(make_pair(query, kString));
+        } break;
         case SCT_CPP_COM: {
             query.first = i;
 
-            while( pTextCtrl->GetStyleAt( i++ ) == SCT_CPP_COM ) ;
+            while(pTextCtrl->GetStyleAt(i++) == SCT_CPP_COM)
+                ;
             query.second = i;
 
-            if( IsScannerType( kCppComment ) )
-                m_parseValues.push_back( make_pair( query, kCppComment ) );
-        }
-        break;
+            if(IsScannerType(kCppComment)) m_parseValues.push_back(make_pair(query, kCppComment));
+        } break;
         case SCT_C_COM: {
             query.first = i;
 
-            while( pTextCtrl->GetStyleAt( i++ ) == SCT_C_COM ) ;
+            while(pTextCtrl->GetStyleAt(i++) == SCT_C_COM)
+                ;
             query.second = i;
 
-            if( IsScannerType( kCComment ) )
-                m_parseValues.push_back( make_pair( query, kCComment ) );
-        }
-        break;
+            if(IsScannerType(kCComment)) m_parseValues.push_back(make_pair(query, kCComment));
+        } break;
         case SCT_DOX_1: {
             query.first = i;
 
-            while( pTextCtrl->GetStyleAt( i++ ) == SCT_DOX_1 ) ;
+            while(pTextCtrl->GetStyleAt(i++) == SCT_DOX_1)
+                ;
             query.second = i;
 
-            if( IsScannerType( kDox1 ) )
-                m_parseValues.push_back( make_pair( query, kDox1 ) );
-        }
-        break;
+            if(IsScannerType(kDox1)) m_parseValues.push_back(make_pair(query, kDox1));
+        } break;
         case SCT_DOX_2: {
             query.first = i;
 
-            while( pTextCtrl->GetStyleAt( i++ ) == SCT_DOX_2 ) ;
+            while(pTextCtrl->GetStyleAt(i++) == SCT_DOX_2)
+                ;
             query.second = i;
 
-            if( IsScannerType( kDox2 ) )
-                m_parseValues.push_back( make_pair( query, kDox2 ) );
-        }
-        break;
+            if(IsScannerType(kDox2)) m_parseValues.push_back(make_pair(query, kDox2));
+        } break;
         }
     }
     int errors = 0;
 
-    if( !m_pPlugIn->GetCheckContinuous() ) {
-        retVal = CheckCppType( pEditor );
+    if(!m_pPlugIn->GetCheckContinuous()) {
+        retVal = CheckCppType(pEditor);
 
-        if( errors == 0 && retVal != kSpellingCanceled )
-            ::wxMessageBox( _( "No spelling errors found!" ) );
+        if(errors == 0 && retVal != kSpellingCanceled) ::wxMessageBox(_("No spelling errors found!"));
     } else
-        retVal = MarkErrors( pEditor );
+        retVal = MarkErrors(pEditor);
 }
 // ------------------------------------------------------------
-void IHunSpell::CheckSpelling( const wxString& check )
+void IHunSpell::CheckSpelling(const wxString& check)
 {
     IEditor* pEditor = m_pPlugIn->GetEditor();
 
-    if( !pEditor )
-        return;
+    if(!pEditor) return;
 
-    int      offset = 0;
-    bool     error  = false;
-    wxString text   = check + wxT( " " );
+    int offset = 0;
+    bool error = false;
+    wxString text = check + wxT(" ");
 
     // check if engine is initialized, if not do so
-    if( !InitEngine() )
-        return;
+    if(!InitEngine()) return;
 
     // check for dialog and create if necessary
-    if( m_pSpellDlg == NULL ) {
-        m_pSpellDlg = new CorrectSpellingDlg( NULL );
+    if(m_pSpellDlg == NULL) {
+        m_pSpellDlg = new CorrectSpellingDlg(NULL);
     }
-    m_pSpellDlg->SetPHs( this );
-    wxStringTokenizer tkz( text, s_defDelimiters );
+    m_pSpellDlg->SetPHs(this);
+    wxStringTokenizer tkz(text, s_defDelimiters);
 
-    while( tkz.HasMoreTokens() ) {
+    while(tkz.HasMoreTokens()) {
         wxString token = tkz.GetNextToken();
-        int      pos   = tkz.GetPosition() - token.Len() - 1;
+        int pos = tkz.GetPosition() - token.Len() - 1;
         pos += offset;
 
         // ignore token shorter then MIN_TOKEN_LEN
-        if( token.Len() <= MIN_TOKEN_LEN )
-            continue;
+        if(token.Len() <= MIN_TOKEN_LEN) continue;
 
         // process token
-        if( !CheckWord( token ) ) {
+        if(!CheckWord(token)) {
             // look in ignore list
-            if( m_ignoreList.Index( token ) != wxNOT_FOUND )
-                continue;
+            if(m_ignoreList.Index(token) != wxNOT_FOUND) continue;
 
             // look in user list
-            if( m_userDict.Index( token ) != wxNOT_FOUND )
-                continue;
-            pEditor->SetUserIndicator( pos, token.Len() );
+            if(m_userDict.Index(token) != wxNOT_FOUND) continue;
+            pEditor->SetUserIndicator(pos, token.Len());
 
-            if( !m_pPlugIn->GetCheckContinuous() ) {
-                pEditor->SetCaretAt( pos );
-                pEditor->SelectText( pos, token.Len() );
+            if(!m_pPlugIn->GetCheckContinuous()) {
+                pEditor->SetCaretAt(pos);
+                pEditor->SelectText(pos, token.Len());
                 // show correct spelling dialog
                 error = true;
-                m_pSpellDlg->SetMisspelled( token );
-                m_pSpellDlg->SetSuggestions( GetSuggestions( token ) );
+                m_pSpellDlg->SetMisspelled(token);
+                m_pSpellDlg->SetSuggestions(GetSuggestions(token));
                 int ret = m_pSpellDlg->ShowModal();
 
-                switch( ret ) {
+                switch(ret) {
                 case SC_CHANGE: {
                     // correct spelling
                     wxString replace = m_pSpellDlg->GetMisspelled();
                     offset += replace.Len() - token.Len();
-                    text.replace( pos, token.Len(), replace );
-                    pEditor->ReplaceSelection( replace );
-                }
-                break;
+                    text.replace(pos, token.Len(), replace);
+                    pEditor->ReplaceSelection(replace);
+                } break;
                 case SC_IGNORE:
-                    AddWordToIgnoreList( token );
+                    AddWordToIgnoreList(token);
                     break;
                 case SC_ADD:
-                    AddWordToUserDict( token );
+                    AddWordToUserDict(token);
                     break;
                 default: {
                     pEditor->ClearUserIndicators();
@@ -312,12 +292,11 @@ void IHunSpell::CheckSpelling( const wxString& check )
         }
     }
 
-    if( !m_pPlugIn->GetCheckContinuous() ) {
+    if(!m_pPlugIn->GetCheckContinuous()) {
         // clean up
         pEditor->ClearUserIndicators();
 
-        if( !error )
-            ::wxMessageBox( _( "No spelling errors found!" ) );
+        if(!error) ::wxMessageBox(_("No spelling errors found!"));
     }
 }
 // ------------------------------------------------------------
@@ -325,66 +304,58 @@ void IHunSpell::CheckSpelling( const wxString& check )
 // ------------------------------------------------------------
 wxString IHunSpell::GetCharacterEncoding()
 {
-    if( m_pSpell == NULL )
-        return wxEmptyString;
+    if(m_pSpell == NULL) return wxEmptyString;
 
-    wxString encoding( wxConvUTF8.cMB2WC( Hunspell_get_dic_encoding( m_pSpell ) ), *wxConvCurrent );
+    wxString encoding(wxConvUTF8.cMB2WC(Hunspell_get_dic_encoding(m_pSpell)), *wxConvCurrent);
     return encoding;
 }
 
 // ------------------------------------------------------------
-void IHunSpell::AddWordToIgnoreList( const wxString& word )
+void IHunSpell::AddWordToIgnoreList(const wxString& word)
 {
-    if(word.IsEmpty())
-        return;
+    if(word.IsEmpty()) return;
 
-    if( m_ignoreList.Index( word ) == wxNOT_FOUND )
-        m_ignoreList.Add( word );
+    if(m_ignoreList.Index(word) == wxNOT_FOUND) m_ignoreList.Add(word);
 }
 // ------------------------------------------------------------
-void IHunSpell::AddWordToUserDict( const wxString& word )
+void IHunSpell::AddWordToUserDict(const wxString& word)
 {
-    if(word.IsEmpty())
-        return;
+    if(word.IsEmpty()) return;
 
-    if( m_userDict.Index( word ) == wxNOT_FOUND )
-        m_userDict.Add( word );
+    if(m_userDict.Index(word) == wxNOT_FOUND) m_userDict.Add(word);
 }
 // ------------------------------------------------------------
-bool IHunSpell::LoadUserDict( const wxString& filename )
+bool IHunSpell::LoadUserDict(const wxString& filename)
 {
-    wxTextFile tf( filename );
+    wxTextFile tf(filename);
 
-    if( !tf.Exists() )
-        return false;
+    if(!tf.Exists()) return false;
 
     m_userDict.Clear();
 
     tf.Open();
 
-    for( wxUint32 i = 0; i  < tf.GetLineCount(); i++ ) {
-        m_userDict.Add( tf.GetLine( i ) );
+    for(wxUint32 i = 0; i < tf.GetLineCount(); i++) {
+        m_userDict.Add(tf.GetLine(i));
     }
     tf.Close();
 
     return true;
 }
 // ------------------------------------------------------------
-bool IHunSpell::SaveUserDict( const wxString& filename )
+bool IHunSpell::SaveUserDict(const wxString& filename)
 {
-    wxTextFile tf( filename );
+    wxTextFile tf(filename);
 
-    if( !tf.Exists() ) {
-        if( !tf.Create() )
-            return false;
+    if(!tf.Exists()) {
+        if(!tf.Create()) return false;
     } else {
-        if( !tf.Open() )
-            return false;
+        if(!tf.Open()) return false;
         tf.Clear();
     }
 
-    for( wxUint32 i = 0; i  < m_userDict.GetCount(); i++ ) {
-        tf.AddLine( m_userDict[i] );
+    for(wxUint32 i = 0; i < m_userDict.GetCount(); i++) {
+        tf.AddLine(m_userDict[i]);
     }
     tf.Write();
     tf.Close();
@@ -392,10 +363,9 @@ bool IHunSpell::SaveUserDict( const wxString& filename )
     return true;
 }
 // ------------------------------------------------------------
-bool IHunSpell::ChangeLanguage( const wxString& language )
+bool IHunSpell::ChangeLanguage(const wxString& language)
 {
-    if( m_dictionary.Cmp( language ) == 0 )
-        return false;
+    if(m_dictionary.Cmp(language) == 0) return false;
     CloseEngine();
     m_dictionary = language;
     return InitEngine();
@@ -403,183 +373,178 @@ bool IHunSpell::ChangeLanguage( const wxString& language )
 // ------------------------------------------------------------
 void IHunSpell::InitLanguageList()
 {
-    m_languageList[_T( "Afrikaans (South Africa)" )]          = _T( "af_ZA" );
-    m_languageList[_T( "Bulgarian (Bulgaria)" )]              = _T( "bg_BG" );
-    m_languageList[_T( "Catalan (Spain)" )]                   = _T( "ca_ES" );
-    m_languageList[_T( "Czech (Czech Republic)" )]            = _T( "cs_CZ" );
-    m_languageList[_T( "Welsh (Wales)" )]                     = _T( "cy_GB" );
-    m_languageList[_T( "Danish (Denmark)" )]                  = _T( "da_DK" );
-    m_languageList[_T( "German (Austria)" )]                  = _T( "de_AT" );
-    m_languageList[_T( "German (Switzerland)" )]              = _T( "de_CH" );
-    m_languageList[_T( "German (Germany- orig dict)" )]       = _T( "de_DE" );
+    m_languageList[_T( "Afrikaans (South Africa)" )] = _T( "af_ZA" );
+    m_languageList[_T( "Bulgarian (Bulgaria)" )] = _T( "bg_BG" );
+    m_languageList[_T( "Catalan (Spain)" )] = _T( "ca_ES" );
+    m_languageList[_T( "Czech (Czech Republic)" )] = _T( "cs_CZ" );
+    m_languageList[_T( "Welsh (Wales)" )] = _T( "cy_GB" );
+    m_languageList[_T( "Danish (Denmark)" )] = _T( "da_DK" );
+    m_languageList[_T( "German (Austria)" )] = _T( "de_AT" );
+    m_languageList[_T( "German (Switzerland)" )] = _T( "de_CH" );
+    m_languageList[_T( "German (Germany- orig dict)" )] = _T( "de_DE" );
     m_languageList[_T( "German (Germany-old & neu ortho.)" )] = _T( "de_DE_comb" );
-    m_languageList[_T( "German (Germany-neu ortho.)" )]       = _T( "de_DE_neu" );
-    m_languageList[_T( "Greek (Greece)" )]                    = _T( "el_GR" );
-    m_languageList[_T( "English (Australia)" )]               = _T( "en_AU" );
-    m_languageList[_T( "English (Canada)" )]                  = _( "en_CA" );
-    m_languageList[_T( "English (United Kingdom)" )]          = _T( "en_GB" );
-    m_languageList[_T( "English (New Zealand)" )]             = _T( "en_NZ" );
-    m_languageList[_T( "English (United States)" )]           = _T( "en_US" );
-    m_languageList[_T( "Esperanto (anywhere)" )]              = _T( "eo_l3" );
-    m_languageList[_T( "Spanish (Spain-etal)" )]              = _T( "es_ES" );
-    m_languageList[_T( "Spanish (Mexico)" )]                  = _T( "es_MX" );
-    m_languageList[_T( "Faroese (Faroe Islands)" )]           = _T( "fo_FO" );
-    m_languageList[_T( "French (France)" )]                   = _T( "fr_FR" );
-    m_languageList[_T( "Irish (Ireland)" )]                   = _T( "ga_IE" );
-    m_languageList[_T( "Scottish Gaelic (Scotland)" )]        = _T( "gd_GB" );
-    m_languageList[_T( "Galician (Spain)" )]                  = _T( "gl_ES" );
-    m_languageList[_T( "Hebrew (Israel)" )]                   = _T( "he_IL" );
-    m_languageList[_T( "Croatian (Croatia)" )]                = _T( "hr_HR" );
-    m_languageList[_T( "Hungarian (Hungary)" )]               = _T( "hu_HU" );
-    m_languageList[_T( "Interlingua (x-register)" )]          = _T( "ia" );
-    m_languageList[_T( "Indonesian (Indonesia)" )]            = _T( "id_ID" );
-    m_languageList[_T( "Italian (Italy)" )]                   = _T( "it_IT" );
-    m_languageList[_T( "Kurdish (Turkey)" )]                  = _T( "ku_TR" );
-    m_languageList[_T( "Latin (x-register)" )]                = _T( "la" );
-    m_languageList[_T( "Lithuanian (Lithuania)" )]            = _T( "lt_LT" );
-    m_languageList[_T( "Latvian (Latvia)" )]                  = _T( "lv_LV" );
-    m_languageList[_T( "Malagasy (Madagascar)" )]             = _T( "mg_MG" );
-    m_languageList[_T( "Maori (New Zealand)" )]               = _T( "mi_NZ" );
-    m_languageList[_T( "Malay (Malaysia)" )]                  = _T( "ms_MY" );
-    m_languageList[_T( "Norwegian Bokmaal (Norway)" )]        = _T( "nb_NO" );
-    m_languageList[_T( "Dutch (Netherlands)" )]               = _T( "nl_NL" );
-    m_languageList[_T( "Norwegian Nynorsk (Norway)" )]        = _T( "nn_NO" );
-    m_languageList[_T( "Chichewa (Malawi)" )]                 = _T( "ny_MW" );
-    m_languageList[_T( "Polish (Poland)" )]                   = _T( "pl_PL" );
-    m_languageList[_T( "Portuguese (Brazil)" )]               = _T( "pt_BR" );
-    m_languageList[_T( "Portuguese (Portugal)" )]             = _T( "pt_PT" );
-    m_languageList[_T( "Romanian (Romania)" )]                = _T( "ro_RO" );
-    m_languageList[_T( "Russian (Russia)" )]                  = _T( "ru_RU" );
-    m_languageList[_T( "Russian ye (Russia)" )]               = _T( "ru_RU_ie" );
-    m_languageList[_T( "Russian yo (Russia)" )]               = _T( "ru_RU_yo" );
-    m_languageList[_T( "Kiswahili (Africa)" )]                = _T( "rw_RW" );
-    m_languageList[_T( "Slovak (Slovakia)" )]                 = _T( "sk_SK" );
-    m_languageList[_T( "Slovenian (Slovenia)" )]              = _T( "sl_SI" );
-    m_languageList[_T( "Swedish (Sweden)" )]                  = _T( "sv_SE" );
-    m_languageList[_T( "Kiswahili (Africa)" )]                = _T( "sw_KE" );
-    m_languageList[_T( "Tetum (Indonesia)" )]                 = _T( "tet_ID" );
-    m_languageList[_T( "Tagalog (Philippines)" )]             = _T( "tl_PH" );
-    m_languageList[_T( "Setswana (Africa)" )]                 = _T( "tn_ZA" );
-    m_languageList[_T( "Ukrainian (Ukraine)" )]               = _T( "uk_UA" );
-    m_languageList[_T( "Zulu (Africa)" )]                     = _T( "zu_ZA" );
+    m_languageList[_T( "German (Germany-neu ortho.)" )] = _T( "de_DE_neu" );
+    m_languageList[_T( "Greek (Greece)" )] = _T( "el_GR" );
+    m_languageList[_T( "English (Australia)" )] = _T( "en_AU" );
+    m_languageList[_T( "English (Canada)" )] = _("en_CA");
+    m_languageList[_T( "English (United Kingdom)" )] = _T( "en_GB" );
+    m_languageList[_T( "English (New Zealand)" )] = _T( "en_NZ" );
+    m_languageList[_T( "English (United States)" )] = _T( "en_US" );
+    m_languageList[_T( "Esperanto (anywhere)" )] = _T( "eo_l3" );
+    m_languageList[_T( "Spanish (Spain-etal)" )] = _T( "es_ES" );
+    m_languageList[_T( "Spanish (Mexico)" )] = _T( "es_MX" );
+    m_languageList[_T( "Faroese (Faroe Islands)" )] = _T( "fo_FO" );
+    m_languageList[_T( "French (France)" )] = _T( "fr_FR" );
+    m_languageList[_T( "Irish (Ireland)" )] = _T( "ga_IE" );
+    m_languageList[_T( "Scottish Gaelic (Scotland)" )] = _T( "gd_GB" );
+    m_languageList[_T( "Galician (Spain)" )] = _T( "gl_ES" );
+    m_languageList[_T( "Hebrew (Israel)" )] = _T( "he_IL" );
+    m_languageList[_T( "Croatian (Croatia)" )] = _T( "hr_HR" );
+    m_languageList[_T( "Hungarian (Hungary)" )] = _T( "hu_HU" );
+    m_languageList[_T( "Interlingua (x-register)" )] = _T( "ia" );
+    m_languageList[_T( "Indonesian (Indonesia)" )] = _T( "id_ID" );
+    m_languageList[_T( "Italian (Italy)" )] = _T( "it_IT" );
+    m_languageList[_T( "Kurdish (Turkey)" )] = _T( "ku_TR" );
+    m_languageList[_T( "Latin (x-register)" )] = _T( "la" );
+    m_languageList[_T( "Lithuanian (Lithuania)" )] = _T( "lt_LT" );
+    m_languageList[_T( "Latvian (Latvia)" )] = _T( "lv_LV" );
+    m_languageList[_T( "Malagasy (Madagascar)" )] = _T( "mg_MG" );
+    m_languageList[_T( "Maori (New Zealand)" )] = _T( "mi_NZ" );
+    m_languageList[_T( "Malay (Malaysia)" )] = _T( "ms_MY" );
+    m_languageList[_T( "Norwegian Bokmaal (Norway)" )] = _T( "nb_NO" );
+    m_languageList[_T( "Dutch (Netherlands)" )] = _T( "nl_NL" );
+    m_languageList[_T( "Norwegian Nynorsk (Norway)" )] = _T( "nn_NO" );
+    m_languageList[_T( "Chichewa (Malawi)" )] = _T( "ny_MW" );
+    m_languageList[_T( "Polish (Poland)" )] = _T( "pl_PL" );
+    m_languageList[_T( "Portuguese (Brazil)" )] = _T( "pt_BR" );
+    m_languageList[_T( "Portuguese (Portugal)" )] = _T( "pt_PT" );
+    m_languageList[_T( "Romanian (Romania)" )] = _T( "ro_RO" );
+    m_languageList[_T( "Russian (Russia)" )] = _T( "ru_RU" );
+    m_languageList[_T( "Russian ye (Russia)" )] = _T( "ru_RU_ie" );
+    m_languageList[_T( "Russian yo (Russia)" )] = _T( "ru_RU_yo" );
+    m_languageList[_T( "Kiswahili (Africa)" )] = _T( "rw_RW" );
+    m_languageList[_T( "Slovak (Slovakia)" )] = _T( "sk_SK" );
+    m_languageList[_T( "Slovenian (Slovenia)" )] = _T( "sl_SI" );
+    m_languageList[_T( "Swedish (Sweden)" )] = _T( "sv_SE" );
+    m_languageList[_T( "Kiswahili (Africa)" )] = _T( "sw_KE" );
+    m_languageList[_T( "Tetum (Indonesia)" )] = _T( "tet_ID" );
+    m_languageList[_T( "Tagalog (Philippines)" )] = _T( "tl_PH" );
+    m_languageList[_T( "Setswana (Africa)" )] = _T( "tn_ZA" );
+    m_languageList[_T( "Ukrainian (Ukraine)" )] = _T( "uk_UA" );
+    m_languageList[_T( "Zulu (Africa)" )] = _T( "zu_ZA" );
 }
 // ------------------------------------------------------------
-void IHunSpell::GetAllLanguageKeyNames( wxArrayString& lang )
+void IHunSpell::GetAllLanguageKeyNames(wxArrayString& lang)
 {
     lang.Clear();
     languageMap::iterator itLang;
 
-    for( itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang ) {
+    for(itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang) {
         wxString key = itLang->first;
-        lang.Add( key );
+        lang.Add(key);
     }
 }
 // ------------------------------------------------------------
-void IHunSpell::GetAvailableLanguageKeyNames( const wxString& path, wxArrayString& lang )
+void IHunSpell::GetAvailableLanguageKeyNames(const wxString& path, wxArrayString& lang)
 {
     lang.Clear();
     languageMap::iterator itLang;
 
-    for( itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang ) {
+    for(itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang) {
         wxFileName fna(path, "");
         wxFileName fnd(path, "");
-        
+
         fna.SetName(itLang->second);
         fna.SetExt("aff");
-        
+
         fnd.SetName(itLang->second);
         fnd.SetExt("dic");
-        
-        if( !fna.FileExists() || !fnd.FileExists() )
-            continue;
 
-        lang.Add( itLang->first );
+        if(!fna.FileExists() || !fnd.FileExists()) continue;
+
+        lang.Add(itLang->first);
     }
 }
 
 // ------------------------------------------------------------
-void IHunSpell::EnableScannerType( int type, bool state )
+void IHunSpell::EnableScannerType(int type, bool state)
 {
-    if( state )
+    if(state)
         m_scanners |= type;
     else
         m_scanners &= ~type;
 }
 // ------------------------------------------------------------
-int IHunSpell::CheckCppType( IEditor* pEditor )
+int IHunSpell::CheckCppType(IEditor* pEditor)
 {
     wxStringTokenizer tkz;
     int retVal = kNoSpellingError;
     int offset = 0;
 
-    for( wxUint32 i = 0; i  < m_parseValues.size(); i++ ) {
-        posLen   pl   = m_parseValues[i].first;
-        wxString text = pEditor->GetTextRange( pl.first, pl.second );
-        wxString del  = s_commentDelimiters;
+    for(wxUint32 i = 0; i < m_parseValues.size(); i++) {
+        posLen pl = m_parseValues[i].first;
+        wxString text = pEditor->GetTextRange(pl.first, pl.second);
+        wxString del = s_commentDelimiters;
 
-        if( m_parseValues[i].second == kString ) {      // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
-            wxRegEx re( s_wsRegEx, wxRE_ADVANCED );
+        if(m_parseValues[i].second ==
+           kString) { // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
+            wxRegEx re(s_wsRegEx, wxRE_ADVANCED);
             // to ensure that \\n will not get captured by the regex, we temporarily replace it
             text.Replace(s_DOUBLE_BACKSLASH, s_PLACE_HOLDER);
-            
-            if( re.Matches( text ) ) {
-                re.ReplaceAll( &text, wxT( "  " ) );
+
+            if(re.Matches(text)) {
+                re.ReplaceAll(&text, wxT("  "));
                 del = s_cppDelimiters;
             }
-            
-            // restore 
+
+            // restore
             text.Replace(s_PLACE_HOLDER, s_DOUBLE_BACKSLASH);
         }
-        
-        tkz.SetString( text, del );
 
-        while( tkz.HasMoreTokens() ) {
+        tkz.SetString(text, del);
+
+        while(tkz.HasMoreTokens()) {
             wxString token = tkz.GetNextToken();
-            int      pos   = pl.first + tkz.GetPosition() - token.Len() - 1;
+            int pos = pl.first + tkz.GetPosition() - token.Len() - 1;
             pos += offset;
 
-            if( token.Len() <= MIN_TOKEN_LEN )
-                continue;
+            if(token.Len() <= MIN_TOKEN_LEN) continue;
 
-            if( m_parseValues[i].second == kString ) {  // ignore filenames in #include
-                wxString line = pEditor->GetSTC()->GetLine( pEditor->LineFromPos( pl.first ) );
+            if(m_parseValues[i].second == kString) { // ignore filenames in #include
+                wxString line = pEditor->GetSTC()->GetLine(pEditor->LineFromPos(pl.first));
 
-                if( line.Find( s_include ) != wxNOT_FOUND )
-                    continue;
+                if(line.Find(s_include) != wxNOT_FOUND) continue;
             }
 
-            if( !CheckWord( token ) ) {
+            if(!CheckWord(token)) {
                 // look in ignore list
-                if( m_ignoreList.Index( token ) != wxNOT_FOUND )
-                    continue;
+                if(m_ignoreList.Index(token) != wxNOT_FOUND) continue;
 
                 // look in user list
-                if( m_userDict.Index( token ) != wxNOT_FOUND )
-                    continue;
+                if(m_userDict.Index(token) != wxNOT_FOUND) continue;
 
-                pEditor->SetUserIndicator( pos, token.Len() );
-                pEditor->SetCaretAt( pos );
-                pEditor->SelectText( pos, token.Len() );
+                pEditor->SetUserIndicator(pos, token.Len());
+                pEditor->SetCaretAt(pos);
+                pEditor->SelectText(pos, token.Len());
                 // show correct spelling dialog
                 retVal = kSpellingError;
-                m_pSpellDlg->SetMisspelled( token );
-                m_pSpellDlg->SetSuggestions( GetSuggestions( token ) );
+                m_pSpellDlg->SetMisspelled(token);
+                m_pSpellDlg->SetSuggestions(GetSuggestions(token));
                 int ret = m_pSpellDlg->ShowModal();
 
-                switch( ret ) {
+                switch(ret) {
                 case SC_CHANGE: {
                     // correct spelling
                     wxString replace = m_pSpellDlg->GetMisspelled();
                     offset += replace.Len() - token.Len();
-                    text.replace( tkz.GetPosition(), token.Len(), replace );
-                    pEditor->ReplaceSelection( replace );
-                }
-                break;
+                    text.replace(tkz.GetPosition(), token.Len(), replace);
+                    pEditor->ReplaceSelection(replace);
+                } break;
                 case SC_IGNORE:
-                    AddWordToIgnoreList( token );
+                    AddWordToIgnoreList(token);
                     break;
                 case SC_ADD:
-                    AddWordToUserDict( token );
+                    AddWordToUserDict(token);
                     break;
                 default: {
                     pEditor->ClearUserIndicators();
@@ -592,61 +557,69 @@ int IHunSpell::CheckCppType( IEditor* pEditor )
     return retVal;
 }
 // ------------------------------------------------------------
-int IHunSpell::MarkErrors( IEditor* pEditor )
+int IHunSpell::MarkErrors(IEditor* pEditor)
 {
     wxStringTokenizer tkz;
     int counter = 0;
     pEditor->ClearUserIndicators();
 
-    for( wxUint32 i = 0; i  < m_parseValues.size(); i++ ) {
-        posLen   pl   = m_parseValues[i].first;
-        wxString text = pEditor->GetTextRange( pl.first, pl.second );
-        wxString del  = s_commentDelimiters;
+    for(wxUint32 i = 0; i < m_parseValues.size(); i++) {
+        posLen pl = m_parseValues[i].first;
+        wxString text = pEditor->GetTextRange(pl.first, pl.second);
+        wxString del = s_commentDelimiters;
 
-        if( m_parseValues[i].second == kString ) {  // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
-            wxRegEx re( s_wsRegEx, wxRE_ADVANCED );
+        if(m_parseValues[i].second ==
+           kString) { // replace \n\r\t in strings with blanks to correctly tokenize content like '\nNext line'
+            wxRegEx re(s_wsRegEx, wxRE_ADVANCED);
             // to ensure that \\n will not get captured by the regex, we temporarily replace it
             text.Replace(s_DOUBLE_BACKSLASH, s_PLACE_HOLDER);
-            if( re.Matches( text ) ) {
-                re.ReplaceAll( &text, wxT( "  " ) );
+            if(re.Matches(text)) {
+                re.ReplaceAll(&text, wxT("  "));
                 del = s_cppDelimiters;
             }
             text.Replace(s_PLACE_HOLDER, s_DOUBLE_BACKSLASH);
         }
-        tkz.SetString( text, del );
+        tkz.SetString(text, del);
 
-        while( tkz.HasMoreTokens() ) {
+        while(tkz.HasMoreTokens()) {
             wxString token = tkz.GetNextToken();
-            int      pos   = pl.first + tkz.GetPosition() - token.Len() - 1;
+            int pos = pl.first + tkz.GetPosition() - token.Len() - 1;
 
-            if( token.Len() <= MIN_TOKEN_LEN )
-                continue;
+            if(token.Len() <= MIN_TOKEN_LEN) continue;
 
-            if( m_parseValues[i].second == kString ) {
-                wxString line = pEditor->GetSTC()->GetLine( pEditor->LineFromPos( pl.first ) );
+            if(m_parseValues[i].second == kString) {
+                wxString line = pEditor->GetSTC()->GetLine(pEditor->LineFromPos(pl.first));
 
-                if( line.Find( s_include ) != wxNOT_FOUND ) // ignore filenames
+                if(line.Find(s_include) != wxNOT_FOUND) // ignore filenames
                     continue;
             }
 
-//			else if(m_pPlugIn->IsTag(token)) {
-//				continue;
-//			}
-            if( !CheckWord( token ) ) {
+            //			else if(m_pPlugIn->IsTag(token)) {
+            //				continue;
+            //			}
+            if(!CheckWord(token)) {
                 // look in ignore list
-                if( m_ignoreList.Index( token ) != wxNOT_FOUND )
-                    continue;
+                if(m_ignoreList.Index(token) != wxNOT_FOUND) continue;
 
                 // look in user list
-                if( m_userDict.Index( token ) != wxNOT_FOUND )
-                    continue;
+                if(m_userDict.Index(token) != wxNOT_FOUND) continue;
 
-                pEditor->SetUserIndicator( pos, token.Len() );
+                pEditor->SetUserIndicator(pos, token.Len());
                 counter++;
             }
         }
     }
 
     return counter;
+}
+
+void IHunSpell::AddWord(const wxString& word) 
+{ 
+#if wxUSE_STL
+    // Implict conversions are disabled when building with wxUSE_STL=1
+    Hunspell_add(m_pSpell, word.mb_str().data()); 
+#else
+    Hunspell_add(m_pSpell, word);
+#endif
 }
 // ------------------------------------------------------------

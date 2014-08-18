@@ -87,7 +87,7 @@ public:
     /// returns the current dictionary base filename
     const wxString& GetDictionary() const { return m_dictionary; }
     ///
-    void AddWord(const wxString& word) { Hunspell_add(m_pSpell, word.mb_str().data()); }
+    void AddWord(const wxString& word) ;
 
     void SetUserDictPath(const wxString& userDictPath) { this->m_userDictPath = userDictPath; }
     const wxString& GetUserDictPath() const { return m_userDictPath; }

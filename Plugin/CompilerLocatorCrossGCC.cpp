@@ -60,15 +60,22 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
     if ( count == 0 )
         return NULL;
 
-    for ( int i = 0; i < count; i++ ) {
+    for ( int i = 0; i < count; ++i ) {
 #ifndef __WXMSW__
-        /* Check if this is a script */
+        // Check if this is a script
         char sha[2];
         wxFile(matches[i]).Read(sha, 2);
-        if (strncmp(sha, "#!", 2) == 0)
+        if (strncmp(sha, "#!", 2) == 0) {
             continue;
+        }
 #endif
-        wxFileName filename = wxFileName(matches[i]);
+        wxFileName filename(matches.Item(i));
+        if(filename.GetName() == "mingw32-gcc" || filename.GetName() == "x86_64-w64-mingw32-gcc") {
+            // Don't include standard mingw32-gcc (32 and 64 bit) binaries
+            // they will be picked up later by the MinGW locator
+            continue;
+        }
+        
         CompilerPtr compiler( new Compiler(NULL) );
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
 
@@ -81,7 +88,12 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
         AddTools(compiler, filename.GetPath(),
                  filename.GetName().BeforeLast('-'), filename.GetExt());
     }
-    return *m_compilers.begin();
+    
+    if(m_compilers.empty()) {
+        return NULL;
+    } else {
+        return *m_compilers.begin();
+    }
 }
 
 bool CompilerLocatorCrossGCC::Locate()

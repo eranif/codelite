@@ -26,6 +26,7 @@
 #include "CompilersDetectorManager.h"
 #include "CompilerLocatorMinGW.h"
 #include "CompilerLocatorGCC.h"
+#include "CompilerLocatorCrossGCC.h"
 #include "CompilerLocatorMSVC9.h"   // VS 2008
 #include "CompilerLocatorMSVC10.h"  // VS 2010
 #include "CompilerLocatorMSVC11.h"  // VS 2012
@@ -53,6 +54,7 @@ CompilersDetectorManager::CompilersDetectorManager()
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()) );
     
 #endif
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorCrossGCC()) );
 }
 
 CompilersDetectorManager::~CompilersDetectorManager()

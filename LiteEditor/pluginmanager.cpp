@@ -54,6 +54,7 @@
 #include "clang_code_completion.h"
 #include "debugger.h"
 #include "cl_standard_paths.h"
+#include "new_build_tab.h"
 
 PluginManager* PluginManager::Get()
 {
@@ -736,7 +737,26 @@ void PluginManager::ProcessEditEvent(wxCommandEvent& e, IEditor* editor)
     }
 }
 
-void PluginManager::AppendOutputText(const wxString& text) 
+void PluginManager::AppendOutputTabText(eOutputPaneTab tab, const wxString& text)
 {
-    clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(text);
+    switch(tab) {
+    case kOutputTab_Build:
+        clMainFrame::Get()->GetOutputPane()->GetBuildTab()->AppendLine(text);
+        break;
+    case kOutputTab_Output:
+        clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(text);
+        break;
+    }
+}
+
+void PluginManager::ClearOutputTab(eOutputPaneTab tab)
+{
+    switch(tab) {
+    case kOutputTab_Build:
+        clMainFrame::Get()->GetOutputPane()->GetBuildTab()->Clear();
+        break;
+    case kOutputTab_Output:
+        clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->Clear();
+        break;
+    }
 }

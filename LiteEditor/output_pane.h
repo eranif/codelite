@@ -72,28 +72,28 @@ public:
 
 private:
     wxString m_caption;
-    wxLog   *m_logTargetOld;
+    wxLog* m_logTargetOld;
 
-    Notebook              *m_book;
-    FindResultsTab        *m_findResultsTab;
-    ReplaceInFilesPanel   *m_replaceResultsTab;
+    Notebook* m_book;
+    FindResultsTab* m_findResultsTab;
+    ReplaceInFilesPanel* m_replaceResultsTab;
 
 #if CL_USE_NEW_BUILD_TAB
-    NewBuildTab           *m_buildWin;
+    NewBuildTab* m_buildWin;
 #else
-    BuildTab              *m_buildWin;
+    BuildTab* m_buildWin;
 #endif
 
-    ShellTab              *m_outputWind;
-    TaskPanel             *m_taskPanel;
-    FindUsageTab          *m_showUsageTab;
-    bool                   m_buildInProgress;
+    ShellTab* m_outputWind;
+    TaskPanel* m_taskPanel;
+    FindUsageTab* m_showUsageTab;
+    bool m_buildInProgress;
 
 protected:
     void CreateGUIControls();
-    void OnEditorFocus(wxCommandEvent &e);
-    void OnBuildStarted(clBuildEvent &e);
-    void OnBuildEnded(clBuildEvent &e);
+    void OnEditorFocus(wxCommandEvent& e);
+    void OnBuildStarted(clBuildEvent& e);
+    void OnBuildEnded(clBuildEvent& e);
 
 public:
     /**
@@ -101,41 +101,21 @@ public:
      * \param parent parent window for this pane
      * \param caption the caption
      */
-    OutputPane(wxWindow *parent, const wxString &caption);
+    OutputPane(wxWindow* parent, const wxString& caption);
 
     /**
      * Destructor
      */
     virtual ~OutputPane();
 
-    Notebook       *GetNotebook()      {
-        return m_book;
-    }
-    const wxString &     GetCaption () const {
-        return m_caption;
-    }
+    Notebook* GetNotebook() { return m_book; }
+    const wxString& GetCaption() const { return m_caption; }
 
-    FindResultsTab        *GetFindResultsTab   () {
-        return m_findResultsTab;
-    }
-    ReplaceInFilesPanel   *GetReplaceResultsTab() {
-        return m_replaceResultsTab;
-    }
-#if CL_USE_NEW_BUILD_TAB
-    NewBuildTab           *GetBuildTab         () {
-        return m_buildWin;
-    }
-#else
-    BuildTab              *GetBuildTab         () {
-        return m_buildWin;
-    }
-#endif
-    ShellTab              *GetOutputWindow     () {
-        return m_outputWind;
-    }
-    FindUsageTab          *GetShowUsageTab     () {
-        return m_showUsageTab;
-    }
+    FindResultsTab* GetFindResultsTab() { return m_findResultsTab; }
+    ReplaceInFilesPanel* GetReplaceResultsTab() { return m_replaceResultsTab; }
+    NewBuildTab* GetBuildTab() { return m_buildWin; }
+    ShellTab* GetOutputWindow() { return m_outputWind; }
+    FindUsageTab* GetShowUsageTab() { return m_showUsageTab; }
 };
 
 #endif // OUTPUT_PANE_H

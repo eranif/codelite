@@ -71,6 +71,8 @@ public:
 //---------------------------
 enum TreeType { TreeFileView = 0, TreeFileExplorer };
 
+enum eOutputPaneTab { kOutputTab_Build, kOutputTab_Output };
+
 //------------------------------------------------------------------
 // Defines the interface of the manager
 //------------------------------------------------------------------
@@ -147,9 +149,14 @@ public:
     virtual Notebook* GetOutputPaneNotebook() = 0;
     
     /**
-     * @brief append text to the 'Output' pane in the output view
+     * @brief append text line to the tab in the "Output View"
      */
-    virtual void AppendOutputText(const wxString& text) = 0;
+    virtual void AppendOutputTabText(eOutputPaneTab tab, const wxString& text) = 0;
+
+    /**
+     * @brief clear the content of the selected output tab
+     */
+    virtual void ClearOutputTab(eOutputPaneTab tab) = 0;
     
     virtual wxPanel* GetEditorPaneNotebook() = 0;
     virtual void AddEditorPage(wxWindow* page, const wxString& name) = 0;

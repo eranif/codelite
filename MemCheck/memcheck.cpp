@@ -497,10 +497,12 @@ void MemCheckPlugin::CheckProject(const wxString& projectName)
     EnvSetter envGuard(m_mgr->GetEnv());
     wxSetWorkingDirectory(path);
     wxSetWorkingDirectory(wd);
-    m_mgr->AppendOutputText(_("Launching MemCheck...\n"));
-    m_mgr->AppendOutputText(wxString() << _("Working directory is set to: ") << ::wxGetCwd() << "\n");
-    m_mgr->AppendOutputText(wxString() << "MemCheck command: " << m_memcheckProcessor->GetExecutionCommand(command)
-                                       << "\n");
+    m_mgr->AppendOutputTabText(kOutputTab_Output, _("Launching MemCheck...\n"));
+    m_mgr->AppendOutputTabText(kOutputTab_Output,
+                               wxString() << _("Working directory is set to: ") << ::wxGetCwd() << "\n");
+    m_mgr->AppendOutputTabText(kOutputTab_Output,
+                               wxString() << "MemCheck command: " << m_memcheckProcessor->GetExecutionCommand(command)
+                                          << "\n");
     m_process = ::CreateAsyncProcess(this, m_memcheckProcessor->GetExecutionCommand(command));
 }
 
@@ -553,7 +555,7 @@ void MemCheckPlugin::StopProcess()
 void MemCheckPlugin::OnProcessOutput(wxCommandEvent& event)
 {
     ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    m_mgr->AppendOutputText(ped->GetData());
+    m_mgr->AppendOutputTabText(kOutputTab_Output, ped->GetData());
     wxDELETE(ped);
 }
 
@@ -562,8 +564,8 @@ void MemCheckPlugin::OnProcessTerminated(wxCommandEvent& event)
     ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
     wxDELETE(ped);
     wxDELETE(m_process);
-    
-    m_mgr->AppendOutputText(_("\n-- MemCheck process completed\n"));
+
+    m_mgr->AppendOutputTabText(kOutputTab_Output, _("\n-- MemCheck process completed\n"));
     wxWindowDisabler disableAll;
     wxBusyInfo wait(wxT(BUSY_MESSAGE));
     m_mgr->GetTheApp()->Yield();

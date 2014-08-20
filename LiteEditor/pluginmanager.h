@@ -146,7 +146,8 @@ public:
     virtual void LoadPerspective(const wxString& perspectiveName);
     virtual void SavePerspective(const wxString& perspectiveName);
     virtual void ProcessEditEvent(wxCommandEvent& e, IEditor* editor);
-    virtual void AppendOutputText(const wxString& text);
+    virtual void AppendOutputTabText(eOutputPaneTab tab, const wxString& text);
+    virtual void ClearOutputTab(eOutputPaneTab tab);
     //------------------------------------
     // End of IManager interface
     //------------------------------------

@@ -1017,7 +1017,7 @@ void clMainFrame::CreateGUIControls(void)
     m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
     m_mgr.AddPane(m_workspacePane,
                   wxAuiPaneInfo()
-                      .CaptionVisible(false)
+                      .CaptionVisible(true)
                       .MinimizeButton()
                       .MaximizeButton()
                       .Name(m_workspacePane->GetCaption())
@@ -1033,7 +1033,7 @@ void clMainFrame::CreateGUIControls(void)
     m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
     m_mgr.AddPane(m_debuggerPane,
                   wxAuiPaneInfo()
-                      .CaptionVisible(false)
+                      .CaptionVisible(true)
                       .Name(m_debuggerPane->GetCaption())
                       .Caption(m_debuggerPane->GetCaption())
                       .Bottom()
@@ -1052,7 +1052,7 @@ void clMainFrame::CreateGUIControls(void)
     m_outputPane = new OutputPane(this, wxT("Output View"));
     wxAuiPaneInfo paneInfo;
     m_mgr.AddPane(m_outputPane,
-                  paneInfo.CaptionVisible(false)
+                  paneInfo.CaptionVisible(true)
                       .Name(wxT("Output View"))
                       .Caption(wxT("Output View"))
                       .Bottom()
@@ -5268,7 +5268,9 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
     wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
 
     for(size_t i = 0; i < panes.GetCount(); i++) {
-        wxAuiPaneInfo p = panes[i];
+        // make sure that the caption is visible
+        panes.Item(i).CaptionVisible(true);
+        wxAuiPaneInfo &p = panes.Item(i);
 
         if(p.window) {
             DockablePane* d = dynamic_cast<DockablePane*>(p.window);
@@ -5318,13 +5320,7 @@ void clMainFrame::SetAUIManagerFlags()
 void clMainFrame::UpdateAUI()
 {
     SetAUIManagerFlags();
-    // Once loaded, update the output pane caption
-    wxAuiPaneInfo& paneInfo = m_mgr.GetPane(wxT("Output View"));
-
-    if(paneInfo.IsOk()) {
-        paneInfo.CaptionVisible(false);
-        m_mgr.Update();
-    }
+    m_mgr.Update();
 }
 
 void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)

@@ -728,7 +728,7 @@ void LLDBPlugin::InitializeUI()
         m_localsView = new LLDBLocalsView(EventNotifier::Get()->TopFrame(), this);
         m_mgr->GetDockingManager()->AddPane(
             m_localsView,
-            wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(0).CloseButton().Caption("Locals").Name(
+            wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(0).CloseButton().Caption("Variables").Name(
                 LLDB_LOCALS_PANE_NAME));
     }
 

@@ -110,7 +110,7 @@ void* LLDBNetworkListenerThread::Entry()
                     m_owner->AddPendingEvent( event );
                     break;
                 }
-
+                
                 case kReplyTypeVariableExpanded: {
                     LLDBEvent event(wxEVT_LLDB_VARIABLE_EXPANDED);
                     event.SetVariables( reply.GetVariables() );

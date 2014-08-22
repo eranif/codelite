@@ -39,6 +39,7 @@ wxDEFINE_EVENT(wxEVT_LLDB_LOCALS_UPDATED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_VARIABLE_EXPANDED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_EXPRESSION_EVALUATED, LLDBEvent);
 
+
 LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     : clCommandEvent(eventType, windid)
     , m_interruptReason(0)

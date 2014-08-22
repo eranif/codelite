@@ -43,9 +43,6 @@
   <Project Name="LLDBDebugger" Path="LLDBDebugger/LLDBDebugger.project" Active="No"/>
   <Project Name="SpellCheck" Path="SpellChecker/SpellCheck.project" Active="No"/>
   <Project Name="hunspell" Path="SpellChecker/hunspell/hunspell.project" Active="No"/>
-  <Environment>
-    <![CDATA[]]>
-  </Environment>
   <Project Name="MemCheck" Path="MemCheck/MemCheck.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
@@ -126,7 +123,7 @@
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -165,7 +162,7 @@
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -283,4 +280,7 @@
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
+  <Environment>
+    <![CDATA[]]>
+  </Environment>
 </CodeLite_Workspace>

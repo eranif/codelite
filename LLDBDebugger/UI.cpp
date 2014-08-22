@@ -221,16 +221,35 @@ LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer67 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer67);
     
+    m_auibar199 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar199->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer67->Add(m_auibar199, 0, wxEXPAND, 5);
+    
+    m_auibar199->AddTool(wxID_NEW, _("Add Watch..."), wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Add Watch..."), _("Add Watch..."), NULL);
+    
+    m_auibar199->AddTool(wxID_DELETE, _("Delete Watch"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete Watch"), _("Delete Watch"), NULL);
+    m_auibar199->Realize();
+    
     SetMinSize( wxSize(200,200) );
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnNewWatch), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnDelete), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBLocalsViewBase::OnDeleteUI), NULL, this);
+    
 }
 
 LLDBLocalsViewBase::~LLDBLocalsViewBase()
 {
+    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnNewWatch), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnDelete), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBLocalsViewBase::OnDeleteUI), NULL, this);
+    
 }
 
 LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
@@ -278,7 +297,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_pgPropCallStackSize = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxIntProperty( _("Backtrace frames"), wxPG_LABEL, 100) );
     m_pgPropCallStackSize->SetHelpString(_("Maximum number of frames to show in the callstack window"));
-    m_pgMgrDisplayProperties->GetGrid()->SetSplitterLeft(true);
+    
     m_panel91 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_panel91, _("Types"), false);
     
@@ -375,7 +394,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_pgPropProxyPort = m_pgMgrAdvanced->AppendIn( m_pgProp169,  new wxIntProperty( _("Port"), wxPG_LABEL, 13610) );
     m_pgPropProxyPort->SetHelpString(_("The port number on which the remote proxy server is accepting connections"));
-    m_pgMgrAdvanced->GetGrid()->SetSplitterLeft(true);
+    
     m_stdBtnSizer79 = new wxStdDialogButtonSizer();
     
     boxSizer77->Add(m_stdBtnSizer79, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);

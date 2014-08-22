@@ -227,7 +227,19 @@ public:
      * @brief send request to the debugger to request the local varibles
      */
     void RequestLocals();
-
+    
+    /**
+     * @brief add watch. To get the list of values, you should invoke
+     * a call to 'RequestLocals'
+     */
+    void AddWatch(const wxString& watch);
+    
+    /**
+     * @brief delete a watch. To get the list of values, you should invoke
+     * a call to 'RequestLocals'
+     */
+    void DeleteWatch(int lldbId);
+    
     /**
      * @brief request lldb to expand a variable and return its children
      * @param lldbId the unique identifier that identifies this variable

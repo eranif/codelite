@@ -64,6 +64,13 @@ void* LLDBNetworkServerThread::Entry()
                 // Process command
                 LLDBCommand command(str);
                 switch( command.GetCommandType() ) {
+                case kCommandAddWatch: 
+                    m_app->CallAfter( &CodeLiteLLDBApp::AddWatch, command );
+                    break;
+                case kCommandDeleteWatch: 
+                    m_app->CallAfter( &CodeLiteLLDBApp::DeleteWatch, command );
+                    break;
+                    
                 case kCommandNextInstruction:
                     m_app->CallAfter( &CodeLiteLLDBApp::NextInstruction, command);
                     break;

@@ -50,6 +50,7 @@ enum eReplyType {
     kReplyTypeLocalsUpdated,
     kReplyTypeVariableExpanded,
     kReplyTypeExprEvaluated,
+    kReplyTypeWatchEvaluated,
 };
 
 // LLDBCommand types
@@ -76,6 +77,8 @@ enum eCommandType {
     kCommandAttachProcess,
     kCommandNextInstruction,
     kCommandCurrentFileLine,
+    kCommandAddWatch,
+    kCommandDeleteWatch,
 };
 
 enum eLLDBOptions {

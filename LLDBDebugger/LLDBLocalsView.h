@@ -45,8 +45,12 @@ private:
     void DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent);
     LLDBVariableClientData *GetItemData(const wxTreeItemId &id);
     void Cleanup();
+    void GetWatchesFromSelections(wxArrayTreeItemIds& items);
     
 protected:
+    virtual void OnDelete(wxCommandEvent& event);
+    virtual void OnDeleteUI(wxUpdateUIEvent& event);
+    virtual void OnNewWatch(wxCommandEvent& event);
     // events coming from LLDB
     void OnLLDBStarted(LLDBEvent &event);
     void OnLLDBExited(LLDBEvent &event);

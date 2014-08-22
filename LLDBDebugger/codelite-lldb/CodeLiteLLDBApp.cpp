@@ -751,7 +751,7 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
 
     // next, add the watches
     for(size_t i = 0; i < m_watches.GetCount(); ++i) {
-        lldb::SBValue value = frame.GetValueForVariablePath(m_watches.Item(i).mb_str(wxConvUTF8).data());
+        lldb::SBValue value = frame.EvaluateExpression(m_watches.Item(i).mb_str(wxConvUTF8).data());
         if(value.IsValid()) {
             LLDBVariable::Ptr_t var(new LLDBVariable(value));
             var->SetIsWatch(true);

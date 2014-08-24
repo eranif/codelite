@@ -159,6 +159,9 @@ Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: 
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "MinGW"; ValueData: "{code:GetMinGWInstallDir}"
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "MinGW_Version"; ValueData: "4.8.1"
 
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}"
+
 [Code]
 var
   MinGW_Page:      TInputDirWizardPage;
@@ -210,6 +213,29 @@ begin
   CreateUnitTestPPPage();
 end;
 
+procedure DeleteFolder(ADirName: string);
+var
+  FindRec: TFindRec;
+begin
+  if FindFirst(ADirName + '\*', FindRec) then begin
+    try
+      repeat
+        if FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0 then begin
+          if (FindRec.Name <> '.') and (FindRec.Name <> '..') then begin
+            DeleteFolder(ADirName + '\' + FindRec.Name);
+            RemoveDir(ADirName + '\' + FindRec.Name);
+          end;
+        end else
+          DeleteFile(ADirName + '\' + FindRec.Name);
+      until not FindNext(FindRec);
+    finally
+      FindClose(FindRec);
+    end;
+  end;
+  // Remove the folder itself
+  RemoveDir(ADirName);
+end;
+
 // Uninstall
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
@@ -217,6 +243,11 @@ begin
     usUninstall:
       begin
         RegDeleteKeyIncludingSubkeys(HKCR, '*\shell\Open With CodeLite');
+        // Prompt the user to delete all his settings, default to "No"
+        if MsgBox('Do you want to delete all user settings as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES 
+        then begin
+            DeleteFolder(ExpandConstant('{userappdata}') + '\codelite');
+        end;
       end;
     usPostUninstall:
       begin

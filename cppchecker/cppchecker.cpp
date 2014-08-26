@@ -115,6 +115,11 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
                                 wxCommandEventHandler(CppCheckPlugin::OnSettingsItemProject),
                                 NULL,
                                 (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("cppcheck_editor_item"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(CppCheckPlugin::OnCheckFileEditorItem),
+                                NULL,
+                                (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("cppcheck_fileexplorer_item"),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(CppCheckPlugin::OnCheckFileExplorerItem),
@@ -150,6 +155,11 @@ CppCheckPlugin::~CppCheckPlugin()
     m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_settings_item_project"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(CppCheckPlugin::OnSettingsItemProject),
+                                   NULL,
+                                   (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_editor_item"),
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(CppCheckPlugin::OnCheckFileEditorItem),
                                    NULL,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_fileexplorer_item"),
@@ -193,7 +203,7 @@ void CppCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
     if(type == MenuTypeEditor) {
         // The editor context menu situation is identical to FileExplore, so piggyback
         if(!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
-            menu->Append(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateFileExplorerPopMenu());
+            menu->Append(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateEditorPopMenu());
         }
     } else if(type == MenuTypeFileExplorer) {
         if(!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
@@ -250,6 +260,22 @@ wxMenu* CppCheckPlugin::CreateFileExplorerPopMenu()
     return menu;
 }
 
+wxMenu* CppCheckPlugin::CreateEditorPopMenu()
+{
+    // Create the popup menu for the file explorer
+    // The only menu that we are interested in is the file explorer menu
+    wxMenu* menu = new wxMenu();
+    wxMenuItem* item(NULL);
+
+    item = new wxMenuItem(menu, XRCID("cppcheck_editor_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+
+    item = new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+
+    return menu;
+}
+
 wxMenu* CppCheckPlugin::CreateProjectPopMenu()
 {
     wxMenu* menu = new wxMenu();
@@ -276,6 +302,26 @@ wxMenu* CppCheckPlugin::CreateWorkspacePopMenu()
     menu->Append(item);
 
     return menu;
+}
+
+void CppCheckPlugin::OnCheckFileEditorItem(wxCommandEvent& e)
+{
+    if(m_cppcheckProcess) {
+        wxLogMessage(_("CppCheckPlugin: CppCheck is currently busy please wait for it to complete the current check"));
+        return;
+    }
+
+    ProjectPtr proj;
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor) {
+        wxString projectName = editor->GetProjectName();
+        if(!projectName.IsEmpty()) {
+            proj = WorkspaceST::Get()->GetProject(projectName);
+        }
+        m_filelist.Add(editor->GetFileName().GetFullPath());
+    }
+
+    DoStartTest();
 }
 
 void CppCheckPlugin::OnCheckFileExplorerItem(wxCommandEvent& e)
@@ -388,8 +434,7 @@ void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
     ProcessEventData* ped = (ProcessEventData*)e.GetClientData();
     delete ped;
 
-    if(m_cppcheckProcess)
-        delete m_cppcheckProcess;
+    if(m_cppcheckProcess) delete m_cppcheckProcess;
     m_cppcheckProcess = NULL;
 
     m_view->PrintStatusMessage();
@@ -566,27 +611,28 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
     ::WrapWithQuotes(path);
 
     wxString fileList = DoGenerateFileList();
-    if(fileList.IsEmpty())
-        return wxT("");
+    if(fileList.IsEmpty()) return wxT("");
 
     // build the command
     cmd << path << " ";
     cmd << m_settings.GetOptions();
 
     // Append here project specifc search paths
-    wxArrayString projectSearchPaths = proj->GetIncludePaths();
-    for(size_t i = 0; i < projectSearchPaths.GetCount(); ++i) {
-        wxFileName fnIncPath(projectSearchPaths.Item(i), "");
-        wxString includePath = fnIncPath.GetPath(true);
-        ::WrapWithQuotes(includePath);
-        cmd << " -I" << includePath;
+    if(proj) {
+        wxArrayString projectSearchPaths = proj->GetIncludePaths();
+        for(size_t i = 0; i < projectSearchPaths.GetCount(); ++i) {
+            wxFileName fnIncPath(projectSearchPaths.Item(i), "");
+            wxString includePath = fnIncPath.GetPath(true);
+            ::WrapWithQuotes(includePath);
+            cmd << " -I" << includePath;
+        }
+
+        wxArrayString projMacros = proj->GetPreProcessors();
+        for(size_t i = 0; i < projMacros.GetCount(); ++i) {
+            cmd << " -D" << projMacros.Item(i);
+        }
     }
-    
-    wxArrayString projMacros = proj->GetPreProcessors();
-    for(size_t i = 0; i < projMacros.GetCount(); ++i) {
-        cmd << " -D" << projMacros.Item(i);
-    }
-    
+
     cmd << wxT(" --file-list=");
     cmd << wxT("\"") << fileList << wxT("\"");
     CL_DEBUG("cppcheck command: %s", cmd);
@@ -626,3 +672,4 @@ void CppCheckPlugin::OnCppCheckReadData(wxCommandEvent& e)
 
     delete ped;
 }
+

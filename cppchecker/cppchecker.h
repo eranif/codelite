@@ -53,6 +53,7 @@ protected:
     wxString DoGenerateFileList();
 
 protected:
+    wxMenu* CreateEditorPopMenu();
     wxMenu* CreateFileExplorerPopMenu();
     wxMenu* CreateWorkspacePopMenu();
     wxMenu* CreateProjectPopMenu();
@@ -68,7 +69,13 @@ protected:
 
 protected:
     /**
-     * @brief handle the context meun activation from the file explorer
+     * @brief handle the context meun activation from within the editor context menu
+     * @param e
+     */
+    void OnCheckFileEditorItem(wxCommandEvent& e);
+
+    /**
+     * @brief handle the context meun activation from within the file explorer
      * @param e
      */
     void OnCheckFileExplorerItem(wxCommandEvent& e);

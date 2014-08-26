@@ -43,7 +43,7 @@ FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
     , m_caption(caption)
     , m_isLinkedToEditor(false)
 {
-    long link(1);
+    long link(0);
     EditorConfigST::Get()->GetLongValue(wxT("LinkFileExplorerToEditor"), link);
     m_isLinkedToEditor = link ? true : false;
     CreateGUIControls();

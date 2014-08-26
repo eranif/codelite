@@ -41,22 +41,19 @@
 #include <wx/regex.h>
 
 //-------------------------------------------------------------
-BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
+BEGIN_EVENT_TABLE(SvnConsole, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, SvnConsole::OnReadProcessOutput)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnConsole::OnProcessEnd)
-EVT_STC_UPDATEUI(wxID_ANY, SvnConsole::OnUpdateUI)
-EVT_STC_CHARADDED(wxID_ANY, SvnConsole::OnCharAdded)
 END_EVENT_TABLE()
 
-SvnConsole::SvnConsole(wxWindow* parent, Subversion2* plugin)
-    : SvnShellBase(parent)
+SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
+    : m_sci(stc)
     , m_process(NULL)
     , m_plugin(plugin)
     , m_inferiorEnd(0)
 {
     m_sci->SetLexer(wxSTC_LEX_NULL);
     m_sci->StyleClearAll();
-    m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SvnConsole::OnKeyDown), NULL, this);
     m_sci->SetUndoCollection(false); // dont allow undo/redo
     DoInitializeFontsAndColours();
 
@@ -80,8 +77,7 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
     wxString s(ped->GetData());
     s.MakeLower();
 
-    if(m_currCmd.printProcessOutput)
-        AppendText(ped->GetData());
+    if(m_currCmd.printProcessOutput) AppendText(ped->GetData());
 
     static wxRegEx reUsername("username[ \t]*:", wxRE_DEFAULT | wxRE_ICASE);
     wxArrayString lines = wxStringTokenize(s, wxT("\n"), wxTOKEN_STRTOK);
@@ -188,20 +184,7 @@ bool SvnConsole::IsEmpty() { return m_sci->GetText().IsEmpty(); }
 
 void SvnConsole::EnsureVisible()
 {
-    // Ensure that the Output View is displayed
-    wxAuiPaneInfo& pi = m_plugin->GetManager()->GetDockingManager()->GetPane("Output View");
-    if(pi.IsOk() && !pi.IsShown()) {
-        pi.Show(true);
-        m_plugin->GetManager()->GetDockingManager()->Update();
-    }
-
-    Notebook* book = m_plugin->GetManager()->GetOutputPaneNotebook();
-    for(size_t i = 0; i < book->GetPageCount(); i++) {
-        if(this == book->GetPage(i)) {
-            book->SetSelection(i);
-            break;
-        }
-    }
+    m_plugin->EnsureVisible();
 }
 
 void SvnConsole::DoProcessNextCommand()
@@ -211,8 +194,7 @@ void SvnConsole::DoProcessNextCommand()
         return;
     }
 
-    if(m_queue.empty())
-        return;
+    if(m_queue.empty()) return;
 
     // Remove the command from the queue
     SvnConsoleCommand* command = m_queue.front();

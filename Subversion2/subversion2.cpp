@@ -444,39 +444,50 @@ void Subversion2::UnPlug()
 
     m_subversionView->DisconnectEvents();
 
-    // before this plugin is un-plugged we must remove the tab we added
-    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if(GetConsole() == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
-            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
-            GetConsole()->Destroy();
-            break;
-        }
-    }
-
     // Remove the tab if it's actually docked in the workspace pane
     size_t index(Notebook::npos);
-    index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_subversionView);
+    index = m_mgr->GetOutputPaneNotebook()->GetPageIndex(m_subversionView);
     if(index != Notebook::npos) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
+        m_mgr->GetOutputPaneNotebook()->RemovePage(index, false);
     }
 
     m_subversionView->Destroy();
 }
 
+void Subversion2::EnsureVisible()
+{
+    // Ensure that the Output View is displayed
+    wxAuiPaneInfo& pi = GetManager()->GetDockingManager()->GetPane("Output View");
+    if(pi.IsOk() && !pi.IsShown()) {
+        pi.Show(true);
+        GetManager()->GetDockingManager()->Update();
+    }
+
+    Notebook* book = GetManager()->GetOutputPaneNotebook();
+    for(size_t i = 0; i < book->GetPageCount(); i++) {
+        if(m_subversionView == book->GetPage(i)) {
+            book->SetSelection(i);
+            break;
+        }
+    }
+}
+
 void Subversion2::DoInitialize()
 {
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    Notebook* book = m_mgr->GetOutputPaneNotebook();
     if(IsSubversionViewDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
             new DockablePane(book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, wxNullBitmap, wxSize(200, 200));
         m_subversionView = new SubversionView(cp, this);
         cp->SetChildNoReparent(m_subversionView);
-
     } else {
         m_subversionView = new SubversionView(book, this);
-        book->AddPage(m_subversionView, svnCONSOLE_TEXT, false);
+        book->AddPage(m_subversionView,
+                      svnCONSOLE_TEXT,
+                      false,
+                      GetManager()->GetStdIcons()->LoadBitmap(wxT("subversion/16/svn")));
     }
 
     DoSetSSH();
@@ -592,7 +603,7 @@ void Subversion2::OnUpdate(wxCommandEvent& event)
     command << GetSvnExeName(nonInteractive) << loginString << wxT(" update ");
     AddCommandLineOption(command, kOpt_ForceInteractive);
     command << DoGetFileExplorerFilesAsString();
-    
+
     // Execute the command, but with console visible
     GetConsole()->Execute(
         command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this, event.GetId(), this), true, true);

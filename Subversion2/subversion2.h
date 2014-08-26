@@ -62,6 +62,10 @@ public:
     enum eCommandLineOption {
         kOpt_ForceInteractive,
     };
+    /**
+     * @brief ensure that the Subversion Page is view
+     */
+    void EnsureVisible();
     
 protected:
     ///////////////////////////////////////////////////////////

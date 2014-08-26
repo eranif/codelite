@@ -278,12 +278,7 @@ void SubversionView::CreatGUIControls()
     sz->Insert(0, tb, 0, wxEXPAND);
     tb->Realize();
 
-    m_subversionConsole = new SvnConsole(m_plugin->GetManager()->GetOutputPaneNotebook(), m_plugin);
-    m_plugin->GetManager()->GetOutputPaneNotebook()->AddPage(
-        m_subversionConsole,
-        wxT("Subversion"),
-        false,
-        m_plugin->GetManager()->GetStdIcons()->LoadBitmap(wxT("subversion/16/svn")));
+    m_subversionConsole = new SvnConsole(m_sci, m_plugin);
 
     DoRootDirChanged(wxGetCwd());
     BuildTree();
@@ -1446,4 +1441,13 @@ void SubversionView::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
     OnRefreshView(event);
+}
+void SubversionView::OnCharAdded(wxStyledTextEvent& event)
+{
+}
+void SubversionView::OnKeyDown(wxKeyEvent& event)
+{
+}
+void SubversionView::OnUpdateUI(wxStyledTextEvent& event)
+{
 }

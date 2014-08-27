@@ -462,5 +462,9 @@ WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument *doc, const wxString &filename)
  */
 WXDLLIMPEXP_SDK bool clIsCygwinEnvironment();
 
+/**
+ * @brief change the command so it will run in the background
+ */
+WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString &cmd);
 
 #endif //GLOBALS_H

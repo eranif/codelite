@@ -58,8 +58,10 @@ struct SvnConsoleCommand
     }
 };
 
+class SubversionView;
 class SvnConsole : public wxEvtHandler
 {
+    friend class SubversionView;
     wxStyledTextCtrl* m_sci;
     std::deque<SvnConsoleCommand*> m_queue;
     SvnConsoleCommand m_currCmd;

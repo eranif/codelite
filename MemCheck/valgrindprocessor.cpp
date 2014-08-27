@@ -41,13 +41,14 @@ wxString ValgrindMemcheckProcessor::GetExecutionCommand(const wxString & origina
     m_outputLogFileName = m_settings->GetValgrindSettings().GetOutputFile();
     if (m_settings->GetValgrindSettings().GetOutputInPrivateFolder() && m_outputLogFileName.IsEmpty())
         CL_ERROR(PLUGIN_PREFIX("Valgrind output file is not set properly. Using default - file in private folder"));
-    if (m_settings->GetValgrindSettings().GetOutputInPrivateFolder() || m_outputLogFileName.IsEmpty())
+    if (m_settings->GetValgrindSettings().GetOutputInPrivateFolder() || m_outputLogFileName.IsEmpty()) {
         if (WorkspaceST::Get()->IsOpen())
             m_outputLogFileName = wxFileName(WorkspaceST::Get()->GetPrivateFolder(),
                                              "valgrind.memcheck.log.xml").GetFullPath();
         else
             m_outputLogFileName = wxFileName(wxStandardPaths::Get().GetTempDir(),
                                              "valgrind.memcheck.log.xml").GetFullPath();
+    }
 
     wxArrayString suppFiles = GetSuppressionFiles();
     wxString suppresions;

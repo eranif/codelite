@@ -84,7 +84,7 @@ public:
 
     const wxString GetDefaultCommand() const {
         wxString str;
-        if (m_lastUsed >= 0 && m_lastUsed < m_commands.size()) {
+        if (m_lastUsed >= 0 && m_lastUsed < (int)m_commands.size()) {
             str = m_commands.at(m_lastUsed).command;
         }
         return str;

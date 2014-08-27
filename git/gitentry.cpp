@@ -48,6 +48,8 @@ const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 
 GitEntry::GitEntry()
     : clConfigItem("git-settings")
+    , m_colourTrackedFile(*wxGREEN)
+    , m_colourDiffFile(*wxRED)
 #ifdef __WXMSW__
     , m_flags(Git_Show_Terminal)
 #else
@@ -55,8 +57,6 @@ GitEntry::GitEntry()
 #endif
     , m_gitDiffDlgSashPos(0)
     , m_gitConsoleSashPos(0)
-    , m_colourTrackedFile(*wxGREEN)
-    , m_colourDiffFile(*wxRED)
     , m_gitCommitDlgHSashPos(0)
     , m_gitCommitDlgVSashPos(0)
 {

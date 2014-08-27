@@ -570,7 +570,7 @@ void GitConsole::DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName,
     wxMenu menu;
     for (size_t n=0; n < entries.size(); ++n) {
         wxMenuItem* item = menu.AppendRadioItem(n, entries.at(n).label);
-        item->Check(n == lastUsed);
+        item->Check(n == (size_t)lastUsed);
         arr.Add(entries.at(n).command);
     }
     menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
@@ -592,7 +592,7 @@ void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
 {
     int id = event.GetId();
     GitCommandData* userdata = static_cast<GitCommandData*>(event.GetEventUserData());
-    wxCHECK_RET(userdata->arr.GetCount() > event.GetId(), "Out-of-range ID");
+    wxCHECK_RET((int)userdata->arr.GetCount() > event.GetId(), "Out-of-range ID");
     event.SetString( userdata->arr.Item(id) );
     event.SetId(userdata->id);
 

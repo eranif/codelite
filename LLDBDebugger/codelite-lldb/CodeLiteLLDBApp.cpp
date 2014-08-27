@@ -403,7 +403,7 @@ void CodeLiteLLDBApp::NotifyStopped()
         lldb::SBThread thr = m_target.GetProcess().GetThreadAtIndex(i);
         t.SetStopReason(thr.GetStopReason());
         t.SetId(thr.GetThreadID());
-        t.SetActive(selectedThreadId == thr.GetThreadID());
+        t.SetActive(selectedThreadId == (int)thr.GetThreadID());
         lldb::SBFrame frame = thr.GetSelectedFrame();
         t.SetFunc(frame.GetFunctionName() ? frame.GetFunctionName() : "");
         lldb::SBLineEntry lineEntry = thr.GetSelectedFrame().GetLineEntry();
@@ -797,7 +797,7 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
 
         lldb::TypeClass typeClass = pvalue->GetType().GetTypeClass();
         if(typeClass & lldb::eTypeClassArray) {
-            size > m_settings.GetMaxArrayElements() ? size = m_settings.GetMaxArrayElements() : size = size;
+            size > (int)m_settings.GetMaxArrayElements() ? size = m_settings.GetMaxArrayElements() : size = size;
             wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", pvalue->GetName());
         } /*else if ( typeClass & lldb::eTypeClassPointer ) {
             // dereference is needed

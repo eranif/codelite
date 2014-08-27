@@ -409,7 +409,7 @@ wxDataViewItem MemCheckOutputView::GetAdjacentItem(const wxDataViewItem& item, b
     m_dataViewCtrlErrorsModel->GetChildren(parent, siblings);
     int pos = siblings.Index(item) + (forward ? 1 : -1);
 
-    if(pos < 0 || pos >= siblings.GetCount()) {
+    if(pos < 0 || pos >= (int)siblings.GetCount()) {
         if(!parent.IsOk()) { // parent == virtual root => we are on top level
             return GetLeaf(siblings.Item(forward ? 0 : siblings.GetCount() - 1), forward);
         } else {
@@ -492,7 +492,7 @@ void MemCheckOutputView::OnValueChanged(wxDataViewEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnValueChanged()"));
 
-    if(m_onValueChangedLocked || event.GetColumn() != GetColumnByName(wxT("Suppress")))
+    if(m_onValueChangedLocked || event.GetColumn() != (int)GetColumnByName(wxT("Suppress")))
         return;
 
     m_onValueChangedLocked = true;

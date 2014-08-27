@@ -135,7 +135,7 @@ void ClangUtils::MakePCHIfNeeded(const wxArrayString& tokens, const CXIndex& ind
     if(where != wxNOT_FOUND) {
         
         int pchfileIndex = where + 1;
-        if(mytokens.GetCount() > pchfileIndex) {
+        if((int)mytokens.GetCount() > pchfileIndex) {
             
             pchfile = mytokens.Item(pchfileIndex);
             mytokens.RemoveAt(where, 2);

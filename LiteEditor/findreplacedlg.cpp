@@ -579,8 +579,8 @@ wxArrayString FindReplaceData::GetReplaceStringArr() const
 FindReplaceData::FindReplaceData()
 	: clConfigItem("FindReplaceData")
 	, m_flags(0)
-	, m_searchScope(1)
 	, m_selectedMask("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc") // Default file mask
+	, m_searchScope(1)
 {
 	m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc");
 }

@@ -103,7 +103,7 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 	}
 
 	if (actual_read != sizeof(buff_len)) {
-		fprintf(stderr, "ERROR: Protocol error: expected %lu bytes, got %u\n", sizeof(buff_len), (unsigned int)actual_read);
+		fprintf(stderr, "ERROR: Protocol error: expected %u bytes, got %u\n", (unsigned int)sizeof(buff_len), (unsigned int)actual_read);
 		return false;
 	}
 

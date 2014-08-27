@@ -39,6 +39,7 @@
 #include "notebook_ex.h"
 #include "event_notifier.h"
 #include <wx/regex.h>
+#include <wx/settings.h>
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(SvnConsole, wxEvtHandler)

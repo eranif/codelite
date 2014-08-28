@@ -1191,7 +1191,7 @@
         <object class="wxMenuItem" name="open_shell">
             <label>Open Shell here</label>
         </object>
-        <object class="wxMenuItem" name="open_file_explorer">
+        <object class="wxMenuItem" name="fe_open_file_explorer">
             <label>Open File Explorer here</label>
         </object>
 	</object>

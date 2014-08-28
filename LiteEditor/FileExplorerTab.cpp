@@ -93,7 +93,7 @@ FileExplorerTab::FileExplorerTab(wxWindow* parent)
             wxCommandEventHandler(FileExplorerTab::OnOpenShell),
             NULL,
             this);
-    Connect(XRCID("open_file_explorer"),
+    Connect(XRCID("fe_open_file_explorer"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(FileExplorerTab::OnOpenExplorer),
             NULL,

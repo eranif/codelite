@@ -134,7 +134,7 @@ public:
         wxArrayString lines = ::wxStringTokenize(m_output, "\n", wxTOKEN_STRTOK);
         if(lines.GetCount() == 3) {
             // we got all the info we need
-            m_view->FinishDiff(lines.Item(2), m_filename);
+            m_view->FinishDiff(lines.Item(2).Trim(), m_filename);
         }
     }
     /**

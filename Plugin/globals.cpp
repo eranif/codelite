@@ -768,6 +768,30 @@ time_t GetFileModificationTime(const wxString& filename)
     return buff.st_mtime;
 }
 
+bool clIsMSYSEnvironment()
+{
+#ifdef __WXMSW__
+    static bool isMSYS = false;
+    static bool firstTime = true;
+
+    if(firstTime) {
+        firstTime = false;
+        CL_DEBUG("Testing for MSYS environment...uname -a");
+        wxString out = ProcUtils::SafeExecuteCommand("uname -a");
+        CL_DEBUG("[%s]", out);
+        if(out.IsEmpty()) {
+            isMSYS = false;
+        } else {
+            out.MakeLower();
+            isMSYS = out.Contains("mingw") && out.Contains("msys");
+        }
+    }
+    return isMSYS;
+#else
+    return false;
+#endif
+}
+
 bool clIsCygwinEnvironment()
 {
 #ifdef __WXMSW__
@@ -776,7 +800,9 @@ bool clIsCygwinEnvironment()
 
     if(firstTime) {
         firstTime = false;
+        CL_DEBUG("Testing for CYGWIN environment...uname -s");
         wxString out = ProcUtils::SafeExecuteCommand("uname -s");
+        CL_DEBUG("[%s]", out);
         if(out.IsEmpty()) {
             isCygwin = false;
         } else {

@@ -464,6 +464,13 @@ WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument *doc, const wxString &filename)
 WXDLLIMPEXP_SDK bool clIsCygwinEnvironment();
 
 /**
+ * @brief return true if running under MSYS environment
+ * This function returns false under Linux/OSX and under Windows it checks the 
+ * output of the command 'uname -s'
+ */
+WXDLLIMPEXP_SDK bool clIsMSYSEnvironment();
+
+/**
  * @brief change the command so it will run in the background
  */
 WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString &cmd);

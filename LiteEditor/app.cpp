@@ -342,6 +342,16 @@ bool CodeLiteApp::OnInit()
         parser.Usage();
         return false;
     }
+    
+    if(parser.Found(wxT("v"))) {
+        // print version
+#ifdef __WXMSW__
+        ::wxMessageBox(wxString() << "CodeLite IDE v" << clGitRevision, "CodeLite");
+#else
+        wxPrintf("CodeLite IDE v%s\n", clGitRevision);
+#endif
+        return false;
+    }
 
     if(parser.Found(wxT("n"))) {
         // Load codelite without plugins

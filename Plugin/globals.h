@@ -37,6 +37,7 @@
 #include <wx/brush.h>
 #include <wx/dcgraph.h>
 #include <wx/dc.h>
+#include "macros.h"
 
 class wxStyledTextCtrl;
 class IProcess;

@@ -3087,3 +3087,102 @@ void TagsManager::GetFilesForCC(const wxString& userTyped, wxArrayString& matche
 {
     GetDatabase()->GetFilesForCC(userTyped, matches);
 }
+
+void TagsManager::GetCXXKeywords(std::set<wxString>& words)
+{
+    wxArrayString arr;
+    GetCXXKeywords(arr);
+    words.clear();
+    words.insert(arr.begin(), arr.end());
+}
+
+void TagsManager::GetCXXKeywords(wxArrayString& words)
+{
+    words.Clear();
+    words.Add("alignas");
+    words.Add("alignof");
+    words.Add("and");
+    words.Add("and_eq");
+    words.Add("asm");
+    words.Add("auto");
+    words.Add("bitand");
+    words.Add("bitor");
+    words.Add("bool");
+    words.Add("break");
+    words.Add("case");
+    words.Add("catch");
+    words.Add("char");
+    words.Add("char16_t");
+    words.Add("char32_t");
+    words.Add("class");
+    words.Add("compl");
+    words.Add("const");
+    words.Add("constexpr");
+    words.Add("const_cast");
+    words.Add("continue");
+    words.Add("decltype");
+    words.Add("default");
+    words.Add("delete");
+    words.Add("do");
+    words.Add("double");
+    words.Add("dynamic_cast");
+    words.Add("else");
+    words.Add("enum");
+    words.Add("explicit");
+    words.Add("export");
+    words.Add("extern");
+    words.Add("false");
+    words.Add("final");
+    words.Add("float");
+    words.Add("for");
+    words.Add("friend");
+    words.Add("goto");
+    words.Add("if");
+    words.Add("inline");
+    words.Add("int");
+    words.Add("long");
+    words.Add("mutable");
+    words.Add("namespace");
+    words.Add("new");
+    words.Add("noexcept");
+    words.Add("not");
+    words.Add("not_eq");
+    words.Add("nullptr");
+    words.Add("operator");
+    words.Add("or");
+    words.Add("or_eq");
+    words.Add("override");
+    words.Add("private");
+    words.Add("protected");
+    words.Add("public");
+    words.Add("register");
+    words.Add("reinterpret_cast");
+    words.Add("return");
+    words.Add("short");
+    words.Add("signed");
+    words.Add("sizeof");
+    words.Add("static");
+    words.Add("static_assert");
+    words.Add("static_cast");
+    words.Add("struct");
+    words.Add("switch");
+    words.Add("template");
+    words.Add("this");
+    words.Add("thread_local");
+    words.Add("throw");
+    words.Add("true");
+    words.Add("try");
+    words.Add("typedef");
+    words.Add("typeid");
+    words.Add("typename");
+    words.Add("union");
+    words.Add("unsigned");
+    words.Add("using");
+    words.Add("virtual");
+    words.Add("void");
+    words.Add("volatile");
+    words.Add("wchar_t");
+    words.Add("while");
+    words.Add("xor");
+    words.Add("xor_eq");
+}

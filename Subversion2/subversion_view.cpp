@@ -331,7 +331,7 @@ void SubversionView::BuildTree(const wxString& root)
     DoChangeRootPathUI(root);
 
     wxString command;
-    command << m_plugin->GetSvnExeName() << wxT(" --no-ignore status");
+    command << m_plugin->GetSvnExeName() << wxT(" status");
     m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL), m_plugin);
 }
 
@@ -340,7 +340,7 @@ void SubversionView::BuildExplorerTree(const wxString& root)
     if(root.IsEmpty()) return;
 
     wxString command;
-    command << m_plugin->GetSvnExeName() << wxT(" --no-ignore status");
+    command << m_plugin->GetSvnExeName() << wxT(" status");
     m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL, true, root), m_plugin);
 }
 

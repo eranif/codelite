@@ -486,6 +486,7 @@ endif(WITH_SFTP)
 if (WITH_LLDB)
     add_subdirectory(LLDBDebugger)
 endif()
+add_subdirectory(codelitephp)
 
 ## Executables
 add_subdirectory(LiteEditor)

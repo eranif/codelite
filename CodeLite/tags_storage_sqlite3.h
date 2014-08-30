@@ -115,7 +115,9 @@ public:
     }
 
     void Close() {
-        wxSQLite3Database::Close();
+        if (IsOpen())
+            wxSQLite3Database::Close();
+
         m_statements.clear();
     }
 

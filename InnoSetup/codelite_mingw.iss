@@ -11,7 +11,7 @@ DefaultDirName={reg:HKLM\Software\codelite\settings,InstalPath|{pf}\CodeLite}
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-6.1.1-mingw4.8.1
+OutputBaseFilename=codelite-7.0-mingw4.8.1
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -69,6 +69,7 @@ Source: "..\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; De
 Source: "..\sdk\codelite_cppcheck\cfg\*.cfg"; DestDir: "{app}\config\cppcheck"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs ; Components: Editor
 Source: "..\SpellChecker\dics\*"; DestDir: "{app}\dics"; Flags: recursesubdirs ; Components: Editor
+Source: "..\codelitephp\resources\cc\*.php"; DestDir: "{app}\plugins\resources\php\cc"; Flags: recursesubdirs ; Components: Editor
 
 ; Override with Windows specific files
 Source: "..\Runtime\templates\projects\dynamic-library\dynamic-library.project.windows"; DestName: dynamic-library.project; DestDir: "{app}\templates\projects\dynamic-library"; Flags: ignoreversion ; Components: Editor
@@ -104,6 +105,7 @@ Source: "..\Runtime\plugins\CodeLiteDiff.dll"; DestDir: "{app}\plugins"; Flags: 
 Source: "..\Runtime\plugins\LLDBDebugger.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\wxcrafter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\plugins\SpellCheck.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\PHP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 
 Source: "..\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

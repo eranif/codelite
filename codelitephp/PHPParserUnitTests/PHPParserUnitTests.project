@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="PHPParserUnitTests" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+  "name": "Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Release",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }]]]>
+    </Plugin>
+  </Plugins>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="main.cpp"/>
+    <File Name="tester.h"/>
+    <File Name="tester.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Tests">
+    <File Name="Tests/test_global_func_locals.php"/>
+    <File Name="Tests/test_chain.php"/>
+    <File Name="Tests/test_chain1.php"/>
+    <File Name="Tests/test_chain_static_method.php"/>
+    <File Name="Tests/test_chain_static_variable.php"/>
+    <File Name="Tests/test_chain_ends_with_obj_operators.php"/>
+    <File Name="Tests/test_init_member.php"/>
+    <File Name="Tests/test_parse_variable_doc_comment.php"/>
+    <File Name="Tests/test_static_class_members.php"/>
+    <File Name="Tests/test_func_return_value.php"/>
+    <File Name="Tests/Mage.php"/>
+    <File Name="Tests/test_include_statement_parsing.php"/>
+    <File Name="Tests/generate_function.php"/>
+    <File Name="Tests/test_global_function_arguments.php"/>
+    <File Name="Tests/test_assignment_with_function.php"/>
+    <File Name="Tests/test_assign_variable_from_global_function.php"/>
+    <File Name="Tests/Test_New_Class_From_NS_Relative.php"/>
+    <File Name="Tests/test_simple_class_members_in_global_namespace.php"/>
+    <File Name="Tests/test_simple_class_in_namespace.php"/>
+    <File Name="Tests/test_parent_keyword.php"/>
+    <File Name="Tests/test_parent_keyword_inherits_with_full_path.php"/>
+    <File Name="Tests/test_using_namesapce.php"/>
+    <File Name="Tests/test_use_in_inheritance.php"/>
+    <File Name="Tests/test_anonymous_function.php"/>
+    <File Name="Tests/test_function_body_with_keywords.php"/>
+    <File Name="Tests/test_complete_namespace_children.php"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug_Unix">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Release_Unix"/>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cflags --debug=yes);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../PHPParser"/>
+        <IncludePath Value="."/>
+        <IncludePath Value="../../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../Interfaces/"/>
+        <IncludePath Value="../../CodeLite/"/>
+        <IncludePath Value="../../Plugin/"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs std,stc --debug=yes)" Required="yes">
+        <LibraryPath Value="../lib"/>
+        <LibraryPath Value="../../lib/gcc_lib"/>
+        <Library Value="PHPParser-dbg"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libcodeliteud.dll"/>
+        <Library Value="plugin_sdkud.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="PHPParserUnitTests.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cflags --debug=yes);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../PHPParser"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes">
+        <LibraryPath Value="../lib"/>
+        <Library Value="PHPParser"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="../../build-debug/bin/PHPUnitTests" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="Tests" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand>make clean &amp;&amp; make -j4</RebuildCommand>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make -j4</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)/build-debug</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cflags --debug=no);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../PHPParser"/>
+        <IncludePath Value="."/>
+        <IncludePath Value="../../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../Interfaces/"/>
+        <IncludePath Value="../../CodeLite/"/>
+        <IncludePath Value="../../Plugin/"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --libs std,stc --debug=no)" Required="yes">
+        <LibraryPath Value="../lib"/>
+        <LibraryPath Value="../../lib/gcc_lib"/>
+        <Library Value="PHPParser"/>
+        <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="plugin_sdku.dll"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cflags --debug=yes);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../PHPParser"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes">
+        <LibraryPath Value="../lib"/>
+        <Library Value="PHPParser"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Release">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+</CodeLite_Project>

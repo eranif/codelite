@@ -1,0 +1,43 @@
+CodeName: Mendes
+================
+
+Code Completion / Code Generation
+=================================
+
+- code completion: member is not recognized when placed after a class constant
+- code completion: better comment for ctor/dtor functions
+- code completion: add a menu option for a class to implements all its parent interface functions
+- code completion: add ctor function calltip... (its annoying!) NOTE: __constuct is not called by default. Only the child __construct should be called
+- When typing inside 'require{_once}' auto complete file names
+- code completion: add option to 'add include for ...'
+- Must: SFTP: add a per file destination folder to allow overriding the global settings
+- Better parsing for functions' return value
+- Navigation Bar
+- Code Formatter based on phptidy
+
+Usability:
+==========
+
+- Restore last session
+- Function calltip should include the return value
+- Allow user to define a deployment folder for his files 
+  (in addition to the SFTP, it should also allow user to copy files by simply saving them)
+- XDebug analysis (help the user configure xdebug on his box)
+- Auto detect Zend Server if installed
+
+*********************************************************
+    Implement the following checks before debug session 
+    starts:
+    - Zend Debugger is _NOT_ enabled
+    - XDebug _is_ loaded
+    - xdebug.remote_connect_back=1
+    - xdebug.remote_enable=1
+    - Check that the XDebug port is available
+    - idekey _is_ set
+*********************************************************
+
+NICE TO HAVE: 
+
+- Watches
+- Workspace view: make it multi selection
+

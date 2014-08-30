@@ -47,6 +47,9 @@
   <Environment>
     <![CDATA[]]>
   </Environment>
+  <Project Name="PHPParser" Path="codelitephp/PHPParser/PHPParser.project" Active="No"/>
+  <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
+  <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
@@ -70,8 +73,12 @@
       <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
       <Project Name="LLDBDebugger" ConfigName="WinReleaseUnicode"/>
       <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
       <Project Name="PCH" ConfigName="Release"/>
+      <Project Name="PHPParser" ConfigName="Release"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Release"/>
+      <Project Name="PHPPlugin" ConfigName="WinReleaseUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
       <Project Name="QMakePlugin" ConfigName="WinReleaseUnicode"/>
       <Project Name="SFTP" ConfigName="WinReleaseUnicode"/>
@@ -85,7 +92,6 @@
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
-      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
@@ -109,8 +115,12 @@
       <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
       <Project Name="LLDBDebugger" ConfigName="WinDebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="PCH" ConfigName="Debug"/>
+      <Project Name="PHPParser" ConfigName="Debug"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
+      <Project Name="PHPPlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
       <Project Name="QMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="SFTP" ConfigName="WinDebugUnicode"/>
@@ -124,9 +134,8 @@
       <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
-      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -164,8 +173,11 @@
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
+      <Project Name="PHPParser" ConfigName="Debug"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
+      <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -203,6 +215,9 @@
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
+      <Project Name="PHPParser" ConfigName="Debug"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
+      <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -242,6 +257,9 @@
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
+      <Project Name="PHPParser" ConfigName="Debug"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
+      <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -281,6 +299,9 @@
       <Project Name="SpellCheck" ConfigName="DebugUnicode"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
+      <Project Name="PHPParser" ConfigName="Debug"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
+      <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

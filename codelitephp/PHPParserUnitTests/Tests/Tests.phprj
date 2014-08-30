@@ -1,0 +1,21 @@
+{
+	"m_name":	"Tests",
+	"m_isActive":	true,
+	"settings":	{
+		"m_runAs":	0,
+		"m_phpExe":	"/usr/local/zend/bin/php",
+		"m_indexFile":	"",
+		"m_args":	"",
+		"m_workingDirectory":	"",
+		"m_projectURL":	"",
+		"m_includePath":	"",
+		"m_ccIncludePath":	"/home/eran/root/lib/codelite/resources/php/cc\n/usr/local/zend/gui/vendor/ZF2/library",
+		"m_flags":	1,
+		"m_phpIniFile":	""
+	},
+	"folders":	[{
+			"m_name":	".",
+			"m_files":	["Mage.php", "Test_New_Class_From_NS_Relative.php", "generate_function.php", "test_anonymous_function.php", "test_assign_variable_from_global_function.php", "test_assignment_with_function.php", "test_chain.php", "test_chain1.php", "test_chain_ends_with_obj_operators.php", "test_chain_static_method.php", "test_chain_static_variable.php", "test_complete_namespace_children.php", "test_func_return_value.php", "test_function_body_with_keywords.php", "test_global_func_locals.php", "test_global_function_arguments.php", "test_include_statement_parsing.php", "test_init_member.php", "test_parent_keyword.php", "test_parent_keyword_inherits_with_full_path.php", "test_parse_variable_doc_comment.php", "test_simple_class_in_namespace.php", "test_simple_class_members_in_global_namespace.php", "test_static_class_members.php", "test_use_in_inheritance.php", "test_using_namesapce.php"],
+			"children":	[]
+		}]
+}

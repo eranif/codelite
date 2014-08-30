@@ -112,8 +112,8 @@ target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} -L"${CMAKE_LIBRARY_OUTPUT
 target_link_libraries(PHPUnitTests ${LINKER_OPTIONS} -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" -L"${CL_LIBPATH}" -lPHPParser -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin -lutil ${wxWidgets_LIBRARIES})
 
 # Make sure that the plugin will not start build before 'plugin.so' is ready
-add_dependencies(${PLUGIN_NAME} PHPParser)
-add_dependencies(PHPUnitTests   PHPParser)
+add_dependencies(${PLUGIN_NAME} plugin PHPParser)
+add_dependencies(PHPUnitTests plugin PHPParser)
 
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
 install(

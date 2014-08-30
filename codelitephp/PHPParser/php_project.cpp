@@ -9,6 +9,7 @@
 #include <cl_command_event.h>
 #include <plugin.h>
 #include <macros.h>
+#include <wx/msgdlg.h>
 
 void PHPProject::FromJSON(const JSONElement& element)
 {

@@ -1216,17 +1216,17 @@ wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: i
                                               // any symlinked dirs in the path
 {
 #if defined(__WXGTK__)
-    char buf[PATH_MAX];
     if(!filepath.empty()) {
-        if(realpath(filepath.mb_str(wxConvUTF8), buf) == NULL) {
-            return filepath;
+        char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
+        if (buf != NULL) {
+            wxString result(buf, wxConvUTF8);
+            free(buf);
+            return result;
         }
     }
-
-    return wxString(buf, wxConvUTF8);
-#else
-    return filepath;
 #endif
+
+    return filepath;
 }
 
 int wxStringToInt(const wxString& str, int defval, int minval, int maxval)

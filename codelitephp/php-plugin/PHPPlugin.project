@@ -106,7 +106,6 @@
     <File Name="TODO.TXT"/>
     <File Name="../CMakeLists.txt"/>
     <File Name="php_ui.wxcp"/>
-    <File Name="../Installer/phplite.iss"/>
     <File Name="phplite.accelerators"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">

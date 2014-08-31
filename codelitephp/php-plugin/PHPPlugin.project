@@ -110,7 +110,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
     <File Name="php_ui.cpp"/>
-    <File Name="php_ui.fbp"/>
     <File Name="php_ui.h"/>
     <File Name="quick_outline_dlg.cpp"/>
     <File Name="quick_outline_dlg.h"/>

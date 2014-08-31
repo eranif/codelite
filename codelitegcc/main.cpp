@@ -188,7 +188,7 @@ char * normalize_path(const char * src, size_t src_len)
 
         // relative path
 
-        char pwd[PATH_MAX];
+        char pwd[4096];
         size_t pwd_len;
 
         if (getcwd(pwd, sizeof(pwd)) == NULL) {

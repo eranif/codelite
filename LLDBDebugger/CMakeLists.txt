@@ -99,7 +99,6 @@ if (WITH_LLDB MATCHES 1)
         # Define the output - shared library
         add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRCS})
 
-        target_link_libraries(${PLUGIN_NAME} ${LIBLLDB})
         target_link_libraries(LLDBDebugger LLDBProtocol)
 
         # Codelite plugins doesn't use the "lib" prefix.
@@ -108,6 +107,7 @@ if (WITH_LLDB MATCHES 1)
             ${LINKER_OPTIONS}
             ${PLUGIN_EXTRA_LIBS}
             ${wxWidgets_LIBRARIES}
+            ${LIBLLDB}
             -L"${CL_LIBPATH}"
             -lLLDBProtocol
             -llibcodelite

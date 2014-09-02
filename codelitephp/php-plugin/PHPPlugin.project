@@ -142,8 +142,6 @@
     <File Name="tree_item_data.h"/>
     <File Name="my_tree_view.h"/>
     <File Name="my_tree_view.cpp"/>
-    <File Name="BrowserPanel.h"/>
-    <File Name="BrowserPanel.cpp"/>
     <VirtualDirectory Name="Debugger">
       <File Name="localsview.h"/>
       <File Name="localsview.cpp"/>

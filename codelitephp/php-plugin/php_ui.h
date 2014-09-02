@@ -25,14 +25,11 @@
 #include <wx/treebook.h>
 #include <wx/imaglist.h>
 #include <wx/choicebk.h>
-#include <wx/infobar.h>
-#include <wx/bannerwindow.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
-#include <wx/webview.h>
 #include <wx/treectrl.h>
 #include "my_tree_view.h"
 #include <wx/gauge.h>
@@ -279,32 +276,6 @@ protected:
 public:
     FileMappingDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~FileMappingDlgBase();
-};
-
-
-class BrowserPanelBase : public wxPanel
-{
-protected:
-    wxInfoBar* m_infobar;
-    wxBannerWindow* m_banner;
-    wxTextCtrl* m_textCtrlAddressBar;
-    wxAuiToolBar* m_auibar;
-#if wxUSE_WEBVIEW
-    wxWebView* m_webView;
-#endif // wxUSE_WEBVIEW
-
-
-protected:
-    virtual void OnGoURL(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnGoUI(wxUpdateUIEvent& event) { event.Skip(); }
-    #if wxUSE_WEBVIEW
-    virtual void OnTitleChanged(wxWebViewEvent& event) { event.Skip(); }
-    virtual void OnNewWindow(wxWebViewEvent& event) { event.Skip(); }
-    #endif // wxUSE_WEBVIEW
-
-public:
-    BrowserPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
-    virtual ~BrowserPanelBase();
 };
 
 

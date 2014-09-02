@@ -24,7 +24,6 @@
 #include <ctags_manager.h>
 #include "ssh_workspace_settings.h"
 #include "php_parser_thread.h"
-#include "BrowserPanel.h"
 #include <file_logger.h>
 #include "PHPDebugPane.h"
 #include <cl_standard_paths.h>
@@ -593,30 +592,7 @@ void PhpPlugin::OnLoadURL(PHPEvent& e)
 {
     e.Skip();
     CL_DEBUG("Loading URL: " + e.GetUrl());
-
-#if wxUSE_WEBVIEW
-    // Check whether the user want to use default browser or built-in one
-    // Ensure that the browser is displayed
-    if(e.IsUseDefaultBrowser()) {
-        ::wxLaunchDefaultBrowser(e.GetUrl());
-
-    } else {
-        BrowserPanel* browser = NULL;
-        wxWindow* win = m_mgr->FindPage("Web Browser");
-        browser = dynamic_cast<BrowserPanel*>(win);
-        if(browser) {
-            m_mgr->SelectPage(browser);
-
-        } else {
-            browser = new BrowserPanel(m_mgr->GetEditorPaneNotebook());
-            m_mgr->AddPage(browser, "Web Browser", wxNullBitmap, true);
-        }
-
-        browser->LoadURL(e.GetUrl());
-    }
-#else
     ::wxLaunchDefaultBrowser(e.GetUrl());
-#endif
 }
 
 // Debugger events

@@ -8,6 +8,10 @@
 #include "SocketAPI/clSocketBase.h"
 #include "SocketAPI/clSocketServer.h"
 
+#if defined(__WXMSW__)
+#include <wx/msw/winundef.h>
+#endif
+
 class XDebugManager;
 class XDebugComThread : public wxThread
 {

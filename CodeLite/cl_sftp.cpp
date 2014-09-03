@@ -288,7 +288,7 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path) throw (clException)
     return pattr;
 }
 
-void clSFTP::CreateFile(const wxString& remoteFullPath, const wxString &content) throw (clException)
+void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxString &content) throw (clException)
 {
     // Create the path to the file
     Mkpath(wxFileName(remoteFullPath).GetPath());
@@ -327,7 +327,7 @@ void clSFTP::Mkpath(const wxString& remoteDirFullpath) throw (clException)
     }
 }
 
-void clSFTP::CreateFile(const wxString& remoteFullPath, const wxFileName& localFile) throw (clException)
+void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxFileName& localFile) throw (clException)
 {
     Mkpath(wxFileName(remoteFullPath).GetPath());
     Write(localFile, remoteFullPath);

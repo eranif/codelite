@@ -120,13 +120,13 @@ public:
     /**
      * @brief create a file. This function also creates the path to the file (by calling internally to Mkpath)
      */
-    void CreateFile(const wxString& remoteFullPath, const wxString &content) throw (clException);
+    void CreateRemoteFile(const wxString& remoteFullPath, const wxString &content) throw (clException);
 
     /**
      * @brief this version create a copy of the local file on the remote server. Similar to the previous
      * version, it also creates the path to the file if needed
      */
-    void CreateFile(const wxString& remoteFullPath, const wxFileName &localFile) throw (clException);
+    void CreateRemoteFile(const wxString& remoteFullPath, const wxFileName &localFile) throw (clException);
     
     /**
      * @brief create path . If the directory does not exist, create it (all sub paths if needed)

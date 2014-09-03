@@ -80,7 +80,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
             msg.Clear();
             if ( req->GetDirection() == SFTPThreadRequet::kUpload ) {
                 DoReportStatusBarMessage(wxString() << _("Uploading file: ") << req->GetRemoteFile());
-                m_sftp->CreateFile(req->GetRemoteFile(), wxFileName(req->GetLocalFile()));
+                m_sftp->CreateRemoteFile(req->GetRemoteFile(), wxFileName(req->GetLocalFile()));
                 msg << "Successfully uploaded file: " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
                 DoReportStatusBarMessage("");

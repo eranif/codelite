@@ -100,7 +100,7 @@ protected:
     void OnRenameWorkspace(wxCommandEvent &e);
     void OnRunProject(wxCommandEvent &e);
     void OnMakeIndexPHP(wxCommandEvent &e);
-    void OnRunActiveProject(wxCommandEvent &e);
+    void OnRunActiveProject(clExecuteEvent& e);
     void OnStopExecutedProgram(wxCommandEvent &e);
     void OnIsProgramRunning(wxCommandEvent &e);
     void OnEditorChanged(wxCommandEvent &e);

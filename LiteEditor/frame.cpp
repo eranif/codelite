@@ -3137,7 +3137,11 @@ void clMainFrame::OnCleanProjectUI(wxUpdateUIEvent& event)
 void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
 {
     // Test to see if any plugin wants to execute it
-    wxCommandEvent evtExecute(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT);
+    clExecuteEvent evtExecute(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT);
+    if(WorkspaceST::Get()->IsOpen()) {
+        // set the project name
+        evtExecute.SetTargetName(WorkspaceST::Get()->GetActiveProject()->GetName());
+    }
     if(EventNotifier::Get()->ProcessEvent(evtExecute)) return;
 
     if(!WorkspaceST::Get()->IsOpen()) {
@@ -5270,7 +5274,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
     for(size_t i = 0; i < panes.GetCount(); i++) {
         // make sure that the caption is visible
         panes.Item(i).CaptionVisible(true);
-        wxAuiPaneInfo &p = panes.Item(i);
+        wxAuiPaneInfo& p = panes.Item(i);
 
         if(p.window) {
             DockablePane* d = dynamic_cast<DockablePane*>(p.window);

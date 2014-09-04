@@ -925,14 +925,11 @@
         <label>Project</label>
         <style>wxMENU_TEAROFF</style>
 
-		<object class="wxMenuItem" name="import_directory">
-			<label>Import Files From Directory</label>
+        <object class="wxMenuItem" name="build_order">
+			<label>Build Order...</label>
 		</object>
-		<object class="wxMenuItem" name="reconcile_project">
-			<label>Reconcile Project</label>
-		</object>
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        
 		<object class="wxMenuItem" name="build_project">
 			<label>Build</label>
 		</object>
@@ -943,7 +940,12 @@
 		<object class="wxMenuItem" name="clean_project">
 			<label>Clean</label>
 		</object>
+        
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="stop_build">
+			<label>Stop Build</label>
+		</object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenu" name="project_only">
 			<label>Project Only</label>
 			<style>wxMENU_TEAROFF</style>
@@ -958,38 +960,28 @@
 				<label>Rebuild</label>
 			</object>
 		</object>
-
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="stop_build">
-			<label>Stop Build</label>
+		<object class="wxMenuItem" name="import_directory">
+			<label>Import Files From Directory</label>
 		</object>
-
+		<object class="wxMenuItem" name="reconcile_project">
+			<label>Reconcile Project</label>
+		</object>
+        <object class="wxMenuItem" name="set_as_active">
+			<label>Set As Active</label>
+		</object>
+        
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
 		<object class="wxMenuItem" name="export_makefile">
 			<label>Export Makefile</label>
 		</object>
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="set_as_active">
-			<label>Set As Active</label>
-		</object>
-
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="build_order">
-			<label>Build Order...</label>
-		</object>
 
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
-		<object class="wxMenuItem" name="retag_project">
-			<label>Re-Tag Project</label>
-		</object>
-
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-
-		<object class="wxMenuItem" name="sort_item">
+		<!--<object class="wxMenuItem" name="sort_item">
 			<label>Sort Item</label>
-		</object>
+		</object>-->
 		<object class="wxMenuItem" name="new_virtual_folder">
 			<label>New Virtual Folder</label>
 		</object>

@@ -271,3 +271,21 @@ clContextMenuEvent& clContextMenuEvent::operator=(const clContextMenuEvent& src)
 }
 
 clContextMenuEvent::~clContextMenuEvent() {}
+
+//-------------------------------------------------------------------------
+// clExecuteEvent
+//-------------------------------------------------------------------------
+
+clExecuteEvent::clExecuteEvent(const clExecuteEvent& event) { *this = event; }
+clExecuteEvent::~clExecuteEvent() {}
+clExecuteEvent& clExecuteEvent::operator=(const clExecuteEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_targetName = src.m_targetName;
+    return *this;
+}
+
+clExecuteEvent::clExecuteEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}

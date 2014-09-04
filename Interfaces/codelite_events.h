@@ -149,8 +149,11 @@
 #define wxEVT_CMD_PROJ_SETTINGS_SAVED 3478
 
 // A user requested to execute the active project
+// Event type:
+// clExecuteEvent.
+// Get the target to run by using clExecuteEvent::GetTargetName
 #define wxEVT_CMD_EXECUTE_ACTIVE_PROJECT 3479
-    
+
 // A user requested to stop the previously executed program
 #define wxEVT_CMD_STOP_EXECUTED_PROGRAM 3480
     

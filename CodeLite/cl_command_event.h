@@ -343,4 +343,25 @@ public:
 typedef void (wxEvtHandler::*clContextMenuEventFunction)(clContextMenuEvent&);
 #define clContextMenuEventHandler(func) wxEVENT_HANDLER_CAST(clContextMenuEventFunction, func)
 
+//---------------------------------------------------------------
+// Execute event
+//---------------------------------------------------------------
+class WXDLLIMPEXP_CL clExecuteEvent : public clCommandEvent
+{
+    wxString m_targetName;
+
+public:
+    clExecuteEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clExecuteEvent(const clExecuteEvent& event);
+    clExecuteEvent& operator=(const clExecuteEvent& src);
+    virtual ~clExecuteEvent();
+    virtual wxEvent* Clone() const { return new clExecuteEvent(*this); }
+
+    void SetTargetName(const wxString& targetName) { this->m_targetName = targetName; }
+    const wxString& GetTargetName() const { return m_targetName; }
+};
+
+typedef void (wxEvtHandler::*clExecuteEventFunction)(clExecuteEvent&);
+#define clExecuteEventHandler(func) wxEVENT_HANDLER_CAST(clExecuteEventFunction, func)
+
 #endif // CLCOMMANDEVENT_H

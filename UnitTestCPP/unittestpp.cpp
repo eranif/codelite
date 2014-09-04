@@ -47,6 +47,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/menuitem.h>
 #include <wx/menu.h>
+#include "codelite_events.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -96,6 +97,9 @@ UnitTestPP::UnitTestPP(IManager* manager)
                       wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
                       NULL,
                       (wxEvtHandler*)this);
+
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(UnitTestPP::OnRunProject), NULL, this);
 
     m_outputPage = new UnitTestsPage(m_mgr->GetOutputPaneNotebook(), m_mgr);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPage,
@@ -368,23 +372,8 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString& projec
 void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 {
     ProjectPtr p = m_mgr->GetSelectedProject();
-    if(!p) {
-        return;
-    }
-    wxString wd;
-    wxString cmd = m_mgr->GetProjectExecutionCommand(p->GetName(), wd);
-    DirSaver ds;
-
-    // first we need to CD to the project directory
-    ::wxSetWorkingDirectory(p->GetFileName().GetPath());
-
-    // now change the directory
-    ::wxSetWorkingDirectory(wd);
-
-    EnvSetter es;
-    // m_proc will be deleted upon termination
-    m_output.Clear();
-    m_proc = ::CreateAsyncProcess(this, cmd);
+    if(!p) return;
+    DoRunProject(p);
 }
 
 void UnitTestPP::OnRunUnitTestsUI(wxUpdateUIEvent& e)
@@ -574,4 +563,42 @@ void UnitTestPP::SelectUTPage()
             break;
         }
     }
+}
+
+void UnitTestPP::OnRunProject(clExecuteEvent& e)
+{
+    e.Skip();
+    // Sanity
+    if(!WorkspaceST::Get()->IsOpen()) return;
+    if(e.GetTargetName().IsEmpty()) return;
+
+    ProjectPtr pProj = WorkspaceST::Get()->GetProject(e.GetTargetName());
+    CHECK_PTR_RET(pProj);
+
+    if(pProj->GetProjectInternalType() != "UnitTest++") {
+        return;
+    }
+
+    // This is our to handle
+    e.Skip(false);
+    // Execute it
+    DoRunProject(pProj);
+}
+
+void UnitTestPP::DoRunProject(ProjectPtr project)
+{
+    wxString wd;
+    wxString cmd = m_mgr->GetProjectExecutionCommand(project->GetName(), wd);
+    DirSaver ds;
+
+    // first we need to CD to the project directory
+    ::wxSetWorkingDirectory(project->GetFileName().GetPath());
+
+    // now change the directory
+    ::wxSetWorkingDirectory(wd);
+
+    EnvSetter es;
+    // m_proc will be deleted upon termination
+    m_output.Clear();
+    m_proc = ::CreateAsyncProcess(this, cmd);
 }

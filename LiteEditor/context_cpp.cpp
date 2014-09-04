@@ -465,7 +465,7 @@ bool ContextCpp::IsCommentOrString(long pos)
     return (style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
             style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
             style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
-            style == wxSTC_C_CHARACTER);
+            style == wxSTC_C_CHARACTER || style == wxSTC_C_STRINGRAW);
 }
 
 //=============================================================================

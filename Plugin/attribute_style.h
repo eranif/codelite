@@ -61,22 +61,27 @@ class StyleProperty
     bool m_underlined;
     bool m_eolFilled;
     int m_alpha;
+
 public:
     typedef std::list<StyleProperty> List_t;
-    struct FindByName {
+    struct FindByName
+    {
         wxString m_name;
-        FindByName(const wxString &name) : m_name(name) {}
-        bool operator()(const StyleProperty& other) const {
-            return m_name == other.GetName();
+        FindByName(const wxString& name)
+            : m_name(name)
+        {
         }
+        bool operator()(const StyleProperty& other) const { return m_name == other.GetName(); }
     };
 
-    struct FindByID {
+    struct FindByID
+    {
         int m_id;
-        FindByID(int id) : m_id(id) {}
-        bool operator()(const StyleProperty& other) const {
-            return m_id == other.GetId();
+        FindByID(int id)
+            : m_id(id)
+        {
         }
+        bool operator()(const StyleProperty& other) const { return m_id == other.GetId(); }
     };
 
 public:
@@ -116,10 +121,7 @@ public:
         , m_eolFilled(false)
         , m_alpha(0){};
 
-    StyleProperty(const StyleProperty& rhs)
-    {
-        *this = rhs;
-    };
+    StyleProperty(const StyleProperty& rhs) { *this = rhs; };
 
     StyleProperty& operator=(const StyleProperty& rhs)
     {
@@ -137,103 +139,39 @@ public:
         return *this;
     }
 
-    virtual ~StyleProperty()
-    {
-    }
+    virtual ~StyleProperty() {}
 
-    bool IsNull() const {
-        return m_id == STYLE_PROPERTY_NULL_ID;
-    }
-    
-    void SetAlpha(int alpha)
-    {
-        this->m_alpha = alpha;
-    }
-    int GetAlpha() const
-    {
-        return m_alpha;
-    }
+    bool IsNull() const { return m_id == STYLE_PROPERTY_NULL_ID; }
 
-    wxString GetFgColour() const
-    {
-        return m_fgColour;
-    }
+    void SetAlpha(int alpha) { this->m_alpha = alpha; }
+    int GetAlpha() const { return m_alpha; }
 
-    wxString GetBgColour() const
-    {
-        return m_bgColour;
-    }
+    wxString GetFgColour() const { return m_fgColour; }
 
-    void SetEolFilled(bool eolFilled)
-    {
-        this->m_eolFilled = eolFilled;
-    }
-    bool GetEolFilled() const
-    {
-        return m_eolFilled;
-    }
+    wxString GetBgColour() const { return m_bgColour; }
+
+    void SetEolFilled(bool eolFilled) { this->m_eolFilled = eolFilled; }
+    bool GetEolFilled() const { return m_eolFilled; }
     const long GetFontSize() const
     {
-        if(m_fontSize <= 0)
-            return FONT_SIZE;
+        if(m_fontSize <= 0) return FONT_SIZE;
         return m_fontSize;
     }
 
-    const wxString& GetFaceName() const
-    {
-        return m_faceName;
-    }
-    bool IsBold() const
-    {
-        return m_bold;
-    }
-    const wxString& GetName() const
-    {
-        return m_name;
-    }
-    int GetId() const
-    {
-        return m_id;
-    }
-    void SetBgColour(const wxString& colour)
-    {
-        m_bgColour = colour;
-    }
-    void SetFgColour(const wxString& colour)
-    {
-        m_fgColour = colour;
-    }
-    void SetFontSize(long size)
-    {
-        m_fontSize = size;
-    }
-    void SetFaceName(const wxString& face)
-    {
-        m_faceName = face;
-    }
-    void SetBold(bool bold)
-    {
-        m_bold = bold;
-    }
-    void SetId(int id)
-    {
-        m_id = id;
-    }
-    void SetItalic(const bool& italic)
-    {
-        this->m_italic = italic;
-    }
-    const bool& GetItalic() const
-    {
-        return m_italic;
-    }
-    void SetUnderlined(const bool& underlined)
-    {
-        this->m_underlined = underlined;
-    }
-    const bool& GetUnderlined() const
-    {
-        return m_underlined;
-    }
+    const wxString& GetFaceName() const { return m_faceName; }
+    bool IsBold() const { return m_bold; }
+    const wxString& GetName() const { return m_name; }
+    int GetId() const { return m_id; }
+    void SetBgColour(const wxString& colour) { m_bgColour = colour; }
+    void SetFgColour(const wxString& colour) { m_fgColour = colour; }
+    void SetFontSize(long size) { m_fontSize = size; }
+    void SetFaceName(const wxString& face) { m_faceName = face; }
+    void SetBold(bool bold) { m_bold = bold; }
+    void SetId(int id) { m_id = id; }
+    void SetItalic(const bool& italic) { this->m_italic = italic; }
+    const bool& GetItalic() const { return m_italic; }
+    void SetUnderlined(const bool& underlined) { this->m_underlined = underlined; }
+    const bool& GetUnderlined() const { return m_underlined; }
+    void SetName(const wxString& name) { this->m_name = name; }
 };
 #endif

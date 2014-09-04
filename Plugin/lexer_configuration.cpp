@@ -97,7 +97,17 @@ void LexerConf::FromXml(wxXmlNode* element)
                 }
             }
         }
-
+        
+        // Hack: add RawString property to the lexers if not exist
+        // By default, we use the settings defined for the wxSTC_C_STRING
+        // property
+        bool isCxxLexer = (m_lexerId == wxSTC_LEX_CPP);
+        bool hasRawString = false;
+        
+        // Keey NULL property
+        StyleProperty stringProp;
+        stringProp.SetId(STYLE_PROPERTY_NULL_ID);
+        
         // load properties
         // Search for <properties>
         node = XmlUtils::FindFirstByTagName(element, wxT("Properties"));
@@ -119,7 +129,12 @@ void LexerConf::FromXml(wxXmlNode* element)
                     long fontSize = XmlUtils::ReadLong(prop, wxT("Size"), 10);
                     long propId = XmlUtils::ReadLong(prop, wxT("Id"), 0);
                     long alpha = XmlUtils::ReadLong(prop, wxT("Alpha"), 50);
-
+                    
+                    // Mainly for upgrade purposes: check if already read
+                    // the StringRaw propery 
+                    if(isCxxLexer && !hasRawString && propId == wxSTC_C_STRINGRAW) {
+                        hasRawString = true;
+                    }
                     StyleProperty property = StyleProperty(propId,
                                                            colour,
                                                            bgcolour,
@@ -131,10 +146,20 @@ void LexerConf::FromXml(wxXmlNode* element)
                                                            StringTolBool(underline),
                                                            StringTolBool(eolFill),
                                                            alpha);
-
+                    if(isCxxLexer && propId == wxSTC_C_STRING) {
+                        stringProp = property;
+                    }
                     m_properties.push_back(property);
                 }
                 prop = prop->GetNext();
+            }
+            
+            // If we don't have the raw string style property,
+            // copy the string property and add it
+            if(isCxxLexer && !hasRawString && !stringProp.IsNull()) {
+                stringProp.SetId(wxSTC_C_STRINGRAW);
+                stringProp.SetName("Raw String");
+                m_properties.push_back(stringProp);
             }
         }
     }

@@ -148,10 +148,10 @@ public:
         m_originalCwd = path;
     }
 
-    const wxString &GetStarupDirectory() const {
+    const wxString &GetStartupDirectory() const {
         return m_startupDir;
     }
-    void SetStarupDirectory(const wxString &path) {
+    void SetStartupDirectory(const wxString &path) {
         m_startupDir = path;
     }
 

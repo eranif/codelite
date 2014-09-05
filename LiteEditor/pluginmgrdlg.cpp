@@ -152,7 +152,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
         } else {
             status = wxT("<img src=\"$(InstallPath)/images/plugin_not_ok.png\" > </img>");
         }
-        status.Replace(wxT("$(InstallPath)"), ManagerST::Get()->GetStarupDirectory());
+        status.Replace(wxT("$(InstallPath)"), ManagerST::Get()->GetStartupDirectory());
 
         content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << status << wxT("</font></td>");
         content << wxT("</tr>");

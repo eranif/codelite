@@ -491,18 +491,18 @@ bool CodeLiteApp::OnInit()
     if(!wxXmlResource::Get()->Load(DoFindMenuFile(ManagerST::Get()->GetInstallDir(), wxT("2.0")))) return false;
 
     // keep the startup directory
-    ManagerST::Get()->SetStarupDirectory(::wxGetCwd());
+    ManagerST::Get()->SetStartupDirectory(::wxGetCwd());
 
     // set the performance output file name
     PERF_OUTPUT(wxString::Format(wxT("%s/codelite.perf"), wxGetCwd().c_str()).mb_str(wxConvUTF8));
 
     // Initialize the configuration file locater
-    ConfFileLocator::Instance()->Initialize(ManagerST::Get()->GetInstallDir(), ManagerST::Get()->GetStarupDirectory());
+    ConfFileLocator::Instance()->Initialize(ManagerST::Get()->GetInstallDir(), ManagerST::Get()->GetStartupDirectory());
 
     Manager* mgr = ManagerST::Get();
 
     // set the CTAGS_REPLACEMENT environment variable
-    wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStarupDirectory() + wxT("/ctags.replacements"));
+    wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStartupDirectory() + wxT("/ctags.replacements"));
 
     long style = wxSIMPLE_BORDER;
 #if defined(__WXMSW__) || defined(__WXGTK__)
@@ -664,7 +664,7 @@ bool CodeLiteApp::OnInit()
     }
 
     wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
-    wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStarupDirectory().c_str()));
+    wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
 
 #ifdef __WXGTK__
     // Needed on GTK
@@ -740,12 +740,12 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser, const wxString
             }
 
             if(files.IsEmpty() == false) {
-                Mkdir(ManagerST::Get()->GetStarupDirectory() + wxT("/ipc"));
+                Mkdir(ManagerST::Get()->GetStartupDirectory() + wxT("/ipc"));
 
                 wxString file_name, tmp_file;
-                tmp_file << ManagerST::Get()->GetStarupDirectory() << wxT("/ipc/command.msg.tmp");
+                tmp_file << ManagerST::Get()->GetStartupDirectory() << wxT("/ipc/command.msg.tmp");
 
-                file_name << ManagerST::Get()->GetStarupDirectory() << wxT("/ipc/command.msg");
+                file_name << ManagerST::Get()->GetStartupDirectory() << wxT("/ipc/command.msg");
 
                 // write the content to a temporary file, once completed,
                 // rename the file to the actual file name

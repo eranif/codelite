@@ -678,7 +678,7 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     JobQueueSingleton::Instance()->Start(6);
 
     // the single instance job is a presisstent job, so the pool will contain only 4 available threads
-    JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));
+    JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStartupDirectory()));
 
     // start the editor creator thread
     m_timer = new wxTimer(this, FrameTimerId);
@@ -895,7 +895,7 @@ void clMainFrame::Initialize(bool loadLastSession)
     // we show splash only when using Release builds of codelite
     if(inf.GetFlags() & CL_SHOW_SPLASH) {
         wxBitmap bitmap;
-        wxString splashName(ManagerST::Get()->GetStarupDirectory() + wxT("/images/splashscreen.png"));
+        wxString splashName(ManagerST::Get()->GetStartupDirectory() + wxT("/images/splashscreen.png"));
         if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
             wxString mainTitle = CODELITE_VERSION_STR;
             clMainFrame::m_splashScreen = new clSplashScreen(NULL, bitmap);
@@ -970,7 +970,7 @@ void clMainFrame::CreateGUIControls(void)
 
     // initialize debugger configuration tool
     DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("5.4"));
-    WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
+    WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStartupDirectory());
 
 #if wxCHECK_VERSION(2, 9, 5)
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
@@ -3189,7 +3189,7 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     long updatePaths(1);
 
     wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
-    wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStarupDirectory().c_str()));
+    wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
     wxLogMessage("Using " + wxStyledTextCtrl::GetLibraryVersionInfo().ToString());
     if(::clIsCygwinEnvironment()) {
         wxLogMessage("Running under Cygwin environment");
@@ -3501,7 +3501,7 @@ void clMainFrame::CreateWelcomePage()
     /*
     Manager *mgr = ManagerST::Get();
     //load the template
-    wxFileName fn(mgr->GetStarupDirectory(), wxT("index.html"));
+    wxFileName fn(mgr->GetStartupDirectory(), wxT("index.html"));
     wxFFile file(fn.GetFullPath(), wxT("r"));
     if (!file.IsOpened()) {
         return;
@@ -3513,7 +3513,7 @@ void clMainFrame::CreateWelcomePage()
     file.Close();
 
     //replace $(InstallPath)
-    content.Replace(wxT("$(InstallPath)"), mgr->GetStarupDirectory());
+    content.Replace(wxT("$(InstallPath)"), mgr->GetStartupDirectory());
 
     //replace the $(FilesTable) & $(WorkspaceTable)
     wxString workspaceTable = CreateWorkspaceTable();

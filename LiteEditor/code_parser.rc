@@ -25,7 +25,9 @@
 
 aaaaa ICON "res/cubes.ico"
 #include "wx/msw/wx.rc"
+#ifndef __GNUC__
 1 24 "wx/msw/wx.manifest"
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Version information

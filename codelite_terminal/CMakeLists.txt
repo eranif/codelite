@@ -31,15 +31,11 @@ add_definitions(-DNDEBUG)
 FILE(GLOB SRCS "*.cpp")
 
 # Define the output
+set (RES_FILE "")
 if (MINGW)
-    add_definitions(-DWINDRES)
-    execute_process(COMMAND sh ${CL_WX_CONFIG} --debug=no --rescomp OUTPUT_VARIABLE WX_RC_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(REGEX REPLACE "windres" "" WX_RC_FLAGS ${WX_RC_FLAGS})
-    set (CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} ${WX_RC_FLAGS}")
-    add_executable(codelite-terminal ${SRCS} win_resources.rc)
-else()
-    add_executable(codelite-terminal ${SRCS})
+    set (RES_FILE "win_resources.rc")
 endif()
+add_executable(codelite-terminal ${SRCS} ${RES_FILE})
 
 set ( UTIL_LIB "" )
 if ( UNIX )

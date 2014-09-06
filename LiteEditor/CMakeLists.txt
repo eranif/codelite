@@ -67,13 +67,12 @@ endif (UNIX)
 
 FILE(GLOB SRCS "*.cpp")
 
+set (RES_FILE "")
 # Define the output
 if (MINGW)
-    add_definitions(-DWINDRES)
-    add_executable(codelite ${SRCS} code_parser.rc)
-else()
-    add_executable(codelite ${SRCS})
+    set(RES_FILES "code_parser.rc")
 endif()
+add_executable(codelite ${SRCS} ${RES_FILES})
 
 set( ADDITIONAL_LIBRARIES "" )
 

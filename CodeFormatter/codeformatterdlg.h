@@ -25,7 +25,6 @@
 #ifndef __codeformatterdlg__
 #define __codeformatterdlg__
 
-
 #include "codeformatterdlgbase.h"
 #include "formatoptions.h"
 
@@ -35,33 +34,31 @@ class CodeFormatter;
 class CodeFormatterDlg : public CodeFormatterBaseDlg
 {
     FormatOptions m_options;
-    CodeFormatter *m_cf;
+    CodeFormatter* m_cf;
     wxString m_sampleCode;
     bool m_isDirty;
-    IManager *m_mgr;
-    
+    IManager* m_mgr;
+
 protected:
     virtual void OnApply(wxCommandEvent& event);
     virtual void OnCustomAstyleFlags(wxCommandEvent& event);
     virtual void OnApplyUI(wxUpdateUIEvent& event);
     virtual void OnAStylePropertyChanged(wxPropertyGridEvent& event);
-    void OnOK(wxCommandEvent &e);
-    void OnHelp(wxCommandEvent &e);
+    void OnOK(wxCommandEvent& e);
+    void OnHelp(wxCommandEvent& e);
     void InitDialog();
     void UpdatePreview();
     void ExpandCollapsUneededOptions();
-    
+
 public:
     /** Constructor */
-    CodeFormatterDlg( wxWindow* parent, 
-                      IManager* mgr,
-                      CodeFormatter *cf, 
-                      const FormatOptions& opts, 
-                      const wxString &sampleCode );
+    CodeFormatterDlg(wxWindow* parent,
+                     IManager* mgr,
+                     CodeFormatter* cf,
+                     const FormatOptions& opts,
+                     const wxString& sampleCode);
     ~CodeFormatterDlg();
-    FormatOptions GetOptions() const {
-        return m_options;
-    }
+    FormatOptions GetOptions() const { return m_options; }
 };
 
 #endif // __codeformatterdlg__

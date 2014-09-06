@@ -13,7 +13,7 @@ public:
      * @brief locate clang-format executable
      * @return
      */
-    bool Locate(wxString &clangFormat);
+    bool Locate(wxString& clangFormat);
 };
 
 #endif // CLCLANGFORMATLOCATOR_H

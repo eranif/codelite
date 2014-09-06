@@ -7,68 +7,81 @@
 #include "codeformatterdlgbase.h"
 #include "formatoptions.h"
 
-
 // Declare the bitmap loading function
 extern void wxCrafterGgLOZbInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent,
+                                           wxWindowID id,
+                                           const wxString& title,
+                                           const wxPoint& pos,
+                                           const wxSize& size,
+                                           long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterGgLOZbInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizerMain = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerMain);
-    
-    m_splitterSettingsPreview = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(400,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+
+    m_splitterSettingsPreview = new wxSplitterWindow(
+        this, wxID_ANY, wxDefaultPosition, wxSize(400, -1), wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitterSettingsPreview->SetSashGravity(0.5);
     m_splitterSettingsPreview->SetMinimumPaneSize(50);
-    
+
     bSizerMain->Add(m_splitterSettingsPreview, 1, wxEXPAND, 5);
-    
-    m_panelSettings = new wxPanel(m_splitterSettingsPreview, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
+
+    m_panelSettings =
+        new wxPanel(m_splitterSettingsPreview, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+
     wxBoxSizer* bSizerSettings = new wxBoxSizer(wxVERTICAL);
     m_panelSettings->SetSizer(bSizerSettings);
-    
-    m_splitter16 = new wxSplitterWindow(m_panelSettings, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+
+    m_splitter16 = new wxSplitterWindow(m_panelSettings,
+                                        wxID_ANY,
+                                        wxDefaultPosition,
+                                        wxSize(-1, -1),
+                                        wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitter16->SetSashGravity(1);
     m_splitter16->SetMinimumPaneSize(100);
-    
+
     bSizerSettings->Add(m_splitter16, 1, wxEXPAND, 5);
-    
-    m_splitterPage20 = new wxPanel(m_splitter16, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    
+
+    m_splitterPage20 = new wxPanel(m_splitter16, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+
     wxBoxSizer* boxSizer26 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage20->SetSizer(boxSizer26);
-    
+
     wxArrayString m_pgMgrArr;
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(m_splitterPage20, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    boxSizer26->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
-    
+    m_pgMgr = new wxPropertyGridManager(m_splitterPage20,
+                                        wxID_ANY,
+                                        wxDefaultPosition,
+                                        wxSize(-1, -1),
+                                        wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    boxSizer26->Add(m_pgMgr, 1, wxALL | wxEXPAND, 5);
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("AStyle"));
     m_pgMgrArr.Add(_("clang-format"));
     m_pgMgrIntArr.Add(kFormatEngineAStyle);
     m_pgMgrIntArr.Add(kFormatEngineClangFormat);
-    m_pgPropEngine = m_pgMgr->Append(  new wxEnumProperty( _("Formatter Tool"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropEngine = m_pgMgr->Append(new wxEnumProperty(_("Formatter Tool"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropEngine->SetHelpString(_("Select the formatter tool to use"));
-    
-    m_pgPropAstyleOptions = m_pgMgr->Append(  new wxPropertyCategory( _("AStyle Options") ) );
+
+    m_pgPropAstyleOptions = m_pgMgr->Append(new wxPropertyCategory(_("AStyle Options")));
     m_pgPropAstyleOptions->SetHelpString(wxT(""));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("GNU"));
@@ -76,9 +89,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrArr.Add(_("K&R"));
     m_pgMgrArr.Add(_("Linux"));
     m_pgMgrArr.Add(_("ANSI"));
-    m_pgPropPreDefinedStyles = m_pgMgr->AppendIn( m_pgPropAstyleOptions,  new wxEnumProperty( _("PreDefined Styles"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropPreDefinedStyles = m_pgMgr->AppendIn(
+        m_pgPropAstyleOptions, new wxEnumProperty(_("PreDefined Styles"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropPreDefinedStyles->SetHelpString(_("Choose the formatting from one of the known styles"));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Break closing"));
@@ -86,9 +100,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrArr.Add(_("Linux"));
     m_pgMgrArr.Add(_("Break"));
     m_pgMgrArr.Add(_("None"));
-    m_pgPropBrackets = m_pgMgr->AppendIn( m_pgPropAstyleOptions,  new wxEnumProperty( _("Brackets"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropBrackets = m_pgMgr->AppendIn(m_pgPropAstyleOptions,
+                                         new wxEnumProperty(_("Brackets"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropBrackets->SetHelpString(_("Bracket Style options define the bracket style to use"));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Class"));
@@ -111,9 +126,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(AS_INDENT_PREPROCESSORS);
     m_pgMgrIntArr.Add(AS_MAX_INSTATEMENT_INDENT);
     m_pgMgrIntArr.Add(AS_MIN_COND_INDENT);
-    m_pgPropIndentation = m_pgMgr->AppendIn( m_pgPropAstyleOptions,  new wxFlagsProperty( _("Indentation"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropIndentation = m_pgMgr->AppendIn(
+        m_pgPropAstyleOptions, new wxFlagsProperty(_("Indentation"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropIndentation->SetHelpString(wxT(""));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Break Blocks"));
@@ -138,19 +154,23 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(AS_ONE_LINE_KEEP_STATEMENT);
     m_pgMgrIntArr.Add(AS_FILL_EMPTY_LINES);
     m_pgMgrIntArr.Add(AS_ONE_LINE_KEEP_BLOCKS);
-    m_pgPropFormatting = m_pgMgr->AppendIn( m_pgPropAstyleOptions,  new wxFlagsProperty( _("Formatting"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropFormatting = m_pgMgr->AppendIn(
+        m_pgPropAstyleOptions, new wxFlagsProperty(_("Formatting"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropFormatting->SetHelpString(_("Select one or more formatting option from the list below"));
-    
-    m_pgPropClangFormat = m_pgMgr->Append(  new wxPropertyCategory( _("ClangFormat Options") ) );
+
+    m_pgPropClangFormat = m_pgMgr->Append(new wxPropertyCategory(_("ClangFormat Options")));
     m_pgPropClangFormat->SetHelpString(wxT(""));
-    
-    m_pgPropClangFormatExePath = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
+
+    m_pgPropClangFormatExePath =
+        m_pgMgr->AppendIn(m_pgPropClangFormat, new wxFileProperty(_("clang-format path"), wxPG_LABEL, wxT("")));
     m_pgMgr->SetPropertyAttribute(m_pgPropClangFormatExePath, wxPG_FILE_WILDCARD, wxT(""));
     m_pgPropClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
-    
-    m_pgPropColumnLimit = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxIntProperty( _("Column Limit"), wxPG_LABEL, 0) );
-    m_pgPropColumnLimit->SetHelpString(_("The column limit\nA column limit of 0 means that there is no column limit.\nIn this case, clang-format will respect the input's line breaking decisions within statements unless they contradict other rules"));
-    
+
+    m_pgPropColumnLimit = m_pgMgr->AppendIn(m_pgPropClangFormat, new wxIntProperty(_("Column Limit"), wxPG_LABEL, 0));
+    m_pgPropColumnLimit->SetHelpString(
+        _("The column limit\nA column limit of 0 means that there is no column limit.\nIn this case, clang-format will "
+          "respect the input's line breaking decisions within statements unless they contradict other rules"));
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Linux"));
@@ -163,9 +183,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(kStroustrup);
     m_pgMgrIntArr.Add(kAllman);
     m_pgMgrIntArr.Add(kGNU);
-    m_pgPropClangBraceBreakStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Brace breaking style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropClangBraceBreakStyle = m_pgMgr->AppendIn(
+        m_pgPropClangFormat, new wxEnumProperty(_("Brace breaking style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropClangBraceBreakStyle->SetHelpString(_("The brace breaking style to use."));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("LLVM"));
@@ -178,9 +199,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(kClangFormatWebKit);
     m_pgMgrIntArr.Add(kClangFormatChromium);
     m_pgMgrIntArr.Add(kClangFormatMozilla);
-    m_pgPropClangFormatStyle = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropClangFormatStyle = m_pgMgr->AppendIn(
+        m_pgPropClangFormat, new wxEnumProperty(_("Style"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Align Escaped Newlines Left"));
@@ -219,70 +241,80 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(kSpaceBeforeAssignmentOperators);
     m_pgMgrIntArr.Add(kSpaceBeforeParens);
     m_pgMgrIntArr.Add(kSpacesInParentheses);
-    m_pgPropClangFormattingOptions = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFlagsProperty( _("Clang Formatting Options"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropClangFormattingOptions =
+        m_pgMgr->AppendIn(m_pgPropClangFormat,
+                          new wxFlagsProperty(_("Clang Formatting Options"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropClangFormattingOptions->SetHelpString(wxT(""));
-    
-    m_splitterPage24 = new wxPanel(m_splitter16, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    m_splitterPage24 = new wxPanel(m_splitter16, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_splitter16->SplitHorizontally(m_splitterPage20, m_splitterPage24, 0);
-    
+
     wxBoxSizer* boxSizer28 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage24->SetSizer(boxSizer28);
-    
+
     wxBoxSizer* bCustomSettingsSizer = new wxBoxSizer(wxVERTICAL);
-    
+
     boxSizer28->Add(bCustomSettingsSizer, 1, wxEXPAND, 0);
-    
+
     wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     bCustomSettingsSizer->Add(boxSizer57, 0, wxEXPAND, 5);
-    
-    m_staticText59 = new wxStaticText(m_splitterPage24, wxID_ANY, _("AStyle Only:"), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    m_staticText59 =
+        new wxStaticText(m_splitterPage24, wxID_ANY, _("AStyle Only:"), wxDefaultPosition, wxSize(-1, -1), 0);
     wxFont m_staticText59Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText59Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText59->SetFont(m_staticText59Font);
-    
+
     boxSizer57->Add(m_staticText59, 0, wxALL, 5);
-    
-    m_staticText3 = new wxStaticText(m_splitterPage24, wxID_ANY, _("Custom user settings"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    boxSizer57->Add(m_staticText3, 0, wxALL|wxEXPAND, 5);
-    
-    m_textCtrlUserFlags = new wxTextCtrl(m_splitterPage24, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+
+    m_staticText3 =
+        new wxStaticText(m_splitterPage24, wxID_ANY, _("Custom user settings"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    boxSizer57->Add(m_staticText3, 0, wxALL | wxEXPAND, 5);
+
+    m_textCtrlUserFlags = new wxTextCtrl(m_splitterPage24,
+                                         wxID_ANY,
+                                         wxT(""),
+                                         wxDefaultPosition,
+                                         wxSize(-1, -1),
+                                         wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE);
     wxFont m_textCtrlUserFlagsFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Sans"));
     m_textCtrlUserFlags->SetFont(m_textCtrlUserFlagsFont);
-    
-    bCustomSettingsSizer->Add(m_textCtrlUserFlags, 1, wxALL|wxEXPAND, 5);
-    
-    m_panelPreview = new wxPanel(m_splitterSettingsPreview, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    bCustomSettingsSizer->Add(m_textCtrlUserFlags, 1, wxALL | wxEXPAND, 5);
+
+    m_panelPreview =
+        new wxPanel(m_splitterSettingsPreview, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_splitterSettingsPreview->SplitVertically(m_panelSettings, m_panelPreview, 0);
-    
+
     wxBoxSizer* bPreviewSizer = new wxBoxSizer(wxHORIZONTAL);
     m_panelPreview->SetSizer(bPreviewSizer);
-    
-    m_textCtrlPreview = new wxStyledTextCtrl(m_panelPreview, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+
+    m_textCtrlPreview = new wxStyledTextCtrl(m_panelPreview, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
     // Configure the fold margin
-    m_textCtrlPreview->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_textCtrlPreview->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_textCtrlPreview->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_textCtrlPreview->SetMarginSensitive(4, true);
-    m_textCtrlPreview->SetMarginWidth    (4, 0);
-    
+    m_textCtrlPreview->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_textCtrlPreview->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_textCtrlPreview->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_textCtrlPreview->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlPreview->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_textCtrlPreview->SetMarginWidth(2, 0);
     m_textCtrlPreview->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_textCtrlPreview->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_textCtrlPreview->SetMarginWidth(0,0);
-    
+    m_textCtrlPreview->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_textCtrlPreview->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_textCtrlPreview->SetMarginMask(3, 0);
-    m_textCtrlPreview->SetMarginWidth(3,0);
+    m_textCtrlPreview->SetMarginWidth(3, 0);
     // Select the lexer
     m_textCtrlPreview->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -294,52 +326,58 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlPreview->SetKeyWords(2, wxT(""));
     m_textCtrlPreview->SetKeyWords(3, wxT(""));
     m_textCtrlPreview->SetKeyWords(4, wxT(""));
-    
-    bPreviewSizer->Add(m_textCtrlPreview, 1, wxALL|wxEXPAND, 5);
-    
+
+    bPreviewSizer->Add(m_textCtrlPreview, 1, wxALL | wxEXPAND, 5);
+
     wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
-    
+
     bSizerMain->Add(bSizerButtons, 0, wxALIGN_CENTER_HORIZONTAL, 5);
-    
+
     m_stdBtnSizer30 = new wxStdDialogButtonSizer();
-    
+
     bSizerButtons->Add(m_stdBtnSizer30, 0, wxALL, 5);
-    
+
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer30->AddButton(m_buttonOK);
-    
+
     m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer30->AddButton(m_buttonApply);
-    
+
     m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer30->AddButton(m_buttonCancel);
-    
+
     m_buttonHelp = new wxButton(this, wxID_HELP, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer30->AddButton(m_buttonHelp);
     m_stdBtnSizer30->Realize();
-    
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+
+    SetSizeHints(-1, -1);
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
     // Connect events
-    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnAStylePropertyChanged), NULL, this);
-    m_textCtrlUserFlags->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
+    m_pgMgr->Connect(
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnAStylePropertyChanged), NULL, this);
+    m_textCtrlUserFlags->Connect(
+        wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);
     m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatterBaseDlg::OnApplyUI), NULL, this);
-    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);
-    m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnHelp), NULL, this);
-    
+    m_buttonApply->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);
+    m_buttonHelp->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnHelp), NULL, this);
 }
 
 CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 {
-    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnAStylePropertyChanged), NULL, this);
-    m_textCtrlUserFlags->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
+    m_pgMgr->Disconnect(
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnAStylePropertyChanged), NULL, this);
+    m_textCtrlUserFlags->Disconnect(
+        wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);
     m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatterBaseDlg::OnApplyUI), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);
-    m_buttonHelp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnHelp), NULL, this);
-    
+    m_buttonApply->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);
+    m_buttonHelp->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnHelp), NULL, this);
 }

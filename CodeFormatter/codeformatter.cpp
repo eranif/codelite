@@ -250,7 +250,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
         // Make sure we format the editor string and _not_ the file (there might be some newly added lines
         // the could be missing ...)
         if(!ClangFormat(editor->GetSTC()->GetText(), formattedOutput, curpos, from, length)) {
-            ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+            ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
 
@@ -567,12 +567,12 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
     CHECK_PTR_RET_FALSE(clangFormatProc);
     clangFormatProc->WaitForTerminate(formattedOutput);
     CL_DEBUG("clang-format returned with:\n%s\n", formattedOutput);
-    
+
     if(formattedOutput.IsEmpty()) {
         // crash?
         return false;
     }
-    
+
     // The first line contains the cursor position
     if(cursorPosition != wxNOT_FOUND) {
         wxString metadata = formattedOutput.BeforeFirst('\n');
@@ -605,7 +605,7 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& e)
             // skip this famous a quite large file ...
             continue;
         }
-        
+
         const wxString& filename = allFiles.at(i).GetFilename();
         if(FileExtManager::IsCxxFile(filename) || FileExtManager::IsJavascriptFile(filename)) {
             filesToFormat.push_back(allFiles.at(i).GetFilename());

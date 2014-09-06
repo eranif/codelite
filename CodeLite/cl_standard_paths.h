@@ -28,6 +28,7 @@
 
 #include <wx/string.h>
 #include "codelite_exports.h"
+#include "cl_defs.h"
 
 class WXDLLIMPEXP_CL clStandardPaths
 {

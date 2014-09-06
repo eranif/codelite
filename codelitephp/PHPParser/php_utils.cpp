@@ -98,8 +98,12 @@ wxString GetResourceDirectory()
     fn = wxFileName( PLUGINS_DIR, "");
     fn.AppendDir( "resources" );
 #else
+#  ifdef USE_POSIX_LAYOUT
+    fn = wxFileName( wxStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR) );
+#  else
     fn = wxFileName( wxStandardPaths::Get().GetExecutablePath() );
     fn.AppendDir( "plugins" );
+#  endif
     fn.AppendDir( "resources" );
 #endif
     fn.AppendDir( "php" );

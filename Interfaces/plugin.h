@@ -152,7 +152,11 @@ public:
 #ifdef __WXGTK__
         wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
+#   ifdef USE_POSIX_LAYOUT
+        wxString pluginsDir(wxStandardPaths::Get().GetDataDir() + wxT( PLUGINS_DIR ));
+#   else
         wxString pluginsDir(m_mgr->GetInstallDirectory() + wxT( "/plugins" ));
+#   endif
 #endif
         wxString basePath(pluginsDir + wxT("/resources/"));
 

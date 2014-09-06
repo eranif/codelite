@@ -15,7 +15,8 @@ include( "${wxWidgets_USE_FILE}" )
 include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
                     "${CL_SRC_ROOT}/sdk/codelite_indexer/network" 
                     "${CL_SRC_ROOT}/CodeLite" 
-                    "${CL_SRC_ROOT}/PCH")
+                    "${CL_SRC_ROOT}/PCH"
+                    "${CL_SRC_ROOT}/Interfaces")
 
 set( ADDITIONAL_LIBRARIES "" )
 

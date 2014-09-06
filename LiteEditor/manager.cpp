@@ -1913,7 +1913,11 @@ void Manager::GetDefaultAcceleratorMap(MenuItemDataMap& accelMap)
 #ifdef __WXGTK__
     wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
-    wxString pluginsDir(GetInstallDir() + wxT("/plugins"));
+#   ifdef USE_POSIX_LAYOUT
+        wxString pluginsDir(wxStandardPaths::Get().GetDataDir() + wxT( PLUGINS_DIR ));
+#   else
+        wxString pluginsDir(GetInstallDir() + wxT( "/plugins" ));
+#   endif
 #endif
 
     wxDir::GetAllFiles(pluginsDir + wxT("/resources/"), &files, wxT("*.accelerators"), wxDIR_FILES);
@@ -1941,7 +1945,11 @@ void Manager::DoGetAccelFiles(wxArrayString& files)
 #ifdef __WXGTK__
         wxString pluginsDir = wxString::From8BitData(PLUGINS_DIR);
 #else
-        wxString pluginsDir(GetInstallDir() + wxT("/plugins"));
+#   ifdef USE_POSIX_LAYOUT
+        wxString pluginsDir(wxStandardPaths::Get().GetDataDir() + wxT( PLUGINS_DIR ));
+#   else
+        wxString pluginsDir(GetInstallDir() + wxT( "/plugins" ));
+#   endif
 #endif
         // append the content of all '*.accelerators' from the plugins
         // resources table

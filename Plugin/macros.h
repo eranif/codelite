@@ -111,7 +111,7 @@ const wxString USE_GLOBAL_SETTINGS         = _("<Use Defaults>");
 const wxString TERMINAL_CMD         = wxT("");
 #endif
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__) && !defined(USE_POSIX_LAYOUT)
 #define PATH_SEP wxT("\\")
 #else
 #define PATH_SEP wxT("/")

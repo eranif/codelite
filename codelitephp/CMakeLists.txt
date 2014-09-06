@@ -4,7 +4,9 @@ project ("codelitephp")
 # set the plugin name here
 set( PLUGIN_NAME "codelitephp")
 
+if (NOT MINGW)
 add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
+endif()
 add_definitions(-DUSE_SFTP=1)
 
 # Our project is called 'plugin' this is how it will be called in

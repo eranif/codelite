@@ -211,8 +211,13 @@ unset(COPY_WX_LIBS CACHE)
 
 set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
+if (NOT MINGW)
 add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
 add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
+else()
+add_definitions(-DNDEBUG)
+add_definitions(-DUSE_POSIX_LAYOUT)
+endif()
 
 message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
 

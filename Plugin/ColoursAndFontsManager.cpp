@@ -43,7 +43,11 @@ void ColoursAndFontsManager::Load()
     m_initialized = true;
 
     // Always load first the installation lexers
+#ifdef USE_POSIX_LAYOUT
+    wxFileName defaultLexersPath(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR), "");
+#else
     wxFileName defaultLexersPath(clStandardPaths::Get().GetDataDir(), "");
+#endif
     defaultLexersPath.AppendDir("lexers");
     LoadNewXmls(defaultLexersPath.GetPath());
 

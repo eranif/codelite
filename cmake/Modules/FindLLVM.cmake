@@ -7,6 +7,7 @@
 #  LLVM_CFLAGS       - llvm compiler flags
 #  LLVM_LDFLAGS      - llvm linker flags
 #  LLVM_MODULE_LIBS  - list of llvm libs for working with modules.
+#  LLVM_SYSTEM_LIBS  - list of 3rdparty libraries needed to link.
 
 find_program(LLVM_CONFIG_EXECUTABLE llvm-config DOC "llvm-config executable")
 
@@ -65,6 +66,12 @@ endif (NOT LLVM_MODULE_LIBS)
 execute_process(
   COMMAND ${LLVM_CONFIG_EXECUTABLE} --ldflags
   OUTPUT_VARIABLE LLVM_LDFLAGS
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+  COMMAND ${LLVM_CONFIG_EXECUTABLE} --system-libs
+  OUTPUT_VARIABLE LLVM_SYSTEM_LIBS
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 

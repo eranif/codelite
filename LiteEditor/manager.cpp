@@ -428,7 +428,7 @@ void Manager::CloseWorkspace()
 #ifdef __WXMSW__
     // Under Windows, and in order to avoid locking the directory set the working directory back to the start up
     // directory
-    wxSetWorkingDirectory(GetStarupDirectory());
+    wxSetWorkingDirectory(GetStartupDirectory());
 #endif
 
     /////////////////////////////////////////////////////////////////

@@ -351,7 +351,7 @@ bool PluginManager::OpenFile(const wxString& fileName, const wxString& projectNa
     return false;
 }
 
-wxString PluginManager::GetStartupDirectory() const { return ManagerST::Get()->GetStarupDirectory(); }
+wxString PluginManager::GetStartupDirectory() const { return ManagerST::Get()->GetStartupDirectory(); }
 
 void PluginManager::AddProject(const wxString& path) { ManagerST::Get()->AddProject(path); }
 

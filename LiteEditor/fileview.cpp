@@ -1202,7 +1202,7 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
                 desc = desc.Trim().Trim(false);
 
                 if ( newName.IsEmpty() == false ) {
-                    wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + wxT ( "/templates/projects/" ) + newName + wxT ( "/" );
+                    wxString tmplateDir = ManagerST::Get()->GetStartupDirectory() + wxT ( "/templates/projects/" ) + newName + wxT ( "/" );
                     Mkdir ( tmplateDir );
 
                     Project newProj( *proj );

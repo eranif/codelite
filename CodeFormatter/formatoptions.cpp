@@ -31,8 +31,7 @@ FormatOptions::FormatOptions()
     , m_engine(kFormatEngineAStyle)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
                            kSpaceBeforeAssignmentOperators |
-                           kAlignEscapedNewlinesLeft |
-                           kAllowShortFunctionsOnASingleLine)
+                           kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120) // No limit
 {

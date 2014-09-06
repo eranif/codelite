@@ -42,6 +42,11 @@
 #include "file_logger.h"
 #include "procutils.h"
 #include "clSTCLineKeeper.h"
+#include "macros.h"
+#include <wx/progdlg.h>
+#include "fileutils.h"
+
+static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
 extern "C" EXPORT char* STDCALL AStyleMain(const char* pSourceIn,
                                            const char* pOptions,
@@ -100,6 +105,11 @@ CodeFormatter::CodeFormatter(IManager* manager)
         wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_FORMAT_FILE, clSourceFormatEventHandler(CodeFormatter::OnFormatFile), NULL, this);
+    m_mgr->GetTheApp()->Connect(ID_TOOL_SOURCE_CODE_FORMATTER,
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(CodeFormatter::OnFormatProject),
+                                NULL,
+                                this);
 }
 
 CodeFormatter::~CodeFormatter()
@@ -199,8 +209,7 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
     }
 
     // get the editor that requires formatting
-    if(!editor)
-        return;
+    if(!editor) return;
 
     // Notify about indentation about to start
     wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_STARTING);
@@ -240,7 +249,10 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
 
         // Make sure we format the editor string and _not_ the file (there might be some newly added lines
         // the could be missing ...)
-        ClangFormat(editor->GetSTC()->GetText(), formattedOutput, curpos, from, length);
+        if(!ClangFormat(editor->GetSTC()->GetText(), formattedOutput, curpos, from, length)) {
+            ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+            return;
+        }
 
         clSTCLineKeeper lk(editor);
         editor->SetEditorText(formattedOutput);
@@ -289,8 +301,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 eol = wxT("\n");
             }
 
-            if(!formatSelectionOnly)
-                output << eol;
+            if(!formatSelectionOnly) output << eol;
 
             if(formatSelectionOnly) {
                 // format the text (add the indentation)
@@ -350,6 +361,10 @@ void CodeFormatter::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     wxUnusedVar(type);
     wxUnusedVar(menu);
+    if(type == MenuTypeFileView_Project) {
+        // Project context menu
+        menu->Prepend(ID_TOOL_SOURCE_CODE_FORMATTER, _("Source Code Formatter"));
+    }
 }
 
 void CodeFormatter::UnPlug()
@@ -374,6 +389,11 @@ void CodeFormatter::UnPlug()
                                    wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI),
                                    NULL,
                                    (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(ID_TOOL_SOURCE_CODE_FORMATTER,
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(CodeFormatter::OnFormatProject),
+                                   NULL,
+                                   this);
 }
 
 IManager* CodeFormatter::GetManager() { return m_mgr; }
@@ -547,7 +567,12 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
     CHECK_PTR_RET_FALSE(clangFormatProc);
     clangFormatProc->WaitForTerminate(formattedOutput);
     CL_DEBUG("clang-format returned with:\n%s\n", formattedOutput);
-
+    
+    if(formattedOutput.IsEmpty()) {
+        // crash?
+        return false;
+    }
+    
     // The first line contains the cursor position
     if(cursorPosition != wxNOT_FOUND) {
         wxString metadata = formattedOutput.BeforeFirst('\n');
@@ -556,4 +581,139 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
         formattedOutput = formattedOutput.AfterFirst('\n');
     }
     return true;
+}
+
+void CodeFormatter::OnFormatProject(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    TreeItemInfo selectedItem = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
+    if(selectedItem.m_itemType != ProjectItem::TypeProject) {
+        return;
+    }
+
+    ProjectPtr pProj = WorkspaceST::Get()->GetProject(selectedItem.m_text);
+    CHECK_PTR_RET(pProj);
+
+    Project::FileInfoVector_t allFiles;
+    pProj->GetFilesMetadata(allFiles);
+
+    std::vector<wxFileName> filesToFormat;
+    // Filter non C++/JavaScript files
+    for(size_t i = 0; i < allFiles.size(); ++i) {
+        wxFileName fn(allFiles.at(i).GetFilename());
+        if(fn.GetFullName() == "sqlite3.c") {
+            // skip this famous a quite large file ...
+            continue;
+        }
+        
+        const wxString& filename = allFiles.at(i).GetFilename();
+        if(FileExtManager::IsCxxFile(filename) || FileExtManager::IsJavascriptFile(filename)) {
+            filesToFormat.push_back(allFiles.at(i).GetFilename());
+        }
+    }
+
+    if(filesToFormat.empty()) {
+        ::wxMessageBox(_("Nothing to be done here"));
+        return;
+    }
+
+    wxString msg;
+    msg << _("You are about to beautify ") << filesToFormat.size() << _(" files\nContinue?");
+    if(wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) {
+        return;
+    }
+
+    // Format the files
+    BatchFormat(filesToFormat);
+}
+
+bool CodeFormatter::BatchFormat(const std::vector<wxFileName>& files)
+{
+    FormatOptions options;
+    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
+
+    if(options.GetEngine() == kFormatEngineAStyle) {
+        AStyleBatchFOrmat(files, options);
+
+    } else if(options.GetEngine() == kFormatEngineClangFormat) {
+        ClangBatchFormat(files, options);
+    }
+}
+
+bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const FormatOptions& options)
+{
+    if(options.GetClangFormatExe().IsEmpty()) {
+        return false;
+    }
+
+    wxProgressDialog dlg(
+        _("Source Code Formatter"), _("Formatting files..."), (int)files.size(), m_mgr->GetTheApp()->GetTopWindow());
+
+    for(size_t i = 0; i < files.size(); ++i) {
+        wxString command, file;
+        command << options.GetClangFormatExe();
+        ::WrapWithQuotes(command);
+
+        command << " -i "; // inline editing
+        command << options.ClangFormatOptionsAsString();
+        file = files.at(i).GetFullPath();
+        ::WrapWithQuotes(file);
+        command << " " << file;
+
+        // Wrap the command in the local shell
+        ::WrapInShell(command);
+
+        // Log the command
+        CL_DEBUG("CodeForamtter: running:\n%s\n", command);
+
+        wxString msg;
+        msg << "[ " << i << " / " << files.size() << " ] " << files.at(i).GetFullName();
+        dlg.Update(i, msg);
+
+        // Execute clang-format and reand the output
+        IProcess::Ptr_t clangFormatProc(
+            ::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+        CHECK_PTR_RET_FALSE(clangFormatProc);
+
+        wxString output;
+        clangFormatProc->WaitForTerminate(output);
+        CL_DEBUG("clang-format returned with:\n%s\n", output);
+    }
+
+    return true;
+}
+
+bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files, const FormatOptions& options)
+{
+    wxString fmtOptions = options.AstyleOptionsAsString();
+
+    wxProgressDialog dlg(
+        _("Source Code Formatter"), _("Formatting files..."), (int)files.size(), m_mgr->GetTheApp()->GetTopWindow());
+    for(size_t i = 0; i < files.size(); ++i) {
+
+        wxString content;
+        if(!FileUtils::ReadFileContent(files.at(i), content)) {
+            CL_WARNING("Failed to read file content. File: %s", files.at(i).GetFullPath());
+            continue;
+        }
+
+        wxString msg;
+        msg << "[ " << i << " / " << files.size() << " ] " << files.at(i).GetFullName();
+        dlg.Update(i, msg);
+
+        // determine indentation method and amount
+        bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
+        int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
+        int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
+        fmtOptions << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
+
+        wxString output;
+        AstyleFormat(content, fmtOptions, output);
+        output << DoGetGlobalEOLString();
+
+        // Replace the content of the file
+        if(!FileUtils::WriteFileContent(files.at(i), output)) {
+            CL_WARNING("Failed to write file content. File: %s", files.at(i).GetFullPath());
+        }
+    }
 }

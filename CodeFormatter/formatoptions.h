@@ -60,8 +60,21 @@ enum AstyleOptions {
     AS_MIN_COND_INDENT = 0x20000000,
     AS_INDENT_USES_TABS = 0x40000000,
     AS_DEFAULT = AS_LINUX | AS_BRACKETS_LINUX | AS_INDENT_PREPROCESSORS,
-    AS_ALL_INDENT_OPTIONS = AS_INDENT_CLASS | AS_INDENT_BRACKETS | AS_INDENT_SWITCHES | AS_INDENT_NAMESPACES | AS_INDENT_CASE | AS_INDENT_LABELS | AS_INDENT_BLOCKS | AS_INDENT_PREPROCESSORS | AS_MAX_INSTATEMENT_INDENT | AS_MIN_COND_INDENT,
-    AS_ALL_FORMAT_OPTIONS = AS_BREAK_BLOCKS | AS_PAD_PARENTHESIS | AS_BREAK_BLOCKS_ALL | AS_PAD_PARENTHESIS_OUT | AS_BREAK_ELSEIF | AS_PAD_PARENTHESIS_IN | AS_PAD_OPER | AS_UNPAD_PARENTHESIS | AS_ONE_LINE_KEEP_STATEMENT | AS_FILL_EMPTY_LINES | AS_ONE_LINE_KEEP_BLOCKS,
+    AS_ALL_INDENT_OPTIONS = AS_INDENT_CLASS | AS_INDENT_BRACKETS | AS_INDENT_SWITCHES | AS_INDENT_NAMESPACES |
+                            AS_INDENT_CASE |
+                            AS_INDENT_LABELS |
+                            AS_INDENT_BLOCKS |
+                            AS_INDENT_PREPROCESSORS |
+                            AS_MAX_INSTATEMENT_INDENT |
+                            AS_MIN_COND_INDENT,
+    AS_ALL_FORMAT_OPTIONS = AS_BREAK_BLOCKS | AS_PAD_PARENTHESIS | AS_BREAK_BLOCKS_ALL | AS_PAD_PARENTHESIS_OUT |
+                            AS_BREAK_ELSEIF |
+                            AS_PAD_PARENTHESIS_IN |
+                            AS_PAD_OPER |
+                            AS_UNPAD_PARENTHESIS |
+                            AS_ONE_LINE_KEEP_STATEMENT |
+                            AS_FILL_EMPTY_LINES |
+                            AS_ONE_LINE_KEEP_BLOCKS,
 };
 
 enum FormatterEngine {
@@ -131,51 +144,26 @@ public:
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
 
-    void SetClangColumnLimit(size_t clangColumnLimit) {
-        this->m_clangColumnLimit = clangColumnLimit;
-    }
-    size_t GetClangColumnLimit() const {
-        return m_clangColumnLimit;
-    }
+    void SetClangColumnLimit(size_t clangColumnLimit) { this->m_clangColumnLimit = clangColumnLimit; }
+    size_t GetClangColumnLimit() const { return m_clangColumnLimit; }
 
-    void SetClangFormatExe(const wxString& clangFormatExe) {
-        this->m_clangFormatExe = clangFormatExe;
-    }
-    const wxString& GetClangFormatExe() const {
-        return m_clangFormatExe;
-    }
-    FormatterEngine GetEngine() const {
-        return m_engine;
-    }
+    void SetClangFormatExe(const wxString& clangFormatExe) { this->m_clangFormatExe = clangFormatExe; }
+    const wxString& GetClangFormatExe() const { return m_clangFormatExe; }
+    FormatterEngine GetEngine() const { return m_engine; }
 
-    void SetClangBreakBeforeBrace(size_t clangBreakBeforeBrace) {
+    void SetClangBreakBeforeBrace(size_t clangBreakBeforeBrace)
+    {
         this->m_clangBreakBeforeBrace = clangBreakBeforeBrace;
     }
-    size_t GetClangBreakBeforeBrace() const {
-        return m_clangBreakBeforeBrace;
-    }
-    void SetEngine(FormatterEngine engine) {
-        m_engine = engine;
-    }
+    size_t GetClangBreakBeforeBrace() const { return m_clangBreakBeforeBrace; }
+    void SetEngine(FormatterEngine engine) { m_engine = engine; }
 
-    size_t GetOptions() const {
-        return m_astyleOptions;
-    }
-    void SetOption(size_t options) {
-        m_astyleOptions = options;
-    }
-    void SetCustomFlags(const wxString& customFlags) {
-        this->m_customFlags = customFlags;
-    }
-    const wxString& GetCustomFlags() const {
-        return m_customFlags;
-    }
-    void SetClangFormatOptions(size_t clangFormatOptions) {
-        this->m_clangFormatOptions = clangFormatOptions;
-    }
-    size_t GetClangFormatOptions() const {
-        return m_clangFormatOptions;
-    }
+    size_t GetOptions() const { return m_astyleOptions; }
+    void SetOption(size_t options) { m_astyleOptions = options; }
+    void SetCustomFlags(const wxString& customFlags) { this->m_customFlags = customFlags; }
+    const wxString& GetCustomFlags() const { return m_customFlags; }
+    void SetClangFormatOptions(size_t clangFormatOptions) { this->m_clangFormatOptions = clangFormatOptions; }
+    size_t GetClangFormatOptions() const { return m_clangFormatOptions; }
 };
 
-#endif //FORMATOPTIONS_H
+#endif // FORMATOPTIONS_H

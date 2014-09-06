@@ -31,8 +31,13 @@
 class WXDLLIMPEXP_CL FileUtils
 {
 public:
-    static bool ReadFileUTF8(const wxFileName& fn, wxString& data);
-
+    static bool ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv = wxConvUTF8);
+    
+    /**
+     * @brief set the file content (replacing it)
+     */
+    static bool WriteFileContent(const wxFileName& fn, const wxString &content, const wxMBConv& conv = wxConvUTF8);
+    
     /**
      * @brief open file explorer at given path
      */

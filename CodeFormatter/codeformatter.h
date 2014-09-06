@@ -60,7 +60,22 @@ public:
      * @brief same as the above, but work on a buffer instead
      */
     bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
-
+    
+    /**
+     * @brief format list of files
+     */
+    bool BatchFormat(const std::vector<wxFileName>& files);
+    
+    /**
+     * @brief batch format of files using clang-format tool
+     */
+    bool ClangBatchFormat(const std::vector<wxFileName>& files, const FormatOptions& options);
+    
+    /**
+     * @brief batch format of files using astyle tool
+     */
+    bool AStyleBatchFOrmat(const std::vector<wxFileName>& files, const FormatOptions& options);
+    
 public:
     CodeFormatter(IManager *manager);
     virtual ~CodeFormatter();
@@ -79,6 +94,7 @@ public:
 
     void OnFormatString(clSourceFormatEvent &e);
     void OnFormatFile(clSourceFormatEvent &e);
+    void OnFormatProject(wxCommandEvent& e);
 };
 
 #endif //CODEFORMATTER_H

@@ -41,20 +41,20 @@ class IProcess;
 
 class GitDiffDlg : public GitDiffDlgBase
 {
-	std::map<wxString, wxString> m_diffMap;
-	wxString                     m_workingDir;
-	wxString                     m_gitPath;
-	
+    std::map<wxString, wxString> m_diffMap;
+    wxString m_workingDir;
+    wxString m_gitPath;
+
 public:
-	GitDiffDlg(wxWindow* parent, const wxString& workingDir);
-	~GitDiffDlg();
+    GitDiffDlg(wxWindow* parent, const wxString& workingDir);
+    ~GitDiffDlg();
 
-	void SetDiff(const wxString& diff);
+    void SetDiff(const wxString& diff);
+
 private:
-	void OnChangeFile(wxCommandEvent& e);
+    void OnChangeFile(wxCommandEvent& e);
 
-	DECLARE_EVENT_TABLE();
-
+    DECLARE_EVENT_TABLE();
 };
 
 #endif //__gitDiffDlg__

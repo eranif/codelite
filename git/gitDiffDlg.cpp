@@ -34,11 +34,9 @@
 #include "processreaderthread.h"
 #include "cl_config.h"
 
-
 BEGIN_EVENT_TABLE(GitDiffDlg, wxDialog)
 
 END_EVENT_TABLE()
-
 
 GitDiffDlg::GitDiffDlg(wxWindow* parent, const wxString& workingDir)
     : GitDiffDlgBase(parent)
@@ -50,7 +48,7 @@ GitDiffDlg::GitDiffDlg(wxWindow* parent, const wxString& workingDir)
     m_gitPath = data.GetGITExecutablePath();
 
     WindowAttrManager::Load(this, wxT("GitDiffDlg"), NULL);
-    m_splitter->SetSashPosition( data.GetGitDiffDlgSashPos() );
+    m_splitter->SetSashPosition(data.GetGitDiffDlgSashPos());
 }
 
 /*******************************************************************************/
@@ -60,7 +58,7 @@ GitDiffDlg::~GitDiffDlg()
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    data.SetGitDiffDlgSashPos( m_splitter->GetSashPosition() );
+    data.SetGitDiffDlgSashPos(m_splitter->GetSashPosition());
     conf.WriteItem(&data);
 }
 
@@ -85,23 +83,22 @@ void GitDiffDlg::SetDiff(const wxString& diff)
             foundFirstDiff = true;
         } else if(line.StartsWith(wxT("Binary"))) {
         } else if(foundFirstDiff) {
-            m_diffMap[currentFile].Append(line+wxT("\n"));
+            m_diffMap[currentFile].Append(line + wxT("\n"));
         }
         ++index;
     }
-    for (std::map<wxString,wxString>::iterator it=m_diffMap.begin() ; it != m_diffMap.end(); ++it) {
+    for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
     m_editor->SetReadOnly(false);
     m_editor->SetText(wxT(""));
 
     if(m_diffMap.size() != 0) {
-        std::map<wxString,wxString>::iterator it=m_diffMap.begin();
+        std::map<wxString, wxString>::iterator it = m_diffMap.begin();
         m_editor->SetText((*it).second);
         m_fileListBox->Select(0);
         m_editor->SetReadOnly(true);
     }
-
 }
 
 /*******************************************************************************/

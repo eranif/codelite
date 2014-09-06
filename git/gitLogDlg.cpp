@@ -29,29 +29,27 @@
 #include "windowattrmanager.h"
 
 GitLogDlg::GitLogDlg(wxWindow* parent, const wxString title)
-    :wxDialog(parent, wxID_ANY, title,wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    : wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     SetIcon(wxICON(icon_git));
-    m_editor = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2|wxTE_READONLY);
+    m_editor = new wxTextCtrl(
+        this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_RICH2 | wxTE_READONLY);
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     wxStdDialogButtonSizer* sizer_3 = CreateStdDialogButtonSizer(wxOK);
-    wxStaticBoxSizer* sizer_1 = new wxStaticBoxSizer(wxVERTICAL,this,wxT("Log output"));
-    sizer_1->Add(m_editor, 1, wxALL|wxEXPAND, 5);
-    sizer->Add(sizer_1, 1, wxALL|wxEXPAND, 5);
-    sizer->Add(sizer_3, 0, wxALL|wxEXPAND, 5);
+    wxStaticBoxSizer* sizer_1 = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Log output"));
+    sizer_1->Add(m_editor, 1, wxALL | wxEXPAND, 5);
+    sizer->Add(sizer_1, 1, wxALL | wxEXPAND, 5);
+    sizer->Add(sizer_3, 0, wxALL | wxEXPAND, 5);
     SetSizer(sizer);
     sizer->Fit(this);
     Layout();
 
-    SetSize(1024,560);
+    SetSize(1024, 560);
     WindowAttrManager::Load(this, "GitLogDlg", NULL);
 }
 
-GitLogDlg::~GitLogDlg()
-{
-    WindowAttrManager::Save(this, "GitLogDlg", NULL);
-}
+GitLogDlg::~GitLogDlg() { WindowAttrManager::Save(this, "GitLogDlg", NULL); }
 
 void GitLogDlg::SetLog(const wxString& log)
 {
@@ -60,5 +58,4 @@ void GitLogDlg::SetLog(const wxString& log)
     atr.SetFont(font);
     m_editor->SetDefaultStyle(atr);
     m_editor->AppendText(log);
-
 }

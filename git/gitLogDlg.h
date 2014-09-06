@@ -38,10 +38,11 @@
 class GitLogDlg : public wxDialog
 {
     wxTextCtrl* m_editor;
+
 public:
     GitLogDlg(wxWindow* parent, const wxString title);
     virtual ~GitLogDlg();
-    
+
     void SetLog(const wxString& log);
 };
 

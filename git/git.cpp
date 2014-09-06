@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/wx.h>
@@ -61,13 +60,16 @@
 #include <wx/ffile.h>
 
 static GitPlugin* thePlugin = NULL;
-#define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));
-#define GIT_MESSAGE1(...)  if ( m_console->IsVerbose() ) {m_console->AddText(wxString::Format(__VA_ARGS__));}
+#define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
+#define GIT_MESSAGE1(...)                                  \
+    if(m_console->IsVerbose()) {                           \
+        m_console->AddText(wxString::Format(__VA_ARGS__)); \
+    }
 
-//Define the plugin entry point
-extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
+// Define the plugin entry point
+extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
+    if(thePlugin == 0) {
         thePlugin = new GitPlugin(manager);
     }
     return thePlugin;
@@ -83,10 +85,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 /*******************************************************************************/
-extern "C" EXPORT int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 /*******************************************************************************/
 // Helper that returns the last-used selection for those git commands with several alternative options
@@ -101,12 +100,12 @@ wxString GetAnyDefaultCommand(const wxString& gitCommand)
 /*******************************************************************************/
 
 BEGIN_EVENT_TABLE(GitPlugin, wxEvtHandler)
-    EVT_TIMER(wxID_ANY, GitPlugin::OnProgressTimer)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  GitPlugin::OnProcessOutput)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, GitPlugin::OnProcessTerminated)
+EVT_TIMER(wxID_ANY, GitPlugin::OnProgressTimer)
+EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, GitPlugin::OnProcessOutput)
+EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, GitPlugin::OnProcessTerminated)
 END_EVENT_TABLE()
 
-GitPlugin::GitPlugin(IManager *manager)
+GitPlugin::GitPlugin(IManager* manager)
     : IPlugin(manager)
     , m_colourTrackedFile(wxT("DARK GREEN"))
     , m_colourDiffFile(wxT("MAROON"))
@@ -129,13 +128,18 @@ GitPlugin::GitPlugin(IManager *manager)
     m_shortName = wxT("git");
     m_eventHandler = m_mgr->GetTheApp();
 
-    EventNotifier::Get()->Connect( wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, wxT("git"), false, m_images.Bitmap("git"));
@@ -143,162 +147,280 @@ GitPlugin::GitPlugin(IManager *manager)
     m_progressTimer.SetOwner(this);
 }
 /*******************************************************************************/
-GitPlugin::~GitPlugin()
-{
-}
+GitPlugin::~GitPlugin() {}
 
 /*******************************************************************************/
-clToolBar *GitPlugin::CreateToolBar(wxWindow *parent)
+clToolBar* GitPlugin::CreateToolBar(wxWindow* parent)
 {
     wxUnusedVar(parent);
     return NULL;
 }
 
 /*******************************************************************************/
-void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
+void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     m_pluginMenu = new wxMenu();
-    wxMenuItem *item( NULL );
+    wxMenuItem* item(NULL);
 
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_pull"), _("Pull remote changes"));
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_pull"), _("Pull remote changes"));
     item->SetBitmap(m_images.Bitmap("gitPull"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
 
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_commit"), _("Commit local changes"));
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_commit"), _("Commit local changes"));
     item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
-    m_pluginMenu->Append( item );
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_push"), _("Push local commits"));
+    m_pluginMenu->Append(item);
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_push"), _("Push local commits"));
     item->SetBitmap(m_images.Bitmap("gitPush"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
 
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_reset_repository"), _("Reset current repository" ));
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_reset_repository"), _("Reset current repository"));
     item->SetBitmap(m_images.Bitmap("gitReset"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_create_branch"), _("Create local branch" ) );
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_create_branch"), _("Create local branch"));
     item->SetBitmap(m_images.Bitmap("gitNewBranch"));
-    m_pluginMenu->Append( item );
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_switch_branch"), _("Switch local branch" ), _("Switch local branch" ), wxITEM_NORMAL );
+    m_pluginMenu->Append(item);
+    item = new wxMenuItem(
+        m_pluginMenu, XRCID("git_switch_branch"), _("Switch local branch"), _("Switch local branch"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitSwitchLocalBranch"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
 
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_switch_to_remote_branch"), _("Switch remote branch" ), _("Switch remote branch" ), wxITEM_NORMAL );
-    m_pluginMenu->Append( item );
+    item = new wxMenuItem(m_pluginMenu,
+                          XRCID("git_switch_to_remote_branch"),
+                          _("Switch remote branch"),
+                          _("Switch remote branch"),
+                          wxITEM_NORMAL);
+    m_pluginMenu->Append(item);
 
     m_pluginMenu->AppendSeparator();
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_browse_commit_list"), _("List commits" ), _("List commits" ), wxITEM_NORMAL );
+    item = new wxMenuItem(
+        m_pluginMenu, XRCID("git_browse_commit_list"), _("List commits"), _("List commits"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitCommitedFiles"));
-    m_pluginMenu->Append( item );
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_commit_diff"), _("Show current diffs" ), _("Show diffs" ), wxITEM_NORMAL );
+    m_pluginMenu->Append(item);
+    item =
+        new wxMenuItem(m_pluginMenu, XRCID("git_commit_diff"), _("Show current diffs"), _("Show diffs"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitDiffs"));
-    m_pluginMenu->Append( item );
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_apply_patch"), _("Apply Patch"),  _("Apply Patch"), wxITEM_NORMAL );
+    m_pluginMenu->Append(item);
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_apply_patch"), _("Apply Patch"), _("Apply Patch"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitApply"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
 
     m_pluginMenu->AppendSeparator();
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_list_modified"), _("List modified files" ), _("List modified files" ), wxITEM_NORMAL );
+    item = new wxMenuItem(
+        m_pluginMenu, XRCID("git_list_modified"), _("List modified files"), _("List modified files"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitModifiedFiles"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
 
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_start_gitk"), _("Start gitk" ), _("Start gitk" ), wxITEM_NORMAL );
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_start_gitk"), _("Start gitk"), _("Start gitk"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitStart"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
 
     m_pluginMenu->AppendSeparator();
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_garbage_collection"), _("Clean git database (garbage collection)" ));
+    item = new wxMenuItem(m_pluginMenu, XRCID("git_garbage_collection"), _("Clean git database (garbage collection)"));
     item->SetBitmap(m_images.Bitmap("gitTrash"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
 
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_refresh"), _("Refresh git file list" ), _("Refresh file lists" ), wxITEM_NORMAL );
+    item = new wxMenuItem(
+        m_pluginMenu, XRCID("git_refresh"), _("Refresh git file list"), _("Refresh file lists"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitRefresh"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
     m_pluginMenu->AppendSeparator();
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_settings"), _("GIT plugin settings" ), _("GIT plugin settings" ), wxITEM_NORMAL );
+    item = new wxMenuItem(
+        m_pluginMenu, XRCID("git_settings"), _("GIT plugin settings"), _("GIT plugin settings"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitSettings"));
-    m_pluginMenu->Append( item );
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_set_repository"), _("Set GIT repository path" ), _("Set GIT repository path" ), wxITEM_NORMAL );
+    m_pluginMenu->Append(item);
+    item = new wxMenuItem(m_pluginMenu,
+                          XRCID("git_set_repository"),
+                          _("Set GIT repository path"),
+                          _("Set GIT repository path"),
+                          wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitPath"));
-    m_pluginMenu->Append( item );
-    item = new wxMenuItem( m_pluginMenu, XRCID("git_clone"), _("Clone a git repository" ), _("Clone a git repository" ), wxITEM_NORMAL );
+    m_pluginMenu->Append(item);
+    item = new wxMenuItem(
+        m_pluginMenu, XRCID("git_clone"), _("Clone a git repository"), _("Clone a git repository"), wxITEM_NORMAL);
     item->SetBitmap(m_images.Bitmap("gitClone"));
-    m_pluginMenu->Append( item );
+    m_pluginMenu->Append(item);
 
     item = new wxMenuItem(pluginsMenu, wxID_ANY, wxT("Git"));
-    item->SetSubMenu( m_pluginMenu);
+    item->SetSubMenu(m_pluginMenu);
     item->SetBitmap(m_images.Bitmap("git"));
     pluginsMenu->Append(item);
 
-    m_eventHandler->Connect( XRCID("git_set_repository"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSetGitRepoPath ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSettings ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_switch_branch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSwitchLocalBranch ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_switch_to_remote_branch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSwitchRemoteBranch ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_create_branch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnCreateBranch ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_pull"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnPull ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_clone"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnClone ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnCommit ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_browse_commit_list"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnCommitList ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_commit_diff"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnShowDiffs ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_apply_patch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnApplyPatch ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_push"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnPush ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_reset_repository"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnResetRepository ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_start_gitk"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnStartGitk ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_list_modified"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnListModified ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_refresh"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnRefresh ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_garbage_collection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnGarbageColletion ), NULL, this );
+    m_eventHandler->Connect(XRCID("git_set_repository"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnSetGitRepoPath),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnSettings), NULL, this);
+    m_eventHandler->Connect(XRCID("git_switch_branch"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnSwitchLocalBranch),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_switch_to_remote_branch"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnSwitchRemoteBranch),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_create_branch"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnCreateBranch),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_pull"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnPull), NULL, this);
+    m_eventHandler->Connect(
+        XRCID("git_clone"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnClone), NULL, this);
+    m_eventHandler->Connect(
+        XRCID("git_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnCommit), NULL, this);
+    m_eventHandler->Connect(XRCID("git_browse_commit_list"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnCommitList),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_commit_diff"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnShowDiffs),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_apply_patch"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnApplyPatch),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_push"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnPush), NULL, this);
+    m_eventHandler->Connect(
+        XRCID("git_rebase"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnRebase), NULL, this);
+    m_eventHandler->Connect(XRCID("git_reset_repository"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnResetRepository),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_start_gitk"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnStartGitk),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_list_modified"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnListModified),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_refresh"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnRefresh), NULL, this);
+    m_eventHandler->Connect(XRCID("git_garbage_collection"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnGarbageColletion),
+                            NULL,
+                            this);
 #if 0
     m_eventHandler->Connect( XRCID("git_bisect_start"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectStart ), NULL, this );
     m_eventHandler->Connect( XRCID("git_bisect_good"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectGood ), NULL, this );
     m_eventHandler->Connect( XRCID("git_bisect_bad"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectBad ), NULL, this );
     m_eventHandler->Connect( XRCID("git_bisect_reset"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectReset ), NULL, this );
 #endif
-    m_eventHandler->Connect( XRCID("git_switch_branch"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_switch_to_remote_branch"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_create_branch"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_pull"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_commit"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_browse_commit_list"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_commit_diff"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_apply_patch"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_push"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_reset_repository"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_start_gitk"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnStartGitkUI ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_list_modified"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_refresh"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_garbage_collection"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-
+    m_eventHandler->Connect(XRCID("git_switch_branch"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_switch_to_remote_branch"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_create_branch"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_pull"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), NULL, this);
+    m_eventHandler->Connect(
+        XRCID("git_commit"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), NULL, this);
+    m_eventHandler->Connect(XRCID("git_browse_commit_list"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_commit_diff"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_apply_patch"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_push"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), NULL, this);
+    m_eventHandler->Connect(
+        XRCID("git_rebase"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), NULL, this);
+    m_eventHandler->Connect(XRCID("git_reset_repository"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_start_gitk"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnStartGitkUI), NULL, this);
+    m_eventHandler->Connect(XRCID("git_list_modified"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(
+        XRCID("git_refresh"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), NULL, this);
+    m_eventHandler->Connect(XRCID("git_garbage_collection"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
+                            NULL,
+                            this);
 }
 
 /*******************************************************************************/
-void GitPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
+void GitPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     if(type == MenuTypeFileView_File) {
         menu->AppendSeparator();
-        wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"),_("Add file"));
+        wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"), _("Git: Add file"));
         item->SetBitmap(m_images.Bitmap("gitFileAdd"));
         menu->Append(item);
-        m_eventHandler->Connect( XRCID("git_add_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileAddSelected), NULL, this );
+        m_eventHandler->Connect(XRCID("git_add_file"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(GitPlugin::OnFileAddSelected),
+                                NULL,
+                                this);
 
-        item = new wxMenuItem(menu, XRCID("git_reset_file"),_("Reset file"));
+        item = new wxMenuItem(menu, XRCID("git_reset_file"), _("Git: Reset file"));
         item->SetBitmap(m_images.Bitmap("gitReset"));
         menu->Append(item);
-        m_eventHandler->Connect( XRCID("git_reset_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileResetSelected), NULL, this );
+        m_eventHandler->Connect(XRCID("git_reset_file"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(GitPlugin::OnFileResetSelected),
+                                NULL,
+                                this);
 
-        item = new wxMenuItem(menu, XRCID("git_diff_file"),_("Show file diff"));
+        item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Git: Show file diff"));
         item->SetBitmap(m_images.Bitmap("gitDiffs"));
         menu->Append(item);
-        m_eventHandler->Connect( XRCID("git_diff_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDiffSelected), NULL, this );
-
+        m_eventHandler->Connect(XRCID("git_diff_file"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
+                                NULL,
+                                this);
     }
 }
 /*******************************************************************************/
 void GitPlugin::UnPlug()
 {
     // before this plugin is un-plugged we must remove the tab we added
-    for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if (m_console == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
+    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
+        if(m_console == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
             m_mgr->GetOutputPaneNotebook()->RemovePage(i);
             m_console->Destroy();
             break;
@@ -306,22 +428,71 @@ void GitPlugin::UnPlug()
     }
 
     /*MENU*/
-    m_eventHandler->Disconnect( XRCID("git_set_repository"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSetGitRepoPath ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSettings ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_switch_branch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSwitchLocalBranch ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_switch_to_remote_branch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSwitchRemoteBranch ), NULL, this);
-    m_eventHandler->Disconnect( XRCID("git_create_branch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnCreateBranch ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_pull"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnPull ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnCommit ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_browse_commit_list"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnCommitList ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_commit_diff"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnShowDiffs ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_apply_patch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnApplyPatch ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_push"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnPush ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_reset_repository"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnResetRepository ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_start_gitk"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnStartGitk ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_list_modified"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnListModified ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_refresh"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnRefresh ), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_garbage_collection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnGarbageColletion ), NULL, this );
+    m_eventHandler->Disconnect(XRCID("git_set_repository"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnSetGitRepoPath),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(
+        XRCID("git_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnSettings), NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_switch_branch"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnSwitchLocalBranch),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(XRCID("git_switch_to_remote_branch"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnSwitchRemoteBranch),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(XRCID("git_create_branch"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnCreateBranch),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(
+        XRCID("git_pull"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnPull), NULL, this);
+    m_eventHandler->Disconnect(
+        XRCID("git_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnCommit), NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_browse_commit_list"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnCommitList),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(XRCID("git_commit_diff"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnShowDiffs),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(XRCID("git_apply_patch"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnApplyPatch),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(
+        XRCID("git_push"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnPush), NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_reset_repository"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnResetRepository),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(XRCID("git_start_gitk"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnStartGitk),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(XRCID("git_list_modified"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnListModified),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(
+        XRCID("git_refresh"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitPlugin::OnRefresh), NULL, this);
+    m_eventHandler->Disconnect(XRCID("git_garbage_collection"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnGarbageColletion),
+                               NULL,
+                               this);
 #if 0
     m_eventHandler->Disconnect( XRCID("git_bisect_start"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectStart ), NULL, this );
     m_eventHandler->Disconnect( XRCID("git_bisect_good"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectGood ), NULL, this );
@@ -329,17 +500,33 @@ void GitPlugin::UnPlug()
     m_eventHandler->Disconnect( XRCID("git_bisect_reset"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnBisectReset ), NULL, this );
 #endif
     /*SYSTEM*/
-    EventNotifier::Get()->Disconnect( wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect( wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect( wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
 
     /*Context Menu*/
-    m_eventHandler->Disconnect( XRCID("git_add_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileAddSelected), NULL, this );
-    //m_eventHandler->Disconnect( ID_DELETE_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDeleteSelected), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_reset_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileResetSelected), NULL, this );
-    m_eventHandler->Disconnect( XRCID("git_diff_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDiffSelected), NULL, this );
+    m_eventHandler->Disconnect(XRCID("git_add_file"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnFileAddSelected),
+                               NULL,
+                               this);
+    // m_eventHandler->Disconnect( ID_DELETE_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(
+    // GitPlugin::OnFileDeleteSelected), NULL, this );
+    m_eventHandler->Disconnect(XRCID("git_reset_file"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnFileResetSelected),
+                               NULL,
+                               this);
+    m_eventHandler->Disconnect(XRCID("git_diff_file"),
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
+                               NULL,
+                               this);
 }
 /*******************************************************************************/
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
@@ -356,16 +543,16 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
     }
 
     const wxString& dir = ::wxDirSelector(_("Select git root directory for this workspace"), startPath);
-    if (dir.empty()) {
+    if(dir.empty()) {
         return; // The user probably pressed Cancel
     }
 
     // make sure that this is a valid git path
     if(wxFileName::DirExists(dir + wxFileName::GetPathSeparator() + wxT(".git"))) {
-        if (m_repositoryDirectory != dir ) {
+        if(m_repositoryDirectory != dir) {
             m_repositoryDirectory = dir;
 
-            if ( !workspaceName.IsEmpty() ) {
+            if(!workspaceName.IsEmpty()) {
                 clConfig conf("git.conf");
                 GitEntry data;
                 conf.ReadItem(&data);
@@ -394,21 +581,25 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
             }
         }
     } else {
-        wxMessageBox(_("The selected directory does not contain a .git directory.\nAre you sure this is a git repository?"), wxT("CodeLite"), wxICON_WARNING|wxOK|wxCENTER, m_topWindow);
+        wxMessageBox(
+            _("The selected directory does not contain a .git directory.\nAre you sure this is a git repository?"),
+            wxT("CodeLite"),
+            wxICON_WARNING | wxOK | wxCENTER,
+            m_topWindow);
         return;
     }
 }
 
 /*******************************************************************************/
-void GitPlugin::OnSettings(wxCommandEvent &e)
+void GitPlugin::OnSettings(wxCommandEvent& e)
 {
     GitSettingsDlg dlg(m_topWindow, m_repositoryDirectory);
-    if ( dlg.ShowModal() == wxID_OK ) {
+    if(dlg.ShowModal() == wxID_OK) {
 
         // update the paths
         clConfig conf("git.conf");
         GitEntry data;
-        conf.ReadItem( &data );
+        conf.ReadItem(&data);
 
         m_pathGITExecutable = data.GetGITExecutablePath();
         m_pathGITKExecutable = data.GetGITKExecutablePath();
@@ -421,23 +612,23 @@ void GitPlugin::OnSettings(wxCommandEvent &e)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnFileAddSelected(wxCommandEvent &e)
+void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
     wxArrayString files;
-    DoGetFileViewSelectedFiles( files, true );
+    DoGetFileViewSelectedFiles(files, true);
 
-    if ( !files.IsEmpty() ) {
+    if(!files.IsEmpty()) {
         DoAddFiles(files);
     }
 }
 
 /*******************************************************************************/
-void GitPlugin::OnFileDeleteSelected(wxCommandEvent &e)
+void GitPlugin::OnFileDeleteSelected(wxCommandEvent& e)
 {
     RefreshFileListView();
-    //Experimental
+    // Experimental
     /*
     wxUnusedVar(e);
     TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
@@ -457,27 +648,27 @@ void GitPlugin::OnFileDeleteSelected(wxCommandEvent &e)
     */
 }
 /*******************************************************************************/
-void GitPlugin::OnFileDiffSelected(wxCommandEvent &e)
+void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
     // fetch the list of files
     wxArrayString files;
-    DoGetFileViewSelectedFiles( files, true );
-    DoShowDiffsForFiles( files );
+    DoGetFileViewSelectedFiles(files, true);
+    DoShowDiffsForFiles(files);
 }
 
 /*******************************************************************************/
-void GitPlugin::OnFileResetSelected(wxCommandEvent &e)
+void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     // fetch the list of files
     wxArrayString files;
-    DoGetFileViewSelectedFiles( files, true );
+    DoGetFileViewSelectedFiles(files, true);
 
     // prepare a space delimited list
     wxString filelist;
-    for(size_t i=0; i<files.GetCount(); ++i) {
+    for(size_t i = 0; i < files.GetCount(); ++i) {
         filelist << files.Item(i) << " ";
     }
 
@@ -488,11 +679,14 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent &e)
     RefreshFileListView();
 }
 /*******************************************************************************/
-void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
+void GitPlugin::OnSwitchLocalBranch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if( !m_modifiedFiles.empty() ) {
-        wxMessageBox(_("Modified files found! Commit them first before switching branches..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+    if(!m_modifiedFiles.empty()) {
+        wxMessageBox(_("Modified files found! Commit them first before switching branches..."),
+                     wxT("CodeLite"),
+                     wxICON_ERROR | wxOK,
+                     m_topWindow);
         return;
     }
 
@@ -504,10 +698,9 @@ void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
     wxString message = _("Select branch (current is ");
     message << m_currentBranch << wxT(")");
 
-    wxString selection = wxGetSingleChoice(message, _("Switch branch"),m_localBranchList, m_topWindow);
+    wxString selection = wxGetSingleChoice(message, _("Switch branch"), m_localBranchList, m_topWindow);
 
-    if(selection.IsEmpty())
-        return;
+    if(selection.IsEmpty()) return;
 
     gitAction ganew(gitBranchSwitch, selection);
     m_gitActionQueue.push(ganew);
@@ -516,11 +709,14 @@ void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
     ProcessGitActionQueue();
 }
 /*******************************************************************************/
-void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent &e)
+void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if( !m_modifiedFiles.empty() ) {
-        wxMessageBox(_("Modified files found! Commit them first before switching branches..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+    if(!m_modifiedFiles.empty()) {
+        wxMessageBox(_("Modified files found! Commit them first before switching branches..."),
+                     wxT("CodeLite"),
+                     wxICON_ERROR | wxOK,
+                     m_topWindow);
         return;
     }
     if(m_remoteBranchList.GetCount() == 0) {
@@ -530,20 +726,17 @@ void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent &e)
     wxString message = _("Select remote branch (current is ");
     message << m_currentBranch << wxT(")");
 
-    wxString selection = wxGetSingleChoice(message, _("Switch to remote branch"),
-                                           m_remoteBranchList ,m_topWindow);
+    wxString selection = wxGetSingleChoice(message, _("Switch to remote branch"), m_remoteBranchList, m_topWindow);
 
-    if(selection.IsEmpty())
-        return;
+    if(selection.IsEmpty()) return;
 
     wxString localBranch = selection;
     localBranch.Replace(wxT("origin/"), wxT(""));
-    localBranch = wxGetTextFromUser(_("Specify the name for the local branch"),
-                                    _("Branch name"), localBranch ,m_topWindow);
-    if(localBranch.IsEmpty())
-        return;
+    localBranch =
+        wxGetTextFromUser(_("Specify the name for the local branch"), _("Branch name"), localBranch, m_topWindow);
+    if(localBranch.IsEmpty()) return;
 
-    gitAction ganew (gitBranchSwitchRemote,localBranch + wxT(" ") + selection);
+    gitAction ganew(gitBranchSwitchRemote, localBranch + wxT(" ") + selection);
     m_gitActionQueue.push(ganew);
 
     AddDefaultActions();
@@ -551,19 +744,18 @@ void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent &e)
     ProcessGitActionQueue();
 }
 /*******************************************************************************/
-void GitPlugin::OnCreateBranch(wxCommandEvent &e)
+void GitPlugin::OnCreateBranch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    wxString newBranch = wxGetTextFromUser(_("Specify the name of the new branch"),
-                                           _("Branch name"), wxT(""), m_topWindow);
-    if(newBranch.IsEmpty())
-        return;
+    wxString newBranch =
+        wxGetTextFromUser(_("Specify the name of the new branch"), _("Branch name"), wxT(""), m_topWindow);
+    if(newBranch.IsEmpty()) return;
 
-    gitAction ga (gitBranchCreate, newBranch);
+    gitAction ga(gitBranchCreate, newBranch);
     m_gitActionQueue.push(ga);
 
-    if(wxMessageBox(_("Switch to new branch once it is created?"),
-                    _("Switch to new branch"), wxYES_NO, m_topWindow) == wxYES) {
+    if(wxMessageBox(_("Switch to new branch once it is created?"), _("Switch to new branch"), wxYES_NO, m_topWindow) ==
+       wxYES) {
         ga.action = gitBranchSwitch;
         ga.arguments = newBranch;
         m_gitActionQueue.push(ga);
@@ -574,19 +766,19 @@ void GitPlugin::OnCreateBranch(wxCommandEvent &e)
     ProcessGitActionQueue();
 }
 /*******************************************************************************/
-void GitPlugin::OnCommit(wxCommandEvent &e)
+void GitPlugin::OnCommit(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    gitAction ga (gitDiffRepoCommit,wxT(""));
+    gitAction ga(gitDiffRepoCommit, wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
 }
 
 /*******************************************************************************/
-void GitPlugin::OnCommitList(wxCommandEvent &e)
+void GitPlugin::OnCommitList(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    gitAction ga (gitCommitList,wxT(""));
+    gitAction ga(gitCommitList, wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
 }
@@ -606,25 +798,24 @@ void GitPlugin::OnApplyPatch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     GitApplyPatchDlg dlg(m_topWindow);
-    if( dlg.ShowModal() == wxID_OK ) {
-        ApplyPatch( dlg.GetPatchFile(), dlg.GetExtraFlags() );
+    if(dlg.ShowModal() == wxID_OK) {
+        ApplyPatch(dlg.GetPatchFile(), dlg.GetExtraFlags());
     }
 }
 /*******************************************************************************/
-void GitPlugin::OnPush(wxCommandEvent &e)
+void GitPlugin::OnPush(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(m_remotes.GetCount() == 0) {
         wxMessageBox(_("No remotes found, can't push!"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
-    
+
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Push all local commits?"), "GitPromptBeforePush");
-    if( res == wxID_YES ) {
+    if(res == wxID_YES) {
         wxString remote = m_remotes[0];
         if(m_remotes.GetCount() > 1) {
-            remote = wxGetSingleChoice(_("Select remote to push to."),
-                                       _("Select remote"),m_remotes ,m_topWindow);
+            remote = wxGetSingleChoice(_("Select remote to push to."), _("Select remote"), m_remotes, m_topWindow);
             if(remote.IsEmpty()) {
                 return;
             }
@@ -636,19 +827,20 @@ void GitPlugin::OnPush(wxCommandEvent &e)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnPull(wxCommandEvent &e)
+void GitPlugin::OnPull(wxCommandEvent& e)
 {
     wxString argumentString = e.GetString(); // This might be user-specified e.g. pull --rebase
-    if (argumentString.empty()) {
+    if(argumentString.empty()) {
         argumentString = GetAnyDefaultCommand("git_pull");
     }
     argumentString.Replace("pull", "");
     argumentString.Trim(false);
-    
-    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Save all changes and pull remote changes?"), "GitPullRemoteChanges");
-    if( res == wxID_YES ) {
+
+    wxStandardID res =
+        ::PromptForYesNoDialogWithCheckbox(_("Save all changes and pull remote changes?"), "GitPullRemoteChanges");
+    if(res == wxID_YES) {
         m_mgr->SaveAll();
-        if ( m_console->IsDirty() ) { 
+        if(m_console->IsDirty()) {
             gitAction ga(gitStash, wxT(""));
             m_gitActionQueue.push(ga);
         }
@@ -656,7 +848,7 @@ void GitPlugin::OnPull(wxCommandEvent &e)
             gitAction ga(gitPull, argumentString);
             m_gitActionQueue.push(ga);
         }
-        if ( m_console->IsDirty() ) { 
+        if(m_console->IsDirty()) {
             gitAction ga(gitStashPop, wxT(""));
             m_gitActionQueue.push(ga);
         }
@@ -666,11 +858,13 @@ void GitPlugin::OnPull(wxCommandEvent &e)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnResetRepository(wxCommandEvent &e)
+void GitPlugin::OnResetRepository(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(wxMessageBox(_("Are you sure that you want to discard all local changes?"),
-                    _("Reset repository"), wxYES_NO, m_topWindow) == wxYES) {
+                    _("Reset repository"),
+                    wxYES_NO,
+                    m_topWindow) == wxYES) {
         gitAction ga(gitResetRepo, wxT(""));
         m_gitActionQueue.push(ga);
         AddDefaultActions();
@@ -698,25 +892,20 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
     std::map<wxString, wxTreeItemId> modifiedIDs;
     CreateFilesTreeIDsMap(modifiedIDs, true);
 
-    for (it = modifiedIDs.begin(); it != modifiedIDs.end(); ++it) {
-        if (it->second.IsOk())
-            choices.Add(it->first);
+    for(it = modifiedIDs.begin(); it != modifiedIDs.end(); ++it) {
+        if(it->second.IsOk()) choices.Add(it->first);
     }
 
-    if(choices.GetCount() == 0)
-        return;
+    if(choices.GetCount() == 0) return;
 
-    wxString choice =wxGetSingleChoice(_("Jump to modifed file"),
-                                       _("Modifed files"),
-                                       choices ,m_topWindow);
-    if (!choice.IsEmpty()) {
+    wxString choice = wxGetSingleChoice(_("Jump to modifed file"), _("Modifed files"), choices, m_topWindow);
+    if(!choice.IsEmpty()) {
         wxTreeItemId id = modifiedIDs[choice];
         if(id.IsOk()) {
             m_mgr->GetTree(TreeFileView)->EnsureVisible(id);
             m_mgr->GetTree(TreeFileView)->SelectItem(id);
         }
     }
-
 }
 /*******************************************************************************/
 void GitPlugin::OnRefresh(wxCommandEvent& e)
@@ -731,7 +920,7 @@ void GitPlugin::OnRefresh(wxCommandEvent& e)
 void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    gitAction ga(gitGarbageCollection,wxT(""));
+    gitAction ga(gitGarbageCollection, wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
 }
@@ -779,17 +968,17 @@ void GitPlugin::OnFileSaved(clCommandEvent& e)
     std::map<wxString, wxTreeItemId> modifiedIDs;
     CreateFilesTreeIDsMap(modifiedIDs, true);
 
-    for (it = modifiedIDs.begin(); it != modifiedIDs.end(); ++it) {
-        if (!it->second.IsOk()) {
+    for(it = modifiedIDs.begin(); it != modifiedIDs.end(); ++it) {
+        if(!it->second.IsOk()) {
             GIT_MESSAGE(wxT("Stored item not found in tree, rebuilding item IDs"));
-            gitAction ga(gitListAll,wxT(""));
+            gitAction ga(gitListAll, wxT(""));
             m_gitActionQueue.push(ga);
             break;
         }
         DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), it->second, OverlayTool::Bmp_Modified);
     }
 
-    gitAction ga(gitListModified,wxT(""));
+    gitAction ga(gitListModified, wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
 
@@ -801,10 +990,10 @@ void GitPlugin::OnFilesAddedToProject(clCommandEvent& e)
 {
     e.Skip();
 
-    const wxArrayString &files = e.GetStrings();
-    if( !files.IsEmpty() && !m_repositoryDirectory.IsEmpty() ) {
+    const wxArrayString& files = e.GetStrings();
+    if(!files.IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
         GIT_MESSAGE(wxT("Files added to project, updating file list"));
-        DoAddFiles( files );
+        DoAddFiles(files);
         RefreshFileListView();
     }
 }
@@ -834,8 +1023,7 @@ void GitPlugin::OnInitDone(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::ProcessGitActionQueue()
 {
-    if(m_gitActionQueue.size() == 0)
-        return;
+    if(m_gitActionQueue.size() == 0) return;
 
     // Sanity:
     // if there is no repo and the command is not 'clone'
@@ -857,13 +1045,13 @@ void GitPlugin::ProcessGitActionQueue()
         GIT_MESSAGE("Git repository is ditry, stashing local changes before pulling...");
         GIT_MESSAGE("%s", command);
         break;
-        
+
     case gitStashPop:
         command << " stash pop";
-        
+
         GIT_MESSAGE("%s", command);
         break;
-        
+
     case gitRevertCommit:
         command << " revert --no-commit " << ga.arguments;
         GIT_MESSAGE("%s", command);
@@ -907,7 +1095,7 @@ void GitPlugin::ProcessGitActionQueue()
         GIT_MESSAGE1(wxT("Updating remotes"));
         command << wxT(" --no-pager remote update");
         break;
- 
+
     case gitListRemotes:
         GIT_MESSAGE1(wxT("Listing remotes"));
         command << wxT(" --no-pager remote");
@@ -967,14 +1155,14 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitPush:
-        GIT_MESSAGE(wxT("Push local changes (")+ ga.arguments+wxT(")"));
+        GIT_MESSAGE(wxT("Push local changes (") + ga.arguments + wxT(")"));
         command << wxT(" --no-pager push ") << ga.arguments;
         ShowProgress(wxT("Pushing local changes..."), false);
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitCommit:
-        GIT_MESSAGE(wxT("Commit local changes (")+ ga.arguments+wxT(")"));
+        GIT_MESSAGE(wxT("Commit local changes (") + ga.arguments + wxT(")"));
         command << wxT(" --no-pager commit ") << ga.arguments;
         ShowProgress(wxT("Commiting local changes..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
@@ -988,7 +1176,7 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitBranchCreate:
-        GIT_MESSAGE(wxT("Create local branch ")+ ga.arguments);
+        GIT_MESSAGE(wxT("Create local branch ") + ga.arguments);
         command << wxT(" --no-pager branch ") << ga.arguments;
         ShowProgress(wxT("Creating local branch..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
@@ -1013,15 +1201,15 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitBranchSwitch:
-        GIT_MESSAGE(wxT("Switch to local branch ")+ ga.arguments);
-        ShowProgress(wxT("Switching to local branch ")+ ga.arguments, false);
+        GIT_MESSAGE(wxT("Switch to local branch ") + ga.arguments);
+        ShowProgress(wxT("Switching to local branch ") + ga.arguments, false);
         command << wxT(" --no-pager checkout ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitBranchSwitchRemote:
-        GIT_MESSAGE(wxT("Switch to remote branch ")+ ga.arguments);
-        ShowProgress(wxT("Switching to remote branch ")+ ga.arguments, false);
+        GIT_MESSAGE(wxT("Switch to remote branch ") + ga.arguments);
+        ShowProgress(wxT("Switching to remote branch ") + ga.arguments, false);
         command << wxT(" --no-pager checkout -b ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
@@ -1036,14 +1224,14 @@ void GitPlugin::ProcessGitActionQueue()
 
     case gitRebase:
         GIT_MESSAGE(wxT("Rebasing.."));
-        ShowProgress(wxT("Rebase with ")+ga.arguments+wxT(".."));
+        ShowProgress(wxT("Rebase with ") + ga.arguments + wxT(".."));
         command << wxT(" --no-pager rebase ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitGarbageCollection:
         GIT_MESSAGE(wxT("Clean database.."));
-        ShowProgress(wxT("Cleaning git database. This may take some time..."),false);
+        ShowProgress(wxT("Cleaning git database. This may take some time..."), false);
         command << wxT(" --no-pager gc");
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
@@ -1059,34 +1247,33 @@ void GitPlugin::ProcessGitActionQueue()
     conf.ReadItem(&data);
 
 #ifdef __WXMSW__
-    if ( ga.action == gitClone || ga.action == gitPush || ga.action == gitPull ) {
-        createFlags = data.GetFlags() & GitEntry::Git_Show_Terminal ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
+    if(ga.action == gitClone || ga.action == gitPush || ga.action == gitPull) {
+        createFlags =
+            data.GetFlags() & GitEntry::Git_Show_Terminal ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
 
     } else {
         createFlags = IProcessCreateWithHiddenConsole;
     }
 #else
     createFlags = IProcessCreateWithHiddenConsole;
-   
+
 #endif
 
     // Set locale to english
     wxStringMap_t om;
-    om.insert( std::make_pair( "LC_ALL", "C" ) );
-    om.insert( std::make_pair( "GIT_MERGE_AUTOEDIT", "no" ) );
+    om.insert(std::make_pair("LC_ALL", "C"));
+    om.insert(std::make_pair("GIT_MERGE_AUTOEDIT", "no"));
 
 #ifdef __WXMSW__
     wxString homeDir;
-    if ( wxGetEnv("USERPROFILE", &homeDir) ) {
-        om.insert( std::make_pair( "HOME", homeDir ) );
+    if(wxGetEnv("USERPROFILE", &homeDir)) {
+        om.insert(std::make_pair("HOME", homeDir));
     }
 #endif
-    EnvSetter es( &om );
+    EnvSetter es(&om);
 
-    m_process = ::CreateAsyncProcess(this,
-                                     command,
-                                     createFlags,
-                                     ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory);
+    m_process = ::CreateAsyncProcess(
+        this, command, createFlags, ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory);
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
     }
@@ -1099,13 +1286,12 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     GitEntry data;
     conf.ReadItem(&data);
 
-    if ( !(data.GetFlags() & GitEntry::Git_Colour_Tree_View) )
-        return;
+    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
 
     wxArrayString tmpArray = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
 
     // Convert path to absolute
-    for (unsigned i=0; i < tmpArray.GetCount(); ++i) {
+    for(unsigned i = 0; i < tmpArray.GetCount(); ++i) {
         wxFileName fname(tmpArray[i]);
         fname.MakeAbsolute(m_repositoryDirectory);
         tmpArray[i] = fname.GetFullPath();
@@ -1115,14 +1301,14 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     wxStringSet_t gitFileSet;
     gitFileSet.insert(tmpArray.begin(), tmpArray.end());
 
-    if (ga.action == gitListAll) {
+    if(ga.action == gitListAll) {
         m_mgr->SetStatusMessage(_("Colouring tracked git files..."), 0);
         ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, OverlayTool::Bmp_OK);
         m_trackedFiles.swap(gitFileSet);
 
-    } else if (ga.action == gitListModified) {
+    } else if(ga.action == gitListModified) {
         m_mgr->SetStatusMessage(_("Colouring modifed git files..."), 0);
-        //Reset modified files
+        // Reset modified files
         ColourFileTree(m_mgr->GetTree(TreeFileView), m_modifiedFiles, OverlayTool::Bmp_OK);
         // First get an up to date map of the filepaths/treeitemids
         // (Trying to cache these results in segfaults when the tree has been modified)
@@ -1132,17 +1318,17 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         // Now filter using the list of modified files, gitFileList, to find which IDs to colour differently
         wxStringSet_t toColour;
         wxStringSet_t::const_iterator iter = gitFileSet.begin();
-        for (; iter != gitFileSet.end(); ++iter) {
-            wxTreeItemId id = IDs[ (*iter) ];
-            if (id.IsOk()) {
+        for(; iter != gitFileSet.end(); ++iter) {
+            wxTreeItemId id = IDs[(*iter)];
+            if(id.IsOk()) {
                 DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), id, OverlayTool::Bmp_Modified);
 
             } else {
-                toColour.insert( *iter );
+                toColour.insert(*iter);
             }
         }
 
-        if ( !toColour.empty() ) {
+        if(!toColour.empty()) {
             ColourFileTree(m_mgr->GetTree(TreeFileView), toColour, OverlayTool::Bmp_Modified);
         }
 
@@ -1156,11 +1342,10 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
 void GitPlugin::ListBranchAction(const gitAction& ga)
 {
     wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
-    if(gitList.GetCount()==0)
-        return;
+    if(gitList.GetCount() == 0) return;
 
     wxArrayString branchList;
-    for(unsigned i=0; i < gitList.GetCount(); ++i) {
+    for(unsigned i = 0; i < gitList.GetCount(); ++i) {
         if(!gitList[i].Contains(wxT("->"))) {
             branchList.Add(gitList[i].Mid(2));
         }
@@ -1180,11 +1365,10 @@ void GitPlugin::ListBranchAction(const gitAction& ga)
 void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
 {
     wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
-    if(gitList.GetCount()==0)
-        return;
+    if(gitList.GetCount() == 0) return;
 
     m_currentBranch.Empty();
-    for(unsigned i=0; i < gitList.GetCount(); ++i) {
+    for(unsigned i = 0; i < gitList.GetCount(); ++i) {
         if(gitList[i].StartsWith(wxT("*"))) {
             m_currentBranch = gitList[i].Mid(2);
             break;
@@ -1192,30 +1376,33 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
     }
 
     if(!m_currentBranch.IsEmpty()) {
-        GIT_MESSAGE(wxT("Current branch ")+m_currentBranch);
-        m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).Caption( wxT("Workspace View [")+m_currentBranch+wxT("]"));
+        GIT_MESSAGE(wxT("Current branch ") + m_currentBranch);
+        m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View [") + m_currentBranch +
+                                                                           wxT("]"));
         m_mgr->GetDockingManager()->Update();
     }
 }
 /*******************************************************************************/
 void GitPlugin::UpdateFileTree()
 {
-    if ( !m_mgr->GetWorkspace()->IsOpen() ) {
+    if(!m_mgr->GetWorkspace()->IsOpen()) {
         return;
     }
 
     if(wxMessageBox(_("Do you want to start importing new / updating changed files?"),
-                    _("Import files"), wxYES_NO, m_topWindow) == wxNO) {
+                    _("Import files"),
+                    wxYES_NO,
+                    m_topWindow) == wxNO) {
         return;
     }
 
     wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
     wxString error = _("Error obtaining project");
-    ProjectPtr proj =  m_mgr->GetWorkspace()->FindProjectByName(projectName,error);
+    ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, error);
 
     proj->BeginTranscation();
     wxString path = m_repositoryDirectory;
-    if (path.EndsWith(wxT("/")) || path.EndsWith(wxT("\\"))) {
+    if(path.EndsWith(wxT("/")) || path.EndsWith(wxT("\\"))) {
         path.RemoveLast();
     }
     wxFileName rootPath(path);
@@ -1223,64 +1410,64 @@ void GitPlugin::UpdateFileTree()
     wxArrayString gitfiles = wxStringTokenize(m_commandOutput, wxT("\n"));
     wxArrayString files;
 
-    //clProgressDlg *prgDlg = new clProgressDlg (m_topWindow, _("Importing files ..."), wxT(""), (int)gitfiles.GetCount()+2);
-    wxProgressDialog *prgDlg = new wxProgressDialog (_("Importing files ..."), wxT(""), (int)gitfiles.GetCount()+2, m_topWindow);
+    // clProgressDlg *prgDlg = new clProgressDlg (m_topWindow, _("Importing files ..."), wxT(""),
+    // (int)gitfiles.GetCount()+2);
+    wxProgressDialog* prgDlg =
+        new wxProgressDialog(_("Importing files ..."), wxT(""), (int)gitfiles.GetCount() + 2, m_topWindow);
     wxString filespec = wxT("*.cpp;*.hpp;*.c;*.h;*.ui;*.py;*.txt");
     bool extlessFiles(true);
     wxStringTokenizer tok(filespec, wxT(";"));
     std::set<wxString> specMap;
-    while ( tok.HasMoreTokens() ) {
+    while(tok.HasMoreTokens()) {
         wxString v = tok.GetNextToken().AfterLast(wxT('*'));
         v = v.AfterLast(wxT('.')).MakeLower();
-        specMap.insert( v );
+        specMap.insert(v);
     }
 
-    //filter non interesting files
-    for (size_t i=0; i<gitfiles.GetCount(); i++) {
+    // filter non interesting files
+    for(size_t i = 0; i < gitfiles.GetCount(); i++) {
 
-        prgDlg->Update((int)i, _("Checking file ")+ gitfiles.Item(i));
-        wxFileName fn(m_repositoryDirectory+wxT("/")+gitfiles.Item(i));
+        prgDlg->Update((int)i, _("Checking file ") + gitfiles.Item(i));
+        wxFileName fn(m_repositoryDirectory + wxT("/") + gitfiles.Item(i));
 
         /* always excluded by default */
         wxString filepath = fn.GetPath();
-        if( filepath.Contains(wxT(".svn"))           || filepath.Contains(wxT(".cvs"))           ||
-            filepath.Contains(wxT(".arch-ids"))      || filepath.Contains(wxT("arch-inventory")) ||
-            filepath.Contains(wxT("autom4te.cache")) || filepath.Contains(wxT("BitKeeper"))      ||
-            filepath.Contains(wxT(".bzr"))           || filepath.Contains(wxT(".bzrignore"))     ||
-            filepath.Contains(wxT("CVS"))            || filepath.Contains(wxT(".cvsignore"))     ||
-            filepath.Contains(wxT("_darcs"))         || filepath.Contains(wxT(".deps"))          ||
-            filepath.Contains(wxT("EIFGEN"))         || filepath.Contains(wxT(".git"))           ||
-            filepath.Contains(wxT(".gitignore"))     ||
-            filepath.Contains(wxT(".hg"))            || filepath.Contains(wxT("PENDING"))        ||
-            filepath.Contains(wxT("RCS"))            || filepath.Contains(wxT("RESYNC"))         ||
-            filepath.Contains(wxT("SCCS"))           || filepath.Contains(wxT("{arch}"))) {
+        if(filepath.Contains(wxT(".svn")) || filepath.Contains(wxT(".cvs")) || filepath.Contains(wxT(".arch-ids")) ||
+           filepath.Contains(wxT("arch-inventory")) || filepath.Contains(wxT("autom4te.cache")) ||
+           filepath.Contains(wxT("BitKeeper")) || filepath.Contains(wxT(".bzr")) ||
+           filepath.Contains(wxT(".bzrignore")) || filepath.Contains(wxT("CVS")) ||
+           filepath.Contains(wxT(".cvsignore")) || filepath.Contains(wxT("_darcs")) ||
+           filepath.Contains(wxT(".deps")) || filepath.Contains(wxT("EIFGEN")) || filepath.Contains(wxT(".git")) ||
+           filepath.Contains(wxT(".gitignore")) || filepath.Contains(wxT(".hg")) || filepath.Contains(wxT("PENDING")) ||
+           filepath.Contains(wxT("RCS")) || filepath.Contains(wxT("RESYNC")) || filepath.Contains(wxT("SCCS")) ||
+           filepath.Contains(wxT("{arch}"))) {
             continue;
         }
 
-        if ( specMap.empty() ) {
+        if(specMap.empty()) {
             files.Add(gitfiles.Item(i));
-        } else if (fn.GetExt().IsEmpty() & extlessFiles) {
+        } else if(fn.GetExt().IsEmpty() & extlessFiles) {
             files.Add(gitfiles.Item(i));
-        } else if (specMap.find(fn.GetExt().MakeLower()) != specMap.end()) {
+        } else if(specMap.find(fn.GetExt().MakeLower()) != specMap.end()) {
             files.Add(gitfiles.Item(i));
         }
     }
 
-    prgDlg->Update(gitfiles.GetCount()+1, _("Adding files..."));
+    prgDlg->Update(gitfiles.GetCount() + 1, _("Adding files..."));
     // get list of files
     std::vector<wxFileName> vExistingFiles;
     wxArrayString existingFiles;
 
     proj->GetFiles(vExistingFiles, true);
-    for (size_t i=0; i<vExistingFiles.size(); i++) {
+    for(size_t i = 0; i < vExistingFiles.size(); i++) {
         existingFiles.Add(vExistingFiles.at(i).GetFullPath());
     }
 
-    for (size_t i=0; i<files.GetCount(); i++) {
-        wxFileName fn(m_repositoryDirectory+wxT("/")+files.Item(i));
+    for(size_t i = 0; i < files.GetCount(); i++) {
+        wxFileName fn(m_repositoryDirectory + wxT("/") + files.Item(i));
 
         // if the file already exist, skip it
-        if (existingFiles.Index(fn.GetFullPath()) != wxNOT_FOUND) {
+        if(existingFiles.Index(fn.GetFullPath()) != wxNOT_FOUND) {
             continue;
         }
 
@@ -1291,10 +1478,10 @@ void GitPlugin::UpdateFileTree()
         relativePath.Replace(wxT("/"), wxT(":"));
         relativePath.Replace(wxT("\\"), wxT(":"));
 
-        if (relativePath.IsEmpty()) {
-            //the file is probably under the root, add it under
-            //a virtual directory with the name of the target
-            //root folder
+        if(relativePath.IsEmpty()) {
+            // the file is probably under the root, add it under
+            // a virtual directory with the name of the target
+            // root folder
             relativePath = rootPath.GetName();
         }
         relativePath.Append(wxT(":"));
@@ -1302,7 +1489,7 @@ void GitPlugin::UpdateFileTree()
         bool createAndAdd = false;
         wxArrayString dummyFiles;
         proj->GetFilesByVirtualDir(relativePath, dummyFiles);
-        if(dummyFiles.GetCount() != 0 ) {
+        if(dummyFiles.GetCount() != 0) {
             createAndAdd = true;
         } else {
             proj->GetFilesByVirtualDir(relativePath.Left(relativePath.Find(wxT(":"))), dummyFiles);
@@ -1314,38 +1501,37 @@ void GitPlugin::UpdateFileTree()
         if(createAndAdd) {
             proj->CreateVirtualDir(relativePath, true);
             proj->FastAddFile(fullpath, relativePath);
-
         }
     }
-    prgDlg->Update(gitfiles.GetCount()+2, _("Finished adding files..."));
+    prgDlg->Update(gitfiles.GetCount() + 2, _("Finished adding files..."));
     prgDlg->Destroy();
     proj->CommitTranscation();
 
     m_mgr->ReloadWorkspace();
 }
 /*******************************************************************************/
-void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
+void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
 {
     HideProgress();
 
-    ProcessEventData *ped = (ProcessEventData*) event.GetClientData();
-    m_console->AddRawText( ped->GetData() );
+    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
+    m_console->AddRawText(ped->GetData());
     m_commandOutput.append(ped->GetData());
 
     wxDELETE(ped);
-    
+
     gitAction ga = m_gitActionQueue.front();
-    if ( ga.action != gitDiffFile ) {
+    if(ga.action != gitDiffFile) {
         // Dont manipulate the output if its a diff...
         m_commandOutput.Replace(wxT("\r"), wxT(""));
     }
 
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         wxString msg = _("There was a problem while performing a git action.\n"
-                           "Last command output:\n");
+                         "Last command output:\n");
         msg << m_commandOutput;
-        wxMessageBox(msg, _("git error"),wxICON_ERROR | wxOK, m_topWindow);
-        //Last action failed, clear queue
+        wxMessageBox(msg, _("git error"), wxICON_ERROR | wxOK, m_topWindow);
+        // Last action failed, clear queue
         while(!m_gitActionQueue.empty()) {
             m_gitActionQueue.pop();
         }
@@ -1355,10 +1541,9 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         return;
     }
 
-    if(ga.action == gitListAll || ga.action == gitListModified || ga.action == gitResetRepo ) {
+    if(ga.action == gitListAll || ga.action == gitListModified || ga.action == gitResetRepo) {
         if(ga.action == gitListAll && m_bActionRequiresTreUpdate) {
-            if(m_commandOutput.Lower().Contains(_("created")))
-                UpdateFileTree();
+            if(m_commandOutput.Lower().Contains(_("created"))) UpdateFileTree();
         }
         m_bActionRequiresTreUpdate = false;
         FinishGitListAction(ga);
@@ -1367,43 +1552,43 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         m_console->UpdateTreeView(m_commandOutput);
         FinishGitListAction(ga);
 
-    } else if(ga.action == gitListRemotes ) {
+    } else if(ga.action == gitListRemotes) {
         wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
         m_remotes = gitList;
 
-    } else if(ga.action == gitDiffFile ) {
-        
+    } else if(ga.action == gitDiffFile) {
+
         // Show the diff in the diff-viewer
         DoShowDiffViewer(m_commandOutput, ga.arguments);
 
-    } else if(ga.action == gitDiffRepoCommit ) {
+    } else if(ga.action == gitDiffRepoCommit) {
         GitCommitDlg dlg(m_topWindow, m_repositoryDirectory);
         dlg.AppendDiff(m_commandOutput);
         if(dlg.ShowModal() == wxID_OK) {
             wxString message = dlg.GetCommitMessage();
-            if(!message.IsEmpty() || dlg.IsAmending() ) {
-                
+            if(!message.IsEmpty() || dlg.IsAmending()) {
+
                 // amending?
                 wxString arg;
-                if ( dlg.IsAmending() ) {
+                if(dlg.IsAmending()) {
                     arg << " --amend ";
                 }
-                
+
                 // Add the message
-                if ( !message.IsEmpty() ) {
+                if(!message.IsEmpty()) {
                     arg << "-m \"";
                     arg << message;
                     arg << "\" ";
-                     
+
                 } else {
-                    // we are amending previous commit, use the previous commit message 
+                    // we are amending previous commit, use the previous commit message
                     // by passing the --no-edit switch
                     arg << " --no-edit ";
                 }
-                
+
                 wxArrayString files = dlg.GetSelectedFiles();
                 if(files.GetCount() != 0) {
-                    for(unsigned i=0; i < files.GetCount(); ++i)
+                    for(unsigned i = 0; i < files.GetCount(); ++i)
                         arg << files.Item(i) << wxT(" ");
                 }
                 gitAction ga(gitCommit, arg);
@@ -1411,57 +1596,59 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
                 AddDefaultActions();
 
             } else {
-                wxMessageBox(_("No commit message given, aborting..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+                wxMessageBox(
+                    _("No commit message given, aborting..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
             }
         }
 
-    } else if(ga.action == gitDiffRepoShow ) {
+    } else if(ga.action == gitDiffRepoShow) {
         GitDiffDlg dlg(m_topWindow, m_repositoryDirectory);
         dlg.SetDiff(m_commandOutput);
         dlg.ShowModal();
 
-    } else if( ga.action == gitResetFile || ga.action == gitApplyPatch ) {
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent( false );
+    } else if(ga.action == gitResetFile || ga.action == gitApplyPatch) {
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 
         gitAction newAction;
         newAction.action = gitListModified;
         m_gitActionQueue.push(newAction);
 
-    } else if(ga.action == gitBranchCurrent ) {
+    } else if(ga.action == gitBranchCurrent) {
         GetCurrentBranchAction(ga);
 
-    } else if(ga.action == gitBranchList || ga.action == gitBranchListRemote ) {
+    } else if(ga.action == gitBranchList || ga.action == gitBranchListRemote) {
         ListBranchAction(ga);
 
-    } else if(ga.action == gitBranchSwitch
-              || ga.action == gitBranchSwitchRemote
-              || ga.action == gitPull
-              || ga.action == gitResetRepo) {
+    } else if(ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote || ga.action == gitPull ||
+              ga.action == gitResetRepo) {
         if(ga.action == gitPull) {
             if(m_commandOutput.Contains(wxT("Already"))) {
-                wxMessageBox(_("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
+                wxMessageBox(
+                    _("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
             } else {
-                wxString log =  m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
-                if(!log.IsEmpty()){
+                wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
+                if(!log.IsEmpty()) {
                     GitLogDlg dlg(m_topWindow, _("Pull log"));
                     dlg.SetLog(log);
                     dlg.ShowModal();
                 }
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
-                    if(wxMessageBox(_("Merged after pull. Rebase?"),_("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
+                    if(wxMessageBox(_("Merged after pull. Rebase?"), _("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
                         wxString selection;
                         if(m_remotes.GetCount() > 1) {
-                            selection = wxGetSingleChoice(_("Rebase with what branch?"), _("Rebase"),m_remoteBranchList, m_topWindow);
+                            selection = wxGetSingleChoice(
+                                _("Rebase with what branch?"), _("Rebase"), m_remoteBranchList, m_topWindow);
                         } else {
-                            selection = m_remotes[0]+wxT("/")+m_currentBranch;
-                            if(wxMessageBox(_("Rebase with ")+selection+wxT("?"),_("Rebase"), wxYES_NO, m_topWindow) == wxNO)
+                            selection = m_remotes[0] + wxT("/") + m_currentBranch;
+                            if(wxMessageBox(
+                                   _("Rebase with ") + selection + wxT("?"), _("Rebase"), wxYES_NO, m_topWindow) ==
+                               wxNO)
                                 selection.Empty();
                         }
 
-                        if(selection.IsEmpty())
-                            return;
+                        if(selection.IsEmpty()) return;
 
-                        gitAction ga(gitRebase,selection);
+                        gitAction ga(gitRebase, selection);
                         m_gitActionQueue.push(ga);
                     }
                 } else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
@@ -1469,26 +1656,24 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
                                      "Please resolve conflicts and commit by hand.\n"
                                      "After resolving conflicts, be sure to reload the current project."),
                                  _("Conflict found during merge"),
-                                 wxOK, m_topWindow);
+                                 wxOK,
+                                 m_topWindow);
                 }
-                if(m_commandOutput.Contains(wxT("Updating")))
-                    m_bActionRequiresTreUpdate = true;
+                if(m_commandOutput.Contains(wxT("Updating"))) m_bActionRequiresTreUpdate = true;
             }
-        } else if(ga.action == gitBranchSwitch
-                  || ga.action == gitBranchSwitchRemote) {
-            //update the tree
-            gitAction ga(gitListAll,wxT(""));
+        } else if(ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote) {
+            // update the tree
+            gitAction ga(gitListAll, wxT(""));
             m_gitActionQueue.push(ga);
             ga.action = gitListModified;
             m_gitActionQueue.push(ga);
-
         }
     } else if(ga.action == gitCommitList) {
-        GitCommitListDlg *dlg = new GitCommitListDlg(m_topWindow, m_repositoryDirectory, this);
+        GitCommitListDlg* dlg = new GitCommitListDlg(m_topWindow, m_repositoryDirectory, this);
         dlg->SetCommitList(m_commandOutput);
         dlg->Show();
 
-    } else if ( ga.action == gitRevertCommit ) {
+    } else if(ga.action == gitRevertCommit) {
         AddDefaultActions();
     }
 
@@ -1499,20 +1684,19 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnProcessOutput(wxCommandEvent &event)
+void GitPlugin::OnProcessOutput(wxCommandEvent& event)
 {
-    ProcessEventData *ped = (ProcessEventData*)event.GetClientData();
-    if( ped ) {
+    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
+    if(ped) {
         wxString output = ped->GetData();
         wxDELETE(ped);
 
         gitAction ga;
-        if ( !m_gitActionQueue.empty() ) {
+        if(!m_gitActionQueue.empty()) {
             ga = m_gitActionQueue.front();
         }
 
-        if ( m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull )
-            m_console->AddRawText(output);
+        if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) m_console->AddRawText(output);
         m_commandOutput.Append(output);
 
         // Handle password required
@@ -1520,37 +1704,37 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
         tmpOutput.Trim().Trim(false);
         tmpOutput.MakeLower();
 
-        if ( ga.action != gitDiffRepoCommit &&
-             ga.action != gitDiffFile       &&
-             ga.action != gitCommitList     &&
-             ga.action != gitDiffRepoShow )
+        if(ga.action != gitDiffRepoCommit && ga.action != gitDiffFile && ga.action != gitCommitList &&
+           ga.action != gitDiffRepoShow)
 
         {
-            if ( tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure") ) {
+            if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
                 m_process->Terminate();
-                ::wxMessageBox(output, "git", wxICON_ERROR|wxCENTER|wxOK, EventNotifier::Get()->TopFrame());
+                ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
 
-            } else if ( tmpOutput.Contains("*** please tell me who you are") ) {
+            } else if(tmpOutput.Contains("*** please tell me who you are")) {
                 m_process->Terminate();
-                ::wxMessageBox(output, "git", wxICON_ERROR|wxCENTER|wxOK, EventNotifier::Get()->TopFrame());
-                
-            } else if ( tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for") ) {
+                ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
+
+            } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for")) {
 
                 // Password is required
                 wxString pass = ::wxGetPasswordFromUser(output);
-                if ( pass.IsEmpty() ) {
+                if(pass.IsEmpty()) {
 
                     // No point on continuing
                     m_process->Terminate();
-                    
+
                 } else {
 
                     // write the password
-                    m_process->WriteToConsole( pass );
-
+                    m_process->WriteToConsole(pass);
                 }
-            } else if (( tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) || tmpOutput.Contains("key fingerprint")) {
-                if ( ::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES ) {
+            } else if((tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) ||
+                      tmpOutput.Contains("key fingerprint")) {
+                if(::wxMessageBox(tmpOutput,
+                                  _("Are you sure you want to continue connecting"),
+                                  wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
                     m_process->WriteToConsole("yes");
 
                 } else {
@@ -1559,12 +1743,12 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
             }
         }
 
-        if( m_console->IsProgressShown() ) {
+        if(m_console->IsProgressShown()) {
             wxString message = output.Left(output.Find(':'));
-            int percent = output.Find('%',true);
+            int percent = output.Find('%', true);
             if(percent != wxNOT_FOUND) {
 
-                wxString number = output.Mid(percent-3,3);
+                wxString number = output.Mid(percent - 3, 3);
                 number.Trim(false);
                 unsigned long current;
                 if(number.ToULong(&current)) {
@@ -1596,14 +1780,14 @@ void GitPlugin::InitDefaults()
     if(!data.GetGITKExecutablePath().IsEmpty()) {
         m_pathGITKExecutable = data.GetGITKExecutablePath();
     }
- 
+
     LoadDefaultGitCommands(data); // Always do this, in case of new entries
     conf.WriteItem(&data);
     conf.Save();
 
     wxString repoPath;
-    if ( IsWorkspaceOpened() ) {
-        repoPath = data.GetPath( GetWorkspaceName() );
+    if(IsWorkspaceOpened()) {
+        repoPath = data.GetPath(GetWorkspaceName());
     } else {
         repoPath = ::wxGetCwd();
     }
@@ -1636,14 +1820,14 @@ void GitPlugin::AddDefaultActions()
     gitAction ga(gitBranchCurrent, wxT(""));
     m_gitActionQueue.push(ga);
 
-//    ga.action = gitListAll;
-//    m_gitActionQueue.push(ga);
+    //    ga.action = gitListAll;
+    //    m_gitActionQueue.push(ga);
 
     ga.action = gitListModified;
     m_gitActionQueue.push(ga);
 
-    //ga.action = gitUpdateRemotes;
-    //m_gitActionQueue.push(ga);
+    // ga.action = gitUpdateRemotes;
+    // m_gitActionQueue.push(ga);
 
     ga.action = gitBranchList;
     m_gitActionQueue.push(ga);
@@ -1665,28 +1849,26 @@ void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, Ove
     GitEntry data;
     conf.ReadItem(&data);
 
-    if ( !(data.GetFlags() & GitEntry::Git_Colour_Tree_View) )
-        return;
+    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
 
     std::stack<wxTreeItemId> items;
-    if (tree->GetRootItem().IsOk())
-        items.push(tree->GetRootItem());
+    if(tree->GetRootItem().IsOk()) items.push(tree->GetRootItem());
 
-    while (!items.empty()) {
+    while(!items.empty()) {
         wxTreeItemId next = items.top();
         items.pop();
 
-        if (next != tree->GetRootItem()) {
-            FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( tree->GetItemData( next ) );
+        if(next != tree->GetRootItem()) {
+            FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(tree->GetItemData(next));
             const wxString& path = data->GetData().GetFile();
-            if (!path.IsEmpty() && files.count(path)) {
+            if(!path.IsEmpty() && files.count(path)) {
                 DoSetTreeItemImage(tree, next, bmpType);
             }
         }
 
         wxTreeItemIdValue cookie;
         wxTreeItemId nextChild = tree->GetFirstChild(next, cookie);
-        while (nextChild.IsOk()) {
+        while(nextChild.IsOk()) {
             items.push(nextChild);
             nextChild = tree->GetNextSibling(nextChild);
         }
@@ -1698,26 +1880,25 @@ void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, Ove
 void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified /*=false*/) const
 {
     wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
-    if (!tree) {
+    if(!tree) {
         return;
     }
 
     IDs.clear();
 
     std::stack<wxTreeItemId> items;
-    if (tree->GetRootItem().IsOk())
-        items.push(tree->GetRootItem());
+    if(tree->GetRootItem().IsOk()) items.push(tree->GetRootItem());
 
-    while (!items.empty()) {
+    while(!items.empty()) {
         wxTreeItemId next = items.top();
         items.pop();
 
-        if (next != tree->GetRootItem()) {
+        if(next != tree->GetRootItem()) {
             FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(tree->GetItemData(next));
             const wxString& path = data->GetData().GetFile();
-            if (!path.IsEmpty()) {
+            if(!path.IsEmpty()) {
                 // If m_modifiedFiles has already been filled, only include files listed there
-                if (!ifmodified || m_modifiedFiles.count(path)) {
+                if(!ifmodified || m_modifiedFiles.count(path)) {
                     IDs[path] = next;
                 }
             }
@@ -1725,7 +1906,7 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
 
         wxTreeItemIdValue cookie;
         wxTreeItemId nextChild = tree->GetFirstChild(next, cookie);
-        while (nextChild.IsOk()) {
+        while(nextChild.IsOk()) {
             items.push(nextChild);
             nextChild = tree->GetNextSibling(nextChild);
         }
@@ -1735,18 +1916,17 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
 /*******************************************************************************/
 void GitPlugin::OnProgressTimer(wxTimerEvent& Event)
 {
-    if( m_console->IsProgressShown() )
-        m_console->PulseProgress();
+    if(m_console->IsProgressShown()) m_console->PulseProgress();
 }
 
 /*******************************************************************************/
 void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 {
     m_console->ShowProgress(message, pulse);
-    
+
     if(pulse) {
         m_progressTimer.Start(50);
-        
+
     } else {
         m_progressMessage = message;
     }
@@ -1759,10 +1939,7 @@ void GitPlugin::HideProgress()
     m_progressTimer.Stop();
 }
 
-void GitPlugin::OnEnableGitRepoExists(wxUpdateUIEvent& e)
-{
-    e.Enable(m_repositoryDirectory.IsEmpty() == false);
-}
+void GitPlugin::OnEnableGitRepoExists(wxUpdateUIEvent& e) { e.Enable(m_repositoryDirectory.IsEmpty() == false); }
 
 void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 {
@@ -1775,7 +1952,7 @@ void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 #endif
 
     // store the GIT entry data
-    if( IsWorkspaceOpened() ) {
+    if(IsWorkspaceOpened()) {
 
         clConfig conf("git.conf");
         GitEntry data;
@@ -1807,7 +1984,7 @@ void GitPlugin::DoCleanup()
         delete m_process;
         m_process = NULL;
     }
-    m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).Caption( wxT("Workspace View"));
+    m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View"));
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -1819,19 +1996,22 @@ void GitPlugin::DoCreateTreeImages()
     // the index will be: m_baseImageCount + img-base + 1 => OK
     //                    m_baseImageCount + img-base + 2 => Modified
 
-    if (m_treeImageMapping.empty()) {
+    if(m_treeImageMapping.empty()) {
         wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
 
         // Create 2 sets: modified & normal
-        wxImageList *il = tree->GetImageList();
+        wxImageList* il = tree->GetImageList();
         m_baseImageCount = il->GetImageCount();
 
-        for(int i=0; i<m_baseImageCount; ++i) {
+        for(int i = 0; i < m_baseImageCount; ++i) {
             // we also keep a mapping of the new image to its base image
-            // The ordeer of adding the images is important since we will use this enumerators (OverlayTool::Bmp_OK etc) to choose the correct
+            // The ordeer of adding the images is important since we will use this enumerators (OverlayTool::Bmp_OK etc)
+            // to choose the correct
             // image when colouring the tree
-            m_treeImageMapping.insert(std::make_pair(il->Add( OverlayTool::Get().CreateBitmap(il->GetBitmap(i), OverlayTool::Bmp_OK)), i));
-            m_treeImageMapping.insert(std::make_pair(il->Add( OverlayTool::Get().CreateBitmap(il->GetBitmap(i), OverlayTool::Bmp_Modified)), i));
+            m_treeImageMapping.insert(
+                std::make_pair(il->Add(OverlayTool::Get().CreateBitmap(il->GetBitmap(i), OverlayTool::Bmp_OK)), i));
+            m_treeImageMapping.insert(std::make_pair(
+                il->Add(OverlayTool::Get().CreateBitmap(il->GetBitmap(i), OverlayTool::Bmp_Modified)), i));
             m_treeImageMapping.insert(std::make_pair(i, i));
         }
     }
@@ -1843,12 +2023,11 @@ void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, O
     GitEntry data;
     conf.ReadItem(&data);
 
-    if ( !(data.GetFlags() & GitEntry::Git_Colour_Tree_View) )
-        return;
+    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
 
     // get the base image first
     int curImgIdx = ctrl->GetItemImage(item);
-    if ( m_treeImageMapping.count( curImgIdx ) ) {
+    if(m_treeImageMapping.count(curImgIdx)) {
         int baseImg = m_treeImageMapping.find(curImgIdx)->second;
 
         // now get the new image index based on the following:
@@ -1856,10 +2035,9 @@ void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, O
         int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
 
         // the below condition should never met, but I am paranoid..
-        if ( ctrl->GetImageList()->GetImageCount() > newImg ) {
-            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Selected );
+        if(ctrl->GetImageList()->GetImageCount() > newImg) {
+            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Selected);
             ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Normal);
-
         }
     }
 }
@@ -1867,9 +2045,9 @@ void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, O
 void GitPlugin::OnClone(wxCommandEvent& e)
 {
     gitCloneDlg dlg(wxTheApp->GetTopWindow());
-    if ( dlg.ShowModal() == wxID_OK ) {
+    if(dlg.ShowModal() == wxID_OK) {
         gitAction ga;
-        ga.action    = gitClone;
+        ga.action = gitClone;
         ga.arguments = dlg.GetCloneURL();
         ga.workingDirectory = dlg.GetTargetDirectory();
         m_gitActionQueue.push(ga);
@@ -1883,15 +2061,14 @@ void GitPlugin::DoAddFiles(const wxArrayString& files)
     m_addedFiles = true;
 
     wxString filesToAdd;
-    for(size_t i=0; i<files.GetCount(); ++i) {
+    for(size_t i = 0; i < files.GetCount(); ++i) {
         wxFileName fn(files.Item(i));
-        if ( fn.IsAbsolute() )
-            fn.MakeRelativeTo(m_repositoryDirectory);
+        if(fn.IsAbsolute()) fn.MakeRelativeTo(m_repositoryDirectory);
         filesToAdd << "\"" << fn.GetFullPath(wxPATH_UNIX) << "\" ";
     }
 
     gitAction ga(gitAddFile, filesToAdd);
-    m_gitActionQueue.push( ga );
+    m_gitActionQueue.push(ga);
 
     AddDefaultActions();
     ProcessGitActionQueue();
@@ -1900,10 +2077,9 @@ void GitPlugin::DoAddFiles(const wxArrayString& files)
 void GitPlugin::DoResetFiles(const wxArrayString& files)
 {
     wxString filesToDelete;
-    for(size_t i=0; i<files.GetCount(); ++i) {
+    for(size_t i = 0; i < files.GetCount(); ++i) {
         wxFileName fn(files.Item(i));
-        if ( fn.IsAbsolute() )
-            fn.MakeAbsolute(m_repositoryDirectory);
+        if(fn.IsAbsolute()) fn.MakeAbsolute(m_repositoryDirectory);
         filesToDelete << "\"" << fn.GetFullPath() << "\" ";
     }
 
@@ -1917,10 +2093,9 @@ void GitPlugin::DoResetFiles(const wxArrayString& files)
 void GitPlugin::UndoAddFiles(const wxArrayString& files)
 {
     wxString filesToDelete;
-    for(size_t i=0; i<files.GetCount(); ++i) {
+    for(size_t i = 0; i < files.GetCount(); ++i) {
         wxFileName fn(files.Item(i));
-        if ( fn.IsAbsolute() )
-            fn.MakeAbsolute(m_repositoryDirectory);
+        if(fn.IsAbsolute()) fn.MakeAbsolute(m_repositoryDirectory);
         filesToDelete << "\"" << fn.GetFullPath() << "\" ";
     }
 
@@ -1943,48 +2118,47 @@ void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeTo
 {
     files.Clear();
     wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
-    if ( !tree )
-        return;
+    if(!tree) return;
 
     wxArrayTreeItemIds items;
     tree->GetSelections(items);
 
-    for(size_t i=0; i<items.GetCount(); ++i) {
-        FilewViewTreeItemData* itemData =  dynamic_cast<FilewViewTreeItemData*>(tree->GetItemData(items.Item(i)));
-        if ( itemData && itemData->GetData().GetKind() == ProjectItem::TypeFile ) {
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        FilewViewTreeItemData* itemData = dynamic_cast<FilewViewTreeItemData*>(tree->GetItemData(items.Item(i)));
+        if(itemData && itemData->GetData().GetKind() == ProjectItem::TypeFile) {
             // we got a file
-            wxFileName fn ( itemData->GetData().GetFile() );
-            if ( relativeToRepo && fn.IsAbsolute()) {
-                fn.MakeRelativeTo( m_repositoryDirectory );
+            wxFileName fn(itemData->GetData().GetFile());
+            if(relativeToRepo && fn.IsAbsolute()) {
+                fn.MakeRelativeTo(m_repositoryDirectory);
             }
 
             wxString filename = fn.GetFullPath();
-            if ( filename.Contains(" ") ) {
+            if(filename.Contains(" ")) {
                 filename.Prepend("\"").Append("\"");
             }
-            files.Add( filename );
+            files.Add(filename);
         }
     }
 }
 
 void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files)
 {
-    for(size_t i=0; i<files.GetCount(); ++i) {
-        
+    for(size_t i = 0; i < files.GetCount(); ++i) {
+
         // and finally, perform the action
         // File name should be relative to the repo
         wxFileName fn(files.Item(i));
         fn.MakeRelativeTo(m_repositoryDirectory);
-        gitAction ga( gitDiffFile, fn.GetFullPath(wxPATH_UNIX) );
-        m_gitActionQueue.push( ga );
+        gitAction ga(gitDiffFile, fn.GetFullPath(wxPATH_UNIX));
+        m_gitActionQueue.push(ga);
     }
-    
+
     ProcessGitActionQueue();
 }
 
 void GitPlugin::OnStartGitkUI(wxUpdateUIEvent& e)
 {
-    e.Enable( !m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty() );
+    e.Enable(!m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty());
 }
 
 void GitPlugin::ApplyPatch(const wxString& filename, const wxString& extraFlags)
@@ -2009,20 +2183,11 @@ void GitPlugin::OnWorkspaceConfigurationChanged(wxCommandEvent& e)
     ProcessGitActionQueue();
 }
 
-wxString GitPlugin::GetWorkspaceName() const
-{
-    return m_workspaceFilename.GetName();
-}
+wxString GitPlugin::GetWorkspaceName() const { return m_workspaceFilename.GetName(); }
 
-bool GitPlugin::IsWorkspaceOpened() const
-{
-    return m_workspaceFilename.IsOk();
-}
+bool GitPlugin::IsWorkspaceOpened() const { return m_workspaceFilename.IsOk(); }
 
-wxFileName GitPlugin::GetWorkspaceFileName() const
-{
-    return m_workspaceFilename;
-}
+wxFileName GitPlugin::GetWorkspaceFileName() const { return m_workspaceFilename; }
 
 void GitPlugin::RevertCommit(const wxString& commitId)
 {
@@ -2031,41 +2196,40 @@ void GitPlugin::RevertCommit(const wxString& commitId)
     ProcessGitActionQueue();
 }
 
-void GitPlugin::LoadDefaultGitCommands(GitEntry& data, bool overwrite/*= false*/)
+void GitPlugin::LoadDefaultGitCommands(GitEntry& data, bool overwrite /*= false*/)
 {
-    static const char* commands[] = {
-    //  ID_String|MenuLabel,Command;MenuLabel,Command; ...
-        "git_pull|git pull,pull;git pull --rebase,pull --rebase"
-        
+    static const char* commands[] = { //  ID_String|MenuLabel,Command;MenuLabel,Command; ...
+                                      "git_pull|git pull,pull;git pull --rebase,pull --rebase",
+                                      "git_rebase|git rebase,git rebase;git rebase --continue,rebase --continue"
     };
-    const size_t items = sizeof(commands)/sizeof(char*);
-    
-    for (size_t n=0; n < items; ++n) {
+
+    const size_t items = sizeof(commands) / sizeof(char*);
+    for(size_t n = 0; n < items; ++n) {
         wxString item = commands[n];
-        
+
         wxString name = item.BeforeFirst('|');
-        if (name.empty() || name.Len() == item.Len()) {
+        if(name.empty() || name.Len() == item.Len()) {
             wxASSERT(name.empty() || name.Len() == item.Len());
             continue;
         }
 
-        if (!overwrite && !data.GetGitCommandsEntries(name).GetCommands().empty()) {
+        if(!overwrite && !data.GetGitCommandsEntries(name).GetCommands().empty()) {
             continue;
         }
-        
+
         GitCommandsEntries gce(name);
         vGitLabelCommands_t commandEntries;
         wxArrayString entries = wxStringTokenize(item.AfterFirst('|'), ";");
 
-        for (size_t entry=0; entry < entries.GetCount(); ++entry) {
+        for(size_t entry = 0; entry < entries.GetCount(); ++entry) {
             wxString label = entries.Item(entry).BeforeFirst(',');
             wxString command = entries.Item(entry).AfterFirst(',');
             wxASSERT(!label.empty() && !command.empty());
-            if (!label.empty() && !command.empty()) {
+            if(!label.empty() && !command.empty()) {
                 commandEntries.push_back(GitLabelCommand(label, command));
             }
         }
-    
+
         gce.SetCommands(commandEntries);
         data.DeleteGitCommandsEntry(name);
         data.AddGitCommandsEntry(gce, name);
@@ -2075,15 +2239,15 @@ void GitPlugin::LoadDefaultGitCommands(GitEntry& data, bool overwrite/*= false*/
 void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileName)
 {
     // Write the content of the head file to a temporary file
-    wxFileName tmpFile( wxFileName::CreateTempFileName("gittmp") );
+    wxFileName tmpFile(wxFileName::CreateTempFileName("gittmp"));
     wxFileName fnWorkingCopy(fileName);
     fnWorkingCopy.MakeAbsolute(m_repositoryDirectory);
-    
-    tmpFile.SetExt( wxFileName(fileName).GetExt() );
+
+    tmpFile.SetExt(wxFileName(fileName).GetExt());
     wxString tmpFilePath = tmpFile.GetFullPath();
     wxFFile fp(tmpFilePath, "w+b");
-    if ( fp.IsOpened() ) {
-        fp.Write( headFile );
+    if(fp.IsOpened()) {
+        fp.Write(headFile);
         fp.Close();
     }
     DiffSideBySidePanel* p = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
@@ -2094,4 +2258,33 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     p->Diff();
     p->SetOriginSourceControl();
     m_mgr->AddPage(p, _("Git Diff: ") + fnWorkingCopy.GetFullName(), wxNullBitmap, true);
+}
+
+void GitPlugin::OnRebase(wxCommandEvent& e)
+{
+    wxString argumentString = e.GetString(); // This might be user-specified e.g. rebase --continue
+    if(argumentString.empty()) {
+        argumentString = GetAnyDefaultCommand("git_rebase");
+    }
+    argumentString.Replace("rebase", "");
+    argumentString.Trim(false);
+
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Save all changes and rebase?"), "GitRebaseChanges");
+    if(res == wxID_YES) {
+        m_mgr->SaveAll();
+        if(m_console->IsDirty()) {
+            gitAction ga(gitStash, wxT(""));
+            m_gitActionQueue.push(ga);
+        }
+        {
+            gitAction ga(gitRebase, argumentString);
+            m_gitActionQueue.push(ga);
+        }
+        if(m_console->IsDirty()) {
+            gitAction ga(gitStashPop, wxT(""));
+            m_gitActionQueue.push(ga);
+        }
+        AddDefaultActions();
+        ProcessGitActionQueue();
+    }
 }

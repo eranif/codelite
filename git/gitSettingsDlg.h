@@ -39,6 +39,7 @@
 class GitSettingsDlg : public GitSettingsDlgBase
 {
     wxString m_localRepoPath;
+
 public:
     GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath);
     virtual ~GitSettingsDlg();

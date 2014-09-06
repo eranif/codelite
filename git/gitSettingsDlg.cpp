@@ -38,44 +38,38 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
 
     m_pathGIT->SetPath(data.GetGITExecutablePath());
     m_pathGITK->SetPath(data.GetGITKExecutablePath());
-    m_checkBoxLog->SetValue( data.GetFlags() & GitEntry::Git_Verbose_Log );
-    m_checkBoxTerminal->SetValue( data.GetFlags() & GitEntry::Git_Show_Terminal );
-    m_checkBoxTrackTree->SetValue( data.GetFlags() & GitEntry::Git_Colour_Tree_View );
+    m_checkBoxLog->SetValue(data.GetFlags() & GitEntry::Git_Verbose_Log);
+    m_checkBoxTerminal->SetValue(data.GetFlags() & GitEntry::Git_Show_Terminal);
+    m_checkBoxTrackTree->SetValue(data.GetFlags() & GitEntry::Git_Colour_Tree_View);
 
-    GitEntry::GitProperties props = GitEntry::ReadGitProperties( m_localRepoPath );
+    GitEntry::GitProperties props = GitEntry::ReadGitProperties(m_localRepoPath);
 
-    m_textCtrlGlobalEmail->ChangeValue( props.global_email );
-    m_textCtrlGlobalName->ChangeValue( props.global_username );
-    m_textCtrlLocalEmail->ChangeValue( props.local_email );
-    m_textCtrlLocalName->ChangeValue( props.local_username );
+    m_textCtrlGlobalEmail->ChangeValue(props.global_email);
+    m_textCtrlGlobalName->ChangeValue(props.global_username);
+    m_textCtrlLocalEmail->ChangeValue(props.local_email);
+    m_textCtrlLocalName->ChangeValue(props.local_username);
 
     WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
 }
 
-GitSettingsDlg::~GitSettingsDlg()
-{
-    WindowAttrManager::Save(this, wxT("GitSettingsDlg"), NULL);
-}
+GitSettingsDlg::~GitSettingsDlg() { WindowAttrManager::Save(this, wxT("GitSettingsDlg"), NULL); }
 
 void GitSettingsDlg::OnOK(wxCommandEvent& event)
 {
     GitEntry data;
     data.Load();
-    
-    data.SetGITExecutablePath( m_pathGIT->GetPath() );
-    data.SetGITKExecutablePath( m_pathGITK->GetPath() );
+
+    data.SetGITExecutablePath(m_pathGIT->GetPath());
+    data.SetGITKExecutablePath(m_pathGITK->GetPath());
 
     size_t flags = 0;
-    if ( m_checkBoxLog->IsChecked() )
-        flags |= GitEntry::Git_Verbose_Log;
+    if(m_checkBoxLog->IsChecked()) flags |= GitEntry::Git_Verbose_Log;
 
-    if ( m_checkBoxTerminal->IsChecked() )
-        flags |= GitEntry::Git_Show_Terminal;
+    if(m_checkBoxTerminal->IsChecked()) flags |= GitEntry::Git_Show_Terminal;
 
-    if ( m_checkBoxTrackTree->IsChecked())
-        flags |= GitEntry::Git_Colour_Tree_View;
+    if(m_checkBoxTrackTree->IsChecked()) flags |= GitEntry::Git_Colour_Tree_View;
 
-    data.SetFlags( flags );
+    data.SetFlags(flags);
     data.Save();
 
     GitEntry::GitProperties props;
@@ -87,12 +81,9 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
 
     // Notify about configuration changed
     wxCommandEvent evt(wxEVT_GIT_CONFIG_CHANGED);
-    EventNotifier::Get()->AddPendingEvent( evt );
+    EventNotifier::Get()->AddPendingEvent(evt);
 
     EndModal(wxID_OK);
 }
 
-void GitSettingsDlg::OnLocalRepoUI(wxUpdateUIEvent& event)
-{
-    event.Enable( !m_localRepoPath.IsEmpty() );
-}
+void GitSettingsDlg::OnLocalRepoUI(wxUpdateUIEvent& event) { event.Enable(!m_localRepoPath.IsEmpty()); }

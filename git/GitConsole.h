@@ -33,42 +33,42 @@ class GitPlugin;
 class GitConsole : public GitConsoleBase
 {
     GitPlugin* m_git;
-    bool       m_isVerbose;
+    bool m_isVerbose;
     wxDataViewItem m_itemModified;
     wxDataViewItem m_itemUntracked;
     wxDataViewItem m_itemNew;
     wxDataViewItem m_itemDeleted;
-    BitmapLoader   *m_bitmapLoader;
+    BitmapLoader* m_bitmapLoader;
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxBitmap m_modifiedBmp;
     wxBitmap m_untrackedBmp;
     wxBitmap m_folderBmp;
     wxBitmap m_newBmp;
     wxBitmap m_deleteBmp;
-    
+
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);
     virtual ~GitConsole();
-    void AddRawText(const wxString &text);
-    void AddText(const wxString &text);
+    void AddRawText(const wxString& text);
+    void AddText(const wxString& text);
     bool IsVerbose() const;
-    void UpdateTreeView(const wxString &output);
-    
+    void UpdateTreeView(const wxString& output);
+
     /**
      * @brief return true if there are any deleted/new/modified items
-     * @return 
+     * @return
      */
     bool IsDirty() const;
-    
+
     //
     // Progress bar API
     //
     void ShowProgress(const wxString& message, bool pulse = false);
     void HideProgress();
-    void UpdateProgress(unsigned long current, const wxString &message);
+    void UpdateProgress(unsigned long current, const wxString& message);
     bool IsProgressShown() const;
     void PulseProgress();
-    
+
 protected:
     virtual void OnApplyPatch(wxCommandEvent& event);
     virtual void OnFileActivated(wxDataViewEvent& event);
@@ -80,18 +80,15 @@ protected:
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
-    void OnOpenFile(wxCommandEvent &e);
-    void OnWorkspaceClosed(wxCommandEvent &e);
-    void OnConfigurationChanged(wxCommandEvent &e);
-    void OnEditorThemeChanged(wxCommandEvent &e);
-    
-    
-    void OnGitPullDropdown(wxAuiToolBarEvent& event) {
-        DoOnDropdown(event, "git_pull", XRCID("git_pull"));
-    }
+    void OnOpenFile(wxCommandEvent& e);
+    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnConfigurationChanged(wxCommandEvent& e);
+    void OnEditorThemeChanged(wxCommandEvent& e);
+
+    void OnGitPullDropdown(wxAuiToolBarEvent& event) { DoOnDropdown(event, "git_pull", XRCID("git_pull")); }
+    void OnGitRebaseDropdown(wxAuiToolBarEvent& event) { DoOnDropdown(event, "git_rebase", XRCID("git_rebase")); }
 
     void DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName, int id);
     void OnDropDownMenuEvent(wxCommandEvent& e);
-
 };
 #endif // GITCONSOLE_H

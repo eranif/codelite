@@ -33,13 +33,10 @@ GitApplyPatchDlg::GitApplyPatchDlg(wxWindow* parent)
     WindowAttrManager::Load(this, "GitPatchDlg", NULL);
 }
 
-GitApplyPatchDlg::~GitApplyPatchDlg()
-{
-    WindowAttrManager::Save(this, "GitPatchDlg", NULL);
-}
+GitApplyPatchDlg::~GitApplyPatchDlg() { WindowAttrManager::Save(this, "GitPatchDlg", NULL); }
 
 void GitApplyPatchDlg::OnApplyGitPatchUI(wxUpdateUIEvent& event)
 {
-    wxFileName fnPathFile( m_filePickerPatchFile->GetPath() );
-    event.Enable( fnPathFile.IsOk() && fnPathFile.Exists() );
+    wxFileName fnPathFile(m_filePickerPatchFile->GetPath());
+    event.Enable(fnPathFile.IsOk() && fnPathFile.Exists());
 }

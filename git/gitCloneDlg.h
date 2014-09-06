@@ -38,9 +38,7 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
 
 public:
-    wxString GetCloneURL() const ;
-    wxString GetTargetDirectory() const {
-        return m_dirPickerTargetDir->GetPath();
-    }
+    wxString GetCloneURL() const;
+    wxString GetTargetDirectory() const { return m_dirPickerTargetDir->GetPath(); }
 };
 #endif // GITCLONEDLG_H

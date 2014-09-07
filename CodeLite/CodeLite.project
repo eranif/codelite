@@ -87,6 +87,7 @@
     <File Name="codelite_exports.h"/>
     <File Name="cl_exception.h"/>
     <File Name="browse_record.h"/>
+    <File Name="cl_defs.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>

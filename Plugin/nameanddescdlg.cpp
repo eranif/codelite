@@ -28,48 +28,48 @@
 #include <set>
 #include "globals.h"
 
-NameAndDescDlg::NameAndDescDlg( wxWindow* parent, IManager *manager, const wxString &name )
-		:NameAndDescBaseDlg( parent )
+NameAndDescDlg::NameAndDescDlg(wxWindow* parent, IManager* manager, const wxString& name)
+    : NameAndDescBaseDlg(parent)
 {
-	std::list<ProjectPtr> projectList;
-	GetProjectTemplateList(manager, projectList);
-	
-	m_choiceType->Clear();
-	std::list<ProjectPtr>::iterator iter = projectList.begin();
-	std::set<wxString>              categories;
-	
-	// Add the 'All' category
-	categories.insert(wxT("All"));
-	for(; iter != projectList.end(); iter++) {
-		wxString internalType = (*iter)->GetProjectInternalType();
-		if(internalType.IsEmpty()) internalType = wxT("Others");
-		categories.insert( internalType );
-	}
-	
-	std::set<wxString>::iterator cIter = categories.begin();
-	for(; cIter != categories.end(); cIter++) {
-		m_choiceType->Append((*cIter));
-	}
-	
-	// Select the 'Console' to be the default
-	int where = m_choiceType->FindString(wxT("Console"));
-	if(where == wxNOT_FOUND) {
-		where = 0;
-	}
-	m_choiceType->SetSelection(where);
-	m_textCtrlName->SetValue(name);
-	m_textCtrlName->SetFocus();
-	Centre();
+    std::list<ProjectPtr> projectList;
+    GetProjectTemplateList(projectList);
+
+    m_choiceType->Clear();
+    std::list<ProjectPtr>::iterator iter = projectList.begin();
+    std::set<wxString> categories;
+
+    // Add the 'All' category
+    categories.insert(wxT("All"));
+    for(; iter != projectList.end(); iter++) {
+        wxString internalType = (*iter)->GetProjectInternalType();
+        if(internalType.IsEmpty()) internalType = wxT("Others");
+        categories.insert(internalType);
+    }
+
+    std::set<wxString>::iterator cIter = categories.begin();
+    for(; cIter != categories.end(); cIter++) {
+        m_choiceType->Append((*cIter));
+    }
+
+    // Select the 'Console' to be the default
+    int where = m_choiceType->FindString(wxT("Console"));
+    if(where == wxNOT_FOUND) {
+        where = 0;
+    }
+    m_choiceType->SetSelection(where);
+    m_textCtrlName->SetValue(name);
+    m_textCtrlName->SetFocus();
+    Centre();
 }
 
-void NameAndDescDlg::OnButtonOK( wxCommandEvent& event )
+void NameAndDescDlg::OnButtonOK(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-	EndModal(wxID_OK);
+    wxUnusedVar(event);
+    EndModal(wxID_OK);
 }
 
-void NameAndDescDlg::OnButtonCancel( wxCommandEvent& event )
+void NameAndDescDlg::OnButtonCancel(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-	EndModal(wxID_CANCEL);
+    wxUnusedVar(event);
+    EndModal(wxID_CANCEL);
 }

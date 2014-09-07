@@ -71,14 +71,13 @@ public:
     ~clEventDisabler();
 };
 
-
 /**
  * \brief send command event to the application (wxTheApp),
  * \param eventId
  * \param clientData any user data. Must NOT be freed by the handler
  * \return same as wxTheApp->ProcessEvent()
  */
-WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void *clientData = NULL);
+WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData = NULL);
 
 /**
  * @brief send command event to the application (wxTheApp),
@@ -87,14 +86,14 @@ WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void *clientData = NULL);
  * @param str this string will be available by the handlers by calling event.GetString()
  * @return same as wxTheApp->ProcessEvent()
  */
-WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void *clientData, const wxString &str);
+WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData, const wxString& str);
 
 /**
  * \brief post command event to the application (wxTheApp),
  * \param eventId
  * \param clientData allocated data on the heap. Must be freed by the handler
  */
-WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void *clientData = NULL);
+WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void* clientData = NULL);
 
 /**
  * \brief set column text
@@ -104,7 +103,8 @@ WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void *clientData = NULL);
  * \param rText the text
  * \param imgId image id
  */
-WXDLLIMPEXP_SDK void SetColumnText (wxListCtrl *list, long indx, long column, const wxString &rText, int imgId = wxNOT_FOUND );
+WXDLLIMPEXP_SDK void
+SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText, int imgId = wxNOT_FOUND);
 
 /**
  * \brief return column's text
@@ -113,14 +113,14 @@ WXDLLIMPEXP_SDK void SetColumnText (wxListCtrl *list, long indx, long column, co
  * \param column the column ID
  * \return the column's text
  */
-WXDLLIMPEXP_SDK wxString GetColumnText(wxListCtrl *list, long index, long column);
+WXDLLIMPEXP_SDK wxString GetColumnText(wxListCtrl* list, long index, long column);
 
 /**
  * \brief append row to list control
  * \param list the list
  * \return new row index
  */
-WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl *list);
+WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl* list);
 
 /**
  * \brief read file from disk using appropriate file conversion
@@ -129,7 +129,10 @@ WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl *list);
  * \param encoding
  * \return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &content, wxFontEncoding encoding = wxFONTENCODING_DEFAULT, BOM *bom = NULL);
+WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString& fileName,
+                                            wxString& content,
+                                            wxFontEncoding encoding = wxFONTENCODING_DEFAULT,
+                                            BOM* bom = NULL);
 
 /**
  * \brief write file using UTF8 converter
@@ -137,7 +140,7 @@ WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &
  * \param content file's content
  * \return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString &fileName, const wxString &content);
+WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString& fileName, const wxString& content);
 
 /**
  * \brief compare a file with a wxString using md5
@@ -152,24 +155,24 @@ WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxStr
  * \param path directory path
  * \return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool RemoveDirectory(const wxString &path);
+WXDLLIMPEXP_SDK bool RemoveDirectory(const wxString& path);
 
 /**
  * \brief return true of id is a valid cpp identifier
  */
-WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString &id);
+WXDLLIMPEXP_SDK bool IsValidCppIndetifier(const wxString& id);
 
 /**
  * \brief return true of word is a C++ keyword
  * \param word
  * \return
  */
-WXDLLIMPEXP_SDK bool IsCppKeyword(const wxString &word);
+WXDLLIMPEXP_SDK bool IsCppKeyword(const wxString& word);
 
 /**
  * \brief return true of id is a valid cpp file
  */
-WXDLLIMPEXP_SDK bool IsValidCppFile(const wxString &id);
+WXDLLIMPEXP_SDK bool IsValidCppFile(const wxString& id);
 
 /**
  * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
@@ -177,7 +180,7 @@ WXDLLIMPEXP_SDK bool IsValidCppFile(const wxString &id);
  * the return value is same as input. The variable is expanded
  * in the project context
  */
-WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString &expression, ProjectPtr proj, IEditor *editor);
+WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* editor);
 
 /**
  * * [DEPRECATED] DONT USE THIS METHOD ANYMORE - USE IMacroManager
@@ -187,7 +190,11 @@ WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString &expression, ProjectPtr 
  * \param fileName file name, to help expand the $(CurrentFile) macro family
  * \return an expanded string. If a macro is unknown it is replaced by empty string
  */
-WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &selConf, const wxString &fileName);
+WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression,
+                                            Workspace* workspace,
+                                            const wxString& projectName,
+                                            const wxString& selConf,
+                                            const wxString& fileName);
 
 /**
  * \brief copy entire directory content (recursievly) from source to target
@@ -201,7 +208,7 @@ WXDLLIMPEXP_SDK bool CopyDir(const wxString& src, const wxString& target);
  * \brief create a directory
  * \param path directory path
  */
-WXDLLIMPEXP_SDK void Mkdir(const wxString &path);
+WXDLLIMPEXP_SDK void Mkdir(const wxString& path);
 
 /**
  * \brief write file content with optinal backup
@@ -210,13 +217,13 @@ WXDLLIMPEXP_SDK void Mkdir(const wxString &path);
  * \param backup
  * \return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool WriteFileWithBackup(const wxString &file_name, const wxString &content, bool backup);
+WXDLLIMPEXP_SDK bool WriteFileWithBackup(const wxString& file_name, const wxString& content, bool backup);
 
 /**
  * \brief copy text to the clipboard
  * \return true on success false otherwise
  */
-WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString &text);
+WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString& text);
 
 /**
  * \brief make colour lighter
@@ -229,40 +236,40 @@ WXDLLIMPEXP_SDK wxColour MakeColourLighter(wxColour color, float level);
 /**
  * @brief return true if filename is readonly false otherwise
  */
-WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName &filename);
+WXDLLIMPEXP_SDK bool IsFileReadOnly(const wxFileName& filename);
 
 /**
  * \brief fill an array with a semi-colon separated string
  * \param arr [out] the array to fill
  * \param str the string to split
  */
-WXDLLIMPEXP_SDK void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
+WXDLLIMPEXP_SDK void FillFromSmiColonString(wxArrayString& arr, const wxString& str);
 
 /**
  * \brief return a string semi-colon separated of the given array
  */
-WXDLLIMPEXP_SDK wxString ArrayToSmiColonString(const wxArrayString &array);
+WXDLLIMPEXP_SDK wxString ArrayToSmiColonString(const wxArrayString& array);
 
 /**
  * \brief Remove all semi colons of the given string
  */
-WXDLLIMPEXP_SDK void StripSemiColons(wxString &str);
+WXDLLIMPEXP_SDK void StripSemiColons(wxString& str);
 
 /**
  * \brief Normalize the given path (change all \ by /)
  */
-WXDLLIMPEXP_SDK wxString NormalizePath(const wxString &path);
+WXDLLIMPEXP_SDK wxString NormalizePath(const wxString& path);
 
 /**
  * \brief Returns the file modification time in seconds after the epoch.
  */
-WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxString &filename);
-WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxFileName &filename);
+WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxString& filename);
+WXDLLIMPEXP_SDK time_t GetFileModificationTime(const wxFileName& filename);
 
 /**
  * @brief wrap a given command in the shell command (e.g. cmd /c "command")
  */
-WXDLLIMPEXP_SDK void WrapInShell(wxString &cmd);
+WXDLLIMPEXP_SDK void WrapInShell(wxString& cmd);
 
 /**
  * @brief return the current user name without any special characters
@@ -274,9 +281,8 @@ WXDLLIMPEXP_SDK wxString clGetUserName();
  * @brief return list of projects available based on the installed tempaltes
  * @param list list of projects
  * @param imageMap when provided, returns the image index (set in the lstImages) mapped to the project type
- * @param lstImages wxImageList allocated on the heap for the projects
  */
-WXDLLIMPEXP_SDK void GetProjectTemplateList( IManager *manager, std::list<ProjectPtr> &list, std::map<wxString,int> *imageMap = NULL, wxImageList **lstImages = NULL);
+WXDLLIMPEXP_SDK void GetProjectTemplateList(std::list<ProjectPtr>& list);
 
 /**
  * @brief extract file from Zip and place it under targetDir
@@ -286,15 +292,16 @@ WXDLLIMPEXP_SDK void GetProjectTemplateList( IManager *manager, std::list<Projec
  * @param targetFileName the path of the file that was actually extracted
  * @return true on success, false otherwise
  */
-WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString &zipPath, const wxString& filename, const wxString &targetDir, wxString &targetFileName);
-
+WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString& zipPath,
+                                        const wxString& filename,
+                                        const wxString& targetDir,
+                                        wxString& targetFileName);
 
 /**
  * @brief set the native Windows theme for the application
  * @param win [input]
  */
-WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString &theme = wxT("Explorer"));
-
+WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = wxT("Explorer"));
 
 /**
  * @brief make relative only if a subpath of reference_path (or is reference_path itself)
@@ -308,12 +315,12 @@ WXDLLIMPEXP_SDK bool MakeRelativeIfSensible(wxFileName& fn, const wxString& refe
  * @brief joins array element into a string using 'glue' as the array elements
  * separator
  */
-WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString &arr, const wxString &glue = wxT("\n"));
+WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString& arr, const wxString& glue = wxT("\n"));
 
 /**
  * @brief executes a command under the proper shell and return string as the output
  */
-WXDLLIMPEXP_SDK wxString wxShellExec(const wxString &cmd, const wxString &projectName);
+WXDLLIMPEXP_SDK wxString wxShellExec(const wxString& cmd, const wxString& projectName);
 
 /**
  * @class StringManager
@@ -325,8 +332,12 @@ protected:
     wxArrayString m_unlocalisedStringArray;
     wxControlWithItems* p_control;
     size_t m_size;
+
 public:
-    StringManager() : m_size(0) {}
+    StringManager()
+        : m_size(0)
+    {
+    }
 
     /**
      * @brief Store the data, and load the strings into the control, localised
@@ -356,17 +367,18 @@ public:
  * @param maxsize the maximum number of items allowed in the arraystring. 0 means no maximum
  * @return the amended entries
  */
-WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
+WXDLLIMPEXP_SDK wxArrayString
+ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
 
 /**
  * @brief return true if filename is a symbolic link
  */
-WXDLLIMPEXP_SDK bool wxIsFileSymlink(const wxFileName &filename);
+WXDLLIMPEXP_SDK bool wxIsFileSymlink(const wxFileName& filename);
 
 /**
  * @brief convert filename to the real path if filename is a symbolic link
  */
-WXDLLIMPEXP_SDK wxFileName wxReadLink(const wxFileName &filename);
+WXDLLIMPEXP_SDK wxFileName wxReadLink(const wxFileName& filename);
 
 /**
  * @brief makes-absolute filepath, and dereferences it and any symlinked dirs in the path
@@ -376,16 +388,16 @@ WXDLLIMPEXP_SDK wxString CLRealPath(const wxString& filepath);
 /**
  * @brief convert string to integer using range validation and default value
  */
-WXDLLIMPEXP_SDK int wxStringToInt(const wxString &str, int defval, int min = -1, int max = -1);
+WXDLLIMPEXP_SDK int wxStringToInt(const wxString& str, int defval, int min = -1, int max = -1);
 
 /**
  * @brief convert integer to string
  */
 WXDLLIMPEXP_SDK wxString wxIntToString(int val);
 
-WXDLLIMPEXP_SDK unsigned int clUTF8Length(const wchar_t *uptr, unsigned int tlen);
+WXDLLIMPEXP_SDK unsigned int clUTF8Length(const wchar_t* uptr, unsigned int tlen);
 
-WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString &expr, const wxString &exprType);
+WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, const wxString& exprType);
 
 /**
  * @brief create wxVariant from wxString + wxBitmap
@@ -395,53 +407,56 @@ WXDLLIMPEXP_SDK wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp
 /**
  * @brief queue a call to a function to be executed on the next event loop
  */
-WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func, wxClientData* arg);
-WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func);
+WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func, wxClientData* arg);
+WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func);
 
 /**
  * @brief split lines (using CR|LF as the separator), taking into considertaion line continuation
  * @param trim trim the lines with set to true
  */
-WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString &inString, bool trim = true);
+WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString& inString, bool trim = true);
 
 /**
- * @brief make an execution command for running cmd under a shell and optionally prompt the user with the 'press any to key to continue...' message
+ * @brief make an execution command for running cmd under a shell and optionally prompt the user with the 'press any to
+ * key to continue...' message
  */
-WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey);
+WXDLLIMPEXP_SDK wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey);
 
 /**
  * @brief launch codelite terminal and return its TTY
  */
-WXDLLIMPEXP_SDK  IProcess* LaunchTerminal(const wxString &title, bool forDebugger, IProcessCallback* processCB);
+WXDLLIMPEXP_SDK IProcess* LaunchTerminal(const wxString& title, bool forDebugger, IProcessCallback* processCB);
 
 /**
  * @brief launch terminal for debugging purposes and return its TTY. This function does nothing under Windows
  */
-WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid);
+WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& tty, long& pid);
 
 /**
  * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"
  * @param message the message to show to the user
  * @param checkboxLabel the message to display next to the checkbox
- * @param dlgId a unique string ID which will be used for storing the user value incase he checks the 'dont annoy me again' checkbox
+ * @param dlgId a unique string ID which will be used for storing the user value incase he checks the 'dont annoy me
+ * again' checkbox
  * @param yesLabel set a different label to the "Yes" button
  * @param noLabel set a different label to the "No" button
  * @param style the wxRichMessageDialog style
  * @param checkboxInitialValue
  * @return wxRichMessageDialog::ShowModal() return value
  */
-WXDLLIMPEXP_SDK  wxStandardID PromptForYesNoDialogWithCheckbox( const wxString &message,
-        const wxString &dlgId,
-        const wxString &yesLabel = _("Yes"),
-        const wxString &noLabel  = _("No"),
-        const wxString &checkboxLabel = _("Remember my answer and don't ask me again"),
-        long style = wxYES_NO|wxICON_QUESTION|wxYES_DEFAULT,
-        bool checkboxInitialValue = false);
+WXDLLIMPEXP_SDK wxStandardID
+PromptForYesNoDialogWithCheckbox(const wxString& message,
+                                 const wxString& dlgId,
+                                 const wxString& yesLabel = _("Yes"),
+                                 const wxString& noLabel = _("No"),
+                                 const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
+                                 long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT,
+                                 bool checkboxInitialValue = false);
 
 /**
  * @brief wrap string with quotes if needed
  */
-WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString &str);
+WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString& str);
 
 /**
  * @brief return an expression from a given position.
@@ -449,23 +464,23 @@ WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString &str);
  * variable.m_name.m_value|
  * the | represents the cart, this function will return the entire expression: variable.m_name.m_value
  */
-WXDLLIMPEXP_SDK wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl *ctrl, bool forCC);
+WXDLLIMPEXP_SDK wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC);
 
 /**
  * @brief save an xml document to file
  */
-WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument *doc, const wxString &filename);
+WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename);
 
 /**
  * @brief return true if running under Cygwin environment
- * This function returns false under Linux/OSX and under Windows it checks the 
+ * This function returns false under Linux/OSX and under Windows it checks the
  * output of the command 'uname -s'
  */
 WXDLLIMPEXP_SDK bool clIsCygwinEnvironment();
 
 /**
  * @brief return true if running under MSYS environment
- * This function returns false under Linux/OSX and under Windows it checks the 
+ * This function returns false under Linux/OSX and under Windows it checks the
  * output of the command 'uname -s'
  */
 WXDLLIMPEXP_SDK bool clIsMSYSEnvironment();
@@ -473,6 +488,6 @@ WXDLLIMPEXP_SDK bool clIsMSYSEnvironment();
 /**
  * @brief change the command so it will run in the background
  */
-WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString &cmd);
+WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString& cmd);
 
-#endif //GLOBALS_H
+#endif // GLOBALS_H

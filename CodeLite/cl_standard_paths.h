@@ -89,6 +89,11 @@ public:
      * @brief return the default (installation) lexers directory
      */
     wxString GetLexersDir() const;
+    
+    /**
+     * @brief return the project templates dircectory
+     */
+    wxString GetProjectTemplatesDir() const;
 };
 
 #endif // CLSTANDARDPATHS_H

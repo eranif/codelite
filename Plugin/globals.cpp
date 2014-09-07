@@ -74,6 +74,7 @@
 #include "cpp_scanner.h"
 #include "macros.h"
 #include <wx/sstream.h>
+#include "cl_standard_paths.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -109,11 +110,23 @@ public:
     {
     }
 
-    virtual ~clInternalEventHandlerData() { wxDELETE(m_arg); }
+    virtual ~clInternalEventHandlerData()
+    {
+        wxDELETE(m_arg);
+    }
 
-    wxClientData* GetArg() const { return m_arg; }
-    clEventFunc_t GetFuncPtr() const { return m_funcPtr; }
-    wxObject* GetThis() { return m_this; }
+    wxClientData* GetArg() const
+    {
+        return m_arg;
+    }
+    clEventFunc_t GetFuncPtr() const
+    {
+        return m_funcPtr;
+    }
+    wxObject* GetThis()
+    {
+        return m_this;
+    }
 };
 
 class clInternalEventHandler : public wxEvtHandler
@@ -222,7 +235,10 @@ static wxString MacGetInstallPath()
 
 struct ProjListCompartor
 {
-    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
+    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const
+    {
+        return p1->GetName() > p2->GetName();
+    }
 };
 
 static bool IsBOMFile(const char* file_name)
@@ -309,14 +325,20 @@ static bool ReadFile8BitData(const char* file_name, wxString& content)
     return content.IsEmpty() == false;
 }
 
-bool SendCmdEvent(int eventId, void* clientData) { return EventNotifier::Get()->SendCommandEvent(eventId, clientData); }
+bool SendCmdEvent(int eventId, void* clientData)
+{
+    return EventNotifier::Get()->SendCommandEvent(eventId, clientData);
+}
 
 bool SendCmdEvent(int eventId, void* clientData, const wxString& str)
 {
     return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str);
 }
 
-void PostCmdEvent(int eventId, void* clientData) { EventNotifier::Get()->PostCommandEvent(eventId, clientData); }
+void PostCmdEvent(int eventId, void* clientData)
+{
+    EventNotifier::Get()->PostCommandEvent(eventId, clientData);
+}
 
 void SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText, int imgId)
 {
@@ -698,7 +720,10 @@ bool CopyToClipboard(const wxString& text)
     return ret;
 }
 
-wxColour MakeColourLighter(wxColour color, float level) { return DrawingUtils::LightColour(color, level); }
+wxColour MakeColourLighter(wxColour color, float level)
+{
+    return DrawingUtils::LightColour(color, level);
+}
 
 bool IsFileReadOnly(const wxFileName& filename)
 {
@@ -744,7 +769,10 @@ wxString ArrayToSmiColonString(const wxArrayString& array)
     return result.BeforeLast(wxT(';'));
 }
 
-void StripSemiColons(wxString& str) { str.Replace(wxT(";"), wxT(" ")); }
+void StripSemiColons(wxString& str)
+{
+    str.Replace(wxT(";"), wxT(" "));
+}
 
 wxString NormalizePath(const wxString& path)
 {
@@ -756,7 +784,10 @@ wxString NormalizePath(const wxString& path)
     return normalized_path;
 }
 
-time_t GetFileModificationTime(const wxFileName& filename) { return GetFileModificationTime(filename.GetFullPath()); }
+time_t GetFileModificationTime(const wxFileName& filename)
+{
+    return GetFileModificationTime(filename.GetFullPath());
+}
 
 time_t GetFileModificationTime(const wxString& filename)
 {
@@ -855,15 +886,12 @@ wxString clGetUserName()
     return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
 }
 
-void GetProjectTemplateList(IManager* manager,
-                            std::list<ProjectPtr>& list,
-                            std::map<wxString, int>* imageMap,
-                            wxImageList** lstImages)
+void GetProjectTemplateList(std::list<ProjectPtr>& list)
 {
-    wxString tmplateDir = manager->GetStartupDirectory() + wxFileName::GetPathSeparator() + wxT("templates/projects");
+    wxString tmplateDir = clStandardPaths::Get().GetProjectTemplatesDir();
 
     // read all files under this directory
-    DirTraverser dt(wxT("*.project"));
+    DirTraverser dt("*.project");
 
     wxDir dir(tmplateDir);
     dir.Traverse(dt);
@@ -871,14 +899,6 @@ void GetProjectTemplateList(IManager* manager,
     wxArrayString& files = dt.GetFiles();
 
     if(files.GetCount() > 0) {
-
-        // Allocate image list
-        if(imageMap) {
-            // add the default icon at position 0
-            *lstImages = new wxImageList(24, 24, true);
-            //(*lstImages)->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
-        }
-
         for(size_t i = 0; i < files.GetCount(); i++) {
             ProjectPtr proj(new Project());
             if(!proj->Load(files.Item(i))) {
@@ -889,20 +909,12 @@ void GetProjectTemplateList(IManager* manager,
             list.push_back(proj);
 
             // load template icon
-            if(imageMap) {
-
-                wxFileName fn(files.Item(i));
-                wxString imageFileName(fn.GetPath(wxPATH_GET_SEPARATOR) + wxT("icon.png"));
-                if(wxFileExists(imageFileName)) {
-                    wxBitmap bmp = wxBitmap(fn.GetPath(wxPATH_GET_SEPARATOR) + wxT("icon.png"), wxBITMAP_TYPE_PNG);
-                    if(bmp.IsOk() && bmp.GetWidth() == 24 && bmp.GetHeight() == 24) {
-                        int img_id = (*lstImages)->Add(bmp);
-                        (*imageMap)[proj->GetName()] = img_id;
-
-                    } else {
-                        // wrong size...
-                        bmp = wxBitmap();
-                    }
+            wxFileName fn(files.Item(i));
+            fn.SetFullName("icon.png");
+            if(fn.Exists()) {
+                wxBitmap bmp = wxBitmap(fn.GetFullPath(), wxBITMAP_TYPE_ANY);
+                if(bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
+                    proj->SetIconPath(fn.GetFullPath());
                 }
             }
         }
@@ -1218,7 +1230,7 @@ wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: i
 #if defined(__WXGTK__)
     if(!filepath.empty()) {
         char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
-        if (buf != NULL) {
+        if(buf != NULL) {
             wxString result(buf, wxConvUTF8);
             free(buf);
             return result;
@@ -1254,11 +1266,18 @@ wxString wxIntToString(int val)
 // BOM
 ////////////////////////////////////////
 
-BOM::BOM(const char* buffer, size_t len) { m_bom.AppendData(buffer, len); }
+BOM::BOM(const char* buffer, size_t len)
+{
+    m_bom.AppendData(buffer, len);
+}
 
-BOM::BOM() {}
+BOM::BOM()
+{
+}
 
-BOM::~BOM() {}
+BOM::~BOM()
+{
+}
 
 wxFontEncoding BOM::Encoding()
 {
@@ -1328,7 +1347,10 @@ void BOM::SetData(const char* buffer, size_t len)
     m_bom.AppendData(buffer, len);
 }
 
-int BOM::Len() const { return m_bom.GetDataLen(); }
+int BOM::Len() const
+{
+    return m_bom.GetDataLen();
+}
 
 void BOM::Clear()
 {
@@ -1338,9 +1360,15 @@ void BOM::Clear()
 
 /////////////////////////////////////////////////////////////////
 
-clEventDisabler::clEventDisabler() { EventNotifier::Get()->DisableEvents(true); }
+clEventDisabler::clEventDisabler()
+{
+    EventNotifier::Get()->DisableEvents(true);
+}
 
-clEventDisabler::~clEventDisabler() { EventNotifier::Get()->DisableEvents(false); }
+clEventDisabler::~clEventDisabler()
+{
+    EventNotifier::Get()->DisableEvents(false);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // UTF8/16 conversions methods copied from wxScintilla

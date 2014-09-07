@@ -123,6 +123,14 @@ wxString clStandardPaths::GetLexersDir() const
     return fn.GetPath();
 }
 
+wxString clStandardPaths::GetProjectTemplatesDir() const
+{
+    wxFileName fn(GetUserDataDir(), "");
+    fn.AppendDir("templates");
+    fn.AppendDir("projects");
+    return fn.GetPath();
+}
+
 wxString clStandardPaths::GetUserLexersDir() const
 {
     wxFileName fn(GetUserDataDir(), "");

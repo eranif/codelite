@@ -2291,7 +2291,7 @@
               }, {
                "type": "string",
                "m_label": "Minimum Pane Size:",
-               "m_value": "0"
+               "m_value": "50"
               }, {
                "type": "string",
                "m_label": "Sash Position:",

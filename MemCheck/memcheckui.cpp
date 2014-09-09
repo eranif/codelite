@@ -268,7 +268,7 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     
     m_splitter542 = new wxSplitterWindow(m_panelSupp, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
     m_splitter542->SetSashGravity(0.5);
-    m_splitter542->SetMinimumPaneSize(0);
+    m_splitter542->SetMinimumPaneSize(50);
     
     boxSizer536->Add(m_splitter542, 1, wxALL|wxEXPAND, 0);
     

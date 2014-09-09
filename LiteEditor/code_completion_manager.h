@@ -32,6 +32,7 @@
 #include "cl_command_event.h"
 #include <wx/event.h>
 #include "CompileCommandsCreateor.h"
+#include "CxxPreProcessorThread.h"
 
 class CodeCompletionManager : public wxEvtHandler
 {
@@ -39,7 +40,7 @@ protected:
     size_t m_options;
     bool m_wordCompletionRefreshNeeded;
     bool m_buildInProgress;
-
+    CxxPreProcessorThread m_preProcessorThread;
 protected:
     /// ctags implementions
     bool DoCtagsWordCompletion(LEditor* editor, const wxString& expr, const wxString& word);
@@ -64,12 +65,23 @@ protected:
     void OnBuildStarted(clBuildEvent& e);
     void OnAppActivated(wxActivateEvent& e);
     void OnCompileCommandsFileGenerated(clCommandEvent& event);
-    void OnParseThreadCollectedMacros(clCodeCompletionEvent &event);
+    void OnFileSaved(clCommandEvent &event);
+    void OnFileLoaded(clCommandEvent &event);
+    void OnWorkspaceConfig(wxCommandEvent &event);
+    void OnSettingsModified(wxCommandEvent &event);
     
 public:
     CodeCompletionManager();
     virtual ~CodeCompletionManager();
-
+    
+    /**
+     * @brief force a refresh based on the current settings
+     */
+    void RefreshPreProcessorColouring();
+    
+    // Will be called by the parser thread when done
+    void OnParseThreadCollectedMacros(const wxArrayString& definitions, const wxString &filename);
+    
     void SetWordCompletionRefreshNeeded(bool wordCompletionRefreshNeeded)
     {
         this->m_wordCompletionRefreshNeeded = wordCompletionRefreshNeeded;

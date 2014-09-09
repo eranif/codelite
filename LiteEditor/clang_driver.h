@@ -64,7 +64,6 @@ protected:
     ClangThreadRequest::List_t DoCreateListOfModifiedBuffers(IEditor *excludeEditor);
 
     // Event handlers
-    void OnDeletMacroHandler(wxCommandEvent &e);
     void DoDeleteTempFile( const wxString &fileName );
     
 public:

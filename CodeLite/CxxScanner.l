@@ -15,11 +15,12 @@
 extern "C" int yywrap(void*) { return 1; }
 
 #include <wx/string.h>
+#include <string>
 #include <wx/filename.h>
 #include "CxxLexerAPI.h"
 #include "CxxScannerTokens.h"
 
-#define YYSTYPE wxString
+#define YYSTYPE std::string
 #define ECHO
 #define P(s) fprintf(stderr, "%s\n", s)
 

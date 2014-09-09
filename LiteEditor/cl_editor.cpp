@@ -363,11 +363,6 @@ void LEditor::SetProperties()
     SetProperty(wxT("fold.preprocessor"), options->GetFoldPreprocessor() ? wxT("1") : wxT("0"));
     SetProperty(wxT("fold.compact"), options->GetFoldCompact() ? wxT("1") : wxT("0"));
 
-    // disable pre-processing (for now)
-    // TODO: make this configurable
-    SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
-    SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-
     // Fold and comments as well
     SetProperty(wxT("fold.comment"), wxT("1"));
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT | wxSTC_PERFORMED_UNDO | wxSTC_PERFORMED_REDO |
@@ -2808,9 +2803,16 @@ void LEditor::ReloadFile()
 
     // mark read only files
     clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
-
     SetReloadingFile(false);
-
+    
+    // Notify that a file has been loaded into the editor
+    clCommandEvent fileLoadedEvent(wxEVT_FILE_LOADED);
+    fileLoadedEvent.SetFileName(GetFileName().GetFullPath());
+    EventNotifier::Get()->AddPendingEvent(fileLoadedEvent);
+    
+    SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
+    SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+    
     // Now restore as far as possible the look'n'feel of the file
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
     LoadMarkersFromArray(bookmarks);
@@ -3611,12 +3613,6 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent& event)
 
 void LEditor::UpdateColours()
 {
-    // disable macros tracking (if needed it will be re-enabled by
-    // the Clang Worker Thread
-    SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
-    SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-    Colourise(0, wxSTC_INVALID_POSITION);
-
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS ||
        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS ||
        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_MACRO_BLOCKS) {
@@ -3627,7 +3623,7 @@ void LEditor::UpdateColours()
             SetKeyWords(1, wxEmptyString);
             SetKeyWords(2, wxEmptyString);
             SetKeyWords(3, wxEmptyString);
-            SetKeyWords(4, wxEmptyString);
+            SetKeyWords(4, GetPreProcessorsWords());
         }
     }
 }

@@ -10,7 +10,9 @@
 #if 0
 #define DEBUGMSG wxPrintf
 #else
-#define DEBUGMSG(...) do {} while(false)
+#define DEBUGMSG(...) \
+    do {              \
+    } while(false)
 #endif
 
 enum eLexerOptions {
@@ -18,6 +20,7 @@ enum eLexerOptions {
     kLexerOpt_ReturnComments = 0x00000001,
     kLexerOpt_ReturnWhitespace = 0x00000002,
     kLexerOpt_CollectMacroValueNumbers = 0x00000004,
+    kLexerOpt_DontCollectMacrosDefinedInThisFile = 0x00000008,
 };
 
 struct WXDLLIMPEXP_CL CxxLexerException
@@ -35,12 +38,23 @@ struct WXDLLIMPEXP_CL CxxLexerToken
     int column;
     wxString text;
     int type;
+    CxxLexerToken()
+        : lineNumber(0)
+        , column(0)
+        , type(0)
+    {
+    }
 };
 
 struct WXDLLIMPEXP_CL CxxPreProcessorToken
 {
     wxString name;
     wxString value;
+    bool deleteOnExit;
+    CxxPreProcessorToken()
+        : deleteOnExit(false)
+    {
+    }
     typedef std::map<wxString, CxxPreProcessorToken> Map_t;
 };
 /**

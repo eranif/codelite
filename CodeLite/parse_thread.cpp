@@ -73,9 +73,6 @@ const wxEventType wxEVT_PARSE_THREAD_READY = XRCID("wxEVT_PARSE_THREAD_READY");
 // Event type: clCommandEvent
 const wxEventType wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS = XRCID("wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS");
 
-// Event type: clCodeCompletionEvent
-wxDEFINE_EVENT(wxEVT_PARSE_THREAD_LIST_MACROS, clCodeCompletionEvent);
-
 ParseThread::ParseThread()
     : WorkerThread()
 {
@@ -108,9 +105,6 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
         break;
     case ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS:
         ProcessColourRequest(req);
-        break;
-    case ParseRequest::PR_COLLECT_MACROS:
-        ProcessMacroRequest(req);
         break;
     default:
     case ParseRequest::PR_FILESAVED:
@@ -707,44 +701,4 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
             req->_evtHandler->AddPendingEvent(event);
         }
     }
-}
-
-void ParseThread::ProcessMacroRequest(ParseRequest* req)
-{
-    wxUnusedVar(req);
-    wxArrayString searchPaths, excludePaths;
-    GetSearchPaths(searchPaths, excludePaths);
-
-    CxxPreProcessor pp;
-    for(size_t i = 0; i < searchPaths.GetCount(); ++i) {
-        pp.AddIncludePath(searchPaths.Item(i));
-    }
-
-    const wxArrayString& definitions = req->GetDefinitions();
-    for(size_t i = 0; i < definitions.GetCount(); ++i) {
-        pp.AddDefinition(definitions.Item(i));
-    }
-
-    pp.Parse(req->getFile(), kLexerOpt_CollectMacroValueNumbers);
-
-    // Notify about completion
-    if(req->_evtHandler) {
-        clCodeCompletionEvent event(wxEVT_PARSE_THREAD_LIST_MACROS);
-        event.SetDefinitions(pp.GetDefinitions());
-        event.SetFileName(req->getFile());
-        req->_evtHandler->AddPendingEvent(event);
-    }
-}
-
-void ParseThread::AddListMacrosTask(wxEvtHandler* caller,
-                                    const wxString& filename,
-                                    const wxArrayString& includePaths,
-                                    const wxArrayString& macros)
-{
-    ParseRequest* req = new ParseRequest(caller);
-    req->setFile(filename);
-    req->setType(ParseRequest::PR_COLLECT_MACROS);
-    req->SetDefinitions(macros);
-    req->SetIncludePaths(includePaths);
-    this->Add(req);
 }

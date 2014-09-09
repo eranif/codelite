@@ -17,12 +17,25 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
         CL_DEBUG("Calling CxxPreProcessor::Parse for file '%s'\n", filename.GetFullPath());
         m_options = options;
         scanner = new CxxPreProcessorScanner(filename, m_options);
+        // Remove the option so recursive scanner won't get it
+        m_options &= ~kLexerOpt_DontCollectMacrosDefinedInThisFile;
         if(scanner) {
             scanner->Parse(this);
         }
     } catch(CxxLexerException& e) {
         wxUnusedVar(e);
     }
+
+    // Delete all the 'deleteOnExit' tokens
+    CxxPreProcessorToken::Map_t filteredMap;
+    CxxPreProcessorToken::Map_t::iterator iter = m_tokens.begin();
+    for(; iter != m_tokens.end(); ++iter) {
+        if(!iter->second.deleteOnExit) {
+            filteredMap.insert(std::make_pair(iter->first, iter->second));
+        }
+    }
+    m_tokens.swap(filteredMap);
+    
     // Make sure that the scanner is deleted
     wxDELETE(scanner);
 }
@@ -42,16 +55,18 @@ CxxPreProcessorScanner* CxxPreProcessor::CreateScanner(const wxFileName& current
         wxString tmpfile;
         tmpfile << paths.Item(i) << "/" << includeName;
         wxFileName fn(tmpfile);
-        CL_DEBUG(" ... Checking include file: %s\n", fn.GetFullPath());
-        if(fn.Exists()) {
+        tmpfile = fn.GetFullPath();
+        // CL_DEBUG(" ... Checking include file: %s\n", fn.GetFullPath());
+        struct stat buff;
+        if(stat(tmpfile.mb_str(wxConvUTF8).data(), &buff) == 0) {
             // match
-            if(m_filesVisited.count(fn.GetFullPath())) {
+            if(m_filesVisited.count(tmpfile)) {
                 // we already scanned this file
-                CL_DEBUG(" ==> File '%s' was already scanned\n", fn.GetFullPath());
+                CL_DEBUG1(" ==> File '%s' was already scanned\n", tmpfile);
                 return NULL;
             }
-            CL_DEBUG(" ==> Creating scanner for file: %s\n", fn.GetFullPath());
-            m_filesVisited.insert(fn.GetFullPath());
+            CL_DEBUG1(" ==> Creating scanner for file: %s\n", tmpfile);
+            m_filesVisited.insert(tmpfile);
             return new CxxPreProcessorScanner(fn, m_options);
         }
     }

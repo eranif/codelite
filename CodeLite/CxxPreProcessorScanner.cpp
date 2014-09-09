@@ -184,6 +184,8 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
             CxxPreProcessorToken pp;
             pp.name = macroName;
             pp.value = macroValue;
+            // mark this token for deletion when the entire TU parsing is done
+            pp.deleteOnExit = (m_options & kLexerOpt_DontCollectMacrosDefinedInThisFile);
             DEBUGMSG("=> Adding macro: %s=%s (line %d)\n", pp.name, pp.value, token.lineNumber);
             ppTable.insert(std::make_pair(pp.name, pp));
             break;

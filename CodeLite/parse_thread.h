@@ -71,7 +71,6 @@ public:
         PR_PARSE_FILE_NO_INCLUDES,
         PR_PARSE_INCLUDE_STATEMENTS,
         PR_SUGGEST_HIGHLIGHT_WORDS,
-        PR_COLLECT_MACROS,
     };
 
 public:
@@ -158,18 +157,6 @@ public:
     void SetSearchPaths(const wxArrayString& paths, const wxArrayString& exlucdePaths);
     void GetSearchPaths(wxArrayString& paths, wxArrayString& excludePaths);
     bool IsCrawlerEnabled();
-
-    /**
-     * @brief add a 'list macros' command to the parser thread.
-     * This task runs the PreProcessor parser on the  current file
-     * and return list of macros found. The arrives as an event of type
-     * clCodeCompletionEvent to the caller
-     */
-    void AddListMacrosTask(wxEvtHandler* caller,
-                           const wxString& filename,
-                           const wxArrayString& includePaths,
-                           const wxArrayString& macros);
-
 private:
     /**
      * Default constructor.
@@ -229,5 +216,4 @@ extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_INCLUDE_STATEMENTS_DONE;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_READY;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS;
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_LIST_MACROS, clCodeCompletionEvent);
 #endif // CODELITE_PARSE_THREAD_H

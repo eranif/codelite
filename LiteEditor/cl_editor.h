@@ -140,6 +140,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     bool m_findBookmarksActive;
     std::map<int, wxString> m_compilerMessagesMap;
     CLCommandProcessor m_commandsProcessor;
+    wxString m_preProcessorsWords;
 
 public:
     static bool m_ccShowPrivateMembers;
@@ -148,22 +149,51 @@ public:
     typedef std::vector<LEditor*> Vec_t;
 
 public:
-    static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
+    static FindReplaceData& GetFindReplaceData()
+    {
+        return m_findReplaceData;
+    }
 
+    void SetPreProcessorsWords(const wxString& preProcessorsWords)
+    {
+        this->m_preProcessorsWords = preProcessorsWords;
+    }
+    const wxString& GetPreProcessorsWords() const
+    {
+        return m_preProcessorsWords;
+    }
     void SetLineVisible(int lineno);
 
-    void SetReloadingFile(const bool& reloadingFile) { this->m_reloadingFile = reloadingFile; }
-    const bool& GetReloadingFile() const { return m_reloadingFile; }
+    void SetReloadingFile(const bool& reloadingFile)
+    {
+        this->m_reloadingFile = reloadingFile;
+    }
+    const bool& GetReloadingFile() const
+    {
+        return m_reloadingFile;
+    }
 
-    clEditorTipWindow* GetFunctionTip() { return m_functionTip; }
+    clEditorTipWindow* GetFunctionTip()
+    {
+        return m_functionTip;
+    }
 
     bool IsFocused() const;
 
-    void SetFullLineCopyCut(bool fullLineCopyCut) { this->m_fullLineCopyCut = fullLineCopyCut; }
+    void SetFullLineCopyCut(bool fullLineCopyCut)
+    {
+        this->m_fullLineCopyCut = fullLineCopyCut;
+    }
 
-    bool IsFullLineCopyCut() const { return m_fullLineCopyCut; }
+    bool IsFullLineCopyCut() const
+    {
+        return m_fullLineCopyCut;
+    }
 
-    CLCommandProcessor& GetCommandsProcessor() { return m_commandsProcessor; }
+    CLCommandProcessor& GetCommandsProcessor()
+    {
+        return m_commandsProcessor;
+    }
 
 public:
     /// Construct a LEditor object
@@ -179,9 +209,15 @@ public:
     // this function prompts the user for selecting file name
     bool SaveFileAs();
 
-    void SetDisableSmartIndent(bool disableSmartIndent) { this->m_disableSmartIndent = disableSmartIndent; }
+    void SetDisableSmartIndent(bool disableSmartIndent)
+    {
+        this->m_disableSmartIndent = disableSmartIndent;
+    }
 
-    bool GetDisableSmartIndent() const { return m_disableSmartIndent; }
+    bool GetDisableSmartIndent() const
+    {
+        return m_disableSmartIndent;
+    }
     /**
      * @brief set the EOL mode of the file by applying this logic:
      * - if the file has content, use the current cotext EOL
@@ -201,12 +237,21 @@ public:
     void ChangeCase(bool toLower);
 
     // set this editor file name
-    void SetFileName(const wxFileName& name) { m_fileName = name; }
+    void SetFileName(const wxFileName& name)
+    {
+        m_fileName = name;
+    }
 
     // Return the project name
-    const wxString& GetProject() const { return m_project; }
+    const wxString& GetProject() const
+    {
+        return m_project;
+    }
     // Set the project name
-    void SetProject(const wxString& proj) { m_project = proj; }
+    void SetProject(const wxString& proj)
+    {
+        m_project = proj;
+    }
 
     // Attempt to display a list of members
     // after a '.' or '->' operator has been inserted into
@@ -224,7 +269,10 @@ public:
      * Return true if editor definition contains more
      * on its stack
      */
-    bool CanGotoPreviousDefintion() { return NavMgr::Get()->CanPrev(); }
+    bool CanGotoPreviousDefintion()
+    {
+        return NavMgr::Get()->CanPrev();
+    }
 
     // Callback function for UI events
     void OnUpdateUI(wxUpdateUIEvent& event);
@@ -267,7 +315,10 @@ public:
     /**
      * Return the document context object
      */
-    ContextBasePtr GetContext() const { return m_context; }
+    ContextBasePtr GetContext() const
+    {
+        return m_context;
+    }
 
     /**
      * If word-wrap isn't on, and forceDelay is false, this calls DoEnsureCaretIsVisible() immediately. Otherwise it
@@ -314,11 +365,17 @@ public:
     /**
      * Sets whether the currently-active bookmark level is Find', or the current standard-bookmark type
      */
-    void SetFindBookmarksActive(bool findBookmarksActive) { m_findBookmarksActive = findBookmarksActive; }
+    void SetFindBookmarksActive(bool findBookmarksActive)
+    {
+        m_findBookmarksActive = findBookmarksActive;
+    }
     /**
      * Returns true if the currently-active bookmark level is 'Find'
      */
-    bool IsFindBookmarksActive() const { return m_findBookmarksActive; }
+    bool IsFindBookmarksActive() const
+    {
+        return m_findBookmarksActive;
+    }
 
     /**
      * The user is changing the currently-active bookmark type
@@ -387,7 +444,10 @@ public:
      */
     void StoreCollapsedFoldsToArray(std::vector<int>& folds) const;
 
-    static FindReplaceDialog* GetFindReplaceDialog() { return m_findReplaceDlg; }
+    static FindReplaceDialog* GetFindReplaceDialog()
+    {
+        return m_findReplaceDlg;
+    }
 
     // Util function
     int SafeGetChar(int pos);
@@ -453,9 +513,15 @@ public:
 
     virtual BrowseRecord CreateBrowseRecord();
 
-    bool IsContextMenuOn() const { return m_popupIsOn; }
+    bool IsContextMenuOn() const
+    {
+        return m_popupIsOn;
+    }
 
-    bool IsDragging() const { return m_isDragging; }
+    bool IsDragging() const
+    {
+        return m_isDragging;
+    }
 
     /**
      * @brief return an approximation of the line height
@@ -546,8 +612,14 @@ public:
     /**
      * return/set the last modification time that was made by the editor
      */
-    time_t GetEditorLastModifiedTime() const { return m_modifyTime; }
-    void SetEditorLastModifiedTime(time_t modificationTime) { m_modifyTime = modificationTime; }
+    time_t GetEditorLastModifiedTime() const
+    {
+        return m_modifyTime;
+    }
+    void SetEditorLastModifiedTime(time_t modificationTime)
+    {
+        m_modifyTime = modificationTime;
+    }
 
     /**
      * \brief run through the file content and update colours for the
@@ -614,15 +686,30 @@ public:
      * Implemetation for IEditor interace
      *--------------------------------------------------
      */
-    virtual wxStyledTextCtrl* GetSTC() { return static_cast<wxStyledTextCtrl*>(this); }
+    virtual wxStyledTextCtrl* GetSTC()
+    {
+        return static_cast<wxStyledTextCtrl*>(this);
+    }
 
-    virtual wxString GetEditorText() { return GetText(); }
+    virtual wxString GetEditorText()
+    {
+        return GetText();
+    }
     virtual void SetEditorText(const wxString& text);
     virtual void ReloadFile();
     virtual void SetCaretAt(long pos);
-    virtual long GetCurrentPosition() { return GetCurrentPos(); }
-    virtual const wxFileName& GetFileName() const { return m_fileName; }
-    virtual const wxString& GetProjectName() const { return m_project; }
+    virtual long GetCurrentPosition()
+    {
+        return GetCurrentPos();
+    }
+    virtual const wxFileName& GetFileName() const
+    {
+        return m_fileName;
+    }
+    virtual const wxString& GetProjectName() const
+    {
+        return m_project;
+    }
     /**
      * @brief
      * @return
@@ -637,11 +724,26 @@ public:
      * @brief
      * @param text
      */
-    virtual void AppendText(const wxString& text) { wxStyledTextCtrl::AppendText(text); }
-    virtual void InsertText(int pos, const wxString& text) { wxStyledTextCtrl::InsertText(pos, text); }
-    virtual int GetLength() { return wxStyledTextCtrl::GetLength(); }
-    virtual bool IsModified() { return wxStyledTextCtrl::GetModify(); }
-    virtual int GetEOL() { return wxStyledTextCtrl::GetEOLMode(); }
+    virtual void AppendText(const wxString& text)
+    {
+        wxStyledTextCtrl::AppendText(text);
+    }
+    virtual void InsertText(int pos, const wxString& text)
+    {
+        wxStyledTextCtrl::InsertText(pos, text);
+    }
+    virtual int GetLength()
+    {
+        return wxStyledTextCtrl::GetLength();
+    }
+    virtual bool IsModified()
+    {
+        return wxStyledTextCtrl::GetModify();
+    }
+    virtual int GetEOL()
+    {
+        return wxStyledTextCtrl::GetEOLMode();
+    }
     virtual int GetCurrentLine();
     virtual void ReplaceSelection(const wxString& text);
     virtual wxString GetSelection();
@@ -744,8 +846,14 @@ public:
      */
     OptionsConfigPtr GetOptions();
 
-    void SetIsVisible(const bool& isVisible) { this->m_isVisible = isVisible; }
-    const bool& GetIsVisible() const { return m_isVisible; }
+    void SetIsVisible(const bool& isVisible)
+    {
+        this->m_isVisible = isVisible;
+    }
+    const bool& GetIsVisible() const
+    {
+        return m_isVisible;
+    }
 
     wxString GetEolString();
     void HighlightWord(StringHighlightOutput* highlightOutput);

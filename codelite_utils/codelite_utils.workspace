@@ -7,7 +7,6 @@
   <Project Name="codelite_cppcheck" Path="../sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
   <Project Name="codelite_indexer" Path="../sdk/codelite_indexer/codelite_indexer.project" Active="No"/>
   <Project Name="wx-config" Path="../sdk/wxconfig/wx-config.project" Active="No"/>
-  <Project Name="codelite_clang" Path="../codelite_clang/codelite_clang.project" Active="No"/>
   <Project Name="codelitegcc" Path="../codelitegcc/codelitegcc.project" Active="No"/>
   <Project Name="codelite_make" Path="../codelite_make/codelite_make.project" Active="No"/>
   <Project Name="codelite_terminal" Path="../codelite_terminal/codelite_terminal.project" Active="No"/>

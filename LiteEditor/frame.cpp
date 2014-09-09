@@ -5677,7 +5677,7 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
     wxUnusedVar(e);
     SetStatusMessage(wxEmptyString, 0);
 
-    if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS || e.GetInt() == ParseRequest::PR_COLLECT_MACROS)
+    if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS)
         // no need to trigger another UpdateColour
         return;
 

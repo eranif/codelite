@@ -618,5 +618,9 @@
 // event type: clCommandEvent
 #define wxEVT_CMD_COLOURS_FONTS_UPDATED  3640
 
+// File has been loaded into the IDE
+// User: clCommandEvnet::GetFileName() to get the file name
+#define wxEVT_FILE_LOADED 3700
+
 #endif // CODELITE_EVENTS_H
 

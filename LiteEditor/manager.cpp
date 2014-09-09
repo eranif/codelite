@@ -3798,14 +3798,7 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 
 void Manager::UpdatePreprocessorFile(LEditor* editor)
 {
-    // Sanity
-    if(!editor)
-        return;
-
-    if((TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS) == 0)
-        return;
-
-    CodeCompletionManager::Get().ProcessMacros(editor);
+    wxUnusedVar(editor);
 }
 
 BuildConfigPtr Manager::GetCurrentBuildConf()

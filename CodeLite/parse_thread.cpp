@@ -94,10 +94,6 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
     case ParseRequest::PR_PARSEINCLUDES:
         ProcessIncludes(req);
         break;
-    default:
-    case ParseRequest::PR_FILESAVED:
-        ProcessSimple(req);
-        break;
     case ParseRequest::PR_PARSE_AND_STORE:
         ProcessParseAndStore(req);
         break;
@@ -115,6 +111,10 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
         break;
     case ParseRequest::PR_COLLECT_MACROS:
         ProcessMacroRequest(req);
+        break;
+    default:
+    case ParseRequest::PR_FILESAVED:
+        ProcessSimple(req);
         break;
     }
 
@@ -714,13 +714,19 @@ void ParseThread::ProcessMacroRequest(ParseRequest* req)
     wxUnusedVar(req);
     wxArrayString searchPaths, excludePaths;
     GetSearchPaths(searchPaths, excludePaths);
-    
+
     CxxPreProcessor pp;
-    for(size_t i=0; i<searchPaths.GetCount(); ++i) {
+    for(size_t i = 0; i < searchPaths.GetCount(); ++i) {
         pp.AddIncludePath(searchPaths.Item(i));
     }
+
+    const wxArrayString& definitions = req->GetDefinitions();
+    for(size_t i = 0; i < definitions.GetCount(); ++i) {
+        pp.AddDefinition(definitions.Item(i));
+    }
+
     pp.Parse(req->getFile(), kLexerOpt_CollectMacroValueNumbers);
-    
+
     // Notify about completion
     if(req->_evtHandler) {
         clCodeCompletionEvent event(wxEVT_PARSE_THREAD_LIST_MACROS);
@@ -728,4 +734,17 @@ void ParseThread::ProcessMacroRequest(ParseRequest* req)
         event.SetFileName(req->getFile());
         req->_evtHandler->AddPendingEvent(event);
     }
+}
+
+void ParseThread::AddListMacrosTask(wxEvtHandler* caller,
+                                    const wxString& filename,
+                                    const wxArrayString& includePaths,
+                                    const wxArrayString& macros)
+{
+    ParseRequest* req = new ParseRequest(caller);
+    req->setFile(filename);
+    req->setType(ParseRequest::PR_COLLECT_MACROS);
+    req->SetDefinitions(macros);
+    req->SetIncludePaths(includePaths);
+    this->Add(req);
 }

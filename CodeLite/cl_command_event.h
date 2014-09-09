@@ -117,6 +117,10 @@ public:
     {
         this->m_definitions = definitions;
     }
+    const wxArrayString& GetDefinitions() const
+    {
+        return m_definitions;
+    }
     void SetTagEntry(TagEntryPtr tag)
     {
         this->m_tagEntry = tag;

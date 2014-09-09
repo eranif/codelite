@@ -53,6 +53,8 @@ class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest
     wxString _dbfile;
     wxString _tags;
     int _type;
+    wxArrayString m_definitions;
+    wxArrayString m_includePaths;
 
 public:
     wxEvtHandler* _evtHandler;
@@ -84,6 +86,23 @@ public:
     virtual ~ParseRequest();
 
     // accessors
+
+    void SetDefinitions(const wxArrayString& definitions)
+    {
+        this->m_definitions = definitions;
+    }
+    void SetIncludePaths(const wxArrayString& includePaths)
+    {
+        this->m_includePaths = includePaths;
+    }
+    const wxArrayString& GetDefinitions() const
+    {
+        return m_definitions;
+    }
+    const wxArrayString& GetIncludePaths() const
+    {
+        return m_includePaths;
+    }
     void setFile(const wxString& file);
     void setDbFile(const wxString& dbfile);
     void setTags(const wxString& tags);
@@ -139,6 +158,17 @@ public:
     void SetSearchPaths(const wxArrayString& paths, const wxArrayString& exlucdePaths);
     void GetSearchPaths(wxArrayString& paths, wxArrayString& excludePaths);
     bool IsCrawlerEnabled();
+
+    /**
+     * @brief add a 'list macros' command to the parser thread.
+     * This task runs the PreProcessor parser on the  current file
+     * and return list of macros found. The arrives as an event of type
+     * clCodeCompletionEvent to the caller
+     */
+    void AddListMacrosTask(wxEvtHandler* caller,
+                           const wxString& filename,
+                           const wxArrayString& includePaths,
+                           const wxArrayString& macros);
 
 private:
     /**

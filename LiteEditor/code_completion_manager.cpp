@@ -49,7 +49,8 @@ CodeCompletionManager::CodeCompletionManager()
         wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL, this);
     EventNotifier::Get()->Bind(
         wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
-
+    
+    Bind(wxEVT_PARSE_THREAD_LIST_MACROS, &CodeCompletionManager::OnParseThreadCollectedMacros, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 }
 
@@ -226,7 +227,30 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
     if(editor->GetProjectName().IsEmpty()) return;
     if(!WorkspaceST::Get()->IsOpen()) return;
     
+    // Get the file's project and get the build configuration settings
+    // for it
+    ProjectPtr proj = WorkspaceST::Get()->GetProject(editor->GetProjectName());
+    CHECK_PTR_RET(proj);
     
+    BuildConfigPtr buildConf = proj->GetBuildConfiguration();
+    CHECK_PTR_RET(buildConf);
+    
+    CompilerPtr compiler = buildConf->GetCompiler();
+    CHECK_PTR_RET(compiler);
+    
+    // get the include paths based on the project settings (this is per build configuration)
+    wxArrayString includePaths = proj->GetIncludePaths();
+    
+    // get the compiler include paths
+    wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
+    
+    includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
+    wxArrayString macros = proj->GetPreProcessors();
+    // Append the compiler builtin macros
+    wxArrayString builtinMacros = compiler->GetBuiltinMacros();
+    macros.insert(macros.end(), builtinMacros.begin(), builtinMacros.end());
+    
+    ParseThreadST::Get()->AddListMacrosTask(this, editor->GetFileName().GetFullPath(), includePaths, macros);
 }
 
 void CodeCompletionManager::GotoImpl(LEditor* editor)
@@ -346,4 +370,25 @@ void CodeCompletionManager::OnCompileCommandsFileGenerated(clCommandEvent& event
     CompilationDatabase db;
     ClangCompilationDbThreadST::Get()->AddFile(db.GetFileName().GetFullPath());
     clMainFrame::Get()->SetStatusText("Ready");
+}
+
+void CodeCompletionManager::OnParseThreadCollectedMacros(clCodeCompletionEvent& event)
+{
+    CL_DEBUG("Parser thread returned list of amcros found:\n");
+    // We got a list of macros from the parser thead
+    // prepare a space delimited list out of it
+    wxString macrosAsString;
+    for(size_t i=0; i<event.GetDefinitions().GetCount(); ++i) {
+        CL_DEBUG("%s\n", event.GetDefinitions().Item(i));
+        macrosAsString << event.GetDefinitions().Item(i) << " ";
+    }
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+    if(editor && event.GetFileName() == editor->GetFileName().GetFullPath()) {
+        // its the same file that triggered the request, update its pre processor colouring
+        // turn off the macro colouring (until new set is arrived)
+        editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("1"));
+        editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
+        editor->GetSTC()->SetKeyWords(4, macrosAsString);
+        editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
+    }
 }

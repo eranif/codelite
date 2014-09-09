@@ -1,5 +1,6 @@
 #include "CxxPreProcessor.h"
 #include <wx/regex.h>
+#include "file_logger.h"
 
 CxxPreProcessor::CxxPreProcessor()
 {
@@ -11,16 +12,22 @@ CxxPreProcessor::~CxxPreProcessor()
 
 void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 {
+    CxxPreProcessorScanner* scanner = NULL;
     try {
+        CL_DEBUG("Calling CxxPreProcessor::Parse for file '%s'\n", filename.GetFullPath());
         m_options = options;
-        CxxPreProcessorScanner::Ptr_t scanner(new CxxPreProcessorScanner(filename, m_options));
-        scanner->Parse(this);
+        scanner = new CxxPreProcessorScanner(filename, m_options);
+        if(scanner) {
+            scanner->Parse(this);
+        }
     } catch(CxxLexerException& e) {
+        wxUnusedVar(e);
     }
+    // Make sure that the scanner is deleted
+    wxDELETE(scanner);
 }
 
-CxxPreProcessorScanner::Ptr_t CxxPreProcessor::CreateScanner(const wxFileName& currentFile,
-                                                             const wxString& includeStatement)
+CxxPreProcessorScanner* CxxPreProcessor::CreateScanner(const wxFileName& currentFile, const wxString& includeStatement)
 {
     wxString includeName = includeStatement;
     includeName.Replace("\"", "");
@@ -35,14 +42,20 @@ CxxPreProcessorScanner::Ptr_t CxxPreProcessor::CreateScanner(const wxFileName& c
         wxString tmpfile;
         tmpfile << paths.Item(i) << "/" << includeName;
         wxFileName fn(tmpfile);
-        DEBUGMSG(" ? Checking include file: %s\n", fn.GetFullPath());
-        if(fn.Exists() && !m_filesVisited.count(fn.GetFullPath())) {
-            DEBUGMSG(" ==> Creating scanner for file: %s\n", fn.GetFullPath());
+        CL_DEBUG(" ... Checking include file: %s\n", fn.GetFullPath());
+        if(fn.Exists()) {
+            // match
+            if(m_filesVisited.count(fn.GetFullPath())) {
+                // we already scanned this file
+                CL_DEBUG(" ==> File '%s' was already scanned\n", fn.GetFullPath());
+                return NULL;
+            }
+            CL_DEBUG(" ==> Creating scanner for file: %s\n", fn.GetFullPath());
             m_filesVisited.insert(fn.GetFullPath());
-            return CxxPreProcessorScanner::Ptr_t(new CxxPreProcessorScanner(fn, m_options));
+            return new CxxPreProcessorScanner(fn, m_options);
         }
     }
-    return CxxPreProcessorScanner::Ptr_t(NULL);
+    return NULL;
 }
 
 void CxxPreProcessor::AddIncludePath(const wxString& path)
@@ -54,7 +67,7 @@ void CxxPreProcessor::AddDefinition(const wxString& def)
 {
     wxString macroName = def.BeforeFirst('=');
     wxString macroValue = def.AfterFirst('=');
-    
+
     CxxPreProcessorToken token;
     token.name = macroName;
     token.value = macroValue;

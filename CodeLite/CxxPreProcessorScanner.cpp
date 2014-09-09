@@ -3,7 +3,14 @@
 #include "CxxPreProcessorExpression.h"
 #include <wx/sharedptr.h>
 #include "CxxPreProcessor.h"
+#include "file_logger.h"
 
+/**
+ * @brief 
+ * @param filename
+ * @param options
+ * @return 
+ */
 CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename, size_t options)
     : m_scanner(NULL)
     , m_filename(filename)
@@ -14,7 +21,9 @@ CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename, size_
 
 CxxPreProcessorScanner::~CxxPreProcessorScanner()
 {
-    ::LexerDestroy(&m_scanner);
+    if(m_scanner) {
+        ::LexerDestroy(&m_scanner);
+    }
 }
 
 void CxxPreProcessorScanner::GetRestOfPPLine(wxString& rest, bool collectNumberOnly)
@@ -70,9 +79,17 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
         switch(token.type) {
         case T_PP_INCLUDE_FILENAME: {
             // we found an include statement, recurse into it
-            CxxPreProcessorScanner::Ptr_t scanner = pp->CreateScanner(m_filename, token.text);
+            CxxPreProcessorScanner* scanner = pp->CreateScanner(m_filename, token.text);
             if(scanner) {
-                scanner->Parse(pp);
+                try {
+                    scanner->Parse(pp);
+                    
+                } catch (CxxLexerException& e) {
+                    // catch the exception
+                    CL_DEBUG("Exception caught: %s\n", e.message);
+                }
+                // make sure we always delete the scanner
+                wxDELETE(scanner);
                 DEBUGMSG("<== Resuming parser on file: %s\n", m_filename.GetFullPath());
             }
             break;

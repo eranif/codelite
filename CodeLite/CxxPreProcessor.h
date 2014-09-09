@@ -41,7 +41,7 @@ public:
      * statements)
      * @param includeStatement the include statement found by the scanner
      */
-    CxxPreProcessorScanner::Ptr_t CreateScanner(const wxFileName& currentFile, const wxString& includeStatement);
+    CxxPreProcessorScanner* CreateScanner(const wxFileName& currentFile, const wxString& includeStatement);
     /**
      * @brief the main entry function
      * @param filename

@@ -940,7 +940,10 @@ void clMainFrame::Initialize(bool loadLastSession)
     m_theFrame->AddPendingEvent(evt);
 }
 
-clMainFrame* clMainFrame::Get() { return m_theFrame; }
+clMainFrame* clMainFrame::Get()
+{
+    return m_theFrame;
+}
 
 void clMainFrame::CreateGUIControls(void)
 {
@@ -2023,9 +2026,14 @@ void clMainFrame::LocateCompilersIfNeeded()
     }
 }
 
-void clMainFrame::UpdateBuildTools() {}
+void clMainFrame::UpdateBuildTools()
+{
+}
 
-void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
+void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
+{
+    Close();
+}
 
 void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 {
@@ -3864,14 +3872,17 @@ void clMainFrame::OnShowWelcomePageUI(wxUpdateUIEvent& event)
     event.Enable(GetMainBook()->FindPage(_("Welcome!")) == NULL);
 }
 
-void clMainFrame::OnShowWelcomePage(wxCommandEvent& event) { ShowWelcomePage(); }
+void clMainFrame::OnShowWelcomePage(wxCommandEvent& event)
+{
+    ShowWelcomePage();
+}
 
 void clMainFrame::CompleteInitialization()
 {
     // Load the plugins
     PluginManager::Get()->Load();
 
-    // Load debuggers (*must* be after the plugins)
+// Load debuggers (*must* be after the plugins)
 #ifdef USE_POSIX_LAYOUT
     wxString plugdir(wxStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
     DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), plugdir);
@@ -3993,11 +4004,20 @@ void clMainFrame::OnCloseAllButThis(wxCommandEvent& e)
     }
 }
 
-WorkspaceTab* clMainFrame::GetWorkspaceTab() { return GetWorkspacePane()->GetWorkspaceTab(); }
+WorkspaceTab* clMainFrame::GetWorkspaceTab()
+{
+    return GetWorkspacePane()->GetWorkspaceTab();
+}
 
-FileExplorer* clMainFrame::GetFileExplorer() { return GetWorkspacePane()->GetFileExplorer(); }
+FileExplorer* clMainFrame::GetFileExplorer()
+{
+    return GetWorkspacePane()->GetFileExplorer();
+}
 
-void clMainFrame::OnLoadWelcomePage(wxCommandEvent& event) { SetFrameFlag(event.IsChecked(), CL_SHOW_WELCOME_PAGE); }
+void clMainFrame::OnLoadWelcomePage(wxCommandEvent& event)
+{
+    SetFrameFlag(event.IsChecked(), CL_SHOW_WELCOME_PAGE);
+}
 
 void clMainFrame::OnLoadWelcomePageUI(wxUpdateUIEvent& event)
 {
@@ -4149,7 +4169,10 @@ void clMainFrame::OnConfigureAccelerators(wxCommandEvent& e)
     dlg.ShowModal();
 }
 
-void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e) { wxUnusedVar(e); }
+void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+}
 
 void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 {
@@ -5109,7 +5132,10 @@ void clMainFrame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
     e.Enable(ManagerST::Get()->IsWorkspaceOpen() && (projectList.IsEmpty() == false));
 }
 
-void clMainFrame::StartTimer() { m_timer->Start(1000, true); }
+void clMainFrame::StartTimer()
+{
+    m_timer->Start(1000, true);
+}
 
 void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 {
@@ -5625,7 +5651,10 @@ void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e) { DoUpdatePerspectiveMenu(); }
+void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e)
+{
+    DoUpdatePerspectiveMenu();
+}
 
 void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
 {
@@ -5648,7 +5677,7 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
     wxUnusedVar(e);
     SetStatusMessage(wxEmptyString, 0);
 
-    if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS)
+    if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS || e.GetInt() == ParseRequest::PR_COLLECT_MACROS)
         // no need to trigger another UpdateColour
         return;
 
@@ -5897,7 +5926,10 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnThemeChanged(wxCommandEvent& e) { e.Skip(); }
+void clMainFrame::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+}
 
 void clMainFrame::OnChangeActiveBookmarkType(wxCommandEvent& e)
 {
@@ -5913,9 +5945,15 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     SetFrameTitle(GetMainBook()->GetActiveEditor());
 }
 
-void clMainFrame::OnDetachEditor(wxCommandEvent& e) { GetMainBook()->DetachActiveEditor(); }
+void clMainFrame::OnDetachEditor(wxCommandEvent& e)
+{
+    GetMainBook()->DetachActiveEditor();
+}
 
-void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
+void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e)
+{
+    e.Enable(GetMainBook()->GetActiveEditor() != NULL);
+}
 
 void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {
@@ -5924,7 +5962,10 @@ void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
     clConfig::Get().Write("ShowStatusBar", event.IsChecked());
 }
 
-void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetStatusBar()->IsShown()); }
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event)
+{
+    event.Check(GetStatusBar()->IsShown());
+}
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {

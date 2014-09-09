@@ -8,9 +8,9 @@
 #include <codelite_exports.h>
 
 #if 0
-#   define DEBUGMSG wxPrintf
+#define DEBUGMSG wxPrintf
 #else
-#   define DEBUGMSG(...)
+#define DEBUGMSG(...)
 #endif
 
 enum eLexerOptions {
@@ -54,6 +54,7 @@ private:
     wxString m_rawStringLabel;
     int m_commentStartLine;
     int m_commentEndLine;
+    FILE* m_currentPF;
 
 public:
     int m_ppNestLevel;
@@ -61,6 +62,11 @@ public:
 
     void Clear()
     {
+        if(m_currentPF) {
+            ::fclose(m_currentPF);
+            m_currentPF = NULL;
+        }
+
         m_ppNestLevel = 0;
         m_ppExpectedNestLevel = 0;
         ClearComment();
@@ -73,9 +79,19 @@ public:
         , m_commentEndLine(wxNOT_FOUND)
         , m_ppNestLevel(0)
         , m_ppExpectedNestLevel(0)
+        , m_currentPF(NULL)
     {
     }
 
+    ~CppLexerUserData()
+    {
+        Clear();
+    }
+
+    void SetCurrentPF(FILE* currentPF)
+    {
+        this->m_currentPF = currentPF;
+    }
     /**
      * @brief do we collect comments?
      */

@@ -402,9 +402,13 @@ void* LexerNew(const wxString& filename, size_t options )
     yyscan_t scanner;
     yylex_init(&scanner);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
-    yyg->yyextra_r = new CppLexerUserData(options);
-    yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE, scanner), scanner);
+    CppLexerUserData *userData = new CppLexerUserData(options);
     
+    // keep the file pointer (and make sure we close it at the end)
+    userData->SetCurrentPF(fp);
+    yyg->yyextra_r = userData;
+    
+    yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE, scanner), scanner);
     yycolumn = 1;
     return scanner;
 }

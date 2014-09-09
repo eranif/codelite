@@ -47,6 +47,14 @@ private:
     
 public:
     CxxPreProcessorScanner(const wxFileName &file, size_t options);
+    
+    /**
+     * @brief return true if we got a valid scanner
+     */
+    bool IsNull() const {
+        return m_scanner == NULL;;
+    }
+    
     virtual ~CxxPreProcessorScanner();
     
     /**

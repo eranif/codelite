@@ -787,58 +787,6 @@ void ClangDriver::OnTUCreateError(wxCommandEvent& e)
     DoCleanup();
 }
 
-void ClangDriver::GetMacros(IEditor *editor)
-{
-    if( !editor )
-        return;
-
-    if(editor->GetProjectName().IsEmpty()) {
-        // This file is not part of the workspace
-        // do not attemp to color its preprocessors
-        editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
-        editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-        editor->GetSTC()->SetKeyWords(4, wxT(""));
-        editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
-        return;
-    }
-
-    wxString projectPath;
-    wxString pchFile;
-    FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), projectPath, pchFile);
-
-    wxString cmd;
-
-    wxFileName exePath( clStandardPaths::Get().GetBinaryFullPath("codelite-clang") );
-    wxFileName outputFolder(pchFile);
-    // Select the compilation args
-    FileExtManager::FileType type = FileExtManager::TypeSourceCpp; // Default is C++
-
-    switch(FileExtManager::GetType(editor->GetFileName().GetFullName())) {
-    case FileExtManager::TypeSourceC:
-        type = FileExtManager::TypeSourceC;
-        break;
-    default:
-        // Use the default
-        break;
-    }
-
-    const wxArrayString& compilerSwitches = compileFlags[type];
-    cmd << wxT("\"") << exePath.GetFullPath() << wxT("\" parse-macros \"") << editor->GetFileName().GetFullPath() << wxT("\" \"") << outputFolder.GetPath() << wxT("\" ");
-    for(size_t i=0; i<compilerSwitches.GetCount(); i++) {
-        cmd << compilerSwitches.Item(i) << wxT(" ");
-    }
-
-    ClangMacroHandler *handler = new ClangMacroHandler();
-
-    CL_DEBUG(wxT("Executing command: %s"), cmd.c_str());
-    handler->SetProcessAndEditor( ::CreateAsyncProcess(handler, cmd), editor );
-
-    if(handler->GetProcess() == NULL) {
-        delete handler;
-        return;
-    }
-}
-
 void ClangDriver::OnDeletMacroHandler(wxCommandEvent& e)
 {
     ClangMacroHandler *h = reinterpret_cast<ClangMacroHandler*>(e.GetClientData());

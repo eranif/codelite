@@ -54,39 +54,36 @@ public:
 
 protected:
     static ClangCodeCompletion* ms_instance;
-    ClangDriver                 m_clang;
-    bool                        m_allEditorsAreClosing;
+    ClangDriver m_clang;
+    bool m_allEditorsAreClosing;
 
     friend class ClangDriver;
+
 public:
     static ClangCodeCompletion* Instance();
     static void Release();
 
     /**
-     * @brief perform codecompletion in the editor
+     * @brief perform code completion in the editor
      */
-    void CodeComplete(IEditor *editor);
+    void CodeComplete(IEditor* editor);
     /**
-     * @brief perform word-completin in the editor
+     * @brief perform word-completion in the editor
      */
-    void WordComplete(IEditor *editor);
-    /**
-     * @brief provide list of macros and pass them to the editor (this is useful for disabling block of text which is not visible due to #if #endif conditions)
-     */
-    void ListMacros(IEditor *editor);
+    void WordComplete(IEditor* editor);
     /**
      * @brief go to the definition under the caret
      */
-    void GotoDeclaration(IEditor *editor);
+    void GotoDeclaration(IEditor* editor);
     /**
      * @brief go to the definition under the caret
      */
-    void GotoImplementation(IEditor *editor);
+    void GotoImplementation(IEditor* editor);
 
     /**
-     * @brief display calltip for a function
+     * @brief display call tip for a function
      */
-    void Calltip(IEditor *editor);
+    void Calltip(IEditor* editor);
     void CancelCodeComplete();
     void ClearCache();
     bool IsCacheEmpty();
@@ -95,19 +92,18 @@ protected:
     void DoCleanUp();
 
     // Event handling
-    void OnFileLoaded(wxCommandEvent &e);
-    void OnFileSaved(clCommandEvent &e);
-    void OnAllEditorsClosing(wxCommandEvent &e);
-    void OnAllEditorsClosed(wxCommandEvent &e);
+    void OnFileLoaded(wxCommandEvent& e);
+    void OnFileSaved(clCommandEvent& e);
+    void OnAllEditorsClosing(wxCommandEvent& e);
+    void OnAllEditorsClosed(wxCommandEvent& e);
 
-    void OnBuildStarting(clBuildEvent &e);
-    void OnBuildEnded(clBuildEvent &e);
-    void OnWorkspaceClosed(wxCommandEvent &e);
+    void OnBuildStarting(clBuildEvent& e);
+    void OnBuildEnded(clBuildEvent& e);
+    void OnWorkspaceClosed(wxCommandEvent& e);
 
 private:
     ClangCodeCompletion();
     ~ClangCodeCompletion();
-
 };
 
 #endif // HAS_LIBCLANG

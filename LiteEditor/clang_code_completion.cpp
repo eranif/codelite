@@ -184,11 +184,6 @@ void ClangCodeCompletion::WordComplete(IEditor* editor)
     m_clang.CodeCompletion(editor);
 }
 
-void ClangCodeCompletion::ListMacros(IEditor* editor)
-{
-    m_clang.GetMacros(editor);
-}
-
 void ClangCodeCompletion::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();

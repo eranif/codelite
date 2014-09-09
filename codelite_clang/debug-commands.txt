@@ -1,7 +1,0 @@
-parse /home/eran/main.cpp /tmp -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/x86_64-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -ferror-limit=1000 -w -nobuiltininc -I/usr/include/gtk-2.0 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12
-parse-macros /home/eran/main.cpp /tmp -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/x86_64-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -ferror-limit=1000 -w -nobuiltininc -I/usr/include/gtk-2.0 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12
-
-print-macros /home/eran/main.cpp /tmp/main.cpp.AST
-
-code-complete /home/eran/main.cpp /tmp/main.cpp.AST.REPARSED 25:6
-

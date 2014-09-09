@@ -505,11 +505,6 @@ add_subdirectory(sdk/codelite_indexer)
 add_subdirectory(sdk/codelite_cppcheck)
 add_subdirectory(codelite_echo)
 
-if (USE_CLANG)
-    add_subdirectory(codelite_clang)
-endif(USE_CLANG)
-
-
 ##
 ## Setup the proper dependencies
 ##

@@ -10,7 +10,7 @@
 #if 0
 #define DEBUGMSG wxPrintf
 #else
-#define DEBUGMSG(...)
+#define DEBUGMSG(...) do {} while(false)
 #endif
 
 enum eLexerOptions {
@@ -57,9 +57,6 @@ private:
     FILE* m_currentPF;
 
 public:
-    int m_ppNestLevel;
-    int m_ppExpectedNestLevel;
-
     void Clear()
     {
         if(m_currentPF) {
@@ -67,8 +64,6 @@ public:
             m_currentPF = NULL;
         }
 
-        m_ppNestLevel = 0;
-        m_ppExpectedNestLevel = 0;
         ClearComment();
         m_rawStringLabel.Clear();
     }
@@ -77,8 +72,6 @@ public:
         : m_flags(options)
         , m_commentStartLine(wxNOT_FOUND)
         , m_commentEndLine(wxNOT_FOUND)
-        , m_ppNestLevel(0)
-        , m_ppExpectedNestLevel(0)
         , m_currentPF(NULL)
     {
     }

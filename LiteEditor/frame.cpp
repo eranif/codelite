@@ -2746,6 +2746,8 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
         // Clear clang's cache
         ClangCodeCompletion::Instance()->ClearCache();
 #endif
+        // Update the pre-processor dimming feature
+        CodeCompletionManager::Get().RefreshPreProcessorColouring();
     }
 }
 

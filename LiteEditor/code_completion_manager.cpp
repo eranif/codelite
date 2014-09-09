@@ -470,5 +470,4 @@ void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
 void CodeCompletionManager::OnSettingsModified(wxCommandEvent& event)
 {
     event.Skip();
-    RefreshPreProcessorColouring();
 }

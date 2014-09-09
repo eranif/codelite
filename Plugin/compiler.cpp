@@ -722,11 +722,15 @@ const wxArrayString& Compiler::GetBuiltinMacros()
     if(GetCompilerFamily() == COMPILER_FAMILY_CLANG || GetCompilerFamily() == COMPILER_FAMILY_GCC ||
        GetCompilerFamily() == COMPILER_FAMILY_CYGWIN || GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
         wxString command;
-        command << "echo | " << GetTool("CXX") << " -dM -E - > ";
+        wxString tool = GetTool("CXX");
+        tool.Trim().Trim(false);
+        command << "echo | \"" << tool << "\" -dM -E - > ";
         wxString tmpFile = wxFileName::CreateTempFileName("def-macros");
         ::WrapWithQuotes(tmpFile);
         command << tmpFile;
-
+        ::WrapInShell(command);
+        //CL_SYSTEM(command);
+        
         ProcUtils::SafeExecuteCommand(command);
         wxFileName cmpMacrosFile(tmpFile);
         if(cmpMacrosFile.Exists()) {
@@ -740,6 +744,12 @@ const wxArrayString& Compiler::GetBuiltinMacros()
 
             for(size_t i = 0; i < definitions.GetCount(); ++i) {
                 CL_DEBUG("BUILTIN: %s\n", definitions.Item(i));
+            }
+            
+            {
+                // Delete the file
+                wxLogNull n;
+                ::wxRemoveFile(cmpMacrosFile.GetFullPath());
             }
         }
     }

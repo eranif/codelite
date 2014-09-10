@@ -2243,7 +2243,7 @@ void LEditor::ToggleAllFoldsInSelection()
 // If the cursor is on/in/below an open fold, collapse all. Otherwise expand all
 void LEditor::FoldAll()
 {
-    // Colourise(0,-1);  SciTE did this here, but it doesn't seem to accomplish anything
+    // >(0,-1);  SciTE did this here, but it doesn't seem to accomplish anything
 
     // First find the current fold-point, and ask it whether or not it's folded
     int lineSeek = GetCurrentLine();
@@ -3626,6 +3626,7 @@ void LEditor::UpdateColours()
             SetKeyWords(4, GetPreProcessorsWords());
         }
     }
+    Colourise(0, wxSTC_INVALID_POSITION);
 }
 
 int LEditor::SafeGetChar(int pos)

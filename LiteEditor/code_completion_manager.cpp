@@ -235,10 +235,30 @@ void CodeCompletionManager::DoUpdateOptions()
     }
 }
 
+struct EditorDimmerDisabler
+{
+    LEditor* m_editor;
+    EditorDimmerDisabler(LEditor* editor)
+        : m_editor(editor)
+    {
+        if(m_editor) {
+            m_editor->SetPreProcessorsWords("");
+            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
+            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
+            m_editor->GetSTC()->SetKeyWords(4, "");
+            m_editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
+        }
+    }
+};
+
 void CodeCompletionManager::ProcessMacros(LEditor* editor)
 {
     // Sanity
     CHECK_PTR_RET(editor);
+    
+    /// disable the editor pre-processor dimming
+    EditorDimmerDisabler eds(editor);
+    
     if(editor->GetProjectName().IsEmpty()) return;
     if(!WorkspaceST::Get()->IsOpen()) return;
 
@@ -255,7 +275,7 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 
     CompilerPtr compiler = buildConf->GetCompiler();
     CHECK_PTR_RET(compiler);
-    
+
     wxArrayString macros;
     wxArrayString includePaths;
     if(buildConf->IsCustomBuild()) {
@@ -266,11 +286,11 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
             // we have compilation database for this workspace
             wxString compileLine, cwd;
             compileDb.CompilationLine(editor->GetFileName().GetFullPath(), compileLine, cwd);
-            
+
             CL_DEBUG("Pre Processor dimming: %s\n", compileLine);
             CompilerCommandLineParser cclp(compileLine, cwd);
             includePaths = cclp.GetIncludes();
-            
+
             // get the mcros
             macros = cclp.GetMacros();
         } else {
@@ -282,16 +302,16 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
         includePaths = proj->GetIncludePaths();
 
         // get the compiler include paths
-        //wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
+        // wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
 
         // includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
         wxArrayString macros = proj->GetPreProcessors();
     }
-    
+
     // Append the compiler builtin macros
     wxArrayString builtinMacros = compiler->GetBuiltinMacros();
     macros.insert(macros.end(), builtinMacros.begin(), builtinMacros.end());
-    
+
     // Queue this request in the worker thread
     m_preProcessorThread.QueueFile(editor->GetFileName().GetFullPath(), macros, includePaths);
 }

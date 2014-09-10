@@ -36,17 +36,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 class TagsOptionsDlg : public TagsOptionsBaseDlg
 {
-    TagsOptionsData     m_data;
-    size_t              m_colour_flags;
-    
+    TagsOptionsData m_data;
+
     void SetFlag(CodeCompletionOpts flag, bool set);
     void SetColouringFlag(CodeCompletionColourOpts flag, bool set);
     void CopyData();
+
 protected:
+    virtual void OnColouringPropertyValueChanged(wxPropertyGridEvent& event);
     virtual void OnSuggestCtags(wxCommandEvent& event);
     wxArrayString GetCTagsSearchPaths() const;
     void DoSuggest(wxTextCtrl* textCtrl);
-    
+
 protected:
     virtual void OnAddExcludePath(wxCommandEvent& event);
     virtual void OnAddSearchPath(wxCommandEvent& event);
@@ -54,19 +55,19 @@ protected:
     virtual void OnClangCCEnabledUI(wxUpdateUIEvent& event);
     virtual void OnClearClangCache(wxCommandEvent& event);
     virtual void OnClearClangCacheUI(wxUpdateUIEvent& event);
-    virtual void OnColourWorkspaceUI(wxUpdateUIEvent& event);
     virtual void OnFileSelectedUI(wxUpdateUIEvent& event);
     virtual void OnParse(wxCommandEvent& event);
     virtual void OnSuggestSearchPaths(wxCommandEvent& event);
-    virtual void OnButtonOK(wxCommandEvent &event);
+    virtual void OnButtonOK(wxCommandEvent& event);
 
 public:
     void Parse();
 
 public:
-    TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data);
+    TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data);
     virtual ~TagsOptionsDlg();
-    TagsOptionsData &GetData() {
+    TagsOptionsData& GetData()
+    {
         return m_data;
     }
 };

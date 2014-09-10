@@ -20,7 +20,7 @@ extern "C" int yywrap(void*) { return 1; }
 #include "CxxLexerAPI.h"
 #include "CxxScannerTokens.h"
 
-#define YY_FATAL_ERROR
+#define YY_FATAL_ERROR(x)
 #define YYSTYPE char*
 #define ECHO
 #define P(s) fprintf(stderr, "%s\n", s)

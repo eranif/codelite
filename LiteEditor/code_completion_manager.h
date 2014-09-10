@@ -68,7 +68,6 @@ protected:
     void OnFileSaved(clCommandEvent &event);
     void OnFileLoaded(clCommandEvent &event);
     void OnWorkspaceConfig(wxCommandEvent &event);
-    void OnSettingsModified(wxCommandEvent &event);
     
 public:
     CodeCompletionManager();

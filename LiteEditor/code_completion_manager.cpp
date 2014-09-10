@@ -37,6 +37,8 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "cl_editor.h"
+#include "compilation_database.h"
+#include "compiler_command_line_parser.h"
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
@@ -58,8 +60,6 @@ CodeCompletionManager::CodeCompletionManager()
         wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnSettingsModified), NULL, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
     m_preProcessorThread.Start();
 }
@@ -79,8 +79,6 @@ CodeCompletionManager::~CodeCompletionManager()
         wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnSettingsModified), NULL, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 }
 
@@ -257,19 +255,43 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 
     CompilerPtr compiler = buildConf->GetCompiler();
     CHECK_PTR_RET(compiler);
+    
+    wxArrayString macros;
+    wxArrayString includePaths;
+    if(buildConf->IsCustomBuild()) {
+        // Custom builds are handled differently
+        CompilationDatabase compileDb;
+        compileDb.Open();
+        if(compileDb.IsOpened()) {
+            // we have compilation database for this workspace
+            wxString compileLine, cwd;
+            compileDb.CompilationLine(editor->GetFileName().GetFullPath(), compileLine, cwd);
+            
+            CL_DEBUG("Pre Processor dimming: %s\n", compileLine);
+            CompilerCommandLineParser cclp(compileLine, cwd);
+            includePaths = cclp.GetIncludes();
+            
+            // get the mcros
+            macros = cclp.GetMacros();
+        } else {
+            // we will probably will fail...
+            return;
+        }
+    } else {
+        // get the include paths based on the project settings (this is per build configuration)
+        includePaths = proj->GetIncludePaths();
 
-    // get the include paths based on the project settings (this is per build configuration)
-    wxArrayString includePaths = proj->GetIncludePaths();
+        // get the compiler include paths
+        //wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
 
-    // get the compiler include paths
-    //wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
-
-    // includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
-    wxArrayString macros = proj->GetPreProcessors();
+        // includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
+        wxArrayString macros = proj->GetPreProcessors();
+    }
+    
     // Append the compiler builtin macros
     wxArrayString builtinMacros = compiler->GetBuiltinMacros();
     macros.insert(macros.end(), builtinMacros.begin(), builtinMacros.end());
-
+    
     // Queue this request in the worker thread
     m_preProcessorThread.QueueFile(editor->GetFileName().GetFullPath(), macros, includePaths);
 }
@@ -465,9 +487,4 @@ void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
 {
     event.Skip();
     RefreshPreProcessorColouring();
-}
-
-void CodeCompletionManager::OnSettingsModified(wxCommandEvent& event)
-{
-    event.Skip();
 }

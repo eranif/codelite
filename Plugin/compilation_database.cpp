@@ -39,8 +39,10 @@
 
 const wxString DB_VERSION = "2.0";
 
-struct wxFileNameSorter {
-    bool operator()(const wxFileName& one, const wxFileName& two) const {
+struct wxFileNameSorter
+{
+    bool operator()(const wxFileName& one, const wxFileName& two) const
+    {
         return one.GetModificationTime().GetTicks() > two.GetModificationTime().GetTicks();
     }
 };
@@ -50,7 +52,7 @@ CompilationDatabase::CompilationDatabase()
 {
 }
 
-CompilationDatabase::CompilationDatabase(const wxString &filename)
+CompilationDatabase::CompilationDatabase(const wxString& filename)
     : m_db(NULL)
     , m_filename(filename)
 {
@@ -61,10 +63,10 @@ CompilationDatabase::~CompilationDatabase()
     Close();
 }
 
-void CompilationDatabase::Open(const wxFileName& fn)
+void CompilationDatabase::Open()
 {
     // Close the old database
-    if ( m_db ) {
+    if(m_db) {
         Close();
     }
 
@@ -76,18 +78,17 @@ void CompilationDatabase::Open(const wxFileName& fn)
         m_db->Open(dbfile.GetFullPath());
         CreateDatabase();
 
-    } catch (wxSQLite3Exception &e) {
+    } catch(wxSQLite3Exception& e) {
 
         delete m_db;
         m_db = NULL;
-
     }
 }
 
 wxFileName CompilationDatabase::GetFileName() const
 {
     wxFileName dbfile;
-    if ( !m_filename.IsOk() ) {
+    if(!m_filename.IsOk()) {
         dbfile = wxFileName(WorkspaceST::Get()->GetPrivateFolder(), "compilation.db");
 
     } else {
@@ -96,15 +97,14 @@ wxFileName CompilationDatabase::GetFileName() const
     return dbfile;
 }
 
-void CompilationDatabase::CompilationLine(const wxString& filename, wxString &compliationLine, wxString &cwd)
+void CompilationDatabase::CompilationLine(const wxString& filename, wxString& compliationLine, wxString& cwd)
 {
-    if ( !IsOpened() )
-        return;
+    if(!IsOpened()) return;
 
     try {
 
-        wxFileName file ( filename );
-        if( FileExtManager::GetType(file.GetFullName()) == FileExtManager::TypeHeader ) {
+        wxFileName file(filename);
+        if(FileExtManager::GetType(file.GetFullName()) == FileExtManager::TypeHeader) {
             // This file is a header file, try locating the C++ file for it
             file.SetExt(wxT("cpp"));
         }
@@ -115,9 +115,9 @@ void CompilationDatabase::CompilationLine(const wxString& filename, wxString &co
         st.Bind(1, file.GetFullPath());
         wxSQLite3ResultSet rs = st.ExecuteQuery();
 
-        if ( rs.NextRow() ) {
+        if(rs.NextRow()) {
             compliationLine = rs.GetString(0);
-            cwd             = rs.GetString(1);
+            cwd = rs.GetString(1);
             return;
 
         } else {
@@ -126,27 +126,27 @@ void CompilationDatabase::CompilationLine(const wxString& filename, wxString &co
             wxSQLite3Statement st2 = m_db->PrepareStatement(sql);
             st2.Bind(1, file.GetPath());
             wxSQLite3ResultSet rs2 = st2.ExecuteQuery();
-            if ( rs2.NextRow() ) {
+            if(rs2.NextRow()) {
                 compliationLine = rs2.GetString(0);
-                cwd             = rs2.GetString(1);
+                cwd = rs2.GetString(1);
                 return;
             }
         }
 
-    } catch (wxSQLite3Exception &e) {
+    } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
 
 void CompilationDatabase::Close()
 {
-    if ( m_db ) {
+    if(m_db) {
 
         try {
             m_db->Close();
             delete m_db;
 
-        } catch (wxSQLite3Exception &e) {
+        } catch(wxSQLite3Exception& e) {
             wxUnusedVar(e);
         }
     }
@@ -156,60 +156,58 @@ void CompilationDatabase::Close()
 void CompilationDatabase::Initialize()
 {
     Open();
-    if ( !IsOpened() )
-        return;
-    
+    if(!IsOpened()) return;
+
     // get list of files created by cmake
-    FileNameVector_t files  = GetCompileCommandsFiles();
-    
+    FileNameVector_t files = GetCompileCommandsFiles();
+
     // pick codelite's compilation database created by codelite-cc
     // - convert it to compile_commands.json
     // - append it the list of files
     wxFileName clCustomCompileFile = GetFileName();
     clCustomCompileFile.SetExt("db.txt");
-    wxFileName compile_commands = ConvertCodeLiteCompilationDatabaseToCMake( clCustomCompileFile );
-    if ( compile_commands.IsOk() ) {
-        files.push_back( compile_commands );
+    wxFileName compile_commands = ConvertCodeLiteCompilationDatabaseToCMake(clCustomCompileFile);
+    if(compile_commands.IsOk()) {
+        files.push_back(compile_commands);
     }
 
     // Sort the files by modification time
     std::sort(files.begin(), files.end(), wxFileNameSorter());
 
-    for(size_t i=0; i<files.size(); ++i) {
-        ProcessCMakeCompilationDatabase( files.at(i) );
+    for(size_t i = 0; i < files.size(); ++i) {
+        ProcessCMakeCompilationDatabase(files.at(i));
     }
 }
 
 void CompilationDatabase::CreateDatabase()
 {
-    if ( !IsOpened() )
-        return;
+    if(!IsOpened()) return;
 
     try {
-
-        if ( GetDbVersion() != DB_VERSION )
-            DropTables();
-
+        if(GetDbVersion() != DB_VERSION) DropTables();
+        
         // Create the schema
-        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, FILE_PATH TEXT, CWD TEXT, COMPILE_FLAGS TEXT)");
+        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, FILE_PATH TEXT, CWD TEXT, "
+                            "COMPILE_FLAGS TEXT)");
         m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS SCHEMA_VERSION (PROPERTY TEXT, VERSION TEXT)");
         m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX1 ON COMPILATION_TABLE(FILE_NAME)");
         m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS SCHEMA_VERSION_IDX1 ON SCHEMA_VERSION(PROPERTY)");
         m_db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX2 ON COMPILATION_TABLE(FILE_PATH)");
+        m_db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX3 ON COMPILATION_TABLE(CWD)");
 
         wxString versionSql;
-        versionSql << "INSERT OR IGNORE INTO SCHEMA_VERSION (PROPERTY, VERSION) VALUES ('Db Version', '" << DB_VERSION << "')";
+        versionSql << "INSERT OR IGNORE INTO SCHEMA_VERSION (PROPERTY, VERSION) VALUES ('Db Version', '" << DB_VERSION
+                   << "')";
         m_db->ExecuteUpdate(versionSql);
 
-    } catch (wxSQLite3Exception &e) {
+    } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
 
 void CompilationDatabase::DropTables()
 {
-    if ( !IsOpened() )
-        return;
+    if(!IsOpened()) return;
 
     try {
 
@@ -217,15 +215,14 @@ void CompilationDatabase::DropTables()
         m_db->ExecuteUpdate("DROP TABLE COMPILATION_TABLE");
         m_db->ExecuteUpdate("DROP TABLE SCHEMA_VERSION");
 
-    } catch (wxSQLite3Exception &e) {
+    } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
 
 wxString CompilationDatabase::GetDbVersion()
 {
-    if ( !IsOpened() )
-        return wxT("");
+    if(!IsOpened()) return wxT("");
 
     try {
 
@@ -235,13 +232,12 @@ wxString CompilationDatabase::GetDbVersion()
         wxSQLite3Statement st = m_db->PrepareStatement(sql);
         wxSQLite3ResultSet rs = st.ExecuteQuery();
 
-        if ( rs.NextRow() ) {
+        if(rs.NextRow()) {
             wxString schemaVersion = rs.GetString(0);
             return schemaVersion;
         }
 
-
-    } catch (wxSQLite3Exception &e) {
+    } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
     return wxT("");
@@ -257,12 +253,12 @@ bool CompilationDatabase::IsDbVersionUpToDate(const wxFileName& fn)
         wxSQLite3Statement st = db.PrepareStatement(sql);
         wxSQLite3ResultSet rs = st.ExecuteQuery();
 
-        if ( rs.NextRow() ) {
+        if(rs.NextRow()) {
             return rs.GetString(0) == DB_VERSION;
         }
         return false;
 
-    } catch (wxSQLite3Exception &e) {
+    } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
     return false;
@@ -271,14 +267,14 @@ bool CompilationDatabase::IsDbVersionUpToDate(const wxFileName& fn)
 bool CompilationDatabase::IsOk() const
 {
     wxFileName fnDb = GetFileName();
-    return fnDb.Exists() && IsDbVersionUpToDate( fnDb );
+    return fnDb.Exists() && IsDbVersionUpToDate(fnDb);
 }
 
 FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
 {
-    wxFileName databaseFile ( GetFileName() );
-    wxFileName fn( databaseFile );
-    
+    wxFileName databaseFile(GetFileName());
+    wxFileName fn(databaseFile);
+
     // Usually it will be under the top folder
     fn.RemoveLastDir();
 
@@ -286,33 +282,34 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
     // Prepare a list of files to check
     FileNameVector_t files;
     std::queue<wxString> dirs;
-    
+
     // we start with the current path
-    dirs.push( fn.GetPath() );
-    
-    while ( !dirs.empty() ) {
+    dirs.push(fn.GetPath());
+
+    while(!dirs.empty()) {
         wxString curdir = dirs.front();
         dirs.pop();
-        
-        wxFileName fn(curdir, "compile_commands.json" );
-        if ( fn.Exists() &&                                                                          // file exists
-            (fn.GetModificationTime().GetTicks() > databaseFile.GetModificationTime().GetTicks() ) ) // and its newer than the database file
+
+        wxFileName fn(curdir, "compile_commands.json");
+        if(fn.Exists() && // file exists
+           (fn.GetModificationTime().GetTicks() >
+            databaseFile.GetModificationTime().GetTicks())) // and its newer than the database file
         {
             CL_DEBUGS("CompilationDatabase: found file: " + fn.GetFullPath());
-            files.push_back( fn );
+            files.push_back(fn);
         }
 
         // Check to see if there are more directories to recurse
         wxDir dir;
-        if ( dir.Open( curdir ) ) {
+        if(dir.Open(curdir)) {
             wxString dirname;
-            bool cont = dir.GetFirst( &dirname, "", wxDIR_DIRS );
-            while ( cont ) {
+            bool cont = dir.GetFirst(&dirname, "", wxDIR_DIRS);
+            while(cont) {
                 wxString new_dir;
                 new_dir << curdir << wxFileName::GetPathSeparator() << dirname;
-                dirs.push( new_dir );
+                dirs.push(new_dir);
                 dirname.Clear();
-                cont = dir.GetNext( &dirname );
+                cont = dir.GetNext(&dirname);
             }
         }
     }
@@ -330,20 +327,21 @@ void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& comp
         sql = wxT("REPLACE INTO COMPILATION_TABLE (FILE_NAME, FILE_PATH, CWD, COMPILE_FLAGS) VALUES(?, ?, ?, ?)");
         wxSQLite3Statement st = m_db->PrepareStatement(sql);
         m_db->ExecuteUpdate("BEGIN");
-        
-        for( int i=0; i<arr.arraySize(); ++i ) {
+
+        for(int i = 0; i < arr.arraySize(); ++i) {
             // Each object has 3 properties:
             // directory, command, file
             JSONElement element = arr.arrayItem(i);
-            if ( element.hasNamedObject("file") && element.hasNamedObject("directory") && element.hasNamedObject("command") ) {
-                wxString cmd  = element.namedObject("command").toString();
+            if(element.hasNamedObject("file") && element.hasNamedObject("directory") &&
+               element.hasNamedObject("command")) {
+                wxString cmd = element.namedObject("command").toString();
                 wxString file = element.namedObject("file").toString();
                 wxString path = wxFileName(file).GetPath();
-                wxString cwd  = element.namedObject("directory").toString();
-                
-                cwd  = wxFileName(cwd, "").GetPath();
+                wxString cwd = element.namedObject("directory").toString();
+
+                cwd = wxFileName(cwd, "").GetPath();
                 file = wxFileName(file).GetFullPath();
-                
+
                 st.Bind(1, file);
                 st.Bind(2, path);
                 st.Bind(3, cwd);
@@ -351,10 +349,10 @@ void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& comp
                 st.ExecuteUpdate();
             }
         }
-        
+
         m_db->ExecuteUpdate("COMMIT");
-        
-    } catch (wxSQLite3Exception &e) {
+
+    } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
@@ -362,40 +360,38 @@ void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& comp
 wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const wxFileName& compile_file)
 {
     wxFFile fp(compile_file.GetFullPath(), wxT("rb"));
-    if( fp.IsOpened() ) {
+    if(fp.IsOpened()) {
         wxString content;
         fp.ReadAll(&content, wxConvUTF8);
 
-        if( content.IsEmpty() )
-            return wxFileName();
-        
+        if(content.IsEmpty()) return wxFileName();
+
         JSONRoot root(cJSON_Array);
         JSONElement arr = root.toElement();
         wxArrayString lines = ::wxStringTokenize(content, "\n\r", wxTOKEN_STRTOK);
-        for(size_t i=0; i<lines.GetCount(); ++i) {
+        for(size_t i = 0; i < lines.GetCount(); ++i) {
             wxArrayString parts = ::wxStringTokenize(lines.Item(i), wxT("|"), wxTOKEN_STRTOK);
-            if( parts.GetCount() != 3 )
-                continue;
+            if(parts.GetCount() != 3) continue;
 
             wxString file_name = wxFileName(parts.Item(0).Trim().Trim(false)).GetFullPath();
-            wxString cwd       = parts.Item(1).Trim().Trim(false);
+            wxString cwd = parts.Item(1).Trim().Trim(false);
             wxString cmp_flags = parts.Item(2).Trim().Trim(false);
 
             JSONElement element = JSONElement::createObject();
             element.addProperty("directory", cwd);
-            element.addProperty("command",   cmp_flags);
-            element.addProperty("file",      file_name);
-            arr.arrayAppend( element );
+            element.addProperty("command", cmp_flags);
+            element.addProperty("file", file_name);
+            arr.arrayAppend(element);
         }
-        
+
         wxFileName fn(compile_file.GetPath(), "compile_commands.json");
-        root.save( fn );
+        root.save(fn);
         // Delete the old file
         {
             wxLogNull nl;
             fp.Close();
-            if ( compile_file.Exists() ) {
-                ::wxRemoveFile( compile_file.GetFullPath() );
+            if(compile_file.Exists()) {
+                ::wxRemoveFile(compile_file.GetFullPath());
             }
         }
         return fn;

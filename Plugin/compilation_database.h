@@ -54,7 +54,7 @@ public:
     virtual ~CompilationDatabase();
     
     static bool IsDbVersionUpToDate(const wxFileName &fn);
-    void Open(const wxFileName& fn = wxFileName());
+    void Open();
     void Close();
     
     bool IsOpened() const {

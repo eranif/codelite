@@ -22,17 +22,15 @@ private:
      * @brief run the scanner until we reach the closing #endif
      * directive
      * Note that this function consumes the 'endif' directive
-     * @throw CxxLexerException if it could not find the closing #endif directive
      */
-    void ConsumeBlock() throw (CxxLexerException);
+    bool ConsumeBlock();
     /**
      * @brief run the scanner until it reaches the next pre processor branch
      * or until it finds the closing #endif directive
      * Note that this function also consumes the directive 'endif'
      * but will _not_ consume the elif/else directives
-     * @throw CxxLexerException if it could not find the closing next branch or the closing 'endif' directive
      */
-    void ConsumeCurrentBranch() throw (CxxLexerException);
+    bool ConsumeCurrentBranch();
     /**
      * @brief read the next token that matches 'type' 
      * If we reached the end of the 'PreProcessor' state and there is no match

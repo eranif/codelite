@@ -11,12 +11,18 @@ class WXDLLIMPEXP_CL CxxPreProcessor
 {
     CxxPreProcessorToken::Map_t m_tokens;
     wxArrayString m_includePaths;
-    std::set<wxString> m_filesVisited;
+    std::set<wxString> m_noSuchFiles;
+    std::map<wxString, wxString> m_fileMapping;
     size_t m_options;
+    
 public:
     CxxPreProcessor();
     virtual ~CxxPreProcessor();
-
+    
+    /**
+     * @brief return a command that generates a single file with all defines in it
+     */
+    wxString GetGxxCommand(const wxString& gxx, const wxString &filename) const;
     CxxPreProcessorToken::Map_t& GetTokens()
     {
         return m_tokens;
@@ -26,6 +32,8 @@ public:
     {
         return m_tokens;
     }
+    void SetTokens(const CxxPreProcessorToken::Map_t& tokens) { m_tokens = tokens; }
+    
     /**
      * @brief add search path to the PreProcessor
      */

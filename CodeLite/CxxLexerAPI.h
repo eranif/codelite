@@ -9,10 +9,25 @@
 
 #if 0
 #define DEBUGMSG wxPrintf
+#define CL_DEBUG wxPrintf
+#define CL_DEBUG1 wxPrintf
 #else
+
 #define DEBUGMSG(...) \
     do {              \
     } while(false)
+
+#if 0
+#define CL_DEBUG(...) \
+    do {              \
+    } while(false)
+
+#define CL_DEBUG1(...) \
+    do {              \
+    } while(false)
+        
+#endif
+
 #endif
 
 enum eLexerOptions {
@@ -36,11 +51,13 @@ struct WXDLLIMPEXP_CL CxxLexerToken
 {
     int lineNumber;
     int column;
-    wxString text;
+    char* text;
     int type;
+    wxString comment;
     CxxLexerToken()
         : lineNumber(0)
         , column(0)
+        , text(NULL)
         , type(0)
     {
     }

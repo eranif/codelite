@@ -987,7 +987,7 @@ extern "C" int yywrap(void*) { return 1; }
 #include "CxxLexerAPI.h"
 #include "CxxScannerTokens.h"
 
-#define YYSTYPE std::string
+#define YYSTYPE char*
 #define ECHO
 #define P(s) fprintf(stderr, "%s\n", s)
 
@@ -3366,11 +3366,11 @@ bool LexerNext(void* scanner, CxxLexerToken& token)
         case T_CXX_COMMENT:
             // One line up for CXX comments
             token.lineNumber = userData->GetCommentStartLine();
-            token.text = userData->GetComment();
+            token.comment = userData->GetComment();
             userData->ClearComment();
             break;
         case T_C_COMMENT:
-            token.text = userData->GetComment();
+            token.comment = userData->GetComment();
             userData->ClearComment();
             token.lineNumber = userData->GetCommentStartLine();
             break;
@@ -3382,7 +3382,7 @@ bool LexerNext(void* scanner, CxxLexerToken& token)
         }
 
     } else {
-        token.text.Clear();
+        token.text = NULL;
         token.lineNumber = 0;
         token.column = 0;
     }

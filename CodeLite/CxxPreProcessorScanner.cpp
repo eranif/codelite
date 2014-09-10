@@ -44,7 +44,7 @@ void CxxPreProcessorScanner::GetRestOfPPLine(wxString& rest, bool collectNumberO
     rest.Trim(false).Trim(true);
 }
 
-void CxxPreProcessorScanner::ConsumeBlock() throw(CxxLexerException)
+bool CxxPreProcessorScanner::ConsumeBlock()
 {
     CxxLexerToken token;
     int depth = 1;
@@ -54,7 +54,7 @@ void CxxPreProcessorScanner::ConsumeBlock() throw(CxxLexerException)
             depth--;
             if(depth == 0) {
                 DEBUGMSG("=> ConsumeBlock until line %d (after 'endif')\n", token.lineNumber);
-                return;
+                return true;
             }
             break;
         case T_PP_IF:
@@ -66,7 +66,8 @@ void CxxPreProcessorScanner::ConsumeBlock() throw(CxxLexerException)
             break;
         }
     }
-    throw CxxLexerException("Invalid EOF");
+    //throw CxxLexerException("Invalid EOF");
+    return false;
 }
 
 void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
@@ -107,7 +108,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
                 DEBUGMSG("=> ifdef condition is FALSE (line: %d)\n", token.lineNumber);
                 // skip until we find the next:
                 // else, elif, endif (but do not consume these tokens)
-                ConsumeCurrentBranch();
+                if(!ConsumeCurrentBranch()) return;
             }
             break;
         }
@@ -124,7 +125,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
                 DEBUGMSG("=> ifndef condition is FALSE (line: %d)\n", token.lineNumber);
                 // skip until we find the next:
                 // else, elif, endif (but do not consume these tokens)
-                ConsumeCurrentBranch();
+                if(!ConsumeCurrentBranch()) return;
             }
             break;
         }
@@ -137,7 +138,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
                     DEBUGMSG("=> if condition is FALSE (line: %d)\n", token.lineNumber);
                     // skip until we find the next:
                     // else, elif, endif (but do not consume these tokens)
-                    ConsumeCurrentBranch();
+                    if(!ConsumeCurrentBranch()) return;
 
                 } else {
                     DEBUGMSG("=> if condition is TRUE (line: %d)\n", token.lineNumber);
@@ -260,47 +261,46 @@ bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
             break;
 
         case T_PP_DEC_NUMBER: {
-            long v(0);
-            bool res = token.text.ToCLong(&v);
-            if(!res) {
-                SET_CUR_EXPR_VALUE_RET_FALSE(0);
-            } else {
-                SET_CUR_EXPR_VALUE_RET_FALSE(v);
-            }
+            // long v(0);
+            // wxString text = token.text;
+            // bool res = text.ToCLong(&v);
+            // if(!res) {
+            //     SET_CUR_EXPR_VALUE_RET_FALSE(0);
+            // } else {
+            //     SET_CUR_EXPR_VALUE_RET_FALSE(v);
+            // }
+            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.text));
             break;
         }
         case T_PP_OCTAL_NUMBER: {
-            long v(0);
-            bool res = token.text.ToCLong(&v, 8);
-            if(!res) {
-                SET_CUR_EXPR_VALUE_RET_FALSE(0);
-            } else {
-                SET_CUR_EXPR_VALUE_RET_FALSE(v);
-            }
+            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.text));
             break;
         }
         case T_PP_HEX_NUMBER: {
-            long v(0);
-            bool res = token.text.ToCLong(&v, 16);
-            if(!res) {
-                SET_CUR_EXPR_VALUE_RET_FALSE(0);
-            } else {
-                SET_CUR_EXPR_VALUE_RET_FALSE(v);
-            }
+            SET_CUR_EXPR_VALUE_RET_FALSE(atol(token.text));
+            // long v(0);
+            // bool res = token.text.ToCLong(&v, 16);
+            // if(!res) {
+            //     SET_CUR_EXPR_VALUE_RET_FALSE(0);
+            // } else {
+            //     SET_CUR_EXPR_VALUE_RET_FALSE(v);
+            // }
             break;
         }
         case T_PP_FLOAT_NUMBER: {
-            double v(0);
-            bool res = token.text.ToCDouble(&v);
-            if(!res) {
-                SET_CUR_EXPR_VALUE_RET_FALSE(0.0);
-            } else {
-                SET_CUR_EXPR_VALUE_RET_FALSE(v);
-            }
+            // double v(0);
+            // bool res = token.text.ToCDouble(&v);
+            // if(!res) {
+            //    SET_CUR_EXPR_VALUE_RET_FALSE(0.0);
+            // } else {
+            //    SET_CUR_EXPR_VALUE_RET_FALSE(v);
+            // }
+            SET_CUR_EXPR_VALUE_RET_FALSE(atof(token.text));
             break;
         }
         case T_PP_IDENTIFIER: {
-            CxxPreProcessorToken::Map_t::const_iterator iter = table.find(token.text);
+            wxString identifier = token.text;
+            CxxPreProcessorToken::Map_t::const_iterator iter = table.find(identifier);
             if(iter == table.end()) {
                 SET_CUR_EXPR_VALUE_RET_FALSE(0);
             } else {
@@ -360,7 +360,7 @@ bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)
  * @brief fast-forward until we hit one of the tokens in the stopTokens
  * Note that this function does not consume the 'stopToken'
  */
-void CxxPreProcessorScanner::ConsumeCurrentBranch() throw(CxxLexerException)
+bool CxxPreProcessorScanner::ConsumeCurrentBranch()
 {
     CxxLexerToken token;
     int depth = 1;
@@ -377,7 +377,7 @@ void CxxPreProcessorScanner::ConsumeCurrentBranch() throw(CxxLexerException)
         case T_PP_ENDIF:
             if(depth == 1) {
                 DEBUGMSG("=> ConsumeCurrentBranch until line %d (before token '%s')\n", token.lineNumber, token.text);
-                return;
+                return true;
             }
             depth--;
             break;
@@ -386,14 +386,14 @@ void CxxPreProcessorScanner::ConsumeCurrentBranch() throw(CxxLexerException)
             if(depth == 1) {
                 DEBUGMSG("=> ConsumeCurrentBranch until line %d (before token '%s')\n", token.lineNumber, token.text);
                 ::LexerUnget(m_scanner);
-                return;
+                return true;
             }
             break;
         default:
             break;
         }
     }
-    throw CxxLexerException("ConsumeCurrentBranch: Unexpected EOF found");
+    return false;
 }
 
 void CxxPreProcessorScanner::ReadUntilMatch(int type, CxxLexerToken& token) throw(CxxLexerException)

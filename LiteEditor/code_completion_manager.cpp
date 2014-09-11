@@ -300,12 +300,16 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
     } else {
         // get the include paths based on the project settings (this is per build configuration)
         includePaths = proj->GetIncludePaths();
-
+        CL_DEBUG("CxxPreProcessor will use the following include paths:");
+        CL_DEBUG_ARR(macros);
+        
         // get the compiler include paths
         // wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
 
         // includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
-        wxArrayString macros = proj->GetPreProcessors();
+        macros = proj->GetPreProcessors();
+        CL_DEBUG("CxxPreProcessor will use the following macros:");
+        CL_DEBUG_ARR(macros);
     }
 
     // Append the compiler builtin macros

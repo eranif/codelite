@@ -48,7 +48,7 @@ FileLogger::~FileLogger()
     }
 }
 
-void FileLogger::AddLogLine(const wxString &msg, int verbosity)
+void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
     if(m_verbosity >= verbosity && m_fp) {
         wxString formattedMsg;
@@ -59,10 +59,7 @@ void FileLogger::AddLogLine(const wxString &msg, int verbosity)
 
         wxString msStr = wxString::Format(wxT("%03d"), ms);
 
-        formattedMsg << wxT("[ ")
-                     << wxDateTime::Now().FormatISOTime()
-                     << wxT(":")
-                     << msStr;
+        formattedMsg << wxT("[ ") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
 
         switch(verbosity) {
         case System:
@@ -84,9 +81,7 @@ void FileLogger::AddLogLine(const wxString &msg, int verbosity)
         case Developer:
             formattedMsg << wxT(" DVL ] ");
             break;
-
         }
-
 
         formattedMsg << msg;
         formattedMsg.Trim().Trim(false);
@@ -111,7 +106,7 @@ void FileLogger::SetVerbosity(int level)
 
 int FileLogger::GetVerbosityAsNumber(const wxString& verbosity)
 {
-    if (verbosity == wxT("Debug")) {
+    if(verbosity == wxT("Debug")) {
         return FileLogger::Dbg;
 
     } else if(verbosity == wxT("Error")) {
@@ -153,16 +148,23 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
 
 void FileLogger::SetVerbosity(const wxString& verbosity)
 {
-    SetVerbosity( FileLogger::GetVerbosityAsNumber(verbosity) );
+    SetVerbosity(FileLogger::GetVerbosityAsNumber(verbosity));
 }
 
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
-    if ( !initialized ) {
+    if(!initialized) {
         wxString filename;
         filename << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
         theLogger.m_fp = wxFopen(filename, wxT("a+"));
         theLogger.m_verbosity = verbosity;
         initialized = true;
+    }
+}
+
+void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
+{
+    for(size_t i = 0; i < arr.GetCount(); ++i) {
+        AddLogLine(arr.Item(i), verbosity);
     }
 }

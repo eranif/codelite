@@ -107,7 +107,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     bool is_dark_theme = DrawingUtils::IsThemeDark();
     wxColour bgColour, penColour, textColour;
     if ( is_dark_theme ) {
-        bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+        //bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+        bgColour = DrawingUtils::GetAUIPaneBGColour();
         penColour = DrawingUtils::DarkColour(bgColour, 5.0);
         textColour = *wxWHITE;
         
@@ -128,13 +129,13 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
             }
             
         } else {
-            bgColour  = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), 2.0);
+            bgColour = DrawingUtils::GetAUIPaneBGColour();
             penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
             textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
         }
     }
     
-    memDc.SetPen( penColour );
+    memDc.SetPen( bgColour );
     memDc.SetBrush( bgColour );
     memDc.DrawRectangle( tmpRect );
     
@@ -143,12 +144,12 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     bottomRight = tmpRect.GetBottomRight();
     bottomRight.x += 1;
     memDc.SetPen( bgColour );
-    memDc.DrawLine(bottomLeft, bottomRight);
+    //memDc.DrawLine(bottomLeft, bottomRight);
     
     memDc.SetPen( penColour );
     bottomLeft.y--;
     bottomRight.y--;
-    memDc.DrawLine(bottomLeft, bottomRight);
+    //memDc.DrawLine(bottomLeft, bottomRight);
     
     int caption_offset = 0;
     if ( pane.icon.IsOk() ) {
@@ -187,6 +188,7 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
+    return;
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
     wxColour penColour;
     

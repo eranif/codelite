@@ -205,7 +205,7 @@ Manager::Manager(void)
             this);
 
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(Manager::OnProjectSettingsModified), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST,
                                   wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList),
                                   NULL,
@@ -217,7 +217,7 @@ Manager::Manager(void)
 Manager::~Manager(void)
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(Manager::OnProjectSettingsModified), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST,
                                      wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList),
                                      NULL,
@@ -709,8 +709,8 @@ void Manager::SetActiveProject(const wxString& name)
     WorkspaceST::Get()->SetActiveProject(name, true);
     clMainFrame::Get()->SelectBestEnvSet();
 
-    wxCommandEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
-    evt.SetString(name);
+    clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
+    evt.SetProjectName(name);
     EventNotifier::Get()->AddPendingEvent(evt);
 }
 
@@ -3770,8 +3770,9 @@ DisplayVariableDlg* Manager::GetDebuggerTip()
     return m_watchDlg;
 }
 
-void Manager::OnProjectSettingsModified(wxCommandEvent& event)
+void Manager::OnProjectSettingsModified(clProjectSettingsEvent& event)
 {
+    event.Skip();
     // Get the project settings
     clMainFrame::Get()->SelectBestEnvSet();
 }

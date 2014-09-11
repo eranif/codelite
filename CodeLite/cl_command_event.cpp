@@ -341,3 +341,28 @@ clExecuteEvent::clExecuteEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
 }
+
+//------------------------------------------------------------------------
+// clProjectSettingsEvent
+//------------------------------------------------------------------------
+clProjectSettingsEvent& clProjectSettingsEvent::operator=(const clProjectSettingsEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_configName = src.m_configName;
+    m_projectName = src.m_projectName;
+    return *this;
+}
+
+clProjectSettingsEvent::clProjectSettingsEvent(const clProjectSettingsEvent& event)
+{
+    *this = event;
+}
+
+clProjectSettingsEvent::clProjectSettingsEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clProjectSettingsEvent::~clProjectSettingsEvent()
+{
+}

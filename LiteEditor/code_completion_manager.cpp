@@ -42,6 +42,27 @@
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
+// Helper class
+struct EditorDimmerDisabler
+{
+    LEditor* m_editor;
+    EditorDimmerDisabler(LEditor* editor)
+        : m_editor(editor)
+    {
+        if(m_editor) {
+            m_editor->SetPreProcessorsWords("");
+            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
+            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+            m_editor->GetSTC()->SetKeyWords(4, "");
+            m_editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
+        }
+    }
+
+    ~EditorDimmerDisabler()
+    {
+    }
+};
+
 CodeCompletionManager::CodeCompletionManager()
     : m_options(CC_CTAGS_ENABLED)
     , m_wordCompletionRefreshNeeded(false)
@@ -60,6 +81,8 @@ CodeCompletionManager::CodeCompletionManager()
         wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
     m_preProcessorThread.Start();
 }
@@ -79,6 +102,8 @@ CodeCompletionManager::~CodeCompletionManager()
         wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 }
 
@@ -235,30 +260,14 @@ void CodeCompletionManager::DoUpdateOptions()
     }
 }
 
-struct EditorDimmerDisabler
-{
-    LEditor* m_editor;
-    EditorDimmerDisabler(LEditor* editor)
-        : m_editor(editor)
-    {
-        if(m_editor) {
-            m_editor->SetPreProcessorsWords("");
-            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
-            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
-            m_editor->GetSTC()->SetKeyWords(4, "");
-            m_editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
-        }
-    }
-};
-
 void CodeCompletionManager::ProcessMacros(LEditor* editor)
 {
     // Sanity
     CHECK_PTR_RET(editor);
-    
+
     /// disable the editor pre-processor dimming
     EditorDimmerDisabler eds(editor);
-    
+
     if(editor->GetProjectName().IsEmpty()) return;
     if(!WorkspaceST::Get()->IsOpen()) return;
 
@@ -302,7 +311,7 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
         includePaths = proj->GetIncludePaths();
         CL_DEBUG("CxxPreProcessor will use the following include paths:");
         CL_DEBUG_ARR(macros);
-        
+
         // get the compiler include paths
         // wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
 

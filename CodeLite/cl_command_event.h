@@ -631,4 +631,42 @@ public:
 typedef void (wxEvtHandler::*clExecuteEventFunction)(clExecuteEvent&);
 #define clExecuteEventHandler(func) wxEVENT_HANDLER_CAST(clExecuteEventFunction, func)
 
+//---------------------------------------------------------------
+// Execute event
+//---------------------------------------------------------------
+class WXDLLIMPEXP_CL clProjectSettingsEvent : public clCommandEvent
+{
+    wxString m_configName;
+    wxString m_projectName;
+
+public:
+    clProjectSettingsEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clProjectSettingsEvent(const clProjectSettingsEvent& event);
+    clProjectSettingsEvent& operator=(const clProjectSettingsEvent& src);
+    virtual ~clProjectSettingsEvent();
+    virtual wxEvent* Clone() const
+    {
+        return new clProjectSettingsEvent(*this);
+    }
+    void SetConfigName(const wxString& configName)
+    {
+        this->m_configName = configName;
+    }
+    void SetProjectName(const wxString& projectName)
+    {
+        this->m_projectName = projectName;
+    }
+    const wxString& GetConfigName() const
+    {
+        return m_configName;
+    }
+    const wxString& GetProjectName() const
+    {
+        return m_projectName;
+    }
+};
+
+typedef void (wxEvtHandler::*clProjectSettingsEventFunction)(clProjectSettingsEvent&);
+#define clProjectSettingsEventHandler(func) wxEVENT_HANDLER_CAST(clProjectSettingsEventFunction, func)
+
 #endif // CLCOMMANDEVENT_H

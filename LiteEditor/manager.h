@@ -333,7 +333,7 @@ public:
     /**
      * @brief user modified the project settings dialog
      */
-    void OnProjectSettingsModified(wxCommandEvent &event);
+    void OnProjectSettingsModified(clProjectSettingsEvent &event);
 
     //--------------------------- Workspace Files Mgmt -----------------------------
 public:

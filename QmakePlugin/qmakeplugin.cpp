@@ -91,7 +91,7 @@ QMakePlugin::QMakePlugin(IManager* manager)
 
     // Connect items
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand), NULL, this);
@@ -196,7 +196,7 @@ void QMakePlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 void QMakePlugin::UnPlug()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -247,15 +247,13 @@ void
     DoUnHookAllTabs(book);
 }
 
-void QMakePlugin::OnSaveConfig(wxCommandEvent& event)
+void QMakePlugin::OnSaveConfig(clProjectSettingsEvent& event)
 {
     event.Skip();
 
-    wxString* proj = (wxString*)event.GetClientData();
-
     wxString conf, project;
-    project = *proj;
-    conf = event.GetString();
+    project = event.GetProjectName();
+    conf = event.GetConfigName();
 
     QMakeTab* tab = DoGetQmakeTab(conf);
     if(!tab) {

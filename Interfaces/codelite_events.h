@@ -144,8 +144,7 @@
 
 // Sent by the project settings dialogs to indicate that
 // the project configurations are saved
-// clientData is the project name (wxString*)
-// event.GetString() returns the selected configuration
+// Event type: clProjectSettingsEvent
 #define wxEVT_CMD_PROJ_SETTINGS_SAVED 3478
 
 // A user requested to execute the active project
@@ -420,9 +419,9 @@
 #define wxEVT_REBUILD_WORKSPACE_TREE 3529
     
 // Sent when user has changed the active project
-// call event.GetString() to get the name of the project
+// Event type: clProjectSettingsEvent
 #define wxEVT_ACTIVE_PROJECT_CHANGED 3530
-    
+
 // This event is fired by codelite when the find-bar is requested to be shown
 // the default for the find bar is not to be shown if it has no window associated with it
 // The Window is passed using the event.GetClientData()

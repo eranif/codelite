@@ -61,7 +61,7 @@ public:
     virtual void UnPlug();
 
     // event handlers
-    void OnSaveConfig(wxCommandEvent& event);
+    void OnSaveConfig(clProjectSettingsEvent& event);
     void OnBuildStarting(clBuildEvent& event);
     void OnSettings(wxCommandEvent& event);
     void OnGetCleanCommand(clBuildEvent& event);

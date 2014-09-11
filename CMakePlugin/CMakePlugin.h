@@ -337,7 +337,7 @@ public:
      *
      * @param event
      */
-    void OnSaveConfig(wxCommandEvent& event);
+    void OnSaveConfig(clProjectSettingsEvent& event);
 
 
     /**

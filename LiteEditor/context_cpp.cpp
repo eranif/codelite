@@ -116,8 +116,7 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort
-{
+struct SFileSort {
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -2207,14 +2206,22 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
     if(!clMainFrame::Get()->GetMainBook()->SaveAll(true, false)) return;
 
     // Get list of projects to work on
-    SelectProjectsDlg projectSelectorDlg(EventNotifier::Get()->TopFrame());
-    if(projectSelectorDlg.ShowModal() != wxID_OK) {
-        return;
-    }
+    wxArrayString projectsCandidateList, projects;
+    WorkspaceST::Get()->GetProjectList(projectsCandidateList);
+    if(projectsCandidateList.IsEmpty()) return;
 
-    wxArrayString projects = projectSelectorDlg.GetProjects();
-    if(projects.IsEmpty()) {
-        return;
+    if(projectsCandidateList.GetCount() > 1) {
+        SelectProjectsDlg projectSelectorDlg(EventNotifier::Get()->TopFrame());
+        if(projectSelectorDlg.ShowModal() != wxID_OK) {
+            return;
+        }
+        projects = projectSelectorDlg.GetProjects();
+        if(projects.IsEmpty()) {
+            return;
+        }
+    } else {
+        // we have excatly one project. Skip the 'Project Selector' dialog
+        projects.swap(projectsCandidateList);
     }
 
     wxArrayString filesArr;

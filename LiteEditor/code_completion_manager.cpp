@@ -51,9 +51,8 @@ struct EditorDimmerDisabler
     {
         if(m_editor) {
             m_editor->SetPreProcessorsWords("");
-            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
-            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
-            //m_editor->GetSTC()->SetKeyWords(4, "");
+            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
+            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
             m_editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
         }
     }

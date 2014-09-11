@@ -293,10 +293,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // by default indicators are set to be opaque rounded box
     ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
-
-    // ctrl->IndicatorSetAlpha(1, 80);
-    // ctrl->IndicatorSetAlpha(2, 80);
-
+    
     bool tooltip(false);
 
     std::list<StyleProperty> styles;
@@ -415,10 +412,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 // test the background colour of the editor, if it is considered "dark"
                 // set the indicator to be hollow rectanlgle
                 StyleProperty sp = (*iter);
-                //if(DrawingUtils::IsDark(sp.GetBgColour())) {
-                    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
-                    ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
-                //}
+                // if(DrawingUtils::IsDark(sp.GetBgColour())) {
+                //    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
+                //    ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
+                // }
             } else if(sp.GetId() == wxSTC_STYLE_CALLTIP) {
                 tooltip = true;
                 if(sp.GetFaceName().IsEmpty()) {

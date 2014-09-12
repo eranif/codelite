@@ -1160,7 +1160,8 @@ DbgCmdCLIHandler* DbgGdb::GetCliHandler()
 bool DbgGdb::ListChildren( const wxString& name, int userReason )
 {
     wxString cmd;
-    cmd << wxT( "-var-list-children \"" ) << name << wxT( "\"" );
+    // use -var-list-children 2 ("--simple-values")
+    cmd << wxT( "-var-list-children 1 \"" ) << name << wxT( "\"" );
     return WriteCommand( cmd, new DbgCmdListChildren( m_observer, name, userReason ) );
 }
 

@@ -110,6 +110,7 @@ time                                                       {RETURN_VAL(GDB_TIME)
 reason                                                     {RETURN_VAL(GDB_REASON);}
 changelist                                                 {RETURN_VAL(GDB_CHANGELIST);}
 has_more                                                   {RETURN_VAL(GDB_HAS_MORE);}
+dynamic                                                    {RETURN_VAL(GDB_DYNAMIC);}
 new_children                                               {RETURN_VAL(GDB_NEW_CHILDREN);}
 thread-groups                                              {RETURN_VAL(GDB_THREAD_GROUPS);}
 new_num_children                                           {RETURN_VAL(GDB_NEW_NUM_CHILDREN);}

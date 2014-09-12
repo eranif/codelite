@@ -80,6 +80,8 @@ static std::vector<std::string>  sg_currentArrayString;
 %token GDB_FUNC_NAME GDB_OFFSET GDB_INSTRUCTION GDB_ADDRESS GDB_ASM_INSTS
 %token GDB_THREAD_GROUPS
 %token GDB_REGISTER_NAMES
+%token GDB_DYNAMIC
+
 %%
 
 parse: children_list
@@ -241,13 +243,14 @@ children     : GDB_CHILD '=' '{' child_attributes '}' {
              ;
 
 child_attributes : child_key '=' GDB_STRING {
-                       if ( $1 == "has_more" ) {
+                        if ( $1 == "has_more" || $1 == "dynamic" ) {
                            sg_children.has_more = ($3 == "\"1\"");
-
-                       } else if (!$3.empty()) {
+                           
+                        } 
+                        if (!$3.empty()) {
                            sg_attributes[$1] = $3;
-                       }
-                   }
+                        }
+                    }
                  | child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
                  | GDB_NEW_CHILDREN '=' '[' { gdbConsumeList(); }
                  | GDB_THREAD_GROUPS '=' '[' { gdbConsumeList(); } ',' child_attributes
@@ -278,6 +281,7 @@ child_key: GDB_NAME             {$$ = $1;}
          | GDB_INSTRUCTION      {$$ = $1;}
          | GDB_FUNC_NAME        {$$ = $1;}
          | GDB_OFFSET           {$$ = $1;}
+         | GDB_DYNAMIC          {$$ = $1;}
          ;
 %%
 

@@ -637,3 +637,21 @@ wxColour DrawingUtils::GetThemeLinkColour()
         return "YELLOW";
     }
 }
+
+bool DrawingUtils::DrawStippleBackground(const wxRect& rect, wxDC& dc)
+{
+        // dark theme
+#if defined(__WXMAC__)
+    wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
+    return false;
+#endif
+    
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    if(IsThemeDark()) {
+        dc.SetBrush( GetStippleBrush() );
+    } else {
+        dc.SetBrush( GetAUIPaneBGColour() );
+    }
+    dc.DrawRectangle(rect);
+    return true;
+}

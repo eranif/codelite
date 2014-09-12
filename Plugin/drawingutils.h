@@ -56,6 +56,12 @@ public:
     /// New theme related API
     /// -------------------------------------------------------------
     
+    /**
+     * @brief draw a standard codelite background colour
+     * @param rect
+     * @param dc
+     */
+    static bool DrawStippleBackground(const wxRect& rect, wxDC& dc);
     
     /**
      * @brief convert wxDC into wxGCDC

@@ -180,18 +180,11 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    // dark theme
-#if defined(__WXMAC__)
-    wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
-    return;
-#endif
-
-    // MSW
     wxUnusedVar(window);
     wxUnusedVar(orientation);
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush( DrawingUtils::GetStippleBrush() );
-    dc.DrawRectangle(rect);
+    // dark theme
+    if(!DrawingUtils::DrawStippleBackground(rect, dc))
+        wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)

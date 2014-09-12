@@ -32,19 +32,13 @@
 #include <wx/version.h>
 
 #if defined(__WXMSW__)||defined(__WXMAC__)||defined(__WXGTK__)
-#    if wxCHECK_VERSION(2, 8, 9)
-#        define clToolBar          wxAuiToolBar
-#        define clTB_DEFAULT_STYLE wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND
-#        define USE_AUI_TOOLBAR    1
-#    else
-#        define clToolBar          wxToolBar
-#        define clTB_DEFAULT_STYLE wxTB_FLAT | wxTB_NODIVIDER
-#        define USE_AUI_TOOLBAR    0
-#    endif
+#   define clToolBar          wxAuiToolBar
+#   define clTB_DEFAULT_STYLE wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND
+#   define USE_AUI_TOOLBAR    1
 #else // !Mac !Win !Linux
-#    define clToolBar          wxToolBar
-#    define clTB_DEFAULT_STYLE wxTB_FLAT | wxTB_NODIVIDER
-#    define USE_AUI_TOOLBAR    0
+#   define clToolBar          wxToolBar
+#   define clTB_DEFAULT_STYLE wxTB_FLAT | wxTB_NODIVIDER
+#   define USE_AUI_TOOLBAR    0
 #endif
 
 // Defaults

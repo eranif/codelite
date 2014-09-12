@@ -168,7 +168,7 @@ void OutputTabWindow::CreateGUIControls()
 #ifdef __WXGTK__
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
 #else
-    m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
+    m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
 #endif
 
     // We dont really want to collect undo in the output tabs...

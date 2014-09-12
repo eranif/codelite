@@ -48,6 +48,9 @@ public:
         return new CLMainAuiTBArt();
     }
     virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
+    virtual void DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
+    virtual void DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
+    virtual void DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
 };
 #endif
 

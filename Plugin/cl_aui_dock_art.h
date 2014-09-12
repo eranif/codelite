@@ -38,8 +38,6 @@
 class WXDLLIMPEXP_SDK clAuiDockArt : public wxAuiDefaultDockArt
 {
     IManager *m_manager;
-    wxBitmap m_bmpClose;
-    wxBitmap m_bmpCloseInactive;
 
 public:
     clAuiDockArt(IManager *manager);

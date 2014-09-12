@@ -28,6 +28,7 @@
 
 #include <wx/app.h>
 #include "cl_aui_notebook_art.h"
+#include "cl_aui_dock_art.h"
 #include "drawingutils.h"
 #include <wx/xrc/xmlres.h>
 #include "editor_config.h"
@@ -80,7 +81,10 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
     , m_notify (true)
 {
     Initialize();
-
+    
+    // Set our docking art provider for this notebook
+    m_mgr.SetArtProvider(new clAuiDockArt(NULL));
+    
     m_leftDownPos = wxPoint();
 
     // Connect events

@@ -45,6 +45,7 @@
 #include "tabgroupspane.h"
 #include "workspace_pane.h"
 #include "cl_config.h"
+#include "cl_aui_dock_art.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -77,7 +78,7 @@ void WorkspacePane::CreateGUIControls()
     // add notebook for tabs
     long bookStyle = wxVB_LEFT | wxAUI_NB_WINDOWLIST_BUTTON | wxBORDER_NONE;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
-
+    
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

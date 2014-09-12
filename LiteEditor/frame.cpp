@@ -940,10 +940,7 @@ void clMainFrame::Initialize(bool loadLastSession)
     m_theFrame->AddPendingEvent(evt);
 }
 
-clMainFrame* clMainFrame::Get()
-{
-    return m_theFrame;
-}
+clMainFrame* clMainFrame::Get() { return m_theFrame; }
 
 void clMainFrame::CreateGUIControls(void)
 {
@@ -2021,14 +2018,9 @@ void clMainFrame::LocateCompilersIfNeeded()
     }
 }
 
-void clMainFrame::UpdateBuildTools()
-{
-}
+void clMainFrame::UpdateBuildTools() {}
 
-void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
-{
-    Close();
-}
+void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
 
 void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 {
@@ -2764,7 +2756,14 @@ void clMainFrame::OnViewToolbar(wxCommandEvent& event)
 {
     std::map<int, wxString>::iterator iter = m_toolbars.find(event.GetId());
     if(iter != m_toolbars.end()) {
-        ViewPane(iter->second, event.IsChecked());
+        wxAuiPaneInfo& pane = m_mgr.GetPane(iter->second);
+        if(pane.IsOk() && pane.IsToolbar()) {
+            pane.Show(event.IsChecked());
+            m_mgr.Update();
+            
+            // Update the current perspective
+            ManagerST::Get()->GetPerspectiveManager().SavePerspective();
+        }
     }
 }
 
@@ -2791,63 +2790,35 @@ void clMainFrame::OnTogglePluginTBars(wxCommandEvent& event)
 
 void clMainFrame::ToggleToolBars(bool std)
 {
-    wxMenu* menu;
-    wxMenuItem* item = GetMenuBar()->FindItem(XRCID("show_std_toolbar"), &menu);
-    if(!item || !item->IsCheckable()) {
-        CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: menuitem not found"));
-        return;
-    }
+    wxStringSet_t toolbars;
+    {
+        wxAuiPaneInfoArray& allPanes = m_mgr.GetAllPanes();
+        for(size_t i = 0; i < allPanes.GetCount(); ++i) {
+            wxAuiPaneInfo& pane = allPanes.Item(i);
+            if(!pane.IsOk() || !pane.IsToolbar()) continue;
 
-    if(std) {
-        // The standard items are the first 4
-        // Use the first menuitem's state to decide whether to show or hide them all
-        bool checked = item->IsChecked();
-
-        if(!menu || (menu->GetMenuItemCount() < 4)) {
-            CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: menu not found, or has too few items"));
-            return;
-        }
-
-        for(size_t n = 0; n < 4; ++n) {
-            wxMenuItem* item = menu->FindItemByPosition(n);
-            if(!item || !item->IsCheckable()) {
-                CL_DEBUG1(
-                    wxT("In clMainFrame::ToggleToolBars: standard menuitem not found, or is no longer checkable :/"));
-                continue;
-            }
-
-            std::map<int, wxString>::iterator iter = m_toolbars.find(item->GetId());
-            if(iter != m_toolbars.end()) {
-                ViewPane(iter->second, !checked);
+            if(std) {
+                // collect core toolbars
+                if(m_coreToolbars.count(pane.name)) toolbars.insert(pane.name);
+            } else {
+                // collect plugins toolbars
+                if(m_coreToolbars.count(pane.name) == 0) toolbars.insert(pane.name);
             }
         }
-        return;
     }
 
-    // We don't know in advance the number of plugin toolbars, but we do know that they are at the end, following a
-    // separator
-    // So show/hide them backwards until we hit something uncheckable
-    size_t count = menu->GetMenuItemCount();
-    if(count < 8) {
-        CL_DEBUG1(wxT("In clMainFrame::ToggleToolBars: An implausibly small number of non-plugin menuitem found"));
-        return;
-    }
+    if(toolbars.empty()) return;
 
-    bool checked = true;
-    for(size_t n = count; n; --n) {
-        wxMenuItem* item = menu->FindItemByPosition(n - 1);
-        if(!item || !item->IsCheckable()) {
-            return;
-        }
-        // Arbitrarily use the last menuitem's state to decide whether to show or hide them all
-        if(n == count) {
-            checked = item->IsChecked();
-        }
-        std::map<int, wxString>::iterator iter = m_toolbars.find(item->GetId());
-        if(iter != m_toolbars.end()) {
-            ViewPane(iter->second, !checked);
-        }
+    // determine that state based on the first toolbar
+    bool currentStateVisible = m_mgr.GetPane((*toolbars.begin())).IsShown();
+
+    wxStringSet_t::iterator iter = toolbars.begin();
+    for(; iter != toolbars.end(); ++iter) {
+        wxString name = *iter;
+        wxAuiPaneInfo& pane = m_mgr.GetPane(name);
+        pane.Show(!currentStateVisible);
     }
+    m_mgr.Update();
 }
 
 void clMainFrame::OnViewPane(wxCommandEvent& event)
@@ -2883,11 +2854,9 @@ void clMainFrame::ViewPane(const wxString& paneName, bool checked)
         }
     }
 
-#if wxVERSION_NUMBER >= 2900
     // This is needed in >=wxGTK-2.9, otherwise output pane doesn't fully expand, or on closing the auinotebook doesn't
     // occupy its space
     SendSizeEvent(wxSEND_EVENT_POST);
-#endif
 }
 
 void clMainFrame::ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event)
@@ -3869,13 +3838,19 @@ void clMainFrame::OnShowWelcomePageUI(wxUpdateUIEvent& event)
     event.Enable(GetMainBook()->FindPage(_("Welcome!")) == NULL);
 }
 
-void clMainFrame::OnShowWelcomePage(wxCommandEvent& event)
-{
-    ShowWelcomePage();
-}
+void clMainFrame::OnShowWelcomePage(wxCommandEvent& event) { ShowWelcomePage(); }
 
 void clMainFrame::CompleteInitialization()
 {
+    // Populate the list of core toolbars before we start loading
+    // the plugins
+    wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
+    for(size_t i = 0; i < panes.GetCount(); ++i) {
+        if(panes.Item(i).IsToolbar()) {
+            m_coreToolbars.insert(panes.Item(i).name);
+        }
+    }
+
     // Load the plugins
     PluginManager::Get()->Load();
 
@@ -4001,20 +3976,11 @@ void clMainFrame::OnCloseAllButThis(wxCommandEvent& e)
     }
 }
 
-WorkspaceTab* clMainFrame::GetWorkspaceTab()
-{
-    return GetWorkspacePane()->GetWorkspaceTab();
-}
+WorkspaceTab* clMainFrame::GetWorkspaceTab() { return GetWorkspacePane()->GetWorkspaceTab(); }
 
-FileExplorer* clMainFrame::GetFileExplorer()
-{
-    return GetWorkspacePane()->GetFileExplorer();
-}
+FileExplorer* clMainFrame::GetFileExplorer() { return GetWorkspacePane()->GetFileExplorer(); }
 
-void clMainFrame::OnLoadWelcomePage(wxCommandEvent& event)
-{
-    SetFrameFlag(event.IsChecked(), CL_SHOW_WELCOME_PAGE);
-}
+void clMainFrame::OnLoadWelcomePage(wxCommandEvent& event) { SetFrameFlag(event.IsChecked(), CL_SHOW_WELCOME_PAGE); }
 
 void clMainFrame::OnLoadWelcomePageUI(wxUpdateUIEvent& event)
 {
@@ -4166,10 +4132,7 @@ void clMainFrame::OnConfigureAccelerators(wxCommandEvent& e)
     dlg.ShowModal();
 }
 
-void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-}
+void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e) { wxUnusedVar(e); }
 
 void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 {
@@ -5129,10 +5092,7 @@ void clMainFrame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
     e.Enable(ManagerST::Get()->IsWorkspaceOpen() && (projectList.IsEmpty() == false));
 }
 
-void clMainFrame::StartTimer()
-{
-    m_timer->Start(1000, true);
-}
+void clMainFrame::StartTimer() { m_timer->Start(1000, true); }
 
 void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 {
@@ -5648,10 +5608,7 @@ void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e)
-{
-    DoUpdatePerspectiveMenu();
-}
+void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e) { DoUpdatePerspectiveMenu(); }
 
 void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
 {
@@ -5923,10 +5880,7 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnThemeChanged(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void clMainFrame::OnThemeChanged(wxCommandEvent& e) { e.Skip(); }
 
 void clMainFrame::OnChangeActiveBookmarkType(wxCommandEvent& e)
 {
@@ -5942,15 +5896,9 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     SetFrameTitle(GetMainBook()->GetActiveEditor());
 }
 
-void clMainFrame::OnDetachEditor(wxCommandEvent& e)
-{
-    GetMainBook()->DetachActiveEditor();
-}
+void clMainFrame::OnDetachEditor(wxCommandEvent& e) { GetMainBook()->DetachActiveEditor(); }
 
-void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e)
-{
-    e.Enable(GetMainBook()->GetActiveEditor() != NULL);
-}
+void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
 
 void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {
@@ -5959,10 +5907,7 @@ void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
     clConfig::Get().Write("ShowStatusBar", event.IsChecked());
 }
 
-void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event)
-{
-    event.Check(GetStatusBar()->IsShown());
-}
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetStatusBar()->IsShown()); }
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {

@@ -27,6 +27,8 @@
 #include <wx/settings.h>
 #include "editor_config.h"
 #include "drawingutils.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 
 #if USE_AUI_TOOLBAR
 // these constants were copied from src/aui/auibar.cpp
@@ -41,15 +43,23 @@ static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp)
     wxBitmap greyBmp(img);
     if(DrawingUtils::IsThemeDark()) {
         return greyBmp.ConvertToDisabled(70);
-        
+
     } else {
         return greyBmp.ConvertToDisabled(150);
     }
 }
 
-CLMainAuiTBArt::CLMainAuiTBArt() {}
+CLMainAuiTBArt::CLMainAuiTBArt()
+{
+    EventNotifier::Get()->Connect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CLMainAuiTBArt::OnThemeChanged), NULL, this);
+}
 
-CLMainAuiTBArt::~CLMainAuiTBArt() {}
+CLMainAuiTBArt::~CLMainAuiTBArt()
+{
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CLMainAuiTBArt::OnThemeChanged), NULL, this);
+}
 
 void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
@@ -145,7 +155,7 @@ void CLMainAuiTBArt::DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiTool
     //     wxAuiDefaultToolBarArt::DrawDropDownButton(dc, wnd, item, rect);
     //     return;
     // }
-    
+
     // Dark theme
     int textWidth = 0, textHeight = 0, textX = 0, textY = 0;
     int bmpX = 0, bmpY = 0, dropBmpX = 0, dropBmpY = 0;
@@ -227,6 +237,17 @@ void CLMainAuiTBArt::DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiTool
     if((m_flags & wxAUI_TB_TEXT) && !item.GetLabel().empty()) {
         dc.DrawText(item.GetLabel(), textX, textY);
     }
+}
+
+void CLMainAuiTBArt::OnThemeChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    if(DrawingUtils::IsThemeDark()) {
+        m_gripperPen3 = *wxBLACK;
+    } else {
+        m_gripperPen3 = *wxWHITE;
+    }
+    m_baseColour = DrawingUtils::GetAUIPaneBGColour();
 }
 
 #endif

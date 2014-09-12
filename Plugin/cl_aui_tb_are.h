@@ -32,15 +32,15 @@
 #include "drawingutils.h"
 #include "cl_defs.h"
 #include "codelite_exports.h"
+#include <wx/event.h>
 
 #if USE_AUI_TOOLBAR
 
 #include <wx/aui/auibar.h>
 
-class WXDLLIMPEXP_SDK CLMainAuiTBArt : public wxAuiDefaultToolBarArt
+class WXDLLIMPEXP_SDK CLMainAuiTBArt : public wxAuiDefaultToolBarArt, public wxEvtHandler
 {
     bool m_mswWithThemeEnabled;
-
 public:
     CLMainAuiTBArt();
     virtual ~CLMainAuiTBArt();
@@ -51,6 +51,8 @@ public:
     virtual void DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     virtual void DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
     virtual void DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
+    
+    void OnThemeChanged(wxCommandEvent &event);
 };
 #endif
 

@@ -1,1 +1,1 @@
-enum ENUM_VAL k;
+long double aa;

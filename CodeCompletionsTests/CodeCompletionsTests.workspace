@@ -2,12 +2,12 @@
 <CodeLite_Workspace Name="CodeCompletionsTests" Database="./CodeCompletionsTests.tags">
   <Project Name="CCTest" Path="CCTest/CCTest.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="sqlite3" ConfigName="Debug"/>
       <Project Name="sqlite3" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="CCTest" ConfigName="Release"/>
       <Project Name="sqlite3" ConfigName="Release"/>
       <Project Name="sqlite3" ConfigName="Release"/>

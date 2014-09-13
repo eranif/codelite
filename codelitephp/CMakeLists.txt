@@ -78,10 +78,15 @@ if (UNIX AND NOT APPLE)
     set ( CMAKE_CXX_FLAGS "-fPIC" )
 endif()
 
+if ( APPLE )
+    add_definitions(-fPIC)
+endif()
+
 set( ADDITIONAL_LIBRARIES "" )
 if (UNIX)
     set(ADDITIONAL_LIBRARIES "-lutil")
 endif()
+
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" -L"${CL_LIBPATH}" -lPHPParser -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES})

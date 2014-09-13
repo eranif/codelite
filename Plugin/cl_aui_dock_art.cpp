@@ -211,12 +211,6 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    // dark theme
-#if defined(__WXMAC__)
-    wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
-    return;
-#endif
-    
     // MSW
     wxUnusedVar(window);
     wxUnusedVar(orientation);

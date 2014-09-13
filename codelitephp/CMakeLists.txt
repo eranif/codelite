@@ -73,10 +73,11 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS} )
 add_library(PHPParser STATIC ${LIBSRC})
 add_executable(PHPUnitTests ${UNIT_TESTS_SRC})
 
-if (UNIX)
-set ( CMAKE_C_FLAGS "-fPIC" )
-set ( CMAKE_CXX_FLAGS "-fPIC" )
+if (UNIX AND NOT APPLE)
+    set ( CMAKE_C_FLAGS "-fPIC" )
+    set ( CMAKE_CXX_FLAGS "-fPIC" )
 endif()
+
 set( ADDITIONAL_LIBRARIES "" )
 if (UNIX)
     set(ADDITIONAL_LIBRARIES "-lutil")
@@ -101,4 +102,3 @@ install(
 
 target_link_libraries(${PLUGIN_NAME} PHPParser)
 target_link_libraries(PHPUnitTests PHPParser)
-

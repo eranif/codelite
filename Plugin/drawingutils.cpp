@@ -640,12 +640,7 @@ wxColour DrawingUtils::GetThemeLinkColour()
 
 bool DrawingUtils::DrawStippleBackground(const wxRect& rect, wxDC& dc)
 {
-        // dark theme
-#if defined(__WXMAC__)
-    wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
-    return false;
-#endif
-    
+    // dark theme
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.SetBrush( GetStippleBrush() );
     dc.DrawRectangle(rect);

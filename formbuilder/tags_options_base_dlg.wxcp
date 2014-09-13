@@ -74,7 +74,7 @@
     }, {
      "type": "string",
      "m_label": "Title:",
-     "m_value": "Tags Options"
+     "m_value": "Code Completion"
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",

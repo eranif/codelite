@@ -620,34 +620,34 @@
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="restore_layout">
-				<label>Restore Default Layout</label>
+                <label>Restore Default Layout</label>
             </object>
-		</object>
-		<object class="wxMenu" name="settings_menu">
+        </object>
+        <object class="wxMenu" name="settings_menu">
             <label>Settin&amp;gs</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="wxID_PREFERENCES">
                 <label>Global &amp;Editor Preferences...</label>
             </object>
-			<object class="wxMenuItem" name="syntax_highlight">
+            <object class="wxMenuItem" name="syntax_highlight">
                 <label>Colours and &amp;Fonts...</label>
             </object>
-			<object class="wxMenuItem" name="configure_accelerators">
+            <object class="wxMenuItem" name="configure_accelerators">
                 <label>Keyboard &amp;shortcuts...</label>
             </object>
             <object class="wxMenuItem" name="add_envvar">
                 <label>En&amp;vironment Variables...</label>
             </object>
-			<object class="wxMenuItem" name="advance_settings">
+            <object class="wxMenuItem" name="advance_settings">
                 <label>&amp;Build Settings...</label>
             </object>
-			<object class="wxMenuItem" name="debuger_settings">
+            <object class="wxMenuItem" name="debuger_settings">
                 <label>&amp;GDB Settings...</label>
             </object>
-			<object class="wxMenuItem" name="tags_options">
-                <label>&amp;Tags Settings...</label>
+            <object class="wxMenuItem" name="tags_options">
+                <label>&amp;Code Completion...</label>
             </object>
-		</object>
+        </object>
 
         <!---
             Help menu

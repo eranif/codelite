@@ -64,8 +64,9 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxUnusedVar(wnd);
-    // dark theme
-    if(!DrawingUtils::DrawStippleBackground(rect, dc)) wxAuiDefaultToolBarArt::DrawPlainBackground(dc, wnd, rect);
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush( DrawingUtils::GetAUIPaneBGColour() );
+    dc.DrawRectangle(rect);
 }
 
 void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) { DrawPlainBackground(dc, wnd, rect); }

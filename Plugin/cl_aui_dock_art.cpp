@@ -188,16 +188,9 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 {
     wxUnusedVar(window);
     wxUnusedVar(orientation);
-    // dark theme
-    if(DrawingUtils::IsThemeDark()) {
-        DrawingUtils::DrawStippleBackground(rect, dc);
-    } else {
-        //wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-        //dc.SetPen(bg);
-        //dc.SetBrush(bg);
-        //dc.DrawRectangle(rect);
-        wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
-    }
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush( DrawingUtils::GetAUIPaneBGColour() );
+    dc.DrawRectangle(rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)

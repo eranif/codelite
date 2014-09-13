@@ -647,11 +647,7 @@ bool DrawingUtils::DrawStippleBackground(const wxRect& rect, wxDC& dc)
 #endif
     
     dc.SetPen(*wxTRANSPARENT_PEN);
-    if(IsThemeDark()) {
-        dc.SetBrush( GetStippleBrush() );
-    } else {
-        dc.SetBrush( GetAUIPaneBGColour() );
-    }
+    dc.SetBrush( GetStippleBrush() );
     dc.DrawRectangle(rect);
     return true;
 }

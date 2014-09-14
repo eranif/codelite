@@ -6,7 +6,7 @@
 #include <wx/filename.h>
 
 class WXDLLIMPEXP_CL CxxPreProcessor;
-class WXDLLIMPEXP_CL CxxPreProcessorScannerBase
+class WXDLLIMPEXP_CL CxxPreProcessorIncludeStatementCollector
 {
 protected:
     Scanner_t m_scanner;
@@ -14,8 +14,8 @@ protected:
     size_t m_options;
 
 public:
-    CxxPreProcessorScannerBase(const wxFileName& filename, size_t options);
-    virtual ~CxxPreProcessorScannerBase();
+    CxxPreProcessorIncludeStatementCollector(const wxFileName& filename, size_t options);
+    virtual ~CxxPreProcessorIncludeStatementCollector();
     
     /**
      * @brief run the main lexing function

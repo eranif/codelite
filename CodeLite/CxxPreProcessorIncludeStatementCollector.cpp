@@ -1,9 +1,9 @@
-#include "CxxPreProcessorScannerBase.h"
+#include "CxxPreProcessorIncludeStatementCollector.h"
 #include "CxxScannerTokens.h"
 #include "CxxPreProcessor.h"
 #include "file_logger.h"
 
-CxxPreProcessorScannerBase::CxxPreProcessorScannerBase(const wxFileName& filename, size_t options)
+CxxPreProcessorIncludeStatementCollector::CxxPreProcessorIncludeStatementCollector(const wxFileName& filename, size_t options)
     : m_scanner(NULL)
     , m_filename(filename)
     , m_options(options)
@@ -11,14 +11,14 @@ CxxPreProcessorScannerBase::CxxPreProcessorScannerBase(const wxFileName& filenam
     m_scanner = ::LexerNew(m_filename.GetFullPath(), m_options);
 }
 
-CxxPreProcessorScannerBase::~CxxPreProcessorScannerBase()
+CxxPreProcessorIncludeStatementCollector::~CxxPreProcessorIncludeStatementCollector()
 {
     if(m_scanner) {
         ::LexerDestroy(&m_scanner);
     }
 }
 
-void CxxPreProcessorScannerBase::Parse(CxxPreProcessor* pp)
+void CxxPreProcessorIncludeStatementCollector::Parse(CxxPreProcessor* pp)
 {
     CxxLexerToken token;
     while(::LexerNext(m_scanner, token)) {
@@ -28,7 +28,7 @@ void CxxPreProcessorScannerBase::Parse(CxxPreProcessor* pp)
             // we found an include statement, recurse into it
             wxFileName include;
             if(pp->ExpandInclude(m_filename, token.text, include)) {
-                CxxPreProcessorScannerBase* scanner = new CxxPreProcessorScannerBase(include, pp->GetOptions());
+                CxxPreProcessorIncludeStatementCollector* scanner = new CxxPreProcessorIncludeStatementCollector(include, pp->GetOptions());
                 scanner->Parse(pp);
                 // make sure we always delete the scanner
                 wxDELETE(scanner);

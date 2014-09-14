@@ -6,8 +6,8 @@
 #include <list>
 #include <wx/sharedptr.h>
 #include "codelite_exports.h"
-#include "CxxPreProcessorScannerBase.h"
 
+class CxxPreProcessor;
 class WXDLLIMPEXP_CL CxxPreProcessorScanner
 {
 protected:

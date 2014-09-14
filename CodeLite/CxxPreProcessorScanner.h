@@ -6,10 +6,11 @@
 #include <list>
 #include <wx/sharedptr.h>
 #include "codelite_exports.h"
+#include "CxxPreProcessorScannerBase.h"
 
-class WXDLLIMPEXP_CL CxxPreProcessor;
 class WXDLLIMPEXP_CL CxxPreProcessorScanner
 {
+protected:
     Scanner_t m_scanner;
     wxFileName m_filename;
     size_t m_options;

@@ -5,12 +5,6 @@
 #include "CxxPreProcessor.h"
 #include "file_logger.h"
 
-/**
- * @brief 
- * @param filename
- * @param options
- * @return 
- */
 CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename, size_t options)
     : m_scanner(NULL)
     , m_filename(filename)
@@ -66,7 +60,7 @@ bool CxxPreProcessorScanner::ConsumeBlock()
             break;
         }
     }
-    //throw CxxLexerException("Invalid EOF");
+    // throw CxxLexerException("Invalid EOF");
     return false;
 }
 
@@ -80,12 +74,12 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp) throw(CxxLexerException)
         switch(token.type) {
         case T_PP_INCLUDE_FILENAME: {
             // we found an include statement, recurse into it
-            CxxPreProcessorScanner* scanner = pp->CreateScanner(m_filename, token.text);
-            if(scanner) {
+            wxFileName include;
+            if(pp->ExpandInclude(m_filename, token.text, include)) {
+                CxxPreProcessorScanner* scanner = new CxxPreProcessorScanner(include, pp->GetOptions());
                 try {
                     scanner->Parse(pp);
-                    
-                } catch (CxxLexerException& e) {
+                } catch(CxxLexerException& e) {
                     // catch the exception
                     CL_DEBUG("Exception caught: %s\n", e.message);
                 }
@@ -221,17 +215,13 @@ bool CxxPreProcessorScanner::CheckIfDefined(const CxxPreProcessorToken::Map_t& t
     else                                \
         cur->SetValue((double)v);
 
-struct ExpressionLocker
-{
+struct ExpressionLocker {
     CxxPreProcessorExpression* m_expr;
     ExpressionLocker(CxxPreProcessorExpression* expr)
         : m_expr(expr)
     {
     }
-    ~ExpressionLocker()
-    {
-        wxDELETE(m_expr);
-    }
+    ~ExpressionLocker() { wxDELETE(m_expr); }
 };
 
 bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)

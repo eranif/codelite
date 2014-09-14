@@ -2,13 +2,9 @@
 #include <wx/regex.h>
 #include "file_logger.h"
 
-CxxPreProcessor::CxxPreProcessor()
-{
-}
+CxxPreProcessor::CxxPreProcessor() {}
 
-CxxPreProcessor::~CxxPreProcessor()
-{
-}
+CxxPreProcessor::~CxxPreProcessor() {}
 
 void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 {
@@ -35,12 +31,13 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
         }
     }
     m_tokens.swap(filteredMap);
-    
+
     // Make sure that the scanner is deleted
     wxDELETE(scanner);
 }
 
-CxxPreProcessorScanner* CxxPreProcessor::CreateScanner(const wxFileName& currentFile, const wxString& includeStatement)
+bool
+CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxString& includeStatement, wxFileName& outFile)
 {
     wxString includeName = includeStatement;
     includeName.Replace("\"", "");
@@ -50,20 +47,20 @@ CxxPreProcessorScanner* CxxPreProcessor::CreateScanner(const wxFileName& current
     // Try the current file's directory first
     wxArrayString paths = m_includePaths;
     paths.Insert(currentFile.GetPath(), 0);
-    
+
     if(m_noSuchFiles.count(includeStatement)) {
-        //wxPrintf("No such file hit\n");
-        return NULL;
+        // wxPrintf("No such file hit\n");
+        return false;
     }
-    
+
     std::map<wxString, wxString>::iterator iter = m_fileMapping.find(includeStatement);
     if(iter != m_fileMapping.end()) {
         // if this file has a mapped file, it means that we either
         // already scanned it or could not find a match for it
-        //wxPrintf("File already been scanned\n");
-        return NULL;
+        // wxPrintf("File already been scanned\n");
+        return false;
     }
-    
+
     for(size_t i = 0; i < paths.GetCount(); ++i) {
         wxString tmpfile;
         tmpfile << paths.Item(i) << "/" << includeName;
@@ -77,20 +74,18 @@ CxxPreProcessorScanner* CxxPreProcessor::CreateScanner(const wxFileName& current
             fixedFileName.Normalize(wxPATH_NORM_DOTS);
             tmpfile = fixedFileName.GetFullPath();
             m_fileMapping.insert(std::make_pair(includeStatement, tmpfile));
-            return new CxxPreProcessorScanner(fixedFileName, m_options);
+            outFile = fixedFileName;
+            return true;
         }
     }
-    
+
     // remember that we could not locate this include statement
     m_noSuchFiles.insert(includeStatement);
     m_fileMapping.insert(std::make_pair(includeStatement, wxString()));
-    return NULL;
+    return false;
 }
 
-void CxxPreProcessor::AddIncludePath(const wxString& path)
-{
-    m_includePaths.Add(path);
-}
+void CxxPreProcessor::AddIncludePath(const wxString& path) { m_includePaths.Add(path); }
 
 void CxxPreProcessor::AddDefinition(const wxString& def)
 {
@@ -118,11 +113,11 @@ wxArrayString CxxPreProcessor::GetDefinitions() const
     return defs;
 }
 
-wxString CxxPreProcessor::GetGxxCommand(const wxString& gxx, const wxString &filename) const
+wxString CxxPreProcessor::GetGxxCommand(const wxString& gxx, const wxString& filename) const
 {
     wxString command;
     command << gxx << " -dM -E -D__WXMSW__ -D__cplusplus -fsyntax-only ";
-    for(size_t i=0; i<m_includePaths.GetCount(); ++i) {
+    for(size_t i = 0; i < m_includePaths.GetCount(); ++i) {
         command << "-I" << m_includePaths.Item(i) << " ";
     }
     command << " - < " << filename;

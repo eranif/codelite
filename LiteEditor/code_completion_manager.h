@@ -33,6 +33,7 @@
 #include <wx/event.h>
 #include "CompileCommandsCreateor.h"
 #include "CxxPreProcessorThread.h"
+#include "CxxPreProcessorCache.h"
 
 class CodeCompletionManager : public wxEvtHandler
 {
@@ -41,6 +42,8 @@ protected:
     bool m_wordCompletionRefreshNeeded;
     bool m_buildInProgress;
     CxxPreProcessorThread m_preProcessorThread;
+    CxxPreProcessorCache m_preProcessorCache;
+    
 protected:
     /// ctags implementions
     bool DoCtagsWordCompletion(LEditor* editor, const wxString& expr, const wxString& word);

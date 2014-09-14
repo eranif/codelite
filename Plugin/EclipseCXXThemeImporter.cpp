@@ -40,7 +40,7 @@ EclipseCXXThemeImporter::~EclipseCXXThemeImporter()
 {
 }
 
-bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile, wxString &codeliteXml)
+bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
     if(!Load(eclipseXmlFile))
         return false;
@@ -128,7 +128,7 @@ bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile, wxString 
     AddProperty(properties, "7", "Character", string.colour, background.colour, string.isBold, string.isItalic);
     AddProperty(properties, "8", "Uuid", number.colour, background.colour, number.isBold, number.isItalic);
     AddProperty(properties, "9", "Preprocessor", foreground.colour, background.colour);
-    AddProperty(properties, "10", "Operator", oper.colour, background.colour);
+    AddProperty(properties, "10", "Operator", foreground.colour, background.colour);
     AddProperty(properties, "11", "Identifier", foreground.colour, background.colour);
     AddProperty(properties, "12", "Open string", string.colour, background.colour, string.isBold, string.isItalic);
     AddProperty(properties,
@@ -155,10 +155,8 @@ bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile, wxString 
     AddProperty(properties, "16", "Workspace tags", klass.colour, background.colour, klass.isBold, klass.isItalic);
     AddProperty(
         properties, "19", "Local variables", variable.colour, background.colour, variable.isBold, variable.isItalic);
-    AddProperty(
-        properties, "33", "Line Numbers", lineNumber.colour, background.colour, lineNumber.isBold, lineNumber.isItalic);
 
     AddCommonProperties(properties);
-    codeliteXml = wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile("c++")).GetFullPath();
-    return ::SaveXmlToFile(&codeliteXML, codeliteXml);
+    wxString codeliteXmlFile = wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile("c++")).GetFullPath();
+    return ::SaveXmlToFile(&codeliteXML, codeliteXmlFile);
 }

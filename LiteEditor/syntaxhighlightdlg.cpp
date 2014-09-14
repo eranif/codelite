@@ -598,9 +598,9 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
 {
     wxString eclipseThemeXml =
         ::wxFileSelector(_("Select eclipse XML theme file"), "", "", "", "Eclipse Theme Files (*.xml)|*.xml");
-    wxString outputFile;
-    if(ColoursAndFontsManager::Get().ImportEclipseTheme(eclipseThemeXml, outputFile)) {
-        ::wxMessageBox(_("File imported successfully!\n") + outputFile);
+    
+    if(ColoursAndFontsManager::Get().ImportEclipseTheme(eclipseThemeXml)) {
+        ::wxMessageBox(_("File imported successfully!"));
         // Dismiss the dialog
         EndModal(wxID_OK);
         // and reload it

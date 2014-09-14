@@ -3,21 +3,16 @@
 #include "xmlutils.h"
 #include <wx/colour.h>
 
-EclipseThemeImporterBase::EclipseThemeImporterBase()
-{
-}
+EclipseThemeImporterBase::EclipseThemeImporterBase() {}
 
-EclipseThemeImporterBase::~EclipseThemeImporterBase()
-{
-}
+EclipseThemeImporterBase::~EclipseThemeImporterBase() {}
 
 bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImporterBase::Property& prop) const
 {
     prop.colour = "";
     prop.isBold = false;
     prop.isItalic = false;
-    if(!m_doc.IsOk())
-        return false;
+    if(!m_doc.IsOk()) return false;
 
     wxXmlNode* child = m_doc.GetRoot()->GetChildren();
     while(child) {
@@ -32,17 +27,13 @@ bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImp
     return false;
 }
 
-bool EclipseThemeImporterBase::Load(const wxFileName& eclipseXml)
-{
-    return m_doc.Load(eclipseXml.GetFullPath());
-}
+bool EclipseThemeImporterBase::Load(const wxFileName& eclipseXml) { return m_doc.Load(eclipseXml.GetFullPath()); }
 
 bool EclipseThemeImporterBase::IsDarkTheme() const
 {
     // load the theme background colour
     EclipseThemeImporterBase::Property p;
-    if(!GetProperty("background", p))
-        return false;
+    if(!GetProperty("background", p)) return false;
 
     // test the colour
     return DrawingUtils::IsDark(p.colour);
@@ -50,8 +41,7 @@ bool EclipseThemeImporterBase::IsDarkTheme() const
 
 wxString EclipseThemeImporterBase::GetName() const
 {
-    if(!IsValid())
-        return "";
+    if(!IsValid()) return "";
     return m_doc.GetRoot()->GetAttribute("name");
 }
 
@@ -145,13 +135,15 @@ void EclipseThemeImporterBase::AddBaseProperties(wxXmlNode* node, const wxString
 void EclipseThemeImporterBase::AddCommonProperties(wxXmlNode* propertiesNode)
 {
     // Set the brace match based on the background colour
-    Property background, foreground, selectionBackground, selectionForeground;
+    Property background, foreground, selectionBackground, selectionForeground, lineNumber;
 
     GetProperty("background", background);
     GetProperty("foreground", foreground);
     GetProperty("selectionForeground", selectionForeground);
     GetProperty("selectionBackground", selectionBackground);
-    
+    GetProperty("selectionBackground", selectionBackground);
+    GetProperty("lineNumber", lineNumber);
+
     wxString whitespaceColour;
     if(IsDarkTheme()) {
         // dark theme
@@ -173,4 +165,11 @@ void EclipseThemeImporterBase::AddCommonProperties(wxXmlNode* propertiesNode)
     AddProperty(propertiesNode, "-3", "Caret Colour", IsDarkTheme() ? "white" : "black", background.colour);
     AddProperty(propertiesNode, "-4", "Whitespace", whitespaceColour, background.colour);
     AddProperty(propertiesNode, "38", "Calltip", foreground.colour, background.colour);
+    AddProperty(propertiesNode,
+                "33",
+                "Line Numbers",
+                lineNumber.colour,
+                background.colour,
+                lineNumber.isBold,
+                lineNumber.isItalic);
 }

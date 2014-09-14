@@ -110,7 +110,7 @@ public:
     /**
      * @brief import an eclipse theme into codelite
      */
-    bool ImportEclipseTheme(const wxString &eclipseXml, wxString &outputFile);
+    bool ImportEclipseTheme(const wxString &eclipseXml);
 };
 
 #endif // LEXERCONFMANAGER_H

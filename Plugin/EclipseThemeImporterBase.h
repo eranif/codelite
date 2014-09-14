@@ -5,6 +5,8 @@
 #include <wx/xml/xml.h>
 #include <wx/string.h>
 #include <wx/filename.h>
+#include <list>
+#include "smart_ptr.h"
 
 class WXDLLIMPEXP_SDK EclipseThemeImporterBase
 {
@@ -24,7 +26,9 @@ public:
         bool isBold;
         bool isItalic;
     };
-
+    typedef SmartPtr<EclipseThemeImporterBase> Ptr_t;
+    typedef std::list<EclipseThemeImporterBase::Ptr_t> List_t;
+    
 protected:
     void AddProperty(wxXmlNode* properties,
                      const wxString& id,
@@ -126,6 +130,13 @@ public:
      * @return
      */
     wxString GetOutputFile(const wxString& language) const;
+    
+    /**
+     * @brief import an eclipse XML colour theme
+     * @param eclipseXmlFile
+     * @param codeliteXml [output] the output file name
+     */
+    virtual bool Import(const wxFileName& eclipseXmlFile) = 0;
 };
 
 #endif // ECLIPSETHEMEIMPORTERBASE_H

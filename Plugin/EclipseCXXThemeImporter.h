@@ -15,7 +15,7 @@ public:
      * @param eclipseXmlFile
      * @param codeliteXml [output] the output file name
      */
-    bool Import(const wxFileName& eclipseXmlFile, wxString &codeliteXml);
+    virtual bool Import(const wxFileName& eclipseXmlFile);
 };
 
 #endif // ECLIPSECXXTHEMEIMPORTER_H

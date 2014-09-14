@@ -15,7 +15,7 @@
 #include "macros.h"
 #include <wx/settings.h>
 #include <wx/tokenzr.h>
-#include "EclipseCXXThemeImporter.h"
+#include "EclipseThemeImporterManager.h"
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()
@@ -417,12 +417,12 @@ void ColoursAndFontsManager::RestoreDefaults()
     Reload();
 }
 
-bool ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml, wxString& outputFile)
+bool ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml)
 {
     bool res = false;
     if(!eclipseXml.IsEmpty()) {
-        EclipseCXXThemeImporter importer;
-        res = importer.Import(eclipseXml, outputFile);
+        EclipseThemeImporterManager importer;
+        res = importer.Import(eclipseXml);
         if(res) {
             Reload();
         }

@@ -29,12 +29,7 @@ void CxxPreProcessorScannerBase::Parse(CxxPreProcessor* pp)
             wxFileName include;
             if(pp->ExpandInclude(m_filename, token.text, include)) {
                 CxxPreProcessorScannerBase* scanner = new CxxPreProcessorScannerBase(include, pp->GetOptions());
-                try {
-                    scanner->Parse(pp);
-                } catch(CxxLexerException& e) {
-                    // catch the exception
-                    CL_DEBUG("Exception caught: %s\n", e.message);
-                }
+                scanner->Parse(pp);
                 // make sure we always delete the scanner
                 wxDELETE(scanner);
                 DEBUGMSG("<== Resuming parser on file: %s\n", m_filename.GetFullPath());

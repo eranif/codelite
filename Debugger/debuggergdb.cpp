@@ -1161,7 +1161,7 @@ bool DbgGdb::ListChildren( const wxString& name, int userReason )
 {
     wxString cmd;
     // use -var-list-children 2 ("--simple-values")
-    cmd << wxT( "-var-list-children 1 \"" ) << name << wxT( "\"" );
+    cmd << wxT( "-var-list-children \"" ) << name << wxT( "\"" );
     return WriteCommand( cmd, new DbgCmdListChildren( m_observer, name, userReason ) );
 }
 

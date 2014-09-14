@@ -93,7 +93,7 @@ public:
 
 public:
     EclipseThemeImporterBase();
-    ~EclipseThemeImporterBase();
+    virtual ~EclipseThemeImporterBase();
     /**
      * @brief load eclispe theme (in xml format)
      * @param eclipseXml

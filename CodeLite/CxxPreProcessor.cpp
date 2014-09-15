@@ -123,3 +123,17 @@ wxString CxxPreProcessor::GetGxxCommand(const wxString& gxx, const wxString& fil
     command << " - < " << filename;
     return command;
 }
+
+void CxxPreProcessor::SetIncludePaths(const wxArrayString& includePaths)
+{
+    m_includePaths.Clear();
+    for(size_t i=0; i<includePaths.GetCount(); ++i) {
+        wxString path = includePaths.Item(i);
+        path.Trim().Trim(false);
+        if(path.IsEmpty()) continue;
+        
+        if(m_includePaths.Index(path) == wxNOT_FOUND) {
+            m_includePaths.Add(path);
+        }
+    }
+}

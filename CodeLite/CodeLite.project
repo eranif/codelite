@@ -184,8 +184,12 @@
       <File Name="CxxScannerTokens.h"/>
       <File Name="CxxPreProcessorCache.h"/>
       <File Name="CxxPreProcessorCache.cpp"/>
-      <File Name="CxxPreProcessorIncludeStatementCollector.cpp"/>
-      <File Name="CxxPreProcessorIncludeStatementCollector.h"/>
+      <File Name="CxxUsingNamespaceCollector.h"/>
+      <File Name="CxxUsingNamespaceCollector.cpp"/>
+      <File Name="CIncludeStatementCollector.cpp"/>
+      <File Name="CIncludeStatementCollector.h"/>
+      <File Name="CxxScannerBase.h"/>
+      <File Name="CxxScannerBase.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="RefactorEngine">

@@ -19,6 +19,9 @@ public:
     CxxPreProcessor();
     virtual ~CxxPreProcessor();
 
+    void SetIncludePaths(const wxArrayString& includePaths);
+    const wxArrayString& GetIncludePaths() const { return m_includePaths; }
+    
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }
     /**

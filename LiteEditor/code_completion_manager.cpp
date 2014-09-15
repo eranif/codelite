@@ -43,8 +43,7 @@
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
 // Helper class
-struct EditorDimmerDisabler
-{
+struct EditorDimmerDisabler {
     LEditor* m_editor;
     EditorDimmerDisabler(LEditor* editor)
         : m_editor(editor)
@@ -57,9 +56,7 @@ struct EditorDimmerDisabler
         }
     }
 
-    ~EditorDimmerDisabler()
-    {
-    }
+    ~EditorDimmerDisabler() {}
 };
 
 CodeCompletionManager::CodeCompletionManager()
@@ -331,13 +328,10 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 void CodeCompletionManager::GotoImpl(LEditor* editor)
 {
     DoUpdateOptions();
-
     bool res = false;
-
     if(GetOptions() & CC_CTAGS_ENABLED) {
         res = DoCtagsGotoImpl(editor);
     }
-
     if(!res && (GetOptions() & CC_CLANG_ENABLED)) {
         DoClangGotoImpl(editor);
     }
@@ -422,15 +416,9 @@ void CodeCompletionManager::DoUpdateCompilationDatabase()
     ClangCompilationDbThreadST::Get()->AddFile(db.GetFileName().GetFullPath());
 }
 
-void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
-{
-    e.Skip();
-}
+void CodeCompletionManager::OnAppActivated(wxActivateEvent& e) { e.Skip(); }
 
-void CodeCompletionManager::Release()
-{
-    wxDELETE(ms_CodeCompletionManager);
-}
+void CodeCompletionManager::Release() { wxDELETE(ms_CodeCompletionManager); }
 
 void CodeCompletionManager::OnBuildStarted(clBuildEvent& e)
 {
@@ -474,8 +462,9 @@ void CodeCompletionManager::OnParseThreadCollectedMacros(const wxArrayString& de
 void CodeCompletionManager::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
-    if(!(TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS)) return;
-    ProcessMacros(clMainFrame::Get()->GetMainBook()->FindEditor(event.GetFileName()));
+    if(TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS) {
+        ProcessMacros(clMainFrame::Get()->GetMainBook()->FindEditor(event.GetFileName()));
+    }
 }
 
 void CodeCompletionManager::OnFileLoaded(clCommandEvent& event)
@@ -483,7 +472,8 @@ void CodeCompletionManager::OnFileLoaded(clCommandEvent& event)
     event.Skip();
     LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
-
+    
+    // Handle Pre Processor block colouring
     if(!(TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS)) {
         editor->SetPreProcessorsWords("");
         editor->SetProperty("lexer.cpp.track.preprocessor", "0");

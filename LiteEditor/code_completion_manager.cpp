@@ -81,6 +81,10 @@ CodeCompletionManager::CodeCompletionManager()
     EventNotifier::Get()->Connect(
         wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
+
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
+    // Start the worker threads
     m_preProcessorThread.Start();
     m_usingNamespaceThread.Start();
 }
@@ -103,6 +107,8 @@ CodeCompletionManager::~CodeCompletionManager()
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 }
 
@@ -263,15 +269,14 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 {
     // Sanity
     CHECK_PTR_RET(editor);
-    
+
     /// disable the editor pre-processor dimming
     EditorDimmerDisabler eds(editor);
-    
+
     wxArrayString macros;
     wxArrayString includePaths;
-    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
-        return;
-        
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros)) return;
+
     // Queue this request in the worker thread
     m_preProcessorThread.QueueFile(editor->GetFileName().GetFullPath(), macros, includePaths);
 }
@@ -487,15 +492,14 @@ void CodeCompletionManager::ProcessUsingNamespace(LEditor* editor)
 {
     // Sanity
     CHECK_PTR_RET(editor);
-    
+
     /// disable the editor pre-processor dimming
     EditorDimmerDisabler eds(editor);
-    
+
     wxArrayString macros;
     wxArrayString includePaths;
-    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
-        return;
-    
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros)) return;
+
     wxUnusedVar(macros);
     // Queue this request in the worker thread
     m_usingNamespaceThread.QueueFile(editor->GetFileName().GetFullPath(), includePaths);
@@ -562,6 +566,12 @@ bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
     // Append the compiler builtin macros
     wxArrayString builtinMacros = compiler->GetBuiltinMacros();
     definitions.insert(definitions.end(), builtinMacros.begin(), builtinMacros.end());
-    
+
     return true;
+}
+
+void CodeCompletionManager::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    LanguageST::Get()->ClearAdditionalScopesCache();
 }

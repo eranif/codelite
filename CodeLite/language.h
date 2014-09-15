@@ -157,6 +157,10 @@ public:
      * @param additionalScopes
      */
     void UpdateAdditionalScopesCache(const wxString &filename, const std::vector<wxString>& additionalScopes);
+    /**
+     * @brief clear the additional scopes cache
+     */
+    void ClearAdditionalScopesCache();
     
     const std::vector<wxString>& GetAdditionalScopes() const;
     /**

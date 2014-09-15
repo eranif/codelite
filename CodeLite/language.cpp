@@ -2359,3 +2359,8 @@ void Language::UpdateAdditionalScopesCache(const wxString& filename, const std::
     }
     m_additionalScopesCache.insert(std::make_pair(filename, additionalScopes));
 }
+
+void Language::ClearAdditionalScopesCache()
+{
+    m_additionalScopesCache.clear();
+}

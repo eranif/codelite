@@ -34,6 +34,7 @@
 #include "CompileCommandsCreateor.h"
 #include "CxxPreProcessorThread.h"
 #include "CxxPreProcessorCache.h"
+#include "CxxUsingNamespaceCollectorThread.h"
 
 class CodeCompletionManager : public wxEvtHandler
 {
@@ -42,7 +43,7 @@ protected:
     bool m_wordCompletionRefreshNeeded;
     bool m_buildInProgress;
     CxxPreProcessorThread m_preProcessorThread;
-    CxxPreProcessorCache m_preProcessorCache;
+    CxxUsingNamespaceCollectorThread m_usingNamespaceThread;
     
 protected:
     /// ctags implementions
@@ -81,8 +82,11 @@ public:
      */
     void RefreshPreProcessorColouring();
     
-    // Will be called by the parser thread when done
+    // Callback for collecting macros completed
     void OnParseThreadCollectedMacros(const wxArrayString& definitions, const wxString &filename);
+    
+    // Callback for collecting 'using namespaces' completed
+    void OnFindUsingNamespaceDone(const wxArrayString& usingNamespace, const wxString &filename);
     
     void SetWordCompletionRefreshNeeded(bool wordCompletionRefreshNeeded)
     {
@@ -108,8 +112,10 @@ public:
     void Calltip(LEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word);
     void CodeComplete(LEditor* editor, int line, const wxString& expr, const wxString& text);
     void ProcessMacros(LEditor* editor);
+    void ProcessUsingNamespace(LEditor* editor);
     void GotoImpl(LEditor* editor);
     void GotoDecl(LEditor* editor);
+    bool GetDefinitionsAndSearchPaths(LEditor *editor, wxArrayString& searchPaths, wxArrayString& definitions);
 };
 
 #endif // CODECOMPLETIONMANAGER_H

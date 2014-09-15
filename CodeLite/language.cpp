@@ -1743,23 +1743,20 @@ wxString TemplateHelper::GetPath() const
 
 void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes, const wxString& filename)
 {
-
     if(!(GetTagsManager()->GetCtagsOptions().GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING)) {
         this->m_additionalScopes = additionalScopes;
 
     } else {
         this->m_additionalScopes.clear();
-        wxArrayString includePaths = GetTagsManager()->GetProjectPaths();
-        CxxPreProcessor pp;
-        pp.SetMaxDepth(3);
-        pp.SetIncludePaths(includePaths);
-        CxxUsingNamespaceCollector collector(&pp, filename);
-        collector.Parse();
-        this->m_additionalScopes.insert(this->m_additionalScopes.end(),
-                                        collector.GetUsingNamespaces().begin(),
-                                        collector.GetUsingNamespaces().end());
-                                        
-        //"using namespace" may not contains current namespace
+        // Use the cache to get the list of using namespaces. 
+        // The cache is populated by the CodeCompletionManager worker
+        // thread when the file is loaded
+        std::map<wxString, std::vector<wxString> >::iterator iter = m_additionalScopesCache.find(filename);
+        if(iter != m_additionalScopesCache.end()) {
+            this->m_additionalScopes = iter->second;
+        }
+        
+        // "using namespace" may not contains current namespace, so make sure we add it
         for(size_t i = 0; i < additionalScopes.size(); i++) {
             if(!(std::find(this->m_additionalScopes.begin(), this->m_additionalScopes.end(), additionalScopes.at(i)) !=
                  this->m_additionalScopes.end())) {
@@ -2353,4 +2350,12 @@ int Language::GetBestLineForForwardDecl(const wxString& fileContent) const
     int line = lexer.line_number();
     if(line) --line;
     return line;
+}
+
+void Language::UpdateAdditionalScopesCache(const wxString& filename, const std::vector<wxString>& additionalScopes)
+{
+    if(m_additionalScopesCache.count(filename)) {
+        m_additionalScopesCache.erase(filename);
+    }
+    m_additionalScopesCache.insert(std::make_pair(filename, additionalScopes));
 }

@@ -20,6 +20,10 @@ void CxxUsingNamespaceCollector::OnToken(CxxLexerToken& token)
             m_preProcessor->IncDepth();
             scanner->Parse();
             m_preProcessor->DecDepth();
+
+            // Append the matched results to the current parser results
+            m_usingNamespaces.insert(
+                m_usingNamespaces.end(), scanner->GetUsingNamespaces().begin(), scanner->GetUsingNamespaces().end());
             wxDELETE(scanner);
             DEBUGMSG("<== Resuming parser on file: %s\n", m_filename.GetFullPath());
         }
@@ -40,8 +44,6 @@ void CxxUsingNamespaceCollector::ParseUsingNamespace()
     if(!::LexerNext(m_scanner, token)) return;
     if(token.type != T_NAMESPACE) return;
 
-    if(!::LexerNext(m_scanner, token)) return;
-
     // Read everything until we find the ';'
     wxString usingNamespace;
     while(::LexerNext(m_scanner, token)) {
@@ -50,5 +52,7 @@ void CxxUsingNamespaceCollector::ParseUsingNamespace()
         }
         usingNamespace << token.text;
     }
-    m_usingNamespaces.Add(usingNamespace);
+    if(!usingNamespace.IsEmpty()) {
+        m_usingNamespaces.Add(usingNamespace);
+    }
 }

@@ -39,6 +39,7 @@
 #include "cl_editor.h"
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
+#include "language.h"
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
@@ -81,11 +82,13 @@ CodeCompletionManager::CodeCompletionManager()
         wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
     m_preProcessorThread.Start();
+    m_usingNamespaceThread.Start();
 }
 
 CodeCompletionManager::~CodeCompletionManager()
 {
     m_preProcessorThread.Stop();
+    m_usingNamespaceThread.Stop();
     EventNotifier::Get()->Disconnect(
         wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -260,67 +263,15 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 {
     // Sanity
     CHECK_PTR_RET(editor);
-
+    
     /// disable the editor pre-processor dimming
     EditorDimmerDisabler eds(editor);
-
-    if(editor->GetProjectName().IsEmpty()) return;
-    if(!WorkspaceST::Get()->IsOpen()) return;
-
-    // Support only C/C++ files
-    if(!FileExtManager::IsCxxFile(editor->GetFileName().GetFullName())) return;
-
-    // Get the file's project and get the build configuration settings
-    // for it
-    ProjectPtr proj = WorkspaceST::Get()->GetProject(editor->GetProjectName());
-    CHECK_PTR_RET(proj);
-
-    BuildConfigPtr buildConf = proj->GetBuildConfiguration();
-    CHECK_PTR_RET(buildConf);
-
-    CompilerPtr compiler = buildConf->GetCompiler();
-    CHECK_PTR_RET(compiler);
-
+    
     wxArrayString macros;
     wxArrayString includePaths;
-    if(buildConf->IsCustomBuild()) {
-        // Custom builds are handled differently
-        CompilationDatabase compileDb;
-        compileDb.Open();
-        if(compileDb.IsOpened()) {
-            // we have compilation database for this workspace
-            wxString compileLine, cwd;
-            compileDb.CompilationLine(editor->GetFileName().GetFullPath(), compileLine, cwd);
-
-            CL_DEBUG("Pre Processor dimming: %s\n", compileLine);
-            CompilerCommandLineParser cclp(compileLine, cwd);
-            includePaths = cclp.GetIncludes();
-
-            // get the mcros
-            macros = cclp.GetMacros();
-        } else {
-            // we will probably will fail...
-            return;
-        }
-    } else {
-        // get the include paths based on the project settings (this is per build configuration)
-        includePaths = proj->GetIncludePaths();
-        CL_DEBUG("CxxPreProcessor will use the following include paths:");
-        CL_DEBUG_ARR(macros);
-
-        // get the compiler include paths
-        // wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
-
-        // includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
-        macros = proj->GetPreProcessors();
-        CL_DEBUG("CxxPreProcessor will use the following macros:");
-        CL_DEBUG_ARR(macros);
-    }
-
-    // Append the compiler builtin macros
-    wxArrayString builtinMacros = compiler->GetBuiltinMacros();
-    macros.insert(macros.end(), builtinMacros.begin(), builtinMacros.end());
-
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
+        return;
+        
     // Queue this request in the worker thread
     m_preProcessorThread.QueueFile(editor->GetFileName().GetFullPath(), macros, includePaths);
 }
@@ -472,14 +423,20 @@ void CodeCompletionManager::OnFileLoaded(clCommandEvent& event)
     event.Skip();
     LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
-    
+
     // Handle Pre Processor block colouring
-    if(!(TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS)) {
+    const size_t colourOptions = TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags();
+    const size_t ccFlags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
+    if(!(colourOptions & CC_COLOUR_MACRO_BLOCKS)) {
         editor->SetPreProcessorsWords("");
         editor->SetProperty("lexer.cpp.track.preprocessor", "0");
         editor->SetProperty("lexer.cpp.update.preprocessor", "0");
     } else {
         ProcessMacros(editor);
+    }
+
+    if(editor && (ccFlags & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING)) {
+        ProcessUsingNamespace(editor);
     }
 }
 
@@ -509,4 +466,102 @@ void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
 {
     event.Skip();
     RefreshPreProcessorColouring();
+}
+
+void CodeCompletionManager::OnFindUsingNamespaceDone(const wxArrayString& usingNamespace, const wxString& filename)
+{
+    CL_DEBUG("OnFindUsingNamespaceDone called");
+
+    CL_DEBUG("Found the following 'using namespace' statements for file %s", filename);
+    CL_DEBUG_ARR(usingNamespace);
+
+    // We got a list of macros from the parser thead
+    // prepare a space delimited list out of it
+    std::vector<wxString> additionalScopes;
+    additionalScopes.insert(additionalScopes.end(), usingNamespace.begin(), usingNamespace.end());
+
+    LanguageST::Get()->UpdateAdditionalScopesCache(filename, additionalScopes);
+}
+
+void CodeCompletionManager::ProcessUsingNamespace(LEditor* editor)
+{
+    // Sanity
+    CHECK_PTR_RET(editor);
+    
+    /// disable the editor pre-processor dimming
+    EditorDimmerDisabler eds(editor);
+    
+    wxArrayString macros;
+    wxArrayString includePaths;
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
+        return;
+    
+    wxUnusedVar(macros);
+    // Queue this request in the worker thread
+    m_usingNamespaceThread.QueueFile(editor->GetFileName().GetFullPath(), includePaths);
+}
+
+bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
+                                                         wxArrayString& searchPaths,
+                                                         wxArrayString& definitions)
+{
+    // Sanity
+    CHECK_PTR_RET_FALSE(editor);
+
+    if(editor->GetProjectName().IsEmpty()) return false;
+    if(!WorkspaceST::Get()->IsOpen()) return false;
+
+    // Support only C/C++ files
+    if(!FileExtManager::IsCxxFile(editor->GetFileName().GetFullName())) return false;
+
+    // Get the file's project and get the build configuration settings
+    // for it
+    ProjectPtr proj = WorkspaceST::Get()->GetProject(editor->GetProjectName());
+    CHECK_PTR_RET_FALSE(proj);
+
+    BuildConfigPtr buildConf = proj->GetBuildConfiguration();
+    CHECK_PTR_RET_FALSE(buildConf);
+
+    CompilerPtr compiler = buildConf->GetCompiler();
+    CHECK_PTR_RET_FALSE(compiler);
+
+    if(buildConf->IsCustomBuild()) {
+        // Custom builds are handled differently
+        CompilationDatabase compileDb;
+        compileDb.Open();
+        if(compileDb.IsOpened()) {
+            // we have compilation database for this workspace
+            wxString compileLine, cwd;
+            compileDb.CompilationLine(editor->GetFileName().GetFullPath(), compileLine, cwd);
+
+            CL_DEBUG("Pre Processor dimming: %s\n", compileLine);
+            CompilerCommandLineParser cclp(compileLine, cwd);
+            searchPaths = cclp.GetIncludes();
+
+            // get the mcros
+            definitions = cclp.GetMacros();
+        } else {
+            // we will probably will fail...
+            return false;
+        }
+    } else {
+        // get the include paths based on the project settings (this is per build configuration)
+        searchPaths = proj->GetIncludePaths();
+        CL_DEBUG("CxxPreProcessor will use the following include paths:");
+        CL_DEBUG_ARR(definitions);
+
+        // get the compiler include paths
+        // wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();
+
+        // includePaths.insert(includePaths.end(), compileIncludePaths.begin(), compileIncludePaths.end());
+        definitions = proj->GetPreProcessors();
+        CL_DEBUG("CxxPreProcessor will use the following macros:");
+        CL_DEBUG_ARR(definitions);
+    }
+
+    // Append the compiler builtin macros
+    wxArrayString builtinMacros = compiler->GetBuiltinMacros();
+    definitions.insert(definitions.end(), builtinMacros.begin(), builtinMacros.end());
+    
+    return true;
 }

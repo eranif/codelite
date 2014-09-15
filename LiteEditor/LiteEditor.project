@@ -740,7 +740,7 @@
     <Project Name="plugin_sdk"/>
     <Project Name="DebuggerGDB"/>
   </Dependencies>
-  <VirtualDirectory Name="ClangCodeCompletion">
+  <VirtualDirectory Name="CodeCompletion">
     <File Name="clang_code_completion.h"/>
     <File Name="clang_code_completion.cpp"/>
     <File Name="clangpch_cache.h"/>
@@ -769,6 +769,8 @@
     <File Name="clang_cleaner_thread.cpp"/>
     <File Name="CxxPreProcessorThread.h"/>
     <File Name="CxxPreProcessorThread.cpp"/>
+    <File Name="CxxUsingNamespaceCollectorThread.h"/>
+    <File Name="CxxUsingNamespaceCollectorThread.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

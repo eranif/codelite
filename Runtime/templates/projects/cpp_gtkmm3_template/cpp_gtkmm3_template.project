@@ -18,10 +18,10 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;-O0;`pkg-config --cflags gtkmm-3.0`" C_Options="-g;-O0;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-Wall;-O0;$(shell pkg-config --cflags gtkmm-3.0)" C_Options="-g;-O0;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="`pkg-config --libs gtkmm-3.0`" Required="yes"/>
+      <Linker Options="$(shell pkg-config --libs gtkmm-3.0)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
@@ -56,11 +56,11 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;`pkg-config --cflags gtkmm-3.0`" C_Options="-O2;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-O2;-Wall;$(shell pkg-config --cflags gtkmm-3.0)" C_Options="-O2;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Options="`pkg-config --libs gtkmm-3.0`" Required="yes"/>
+      <Linker Options="$(shell pkg-config --libs gtkmm-3.0)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">

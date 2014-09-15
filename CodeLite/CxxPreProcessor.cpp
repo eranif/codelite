@@ -2,9 +2,15 @@
 #include <wx/regex.h>
 #include "file_logger.h"
 
-CxxPreProcessor::CxxPreProcessor() {}
+CxxPreProcessor::CxxPreProcessor()
+    : m_maxDepth(-1)
+    , m_currentDepth(0)
+{
+}
 
-CxxPreProcessor::~CxxPreProcessor() {}
+CxxPreProcessor::~CxxPreProcessor()
+{
+}
 
 void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 {
@@ -85,7 +91,10 @@ CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxString& in
     return false;
 }
 
-void CxxPreProcessor::AddIncludePath(const wxString& path) { m_includePaths.Add(path); }
+void CxxPreProcessor::AddIncludePath(const wxString& path)
+{
+    m_includePaths.Add(path);
+}
 
 void CxxPreProcessor::AddDefinition(const wxString& def)
 {
@@ -127,13 +136,32 @@ wxString CxxPreProcessor::GetGxxCommand(const wxString& gxx, const wxString& fil
 void CxxPreProcessor::SetIncludePaths(const wxArrayString& includePaths)
 {
     m_includePaths.Clear();
-    for(size_t i=0; i<includePaths.GetCount(); ++i) {
+    for(size_t i = 0; i < includePaths.GetCount(); ++i) {
         wxString path = includePaths.Item(i);
         path.Trim().Trim(false);
         if(path.IsEmpty()) continue;
-        
+
         if(m_includePaths.Index(path) == wxNOT_FOUND) {
             m_includePaths.Add(path);
         }
     }
+}
+
+bool CxxPreProcessor::CanGoDeeper() const
+{
+    if(m_maxDepth == -1) return true;
+    return m_currentDepth < m_maxDepth;
+}
+
+void CxxPreProcessor::DecDepth()
+{
+    m_currentDepth--;
+    if(m_currentDepth < 0) {
+        m_currentDepth = 0;
+    }
+}
+
+void CxxPreProcessor::IncDepth()
+{
+    m_currentDepth++;
 }

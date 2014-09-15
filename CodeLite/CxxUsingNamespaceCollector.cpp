@@ -15,9 +15,11 @@ void CxxUsingNamespaceCollector::OnToken(CxxLexerToken& token)
     case T_PP_INCLUDE_FILENAME: {
         // we found an include statement, recurse into it
         wxFileName include;
-        if(m_preProcessor->ExpandInclude(m_filename, token.text, include)) {
+        if(m_preProcessor->CanGoDeeper() && m_preProcessor->ExpandInclude(m_filename, token.text, include)) {
             CxxUsingNamespaceCollector* scanner = new CxxUsingNamespaceCollector(m_preProcessor, include);
+            m_preProcessor->IncDepth();
             scanner->Parse();
+            m_preProcessor->DecDepth();
             wxDELETE(scanner);
             DEBUGMSG("<== Resuming parser on file: %s\n", m_filename.GetFullPath());
         }

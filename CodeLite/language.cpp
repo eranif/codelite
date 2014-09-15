@@ -1751,6 +1751,7 @@ void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes
         this->m_additionalScopes.clear();
         wxArrayString includePaths = GetTagsManager()->GetProjectPaths();
         CxxPreProcessor pp;
+        pp.SetMaxDepth(3);
         pp.SetIncludePaths(includePaths);
         CxxUsingNamespaceCollector collector(&pp, filename);
         collector.Parse();

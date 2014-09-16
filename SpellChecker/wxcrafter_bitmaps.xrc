@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1"/>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+  <object class="wxBitmap" name="spellChecker16">res\spellcheck-16.png</object>
+  <object class="wxBitmap" name="spellChecker16Cont">res\spellcheck-16-continous.png</object>
+  <object class="wxBitmap" name="spellChecker24">res\spellcheck-24.png</object>
+  <object class="wxBitmap" name="spellChecker24Cont">res\spellcheck-24-continous.png</object>
+</resource>

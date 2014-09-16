@@ -1178,13 +1178,11 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     wxString outputFile = bldConf->GetOutputFileName();
     if(OS_WINDOWS && (bldConf->GetProjectType() == Project::EXECUTABLE || bldConf->GetProjectType().IsEmpty())) {
         outputFile.Trim().Trim(false);
-        // if(outputFile.EndsWith(wxT(".exe")) == false) {
-        //	outputFile.Append(wxT(".exe"));
-        //}
     }
 
     // Expand the build macros into the generated makefile
-    text << wxT("ProjectName            :=") << proj->GetName() << wxT("\n");
+    wxString projectName = proj->GetName();
+    text << wxT("ProjectName            :=") << projectName << wxT("\n");
     text << wxT("ConfigurationName      :=") << name << wxT("\n");
     text << wxT("WorkspacePath          := \"") << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxT("\"\n");
     text << wxT("ProjectPath            := \"") << proj->GetFileName().GetPath() << wxT("\"\n");

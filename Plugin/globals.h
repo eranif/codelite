@@ -459,6 +459,11 @@ PromptForYesNoDialogWithCheckbox(const wxString& message,
 WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString& str);
 
 /**
+ * @brief wrap string with quotes if needed
+ */
+WXDLLIMPEXP_SDK wxString& EscapeSpaces(wxString& str);
+
+/**
  * @brief return an expression from a given position.
  * e.g. if the caret is on a line:
  * variable.m_name.m_value|

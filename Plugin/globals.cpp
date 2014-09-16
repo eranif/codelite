@@ -2078,6 +2078,12 @@ wxString& WrapWithQuotes(wxString& str)
     return str;
 }
 
+wxString& EscapeSpaces(wxString& str)
+{
+    str.Replace(" ", "\\ ");
+    return str;
+}
+
 bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
 {
     CHECK_PTR_RET_FALSE(doc);

@@ -457,10 +457,10 @@ bool NewProjectWizard::CheckProjectName()
 {
     wxString projectName = m_txtProjName->GetValue();
     projectName.Trim().Trim(false);
-    if(projectName.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) !=
+    if(projectName.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")) !=
            wxString::npos ||
        projectName.IsEmpty()) {
-        wxMessageBox(_("Project name can only contain alpha numeric characters and/or the underscore '_'"),
+        wxMessageBox(_("Project name may contain the following characters [a-z0-9_-]"),
                      "CodeLite",
                      wxOK | wxICON_WARNING | wxCENTER,
                      this);

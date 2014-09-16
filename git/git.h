@@ -182,6 +182,7 @@ private:
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnWorkspaceConfigurationChanged(wxCommandEvent& e);
+    void OnMainFrameTitle(clCommandEvent& e);
     void OnSetGitRepoPath(wxCommandEvent& e);
     void OnSettings(wxCommandEvent& e);
     void OnFileDiffSelected(wxCommandEvent& e);

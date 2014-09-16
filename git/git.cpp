@@ -78,7 +78,7 @@ extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
-    info.SetAuthor(wxT("RenÃÂ© Kraus"));
+    info.SetAuthor(wxT("René Kraus"));
     info.SetName(wxT("git"));
     info.SetDescription(wxT("Simple GIT plugin"));
     info.SetVersion(wxT("v1.1.0"));
@@ -140,6 +140,7 @@ GitPlugin::GitPlugin(IManager* manager)
         wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, wxT("git"), false, m_images.Bitmap("git"));
@@ -2286,5 +2287,17 @@ void GitPlugin::OnRebase(wxCommandEvent& e)
         }
         AddDefaultActions();
         ProcessGitActionQueue();
+    }
+}
+
+void GitPlugin::OnMainFrameTitle(clCommandEvent& e)
+{
+    // By default - skip it
+    e.Skip();
+    if(!m_currentBranch.IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
+        wxString newTitle;
+        newTitle << e.GetString() << wxT(" • [git: ") << m_currentBranch << "]";
+        e.SetString(newTitle);
+        e.Skip(false);
     }
 }

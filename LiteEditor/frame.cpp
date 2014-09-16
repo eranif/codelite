@@ -4473,7 +4473,14 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     }
 
     title << pattern;
-    SetTitle(title);
+    
+    // notify the plugins
+    clCommandEvent titleEvent(wxEVT_CL_FRAME_TITLE);
+    titleEvent.SetString(title);
+    EventNotifier::Get()->ProcessEvent(titleEvent);
+    
+    // Update the title
+    SetTitle(titleEvent.GetString());
 }
 
 void clMainFrame::OnBuildWorkspace(wxCommandEvent& e)

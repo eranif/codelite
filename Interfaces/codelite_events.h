@@ -27,42 +27,42 @@
 #define CODELITE_EVENTS_H
 
 // ------------------------------------------------------------------------
-// 
+//
 // Plugins events
-// 
+//
 //  We use #define and not enum because to make sure that the event numbers
 //  will not change when we move an event up or down in this file...
 // ------------------------------------------------------------------------
 
-//clientData is NULL
+// clientData is NULL
 #define wxEVT_INIT_DONE 3450
 
 // wxCommandEvent::GetString() will return the node name modified
 #define wxEVT_EDITOR_CONFIG_CHANGED 3451
 
 // wxCommandEvent::GetString() will return the workspace fullpath
-#define wxEVT_WORKSPACE_LOADED  3452
-    
+#define wxEVT_WORKSPACE_LOADED 3452
+
 // The build configuration was changed
 // use event.GetString() to get the selected configuration name
 #define wxEVT_WORKSPACE_CONFIG_CHANGED 3453
-    
-//clientData is NULL
+
+// clientData is NULL
 #define wxEVT_WORKSPACE_CLOSED 3454
 
-//clientData is NULL
+// clientData is NULL
 #define wxEVT_FILE_VIEW_INIT_DONE 3455
 
-//clientData is NULL
+// clientData is NULL
 #define wxEVT_FILE_VIEW_REFRESHED 3456
 
-//clientData is NULL
+// clientData is NULL
 #define wxEVT_FILE_EXP_INIT_DONE 3457
 
-//clientData is NULL
+// clientData is NULL
 #define wxEVT_FILE_EXP_REFRESHED 3458
 
-//clientData is the wxTreeItemId*
+// clientData is the wxTreeItemId*
 #define wxEVT_CMD_FILE_EXP_ITEM_EXPANDING 3459
 
 // an attempt to open a file using double click / ENTER was made
@@ -109,16 +109,16 @@
 //                               Item(1) = newName
 #define wxEVT_FILE_RENAMED 3469
 
-//clientData is active editor (IEditor*)
+// clientData is active editor (IEditor*)
 #define wxEVT_ACTIVE_EDITOR_CHANGED 3470
 
-//clientData is closing editor (IEditor*)
+// clientData is closing editor (IEditor*)
 #define wxEVT_EDITOR_CLOSING 3471
 
-//clientData is NULL
+// clientData is NULL
 #define wxEVT_ALL_EDITORS_CLOSING 3472
 
-//clientData is NULL
+// clientData is NULL
 #define wxEVT_ALL_EDITORS_CLOSED 3473
 
 // This event is sent when the user clicks inside an editor
@@ -155,7 +155,7 @@
 
 // A user requested to stop the previously executed program
 #define wxEVT_CMD_STOP_EXECUTED_PROGRAM 3480
-    
+
 // codelite sends this event to query plugins incase there is a program running
 // use evet.SetInt(1) to indicate that the plugin has launched an executable
 // it is mainly used for displaying the 'Stop' button in the toolbar as active/disabled
@@ -259,16 +259,15 @@
 // let the plugins a chance to handle this
 // event.
 #define wxEVT_CC_CODE_COMPLETE 3498
-    
-//clientData is the selected word (wxString*)
-#define wxEVT_CCBOX_SELECTION_MADE 3499
 
+// clientData is the selected word (wxString*)
+#define wxEVT_CCBOX_SELECTION_MADE 3499
 
 // A tooltip is requested for the selected entry in the completion box
 // clientData is set to the client data set by the user
 // the plugin returns the tooltip to the IDE using the:
 // evt.SetTooltip(..) method
-// Use evt.GetTagEntry() to retrieve the tag 
+// Use evt.GetTagEntry() to retrieve the tag
 #define wxEVT_CC_CODE_COMPLETE_TAG_COMMENT 3500
 
 // A function calltip is requesed
@@ -288,7 +287,7 @@
 // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
 // Hover position is set in the evt.GetPosition()
 #define wxEVT_CC_TYPEINFO_TIP 3504
-    
+
 // Send a clCodeCompletionEvent
 // Codelite is about to show the completion box for language keywords
 #define wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD 3505
@@ -310,9 +309,9 @@
 // User selected an option to create a new workspace
 #define wxEVT_CMD_CREATE_NEW_WORKSPACE 3506
 
-// a _plugin_ sends this event to codelite to request adding 
+// a _plugin_ sends this event to codelite to request adding
 // a workspace to the recetly used list
-// The workspace path is sent in the evt.SetString()/GetString() 
+// The workspace path is sent in the evt.SetString()/GetString()
 #define wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST 3508
 
 // Event type: clCommandEvent
@@ -337,12 +336,12 @@
 // will be left disabled
 // to return a true or false reply to codelite, use
 // evt.SetAnswer( true / false )
-// The workspace name should also returned in the evt.SetString(..) 
+// The workspace name should also returned in the evt.SetString(..)
 #define wxEVT_CMD_IS_WORKSPACE_OPEN 3511
 
 // User has requested a retagging for the workspace
 #define wxEVT_CMD_RETAG_WORKSPACE 3512
-#define wxEVT_CMD_RETAG_WORKSPACE_FULL 3513 
+#define wxEVT_CMD_RETAG_WORKSPACE_FULL 3513
 
 // codelite has requested a complete list of the workspace files.
 // The result should be wxArrayString that contains a list of files
@@ -414,10 +413,10 @@
 // use event.GetClientData() to get a pointer to the wxWindow*
 #define wxEVT_CMD_PAGE_CHANGED 3527
 
-// Triggers a workspace view tree rebuild (useful when user has modified the workspace / project structure and he want 
+// Triggers a workspace view tree rebuild (useful when user has modified the workspace / project structure and he want
 // to reflect the changes in the tree view)
 #define wxEVT_REBUILD_WORKSPACE_TREE 3529
-    
+
 // Sent when user has changed the active project
 // Event type: clProjectSettingsEvent
 #define wxEVT_ACTIVE_PROJECT_CHANGED 3530
@@ -427,40 +426,40 @@
 // The Window is passed using the event.GetClientData()
 // The Window *MUST* be of type wxStyledTextCtrl
 #define wxEVT_FINDBAR_ABOUT_TO_SHOW 3531
-    
+
 // A plugin *must* send this event to ask the find bar to release any window associated with it
 // This event should be used with  'wxEVT_FINDBAR_ABOUT_TO_SHOW'. If this event is not sent when the window
 // is destroyed - it might result in a crash
 // The window pointer is passed using event.GetClientData()
-// If the editor managed by the find-bar is the same as event.GetClientData() -> the find-bar will un-refernce it 
+// If the editor managed by the find-bar is the same as event.GetClientData() -> the find-bar will un-refernce it
 // but *IT DOES NOT FREE ITS MEMORY*
 #define wxEVT_FINDBAR_RELEASE_EDITOR 3532
-    
+
 // Instruct codelite to build a project only ( no deps )
 // the project name is passed in the wxCommandEvent::GetString
 #define wxEVT_CMD_BUILD_PROJECT_ONLY 3533
 // Instruct codelite to clean a project only ( no deps )
 // the project name is passed in the wxCommandEvent::GetString
 #define wxEVT_CMD_CLEAN_PROJECT_ONLY 3534
-    
+
 // User changed the default theme color of codelite
 #define wxEVT_CL_THEME_CHANGED 3535
-    
+
 // Sent from the CodeFormatter plugin when a file indentation was completed
 // event.GetString() will return the name of the indented file
 #define wxEVT_CODEFORMATTER_INDENT_COMPLETED 3536
-    
+
 // Sent from the CodeFormatter plugin when a file indentation is about to begin
 // event.GetString() will return the name of the indented file
 #define wxEVT_CODEFORMATTER_INDENT_STARTING 3537
-    
+
 // Sent when codelite's main frame gained the focus
 #define wxEVT_CODELITE_MAINFRAME_GOT_FOCUS 3538
-    
+
 // User clicked on a project item in the treeview
 // the event.GetString() contains the project name that was clicked
 #define wxEVT_PROJECT_TREEITEM_CLICKED 3539
-    
+
 // user has deleted all the breakpoints using the "Breakpoints" table
 #define wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED 3540
 
@@ -470,7 +469,7 @@
 
 // Event type: clCommandEvent
 // User requested to reload the workspace
-// simply avoid calling event.Skip() to indicate to codelite that this event 
+// simply avoid calling event.Skip() to indicate to codelite that this event
 // was handled by a plugin
 #define wxEVT_CMD_RELOAD_WORKSPACE 3542
 
@@ -488,7 +487,8 @@
 #define wxEVT_WORKSPACE_VIEW_BUILD_STARTING 3544
 
 // Event type: clColourEvent
-// Sent by codelite adding a project item to the file-view ("Workspace View"). Use event.GetString() to get the project name
+// Sent by codelite adding a project item to the file-view ("Workspace View"). Use event.GetString() to get the project
+// name
 // User may alter the following attributes:
 // . Project item background colour
 // . Project item text colour
@@ -511,37 +511,41 @@
 // If a plugin wishes to override codelite's default debugger (gdb)
 // it simply needs to connect the event and avoid calling 'event.Skip();
 //----------------------------------------------------------------------
-#define wxEVT_DBG_UI_START                      3547 // Start
-#define wxEVT_DBG_UI_CONTINUE                   3548 // Continue
-#define wxEVT_DBG_UI_STOP                       3549 // Stop the debugger
-#define wxEVT_DBG_UI_STEP_IN                    3550 // Step into function
-#define wxEVT_DBG_UI_STEP_OUT                   3551 // Step out of current frame
-#define wxEVT_DBG_UI_NEXT                       3552 // Next line
-#define wxEVT_DBG_UI_NEXT_INST                  3553 // Next instruction
-#define wxEVT_DBG_UI_INTERRUPT                  3554 // Interrupt the debugger execution
-#define wxEVT_DBG_UI_SHOW_CURSOR                3555 // Set the focus to the current debugger file/line
-#define wxEVT_DBG_UI_RESTART                    3556 // Restart the debug session
-#define wxEVT_DBG_IS_RUNNING                    3557 // Use evet.SetAnswer() method to reply
-#define wxEVT_DBG_UI_TOGGLE_BREAKPOINT          3558 // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
-#define wxEVT_DBG_CAN_INTERACT                  3559 // Can CodeLite interact with the debugger? use event.SetAnswer(true); 
-                                                        // Note: by avoid calling Skip() CodeLite will assume that the plugin is controlling the debug session
-                                                        // and it will use the event.IsAnswer() as the answer to the question to : CanDbgInteract()
-#define wxEVT_DBG_EXPR_TOOLTIP                  3560 // Provide a tooltip for the expression under the caret. user event.GetString() to get the expression
-            
-#define wxEVT_DBG_IS_PLUGIN_DEBUGGER            3570 // This event is sent by codelite to all plugins to determine whether a plugin is actually a debugger.
-                                                        // A plugin should *always* call event.Skip() when handling this event. If the plugin is actually a debugger
-                                                        // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
-                                                        // This string is later will be availe for codelite to display it in various dialogs (e.g. Quick Debug, project settings etc)
-            
-#define wxEVT_DBG_UI_QUICK_DEBUG                3571 // User clicked on the 'Quick Debug' button. Event type is clDebugEvent
-#define wxEVT_DBG_UI_CORE_FILE                  3572 // User selected to debug a core file. Event type is clDebugEvent
-#define wxEVT_DBG_UI_ATTACH_TO_PROCESS          3573 // Attach to process. Use clDebugEvent::GetInt() to get the process ID
-#define wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS      3574 // Delete all breakpoints
-#define wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS     3575 // Enable all breakpoints
-#define wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS    3576 // Disable all breakpoints
+#define wxEVT_DBG_UI_START 3547       // Start
+#define wxEVT_DBG_UI_CONTINUE 3548    // Continue
+#define wxEVT_DBG_UI_STOP 3549        // Stop the debugger
+#define wxEVT_DBG_UI_STEP_IN 3550     // Step into function
+#define wxEVT_DBG_UI_STEP_OUT 3551    // Step out of current frame
+#define wxEVT_DBG_UI_NEXT 3552        // Next line
+#define wxEVT_DBG_UI_NEXT_INST 3553   // Next instruction
+#define wxEVT_DBG_UI_INTERRUPT 3554   // Interrupt the debugger execution
+#define wxEVT_DBG_UI_SHOW_CURSOR 3555 // Set the focus to the current debugger file/line
+#define wxEVT_DBG_UI_RESTART 3556     // Restart the debug session
+#define wxEVT_DBG_IS_RUNNING 3557     // Use evet.SetAnswer() method to reply
+#define wxEVT_DBG_UI_TOGGLE_BREAKPOINT \
+    3558                            // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
+#define wxEVT_DBG_CAN_INTERACT 3559 // Can CodeLite interact with the debugger? use event.SetAnswer(true);
+// Note: by avoid calling Skip() CodeLite will assume that the plugin is controlling the debug session
+// and it will use the event.IsAnswer() as the answer to the question to : CanDbgInteract()
+#define wxEVT_DBG_EXPR_TOOLTIP \
+    3560 // Provide a tooltip for the expression under the caret. user event.GetString() to get the expression
+
+#define wxEVT_DBG_IS_PLUGIN_DEBUGGER \
+    3570 // This event is sent by codelite to all plugins to determine whether a plugin is actually a debugger.
+         // A plugin should *always* call event.Skip() when handling this event. If the plugin is actually a debugger
+         // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
+// This string is later will be availe for codelite to display it in various dialogs (e.g. Quick Debug, project settings
+// etc)
+
+#define wxEVT_DBG_UI_QUICK_DEBUG 3571            // User clicked on the 'Quick Debug' button. Event type is clDebugEvent
+#define wxEVT_DBG_UI_CORE_FILE 3572              // User selected to debug a core file. Event type is clDebugEvent
+#define wxEVT_DBG_UI_ATTACH_TO_PROCESS 3573      // Attach to process. Use clDebugEvent::GetInt() to get the process ID
+#define wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS 3574  // Delete all breakpoints
+#define wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS 3575 // Enable all breakpoints
+#define wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS 3576 // Disable all breakpoints
 
 // -------------------Debugger events end------------------------------------------------
-#define wxEVT_CMD_OPEN_PROJ_SETTINGS   3580 // clCommandEvent. Use event.GetString() to get the project name
+#define wxEVT_CMD_OPEN_PROJ_SETTINGS 3580 // clCommandEvent. Use event.GetString() to get the project name
 
 // Workspace reload started
 // event type: clCommandEvent
@@ -549,7 +553,7 @@
 
 // Workspace reload is done
 // event type: clCommandEvent
-#define wxEVT_WORKSPACE_RELOAD_ENDED   3582
+#define wxEVT_WORKSPACE_RELOAD_ENDED 3582
 
 // event type: clNewProjectEvent
 // Use this event to add new templates / categories to the wizard
@@ -590,7 +594,7 @@
 // Note that the plugin should be "smart" enough to indent the file
 // by its type
 // Call event.Skip(false) to mark this event as completed
-#define wxEVT_FORMAT_STRING    3620
+#define wxEVT_FORMAT_STRING 3620
 
 // Format a file
 // Event type: clSourceFormatEvent
@@ -598,7 +602,7 @@
 // Note that the plugin should be "smart" enough to indent the file
 // by its type
 // Call event.Skip(false) to mark this event as completed
-#define wxEVT_FORMAT_FILE      3621
+#define wxEVT_FORMAT_FILE 3621
 
 //----------------------------------------------------------------------
 // Context menu events
@@ -615,11 +619,16 @@
 
 // User modified the colours and font of the IDE
 // event type: clCommandEvent
-#define wxEVT_CMD_COLOURS_FONTS_UPDATED  3640
+#define wxEVT_CMD_COLOURS_FONTS_UPDATED 3640
 
 // File has been loaded into the IDE
 // User: clCommandEvnet::GetFileName() to get the file name
 #define wxEVT_FILE_LOADED 3700
 
-#endif // CODELITE_EVENTS_H
+// Sent when codelite is about to set the main frame's title.
+// A plugin may alter the frame title by calling event.SetString(..)
+// To get the current frame title, a plugin may call event.GetString()
+// Event type: clCommandEvent
+#define wxEVT_CL_FRAME_TITLE 3701 
 
+#endif // CODELITE_EVENTS_H

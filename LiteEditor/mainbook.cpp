@@ -431,15 +431,25 @@ LEditor* MainBook::FindEditor(const wxString& fileName)
 #ifdef __WXMSW__
             unixStyleFile.Replace(wxT("\\"), wxT("/"));
 #endif
+
+
+#ifndef __WXMSW__
+            // On Unix files are case sensitive
+            if(nativeFile.Cmp(fileName) == 0 || unixStyleFile.Cmp(fileName) == 0 ||
+               unixStyleFile.Cmp(fileNameDest) == 0) 
+#else
+            // Compare in no case sensitive manner
             if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0 ||
-               unixStyleFile.CmpNoCase(fileNameDest) == 0) {
+               unixStyleFile.CmpNoCase(fileNameDest) == 0) 
+#endif
+            {
                 return editor;
             }
 
 #if defined(__WXGTK__)
             // Try again, dereferencing the editor fpath
             wxString editorDest = CLRealPath(unixStyleFile);
-            if(editorDest.CmpNoCase(fileName) == 0 || editorDest.CmpNoCase(fileNameDest) == 0) {
+            if(editorDest.Cmp(fileName) == 0 || editorDest.Cmp(fileNameDest) == 0) {
                 return editor;
             }
 #endif

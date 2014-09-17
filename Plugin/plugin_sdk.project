@@ -74,6 +74,8 @@
     <File Name="EclipseCMakeThemeImporter.cpp"/>
     <File Name="EclipseThemeImporterManager.h"/>
     <File Name="EclipseThemeImporterManager.cpp"/>
+    <File Name="EclipseTextThemeImporter.h"/>
+    <File Name="EclipseTextThemeImporter.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

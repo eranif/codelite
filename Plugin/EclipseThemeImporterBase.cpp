@@ -141,7 +141,6 @@ void EclipseThemeImporterBase::AddCommonProperties(wxXmlNode* propertiesNode)
     GetProperty("foreground", foreground);
     GetProperty("selectionForeground", selectionForeground);
     GetProperty("selectionBackground", selectionBackground);
-    GetProperty("selectionBackground", selectionBackground);
     GetProperty("lineNumber", lineNumber);
 
     wxString whitespaceColour;

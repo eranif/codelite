@@ -1,11 +1,13 @@
 #include "EclipseThemeImporterManager.h"
 #include "EclipseCXXThemeImporter.h"
 #include "EclipseCMakeThemeImporter.h"
+#include "EclipseTextThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
     m_importers.push_back(new EclipseCXXThemeImporter());
     m_importers.push_back(new EclipseCMakeThemeImporter());
+    m_importers.push_back(new EclipseTextThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

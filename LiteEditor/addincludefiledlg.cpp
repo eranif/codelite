@@ -34,7 +34,8 @@
 
 wxArrayString AddIncludeFileDlg::m_includePath;
 
-struct SAscendingSort {
+struct SAscendingSort
+{
     bool operator()(const wxString& s1, const wxString& s2) { return s1.Len() > s2.Len(); }
 };
 
@@ -44,9 +45,8 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     , m_text(text)
     , m_line(lineNo)
 {
-    UpdateLineToAdd();
-
     // Initialise the preview window
+    UpdateLineToAdd();
     LexerConf::Ptr_t cppLex = EditorConfigST::Get()->GetLexer("C++");
     cppLex->Apply(m_textCtrlPreview, true);
 
@@ -60,11 +60,21 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     // Set the initial text
     m_textCtrlPreview->SetReadOnly(false);
     m_textCtrlPreview->AddText(m_text);
-    m_textCtrlPreview->EmptyUndoBuffer();
     SetAndMarkLine();
+    m_textCtrlPreview->EmptyUndoBuffer();
     m_textCtrlPreview->SetFocus();
     WindowAttrManager::Load(this, "AddIncludeFileDlg", NULL);
     Centre();
+
+    // Only call OnModified when text was deleted or added
+    Bind(wxEVT_IDLE, &AddIncludeFileDlg::OnIdle, this);
+    
+    int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
+    int firstVisibleLine = m_line - (numOfLinesVisible / 2);
+    if(firstVisibleLine < 0) {
+        firstVisibleLine = 0;
+    }
+    m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
 }
 
 AddIncludeFileDlg::~AddIncludeFileDlg() { WindowAttrManager::Save(this, "AddIncludeFileDlg", NULL); }
@@ -119,30 +129,32 @@ void AddIncludeFileDlg::UpdateLineToAdd()
     } else {
         line << wxT("#include \"") << rest << wxT("\"");
     }
-    m_textCtrlLineToAdd->ChangeValue(line);
+    m_lineToAdd = line;
+    // m_textCtrlLineToAdd->ChangeValue(line);
 }
 
 void AddIncludeFileDlg::SetAndMarkLine()
 {
-    wxString line = m_textCtrlLineToAdd->GetValue();
+    // restore the initial text
     m_textCtrlPreview->SetReadOnly(false);
-    if(m_textCtrlPreview->CanUndo()) {
-        m_textCtrlPreview->Undo();
+    
+    // Make the line to add at the center of the display
+    int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
+    int firstVisibleLine = m_line - (numOfLinesVisible / 2);
+    if(firstVisibleLine < 0) {
+        firstVisibleLine = 0;
     }
-
-    m_textCtrlPreview->BeginUndoAction();
-    if(m_line == wxNOT_FOUND) {
-        m_line = 0;
-    }
+    
     m_textCtrlPreview->MarkerDeleteAll(0x7);
+    m_textCtrlPreview->SetText(m_text);
     long pos = m_textCtrlPreview->PositionFromLine(m_line);
-    m_textCtrlPreview->InsertText(pos, line + wxT("\n"));
+    m_textCtrlPreview->InsertText(pos, m_lineToAdd + wxT("\n"));
     m_textCtrlPreview->MarkerAdd(m_line, 0x7);
+    m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
     m_textCtrlPreview->SetCurrentPos(pos);
     m_textCtrlPreview->SetSelectionStart(pos);
     m_textCtrlPreview->SetSelectionEnd(pos);
-    m_textCtrlPreview->EnsureCaretVisible();
-    m_textCtrlPreview->EndUndoAction();
+    m_textCtrlPreview->EmptyUndoBuffer();
     m_textCtrlPreview->SetReadOnly(true);
 }
 
@@ -180,8 +192,8 @@ void AddIncludeFileDlg::OnButtonOK(wxCommandEvent& e)
     static wxRegEx reIncludeFile(wxT("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.]*)"));
     wxString relativePath;
 
-    if(reIncludeFile.Matches(m_textCtrlLineToAdd->GetValue())) {
-        relativePath = reIncludeFile.GetMatch(m_textCtrlLineToAdd->GetValue(), 1);
+    if(reIncludeFile.Matches(m_lineToAdd)) {
+        relativePath = reIncludeFile.GetMatch(m_lineToAdd, 1);
     }
 
     fullpath.Replace(wxT("\\"), wxT("/"));
@@ -190,7 +202,7 @@ void AddIncludeFileDlg::OnButtonOK(wxCommandEvent& e)
 
     wxString inclPath;
     if(fullpath.EndsWith(relativePath, &inclPath) &&
-       fullpath != relativePath && // dont save the '.' path this is done by default
+       fullpath != relativePath &&         // don't save the '.' path this is done by default
        fn.GetFullName() != relativePath) { // if the relative path is only file name, nothing to cache
         m_includePath.Add(inclPath);
     }
@@ -208,10 +220,35 @@ void AddIncludeFileDlg::OnClearCachedPaths(wxCommandEvent& e)
 void AddIncludeFileDlg::OnPreviewKeyDown(wxKeyEvent& event)
 {
     event.Skip(false);
+    m_textCtrlPreview->SetEditable(false);
+    bool isOnMarkerLine = m_line == m_textCtrlPreview->GetCurrentLine();
     wxCommandEvent dummy;
     if(event.GetKeyCode() == WXK_DOWN) {
+        // update the line to add string and move the line down
+        // m_lineToAdd = m_textCtrlPreview->GetLine(m_line);
         OnButtonDown(dummy);
+
     } else if(event.GetKeyCode() == WXK_UP) {
+        // update the line to add string and move the line up
+        // m_lineToAdd = m_textCtrlPreview->GetLine(m_line);
         OnButtonUp(dummy);
+    } else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
+        OnButtonOK(dummy);
+
+    } else if(isOnMarkerLine) {
+        m_textCtrlPreview->SetEditable(true);
+        event.Skip();
+    }
+}
+
+void AddIncludeFileDlg::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(m_textCtrlPreview->MarkerNext(wxNOT_FOUND, (1 << 0x7)) != wxNOT_FOUND) {
+        // we have a marker
+        m_lineToAdd = m_textCtrlPreview->GetLine(m_line);
+        m_lineToAdd.Trim();
+
+        m_staticTextPreview->CallAfter(&wxStaticText::SetLabel, m_lineToAdd);
     }
 }

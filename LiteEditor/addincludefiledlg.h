@@ -33,27 +33,26 @@ class AddIncludeFileDlg : public AddIncludeFileDlgBase
     wxString m_text;
     int m_line;
     static wxArrayString m_includePath;
+    wxString m_lineToAdd;
 
 protected:
     void SetAndMarkLine();
-    void OnTextUpdated(wxCommandEvent &e);
-    void OnButtonDown(wxCommandEvent &event);
-    void OnButtonUp(wxCommandEvent &event);
-    void OnButtonOK(wxCommandEvent &e);
-    void OnClearCachedPaths(wxCommandEvent &e);
+    void OnTextUpdated(wxCommandEvent& e);
+    void OnButtonDown(wxCommandEvent& event);
+    void OnButtonUp(wxCommandEvent& event);
+    void OnButtonOK(wxCommandEvent& e);
+    void OnClearCachedPaths(wxCommandEvent& e);
     void UpdateLineToAdd();
-    
+
     void OnPreviewKeyDown(wxKeyEvent& event);
+    void OnIdle(wxIdleEvent& event);
+    
 public:
     /** Constructor */
-    AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath, const wxString &text, int lineNo );
+    AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath, const wxString& text, int lineNo);
     virtual ~AddIncludeFileDlg();
-    wxString GetLineToAdd() const {
-        return m_textCtrlLineToAdd->GetValue();
-    }
-    int GetLine() const {
-        return m_line;
-    }
+    const wxString& GetLineToAdd() const { return m_lineToAdd; }
+    int GetLine() const { return m_line; }
 };
 
 #endif // __addincludefiledlg__

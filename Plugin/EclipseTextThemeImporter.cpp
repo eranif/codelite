@@ -2,7 +2,7 @@
 #include "cl_standard_paths.h"
 #include "globals.h"
 
-EclipseTextThemeImporter::EclipseTextThemeImporter() { SetFileExtensions("*.txt;*.log"); }
+EclipseTextThemeImporter::EclipseTextThemeImporter() { SetFileExtensions(""); }
 
 EclipseTextThemeImporter::~EclipseTextThemeImporter() {}
 

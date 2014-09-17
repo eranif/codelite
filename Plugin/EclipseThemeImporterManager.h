@@ -14,6 +14,13 @@ public:
     virtual ~EclipseThemeImporterManager();
     
     bool Import(const wxString& eclipseXml);
+    
+    /**
+     * @brief scan, convert all C++ existing lexers into eclipse XML and then import them
+     * to all other languages that we support. This is used internally and not exposed to 
+     * the end user
+     */
+    bool ImportCxxToAll();
 };
 
 #endif // ECLIPSETHEMEIMPORTERMANAGER_H

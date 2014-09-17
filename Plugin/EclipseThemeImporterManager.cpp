@@ -20,3 +20,12 @@ bool EclipseThemeImporterManager::Import(const wxString& eclipseXml)
     }
     return true;
 }
+
+bool EclipseThemeImporterManager::ImportCxxToAll()
+{
+    std::vector<wxFileName> files = EclipseCXXThemeImporter::ToEclipseXMLs();
+    for(size_t i=0; i<files.size(); ++i) {
+        Import(files.at(i).GetFullPath());
+    }
+    return true;
+}

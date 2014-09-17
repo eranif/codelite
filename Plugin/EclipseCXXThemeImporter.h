@@ -6,9 +6,20 @@
 
 class WXDLLIMPEXP_SDK EclipseCXXThemeImporter : public EclipseThemeImporterBase
 {
+private:
+    /**
+     * @brief convert a single XML file to eclipse XML format
+     */
+    static wxFileName ToEclipseXML(const wxFileName& codeliteXml, size_t id);
+    
 public:
     EclipseCXXThemeImporter();
     virtual ~EclipseCXXThemeImporter();
+    
+    /**
+     * @brief convert _all_ C++ xml files into eclipse format
+     */
+    static std::vector<wxFileName> ToEclipseXMLs();
     
     /**
      * @brief import an eclipse XML colour theme

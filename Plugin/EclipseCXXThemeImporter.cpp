@@ -1,6 +1,8 @@
 #include "EclipseCXXThemeImporter.h"
 #include "globals.h"
 #include "cl_standard_paths.h"
+#include "fileutils.h"
+#include "xmlutils.h"
 
 EclipseCXXThemeImporter::EclipseCXXThemeImporter()
 {
@@ -36,15 +38,12 @@ EclipseCXXThemeImporter::EclipseCXXThemeImporter()
     SetFileExtensions("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++");
 }
 
-EclipseCXXThemeImporter::~EclipseCXXThemeImporter()
-{
-}
+EclipseCXXThemeImporter::~EclipseCXXThemeImporter() {}
 
 bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
-    if(!Load(eclipseXmlFile))
-        return false;
-        
+    if(!Load(eclipseXmlFile)) return false;
+
     wxXmlDocument codeliteXML;
     wxXmlNode* lexer = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Lexer");
     codeliteXML.SetRoot(lexer);
@@ -157,6 +156,76 @@ bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile)
         properties, "19", "Local variables", variable.colour, background.colour, variable.isBold, variable.isItalic);
 
     AddCommonProperties(properties);
-    wxString codeliteXmlFile = wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile("c++")).GetFullPath();
+    wxString codeliteXmlFile =
+        wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile("c++")).GetFullPath();
     return ::SaveXmlToFile(&codeliteXML, codeliteXmlFile);
+}
+
+wxFileName EclipseCXXThemeImporter::ToEclipseXML(const wxFileName& codeliteXml, size_t id)
+{
+    wxXmlDocument doc(codeliteXml.GetFullPath());
+    if(!doc.IsOk()) return wxFileName();
+
+    wxXmlNode* props = XmlUtils::FindFirstByTagName(doc.GetRoot(), "Properties");
+    if(!props) return wxFileName();
+
+    wxString eclipseXML;
+    eclipseXML << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+    eclipseXML << "<colorTheme id=\"2\" name=\"" << doc.GetRoot()->GetAttribute("Theme") << "\">\n";
+    wxXmlNode* prop = props->GetChildren();
+    while(prop) {
+        if(prop->GetAttribute("Name") == "Default") {
+            eclipseXML << "  <foreground color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <background color=\"" << prop->GetAttribute("BgColour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Line Numbers") {
+            eclipseXML << "  <lineNumber color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Text Selection") {
+            eclipseXML << "  <selectionForeground color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <selectionBackground color=\"" << prop->GetAttribute("BgColour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Common C++ style comment") {
+            eclipseXML << "  <singleLineComment color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Common C style comment") {
+            eclipseXML << "  <multiLineComment color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Number") {
+            eclipseXML << "  <number color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "String") {
+            eclipseXML << "  <string color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Operator") {
+            eclipseXML << "  <operator color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "C++ keyword") {
+            eclipseXML << "  <keyword color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Workspace tags") {
+            eclipseXML << "  <class color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+
+        } else if(prop->GetAttribute("Name") == "Local variables") {
+            eclipseXML << "  <localVariable color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+        }
+        prop = prop->GetNext();
+    }
+    eclipseXML << "</colorTheme>\n";
+    wxString xmlFile;
+    xmlFile << wxStandardPaths::Get().GetTempDir() << "/"
+            << "eclipse-theme-" << id << ".xml";
+    FileUtils::WriteFileContent(xmlFile, eclipseXML);
+    return wxFileName(xmlFile);
+}
+
+std::vector<wxFileName> EclipseCXXThemeImporter::ToEclipseXMLs()
+{
+    std::vector<wxFileName> arr;
+    wxArrayString files;
+    wxDir::GetAllFiles(clStandardPaths::Get().GetLexersDir(), &files, "lexer_c++_*.xml");
+    for(size_t i = 0; i < files.GetCount(); ++i) {
+        arr.push_back( ToEclipseXML(files.Item(i), i));
+    }
+    return arr;
 }

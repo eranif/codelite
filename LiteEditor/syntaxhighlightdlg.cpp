@@ -49,6 +49,7 @@
 #include <wx/filedlg.h>
 #include "EclipseCXXThemeImporter.h"
 #include <wx/msgdlg.h>
+#include "EclipseThemeImporterManager.h"
 
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)
@@ -596,6 +597,14 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
 {
+#if 0
+    EclipseThemeImporterManager importer;
+    importer.ImportCxxToAll();
+    EndModal(wxID_OK);
+    wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
+    
+#else
     wxString eclipseThemeXml =
         ::wxFileSelector(_("Select eclipse XML theme file"), "", "", "", "Eclipse Theme Files (*.xml)|*.xml");
     
@@ -607,6 +616,7 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
         wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
     }
+#endif
 }
 
 void SyntaxHighlightDlg::OnLoadEclipseThemeWebsite(wxCommandEvent& event)

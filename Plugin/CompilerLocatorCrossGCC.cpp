@@ -31,41 +31,42 @@
 #include "file_logger.h"
 #include "procutils.h"
 
-CompilerLocatorCrossGCC::CompilerLocatorCrossGCC()
-{
-}
+CompilerLocatorCrossGCC::CompilerLocatorCrossGCC() {}
 
-CompilerLocatorCrossGCC::~CompilerLocatorCrossGCC()
-{
-}
+CompilerLocatorCrossGCC::~CompilerLocatorCrossGCC() {}
 
-CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder)
-{
-    return Locate(folder, true);
-}
+CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder) { return Locate(folder, true); }
 
 CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
 {
-    if (clear)
+    if(clear) {
         m_compilers.clear();
+    }
 
     wxArrayString matches;
-    int count;
+    wxFileName fnFolder(folder, "");
+
+    // We collect "*-gcc" files
+    wxString pattern = "*-gcc";
 #ifdef __WXMSW__
-    count = wxDir::GetAllFiles(folder, &matches, "*-gcc.exe", wxDIR_FILES);
-#else
-    count = wxDir::GetAllFiles(folder, &matches, "*-gcc", wxDIR_FILES);
+    pattern << ".exe";
 #endif
 
-    if ( count == 0 )
-        return NULL;
+    int count = wxDir::GetAllFiles(fnFolder.GetPath(), &matches, pattern, wxDIR_FILES);
+    if(count == 0) {
+        // try to see if we have a 'bin' folder under 'folder'
+        fnFolder.AppendDir("bin");
+        count = wxDir::GetAllFiles(fnFolder.GetPath(), &matches, pattern, wxDIR_FILES);
+    }
 
-    for ( int i = 0; i < count; ++i ) {
+    if(count == 0) return NULL;
+
+    for(int i = 0; i < count; ++i) {
 #ifndef __WXMSW__
         // Check if this is a script
         char sha[2];
         wxFile(matches[i]).Read(sha, 2);
-        if (strncmp(sha, "#!", 2) == 0) {
+        if(strncmp(sha, "#!", 2) == 0) {
             continue;
         }
 #endif
@@ -75,20 +76,19 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
             // they will be picked up later by the MinGW locator
             continue;
         }
-        
-        CompilerPtr compiler( new Compiler(NULL) );
+
+        CompilerPtr compiler(new Compiler(NULL));
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
 
         // get the compiler version
-        compiler->SetName( filename.GetName() );
+        compiler->SetName(filename.GetName());
         compiler->SetGenerateDependeciesFile(true);
-        m_compilers.push_back( compiler );
+        m_compilers.push_back(compiler);
 
         // we path the bin folder
-        AddTools(compiler, filename.GetPath(),
-                 filename.GetName().BeforeLast('-'), filename.GetExt());
+        AddTools(compiler, filename.GetPath(), filename.GetName().BeforeLast('-'), filename.GetExt());
     }
-    
+
     if(m_compilers.empty()) {
         return NULL;
     } else {
@@ -105,13 +105,12 @@ bool CompilerLocatorCrossGCC::Locate()
     wxGetEnv("PATH", &pathValues);
     wxStringSet_t tried;
 
-    if ( !pathValues.IsEmpty() ) {
+    if(!pathValues.IsEmpty()) {
         wxArrayString pathArray = ::wxStringTokenize(pathValues, wxPATH_SEP, wxTOKEN_STRTOK);
-        for (size_t i = 0; i < pathArray.GetCount(); ++i) {
-            if ( tried.count(pathArray[i]) )
-                continue;
+        for(size_t i = 0; i < pathArray.GetCount(); ++i) {
+            if(tried.count(pathArray[i])) continue;
             Locate(pathArray[i], false);
-            tried.insert( pathArray[i] );
+            tried.insert(pathArray[i]);
         }
     }
 
@@ -119,12 +118,12 @@ bool CompilerLocatorCrossGCC::Locate()
 }
 
 void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler,
-                                       const wxString &binFolder,
-                                       const wxString &prefix,
-                                       const wxString &suffix)
+                                       const wxString& binFolder,
+                                       const wxString& prefix,
+                                       const wxString& suffix)
 {
     compiler->SetName("Cross GCC ( " + prefix + " )");
-    compiler->SetInstallationPath( binFolder );
+    compiler->SetInstallationPath(binFolder);
 
     CL_DEBUG("Found CrossGCC compiler under: %s. \"%s\"", binFolder, compiler->GetName());
     wxFileName toolFile(binFolder, "");
@@ -145,8 +144,7 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler,
 
     toolFile.SetFullName(prefix + "-windres");
     toolFile.SetExt(suffix);
-    if (toolFile.FileExists())
-        AddTool(compiler, "ResourceCompiler", toolFile.GetFullPath());
+    if(toolFile.FileExists()) AddTool(compiler, "ResourceCompiler", toolFile.GetFullPath());
 
     toolFile.SetFullName(prefix + "-as");
     toolFile.SetExt(suffix);
@@ -159,23 +157,24 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler,
     toolFile.SetFullName("make");
     toolFile.SetExt(suffix);
     wxString makeExtraArgs;
-    if ( wxThread::GetCPUCount() > 1 ) {
+    if(wxThread::GetCPUCount() > 1) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
 
     // XXX Need this on Windows?
-    //makeExtraArgs <<  " SHELL=cmd.exe ";
+    // makeExtraArgs <<  " SHELL=cmd.exe ";
 
     // What to do if there's no make here? (on Windows)
-    if (toolFile.FileExists())
-        AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
+    if(toolFile.FileExists()) AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
 }
 
-void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs)
+void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler,
+                                      const wxString& toolname,
+                                      const wxString& toolpath,
+                                      const wxString& extraArgs)
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
     compiler->SetTool(toolname, tool + " " + extraArgs);
     CL_DEBUG("Adding tool: %s => %s", toolname, tool);
 }
-

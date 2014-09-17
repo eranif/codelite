@@ -274,7 +274,7 @@ void AdvancedDlg::OnAddExistingCompiler()
         // We found new compiler
         // Prompt the user to give it a name
         while ( true ) {
-            wxString name = ::wxGetTextFromUser(_("Compiler Name:"), _("Set a name to the compiler"), cmp->GetName());
+            wxString name = ::wxGetTextFromUser(_("Set a name to the compiler"), _("New compiler found!"), cmp->GetName());
             if ( name.IsEmpty() ) {
                 return;
             }

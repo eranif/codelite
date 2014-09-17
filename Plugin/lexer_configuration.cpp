@@ -299,6 +299,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     std::list<StyleProperty> styles;
     styles = GetLexerProperties();
     ctrl->SetProperty(wxT("styling.within.preprocessor"), this->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
+    
+    // turn off PP tracking/updating by default
+    ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
+    ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
 
     // Find the default style
     wxFont defaultFont;

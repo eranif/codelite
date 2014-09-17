@@ -84,7 +84,8 @@ bool CompilerLocatorMinGW::Locate()
     m_compilers.clear();
     m_locatedFolders.clear();
     
-#ifdef __WXMSW__ // for wxRegKey
+    // for wxRegKey
+#ifdef __WXMSW__ 
 
     // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
     wxRegKey regClMinGW(wxRegKey::HKLM, "SOFTWARE\\codelite\\settings");

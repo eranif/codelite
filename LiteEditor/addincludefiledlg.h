@@ -42,7 +42,8 @@ protected:
     void OnButtonOK(wxCommandEvent &e);
     void OnClearCachedPaths(wxCommandEvent &e);
     void UpdateLineToAdd();
-
+    
+    void OnPreviewKeyDown(wxKeyEvent& event);
 public:
     /** Constructor */
     AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath, const wxString &text, int lineNo );

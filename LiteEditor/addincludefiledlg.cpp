@@ -248,7 +248,9 @@ void AddIncludeFileDlg::OnIdle(wxIdleEvent& event)
         // we have a marker
         m_lineToAdd = m_textCtrlPreview->GetLine(m_line);
         m_lineToAdd.Trim();
-
-        m_staticTextPreview->CallAfter(&wxStaticText::SetLabel, m_lineToAdd);
+        
+        if(m_staticTextPreview->GetLabel() != m_lineToAdd) {
+            m_staticTextPreview->CallAfter(&wxStaticText::SetLabel, m_lineToAdd);
+        }
     }
 }

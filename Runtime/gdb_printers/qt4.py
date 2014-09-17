@@ -20,25 +20,30 @@ import gdb
 import itertools
 import re
 
+from helper import *
+
 class QStringPrinter:
 
     def __init__(self, val):
         self.val = val
 
     def to_string(self):
-        #ret = ""
-        #i = 0
         size = self.val['d']['size']
-        #while i < size:
-        #    char = self.val['d']['data'][i]
-        #    if (char > 127):
-        #        ret += "\\u%x" % int(char)
-        #    else:
-        #        ret += chr(char)
-        #    i = i + 1
-        #return ret
-        dataAsCharPointer = self.val['d']['data'].cast(gdb.lookup_type("char").pointer())
-        return dataAsCharPointer.string(encoding = 'UTF-16', length = size * 2)
+        ret = ""
+
+        # The QString object might be not yet initialized. In this case size is a bogus value
+        # and the following 2 lines might throw memory access error. Hence the try/catch.
+        try:
+            isQt4 = has_field(self.val['d'], 'data') # Qt4 has d->data, Qt5 doesn't.
+            if isQt4:
+                dataAsCharPointer = self.val['d']['data'].cast(gdb.lookup_type("char").pointer())
+            else:
+                dataAsCharPointer = (self.val['d'] + 1).cast(gdb.lookup_type("char").pointer())
+            ret = dataAsCharPointer.string(encoding = 'UTF-16', length = size * 2)
+        except Exception:
+            # swallow the exception and return empty string
+            pass
+        return ret
 
     def display_hint (self):
         return 'string'
@@ -49,7 +54,7 @@ class QByteArrayPrinter:
     def __init__(self, val):
         self.val = val
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, data, size):
             self.data = data
             self.size = size
@@ -58,16 +63,12 @@ class QByteArrayPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.count >= self.size:
                 raise StopIteration
             count = self.count
             self.count = self.count + 1
             return ('[%d]' % count, self.data[count])
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def children(self):
         return self._iterator(self.val['d']['data'], self.val['d']['size'])
@@ -82,7 +83,7 @@ class QByteArrayPrinter:
 class QListPrinter:
     "Print a QList"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, nodetype, d):
             self.nodetype = nodetype
             self.d = d
@@ -91,7 +92,7 @@ class QListPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.count >= self.d['end'] - self.d['begin']:
                 raise StopIteration
             count = self.count
@@ -100,21 +101,22 @@ class QListPrinter:
             #from QTypeInfo::isLarge
             isLarge = self.nodetype.sizeof > gdb.lookup_type('void').pointer().sizeof
 
-            #isStatic is not needed anymore since Qt 4.6
-            #isPointer = self.nodetype.code == gdb.TYPE_CODE_PTR
-            #
-            ##unfortunately we can't use QTypeInfo<T>::isStatic as it's all inlined, so use
-            ##this list of types that use Q_DECLARE_TYPEINFO(T, Q_MOVABLE_TYPE)
-            ##(obviously it won't work for custom types)
-            #movableTypes = ['QRect', 'QRectF', 'QString', 'QMargins', 'QLocale', 'QChar', 'QDate', 'QTime', 'QDateTime', 'QVector',
-            #    'QRegExpr', 'QPoint', 'QPointF', 'QByteArray', 'QSize', 'QSizeF', 'QBitArray', 'QLine', 'QLineF', 'QModelIndex', 'QPersitentModelIndex',
-            #    'QVariant', 'QFileInfo', 'QUrl', 'QXmlStreamAttribute', 'QXmlStreamNamespaceDeclaration', 'QXmlStreamNotationDeclaration',
-            #    'QXmlStreamEntityDeclaration']
-            #if movableTypes.count(self.nodetype.tag):
-            #    isStatic = False
-            #else:
-            #    isStatic = not isPointer
-            isStatic = False
+            isPointer = self.nodetype.code == gdb.TYPE_CODE_PTR
+
+            #unfortunately we can't use QTypeInfo<T>::isStatic as it's all inlined, so use
+            #this list of types that use Q_DECLARE_TYPEINFO(T, Q_MOVABLE_TYPE)
+            #(obviously it won't work for custom types)
+            movableTypes = ['QRect', 'QRectF', 'QString', 'QMargins', 'QLocale', 'QChar', 'QDate', 'QTime', 'QDateTime', 'QVector',
+               'QRegExpr', 'QPoint', 'QPointF', 'QByteArray', 'QSize', 'QSizeF', 'QBitArray', 'QLine', 'QLineF', 'QModelIndex', 'QPersitentModelIndex',
+               'QVariant', 'QFileInfo', 'QUrl', 'QXmlStreamAttribute', 'QXmlStreamNamespaceDeclaration', 'QXmlStreamNotationDeclaration',
+               'QXmlStreamEntityDeclaration']
+            #this list of types that use Q_DECLARE_TYPEINFO(T, Q_PRIMITIVE_TYPE) (from qglobal.h)
+            primitiveTypes = ['bool', 'char', 'signed char', 'unsigned char', 'short', 'unsigned short', 'int', 'unsigned int', 'long', 'unsigned long', 'long long', 'unsigned long long', 'float', 'double']
+
+            if movableTypes.count(self.nodetype.tag) or primitiveTypes.count(str(self.nodetype)):
+               isStatic = False
+            else:
+                isStatic = not isPointer
 
             if isLarge or isStatic: #see QList::Node::t()
                 node = array.cast(gdb.lookup_type('QList<%s>::Node' % self.nodetype).pointer())
@@ -123,12 +125,9 @@ class QListPrinter:
             self.count = self.count + 1
             return ('[%d]' % count, node['v'].cast(self.nodetype))
 
-         # Python3 version
-        def __next__(self):
-            return self.next()
-
-    def __init__(self, val, itype):
+    def __init__(self, val, container, itype):
         self.val = val
+        self.container = container
         if itype == None:
             self.itype = self.val.type.template_argument(0)
         else:
@@ -143,12 +142,87 @@ class QListPrinter:
         else:
             empty = ""
 
-        return "%sQList<%s>" % ( empty , self.itype )
+        return "%s%s<%s>" % ( empty, self.container, self.itype )
+
+class QVectorPrinter:
+    "Print a QVector"
+
+    class _iterator(Iterator):
+        def __init__(self, nodetype, d, p):
+            self.nodetype = nodetype
+            self.d = d
+            self.p = p
+            self.count = 0
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self.count >= self.p['size']:
+                raise StopIteration
+            count = self.count
+
+            self.count = self.count + 1
+            return ('[%d]' % count, self.p['array'][count])
+
+    def __init__(self, val, container):
+        self.val = val
+        self.container = container
+        self.itype = self.val.type.template_argument(0)
+
+    def children(self):
+        return self._iterator(self.itype, self.val['d'], self.val['p'])
+
+    def to_string(self):
+        if self.val['d']['size'] == 0:
+            empty = "empty "
+        else:
+            empty = ""
+
+        return "%s%s<%s>" % ( empty, self.container, self.itype )
+
+class QLinkedListPrinter:
+    "Print a QLinkedList"
+
+    class _iterator(Iterator):
+        def __init__(self, nodetype, begin, size):
+            self.nodetype = nodetype
+            self.it = begin
+            self.pos = 0
+            self.size = size
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self.pos >= self.size:
+                raise StopIteration
+
+            pos = self.pos
+            val = self.it['t']
+            self.it = self.it['n']
+            self.pos = self.pos + 1
+            return ('[%d]' % pos, val)
+
+    def __init__(self, val):
+        self.val = val
+        self.itype = self.val.type.template_argument(0)
+
+    def children(self):
+        return self._iterator(self.itype, self.val['e']['n'], self.val['d']['size'])
+
+    def to_string(self):
+        if self.val['d']['size'] == 0:
+            empty = "empty "
+        else:
+            empty = ""
+
+        return "%sQLinkedList<%s>" % ( empty, self.itype )
 
 class QMapPrinter:
     "Print a QMap"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, val):
             self.val = val
             self.ktype = self.val.type.template_argument(0)
@@ -160,6 +234,11 @@ class QMapPrinter:
             return self
 
         def payload (self):
+            if gdb.parse_and_eval:
+                ret = int(gdb.parse_and_eval('QMap<%s, %s>::payload()' % (self.ktype, self.vtype)))
+                if (ret): return ret;
+            
+            #if the inferior function call didn't work, let's try to calculate ourselves
 
             #we can't use QMapPayloadNode as it's inlined
             #as a workaround take the sum of sizeof(members)
@@ -172,14 +251,19 @@ class QMapPrinter:
             #TODO: find a real solution for this problem
             ret += ret % gdb.lookup_type('void').pointer().sizeof
 
+            #for some reason booleans are different
+            if str(self.vtype) == 'bool':
+                ret += 2
+
             ret -= gdb.lookup_type('void').pointer().sizeof
+            
             return ret
 
         def concrete (self, data_node):
             node_type = gdb.lookup_type('QMapNode<%s, %s>' % (self.ktype, self.vtype)).pointer()
             return (data_node.cast(gdb.lookup_type('char').pointer()) - self.payload()).cast(node_type)
 
-        def next(self):
+        def __next__(self):
             if self.data_node == self.val['e']:
                 raise StopIteration
             node = self.concrete(self.data_node).dereference()
@@ -193,16 +277,18 @@ class QMapPrinter:
             self.count = self.count + 1
             return result
 
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
-
-    def __init__(self, val):
+    def __init__(self, val, container):
         self.val = val
+        self.container = container
 
     def children(self):
-        return self._iterator(self.val)
+        isQt4 = has_field(self.val, 'e') # Qt4 has 'e', Qt5 doesn't
+        if isQt4:
+            return self._iterator(self.val)
+        else:
+            # TODO: Add proper iterator for Qt5-based QMap
+            return default_iterator(self.val)
 
     def to_string(self):
         if self.val['d']['size'] == 0:
@@ -210,7 +296,7 @@ class QMapPrinter:
         else:
             empty = ""
 
-        return "%sQMap<%s, %s>" % ( empty , self.val.type.template_argument(0), self.val.type.template_argument(1) )
+        return "%s%s<%s, %s>" % ( empty, self.container, self.val.type.template_argument(0), self.val.type.template_argument(1) )
 
     def display_hint (self):
         return 'map'
@@ -218,7 +304,7 @@ class QMapPrinter:
 class QHashPrinter:
     "Print a QHash"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, val):
             self.val = val
             self.d = self.val['d']
@@ -244,7 +330,6 @@ class QHashPrinter:
             #print "QHashData::firstNode() *bucket %s" % bucket
             n = self.d['numBuckets']
             #print "QHashData::firstNode() n %s" % n
-            n -= 1
             while n:
                 #print "QHashData::firstNode() in while, n %s" % n;
                 if bucket != e:
@@ -261,14 +346,13 @@ class QHashPrinter:
         def nextNode (self, node):
             "Get the nextNode after the current, see also QHashData::nextNode()."
             #print "******************************** nextNode"
-            e = self.d.cast(gdb.lookup_type('QHashData::Node').pointer())
-
             #print "nextNode: node %s" % node
+            next = node['next'].cast(gdb.lookup_type('QHashData::Node').pointer())
+            e = next
 
-            next = node['next']
             #print "nextNode: next %s" % next
             if next['next']:
-                #return "nextNode: return next"
+                #print "nextNode: return next"
                 return next
 
             #print "nextNode: node->h %s" % node['h']
@@ -293,7 +377,7 @@ class QHashPrinter:
             #print "nextNode: return e %s" % e
             return e
 
-        def next(self):
+        def __next__(self):
             "GDB iteration, first call returns key, second value and then jumps to the next hash node."
             if self.data_node == self.end_node:
                 raise StopIteration
@@ -309,12 +393,9 @@ class QHashPrinter:
             self.count = self.count + 1
             return ('[%d]' % self.count, item)
 
-         # Python3 version
-        def __next__(self):
-            return self.next()
-
-    def __init__(self, val):
+    def __init__(self, val, container):
         self.val = val
+        self.container = container
 
     def children(self):
         return self._iterator(self.val)
@@ -325,7 +406,7 @@ class QHashPrinter:
         else:
             empty = ""
 
-        return "%sQMap<%s, %s>" % ( empty , self.val.type.template_argument(0), self.val.type.template_argument(1) )
+        return "%s%s<%s, %s>" % ( empty, self.container, self.val.type.template_argument(0), self.val.type.template_argument(1) )
 
     def display_hint (self):
         return 'map'
@@ -415,7 +496,7 @@ class QUrlPrinter:
     def to_string(self):
         try:
             return self.val['d']['encodedOriginal']
-        except RuntimeError as error:
+        except RuntimeError:
             #if no debug information is avaliable for Qt, try guessing the correct address for encodedOriginal
             #problem with this is that if QUrlPrivate members get changed, this fails
             offset = gdb.lookup_type('int').sizeof
@@ -434,7 +515,7 @@ class QSetPrinter:
     def __init__(self, val):
         self.val = val
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, hashIterator):
             self.hashIterator = hashIterator
             self.count = 0
@@ -442,7 +523,7 @@ class QSetPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.hashIterator.data_node == self.hashIterator.end_node:
                 raise StopIteration
 
@@ -454,17 +535,18 @@ class QSetPrinter:
             self.count = self.count + 1
             return ('[%d]' % (self.count-1), item)
 
-         # Python3 version
-        def __next__(self):
-            return self.next()
-
     def children(self):
-        hashPrinter = QHashPrinter(self.val['q_hash'])
+        hashPrinter = QHashPrinter(self.val['q_hash'], None)
         hashIterator = hashPrinter._iterator(self.val['q_hash'])
         return self._iterator(hashIterator)
 
     def to_string(self):
-        return 'QSet'
+        if self.val['q_hash']['d']['size'] == 0:
+            empty = "empty "
+        else:
+            empty = ""
+
+        return "%sQSet<%s>" % ( empty , self.val.type.template_argument(0) )
 
 
 class QCharPrinter:
@@ -473,60 +555,54 @@ class QCharPrinter:
         self.val = val
 
     def to_string(self):
-        return chr(self.val['ucs'])
+        return unichr(self.val['ucs'])
 
     def display_hint (self):
         return 'string'
+
+class QUuidPrinter:
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        return "QUuid({%x-%x-%x-%x%x-%x%x%x%x%x%x})" % (self.val['data1'], self.val['data2'], self.val['data3'],
+                                            self.val['data4'][0], self.val['data4'][1],
+                                            self.val['data4'][2], self.val['data4'][3],
+                                            self.val['data4'][4], self.val['data4'][5],
+                                            self.val['data4'][6], self.val['data4'][7])
+
+    def display_hint (self):
+        return 'string'
+
+pretty_printers_dict = {}
 
 def register_qt4_printers (obj):
     if obj == None:
         obj = gdb
 
-    obj.pretty_printers.append (lookup_function)
-
-def lookup_function (val):
-    "Look-up and return a pretty-printer that can print val."
-
-    # Get the type.
-    type = val.type;
-
-    # If it points to a reference, get the reference.
-    if type.code == gdb.TYPE_CODE_REF:
-        type = type.target ()
-
-    # Get the unqualified type, stripped of typedefs.
-    type = type.unqualified ().strip_typedefs ()
-
-    # Get the type name.
-    typename = type.tag
-    if typename == None:
-        return None
-
-    # Iterate over local dictionary of types to determine
-    # if a printer is registered for that type.  Return an
-    # instantiation of the printer if found.
-    for function in pretty_printers_dict:
-        if function.search (typename):
-            return pretty_printers_dict[function] (val)
-
-    # Cannot find a pretty printer.  Return None.
-    return None
+    obj.pretty_printers.append(FunctionLookup(gdb, pretty_printers_dict))
 
 def build_dictionary ():
     pretty_printers_dict[re.compile('^QString$')] = lambda val: QStringPrinter(val)
     pretty_printers_dict[re.compile('^QByteArray$')] = lambda val: QByteArrayPrinter(val)
-    pretty_printers_dict[re.compile('^QList<.*>$')] = lambda val: QListPrinter(val, None)
-    pretty_printers_dict[re.compile('^QStringList$')] = lambda val: QListPrinter(val, 'QString')
-    pretty_printers_dict[re.compile('^QMap<.*>$')] = lambda val: QMapPrinter(val)
-    pretty_printers_dict[re.compile('^QHash<.*>$')] = lambda val: QHashPrinter(val)
+    pretty_printers_dict[re.compile('^QList<.*>$')] = lambda val: QListPrinter(val, 'QList', None)
+    pretty_printers_dict[re.compile('^QStringList$')] = lambda val: QListPrinter(val, 'QStringList', 'QString')
+    pretty_printers_dict[re.compile('^QQueue')] = lambda val: QListPrinter(val, 'QQueue', None)
+    pretty_printers_dict[re.compile('^QVector<.*>$')] = lambda val: QVectorPrinter(val, 'QVector')
+    pretty_printers_dict[re.compile('^QStack<.*>$')] = lambda val: QVectorPrinter(val, 'QStack')
+    pretty_printers_dict[re.compile('^QLinkedList<.*>$')] = lambda val: QLinkedListPrinter(val)
+    pretty_printers_dict[re.compile('^QMap<.*>$')] = lambda val: QMapPrinter(val, 'QMap')
+    pretty_printers_dict[re.compile('^QMultiMap<.*>$')] = lambda val: QMapPrinter(val, 'QMultiMap')
+    pretty_printers_dict[re.compile('^QHash<.*>$')] = lambda val: QHashPrinter(val, 'QHash')
+    pretty_printers_dict[re.compile('^QMultiHash<.*>$')] = lambda val: QHashPrinter(val, 'QMultiHash')
     pretty_printers_dict[re.compile('^QDate$')] = lambda val: QDatePrinter(val)
     pretty_printers_dict[re.compile('^QTime$')] = lambda val: QTimePrinter(val)
     pretty_printers_dict[re.compile('^QDateTime$')] = lambda val: QDateTimePrinter(val)
     pretty_printers_dict[re.compile('^QUrl$')] = lambda val: QUrlPrinter(val)
     pretty_printers_dict[re.compile('^QSet<.*>$')] = lambda val: QSetPrinter(val)
     pretty_printers_dict[re.compile('^QChar$')] = lambda val: QCharPrinter(val)
+    pretty_printers_dict[re.compile('^QUuid')] = lambda val: QUuidPrinter(val)
 
-
-pretty_printers_dict = {}
 
 build_dictionary ()

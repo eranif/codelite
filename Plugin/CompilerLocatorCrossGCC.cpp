@@ -30,6 +30,7 @@
 #include <globals.h>
 #include "file_logger.h"
 #include "procutils.h"
+#include <wx/dir.h>
 
 CompilerLocatorCrossGCC::CompilerLocatorCrossGCC() {}
 
@@ -56,7 +57,9 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
     if(count == 0) {
         // try to see if we have a 'bin' folder under 'folder'
         fnFolder.AppendDir("bin");
-        count = wxDir::GetAllFiles(fnFolder.GetPath(), &matches, pattern, wxDIR_FILES);
+        if(wxDir::Exists(fnFolder.GetPath())) {
+            count = wxDir::GetAllFiles(fnFolder.GetPath(), &matches, pattern, wxDIR_FILES);
+        }
     }
 
     if(count == 0) return NULL;

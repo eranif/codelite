@@ -31,6 +31,7 @@
 #include "editor_config.h"
 #include "lexer_configuration.h"
 #include "windowattrmanager.h"
+#include <wx/wupdlock.h>
 
 wxArrayString AddIncludeFileDlg::m_includePath;
 
@@ -136,6 +137,10 @@ void AddIncludeFileDlg::UpdateLineToAdd()
 void AddIncludeFileDlg::SetAndMarkLine()
 {
     // restore the initial text
+#ifdef __WXMSW__
+    wxWindowUpdateLocker locker(m_textCtrlPreview);
+#endif
+
     m_textCtrlPreview->SetReadOnly(false);
     
     // Make the line to add at the center of the display

@@ -3,6 +3,7 @@
 
 #include "EclipseThemeImporterBase.h" // Base class: EclipseThemeImporterBase
 #include "codelite_exports.h"
+#include <vector>
 
 class WXDLLIMPEXP_SDK EclipseCXXThemeImporter : public EclipseThemeImporterBase
 {

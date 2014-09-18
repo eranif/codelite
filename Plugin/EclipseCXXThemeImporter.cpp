@@ -3,6 +3,7 @@
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 #include "xmlutils.h"
+#include "wx/dir.h"
 
 EclipseCXXThemeImporter::EclipseCXXThemeImporter()
 {

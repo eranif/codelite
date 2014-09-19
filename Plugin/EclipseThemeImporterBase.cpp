@@ -2,6 +2,8 @@
 #include "drawingutils.h"
 #include "xmlutils.h"
 #include <wx/colour.h>
+#include "cl_standard_paths.h"
+#include "globals.h"
 
 EclipseThemeImporterBase::EclipseThemeImporterBase() {}
 
@@ -27,7 +29,57 @@ bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImp
     return false;
 }
 
-bool EclipseThemeImporterBase::Load(const wxFileName& eclipseXml) { return m_doc.Load(eclipseXml.GetFullPath()); }
+wxXmlNode*
+EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const wxString& langName, int langId)
+{
+    m_langName = langName;
+    if(!m_doc.Load(eclipseXml.GetFullPath())) return NULL;
+
+    wxXmlNode* lexer = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Lexer");
+    m_codeliteDoc.SetRoot(lexer);
+
+    // Add the lexer basic properties (laguage, file extensions, keywords, name)
+    AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
+
+    wxXmlNode* properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Properties");
+    m_codeliteDoc.GetRoot()->AddChild(properties);
+
+    // Read the basic properties
+    if(!GetProperty("background", m_background)) return NULL;
+    if(!GetProperty("foreground", m_foreground)) return NULL;
+    if(!GetProperty("selectionForeground", m_selectionForeground)) return NULL;
+    if(!GetProperty("selectionBackground", m_selectionBackground)) return NULL;
+    if(!GetProperty("lineNumber", m_lineNumber)) return NULL;
+    if(!GetProperty("singleLineComment", m_singleLineComment)) return NULL;
+    if(!GetProperty("multiLineComment", m_multiLineComment)) return NULL;
+    if(!GetProperty("number", m_number)) return NULL;
+    if(!GetProperty("string", m_string)) return NULL;
+    if(!GetProperty("operator", m_oper)) return NULL;
+    if(!GetProperty("keyword", m_keyword)) return NULL;
+    if(!GetProperty("class", m_klass)) {
+        m_klass = m_foreground;
+    }
+    if(!GetProperty("localVariable", m_variable)) {
+        m_variable = m_foreground;
+    }
+    if(!GetProperty("javadoc", m_javadoc)) {
+        m_javadoc = m_multiLineComment;
+    }
+
+    if(!GetProperty("javadocKeyword", m_javadocKeyword)) {
+        m_javadocKeyword = m_multiLineComment;
+    }
+
+    return properties;
+}
+
+bool EclipseThemeImporterBase::FinalizeImport(wxXmlNode* propertiesNode)
+{
+    AddCommonProperties(propertiesNode);
+    wxString codeliteXmlFile =
+        wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile(m_langName)).GetFullPath();
+    return ::SaveXmlToFile(&m_codeliteDoc, codeliteXmlFile);
+}
 
 bool EclipseThemeImporterBase::IsDarkTheme() const
 {
@@ -71,7 +123,8 @@ void EclipseThemeImporterBase::AddProperty(wxXmlNode* properties,
                                            const wxString& colour,
                                            const wxString& bgColour,
                                            bool bold,
-                                           bool italic)
+                                           bool italic,
+                                           bool isEOLFilled)
 {
     wxASSERT(!colour.IsEmpty());
     wxASSERT(!bgColour.IsEmpty());
@@ -87,7 +140,7 @@ void EclipseThemeImporterBase::AddProperty(wxXmlNode* properties,
     property->AddAttribute("Colour", colour);
     property->AddAttribute("BgColour", bgColour);
     property->AddAttribute("Underline", "no");
-    property->AddAttribute("EolFilled", "no");
+    property->AddAttribute("EolFilled", isEOLFilled ? "yes" : "no");
     property->AddAttribute("Alpha", "50");
     property->AddAttribute("Size", "11");
 }

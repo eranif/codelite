@@ -43,123 +43,75 @@ EclipseCXXThemeImporter::~EclipseCXXThemeImporter() {}
 
 bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
-    if(!Load(eclipseXmlFile)) return false;
-
-    wxXmlDocument codeliteXML;
-    wxXmlNode* lexer = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Lexer");
-    codeliteXML.SetRoot(lexer);
-
-    // Add the lexer basic properties (laguage, file extensions, keywords, name)
-    AddBaseProperties(lexer, "c++", "3");
-
-    wxXmlNode* properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Properties");
-    codeliteXML.GetRoot()->AddChild(properties);
-
-    Property background;
-    Property foreground;
-    Property lineNumber;
-    Property selectionBackground;
-    Property selectionForeground;
-    Property singleLineComment;
-    Property multiLineComment;
-    Property javadoc;
-    Property javadocKeyword;
-    Property klass;
-    Property variable;
-    Property number;
-    Property string;
-    Property oper;
-    Property keyword;
-
-    // Read the basic properties
-    if(!GetProperty("background", background)) return false;
-    if(!GetProperty("foreground", foreground)) return false;
-    if(!GetProperty("lineNumber", lineNumber)) return false;
-    if(!GetProperty("selectionForeground", selectionForeground)) return false;
-    if(!GetProperty("selectionBackground", selectionBackground)) return false;
-    if(!GetProperty("singleLineComment", singleLineComment)) return false;
-    if(!GetProperty("multiLineComment", multiLineComment)) return false;
-    if(!GetProperty("number", number)) return false;
-    if(!GetProperty("string", string)) return false;
-    if(!GetProperty("operator", oper)) return false;
-    if(!GetProperty("keyword", keyword)) return false;
-
-    // Optionals
-    if(!GetProperty("javadoc", javadoc)) {
-        javadoc = multiLineComment;
-    }
-
-    if(!GetProperty("javadocKeyword", javadocKeyword)) {
-        javadocKeyword = multiLineComment;
-    }
-    if(!GetProperty("class", klass)) {
-        klass = foreground;
-    }
-    if(!GetProperty("localVariable", variable)) {
-        variable = foreground;
-    }
+    wxXmlNode* properties = InitializeImport(eclipseXmlFile, "c++", 3);
+    CHECK_PTR_RET_FALSE(properties);
 
     // Covnert to codelite's XML properties
-    AddProperty(properties, "0", "Default", foreground.colour, background.colour);
+    AddProperty(properties, "0", "Default", m_foreground.colour, m_background.colour);
     AddProperty(properties,
                 "1",
                 "Common C style comment",
-                multiLineComment.colour,
-                background.colour,
-                multiLineComment.isBold,
-                multiLineComment.isItalic);
+                m_multiLineComment.colour,
+                m_background.colour,
+                m_multiLineComment.isBold,
+                m_multiLineComment.isItalic);
     AddProperty(properties,
                 "2",
                 "Common C++ style comment",
-                singleLineComment.colour,
-                background.colour,
-                singleLineComment.isBold,
-                singleLineComment.isItalic);
+                m_singleLineComment.colour,
+                m_background.colour,
+                m_singleLineComment.isBold,
+                m_singleLineComment.isItalic);
     AddProperty(properties,
                 "3",
                 "Doxygen C style comment",
-                javadoc.colour,
-                background.colour,
-                javadoc.isBold,
-                javadoc.isItalic);
-    AddProperty(properties, "4", "Number", number.colour, background.colour, number.isBold, number.isItalic);
-    AddProperty(properties, "5", "C++ keyword", keyword.colour, background.colour, keyword.isBold, keyword.isItalic);
-    AddProperty(properties, "6", "String", string.colour, background.colour, string.isBold, string.isItalic);
-    AddProperty(properties, "7", "Character", string.colour, background.colour, string.isBold, string.isItalic);
-    AddProperty(properties, "8", "Uuid", number.colour, background.colour, number.isBold, number.isItalic);
-    AddProperty(properties, "9", "Preprocessor", foreground.colour, background.colour);
-    AddProperty(properties, "10", "Operator", foreground.colour, background.colour);
-    AddProperty(properties, "11", "Identifier", foreground.colour, background.colour);
-    AddProperty(properties, "12", "Open string", string.colour, background.colour, string.isBold, string.isItalic);
+                m_javadoc.colour,
+                m_background.colour,
+                m_javadoc.isBold,
+                m_javadoc.isItalic);
+    AddProperty(properties, "4", "Number", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
+    AddProperty(
+        properties, "5", "C++ keyword", m_keyword.colour, m_background.colour, m_keyword.isBold, m_keyword.isItalic);
+    AddProperty(properties, "6", "String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
+    AddProperty(properties, "7", "Character", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
+    AddProperty(properties, "8", "Uuid", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
+    AddProperty(properties, "9", "Preprocessor", m_foreground.colour, m_background.colour);
+    AddProperty(properties, "10", "Operator", m_foreground.colour, m_background.colour);
+    AddProperty(properties, "11", "Identifier", m_foreground.colour, m_background.colour);
+    AddProperty(
+        properties, "12", "Open String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
     AddProperty(properties,
                 "15",
                 "Doxygen C++ style comment",
-                javadoc.colour,
-                background.colour,
-                javadoc.isBold,
-                javadoc.isItalic);
+                m_javadoc.colour,
+                m_background.colour,
+                m_javadoc.isBold,
+                m_javadoc.isItalic);
     AddProperty(properties,
                 "17",
                 "Doxygen keyword",
-                javadocKeyword.colour,
-                background.colour,
-                javadocKeyword.isBold,
-                javadocKeyword.isItalic);
+                m_javadocKeyword.colour,
+                m_background.colour,
+                m_javadocKeyword.isBold,
+                m_javadocKeyword.isItalic);
     AddProperty(properties,
                 "18",
                 "Doxygen keyword error",
-                javadocKeyword.colour,
-                background.colour,
-                javadocKeyword.isBold,
-                javadocKeyword.isItalic);
-    AddProperty(properties, "16", "Workspace tags", klass.colour, background.colour, klass.isBold, klass.isItalic);
+                m_javadocKeyword.colour,
+                m_background.colour,
+                m_javadocKeyword.isBold,
+                m_javadocKeyword.isItalic);
     AddProperty(
-        properties, "19", "Local variables", variable.colour, background.colour, variable.isBold, variable.isItalic);
+        properties, "16", "Workspace tags", m_klass.colour, m_background.colour, m_klass.isBold, m_klass.isItalic);
+    AddProperty(properties,
+                "19",
+                "Local variables",
+                m_variable.colour,
+                m_background.colour,
+                m_variable.isBold,
+                m_variable.isItalic);
 
-    AddCommonProperties(properties);
-    wxString codeliteXmlFile =
-        wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile("c++")).GetFullPath();
-    return ::SaveXmlToFile(&codeliteXML, codeliteXmlFile);
+    return FinalizeImport(properties);
 }
 
 wxFileName EclipseCXXThemeImporter::ToEclipseXML(const wxFileName& codeliteXml, size_t id)
@@ -169,6 +121,10 @@ wxFileName EclipseCXXThemeImporter::ToEclipseXML(const wxFileName& codeliteXml, 
 
     wxXmlNode* props = XmlUtils::FindFirstByTagName(doc.GetRoot(), "Properties");
     if(!props) return wxFileName();
+
+//    if(doc.GetRoot()->GetAttribute("Theme") == "Default" || doc.GetRoot()->GetAttribute("Theme") == "DarkTheme" ||
+//       doc.GetRoot()->GetAttribute("Theme") == "Zmrok-like")
+//        return wxFileName();
 
     wxString eclipseXML;
     eclipseXML << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
@@ -226,7 +182,7 @@ std::vector<wxFileName> EclipseCXXThemeImporter::ToEclipseXMLs()
     wxArrayString files;
     wxDir::GetAllFiles(clStandardPaths::Get().GetLexersDir(), &files, "lexer_c++_*.xml");
     for(size_t i = 0; i < files.GetCount(); ++i) {
-        arr.push_back( ToEclipseXML(files.Item(i), i));
+        arr.push_back(ToEclipseXML(files.Item(i), i));
     }
     return arr;
 }

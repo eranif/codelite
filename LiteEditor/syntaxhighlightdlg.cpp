@@ -581,7 +581,7 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 {
     // Ask for confirmation
     if(::wxMessageBox(_("Are you sure you want to restore colours to factory defaults?\nBy choosing 'Yes', you will "
-                        "lose your modifications"),
+                        "lose all your local modifications"),
                       _("Confirm"),
                       wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER,
                       this) == wxYES) {
@@ -600,10 +600,10 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
 #if 0
     EclipseThemeImporterManager importer;
     importer.ImportCxxToAll();
+    ColoursAndFontsManager::Get().Reload();
     EndModal(wxID_OK);
     wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
-    
 #else
     wxString eclipseThemeXml =
         ::wxFileSelector(_("Select eclipse XML theme file"), "", "", "", "Eclipse Theme Files (*.xml)|*.xml");

@@ -66,18 +66,22 @@
     <File Name="clSTCLineKeeper.h"/>
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
-    <File Name="EclipseThemeImporterBase.h"/>
-    <File Name="EclipseThemeImporterBase.cpp"/>
-    <File Name="EclipseCXXThemeImporter.h"/>
-    <File Name="EclipseCXXThemeImporter.cpp"/>
-    <File Name="EclipseCMakeThemeImporter.h"/>
-    <File Name="EclipseCMakeThemeImporter.cpp"/>
-    <File Name="EclipseThemeImporterManager.h"/>
-    <File Name="EclipseThemeImporterManager.cpp"/>
-    <File Name="EclipseTextThemeImporter.h"/>
-    <File Name="EclipseTextThemeImporter.cpp"/>
-    <File Name="EclipseMakefileThemeImporter.h"/>
-    <File Name="EclipseMakefileThemeImporter.cpp"/>
+    <VirtualDirectory Name="EclipseImporters">
+      <File Name="EclipseCMakeThemeImporter.cpp"/>
+      <File Name="EclipseCMakeThemeImporter.h"/>
+      <File Name="EclipseCXXThemeImporter.cpp"/>
+      <File Name="EclipseCXXThemeImporter.h"/>
+      <File Name="EclipseMakefileThemeImporter.cpp"/>
+      <File Name="EclipseMakefileThemeImporter.h"/>
+      <File Name="EclipseTextThemeImporter.cpp"/>
+      <File Name="EclipseTextThemeImporter.h"/>
+      <File Name="EclipseThemeImporterBase.cpp"/>
+      <File Name="EclipseThemeImporterBase.h"/>
+      <File Name="EclipseThemeImporterManager.cpp"/>
+      <File Name="EclipseThemeImporterManager.h"/>
+      <File Name="EclipseDiffThemeImporter.h"/>
+      <File Name="EclipseDiffThemeImporter.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

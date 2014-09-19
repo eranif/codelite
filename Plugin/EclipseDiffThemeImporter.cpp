@@ -20,8 +20,8 @@ bool EclipseDiffThemeImporter::Import(const wxFileName& eclipseXmlFile)
 
     // Use pink and forest green
     if(IsDarkTheme()) {
-        AddProperty(properties, "5", "Line Deleted", "RED", m_background.colour, false, false, true);
-        AddProperty(properties, "6", "Line Added", "GREEN YELLOW", m_background.colour, false, false, true);
+        AddProperty(properties, "5", "Line Deleted", "#FF8080", m_background.colour, false, false, true);
+        AddProperty(properties, "6", "Line Added", "#80FF80", m_background.colour, false, false, true);
     } else {
         AddProperty(properties, "5", "Line Deleted", "RED", "PINK", false, false, true);
         AddProperty(properties,

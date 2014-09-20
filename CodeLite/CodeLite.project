@@ -237,6 +237,12 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="PhpScanner">
+    <File Name="PhpLexer.cpp"/>
+    <File Name="PhpLexer.l"/>
+    <File Name="PhpLexerAPI.h"/>
+    <File Name="PHPScannerTokens.h"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -293,7 +299,12 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp
+CxxLexer.cpp: CxxScanner.l
+	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
+PhpLexer.cpp: PhpLexer.l
+	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -344,10 +355,11 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>CxxLexer.cpp
+        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
-</CustomPreBuild>
+PhpLexer.cpp: PhpLexer.l
+	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

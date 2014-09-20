@@ -736,7 +736,7 @@ string ASFormatter::nextLine()
                peekNextChar() != ' ' && !isBracketType(previousBracketType, DEFINITION_TYPE)) &&
               !isBracketType(bracketTypeStack->back(), DEFINITION_TYPE))) &&
             isOkToBreakBlock(bracketTypeStack->back()))
-           // check for array
+               // check for array
            ||
            (previousCommandChar == '{' // added 9/30/2010
             &&
@@ -1080,7 +1080,7 @@ string ASFormatter::nextLine()
             if(!isWhiteSpace(nextChar) && nextChar != '}' && nextChar != ')' && nextChar != ']' && nextChar != '>' &&
                nextChar != ';' &&
                !isBeforeAnyComment()
-               /* && !(isBracketType(bracketTypeStack->back(), ARRAY_TYPE)) */
+                   /* && !(isBracketType(bracketTypeStack->back(), ARRAY_TYPE)) */
                ) {
                 appendCurrentChar();
                 appendSpaceAfter();
@@ -2896,10 +2896,10 @@ void ASFormatter::formatClosingBracket(BracketType bracketType)
             ||
             isCharImmediatelyPostLineComment || isCharImmediatelyPostComment ||
             (isImmediatelyPostPreprocessor && (int)currentLine.find_first_not_of(" \t") == charNum)
-            //		        || (isBracketType(bracketType, CLASS_TYPE) && isOkToBreakBlock(bracketType) &&
-            //previousNonWSChar != '{')
+                //		        || (isBracketType(bracketType, CLASS_TYPE) && isOkToBreakBlock(bracketType) &&
+            // previousNonWSChar != '{')
             //		        || (isBracketType(bracketType, NAMESPACE_TYPE) && isOkToBreakBlock(bracketType) &&
-            //previousNonWSChar != '{')
+            // previousNonWSChar != '{')
             ) &&
            (!isBracketType(bracketType, SINGLE_LINE_TYPE) || isOkToBreakBlock(bracketType))) {
             breakLine();
@@ -2913,8 +2913,9 @@ void ASFormatter::formatClosingBracket(BracketType bracketType)
     } else if((!(previousCommandChar == '{' && isPreviousBracketBlockRelated)) // this '{' does not close an empty block
               &&
               isOkToBreakBlock(bracketType)) // astyle is allowed to break one line blocks
-    //	        && !isImmediatelyPostEmptyBlock)    /* removed 9/5/10 */			// this '}' does not immediately follow an
-    //empty block
+    //	        && !isImmediatelyPostEmptyBlock)    /* removed 9/5/10 */			// this '}' does not immediately follow
+    //an
+    // empty block
     {
         breakLine();
         appendCurrentChar();
@@ -4162,11 +4163,13 @@ void ASFormatter::updateFormattedLineSplitPoints(char appendedChar)
            !(currentChar == '(' &&
              !isCharPotentialOperator(previousNonWSChar)) // appended space between a non operator followed by a paren
            // NO && !(previousNonWSChar == '(' && nextChar == '(')		// space between opening parens
-           // NO && !(currentChar == '(' && nextChar == '(')				// appended space between opening
+           // NO && !(currentChar == '(' && nextChar == '(')				// appended space between
+           // opening
            // parens
            // NO && !(previousNonWSChar == '(' && nextChar == '"')		// space after a paren followed by a
            // quote
-           // NO && !(currentChar == '(' && nextChar == '"')				// appended space after a paren followed by a
+           // NO && !(currentChar == '(' && nextChar == '"')				// appended space after a paren followed by
+           // a
            // quote
            ) {
             if(maxWhiteSpace == 0 || formattedLine.length() < maxCodeLength)

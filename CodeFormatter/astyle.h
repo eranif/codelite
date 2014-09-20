@@ -548,8 +548,7 @@ private:
 
     // struct used by ParseFormattedLine function
     // contains variables used to unindent the case blocks
-    struct switchVariables
-    {
+    struct switchVariables {
         int switchBracketCount;
         int unindentDepth;
         bool unindentCase;

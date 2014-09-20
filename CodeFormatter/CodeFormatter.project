@@ -233,4 +233,8 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="PHPFormatter">
+    <File Name="PHPFormatterBuffer.cpp"/>
+    <File Name="PHPFormatterBuffer.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

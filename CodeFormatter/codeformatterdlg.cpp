@@ -118,7 +118,7 @@ void CodeFormatterDlg::InitDialog()
     m_pgPropClangFormattingOptions->SetValue((int)m_options.GetClangFormatOptions());
     m_pgPropClangBraceBreakStyle->SetValue((int)m_options.GetClangBreakBeforeBrace());
     m_pgPropColumnLimit->SetValue((int)m_options.GetClangColumnLimit());
-    
+
     // User custom flags
     m_textCtrlUserFlags->ChangeValue(m_options.GetCustomFlags());
 }

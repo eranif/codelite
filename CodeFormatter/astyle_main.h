@@ -350,7 +350,7 @@ char* STDCALL javaMemoryAlloc(unsigned long memoryNeeded);
 // the following function names are constructed from method names in the calling java program
 extern "C" EXPORT jstring STDCALL Java_AStyleInterface_AStyleGetVersion(JNIEnv* env, jclass);
 extern "C" EXPORT jstring STDCALL
-Java_AStyleInterface_AStyleMain(JNIEnv* env, jobject obj, jstring textInJava, jstring optionsJava);
+    Java_AStyleInterface_AStyleMain(JNIEnv* env, jobject obj, jstring textInJava, jstring optionsJava);
 #endif //  ASTYLE_JNI
 
 #endif // closes ASTYLE_MAIN_H

@@ -149,8 +149,7 @@ const size_t SUBLANG_CHINESE_MACAU = 5;
 const size_t LANG_HINDI = 57;
 #endif
 
-struct WinLangCode
-{
+struct WinLangCode {
     size_t winLang;
     char canonicalLang[3];
 };

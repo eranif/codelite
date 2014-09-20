@@ -2059,7 +2059,7 @@ int ASConsole::waitForRemove(const char* newFileName) const
 // Modified to compare case insensitive for Windows
 int ASConsole::wildcmp(const char* wild, const char* data) const
 {
-    const char* cp = NULL, *mp = NULL;
+    const char* cp = NULL, * mp = NULL;
     bool cmpval;
 
     while((*data) && (*wild != '*')) {
@@ -2604,7 +2604,7 @@ extern "C" EXPORT jstring STDCALL Java_AStyleInterface_AStyleGetVersion(JNIEnv* 
 // called by a java program to format the source code
 // the function name is constructed from method names in the calling java program
 extern "C" EXPORT jstring STDCALL
-Java_AStyleInterface_AStyleMain(JNIEnv* env, jobject obj, jstring textInJava, jstring optionsJava)
+    Java_AStyleInterface_AStyleMain(JNIEnv* env, jobject obj, jstring textInJava, jstring optionsJava)
 {
     g_env = env; // make object available globally
     g_obj = obj; // make object available globally

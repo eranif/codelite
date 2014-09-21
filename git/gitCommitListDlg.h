@@ -48,7 +48,12 @@ class GitCommitListDlg : public GitCommitListDlgBase
     wxString m_commandOutput;
     IProcess* m_process;
     wxString m_gitPath;
-
+    wxString m_commitList;
+protected:
+    virtual void OnSearchCommitList(wxCommandEvent& event);
+    void DoLoadCommits(const wxString &filter);
+    bool IsMatchFilter(const wxArrayString& filters, const wxArrayString& columns);
+    
 public:
     GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git);
     ~GitCommitListDlg();

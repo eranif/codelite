@@ -26,6 +26,7 @@
 #include <wx/checklst.h>
 #include "gitCommitEditor.h"
 #include <wx/stc/stc.h>
+#include <wx/srchctrl.h>
 #include <wx/dataview.h>
 #include <wx/listbox.h>
 #include <wx/bitmap.h>
@@ -69,14 +70,10 @@ protected:
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitSettingsDlgBase(wxWindow* parent,
-                       wxWindowID id = wxID_ANY,
-                       const wxString& title = _("Git settings..."),
-                       const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxSize(-1, -1),
-                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitSettingsDlgBase();
 };
+
 
 class GitCommitDlgBase : public wxDialog
 {
@@ -103,21 +100,17 @@ protected:
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitCommitDlgBase(wxWindow* parent,
-                     wxWindowID id = wxID_ANY,
-                     const wxString& title = _("Git commit..."),
-                     const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1),
-                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitCommitDlgBase();
 };
+
 
 class GitCommitListDlgBase : public wxDialog
 {
 protected:
     wxSplitterWindow* m_splitter174;
     wxPanel* m_splitterPage178;
-    wxStaticText* m_staticText207;
+    wxSearchCtrl* m_searchCtrlFilter;
     wxDataViewListCtrl* m_dvListCtrlCommitList;
     wxPanel* m_splitterPage182;
     wxSplitterWindow* m_splitter186;
@@ -137,20 +130,17 @@ protected:
 
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
+    virtual void OnSearchCommitList(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitCommitListDlgBase(wxWindow* parent,
-                         wxWindowID id = wxID_ANY,
-                         const wxString& title = _("Commit List"),
-                         const wxPoint& pos = wxDefaultPosition,
-                         const wxSize& size = wxSize(-1, -1),
-                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX);
+    GitCommitListDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit List"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxMAXIMIZE_BOX);
     virtual ~GitCommitListDlgBase();
 };
+
 
 class GitDiffDlgBase : public wxDialog
 {
@@ -169,14 +159,10 @@ protected:
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitDiffDlgBase(wxWindow* parent,
-                   wxWindowID id = wxID_ANY,
-                   const wxString& title = _("Current Diffs"),
-                   const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxSize(879, 600),
-                   long style = wxCAPTION | wxRESIZE_BORDER | wxMAXIMIZE_BOX | wxMINIMIZE_BOX | wxCLOSE_BOX);
+    GitDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Current Diffs"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(879,600), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX);
     virtual ~GitDiffDlgBase();
 };
+
 
 class gitCloneDlgBaseClass : public wxDialog
 {
@@ -193,14 +179,10 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    gitCloneDlgBaseClass(wxWindow* parent,
-                         wxWindowID id = wxID_ANY,
-                         const wxString& title = _("git clone.."),
-                         const wxPoint& pos = wxDefaultPosition,
-                         const wxSize& size = wxSize(500, -1),
-                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("git clone.."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~gitCloneDlgBaseClass();
 };
+
 
 class GitFileDiffDlgBase : public wxDialog
 {
@@ -215,14 +197,10 @@ protected:
     virtual void OnSaveAsPatch(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitFileDiffDlgBase(wxWindow* parent,
-                       wxWindowID id = wxID_ANY,
-                       const wxString& title = _("File diff"),
-                       const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxSize(500, 300),
-                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitFileDiffDlgBase();
 };
+
 
 class GitImages : public wxImageList
 {
@@ -230,16 +208,19 @@ protected:
     // Maintain a map of all bitmaps representd by their name
     std::map<wxString, wxBitmap> m_bitmaps;
 
+
 protected:
+
 public:
     GitImages();
-    const wxBitmap& Bitmap(const wxString& name) const
-    {
-        if(!m_bitmaps.count(name)) return wxNullBitmap;
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
         return m_bitmaps.find(name)->second;
     }
     virtual ~GitImages();
 };
+
 
 class GitApplyPatchDlgBase : public wxDialog
 {
@@ -253,15 +234,12 @@ protected:
     wxButton* m_buttonOK;
 
 protected:
+
 public:
-    GitApplyPatchDlgBase(wxWindow* parent,
-                         wxWindowID id = wxID_ANY,
-                         const wxString& title = _("Git Apply Patch"),
-                         const wxPoint& pos = wxDefaultPosition,
-                         const wxSize& size = wxSize(-1, -1),
-                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Apply Patch"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitApplyPatchDlgBase();
 };
+
 
 class GitConsoleBase : public wxPanel
 {
@@ -290,11 +268,7 @@ protected:
     virtual void OnFileActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    GitConsoleBase(wxWindow* parent,
-                   wxWindowID id = wxID_ANY,
-                   const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxSize(500, 300),
-                   long style = wxTAB_TRAVERSAL);
+    GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~GitConsoleBase();
 };
 

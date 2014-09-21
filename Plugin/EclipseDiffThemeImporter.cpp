@@ -1,4 +1,5 @@
 #include "EclipseDiffThemeImporter.h"
+#include <wx/colour.h>
 
 EclipseDiffThemeImporter::EclipseDiffThemeImporter() { SetFileExtensions("*.diff;*.patch;Diff;*.Diff"); }
 

@@ -57,6 +57,7 @@ protected:
     wxFlatButton* m_regexOrWildButton;
     wxFlatButton* m_showReplaceControls;
     wxFlatButton* m_buttonReplace;
+    wxFlatButton* m_closeButton;
     wxMenu* m_regexOrWildMenu;
     eRegexType m_regexType;
     
@@ -122,6 +123,7 @@ protected:
     void OnReplaceUI(wxUpdateUIEvent& e);
     void OnReplaceEnter(wxCommandEvent& e);
     void OnHighlightMatches(wxFlatButtonEvent& e);
+    void OnHideBar(wxFlatButtonEvent& e);
     void OnRegularExpMenu(wxFlatButtonEvent& e);
     void OnUseRegex(wxCommandEvent& e);
     void OnNoRegex(wxCommandEvent& e);

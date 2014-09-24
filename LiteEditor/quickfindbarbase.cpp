@@ -169,6 +169,15 @@ QuickFindBarImages::QuickFindBarImages()
         m_bitmaps.insert( std::make_pair(wxT("replace-controls"), bmp ) );
     }
     
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("find-bar-close-16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("find-bar-close-16"), bmp ) );
+    }
+    
 }
 
 QuickFindBarImages::~QuickFindBarImages()

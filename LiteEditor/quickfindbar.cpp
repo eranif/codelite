@@ -78,6 +78,12 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     GetSizer()->Add(m_bar, 1, wxEXPAND | wxALL, 2);
     QuickFindBarImages images;
     
+    // Add the 'close' button
+    m_closeButton = m_bar->AddButton("", images.Bitmap("find-bar-close-16"), wxSize(24, -1));
+    m_closeButton->SetToolTip(_("Close"));
+    m_closeButton->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
+    m_closeButton->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnHideBar, this);
+    
     // Add the 'case sensitive' button
     m_caseSensitive = m_bar->AddButton("", images.Bitmap("case-sensitive"), wxSize(24, -1));
     m_caseSensitive->SetTogglable(true);
@@ -112,6 +118,13 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnMarker->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnHighlightMatchesUI, this);
     btnMarker->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
     btnMarker->SetToolTip(_("Highlight Occurences"));
+    
+    // Add the 'Show Replace' controls
+    m_showReplaceControls = m_bar->AddButton("", images.Bitmap("replace-controls"), wxSize(24, -1));
+    m_showReplaceControls->SetTogglable(true);
+    m_showReplaceControls->SetToolTip(_("Show the 'Replace' buttons"));
+    m_showReplaceControls->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
+    m_showReplaceControls->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnShowReplaceControls, this);
 
     // Add the controls
     //=======----------------------
@@ -143,13 +156,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     btnAll->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnFindAll, this);
     btnAll->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnButtonPrevUI, this);
     btnAll->SetToolTip(_("Find and select all occurrences"));
-    
-    // Add the 'Show Replace' controls
-    m_showReplaceControls = m_bar->AddButton("", images.Bitmap("replace-controls"), wxSize(24, -1));
-    m_showReplaceControls->SetTogglable(true);
-    m_showReplaceControls->SetToolTip(_("Show the 'Replace' buttons"));
-    m_showReplaceControls->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
-    m_showReplaceControls->Bind(wxEVT_CMD_FLATBUTTON_CLICK, &QuickFindBar::OnShowReplaceControls, this);
     
     //=======----------------------
     // Replace with:
@@ -1039,4 +1045,9 @@ void QuickFindBar::OnButtonReplace(wxFlatButtonEvent& e)
 void QuickFindBar::OnButtonReplaceUI(wxUpdateUIEvent& e)
 {
     e.Enable(!m_replaceWith->GetValue().IsEmpty());
+}
+
+void QuickFindBar::OnHideBar(wxFlatButtonEvent& e)
+{
+    OnHide(e);
 }

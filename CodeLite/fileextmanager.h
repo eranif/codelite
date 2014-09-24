@@ -95,5 +95,14 @@ public:
     static bool IsJavascriptFile(const wxFileName& filename) {
         return IsJavascriptFile(filename.GetFullName());
     }
+    
+    /**
+     * @param return true if a file is a PHP file
+     */
+    static bool IsPHPFile(const wxString& filename);
+    static bool IsPHPFile(const wxFileName& filename) {
+        return IsPHPFile(filename.GetFullName());
+    }
 };
+
 #endif // __fileextmanager__

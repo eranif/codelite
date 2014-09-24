@@ -2,8 +2,8 @@
 #include "PHPScannerTokens.h"
 #include <wx/tokenzr.h>
 
-PHPFormatterBuffer::PHPFormatterBuffer(PHPScanner_t scanner, const PHPFormatterOptions& options)
-    : m_scanner(scanner)
+PHPFormatterBuffer::PHPFormatterBuffer(const wxString& buffer, const PHPFormatterOptions& options)
+    : m_scanner(NULL)
     , m_options(options)
     , m_openTagWithEcho(false)
     , m_forDepth(0)
@@ -12,9 +12,15 @@ PHPFormatterBuffer::PHPFormatterBuffer(PHPScanner_t scanner, const PHPFormatterO
     , m_depth(0)
     , m_lastCommentLine(-1)
 {
+    m_scanner = ::phpLexerNew(buffer, kPhpLexerOpt_ReturnComments | kPhpLexerOpt_ReturnAllNonPhp);
 }
 
-PHPFormatterBuffer::~PHPFormatterBuffer() {}
+PHPFormatterBuffer::~PHPFormatterBuffer()
+{
+    if(m_scanner) {
+        ::phpLexerDestroy(&m_scanner);
+    }
+}
 
 PHPFormatterBuffer& PHPFormatterBuffer::operator<<(const phpLexerToken& token)
 {
@@ -49,7 +55,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::operator<<(const phpLexerToken& token)
             if(m_options.flags & kPFF_BreakBeforeForeach) {
                 InsertSeparatorLine();
             }
-        } else if(token.type == kPHP_T_ELSE) {
+        } else if(token.type == kPHP_T_ELSE || token.type == kPHP_T_ELSEIF) {
             if(m_options.flags & kPFF_ElseOnSameLineAsClosingCurlyBrace && m_lastToken.type == '}') {
                 ReverseClearUntilFind("}");
                 m_buffer << " " << token.text << " ";
@@ -265,5 +271,12 @@ void PHPFormatterBuffer::ReverseClearUntilFind(const wxString& delim)
     size_t where = m_buffer.rfind(delim);
     if(where != wxString::npos) {
         m_buffer = m_buffer.Mid(0, where + delim.length());
+    }
+}
+
+void PHPFormatterBuffer::format() {
+    phpLexerToken token;
+    while( ::phpLexerNext(m_scanner, token) ) {
+        *this << token;
     }
 }

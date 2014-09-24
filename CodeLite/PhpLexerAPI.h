@@ -6,10 +6,10 @@
 #include "codelite_exports.h"
 
 enum eLexerOptions {
-    kLexerOpt_None = 0x00000000,
-    kLexerOpt_ReturnComments = 0x00000001,
-    kLexerOpt_ReturnWhitespace = 0x00000002,
-    kLexerOpt_ReturnAllNonPhp = 0x00000004,
+    kPhpLexerOpt_None = 0x00000000,
+    kPhpLexerOpt_ReturnComments = 0x00000001,
+    kPhpLexerOpt_ReturnWhitespace = 0x00000002,
+    kPhpLexerOpt_ReturnAllNonPhp = 0x00000004,
 };
 
 struct WXDLLIMPEXP_CL phpLexerToken {
@@ -41,10 +41,15 @@ private:
     int m_commentStartLine;
     int m_commentEndLine;
     bool m_insidePhp;
+    FILE* m_fp;
 
 public:
     void Clear()
     {
+        if(m_fp) {
+            ::fclose(m_fp);
+        }
+        m_fp = NULL;
         m_insidePhp = false;
         ClearComment();
         m_rawStringLabel.Clear();
@@ -56,15 +61,18 @@ public:
         , m_commentStartLine(wxNOT_FOUND)
         , m_commentEndLine(wxNOT_FOUND)
         , m_insidePhp(false)
+        , m_fp(NULL)
     {
     }
 
+    ~phpLexerUserData() { Clear(); }
+    void SetFp(FILE* fp) { this->m_fp = fp; }
     /**
      * @brief do we collect comments?
      */
-    bool IsCollectingComments() const { return m_flags & kLexerOpt_ReturnComments; }
-    bool IsCollectingWhitespace() const { return m_flags & kLexerOpt_ReturnWhitespace; }
-    bool IsCollectingAllNonPhp() const { return m_flags & kLexerOpt_ReturnAllNonPhp; }
+    bool IsCollectingComments() const { return m_flags & kPhpLexerOpt_ReturnComments; }
+    bool IsCollectingWhitespace() const { return m_flags & kPhpLexerOpt_ReturnWhitespace; }
+    bool IsCollectingAllNonPhp() const { return m_flags & kPhpLexerOpt_ReturnAllNonPhp; }
 
     void SetInsidePhp(bool insidePhp) { this->m_insidePhp = insidePhp; }
     bool IsInsidePhp() const { return m_insidePhp; }
@@ -100,7 +108,12 @@ typedef void* PHPScanner_t;
 /**
  * @brief create a new Lexer for a given file name
  */
-WXDLLIMPEXP_CL PHPScanner_t phpLexerNew(const wxString& filename, size_t options = kLexerOpt_None);
+WXDLLIMPEXP_CL PHPScanner_t phpLexerNew(const wxFileName& filename, size_t options = kPhpLexerOpt_None);
+
+/**
+ * @brief create a new Lexer for a given file content
+ */
+WXDLLIMPEXP_CL PHPScanner_t phpLexerNew(const wxString& content, size_t options = kPhpLexerOpt_None);
 
 /**
  * @brief destroy the current lexer and perform cleanup

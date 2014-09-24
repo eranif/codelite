@@ -31,6 +31,31 @@
 #include "lexer_configuration.h"
 #include <wx/menu.h>
 #include "clSTCLineKeeper.h"
+#include "fileextmanager.h"
+
+static const wxString PHPSample = "<?php\n"
+                                  "namespace MySpace;\n"
+                                  "require_once 'bla.php';\n"
+                                  "class MyClass {\n"
+                                  "  const MY_CONST = \"Hello World\";\n"
+                                  "  const MY_2ND_CONST = \"Second Constant\";\n"
+                                  "  public function __construct() {}\n"
+                                  "  public function foo() {}\n"
+                                  "  public function bar() {\n"
+                                  "    $a=1;\n"
+                                  "    if($a == 1) {\n"
+                                  "      // do something\n"
+                                  "    } elseif ($==2) {\n"
+                                  "      // do something else\n"
+                                  "    } else {\n"
+                                  "      // default\n"
+                                  "    }\n"
+                                  "    while($a==1) {\n"
+                                  "      // a is 1... reduce it\n"
+                                  "      --$a;\n"
+                                  "    }\n"
+                                  "  }\n"
+                                  "}\n";
 
 CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
                                    IManager* mgr,
@@ -54,6 +79,13 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     InitDialog();
     UpdatePreview();
     ExpandCollapsUneededOptions();
+    
+    // If the current file is PHP, select the PHP preview tab
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {
+        m_notebook65->SetSelection(1);
+    }
+    
     WindowAttrManager::Load(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
 }
 
@@ -91,7 +123,13 @@ void CodeFormatterDlg::InitDialog()
     if(lexer) {
         lexer->Apply(m_textCtrlPreview, true);
     }
+
+    LexerConf::Ptr_t phpLexer = EditorConfigST::Get()->GetLexer("html");
+    if(phpLexer) {
+        phpLexer->Apply(m_stcPhpPreview, true);
+    }
     m_textCtrlPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
+    m_stcPhpPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
 
     // Select the proper engine
     m_pgPropEngine->SetValueFromInt((int)m_options.GetEngine());
@@ -118,6 +156,9 @@ void CodeFormatterDlg::InitDialog()
     m_pgPropClangFormattingOptions->SetValue((int)m_options.GetClangFormatOptions());
     m_pgPropClangBraceBreakStyle->SetValue((int)m_options.GetClangBreakBeforeBrace());
     m_pgPropColumnLimit->SetValue((int)m_options.GetClangColumnLimit());
+
+    // PHP flags
+    m_pgPropPhpFormatterOptions->SetValue((int)m_options.GetPHPFormatterOptions());
 
     // User custom flags
     m_textCtrlUserFlags->ChangeValue(m_options.GetCustomFlags());
@@ -156,6 +197,7 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 
 void CodeFormatterDlg::UpdatePreview()
 {
+    // C++ preview
     FormatterEngine engine = (FormatterEngine)m_pgPropEngine->GetValue().GetInteger();
     wxString output;
     if(engine == kFormatEngineAStyle) {
@@ -171,6 +213,16 @@ void CodeFormatterDlg::UpdatePreview()
         m_textCtrlPreview->SetText(output);
     }
     m_textCtrlPreview->SetEditable(false);
+
+    // PHP preview
+    output.Clear();
+    m_cf->PhpFormat(PHPSample, output, m_options);
+    m_stcPhpPreview->SetEditable(true);
+    {
+        clSTCLineKeeper lk(m_stcPhpPreview);
+        m_stcPhpPreview->SetText(output);
+    }
+    m_stcPhpPreview->SetEditable(false);
 }
 
 CodeFormatterDlg::~CodeFormatterDlg()
@@ -227,6 +279,9 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     m_options.SetClangBreakBeforeBrace(m_pgPropClangBraceBreakStyle->GetValue().GetInteger());
     m_options.SetClangFormatExe(m_pgPropClangFormatExePath->GetValueAsString());
     m_options.SetClangColumnLimit(m_pgPropColumnLimit->GetValue().GetInteger());
+
+    // save php options
+    m_options.SetPHPFormatterOptions(m_pgPropPhpFormatterOptions->GetValue().GetInteger());
 
     // Check the active engine
     ExpandCollapsUneededOptions();

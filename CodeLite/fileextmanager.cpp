@@ -152,3 +152,9 @@ bool FileExtManager::IsJavascriptFile(const wxString& filename)
     FileType ft = GetType(filename);
     return ft == TypeJS;
 }
+
+bool FileExtManager::IsPHPFile(const wxString& filename)
+{
+    FileType ft = GetType(filename);
+    return ft == TypePhp;
+}

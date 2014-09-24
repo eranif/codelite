@@ -75,7 +75,12 @@ public:
      * @brief same as the above, but work on a buffer instead
      */
     bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
-
+    
+    /**
+     * @brief format a PHP content
+     */
+    bool PhpFormat(const wxString &content, wxString& formattedOutput, const FormatOptions& options);
+    
     /**
      * @brief format list of files
      */

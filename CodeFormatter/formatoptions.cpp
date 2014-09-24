@@ -25,6 +25,7 @@
 #include "formatoptions.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
+#include "PHPFormatterBuffer.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
@@ -34,6 +35,7 @@ FormatOptions::FormatOptions()
                            kAlignEscapedNewlinesLeft)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120) // No limit
+    , m_phpFormatOptions(kPFF_Defaults)
 {
     if(m_clangFormatExe.IsEmpty()) {
         clClangFormatLocator locator;
@@ -62,6 +64,7 @@ void FormatOptions::DeSerialize(Archive& arch)
 
     arch.Read("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Read("m_clangColumnLimit", m_clangColumnLimit);
+    arch.Read("m_phpFormatOptions", m_phpFormatOptions);
 }
 
 void FormatOptions::Serialize(Archive& arch)
@@ -73,6 +76,7 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write("m_clangFormatExe", m_clangFormatExe);
     arch.Write("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Write("m_clangColumnLimit", m_clangColumnLimit);
+    arch.Write("m_phpFormatOptions", m_phpFormatOptions);
 }
 
 wxString FormatOptions::AstyleOptionsAsString() const

@@ -125,6 +125,7 @@ class FormatOptions : public SerializedObject
     FormatterEngine m_engine;
     wxString m_clangFormatExe;
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
+    size_t m_phpFormatOptions;
 
 private:
     wxString ClangFlagToBool(ClangFormatStyle flag) const;
@@ -164,6 +165,8 @@ public:
     const wxString& GetCustomFlags() const { return m_customFlags; }
     void SetClangFormatOptions(size_t clangFormatOptions) { this->m_clangFormatOptions = clangFormatOptions; }
     size_t GetClangFormatOptions() const { return m_clangFormatOptions; }
+    size_t GetPHPFormatterOptions() const { return m_phpFormatOptions; }
+    size_t SetPHPFormatterOptions(size_t options) { m_phpFormatOptions = options; }
 };
 
 #endif // FORMATOPTIONS_H

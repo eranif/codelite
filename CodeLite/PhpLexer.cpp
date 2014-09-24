@@ -3251,9 +3251,9 @@ bool phpLexerIsPHPCode(void* scanner)
     return userData->IsInsidePhp();
 }
 
-void* phpLexerNew(const wxString& filename, size_t options )
+void* phpLexerNew(const wxFileName& filename, size_t options )
 {
-    wxFileName fn = filename;
+    wxFileName fn(filename);
     if(fn.IsRelative()) {
         fn.MakeAbsolute();
     }
@@ -3266,7 +3266,19 @@ void* phpLexerNew(const wxString& filename, size_t options )
     phplex_init(&scanner);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     yyg->yyextra_r = new phpLexerUserData(options);
+    ((phpLexerUserData*)yyg->yyextra_r)->SetFp(fp);
     php_switch_to_buffer(php_create_buffer(fp, YY_BUF_SIZE, scanner), scanner);
+    return scanner;
+}
+
+void* phpLexerNew(const wxString& content, size_t options )
+{
+    yyscan_t scanner;
+    phplex_init(&scanner);
+    wxCharBuffer cb = content.mb_str(wxConvUTF8);
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner;
+    yyg->yyextra_r = new phpLexerUserData(options);
+    php_switch_to_buffer(php_scan_string(cb.data(), scanner), scanner);
     return scanner;
 }
 

@@ -129,9 +129,14 @@ protected:
     void AppendEOL(eDepthCommand depth = kDepthNone);
 
 public:
-    PHPFormatterBuffer(PHPScanner_t scanner, const PHPFormatterOptions& options);
+    PHPFormatterBuffer(const wxString& buffer, const PHPFormatterOptions& options);
     virtual ~PHPFormatterBuffer();
-
+    
+    /**
+     * @brief format the buffer (provided in the constructor)
+     */
+    void format();
+    
     PHPFormatterBuffer& operator<<(const phpLexerToken& token);
     const wxString& GetBuffer() const { return m_buffer; }
 };

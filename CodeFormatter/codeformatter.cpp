@@ -229,94 +229,122 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
     // execute the formatter
     FormatOptions fmtroptions;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
+    if(FileExtManager::IsPHPFile(editor->GetFileName())) {
+        // use the built-in PHP formatter
 
-    // We allow ClangFormat to work only when the source file is known to be
-    // a C/C++ source file or JavaScript (these are the types of files that clang-format can handle properly)
-    if(fmtroptions.GetEngine() == kFormatEngineClangFormat &&
-       (FileExtManager::IsCxxFile(editor->GetFileName()) || FileExtManager::IsJavascriptFile(editor->GetFileName()))) {
-
-        int from = wxNOT_FOUND, length = wxNOT_FOUND;
-        wxString formattedOutput;
-        if(editor->GetSelectionStart() != wxNOT_FOUND) {
-            // we got a selection, only format it
-            from = editor->GetSelectionStart();
-            length = editor->GetSelectionEnd() - from;
-            if(length <= 0) {
-                from = wxNOT_FOUND;
-                length = wxNOT_FOUND;
-            }
+        // Construct the formatting options
+        PHPFormatterOptions phpOptions;
+        phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
+        if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
+            phpOptions.flags |= kPFF_UseTabs;
         }
+        phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
+        phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
+        // Create the formatter buffer
+        PHPFormatterBuffer buffer(editor->GetSTC()->GetText(), phpOptions);
 
-        // Make sure we format the editor string and _not_ the file (there might be some newly added lines
-        // the could be missing ...)
-        if(!ClangFormat(editor->GetSTC()->GetText(), formattedOutput, curpos, from, length)) {
-            ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
-            return;
-        }
+        // Format the source
+        buffer.format();
 
+        // Restore line
         clSTCLineKeeper lk(editor);
-        editor->SetEditorText(formattedOutput);
+
+        // Replace the text with the new formatted buffer
+        editor->SetEditorText(buffer.GetBuffer());
+
+        // Restore caret position
         editor->SetCaretAt(curpos);
 
     } else {
-        // AStyle
-        wxString options = fmtroptions.AstyleOptionsAsString();
+        // We allow ClangFormat to work only when the source file is known to be
+        // a C/C++ source file or JavaScript (these are the types of files that clang-format can handle properly)
+        if(fmtroptions.GetEngine() == kFormatEngineClangFormat &&
+           (FileExtManager::IsCxxFile(editor->GetFileName()) ||
+            FileExtManager::IsJavascriptFile(editor->GetFileName()))) {
 
-        // determine indentation method and amount
-        bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
-        int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
-        int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
-        options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
-
-        wxString output;
-        wxString inputString;
-        bool formatSelectionOnly(editor->GetSelection().IsEmpty() == false);
-
-        if(formatSelectionOnly) {
-            // get the lines contained in the selection
-            int selStart = editor->GetSelectionStart();
-            int selEnd = editor->GetSelectionEnd();
-            int lineNumber = editor->LineFromPos(selStart);
-
-            selStart = editor->PosFromLine(lineNumber);
-            selEnd = editor->LineEnd(editor->LineFromPos(selEnd));
-
-            editor->SelectText(selStart, selEnd - selStart);
-            inputString = editor->GetSelection();
-
-        } else {
-            inputString = editor->GetEditorText();
-        }
-
-        AstyleFormat(inputString, options, output);
-        if(output.IsEmpty() == false) {
-
-            // append new-line
-            wxString eol;
-            if(editor->GetEOL() == 0) { // CRLF
-                eol = wxT("\r\n");
-            } else if(editor->GetEOL() == 1) { // CR
-                eol = wxT("\r");
-            } else {
-                eol = wxT("\n");
+            int from = wxNOT_FOUND, length = wxNOT_FOUND;
+            wxString formattedOutput;
+            if(editor->GetSelectionStart() != wxNOT_FOUND) {
+                // we got a selection, only format it
+                from = editor->GetSelectionStart();
+                length = editor->GetSelectionEnd() - from;
+                if(length <= 0) {
+                    from = wxNOT_FOUND;
+                    length = wxNOT_FOUND;
+                }
             }
 
-            if(!formatSelectionOnly) output << eol;
+            // Make sure we format the editor string and _not_ the file (there might be some newly added lines
+            // the could be missing ...)
+            if(!ClangFormat(editor->GetSTC()->GetText(), formattedOutput, curpos, from, length)) {
+                ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+                return;
+            }
+
+            clSTCLineKeeper lk(editor);
+            editor->SetEditorText(formattedOutput);
+            editor->SetCaretAt(curpos);
+
+        } else {
+            // AStyle
+            wxString options = fmtroptions.AstyleOptionsAsString();
+
+            // determine indentation method and amount
+            bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
+            int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
+            int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
+            options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
+
+            wxString output;
+            wxString inputString;
+            bool formatSelectionOnly(editor->GetSelection().IsEmpty() == false);
 
             if(formatSelectionOnly) {
-                // format the text (add the indentation)
-                output = editor->FormatTextKeepIndent(
-                    output, editor->GetSelectionStart(), Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
-                editor->ReplaceSelection(output);
+                // get the lines contained in the selection
+                int selStart = editor->GetSelectionStart();
+                int selEnd = editor->GetSelectionEnd();
+                int lineNumber = editor->LineFromPos(selStart);
+
+                selStart = editor->PosFromLine(lineNumber);
+                selEnd = editor->LineEnd(editor->LineFromPos(selEnd));
+
+                editor->SelectText(selStart, selEnd - selStart);
+                inputString = editor->GetSelection();
 
             } else {
-                clSTCLineKeeper lk(editor);
-                editor->SetEditorText(output);
-                editor->SetCaretAt(curpos);
+                inputString = editor->GetEditorText();
+            }
+
+            AstyleFormat(inputString, options, output);
+            if(output.IsEmpty() == false) {
+
+                // append new-line
+                wxString eol;
+                if(editor->GetEOL() == 0) { // CRLF
+                    eol = wxT("\r\n");
+                } else if(editor->GetEOL() == 1) { // CR
+                    eol = wxT("\r");
+                } else {
+                    eol = wxT("\n");
+                }
+
+                if(!formatSelectionOnly) output << eol;
+
+                if(formatSelectionOnly) {
+                    // format the text (add the indentation)
+                    output = editor->FormatTextKeepIndent(output,
+                                                          editor->GetSelectionStart(),
+                                                          Format_Text_Indent_Prev_Line | Format_Text_Save_Empty_Lines);
+                    editor->ReplaceSelection(output);
+
+                } else {
+                    clSTCLineKeeper lk(editor);
+                    editor->SetEditorText(output);
+                    editor->SetCaretAt(curpos);
+                }
             }
         }
     }
-
     // Notify that a file was indented
     wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_COMPLETED);
     evt.SetString(editor->GetFileName().GetFullPath());
@@ -716,4 +744,23 @@ bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files, cons
             CL_WARNING("Failed to write file content. File: %s", files.at(i).GetFullPath());
         }
     }
+}
+
+bool CodeFormatter::PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options)
+{
+    // Construct the formatting options
+    PHPFormatterOptions phpOptions;
+    phpOptions.flags = options.GetPHPFormatterOptions();
+    if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
+        phpOptions.flags |= kPFF_UseTabs;
+    }
+    phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
+    phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
+    // Create the formatter buffer
+    PHPFormatterBuffer buffer(content, phpOptions);
+
+    // Format the source
+    buffer.format();
+    formattedOutput << buffer.GetBuffer();
+    return true;
 }

@@ -23,9 +23,9 @@
     } while(false)
 
 #define CL_DEBUG1(...) \
-    do {              \
+    do {               \
     } while(false)
-        
+
 #endif
 
 #endif
@@ -107,57 +107,24 @@ public:
     {
     }
 
-    ~CppLexerUserData()
-    {
-        Clear();
-    }
+    ~CppLexerUserData() { Clear(); }
 
-    void SetCurrentPF(FILE* currentPF)
-    {
-        this->m_currentPF = currentPF;
-    }
+    void SetCurrentPF(FILE* currentPF) { this->m_currentPF = currentPF; }
     /**
      * @brief do we collect comments?
      */
-    bool IsCollectingComments() const
-    {
-        return m_flags & kLexerOpt_ReturnComments;
-    }
-    bool IsCollectingWhitespace() const
-    {
-        return m_flags & kLexerOpt_ReturnWhitespace;
-    }
+    bool IsCollectingComments() const { return m_flags & kLexerOpt_ReturnComments; }
+    bool IsCollectingWhitespace() const { return m_flags & kLexerOpt_ReturnWhitespace; }
     //==--------------------
     // Comment management
     //==--------------------
-    void AppendToComment(const wxString& str)
-    {
-        m_comment << str;
-    }
-    void SetCommentEndLine(int commentEndLine)
-    {
-        this->m_commentEndLine = commentEndLine;
-    }
-    void SetCommentStartLine(int commentStartLine)
-    {
-        this->m_commentStartLine = commentStartLine;
-    }
-    int GetCommentEndLine() const
-    {
-        return m_commentEndLine;
-    }
-    int GetCommentStartLine() const
-    {
-        return m_commentStartLine;
-    }
-    const wxString& GetComment() const
-    {
-        return m_comment;
-    }
-    bool HasComment() const
-    {
-        return !m_comment.IsEmpty();
-    }
+    void AppendToComment(const wxString& str) { m_comment << str; }
+    void SetCommentEndLine(int commentEndLine) { this->m_commentEndLine = commentEndLine; }
+    void SetCommentStartLine(int commentStartLine) { this->m_commentStartLine = commentStartLine; }
+    int GetCommentEndLine() const { return m_commentEndLine; }
+    int GetCommentStartLine() const { return m_commentStartLine; }
+    const wxString& GetComment() const { return m_comment; }
+    bool HasComment() const { return !m_comment.IsEmpty(); }
     /**
      * @brief clear all info collected for the last comment
      */
@@ -171,32 +138,36 @@ public:
 
 typedef void* Scanner_t;
 /**
- * @brief create a new Lexer for a given file name
+ * @brief create a new Lexer for a file content
  */
-extern Scanner_t LexerNew(const wxString& filename, size_t options = kLexerOpt_None);
+WXDLLIMPEXP_CL Scanner_t LexerNew(const wxString& filename, size_t options = kLexerOpt_None);
 
+/**
+ * @brief create a scanner for a given file name
+ */
+WXDLLIMPEXP_CL Scanner_t LexerNew(const wxFileName& filename, size_t options);
 /**
  * @brief destroy the current lexer and perform cleanup
  */
-extern void LexerDestroy(Scanner_t* scanner);
+WXDLLIMPEXP_CL void LexerDestroy(Scanner_t* scanner);
 
 /**
  * @brief return the next token, its type, line number and columns
  */
-extern bool LexerNext(Scanner_t scanner, CxxLexerToken& token);
+WXDLLIMPEXP_CL bool LexerNext(Scanner_t scanner, CxxLexerToken& token);
 
 /**
  * @brief unget the last token
  */
-extern void LexerUnget(Scanner_t scanner);
+WXDLLIMPEXP_CL void LexerUnget(Scanner_t scanner);
 
 /**
  * @brief return the current lexer token
  */
-extern wxString LexerCurrentToken(Scanner_t scanner);
+WXDLLIMPEXP_CL wxString LexerCurrentToken(Scanner_t scanner);
 
 /**
  * @brief return the associated data with this scanner
  */
-extern CppLexerUserData* LexerGetUserData(Scanner_t scanner);
+WXDLLIMPEXP_CL CppLexerUserData* LexerGetUserData(Scanner_t scanner);
 #endif

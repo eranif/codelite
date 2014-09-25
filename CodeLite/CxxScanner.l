@@ -390,7 +390,24 @@ horizontal_white [ ]|{h_tab}
 // API methods implementation
 //=============-------------------------------
 
-void* LexerNew(const wxString& filename, size_t options )
+void* LexerNew(const wxString& content, size_t options )
+{
+    yyscan_t scanner;
+    yylex_init(&scanner);
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner;
+    CppLexerUserData *userData = new CppLexerUserData(options);
+    
+    // keep the file pointer (and make sure we close it at the end)
+    userData->SetCurrentPF(NULL);
+    yyg->yyextra_r = userData;
+    
+    wxCharBuffer cb = content.mb_str(wxConvUTF8);
+    yy_switch_to_buffer(yy_scan_string(cb.data(), scanner), scanner);
+    yycolumn = 1;
+    return scanner;
+}
+
+void* LexerNew(const wxFileName& filename, size_t options )
 {
     wxFileName fn = filename;
     if(fn.IsRelative()) {

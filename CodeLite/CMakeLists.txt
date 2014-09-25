@@ -11,6 +11,30 @@ find_package(wxWidgets COMPONENTS std REQUIRED)
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
+# Flex files
+if (UNIX AND NOT APPLE)
+    find_package(FLEX REQUIRED)
+    
+    set(CxxFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/CxxLexer.cpp)
+    set(PhpFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.cpp)
+    
+    set(CxxFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l)
+    set(PhpFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l)
+    
+    if(FLEX_FOUND)
+        add_custom_command(
+            OUTPUT ${CxxFlexOutput}
+            COMMAND ${FLEX_EXECUTABLE} --noline --batch --outfile=${CxxFlexOutput} ${CxxFlexInput}
+            DEPENDS ${CxxFlexInput}
+            COMMENT "Generating ${CxxFlexOutput}")
+        add_custom_command(
+            OUTPUT ${PhpFlexOutput}
+            COMMAND ${FLEX_EXECUTABLE} -Pphp --noline --batch --outfile=${PhpFlexOutput} ${PhpFlexInput}
+            DEPENDS ${PhpFlexInput}
+            COMMENT "Generating ${PhpFlexOutput}")
+    endif()
+endif()
+
 # Include paths
 include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
                     "${CL_SRC_ROOT}/sdk/codelite_indexer/network" 

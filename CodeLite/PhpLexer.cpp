@@ -1,5 +1,5 @@
 
-#line 3 "PhpLexer.cpp"
+#line 3 "/home/eran/devl/codelite/CodeLite/PhpLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -934,7 +934,7 @@ static yyconst flex_int32_t yy_rule_can_match_eol[150] =
 // a flex version 2.5.34 and later
 // Under Windows, you will need to run the following command 
 // from within *MSYS* terminal (or run codelite from an MSYS shell):
-// /usr/bin/flex --noline --batch --outfile=CppLexer.cpp cpp_lexer.l
+// /usr/bin/flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 //
 //====================--------------------------------------------------------------
 //

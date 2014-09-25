@@ -8,7 +8,7 @@
 // a flex version 2.5.34 and later
 // Under Windows, you will need to run the following command 
 // from within *MSYS* terminal (or run codelite from an MSYS shell):
-// /usr/bin/flex --noline --batch --outfile=CppLexer.cpp cpp_lexer.l
+// /usr/bin/flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 //
 //====================--------------------------------------------------------------
 //

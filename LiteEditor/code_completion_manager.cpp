@@ -552,7 +552,7 @@ bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
         // get the include paths based on the project settings (this is per build configuration)
         searchPaths = proj->GetIncludePaths();
         CL_DEBUG("CxxPreProcessor will use the following include paths:");
-        CL_DEBUG_ARR(definitions);
+        CL_DEBUG_ARR(searchPaths);
 
         // get the compiler include paths
         // wxArrayString compileIncludePaths = compiler->GetDefaultIncludePaths();

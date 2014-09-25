@@ -70,6 +70,7 @@
 #include <wx/wupdlock.h>
 #include "cl_command_event.h"
 #include "codelite_events.h"
+#include "clSTCLineKeeper.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -2763,7 +2764,8 @@ void LEditor::ReloadFile()
         SetReloadingFile(false);
         return;
     }
-
+    
+    clSTCLineKeeper lk(static_cast<wxStyledTextCtrl*>(this));
     // Store a 'template' of the current file, so that it can be reapplied after
     wxArrayString bookmarks;
     StoreMarkersToArray(bookmarks);

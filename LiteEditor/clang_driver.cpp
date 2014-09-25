@@ -61,6 +61,7 @@
 #include "plugin.h"
 #include "browse_record.h"
 #include "mainbook.h"
+#include "macromanager.h"
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -330,6 +331,10 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     ///////////////////////////////////////////////////////////////////////
     // add global clang include paths
     wxString strGlobalIncludes = options.GetClangSearchPaths();
+    
+    // expand any macros from the include paths
+    strGlobalIncludes = MacroManager::Instance()->Expand(strGlobalIncludes, PluginManager::Get(), projectName);
+
     wxArrayString globalIncludes = wxStringTokenize(strGlobalIncludes, wxT("\n\r"), wxTOKEN_STRTOK);
     for(size_t i = 0; i < globalIncludes.GetCount(); i++) {
         wxFileName fn(globalIncludes.Item(i).Trim().Trim(false), wxT(""));

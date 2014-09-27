@@ -3,10 +3,11 @@
 PHPEntityNamespace::PHPEntityNamespace() {}
 
 PHPEntityNamespace::~PHPEntityNamespace() {}
+
 void PHPEntityNamespace::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
-    wxPrintf("%sNamespace name: %s\n", indentString, GetPath());
+    wxPrintf("%sNamespace name: %s\n", indentString, GetName());
     
     PHPEntityBase::Map_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {

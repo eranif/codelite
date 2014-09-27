@@ -15,11 +15,10 @@ public:
         kMember = (1 << 4),
         kReference = (1 << 5),
         kConst = (1 << 6),
+        kFunctionArg = (1 << 7),
     };
 
 protected:
-    wxString m_name;
-    wxString m_nameWithoutDollar;
     wxString m_typeHint;
 
     // Incase this variable is instantiated with an expression
@@ -30,7 +29,10 @@ protected:
 
 public:
     virtual void PrintStdout(int indent) const;
-    virtual wxString ID() const;
+    /**
+     * @brief format this variable
+     */
+    wxString ToFuncArgString() const;
     PHPEntityVariable();
     virtual ~PHPEntityVariable();
 
@@ -43,11 +45,7 @@ public:
     bool Is(eVariableFlags flag) const { return m_flags & flag; }
     void SetIsReference(bool isReference) { SetFlag(kReference, isReference); }
     bool IsReference() const { return Is(kReference); }
-    void SetName(const wxString& name) { this->m_name = name; }
-    void SetNameWithoutDollar(const wxString& nameWithoutDollar) { this->m_nameWithoutDollar = nameWithoutDollar; }
     void SetTypeHint(const wxString& typeHint) { this->m_typeHint = typeHint; }
-    const wxString& GetName() const { return m_name; }
-    const wxString& GetNameWithoutDollar() const { return m_nameWithoutDollar; }
     const wxString& GetTypeHint() const { return m_typeHint; }
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }

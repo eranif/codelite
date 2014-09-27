@@ -22,21 +22,21 @@ protected:
     wxFileName m_filename;
     int m_line;
     int m_column;
+    wxString m_name;
+    wxString m_scope;
 
 public:
     PHPEntityBase();
     virtual ~PHPEntityBase(){};
-    
-    PHPEntityBase* Parent() const {
-        return m_parent;
-    }
-    
+
+    PHPEntityBase* Parent() const { return m_parent; }
+
     /**
      * @brief search for child in the children list of this entity.
      * Optionally, you can request to search for a child with or without the dollar "$" sign
      */
-    PHPEntityBase::Ptr_t FindChild(const wxString &name, bool tryPrependingDollar = false) const;
-    
+    PHPEntityBase::Ptr_t FindChild(const wxString& name, bool tryPrependingDollar = false) const;
+
     // Setters / Getters
     void SetColumn(int column) { this->m_column = column; }
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
@@ -44,17 +44,16 @@ public:
     int GetColumn() const { return m_column; }
     const wxFileName& GetFilename() const { return m_filename; }
     int GetLine() const { return m_line; }
-    
+
+    void SetName(const wxString& name) { this->m_name = name; }
+    void SetScope(const wxString& scope) { this->m_scope = scope; }
+    const wxString& GetName() const { return m_name; }
+    const wxString& GetScope() const { return m_scope; }
     /**
      * @brief recursive print to stdout this object and all its children
      * @param parent
      */
     void RecursivePrintStdout(PHPEntityBase::Ptr_t parent, int indent);
-
-    /**
-     * @brief return a ID string that identifies this entity
-     */
-    virtual wxString ID() const = 0;
 
     /**
      * @brief print this object to the stdout
@@ -64,7 +63,7 @@ public:
     /**
      * @brief add a child to this scope
      */
-    void AddChild(PHPEntityBase::Ptr_t child);
+    virtual void AddChild(PHPEntityBase::Ptr_t child);
 
     /**
      * @brief convert this base class to its concrete

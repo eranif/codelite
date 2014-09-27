@@ -248,8 +248,6 @@
     <File Name="PHPEntityClass.h"/>
     <File Name="PHPEntityFunction.cpp"/>
     <File Name="PHPEntityFunction.h"/>
-    <File Name="PHPEntityFunctionSignature.cpp"/>
-    <File Name="PHPEntityFunctionSignature.h"/>
     <File Name="PHPEntityNamespace.cpp"/>
     <File Name="PHPEntityNamespace.h"/>
     <File Name="PHPEntityVariable.cpp"/>

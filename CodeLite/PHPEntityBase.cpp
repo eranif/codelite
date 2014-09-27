@@ -9,7 +9,7 @@ PHPEntityBase::PHPEntityBase()
 
 void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 {
-    m_children.insert(std::make_pair(child->ID(), child));
+    m_children.insert(std::make_pair(child->GetName(), child));
     child->m_parent = this;
 }
 

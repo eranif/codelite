@@ -3,7 +3,6 @@
 #include "PHPScannerTokens.h"
 #include "PHPEntityNamespace.h"
 #include "PHPEntityFunction.h"
-#include "PHPEntityFunctionSignature.h"
 #include "PHPEntityVariable.h"
 #include <wx/arrstr.h>
 #include "PHPEntityClass.h"
@@ -216,7 +215,7 @@ void PHPSourceFile::OnNamespace()
         m_scopes.push_back(PHPEntityBase::Ptr_t(new PHPEntityNamespace()));
         PHPEntityNamespace* ns = CurrentScope()->Cast<PHPEntityNamespace>();
         if(ns) {
-            ns->SetPath(path); // Global namespace
+            ns->SetName(path); // Global namespace
         }
     } else {
         // PHP parsing error... (namespace must be the first thing on the file)
@@ -256,7 +255,7 @@ void PHPSourceFile::OnFunction()
     m_scopes.push_back(funcPtr);
 
     // update function attributes
-    func->SetSignature(ParseFunctionSignature(funcDepth));
+    ParseFunctionSignature(funcDepth);
     func->SetFlags(LookBackForFunctionFlags());
 
     if(ReadUntilFound('{', token)) {
@@ -280,7 +279,7 @@ PHPEntityBase::Ptr_t PHPSourceFile::CurrentScope()
     if(m_scopes.empty()) {
         // no scope is set, push the global scope
         m_scopes.push_back(PHPEntityBase::Ptr_t(new PHPEntityNamespace()));
-        CurrentScope()->Cast<PHPEntityNamespace>()->SetPath("\\"); // Global namespace
+        CurrentScope()->SetName("\\"); // Global namespace
     }
     return m_scopes.back();
 }
@@ -312,7 +311,7 @@ size_t PHPSourceFile::LookBackForFunctionFlags()
     return flags;
 }
 
-PHPEntityBase::Ptr_t PHPSourceFile::ParseFunctionSignature(int startingDepth)
+void PHPSourceFile::ParseFunctionSignature(int startingDepth)
 {
     phpLexerToken token;
     if(startingDepth == 0) {
@@ -323,12 +322,11 @@ PHPEntityBase::Ptr_t PHPSourceFile::ParseFunctionSignature(int startingDepth)
                 break;
             }
         }
-        if(startingDepth == 0) return PHPEntityBase::Ptr_t(NULL);
+        if(startingDepth == 0) return;
     }
 
     // at this point the 'depth' is 1
     int depth = 1;
-    PHPEntityBase::Ptr_t sig(new PHPEntityFunctionSignature());
     wxString typeHint;
     wxString defaultValue;
     PHPEntityVariable* var(NULL);
@@ -339,7 +337,8 @@ PHPEntityBase::Ptr_t PHPSourceFile::ParseFunctionSignature(int startingDepth)
             var = new PHPEntityVariable();
             var->SetName(token.text);
             var->SetLine(token.lineNumber);
-
+            // Mark this variable as function argument
+            var->SetFlag(PHPEntityVariable::kFunctionArg); 
             if(typeHint.EndsWith("&")) {
                 var->SetIsReference(true);
                 typeHint.RemoveLast();
@@ -358,9 +357,9 @@ PHPEntityBase::Ptr_t PHPSourceFile::ParseFunctionSignature(int startingDepth)
             if(depth < 1) {
                 if(var) {
                     var->SetDefaultValue(defaultValue);
-                    sig->AddChild(PHPEntityBase::Ptr_t(var));
+                    CurrentScope()->AddChild(PHPEntityBase::Ptr_t(var));
                 }
-                return sig;
+                return;
 
             } else if(depth) {
                 defaultValue << token.text;
@@ -373,7 +372,7 @@ PHPEntityBase::Ptr_t PHPSourceFile::ParseFunctionSignature(int startingDepth)
         case ',':
             if(var) {
                 var->SetDefaultValue(defaultValue);
-                sig->AddChild(PHPEntityBase::Ptr_t(var));
+                CurrentScope()->AddChild(PHPEntityBase::Ptr_t(var));
             }
             var = NULL;
             typeHint.Clear();
@@ -389,7 +388,6 @@ PHPEntityBase::Ptr_t PHPSourceFile::ParseFunctionSignature(int startingDepth)
             break;
         }
     }
-    return PHPEntityBase::Ptr_t(NULL);
 }
 
 void PHPSourceFile::PrintStdout()
@@ -582,13 +580,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     if(m_aliases.find(type) != m_aliases.end()) {
         return m_aliases.find(type)->second;
     }
-
-    PHPEntityNamespace* pNS = Namespace()->Cast<PHPEntityNamespace>();
-    wxString ns;
-    if(pNS) {
-        ns = pNS->GetPath();
-    }
-
+    wxString ns = Namespace()->GetName();
     if(!ns.EndsWith("\\")) {
         ns << "\\";
     }

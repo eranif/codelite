@@ -7,11 +7,10 @@ PHPEntityVariable::PHPEntityVariable()
 }
 
 PHPEntityVariable::~PHPEntityVariable() {}
-wxString PHPEntityVariable::ID() const { return m_name; }
 void PHPEntityVariable::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
-    wxPrintf("%sVariable: %s", indentString, GetName());
+    wxPrintf("%s%s: %s", indentString, Is(kMember) ? "Member" : "Variable", GetName());
     if(!GetTypeHint().IsEmpty()) {
         wxPrintf(", TypeHint: %s", GetTypeHint());
     }
@@ -52,4 +51,26 @@ void PHPEntityVariable::SetVisibility(int visibility)
     default:
         break;
     }
+}
+
+wxString PHPEntityVariable::ToFuncArgString() const
+{
+    if(!Is(kFunctionArg)) {
+        return "";
+    }
+    
+    wxString str;
+    if(!GetTypeHint().IsEmpty()) {
+        str << GetTypeHint() << " ";
+    }
+    
+    if(IsReference()) {
+        str << "&";
+    }
+    
+    str << GetName();
+    if(!GetDefaultValue().IsEmpty()) {
+        str << " = " << GetDefaultValue();
+    }
+    return str;
 }

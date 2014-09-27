@@ -5,14 +5,15 @@
 #include <wx/filename.h>
 #include "PhpLexerAPI.h"
 #include "PHPEntityBase.h"
+#include <vector>
 
 class WXDLLIMPEXP_CL PHPSourceFile
 {
     PHPEntityBase::List_t m_scopes;
     PHPScanner_t m_scanner;
     wxFileName m_filename;
-    wxVector<phpLexerToken> m_lookBackTokens;
-    wxVector<phpLexerToken> m_comments;
+    std::vector<phpLexerToken> m_lookBackTokens;
+    std::vector<phpLexerToken> m_comments;
     bool m_parseFunctionBody;
     int m_depth;
     bool m_reachedEOF;
@@ -98,7 +99,7 @@ protected:
     /**
      * @brief parse function signature
      */
-    PHPEntityBase::Ptr_t ParseFunctionSignature(int startingDepth);
+    void ParseFunctionSignature(int startingDepth);
     
     /**
      * @brief consume the function body

@@ -4,6 +4,7 @@
 #include <wx/filename.h>
 #include <wx/string.h>
 #include "codelite_exports.h"
+#include "PHPScannerTokens.h"
 
 enum eLexerOptions {
     kPhpLexerOpt_None = 0x00000000,
@@ -27,6 +28,18 @@ struct WXDLLIMPEXP_CL phpLexerToken {
     }
 
     bool IsNull() const { return type == -1; }
+    /**
+     * @brief is the current token a comment? (c++ or c comment)
+     */
+    bool IsAnyComment() const {
+        return type == kPHP_T_C_COMMENT || type == kPHP_T_CXX_COMMENT;
+    }
+    /**
+     * @brief is the current token a PHP Doc comment?
+     */
+    bool IsDocComment() const {
+        return type == kPHP_T_C_COMMENT;
+    }
 };
 
 /**
@@ -129,5 +142,10 @@ WXDLLIMPEXP_CL bool phpLexerNext(PHPScanner_t scanner, phpLexerToken& token);
  * @brief return true if we are currently inside a PHP block
  */
 WXDLLIMPEXP_CL bool phpLexerIsPHPCode(PHPScanner_t scanner);
+
+/**
+ * @brief peek at the next token
+ */
+WXDLLIMPEXP_CL void phpLexerUnget(PHPScanner_t scanner);
 
 #endif

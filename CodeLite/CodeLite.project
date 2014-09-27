@@ -242,6 +242,24 @@
     <File Name="PhpLexer.l"/>
     <File Name="PhpLexerAPI.h"/>
     <File Name="PHPScannerTokens.h"/>
+    <File Name="PHPEntityBase.cpp"/>
+    <File Name="PHPEntityBase.h"/>
+    <File Name="PHPEntityClass.cpp"/>
+    <File Name="PHPEntityClass.h"/>
+    <File Name="PHPEntityFunction.cpp"/>
+    <File Name="PHPEntityFunction.h"/>
+    <File Name="PHPEntityFunctionSignature.cpp"/>
+    <File Name="PHPEntityFunctionSignature.h"/>
+    <File Name="PHPEntityNamespace.cpp"/>
+    <File Name="PHPEntityNamespace.h"/>
+    <File Name="PHPEntityVariable.cpp"/>
+    <File Name="PHPEntityVariable.h"/>
+    <File Name="PHPExpression.cpp"/>
+    <File Name="PHPExpression.h"/>
+    <File Name="PHPLookupTable.cpp"/>
+    <File Name="PHPLookupTable.h"/>
+    <File Name="PHPSourceFile.cpp"/>
+    <File Name="PHPSourceFile.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

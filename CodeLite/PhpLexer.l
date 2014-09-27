@@ -27,12 +27,12 @@ extern "C" int yywrap(void*) { return 1; }
 #define RETURN_WHITESPACE()                                         \
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r; \
     if(userData->IsCollectingWhitespace()) {                        \
-        return kPHP_T_WHITESPACE;                                        \
+        return kPHP_T_WHITESPACE;                                   \
     }
 #define RETURN_NEWLINE()                                            \
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r; \
     if(userData->IsCollectingWhitespace()) {                        \
-        return kPHP_T_NEWLINE;                                           \
+        return kPHP_T_NEWLINE;                                      \
     }
 
 #define LEX_RETURN(x) {\
@@ -125,6 +125,8 @@ horizontal_white [ ]|{h_tab}
 <PHP>{horizontal_white}+ { RETURN_WHITESPACE(); }
 <PHP>({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n" { RETURN_NEWLINE();}
 <PHP>({v_tab}|{c_return}|{form_feed})+ {RETURN_WHITESPACE();}
+<PHP>"$this" {LEX_RETURN(kPHP_T_THIS);}
+<PHP>"self" {LEX_RETURN(kPHP_T_SELF);}
 <PHP>"$"{LABEL}             {LEX_RETURN(kPHP_T_VARIABLE);}
 <PHP>b?"<<<"{TABS_AND_SPACES}({LABEL}|([']{LABEL}['])|(["]{LABEL}["])){NEWLINE} {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -441,6 +443,7 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
     yyg->yyextra_r = new phpLexerUserData(options);
     ((phpLexerUserData*)yyg->yyextra_r)->SetFp(fp);
     php_switch_to_buffer(php_create_buffer(fp, YY_BUF_SIZE, scanner), scanner);
+    yylineno = 0;
     return scanner;
 }
 
@@ -452,6 +455,7 @@ void* phpLexerNew(const wxString& content, size_t options )
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     yyg->yyextra_r = new phpLexerUserData(options);
     php_switch_to_buffer(php_scan_string(cb.data(), scanner), scanner);
+    yylineno = 0;
     return scanner;
 }
 
@@ -465,6 +469,12 @@ void phpLexerDestroy(void** scanner)
     *scanner = NULL;
 }
 
+void phpLexerUnget(void* scanner)
+{
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner;
+    yyless(0);
+}
+
 bool phpLexerNext(void* scanner, phpLexerToken& token)
 {
     token.endLineNumber = -1;
@@ -474,16 +484,16 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
         phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
         switch(token.type) {
         case kPHP_T_END_HEREDOC:
-            token.lineNumber = phpget_lineno(scanner); 
+            token.lineNumber = yylineno; 
             token.text = userData->GetString();
             userData->GetString().Clear();
             break;
         case kPHP_T_START_HEREDOC:
-            token.lineNumber = phpget_lineno(scanner);
+            token.lineNumber = yylineno;
             token.text.Clear();
             break;
         case kPHP_T_CONSTANT_ENCAPSED_STRING:
-            token.lineNumber = phpget_lineno(scanner);
+            token.lineNumber = yylineno;
             token.text = userData->GetString();
             userData->GetString().Clear();
             break;
@@ -500,7 +510,7 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
             userData->ClearComment();
             break;
         default:
-            token.lineNumber = phpget_lineno(scanner);
+            token.lineNumber = yylineno;
             token.text = phpget_text(scanner);
             break;
         }

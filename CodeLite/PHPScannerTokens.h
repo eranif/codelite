@@ -56,6 +56,8 @@ enum {
     kPHP_T_IDENTIFIER,
     kPHP_T_STRING_VARNAME,
     kPHP_T_VARIABLE,
+    kPHP_T_THIS,
+    kPHP_T_SELF,
     kPHP_T_NUM_STRING,
     kPHP_T_INLINE_HTML,
     kPHP_T_CHARACTER,
@@ -133,5 +135,5 @@ enum {
 };
 
 // Special tokens
-enum { kPHP_T_C_COMMENT = 400, kPHP_T_CXX_COMMENT, kPHP_T_NEWLINE };
+enum { kPHP_T_C_COMMENT = 500, kPHP_T_CXX_COMMENT, kPHP_T_NEWLINE };
 #endif

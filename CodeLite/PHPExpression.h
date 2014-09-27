@@ -1,0 +1,54 @@
+#ifndef PHPEXPRESSION_H
+#define PHPEXPRESSION_H
+
+#include "codelite_exports.h"
+#include <wx/string.h>
+#include "PhpLexerAPI.h"
+#include <list>
+#include "PHPSourceFile.h"
+
+class WXDLLIMPEXP_CL PHPExpression
+{
+public:
+    enum eType {
+        kNone = -1,
+        kThis,
+        kSelf,
+        kStatic,
+    };
+    struct Part {
+        wxString m_text;
+        int m_operator;
+        wxString m_operatorText;
+
+        Part()
+            : m_operator(kPHP_T_OBJECT_OPERATOR)
+        {
+        }
+    };
+    typedef std::list<PHPExpression::Part> List_t;
+
+protected:
+    eType m_type;
+    wxString m_text;
+    wxVector<phpLexerToken> m_expression;
+    PHPExpression::List_t m_parts;
+    wxString m_filter; // Part of the word that was typed by the user
+                       // but will do no good to resolve the expression
+protected:
+    wxVector<phpLexerToken> CreateExpression(const wxString& text);
+    wxString SimplifyExpression(PHPSourceFile& source, int depth);
+    
+public:
+    PHPExpression(const wxString& fulltext, const wxString& exprText = wxString());
+    virtual ~PHPExpression();
+
+    wxString GetExpressionAsString() const;
+
+    /**
+     * @brief resolve the expression and return the type it deduced to
+     */
+    wxString Resolve();
+};
+
+#endif // PHPEXPRESSION_H

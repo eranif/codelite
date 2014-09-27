@@ -144,7 +144,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::operator<<(const phpLexerToken& token)
 
         } else if(token.type == kPHP_T_CXX_COMMENT) {
             // C++ style comment ("//")
-            AppendEOL();
+            //AppendEOL();
             m_buffer << token.text;
             AppendEOL();
             m_lastCommentLine = token.lineNumber + 1;

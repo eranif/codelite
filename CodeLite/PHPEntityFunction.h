@@ -27,26 +27,32 @@ protected:
 
     // Function flags
     size_t m_flags;
-    
+
     std::vector<PHPEntityBase::Ptr_t> m_childrenVec;
-    
+
 public:
     PHPEntityFunction();
     virtual ~PHPEntityFunction();
-    
+
     /**
-     * @brief format function signature 
+     * @brief format function signature
      */
     wxString FormatSignature() const;
-    
+
     /**
-     * @brief override the base AddChild() we do this because we need 
+     * @brief override the base AddChild() we do this because we need
      * to preserve the order of the children
      */
     virtual void AddChild(PHPEntityBase::Ptr_t child);
-    
-    // Accessors
 
+    /**
+     * @brief write this object into the database
+     * @param db
+     */
+    virtual void Store(wxSQLite3Database& db);
+
+    // Accessors
+    size_t GetFlags() const { return m_flags; }
     void SetFlags(size_t flags);
     bool Is(eFunctionFlags flag) const { return m_flags & flag; }
     void SetReturnValue(PHPEntityBase::Ptr_t returnValue) { this->m_returnValue = returnValue; }

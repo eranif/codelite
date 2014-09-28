@@ -11,6 +11,9 @@ class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
     wxArrayString m_implements;
 
 public:
+    // Save the class into teh database
+    virtual void Store(wxSQLite3Database& db);
+    
     virtual wxString ID() const;
     virtual void PrintStdout(int indent) const;
 
@@ -22,6 +25,9 @@ public:
     const wxString& GetExtends() const { return m_extends; }
     void SetImplements(const wxArrayString& implements) { this->m_implements = implements; }
     const wxArrayString& GetImplements() const { return m_implements; }
+    wxString GetImplementsAsString() const {
+        return ::wxJoin(m_implements, ';');
+    }
 };
 
 #endif // PHPENTITYCLASSIMPL_H

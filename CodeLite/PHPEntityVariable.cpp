@@ -58,19 +58,41 @@ wxString PHPEntityVariable::ToFuncArgString() const
     if(!Is(kFunctionArg)) {
         return "";
     }
-    
+
     wxString str;
     if(!GetTypeHint().IsEmpty()) {
         str << GetTypeHint() << " ";
     }
-    
+
     if(IsReference()) {
         str << "&";
     }
-    
+
     str << GetName();
     if(!GetDefaultValue().IsEmpty()) {
         str << " = " << GetDefaultValue();
     }
     return str;
+}
+void PHPEntityVariable::Store(wxSQLite3Database& db)
+{
+    try {
+
+        wxSQLite3Statement statement = db.PrepareStatement(
+            "INSERT OR REPLACE INTO VARIABLES_TABLE VALUES(NULL, :PARENT_ID, :NAME, :SCOPE, :TYPEHINT, "
+            ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+        statement.Bind(statement.GetParamIndex(":PARENT_ID"), Parent()->GetDbId());
+        statement.Bind(statement.GetParamIndex(":NAME"), GetName());
+        statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
+        statement.Bind(statement.GetParamIndex(":TYPEHINT"), GetTypeHint());
+        statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags());
+        statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
+        statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
+        statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
+        statement.ExecuteUpdate();
+        SetDbId(db.GetLastRowId());
+
+    } catch(wxSQLite3Exception& exc) {
+        wxUnusedVar(exc);
+    }
 }

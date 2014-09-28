@@ -28,6 +28,7 @@ protected:
     size_t m_flags;
 
 public:
+    virtual void Store(wxSQLite3Database& db);
     virtual void PrintStdout(int indent) const;
     /**
      * @brief format this variable

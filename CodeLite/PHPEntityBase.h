@@ -8,6 +8,7 @@
 #include <wx/string.h>
 #include <iostream>
 #include <wx/filename.h>
+#include "wx/wxsqlite3.h"
 
 class WXDLLIMPEXP_CL PHPEntityBase
 {
@@ -24,6 +25,10 @@ protected:
     int m_column;
     wxString m_name;
     wxString m_scope;
+    wxString m_docComment;
+
+    // The database identifier
+    wxLongLong m_dbId;
 
 public:
     PHPEntityBase();
@@ -38,6 +43,11 @@ public:
     PHPEntityBase::Ptr_t FindChild(const wxString& name, bool tryPrependingDollar = false) const;
 
     // Setters / Getters
+
+    void SetDocComment(const wxString& docComment) { this->m_docComment = docComment; }
+    const wxString& GetDocComment() const { return m_docComment; }
+    void SetDbId(wxLongLong dbId) { this->m_dbId = dbId; }
+    wxLongLong GetDbId() const { return m_dbId; }
     void SetColumn(int column) { this->m_column = column; }
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     void SetLine(int line) { this->m_line = line; }
@@ -70,5 +80,16 @@ public:
      * @return
      */
     template <typename T> T* Cast() const { return dynamic_cast<T*>(const_cast<PHPEntityBase*>(this)); }
+
+    /**
+     * @brief store this object and all its children into the database
+     * @param db
+     */
+    virtual void Store(wxSQLite3Database& db) = 0;
+    
+    /**
+     * @brief store this entry and all its children
+     */
+    void StoreRecursive(wxSQLite3Database& db);
 };
 #endif // PHPENTITYIMPL_H

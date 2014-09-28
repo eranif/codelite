@@ -4,6 +4,7 @@ PHPEntityBase::PHPEntityBase()
     : m_parent(NULL)
     , m_line(0)
     , m_column(0)
+    , m_dbId(wxNOT_FOUND)
 {
 }
 
@@ -34,4 +35,9 @@ PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrep
         }
     }
     return PHPEntityBase::Ptr_t(NULL);
+}
+
+void PHPEntityBase::StoreRecursive(wxSQLite3Database& db)
+{
+    
 }

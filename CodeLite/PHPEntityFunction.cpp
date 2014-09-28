@@ -16,7 +16,8 @@ void PHPEntityFunction::SetFlags(size_t flags)
     }
 }
 
-void PHPEntityFunction::PrintStdout(int indent) const {
+void PHPEntityFunction::PrintStdout(int indent) const
+{
     wxString indentString(' ', indent);
     // Print the indentation
     wxPrintf("%sFunction: %s%s", indentString, GetName(), FormatSignature());
@@ -24,16 +25,16 @@ void PHPEntityFunction::PrintStdout(int indent) const {
     wxPrintf("%sLocals:\n", indentString);
     PHPEntityBase::Map_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
-        iter->second->PrintStdout(indent+4);
+        iter->second->PrintStdout(indent + 4);
     }
 }
 
 wxString PHPEntityFunction::FormatSignature() const
 {
     wxString signature = "(";
-    for(size_t i=0; i<m_childrenVec.size(); ++i) {
+    for(size_t i = 0; i < m_childrenVec.size(); ++i) {
         PHPEntityVariable* var = m_childrenVec.at(i)->Cast<PHPEntityVariable>();
-        if(var && var->Is(PHPEntityVariable::kFunctionArg) ) {
+        if(var && var->Is(PHPEntityVariable::kFunctionArg)) {
             signature << var->ToFuncArgString() << ", ";
         } else {
             break;
@@ -49,8 +50,32 @@ wxString PHPEntityFunction::FormatSignature() const
 void PHPEntityFunction::AddChild(PHPEntityBase::Ptr_t child)
 {
     // add it to the parent map
-    PHPEntityBase::AddChild(child); 
-    
+    PHPEntityBase::AddChild(child);
+
     // keep a copy in the vector (which preserves the order of adding them)
     m_childrenVec.push_back(child);
+}
+
+void PHPEntityFunction::Store(wxSQLite3Database& db)
+{
+    try {
+        wxSQLite3Statement statement = db.PrepareStatement(
+            "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :PARENT_ID, :NAME, :SCOPE, :SIGNATURE, "
+            ":RETURN_VALUE, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+        statement.Bind(statement.GetParamIndex(":PARENT_ID"), Parent()->GetDbId());
+        statement.Bind(statement.GetParamIndex(":NAME"), GetName());
+        statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
+        statement.Bind(statement.GetParamIndex(":SIGNATURE"), FormatSignature());
+        statement.Bind(statement.GetParamIndex(":RETURN_VALUE"),
+                       GetReturnValue() ? GetReturnValue()->GetName() : wxString());
+        statement.Bind(statement.GetParamIndex(":FLAGS"), (int) GetFlags()); // TODO: implement this
+        statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
+        statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
+        statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
+        statement.ExecuteUpdate();
+        SetDbId(db.GetLastRowId());
+        
+    } catch(wxSQLite3Exception& exc) {
+        wxUnusedVar(exc);
+    }
 }

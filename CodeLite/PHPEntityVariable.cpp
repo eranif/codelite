@@ -1,5 +1,7 @@
 #include "PHPEntityVariable.h"
 #include "PHPScannerTokens.h"
+#include "PHPEntityFunction.h"
+#include "PHPEntityClass.h"
 
 PHPEntityVariable::PHPEntityVariable()
     : m_flags(0)
@@ -76,23 +78,40 @@ wxString PHPEntityVariable::ToFuncArgString() const
 }
 void PHPEntityVariable::Store(wxSQLite3Database& db)
 {
-    try {
+    // we keep only the function arguments in the databse and globals
+    if(Is(kFunctionArg) || Is(kMember)) {
+        try {
+            wxSQLite3Statement statement = db.PrepareStatement("INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
+                                                               ":SCOPE_ID, :FUNCTION_ID, :NAME, :SCOPE, :TYPEHINT, "
+                                                               ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+            statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Is(kMember) ? Parent()->GetDbId() : wxLongLong(-1));
+            statement.Bind(statement.GetParamIndex(":FUNCTION_ID"),
+                           Is(kFunctionArg) ? Parent()->GetDbId() : wxLongLong(-1));
+            statement.Bind(statement.GetParamIndex(":NAME"), GetName());
+            statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
+            statement.Bind(statement.GetParamIndex(":TYPEHINT"), GetTypeHint());
+            statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags());
+            statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
+            statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
+            statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
+            statement.ExecuteUpdate();
+            SetDbId(db.GetLastRowId());
 
-        wxSQLite3Statement statement = db.PrepareStatement(
-            "INSERT OR REPLACE INTO VARIABLES_TABLE VALUES(NULL, :PARENT_ID, :NAME, :SCOPE, :TYPEHINT, "
-            ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
-        statement.Bind(statement.GetParamIndex(":PARENT_ID"), Parent()->GetDbId());
-        statement.Bind(statement.GetParamIndex(":NAME"), GetName());
-        statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
-        statement.Bind(statement.GetParamIndex(":TYPEHINT"), GetTypeHint());
-        statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags());
-        statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
-        statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
-        statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
-        statement.ExecuteUpdate();
-        SetDbId(db.GetLastRowId());
+        } catch(wxSQLite3Exception& exc) {
+            wxUnusedVar(exc);
+        }
+    }
+}
 
-    } catch(wxSQLite3Exception& exc) {
-        wxUnusedVar(exc);
+wxString PHPEntityVariable::GetScope() const
+{
+    if(Is(kFunctionArg) && Parent()) {
+        return Parent()->Cast<PHPEntityFunction>()->GetScope();
+
+    } else if(Is(kMember) && Parent()) {
+        return Parent()->Cast<PHPEntityClass>()->GetName();
+
+    } else {
+        return "";
     }
 }

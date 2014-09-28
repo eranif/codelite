@@ -29,12 +29,13 @@ void PHPEntityClass::PrintStdout(int indent) const
 void PHPEntityClass::Store(wxSQLite3Database& db)
 {
     try {
-        wxSQLite3Statement statement =
-            db.PrepareStatement("INSERT OR REPLACE INTO CLASS_TABLE VALUES(NULL, :PARENT_ID, :NAME, :SCOPE, :EXTENDS, "
-                                ":IMPLEMENTS, :USING_TRAITS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
-        statement.Bind(statement.GetParamIndex(":PARENT_ID"), Parent()->GetDbId());
+        wxSQLite3Statement statement = db.PrepareStatement(
+            "REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, EXTENDS, IMPLEMENTS, USING_TRAITS, DOC_COMMENT, "
+            "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :EXTENDS, "
+            ":IMPLEMENTS, :USING_TRAITS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+
+        statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());
-        statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
         statement.Bind(statement.GetParamIndex(":EXTENDS"), GetExtends());
         statement.Bind(statement.GetParamIndex(":IMPLEMENTS"), GetImplementsAsString());
         statement.Bind(statement.GetParamIndex(":USING_TRAITS"), wxString()); // TODO: implement this

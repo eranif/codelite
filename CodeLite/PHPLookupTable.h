@@ -5,6 +5,7 @@
 #include <wx/string.h>
 #include "PHPEntityBase.h"
 #include "wx/wxsqlite3.h"
+#include "PHPSourceFile.h"
 
 /**
  * @class PHPLookupTable
@@ -14,23 +15,29 @@
 class WXDLLIMPEXP_CL PHPLookupTable
 {
     wxSQLite3Database m_db;
+
 private:
     void CreateSchema();
-    
+    void SplitFullname(const wxString& fullname, wxString& name, wxString& scope);
+
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
-    
+
     /**
      * @brief open the lookup table database
      */
     void Open(const wxString& workspacePath);
+
+    /**
+     * @brief find a symbol by fullname (scope+name)
+     */
+    virtual PHPEntityBase::Ptr_t FindSymbol(const wxString& fullname);
     
     /**
-     * @brief find a symbol by name and parent
-     * Note that the parent must be in absolute path
+     * @brief save source file into the database
      */
-    virtual PHPEntityBase::Ptr_t FindSymbol(const wxString &name, const wxString &path);
+    void UpdateSourceFile(PHPSourceFile &source);
 };
 
 #endif // PHPLOOKUPTABLE_H

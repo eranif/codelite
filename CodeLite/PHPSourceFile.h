@@ -113,11 +113,6 @@ protected:
     void ParseFunctionBody();
     
     /**
-     * @brief return the namespace scope of this file
-     */
-    PHPEntityBase::Ptr_t Namespace();
-    
-    /**
      * @brief go over the loop back tokens and construct the type hint
      */
     wxString LookBackForTypeHint();
@@ -148,7 +143,12 @@ public:
      * class
      */
     const PHPEntityBase* Class();
-
+    
+    /**
+     * @brief return the namespace scope of this file
+     */
+    PHPEntityBase::Ptr_t Namespace();
+    
     void SetParseFunctionBody(bool parseFunctionBody) { this->m_parseFunctionBody = parseFunctionBody; }
     bool IsParseFunctionBody() const { return m_parseFunctionBody; }
     void PrintStdout();

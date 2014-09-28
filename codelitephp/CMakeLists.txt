@@ -74,8 +74,8 @@ add_library(PHPParser STATIC ${LIBSRC})
 add_executable(PHPUnitTests ${UNIT_TESTS_SRC})
 
 if (UNIX AND NOT APPLE)
-    set ( CMAKE_C_FLAGS "-fPIC" )
-    set ( CMAKE_CXX_FLAGS "-fPIC" )
+    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
 endif()
 
 if ( APPLE )

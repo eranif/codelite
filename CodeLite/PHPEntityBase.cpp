@@ -39,5 +39,10 @@ PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrep
 
 void PHPEntityBase::StoreRecursive(wxSQLite3Database& db)
 {
-    
+    Store(db);
+    // save the children
+    PHPEntityBase::Map_t::iterator iter = m_children.begin();
+    for(; iter != m_children.end(); ++iter) {
+        iter->second->StoreRecursive(db);
+    }
 }

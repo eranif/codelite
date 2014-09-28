@@ -17,8 +17,8 @@ void PHPEntityNamespace::PrintStdout(int indent) const
 void PHPEntityNamespace::Store(wxSQLite3Database& db)
 {
     try {
-        wxSQLite3Statement statement =
-            db.PrepareStatement("INSERT OR REPLACE INTO NAMESPACE_TABLE VALUES(NULL, :NAME)");
+        wxSQLite3Statement statement = db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME) "
+                                                           "VALUES (NULL, 0, -1, :NAME)");
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());
         statement.ExecuteUpdate();
         SetDbId(db.GetLastRowId());

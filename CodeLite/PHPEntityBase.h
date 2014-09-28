@@ -24,7 +24,6 @@ protected:
     int m_line;
     int m_column;
     wxString m_name;
-    wxString m_scope;
     wxString m_docComment;
 
     // The database identifier
@@ -56,9 +55,8 @@ public:
     int GetLine() const { return m_line; }
 
     void SetName(const wxString& name) { this->m_name = name; }
-    void SetScope(const wxString& scope) { this->m_scope = scope; }
     const wxString& GetName() const { return m_name; }
-    const wxString& GetScope() const { return m_scope; }
+
     /**
      * @brief recursive print to stdout this object and all its children
      * @param parent
@@ -90,6 +88,6 @@ public:
     /**
      * @brief store this entry and all its children
      */
-    void StoreRecursive(wxSQLite3Database& db);
+    virtual void StoreRecursive(wxSQLite3Database& db);
 };
 #endif // PHPENTITYIMPL_H

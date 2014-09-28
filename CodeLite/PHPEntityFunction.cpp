@@ -60,9 +60,9 @@ void PHPEntityFunction::Store(wxSQLite3Database& db)
 {
     try {
         wxSQLite3Statement statement = db.PrepareStatement(
-            "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :PARENT_ID, :NAME, :SCOPE, :SIGNATURE, "
+            "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :SCOPE, :SIGNATURE, "
             ":RETURN_VALUE, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
-        statement.Bind(statement.GetParamIndex(":PARENT_ID"), Parent()->GetDbId());
+        statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());
         statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
         statement.Bind(statement.GetParamIndex(":SIGNATURE"), FormatSignature());
@@ -76,6 +76,23 @@ void PHPEntityFunction::Store(wxSQLite3Database& db)
         SetDbId(db.GetLastRowId());
         
     } catch(wxSQLite3Exception& exc) {
+        wxPrintf("error: %s\n", exc.GetMessage());
         wxUnusedVar(exc);
     }
+}
+
+void PHPEntityFunction::StoreRecursive(wxSQLite3Database& db)
+{
+    Store(db);
+    for(size_t i=0; i<m_childrenVec.size(); ++i) {
+        m_childrenVec.at(i)->StoreRecursive(db);
+    }
+}
+
+wxString PHPEntityFunction::GetScope() const
+{
+    if(Parent()) {
+        return Parent()->GetName();
+    }
+    return "";
 }

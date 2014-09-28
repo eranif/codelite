@@ -28,6 +28,11 @@ protected:
     size_t m_flags;
 
 public:
+    /**
+     * @brief 
+     * @return 
+     */
+    wxString GetScope() const;
     virtual void Store(wxSQLite3Database& db);
     virtual void PrintStdout(int indent) const;
     /**

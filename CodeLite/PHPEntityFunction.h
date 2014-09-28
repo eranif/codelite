@@ -30,11 +30,12 @@ protected:
     size_t m_flags;
 
     std::vector<PHPEntityBase::Ptr_t> m_childrenVec;
-
+    
 public:
     PHPEntityFunction();
     virtual ~PHPEntityFunction();
-
+    
+    wxString GetScope() const;
     /**
      * @brief format function signature
      */
@@ -51,7 +52,12 @@ public:
      * @param db
      */
     virtual void Store(wxSQLite3Database& db);
-
+    
+    /**
+     * @brief store recursively (in order)
+     */
+    virtual void StoreRecursive(wxSQLite3Database& db);
+    
     // Accessors
     size_t GetFlags() const { return m_flags; }
     void SetFlags(size_t flags);

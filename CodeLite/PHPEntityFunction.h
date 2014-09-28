@@ -3,6 +3,7 @@
 
 #include "codelite_exports.h"
 #include "PHPEntityBase.h" // Base class: PHPEntityBase
+#include <vector>
 
 class WXDLLIMPEXP_CL PHPEntityFunction : public PHPEntityBase
 {

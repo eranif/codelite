@@ -8,6 +8,8 @@
 class WXDLLIMPEXP_CL PHPEntityVariable : public PHPEntityBase
 {
 public:
+    virtual wxString Type() const;
+    virtual void FromResultSet(wxSQLite3ResultSet& res);
     enum eVariableFlags {
         kPublic = (1 << 1),
         kPrivate = (1 << 2),
@@ -29,8 +31,8 @@ protected:
 
 public:
     /**
-     * @brief 
-     * @return 
+     * @brief
+     * @return
      */
     wxString GetScope() const;
     virtual void Store(wxSQLite3Database& db);

@@ -74,9 +74,9 @@ wxVector<phpLexerToken> PHPExpression::CreateExpression(const wxString& text)
     return tokens;
 }
 
-wxString PHPExpression::Resolve()
+PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable)
 {
-    if(m_expression.empty()) return "";
+    if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
 
     PHPSourceFile source(m_text);
     source.SetParseFunctionBody(true);
@@ -84,7 +84,23 @@ wxString PHPExpression::Resolve()
     wxString asString = SimplifyExpression(source, 0);
     
     // Now, use the lookup table
-    return asString;
+    std::list<PHPExpression::Part>::iterator iter = m_parts.begin();
+    PHPEntityBase::Ptr_t currentToken(NULL);
+    for(; iter != m_parts.end(); ++iter) {
+        if(!currentToken) {
+            // first token
+            currentToken = lookpTable.FindScope(iter->m_text);
+            
+        } else {
+            // load the children of the current token (optionally, filter by the text)
+            currentToken = lookpTable.FindMemberOf(currentToken->GetDbId(), iter->m_text);
+        }
+        if(!currentToken) {
+            // return NULL
+            return currentToken;
+        }
+    }
+    return currentToken;
 }
 
 wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)

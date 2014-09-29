@@ -103,6 +103,17 @@ void PHPEntityVariable::Store(wxSQLite3Database& db)
     }
 }
 
+void PHPEntityVariable::FromResultSet(wxSQLite3ResultSet& res)
+{
+    SetDbId(res.GetInt("ID"));
+    SetName(res.GetString("NAME"));
+    SetTypeHint(res.GetString("TYPEHINT"));
+    SetFlags(res.GetInt("FLAGS"));
+    SetDocComment(res.GetString("DOC_COMMENT"));
+    SetLine(res.GetInt("LINE_NUMBER"));
+    SetFilename(res.GetString("FILE_NAME"));
+}
+
 wxString PHPEntityVariable::GetScope() const
 {
     if(Is(kFunctionArg) && Parent()) {
@@ -115,3 +126,4 @@ wxString PHPEntityVariable::GetScope() const
         return "";
     }
 }
+wxString PHPEntityVariable::Type() const { return GetTypeHint(); }

@@ -65,10 +65,10 @@
     <Project Name="PHPParser"/>
   </Dependencies>
   <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Debug">
-    <Project Name="PHPParser"/>
-  </Dependencies>
   <Dependencies Name="Release">
+    <Project Name="CodeLite"/>
+  </Dependencies>
+  <Dependencies Name="Debug">
     <Project Name="CodeLite"/>
   </Dependencies>
   <Settings Type="Executable">
@@ -102,8 +102,9 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="PHPParserUnitTests.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
-        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple
+PATH=C:\src\codelite\lib\gcc_lib;$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>

@@ -8,6 +8,8 @@
 class WXDLLIMPEXP_CL PHPEntityFunction : public PHPEntityBase
 {
 public:
+    virtual wxString Type() const;
+    virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;
     enum eFunctionFlags {
         kPublic = (1 << 1),
@@ -29,17 +31,24 @@ protected:
     // Function flags
     size_t m_flags;
 
+    // the return value as read from the database
+    wxString m_strReturnValue;
+
+    // the signature
+    wxString m_strSignature;
+
     std::vector<PHPEntityBase::Ptr_t> m_childrenVec;
-    
+
 public:
     PHPEntityFunction();
     virtual ~PHPEntityFunction();
-    
+    const wxString& GetReturnValue() const { return m_strReturnValue; }
+
     wxString GetScope() const;
     /**
      * @brief format function signature
      */
-    wxString FormatSignature() const;
+    wxString GetSignature() const;
 
     /**
      * @brief override the base AddChild() we do this because we need
@@ -52,18 +61,17 @@ public:
      * @param db
      */
     virtual void Store(wxSQLite3Database& db);
-    
+
     /**
      * @brief store recursively (in order)
      */
     virtual void StoreRecursive(wxSQLite3Database& db);
-    
+
     // Accessors
     size_t GetFlags() const { return m_flags; }
     void SetFlags(size_t flags);
     bool Is(eFunctionFlags flag) const { return m_flags & flag; }
     void SetReturnValue(PHPEntityBase::Ptr_t returnValue) { this->m_returnValue = returnValue; }
-    PHPEntityBase::Ptr_t GetReturnValue() const { return m_returnValue; }
 };
 
 #endif // PHPENTITYFUNCTION_H

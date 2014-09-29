@@ -20,7 +20,7 @@ void PHPEntityFunction::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
     // Print the indentation
-    wxPrintf("%sFunction: %s%s", indentString, GetName(), FormatSignature());
+    wxPrintf("%sFunction: %s%s", indentString, GetName(), GetSignature());
     wxPrintf(", Ln. %d\n", GetLine());
     wxPrintf("%sLocals:\n", indentString);
     PHPEntityBase::Map_t::const_iterator iter = m_children.begin();
@@ -29,22 +29,27 @@ void PHPEntityFunction::PrintStdout(int indent) const
     }
 }
 
-wxString PHPEntityFunction::FormatSignature() const
+wxString PHPEntityFunction::GetSignature() const
 {
-    wxString signature = "(";
-    for(size_t i = 0; i < m_childrenVec.size(); ++i) {
-        PHPEntityVariable* var = m_childrenVec.at(i)->Cast<PHPEntityVariable>();
-        if(var && var->Is(PHPEntityVariable::kFunctionArg)) {
-            signature << var->ToFuncArgString() << ", ";
-        } else {
-            break;
+    if(!m_strSignature.IsEmpty()) {
+        return m_strSignature;
+    } else {
+
+        wxString strSignature = "(";
+        for(size_t i = 0; i < m_childrenVec.size(); ++i) {
+            PHPEntityVariable* var = m_childrenVec.at(i)->Cast<PHPEntityVariable>();
+            if(var && var->Is(PHPEntityVariable::kFunctionArg)) {
+                strSignature << var->ToFuncArgString() << ", ";
+            } else {
+                break;
+            }
         }
+        if(strSignature.EndsWith(", ")) {
+            strSignature.RemoveLast(2);
+        }
+        strSignature << ")";
+        return strSignature;
     }
-    if(signature.EndsWith(", ")) {
-        signature.RemoveLast(2);
-    }
-    signature << ")";
-    return signature;
 }
 
 void PHPEntityFunction::AddChild(PHPEntityBase::Ptr_t child)
@@ -65,26 +70,36 @@ void PHPEntityFunction::Store(wxSQLite3Database& db)
         statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());
         statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
-        statement.Bind(statement.GetParamIndex(":SIGNATURE"), FormatSignature());
-        statement.Bind(statement.GetParamIndex(":RETURN_VALUE"),
-                       GetReturnValue() ? GetReturnValue()->GetName() : wxString());
-        statement.Bind(statement.GetParamIndex(":FLAGS"), (int) GetFlags()); // TODO: implement this
+        statement.Bind(statement.GetParamIndex(":SIGNATURE"), GetSignature());
+        statement.Bind(statement.GetParamIndex(":RETURN_VALUE"), m_returnValue ? m_returnValue->GetName() : wxString());
+        statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags()); // TODO: implement this
         statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
         statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
         statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
         statement.ExecuteUpdate();
         SetDbId(db.GetLastRowId());
-        
+
     } catch(wxSQLite3Exception& exc) {
         wxPrintf("error: %s\n", exc.GetMessage());
         wxUnusedVar(exc);
     }
 }
+void PHPEntityFunction::FromResultSet(wxSQLite3ResultSet& res)
+{
+    SetDbId(res.GetInt("ID"));
+    SetName(res.GetString("NAME"));
+    m_strSignature = res.GetString("SIGNATURE");
+    m_strReturnValue = res.GetString("RETURN_VALUE");
+    SetFlags(res.GetInt("FLAGS"));
+    SetDocComment(res.GetString("DOC_COMMENT"));
+    SetLine(res.GetInt("LINE_NUMBER"));
+    SetFilename(res.GetString("FILE_NAME"));
+}
 
 void PHPEntityFunction::StoreRecursive(wxSQLite3Database& db)
 {
     Store(db);
-    for(size_t i=0; i<m_childrenVec.size(); ++i) {
+    for(size_t i = 0; i < m_childrenVec.size(); ++i) {
         m_childrenVec.at(i)->StoreRecursive(db);
     }
 }
@@ -96,3 +111,4 @@ wxString PHPEntityFunction::GetScope() const
     }
     return "";
 }
+wxString PHPEntityFunction::Type() const { return GetReturnValue(); }

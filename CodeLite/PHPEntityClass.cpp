@@ -1,4 +1,5 @@
 #include "PHPEntityClass.h"
+#include <wx/tokenzr.h>
 
 PHPEntityClass::PHPEntityClass() {}
 
@@ -38,7 +39,7 @@ void PHPEntityClass::Store(wxSQLite3Database& db)
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());
         statement.Bind(statement.GetParamIndex(":EXTENDS"), GetExtends());
         statement.Bind(statement.GetParamIndex(":IMPLEMENTS"), GetImplementsAsString());
-        statement.Bind(statement.GetParamIndex(":USING_TRAITS"), wxString()); // TODO: implement this
+        statement.Bind(statement.GetParamIndex(":USING_TRAITS"), GetTraitsAsString()); // TODO: implement this
         statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
         statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
         statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
@@ -48,3 +49,31 @@ void PHPEntityClass::Store(wxSQLite3Database& db)
         wxUnusedVar(exc);
     }
 }
+void PHPEntityClass::FromResultSet(wxSQLite3ResultSet& res)
+{
+    SetDbId(res.GetInt("ID"));
+    SetName(res.GetString("NAME"));
+    SetExtends(res.GetString("EXTENDS"));
+    SetImplements(::wxStringTokenize(res.GetString("IMPLEMENTS"), ";", wxTOKEN_STRTOK));
+    SetTraits(::wxStringTokenize(res.GetString("USING_TRAITS"), ";", wxTOKEN_STRTOK));
+    SetDocComment(res.GetString("DOC_COMMENT"));
+    SetLine(res.GetInt("LINE_NUMBER"));
+    SetFilename(res.GetString("FILE_NAME"));
+}
+
+wxArrayString PHPEntityClass::GetInheritanceArray() const
+{
+    wxArrayString arr, uniqueArr;
+    arr.Add(GetExtends());
+    arr.insert(arr.end(), GetImplements().begin(), GetImplements().end());
+    arr.insert(arr.end(), GetTraits().begin(), GetTraits().end());
+
+    for(size_t i = 0; i < arr.GetCount(); ++i) {
+        if(uniqueArr.Index(arr.Item(i)) == wxNOT_FOUND) {
+            uniqueArr.Add(arr.Item(i));
+        }
+    }
+    arr.swap(uniqueArr);
+    return arr;
+}
+wxString PHPEntityClass::Type() const { return GetName(); }

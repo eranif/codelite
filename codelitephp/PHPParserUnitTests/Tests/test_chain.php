@@ -1,3 +1,8 @@
 <?php
-	//v1()->foo()->bar()->variable
-	$this->foo($a, $b, $c)->bar("foo", "ar")->variable
+
+class Sample {
+    public $name = "";
+    public $last_name = "";
+    public function foo() {
+        // test code complete after "$this"
+        $this->na

@@ -67,7 +67,16 @@ public:
      * @brief print this object to the stdout
      */
     virtual void PrintStdout(int indent) const = 0;
-
+    /**
+     * @brief return the actual type that this entity deduced to.
+     * + class: the return value is the fullpath of the class
+     * + namespace: it will be the fullpath of the namespace
+     * + function: return the return value type
+     * + variable: the typehint
+     * @return 
+     */
+    virtual wxString Type() const = 0;
+    
     /**
      * @brief add a child to this scope
      */
@@ -84,6 +93,11 @@ public:
      * @param db
      */
     virtual void Store(wxSQLite3Database& db) = 0;
+    
+    /**
+     * @brief construct this instance from a sqlite3 result set
+     */
+    virtual void FromResultSet(wxSQLite3ResultSet& res) = 0;
     
     /**
      * @brief store this entry and all its children

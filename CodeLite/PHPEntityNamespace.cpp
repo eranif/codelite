@@ -26,3 +26,10 @@ void PHPEntityNamespace::Store(wxSQLite3Database& db)
         wxUnusedVar(exc);
     }
 }
+
+void PHPEntityNamespace::FromResultSet(wxSQLite3ResultSet& res)
+{
+    SetDbId(res.GetInt("ID"));
+    SetName(res.GetString("NAME"));
+}
+wxString PHPEntityNamespace::Type() const { return GetName(); }

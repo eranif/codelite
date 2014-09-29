@@ -8,6 +8,8 @@
 class WXDLLIMPEXP_CL PHPEntityNamespace : public PHPEntityBase
 {
 public:
+    virtual wxString Type() const;
+    virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void Store(wxSQLite3Database& db);
     virtual void PrintStdout(int indent) const;
     PHPEntityNamespace();

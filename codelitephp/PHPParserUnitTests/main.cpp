@@ -3,6 +3,7 @@
 #include <wx/ffile.h>
 #include <wx/init.h>
 #include "PHPLookupTable.h"
+#include "PHPExpression.h"
 
 int main(int argc, char **argv)
 {
@@ -10,16 +11,20 @@ int main(int argc, char **argv)
 #if 1
     wxPrintf("Starting...\n");
     PHPLookupTable lookup;
-    lookup.Open("/tmp");
+    lookup.Open(::wxGetCwd());
     
-    PHPSourceFile sourceFile(wxFileName("../Tests/Mage.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_chain.php"));
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     sourceFile.PrintStdout();
     
     // Store the results
     lookup.UpdateSourceFile( sourceFile );
-    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolvedType = expr.Resolve(lookup);
+    if(resolvedType) {
+        wxPrintf("%s => suggest members of: %s\n", expr.GetExpressionAsString(), resolvedType->Type());
+    }
     wxPrintf("Done!...\n");
     
 #else

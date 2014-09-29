@@ -17,7 +17,8 @@
     }
 
 PHPSourceFile::PHPSourceFile(const wxString& content)
-    : m_parseFunctionBody(false)
+    : m_text(content)
+    , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
 {
@@ -39,7 +40,8 @@ PHPSourceFile::PHPSourceFile(const wxFileName& filename)
         fp.ReadAll(&content, wxConvUTF8);
         fp.Close();
     }
-    m_scanner = ::phpLexerNew(content, kPhpLexerOpt_ReturnComments);
+    m_text.swap(content);
+    m_scanner = ::phpLexerNew(m_text, kPhpLexerOpt_ReturnComments);
 }
 
 PHPSourceFile::~PHPSourceFile()
@@ -338,7 +340,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
             var->SetName(token.text);
             var->SetLine(token.lineNumber);
             // Mark this variable as function argument
-            var->SetFlag(PHPEntityVariable::kFunctionArg); 
+            var->SetFlag(PHPEntityVariable::kFunctionArg);
             if(typeHint.EndsWith("&")) {
                 var->SetIsReference(true);
                 typeHint.RemoveLast();

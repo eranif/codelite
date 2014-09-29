@@ -6,6 +6,7 @@
 #include "PhpLexerAPI.h"
 #include <list>
 #include "PHPSourceFile.h"
+#include "PHPLookupTable.h"
 
 class WXDLLIMPEXP_CL PHPExpression
 {
@@ -46,9 +47,10 @@ public:
     wxString GetExpressionAsString() const;
 
     /**
-     * @brief resolve the expression and return the type it deduced to
+     * @brief resolve the expression and return the entity of the last part
+     * of the expression
      */
-    wxString Resolve();
+    PHPEntityBase::Ptr_t Resolve(PHPLookupTable& lookpTable);
 };
 
 #endif // PHPEXPRESSION_H

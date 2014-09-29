@@ -9,6 +9,7 @@
 #include <iostream>
 #include <wx/filename.h>
 #include "wx/wxsqlite3.h"
+#include <wx/wxcrtvararg.h> // Needed for wxPrintf
 
 class WXDLLIMPEXP_CL PHPEntityBase
 {

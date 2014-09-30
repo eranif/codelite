@@ -8,6 +8,7 @@
 class WXDLLIMPEXP_CL PHPEntityVariable : public PHPEntityBase
 {
 public:
+    virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     enum eVariableFlags {
@@ -50,9 +51,9 @@ public:
     size_t GetFlags() const { return m_flags; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
     void SetFlag(eVariableFlags flag, bool b = true) { b ? this->m_flags |= flag : this->m_flags &= ~flag; }
-    bool Is(eVariableFlags flag) const { return m_flags & flag; }
+    bool HasFlag(eVariableFlags flag) const { return m_flags & flag; }
     void SetIsReference(bool isReference) { SetFlag(kReference, isReference); }
-    bool IsReference() const { return Is(kReference); }
+    bool IsReference() const { return HasFlag(kReference); }
     void SetTypeHint(const wxString& typeHint) { this->m_typeHint = typeHint; }
     const wxString& GetTypeHint() const { return m_typeHint; }
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }

@@ -12,7 +12,7 @@ PHPEntityVariable::~PHPEntityVariable() {}
 void PHPEntityVariable::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
-    wxPrintf("%s%s: %s", indentString, Is(kMember) ? "Member" : "Variable", GetName());
+    wxPrintf("%s%s: %s", indentString, HasFlag(kMember) ? "Member" : "Variable", GetName());
     if(!GetTypeHint().IsEmpty()) {
         wxPrintf(", TypeHint: %s", GetTypeHint());
     }
@@ -57,7 +57,7 @@ void PHPEntityVariable::SetVisibility(int visibility)
 
 wxString PHPEntityVariable::ToFuncArgString() const
 {
-    if(!Is(kFunctionArg)) {
+    if(!HasFlag(kFunctionArg)) {
         return "";
     }
 
@@ -79,14 +79,15 @@ wxString PHPEntityVariable::ToFuncArgString() const
 void PHPEntityVariable::Store(wxSQLite3Database& db)
 {
     // we keep only the function arguments in the databse and globals
-    if(Is(kFunctionArg) || Is(kMember)) {
+    if(HasFlag(kFunctionArg) || HasFlag(kMember)) {
         try {
             wxSQLite3Statement statement = db.PrepareStatement("INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
                                                                ":SCOPE_ID, :FUNCTION_ID, :NAME, :SCOPE, :TYPEHINT, "
                                                                ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
-            statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Is(kMember) ? Parent()->GetDbId() : wxLongLong(-1));
+            statement.Bind(statement.GetParamIndex(":SCOPE_ID"),
+                           HasFlag(kMember) ? Parent()->GetDbId() : wxLongLong(-1));
             statement.Bind(statement.GetParamIndex(":FUNCTION_ID"),
-                           Is(kFunctionArg) ? Parent()->GetDbId() : wxLongLong(-1));
+                           HasFlag(kFunctionArg) ? Parent()->GetDbId() : wxLongLong(-1));
             statement.Bind(statement.GetParamIndex(":NAME"), GetName());
             statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
             statement.Bind(statement.GetParamIndex(":TYPEHINT"), GetTypeHint());
@@ -116,10 +117,10 @@ void PHPEntityVariable::FromResultSet(wxSQLite3ResultSet& res)
 
 wxString PHPEntityVariable::GetScope() const
 {
-    if(Is(kFunctionArg) && Parent()) {
+    if(HasFlag(kFunctionArg) && Parent()) {
         return Parent()->Cast<PHPEntityFunction>()->GetScope();
 
-    } else if(Is(kMember) && Parent()) {
+    } else if(HasFlag(kMember) && Parent()) {
         return Parent()->Cast<PHPEntityClass>()->GetName();
 
     } else {
@@ -127,3 +128,4 @@ wxString PHPEntityVariable::GetScope() const
     }
 }
 wxString PHPEntityVariable::Type() const { return GetTypeHint(); }
+bool PHPEntityVariable::Is(eEntityType type) const { return type == kEntityTypeVariable; }

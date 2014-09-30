@@ -24,6 +24,13 @@ enum ePhpScopeType {
 class WXDLLIMPEXP_CL PHPLookupTable
 {
     wxSQLite3Database m_db;
+    size_t m_sizeLimit;
+public:
+    enum eLookupFlags {
+        kLookupFlags_None = 0,
+        kLookupFlags_ExactMatch = (1 << 1),
+        kLookupFlags_PartialMatch = (1 << 2),
+    };
 
 private:
     void CreateSchema();
@@ -36,7 +43,13 @@ private:
 
     PHPEntityBase::Ptr_t DoFindScope(const wxString& fullname, ePhpScopeType scopeType = kPhpScopeTypeAny);
     PHPEntityBase::Ptr_t DoFindScope(wxLongLong id, ePhpScopeType scopeType = kPhpScopeTypeAny);
-
+    /**
+     * @brief sqlite uses '_' as a wildcard. escape it using '^'
+     * as our escape char
+     */
+    wxString EscapeWildCards(const wxString &str);
+    
+    void DoAddLimit(wxString& sql);
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
@@ -64,6 +77,12 @@ public:
      * @brief find a member of parentDbId with name that matches 'exactName'
      */
     PHPEntityBase::Ptr_t FindMemberOf(wxLongLong parentDbId, const wxString& exactName);
+
+    /**
+     * @brief find children of a scope by its database ID.
+     */
+    PHPEntityBase::List_t
+    FindChildren(wxLongLong parentId, eLookupFlags flags = kLookupFlags_None, const wxString& nameHint = "");
 
     /**
      * @brief save source file into the database

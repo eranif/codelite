@@ -39,7 +39,7 @@ protected:
 protected:
     wxVector<phpLexerToken> CreateExpression(const wxString& text);
     wxString SimplifyExpression(PHPSourceFile& source, int depth);
-    
+
 public:
     PHPExpression(const wxString& fulltext, const wxString& exprText = wxString());
     virtual ~PHPExpression();
@@ -51,6 +51,10 @@ public:
      * of the expression
      */
     PHPEntityBase::Ptr_t Resolve(PHPLookupTable& lookpTable);
+    /**
+     * @brief return the filter for this expression
+     */
+    const wxString& GetFilter() const { return m_filter; }
 };
 
 #endif // PHPEXPRESSION_H

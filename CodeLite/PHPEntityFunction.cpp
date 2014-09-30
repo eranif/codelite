@@ -38,7 +38,7 @@ wxString PHPEntityFunction::GetSignature() const
         wxString strSignature = "(";
         for(size_t i = 0; i < m_childrenVec.size(); ++i) {
             PHPEntityVariable* var = m_childrenVec.at(i)->Cast<PHPEntityVariable>();
-            if(var && var->Is(PHPEntityVariable::kFunctionArg)) {
+            if(var && var->HasFlag(PHPEntityVariable::kFunctionArg)) {
                 strSignature << var->ToFuncArgString() << ", ";
             } else {
                 break;
@@ -112,3 +112,4 @@ wxString PHPEntityFunction::GetScope() const
     return "";
 }
 wxString PHPEntityFunction::Type() const { return GetReturnValue(); }
+bool PHPEntityFunction::Is(eEntityType type) const { return type == kEntityTypeFunction; }

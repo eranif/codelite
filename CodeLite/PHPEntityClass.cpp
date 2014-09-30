@@ -77,3 +77,4 @@ wxArrayString PHPEntityClass::GetInheritanceArray() const
     return arr;
 }
 wxString PHPEntityClass::Type() const { return GetName(); }
+bool PHPEntityClass::Is(eEntityType type) const { return type == kEntityTypeClass; }

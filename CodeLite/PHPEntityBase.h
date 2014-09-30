@@ -11,13 +11,20 @@
 #include "wx/wxsqlite3.h"
 #include <wx/wxcrtvararg.h> // Needed for wxPrintf
 
+enum eEntityType {
+    kEntityTypeVariable = 0,
+    kEntityTypeFunction = 1,
+    kEntityTypeClass = 2,
+    kEntityTypeNamespace = 3,
+};
+
 class WXDLLIMPEXP_CL PHPEntityBase
 {
 public:
     typedef wxSharedPtr<PHPEntityBase> Ptr_t;
     typedef std::list<PHPEntityBase::Ptr_t> List_t;
     typedef std::map<wxString, PHPEntityBase::Ptr_t> Map_t;
-
+    
 protected:
     PHPEntityBase::Map_t m_children;
     PHPEntityBase* m_parent;
@@ -68,6 +75,7 @@ public:
      * @brief print this object to the stdout
      */
     virtual void PrintStdout(int indent) const = 0;
+    
     /**
      * @brief return the actual type that this entity deduced to.
      * + class: the return value is the fullpath of the class
@@ -77,6 +85,11 @@ public:
      * @return 
      */
     virtual wxString Type() const = 0;
+    
+    /**
+     * @brief return the underlying type of this instance
+     */
+    virtual bool Is(eEntityType type) const = 0;
     
     /**
      * @brief add a child to this scope

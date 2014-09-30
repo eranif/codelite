@@ -11,6 +11,7 @@ class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
     wxArrayString m_traits;
 
 public:
+    virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     // Save the class into teh database
     virtual void Store(wxSQLite3Database& db);

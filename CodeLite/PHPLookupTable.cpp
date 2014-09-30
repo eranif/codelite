@@ -76,7 +76,10 @@ const static wxString CREATE_VARIABLES_TABLE_SQL_IDX3 =
 const static wxString CREATE_VARIABLES_TABLE_SQL_IDX4 =
     "CREATE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_4 ON VARIABLES_TABLE(FUNCTION_ID)";
 
-PHPLookupTable::PHPLookupTable() {}
+PHPLookupTable::PHPLookupTable()
+    : m_sizeLimit(50)
+{
+}
 
 PHPLookupTable::~PHPLookupTable() {}
 
@@ -89,9 +92,9 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
         std::set<wxLongLong> parentsVisited;
 
         DoGetInheritanceParentIDs(scope, parents, parentsVisited);
-        
+
         // Parents should now contain an ordered list of all the inheritance
-        for(size_t i=0; i<parents.size(); ++i) {
+        for(size_t i = 0; i < parents.size(); ++i) {
             PHPEntityBase::Ptr_t match = DoFindMemberOf(parents.at(i), exactName);
             if(match) {
                 return match;
@@ -250,7 +253,7 @@ void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
     parents.push_back(cls->GetDbId());
     parentsVisited.insert(cls->GetDbId());
     wxArrayString parentsArr = cls->Cast<PHPEntityClass>()->GetInheritanceArray();
-    for(size_t i=0; i<parentsArr.GetCount(); ++i) {
+    for(size_t i = 0; i < parentsArr.GetCount(); ++i) {
         PHPEntityBase::Ptr_t parent = FindClass(parentsArr.Item(i));
         if(parent && !parentsVisited.count(parent->GetDbId())) {
             DoGetInheritanceParentIDs(parent, parents, parentsVisited);
@@ -342,3 +345,63 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
 }
 
 PHPEntityBase::Ptr_t PHPLookupTable::FindClass(wxLongLong id) { return DoFindScope(id, kPhpScopeTypeClass); }
+
+PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, eLookupFlags flags, const wxString& nameHint)
+{
+    // Find members of of parentDbID
+    PHPEntityBase::List_t matches;
+    try {
+        {
+            // load functions
+            wxString sql;
+            sql << "SELECT * from FUNCTION_TABLE WHERE SCOPE_ID=" << parentId;
+            if(flags & kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
+                sql << " AND NAME = '" << nameHint << "'";
+
+            } else if(flags & kLookupFlags_PartialMatch && !nameHint.IsEmpty()) {
+                sql << " AND NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
+            }
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityFunction());
+                match->FromResultSet(res);
+                matches.push_back(match);
+            }
+        }
+
+        {
+            // Add members from the variables table
+            wxString sql;
+            sql << "SELECT * from VARIABLES_TABLE WHERE SCOPE_ID=" << parentId;
+            if(flags & kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
+                sql << " AND NAME = '" << nameHint << "'";
+
+            } else if(flags & kLookupFlags_PartialMatch && !nameHint.IsEmpty()) {
+                sql << " AND NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
+            }
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityVariable());
+                match->FromResultSet(res);
+                matches.push_back(match);
+            }
+        }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::FindChildren: %s", e.GetMessage());
+    }
+    return matches;
+}
+
+wxString PHPLookupTable::EscapeWildCards(const wxString& str)
+{
+    wxString s(str);
+    s.Replace(wxT("_"), wxT("^_"));
+    return s;
+}
+
+void PHPLookupTable::DoAddLimit(wxString& sql) { sql << " LIMIT " << m_sizeLimit; }

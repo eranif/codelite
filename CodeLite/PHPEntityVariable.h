@@ -8,6 +8,8 @@
 class WXDLLIMPEXP_CL PHPEntityVariable : public PHPEntityBase
 {
 public:
+    virtual wxString GetDisplayName() const;
+    virtual wxString GetNameOnly() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);

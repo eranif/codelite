@@ -11,7 +11,7 @@ PHPEntityFunction::~PHPEntityFunction() {}
 void PHPEntityFunction::SetFlags(size_t flags)
 {
     this->m_flags = flags;
-    if(!Is(kPrivate) && !Is(kProtected)) {
+    if(!HasFlag(kPrivate) && !HasFlag(kProtected)) {
         m_flags |= kPublic;
     }
 }
@@ -113,3 +113,5 @@ wxString PHPEntityFunction::GetScope() const
 }
 wxString PHPEntityFunction::Type() const { return GetReturnValue(); }
 bool PHPEntityFunction::Is(eEntityType type) const { return type == kEntityTypeFunction; }
+wxString PHPEntityFunction::GetDisplayName() const { return wxString() << GetName() << GetSignature(); }
+wxString PHPEntityFunction::GetNameOnly() const { return GetName(); }

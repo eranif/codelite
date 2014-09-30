@@ -78,3 +78,5 @@ wxArrayString PHPEntityClass::GetInheritanceArray() const
 }
 wxString PHPEntityClass::Type() const { return GetName(); }
 bool PHPEntityClass::Is(eEntityType type) const { return type == kEntityTypeClass; }
+wxString PHPEntityClass::GetDisplayName() const { return GetNameOnly(); }
+wxString PHPEntityClass::GetNameOnly() const { return GetName().AfterLast('\\'); }

@@ -8,6 +8,8 @@
 class WXDLLIMPEXP_CL PHPEntityFunction : public PHPEntityBase
 {
 public:
+    virtual wxString GetDisplayName() const;
+    virtual wxString GetNameOnly() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);
@@ -71,7 +73,7 @@ public:
     // Accessors
     size_t GetFlags() const { return m_flags; }
     void SetFlags(size_t flags);
-    bool Is(eFunctionFlags flag) const { return m_flags & flag; }
+    bool HasFlag(eFunctionFlags flag) const { return m_flags & flag; }
     void SetReturnValue(PHPEntityBase::Ptr_t returnValue) { this->m_returnValue = returnValue; }
 };
 

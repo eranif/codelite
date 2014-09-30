@@ -129,3 +129,5 @@ wxString PHPEntityVariable::GetScope() const
 }
 wxString PHPEntityVariable::Type() const { return GetTypeHint(); }
 bool PHPEntityVariable::Is(eEntityType type) const { return type == kEntityTypeVariable; }
+wxString PHPEntityVariable::GetDisplayName() const { return GetName(); }
+wxString PHPEntityVariable::GetNameOnly() const { return GetName(); }

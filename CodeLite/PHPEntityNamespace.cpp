@@ -34,3 +34,5 @@ void PHPEntityNamespace::FromResultSet(wxSQLite3ResultSet& res)
 }
 wxString PHPEntityNamespace::Type() const { return GetName(); }
 bool PHPEntityNamespace::Is(eEntityType type) const { return type == kEntityTypeNamespace; }
+wxString PHPEntityNamespace::GetDisplayName() const { return GetName(); }
+wxString PHPEntityNamespace::GetNameOnly() const { return GetName().AfterLast('\\'); }

@@ -75,3 +75,12 @@ public:
 void foo_bar(struct wxString *s) {
     
 }
+} // Namespace Baz
+
+class ClassWithTemplateFunction {
+public:
+    void* m_type;
+    template <typename T> 
+    T* Get() { return (T*)m_type; }
+};
+

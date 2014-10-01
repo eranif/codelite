@@ -425,6 +425,18 @@ TEST_FUNC(testTypedefIteratorInsideClass)
     return true;
 }
 
+TEST_FUNC(testTemplateFunctionInsideClass)
+{
+    std::vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_template_function.h")),
+                                                 10,
+                                                 wxT("a.Get<wxString>()->"),
+                                                 LoadFile(wxT("../tests/test_template_function.h")),
+                                                 tags);
+    CHECK_SIZE(tags.size(), 23);
+    return true;
+}
+
 TEST_FUNC(testStrcutDelcratorInFuncArgument)
 {
     std::vector<TagEntryPtr> tags;

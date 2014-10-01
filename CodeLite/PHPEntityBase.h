@@ -26,7 +26,8 @@ public:
     typedef std::map<wxString, PHPEntityBase::Ptr_t> Map_t;
 
 protected:
-    PHPEntityBase::Map_t m_children;
+    PHPEntityBase::Map_t m_childrenMap;
+    PHPEntityBase::List_t m_children;
     PHPEntityBase* m_parent;
     wxFileName m_filename;
     int m_line;
@@ -41,7 +42,7 @@ public:
     PHPEntityBase();
     virtual ~PHPEntityBase(){};
 
-    const PHPEntityBase::Map_t& GetChildren() const { return m_children; }
+    const PHPEntityBase::List_t& GetChildren() const { return m_children; }
     PHPEntityBase* Parent() const { return m_parent; }
 
     /**
@@ -106,13 +107,14 @@ public:
     /**
      * @brief add a child to this scope
      */
-    virtual void AddChild(PHPEntityBase::Ptr_t child);
+    void AddChild(PHPEntityBase::Ptr_t child);
 
     /**
      * @brief convert this base class to its concrete
      * @return
      */
-    template <typename T> T* Cast() const { return dynamic_cast<T*>(const_cast<PHPEntityBase*>(this)); }
+    template <typename T> 
+    T* Cast() const { return dynamic_cast<T*>(const_cast<PHPEntityBase*>(this)); }
 
     /**
      * @brief store this object and all its children into the database
@@ -128,6 +130,6 @@ public:
     /**
      * @brief store this entry and all its children
      */
-    virtual void StoreRecursive(wxSQLite3Database& db);
+    void StoreRecursive(wxSQLite3Database& db);
 };
 #endif // PHPENTITYIMPL_H

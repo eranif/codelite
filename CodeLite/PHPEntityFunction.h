@@ -40,13 +40,12 @@ protected:
     // the signature
     wxString m_strSignature;
 
-    std::vector<PHPEntityBase::Ptr_t> m_childrenVec;
-
 public:
     PHPEntityFunction();
     virtual ~PHPEntityFunction();
     const wxString& GetReturnValue() const { return m_strReturnValue; }
-
+    void SetStrReturnValue(const wxString& strReturnValue) { this->m_strReturnValue = strReturnValue; }
+    
     wxString GetScope() const;
     /**
      * @brief format function signature
@@ -54,21 +53,10 @@ public:
     wxString GetSignature() const;
 
     /**
-     * @brief override the base AddChild() we do this because we need
-     * to preserve the order of the children
-     */
-    virtual void AddChild(PHPEntityBase::Ptr_t child);
-
-    /**
      * @brief write this object into the database
      * @param db
      */
     virtual void Store(wxSQLite3Database& db);
-
-    /**
-     * @brief store recursively (in order)
-     */
-    virtual void StoreRecursive(wxSQLite3Database& db);
 
     // Accessors
     size_t GetFlags() const { return m_flags; }

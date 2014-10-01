@@ -9,11 +9,12 @@ void PHPEntityNamespace::PrintStdout(int indent) const
     wxString indentString(' ', indent);
     wxPrintf("%sNamespace name: %s\n", indentString, GetName());
 
-    PHPEntityBase::Map_t::const_iterator iter = m_children.begin();
+    PHPEntityBase::List_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
-        iter->second->PrintStdout(indent + 4);
+        (*iter)->PrintStdout(indent + 4);
     }
 }
+
 void PHPEntityNamespace::Store(wxSQLite3Database& db)
 {
     try {

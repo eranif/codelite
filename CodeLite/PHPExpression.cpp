@@ -74,12 +74,13 @@ wxVector<phpLexerToken> PHPExpression::CreateExpression(const wxString& text)
     return tokens;
 }
 
-PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable)
+PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
 {
     if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
 
     PHPSourceFile source(m_text);
     source.SetParseFunctionBody(true);
+    source.SetFilename(sourceFileName);
     source.Parse();
     wxString asString = SimplifyExpression(source, 0);
     

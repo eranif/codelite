@@ -21,11 +21,11 @@ void PHPEntityFunction::PrintStdout(int indent) const
     wxString indentString(' ', indent);
     // Print the indentation
     wxPrintf("%sFunction: %s%s", indentString, GetName(), GetSignature());
-    wxPrintf(", Ln. %d\n", GetLine());
+    wxPrintf(", (%s:%d)\n", GetFilename().GetFullPath(), GetLine());
     wxPrintf("%sLocals:\n", indentString);
-    PHPEntityBase::Map_t::const_iterator iter = m_children.begin();
+    PHPEntityBase::List_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
-        iter->second->PrintStdout(indent + 4);
+        (*iter)->PrintStdout(indent + 4);
     }
 }
 
@@ -36,8 +36,9 @@ wxString PHPEntityFunction::GetSignature() const
     } else {
 
         wxString strSignature = "(";
-        for(size_t i = 0; i < m_childrenVec.size(); ++i) {
-            PHPEntityVariable* var = m_childrenVec.at(i)->Cast<PHPEntityVariable>();
+        PHPEntityBase::List_t::const_iterator iter = m_children.begin();
+        for(; iter != m_children.end(); ++iter) {
+            PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
             if(var && var->HasFlag(PHPEntityVariable::kFunctionArg)) {
                 strSignature << var->ToFuncArgString() << ", ";
             } else {
@@ -50,15 +51,6 @@ wxString PHPEntityFunction::GetSignature() const
         strSignature << ")";
         return strSignature;
     }
-}
-
-void PHPEntityFunction::AddChild(PHPEntityBase::Ptr_t child)
-{
-    // add it to the parent map
-    PHPEntityBase::AddChild(child);
-
-    // keep a copy in the vector (which preserves the order of adding them)
-    m_childrenVec.push_back(child);
 }
 
 void PHPEntityFunction::Store(wxSQLite3Database& db)
@@ -96,14 +88,6 @@ void PHPEntityFunction::FromResultSet(wxSQLite3ResultSet& res)
     SetFilename(res.GetString("FILE_NAME"));
 }
 
-void PHPEntityFunction::StoreRecursive(wxSQLite3Database& db)
-{
-    Store(db);
-    for(size_t i = 0; i < m_childrenVec.size(); ++i) {
-        m_childrenVec.at(i)->StoreRecursive(db);
-    }
-}
-
 wxString PHPEntityFunction::GetScope() const
 {
     if(Parent()) {
@@ -111,6 +95,7 @@ wxString PHPEntityFunction::GetScope() const
     }
     return "";
 }
+
 wxString PHPEntityFunction::Type() const { return GetReturnValue(); }
 bool PHPEntityFunction::Is(eEntityType type) const { return type == kEntityTypeFunction; }
 wxString PHPEntityFunction::GetDisplayName() const { return wxString() << GetName() << GetSignature(); }

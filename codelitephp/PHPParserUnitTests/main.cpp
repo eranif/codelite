@@ -17,11 +17,12 @@ int main(int argc, char** argv)
     PHPSourceFile sourceFile(wxFileName("../Tests/Mage.php"));
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
-    
+    sourceFile.PrintStdout();
+        
     // Store the results
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr("<?php \\Mage::ins");
-    PHPEntityBase::Ptr_t resolvedType = expr.Resolve(lookup);
+    PHPEntityBase::Ptr_t resolvedType = expr.Resolve(lookup, "file.php");
     if(resolvedType) {
         // Get list of children from the database
         PHPEntityBase::List_t matches =

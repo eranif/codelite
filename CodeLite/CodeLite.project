@@ -260,6 +260,12 @@
     <File Name="PHPLookupTable.h"/>
     <File Name="PHPSourceFile.cpp"/>
     <File Name="PHPSourceFile.h"/>
+    <File Name="PHPEntityVisitor.h"/>
+    <File Name="PHPEntityVisitor.cpp"/>
+    <File Name="PHPDocVisitor.h"/>
+    <File Name="PHPDocVisitor.cpp"/>
+    <File Name="PHPDocComment.cpp"/>
+    <File Name="PHPDocComment.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

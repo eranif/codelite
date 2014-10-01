@@ -10,7 +10,8 @@ PHPEntityBase::PHPEntityBase()
 
 void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 {
-    m_children.insert(std::make_pair(child->GetName(), child));
+    m_children.push_back(child);
+    m_childrenMap.insert(std::make_pair(child->GetName(), child));
     child->m_parent = this;
 }
 
@@ -18,8 +19,8 @@ void PHPEntityBase::RecursivePrintStdout(PHPEntityBase::Ptr_t parent, int indent
 
 PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrependingDollar) const
 {
-    PHPEntityBase::Map_t::const_iterator iter = m_children.find(name);
-    if(iter != m_children.end()) {
+    PHPEntityBase::Map_t::const_iterator iter = m_childrenMap.find(name);
+    if(iter != m_childrenMap.end()) {
         return iter->second;
     }
 
@@ -29,8 +30,8 @@ PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrep
         if(!modName.StartsWith("$")) {
             modName.Prepend("$");
         }
-        iter = m_children.find(modName);
-        if(iter != m_children.end()) {
+        iter = m_childrenMap.find(modName);
+        if(iter != m_childrenMap.end()) {
             return iter->second;
         }
     }
@@ -41,8 +42,8 @@ void PHPEntityBase::StoreRecursive(wxSQLite3Database& db)
 {
     Store(db);
     // save the children
-    PHPEntityBase::Map_t::iterator iter = m_children.begin();
+    PHPEntityBase::List_t::iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
-        iter->second->StoreRecursive(db);
+        (*iter)->StoreRecursive(db);
     }
 }

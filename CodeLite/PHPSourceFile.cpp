@@ -6,6 +6,7 @@
 #include "PHPEntityVariable.h"
 #include <wx/arrstr.h>
 #include "PHPEntityClass.h"
+#include "PHPDocVisitor.h"
 
 #define NEXT_TOKEN_BREAK_IF_NOT(t, action) \
     {                                      \
@@ -90,6 +91,7 @@ void PHPSourceFile::Parse(int exitDepth)
                 if(what == kPHP_T_VARIABLE) {
                     // A variable
                     PHPEntityBase::Ptr_t member(new PHPEntityVariable());
+                    member->SetFilename(m_filename.GetFullPath());
                     PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
                     var->SetVisibility(visibility);
                     var->SetName(token.text);
@@ -109,6 +111,7 @@ void PHPSourceFile::Parse(int exitDepth)
             if(ReadUntilFound(kPHP_T_IDENTIFIER, token)) {
                 // constant
                 PHPEntityBase::Ptr_t member(new PHPEntityVariable());
+                member->SetFilename(m_filename.GetFullPath());
                 PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
                 var->SetName(token.text);
                 var->SetLine(token.lineNumber);
@@ -149,6 +152,7 @@ void PHPSourceFile::Parse(int exitDepth)
             break;
         }
     }
+    PhaseTwo();
 }
 
 void PHPSourceFile::OnUse()
@@ -339,6 +343,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
             var = new PHPEntityVariable();
             var->SetName(token.text);
             var->SetLine(token.lineNumber);
+            var->SetFilename(m_filename);
             // Mark this variable as function argument
             var->SetFlag(PHPEntityVariable::kFunctionArg);
             if(typeHint.EndsWith("&")) {
@@ -459,6 +464,7 @@ void PHPSourceFile::ParseFunctionBody()
         case kPHP_T_VARIABLE: {
             var.reset(new PHPEntityVariable());
             var->Cast<PHPEntityVariable>()->SetName(token.text);
+            var->Cast<PHPEntityVariable>()->SetFilename(m_filename.GetFullPath());
             var->SetLine(token.lineNumber);
             CurrentScope()->AddChild(var);
 
@@ -551,7 +557,12 @@ wxString PHPSourceFile::LookBackForTypeHint()
     return type;
 }
 
-void PHPSourceFile::PhaseTwo(PHPEntityBase::Ptr_t parent) {}
+void PHPSourceFile::PhaseTwo()
+{
+    // Assigna doc comment to each of the entities found in this source file
+    PHPDocVisitor visitor(*this, m_comments);
+    visitor.Visit(Namespace());
+}
 
 bool PHPSourceFile::NextToken(phpLexerToken& token)
 {
@@ -572,6 +583,13 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
 {
     wxString typeWithNS(type);
     typeWithNS.Trim().Trim(false);
+
+    if(typeWithNS == "string" || typeWithNS == "array" || typeWithNS == "mixed" || typeWithNS == "bool" ||
+       typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean") {
+        // primitives, don't bother...
+        return typeWithNS;
+    }
+
     if(typeWithNS.IsEmpty()) return "";
 
     if(typeWithNS.StartsWith("\\")) {
@@ -608,6 +626,7 @@ void PHPSourceFile::OnClass()
 
     // create new class entity
     PHPEntityBase::Ptr_t klass(new PHPEntityClass());
+    klass->SetFilename(m_filename.GetFullPath());
     PHPEntityClass* pClass = klass->Cast<PHPEntityClass>();
     pClass->SetName(MakeIdentifierAbsolute(token.text));
     pClass->SetLine(token.lineNumber);

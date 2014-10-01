@@ -50,7 +50,7 @@ public:
      * @brief resolve the expression and return the entity of the last part
      * of the expression
      */
-    PHPEntityBase::Ptr_t Resolve(PHPLookupTable& lookpTable);
+    PHPEntityBase::Ptr_t Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName);
     /**
      * @brief return the filter for this expression
      */

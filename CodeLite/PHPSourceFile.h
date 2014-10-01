@@ -22,11 +22,7 @@ class WXDLLIMPEXP_CL PHPSourceFile
     std::map<wxString, wxString> m_aliases;
 
 protected:
-    /**
-     * @brief attempt to resolve 'type' to its full path
-     */
-    wxString MakeIdentifierAbsolute(const wxString& type);
-
+    
     /**
      * @brief calls phpLexerNextToken. Use this call instead of the global phpLexerNextToken
      * since this function will handle all PHP comments found
@@ -122,18 +118,23 @@ protected:
      * @brief parse phase 2.
      * On this stage, all phpdoc comments are assigned to the proper PHP entity
      */
-    void PhaseTwo(PHPEntityBase::Ptr_t parent);
+    void PhaseTwo();
 
 public:
     PHPSourceFile(const wxFileName& filename);
     PHPSourceFile(const wxString& content);
     virtual ~PHPSourceFile();
+    
+    /**
+     * @brief attempt to resolve 'type' to its full path
+     */
+    wxString MakeIdentifierAbsolute(const wxString& type);
 
     /**
      * @brief return the source file text
      */
     const wxString& GetText() const { return m_text; }
-    
+
     /**
      * @brief parse the source file
      */
@@ -155,7 +156,10 @@ public:
      * @brief return the namespace scope of this file
      */
     PHPEntityBase::Ptr_t Namespace();
-
+    
+    // Accessors
+    void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
+    const wxFileName& GetFilename() const { return m_filename; }
     void SetParseFunctionBody(bool parseFunctionBody) { this->m_parseFunctionBody = parseFunctionBody; }
     bool IsParseFunctionBody() const { return m_parseFunctionBody; }
     void PrintStdout();

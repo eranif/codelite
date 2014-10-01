@@ -63,6 +63,7 @@
 #include "tags_storage_sqlite3.h"
 #include "cl_standard_paths.h"
 #include <algorithm>
+#include "CxxTemplateFunction.h"
 
 
 //#define __PERFORMANCE
@@ -1942,9 +1943,23 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
     wxString body;
     // add virtual keyword to declarations only && if the flags is set
     if (foo.m_isVirtual && (flags & FunctionFormat_WithVirtual) && !(flags & FunctionFormat_Impl)) {
-        body << wxT("virtual ");
+        body << wxT("virtual\n");
     }
 
+    if(tag->IsTemplateFunction()) {
+        // a template function, add the template definition
+        body << "template <";
+        CxxTemplateFunction helper(tag);
+        helper.ParseDefinitionList();
+        for(size_t i=0; i<helper.GetList().GetCount(); ++i) {
+            body << "typename " << helper.GetList().Item(i) << ", \n";
+        }
+        if(body.EndsWith(", \n")) {
+            body.RemoveLast(3);
+        }
+        body << ">\n";
+    }
+    
     wxString ret_value = GetFunctionReturnValueFromPattern(tag);
     if(ret_value.IsEmpty() == false) {
         body << ret_value << wxT(" ");

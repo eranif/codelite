@@ -480,8 +480,16 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
             // if full declaration was selected, dont do anything,
             // otherwise, append '()' to the inserted string, place the caret
             // in the middle, and trigger the function tooltip
-
-            if(word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
+            if(itemInfo.tag.IsTemplateFunction()) {
+                // a template function was found - insert the following:
+                // <>()
+                m_editor->InsertText(m_editor->GetCurrentPos(), wxT("<>()"));
+                int pos = m_editor->GetCurrentPos();
+                m_editor->SetSelectionStart(pos);
+                m_editor->SetSelectionEnd(pos);
+                m_editor->CharRight();
+                
+            } else if(word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
 
                 // If the char after the insertion is '(' dont place another '()'
                 int dummyPos = wxNOT_FOUND;

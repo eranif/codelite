@@ -45,6 +45,7 @@ void PHPFileLayoutTree::Construct()
     wxString text = m_editor->GetTextRange(0, m_editor->GetLength());
     PHPSourceFile source(text);
     source.SetParseFunctionBody(false);
+    source.SetFilename(m_editor->GetFileName());
     source.Parse();
 
     DeleteAllItems();

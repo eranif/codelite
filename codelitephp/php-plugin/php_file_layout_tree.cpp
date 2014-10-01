@@ -239,11 +239,11 @@ void PHPFileLayoutTree::BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Pt
         parentTreeItem, entity->GetDisplayName(), GetImageId(entity), GetImageId(entity), new QItemData(entity));
     // dont add the children of the function (i.e. function arguments)
     if(entity->Is(kEntityTypeFunction)) return;
-    const PHPEntityBase::Map_t& children = entity->GetChildren();
+    const PHPEntityBase::List_t& children = entity->GetChildren();
     if(!children.empty()) {
-        PHPEntityBase::Map_t::const_iterator iter = children.begin();
+        PHPEntityBase::List_t::const_iterator iter = children.begin();
         for(; iter != children.end(); ++iter) {
-            BuildTree(parent, iter->second);
+            BuildTree(parent, *iter);
         }
     }
 }

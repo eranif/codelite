@@ -741,7 +741,8 @@ int TagEntry::CompareDisplayString(const TagEntryPtr& rhs) const
 bool TagEntry::IsTemplateFunction() const 
 {
     wxString pattern = GetPatternClean();
-    return false;
+    pattern.Trim().Trim(false);
+    return IsMethod() && pattern.StartsWith("template ");
 }
 
 wxString TagEntry::GetPatternClean() const

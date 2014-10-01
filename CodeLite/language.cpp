@@ -40,6 +40,7 @@
 #include <algorithm>
 #include "CxxPreProcessor.h"
 #include "CxxUsingNamespaceCollector.h"
+#include "CxxTemplateFunction.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -312,9 +313,9 @@ bool Language::ProcessExpression(const wxString& stmt,
                                  const wxString& text,
                                  const wxFileName& fn,
                                  int lineno,
-                                 wxString& typeName, // output
-                                 wxString& typeScope, // output
-                                 wxString& oper, // output
+                                 wxString& typeName,              // output
+                                 wxString& typeScope,             // output
+                                 wxString& oper,                  // output
                                  wxString& scopeTemplateInitList) // output
 {
     CL_DEBUG(wxT(" >>> Language::ProcessExpression started ..."));
@@ -917,8 +918,8 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
             // for the last two cases, we need to handle this as if we did not find a match in the
             // database
             li.clear();
-
-            if(tags.at(0)->GetKind() == wxT("member") || tags.at(0)->GetKind() == wxT("variable")) {
+            TagEntryPtr tag = tags.at(0);
+            if(tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
                 const wxCharBuffer buf = _C(tags.at(0)->GetPattern());
                 get_variables(buf.data(), li, ignoreTokens, true);
 
@@ -932,13 +933,15 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
                 }
                 return false;
             }
+
         } else {
             li.clear();
 
             // if we are a "member" or " variable"
             // try to locate the template initialization list
             bool isTyperef = !tags.at(0)->GetTyperef().IsEmpty();
-
+            
+            TagEntryPtr tag = tags.at(0);
             if(!isTyperef && (tags.at(0)->GetKind() == wxT("member") || tags.at(0)->GetKind() == wxT("variable"))) {
                 const wxCharBuffer buf = _C(tags.at(0)->GetPattern());
                 get_variables(buf.data(), li, ignoreTokens, true);
@@ -957,6 +960,15 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
                             token->SetTemplateInitialization(argsList);
                         }
                     }
+                }
+            } else if(tag->IsTemplateFunction()) {
+                // Parse the definition list
+                CxxTemplateFunction ctf(tag);
+                ctf.ParseDefinitionList();
+                
+                if(!ctf.GetList().IsEmpty()) {
+                    token->SetIsTemplate(true);
+                    token->SetTemplateArgList(ctf.GetList());
                 }
             }
             // fall through...
@@ -1466,9 +1478,8 @@ void Language::DoReplaceTokens(wxString& inStr, const std::map<wxString, wxStrin
             if(where >= 0) {
                 if(inStr.Length() > static_cast<size_t>(where)) {
                     // Make sure that the next char is a non valid char otherwise this is not a complete word
-                    if(inStr.Mid(where, 1)
-                           .find_first_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890")) !=
-                       wxString::npos) {
+                    if(inStr.Mid(where, 1).find_first_of(
+                           wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890")) != wxString::npos) {
                         // the match is not a full word
                         continue;
                     } else {
@@ -1748,14 +1759,14 @@ void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes
 
     } else {
         this->m_additionalScopes.clear();
-        // Use the cache to get the list of using namespaces. 
+        // Use the cache to get the list of using namespaces.
         // The cache is populated by the CodeCompletionManager worker
         // thread when the file is loaded
         std::map<wxString, std::vector<wxString> >::iterator iter = m_additionalScopesCache.find(filename);
         if(iter != m_additionalScopesCache.end()) {
             this->m_additionalScopes = iter->second;
         }
-        
+
         // "using namespace" may not contains current namespace, so make sure we add it
         for(size_t i = 0; i < additionalScopes.size(); i++) {
             if(!(std::find(this->m_additionalScopes.begin(), this->m_additionalScopes.end(), additionalScopes.at(i)) !=
@@ -2360,7 +2371,4 @@ void Language::UpdateAdditionalScopesCache(const wxString& filename, const std::
     m_additionalScopesCache.insert(std::make_pair(filename, additionalScopes));
 }
 
-void Language::ClearAdditionalScopesCache()
-{
-    m_additionalScopesCache.clear();
-}
+void Language::ClearAdditionalScopesCache() { m_additionalScopesCache.clear(); }

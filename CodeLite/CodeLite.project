@@ -190,6 +190,8 @@
       <File Name="CIncludeStatementCollector.h"/>
       <File Name="CxxScannerBase.h"/>
       <File Name="CxxScannerBase.cpp"/>
+      <File Name="CxxTemplateFunction.h"/>
+      <File Name="CxxTemplateFunction.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="RefactorEngine">

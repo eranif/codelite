@@ -2,7 +2,6 @@
 #define PHPFILELAYOUTTREE_H
 
 #include "precompiled_header.h"
-#include "php_parser_api.h"
 #include "PHPEntityBase.h"
 
 class IEditor;

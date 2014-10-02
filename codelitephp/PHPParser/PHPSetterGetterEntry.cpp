@@ -1,59 +1,60 @@
 #include "PHPSetterGetterEntry.h"
 #include <wx/tokenzr.h>
+#include "PHPEntityVariable.h"
 
-PHPSetterGetterEntry::PHPSetterGetterEntry()
+PHPSetterGetterEntry::PHPSetterGetterEntry() {}
+
+PHPSetterGetterEntry::PHPSetterGetterEntry(PHPEntityBase::Ptr_t entry)
+    : m_entry(entry)
 {
 }
 
-PHPSetterGetterEntry::PHPSetterGetterEntry(const PHPEntry& entry)
-{
-    m_entry = entry;
-}
-
-PHPSetterGetterEntry::~PHPSetterGetterEntry()
-{
-}
+PHPSetterGetterEntry::~PHPSetterGetterEntry() {}
 
 wxString PHPSetterGetterEntry::GetGetter(eSettersGettersFlags flags) const
 {
-    wxString name = m_entry.getName();
+    wxString nameNoDollar = m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar();
+    wxString nameWithDollar = m_entry->GetName();
     
     // Remove user prefixes
-    FormatName( name );
+    wxString functionName = nameNoDollar;
+    FormatName(functionName);
     wxString prefix = (flags & kSG_StartWithUpperCase) ? "Get" : "get";
-    name.Prepend( prefix );
-    if ( flags & kSG_NameOnly ) {
-        return name;
+    functionName.Prepend(prefix);
+    if(flags & kSG_NameOnly) {
+        return functionName;
     }
-    
+
     wxString body;
     body << "/**\n"
-         << " * @return $" << m_entry.getName() << "\n"
+         << " * @return " << nameWithDollar << "\n"
          << " */\n"
-         << "public function " << name << "() {\n"
-         << "    return $this->" << m_entry.getName() << ";\n"
+         << "public function " << functionName << "() {\n"
+         << "    return $this->" << nameNoDollar << ";\n"
          << "}";
     return body;
 }
 
 wxString PHPSetterGetterEntry::GetSetter(eSettersGettersFlags flags) const
 {
-    wxString name = m_entry.getName();
-    
+    wxString nameNoDollar = m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar();
+    wxString nameWithDollar = m_entry->GetName();
+
     // Remove user prefixes
-    FormatName( name );
+    wxString functionName = nameNoDollar;
+    FormatName(functionName);
     wxString prefix = (flags & kSG_StartWithUpperCase) ? "Set" : "set";
-    name.Prepend( prefix );
-    if ( flags & kSG_NameOnly ) {
-        return name;
+    functionName.Prepend(prefix);
+    if(flags & kSG_NameOnly) {
+        return functionName;
     }
-    
+
     wxString body;
     body << "/**\n"
-         << " * @param $" << m_entry.getName() << "\n"
+         << " * @param $" << m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar() << "\n"
          << " */\n"
-         << "public function " << name << "( $" << m_entry.getName() << " ) {\n"
-         << "    $this->" << m_entry.getName() << " = $" << m_entry.getName() << ";\n"
+         << "public function " << functionName << "(" << nameWithDollar << ") {\n"
+         << "    $this->" << nameNoDollar << " = " << nameWithDollar << ";\n"
          << "}";
     return body;
 }
@@ -69,7 +70,7 @@ void PHPSetterGetterEntry::FormatName(wxString& name) const
 
     wxStringTokenizer tkz(name, wxT("_"));
     name.Clear();
-    while (tkz.HasMoreTokens()) {
+    while(tkz.HasMoreTokens()) {
         wxString token = tkz.NextToken();
         wxString pre = token.Mid(0, 1);
         token.Remove(0, 1);
@@ -78,4 +79,3 @@ void PHPSetterGetterEntry::FormatName(wxString& name) const
         name << token;
     }
 }
-

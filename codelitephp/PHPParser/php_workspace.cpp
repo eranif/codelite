@@ -1,5 +1,4 @@
 #include "php_workspace.h"
-#include "php_storage.h"
 #include "php_strings.h"
 #include <dirtraverser.h>
 #include <plugin.h>
@@ -94,18 +93,9 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     JSONRoot root(m_workspaceFile);
     FromJSON(root.toElement());
 
-    PHPStorage::Instance()->OpenWorksace(tagsfile.GetFullPath());
-
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_LOADED);
     phpEvent.SetFileName(m_workspaceFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(phpEvent);
-
-    // Notify that workspace has been opened to the plugins
-    if(!PHPCodeCompletion::Instance()->IsUnitTestsMode()) {
-        wxCommandEvent evtOpen(wxEVT_WORKSPACE_LOADED);
-        evtOpen.SetString(m_workspaceFile.GetFullPath());
-        EventNotifier::Get()->ProcessEvent(evtOpen);
-    }
     return true;
 }
 

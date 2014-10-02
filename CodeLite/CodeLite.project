@@ -266,6 +266,8 @@
     <File Name="PHPDocVisitor.cpp"/>
     <File Name="PHPDocComment.cpp"/>
     <File Name="PHPDocComment.h"/>
+    <File Name="PHPIndex.h"/>
+    <File Name="PHPIndex.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

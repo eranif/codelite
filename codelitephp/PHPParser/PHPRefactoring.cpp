@@ -1,16 +1,14 @@
 #include "PHPRefactoring.h"
 #include "php_code_completion.h"
 #include <ieditor.h>
-#include "php_entry.h"
-#include "php_storage.h"
+#include "PHPEntityBase.h"
+#include "PHPEntityVariable.h"
+#include "PHPSourceFile.h"
+#include "PHPEntityClass.h"
 
-PHPRefactoring::PHPRefactoring()
-{
-}
+PHPRefactoring::PHPRefactoring() {}
 
-PHPRefactoring::~PHPRefactoring()
-{
-}
+PHPRefactoring::~PHPRefactoring() {}
 
 PHPRefactoring& PHPRefactoring::Get()
 {
@@ -20,60 +18,63 @@ PHPRefactoring& PHPRefactoring::Get()
 
 PHPSetterGetterEntry::Vec_t PHPRefactoring::GetSetters(IEditor* editor) const
 {
-    PHPSetterGetterEntry::Vec_t setters;
-    if ( !editor ) {
+    PHPSetterGetterEntry::Vec_t setters, candidates;
+    if(!editor) {
         return setters;
     }
-    
-    
-    // retrieve the scope
-    PHPEntry::Vector_t members, functions;
-    PHPEntry scopeEntry = PHPCodeCompletion::Instance()->GetClassNearPosition(editor, editor->GetCurrentPosition());
-    GetMembersAndFunctions(scopeEntry, members, functions);
-    
-    if ( members.empty() ) {
+
+    // Parse until the current position
+    wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
+    PHPSourceFile sourceFile(text);
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.SetFilename(editor->GetFileName());
+    sourceFile.Parse();
+
+    const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
+    if(!scopeAtPoint) {
         return setters;
     }
+
+    // filter out
+    const PHPEntityBase::List_t& children = scopeAtPoint->GetChildren();
+    PHPEntityBase::List_t::const_iterator iter = children.begin();
+
+    PHPEntityBase::List_t members, functions;
+    for(; iter != children.end(); ++iter) {
+        PHPEntityBase::Ptr_t child = *iter;
+        if(child->Is(kEntityTypeFunction)) {
+            functions.push_back(child);
+        } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember()) {
+            // a member of a class
+            members.push_back(child);
+        }
+    }
     
+    if(members.empty()) {
+        return setters;
+    }
+
     // Prepare list of candidates
-    PHPSetterGetterEntry::Vec_t candidates;
-    for(size_t i=0; i<members.size(); ++i) {
-        PHPSetterGetterEntry candidate(members.at(i));
-        
+    PHPEntityBase::List_t::iterator membersIter = members.begin();
+    for(; membersIter != members.end(); ++membersIter) {
+        PHPSetterGetterEntry candidate(*membersIter);
+
         // make sure we don't add setters that already exist
-        if ( FindByName(functions, candidate.GetSetter(kSG_NameOnly) ) ) {
+        if(FindByName(functions, candidate.GetSetter(kSG_NameOnly))) {
             continue;
         }
-        candidates.push_back( candidate );
+        candidates.push_back(candidate);
     }
-    
-    setters.swap( candidates );
+
+    setters.swap(candidates);
     return setters;
 }
 
-void PHPRefactoring::GetMembersAndFunctions(const PHPEntry& cls, PHPEntry::Vector_t& members, PHPEntry::Vector_t& functions) const 
+bool PHPRefactoring::FindByName(const PHPEntityBase::List_t& entries, const wxString& name) const
 {
-    members.clear();
-    functions.clear();
-    if ( cls.isOk() && cls.isClass() ) {
-        PHPEntry::Vector_t children = PHPStorage::Instance()->FindEntriesByParentId(cls.getDbId(), PHPStorage::FetchFlags_Self_All);
-        
-        // collect members and functions
-        for(size_t i=0; i<children.size(); ++i) {
-            if ( children.at(i).isMember() && !children.at(i).isStatic() ) {
-                members.push_back( children.at(i) );
-
-            } else if ( children.at(i).isFunction() ) {
-                functions.push_back( children.at(i) );
-            }
-        }
-    }
-}
-
-bool PHPRefactoring::FindByName(const PHPEntry::Vector_t& entries, const wxString& name) const
-{
-    for(size_t i=0; i<entries.size(); ++i) {
-        if ( entries.at(i).getName() == name ) {
+    PHPEntityBase::List_t::const_iterator iter = entries.begin();
+    for(; iter != entries.end(); ++iter) {
+        if((*iter)->GetName() == name) {
             return true;
         }
     }
@@ -82,33 +83,54 @@ bool PHPRefactoring::FindByName(const PHPEntry::Vector_t& entries, const wxStrin
 
 PHPSetterGetterEntry::Vec_t PHPRefactoring::GetGetters(IEditor* editor) const
 {
-    PHPSetterGetterEntry::Vec_t getters;
-    if ( !editor ) {
+    PHPSetterGetterEntry::Vec_t getters, candidates;
+    if(!editor) {
         return getters;
     }
-    
-    
-    // retrieve the scope
-    PHPEntry::Vector_t members, functions;
-    PHPEntry scopeEntry = PHPCodeCompletion::Instance()->GetClassNearPosition(editor, editor->GetCurrentPosition());
-    GetMembersAndFunctions(scopeEntry, members, functions);
-    
-    if ( members.empty() ) {
+
+    // Parse until the current position
+    wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
+    PHPSourceFile sourceFile(text);
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.SetFilename(editor->GetFileName());
+    sourceFile.Parse();
+
+    const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
+    if(!scopeAtPoint) {
         return getters;
     }
+
+    // filter out
+    const PHPEntityBase::List_t& children = scopeAtPoint->GetChildren();
+    PHPEntityBase::List_t::const_iterator iter = children.begin();
+
+    PHPEntityBase::List_t members, functions;
+    for(; iter != children.end(); ++iter) {
+        PHPEntityBase::Ptr_t child = *iter;
+        if(child->Is(kEntityTypeFunction)) {
+            functions.push_back(child);
+        } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember()) {
+            // a member of a class
+            members.push_back(child);
+        }
+    }
     
+    if(members.empty()) {
+        return getters;
+    }
+
     // Prepare list of candidates
-    PHPSetterGetterEntry::Vec_t candidates;
-    for(size_t i=0; i<members.size(); ++i) {
-        PHPSetterGetterEntry candidate(members.at(i));
-        
-        // make sure we don't add getters that already exist
-        if ( FindByName(functions, candidate.GetGetter(kSG_NameOnly) ) ) {
+    PHPEntityBase::List_t::iterator membersIter = members.begin();
+    for(; membersIter != members.end(); ++membersIter) {
+        PHPSetterGetterEntry candidate(*membersIter);
+
+        // make sure we don't add setters that already exist
+        if(FindByName(functions, candidate.GetGetter(kSG_NameOnly))) {
             continue;
         }
-        candidates.push_back( candidate );
+        candidates.push_back(candidate);
     }
-    
-    getters.swap( candidates );
+
+    getters.swap(candidates);
     return getters;
 }

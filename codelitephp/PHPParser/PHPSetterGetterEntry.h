@@ -2,8 +2,8 @@
 #define PHPSETTERGETTERENTRY_H
 
 #include <wx/string.h>
-#include "php_entry.h"
 #include <vector>
+#include "PHPEntityBase.h"
 
 enum eSettersGettersFlags {
     kSG_None                = 0x00000000,
@@ -17,14 +17,14 @@ public:
     typedef std::vector<PHPSetterGetterEntry> Vec_t;
     
 protected:
-    PHPEntry m_entry;
+    PHPEntityBase::Ptr_t m_entry;
     
 protected:
     void FormatName(wxString &name) const;
     
 public:
     PHPSetterGetterEntry();
-    PHPSetterGetterEntry(const PHPEntry& entry);
+    PHPSetterGetterEntry(PHPEntityBase::Ptr_t entry);
     virtual ~PHPSetterGetterEntry();
     
     /**

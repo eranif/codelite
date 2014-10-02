@@ -37,35 +37,13 @@
   </Reconciliation>
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="Grammar">
-    <File Name="php.l"/>
-    <File Name="php_lexer.cpp"/>
-    <File Name="php.y"/>
-    <File Name="php_parser.cpp.h"/>
-    <File Name="php_expr.y"/>
-    <File Name="php_expr_parser.cpp"/>
-    <File Name="php_expr_parser.cpp.h"/>
-    <File Name="php_expr_lexer.cpp"/>
-    <File Name="php_expr.l"/>
-    <File Name="php_parser.cpp"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="php">
     <File Name="test.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
   <VirtualDirectory Name="src">
-    <File Name="php_func_arg.h"/>
-    <File Name="php_func_arg.cpp"/>
-    <File Name="php_parser_api.cpp"/>
-    <File Name="php_parser_api.h"/>
     <File Name="php_parser_constants.h"/>
-    <File Name="php_entry.h"/>
-    <File Name="php_entry.cpp"/>
-    <File Name="php_doc_comment.h"/>
-    <File Name="php_doc_comment.cpp"/>
-    <File Name="token.cpp"/>
-    <File Name="token.h"/>
     <File Name="php_helpers.h"/>
     <File Name="php_strings.h"/>
     <File Name="phpexecutor.cpp"/>
@@ -82,8 +60,6 @@
     <File Name="php_code_completion.h"/>
     <File Name="php_event.cpp"/>
     <File Name="php_event.h"/>
-    <File Name="php_storage.cpp"/>
-    <File Name="php_storage.h"/>
     <File Name="php_utils.cpp"/>
     <File Name="php_utils.h"/>
     <File Name="php_parser_thread.cpp"/>

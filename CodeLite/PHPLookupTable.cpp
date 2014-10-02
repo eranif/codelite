@@ -5,6 +5,11 @@
 #include "PHPEntityClass.h"
 #include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
+#include "event_notifier.h"
+
+wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
+wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
+wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
 //------------------------------------------------
 // Scope table
@@ -112,6 +117,11 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname) { retur
 void PHPLookupTable::Open(const wxString& workspacePath)
 {
     wxFileName fnDBFile(workspacePath, "phpsymbols.db");
+
+    // ensure that the database directory exists
+    fnDBFile.AppendDir(".codelite");
+    fnDBFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
     try {
         wxFileName::Mkdir(fnDBFile.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         m_db.Open(fnDBFile.GetFullPath());
@@ -168,10 +178,11 @@ void PHPLookupTable::SplitFullname(const wxString& fullname, wxString& name, wxS
     }
 }
 
-void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source)
+void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
 {
     try {
-        m_db.Begin();
+        if(autoCommit) m_db.Begin();
+
         // Delete all entries for this file
 
         // Store new entries
@@ -179,7 +190,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source)
         if(topNamespace) {
             topNamespace->StoreRecursive(m_db);
         }
-        m_db.Commit();
+        if(autoCommit) m_db.Commit();
 
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::SaveSourceFile: %s", e.GetMessage());
@@ -405,3 +416,46 @@ wxString PHPLookupTable::EscapeWildCards(const wxString& str)
 }
 
 void PHPLookupTable::DoAddLimit(wxString& sql) { sql << " LIMIT " << m_sizeLimit; }
+
+void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, bool parseFuncBodies)
+{
+    try {
+
+        {
+            clParseEvent event(wxPHP_PARSE_STARTED);
+            event.SetTotalFiles(files.GetCount());
+            event.SetCurfileIndex(0);
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
+
+        m_db.Begin();
+        for(size_t i = 0; i < files.GetCount(); ++i) {
+            {
+                clParseEvent event(wxPHP_PARSE_PROGRESS);
+                event.SetTotalFiles(files.GetCount());
+                event.SetCurfileIndex(i);
+                event.SetFileName(files.Item(i));
+                EventNotifier::Get()->AddPendingEvent(event);
+            }
+
+            wxFileName fnSourceFile(files.Item(i));
+            PHPSourceFile sourceFile(fnSourceFile);
+            sourceFile.SetFilename(fnSourceFile);
+            sourceFile.SetParseFunctionBody(parseFuncBodies);
+            sourceFile.Parse();
+            UpdateSourceFile(sourceFile, false);
+        }
+        m_db.Commit();
+
+        {
+            clParseEvent event(wxPHP_PARSE_ENDED);
+            event.SetTotalFiles(files.GetCount());
+            event.SetCurfileIndex(files.GetCount());
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
+
+    } catch(wxSQLite3Exception& e) {
+        m_db.Rollback();
+        CL_WARNING("PHPLookupTable::UpdateSourceFiles: %s", e.GetMessage());
+    }
+}

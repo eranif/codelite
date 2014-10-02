@@ -9,6 +9,12 @@
 #include <vector>
 #include <set>
 #include <wx/longlong.h>
+#include "cl_command_event.h"
+
+
+wxDECLARE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
+wxDECLARE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
+wxDECLARE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
 enum ePhpScopeType {
     kPhpScopeTypeAny = -1,
@@ -87,7 +93,12 @@ public:
     /**
      * @brief save source file into the database
      */
-    void UpdateSourceFile(PHPSourceFile& source);
+    void UpdateSourceFile(PHPSourceFile& source, bool autoCommit = true);
+    
+    /**
+     * @brief update list of source files
+     */
+    void UpdateSourceFiles(const wxArrayString& files, bool parseFuncBodies = true);
 };
 
 #endif // PHPLOOKUPTABLE_H

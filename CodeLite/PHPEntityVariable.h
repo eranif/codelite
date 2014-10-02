@@ -21,6 +21,7 @@ public:
         kReference = (1 << 5),
         kConst = (1 << 6),
         kFunctionArg = (1 << 7),
+        kStatic = (1 << 8),
     };
 
 protected:
@@ -55,11 +56,20 @@ public:
     void SetFlag(eVariableFlags flag, bool b = true) { b ? this->m_flags |= flag : this->m_flags &= ~flag; }
     bool HasFlag(eVariableFlags flag) const { return m_flags & flag; }
     void SetIsReference(bool isReference) { SetFlag(kReference, isReference); }
-    bool IsReference() const { return HasFlag(kReference); }
     void SetTypeHint(const wxString& typeHint) { this->m_typeHint = typeHint; }
     const wxString& GetTypeHint() const { return m_typeHint; }
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }
+    wxString GetNameNoDollar() const;
+    // Aliases
+    bool IsMember() const { return HasFlag(kMember); }
+    bool IsPublic() const { return HasFlag(kPublic); }
+    bool IsPrivate() const { return HasFlag(kPrivate); }
+    bool IsProtected() const { return HasFlag(kProtected); }
+    bool IsFunctionArg() const { return HasFlag(kFunctionArg); }
+    bool IsConst() const { return HasFlag(kConst); }
+    bool IsReference() const { return HasFlag(kReference); }
+    bool IsStatic() const { return HasFlag(kStatic); }
 };
 
 #endif // PHPENTITYVARIABLE_H

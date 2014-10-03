@@ -427,7 +427,13 @@ void PhpPlugin::OnOpenResource(wxCommandEvent& e)
         if(dlg.ShowModal() == wxID_OK) {
             ResourceItem* itemData = dlg.GetSelectedItem();
             if(itemData) {
-                m_mgr->OpenFile(itemData->filename.GetFullPath());
+                if(m_mgr->OpenFile(itemData->filename.GetFullPath())) {
+                    IEditor* editor = m_mgr->GetActiveEditor();
+                    if(editor && itemData->line != wxNOT_FOUND) {
+                        editor->FindAndSelect(
+                            itemData->displayName, itemData->displayName, editor->PosFromLine(itemData->line), NULL);
+                    }
+                }
             }
         }
     } else {
@@ -650,10 +656,15 @@ void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
     if(!m_xdebugEvalPane) {
         // Create the pane
         m_xdebugEvalPane = new EvalPane(EventNotifier::Get()->TopFrame());
-        m_mgr->GetDockingManager()->AddPane(
-            m_xdebugEvalPane,
-            wxAuiPaneInfo().Name("XDebugEval").Caption("PHP").Show().CloseButton().MaximizeButton().Bottom().Position(
-                2));
+        m_mgr->GetDockingManager()->AddPane(m_xdebugEvalPane,
+                                            wxAuiPaneInfo()
+                                                .Name("XDebugEval")
+                                                .Caption("PHP")
+                                                .Show()
+                                                .CloseButton()
+                                                .MaximizeButton()
+                                                .Bottom()
+                                                .Position(2));
     }
 
     // If we have an old perspective, load it

@@ -184,7 +184,8 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
         if(autoCommit) m_db.Begin();
 
         // Delete all entries for this file
-
+        DeleteFileEntries(source.GetFilename(), false);
+        
         // Store new entries
         PHPEntityBase::Ptr_t topNamespace = source.Namespace();
         if(topNamespace) {
@@ -193,6 +194,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
         if(autoCommit) m_db.Commit();
 
     } catch(wxSQLite3Exception& e) {
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::SaveSourceFile: %s", e.GetMessage());
     }
 }
@@ -462,7 +464,7 @@ void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, eL
         sql << " NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
 
     } else if(flags == kLookupFlags_StartsWith && !nameHint.IsEmpty()) {
-        sql << " NAME LIKE '%%" << EscapeWildCards(nameHint) << "' ESCAPE '^'";
+        sql << " NAME LIKE '" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
     }
 }
 
@@ -516,5 +518,39 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
         PHPEntityBase::Ptr_t match(NewEntity(tableName, st));
         match->FromResultSet(res);
         matches.push_back(match);
+    }
+}
+
+void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoCommit)
+{
+    try {
+        if(autoCommit) m_db.Begin();
+        {
+            wxString sql;
+            sql << "delete from SCOPE_TABLE where FILE_NAME=:FILE_NAME";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+            st.ExecuteUpdate();
+        }
+        
+        {
+            wxString sql;
+            sql << "delete from FUNCTION_TABLE where FILE_NAME=:FILE_NAME";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+            st.ExecuteUpdate();
+        }
+        
+        {
+            wxString sql;
+            sql << "delete from VARIABLES_TABLE where FILE_NAME=:FILE_NAME";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+            st.ExecuteUpdate();
+        }
+        if(autoCommit) m_db.Commit();
+    } catch(wxSQLite3Exception& e) {
+        if(autoCommit) m_db.Rollback();
+        CL_WARNING("PHPLookupTable::DeleteFileEntries: %s", e.GetMessage());
     }
 }

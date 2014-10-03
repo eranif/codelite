@@ -16,6 +16,7 @@ static wxBitmap FUNC_IMG_ID = wxNullBitmap;
 static wxBitmap CONST_IMG_ID = wxNullBitmap;
 static wxBitmap DEFINE_IMG_ID = wxNullBitmap;
 static wxBitmap VARIABLE_IMG_ID = wxNullBitmap;
+static wxBitmap NAMESPACE_IMG_ID = wxNullBitmap;
 
 BEGIN_EVENT_TABLE(OpenResourceDlg, OpenResourceDlgBase)
 EVT_TIMER(TIMER_ID, OpenResourceDlg::OnTimer)
@@ -72,7 +73,8 @@ void OpenResourceDlg::DoInitialize()
     CONST_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
     DEFINE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/macro"));
     VARIABLE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
-
+    NAMESPACE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/namespace"));
+    
     WindowAttrManager::Load(this, wxT("OpenResourceDlg"), NULL);
     SetSelectedItem(NULL);
 }
@@ -244,6 +246,8 @@ void OpenResourceDlg::DoSelectPrev()
 wxBitmap OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
 {
     switch(item->type) {
+    case ResourceItem::kRI_Namespace:
+        return NAMESPACE_IMG_ID;
     case ResourceItem::kRI_Class:
         return CLASS_IMG_ID;
     case ResourceItem::kRI_Constant:

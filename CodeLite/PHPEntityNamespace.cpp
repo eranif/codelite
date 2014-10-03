@@ -18,9 +18,12 @@ void PHPEntityNamespace::PrintStdout(int indent) const
 void PHPEntityNamespace::Store(wxSQLite3Database& db)
 {
     try {
-        wxSQLite3Statement statement = db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME) "
-                                                           "VALUES (NULL, 0, -1, :NAME)");
+        wxSQLite3Statement statement =
+            db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, LINE_NUMBER, FILE_NAME) "
+                                "VALUES (NULL, 0, -1, :NAME, :LINE_NUMBER, :FILE_NAME)");
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());
+        statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
+        statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
         statement.ExecuteUpdate();
         SetDbId(db.GetLastRowId());
     } catch(wxSQLite3Exception& exc) {
@@ -32,6 +35,8 @@ void PHPEntityNamespace::FromResultSet(wxSQLite3ResultSet& res)
 {
     SetDbId(res.GetInt("ID"));
     SetName(res.GetString("NAME"));
+    SetFilename(res.GetString("FILE_NAME"));
+    SetLine(res.GetInt("LINE_NUMBER"));
 }
 wxString PHPEntityNamespace::Type() const { return GetName(); }
 bool PHPEntityNamespace::Is(eEntityType type) const { return type == kEntityTypeNamespace; }

@@ -124,6 +124,13 @@ public:
      * @brief update list of source files
      */
     void UpdateSourceFiles(const wxArrayString& files, bool parseFuncBodies = true);
+    
+    /**
+     * @brief delete all entries belonged to filename.
+     * @param filename the file name
+     * @param autoCommit when true, issue a begin/commit transcation commands
+     */
+    void DeleteFileEntries(const wxFileName& filename, bool autoCommit = true);
 };
 
 #endif // PHPLOOKUPTABLE_H

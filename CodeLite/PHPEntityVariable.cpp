@@ -117,16 +117,18 @@ void PHPEntityVariable::FromResultSet(wxSQLite3ResultSet& res)
 
 wxString PHPEntityVariable::GetScope() const
 {
-    if(HasFlag(kFunctionArg) && Parent()) {
-        return Parent()->Cast<PHPEntityFunction>()->GetScope();
+    PHPEntityBase* parent = Parent();
+    if(parent && parent->Is(kEntityTypeFunction) && HasFlag(kFunctionArg)) {
+        return parent->Cast<PHPEntityFunction>()->GetScope();
 
-    } else if(HasFlag(kMember) && Parent()) {
-        return Parent()->Cast<PHPEntityClass>()->GetName();
+    } else if(parent && parent->Is(kEntityTypeClass) && HasFlag(kMember)) {
+        return parent->Cast<PHPEntityClass>()->GetName();
 
     } else {
         return "";
     }
 }
+
 wxString PHPEntityVariable::Type() const { return GetTypeHint(); }
 bool PHPEntityVariable::Is(eEntityType type) const { return type == kEntityTypeVariable; }
 wxString PHPEntityVariable::GetDisplayName() const { return GetName(); }

@@ -21,7 +21,7 @@ int main(int argc, char** argv)
         
     // Store the results
     lookup.UpdateSourceFile(sourceFile);
-    PHPExpression expr("<?php \\Mage::ins");
+    PHPExpression expr("<?php \\Mage::$");
     PHPEntityBase::Ptr_t resolvedType = expr.Resolve(lookup, "file.php");
     if(resolvedType) {
         // Get list of children from the database

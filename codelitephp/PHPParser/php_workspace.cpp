@@ -13,6 +13,7 @@
 #include "php_code_completion.h"
 #include "php_strings.h"
 #include <wx/msgdlg.h>
+#include "php_parser_thread.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -96,6 +97,12 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_LOADED);
     phpEvent.SetFileName(m_workspaceFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(phpEvent);
+
+    // Request for parsing
+    PHPParserThreadRequest* req = new PHPParserThreadRequest();
+    req->workspaceFile = GetFilename().GetFullPath();
+    GetWorkspaceFiles(req->files);
+    PHPParserThread::Instance()->Add(req);
     return true;
 }
 
@@ -302,7 +309,7 @@ bool PHPWorkspace::RunProject(bool debugging, const wxString& projectName, const
         ::wxMessageBox(message, wxT("CodeLite"), wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
         return false;
     }
-    
+
     // Error is reported inside 'Exec'
     return m_executor.Exec(projectToRun, xdebugSessionName, debugging);
 }
@@ -437,5 +444,16 @@ void PHPWorkspace::DoPromptWorkspaceModifiedDialog()
     if(answer == wxID_YES) {
         wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
         FRAME->GetEventHandler()->AddPendingEvent(evtReload);
+    }
+}
+
+void PHPWorkspace::GetWorkspaceFiles(wxArrayString& workspaceFiles) const
+{
+    wxStringSet_t files;
+    GetWorkspaceFiles(files);
+    workspaceFiles.clear();
+    wxStringSet_t::const_iterator iter = files.begin();
+    for(; iter != files.end(); ++iter) {
+        workspaceFiles.Add(*iter);
     }
 }

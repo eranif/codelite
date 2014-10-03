@@ -7,7 +7,7 @@
 #include "PHPEntityBase.h"
 
 struct ResourceItem {
-    enum { kRI_Invalid = -1, kRI_File, kRI_Class, kRI_Constant, kRI_Function, kRI_Member, kRI_Variable };
+    enum { kRI_Invalid = -1, kRI_File, kRI_Class, kRI_Constant, kRI_Function, kRI_Member, kRI_Variable, kRI_Namespace };
     wxString displayName;
     wxFileName filename;
     int line;
@@ -19,7 +19,7 @@ struct ResourceItem {
     {
     }
 
-    void SetType(PHPEntityBase::Ptr_t match) 
+    void SetType(PHPEntityBase::Ptr_t match)
     {
         if(match->Is(kEntityTypeClass)) {
             type = kRI_Class;
@@ -33,12 +33,16 @@ struct ResourceItem {
             } else {
                 type = kRI_Variable;
             }
+        } else if(match->Is(kEntityTypeNamespace)) {
+            type = kRI_Namespace;
         }
     }
 
     wxString TypeAsString() const
     {
         switch(type) {
+        case ResourceItem::kRI_Namespace:
+            return "Namespace";
         case ResourceItem::kRI_Class:
             return "Class";
         case ResourceItem::kRI_Constant:

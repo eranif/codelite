@@ -38,21 +38,11 @@ void PHPParserThread::ProcessRequest(ThreadRequest* request)
 
 void PHPParserThread::ParseFiles(PHPParserThreadRequest* request)
 {
-    const wxArrayString& files = request->files;
     wxFileName fnWorkspaceFile(request->workspaceFile);
     
     // Open the database
     PHPLookupTable lookuptable;
     lookuptable.Open(fnWorkspaceFile.GetPath());
-
-    for(size_t i = 0; i < files.GetCount(); ++i) {
-        PHPSourceFile sourceFile(wxFileName(files.Item(i)));
-        sourceFile.SetFilename(files.Item(i));
-        sourceFile.SetParseFunctionBody(false);
-        sourceFile.Parse();
-
-        // Update the database
-        PHPLookupTable table;
-        table.UpdateSourceFile(sourceFile);
-    }
+    lookuptable.UpdateSourceFiles(request->files, false);
 }
+

@@ -515,9 +515,12 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
         if(tableName == "SCOPE_TABLE") {
             st = res.GetInt("SCOPE_TYPE", 1) == kPhpScopeTypeNamespace ? kPhpScopeTypeNamespace : kPhpScopeTypeClass;
         }
-        PHPEntityBase::Ptr_t match(NewEntity(tableName, st));
-        match->FromResultSet(res);
-        matches.push_back(match);
+        
+        PHPEntityBase::Ptr_t match = NewEntity(tableName, st);
+        if(match) {
+            match->FromResultSet(res);
+            matches.push_back(match);
+        }
     }
 }
 

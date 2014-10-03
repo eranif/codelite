@@ -84,7 +84,7 @@
     <File Name="PHPUserWorkspace.h"/>
     <File Name="PHPUserWorkspace.cpp"/>
   </VirtualDirectory>
-  <Settings Type="Executable">
+  <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -134,20 +134,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>php_lexer.cpp php_parser.cpp php_expr_parser.cpp php_expr_lexer.cpp
-php_lexer.cpp: php.l
-	flex -i -L  -Pphp_ php.l
-	mv lex.php_.c php_lexer.cpp
-
-php_parser.cpp: php.y
-	../bin/bison -y -p php_ -d -o php_parser.cpp php.y
-
-php_expr_parser.cpp: php_expr.y
-	../bin/bison -y -p php_expr_ -d -o php_expr_parser.cpp php_expr.y
-
-php_expr_lexer.cpp: php_expr.l
-	flex -i -L  -Pphp_expr_ php_expr.l
-	mv lex.php_expr_.c php_expr_lexer.cpp</CustomPreBuild>
+        <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -200,8 +187,7 @@ php_expr_parser.cpp: php_expr.y
 
 php_expr_lexer.cpp: php_expr.l
 	flex -L  -Pphp_expr_ php_expr.l
-	mv lex.php_expr_.c php_expr_lexer.cpp
-</CustomPreBuild>
+	mv lex.php_expr_.c php_expr_lexer.cpp</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -251,20 +237,7 @@ php_expr_lexer.cpp: php_expr.l
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>php_lexer.cpp php_parser.cpp php_expr_parser.cpp php_expr_lexer.cpp
-php_lexer.cpp: php.l
-	flex -i -L  -Pphp_ php.l
-	mv lex.php_.c php_lexer.cpp
-
-php_parser.cpp: php.y
-	../bin/bison -y -p php_ -d -o php_parser.cpp php.y
-
-php_expr_parser.cpp: php_expr.y
-	../bin/bison -y -p php_expr_ -d -o php_expr_parser.cpp php_expr.y
-
-php_expr_lexer.cpp: php_expr.l
-	flex -i -L  -Pphp_expr_ php_expr.l
-	mv lex.php_expr_.c php_expr_lexer.cpp</CustomPreBuild>
+        <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

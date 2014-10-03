@@ -100,3 +100,19 @@ wxString PHPEntityFunction::Type() const { return GetReturnValue(); }
 bool PHPEntityFunction::Is(eEntityType type) const { return type == kEntityTypeFunction; }
 wxString PHPEntityFunction::GetDisplayName() const { return wxString() << GetName() << GetSignature(); }
 wxString PHPEntityFunction::GetNameOnly() const { return GetName(); }
+
+wxString PHPEntityFunction::FormatPhpDoc() const
+{
+    wxString doc;
+    doc << "/**\n"
+        << " * @brief \n";
+    PHPEntityBase::List_t::const_iterator iter = m_children.begin();
+    for(; iter != m_children.end(); ++iter) {
+        const PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
+        doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "<unknown>" : var->GetTypeHint()) << var->GetName()
+                                                                                               << " \n";
+    }
+    doc << " * @return " << GetReturnValue() << " \n";
+    doc << " */";
+    return doc;
+}

@@ -80,3 +80,12 @@ wxString PHPEntityClass::Type() const { return GetName(); }
 bool PHPEntityClass::Is(eEntityType type) const { return type == kEntityTypeClass; }
 wxString PHPEntityClass::GetDisplayName() const { return GetNameOnly(); }
 wxString PHPEntityClass::GetNameOnly() const { return GetName().AfterLast('\\'); }
+wxString PHPEntityClass::FormatPhpDoc() const 
+{
+    wxString doc;
+    doc << "/**\n"
+        << " * @class " << GetName() << "\n"
+        << " * @brief \n"
+        << " */";
+    return doc;
+}

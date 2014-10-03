@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     if(resolvedType) {
         // Get list of children from the database
         PHPEntityBase::List_t matches =
-            lookup.FindChildren(resolvedType->GetDbId(), PHPLookupTable::kLookupFlags_PartialMatch, expr.GetFilter());
+            lookup.FindChildren(resolvedType->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith, expr.GetFilter());
     
         wxPrintf("%s => suggested members are:\n", expr.GetExpressionAsString());
         PHPEntityBase::List_t::iterator iter = matches.begin();

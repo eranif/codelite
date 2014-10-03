@@ -7,7 +7,6 @@
 #include <detachedpanesinfo.h>
 #include <dockablepane.h>
 #include "php_code_completion.h"
-#include "php_storage.h"
 #include "quick_outline_dlg.h"
 #include <wx/app.h>
 #include <wx/filedlg.h>
@@ -90,7 +89,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     PHPCodeCompletion::Instance()->SetManager(m_mgr);
 
     PHPEditorContextMenu::Instance()->ConnectEvents();
-    PHPStorage::Instance()->ConnectEvents();
     PHPParserThread::Instance()->Start();
 
     // Pass the manager class to the context menu manager
@@ -230,7 +228,6 @@ void PhpPlugin::UnPlug()
     m_workspaceView->Destroy();
     PHPWorkspace::Release();
     PHPCodeCompletion::Release();
-    PHPStorage::Release();
     PHPEditorContextMenu::Release();
 }
 
@@ -430,15 +427,7 @@ void PhpPlugin::OnOpenResource(wxCommandEvent& e)
         if(dlg.ShowModal() == wxID_OK) {
             ResourceItem* itemData = dlg.GetSelectedItem();
             if(itemData) {
-                if(m_mgr->OpenFile(itemData->filename.GetFullPath())) {
-                    if(itemData->type != PHP_Kind_File) {
-                        IEditor* editor = m_mgr->GetActiveEditor();
-                        if(editor) {
-                            m_mgr->FindAndSelect(
-                                itemData->name, itemData->name, editor->PosFromLine(itemData->line - 1));
-                        }
-                    }
-                }
+                m_mgr->OpenFile(itemData->filename.GetFullPath());
             }
         }
     } else {

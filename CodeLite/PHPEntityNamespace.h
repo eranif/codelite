@@ -8,6 +8,7 @@
 class WXDLLIMPEXP_CL PHPEntityNamespace : public PHPEntityBase
 {
 public:
+    virtual wxString FormatPhpDoc() const;
     virtual wxString GetDisplayName() const;
     virtual wxString GetNameOnly() const;
     virtual bool Is(eEntityType type) const;

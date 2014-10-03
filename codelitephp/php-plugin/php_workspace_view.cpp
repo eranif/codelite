@@ -21,10 +21,10 @@
 #include <SFTPBrowserDlg.h>
 #include "ssh_workspace_settings.h"
 #include "cl_aui_tool_stickness.h"
-#include "parser_threadui_progress.h"
 #include <macros.h>
 #include "tree_item_data.h"
 #include <bitmap_loader.h>
+#include "PHPLookupTable.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -72,8 +72,10 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Connect(wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_PHP_WORKSPACE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnWorkspaceRenamed), NULL, this);
-    PHPParserThread::Instance()->SetProgress(new ParserThreadUIProgress(this));
-
+    
+    EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
+    EventNotifier::Get()->Bind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
+    
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
     m_treeCtrlView->AssignImageList(imageList);
@@ -93,6 +95,9 @@ PHPWorkspaceView::~PHPWorkspaceView()
         wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_PHP_WORKSPACE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnWorkspaceRenamed), NULL, this);
+        
+    EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
+    EventNotifier::Get()->Unbind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
 }
 
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
@@ -1123,4 +1128,21 @@ wxTreeItemId PHPWorkspaceView::DoGetFileItem(const wxTreeItemId& folderItem, con
         child = m_treeCtrlView->GetNextChild(folderItem, cookie);
     }
     return wxTreeItemId();
+}
+
+void PHPWorkspaceView::OnPhpParserDone(clParseEvent& event) 
+{
+    event.Skip();
+    ReportParseThreadDone();
+}
+
+void PHPWorkspaceView::OnPhpParserProgress(clParseEvent& event) 
+{
+    event.Skip();
+    ReportParseThreadProgress(event.GetCurfileIndex(), event.GetTotalFiles());
+}
+
+void PHPWorkspaceView::OnPhpParserStarted(clParseEvent& event) 
+{
+    event.Skip();
 }

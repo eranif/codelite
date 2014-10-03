@@ -11,6 +11,7 @@ class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
     wxArrayString m_traits;
 
 public:
+    virtual wxString FormatPhpDoc() const;
     virtual wxString GetDisplayName() const;
     virtual wxString GetNameOnly() const;
     virtual bool Is(eEntityType type) const;

@@ -18,7 +18,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
 
 private:
     enum {
-        ID_TOGGLE_AUTOMATIC_UPLOAD = wxID_HIGHEST +1,
+        ID_TOGGLE_AUTOMATIC_UPLOAD = wxID_HIGHEST + 1,
     };
 
 protected:
@@ -31,26 +31,32 @@ protected:
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event);
 
     // Helpers
-    wxTreeItemId              DoGetSingleSelection();
-    wxString                  DoGetSelectedProject();
-    ItemData* DoGetItemData   (const wxTreeItemId& item);
+    wxTreeItemId DoGetSingleSelection();
+    wxString DoGetSelectedProject();
+    ItemData* DoGetItemData(const wxTreeItemId& item);
     const ItemData* DoGetItemData(const wxTreeItemId& item) const;
-    bool IsFolderItem    (const wxTreeItemId& item);
-    void DoAddFolderFiles(const wxString &project, const wxString &folder, const wxTreeItemId& folderTreeItemId, wxStringSet_t *filesAdded = NULL);
-    void DoAddFilesToTreeView(const wxTreeItemId& folderId, PHPProject::Ptr_t pProject, PHPFolder::Ptr_t pFolder, const wxArrayString& files);
-    int                       DoGetItemImgIdx(const wxString &filename);
-    wxBitmap                  DoGetBitmapForExt(const wxString &ext) const;
-    void                      DoDeleteSelectedFileItem();
-    void                      DoAddFileWithContent(const wxTreeItemId& folderId, const wxFileName& filename, const wxString& content);
-    void                      DoOpenSSHAccountManager();
-    wxTreeItemId EnsureFolderExists(const wxTreeItemId& projectItem, const wxString &path, const wxString &project);
-    bool HasFolderWithName(const wxTreeItemId& parent, const wxString &name, wxTreeItemId& item) const;
+    bool IsFolderItem(const wxTreeItemId& item);
+    void DoAddFolderFiles(const wxString& project,
+                          const wxString& folder,
+                          const wxTreeItemId& folderTreeItemId,
+                          wxStringSet_t* filesAdded = NULL);
+    void DoAddFilesToTreeView(const wxTreeItemId& folderId,
+                              PHPProject::Ptr_t pProject,
+                              PHPFolder::Ptr_t pFolder,
+                              const wxArrayString& files);
+    int DoGetItemImgIdx(const wxString& filename);
+    wxBitmap DoGetBitmapForExt(const wxString& ext) const;
+    void DoDeleteSelectedFileItem();
+    void DoAddFileWithContent(const wxTreeItemId& folderId, const wxFileName& filename, const wxString& content);
+    void DoOpenSSHAccountManager();
+    wxTreeItemId EnsureFolderExists(const wxTreeItemId& projectItem, const wxString& path, const wxString& project);
+    bool HasFolderWithName(const wxTreeItemId& parent, const wxString& name, wxTreeItemId& item) const;
     wxTreeItemId DoGetProjectItem(const wxString& projectName);
     wxTreeItemId DoGetFolderItem(const wxTreeItemId& projectItem, PHPFolder::Ptr_t pFolder);
     /**
      * @brief search for the filename in the given folder (does not work recursively)
      */
-    wxTreeItemId DoGetFileItem(const wxTreeItemId& folderItem, const wxString &filename);
+    wxTreeItemId DoGetFileItem(const wxTreeItemId& folderItem, const wxString& filename);
     /**
      * @brief construct the project in the tree view
      * @param projectItem
@@ -63,14 +69,14 @@ protected:
      * @param folder
      */
     void DoAddFolder(const wxTreeItemId& parent, PHPFolder::Ptr_t folder, PHPProject::Ptr_t project);
-    
+
     /**
      * @brief open an item into an editor
      */
     void DoOpenFile(const wxTreeItemId& item);
-    
+
     /**
-     * @brief add files to the project file + view. 
+     * @brief add files to the project file + view.
      * @param paths the paths to add. must be in full path and all must exists under the same directory
      * @param pProject
      * @param notify when set to true, send a wxEVT_PROJ_FILE_ADDED event with the list of files that were added
@@ -82,49 +88,53 @@ protected:
 
     // Menu handlers
     DECLARE_EVENT_TABLE()
-    
-    void OnCloseWorkspace(wxCommandEvent &e);
-    void OnReloadWorkspace(wxCommandEvent &e);
-    void OnNewFolder(wxCommandEvent &e);
-    void OnNewClass(wxCommandEvent &e);
-    void OnDeleteProject(wxCommandEvent &e);
-    void OnSetProjectActive(wxCommandEvent &e);
-    void OnNewFile(wxCommandEvent &e);
-    void OnAddFile(wxCommandEvent &e);
-    void OnDeleteFolder(wxCommandEvent &e);
-    void OnImportFiles(wxCommandEvent &e);
-    void OnRetagWorkspace(wxCommandEvent &e);
-    void OnRemoveFile(wxCommandEvent &e);
-    void OnOpenFile(wxCommandEvent &e);
-    void OnRenameFile(wxCommandEvent &e);
-    void OnRenameWorkspace(wxCommandEvent &e);
-    void OnRunProject(wxCommandEvent &e);
-    void OnMakeIndexPHP(wxCommandEvent &e);
-    void OnRunActiveProject(clExecuteEvent& e);
-    void OnStopExecutedProgram(wxCommandEvent &e);
-    void OnIsProgramRunning(wxCommandEvent &e);
-    void OnEditorChanged(wxCommandEvent &e);
-    void OnFileRenamed(PHPEvent &e);
-    void OnWorkspaceRenamed(PHPEvent &e);
-    void OnToggleAutoUpload(wxCommandEvent &e);
 
+    void OnCloseWorkspace(wxCommandEvent& e);
+    void OnReloadWorkspace(wxCommandEvent& e);
+    void OnNewFolder(wxCommandEvent& e);
+    void OnNewClass(wxCommandEvent& e);
+    void OnDeleteProject(wxCommandEvent& e);
+    void OnSetProjectActive(wxCommandEvent& e);
+    void OnNewFile(wxCommandEvent& e);
+    void OnAddFile(wxCommandEvent& e);
+    void OnDeleteFolder(wxCommandEvent& e);
+    void OnImportFiles(wxCommandEvent& e);
+    void OnRetagWorkspace(wxCommandEvent& e);
+    void OnRemoveFile(wxCommandEvent& e);
+    void OnOpenFile(wxCommandEvent& e);
+    void OnRenameFile(wxCommandEvent& e);
+    void OnRenameWorkspace(wxCommandEvent& e);
+    void OnRunProject(wxCommandEvent& e);
+    void OnMakeIndexPHP(wxCommandEvent& e);
+    void OnRunActiveProject(clExecuteEvent& e);
+    void OnStopExecutedProgram(wxCommandEvent& e);
+    void OnIsProgramRunning(wxCommandEvent& e);
+    void OnEditorChanged(wxCommandEvent& e);
+    void OnFileRenamed(PHPEvent& e);
+    void OnWorkspaceRenamed(PHPEvent& e);
+    void OnToggleAutoUpload(wxCommandEvent& e);
+    
+    // Php parser events
+    void OnPhpParserStarted(clParseEvent& event);
+    void OnPhpParserProgress(clParseEvent& event);
+    void OnPhpParserDone(clParseEvent& event);
 public:
     /** Constructor */
-    PHPWorkspaceView( wxWindow* parent, IManager* mgr );
+    PHPWorkspaceView(wxWindow* parent, IManager* mgr);
     virtual ~PHPWorkspaceView();
-    
+
     /**
      * @brief create a new project
      * @param name
      */
     void CreateNewProject(const wxString& name);
-    
+
     void LoadWorkspace();
     void UnLoadWorkspace();
 
     void ReportParseThreadProgress(size_t curIndex, size_t total);
     void ReportParseThreadDone();
-    void ReloadWorkspace( bool saveBeforeReload );
+    void ReloadWorkspace(bool saveBeforeReload);
 };
 
 #endif // __php_workspace_view__

@@ -8,6 +8,7 @@
 class WXDLLIMPEXP_CL PHPEntityFunction : public PHPEntityBase
 {
 public:
+    virtual wxString FormatPhpDoc() const;
     virtual wxString GetDisplayName() const;
     virtual wxString GetNameOnly() const;
     virtual bool Is(eEntityType type) const;
@@ -45,7 +46,7 @@ public:
     virtual ~PHPEntityFunction();
     const wxString& GetReturnValue() const { return m_strReturnValue; }
     void SetStrReturnValue(const wxString& strReturnValue) { this->m_strReturnValue = strReturnValue; }
-    
+
     wxString GetScope() const;
     /**
      * @brief format function signature

@@ -137,8 +137,6 @@
     </VirtualDirectory>
     <File Name="NewPHPClass.h"/>
     <File Name="NewPHPClass.cpp"/>
-    <File Name="parser_threadui_progress.h"/>
-    <File Name="parser_threadui_progress.cpp"/>
     <File Name="tree_item_data.h"/>
     <File Name="my_tree_view.h"/>
     <File Name="my_tree_view.cpp"/>

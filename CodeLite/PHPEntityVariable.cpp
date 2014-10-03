@@ -141,3 +141,11 @@ wxString PHPEntityVariable::GetNameNoDollar() const
     name.Trim().Trim(false);
     return name;
 }
+wxString PHPEntityVariable::FormatPhpDoc() const 
+{
+    wxString doc;
+    doc << "/**\n"
+        << " * @var " << GetTypeHint() << "\n"
+        << " */";
+    return doc;
+}

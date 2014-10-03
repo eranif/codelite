@@ -1,7 +1,6 @@
 #include "precompiled_header.h"
 #include "quick_outline_dlg.h"
 #include <globals.h>
-#include "php_parser_api.h"
 #include <imanager.h>
 #include <ieditor.h>
 #include <windowattrmanager.h>
@@ -60,9 +59,8 @@ void PHPQuickOutlineDlg::DoItemSelected(const wxTreeItemId& item)
     if(item.IsOk()) {
         QItemData* data = dynamic_cast<QItemData*>(m_treeCtrlLayout->GetItemData(item));
         if(data && data->m_entry) {
-            DoSelectMatch(data->m_entry->GetFilename().GetFullPath(),
-                          data->m_entry->GetLine() - 1,
-                          data->m_entry->GetNameOnly());
+            DoSelectMatch(
+                data->m_entry->GetFilename().GetFullPath(), data->m_entry->GetLine() - 1, data->m_entry->GetNameOnly());
             Close();
         }
     }

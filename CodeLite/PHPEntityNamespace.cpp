@@ -37,3 +37,11 @@ wxString PHPEntityNamespace::Type() const { return GetName(); }
 bool PHPEntityNamespace::Is(eEntityType type) const { return type == kEntityTypeNamespace; }
 wxString PHPEntityNamespace::GetDisplayName() const { return GetName(); }
 wxString PHPEntityNamespace::GetNameOnly() const { return GetName().AfterLast('\\'); }
+wxString PHPEntityNamespace::FormatPhpDoc() const
+{
+    wxString doc;
+    doc << "/**\n"
+        << " * @brief \n";
+    doc << " */";
+    return doc;
+}

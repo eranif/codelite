@@ -51,8 +51,13 @@ public:
      */
     PHPEntityBase::Ptr_t FindChild(const wxString& name, bool tryPrependingDollar = false) const;
 
+    /**
+     * @brief generate a php doc comment that matches this entry
+     */
+    virtual wxString FormatPhpDoc() const = 0;
+    
     // Setters / Getters
-
+    
     void SetDocComment(const wxString& docComment) { this->m_docComment = docComment; }
     const wxString& GetDocComment() const { return m_docComment; }
     void SetDbId(wxLongLong dbId) { this->m_dbId = dbId; }

@@ -365,13 +365,9 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, eLookupF
         {
             // load functions
             wxString sql;
-            sql << "SELECT * from FUNCTION_TABLE WHERE SCOPE_ID=" << parentId;
-            if(flags & kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
-                sql << " AND NAME = '" << nameHint << "'";
-
-            } else if(flags & kLookupFlags_PartialMatch && !nameHint.IsEmpty()) {
-                sql << " AND NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
-            }
+            sql << "SELECT * from FUNCTION_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
+            DoAddNameFilter(sql, nameHint, flags);
+            DoAddLimit(sql);
 
             wxSQLite3Statement st = m_db.PrepareStatement(sql);
             wxSQLite3ResultSet res = st.ExecuteQuery();
@@ -386,13 +382,10 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, eLookupF
         {
             // Add members from the variables table
             wxString sql;
-            sql << "SELECT * from VARIABLES_TABLE WHERE SCOPE_ID=" << parentId;
-            if(flags & kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
-                sql << " AND NAME = '" << nameHint << "'";
+            sql << "SELECT * from VARIABLES_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
+            DoAddNameFilter(sql, nameHint, flags);
+            DoAddLimit(sql);
 
-            } else if(flags & kLookupFlags_PartialMatch && !nameHint.IsEmpty()) {
-                sql << " AND NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
-            }
             wxSQLite3Statement st = m_db.PrepareStatement(sql);
             wxSQLite3ResultSet res = st.ExecuteQuery();
 
@@ -457,5 +450,71 @@ void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, bool parseFun
     } catch(wxSQLite3Exception& e) {
         m_db.Rollback();
         CL_WARNING("PHPLookupTable::UpdateSourceFiles: %s", e.GetMessage());
+    }
+}
+
+void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, eLookupFlags flags)
+{
+    if(flags == kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
+        sql << " NAME = '" << nameHint << "'";
+
+    } else if(flags == kLookupFlags_Contains && !nameHint.IsEmpty()) {
+        sql << " NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
+
+    } else if(flags == kLookupFlags_StartsWith && !nameHint.IsEmpty()) {
+        sql << " NAME LIKE '%%" << EscapeWildCards(nameHint) << "' ESCAPE '^'";
+    }
+}
+
+void PHPLookupTable::LoadAllByFilter(PHPEntityBase::List_t& matches, const wxString& nameHint, eLookupFlags flags)
+{
+    try {
+        LoadFromTableByNameHint(matches, "SCOPE_TABLE", nameHint, flags);
+        LoadFromTableByNameHint(matches, "FUNCTION_TABLE", nameHint, flags);
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::LoadAllByFilter: %s", e.GetMessage());
+    }
+}
+
+PHPEntityBase::Ptr_t PHPLookupTable::NewEntity(const wxString& tableName, ePhpScopeType scopeType)
+{
+    if(tableName == "FUNCTION_TABLE") {
+        return PHPEntityBase::Ptr_t(new PHPEntityFunction());
+    } else if(tableName == "VARIABLES_TABLE") {
+        return PHPEntityBase::Ptr_t(new PHPEntityVariable());
+    } else if(tableName == "SCOPE_TABLE" && scopeType == kPhpScopeTypeNamespace) {
+        return PHPEntityBase::Ptr_t(new PHPEntityNamespace());
+    } else if(tableName == "SCOPE_TABLE" && scopeType == kPhpScopeTypeClass) {
+        return PHPEntityBase::Ptr_t(new PHPEntityClass());
+    } else {
+        return PHPEntityBase::Ptr_t(NULL);
+    }
+}
+
+void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
+                                             const wxString& tableName,
+                                             const wxString& nameHint,
+                                             eLookupFlags flags)
+{
+    wxString trimmedNameHint(nameHint);
+    trimmedNameHint.Trim().Trim(false);
+    if(trimmedNameHint.IsEmpty()) return;
+
+    wxString sql;
+    sql << "SELECT * from " << tableName << " WHERE ";
+    DoAddNameFilter(sql, trimmedNameHint, flags);
+    DoAddLimit(sql);
+
+    wxSQLite3Statement st = m_db.PrepareStatement(sql);
+    wxSQLite3ResultSet res = st.ExecuteQuery();
+
+    while(res.NextRow()) {
+        ePhpScopeType st = kPhpScopeTypeAny;
+        if(tableName == "SCOPE_TABLE") {
+            st = res.GetInt("SCOPE_TYPE", 1) == kPhpScopeTypeNamespace ? kPhpScopeTypeNamespace : kPhpScopeTypeClass;
+        }
+        PHPEntityBase::Ptr_t match(NewEntity(tableName, st));
+        match->FromResultSet(res);
+        matches.push_back(match);
     }
 }

@@ -52,7 +52,7 @@ public:
     void SetClassNamespace(const wxString& classNamespace) {
         this->m_classNamespace = classNamespace;
     }
-    const wxString& GetClassNamespace() const {
+    const wxString& GetNamespace() const {
         return m_classNamespace;
     }
     void SetName(const wxString& name) {

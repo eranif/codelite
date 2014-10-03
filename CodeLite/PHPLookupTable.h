@@ -11,10 +11,9 @@
 #include <wx/longlong.h>
 #include "cl_command_event.h"
 
-
-wxDECLARE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
-wxDECLARE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
-wxDECLARE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_STARTED, clParseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_ENDED, clParseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_PROGRESS, clParseEvent);
 
 enum ePhpScopeType {
     kPhpScopeTypeAny = -1,
@@ -31,14 +30,18 @@ class WXDLLIMPEXP_CL PHPLookupTable
 {
     wxSQLite3Database m_db;
     size_t m_sizeLimit;
+
 public:
     enum eLookupFlags {
         kLookupFlags_None = 0,
         kLookupFlags_ExactMatch = (1 << 1),
-        kLookupFlags_PartialMatch = (1 << 2),
+        kLookupFlags_Contains = (1 << 2),
+        kLookupFlags_StartsWith = (1 << 3),
     };
 
 private:
+    void DoAddNameFilter(wxString& sql, const wxString& nameHint, eLookupFlags flags);
+
     void CreateSchema();
     void SplitFullname(const wxString& fullname, wxString& name, wxString& scope) const;
     PHPEntityBase::Ptr_t DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName);
@@ -53,9 +56,24 @@ private:
      * @brief sqlite uses '_' as a wildcard. escape it using '^'
      * as our escape char
      */
-    wxString EscapeWildCards(const wxString &str);
-    
+    wxString EscapeWildCards(const wxString& str);
+
     void DoAddLimit(wxString& sql);
+
+    /**
+     * @brief allocate new entity that matches the table name
+     */
+    PHPEntityBase::Ptr_t NewEntity(const wxString& tableName, ePhpScopeType scopeType = kPhpScopeTypeAny);
+
+    /**
+     * @brief load entities from table and name hint
+     * if nameHint is empty, return empty list
+     */
+    void LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
+                                 const wxString& tableName,
+                                 const wxString& nameHint,
+                                 eLookupFlags flags);
+
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
@@ -91,10 +109,17 @@ public:
     FindChildren(wxLongLong parentId, eLookupFlags flags = kLookupFlags_None, const wxString& nameHint = "");
 
     /**
+     * @brief load list of entities from all the tables that matches 'nameHint'
+     * if nameHint is empty, return an empty list
+     */
+    void LoadAllByFilter(PHPEntityBase::List_t& matches,
+                         const wxString& nameHint,
+                         eLookupFlags flags = kLookupFlags_Contains);
+    /**
      * @brief save source file into the database
      */
     void UpdateSourceFile(PHPSourceFile& source, bool autoCommit = true);
-    
+
     /**
      * @brief update list of source files
      */

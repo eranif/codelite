@@ -1,7 +1,6 @@
 #include "NewPHPClass.h"
 #include <windowattrmanager.h>
 #include <wx/dirdlg.h>
-#include "php_entry.h"
 #include <wx/tokenzr.h>
 #include <wx/textdlg.h>
 
@@ -126,8 +125,8 @@ void NewPHPClass::OnEditImplements(wxCommandEvent& event)
 wxString PHPClassDetails::ToString(const wxString & EOL, const wxString &indent) const
 {
     wxString classString;
-    if ( !GetClassNamespace().IsEmpty() ) {
-        classString << "namespace " << GetClassNamespace() << ";" << EOL << EOL;
+    if ( !GetNamespace().IsEmpty() ) {
+        classString << "namespace " << GetNamespace() << ";" << EOL << EOL;
     }
 
     classString << GetType() << " " << GetName() << " ";
@@ -168,16 +167,17 @@ wxString PHPClassDetails::ToString(const wxString & EOL, const wxString &indent)
 
     if ( IsClass() && (GetFlags() & GEN_SINGLETON)) {
         wxString returnType;
-        if ( GetClassNamespace().IsEmpty() ) {
+        if ( GetNamespace().IsEmpty() ) {
             returnType = GetName();
         } else {
             // user provided a namespace
-            wxString fixedName, fixedNS;
-            PHPEntry::CorrectClassName(GetName(), GetClassNamespace(), fixedName, fixedNS);
-            returnType << fixedNS << "\\" << fixedName;
-
+            returnType << GetNamespace() << "\\" << GetName();
+            
         }
-
+        
+        // Remove duplicate backslahes
+        while(returnType.Replace("\\\\", "\\")) {}
+        
         classString << indent << "/** @return " << returnType << " **/" << EOL;
         classString << indent << "static public function instance() {" << EOL;
         classString << indent << indent << "static $s_instance = null;" << EOL;

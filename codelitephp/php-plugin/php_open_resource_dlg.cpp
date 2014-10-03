@@ -6,19 +6,19 @@
 #include <ieditor.h>
 #include <bitmap_loader.h>
 #include "php_workspace.h"
-#include "php_storage.h"
 #include <macros.h>
+#include "PHPLookupTable.h"
 
-static int TIMER_ID        = 5647;
-static wxBitmap CLASS_IMG_ID    = wxNullBitmap;
-static wxBitmap FILE_IMG_ID     = wxNullBitmap;
-static wxBitmap FUNC_IMG_ID     = wxNullBitmap;
-static wxBitmap CONST_IMG_ID    = wxNullBitmap;
-static wxBitmap DEFINE_IMG_ID   = wxNullBitmap;
+static int TIMER_ID = 5647;
+static wxBitmap CLASS_IMG_ID = wxNullBitmap;
+static wxBitmap FILE_IMG_ID = wxNullBitmap;
+static wxBitmap FUNC_IMG_ID = wxNullBitmap;
+static wxBitmap CONST_IMG_ID = wxNullBitmap;
+static wxBitmap DEFINE_IMG_ID = wxNullBitmap;
 static wxBitmap VARIABLE_IMG_ID = wxNullBitmap;
 
 BEGIN_EVENT_TABLE(OpenResourceDlg, OpenResourceDlgBase)
-    EVT_TIMER(TIMER_ID, OpenResourceDlg::OnTimer)
+EVT_TIMER(TIMER_ID, OpenResourceDlg::OnTimer)
 END_EVENT_TABLE()
 
 OpenResourceDlg::OpenResourceDlg(wxWindow* parent, const ResourceVector_t& items, IManager* manager)
@@ -36,13 +36,13 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, const ResourceVector_t& items
     WindowAttrManager::Load(this, "PHPOpenResourceDlg", NULL);
 }
 
-OpenResourceDlg::OpenResourceDlg( wxWindow* parent, IManager* manager )
-    : OpenResourceDlgBase( parent )
+OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
+    : OpenResourceDlgBase(parent)
     , m_mgr(manager)
     , m_timer(NULL)
 {
     wxStringSet_t files;
-    PHPWorkspace::Get()->GetWorkspaceFiles( files );
+    PHPWorkspace::Get()->GetWorkspaceFiles(files);
 
     m_allFiles.reserve(files.size());
     std::set<wxString>::iterator iter = files.begin();
@@ -50,9 +50,9 @@ OpenResourceDlg::OpenResourceDlg( wxWindow* parent, IManager* manager )
         wxFileName fn((*iter));
         ResourceItem fileItem;
         fileItem.displayName = fn.GetFullName();
-        fileItem.filename    = fn;
-        fileItem.line        = -1;
-        fileItem.type        = PHP_Kind_File;
+        fileItem.filename = fn;
+        fileItem.line = -1;
+        fileItem.type = ResourceItem::kRI_File;
         m_allFiles.push_back(fileItem);
     }
 
@@ -64,13 +64,13 @@ OpenResourceDlg::OpenResourceDlg( wxWindow* parent, IManager* manager )
 
 void OpenResourceDlg::DoInitialize()
 {
-    BitmapLoader *bmpLoader = m_mgr->GetStdIcons();
+    BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
 
-    CLASS_IMG_ID    = bmpLoader->LoadBitmap(wxT("cc/16/class"));
-    FILE_IMG_ID     = bmpLoader->LoadBitmap(wxT("mime/16/php"));
-    FUNC_IMG_ID     = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
-    CONST_IMG_ID    = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
-    DEFINE_IMG_ID   = bmpLoader->LoadBitmap(wxT("cc/16/macro"));
+    CLASS_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/class"));
+    FILE_IMG_ID = bmpLoader->LoadBitmap(wxT("mime/16/php"));
+    FUNC_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
+    CONST_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
+    DEFINE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/macro"));
     VARIABLE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
 
     WindowAttrManager::Load(this, wxT("OpenResourceDlg"), NULL);
@@ -82,8 +82,8 @@ OpenResourceDlg::~OpenResourceDlg()
     wxDELETE(m_timer);
 
     // list control does not own the client data, we need to free it ourselves
-    for(int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
-        ResourceItem *data = (ResourceItem *) m_dvListCtrl->GetItemData( m_dvListCtrl->RowToItem(i) );
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        ResourceItem* data = (ResourceItem*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         wxDELETE(data);
     }
     m_dvListCtrl->DeleteAllItems();
@@ -93,16 +93,13 @@ OpenResourceDlg::~OpenResourceDlg()
 void OpenResourceDlg::OnFilterEnter(wxCommandEvent& event)
 {
     wxDataViewItem sel = m_dvListCtrl->GetSelection();
-    if ( sel.IsOk() ) {
-        SetSelectedItem( DoGetItemData(sel) );
+    if(sel.IsOk()) {
+        SetSelectedItem(DoGetItemData(sel));
         EndModal(wxID_OK);
     }
 }
 
-void OpenResourceDlg::OnFilterText(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void OpenResourceDlg::OnFilterText(wxCommandEvent& event) { event.Skip(); }
 
 void OpenResourceDlg::OnTimer(wxTimerEvent& event)
 {
@@ -127,7 +124,6 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
         allVec.insert(allVec.end(), filesVec.begin(), filesVec.end());
         allVec.insert(allVec.end(), m_resources.begin(), m_resources.end());
         DoPopulateListCtrl(allVec);
-
     }
     m_timer->Start(500, true);
 }
@@ -135,27 +131,43 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
 void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
 {
     wxDataViewItem selection;
-    for(size_t i=0; i<items.size(); ++i) {
+    for(size_t i = 0; i < items.size(); ++i) {
         wxVector<wxVariant> cols;
-        cols.push_back( ::MakeIconText(items.at(i).displayName, DoGetImgIdx(&items.at(i))) );
-        cols.push_back( items.at(i).typeAsString() );
-        cols.push_back( items.at(i).filename.GetFullPath() );
-        m_dvListCtrl->AppendItem( cols, (wxUIntPtr)(new ResourceItem(items.at(i))) );
-        if ( !selection.IsOk() ) {
+        cols.push_back(::MakeIconText(items.at(i).displayName, DoGetImgIdx(&items.at(i))));
+        cols.push_back(items.at(i).TypeAsString());
+        cols.push_back(items.at(i).filename.GetFullPath());
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new ResourceItem(items.at(i))));
+        if(!selection.IsOk()) {
             selection = m_dvListCtrl->RowToItem(0);
         }
     }
 
-    if( selection.IsOk() ) {
-        m_dvListCtrl->Select( selection );
-        m_dvListCtrl->EnsureVisible( selection );
+    if(selection.IsOk()) {
+        m_dvListCtrl->Select(selection);
+        m_dvListCtrl->EnsureVisible(selection);
     }
 }
 
 void OpenResourceDlg::DoGetResources(const wxString& filter)
 {
     m_resources.clear();
-    PHPStorage::Instance()->GetAllResources(m_resources, filter);
+    PHPLookupTable table;
+    table.Open(PHPWorkspace::Get()->GetFilename().GetPath());
+    PHPEntityBase::List_t matches;
+    table.LoadAllByFilter(matches, filter);
+    
+    // Convert the PHP matches into resources
+    PHPEntityBase::List_t::iterator iter = matches.begin();
+    m_resources.reserve(matches.size());
+    for(; iter != matches.end(); ++iter) {
+        PHPEntityBase::Ptr_t match = *iter;
+        ResourceItem resource;
+        resource.displayName = match->GetDisplayName();
+        resource.filename = match->GetFilename();
+        resource.line = match->GetLine();
+        resource.SetType(match);
+        m_resources.push_back(resource);
+    }
 }
 
 ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
@@ -165,14 +177,13 @@ ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
     wxString lcFilter = filter;
     lcFilter.MakeLower();
 
-    for(size_t i=0; i<m_allFiles.size(); i++) {
+    for(size_t i = 0; i < m_allFiles.size(); i++) {
         wxString displayName = m_allFiles.at(i).displayName;
         displayName.MakeLower();
         if(displayName.Contains(lcFilter)) {
             resources.push_back(m_allFiles.at(i));
             // Don't return too many matches...
-            if(resources.size() == 150)
-                break;
+            if(resources.size() == 150) break;
         }
     }
     return resources;
@@ -180,7 +191,7 @@ ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
 
 ResourceItem* OpenResourceDlg::DoGetItemData(const wxDataViewItem& item)
 {
-    ResourceItem *data = (ResourceItem *) m_dvListCtrl->GetItemData( item );
+    ResourceItem* data = (ResourceItem*)m_dvListCtrl->GetItemData(item);
     return data;
 }
 
@@ -211,8 +222,8 @@ void OpenResourceDlg::DoSelectNext()
         long row = m_dvListCtrl->ItemToRow(selecteditem);
         ++row;
         if(m_dvListCtrl->GetItemCount() > row) {
-            m_dvListCtrl->SelectRow( row );
-            m_dvListCtrl->EnsureVisible( m_dvListCtrl->RowToItem(row) ) ;
+            m_dvListCtrl->SelectRow(row);
+            m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(row));
         }
     }
 }
@@ -223,9 +234,9 @@ void OpenResourceDlg::DoSelectPrev()
     if(selecteditem.IsOk()) {
         long row = m_dvListCtrl->ItemToRow(selecteditem);
         --row;
-        if( row >= 0 ) {
-            m_dvListCtrl->SelectRow( row );
-            m_dvListCtrl->EnsureVisible( m_dvListCtrl->RowToItem(row) ) ;
+        if(row >= 0) {
+            m_dvListCtrl->SelectRow(row);
+            m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(row));
         }
     }
 }
@@ -233,17 +244,17 @@ void OpenResourceDlg::DoSelectPrev()
 wxBitmap OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
 {
     switch(item->type) {
-    case PHP_Kind_Class:
+    case ResourceItem::kRI_Class:
         return CLASS_IMG_ID;
-    case PHP_Kind_Constant:
+    case ResourceItem::kRI_Constant:
         return CONST_IMG_ID;
-    case PHP_Kind_File:
+    case ResourceItem::kRI_File:
         return FILE_IMG_ID;
-    case PHP_Kind_Function:
+    case ResourceItem::kRI_Function:
         return FUNC_IMG_ID;
     default:
-    case PHP_Kind_Member:
-    case PHP_Kind_Variable:
+    case ResourceItem::kRI_Member:
+    case ResourceItem::kRI_Variable:
         return VARIABLE_IMG_ID;
     }
     return DEFINE_IMG_ID;
@@ -251,6 +262,6 @@ wxBitmap OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
 
 void OpenResourceDlg::OnDVItemActivated(wxDataViewEvent& event)
 {
-    SetSelectedItem( DoGetItemData( event.GetItem() ) );
+    SetSelectedItem(DoGetItemData(event.GetItem()));
     EndModal(wxID_OK);
 }

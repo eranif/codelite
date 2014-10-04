@@ -37,10 +37,14 @@ public:
         kLookupFlags_ExactMatch = (1 << 1),
         kLookupFlags_Contains = (1 << 2),
         kLookupFlags_StartsWith = (1 << 3),
+        kLookupFlags_Members = (1 << 4),           // Class members
+        kLookupFlags_Constants = (1 << 5),         // 'const'
+        kLookupFlags_StaticMembers = (1 << 6),     // include static members/functions (static::, class_type::)
+        kLookupFlags_SelfStaticMembers = (1 << 7), // Current class static members only (self::)
     };
 
 private:
-    void DoAddNameFilter(wxString& sql, const wxString& nameHint, eLookupFlags flags);
+    void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 
     void CreateSchema();
     void SplitFullname(const wxString& fullname, wxString& name, wxString& scope) const;
@@ -73,7 +77,11 @@ private:
                                  const wxString& tableName,
                                  const wxString& nameHint,
                                  eLookupFlags flags);
-
+    
+    bool CollectingStatics(size_t flags) const {
+        return flags & (kLookupFlags_SelfStaticMembers | kLookupFlags_StaticMembers);
+    }
+    
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
@@ -82,6 +90,17 @@ public:
      * @brief open the lookup table database
      */
     void Open(const wxString& workspacePath);
+
+    /**
+     * @brief
+     * @return
+     */
+    bool IsOpened() const;
+
+    /**
+     * @brief close the lookup table database
+     */
+    void Close();
 
     /**
      * @brief find a scope symbol (class or namespace) by its fullname
@@ -106,7 +125,7 @@ public:
      * @brief find children of a scope by its database ID.
      */
     PHPEntityBase::List_t
-    FindChildren(wxLongLong parentId, eLookupFlags flags = kLookupFlags_None, const wxString& nameHint = "");
+    FindChildren(wxLongLong parentId, size_t flags = kLookupFlags_None, const wxString& nameHint = "");
 
     /**
      * @brief load list of entities from all the tables that matches 'nameHint'
@@ -124,7 +143,7 @@ public:
      * @brief update list of source files
      */
     void UpdateSourceFiles(const wxArrayString& files, bool parseFuncBodies = true);
-    
+
     /**
      * @brief delete all entries belonged to filename.
      * @param filename the file name

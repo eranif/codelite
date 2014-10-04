@@ -20,10 +20,12 @@ public:
     struct Part {
         wxString m_text;
         int m_operator;
+        int m_textType;
         wxString m_operatorText;
 
         Part()
             : m_operator(kPHP_T_OBJECT_OPERATOR)
+            , m_textType(wxNOT_FOUND)
         {
         }
     };
@@ -55,6 +57,11 @@ public:
      * @brief return the filter for this expression
      */
     const wxString& GetFilter() const { return m_filter; }
+    
+    /**
+     * @brief get the lookup flags to pass to the lookup table for feteching members
+     */
+    size_t GetLookupFlags() const;
 };
 
 #endif // PHPEXPRESSION_H

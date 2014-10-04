@@ -1245,7 +1245,7 @@ public:
   /**
   * \return TRUE if database has been opened, FALSE otherwise
   */
-  bool IsOpen();
+  bool IsOpen() const;
 
   /// Close a SQLite3 database
   /**

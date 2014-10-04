@@ -79,7 +79,6 @@ void PHPSourceFile::Parse(int exitDepth)
             int visibility = token.type;
             PHPEntityClass* cls = CurrentScope()->Cast<PHPEntityClass>();
             if(cls) {
-                m_lookBackTokens.clear();
                 /// keep the current token
                 m_lookBackTokens.push_back(token);
 
@@ -95,7 +94,10 @@ void PHPSourceFile::Parse(int exitDepth)
                     PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
                     var->SetVisibility(visibility);
                     var->SetName(token.text);
+                    size_t flags = LookBackForVariablesFlags();
                     var->SetFlag(PHPEntityVariable::kMember);
+                    var->SetFlag(PHPEntityVariable::kConst, flags & PHPEntityVariable::kConst);
+                    var->SetFlag(PHPEntityVariable::kStatic, flags & PHPEntityVariable::kStatic);
                     var->SetLine(token.lineNumber);
                     CurrentScope()->AddChild(member);
                     if(!ConsumeUntil(';')) return;
@@ -116,6 +118,7 @@ void PHPSourceFile::Parse(int exitDepth)
                 var->SetName(token.text);
                 var->SetLine(token.lineNumber);
                 var->SetFlag(PHPEntityVariable::kMember);
+                var->SetFlag(PHPEntityVariable::kConst);
                 CurrentScope()->AddChild(member);
                 if(!ConsumeUntil(';')) return;
             }
@@ -573,6 +576,8 @@ bool PHPSourceFile::NextToken(phpLexerToken& token)
         m_depth++;
     } else if(token.type == '}') {
         m_depth--;
+    } else if(token.type == ';') {
+        m_lookBackTokens.clear();
     }
     if(!res) m_reachedEOF = true;
     if(res) m_lookBackTokens.push_back(token);
@@ -787,4 +792,36 @@ int PHPSourceFile::ReadUntilFoundOneOf(int delim1, int delim2, phpLexerToken& to
         }
     }
     return wxNOT_FOUND;
+}
+
+bool PHPSourceFile::LookBackTokensContains(int type) const
+{
+    for(size_t i = 0; i < m_lookBackTokens.size(); ++i) {
+        if(m_lookBackTokens.at(i).type == type) return true;
+    }
+    return false;
+}
+
+size_t PHPSourceFile::LookBackForVariablesFlags()
+{
+    size_t flags(0);
+    for(size_t i = 0; i < m_lookBackTokens.size(); ++i) {
+        const phpLexerToken& tok = m_lookBackTokens.at(i);
+        if(tok.type == kPHP_T_STATIC) {
+            flags |= PHPEntityVariable::kStatic;
+
+        } else if(tok.type == kPHP_T_CONST) {
+            flags |= PHPEntityVariable::kConst;
+
+        } else if(tok.type == kPHP_T_PUBLIC) {
+            flags |= PHPEntityVariable::kPublic;
+
+        } else if(tok.type == kPHP_T_PRIVATE) {
+            flags |= PHPEntityVariable::kPrivate;
+
+        } else if(tok.type == kPHP_T_PROTECTED) {
+            flags |= PHPEntityVariable::kProtected;
+        }
+    }
+    return flags;
 }

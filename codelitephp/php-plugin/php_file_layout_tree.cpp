@@ -98,6 +98,8 @@ int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
             return 6;
 
         } else if(var->HasFlag(PHPEntityVariable::kMember)) {
+            if(var->HasFlag(PHPEntityVariable::kConst))
+                return 9; // constant
             // Member
             if(var->HasFlag(PHPEntityVariable::kPrivate))
                 return 4;
@@ -109,6 +111,8 @@ int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
         } else if(var->HasFlag(PHPEntityVariable::kConst)) {
             // Constant
             return 9;
+        } else {
+            return 6;
         }
 
     } else if(entry->Is(kEntityTypeNamespace)) {

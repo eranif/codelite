@@ -75,14 +75,14 @@ const static wxString CREATE_VARIABLES_TABLE_SQL =
 const static wxString CREATE_VARIABLES_TABLE_SQL_IDX1 =
     "CREATE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_1 ON VARIABLES_TABLE(SCOPE_ID)";
 const static wxString CREATE_VARIABLES_TABLE_SQL_IDX2 =
-    "CREATE UNIQUE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_2 ON VARIABLES_TABLE(SCOPE, NAME)";
+    "CREATE UNIQUE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_2 ON VARIABLES_TABLE(SCOPE, NAME, FUNCTION_ID, SCOPE_ID)";
 const static wxString CREATE_VARIABLES_TABLE_SQL_IDX3 =
     "CREATE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_3 ON VARIABLES_TABLE(FILE_NAME)";
 const static wxString CREATE_VARIABLES_TABLE_SQL_IDX4 =
     "CREATE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_4 ON VARIABLES_TABLE(FUNCTION_ID)";
 
 PHPLookupTable::PHPLookupTable()
-    : m_sizeLimit(50)
+    : m_sizeLimit(250)
 {
 }
 
@@ -185,7 +185,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
 
         // Delete all entries for this file
         DeleteFileEntries(source.GetFilename(), false);
-        
+
         // Store new entries
         PHPEntityBase::Ptr_t topNamespace = source.Namespace();
         if(topNamespace) {
@@ -359,7 +359,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
 
 PHPEntityBase::Ptr_t PHPLookupTable::FindClass(wxLongLong id) { return DoFindScope(id, kPhpScopeTypeClass); }
 
-PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, eLookupFlags flags, const wxString& nameHint)
+PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t flags, const wxString& nameHint)
 {
     // Find members of of parentDbID
     PHPEntityBase::List_t matches;
@@ -377,7 +377,13 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, eLookupF
             while(res.NextRow()) {
                 PHPEntityBase::Ptr_t match(new PHPEntityFunction());
                 match->FromResultSet(res);
-                matches.push_back(match);
+                bool isStatic = match->Cast<PHPEntityFunction>()->HasFlag(PHPEntityFunction::kStatic);
+                if(isStatic & CollectingStatics(flags)) {
+                    matches.push_back(match);
+
+                } else if(!isStatic && !CollectingStatics(flags)) {
+                    matches.push_back(match);
+                }
             }
         }
 
@@ -394,7 +400,15 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, eLookupF
             while(res.NextRow()) {
                 PHPEntityBase::Ptr_t match(new PHPEntityVariable());
                 match->FromResultSet(res);
-                matches.push_back(match);
+
+                bool isConst = match->Cast<PHPEntityVariable>()->IsConst();
+                bool isStatic = match->Cast<PHPEntityVariable>()->IsStatic();
+                if((isStatic || isConst) && CollectingStatics(flags)) {
+                    matches.push_back(match);
+
+                } else if(!isStatic && !isConst && !CollectingStatics(flags)) {
+                    matches.push_back(match);
+                }
             }
         }
     } catch(wxSQLite3Exception& e) {
@@ -455,15 +469,24 @@ void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, bool parseFun
     }
 }
 
-void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, eLookupFlags flags)
+void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags)
 {
-    if(flags == kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
+    if(nameHint.IsEmpty()) {
+        sql.Trim();
+        if(sql.EndsWith("AND") || sql.EndsWith("and")) {
+            sql.RemoveLast(3);
+        }
+        sql << " ";
+        return;
+    }
+
+    if(flags & kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
         sql << " NAME = '" << nameHint << "'";
 
-    } else if(flags == kLookupFlags_Contains && !nameHint.IsEmpty()) {
+    } else if(flags & kLookupFlags_Contains && !nameHint.IsEmpty()) {
         sql << " NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
 
-    } else if(flags == kLookupFlags_StartsWith && !nameHint.IsEmpty()) {
+    } else if(flags & kLookupFlags_StartsWith && !nameHint.IsEmpty()) {
         sql << " NAME LIKE '" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
     }
 }
@@ -515,7 +538,7 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
         if(tableName == "SCOPE_TABLE") {
             st = res.GetInt("SCOPE_TYPE", 1) == kPhpScopeTypeNamespace ? kPhpScopeTypeNamespace : kPhpScopeTypeClass;
         }
-        
+
         PHPEntityBase::Ptr_t match = NewEntity(tableName, st);
         if(match) {
             match->FromResultSet(res);
@@ -535,7 +558,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
         }
-        
+
         {
             wxString sql;
             sql << "delete from FUNCTION_TABLE where FILE_NAME=:FILE_NAME";
@@ -543,7 +566,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
         }
-        
+
         {
             wxString sql;
             sql << "delete from VARIABLES_TABLE where FILE_NAME=:FILE_NAME";
@@ -557,3 +580,16 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
         CL_WARNING("PHPLookupTable::DeleteFileEntries: %s", e.GetMessage());
     }
 }
+
+void PHPLookupTable::Close()
+{
+    try {
+        if(m_db.IsOpen()) {
+            m_db.Close();
+        }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::Close: %s", e.GetMessage());
+    }
+}
+
+bool PHPLookupTable::IsOpened() const { return m_db.IsOpen(); }

@@ -92,7 +92,16 @@ protected:
      * @brief go over the look back tokens and extract all function flags
      */
     size_t LookBackForFunctionFlags();
-
+    
+    /**
+     * @brief go over the look back tokens and extract all variable flags
+     */
+    size_t LookBackForVariablesFlags();
+    
+    /**
+     * @brief return true of the look back tokens contains 'type'
+     */
+    bool LookBackTokensContains(int type) const;
     /**
      * @brief parse function signature
      */

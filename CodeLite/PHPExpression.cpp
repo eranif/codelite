@@ -83,6 +83,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     source.SetFilename(sourceFileName);
     source.Parse();
     wxString asString = SimplifyExpression(source, 0);
+    wxUnusedVar(asString);
     
     // Now, use the lookup table
     std::list<PHPExpression::Part>::iterator iter = m_parts.begin();
@@ -226,6 +227,12 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
             part.m_operatorText.clear();
             part.m_operator = wxNOT_FOUND;
             break;
+        case kPHP_T_THIS:
+        case kPHP_T_SELF:
+        case kPHP_T_STATIC:
+            part.m_textType = token.type;
+            currentText << token.text;
+            break;
         default:
             currentText << token.text;
             break;
@@ -251,4 +258,19 @@ wxString PHPExpression::GetExpressionAsString() const
         expr << m_expression.at(i).text << " ";
     }
     return expr;
+}
+
+size_t PHPExpression::GetLookupFlags() const
+{
+    size_t flags(0);
+    if(m_parts.empty()) return flags;
+    
+    Part lastExpressionPart = m_parts.back();
+    if(lastExpressionPart.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
+        if(lastExpressionPart.m_textType == kPHP_T_SELF)
+            flags |= PHPLookupTable::kLookupFlags_SelfStaticMembers;
+        else
+            flags |= PHPLookupTable::kLookupFlags_StaticMembers;
+    }
+    return flags;
 }

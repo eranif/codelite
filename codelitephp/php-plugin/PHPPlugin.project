@@ -98,9 +98,6 @@
     <File Name="plugin_settings.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="PHPParser"/>
-  </Dependencies>
   <VirtualDirectory Name="resources">
     <File Name="doc-gen.php"/>
     <File Name="TODO.TXT"/>
@@ -429,4 +426,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="CodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
 </CodeLite_Project>

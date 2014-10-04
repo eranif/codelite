@@ -8,6 +8,9 @@
 #include <cl_command_event.h>
 #include <cc_box_tip_window.h>
 #include "PHPEntityBase.h"
+#include "PHPLookupTable.h"
+#include "cl_command_event.h"
+#include "php_event.h"
 
 struct PHPLocation
 {
@@ -37,7 +40,8 @@ protected:
     static PHPCodeCompletion* m_instance;
     IManager* m_manager;
     CCBoxTipWindow* m_typeInfoTooltip;
-
+    PHPLookupTable m_lookupTable;
+    
     bool CanCodeComplete(clCodeCompletionEvent& e) const;
     void DoShowCompletionBox(const PHPEntityBase::List_t& entries, const wxString& partname);
 
@@ -57,7 +61,11 @@ private:
     void OnCodeCompletionGetTagComment(clCodeCompletionEvent& e);
     void OnFindSymbol(clCodeCompletionEvent& e);
     void OnDismissTooltip(wxCommandEvent& e);
-
+    
+    // Workspace events
+    void OnWorkspaceOpened(PHPEvent& event);
+    void OnWorkspaceClosed(PHPEvent& event);
+    
 public:
     void SetManager(IManager* manager) { this->m_manager = manager; }
     /**

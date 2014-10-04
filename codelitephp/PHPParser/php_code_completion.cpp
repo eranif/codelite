@@ -15,11 +15,11 @@
 #include "PHPEntityBase.h"
 #include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
+#include "PHPExpression.h"
 
 ///////////////////////////////////////////////////////////////////
 
-struct PHPCCUserData
-{
+struct PHPCCUserData {
     PHPEntityBase::Ptr_t entry;
     PHPCCUserData(PHPEntityBase::Ptr_t e)
         : entry(e)
@@ -28,16 +28,14 @@ struct PHPCCUserData
 };
 
 /// Ascending sorting function
-struct _SDescendingSort
-{
+struct _SDescendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rStart->GetName().Cmp(rEnd->GetName()) > 0;
     }
 };
 
-struct _SAscendingSort
-{
+struct _SAscendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rEnd->GetName().Cmp(rStart->GetName()) > 0;
@@ -51,6 +49,8 @@ PHPCodeCompletion::PHPCodeCompletion()
     : m_manager(NULL)
     , m_typeInfoTooltip(NULL)
 {
+    EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_CLOSED, &PHPCodeCompletion::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPCodeCompletion::OnWorkspaceOpened, this);
     EventNotifier::Get()->Connect(
         wxEVT_CC_CODE_COMPLETE, clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
@@ -79,6 +79,9 @@ PHPCodeCompletion::PHPCodeCompletion()
 
 PHPCodeCompletion::~PHPCodeCompletion()
 {
+    EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_CLOSED, &PHPCodeCompletion::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &PHPCodeCompletion::OnWorkspaceOpened, this);
+
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_CODE_COMPLETE, clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
@@ -156,10 +159,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
     m_manager->GetActiveEditor()->ShowCompletionBox(tags, partname, true, this);
 }
 
-void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e)
-{
-    e.Skip();
-}
+void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }
 
 void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
 {
@@ -236,11 +236,12 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
         }
         t->SetSignature(func->GetSignature());
         t->SetPattern(func->GetName() + func->GetSignature());
-        
+        t->SetKind("function");
+
     } else if(entry->Is(kEntityTypeClass)) {
         t->SetAccess(wxT("public"));
         t->SetKind("class");
-        
+
     } else if(entry->Is(kEntityTypeNamespace)) {
         t->SetAccess("public");
         t->SetKind("namespace");
@@ -258,10 +259,20 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
         if(editor) {
             // we handle only .php files
             if(IsPHPFile(editor)) {
-                
+
                 // Perform the code completion here
-                
-                return;
+                PHPExpression expr(editor->GetTextRange(0, e.GetPosition()));
+                PHPEntityBase::Ptr_t entity = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+                if(entity) {
+                    PHPEntityBase::List_t matches =
+                        m_lookupTable.FindChildren(entity->GetDbId(),
+                                                   PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(),
+                                                   expr.GetFilter());
+                    if(!matches.empty()) {
+                        // Show the code completion box
+                        DoShowCompletionBox(matches, expr.GetFilter());
+                    }
+                }
             }
         }
     } else {
@@ -279,7 +290,7 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
             // we handle only .php files
             if(IsPHPFile(editor)) {
                 // get the position
-                
+
                 return;
             }
         }
@@ -385,4 +396,21 @@ bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e) const
     }
 
     return (editor && !e.IsInsideCommentOrString() && IsPHPSection(styleAt) && !IsPHPCommentOrString(styleAt));
+}
+
+void PHPCodeCompletion::OnWorkspaceOpened(PHPEvent& event)
+{
+    event.Skip();
+    if(m_lookupTable.IsOpened()) {
+        m_lookupTable.Close();
+    }
+
+    wxFileName fnWorkspace(event.GetFileName());
+    m_lookupTable.Open(fnWorkspace.GetPath());
+}
+
+void PHPCodeCompletion::OnWorkspaceClosed(PHPEvent& event)
+{
+    event.Skip();
+    m_lookupTable.Close();
 }

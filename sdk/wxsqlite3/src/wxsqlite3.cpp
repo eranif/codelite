@@ -1580,7 +1580,7 @@ void wxSQLite3Database::Open(const wxString& fileName, const wxMemoryBuffer& key
   SetBusyTimeout(m_busyTimeoutMs);
 }
 
-bool wxSQLite3Database::IsOpen()
+bool wxSQLite3Database::IsOpen() const
 {
   return (m_db != NULL);
 }

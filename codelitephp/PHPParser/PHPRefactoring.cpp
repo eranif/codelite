@@ -44,12 +44,13 @@ PHPSetterGetterEntry::Vec_t PHPRefactoring::GetSetters(IEditor* editor) const
         PHPEntityBase::Ptr_t child = *iter;
         if(child->Is(kEntityTypeFunction)) {
             functions.push_back(child);
-        } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember()) {
-            // a member of a class
+        } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
+                  !child->Cast<PHPEntityVariable>()->IsConst()) {
+            // a member of a class which is not a constant
             members.push_back(child);
         }
     }
-    
+
     if(members.empty()) {
         return setters;
     }
@@ -109,12 +110,13 @@ PHPSetterGetterEntry::Vec_t PHPRefactoring::GetGetters(IEditor* editor) const
         PHPEntityBase::Ptr_t child = *iter;
         if(child->Is(kEntityTypeFunction)) {
             functions.push_back(child);
-        } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember()) {
+        } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
+                  !child->Cast<PHPEntityVariable>()->IsConst()) {
             // a member of a class
             members.push_back(child);
         }
     }
-    
+
     if(members.empty()) {
         return getters;
     }

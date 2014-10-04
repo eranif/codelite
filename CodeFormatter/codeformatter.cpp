@@ -439,7 +439,26 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
 
     wxString output;
-    if(fmtroptions.GetEngine() == kFormatEngineAStyle) {
+    if(FileExtManager::IsPHPFile(e.GetFileName())) {
+        // use the built-in PHP formatter
+        // Construct the formatting options
+        PHPFormatterOptions phpOptions;
+        phpOptions.flags = fmtroptions.GetPHPFormatterOptions();
+        if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
+            phpOptions.flags |= kPFF_UseTabs;
+        }
+        phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
+        phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
+        // Create the formatter buffer
+        PHPFormatterBuffer buffer(e.GetInputString(), phpOptions);
+
+        // Format the source
+        buffer.format();
+        
+        // set the output
+        output = buffer.GetBuffer();
+        
+    } else  if(fmtroptions.GetEngine() == kFormatEngineAStyle) {
         wxString options = fmtroptions.AstyleOptionsAsString();
 
         // determine indentation method and amount

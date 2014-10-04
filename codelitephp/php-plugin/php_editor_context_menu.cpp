@@ -10,6 +10,9 @@
 #include <event_notifier.h>
 #include "PHPRefactoring.h"
 #include "PHPEntityBase.h"
+#include "cl_command_event.h"
+#include <codelite_events.h>
+#include "clSTCLineKeeper.h"
 
 PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
 
@@ -786,7 +789,8 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
 {
     IEditor* editor = m_manager->GetActiveEditor();
     if(editor) {
-        PHPEntityBase::Ptr_t entry = PHPCodeCompletion::Instance()->GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
+        PHPEntityBase::Ptr_t entry =
+            PHPCodeCompletion::Instance()->GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
         if(entry) {
             wxString comment = entry->FormatPhpDoc();
             comment = editor->FormatTextKeepIndent(comment, editor->GetCurrentPosition());
@@ -816,9 +820,23 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         }
 
         if(!textToAdd.IsEmpty()) {
+            // Wrap the text insertion as a single transcation
+            editor->GetSTC()->BeginUndoAction();
+            clSTCLineKeeper lk(editor); // keep the current file line
             textToAdd =
                 editor->FormatTextKeepIndent(textToAdd, editor->GetCurrentPosition(), Format_Text_Save_Empty_Lines);
             editor->InsertText(editor->GetCurrentPosition(), textToAdd);
+            
+            // Format the source code after generation
+            clSourceFormatEvent evt(wxEVT_FORMAT_STRING);
+            evt.SetInputString(editor->GetSTC()->GetText());
+            
+            // Send also the filename, this will help the formatter to determine which fomratter engine to use
+            evt.SetFileName(editor->GetFileName().GetFullName());
+            
+            EventNotifier::Get()->ProcessEvent(evt);
+            editor->GetSTC()->SetText(evt.GetFormattedString());
+            editor->GetSTC()->EndUndoAction();
         }
     }
 }

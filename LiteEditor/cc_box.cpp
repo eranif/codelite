@@ -47,6 +47,7 @@
 #include "event_notifier.h"
 #include "cc_box_tip_window.h"
 #include "cl_command_event.h"
+#include "CxxTemplateFunction.h"
 
 #ifdef __WXGTK__
 #define TIP_TIMER 100
@@ -481,14 +482,37 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
             // otherwise, append '()' to the inserted string, place the caret
             // in the middle, and trigger the function tooltip
             if(itemInfo.tag.IsTemplateFunction()) {
+
+                /////////////////////////////////////////////////////////////
+                // Entering C++ zone here:
+                /////////////////////////////////////////////////////////////
+
                 // a template function was found - insert the following:
                 // <>()
-                m_editor->InsertText(m_editor->GetCurrentPos(), wxT("<>()"));
-                int pos = m_editor->GetCurrentPos();
-                m_editor->SetSelectionStart(pos);
-                m_editor->SetSelectionEnd(pos);
-                m_editor->CharRight();
-                
+                // There is however, one condition where we don't want to automatically
+                // enter "<|>()" and place the caret between the angle brackets:
+                // the template arguments can be deduced from the function signaure
+                TagEntryPtr t(new TagEntry(itemInfo.tag));
+                CxxTemplateFunction tf(t);
+                if(tf.CanTemplateArgsDeduced()) {
+                    m_editor->InsertText(m_editor->GetCurrentPos(), wxT("()"));
+                    int pos = m_editor->GetCurrentPos();
+                    m_editor->SetSelectionStart(pos);
+                    m_editor->SetSelectionEnd(pos);
+                    m_editor->CharRight();
+                    m_editor->SetIndicatorCurrent(MATCH_INDICATOR);
+                    m_editor->IndicatorFillRange(pos, 1);
+                } else {
+                    m_editor->InsertText(m_editor->GetCurrentPos(), wxT("<>()"));
+                    int pos = m_editor->GetCurrentPos();
+                    m_editor->SetSelectionStart(pos);
+                    m_editor->SetSelectionEnd(pos);
+                    m_editor->CharRight();
+                    m_editor->SetIndicatorCurrent(MATCH_INDICATOR);
+                    m_editor->IndicatorFillRange(pos, 1);
+                    // trigger function tip
+                    m_editor->CodeComplete();
+                }
             } else if(word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
 
                 // If the char after the insertion is '(' dont place another '()'

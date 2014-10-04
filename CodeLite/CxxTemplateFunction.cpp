@@ -1,15 +1,20 @@
 #include "CxxTemplateFunction.h"
 #include "CxxScannerTokens.h"
+#include <set>
 
 CxxTemplateFunction::CxxTemplateFunction(TagEntryPtr tag)
 {
     m_scanner = ::LexerNew(tag->GetPatternClean(), kLexerOpt_None);
+    m_sigScanner = ::LexerNew(tag->GetSignature(), kLexerOpt_None);
 }
 
 CxxTemplateFunction::~CxxTemplateFunction()
 {
     if(m_scanner) {
         ::LexerDestroy(&m_scanner);
+    }
+    if(m_sigScanner) {
+        ::LexerDestroy(&m_sigScanner);
     }
 }
 
@@ -75,4 +80,29 @@ void CxxTemplateFunction::ParseDefinitionList()
             break;
         }
     }
+}
+
+bool CxxTemplateFunction::CanTemplateArgsDeduced()
+{
+    ParseDefinitionList(); // Initializes the m_list array
+    
+    std::set<wxString> words;
+    CxxLexerToken token;
+    
+    // Collect all the identifiers and keep them inside a set
+    while(::LexerNext(m_sigScanner, token)) {
+        if(token.type == T_IDENTIFIER) {
+            words.insert(wxString(token.text));
+        }
+    }
+    
+    // Loop over the function arguments list and check that all of them 
+    // exists in the set we created from the function signature
+    for(size_t i=0; i<m_list.GetCount(); ++i) {
+        if(words.count(m_list.Item(i)) == 0) {
+            // this template argument could not be found in the function signature...
+            return false;
+        }
+    }
+    return true;
 }

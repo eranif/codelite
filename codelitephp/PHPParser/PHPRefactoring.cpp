@@ -45,7 +45,7 @@ PHPSetterGetterEntry::Vec_t PHPRefactoring::GetSetters(IEditor* editor) const
         if(child->Is(kEntityTypeFunction)) {
             functions.push_back(child);
         } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
-                  !child->Cast<PHPEntityVariable>()->IsConst()) {
+                  !child->Cast<PHPEntityVariable>()->IsConst() && !child->Cast<PHPEntityVariable>()->IsStatic()) {
             // a member of a class which is not a constant
             members.push_back(child);
         }
@@ -111,7 +111,7 @@ PHPSetterGetterEntry::Vec_t PHPRefactoring::GetGetters(IEditor* editor) const
         if(child->Is(kEntityTypeFunction)) {
             functions.push_back(child);
         } else if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
-                  !child->Cast<PHPEntityVariable>()->IsConst()) {
+                  !child->Cast<PHPEntityVariable>()->IsConst() && !child->Cast<PHPEntityVariable>()->IsStatic()) {
             // a member of a class
             members.push_back(child);
         }

@@ -562,6 +562,15 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
         }
+        
+        {
+            wxString sql;
+            sql << "delete from FILES_TABLE where FILE_NAME=:FILE_NAME";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+            st.ExecuteUpdate();
+        }
+        
         if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
         if(autoCommit) m_db.Rollback();

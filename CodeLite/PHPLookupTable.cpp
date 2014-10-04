@@ -81,6 +81,17 @@ const static wxString CREATE_VARIABLES_TABLE_SQL_IDX3 =
 const static wxString CREATE_VARIABLES_TABLE_SQL_IDX4 =
     "CREATE INDEX IF NOT EXISTS VARIABLES_TABLE_IDX_4 ON VARIABLES_TABLE(FUNCTION_ID)";
 
+//------------------------------------------------
+// Files table
+//------------------------------------------------
+const static wxString CREATE_FILES_TABLE_SQL =
+    "CREATE TABLE IF NOT EXISTS FILES_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+    "FILE_NAME TEXT, "                        // for global variable or class member this will be the scope_id parent id
+    "LAST_UPDATED INTEGER NOT NULL DEFAULT 0" // for function argument
+    ")";
+const static wxString CREATE_FILES_TABLE_SQL_IDX1 =
+    "CREATE UNIQUE INDEX IF NOT EXISTS FILES_TABLE_IDX_1 ON FILES_TABLE(FILE_NAME)";
+
 PHPLookupTable::PHPLookupTable()
     : m_sizeLimit(250)
 {
@@ -92,7 +103,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
 {
     // find the entity
     PHPEntityBase::Ptr_t scope = DoFindScope(parentDbId);
-    if(scope->Cast<PHPEntityClass>()) {
+    if(scope && scope->Cast<PHPEntityClass>()) {
         std::vector<wxLongLong> parents;
         std::set<wxLongLong> parentsVisited;
 
@@ -157,6 +168,10 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL_IDX3);
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL_IDX4);
 
+        // Files
+        m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL);
+        m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL_IDX1);
+
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::CreateSchema: %s", e.GetMessage());
     }
@@ -190,6 +205,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
         PHPEntityBase::Ptr_t topNamespace = source.Namespace();
         if(topNamespace) {
             topNamespace->StoreRecursive(m_db);
+            UpdateFileLastParsedTimestamp(source.GetFilename());
         }
         if(autoCommit) m_db.Commit();
 
@@ -361,58 +377,16 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindClass(wxLongLong id) { return DoFindSco
 
 PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t flags, const wxString& nameHint)
 {
-    // Find members of of parentDbID
     PHPEntityBase::List_t matches;
-    try {
-        {
-            // load functions
-            wxString sql;
-            sql << "SELECT * from FUNCTION_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
-            DoAddNameFilter(sql, nameHint, flags);
-            DoAddLimit(sql);
+    PHPEntityBase::Ptr_t scope = DoFindScope(parentId);
+    if(scope && scope->Cast<PHPEntityClass>()) {
+        std::vector<wxLongLong> parents;
+        std::set<wxLongLong> parentsVisited;
 
-            wxSQLite3Statement st = m_db.PrepareStatement(sql);
-            wxSQLite3ResultSet res = st.ExecuteQuery();
-
-            while(res.NextRow()) {
-                PHPEntityBase::Ptr_t match(new PHPEntityFunction());
-                match->FromResultSet(res);
-                bool isStatic = match->Cast<PHPEntityFunction>()->HasFlag(PHPEntityFunction::kStatic);
-                if(isStatic & CollectingStatics(flags)) {
-                    matches.push_back(match);
-
-                } else if(!isStatic && !CollectingStatics(flags)) {
-                    matches.push_back(match);
-                }
-            }
+        DoGetInheritanceParentIDs(scope, parents, parentsVisited);
+        for(size_t i = 0; i < parents.size(); ++i) {
+            DoFindChildren(matches, parents.at(i), flags, nameHint);
         }
-
-        {
-            // Add members from the variables table
-            wxString sql;
-            sql << "SELECT * from VARIABLES_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
-            DoAddNameFilter(sql, nameHint, flags);
-            DoAddLimit(sql);
-
-            wxSQLite3Statement st = m_db.PrepareStatement(sql);
-            wxSQLite3ResultSet res = st.ExecuteQuery();
-
-            while(res.NextRow()) {
-                PHPEntityBase::Ptr_t match(new PHPEntityVariable());
-                match->FromResultSet(res);
-
-                bool isConst = match->Cast<PHPEntityVariable>()->IsConst();
-                bool isStatic = match->Cast<PHPEntityVariable>()->IsStatic();
-                if((isStatic || isConst) && CollectingStatics(flags)) {
-                    matches.push_back(match);
-
-                } else if(!isStatic && !isConst && !CollectingStatics(flags)) {
-                    matches.push_back(match);
-                }
-            }
-        }
-    } catch(wxSQLite3Exception& e) {
-        CL_WARNING("PHPLookupTable::FindChildren: %s", e.GetMessage());
     }
     return matches;
 }
@@ -426,7 +400,7 @@ wxString PHPLookupTable::EscapeWildCards(const wxString& str)
 
 void PHPLookupTable::DoAddLimit(wxString& sql) { sql << " LIMIT " << m_sizeLimit; }
 
-void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, bool parseFuncBodies)
+void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies)
 {
     try {
 
@@ -447,12 +421,26 @@ void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, bool parseFun
                 EventNotifier::Get()->AddPendingEvent(event);
             }
 
-            wxFileName fnSourceFile(files.Item(i));
-            PHPSourceFile sourceFile(fnSourceFile);
-            sourceFile.SetFilename(fnSourceFile);
-            sourceFile.SetParseFunctionBody(parseFuncBodies);
-            sourceFile.Parse();
-            UpdateSourceFile(sourceFile, false);
+            bool reParseNeeded(true);
+            if(updateMode == kUpdateMode_Fast) {
+                // Check to see if we need to re-parse this file
+                // and store it to the database
+                wxFileName fnFile(files.Item(i));
+                time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
+                wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
+                if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
+                    reParseNeeded = false;
+                }
+            }
+
+            if(reParseNeeded) {
+                wxFileName fnSourceFile(files.Item(i));
+                PHPSourceFile sourceFile(fnSourceFile);
+                sourceFile.SetFilename(fnSourceFile);
+                sourceFile.SetParseFunctionBody(parseFuncBodies);
+                sourceFile.Parse();
+                UpdateSourceFile(sourceFile, false);
+            }
         }
         m_db.Commit();
 
@@ -593,3 +581,92 @@ void PHPLookupTable::Close()
 }
 
 bool PHPLookupTable::IsOpened() const { return m_db.IsOpen(); }
+
+void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
+                                    wxLongLong parentId,
+                                    size_t flags,
+                                    const wxString& nameHint)
+{
+    // Find members of of parentDbID
+    try {
+        {
+            // load functions
+            wxString sql;
+            sql << "SELECT * from FUNCTION_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
+            DoAddNameFilter(sql, nameHint, flags);
+            DoAddLimit(sql);
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityFunction());
+                match->FromResultSet(res);
+                bool isStatic = match->Cast<PHPEntityFunction>()->HasFlag(PHPEntityFunction::kStatic);
+                if(isStatic & CollectingStatics(flags)) {
+                    matches.push_back(match);
+
+                } else if(!isStatic && !CollectingStatics(flags)) {
+                    matches.push_back(match);
+                }
+            }
+        }
+
+        {
+            // Add members from the variables table
+            wxString sql;
+            sql << "SELECT * from VARIABLES_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
+            DoAddNameFilter(sql, nameHint, flags);
+            DoAddLimit(sql);
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityVariable());
+                match->FromResultSet(res);
+
+                bool isConst = match->Cast<PHPEntityVariable>()->IsConst();
+                bool isStatic = match->Cast<PHPEntityVariable>()->IsStatic();
+                if((isStatic || isConst) && CollectingStatics(flags)) {
+                    matches.push_back(match);
+
+                } else if(!isStatic && !isConst && !CollectingStatics(flags)) {
+                    matches.push_back(match);
+                }
+            }
+        }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::FindChildren: %s", e.GetMessage());
+    }
+}
+
+wxLongLong PHPLookupTable::GetFileLastParsedTimestamp(const wxFileName& filename)
+{
+    try {
+        wxSQLite3Statement st =
+            m_db.PrepareStatement("SELECT LAST_UPDATED FROM FILES_TABLE WHERE FILE_NAME=:FILE_NAME");
+        st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        if(res.NextRow()) {
+            return res.GetInt64("LAST_UPDATED");
+        }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::FindChildren: %s", e.GetMessage());
+    }
+    return 0;
+}
+
+void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
+{
+    try {
+        wxSQLite3Statement st = m_db.PrepareStatement(
+            "REPLACE INTO FILES_TABLE (ID, FILE_NAME, LAST_UPDATED) VALUES (NULL, :FILE_NAME, :LAST_UPDATED)");
+        st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+        st.Bind(st.GetParamIndex(":LAST_UPDATED"), (wxLongLong) time(NULL));
+        st.ExecuteUpdate();
+        
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::UpdateFileLastParsedTimestamp: %s", e.GetMessage());
+    }
+}

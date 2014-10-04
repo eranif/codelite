@@ -2,6 +2,7 @@
 #include "PHPSourceFile.h"
 #include "PHPEntityClass.h"
 #include "PHPEntityVariable.h"
+#include "PHPEntityFunction.h"
 
 PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText)
     : m_type(kNone)
@@ -84,19 +85,42 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     source.Parse();
     wxString asString = SimplifyExpression(source, 0);
     wxUnusedVar(asString);
-    
+
     // Now, use the lookup table
     std::list<PHPExpression::Part>::iterator iter = m_parts.begin();
     PHPEntityBase::Ptr_t currentToken(NULL);
     for(; iter != m_parts.end(); ++iter) {
+        Part& part = *iter;
         if(!currentToken) {
             // first token
-            currentToken = lookpTable.FindScope(iter->m_text);
-            
+            currentToken = lookpTable.FindScope(part.m_text);
+
         } else {
             // load the children of the current token (optionally, filter by the text)
-            currentToken = lookpTable.FindMemberOf(currentToken->GetDbId(), iter->m_text);
+            currentToken = lookpTable.FindMemberOf(currentToken->GetDbId(), part.m_text);
         }
+
+        // If the current "part" of the expression ends with a scope resolving operator ("::") or
+        // an object operator ("->") we need to resolve the operator to the actual type (
+        // incase of a functin it will be the return value, and in case of a variable it will be
+        // the type hint)
+        if(currentToken) {
+            if(part.m_operator == kPHP_T_OBJECT_OPERATOR || part.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
+                wxString actualType;
+                if(currentToken->Is(kEntityTypeFunction)) {
+                    // return the function return value
+                    actualType = currentToken->Cast<PHPEntityFunction>()->GetReturnValue();
+                } else if(currentToken->Is(kEntityTypeVariable)) {
+                    // return the type hint
+                    actualType = currentToken->Cast<PHPEntityVariable>()->GetTypeHint();
+                }
+
+                if(!actualType.IsEmpty()) {
+                    currentToken = lookpTable.FindScope(actualType);
+                }
+            }
+        }
+        
         if(!currentToken) {
             // return NULL
             return currentToken;
@@ -215,7 +239,13 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
         case kPHP_T_PAAMAYIM_NEKUDOTAYIM:
         case kPHP_T_OBJECT_OPERATOR:
             if(!currentText.IsEmpty() && part.m_text.IsEmpty()) {
-                part.m_text = currentText;
+                if(m_parts.empty() && token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
+                    // The first token in the "parts" list with scope resolving operator
+                    // we need to make sure that the indetifier is provided in fullpath
+                    part.m_text = source.MakeIdentifierAbsolute(currentText);
+                } else {
+                    part.m_text = currentText;
+                }
             }
             part.m_operator = token.type;
             part.m_operatorText = token.text;
@@ -264,7 +294,7 @@ size_t PHPExpression::GetLookupFlags() const
 {
     size_t flags(0);
     if(m_parts.empty()) return flags;
-    
+
     Part lastExpressionPart = m_parts.back();
     if(lastExpressionPart.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
         if(lastExpressionPart.m_textType == kPHP_T_SELF)

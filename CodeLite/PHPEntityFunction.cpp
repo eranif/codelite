@@ -63,8 +63,8 @@ void PHPEntityFunction::Store(wxSQLite3Database& db)
         statement.Bind(statement.GetParamIndex(":NAME"), GetName());
         statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
         statement.Bind(statement.GetParamIndex(":SIGNATURE"), GetSignature());
-        statement.Bind(statement.GetParamIndex(":RETURN_VALUE"), m_returnValue ? m_returnValue->GetName() : wxString());
-        statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags()); // TODO: implement this
+        statement.Bind(statement.GetParamIndex(":RETURN_VALUE"), GetReturnValue());
+        statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags());
         statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
         statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
         statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
@@ -109,8 +109,8 @@ wxString PHPEntityFunction::FormatPhpDoc() const
     PHPEntityBase::List_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
         const PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
-        doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "<unknown>" : var->GetTypeHint()) << var->GetName()
-                                                                                               << " \n";
+        doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "<unknown>" : var->GetTypeHint()) << " "
+            << var->GetName() << " \n";
     }
     doc << " * @return " << GetReturnValue() << " \n";
     doc << " */";

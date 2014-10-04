@@ -27,7 +27,7 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
 
         PHPDocComment docComment(m_sourceFile, entity->GetDocComment());
         if(entity->Is(kEntityTypeFunction) && !docComment.GetReturn().IsEmpty()) {
-            entity->Cast<PHPEntityFunction>()->SetStrReturnValue(docComment.GetReturn());
+            entity->Cast<PHPEntityFunction>()->SetReturnValue(docComment.GetReturn());
         } else if(entity->Is(kEntityTypeVariable) &&
                   (!entity->Cast<PHPEntityVariable>()->HasFlag(PHPEntityVariable::kFunctionArg))) {
             // A global variable, const or a member

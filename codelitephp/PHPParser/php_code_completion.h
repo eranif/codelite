@@ -12,8 +12,7 @@
 #include "cl_command_event.h"
 #include "php_event.h"
 
-struct PHPLocation
-{
+struct PHPLocation {
     wxString what;     // Token name
     wxString filename; // file name (absolute path)
     int linenumber;    // line number within filename
@@ -41,7 +40,7 @@ protected:
     IManager* m_manager;
     CCBoxTipWindow* m_typeInfoTooltip;
     PHPLookupTable m_lookupTable;
-    
+
     bool CanCodeComplete(clCodeCompletionEvent& e) const;
     void DoShowCompletionBox(const PHPEntityBase::List_t& entries, const wxString& partname);
 
@@ -62,10 +61,13 @@ private:
     void OnFindSymbol(clCodeCompletionEvent& e);
     void OnDismissTooltip(wxCommandEvent& e);
     
+    void OnRetagWorkspace(wxCommandEvent& event);
+    
     // Workspace events
     void OnWorkspaceOpened(PHPEvent& event);
     void OnWorkspaceClosed(PHPEvent& event);
-    
+    void OnFileSaved(clCommandEvent& event);
+
 public:
     void SetManager(IManager* manager) { this->m_manager = manager; }
     /**
@@ -74,7 +76,7 @@ public:
      * @return a valid PHPLocation or NULL
      */
     PHPLocationPtr FindDefinition(IEditor* editor, int pos);
-    
+
     /**
      * @brief return the PHPEntity under the caret
      */

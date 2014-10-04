@@ -29,9 +29,6 @@ protected:
     // PHPEntityVariable
     PHPEntityBase::List_t m_locals;
 
-    // The function return value
-    PHPEntityBase::Ptr_t m_returnValue;
-
     // Function flags
     size_t m_flags;
 
@@ -45,7 +42,7 @@ public:
     PHPEntityFunction();
     virtual ~PHPEntityFunction();
     const wxString& GetReturnValue() const { return m_strReturnValue; }
-    void SetStrReturnValue(const wxString& strReturnValue) { this->m_strReturnValue = strReturnValue; }
+    void SetReturnValue(const wxString& strReturnValue) { this->m_strReturnValue = strReturnValue; }
 
     wxString GetScope() const;
     /**
@@ -63,7 +60,6 @@ public:
     size_t GetFlags() const { return m_flags; }
     void SetFlags(size_t flags);
     bool HasFlag(eFunctionFlags flag) const { return m_flags & flag; }
-    void SetReturnValue(PHPEntityBase::Ptr_t returnValue) { this->m_returnValue = returnValue; }
 };
 
 #endif // PHPENTITYFUNCTION_H

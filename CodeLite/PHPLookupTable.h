@@ -42,7 +42,11 @@ public:
         kLookupFlags_StaticMembers = (1 << 6),     // include static members/functions (static::, class_type::)
         kLookupFlags_SelfStaticMembers = (1 << 7), // Current class static members only (self::)
     };
-
+    
+    enum eUpdateMode {
+        kUpdateMode_Fast,
+        kUpdateMode_Full,
+    };
 private:
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 
@@ -77,11 +81,29 @@ private:
                                  const wxString& tableName,
                                  const wxString& nameHint,
                                  eLookupFlags flags);
-    
-    bool CollectingStatics(size_t flags) const {
+
+    bool CollectingStatics(size_t flags) const
+    {
         return flags & (kLookupFlags_SelfStaticMembers | kLookupFlags_StaticMembers);
     }
+
+    /**
+     * @brief return children of parentId _WITHOUT_ taking inheritance into consideration
+     */
+    void DoFindChildren(PHPEntityBase::List_t& matches,
+                        wxLongLong parentId,
+                        size_t flags = kLookupFlags_None,
+                        const wxString& nameHint = "");
     
+    /**
+     * @brief return the timestamp of the last parse for 'filename'
+     */
+    wxLongLong GetFileLastParsedTimestamp(const wxFileName& filename);
+    
+    /**
+     * @brief update the file's last updated timestamp
+     */
+    void UpdateFileLastParsedTimestamp(const wxFileName& filename);
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
@@ -142,7 +164,7 @@ public:
     /**
      * @brief update list of source files
      */
-    void UpdateSourceFiles(const wxArrayString& files, bool parseFuncBodies = true);
+    void UpdateSourceFiles(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies = true);
 
     /**
      * @brief delete all entries belonged to filename.

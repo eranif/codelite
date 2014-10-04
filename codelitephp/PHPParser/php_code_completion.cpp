@@ -16,6 +16,7 @@
 #include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
 #include "PHPExpression.h"
+#include "php_parser_thread.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -49,6 +50,12 @@ PHPCodeCompletion::PHPCodeCompletion()
     : m_manager(NULL)
     , m_typeInfoTooltip(NULL)
 {
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_RETAG_WORKSPACE, wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_RETAG_WORKSPACE_FULL, wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
+
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_CLOSED, &PHPCodeCompletion::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPCodeCompletion::OnWorkspaceOpened, this);
     EventNotifier::Get()->Connect(
@@ -79,6 +86,12 @@ PHPCodeCompletion::PHPCodeCompletion()
 
 PHPCodeCompletion::~PHPCodeCompletion()
 {
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_RETAG_WORKSPACE, wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_RETAG_WORKSPACE_FULL, wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
+
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_CLOSED, &PHPCodeCompletion::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &PHPCodeCompletion::OnWorkspaceOpened, this);
 
@@ -174,9 +187,26 @@ void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
             wxString comment, docComment;
             docComment = userData->entry->GetDocComment();
             if(docComment.IsEmpty() == false) {
+                
+                // Format the comment
+                docComment.Replace("/**", "");
+                docComment.Replace("/*!", "");
+                docComment.Replace("/*", "");
+                docComment.Replace("*/", "");
+                docComment.Replace("**/", "");
+                wxArrayString commentLines = ::wxStringTokenize(docComment, "\n", wxTOKEN_STRTOK);
+                docComment.Clear();
+                for(size_t i = 0; i < commentLines.GetCount(); ++i) {
+                    commentLines.Item(i).Trim().Trim(false);
+                    if(commentLines.Item(i).StartsWith("*")) {
+                        commentLines.Item(i).Remove(0, 1);
+                    }
+                    docComment << commentLines.Item(i) << "\n";
+                }
+                
                 comment << docComment;
                 comment.Trim().Trim(false); // The Doc comment
-                comment << wxT("\n<hr>\n"); // HLine
+                comment << wxT("\n<hr>");   // HLine
             }
 
             wxFileName fn(userData->entry->GetFilename());
@@ -413,4 +443,27 @@ void PHPCodeCompletion::OnWorkspaceClosed(PHPEvent& event)
 {
     event.Skip();
     m_lookupTable.Close();
+}
+
+void PHPCodeCompletion::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    // check if the saved file is a PHP file
+    // In case it is, then re-parse the file and store the results
+    if(::IsPHPFile(event.GetFileName())) {
+        PHPParserThreadRequest* req = new PHPParserThreadRequest(PHPParserThreadRequest::kParseSingleFile);
+        req->file = event.GetFileName();
+        req->workspaceFile = PHPWorkspace::Get()->GetFilename().GetFullPath();
+        PHPParserThread::Instance()->Add(req);
+    }
+}
+
+void PHPCodeCompletion::OnRetagWorkspace(wxCommandEvent& event)
+{
+    event.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        event.Skip(false);
+        // Reparse the workspace
+        PHPWorkspace::Get()->ParseWorkspace(event.GetEventType() == wxEVT_CMD_RETAG_WORKSPACE_FULL);
+    }
 }

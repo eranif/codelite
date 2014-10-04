@@ -98,11 +98,7 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     phpEvent.SetFileName(m_workspaceFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(phpEvent);
 
-    // Request for parsing
-    PHPParserThreadRequest* req = new PHPParserThreadRequest();
-    req->workspaceFile = GetFilename().GetFullPath();
-    GetWorkspaceFiles(req->files);
-    PHPParserThread::Instance()->Add(req);
+    ParseWorkspace(false);
     return true;
 }
 
@@ -456,4 +452,14 @@ void PHPWorkspace::GetWorkspaceFiles(wxArrayString& workspaceFiles) const
     for(; iter != files.end(); ++iter) {
         workspaceFiles.Add(*iter);
     }
+}
+
+void PHPWorkspace::ParseWorkspace(bool full)
+{
+    // Request for parsing
+    PHPParserThreadRequest* req = new PHPParserThreadRequest(full ? PHPParserThreadRequest::kParseWorkspaceFilesFull :
+                                                                    PHPParserThreadRequest::kParseWorkspaceFilesQuick);
+    req->workspaceFile = GetFilename().GetFullPath();
+    GetWorkspaceFiles(req->files);
+    PHPParserThread::Instance()->Add(req);
 }

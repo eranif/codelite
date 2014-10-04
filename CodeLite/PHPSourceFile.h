@@ -82,7 +82,12 @@ protected:
      * @brief 'function' keyword found
      */
     void OnFunction();
-
+    
+    /**
+     * @brief found a global variable
+     */
+    void OnVariable(const phpLexerToken& token);
+    
     /**
      * @brief 'class' keyword found
      */

@@ -98,8 +98,7 @@ int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
             return 6;
 
         } else if(var->HasFlag(PHPEntityVariable::kMember)) {
-            if(var->HasFlag(PHPEntityVariable::kConst))
-                return 9; // constant
+            if(var->HasFlag(PHPEntityVariable::kConst)) return 9; // constant
             // Member
             if(var->HasFlag(PHPEntityVariable::kPrivate))
                 return 4;
@@ -240,8 +239,8 @@ wxTreeItemId PHPFileLayoutTree::TryGetPrevItem(wxTreeItemId item)
 
 void PHPFileLayoutTree::BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Ptr_t entity)
 {
-    wxTreeItemId parent = AppendItem(
-        parentTreeItem, entity->GetDisplayName(), GetImageId(entity), GetImageId(entity), new QItemData(entity));
+    int imgID = GetImageId(entity);
+    wxTreeItemId parent = AppendItem(parentTreeItem, entity->GetDisplayName(), imgID, imgID, new QItemData(entity));
     // dont add the children of the function (i.e. function arguments)
     if(entity->Is(kEntityTypeFunction)) return;
     const PHPEntityBase::List_t& children = entity->GetChildren();

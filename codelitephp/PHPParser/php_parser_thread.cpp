@@ -4,9 +4,7 @@
 
 PHPParserThread* PHPParserThread::ms_instance = 0;
 
-PHPParserThread::PHPParserThread()
-{
-}
+PHPParserThread::PHPParserThread() {}
 
 PHPParserThread::~PHPParserThread() {}
 
@@ -31,18 +29,39 @@ void PHPParserThread::ProcessRequest(ThreadRequest* request)
 {
     PHPParserThreadRequest* r = dynamic_cast<PHPParserThreadRequest*>(request);
     if(r) {
-        // Now parse the files
-        ParseFiles(r);
+        switch(r->requestType) {
+        case PHPParserThreadRequest::kParseWorkspaceFilesFull:
+        case PHPParserThreadRequest::kParseWorkspaceFilesQuick:
+            ParseFiles(r);
+            break;
+        case PHPParserThreadRequest::kParseSingleFile:
+            ParseFile(r);
+            break;
+        }
     }
 }
 
 void PHPParserThread::ParseFiles(PHPParserThreadRequest* request)
 {
     wxFileName fnWorkspaceFile(request->workspaceFile);
-    
+
     // Open the database
     PHPLookupTable lookuptable;
     lookuptable.Open(fnWorkspaceFile.GetPath());
-    lookuptable.UpdateSourceFiles(request->files, false);
+    lookuptable.UpdateSourceFiles(request->files,
+                                  request->requestType == PHPParserThreadRequest::kParseWorkspaceFilesFull ?
+                                      PHPLookupTable::kUpdateMode_Full :
+                                      PHPLookupTable::kUpdateMode_Fast,
+                                  false);
 }
 
+void PHPParserThread::ParseFile(PHPParserThreadRequest* request)
+{
+    wxFileName fnWorkspaceFile(request->workspaceFile);
+    PHPLookupTable lookuptable;
+    lookuptable.Open(fnWorkspaceFile.GetPath());
+
+    wxArrayString files;
+    files.Add(request->file);
+    lookuptable.UpdateSourceFiles(files, PHPLookupTable::kUpdateMode_Full, false);
+}

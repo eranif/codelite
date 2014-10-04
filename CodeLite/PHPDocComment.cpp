@@ -24,22 +24,22 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         m_varName = reVarType2.GetMatch(m_comment, 2);
     }
 
-    // @param $name PDO
-    static wxRegEx reParam(wxT("@(param|parameter)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\a-zA-Z0-9_]+)"));
-    wxArrayString lines = wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
-    if(reParam.IsValid()) {
-        for(size_t i = 0; i < lines.GetCount(); i++) {
-            wxString line = lines.Item(i).Trim().Trim(false);
-            if(reParam.Matches(line)) {
-                wxString paramName, paramHint;
-                paramHint = sourceFile.MakeIdentifierAbsolute(reParam.GetMatch(line, 3));
-                paramName = reParam.GetMatch(line, 2);
-                m_paramsArr.Add(paramHint);
-                m_params.insert(std::make_pair(paramName, paramHint));
-            }
-        }
-    }
-
+//    // @param $name PDO
+//    static wxRegEx reParam(wxT("@(param|parameter)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]*)[ \t]+([\\a-zA-Z0-9_]+)"));
+//    wxArrayString lines = wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);
+//    if(reParam.IsValid()) {
+//        for(size_t i = 0; i < lines.GetCount(); i++) {
+//            wxString line = lines.Item(i).Trim().Trim(false);
+//            if(reParam.Matches(line)) {
+//                wxString paramName, paramHint;
+//                paramHint = sourceFile.MakeIdentifierAbsolute(reParam.GetMatch(line, 3));
+//                paramName = reParam.GetMatch(line, 2);
+//                m_paramsArr.Add(paramHint);
+//                m_params.insert(std::make_pair(paramName, paramHint));
+//            }
+//        }
+//    }
+//
     // @param PDO $name
     static wxRegEx reParam2(wxT("@(param|parameter)[ \t]+([\\a-zA-Z0-9_]*)[ \t]+([\\$]{1}[\\a-zA-Z0-9_]+)"));
     wxArrayString lines2 = wxStringTokenize(m_comment, wxT("\n"), wxTOKEN_STRTOK);

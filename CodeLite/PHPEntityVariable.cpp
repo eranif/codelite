@@ -138,7 +138,7 @@ wxString PHPEntityVariable::GetNameNoDollar() const
 {
     wxString name = GetName();
     if(name.StartsWith("$")) {
-        name.RemoveLast();
+        name.Remove(0, 1);
     }
     name.Trim().Trim(false);
     return name;

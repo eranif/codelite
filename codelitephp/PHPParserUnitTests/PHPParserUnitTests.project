@@ -60,6 +60,7 @@
     <File Name="Tests/test_anonymous_function.php"/>
     <File Name="Tests/test_function_body_with_keywords.php"/>
     <File Name="Tests/test_complete_namespace_children.php"/>
+    <File Name="Tests/test_global_vars.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

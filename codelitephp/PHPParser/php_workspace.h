@@ -56,7 +56,12 @@ public:
     PHPProject::Ptr_t GetProject(const wxString& project) const;
     PHPProject::Ptr_t GetActiveProject() const;
     wxString GetPrivateFolder() const;
-
+    
+    /**
+     * @brief re-parse the workspace
+     */
+    void ParseWorkspace(bool full);
+    
     /**
      * @brief return true if project exists
      */

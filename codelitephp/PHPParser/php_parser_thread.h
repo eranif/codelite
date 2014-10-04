@@ -7,13 +7,20 @@
 class PHPParserThreadRequest : public ThreadRequest
 {
 public:
-    bool bIsFullRetag;
+    enum ePHPParserThreadRequestType {
+        kParseWorkspaceFilesFull,
+        kParseWorkspaceFilesQuick,
+        kParseSingleFile,
+    };
+    
+    ePHPParserThreadRequestType requestType;
     wxArrayString files;
     wxString workspaceFile;
-
+    wxString file;
+    
 public:
-    PHPParserThreadRequest()
-        : bIsFullRetag(false)
+    PHPParserThreadRequest(ePHPParserThreadRequestType type)
+        : requestType(type)
     {
     }
     virtual ~PHPParserThreadRequest() {}
@@ -31,6 +38,7 @@ private:
     PHPParserThread();
     virtual ~PHPParserThread();
     void ParseFiles(PHPParserThreadRequest* request);
+    void ParseFile(PHPParserThreadRequest* request);
 
 public:
     virtual void ProcessRequest(ThreadRequest* request);

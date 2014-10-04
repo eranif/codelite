@@ -39,8 +39,12 @@ bool IsPHPFile(IEditor* editor)
 {
     if(!editor)
         return false;
+    return ::IsPHPFile(editor->GetFileName().GetFullPath());
+}
 
-    wxFileName fileName = editor->GetFileName();
+bool IsPHPFile(const wxString& filename)
+{
+    wxFileName fileName = filename;
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer(wxT("Html"));
     wxString fileSpec;
 

@@ -14,31 +14,31 @@ int main(int argc, char** argv)
     PHPLookupTable lookup;
     lookup.Open(::wxGetCwd());
 
-    PHPSourceFile sourceFile(wxFileName("../Tests/Mage.php"));
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_global_vars.php"));
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     sourceFile.PrintStdout();
-        
-    // Store the results
-    lookup.UpdateSourceFile(sourceFile);
-    PHPExpression expr("<?php \\Mage::$");
-    PHPEntityBase::Ptr_t resolvedType = expr.Resolve(lookup, "file.php");
-    if(resolvedType) {
-        // Get list of children from the database
-        PHPEntityBase::List_t matches =
-            lookup.FindChildren(resolvedType->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith, expr.GetFilter());
-    
-        wxPrintf("%s => suggested members are:\n", expr.GetExpressionAsString());
-        PHPEntityBase::List_t::iterator iter = matches.begin();
-        for(; iter != matches.end(); ++iter) {
-            PHPEntityBase::Ptr_t entry = *iter;
-            if(entry->Is(kEntityTypeFunction)) {
-                wxPrintf("%s%s\n", entry->GetName(), entry->Cast<PHPEntityFunction>()->GetSignature());
-            } else {
-                wxPrintf("%s\n", entry->GetName());
-            }
-        }
-    }
+
+//    // Store the results
+//    lookup.UpdateSourceFile(sourceFile);
+//    PHPExpression expr("<?php \\Mage::$");
+//    PHPEntityBase::Ptr_t resolvedType = expr.Resolve(lookup, "file.php");
+//    if(resolvedType) {
+//        // Get list of children from the database
+//        PHPEntityBase::List_t matches =
+//            lookup.FindChildren(resolvedType->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith, expr.GetFilter());
+//    
+//        wxPrintf("%s => suggested members are:\n", expr.GetExpressionAsString());
+//        PHPEntityBase::List_t::iterator iter = matches.begin();
+//        for(; iter != matches.end(); ++iter) {
+//            PHPEntityBase::Ptr_t entry = *iter;
+//            if(entry->Is(kEntityTypeFunction)) {
+//                wxPrintf("%s%s\n", entry->GetName(), entry->Cast<PHPEntityFunction>()->GetSignature());
+//            } else {
+//                wxPrintf("%s\n", entry->GetName());
+//            }
+//        }
+//    }
     wxPrintf("Done!...\n");
 
 #else

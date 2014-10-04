@@ -73,6 +73,13 @@ void PHPSourceFile::Parse(int exitDepth)
         case ';':
             m_lookBackTokens.clear();
             break;
+        case kPHP_T_VARIABLE:
+            if(!CurrentScope()->Is(kEntityTypeClass)) {
+                // A global variable
+                OnVariable(token);
+            }
+            break;
+
         case kPHP_T_PUBLIC:
         case kPHP_T_PRIVATE:
         case kPHP_T_PROTECTED: {
@@ -824,4 +831,38 @@ size_t PHPSourceFile::LookBackForVariablesFlags()
         }
     }
     return flags;
+}
+
+void PHPSourceFile::OnVariable(const phpLexerToken& tok)
+{
+    phpLexerToken token;
+    // Read until we find the ';'
+    std::vector<phpLexerToken> tokens;
+    PHPEntityBase::Ptr_t var(new PHPEntityVariable());
+    var->SetName(tok.text);
+    var->SetFilename(m_filename.GetFullPath());
+    CurrentScope()->AddChild(var);
+    
+    if(!NextToken(token)) return;
+    
+    if(token.type != '=') {
+        m_lookBackTokens.clear();
+        return;
+    }
+            
+    wxString expr;
+    if(!ReadExpression(expr)) return; // EOF
+
+    // Optimize 'new ClassName(..)' expression
+    if(expr.StartsWith("new")) {
+        expr = expr.Mid(3);
+        expr.Trim().Trim(false);
+        expr = expr.BeforeFirst('(');
+        expr.Trim().Trim(false);
+        var->Cast<PHPEntityVariable>()->SetTypeHint(MakeIdentifierAbsolute(expr));
+
+    } else {
+        // keep the expression
+        var->Cast<PHPEntityVariable>()->SetExpressionHint(expr);
+    }
 }

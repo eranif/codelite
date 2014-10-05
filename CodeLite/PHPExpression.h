@@ -34,12 +34,12 @@ public:
 protected:
     eType m_type;
     wxString m_text;
-    wxVector<phpLexerToken> m_expression;
+    phpLexerToken::Vet_t m_expression;
     PHPExpression::List_t m_parts;
     wxString m_filter; // Part of the word that was typed by the user
                        // but will do no good to resolve the expression
 protected:
-    wxVector<phpLexerToken> CreateExpression(const wxString& text);
+    phpLexerToken::Vet_t CreateExpression(const wxString& text);
     wxString SimplifyExpression(PHPSourceFile& source, int depth);
 
 public:

@@ -3,6 +3,7 @@
 #include "PHPEntityClass.h"
 #include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
+#include <stack>
 
 PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText)
     : m_type(kNone)
@@ -24,55 +25,104 @@ PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText)
 
 PHPExpression::~PHPExpression() {}
 
-wxVector<phpLexerToken> PHPExpression::CreateExpression(const wxString& text)
+phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 {
+    // Extract the expression at the end of the input text
+    std::stack<phpLexerToken::Vet_t> stack;
+    phpLexerToken::Vet_t tokens;
+    stack.push(tokens);
+
+    phpLexerToken::Vet_t* current = &stack.top();
+
     // strip the text from any comments
     PHPScanner_t scanner = ::phpLexerNew(text);
     phpLexerToken token;
-    wxVector<phpLexerToken> tokens;
-    int depth(0);
     while(::phpLexerNext(scanner, token)) {
         switch(token.type) {
         case kPHP_T_OPEN_TAG:
             // skip the open tag
             break;
+        // the following are tokens that once seen
+        // we should start a new expression:
+        case kPHP_T_ECHO:
+        case kPHP_T_CASE:
+        case kPHP_T_RETURN:
+        case kPHP_T_THROW:
+        case kPHP_T_CLASS:
+        case kPHP_T_TRAIT:
+        case kPHP_T_INTERFACE:
+        case kPHP_T_EXTENDS:
+        case kPHP_T_IMPLEMENTS:
+        case kPHP_T_DOUBLE_ARROW:
+        case kPHP_T_NS_C:
+        case kPHP_T_FUNC_C:
+        case kPHP_T_METHOD_C:
+        case kPHP_T_CLASS_C:
+        case kPHP_T_TRAIT_C:
+        case kPHP_T_LINE:
+        case kPHP_T_FILE:
+        case kPHP_T_DIR:
+        case kPHP_T_YIELD:
+        case kPHP_T_LOGICAL_OR:
+        case kPHP_T_LOGICAL_XOR:
+        case kPHP_T_LOGICAL_AND:
+        case kPHP_T_PRINT:
+        case kPHP_T_PLUS_EQUAL:
+        case kPHP_T_MINUS_EQUAL:
+        case kPHP_T_MUL_EQUAL:
+        case kPHP_T_DIV_EQUAL:
+        case kPHP_T_CONCAT_EQUAL:
+        case kPHP_T_MOD_EQUAL:
+        case kPHP_T_AND_EQUAL:
+        case kPHP_T_OR_EQUAL:
+        case kPHP_T_XOR_EQUAL:
+        case kPHP_T_SL_EQUAL:
+        case kPHP_T_SR_EQUAL:
+        case kPHP_T_BOOLEAN_OR:
+        case kPHP_T_BOOLEAN_AND:
+        case kPHP_T_IS_EQUAL:
+        case kPHP_T_IS_NOT_EQUAL:
+        case kPHP_T_IS_IDENTICAL:
+        case kPHP_T_IS_NOT_IDENTICAL:
+        case kPHP_T_IS_SMALLER_OR_EQUAL:
+        case kPHP_T_IS_GREATER_OR_EQUAL:
+        case kPHP_T_SL:
+        case kPHP_T_SR:
+        case '.':
         case ';':
         case '{':
         case '}':
         case '=':
-            if(depth == 0) {
-                tokens.clear();
-            }
+        case ':':
+            if(current) current->clear();
             break;
         case '(':
-            if(depth == 0) {
-                tokens.push_back(token);
-            }
-            depth++;
+            if(current) current->push_back(token);
+            stack.push(phpLexerToken::Vet_t());
+            current = &stack.top();
             break;
         case ')':
-            depth--;
-            if(depth == 0) {
-                // test the next token
-                phpLexerToken nextToken;
-                if(::phpLexerNext(scanner, nextToken)) ::phpLexerUnget(scanner);
-
-                if(nextToken.type == kPHP_T_OBJECT_OPERATOR) {
-                    tokens.push_back(token);
-                } else {
-                    tokens.clear();
-                }
+            if(stack.size() < 2) {
+                // parse error...
+                return phpLexerToken::Vet_t();
             }
+            // switch back to the previous set of tokens
+            stack.pop();
+            current = &stack.top();
+            if(current) current->push_back(token);
             break;
         default:
-            if(depth == 0) {
-                tokens.push_back(token);
-            }
+            if(current) current->push_back(token);
             break;
         }
     }
+
     ::phpLexerDestroy(&scanner);
-    return tokens;
+    phpLexerToken::Vet_t result;
+    if(current) {
+        result.swap(*current);
+    }
+    return result;
 }
 
 PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
@@ -120,7 +170,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
                 }
             }
         }
-        
+
         if(!currentToken) {
             // return NULL
             return currentToken;
@@ -240,13 +290,14 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
         case kPHP_T_OBJECT_OPERATOR:
             if(!currentText.IsEmpty() && part.m_text.IsEmpty()) {
                 if(m_parts.empty() && token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
-                    // The first token in the "parts" list with scope resolving operator
+                    // The first token in the "parts" list has a scope resolving operator ("::")
                     // we need to make sure that the indetifier is provided in fullpath
                     part.m_text = source.MakeIdentifierAbsolute(currentText);
                 } else {
                     part.m_text = currentText;
                 }
             }
+            
             part.m_operator = token.type;
             part.m_operatorText = token.text;
             m_parts.push_back(part);

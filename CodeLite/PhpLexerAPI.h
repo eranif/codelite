@@ -5,6 +5,7 @@
 #include <wx/string.h>
 #include "codelite_exports.h"
 #include "PHPScannerTokens.h"
+#include <vector>
 
 enum eLexerOptions {
     kPhpLexerOpt_None = 0x00000000,
@@ -40,6 +41,7 @@ struct WXDLLIMPEXP_CL phpLexerToken {
     bool IsDocComment() const {
         return type == kPHP_T_C_COMMENT;
     }
+    typedef std::vector<phpLexerToken> Vet_t;
 };
 
 /**

@@ -5,53 +5,69 @@
 #include "PHPLookupTable.h"
 #include "PHPExpression.h"
 #include "PHPEntityFunction.h"
+#include "tester.h"
+
+void PrintMatches(const PHPEntityBase::List_t& matches)
+{
+    PHPEntityBase::List_t::const_iterator iter = matches.begin();
+    for(; iter != matches.end(); ++iter) {
+        (*iter)->PrintStdout(2);
+    }
+}
+
+PHPLookupTable lookup;
+TEST_FUNC(test_this_operator)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_this_operator.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    if(resolved) {
+        PHPEntityBase::List_t matches = lookup.FindChildren(
+            resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
+        CHECK_SIZE(matches.size(), 3);
+        PrintMatches(matches);
+    }
+}
+
+TEST_FUNC(test_class_extends)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_extends.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    if(resolved) {
+        PHPEntityBase::List_t matches = lookup.FindChildren(
+            resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
+        CHECK_SIZE(matches.size(), 2);
+        PrintMatches(matches);
+        
+    }
+}
+
+TEST_FUNC(test_use_alias_operator)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_use_alias_operator.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    if(resolved) {
+        PHPEntityBase::List_t matches = lookup.FindChildren(
+            resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
+        CHECK_SIZE(matches.size(), 1);
+        PrintMatches(matches);
+    }
+}
 
 int main(int argc, char** argv)
 {
-    wxInitialize(argc, argv);
-#if 1
-    wxPrintf("Starting...\n");
-    PHPLookupTable lookup;
     lookup.Open(::wxGetCwd());
-
-    PHPSourceFile sourceFile(wxFileName("../Tests/test_global_vars.php"));
-    sourceFile.SetParseFunctionBody(true);
-    sourceFile.Parse();
-    sourceFile.PrintStdout();
-
-//    // Store the results
-//    lookup.UpdateSourceFile(sourceFile);
-//    PHPExpression expr("<?php \\Mage::$");
-//    PHPEntityBase::Ptr_t resolvedType = expr.Resolve(lookup, "file.php");
-//    if(resolvedType) {
-//        // Get list of children from the database
-//        PHPEntityBase::List_t matches =
-//            lookup.FindChildren(resolvedType->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith, expr.GetFilter());
-//    
-//        wxPrintf("%s => suggested members are:\n", expr.GetExpressionAsString());
-//        PHPEntityBase::List_t::iterator iter = matches.begin();
-//        for(; iter != matches.end(); ++iter) {
-//            PHPEntityBase::Ptr_t entry = *iter;
-//            if(entry->Is(kEntityTypeFunction)) {
-//                wxPrintf("%s%s\n", entry->GetName(), entry->Cast<PHPEntityFunction>()->GetSignature());
-//            } else {
-//                wxPrintf("%s\n", entry->GetName());
-//            }
-//        }
-//    }
-    wxPrintf("Done!...\n");
-
-#else
-    wxPrintf("Starting...\n");
-    wxString content;
-    phpLexerToken token;
-    wxFFile fp("../Tests/Mage.php");
-    fp.ReadAll(&content);
-    PHPScanner_t scanner = ::phpLexerNew(content);
-    while(::phpLexerNext(scanner, token)) {
-    }
-    ::phpLexerDestroy(&scanner);
-    wxPrintf("Done!...\n");
-#endif
+    Tester::Instance()->RunTests(); // Run all tests
     return 0;
 }

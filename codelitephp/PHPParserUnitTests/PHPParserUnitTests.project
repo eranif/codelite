@@ -34,33 +34,10 @@
     <File Name="tester.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Tests">
-    <File Name="Tests/test_global_func_locals.php"/>
-    <File Name="Tests/test_chain.php"/>
-    <File Name="Tests/test_chain1.php"/>
-    <File Name="Tests/test_chain_static_method.php"/>
-    <File Name="Tests/test_chain_static_variable.php"/>
-    <File Name="Tests/test_chain_ends_with_obj_operators.php"/>
-    <File Name="Tests/test_init_member.php"/>
-    <File Name="Tests/test_parse_variable_doc_comment.php"/>
-    <File Name="Tests/test_static_class_members.php"/>
-    <File Name="Tests/test_func_return_value.php"/>
     <File Name="Tests/Mage.php"/>
-    <File Name="Tests/test_include_statement_parsing.php"/>
-    <File Name="Tests/generate_function.php"/>
-    <File Name="Tests/test_global_function_arguments.php"/>
-    <File Name="Tests/test_assignment_with_function.php"/>
-    <File Name="Tests/test_assign_variable_from_global_function.php"/>
-    <File Name="Tests/Test_New_Class_From_NS_Relative.php"/>
-    <File Name="Tests/test_simple_class_members_in_global_namespace.php"/>
-    <File Name="Tests/test_simple_class_in_namespace.php"/>
-    <File Name="Tests/test_parent_keyword.php"/>
-    <File Name="Tests/test_parent_keyword_inherits_with_full_path.php"/>
-    <File Name="Tests/test_using_namesapce.php"/>
-    <File Name="Tests/test_use_in_inheritance.php"/>
-    <File Name="Tests/test_anonymous_function.php"/>
-    <File Name="Tests/test_function_body_with_keywords.php"/>
-    <File Name="Tests/test_complete_namespace_children.php"/>
-    <File Name="Tests/test_global_vars.php"/>
+    <File Name="Tests/test_this_operator.php"/>
+    <File Name="Tests/test_class_extends.php"/>
+    <File Name="Tests/test_use_alias_operator.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

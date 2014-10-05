@@ -22,10 +22,12 @@ void PHPEntityFunction::PrintStdout(int indent) const
     // Print the indentation
     wxPrintf("%sFunction: %s%s", indentString, GetName(), GetSignature());
     wxPrintf(", (%s:%d)\n", GetFilename().GetFullPath(), GetLine());
-    wxPrintf("%sLocals:\n", indentString);
-    PHPEntityBase::List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); ++iter) {
-        (*iter)->PrintStdout(indent + 4);
+    if(!m_children.empty()) {
+        wxPrintf("%sLocals:\n", indentString);
+        PHPEntityBase::List_t::const_iterator iter = m_children.begin();
+        for(; iter != m_children.end(); ++iter) {
+            (*iter)->PrintStdout(indent + 4);
+        }
     }
 }
 

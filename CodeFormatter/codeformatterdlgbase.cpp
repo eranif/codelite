@@ -202,6 +202,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrArr.Add(_("Space Before Assignment Operators"));
     m_pgMgrArr.Add(_("Space Before Parentheses"));
     m_pgMgrArr.Add(_("Spaces In Parentheses"));
+    m_pgMgrArr.Add(_("Pointer And Reference Aligned to the Right"));
     m_pgMgrIntArr.Add(kAlignEscapedNewlinesLeft);
     m_pgMgrIntArr.Add(kAlignTrailingComments);
     m_pgMgrIntArr.Add(kAllowAllParametersOfDeclarationOnNextLine);
@@ -220,6 +221,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(kSpaceBeforeAssignmentOperators);
     m_pgMgrIntArr.Add(kSpaceBeforeParens);
     m_pgMgrIntArr.Add(kSpacesInParentheses);
+    m_pgMgrIntArr.Add(kPointerAlignmentRight);
     m_pgPropClangFormattingOptions = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFlagsProperty( _("Clang Formatting Options"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropClangFormattingOptions->SetHelpString(wxT(""));
     

@@ -215,7 +215,7 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
     options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
     options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
     options << ", ColumnLimit : " << m_clangColumnLimit;
-
+    options << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
     options << " }\" ";
     return options;
 }

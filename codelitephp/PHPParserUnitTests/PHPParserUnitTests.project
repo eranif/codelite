@@ -38,6 +38,11 @@
     <File Name="Tests/test_this_operator.php"/>
     <File Name="Tests/test_class_extends.php"/>
     <File Name="Tests/test_use_alias_operator.php"/>
+    <File Name="Tests/test_expression_parser_for_partial_word.php"/>
+    <File Name="Tests/test_global_func.php"/>
+    <File Name="Tests/test_global_func_return_value.php"/>
+    <File Name="Tests/test_long_chain.php"/>
+    <File Name="Tests/test_parsing_abstract_class.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

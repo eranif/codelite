@@ -336,7 +336,7 @@ wxString PHPExpression::GetExpressionAsString() const
 {
     wxString expr;
     for(size_t i = 0; i < m_expression.size(); ++i) {
-        expr << m_expression.at(i).text << " ";
+        expr << m_expression.at(i).text;
     }
     return expr;
 }

@@ -461,5 +461,12 @@ void PHPWorkspace::ParseWorkspace(bool full)
                                                                     PHPParserThreadRequest::kParseWorkspaceFilesQuick);
     req->workspaceFile = GetFilename().GetFullPath();
     GetWorkspaceFiles(req->files);
+    
+    // Append the current project CC include paths
+    PHPProject::Ptr_t pProject = GetActiveProject();
+    if(pProject) {
+        PHPProjectSettingsData& settings = pProject->GetSettings();
+        req->frameworksPaths = settings.GetCCIncludePathAsArray();
+    }
     PHPParserThread::Instance()->Add(req);
 }

@@ -17,6 +17,7 @@ public:
     wxArrayString files;
     wxString workspaceFile;
     wxString file;
+    wxArrayString frameworksPaths;
     
 public:
     PHPParserThreadRequest(ePHPParserThreadRequestType type)

@@ -260,7 +260,7 @@ void PHPSourceFile::OnFunction()
         func = new PHPEntityFunction();
         func->SetLine(token.lineNumber);
     }
-
+    
     if(!func) return;
     PHPEntityBase::Ptr_t funcPtr(func);
 
@@ -273,8 +273,16 @@ void PHPSourceFile::OnFunction()
     // update function attributes
     ParseFunctionSignature(funcDepth);
     func->SetFlags(LookBackForFunctionFlags());
-
-    if(ReadUntilFound('{', token)) {
+    if(LookBackTokensContains(kPHP_T_ABSTRACT)) {
+        // abstract function
+        func->SetFlags(func->GetFlags() | PHPEntityFunction::kAbstract);
+    }
+    
+    if(func->HasFlag(PHPEntityFunction::kAbstract)) {
+        // an abstract function - it has no body
+        ConsumeUntil(';');
+        
+    } else if(ReadUntilFound('{', token)) {
         // found the function body starting point
         if(IsParseFunctionBody()) {
             ParseFunctionBody();
@@ -283,6 +291,7 @@ void PHPSourceFile::OnFunction()
             ConsumeFunctionBody();
         }
     }
+    
     // Remove the current function from the scope list
     if(!m_reachedEOF) {
         m_scopes.pop_back();

@@ -24,6 +24,7 @@ void PHPEntityNamespace::Store(wxSQLite3Database& db)
         // we try to locate the namespace in the DB before we attempt to insert it
         {
             wxSQLite3Statement statement = db.PrepareStatement("SELECT * FROM SCOPE_TABLE WHERE NAME=:NAME LIMIT 1");
+            statement.Bind(statement.GetParamIndex(":NAME"), GetName());
             wxSQLite3ResultSet res = statement.ExecuteQuery();
             if(res.NextRow()) {
                 // we have a match, update this item database ID to match
@@ -52,7 +53,7 @@ void PHPEntityNamespace::Store(wxSQLite3Database& db)
 
 void PHPEntityNamespace::FromResultSet(wxSQLite3ResultSet& res)
 {
-    SetDbId(res.GetInt("ID"));
+    SetDbId(res.GetInt64("ID"));
     SetName(res.GetString("NAME"));
     SetFilename(res.GetString("FILE_NAME"));
     SetLine(res.GetInt("LINE_NUMBER"));

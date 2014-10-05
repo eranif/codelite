@@ -10,9 +10,11 @@ PHPEntityBase::PHPEntityBase()
 
 void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 {
-    m_children.push_back(child);
-    m_childrenMap.insert(std::make_pair(child->GetName(), child));
-    child->m_parent = this;
+    if(m_childrenMap.count(child->GetName()) == 0) {
+        m_children.push_back(child);
+        m_childrenMap.insert(std::make_pair(child->GetName(), child));
+        child->m_parent = this;
+    }        
 }
 
 void PHPEntityBase::RecursivePrintStdout(PHPEntityBase::Ptr_t parent, int indent) { PrintStdout(indent); }

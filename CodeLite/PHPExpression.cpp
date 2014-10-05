@@ -88,6 +88,13 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case kPHP_T_IS_GREATER_OR_EQUAL:
         case kPHP_T_SL:
         case kPHP_T_SR:
+        case kPHP_T_FUNCTION:
+        case kPHP_T_ABSTRACT:
+        case kPHP_T_PUBLIC:
+        case kPHP_T_PROTECTED:
+        case kPHP_T_PRIVATE:
+        case kPHP_T_FINAL:
+        case kPHP_T_CONST:
         case '.':
         case ';':
         case '{':
@@ -323,7 +330,25 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
     if(!currentText.IsEmpty()) {
         m_filter = currentText;
     }
-
+    
+    if(m_parts.empty() && !m_filter.IsEmpty()) {
+        // we only have filter but no parts. 
+        // this means that we are actually after a 'word completion'
+        // here
+        // set as the first part the namesapce name with the -> operator
+        part.m_operator = kPHP_T_OBJECT_OPERATOR;
+        part.m_operatorText = "->";
+        PHPEntityBase* cls = const_cast<PHPEntityBase*>(source.Class());
+        if(!cls) {
+            cls = source.Namespace()->Cast<PHPEntityBase>();
+        }
+        if(cls) {
+            part.m_text = cls->GetName(); // set the first token to be the top namespace / inner class
+            part.m_textType = kPHP_T_NS_SEPARATOR;
+            m_parts.push_back(part);
+        }
+    }
+    
     wxString simplified;
     List_t::iterator iter = m_parts.begin();
     for(; iter != m_parts.end(); ++iter) {

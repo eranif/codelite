@@ -49,3 +49,13 @@ void PHPEntityBase::StoreRecursive(wxSQLite3Database& db)
         (*iter)->StoreRecursive(db);
     }
 }
+
+void PHPEntityBase::SetChildren(const PHPEntityBase::List_t& children)
+{
+    m_children.clear();
+    m_childrenMap.clear();
+    PHPEntityBase::List_t::const_iterator iter = children.begin();
+    for(; iter != children.end(); ++iter) {
+        AddChild(*iter);
+    }
+}

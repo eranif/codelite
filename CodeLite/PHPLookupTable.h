@@ -172,6 +172,12 @@ public:
      * @param autoCommit when true, issue a begin/commit transcation commands
      */
     void DeleteFileEntries(const wxFileName& filename, bool autoCommit = true);
+    
+    /**
+     * @brief load function arguments from the database
+     * @param parentId the function database ID
+     */
+    PHPEntityBase::List_t LoadFunctionArguments(wxLongLong parentId);
 };
 
 #endif // PHPLOOKUPTABLE_H

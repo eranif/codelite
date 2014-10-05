@@ -44,7 +44,11 @@ public:
 
     const PHPEntityBase::List_t& GetChildren() const { return m_children; }
     PHPEntityBase* Parent() const { return m_parent; }
-
+    /**
+     * @brief set this entity children
+     */
+    void SetChildren(const PHPEntityBase::List_t& children);
+    
     /**
      * @brief search for child in the children list of this entity.
      * Optionally, you can request to search for a child with or without the dollar "$" sign

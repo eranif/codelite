@@ -18,14 +18,33 @@ void PHPEntityNamespace::PrintStdout(int indent) const
 void PHPEntityNamespace::Store(wxSQLite3Database& db)
 {
     try {
-        wxSQLite3Statement statement =
-            db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, LINE_NUMBER, FILE_NAME) "
-                                "VALUES (NULL, 0, -1, :NAME, :LINE_NUMBER, :FILE_NAME)");
-        statement.Bind(statement.GetParamIndex(":NAME"), GetName());
-        statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
-        statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
-        statement.ExecuteUpdate();
-        SetDbId(db.GetLastRowId());
+        // A namespace, unlike other PHP entities, can be defined in various files
+        // and in multiple locations. This means, that by definition, there can be multiple entries
+        // for the same namespace, however, since our relations in the database is ID based,
+        // we try to locate the namespace in the DB before we attempt to insert it
+        {
+            wxSQLite3Statement statement = db.PrepareStatement("SELECT * FROM SCOPE_TABLE WHERE NAME=:NAME LIMIT 1");
+            wxSQLite3ResultSet res = statement.ExecuteQuery();
+            if(res.NextRow()) {
+                // we have a match, update this item database ID to match
+                // what we have found in the database
+                PHPEntityNamespace ns;
+                ns.FromResultSet(res);
+                SetDbId(ns.GetDbId());
+                return;
+            }
+        }
+        
+        {
+            wxSQLite3Statement statement =
+                db.PrepareStatement("INSERT INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, LINE_NUMBER, FILE_NAME) "
+                                    "VALUES (NULL, 0, -1, :NAME, :LINE_NUMBER, :FILE_NAME)");
+            statement.Bind(statement.GetParamIndex(":NAME"), GetName());
+            statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
+            statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
+            statement.ExecuteUpdate();
+            SetDbId(db.GetLastRowId());
+        }
     } catch(wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }

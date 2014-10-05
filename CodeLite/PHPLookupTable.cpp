@@ -391,6 +391,31 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
     return matches;
 }
 
+PHPEntityBase::List_t PHPLookupTable::LoadFunctionArguments(wxLongLong parentId)
+{
+    PHPEntityBase::List_t matches;
+
+    try {
+        {
+            // load functions
+            wxString sql;
+            sql << "SELECT * from VARIABLES_TABLE WHERE FUNCTION_ID=" << parentId << " ORDER BY ID ASC";
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityVariable());
+                match->FromResultSet(res);
+                matches.push_back(match);
+            }
+        }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::LoadFunctionArguments: %s", e.GetMessage());
+    }
+    return matches;
+}
+
 wxString PHPLookupTable::EscapeWildCards(const wxString& str)
 {
     wxString s(str);
@@ -562,7 +587,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
         }
-        
+
         {
             wxString sql;
             sql << "delete from FILES_TABLE where FILE_NAME=:FILE_NAME";
@@ -570,7 +595,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
         }
-        
+
         if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
         if(autoCommit) m_db.Rollback();
@@ -672,9 +697,9 @@ void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
         wxSQLite3Statement st = m_db.PrepareStatement(
             "REPLACE INTO FILES_TABLE (ID, FILE_NAME, LAST_UPDATED) VALUES (NULL, :FILE_NAME, :LAST_UPDATED)");
         st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
-        st.Bind(st.GetParamIndex(":LAST_UPDATED"), (wxLongLong) time(NULL));
+        st.Bind(st.GetParamIndex(":LAST_UPDATED"), (wxLongLong)time(NULL));
         st.ExecuteUpdate();
-        
+
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::UpdateFileLastParsedTimestamp: %s", e.GetMessage());
     }

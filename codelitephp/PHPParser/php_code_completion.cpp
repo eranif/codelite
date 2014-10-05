@@ -20,7 +20,8 @@
 
 ///////////////////////////////////////////////////////////////////
 
-struct PHPCCUserData {
+struct PHPCCUserData
+{
     PHPEntityBase::Ptr_t entry;
     PHPCCUserData(PHPEntityBase::Ptr_t e)
         : entry(e)
@@ -29,14 +30,16 @@ struct PHPCCUserData {
 };
 
 /// Ascending sorting function
-struct _SDescendingSort {
+struct _SDescendingSort
+{
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rStart->GetName().Cmp(rEnd->GetName()) > 0;
     }
 };
 
-struct _SAscendingSort {
+struct _SAscendingSort
+{
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rEnd->GetName().Cmp(rStart->GetName()) > 0;
@@ -187,7 +190,7 @@ void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
             wxString comment, docComment;
             docComment = userData->entry->GetDocComment();
             if(docComment.IsEmpty() == false) {
-                
+
                 // Format the comment
                 docComment.Replace("/**", "");
                 docComment.Replace("/*!", "");
@@ -203,7 +206,7 @@ void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
                     }
                     docComment << commentLines.Item(i) << "\n";
                 }
-                
+
                 comment << docComment;
                 comment.Trim().Trim(false); // The Doc comment
                 comment << wxT("\n<hr>");   // HLine
@@ -398,7 +401,20 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::GetPHPEntryUnderTheAtPos(IEditor* editor
 {
     if(!PHPWorkspace::Get()->IsOpen()) return PHPEntityBase::Ptr_t(NULL);
     pos = editor->GetSTC()->WordEndPosition(pos, true);
-    return PHPEntityBase::Ptr_t(NULL);
+
+    // Get the expression under the caret
+    PHPExpression expr(editor->GetTextRange(0, pos));
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+    if(resolved && !expr.GetFilter().IsEmpty()) {
+        resolved = m_lookupTable.FindMemberOf(resolved->GetDbId(), expr.GetFilter());
+
+        if(resolved && resolved->Is(kEntityTypeFunction)) {
+            // for a function, we need to load its children (function arguments)
+            resolved->SetChildren(m_lookupTable.LoadFunctionArguments(resolved->GetDbId()));
+        }
+    }
+
+    return resolved;
 }
 
 bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e) const

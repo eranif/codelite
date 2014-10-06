@@ -216,6 +216,46 @@ TEST_FUNC(test_class_with_members_inside_namespace)
     return true;
 }
 
+// test instantiating and using variable
+// and using multiple times
+TEST_FUNC(test_variable_1)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_1.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_WXSTRING(resolved->GetShortName(), "test_variable_1_return_value");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 3);
+    PrintMatches(matches);
+    return true;
+}
+
+// test instantiating and using variable
+// and using multiple times
+TEST_FUNC(test_variable_2)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_variable_2.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_WXSTRING(resolved->GetShortName(), "test_variable_2");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 5);
+    PrintMatches(matches);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
 #if 0

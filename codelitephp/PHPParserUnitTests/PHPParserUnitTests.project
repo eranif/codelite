@@ -47,6 +47,8 @@
     <File Name="Tests/test_word_completion_inside_ns.php"/>
     <File Name="Tests/test_class_members.php"/>
     <File Name="Tests/test_class_with_members_inside_namespace.php"/>
+    <File Name="Tests/test_variable_1.php"/>
+    <File Name="Tests/test_variable_2.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

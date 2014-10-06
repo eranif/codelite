@@ -243,6 +243,7 @@ void PhpPlugin::OnShowQuickOutline(clCodeCompletionEvent& e)
         }
         PHPQuickOutlineDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), editor, m_mgr);
         dlg.ShowModal();
+        CallAfter(&PhpPlugin::SetEditorActive, editor);
     }
 }
 
@@ -751,3 +752,5 @@ void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
         FRAME->GetEventHandler()->AddPendingEvent(eventShowWelcomePage);
     }
 }
+
+void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }

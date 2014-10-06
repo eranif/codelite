@@ -73,6 +73,7 @@ void PHPQuickOutlineDlg::DoSelectMatch(const wxString& filename, int line, const
         IEditor* editor = m_mgr->GetActiveEditor();
         if(editor) {
             m_mgr->FindAndSelect(what, what, editor->PosFromLine(line));
+            editor->SetActive();
         }
     }
 }

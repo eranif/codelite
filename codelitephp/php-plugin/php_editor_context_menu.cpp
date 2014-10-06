@@ -712,13 +712,6 @@ void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
         case wxID_REDO:
             m_manager->ProcessEditEvent(event, editor);
             break;
-
-        //            if ( editor->GetSTC()->CanUndo() )
-        //                editor->GetSTC()->Undo();
-        //            break;
-        //            if ( editor->GetSTC()->CanRedo() )
-        //                editor->GetSTC()->Redo();
-        //            break;
         default:
             event.Skip();
             break;
@@ -752,6 +745,8 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
         PHPEntityBase::Ptr_t entry =
             PHPCodeCompletion::Instance()->GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
         if(entry) {
+            clSTCLineKeeper lk(editor); // keep the current file line
+            editor->GetSTC()->BeginUndoAction();
             wxString comment = entry->FormatPhpDoc();
             comment = editor->FormatTextKeepIndent(comment, editor->GetCurrentPosition());
 
@@ -771,6 +766,7 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             if(!evt.GetFormattedString().IsEmpty()) {
                 editor->GetSTC()->SetText(evt.GetFormattedString());
             }
+            editor->GetSTC()->EndUndoAction();
         }
     }
 }

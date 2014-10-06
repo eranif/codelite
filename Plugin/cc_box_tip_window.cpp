@@ -61,7 +61,8 @@ static void CCBoxTipWindow_ShrinkTip(wxString& str)
         tip << curline << "\n";
     }
     str.swap(tip);
-    str.Trim();
+    str.Trim().Trim(false);
+    
     // strip double empty lines
     while(str.Replace("\n\n", "\n")) {}
 }

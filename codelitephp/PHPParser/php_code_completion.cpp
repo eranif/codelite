@@ -173,26 +173,8 @@ void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
             wxString comment, docComment;
             docComment = userData->entry->GetDocComment();
             if(docComment.IsEmpty() == false) {
-
-                // Format the comment
-                docComment.Replace("/**", "");
-                docComment.Replace("/*!", "");
-                docComment.Replace("/*", "");
-                docComment.Replace("*/", "");
-                docComment.Replace("**/", "");
-                wxArrayString commentLines = ::wxStringTokenize(docComment, "\n", wxTOKEN_STRTOK);
-                docComment.Clear();
-                for(size_t i = 0; i < commentLines.GetCount(); ++i) {
-                    commentLines.Item(i).Trim().Trim(false);
-                    if(commentLines.Item(i).StartsWith("*")) {
-                        commentLines.Item(i).Remove(0, 1);
-                    }
-                    docComment << commentLines.Item(i) << "\n";
-                }
-
-                comment << docComment;
-                comment.Trim().Trim(false); // The Doc comment
-                comment << wxT("\n<hr>");   // HLine
+                docComment.Trim().Trim(false); // The Doc comment
+                comment << docComment << wxT("\n<hr>");   // HLine
             }
 
             wxFileName fn(userData->entry->GetFilename());

@@ -134,7 +134,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
         }
     } else {
         // namespace
-        return DoFindMemberOf(parentDbId, exactName);
+        return DoFindMemberOf(parentDbId, exactName, true);
     }
     return PHPEntityBase::Ptr_t(NULL);
 }
@@ -258,7 +258,8 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
     }
 }
 
-PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName)
+PHPEntityBase::Ptr_t
+PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace)
 {
     // Find members of of parentDbID
     try {
@@ -275,6 +276,27 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const
                 matches.push_back(match);
             }
         }
+
+        if(matches.empty() && parentIsNamespace) {
+            // search the scope table as well
+            wxString sql;
+            sql << "SELECT * from SCOPE_TABLE WHERE SCOPE_ID=" << parentDbId << " AND NAME='" << exactName << "'";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                ePhpScopeType st = kPhpScopeTypeAny;
+                st =
+                    res.GetInt("SCOPE_TYPE", 1) == kPhpScopeTypeNamespace ? kPhpScopeTypeNamespace : kPhpScopeTypeClass;
+
+                PHPEntityBase::Ptr_t match = NewEntity("SCOPE_TABLE", st);
+                if(match) {
+                    match->FromResultSet(res);
+                    matches.push_back(match);
+                }
+            }
+        }
+
         if(matches.empty()) {
             // Could not find a match in the function table, check the variable table
             wxString sql;
@@ -360,10 +382,10 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(const wxString& fullname, ePhpS
             int scopeType = res.GetInt("SCOPE_TYPE", 1);
             if(scopeType == 0) {
                 // namespace
-                match.reset(new PHPEntityNamespace());
+                match.Reset(new PHPEntityNamespace());
             } else {
                 // class
-                match.reset(new PHPEntityClass());
+                match.Reset(new PHPEntityClass());
             }
             match->FromResultSet(res);
         }
@@ -402,10 +424,10 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
             int scopeType = res.GetInt("SCOPE_TYPE", 1);
             if(scopeType == kPhpScopeTypeNamespace) {
                 // namespace
-                match.reset(new PHPEntityNamespace());
+                match.Reset(new PHPEntityNamespace());
             } else {
                 // class
-                match.reset(new PHPEntityClass());
+                match.Reset(new PHPEntityClass());
             }
             match->FromResultSet(res);
             return match;

@@ -481,7 +481,7 @@ void PHPSourceFile::ParseFunctionBody()
             m_lookBackTokens.clear();
             break;
         case kPHP_T_VARIABLE: {
-            var.reset(new PHPEntityVariable());
+            var.Reset(new PHPEntityVariable());
             var->SetFullName(token.text);
             var->SetFilename(m_filename.GetFullPath());
             var->SetLine(token.lineNumber);
@@ -491,7 +491,7 @@ void PHPSourceFile::ParseFunctionBody()
             if(!NextToken(token)) return; // EOF
             if(token.type != '=') {
                 m_lookBackTokens.clear();
-                var.reset(NULL);
+                var.Reset(NULL);
                 UngetToken(token);
 
             } else {
@@ -578,7 +578,9 @@ wxString PHPSourceFile::LookBackForTypeHint()
 
 void PHPSourceFile::PhaseTwo()
 {
-    // Assigna doc comment to each of the entities found in this source file
+    // Visit each entity found during the parsing stage 
+    // and try to match it with its phpdoc comment block (we do this by line number)
+    // the visitor also makes sure that each entity is properly assigned with the current file name
     PHPDocVisitor visitor(*this, m_comments);
     visitor.Visit(Namespace());
 }
@@ -785,7 +787,7 @@ void PHPSourceFile::UngetToken(const phpLexerToken& token)
 const PHPEntityBase* PHPSourceFile::Class()
 {
     PHPEntityBase::Ptr_t curScope = CurrentScope();
-    PHPEntityBase* pScope = curScope.get();
+    PHPEntityBase* pScope = curScope.Get();
     while(pScope) {
         PHPEntityClass* cls = pScope->Cast<PHPEntityClass>();
         if(cls) {

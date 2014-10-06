@@ -54,7 +54,8 @@ private:
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 
     void CreateSchema();
-    PHPEntityBase::Ptr_t DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName);
+    PHPEntityBase::Ptr_t
+    DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace = false);
 
     void DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
                                    std::vector<wxLongLong>& parents,
@@ -126,12 +127,12 @@ public:
      * @brief close the lookup table database
      */
     void Close();
-    
+
     /**
      * @brief clear all cached data from the database
      */
     void ClearAll();
-    
+
     /**
      * @brief find a scope symbol (class or namespace) by its fullname
      */

@@ -325,7 +325,10 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
 
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
-            // FIXME : implement find-symbol
+            PHPEntityBase::Ptr_t resolved = GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
+            if(resolved) {
+                m_manager->OpenFile(resolved->GetFilename().GetFullPath(), "", resolved->GetLine());
+            }
         }
 
     } else {
@@ -369,15 +372,20 @@ void PHPCodeCompletion::OnDismissTooltip(wxCommandEvent& e)
     e.Skip();
 }
 
-PHPLocationPtr PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
+PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
 {
     CHECK_PHP_WORKSPACE_RET_NULL();
-
+    PHPLocation::Ptr_t loc; // Null
     if(IsPHPFile(editor)) {
-        // FIXME :: Implement this
-        return NULL;
+        PHPEntityBase::Ptr_t resolved = GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
+        if(resolved) {
+            loc = new PHPLocation;
+            loc->filename = resolved->GetFilename().GetFullPath();
+            loc->linenumber = resolved->GetLine();
+            loc->what = resolved->GetShortName();
+        }
     }
-    return NULL;
+    return loc;
 }
 
 void PHPCodeCompletion::OnCodeCompleteLangKeywords(clCodeCompletionEvent& e) { e.Skip(); }

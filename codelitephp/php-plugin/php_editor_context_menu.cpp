@@ -282,12 +282,9 @@ void PHPEditorContextMenu::DoGotoDefinition()
     wxStyledTextCtrl* sci = DoGetActiveScintila();
     if(!sci) return;
 
-    PHPLocationPtr definitionLocation =
+    PHPLocation::Ptr_t definitionLocation =
         PHPCodeCompletion::Instance()->FindDefinition(m_manager->GetActiveEditor(), sci->GetCurrentPos());
-
-    if(!definitionLocation) return;
-
-    if(!definitionLocation->filename) return;
+    CHECK_PTR_RET(definitionLocation);
 
     // Open the file (make sure we use the 'OpenFile' so we will get a browsing record)
     if(m_manager->OpenFile(definitionLocation->filename, wxEmptyString, definitionLocation->linenumber)) {
@@ -300,38 +297,6 @@ void PHPEditorContextMenu::DoGotoDefinition()
     }
 }
 
-/*
-void PHPEditorContextMenu::DoFindReferences()
-{
-        GET_EDITOR_SCI_VOID();
-
-        int caret_pos = sci->GetCurrentPos();
-        int word_start = sci->WordStartPosition(caret_pos, true);
-        int word_end   = sci->WordEndPosition(caret_pos, true);
-
-        // Read the word that we want to refactor
-        wxString word = sci->GetTextRange(word_start, word_end);
-        if(word.IsEmpty())
-                return;
-
-        // Save all files before 'find usage'
-        if (!m_manager->SaveAll())
-                return;
-
-        // Get list of files to search in
-//	wxFileList files;
-        //ManagerST::Get()->GetWorkspaceFiles(files, true);
-//	m_manager->GetWorkspace()->GetWorkspaceFiles(files, true);
-
-        // Invoke the RefactorEngine - this is not relevant here since it is cpp oriented.
-        // TODO: discuss with Eran
-        // RefactoringEngine::Instance()->FindReferences(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos+1),
-word_start, files);
-
-        // Show the results
-        // m_manager->GetOutputPane()->GetShowUsageTab()->ShowUsage( RefactoringEngine::Instance()->GetCandidates(),
-word);
-}*/
 int PHPEditorContextMenu::GetTokenPosInScope(wxStyledTextCtrl* sci,
                                              const wxString& token,
                                              int start_pos,
@@ -826,14 +791,14 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
             textToAdd =
                 editor->FormatTextKeepIndent(textToAdd, editor->GetCurrentPosition(), Format_Text_Save_Empty_Lines);
             editor->InsertText(editor->GetCurrentPosition(), textToAdd);
-            
+
             // Format the source code after generation
             clSourceFormatEvent evt(wxEVT_FORMAT_STRING);
             evt.SetInputString(editor->GetSTC()->GetText());
-            
+
             // Send also the filename, this will help the formatter to determine which fomratter engine to use
             evt.SetFileName(editor->GetFileName().GetFullName());
-            
+
             EventNotifier::Get()->ProcessEvent(evt);
             editor->GetSTC()->SetText(evt.GetFormattedString());
             editor->GetSTC()->EndUndoAction();

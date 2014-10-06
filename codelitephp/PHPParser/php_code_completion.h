@@ -17,8 +17,9 @@ struct PHPLocation {
     wxString what;     // Token name
     wxString filename; // file name (absolute path)
     int linenumber;    // line number within filename
+    typedef SmartPtr<PHPLocation> Ptr_t;
 };
-typedef SmartPtr<PHPLocation> PHPLocationPtr;
+
 
 class IManager;
 class ResourceItem;
@@ -72,11 +73,11 @@ private:
 public:
     void SetManager(IManager* manager) { this->m_manager = manager; }
     /**
-     * @brief return a PHPLocationPtr for the declaration of the
+     * @brief return a PHPLocation::Ptr_t for the declaration of the
      * expression in the given editor / position
      * @return a valid PHPLocation or NULL
      */
-    PHPLocationPtr FindDefinition(IEditor* editor, int pos);
+    PHPLocation::Ptr_t FindDefinition(IEditor* editor, int pos);
 
     /**
      * @brief return the PHPEntity under the caret

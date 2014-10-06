@@ -10,6 +10,7 @@
 #include <wx/filename.h>
 #include "wx/wxsqlite3.h"
 #include <wx/wxcrtvararg.h> // Needed for wxPrintf
+#include "smart_ptr.h"
 
 enum eEntityType {
     kEntityTypeVariable = 0,
@@ -21,7 +22,7 @@ enum eEntityType {
 class WXDLLIMPEXP_CL PHPEntityBase
 {
 public:
-    typedef wxSharedPtr<PHPEntityBase> Ptr_t;
+    typedef SmartPtr<PHPEntityBase> Ptr_t;
     typedef std::list<PHPEntityBase::Ptr_t> List_t;
     typedef std::map<wxString, PHPEntityBase::Ptr_t> Map_t;
 

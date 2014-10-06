@@ -71,7 +71,7 @@ TEST_FUNC(test_use_alias_operator)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved != NULL);
+    CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "use_real_name");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
@@ -104,7 +104,7 @@ TEST_FUNC(test_long_chain)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved != NULL);
+    CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "ClassRetVal1");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
@@ -124,7 +124,7 @@ TEST_FUNC(test_parsing_abstract_class)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved != NULL);
+    CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "AbstractFoo");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
@@ -144,7 +144,7 @@ TEST_FUNC(test_word_completion)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved != NULL);
+    CHECK_BOOL(resolved);
 
     CHECK_BOOL(resolved->GetShortName().IsEmpty());
     CHECK_WXSTRING(resolved->GetFullName(), "\\");
@@ -167,7 +167,7 @@ TEST_FUNC(test_word_completion_inside_ns)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved != NULL);
+    CHECK_BOOL(resolved);
 
     CHECK_WXSTRING(resolved->GetShortName(), "ns");
     
@@ -187,7 +187,7 @@ TEST_FUNC(test_class_members)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved != NULL);
+    CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "ClassWithMembers");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
@@ -206,7 +206,7 @@ TEST_FUNC(test_class_with_members_inside_namespace)
     lookup.UpdateSourceFile(sourceFile);
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
-    CHECK_BOOL(resolved != NULL);
+    CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "MyClassWithMembers");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(

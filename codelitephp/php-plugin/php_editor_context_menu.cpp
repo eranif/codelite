@@ -280,7 +280,7 @@ void PHPEditorContextMenu::DoGotoEndOfScope()
 void PHPEditorContextMenu::DoGotoDefinition()
 {
     wxStyledTextCtrl* sci = DoGetActiveScintila();
-    if(!sci) return;
+    CHECK_PTR_RET(sci);
 
     PHPLocation::Ptr_t definitionLocation =
         PHPCodeCompletion::Instance()->FindDefinition(m_manager->GetActiveEditor(), sci->GetCurrentPos());
@@ -309,12 +309,6 @@ int PHPEditorContextMenu::GetTokenPosInScope(wxStyledTextCtrl* sci,
     int token_pos = wxSTC_INVALID_POSITION;
 
     if(direction) { // search down
-        /*token_pos = sci->SearchInTarget(token);
-        while(token_pos != wxSTC_INVALID_POSITION && IsTokenInBlackList(sci, token, token_pos, tokensBlackList)) {
-                sci->SetTargetStart(token_pos+1);
-                sci->SetTargetEnd(end_pos);
-                token_pos = sci->SearchInTarget(token);
-        }*/
         sci->SetCurrentPos(start_pos);
         sci->SearchAnchor();
         token_pos = sci->SearchNext(sci->GetSearchFlags(), token);
@@ -336,6 +330,7 @@ int PHPEditorContextMenu::GetTokenPosInScope(wxStyledTextCtrl* sci,
 
     return token_pos;
 }
+
 bool PHPEditorContextMenu::IsTokenInBlackList(wxStyledTextCtrl* sci,
                                               const wxString& token,
                                               int token_pos,

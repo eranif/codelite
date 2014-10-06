@@ -260,7 +260,7 @@ void PHPSourceFile::OnFunction()
         func = new PHPEntityFunction();
         func->SetLine(token.lineNumber);
     }
-    
+
     if(!func) return;
     PHPEntityBase::Ptr_t funcPtr(func);
 
@@ -277,21 +277,32 @@ void PHPSourceFile::OnFunction()
         // abstract function
         func->SetFlags(func->GetFlags() | PHPEntityFunction::kAbstract);
     }
-    
+
     if(func->HasFlag(PHPEntityFunction::kAbstract)) {
         // an abstract function - it has no body
-        ConsumeUntil(';');
-        
-    } else if(ReadUntilFound('{', token)) {
-        // found the function body starting point
-        if(IsParseFunctionBody()) {
-            ParseFunctionBody();
+        if(!ConsumeUntil(';')) {
+            // could not locate the function delimiter, remove it from the stack
+            // we probably reached EOF here
+            m_scopes.pop_back();
+        }
+
+    } else {
+
+        if(ReadUntilFound('{', token)) {
+            // found the function body starting point
+            if(IsParseFunctionBody()) {
+                ParseFunctionBody();
+            } else {
+                // Consume the function body
+                ConsumeFunctionBody();
+            }
         } else {
-            // Consume the function body
-            ConsumeFunctionBody();
+            // could not locate the open brace!
+            // remove this function from the stack
+            m_scopes.pop_back();
         }
     }
-    
+
     // Remove the current function from the scope list
     if(!m_reachedEOF) {
         m_scopes.pop_back();
@@ -578,7 +589,7 @@ wxString PHPSourceFile::LookBackForTypeHint()
 
 void PHPSourceFile::PhaseTwo()
 {
-    // Visit each entity found during the parsing stage 
+    // Visit each entity found during the parsing stage
     // and try to match it with its phpdoc comment block (we do this by line number)
     // the visitor also makes sure that each entity is properly assigned with the current file name
     PHPDocVisitor visitor(*this, m_comments);
@@ -608,7 +619,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     typeWithNS.Trim().Trim(false);
 
     if(typeWithNS == "string" || typeWithNS == "array" || typeWithNS == "mixed" || typeWithNS == "bool" ||
-       typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean") {
+       typeWithNS == "int" || typeWithNS == "integer" || typeWithNS == "boolean" || typeWithNS == "double") {
         // primitives, don't bother...
         return typeWithNS;
     }
@@ -623,6 +634,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     if(m_aliases.find(type) != m_aliases.end()) {
         return m_aliases.find(type)->second;
     }
+
     wxString ns = Namespace()->GetFullName();
     if(!ns.EndsWith("\\")) {
         ns << "\\";
@@ -855,14 +867,14 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
     if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
         CurrentScope()->AddChild(var);
     }
-    
+
     if(!NextToken(token)) return;
-    
+
     if(token.type != '=') {
         m_lookBackTokens.clear();
         return;
     }
-            
+
     wxString expr;
     if(!ReadExpression(expr)) return; // EOF
 

@@ -50,6 +50,7 @@ public:
     PHPExpression(const wxString& fulltext, const wxString& exprText = wxString(), bool functionCalltipExpr = false);
     virtual ~PHPExpression();
 
+    const phpLexerToken::Vet_t& GetExpression() const { return m_expression; }
     wxString GetExpressionAsString() const;
     /**
      * @brief return the source file used to create and parse this expression

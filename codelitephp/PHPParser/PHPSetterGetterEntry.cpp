@@ -15,7 +15,7 @@ wxString PHPSetterGetterEntry::GetGetter(eSettersGettersFlags flags) const
 {
     wxString nameNoDollar = m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar();
     wxString nameWithDollar = m_entry->GetShortName();
-    
+
     // Remove user prefixes
     wxString functionName = nameNoDollar;
     FormatName(functionName);
@@ -27,7 +27,7 @@ wxString PHPSetterGetterEntry::GetGetter(eSettersGettersFlags flags) const
 
     wxString body;
     body << "/**\n"
-         << " * @return " << nameWithDollar << "\n"
+         << " * @return " << m_entry->Cast<PHPEntityVariable>()->GetTypeHint() << "\n"
          << " */\n"
          << "public function " << functionName << "() {\n"
          << "    return $this->" << nameNoDollar << ";\n"
@@ -51,7 +51,7 @@ wxString PHPSetterGetterEntry::GetSetter(eSettersGettersFlags flags) const
 
     wxString body;
     body << "/**\n"
-         << " * @param $" << m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar() << "\n"
+         << " * @param " << m_entry->Cast<PHPEntityVariable>()->GetTypeHint() << " " << m_entry->GetShortName() << "\n"
          << " */\n"
          << "public function " << functionName << "(" << nameWithDollar << ") {\n"
          << "    $this->" << nameNoDollar << " = " << nameWithDollar << ";\n"

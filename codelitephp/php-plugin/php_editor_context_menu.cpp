@@ -759,6 +759,18 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             // insert the comment above the current line
             int pos = editor->PosFromLine(curline);
             editor->InsertText(pos, comment);
+            
+            // Format the source code after generation
+            clSourceFormatEvent evt(wxEVT_FORMAT_STRING);
+            evt.SetInputString(editor->GetSTC()->GetText());
+
+            // Send also the filename, this will help the formatter to determine which fomratter engine to use
+            evt.SetFileName(editor->GetFileName().GetFullName());
+
+            EventNotifier::Get()->ProcessEvent(evt);
+            if(!evt.GetFormattedString().IsEmpty()) {
+                editor->GetSTC()->SetText(evt.GetFormattedString());
+            }
         }
     }
 }
@@ -795,7 +807,9 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
             evt.SetFileName(editor->GetFileName().GetFullName());
 
             EventNotifier::Get()->ProcessEvent(evt);
-            editor->GetSTC()->SetText(evt.GetFormattedString());
+            if(!evt.GetFormattedString().IsEmpty()) {
+                editor->GetSTC()->SetText(evt.GetFormattedString());
+            }
             editor->GetSTC()->EndUndoAction();
         }
     }

@@ -277,13 +277,13 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
         if(editor) {
             // we handle only .php files
             if(IsPHPFile(editor)) {
-                
+
                 // Check if the code completion was triggered due to user
                 // typing '(', in this case, call OnFunctionCallTip()
-                wxChar charAtPos = editor->GetCharAtPos(editor->GetCurrentPosition()-1);
+                wxChar charAtPos = editor->GetCharAtPos(editor->GetCurrentPosition() - 1);
                 if(charAtPos == '(') {
                     OnFunctionCallTip(e);
-                    
+
                 } else {
                     // Perform the code completion here
                     PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
@@ -483,16 +483,52 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* edit
     pos = editor->GetSTC()->WordEndPosition(pos, true);
 
     // Get the expression under the caret
-    PHPExpression expr(editor->GetTextRange(0, pos), "", forFunctionCalltip);
-    PHPEntityBase::Ptr_t resolved = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
-    if(resolved && !expr.GetFilter().IsEmpty()) {
-        resolved = m_lookupTable.FindMemberOf(resolved->GetDbId(), expr.GetFilter());
+    wxString unsavedBuffer = editor->GetTextRange(0, pos);
+    wxString filter;
+    PHPEntityBase::Ptr_t resolved;
+
+    // Parse the source file
+    PHPSourceFile source(unsavedBuffer);
+    source.SetFilename(editor->GetFileName());
+    source.SetParseFunctionBody(false);
+    source.Parse();
+
+    PHPEntityBase::Ptr_t currentScope = source.CurrentScope();
+    if(currentScope && currentScope->Is(kEntityTypeClass)) {
+        // we are trying to resolve a 'word' under the caret within the class
+        // body but _not_ within a function body (i.e. it can only be
+        // a definition of some kind)
+        // try to construct an expression that will work
+        int wordStart = editor->GetSTC()->WordStartPosition(pos, true);
+        wxString theWord = editor->GetTextRange(wordStart, pos);
+        wxString theWordNoDollar = theWord;
+        if(theWord.StartsWith("$")) {
+            theWordNoDollar = theWord.Mid(1);
+        }
+        PHPExpression expr2(unsavedBuffer, "<?php $this->" + theWordNoDollar, forFunctionCalltip);
+        resolved = expr2.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+        filter = expr2.GetFilter();
+        if(!resolved) {
+            // Maybe its a static member/function/const, try using static keyword
+            PHPExpression expr3(unsavedBuffer, "<?php static::" + theWord, forFunctionCalltip);
+            resolved = expr2.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+            filter = expr2.GetFilter();
+        }
+    }
+
+    if(!resolved) {
+        PHPExpression expr(unsavedBuffer, "", forFunctionCalltip);
+        resolved = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+        filter = expr.GetFilter();
+    }
+    
+    if(resolved && !filter.IsEmpty()) {
+        resolved = m_lookupTable.FindMemberOf(resolved->GetDbId(), filter);
 
         if(resolved && resolved->Is(kEntityTypeFunction)) {
             // for a function, we need to load its children (function arguments)
             resolved->SetChildren(m_lookupTable.LoadFunctionArguments(resolved->GetDbId()));
         }
     }
-
     return resolved;
 }

@@ -105,6 +105,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case '=':
         case ':':
         case ',':
+        case '!':
             if(current) current->clear();
             break;
         case '(':

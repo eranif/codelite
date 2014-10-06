@@ -11,6 +11,17 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
+static wxString PHP_SCHEMA_VERSION = "7.0.0";
+
+//------------------------------------------------
+// Metadata table
+//------------------------------------------------
+const static wxString CREATE_METADATA_TABLE_SQL =
+    "CREATE TABLE IF NOT EXISTS METADATA_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+    "SCHEMA_NAME TEXT, " // The scope type: 0 for namespace, 1 for class
+    "SCHEMA_VERSION TEXT)";
+const static wxString CREATE_METADATA_TABLE_SQL_IDX1 =
+    "CREATE UNIQUE INDEX IF NOT EXISTS METADATA_TABLE_IDX_1 ON METADATA_TABLE(SCHEMA_NAME)";
 //------------------------------------------------
 // Scope table
 //------------------------------------------------
@@ -18,7 +29,8 @@ const static wxString CREATE_SCOPE_TABLE_SQL =
     "CREATE TABLE IF NOT EXISTS SCOPE_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
     "SCOPE_TYPE INTEGER, " // The scope type: 0 for namespace, 1 for class
     "SCOPE_ID INTEGER NOT NULL DEFAULT -1, "
-    "NAME TEXT, " // no scope, just the class name
+    "NAME TEXT, "     // no scope, just the class name
+    "FULLNAME TEXT, " // full path
     "EXTENDS TEXT DEFAULT '', "
     "IMPLEMENTS TEXT DEFAULT '', "
     "USING_TRAITS TEXT DEFAULT '', "
@@ -34,6 +46,8 @@ const static wxString CREATE_SCOPE_TABLE_SQL_IDX3 =
     "CREATE UNIQUE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_3 ON SCOPE_TABLE(NAME)";
 const static wxString CREATE_SCOPE_TABLE_SQL_IDX4 =
     "CREATE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_4 ON SCOPE_TABLE(SCOPE_TYPE)";
+const static wxString CREATE_SCOPE_TABLE_SQL_IDX5 =
+    "CREATE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_5 ON SCOPE_TABLE(FULLNAME)";
 
 //------------------------------------------------
 // Function table
@@ -42,6 +56,7 @@ const static wxString CREATE_FUNCTION_TABLE_SQL =
     "CREATE TABLE IF NOT EXISTS FUNCTION_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
     "SCOPE_ID INTEGER NOT NULL DEFAULT -1, "
     "NAME TEXT, "         // no scope, just the function name
+    "FULLNAME TEXT, "     // Fullname with scope
     "SCOPE TEXT, "        // Usually, this means the namespace\class
     "SIGNATURE TEXT, "    // Formatted signature
     "RETURN_VALUE TEXT, " // Fullname (including namespace)
@@ -53,9 +68,9 @@ const static wxString CREATE_FUNCTION_TABLE_SQL =
 const static wxString CREATE_FUNCTION_TABLE_SQL_IDX1 =
     "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_1 ON FUNCTION_TABLE(SCOPE_ID)";
 const static wxString CREATE_FUNCTION_TABLE_SQL_IDX2 =
-    "CREATE UNIQUE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_2 ON FUNCTION_TABLE(SCOPE, NAME)";
-const static wxString CREATE_FUNCTION_TABLE_SQL_IDX3 =
     "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_3 ON FUNCTION_TABLE(FILE_NAME)";
+const static wxString CREATE_FUNCTION_TABLE_SQL_IDX3 =
+    "CREATE UNIQUE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_4 ON FUNCTION_TABLE(FULLNAME)";
 
 //------------------------------------------------
 // Variables table
@@ -65,6 +80,7 @@ const static wxString CREATE_VARIABLES_TABLE_SQL =
     "SCOPE_ID INTEGER NOT NULL DEFAULT -1, " // for global variable or class member this will be the scope_id parent id
     "FUNCTION_ID INTEGER NOT NULL DEFAULT -1, " // for function argument
     "NAME TEXT, "                               // no scope, just the function name
+    "FULLNAME TEXT, "                           // Fullname with scope
     "SCOPE TEXT, "                              // Usually, this means the namespace\class
     "TYPEHINT TEXT, "                           // the Variable type hint
     "FLAGS INTEGER DEFAULT 0, "
@@ -123,7 +139,15 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
     return PHPEntityBase::Ptr_t(NULL);
 }
 
-PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname) { return DoFindScope(fullname); }
+PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname)
+{
+    wxString scopeName = fullname;
+    scopeName.Trim().Trim(false);
+    if(scopeName.EndsWith("\\") && scopeName.length() > 1) {
+        scopeName.RemoveLast();
+    }
+    return DoFindScope(scopeName);
+}
 
 void PHPLookupTable::Open(const wxString& workspacePath)
 {
@@ -145,8 +169,34 @@ void PHPLookupTable::Open(const wxString& workspacePath)
 
 void PHPLookupTable::CreateSchema()
 {
+    wxString schemaVersion;
     try {
         m_db.ExecuteUpdate("pragma synchronous = off");
+        wxSQLite3Statement st =
+            m_db.PrepareStatement("select SCHEMA_VERSION from METADATA_TABLE where SCHEMA_NAME=:SCHEMA_NAME");
+        st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        if(res.NextRow()) {
+            schemaVersion = res.GetString("SCHEMA_VERSION");
+        }
+    } catch(wxSQLite3Exception& e) {
+        wxUnusedVar(e);
+    }
+
+    if(schemaVersion != PHP_SCHEMA_VERSION) {
+        // Drop the tables and recreate the schema from scratch
+        m_db.ExecuteUpdate("drop table if exists SCHEMA_VERSION");
+        m_db.ExecuteUpdate("drop table if exists SCOPE_TABLE");
+        m_db.ExecuteUpdate("drop table if exists FUNCTION_TABLE");
+        m_db.ExecuteUpdate("drop table if exists VARIABLES_TABL");
+        m_db.ExecuteUpdate("drop table if exists FILES_TABLE");
+    }
+
+    try {
+
+        // Metadata
+        m_db.ExecuteUpdate(CREATE_METADATA_TABLE_SQL);
+        m_db.ExecuteUpdate(CREATE_METADATA_TABLE_SQL_IDX1);
 
         // class / namespace table "scope"
         m_db.ExecuteUpdate(CREATE_SCOPE_TABLE_SQL);
@@ -154,6 +204,7 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_SCOPE_TABLE_SQL_IDX2);
         m_db.ExecuteUpdate(CREATE_SCOPE_TABLE_SQL_IDX3);
         m_db.ExecuteUpdate(CREATE_SCOPE_TABLE_SQL_IDX4);
+        m_db.ExecuteUpdate(CREATE_SCOPE_TABLE_SQL_IDX5);
 
         // function table
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL);
@@ -172,24 +223,16 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL);
         m_db.ExecuteUpdate(CREATE_FILES_TABLE_SQL_IDX1);
 
+        // Update the schema version
+        wxSQLite3Statement st =
+            m_db.PrepareStatement("replace into METADATA_TABLE (ID, SCHEMA_NAME, SCHEMA_VERSION) VALUES (NULL, "
+                                  ":SCHEMA_NAME, :SCHEMA_VERSION)");
+        st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");
+        st.Bind(st.GetParamIndex(":SCHEMA_VERSION"), PHP_SCHEMA_VERSION);
+        st.ExecuteUpdate();
+
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::CreateSchema: %s", e.GetMessage());
-    }
-}
-
-void PHPLookupTable::SplitFullname(const wxString& fullname, wxString& name, wxString& scope) const
-{
-    wxString path = fullname;
-    path.Replace("\\\\", "\\");
-    if(path.Find("\\") == wxNOT_FOUND) {
-        name = path;
-        scope.clear();
-    } else {
-        scope = path.BeforeLast('\\');
-        name = path.AfterLast('\\');
-        if(!scope.StartsWith("\\")) {
-            scope.Prepend("\\");
-        }
     }
 }
 
@@ -298,7 +341,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(const wxString& fullname, ePhpS
 
         // limit by 2 for performance reason
         // we will return NULL incase the number of matches is greater than 1...
-        sql << "SELECT * from SCOPE_TABLE WHERE NAME='" << fullname << "'";
+        sql << "SELECT * from SCOPE_TABLE WHERE FULLNAME='" << fullname << "'";
         if(scopeType != kPhpScopeTypeAny) {
             sql << " AND SCOPE_TYPE = " << static_cast<int>(scopeType);
         }
@@ -379,7 +422,7 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
 {
     PHPEntityBase::List_t matches;
     PHPEntityBase::Ptr_t scope = DoFindScope(parentId);
-    if(scope && scope->Cast<PHPEntityClass>()) {
+    if(scope && scope->Is(kEntityTypeClass)) {
         std::vector<wxLongLong> parents;
         std::set<wxLongLong> parentsVisited;
 
@@ -387,6 +430,8 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
         for(size_t i = 0; i < parents.size(); ++i) {
             DoFindChildren(matches, parents.at(i), flags, nameHint);
         }
+    } else if(scope && scope->Is(kEntityTypeNamespace)) {
+        DoFindChildren(matches, parentId, flags | kLookupFlags_NameHintIsScope, nameHint);
     }
     return matches;
 }
@@ -484,7 +529,10 @@ void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, eUpdateMode u
 
 void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags)
 {
-    if(nameHint.IsEmpty()) {
+    wxString name = nameHint;
+    name.Trim().Trim(false);
+
+    if(name.IsEmpty()) {
         sql.Trim();
         if(sql.EndsWith("AND") || sql.EndsWith("and")) {
             sql.RemoveLast(3);
@@ -493,14 +541,14 @@ void PHPLookupTable::DoAddNameFilter(wxString& sql, const wxString& nameHint, si
         return;
     }
 
-    if(flags & kLookupFlags_ExactMatch && !nameHint.IsEmpty()) {
-        sql << " NAME = '" << nameHint << "'";
+    if(flags & kLookupFlags_ExactMatch && !name.IsEmpty()) {
+        sql << " NAME = '" << name << "'";
 
-    } else if(flags & kLookupFlags_Contains && !nameHint.IsEmpty()) {
-        sql << " NAME LIKE '%%" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
+    } else if(flags & kLookupFlags_Contains && !name.IsEmpty()) {
+        sql << " NAME LIKE '%%" << EscapeWildCards(name) << "%%' ESCAPE '^'";
 
-    } else if(flags & kLookupFlags_StartsWith && !nameHint.IsEmpty()) {
-        sql << " NAME LIKE '" << EscapeWildCards(nameHint) << "%%' ESCAPE '^'";
+    } else if(flags & kLookupFlags_StartsWith && !name.IsEmpty()) {
+        sql << " NAME LIKE '" << EscapeWildCards(name) << "%%' ESCAPE '^'";
     }
 }
 
@@ -624,6 +672,23 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
     // Find members of of parentDbID
     try {
         {
+            // Load classes
+            wxString sql;
+            sql << "SELECT * from SCOPE_TABLE WHERE SCOPE_ID=" << parentId << " AND SCOPE_TYPE = 1 AND ";
+            DoAddNameFilter(sql, nameHint, flags);
+            DoAddLimit(sql);
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityClass());
+                match->FromResultSet(res);
+                matches.push_back(match);
+            }
+        }
+
+        {
             // load functions
             wxString sql;
             sql << "SELECT * from FUNCTION_TABLE WHERE SCOPE_ID=" << parentId << " AND ";
@@ -670,6 +735,7 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
                 }
             }
         }
+
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::FindChildren: %s", e.GetMessage());
     }
@@ -702,5 +768,44 @@ void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
 
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::UpdateFileLastParsedTimestamp: %s", e.GetMessage());
+    }
+}
+
+void PHPLookupTable::ClearAll()
+{
+    try {
+        m_db.Begin();
+        {
+            wxString sql;
+            sql << "delete from SCOPE_TABLE";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.ExecuteUpdate();
+        }
+
+        {
+            wxString sql;
+            sql << "delete from FUNCTION_TABLE";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.ExecuteUpdate();
+        }
+
+        {
+            wxString sql;
+            sql << "delete from VARIABLES_TABLE";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.ExecuteUpdate();
+        }
+
+        {
+            wxString sql;
+            sql << "delete from FILES_TABLE";
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            st.ExecuteUpdate();
+        }
+
+        m_db.Commit();
+    } catch(wxSQLite3Exception& e) {
+        m_db.Rollback();
+        CL_WARNING("PHPLookupTable::ClearAll: %s", e.GetMessage());
     }
 }

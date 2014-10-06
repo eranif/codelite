@@ -8,7 +8,7 @@
   </Ctags>
   <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="No"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
   <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
@@ -49,7 +49,7 @@
   </Environment>
   <Project Name="PHPParser" Path="codelitephp/PHPParser/PHPParser.project" Active="No"/>
   <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
-  <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
+  <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
@@ -93,7 +93,7 @@
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
@@ -135,7 +135,7 @@
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -177,7 +177,7 @@
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>

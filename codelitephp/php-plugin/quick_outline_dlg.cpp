@@ -59,8 +59,9 @@ void PHPQuickOutlineDlg::DoItemSelected(const wxTreeItemId& item)
     if(item.IsOk()) {
         QItemData* data = dynamic_cast<QItemData*>(m_treeCtrlLayout->GetItemData(item));
         if(data && data->m_entry) {
-            DoSelectMatch(
-                data->m_entry->GetFilename().GetFullPath(), data->m_entry->GetLine() - 1, data->m_entry->GetNameOnly());
+            DoSelectMatch(data->m_entry->GetFilename().GetFullPath(),
+                          data->m_entry->GetLine() - 1,
+                          data->m_entry->GetShortName());
             Close();
         }
     }

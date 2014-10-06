@@ -10,11 +10,11 @@ PHPEntityBase::PHPEntityBase()
 
 void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 {
-    if(m_childrenMap.count(child->GetName()) == 0) {
+    if(m_childrenMap.count(child->GetFullName()) == 0) {
         m_children.push_back(child);
-        m_childrenMap.insert(std::make_pair(child->GetName(), child));
+        m_childrenMap.insert(std::make_pair(child->GetFullName(), child));
         child->m_parent = this;
-    }        
+    }
 }
 
 void PHPEntityBase::RecursivePrintStdout(PHPEntityBase::Ptr_t parent, int indent) { PrintStdout(indent); }
@@ -58,4 +58,10 @@ void PHPEntityBase::SetChildren(const PHPEntityBase::List_t& children)
     for(; iter != children.end(); ++iter) {
         AddChild(*iter);
     }
+}
+
+void PHPEntityBase::SetFullName(const wxString& fullname)
+{
+    m_fullname = fullname;
+    m_shortName = m_fullname.AfterLast('\\');
 }

@@ -75,7 +75,7 @@ bool PHPRefactoring::FindByName(const PHPEntityBase::List_t& entries, const wxSt
 {
     PHPEntityBase::List_t::const_iterator iter = entries.begin();
     for(; iter != entries.end(); ++iter) {
-        if((*iter)->GetName() == name) {
+        if((*iter)->GetFullName() == name) {
             return true;
         }
     }

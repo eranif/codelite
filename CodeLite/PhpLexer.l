@@ -263,7 +263,7 @@ horizontal_white [ ]|{h_tab}
 <PHP>"implements"           {LEX_RETURN(kPHP_T_IMPLEMENTS);}
 <PHP>"->"                   {LEX_RETURN(kPHP_T_OBJECT_OPERATOR);}
 <PHP>"::"                   {LEX_RETURN(kPHP_T_PAAMAYIM_NEKUDOTAYIM);}
-<PHP>"\\"                   {LEX_RETURN(kPHP_T_NS_SEPARATOR);}
+<PHP>\\                     {LEX_RETURN(kPHP_T_NS_SEPARATOR);}
 <PHP>"new"                  {LEX_RETURN(kPHP_T_NEW);}
 <PHP>"clone"                {LEX_RETURN(kPHP_T_CLONE);}
 <PHP>"var"                  {LEX_RETURN(kPHP_T_VAR);}

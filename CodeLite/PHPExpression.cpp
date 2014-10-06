@@ -44,6 +44,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
             break;
         // the following are tokens that once seen
         // we should start a new expression:
+        case kPHP_T_NEW:
         case kPHP_T_ECHO:
         case kPHP_T_CASE:
         case kPHP_T_RETURN:
@@ -136,13 +137,51 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
 {
     if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
 
-    PHPSourceFile source(m_text);
-    source.SetParseFunctionBody(true);
-    source.SetFilename(sourceFileName);
-    source.Parse();
-    wxString asString = SimplifyExpression(source, 0);
+    m_sourceFile.reset(new PHPSourceFile(m_text));
+    m_sourceFile->SetParseFunctionBody(true);
+    m_sourceFile->SetFilename(sourceFileName);
+    m_sourceFile->Parse();
+    
+    if(m_expression.size() == 1 && m_expression.at(0).type == kPHP_T_NS_SEPARATOR) {
+        // user typed '\'
+        return lookpTable.FindScope("\\");
+    }
+    
+    wxString asString = SimplifyExpression(0);
     wxUnusedVar(asString);
+    
+    if(m_parts.empty() && !m_filter.IsEmpty()) {
+        
+        // We have no expression, but the user did type something...
+        // Return the parent scope of what the user typed so far
+        if(m_filter.Contains("\\")) {
+            // A namespace separator was found in the filter, break
+            // the filter into 2:
+            // scope + filter
+            wxString scopePart = m_filter.BeforeLast('\\');
+            if(!scopePart.StartsWith("\\")) {
+                scopePart.Prepend("\\");
+            }
+            
+            wxString filterPart = m_filter.AfterLast('\\');
+            
+            // Adjust the filter
+            m_filter.swap(filterPart);
+            
+            // Fix the scope part
+            scopePart = m_sourceFile->MakeIdentifierAbsolute(scopePart);
+            return lookpTable.FindScope(scopePart);
+            
+        } else {
+            // No namespace separator was typed
+            // try to guess:
+            // if the m_filter contains "(" -> user wants a global functions
+            // else we use the current file scope
+            return lookpTable.FindScope(m_sourceFile->Namespace()->GetFullName());
 
+        }
+    }
+    
     // Now, use the lookup table
     std::list<PHPExpression::Part>::iterator iter = m_parts.begin();
     PHPEntityBase::Ptr_t currentToken(NULL);
@@ -186,16 +225,16 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     return currentToken;
 }
 
-wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
+wxString PHPExpression::SimplifyExpression(int depth)
 {
     if(depth > 5) {
         // avoid infinite recursion, by limiting the nest level to 5
         return "";
     }
     // Parse the input source file
-    PHPEntityBase::Ptr_t scope = source.CurrentScope();
-    const PHPEntityBase* innerClass = source.Class();
-
+    PHPEntityBase::Ptr_t scope = m_sourceFile->CurrentScope();
+    const PHPEntityBase* innerClass = m_sourceFile->Class();
+    
     // Check the first token
 
     // Phase 1:
@@ -214,17 +253,17 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
                 // the first token is $this
                 // replace it with the current class absolute path
                 if(!innerClass) return "";
-                firstToken = innerClass->Cast<PHPEntityClass>()->GetName(); // Is always in absolute path
+                firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_SELF) {
                 // Same as $this: replace it with the current class absolute path
                 if(!innerClass) return "";
-                firstToken = innerClass->Cast<PHPEntityClass>()->GetName(); // Is always in absolute path
+                firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
                 if(!innerClass) return "";
-                firstToken = innerClass->Cast<PHPEntityClass>()->GetName(); // Is always in absolute path
+                firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_VARIABLE) {
                 // the expression being evaluated starts with a variable (e.g. $a->something()->)
@@ -250,7 +289,7 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
                         // append the "->" to the expression to make sure that the parser will understand it
                         // as an expression
                         PHPExpression e(m_text, local->Cast<PHPEntityVariable>()->GetExpressionHint() + "->");
-                        firstToken = e.SimplifyExpression(source, depth + 1);
+                        firstToken = e.SimplifyExpression(depth + 1);
                         if(firstToken.EndsWith("->")) {
                             // remove the last 2 characters
                             firstToken.RemoveLast(2);
@@ -260,8 +299,13 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
                     // this local variable does not exist in the current scope
                     return "";
                 }
+            } else if(token.type == kPHP_T_IDENTIFIER) {
+                // an identifier, convert it to the fullpath
+                firstToken = m_sourceFile->MakeIdentifierAbsolute(token.text);
+                
             }
         }
+        
         if(!firstToken.IsEmpty()) {
             newExpr = firstToken;
             firstToken.Clear();
@@ -299,7 +343,7 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
                 if(m_parts.empty() && token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
                     // The first token in the "parts" list has a scope resolving operator ("::")
                     // we need to make sure that the indetifier is provided in fullpath
-                    part.m_text = source.MakeIdentifierAbsolute(currentText);
+                    part.m_text = m_sourceFile->MakeIdentifierAbsolute(currentText);
                 } else {
                     part.m_text = currentText;
                 }
@@ -329,24 +373,6 @@ wxString PHPExpression::SimplifyExpression(PHPSourceFile& source, int depth)
 
     if(!currentText.IsEmpty()) {
         m_filter = currentText;
-    }
-    
-    if(m_parts.empty() && !m_filter.IsEmpty()) {
-        // we only have filter but no parts. 
-        // this means that we are actually after a 'word completion'
-        // here
-        // set as the first part the namesapce name with the -> operator
-        part.m_operator = kPHP_T_OBJECT_OPERATOR;
-        part.m_operatorText = "->";
-        PHPEntityBase* cls = const_cast<PHPEntityBase*>(source.Class());
-        if(!cls) {
-            cls = source.Namespace()->Cast<PHPEntityBase>();
-        }
-        if(cls) {
-            part.m_text = cls->GetName(); // set the first token to be the top namespace / inner class
-            part.m_textType = kPHP_T_NS_SEPARATOR;
-            m_parts.push_back(part);
-        }
     }
     
     wxString simplified;

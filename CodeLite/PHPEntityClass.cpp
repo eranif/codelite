@@ -4,12 +4,11 @@
 PHPEntityClass::PHPEntityClass() {}
 
 PHPEntityClass::~PHPEntityClass() {}
-wxString PHPEntityClass::ID() const { return GetName(); }
 
 void PHPEntityClass::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
-    wxPrintf("%sClass name: %s", indentString, GetName());
+    wxPrintf("%sClass name: %s", indentString, GetFullName());
     if(!GetExtends().IsEmpty()) {
         wxPrintf(", extends %s", GetExtends());
     }
@@ -30,13 +29,15 @@ void PHPEntityClass::PrintStdout(int indent) const
 void PHPEntityClass::Store(wxSQLite3Database& db)
 {
     try {
-        wxSQLite3Statement statement = db.PrepareStatement(
-            "REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, EXTENDS, IMPLEMENTS, USING_TRAITS, DOC_COMMENT, "
-            "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :EXTENDS, "
-            ":IMPLEMENTS, :USING_TRAITS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+        wxSQLite3Statement statement =
+            db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, EXTENDS, "
+                                "IMPLEMENTS, USING_TRAITS, DOC_COMMENT, "
+                                "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :FULLNAME, :EXTENDS, "
+                                ":IMPLEMENTS, :USING_TRAITS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
 
         statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
-        statement.Bind(statement.GetParamIndex(":NAME"), GetName());
+        statement.Bind(statement.GetParamIndex(":NAME"), GetShortName());
+        statement.Bind(statement.GetParamIndex(":FULLNAME"), GetFullName());
         statement.Bind(statement.GetParamIndex(":EXTENDS"), GetExtends());
         statement.Bind(statement.GetParamIndex(":IMPLEMENTS"), GetImplementsAsString());
         statement.Bind(statement.GetParamIndex(":USING_TRAITS"), GetTraitsAsString()); // TODO: implement this
@@ -49,10 +50,12 @@ void PHPEntityClass::Store(wxSQLite3Database& db)
         wxUnusedVar(exc);
     }
 }
+
 void PHPEntityClass::FromResultSet(wxSQLite3ResultSet& res)
 {
     SetDbId(res.GetInt("ID"));
-    SetName(res.GetString("NAME"));
+    SetFullName(res.GetString("FULLNAME"));
+    SetShortName(res.GetString("NAME"));
     SetExtends(res.GetString("EXTENDS"));
     SetImplements(::wxStringTokenize(res.GetString("IMPLEMENTS"), ";", wxTOKEN_STRTOK));
     SetTraits(::wxStringTokenize(res.GetString("USING_TRAITS"), ";", wxTOKEN_STRTOK));
@@ -76,15 +79,15 @@ wxArrayString PHPEntityClass::GetInheritanceArray() const
     arr.swap(uniqueArr);
     return arr;
 }
-wxString PHPEntityClass::Type() const { return GetName(); }
+
+wxString PHPEntityClass::Type() const { return GetFullName(); }
 bool PHPEntityClass::Is(eEntityType type) const { return type == kEntityTypeClass; }
-wxString PHPEntityClass::GetDisplayName() const { return GetNameOnly(); }
-wxString PHPEntityClass::GetNameOnly() const { return GetName().AfterLast('\\'); }
-wxString PHPEntityClass::FormatPhpDoc() const 
+wxString PHPEntityClass::GetDisplayName() const { return GetShortName(); }
+wxString PHPEntityClass::FormatPhpDoc() const
 {
     wxString doc;
     doc << "/**\n"
-        << " * @class " << GetName() << "\n"
+        << " * @class " << GetFullName() << "\n"
         << " * @brief \n"
         << " */";
     return doc;

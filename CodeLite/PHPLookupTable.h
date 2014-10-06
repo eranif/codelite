@@ -41,17 +41,19 @@ public:
         kLookupFlags_Constants = (1 << 5),         // 'const'
         kLookupFlags_StaticMembers = (1 << 6),     // include static members/functions (static::, class_type::)
         kLookupFlags_SelfStaticMembers = (1 << 7), // Current class static members only (self::)
+        kLookupFlags_NameHintIsScope = (1 << 8),   // the namehint provided is of a class name. When enabled, the search
+                                                   // will try to take "\" into consideration
     };
-    
+
     enum eUpdateMode {
         kUpdateMode_Fast,
         kUpdateMode_Full,
     };
+
 private:
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 
     void CreateSchema();
-    void SplitFullname(const wxString& fullname, wxString& name, wxString& scope) const;
     PHPEntityBase::Ptr_t DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName);
 
     void DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
@@ -94,16 +96,17 @@ private:
                         wxLongLong parentId,
                         size_t flags = kLookupFlags_None,
                         const wxString& nameHint = "");
-    
+
     /**
      * @brief return the timestamp of the last parse for 'filename'
      */
     wxLongLong GetFileLastParsedTimestamp(const wxFileName& filename);
-    
+
     /**
      * @brief update the file's last updated timestamp
      */
     void UpdateFileLastParsedTimestamp(const wxFileName& filename);
+
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
@@ -123,7 +126,12 @@ public:
      * @brief close the lookup table database
      */
     void Close();
-
+    
+    /**
+     * @brief clear all cached data from the database
+     */
+    void ClearAll();
+    
     /**
      * @brief find a scope symbol (class or namespace) by its fullname
      */
@@ -172,7 +180,7 @@ public:
      * @param autoCommit when true, issue a begin/commit transcation commands
      */
     void DeleteFileEntries(const wxFileName& filename, bool autoCommit = true);
-    
+
     /**
      * @brief load function arguments from the database
      * @param parentId the function database ID

@@ -13,15 +13,13 @@ class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
 public:
     virtual wxString FormatPhpDoc() const;
     virtual wxString GetDisplayName() const;
-    virtual wxString GetNameOnly() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     // Save the class into teh database
     virtual void Store(wxSQLite3Database& db);
     virtual void FromResultSet(wxSQLite3ResultSet& res);
-
-    virtual wxString ID() const;
     virtual void PrintStdout(int indent) const;
+    
 
     /**
      * @brief return an array of inheritance (extends, implementes and traits)

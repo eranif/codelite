@@ -11,6 +11,7 @@
 #include "PHPLookupTable.h"
 #include "cl_command_event.h"
 #include "php_event.h"
+#include "PHPExpression.h"
 
 struct PHPLocation {
     wxString what;     // Token name
@@ -42,7 +43,7 @@ protected:
     PHPLookupTable m_lookupTable;
 
     bool CanCodeComplete(clCodeCompletionEvent& e) const;
-    void DoShowCompletionBox(const PHPEntityBase::List_t& entries, const wxString& partname);
+    void DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr);
 
 protected:
     TagEntryPtr DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry);

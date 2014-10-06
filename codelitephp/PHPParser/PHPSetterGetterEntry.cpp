@@ -14,7 +14,7 @@ PHPSetterGetterEntry::~PHPSetterGetterEntry() {}
 wxString PHPSetterGetterEntry::GetGetter(eSettersGettersFlags flags) const
 {
     wxString nameNoDollar = m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar();
-    wxString nameWithDollar = m_entry->GetName();
+    wxString nameWithDollar = m_entry->GetShortName();
     
     // Remove user prefixes
     wxString functionName = nameNoDollar;
@@ -38,7 +38,7 @@ wxString PHPSetterGetterEntry::GetGetter(eSettersGettersFlags flags) const
 wxString PHPSetterGetterEntry::GetSetter(eSettersGettersFlags flags) const
 {
     wxString nameNoDollar = m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar();
-    wxString nameWithDollar = m_entry->GetName();
+    wxString nameWithDollar = m_entry->GetShortName();
 
     // Remove user prefixes
     wxString functionName = nameNoDollar;

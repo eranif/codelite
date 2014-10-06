@@ -38,7 +38,7 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
               entity->Cast<PHPEntityVariable>()->HasFlag(PHPEntityVariable::kFunctionArg)) {
         // A function argument
         PHPDocComment docComment(m_sourceFile, entity->Parent()->GetDocComment());
-        wxString typeHint = docComment.GetParam(entity->GetName());
+        wxString typeHint = docComment.GetParam(entity->GetFullName());
         if(!typeHint.IsEmpty()) {
             entity->Cast<PHPEntityVariable>()->SetTypeHint(typeHint);
         }

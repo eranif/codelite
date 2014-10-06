@@ -1,6 +1,5 @@
-#line 2 "PhpLexer.cpp"
 
-#line 4 "PhpLexer.cpp"
+#line 3 "PhpLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -928,8 +927,6 @@ static yyconst flex_int32_t yy_rule_can_match_eol[152] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "PhpLexer.l"
-#line 2 "PhpLexer.l"
 //
 //====================--------------------------------------------------------------
 // Eran Ifrah 2014 (c)
@@ -972,13 +969,6 @@ extern "C" int phpwrap(void*) { return 1; }
 
 /* regex and modes */
 /* options */
-
-
- 
-
-
-
-#line 982 "PhpLexer.cpp"
 
 #define INITIAL 0
 #define PHP 1
@@ -1210,10 +1200,6 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-#line 87 "PhpLexer.l"
-
-#line 1216 "PhpLexer.cpp"
-
 	if ( !yyg->yy_init )
 		{
 		yyg->yy_init = 1;
@@ -1305,7 +1291,6 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 88 "PhpLexer.l"
 {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1315,7 +1300,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 94 "PhpLexer.l"
 {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1325,7 +1309,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 100 "PhpLexer.l"
 {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1335,7 +1318,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 106 "PhpLexer.l"
 {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1346,7 +1328,6 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 112 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingAllNonPhp()) {
@@ -1356,7 +1337,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 118 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingAllNonPhp()) {
@@ -1366,39 +1346,32 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 125 "PhpLexer.l"
 { RETURN_WHITESPACE(); }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 126 "PhpLexer.l"
 { RETURN_NEWLINE();}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 127 "PhpLexer.l"
 {RETURN_WHITESPACE();}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 128 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_THIS);}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 129 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_SELF);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 130 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_VARIABLE);}
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 131 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     wxString label = yytext;
@@ -1414,7 +1387,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 143 "PhpLexer.l"
 {
     // anything else
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1429,7 +1401,6 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 153 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->GetString() << yytext;
@@ -1437,7 +1408,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 157 "PhpLexer.l"
 {
     // anything else
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1446,7 +1416,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 162 "PhpLexer.l"
 {
     // Clear the comment collected
     BEGIN(DOC_COMMENT);
@@ -1460,7 +1429,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 172 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1476,7 +1444,6 @@ YY_RULE_SETUP
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 183 "PhpLexer.l"
 { 
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1486,7 +1453,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 189 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1496,7 +1462,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 196 "PhpLexer.l"
 { 
     BEGIN(CPP_COMMENT); 
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1510,7 +1475,6 @@ YY_RULE_SETUP
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 205 "PhpLexer.l"
 {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -1524,7 +1488,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 215 "PhpLexer.l"
 { 
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1534,592 +1497,477 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 222 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DNUMBER);}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 223 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_LNUMBER);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 224 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_LNUMBER);}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 225 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DNUMBER);}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 226 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DEFINE);}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 227 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_EXIT);}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 228 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_EXIT);}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 229 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_FUNCTION);}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 230 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CONST);}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 231 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_RETURN);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 232 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_TRY);}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 233 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CATCH);}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 234 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_THROW);}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 235 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IF);}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 236 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ELSEIF);}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 237 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ENDIF);}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 238 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ELSE);}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 239 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_WHILE);}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 240 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ENDWHILE);}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 241 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DO);}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 242 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_FOR);}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 243 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ENDFOR);}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 244 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_FOREACH);}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 245 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ENDFOREACH);}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 246 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DECLARE);}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 247 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ENDDECLARE);}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 248 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_INSTANCEOF);}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 249 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_AS);}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 250 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_SWITCH);}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 251 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ENDSWITCH);}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 252 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CASE);}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 253 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DEFAULT);}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 254 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_BREAK);}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 255 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CONTINUE);}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 256 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_GOTO);}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 257 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ECHO);}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 258 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_PRINT);}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 259 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CLASS);}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 260 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_INTERFACE);}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 261 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_TRAIT);}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 262 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_EXTENDS);}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 263 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IMPLEMENTS);}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 264 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_OBJECT_OPERATOR);}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 265 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_PAAMAYIM_NEKUDOTAYIM);}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 266 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_NS_SEPARATOR);}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 267 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_NEW);}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 268 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CLONE);}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 269 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_VAR);}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 270 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_EVAL);}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 271 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_INCLUDE);}
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 272 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_INCLUDE_ONCE);}
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 273 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_REQUIRE);}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 274 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_REQUIRE_ONCE);}
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 275 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_NAMESPACE);}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 276 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_USE);}
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 277 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_INSTEADOF);}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 278 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_GLOBAL);}
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 279 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ISSET);}
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 280 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_EMPTY);}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 281 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_STATIC);}
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 282 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ABSTRACT);}
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 283 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ABSTRACT);}
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 284 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_FINAL);}
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 285 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_PRIVATE);}
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 286 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_PROTECTED);}
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 287 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_PUBLIC);}
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 288 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_UNSET);}
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 289 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DOUBLE_ARROW);}
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 290 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_LIST);}
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 291 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_ARRAY);}
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 292 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CALLABLE);}
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 293 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_INC);}
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 294 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DEC);}
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 295 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IS_IDENTICAL);}
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 296 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IS_NOT_IDENTICAL);}
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 297 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IS_EQUAL);}
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 298 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IS_NOT_EQUAL);}
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 299 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IS_SMALLER_OR_EQUAL);}
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 300 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IS_GREATER_OR_EQUAL);}
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 301 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_PLUS_EQUAL);}
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 302 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_MINUS_EQUAL);}
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 303 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_MUL_EQUAL);}
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 304 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DIV_EQUAL);}
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 305 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CONCAT_EQUAL);}
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 306 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_MOD_EQUAL);}
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 307 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_SL_EQUAL);}
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 308 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_SR_EQUAL);}
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 309 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_AND_EQUAL);}
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 310 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_OR_EQUAL);}
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 311 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_XOR_EQUAL);}
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 312 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_BOOLEAN_OR);}
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 313 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_BOOLEAN_AND);}
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 314 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_LOGICAL_OR);}
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 315 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_LOGICAL_AND);}
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 316 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_LOGICAL_XOR);}
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 317 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_SL);}
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 318 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_SR);}
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 319 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_CLASS_C);}
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 320 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_TRAIT_C);}
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 321 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_FUNC_C);}
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 322 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_METHOD_C);}
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 323 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_LINE);}
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 324 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_FILE);}
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 325 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_DIR);}
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 326 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_NS_C);}
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 327 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_YIELD);}
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 328 "PhpLexer.l"
 {
     LEX_RETURN(kPHP_T_INT_CAST);
 }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 331 "PhpLexer.l"
 {
     LEX_RETURN(kPHP_T_DOUBLE_CAST);
 }
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 334 "PhpLexer.l"
 {
     LEX_RETURN(kPHP_T_STRING_CAST);
 }
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 337 "PhpLexer.l"
 {
     LEX_RETURN(kPHP_T_ARRAY_CAST);
 }
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 340 "PhpLexer.l"
 {
     LEX_RETURN(kPHP_T_OBJECT_CAST);
 }
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 343 "PhpLexer.l"
 {
     return kPHP_T_BOOL_CAST;
 }
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 346 "PhpLexer.l"
 {
     return kPHP_T_UNSET_CAST;
 }
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 349 "PhpLexer.l"
 {LEX_RETURN(kPHP_T_IDENTIFIER);}
 	YY_BREAK
 case 138:
 /* rule 138 can match eol */
 YY_RULE_SETUP
-#line 350 "PhpLexer.l"
 {
     BEGIN(INITIAL);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -2130,7 +1978,6 @@ YY_RULE_SETUP
 case 139:
 /* rule 139 can match eol */
 YY_RULE_SETUP
-#line 356 "PhpLexer.l"
 {
     BEGIN(INITIAL);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -2140,7 +1987,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 362 "PhpLexer.l"
 {
     BEGIN(SINGLE_STRING); 
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -2149,7 +1995,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 367 "PhpLexer.l"
 {
     BEGIN(DSTRING);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -2157,7 +2002,6 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(PHP):
-#line 372 "PhpLexer.l"
 { 
     yyterminate(); 
     return 0;
@@ -2165,7 +2009,6 @@ case YY_STATE_EOF(PHP):
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 376 "PhpLexer.l"
 {
     LEX_RETURN(yytext[0]);
 }
@@ -2173,7 +2016,6 @@ YY_RULE_SETUP
 case 143:
 /* rule 143 can match eol */
 YY_RULE_SETUP
-#line 379 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->GetString().Append("\n");
@@ -2181,7 +2023,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 383 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->GetString().Append(yytext);
@@ -2189,7 +2030,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 387 "PhpLexer.l"
 {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -2199,7 +2039,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 393 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->GetString().Append(yytext[0]);
@@ -2208,7 +2047,6 @@ YY_RULE_SETUP
 case 147:
 /* rule 147 can match eol */
 YY_RULE_SETUP
-#line 397 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->GetString().Append("\n");
@@ -2216,7 +2054,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 401 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->GetString().Append(yytext);
@@ -2224,7 +2061,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 406 "PhpLexer.l"
 {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
@@ -2234,7 +2070,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 412 "PhpLexer.l"
 {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     userData->GetString().Append(yytext[0]);
@@ -2242,10 +2077,8 @@ YY_RULE_SETUP
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 416 "PhpLexer.l"
 ECHO;
 	YY_BREAK
-#line 2249 "PhpLexer.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(CPP_COMMENT):
 case YY_STATE_EOF(DOC_COMMENT):
@@ -3416,10 +3249,6 @@ void phpfree (void * ptr , yyscan_t yyscanner)
 }
 
 #define YYTABLES_NAME "yytables"
-
-#line 416 "PhpLexer.l"
-
-
 
 //=============-------------------------------
 // API methods implementation

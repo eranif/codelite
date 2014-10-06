@@ -100,7 +100,7 @@ void PHPSourceFile::Parse(int exitDepth)
                     member->SetFilename(m_filename.GetFullPath());
                     PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
                     var->SetVisibility(visibility);
-                    var->SetName(token.text);
+                    var->SetFullName(token.text);
                     size_t flags = LookBackForVariablesFlags();
                     var->SetFlag(PHPEntityVariable::kMember);
                     var->SetFlag(PHPEntityVariable::kConst, flags & PHPEntityVariable::kConst);
@@ -122,7 +122,7 @@ void PHPSourceFile::Parse(int exitDepth)
                 PHPEntityBase::Ptr_t member(new PHPEntityVariable());
                 member->SetFilename(m_filename.GetFullPath());
                 PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
-                var->SetName(token.text);
+                var->SetFullName(token.text);
                 var->SetLine(token.lineNumber);
                 var->SetFlag(PHPEntityVariable::kMember);
                 var->SetFlag(PHPEntityVariable::kConst);
@@ -231,7 +231,7 @@ void PHPSourceFile::OnNamespace()
         m_scopes.push_back(PHPEntityBase::Ptr_t(new PHPEntityNamespace()));
         PHPEntityNamespace* ns = CurrentScope()->Cast<PHPEntityNamespace>();
         if(ns) {
-            ns->SetName(path); // Global namespace
+            ns->SetFullName(path); // Global namespace
         }
     } else {
         // PHP parsing error... (namespace must be the first thing on the file)
@@ -251,7 +251,7 @@ void PHPSourceFile::OnFunction()
     if(token.type == kPHP_T_IDENTIFIER) {
         // the function name
         func = new PHPEntityFunction();
-        func->SetName(token.text);
+        func->SetFullName(token.text);
         func->SetLine(token.lineNumber);
 
     } else if(token.type == '(') {
@@ -304,7 +304,7 @@ PHPEntityBase::Ptr_t PHPSourceFile::CurrentScope()
     if(m_scopes.empty()) {
         // no scope is set, push the global scope
         m_scopes.push_back(PHPEntityBase::Ptr_t(new PHPEntityNamespace()));
-        CurrentScope()->SetName("\\"); // Global namespace
+        CurrentScope()->SetFullName("\\"); // Global namespace
     }
     return m_scopes.back();
 }
@@ -360,7 +360,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
         switch(token.type) {
         case kPHP_T_VARIABLE:
             var = new PHPEntityVariable();
-            var->SetName(token.text);
+            var->SetFullName(token.text);
             var->SetLine(token.lineNumber);
             var->SetFilename(m_filename);
             // Mark this variable as function argument
@@ -482,8 +482,8 @@ void PHPSourceFile::ParseFunctionBody()
             break;
         case kPHP_T_VARIABLE: {
             var.reset(new PHPEntityVariable());
-            var->Cast<PHPEntityVariable>()->SetName(token.text);
-            var->Cast<PHPEntityVariable>()->SetFilename(m_filename.GetFullPath());
+            var->SetFullName(token.text);
+            var->SetFilename(m_filename.GetFullPath());
             var->SetLine(token.lineNumber);
             CurrentScope()->AddChild(var);
 
@@ -621,7 +621,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     if(m_aliases.find(type) != m_aliases.end()) {
         return m_aliases.find(type)->second;
     }
-    wxString ns = Namespace()->GetName();
+    wxString ns = Namespace()->GetFullName();
     if(!ns.EndsWith("\\")) {
         ns << "\\";
     }
@@ -649,7 +649,7 @@ void PHPSourceFile::OnClass()
     PHPEntityBase::Ptr_t klass(new PHPEntityClass());
     klass->SetFilename(m_filename.GetFullPath());
     PHPEntityClass* pClass = klass->Cast<PHPEntityClass>();
-    pClass->SetName(MakeIdentifierAbsolute(token.text));
+    pClass->SetFullName(MakeIdentifierAbsolute(token.text));
     pClass->SetLine(token.lineNumber);
 
     // add the current class to the current scope
@@ -848,7 +848,7 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
     // Read until we find the ';'
     std::vector<phpLexerToken> tokens;
     PHPEntityBase::Ptr_t var(new PHPEntityVariable());
-    var->SetName(tok.text);
+    var->SetFullName(tok.text);
     var->SetFilename(m_filename.GetFullPath());
     CurrentScope()->AddChild(var);
     

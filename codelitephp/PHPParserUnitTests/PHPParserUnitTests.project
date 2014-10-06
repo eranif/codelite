@@ -43,6 +43,10 @@
     <File Name="Tests/test_global_func_return_value.php"/>
     <File Name="Tests/test_long_chain.php"/>
     <File Name="Tests/test_parsing_abstract_class.php"/>
+    <File Name="Tests/test_word_completion.php"/>
+    <File Name="Tests/test_word_completion_inside_ns.php"/>
+    <File Name="Tests/test_class_members.php"/>
+    <File Name="Tests/test_class_with_members_inside_namespace.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

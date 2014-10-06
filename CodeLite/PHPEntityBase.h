@@ -32,7 +32,8 @@ protected:
     wxFileName m_filename;
     int m_line;
     int m_column;
-    wxString m_name;
+    wxString m_fullname;
+    wxString m_shortName;
     wxString m_docComment;
 
     // The database identifier
@@ -48,7 +49,7 @@ public:
      * @brief set this entity children
      */
     void SetChildren(const PHPEntityBase::List_t& children);
-    
+
     /**
      * @brief search for child in the children list of this entity.
      * Optionally, you can request to search for a child with or without the dollar "$" sign
@@ -59,9 +60,9 @@ public:
      * @brief generate a php doc comment that matches this entry
      */
     virtual wxString FormatPhpDoc() const = 0;
-    
+
     // Setters / Getters
-    
+
     void SetDocComment(const wxString& docComment) { this->m_docComment = docComment; }
     const wxString& GetDocComment() const { return m_docComment; }
     void SetDbId(wxLongLong dbId) { this->m_dbId = dbId; }
@@ -72,10 +73,15 @@ public:
     int GetColumn() const { return m_column; }
     const wxFileName& GetFilename() const { return m_filename; }
     int GetLine() const { return m_line; }
-
-    void SetName(const wxString& name) { this->m_name = name; }
-    const wxString& GetName() const { return m_name; }
-
+    
+    // Fullname, including the namespace prefix
+    void SetFullName(const wxString& fullname) ;
+    const wxString& GetFullName() const { return m_fullname; }
+    
+    // Short name (usually, this is the last part after the namespace separator)
+    void SetShortName(const wxString& shortName) { this->m_shortName = shortName; }
+    const wxString& GetShortName() const { return m_shortName; }
+    
     /**
      * @brief recursive print to stdout this object and all its children
      * @param parent
@@ -86,18 +92,13 @@ public:
      * @brief print this object to the stdout
      */
     virtual void PrintStdout(int indent) const = 0;
-    
+
     /**
-     * @brief return the name only
-     */
-    virtual wxString GetNameOnly() const = 0;
-    
-    /**
-     * @brief return a nicely formatted string to display for this 
+     * @brief return a nicely formatted string to display for this
      * entity, mainly used for UI purposes
      */
     virtual wxString GetDisplayName() const = 0;
-    
+
     /**
      * @brief return the actual type that this entity deduced to.
      * + class: the return value is the fullpath of the class
@@ -122,8 +123,7 @@ public:
      * @brief convert this base class to its concrete
      * @return
      */
-    template <typename T> 
-    T* Cast() const { return dynamic_cast<T*>(const_cast<PHPEntityBase*>(this)); }
+    template <typename T> T* Cast() const { return dynamic_cast<T*>(const_cast<PHPEntityBase*>(this)); }
 
     /**
      * @brief store this object and all its children into the database

@@ -7,12 +7,20 @@
 #include "PHPEntityFunction.h"
 #include "tester.h"
 
+#ifdef __WXMSW__
+#   define SYMBOLS_DB_PATH "%TEMP%"
+#else
+#   define SYMBOLS_DB_PATH "/tmp" 
+#endif
+
 void PrintMatches(const PHPEntityBase::List_t& matches)
 {
+#if 0
     PHPEntityBase::List_t::const_iterator iter = matches.begin();
     for(; iter != matches.end(); ++iter) {
         (*iter)->PrintStdout(2);
     }
+#endif
 }
 
 PHPLookupTable lookup;
@@ -64,7 +72,7 @@ TEST_FUNC(test_use_alias_operator)
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved != NULL);
-    CHECK_WXSTRING(resolved->GetName(), "\\use_real_name");
+    CHECK_WXSTRING(resolved->GetShortName(), "use_real_name");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
@@ -97,7 +105,7 @@ TEST_FUNC(test_long_chain)
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved != NULL);
-    CHECK_WXSTRING(resolved->GetName(), "\\ClassRetVal1");
+    CHECK_WXSTRING(resolved->GetShortName(), "ClassRetVal1");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
@@ -117,7 +125,7 @@ TEST_FUNC(test_parsing_abstract_class)
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved != NULL);
-    CHECK_WXSTRING(resolved->GetName(), "\\AbstractFoo");
+    CHECK_WXSTRING(resolved->GetShortName(), "AbstractFoo");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
@@ -126,9 +134,99 @@ TEST_FUNC(test_parsing_abstract_class)
     return true;
 }
 
+// test word completion when inside the global namespace
+// part_w + CTRL+SPACE
+TEST_FUNC(test_word_completion)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved != NULL);
+
+    CHECK_BOOL(resolved->GetShortName().IsEmpty());
+    CHECK_WXSTRING(resolved->GetFullName(), "\\");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 2); // 2 matches
+    PrintMatches(matches);
+    return true;
+}
+
+// test word completion when inside a namespace
+// namespace bla;
+// part_w + CTRL+SPACE
+TEST_FUNC(test_word_completion_inside_ns)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_inside_ns.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved != NULL);
+
+    CHECK_WXSTRING(resolved->GetShortName(), "ns");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 1);
+    PrintMatches(matches);
+    return true;
+}
+
+// test completing class members
+TEST_FUNC(test_class_members)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_members.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved != NULL);
+    CHECK_WXSTRING(resolved->GetShortName(), "ClassWithMembers");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 4);
+    PrintMatches(matches);
+    return true;
+}
+
+// test completing class members, but this time the class is defined inside a namespace
+TEST_FUNC(test_class_with_members_inside_namespace)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_class_with_members_inside_namespace.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved != NULL);
+    CHECK_WXSTRING(resolved->GetShortName(), "MyClassWithMembers");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 4);
+    PrintMatches(matches);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
-    lookup.Open(::wxGetCwd());
+#if 0
+    PHPExpression expr("<?php wx\\msg");
+    wxPrintf("%s\n", expr.GetExpressionAsString());
+#else
+    wxFileName symbolsDBPath(SYMBOLS_DB_PATH, "phpsymbols.db");
+    symbolsDBPath.Normalize();
+    lookup.Open(symbolsDBPath.GetPath());
+    lookup.ClearAll();
     Tester::Instance()->RunTests(); // Run all tests
+#endif
     return 0;
 }

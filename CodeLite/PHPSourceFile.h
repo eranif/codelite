@@ -20,7 +20,10 @@ class WXDLLIMPEXP_CL PHPSourceFile
     bool m_reachedEOF;
     // aliases defined by the 'use' operator
     std::map<wxString, wxString> m_aliases;
-
+    
+public:
+    typedef wxSharedPtr<PHPSourceFile> Ptr_t;
+    
 protected:
     
     /**

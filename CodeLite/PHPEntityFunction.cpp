@@ -1,5 +1,6 @@
 #include "PHPEntityFunction.h"
 #include "PHPEntityVariable.h"
+#include "file_logger.h"
 
 PHPEntityFunction::PHPEntityFunction()
     : m_flags(0)
@@ -20,7 +21,7 @@ void PHPEntityFunction::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
     // Print the indentation
-    wxPrintf("%sFunction: %s%s", indentString, GetName(), GetSignature());
+    wxPrintf("%sFunction: %s%s", indentString, GetShortName(), GetSignature());
     wxPrintf(", (%s:%d)\n", GetFilename().GetFullPath(), GetLine());
     if(!m_children.empty()) {
         wxPrintf("%sLocals:\n", indentString);
@@ -57,12 +58,17 @@ wxString PHPEntityFunction::GetSignature() const
 
 void PHPEntityFunction::Store(wxSQLite3Database& db)
 {
+    wxString fullname;
+    fullname << GetScope() << "\\" << GetShortName();
+    while(fullname.Replace("\\\\", "\\")){}
+    
     try {
         wxSQLite3Statement statement = db.PrepareStatement(
-            "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :SCOPE, :SIGNATURE, "
+            "INSERT OR REPLACE INTO FUNCTION_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :FULLNAME, :SCOPE, :SIGNATURE, "
             ":RETURN_VALUE, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
         statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
-        statement.Bind(statement.GetParamIndex(":NAME"), GetName());
+        statement.Bind(statement.GetParamIndex(":NAME"), GetShortName());
+        statement.Bind(statement.GetParamIndex(":FULLNAME"), fullname);
         statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
         statement.Bind(statement.GetParamIndex(":SIGNATURE"), GetSignature());
         statement.Bind(statement.GetParamIndex(":RETURN_VALUE"), GetReturnValue());
@@ -74,14 +80,15 @@ void PHPEntityFunction::Store(wxSQLite3Database& db)
         SetDbId(db.GetLastRowId());
 
     } catch(wxSQLite3Exception& exc) {
-        wxPrintf("error: %s\n", exc.GetMessage());
-        wxUnusedVar(exc);
+        CL_WARNING("PHPEntityFunction::Store: %s", exc.GetMessage());
     }
 }
+
 void PHPEntityFunction::FromResultSet(wxSQLite3ResultSet& res)
 {
     SetDbId(res.GetInt("ID"));
-    SetName(res.GetString("NAME"));
+    SetFullName(res.GetString("FULLNAME"));
+    SetShortName(res.GetString("NAME"));
     m_strSignature = res.GetString("SIGNATURE");
     m_strReturnValue = res.GetString("RETURN_VALUE");
     SetFlags(res.GetInt("FLAGS"));
@@ -93,16 +100,14 @@ void PHPEntityFunction::FromResultSet(wxSQLite3ResultSet& res)
 wxString PHPEntityFunction::GetScope() const
 {
     if(Parent()) {
-        return Parent()->GetName();
+        return Parent()->GetFullName();
     }
     return "";
 }
 
 wxString PHPEntityFunction::Type() const { return GetReturnValue(); }
 bool PHPEntityFunction::Is(eEntityType type) const { return type == kEntityTypeFunction; }
-wxString PHPEntityFunction::GetDisplayName() const { return wxString() << GetName() << GetSignature(); }
-wxString PHPEntityFunction::GetNameOnly() const { return GetName(); }
-
+wxString PHPEntityFunction::GetDisplayName() const { return wxString() << GetShortName() << GetSignature(); }
 wxString PHPEntityFunction::FormatPhpDoc() const
 {
     wxString doc;
@@ -112,7 +117,7 @@ wxString PHPEntityFunction::FormatPhpDoc() const
     for(; iter != m_children.end(); ++iter) {
         const PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
         doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "<unknown>" : var->GetTypeHint()) << " "
-            << var->GetName() << " \n";
+            << var->GetFullName() << " \n";
     }
     doc << " * @return " << GetReturnValue() << " \n";
     doc << " */";

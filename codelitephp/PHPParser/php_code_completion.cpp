@@ -20,8 +20,7 @@
 
 ///////////////////////////////////////////////////////////////////
 
-struct PHPCCUserData
-{
+struct PHPCCUserData {
     PHPEntityBase::Ptr_t entry;
     PHPCCUserData(PHPEntityBase::Ptr_t e)
         : entry(e)
@@ -30,16 +29,14 @@ struct PHPCCUserData
 };
 
 /// Ascending sorting function
-struct _SDescendingSort
-{
+struct _SDescendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rStart->GetName().Cmp(rEnd->GetName()) > 0;
     }
 };
 
-struct _SAscendingSort
-{
+struct _SAscendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rEnd->GetName().Cmp(rStart->GetName()) > 0;
@@ -141,29 +138,15 @@ void PHPCodeCompletion::Release()
     m_instance = NULL;
 }
 
-void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries, const wxString& partname)
+void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr)
 {
     std::vector<TagEntryPtr> tags;
-    wxString lcName, lcPartname;
-    lcPartname = partname;
-    lcPartname.MakeLower();
 
     // search for the old item
     PHPEntityBase::List_t::const_iterator iter = entries.begin();
     for(; iter != entries.end(); ++iter) {
         PHPEntityBase::Ptr_t entry = *iter;
-        wxString name = entry->GetName();
-        // remove the $ prefix from all non static members
-        if(entry->Is(kEntityTypeVariable) && !entry->Cast<PHPEntityVariable>()->IsStatic()) {
-            if(name.StartsWith(wxT("$"))) {
-                name.Remove(0, 1);
-            }
-        }
-
-        lcName = name;
-        lcName.MakeLower();
-        if(!lcName.StartsWith(lcPartname)) continue;
-
+        PHPEntityBase::Ptr_t ns = expr->GetSourceFile()->Namespace(); // the namespace at the source file
         TagEntryPtr t = DoPHPEntityToTagEntry(entry);
         t->SetUserData(new PHPCCUserData(entry));
         tags.push_back(t);
@@ -172,7 +155,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
     if(tags.empty()) return;
 
     std::sort(tags.begin(), tags.end(), _SAscendingSort());
-    m_manager->GetActiveEditor()->ShowCompletionBox(tags, partname, true, this);
+    m_manager->GetActiveEditor()->ShowCompletionBox(tags, expr->GetFilter(), true, this);
 }
 
 void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }
@@ -226,15 +209,17 @@ void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
 TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
 {
     TagEntryPtr t(new TagEntry());
-    wxString name = entry->GetName();
+    wxString name = entry->GetShortName();
 
     if(entry->Is(kEntityTypeVariable) && entry->Cast<PHPEntityVariable>()->IsMember() && name.StartsWith(wxT("$")) &&
        !entry->Cast<PHPEntityVariable>()->IsStatic()) {
         name.Remove(0, 1);
+    } else if((entry->Is(kEntityTypeClass) || entry->Is(kEntityTypeNamespace)) && name.StartsWith("\\")) {
+        name.Remove(0, 1);
     }
 
     t->SetName(name);
-    t->SetParent(entry->Parent() ? entry->Parent()->GetName() : "");
+    t->SetParent(entry->Parent() ? entry->Parent()->GetFullName() : "");
     t->SetPattern(t->GetName());
     t->SetComment(entry->GetDocComment());
 
@@ -268,7 +253,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
             t->SetAccess(wxT("public"));
         }
         t->SetSignature(func->GetSignature());
-        t->SetPattern(func->GetName() + func->GetSignature());
+        t->SetPattern(func->GetShortName() + func->GetSignature());
         t->SetKind("function");
 
     } else if(entry->Is(kEntityTypeClass)) {
@@ -294,16 +279,16 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
             if(IsPHPFile(editor)) {
 
                 // Perform the code completion here
-                PHPExpression expr(editor->GetTextRange(0, e.GetPosition()));
-                PHPEntityBase::Ptr_t entity = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+                PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
+                PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
                 if(entity) {
                     PHPEntityBase::List_t matches =
                         m_lookupTable.FindChildren(entity->GetDbId(),
-                                                   PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(),
-                                                   expr.GetFilter());
+                                                   PHPLookupTable::kLookupFlags_Contains | expr->GetLookupFlags(),
+                                                   expr->GetFilter());
                     if(!matches.empty()) {
                         // Show the code completion box
-                        DoShowCompletionBox(matches, expr.GetFilter());
+                        DoShowCompletionBox(matches, expr);
                     }
                 }
             }

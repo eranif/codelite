@@ -36,6 +36,7 @@
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "plugin.h"
+#include "ColoursAndFontsManager.h"
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
 EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -48,7 +49,7 @@ clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
     : wxPanel(parent)
     , m_highlighIndex(0)
 {
-    m_font = EditorConfigST::Get()->GetLexer("C++")->GetFontForSyle(wxSTC_STYLE_CALLTIP);
+    m_font = ColoursAndFontsManager::Get().GetLexer("c++")->GetFontForSyle(0); // default font
     Hide();
     EventNotifier::Get()->Connect(
         wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
@@ -68,14 +69,10 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxBufferedPaintDC dc(this);
 
     wxGCDC gdc;
-    if(!DrawingUtils::GetGCDC(dc, gdc))
-        return;
+    if(!DrawingUtils::GetGCDC(dc, gdc)) return;
 
-    wxColour bgColour = DrawingUtils::GetThemeTipBgColour();
-    wxColour penColour = DrawingUtils::GetThemeBorderColour();
-
-    bool isDarkTheme = DrawingUtils::IsDark(bgColour);
-    wxUnusedVar(isDarkTheme);
+    wxColour bgColour = wxColour("rgb(43, 43, 43)").ChangeLightness(180);
+    wxColour penColour = wxColour("rgb(43, 43, 43)");
 
     wxRect rr = GetClientRect();
 
@@ -91,22 +88,23 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     int firstLineY = TIP_SPACER;
 
     // Draw the Tip text
-    gdc.SetFont(m_font);
-    gdc.SetTextForeground(EditorConfigST::Get()->GetCurrentOutputviewFgColour());
+    gdc.SetTextForeground(wxColour("BLACK"));
     gdc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
 
     if(tip) {
+        bool twoLinesTip = (tip->Count() > 1);
         wxString txt;
-        txt << tip->GetCurr() + 1 << wxT(" of ") << tip->Count();
-        int txtLen = DoGetTextLen(gdc, txt);
+        if(twoLinesTip) {
+            txt << tip->GetCurr() + 1 << wxT(" of ") << tip->Count();
+            int txtLen = DoGetTextLen(gdc, txt);
 
-        int summaryLineXText(rr.GetWidth());
-        summaryLineXText -= (txtLen + TIP_SPACER);
+            int summaryLineXText(rr.GetWidth());
+            summaryLineXText -= (txtLen + TIP_SPACER);
 
-        // Draw the summary line
-        gdc.SetFont(m_font);
-        gdc.SetTextForeground(DrawingUtils::GetThemeTextColour());
-        gdc.DrawText(txt, summaryLineXText, secondLineY + TIP_SPACER / 2);
+            // Draw the summary line
+            gdc.SetTextForeground(DrawingUtils::GetThemeTextColour());
+            gdc.DrawText(txt, summaryLineXText, secondLineY + TIP_SPACER / 2);
+        }
 
         int start(-1), len(-1);
         tip->GetHighlightPos(m_highlighIndex, start, len);
@@ -117,28 +115,16 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             int x = DoGetTextLen(gdc, txtBefore);
             int w = DoGetTextLen(gdc, txtInclude);
 
-            wxColour bodyColour, borderColour;
-            wxColour base = *wxBLUE;
-            bodyColour = base.ChangeLightness(180);
-            borderColour = base.ChangeLightness(150);
+            gdc.SetBrush(wxColour("rgb(43, 43, 43)"));
+            gdc.SetPen(wxColour("rgb(43, 43, 43)"));
 
-            if(isDarkTheme) {
-                gdc.SetBrush(*wxTRANSPARENT_BRUSH);
-                gdc.SetPen(borderColour);
-                gdc.DrawRoundedRectangle(
-                    x + TIP_SPACER - 1, firstLineY - (TIP_SPACER / 2), w + 2, (rr.GetHeight() / 2), 3.5);
-
-            } else {
-                gdc.SetBrush(bodyColour);
-                gdc.SetPen(borderColour);
-                gdc.DrawRoundedRectangle(
-                    x + TIP_SPACER - 1, firstLineY - (TIP_SPACER / 2), w + 2, (rr.GetHeight() / 2), 3.5);
-
-                wxFont f = m_font;
-                f.SetWeight(wxFONTWEIGHT_BOLD);
-                gdc.SetFont(f);
-                gdc.DrawText(txtInclude, wxPoint(x + TIP_SPACER, firstLineY));
-            }
+            // if this is a 2 liner tip, the highlight rect is 1/2 the tip window height,
+            // otherwise its the same as the height
+            int highlightRectHeight = twoLinesTip ? (rr.GetHeight() / 2) : rr.GetHeight();
+            int highlightRectY = twoLinesTip ? firstLineY - (TIP_SPACER / 2) : 0;
+            gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, highlightRectY, w + 2, highlightRectHeight, 0);
+            gdc.SetTextForeground(*wxWHITE);
+            gdc.DrawText(txtInclude, wxPoint(x + TIP_SPACER, firstLineY));
         }
     }
 }
@@ -160,8 +146,7 @@ void clEditorTipWindow::AddCallTip(clCallTipPtr tip)
 
 clCallTipPtr clEditorTipWindow::GetTip()
 {
-    if(m_tips.empty())
-        return NULL;
+    if(m_tips.empty()) return NULL;
 
     return m_tips.at(m_tips.size() - 1).tip;
 }
@@ -178,8 +163,7 @@ void clEditorTipWindow::Remove()
         }
     }
 
-    if(m_tips.empty())
-        Deactivate();
+    if(m_tips.empty()) Deactivate();
 }
 
 void clEditorTipWindow::Clear()
@@ -237,8 +221,7 @@ wxString clEditorTipWindow::GetText()
 
 void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgColour)
 {
-    if(m_tips.empty())
-        return;
+    if(m_tips.empty()) return;
 
     m_point = pt;
     m_lineHeight = lineHeight;
@@ -253,8 +236,7 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
 void clEditorTipWindow::Deactivate()
 {
     Clear();
-    if(IsShown())
-        Hide();
+    if(IsShown()) Hide();
 }
 
 wxSize clEditorTipWindow::DoGetTipSize()
@@ -275,9 +257,14 @@ wxSize clEditorTipWindow::DoGetTipSize()
     wxSize sz2;
     dc->SetFont(m_font);
     sz = dc->GetTextExtent(m_tipText);
-    sz2 = dc->GetTextExtent(wxT("100 of 100"));
+    if(GetTip() && GetTip()->Count() > 1) {
+        // for multiple tips, use second line as well
+        sz2 = dc->GetTextExtent(wxT("100 of 100"));
+        sz.y *= 2;
+    } else {
+        sz2 = wxSize(1, 1);
+    }
 
-    sz.y *= 2;
     sz.y += (2 * TIP_SPACER);
     sz.x += (2 * TIP_SPACER);
 
@@ -313,8 +300,7 @@ void clEditorTipWindow::DoAdjustPosition()
         // our tip can not fit into the screen, shift it left
         pt.x -= ((pt.x + sz.x) - parentSize.width);
 
-        if(pt.x < 0)
-            pt.x = 0;
+        if(pt.x < 0) pt.x = 0;
     }
     Move(pt);
 }
@@ -322,6 +308,7 @@ void clEditorTipWindow::DoAdjustPosition()
 void clEditorTipWindow::DoLayoutTip()
 {
     SetSize(DoGetTipSize());
+    SetSizeHints(DoGetTipSize());
     DoAdjustPosition();
     Layout();
     Refresh();

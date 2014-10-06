@@ -852,7 +852,9 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
     PHPEntityBase::Ptr_t var(new PHPEntityVariable());
     var->SetFullName(tok.text);
     var->SetFilename(m_filename.GetFullPath());
-    CurrentScope()->AddChild(var);
+    if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
+        CurrentScope()->AddChild(var);
+    }
     
     if(!NextToken(token)) return;
     

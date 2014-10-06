@@ -277,18 +277,26 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
         if(editor) {
             // we handle only .php files
             if(IsPHPFile(editor)) {
-
-                // Perform the code completion here
-                PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
-                PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
-                if(entity) {
-                    PHPEntityBase::List_t matches =
-                        m_lookupTable.FindChildren(entity->GetDbId(),
-                                                   PHPLookupTable::kLookupFlags_Contains | expr->GetLookupFlags(),
-                                                   expr->GetFilter());
-                    if(!matches.empty()) {
-                        // Show the code completion box
-                        DoShowCompletionBox(matches, expr);
+                
+                // Check if the code completion was triggered due to user
+                // typing '(', in this case, call OnFunctionCallTip()
+                wxChar charAtPos = editor->GetCharAtPos(editor->GetCurrentPosition()-1);
+                if(charAtPos == '(') {
+                    OnFunctionCallTip(e);
+                    
+                } else {
+                    // Perform the code completion here
+                    PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
+                    PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+                    if(entity) {
+                        PHPEntityBase::List_t matches =
+                            m_lookupTable.FindChildren(entity->GetDbId(),
+                                                       PHPLookupTable::kLookupFlags_Contains | expr->GetLookupFlags(),
+                                                       expr->GetFilter());
+                        if(!matches.empty()) {
+                            // Show the code completion box
+                            DoShowCompletionBox(matches, expr);
+                        }
                     }
                 }
             }
@@ -308,8 +316,15 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
             // we handle only .php files
             if(IsPHPFile(editor)) {
                 // get the position
-
-                return;
+                PHPEntityBase::Ptr_t resolved = DoGetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition(), true);
+                if(resolved) {
+                    // In PHP there is no overloading, so there can be only one signature for a function
+                    // so we simply place our match into TagEntryPtrVector_t structure and pass it to the editor
+                    TagEntryPtrVector_t tags;
+                    tags.push_back(DoPHPEntityToTagEntry(resolved));
+                    clCallTipPtr callTip(new clCallTip(tags));
+                    editor->ShowCalltip(callTip);
+                }
             }
         }
 
@@ -392,22 +407,7 @@ void PHPCodeCompletion::OnCodeCompleteLangKeywords(clCodeCompletionEvent& e) { e
 
 PHPEntityBase::Ptr_t PHPCodeCompletion::GetPHPEntryUnderTheAtPos(IEditor* editor, int pos)
 {
-    if(!PHPWorkspace::Get()->IsOpen()) return PHPEntityBase::Ptr_t(NULL);
-    pos = editor->GetSTC()->WordEndPosition(pos, true);
-
-    // Get the expression under the caret
-    PHPExpression expr(editor->GetTextRange(0, pos));
-    PHPEntityBase::Ptr_t resolved = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
-    if(resolved && !expr.GetFilter().IsEmpty()) {
-        resolved = m_lookupTable.FindMemberOf(resolved->GetDbId(), expr.GetFilter());
-
-        if(resolved && resolved->Is(kEntityTypeFunction)) {
-            // for a function, we need to load its children (function arguments)
-            resolved->SetChildren(m_lookupTable.LoadFunctionArguments(resolved->GetDbId()));
-        }
-    }
-
-    return resolved;
+    return DoGetPHPEntryUnderTheAtPos(editor, pos, false);
 }
 
 bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e) const
@@ -475,4 +475,24 @@ void PHPCodeCompletion::OnRetagWorkspace(wxCommandEvent& event)
         // Reparse the workspace
         PHPWorkspace::Get()->ParseWorkspace(event.GetEventType() == wxEVT_CMD_RETAG_WORKSPACE_FULL);
     }
+}
+
+PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* editor, int pos, bool forFunctionCalltip)
+{
+    if(!PHPWorkspace::Get()->IsOpen()) return PHPEntityBase::Ptr_t(NULL);
+    pos = editor->GetSTC()->WordEndPosition(pos, true);
+
+    // Get the expression under the caret
+    PHPExpression expr(editor->GetTextRange(0, pos), "", forFunctionCalltip);
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+    if(resolved && !expr.GetFilter().IsEmpty()) {
+        resolved = m_lookupTable.FindMemberOf(resolved->GetDbId(), expr.GetFilter());
+
+        if(resolved && resolved->Is(kEntityTypeFunction)) {
+            // for a function, we need to load its children (function arguments)
+            resolved->SetChildren(m_lookupTable.LoadFunctionArguments(resolved->GetDbId()));
+        }
+    }
+
+    return resolved;
 }

@@ -5,9 +5,10 @@
 #include "PHPEntityFunction.h"
 #include <stack>
 
-PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText)
+PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText, bool functionCalltipExpr)
     : m_type(kNone)
     , m_text(fulltext)
+    , m_functionCalltipExpr(functionCalltipExpr)
 {
     if(exprText.IsEmpty()) {
         // use the full text to extract the expression
@@ -36,8 +37,9 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
     // strip the text from any comments
     PHPScanner_t scanner = ::phpLexerNew(text);
-    phpLexerToken token;
+    phpLexerToken token, lastToken;
     while(::phpLexerNext(scanner, token)) {
+        lastToken = token;
         switch(token.type) {
         case kPHP_T_OPEN_TAG:
             // skip the open tag
@@ -127,6 +129,17 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
     ::phpLexerDestroy(&scanner);
     phpLexerToken::Vet_t result;
+
+    if(m_functionCalltipExpr) {
+        // the expression parser was constructed for the purpose of
+        // function-calltip so replace the current expression with the previous one from the stack
+        // i.e. the one before the first open brace
+        if(stack.size() > 1) {
+            stack.pop(); // remove the last token sequence
+            current = &stack.top();
+        }
+    }
+    
     if(current) {
         result.swap(*current);
     }
@@ -141,17 +154,17 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     m_sourceFile->SetParseFunctionBody(true);
     m_sourceFile->SetFilename(sourceFileName);
     m_sourceFile->Parse();
-    
+
     if(m_expression.size() == 1 && m_expression.at(0).type == kPHP_T_NS_SEPARATOR) {
         // user typed '\'
         return lookpTable.FindScope("\\");
     }
-    
+
     wxString asString = SimplifyExpression(0);
     wxUnusedVar(asString);
-    
+
     if(m_parts.empty() && !m_filter.IsEmpty()) {
-        
+
         // We have no expression, but the user did type something...
         // Return the parent scope of what the user typed so far
         if(m_filter.Contains("\\")) {
@@ -162,26 +175,25 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
             if(!scopePart.StartsWith("\\")) {
                 scopePart.Prepend("\\");
             }
-            
+
             wxString filterPart = m_filter.AfterLast('\\');
-            
+
             // Adjust the filter
             m_filter.swap(filterPart);
-            
+
             // Fix the scope part
             scopePart = m_sourceFile->MakeIdentifierAbsolute(scopePart);
             return lookpTable.FindScope(scopePart);
-            
+
         } else {
             // No namespace separator was typed
             // try to guess:
             // if the m_filter contains "(" -> user wants a global functions
             // else we use the current file scope
             return lookpTable.FindScope(m_sourceFile->Namespace()->GetFullName());
-
         }
     }
-    
+
     // Now, use the lookup table
     std::list<PHPExpression::Part>::iterator iter = m_parts.begin();
     PHPEntityBase::Ptr_t currentToken(NULL);
@@ -234,7 +246,7 @@ wxString PHPExpression::SimplifyExpression(int depth)
     // Parse the input source file
     PHPEntityBase::Ptr_t scope = m_sourceFile->CurrentScope();
     const PHPEntityBase* innerClass = m_sourceFile->Class();
-    
+
     // Check the first token
 
     // Phase 1:
@@ -302,10 +314,9 @@ wxString PHPExpression::SimplifyExpression(int depth)
             } else if(token.type == kPHP_T_IDENTIFIER) {
                 // an identifier, convert it to the fullpath
                 firstToken = m_sourceFile->MakeIdentifierAbsolute(token.text);
-                
             }
         }
-        
+
         if(!firstToken.IsEmpty()) {
             newExpr = firstToken;
             firstToken.Clear();
@@ -348,7 +359,7 @@ wxString PHPExpression::SimplifyExpression(int depth)
                     part.m_text = currentText;
                 }
             }
-            
+
             part.m_operator = token.type;
             part.m_operatorText = token.text;
             m_parts.push_back(part);
@@ -374,7 +385,7 @@ wxString PHPExpression::SimplifyExpression(int depth)
     if(!currentText.IsEmpty()) {
         m_filter = currentText;
     }
-    
+
     wxString simplified;
     List_t::iterator iter = m_parts.begin();
     for(; iter != m_parts.end(); ++iter) {

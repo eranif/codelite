@@ -40,13 +40,14 @@ protected:
     wxString m_filter; // Part of the word that was typed by the user
                        // but will do no good to resolve the expression
     PHPSourceFile::Ptr_t m_sourceFile;
+    bool m_functionCalltipExpr;
 
 protected:
     phpLexerToken::Vet_t CreateExpression(const wxString& text);
     wxString SimplifyExpression(int depth);
 
 public:
-    PHPExpression(const wxString& fulltext, const wxString& exprText = wxString());
+    PHPExpression(const wxString& fulltext, const wxString& exprText = wxString(), bool functionCalltipExpr = false);
     virtual ~PHPExpression();
 
     wxString GetExpressionAsString() const;

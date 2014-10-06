@@ -48,7 +48,8 @@ protected:
 
 protected:
     TagEntryPtr DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry);
-
+    PHPEntityBase::Ptr_t DoGetPHPEntryUnderTheAtPos(IEditor* editor, int pos, bool forFunctionCalltip);
+    
 private:
     PHPCodeCompletion();
     virtual ~PHPCodeCompletion();

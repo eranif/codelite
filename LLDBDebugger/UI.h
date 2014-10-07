@@ -14,6 +14,10 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/dataview.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
@@ -23,14 +27,10 @@
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/checkbox.h>
-#include <wx/textctrl.h>
 #include <wx/button.h>
-#include <wx/notebook.h>
-#include <wx/imaglist.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
-#include <wx/stc/stc.h>
 #include <wx/hyperlink.h>
 #include <wx/popupwin.h>
 #include <wx/treectrl.h>
@@ -52,15 +52,21 @@ public:
 };
 
 
-class LLDBBreakpointsPaneBase : public wxPanel
+class LLDBOutputViewBase : public wxPanel
 {
 protected:
+    wxNotebook* m_notebook205;
+    wxPanel* m_panelConsole;
+    wxStyledTextCtrl* m_stcConsole;
+    wxTextCtrl* m_textCtrlConsoleSend;
+    wxPanel* m_pageBreakpoints;
     wxAuiToolBar* m_auibar;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<LLDBBreakpointModel> m_dataviewModel;
 
 
 protected:
+    virtual void OnSendCommandToLLDB(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNewBreakpoint(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNewBreakpointUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDeleteBreakpointUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -70,8 +76,8 @@ protected:
     virtual void OnBreakpointActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
-    virtual ~LLDBBreakpointsPaneBase();
+    LLDBOutputViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~LLDBOutputViewBase();
 };
 
 

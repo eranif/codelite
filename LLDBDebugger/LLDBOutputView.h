@@ -33,22 +33,24 @@
 
 class LLDBDebugger;
 class LLDBPlugin;
-class LLDBBreakpointsPane : public LLDBBreakpointsPaneBase
+class LLDBOutputView : public LLDBOutputViewBase
 {
     LLDBPlugin *m_plugin;
     LLDBConnector* m_connector;
     
 public:
-    LLDBBreakpointsPane(wxWindow* parent, LLDBPlugin *plugin);
-    virtual ~LLDBBreakpointsPane();
+    LLDBOutputView(wxWindow* parent, LLDBPlugin *plugin);
+    virtual ~LLDBOutputView();
     
     void Initialize();
     void Clear();
     
     // Event handlers
     void OnBreakpointsUpdated(LLDBEvent &event);
+    void OnConsoleOutput(LLDBEvent &event);
     LLDBBreakpoint::Ptr_t GetBreakpoint(const wxDataViewItem& item);
 protected:
+    virtual void OnSendCommandToLLDB(wxCommandEvent& event);
     void GotoBreakpoint(LLDBBreakpoint::Ptr_t bp);
     
 protected:
@@ -59,6 +61,9 @@ protected:
     virtual void OnNewBreakpoint(wxCommandEvent& event);
     virtual void OnNewBreakpointUI(wxUpdateUIEvent& event);
     virtual void OnBreakpointActivated(wxDataViewEvent& event);
+    
+    void OnSelectAll(wxCommandEvent &event);
+    void OnCopy(wxCommandEvent &event);
 };
 
 #endif // LLDBBREAKPOINTSPANE_H

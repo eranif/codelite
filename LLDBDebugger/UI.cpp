@@ -51,7 +51,7 @@ LLDBCallStackBase::~LLDBCallStackBase()
     
 }
 
-LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if ( !bBitmapLoaded ) {
@@ -64,10 +64,78 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_notebook205 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    wxImageList* m_notebook205_il = new wxImageList(16, 16);
+    m_notebook205->AssignImageList(m_notebook205_il);
+    
+    boxSizer10->Add(m_notebook205, 1, wxEXPAND, 5);
+    
+    m_panelConsole = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    int m_panelConsoleImgIndex;
+    m_panelConsoleImgIndex = m_notebook205_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("terminal")));
+    m_notebook205->AddPage(m_panelConsole, _("Console"), true, m_panelConsoleImgIndex);
+    
+    wxBoxSizer* boxSizer213 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsole->SetSizer(boxSizer213);
+    
+    m_stcConsole = new wxStyledTextCtrl(m_panelConsole, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_stcConsole->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcConsole->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcConsole->SetMarginSensitive(4, true);
+    m_stcConsole->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcConsole->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcConsole->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcConsole->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcConsole->SetMarginWidth(2, 0);
+    m_stcConsole->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcConsole->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcConsole->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcConsole->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcConsole->SetMarginMask(3, 0);
+    m_stcConsole->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcConsole->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcConsole->StyleClearAll();
+    m_stcConsole->SetWrapMode(0);
+    m_stcConsole->SetIndentationGuides(0);
+    m_stcConsole->SetKeyWords(0, wxT(""));
+    m_stcConsole->SetKeyWords(1, wxT(""));
+    m_stcConsole->SetKeyWords(2, wxT(""));
+    m_stcConsole->SetKeyWords(3, wxT(""));
+    m_stcConsole->SetKeyWords(4, wxT(""));
+    
+    boxSizer213->Add(m_stcConsole, 1, wxALL|wxEXPAND, 2);
+    
+    m_textCtrlConsoleSend = new wxTextCtrl(m_panelConsole, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlConsoleSend->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlConsoleSend->SetHint(_("Send commands to lldb"));
+    #endif
+    
+    boxSizer213->Add(m_textCtrlConsoleSend, 0, wxALL|wxEXPAND, 2);
+    
+    m_pageBreakpoints = new wxPanel(m_notebook205, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    int m_pageBreakpointsImgIndex;
+    m_pageBreakpointsImgIndex = m_notebook205_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("breakpoint")));
+    m_notebook205->AddPage(m_pageBreakpoints, _("Breakpoints"), false, m_pageBreakpointsImgIndex);
+    
+    wxBoxSizer* boxSizer211 = new wxBoxSizer(wxVERTICAL);
+    m_pageBreakpoints->SetSizer(boxSizer211);
+    
+    m_auibar = new wxAuiToolBar(m_pageBreakpoints, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer10->Add(m_auibar, 0, wxEXPAND, 5);
+    boxSizer211->Add(m_auibar, 0, wxEXPAND, 5);
     
     m_auibar->AddTool(wxID_NEW, _("New breakpoint"), wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("New breakpoint"), _("New breakpoint"), NULL);
     
@@ -76,13 +144,13 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     m_auibar->AddTool(wxID_CLEAR, _("Delete All Breakpoints"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete All Breakpoints"), _("Delete All Breakpoints"), NULL);
     m_auibar->Realize();
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(m_pageBreakpoints, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new LLDBBreakpointModel;
     m_dataviewModel->SetColCount( 4 );
     m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    boxSizer10->Add(m_dataview, 1, wxALL|wxEXPAND, 2);
+    boxSizer211->Add(m_dataview, 1, wxALL|wxEXPAND, 2);
     
     m_dataview->AppendTextColumn(_("#"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("File"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
@@ -95,25 +163,27 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     }
     Centre(wxBOTH);
     // Connect events
-    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
-    this->Connect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
-    this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
-    this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAll), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllUI), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
+    m_textCtrlConsoleSend->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(LLDBOutputViewBase::OnSendCommandToLLDB), NULL, this);
+    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBOutputViewBase::OnNewBreakpoint), NULL, this);
+    this->Connect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBOutputViewBase::OnNewBreakpointUI), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBOutputViewBase::OnDeleteBreakpointUI), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBOutputViewBase::OnDeleteBreakpoint), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBOutputViewBase::OnDeleteAll), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBOutputViewBase::OnDeleteAllUI), NULL, this);
+    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBOutputViewBase::OnBreakpointActivated), NULL, this);
     
 }
 
-LLDBBreakpointsPaneBase::~LLDBBreakpointsPaneBase()
+LLDBOutputViewBase::~LLDBOutputViewBase()
 {
-    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
-    this->Disconnect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
-    this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
-    this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAll), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllUI), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
+    m_textCtrlConsoleSend->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(LLDBOutputViewBase::OnSendCommandToLLDB), NULL, this);
+    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBOutputViewBase::OnNewBreakpoint), NULL, this);
+    this->Disconnect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBOutputViewBase::OnNewBreakpointUI), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBOutputViewBase::OnDeleteBreakpointUI), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBOutputViewBase::OnDeleteBreakpoint), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBOutputViewBase::OnDeleteAll), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBOutputViewBase::OnDeleteAllUI), NULL, this);
+    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBOutputViewBase::OnBreakpointActivated), NULL, this);
     
 }
 

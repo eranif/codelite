@@ -45,40 +45,46 @@ class LLDBTerminalCallback : public IProcessCallback
     IProcess* m_process;
 
 public:
-    LLDBTerminalCallback(LLDBConnector* connector) : m_connector(connector), m_process(NULL) {}
-    virtual void OnProcessOutput(const wxString &str);
-    virtual void OnProcessTerminated();
-    void SetProcess(IProcess* process) {
-        this->m_process = process;
+    LLDBTerminalCallback(LLDBConnector* connector)
+        : m_connector(connector)
+        , m_process(NULL)
+    {
     }
+    virtual void OnProcessOutput(const wxString& str);
+    virtual void OnProcessTerminated();
+    void SetProcess(IProcess* process) { this->m_process = process; }
 };
 
 class LLDBConnector : public wxEvtHandler
 {
 public:
-    struct TerminalInfo {
+    struct TerminalInfo
+    {
         int terminalProcessID;
         wxString tty;
-        TerminalInfo() : terminalProcessID(wxNOT_FOUND) {}
+        TerminalInfo()
+            : terminalProcessID(wxNOT_FOUND)
+        {
+        }
     };
 
 protected:
-    clSocketClient::Ptr_t       m_socket;
-    LLDBNetworkListenerThread * m_thread;
-    LLDBBreakpoint::Vec_t       m_breakpoints;
-    LLDBBreakpoint::Vec_t       m_pendingDeletionBreakpoints;
-    IProcess*                   m_process;
-    bool                        m_isRunning;
-    bool                        m_canInteract;
-    LLDBCommand                 m_runCommand;
-    TerminalInfo                m_terminalInfo;
-    bool                        m_attachedToProcess;
-    bool                        m_goingDown;
-    LLDBPivot                   m_pivot;
+    clSocketClient::Ptr_t m_socket;
+    LLDBNetworkListenerThread* m_thread;
+    LLDBBreakpoint::Vec_t m_breakpoints;
+    LLDBBreakpoint::Vec_t m_pendingDeletionBreakpoints;
+    IProcess* m_process;
+    bool m_isRunning;
+    bool m_canInteract;
+    LLDBCommand m_runCommand;
+    TerminalInfo m_terminalInfo;
+    bool m_attachedToProcess;
+    bool m_goingDown;
+    LLDBPivot m_pivot;
 
     wxDECLARE_EVENT_TABLE();
-    void OnProcessOutput(wxCommandEvent &event);
-    void OnProcessTerminated(wxCommandEvent &event);
+    void OnProcessOutput(wxCommandEvent& event);
+    void OnProcessTerminated(wxCommandEvent& event);
 
 protected:
     bool IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const;
@@ -86,52 +92,32 @@ protected:
     LLDBBreakpoint::Vec_t::iterator FindBreakpoint(LLDBBreakpoint::Ptr_t bp);
     LLDBBreakpoint::Vec_t GetUnappliedBreakpoints();
 
-    void OnLLDBStarted(LLDBEvent &event);
-    void OnLLDBExited(LLDBEvent &event);
+    void OnLLDBStarted(LLDBEvent& event);
+    void OnLLDBExited(LLDBEvent& event);
     wxString GetDebugServerPath() const;
 
 public:
     LLDBConnector();
     virtual ~LLDBConnector();
-    
+
     void StartNetworkThread();
-    void SetPivot(const LLDBPivot& pivot) {
-        this->m_pivot = pivot;
-    }
+    void SetPivot(const LLDBPivot& pivot) { this->m_pivot = pivot; }
     /**
      * @brief return the connect string that is used to connect to codelite-lldb
      * @return
      */
     wxString GetConnectString() const;
 
-    void SetGoingDown(bool goingDown) {
-        this->m_goingDown = goingDown;
-    }
-    bool IsGoingDown() const {
-        return m_goingDown;
-    }
-    void SetAttachedToProcess(bool attachedToProcess) {
-        this->m_attachedToProcess = attachedToProcess;
-    }
-    bool IsAttachedToProcess() const {
-        return m_attachedToProcess;
-    }
-    TerminalInfo& GetTerminalInfo() {
-        return m_terminalInfo;
-    }
+    void SetGoingDown(bool goingDown) { this->m_goingDown = goingDown; }
+    bool IsGoingDown() const { return m_goingDown; }
+    void SetAttachedToProcess(bool attachedToProcess) { this->m_attachedToProcess = attachedToProcess; }
+    bool IsAttachedToProcess() const { return m_attachedToProcess; }
+    TerminalInfo& GetTerminalInfo() { return m_terminalInfo; }
 
-    bool IsCanInteract() const {
-        return m_canInteract;
-    }
-    void SetCanInteract(bool canInteract) {
-        this->m_canInteract = canInteract;
-    }
-    void SetIsRunning(bool isRunning) {
-        this->m_isRunning = isRunning;
-    }
-    bool IsRunning() const {
-        return m_isRunning;
-    }
+    bool IsCanInteract() const { return m_canInteract; }
+    void SetCanInteract(bool canInteract) { this->m_canInteract = canInteract; }
+    void SetIsRunning(bool isRunning) { this->m_isRunning = isRunning; }
+    bool IsRunning() const { return m_isRunning; }
     const LLDBBreakpoint::Vec_t& GetAllBreakpoints() const;
 
     /**
@@ -184,13 +170,15 @@ public:
     void UpdateAppliedBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints);
 
     // aliases
-    void AddBreakpoint(const wxString &location) {
-        LLDBBreakpoint::Ptr_t bp( new LLDBBreakpoint(location) );
-        AddBreakpoint( bp );
+    void AddBreakpoint(const wxString& location)
+    {
+        LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint(location));
+        AddBreakpoint(bp);
     }
-    void AddBreakpoint(const wxFileName& filename, int line) {
-        LLDBBreakpoint::Ptr_t bp( new LLDBBreakpoint(filename, line) );
-        AddBreakpoint( bp );
+    void AddBreakpoint(const wxFileName& filename, int line)
+    {
+        LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint(filename, line));
+        AddBreakpoint(bp);
     }
 
     /**
@@ -227,19 +215,19 @@ public:
      * @brief send request to the debugger to request the local varibles
      */
     void RequestLocals();
-    
+
     /**
      * @brief add watch. To get the list of values, you should invoke
      * a call to 'RequestLocals'
      */
     void AddWatch(const wxString& watch);
-    
+
     /**
      * @brief delete a watch. To get the list of values, you should invoke
      * a call to 'RequestLocals'
      */
     void DeleteWatch(int lldbId);
-    
+
     /**
      * @brief request lldb to expand a variable and return its children
      * @param lldbId the unique identifier that identifies this variable
@@ -280,7 +268,8 @@ public:
      * @brief Start the debugger
      * The debugger starts in 2 phases:
      * 1. A "Start" command is sent over to the debugger
-     * 2. When the "Start" command is successfully executed on the codelite-lldb side, the caller should call 'Run()'. Run() will use the arguments passed to this command
+     * 2. When the "Start" command is successfully executed on the codelite-lldb side, the caller should call 'Run()'.
+     * Run() will use the arguments passed to this command
      * @param runCommand
      */
     void Start(const LLDBCommand& runCommand);
@@ -318,7 +307,7 @@ public:
     /**
      * @brief evaluate an expression
      */
-    void EvaluateExpression(const wxString &expression);
+    void EvaluateExpression(const wxString& expression);
 
     /**
      * @brief step over to next instruction
@@ -329,7 +318,13 @@ public:
      * @brief step over to next instruction
      */
     void ShowCurrentFileLine();
-
+    
+    /**
+     * @brief send text command (typed by the user) to the debugger command line
+     * interperter
+     */
+    void SendInterperterCommand(const wxString &command);
+    
 protected:
     /**
      * @brief establish connection to codelite-lldb server
@@ -345,7 +340,7 @@ protected:
      * @param timeout number of seconds to wait until successfull connect
      * @return true on success, false otherwise
      */
-    bool ConnectToRemoteDebugger(const wxString &ip, int port, LLDBConnectReturnObject& ret, int timeout = 10);
+    bool ConnectToRemoteDebugger(const wxString& ip, int port, LLDBConnectReturnObject& ret, int timeout = 10);
 };
 
 #endif // LLDBCONNECTOR_H

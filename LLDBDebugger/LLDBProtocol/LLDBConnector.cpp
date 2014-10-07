@@ -663,6 +663,14 @@ void LLDBConnector::DeleteWatch(int lldbId)
     SendCommand(command);
 }
 
+void LLDBConnector::SendInterperterCommand(const wxString& command)
+{
+    LLDBCommand lldbCommand;
+    lldbCommand.SetCommandType(kCommandInterperterCommand);
+    lldbCommand.SetExpression(command);
+    SendCommand(lldbCommand);
+}
+
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str) { wxUnusedVar(str); }
 
 void LLDBTerminalCallback::OnProcessTerminated()

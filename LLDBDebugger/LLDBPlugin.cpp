@@ -41,7 +41,7 @@
 #include "LLDBCallStack.h"
 #include "LLDBProtocol/LLDBSettings.h"
 #include "bookmark_manager.h"
-#include "LLDBBreakpointsPane.h"
+#include "LLDBOutputView.h"
 #include "LLDBLocalsView.h"
 #include "json_node.h"
 #include <wx/msgdlg.h>
@@ -717,7 +717,7 @@ void LLDBPlugin::InitializeUI()
     }
 
     if(!m_breakpointsView) {
-        m_breakpointsView = new LLDBBreakpointsPane(EventNotifier::Get()->TopFrame(), this);
+        m_breakpointsView = new LLDBOutputView(EventNotifier::Get()->TopFrame(), this);
         m_mgr->GetDockingManager()->AddPane(
             m_breakpointsView,
             wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(1).CloseButton().Caption("Breakpoints").Name(

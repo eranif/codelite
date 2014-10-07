@@ -142,6 +142,7 @@ public:
     void Next(const LLDBCommand& command);
     void NextInstruction(const LLDBCommand& command);
     void AddWatch(const LLDBCommand& command);
+    void ExecuteInterperterCommand(const LLDBCommand& command);
     void DeleteWatch(const LLDBCommand& command);
     void StepIn(const LLDBCommand& command);
     void StepOut(const LLDBCommand& command);

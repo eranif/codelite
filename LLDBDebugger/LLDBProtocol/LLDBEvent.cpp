@@ -25,20 +25,20 @@
 
 #include "LLDBEvent.h"
 
-wxDEFINE_EVENT(wxEVT_LLDB_STOPPED,   LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_STOPPED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_BACKTRACE, LLDBEvent);
-wxDEFINE_EVENT(wxEVT_LLDB_EXITED,    LLDBEvent);
-wxDEFINE_EVENT(wxEVT_LLDB_STARTED,   LLDBEvent);
-wxDEFINE_EVENT(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY,   LLDBEvent);
-wxDEFINE_EVENT(wxEVT_LLDB_RUNNING,   LLDBEvent);
-wxDEFINE_EVENT(wxEVT_LLDB_BREAKPOINTS_UPDATED,   LLDBEvent);
-wxDEFINE_EVENT(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL,   LLDBEvent);
-wxDEFINE_EVENT(wxEVT_LLDB_FRAME_SELECTED,   LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_EXITED, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_STARTED, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_RUNNING, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_BREAKPOINTS_UPDATED, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_FRAME_SELECTED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_CRASHED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_LOCALS_UPDATED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_VARIABLE_EXPANDED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_EXPRESSION_EVALUATED, LLDBEvent);
-
+wxDEFINE_EVENT(wxEVT_LLDB_INTERPERTER_REPLY, LLDBEvent);
 
 LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     : clCommandEvent(eventType, windid)
@@ -49,18 +49,13 @@ LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
 {
 }
 
-LLDBEvent::~LLDBEvent()
-{
-}
+LLDBEvent::~LLDBEvent() {}
 
-LLDBEvent::LLDBEvent(const LLDBEvent& src)
-{
-    *this = src;
-}
+LLDBEvent::LLDBEvent(const LLDBEvent& src) { *this = src; }
 
 LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
 {
-    clCommandEvent::operator =(src);
+    clCommandEvent::operator=(src);
     m_sessionType = src.m_sessionType;
     m_backtrace = src.m_backtrace;
     m_filename = src.m_filename;
@@ -76,11 +71,11 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     return *this;
 }
 
-bool LLDBEvent::ShouldPromptStopReason(wxString &message) const
+bool LLDBEvent::ShouldPromptStopReason(wxString& message) const
 {
     LLDBThread::Vect_t::const_iterator iter = m_threads.begin();
-    for(; iter != m_threads.end(); ++iter ) {
-        if ( iter->GetStopReason() == kStopReasonSignal || iter->GetStopReason() == kStopReasonException ) {
+    for(; iter != m_threads.end(); ++iter) {
+        if(iter->GetStopReason() == kStopReasonSignal || iter->GetStopReason() == kStopReasonException) {
             message = iter->GetStopReasonString();
             return true;
         }

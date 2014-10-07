@@ -35,14 +35,14 @@ LLDBNetworkServerThread::LLDBNetworkServerThread(CodeLiteLLDBApp* app, socket_t 
     : wxThread(wxTHREAD_JOINABLE)
     , m_app(app)
 {
-    m_socket.reset( new clSocketBase(fd) );
+    m_socket.reset(new clSocketBase(fd));
     // we don't own the socket, so don't close it when we are going down
     m_socket->SetCloseOnExit(false);
 }
 
 LLDBNetworkServerThread::~LLDBNetworkServerThread()
 {
-    if ( IsAlive() ) {
+    if(IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
@@ -52,118 +52,123 @@ LLDBNetworkServerThread::~LLDBNetworkServerThread()
 void* LLDBNetworkServerThread::Entry()
 {
     clSocketServer server;
-    wxPrintf("codelite-lldb: successfully started network thread. Reading input on fd=%d\n", (int)m_socket->GetSocket());
+    wxPrintf("codelite-lldb: successfully started network thread. Reading input on fd=%d\n",
+             (int)m_socket->GetSocket());
     try {
 
         // we got connection, enter the main loop
-        while ( !TestDestroy() ) {
+        while(!TestDestroy()) {
             wxString str;
-            if ( m_socket->ReadMessage( str, 1 ) == clSocketBase::kSuccess ) {
-                //wxPrintf("codelite-lldb: received command\n%s\n", str);
-                
+            if(m_socket->ReadMessage(str, 1) == clSocketBase::kSuccess) {
+                // wxPrintf("codelite-lldb: received command\n%s\n", str);
+
                 // Process command
                 LLDBCommand command(str);
-                switch( command.GetCommandType() ) {
-                case kCommandAddWatch: 
-                    m_app->CallAfter( &CodeLiteLLDBApp::AddWatch, command );
-                    break;
-                case kCommandDeleteWatch: 
-                    m_app->CallAfter( &CodeLiteLLDBApp::DeleteWatch, command );
+                switch(command.GetCommandType()) {
+                case kCommandInterperterCommand:
+                    m_app->CallAfter(&CodeLiteLLDBApp::ExecuteInterperterCommand, command);
                     break;
                     
+                case kCommandAddWatch:
+                    m_app->CallAfter(&CodeLiteLLDBApp::AddWatch, command);
+                    break;
+                case kCommandDeleteWatch:
+                    m_app->CallAfter(&CodeLiteLLDBApp::DeleteWatch, command);
+                    break;
+
                 case kCommandNextInstruction:
-                    m_app->CallAfter( &CodeLiteLLDBApp::NextInstruction, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::NextInstruction, command);
                     break;
-                    
+
                 case kCommandCurrentFileLine:
-                    m_app->CallAfter( &CodeLiteLLDBApp::ShowCurrentFileLine, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::ShowCurrentFileLine, command);
                     break;
-                    
+
                 case kCommandStart:
-                    m_app->CallAfter( &CodeLiteLLDBApp::StartDebugger, command );
+                    m_app->CallAfter(&CodeLiteLLDBApp::StartDebugger, command);
                     break;
-                    
-                case kCommandDebugCoreFile: 
-                    m_app->CallAfter( &CodeLiteLLDBApp::OpenCoreFile, command );
+
+                case kCommandDebugCoreFile:
+                    m_app->CallAfter(&CodeLiteLLDBApp::OpenCoreFile, command);
                     break;
-                    
-                case kCommandAttachProcess: 
-                    m_app->CallAfter( &CodeLiteLLDBApp::AttachProcess, command );
+
+                case kCommandAttachProcess:
+                    m_app->CallAfter(&CodeLiteLLDBApp::AttachProcess, command);
                     break;
-                    
+
                 case kCommandRun:
-                    m_app->CallAfter( &CodeLiteLLDBApp::RunDebugger, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::RunDebugger, command);
                     break;
 
                 case kCommandApplyBreakpoints:
-                    m_app->CallAfter( &CodeLiteLLDBApp::ApplyBreakpoints, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::ApplyBreakpoints, command);
                     break;
 
                 case kCommandContinue:
-                    m_app->CallAfter( &CodeLiteLLDBApp::Continue, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::Continue, command);
                     break;
 
                 case kCommandStop:
-                    m_app->CallAfter( &CodeLiteLLDBApp::StopDebugger, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::StopDebugger, command);
                     break;
-                    
+
                 case kCommandDetach:
-                    m_app->CallAfter( &CodeLiteLLDBApp::DetachDebugger, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::DetachDebugger, command);
                     break;
 
                 case kCommandDeleteBreakpoint:
-                    m_app->CallAfter( &CodeLiteLLDBApp::DeleteBreakpoints, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::DeleteBreakpoints, command);
                     break;
 
                 case kCommandDeleteAllBreakpoints:
-                    m_app->CallAfter( &CodeLiteLLDBApp::DeleteAllBreakpoints, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::DeleteAllBreakpoints, command);
                     break;
 
                 case kCommandNext:
-                    m_app->CallAfter( &CodeLiteLLDBApp::Next, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::Next, command);
                     break;
 
                 case kCommandStepIn:
-                    m_app->CallAfter( &CodeLiteLLDBApp::StepIn, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::StepIn, command);
                     break;
 
                 case kCommandStepOut:
-                    m_app->CallAfter( &CodeLiteLLDBApp::StepOut, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::StepOut, command);
                     break;
 
                 case kCommandInterrupt:
-                    m_app->CallAfter( &CodeLiteLLDBApp::Interrupt, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::Interrupt, command);
                     break;
-                
+
                 case kCommandGetLocals:
-                    m_app->CallAfter( &CodeLiteLLDBApp::LocalVariables, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::LocalVariables, command);
                     break;
-                
+
                 case kCommandExpandVariable:
-                    m_app->CallAfter( &CodeLiteLLDBApp::ExpandVariable, command);
+                    m_app->CallAfter(&CodeLiteLLDBApp::ExpandVariable, command);
                     break;
-                
+
                 case kCommandSelectFrame:
-                    m_app->CallAfter( &CodeLiteLLDBApp::SelectFrame, command );
+                    m_app->CallAfter(&CodeLiteLLDBApp::SelectFrame, command);
                     break;
-                    
+
                 case kCommandSelectThread:
-                    m_app->CallAfter( &CodeLiteLLDBApp::SelectThread, command );
+                    m_app->CallAfter(&CodeLiteLLDBApp::SelectThread, command);
                     break;
-                    
+
                 case kCommandEvalExpression:
-                    m_app->CallAfter( &CodeLiteLLDBApp::EvalExpression, command );
+                    m_app->CallAfter(&CodeLiteLLDBApp::EvalExpression, command);
                     break;
-                    
+
                 default:
                     break;
                 }
             }
         }
 
-    } catch ( clSocketException& e ) {
+    } catch(clSocketException& e) {
         wxPrintf("codelite-lldb: error while reading message. %s\n", e.what().c_str());
-        m_app->CallAfter( &CodeLiteLLDBApp::NotifyAborted );
+        m_app->CallAfter(&CodeLiteLLDBApp::NotifyAborted);
         return NULL;
     }
 

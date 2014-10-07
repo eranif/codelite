@@ -37,59 +37,56 @@
 class LLDBTooltip;
 class LLDBThreadsView;
 class LLDBLocalsView;
-class LLDBBreakpointsPane;
+class LLDBOutputView;
 class ConsoleFrame;
 class LLDBCallStackPane;
 class LLDBPlugin : public IPlugin
 {
     LLDBConnector m_connector;
     wxString m_defaultPerspective;
-    
+
     /// ------------------------------------
     /// UI elements
     /// ------------------------------------
-    LLDBCallStackPane*      m_callstack;
-    LLDBBreakpointsPane*    m_breakpointsView;
-    LLDBLocalsView*         m_localsView;
-    LLDBThreadsView*        m_threadsView;
-    long                    m_terminalPID;
-    wxString                m_terminalTTY;
-    bool                    m_stopReasonPrompted;
-    bool                    m_raisOnBpHit;
-    LLDBTooltip*            m_tooltip;
+    LLDBCallStackPane* m_callstack;
+    LLDBOutputView* m_breakpointsView;
+    LLDBLocalsView* m_localsView;
+    LLDBThreadsView* m_threadsView;
+    long m_terminalPID;
+    wxString m_terminalTTY;
+    bool m_stopReasonPrompted;
+    bool m_raisOnBpHit;
+    LLDBTooltip* m_tooltip;
     friend class LLDBTooltip;
+
 public:
-    LLDBPlugin(IManager *manager);
+    LLDBPlugin(IManager* manager);
     ~LLDBPlugin();
-    
-    LLDBConnector* GetLLDB() {
-        return &m_connector;
-    }
-    
-    IManager* GetManager() {
-        return m_mgr;
-    }
-    
+
+    LLDBConnector* GetLLDB() { return &m_connector; }
+
+    IManager* GetManager() { return m_mgr; }
+
 private:
     void TerminateTerminal();
     void SetupPivotFolder(const LLDBConnectReturnObject& ret);
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
     void LoadLLDBPerspective();
-    void ShowLLDBPane(const wxString &paneName, bool show = true);
+    void ShowLLDBPane(const wxString& paneName, bool show = true);
     void InitializeUI();
     void DestroyUI();
     void DoCleanup();
-    bool DoInitializeDebugger(clDebugEvent &event, bool redirectOutput, const wxString &terminalTitle = wxEmptyString);
+    bool DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle = wxEmptyString);
     void DestroyTooltip();
-    
+
 protected:
     // Other codelite events
-    void OnWorkspaceLoaded(wxCommandEvent &event);
-    void OnWorkspaceClosed(wxCommandEvent &event);
-    void OnSettings(wxCommandEvent &event);
-    void OnInitDone(wxCommandEvent &event);
-    
+    void OnWorkspaceLoaded(wxCommandEvent& event);
+    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnSettings(wxCommandEvent& event);
+    void OnInitDone(wxCommandEvent& event);
+
     // UI debugger events
     void OnIsDebugger(clDebugEvent& event);
     void OnDebugStart(clDebugEvent& event);
@@ -111,29 +108,29 @@ protected:
     void OnDebugDisableAllBreakpoints(clDebugEvent& event);
     void OnDebugNextInst(clDebugEvent& event);
     void OnDebugShowCursor(clDebugEvent& event);
-    
+
     void OnBuildStarting(clBuildEvent& event);
 
     // LLDB events
     void OnLLDBCrashed(LLDBEvent& event);
     void OnLLDBStarted(LLDBEvent& event);
     void OnLLDBExited(LLDBEvent& event);
-    void OnLLDBStopped(LLDBEvent &event);
-    void OnLLDBStoppedOnEntry(LLDBEvent &event);
-    void OnLLDBRunning(LLDBEvent &event);
-    void OnLLDBDeletedAllBreakpoints(LLDBEvent &event);
-    void OnLLDBBreakpointsUpdated(LLDBEvent &event);
-    void OnLLDBExpressionEvaluated(LLDBEvent &event);
+    void OnLLDBStopped(LLDBEvent& event);
+    void OnLLDBStoppedOnEntry(LLDBEvent& event);
+    void OnLLDBRunning(LLDBEvent& event);
+    void OnLLDBDeletedAllBreakpoints(LLDBEvent& event);
+    void OnLLDBBreakpointsUpdated(LLDBEvent& event);
+    void OnLLDBExpressionEvaluated(LLDBEvent& event);
 
-public:    
+public:
     //--------------------------------------------
-    //Abstract methods
+    // Abstract methods
     //--------------------------------------------
-    virtual clToolBar *CreateToolBar(wxWindow *parent);
-    virtual void CreatePluginMenu(wxMenu *pluginsMenu);
-    virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
+    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
 };
 
-#endif //LLDBDebuggerPlugin
+#endif // LLDBDebuggerPlugin

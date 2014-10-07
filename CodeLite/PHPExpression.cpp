@@ -141,7 +141,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
             current = &stack.top();
         }
     }
-    
+
     if(current) {
         result.swap(*current);
     }
@@ -162,7 +162,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         return lookpTable.FindScope("\\");
     }
 
-    wxString asString = SimplifyExpression(0);
+    wxString asString = DoSimplifyExpression(0, m_sourceFile);
     wxUnusedVar(asString);
 
     if(m_parts.empty() && !m_filter.IsEmpty()) {
@@ -239,15 +239,15 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     return currentToken;
 }
 
-wxString PHPExpression::SimplifyExpression(int depth)
+wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sourceFile)
 {
     if(depth > 5) {
         // avoid infinite recursion, by limiting the nest level to 5
         return "";
     }
     // Parse the input source file
-    PHPEntityBase::Ptr_t scope = m_sourceFile->CurrentScope();
-    const PHPEntityBase* innerClass = m_sourceFile->Class();
+    PHPEntityBase::Ptr_t scope = sourceFile->CurrentScope();
+    const PHPEntityBase* innerClass = sourceFile->Class();
 
     // Check the first token
 
@@ -303,7 +303,7 @@ wxString PHPExpression::SimplifyExpression(int depth)
                         // append the "->" to the expression to make sure that the parser will understand it
                         // as an expression
                         PHPExpression e(m_text, local->Cast<PHPEntityVariable>()->GetExpressionHint() + "->");
-                        firstToken = e.SimplifyExpression(depth + 1);
+                        firstToken = e.DoSimplifyExpression(depth + 1, m_sourceFile);
                         if(firstToken.EndsWith("->")) {
                             // remove the last 2 characters
                             firstToken.RemoveLast(2);
@@ -315,7 +315,7 @@ wxString PHPExpression::SimplifyExpression(int depth)
                 }
             } else if(token.type == kPHP_T_IDENTIFIER) {
                 // an identifier, convert it to the fullpath
-                firstToken = m_sourceFile->MakeIdentifierAbsolute(token.text);
+                firstToken = sourceFile->MakeIdentifierAbsolute(token.text);
             }
         }
 
@@ -356,7 +356,7 @@ wxString PHPExpression::SimplifyExpression(int depth)
                 if(m_parts.empty() && token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
                     // The first token in the "parts" list has a scope resolving operator ("::")
                     // we need to make sure that the indetifier is provided in fullpath
-                    part.m_text = m_sourceFile->MakeIdentifierAbsolute(currentText);
+                    part.m_text = sourceFile->MakeIdentifierAbsolute(currentText);
                 } else {
                     part.m_text = currentText;
                 }

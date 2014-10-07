@@ -41,10 +41,10 @@ protected:
                        // but will do no good to resolve the expression
     PHPSourceFile::Ptr_t m_sourceFile;
     bool m_functionCalltipExpr;
-
+    wxString DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sourceFile);
+    
 protected:
     phpLexerToken::Vet_t CreateExpression(const wxString& text);
-    wxString SimplifyExpression(int depth);
 
 public:
     PHPExpression(const wxString& fulltext, const wxString& exprText = wxString(), bool functionCalltipExpr = false);

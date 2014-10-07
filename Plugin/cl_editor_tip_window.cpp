@@ -70,10 +70,16 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
     wxGCDC gdc;
     if(!DrawingUtils::GetGCDC(dc, gdc)) return;
-
-    wxColour bgColour = wxColour("rgb(43, 43, 43)").ChangeLightness(180);
-    wxColour penColour = wxColour("rgb(43, 43, 43)");
-
+    
+    // Define the colours used by this tooltip window
+    wxColour bgColour, penColour, textColour, higlighTextBg, higlighTextFg, higlighTextPen;
+    bgColour = wxColour("#feffcd"); // basic colour
+    penColour = bgColour.ChangeLightness(80);
+    textColour = wxColour("#000023");
+    higlighTextBg = wxColour("rgb(204, 153, 0)");
+    higlighTextPen = higlighTextBg;
+    higlighTextFg = *wxWHITE;
+    
     wxRect rr = GetClientRect();
 
     // draw the background using the parent background colour
@@ -88,7 +94,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     int firstLineY = TIP_SPACER;
 
     // Draw the Tip text
-    gdc.SetTextForeground(wxColour("BLACK"));
+    gdc.SetTextForeground(textColour);
     gdc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
 
     if(tip) {
@@ -102,7 +108,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             summaryLineXText -= (txtLen + TIP_SPACER);
 
             // Draw the summary line
-            gdc.SetTextForeground(DrawingUtils::GetThemeTextColour());
+            gdc.SetTextForeground(textColour);
             gdc.DrawText(txt, summaryLineXText, secondLineY + TIP_SPACER / 2);
         }
 
@@ -115,15 +121,16 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             int x = DoGetTextLen(gdc, txtBefore);
             int w = DoGetTextLen(gdc, txtInclude);
 
-            gdc.SetBrush(wxColour("rgb(43, 43, 43)"));
-            gdc.SetPen(wxColour("rgb(43, 43, 43)"));
+            // darken the background colour and use it as the highlight colour
+            gdc.SetBrush(higlighTextBg);
+            gdc.SetPen(higlighTextPen);
+            gdc.SetTextForeground(higlighTextFg);
 
             // if this is a 2 liner tip, the highlight rect is 1/2 the tip window height,
             // otherwise its the same as the height
             int highlightRectHeight = twoLinesTip ? (rr.GetHeight() / 2) : rr.GetHeight();
             int highlightRectY = twoLinesTip ? firstLineY - (TIP_SPACER / 2) : 0;
             gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, highlightRectY, w + 2, highlightRectHeight, 0);
-            gdc.SetTextForeground(*wxWHITE);
             gdc.DrawText(txtInclude, wxPoint(x + TIP_SPACER, firstLineY));
         }
     }

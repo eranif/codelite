@@ -48,6 +48,7 @@ public:
     // Event handlers
     void OnBreakpointsUpdated(LLDBEvent &event);
     void OnConsoleOutput(LLDBEvent &event);
+    void OnLLDBStarted(LLDBEvent &event);
     LLDBBreakpoint::Ptr_t GetBreakpoint(const wxDataViewItem& item);
 protected:
     virtual void OnSendCommandToLLDB(wxCommandEvent& event);

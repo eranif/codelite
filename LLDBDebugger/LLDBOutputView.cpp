@@ -54,6 +54,7 @@ LLDBOutputView::LLDBOutputView(wxWindow* parent, LLDBPlugin* plugin)
 {
     Initialize();
     m_connector->Bind(wxEVT_LLDB_INTERPERTER_REPLY, &LLDBOutputView::OnConsoleOutput, this);
+    m_connector->Bind(wxEVT_LLDB_STARTED, &LLDBOutputView::OnLLDBStarted, this);
     m_connector->Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBOutputView::OnBreakpointsUpdated, this);
     m_connector->Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBOutputView::OnBreakpointsUpdated, this);
     EventNotifier::Get()->TopFrame()->Bind(
@@ -64,6 +65,7 @@ LLDBOutputView::LLDBOutputView(wxWindow* parent, LLDBPlugin* plugin)
 LLDBOutputView::~LLDBOutputView()
 {
     m_connector->Unbind(wxEVT_LLDB_INTERPERTER_REPLY, &LLDBOutputView::OnConsoleOutput, this);
+    m_connector->Unbind(wxEVT_LLDB_STARTED, &LLDBOutputView::OnLLDBStarted, this);
     m_connector->Unbind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBOutputView::OnBreakpointsUpdated, this);
     m_connector->Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBOutputView::OnBreakpointsUpdated, this);
     EventNotifier::Get()->TopFrame()->Unbind(
@@ -251,4 +253,12 @@ void LLDBOutputView::OnSendCommandToLLDB(wxCommandEvent& event)
     }
     m_connector->SendInterperterCommand(commandText);
     m_textCtrlConsoleSend->ChangeValue("");
+}
+
+void LLDBOutputView::OnLLDBStarted(LLDBEvent& event)
+{
+    event.Skip();
+    m_stcConsole->SetReadOnly(false);
+    m_stcConsole->ClearAll();
+    m_stcConsole->SetReadOnly(true);
 }

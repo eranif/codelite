@@ -97,7 +97,13 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_LOADED);
     phpEvent.SetFileName(m_workspaceFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(phpEvent);
-
+    
+    // Notify that the a new workspace is loaded
+    {
+        wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
+        event.SetString(GetFilename().GetFullPath());
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
     ParseWorkspace(false);
     return true;
 }

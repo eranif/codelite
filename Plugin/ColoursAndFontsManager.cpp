@@ -16,6 +16,7 @@
 #include <wx/settings.h>
 #include <wx/tokenzr.h>
 #include "EclipseThemeImporterManager.h"
+#include "fileextmanager.h"
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()
@@ -25,9 +26,7 @@ ColoursAndFontsManager::ColoursAndFontsManager()
     m_globalFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 }
 
-ColoursAndFontsManager::~ColoursAndFontsManager()
-{
-}
+ColoursAndFontsManager::~ColoursAndFontsManager() {}
 
 ColoursAndFontsManager& ColoursAndFontsManager::Get()
 {
@@ -42,7 +41,7 @@ void ColoursAndFontsManager::Load()
     m_lexersMap.clear();
     m_initialized = true;
 
-    // Always load first the installation lexers
+// Always load first the installation lexers
 #ifdef USE_POSIX_LAYOUT
     wxFileName defaultLexersPath(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR), "");
 #else
@@ -122,7 +121,7 @@ void ColoursAndFontsManager::LoadOldXmls(const wxString& path)
         wxXmlNode* child = lexers->GetChildren();
         wxString themeName = XmlUtils::ReadString(lexers, "Theme", "Default");
         themeName = themeName.Capitalize();
-        
+
         while(child) {
             if(child->GetName() == "Lexer") {
                 // Assign theme to this lexer
@@ -151,13 +150,13 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
 
     LexerConf::Ptr_t lexer(new LexerConf);
     lexer->FromXml(node);
-    
+
     // ensure that the theme name is capitalized - this helps
     // when displaying the content in a wxListBox sorted
     wxString themeName = lexer->GetThemeName();
     themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
-    lexer->SetThemeName( themeName );
-    
+    lexer->SetThemeName(themeName);
+
     // Hack: fix Java lexer which is using the same
     // file extensions as C++...
     if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
@@ -198,7 +197,7 @@ wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString&
     for(size_t i = 0; i < lexers.size(); ++i) {
         themes.Add(lexers.at(i)->GetThemeName());
     }
-    
+
     // sort the list
     themes.Sort();
     return themes;
@@ -305,11 +304,42 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
         }
     }
 
+    // Try this:
+    // Use the FileExtManager to get the file type by examinig its content
+    LexerConf::Ptr_t lexerByContent; // Null by default
+    FileExtManager::FileType fileType = FileExtManager::TypeOther;
+    if(FileExtManager::AutoDetectByContent(filename, fileType) && fileType != FileExtManager::TypeOther) {
+        switch(fileType) {
+        case FileExtManager::TypeScript:
+            lexerByContent = GetLexer("script");
+            break;
+        case FileExtManager::TypePhp:
+            lexerByContent = GetLexer("html");
+            break;
+        case FileExtManager::TypeSourceCpp:
+            lexerByContent = GetLexer("c++");
+            break;
+        case FileExtManager::TypeXml:
+            lexerByContent = GetLexer("xml");
+            break;
+        case FileExtManager::TypePython:
+            lexerByContent = GetLexer("python");
+            break;
+        default:
+            break;
+        }
+    }
+    
+    // If we managed to find a lexer by content, use it
+    if(lexerByContent) return lexerByContent;
+    
     // If we reached here, it means we could not locate an active lexer for this file type
     if(defaultLexer) {
         return defaultLexer;
+
     } else if(firstLexer) {
         return firstLexer;
+
     } else {
         // Return the "Text" lexer
         return GetLexer("text");

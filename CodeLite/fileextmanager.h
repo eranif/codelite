@@ -30,6 +30,9 @@
 #include <wx/string.h>
 #include <map>
 #include "codelite_exports.h"
+#include <wx/regex.h>
+#include "smart_ptr.h"
+#include <vector>
 
 class WXDLLIMPEXP_CL FileExtManager
 {
@@ -74,8 +77,10 @@ public:
     };
 
 private:
+    typedef SmartPtr<wxRegEx> wxRegExPtr_t;
     static std::map<wxString, FileType> m_map;
-
+    static std::vector<std::pair<wxRegExPtr_t, FileType> > m_regexVec;
+    
 public:
     static FileType GetType(const wxString &filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
     static void Init();
@@ -103,6 +108,11 @@ public:
     static bool IsPHPFile(const wxFileName& filename) {
         return IsPHPFile(filename.GetFullName());
     }
+    
+    /**
+     * @brief attempt to autodetect the file type by examining its content 
+     */
+    static bool AutoDetectByContent(const wxString &filename, FileExtManager::FileType &fileType);
 };
 
 #endif // __fileextmanager__

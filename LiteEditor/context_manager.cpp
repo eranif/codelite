@@ -56,7 +56,7 @@ ContextBasePtr ContextManager::NewContext(LEditor* parent, const wxString& lexer
 
 ContextBasePtr ContextManager::NewContextByFileName(LEditor* parent, const wxFileName& fileName)
 {
-    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(fileName.GetFullName());
+    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(fileName.GetFullPath());
     if(!lexer) {
         // could not locate a lexer for this file name, return the default text lexer
         return ContextManager::Get()->NewContext(parent, wxT("Text"));

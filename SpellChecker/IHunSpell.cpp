@@ -243,6 +243,8 @@ void IHunSpell::CheckSpelling(const wxString& check)
     m_pSpellDlg->SetPHs(this);
     wxStringTokenizer tkz(text, s_defDelimiters);
 
+	wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
+
     while(tkz.HasMoreTokens()) {
         wxString token = tkz.GetNextToken();
         int pos = tkz.GetPosition() - token.Len() - 1;
@@ -258,6 +260,10 @@ void IHunSpell::CheckSpelling(const wxString& check)
 
             // look in user list
             if(m_userDict.Index(token) != wxNOT_FOUND) continue;
+
+			// see if hex number 
+			if(rehex.Matches(token)) continue;
+
             pEditor->SetUserIndicator(pos, token.Len());
 
             if(!m_pPlugIn->GetCheckContinuous()) {
@@ -478,6 +484,8 @@ void IHunSpell::EnableScannerType(int type, bool state)
 int IHunSpell::CheckCppType(IEditor* pEditor)
 {
     wxStringTokenizer tkz;
+	wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
+
     int retVal = kNoSpellingError;
     int offset = 0;
 
@@ -523,6 +531,9 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
                 // look in user list
                 if(m_userDict.Index(token) != wxNOT_FOUND) continue;
 
+				// see if hex number 
+				if(rehex.Matches(token)) continue;
+
                 pEditor->SetUserIndicator(pos, token.Len());
                 pEditor->SetCaretAt(pos);
                 pEditor->SelectText(pos, token.Len());
@@ -560,6 +571,8 @@ int IHunSpell::CheckCppType(IEditor* pEditor)
 int IHunSpell::MarkErrors(IEditor* pEditor)
 {
     wxStringTokenizer tkz;
+	wxRegEx rehex(s_dectHex, wxRE_ADVANCED);
+
     int counter = 0;
     pEditor->ClearUserIndicators();
 
@@ -604,6 +617,9 @@ int IHunSpell::MarkErrors(IEditor* pEditor)
                 // look in user list
                 if(m_userDict.Index(token) != wxNOT_FOUND) continue;
 
+				// see if hex number 
+				if(rehex.Matches(token)) continue;
+
                 pEditor->SetUserIndicator(pos, token.Len());
                 counter++;
             }
@@ -613,11 +629,11 @@ int IHunSpell::MarkErrors(IEditor* pEditor)
     return counter;
 }
 
-void IHunSpell::AddWord(const wxString& word) 
-{ 
+void IHunSpell::AddWord(const wxString& word)
+{
 #if wxUSE_STL
     // Implict conversions are disabled when building with wxUSE_STL=1
-    Hunspell_add(m_pSpell, word.mb_str().data()); 
+    Hunspell_add(m_pSpell, word.mb_str().data());
 #else
     Hunspell_add(m_pSpell, word);
 #endif

@@ -42,6 +42,7 @@ static const wxString s_userDict( wxT("userwords.dict") );
 static const wxString s_cppDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|_;:\"\'<>/~0123456789" ) );
 static const wxString s_commentDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/" ) );
 static const wxString s_defDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/~0123456789" ) );
+static const wxString s_dectHex( wxT("^0[xX]([0-9a-f]+|[0-9A-F]+)$"));
 
 static const wxString s_include( wxT( "#include" ) );
 static const wxString s_wsRegEx( wxT( "(\\\\[^\\\\])" ) );
@@ -51,6 +52,6 @@ static const wxString s_contCheckID(wxT("do_continuous_check"));
 
 static const wxString s_PLACE_HOLDER     = "@#)(";
 static const wxString s_DOUBLE_BACKSLASH = "\\\\";
-        
+
 //------------------------------------------------------------
 

@@ -137,6 +137,12 @@ public:
      * @brief find a scope symbol (class or namespace) by its fullname
      */
     PHPEntityBase::Ptr_t FindScope(const wxString& fullname);
+    
+    /**
+     * @brief find a function by its fullname (scope+name)
+     */
+    PHPEntityBase::Ptr_t FindFunction(const wxString& fullname);
+    
     /**
      * @brief find a class with a given name
      */

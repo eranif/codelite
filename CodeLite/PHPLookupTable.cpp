@@ -831,3 +831,35 @@ void PHPLookupTable::ClearAll()
         CL_WARNING("PHPLookupTable::ClearAll: %s", e.GetMessage());
     }
 }
+
+PHPEntityBase::Ptr_t PHPLookupTable::FindFunction(const wxString& fullname)
+{
+    // locate the scope
+    try {
+        wxString sql;
+
+        // limit by 2 for performance reason
+        // we will return NULL incase the number of matches is greater than 1...
+        sql << "SELECT * from FUNCTION_TABLE WHERE FULLNAME='" << fullname << "'";
+        sql << " LIMIT 2";
+
+        wxSQLite3Statement st = m_db.PrepareStatement(sql);
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        PHPEntityBase::Ptr_t match(NULL);
+
+        while(res.NextRow()) {
+            if(match) {
+                // only one match
+                return PHPEntityBase::Ptr_t(NULL);
+            }
+
+            match.Reset(new PHPEntityFunction());
+            match->FromResultSet(res);
+        }
+        return match;
+
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::FindFunction: %s", e.GetMessage());
+    }
+    return PHPEntityBase::Ptr_t(NULL);
+}

@@ -204,7 +204,11 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         if(!currentToken) {
             // first token
             currentToken = lookpTable.FindScope(part.m_text);
-
+            if(!currentToken) {
+                // Maybe its a global function..
+                currentToken = lookpTable.FindFunction(part.m_text);
+            }
+            
         } else {
             // load the children of the current token (optionally, filter by the text)
             currentToken = lookpTable.FindMemberOf(currentToken->GetDbId(), part.m_text);

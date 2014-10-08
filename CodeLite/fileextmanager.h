@@ -76,43 +76,61 @@ public:
         TypeOther = wxNOT_FOUND
     };
 
+    struct Matcher {
+        SmartPtr<wxRegEx> m_regex;
+        wxString m_exactMatch;
+        FileType m_fileType;
+        
+        Matcher(const wxString& pattern, FileType fileType, bool regex = true)
+            : m_fileType(fileType)
+        {
+            if(regex) {
+                m_regex = new wxRegEx(pattern);
+            } else {
+                m_exactMatch = pattern;
+            }
+        }
+        
+        bool Matches(const wxString &in) const {
+            if(m_regex) {
+                return m_regex->Matches(in);
+            } else {
+                return in.Find(m_exactMatch) != wxNOT_FOUND;
+            }
+        }
+        typedef SmartPtr<Matcher> Ptr_t;
+    };
+
 private:
-    typedef SmartPtr<wxRegEx> wxRegExPtr_t;
     static std::map<wxString, FileType> m_map;
-    static std::vector<std::pair<wxRegExPtr_t, FileType> > m_regexVec;
-    
+    static std::vector<FileExtManager::Matcher::Ptr_t> m_matchers;
+
 public:
-    static FileType GetType(const wxString &filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
+    static FileType GetType(const wxString& filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
     static void Init();
 
     /**
      * @brief return true if the file is a C/C++ file
      */
     static bool IsCxxFile(const wxString& filename);
-    static bool IsCxxFile(const wxFileName& filename) {
-        return IsCxxFile(filename.GetFullName());
-    }
+    static bool IsCxxFile(const wxFileName& filename) { return IsCxxFile(filename.GetFullName()); }
 
     /**
      * @brief return true if a file is a JavaScript file
      */
     static bool IsJavascriptFile(const wxString& filename);
-    static bool IsJavascriptFile(const wxFileName& filename) {
-        return IsJavascriptFile(filename.GetFullName());
-    }
-    
+    static bool IsJavascriptFile(const wxFileName& filename) { return IsJavascriptFile(filename.GetFullName()); }
+
     /**
      * @param return true if a file is a PHP file
      */
     static bool IsPHPFile(const wxString& filename);
-    static bool IsPHPFile(const wxFileName& filename) {
-        return IsPHPFile(filename.GetFullName());
-    }
-    
+    static bool IsPHPFile(const wxFileName& filename) { return IsPHPFile(filename.GetFullName()); }
+
     /**
-     * @brief attempt to autodetect the file type by examining its content 
+     * @brief attempt to autodetect the file type by examining its content
      */
-    static bool AutoDetectByContent(const wxString &filename, FileExtManager::FileType &fileType);
+    static bool AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType);
 };
 
 #endif // __fileextmanager__

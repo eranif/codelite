@@ -29,7 +29,7 @@
 #include <wx/regex.h>
 
 std::map<wxString, FileExtManager::FileType> FileExtManager::m_map;
-std::vector<std::pair<FileExtManager::wxRegExPtr_t, FileExtManager::FileType> > FileExtManager::m_regexVec;
+std::vector<FileExtManager::Matcher::Ptr_t> FileExtManager::m_matchers;
 
 void FileExtManager::Init()
 {
@@ -119,15 +119,23 @@ void FileExtManager::Init()
         m_map["s"] = TypeAsm;
         
         // Initialize regexes:
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("#[ \t]*![ \t]*/bin/bash")), TypeScript));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("#[ \t]*![ \t]*/bin/sh")), TypeScript));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("#[ \t]*![ \t]*/usr/bin/sh")), TypeScript));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("#[ \t]*![ \t]*/usr/bin/bash")), TypeScript));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("#[ \t]*![ \t]*/bin/python")), TypePython));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("#[ \t]*![ \t]*/usr/bin/python")), TypePython));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("\\<\\?xml")), TypeXml));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("\\<\\?php")), TypePhp));
-        m_regexVec.push_back(std::make_pair(wxRegExPtr_t(new wxRegEx("#include[ \t]+[\\<\"]")), TypeSourceCpp));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/sh", TypeScript)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/sh", TypeScript)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeScript)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/python", TypePython)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?xml", TypeXml, false)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?php", TypePhp, false)));
+        
+        // STL sources places "-*- C++ -*-" at the top of their headers
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("-*- C++ -*-", TypeSourceCpp, false)));
+        
+        // #ifndef WORD 
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#ifndef[ \t]+[a-zA-Z0-9_]+", TypeSourceCpp)));
+        
+        // #include <
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp)));
     }
 }
 
@@ -183,9 +191,9 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
         fileContent.Truncate(4096);
     }
     
-    for(size_t i=0; i<m_regexVec.size(); ++i) {
-        if(m_regexVec.at(i).first->Matches(fileContent)) {
-            fileType = m_regexVec.at(i).second;
+    for(size_t i=0; i<m_matchers.size(); ++i) {
+        if(m_matchers.at(i)->Matches(fileContent)) {
+            fileType = m_matchers.at(i)->m_fileType;
             return true;
         }
     }

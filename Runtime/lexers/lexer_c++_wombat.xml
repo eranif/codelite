@@ -34,5 +34,6 @@
     <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="white" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#919191" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#f6f3e8" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="20" Name="Raw String" Bold="no" Face="" Colour="#95e454" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
   </Properties>
 </Lexer>

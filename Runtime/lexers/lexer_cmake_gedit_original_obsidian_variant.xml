@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="cmake" Theme="Gedit Original Obsidian Variant" IsActive="No" UseCustomTextSelFgColour="Yes" StylingWithinPreProcessor="yes" Id="80">
+  <KeyWords0>add_custom_command add_custom_target add_definitions add_dependencies add_executable add_library add_subdirectory add_test aux_source_directory build_command build_name cmake_minimum_required configure_file create_test_sourcelist else elseif enable_language enable_testing endforeach endfunction endif endmacro endwhile exec_program execute_process export_library_dependencies file find_file find_library find_package find_path find_program fltk_wrap_ui foreach function get_cmake_property get_directory_property get_filename_component get_source_file_property get_target_property get_test_property if include include_directories include_external_msproject include_regular_expression install install_files install_programs install_targets link_directories link_libraries list load_cache load_command macro make_directory mark_as_advanced math message option output_required_files project qt_wrap_cpp qt_wrap_ui remove remove_definitions separate_arguments set set_directory_properties set_source_files_properties set_target_properties set_tests_properties site_name source_group string subdir_depends subdirs target_link_libraries try_compile try_run unset use_mangled_mesa utility_source variable_requires vtk_make_instantiator vtk_wrap_java vtk_wrap_python vtk_wrap_tcl while write_file</KeyWords0>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.cmake;*.CMAKE;*CMakeLists.txt</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Italic="no" Face="" Colour="#d3d7cf" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Comment" Bold="no" Italic="no" Face="" Colour="#888a85" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="String DQ" Bold="no" Italic="no" Face="" Colour="#edd400" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="String LQ" Bold="no" Italic="no" Face="" Colour="#edd400" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="String RQ" Bold="no" Italic="no" Face="" Colour="#edd400" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="Commands" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="6" Name="Parameters" Bold="no" Italic="no" Face="" Colour="#d3d7cf" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="7" Name="Variables" Bold="no" Italic="no" Face="" Colour="#bbbbbb" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="8" Name="UserDefined" Bold="no" Italic="no" Face="" Colour="#d3d7cf" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="While Def" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="10" Name="Foreach Def" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="11" Name="If Defined Def" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="12" Name="Macro Def" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="13" Name="String Var" Bold="no" Italic="no" Face="" Colour="#bbbbbb" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="14" Name="Number" Bold="no" Italic="no" Face="" Colour="#ce5c00" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Italic="no" Face="" Colour="yellow" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Italic="no" Face="" Colour="red" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Italic="no" Face="" Colour="#8C8C8C" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Italic="no" Face="" Colour="#1A1A1A" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Italic="no" Face="" Colour="#EEEEEC" BgColour="#888a85" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Italic="no" Face="" Colour="white" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Italic="no" Face="" Colour="#8C8C8C" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Italic="no" Face="" Colour="#d3d7cf" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Italic="no" Face="" Colour="#555753" BgColour="#1A1A1A" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+  </Properties>
+</Lexer>

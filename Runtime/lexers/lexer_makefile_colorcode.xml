@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="makefile" Theme="ColorCode" IsActive="No" UseCustomTextSelFgColour="Yes" StylingWithinPreProcessor="yes" Id="11">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.mk;makefile;Makefile;*.mak;*.make</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#36AA70" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="Preprocessor" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="Identifier" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="Operator" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="Target" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="ID End Of Line" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="yellow" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#9B9C9D" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#373A3C" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#949494" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="white" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#9B9C9D" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#787878" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+  </Properties>
+</Lexer>

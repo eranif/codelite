@@ -34,5 +34,6 @@
     <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FFFFFF" BgColour="red" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="20" Name="Raw String" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
   </Properties>
 </Lexer>

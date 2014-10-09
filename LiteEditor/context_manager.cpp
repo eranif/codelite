@@ -28,6 +28,7 @@
 #include "context_diff.h"
 #include "context_base.h"
 #include "context_html.h"
+#include "ContextPhp.h"
 #include "generic_context.h"
 #include "editor_config.h"
 #include "ColoursAndFontsManager.h"
@@ -73,6 +74,7 @@ void ContextManager::Initialize()
     m_contextPool["c++"] = new ContextCpp();
     m_contextPool["diff"] = new ContextDiff();
     m_contextPool["html"] = new ContextHtml();
+    m_contextPool["php"] = new ContextPhp();
 
     // load generic lexers
     wxArrayString names = ColoursAndFontsManager::Get().GetAllLexersNames();

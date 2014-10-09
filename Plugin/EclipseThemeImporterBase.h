@@ -56,7 +56,21 @@ protected:
                      bool bold = false,
                      bool italic = false,
                      bool isEOLFilled = false);
+
+    void AddProperty(wxXmlNode* properties,
+                     int id,
+                     const wxString& name,
+                     const wxString& colour,
+                     const wxString& bgColour,
+                     bool bold = false,
+                     bool italic = false,
+                     bool isEOLFilled = false)
+    {
+        AddProperty(properties, wxString::Format("%d", id), name, colour, bgColour, bold, italic, isEOLFilled);
+    }
+
     void AddBaseProperties(wxXmlNode* node, const wxString& lang, const wxString& id);
+
     void AddCommonProperties(wxXmlNode* propertiesNode);
 
 public:

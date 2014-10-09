@@ -45,7 +45,7 @@ bool IsPHPFile(IEditor* editor)
 bool IsPHPFile(const wxString& filename)
 {
     wxFileName fileName = filename;
-    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer(wxT("Html"));
+    LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer(wxT("php"));
     wxString fileSpec;
 
     if(!lexer) {

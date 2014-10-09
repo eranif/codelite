@@ -163,6 +163,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
         lexer->SetFileSpec("*.java");
     }
 
+    // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
+    // the HTML lexer
+    if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
+        lexer->SetFileSpec("*.htm;*.html;*.xhtml");
+    }
+
     if(m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
     }
@@ -314,7 +320,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
             lexerByContent = GetLexer("script");
             break;
         case FileExtManager::TypePhp:
-            lexerByContent = GetLexer("html");
+            lexerByContent = GetLexer("php");
             break;
         case FileExtManager::TypeSourceCpp:
             lexerByContent = GetLexer("c++");
@@ -329,10 +335,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
             break;
         }
     }
-    
+
     // If we managed to find a lexer by content, use it
     if(lexerByContent) return lexerByContent;
-    
+
     // If we reached here, it means we could not locate an active lexer for this file type
     if(defaultLexer) {
         return defaultLexer;

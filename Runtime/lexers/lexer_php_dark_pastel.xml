@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="php" Theme="Dark Pastel" IsActive="No" UseCustomTextSelFgColour="Yes" StylingWithinPreProcessor="yes" Id="4">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4>implements abstract and array as bool boolean break case cfunction class const continue declare default die directory do double echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends false float for foreach function global if include include_once int integer isset list new null object old_function or parent print real require require_once resource return static stdclass string switch true unset use var while xor __class__ __file__ __function__ __line__ __sleep __namespace__ __trait__ __wakeup public protected private trait interface namespace final throw extends try catch self yield</KeyWords4>
+  <Extensions>*.php;*.php3;*.phtml;*.inc</Extensions>
+  <Properties>
+    <Property Id="0" Name="HTML Default" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="HTML Tag" Bold="no" Face="" Colour="#99CCFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="Unknown HTML Tag" Bold="no" Face="" Colour="#99CCFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="HTML Attribute" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="Unknown HTML Attribute" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="HTML Number" Bold="no" Face="" Colour="#99FF00" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="6" Name="HTML Double String" Bold="no" Face="" Colour="#99FF99" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="7" Name="HTML Single String" Bold="no" Face="" Colour="#99FF99" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="8" Name="HTML Other" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="HTML Comment" Bold="no" Face="" Colour="#A6A684" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="10" Name="HTML Entity" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="40" Name="JS Start" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="41" Name="JS Default" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="42" Name="JS Comment" Bold="no" Face="" Colour="#A6A684" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="43" Name="JS MultiLine Comment" Bold="no" Face="" Colour="#A6A684" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="44" Name="JS Doc Comment" Bold="no" Face="" Colour="#A6A684" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="45" Name="JS Number" Bold="no" Face="" Colour="#99FF00" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="46" Name="JS Word" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="47" Name="JS Keyword" Bold="no" Face="" Colour="#0099FF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="48" Name="JS Double String" Bold="no" Face="" Colour="#99FF99" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="49" Name="JS Single String" Bold="no" Face="" Colour="#99FF99" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="50" Name="JS Symbols" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="51" Name="JS String EOL" Bold="no" Face="" Colour="#99FF99" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="52" Name="JS Regex" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="104" Name="PHP Complex Variable" Bold="no" Face="" Colour="#99CCFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="118" Name="PHP Default" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="119" Name="PHP Heredoc String" Bold="no" Face="" Colour="#99FF99" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="120" Name="PHP String" Bold="no" Face="" Colour="#99FF99" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="121" Name="PHP Word" Bold="no" Face="" Colour="#0099FF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#99FF00" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="123" Name="PHP Variable" Bold="no" Face="" Colour="#99CCFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="125" Name="PHP Comment" Bold="no" Face="" Colour="#A6A684" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="124" Name="PHP Multiline Comment" Bold="no" Face="" Colour="#A6A684" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="126" Name="PHP Heredoc Variable" Bold="no" Face="" Colour="#99CCFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="yellow" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#868A90" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#0D1622" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#4E687D" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="white" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#868A90" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0D1622" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+  </Properties>
+</Lexer>

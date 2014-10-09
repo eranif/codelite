@@ -182,7 +182,7 @@ ContextCpp::ContextCpp(LEditor* container)
     , m_rclickMenu(NULL)
 {
     Initialize();
-
+    SetName("c++");
     EventNotifier::Get()->Connect(
         wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
 }

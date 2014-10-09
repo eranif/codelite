@@ -513,17 +513,31 @@ void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, eUpdateMode u
                 EventNotifier::Get()->AddPendingEvent(event);
             }
 
+            wxFileName fnFile(files.Item(i));
             bool reParseNeeded(true);
             if(updateMode == kUpdateMode_Fast) {
                 // Check to see if we need to re-parse this file
                 // and store it to the database
-                wxFileName fnFile(files.Item(i));
-                time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
-                wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
-                if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
+
+                if(!fnFile.Exists()) {
                     reParseNeeded = false;
+                } else {
+                    time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
+                    wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
+                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
+                        reParseNeeded = false;
+                    }
                 }
             }
+
+            // Ensure that the file exists
+            if(!fnFile.Exists()) {
+                reParseNeeded = false;
+            }
+
+            // Parse only valid PHP files
+            if((fnFile.GetExt() != "php") && (fnFile.GetExt() != "inc") && (fnFile.GetExt() != "phtml"))
+                reParseNeeded = false;
 
             if(reParseNeeded) {
                 wxFileName fnSourceFile(files.Item(i));

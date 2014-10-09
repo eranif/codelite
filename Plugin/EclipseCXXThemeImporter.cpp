@@ -114,6 +114,19 @@ bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile)
     return FinalizeImport(properties);
 }
 
+/**
+ * @brief helper method that ensure that if the colour property does not exist
+ * or contains an empty string, it returns teh 'defaultVal'
+ */
+static wxString GetFgColour(wxXmlNode* prop, const wxString& defaultVal)
+{
+    wxString colour = prop->GetAttribute("Colour", defaultVal);
+    if(colour.IsEmpty()) {
+        colour = defaultVal;
+    }
+    return colour;
+}
+
 wxFileName EclipseCXXThemeImporter::ToEclipseXML(const wxFileName& codeliteXml, size_t id)
 {
     wxXmlDocument doc(codeliteXml.GetFullPath());
@@ -122,49 +135,54 @@ wxFileName EclipseCXXThemeImporter::ToEclipseXML(const wxFileName& codeliteXml, 
     wxXmlNode* props = XmlUtils::FindFirstByTagName(doc.GetRoot(), "Properties");
     if(!props) return wxFileName();
 
-//    if(doc.GetRoot()->GetAttribute("Theme") == "Default" || doc.GetRoot()->GetAttribute("Theme") == "DarkTheme" ||
-//       doc.GetRoot()->GetAttribute("Theme") == "Zmrok-like")
-//        return wxFileName();
-
     wxString eclipseXML;
+    wxString themeName = doc.GetRoot()->GetAttribute("Theme");
     eclipseXML << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-    eclipseXML << "<colorTheme id=\"2\" name=\"" << doc.GetRoot()->GetAttribute("Theme") << "\">\n";
+    eclipseXML << "<colorTheme id=\"2\" name=\"" << themeName << "\">\n";
     wxXmlNode* prop = props->GetChildren();
+    wxString defaultFgColour;
     while(prop) {
         if(prop->GetAttribute("Name") == "Default") {
-            eclipseXML << "  <foreground color=\"" << prop->GetAttribute("Colour") << "\" />\n";
-            eclipseXML << "  <background color=\"" << prop->GetAttribute("BgColour") << "\" />\n";
+            if(themeName == "Default") {
+                eclipseXML << "  <foreground color=\"black\" />\n";
+                eclipseXML << "  <background color=\"white\" />\n";
+                defaultFgColour = "black";
 
+            } else {
+                eclipseXML << "  <foreground color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+                eclipseXML << "  <background color=\"" << prop->GetAttribute("BgColour") << "\" />\n";
+                defaultFgColour = prop->GetAttribute("Colour");
+            }
         } else if(prop->GetAttribute("Name") == "Line Numbers") {
-            eclipseXML << "  <lineNumber color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <lineNumber color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "Text Selection") {
             eclipseXML << "  <selectionForeground color=\"" << prop->GetAttribute("Colour") << "\" />\n";
             eclipseXML << "  <selectionBackground color=\"" << prop->GetAttribute("BgColour") << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "Common C++ style comment") {
-            eclipseXML << "  <singleLineComment color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <singleLineComment color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "Common C style comment") {
-            eclipseXML << "  <multiLineComment color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <multiLineComment color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "Number") {
-            eclipseXML << "  <number color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <number color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "String") {
-            eclipseXML << "  <string color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <string color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "Operator") {
-            eclipseXML << "  <operator color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <operator color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "C++ keyword") {
-            eclipseXML << "  <keyword color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <keyword color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "Workspace tags") {
-            eclipseXML << "  <class color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <class color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
 
         } else if(prop->GetAttribute("Name") == "Local variables") {
-            eclipseXML << "  <localVariable color=\"" << prop->GetAttribute("Colour") << "\" />\n";
+            eclipseXML << "  <localVariable color=\"" << GetFgColour(prop, defaultFgColour) << "\" />\n";
         }
         prop = prop->GetNext();
     }
@@ -182,7 +200,8 @@ std::vector<wxFileName> EclipseCXXThemeImporter::ToEclipseXMLs()
     wxArrayString files;
     wxDir::GetAllFiles(clStandardPaths::Get().GetLexersDir(), &files, "lexer_c++_*.xml");
     for(size_t i = 0; i < files.GetCount(); ++i) {
-        arr.push_back(ToEclipseXML(files.Item(i), i));
+        const wxString& curfile = files.Item(i);
+        arr.push_back(ToEclipseXML(curfile, i));
     }
     return arr;
 }

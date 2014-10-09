@@ -31,6 +31,7 @@
 ContextHtml::ContextHtml(LEditor *editor)
     : ContextBase(editor)
 {
+    SetName("html");
     editor->SetWordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$"));
     m_completionTriggerStrings.insert("\\");
     m_completionTriggerStrings.insert("->");

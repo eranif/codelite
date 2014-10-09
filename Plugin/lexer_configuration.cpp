@@ -322,7 +322,15 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             break;
         }
     }
-
+    
+    // Reset all colours to use the default style colour
+    if(foundDefaultStyle) {
+        for(int i = 0; i < 256; i++) {
+            ctrl->StyleSetBackground(i, defaultStyle.GetBgColour());
+            ctrl->StyleSetForeground(i, defaultStyle.GetFgColour());
+        }
+    }
+    
     if(foundDefaultStyle && defaultFont.IsOk()) {
         for(int i = 0; i < 256; i++) {
             ctrl->StyleSetFont(i, defaultFont);

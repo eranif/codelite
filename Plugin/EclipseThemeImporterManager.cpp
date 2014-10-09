@@ -4,6 +4,7 @@
 #include "EclipseTextThemeImporter.h"
 #include "EclipseMakefileThemeImporter.h"
 #include "EclipseDiffThemeImporter.h"
+#include "EclipsePHPThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -12,7 +13,7 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseTextThemeImporter());
     m_importers.push_back(new EclipseMakefileThemeImporter());
     m_importers.push_back(new EclipseDiffThemeImporter());
-    
+    m_importers.push_back(new EclipsePHPThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

@@ -124,7 +124,7 @@ void CodeFormatterDlg::InitDialog()
         lexer->Apply(m_textCtrlPreview, true);
     }
 
-    LexerConf::Ptr_t phpLexer = EditorConfigST::Get()->GetLexer("html");
+    LexerConf::Ptr_t phpLexer = EditorConfigST::Get()->GetLexer("php");
     if(phpLexer) {
         phpLexer->Apply(m_stcPhpPreview, true);
     }

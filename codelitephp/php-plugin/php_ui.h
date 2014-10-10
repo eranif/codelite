@@ -39,6 +39,7 @@
 #include <wx/icon.h>
 #include <wx/notebook.h>
 #include <wx/stc/stc.h>
+#include <wx/html/htmlwin.h>
 
 class QuickOutlineDlgBase : public wxDialog
 {
@@ -398,6 +399,22 @@ protected:
 public:
     EvalPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~EvalPaneBase();
+};
+
+
+class XDebugDiagDlgBase : public wxDialog
+{
+protected:
+    wxHtmlWindow* m_htmlWin289;
+    wxStdDialogButtonSizer* m_stdBtnSizer283;
+    wxButton* m_button285;
+    wxButton* m_button287;
+
+protected:
+
+public:
+    XDebugDiagDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Diagnostics"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~XDebugDiagDlgBase();
 };
 
 #endif

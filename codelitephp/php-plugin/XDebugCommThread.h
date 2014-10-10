@@ -19,29 +19,32 @@ class XDebugComThread : public wxThread
     wxMessageQueue<wxString> m_queue;
     int m_port;
     clSocketServer m_server;
-    
+    wxString m_host;
+
 protected:
-    void DoSendCommand(const wxString &command, clSocketBase::Ptr_t client);
+    void DoSendCommand(const wxString& command, clSocketBase::Ptr_t client);
     bool DoReadReply(std::string& reply, clSocketBase::Ptr_t client);
     void Stop();
-    
+
 public:
-    XDebugComThread(XDebugManager* xdebugMgr, int port) 
+    XDebugComThread(XDebugManager* xdebugMgr, int port, const wxString& host)
         : wxThread(wxTHREAD_JOINABLE)
         , m_xdebugMgr(xdebugMgr)
         , m_port(port)
-    {}
-    
+        , m_host(host)
+    {
+    }
+
     virtual ~XDebugComThread();
-    
-    void SendMsg( const wxString &msg );
-    
+
+    void SendMsg(const wxString& msg);
+
     void* Entry();
-    void Start() {
+    void Start()
+    {
         Create();
         Run();
     }
-    
 };
 
 #endif // XDEBUG_COMM_THREAD_H

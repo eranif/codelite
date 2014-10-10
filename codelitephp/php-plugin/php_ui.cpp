@@ -1491,3 +1491,44 @@ EvalPaneBase::~EvalPaneBase()
     m_buttonSendXdebug->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendXDebugCommandUI), NULL, this);
     
 }
+
+XDebugDiagDlgBase::XDebugDiagDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF01InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer281 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer281);
+    
+    m_htmlWin289 = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxHW_SCROLLBAR_AUTO);
+    m_htmlWin289->SetPage(wxT("<b>wxHtmlWindow control!</b>"));
+    
+    boxSizer281->Add(m_htmlWin289, 1, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer283 = new wxStdDialogButtonSizer();
+    
+    boxSizer281->Add(m_stdBtnSizer283, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button285 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button285->SetDefault();
+    m_stdBtnSizer283->AddButton(m_button285);
+    
+    m_button287 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer283->AddButton(m_button287);
+    m_stdBtnSizer283->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+XDebugDiagDlgBase::~XDebugDiagDlgBase()
+{
+}

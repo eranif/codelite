@@ -36,6 +36,7 @@ public:
         wxID_XDEBUG_SETTING,
         wxID_XDEBUG_DELETE_ALL_BREAKPOINTS,
         wxID_XDEBUG_SHOW_BREAKPOINTS_WINDOW,
+        wxID_PHP_RUN_XDEBUG_DIAGNOSTICS,
     };
 
 public:
@@ -85,6 +86,7 @@ public:
     void OnNewProject(clNewProjectEvent& e);
     void OnNewProjectFinish(clNewProjectEvent& e);
     void OnGetFiFMask(clCommandEvent& e);
+    void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
     void OnFileSaved(clCommandEvent& e);
     void OnXDebugShowBreakpointsWindow(wxCommandEvent& e);

@@ -107,14 +107,14 @@ XDebugManager::~XDebugManager()
 void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
 {
     if(!PHPWorkspace::Get()->IsOpen()) {
-        // Call skip so CodeLite will continue to handle this event 
+        // Call skip so CodeLite will continue to handle this event
         // by passing it to other debuggers
         e.Skip();
         return;
     }
-    
+
     // This event is ours to handler, don't call e.Skip()
-    
+
     // a PHP debug session requested to start
     if(!m_readerThread) {
         // No reader thread is up, start on
@@ -130,7 +130,7 @@ void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
 void XDebugManager::DoStartDebugger()
 {
     wxDELETE(m_readerThread);
-    m_readerThread = new XDebugComThread(this, GetPort());
+    m_readerThread = new XDebugComThread(this, GetPort(), GetHost());
     m_readerThread->Start();
 
     // Starting event
@@ -549,8 +549,14 @@ int XDebugManager::GetPort() const
 {
     PHPConfigurationData phpGlobalSettings;
     phpGlobalSettings.Load();
-    int port = phpGlobalSettings.GetXdebugPort();
-    return port;
+    return phpGlobalSettings.GetXdebugPort();
+}
+
+wxString XDebugManager::GetHost() const
+{
+    PHPConfigurationData phpGlobalSettings;
+    phpGlobalSettings.Load();
+    return phpGlobalSettings.GetXdebugHost();
 }
 
 void XDebugManager::Free() { wxDELETE(s_xdebugManager); }
@@ -765,4 +771,11 @@ void XDebugManager::SendGetProperty(const wxString& propertyName)
     command << "property_get -n " << propertyName << " -i " << handler->GetTransactionId();
     DoSocketWrite(command);
     AddHandler(handler);
+}
+
+void XDebugManager::SetConnected(bool connected)
+{
+    this->m_connected = connected;
+    XDebugEvent event(wxEVT_XDEBUG_CONNECTED);
+    EventNotifier::Get()->AddPendingEvent(event);
 }

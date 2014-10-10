@@ -36,7 +36,8 @@ void* XDebugComThread::Entry()
     clSocketBase::Ptr_t client;
     int retry(0);
     try {
-        m_server.CreateServer("127.0.0.1", m_port);
+        wxCharBuffer cb = m_host.mb_str(wxConvUTF8);
+        m_server.CreateServer(cb.data(), m_port);
 
         // Wait for new connection (up to 5 seconds )
         do {

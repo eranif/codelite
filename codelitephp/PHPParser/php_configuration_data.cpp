@@ -26,8 +26,17 @@ void PHPConfigurationData::FromJSON(const JSONElement &json)
     m_phpExe = json.namedObject("m_phpExe").toString("php");
     m_errorReporting = json.namedObject("m_errorReporting").toString("E_ALL & ~E_NOTICE");
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(9000);
+    m_xdebugHost = json.namedObject("m_xdebugHost").toString("127.0.0.1");
     m_flags = json.namedObject("m_flags").toSize_t();
-    m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString("phplite");
+    m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString("codeliteide");
+    m_xdebugIdeKey.Trim().Trim(false);
+    
+    // xdebug IDE can not be an empty string, or else debugging in command line 
+    // will not work
+    if(m_xdebugIdeKey.IsEmpty()) {
+        m_xdebugIdeKey = "codeliteide";
+    }
+    
     bool nodeExists = json.hasNamedObject("m_ccIncludePath");
     m_ccIncludePath = json.namedObject("m_ccIncludePath").toArrayString();
     

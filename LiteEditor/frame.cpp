@@ -4948,7 +4948,7 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
 
 void clMainFrame::SaveLayoutAndSession()
 {
-    EditorConfigST::Get()->SaveLexers();
+    //EditorConfigST::Get()->SaveLexers();
 
     // save general information
     if(IsMaximized()) {

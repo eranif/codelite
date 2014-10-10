@@ -31,6 +31,7 @@ xcopy locale\* "%TARGET_DIR%\CodeLite\locale\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 IF EXIST wxgui.zip ( copy wxgui.zip "%TARGET_DIR%\CodeLite\" )
+copy PHP.zip "%TARGET_DIR%\CodeLite\"
 
 if "%WXWIN%" == "" GOTO OTHERS
 xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
@@ -52,7 +53,6 @@ copy ..\sdk\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\" /Y
 copy makedir.exe "%TARGET_DIR%\CodeLite\" /Y
 copy le_exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy CodeLite.exe "%TARGET_DIR%\CodeLite\" /Y
-copy codelite-clang.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-make.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-terminal.exe "%TARGET_DIR%\CodeLite\" /Y
 copy patch.exe "%TARGET_DIR%\CodeLite\" /Y

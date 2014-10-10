@@ -1,16 +1,17 @@
 #include "xdebugevent.h"
 
-wxDEFINE_EVENT(wxEVT_XDEBUG_IDE_GOT_CONTROL,     XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_STOPPED,             XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_STACK_TRACE,         XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_SESSION_STARTED,     XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_SESSION_STARTING,    XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_SESSION_ENDED,       XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_IDE_GOT_CONTROL, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_STOPPED, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_STACK_TRACE, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_SESSION_STARTED, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_SESSION_STARTING, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_SESSION_ENDED, XDebugEvent);
 wxDEFINE_EVENT(wxEVT_XDEBUG_BREAKPOINTS_UPDATED, XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_LOCALS_UPDATED,      XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_EVAL_EXPRESSION,     XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_UNKNOWN_RESPONSE,    XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_PROPERTY_GET,        XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_LOCALS_UPDATED, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_EVAL_EXPRESSION, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_UNKNOWN_RESPONSE, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_PROPERTY_GET, XDebugEvent);
+wxDEFINE_EVENT(wxEVT_XDEBUG_CONNECTED, XDebugEvent);
 
 XDebugEvent::XDebugEvent(wxEventType commandType, int winid)
     : PHPEvent(commandType, winid)
@@ -19,14 +20,9 @@ XDebugEvent::XDebugEvent(wxEventType commandType, int winid)
 {
 }
 
-XDebugEvent::XDebugEvent(const XDebugEvent& src)
-{
-    *this = src;
-}
+XDebugEvent::XDebugEvent(const XDebugEvent& src) { *this = src; }
 
-XDebugEvent::~XDebugEvent()
-{
-}
+XDebugEvent::~XDebugEvent() {}
 
 XDebugEvent& XDebugEvent::operator=(const XDebugEvent& src)
 {

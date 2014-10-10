@@ -29,26 +29,23 @@ struct xInitStruct {
 class XDebugManager : public wxEvtHandler
 {
     friend class SocketServer;
-    size_t                      TranscationId;
+    size_t TranscationId;
     XDebugCommandHandler::Map_t m_handlers;
-    XDebugBreakpointsMgr        m_breakpointsMgr;
-    PhpPlugin*                  m_plugin;
-    XDebugComThread*            m_readerThread;
-    bool                        m_connected;
+    XDebugBreakpointsMgr m_breakpointsMgr;
+    PhpPlugin* m_plugin;
+    XDebugComThread* m_readerThread;
+    bool m_connected;
 
 public:
     typedef wxSharedPtr<XDebugManager> Ptr_t;
 
 public:
     int GetPort() const;
+    wxString GetHost() const;
 
-    void SetConnected(bool connected) {
-        this->m_connected = connected;
-    }
-    bool IsConnected() const {
-        return m_connected;
-    }
-    void DoSocketWrite(const wxString &command );
+    void SetConnected(bool connected);
+    bool IsConnected() const { return m_connected; }
+    void DoSocketWrite(const wxString& command);
     /**
      * @brief refresh the current stack view (Locals & Callstack)
      * @param requestedStack
@@ -58,13 +55,13 @@ public:
     void CloseDebugSession();
     void SendStopCommand();
     void SendRunCommand();
-    
+
     /**
      * @brief request XDebug to expand propertyName
      * @param propertyName
      */
-    void SendGetProperty(const wxString &propertyName);
-    
+    void SendGetProperty(const wxString& propertyName);
+
     /**
      * @brief send dbgp command to xdebug
      */
@@ -72,7 +69,7 @@ public:
     /**
      * @brief send an 'Eval' command to XDebug
      */
-    void SendEvalCommand(const wxString &expression, int evalPurpose);
+    void SendEvalCommand(const wxString& expression, int evalPurpose);
 
     /**
      * @brief highlight the current line with the debugger marker
@@ -93,7 +90,7 @@ public:
 protected:
     void DoStartDebugger();
     void DoStopDebugger();
-    void DoRefreshBreakpointsMarkersForEditor( IEditor* editor );
+    void DoRefreshBreakpointsMarkersForEditor(IEditor* editor);
     void DoHandleResponse(wxXmlNode* xml);
     void DoContinue();
     void DoApplyBreakpoints();
@@ -117,41 +114,41 @@ protected:
     /**
      * @brief set e.SetAnswer to true if an active XDebug session is currently in progress
      */
-    void OnDebugIsRunning(clDebugEvent &e);
+    void OnDebugIsRunning(clDebugEvent& e);
     /**
      * @brief user placed a breakpoint (either by the keyboard shortcut or by clicking on the margin)
      */
-    void OnToggleBreakpoint(clDebugEvent &e);
+    void OnToggleBreakpoint(clDebugEvent& e);
     /**
      * @brief user clicked on the "Next" tool
      */
-    void OnDebugNext(clDebugEvent &e);
+    void OnDebugNext(clDebugEvent& e);
     /**
      * @brief a "void" function that swallows events
      */
-    void OnVoid(clDebugEvent &e);
+    void OnVoid(clDebugEvent& e);
     /**
      * @brief step into function
      */
-    void OnDebugStepIn(clDebugEvent &e);
+    void OnDebugStepIn(clDebugEvent& e);
     /**
      * @brief step out of a function
      */
-    void OnDebugStepOut(clDebugEvent &e);
+    void OnDebugStepOut(clDebugEvent& e);
     /**
      * @brief a tooltip is requested
      */
-    void OnTooltip(clDebugEvent &e);
+    void OnTooltip(clDebugEvent& e);
     /**
      * @brief can we interact with the debugger?
      */
-    void OnCanInteract(clDebugEvent &e);
+    void OnCanInteract(clDebugEvent& e);
 
     /**
      * @brief XDebug stopped and the control is now passed to codelite
      * this is a good time to update the callstack and any watches we have
      */
-    void OnGotFocusFromXDebug(XDebugEvent &e);
+    void OnGotFocusFromXDebug(XDebugEvent& e);
 
     /**
      * @brief xdebug stopped the debug session (for whatever reason)
@@ -161,34 +158,34 @@ protected:
     /**
      * @brief respond to use d-click an entry in the call stack
      */
-    void OnStackTraceItemActivated(PHPEvent &e);
+    void OnStackTraceItemActivated(PHPEvent& e);
 
     /**
      * @brief respond to use d-click an entry in the breakpoint table
      */
-    void OnBreakpointItemActivated(PHPEvent &e);
+    void OnBreakpointItemActivated(PHPEvent& e);
 
     /**
      * @brief user clicked the 'delete all' button in the breakpoints view
      * @param e
      */
-    void OnDeleteAllBreakpoints(PHPEvent &e);
+    void OnDeleteAllBreakpoints(PHPEvent& e);
     /**
      * @brief user clicked the 'delete' bp button
      */
-    void OnDeleteBreakpoint(PHPEvent &e);
+    void OnDeleteBreakpoint(PHPEvent& e);
 
     /**
      * @brief user updated the breakpoint view
      */
-    void OnBreakpointsViewUpdated(XDebugEvent &e);
-    
+    void OnBreakpointsViewUpdated(XDebugEvent& e);
+
     /**
      * @brief display debugger tooltip
      */
-    void OnShowTooltip(XDebugEvent &e);
-    
-    bool ProcessDebuggerMessage( const wxString &buffer );
+    void OnShowTooltip(XDebugEvent& e);
+
+    bool ProcessDebuggerMessage(const wxString& buffer);
 
     XDebugManager();
 
@@ -203,32 +200,25 @@ public:
      */
     bool IsDebugSessionRunning() const;
 
-    PhpPlugin* GetPlugin() {
-        return m_plugin;
-    }
-    XDebugBreakpointsMgr& GetBreakpointsMgr() {
-        return m_breakpointsMgr;
-    }
+    PhpPlugin* GetPlugin() { return m_plugin; }
+    XDebugBreakpointsMgr& GetBreakpointsMgr() { return m_breakpointsMgr; }
 
-    const XDebugBreakpointsMgr& GetBreakpointsMgr() const {
-        return m_breakpointsMgr;
-    }
+    const XDebugBreakpointsMgr& GetBreakpointsMgr() const { return m_breakpointsMgr; }
 
     /**
      * @brief we got something on the socket - read it
      */
-    void OnSocketInput(const std::string &reply);
-    
+    void OnSocketInput(const std::string& reply);
+
     /**
      * @brief will be called once XDebug does not connect after 5 seconds
      */
     void XDebugNotConnecting();
-    
+
     /**
      * @brief called when the comm thread is done
      */
     void OnCommThreadTerminated();
-
 };
 
 #endif // XDEBUGMANAGER_H

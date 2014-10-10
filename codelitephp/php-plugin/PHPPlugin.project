@@ -89,6 +89,8 @@
       <File Name="XVariable.cpp"/>
       <File Name="XDebugCommThread.h"/>
       <File Name="XDebugCommThread.cpp"/>
+      <File Name="XDebugTester.h"/>
+      <File Name="XDebugTester.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
@@ -104,6 +106,9 @@
     <File Name="../CMakeLists.txt"/>
     <File Name="php_ui.wxcp"/>
     <File Name="phplite.accelerators"/>
+    <File Name="../resources/TestXDebugSettings.php"/>
+    <File Name="../resources/pack-resources.sh"/>
+    <File Name="../../Runtime/PHP.zip"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
     <File Name="php_ui.cpp"/>
@@ -145,6 +150,8 @@
       <File Name="PHPDebugPane.cpp"/>
       <File Name="PHPDebugPane.h"/>
     </VirtualDirectory>
+    <File Name="XDebugDiagDlg.h"/>
+    <File Name="XDebugDiagDlg.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="PHPParser"/>
@@ -168,6 +175,10 @@
     </VirtualDirectory>
     <File Name="new_class.wxcp"/>
   </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="CodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -389,7 +400,7 @@
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -426,8 +437,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="CodeLite"/>
-    <Project Name="PHPParser"/>
-  </Dependencies>
 </CodeLite_Project>

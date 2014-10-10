@@ -29,6 +29,8 @@
 #include "xdebugevent.h"
 #include "localsview.h"
 #include "evalpane.h"
+#include "XDebugTester.h"
+#include "XDebugDiagDlg.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -130,7 +132,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL, this);
 
-    EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &PhpPlugin::OnDebugSatrted, this);
+    EventNotifier::Get()->Bind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
 }
 
@@ -208,7 +210,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTED, &PhpPlugin::OnDebugSatrted, this);
+    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
 
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
@@ -513,6 +515,8 @@ void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
     // Add our menu bar
     wxMenu* phpMenuBarMenu = new wxMenu();
     phpMenuBarMenu->Append(wxID_PHP_SETTINGS, _("Settings..."), _("Settings..."));
+    phpMenuBarMenu->Append(
+        wxID_PHP_RUN_XDEBUG_DIAGNOSTICS, _("Run XDebug Diagnostics..."), _("Run XDebug Diagnostics..."));
     phpMenuBarMenu->AppendSeparator();
     phpMenuBarMenu->Append(wxID_ADD_DOXY_COMMENT, _("Insert Doxygen Comment"));
 
@@ -524,6 +528,11 @@ void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
     phpMenuBarMenu->Connect(wxID_PHP_SETTINGS,
                             wxEVT_COMMAND_MENU_SELECTED,
                             wxCommandEventHandler(PhpPlugin::OnMenuCommand),
+                            NULL,
+                            (wxEvtHandler*)this);
+    phpMenuBarMenu->Connect(wxID_PHP_RUN_XDEBUG_DIAGNOSTICS,
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(PhpPlugin::OnRunXDebugDiagnostics),
                             NULL,
                             (wxEvtHandler*)this);
     phpMenuBarMenu->Connect(wxID_ADD_DOXY_COMMENT,
@@ -754,3 +763,31 @@ void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 }
 
 void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }
+
+void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
+{
+    XDebugTester xdebugTester;
+    if(xdebugTester.RunTest()) {
+        // Display the result
+        wxString html;
+        html << "<html><body>";
+        html << "<table>";
+        
+        html << "<tr align=\"left\"><th>Test</th><th>Actual Value</th><th>Recommended Value</th></tr>";
+        const XDebugTester::ResultMap_t& result = xdebugTester.GetResults();
+        XDebugTester::ResultMap_t::const_iterator iter = result.begin();
+        for(; iter != result.end(); ++iter) {
+            html << "<tr>";
+            html << "<td>" << iter->first << "</td>";
+            html << "<td>" << iter->second.first << "</td>";
+            html << "<td>" << iter->second.second << "</td>";
+            html << "</tr>";
+        }
+        
+        html << "</table></body></html>";
+        
+        XDebugDiagDlg dlg(EventNotifier::Get()->TopFrame());
+        dlg.Load(html);
+        dlg.ShowModal();
+    }
+}

@@ -1505,7 +1505,7 @@ XDebugDiagDlgBase::XDebugDiagDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer281 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer281);
     
-    m_htmlWin289 = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxHW_SCROLLBAR_AUTO);
+    m_htmlWin289 = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxHW_SCROLLBAR_NEVER|wxBORDER_THEME);
     m_htmlWin289->SetPage(wxT("<b>wxHtmlWindow control!</b>"));
     
     boxSizer281->Add(m_htmlWin289, 1, wxALL|wxEXPAND, 5);

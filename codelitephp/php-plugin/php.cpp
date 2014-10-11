@@ -773,11 +773,11 @@ void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
         html << "<html><body>";
         html << "<table>";
         
-        html << "<tr align=\"left\"><th>Test</th><th>Actual Value</th><th>Recommended Value</th></tr>";
+        html << "<tr valign=\"top\" align=\"left\"><th>What?</th><th>Result</th><th>Description</th></tr>";
         const XDebugTester::ResultMap_t& result = xdebugTester.GetResults();
         XDebugTester::ResultMap_t::const_iterator iter = result.begin();
         for(; iter != result.end(); ++iter) {
-            html << "<tr>";
+            html << "<tr valign=\"top\" align=\"left\">";
             html << "<td>" << iter->first << "</td>";
             html << "<td>" << iter->second.first << "</td>";
             html << "<td>" << iter->second.second << "</td>";

@@ -88,7 +88,8 @@ public:
     // ----------------------------------------------------
 
     const wxArrayString& GetCcIncludePath() const { return m_ccIncludePath; }
-
+    wxArrayString& GetCcIncludePath() { return m_ccIncludePath; }
+    
     const wxString& GetErrorReporting() const { return m_errorReporting; }
     const wxArrayString& GetIncludePaths() const { return m_includePaths; }
     wxString GetIncludePathsAsString() const;

@@ -12,12 +12,11 @@ Code Completion / Code Generation
 
 Must:
 ======
-- Add link to XDebug diagnostic dialog that points to the codelite's wiki for further explanation
-- When codelite shows the "XDebug failed to connect in a timely manner" -> add button to run xdebug diag tool
-- Load CC files from the new PHP.zip file
 - Update Windows installer to install PHP.zip file
 - 'parent' key word is not working
 - word completion for local variables does not work
+- Add link to XDebug diagnostic dialog that points to the codelite's wiki for further explanation
+- When codelite shows the "XDebug failed to connect in a timely manner" -> add button to run xdebug diag tool
 
 Usability:
 ==========

@@ -21,7 +21,16 @@ void clZipReader::Extract(const wxString& filename, const wxString& directory)
     entry = m_zip->GetNextEntry();
     while(entry) {
         if ( ::wxMatchWild(filename, entry->GetName()) ) {
-            wxFileName outfile(directory, entry->GetName());
+            // Incase the entry name has a directory prefix, remove it
+            wxString fullpath;
+            fullpath << directory << "/" << entry->GetName();
+            // Change to posix style
+            fullpath.Replace("\\", "/"); 
+            // Remove any duplicate double slashes
+            while(fullpath.Replace("//", "/")) {}
+            wxFileName outfile(fullpath);
+            // ensure that the path to the file exists
+            outfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
             wxFFileOutputStream out(outfile.GetFullPath());
             m_zip->Read(out);
             out.Close();

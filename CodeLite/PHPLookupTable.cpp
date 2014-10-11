@@ -492,7 +492,7 @@ wxString PHPLookupTable::EscapeWildCards(const wxString& str)
 
 void PHPLookupTable::DoAddLimit(wxString& sql) { sql << " LIMIT " << m_sizeLimit; }
 
-void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies)
+void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies)
 {
     try {
 
@@ -504,6 +504,11 @@ void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, eUpdateMode u
         }
 
         m_db.Begin();
+        // If the parsing mode is 'Full' - clear the database first
+        if(updateMode == kUpdateMode_Full) {
+            ClearAll(false);
+        }
+
         for(size_t i = 0; i < files.GetCount(); ++i) {
             {
                 clParseEvent event(wxPHP_PARSE_PROGRESS);
@@ -515,6 +520,7 @@ void PHPLookupTable::UpdateSourceFiles(const wxArrayString& files, eUpdateMode u
 
             wxFileName fnFile(files.Item(i));
             bool reParseNeeded(true);
+
             if(updateMode == kUpdateMode_Fast) {
                 // Check to see if we need to re-parse this file
                 // and store it to the database
@@ -649,8 +655,11 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
     try {
         if(autoCommit) m_db.Begin();
         {
+            // When deleting from the 'SCOPE_TABLE' don't remove namespaces
+            // since they can be still be pointed by other entries in the database
             wxString sql;
-            sql << "delete from SCOPE_TABLE where FILE_NAME=:FILE_NAME";
+            sql << "delete from SCOPE_TABLE where FILE_NAME=:FILE_NAME WHERE SCOPE_TYPE != "
+                << (int)kPhpScopeTypeNamespace;
             wxSQLite3Statement st = m_db.PrepareStatement(sql);
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
             st.ExecuteUpdate();
@@ -807,10 +816,10 @@ void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
     }
 }
 
-void PHPLookupTable::ClearAll()
+void PHPLookupTable::ClearAll(bool autoCommit)
 {
     try {
-        m_db.Begin();
+        if(autoCommit) m_db.Begin();
         {
             wxString sql;
             sql << "delete from SCOPE_TABLE";
@@ -839,9 +848,9 @@ void PHPLookupTable::ClearAll()
             st.ExecuteUpdate();
         }
 
-        m_db.Commit();
+        if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
-        m_db.Rollback();
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::ClearAll: %s", e.GetMessage());
     }
 }

@@ -31,6 +31,9 @@
 #include "evalpane.h"
 #include "XDebugTester.h"
 #include "XDebugDiagDlg.h"
+#include "clZipReader.h"
+#include "cl_standard_paths.h"
+#include "php_configuration_data.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -134,6 +137,30 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
+
+    // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
+    wxFileName phpResources(clStandardPaths::Get().GetDataDir(), "PHP.zip");
+    if(phpResources.Exists()) {
+        
+        clZipReader zipReader(phpResources);
+        wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "");
+        targetDir.AppendDir("php-plugin");
+        targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        zipReader.Extract("*", targetDir.GetPath());
+        
+        // Make sure we add this path to the general PHP settings
+        targetDir.AppendDir("cc"); // the CC files are located under an internal folder named "cc" (lowercase)
+        PHPConfigurationData config;
+        if(config.Load().GetCcIncludePath().Index(targetDir.GetPath()) == wxNOT_FOUND) {
+            config.Load().GetCcIncludePath().Add(targetDir.GetPath());
+            config.Save();
+        }
+        
+    } else {
+        CL_WARNING("PHP: Could not locate PHP resources 'PHP.zip' => '%s'", phpResources.GetFullPath());
+    }
+    
+    
 }
 
 PhpPlugin::~PhpPlugin() {}

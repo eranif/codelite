@@ -131,7 +131,7 @@ public:
     /**
      * @brief clear all cached data from the database
      */
-    void ClearAll();
+    void ClearAll(bool autoCommit = true);
 
     /**
      * @brief find a scope symbol (class or namespace) by its fullname
@@ -179,7 +179,7 @@ public:
     /**
      * @brief update list of source files
      */
-    void UpdateSourceFiles(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies = true);
+    void RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, bool parseFuncBodies = true);
 
     /**
      * @brief delete all entries belonged to filename.

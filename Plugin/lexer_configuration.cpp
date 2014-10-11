@@ -286,10 +286,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-    // Define the styles for the editing margin
-    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("FOREST GREEN")));
-    ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
-
+    
     // by default indicators are set to be opaque rounded box
     ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
@@ -331,6 +328,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
     }
     
+    // Define the styles for the editing margin
+    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("FOREST GREEN")));
+    ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
+
     if(foundDefaultStyle && defaultFont.IsOk()) {
         for(int i = 0; i < 256; i++) {
             ctrl->StyleSetFont(i, defaultFont);

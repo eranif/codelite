@@ -275,7 +275,7 @@ void PHPSourceFile::OnFunction()
     ParseFunctionSignature(funcDepth);
     func->SetFlags(LookBackForFunctionFlags());
     if(LookBackTokensContains(kPHP_T_ABSTRACT) || // The 'abstract modifier was found for this this function
-       (funcPtr->Parent()->Is(kEntityTypeClass) &&
+       (funcPtr->Parent() && funcPtr->Parent()->Is(kEntityTypeClass) &&
         funcPtr->Parent()->Cast<PHPEntityClass>()->IsInterface())) // We are inside an interface
     {
         // Mark this function as an abstract function

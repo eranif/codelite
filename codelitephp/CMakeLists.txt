@@ -97,13 +97,7 @@ add_dependencies(${PLUGIN_NAME} plugin PHPParser)
 add_dependencies(PHPUnitTests plugin PHPParser)
 
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
-install(
-  DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/resources/cc
-  DESTINATION ${PLUGINS_DIR}/resources/php
-  USE_SOURCE_PERMISSIONS
-  PATTERN ".svn" EXCLUDE
-  PATTERN ".git" EXCLUDE
-)
+install(FILES "${CL_SRC_ROOT}/Runtime/PHP.zip" DESTINATION ${CL_PREFIX}/share/codelite)
 
 target_link_libraries(${PLUGIN_NAME} PHPParser)
 target_link_libraries(PHPUnitTests PHPParser)

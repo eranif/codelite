@@ -36,6 +36,7 @@ FormatOptions::FormatOptions()
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120) // No limit
     , m_phpFormatOptions(kPFF_Defaults)
+    , m_generalFlags(0)
 {
     if(m_clangFormatExe.IsEmpty()) {
         clClangFormatLocator locator;
@@ -65,6 +66,7 @@ void FormatOptions::DeSerialize(Archive& arch)
     arch.Read("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Read("m_clangColumnLimit", m_clangColumnLimit);
     arch.Read("m_phpFormatOptions", m_phpFormatOptions);
+    arch.Read("m_generalFlags", m_generalFlags);
 }
 
 void FormatOptions::Serialize(Archive& arch)
@@ -77,6 +79,7 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Write("m_clangColumnLimit", m_clangColumnLimit);
     arch.Write("m_phpFormatOptions", m_phpFormatOptions);
+    arch.Write("m_generalFlags", m_generalFlags);
 }
 
 wxString FormatOptions::AstyleOptionsAsString() const

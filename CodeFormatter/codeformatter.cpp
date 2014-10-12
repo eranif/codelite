@@ -110,6 +110,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
                                 wxCommandEventHandler(CodeFormatter::OnFormatProject),
                                 NULL,
                                 this);
+    EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
 }
 
 CodeFormatter::~CodeFormatter()
@@ -118,6 +119,8 @@ CodeFormatter::~CodeFormatter()
         wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_FORMAT_FILE, clSourceFormatEventHandler(CodeFormatter::OnFormatFile), NULL, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
 }
 
 clToolBar* CodeFormatter::CreateToolBar(wxWindow* parent)
@@ -454,11 +457,11 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 
         // Format the source
         buffer.format();
-        
+
         // set the output
         output = buffer.GetBuffer();
-        
-    } else  if(fmtroptions.GetEngine() == kFormatEngineAStyle) {
+
+    } else if(fmtroptions.GetEngine() == kFormatEngineAStyle) {
         wxString options = fmtroptions.AstyleOptionsAsString();
 
         // determine indentation method and amount
@@ -782,4 +785,19 @@ bool CodeFormatter::PhpFormat(const wxString& content, wxString& formattedOutput
     buffer.format();
     formattedOutput << buffer.GetBuffer();
     return true;
+}
+
+void CodeFormatter::OnBeforeFileSave(clCommandEvent& e)
+{
+    e.Skip();
+    FormatOptions fmtroptions;
+    m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
+    if(fmtroptions.HasFlag(kCF_AutoFormatOnFileSave)) {
+        // format the file before we save it
+        IEditor *editor = m_mgr->FindEditor(e.GetFileName());
+        if(editor && m_mgr->GetActiveEditor() == editor) {
+            // we have our editor, format it
+            DoFormatFile(editor);
+        }
+    }
 }

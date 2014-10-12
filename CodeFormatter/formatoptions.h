@@ -117,6 +117,11 @@ enum ClangBreakBeforeBraceOpt {
     kGNU = 0x00000010,
 };
 
+// Genral options
+enum eCF_GeneralOptions {
+    kCF_AutoFormatOnFileSave = (1 << 0),
+};
+
 class FormatOptions : public SerializedObject
 {
     size_t m_astyleOptions;
@@ -127,6 +132,7 @@ class FormatOptions : public SerializedObject
     wxString m_clangFormatExe;
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
     size_t m_phpFormatOptions;
+    size_t m_generalFlags;
 
 private:
     wxString ClangFlagToBool(ClangFormatStyle flag) const;
@@ -168,6 +174,8 @@ public:
     size_t GetClangFormatOptions() const { return m_clangFormatOptions; }
     size_t GetPHPFormatterOptions() const { return m_phpFormatOptions; }
     size_t SetPHPFormatterOptions(size_t options) { m_phpFormatOptions = options; }
+    bool HasFlag(eCF_GeneralOptions flag) const { return m_generalFlags & flag; }
+    void SetFlag(eCF_GeneralOptions flag, bool b) { b ? m_generalFlags |= flag : m_generalFlags &= ~flag; }
 };
 
 #endif // FORMATOPTIONS_H

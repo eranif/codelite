@@ -46,13 +46,20 @@ protected:
     wxArrayString m_strings;
     wxString m_fileName;
     bool m_answer;
+    bool m_allowed;
 
 public:
     clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     clCommandEvent(const clCommandEvent& event);
     clCommandEvent& operator=(const clCommandEvent& src);
     virtual ~clCommandEvent();
-
+    
+    // Veto management
+    void SetAllowed(bool allowed) { this->m_allowed = allowed; }
+    bool IsAllowed() const { return m_allowed; }
+    void Veto() { this->m_allowed = false; }
+    void Allow() { this->m_allowed = true; }
+    
     // Hides wxCommandEvent::Set{Get}ClientObject
     void SetClientObject(wxClientData* clientObject);
 
@@ -239,8 +246,7 @@ typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
 class WXDLLIMPEXP_CL clNewProjectEvent : public clCommandEvent
 {
 public:
-    struct Template
-    {
+    struct Template {
         wxString m_category;
         wxString m_categoryPng;
         wxString m_template;

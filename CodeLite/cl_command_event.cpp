@@ -28,12 +28,14 @@
 clCommandEvent::clCommandEvent(wxEventType commandType, int winid)
     : wxCommandEvent(commandType, winid)
     , m_answer(false)
+    , m_allowed(true)
 {
 }
 
 clCommandEvent::clCommandEvent(const clCommandEvent& event)
     : wxCommandEvent(event)
     , m_answer(false)
+    , m_allowed(true)
 {
     *this = event;
 }
@@ -45,7 +47,8 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_strings.insert(m_strings.end(), src.m_strings.begin(), src.m_strings.end());
     m_fileName = src.m_fileName;
     m_answer = src.m_answer;
-
+    m_allowed = src.m_allowed;
+    
     // Copy wxCommandEvent members here
     m_eventType = src.m_eventType;
     m_id = src.m_id;

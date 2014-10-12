@@ -115,6 +115,7 @@ public:
     void OnFormatString(clSourceFormatEvent& e);
     void OnFormatFile(clSourceFormatEvent& e);
     void OnFormatProject(wxCommandEvent& e);
+    void OnBeforeFileSave(clCommandEvent& e);
 };
 
 #endif // CODEFORMATTER_H

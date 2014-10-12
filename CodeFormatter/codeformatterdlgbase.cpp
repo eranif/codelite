@@ -54,9 +54,19 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(m_splitterPage20, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgr = new wxPropertyGridManager(m_splitterPage20, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER);
+    m_pgMgr->SetFocus();
     
     boxSizer26->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
+    
+    m_pgPropGeneral = m_pgMgr->Append(  new wxPropertyCategory( _("General Options") ) );
+    m_pgPropGeneral->SetHelpString(_("General Options"));
+    
+    m_pgPropAutoSave = m_pgMgr->AppendIn( m_pgPropGeneral,  new wxBoolProperty( _("Format file OnSave"), wxPG_LABEL, 0) );
+    m_pgPropAutoSave->SetHelpString(_("Auto format the file before saving it"));
+    
+    m_pgPropCXX = m_pgMgr->Append(  new wxPropertyCategory( _("C++") ) );
+    m_pgPropCXX->SetHelpString(_("C++ Related Settings"));
     
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
@@ -64,10 +74,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrArr.Add(_("clang-format"));
     m_pgMgrIntArr.Add(kFormatEngineAStyle);
     m_pgMgrIntArr.Add(kFormatEngineClangFormat);
-    m_pgPropEngine = m_pgMgr->Append(  new wxEnumProperty( _("C++ Formatter Tool"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropEngine = m_pgMgr->AppendIn( m_pgPropCXX,  new wxEnumProperty( _("C++ Formatter Tool"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropEngine->SetHelpString(_("Select the formatter tool to use for the C,C++,Java and JavaScript language"));
     
-    m_pgPropAstyleOptions = m_pgMgr->Append(  new wxPropertyCategory( _("AStyle Options") ) );
+    m_pgPropAstyleOptions = m_pgMgr->AppendIn( m_pgPropCXX,  new wxPropertyCategory( _("AStyle Options") ) );
     m_pgPropAstyleOptions->SetHelpString(wxT(""));
     
     m_pgMgrArr.Clear();
@@ -142,7 +152,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropFormatting = m_pgMgr->AppendIn( m_pgPropAstyleOptions,  new wxFlagsProperty( _("Formatting"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropFormatting->SetHelpString(_("Select one or more formatting option from the list below"));
     
-    m_pgPropClangFormat = m_pgMgr->Append(  new wxPropertyCategory( _("ClangFormat Options") ) );
+    m_pgPropClangFormat = m_pgMgr->AppendIn( m_pgPropCXX,  new wxPropertyCategory( _("ClangFormat Options") ) );
     m_pgPropClangFormat->SetHelpString(wxT(""));
     
     m_pgPropClangFormatExePath = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
@@ -225,8 +235,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropClangFormattingOptions = m_pgMgr->AppendIn( m_pgPropClangFormat,  new wxFlagsProperty( _("Clang Formatting Options"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropClangFormattingOptions->SetHelpString(wxT(""));
     
-    m_pgPropPhpFormatter = m_pgMgr->Append(  new wxPropertyCategory( _("PHP Formatter") ) );
-    m_pgPropPhpFormatter->SetHelpString(_("Define the options of the built-in PHP code formatter (for *.php files)"));
+    m_pgPropPhpFormatter = m_pgMgr->Append(  new wxPropertyCategory( _("PHP") ) );
+    m_pgPropPhpFormatter->SetHelpString(_("PHP related settings"));
     
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
@@ -268,7 +278,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     m_staticText3 = new wxStaticText(m_splitterPage24, wxID_ANY, _("Custom user settings"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    boxSizer57->Add(m_staticText3, 0, wxALL|wxEXPAND, 5);
+    boxSizer57->Add(m_staticText3, 0, wxALL, 5);
     
     m_textCtrlUserFlags = new wxTextCtrl(m_splitterPage24, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
     wxFont m_textCtrlUserFlagsFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Sans"));

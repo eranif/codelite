@@ -159,7 +159,10 @@ void CodeFormatterDlg::InitDialog()
 
     // PHP flags
     m_pgPropPhpFormatterOptions->SetValue((int)m_options.GetPHPFormatterOptions());
-
+    
+    // General Options
+    m_pgPropAutoSave->SetValue(m_options.HasFlag(kCF_AutoFormatOnFileSave));
+    
     // User custom flags
     m_textCtrlUserFlags->ChangeValue(m_options.GetCustomFlags());
 }
@@ -282,7 +285,10 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
 
     // save php options
     m_options.SetPHPFormatterOptions(m_pgPropPhpFormatterOptions->GetValue().GetInteger());
-
+    
+    // Save general options
+    m_options.SetFlag(kCF_AutoFormatOnFileSave, m_pgPropAutoSave->GetValue().GetBool());
+    
     // Check the active engine
     ExpandCollapsUneededOptions();
     CallAfter(&CodeFormatterDlg::UpdatePreview);

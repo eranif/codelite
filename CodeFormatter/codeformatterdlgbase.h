@@ -36,6 +36,9 @@ protected:
     wxSplitterWindow* m_splitter16;
     wxPanel* m_splitterPage20;
     wxPropertyGridManager* m_pgMgr;
+    wxPGProperty* m_pgPropGeneral;
+    wxPGProperty* m_pgPropAutoSave;
+    wxPGProperty* m_pgPropCXX;
     wxPGProperty* m_pgPropEngine;
     wxPGProperty* m_pgPropAstyleOptions;
     wxPGProperty* m_pgPropPreDefinedStyles;

@@ -631,4 +631,11 @@
 // Event type: clCommandEvent
 #define wxEVT_CL_FRAME_TITLE 3701 
 
+// Event: clCommandEvent
+// CodeLite is about to save a file. Use event.GetFilename() to get the file name
+// This event can be vetoed by calling event.Veto()
+// Note tis this event is sent for editor files (i.e. it is not sent for internal files like project file being saved
+// etc) only for editors (hence the name)
+#define wxEVT_BEFORE_EDITOR_SAVE 3702
+
 #endif // CODELITE_EVENTS_H

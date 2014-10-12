@@ -1244,7 +1244,18 @@ mode_t GTKGetFilePermissions(const wxString& filename)
 // an internal function that does the actual file writing to disk
 bool LEditor::SaveToFile(const wxFileName& fileName)
 {
-
+    {
+        // Notify about file being saved
+        clCommandEvent beforeSaveEvent(wxEVT_BEFORE_EDITOR_SAVE);
+        beforeSaveEvent.SetFileName(fileName.GetFullPath());
+        EventNotifier::Get()->ProcessEvent(beforeSaveEvent);
+        
+        if(!beforeSaveEvent.IsAllowed()) {
+            // A plugin vetoed the file save
+            return false;
+        }
+    }
+    
 #if defined(__WXMSW__)
     DWORD dwAttrs = GetFileAttributes(fileName.GetFullPath().c_str());
     if(dwAttrs != INVALID_FILE_ATTRIBUTES) {

@@ -11,7 +11,7 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "7.0.1";
+static wxString PHP_SCHEMA_VERSION = "7.0.2";
 
 //------------------------------------------------
 // Metadata table
@@ -191,7 +191,7 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate("drop table if exists SCHEMA_VERSION");
         m_db.ExecuteUpdate("drop table if exists SCOPE_TABLE");
         m_db.ExecuteUpdate("drop table if exists FUNCTION_TABLE");
-        m_db.ExecuteUpdate("drop table if exists VARIABLES_TABL");
+        m_db.ExecuteUpdate("drop table if exists VARIABLES_TABLE");
         m_db.ExecuteUpdate("drop table if exists FILES_TABLE");
     }
 

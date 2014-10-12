@@ -36,15 +36,18 @@ void PHPEntityVariable::SetVisibility(int visibility)
 {
     switch(visibility) {
     case kPHP_T_PUBLIC:
-        m_flags &= ~(kVar_Private | kVar_Protected);
+        m_flags &= ~kVar_Private;
+        m_flags &= ~kVar_Protected;
         m_flags |= kVar_Public;
         break;
     case kPHP_T_PROTECTED:
-        m_flags &= ~(kVar_Private | kVar_Public);
+        m_flags &= ~kVar_Private;
+        m_flags &= ~kVar_Public;
         m_flags |= kVar_Protected;
         break;
     case kPHP_T_PRIVATE:
-        m_flags &= ~(kVar_Public | kVar_Protected);
+        m_flags &= ~kVar_Public;
+        m_flags &= ~kVar_Protected;
         m_flags |= kVar_Private;
         break;
     default:

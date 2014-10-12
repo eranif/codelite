@@ -339,14 +339,19 @@ size_t PHPSourceFile::LookBackForFunctionFlags()
 
         } else if(tok.type == kPHP_T_PUBLIC) {
             flags |= kFunc_Public;
-            flags &= ~(kFunc_Private | kFunc_Protected);
-
+            flags &= ~kFunc_Private;
+            flags &= ~kFunc_Protected;
+            
         } else if(tok.type == kPHP_T_PRIVATE) {
             flags |= kFunc_Private;
-            flags &= ~(kFunc_Public | kFunc_Protected);
+            flags &= ~kFunc_Public;
+            flags &= ~kFunc_Protected;
+            
         } else if(tok.type == kPHP_T_PROTECTED) {
             flags |= kFunc_Protected;
-            flags &= ~(kFunc_Private | kFunc_Public);
+            flags &= ~kFunc_Public;
+            flags &= ~kFunc_Private;
+            
         }
     }
     return flags;
@@ -852,13 +857,18 @@ size_t PHPSourceFile::LookBackForVariablesFlags()
 
         } else if(tok.type == kPHP_T_PUBLIC) {
             flags |= kVar_Public;
-            flags &= (kVar_Private | kVar_Protected);
+            flags &= ~kVar_Private;
+            flags &= ~kVar_Protected;
+            
         } else if(tok.type == kPHP_T_PRIVATE) {
             flags |= kVar_Private;
-            flags &= (kVar_Public | kVar_Protected);
+            flags &= ~kVar_Public;
+            flags &= ~kVar_Protected;
+
         } else if(tok.type == kPHP_T_PROTECTED) {
             flags |= kVar_Protected;
-            flags &= (kVar_Public | kVar_Private);
+            flags &= ~kVar_Private;
+            flags &= ~kVar_Public;
         }
     }
     return flags;

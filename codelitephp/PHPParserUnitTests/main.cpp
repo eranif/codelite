@@ -114,8 +114,6 @@ TEST_FUNC(test_long_chain)
     return true;
 }
 
-// test a chained expression:
-// $a->foo()->bar()->
 TEST_FUNC(test_parsing_abstract_class)
 {
     PHPSourceFile sourceFile(wxFileName("../Tests/test_parsing_abstract_class.php"));
@@ -130,6 +128,24 @@ TEST_FUNC(test_parsing_abstract_class)
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 3);
+    PrintMatches(matches);
+    return true;
+}
+
+TEST_FUNC(test_abstract_class_with_self)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_abstract_class_with_self.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_WXSTRING(resolved->GetShortName(), "test_parsing_abstract_class_impl1");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 1);
     PrintMatches(matches);
     return true;
 }

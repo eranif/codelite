@@ -94,7 +94,7 @@ protected:
     /**
      * @brief 'class' keyword found
      */
-    void OnClass();
+    void OnClass(const phpLexerToken& tok);
 
     /**
      * @brief go over the look back tokens and extract all function flags

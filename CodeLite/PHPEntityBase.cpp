@@ -4,6 +4,7 @@ PHPEntityBase::PHPEntityBase()
     : m_parent(NULL)
     , m_line(0)
     , m_column(0)
+    , m_flags(0)
     , m_dbId(wxNOT_FOUND)
 {
 }

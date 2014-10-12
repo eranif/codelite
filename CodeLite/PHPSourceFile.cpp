@@ -102,9 +102,9 @@ void PHPSourceFile::Parse(int exitDepth)
                     var->SetVisibility(visibility);
                     var->SetFullName(token.text);
                     size_t flags = LookBackForVariablesFlags();
-                    var->SetFlag(PHPEntityVariable::kMember);
-                    var->SetFlag(PHPEntityVariable::kConst, flags & PHPEntityVariable::kConst);
-                    var->SetFlag(PHPEntityVariable::kStatic, flags & PHPEntityVariable::kStatic);
+                    var->SetFlag(kVar_Member);
+                    var->SetFlag(kVar_Const, flags & kVar_Const);
+                    var->SetFlag(kVar_Static, flags & kVar_Static);
                     var->SetLine(token.lineNumber);
                     CurrentScope()->AddChild(member);
                     if(!ConsumeUntil(';')) return;
@@ -124,8 +124,8 @@ void PHPSourceFile::Parse(int exitDepth)
                 PHPEntityVariable* var = member->Cast<PHPEntityVariable>();
                 var->SetFullName(token.text);
                 var->SetLine(token.lineNumber);
-                var->SetFlag(PHPEntityVariable::kMember);
-                var->SetFlag(PHPEntityVariable::kConst);
+                var->SetFlag(kVar_Member);
+                var->SetFlag(kVar_Const);
                 CurrentScope()->AddChild(member);
                 if(!ConsumeUntil(';')) return;
             }
@@ -143,8 +143,9 @@ void PHPSourceFile::Parse(int exitDepth)
             m_lookBackTokens.clear();
             break;
         case kPHP_T_CLASS:
+        case kPHP_T_INTERFACE:
             // Found class
-            OnClass();
+            OnClass(token);
             m_lookBackTokens.clear();
             break;
         case kPHP_T_NAMESPACE:
@@ -273,12 +274,15 @@ void PHPSourceFile::OnFunction()
     // update function attributes
     ParseFunctionSignature(funcDepth);
     func->SetFlags(LookBackForFunctionFlags());
-    if(LookBackTokensContains(kPHP_T_ABSTRACT)) {
-        // abstract function
-        func->SetFlags(func->GetFlags() | PHPEntityFunction::kAbstract);
+    if(LookBackTokensContains(kPHP_T_ABSTRACT) || // The 'abstract modifier was found for this this function
+       (funcPtr->Parent()->Is(kEntityTypeClass) &&
+        funcPtr->Parent()->Cast<PHPEntityClass>()->IsInterface())) // We are inside an interface
+    {
+        // Mark this function as an abstract function
+        func->SetFlags(func->GetFlags() | kFunc_Abstract);
     }
 
-    if(func->HasFlag(PHPEntityFunction::kAbstract)) {
+    if(func->HasFlag(kFunc_Abstract)) {
         // an abstract function - it has no body
         if(!ConsumeUntil(';')) {
             // could not locate the function delimiter, remove it from the stack
@@ -326,22 +330,23 @@ size_t PHPSourceFile::LookBackForFunctionFlags()
     for(size_t i = 0; i < m_lookBackTokens.size(); ++i) {
         const phpLexerToken& tok = m_lookBackTokens.at(i);
         if(tok.type == kPHP_T_ABSTRACT) {
-            flags |= PHPEntityFunction::kAbstract;
+            flags |= kFunc_Abstract;
 
         } else if(tok.type == kPHP_T_FINAL) {
-            flags |= PHPEntityFunction::kFinal;
-
+            flags |= kFunc_Final;
         } else if(tok.type == kPHP_T_STATIC) {
-            flags |= PHPEntityFunction::kStatic;
+            flags |= kFunc_Static;
 
         } else if(tok.type == kPHP_T_PUBLIC) {
-            flags |= PHPEntityFunction::kPublic;
+            flags |= kFunc_Public;
+            flags &= ~(kFunc_Private | kFunc_Protected);
 
         } else if(tok.type == kPHP_T_PRIVATE) {
-            flags |= PHPEntityFunction::kPrivate;
-
+            flags |= kFunc_Private;
+            flags &= ~(kFunc_Public | kFunc_Protected);
         } else if(tok.type == kPHP_T_PROTECTED) {
-            flags |= PHPEntityFunction::kProtected;
+            flags |= kFunc_Protected;
+            flags &= ~(kFunc_Private | kFunc_Public);
         }
     }
     return flags;
@@ -375,7 +380,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
             var->SetLine(token.lineNumber);
             var->SetFilename(m_filename);
             // Mark this variable as function argument
-            var->SetFlag(PHPEntityVariable::kFunctionArg);
+            var->SetFlag(kVar_FunctionArg);
             if(typeHint.EndsWith("&")) {
                 var->SetIsReference(true);
                 typeHint.RemoveLast();
@@ -644,7 +649,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     return typeWithNS;
 }
 
-void PHPSourceFile::OnClass()
+void PHPSourceFile::OnClass(const phpLexerToken& tok)
 {
     // A "complex" example: class A extends BaseClass implements C, D {}
 
@@ -663,6 +668,8 @@ void PHPSourceFile::OnClass()
     PHPEntityBase::Ptr_t klass(new PHPEntityClass());
     klass->SetFilename(m_filename.GetFullPath());
     PHPEntityClass* pClass = klass->Cast<PHPEntityClass>();
+    // Is the class an interface?
+    pClass->SetIsInterface(tok.type == kPHP_T_INTERFACE);
     pClass->SetFullName(MakeIdentifierAbsolute(token.text));
     pClass->SetLine(token.lineNumber);
 
@@ -834,23 +841,24 @@ bool PHPSourceFile::LookBackTokensContains(int type) const
 
 size_t PHPSourceFile::LookBackForVariablesFlags()
 {
-    size_t flags(0);
+    size_t flags(kVar_Public);
     for(size_t i = 0; i < m_lookBackTokens.size(); ++i) {
         const phpLexerToken& tok = m_lookBackTokens.at(i);
         if(tok.type == kPHP_T_STATIC) {
-            flags |= PHPEntityVariable::kStatic;
+            flags |= kVar_Static;
 
         } else if(tok.type == kPHP_T_CONST) {
-            flags |= PHPEntityVariable::kConst;
+            flags |= kVar_Const;
 
         } else if(tok.type == kPHP_T_PUBLIC) {
-            flags |= PHPEntityVariable::kPublic;
-
+            flags |= kVar_Public;
+            flags &= (kVar_Private | kVar_Protected);
         } else if(tok.type == kPHP_T_PRIVATE) {
-            flags |= PHPEntityVariable::kPrivate;
-
+            flags |= kVar_Private;
+            flags &= (kVar_Public | kVar_Protected);
         } else if(tok.type == kPHP_T_PROTECTED) {
-            flags |= PHPEntityVariable::kProtected;
+            flags |= kVar_Protected;
+            flags &= (kVar_Public | kVar_Private);
         }
     }
     return flags;

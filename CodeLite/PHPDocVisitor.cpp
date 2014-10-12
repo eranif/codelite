@@ -28,14 +28,13 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
         PHPDocComment docComment(m_sourceFile, entity->GetDocComment());
         if(entity->Is(kEntityTypeFunction) && !docComment.GetReturn().IsEmpty()) {
             entity->Cast<PHPEntityFunction>()->SetReturnValue(docComment.GetReturn());
-        } else if(entity->Is(kEntityTypeVariable) &&
-                  (!entity->Cast<PHPEntityVariable>()->HasFlag(PHPEntityVariable::kFunctionArg))) {
+        } else if(entity->Is(kEntityTypeVariable) && !entity->Cast<PHPEntityVariable>()->IsFunctionArg()) {
             // A global variable, const or a member
             entity->Cast<PHPEntityVariable>()->SetTypeHint(docComment.GetVar());
         }
-        
+
     } else if(entity->Is(kEntityTypeVariable) && entity->Parent() && entity->Parent()->Is(kEntityTypeFunction) &&
-              entity->Cast<PHPEntityVariable>()->HasFlag(PHPEntityVariable::kFunctionArg)) {
+              entity->Cast<PHPEntityVariable>()->IsFunctionArg()) {
         // A function argument
         PHPDocComment docComment(m_sourceFile, entity->Parent()->GetDocComment());
         wxString typeHint = docComment.GetParam(entity->GetFullName());

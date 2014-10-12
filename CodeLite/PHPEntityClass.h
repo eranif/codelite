@@ -36,6 +36,10 @@ public:
     const wxArrayString& GetTraits() const { return m_traits; }
     wxString GetImplementsAsString() const { return ::wxJoin(m_implements, ';'); }
     wxString GetTraitsAsString() const { return ::wxJoin(m_traits, ';'); }
+    
+    // Aliases
+    void SetIsInterface(bool b) { SetFlag(kClass_Interface, b); }
+    bool IsInterface() const { return HasFlag(kClass_Interface); }
 };
 
 #endif // PHPENTITYCLASSIMPL_H

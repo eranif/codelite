@@ -31,16 +31,17 @@ void PHPEntityClass::Store(wxSQLite3Database& db)
     try {
         wxSQLite3Statement statement =
             db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, EXTENDS, "
-                                "IMPLEMENTS, USING_TRAITS, DOC_COMMENT, "
+                                "IMPLEMENTS, USING_TRAITS, FLAGS, DOC_COMMENT, "
                                 "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :FULLNAME, :EXTENDS, "
-                                ":IMPLEMENTS, :USING_TRAITS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+                                ":IMPLEMENTS, :USING_TRAITS, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
 
         statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
         statement.Bind(statement.GetParamIndex(":NAME"), GetShortName());
         statement.Bind(statement.GetParamIndex(":FULLNAME"), GetFullName());
         statement.Bind(statement.GetParamIndex(":EXTENDS"), GetExtends());
         statement.Bind(statement.GetParamIndex(":IMPLEMENTS"), GetImplementsAsString());
-        statement.Bind(statement.GetParamIndex(":USING_TRAITS"), GetTraitsAsString()); // TODO: implement this
+        statement.Bind(statement.GetParamIndex(":USING_TRAITS"), GetTraitsAsString());
+        statement.Bind(statement.GetParamIndex(":FLAGS"), (int) GetFlags());
         statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
         statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
         statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
@@ -62,6 +63,7 @@ void PHPEntityClass::FromResultSet(wxSQLite3ResultSet& res)
     SetDocComment(res.GetString("DOC_COMMENT"));
     SetLine(res.GetInt("LINE_NUMBER"));
     SetFilename(res.GetString("FILE_NAME"));
+    SetFlags(res.GetInt("FLAGS"));
 }
 
 wxArrayString PHPEntityClass::GetInheritanceArray() const

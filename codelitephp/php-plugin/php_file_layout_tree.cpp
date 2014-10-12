@@ -83,9 +83,9 @@ int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
     if(entry->Is(kEntityTypeFunction)) {
         PHPEntityFunction* func = entry->Cast<PHPEntityFunction>();
 
-        if(func->HasFlag(PHPEntityFunction::kPrivate))
+        if(func->HasFlag(kFunc_Private))
             return 1;
-        else if(func->HasFlag(PHPEntityFunction::kProtected))
+        else if(func->HasFlag(kFunc_Protected))
             return 2;
         else
             // public
@@ -93,21 +93,21 @@ int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
 
     } else if(entry->Is(kEntityTypeVariable)) {
         PHPEntityVariable* var = entry->Cast<PHPEntityVariable>();
-        if(!var->HasFlag(PHPEntityVariable::kMember) && !var->HasFlag(PHPEntityVariable::kConst)) {
+        if(!var->IsMember() && !var->IsConst()) {
             // A global variale
             return 6;
 
-        } else if(var->HasFlag(PHPEntityVariable::kMember)) {
-            if(var->HasFlag(PHPEntityVariable::kConst)) return 9; // constant
+        } else if(var->IsMember()) {
+            if(var->HasFlag(kVar_Const)) return 9; // constant
             // Member
-            if(var->HasFlag(PHPEntityVariable::kPrivate))
+            if(var->HasFlag(kVar_Private))
                 return 4;
-            else if(var->HasFlag(PHPEntityVariable::kProtected))
+            else if(var->HasFlag(kVar_Protected))
                 return 5;
             else
                 return 6;
 
-        } else if(var->HasFlag(PHPEntityVariable::kConst)) {
+        } else if(var->IsConst()) {
             // Constant
             return 9;
         } else {

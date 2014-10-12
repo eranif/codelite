@@ -60,7 +60,9 @@ void PHPEntityNamespace::FromResultSet(wxSQLite3ResultSet& res)
     SetShortName(res.GetString("NAME"));
     SetFilename(res.GetString("FILE_NAME"));
     SetLine(res.GetInt("LINE_NUMBER"));
+    SetFlags(0);
 }
+
 wxString PHPEntityNamespace::Type() const { return GetFullName(); }
 bool PHPEntityNamespace::Is(eEntityType type) const { return type == kEntityTypeNamespace; }
 wxString PHPEntityNamespace::GetDisplayName() const { return GetFullName(); }

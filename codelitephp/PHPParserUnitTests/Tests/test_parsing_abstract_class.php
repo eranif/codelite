@@ -7,5 +7,12 @@ abstract class AbstractFoo
     abstract public function baz();
 }
 
-$a = new AbstractFoo();
+class test_parsing_abstract_class_impl extends AbstractFoo
+{
+    public function foo(){}
+    public function bar(){}
+    public function baz(){}
+}
+
+$a = new test_parsing_abstract_class_impl();
 $a-> // 3 entries

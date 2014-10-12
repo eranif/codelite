@@ -125,7 +125,7 @@ TEST_FUNC(test_parsing_abstract_class)
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    CHECK_WXSTRING(resolved->GetShortName(), "AbstractFoo");
+    CHECK_WXSTRING(resolved->GetShortName(), "test_parsing_abstract_class_impl");
     
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
@@ -292,6 +292,26 @@ TEST_FUNC(test_global_variable_assigned_from_function)
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 1);
+    PrintMatches(matches);
+    return true;
+}
+
+// test instantiating a variable from a global function
+// The variable is used within a global function
+TEST_FUNC(test_interface)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_interface.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_WXSTRING(resolved->GetShortName(), "test_interface_impl");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 2);
     PrintMatches(matches);
     return true;
 }

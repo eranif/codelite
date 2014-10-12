@@ -51,6 +51,7 @@
     <File Name="Tests/test_variable_2.php"/>
     <File Name="Tests/test_variable_assigned_from_function.php"/>
     <File Name="Tests/test_global_variable_assigned_from_function.php"/>
+    <File Name="Tests/test_interface.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

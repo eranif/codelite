@@ -12,11 +12,39 @@
 #include <wx/wxcrtvararg.h> // Needed for wxPrintf
 #include "smart_ptr.h"
 
+// The entity type
 enum eEntityType {
     kEntityTypeVariable = 0,
     kEntityTypeFunction = 1,
     kEntityTypeClass = 2,
     kEntityTypeNamespace = 3,
+};
+
+// Variable flags
+enum {
+    kVar_Public = (1 << 1),
+    kVar_Private = (1 << 2),
+    kVar_Protected = (1 << 3),
+    kVar_Member = (1 << 4),
+    kVar_Reference = (1 << 5),
+    kVar_Const = (1 << 6),
+    kVar_FunctionArg = (1 << 7),
+    kVar_Static = (1 << 8),
+};
+
+// Function flags
+enum {
+    kFunc_Public = (1 << 1),
+    kFunc_Private = (1 << 2),
+    kFunc_Protected = (1 << 3),
+    kFunc_Final = (1 << 4),
+    kFunc_Static = (1 << 5),
+    kFunc_Abstract = (1 << 6),
+};
+
+// Class flags
+enum {
+    kClass_Interface = (1 << 1),
 };
 
 class WXDLLIMPEXP_CL PHPEntityBase
@@ -36,6 +64,7 @@ protected:
     wxString m_fullname;
     wxString m_shortName;
     wxString m_docComment;
+    size_t m_flags;
 
     // The database identifier
     wxLongLong m_dbId;
@@ -63,7 +92,10 @@ public:
     virtual wxString FormatPhpDoc() const = 0;
 
     // Setters / Getters
-
+    void SetFlag(size_t flag, bool b = true) { b ? this->m_flags |= flag : this->m_flags &= ~flag; }
+    bool HasFlag(size_t flag) const { return m_flags & flag; }
+    size_t GetFlags() const { return m_flags; }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
     void SetDocComment(const wxString& docComment) { this->m_docComment = docComment; }
     const wxString& GetDocComment() const { return m_docComment; }
     void SetDbId(wxLongLong dbId) { this->m_dbId = dbId; }
@@ -74,15 +106,15 @@ public:
     int GetColumn() const { return m_column; }
     const wxFileName& GetFilename() const { return m_filename; }
     int GetLine() const { return m_line; }
-    
+
     // Fullname, including the namespace prefix
-    void SetFullName(const wxString& fullname) ;
+    void SetFullName(const wxString& fullname);
     const wxString& GetFullName() const { return m_fullname; }
-    
+
     // Short name (usually, this is the last part after the namespace separator)
     void SetShortName(const wxString& shortName) { this->m_shortName = shortName; }
     const wxString& GetShortName() const { return m_shortName; }
-    
+
     /**
      * @brief recursive print to stdout this object and all its children
      * @param parent

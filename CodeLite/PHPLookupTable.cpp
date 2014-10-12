@@ -11,7 +11,7 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "7.0.0";
+static wxString PHP_SCHEMA_VERSION = "7.0.1";
 
 //------------------------------------------------
 // Metadata table
@@ -34,6 +34,7 @@ const static wxString CREATE_SCOPE_TABLE_SQL =
     "EXTENDS TEXT DEFAULT '', "
     "IMPLEMENTS TEXT DEFAULT '', "
     "USING_TRAITS TEXT DEFAULT '', "
+    "FLAGS INTEGER DEFAULT 0, "
     "DOC_COMMENT TEXT DEFAULT '', "
     "LINE_NUMBER INTEGER NOT NULL DEFAULT 0, "
     "FILE_NAME TEXT DEFAULT '')";
@@ -43,11 +44,11 @@ const static wxString CREATE_SCOPE_TABLE_SQL_IDX1 =
 const static wxString CREATE_SCOPE_TABLE_SQL_IDX2 =
     "CREATE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_2 ON SCOPE_TABLE(FILE_NAME)";
 const static wxString CREATE_SCOPE_TABLE_SQL_IDX3 =
-    "CREATE UNIQUE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_3 ON SCOPE_TABLE(NAME)";
+    "CREATE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_3 ON SCOPE_TABLE(NAME)";
 const static wxString CREATE_SCOPE_TABLE_SQL_IDX4 =
     "CREATE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_4 ON SCOPE_TABLE(SCOPE_TYPE)";
 const static wxString CREATE_SCOPE_TABLE_SQL_IDX5 =
-    "CREATE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_5 ON SCOPE_TABLE(FULLNAME)";
+    "CREATE UNIQUE INDEX IF NOT EXISTS SCOPE_TABLE_IDX_5 ON SCOPE_TABLE(FULLNAME)";
 
 //------------------------------------------------
 // Function table
@@ -68,9 +69,11 @@ const static wxString CREATE_FUNCTION_TABLE_SQL =
 const static wxString CREATE_FUNCTION_TABLE_SQL_IDX1 =
     "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_1 ON FUNCTION_TABLE(SCOPE_ID)";
 const static wxString CREATE_FUNCTION_TABLE_SQL_IDX2 =
-    "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_3 ON FUNCTION_TABLE(FILE_NAME)";
+    "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_2 ON FUNCTION_TABLE(FILE_NAME)";
 const static wxString CREATE_FUNCTION_TABLE_SQL_IDX3 =
-    "CREATE UNIQUE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_4 ON FUNCTION_TABLE(FULLNAME)";
+    "CREATE UNIQUE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_3 ON FUNCTION_TABLE(FULLNAME)";
+const static wxString CREATE_FUNCTION_TABLE_SQL_IDX4 =
+    "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_4 ON FUNCTION_TABLE(NAME)";
 
 //------------------------------------------------
 // Variables table
@@ -211,6 +214,7 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX1);
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX2);
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX3);
+        m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX4);
 
         // variables (function args, globals class members and consts)
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL);
@@ -442,7 +446,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindClass(wxLongLong id) { return DoFindSco
 
 PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t flags, const wxString& nameHint)
 {
-    PHPEntityBase::List_t matches;
+    PHPEntityBase::List_t matches, matchesNoAbstracts;
     PHPEntityBase::Ptr_t scope = DoFindScope(parentId);
     if(scope && scope->Is(kEntityTypeClass)) {
         std::vector<wxLongLong> parents;
@@ -452,6 +456,17 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
         for(size_t i = 0; i < parents.size(); ++i) {
             DoFindChildren(matches, parents.at(i), flags, nameHint);
         }
+        
+        // Filter out abstract functions
+        PHPEntityBase::List_t::iterator iter = matches.begin();
+        for(; iter != matches.end(); ++iter) {
+            PHPEntityBase::Ptr_t child = *iter;
+            if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract))
+                continue;
+            matchesNoAbstracts.push_back(child);
+        }
+        matches.swap(matchesNoAbstracts);
+        
     } else if(scope && scope->Is(kEntityTypeNamespace)) {
         DoFindChildren(matches, parentId, flags | kLookupFlags_NameHintIsScope, nameHint);
     }
@@ -746,7 +761,7 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
             while(res.NextRow()) {
                 PHPEntityBase::Ptr_t match(new PHPEntityFunction());
                 match->FromResultSet(res);
-                bool isStatic = match->Cast<PHPEntityFunction>()->HasFlag(PHPEntityFunction::kStatic);
+                bool isStatic = match->HasFlag(kFunc_Static);
                 if(isStatic & CollectingStatics(flags)) {
                     matches.push_back(match);
 

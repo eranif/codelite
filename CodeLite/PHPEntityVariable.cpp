@@ -3,16 +3,13 @@
 #include "PHPEntityFunction.h"
 #include "PHPEntityClass.h"
 
-PHPEntityVariable::PHPEntityVariable()
-    : m_flags(0)
-{
-}
+PHPEntityVariable::PHPEntityVariable() {}
 
 PHPEntityVariable::~PHPEntityVariable() {}
 void PHPEntityVariable::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
-    wxPrintf("%s%s: %s", indentString, HasFlag(kMember) ? "Member" : "Variable", GetShortName());
+    wxPrintf("%s%s: %s", indentString, IsMember() ? "Member" : "Variable", GetShortName());
     if(!GetTypeHint().IsEmpty()) {
         wxPrintf(", TypeHint: %s", GetTypeHint());
     }
@@ -39,16 +36,16 @@ void PHPEntityVariable::SetVisibility(int visibility)
 {
     switch(visibility) {
     case kPHP_T_PUBLIC:
-        m_flags &= ~(kPrivate | kProtected);
-        m_flags |= kPublic;
+        m_flags &= ~(kVar_Private | kVar_Protected);
+        m_flags |= kVar_Public;
         break;
     case kPHP_T_PROTECTED:
-        m_flags &= ~(kPrivate | kPublic);
-        m_flags |= kProtected;
+        m_flags &= ~(kVar_Private | kVar_Public);
+        m_flags |= kVar_Protected;
         break;
     case kPHP_T_PRIVATE:
-        m_flags &= ~(kPublic | kProtected);
-        m_flags |= kPrivate;
+        m_flags &= ~(kVar_Public | kVar_Protected);
+        m_flags |= kVar_Private;
         break;
     default:
         break;
@@ -57,7 +54,7 @@ void PHPEntityVariable::SetVisibility(int visibility)
 
 wxString PHPEntityVariable::ToFuncArgString() const
 {
-    if(!HasFlag(kFunctionArg)) {
+    if(!IsFunctionArg()) {
         return "";
     }
 
@@ -79,16 +76,15 @@ wxString PHPEntityVariable::ToFuncArgString() const
 void PHPEntityVariable::Store(wxSQLite3Database& db)
 {
     // we keep only the function arguments in the databse and globals
-    if(HasFlag(kFunctionArg) || HasFlag(kMember)) {
+    if(IsFunctionArg() || IsMember()) {
         try {
             wxSQLite3Statement statement =
                 db.PrepareStatement("INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
                                     ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, "
                                     ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
-            statement.Bind(statement.GetParamIndex(":SCOPE_ID"),
-                           HasFlag(kMember) ? Parent()->GetDbId() : wxLongLong(-1));
+            statement.Bind(statement.GetParamIndex(":SCOPE_ID"), IsMember() ? Parent()->GetDbId() : wxLongLong(-1));
             statement.Bind(statement.GetParamIndex(":FUNCTION_ID"),
-                           HasFlag(kFunctionArg) ? Parent()->GetDbId() : wxLongLong(-1));
+                           IsFunctionArg() ? Parent()->GetDbId() : wxLongLong(-1));
             statement.Bind(statement.GetParamIndex(":NAME"), GetShortName());
             statement.Bind(statement.GetParamIndex(":FULLNAME"), GetFullName());
             statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
@@ -121,11 +117,11 @@ void PHPEntityVariable::FromResultSet(wxSQLite3ResultSet& res)
 wxString PHPEntityVariable::GetScope() const
 {
     PHPEntityBase* parent = Parent();
-    if(parent && parent->Is(kEntityTypeFunction) && HasFlag(kFunctionArg)) {
+    if(parent && parent->Is(kEntityTypeFunction) && IsFunctionArg()) {
         return parent->Cast<PHPEntityFunction>()->GetScope();
 
-    } else if(parent && parent->Is(kEntityTypeClass) && HasFlag(kMember)) {
-        return parent->Cast<PHPEntityClass>()->GetFullName();
+    } else if(parent && parent->Is(kEntityTypeClass) && IsMember()) {
+        return parent->GetFullName();
 
     } else {
         return "";

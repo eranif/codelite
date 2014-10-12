@@ -3,19 +3,10 @@
 #include "file_logger.h"
 
 PHPEntityFunction::PHPEntityFunction()
-    : m_flags(0)
 {
 }
 
 PHPEntityFunction::~PHPEntityFunction() {}
-
-void PHPEntityFunction::SetFlags(size_t flags)
-{
-    this->m_flags = flags;
-    if(!HasFlag(kPrivate) && !HasFlag(kProtected)) {
-        m_flags |= kPublic;
-    }
-}
 
 void PHPEntityFunction::PrintStdout(int indent) const
 {
@@ -42,7 +33,7 @@ wxString PHPEntityFunction::GetSignature() const
         PHPEntityBase::List_t::const_iterator iter = m_children.begin();
         for(; iter != m_children.end(); ++iter) {
             PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
-            if(var && var->HasFlag(PHPEntityVariable::kFunctionArg)) {
+            if(var && var->IsFunctionArg()) {
                 strSignature << var->ToFuncArgString() << ", ";
             } else {
                 break;

@@ -227,9 +227,9 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
 
     } else if(entry->Is(kEntityTypeFunction)) {
         PHPEntityFunction* func = entry->Cast<PHPEntityFunction>();
-        if(func->HasFlag(PHPEntityFunction::kPrivate)) {
+        if(func->HasFlag(kFunc_Private)) {
             t->SetAccess(wxT("private"));
-        } else if(func->HasFlag(PHPEntityFunction::kProtected)) {
+        } else if(func->HasFlag(kFunc_Protected)) {
             t->SetAccess("protected");
         } else {
             t->SetAccess(wxT("public"));

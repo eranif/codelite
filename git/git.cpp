@@ -79,7 +79,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("René Kraus"));
-    info.SetName(wxT("git"));
+    info.SetName(wxT("Git"));
     info.SetDescription(wxT("Simple GIT plugin"));
     info.SetVersion(wxT("v1.1.0"));
     return info;
@@ -125,7 +125,7 @@ GitPlugin::GitPlugin(IManager* manager)
     , m_commitListDlg(NULL)
 {
     m_longName = wxT("GIT plugin");
-    m_shortName = wxT("git");
+    m_shortName = wxT("Git");
     m_eventHandler = m_mgr->GetTheApp();
 
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);

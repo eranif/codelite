@@ -52,7 +52,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("abbreviation"));
+    info.SetName(wxT("Abbreviation"));
     info.SetDescription(_("Abbreviation plugin"));
     info.SetVersion(wxT("v1.0"));
     return info;
@@ -69,7 +69,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager *manager)
     , m_config("abbreviations.conf")
 {
     m_longName = _("Abbreviation plugin");
-    m_shortName = wxT("abbreviation");
+    m_shortName = wxT("Abbreviation");
     m_topWindow = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
 

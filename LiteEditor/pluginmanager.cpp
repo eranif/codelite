@@ -265,19 +265,23 @@ void PluginManager::Load()
                 }
             }
 
-            // Let the plugin plug its menu in the 'Plugins' menu at the menu bar
-            // the create menu will be placed as a sub menu of the 'Plugin' menu
-            wxMenu* pluginsMenu = NULL;
-            wxMenuItem* menuitem = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("manage_plugins"), &pluginsMenu);
-            if(menuitem && pluginsMenu) {
-                plugin->CreatePluginMenu(pluginsMenu);
-            }
-
             // Keep the dynamic load library
             m_dl.push_back(dl);
         }
         clMainFrame::Get()->GetDockingManager().Update();
-
+        
+        // Let the plugins plug their menu in the 'Plugins' menu at the menu bar
+        // the create menu will be placed as a sub menu of the 'Plugin' menu
+        wxMenu* pluginsMenu = NULL;
+        wxMenuItem* menuitem = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("manage_plugins"), &pluginsMenu);
+        if(pluginsMenu && menuitem) {
+            std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
+            for(; iter != m_plugins.end(); ++iter) {
+                IPlugin* plugin = iter->second;
+                plugin->CreatePluginMenu(pluginsMenu);
+            }
+        }
+            
         // save the plugins data
         conf.WriteItem(&m_pluginsData);
     }

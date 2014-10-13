@@ -43,7 +43,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("CodeLiteDiff"));
+    info.SetName(wxT("Diff Plugin"));
     info.SetDescription(wxT("CodeLite Diff Plugin"));
     info.SetVersion(wxT("v1.0"));
     return info;
@@ -58,7 +58,7 @@ CodeLiteDiff::CodeLiteDiff(IManager *manager)
     : IPlugin(manager)
 {
     m_longName = wxT("CodeLite Diff Plugin");
-    m_shortName = wxT("CodeLiteDiff");
+    m_shortName = wxT("Diff Plugin");
 }
 
 CodeLiteDiff::~CodeLiteDiff()

@@ -87,9 +87,9 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("CodeFormatter"));
-    info.SetDescription(_("Source Code Formatter based on the open source AStyle tool"));
-    info.SetVersion(wxT("v1.0"));
+    info.SetName(wxT("Source Code Formatter"));
+    info.SetDescription(_("Source Code Formatter (Supports C/C++/Obj-C/JavaScript/PHP files)"));
+    info.SetVersion(wxT("v2.0"));
     return info;
 }
 
@@ -98,8 +98,8 @@ extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERS
 CodeFormatter::CodeFormatter(IManager* manager)
     : IPlugin(manager)
 {
-    m_longName = _("Source Code Formatter (AStyle)");
-    m_shortName = wxT("CodeFormatter");
+    m_longName = _("Source Code Formatter");
+    m_shortName = wxT("Source Code Formatter");
 
     EventNotifier::Get()->Connect(
         wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString), NULL, this);

@@ -63,11 +63,9 @@ private:
     void OnCodeCompletionGetTagComment(clCodeCompletionEvent& e);
     void OnFindSymbol(clCodeCompletionEvent& e);
     void OnDismissTooltip(wxCommandEvent& e);
-    
     void OnRetagWorkspace(wxCommandEvent& event);
     
     // Workspace events
-    void OnWorkspaceOpened(PHPEvent& event);
     void OnWorkspaceClosed(PHPEvent& event);
     void OnFileSaved(clCommandEvent& event);
 
@@ -84,6 +82,12 @@ public:
      * @brief return the PHPEntity under the caret
      */
     PHPEntityBase::Ptr_t GetPHPEntryUnderTheAtPos(IEditor* editor, int pos);
+    
+    /**
+     * @brief open the symbols database for the given workspace file.
+     * Close any opened database
+     */
+    void Open(const wxFileName& workspaceFile);
 };
 
 #endif // PHPCODECOMPLETION_H

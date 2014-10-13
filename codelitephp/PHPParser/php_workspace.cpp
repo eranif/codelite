@@ -94,16 +94,26 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     JSONRoot root(m_workspaceFile);
     FromJSON(root.toElement());
 
+    // We open the symbols database manually here and _not_ via an event
+    // since the parser thread might open it first and leave us with a lock
+    PHPCodeCompletion::Instance()->Open(m_workspaceFile);
+    
+    // Notify internally that the workspace is loaded
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_LOADED);
     phpEvent.SetFileName(m_workspaceFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(phpEvent);
     
     // Notify that the a new workspace is loaded
+    // This time send the standard codelite event
+    // this is important so other plugins such as Svn, Git
+    // want to adjust their paths according to the new workspace
     {
         wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
         event.SetString(GetFilename().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(event);
     }
+    
+    // Perform a quick re-parse of the workspace
     ParseWorkspace(false);
     return true;
 }

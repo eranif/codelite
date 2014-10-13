@@ -57,7 +57,6 @@ PHPCodeCompletion::PHPCodeCompletion()
 
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_CLOSED, &PHPCodeCompletion::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPCodeCompletion::OnWorkspaceOpened, this);
     EventNotifier::Get()->Connect(
         wxEVT_CC_CODE_COMPLETE, clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
@@ -93,7 +92,6 @@ PHPCodeCompletion::~PHPCodeCompletion()
 
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_CLOSED, &PHPCodeCompletion::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &PHPCodeCompletion::OnWorkspaceOpened, this);
 
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_CODE_COMPLETE, clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
@@ -419,17 +417,6 @@ bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e) const
     return (editor && !e.IsInsideCommentOrString() && IsPHPSection(styleAt) && !IsPHPCommentOrString(styleAt));
 }
 
-void PHPCodeCompletion::OnWorkspaceOpened(PHPEvent& event)
-{
-    event.Skip();
-    if(m_lookupTable.IsOpened()) {
-        m_lookupTable.Close();
-    }
-
-    wxFileName fnWorkspace(event.GetFileName());
-    m_lookupTable.Open(fnWorkspace.GetPath());
-}
-
 void PHPCodeCompletion::OnWorkspaceClosed(PHPEvent& event)
 {
     event.Skip();
@@ -513,4 +500,12 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* edit
         }
     }
     return resolved;
+}
+
+void PHPCodeCompletion::Open(const wxFileName& workspaceFile)
+{
+    if(m_lookupTable.IsOpened()) {
+        m_lookupTable.Close();
+    }
+    m_lookupTable.Open(workspaceFile.GetPath());
 }

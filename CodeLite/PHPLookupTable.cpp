@@ -673,7 +673,7 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             // When deleting from the 'SCOPE_TABLE' don't remove namespaces
             // since they can be still be pointed by other entries in the database
             wxString sql;
-            sql << "delete from SCOPE_TABLE where FILE_NAME=:FILE_NAME WHERE SCOPE_TYPE != "
+            sql << "delete from SCOPE_TABLE where FILE_NAME=:FILE_NAME AND SCOPE_TYPE != "
                 << (int)kPhpScopeTypeNamespace;
             wxSQLite3Statement st = m_db.PrepareStatement(sql);
             st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());

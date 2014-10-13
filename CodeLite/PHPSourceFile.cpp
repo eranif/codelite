@@ -582,7 +582,7 @@ wxString PHPSourceFile::LookBackForTypeHint()
     if(m_lookBackTokens.empty()) return wxEmptyString;
     wxArrayString tokens;
 
-    for(size_t i = m_lookBackTokens.size() - 1; i >= 0; --i) {
+    for(int i = (int)m_lookBackTokens.size() - 1; i >= 0; --i) {
         if(m_lookBackTokens.at(i).type == kPHP_T_IDENTIFIER || m_lookBackTokens.at(i).type == kPHP_T_NS_SEPARATOR) {
             tokens.Insert(m_lookBackTokens.at(i).text, 0);
         } else {

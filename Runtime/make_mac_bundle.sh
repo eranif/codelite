@@ -278,6 +278,11 @@ if [ -f ../lib/wxcrafter.dylib ]; then
     cp -pr ../../Runtime/../wxcrafter/wxcrafter.accelerators ./codelite.app/Contents/SharedSupport/plugins/resources
 fi
 
+## PHP Plugin
+cp -pr ../../Runtime/PHP.zip ./codelite.app/Contents/SharedSupport/
+cp ../lib/codelitephp.dylib ./codelite.app/Contents/SharedSupport/plugins/
+## PHP Plugin - END
+
 cp ../lib/libplugin.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/liblibcodelite.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3.dylib ./codelite.app/Contents/MacOS/

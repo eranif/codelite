@@ -97,17 +97,17 @@ void LexerConf::FromXml(wxXmlNode* element)
                 }
             }
         }
-        
+
         // Hack: add RawString property to the lexers if not exist
         // By default, we use the settings defined for the wxSTC_C_STRING
         // property
         bool isCxxLexer = (m_lexerId == wxSTC_LEX_CPP);
         bool hasRawString = false;
-        
+
         // Keey NULL property
         StyleProperty stringProp;
         stringProp.SetId(STYLE_PROPERTY_NULL_ID);
-        
+
         // load properties
         // Search for <properties>
         node = XmlUtils::FindFirstByTagName(element, wxT("Properties"));
@@ -129,9 +129,9 @@ void LexerConf::FromXml(wxXmlNode* element)
                     long fontSize = XmlUtils::ReadLong(prop, wxT("Size"), 10);
                     long propId = XmlUtils::ReadLong(prop, wxT("Id"), 0);
                     long alpha = XmlUtils::ReadLong(prop, wxT("Alpha"), 50);
-                    
+
                     // Mainly for upgrade purposes: check if already read
-                    // the StringRaw propery 
+                    // the StringRaw propery
                     if(isCxxLexer && !hasRawString && propId == wxSTC_C_STRINGRAW) {
                         hasRawString = true;
                     }
@@ -153,7 +153,7 @@ void LexerConf::FromXml(wxXmlNode* element)
                 }
                 prop = prop->GetNext();
             }
-            
+
             // If we don't have the raw string style property,
             // copy the string property and add it
             if(isCxxLexer && !hasRawString && !stringProp.IsNull()) {
@@ -286,17 +286,17 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-    
+
     // by default indicators are set to be opaque rounded box
     ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
-    
+
     bool tooltip(false);
 
     std::list<StyleProperty> styles;
     styles = GetLexerProperties();
     ctrl->SetProperty(wxT("styling.within.preprocessor"), this->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
-    
+
     // turn off PP tracking/updating by default
     ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
@@ -309,17 +309,18 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     for(; iter != styles.end(); iter++) {
         if(iter->GetId() == 0) {
             defaultStyle = *iter;
+            wxString fontFace = iter->GetFaceName().IsEmpty() ? DEFAULT_FACE_NAME : iter->GetFaceName();
             defaultFont = wxFont(iter->GetFontSize(),
                                  wxFONTFAMILY_TELETYPE,
                                  iter->GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
                                  iter->IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
                                  iter->GetUnderlined(),
-                                 iter->GetFaceName());
+                                 fontFace);
             foundDefaultStyle = true;
             break;
         }
     }
-    
+
     // Reset all colours to use the default style colour
     if(foundDefaultStyle) {
         for(int i = 0; i < 256; i++) {
@@ -327,7 +328,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             ctrl->StyleSetForeground(i, defaultStyle.GetFgColour());
         }
     }
-    
+
     // Define the styles for the editing margin
     ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("FOREST GREEN")));
     ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
@@ -401,14 +402,14 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                                       .Italic(italic)
                                       .Bold(bold)
                                       .Underlined(underline)
-                                      .FaceName(faceName);
+                                      .FaceName(faceName.IsEmpty() ? DEFAULT_FACE_NAME : faceName);
             wxFont font(fontInfo);
 
             if(sp.GetId() == 0) { // default
                 ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
                 ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT, size);
                 ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT, (*iter).GetFgColour());
-                
+
                 // Set the inactive state colours
                 // Inactive state is greater by 64 from its counterpart
                 wxColor inactiveColor = GetInactiveColor(defaultStyle);
@@ -444,8 +445,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             if(iter->GetId() == LINE_NUMBERS_ATTR_ID) {
                 // Set the line number colours only if requested
                 // otherwise, use default colours provided by scintilla
-                if(sp.GetBgColour().IsEmpty() == false)
-                    ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
+                if(sp.GetBgColour().IsEmpty() == false) ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
 
                 if(sp.GetFgColour().IsEmpty() == false)
                     ctrl->StyleSetForeground(sp.GetId(), sp.GetFgColour());
@@ -461,7 +461,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 ctrl->StyleSetFont(sp.GetId() + 64, font);
                 ctrl->StyleSetSize(sp.GetId() + 64, size);
                 ctrl->StyleSetBackground(sp.GetId() + 64, defaultStyle.GetBgColour());
-                
+
                 ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
             }
             break;

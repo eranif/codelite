@@ -66,7 +66,6 @@ private:
     void OnRetagWorkspace(wxCommandEvent& event);
     
     // Workspace events
-    void OnWorkspaceClosed(PHPEvent& event);
     void OnFileSaved(clCommandEvent& event);
 
 public:
@@ -88,6 +87,11 @@ public:
      * Close any opened database
      */
     void Open(const wxFileName& workspaceFile);
+    
+    /**
+     * @brief close the lookup database
+     */
+    void Close();
 };
 
 #endif // PHPCODECOMPLETION_H

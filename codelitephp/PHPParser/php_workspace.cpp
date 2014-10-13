@@ -50,7 +50,10 @@ bool PHPWorkspace::Close(bool saveBeforeClose)
 
     m_projects.clear();
     m_workspaceFile.Clear();
-
+    
+    // Close the code completion lookup table
+    PHPCodeCompletion::Instance()->Close();
+    
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_CLOSED);
     EventNotifier::Get()->AddPendingEvent(phpEvent);
 
@@ -62,7 +65,10 @@ bool PHPWorkspace::Close(bool saveBeforeClose)
 bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
 {
     // Close the currently opened workspace
-    Close();
+    if(IsOpen()) {
+        Close();
+    }
+    
     m_workspaceFile = filename;
 
     {

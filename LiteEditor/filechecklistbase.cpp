@@ -107,14 +107,18 @@ FilesModifiedDlgBase::FilesModifiedDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer26->Add(m_staticText34, 0, wxALL, 5);
     
-    m_cmdLnkBtn28 = new wxCommandLinkButton(this, ID_BUTTON_CHOOSE, _("Choose."), _("Show me a list of files so I can choose from"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtn30 = new wxCommandLinkButton(this, ID_BUTTON_LOAD, _("Reload."), _("Reload all the externally modified files"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    
+    boxSizer26->Add(m_cmdLnkBtn30, 1, wxALL|wxEXPAND, 5);
+    
+    m_cmdLnkBtn28 = new wxCommandLinkButton(this, ID_BUTTON_CHOOSE, _("Choose."), _("Let me choose which file or files to reload"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     m_cmdLnkBtn28->SetFocus();
     
     boxSizer26->Add(m_cmdLnkBtn28, 1, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn30 = new wxCommandLinkButton(this, ID_BUTTON_LOAD, _("Load."), _("Automatically load all externally modified files"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnNone = new wxCommandLinkButton(this, wxID_CANCEL, _("Ignore."), _("Don't reload any the externally modified files"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
-    boxSizer26->Add(m_cmdLnkBtn30, 1, wxALL|wxEXPAND, 5);
+    boxSizer26->Add(m_cmdLnkBtnNone, 1, wxALL|wxEXPAND, 5);
     
     m_checkBoxRemember = new wxCheckBox(this, wxID_ANY, _("Remember my answer"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxRemember->SetValue(false);
@@ -127,14 +131,14 @@ FilesModifiedDlgBase::FilesModifiedDlgBase(wxWindow* parent, wxWindowID id, cons
     }
     Centre(wxBOTH);
     // Connect events
-    m_cmdLnkBtn28->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FilesModifiedDlgBase::OnChoose), NULL, this);
     m_cmdLnkBtn30->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FilesModifiedDlgBase::OnLoad), NULL, this);
+    m_cmdLnkBtn28->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FilesModifiedDlgBase::OnChoose), NULL, this);
     
 }
 
 FilesModifiedDlgBase::~FilesModifiedDlgBase()
 {
-    m_cmdLnkBtn28->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FilesModifiedDlgBase::OnChoose), NULL, this);
     m_cmdLnkBtn30->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FilesModifiedDlgBase::OnLoad), NULL, this);
+    m_cmdLnkBtn28->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FilesModifiedDlgBase::OnChoose), NULL, this);
     
 }

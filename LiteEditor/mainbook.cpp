@@ -806,17 +806,21 @@ void MainBook::ReloadExternallyModified(bool prompt)
     if(prompt) {
 
         int res = clConfig::Get().GetAnnoyingDlgAnswer("FilesModifiedDlg", wxNOT_FOUND);
+        if(res == wxID_CANCEL) {
+            return; // User had previous ticked the 'Remember my answer' checkbox after he'd just chosen Ignore
+        }
+
         if(res == wxNOT_FOUND) {
-            // User did not ticked the 'Remember my answer' checkbox
+            // User hasn't previously ticked the 'Remember my answer' checkbox
             // Show the dialog
             res = GetFilesModifiedDlg()->ShowModal();
 
-            if(res == wxID_CANCEL) {
-                return;
-            }
-
             if(GetFilesModifiedDlg()->GetRememberMyAnswer()) {
                 clConfig::Get().SetAnnoyingDlgAnswer("FilesModifiedDlg", res);
+            }
+
+            if(res == wxID_CANCEL) {
+                return;
             }
         }
 

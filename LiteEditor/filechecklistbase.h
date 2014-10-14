@@ -52,13 +52,14 @@ public:
     };
 protected:
     wxStaticText* m_staticText34;
-    wxCommandLinkButton* m_cmdLnkBtn28;
     wxCommandLinkButton* m_cmdLnkBtn30;
+    wxCommandLinkButton* m_cmdLnkBtn28;
+    wxCommandLinkButton* m_cmdLnkBtnNone;
     wxCheckBox* m_checkBoxRemember;
 
 protected:
-    virtual void OnChoose(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLoad(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoose(wxCommandEvent& event) { event.Skip(); }
 
 public:
     FilesModifiedDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Files were modified outside the editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);

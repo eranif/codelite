@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 34,
+  "m_objCounter": 35,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCraftertLrKnvInitBitmapResources",
   "m_bitmapsFile": "filechecklistbase_liteeditor_bitmaps.cpp",
@@ -953,6 +953,96 @@
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
+         "m_winid": "ID_BUTTON_LOAD"
+        }, {
+         "type": "string",
+         "m_label": "Size:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
+         "m_label": "Name:",
+         "m_value": "m_cmdLnkBtn30"
+        }, {
+         "type": "multi-string",
+         "m_label": "Tooltip:",
+         "m_value": ""
+        }, {
+         "type": "colour",
+         "m_label": "Bg Colour:",
+         "colour": "<Default>"
+        }, {
+         "type": "colour",
+         "m_label": "Fg Colour:",
+         "colour": "<Default>"
+        }, {
+         "type": "font",
+         "m_label": "Font:",
+         "m_value": ""
+        }, {
+         "type": "bool",
+         "m_label": "Hidden",
+         "m_value": false
+        }, {
+         "type": "bool",
+         "m_label": "Disabled",
+         "m_value": false
+        }, {
+         "type": "bool",
+         "m_label": "Focused",
+         "m_value": false
+        }, {
+         "type": "string",
+         "m_label": "Class Name:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Include File:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Style:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Label:",
+         "m_value": "Reload."
+        }, {
+         "type": "string",
+         "m_label": "Note",
+         "m_value": "Reload all the externally modified files"
+        }, {
+         "type": "bitmapPicker",
+         "m_label": "Bitmap File:",
+         "m_path": ""
+        }, {
+         "type": "bool",
+         "m_label": "Default Button",
+         "m_value": false
+        }],
+       "m_events": [{
+         "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+         "m_eventClass": "wxCommandEvent",
+         "m_eventHandler": "wxCommandEventHandler",
+         "m_functionNameAndSignature": "OnLoad(wxCommandEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+         "m_noBody": false
+        }],
+       "m_children": []
+      }, {
+       "m_type": 4474,
+       "proportion": 1,
+       "border": 5,
+       "gbSpan": "1,1",
+       "gbPosition": "0,0",
+       "m_styles": ["wxBU_LEFT"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_properties": [{
+         "type": "winid",
+         "m_label": "ID:",
          "m_winid": "ID_BUTTON_CHOOSE"
         }, {
          "type": "string",
@@ -1013,7 +1103,7 @@
         }, {
          "type": "string",
          "m_label": "Note",
-         "m_value": "Show me a list of files so I can choose from"
+         "m_value": "Let me choose which file or files to reload"
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
@@ -1043,7 +1133,7 @@
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
-         "m_winid": "ID_BUTTON_LOAD"
+         "m_winid": "wxID_CANCEL"
         }, {
          "type": "string",
          "m_label": "Size:",
@@ -1055,7 +1145,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_cmdLnkBtn30"
+         "m_value": "m_cmdLnkBtnNone"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -1099,11 +1189,11 @@
         }, {
          "type": "string",
          "m_label": "Label:",
-         "m_value": "Load."
+         "m_value": "Ignore."
         }, {
          "type": "string",
          "m_label": "Note",
-         "m_value": "Automatically load all externally modified files"
+         "m_value": "Don't reload any the externally modified files"
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
@@ -1113,14 +1203,7 @@
          "m_label": "Default Button",
          "m_value": false
         }],
-       "m_events": [{
-         "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-         "m_eventClass": "wxCommandEvent",
-         "m_eventHandler": "wxCommandEventHandler",
-         "m_functionNameAndSignature": "OnLoad(wxCommandEvent& event)",
-         "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-         "m_noBody": false
-        }],
+       "m_events": [],
        "m_children": []
       }, {
        "m_type": 4415,

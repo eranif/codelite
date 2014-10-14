@@ -43,6 +43,6 @@ void wxCraftertLrKnvInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/filechecklistbase_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_filechecklistbase_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/filechecklistbase_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_filechecklistbase_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/filechecklistbase_liteeditor_bitmaps.cpp$_home_david_devel_git_CL_LiteEditor_filechecklistbase_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/filechecklistbase_liteeditor_bitmaps.cpp$_home_david_devel_git_CL_LiteEditor_filechecklistbase_liteeditor_bitmaps.xrc"));
 }

@@ -403,17 +403,21 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
             if(posWordBeforeColons != wxNOT_FOUND) {
                 word = rCtrl.PreviousWord(posWordBeforeColons, foundPos);
                 int prevLine = rCtrl.LineFromPosition(posWordBeforeColons);
-
+                wxUnusedVar(prevLine);
                 // If we found one of the following keywords, un-indent their line by (foldLevel - 1)*indentSize
                 if(word == wxT("public") || word == wxT("private") || word == wxT("protected")) {
 
                     ContextBase::AutoIndent(nChar);
 
                     // Indent this line according to the block indentation level
-                    int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
-                    if(foldLevel) {
-                        rCtrl.SetLineIndentation(prevLine, ((foldLevel - 1) * rCtrl.GetIndent()));
-                        rCtrl.ChooseCaretX();
+                    // But do this only if "Fold PreProcessors" switch is OFF
+                    // Otherwise, these keywords will be somewhat miss-aligned
+                    if(!GetCtrl().GetOptions()->GetFoldPreprocessor()) {
+                        int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
+                        if(foldLevel) {
+                            rCtrl.SetLineIndentation(prevLine, ((foldLevel - 1) * rCtrl.GetIndent()));
+                            rCtrl.ChooseCaretX();
+                        }
                     }
                     return;
                 }

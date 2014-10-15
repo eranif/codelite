@@ -1,10 +1,16 @@
 #include "TerminalEmulator.h"
 #include <wx/filename.h>
+#include <wx/log.h>
+
+#ifndef __WXMSW__
+#include <signal.h>
+#endif 
 
 wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
 
 TerminalEmulator::TerminalEmulator()
     : m_process(NULL)
+    , m_pid(wxNOT_FOUND)
 {
 }
 
@@ -50,11 +56,14 @@ bool TerminalEmulator::Execute(const wxString& command,
 #elif defined(__WXMAC__)
 
 #endif
-    if(consoleCommand.IsEmpty()) return false;
-    
+    if(consoleCommand.IsEmpty())
+        return false;
+    wxLogMessage(consoleCommand);
+
     m_process = new wxProcess(wxPROCESS_DEFAULT);
     m_process->Bind(wxEVT_END_PROCESS, &TerminalEmulator::OnProcessTerminated, this);
-    return ::wxExecute(consoleCommand, wxEXEC_ASYNC, m_process) > 0;
+    m_pid = ::wxExecute(consoleCommand, wxEXEC_ASYNC, m_process);
+    return m_pid > 0;
 }
 
 wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& title, bool waitOnExit)
@@ -65,11 +74,12 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
     // so "Some Command" -> \"Some Command\"
     wxString escapedString = str;
     escapedString.Replace("\"", "\\\"");
-    command << "/usr/bin/bash -c \"" << escapedString;
+    command << "/bin/bash -c \"" << escapedString;
     if(waitOnExit) {
         command << " && echo 'Hit ENTER to continue' && read";
     }
     command << "\"";
+
 #elif defined(__WXMSW__)
     // Windows
     wxString escapedString = str;
@@ -78,7 +88,7 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
         command << " && echo \"\" && pause";
     }
 #else
-    // OSX
+// OSX
 
 #endif
     return command;
@@ -88,6 +98,7 @@ void TerminalEmulator::OnProcessTerminated(wxProcessEvent& event)
 {
     // Process terminated
     wxDELETE(m_process);
+    m_pid = wxNOT_FOUND;
     
     // Notify that the terminal has terminated
     clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);
@@ -97,6 +108,15 @@ void TerminalEmulator::OnProcessTerminated(wxProcessEvent& event)
 void TerminalEmulator::Terminate()
 {
     if(IsRunning()) {
-        wxProcess::Kill(m_process->GetPid(), wxSIGKILL, wxKILL_CHILDREN);
+        wxProcess::Kill(m_pid, wxSIGKILL, wxKILL_CHILDREN);
     }
+}
+
+bool TerminalEmulator::IsRunning() const { 
+#if defined(__WXGTK__) || defined(__WXMAC__)
+    return m_pid != wxNOT_FOUND && kill(m_pid, 0) == 0;
+#else
+    // On Windows we need to use different approach
+    return true;
+#endif
 }

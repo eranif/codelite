@@ -12,6 +12,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_EXIT, clCommandE
 class WXDLLIMPEXP_CL TerminalEmulator : public wxEvtHandler
 {
     wxProcess* m_process;
+    int m_pid;
 protected:
     void OnProcessTerminated(wxProcessEvent &event);
     
@@ -29,9 +30,7 @@ public:
     /**
      * @brief is the process currently running?
      */
-    bool IsRunning() const {
-        return m_process != NULL;
-    }
+    bool IsRunning() const ;
     
     /**
      * @brief Execute a command in the OS terminal.

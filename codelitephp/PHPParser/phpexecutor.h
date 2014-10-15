@@ -4,13 +4,14 @@
 #include <wx/event.h>
 #include <wx/process.h>
 #include "php_project.h"
+#include "TerminalEmulator.h"
 
 class PHPExecutor : public wxEvtHandler
 {
-    wxProcess* m_process;
+    TerminalEmulator m_terminal;
 
 protected:
-    void OnProcessTerminated(wxProcessEvent& e);
+    void OnProcessTerminated(clCommandEvent& e);
     bool RunRUL(PHPProject::Ptr_t pProject, const wxString& xdebugSessionName);
     bool
     DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName, bool neverPauseOnExit);

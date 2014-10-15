@@ -154,6 +154,8 @@
     <File Name="winprocess_impl.h"/>
     <File Name="ZombieReaperPOSIX.cpp"/>
     <File Name="ZombieReaperPOSIX.h"/>
+    <File Name="TerminalEmulator.h"/>
+    <File Name="TerminalEmulator.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include_finder">
     <File Name="include_finder.h"/>

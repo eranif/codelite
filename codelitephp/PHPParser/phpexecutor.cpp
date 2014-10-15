@@ -19,7 +19,6 @@
 #include "asyncprocess.h"
 
 PHPExecutor::PHPExecutor()
-    : m_process(NULL)
 {
 }
 
@@ -43,16 +42,13 @@ bool PHPExecutor::Exec(const wxString& projectName, const wxString& xdebugSessio
     }
 }
 
-bool PHPExecutor::IsRunning() const { return m_process != NULL; }
+bool PHPExecutor::IsRunning() const { return m_terminal.IsRunning(); }
 
-void PHPExecutor::OnProcessTerminated(wxProcessEvent& e) { wxDELETE(m_process); }
+void PHPExecutor::OnProcessTerminated(clCommandEvent& e) {}
 
 void PHPExecutor::Stop()
 {
-    if(IsRunning()) {
-        wxProcess::Kill(m_process->GetPid(), wxSIGTERM, wxKILL_CHILDREN);
-        wxDELETE(m_process);
-    }
+    m_terminal.Terminate();
 }
 
 bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& xdebugSessionName)
@@ -105,7 +101,6 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
         wd = data.GetWorkingDirectory();
     }
 
-    cmd = ::MakeExecInShellCommand(cmd, wd, (pauseWhenTerminate && !neverPauseOnExit));
     wxLogMessage(cmd);
 
     // Apply the environment variables
@@ -124,19 +119,9 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
     }
 
     EnvSetter serrter(&om);
-    DirSaver ds;
-    ::wxSetWorkingDirectory(wd);
-
+    
     // Execute the command
-    m_process = new wxProcess(wxPROCESS_DEFAULT);
-    if(::wxExecute(cmd, wxEXEC_SHOW_CONSOLE | wxEXEC_ASYNC, m_process) > 0) {
-        if(m_process) {
-            m_process->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(PHPExecutor::OnProcessTerminated), NULL, this);
-        }
-    } else {
-        wxDELETE(m_process);
-    }
-    return m_process != NULL;
+    return m_terminal.Execute(cmd, wd, pauseWhenTerminate && xdebugSessionName.IsEmpty());
 }
 
 bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)
@@ -150,7 +135,7 @@ bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)
 
     IProcess::Ptr_t phpcli(::CreateSyncProcess(cmd, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
     CHECK_PTR_RET_FALSE(phpcli);
-    
+
     phpcli->WaitForTerminate(php_output);
     return true;
 }

@@ -153,7 +153,7 @@ function make_funckey_from_ref($ref){
  * @return array Function information gathered from the PHP.net documentation by parsing XML files
  */
 function parse_phpdoc_functions($phpdocDir){
-    $xml_files = array_merge(glob("{$phpdocDir}/reference/*/*/*.xml"));
+    $xml_files = array_merge(glob("{$phpdocDir}/en/reference/*/*/*.xml"));
 
     foreach($xml_files as $xml_file){
         $xml = file_get_contents($xml_file);
@@ -255,7 +255,7 @@ function parse_phpdoc_functions($phpdocDir){
  * @return array Class information gathered from the PHP.net documentation by parsing XML files
  */
 function parse_phpdoc_classes($phpdocDir){
-    $xml_files = array_merge(glob("{$phpdocDir}/reference/*/reference.xml"), glob("{$phpdocDir}/reference/*/classes.xml"), glob("{$phpdocDir}/language/*/*.xml"), glob("{$phpdocDir}/language/*.xml"));
+    $xml_files = array_merge(glob("{$phpdocDir}/en/reference/*/reference.xml"), glob("{$phpdocDir}/reference/*/classes.xml"), glob("{$phpdocDir}/language/*/*.xml"), glob("{$phpdocDir}/language/*.xml"));
     global $fields_doc;
 
     foreach($xml_files as $xml_file){

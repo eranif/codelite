@@ -45,6 +45,8 @@ public:
     void SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name);
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
 
+    PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
+
 protected:
     bool IsWorkspaceViewDetached();
     void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false);

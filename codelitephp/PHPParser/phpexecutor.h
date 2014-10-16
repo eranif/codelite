@@ -11,7 +11,6 @@ class PHPExecutor : public wxEvtHandler
     TerminalEmulator m_terminal;
 
 protected:
-    void OnProcessTerminated(clCommandEvent& e);
     bool RunRUL(PHPProject::Ptr_t pProject, const wxString& xdebugSessionName);
     bool
     DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName, bool neverPauseOnExit);
@@ -41,6 +40,8 @@ public:
      * @brief run simple script using the global settings only and return its output
      */
     bool RunScript(const wxString& script, wxString& php_output);
+    
+    TerminalEmulator* GetTerminalEmulator() { return &m_terminal; }
 };
 
 #endif // PHPEXECUTOR_H

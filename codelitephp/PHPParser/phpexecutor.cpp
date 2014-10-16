@@ -17,10 +17,10 @@
 #include <event_notifier.h>
 #include <wx/uri.h>
 #include "asyncprocess.h"
+#include "TerminalEmulatorFrame.h"
+#include "PHPTerminal.h"
 
-PHPExecutor::PHPExecutor()
-{
-}
+PHPExecutor::PHPExecutor() {}
 
 PHPExecutor::~PHPExecutor() {}
 
@@ -44,12 +44,7 @@ bool PHPExecutor::Exec(const wxString& projectName, const wxString& xdebugSessio
 
 bool PHPExecutor::IsRunning() const { return m_terminal.IsRunning(); }
 
-void PHPExecutor::OnProcessTerminated(clCommandEvent& e) {}
-
-void PHPExecutor::Stop()
-{
-    m_terminal.Terminate();
-}
+void PHPExecutor::Stop() { m_terminal.Terminate(); }
 
 bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& xdebugSessionName)
 {
@@ -93,11 +88,9 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
         ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK | wxICON_INFORMATION, wxTheApp->GetTopWindow());
         return false;
     }
-    bool pauseWhenTerminate(false);
     wxString wd;
     if(proj) {
         const PHPProjectSettingsData& data = proj->GetSettings();
-        pauseWhenTerminate = data.IsPauseWhenExeTerminates();
         wd = data.GetWorkingDirectory();
     }
 
@@ -119,9 +112,22 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
     }
 
     EnvSetter serrter(&om);
-    
+
     // Execute the command
-    return m_terminal.Execute(cmd, wd, pauseWhenTerminate && xdebugSessionName.IsEmpty());
+    if(!xdebugSessionName.IsEmpty()) {
+        // debugging
+        return m_terminal.ExecuteNoConsole(cmd, wd);
+    } else {
+        // Launch the terminal UI
+        PHPTerminal* frame = new PHPTerminal(EventNotifier::Get()->TopFrame());
+        frame->GetTerminalUI()->SetTerminal(&m_terminal);
+        frame->Show();
+        if(!m_terminal.ExecuteNoConsole(cmd, wd)) {
+            frame->Destroy();
+            return false;
+        }
+        return true;
+    }
 }
 
 bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)

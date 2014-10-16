@@ -492,3 +492,8 @@ void PHPWorkspace::ParseWorkspace(bool full)
     }
     PHPParserThread::Instance()->Add(req);
 }
+
+TerminalEmulator* PHPWorkspace::GetTerminalEmulator()
+{
+    return m_executor.GetTerminalEmulator();
+}

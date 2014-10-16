@@ -400,7 +400,7 @@
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./codelite.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>

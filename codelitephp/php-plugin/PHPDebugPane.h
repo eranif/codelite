@@ -6,19 +6,24 @@
 #include "XDebugManager.h"
 #include "xdebugevent.h"
 #include <macros.h>
+#include "TerminalEmulatorUI.h"
+#include "php_event.h"
 
 class PHPDebugPane : public PHPDebugPaneBase
 {
     PHPDebuggerImages m_images;
+    TerminalEmulatorUI* m_console;
 
-    
 public:
     PHPDebugPane(wxWindow* parent);
     virtual ~PHPDebugPane();
-    void OnUpdateStackTrace(XDebugEvent &e);
-    void OnRefreshBreakpointsView(XDebugEvent &e);
-    void OnXDebugSessionEnded(XDebugEvent &e);
-    void SelectTab(const wxString &title);
+    void OnUpdateStackTrace(XDebugEvent& e);
+    void OnRefreshBreakpointsView(XDebugEvent& e);
+    void OnXDebugSessionEnded(XDebugEvent& e);
+    void OnXDebugSessionStarted(XDebugEvent& e);
+    void OnXDebugSessionStarting(XDebugEvent& event);
+    void SelectTab(const wxString& title);
+    void SetTerminal(TerminalEmulator* terminal) { m_console->SetTerminal(terminal); }
 
 protected:
     virtual void OnBreakpointItemActivated(wxDataViewEvent& event);

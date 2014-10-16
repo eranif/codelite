@@ -83,6 +83,8 @@
     <File Name="php_configuration_data.h"/>
     <File Name="PHPUserWorkspace.h"/>
     <File Name="PHPUserWorkspace.cpp"/>
+    <File Name="PHPTerminal.cpp"/>
+    <File Name="PHPTerminal.h"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
     <GlobalSettings>

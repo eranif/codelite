@@ -1,25 +1,31 @@
 #include "TerminalEmulator.h"
 #include <wx/filename.h>
 #include <wx/log.h>
+#include "processreaderthread.h"
 
 #ifndef __WXMSW__
 #include <signal.h>
-#endif 
+#endif
 
 wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
+
+BEGIN_EVENT_TABLE(TerminalEmulator, wxEvtHandler)
+EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, TerminalEmulator::OnProcessOutput)
+EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, TerminalEmulator::OnProcessTerminated)
+END_EVENT_TABLE()
 
 TerminalEmulator::TerminalEmulator()
     : m_process(NULL)
-    , m_pid(wxNOT_FOUND)
 {
 }
 
 TerminalEmulator::~TerminalEmulator() {}
 
-bool TerminalEmulator::Execute(const wxString& command,
-                               const wxString& workingDirectory,
-                               bool waitOnExit,
-                               const wxString& title)
+bool TerminalEmulator::ExecuteConsole(const wxString& command,
+                                      const wxString& workingDirectory,
+                                      bool waitOnExit,
+                                      const wxString& title)
 {
     if(m_process) {
         // another process is running
@@ -56,14 +62,11 @@ bool TerminalEmulator::Execute(const wxString& command,
 #elif defined(__WXMAC__)
 
 #endif
-    if(consoleCommand.IsEmpty())
-        return false;
+    if(consoleCommand.IsEmpty()) return false;
     wxLogMessage(consoleCommand);
 
-    m_process = new wxProcess(wxPROCESS_DEFAULT);
-    m_process->Bind(wxEVT_END_PROCESS, &TerminalEmulator::OnProcessTerminated, this);
-    m_pid = ::wxExecute(consoleCommand, wxEXEC_ASYNC, m_process);
-    return m_pid > 0;
+    m_process = ::CreateAsyncProcess(this, consoleCommand, IProcessCreateConsole, workingDirectory);
+    return m_process != NULL;
 }
 
 wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& title, bool waitOnExit)
@@ -94,12 +97,11 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
     return command;
 }
 
-void TerminalEmulator::OnProcessTerminated(wxProcessEvent& event)
+void TerminalEmulator::OnProcessTerminated(wxCommandEvent& event)
 {
     // Process terminated
     wxDELETE(m_process);
-    m_pid = wxNOT_FOUND;
-    
+
     // Notify that the terminal has terminated
     clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);
     AddPendingEvent(terminateEvent);
@@ -108,15 +110,46 @@ void TerminalEmulator::OnProcessTerminated(wxProcessEvent& event)
 void TerminalEmulator::Terminate()
 {
     if(IsRunning()) {
-        wxProcess::Kill(m_pid, wxSIGKILL, wxKILL_CHILDREN);
+        m_process->Terminate();
     }
 }
 
-bool TerminalEmulator::IsRunning() const { 
-#if defined(__WXGTK__) || defined(__WXMAC__)
-    return m_pid != wxNOT_FOUND && kill(m_pid, 0) == 0;
+bool TerminalEmulator::IsRunning() const { return m_process != NULL; }
+
+void TerminalEmulator::OnProcessOutput(wxCommandEvent& event)
+{
+    ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
+    clCommandEvent evtOutput(wxEVT_TERMINAL_COMMAND_OUTPUT);
+    evtOutput.SetString(ped->GetData());
+    wxDELETE(ped);
+    AddPendingEvent(evtOutput);
+}
+
+bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxString& workingDirectory)
+{
+    if(m_process) {
+        // another process is running
+        return false;
+    }
+
+    wxString command;
+#ifdef __WXMSW__
+    wxString shell = wxGetenv("COMSPEC");
+    if(shell.IsEmpty()) {
+        shell = "CMD";
+    }
+
+    command << shell << wxT(" /c \"");
+    command << commandToRun << wxT("\"");
+
 #else
-    // On Windows we need to use different approach
-    return true;
+    wxString tmpCmd = commandToRun;
+    command << "/bin/sh -c '";
+    // escape any single quoutes
+    tmpCmd.Replace("'", "\\'");
+    command << tmpCmd << "'";
 #endif
+
+    m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole, workingDirectory);
+    return m_process != NULL;
 }

@@ -137,6 +137,19 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
+    
+    // Create the debugger pane.
+    // We create it here because it needs to be alrady pre-allocted so it can capture the various
+    // xdebug manager events
+    m_debuggerPane = new PHPDebugPane(EventNotifier::Get()->TopFrame());
+    m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
+                                        wxAuiPaneInfo()
+                                            .Name("XDebug")
+                                            .Caption("Call Stack & Breakpoints")
+                                            .Show()
+                                            .CloseButton()
+                                            .MaximizeButton()
+                                            .Top());
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
     wxFileName phpResources(clStandardPaths::Get().GetDataDir(), "PHP.zip");
@@ -667,19 +680,6 @@ void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
 {
     // Save the current layout to be the normal layout
     m_savedPerspective = m_mgr->GetDockingManager()->SavePerspective();
-
-    if(!m_debuggerPane) {
-        // Create the pane
-        m_debuggerPane = new PHPDebugPane(EventNotifier::Get()->TopFrame());
-        m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
-                                            wxAuiPaneInfo()
-                                                .Name("XDebug")
-                                                .Caption("Call Stack & Breakpoints")
-                                                .Show()
-                                                .CloseButton()
-                                                .MaximizeButton()
-                                                .Top());
-    }
 
     m_debuggerPane->SelectTab(selectWindow);
     if(!m_xdebugLocalsView) {

@@ -58,6 +58,11 @@ public:
     wxString GetPrivateFolder() const;
     
     /**
+     * @brief return the PHPExecutor terminal emulator object
+     */
+    TerminalEmulator* GetTerminalEmulator();
+    
+    /**
      * @brief re-parse the workspace
      */
     void ParseWorkspace(bool full);

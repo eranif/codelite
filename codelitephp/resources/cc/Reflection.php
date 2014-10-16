@@ -53,9 +53,9 @@ class Reflection  {
 
 interface Reflector  {
 
-	abstract public static function export () {}
+	abstract public static function export () ;
 
-	abstract public function __toString () {}
+	abstract public function __toString () ;
 
 }
 

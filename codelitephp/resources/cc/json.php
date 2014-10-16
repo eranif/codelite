@@ -4,7 +4,7 @@
 
 interface JsonSerializable  {
 
-	abstract public function jsonSerialize () {}
+	abstract public function jsonSerialize () ;
 
 }
 

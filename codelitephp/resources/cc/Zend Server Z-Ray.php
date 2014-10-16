@@ -8,6 +8,8 @@ class ZRayExtension  {
 
 	public function traceFunction () {}
 
+	public function untraceFunction () {}
+
 	public function hasTraceFunction () {}
 
 	public function traceFile () {}

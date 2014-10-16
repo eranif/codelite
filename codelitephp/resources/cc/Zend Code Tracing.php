@@ -1,6 +1,6 @@
 <?php
 
-// Start of Zend Code Tracing v.6.0.0
+// Start of Zend Code Tracing v.8.0.0
 
 function zend_codetracing_options () {}
 
@@ -40,5 +40,5 @@ define ('ZCT_DUMP_REASON_EVENT', 1);
 define ('ZCT_DUMP_REASON_REQUEST', 2);
 define ('ZCT_DUMP_REASON_SIGNAL', 3);
 
-// End of Zend Code Tracing v.6.0.0
+// End of Zend Code Tracing v.8.0.0
 ?>

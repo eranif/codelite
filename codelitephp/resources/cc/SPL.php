@@ -446,19 +446,19 @@ class UnexpectedValueException extends RuntimeException  {
 
 interface RecursiveIterator extends Iterator, Traversable {
 
-	abstract public function hasChildren () {}
+	abstract public function hasChildren () ;
 
-	abstract public function getChildren () {}
+	abstract public function getChildren () ;
 
-	abstract public function current () {}
+	abstract public function current () ;
 
-	abstract public function next () {}
+	abstract public function next () ;
 
-	abstract public function key () {}
+	abstract public function key () ;
 
-	abstract public function valid () {}
+	abstract public function valid () ;
 
-	abstract public function rewind () {}
+	abstract public function rewind () ;
 
 }
 
@@ -520,17 +520,17 @@ class RecursiveIteratorIterator implements Iterator, Traversable, OuterIterator 
 
 interface OuterIterator extends Iterator, Traversable {
 
-	abstract public function getInnerIterator () {}
+	abstract public function getInnerIterator () ;
 
-	abstract public function current () {}
+	abstract public function current () ;
 
-	abstract public function next () {}
+	abstract public function next () ;
 
-	abstract public function key () {}
+	abstract public function key () ;
 
-	abstract public function valid () {}
+	abstract public function valid () ;
 
-	abstract public function rewind () {}
+	abstract public function rewind () ;
 
 }
 
@@ -686,7 +686,7 @@ class ParentIterator extends RecursiveFilterIterator implements RecursiveIterato
 
 interface Countable  {
 
-	abstract public function count () {}
+	abstract public function count () ;
 
 }
 
@@ -695,17 +695,17 @@ interface SeekableIterator extends Iterator, Traversable {
 	/**
 	 * @param position
 	 */
-	abstract public function seek ($position) {}
+	abstract public function seek ($position) ;
 
-	abstract public function current () {}
+	abstract public function current () ;
 
-	abstract public function next () {}
+	abstract public function next () ;
 
-	abstract public function key () {}
+	abstract public function key () ;
 
-	abstract public function valid () {}
+	abstract public function valid () ;
 
-	abstract public function rewind () {}
+	abstract public function rewind () ;
 
 }
 
@@ -2885,7 +2885,7 @@ interface SplObserver  {
 	/**
 	 * @param SplSubject SplSubject
 	 */
-	abstract public function update (SplSubject $SplSubject) {}
+	abstract public function update (SplSubject $SplSubject) ;
 
 }
 
@@ -2894,14 +2894,14 @@ interface SplSubject  {
 	/**
 	 * @param SplObserver SplObserver
 	 */
-	abstract public function attach (SplObserver $SplObserver) {}
+	abstract public function attach (SplObserver $SplObserver) ;
 
 	/**
 	 * @param SplObserver SplObserver
 	 */
-	abstract public function detach (SplObserver $SplObserver) {}
+	abstract public function detach (SplObserver $SplObserver) ;
 
-	abstract public function notify () {}
+	abstract public function notify () ;
 
 }
 

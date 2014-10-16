@@ -10,21 +10,21 @@ interface Traversable  {
 
 interface IteratorAggregate extends Traversable {
 
-	abstract public function getIterator () {}
+	abstract public function getIterator () ;
 
 }
 
 interface Iterator extends Traversable {
 
-	abstract public function current () {}
+	abstract public function current () ;
 
-	abstract public function next () {}
+	abstract public function next () ;
 
-	abstract public function key () {}
+	abstract public function key () ;
 
-	abstract public function valid () {}
+	abstract public function valid () ;
 
-	abstract public function rewind () {}
+	abstract public function rewind () ;
 
 }
 
@@ -33,34 +33,34 @@ interface ArrayAccess  {
 	/**
 	 * @param offset
 	 */
-	abstract public function offsetExists ($offset) {}
+	abstract public function offsetExists ($offset) ;
 
 	/**
 	 * @param offset
 	 */
-	abstract public function offsetGet ($offset) {}
+	abstract public function offsetGet ($offset) ;
 
 	/**
 	 * @param offset
 	 * @param value
 	 */
-	abstract public function offsetSet ($offset, $value) {}
+	abstract public function offsetSet ($offset, $value) ;
 
 	/**
 	 * @param offset
 	 */
-	abstract public function offsetUnset ($offset) {}
+	abstract public function offsetUnset ($offset) ;
 
 }
 
 interface Serializable  {
 
-	abstract public function serialize () {}
+	abstract public function serialize () ;
 
 	/**
 	 * @param serialized
 	 */
-	abstract public function unserialize ($serialized) {}
+	abstract public function unserialize ($serialized) ;
 
 }
 
@@ -721,7 +721,6 @@ define ('UPLOAD_ERR_NO_FILE', 4);
 define ('UPLOAD_ERR_NO_TMP_DIR', 6);
 define ('UPLOAD_ERR_CANT_WRITE', 7);
 define ('UPLOAD_ERR_EXTENSION', 8);
-define ('DEBUGGER_VERSION', "6.0.0");
 define ('STDIN', "Resource id #1");
 define ('STDOUT', "Resource id #2");
 define ('STDERR', "Resource id #3");

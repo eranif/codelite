@@ -1,6 +1,6 @@
 <?php
 
-// Start of Zend Monitor v.6.0.0
+// Start of Zend Monitor v.8.0.0
 
 function monitor_pass_error () {}
 
@@ -110,5 +110,5 @@ define ('ZEND_MONITOR_EVENT_SEVERITY_INFO', -1);
 define ('ZEND_MONITOR_EVENT_SEVERITY_WARNING', 0);
 define ('ZEND_MONITOR_EVENT_SEVERITY_ERROR', 1);
 
-// End of Zend Monitor v.6.0.0
+// End of Zend Monitor v.8.0.0
 ?>

@@ -1,6 +1,6 @@
 <?php
 
-// Start of Zend Job Queue v.6.0.0
+// Start of Zend Job Queue v.8.0.0
 
 class ZendJobQueue  {
 	const TYPE_HTTP_RELATIVE = 0;
@@ -166,5 +166,5 @@ class ZendJobQueueException extends Exception  {
 	public function __toString () {}
 
 }
-// End of Zend Job Queue v.6.0.0
+// End of Zend Job Queue v.8.0.0
 ?>

@@ -8,36 +8,36 @@ interface SessionHandlerInterface  {
 	 * @param save_path
 	 * @param session_name
 	 */
-	abstract public function open ($save_path, $session_name) {}
+	abstract public function open ($save_path, $session_name) ;
 
-	abstract public function close () {}
+	abstract public function close () ;
 
 	/**
 	 * @param key
 	 */
-	abstract public function read ($key) {}
+	abstract public function read ($key) ;
 
 	/**
 	 * @param key
 	 * @param val
 	 */
-	abstract public function write ($key, $val) {}
+	abstract public function write ($key, $val) ;
 
 	/**
 	 * @param key
 	 */
-	abstract public function destroy ($key) {}
+	abstract public function destroy ($key) ;
 
 	/**
 	 * @param maxlifetime
 	 */
-	abstract public function gc ($maxlifetime) {}
+	abstract public function gc ($maxlifetime) ;
 
 }
 
 interface SessionIdInterface  {
 
-	abstract public function create_sid () {}
+	abstract public function create_sid () ;
 
 }
 

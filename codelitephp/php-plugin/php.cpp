@@ -137,30 +137,33 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
-    
-    // Create the debugger pane.
-    // We create it here because it needs to be alrady pre-allocted so it can capture the various
-    // xdebug manager events
+
+    // Create the debugger windows (hidden)
     m_debuggerPane = new PHPDebugPane(EventNotifier::Get()->TopFrame());
-    m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
-                                        wxAuiPaneInfo()
-                                            .Name("XDebug")
-                                            .Caption("Call Stack & Breakpoints")
-                                            .Show()
-                                            .CloseButton()
-                                            .MaximizeButton()
-                                            .Top());
+    m_mgr->GetDockingManager()->AddPane(
+        m_debuggerPane,
+        wxAuiPaneInfo().Name("XDebug").Caption("Call Stack & Breakpoints").Hide().CloseButton().MaximizeButton().Top());
+
+    m_xdebugLocalsView = new LocalsView(EventNotifier::Get()->TopFrame());
+    m_mgr->GetDockingManager()->AddPane(
+        m_xdebugLocalsView,
+        wxAuiPaneInfo().Name("XDebugLocals").Caption("Locals").Hide().CloseButton().MaximizeButton().Bottom());
+        
+    m_xdebugEvalPane = new EvalPane(EventNotifier::Get()->TopFrame());
+    m_mgr->GetDockingManager()->AddPane(
+        m_xdebugEvalPane,
+        wxAuiPaneInfo().Name("XDebugEval").Caption("PHP").Hide().CloseButton().MaximizeButton().Bottom().Position(2));
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
     wxFileName phpResources(clStandardPaths::Get().GetDataDir(), "PHP.zip");
     if(phpResources.Exists()) {
-        
+
         clZipReader zipReader(phpResources);
         wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "");
         targetDir.AppendDir("php-plugin");
         targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         zipReader.Extract("*", targetDir.GetPath());
-        
+
         // Make sure we add this path to the general PHP settings
         targetDir.AppendDir("cc"); // the CC files are located under an internal folder named "cc" (lowercase)
         PHPConfigurationData config;
@@ -168,12 +171,10 @@ PhpPlugin::PhpPlugin(IManager* manager)
             config.Load().GetCcIncludePath().Add(targetDir.GetPath());
             config.Save();
         }
-        
+
     } else {
         CL_WARNING("PHP: Could not locate PHP resources 'PHP.zip' => '%s'", phpResources.GetFullPath());
     }
-    
-    
 }
 
 PhpPlugin::~PhpPlugin() {}
@@ -680,30 +681,8 @@ void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
 {
     // Save the current layout to be the normal layout
     m_savedPerspective = m_mgr->GetDockingManager()->SavePerspective();
-
     m_debuggerPane->SelectTab(selectWindow);
-    if(!m_xdebugLocalsView) {
-        // Create the pane
-        m_xdebugLocalsView = new LocalsView(EventNotifier::Get()->TopFrame());
-        m_mgr->GetDockingManager()->AddPane(
-            m_xdebugLocalsView,
-            wxAuiPaneInfo().Name("XDebugLocals").Caption("Locals").Show().CloseButton().MaximizeButton().Bottom());
-    }
-
-    if(!m_xdebugEvalPane) {
-        // Create the pane
-        m_xdebugEvalPane = new EvalPane(EventNotifier::Get()->TopFrame());
-        m_mgr->GetDockingManager()->AddPane(m_xdebugEvalPane,
-                                            wxAuiPaneInfo()
-                                                .Name("XDebugEval")
-                                                .Caption("PHP")
-                                                .Show()
-                                                .CloseButton()
-                                                .MaximizeButton()
-                                                .Bottom()
-                                                .Position(2));
-    }
-
+    
     // If we have an old perspective, load it
     wxFileName fnConfig(clStandardPaths::Get().GetUserDataDir(), "xdebug-perspective");
     fnConfig.AppendDir("config");
@@ -718,7 +697,6 @@ void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
         }
     }
 
-    // Ensure that the XDebug pane is visible
     EnsureAuiPaneIsVisible("XDebug");
     EnsureAuiPaneIsVisible("XDebugEval");
     EnsureAuiPaneIsVisible("XDebugLocals", true);
@@ -799,7 +777,7 @@ void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
         wxString html;
         html << "<html><body>";
         html << "<table>";
-        
+
         html << "<tr valign=\"top\" align=\"left\"><th>What?</th><th>Result</th><th>Description</th></tr>";
         const XDebugTester::ResultMap_t& result = xdebugTester.GetResults();
         XDebugTester::ResultMap_t::const_iterator iter = result.begin();
@@ -810,9 +788,9 @@ void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
             html << "<td>" << iter->second.second << "</td>";
             html << "</tr>";
         }
-        
+
         html << "</table></body></html>";
-        
+
         XDebugDiagDlg dlg(EventNotifier::Get()->TopFrame());
         dlg.Load(html);
         dlg.ShowModal();

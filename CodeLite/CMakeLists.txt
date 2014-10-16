@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6.2)
 project(libcodelite)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS std REQUIRED)
+find_package(wxWidgets COMPONENTS std stc REQUIRED)
 
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )

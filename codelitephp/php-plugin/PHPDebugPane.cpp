@@ -16,7 +16,6 @@
 PHPDebugPane::PHPDebugPane(wxWindow* parent)
     : PHPDebugPaneBase(parent)
 {
-    Hide();
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_STACK_TRACE, &PHPDebugPane::OnUpdateStackTrace, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &PHPDebugPane::OnXDebugSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTING, &PHPDebugPane::OnXDebugSessionStarting, this);

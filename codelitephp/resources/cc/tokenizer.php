@@ -3,12 +3,26 @@
 // Start of tokenizer v.0.1
 
 /**
- * @param source
+ * Split given source into PHP tokens
+ * @link http://www.php.net/manual/en/function.token-get-all.php
+ * @param source string <p>
+ *       The PHP source to parse.
+ *      </p>
+ * @return array An array of token identifiers. Each individual token identifier is either
+ *   a single character (i.e.: ;, ., 
+ *   >, !, etc...),
+ *   or a three element array containing the token index in element 0, the string
+ *   content of the original token in element 1 and the line number in element 2.
  */
 function token_get_all ($source) {}
 
 /**
- * @param token
+ * Get the symbolic name of a given PHP token
+ * @link http://www.php.net/manual/en/function.token-name.php
+ * @param token int <p>
+ *       The token value.
+ *      </p>
+ * @return string The symbolic name of the given token.
  */
 function token_name ($token) {}
 

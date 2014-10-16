@@ -4,62 +4,104 @@
 
 class OCI_Lob  {
 
+	/**
+	 * Returns large object's contents
+	 * @link http://www.php.net/manual/en/oci-lob.load.php
+	 */
 	public function load () {}
 
+	/**
+	 * Returns the current position of internal pointer of large object
+	 * @link http://www.php.net/manual/en/oci-lob.tell.php
+	 */
 	public function tell () {}
 
 	/**
+	 * Truncates large object
+	 * @link http://www.php.net/manual/en/oci-lob.truncate.php
 	 * @param length[optional]
 	 */
 	public function truncate ($length) {}
 
 	/**
+	 * Erases a specified portion of the internal LOB data
+	 * @link http://www.php.net/manual/en/oci-lob.erase.php
 	 * @param offset[optional]
 	 * @param length[optional]
 	 */
 	public function erase ($offset, $length) {}
 
 	/**
+	 * Flushes/writes buffer of the LOB to the server
+	 * @link http://www.php.net/manual/en/oci-lob.flush.php
 	 * @param flag[optional]
 	 */
 	public function flush ($flag) {}
 
 	/**
+	 * Changes current state of buffering for the large object
+	 * @link http://www.php.net/manual/en/oci-lob.setbuffering.php
 	 * @param mode
 	 */
 	public function setbuffering ($mode) {}
 
+	/**
+	 * Returns current state of buffering for the large object
+	 * @link http://www.php.net/manual/en/oci-lob.getbuffering.php
+	 */
 	public function getbuffering () {}
 
+	/**
+	 * Moves the internal pointer to the beginning of the large object
+	 * @link http://www.php.net/manual/en/oci-lob.rewind.php
+	 */
 	public function rewind () {}
 
 	/**
+	 * Reads part of the large object
+	 * @link http://www.php.net/manual/en/oci-lob.read.php
 	 * @param length
 	 */
 	public function read ($length) {}
 
+	/**
+	 * Tests for end-of-file on a large object's descriptor
+	 * @link http://www.php.net/manual/en/oci-lob.eof.php
+	 */
 	public function eof () {}
 
 	/**
+	 * Sets the internal pointer of the large object
+	 * @link http://www.php.net/manual/en/oci-lob.seek.php
 	 * @param offset
 	 * @param whence[optional]
 	 */
 	public function seek ($offset, $whence) {}
 
 	/**
+	 * Writes data to the large object
+	 * @link http://www.php.net/manual/en/oci-lob.write.php
 	 * @param string
 	 * @param length[optional]
 	 */
 	public function write ($string, $length) {}
 
 	/**
+	 * Appends data from the large object to another large object
+	 * @link http://www.php.net/manual/en/oci-lob.append.php
 	 * @param lob_descriptor_from
 	 */
 	public function append ($lob_descriptor_from) {}
 
+	/**
+	 * Returns size of large object
+	 * @link http://www.php.net/manual/en/oci-lob.size.php
+	 */
 	public function size () {}
 
 	/**
+	 * &Alias; <function>OCI-Lob::export</function>
+	 * @link http://www.php.net/manual/en/oci-lob.writetofile.php
 	 * @param filename
 	 * @param start[optional]
 	 * @param length[optional]
@@ -67,6 +109,8 @@ class OCI_Lob  {
 	public function writetofile ($filename, $start, $length) {}
 
 	/**
+	 * Exports LOB's contents to a file
+	 * @link http://www.php.net/manual/en/oci-lob.export.php
 	 * @param filename
 	 * @param start[optional]
 	 * @param length[optional]
@@ -74,29 +118,45 @@ class OCI_Lob  {
 	public function export ($filename, $start, $length) {}
 
 	/**
+	 * Imports file data to the LOB
+	 * @link http://www.php.net/manual/en/oci-lob.import.php
 	 * @param filename
 	 */
 	public function import ($filename) {}
 
 	/**
+	 * Writes a temporary large object
+	 * @link http://www.php.net/manual/en/oci-lob.writetemporary.php
 	 * @param data
 	 * @param type[optional]
 	 */
 	public function writetemporary ($data, $type) {}
 
+	/**
+	 * Closes LOB descriptor
+	 * @link http://www.php.net/manual/en/oci-lob.close.php
+	 */
 	public function close () {}
 
 	/**
+	 * Saves data to the large object
+	 * @link http://www.php.net/manual/en/oci-lob.save.php
 	 * @param data
 	 * @param offset[optional]
 	 */
 	public function save ($data, $offset) {}
 
 	/**
+	 * &Alias; <function>OCI-Lob::import</function>
+	 * @link http://www.php.net/manual/en/oci-lob.savefile.php
 	 * @param filename
 	 */
 	public function savefile ($filename) {}
 
+	/**
+	 * Frees resources associated with the LOB descriptor
+	 * @link http://www.php.net/manual/en/oci-lob.free.php
+	 */
 	public function free () {}
 
 }
@@ -104,146 +164,499 @@ class OCI_Lob  {
 class OCI_Collection  {
 
 	/**
+	 * Appends element to the collection
+	 * @link http://www.php.net/manual/en/oci-collection.append.php
 	 * @param value
 	 */
 	public function append ($value) {}
 
 	/**
+	 * Returns value of the element
+	 * @link http://www.php.net/manual/en/oci-collection.getelem.php
 	 * @param index
 	 */
 	public function getelem ($index) {}
 
 	/**
+	 * Assigns a value to the element of the collection
+	 * @link http://www.php.net/manual/en/oci-collection.assignelem.php
 	 * @param index
 	 * @param value
 	 */
 	public function assignelem ($index, $value) {}
 
 	/**
+	 * Assigns a value to the collection from another existing collection
+	 * @link http://www.php.net/manual/en/oci-collection.assign.php
 	 * @param collection_from
 	 */
 	public function assign ($collection_from) {}
 
+	/**
+	 * Returns size of the collection
+	 * @link http://www.php.net/manual/en/oci-collection.size.php
+	 */
 	public function size () {}
 
+	/**
+	 * Returns the maximum number of elements in the collection
+	 * @link http://www.php.net/manual/en/oci-collection.max.php
+	 */
 	public function max () {}
 
 	/**
+	 * Trims elements from the end of the collection
+	 * @link http://www.php.net/manual/en/oci-collection.trim.php
 	 * @param number
 	 */
 	public function trim ($number) {}
 
+	/**
+	 * Frees the resources associated with the collection object
+	 * @link http://www.php.net/manual/en/oci-collection.free.php
+	 */
 	public function free () {}
 
 }
 
 /**
- * @param statement_resource
- * @param column_name
- * @param variable
- * @param type[optional]
+ * Associates a PHP variable with a column for query fetches
+ * @link http://www.php.net/manual/en/function.oci-define-by-name.php
+ * @param statement resource &oci.arg.statement.id;
+ * @param column_name string <p>
+ *       The column name used in the query.
+ *      </p>
+ *      <p>
+ *       Use uppercase for Oracle's default, non-case sensitive column
+ *       names.  Use the exact column name case for case-sensitive
+ *       column names.
+ *      </p>
+ * @param variable mixed <p>
+ *       The PHP variable that will contain the returned column value.
+ *      </p>
+ * @param type int[optional] <p>
+ *        The data type to be returned.  Generally not needed.  Note that
+ *        Oracle-style data conversions are not performed.  For example,
+ *        SQLT_INT will be ignored and the returned
+ *        data type will still be SQLT_CHR.
+ *      </p>
+ *      <p>
+ *       You can optionally use oci_new_descriptor
+ *       to allocate LOB/ROWID/BFILE descriptors.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_define_by_name ($statement_resource, $column_name, &$variable, $type) {}
+function oci_define_by_name ($statement, $column_name, &$variable, $type = null) {}
 
 /**
- * @param statement_resource
- * @param column_name
- * @param variable
- * @param maximum_length[optional]
- * @param type[optional]
+ * Binds a PHP variable to an Oracle placeholder
+ * @link http://www.php.net/manual/en/function.oci-bind-by-name.php
+ * @param statement resource <p>
+ *       A valid OCI8 statement identifer.
+ *      </p>
+ * @param bv_name string <p>
+ *       The colon-prefixed bind variable placeholder used in the
+ *       statement.  The colon is optional
+ *       in bv_name. Oracle does not use question
+ *       marks for placeholders.
+ *      </p>
+ * @param variable mixed <p>
+ *       The PHP variable to be associated with bv_name
+ *      </p>
+ * @param maxlength int[optional] <p>
+ *       Sets the maximum length for the data. If you set it to -1, this
+ *       function will use the current length
+ *       of variable to set the maximum
+ *       length. In this case the variable must
+ *       exist and contain data
+ *       when oci_bind_by_name is called.
+ *      </p>
+ * @param type int[optional] <p>
+ *       The datatype that Oracle will treat the data as.  The
+ *       default type used
+ *       is SQLT_CHR. Oracle will convert the data
+ *       between this type and the database column (or PL/SQL variable
+ *       type), when possible.
+ *      </p>
+ *      <p>
+ *       If you need to bind an abstract datatype (LOB/ROWID/BFILE) you
+ *       need to allocate it first using the
+ *       oci_new_descriptor function. The
+ *       length is not used for abstract datatypes
+ *       and should be set to -1.
+ *      </p>
+ *      <p>
+ *       Possible values for type are:
+ *       
+ *        
+ *         <p>
+ *          SQLT_BFILEE or OCI_B_BFILE
+ *           - for BFILEs;
+ *         </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_bind_by_name ($statement_resource, $column_name, &$variable, $maximum_length, $type) {}
+function oci_bind_by_name ($statement, $bv_name, &$variable, $maxlength = null, $type = null) {}
 
 /**
- * @param statement_resource
- * @param column_name
- * @param variable
- * @param maximum_array_length
- * @param maximum_item_length[optional]
- * @param type[optional]
+ * Binds a PHP array to an Oracle PL/SQL array parameter
+ * @link http://www.php.net/manual/en/function.oci-bind-array-by-name.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param name string <p>
+ *       The Oracle placeholder.
+ *      </p>
+ * @param var_array array <p>
+ *       An array.
+ *      </p>
+ * @param max_table_length int <p>
+ *       Sets the maximum length both for incoming and result arrays.
+ *      </p>
+ * @param max_item_length int[optional] <p>
+ *       Sets maximum length for array items. If not specified or equals to -1,
+ *       oci_bind_array_by_name will find the longest
+ *       element in the incoming array and will use it as the maximum length.
+ *      </p>
+ * @param type int[optional] <p>
+ *       Should be used to set the type of PL/SQL array items. See list of
+ *       available types below:
+ *      </p>
+ *      <p>
+ *       
+ *        
+ *         <p>
+ *          SQLT_NUM - for arrays of NUMBER.
+ *         </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_bind_array_by_name ($statement_resource, $column_name, &$variable, $maximum_array_length, $maximum_item_length, $type) {}
+function oci_bind_array_by_name ($statement, $name, array &$var_array, $max_table_length, $max_item_length = null, $type = null) {}
 
 /**
- * @param statement_resource
- * @param column_number_or_name
+ * Checks if a field in the currently fetched row is &null;
+ * @link http://www.php.net/manual/en/function.oci-field-is-null.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param field mixed <p>
+ *       Can be the field's index (1-based) or name.
+ *      </p>
+ * @return bool true if field is &null;, false otherwise.
  */
-function oci_field_is_null ($statement_resource, $column_number_or_name) {}
+function oci_field_is_null ($statement, $field) {}
 
 /**
- * @param statement_resource
- * @param column_number
+ * Returns the name of a field from the statement
+ * @link http://www.php.net/manual/en/function.oci-field-name.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param field mixed <p>
+ *       Can be the field's index (1-based) or name.
+ *      </p>
+ * @return string the name as a string, or false on errors.
  */
-function oci_field_name ($statement_resource, $column_number) {}
+function oci_field_name ($statement, $field) {}
 
 /**
- * @param statement_resource
- * @param column_number_or_name
+ * Returns field's size
+ * @link http://www.php.net/manual/en/function.oci-field-size.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param field mixed <p>
+ *       Can be the field's index (1-based) or name.
+ *      </p>
+ * @return int the size of a field in bytes, or false on
+ *   errors.
  */
-function oci_field_size ($statement_resource, $column_number_or_name) {}
+function oci_field_size ($statement, $field) {}
 
 /**
- * @param statement_resource
- * @param column_number
+ * Tell the scale of the field
+ * @link http://www.php.net/manual/en/function.oci-field-scale.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param field mixed <p>
+ *       Can be the field's index (1-based) or name.
+ *      </p>
+ * @return int the scale as an integer, or false on errors.
  */
-function oci_field_scale ($statement_resource, $column_number) {}
+function oci_field_scale ($statement, $field) {}
 
 /**
- * @param statement_resource
- * @param column_number
+ * Tell the precision of a field
+ * @link http://www.php.net/manual/en/function.oci-field-precision.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param field mixed <p>
+ *       Can be the field's index (1-based) or name.
+ *      </p>
+ * @return int the precision as an integer, or false on errors.
  */
-function oci_field_precision ($statement_resource, $column_number) {}
+function oci_field_precision ($statement, $field) {}
 
 /**
- * @param statement_resource
- * @param column_number
+ * Returns a field's data type name
+ * @link http://www.php.net/manual/en/function.oci-field-type.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param field mixed <p>
+ *       Can be the field's index (1-based) or name.
+ *      </p>
+ * @return mixed the field data type as a string, or false on errors.
  */
-function oci_field_type ($statement_resource, $column_number) {}
+function oci_field_type ($statement, $field) {}
 
 /**
- * @param statement_resource
- * @param column_number
+ * Tell the raw Oracle data type of the field
+ * @link http://www.php.net/manual/en/function.oci-field-type-raw.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param field mixed <p>
+ *       Can be the field's index (1-based) or name.
+ *      </p>
+ * @return int Oracle's raw data type as a number, or false on errors.
  */
-function oci_field_type_raw ($statement_resource, $column_number) {}
+function oci_field_type_raw ($statement, $field) {}
 
 /**
- * @param statement_resource
- * @param mode[optional]
+ * Executes a statement
+ * @link http://www.php.net/manual/en/function.oci-execute.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @param mode int[optional] <p>
+ *        An optional second parameter can be one of the following constants:
+ *       <table>
+ *        Execution Modes
+ *        
+ *         
+ *          <tr valign="top">
+ *           <td>Constant</td>
+ *           <td>Description</td>
+ *          </tr>
+ *         
+ *         
+ *          <tr valign="top">
+ *           <td>OCI_COMMIT_ON_SUCCESS</td>
+ *           <td>Automatically commit all outstanding changes for
+ *             this connection when the statement has succeeded. This
+ *             is the default.</td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_DESCRIBE_ONLY</td>
+ *           <td>Make query meta data available to functions
+ *             like oci_field_name but do not
+ *             create a result set. Any subsequent fetch call such
+ *             as oci_fetch_array will
+ *             fail.</td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_NO_AUTO_COMMIT</td>
+ *           <td>Do not automatically commit changes.  Prior to PHP
+ *             5.3.2 (PECL OCI8 1.4)
+ *             use OCI_DEFAULT which is equivalent
+ *             to OCI_NO_AUTO_COMMIT.</td>
+ *          </tr>
+ *         
+ *        
+ *       </table>
+ *      </p>
+ *      <p>
+ *       Using OCI_NO_AUTO_COMMIT mode starts or continues a
+ *       transaction. Transactions are automatically rolled back when
+ *       the connection is closed, or when the script ends.  Explicitly
+ *       call oci_commit to commit a transaction,
+ *       or oci_rollback to abort it.
+ *      </p>
+ *      <p>
+ *       When inserting or updating data, using transactions is
+ *       recommended for relational data consistency and for performance
+ *       reasons.
+ *      </p>
+ *      <p>
+ *       If OCI_NO_AUTO_COMMIT mode is used for any
+ *       statement including queries, and 
+ *        oci_commit
+ *       or oci_rollback is not subsequently
+ *       called, then OCI8 will perform a rollback at the end of the
+ *       script even if no data was changed.  To avoid an unnecessary
+ *       rollback, many scripts do not
+ *       use OCI_NO_AUTO_COMMIT mode for queries or
+ *       PL/SQL.  Be careful to ensure the appropriate transactional
+ *       consistency for the application when
+ *       using oci_execute with different modes in
+ *       the same script.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_execute ($statement_resource, $mode) {}
+function oci_execute ($statement, $mode = null) {}
 
 /**
- * @param statement_resource
+ * Cancels reading from cursor
+ * @link http://www.php.net/manual/en/function.oci-cancel.php
+ * @param statement resource <p>
+ *       An OCI statement.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_cancel ($statement_resource) {}
+function oci_cancel ($statement) {}
 
 /**
- * @param statement_resource
+ * Fetches the next row from a query into internal buffers
+ * @link http://www.php.net/manual/en/function.oci-fetch.php
+ * @param statement resource &oci.arg.statement.id;
+ * @return bool true on success or false if there are no more rows in the
+ *   statement.
  */
-function oci_fetch ($statement_resource) {}
+function oci_fetch ($statement) {}
 
 /**
- * @param statement_resource
+ * Returns the next row from a query as an object
+ * @link http://www.php.net/manual/en/function.oci-fetch-object.php
+ * @param statement resource &oci.arg.statement.id;
+ * @return object an object.  Each attribute of the object corresponds to a
+ *   column of the row.  If there are no more rows in
+ *   the statement then false is returned.
+ *  </p>
+ *  <p>
+ *    Any LOB columns are returned as LOB descriptors.
+ *  </p>
+ *  <p>
+ *   DATE columns are returned as strings formatted
+ *   to the current date format.  The default format can be changed with
+ *   Oracle environment variables such as NLS_LANG or
+ *   by a previously executed ALTER SESSION SET
+ *   NLS_DATE_FORMAT command.
+ *  </p>
+ *  <p>
+ *   Oracle's default, non-case sensitive column names will have
+ *   uppercase attribute names.  Case-sensitive column names will have
+ *   attribute names using the exact column case.
+ *   Use var_dump on the result object to verify
+ *   the appropriate case for attribute access.
+ *  </p>
+ *  <p>
+ *    Attribute values will be &null; for any NULL
+ *    data fields.
  */
-function oci_fetch_object ($statement_resource) {}
+function oci_fetch_object ($statement) {}
 
 /**
- * @param statement_resource
+ * Returns the next row from a query as a numeric array
+ * @link http://www.php.net/manual/en/function.oci-fetch-row.php
+ * @param statement resource &oci.arg.statement.id;
+ * @return array a numerically indexed array.  If there are no more rows in
+ *   the statement then false is returned.
  */
-function oci_fetch_row ($statement_resource) {}
+function oci_fetch_row ($statement) {}
 
 /**
- * @param statement_resource
+ * Returns the next row from a query as an associative array
+ * @link http://www.php.net/manual/en/function.oci-fetch-assoc.php
+ * @param statement resource &oci.arg.statement.id;
+ * @return array an associative array. If there are no more rows in
+ *   the statement then false is returned.
  */
-function oci_fetch_assoc ($statement_resource) {}
+function oci_fetch_assoc ($statement) {}
 
 /**
- * @param statement_resource
- * @param mode[optional]
+ * Returns the next row from a query as an associative or numeric array
+ * @link http://www.php.net/manual/en/function.oci-fetch-array.php
+ * @param statement resource &oci.arg.statement.id;
+ *       <p>
+ *        Can also be a statement identifier returned by oci_get_implicit_resultset.
+ *       </p>
+ * @param mode int[optional] <p>
+ *       An optional second parameter can be any combination of the following
+ *       constants:
+ *       <table>
+ *        oci_fetch_array Modes
+ *        
+ *         
+ *          <tr valign="top">
+ *           <td>Constant</td>
+ *           <td>Description</td>
+ *          </tr>
+ *         
+ *         
+ *          <tr valign="top">
+ *           <td>OCI_BOTH</td>
+ *           <td>Returns an array with both associative and numeric
+ *            indices. This is the same
+ *            as OCI_ASSOC
+ *            + OCI_NUM and is the default
+ *            behavior.</td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_ASSOC</td>
+ *           <td>Returns an associative array.</td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_NUM</td>
+ *           <td>Returns a numeric array.</td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_RETURN_NULLS</td>
+ *           <td>Creates elements for &null; fields.  The element
+ *             values will be a PHP &null;.
+ *           </td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_RETURN_LOBS</td>
+ *           <td>Returns the contents of LOBs instead of the LOB
+ *             descriptors.</td>
+ *          </tr>
+ *         
+ *        
+ *       </table>
+ *      </p>
+ *      <p>
+ *       The default mode is OCI_BOTH.
+ *      </p>
+ *      <p>
+ *       Use the addition operator &quot;+&quot; to specify more than
+ *       one mode at a time.
+ *      </p>
+ * @return array an array with associative and/or numeric indices. If there
+ *   are no more rows in the statement then
+ *   false is returned.
+ *  </p>
+ *  <p>
+ *    By default, LOB columns are returned as LOB descriptors.
+ *  </p>
+ *  <p>
+ *   DATE columns are returned as strings formatted
+ *   to the current date format.  The default format can be changed with
+ *   Oracle environment variables such as NLS_LANG or
+ *   by a previously executed ALTER SESSION SET
+ *   NLS_DATE_FORMAT command.
+ *  </p>
+ *  <p>
+ *   Oracle's default, non-case sensitive column names will have
+ *   uppercase associative indices in the result array.  Case-sensitive
+ *   column names will have array indices using the exact column case.
+ *   Use var_dump on the result array to verify the
+ *   appropriate case to use for each query. 
+ *  </p>
+ *  <p>
+ *   The table name is not included in the array index.  If your query
+ *   contains two different columns with the same name,
+ *   use OCI_NUM or add a column alias to the query
+ *   to ensure name uniqueness, see example #7. Otherwise only one
+ *   column will be returned via PHP.
  */
-function oci_fetch_array ($statement_resource, $mode) {}
+function oci_fetch_array ($statement, $mode = null) {}
 
 /**
+ * Obsolete variant of <function>oci_fetch_array</function>, <function>oci_fetch_object</function>,
+   <function>oci_fetch_assoc</function> and
+   <function>oci_fetch_row</function>
+ * @link http://www.php.net/manual/en/function.ocifetchinto.php
  * @param statement_resource
  * @param result
  * @param mode[optional]
@@ -251,109 +664,424 @@ function oci_fetch_array ($statement_resource, $mode) {}
 function ocifetchinto ($statement_resource, &$result, $mode) {}
 
 /**
- * @param statement_resource
- * @param output
- * @param skip[optional]
- * @param maximum_rows[optional]
- * @param flags[optional]
+ * Fetches multiple rows from a query into a two-dimensional array
+ * @link http://www.php.net/manual/en/function.oci-fetch-all.php
+ * @param statement resource &oci.arg.statement.id;
+ * @param output array <p>
+ *       The variable to contain the returned rows.
+ *      </p>
+ *      <p>
+ *        LOB columns are returned as strings, where Oracle supports
+ *        conversion.
+ *      </p>
+ *      <p>
+ *        See oci_fetch_array for more information
+ *        on how data and types are fetched.
+ *      </p>
+ * @param skip int[optional] <p>
+ *       The number of initial rows to discard when fetching the
+ *       result. The default value is 0, so the first row onwards is
+ *       returned.
+ *      </p>
+ * @param maxrows int[optional] <p>
+ *       The number of rows to return.  The default is -1 meaning return
+ *       all the rows from skip + 1 onwards.
+ *      </p>
+ * @param flags int[optional] <p>
+ *       Parameter flags indicates the array
+ *       structure and whether associative arrays should be used.
+ *       <table>
+ *        oci_fetch_all Array Structure Modes
+ *        
+ *         
+ *          <tr valign="top">
+ *           <td>Constant</td>
+ *           <td>Description</td>
+ *          </tr>
+ *         
+ *         
+ *          <tr valign="top">
+ *           <td>OCI_FETCHSTATEMENT_BY_ROW</td>
+ *           <td>The outer array will contain one sub-array per query
+ *           row.</td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_FETCHSTATEMENT_BY_COLUMN</td>
+ *           <td>The outer array will contain one sub-array per query
+ *           column. This is the default.</td>
+ *          </tr>
+ *         
+ *        
+ *       </table>
+ *      </p>
+ *      <p>
+ *        Arrays can be indexed either by column heading or numerically.
+ *        Only one index mode will be returned.
+ *       <table>
+ *        oci_fetch_all Array Index Modes
+ *        
+ *         
+ *          <tr valign="top">
+ *           <td>Constant</td>
+ *           <td>Description</td>
+ *          </tr>
+ *         
+ *         
+ *          <tr valign="top">
+ *           <td>OCI_NUM</td>
+ *           <td>Numeric indexes are used for each column's array.</td>
+ *          </tr>
+ *          <tr valign="top">
+ *           <td>OCI_ASSOC</td>
+ *           <td>Associative indexes are used for each column's
+ *           array. This is the default.</td>
+ *          </tr>
+ *         
+ *        
+ *       </table>
+ *      </p>
+ *      <p>
+ *       Use the addition operator &quot;+&quot; to choose a combination
+ *       of array structure and index modes.
+ *      </p>
+ *      <p>
+ *       Oracle's default, non-case sensitive column names will have
+ *       uppercase array keys.  Case-sensitive column names will have
+ *       array keys using the exact column case.
+ *       Use var_dump
+ *       on output to verify the appropriate case
+ *       to use for each query.
+ *      </p>
+ *      <p>
+ *        Queries that have more than one column with the same name
+ *        should use column aliases.  Otherwise only one of the columns
+ *        will appear in an associative array.
+ *      </p>
+ * @return int the number of rows in output, which
+ *   may be 0 or more, &return.falseforfailure;.
  */
-function oci_fetch_all ($statement_resource, &$output, $skip, $maximum_rows, $flags) {}
+function oci_fetch_all ($statement, array &$output, $skip = null, $maxrows = null, $flags = null) {}
 
 /**
- * @param statement_resource
+ * Frees all resources associated with statement or cursor
+ * @link http://www.php.net/manual/en/function.oci-free-statement.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_free_statement ($statement_resource) {}
+function oci_free_statement ($statement) {}
 
 /**
- * @param mode
+ * Enables or disables internal debug output
+ * @link http://www.php.net/manual/en/function.oci-internal-debug.php
+ * @param onoff bool <p>
+ *       Set this to false to turn debug output off or true to turn it on.
+ *      </p>
+ * @return void 
  */
-function oci_internal_debug ($mode) {}
+function oci_internal_debug ($onoff) {}
 
 /**
- * @param statement_resource
+ * Returns the number of result columns in a statement
+ * @link http://www.php.net/manual/en/function.oci-num-fields.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @return int the number of columns as an integer, or false on errors.
  */
-function oci_num_fields ($statement_resource) {}
+function oci_num_fields ($statement) {}
 
 /**
- * @param connection_resource
- * @param sql_text
+ * Prepares an Oracle statement for execution
+ * @link http://www.php.net/manual/en/function.oci-parse.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier, returned by 
+ *       oci_connect, oci_pconnect, or oci_new_connect.
+ *      </p>
+ * @param sql_text string <p>
+ *       The SQL or PL/SQL statement.
+ *      </p>
+ *      <p>
+ *       SQL statements should not end with a
+ *       semi-colon (&quot;;&quot;).  PL/SQL
+ *       statements should end with a semi-colon
+ *       (&quot;;&quot;).
+ *      </p>
+ * @return resource a statement handle on success, or false on error.
  */
-function oci_parse ($connection_resource, $sql_text) {}
+function oci_parse ($connection, $sql_text) {}
 
 /**
- * @param statement_resource
+ * Returns the next child statement resource from a parent statement resource that has Oracle Database 12c Implicit Result Sets
+ * @link http://www.php.net/manual/en/function.oci-get-implicit-resultset.php
+ * @param statement resource <p>A valid OCI8 statement identifier created
+ *         by oci_parse and executed
+ *         by oci_execute.  The statement
+ *         identifier may or may not be associated with a SQL statement
+ *         that returns Implicit Result Sets.
+ *       </p>
+ * @return resource a statement handle for the next child statement available
+ *   on statement.  Returns false when child
+ *   statements do not exist, or all child statements have been returned
+ *   by previous calls
+ *   to oci_get_implicit_resultset.
  */
-function oci_get_implicit_resultset ($statement_resource) {}
+function oci_get_implicit_resultset ($statement) {}
 
 /**
- * @param connection_resource
+ * Allocates and returns a new cursor (statement handle)
+ * @link http://www.php.net/manual/en/function.oci-new-cursor.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier, returned by 
+ *       oci_connect or oci_pconnect.
+ *      </p>
+ * @return resource a new statement handle, or false on error.
  */
-function oci_new_cursor ($connection_resource) {}
+function oci_new_cursor ($connection) {}
 
 /**
- * @param statement_resource
- * @param column_number_or_name
+ * Returns field's value from the fetched row
+ * @link http://www.php.net/manual/en/function.oci-result.php
+ * @param statement resource <p>
+ *      </p>
+ * @param field mixed <p>
+ *       Can be either use the column number (1-based) or the column name.
+ *       The case of the column name must be the case that Oracle meta data
+ *       describes the column as, which is uppercase for columns created
+ *       case insensitively.
+ *      </p>
+ * @return mixed everything as strings except for abstract types (ROWIDs, LOBs and
+ *   FILEs). Returns false on error.
  */
-function oci_result ($statement_resource, $column_number_or_name) {}
+function oci_result ($statement, $field) {}
 
+/**
+ * Returns the Oracle client library version
+ * @link http://www.php.net/manual/en/function.oci-client-version.php
+ * @return string the version number as a string.
+ */
 function oci_client_version () {}
 
 /**
- * @param connection_resource
+ * Returns the Oracle Database version
+ * @link http://www.php.net/manual/en/function.oci-server-version.php
+ * @param connection resource <p>
+ *      </p>
+ * @return string the version information as a string or false on error.
  */
-function oci_server_version ($connection_resource) {}
+function oci_server_version ($connection) {}
 
 /**
- * @param statement_resource
+ * Returns the type of a statement
+ * @link http://www.php.net/manual/en/function.oci-statement-type.php
+ * @param statement resource <p>
+ *       A valid OCI8 statement identifier from oci_parse.
+ *      </p>
+ * @return string the type of statement as one of the
+ *   following strings.
+ *   <table>
+ *    Statement type
+ *    
+ *     
+ *      <tr valign="top">
+ *       <td>Return String</td>
+ *       <td>Notes</td>
+ *      </tr>
+ *     
+ *     
+ *      <tr valign="top">
+ *       <td>ALTER</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>BEGIN</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>CALL</td>
+ *       <td>Introduced in PHP 5.2.1 (PECL OCI8 1.2.3)</td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>CREATE</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>DECLARE</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>DELETE</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>DROP</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>INSERT</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>SELECT</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>UPDATE</td>
+ *       <td></td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>UNKNOWN</td>
+ *       <td></td>
+ *      </tr>
+ *     
+ *    
+ *   </table>
+ *  </p>
+ *  <p>
+ *   Returns false on error.
  */
-function oci_statement_type ($statement_resource) {}
+function oci_statement_type ($statement) {}
 
 /**
- * @param statement_resource
+ * Returns number of rows affected during statement execution
+ * @link http://www.php.net/manual/en/function.oci-num-rows.php
+ * @param statement resource <p>
+ *       A valid OCI statement identifier.
+ *      </p>
+ * @return int the number of rows affected as an integer, or false on errors.
  */
-function oci_num_rows ($statement_resource) {}
+function oci_num_rows ($statement) {}
 
 /**
- * @param connection_resource
+ * Closes an Oracle connection
+ * @link http://www.php.net/manual/en/function.oci-close.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier returned by 
+ *       oci_connect, oci_pconnect,
+ *       or oci_new_connect.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_close ($connection_resource) {}
+function oci_close ($connection) {}
 
 /**
- * @param username
- * @param password
- * @param connection_string[optional]
- * @param character_set[optional]
- * @param session_mode[optional]
+ * Connect to an Oracle database
+ * @link http://www.php.net/manual/en/function.oci-connect.php
+ * @param username string <p>
+ *       The Oracle user name.
+ *      </p>
+ * @param password string <p>
+ *       The password for username.
+ *      </p>
+ * @param connection_string string[optional] &oci.db;
+ * @param character_set string[optional] &oci.charset;
+ * @param session_mode int[optional] &oci.sessionmode;
+ * @return resource a connection identifier or false on error.
  */
-function oci_connect ($username, $password, $connection_string, $character_set, $session_mode) {}
+function oci_connect ($username, $password, $connection_string = null, $character_set = null, $session_mode = null) {}
 
 /**
- * @param username
- * @param password
- * @param connection_string[optional]
- * @param character_set[optional]
- * @param session_mode[optional]
+ * Connect to the Oracle server using a unique connection
+ * @link http://www.php.net/manual/en/function.oci-new-connect.php
+ * @param username string <p>
+ *       The Oracle user name.
+ *      </p>
+ * @param password string <p>
+ *       The password for username.
+ *      </p>
+ * @param connection_string string[optional] &oci.db;
+ * @param character_set string[optional] &oci.charset;
+ * @param session_mode int[optional] &oci.sessionmode;
+ * @return resource a connection identifier or false on error.
  */
-function oci_new_connect ($username, $password, $connection_string, $character_set, $session_mode) {}
+function oci_new_connect ($username, $password, $connection_string = null, $character_set = null, $session_mode = null) {}
 
 /**
- * @param username
- * @param password
- * @param connection_string[optional]
- * @param character_set[optional]
- * @param session_mode[optional]
+ * Connect to an Oracle database using a persistent connection
+ * @link http://www.php.net/manual/en/function.oci-pconnect.php
+ * @param username string <p>
+ *       The Oracle user name.
+ *      </p>
+ * @param password string <p>
+ *       The password for username.
+ *      </p>
+ * @param connection_string string[optional] &oci.db;
+ * @param character_set string[optional] &oci.charset;
+ * @param session_mode int[optional] &oci.sessionmode;
+ * @return resource a connection identifier or false on error.
  */
-function oci_pconnect ($username, $password, $connection_string, $character_set, $session_mode) {}
+function oci_pconnect ($username, $password, $connection_string = null, $character_set = null, $session_mode = null) {}
 
 /**
- * @param connection_or_statement_resource[optional]
+ * Returns the last error found
+ * @link http://www.php.net/manual/en/function.oci-error.php
+ * @param resource resource[optional] <p>
+ *       For most errors, resource is the
+ *       resource handle that was passed to the failing function call.
+ *       For connection errors with oci_connect,
+ *       oci_new_connect or 
+ *       oci_pconnect do not pass resource.
+ *      </p>
+ * @return array If no error is found, oci_error returns
+ *   false. Otherwise, oci_error returns the
+ *   error information as an associative array.
+ *  </p>
+ *  <p>
+ *   <table>
+ *   oci_error Array Description
+ *    
+ *     
+ *      <tr valign="top">
+ *       <td>Array key</td>
+ *       <td>Type</td>
+ *       <td>&Description;</td>
+ *      </tr>
+ *     
+ *     
+ *      <tr valign="top">
+ *       <td>code</td>
+ *       <td>integer</td>
+ *       <td>
+ *         The Oracle error number.
+ *       </td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>message</td>
+ *       <td>string</td>
+ *       <td>
+ *         The Oracle error text.
+ *       </td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>offset</td>
+ *       <td>integer</td>
+ *       <td>
+ *         The byte position of an error in the SQL statement.  If there
+ *         was no statement, this is 0
+ *       </td>
+ *      </tr>
+ *      <tr valign="top">
+ *       <td>sqltext</td>
+ *       <td>string</td>
+ *       <td>
+ *         The SQL statement text.  If there was no statement, this is
+ *         an empty string.
+ *       </td>
+ *      </tr>
+ *     
+ *    
+ *   </table>
  */
-function oci_error ($connection_or_statement_resource) {}
+function oci_error ($resource = null) {}
 
 /**
- * @param lob_descriptor
+ * Frees a descriptor
+ * @link http://www.php.net/manual/en/function.oci-free-descriptor.php
+ * @param descriptor resource 
+ * @return bool Returns true on success, false on failure.
  */
-function oci_free_descriptor ($lob_descriptor) {}
+function oci_free_descriptor ($descriptor) {}
 
 /**
  * @param lob_descriptor
@@ -425,10 +1153,17 @@ function ocisetbufferinglob ($lob_descriptor, $mode) {}
 function ocigetbufferinglob ($lob_descriptor) {}
 
 /**
- * @param lob_descriptor
- * @param lob_descriptor
+ * Compares two LOB/FILE locators for equality
+ * @link http://www.php.net/manual/en/function.oci-lob-is-equal.php
+ * @param lob1 OCI-Lob <p>
+ *       A LOB identifier.
+ *      </p>
+ * @param lob2 OCI-Lob <p>
+ *       A LOB identifier.
+ *      </p>
+ * @return bool true if these objects are equal, false otherwise.
  */
-function oci_lob_is_equal ($lob_descriptor, $lob_descriptor) {}
+function oci_lob_is_equal (OCI-Lob $lob1, OCI-Lob $lob2) {}
 
 /**
  * @param lob_descriptor
@@ -449,11 +1184,20 @@ function oci_lob_write ($lob_descriptor, $string, $length) {}
 function oci_lob_append ($lob_descriptor_to, $lob_descriptor_from) {}
 
 /**
- * @param lob_descriptor_to
- * @param lob_descriptor_from
- * @param length[optional]
+ * Copies large object
+ * @link http://www.php.net/manual/en/function.oci-lob-copy.php
+ * @param lob_to OCI-Lob <p>
+ *       The destination LOB.
+ *      </p>
+ * @param lob_from OCI-Lob <p>
+ *       The copied LOB.
+ *      </p>
+ * @param length int[optional] <p>
+ *       Indicates the length of data to be copied.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_lob_copy ($lob_descriptor_to, $lob_descriptor_from, $length) {}
+function oci_lob_copy (OCI-Lob $lob_to, OCI-Lob $lob_from, $length = null) {}
 
 /**
  * @param lob_descriptor
@@ -471,63 +1215,129 @@ function oci_lob_export ($lob_descriptor, $filename, $start, $length) {}
 function oci_lob_seek ($lob_descriptor, $offset, $whence) {}
 
 /**
- * @param connection_resource
+ * Commits the outstanding database transaction
+ * @link http://www.php.net/manual/en/function.oci-commit.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier, returned by
+ *       oci_connect, oci_pconnect, or oci_new_connect.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_commit ($connection_resource) {}
+function oci_commit ($connection) {}
 
 /**
- * @param connection_resource
+ * Rolls back the outstanding database transaction
+ * @link http://www.php.net/manual/en/function.oci-rollback.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier, returned by
+ *       oci_connect, oci_pconnect
+ *       or oci_new_connect.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_rollback ($connection_resource) {}
+function oci_rollback ($connection) {}
 
 /**
- * @param connection_resource
- * @param type[optional]
+ * Initializes a new empty LOB or FILE descriptor
+ * @link http://www.php.net/manual/en/function.oci-new-descriptor.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier, returned by 
+ *       oci_connect or oci_pconnect.
+ *      </p>
+ * @param type int[optional] <p>
+ *       Valid values for type are: 
+ *       OCI_DTYPE_FILE, OCI_DTYPE_LOB and
+ *       OCI_DTYPE_ROWID.
+ *      </p>
+ * @return OCI-Lob a new LOB or FILE descriptor on success, false on error.
  */
-function oci_new_descriptor ($connection_resource, $type) {}
+function oci_new_descriptor ($connection, $type = null) {}
 
 /**
- * @param statement_resource
- * @param number_of_rows
+ * Sets number of rows to be prefetched by queries
+ * @link http://www.php.net/manual/en/function.oci-set-prefetch.php
+ * @param statement resource &oci.arg.statement.id;
+ * @param rows int <p>
+ *       The number of rows to be prefetched, >= 0
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_set_prefetch ($statement_resource, $number_of_rows) {}
+function oci_set_prefetch ($statement, $rows) {}
 
 /**
- * @param connection_resource
- * @param client_identifier
+ * Sets the client identifier
+ * @link http://www.php.net/manual/en/function.oci-set-client-identifier.php
+ * @param connection resource &oci.parameter.connection;
+ * @param client_identifier string <p>
+ *       User chosen string up to 64 bytes long.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_set_client_identifier ($connection_resource, $client_identifier) {}
+function oci_set_client_identifier ($connection, $client_identifier) {}
 
 /**
- * @param edition_name
+ * Sets the database edition
+ * @link http://www.php.net/manual/en/function.oci-set-edition.php
+ * @param edition string <p>
+ *       Oracle Database edition name previously created with the SQL
+ *       "CREATE EDITION" command.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_set_edition ($edition_name) {}
+function oci_set_edition ($edition) {}
 
 /**
- * @param connection_resource
- * @param module_name
+ * Sets the module name
+ * @link http://www.php.net/manual/en/function.oci-set-module-name.php
+ * @param connection resource &oci.parameter.connection;
+ * @param module_name string <p>
+ *       User chosen string up to 48 bytes long.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_set_module_name ($connection_resource, $module_name) {}
+function oci_set_module_name ($connection, $module_name) {}
 
 /**
- * @param connection_resource
- * @param action
+ * Sets the action name
+ * @link http://www.php.net/manual/en/function.oci-set-action.php
+ * @param connection resource &oci.parameter.connection;
+ * @param action_name string <p>
+ *       User chosen string up to 32 bytes long.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_set_action ($connection_resource, $action) {}
+function oci_set_action ($connection, $action_name) {}
 
 /**
- * @param connection_resource
- * @param client_information
+ * Sets the client information
+ * @link http://www.php.net/manual/en/function.oci-set-client-info.php
+ * @param connection resource &oci.parameter.connection;
+ * @param client_info string <p>
+ *       User chosen string up to 64 bytes long.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_set_client_info ($connection_resource, $client_information) {}
+function oci_set_client_info ($connection, $client_info) {}
 
 /**
- * @param connection_resource_or_connection_string
- * @param username
- * @param old_password
- * @param new_password
+ * Changes password of Oracle's user
+ * @link http://www.php.net/manual/en/function.oci-password-change.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier, returned by 
+ *       oci_connect or oci_pconnect.
+ *      </p>
+ * @param username string <p>
+ *       The Oracle user name.
+ *      </p>
+ * @param old_password string <p>
+ *       The old password.
+ *      </p>
+ * @param new_password string <p>
+ *       The new password to be set.
+ *      </p>
+ * @return bool Returns true on success, false on failure.
  */
-function oci_password_change ($connection_resource_or_connection_string, $username, $old_password, $new_password) {}
+function oci_password_change ($connection, $username, $old_password, $new_password) {}
 
 /**
  * @param collection
@@ -576,11 +1386,23 @@ function oci_collection_max ($collection) {}
 function oci_collection_trim ($collection, $number) {}
 
 /**
- * @param connection_resource
- * @param type_name
- * @param schema_name[optional]
+ * Allocates new collection object
+ * @link http://www.php.net/manual/en/function.oci-new-collection.php
+ * @param connection resource <p>
+ *       An Oracle connection identifier, returned by 
+ *       oci_connect or oci_pconnect.
+ *      </p>
+ * @param tdo string <p>
+ *       Should be a valid named type (uppercase).
+ *      </p>
+ * @param schema string[optional] <p>
+ *       Should point to the scheme, where the named type was created. The name
+ *       of the current user is the default value.
+ *      </p>
+ * @return OCI-Collection a new OCICollection object or false on
+ *   error.
  */
-function oci_new_collection ($connection_resource, $type_name, $schema_name) {}
+function oci_new_collection ($connection, $tdo, $schema = null) {}
 
 /**
  * @param statement_resource
@@ -588,11 +1410,15 @@ function oci_new_collection ($connection_resource, $type_name, $schema_name) {}
 function oci_free_cursor ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_free_statement</function>
+ * @link http://www.php.net/manual/en/function.ocifreecursor.php
  * @param statement_resource
  */
 function ocifreecursor ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_bind_by_name</function>
+ * @link http://www.php.net/manual/en/function.ocibindbyname.php
  * @param statement_resource
  * @param column_name
  * @param variable
@@ -602,6 +1428,8 @@ function ocifreecursor ($statement_resource) {}
 function ocibindbyname ($statement_resource, $column_name, &$variable, $maximum_length, $type) {}
 
 /**
+ * &Alias; <function>oci_define_by_name</function>
+ * @link http://www.php.net/manual/en/function.ocidefinebyname.php
  * @param statement_resource
  * @param column_name
  * @param variable
@@ -610,64 +1438,86 @@ function ocibindbyname ($statement_resource, $column_name, &$variable, $maximum_
 function ocidefinebyname ($statement_resource, $column_name, &$variable, $type) {}
 
 /**
+ * &Alias; <function>oci_field_is_null</function>
+ * @link http://www.php.net/manual/en/function.ocicolumnisnull.php
  * @param statement_resource
  * @param column_number_or_name
  */
 function ocicolumnisnull ($statement_resource, $column_number_or_name) {}
 
 /**
+ * &Alias; <function>oci_field_name</function>
+ * @link http://www.php.net/manual/en/function.ocicolumnname.php
  * @param statement_resource
  * @param column_number
  */
 function ocicolumnname ($statement_resource, $column_number) {}
 
 /**
+ * &Alias; <function>oci_field_size</function>
+ * @link http://www.php.net/manual/en/function.ocicolumnsize.php
  * @param statement_resource
  * @param column_number_or_name
  */
 function ocicolumnsize ($statement_resource, $column_number_or_name) {}
 
 /**
+ * &Alias; <function>oci_field_scale</function>
+ * @link http://www.php.net/manual/en/function.ocicolumnscale.php
  * @param statement_resource
  * @param column_number
  */
 function ocicolumnscale ($statement_resource, $column_number) {}
 
 /**
+ * &Alias; <function>oci_field_precision</function>
+ * @link http://www.php.net/manual/en/function.ocicolumnprecision.php
  * @param statement_resource
  * @param column_number
  */
 function ocicolumnprecision ($statement_resource, $column_number) {}
 
 /**
+ * &Alias; <function>oci_field_type</function>
+ * @link http://www.php.net/manual/en/function.ocicolumntype.php
  * @param statement_resource
  * @param column_number
  */
 function ocicolumntype ($statement_resource, $column_number) {}
 
 /**
+ * &Alias; <function>oci_field_type_raw</function>
+ * @link http://www.php.net/manual/en/function.ocicolumntyperaw.php
  * @param statement_resource
  * @param column_number
  */
 function ocicolumntyperaw ($statement_resource, $column_number) {}
 
 /**
+ * &Alias; <function>oci_execute</function>
+ * @link http://www.php.net/manual/en/function.ociexecute.php
  * @param statement_resource
  * @param mode[optional]
  */
 function ociexecute ($statement_resource, $mode) {}
 
 /**
+ * &Alias; <function>oci_cancel</function>
+ * @link http://www.php.net/manual/en/function.ocicancel.php
  * @param statement_resource
  */
 function ocicancel ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_fetch</function>
+ * @link http://www.php.net/manual/en/function.ocifetch.php
  * @param statement_resource
  */
 function ocifetch ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_fetch_all</function>
+ * @link http://www.php.net/manual/en/function.ocifetchstatement.php
  * @param statement_resource
  * @param output
  * @param skip[optional]
@@ -677,58 +1527,80 @@ function ocifetch ($statement_resource) {}
 function ocifetchstatement ($statement_resource, &$output, $skip, $maximum_rows, $flags) {}
 
 /**
+ * &Alias; <function>oci_free_statement</function>
+ * @link http://www.php.net/manual/en/function.ocifreestatement.php
  * @param statement_resource
  */
 function ocifreestatement ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_internal_debug</function>
+ * @link http://www.php.net/manual/en/function.ociinternaldebug.php
  * @param mode
  */
 function ociinternaldebug ($mode) {}
 
 /**
+ * &Alias; <function>oci_num_fields</function>
+ * @link http://www.php.net/manual/en/function.ocinumcols.php
  * @param statement_resource
  */
 function ocinumcols ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_parse</function>
+ * @link http://www.php.net/manual/en/function.ociparse.php
  * @param connection_resource
  * @param sql_text
  */
 function ociparse ($connection_resource, $sql_text) {}
 
 /**
+ * &Alias; <function>oci_new_cursor</function>
+ * @link http://www.php.net/manual/en/function.ocinewcursor.php
  * @param connection_resource
  */
 function ocinewcursor ($connection_resource) {}
 
 /**
+ * &Alias; <function>oci_result</function>
+ * @link http://www.php.net/manual/en/function.ociresult.php
  * @param statement_resource
  * @param column_number_or_name
  */
 function ociresult ($statement_resource, $column_number_or_name) {}
 
 /**
+ * &Alias; <function>oci_server_version</function>
+ * @link http://www.php.net/manual/en/function.ociserverversion.php
  * @param connection_resource
  */
 function ociserverversion ($connection_resource) {}
 
 /**
+ * &Alias; <function>oci_statement_type</function>
+ * @link http://www.php.net/manual/en/function.ocistatementtype.php
  * @param statement_resource
  */
 function ocistatementtype ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_num_rows</function>
+ * @link http://www.php.net/manual/en/function.ocirowcount.php
  * @param statement_resource
  */
 function ocirowcount ($statement_resource) {}
 
 /**
+ * &Alias; <function>oci_close</function>
+ * @link http://www.php.net/manual/en/function.ocilogoff.php
  * @param connection_resource
  */
 function ocilogoff ($connection_resource) {}
 
 /**
+ * &Alias; <function>oci_connect</function>
+ * @link http://www.php.net/manual/en/function.ocilogon.php
  * @param username
  * @param password
  * @param connection_string[optional]
@@ -738,6 +1610,8 @@ function ocilogoff ($connection_resource) {}
 function ocilogon ($username, $password, $connection_string, $character_set, $session_mode) {}
 
 /**
+ * &Alias; <function>oci_new_connect</function>
+ * @link http://www.php.net/manual/en/function.ocinlogon.php
  * @param username
  * @param password
  * @param connection_string[optional]
@@ -747,6 +1621,8 @@ function ocilogon ($username, $password, $connection_string, $character_set, $se
 function ocinlogon ($username, $password, $connection_string, $character_set, $session_mode) {}
 
 /**
+ * &Alias; <function>oci_pconnect</function>
+ * @link http://www.php.net/manual/en/function.ociplogon.php
  * @param username
  * @param password
  * @param connection_string[optional]
@@ -756,16 +1632,22 @@ function ocinlogon ($username, $password, $connection_string, $character_set, $s
 function ociplogon ($username, $password, $connection_string, $character_set, $session_mode) {}
 
 /**
+ * &Alias; <function>oci_error</function>
+ * @link http://www.php.net/manual/en/function.ocierror.php
  * @param connection_or_statement_resource[optional]
  */
 function ocierror ($connection_or_statement_resource) {}
 
 /**
+ * &Alias; <function>OCI-Lob::free</function>
+ * @link http://www.php.net/manual/en/function.ocifreedesc.php
  * @param lob_descriptor
  */
 function ocifreedesc ($lob_descriptor) {}
 
 /**
+ * &Alias; <function>OCI-Lob::save</function>
+ * @link http://www.php.net/manual/en/function.ocisavelob.php
  * @param lob_descriptor
  * @param data
  * @param offset[optional]
@@ -773,12 +1655,16 @@ function ocifreedesc ($lob_descriptor) {}
 function ocisavelob ($lob_descriptor, $data, $offset) {}
 
 /**
+ * &Alias; <function>OCI-Lob::import</function>
+ * @link http://www.php.net/manual/en/function.ocisavelobfile.php
  * @param lob_descriptor
  * @param filename
  */
 function ocisavelobfile ($lob_descriptor, $filename) {}
 
 /**
+ * &Alias; <function>OCI-Lob::export</function>
+ * @link http://www.php.net/manual/en/function.ociwritelobtofile.php
  * @param lob_descriptor
  * @param filename
  * @param start[optional]
@@ -787,27 +1673,37 @@ function ocisavelobfile ($lob_descriptor, $filename) {}
 function ociwritelobtofile ($lob_descriptor, $filename, $start, $length) {}
 
 /**
+ * &Alias; <function>OCI-Lob::load</function>
+ * @link http://www.php.net/manual/en/function.ociloadlob.php
  * @param lob_descriptor
  */
 function ociloadlob ($lob_descriptor) {}
 
 /**
+ * &Alias; <function>oci_commit</function>
+ * @link http://www.php.net/manual/en/function.ocicommit.php
  * @param connection_resource
  */
 function ocicommit ($connection_resource) {}
 
 /**
+ * &Alias; <function>oci_rollback</function>
+ * @link http://www.php.net/manual/en/function.ocirollback.php
  * @param connection_resource
  */
 function ocirollback ($connection_resource) {}
 
 /**
+ * &Alias; <function>oci_new_descriptor</function>
+ * @link http://www.php.net/manual/en/function.ocinewdescriptor.php
  * @param connection_resource
  * @param type[optional]
  */
 function ocinewdescriptor ($connection_resource, $type) {}
 
 /**
+ * &Alias; <function>oci_set_prefetch</function>
+ * @link http://www.php.net/manual/en/function.ocisetprefetch.php
  * @param statement_resource
  * @param number_of_rows
  */
@@ -822,11 +1718,15 @@ function ocisetprefetch ($statement_resource, $number_of_rows) {}
 function ocipasswordchange ($connection_resource_or_connection_string, $username, $old_password, $new_password) {}
 
 /**
+ * &Alias; <function>OCI-Collection::free</function>
+ * @link http://www.php.net/manual/en/function.ocifreecollection.php
  * @param collection
  */
 function ocifreecollection ($collection) {}
 
 /**
+ * &Alias; <function>oci_new_collection</function>
+ * @link http://www.php.net/manual/en/function.ocinewcollection.php
  * @param connection_resource
  * @param type_name
  * @param schema_name[optional]
@@ -834,18 +1734,24 @@ function ocifreecollection ($collection) {}
 function ocinewcollection ($connection_resource, $type_name, $schema_name) {}
 
 /**
+ * &Alias; <function>OCI-Collection::append</function>
+ * @link http://www.php.net/manual/en/function.ocicollappend.php
  * @param collection
  * @param value
  */
 function ocicollappend ($collection, $value) {}
 
 /**
+ * &Alias; <function>OCI-Collection::getElem</function>
+ * @link http://www.php.net/manual/en/function.ocicollgetelem.php
  * @param collection
  * @param index
  */
 function ocicollgetelem ($collection, $index) {}
 
 /**
+ * &Alias; <function>OCI-Collection::assignElem</function>
+ * @link http://www.php.net/manual/en/function.ocicollassignelem.php
  * @param collection
  * @param index
  * @param value
@@ -853,16 +1759,22 @@ function ocicollgetelem ($collection, $index) {}
 function ocicollassignelem ($collection, $index, $value) {}
 
 /**
+ * &Alias; <function>OCI-Collection::size</function>
+ * @link http://www.php.net/manual/en/function.ocicollsize.php
  * @param collection
  */
 function ocicollsize ($collection) {}
 
 /**
+ * &Alias; <function>OCI-Collection::max</function>
+ * @link http://www.php.net/manual/en/function.ocicollmax.php
  * @param collection
  */
 function ocicollmax ($collection) {}
 
 /**
+ * &Alias; <function>OCI-Collection::trim</function>
+ * @link http://www.php.net/manual/en/function.ocicolltrim.php
  * @param collection
  * @param number
  */

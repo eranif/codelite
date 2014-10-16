@@ -3,10 +3,6 @@
 
 Notice: Undefined index: internal in /home/eran/devl/codelite/codelitephp/php-plugin/doc-gen.php on line 85
 
-Call Stack:
-    0.0012     436752   1. {main}() /home/eran/devl/codelite/codelitephp/php-plugin/doc-gen.php:0
-
-
 /**
  * The full path and filename of the file with symlinks resolved. If used inside an include,
  *         the name of the included file is returned.

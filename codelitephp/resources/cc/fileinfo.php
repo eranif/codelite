@@ -32,23 +32,31 @@ class finfo  {
 }
 
 /**
+ * Create a new fileinfo resource
+ * @link http://www.php.net/manual/en/function.finfo-open.php
  * @param options[optional]
  * @param arg[optional]
  */
 function finfo_open ($options, $arg) {}
 
 /**
+ * Close fileinfo resource
+ * @link http://www.php.net/manual/en/function.finfo-close.php
  * @param finfo
  */
 function finfo_close ($finfo) {}
 
 /**
+ * Set libmagic configuration options
+ * @link http://www.php.net/manual/en/function.finfo-set-flags.php
  * @param finfo
  * @param options
  */
 function finfo_set_flags ($finfo, $options) {}
 
 /**
+ * Return information about a file
+ * @link http://www.php.net/manual/en/function.finfo-file.php
  * @param finfo
  * @param filename
  * @param options[optional]
@@ -57,6 +65,8 @@ function finfo_set_flags ($finfo, $options) {}
 function finfo_file ($finfo, $filename, $options, $context) {}
 
 /**
+ * Return information about a string buffer
+ * @link http://www.php.net/manual/en/function.finfo-buffer.php
  * @param finfo
  * @param string
  * @param options[optional]
@@ -65,9 +75,15 @@ function finfo_file ($finfo, $filename, $options, $context) {}
 function finfo_buffer ($finfo, $string, $options, $context) {}
 
 /**
- * @param string
+ * Detect MIME Content-type for a file (deprecated)
+ * @link http://www.php.net/manual/en/function.mime-content-type.php
+ * @param filename string <p>
+ *       Path to the tested file.
+ *      </p>
+ * @return string the content type in MIME format, like 
+ *   text/plain or application/octet-stream.
  */
-function mime_content_type ($string) {}
+function mime_content_type ($filename) {}
 
 
 /**

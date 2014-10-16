@@ -4,27 +4,91 @@
 
 interface JsonSerializable  {
 
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link http://www.php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by json_encode,
+	 *   which is a value of any type other than a resource.
+	 */
 	abstract public function jsonSerialize () ;
 
 }
 
 /**
- * @param value
- * @param options[optional]
- * @param depth[optional]
+ * Returns the JSON representation of a value
+ * @link http://www.php.net/manual/en/function.json-encode.php
+ * @param value mixed <p>
+ *       The value being encoded. Can be any type except
+ *       a resource.
+ *      </p>
+ *      <p>
+ *       All string data must be UTF-8 encoded.
+ *      </p>
+ *      &json.implementation.superset;
+ * @param options int[optional] <p>
+ *       Bitmask consisting of JSON_HEX_QUOT,
+ *       JSON_HEX_TAG,
+ *       JSON_HEX_AMP,
+ *       JSON_HEX_APOS,
+ *       JSON_NUMERIC_CHECK,
+ *       JSON_PRETTY_PRINT,
+ *       JSON_UNESCAPED_SLASHES,
+ *       JSON_FORCE_OBJECT,
+ *       JSON_UNESCAPED_UNICODE. The behaviour of these
+ *       constants is described on
+ *       the JSON constants page.
+ *      </p>
+ * @param depth int[optional] <p>
+ *       Set the maximum depth. Must be greater than zero.
+ *      </p>
+ * @return string a JSON encoded string on success &return.falseforfailure;.
  */
-function json_encode ($value, $options, $depth) {}
+function json_encode ($value, $options = null, $depth = null) {}
 
 /**
- * @param json
- * @param assoc[optional]
- * @param depth[optional]
- * @param options[optional]
+ * Decodes a JSON string
+ * @link http://www.php.net/manual/en/function.json-decode.php
+ * @param json string <p>
+ *       The json string being decoded.
+ *      </p>
+ *      <p>
+ *       This function only works with UTF-8 encoded strings.
+ *      </p>
+ *      &json.implementation.superset;
+ * @param assoc bool[optional] <p>
+ *       When true, returned objects will be converted into
+ *       associative arrays.
+ *      </p>
+ * @param depth int[optional] <p>
+ *       User specified recursion depth.
+ *      </p>
+ * @param options int[optional] <p>
+ *       Bitmask of JSON decode options.  Currently only
+ *       JSON_BIGINT_AS_STRING
+ *       is supported (default is to cast large integers as floats)
+ *      </p>
+ * @return mixed the value encoded in json in appropriate
+ *   PHP type. Values true, false and
+ *   null are returned as true, false and &null;
+ *   respectively. &null; is returned if the json cannot
+ *   be decoded or if the encoded data is deeper than the recursion limit.
  */
-function json_decode ($json, $assoc, $depth, $options) {}
+function json_decode ($json, $assoc = null, $depth = null, $options = null) {}
 
+/**
+ * Returns the last error occurred
+ * @link http://www.php.net/manual/en/function.json-last-error.php
+ * @return int an integer, the value can be one of the following 
+ *   constants:
+ */
 function json_last_error () {}
 
+/**
+ * Returns the error string of the last json_encode() or json_decode() call
+ * @link http://www.php.net/manual/en/function.json-last-error-msg.php
+ * @return string the error message on success, "No Error" if no
+ *   error has occurred, &return.falseforfailure;.
+ */
 function json_last_error_msg () {}
 
 

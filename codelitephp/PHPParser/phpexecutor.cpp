@@ -123,6 +123,7 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
         frame->GetTerminalUI()->SetTerminal(&m_terminal);
         frame->Show();
         if(!m_terminal.ExecuteNoConsole(cmd, wd)) {
+            ::wxMessageBox(wxString::Format("Could not execute: %s", cmd), "CodeLite", wxICON_ERROR|wxOK);
             frame->Destroy();
             return false;
         }

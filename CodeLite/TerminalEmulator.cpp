@@ -149,7 +149,7 @@ bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxSt
     tmpCmd.Replace("'", "\\'");
     command << tmpCmd << "'";
 #endif
-
+    wxLogMessage("TerminalEmulator::ExecuteNoConsole: %s", command);
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole, workingDirectory);
     return m_process != NULL;
 }

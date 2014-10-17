@@ -22,9 +22,10 @@ PHPFormatterBuffer::~PHPFormatterBuffer()
     }
 }
 
-PHPFormatterBuffer& PHPFormatterBuffer::operator<<(const phpLexerToken& token)
+PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
 {
     if(::phpLexerIsPHPCode(m_scanner)) {
+
         // Inside PHP tags
         if(m_insideHereDoc) {
             m_buffer << token.text;
@@ -38,6 +39,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::operator<<(const phpLexerToken& token)
         } else if(token.type == kPHP_T_OPEN_TAG) {
             m_openTagWithEcho = false;
             m_buffer << token.text;
+            AppendEOL();
             AppendEOL();
 
         } else if(token.type == kPHP_T_OPEN_TAG_WITH_ECHO) {
@@ -144,7 +146,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::operator<<(const phpLexerToken& token)
 
         } else if(token.type == kPHP_T_CXX_COMMENT) {
             // C++ style comment ("//")
-            //AppendEOL();
+            // AppendEOL();
             m_buffer << token.text;
             AppendEOL();
             m_lastCommentLine = token.lineNumber + 1;
@@ -191,7 +193,8 @@ PHPFormatterBuffer& PHPFormatterBuffer::operator<<(const phpLexerToken& token)
 
 void PHPFormatterBuffer::HandleOpenCurlyBrace()
 {
-    m_buffer << "{";
+    RemoveLastSpace();
+    m_buffer << " {";
     AppendEOL(kDepthInc);
 }
 
@@ -202,6 +205,7 @@ void PHPFormatterBuffer::AppendEOL(eDepthCommand depth)
     case kDepthDec:
         --m_depth;
         break;
+    case kDepthIncTemporarily:
     case kDepthInc:
         ++m_depth;
         break;
@@ -209,6 +213,9 @@ void PHPFormatterBuffer::AppendEOL(eDepthCommand depth)
         break;
     }
     m_buffer << GetIndent();
+    if(kDepthIncTemporarily == depth) {
+        --m_depth;
+    }
 }
 
 void PHPFormatterBuffer::UnIndent()
@@ -274,9 +281,85 @@ void PHPFormatterBuffer::ReverseClearUntilFind(const wxString& delim)
     }
 }
 
-void PHPFormatterBuffer::format() {
+void PHPFormatterBuffer::format()
+{
     phpLexerToken token;
-    while( ::phpLexerNext(m_scanner, token) ) {
-        *this << token;
+    phpLexerToken::Vet_t sequence;
+    m_stack.push(sequence);
+    m_sequence = &m_stack.top();
+    while(NextToken(token)) {
+        phpLexerToken nextToken;
+        if(::phpLexerIsPHPCode(m_scanner)) {
+            ProcessToken(token);
+
+            //
+            // Special indentation cases
+            // Handle the following:
+            // for(..) <statement> -> for(..)
+            //                            <statement>
+            // if(..) <statement> -> if(..)
+            //                            <statement>
+            // etc.
+            // In addtion, we also handle here the following:
+            // if(something) {} else <statement> =>
+            //                                      if(something) {
+            //                                      } else
+            //                                          <statement>
+            //
+
+            if(token.type == '(') {
+                // Create new stack
+                m_stack.push(phpLexerToken::Vet_t());
+                m_sequence = &m_stack.top();
+            }
+            if(token.type == ')') {
+                // switch back to the previous sequence
+                if(m_stack.size() >= 2) {
+                    m_stack.pop();
+                    m_sequence = &m_stack.top();
+                }
+
+                if(!m_sequence->empty()) {
+                    phpLexerToken lastToken = m_sequence->at(m_sequence->size() - 1);
+                    // The following tokens are usually followed by an open brace
+                    if(lastToken.type == kPHP_T_IF || lastToken.type == kPHP_T_FOR || lastToken.type == kPHP_T_ELSEIF ||
+                       lastToken.type == kPHP_T_FOREACH || lastToken.type == kPHP_T_WHILE) {
+                        // Peek at the next char
+                        if(PeekToken(nextToken)) {
+                            if(nextToken.type != '{' && !nextToken.IsAnyComment()) {
+                                // Increase the depth but only temporarily for the next statement
+                                AppendEOL(kDepthIncTemporarily);
+                            }
+                        }
+                    }
+                }
+            } else if(token.type == kPHP_T_ELSE) {
+                // Check for 'else <statement>' (without an open  curly braces)
+                if(PeekToken(nextToken) && nextToken.type != '{' && nextToken.type != kPHP_T_IF) {
+                    AppendEOL(kDepthIncTemporarily);
+                }
+
+            } else {
+                m_sequence->push_back(token);
+            }
+        }
     }
+}
+
+bool PHPFormatterBuffer::NextToken(phpLexerToken& token)
+{
+    if(m_tokensBuffer.empty()) {
+        return ::phpLexerNext(m_scanner, token);
+    } else {
+        token = *m_tokensBuffer.begin();
+        m_tokensBuffer.erase(m_tokensBuffer.begin());
+        return true;
+    }
+}
+
+bool PHPFormatterBuffer::PeekToken(phpLexerToken& token)
+{
+    if(!::phpLexerNext(m_scanner, token)) return false;
+    m_tokensBuffer.push_back(token);
+    return true;
 }

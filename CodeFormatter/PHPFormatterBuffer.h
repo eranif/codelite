@@ -28,6 +28,7 @@
 
 #include "PhpLexerAPI.h"
 #include <wx/string.h>
+#include <stack>
 
 enum ePHPFormatterFlags {
     kPFF_UseTabs = (1 << 1),
@@ -65,6 +66,7 @@ class PHPFormatterBuffer
         kDepthNone,
         kDepthInc,
         kDepthDec,
+        kDepthIncTemporarily,
     };
 
 protected:
@@ -74,7 +76,10 @@ protected:
     phpLexerToken m_lastToken;
     wxString m_indentString;
     bool m_openTagWithEcho;
-
+    std::stack<phpLexerToken::Vet_t> m_stack;
+    phpLexerToken::Vet_t* m_sequence;
+    phpLexerToken::Vet_t m_tokensBuffer;
+    
     // For statement
     int m_forDepth;
     bool m_insideForStatement;
@@ -128,16 +133,29 @@ protected:
 
     void AppendEOL(eDepthCommand depth = kDepthNone);
 
+    PHPFormatterBuffer& ProcessToken(const phpLexerToken& token);
+
+    /**
+     * @brief return the next token. This function wraps the standard ::phpLexerNext
+     * but it also takes into considertation our internal buffer
+     */
+    bool NextToken(phpLexerToken& token);
+
+    /**
+     * @brief return the next token but place it back in the m_buffer so next call to NextToken() will
+     * re-use it
+     */
+    bool PeekToken(phpLexerToken& token);
+
 public:
     PHPFormatterBuffer(const wxString& buffer, const PHPFormatterOptions& options);
     virtual ~PHPFormatterBuffer();
-    
+
     /**
      * @brief format the buffer (provided in the constructor)
      */
     void format();
-    
-    PHPFormatterBuffer& operator<<(const phpLexerToken& token);
+
     const wxString& GetBuffer() const { return m_buffer; }
 };
 

@@ -12,7 +12,6 @@ Code Completion / Code Generation
 
 Must:
 ======
-- Update Windows installer to install PHP.zip file
 - 'parent' key word is not working
 - word completion for local variables does not work
 - Add link to XDebug diagnostic dialog that points to the codelite's wiki for further explanation
@@ -20,7 +19,6 @@ Must:
 
 Usability:
 ==========
-
 - Restore last session
 - Function calltip should include the return value
 - Allow user to define a deployment folder for his files 

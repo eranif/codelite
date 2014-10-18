@@ -30,6 +30,7 @@
 #include "shelltab.h"
 #include "cl_command_event.h"
 
+class ClangOutputTab;
 class FindResultsTab;
 #if CL_USE_NEW_BUILD_TAB
 class NewBuildTab;
@@ -69,7 +70,8 @@ public:
     static const wxString TASKS;
     static const wxString TRACE_TAB;
     static const wxString SHOW_USAGE;
-
+    static const wxString CLANG_TAB;
+    
 private:
     wxString m_caption;
     wxLog* m_logTargetOld;
@@ -87,8 +89,13 @@ private:
     ShellTab* m_outputWind;
     TaskPanel* m_taskPanel;
     FindUsageTab* m_showUsageTab;
-    bool m_buildInProgress;
+    
+#if HAS_LIBCLANG
+    ClangOutputTab* m_clangOutputTab;
+#endif
 
+    bool m_buildInProgress;
+    
 protected:
     void CreateGUIControls();
     void OnEditorFocus(wxCommandEvent& e);

@@ -630,6 +630,8 @@
     </VirtualDirectory>
     <File Name="editor_options_docking_windows.wxcp"/>
     <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>
+    <File Name="ClangOutputTab.h"/>
+    <File Name="ClangOutputTab.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

@@ -41,30 +41,26 @@
 #include "fileextmanager.h"
 #include <wx/xrc/xmlres.h>
 #include "clang_utils.h"
+#include "codelite_events.h"
 
 #define cstr(x) x.mb_str(wxConvUTF8).data()
 
 const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started");
-const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   = XRCID("clang_pch_cache_ended");
+const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED = XRCID("clang_pch_cache_ended");
 const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED = XRCID("clang_pch_cache_cleared");
-const wxEventType wxEVT_CLANG_TU_CREATE_ERROR   = XRCID("clang_pch_create_error");
+const wxEventType wxEVT_CLANG_TU_CREATE_ERROR = XRCID("clang_pch_create_error");
 extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
 
-ClangWorkerThread::ClangWorkerThread()
-{
-    clang_toggleCrashRecovery(1);
-}
+ClangWorkerThread::ClangWorkerThread() { clang_toggleCrashRecovery(1); }
 
-ClangWorkerThread::~ClangWorkerThread()
-{
-}
+ClangWorkerThread::~ClangWorkerThread() {}
 
 void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 {
     // Send start event
     PostEvent(wxEVT_CLANG_PCH_CACHE_STARTED, "");
 
-    ClangThreadRequest *task = dynamic_cast<ClangThreadRequest*>( request );
+    ClangThreadRequest* task = dynamic_cast<ClangThreadRequest*>(request);
     wxASSERT_MSG(task, "ClangWorkerThread: NULL task");
 
     {
@@ -96,7 +92,6 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
     }
 
     if(!TU) {
-        DoSetStatusMsg(wxT("Ready"));
         CL_DEBUG(wxT("Failed to parse Translation UNIT..."));
         PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
         return;
@@ -113,7 +108,9 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
         } else {
 
-            CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
+            CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"),
+                     task->GetFileName().c_str(),
+                     (void*)TU);
 
             // The only thing that left to be done here, is to dispose the TU
             clang_disposeTranslationUnit(TU);
@@ -128,23 +125,22 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
     // when we leave the current scope
     CacheReturner cr(this, cacheEntry);
 
-    DoSetStatusMsg(wxT("Ready"));
-
     // Prepare the 'End' event
     wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
-    ClangThreadReply *reply = new ClangThreadReply;
-    reply->context    = task->GetContext();
+    ClangThreadReply* reply = new ClangThreadReply;
+    reply->context = task->GetContext();
     reply->filterWord = task->GetFilterWord();
-    reply->filename   = task->GetFileName().c_str();
-    reply->results    = NULL;
-    
-    wxFileName realFileName( reply->filename );
-    if ( realFileName.GetFullName().StartsWith(CODELITE_CLANG_FILE_PREFIX) ) {
-        realFileName.SetFullName( realFileName.GetFullName().Mid(strlen(CODELITE_CLANG_FILE_PREFIX)) );
+    reply->filename = task->GetFileName().c_str();
+    reply->results = NULL;
+
+    wxFileName realFileName(reply->filename);
+    if(realFileName.GetFullName().StartsWith(CODELITE_CLANG_FILE_PREFIX)) {
+        realFileName.SetFullName(realFileName.GetFullName().Mid(strlen(CODELITE_CLANG_FILE_PREFIX)));
     }
     reply->filename = realFileName.GetFullPath();
-    
-    if( task->GetContext() == CTX_CodeCompletion || task->GetContext() == CTX_WordCompletion || task->GetContext() == CTX_Calltip) {
+
+    if(task->GetContext() == CTX_CodeCompletion || task->GetContext() == CTX_WordCompletion ||
+       task->GetContext() == CTX_Calltip) {
         CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
 
         ClangThreadRequest::List_t usList = task->GetModifiedBuffers();
@@ -160,7 +156,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                                               usf.GetCount(),
                                               clang_defaultCodeCompleteOptions()
 #ifndef __FreeBSD__
-                                              | CXCodeComplete_IncludeBriefComments
+                                                  |
+                                                  CXCodeComplete_IncludeBriefComments
 #endif
                                               );
 
@@ -174,20 +171,21 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
             std::set<wxString> errorMessages;
             unsigned errorCount = clang_codeCompleteGetNumDiagnostics(reply->results);
             // Collect all errors / fatal errors and report them back to user
-            for(unsigned i=0; i<errorCount; i++) {
-                CXDiagnostic         diag     = clang_codeCompleteGetDiagnostic(reply->results, i);
+            for(unsigned i = 0; i < errorCount; i++) {
+                CXDiagnostic diag = clang_codeCompleteGetDiagnostic(reply->results, i);
                 CXDiagnosticSeverity severity = clang_getDiagnosticSeverity(diag);
                 if(!hasErrors) {
                     hasErrors = (severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal);
                 }
 
                 if(severity == CXDiagnostic_Error || severity == CXDiagnostic_Fatal || severity == CXDiagnostic_Note) {
-                    CXString diagStr      = clang_getDiagnosticSpelling(diag);
+                    CXString diagStr = clang_getDiagnosticSpelling(diag);
                     wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
 
                     // Collect up to 10 error messages
                     // and dont collect the same error twice
-                    if(errorMessages.find(wxDiagString) == errorMessages.end() && errorMessages.size() <= maxErrorToDisplay) {
+                    if(errorMessages.find(wxDiagString) == errorMessages.end() &&
+                       errorMessages.size() <= maxErrorToDisplay) {
                         errorMessages.insert(wxDiagString);
                         displayTip << wxDiagString.c_str() << wxT("\n");
                     }
@@ -204,7 +202,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         if(!displayTip.IsEmpty() && hasErrors) {
 
             // Send back the error messages
-            reply->errorMessage << "code completion error: " << displayTip;
+            reply->errorMessage << "clang: " << displayTip;
 
             // Free the results
             clang_disposeCodeCompleteResults(reply->results);
@@ -222,35 +220,40 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         // If it does, we need to re-parse it again
         wxFileName fnSource(cacheEntry.sourceFile);
         time_t fileModificationTime = fnSource.GetModificationTime().GetTicks();
-        time_t lastReparseTime      = cacheEntry.lastReparse;
+        time_t lastReparseTime = cacheEntry.lastReparse;
 
         if(fileModificationTime > lastReparseTime) {
+
             // The file needs to be re-parsed
-            this->DoSetStatusMsg(wxString::Format(wxT("clang: re-parsing file %s..."), cacheEntry.sourceFile.c_str()));
+            DoSetStatusMsg(wxString::Format(wxT("clang: re-parsing file %s...\n"), cacheEntry.sourceFile));
 
             // Try reparsing the TU
             ClangThreadRequest::List_t usList = task->GetModifiedBuffers();
             usList.push_back(std::make_pair(task->GetFileName(), task->GetDirtyBuffer()));
             ClangUnsavedFiles usf(usList);
 
-            if(clang_reparseTranslationUnit(TU, usf.GetCount(), usf.GetUnsavedFiles(), clang_defaultReparseOptions(TU)) != 0) {
+            if(clang_reparseTranslationUnit(
+                   TU, usf.GetCount(), usf.GetUnsavedFiles(), clang_defaultReparseOptions(TU)) != 0) {
                 // Failed to reparse
                 cr.SetCancelled(true); // cancel the re-caching of the TU
-                CL_DEBUG(wxT("clang_reparseTranslationUnit failed for file: %s"), task->GetFileName().c_str());
+
+                DoSetStatusMsg(wxString::Format("clang: clang_reparseTranslationUnit '%s' failed\n",
+                               cacheEntry.sourceFile));
+
                 clang_disposeTranslationUnit(TU);
                 wxDELETE(reply);
                 PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
                 return;
             }
 
+            DoSetStatusMsg(wxString::Format("clang: clang_reparseTranslationUnit '%s' - done\n",
+                           cacheEntry.sourceFile));
             // Update the 'lastReparse' field
             cacheEntry.lastReparse = time(NULL);
         }
 
         bool success = DoGotoDefinition(TU, task, reply);
         if(success) {
-            DoSetStatusMsg(wxT(""));
-
             eEnd.SetClientData(reply);
             EventNotifier::Get()->AddPendingEvent(eEnd);
 
@@ -264,13 +267,11 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
             // Failed, delete the 'reply' allocatd earlier
             wxDELETE(reply);
             PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
-
         }
     } else {
 
         wxDELETE(reply);
         PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED, task->GetFileName());
-
     }
 }
 
@@ -314,10 +315,10 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
 {
     bool isHeader = !(fileType == FileExtManager::TypeSourceC || fileType == FileExtManager::TypeSourceCpp);
     wxArrayString tokens;
-    const FileTypeCmpArgs_t &compilerArgsMap = req->GetCompilationArgs();
+    const FileTypeCmpArgs_t& compilerArgsMap = req->GetCompilationArgs();
 
     wxArrayString options;
-    if ( compilerArgsMap.count( fileType ) ) {
+    if(compilerArgsMap.count(fileType)) {
         // we got commands for this file type
         options = compilerArgsMap.find(fileType)->second;
 
@@ -340,41 +341,42 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
     tokens.Add(wxT("-fdelayed-template-parsing"));
 #endif
 
-//    static bool gotPCH = false;
-//    if(!gotPCH) {
-//        int nArgc(0);
-//        wxArrayString pchTokens;
-//        pchTokens.insert(pchTokens.end(), tokens.begin(), tokens.end());
-//        pchTokens.Add(wxT("-x"));
-//        pchTokens.Add(wxT("c++-header"));
-//        char **pArgv = ClangUtils::MakeArgv(pchTokens, nArgc);
-//        CXTranslationUnit PCH = clang_parseTranslationUnit(req->GetIndex(), "/home/eran/mypch.h", pArgv, nArgc,
-//                                NULL,
-//                                0,
-//                                CXTranslationUnit_Incomplete);
-//
-//        ClangUtils::FreeArgv(pArgv, nArgc);
-//
-//        if(PCH) {
-//            clang_saveTranslationUnit(PCH, "/home/eran/mypch.pch", clang_defaultSaveOptions(PCH));
-//            clang_disposeTranslationUnit(PCH);
-//
-//            tokens.Add(wxT("-include-pch"));
-//            tokens.Add(wxT("/home/eran/mypch.pch"));
-//        }
-//        gotPCH = true;
-//    }
-    char **argv = ClangUtils::MakeArgv(tokens, argc);
+    //    static bool gotPCH = false;
+    //    if(!gotPCH) {
+    //        int nArgc(0);
+    //        wxArrayString pchTokens;
+    //        pchTokens.insert(pchTokens.end(), tokens.begin(), tokens.end());
+    //        pchTokens.Add(wxT("-x"));
+    //        pchTokens.Add(wxT("c++-header"));
+    //        char **pArgv = ClangUtils::MakeArgv(pchTokens, nArgc);
+    //        CXTranslationUnit PCH = clang_parseTranslationUnit(req->GetIndex(), "/home/eran/mypch.h", pArgv,
+    //        nArgc,
+    //                                NULL,
+    //                                0,
+    //                                CXTranslationUnit_Incomplete);
+    //
+    //        ClangUtils::FreeArgv(pArgv, nArgc);
+    //
+    //        if(PCH) {
+    //            clang_saveTranslationUnit(PCH, "/home/eran/mypch.pch", clang_defaultSaveOptions(PCH));
+    //            clang_disposeTranslationUnit(PCH);
+    //
+    //            tokens.Add(wxT("-include-pch"));
+    //            tokens.Add(wxT("/home/eran/mypch.pch"));
+    //        }
+    //        gotPCH = true;
+    //    }
+    char** argv = ClangUtils::MakeArgv(tokens, argc);
     return argv;
 }
 
 void ClangWorkerThread::DoSetStatusMsg(const wxString& msg)
 {
-    wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
-    e.SetString(msg.c_str());
-    e.SetInt(0);
-    e.SetId(10);
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
+    clCommandEvent event(wxEVT_CLANG_CODE_COMPLETE_MESSAGE);
+    wxString sMsg = msg;
+    sMsg.Trim().Append("\n");
+    event.SetString(sMsg);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 bool ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply)
@@ -396,22 +398,21 @@ bool ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadReque
 void ClangWorkerThread::PostEvent(int type, const wxString& fileName)
 {
     wxCommandEvent e(type);
-    if ( !fileName.IsEmpty() ) {
-        
-        wxFileName realFileName( fileName );
-        if ( realFileName.GetFullName().StartsWith(CODELITE_CLANG_FILE_PREFIX) ) {
-            realFileName.SetFullName( realFileName.GetFullName().Mid(strlen(CODELITE_CLANG_FILE_PREFIX)) );
+    if(!fileName.IsEmpty()) {
+
+        wxFileName realFileName(fileName);
+        if(realFileName.GetFullName().StartsWith(CODELITE_CLANG_FILE_PREFIX)) {
+            realFileName.SetFullName(realFileName.GetFullName().Mid(strlen(CODELITE_CLANG_FILE_PREFIX)));
         }
 
         ClangThreadReply* reply = new ClangThreadReply;
         reply->filename = realFileName.GetFullPath();
         e.SetClientData(reply);
-        
+
     } else {
         e.SetClientData(NULL);
-        
     }
-    
+
     EventNotifier::Get()->AddPendingEvent(e);
 }
 
@@ -422,9 +423,9 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
 
     FileExtManager::FileType type = FileExtManager::GetType(task->GetFileName());
     int argc(0);
-    char **argv = MakeCommandLine(task, argc, type);
+    char** argv = MakeCommandLine(task, argc, type);
 
-    for(int i=0; i<argc; i++) {
+    for(int i = 0; i < argc; i++) {
         CL_DEBUG(wxT("Command Line Argument: %s"), wxString(argv[i], wxConvUTF8).c_str());
     }
 
@@ -434,27 +435,19 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
     // First time, need to create it
     unsigned flags;
     if(reparse) {
-        flags = CXTranslationUnit_CXXPrecompiledPreamble
-                | CXTranslationUnit_CacheCompletionResults
-                | CXTranslationUnit_PrecompiledPreamble
-                | CXTranslationUnit_Incomplete
-                | CXTranslationUnit_DetailedPreprocessingRecord
-                | CXTranslationUnit_CXXChainedPCH;
+        flags = CXTranslationUnit_CXXPrecompiledPreamble | CXTranslationUnit_CacheCompletionResults |
+                CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_Incomplete |
+                CXTranslationUnit_DetailedPreprocessingRecord | CXTranslationUnit_CXXChainedPCH;
     } else {
-        flags = CXTranslationUnit_Incomplete
-                | CXTranslationUnit_SkipFunctionBodies
-                | CXTranslationUnit_DetailedPreprocessingRecord;
+        flags = CXTranslationUnit_Incomplete | CXTranslationUnit_SkipFunctionBodies |
+                CXTranslationUnit_DetailedPreprocessingRecord;
     }
 
-    CXTranslationUnit TU = clang_parseTranslationUnit(index,
-                           c_filename.c_str(),
-                           argv,
-                           argc,
-                           NULL, 0, flags);
+    CXTranslationUnit TU = clang_parseTranslationUnit(index, c_filename.c_str(), argv, argc, NULL, 0, flags);
 
     CL_DEBUG(wxT("Calling clang_parseTranslationUnit... done"));
     ClangUtils::FreeArgv(argv, argc);
-
+    DoSetStatusMsg(wxString::Format(wxT("clang: parsing file %s...done"), fn.GetFullName().c_str()));
     if(TU && reparse) {
         CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
         if(clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU)) == 0) {
@@ -462,7 +455,9 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
             return TU;
 
         } else {
-            CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
+            CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"),
+                     task->GetFileName().c_str(),
+                     (void*)TU);
 
             // The only thing that left to be done here, is to dispose the TU
             clang_disposeTranslationUnit(TU);

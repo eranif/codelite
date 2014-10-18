@@ -581,21 +581,11 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         break;
     }
 
-    if(!reply->results) {
-        // Display an error message if needed, but not if the code-completion box
-        // is visible
-        if(reply->errorMessage.IsEmpty() == false && !m_activeEditor->IsCompletionBoxShown()) {
-            // CodeCompletionBox::Get().CancelTip();
-            // CodeCompletionBox::Get().ShowTip(reply->errorMessage, dynamic_cast<LEditor*>(m_activeEditor));
-            LEditor* pEditor = dynamic_cast<LEditor*>(m_activeEditor);
-            if(pEditor) {
-                wxWindow* pParent = ::wxGetTopLevelParent(pEditor);
-                wxFrame* pFrame = dynamic_cast<wxFrame*>(pParent);
-                if(pFrame) {
-                    pFrame->SetStatusText(reply->errorMessage);
-                }
-            }
-        }
+    if(!reply->results && !reply->errorMessage.IsEmpty()) {
+        // Notify about this error
+        clCommandEvent event(wxEVT_CLANG_CODE_COMPLETE_MESSAGE);
+        event.SetString(reply->errorMessage);
+        EventNotifier::Get()->AddPendingEvent(event);
         return;
     }
 

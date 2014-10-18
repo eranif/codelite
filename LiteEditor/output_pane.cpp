@@ -39,6 +39,10 @@
 #include "taskpanel.h"
 #include "wxcl_log_text_ctrl.h"
 
+#if HAS_LIBCLANG
+#   include "ClangOutputTab.h"
+#endif
+
 const wxString OutputPane::FIND_IN_FILES_WIN = _("Search");
 const wxString OutputPane::BUILD_WIN = _("Build");
 const wxString OutputPane::OUTPUT_WIN = _("Output");
@@ -47,6 +51,7 @@ const wxString OutputPane::REPLACE_IN_FILES = _("Replace");
 const wxString OutputPane::TASKS = _("Tasks");
 const wxString OutputPane::TRACE_TAB = _("Trace");
 const wxString OutputPane::SHOW_USAGE = _("References");
+const wxString OutputPane::CLANG_TAB = _("Clang");
 
 OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
@@ -119,6 +124,12 @@ void OutputPane::CreateGUIControls()
     m_book->AddPage(
         m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
 
+#if HAS_LIBCLANG
+    NewProjImgList images;
+    m_clangOutputTab = new ClangOutputTab(m_book);
+    m_book->AddPage(
+        m_clangOutputTab, wxGetTranslation(CLANG_TAB), false, images.Bitmap("clang16"));
+#endif
     wxTextCtrl* text = new wxTextCtrl(m_book,
                                       wxID_ANY,
                                       wxEmptyString,

@@ -314,6 +314,15 @@ NewProjImgList::NewProjImgList()
         m_bitmaps.insert( std::make_pair(wxT("cmake"), bmp ) );
     }
     
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("clang16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("clang16"), bmp ) );
+    }
+    
 }
 
 NewProjImgList::~NewProjImgList()
@@ -932,5 +941,100 @@ NewProjectWizardBase::~NewProjectWizardBase()
     m_textCtrlProjectPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectWizardBase::OnProjectPathUpdated), NULL, this);
     m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectWizardBase::OnBrowseProjectPath), NULL, this);
     m_cbSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectWizardBase::OnProjectNameChanged), NULL, this);
+    
+}
+
+ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer424 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer424);
+    
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer424->Add(m_auibar, 0, wxALL|wxEXPAND, 0);
+    
+    m_auibar->AddTool(ID_TOOL_CLEAR_LOG, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
+    
+    m_auibar->AddTool(ID_TOOL_CLEAR_ALL, _("Clear Clang Cache"), wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Clang Cache"), _("Clear Clang Cache"), NULL);
+    
+    m_auibar->AddStretchSpacer(1);
+    
+    m_auibar->AddLabel(wxID_ANY, _("Cache policy:"), -1);
+    
+    wxArrayString m_choiceCacheArr;
+    m_choiceCache = new wxChoice(m_auibar, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceCacheArr, 0);
+    m_auibar->AddControl(m_choiceCache);
+    m_auibar->Realize();
+    
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    m_stc->SetWrapMode(0);
+    m_stc->SetIndentationGuides(0);
+    m_stc->SetKeyWords(0, wxT(""));
+    m_stc->SetKeyWords(1, wxT(""));
+    m_stc->SetKeyWords(2, wxT(""));
+    m_stc->SetKeyWords(3, wxT(""));
+    m_stc->SetKeyWords(4, wxT(""));
+    
+    boxSizer424->Add(m_stc, 1, wxALL|wxEXPAND, 2);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    this->Connect(ID_TOOL_CLEAR_LOG, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearText), NULL, this);
+    this->Connect(ID_TOOL_CLEAR_LOG, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearTextUI), NULL, this);
+    this->Connect(ID_TOOL_CLEAR_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearCache), NULL, this);
+    this->Connect(ID_TOOL_CLEAR_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearCacheUI), NULL, this);
+    m_choiceCache->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ClangOutputTabBase::OnPolicy), NULL, this);
+    m_choiceCache->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnPolicyUI), NULL, this);
+    
+}
+
+ClangOutputTabBase::~ClangOutputTabBase()
+{
+    this->Disconnect(ID_TOOL_CLEAR_LOG, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearText), NULL, this);
+    this->Disconnect(ID_TOOL_CLEAR_LOG, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearTextUI), NULL, this);
+    this->Disconnect(ID_TOOL_CLEAR_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearCache), NULL, this);
+    this->Disconnect(ID_TOOL_CLEAR_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearCacheUI), NULL, this);
+    m_choiceCache->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ClangOutputTabBase::OnPolicy), NULL, this);
+    m_choiceCache->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnPolicyUI), NULL, this);
     
 }

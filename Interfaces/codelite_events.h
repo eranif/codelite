@@ -638,4 +638,13 @@
 // etc) only for editors (hence the name)
 #define wxEVT_BEFORE_EDITOR_SAVE 3702
 
+// Event: clCommandEvent
+// Sent when clang code completion encountered an error
+// use: event.GetString() to get the error message
+#define wxEVT_CLANG_CODE_COMPLETE_MESSAGE 3703
+
+/////////////////////////////////////////////////
+// NOTE: update this counter: Next event ID: 3704
+/////////////////////////////////////////////////
+
 #endif // CODELITE_EVENTS_H

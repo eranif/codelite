@@ -42,6 +42,7 @@
 #include "dvtemplatesmodel.h"
 #include <wx/stattext.h>
 #include <wx/checkbox.h>
+#include <wx/stc/stc.h>
 
 class NewProjectDlgBaseClass : public wxDialog
 {
@@ -219,10 +220,10 @@ class WorkspaceTabBase : public wxPanel
 {
 public:
     enum {
-        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 1001,
-        ID_TOOL_COLLAPSE_ALL = 1002,
-        ID_TOOL_GOTO_ACTIVE_PROJECT = 1003,
-        ID_TOOL_LINK_EDITOR = 1004,
+        ID_TOOL_ACTIVE_PROJECT_SETTINGS = 8001,
+        ID_TOOL_COLLAPSE_ALL = 8002,
+        ID_TOOL_GOTO_ACTIVE_PROJECT = 8003,
+        ID_TOOL_LINK_EDITOR = 8004,
     };
 protected:
     wxAuiToolBar* m_auibar;
@@ -308,6 +309,32 @@ public:
     NewProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project Wizard"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~NewProjectWizardBase();
+};
+
+
+class ClangOutputTabBase : public wxPanel
+{
+public:
+    enum {
+        ID_TOOL_CLEAR_ALL = 8001,
+        ID_TOOL_CLEAR_LOG = 8002,
+    };
+protected:
+    wxAuiToolBar* m_auibar;
+    wxChoice* m_choiceCache;
+    wxStyledTextCtrl* m_stc;
+
+protected:
+    virtual void OnClearText(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearTextUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClearCache(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearCacheUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnPolicy(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPolicyUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~ClangOutputTabBase();
 };
 
 #endif

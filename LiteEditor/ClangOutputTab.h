@@ -6,6 +6,7 @@
 class ClangOutputTab : public ClangOutputTabBase
 {
 protected:
+    virtual void OnEnableClang(wxCommandEvent& event);
     virtual void OnClearCache(wxCommandEvent& event);
     virtual void OnClearCacheUI(wxUpdateUIEvent& event);
     virtual void OnClearText(wxCommandEvent& event);

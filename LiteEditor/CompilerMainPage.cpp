@@ -917,3 +917,9 @@ void CompilerMainPage::OnValueChanged(wxPropertyGridEvent& event)
     event.Skip();
     m_isDirty = true;
 }
+
+void CompilerMainPage::OnCmdModify(wxCommandEvent& event)
+{
+    event.Skip();
+    m_isDirty = true;
+}

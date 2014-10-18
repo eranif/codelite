@@ -45,6 +45,7 @@ void ClangOutputTab::OnBuildStarted(clBuildEvent& event)
 void ClangOutputTab::OnClangOutput(clCommandEvent& event)
 {
     event.Skip();
+    DoClear();
     DoAppendText(event.GetString());
 }
 
@@ -77,19 +78,19 @@ void ClangOutputTab::OnPolicy(wxCommandEvent& event)
     TagsManagerST::Get()->SetCtagsOptions(clMainFrame::Get()->GetTagsOptions());
 }
 
-void ClangOutputTab::OnPolicyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(clMainFrame::Get()->GetTagsOptions().GetClangOptions() & CC_CLANG_ENABLED);
-}
+void ClangOutputTab::OnPolicyUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxEnableClang->IsChecked()); }
 
 void ClangOutputTab::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
-    int where = m_choiceCache->FindString(clMainFrame::Get()->GetTagsOptions().GetClangCachePolicy());
+    TagsOptionsData& options = clMainFrame::Get()->GetTagsOptions();
+    int where = m_choiceCache->FindString(options.GetClangCachePolicy());
     if(where != wxNOT_FOUND) {
         m_choiceCache->Select(where);
     }
+    m_checkBoxEnableClang->SetValue(options.GetClangOptions() & CC_CLANG_ENABLED);
 }
+
 void ClangOutputTab::OnClearCache(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -101,7 +102,7 @@ void ClangOutputTab::OnClearCache(wxCommandEvent& event)
 void ClangOutputTab::OnClearCacheUI(wxUpdateUIEvent& event)
 {
 #if HAS_LIBCLANG
-    event.Enable(!ClangCodeCompletion::Instance()->IsCacheEmpty());
+    event.Enable(!ClangCodeCompletion::Instance()->IsCacheEmpty() && m_checkBoxEnableClang->IsChecked());
 #else
     event.Enable(false);
 #endif
@@ -114,3 +115,17 @@ void ClangOutputTab::OnClearText(wxCommandEvent& event)
 }
 
 void ClangOutputTab::OnClearTextUI(wxUpdateUIEvent& event) { event.Enable(!m_stc->IsEmpty()); }
+void ClangOutputTab::OnEnableClang(wxCommandEvent& event)
+{
+    TagsOptionsData& options = clMainFrame::Get()->GetTagsOptions();
+    size_t clangOptions = options.GetClangOptions();
+    if(event.IsChecked()) {
+        clangOptions |= CC_CLANG_ENABLED;
+    } else {
+        clangOptions &= ~CC_CLANG_ENABLED;
+    }
+
+    // Apply the changes
+    options.SetClangOptions(clangOptions);
+    TagsManagerST::Get()->SetCtagsOptions(options);
+}

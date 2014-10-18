@@ -321,10 +321,12 @@ public:
     };
 protected:
     wxAuiToolBar* m_auibar;
+    wxCheckBox* m_checkBoxEnableClang;
     wxChoice* m_choiceCache;
     wxStyledTextCtrl* m_stc;
 
 protected:
+    virtual void OnEnableClang(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearTextUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClearCache(wxCommandEvent& event) { event.Skip(); }

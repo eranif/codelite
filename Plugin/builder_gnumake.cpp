@@ -1546,7 +1546,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString& project,
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
     wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
-    target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetName()
+    target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetFullName()
            << cmp->GetPreprocessSuffix();
 
     target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);

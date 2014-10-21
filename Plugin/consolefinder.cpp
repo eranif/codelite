@@ -147,7 +147,7 @@ wxString ConsoleFinder::GetConsoleName()
 #ifdef __WXMSW__
 	cmd = wxGetenv(wxT("COMSPEC"));
 	if ( cmd.IsEmpty() ) {
-		cmd = wxT("\\COMMAND.COM");
+		cmd = wxT("CMD.EXE");
 	}
 #else //non-windows
 	//try to locate the default terminal

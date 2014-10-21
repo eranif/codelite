@@ -402,7 +402,7 @@ bool ProcUtils::Shell(const wxString& programConsoleCommand)
 #ifdef __WXMSW__
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
     if(!shell) {
-        shell = (wxChar*)wxT("\\COMMAND.COM");
+        shell = (wxChar*)wxT("CMD.EXE");
     }
 
     // just the shell

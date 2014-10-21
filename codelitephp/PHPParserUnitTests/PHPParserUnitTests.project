@@ -54,6 +54,7 @@
     <File Name="Tests/test_interface.php"/>
     <File Name="Tests/test_abstract_class_with_self.php"/>
     <File Name="Tests/test_parent.php"/>
+    <File Name="Tests/test_locals.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

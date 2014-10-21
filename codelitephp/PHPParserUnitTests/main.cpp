@@ -8,9 +8,9 @@
 #include "tester.h"
 
 #ifdef __WXMSW__
-#   define SYMBOLS_DB_PATH "%TEMP%"
+#define SYMBOLS_DB_PATH "%TEMP%"
 #else
-#   define SYMBOLS_DB_PATH "/tmp" 
+#define SYMBOLS_DB_PATH "/tmp"
 #endif
 
 void PrintMatches(const PHPEntityBase::List_t& matches)
@@ -73,7 +73,7 @@ TEST_FUNC(test_use_alias_operator)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "use_real_name");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 1);
@@ -106,7 +106,7 @@ TEST_FUNC(test_long_chain)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "ClassRetVal1");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 3);
@@ -124,7 +124,7 @@ TEST_FUNC(test_parsing_abstract_class)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_parsing_abstract_class_impl");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 3);
@@ -142,7 +142,7 @@ TEST_FUNC(test_abstract_class_with_self)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_parsing_abstract_class_impl1");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_StartsWith | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 1);
@@ -164,7 +164,7 @@ TEST_FUNC(test_word_completion)
 
     CHECK_BOOL(resolved->GetShortName().IsEmpty());
     CHECK_WXSTRING(resolved->GetFullName(), "\\");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 2); // 2 matches
@@ -186,7 +186,7 @@ TEST_FUNC(test_word_completion_inside_ns)
     CHECK_BOOL(resolved);
 
     CHECK_WXSTRING(resolved->GetShortName(), "ns");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 1);
@@ -205,7 +205,7 @@ TEST_FUNC(test_class_members)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "ClassWithMembers");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 4);
@@ -224,7 +224,7 @@ TEST_FUNC(test_class_with_members_inside_namespace)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "MyClassWithMembers");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 4);
@@ -244,7 +244,7 @@ TEST_FUNC(test_variable_1)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_variable_1_return_value");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 3);
@@ -264,7 +264,7 @@ TEST_FUNC(test_variable_2)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_variable_2");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 5);
@@ -284,7 +284,7 @@ TEST_FUNC(test_variable_assigned_from_function)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_variable_assigned_from_function_return_value");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 1);
@@ -304,7 +304,7 @@ TEST_FUNC(test_global_variable_assigned_from_function)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_global_variable_assigned_from_function_return_value");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 1);
@@ -324,7 +324,7 @@ TEST_FUNC(test_interface)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_interface_impl");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 2);
@@ -332,8 +332,7 @@ TEST_FUNC(test_interface)
     return true;
 }
 
-// test instantiating a variable from a global function
-// The variable is used within a global function
+// test usage of the parent keyword
 TEST_FUNC(test_parent)
 {
     PHPSourceFile sourceFile(wxFileName("../Tests/test_parent.php"));
@@ -344,11 +343,40 @@ TEST_FUNC(test_parent)
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
     CHECK_WXSTRING(resolved->GetShortName(), "test_parent_subclass");
-    
+
     PHPEntityBase::List_t matches = lookup.FindChildren(
         resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
     CHECK_SIZE(matches.size(), 2);
     PrintMatches(matches);
+    return true;
+}
+
+// test code completion for local variables
+TEST_FUNC(test_locals)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_locals.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+
+    PHPEntityBase::List_t matches;
+    // If the current scope is a function
+    // add the local variables + function arguments to the current list of matches
+    PHPEntityBase::Ptr_t currentScope = sourceFile.CurrentScope();
+    if(currentScope && currentScope->Is(kEntityTypeFunction) && !expr.GetFilter().IsEmpty()) {
+        const PHPEntityBase::List_t& children = currentScope->GetChildren();
+        PHPEntityBase::List_t::const_iterator iter = children.begin();
+        for(; iter != children.end(); ++iter) {
+            PHPEntityBase::Ptr_t child = *iter;
+            if(child->Is(kEntityTypeVariable) && child->GetShortName().Contains(expr.GetFilter()) &&
+               child->GetShortName() != expr.GetFilter()) {
+                matches.push_back(child);
+            }
+        }
+    }
+    CHECK_SIZE(matches.size(), 3);
     return true;
 }
 

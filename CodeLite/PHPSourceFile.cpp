@@ -507,7 +507,7 @@ void PHPSourceFile::ParseFunctionBody()
             var->SetFilename(m_filename.GetFullPath());
             var->SetLine(token.lineNumber);
             CurrentScope()->AddChild(var);
-
+            
             // Peek at the next token
             if(!NextToken(token)) return; // EOF
             if(token.type != '=') {

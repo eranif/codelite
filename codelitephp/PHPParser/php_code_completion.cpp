@@ -169,8 +169,8 @@ void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
             wxString comment, docComment;
             docComment = userData->entry->GetDocComment();
             if(docComment.IsEmpty() == false) {
-                docComment.Trim().Trim(false); // The Doc comment
-                comment << docComment << wxT("\n<hr>");   // HLine
+                docComment.Trim().Trim(false);          // The Doc comment
+                comment << docComment << wxT("\n<hr>"); // HLine
             }
 
             wxFileName fn(userData->entry->GetFilename());
@@ -267,10 +267,29 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                     PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
                     PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
                     if(entity) {
-                        PHPEntityBase::List_t matches =
+                        PHPEntityBase::List_t matches;
+                        // If the current scope is a function
+                        // add the local variables + function arguments to the current list of matches
+                        PHPEntityBase::Ptr_t currentScope = expr->GetSourceFile()->CurrentScope();
+                        if(currentScope &&
+                           (currentScope->Is(kEntityTypeFunction) || currentScope->Is(kEntityTypeNamespace)) &&
+                           !expr->GetFilter().IsEmpty()) {
+                            const PHPEntityBase::List_t& children = currentScope->GetChildren();
+                            PHPEntityBase::List_t::const_iterator iter = children.begin();
+                            for(; iter != children.end(); ++iter) {
+                                PHPEntityBase::Ptr_t child = *iter;
+                                if(child->Is(kEntityTypeVariable) &&
+                                   child->GetShortName().Contains(expr->GetFilter()) &&
+                                   child->GetShortName() != expr->GetFilter()) {
+                                    matches.push_back(child);
+                                }
+                            }
+                        }
+                        PHPEntityBase::List_t scopeChildren =
                             m_lookupTable.FindChildren(entity->GetDbId(),
                                                        PHPLookupTable::kLookupFlags_Contains | expr->GetLookupFlags(),
                                                        expr->GetFilter());
+                        matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
                         if(!matches.empty()) {
                             // Show the code completion box
                             DoShowCompletionBox(matches, expr);
@@ -482,7 +501,7 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* edit
         resolved = expr.Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
         filter = expr.GetFilter();
     }
-    
+
     if(resolved && !filter.IsEmpty()) {
         resolved = m_lookupTable.FindMemberOf(resolved->GetDbId(), filter);
 

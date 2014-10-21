@@ -12,7 +12,7 @@ Code Completion / Code Generation
 
 Must:
 ======
-- 'parent' key word is not working
+- '[' ']' expression is not collected correctly after these chars
 - suggest global functions for all namespaces (json_encode etc..)
 - Use the PHP include paths to the global PHP settings (so it will include ZF etc)
 - word completion for local variables does not work

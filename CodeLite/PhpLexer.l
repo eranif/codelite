@@ -127,6 +127,7 @@ horizontal_white [ ]|{h_tab}
 <PHP>({v_tab}|{c_return}|{form_feed})+ {RETURN_WHITESPACE();}
 <PHP>"$this" {LEX_RETURN(kPHP_T_THIS);}
 <PHP>"self" {LEX_RETURN(kPHP_T_SELF);}
+<PHP>"parent" {LEX_RETURN(kPHP_T_PARENT);}
 <PHP>"$"{LABEL}             {LEX_RETURN(kPHP_T_VARIABLE);}
 <PHP>b?"<<<"{TABS_AND_SPACES}({LABEL}|([']{LABEL}['])|(["]{LABEL}["])){NEWLINE} {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;

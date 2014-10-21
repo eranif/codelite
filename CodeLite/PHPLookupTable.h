@@ -43,6 +43,8 @@ public:
         kLookupFlags_SelfStaticMembers = (1 << 7), // Current class static members only (self::)
         kLookupFlags_NameHintIsScope = (1 << 8),   // the namehint provided is of a class name. When enabled, the search
                                                    // will try to take "\" into consideration
+        kLookupFlags_Parent = (1 << 9),            // Exclude 'this' from the results and return only
+                                                   // its parents parent::
     };
 
     enum eUpdateMode {
@@ -59,7 +61,8 @@ private:
 
     void DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
                                    std::vector<wxLongLong>& parents,
-                                   std::set<wxLongLong>& parentsVisited);
+                                   std::set<wxLongLong>& parentsVisited,
+                                   bool excludeSelf);
 
     PHPEntityBase::Ptr_t DoFindScope(const wxString& fullname, ePhpScopeType scopeType = kPhpScopeTypeAny);
     PHPEntityBase::Ptr_t DoFindScope(wxLongLong id, ePhpScopeType scopeType = kPhpScopeTypeAny);
@@ -137,12 +140,12 @@ public:
      * @brief find a scope symbol (class or namespace) by its fullname
      */
     PHPEntityBase::Ptr_t FindScope(const wxString& fullname);
-    
+
     /**
      * @brief find a function by its fullname (scope+name)
      */
     PHPEntityBase::Ptr_t FindFunction(const wxString& fullname);
-    
+
     /**
      * @brief find a class with a given name
      */
@@ -156,7 +159,7 @@ public:
     /**
      * @brief find a member of parentDbId with name that matches 'exactName'
      */
-    PHPEntityBase::Ptr_t FindMemberOf(wxLongLong parentDbId, const wxString& exactName);
+    PHPEntityBase::Ptr_t FindMemberOf(wxLongLong parentDbId, const wxString& exactName, size_t flags = 0);
 
     /**
      * @brief find children of a scope by its database ID.

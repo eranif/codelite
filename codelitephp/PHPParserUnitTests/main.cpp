@@ -332,6 +332,26 @@ TEST_FUNC(test_interface)
     return true;
 }
 
+// test instantiating a variable from a global function
+// The variable is used within a global function
+TEST_FUNC(test_parent)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_parent.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    CHECK_WXSTRING(resolved->GetShortName(), "test_parent_subclass");
+    
+    PHPEntityBase::List_t matches = lookup.FindChildren(
+        resolved->GetDbId(), PHPLookupTable::kLookupFlags_Contains | expr.GetLookupFlags(), expr.GetFilter());
+    CHECK_SIZE(matches.size(), 2);
+    PrintMatches(matches);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
 #if 0

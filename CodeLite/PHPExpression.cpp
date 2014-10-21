@@ -106,10 +106,12 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case ':':
         case ',':
         case '!':
-            if(current) current->clear();
+            if(current)
+                current->clear();
             break;
         case '(':
-            if(current) current->push_back(token);
+            if(current)
+                current->push_back(token);
             stack.push(phpLexerToken::Vet_t());
             current = &stack.top();
             break;
@@ -121,10 +123,12 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
             // switch back to the previous set of tokens
             stack.pop();
             current = &stack.top();
-            if(current) current->push_back(token);
+            if(current)
+                current->push_back(token);
             break;
         default:
-            if(current) current->push_back(token);
+            if(current)
+                current->push_back(token);
             break;
         }
     }
@@ -150,7 +154,8 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
 PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
 {
-    if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
+    if(m_expression.empty())
+        return PHPEntityBase::Ptr_t(NULL);
 
     m_sourceFile.reset(new PHPSourceFile(m_text));
     m_sourceFile->SetParseFunctionBody(true);
@@ -208,7 +213,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
                 // Maybe its a global function..
                 currentToken = lookpTable.FindFunction(part.m_text);
             }
-            
+
         } else {
             // load the children of the current token (optionally, filter by the text)
             currentToken = lookpTable.FindMemberOf(currentToken->GetDbId(), part.m_text);
@@ -262,25 +267,35 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
     phpLexerToken token;
     wxString newExpr;
     wxString firstToken;
+    int firstTokenType = wxNOT_FOUND;
     for(size_t i = 0; i < m_expression.size(); ++i) {
         token = m_expression.at(i);
         if(i == 0) {
             // Perform basic replacements that we can conduct here without the need of the global
             // lookup table
-            if(token.type == kPHP_T_THIS) {
+            if(token.type == kPHP_T_PARENT) {
+                if(!innerClass)
+                    return "";
+                firstToken = innerClass->GetFullName();
+                firstTokenType = kPHP_T_PARENT;
+
+            } else if(token.type == kPHP_T_THIS) {
                 // the first token is $this
                 // replace it with the current class absolute path
-                if(!innerClass) return "";
+                if(!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_SELF) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass) return "";
+                if(!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass) return "";
+                if(!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_VARIABLE) {
@@ -366,6 +381,12 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 }
             }
 
+            if(m_parts.empty() && firstTokenType == kPHP_T_PARENT) {
+                // If the first token before the simplication was 'parent'
+                // keyword, we need to carry this over
+                part.m_textType = kPHP_T_PARENT;
+            }
+
             part.m_operator = token.type;
             part.m_operatorText = token.text;
             m_parts.push_back(part);
@@ -412,14 +433,22 @@ wxString PHPExpression::GetExpressionAsString() const
 size_t PHPExpression::GetLookupFlags() const
 {
     size_t flags(0);
-    if(m_parts.empty()) return flags;
+    if(m_parts.empty())
+        return flags;
 
-    Part lastExpressionPart = m_parts.back();
-    if(lastExpressionPart.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
-        if(lastExpressionPart.m_textType == kPHP_T_SELF)
-            flags |= PHPLookupTable::kLookupFlags_SelfStaticMembers;
-        else
-            flags |= PHPLookupTable::kLookupFlags_StaticMembers;
+    if(m_parts.size() == 1 && m_parts.back().m_textType == kPHP_T_PARENT) {
+        Part firstPart = m_parts.back();
+        if(firstPart.m_textType == kPHP_T_PARENT) {
+            flags |= PHPLookupTable::kLookupFlags_Parent;
+        }
+    } else {
+        Part lastExpressionPart = m_parts.back();
+        if(lastExpressionPart.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
+            if(lastExpressionPart.m_textType == kPHP_T_SELF)
+                flags |= PHPLookupTable::kLookupFlags_SelfStaticMembers;
+            else
+                flags |= PHPLookupTable::kLookupFlags_StaticMembers;
+        }
     }
     return flags;
 }

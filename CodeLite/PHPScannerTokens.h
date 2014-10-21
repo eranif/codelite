@@ -57,6 +57,7 @@ enum {
     kPHP_T_STRING_VARNAME,
     kPHP_T_VARIABLE,
     kPHP_T_THIS,
+    kPHP_T_PARENT,
     kPHP_T_SELF,
     kPHP_T_NUM_STRING,
     kPHP_T_INLINE_HTML,

@@ -110,12 +110,14 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
                 current->clear();
             break;
         case '(':
+        case '[':
             if(current)
                 current->push_back(token);
             stack.push(phpLexerToken::Vet_t());
             current = &stack.top();
             break;
         case ')':
+        case ']':
             if(stack.size() < 2) {
                 // parse error...
                 return phpLexerToken::Vet_t();

@@ -430,7 +430,7 @@ WXDLLIMPEXP_SDK IProcess* LaunchTerminal(const wxString& title, bool forDebugger
 /**
  * @brief launch terminal for debugging purposes and return its TTY. This function does nothing under Windows
  */
-WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& tty, long& pid);
+WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid);
 
 /**
  * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"

@@ -1704,11 +1704,12 @@ static bool search_process_by_command(const wxString& name, wxString& tty, long&
 }
 #endif
 
-void LaunchTerminalForDebugger(const wxString& title, wxString& tty, long& pid)
+void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid)
 {
     pid = wxNOT_FOUND;
     tty.Clear();
-
+    realPts.Clear();
+    
 #ifdef __WXMSW__
     // Windows
     wxUnusedVar(title);
@@ -1752,6 +1753,10 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, long& pid)
 #ifdef __WXGTK__
             // On GTK, redirection to TTY does not work with lldb
             // as a workaround, we create a symlink with different name
+            
+            // Keep the real tty
+            realPts = tty;
+            
             wxString symlinkName = tty;
             symlinkName.Replace("/dev/pts/", "/tmp/pts");
             wxString lnCommand;

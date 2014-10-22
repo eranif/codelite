@@ -50,25 +50,23 @@ public:
 
     enum CmpFileKind { CmpFileKindSource, CmpFileKindResource };
 
-    struct CmpFileTypeInfo
-    {
+    struct CmpFileTypeInfo {
         wxString extension;
         wxString compilation_line;
         CmpFileKind kind;
     };
 
-    struct CmpCmdLineOption
-    {
+    struct CmpCmdLineOption {
         wxString name;
         wxString help;
     };
     typedef std::map<wxString, CmpCmdLineOption> CmpCmdLineOptions;
 
-    struct CmpInfoPattern
-    {
+    struct CmpInfoPattern {
         wxString pattern;
         wxString lineNumberIndex;
         wxString fileNameIndex;
+        wxString columnIndex;
     };
 
     enum eRegexType { kRegexVC = 0, kRegexGNU };
@@ -76,7 +74,8 @@ public:
 
 private:
     void AddCmpFileType(const wxString& extension, CmpFileKind type, const wxString& compile_line);
-    void AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex);
+    void
+    AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex, int colIndex = wxNOT_FOUND);
     void AddDefaultGnuComplierOptions();
     void AddDefaultGnuLinkerOptions();
 
@@ -102,6 +101,7 @@ protected:
     bool m_isDefault;
     wxString m_installationPath;
     wxArrayString m_compilerBuiltinDefinitions;
+
 private:
     wxString GetGCCVersion() const;
     wxString GetIncludePath(const wxString& pathSuffix) const;
@@ -127,131 +127,53 @@ public:
     void SetTool(const wxString& toolname, const wxString& cmd);
     void SetSwitch(const wxString& switchName, const wxString& switchValue);
 
-    void SetInstallationPath(const wxString& installationPath)
-    {
-        this->m_installationPath = installationPath;
-    }
-    const wxString& GetInstallationPath() const
-    {
-        return m_installationPath;
-    }
-    void SetCompilerFamily(const wxString& compilerFamily)
-    {
-        this->m_compilerFamily = compilerFamily;
-    }
-    void SetIsDefault(bool isDefault)
-    {
-        this->m_isDefault = isDefault;
-    }
-    const wxString& GetCompilerFamily() const
-    {
-        return m_compilerFamily;
-    }
-    bool IsDefault() const
-    {
-        return m_isDefault;
-    }
+    void SetInstallationPath(const wxString& installationPath) { this->m_installationPath = installationPath; }
+    const wxString& GetInstallationPath() const { return m_installationPath; }
+    void SetCompilerFamily(const wxString& compilerFamily) { this->m_compilerFamily = compilerFamily; }
+    void SetIsDefault(bool isDefault) { this->m_isDefault = isDefault; }
+    const wxString& GetCompilerFamily() const { return m_compilerFamily; }
+    bool IsDefault() const { return m_isDefault; }
     // iteration over switches
-    Compiler::ConstIterator SwitchesBegin() const
-    {
-        return m_switches.begin();
-    }
-    Compiler::ConstIterator SwitchesEnd() const
-    {
-        return m_switches.end();
-    }
+    Compiler::ConstIterator SwitchesBegin() const { return m_switches.begin(); }
+    Compiler::ConstIterator SwitchesEnd() const { return m_switches.end(); }
 
     void AddCompilerOption(const wxString& name, const wxString& desc);
     void AddLinkerOption(const wxString& name, const wxString& desc);
-    
+
     /**
      * @brief return list of builtin macros for this compiler instance
-     * @return 
+     * @return
      */
     const wxArrayString& GetBuiltinMacros();
-    
+
     //---------------------------------------------------
     // setters/getters
     //---------------------------------------------------
     wxString GetTool(const wxString& name) const;
     wxString GetSwitch(const wxString& name) const;
 
-    const wxString& GetObjectSuffix() const
-    {
-        return m_objectSuffix;
-    }
-    void SetObjectSuffix(const wxString& suffix)
-    {
-        m_objectSuffix = suffix;
-    }
-    const wxString& GetDependSuffix() const
-    {
-        return m_dependSuffix;
-    }
-    void SetDependSuffix(const wxString& suffix)
-    {
-        m_dependSuffix = suffix;
-    }
-    const wxString& GetPreprocessSuffix() const
-    {
-        return m_preprocessSuffix;
-    }
-    void SetPreprocessSuffix(const wxString& suffix)
-    {
-        m_preprocessSuffix = suffix;
-    }
+    const wxString& GetObjectSuffix() const { return m_objectSuffix; }
+    void SetObjectSuffix(const wxString& suffix) { m_objectSuffix = suffix; }
+    const wxString& GetDependSuffix() const { return m_dependSuffix; }
+    void SetDependSuffix(const wxString& suffix) { m_dependSuffix = suffix; }
+    const wxString& GetPreprocessSuffix() const { return m_preprocessSuffix; }
+    void SetPreprocessSuffix(const wxString& suffix) { m_preprocessSuffix = suffix; }
 
-    void SetName(const wxString& name)
-    {
-        m_name = name;
-    }
-    const wxString& GetName() const
-    {
-        return m_name;
-    }
-    const CmpListInfoPattern& GetErrPatterns() const
-    {
-        return m_errorPatterns;
-    }
-    const CmpListInfoPattern& GetWarnPatterns() const
-    {
-        return m_warningPatterns;
-    }
+    void SetName(const wxString& name) { m_name = name; }
+    const wxString& GetName() const { return m_name; }
+    const CmpListInfoPattern& GetErrPatterns() const { return m_errorPatterns; }
+    const CmpListInfoPattern& GetWarnPatterns() const { return m_warningPatterns; }
 
-    void SetErrPatterns(const CmpListInfoPattern& p)
-    {
-        m_errorPatterns = p;
-    }
-    void SetWarnPatterns(const CmpListInfoPattern& p)
-    {
-        m_warningPatterns = p;
-    }
+    void SetErrPatterns(const CmpListInfoPattern& p) { m_errorPatterns = p; }
+    void SetWarnPatterns(const CmpListInfoPattern& p) { m_warningPatterns = p; }
 
-    void SetGlobalIncludePath(const wxString& globalIncludePath)
-    {
-        this->m_globalIncludePath = globalIncludePath;
-    }
-    void SetGlobalLibPath(const wxString& globalLibPath)
-    {
-        this->m_globalLibPath = globalLibPath;
-    }
-    const wxString& GetGlobalIncludePath() const
-    {
-        return m_globalIncludePath;
-    }
-    const wxString& GetGlobalLibPath() const
-    {
-        return m_globalLibPath;
-    }
+    void SetGlobalIncludePath(const wxString& globalIncludePath) { this->m_globalIncludePath = globalIncludePath; }
+    void SetGlobalLibPath(const wxString& globalLibPath) { this->m_globalLibPath = globalLibPath; }
+    const wxString& GetGlobalIncludePath() const { return m_globalIncludePath; }
+    const wxString& GetGlobalLibPath() const { return m_globalLibPath; }
 
-    void SetPathVariable(const wxString& pathVariable)
-    {
-        this->m_pathVariable = pathVariable;
-    }
-    const wxString& GetPathVariable() const
-    {
-        return m_pathVariable;
-    }
+    void SetPathVariable(const wxString& pathVariable) { this->m_pathVariable = pathVariable; }
+    const wxString& GetPathVariable() const { return m_pathVariable; }
 
     void SetFileTypes(const std::map<wxString, Compiler::CmpFileTypeInfo>& fileTypes)
     {
@@ -259,56 +181,32 @@ public:
         this->m_fileTypes = fileTypes;
     }
 
-    const std::map<wxString, Compiler::CmpFileTypeInfo>& GetFileTypes() const
-    {
-        return m_fileTypes;
-    }
+    const std::map<wxString, Compiler::CmpFileTypeInfo>& GetFileTypes() const { return m_fileTypes; }
 
-    const CmpCmdLineOptions& GetCompilerOptions() const
-    {
-        return m_compilerOptions;
-    }
+    const CmpCmdLineOptions& GetCompilerOptions() const { return m_compilerOptions; }
 
-    void SetCompilerOptions(const CmpCmdLineOptions& cmpOptions)
-    {
-        m_compilerOptions = cmpOptions;
-    }
+    void SetCompilerOptions(const CmpCmdLineOptions& cmpOptions) { m_compilerOptions = cmpOptions; }
 
-    const CmpCmdLineOptions& GetLinkerOptions() const
-    {
-        return m_linkerOptions;
-    }
+    const CmpCmdLineOptions& GetLinkerOptions() const { return m_linkerOptions; }
 
-    void SetLinkerOptions(const CmpCmdLineOptions& cmpOptions)
-    {
-        m_linkerOptions = cmpOptions;
-    }
+    void SetLinkerOptions(const CmpCmdLineOptions& cmpOptions) { m_linkerOptions = cmpOptions; }
 
     void SetGenerateDependeciesFile(const bool& generateDependeciesFile)
     {
         this->m_generateDependeciesFile = generateDependeciesFile;
     }
-    const bool& GetGenerateDependeciesFile() const
-    {
-        return m_generateDependeciesFile;
-    }
+    const bool& GetGenerateDependeciesFile() const { return m_generateDependeciesFile; }
     void SetReadObjectFilesFromList(bool readObjectFilesFromList)
     {
         this->m_readObjectFilesFromList = readObjectFilesFromList;
     }
-    bool GetReadObjectFilesFromList() const
-    {
-        return m_readObjectFilesFromList;
-    }
+    bool GetReadObjectFilesFromList() const { return m_readObjectFilesFromList; }
     bool GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo& ft);
     void SetObjectNameIdenticalToFileName(bool objectNameIdenticalToFileName)
     {
         this->m_objectNameIdenticalToFileName = objectNameIdenticalToFileName;
     }
-    bool GetObjectNameIdenticalToFileName() const
-    {
-        return m_objectNameIdenticalToFileName;
-    }
+    bool GetObjectNameIdenticalToFileName() const { return m_objectNameIdenticalToFileName; }
 };
 
 typedef SmartPtr<Compiler> CompilerPtr;

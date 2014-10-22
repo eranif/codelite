@@ -51,6 +51,7 @@ class BuildLineInfo
 protected:
     wxString m_filename;
     int m_line_number;
+    int m_column;
     LINE_SEVERITY m_severity;
     int m_lineInBuildTab;
     int m_regexLineMatch;
@@ -58,6 +59,7 @@ protected:
 public:
     BuildLineInfo()
         : m_line_number(-1)
+        , m_column(wxNOT_FOUND)
         , m_severity(SV_NONE)
         , m_lineInBuildTab(-1)
         , m_regexLineMatch(0)
@@ -70,6 +72,8 @@ public:
      */
     void NormalizeFilename(const wxArrayString& directories, const wxString& cygwinPath);
 
+    void SetColumn(int column) { this->m_column = column; }
+    int GetColumn() const { return m_column; }
     void SetRegexLineMatch(int regexLineMatch) { this->m_regexLineMatch = regexLineMatch; }
     int GetRegexLineMatch() const { return m_regexLineMatch; }
     void SetFilename(const wxString& filename);
@@ -90,24 +94,20 @@ protected:
     wxRegEx* m_regex;
     wxString m_fileIndex;
     wxString m_lineIndex;
+    wxString m_colIndex;
     LINE_SEVERITY m_severity;
 
 public:
-    CmpPattern(wxRegEx* re, const wxString& file, const wxString& line, LINE_SEVERITY severity)
+    CmpPattern(wxRegEx* re, const wxString& file, const wxString& line, const wxString& column, LINE_SEVERITY severity)
         : m_regex(re)
         , m_fileIndex(file)
         , m_lineIndex(line)
+        , m_colIndex(column)
         , m_severity(severity)
     {
     }
 
-    ~CmpPattern()
-    {
-        if(m_regex) {
-            delete m_regex;
-            m_regex = NULL;
-        }
-    }
+    ~CmpPattern() { wxDELETE(m_regex); }
 
     /**
      * @brief return true if "line" matches this pattern
@@ -121,6 +121,8 @@ public:
     void SetSeverity(LINE_SEVERITY severity) { this->m_severity = severity; }
     const wxString& GetFileIndex() const { return m_fileIndex; }
     const wxString& GetLineIndex() const { return m_lineIndex; }
+    void SetColIndex(const wxString& colIndex) { this->m_colIndex = colIndex; }
+    const wxString& GetColIndex() const { return m_colIndex; }
     wxRegEx* GetRegex() { return m_regex; }
     LINE_SEVERITY GetSeverity() const { return m_severity; }
 };
@@ -128,8 +130,7 @@ typedef SmartPtr<CmpPattern> CmpPatternPtr;
 
 //////////////////////////////////////////////////////////////////
 
-struct CmpPatterns
-{
+struct CmpPatterns {
     std::vector<CmpPatternPtr> errorsPatterns;
     std::vector<CmpPatternPtr> warningPatterns;
 };
@@ -194,8 +195,8 @@ public:
     void Clear() { DoClear(); }
 
     wxString GetBuildContent() const;
-    void AppendLine(const wxString &text);
-    
+    void AppendLine(const wxString& text);
+
 protected:
     void OnBuildStarted(clCommandEvent& e);
     void OnBuildEnded(clCommandEvent& e);

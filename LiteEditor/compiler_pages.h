@@ -58,15 +58,17 @@ protected:
     wxTextCtrl* m_textFileIndex;
     wxStaticText* m_staticText7;
     wxTextCtrl* m_textLineNumber;
-    wxStaticLine* m_staticline5;
-    wxButton* m_buttonOK;
-    wxButton* m_buttonCancel;
+    wxStaticText* m_staticText235;
+    wxTextCtrl* m_textColumn;
+    wxStdDialogButtonSizer* m_stdBtnSizer229;
+    wxButton* m_button231;
+    wxButton* m_button233;
 
 protected:
     virtual void OnSubmit(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    CompilerPatternDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CompilerPatternDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CompilerPatternDlgBase();
 };
 

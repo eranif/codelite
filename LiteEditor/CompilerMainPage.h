@@ -38,49 +38,45 @@ public:
     CompilerPatternDlg(wxWindow* parent, const wxString& title);
     virtual ~CompilerPatternDlg();
 
-    void SetPattern(const wxString& pattern, const wxString& lineIdx, const wxString& fileIdx);
+    void
+    SetPattern(const wxString& pattern, const wxString& lineIdx, const wxString& fileIdx, const wxString& columnIndex);
 
 protected:
-    virtual void OnSubmit( wxCommandEvent& event );
+    virtual void OnSubmit(wxCommandEvent& event);
 
 public:
-    wxString GetPattern() const {
-        return m_textPattern->GetValue();
-    }
-
-    wxString GetFileIndex() const {
-        return m_textFileIndex->GetValue();
-    }
-
-    wxString GetLineIndex() const {
-        return m_textLineNumber->GetValue();
-    }
+    wxString GetPattern() const { return m_textPattern->GetValue(); }
+    wxString GetFileIndex() const { return m_textFileIndex->GetValue(); }
+    wxString GetLineIndex() const { return m_textLineNumber->GetValue(); }
+    wxString GetColumnIndex() const { return m_textColumn->GetValue(); }
 };
 
 /** Implementing CompilerOptionDlgBase */
 class CompilerOptionDialog : public CompilerOptionDlgBase
 {
 public:
-    CompilerOptionDialog(wxWindow* parent, const wxString& title, const wxString& name, const wxString& help, wxWindowID id = wxID_ANY)
-        : CompilerOptionDlgBase(parent, id, title) {
+    CompilerOptionDialog(wxWindow* parent,
+                         const wxString& title,
+                         const wxString& name,
+                         const wxString& help,
+                         wxWindowID id = wxID_ANY)
+        : CompilerOptionDlgBase(parent, id, title)
+    {
         m_textCtrl18->ChangeValue(name);
         m_textCtrl19->ChangeValue(help);
     }
 
-    wxString GetName() const {
-        return m_textCtrl18->GetValue();
-    }
+    wxString GetName() const { return m_textCtrl18->GetValue(); }
 
-    wxString GetHelp() const {
-        return m_textCtrl19->GetValue();
-    }
+    wxString GetHelp() const { return m_textCtrl19->GetValue(); }
 };
 
 class CompilerCompilerOptionDialog : public CompilerOptionDialog
 {
 public:
     CompilerCompilerOptionDialog(wxWindow* parent, const wxString& name, const wxString& help)
-        : CompilerOptionDialog(parent, _("Compiler option"), name, help) {
+        : CompilerOptionDialog(parent, _("Compiler option"), name, help)
+    {
     }
 };
 
@@ -88,7 +84,8 @@ class CompilerLinkerOptionDialog : public CompilerOptionDialog
 {
 public:
     CompilerLinkerOptionDialog(wxWindow* parent, const wxString& name, const wxString& help)
-        : CompilerOptionDialog(parent, _("Linker option"), name, help) {
+        : CompilerOptionDialog(parent, _("Linker option"), name, help)
+    {
     }
 };
 
@@ -100,7 +97,7 @@ class CompilerMainPage : public CompilerMainPageBase
 {
     bool m_isDirty;
     CompilerPtr m_compiler;
-    wxString m_selSwitchName ;
+    wxString m_selSwitchName;
     wxString m_selSwitchValue;
     long m_selectedFileType;
     long m_selectedCmpOption;
@@ -109,13 +106,13 @@ class CompilerMainPage : public CompilerMainPageBase
 protected:
     virtual void OnCmdModify(wxCommandEvent& event);
     virtual void OnValueChanged(wxPropertyGridEvent& event);
-    virtual void OnRenameCompiler(wxCommandEvent &event);
-    virtual void OnDeleteCompiler(wxCommandEvent &event);
+    virtual void OnRenameCompiler(wxCommandEvent& event);
+    virtual void OnDeleteCompiler(wxCommandEvent& event);
     virtual void OnContextMenu(wxContextMenuEvent& event);
     virtual void OnAddCompilers(wxCommandEvent& event);
     virtual void OnCompilerSelected(wxCommandEvent& event);
     void Initialize();
-    
+
     // Tools
     void InitializeTools();
     void SaveTools();
@@ -127,7 +124,7 @@ protected:
     void DoUpdateWarnPattern(long item);
 
     // Compiler Switches
-    void AddSwitch(const wxString &name, const wxString &value, bool choose);
+    void AddSwitch(const wxString& name, const wxString& value, bool choose);
     void EditSwitch();
     void SaveSwitches();
     void InitializeSwitches();
@@ -148,17 +145,16 @@ protected:
     void InitializeLinkerOptions();
     void SaveLinkerOptions();
 
-    void LoadCompiler(const wxString &compilerName);
+    void LoadCompiler(const wxString& compilerName);
 
 public:
     CompilerMainPage(wxWindow* parent);
     virtual ~CompilerMainPage();
     void LoadCompilers();
     void Save();
-    
-    bool IsDirty() const {
-        return m_isDirty;
-    }
+
+    bool IsDirty() const { return m_isDirty; }
+
 protected:
     virtual void OnBtnAddErrPattern(wxCommandEvent& event);
     virtual void OnBtnAddWarnPattern(wxCommandEvent& event);

@@ -110,6 +110,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     fgSizer41->Add(m_staticText5, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textPattern = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textPattern->SetToolTip(_("Compiler regular expression"));
     #if wxVERSION_NUMBER >= 3000
     m_textPattern->SetHint(wxT(""));
     #endif
@@ -121,6 +122,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     fgSizer41->Add(m_staticText6, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textFileIndex = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textFileIndex->SetToolTip(_("The capture index in the regex that holds the file path"));
     #if wxVERSION_NUMBER >= 3000
     m_textFileIndex->SetHint(wxT(""));
     #endif
@@ -132,44 +134,52 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     fgSizer41->Add(m_staticText7, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textLineNumber = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textLineNumber->SetToolTip(_("The capture index in the regex that holds the line number"));
     #if wxVERSION_NUMBER >= 3000
     m_textLineNumber->SetHint(wxT(""));
     #endif
     
     fgSizer41->Add(m_textLineNumber, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText235 = new wxStaticText(this, wxID_ANY, _("Column Index in Pattern:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer41->Add(m_staticText235, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textColumn = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textColumn->SetToolTip(_("The capture index in the regex that holds the column number"));
+    #if wxVERSION_NUMBER >= 3000
+    m_textColumn->SetHint(wxT(""));
+    #endif
+    
+    fgSizer41->Add(m_textColumn, 0, wxALL|wxEXPAND, 5);
+    
     bSizerError->Add(0, 0, 1, wxEXPAND, 5);
     
-    m_staticline5 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
+    m_stdBtnSizer229 = new wxStdDialogButtonSizer();
     
-    bSizerError->Add(m_staticline5, 0, wxALL|wxEXPAND, 5);
+    bSizerError->Add(m_stdBtnSizer229, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    wxBoxSizer* bSizer24 = new wxBoxSizer(wxHORIZONTAL);
+    m_button231 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button231->SetDefault();
+    m_stdBtnSizer229->AddButton(m_button231);
     
-    bSizerError->Add(bSizer24, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    m_button233 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer229->AddButton(m_button233);
+    m_stdBtnSizer229->Realize();
     
-    m_buttonOK = new wxButton(this, wxID_ANY, _("OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOK->SetDefault();
-    
-    bSizer24->Add(m_buttonOK, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer24->Add(m_buttonCancel, 0, wxALL, 5);
-    
-    SetSizeHints(-1,-1);
+    SetSizeHints(500,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre();
     // Connect events
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
+    m_button231->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
     
 }
 
 CompilerPatternDlgBase::~CompilerPatternDlgBase()
 {
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
+    m_button231->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
     
 }
 

@@ -131,6 +131,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
                     CmpInfoPattern errPattern;
                     errPattern.fileNameIndex = XmlUtils::ReadString(child, wxT("FileNameIndex"));
                     errPattern.lineNumberIndex = XmlUtils::ReadString(child, wxT("LineNumberIndex"));
+                    errPattern.columnIndex = XmlUtils::ReadString(child, "ColumnIndex", "-1");
                     errPattern.pattern = child->GetNodeContent();
                     m_errorPatterns.push_back(errPattern);
                 } else if(XmlUtils::ReadString(child, wxT("Name")) == wxT("Warning")) {
@@ -138,6 +139,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
                     CmpInfoPattern warnPattern;
                     warnPattern.fileNameIndex = XmlUtils::ReadString(child, wxT("FileNameIndex"));
                     warnPattern.lineNumberIndex = XmlUtils::ReadString(child, wxT("LineNumberIndex"));
+                    warnPattern.columnIndex = XmlUtils::ReadString(child, "ColumnIndex", "-1");
                     warnPattern.pattern = child->GetNodeContent();
                     m_warningPatterns.push_back(warnPattern);
                 }
@@ -224,34 +226,43 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal "
                        "error)|(error)|(undefined reference))",
                        1,
-                       3);
+                       3,
+                       4);
             AddPattern(eErrorPattern,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
                        "*)(:)(\\(\\.text\\+[0-9a-fx]*\\))",
                        3,
-                       1);
+                       1,
+                       -1);
             AddPattern(eErrorPattern,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
                        "*)(:)([0-9]+)(:)",
                        3,
-                       1);
-            AddPattern(eErrorPattern, "undefined reference to", -1, -1);
-            AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1);
+                       1,
+                       -1);
+            AddPattern(eErrorPattern, "undefined reference to", -1, -1, -1);
+            AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
 
             AddPattern(eWarningPattern,
                        "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)",
                        1,
-                       3);
-            AddPattern(
-                eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)", 1, 3);
+                       3,
+                       4);
+            AddPattern(eWarningPattern,
+                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)",
+                       1,
+                       3,
+                       -1);
             AddPattern(eWarningPattern,
                        "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)",
                        1,
-                       3);
+                       3,
+                       -1);
             AddPattern(eWarningPattern,
                        "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?",
                        2,
-                       4);
+                       4,
+                       -1);
 
             AddDefaultGnuComplierOptions();
             AddDefaultGnuLinkerOptions();
@@ -362,9 +373,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
     }
 }
 
-Compiler::~Compiler()
-{
-}
+Compiler::~Compiler() {}
 
 wxXmlNode* Compiler::ToXml() const
 {
@@ -429,18 +438,20 @@ wxXmlNode* Compiler::ToXml() const
     CmpListInfoPattern::const_iterator itPattern;
     for(itPattern = m_errorPatterns.begin(); itPattern != m_errorPatterns.end(); ++itPattern) {
         wxXmlNode* error = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Pattern"));
-        error->AddProperty(wxT("Name"), wxT("Error"));
-        error->AddProperty(wxT("FileNameIndex"), itPattern->fileNameIndex);
-        error->AddProperty(wxT("LineNumberIndex"), itPattern->lineNumberIndex);
+        error->AddAttribute(wxT("Name"), wxT("Error"));
+        error->AddAttribute(wxT("FileNameIndex"), itPattern->fileNameIndex);
+        error->AddAttribute(wxT("LineNumberIndex"), itPattern->lineNumberIndex);
+        error->AddAttribute(wxT("ColumnIndex"), itPattern->columnIndex);
         XmlUtils::SetNodeContent(error, itPattern->pattern);
         node->AddChild(error);
     }
 
     for(itPattern = m_warningPatterns.begin(); itPattern != m_warningPatterns.end(); ++itPattern) {
         wxXmlNode* warning = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Pattern"));
-        warning->AddProperty(wxT("Name"), wxT("Warning"));
-        warning->AddProperty(wxT("FileNameIndex"), itPattern->fileNameIndex);
-        warning->AddProperty(wxT("LineNumberIndex"), itPattern->lineNumberIndex);
+        warning->AddAttribute(wxT("Name"), wxT("Warning"));
+        warning->AddAttribute(wxT("FileNameIndex"), itPattern->fileNameIndex);
+        warning->AddAttribute(wxT("LineNumberIndex"), itPattern->lineNumberIndex);
+        warning->AddAttribute(wxT("ColumnIndex"), itPattern->columnIndex);
         XmlUtils::SetNodeContent(warning, itPattern->pattern);
         node->AddChild(warning);
     }
@@ -538,12 +549,13 @@ void Compiler::SetSwitch(const wxString& switchName, const wxString& switchValue
     m_switches.insert(std::make_pair(switchName, switchValue));
 }
 
-void Compiler::AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex)
+void Compiler::AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex, int colIndex)
 {
     CmpInfoPattern pt;
     pt.pattern = pattern;
     pt.fileNameIndex = wxString::Format("%d", (int)fileNameIndex);
     pt.lineNumberIndex = wxString::Format("%d", (int)lineNumberIndex);
+    pt.columnIndex = wxString::Format("%d", colIndex);
     if(type == eErrorPattern) {
         m_errorPatterns.push_back(pt);
 
@@ -716,7 +728,7 @@ const wxArrayString& Compiler::GetBuiltinMacros()
     if(!m_compilerBuiltinDefinitions.IsEmpty()) {
         return m_compilerBuiltinDefinitions;
     }
-    
+
     wxArrayString definitions;
     // Command example: "echo | clang -dM -E - > /tmp/pp"
     if(GetCompilerFamily() == COMPILER_FAMILY_CLANG || GetCompilerFamily() == COMPILER_FAMILY_GCC ||
@@ -729,8 +741,8 @@ const wxArrayString& Compiler::GetBuiltinMacros()
         ::WrapWithQuotes(tmpFile);
         command << tmpFile;
         ::WrapInShell(command);
-        //CL_SYSTEM(command);
-        
+        // CL_SYSTEM(command);
+
         ProcUtils::SafeExecuteCommand(command);
         wxFileName cmpMacrosFile(tmpFile);
         if(cmpMacrosFile.Exists()) {
@@ -745,7 +757,7 @@ const wxArrayString& Compiler::GetBuiltinMacros()
             for(size_t i = 0; i < definitions.GetCount(); ++i) {
                 CL_DEBUG("BUILTIN: %s\n", definitions.Item(i));
             }
-            
+
             {
                 // Delete the file
                 wxLogNull n;

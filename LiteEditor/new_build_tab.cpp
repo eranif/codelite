@@ -176,13 +176,11 @@ public:
 
         } else if(str.StartsWith(wxT("----"))) {
             f.SetStyle(wxFONTSTYLE_ITALIC);
-            if(!isSelected)
-                dc->SetTextForeground(m_greyColor);
+            if(!isSelected) dc->SetTextForeground(m_greyColor);
 
         } else if(str.Contains(wxT("Entering directory")) || str.Contains(wxT("Leaving directory"))) {
             f.SetStyle(wxFONTSTYLE_ITALIC);
-            if(!isSelected)
-                dc->SetTextForeground(m_greyColor);
+            if(!isSelected) dc->SetTextForeground(m_greyColor);
         }
 
         if(str.StartsWith(SUMMARY_MARKER_ERROR, &str)) {
@@ -228,8 +226,7 @@ public:
 
 //////////////////////////////////////////////////////////////
 
-struct AnnotationInfo
-{
+struct AnnotationInfo {
     int line;
     LINE_SEVERITY severity;
     wxString text;
@@ -437,8 +434,7 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
 
     wxWindow* win(NULL);
     size_t sel = opane->GetNotebook()->GetSelection();
-    if(sel != Notebook::npos)
-        win = opane->GetNotebook()->GetPage(sel);
+    if(sel != Notebook::npos) win = opane->GetNotebook()->GetPage(sel);
 
     if(m_showMe == BuildTabSettingsData::ShowOnStart) {
         ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN, true);
@@ -515,7 +511,7 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
                 buildLineInfo->SetLineNumber(bli.GetLineNumber());
                 buildLineInfo->NormalizeFilename(m_directories, m_cygwinRoot);
                 buildLineInfo->SetRegexLineMatch(bli.GetRegexLineMatch());
-
+                buildLineInfo->SetColumn(bli.GetColumn());
                 // keep this info in the errors+warnings list only
                 m_errorsAndWarningsList.push_back(buildLineInfo);
 
@@ -534,6 +530,7 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
                     buildLineInfo->SetLineNumber(bli.GetLineNumber());
                     buildLineInfo->NormalizeFilename(m_directories, m_cygwinRoot);
                     buildLineInfo->SetRegexLineMatch(bli.GetRegexLineMatch());
+                    buildLineInfo->SetColumn(bli.GetColumn());
 
                     // keep this info in both lists (errors+warnings AND errors)
                     m_errorsAndWarningsList.push_back(buildLineInfo);
@@ -561,8 +558,8 @@ void NewBuildTab::DoCacheRegexes()
         Compiler::CmpListInfoPattern::const_iterator iter;
         for(iter = errPatterns.begin(); iter != errPatterns.end(); iter++) {
 
-            CmpPatternPtr compiledPatternPtr(
-                new CmpPattern(new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex, SV_ERROR));
+            CmpPatternPtr compiledPatternPtr(new CmpPattern(
+                new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex, iter->columnIndex, SV_ERROR));
             if(compiledPatternPtr->GetRegex()->IsValid()) {
                 cmpPatterns.errorsPatterns.push_back(compiledPatternPtr);
             }
@@ -570,8 +567,8 @@ void NewBuildTab::DoCacheRegexes()
 
         for(iter = warnPatterns.begin(); iter != warnPatterns.end(); iter++) {
 
-            CmpPatternPtr compiledPatternPtr(
-                new CmpPattern(new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex, SV_WARNING));
+            CmpPatternPtr compiledPatternPtr(new CmpPattern(
+                new wxRegEx(iter->pattern), iter->fileNameIndex, iter->lineNumberIndex, iter->columnIndex, SV_WARNING));
             if(compiledPatternPtr->GetRegex()->IsValid()) {
                 cmpPatterns.warningPatterns.push_back(compiledPatternPtr);
             }
@@ -631,8 +628,7 @@ void NewBuildTab::DoClear()
 
 void NewBuildTab::MarkEditor(LEditor* editor)
 {
-    if(!editor)
-        return;
+    if(!editor) return;
 
     editor->DelAllCompilerMarkers();
     editor->AnnotationClearAll();
@@ -862,8 +858,7 @@ void NewBuildTab::DoToggleWindow()
 void NewBuildTab::OnNextBuildError(wxCommandEvent& e)
 {
     // if we are here, we have at least something in the list of errors
-    if(m_errorsAndWarningsList.empty())
-        return;
+    if(m_errorsAndWarningsList.empty()) return;
 
     EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &m_buildTabSettings);
     bool skipWarnings = m_buildTabSettings.GetSkipWarnings();
@@ -913,8 +908,7 @@ void NewBuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& e)
 
 bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
 {
-    if(item.IsOk() == false)
-        return false;
+    if(item.IsOk() == false) return false;
 
     m_listctrl->UnselectAll(); // Clear any selection
     m_listctrl->EnsureVisible(item);
@@ -935,8 +929,7 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                 }
             }
 
-            if(candidates.empty())
-                return false;
+            if(candidates.empty()) return false;
 
             if(candidates.size() == 1)
                 fn = candidates.at(0);
@@ -949,8 +942,7 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                 }
 
                 wxString selection = wxGetSingleChoice(_("Select a file to open:"), _("Choose a file"), fileArr);
-                if(selection.IsEmpty())
-                    return false;
+                if(selection.IsEmpty()) return false;
 
                 fn = wxFileName(selection);
                 // if we resolved it now, open the file there is no point in searching this file
@@ -965,6 +957,13 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                     // We already got compiler markers set here, just goto the line
                     clMainFrame::Get()->GetMainBook()->SelectPage(editor);
                     editor->GotoLine(bli->GetLineNumber());
+                    
+                    // Convert the compiler column to scintilla's position
+                    if(bli->GetColumn() != wxNOT_FOUND) {
+                        int pos = editor->PositionFromLine(bli->GetLineNumber());
+                        pos += bli->GetColumn() - 1;
+                        editor->GotoPos(pos);
+                    }
                     SetActive(editor);
                     return true;
                 }
@@ -982,8 +981,7 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
             }
 
             if(editor) {
-                if(!editor->HasCompilerMarkers())
-                    MarkEditor(editor);
+                if(!editor->HasCompilerMarkers()) MarkEditor(editor);
 
                 int lineNumber = bli->GetLineNumber();
                 if(lineNumber > 0) {
@@ -993,6 +991,12 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                 // We already got compiler markers set here, just goto the line
                 clMainFrame::Get()->GetMainBook()->SelectPage(editor);
                 editor->GotoLine(bli->GetLineNumber());
+                // Convert the compiler column to scintilla's position
+                if(bli->GetColumn() != wxNOT_FOUND) {
+                    int pos = editor->PositionFromLine(bli->GetLineNumber());
+                    pos += bli->GetColumn() - 1;
+                    editor->GotoPos(pos);
+                }
                 editor->ScrollToLine(bli->GetLineNumber());
                 editor->EnsureVisible(lineNumber);
                 editor->EnsureCaretVisible();
@@ -1068,8 +1072,7 @@ void NewBuildTab::OnCopySelection(wxCommandEvent& e)
 {
     wxDataViewItemArray items;
     m_listctrl->GetSelections(items);
-    if(items.IsEmpty())
-        return;
+    if(items.IsEmpty()) return;
     wxString text;
     for(size_t i = 0; i < items.GetCount(); ++i) {
         wxString line;
@@ -1112,14 +1115,13 @@ void NewBuildTab::AppendLine(const wxString& text)
 bool CmpPattern::Matches(const wxString& line, BuildLineInfo& lineInfo)
 {
     long fidx, lidx;
-    if(!m_fileIndex.ToLong(&fidx) || !m_lineIndex.ToLong(&lidx))
-        return false;
+    if(!m_fileIndex.ToLong(&fidx) || !m_lineIndex.ToLong(&lidx)) return false;
 
-    if(!m_regex || !m_regex->IsValid())
-        return false;
+    if(!m_regex || !m_regex->IsValid()) return false;
+    if(!m_regex->Matches(line)) return false;
 
-    if(!m_regex->Matches(line))
-        return false;
+    long colIndex;
+    if(!m_colIndex.ToLong(&colIndex)) return false;
 
     lineInfo.SetSeverity(m_severity);
     if(m_regex->GetMatchCount() > (size_t)fidx) {
@@ -1134,6 +1136,18 @@ bool CmpPattern::Matches(const wxString& line, BuildLineInfo& lineInfo)
         wxString strLine = m_regex->GetMatch(line, lidx);
         strLine.ToLong(&lineNumber);
         lineInfo.SetLineNumber(--lineNumber);
+    }
+
+    if(m_regex->GetMatchCount() > (size_t)colIndex) {
+        long column;
+        wxString strCol = m_regex->GetMatch(line, colIndex);
+        if(strCol.StartsWith(":")) {
+            strCol.Remove(0, 1);
+        }
+        
+        if(!strCol.IsEmpty() && strCol.ToLong(&column)) {
+            lineInfo.SetColumn(column);
+        }
     }
     return true;
 }

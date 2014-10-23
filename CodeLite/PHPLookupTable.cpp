@@ -242,8 +242,7 @@ void PHPLookupTable::CreateSchema()
 void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
 {
     try {
-        if(autoCommit)
-            m_db.Begin();
+        if(autoCommit) m_db.Begin();
 
         // Delete all entries for this file
         DeleteFileEntries(source.GetFilename(), false);
@@ -254,12 +253,10 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
             topNamespace->StoreRecursive(m_db);
             UpdateFileLastParsedTimestamp(source.GetFilename());
         }
-        if(autoCommit)
-            m_db.Commit();
+        if(autoCommit) m_db.Commit();
 
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit)
-            m_db.Rollback();
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::SaveSourceFile: %s", e.GetMessage());
     }
 }
@@ -467,8 +464,7 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
         PHPEntityBase::List_t::iterator iter = matches.begin();
         for(; iter != matches.end(); ++iter) {
             PHPEntityBase::Ptr_t child = *iter;
-            if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract))
-                continue;
+            if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract)) continue;
             matchesNoAbstracts.push_back(child);
         }
         matches.swap(matchesNoAbstracts);
@@ -647,8 +643,7 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
 {
     wxString trimmedNameHint(nameHint);
     trimmedNameHint.Trim().Trim(false);
-    if(trimmedNameHint.IsEmpty())
-        return;
+    if(trimmedNameHint.IsEmpty()) return;
 
     wxString sql;
     sql << "SELECT * from " << tableName << " WHERE ";
@@ -675,8 +670,7 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
 void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoCommit)
 {
     try {
-        if(autoCommit)
-            m_db.Begin();
+        if(autoCommit) m_db.Begin();
         {
             // When deleting from the 'SCOPE_TABLE' don't remove namespaces
             // since they can be still be pointed by other entries in the database
@@ -712,11 +706,9 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.ExecuteUpdate();
         }
 
-        if(autoCommit)
-            m_db.Commit();
+        if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit)
-            m_db.Rollback();
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::DeleteFileEntries: %s", e.GetMessage());
     }
 }
@@ -741,8 +733,8 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
 {
     // Find members of of parentDbID
     try {
-        {
-            // Load classes
+        // Load classes
+        if(!(flags & kLookupFlags_FunctionsAndConstsOnly)) {
             wxString sql;
             sql << "SELECT * from SCOPE_TABLE WHERE SCOPE_ID=" << parentId << " AND SCOPE_TYPE = 1 AND ";
             DoAddNameFilter(sql, nameHint, flags);
@@ -795,6 +787,13 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
                 PHPEntityBase::Ptr_t match(new PHPEntityVariable());
                 match->FromResultSet(res);
 
+                if(flags & kLookupFlags_FunctionsAndConstsOnly) {
+                    // Filter non consts from the list
+                    if(!match->Cast<PHPEntityVariable>()->IsConst()) {
+                        continue;
+                    }
+                }
+
                 bool isConst = match->Cast<PHPEntityVariable>()->IsConst();
                 bool isStatic = match->Cast<PHPEntityVariable>()->IsStatic();
                 if((isStatic || isConst) && CollectingStatics(flags)) {
@@ -844,8 +843,7 @@ void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
 void PHPLookupTable::ClearAll(bool autoCommit)
 {
     try {
-        if(autoCommit)
-            m_db.Begin();
+        if(autoCommit) m_db.Begin();
         {
             wxString sql;
             sql << "delete from SCOPE_TABLE";
@@ -874,11 +872,9 @@ void PHPLookupTable::ClearAll(bool autoCommit)
             st.ExecuteUpdate();
         }
 
-        if(autoCommit)
-            m_db.Commit();
+        if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit)
-            m_db.Rollback();
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::ClearAll: %s", e.GetMessage());
     }
 }
@@ -913,4 +909,16 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindFunction(const wxString& fullname)
         CL_WARNING("PHPLookupTable::FindFunction: %s", e.GetMessage());
     }
     return PHPEntityBase::Ptr_t(NULL);
+}
+
+PHPEntityBase::List_t PHPLookupTable::FindGlobalFunctionAndConsts(const wxString& nameHint)
+{
+    PHPEntityBase::List_t matches;
+    // Sanity
+    if(nameHint.IsEmpty()) return matches;
+    // First, locate the global namespace in the database
+    PHPEntityBase::Ptr_t globalNs = FindScope("\\");
+    if(!globalNs) return matches;
+    DoFindChildren(matches, globalNs->GetDbId(), kLookupFlags_FunctionsAndConstsOnly | kLookupFlags_Contains, nameHint);
+    return matches;
 }

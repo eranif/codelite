@@ -45,6 +45,7 @@ public:
                                                    // will try to take "\" into consideration
         kLookupFlags_Parent = (1 << 9),            // Exclude 'this' from the results and return only
                                                    // its parents parent::
+        kLookupFlags_FunctionsAndConstsOnly = (1 << 10), // Fetch functions and consts ONLY
     };
 
     enum eUpdateMode {
@@ -166,6 +167,12 @@ public:
      */
     PHPEntityBase::List_t
     FindChildren(wxLongLong parentId, size_t flags = kLookupFlags_None, const wxString& nameHint = "");
+
+    /**
+     * @brief load the global functions and consts that matches nameHint
+     * If nameHint is empty, return an empty list
+     */
+    PHPEntityBase::List_t FindGlobalFunctionAndConsts(const wxString& nameHint = "");
 
     /**
      * @brief load list of entities from all the tables that matches 'nameHint'

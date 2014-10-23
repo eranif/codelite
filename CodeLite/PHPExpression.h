@@ -51,7 +51,19 @@ public:
     virtual ~PHPExpression();
 
     const phpLexerToken::Vet_t& GetExpression() const { return m_expression; }
+    /**
+     * @brief return the parse expression as string. Useful for debuggin purposes
+     */
     wxString GetExpressionAsString() const;
+    
+    /**
+     * @brief return the elements count in the expression.
+     * For example:
+     * $a->foo()->bar()->b // Code complete here
+     * will return 3 ($a, foo, bar)
+     */
+    size_t GetCount() const { return m_parts.size(); }
+    
     /**
      * @brief return the source file used to create and parse this expression
      */

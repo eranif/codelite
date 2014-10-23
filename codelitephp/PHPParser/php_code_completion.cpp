@@ -17,6 +17,7 @@
 #include "PHPEntityFunction.h"
 #include "PHPExpression.h"
 #include "php_parser_thread.h"
+#include "macros.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -137,11 +138,19 @@ void PHPCodeCompletion::Release()
 void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr)
 {
     std::vector<TagEntryPtr> tags;
-
+    wxStringSet_t uniqueEntries;
+    
     // search for the old item
     PHPEntityBase::List_t::const_iterator iter = entries.begin();
     for(; iter != entries.end(); ++iter) {
         PHPEntityBase::Ptr_t entry = *iter;
+        if(uniqueEntries.count(entry->GetFullName()) == 0) {
+            uniqueEntries.insert(entry->GetFullName());
+        } else {
+            // don't add duplicate entries
+            continue;
+        }
+        
         PHPEntityBase::Ptr_t ns = expr->GetSourceFile()->Namespace(); // the namespace at the source file
         TagEntryPtr t = DoPHPEntityToTagEntry(entry);
         t->SetUserData(new PHPCCUserData(entry));
@@ -267,6 +276,7 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                     PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
                     PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
                     if(entity) {
+
                         PHPEntityBase::List_t matches;
                         // If the current scope is a function
                         // add the local variables + function arguments to the current list of matches
@@ -285,11 +295,23 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                                 }
                             }
                         }
+
+                        // Add the scoped matches
+                        // for the code completion
                         PHPEntityBase::List_t scopeChildren =
                             m_lookupTable.FindChildren(entity->GetDbId(),
                                                        PHPLookupTable::kLookupFlags_Contains | expr->GetLookupFlags(),
                                                        expr->GetFilter());
                         matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
+
+                        // For functions and constants, PHP will fall back to global functions or constants if a
+                        // namespaced function or constant does not exist.
+                        if(expr->GetCount() == 0) {
+                            PHPEntityBase::List_t globals =
+                                m_lookupTable.FindGlobalFunctionAndConsts(expr->GetFilter());
+                            matches.insert(matches.end(), globals.begin(), globals.end());
+                        }
+                        // Remove duplicates from the list
                         if(!matches.empty()) {
                             // Show the code completion box
                             DoShowCompletionBox(matches, expr);

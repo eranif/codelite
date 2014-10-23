@@ -47,6 +47,12 @@ protected:
     void DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr);
 
 protected:
+    /**
+     * @brief convert PHP's entity to CodeLite's TagEntry class
+     * This is needed mainly for display purposes (CodeLite's API requires
+     * TagEntry for display)
+     * This function never fails.
+     */
     TagEntryPtr DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry);
     PHPEntityBase::Ptr_t DoGetPHPEntryUnderTheAtPos(IEditor* editor, int pos, bool forFunctionCalltip);
     

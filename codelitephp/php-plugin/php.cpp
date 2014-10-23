@@ -525,6 +525,7 @@ void PhpPlugin::OnNewProject(clNewProjectEvent& e)
     phpTemplate.m_templatePng = "m_bmpPhpFile";
     phpTemplate.m_debugger = "XDebug";
     phpTemplate.m_toolchain = "PHP Tools";
+    phpTemplate.m_allowSeparateFolder = false; // Don't allow to create PHP project under a separate folder
     e.GetTemplates().push_back(phpTemplate);
 }
 

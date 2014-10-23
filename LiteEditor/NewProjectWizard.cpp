@@ -51,9 +51,7 @@ public:
     {
     }
 
-    virtual ~NewProjectDlgData()
-    {
-    }
+    virtual ~NewProjectDlgData() {}
 
     void DeSerialize(Archive& arch)
     {
@@ -69,30 +67,12 @@ public:
         arch.Write(wxT("m_lastSelection"), m_lastSelection);
     }
 
-    void SetFlags(size_t flags)
-    {
-        this->m_flags = flags;
-    }
-    size_t GetFlags() const
-    {
-        return m_flags;
-    }
-    void SetCategory(int category)
-    {
-        this->m_category = category;
-    }
-    int GetCategory() const
-    {
-        return m_category;
-    }
-    void SetLastSelection(const wxString& lastSelection)
-    {
-        this->m_lastSelection = lastSelection;
-    }
-    const wxString& GetLastSelection() const
-    {
-        return m_lastSelection;
-    }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
+    size_t GetFlags() const { return m_flags; }
+    void SetCategory(int category) { this->m_category = category; }
+    int GetCategory() const { return m_category; }
+    void SetLastSelection(const wxString& lastSelection) { this->m_lastSelection = lastSelection; }
+    const wxString& GetLastSelection() const { return m_lastSelection; }
 };
 
 // ------------------------------------------------------------
@@ -101,10 +81,17 @@ class NewProjectClientData : public wxClientData
 {
     ProjectPtr m_project;
     wxString m_templateName;
+    bool m_isPluginManaged;
+    bool m_canUseSeparateFolder;
 
 public:
-    NewProjectClientData(ProjectPtr project, const wxString& templateName = wxEmptyString)
+    NewProjectClientData(ProjectPtr project,
+                         const wxString& templateName = wxEmptyString,
+                         bool isPluginManaged = false,
+                         bool canUseSeparateFolder = true)
         : m_templateName(templateName)
+        , m_isPluginManaged(isPluginManaged)
+        , m_canUseSeparateFolder(canUseSeparateFolder)
     {
         m_project = project;
         if(m_project && m_templateName.IsEmpty()) {
@@ -113,26 +100,15 @@ public:
         }
     }
 
-    virtual ~NewProjectClientData()
-    {
-        m_project = NULL;
-    }
-    void setProject(const ProjectPtr& project)
-    {
-        this->m_project = project;
-    }
-    const ProjectPtr& getProject() const
-    {
-        return m_project;
-    }
-    void SetTemplate(const wxString& templateName)
-    {
-        this->m_templateName = templateName;
-    }
-    const wxString& GetTemplate() const
-    {
-        return m_templateName;
-    }
+    void SetCanUseSeparateFolder(bool canUseSeparateFolder) { this->m_canUseSeparateFolder = canUseSeparateFolder; }
+    void SetIsPluginManaged(bool isPluginManaged) { this->m_isPluginManaged = isPluginManaged; }
+    bool IsCanUseSeparateFolder() const { return m_canUseSeparateFolder; }
+    bool IsPluginManaged() const { return m_isPluginManaged; }
+    virtual ~NewProjectClientData() { m_project = NULL; }
+    void setProject(const ProjectPtr& project) { this->m_project = project; }
+    const ProjectPtr& getProject() const { return m_project; }
+    void SetTemplate(const wxString& templateName) { this->m_templateName = templateName; }
+    const wxString& GetTemplate() const { return m_templateName; }
 };
 
 // ------------------------------------------------------------
@@ -191,7 +167,9 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
             }
             cols.push_back(DVTemplatesModel::CreateIconTextVariant(newTemplate.m_template, bmp));
             m_dataviewTemplatesModel->AppendItem(
-                categoryMap[category], cols, new NewProjectClientData(NULL, newTemplate.m_template));
+                categoryMap[category],
+                cols,
+                new NewProjectClientData(NULL, newTemplate.m_template, true, newTemplate.m_allowSeparateFolder));
         }
     }
 
@@ -201,7 +179,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
         wxVector<wxVariant> cols;
         wxString internalType = (*iter)->GetProjectInternalType();
         if(internalType.IsEmpty()) internalType = "Others";
-        
+
         // Add the category node if needed
         if(categoryMap.count(internalType) == 0) {
             cols.clear();
@@ -217,7 +195,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
         wxString imgId = (*iter)->GetProjectIconName();
         wxBitmap bmp = images.Bitmap(imgId);
         // Allow the user to override it
-        
+
         cols.clear();
         wxIcon icn;
         icn.CopyFromBitmap(bmp);
@@ -441,6 +419,17 @@ void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
             if(!CheckProjectTemplate()) {
                 event.Veto();
                 return;
+            }
+
+            // Test to see if the selected project allows enabling the 'Create under separate folder'
+            wxDataViewItem sel = m_dataviewTemplates->GetSelection();
+            NewProjectClientData* cd =
+                dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel));
+            if(!cd->IsCanUseSeparateFolder()) {
+                m_cbSeparateDir->SetValue(false);
+                m_cbSeparateDir->Enable(false);
+            } else {
+                m_cbSeparateDir->Enable(true);
             }
 
         } else if(event.GetPage() == m_wizardPageDetails) {

@@ -253,6 +253,8 @@ public:
         wxString m_templatePng;
         wxString m_toolchain;
         wxString m_debugger;
+        bool m_allowSeparateFolder;
+        Template() : m_allowSeparateFolder(true) {}
         typedef std::vector<clNewProjectEvent::Template> Vec_t;
     };
 

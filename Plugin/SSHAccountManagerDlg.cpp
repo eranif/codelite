@@ -41,16 +41,16 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
     SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
     for(; iter != accounts.end(); ++iter) {
-        DoAddAccount( *iter );
+        DoAddAccount(*iter);
     }
     WindowAttrManager::Load(this, "SSHAccountManagerDlg", NULL);
 }
 
 SSHAccountManagerDlg::~SSHAccountManagerDlg()
 {
-    for(int i=0; i<m_dvListCtrlAccounts->GetItemCount(); ++i) {
+    for(int i = 0; i < m_dvListCtrlAccounts->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrlAccounts->RowToItem(i);
-        SSHAccountInfo* pAccount = (SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData( item ));
+        SSHAccountInfo* pAccount = (SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData(item));
         delete pAccount;
         m_dvListCtrlAccounts->SetItemData(item, (wxUIntPtr)NULL);
     }
@@ -61,64 +61,89 @@ SSHAccountManagerDlg::~SSHAccountManagerDlg()
 void SSHAccountManagerDlg::OnAddAccount(wxCommandEvent& event)
 {
     AddSSHAcountDlg dlg(this);
-    if ( dlg.ShowModal() == wxID_OK ) {
+    if(dlg.ShowModal() == wxID_OK) {
         SSHAccountInfo account;
-        dlg.GetAccountInfo( account );
-        DoAddAccount( account );
+        dlg.GetAccountInfo(account);
+        DoAddAccount(account);
     }
 }
 
 void SSHAccountManagerDlg::OnDeleteAccount(wxCommandEvent& event)
 {
     wxDataViewItemArray sels;
-    m_dvListCtrlAccounts->GetSelections( sels );
+    m_dvListCtrlAccounts->GetSelections(sels);
 
-    if ( ::wxMessageBox(_("Are you sure you want to delete the selected accounts?"), "SFTP", wxYES_NO|wxCENTER|wxCANCEL|wxICON_QUESTION|wxNO_DEFAULT) != wxYES ) {
+    if(::wxMessageBox(_("Are you sure you want to delete the selected accounts?"),
+                      "SFTP",
+                      wxYES_NO | wxCENTER | wxCANCEL | wxICON_QUESTION | wxNO_DEFAULT) != wxYES) {
         return;
     }
 
-    for(size_t i=0; i<sels.GetCount(); ++i) {
+    for(size_t i = 0; i < sels.GetCount(); ++i) {
         wxDataViewItem item = sels.Item(i);
-        m_dvListCtrlAccounts->DeleteItem( m_dvListCtrlAccounts->ItemToRow( item ) );
+        m_dvListCtrlAccounts->DeleteItem(m_dvListCtrlAccounts->ItemToRow(item));
     }
 
     m_dvListCtrlAccounts->Refresh();
 }
 
-void SSHAccountManagerDlg::OnEditAccount(wxDataViewEvent& event)
+void SSHAccountManagerDlg::OnEditAccount(wxCommandEvent& event)
 {
-    SSHAccountInfo *account = (SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData( event.GetItem() ));
-    AddSSHAcountDlg dlg(this, *account);
-    if ( dlg.ShowModal() == wxID_OK ) {
-        // update the user info
-        dlg.GetAccountInfo(*account);
-
-        // update the UI
-        m_dvListCtrlAccounts->GetStore()->SetValue(account->GetAccountName(), event.GetItem(), 0);
-        m_dvListCtrlAccounts->GetStore()->SetValue(account->GetUsername(), event.GetItem(), 1);
-        m_dvListCtrlAccounts->Refresh();
+    wxDataViewItemArray sels;
+    m_dvListCtrlAccounts->GetSelections(sels);
+    if(sels.GetCount() == 1) {
+        DoEditAccount(sels.Item(0));
     }
 }
 
 void SSHAccountManagerDlg::DoAddAccount(const SSHAccountInfo& account)
 {
     wxVector<wxVariant> cols;
-    cols.push_back( account.GetAccountName() );
-    cols.push_back( account.GetUsername() );
-    m_dvListCtrlAccounts->AppendItem( cols, (wxUIntPtr)(new SSHAccountInfo(account)));
+    cols.push_back(account.GetAccountName());
+    cols.push_back(account.GetHost());
+    cols.push_back(account.GetUsername());
+    m_dvListCtrlAccounts->AppendItem(cols, (wxUIntPtr)(new SSHAccountInfo(account)));
 }
 
 SSHAccountInfo::Vect_t SSHAccountManagerDlg::GetAccounts() const
 {
     SSHAccountInfo::Vect_t accounts;
-    for(int i=0; i<m_dvListCtrlAccounts->GetItemCount(); ++i) {
-        accounts.push_back( *(SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData( m_dvListCtrlAccounts->RowToItem(i))) );
+    for(int i = 0; i < m_dvListCtrlAccounts->GetItemCount(); ++i) {
+        accounts.push_back(*(SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData(m_dvListCtrlAccounts->RowToItem(i))));
     }
     return accounts;
 }
 
 void SSHAccountManagerDlg::OnDeleteAccountUI(wxUpdateUIEvent& event)
 {
-    event.Enable( m_dvListCtrlAccounts->GetSelectedItemsCount() );
+    event.Enable(m_dvListCtrlAccounts->GetSelectedItemsCount());
+}
+
+void SSHAccountManagerDlg::OnEditAccountUI(wxUpdateUIEvent& event) 
+{
+    event.Enable(m_dvListCtrlAccounts->GetSelectedItemsCount());
+}
+
+void SSHAccountManagerDlg::OnItemActivated(wxDataViewEvent& event)
+{
+    DoEditAccount(event.GetItem());
+}
+
+void SSHAccountManagerDlg::DoEditAccount(const wxDataViewItem& item)
+{
+    SSHAccountInfo* account = (SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData(item));
+    if(account) {
+        AddSSHAcountDlg dlg(this, *account);
+        if(dlg.ShowModal() == wxID_OK) {
+            // update the user info
+            dlg.GetAccountInfo(*account);
+
+            // update the UI
+            m_dvListCtrlAccounts->GetStore()->SetValue(account->GetAccountName(), item, 0);
+            m_dvListCtrlAccounts->GetStore()->SetValue(account->GetHost(), item, 1);
+            m_dvListCtrlAccounts->GetStore()->SetValue(account->GetUsername(), item, 2);
+            m_dvListCtrlAccounts->Refresh();
+        }
+    }
 }
 #endif // USE_SFTP

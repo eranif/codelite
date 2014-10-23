@@ -36,8 +36,11 @@ public:
     virtual ~SSHAccountManagerDlg();
 
 protected:
+    virtual void OnItemActivated(wxDataViewEvent& event);
+    virtual void OnEditAccountUI(wxUpdateUIEvent& event);
     virtual void OnDeleteAccountUI(wxUpdateUIEvent& event);
-    void DoAddAccount( const SSHAccountInfo& account );
+    void DoAddAccount(const SSHAccountInfo& account);
+    void DoEditAccount(const wxDataViewItem& item);
 
 public:
     SSHAccountInfo::Vect_t GetAccounts() const;
@@ -45,7 +48,7 @@ public:
 protected:
     virtual void OnAddAccount(wxCommandEvent& event);
     virtual void OnDeleteAccount(wxCommandEvent& event);
-    virtual void OnEditAccount(wxDataViewEvent& event);
+    virtual void OnEditAccount(wxCommandEvent& event);
 };
 #endif // USE_SFTP
 #endif // SSHACCOUNTMANAGERDLG_H

@@ -492,7 +492,12 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
         {
             // Add aliases
             PHPEntityBase::List_t aliases = GetSourceFile()->GetAliases();
-            matches.insert(matches.end(), aliases.begin(), aliases.end());
+            PHPEntityBase::List_t::iterator iter = aliases.begin();
+            for(; iter != aliases.end(); ++iter) {
+                if((*iter)->GetShortName().Contains(GetFilter())) {
+                    matches.push_back(*iter);
+                }
+            }
         }
     }
 

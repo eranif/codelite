@@ -643,8 +643,16 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
         // primitives, don't bother...
         return typeWithNS;
     }
-
+    
     if(typeWithNS.IsEmpty()) return "";
+    // If the symbol contains namespace separator
+    // Convert it full path and return (prepend namespace separator)
+    if(typeWithNS.Contains("\\")) {
+        if(!typeWithNS.StartsWith("\\")) {
+            typeWithNS.Prepend("\\");
+        }
+        return typeWithNS;
+    }
 
     if(typeWithNS.StartsWith("\\")) {
         return typeWithNS;

@@ -143,6 +143,11 @@ public:
     virtual ~PHPSourceFile();
     
     /**
+     * @brief return list of aliases (their short name) that appears on this file
+     */
+    PHPEntityBase::List_t GetAliases() const;
+    
+    /**
      * @brief attempt to resolve 'type' to its full path
      */
     wxString MakeIdentifierAbsolute(const wxString& type);

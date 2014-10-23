@@ -454,3 +454,54 @@ size_t PHPExpression::GetLookupFlags() const
     }
     return flags;
 }
+
+void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches)
+{
+    // sanity
+    if(!resolved) return;
+    PHPEntityBase::Ptr_t currentScope = GetSourceFile()->CurrentScope();
+
+    // GetCount() == 0 && !GetFilter().IsEmpty() i.e. a word completion is required.
+    // We enhance the list with the following:
+    // - Global functions
+    // - Global constants
+    // - Function arguments
+    // - Local variables (of the current scope)
+    // - And aliases e.g. 'use foo\bar as Bar;'
+    if(GetCount() == 0 && !GetFilter().IsEmpty()) {
+
+        // For functions and constants, PHP will fall back to global functions or constants if a
+        // namespaced function or constant does not exist.
+        PHPEntityBase::List_t globals = lookup.FindGlobalFunctionAndConsts(GetFilter());
+        matches.insert(matches.end(), globals.begin(), globals.end());
+
+        if(currentScope && (currentScope->Is(kEntityTypeFunction) || currentScope->Is(kEntityTypeNamespace))) {
+            // If the current scope is a function
+            // add the local variables + function arguments to the current list of matches
+            const PHPEntityBase::List_t& children = currentScope->GetChildren();
+            PHPEntityBase::List_t::const_iterator iter = children.begin();
+            for(; iter != children.end(); ++iter) {
+                PHPEntityBase::Ptr_t child = *iter;
+                if(child->Is(kEntityTypeVariable) && child->GetShortName().Contains(GetFilter()) &&
+                   child->GetShortName() != GetFilter()) {
+                    matches.push_back(child);
+                }
+            }
+        }
+
+        {
+            // Add aliases
+            PHPEntityBase::List_t aliases = GetSourceFile()->GetAliases();
+            matches.insert(matches.end(), aliases.begin(), aliases.end());
+        }
+    }
+
+    // Add the scoped matches
+    // for the code completion
+    size_t flags = PHPLookupTable::kLookupFlags_Contains | GetLookupFlags();
+    if(resolved->Is(kEntityTypeClass) && resolved->Cast<PHPEntityClass>()->IsInterface()) {
+        flags |= PHPLookupTable::kLookupFlags_IncludeAbstractMethods;
+    }
+    PHPEntityBase::List_t scopeChildren = lookup.FindChildren(resolved->GetDbId(), flags, GetFilter());
+    matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
+}

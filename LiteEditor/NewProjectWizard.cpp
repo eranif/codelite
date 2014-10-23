@@ -353,7 +353,7 @@ void NewProjectWizard::OnBrowseProjectPath(wxCommandEvent& event)
     wxString new_path = ::wxDirSelector(_("Select Project Path:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
     if(new_path.IsEmpty() == false) {
 
-        static wxString INVALID_CHARS = " ,'()";
+        static wxString INVALID_CHARS = ",'";
         if(new_path.find_first_of(INVALID_CHARS) != wxString::npos) {
             int answer = ::wxMessageBox(wxString() << _("The selected project path '") << new_path
                                                    << _("'\nContains some invalid characters\nContinue anyways?"),

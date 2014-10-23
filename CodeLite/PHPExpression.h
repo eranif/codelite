@@ -57,6 +57,14 @@ public:
     wxString GetExpressionAsString() const;
     
     /**
+     * @brief suggest matches for this expression.
+     * This function must be called after a successfull call to 'Resolve'
+     * @param resolved the resolved object from the previous call to 'Resolve'
+     * @param matches [output]
+     */
+    void Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches);
+    
+    /**
      * @brief return the elements count in the expression.
      * For example:
      * $a->foo()->bar()->b // Code complete here

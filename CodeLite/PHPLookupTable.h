@@ -10,6 +10,7 @@
 #include <set>
 #include <wx/longlong.h>
 #include "cl_command_event.h"
+#include "smart_ptr.h"
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_STARTED, clParseEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPHP_PARSE_ENDED, clParseEvent);
@@ -46,13 +47,15 @@ public:
         kLookupFlags_Parent = (1 << 9),            // Exclude 'this' from the results and return only
                                                    // its parents parent::
         kLookupFlags_FunctionsAndConstsOnly = (1 << 10), // Fetch functions and consts ONLY
+        kLookupFlags_IncludeAbstractMethods = (1 << 11), // Include abstract functions in the result set
     };
 
     enum eUpdateMode {
         kUpdateMode_Fast,
         kUpdateMode_Full,
     };
-
+    typedef SmartPtr<PHPLookupTable> Ptr_t;
+    
 private:
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 

@@ -43,7 +43,7 @@ protected:
     CCBoxTipWindow* m_typeInfoTooltip;
     PHPLookupTable m_lookupTable;
 
-    bool CanCodeComplete(clCodeCompletionEvent& e) const;
+    static bool CanCodeComplete(clCodeCompletionEvent& e);
     void DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr);
 
 protected:

@@ -18,10 +18,12 @@
 #include "PHPExpression.h"
 #include "php_parser_thread.h"
 #include "macros.h"
+#include "PHPEntityClass.h"
 
 ///////////////////////////////////////////////////////////////////
 
-struct PHPCCUserData {
+struct PHPCCUserData
+{
     PHPEntityBase::Ptr_t entry;
     PHPCCUserData(PHPEntityBase::Ptr_t e)
         : entry(e)
@@ -30,14 +32,16 @@ struct PHPCCUserData {
 };
 
 /// Ascending sorting function
-struct _SDescendingSort {
+struct _SDescendingSort
+{
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rStart->GetName().Cmp(rEnd->GetName()) > 0;
     }
 };
 
-struct _SAscendingSort {
+struct _SAscendingSort
+{
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rEnd->GetName().Cmp(rStart->GetName()) > 0;
@@ -139,7 +143,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
 {
     std::vector<TagEntryPtr> tags;
     wxStringSet_t uniqueEntries;
-    
+
     // search for the old item
     PHPEntityBase::List_t::const_iterator iter = entries.begin();
     for(; iter != entries.end(); ++iter) {
@@ -150,14 +154,15 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
             // don't add duplicate entries
             continue;
         }
-        
+
         PHPEntityBase::Ptr_t ns = expr->GetSourceFile()->Namespace(); // the namespace at the source file
         TagEntryPtr t = DoPHPEntityToTagEntry(entry);
         t->SetUserData(new PHPCCUserData(entry));
         tags.push_back(t);
     }
 
-    if(tags.empty()) return;
+    if(tags.empty())
+        return;
 
     std::sort(tags.begin(), tags.end(), _SAscendingSort());
     m_manager->GetActiveEditor()->ShowCompletionBox(tags, expr->GetFilter(), true, this);
@@ -258,7 +263,8 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
 void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e)) return;
+        if(!CanCodeComplete(e))
+            return;
 
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
@@ -276,41 +282,10 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                     PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
                     PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
                     if(entity) {
-
+                        // Suggets members for the resolved entity
                         PHPEntityBase::List_t matches;
-                        // If the current scope is a function
-                        // add the local variables + function arguments to the current list of matches
-                        PHPEntityBase::Ptr_t currentScope = expr->GetSourceFile()->CurrentScope();
-                        if(currentScope &&
-                           (currentScope->Is(kEntityTypeFunction) || currentScope->Is(kEntityTypeNamespace)) &&
-                           !expr->GetFilter().IsEmpty()) {
-                            const PHPEntityBase::List_t& children = currentScope->GetChildren();
-                            PHPEntityBase::List_t::const_iterator iter = children.begin();
-                            for(; iter != children.end(); ++iter) {
-                                PHPEntityBase::Ptr_t child = *iter;
-                                if(child->Is(kEntityTypeVariable) &&
-                                   child->GetShortName().Contains(expr->GetFilter()) &&
-                                   child->GetShortName() != expr->GetFilter()) {
-                                    matches.push_back(child);
-                                }
-                            }
-                        }
-
-                        // Add the scoped matches
-                        // for the code completion
-                        PHPEntityBase::List_t scopeChildren =
-                            m_lookupTable.FindChildren(entity->GetDbId(),
-                                                       PHPLookupTable::kLookupFlags_Contains | expr->GetLookupFlags(),
-                                                       expr->GetFilter());
-                        matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
-
-                        // For functions and constants, PHP will fall back to global functions or constants if a
-                        // namespaced function or constant does not exist.
-                        if(expr->GetCount() == 0) {
-                            PHPEntityBase::List_t globals =
-                                m_lookupTable.FindGlobalFunctionAndConsts(expr->GetFilter());
-                            matches.insert(matches.end(), globals.begin(), globals.end());
-                        }
+                        expr->Suggest(entity, m_lookupTable, matches);
+                        
                         // Remove duplicates from the list
                         if(!matches.empty()) {
                             // Show the code completion box
@@ -328,7 +303,8 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
 void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e)) return;
+        if(!CanCodeComplete(e))
+            return;
 
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
@@ -355,7 +331,8 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
 void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e)) return;
+        if(!CanCodeComplete(e))
+            return;
 
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
@@ -373,7 +350,8 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
 void PHPCodeCompletion::OnTypeinfoTip(clCodeCompletionEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e)) return;
+        if(!CanCodeComplete(e))
+            return;
 
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
@@ -429,19 +407,23 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::GetPHPEntryUnderTheAtPos(IEditor* editor
     return DoGetPHPEntryUnderTheAtPos(editor, pos, false);
 }
 
-bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e) const
+/* static */
+bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e)
 {
     int pos = e.GetPosition();
-    if(pos) pos -= 1;
+    if(pos)
+        pos -= 1;
     IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
-    if(!editor) return false;
+    if(!editor)
+        return false;
 
     // we can get style 0 if we added chars and they were not styled just yet
     // sd we use the first style near our position (backward)
     int lineNumber = editor->LineFromPos(pos);
     int lineStartPos = editor->PosFromLine(lineNumber);
 
-    if(lineStartPos > pos) return false;
+    if(lineStartPos > pos)
+        return false;
 
     int styleAt(0);
     int retryLeft(pos - lineStartPos + 2);
@@ -481,7 +463,8 @@ void PHPCodeCompletion::OnRetagWorkspace(wxCommandEvent& event)
 
 PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* editor, int pos, bool forFunctionCalltip)
 {
-    if(!PHPWorkspace::Get()->IsOpen()) return PHPEntityBase::Ptr_t(NULL);
+    if(!PHPWorkspace::Get()->IsOpen())
+        return PHPEntityBase::Ptr_t(NULL);
     pos = editor->GetSTC()->WordEndPosition(pos, true);
 
     // Get the expression under the caret

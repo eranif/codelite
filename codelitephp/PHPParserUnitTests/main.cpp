@@ -362,21 +362,26 @@ TEST_FUNC(test_locals)
     CHECK_BOOL(resolved);
 
     PHPEntityBase::List_t matches;
-    // If the current scope is a function
-    // add the local variables + function arguments to the current list of matches
-    PHPEntityBase::Ptr_t currentScope = sourceFile.CurrentScope();
-    if(currentScope && currentScope->Is(kEntityTypeFunction) && !expr.GetFilter().IsEmpty()) {
-        const PHPEntityBase::List_t& children = currentScope->GetChildren();
-        PHPEntityBase::List_t::const_iterator iter = children.begin();
-        for(; iter != children.end(); ++iter) {
-            PHPEntityBase::Ptr_t child = *iter;
-            if(child->Is(kEntityTypeVariable) && child->GetShortName().Contains(expr.GetFilter()) &&
-               child->GetShortName() != expr.GetFilter()) {
-                matches.push_back(child);
-            }
-        }
-    }
+    expr.Suggest(resolved, lookup, matches);
+    
     CHECK_SIZE(matches.size(), 3);
+    return true;
+}
+
+// test code completion for local variables
+TEST_FUNC(test_word_complete_of_aliases)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_complete_of_aliases.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+    
+    CHECK_SIZE(matches.size(), 2);
     return true;
 }
 

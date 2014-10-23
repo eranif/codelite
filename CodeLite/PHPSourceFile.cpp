@@ -189,6 +189,16 @@ void PHPSourceFile::OnUse()
             }
 
             if(!fullname.IsEmpty() && !alias.IsEmpty()) {
+                // Use namespace is alway refered as fullpath namespace
+                // So writing:
+                // use Zend\Mvc\Controll\Action;
+                // is equal for writing:
+                // use \Zend\Mvc\Controll\Action;
+                // For simplicitiy, we change it to fully qualified path 
+                // so parsing is easier
+                if(!fullname.StartsWith("\\")) {
+                    fullname.Prepend("\\");
+                }
                 m_aliases.insert(std::make_pair(alias, MakeIdentifierAbsolute(fullname)));
             }
             temp.clear();
@@ -908,4 +918,19 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
         // keep the expression
         var->Cast<PHPEntityVariable>()->SetExpressionHint(expr);
     }
+}
+
+PHPEntityBase::List_t PHPSourceFile::GetAliases() const
+{
+    PHPEntityBase::List_t aliases;
+    std::map<wxString, wxString>::const_iterator iter = m_aliases.begin();
+    for(; iter != m_aliases.end(); ++iter) {
+        // wrap each alias with class entity
+        PHPEntityBase::Ptr_t klass(new PHPEntityClass());
+        klass->SetFullName(iter->second);
+        klass->SetShortName(iter->first);
+        klass->SetFilename(GetFilename());
+        aliases.push_back(klass);
+    }
+    return aliases;
 }

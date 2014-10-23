@@ -243,7 +243,8 @@ void PHPLookupTable::CreateSchema()
 void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
 {
     try {
-        if(autoCommit) m_db.Begin();
+        if(autoCommit)
+            m_db.Begin();
 
         // Delete all entries for this file
         DeleteFileEntries(source.GetFilename(), false);
@@ -254,10 +255,12 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
             topNamespace->StoreRecursive(m_db);
             UpdateFileLastParsedTimestamp(source.GetFilename());
         }
-        if(autoCommit) m_db.Commit();
+        if(autoCommit)
+            m_db.Commit();
 
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit) m_db.Rollback();
+        if(autoCommit)
+            m_db.Rollback();
         CL_WARNING("PHPLookupTable::SaveSourceFile: %s", e.GetMessage());
     }
 }
@@ -462,14 +465,16 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
         }
 
         // Filter out abstract functions
-        PHPEntityBase::List_t::iterator iter = matches.begin();
-        for(; iter != matches.end(); ++iter) {
-            PHPEntityBase::Ptr_t child = *iter;
-            if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract)) continue;
-            matchesNoAbstracts.push_back(child);
+        if(!(flags & kLookupFlags_IncludeAbstractMethods)) {
+            PHPEntityBase::List_t::iterator iter = matches.begin();
+            for(; iter != matches.end(); ++iter) {
+                PHPEntityBase::Ptr_t child = *iter;
+                if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract))
+                    continue;
+                matchesNoAbstracts.push_back(child);
+            }
+            matches.swap(matchesNoAbstracts);
         }
-        matches.swap(matchesNoAbstracts);
-
     } else if(scope && scope->Is(kEntityTypeNamespace)) {
         DoFindChildren(matches, parentId, flags | kLookupFlags_NameHintIsScope, nameHint);
     }
@@ -644,7 +649,8 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
 {
     wxString trimmedNameHint(nameHint);
     trimmedNameHint.Trim().Trim(false);
-    if(trimmedNameHint.IsEmpty()) return;
+    if(trimmedNameHint.IsEmpty())
+        return;
 
     wxString sql;
     sql << "SELECT * from " << tableName << " WHERE ";
@@ -671,7 +677,8 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
 void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoCommit)
 {
     try {
-        if(autoCommit) m_db.Begin();
+        if(autoCommit)
+            m_db.Begin();
         {
             // When deleting from the 'SCOPE_TABLE' don't remove namespaces
             // since they can be still be pointed by other entries in the database
@@ -707,9 +714,11 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.ExecuteUpdate();
         }
 
-        if(autoCommit) m_db.Commit();
+        if(autoCommit)
+            m_db.Commit();
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit) m_db.Rollback();
+        if(autoCommit)
+            m_db.Rollback();
         CL_WARNING("PHPLookupTable::DeleteFileEntries: %s", e.GetMessage());
     }
 }
@@ -844,7 +853,8 @@ void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
 void PHPLookupTable::ClearAll(bool autoCommit)
 {
     try {
-        if(autoCommit) m_db.Begin();
+        if(autoCommit)
+            m_db.Begin();
         {
             wxString sql;
             sql << "delete from SCOPE_TABLE";
@@ -873,9 +883,11 @@ void PHPLookupTable::ClearAll(bool autoCommit)
             st.ExecuteUpdate();
         }
 
-        if(autoCommit) m_db.Commit();
+        if(autoCommit)
+            m_db.Commit();
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit) m_db.Rollback();
+        if(autoCommit)
+            m_db.Rollback();
         CL_WARNING("PHPLookupTable::ClearAll: %s", e.GetMessage());
     }
 }
@@ -916,10 +928,12 @@ PHPEntityBase::List_t PHPLookupTable::FindGlobalFunctionAndConsts(const wxString
 {
     PHPEntityBase::List_t matches;
     // Sanity
-    if(nameHint.IsEmpty()) return matches;
+    if(nameHint.IsEmpty())
+        return matches;
     // First, locate the global namespace in the database
     PHPEntityBase::Ptr_t globalNs = FindScope("\\");
-    if(!globalNs) return matches;
+    if(!globalNs)
+        return matches;
     DoFindChildren(matches, globalNs->GetDbId(), kLookupFlags_FunctionsAndConstsOnly | kLookupFlags_Contains, nameHint);
     return matches;
 }

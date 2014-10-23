@@ -2,10 +2,12 @@
 #include <windowattrmanager.h>
 #include "php_workspace.h"
 
-ImportFilesDlg::ImportFilesDlg( wxWindow* parent )
+ImportFilesDlg::ImportFilesDlg( wxWindow* parent, PHPProject::Ptr_t pProject)
     : ImportFilesBaseDlg( parent )
 {
-    m_textCtrlFolderPath->ChangeValue(PHPWorkspace::Get()->GetFilename().GetPath());
+    if(pProject) {
+        m_textCtrlFolderPath->ChangeValue(pProject->GetFilename().GetPath());
+    }
     WindowAttrManager::Load(this, wxT("ImportFilesDlg"), NULL);
 }
 
@@ -16,7 +18,7 @@ ImportFilesDlg::~ImportFilesDlg()
 
 void ImportFilesDlg::OnBrowse(wxCommandEvent& event)
 {
-    wxString path = ::wxDirSelector(_("Select a folder"));
+    wxString path = ::wxDirSelector(_("Select a folder"), m_textCtrlFolderPath->GetValue());
     if ( !path.IsEmpty() ) {
         m_textCtrlFolderPath->SetValue( path );
     }

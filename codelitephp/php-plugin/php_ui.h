@@ -131,8 +131,9 @@ protected:
     wxStaticText* m_staticText8;
     wxTextCtrl* m_textCtrlFileExtension;
     wxCheckBox* m_checkBoxSubDirs;
-    wxButton* m_button7;
-    wxButton* m_button8;
+    wxStdDialogButtonSizer* m_stdBtnSizer291;
+    wxButton* m_buttonOK;
+    wxButton* m_button295;
 
 protected:
     virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }

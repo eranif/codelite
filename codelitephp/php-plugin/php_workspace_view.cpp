@@ -497,11 +497,11 @@ void PHPWorkspaceView::OnDeleteFolder(wxCommandEvent& e)
 
 void PHPWorkspaceView::OnImportFiles(wxCommandEvent& e)
 {
-    ImportFilesDlg dlg(wxTheApp->GetTopWindow());
+    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(DoGetSelectedProject());
+    CHECK_PTR_RET(pProject);
+    
+    ImportFilesDlg dlg(wxTheApp->GetTopWindow(), pProject);
     if(dlg.ShowModal() == wxID_OK) {
-        PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(DoGetSelectedProject());
-        CHECK_PTR_RET(pProject);
-
         pProject->ImportDirectory(dlg.GetPath(), dlg.GetFileSpec(), dlg.GetIsRecursive());
         LoadWorkspace();
     }

@@ -2,12 +2,13 @@
 #define __import_files_dlg__
 
 #include "php_ui.h"
+#include "php_project.h"
 
 class ImportFilesDlg : public ImportFilesBaseDlg
 {
 public:
     /** Constructor */
-    ImportFilesDlg( wxWindow* parent );
+    ImportFilesDlg( wxWindow* parent, PHPProject::Ptr_t pProject );
     virtual ~ImportFilesDlg();
 
     bool GetIsRecursive() const {

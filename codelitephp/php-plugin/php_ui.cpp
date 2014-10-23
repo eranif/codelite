@@ -312,7 +312,7 @@ ImportFilesBaseDlg::ImportFilesBaseDlg(wxWindow* parent, wxWindowID id, const wx
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer3->AddGrowableCol(1);
     
-    bSizer8->Add(fgSizer3, 1, wxALL|wxEXPAND, 5);
+    bSizer8->Add(fgSizer3, 0, wxALL|wxEXPAND, 5);
     
     m_staticText7 = new wxStaticText(this, wxID_ANY, _("Select folder:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -329,13 +329,14 @@ ImportFilesBaseDlg::ImportFilesBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     m_button61 = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    fgSizer3->Add(m_button61, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer3->Add(m_button61, 0, wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText8 = new wxStaticText(this, wxID_ANY, _("Files to import:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer3->Add(m_staticText8, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlFileExtension = new wxTextCtrl(this, wxID_ANY, wxT("*.php;*.inc;*.js;*.css"), wxDefaultPosition, wxSize(200,-1), 0);
+    m_textCtrlFileExtension = new wxTextCtrl(this, wxID_ANY, wxT("*.php;*.inc;*.js;*.css;*.html;.htaccess"), wxDefaultPosition, wxSize(200,-1), 0);
+    m_textCtrlFileExtension->SetToolTip(_("Set the file extensions to import"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlFileExtension->SetHint(wxT(""));
     #endif
@@ -350,18 +351,19 @@ ImportFilesBaseDlg::ImportFilesBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer8->Add(m_checkBoxSubDirs, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer8->Add(0, 0, 1, wxALL, 5);
     
-    bSizer8->Add(bSizer9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    m_stdBtnSizer291 = new wxStdDialogButtonSizer();
     
-    m_button7 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_button7->SetDefault();
+    bSizer8->Add(m_stdBtnSizer291, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
-    bSizer9->Add(m_button7, 0, wxALL, 5);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer291->AddButton(m_buttonOK);
     
-    m_button8 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer9->Add(m_button8, 0, wxALL, 5);
+    m_button295 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer291->AddButton(m_button295);
+    m_stdBtnSizer291->Realize();
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -370,14 +372,14 @@ ImportFilesBaseDlg::ImportFilesBaseDlg(wxWindow* parent, wxWindowID id, const wx
     Centre(wxBOTH);
     // Connect events
     m_button61->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ImportFilesBaseDlg::OnBrowse), NULL, this);
-    m_button7->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportFilesBaseDlg::OnOkUI), NULL, this);
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportFilesBaseDlg::OnOkUI), NULL, this);
     
 }
 
 ImportFilesBaseDlg::~ImportFilesBaseDlg()
 {
     m_button61->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ImportFilesBaseDlg::OnBrowse), NULL, this);
-    m_button7->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportFilesBaseDlg::OnOkUI), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ImportFilesBaseDlg::OnOkUI), NULL, this);
     
 }
 

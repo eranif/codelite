@@ -77,7 +77,6 @@ public:
 protected:
     wxAuiToolBar* m_auibar;
     std::map<int, wxMenu*> m_dropdownMenus;
-    wxMenu* m_menu77;
     wxChoice* m_choiceAccount;
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlQuickJump;

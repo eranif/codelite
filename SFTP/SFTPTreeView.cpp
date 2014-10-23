@@ -511,9 +511,7 @@ void SFTPTreeView::OnAddBookmark(wxAuiToolBarEvent& event)
     } else {
         try {
             // sanity
-            if(!m_sftp || !m_sftp->IsConnected()) {
-                return;
-            }
+            if(!IsConnected()) return;
 
             // Get the current selection
             MyClientDataVect_t selections = GetSelectionsItemData();
@@ -565,7 +563,7 @@ void SFTPTreeView::OnSelectionChanged(wxTreeListEvent& event)
         m_textCtrlQuickJump->ChangeValue(cd->GetFullPath());
     }
 }
-void SFTPTreeView::OnConnection(wxCommandEvent& event) 
+void SFTPTreeView::OnConnection(wxCommandEvent& event)
 {
     SFTPImages images;
     if(IsConnected()) {

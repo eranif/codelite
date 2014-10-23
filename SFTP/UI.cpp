@@ -147,9 +147,6 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxAuiToolBarItem* m_toolbarItemAddBookmark = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
     if (m_toolbarItemAddBookmark) {
         m_toolbarItemAddBookmark->SetHasDropDown(true);
-        m_menu77 = new wxMenu;
-        
-        m_dropdownMenus.insert(std::make_pair( m_toolbarItemAddBookmark->GetId(), m_menu77) );
     }
     m_auibar->Realize();
     

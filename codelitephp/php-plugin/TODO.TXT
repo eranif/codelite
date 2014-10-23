@@ -12,9 +12,7 @@ Code Completion / Code Generation
 
 Must:
 ======
-- suggest global functions for all namespaces (json_encode etc..)
 - Use the PHP include paths to the global PHP settings (so it will include ZF etc)
-- word completion for local variables does not work
 - Add link to XDebug diagnostic dialog that points to the codelite's wiki for further explanation
 - When codelite shows the "XDebug failed to connect in a timely manner" -> add button to run xdebug diag tool
 

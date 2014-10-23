@@ -162,6 +162,7 @@ void PHPLookupTable::Open(const wxString& workspacePath)
     try {
         wxFileName::Mkdir(fnDBFile.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         m_db.Open(fnDBFile.GetFullPath());
+        m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
         CreateSchema();
 
     } catch(wxSQLite3Exception& e) {

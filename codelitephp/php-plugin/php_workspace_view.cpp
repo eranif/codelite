@@ -25,6 +25,7 @@
 #include "tree_item_data.h"
 #include <bitmap_loader.h>
 #include "PHPLookupTable.h"
+#include "PHPProjectSetupDlg.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -72,10 +73,10 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Connect(wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_PHP_WORKSPACE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnWorkspaceRenamed), NULL, this);
-    
+
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
-    
+
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
     m_treeCtrlView->AssignImageList(imageList);
@@ -95,7 +96,7 @@ PHPWorkspaceView::~PHPWorkspaceView()
         wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_PHP_WORKSPACE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnWorkspaceRenamed), NULL, this);
-        
+
     EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
 }
@@ -207,10 +208,26 @@ void PHPWorkspaceView::LoadWorkspace()
 
 void PHPWorkspaceView::UnLoadWorkspace() { m_treeCtrlView->DeleteAllItems(); }
 
-void PHPWorkspaceView::CreateNewProject(const wxString& name)
+void PHPWorkspaceView::CreateNewProject(PHPProject::CreateData cd)
 {
-    bool active = PHPWorkspace::Get()->GetProjects().empty();
-    PHPWorkspace::Get()->CreateProject(name, active);
+    PHPProjectSetupDlg setupDlg(FRAME);
+    if(setupDlg.ShowModal() == wxID_OK) {
+        cd.importFilesUnderPath = setupDlg.IsImportFiles();
+        cd.projectType = setupDlg.GetProjectType();
+        cd.phpExe = setupDlg.GetPhpExecutable();
+    }
+
+    PHPWorkspace::Get()->CreateProject(cd);
+    if(cd.importFilesUnderPath) {
+        // Auto import the files under source folder
+        PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(cd.name);
+        if(pProject) {
+            // import all PHP files from the newly added project path
+            pProject->ImportDirectory(
+                pProject->GetFilename().GetPath(), "*.php;*.inc;*.js;*.css;*.html;.htaccess", true);
+        }
+    }
+    // Update the UI
     LoadWorkspace();
 }
 
@@ -499,7 +516,7 @@ void PHPWorkspaceView::OnImportFiles(wxCommandEvent& e)
 {
     PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(DoGetSelectedProject());
     CHECK_PTR_RET(pProject);
-    
+
     ImportFilesDlg dlg(wxTheApp->GetTopWindow(), pProject);
     if(dlg.ShowModal() == wxID_OK) {
         pProject->ImportDirectory(dlg.GetPath(), dlg.GetFileSpec(), dlg.GetIsRecursive());
@@ -1130,19 +1147,16 @@ wxTreeItemId PHPWorkspaceView::DoGetFileItem(const wxTreeItemId& folderItem, con
     return wxTreeItemId();
 }
 
-void PHPWorkspaceView::OnPhpParserDone(clParseEvent& event) 
+void PHPWorkspaceView::OnPhpParserDone(clParseEvent& event)
 {
     event.Skip();
     ReportParseThreadDone();
 }
 
-void PHPWorkspaceView::OnPhpParserProgress(clParseEvent& event) 
+void PHPWorkspaceView::OnPhpParserProgress(clParseEvent& event)
 {
     event.Skip();
     ReportParseThreadProgress(event.GetCurfileIndex(), event.GetTotalFiles());
 }
 
-void PHPWorkspaceView::OnPhpParserStarted(clParseEvent& event) 
-{
-    event.Skip();
-}
+void PHPWorkspaceView::OnPhpParserStarted(clParseEvent& event) { event.Skip(); }

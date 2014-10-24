@@ -1534,3 +1534,88 @@ XDebugDiagDlgBase::XDebugDiagDlgBase(wxWindow* parent, wxWindowID id, const wxSt
 XDebugDiagDlgBase::~XDebugDiagDlgBase()
 {
 }
+
+PHPProjectSetupDlgBase::PHPProjectSetupDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF01InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer336 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer336);
+    
+    wxBoxSizer* boxSizer309 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer336->Add(boxSizer309, 1, wxALL|wxEXPAND, 2);
+    
+    m_banner313 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_banner313->SetBitmap(wxNullBitmap);
+    m_banner313->SetText(_("Project setup"), _("Finalize your PHP project by selecting the project type and selecting PHP executable"));
+    m_banner313->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK), wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_banner313->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    
+    boxSizer309->Add(m_banner313, 0, wxEXPAND, 5);
+    
+    wxFlexGridSizer* flexGridSizer315 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer315->SetFlexibleDirection( wxBOTH );
+    flexGridSizer315->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer315->AddGrowableCol(1);
+    
+    boxSizer309->Add(flexGridSizer315, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText317 = new wxStaticText(this, wxID_ANY, _("Project type:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer315->Add(m_staticText317, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceProjectTypeArr;
+    m_choiceProjectTypeArr.Add(wxT("Run project as command line"));
+    m_choiceProjectTypeArr.Add(wxT("Run project as web site"));
+    m_choiceProjectType = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceProjectTypeArr, 0);
+    m_choiceProjectType->SetToolTip(_("Select the project type from the list"));
+    m_choiceProjectType->SetSelection(0);
+    
+    flexGridSizer315->Add(m_choiceProjectType, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText321 = new wxStaticText(this, wxID_ANY, _("PHP executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer315->Add(m_staticText321, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_filePickerPhpExe = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+    m_filePickerPhpExe->SetToolTip(_("Select the PHP command line executable to use"));
+    
+    flexGridSizer315->Add(m_filePickerPhpExe, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    flexGridSizer315->Add(0, 0, 1, wxALL, 5);
+    
+    m_checkBoxImportFiles = new wxCheckBox(this, wxID_ANY, _("Automatically import all PHP files under the project folder to the project"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxImportFiles->SetValue(false);
+    m_checkBoxImportFiles->SetToolTip(_("Automatically import all PHP files under the project folder to the project"));
+    
+    flexGridSizer315->Add(m_checkBoxImportFiles, 0, wxALL, 5);
+    
+    m_stdBtnSizer338 = new wxStdDialogButtonSizer();
+    
+    boxSizer336->Add(m_stdBtnSizer338, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_button340 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button340->SetDefault();
+    m_stdBtnSizer338->AddButton(m_button340);
+    
+    m_button342 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer338->AddButton(m_button342);
+    m_stdBtnSizer338->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+PHPProjectSetupDlgBase::~PHPProjectSetupDlgBase()
+{
+}

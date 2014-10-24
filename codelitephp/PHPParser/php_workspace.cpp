@@ -181,21 +181,28 @@ void PHPWorkspace::CreateFolder(const wxString& project, const wxString& folder)
     proj->Save();
 }
 
-void PHPWorkspace::CreateProject(const wxString& project, bool active)
+void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
 {
-    if(HasProject(project)) return;
+    wxString projectName;
+    wxFileName fnProjectFileName(createData.path, "");
+    projectName << createData.name << ".phprj";
+    fnProjectFileName.SetFullName(projectName);
+    
+    if(HasProject(projectName)) return;
 
     // Create an empty project and initialize it with the global settings
-    PHPProject::Ptr_t proj(new PHPProject(project));
-    wxFileName projectFile = m_workspaceFile;
-    projectFile.SetName(project);
-    projectFile.SetExt("phprj");
-    proj->Create(projectFile);
+    PHPProject::Ptr_t proj(new PHPProject());
+    // Setup the file path + name
+    proj->Create(fnProjectFileName, createData.name);
     proj->GetSettings().MergeWithGlobalSettings();
-
-    m_projects.insert(std::make_pair(project, proj));
-    if(active) {
-        SetProjectActive(project);
+    if(!createData.phpExe.IsEmpty() && wxFileName::Exists(createData.phpExe)) {
+        proj->GetSettings().SetPhpExe(createData.phpExe);
+    }
+    proj->GetSettings().SetRunAs(createData.projectType);
+    
+    m_projects.insert(std::make_pair(proj->GetName(), proj));
+    if(m_projects.size() == 1) {
+        SetProjectActive(proj->GetName());
     }
     Save();
     proj->Save();
@@ -367,7 +374,7 @@ JSONElement PHPWorkspace::ToJSON(JSONElement& e) const
     for(; iter != m_projects.end(); ++iter) {
         wxFileName projectFile = iter->second->GetFilename();
         projectFile.MakeRelativeTo(m_workspaceFile.GetPath());
-        projectsArr.arrayAppend(projectFile.GetFullPath());
+        projectsArr.arrayAppend(projectFile.GetFullPath(wxPATH_UNIX));
     }
     return e;
 }

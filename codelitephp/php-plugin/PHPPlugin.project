@@ -104,7 +104,6 @@
     <File Name="doc-gen.php"/>
     <File Name="TODO.TXT"/>
     <File Name="../CMakeLists.txt"/>
-    <File Name="php_ui.wxcp"/>
     <File Name="phplite.accelerators"/>
     <File Name="../resources/TestXDebugSettings.php"/>
     <File Name="../resources/pack-resources.sh"/>
@@ -136,6 +135,8 @@
       <File Name="php_project_settings_dlg.h"/>
       <File Name="FileMappingDlg.h"/>
       <File Name="FileMappingDlg.cpp"/>
+      <File Name="PHPProjectSetupDlg.h"/>
+      <File Name="PHPProjectSetupDlg.cpp"/>
     </VirtualDirectory>
     <File Name="NewPHPClass.h"/>
     <File Name="NewPHPClass.cpp"/>
@@ -174,6 +175,7 @@
       <File Name="xdebuglocalsviewmodel.h"/>
     </VirtualDirectory>
     <File Name="new_class.wxcp"/>
+    <File Name="php_ui.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="CodeLite"/>

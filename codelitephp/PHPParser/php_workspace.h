@@ -118,7 +118,7 @@ public:
     /////////////////////////////////////
     // Workspace construction
     /////////////////////////////////////
-    void CreateProject(const wxString& project, bool active);
+    void CreateProject(const PHPProject::CreateData& createData);
     void DeleteProject(const wxString& project);
     void CreateFolder(const wxString& project, const wxString& folder);
     bool AddFile(const wxString& project, const wxString& folder, const wxString& file);

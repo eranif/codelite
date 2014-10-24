@@ -40,6 +40,9 @@
 #include <wx/notebook.h>
 #include <wx/stc/stc.h>
 #include <wx/html/htmlwin.h>
+#include <wx/bannerwindow.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 
 class QuickOutlineDlgBase : public wxDialog
 {
@@ -416,6 +419,27 @@ protected:
 public:
     XDebugDiagDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Diagnostics"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~XDebugDiagDlgBase();
+};
+
+
+class PHPProjectSetupDlgBase : public wxDialog
+{
+protected:
+    wxBannerWindow* m_banner313;
+    wxStaticText* m_staticText317;
+    wxChoice* m_choiceProjectType;
+    wxStaticText* m_staticText321;
+    wxFilePickerCtrl* m_filePickerPhpExe;
+    wxCheckBox* m_checkBoxImportFiles;
+    wxStdDialogButtonSizer* m_stdBtnSizer338;
+    wxButton* m_button340;
+    wxButton* m_button342;
+
+protected:
+
+public:
+    PHPProjectSetupDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Project Setup"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~PHPProjectSetupDlgBase();
 };
 
 #endif

@@ -97,10 +97,10 @@ PHPFolder::Ptr_t PHPProject::AddFolder(const wxString& name)
     }
 }
 
-void PHPProject::Create(const wxFileName& filename)
+void PHPProject::Create(const wxFileName& filename, const wxString &name)
 {
     m_filename = filename;
-    m_name = filename.GetName();
+    m_name = name;
     Save();
 }
 

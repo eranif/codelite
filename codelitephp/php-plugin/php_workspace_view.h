@@ -127,7 +127,7 @@ public:
      * @brief create a new project
      * @param name
      */
-    void CreateNewProject(const wxString& name);
+    void CreateNewProject(PHPProject::CreateData cd);
 
     void LoadWorkspace();
     void UnLoadWorkspace();

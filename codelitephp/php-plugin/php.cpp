@@ -525,7 +525,7 @@ void PhpPlugin::OnNewProject(clNewProjectEvent& e)
     phpTemplate.m_templatePng = "m_bmpPhpFile";
     phpTemplate.m_debugger = "XDebug";
     phpTemplate.m_toolchain = "PHP Tools";
-    phpTemplate.m_allowSeparateFolder = false; // Don't allow to create PHP project under a separate folder
+    phpTemplate.m_allowSeparateFolder = true;
     e.GetTemplates().push_back(phpTemplate);
 }
 
@@ -723,7 +723,7 @@ void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
             _("Can't create PHP project. Close your current workspace first"), "PHP", wxOK | wxICON_ERROR | wxCENTER);
         return;
     }
-
+    
     if(!PHPWorkspace::Get()->IsOpen()) {
         // No PHP workspace is open, create a new one
         wxFileName workspacePath(e.GetProjectFolder(), e.GetProjectName());
@@ -732,7 +732,11 @@ void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
     }
 
     if(PHPWorkspace::Get()->IsOpen()) {
-        m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, e.GetProjectName());
+        PHPProject::CreateData cd;
+        cd.importFilesUnderPath = true;
+        cd.name = e.GetProjectName();
+        cd.path = e.GetProjectFolder();
+        m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, cd);
     }
 }
 

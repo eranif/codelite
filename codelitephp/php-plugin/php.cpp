@@ -357,30 +357,7 @@ void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
 
         PluginSettings::Load(settings);
 
-        // try reading the filter from the configuration
-        filter = settings.GetOpenWorkspaceFilter();
-        if(filter.IsEmpty()) {
-            wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
-                                    _("Which workspace would you like to open?"),
-                                    _("PHP Plugin"),
-                                    wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
-            dlg.ShowCheckBox(_("Remember my answer"));
-            dlg.SetYesNoLabels("PHP Workspace", "Standard Workspace");
-            if(dlg.ShowModal() == wxID_YES) {
-                // Open PHP workspace
-                filter = "PHP Workspace (*.phpwsp)|*.phpwsp|Standard codelite workspace (*.workspace)|*.workspace";
-
-            } else {
-                filter = "Standard codelite workspace (*.workspace)|*.workspace|PHP Workspace (*.phpwsp)|*.phpwsp";
-            }
-
-            bool rememberAnswer = dlg.IsCheckBoxChecked();
-            if(rememberAnswer) {
-                settings.SetOpenWorkspaceFilter(filter);
-                PluginSettings::Save(settings);
-            }
-        }
-
+        filter = "All Files (*)|*|Standard Workspace (*.workspace)|*.workspace|PHP Workspace (*.phpwsp)|*.phpwsp";
         filename =
             wxFileSelector(wxT("Open workspace"), wxT(""), wxT(""), wxT(""), filter, wxFD_FILE_MUST_EXIST | wxFD_OPEN);
     }
@@ -723,7 +700,7 @@ void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
             _("Can't create PHP project. Close your current workspace first"), "PHP", wxOK | wxICON_ERROR | wxCENTER);
         return;
     }
-    
+
     if(!PHPWorkspace::Get()->IsOpen()) {
         // No PHP workspace is open, create a new one
         wxFileName workspacePath(e.GetProjectFolder(), e.GetProjectName());

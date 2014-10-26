@@ -197,7 +197,11 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
     wxString cmd;
 
     cmd << php;              // Wrap the php exe with qoutes
+#ifdef __WXMSW__
+    ::WrapWithQuotes(cmd);
+#else
     cmd.Replace(" ", "\\ "); // escape spaces
+#endif
     if(!ini.IsEmpty()) {
         cmd << " -c " << ini << " ";
     }

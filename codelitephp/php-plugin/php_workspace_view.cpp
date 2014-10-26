@@ -39,7 +39,8 @@ EVT_MENU(XRCID("php_close_workspace"), PHPWorkspaceView::OnCloseWorkspace)
 EVT_MENU(XRCID("php_reload_workspace"), PHPWorkspaceView::OnReloadWorkspace)
 EVT_MENU(XRCID("php_set_project_active"), PHPWorkspaceView::OnSetProjectActive)
 EVT_MENU(XRCID("php_delete_project"), PHPWorkspaceView::OnDeleteProject)
-EVT_MENU(XRCID("php_add_folder"), PHPWorkspaceView::OnNewFolder)
+EVT_MENU(XRCID("php_new_folder"), PHPWorkspaceView::OnNewFolder)
+EVT_MENU(XRCID("php_add_folder"), PHPWorkspaceView::OnAddFolder)
 EVT_MENU(XRCID("php_new_class"), PHPWorkspaceView::OnNewClass)
 EVT_MENU(XRCID("php_new_file"), PHPWorkspaceView::OnNewFile)
 EVT_MENU(XRCID("php_add_existing_file"), PHPWorkspaceView::OnAddFile)
@@ -139,7 +140,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_delete_project"), _("Delete project"));
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_add_folder"), _("Add a folder..."));
+                menu.Append(XRCID("php_add_folder"), _("Add an existing folder..."));
+                menu.Append(XRCID("php_new_folder"), _("New folder..."));
                 menu.Append(XRCID("php_import_files"), _("Import files from a directory..."));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_run_project"), _("Run project..."));
@@ -150,10 +152,12 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
             case ItemData::Kind_Folder: {
                 wxMenu menu;
                 menu.Append(XRCID("php_new_class"), _("New Class..."));
-                menu.Append(XRCID("php_new_file"), _("Add a new file..."));
-                menu.Append(XRCID("php_add_existing_file"), _("Add an existing file..."));
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_add_folder"), _("Add a folder..."));
+                menu.Append(XRCID("php_add_existing_file"), _("Add an existing file..."));
+                menu.Append(XRCID("php_new_file"), _("Add a new file..."));
+                menu.AppendSeparator();
+                menu.Append(XRCID("php_add_folder"), _("Add an existing folder..."));
+                menu.Append(XRCID("php_new_folder"), _("New folder..."));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_delete_folder"), _("Delete this folder"));
                 m_treeCtrlView->PopupMenu(&menu);
@@ -266,6 +270,49 @@ void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
     }
 }
 
+void PHPWorkspaceView::OnAddFolder(wxCommandEvent& e)
+{
+    wxString project = DoGetSelectedProject();
+    if(project.IsEmpty()) return;
+
+    wxTreeItemId parent = m_treeCtrlView->GetSelection();
+    CHECK_ITEM_RET(parent);
+
+    ItemData* itemData = DoGetItemData(parent);
+    CHECK_PTR_RET(itemData);
+
+    PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(project);
+    CHECK_PTR_RET(proj);
+
+    wxString folder = wxDirSelector(_("Select folder"), proj->GetFilename().GetPath());
+    if(folder.IsEmpty()) return;
+
+    wxFileName fnFolder(folder, "");
+    if(!fnFolder.MakeRelativeTo(proj->GetFilename().GetPath())) return;
+
+    if(fnFolder.GetFullPath().Contains("..")) {
+        ::wxMessageBox(
+            _("The folder must be located under the project folder"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+        return;
+    }
+    folder = fnFolder.GetFullPath();
+    folder.Replace("\\", "/");
+    if(!folder.StartsWith("./")) {
+        folder.Prepend("./");
+    }
+    PHPFolder::Ptr_t pFolder = proj->Folder(folder);
+    if(pFolder) {
+        // this folder already exist, don't do anything
+        return;
+    }
+
+    pFolder = proj->AddFolder(folder);
+    proj->Save();
+
+    // Update the UI
+    DoAddFolder(parent, pFolder, proj);
+}
+
 void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -293,7 +340,20 @@ void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
     } else {
         folder << name;
     }
-    PHPFolder::Ptr_t pFolder = proj->AddFolder(folder);
+
+    folder.Replace("\\", "/");
+
+    if(!folder.StartsWith("./")) {
+        folder.Prepend("./");
+    }
+
+    PHPFolder::Ptr_t pFolder = proj->Folder(folder);
+    if(pFolder) {
+        // this folder already exist, don't do anything
+        return;
+    }
+
+    pFolder = proj->AddFolder(folder);
     proj->Save();
 
     // Update the UI

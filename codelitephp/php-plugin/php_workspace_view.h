@@ -92,6 +92,7 @@ protected:
     void OnCloseWorkspace(wxCommandEvent& e);
     void OnReloadWorkspace(wxCommandEvent& e);
     void OnNewFolder(wxCommandEvent& e);
+    void OnAddFolder(wxCommandEvent& e);
     void OnNewClass(wxCommandEvent& e);
     void OnDeleteProject(wxCommandEvent& e);
     void OnSetProjectActive(wxCommandEvent& e);

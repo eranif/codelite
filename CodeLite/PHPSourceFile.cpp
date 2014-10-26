@@ -198,7 +198,7 @@ void PHPSourceFile::OnUse()
                 // use Zend\Mvc\Controll\Action;
                 // is equal for writing:
                 // use \Zend\Mvc\Controll\Action;
-                // For simplicitiy, we change it to fully qualified path 
+                // For simplicitiy, we change it to fully qualified path
                 // so parsing is easier
                 if(!fullname.StartsWith("\\")) {
                     fullname.Prepend("\\");
@@ -355,17 +355,16 @@ size_t PHPSourceFile::LookBackForFunctionFlags()
             flags |= kFunc_Public;
             flags &= ~kFunc_Private;
             flags &= ~kFunc_Protected;
-            
+
         } else if(tok.type == kPHP_T_PRIVATE) {
             flags |= kFunc_Private;
             flags &= ~kFunc_Public;
             flags &= ~kFunc_Protected;
-            
+
         } else if(tok.type == kPHP_T_PROTECTED) {
             flags |= kFunc_Protected;
             flags &= ~kFunc_Public;
             flags &= ~kFunc_Private;
-            
         }
     }
     return flags;
@@ -521,7 +520,7 @@ void PHPSourceFile::ParseFunctionBody()
             var->SetFilename(m_filename.GetFullPath());
             var->SetLine(token.lineNumber);
             CurrentScope()->AddChild(var);
-            
+
             // Peek at the next token
             if(!NextToken(token)) return; // EOF
             if(token.type != '=') {
@@ -647,7 +646,7 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
         // primitives, don't bother...
         return typeWithNS;
     }
-    
+
     if(typeWithNS.IsEmpty()) return "";
     // If the symbol contains namespace separator
     // Convert it full path and return (prepend namespace separator)
@@ -881,7 +880,7 @@ size_t PHPSourceFile::LookBackForVariablesFlags()
             flags |= kVar_Public;
             flags &= ~kVar_Private;
             flags &= ~kVar_Protected;
-            
+
         } else if(tok.type == kPHP_T_PRIVATE) {
             flags |= kVar_Private;
             flags &= ~kVar_Public;
@@ -962,13 +961,13 @@ void PHPSourceFile::OnDefine(const phpLexerToken& tok)
     }
     // Remove the quotes
     wxString varName = token.text;
-    if(varName.StartsWith("\"") && varName.EndsWith("\"")) {
+    if((varName.StartsWith("\"") && varName.EndsWith("\"")) || (varName.StartsWith("'") && varName.EndsWith("'"))) {
         varName.Remove(0, 1);
         varName.RemoveLast();
         // define() defines constants exactly as it was instructed
         // i.e. it does not take the current namespace into consideration
         PHPEntityBase::Ptr_t var(new PHPEntityVariable());
-        
+
         // Convert the variable into fullpath + relative name
         if(!varName.StartsWith("\\")) {
             varName.Prepend("\\");
@@ -979,7 +978,7 @@ void PHPSourceFile::OnDefine(const phpLexerToken& tok)
         var->SetFlag(kVar_Define);
         var->SetFilename(GetFilename());
         var->SetLine(tok.lineNumber);
-        
+
         // We keep the defines in a special list
         // this is because 'define' does not obay to the current scope
         m_defines.push_back(var);

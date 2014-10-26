@@ -78,16 +78,26 @@ wxString PHPEntityVariable::ToFuncArgString() const
 }
 void PHPEntityVariable::Store(wxSQLite3Database& db)
 {
-    // we keep only the function arguments in the databse and globals
-    if(IsFunctionArg() || IsMember()) {
+    if(IsFunctionArg() || IsMember() || IsDefine()) {
         try {
             wxSQLite3Statement statement =
                 db.PrepareStatement("INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
                                     ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, "
                                     ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
-            statement.Bind(statement.GetParamIndex(":SCOPE_ID"), IsMember() ? Parent()->GetDbId() : wxLongLong(-1));
-            statement.Bind(statement.GetParamIndex(":FUNCTION_ID"),
-                           IsFunctionArg() ? Parent()->GetDbId() : wxLongLong(-1));
+            wxLongLong functionId, scopeId;
+            if(IsFunctionArg()) {
+                functionId = Parent()->GetDbId();
+            } else {
+                functionId = -1;
+            }
+            
+            if(IsMember() || IsDefine()) {
+                scopeId = Parent()->GetDbId();
+            } else {
+                scopeId = -1;
+            }
+            statement.Bind(statement.GetParamIndex(":SCOPE_ID"), scopeId);
+            statement.Bind(statement.GetParamIndex(":FUNCTION_ID"), functionId);
             statement.Bind(statement.GetParamIndex(":NAME"), GetShortName());
             statement.Bind(statement.GetParamIndex(":FULLNAME"), GetFullName());
             statement.Bind(statement.GetParamIndex(":SCOPE"), GetScope());
@@ -124,6 +134,9 @@ wxString PHPEntityVariable::GetScope() const
         return parent->Cast<PHPEntityFunction>()->GetScope();
 
     } else if(parent && parent->Is(kEntityTypeClass) && IsMember()) {
+        return parent->GetFullName();
+        
+    } else if(parent && parent->Is(kEntityTypeNamespace) && IsDefine()) {
         return parent->GetFullName();
 
     } else {

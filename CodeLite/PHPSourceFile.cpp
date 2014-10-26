@@ -116,6 +116,10 @@ void PHPSourceFile::Parse(int exitDepth)
             }
             break;
         }
+        case kPHP_T_DEFINE:
+            // Define statement
+            OnDefine(token);
+            break;
         case kPHP_T_CONST:
             if(ReadUntilFound(kPHP_T_IDENTIFIER, token)) {
                 // constant
@@ -941,4 +945,45 @@ PHPEntityBase::List_t PHPSourceFile::GetAliases() const
         aliases.push_back(klass);
     }
     return aliases;
+}
+
+void PHPSourceFile::OnDefine(const phpLexerToken& tok)
+{
+    phpLexerToken token;
+    if(!NextToken(token)) return; // EOF
+    if(token.type != '(') {
+        ConsumeUntil(';');
+        return;
+    }
+    if(!NextToken(token)) return; // EOF
+    if(token.type != kPHP_T_CONSTANT_ENCAPSED_STRING) {
+        ConsumeUntil(';');
+        return;
+    }
+    // Remove the quotes
+    wxString varName = token.text;
+    if(varName.StartsWith("\"") && varName.EndsWith("\"")) {
+        varName.Remove(0, 1);
+        varName.RemoveLast();
+        // define() defines constants exactly as it was instructed
+        // i.e. it does not take the current namespace into consideration
+        PHPEntityBase::Ptr_t var(new PHPEntityVariable());
+        
+        // Convert the variable into fullpath + relative name
+        if(!varName.StartsWith("\\")) {
+            varName.Prepend("\\");
+        }
+        wxString shortName = varName.AfterLast('\\');
+        var->SetFullName(varName);
+        var->SetShortName(shortName);
+        var->SetFlag(kVar_Define);
+        var->SetFilename(GetFilename());
+        var->SetLine(tok.lineNumber);
+        
+        // We keep the defines in a special list
+        // this is because 'define' does not obay to the current scope
+        m_defines.push_back(var);
+    }
+    // Always consume the 'define' statement
+    ConsumeUntil(';');
 }

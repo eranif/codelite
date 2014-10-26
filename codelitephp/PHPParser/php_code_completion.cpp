@@ -228,7 +228,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
             t->SetAccess(wxT("public"));
 
         // type (affects icon)
-        if(var->IsConst()) {
+        if(var->IsConst() || var->IsDefine()) {
             t->SetKind("macro");
         } else {
             t->SetKind("variable");

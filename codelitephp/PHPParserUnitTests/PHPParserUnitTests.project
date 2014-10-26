@@ -56,6 +56,9 @@
     <File Name="Tests/test_parent.php"/>
     <File Name="Tests/test_locals.php"/>
     <File Name="Tests/test_word_complete_of_aliases.php"/>
+    <File Name="Tests/test_define.php"/>
+    <File Name="Tests/test_define_in_namespace.php"/>
+    <File Name="Tests/test_define_with_namespace.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

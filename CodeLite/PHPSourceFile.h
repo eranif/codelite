@@ -11,6 +11,7 @@ class WXDLLIMPEXP_CL PHPSourceFile
 {
     wxString m_text;
     PHPEntityBase::List_t m_scopes;
+    PHPEntityBase::List_t m_defines;
     PHPScanner_t m_scanner;
     wxFileName m_filename;
     std::vector<phpLexerToken> m_lookBackTokens;
@@ -20,12 +21,11 @@ class WXDLLIMPEXP_CL PHPSourceFile
     bool m_reachedEOF;
     // aliases defined by the 'use' operator
     std::map<wxString, wxString> m_aliases;
-    
+
 public:
     typedef wxSharedPtr<PHPSourceFile> Ptr_t;
-    
+
 protected:
-    
     /**
      * @brief calls phpLexerNextToken. Use this call instead of the global phpLexerNextToken
      * since this function will handle all PHP comments found
@@ -85,27 +85,32 @@ protected:
      * @brief 'function' keyword found
      */
     void OnFunction();
-    
+
     /**
      * @brief found a global variable
      */
     void OnVariable(const phpLexerToken& token);
-    
+
     /**
      * @brief 'class' keyword found
      */
     void OnClass(const phpLexerToken& tok);
 
     /**
+     * @brief a define keyword was found
+     */
+    void OnDefine(const phpLexerToken& tok);
+
+    /**
      * @brief go over the look back tokens and extract all function flags
      */
     size_t LookBackForFunctionFlags();
-    
+
     /**
      * @brief go over the look back tokens and extract all variable flags
      */
     size_t LookBackForVariablesFlags();
-    
+
     /**
      * @brief return true of the look back tokens contains 'type'
      */
@@ -141,12 +146,17 @@ public:
     PHPSourceFile(const wxFileName& filename);
     PHPSourceFile(const wxString& content);
     virtual ~PHPSourceFile();
-    
+
     /**
      * @brief return list of aliases (their short name) that appears on this file
      */
     PHPEntityBase::List_t GetAliases() const;
     
+    /**
+     * @brief return list of defines defined in this source file
+     */
+    const PHPEntityBase::List_t& GetDefines() const { return m_defines; }
+
     /**
      * @brief attempt to resolve 'type' to its full path
      */
@@ -178,7 +188,7 @@ public:
      * @brief return the namespace scope of this file
      */
     PHPEntityBase::Ptr_t Namespace();
-    
+
     // Accessors
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     const wxFileName& GetFilename() const { return m_filename; }

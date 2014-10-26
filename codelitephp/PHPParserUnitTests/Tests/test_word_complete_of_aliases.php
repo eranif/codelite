@@ -1,8 +1,8 @@
 <?php
 
-use Zend\Mvc\Controller;
+use Zend\Mvc\XYZController;
 use Zend\Mvc\Something;
 
-class Connection {}
+class XYZConnection {}
 
-$a = new Con // Suggest 2 entries: 'Controller' + 'Connection'
+$a = new XYZCon

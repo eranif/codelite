@@ -55,6 +55,7 @@ public:
     bool IsConst() const { return HasFlag(kVar_Const); }
     bool IsReference() const { return HasFlag(kVar_Reference); }
     bool IsStatic() const { return HasFlag(kVar_Static); }
+    bool IsDefine() const { return HasFlag(kVar_Define); }
 };
 
 #endif // PHPENTITYVARIABLE_H

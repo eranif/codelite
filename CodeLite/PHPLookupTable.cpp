@@ -243,8 +243,7 @@ void PHPLookupTable::CreateSchema()
 void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
 {
     try {
-        if(autoCommit)
-            m_db.Begin();
+        if(autoCommit) m_db.Begin();
 
         // Delete all entries for this file
         DeleteFileEntries(source.GetFilename(), false);
@@ -255,12 +254,56 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
             topNamespace->StoreRecursive(m_db);
             UpdateFileLastParsedTimestamp(source.GetFilename());
         }
-        if(autoCommit)
-            m_db.Commit();
+
+        // Store defines
+        // --------------
+        // 'defines' are handled separately as they dont really comply to the standard PHP rules
+        // define() will define constants exactly as specified.
+        // The following code will define the constant "MESSAGE" in the global namespace (i.e. "\MESSAGE").
+        // <?php
+        //  namespace test;
+        //  define('MESSAGE', 'Hello world!');
+        // ?>
+        // In the above code, the constant 'MESSAGE' is defined in the GLOBAL namespace even though the 
+        // define was called inside namespace 'test'
+        // For this reason, we need get the list of defined parsed in the source file and associate them 
+        // with their namespace (we either load the namespace from the database or create one)
+        
+        if(!source.GetDefines().empty()) {
+            const PHPEntityBase::List_t& defines = source.GetDefines();
+            PHPEntityBase::List_t::const_iterator iter = defines.begin();
+            PHPEntityBase::Map_t nsMap;
+            for(; iter != defines.end(); ++iter) {
+                PHPEntityBase::Ptr_t pDefine = *iter;
+                PHPEntityBase::Ptr_t pNamespace(NULL);
+                
+                wxString nameSpaceName, shortName;
+                DoSplitFullname(pDefine->GetFullName(), nameSpaceName, shortName);
+
+                PHPEntityBase::Map_t::iterator nsIter = nsMap.find(nameSpaceName);
+                if(nsIter == nsMap.end()) {
+                    // we did not load this namespace yet => load and cache it
+                    pNamespace = CreateNamespaceForDefine(pDefine);
+                    nsMap.insert(std::make_pair(pNamespace->GetFullName(), pNamespace));
+
+                } else {
+                    // We already loaded this namespace
+                    pNamespace = nsIter->second;
+                }
+                pNamespace->AddChild(pDefine);
+            }
+
+            // Now, loop over the namespace map and store all entries
+            PHPEntityBase::Map_t::iterator nsIter = nsMap.begin();
+            for(; nsIter != nsMap.end(); ++nsIter) {
+                nsIter->second->StoreRecursive(m_db);
+            }
+        }
+
+        if(autoCommit) m_db.Commit();
 
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit)
-            m_db.Rollback();
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::SaveSourceFile: %s", e.GetMessage());
     }
 }
@@ -469,8 +512,7 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
             PHPEntityBase::List_t::iterator iter = matches.begin();
             for(; iter != matches.end(); ++iter) {
                 PHPEntityBase::Ptr_t child = *iter;
-                if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract))
-                    continue;
+                if(child->Is(kEntityTypeFunction) && child->HasFlag(kFunc_Abstract)) continue;
                 matchesNoAbstracts.push_back(child);
             }
             matches.swap(matchesNoAbstracts);
@@ -649,8 +691,7 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
 {
     wxString trimmedNameHint(nameHint);
     trimmedNameHint.Trim().Trim(false);
-    if(trimmedNameHint.IsEmpty())
-        return;
+    if(trimmedNameHint.IsEmpty()) return;
 
     wxString sql;
     sql << "SELECT * from " << tableName << " WHERE ";
@@ -677,8 +718,7 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
 void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoCommit)
 {
     try {
-        if(autoCommit)
-            m_db.Begin();
+        if(autoCommit) m_db.Begin();
         {
             // When deleting from the 'SCOPE_TABLE' don't remove namespaces
             // since they can be still be pointed by other entries in the database
@@ -714,11 +754,9 @@ void PHPLookupTable::DeleteFileEntries(const wxFileName& filename, bool autoComm
             st.ExecuteUpdate();
         }
 
-        if(autoCommit)
-            m_db.Commit();
+        if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit)
-            m_db.Rollback();
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::DeleteFileEntries: %s", e.GetMessage());
     }
 }
@@ -853,8 +891,7 @@ void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
 void PHPLookupTable::ClearAll(bool autoCommit)
 {
     try {
-        if(autoCommit)
-            m_db.Begin();
+        if(autoCommit) m_db.Begin();
         {
             wxString sql;
             sql << "delete from SCOPE_TABLE";
@@ -883,11 +920,9 @@ void PHPLookupTable::ClearAll(bool autoCommit)
             st.ExecuteUpdate();
         }
 
-        if(autoCommit)
-            m_db.Commit();
+        if(autoCommit) m_db.Commit();
     } catch(wxSQLite3Exception& e) {
-        if(autoCommit)
-            m_db.Rollback();
+        if(autoCommit) m_db.Rollback();
         CL_WARNING("PHPLookupTable::ClearAll: %s", e.GetMessage());
     }
 }
@@ -928,12 +963,41 @@ PHPEntityBase::List_t PHPLookupTable::FindGlobalFunctionAndConsts(const wxString
 {
     PHPEntityBase::List_t matches;
     // Sanity
-    if(nameHint.IsEmpty())
-        return matches;
+    if(nameHint.IsEmpty()) return matches;
     // First, locate the global namespace in the database
     PHPEntityBase::Ptr_t globalNs = FindScope("\\");
-    if(!globalNs)
-        return matches;
+    if(!globalNs) return matches;
     DoFindChildren(matches, globalNs->GetDbId(), kLookupFlags_FunctionsAndConstsOnly | kLookupFlags_Contains, nameHint);
     return matches;
+}
+
+PHPEntityBase::Ptr_t PHPLookupTable::CreateNamespaceForDefine(PHPEntityBase::Ptr_t define)
+{
+    wxString nameSpaceName, shortName;
+    DoSplitFullname(define->GetFullName(), nameSpaceName, shortName);
+    
+    PHPEntityBase::Ptr_t pNamespace = DoFindScope(nameSpaceName, kPhpScopeTypeNamespace);
+    if(!pNamespace) {
+        // Create it
+        pNamespace.Reset(new PHPEntityNamespace());
+        pNamespace->SetFullName(nameSpaceName);
+        pNamespace->SetShortName(nameSpaceName.AfterLast('\\'));
+        pNamespace->SetFilename(define->GetFilename());
+        pNamespace->SetLine(define->GetLine());
+        pNamespace->Store(m_db);
+    }
+    return pNamespace;
+}
+
+void PHPLookupTable::DoSplitFullname(const wxString& fullname, wxString& ns, wxString& shortName)
+{
+    // get the namespace part
+    ns = fullname.BeforeLast('\\');
+    if(!ns.StartsWith("\\")) {
+        // This means that the fullname contained a single '\'
+        // and we removed it
+        ns.Prepend("\\");
+    }
+    // Now the short name
+    shortName = fullname.AfterLast('\\');
 }

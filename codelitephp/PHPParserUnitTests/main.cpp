@@ -357,6 +357,8 @@ TEST_FUNC(test_locals)
     PHPSourceFile sourceFile(wxFileName("../Tests/test_locals.php"));
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
@@ -374,6 +376,8 @@ TEST_FUNC(test_word_complete_of_aliases)
     PHPSourceFile sourceFile(wxFileName("../Tests/test_word_complete_of_aliases.php"));
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
@@ -382,6 +386,63 @@ TEST_FUNC(test_word_complete_of_aliases)
     expr.Suggest(resolved, lookup, matches);
     
     CHECK_SIZE(matches.size(), 2);
+    return true;
+}
+
+// test code completion for local variables
+TEST_FUNC(test_define)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_define.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+    
+    CHECK_SIZE(matches.size(), 1);
+    return true;
+}
+
+// test code completion for local variables
+TEST_FUNC(test_define_in_namespace)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_define_in_namespace.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+    
+    CHECK_SIZE(matches.size(), 0);
+    return true;
+}
+
+// test code completion for local variables
+TEST_FUNC(test_define_with_namespace)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_define_with_namespace.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+    
+    CHECK_SIZE(matches.size(), 1);
     return true;
 }
 

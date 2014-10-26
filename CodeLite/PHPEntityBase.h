@@ -30,6 +30,7 @@ enum {
     kVar_Const = (1 << 6),
     kVar_FunctionArg = (1 << 7),
     kVar_Static = (1 << 8),
+    kVar_Define = (1 << 9),
 };
 
 // Function flags

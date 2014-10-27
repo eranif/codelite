@@ -13,15 +13,15 @@ wxID_REDO|Edit|Redo|Ctrl-Y
 wxID_CUT|Edit|Cut|Ctrl-X
 wxID_COPY|Edit|Copy|Ctrl-C
 wxID_PASTE|Edit|Paste|Ctrl-V
-wxID_DUPLICATE|Edit|Duplicate Selection / Line|Ctrl-U
+wxID_DUPLICATE|Edit|Duplicate Selection / Line|Ctrl-D
 delete_line_end|Edit|Delete to Line End|
 delete_line_start|Edit|Delete to Line Start|
 delete_line|Edit|Delete Line|Ctrl-L
-to_lower|Edit|Make Lowercase|
-to_upper|Edit|Make Uppercase|
+to_lower|Edit|Make Lowercase|Ctrl-U
+to_upper|Edit|Make Uppercase|Ctrl-Shift-U
 transpose_lines|Edit|Transpose Lines|Ctrl-T
-move_line_up|Edit|Move Line Up|Alt-PGUP
-move_line_down|Edit|Move Line Down|Alt-PGDN
+move_line_up|Edit|Move Line Up|Ctrl-Shift-UP
+move_line_down|Edit|Move Line Down|Ctrl-Shift-DOWN
 center_line|Edit|Center Line in Editor|
 center_line_roll|Edit|Center Line in Editor by Rolling|
 wxID_SELECTALL|Edit|Select All|Ctrl-A
@@ -67,7 +67,7 @@ previous_fif_match|Search|Go to Previous 'Find In File' Match|Ctrl-F8
 find_previous|Search|Find Previous|Shift-F3
 find_resource|Search|Find Resource...|Ctrl-Shift-R
 find_symbol|Search|Quick Outline...|Ctrl-Shift-O
-goto_definition|Search|Find Symbol|Ctrl-D
+goto_definition|Search|Find Symbol|
 goto_previous_definition|Search|Go To Previous Location|Ctrl-P
 wxID_BACKWARD|Search|Navigate Backward|Ctrl-,
 wxID_FORWARD|Search|Navigate Forward|Ctrl-.

@@ -1,5 +1,7 @@
 #include "clKeyboardManager.h"
 #include <wx/app.h>
+#include <wx/menu.h>
+#include <wx/xrc/xmlres.h>
 #include "macros.h"
 #include <algorithm>
 #include "clKeyboardBindingConfig.h"

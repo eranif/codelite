@@ -625,4 +625,10 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="Keyboard">
+    <File Name="clKeyboardManager.cpp"/>
+    <File Name="clKeyboardManager.h"/>
+    <File Name="clKeyboardBindingConfig.h"/>
+    <File Name="clKeyboardBindingConfig.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

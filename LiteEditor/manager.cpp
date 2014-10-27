@@ -97,6 +97,7 @@
 #include "code_completion_manager.h"
 #include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
+#include "clKeyboardManager.h"
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -258,14 +259,11 @@ Manager::~Manager(void)
 #if HAS_LIBCLANG
     ClangCodeCompletion::Release();
 #endif
-
-    if(m_shellProcess) {
-        delete m_shellProcess;
-        m_shellProcess = NULL;
-    }
-    delete m_breakptsmgr;
-
+    
+    wxDELETE(m_shellProcess);
+    wxDELETE(m_breakptsmgr);
     TabGroupsManager::Free();
+    clKeyboardManager::Release();
 }
 
 //--------------------------- Workspace Loading -----------------------------

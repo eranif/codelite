@@ -33,7 +33,6 @@
 #include "wx/treectrl.h"
 #include "dynamiclibrary.h"
 #include "plugindata.h"
-#include "keyboardmanager.h"
 #include "project.h"
 #include <set>
 #include <map>
@@ -51,7 +50,6 @@ class PluginManager : public IManager
     std::map<wxString, IPlugin*> m_plugins;
     std::list<clDynamicLibrary*> m_dl;
     PluginInfoArray m_pluginsData;
-    KeyboardManager m_keyboardMgr;
     BitmapLoader* m_bmpLoader;
     std::set<MenuType> m_menusToBeHooked;
     std::map<wxString, wxString> m_backticks;
@@ -104,7 +102,6 @@ public:
     virtual wxEvtHandler* GetOutputWindow();
     virtual bool SaveAll();
     virtual wxString GetInstallDirectory() const;
-    virtual IKeyboard* GetKeyboardManager();
     virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
     virtual OptionsConfigPtr GetEditorSettings();
     virtual void FindAndSelect(const wxString& pattern, const wxString& name, int pos = 0);

@@ -630,5 +630,11 @@
     <File Name="clKeyboardManager.h"/>
     <File Name="clKeyboardBindingConfig.h"/>
     <File Name="clKeyboardBindingConfig.cpp"/>
+    <File Name="NewKeyShortcutBaseDlg.cpp"/>
+    <File Name="NewKeyShortcutBaseDlg.h"/>
+    <File Name="NewKeyShortcutBaseDlg.wxcp"/>
+    <File Name="NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp"/>
+    <File Name="newkeyshortcutdlg.cpp"/>
+    <File Name="newkeyshortcutdlg.h"/>
   </VirtualDirectory>
 </CodeLite_Project>

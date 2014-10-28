@@ -403,8 +403,6 @@
     <VirtualDirectory Name="Accelerators">
       <File Name="acceltabledlg.h"/>
       <File Name="acceltabledlg.cpp"/>
-      <File Name="newkeyshortcutdlg.h"/>
-      <File Name="newkeyshortcutdlg.cpp"/>
       <File Name="AccelTableBaseDlg.wxcp"/>
       <File Name="keyboardaccelemodel.cpp"/>
       <File Name="keyboardaccelemodel.h"/>
@@ -447,7 +445,6 @@
       <File Name="../formbuilder/setters_getters.wxcp"/>
       <File Name="../formbuilder/rename_symbool_dlg.wxcp"/>
     </VirtualDirectory>
-    <File Name="NewKeyShortcutBaseDlg.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>
@@ -638,8 +635,6 @@
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>
     <File Name="pluginmanager.cpp"/>
-    <File Name="keyboardmanager.cpp"/>
-    <File Name="keyboardmanager.h"/>
   </VirtualDirectory>
   <Dependencies>
     <Project Name="wxscintilla"/>
@@ -827,8 +822,6 @@
       <File Name="rename_symbool_dlg.cpp"/>
       <File Name="compiler_pages.h"/>
       <File Name="compiler_pages.cpp"/>
-      <File Name="NewKeyShortcutBaseDlg.h"/>
-      <File Name="NewKeyShortcutBaseDlg.cpp"/>
       <File Name="AccelTableBaseDlg.h"/>
       <File Name="AccelTableBaseDlg.cpp"/>
       <File Name="editor_options_copy_paste.h"/>
@@ -862,7 +855,6 @@
       <File Name="workspacesettingsbase_liteeditor_bitmaps.cpp"/>
       <File Name="compiler_page_plugin_bitmaps.cpp"/>
       <File Name="messagepane_liteeditor_bitmaps.cpp"/>
-      <File Name="NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AccelTableBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AddIncludeFile_liteeditor_bitmaps.cpp"/>
       <File Name="tags_options_base_dlg_formbuilder_bitmaps.cpp"/>
@@ -1581,7 +1573,7 @@ resources.cpp: resources.xrc
         <Library Value="libclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command=".\codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --with-plugins codeformatter" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command=".\codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

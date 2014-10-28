@@ -55,6 +55,7 @@
 #include "debugger.h"
 #include "cl_standard_paths.h"
 #include "new_build_tab.h"
+#include "clKeyboardManager.h"
 
 PluginManager* PluginManager::Get()
 {
@@ -124,9 +125,12 @@ void PluginManager::Load()
     CodeLiteApp* app = static_cast<CodeLiteApp*>(GetTheApp());
     CodeLiteApp::PluginPolicy pp = app->GetPluginLoadPolicy();
     wxArrayString allowedPlugins;
-    if(pp == CodeLiteApp::PP_None)
+    if(pp == CodeLiteApp::PP_None) {
+        // Make sure that we initialise the keyboard manager
+        clKeyboardManager::Get()->Initialize();
         return;
-
+    }
+    
     else if(pp == CodeLiteApp::PP_FromList)
         allowedPlugins = app->GetAllowedPlugins();
 
@@ -285,6 +289,10 @@ void PluginManager::Load()
         // save the plugins data
         conf.WriteItem(&m_pluginsData);
     }
+    
+    // Now that all the plugins have been loaded, initialize the 
+    // keyboard manager 
+    clKeyboardManager::Get()->Initialize();
 }
 
 IEditor* PluginManager::GetActiveEditor() { return (IEditor*)clMainFrame::Get()->GetMainBook()->GetActiveEditor(true); }
@@ -428,8 +436,6 @@ wxEvtHandler* PluginManager::GetOutputWindow() { return clMainFrame::Get()->GetO
 bool PluginManager::SaveAll() { return clMainFrame::Get()->GetMainBook()->SaveAll(true, false); }
 
 wxString PluginManager::GetInstallDirectory() const { return ManagerST::Get()->GetInstallDir(); }
-
-IKeyboard* PluginManager::GetKeyboardManager() { return &m_keyboardMgr; }
 
 bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName)
 {

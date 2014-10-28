@@ -26,6 +26,7 @@
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="resources">
     <File Name="abbreviationssettingsbase.wxcp"/>
+    <File Name="../Runtime/plugins/resources/abbreviation.accelerators"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">

@@ -25,10 +25,10 @@
 #ifndef __newkeyshortcutdlg__
 #define __newkeyshortcutdlg__
 
-#include "manager.h"
 #include "NewKeyShortcutBaseDlg.h"
+#include "clKeyboardManager.h"
 
-class NewKeyShortcutDlg : public NewKeyShortcutBaseDlg
+class WXDLLIMPEXP_SDK NewKeyShortcutDlg : public NewKeyShortcutBaseDlg
 {
     MenuItemData m_mid;
     enum {

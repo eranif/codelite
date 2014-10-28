@@ -48,6 +48,10 @@ struct AccelItemData : public wxClientData {
         , isPluginAccel(fromPlugin)
     {
     }
+    
+    int GetActionID() const {
+        return menuItemData.id;
+    }
 };
 
 //-------------------------------------------------------------------------------
@@ -67,12 +71,6 @@ struct ActionSorter {
     }
 };
 
-struct ParentSorter {
-    bool operator()(const MenuItemData& rStart, const MenuItemData& rEnd)
-    {
-        return rEnd.parent.CmpNoCase(rStart.parent) < 0;
-    }
-};
 struct AccelRSorter {
     bool operator()(const MenuItemData& rStart, const MenuItemData& rEnd)
     {
@@ -87,12 +85,6 @@ struct ActionRSorter {
     }
 };
 
-struct ParentRSorter {
-    bool operator()(const MenuItemData& rStart, const MenuItemData& rEnd)
-    {
-        return rEnd.parent.CmpNoCase(rStart.parent) > 0;
-    }
-};
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
@@ -104,7 +96,7 @@ AccelTableDlg::AccelTableDlg(wxWindow* parent)
     imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("list-control/16/sort_down")));
     imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("list-control/16/sort_up")));
 
-    PluginManager::Get()->GetKeyboardManager()->GetAccelerators(m_coreAccelMap);
+    clKeyboardManager::Get()->GetAllAccelerators(m_accelMap);
     PopulateTable();
 
     // center the dialog
@@ -120,72 +112,36 @@ void AccelTableDlg::PopulateTable(const wxString& filter)
     m_dataviewModel->Clear();
 
     // Add core entries
-    for(MenuItemDataMap::iterator iter = m_coreAccelMap.begin(); iter != m_coreAccelMap.end(); ++iter) {
+    for(MenuItemDataMap_t::iterator iter = m_accelMap.begin(); iter != m_accelMap.end(); ++iter) {
         if(IsMatchesFilter(filter, iter->second)) {
             wxVector<wxVariant> cols;
-            cols.push_back(iter->second.action);
+            wxString actionStr;
+            if(!iter->second.parentMenu.IsEmpty()) {
+                actionStr << iter->second.parentMenu << "::";
+            }
+            actionStr << iter->second.action;
+            cols.push_back(actionStr);
             cols.push_back(iter->second.accel);
             m_dataviewModel->AppendItem(wxDataViewItem(0), cols, new AccelItemData(iter->second, false));
-        }
-    }
-
-    // Add plugins entries
-    for(MenuItemDataMap::iterator iter = m_pluginsAccelMap.begin(); iter != m_pluginsAccelMap.end(); ++iter) {
-        if(IsMatchesFilter(filter, iter->second)) {
-            wxVector<wxVariant> cols;
-            cols.push_back(iter->second.action);
-            cols.push_back(iter->second.accel);
-            m_dataviewModel->AppendItem(wxDataViewItem(0), cols, new AccelItemData(iter->second, true));
         }
     }
 }
 
 void AccelTableDlg::OnButtonOk(wxCommandEvent& e)
 {
-    // export the content of table, and apply the changes
-    wxString content;
-    wxDataViewItemArray children;
-    m_dataviewModel->GetChildren(wxDataViewItem(NULL), children);
-    for(size_t i = 0; i < children.GetCount(); ++i) {
-        AccelItemData* itemData = dynamic_cast<AccelItemData*>(m_dataviewModel->GetClientObject(children.Item(i)));
-        if(!itemData->isPluginAccel) {
-            MenuItemData mid = itemData->menuItemData;
-            content << mid.id;
-            content << wxT("|");
-            content << mid.parent;
-            content << wxT("|");
-            content << mid.action;
-            content << wxT("|");
-            content << mid.accel;
-            content << wxT("\n");
-        }
-    }
-
-    wxString fileName;
-    fileName =
-        clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf");
-
-    wxFFile file;
-    if(!file.Open(fileName, wxT("w+b"))) {
-        return;
-    }
-
-    file.Write(content);
-    file.Close();
-
     // apply changes
-    ManagerST::Get()->UpdateMenuAccelerators();
-
+    clKeyboardManager::Get()->SetAccelerators(m_accelMap);
+    clKeyboardManager::Get()->Update();
     EndModal(wxID_OK);
 }
 
 void AccelTableDlg::OnButtonDefaults(wxCommandEvent& e)
 {
     // re-load the default key bindings settings
-    m_coreAccelMap.clear();
-    m_pluginsAccelMap.clear();
+    m_accelMap.clear();
     m_textCtrlFilter->ChangeValue(""); // Clear the filter
-    ManagerST::Get()->GetDefaultAcceleratorMap(m_coreAccelMap);
+    clKeyboardManager::Get()->RestoreDefaults();
+    clKeyboardManager::Get()->GetAllAccelerators(m_accelMap);
     PopulateTable();
 }
 
@@ -204,20 +160,15 @@ void AccelTableDlg::DoItemActivated()
 
     // build the selected entry
     MenuItemData mid = itemData->menuItemData;
-    if(PluginManager::Get()->GetKeyboardManager()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
+    if(clKeyboardManager::Get()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
         // search the list for similar accelerator
-        wxDataViewItemArray children;
-        m_dataviewModel->GetChildren(wxDataViewItem(NULL), children);
-        for(size_t i = 0; i < children.GetCount(); ++i) {
-            AccelItemData* cd = dynamic_cast<AccelItemData*>(m_dataviewModel->GetClientObject(children.Item(i)));
-            if(cd->menuItemData.accel == mid.accel) {
-                wxString action = cd->menuItemData.action;
-                wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'"), mid.accel, action),
-                             _("CodeLite"),
-                             wxOK | wxCENTER | wxICON_WARNING,
-                             this);
-                return;
-            }
+        MenuItemData who;
+        if(HasAccelerator(mid.accel, who)) {
+            wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'"), mid.accel, who.action),
+                         _("CodeLite"),
+                         wxOK | wxCENTER | wxICON_WARNING,
+                         this);
+            return;
         }
 
         // Update the client data
@@ -228,6 +179,12 @@ void AccelTableDlg::DoItemActivated()
         cols.push_back(mid.action);
         cols.push_back(mid.accel);
         m_dataviewModel->UpdateItem(sel, cols);
+        
+        // and update the map
+        MenuItemDataMap_t::iterator iter = m_accelMap.find(itemData->GetActionID());
+        if(iter != m_accelMap.end()) {
+            iter->second.accel = itemData->menuItemData.accel;
+        }
     }
 }
 
@@ -255,13 +212,25 @@ bool AccelTableDlg::IsMatchesFilter(const wxString& filter, const MenuItemData& 
     lcFilter.Trim().Trim(false);
     if(lcFilter.IsEmpty()) return true;
     
-    wxString action = item.action.Lower();
+    wxString label = item.parentMenu + " :: " + item.action;
+    wxString action = label.Lower();
     wxString accel = item.accel.Lower();
     
     wxArrayString filters = ::wxStringTokenize(lcFilter, " ", wxTOKEN_STRTOK);
     for(size_t i=0; i<filters.GetCount(); ++i) {
-        if(!action.Contains(filters.Item(i)) || accel.Contains(filters.Item(i)))
+        if(!action.Contains(filters.Item(i)) && !accel.Contains(filters.Item(i)))
             return false;
     }
     return true;
+}
+
+bool AccelTableDlg::HasAccelerator(const wxString& accel, MenuItemData& who)
+{
+    for(MenuItemDataMap_t::iterator iter = m_accelMap.begin(); iter != m_accelMap.end(); ++iter) {
+        if(iter->second.accel == accel) {
+            who = iter->second;
+            return true;
+        }
+    }
+    return false;
 }

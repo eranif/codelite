@@ -126,7 +126,6 @@ void clKeyboardManager::Save()
 void clKeyboardManager::Initialize()
 {
     m_menuTable.clear();
-    m_globalTable.clear();
     
     // Load old format
     clKeyboardBindingConfig config;

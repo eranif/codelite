@@ -406,6 +406,8 @@
       <File Name="newkeyshortcutdlg.h"/>
       <File Name="newkeyshortcutdlg.cpp"/>
       <File Name="AccelTableBaseDlg.wxcp"/>
+      <File Name="keyboardaccelemodel.cpp"/>
+      <File Name="keyboardaccelemodel.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="About">
       <File Name="aboutdlg.cpp"/>

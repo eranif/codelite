@@ -224,6 +224,9 @@ void clKeyboardManager::Initialize()
 
     // Store the correct configuration
     config.SetBindings(m_menuTable).SetGlobalBindings(m_globalTable).Save();
+    
+    // And apply the changes
+    Update();
 }
 
 void clKeyboardManager::GetAllAccelerators(MenuItemDataMap_t& accels) const

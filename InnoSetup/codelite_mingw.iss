@@ -142,7 +142,6 @@ Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; 
 Source: "..\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs ; Components: Editor
 Source: "..\Runtime\wxgui.zip";  DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\PHP.zip";  DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "..\wxcrafter\wxcrafter.accelerators"; DestDir: "{app}\plugins\resources"; Flags: ignoreversion; Components: Editor
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\codelite.exe"; WorkingDir: "{app}"

@@ -2760,7 +2760,7 @@ void clMainFrame::OnViewToolbar(wxCommandEvent& event)
         if(pane.IsOk() && pane.IsToolbar()) {
             pane.Show(event.IsChecked());
             m_mgr.Update();
-            
+
             // Update the current perspective
             ManagerST::Get()->GetPerspectiveManager().SavePerspective();
         }
@@ -3851,6 +3851,11 @@ void clMainFrame::CompleteInitialization()
         }
     }
 
+    // Register C++ keyboard shortcuts
+    wxMenu* editorCppMenu = wxXmlResource::Get()->LoadMenu("editor_right_click");
+    clKeyboardManager::Get()->AddGlobalAccelerators(editorCppMenu, "C++::");
+    wxDELETE(editorCppMenu);
+    
     // Load the plugins
     PluginManager::Get()->Load();
 
@@ -4473,12 +4478,12 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     }
 
     title << pattern;
-    
+
     // notify the plugins
     clCommandEvent titleEvent(wxEVT_CL_FRAME_TITLE);
     titleEvent.SetString(title);
     EventNotifier::Get()->ProcessEvent(titleEvent);
-    
+
     // Update the title
     SetTitle(titleEvent.GetString());
 }
@@ -4948,7 +4953,7 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
 
 void clMainFrame::SaveLayoutAndSession()
 {
-    //EditorConfigST::Get()->SaveLexers();
+    // EditorConfigST::Get()->SaveLexers();
 
     // save general information
     if(IsMaximized()) {

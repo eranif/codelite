@@ -1091,12 +1091,12 @@ bool MainBook::DoSelectPage(wxWindow* win)
         SendCmdEvent(wxEVT_CMD_PAGE_CHANGED, win);
 
     } else {
-        if(editor->GetContext()->GetName() == wxT("C++")) {
-            if(clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
-                clMainFrame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")),
-                                                         wxT("C++"));
-            }
-        }
+        // if(editor->GetContext()->GetName() == wxT("C++")) {
+        //     if(clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
+        //         clMainFrame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")),
+        //                                                  wxT("C++"));
+        //     }
+        // }
         SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
     }
 
@@ -1169,19 +1169,19 @@ void MainBook::DoHandleFrameMenu(LEditor* editor)
 {
     // Incase of no editor or an editor with context other than C++
     // remove the context menu from the main frame
-    if(!editor || editor->GetContext()->GetName() != wxT("C++")) {
-        int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-        if(idx != wxNOT_FOUND) {
-            clMainFrame::Get()->GetMenuBar()->EnableTop(idx, false);
-        }
-
-    } else if(editor && editor->GetContext()->GetName() == wxT("C++")) {
-
-        int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-        if(idx != wxNOT_FOUND) {
-            clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);
-        }
-    }
+    // if(!editor || editor->GetContext()->GetName() != wxT("C++")) {
+    //     int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
+    //     if(idx != wxNOT_FOUND) {
+    //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, false);
+    //     }
+    // 
+    // } else if(editor && editor->GetContext()->GetName() == wxT("C++")) {
+    // 
+    //     int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
+    //     if(idx != wxNOT_FOUND) {
+    //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);
+    //     }
+    // }
 }
 
 void MainBook::OnStringHighlight(wxCommandEvent& e)

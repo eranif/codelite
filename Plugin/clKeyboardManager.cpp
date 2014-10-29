@@ -9,6 +9,7 @@
 #include "fileutils.h"
 #include "newkeyshortcutdlg.h"
 #include <wx/log.h>
+#include <algorithm>
 
 clKeyboardManager::clKeyboardManager() {}
 
@@ -161,7 +162,6 @@ void clKeyboardManager::Initialize()
             }
             Update();
             m_menuTable.clear();
-            m_globalTable.clear();
         }
     }
 
@@ -245,8 +245,21 @@ void clKeyboardManager::DoGetFrameAccels(MenuItemDataMap_t& accels, wxFrame* fra
 
 void clKeyboardManager::SetAccelerators(const MenuItemDataMap_t& accels)
 {
-    m_menuTable.clear();
-    m_menuTable.insert(accels.begin(), accels.end());
+    // separate the globals from the menu accelerators
+    // The process is done by checking each item's parentMenu
+    // If the parentMenu is empty -> global accelerator
+    MenuItemDataMap_t globals, menus;
+    MenuItemDataMap_t::const_iterator iter = accels.begin();
+    for(; iter != accels.end(); ++iter) {
+        if(iter->second.parentMenu.IsEmpty()) {
+            globals.insert(std::make_pair(iter->first, iter->second));
+        } else {
+            menus.insert(std::make_pair(iter->first, iter->second));
+        }
+    }
+    
+    m_menuTable.swap(menus);
+    m_globalTable.swap(globals);
     Update();
     Save();
 }
@@ -327,4 +340,18 @@ void clKeyboardManager::RestoreDefaults()
     
     // Call initialize again
     Initialize();
+}
+
+void clKeyboardManager::AddGlobalAccelerators(wxMenu* menu, const wxString &prefix)
+{
+    MenuItemDataMap_t accels;
+    DoGetMenuAccels(accels, menu, "");
+    
+    // Remove the parentMenu entry
+    std::for_each(accels.begin(), accels.end(), MenuItemData::ClearParentMenu());
+    // Prepend the prefix
+    if(!prefix.IsEmpty()) {
+        std::for_each(accels.begin(), accels.end(), MenuItemData::PrependPrefix(prefix));
+    }
+    m_globalTable.insert(accels.begin(), accels.end());
 }

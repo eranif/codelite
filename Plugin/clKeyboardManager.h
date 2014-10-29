@@ -14,7 +14,22 @@ struct WXDLLIMPEXP_SDK MenuItemData {
     wxString action;
     wxString parentMenu; // For display purposes
     MenuItemData() : id(wxNOT_FOUND) {}
+    
+    struct ClearParentMenu {
+        void operator()(std::pair<const int, MenuItemData> &iter) {
+            iter.second.parentMenu.Clear();
+        }
+    };
+    
+    struct PrependPrefix {
+        wxString m_prefix;
+        PrependPrefix(const wxString& prefix) : m_prefix(prefix){}
+        void operator()(std::pair<const int, MenuItemData> &iter) {
+            iter.second.action.Prepend(m_prefix);
+        }
+    };
 };
+
 typedef std::map<int, MenuItemData> MenuItemDataMap_t;
 
 class WXDLLIMPEXP_SDK clKeyboardManager
@@ -69,6 +84,12 @@ public:
      * @return true if the action succeeded, false otherwise
      */
     void AddGlobalAccelerator(int actionId, const wxString& keyboardShortcut, const wxString& description);
+    
+    /**
+     * @brief using a menu, extract the accelerators and add them
+     * as globals
+     */
+    void AddGlobalAccelerators(wxMenu* menu, const wxString &prefix = "");
     
     /**
      * @brief replace all acceleratos with 'accels'

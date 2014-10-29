@@ -25,13 +25,11 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
             binding.action = item.namedObject("description").toString();
             binding.accel = item.namedObject("accelerator").toString();
             binding.parentMenu = item.namedObject("parentMenu").toString();
-            binding.id = item.namedObject("actionId").toInt(wxNOT_FOUND);
-            if(binding.id != wxNOT_FOUND) {
-                m_bindings.insert(std::make_pair(binding.id, binding));
-            }
+            binding.resourceID = item.namedObject("resourceID").toString();
+            m_bindings.insert(std::make_pair(binding.resourceID, binding));
         }
     }
-
+#if 0
     {
         JSONElement globals = root.toElement().namedObject("globals");
         int arrSize = globals.arraySize();
@@ -41,13 +39,11 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
             binding.action = item.namedObject("description").toString();
             binding.accel = item.namedObject("accelerator").toString();
             binding.parentMenu = item.namedObject("parentMenu").toString();
-            binding.id = item.namedObject("actionId").toInt(wxNOT_FOUND);
-            if(binding.id != wxNOT_FOUND) {
-                m_globalBindings.insert(std::make_pair(binding.id, binding));
-            }
+            binding.resourceID = item.namedObject("actionId").toString();
+            m_globalBindings.insert(std::make_pair(binding.resourceID, binding));
         }
     }
-
+#endif
     return *this;
 }
 
@@ -61,11 +57,11 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
         JSONElement binding = JSONElement::createObject();
         binding.addProperty("description", iter->second.action);
         binding.addProperty("accelerator", iter->second.accel);
-        binding.addProperty("actionId", iter->second.id);
+        binding.addProperty("resourceID", iter->second.resourceID);
         binding.addProperty("parentMenu", iter->second.parentMenu);
         menuArr.arrayAppend(binding);
     }
-
+#if 0
     JSONElement globalsArr = JSONElement::createArray("globals");
     mainObj.append(globalsArr);
 
@@ -74,10 +70,11 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
         JSONElement binding = JSONElement::createObject();
         binding.addProperty("description", iter->second.action);
         binding.addProperty("accelerator", iter->second.accel);
-        binding.addProperty("actionId", iter->second.id);
+        binding.addProperty("resourceID", iter->second.resourceID);
         binding.addProperty("parentMenu", iter->second.parentMenu);
         globalsArr.arrayAppend(binding);
     }
+#endif
 
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");
     fn.AppendDir("config");

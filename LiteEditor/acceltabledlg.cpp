@@ -48,10 +48,6 @@ struct AccelItemData : public wxClientData {
         , isPluginAccel(fromPlugin)
     {
     }
-    
-    int GetActionID() const {
-        return menuItemData.id;
-    }
 };
 
 //-------------------------------------------------------------------------------
@@ -181,7 +177,7 @@ void AccelTableDlg::DoItemActivated()
         m_dataviewModel->UpdateItem(sel, cols);
         
         // and update the map
-        MenuItemDataMap_t::iterator iter = m_accelMap.find(itemData->GetActionID());
+        MenuItemDataMap_t::iterator iter = m_accelMap.find(itemData->menuItemData.resourceID);
         if(iter != m_accelMap.end()) {
             iter->second.accel = itemData->menuItemData.accel;
         }

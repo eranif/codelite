@@ -175,7 +175,7 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
         int id = 20050 + index;
 
         MenuItemData mid;
-        mid.id = id;
+        mid.resourceID << id;
         mid.action = m_textCtrlMenuEntry->GetValue();
         
         if(clKeyboardManager::Get()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
@@ -185,7 +185,7 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
                 return;
             }
 
-            clKeyboardManager::Get()->AddGlobalAccelerator(id, mid.accel, mid.action);
+            clKeyboardManager::Get()->AddGlobalAccelerator(mid.resourceID, mid.accel, mid.action);
             clKeyboardManager::Get()->Update();
             m_textCtrlAccelerator->ChangeValue(mid.accel);
         }

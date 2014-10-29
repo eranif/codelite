@@ -9,8 +9,6 @@
 class WXDLLIMPEXP_SDK clKeyboardBindingConfig 
 {
     MenuItemDataMap_t m_bindings;
-    MenuItemDataMap_t m_globalBindings;
-    
 public:
     clKeyboardBindingConfig();
     virtual ~clKeyboardBindingConfig();
@@ -24,18 +22,13 @@ public:
         return fn.Exists();
     }
     
-    clKeyboardBindingConfig& SetBindings(const MenuItemDataMap_t& bindings)
+    clKeyboardBindingConfig& SetBindings(const MenuItemDataMap_t& menus, const MenuItemDataMap_t& globals)
     {
-        this->m_bindings = bindings;
-        return *this;
-    }
-    clKeyboardBindingConfig& SetGlobalBindings(const MenuItemDataMap_t& bindings)
-    {
-        this->m_globalBindings = bindings;
+        this->m_bindings = menus;
+        this->m_bindings.insert(globals.begin(), globals.end());
         return *this;
     }
     const MenuItemDataMap_t& GetBindings() const { return m_bindings; }
-    const MenuItemDataMap_t& GetGlobalBindings() const { return m_globalBindings; }
 };
 
 #endif // CLKEYBOARDBINDINGCONFIG_H

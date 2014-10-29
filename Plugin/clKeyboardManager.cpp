@@ -62,7 +62,7 @@ void clKeyboardManager::DoGetFrames(wxFrame* parent, clKeyboardManager::FrameLis
     }
 }
 
-void clKeyboardManager::DoUpdateMenu(wxMenu* menu, MenuItemDataMap_t& accels, std::vector<wxAcceleratorEntry>& table)
+void clKeyboardManager::DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels, std::vector<wxAcceleratorEntry>& table)
 {
     wxMenuItemList items = menu->GetMenuItems();
     wxMenuItemList::iterator iter = items.begin();
@@ -73,7 +73,7 @@ void clKeyboardManager::DoUpdateMenu(wxMenu* menu, MenuItemDataMap_t& accels, st
             continue;
         }
 
-        MenuItemDataMap_t::iterator where = accels.find(item->GetId());
+        MenuItemDataIntMap_t::iterator where = accels.find(item->GetId());
         if(where != accels.end()) {
             wxString itemText = item->GetItemLabel();
             // remove the old shortcut
@@ -96,13 +96,14 @@ void clKeyboardManager::DoUpdateMenu(wxMenu* menu, MenuItemDataMap_t& accels, st
     }
 }
 
-void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataMap_t& accels)
+void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& accels)
 {
     std::vector<wxAcceleratorEntry> table;
 
     // Update menus. If a match is found remove it from the 'accel' table
     wxMenuBar* menuBar = frame->GetMenuBar();
-    if(!menuBar) return;
+    if(!menuBar)
+        return;
     for(size_t i = 0; i < menuBar->GetMenuCount(); ++i) {
         wxMenu* menu = menuBar->GetMenu(i);
         DoUpdateMenu(menu, accels, table);
@@ -111,12 +112,12 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataMap_t& accels)
     if(!table.empty() || !accels.empty()) {
         wxAcceleratorEntry* entries = new wxAcceleratorEntry[table.size() + accels.size()];
         // append the globals
-        for(MenuItemDataMap_t::iterator iter = accels.begin(); iter != accels.end(); ++iter) {
+        for(MenuItemDataIntMap_t::iterator iter = accels.begin(); iter != accels.end(); ++iter) {
             wxString dummyText;
             dummyText << iter->second.action << "\t" << iter->second.accel;
             wxAcceleratorEntry* entry = wxAcceleratorEntry::Create(dummyText);
             if(entry) {
-                entry->Set(entry->GetFlags(), entry->GetKeyCode(), iter->second.id);
+                entry->Set(entry->GetFlags(), entry->GetKeyCode(), wxXmlResource::GetXRCID(iter->second.resourceID));
                 table.push_back(*entry);
                 wxDELETE(entry);
             }
@@ -135,7 +136,7 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataMap_t& accels)
 void clKeyboardManager::Save()
 {
     clKeyboardBindingConfig config;
-    config.SetBindings(m_menuTable).SetGlobalBindings(m_globalTable).Save();
+    config.SetBindings(m_menuTable, m_globalTable).Save();
 }
 
 void clKeyboardManager::Initialize()
@@ -166,65 +167,36 @@ void clKeyboardManager::Initialize()
 
             // Apply the old settings to the menus
             wxString content;
-            if(!FileUtils::ReadFileContent(fnFileToLoad, content)) return;
+            if(!FileUtils::ReadFileContent(fnFileToLoad, content))
+                return;
             wxArrayString lines = ::wxStringTokenize(content, "\r\n", wxTOKEN_STRTOK);
             for(size_t i = 0; i < lines.GetCount(); ++i) {
                 wxArrayString parts = ::wxStringTokenize(lines.Item(i), "|", wxTOKEN_RET_EMPTY);
-                if(parts.GetCount() < 3) continue;
+                if(parts.GetCount() < 3)
+                    continue;
                 MenuItemData binding;
-                binding.id = wxXmlResource::GetXRCID(parts.Item(0));
+                binding.resourceID = parts.Item(0);
+                binding.parentMenu = parts.Item(1);
                 binding.action = parts.Item(2);
                 if(parts.GetCount() == 4) {
                     binding.accel = parts.Item(3);
                 }
-                m_menuTable.insert(std::make_pair(binding.id, binding));
+                m_menuTable.insert(std::make_pair(binding.resourceID, binding));
             }
-            Update();
-            m_menuTable.clear();
-            
+
             if(canDeleteOldSettings) {
                 wxLogNull noLog;
                 ::wxRemoveFile(fnFileToLoad.GetFullPath());
             }
         }
+    } else {
+        config.Load();
+        m_menuTable = config.GetBindings();
     }
-
-    config.Load();
-    m_menuTable = config.GetBindings();
-
-    // Load the accelerator table from the menu itself
-    // Get the list of frames we have
-    wxFrame* topFrame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
-    if(!topFrame) {
-        CL_DEBUG("Keyboard manager: no top level Window found!");
-    }
-    CHECK_PTR_RET(topFrame);
-
-    // load accelerators by scanning the top level frame and go over all menus
-    // in the menu bar
-    MenuItemDataMap_t accels;
-    CL_DEBUG("Keyboard manager: scanning top frame for keyboard shortcuts...");
-    DoGetFrameAccels(accels, topFrame);
-    CL_DEBUG("Keyboard manager: scanning top frame for keyboard shortcuts...done. %d keyboard shortcuts loaded",
-              (int)accels.size());
-
-    // insert what we have found on the actual menus
-    // insert will fail if an entry is already exists with the same
-    // key in the table. This way we give the user preferences a priority
-    // over the menu set by the plugin
-    m_menuTable.insert(accels.begin(), accels.end());
-
-    // Load global bindings
-    // Same logic here: load the user settings first and then
-    // try to add entries from the plugin
-    MenuItemDataMap_t globals;
-    globals = config.GetGlobalBindings();
-    globals.insert(m_globalTable.begin(), m_globalTable.end());
-    m_globalTable.swap(globals);
 
     // Store the correct configuration
-    config.SetBindings(m_menuTable).SetGlobalBindings(m_globalTable).Save();
-    
+    config.SetBindings(m_menuTable, m_globalTable).Save();
+
     // And apply the changes
     Update();
 }
@@ -234,50 +206,6 @@ void clKeyboardManager::GetAllAccelerators(MenuItemDataMap_t& accels) const
     accels.clear();
     accels.insert(m_menuTable.begin(), m_menuTable.end());
     accels.insert(m_globalTable.begin(), m_globalTable.end());
-}
-
-void clKeyboardManager::DoGetMenuAccels(MenuItemDataMap_t& accels, wxMenu* menu, const wxString& parentMenuTitle) const
-{
-    wxMenuItemList items = menu->GetMenuItems();
-    wxMenuItemList::iterator iter = items.begin();
-    for(; iter != items.end(); iter++) {
-        wxMenuItem* item = *iter;
-        if(item->GetItemLabelText() == _("Recent Workspaces") || item->GetItemLabelText() == _("Recent Files") ||
-           item->GetItemLabelText() == _("View As"))
-            continue;
-
-        if(item->GetKind() == wxITEM_SEPARATOR) {
-            // Skip separators
-            continue;
-        }
-
-        if(item->GetSubMenu()) {
-            DoGetMenuAccels(accels, item->GetSubMenu(), parentMenuTitle + "::" + item->GetItemLabelText());
-            continue;
-        }
-
-        MenuItemData mid;
-        mid.accel = item->GetItemLabel().Find("\t") == wxNOT_FOUND ? "" : item->GetItemLabel().AfterLast('\t');
-        mid.action = item->GetItemLabelText();
-        mid.id = item->GetId();
-        mid.parentMenu = parentMenuTitle;
-        mid.parentMenu.Replace("&", "");
-        accels.insert(std::make_pair(mid.id, mid));
-    }
-}
-
-void clKeyboardManager::DoGetFrameAccels(MenuItemDataMap_t& accels, wxFrame* frame) const
-{
-    wxMenuBar* menuBar = frame->GetMenuBar();
-    if(!menuBar) {
-        CL_DEBUG("Keyboard manager: frame has no menu bar");
-        return;
-    }
-
-    for(size_t i = 0; i < menuBar->GetMenuCount(); ++i) {
-        wxMenu* menu = menuBar->GetMenu(i);
-        DoGetMenuAccels(accels, menu, menu->GetTitle());
-    }
 }
 
 void clKeyboardManager::SetAccelerators(const MenuItemDataMap_t& accels)
@@ -303,6 +231,17 @@ void clKeyboardManager::SetAccelerators(const MenuItemDataMap_t& accels)
 
 void clKeyboardManager::Update(wxFrame* frame)
 {
+    // Since we keep the accelerators with their original resource ID in the form of string
+    // we need to convert the map into a different integer with integer as the resource ID
+    
+    // Note that we place the items from the m_menuTable first and then we add the globals
+    // this is because menu entries takes precedence over global accelerators
+    MenuItemDataMap_t accels = m_menuTable;
+    accels.insert(m_globalTable.begin(), m_globalTable.end());
+
+    MenuItemDataIntMap_t intAccels;
+    DoConvertToIntMap(accels, intAccels);
+    
     if(!frame) {
         // update all frames
         wxFrame* topFrame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
@@ -311,15 +250,12 @@ void clKeyboardManager::Update(wxFrame* frame)
         FrameList_t frames;
         DoGetFrames(topFrame, frames);
         for(FrameList_t::iterator iter = frames.begin(); iter != frames.end(); ++iter) {
-            MenuItemDataMap_t accels = m_menuTable;
-            accels.insert(m_globalTable.begin(), m_globalTable.end());
-            DoUpdateFrame(*iter, accels);
+
+            DoUpdateFrame(*iter, intAccels);
         }
     } else {
         // update only the requested frame
-        MenuItemDataMap_t accels = m_menuTable;
-        accels.insert(m_globalTable.begin(), m_globalTable.end());
-        DoUpdateFrame(frame, accels);
+        DoUpdateFrame(frame, intAccels);
     }
 }
 
@@ -347,14 +283,15 @@ bool clKeyboardManager::Exists(const wxString& accel) const
     return false;
 }
 
-void
-clKeyboardManager::AddGlobalAccelerator(int actionId, const wxString& keyboardShortcut, const wxString& description)
+void clKeyboardManager::AddGlobalAccelerator(const wxString& resourceID,
+                                             const wxString& keyboardShortcut,
+                                             const wxString& description)
 {
     MenuItemData mid;
     mid.action = description;
     mid.accel = keyboardShortcut;
-    mid.id = actionId;
-    m_globalTable.insert(std::make_pair(actionId, mid));
+    mid.resourceID = resourceID;
+    m_globalTable.insert(std::make_pair(mid.resourceID, mid));
 }
 
 void clKeyboardManager::RestoreDefaults()
@@ -379,22 +316,17 @@ void clKeyboardManager::RestoreDefaults()
     Initialize();
 }
 
-void clKeyboardManager::AddGlobalAccelerators(wxMenu* menu, const wxString& prefix)
-{
-    MenuItemDataMap_t accels;
-    DoGetMenuAccels(accels, menu, "");
-
-    // Remove the parentMenu entry
-    std::for_each(accels.begin(), accels.end(), MenuItemData::ClearParentMenu());
-    // Prepend the prefix
-    if(!prefix.IsEmpty()) {
-        std::for_each(accels.begin(), accels.end(), MenuItemData::PrependPrefix(prefix));
-    }
-    m_globalTable.insert(accels.begin(), accels.end());
-}
-
 void clKeyboardManager::OnCodeLiteStarupDone(wxCommandEvent& event)
 {
     event.Skip();
     this->Initialize();
+}
+
+void clKeyboardManager::DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap)
+{
+    // Convert the string map into int based map
+    MenuItemDataMap_t::const_iterator iter = strMap.begin();
+    for(; iter != strMap.end(); ++iter) {
+        intMap.insert(std::make_pair(wxXmlResource::GetXRCID(iter->second.resourceID), iter->second));
+    }
 }

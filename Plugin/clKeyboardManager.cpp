@@ -10,6 +10,7 @@
 #include "newkeyshortcutdlg.h"
 #include <wx/log.h>
 #include <algorithm>
+#include <wx/tokenzr.h>
 
 clKeyboardManager::clKeyboardManager() {}
 

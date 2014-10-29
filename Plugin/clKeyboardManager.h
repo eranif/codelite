@@ -7,6 +7,7 @@
 #include <wx/accel.h>
 #include <vector>
 #include <map>
+#include <wx/menu.h>
 
 struct WXDLLIMPEXP_SDK MenuItemData {
     int id;

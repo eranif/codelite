@@ -126,8 +126,6 @@ void PluginManager::Load()
     CodeLiteApp::PluginPolicy pp = app->GetPluginLoadPolicy();
     wxArrayString allowedPlugins;
     if(pp == CodeLiteApp::PP_None) {
-        // Make sure that we initialise the keyboard manager
-        clKeyboardManager::Get()->Initialize();
         return;
     }
     
@@ -290,9 +288,7 @@ void PluginManager::Load()
         conf.WriteItem(&m_pluginsData);
     }
     
-    // Now that all the plugins have been loaded, initialize the 
-    // keyboard manager 
-    clKeyboardManager::Get()->Initialize();
+    
 }
 
 IEditor* PluginManager::GetActiveEditor() { return (IEditor*)clMainFrame::Get()->GetMainBook()->GetActiveEditor(true); }

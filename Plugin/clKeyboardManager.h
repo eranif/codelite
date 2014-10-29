@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include <wx/menu.h>
+#include <wx/event.h>
 
 struct WXDLLIMPEXP_SDK MenuItemData {
     int id;
@@ -33,7 +34,7 @@ struct WXDLLIMPEXP_SDK MenuItemData {
 
 typedef std::map<int, MenuItemData> MenuItemDataMap_t;
 
-class WXDLLIMPEXP_SDK clKeyboardManager
+class WXDLLIMPEXP_SDK clKeyboardManager : public wxEvtHandler
 {
 private:
     typedef std::list<wxFrame*> FrameList_t;
@@ -54,6 +55,9 @@ protected:
     
     clKeyboardManager();
     virtual ~clKeyboardManager();
+    
+protected:
+    void OnCodeLiteStarupDone(wxCommandEvent &event);
 
 public:
     static void Release();

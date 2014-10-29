@@ -6,11 +6,11 @@
 #include <wx/filename.h>
 #include "cl_standard_paths.h"
 
-class WXDLLIMPEXP_SDK clKeyboardBindingConfig
+class WXDLLIMPEXP_SDK clKeyboardBindingConfig 
 {
     MenuItemDataMap_t m_bindings;
     MenuItemDataMap_t m_globalBindings;
-
+    
 public:
     clKeyboardBindingConfig();
     virtual ~clKeyboardBindingConfig();
@@ -20,6 +20,7 @@ public:
     
     bool Exists() const {
         wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");
+        fn.AppendDir("config");
         return fn.Exists();
     }
     

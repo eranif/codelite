@@ -51,6 +51,7 @@
 #include <wx/regex.h>
 #include "CompilerLocatorCygwin.h"
 #include "ColoursAndFontsManager.h"
+#include "clKeyboardManager.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -489,7 +490,11 @@ bool CodeLiteApp::OnInit()
 
     // Update codelite revision and Version
     EditorConfigST::Get()->Init(clGitRevision, wxT("2.0.2"));
-
+    
+    // Make sure we have an instance if the keyboard manager allocated before we create the main frame class
+    // (the keyboard manager needs to connect to the main frame events)
+    clKeyboardManager::Get();
+    
     ManagerST::Get()->SetOriginalCwd(wxGetCwd());
     ::wxSetWorkingDirectory(homeDir);
     // Load all of the XRC files that will be used. You can put everything

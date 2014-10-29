@@ -11,10 +11,23 @@
 #include <wx/log.h>
 #include <algorithm>
 #include <wx/tokenzr.h>
+#include <wx/log.h>
+#include "file_logger.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
-clKeyboardManager::clKeyboardManager() {}
+clKeyboardManager::clKeyboardManager()
+{
+    EventNotifier::Get()->Connect(
+        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnCodeLiteStarupDone), NULL, this);
+}
 
-clKeyboardManager::~clKeyboardManager() { Save(); }
+clKeyboardManager::~clKeyboardManager()
+{
+    Save();
+    EventNotifier::Get()->Disconnect(
+        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnCodeLiteStarupDone), NULL, this);
+}
 
 static clKeyboardManager* m_mgr = NULL;
 clKeyboardManager* clKeyboardManager::Get()
@@ -128,10 +141,11 @@ void clKeyboardManager::Save()
 void clKeyboardManager::Initialize()
 {
     m_menuTable.clear();
-    
+    CL_DEBUG("Keyboard manager: Initializing keyboard manager");
     // Load old format
     clKeyboardBindingConfig config;
     if(!config.Exists()) {
+        CL_DEBUG("Keyboard manager: No configurtion found - importing old settings");
         // Decide which file we want to load, take the user settings file first
         wxFileName fnOldSettings(clStandardPaths::Get().GetUserDataDir(), "accelerators.conf");
         fnOldSettings.AppendDir("config");
@@ -139,13 +153,17 @@ void clKeyboardManager::Initialize()
         wxFileName fnDefaultOldSettings(clStandardPaths::Get().GetDataDir(), "accelerators.conf.default");
         fnDefaultOldSettings.AppendDir("config");
         wxFileName fnFileToLoad;
+        bool canDeleteOldSettings(false);
         if(fnOldSettings.Exists()) {
             fnFileToLoad = fnOldSettings;
+            canDeleteOldSettings = true;
         } else {
             fnFileToLoad = fnDefaultOldSettings;
         }
 
         if(fnFileToLoad.Exists()) {
+            CL_DEBUG("Keyboard manager: Importing settings from '%s'", fnFileToLoad.GetFullPath());
+
             // Apply the old settings to the menus
             wxString content;
             if(!FileUtils::ReadFileContent(fnFileToLoad, content)) return;
@@ -163,6 +181,11 @@ void clKeyboardManager::Initialize()
             }
             Update();
             m_menuTable.clear();
+            
+            if(canDeleteOldSettings) {
+                wxLogNull noLog;
+                ::wxRemoveFile(fnFileToLoad.GetFullPath());
+            }
         }
     }
 
@@ -172,12 +195,18 @@ void clKeyboardManager::Initialize()
     // Load the accelerator table from the menu itself
     // Get the list of frames we have
     wxFrame* topFrame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
+    if(!topFrame) {
+        CL_DEBUG("Keyboard manager: no top level Window found!");
+    }
     CHECK_PTR_RET(topFrame);
 
     // load accelerators by scanning the top level frame and go over all menus
     // in the menu bar
     MenuItemDataMap_t accels;
+    CL_DEBUG("Keyboard manager: scanning top frame for keyboard shortcuts...");
     DoGetFrameAccels(accels, topFrame);
+    CL_DEBUG("Keyboard manager: scanning top frame for keyboard shortcuts...done. %d keyboard shortcuts loaded",
+              (int)accels.size());
 
     // insert what we have found on the actual menus
     // insert will fail if an entry is already exists with the same
@@ -237,7 +266,11 @@ void clKeyboardManager::DoGetMenuAccels(MenuItemDataMap_t& accels, wxMenu* menu,
 void clKeyboardManager::DoGetFrameAccels(MenuItemDataMap_t& accels, wxFrame* frame) const
 {
     wxMenuBar* menuBar = frame->GetMenuBar();
-    if(!menuBar) return;
+    if(!menuBar) {
+        CL_DEBUG("Keyboard manager: frame has no menu bar");
+        return;
+    }
+
     for(size_t i = 0; i < menuBar->GetMenuCount(); ++i) {
         wxMenu* menu = menuBar->GetMenu(i);
         DoGetMenuAccels(accels, menu, menu->GetTitle());
@@ -258,7 +291,7 @@ void clKeyboardManager::SetAccelerators(const MenuItemDataMap_t& accels)
             menus.insert(std::make_pair(iter->first, iter->second));
         }
     }
-    
+
     m_menuTable.swap(menus);
     m_globalTable.swap(globals);
     Update();
@@ -326,28 +359,28 @@ void clKeyboardManager::RestoreDefaults()
     // Decide which file we want to load, take the user settings file first
     wxFileName fnOldSettings(clStandardPaths::Get().GetUserDataDir(), "accelerators.conf");
     fnOldSettings.AppendDir("config");
-    
+
     wxFileName fnNewSettings(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");
     fnNewSettings.AppendDir("config");
-    
+
     wxLogNull nl;
     if(fnOldSettings.Exists()) {
         ::wxRemoveFile(fnOldSettings.GetFullPath());
     }
-    
+
     if(fnNewSettings.Exists()) {
         ::wxRemoveFile(fnNewSettings.GetFullPath());
     }
-    
+
     // Call initialize again
     Initialize();
 }
 
-void clKeyboardManager::AddGlobalAccelerators(wxMenu* menu, const wxString &prefix)
+void clKeyboardManager::AddGlobalAccelerators(wxMenu* menu, const wxString& prefix)
 {
     MenuItemDataMap_t accels;
     DoGetMenuAccels(accels, menu, "");
-    
+
     // Remove the parentMenu entry
     std::for_each(accels.begin(), accels.end(), MenuItemData::ClearParentMenu());
     // Prepend the prefix
@@ -355,4 +388,10 @@ void clKeyboardManager::AddGlobalAccelerators(wxMenu* menu, const wxString &pref
         std::for_each(accels.begin(), accels.end(), MenuItemData::PrependPrefix(prefix));
     }
     m_globalTable.insert(accels.begin(), accels.end());
+}
+
+void clKeyboardManager::OnCodeLiteStarupDone(wxCommandEvent& event)
+{
+    event.Skip();
+    this->Initialize();
 }

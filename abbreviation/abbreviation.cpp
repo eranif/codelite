@@ -36,6 +36,7 @@
 #include <wx/regex.h>
 #include "cl_config.h"
 #include "macromanager.h"
+#include "clKeyboardManager.h"
 
 static AbbreviationPlugin* thePlugin = NULL;
 
@@ -212,13 +213,15 @@ void AbbreviationPlugin::InitDefaults()
         // fill some default abbreviations
         JSONElement::wxStringMap_t entries;
         entries[wxT("main")] = wxT("int main(int argc, char **argv) {\n    |\n}\n");
-        entries[wxT("while")] = wxT("while ( | ) {\n    \n}\n");
-        entries[wxT("dowhile")] = wxT("do {\n    \n} while ( | );\n");
-        entries[wxT("for_size")] = wxT("for ( size_t i=0; i<|; ++i ) {    \n}\n");
-        entries[wxT("for_int")] = wxT("for ( int i=0; i<|; ++i ) {    \n}\n");
+        entries[wxT("while")] = wxT("while(|) {\n    \n}\n");
+        entries[wxT("dowhile")] = wxT("do {\n    \n} while( | );\n");
+        entries[wxT("for_size")] = wxT("for(size_t i=0; i<|; ++i) {\n}\n");
+        entries[wxT("for_int")] = wxT("for(int i=0; i<|; ++i) {\n}\n");
         jsonData.SetEntries(entries);
         m_config.WriteItem(&jsonData);
     }
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "abbrev_insert", "Ctrl-Alt-SPACE", _("Plugins::Abbreviations::Show abbrevations completion box"));
 }
 
 bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)

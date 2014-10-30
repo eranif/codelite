@@ -13,25 +13,30 @@ include( "${wxWidgets_USE_FILE}" )
 
 # Flex files
 if (UNIX AND NOT APPLE)
-    find_package(FLEX REQUIRED)
-    
-    set(CxxFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/CxxLexer.cpp)
-    set(PhpFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.cpp)
-    
-    set(CxxFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l)
-    set(PhpFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l)
-    
-    if(FLEX_FOUND)
-        add_custom_command(
-            OUTPUT ${CxxFlexOutput}
-            COMMAND ${FLEX_EXECUTABLE} --noline --batch --outfile=${CxxFlexOutput} ${CxxFlexInput}
-            DEPENDS ${CxxFlexInput}
-            COMMENT "Generating ${CxxFlexOutput}")
-        add_custom_command(
-            OUTPUT ${PhpFlexOutput}
-            COMMAND ${FLEX_EXECUTABLE} -Pphp --noline --batch --outfile=${PhpFlexOutput} ${PhpFlexInput}
-            DEPENDS ${PhpFlexInput}
-            COMMENT "Generating ${PhpFlexOutput}")
+    if(WITH_FLEX)
+        message("-- Adding flex support")
+        find_package(FLEX REQUIRED)
+        
+        set(CxxFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/CxxLexer.cpp)
+        set(PhpFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.cpp)
+        
+        set(CxxFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l)
+        set(PhpFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l)
+        
+        if(FLEX_FOUND)
+            add_custom_command(
+                OUTPUT ${CxxFlexOutput}
+                COMMAND ${FLEX_EXECUTABLE} --noline --batch --outfile=${CxxFlexOutput} ${CxxFlexInput}
+                DEPENDS ${CxxFlexInput}
+                COMMENT "Generating ${CxxFlexOutput}")
+            add_custom_command(
+                OUTPUT ${PhpFlexOutput}
+                COMMAND ${FLEX_EXECUTABLE} -Pphp --noline --batch --outfile=${PhpFlexOutput} ${PhpFlexInput}
+                DEPENDS ${PhpFlexInput}
+                COMMENT "Generating ${PhpFlexOutput}")
+        endif()
+    else()
+        message("-- Flex support is disabled")
     endif()
 endif()
 

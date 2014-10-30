@@ -4,7 +4,7 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#include "NewToolBase.h"
+#include "newtoolbase.h"
 
 
 // Declare the bitmap loading function

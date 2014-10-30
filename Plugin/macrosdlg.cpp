@@ -153,7 +153,7 @@ void MacrosDlg::AddMacro(const wxString& name, const wxString& desc)
         SetColumnText(m_listCtrlMacros, row, 2, value);
 
     } else {
-        SetColumnText(m_listCtrlMacros, row, 2, "");
+        // No third column here... don't fill it or we get an assertion
     }
 }
 

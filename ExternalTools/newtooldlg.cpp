@@ -31,6 +31,7 @@
 #include <wx/filedlg.h>
 #include "macrosdlg.h"
 #include "workspace.h"
+#include "windowattrmanager.h"
 
 NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
     : NewToolBase(parent)
@@ -56,7 +57,9 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
         m_textCtrlName->SetValue(data->m_name);
         m_checkBoxCaptureProcessOutput->SetValue(data->m_captureOutput);
         m_checkBoxSaveAllFilesBefore->SetValue(data->m_saveAllFiles);
+        m_choiceId->Enable(false);
     }
+    WindowAttrManager::Load(this, "NewToolDlg");
 }
 
 void NewToolDlg::OnButtonBrowsePath(wxCommandEvent& event)
@@ -98,23 +101,6 @@ void NewToolDlg::OnButtonOk(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int rc(wxID_OK);
-
-    // load all the tools
-    ExternalToolsData inData;
-    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
-    for(size_t i = 0; i < inData.GetTools().size(); i++) {
-        if(GetToolId() == inData.GetTools().at(i).GetId()) {
-            int answer = wxMessageBox(wxString::Format(_("Continue updating tool ID '%s'"), GetToolId().c_str()),
-                                      _("CodeLite"),
-                                      wxYES_NO | wxCANCEL,
-                                      this);
-            if(answer != wxYES) {
-                rc = wxID_CANCEL;
-            }
-            break;
-        }
-    }
-
     EndModal(rc);
 }
 
@@ -143,4 +129,9 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
     if(new_path.IsEmpty() == false) {
         m_textCtrlIcon24->SetValue(new_path);
     }
+}
+
+NewToolDlg::~NewToolDlg()
+{
+    WindowAttrManager::Save(this, "NewToolDlg");
 }

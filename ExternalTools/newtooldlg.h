@@ -53,7 +53,8 @@ protected:
 public:
     /** Constructor */
     NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data);
-
+    virtual ~NewToolDlg();
+    
     wxString GetPath() const { return m_textCtrlPath->GetValue(); }
     wxString GetWorkingDirectory() const { return m_textCtrlWd->GetValue(); }
     wxString GetArguments() const { return m_textCtrlArguments->GetValue(); }

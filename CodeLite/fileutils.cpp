@@ -101,3 +101,18 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
     }
     return file.ReadAll(&data, conv);
 }
+
+void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
+{
+#ifdef __WXMSW__
+    wxString strPath = filename.GetFullPath();
+    if(strPath.Contains(" ")) {
+        strPath.Prepend("\"").Append("\"");
+    }
+    wxString cmd;
+    cmd << "explorer /select," << strPath;
+    ::wxExecute(cmd);
+#else
+    OpenFileExplorer(filename.GetPath());
+#endif
+}

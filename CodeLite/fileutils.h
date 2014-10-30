@@ -27,6 +27,7 @@
 
 #include "wx/filename.h"
 #include "codelite_exports.h"
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_CL FileUtils
 {
@@ -42,6 +43,11 @@ public:
      * @brief open file explorer at given path
      */
     static void OpenFileExplorer(const wxString& path);
+    
+    /**
+     * @brief open file explorer at given path and select the input file
+     */
+    static void OpenFileExplorerAndSelect(const wxFileName& filename);
     
     /**
      * @brief launch the OS default terminal at a given path

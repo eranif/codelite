@@ -6028,7 +6028,6 @@ void clMainFrame::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
 {
     LEditor* editor = GetMainBook()->GetActiveEditor();
     if(editor) {
-        wxString path = editor->GetFileName().GetPath();
-        FileUtils::OpenFileExplorer(path);
+        FileUtils::OpenFileExplorerAndSelect(editor->GetFileName());
     }
 }

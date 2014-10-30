@@ -30,182 +30,183 @@
 #include "newtooldlg.h"
 #include "externaltooldlg.h"
 
-
-ExternalToolDlg::ExternalToolDlg( wxWindow* parent, IManager *mgr )
-		: ExternalToolBaseDlg( parent )
-		, m_item(wxNOT_FOUND)
-		, m_mgr(mgr)
+ExternalToolDlg::ExternalToolDlg(wxWindow* parent, IManager* mgr)
+    : ExternalToolBaseDlg(parent)
+    , m_item(wxNOT_FOUND)
+    , m_mgr(mgr)
 {
-	Initialize();
-	m_listCtrlTools->SetFocus();
+    Initialize();
+    m_listCtrlTools->SetFocus();
+}
+ExternalToolDlg::~ExternalToolDlg()
+{
 }
 
-void ExternalToolDlg::OnItemActivated( wxListEvent& event )
+void ExternalToolDlg::OnItemActivated(wxListEvent& event)
 {
-	m_item = event.m_itemIndex;
-	DoEditEntry(event.m_itemIndex);
+    m_item = event.m_itemIndex;
+    DoEditEntry(event.m_itemIndex);
 }
 
-void ExternalToolDlg::OnItemDeSelected( wxListEvent& event )
+void ExternalToolDlg::OnItemDeSelected(wxListEvent& event)
 {
-	wxUnusedVar(event);
-	m_item = wxNOT_FOUND;
+    wxUnusedVar(event);
+    m_item = wxNOT_FOUND;
 }
 
-void ExternalToolDlg::OnItemSelected( wxListEvent& event )
+void ExternalToolDlg::OnItemSelected(wxListEvent& event) { m_item = event.m_itemIndex; }
+
+void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)
 {
-	m_item = event.m_itemIndex;
+    NewToolDlg dlg(this, m_mgr, NULL);
+    if(dlg.ShowModal() == wxID_OK) {
+        DoUpdateEntry(dlg.GetToolId(),
+                      dlg.GetToolName(),
+                      dlg.GetPath(),
+                      dlg.GetWorkingDirectory(),
+                      dlg.GetArguments(),
+                      dlg.GetIcon16(),
+                      dlg.GetIcon24(),
+                      dlg.GetCaptureProcessOutput(),
+                      dlg.GetSaveAllFiles());
+    }
 }
 
-void ExternalToolDlg::OnButtonNew( wxCommandEvent& event )
+void ExternalToolDlg::OnButtonNewUI(wxUpdateUIEvent& event)
 {
-	NewToolDlg dlg(this, m_mgr, NULL);
-	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry( dlg.GetToolId(),
-		               dlg.GetToolName(),
-		               dlg.GetPath(),
-		               dlg.GetWorkingDirectory(),
-		               dlg.GetArguments(),
-		               dlg.GetIcon16(),
-		               dlg.GetIcon24(),
-		               dlg.GetCaptureProcessOutput(),
-		               dlg.GetSaveAllFiles());
-	}
+    // maximum of 10 items
+    event.Enable(m_listCtrlTools->GetItemCount() < MAX_TOOLS);
 }
 
-void ExternalToolDlg::OnButtonNewUI( wxUpdateUIEvent& event )
+void ExternalToolDlg::OnButtonEdit(wxCommandEvent& event)
 {
-	// maximum of 10 items
-	event.Enable(m_listCtrlTools->GetItemCount() < MAX_TOOLS);
+    wxUnusedVar(event);
+    DoEditEntry(m_item);
 }
 
-void ExternalToolDlg::OnButtonEdit( wxCommandEvent& event )
+void ExternalToolDlg::OnButtonEditUI(wxUpdateUIEvent& event) { event.Enable(m_item != wxNOT_FOUND); }
+
+void ExternalToolDlg::OnButtonDelete(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-	DoEditEntry(m_item);
+    if(wxMessageBox(_("Are you sure you want to delete this tool?"), _("CodeLite"), wxYES_NO | wxCANCEL) == wxYES) {
+        m_listCtrlTools->DeleteItem(m_item);
+    }
 }
 
-void ExternalToolDlg::OnButtonEditUI( wxUpdateUIEvent& event )
-{
-	event.Enable(m_item != wxNOT_FOUND);
-}
-
-void ExternalToolDlg::OnButtonDelete( wxCommandEvent& event )
-{
-	if (wxMessageBox(_("Are you sure you want to delete this tool?"), _("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
-		m_listCtrlTools->DeleteItem(m_item);
-	}
-}
-
-void ExternalToolDlg::OnButtonDeleteUI( wxUpdateUIEvent& event )
-{
-	event.Enable(m_item != wxNOT_FOUND);
-}
+void ExternalToolDlg::OnButtonDeleteUI(wxUpdateUIEvent& event) { event.Enable(m_item != wxNOT_FOUND); }
 
 void ExternalToolDlg::Initialize()
 {
-	m_listCtrlTools->InsertColumn(0, _("ID"));
-	m_listCtrlTools->InsertColumn(1, _("Name"));
-	m_listCtrlTools->InsertColumn(2, _("Path"));
+    m_listCtrlTools->InsertColumn(0, _("ID"));
+    m_listCtrlTools->InsertColumn(1, _("Name"));
+    m_listCtrlTools->InsertColumn(2, _("Path"));
 
-	m_listCtrlTools->SetColumnWidth(0, 200);
-	m_listCtrlTools->SetColumnWidth(1, 200);
-	m_listCtrlTools->SetColumnWidth(2, 200);
+    m_listCtrlTools->SetColumnWidth(0, 200);
+    m_listCtrlTools->SetColumnWidth(1, 200);
+    m_listCtrlTools->SetColumnWidth(2, 200);
 }
 
-void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24, bool captureOutput, bool saveAllFiles)
+void ExternalToolDlg::DoUpdateEntry(const wxString& id,
+                                    const wxString& name,
+                                    const wxString& path,
+                                    const wxString& workingDirectory,
+                                    const wxString& arguments,
+                                    const wxString& icon16,
+                                    const wxString& icon24,
+                                    bool captureOutput,
+                                    bool saveAllFiles)
 {
-	// try to see if 'id' already exist in the list control
-	long item(wxNOT_FOUND);
-	for (size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++) {
-		if (GetColumnText(m_listCtrlTools, i, 0) == id) {
-			item = i;
+    // try to see if 'id' already exist in the list control
+    long item(wxNOT_FOUND);
+    for(size_t i = 0; i < (size_t)m_listCtrlTools->GetItemCount(); i++) {
+        if(GetColumnText(m_listCtrlTools, i, 0) == id) {
+            item = i;
 
-			// Delete old data
-			ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
-			if ( data )
-				delete data;
+            // Delete old data
+            ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
+            if(data) delete data;
 
-			break;
-		}
-	}
+            break;
+        }
+    }
 
-	// append new row
-	if (item == wxNOT_FOUND) {
-		item = AppendListCtrlRow(m_listCtrlTools);
-	}
+    // append new row
+    if(item == wxNOT_FOUND) {
+        item = AppendListCtrlRow(m_listCtrlTools);
+    }
 
-	SetColumnText(m_listCtrlTools, item, 0, id);
-	SetColumnText(m_listCtrlTools, item, 1, name);
-	SetColumnText(m_listCtrlTools, item, 2, path);
+    SetColumnText(m_listCtrlTools, item, 0, id);
+    SetColumnText(m_listCtrlTools, item, 1, name);
+    SetColumnText(m_listCtrlTools, item, 2, path);
 
-	ExternalToolData* data = new ExternalToolData(id, name, path, workingDirectory, arguments, icon16, icon24, captureOutput, saveAllFiles);
-	m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
+    ExternalToolData* data =
+        new ExternalToolData(id, name, path, workingDirectory, arguments, icon16, icon24, captureOutput, saveAllFiles);
+    m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
 }
 
 void ExternalToolDlg::DoEditEntry(long item)
 {
-	ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
-	NewToolDlg dlg(this, m_mgr, data);
-	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry(	dlg.GetToolId(),
-		               dlg.GetToolName(),
-		               dlg.GetPath(),
-		               dlg.GetWorkingDirectory(),
-		               dlg.GetArguments(),
-		               dlg.GetIcon16(),
-		               dlg.GetIcon24(),
-		               dlg.GetCaptureProcessOutput(),
-		               dlg.GetSaveAllFiles());
-	}
+    ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
+    NewToolDlg dlg(this, m_mgr, data);
+    if(dlg.ShowModal() == wxID_OK) {
+        DoUpdateEntry(dlg.GetToolId(),
+                      dlg.GetToolName(),
+                      dlg.GetPath(),
+                      dlg.GetWorkingDirectory(),
+                      dlg.GetArguments(),
+                      dlg.GetIcon16(),
+                      dlg.GetIcon24(),
+                      dlg.GetCaptureProcessOutput(),
+                      dlg.GetSaveAllFiles());
+    }
 }
 
 std::vector<ToolInfo> ExternalToolDlg::GetTools()
 {
-	std::vector<ToolInfo> tools;
-	for (size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++) {
+    std::vector<ToolInfo> tools;
+    for(size_t i = 0; i < (size_t)m_listCtrlTools->GetItemCount(); i++) {
 
-		ToolInfo ti;
-		ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
+        ToolInfo ti;
+        ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
 
-		if(data) {
-			ti.SetId(data->m_id);
-			ti.SetName(data->m_name);
-			ti.SetPath(data->m_path);
-			ti.SetArguments(data->m_args);
-			ti.SetWd(data->m_workingDirectory);
-			ti.SetIcon16(data->m_icon16);
-			ti.SetIcon24(data->m_icon24);
-			ti.SetCaptureOutput(data->m_captureOutput);
-			ti.SetSaveAllFiles(data->m_saveAllFiles);
-			tools.push_back(ti);
-		}
-	}
-	return tools;
+        if(data) {
+            ti.SetId(data->m_id);
+            ti.SetName(data->m_name);
+            ti.SetPath(data->m_path);
+            ti.SetArguments(data->m_args);
+            ti.SetWd(data->m_workingDirectory);
+            ti.SetIcon16(data->m_icon16);
+            ti.SetIcon24(data->m_icon24);
+            ti.SetCaptureOutput(data->m_captureOutput);
+            ti.SetSaveAllFiles(data->m_saveAllFiles);
+            tools.push_back(ti);
+        }
+    }
+    return tools;
 }
 
 void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
 {
-	m_listCtrlTools->Freeze();
-	for(size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++) {
-		ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
-		if(data) {
-			delete data;
-		}
-	}
-	m_listCtrlTools->DeleteAllItems();
+    m_listCtrlTools->Freeze();
+    for(size_t i = 0; i < (size_t)m_listCtrlTools->GetItemCount(); i++) {
+        ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
+        if(data) {
+            delete data;
+        }
+    }
+    m_listCtrlTools->DeleteAllItems();
 
-	for (size_t i=0; i<tools.size(); i++) {
-		ToolInfo ti = tools.at(i);
-		long item = AppendListCtrlRow(m_listCtrlTools);
+    for(size_t i = 0; i < tools.size(); i++) {
+        ToolInfo ti = tools.at(i);
+        long item = AppendListCtrlRow(m_listCtrlTools);
 
-		ExternalToolData *data = new ExternalToolData(ti);
-		m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
+        ExternalToolData* data = new ExternalToolData(ti);
+        m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
 
-		SetColumnText(m_listCtrlTools, item, 0, ti.GetId());
-		SetColumnText(m_listCtrlTools, item, 1, ti.GetName());
-		SetColumnText(m_listCtrlTools, item, 2, ti.GetPath());
-	}
+        SetColumnText(m_listCtrlTools, item, 0, ti.GetId());
+        SetColumnText(m_listCtrlTools, item, 1, ti.GetName());
+        SetColumnText(m_listCtrlTools, item, 2, ti.GetPath());
+    }
 
-	m_listCtrlTools->Thaw();
+    m_listCtrlTools->Thaw();
 }

@@ -13,14 +13,12 @@
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">
-    <File Name="newtoolbase.cpp"/>
-    <File Name="newtoolbase.h"/>
     <File Name="newtooldlg.h"/>
     <File Name="newtooldlg.cpp"/>
     <File Name="externaltooldlg.cpp"/>
     <File Name="externaltooldlg.h"/>
-    <File Name="externaltoolsbasedlg.cpp"/>
-    <File Name="externaltoolsbasedlg.h"/>
+    <File Name="../formbuilder/external_tools.wxcp"/>
+    <File Name="../formbuilder/NewToolBase.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
@@ -193,4 +191,16 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="NewToolBase_formbuilder_bitmaps.cpp"/>
+      <File Name="external_tools_formbuilder_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="NewToolBase.h"/>
+      <File Name="NewToolBase.cpp"/>
+      <File Name="external_tools.h"/>
+      <File Name="external_tools.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

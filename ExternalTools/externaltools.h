@@ -34,35 +34,37 @@ class AsyncExeCmd;
 
 class ExternalToolsPlugin : public IPlugin
 {
-	clToolBar *   m_tb;
-	wxEvtHandler* topWin;
-	AsyncExeCmd*  m_pipedProcess;
-	wxMenu*       m_parentMenu;
+    clToolBar* m_tb;
+    wxEvtHandler* topWin;
+    AsyncExeCmd* m_pipedProcess;
+    wxMenu* m_parentMenu;
 
 protected:
-	void    OnSettings(wxCommandEvent &e);
-	void    OnLaunchExternalTool(wxCommandEvent &e);
-	void    OnLaunchExternalToolUI(wxUpdateUIEvent &e);
-	void    OnStopExternalTool(wxCommandEvent &e);
-	void    OnStopExternalToolUI(wxUpdateUIEvent &e);
-	void    DoLaunchTool(const ToolInfo &ti);
-	void    DoRecreateToolbar();
-	bool    IsRedirectedToolRunning();
-	void    OnProcessEnd(wxProcessEvent &event);
-	void    DoCreatePluginMenu();
-	void    OnRecreateTB(wxCommandEvent &e);
+    void OnSettings(wxCommandEvent& e);
+    void OnLaunchExternalTool(wxCommandEvent& e);
+    void OnLaunchExternalToolUI(wxUpdateUIEvent& e);
+    void OnStopExternalTool(wxCommandEvent& e);
+    void OnStopExternalToolUI(wxUpdateUIEvent& e);
+    void DoLaunchTool(const ToolInfo& ti);
+    void DoRecreateToolbar();
+    bool IsRedirectedToolRunning();
+    void OnProcessEnd(wxProcessEvent& event);
+    void DoCreatePluginMenu();
+    void OnRecreateTB(wxCommandEvent& e);
+    void DoClearNativeToolbarItems(wxToolBar* toolbar);
+    void DoAppendToolsToNativeToolbar(wxToolBar* toolbar);
+    
 public:
-	ExternalToolsPlugin(IManager *manager);
-	~ExternalToolsPlugin();
+    ExternalToolsPlugin(IManager* manager);
+    ~ExternalToolsPlugin();
 
-	//--------------------------------------------
-	//Abstract methods
-	//--------------------------------------------
-	virtual clToolBar *CreateToolBar(wxWindow *parent);
-	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
-	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-	virtual void UnPlug();
+    //--------------------------------------------
+    // Abstract methods
+    //--------------------------------------------
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
+    virtual void UnPlug();
 };
 
-#endif //ExternalTools
-
+#endif // ExternalTools

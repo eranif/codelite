@@ -236,6 +236,7 @@ clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
         CHECK_PTR_RET_NULL(toolbar);
 
         // Add the static tools
+        toolbar->AddSeparator();
         if(size == 24) {
             toolbar->AddTool(XRCID("external_tools_settings"),
                              _("Configure external tools..."),

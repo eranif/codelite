@@ -52,8 +52,8 @@ protected:
     NewKeyShortcutDlg::KeyboardShortcut FromString( const wxString &accelString );
     
 public:
-    /** Constructor */
     NewKeyShortcutDlg( wxWindow* parent, const MenuItemData &mid );
+    virtual ~NewKeyShortcutDlg();
     wxString GetAccel() const;
 };
 

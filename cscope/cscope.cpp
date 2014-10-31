@@ -42,15 +42,18 @@
 #include "cscopetab.h"
 #include "cscopedbbuilderthread.h"
 #include <wx/imaglist.h>
+#include "clKeyboardManager.h"
+#include "CScopeSettingsDlg.h"
+#include "event_notifier.h"
 
 static Cscope* thePlugin = NULL;
 
 static const wxString CSCOPE_NAME = wxT("CScope");
 
-//Define the plugin entry point
-extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
+// Define the plugin entry point
+extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
+    if(thePlugin == 0) {
         thePlugin = new Cscope(manager);
     }
     return thePlugin;
@@ -66,12 +69,9 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-Cscope::Cscope(IManager *manager)
+Cscope::Cscope(IManager* manager)
     : IPlugin(manager)
     , m_topWindow(NULL)
 {
@@ -80,94 +80,207 @@ Cscope::Cscope(IManager *manager)
     m_topWindow = m_mgr->GetTheApp();
 
     m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, CSCOPE_NAME, false, wxXmlResource::Get()->LoadBitmap(wxT("cscope")));
+    m_mgr->GetOutputPaneNotebook()->AddPage(
+        m_cscopeWin, CSCOPE_NAME, false, wxXmlResource::Get()->LoadBitmap(wxT("cscope")));
 
     Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
     Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);
 
-    //start the helper thread
+    // start the helper thread
     CScopeThreadST::Get()->Start();
+
+    // Register keyboard shortcuts for CScope
+    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_find_user_symbol", "Ctrl-Shift-)", "Plugins::CScope::Find");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "cscope_find_symbol", "Ctrl-Alt-0", "Plugins::CScope::Find selected text");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "cscope_find_global_definition", "Ctrl-Alt-1", "Plugins::CScope::Find this global definition");
+    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_calling_this_function",
+                                                   "Ctrl-Alt-2",
+                                                   "Plugins::CScope::Find functions called by this function");
+    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_called_by_this_function",
+                                                   "Ctrl-Alt-3",
+                                                   "Plugins::CScope::Find functions calling this function");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "cscope_create_db", "Ctrl-Alt-4", "Plugins::CScope::Create CScope database");
 }
 
-Cscope::~Cscope()
-{
-}
+Cscope::~Cscope() {}
 
-clToolBar *Cscope::CreateToolBar(wxWindow *parent)
+clToolBar* Cscope::CreateToolBar(wxWindow* parent)
 {
-    //support both toolbars icon size
+    // support both toolbars icon size
     int size = m_mgr->GetToolbarIconSize();
 
-    clToolBar *tb = NULL;
-    if (m_mgr->AllowToolbar()) {
+    clToolBar* tb = NULL;
+    if(m_mgr->AllowToolbar()) {
         tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
         tb->SetToolBitmapSize(wxSize(size, size));
 
         // Sample code that adds single button to the toolbar
         // and associates an image to it
-        BitmapLoader *bitmapLoader = m_mgr->GetStdIcons();
-        if (size == 24) {
-            //use the large icons set
-            tb->AddTool(XRCID("cscope_find_symbol"),                       _("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/find_symbol")),                       _("Find this C symbol"));
-            tb->AddTool(XRCID("cscope_functions_calling_this_function"),   _("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/function_calling_this_function")),    _("Find functions calling this function"));
-            tb->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/functions_called_by_this_function")), _("Find functions called by this function"));
+        BitmapLoader* bitmapLoader = m_mgr->GetStdIcons();
+        if(size == 24) {
+            // use the large icons set
+            tb->AddTool(XRCID("cscope_find_symbol"),
+                        _("Find this C symbol"),
+                        bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/find_symbol")),
+                        _("Find this C symbol"));
+            tb->AddTool(XRCID("cscope_functions_calling_this_function"),
+                        _("Find functions calling this function"),
+                        bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/function_calling_this_function")),
+                        _("Find functions calling this function"));
+            tb->AddTool(XRCID("cscope_functions_called_by_this_function"),
+                        _("Find functions called by this function"),
+                        bitmapLoader->LoadBitmap(wxT("toolbars/24/cscope/functions_called_by_this_function")),
+                        _("Find functions called by this function"));
         } else {
-            //16
-            tb->AddTool(XRCID("cscope_find_symbol"),                       _("Find this C symbol"),                     bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/find_symbol")),                       _("Find this C symbol"));
-            tb->AddTool(XRCID("cscope_functions_calling_this_function"),   _("Find functions calling this function"),   bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/function_calling_this_function")),    _("Find functions calling this function"));
-            tb->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"), bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/functions_called_by_this_function")), _("Find functions called by this function"));
+            // 16
+            tb->AddTool(XRCID("cscope_find_symbol"),
+                        _("Find this C symbol"),
+                        bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/find_symbol")),
+                        _("Find this C symbol"));
+            tb->AddTool(XRCID("cscope_functions_calling_this_function"),
+                        _("Find functions calling this function"),
+                        bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/function_calling_this_function")),
+                        _("Find functions calling this function"));
+            tb->AddTool(XRCID("cscope_functions_called_by_this_function"),
+                        _("Find functions called by this function"),
+                        bitmapLoader->LoadBitmap(wxT("toolbars/16/cscope/functions_called_by_this_function")),
+                        _("Find functions called by this function"));
         }
         tb->Realize();
     }
 
     // Command events
-    m_topWindow->Connect( XRCID("cscope_find_global_definition"),            wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this );
-    m_topWindow->Connect( XRCID("cscope_create_db"),                         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this );
-    m_topWindow->Connect( XRCID("cscope_settings"),                          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnDoSettings), NULL, (wxEvtHandler*)this );
-    m_topWindow->Connect( XRCID("cscope_functions_calling_this_function"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_find_symbol"),                       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_find_user_symbol"),                  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindUserInsertedSymbol), NULL, (wxEvtHandler*)this );
-    m_topWindow->Connect( XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFunction), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_files_including_this_filename"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFilesIncludingThisFname), NULL, (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_find_global_definition"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindGlobalDefinition),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_create_db"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnCreateDB),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_settings"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnDoSettings),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_functions_calling_this_function"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_find_symbol"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindSymbol),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_find_user_symbol"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindUserInsertedSymbol),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_functions_called_by_this_function"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFunction),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_files_including_this_filename"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindFilesIncludingThisFname),
+                         NULL,
+                         (wxEvtHandler*)this);
 
     // UI events
-    m_topWindow->Connect( XRCID("cscope_functions_called_by_this_function"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_files_including_this_filename"),     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_create_db"),                         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_functions_calling_this_function"),   wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_find_global_definition"),            wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_find_symbol"),                       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect( XRCID("cscope_find_user_symbol"),                  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI), NULL, (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_functions_called_by_this_function"),
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_files_including_this_filename"),
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_create_db"),
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_functions_calling_this_function"),
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_find_global_definition"),
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_find_symbol"),
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_find_user_symbol"),
+                         wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI),
+                         NULL,
+                         (wxEvtHandler*)this);
     return tb;
 }
 
-void Cscope::CreatePluginMenu(wxMenu *pluginsMenu)
+void Cscope::CreatePluginMenu(wxMenu* pluginsMenu)
 {
-    wxMenu *menu = new wxMenu();
-    wxMenuItem *item(NULL);
+    wxMenu* menu = new wxMenu();
+    wxMenuItem* item(NULL);
     item = new wxMenuItem(menu, XRCID("cscope_find_user_symbol"), _("Find ..."), _("Find ..."), wxITEM_NORMAL);
     menu->Append(item);
 
     menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), _("Find selected text"), _("Find this C symbol"), wxITEM_NORMAL);
+    item = new wxMenuItem(
+        menu, XRCID("cscope_find_symbol"), _("Find selected text"), _("Find this C symbol"), wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), _("Find this global definition"), _("Find this C global definition"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_find_global_definition"),
+                          _("Find this global definition"),
+                          _("Find this C global definition"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"), _("Find functions called by this function"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_functions_called_by_this_function"),
+                          _("Find functions called by this function"),
+                          _("Find functions called by this function"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), _("Find functions calling this function"), _("Find functions calling this function"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_functions_calling_this_function"),
+                          _("Find functions calling this function"),
+                          _("Find functions calling this function"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_files_including_this_filename"), _("Find files #&including this filename"), _("Find files #including this filename"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_files_including_this_filename"),
+                          _("Find files #&including this filename"),
+                          _("Find files #including this filename"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("cscope_create_db"), _("Create CScope database"), _("Create/Recreate the cscope database"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_create_db"),
+                          _("Create CScope database"),
+                          _("Create/Recreate the cscope database"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     menu->AppendSeparator();
@@ -178,33 +291,81 @@ void Cscope::CreatePluginMenu(wxMenu *pluginsMenu)
     pluginsMenu->Append(wxID_ANY, CSCOPE_NAME, menu);
 }
 
-void Cscope::HookPopupMenu(wxMenu *menu, MenuType type)
+void Cscope::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    //at first, we hook cscope into the editor's context menu
-    if (type == MenuTypeEditor) {
+    // at first, we hook cscope into the editor's context menu
+    if(type == MenuTypeEditor) {
         menu->Append(XRCID("CSCOPE_EDITOR_POPUP"), CSCOPE_NAME, CreateEditorPopMenu());
     }
 }
 
 void Cscope::UnPlug()
 {
-    m_topWindow->Disconnect( XRCID("cscope_functions_called_by_this_function"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect( XRCID("cscope_files_including_this_filename"),     wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect( XRCID("cscope_create_db"),                         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI), NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect( XRCID("cscope_functions_calling_this_function"),   wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect( XRCID("cscope_find_global_definition"),            wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect( XRCID("cscope_find_symbol"),                       wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI),        NULL, (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_files_including_this_filename"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_create_db"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_functions_calling_this_function"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_find_global_definition"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_find_symbol"),
+                            wxEVT_UPDATE_UI,
+                            wxUpdateUIEventHandler(Cscope::OnCscopeUI),
+                            NULL,
+                            (wxEvtHandler*)this);
 
-    m_topWindow->Disconnect(XRCID("cscope_find_symbol"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFunction), NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect(XRCID("cscope_files_including_this_filename"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFilesIncludingThisFname), NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect(XRCID("cscope_functions_calling_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
-    m_topWindow->Disconnect(XRCID("cscope_create_db"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_find_symbol"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(Cscope::OnFindSymbol),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_find_global_definition"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(Cscope::OnFindGlobalDefinition),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFunction),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_files_including_this_filename"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(Cscope::OnFindFilesIncludingThisFname),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_functions_calling_this_function"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction),
+                            NULL,
+                            (wxEvtHandler*)this);
+    m_topWindow->Disconnect(XRCID("cscope_create_db"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(Cscope::OnCreateDB),
+                            NULL,
+                            (wxEvtHandler*)this);
 
     // before this plugin is un-plugged we must remove the tab we added
-    for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
-        if (m_cscopeWin == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
+    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
+        if(m_cscopeWin == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
             m_mgr->GetOutputPaneNotebook()->RemovePage(i);
             m_cscopeWin->Destroy();
             break;
@@ -216,39 +377,76 @@ void Cscope::UnPlug()
 }
 
 //---------------------------------------------------------------------------------
-wxMenu *Cscope::CreateEditorPopMenu()
+wxMenu* Cscope::CreateEditorPopMenu()
 {
-    //Create the popup menu for the file explorer
-    //The only menu that we are interseted is the file explorer menu
+    // Create the popup menu for the file explorer
+    // The only menu that we are interseted is the file explorer menu
     wxMenu* menu = new wxMenu();
-    wxMenuItem *item(NULL);
+    wxMenuItem* item(NULL);
 
     item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), _("&Find this C symbol"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_find_global_definition"), _("Find this &global definition"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(
+        menu, XRCID("cscope_find_global_definition"), _("Find this &global definition"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), _("Find functions &called by this function"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_functions_called_by_this_function"),
+                          _("Find functions &called by this function"),
+                          wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), _("Fi&nd functions calling this function"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_functions_calling_this_function"),
+                          _("Fi&nd functions calling this function"),
+                          wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cscope_files_including_this_filename"), _("Find files #&including this filename"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_files_including_this_filename"),
+                          _("Find files #&including this filename"),
+                          wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("cscope_create_db"), _("Create CScope &database"), _("Create/Recreate the cscope database"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("cscope_create_db"),
+                          _("Create CScope &database"),
+                          _("Create/Recreate the cscope database"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
-    //connect the events
-    m_topWindow->Connect(XRCID("cscope_find_symbol"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFunction), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect(XRCID("cscope_functions_calling_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
-    m_topWindow->Connect(XRCID("cscope_create_db"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this);
+    // connect the events
+    m_topWindow->Connect(XRCID("cscope_find_symbol"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindSymbol),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_find_global_definition"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindGlobalDefinition),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_functions_called_by_this_function"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFunction),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_functions_calling_this_function"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction),
+                         NULL,
+                         (wxEvtHandler*)this);
+    m_topWindow->Connect(XRCID("cscope_create_db"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(Cscope::OnCreateDB),
+                         NULL,
+                         (wxEvtHandler*)this);
     return menu;
 }
 
@@ -258,21 +456,21 @@ wxString Cscope::DoCreateListFile(bool force)
     CScopeConfData settings;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
 
-    //create temporary file and save the file there
+    // create temporary file and save the file there
     wxString privateFolder = WorkspaceST::Get()->GetPrivateFolder();
-    wxFileName list_file( privateFolder, "cscope_file.list" );
-    if (force || settings.GetRebuildOption() || !list_file.FileExists() ) {
+    wxFileName list_file(privateFolder, "cscope_file.list");
+    if(force || settings.GetRebuildOption() || !list_file.FileExists()) {
         wxArrayString projects;
         m_mgr->GetWorkspace()->GetProjectList(projects);
         wxString err_msg;
-        std::vector< wxFileName > files;
-        std::vector< wxFileName > tmpfiles;
+        std::vector<wxFileName> files;
+        std::vector<wxFileName> tmpfiles;
         m_cscopeWin->SetMessage(_("Creating file list..."), 5);
 
-        if (settings.GetScanScope() == SCOPE_ENTIRE_WORKSPACE) {
-            for (size_t i=0; i< projects.GetCount(); i++) {
+        if(settings.GetScanScope() == SCOPE_ENTIRE_WORKSPACE) {
+            for(size_t i = 0; i < projects.GetCount(); i++) {
                 ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
-                if ( proj ) {
+                if(proj) {
                     proj->GetFiles(tmpfiles, true);
                 }
             }
@@ -280,38 +478,39 @@ wxString Cscope::DoCreateListFile(bool force)
             // SCOPE_ACTIVE_PROJECT
             wxString projName = m_mgr->GetWorkspace()->GetActiveProjectName();
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projName, err_msg);
-            if ( proj ) {
+            if(proj) {
                 proj->GetFiles(tmpfiles, true);
             }
         }
 
         // iterate over the files and convert them to be relative path
         // Also remove any .exe files (one of which managed to crash cscope),
-        // and files without an ext, which may be binaries and are unlikely to be .c or .h files in disguise; and .xpm and .png too
-        for (size_t i=0; i< tmpfiles.size(); i++ ) {
+        // and files without an ext, which may be binaries and are unlikely to be .c or .h files in disguise; and .xpm
+        // and .png too
+        for(size_t i = 0; i < tmpfiles.size(); i++) {
             wxString ext = tmpfiles.at(i).GetExt();
-            if (ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) {
+            if(ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) {
                 continue;
             }
-            tmpfiles.at(i).MakeRelativeTo( privateFolder );
+            tmpfiles.at(i).MakeRelativeTo(privateFolder);
             files.push_back(tmpfiles.at(i));
         }
 
-        //create temporary file and save the file there
+        // create temporary file and save the file there
         wxFFile file(list_file.GetFullPath(), wxT("w+b"));
-        if (!file.IsOpened()) {
+        if(!file.IsOpened()) {
             wxLogMessage(wxT("Failed to open temporary file ") + list_file.GetFullPath());
             return wxEmptyString;
         }
 
-        //write the content of the files into the tempfile
+        // write the content of the files into the tempfile
         wxString content;
-        for (size_t i=0; i< files.size(); i++) {
+        for(size_t i = 0; i < files.size(); i++) {
             wxFileName fn(files.at(i));
             content << fn.GetFullPath() << wxT("\n");
         }
 
-        file.Write( content );
+        file.Write(content);
         file.Flush();
         file.Close();
     }
@@ -319,70 +518,70 @@ wxString Cscope::DoCreateListFile(bool force)
     return list_file.GetFullPath();
 }
 
-void Cscope::DoCscopeCommand(const wxString &command, const wxString &findWhat, const wxString &endMsg)
+void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, const wxString& endMsg)
 {
     // We haven't yet found a valid cscope exe, so look for one
     wxString where;
-    if ( !ExeLocator::Locate( GetCscopeExeName(), where ) ) {
+    if(!ExeLocator::Locate(GetCscopeExeName(), where)) {
         wxString msg;
         msg << _("I can't find 'cscope' anywhere. Please check if it's installed.") << wxT('\n')
             << _("Or tell me where it can be found, from the menu: 'Plugins | CScope | Settings'");
-        wxMessageBox( msg, _("CScope not found"), wxOK|wxCENTER|wxICON_WARNING );
+        wxMessageBox(msg, _("CScope not found"), wxOK | wxCENTER | wxICON_WARNING);
         return;
     }
 
-    //set the focus to the cscope tab
-    Notebook *book = m_mgr->GetOutputPaneNotebook();
+    // set the focus to the cscope tab
+    Notebook* book = m_mgr->GetOutputPaneNotebook();
 
-    //make sure that the Output pane is visible
-    wxAuiManager *aui = m_mgr->GetDockingManager();
-    if (aui) {
-        wxAuiPaneInfo &info = aui->GetPane(wxT("Output View"));
-        if (info.IsOk() && !info.IsShown()) {
+    // make sure that the Output pane is visible
+    wxAuiManager* aui = m_mgr->GetDockingManager();
+    if(aui) {
+        wxAuiPaneInfo& info = aui->GetPane(wxT("Output View"));
+        if(info.IsOk() && !info.IsShown()) {
             info.Show();
             aui->Update();
         }
     }
 
     wxString curSel = book->GetPageText((size_t)book->GetSelection());
-    if (curSel != CSCOPE_NAME) {
-        for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
-            if (book->GetPageText(i) == CSCOPE_NAME) {
+    if(curSel != CSCOPE_NAME) {
+        for(size_t i = 0; i < (size_t)book->GetPageCount(); i++) {
+            if(book->GetPageText(i) == CSCOPE_NAME) {
                 book->SetSelection(i);
                 break;
             }
         }
     }
 
-    //create the search thread and return
-    CscopeRequest *req = new CscopeRequest();
-    req->SetOwner     (this    );
-    req->SetCmd       (command );
-    req->SetEndMsg    (endMsg  );
-    req->SetFindWhat  (findWhat);
-    req->SetWorkingDir( WorkspaceST::Get()->GetPrivateFolder() );
+    // create the search thread and return
+    CscopeRequest* req = new CscopeRequest();
+    req->SetOwner(this);
+    req->SetCmd(command);
+    req->SetEndMsg(endMsg);
+    req->SetFindWhat(findWhat);
+    req->SetWorkingDir(WorkspaceST::Get()->GetPrivateFolder());
 
-    CScopeThreadST::Get()->Add( req );
+    CScopeThreadST::Get()->Add(req);
 }
 
-void Cscope::OnFindSymbol(wxCommandEvent &e)
+void Cscope::OnFindSymbol(wxCommandEvent& e)
 {
     wxString word = GetSearchPattern();
-    if (!word.IsEmpty()) {
+    if(!word.IsEmpty()) {
         DoFindSymbol(word);
     }
 }
 
-void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
+void Cscope::OnFindGlobalDefinition(wxCommandEvent& e)
 {
     wxString word = GetSearchPattern();
-    if (word.IsEmpty()) {
+    if(word.IsEmpty()) {
         return;
     }
     m_cscopeWin->Clear();
     wxString list_file = DoCreateListFile(false);
 
-    //Do the actual search
+    // Do the actual search
     wxString command;
     wxString endMsg;
     command << GetCscopeExeName() << wxT(" -d -L -1 ") << word << wxT(" -i ") << list_file;
@@ -390,10 +589,10 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
     DoCscopeCommand(command, word, endMsg);
 }
 
-void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent &e)
+void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent& e)
 {
     wxString word = GetSearchPattern();
-    if (word.IsEmpty()) {
+    if(word.IsEmpty()) {
         return;
     }
 
@@ -405,11 +604,11 @@ void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent &e)
     CScopeConfData settings;
 
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
-    if (!settings.GetRebuildOption()) {
+    if(!settings.GetRebuildOption()) {
         rebuildOption = wxT(" -d");
     }
 
-    //Do the actual search
+    // Do the actual search
     wxString command;
     wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << wxT(" -L -2 ") << word << wxT(" -i ") << list_file;
@@ -417,10 +616,10 @@ void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent &e)
     DoCscopeCommand(command, word, endMsg);
 }
 
-void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
+void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent& e)
 {
     wxString word = GetSearchPattern();
-    if (word.IsEmpty()) {
+    if(word.IsEmpty()) {
         return;
     }
 
@@ -432,11 +631,11 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
     CScopeConfData settings;
 
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
-    if (!settings.GetRebuildOption()) {
+    if(!settings.GetRebuildOption()) {
         rebuildOption = wxT(" -d");
     }
 
-    //Do the actual search
+    // Do the actual search
     wxString command;
     wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << wxT(" -L -3 ") << word << wxT(" -i ") << list_file;
@@ -444,24 +643,24 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
     DoCscopeCommand(command, word, endMsg);
 }
 
-void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent &e)
+void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent& e)
 {
     wxString word = m_mgr->GetActiveEditor()->GetSelection();
-    if (word.IsEmpty()) {
+    if(word.IsEmpty()) {
         // If there's no selection, try for the caret word
         // That'll either be (rubbish, or) a filename
         // or it'll be the 'h'of filename.h
         // Cscope can cope with just a filename
         word = m_mgr->GetActiveEditor()->GetWordAtCaret();
-        if (word == wxT("h")) {
+        if(word == wxT("h")) {
             long pos = m_mgr->GetActiveEditor()->GetCurrentPosition();
-            long start = m_mgr->GetActiveEditor()->WordStartPos(pos-2, true);
-            wxString name = m_mgr->GetActiveEditor()->GetTextRange(start, pos-2);
+            long start = m_mgr->GetActiveEditor()->WordStartPos(pos - 2, true);
+            wxString name = m_mgr->GetActiveEditor()->GetTextRange(start, pos - 2);
             // Append the .h  Cscope would be happy with just foo,
             // but would also return #include foobar.h which isn't what's been requested
             word = name + wxT(".h");
         }
-        if (word.IsEmpty()) {
+        if(word.IsEmpty()) {
             return;
         }
     }
@@ -474,11 +673,11 @@ void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent &e)
     CScopeConfData settings;
 
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
-    if (!settings.GetRebuildOption()) {
+    if(!settings.GetRebuildOption()) {
         rebuildOption = wxT(" -d");
     }
 
-    //Do the actual search
+    // Do the actual search
     wxString command;
     wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << wxT(" -L -8 ") << word << wxT(" -i ") << list_file;
@@ -486,10 +685,10 @@ void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent &e)
     DoCscopeCommand(command, word, endMsg);
 }
 
-void Cscope::OnCreateDB(wxCommandEvent &e)
+void Cscope::OnCreateDB(wxCommandEvent& e)
 {
     // sanity
-    if ( m_mgr->IsWorkspaceOpen() == false )  {
+    if(m_mgr->IsWorkspaceOpen() == false) {
         return;
     }
 
@@ -504,7 +703,7 @@ void Cscope::OnCreateDB(wxCommandEvent &e)
     command << GetCscopeExeName();
 
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
-    if (settings.GetBuildRevertedIndexOption()) {
+    if(settings.GetBuildRevertedIndexOption()) {
         command << wxT(" -q");
         endMsg << _("Recreated inverted CScope DB");
     } else {
@@ -515,27 +714,24 @@ void Cscope::OnCreateDB(wxCommandEvent &e)
     // Do the actual create db
     // since the process is always running from the workspace
     // directory, there is no need to specify the full path of the list file
-    
+
     command << wxT(" -L -i cscope_file.list");
     DoCscopeCommand(command, wxEmptyString, endMsg);
 }
 
-void Cscope::OnDoSettings(wxCommandEvent &e)
+void Cscope::OnDoSettings(wxCommandEvent& e)
 {
     // atm the only setting to set is the cscope filepath
     // First find the current value, if any
     CScopeConfData settings;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
     wxString filepath = settings.GetCscopeExe();
-
-    // Since there's only the one thing to ask, keep it simple for now
-    wxString fp = wxGetTextFromUser(_("Please enter the filepath where cscope can be found"), _("Where is cscope?"), filepath);
-    if ( fp.IsEmpty() ) {
-        return;
+    
+    CScopeSettingsDlg dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        settings.SetCscopeExe(dlg.GetPath());
+        m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &settings);
     }
-
-    settings.SetCscopeExe(fp);
-    m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &settings);
 }
 
 wxString Cscope::GetCscopeExeName()
@@ -545,19 +741,19 @@ wxString Cscope::GetCscopeExeName()
     return settings.GetCscopeExe();
 }
 
-void Cscope::OnCScopeThreadEnded(wxCommandEvent &e)
+void Cscope::OnCScopeThreadEnded(wxCommandEvent& e)
 {
-    CScopeResultTable_t *result = (CScopeResultTable_t*)e.GetClientData();
-    m_cscopeWin->BuildTable( result );
+    CScopeResultTable_t* result = (CScopeResultTable_t*)e.GetClientData();
+    m_cscopeWin->BuildTable(result);
 }
 
-void Cscope::OnCScopeThreadUpdateStatus(wxCommandEvent &e)
+void Cscope::OnCScopeThreadUpdateStatus(wxCommandEvent& e)
 {
-    CScopeStatusMessage *msg = (CScopeStatusMessage *)e.GetClientData();
-    if (msg) {
+    CScopeStatusMessage* msg = (CScopeStatusMessage*)e.GetClientData();
+    if(msg) {
         m_cscopeWin->SetMessage(msg->GetMessage(), msg->GetPercentage());
 
-        if( msg->GetFindWhat().IsEmpty() == false ) {
+        if(msg->GetFindWhat().IsEmpty() == false) {
             m_cscopeWin->SetFindWhat(msg->GetFindWhat());
         }
         delete msg;
@@ -565,7 +761,7 @@ void Cscope::OnCScopeThreadUpdateStatus(wxCommandEvent &e)
     e.Skip();
 }
 
-void Cscope::OnCscopeUI(wxUpdateUIEvent &e)
+void Cscope::OnCscopeUI(wxUpdateUIEvent& e)
 {
     CHECK_CL_SHUTDOWN();
     bool isEditor = m_mgr->GetActiveEditor() ? true : false;
@@ -581,26 +777,28 @@ void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& WXUNUSED(e))
 {
     wxString word = GetSearchPattern();
-    if(word.IsEmpty())
-        return;
+    if(word.IsEmpty()) return;
 
-    DoFindSymbol( word );
+    DoFindSymbol(word);
 }
 
 wxString Cscope::GetSearchPattern() const
 {
     wxString pattern;
-    if (m_mgr->IsShutdownInProgress()) {
+    if(m_mgr->IsShutdownInProgress()) {
         return pattern;
     }
 
     IEditor* editor = m_mgr->GetActiveEditor();
-    if (editor) {
+    if(editor) {
         pattern = editor->GetWordAtCaret();
     }
 
-    if (pattern.IsEmpty()) {
-        pattern = wxGetTextFromUser(_("Enter the symbol to search for:"), _("cscope: find symbol"), wxT(""), m_mgr->GetTheApp()->GetTopWindow());
+    if(pattern.IsEmpty()) {
+        pattern = wxGetTextFromUser(_("Enter the symbol to search for:"),
+                                    _("cscope: find symbol"),
+                                    wxT(""),
+                                    m_mgr->GetTheApp()->GetTopWindow());
     }
 
     return pattern;
@@ -616,11 +814,11 @@ void Cscope::DoFindSymbol(const wxString& word)
     CScopeConfData settings;
 
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
-    if (!settings.GetRebuildOption()) {
+    if(!settings.GetRebuildOption()) {
         rebuildOption = wxT(" -d");
     }
 
-    //Do the actual search
+    // Do the actual search
     wxString command;
     wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;

@@ -271,9 +271,11 @@ int clKeyboardManager::PopupNewKeyboardShortcutDlg(wxWindow* parent, MenuItemDat
 
 bool clKeyboardManager::Exists(const wxString& accel) const
 {
+    if(accel.IsEmpty()) return false;
+    
     MenuItemDataMap_t accels;
     GetAllAccelerators(accels);
-
+    
     MenuItemDataMap_t::const_iterator iter = accels.begin();
     for(; iter != accels.end(); ++iter) {
         if(iter->second.accel == accel) {

@@ -23,6 +23,8 @@
     <File Name="cscopetab.cpp"/>
     <File Name="cscopetab.h"/>
     <File Name="CscopeTabBase.wxcp"/>
+    <File Name="CScopeSettingsDlg.h"/>
+    <File Name="CScopeSettingsDlg.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>

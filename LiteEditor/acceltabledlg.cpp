@@ -222,6 +222,7 @@ bool AccelTableDlg::IsMatchesFilter(const wxString& filter, const MenuItemData& 
 
 bool AccelTableDlg::HasAccelerator(const wxString& accel, MenuItemData& who)
 {
+    if(accel.IsEmpty()) return false;
     for(MenuItemDataMap_t::iterator iter = m_accelMap.begin(); iter != m_accelMap.end(); ++iter) {
         if(iter->second.accel == accel) {
             who = iter->second;

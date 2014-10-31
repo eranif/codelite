@@ -14,8 +14,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
+#include <wx/srchctrl.h>
 #include <wx/dataview.h>
 #include "keyboardaccelemodel.h"
 #include <wx/button.h>
@@ -23,8 +22,7 @@
 class AccelTableBaseDlg : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText1;
-    wxTextCtrl* m_textCtrlFilter;
+    wxSearchCtrl* m_textCtrlFilter;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<KeyboardAcceleModel> m_dataviewModel;
 
@@ -43,7 +41,7 @@ protected:
     virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    AccelTableBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Keyboard Shortcuts:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    AccelTableBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Keyboard Shortcuts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AccelTableBaseDlg();
 };
 

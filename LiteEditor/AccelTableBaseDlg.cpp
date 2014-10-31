@@ -30,16 +30,11 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer1->Add(bSizer5, 0, wxEXPAND, 5);
     
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Filter:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer5->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlFilter = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_textCtrlFilter->SetToolTip(_("Type here to find an entry by its action"));
+    m_textCtrlFilter = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlFilter->SetToolTip(_("Search for a keyboard shortcut either by its keyboard shortcut or by its description"));
     m_textCtrlFilter->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlFilter->SetHint(wxT(""));
-    #endif
+    m_textCtrlFilter->ShowSearchButton(true);
+    m_textCtrlFilter->ShowCancelButton(false);
     
     bSizer5->Add(m_textCtrlFilter, 1, wxALL, 5);
     
@@ -47,7 +42,7 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer1->Add(bSizer4, 1, wxEXPAND, 5);
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(500,300), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new KeyboardAcceleModel;
     m_dataviewModel->SetColCount( 2 );
@@ -55,7 +50,7 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer4->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
-    m_dataview->AppendTextColumn(_("Action"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Menu"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Keyboard Shortcut"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     

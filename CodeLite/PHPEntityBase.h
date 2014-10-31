@@ -11,6 +11,7 @@
 #include "wx/wxsqlite3.h"
 #include <wx/wxcrtvararg.h> // Needed for wxPrintf
 #include "smart_ptr.h"
+#include <set>
 
 // The entity type
 enum eEntityType {
@@ -54,7 +55,7 @@ public:
     typedef SmartPtr<PHPEntityBase> Ptr_t;
     typedef std::list<PHPEntityBase::Ptr_t> List_t;
     typedef std::map<wxString, PHPEntityBase::Ptr_t> Map_t;
-
+    
 protected:
     PHPEntityBase::Map_t m_childrenMap;
     PHPEntityBase::List_t m_children;

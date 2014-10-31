@@ -837,7 +837,7 @@ void PHPLookupTable::DoFindChildren(PHPEntityBase::List_t& matches,
 
                 if(flags & kLookupFlags_FunctionsAndConstsOnly) {
                     // Filter non consts from the list
-                    if(!match->Cast<PHPEntityVariable>()->IsConst()) {
+                    if(!match->Cast<PHPEntityVariable>()->IsConst() && !match->Cast<PHPEntityVariable>()->IsDefine()) {
                         continue;
                     }
                 }

@@ -42,6 +42,10 @@ protected:
     PHPSourceFile::Ptr_t m_sourceFile;
     bool m_functionCalltipExpr;
     wxString DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sourceFile);
+    /**
+     * @brief make 'matches' a unique list by removing duplicates
+     */
+    void DoMakeUnique(PHPEntityBase::List_t& matches);
     
 protected:
     phpLexerToken::Vet_t CreateExpression(const wxString& text);

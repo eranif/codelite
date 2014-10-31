@@ -4,6 +4,8 @@
 #include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
 #include <stack>
+#include <algorithm>
+#include <set>
 
 PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText, bool functionCalltipExpr)
     : m_type(kNone)
@@ -98,6 +100,8 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case kPHP_T_PRIVATE:
         case kPHP_T_FINAL:
         case kPHP_T_CONST:
+        case kPHP_T_REQUIRE:
+        case kPHP_T_REQUIRE_ONCE:
         case '.':
         case ';':
         case '{':
@@ -106,13 +110,11 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case ':':
         case ',':
         case '!':
-            if(current)
-                current->clear();
+            if(current) current->clear();
             break;
         case '(':
         case '[':
-            if(current)
-                current->push_back(token);
+            if(current) current->push_back(token);
             stack.push(phpLexerToken::Vet_t());
             current = &stack.top();
             break;
@@ -125,12 +127,10 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
             // switch back to the previous set of tokens
             stack.pop();
             current = &stack.top();
-            if(current)
-                current->push_back(token);
+            if(current) current->push_back(token);
             break;
         default:
-            if(current)
-                current->push_back(token);
+            if(current) current->push_back(token);
             break;
         }
     }
@@ -156,8 +156,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
 PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
 {
-    if(m_expression.empty())
-        return PHPEntityBase::Ptr_t(NULL);
+    if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
 
     m_sourceFile.reset(new PHPSourceFile(m_text));
     m_sourceFile->SetParseFunctionBody(true);
@@ -276,28 +275,24 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             // Perform basic replacements that we can conduct here without the need of the global
             // lookup table
             if(token.type == kPHP_T_PARENT) {
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName();
                 firstTokenType = kPHP_T_PARENT;
 
             } else if(token.type == kPHP_T_THIS) {
                 // the first token is $this
                 // replace it with the current class absolute path
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_SELF) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_VARIABLE) {
@@ -435,8 +430,7 @@ wxString PHPExpression::GetExpressionAsString() const
 size_t PHPExpression::GetLookupFlags() const
 {
     size_t flags(0);
-    if(m_parts.empty())
-        return flags;
+    if(m_parts.empty()) return flags;
 
     if(m_parts.size() == 1 && m_parts.back().m_textType == kPHP_T_PARENT) {
         Part firstPart = m_parts.back();
@@ -509,4 +503,20 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
     }
     PHPEntityBase::List_t scopeChildren = lookup.FindChildren(resolved->GetDbId(), flags, GetFilter());
     matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
+
+    // and make the list unique
+    DoMakeUnique(matches);
+}
+
+void PHPExpression::DoMakeUnique(PHPEntityBase::List_t& matches)
+{
+    std::set<wxString> uniqueNames;
+    PHPEntityBase::List_t uniqueList;
+    for(PHPEntityBase::List_t::iterator iter = matches.begin(); iter != matches.end(); ++iter) {
+        if(uniqueNames.count((*iter)->GetFullName()) == 0) {
+            uniqueNames.insert((*iter)->GetFullName());
+            uniqueList.push_back(*iter);
+        }
+    }
+    matches.swap(uniqueList);
 }

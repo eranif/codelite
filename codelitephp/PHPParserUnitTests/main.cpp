@@ -423,7 +423,7 @@ TEST_FUNC(test_define_in_namespace)
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
     
-    CHECK_SIZE(matches.size(), 0);
+    CHECK_SIZE(matches.size(), 1);
     return true;
 }
 
@@ -442,7 +442,7 @@ TEST_FUNC(test_define_with_namespace)
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
     
-    CHECK_SIZE(matches.size(), 1);
+    CHECK_SIZE(matches.size(), 2);
     return true;
 }
 

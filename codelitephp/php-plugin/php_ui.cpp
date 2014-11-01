@@ -85,12 +85,11 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     bSizer11->Add(m_staticText9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button1 = new wxButton(m_panel1, wxID_ANY, _("Standard Workspace"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button1->SetDefault();
     
     bSizer11->Add(m_button1, 0, wxALL|wxEXPAND, 5);
     
     m_button2 = new wxButton(m_panel1, wxID_ANY, _("PHP Workspace"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_button2->SetDefault();
-    m_button2->SetFocus();
     
     bSizer11->Add(m_button2, 0, wxALL|wxEXPAND, 5);
     
@@ -1020,7 +1019,7 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 2);
     
-    m_gaugeParseProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,-1), wxGA_HORIZONTAL);
+    m_gaugeParseProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,5), wxGA_HORIZONTAL);
     m_gaugeParseProgress->Hide();
     m_gaugeParseProgress->SetValue(0);
     

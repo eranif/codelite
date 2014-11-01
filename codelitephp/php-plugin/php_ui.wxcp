@@ -718,7 +718,7 @@
             }, {
              "type": "bool",
              "m_label": "Default Button",
-             "m_value": false
+             "m_value": true
             }, {
              "type": "bitmapPicker",
              "m_label": "Bitmap File:",
@@ -800,7 +800,7 @@
             }, {
              "type": "bool",
              "m_label": "Focused",
-             "m_value": true
+             "m_value": false
             }, {
              "type": "string",
              "m_label": "Class Name:",
@@ -820,7 +820,7 @@
             }, {
              "type": "bool",
              "m_label": "Default Button",
-             "m_value": true
+             "m_value": false
             }, {
              "type": "bitmapPicker",
              "m_label": "Bitmap File:",
@@ -10323,7 +10323,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,-1"
+         "m_value": "-1,5"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",

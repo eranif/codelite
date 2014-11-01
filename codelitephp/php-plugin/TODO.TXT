@@ -12,6 +12,7 @@ Code Completion / Code Generation
 
 Must:
 ======
+- Avoid parsing the core zip files each time we open the workspace
 - Use the PHP include paths to the global PHP settings (so it will include ZF etc)
 - Add link to XDebug diagnostic dialog that points to the codelite's wiki for further explanation
 - When codelite shows the "XDebug failed to connect in a timely manner" -> add button to run xdebug diag tool

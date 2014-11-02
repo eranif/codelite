@@ -114,10 +114,6 @@ disable_all_breakpoints|Debugger|Disable All Breakpoints|
 enable_all_breakpoints|Debugger|Enable All Breakpoints|
 delete_all_breakpoints|Debugger|Delete All Breakpoints|
 quick_debug|Debugger|Quick Debug...|
-create_ext_database|Tags|Create external tags database...|
-open_ext_database|Tags|Attach external tags database...|
-close_ext_database|Tags|Close external tags database|
-manage_tags|Tags|Manage external tags databases...|
 manage_plugins|Plugins|Manage Plugins...|
 format_source|Plugins::Source Code Formatter|Format Current Source|Ctrl-I
 formatter_options|Plugins::Source Code Formatter|Options...|

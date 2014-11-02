@@ -1,5 +1,5 @@
 
-#line 3 "/home/eran/devl/codelite/WordCompletion/WordsScanner.cpp"
+#line 3 "WordsScanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 

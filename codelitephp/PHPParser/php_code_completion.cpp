@@ -285,7 +285,7 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                         // Suggets members for the resolved entity
                         PHPEntityBase::List_t matches;
                         expr->Suggest(entity, m_lookupTable, matches);
-                        
+
                         // Remove duplicates from the list
                         if(!matches.empty()) {
                             // Show the code completion box
@@ -509,7 +509,14 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* edit
 
     if(resolved && !filter.IsEmpty()) {
         resolved = m_lookupTable.FindMemberOf(resolved->GetDbId(), filter);
-
+        if(!resolved) {
+            // Fallback to functions and constants
+            PHPEntityBase::List_t children =
+                m_lookupTable.FindGlobalFunctionAndConsts(PHPLookupTable::kLookupFlags_ExactMatch, filter);
+            if(children.size() == 1) {
+                resolved = *children.begin();
+            }
+        }
         if(resolved && resolved->Is(kEntityTypeFunction)) {
             // for a function, we need to load its children (function arguments)
             resolved->SetChildren(m_lookupTable.LoadFunctionArguments(resolved->GetDbId()));

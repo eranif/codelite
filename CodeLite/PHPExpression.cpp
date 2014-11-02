@@ -110,11 +110,13 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case ':':
         case ',':
         case '!':
-            if(current) current->clear();
+            if(current)
+                current->clear();
             break;
         case '(':
         case '[':
-            if(current) current->push_back(token);
+            if(current)
+                current->push_back(token);
             stack.push(phpLexerToken::Vet_t());
             current = &stack.top();
             break;
@@ -127,10 +129,12 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
             // switch back to the previous set of tokens
             stack.pop();
             current = &stack.top();
-            if(current) current->push_back(token);
+            if(current)
+                current->push_back(token);
             break;
         default:
-            if(current) current->push_back(token);
+            if(current)
+                current->push_back(token);
             break;
         }
     }
@@ -156,7 +160,8 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
 PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
 {
-    if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
+    if(m_expression.empty())
+        return PHPEntityBase::Ptr_t(NULL);
 
     m_sourceFile.reset(new PHPSourceFile(m_text));
     m_sourceFile->SetParseFunctionBody(true);
@@ -275,24 +280,28 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             // Perform basic replacements that we can conduct here without the need of the global
             // lookup table
             if(token.type == kPHP_T_PARENT) {
-                if(!innerClass) return "";
+                if(!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName();
                 firstTokenType = kPHP_T_PARENT;
 
             } else if(token.type == kPHP_T_THIS) {
                 // the first token is $this
                 // replace it with the current class absolute path
-                if(!innerClass) return "";
+                if(!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_SELF) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass) return "";
+                if(!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass) return "";
+                if(!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_VARIABLE) {
@@ -430,7 +439,8 @@ wxString PHPExpression::GetExpressionAsString() const
 size_t PHPExpression::GetLookupFlags() const
 {
     size_t flags(0);
-    if(m_parts.empty()) return flags;
+    if(m_parts.empty())
+        return flags;
 
     if(m_parts.size() == 1 && m_parts.back().m_textType == kPHP_T_PARENT) {
         Part firstPart = m_parts.back();
@@ -452,7 +462,8 @@ size_t PHPExpression::GetLookupFlags() const
 void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches)
 {
     // sanity
-    if(!resolved) return;
+    if(!resolved)
+        return;
     PHPEntityBase::Ptr_t currentScope = GetSourceFile()->CurrentScope();
 
     // GetCount() == 0 && !GetFilter().IsEmpty() i.e. a word completion is required.
@@ -466,7 +477,8 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
 
         // For functions and constants, PHP will fall back to global functions or constants if a
         // namespaced function or constant does not exist.
-        PHPEntityBase::List_t globals = lookup.FindGlobalFunctionAndConsts(GetFilter());
+        PHPEntityBase::List_t globals =
+            lookup.FindGlobalFunctionAndConsts(PHPLookupTable::kLookupFlags_Contains, GetFilter());
         matches.insert(matches.end(), globals.begin(), globals.end());
 
         if(currentScope && (currentScope->Is(kEntityTypeFunction) || currentScope->Is(kEntityTypeNamespace))) {

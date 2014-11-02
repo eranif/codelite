@@ -959,7 +959,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindFunction(const wxString& fullname)
     return PHPEntityBase::Ptr_t(NULL);
 }
 
-PHPEntityBase::List_t PHPLookupTable::FindGlobalFunctionAndConsts(const wxString& nameHint)
+PHPEntityBase::List_t PHPLookupTable::FindGlobalFunctionAndConsts(size_t flags, const wxString& nameHint)
 {
     PHPEntityBase::List_t matches;
     // Sanity
@@ -967,7 +967,7 @@ PHPEntityBase::List_t PHPLookupTable::FindGlobalFunctionAndConsts(const wxString
     // First, locate the global namespace in the database
     PHPEntityBase::Ptr_t globalNs = FindScope("\\");
     if(!globalNs) return matches;
-    DoFindChildren(matches, globalNs->GetDbId(), kLookupFlags_FunctionsAndConstsOnly | kLookupFlags_Contains, nameHint);
+    DoFindChildren(matches, globalNs->GetDbId(), kLookupFlags_FunctionsAndConstsOnly | flags, nameHint);
     return matches;
 }
 

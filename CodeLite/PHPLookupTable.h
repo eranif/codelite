@@ -55,11 +55,11 @@ public:
         kUpdateMode_Full,
     };
     typedef SmartPtr<PHPLookupTable> Ptr_t;
-    static void DoSplitFullname(const wxString &fullname, wxString &ns, wxString &shortName);
-    
+    static void DoSplitFullname(const wxString& fullname, wxString& ns, wxString& shortName);
+
 private:
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
-    
+
     void CreateSchema();
     PHPEntityBase::Ptr_t
     DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace = false);
@@ -68,12 +68,12 @@ private:
                                    std::vector<wxLongLong>& parents,
                                    std::set<wxLongLong>& parentsVisited,
                                    bool excludeSelf);
-    
+
     /**
      * @brief find namespace by fullname. If it does not exist, add it and return a pointer to it
      */
     PHPEntityBase::Ptr_t CreateNamespaceForDefine(PHPEntityBase::Ptr_t define);
-    
+
     PHPEntityBase::Ptr_t DoFindScope(const wxString& fullname, ePhpScopeType scopeType = kPhpScopeTypeAny);
     PHPEntityBase::Ptr_t DoFindScope(wxLongLong id, ePhpScopeType scopeType = kPhpScopeTypeAny);
     /**
@@ -181,7 +181,8 @@ public:
      * @brief load the global functions and consts that matches nameHint
      * If nameHint is empty, return an empty list
      */
-    PHPEntityBase::List_t FindGlobalFunctionAndConsts(const wxString& nameHint = "");
+    PHPEntityBase::List_t FindGlobalFunctionAndConsts(size_t flags = PHPLookupTable::kLookupFlags_Contains,
+                                                      const wxString& nameHint = "");
 
     /**
      * @brief load list of entities from all the tables that matches 'nameHint'

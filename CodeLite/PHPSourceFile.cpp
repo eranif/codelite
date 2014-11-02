@@ -699,10 +699,6 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     pClass->SetFullName(MakeIdentifierAbsolute(token.text));
     pClass->SetLine(token.lineNumber);
 
-    // add the current class to the current scope
-    CurrentScope()->AddChild(klass);
-    m_scopes.push_back(klass);
-
     while(NextToken(token)) {
         if(token.IsAnyComment()) continue;
         switch(token.type) {
@@ -719,6 +715,9 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
         } break;
         case '{': {
             // entering the class body
+            // add the current class to the current scope
+            CurrentScope()->AddChild(klass);
+            m_scopes.push_back(klass);
             Parse(m_depth - 1);
             if(!m_reachedEOF) {
                 m_scopes.pop_back();

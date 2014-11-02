@@ -768,7 +768,7 @@ void ContextCpp::CompleteWord()
     wxString expr = GetExpression(rCtrl.GetCurrentPos(), true);
 
     DoSetProjectPaths();
-    CodeCompletionManager::Get().WordCompletion(&GetCtrl(), expr, word);
+    CodeCompletionManager::Get().WordCompletionPlugin(&GetCtrl(), expr, word);
 }
 
 void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl)

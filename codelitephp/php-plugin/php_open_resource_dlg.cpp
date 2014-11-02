@@ -8,6 +8,7 @@
 #include "php_workspace.h"
 #include <macros.h>
 #include "PHPLookupTable.h"
+#include <wx/tokenzr.h>
 
 static int TIMER_ID = 5647;
 static wxBitmap CLASS_IMG_ID = wxNullBitmap;
@@ -163,12 +164,14 @@ void OpenResourceDlg::DoGetResources(const wxString& filter)
     m_resources.reserve(matches.size());
     for(; iter != matches.end(); ++iter) {
         PHPEntityBase::Ptr_t match = *iter;
-        ResourceItem resource;
-        resource.displayName = match->GetDisplayName();
-        resource.filename = match->GetFilename();
-        resource.line = match->GetLine();
-        resource.SetType(match);
-        m_resources.push_back(resource);
+        if(IsMatchesFilter(filter, match->GetFullName())) {
+            ResourceItem resource;
+            resource.displayName = match->GetDisplayName();
+            resource.filename = match->GetFilename();
+            resource.line = match->GetLine();
+            resource.SetType(match);
+            m_resources.push_back(resource);
+        }
     }
 }
 
@@ -180,12 +183,11 @@ ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
     lcFilter.MakeLower();
 
     for(size_t i = 0; i < m_allFiles.size(); i++) {
-        wxString displayName = m_allFiles.at(i).displayName;
-        displayName.MakeLower();
-        if(displayName.Contains(lcFilter)) {
+        wxString filename = m_allFiles.at(i).filename.GetFullPath().Lower();
+        if(IsMatchesFilter(filter, filename)) {
             resources.push_back(m_allFiles.at(i));
             // Don't return too many matches...
-            if(resources.size() == 150) break;
+            if(resources.size() == 300) break;
         }
     }
     return resources;
@@ -268,4 +270,16 @@ void OpenResourceDlg::OnDVItemActivated(wxDataViewEvent& event)
 {
     SetSelectedItem(DoGetItemData(event.GetItem()));
     EndModal(wxID_OK);
+}
+
+bool OpenResourceDlg::IsMatchesFilter(const wxString& filter, const wxString& key)
+{
+    wxString lcKey = key.Lower();
+    wxArrayString filters = ::wxStringTokenize(filter, " ", wxTOKEN_STRTOK);
+    for(size_t i=0; i<filters.GetCount(); ++i) {
+        wxString lcFilter = filters.Item(i).Lower();
+        if(lcKey.Contains(lcFilter)) continue;
+        else return false;
+    }
+    return true;
 }

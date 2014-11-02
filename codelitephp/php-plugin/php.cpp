@@ -147,17 +147,25 @@ PhpPlugin::PhpPlugin(IManager* manager)
         clZipReader zipReader(phpResources);
         wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "");
         targetDir.AppendDir("php-plugin");
-        targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        zipReader.Extract("*", targetDir.GetPath());
 
-        // Make sure we add this path to the general PHP settings
-        targetDir.AppendDir("cc"); // the CC files are located under an internal folder named "cc" (lowercase)
-        PHPConfigurationData config;
-        if(config.Load().GetCcIncludePath().Index(targetDir.GetPath()) == wxNOT_FOUND) {
-            config.Load().GetCcIncludePath().Add(targetDir.GetPath());
-            config.Save();
+        // Don't extract the zip if one of the files on disk is newer or equal to the zip timestamp
+        wxFileName fnSampleFile(targetDir.GetPath(), "basic.php");
+        fnSampleFile.AppendDir("cc");
+        if(!fnSampleFile.Exists() || // the sample file does not exists
+                                     // Or the resource file (PHP.zip) is newer than the sample file
+           (phpResources.GetModificationTime().GetTicks() > fnSampleFile.GetModificationTime().GetTicks())) {
+
+            targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+            zipReader.Extract("*", targetDir.GetPath());
+
+            // Make sure we add this path to the general PHP settings
+            targetDir.AppendDir("cc"); // the CC files are located under an internal folder named "cc" (lowercase)
+            PHPConfigurationData config;
+            if(config.Load().GetCcIncludePath().Index(targetDir.GetPath()) == wxNOT_FOUND) {
+                config.Load().GetCcIncludePath().Add(targetDir.GetPath());
+                config.Save();
+            }
         }
-
     } else {
         CL_WARNING("PHP: Could not locate PHP resources 'PHP.zip' => '%s'", phpResources.GetFullPath());
     }

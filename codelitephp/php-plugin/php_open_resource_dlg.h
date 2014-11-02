@@ -77,7 +77,8 @@ public:
 
 protected:
     virtual void OnDVItemActivated(wxDataViewEvent& event);
-
+    
+    bool IsMatchesFilter(const wxString& filter, const wxString& key);
     ResourceVector_t DoGetFiles(const wxString& filter);
     void DoGetResources(const wxString& filter);
     ResourceItem* DoGetItemData(const wxDataViewItem& item);

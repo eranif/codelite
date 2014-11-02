@@ -112,7 +112,7 @@ CodeCompletionManager::~CodeCompletionManager()
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 }
 
-void CodeCompletionManager::WordCompletionPlugin(LEditor* editor, const wxString& expr, const wxString& word)
+void CodeCompletionManager::WordCompletion(LEditor* editor, const wxString& expr, const wxString& word)
 {
     wxString expression = expr;
     wxString tmp;

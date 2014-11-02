@@ -1,5 +1,5 @@
 
-#line 3 "WordsScanner.cpp"
+#line 3 "/home/eran/devl/codelite/WordCompletion/WordsScanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -2057,8 +2057,9 @@ void wordsfree (void * ptr , yyscan_t yyscanner)
 // API methods implementation
 //=============-------------------------------
 
-void* wordsLexerNew(const wxString& content, size_t options )
+void* wordsLexerNew(const wxString& content, size_t options)
 {
+    wxUnusedVar(options);
     yyscan_t scanner;
     wordslex_init(&scanner);
     wxCharBuffer cb = content.mb_str(wxConvUTF8);

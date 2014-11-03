@@ -530,8 +530,6 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
                 m_editor->CharRight();
                 m_editor->SetIndicatorCurrent(MATCH_INDICATOR);
                 m_editor->IndicatorFillRange(pos, 1);
-                // trigger function tip
-                m_editor->CodeComplete();
 
                 // select the tag to display to match the current one
                 TagEntryPtr tt(new TagEntry(itemInfo.tag));
@@ -540,6 +538,14 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
                 std::vector<clTipInfo> tips;
                 clCallTip::FormatTagsToTips(tags, tips);
 
+                // trigger function tip if we have at least 1 calltip and
+                // the signature does not match "()"
+                if(tips.size() == 1 && tips.at(0).str == "()") {
+                    m_editor->CharRight();
+                } else {
+                    m_editor->CodeComplete();
+                }
+                
                 // post an event to select the proper signature
                 if(!tips.empty()) {
                     m_editor->GetFunctionTip()->SelectSignature(tips.at(0).str);

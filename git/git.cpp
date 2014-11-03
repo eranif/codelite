@@ -533,19 +533,25 @@ void GitPlugin::UnPlug()
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 {
     wxUnusedVar(e);
+    DoSetRepoPath();
+}
 
+void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
+{
+    wxString dir = repoPath;
     wxString workspaceName = GetWorkspaceName();
+    if(dir.IsEmpty()) {
+        // use the current repository as the starting path
+        // if current repository is empty, use the current workspace path
+        wxString startPath = m_repositoryDirectory;
+        if(startPath.IsEmpty()) {
+            startPath = GetWorkspaceFileName().GetPath();
+        }
 
-    // use the current repository as the starting path
-    // if current repository is empty, use the current workspace path
-    wxString startPath = m_repositoryDirectory;
-    if(startPath.IsEmpty()) {
-        startPath = GetWorkspaceFileName().GetPath();
-    }
-
-    const wxString& dir = ::wxDirSelector(_("Select git root directory for this workspace"), startPath);
-    if(dir.empty()) {
-        return; // The user probably pressed Cancel
+        dir = ::wxDirSelector(_("Select git root directory for this workspace"), startPath);
+        if(dir.empty()) {
+            return; // The user probably pressed Cancel
+        }
     }
 
     // make sure that this is a valid git path
@@ -562,31 +568,21 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
             }
 
             if(!dir.IsEmpty()) {
-#if 0
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),true);
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
-#endif
                 AddDefaultActions();
                 ProcessGitActionQueue();
 
             } else {
                 m_repositoryDirectory.Clear();
-#if 0
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),false);
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
-                m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
-#endif
             }
         }
     } else {
-        wxMessageBox(
-            _("The selected directory does not contain a .git directory.\nAre you sure this is a git repository?"),
-            wxT("CodeLite"),
-            wxICON_WARNING | wxOK | wxCENTER,
-            m_topWindow);
+        if(promptUser) {
+            wxMessageBox(
+                _("The selected directory does not contain a .git directory.\nAre you sure this is a git repository?"),
+                wxT("CodeLite"),
+                wxICON_WARNING | wxOK | wxCENTER,
+                m_topWindow);
+        }
         return;
     }
 }
@@ -1009,12 +1005,20 @@ void GitPlugin::OnFilesRemovedFromProject(clCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 {
+    e.Skip();
     m_workspaceFilename = e.GetString();
     DoCleanup();
     InitDefaults();
     RefreshFileListView();
-    e.Skip();
+
+    // If we have a .git folder, set our repository to this path
+    wxFileName gitFolder(m_workspaceFilename.GetPath(), "");
+    gitFolder.AppendDir(".git");
+    if(gitFolder.DirExists()) {
+        DoSetRepoPath(gitFolder.GetPath(), false);
+    }
 }
+
 /*******************************************************************************/
 void GitPlugin::OnInitDone(wxCommandEvent& e)
 {
@@ -2296,7 +2300,7 @@ void GitPlugin::OnMainFrameTitle(clCommandEvent& e)
     e.Skip();
     if(!m_currentBranch.IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
         wxString newTitle;
-        newTitle << e.GetString() << wxT(" • [git: ") << m_currentBranch << "]";
+        newTitle << e.GetString() << wxT(" â¢ [git: ") << m_currentBranch << "]";
         e.SetString(newTitle);
         e.Skip(false);
     }

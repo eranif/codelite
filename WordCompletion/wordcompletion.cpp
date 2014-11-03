@@ -119,7 +119,7 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
     }
     
     // auto insert single match
-    activeEditor->GetSTC()->AutoCompSetChooseSingle(true);
+    //activeEditor->GetSTC()->AutoCompSetChooseSingle(true);
     activeEditor->GetSTC()->AutoCompShow(reply.filter.length(), suggestString);
 }
 

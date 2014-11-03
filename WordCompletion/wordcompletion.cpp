@@ -117,6 +117,9 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
     if(!suggestString.IsEmpty()) {
         suggestString.RemoveLast();
     }
+    
+    // auto insert single match
+    activeEditor->GetSTC()->AutoCompSetChooseSingle(true);
     activeEditor->GetSTC()->AutoCompShow(reply.filter.length(), suggestString);
 }
 

@@ -553,9 +553,17 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
             return; // The user probably pressed Cancel
         }
     }
+    
+    wxFileName fnDir(dir, "");
+    if(fnDir.GetDirs().Last() != ".git") {
+        fnDir.AppendDir(".git");
+    }
 
-    // make sure that this is a valid git path
-    if(wxFileName::DirExists(dir + wxFileName::GetPathSeparator() + wxT(".git"))) {
+    // Make sure that this is a valid git path
+    if(fnDir.DirExists()) {
+        fnDir.RemoveLastDir();
+        dir = fnDir.GetPath();
+        
         if(m_repositoryDirectory != dir) {
             m_repositoryDirectory = dir;
 

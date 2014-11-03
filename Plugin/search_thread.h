@@ -49,20 +49,21 @@ class SearchThread;
 class WXDLLIMPEXP_SDK SearchData : public ThreadRequest
 {
     wxArrayString m_rootDirs;
-    wxString      m_findString;
-    size_t        m_flags;
-    wxString      m_validExt;
+    wxString m_findString;
+    size_t m_flags;
+    wxString m_validExt;
     wxArrayString m_files;
-    bool          m_newTab;
-    wxEvtHandler *m_owner;
-    wxString      m_encoding;
+    bool m_newTab;
+    wxEvtHandler* m_owner;
+    wxString m_encoding;
 
     friend class SearchThread;
 
 private:
     // An internal helper function that set/remove an option bit
-    void SetOption(int option, bool set) {
-        if (set) {
+    void SetOption(int option, bool set)
+    {
+        if(set) {
             m_flags |= option;
         } else {
             m_flags &= ~(option);
@@ -76,30 +77,31 @@ public:
         , m_findString(wxEmptyString)
         , m_flags(0)
         , m_newTab(false)
-        , m_owner(NULL) {}
-
-    SearchData(const SearchData &rhs) {
-        *this = rhs;
+        , m_owner(NULL)
+    {
     }
+
+    SearchData(const SearchData& rhs) { *this = rhs; }
 
     virtual ~SearchData() {}
 
-    SearchData& operator=(const SearchData &rhs) {
-        if (this == &rhs) {
+    SearchData& operator=(const SearchData& rhs)
+    {
+        if(this == &rhs) {
             return *this;
         }
 
         m_findString = rhs.m_findString.c_str();
-        m_flags      = rhs.m_flags;
-        m_validExt   = rhs.m_validExt.c_str();
-        m_rootDirs   = rhs.m_rootDirs;
-        m_newTab     = rhs.m_newTab;
-        m_owner      = rhs.m_owner;
-        m_encoding   = rhs.m_encoding.c_str();
+        m_flags = rhs.m_flags;
+        m_validExt = rhs.m_validExt.c_str();
+        m_rootDirs = rhs.m_rootDirs;
+        m_newTab = rhs.m_newTab;
+        m_owner = rhs.m_owner;
+        m_encoding = rhs.m_encoding.c_str();
 
         m_files.clear();
 
-        for(size_t i=0; i<rhs.m_files.GetCount(); i++) {
+        for(size_t i = 0; i < rhs.m_files.GetCount(); i++) {
             m_files.Add(rhs.m_files.Item(i).c_str());
         }
 
@@ -110,120 +112,65 @@ public:
     //------------------------------------------
     // Setters / Getters
     //------------------------------------------
-    bool IsMatchCase() const {
-        return m_flags & wxSD_MATCHCASE ? true : false;
-    }
+    bool IsMatchCase() const { return m_flags & wxSD_MATCHCASE ? true : false; }
 
-    bool IsMatchWholeWord() const {
-        return m_flags & wxSD_MATCHWHOLEWORD ? true : false;
-    }
+    bool IsMatchWholeWord() const { return m_flags & wxSD_MATCHWHOLEWORD ? true : false; }
 
-    bool IsRegularExpression() const {
-        return m_flags & wxSD_REGULAREXPRESSION ? true : false;
-    }
+    bool IsRegularExpression() const { return m_flags & wxSD_REGULAREXPRESSION ? true : false; }
 
-    const wxArrayString &GetRootDirs() const {
-        return m_rootDirs;
-    }
+    const wxArrayString& GetRootDirs() const { return m_rootDirs; }
 
-    void SetMatchCase(bool matchCase) {
-        SetOption(wxSD_MATCHCASE, matchCase);
-    }
+    void SetMatchCase(bool matchCase) { SetOption(wxSD_MATCHCASE, matchCase); }
 
-    void SetMatchWholeWord(bool matchWholeWord) {
-        SetOption(wxSD_MATCHWHOLEWORD, matchWholeWord);
-    }
+    void SetMatchWholeWord(bool matchWholeWord) { SetOption(wxSD_MATCHWHOLEWORD, matchWholeWord); }
 
-    void SetRegularExpression(bool re) {
-        SetOption(wxSD_REGULAREXPRESSION, re);
-    }
+    void SetRegularExpression(bool re) { SetOption(wxSD_REGULAREXPRESSION, re); }
 
-    void SetExtensions(const wxString &exts) {
-        m_validExt = exts;
-    }
+    void SetExtensions(const wxString& exts) { m_validExt = exts; }
 
-    void SetRootDirs(const wxArrayString &rootDirs) {
-        m_rootDirs = rootDirs;
-    }
+    void SetRootDirs(const wxArrayString& rootDirs) { m_rootDirs = rootDirs; }
 
     const wxString& GetExtensions() const;
 
-    const wxString &GetFindString() const {
-        return m_findString;
-    }
+    const wxString& GetFindString() const { return m_findString; }
 
-    void SetFindString(const wxString &findString) {
-        m_findString = findString;
-    }
+    void SetFindString(const wxString& findString) { m_findString = findString; }
 
-    void SetFiles(const wxArrayString &files) {
-        m_files = files;
-    }
+    void SetFiles(const wxArrayString& files) { m_files = files; }
 
-    const wxArrayString &GetFiles() const
+    const wxArrayString& GetFiles() const { return m_files; }
 
+    void UseNewTab(bool useNewTab) { m_newTab = useNewTab; }
+
+    bool UseNewTab() const { return m_newTab; }
+
+    void SetEncoding(const wxString& encoding) { this->m_encoding = encoding.c_str(); }
+
+    const wxString& GetEncoding() const { return this->m_encoding; }
+
+    bool GetDisplayScope() const { return m_flags & wxSD_PRINT_SCOPE ? true : false; }
+
+    void SetDisplayScope(bool d) { SetOption(wxSD_PRINT_SCOPE, d); }
+
+    void SetOwner(wxEvtHandler* owner) { this->m_owner = owner; }
+    wxEvtHandler* GetOwner() const { return m_owner; }
+
+    bool HasCppOptions() const
     {
-        return m_files;
-    }
-
-    void UseNewTab(bool useNewTab) {
-        m_newTab = useNewTab;
-    }
-
-    bool UseNewTab() const {
-        return m_newTab;
-    }
-
-    void SetEncoding(const wxString &encoding) {
-        this->m_encoding = encoding.c_str();
-    }
-
-    const wxString &GetEncoding() const {
-        return this->m_encoding;
-    }
-
-    bool GetDisplayScope() const {
-        return m_flags & wxSD_PRINT_SCOPE ? true : false;
-    }
-
-    void SetDisplayScope(bool d) {
-        SetOption(wxSD_PRINT_SCOPE, d);
-    }
-
-    void SetOwner(wxEvtHandler* owner) {
-        this->m_owner = owner;
-    }
-    wxEvtHandler* GetOwner() const {
-        return m_owner;
-    }
-
-    bool HasCppOptions() const {
         return (m_flags & wxSD_SKIP_COMMENTS) || (m_flags & wxSD_SKIP_STRINGS) || (m_flags & wxSD_COLOUR_COMMENTS);
     }
 
-    void SetSkipComments(bool d) {
-        SetOption(wxSD_SKIP_COMMENTS, d);
-    }
+    void SetSkipComments(bool d) { SetOption(wxSD_SKIP_COMMENTS, d); }
 
-    void SetSkipStrings(bool d) {
-        SetOption(wxSD_SKIP_STRINGS, d);
-    }
+    void SetSkipStrings(bool d) { SetOption(wxSD_SKIP_STRINGS, d); }
 
-    void SetColourComments(bool d) {
-        SetOption(wxSD_COLOUR_COMMENTS, d);
-    }
+    void SetColourComments(bool d) { SetOption(wxSD_COLOUR_COMMENTS, d); }
 
-    bool GetSkipComments() const {
-        return (m_flags & wxSD_SKIP_COMMENTS);
-    }
+    bool GetSkipComments() const { return (m_flags & wxSD_SKIP_COMMENTS); }
 
-    bool GetSkipStrings() const {
-        return (m_flags & wxSD_SKIP_STRINGS);
-    }
+    bool GetSkipStrings() const { return (m_flags & wxSD_SKIP_STRINGS); }
 
-    bool GetColourComments() const {
-        return (m_flags & wxSD_COLOUR_COMMENTS);
-    }
+    bool GetColourComments() const { return (m_flags & wxSD_COLOUR_COMMENTS); }
 };
 
 //------------------------------------------
@@ -232,152 +179,93 @@ public:
 class WXDLLIMPEXP_SDK SearchResult : public wxObject
 {
     wxString m_pattern;
-    int      m_position;
-    int      m_lineNumber;
-    int      m_column;
+    int m_position;
+    int m_lineNumber;
+    int m_column;
     wxString m_fileName;
-    int      m_len;
+    int m_len;
     wxString m_findWhat;
-    size_t   m_flags;
-    int      m_columnInChars;
-    int      m_lenInChars;
-    short    m_matchState;
+    size_t m_flags;
+    int m_columnInChars;
+    int m_lenInChars;
+    short m_matchState;
     wxString m_scope;
 
 public:
-    //ctor-dtor, copy constructor and assignment operator
+    // ctor-dtor, copy constructor and assignment operator
     SearchResult() {}
 
     virtual ~SearchResult() {}
 
-    SearchResult(const SearchResult &rhs) {
-        *this = rhs;
-    }
+    SearchResult(const SearchResult& rhs) { *this = rhs; }
 
-    SearchResult& operator=(const SearchResult &rhs) {
-        if (this == &rhs)
-            return *this;
-        m_position      = rhs.m_position;
-        m_column        = rhs.m_column;
-        m_lineNumber    = rhs.m_lineNumber;
-        m_pattern       = rhs.m_pattern.c_str();
-        m_fileName      = rhs.m_fileName.c_str();
-        m_len           = rhs.m_len;
-        m_findWhat      = rhs.m_findWhat.c_str();
-        m_flags         = rhs.m_flags;
+    SearchResult& operator=(const SearchResult& rhs)
+    {
+        if(this == &rhs) return *this;
+        m_position = rhs.m_position;
+        m_column = rhs.m_column;
+        m_lineNumber = rhs.m_lineNumber;
+        m_pattern = rhs.m_pattern.c_str();
+        m_fileName = rhs.m_fileName.c_str();
+        m_len = rhs.m_len;
+        m_findWhat = rhs.m_findWhat.c_str();
+        m_flags = rhs.m_flags;
         m_columnInChars = rhs.m_columnInChars;
-        m_lenInChars    = rhs.m_lenInChars;
-        m_matchState    = rhs.m_matchState;
-        m_scope         = rhs.m_scope.c_str();
+        m_lenInChars = rhs.m_lenInChars;
+        m_matchState = rhs.m_matchState;
+        m_scope = rhs.m_scope.c_str();
         return *this;
     }
 
     //------------------------------------------------------
     // Setters/getters
 
-    void SetFlags(const size_t& flags) {
-        this->m_flags = flags;
-    }
+    void SetFlags(const size_t& flags) { this->m_flags = flags; }
 
-    const size_t& GetFlags() const {
-        return m_flags;
-    }
+    const size_t& GetFlags() const { return m_flags; }
 
-    void SetPattern(const wxString &pat) {
-        m_pattern = pat.c_str();
-    }
-    void SetPosition(const int &position) {
-        m_position = position;
-    }
-    void SetLineNumber(const int &line) {
-        m_lineNumber = line;
-    }
-    void SetColumn(const int &col) {
-        m_column = col;
-    }
-    void SetFileName(const wxString &fileName) {
-        m_fileName = fileName.c_str();
-    }
+    void SetPattern(const wxString& pat) { m_pattern = pat.c_str(); }
+    void SetPosition(const int& position) { m_position = position; }
+    void SetLineNumber(const int& line) { m_lineNumber = line; }
+    void SetColumn(const int& col) { m_column = col; }
+    void SetFileName(const wxString& fileName) { m_fileName = fileName.c_str(); }
 
-    const int& GetPosition() const {
-        return m_position;
-    }
-    const int& GetLineNumber() const {
-        return m_lineNumber;
-    }
-    const int& GetColumn() const {
-        return m_column;
-    }
-    const wxString &GetPattern() const {
-        return m_pattern;
-    }
-    const wxString &GetFileName() const {
-        return m_fileName;
-    }
+    const int& GetPosition() const { return m_position; }
+    const int& GetLineNumber() const { return m_lineNumber; }
+    const int& GetColumn() const { return m_column; }
+    const wxString& GetPattern() const { return m_pattern; }
+    const wxString& GetFileName() const { return m_fileName; }
 
+    void SetLen(const int& len) { this->m_len = len; }
+    const int& GetLen() const { return m_len; }
 
-    void SetLen(const int& len) {
-        this->m_len = len;
-    }
-    const int& GetLen() const {
-        return m_len;
-    }
+    // Setters
+    void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat.c_str(); }
+    // Getters
+    const wxString& GetFindWhat() const { return m_findWhat; }
 
+    void SetColumnInChars(const int& col) { this->m_columnInChars = col; }
+    const int& GetColumnInChars() const { return m_columnInChars; }
 
-    //Setters
-    void SetFindWhat(const wxString& findWhat) {
-        this->m_findWhat = findWhat.c_str();
-    }
-    //Getters
-    const wxString& GetFindWhat() const {
-        return m_findWhat;
-    }
+    void SetLenInChars(const int& len) { this->m_lenInChars = len; }
+    const int& GetLenInChars() const { return m_lenInChars; }
 
-    void SetColumnInChars(const int& col) {
-        this->m_columnInChars = col;
-    }
-    const int& GetColumnInChars() const {
-        return m_columnInChars;
-    }
+    void SetMatchState(short matchState) { this->m_matchState = matchState; }
+    short GetMatchState() const { return m_matchState; }
 
-    void SetLenInChars(const int& len) {
-        this->m_lenInChars = len;
-    }
-    const int& GetLenInChars() const {
-        return m_lenInChars;
-    }
-
-    void SetMatchState(short matchState) {
-        this->m_matchState = matchState;
-    }
-    short GetMatchState() const {
-        return m_matchState;
-    }
-
-    void SetScope(const wxString& scope) {
-        this->m_scope = scope.c_str();
-    }
-    const wxString& GetScope() const {
-        return m_scope;
-    }
+    void SetScope(const wxString& scope) { this->m_scope = scope.c_str(); }
+    const wxString& GetScope() const { return m_scope; }
     // return a foramtted message
-    wxString GetMessage() const {
+    wxString GetMessage() const
+    {
         wxString msg;
-        msg << GetFileName()
-            << wxT("(")
-            << GetLineNumber()
-            << wxT(",")
-            << GetColumn()
-            << wxT(",")
-            << GetLen()
-            << wxT("): ")
-            << GetPattern();
+        msg << GetFileName() << wxT("(") << GetLineNumber() << wxT(",") << GetColumn() << wxT(",") << GetLen()
+            << wxT("): ") << GetPattern();
         return msg;
     }
 };
 
 typedef std::list<SearchResult> SearchResultList;
-
 
 class WXDLLIMPEXP_SDK SearchSummary : public wxObject
 {
@@ -389,18 +277,17 @@ public:
     SearchSummary()
         : m_fileScanned(0)
         , m_matchesFound(0)
-        , m_elapsed(0) {
+        , m_elapsed(0)
+    {
     }
 
     virtual ~SearchSummary() {}
 
-    SearchSummary(const SearchSummary& rhs) {
-        *this = rhs;
-    }
+    SearchSummary(const SearchSummary& rhs) { *this = rhs; }
 
-    SearchSummary& operator=(const SearchSummary &rhs) {
-        if (this == &rhs)
-            return *this;
+    SearchSummary& operator=(const SearchSummary& rhs)
+    {
+        if(this == &rhs) return *this;
 
         m_fileScanned = rhs.m_fileScanned;
         m_matchesFound = rhs.m_matchesFound;
@@ -408,34 +295,24 @@ public:
         return *this;
     }
 
-    int GetNumFileScanned() const {
-        return m_fileScanned;
-    }
-    int GetNumMatchesFound() const {
-        return m_matchesFound;
-    }
+    int GetNumFileScanned() const { return m_fileScanned; }
+    int GetNumMatchesFound() const { return m_matchesFound; }
 
-    void SetNumFileScanned(const int &num) {
-        m_fileScanned = num;
-    }
-    void SetNumMatchesFound(const int &num) {
-        m_matchesFound = num;
-    }
-    void SetElapsedTime(long elapsed) {
-        m_elapsed = elapsed;
-    }
-    wxString GetMessage() const {
+    void SetNumFileScanned(const int& num) { m_fileScanned = num; }
+    void SetNumMatchesFound(const int& num) { m_matchesFound = num; }
+    void SetElapsedTime(long elapsed) { m_elapsed = elapsed; }
+    wxString GetMessage() const
+    {
         wxString msg(wxString(wxT("====== ")) + _("Number of files scanned: "));
         msg << m_fileScanned << wxT(",");
         msg << _(" Matches found: ");
         msg << m_matchesFound;
-        int secs  = m_elapsed / 1000;
+        int secs = m_elapsed / 1000;
         int msecs = m_elapsed % 1000;
 
         msg << _(", elapsed time: ") << secs << wxT(":") << msecs << _(" seconds") << wxT(" ======");
         return msg;
     }
-
 };
 
 //----------------------------------------------------------
@@ -453,6 +330,7 @@ class WXDLLIMPEXP_SDK SearchThread : public WorkerThread
     wxString m_reExpr;
     wxRegEx m_regex;
     bool m_matchCase;
+    wxCriticalSection m_cs;
 
 private:
     /**
@@ -469,13 +347,13 @@ public:
     /**
      * Process request from caller
      */
-    void ProcessRequest(ThreadRequest *req);
+    void ProcessRequest(ThreadRequest* req);
 
     /**
      * Add a request to the search thread to start
      * \param data SearchData class
      */
-    void PerformSearch(const SearchData &data);
+    void PerformSearch(const SearchData& data);
 
     /**
      * Stops the current search operation
@@ -490,16 +368,15 @@ public:
      * "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
      * \param chars sequence of characters that are considered part of a word
      */
-    void SetWordChars(const wxString &chars);
+    void SetWordChars(const wxString& chars);
 
 private:
-
     /**
      * Return files to search
      * \param files output
      * \param data search data
      */
-    void GetFiles(const SearchData *data, wxArrayString &files);
+    void GetFiles(const SearchData* data, wxArrayString& files);
 
     /**
      * Index the word chars from the array into a map
@@ -513,29 +390,38 @@ private:
      * Do the actual search operation
      * \param data inpunt contains information about the search
      */
-    void DoSearchFiles(ThreadRequest *data);
+    void DoSearchFiles(ThreadRequest* data);
 
     // Perform search on a single file
-    void DoSearchFile(const wxString &fileName, const SearchData *data);
+    void DoSearchFile(const wxString& fileName, const SearchData* data);
 
     // Perform search on a line
-    void DoSearchLine(const wxString &line, const int lineNum, const int lineOffset, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
+    void DoSearchLine(const wxString& line,
+                      const int lineNum,
+                      const int lineOffset,
+                      const wxString& fileName,
+                      const SearchData* data,
+                      TextStatesPtr statesPtr);
 
     // Perform search on a line using regular expression
-    void DoSearchLineRE(const wxString &line, const int lineNum, const int lineOffset, const wxString &fileName, const SearchData *data, TextStatesPtr statesPtr);
+    void DoSearchLineRE(const wxString& line,
+                        const int lineNum,
+                        const int lineOffset,
+                        const wxString& fileName,
+                        const SearchData* data,
+                        TextStatesPtr statesPtr);
 
     // Send an event to the notified window
-    void SendEvent(wxEventType type, wxEvtHandler *owner);
+    void SendEvent(wxEventType type, wxEvtHandler* owner);
 
     // return a compiled regex object for the expression
-    wxRegEx &GetRegex(const wxString &expr, bool matchCase);
+    wxRegEx& GetRegex(const wxString& expr, bool matchCase);
 
     // Internal function
-    bool AdjustLine(wxString &line, int &pos, wxString &findString);
+    bool AdjustLine(wxString& line, int& pos, wxString& findString);
 
     // filter 'files' according to the files spec
-    void FilterFiles(wxArrayString &files, const SearchData *data);
-
+    void FilterFiles(wxArrayString& files, const SearchData* data);
 };
 
 class WXDLLIMPEXP_SDK SearchThreadST

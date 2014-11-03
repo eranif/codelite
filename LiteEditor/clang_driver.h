@@ -40,60 +40,62 @@ class IEditor;
 class ClangDriverCleaner;
 
 struct ClangRequest {
-    wxString       filename;
+    wxString filename;
     WorkingContext context;
 };
 
 class ClangDriver : public wxEvtHandler
 {
 protected:
-    bool               m_isBusy;
-    ClangWorkerThread  m_pchMakerThread;
-    WorkingContext     m_context;
-    CXIndex            m_index;
-    IEditor*           m_activeEditor;
-    int                m_position;
+    bool m_isBusy;
+    ClangWorkerThread m_pchMakerThread;
+    WorkingContext m_context;
+    CXIndex m_index;
+    IEditor* m_activeEditor;
+    int m_position;
     ClangCleanerThread m_clangCleanerThread;
-    
+
 protected:
-    void                DoCleanup();
-    FileTypeCmpArgs_t   DoPrepareCompilationArgs(const wxString &projectName, const wxString &sourceFile, wxString &projectPath, wxString &pchfile);
-    void                DoParseCompletionString(CXCompletionString str, int depth, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
-    void                DoGotoDefinition(ClangThreadReply *reply);
+    void DoCleanup();
+    FileTypeCmpArgs_t DoPrepareCompilationArgs(const wxString& projectName,
+                                               const wxString& sourceFile,
+                                               wxString& projectPath,
+                                               wxString& pchfile);
+    void DoParseCompletionString(CXCompletionString str,
+                                 int depth,
+                                 wxString& entryName,
+                                 wxString& signature,
+                                 wxString& completeString,
+                                 wxString& returnValue);
+    void DoGotoDefinition(ClangThreadReply* reply);
     ClangThreadRequest* DoMakeClangThreadRequest(IEditor* editor, WorkingContext context);
-    ClangThreadRequest::List_t DoCreateListOfModifiedBuffers(IEditor *excludeEditor);
+    ClangThreadRequest::List_t DoCreateListOfModifiedBuffers(IEditor* excludeEditor);
 
     // Event handlers
-    void DoDeleteTempFile( const wxString &fileName );
-    
+    void DoDeleteTempFile(const wxString& fileName);
+
 public:
     ClangDriver();
     virtual ~ClangDriver();
 
-    void QueueRequest  (IEditor *editor, WorkingContext context);
-    void ReparseFile(const wxString &filename);
-    void CodeCompletion(IEditor *editor);
+    void QueueRequest(IEditor* editor, WorkingContext context);
+    void ReparseFile(const wxString& filename);
+    void CodeCompletion(IEditor* editor);
     void Abort();
 
-    bool IsBusy() const {
-        return m_isBusy;
-    }
+    bool IsBusy() const { return m_isBusy; }
 
-    void SetContext(WorkingContext context) {
-        this->m_context = context;
-    }
-    WorkingContext GetContext() const {
-        return m_context;
-    }
+    void SetContext(WorkingContext context) { this->m_context = context; }
+    WorkingContext GetContext() const { return m_context; }
 
     void ClearCache();
     bool IsCacheEmpty();
 
     // Event Handlers
-    void OnPrepareTUEnded(wxCommandEvent &e);
-    void OnCacheCleared(wxCommandEvent &e);
-    void OnTUCreateError(wxCommandEvent &e);
-    void OnWorkspaceLoaded(wxCommandEvent &event);
+    void OnPrepareTUEnded(wxCommandEvent& e);
+    void OnCacheCleared(wxCommandEvent& e);
+    void OnTUCreateError(wxCommandEvent& e);
+    void OnWorkspaceLoaded(wxCommandEvent& event);
 };
 
 #endif // HAS_LIBCLANG

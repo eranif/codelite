@@ -151,7 +151,8 @@ class WXDLLIMPEXP_CL ParseThread : public WorkerThread
     wxArrayString m_searchPaths;
     wxArrayString m_excludePaths;
     bool m_crawlerEnabled;
-
+    wxCriticalSection m_cs;
+    
 public:
     void SetCrawlerEnabeld(bool b);
     void SetSearchPaths(const wxArrayString& paths, const wxArrayString& exlucdePaths);

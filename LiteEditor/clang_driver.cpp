@@ -78,8 +78,8 @@ ClangDriver::ClangDriver()
     , m_position(wxNOT_FOUND)
 {
     m_index = clang_createIndex(0, 0);
-    m_pchMakerThread.SetSleepInterval(30);
     m_pchMakerThread.Start();
+
 #ifdef __WXMSW__
     m_clangCleanerThread.Start();
 #endif
@@ -253,10 +253,7 @@ void ClangDriver::CodeCompletion(IEditor* editor)
     m_pchMakerThread.Add(request);
 }
 
-void ClangDriver::Abort()
-{
-    DoCleanup();
-}
+void ClangDriver::Abort() { DoCleanup(); }
 
 FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
                                                         const wxString& sourceFile,
@@ -331,7 +328,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     ///////////////////////////////////////////////////////////////////////
     // add global clang include paths
     wxString strGlobalIncludes = options.GetClangSearchPaths();
-    
+
     // expand any macros from the include paths
     strGlobalIncludes = MacroManager::Instance()->Expand(strGlobalIncludes, PluginManager::Get(), projectName);
 
@@ -383,9 +380,10 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         wxString projSearchPaths = buildConf->GetCcSearchPaths();
         wxArrayString projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
         for(size_t i = 0; i < projectIncludePaths.GetCount(); i++) {
-            wxFileName fn(MacroManager::Instance()->Expand(projectIncludePaths.Item(i),
-                                                           PluginManager::Get(),
-                                                           ManagerST::Get()->GetActiveProjectName()),
+            wxFileName fn(MacroManager::Instance()
+                              ->Expand(projectIncludePaths.Item(i),
+                                       PluginManager::Get(),
+                                       ManagerST::Get()->GetActiveProjectName()),
                           wxT(""));
             fn.MakeAbsolute(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
             cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
@@ -445,15 +443,9 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     return cmpArgs;
 }
 
-void ClangDriver::ClearCache()
-{
-    m_pchMakerThread.ClearCache();
-}
+void ClangDriver::ClearCache() { m_pchMakerThread.ClearCache(); }
 
-bool ClangDriver::IsCacheEmpty()
-{
-    return m_pchMakerThread.IsCacheEmpty();
-}
+bool ClangDriver::IsCacheEmpty() { return m_pchMakerThread.IsCacheEmpty(); }
 
 void ClangDriver::DoCleanup()
 {
@@ -825,17 +817,6 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
 void ClangDriver::DoDeleteTempFile(const wxString& fileName)
 {
     wxUnusedVar(fileName);
-    /*
-    if ( fileName.IsEmpty() ) {
-        return;
-    }
-
-    wxFileName sourceFile( fileName );
-    sourceFile.SetFullName( CODELITE_CLANG_FILE_PREFIX + sourceFile.GetFullName() );
-    {
-        wxLogNull nl;
-        m_clangCleanerThread.AddFileName( sourceFile.GetFullPath() );
-    }*/
 }
 
 #endif // HAS_LIBCLANG

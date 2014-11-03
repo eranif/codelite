@@ -57,7 +57,7 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
     for(; iter != reply.suggest.end(); ++iter) {
         wxString lcFilter = req->filter.Lower();
         wxString lcKey = iter->Lower();
-        if(lcKey.Contains(lcFilter)) {
+        if(lcKey.Contains(lcFilter) && req->filter != (*iter)) {
             filterdSet.insert(*iter);
         }
     }

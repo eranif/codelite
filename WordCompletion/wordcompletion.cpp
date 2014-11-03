@@ -125,6 +125,11 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     event.Skip();
     IEditor* activeEditor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(activeEditor);
+    
+    // If the code completion box is shown, hide it
+    if(activeEditor->IsCompletionBoxShown()) {
+        activeEditor->HideCompletionBox();
+    }
 
     wxStyledTextCtrl* stc = activeEditor->GetSTC();
     int curPos = stc->GetCurrentPos();

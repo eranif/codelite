@@ -15,7 +15,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
 {
     IManager* m_mgr;
     BitmapLoader::BitmapMap_t m_bitmaps;
-
+    std::vector<wxTreeItemId> m_itemsToSort;
 private:
     enum {
         ID_TOGGLE_AUTOMATIC_UPLOAD = wxID_HIGHEST + 1,
@@ -29,8 +29,11 @@ protected:
     virtual void OnActiveProjectSettings(wxCommandEvent& event);
     virtual void OnProjectSettings(wxCommandEvent& event);
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event);
-
+    
+    
     // Helpers
+    void DoSortItems();
+    
     wxTreeItemId DoGetSingleSelection();
     wxString DoGetSelectedProject();
     ItemData* DoGetItemData(const wxTreeItemId& item);
@@ -82,7 +85,7 @@ protected:
      * @param notify when set to true, send a wxEVT_PROJ_FILE_ADDED event with the list of files that were added
      */
     void DoAddFilesToFolder(const wxArrayString& paths, PHPProject::Ptr_t pProject, bool notify);
-    
+
 protected:
     // Handlers for PHPWorkspaceViewBase events.
 
@@ -114,11 +117,12 @@ protected:
     void OnFileRenamed(PHPEvent& e);
     void OnWorkspaceRenamed(PHPEvent& e);
     void OnToggleAutoUpload(wxCommandEvent& e);
-    
+
     // Php parser events
     void OnPhpParserStarted(clParseEvent& event);
     void OnPhpParserProgress(clParseEvent& event);
     void OnPhpParserDone(clParseEvent& event);
+
 public:
     /** Constructor */
     PHPWorkspaceView(wxWindow* parent, IManager* mgr);

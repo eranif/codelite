@@ -26,6 +26,7 @@
 #include <bitmap_loader.h>
 #include "PHPLookupTable.h"
 #include "PHPProjectSetupDlg.h"
+#include <wx/wupdlock.h>
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -171,6 +172,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 
 void PHPWorkspaceView::LoadWorkspace()
 {
+    m_itemsToSort.clear();
     wxString workspaceName;
     workspaceName << PHPWorkspace::Get()->GetFilename().GetName();
 
@@ -185,6 +187,7 @@ void PHPWorkspaceView::LoadWorkspace()
                                                 bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()),
                                                 new ItemData(ItemData::Kind_Workspace));
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
+    m_itemsToSort.push_back(root);
 
     // add projects
     wxStringSet_t files;
@@ -202,12 +205,15 @@ void PHPWorkspaceView::LoadWorkspace()
         if(data->IsActive()) {
             m_treeCtrlView->SetItemBold(projectItemId, true);
         }
+        m_itemsToSort.push_back(projectItemId);
         DoBuildProjectNode(projectItemId, iter_project->second);
     }
 
     if(m_treeCtrlView->HasChildren(root)) {
         m_treeCtrlView->Expand(root);
     }
+
+    DoSortItems();
 }
 
 void PHPWorkspaceView::UnLoadWorkspace() { m_treeCtrlView->DeleteAllItems(); }
@@ -272,6 +278,8 @@ void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
 
 void PHPWorkspaceView::OnAddFolder(wxCommandEvent& e)
 {
+    wxWindowUpdateLocker locker(m_treeCtrlView);
+
     wxString project = DoGetSelectedProject();
     if(project.IsEmpty()) return;
 
@@ -310,7 +318,10 @@ void PHPWorkspaceView::OnAddFolder(wxCommandEvent& e)
     proj->Save();
 
     // Update the UI
+    m_itemsToSort.clear();
+    m_itemsToSort.push_back(parent);
     DoAddFolder(parent, pFolder, proj);
+    DoSortItems();
 }
 
 void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
@@ -357,7 +368,12 @@ void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
     proj->Save();
 
     // Update the UI
+    wxWindowUpdateLocker locker(m_treeCtrlView);
+
+    m_itemsToSort.clear();
+    m_itemsToSort.push_back(parent);
     DoAddFolder(parent, pFolder, proj);
+    DoSortItems();
 }
 
 void PHPWorkspaceView::OnSetProjectActive(wxCommandEvent& e)
@@ -432,7 +448,11 @@ void PHPWorkspaceView::OnNewFile(wxCommandEvent& e)
                     _("A file with same name already exists!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
                 return;
             }
+            wxWindowUpdateLocker locker(m_treeCtrlView);
+            m_itemsToSort.clear();
+            m_itemsToSort.push_back(folderId);
             DoAddFileWithContent(folderId, filename, "");
+            DoSortItems();
         }
     }
 }
@@ -506,8 +526,11 @@ void PHPWorkspaceView::OnAddFile(wxCommandEvent& e)
                            wxOK | wxCENTER | wxICON_WARNING);
             return;
         }
-
+        m_itemsToSort.clear();
+        m_itemsToSort.push_back(folderItem);
+        wxWindowUpdateLocker locker(m_treeCtrlView);
         DoAddFilesToFolder(paths, pProject, true);
+        DoSortItems();
         pProject->Save();
     }
 }
@@ -850,11 +873,13 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
         pFolder = pProject->AddFolder(PHPFolder::GetFolderPathFromFileFullPath(pcd.GetFilepath().GetFullPath(),
                                                                                pProject->GetFilename().GetPath()));
         CHECK_PTR_RET(pFolder);
-
+        wxWindowUpdateLocker locker(m_treeCtrlView);
+        m_itemsToSort.clear();
         folderId = EnsureFolderExists(
             DoGetProjectItem(pProject->GetName()), pFolder->GetPathRelativeToProject(), pProject->GetName());
         DoAddFileWithContent(
             folderId, pcd.GetFilepath(), pcd.ToString(EditorConfigST::Get()->GetOptions()->GetEOLAsString(), "    "));
+        DoSortItems();
     }
 }
 
@@ -1057,6 +1082,7 @@ void PHPWorkspaceView::DoAddFolder(const wxTreeItemId& parent, PHPFolder::Ptr_t 
 
     wxTreeItemId folderItem = EnsureFolderExists(
         DoGetProjectItem(project->GetName()), folder->GetPathRelativeToProject(), project->GetName());
+    m_itemsToSort.push_back(folderItem);
 
     // Get list of folders
     const PHPFolder::List_t& children = folder->GetChildren();
@@ -1094,8 +1120,8 @@ void PHPWorkspaceView::DoAddFilesToTreeView(const wxTreeItemId& folderId,
 
         int imgId = DoGetItemImgIdx(files.Item(i));
         m_treeCtrlView->AppendItem(folderId, wxFileName(files.Item(i)).GetFullName(), imgId, imgId, itemData);
+        m_itemsToSort.push_back(folderId);
     }
-    m_treeCtrlView->SortChildren(folderId);
 }
 
 wxTreeItemId
@@ -1107,13 +1133,13 @@ PHPWorkspaceView::EnsureFolderExists(const wxTreeItemId& projectItem, const wxSt
     int imgId = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
     wxString curpath;
     wxTreeItemId parent = projectItem;
+    m_itemsToSort.push_back(parent);
     wxArrayString parts = ::wxStringTokenize(path, "/", wxTOKEN_STRTOK);
     for(size_t i = 0; i < parts.GetCount(); ++i) {
         if(!curpath.IsEmpty()) {
             curpath << "/";
         }
         curpath << parts.Item(i);
-
         if(!HasFolderWithName(parent, parts.Item(i), parent)) {
             ItemData* itemData = new ItemData(ItemData::Kind_Folder);
             itemData->SetFolderPath(curpath);
@@ -1126,8 +1152,8 @@ PHPWorkspaceView::EnsureFolderExists(const wxTreeItemId& projectItem, const wxSt
                                            imgId,
                                            itemData);
         }
+        m_itemsToSort.push_back(parent);
     }
-    m_treeCtrlView->SortChildren(projectItem);
     return parent;
 }
 
@@ -1220,3 +1246,11 @@ void PHPWorkspaceView::OnPhpParserProgress(clParseEvent& event)
 }
 
 void PHPWorkspaceView::OnPhpParserStarted(clParseEvent& event) { event.Skip(); }
+
+void PHPWorkspaceView::DoSortItems()
+{
+    for(size_t i = 0; i < m_itemsToSort.size(); ++i) {
+        m_treeCtrlView->SortItem(m_itemsToSort.at(i));
+    }
+    m_itemsToSort.clear();
+}

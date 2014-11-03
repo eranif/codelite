@@ -14,6 +14,7 @@
 #include "php_folder.h"
 #include <wx/event.h>
 #include "XDebugBreakpoint.h"
+#include "imanager.h"
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
@@ -36,11 +37,12 @@ protected:
     wxFileName m_workspaceFile;
     PHPProject::Map_t m_projects;
     PHPExecutor m_executor;
+    IManager* m_manager;
 
 public:
     static PHPWorkspace* Get();
     static void Release();
-
+    void SetPluginManager(IManager* manager) { this->m_manager = manager; }
     JSONElement ToJSON(JSONElement& e) const;
     void FromJSON(const JSONElement& e);
 
@@ -58,15 +60,20 @@ public:
     wxString GetPrivateFolder() const;
     
     /**
+     * @brief restore the session for this workspace
+     */
+    void RestoreWorkspaceSession();
+    
+    /**
      * @brief return the PHPExecutor terminal emulator object
      */
     TerminalEmulator* GetTerminalEmulator();
-    
+
     /**
      * @brief re-parse the workspace
      */
     void ParseWorkspace(bool full);
-    
+
     /**
      * @brief return true if project exists
      */

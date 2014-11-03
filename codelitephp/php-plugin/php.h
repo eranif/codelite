@@ -97,7 +97,7 @@ public:
     void OnXDebugSettings(wxCommandEvent& e);
     void OnLoadURL(PHPEvent& e);
     void OnAllEditorsClosed(wxCommandEvent& e);
-
+    void OnGoingDown(clCommandEvent& event);
     void OnDebugSatrted(XDebugEvent& e);
     void OnDebugEnded(XDebugEvent& e);
 };

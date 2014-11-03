@@ -21,7 +21,10 @@
 
 PHPWorkspace* PHPWorkspace::ms_instance = 0;
 
-PHPWorkspace::PHPWorkspace() {}
+PHPWorkspace::PHPWorkspace()
+    : m_manager(NULL)
+{
+}
 
 PHPWorkspace::~PHPWorkspace() { m_workspaceFile.Clear(); }
 
@@ -43,17 +46,22 @@ void PHPWorkspace::Release()
 
 bool PHPWorkspace::Close(bool saveBeforeClose)
 {
-    if(saveBeforeClose && IsOpen()) {
-        // Save it
-        Save();
+    if(IsOpen()) {
+        if(m_manager) {
+            m_manager->StoreWorkspaceSession(m_workspaceFile);
+        }
+        if(saveBeforeClose) {
+            // Save it
+            Save();
+        }
     }
 
     m_projects.clear();
     m_workspaceFile.Clear();
-    
+
     // Close the code completion lookup table
     PHPCodeCompletion::Instance()->Close();
-    
+
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_CLOSED);
     EventNotifier::Get()->AddPendingEvent(phpEvent);
 
@@ -68,9 +76,8 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     if(IsOpen()) {
         Close();
     }
-    
-    m_workspaceFile = filename;
 
+    m_workspaceFile = filename;
     {
         // Create the private folder if needed
         wxFileName fn(m_workspaceFile);
@@ -103,12 +110,12 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     // We open the symbols database manually here and _not_ via an event
     // since the parser thread might open it first and leave us with a lock
     PHPCodeCompletion::Instance()->Open(m_workspaceFile);
-    
+
     // Notify internally that the workspace is loaded
     PHPEvent phpEvent(wxEVT_PHP_WORKSPACE_LOADED);
     phpEvent.SetFileName(m_workspaceFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(phpEvent);
-    
+
     // Notify that the a new workspace is loaded
     // This time send the standard codelite event
     // this is important so other plugins such as Svn, Git
@@ -121,6 +128,8 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     
     // Perform a quick re-parse of the workspace
     ParseWorkspace(false);
+    
+    CallAfter(&PHPWorkspace::RestoreWorkspaceSession);
     return true;
 }
 
@@ -187,7 +196,7 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     wxFileName fnProjectFileName(createData.path, "");
     projectName << createData.name << ".phprj";
     fnProjectFileName.SetFullName(projectName);
-    
+
     if(HasProject(projectName)) return;
 
     // Create an empty project and initialize it with the global settings
@@ -199,7 +208,7 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
         proj->GetSettings().SetPhpExe(createData.phpExe);
     }
     proj->GetSettings().SetRunAs(createData.projectType);
-    
+
     m_projects.insert(std::make_pair(proj->GetName(), proj));
     if(m_projects.size() == 1) {
         SetProjectActive(proj->GetName());
@@ -490,7 +499,7 @@ void PHPWorkspace::ParseWorkspace(bool full)
                                                                     PHPParserThreadRequest::kParseWorkspaceFilesQuick);
     req->workspaceFile = GetFilename().GetFullPath();
     GetWorkspaceFiles(req->files);
-    
+
     // Append the current project CC include paths
     PHPProject::Ptr_t pProject = GetActiveProject();
     if(pProject) {
@@ -500,7 +509,11 @@ void PHPWorkspace::ParseWorkspace(bool full)
     PHPParserThread::Instance()->Add(req);
 }
 
-TerminalEmulator* PHPWorkspace::GetTerminalEmulator()
+TerminalEmulator* PHPWorkspace::GetTerminalEmulator() { return m_executor.GetTerminalEmulator(); }
+
+void PHPWorkspace::RestoreWorkspaceSession()
 {
-    return m_executor.GetTerminalEmulator();
+    if(m_manager && IsOpen()) {
+        m_manager->LoadWorkspaceSession(m_workspaceFile);
+    }
 }

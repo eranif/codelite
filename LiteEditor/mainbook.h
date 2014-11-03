@@ -63,7 +63,7 @@ public:
     };
 
 private:
-    FilesModifiedDlg *GetFilesModifiedDlg();
+    FilesModifiedDlg* GetFilesModifiedDlg();
     void CreateGuiControls();
     void ConnectEvents();
 
@@ -116,8 +116,12 @@ public:
     void UpdateNavBar(LEditor* editor);
     bool IsNavBarShown() { return m_navBar->IsShown(); }
 
-    void SaveSession(SessionEntry& session, wxArrayInt& intArr);
+    void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
     void RestoreSession(SessionEntry& session);
+    /**
+     * @brief create session from current IDE state
+     */
+    void CreateSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
 
     LEditor* GetActiveEditor(bool includeDetachedEditors = false);
     void GetAllEditors(LEditor::Vec_t& editors, size_t flags);

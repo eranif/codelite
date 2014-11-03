@@ -382,6 +382,7 @@ EVT_MENU(XRCID("local_workspace_prefs"), clMainFrame::OnWorkspaceEditorPreferenc
 EVT_MENU(XRCID("local_workspace_settings"), clMainFrame::OnWorkspaceSettings)
 EVT_MENU(XRCID("new_workspace"), clMainFrame::OnProjectNewWorkspace)
 EVT_MENU(XRCID("switch_to_workspace"), clMainFrame::OnSwitchWorkspace)
+EVT_UPDATE_UI(XRCID("switch_to_workspace"), clMainFrame::OnSwitchWorkspaceUI)
 EVT_MENU(XRCID("close_workspace"), clMainFrame::OnCloseWorkspace)
 EVT_MENU(XRCID("reload_workspace"), clMainFrame::OnReloadWorkspace)
 EVT_MENU(XRCID("import_from_msvs"), clMainFrame::OnImportMSVS)
@@ -2177,48 +2178,50 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
+    event.Skip();
     wxString msg;
-    bool boDoNotClose = false;
+    ManagerST::Get()->SetShutdownInProgress(true);
+    
+    // Notify the plugins that we are going down
+    clCommandEvent eventGoingDown(wxEVT_GOING_DOWN);
+    EventNotifier::Get()->ProcessEvent(eventGoingDown);
+    
+    // Stop the retag thread
+    ParseThreadST::Get()->Stop();
 
-    if(!boDoNotClose) {
-        ManagerST::Get()->SetShutdownInProgress(true);
+    // Stop the search thread
+    ManagerST::Get()->KillProgram();
+    SearchThreadST::Get()->StopSearch();
 
-        // Stop the retag thread
-        ParseThreadST::Get()->Stop();
+    // Stop any debugging session if any
+    IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
+    if(debugger && debugger->IsRunning())
+        ManagerST::Get()->DbgStop();
 
-        // Stop the search thread
-        ManagerST::Get()->KillProgram();
-        SearchThreadST::Get()->StopSearch();
+    SaveLayoutAndSession();
 
-        // Stop any debugging session if any
-        IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
-        if(debugger && debugger->IsRunning())
-            ManagerST::Get()->DbgStop();
+    // In case we got some data in the clipboard, flush it so it will be available
+    // after our process exits
+    wxTheClipboard->Flush();
 
-        SaveLayoutAndSession();
-
-        // In case we got some data in the clipboard, flush it so it will be available
-        // after our process exits
-        wxTheClipboard->Flush();
-
-        event.Skip();
-    }
 }
 
 void clMainFrame::LoadSession(const wxString& sessionName)
 {
     SessionEntry session;
-
     if(SessionManager::Get().GetSession(sessionName, session)) {
         wxString wspFile = session.GetWorkspaceName();
         if(wspFile.IsEmpty() == false && wspFile != wxT("Default")) {
 
             // Load the workspace only if it exists
             wxFileName fnWorkspace(wspFile);
+            
             if(fnWorkspace.Exists()) {
-                ManagerST::Get()->OpenWorkspace(wspFile);
+                wxCommandEvent eventOpenWorkspace;
+                eventOpenWorkspace.SetString(fnWorkspace.GetFullPath());
+                OnSwitchWorkspace(eventOpenWorkspace);
             }
-
+            
         } else {
             // no workspace to open, so just restore any previously open editors
             GetMainBook()->RestoreSession(session);
@@ -2529,7 +2532,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
         if(dlg.GetChoices(intArr)) { // Don't bother to save if no tabs were selected
             TabGroupEntry session;
             session.SetTabgroupName(path + sessionName);
-            GetMainBook()->SaveSession(session, intArr);
+            GetMainBook()->SaveSession(session, &intArr);
             SessionManager::Get().Save(session.GetTabgroupName(), session, "tabgroup", tabgroupTag);
             // Add the new tabgroup to the tabgroup manager and pane
             GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(filepath);
@@ -4996,17 +4999,16 @@ void clMainFrame::SaveLayoutAndSession()
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();
 
     // save the current session before closing
-    wxString sessionName = ManagerST::Get()->IsWorkspaceOpen() ?
-                               WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() :
-                               wxString(wxT("Default"));
-    SessionEntry session;
-    session.SetWorkspaceName(sessionName);
-    wxArrayInt unused;
-    GetMainBook()->SaveSession(session, unused);
-    ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
-    SessionManager::Get().Save(sessionName, session);
-    SessionManager::Get().SetLastWorkspaceName(sessionName);
-
+    if(ManagerST::Get()->IsWorkspaceOpen()) {
+        wxString sessionName = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
+        SessionEntry session;
+        session.SetWorkspaceName(sessionName);
+        GetMainBook()->SaveSession(session);
+        ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
+        SessionManager::Get().Save(sessionName, session);
+        SessionManager::Get().SetLastWorkspaceName(sessionName);
+    }
+    
     // make sure there are no 'unsaved documents'
     GetMainBook()->CloseAll(false);
 
@@ -6030,4 +6032,14 @@ void clMainFrame::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
     if(editor) {
         FileUtils::OpenFileExplorerAndSelect(editor->GetFileName());
     }
+}
+
+void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
+{
+    CHECK_SHUTDOWN();
+    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+    e.SetEventObject(this);
+    e.SetAnswer(false);
+    EventNotifier::Get()->ProcessEvent(e);
+    event.Enable(!ManagerST::Get()->IsWorkspaceOpen() && !e.IsAnswer());
 }

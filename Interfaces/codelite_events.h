@@ -309,11 +309,6 @@
 // User selected an option to create a new workspace
 #define wxEVT_CMD_CREATE_NEW_WORKSPACE 3506
 
-// a _plugin_ sends this event to codelite to request adding
-// a workspace to the recetly used list
-// The workspace path is sent in the evt.SetString()/GetString()
-#define wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST 3508
-
 // Event type: clCommandEvent
 // User requested to open a workspace
 // By default codelite will open a dialog to open a workspace with the '.workspace' suffix.
@@ -642,6 +637,10 @@
 // Sent when clang code completion encountered an error
 // use: event.GetString() to get the error message
 #define wxEVT_CLANG_CODE_COMPLETE_MESSAGE 3703
+
+// Event: clCommandEvent
+// CodeLite is going down. This event can not be vetoed
+#define wxEVT_GOING_DOWN 3704
 
 /////////////////////////////////////////////////
 // NOTE: update this counter: Next event ID: 3704

@@ -291,38 +291,9 @@ void MainBook::ShowNavBar(bool s)
     UpdateNavBar(GetActiveEditor());
 }
 
-void MainBook::SaveSession(SessionEntry& session, wxArrayInt& intArr)
+void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr)
 {
-    std::vector<LEditor*> editors;
-    bool retain_order(true);
-    GetAllEditors(editors, retain_order);
-
-    session.SetSelectedTab(0);
-    std::vector<TabInfo> vTabInfoArr;
-    for(size_t i = 0; i < editors.size(); i++) {
-        if((intArr.GetCount() > i) && (!intArr.Item(i))) {
-            // If we're saving only selected editors, and this isn't one of them...
-            continue;
-        }
-        if(editors[i] == GetActiveEditor()) {
-            session.SetSelectedTab(vTabInfoArr.size());
-        }
-        TabInfo oTabInfo;
-        oTabInfo.SetFileName(editors[i]->GetFileName().GetFullPath());
-        oTabInfo.SetFirstVisibleLine(editors[i]->GetFirstVisibleLine());
-        oTabInfo.SetCurrentLine(editors[i]->GetCurrentLine());
-
-        wxArrayString astrBookmarks;
-        editors[i]->StoreMarkersToArray(astrBookmarks);
-        oTabInfo.SetBookmarks(astrBookmarks);
-
-        std::vector<int> folds;
-        editors[i]->StoreCollapsedFoldsToArray(folds);
-        oTabInfo.SetCollapsedFolds(folds);
-
-        vTabInfoArr.push_back(oTabInfo);
-    }
-    session.SetTabInfoArr(vTabInfoArr);
+    CreateSession(session, excludeArr);
 }
 
 void MainBook::RestoreSession(SessionEntry& session)
@@ -432,15 +403,14 @@ LEditor* MainBook::FindEditor(const wxString& fileName)
             unixStyleFile.Replace(wxT("\\"), wxT("/"));
 #endif
 
-
 #ifndef __WXMSW__
             // On Unix files are case sensitive
             if(nativeFile.Cmp(fileName) == 0 || unixStyleFile.Cmp(fileName) == 0 ||
-               unixStyleFile.Cmp(fileNameDest) == 0) 
+               unixStyleFile.Cmp(fileNameDest) == 0)
 #else
             // Compare in no case sensitive manner
             if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0 ||
-               unixStyleFile.CmpNoCase(fileNameDest) == 0) 
+               unixStyleFile.CmpNoCase(fileNameDest) == 0)
 #endif
             {
                 return editor;
@@ -1174,9 +1144,9 @@ void MainBook::DoHandleFrameMenu(LEditor* editor)
     //     if(idx != wxNOT_FOUND) {
     //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, false);
     //     }
-    // 
+    //
     // } else if(editor && editor->GetContext()->GetName() == wxT("C++")) {
-    // 
+    //
     //     int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
     //     if(idx != wxNOT_FOUND) {
     //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);
@@ -1287,4 +1257,39 @@ FilesModifiedDlg* MainBook::GetFilesModifiedDlg()
 {
     if(!m_filesModifiedDlg) m_filesModifiedDlg = new FilesModifiedDlg(clMainFrame::Get());
     return m_filesModifiedDlg;
+}
+
+void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr) 
+{
+    std::vector<LEditor*> editors;
+    GetAllEditors(editors, kGetAll_RetainOrder);
+
+    session.SetSelectedTab(0);
+    std::vector<TabInfo> vTabInfoArr;
+    for(size_t i = 0; i < editors.size(); i++) {
+
+        if(excludeArr && (excludeArr->GetCount() > i) && (!excludeArr->Item(i))) {
+            // If we're saving only selected editors, and this isn't one of them...
+            continue;
+        }
+
+        if(editors[i] == GetActiveEditor()) {
+            session.SetSelectedTab(vTabInfoArr.size());
+        }
+        TabInfo oTabInfo;
+        oTabInfo.SetFileName(editors[i]->GetFileName().GetFullPath());
+        oTabInfo.SetFirstVisibleLine(editors[i]->GetFirstVisibleLine());
+        oTabInfo.SetCurrentLine(editors[i]->GetCurrentLine());
+
+        wxArrayString astrBookmarks;
+        editors[i]->StoreMarkersToArray(astrBookmarks);
+        oTabInfo.SetBookmarks(astrBookmarks);
+
+        std::vector<int> folds;
+        editors[i]->StoreCollapsedFoldsToArray(folds);
+        oTabInfo.SetCollapsedFolds(folds);
+
+        vTabInfoArr.push_back(oTabInfo);
+    }
+    session.SetTabInfoArr(vTabInfoArr);
 }

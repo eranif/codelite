@@ -22,7 +22,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("WordCompletion"));
+    info.SetName(wxT("Word Completion"));
     info.SetDescription(wxT("Suggest completion based on words typed in the editor"));
     info.SetVersion(wxT("v1.0"));
     return info;
@@ -35,7 +35,7 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
     , m_thread(NULL)
 {
     m_longName = wxT("Suggest completion based on words typed in the editor");
-    m_shortName = wxT("WordCompletion");
+    m_shortName = wxT("Word Completion");
 
     m_thread = new WordCompletionThread(this);
     m_thread->Start();

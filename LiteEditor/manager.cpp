@@ -201,10 +201,6 @@ Manager::Manager(void)
 
     EventNotifier::Get()->Connect(
         wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST,
-                                  wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList),
-                                  NULL,
-                                  this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
 }
@@ -213,10 +209,6 @@ Manager::~Manager(void)
 {
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST,
-                                     wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList),
-                                     NULL,
-                                     this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
     // stop background processes
@@ -397,8 +389,7 @@ void Manager::CloseWorkspace()
     // save the current session before closing
     SessionEntry session;
     session.SetWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
-    wxArrayInt unused;
-    clMainFrame::Get()->GetMainBook()->SaveSession(session, unused);
+    clMainFrame::Get()->GetMainBook()->SaveSession(session);
     GetBreakpointsMgr()->SaveSession(session);
     SessionManager::Get().Save(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
 

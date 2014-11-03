@@ -218,13 +218,17 @@ public:
 
 protected:
     void DoSetupWorkspace(const wxString& path);
-    void AddToRecentlyOpenedWorkspaces(const wxString& fileName);
 
     void OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e);
     void OnParserThreadSuggestColourTokens(clCommandEvent& event);
 
     //--------------------------- Workspace Projects Mgmt -----------------------------
 public:
+    /**
+     * @brief add 'fileName' to the list of recently used workspaces
+     */
+    void AddToRecentlyOpenedWorkspaces(const wxString& fileName);
+    
     /**
      * \brief create an empty project
      * \param name project name

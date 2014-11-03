@@ -73,7 +73,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     // Instantiate the bitmaps, we do this so they will be populated in wxXmlResource
     // Sigleton class
     PHPDebuggerImages images;
-
+    PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
 
     // Add our UI
@@ -137,7 +137,8 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
-
+    
+    EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     CallAfter(&PhpPlugin::DoCreateDebuggerPanes);
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
@@ -247,7 +248,8 @@ void PhpPlugin::UnPlug()
 
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
-
+    EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
+    
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
@@ -259,10 +261,15 @@ void PhpPlugin::UnPlug()
     }
 
     // Close any open workspace
-    PHPWorkspace::Get()->Close();
-    PHPParserThread::Release();
-
+    if(PHPWorkspace::Get()->IsOpen()) {
+        PHPWorkspace::Get()->Close();
+        m_workspaceView->UnLoadWorkspace();
+    }
+    
     m_workspaceView->Destroy();
+    m_workspaceView = NULL;
+    
+    PHPParserThread::Release();
     PHPWorkspace::Release();
     PHPCodeCompletion::Release();
     PHPEditorContextMenu::Release();
@@ -396,11 +403,6 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
     eventClose.SetEventObject(FRAME);
     FRAME->GetEventHandler()->ProcessEvent(eventClose);
 
-    // Close all open files
-    wxCommandEvent eventCloseAllFiles(wxEVT_COMMAND_MENU_SELECTED, wxID_CLOSE_ALL);
-    eventCloseAllFiles.SetEventObject(FRAME);
-    FRAME->GetEventHandler()->ProcessEvent(eventCloseAllFiles);
-
     // Open the PHP workspace
     if(!PHPWorkspace::Get()->Open(filename, createIfMissing)) {
         wxMessageBox(_("Failed to open workspace: corrupted workspace file"),
@@ -428,11 +430,9 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
     if(index != Notebook::npos) {
         m_mgr->GetWorkspacePaneNotebook()->SetSelection(index);
     }
-
+    
     // and finally, request codelite to keep this workspace in the recently opened workspace list
-    wxCommandEvent evtAddToList(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST);
-    evtAddToList.SetString(filename);
-    EventNotifier::Get()->AddPendingEvent(evtAddToList);
+    m_mgr->AddWorkspaceToRecentlyUsedList(filename);
 }
 
 void PhpPlugin::OnOpenResource(wxCommandEvent& e)
@@ -790,4 +790,17 @@ void PhpPlugin::DoCreateDebuggerPanes()
     m_mgr->GetDockingManager()->AddPane(
         m_xdebugEvalPane,
         wxAuiPaneInfo().Name("XDebugEval").Caption("PHP").Hide().CloseButton().MaximizeButton().Bottom().Position(2));
+}
+
+void PhpPlugin::OnGoingDown(clCommandEvent& event)
+{
+    event.Skip();
+    // Close the workspace. We do this here so have a chance to save the current session properly
+    //  before we exit
+    if(PHPWorkspace::Get()->IsOpen()) {
+        PHPWorkspace::Get()->Close();
+        if(m_workspaceView) {
+            m_workspaceView->UnLoadWorkspace();
+        }
+    }
 }

@@ -81,7 +81,7 @@ public:
     virtual Notebook* GetOutputPaneNotebook();
     virtual Notebook* GetWorkspacePaneNotebook();
     virtual bool
-        OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
+    OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
     virtual bool OpenFile(const BrowseRecord& rec);
     virtual wxString GetStartupDirectory() const;
     virtual void AddProject(const wxString& path);
@@ -119,7 +119,7 @@ public:
     virtual bool ClosePage(const wxString& text);
     virtual wxWindow* FindPage(const wxString& text);
     virtual bool
-        AddPage(wxWindow* win, const wxString& text, const wxBitmap& bmp = wxNullBitmap, bool selected = false);
+    AddPage(wxWindow* win, const wxString& text, const wxBitmap& bmp = wxNullBitmap, bool selected = false);
     virtual bool SelectPage(wxWindow* win);
     virtual NavMgr* GetNavigationMgr();
     virtual IEditor* NewEditor();
@@ -145,6 +145,10 @@ public:
     virtual void ProcessEditEvent(wxCommandEvent& e, IEditor* editor);
     virtual void AppendOutputTabText(eOutputPaneTab tab, const wxString& text);
     virtual void ClearOutputTab(eOutputPaneTab tab);
+    virtual void AddWorkspaceToRecentlyUsedList(const wxFileName& filename);
+    virtual void StoreWorkspaceSession(const wxFileName& workspaceFile);
+    virtual void LoadWorkspaceSession(const wxFileName& workspaceFile);
+
     //------------------------------------
     // End of IManager interface
     //------------------------------------
@@ -155,7 +159,7 @@ public:
     // (Un)Hook the project settings tab
     virtual void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
     virtual void
-        UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
+    UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
 };
 
 #endif // PLUGINMANAGER_H

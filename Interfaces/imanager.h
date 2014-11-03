@@ -484,7 +484,22 @@ public:
      * @param editor the editor
      */
     virtual void ProcessEditEvent(wxCommandEvent& e, IEditor* editor) = 0;
-
+    
+    /**
+     * @brief add 'fileName' to the list of recently used workspaces
+     * @param fileName
+     */
+    virtual void AddWorkspaceToRecentlyUsedList(const wxFileName& fileName) = 0;
+    
+    /**
+     * @brief store a new session for the workspace file associated with the file 'workspaceFile'
+     */
+    virtual void StoreWorkspaceSession(const wxFileName& workspaceFile) = 0;
+    
+    /**
+     * @brief load the session associated with 'workspaceFile'
+     */
+    virtual void LoadWorkspaceSession(const wxFileName& workspaceFile) = 0;
     // ----------------------------------------------
     // Perspective management
     // ----------------------------------------------

@@ -38,7 +38,6 @@ const wxChar sessionTag[] = wxT("Session");
 const wxChar tabgroupTag[] = wxT("Tabgroup");
 }
 
-
 /**
  * \class SessionEntry
  * \brief Session entry is associated per workspace
@@ -55,42 +54,25 @@ protected:
     BreakpointInfoArray m_breakpoints;
 
 public:
-    //Setters
-    void SetSelectedTab(const int& selectedTab) {
-        this->m_selectedTab = selectedTab;
-    }
-    //void SetTabs(const wxArrayString& tabs) {this->m_tabs = tabs;}
-    void SetWorkspaceName(const wxString& workspaceName) {
-        this->m_workspaceName = workspaceName;
-    }
-    void SetTabInfoArr(const std::vector<TabInfo>& _vTabInfoArr) {
-        m_vTabInfoArr = _vTabInfoArr;
-    }
-    void SetBreakpoints(const std::vector<BreakpointInfo>& breakpoints) {
-        m_breakpoints.SetBreakpoints(breakpoints);
-    }
+    // Setters
+    void SetSelectedTab(const int& selectedTab) { this->m_selectedTab = selectedTab; }
+    // void SetTabs(const wxArrayString& tabs) {this->m_tabs = tabs;}
+    void SetWorkspaceName(const wxString& workspaceName) { this->m_workspaceName = workspaceName; }
+    void SetTabInfoArr(const std::vector<TabInfo>& _vTabInfoArr) { m_vTabInfoArr = _vTabInfoArr; }
+    void SetBreakpoints(const std::vector<BreakpointInfo>& breakpoints) { m_breakpoints.SetBreakpoints(breakpoints); }
 
-    //Getters
-    const int& GetSelectedTab() const {
-        return m_selectedTab;
-    }
-    //const wxArrayString& GetTabs() const {return m_tabs;}
-    const wxString& GetWorkspaceName() const {
-        return m_workspaceName;
-    }
-    const std::vector<TabInfo>& GetTabInfoArr() {
-        return m_vTabInfoArr;
-    }
-    const std::vector<BreakpointInfo>& GetBreakpoints() const {
-        return m_breakpoints.GetBreakpoints();
-    }
+    // Getters
+    const int& GetSelectedTab() const { return m_selectedTab; }
+    // const wxArrayString& GetTabs() const {return m_tabs;}
+    const wxString& GetWorkspaceName() const { return m_workspaceName; }
+    const std::vector<TabInfo>& GetTabInfoArr() { return m_vTabInfoArr; }
+    const std::vector<BreakpointInfo>& GetBreakpoints() const { return m_breakpoints.GetBreakpoints(); }
 
     SessionEntry();
     virtual ~SessionEntry();
 
-    void Serialize(Archive &arch);
-    void DeSerialize(Archive &arch);
-
+    void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch);
 };
 
 /**
@@ -105,14 +87,10 @@ public:
     TabGroupEntry() {}
     virtual ~TabGroupEntry() {}
 
-    void Serialize(Archive &arch);
-    void DeSerialize(Archive &arch);
-    void SetTabgroupName(const wxString& tabgroupName) {
-        m_tabgroupName = tabgroupName;
-    }
-    const wxString& GetTabgroupName() const {
-        return m_tabgroupName;
-    }
+    void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch);
+    void SetTabgroupName(const wxString& tabgroupName) { m_tabgroupName = tabgroupName; }
+    const wxString& GetTabgroupName() const { return m_tabgroupName; }
 };
 
 /**
@@ -132,14 +110,18 @@ private:
 
 public:
     static SessionManager& Get();
-    bool Load(const wxString &fileName);
-    bool Save(const wxString &name, SessionEntry &session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
-    bool GetSession(const wxString &workspaceFile, SessionEntry &session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
-    void SetLastWorkspaceName(const wxString &name);
+    bool Load(const wxString& fileName);
+    bool
+    Save(const wxString& name, SessionEntry& session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
+    bool GetSession(const wxString& workspaceFile,
+                    SessionEntry& session,
+                    const wxString& suffix = wxT(""),
+                    const wxChar* Tag = sessionTag);
+    void SetLastWorkspaceName(const wxString& name);
     wxString GetLastSession();
 
 private:
     wxFileName GetSessionFileName(const wxString& name, const wxString& suffix = wxT("")) const;
 };
 
-#endif //SESSIONMANAGER_H
+#endif // SESSIONMANAGER_H

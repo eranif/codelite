@@ -3,6 +3,7 @@
 
 #include <map>
 #include <wx/treebase.h>
+#include <wx/filename.h>
 
 class ItemData : public wxTreeItemData
 {

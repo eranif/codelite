@@ -52,7 +52,7 @@ BitmapLoader::BitmapLoader()
         zipname = wxT("codelite-icons-fresh-farm.zip");
 
     else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
-        zipname = wxT("codelite-icons-dark.zip");
+        zipname = wxT("codelite-icons-glyph.zip");
 
     else
         zipname = wxT("codelite-icons.zip");

@@ -237,6 +237,7 @@ cp ../lib/SFTP.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/CMakePlugin.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/CodeLiteDiff.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/SpellCheck.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/WordCompletion.dylib ./codelite.app/Contents/SharedSupport/plugins/
 
 ## Copy hunspell dylib to its proper location
 echo cp ../../sdk/hunspell/lib/osx/libhunspell-1.3.dylib ./codelite.app/Contents/SharedSupport/

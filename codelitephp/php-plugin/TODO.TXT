@@ -12,8 +12,6 @@ Code Completion / Code Generation
 
 Must:
 =====
-- Code Completion: when parsing namespace, keep in the database its entire path "Zend\Foo\Bar" -> insert into the database
-  Zend, Zend\Foo and Zend\Foo\Bar
 - Fix 'Outline' plugin to support PHP files
 - Use the PHP include paths to the global PHP settings (so it will include ZF etc)
 - Add link to XDebug diagnostic dialog that points to the codelite's wiki for further explanation

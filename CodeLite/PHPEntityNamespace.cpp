@@ -36,7 +36,11 @@ void PHPEntityNamespace::Store(wxSQLite3Database& db)
                 return;
             }
         }
-
+    
+        // Get the 'parent' namespace part
+        wxString parentPath = GetFullName().BeforeLast('\\');
+        DoEnsureNamespacePathExists(db, parentPath);
+        
         {
             wxSQLite3Statement statement = db.PrepareStatement(
                 "INSERT INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, LINE_NUMBER, FILE_NAME) "
@@ -73,4 +77,43 @@ wxString PHPEntityNamespace::FormatPhpDoc() const
         << " * @brief \n";
     doc << " */";
     return doc;
+}
+
+void PHPEntityNamespace::DoEnsureNamespacePathExists(wxSQLite3Database& db, const wxString& path)
+{
+    wxArrayString paths = ::wxStringTokenize(path, "\\", wxTOKEN_STRTOK);
+    if(paths.IsEmpty()) return;
+
+    wxString currentPath;
+    try {
+        for(size_t i = 0; i < paths.GetCount(); ++i) {
+            if(!currentPath.EndsWith("\\")) {
+                currentPath << "\\";
+            }
+            currentPath << paths.Item(i);
+            wxSQLite3Statement statement = db.PrepareStatement(
+                "INSERT OR IGNORE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, LINE_NUMBER, FILE_NAME) "
+                "VALUES (NULL, 0, -1, :NAME, :FULLNAME, :LINE_NUMBER, :FILE_NAME)");
+            statement.Bind(statement.GetParamIndex(":NAME"), paths.Item(i));
+            statement.Bind(statement.GetParamIndex(":FULLNAME"), currentPath);
+            statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
+            statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
+            statement.ExecuteUpdate();
+            //SetDbId(db.GetLastRowId());
+        }
+        
+    } catch(wxSQLite3Exception& exc) {
+        wxUnusedVar(exc);
+    }
+}
+
+wxString PHPEntityNamespace::GetParentNamespace() const
+{
+    if(GetFullName() == "\\") {
+        // this is the global namespace
+        return "\\";
+    }
+    wxString parentPath = GetFullName().BeforeLast('\\');
+    if(parentPath.IsEmpty()) return "\\";
+    return parentPath;
 }

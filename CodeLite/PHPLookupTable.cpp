@@ -1009,26 +1009,25 @@ PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameSta
     try {
         wxString sql;
         wxString prefix = fullnameStartsWith;
-        sql << "SELECT * from SCOPE_TABLE WHERE SCOPE_TYPE = 0 AND "
-            << " FULLNAME LIKE '%%" << EscapeWildCards(prefix) << "%%' ESCAPE '^' ";
+        sql << "SELECT * from SCOPE_TABLE WHERE SCOPE_TYPE = 0 ";
         DoAddLimit(sql);
 
         wxSQLite3Statement st = m_db.PrepareStatement(sql);
         wxSQLite3ResultSet res = st.ExecuteQuery();
-        
+
+        wxString fullpath = fullnameStartsWith;
         if(!shortNameContains.IsEmpty()) {
-            if(!prefix.EndsWith("\\")) {
-                prefix << "\\";
+            if(!fullpath.EndsWith("\\")) {
+                fullpath << "\\";
             }
-            prefix << shortNameContains;
+            fullpath << shortNameContains;
         }
-        wxString fullname;
+
         while(res.NextRow()) {
             PHPEntityBase::Ptr_t match(new PHPEntityNamespace());
             match->FromResultSet(res);
-            fullname = match->GetFullName();
-            fullname.Trim().Trim(false);
-            if(fullname.StartsWith(prefix)) {
+            if(match->Cast<PHPEntityNamespace>()->GetParentNamespace() == fullnameStartsWith &&
+               match->GetShortName().StartsWith(shortNameContains)) {
                 matches.push_back(match);
             }
         }

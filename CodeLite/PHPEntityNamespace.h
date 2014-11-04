@@ -7,7 +7,11 @@
 
 class WXDLLIMPEXP_CL PHPEntityNamespace : public PHPEntityBase
 {
+protected:
+    void DoEnsureNamespacePathExists(wxSQLite3Database& db, const wxString& path);
+
 public:
+    wxString GetParentNamespace() const;
     virtual wxString FormatPhpDoc() const;
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;

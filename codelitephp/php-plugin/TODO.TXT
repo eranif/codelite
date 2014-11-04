@@ -12,6 +12,8 @@ Code Completion / Code Generation
 
 Must:
 =====
+- Code Completion: when parsing namespace, keep in the database its entire path "Zend\Foo\Bar" -> insert into the database
+  Zend, Zend\Foo and Zend\Foo\Bar
 - Fix 'Outline' plugin to support PHP files
 - Use the PHP include paths to the global PHP settings (so it will include ZF etc)
 - Add link to XDebug diagnostic dialog that points to the codelite's wiki for further explanation
@@ -19,7 +21,6 @@ Must:
 
 Usability:
 ==========
-- Restore last session
 - Function calltip should include the return value
 - Allow user to define a deployment folder for his files 
   (in addition to the SFTP, it should also allow user to copy files by simply saving them)

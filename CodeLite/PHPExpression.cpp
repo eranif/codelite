@@ -515,7 +515,13 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
     }
     PHPEntityBase::List_t scopeChildren = lookup.FindChildren(resolved->GetDbId(), flags, GetFilter());
     matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
-
+    
+    // Incase the resolved is a namespace, suggest all children namespaces
+    if(resolved->Is(kEntityTypeNamespace)) {
+        PHPEntityBase::List_t namespaces = lookup.FindNamespaces(resolved->GetFullName(), GetFilter());
+        matches.insert(matches.end(), namespaces.begin(), namespaces.end());
+    }
+    
     // and make the list unique
     DoMakeUnique(matches);
 }

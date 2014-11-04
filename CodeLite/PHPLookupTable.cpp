@@ -11,7 +11,7 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "7.0.2";
+static wxString PHP_SCHEMA_VERSION = "7.0.3";
 
 //------------------------------------------------
 // Metadata table
@@ -264,11 +264,11 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
         //  namespace test;
         //  define('MESSAGE', 'Hello world!');
         // ?>
-        // In the above code, the constant 'MESSAGE' is defined in the GLOBAL namespace even though the 
+        // In the above code, the constant 'MESSAGE' is defined in the GLOBAL namespace even though the
         // define was called inside namespace 'test'
-        // For this reason, we need get the list of defined parsed in the source file and associate them 
+        // For this reason, we need get the list of defined parsed in the source file and associate them
         // with their namespace (we either load the namespace from the database or create one)
-        
+
         if(!source.GetDefines().empty()) {
             const PHPEntityBase::List_t& defines = source.GetDefines();
             PHPEntityBase::List_t::const_iterator iter = defines.begin();
@@ -276,7 +276,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
             for(; iter != defines.end(); ++iter) {
                 PHPEntityBase::Ptr_t pDefine = *iter;
                 PHPEntityBase::Ptr_t pNamespace(NULL);
-                
+
                 wxString nameSpaceName, shortName;
                 DoSplitFullname(pDefine->GetFullName(), nameSpaceName, shortName);
 
@@ -975,7 +975,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::CreateNamespaceForDefine(PHPEntityBase::Ptr
 {
     wxString nameSpaceName, shortName;
     DoSplitFullname(define->GetFullName(), nameSpaceName, shortName);
-    
+
     PHPEntityBase::Ptr_t pNamespace = DoFindScope(nameSpaceName, kPhpScopeTypeNamespace);
     if(!pNamespace) {
         // Create it
@@ -1000,4 +1000,40 @@ void PHPLookupTable::DoSplitFullname(const wxString& fullname, wxString& ns, wxS
     }
     // Now the short name
     shortName = fullname.AfterLast('\\');
+}
+
+PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameStartsWith,
+                                                     const wxString& shortNameContains)
+{
+    PHPEntityBase::List_t matches;
+    try {
+        wxString sql;
+        wxString prefix = fullnameStartsWith;
+        sql << "SELECT * from SCOPE_TABLE WHERE SCOPE_TYPE = 0 AND "
+            << " FULLNAME LIKE '%%" << EscapeWildCards(prefix) << "%%' ESCAPE '^' ";
+        DoAddLimit(sql);
+
+        wxSQLite3Statement st = m_db.PrepareStatement(sql);
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        
+        if(!shortNameContains.IsEmpty()) {
+            if(!prefix.EndsWith("\\")) {
+                prefix << "\\";
+            }
+            prefix << shortNameContains;
+        }
+        wxString fullname;
+        while(res.NextRow()) {
+            PHPEntityBase::Ptr_t match(new PHPEntityNamespace());
+            match->FromResultSet(res);
+            fullname = match->GetFullName();
+            fullname.Trim().Trim(false);
+            if(fullname.StartsWith(prefix)) {
+                matches.push_back(match);
+            }
+        }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::FindNamespaces: %s", e.GetMessage());
+    }
+    return matches;
 }

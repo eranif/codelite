@@ -185,6 +185,10 @@ public:
                                                       const wxString& nameHint = "");
 
     /**
+     * @brief load list of namespaces from the database that
+     */
+    PHPEntityBase::List_t FindNamespaces(const wxString& fullnameStartsWith, const wxString& shortNameContains = "");
+    /**
      * @brief load list of entities from all the tables that matches 'nameHint'
      * if nameHint is empty, return an empty list
      */

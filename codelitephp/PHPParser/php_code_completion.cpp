@@ -201,6 +201,7 @@ void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
 TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
 {
     TagEntryPtr t(new TagEntry());
+    //wxString name = entry->Is(kEntityTypeNamespace) ? entry->GetFullName() : entry->GetShortName();
     wxString name = entry->GetShortName();
 
     if(entry->Is(kEntityTypeVariable) && entry->Cast<PHPEntityVariable>()->IsMember() && name.StartsWith(wxT("$")) &&

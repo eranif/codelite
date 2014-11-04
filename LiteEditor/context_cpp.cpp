@@ -2076,8 +2076,6 @@ void ContextCpp::Initialize()
 
 void ContextCpp::AutoAddComment()
 {
-    CHECK_JS_RETURN_VOID();
-
     LEditor& rCtrl = GetCtrl();
 
     CommentConfigData data;

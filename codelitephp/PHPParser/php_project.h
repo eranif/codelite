@@ -14,6 +14,7 @@ class PHPProject
     PHPFolder::Map_t m_folders;
     PHPProjectSettingsData m_settings;
     wxFileName m_filename;
+    wxString m_importFileSpec;
 
 public:
     typedef wxSharedPtr<PHPProject> Ptr_t;
@@ -38,11 +39,12 @@ public:
 public:
     PHPProject()
         : m_isActive(false)
+        , m_importFileSpec("*.php;*.html;*.phtml;*.inc;*.css;*.js;.htaccess")
     {
     }
     ~PHPProject() {}
 
-    void Create(const wxFileName& filename, const wxString &name);
+    void Create(const wxFileName& filename, const wxString& name);
     void Load(const wxFileName& filename);
     void Save();
 
@@ -63,6 +65,8 @@ public:
      */
     void GetFiles(wxArrayString& files) const;
 
+    void SetImportFileSpec(const wxString& importFileSpec) { this->m_importFileSpec = importFileSpec; }
+    const wxString& GetImportFileSpec() const { return m_importFileSpec; }
     /**
      * @brief find and return a folder
      * @param name the folder name (relative to the project)
@@ -103,7 +107,7 @@ public:
      * @param filespec
      * @param recursive
      */
-    void ImportDirectory(const wxString& path, const wxString& filespec, bool recursive);
+    void ImportDirectory(const wxString& path, const wxString& filespec, bool recursive, bool removeObsolete);
 
     /**
      * @brief rename a file (the file stays on the same path, only its name is renamed)

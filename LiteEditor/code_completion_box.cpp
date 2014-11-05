@@ -35,9 +35,7 @@ CodeCompletionBox::CodeCompletionBox()
 {
 }
 
-CodeCompletionBox::~CodeCompletionBox()
-{
-}
+CodeCompletionBox::~CodeCompletionBox() {}
 
 CodeCompletionBox& CodeCompletionBox::Get()
 {
@@ -45,27 +43,31 @@ CodeCompletionBox& CodeCompletionBox::Get()
     return mgr;
 }
 
-void CodeCompletionBox::Display(LEditor* editor, const TagEntryPtrVector_t& tags, const wxString& word, bool isKeywordList, wxEvtHandler* owner)
+void CodeCompletionBox::Display(LEditor* editor,
+                                const TagEntryPtrVector_t& tags,
+                                const wxString& word,
+                                bool autoRefreshList,
+                                wxEvtHandler* owner)
 {
-    if ( !m_ccBox ) {
+    if(!m_ccBox) {
         DoCreateBox(editor);
     }
 
-    if ( !CodeCompletionManager::Get().GetWordCompletionRefreshNeeded() ) {
-        if ( m_ccBox ) {
+    if(!CodeCompletionManager::Get().GetWordCompletionRefreshNeeded()) {
+        if(m_ccBox) {
             Hide();
         }
         DoCreateBox(editor);
     } else {
 
         // turn off the flag
-        if ( !m_ccBox ) {
+        if(!m_ccBox) {
             CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
             return;
         }
     }
 
-    m_ccBox->Show(tags, word, isKeywordList, owner);
+    m_ccBox->Show(tags, word, autoRefreshList, owner);
     // Show takes into account the return value of 'GetWordCompletionRefreshNeeded'
     // this is why we reset the flag *after* the call to Show(..)
     CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
@@ -74,7 +76,7 @@ void CodeCompletionBox::Display(LEditor* editor, const TagEntryPtrVector_t& tags
 
 void CodeCompletionBox::Hide()
 {
-    if ( m_ccBox ) {
+    if(m_ccBox) {
         // Cancel the calltip as well
         CancelTip();
         m_ccBox->Destroy();
@@ -82,14 +84,11 @@ void CodeCompletionBox::Hide()
     m_ccBox = NULL;
 }
 
-bool CodeCompletionBox::IsShown() const
-{
-    return m_ccBox && m_ccBox->IsShown();
-}
+bool CodeCompletionBox::IsShown() const { return m_ccBox && m_ccBox->IsShown(); }
 
 bool CodeCompletionBox::SelectWord(const wxString& word)
 {
-    if ( IsShown() ) {
+    if(IsShown()) {
         return m_ccBox->SelectWord(word);
     } else {
         return false;
@@ -98,42 +97,42 @@ bool CodeCompletionBox::SelectWord(const wxString& word)
 
 void CodeCompletionBox::InsertSelection()
 {
-    if ( IsShown() ) {
+    if(IsShown()) {
         m_ccBox->InsertSelection();
     }
 }
 
 void CodeCompletionBox::Next()
 {
-    if ( IsShown() ) {
+    if(IsShown()) {
         m_ccBox->Next();
     }
 }
 
 void CodeCompletionBox::NextPage()
 {
-    if ( IsShown() ) {
+    if(IsShown()) {
         m_ccBox->NextPage();
     }
 }
 
 void CodeCompletionBox::Previous()
 {
-    if ( IsShown() ) {
+    if(IsShown()) {
         m_ccBox->Previous();
     }
 }
 
 void CodeCompletionBox::PreviousPage()
 {
-    if ( IsShown() ) {
+    if(IsShown()) {
         m_ccBox->PreviousPage();
     }
 }
 
 void CodeCompletionBox::CancelTip()
 {
-    if ( m_tip ) {
+    if(m_tip) {
         m_tip->Destroy();
         m_tip = NULL;
     }
@@ -143,16 +142,15 @@ void CodeCompletionBox::ShowTip(const wxString& msg, LEditor* editor)
 {
     CancelTip();
 
-    if ( !editor )
-        return;
+    if(!editor) return;
 
-    wxPoint pt = editor->PointFromPosition( editor->GetCurrentPos() );
+    wxPoint pt = editor->PointFromPosition(editor->GetCurrentPos());
     wxPoint displayPt = editor->ClientToScreen(pt);
 
     // Dont display the tip if it displays outside of the
     // editor client area
     wxRect editorRect = editor->GetScreenRect();
-    if ( editorRect.Contains( displayPt ) == false ) {
+    if(editorRect.Contains(displayPt) == false) {
         return;
     }
 
@@ -163,8 +161,7 @@ void CodeCompletionBox::ShowTip(const wxString& msg, LEditor* editor)
 void CodeCompletionBox::ShowTip(const wxString& msg, const wxPoint& pt, LEditor* editor)
 {
     CancelTip();
-    if ( !editor )
-        return;
+    if(!editor) return;
 
     wxPoint p = pt;
     p.y += 16; // Place it under the cursor
@@ -172,7 +169,7 @@ void CodeCompletionBox::ShowTip(const wxString& msg, const wxPoint& pt, LEditor*
     // Dont display the tip if it displays outside of the
     // editor client area
     wxRect editorRect = editor->GetScreenRect();
-    if ( editorRect.Contains( p ) == false ) {
+    if(editorRect.Contains(p) == false) {
         return;
     }
 
@@ -183,11 +180,10 @@ void CodeCompletionBox::ShowTip(const wxString& msg, const wxPoint& pt, LEditor*
 void CodeCompletionBox::RegisterImage(const wxString& kind, const wxBitmap& bmp)
 {
     // sanity
-    if ( bmp.IsOk() == false || kind.IsEmpty() )
-        return;
+    if(bmp.IsOk() == false || kind.IsEmpty()) return;
 
     BitmapMap_t::iterator iter = m_bitmaps.find(kind);
-    if ( iter != m_bitmaps.end() ) {
+    if(iter != m_bitmaps.end()) {
         m_bitmaps.erase(iter);
     }
     m_bitmaps.insert(std::make_pair(kind, bmp));
@@ -195,14 +191,12 @@ void CodeCompletionBox::RegisterImage(const wxString& kind, const wxBitmap& bmp)
 
 void CodeCompletionBox::DoCreateBox(LEditor* editor)
 {
-    m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
+    m_ccBox =
+        new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
     BitmapMap_t::const_iterator iter = m_bitmaps.begin();
-    for(; iter != m_bitmaps.end(); ++iter ) {
+    for(; iter != m_bitmaps.end(); ++iter) {
         m_ccBox->RegisterImageForKind(iter->first, iter->second);
     }
 }
 
-void CodeCompletionBox::FocusEditor(LEditor* editor)
-{
-    editor->SetActive();
-}
+void CodeCompletionBox::FocusEditor(LEditor* editor) { editor->SetActive(); }

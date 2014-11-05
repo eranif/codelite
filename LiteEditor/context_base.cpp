@@ -251,10 +251,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
 
         if ( tags.empty() == false ) {
             GetCtrl().ShowCompletionBox(tags,   // list of tags
-                                        word,   // partial word
-                                        false,  // dont show full declaration
-                                        true,   // auto hide if there is no match in the list
-                                        false); // do not automatically insert word if there is only single choice
+                                        word); // do not automatically insert word if there is only single choice
         }
     }
 }

@@ -166,7 +166,7 @@ void CCBox::OnItemSelected(wxListEvent& event)
     PostSelectItem(m_selectedItem);
 }
 
-void CCBox::Show(const TagEntryPtrVector_t& tags, const wxString& word, bool isKeywordsList, wxEvtHandler* owner)
+void CCBox::Show(const TagEntryPtrVector_t& tags, const wxString& word, bool autoRefreshList, wxEvtHandler* owner)
 {
     if(tags.empty()) {
         return;
@@ -175,7 +175,7 @@ void CCBox::Show(const TagEntryPtrVector_t& tags, const wxString& word, bool isK
 
     m_displayingFileList = (m_tags.at(0)->GetKind() == "FileCpp") || (m_tags.at(0)->GetKind() == "FileHeader");
     m_owner = owner;
-    m_isKeywordsList = isKeywordsList;
+    m_autoRefershList = autoRefreshList;
     Show(word);
 }
 
@@ -293,7 +293,7 @@ bool CCBox::SelectWord(const wxString& word)
             return true;
         }
 
-    } else if(m_isKeywordsList) {
+    } else {
         // When there is no match and the list box is of type "Keywords"
         // hide it...
         HideCCBox();
@@ -301,7 +301,7 @@ bool CCBox::SelectWord(const wxString& word)
     }
 
     m_refreshListTimer->Stop();
-    if(!m_isKeywordsList) {
+    if(m_autoRefershList) {
         m_refreshListTimer->Start(TIP_TIMER, true);
     }
     return fullMatch;
@@ -1001,7 +1001,7 @@ void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 
 void CCBox::OnRefreshList(wxTimerEvent& event)
 {
-    if(!m_isKeywordsList) {
+    if(m_autoRefershList) {
 
         // clang is already slow... don't re-invoke the list
         if(m_tags.empty() == false && m_tags.at(0)->GetIsClangTag()) return;

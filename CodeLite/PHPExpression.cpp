@@ -505,6 +505,17 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
                 }
             }
         }
+        
+        {
+            // Add $this incase we are inside a class
+            if(GetSourceFile()->Class()) {
+                PHPEntityBase::Ptr_t thiz(new PHPEntityVariable());
+                thiz->SetFullName("$this");
+                thiz->SetShortName("$this");
+                thiz->SetFilename(currentScope->GetFilename());
+                matches.push_back(thiz);
+            }
+        }
     }
 
     // Add the scoped matches

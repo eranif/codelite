@@ -36,25 +36,29 @@ class CodeCompletionBox : public wxEvtHandler
 {
     typedef std::map<wxString, wxBitmap> BitmapMap_t;
 
-    CCBox*          m_ccBox;
+    CCBox* m_ccBox;
     CCBoxTipWindow* m_tip;
-    BitmapMap_t     m_bitmaps;
+    BitmapMap_t m_bitmaps;
 
 private:
     CodeCompletionBox();
 
 protected:
-    void DoCreateBox(LEditor *editor);
-    void FocusEditor(LEditor *editor);
-    
+    void DoCreateBox(LEditor* editor);
+    void FocusEditor(LEditor* editor);
+
 public:
     virtual ~CodeCompletionBox();
     static CodeCompletionBox& Get();
 
-    void Display(LEditor* editor, const TagEntryPtrVector_t& tags, const wxString &word, bool isKeywordList, wxEvtHandler* owner = NULL);
+    void Display(LEditor* editor,
+                 const TagEntryPtrVector_t& tags,
+                 const wxString& word,
+                 bool autoRefreshList,
+                 wxEvtHandler* owner = NULL);
     void Hide();
     bool IsShown() const;
-    bool SelectWord(const wxString &word);
+    bool SelectWord(const wxString& word);
     void InsertSelection();
     void Previous();
     void Next();
@@ -63,13 +67,13 @@ public:
     /**
      * @brief display a tooltip at the caret position of the editor
      */
-    void ShowTip(const wxString &msg, LEditor* editor);
+    void ShowTip(const wxString& msg, LEditor* editor);
 
     /**
      * @brief display a tooltip at a given point
      * 'pt' is in screen coordinates
      */
-    void ShowTip(const wxString &msg, const wxPoint& pt, LEditor* editor);
+    void ShowTip(const wxString& msg, const wxPoint& pt, LEditor* editor);
 
     /**
      * @brief dismiss the last calltip shown
@@ -80,7 +84,7 @@ public:
      * @brief add an additional image to the code completion box for a given
      * "kind"
      */
-    void RegisterImage(const wxString &kind, const wxBitmap& bmp);
+    void RegisterImage(const wxString& kind, const wxBitmap& bmp);
 };
 
 #endif // CODECOMPLETIONBOX_H

@@ -631,13 +631,9 @@ public:
      * @brief display completion box. This function also moves the completion box to the current position
      * @param tags list of tags to work with
      * @param word part of the word
-     * @param showFullDecl display full function declaration
      */
     void ShowCompletionBox(const std::vector<TagEntryPtr>& tags,
-                           const wxString& word,
-                           bool showFullDecl,
-                           bool autoHide = false,
-                           bool autoInsertSingleChoice = true);
+                           const wxString& word);
 
     /**
      * @brief displays teh code completion box. Unlike the previous metho, this method accepts owner and sends an event

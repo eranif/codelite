@@ -64,7 +64,7 @@ private:
     bool TryOpenFile(const wxFileName &fileName, bool lookInEntireWorkspace = true);
     bool IsJavaScript() const;
 
-    void DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl);
+    void DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word);
     void DisplayFilesCompletionBox(const wxString &word);
     bool DoGetFunctionBody(long curPos, long &blockStartPos, long &blockEndPos, wxString &content);
     void Initialize();

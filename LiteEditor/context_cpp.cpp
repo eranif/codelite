@@ -771,11 +771,11 @@ void ContextCpp::CompleteWord()
     CodeCompletionManager::Get().WordCompletion(&GetCtrl(), expr, word);
 }
 
-void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl)
+void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word)
 {
     CHECK_JS_RETURN_VOID();
     // calculate the position to display the completion box
-    GetCtrl().ShowCompletionBox(tags, word, showFullDecl);
+    GetCtrl().ShowCompletionBox(tags, word);
 }
 
 void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
@@ -803,7 +803,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
                 tags.push_back(t);
             }
         }
-        GetCtrl().ShowCompletionBox(tags, fileName, false, true);
+        GetCtrl().ShowCompletionBox(tags, fileName);
     }
 }
 
@@ -2381,10 +2381,7 @@ void ContextCpp::OnUserTypedXChars(const wxString& word)
         MakeCppKeywordsTags(word, tags);
         if(tags.empty() == false) {
             GetCtrl().ShowCompletionBox(tags,   // list of tags
-                                        word,   // partial word
-                                        false,  // dont show full declaration
-                                        true,   // auto hide if there is no match in the list
-                                        false); // do not automatically insert word if there is only single choice
+                                        word); // do not automatically insert word if there is only single choice
         }
     }
 }

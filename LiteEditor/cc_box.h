@@ -67,7 +67,7 @@ class CCBox : public CCBoxBase
     LEditor* m_editor;
     wxTimer* m_refreshListTimer;
     wxTimer* m_tipTimer;
-    bool m_isKeywordsList;
+    bool m_autoRefershList;
     CCBoxTipWindow* m_tipWindow;
     wxString m_initialWord;
     bool m_displayingFileList;
@@ -105,7 +105,7 @@ public:
     virtual ~CCBox();
 
     void HideCCBox();
-    void Show(const TagEntryPtrVector_t& tags, const wxString& word, bool isKeywordsList, wxEvtHandler* owner = NULL);
+    void Show(const TagEntryPtrVector_t& tags, const wxString& word, bool autoRefreshList, wxEvtHandler* owner = NULL);
     void InsertSelection();
 
     // can this window have focus? (no)

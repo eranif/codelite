@@ -156,7 +156,7 @@ bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxStrin
 
     if(TagsManagerST::Get()->WordCompletionCandidates(editor->GetFileName(), lineNum, expr, text, word, candidates) &&
        !candidates.empty()) {
-        editor->ShowCompletionBox(candidates, word, false);
+        editor->ShowCompletionBox(candidates, word);
         return true;
     }
     return false;
@@ -245,7 +245,7 @@ bool CodeCompletionManager::DoCtagsCodeComplete(LEditor* editor, int line, const
     std::vector<TagEntryPtr> candidates;
     if(TagsManagerST::Get()->AutoCompleteCandidates(editor->GetFileName(), line, expr, text, candidates) &&
        !candidates.empty()) {
-        editor->ShowCompletionBox(candidates, wxEmptyString, false);
+        editor->ShowCompletionBox(candidates, wxEmptyString);
         return true;
     }
     return false;

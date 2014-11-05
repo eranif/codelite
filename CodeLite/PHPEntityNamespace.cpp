@@ -1,4 +1,5 @@
 #include "PHPEntityNamespace.h"
+#include <wx/tokenzr.h>
 
 PHPEntityNamespace::PHPEntityNamespace() {}
 

@@ -1005,7 +1005,11 @@ void CCBox::OnRefreshList(wxTimerEvent& event)
 
         // clang is already slow... don't re-invoke the list
         if(m_tags.empty() == false && m_tags.at(0)->GetIsClangTag()) return;
-
+        
+        // Tags with user data are from plugins. So we disable the auto-refresh feature of the 
+        // completion box
+        if(!m_tags.empty() && m_tags.at(0)->GetUserData()) return;
+        
         wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("complete_word_refresh_list"));
         event.SetEventObject(clMainFrame::Get());
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);

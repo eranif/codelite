@@ -165,7 +165,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
         return;
 
     std::sort(tags.begin(), tags.end(), _SAscendingSort());
-    m_manager->GetActiveEditor()->ShowCompletionBox(tags, expr->GetFilter(), true, this);
+    m_manager->GetActiveEditor()->ShowCompletionBox(tags, expr->GetFilter(), false, this);
 }
 
 void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }

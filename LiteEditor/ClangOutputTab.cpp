@@ -7,6 +7,7 @@
 #include "frame.h"
 #include "clang_code_completion.h"
 #include "ctags_manager.h"
+#include "cl_config.h"
 
 ClangOutputTab::ClangOutputTab(wxWindow* parent)
     : ClangOutputTabBase(parent)
@@ -25,6 +26,12 @@ ClangOutputTab::ClangOutputTab(wxWindow* parent)
     m_choiceCache->Append(TagsOptionsData::CLANG_CACHE_LAZY);
     m_choiceCache->Append(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD);
     m_choiceCache->Select(1);
+
+    // Get the initial value of the clang code completion
+    TagsOptionsData tod;
+    clConfig ccConfig("code-completion.conf");
+    ccConfig.ReadItem(&tod);
+    m_checkBoxEnableClang->SetValue(tod.GetClangOptions() & CC_CLANG_ENABLED);
 }
 
 ClangOutputTab::~ClangOutputTab()

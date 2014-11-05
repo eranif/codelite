@@ -2308,7 +2308,7 @@ void GitPlugin::OnMainFrameTitle(clCommandEvent& e)
     e.Skip();
     if(!m_currentBranch.IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
         wxString newTitle;
-        newTitle << e.GetString() << wxT(" â¢ [git: ") << m_currentBranch << "]";
+        newTitle << e.GetString() << wxT(" - [git: ") << m_currentBranch << "]";
         e.SetString(newTitle);
         e.Skip(false);
     }

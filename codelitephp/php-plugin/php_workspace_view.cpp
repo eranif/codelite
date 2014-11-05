@@ -234,7 +234,7 @@ void PHPWorkspaceView::CreateNewProject(PHPProject::CreateData cd)
         if(pProject) {
             // import all PHP files from the newly added project path
             pProject->ImportDirectory(
-                pProject->GetFilename().GetPath(), "*.php;*.inc;*.js;*.css;*.html;.htaccess", true);
+                pProject->GetFilename().GetPath(), "*.php;*.inc;*.js;*.css;*.html;.htaccess", true, false);
         }
     }
     // Update the UI
@@ -602,7 +602,7 @@ void PHPWorkspaceView::OnImportFiles(wxCommandEvent& e)
 
     ImportFilesDlg dlg(wxTheApp->GetTopWindow(), pProject);
     if(dlg.ShowModal() == wxID_OK) {
-        pProject->ImportDirectory(dlg.GetPath(), dlg.GetFileSpec(), dlg.GetIsRecursive());
+        pProject->ImportDirectory(dlg.GetPath(), dlg.GetFileSpec(), dlg.GetIsRecursive(), false);
         LoadWorkspace();
     }
 }

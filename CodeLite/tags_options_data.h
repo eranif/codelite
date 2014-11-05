@@ -129,7 +129,7 @@ public:
 
     void Merge(const TagsOptionsData& tod);
     void SetVersion(size_t version) { this->m_version = version; }
-    size_t GetVersion() const { return m_version; }
+
     // setters/getters
     void SetCcNumberOfDisplayItems(size_t ccNumberOfDisplayItems)
     {

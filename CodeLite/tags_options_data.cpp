@@ -34,7 +34,7 @@
 wxString TagsOptionsData::CLANG_CACHE_LAZY = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
-size_t TagsOptionsData::CURRENT_VERSION = 104;
+size_t TagsOptionsData::CURRENT_VERSION = 105;
 
 static bool _IsValidCppIndetifier(const wxString& id)
 {
@@ -436,4 +436,8 @@ void TagsOptionsData::Merge(const TagsOptionsData& tod)
     m_types = conf.MergeArrays(m_types, tod.m_types);
     DoUpdateTokensWxMapReversed();
     DoUpdateTokensWxMap();
+    if(m_version != TagsOptionsData::CURRENT_VERSION) {
+        m_ccFlags |= CC_WORD_ASSIST;
+    }
+    m_version = TagsOptionsData::CURRENT_VERSION;
 }

@@ -25,6 +25,7 @@ class WordCompletionSettingsBaseDlg : public wxDialog
 protected:
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgPropTypes;
+    wxPGProperty* m_pgPropComparisonMethod;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_button6;
     wxButton* m_button8;

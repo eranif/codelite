@@ -12,8 +12,14 @@ public:
         kCompleteNumbers = (1 << 2),
     };
 
+    enum {
+        kComparisonStartsWith = 0,
+        kComparisonContains = 1,
+    };
+
 private:
     size_t m_completeTypes;
+    int m_comparisonMethod;
 
 public:
     WordCompletionSettings();
@@ -25,6 +31,10 @@ public:
 
     void SetCompleteTypes(size_t flags) { this->m_completeTypes = flags; }
     size_t GetCompleteTypes() const { return m_completeTypes; }
+
+    void SetComparisonMethod(int comparisonMethod) { this->m_comparisonMethod = comparisonMethod; }
+    int GetComparisonMethod() const { return m_comparisonMethod; }
+    
     WordCompletionSettings& Load();
     WordCompletionSettings& Save();
 };

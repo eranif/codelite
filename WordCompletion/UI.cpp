@@ -46,6 +46,13 @@ WordCompletionSettingsBaseDlg::WordCompletionSettingsBaseDlg(wxWindow* parent, w
     m_pgPropTypes = m_pgMgr->Append(  new wxFlagsProperty( _("Tokens Type"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
     m_pgPropTypes->SetHelpString(_("CodeLite will suggest word completion for the selected tokens types"));
     
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("Starts With"));
+    m_pgMgrArr.Add(_("Contains"));
+    m_pgPropComparisonMethod = m_pgMgr->Append(  new wxEnumProperty( _("Comparison Method"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropComparisonMethod->SetHelpString(_("Select the word completion comparison method:\n\"Starts With\" - suggest all words that starts with the partial word that the user typed\n\"Contains\" - suggest all words that contains the partial word that the user typed"));
+    
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
     boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);

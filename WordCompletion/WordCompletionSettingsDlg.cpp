@@ -9,6 +9,8 @@ WordCompletionSettingsDlg::WordCompletionSettingsDlg(wxWindow* parent)
     WordCompletionSettings settings;
     size_t completeTypes = settings.Load().GetCompleteTypes();
     m_pgPropTypes->SetValueFromInt(completeTypes);
+    m_pgPropComparisonMethod->SetChoiceSelection(settings.GetComparisonMethod());
+    
     WindowAttrManager::Load(this, "WordCompletionSettingsDlg");
 }
 
@@ -20,5 +22,6 @@ void WordCompletionSettingsDlg::OnValueChanged(wxPropertyGridEvent& event)
     WordCompletionSettings settings;
     settings.Load();
     settings.SetCompleteTypes(m_pgPropTypes->GetValue().GetInteger());
+    settings.SetComparisonMethod(m_pgPropComparisonMethod->GetChoiceSelection());
     settings.Save();
 }

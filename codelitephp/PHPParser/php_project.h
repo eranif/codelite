@@ -93,8 +93,14 @@ public:
      * @brief delete folder
      * @param name (e.g. A/B/C)
      */
-    void DeleteFolder(const wxString& name);
-
+    void DeleteFolder(const wxString& name, bool notify = true);
+    
+    /**
+     * @brief delete all folders + their files from the project
+     * @param notify should this action be notified by an event?
+     */
+    void DeleteAllFolders(bool notify);
+    
     bool HasFolder(const wxString& name) const { return m_folders.count(name); }
     void SetName(const wxString& name) { this->m_name = name; }
     const PHPFolder::Map_t& GetFolders() const { return m_folders; }
@@ -107,8 +113,13 @@ public:
      * @param filespec
      * @param recursive
      */
-    void ImportDirectory(const wxString& path, const wxString& filespec, bool recursive, bool removeObsolete);
-
+    void ImportDirectory(const wxString& path, const wxString& filespec, bool recursive);
+    
+    /**
+     * @brief synch the project folders with the file system
+     */
+    void SynchWithFileSystem();
+    
     /**
      * @brief rename a file (the file stays on the same path, only its name is renamed)
      * @param filename

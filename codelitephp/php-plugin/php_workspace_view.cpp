@@ -55,6 +55,7 @@ EVT_MENU(XRCID("rename_php_workspace"), PHPWorkspaceView::OnRenameWorkspace)
 EVT_MENU(XRCID("php_project_settings"), PHPWorkspaceView::OnProjectSettings)
 EVT_MENU(XRCID("php_run_project"), PHPWorkspaceView::OnRunProject)
 EVT_MENU(XRCID("make_index"), PHPWorkspaceView::OnMakeIndexPHP)
+EVT_MENU(XRCID("php_synch_with_filesystem"), PHPWorkspaceView::OnSyncProjectWithFileSystem)
 END_EVENT_TABLE()
 
 PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
@@ -105,6 +106,7 @@ PHPWorkspaceView::~PHPWorkspaceView()
 
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 {
+    PHPImages images;
     wxTreeItemId item = event.GetItem();
     if(item.IsOk()) {
         // Ensure that the item is selected
@@ -143,7 +145,12 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_add_folder"), _("Add an existing folder..."));
                 menu.Append(XRCID("php_new_folder"), _("New folder..."));
+                menu.AppendSeparator();
                 menu.Append(XRCID("php_import_files"), _("Import files from a directory..."));
+                wxMenuItem* menuItem =
+                    new wxMenuItem(NULL, XRCID("php_synch_with_filesystem"), _("Synch project with file system..."));
+                menuItem->SetBitmap(images.Bitmap("m_bmpSync"));
+                menu.Append(menuItem);
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_run_project"), _("Run project..."));
                 menu.AppendSeparator();
@@ -234,7 +241,7 @@ void PHPWorkspaceView::CreateNewProject(PHPProject::CreateData cd)
         if(pProject) {
             // import all PHP files from the newly added project path
             pProject->ImportDirectory(
-                pProject->GetFilename().GetPath(), "*.php;*.inc;*.js;*.css;*.html;.htaccess", true, false);
+                pProject->GetFilename().GetPath(), "*.php;*.inc;*.js;*.css;*.html;.htaccess", true);
         }
     }
     // Update the UI
@@ -602,7 +609,8 @@ void PHPWorkspaceView::OnImportFiles(wxCommandEvent& e)
 
     ImportFilesDlg dlg(wxTheApp->GetTopWindow(), pProject);
     if(dlg.ShowModal() == wxID_OK) {
-        pProject->ImportDirectory(dlg.GetPath(), dlg.GetFileSpec(), dlg.GetIsRecursive(), false);
+        pProject->ImportDirectory(dlg.GetPath(), dlg.GetFileSpec(), dlg.GetIsRecursive());
+        pProject->SetImportFileSpec(dlg.GetFileSpec());
         LoadWorkspace();
     }
 }
@@ -1253,4 +1261,28 @@ void PHPWorkspaceView::DoSortItems()
         m_treeCtrlView->SortItem(m_itemsToSort.at(i));
     }
     m_itemsToSort.clear();
+}
+
+void PHPWorkspaceView::OnSyncProjectWithFileSystem(wxCommandEvent& e)
+{
+    if(::wxMessageBox(_("Selecting this action will re-create your project from the files existing on your file "
+                        "system.\n Continue?"),
+                      _("CodeLite"),
+                      wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER | wxICON_QUESTION) != wxYES) {
+        return;
+    }
+    wxTreeItemId item = DoGetSingleSelection();
+    CHECK_ITEM_RET(item);
+
+    ItemData* itemData = DoGetItemData(item);
+    CHECK_PTR_RET(itemData);
+    CHECK_COND_RET(itemData->IsProject());
+
+    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(itemData->GetProjectName());
+    CHECK_PTR_RET(pProject);
+
+    pProject->SynchWithFileSystem();
+    
+    // Reload the UI
+    CallAfter(&PHPWorkspaceView::LoadWorkspace);
 }

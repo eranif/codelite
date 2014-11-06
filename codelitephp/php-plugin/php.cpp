@@ -72,7 +72,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     // Instantiate the bitmaps, we do this so they will be populated in wxXmlResource
     // Sigleton class
-    PHPDebuggerImages images;
+    PHPImages images;
     PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
 

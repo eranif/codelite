@@ -140,17 +140,17 @@ PHPFolder::Ptr_t PHPProject::Folder(const wxString& name) const
     return pFolder;
 }
 
-void PHPProject::DeleteFolder(const wxString& name)
+void PHPProject::DeleteFolder(const wxString& name, bool notify)
 {
     if(m_folders.count(name)) {
         // a top folder remove all its children (folders + files) and notify
-        m_folders.find(name)->second->RemoveFilesRecursively(m_filename.GetPath());
+        m_folders.find(name)->second->RemoveFilesRecursively(m_filename.GetPath(), notify);
         m_folders.erase(name);
 
     } else {
         PHPFolder::Ptr_t parentFolder = GetParentFolder(name);
         CHECK_PTR_RET(parentFolder);
-        parentFolder->DeleteChildFolder(name.AfterLast('/'), m_filename.GetPath());
+        parentFolder->DeleteChildFolder(name.AfterLast('/'), m_filename.GetPath(), notify);
     }
 }
 
@@ -173,7 +173,7 @@ PHPFolder::Ptr_t PHPProject::GetParentFolder(const wxString& child_folder) const
     return pFolder;
 }
 
-void PHPProject::ImportDirectory(const wxString& path, const wxString& filespec, bool recursive, bool removeObsolete)
+void PHPProject::ImportDirectory(const wxString& path, const wxString& filespec, bool recursive)
 {
     DirTraverser traverser(filespec);
     wxDir dir(path);
@@ -191,7 +191,6 @@ void PHPProject::ImportDirectory(const wxString& path, const wxString& filespec,
         wxString projectPath = m_filename.GetPath();
         PHPFolder::Map_t cache;
         for(size_t i = 0; i < files.GetCount(); ++i) {
-
             // Normalize the virtual folder path
             wxString folder = PHPFolder::GetFolderPathFromFileFullPath(files.Item(i), projectPath);
             if(folder.IsEmpty()) {
@@ -218,22 +217,7 @@ void PHPProject::ImportDirectory(const wxString& path, const wxString& filespec,
             }
         }
     }
-    
-    if (removeObsolete) {
-        wxBusyInfo info(_("Removing obsolete files..."));
-        wxYieldIfNeeded();
-        
-        wxArrayString allFiles;
-        wxArrayString obsoletefiles;
-        GetFiles(allFiles);
-        for(size_t i=0; i<allFiles.GetCount(); ++i) {
-            if(!wxFileName::Exists(allFiles.Item(i))) {
-                obsoletefiles.Add(allFiles.Item(i));
-            }
-        }
-        // Remove the files from the project
-    }
-    
+
     Save();
 
     // Notify the plugins
@@ -257,4 +241,23 @@ bool PHPProject::RenameFile(const wxFileName& filename, const wxString& newFullN
     CHECK_PTR_RET_FALSE(pFolder);
 
     return pFolder->RenameFile(filename.GetFullPath(), newFullName);
+}
+
+void PHPProject::SynchWithFileSystem()
+{
+    // We first remove all folders from the project (and their files)
+    DeleteAllFolders(false);
+    Save();
+    
+    // Import back the files 
+    ImportDirectory(GetFilename().GetPath(), m_importFileSpec, true);
+}
+
+void PHPProject::DeleteAllFolders(bool notify)
+{
+    PHPFolder::Map_t::iterator iter = m_folders.begin();
+    for(; iter != m_folders.end(); ++iter) {
+        iter->second->RemoveFilesRecursively(m_filename.GetPath(), notify);
+    }
+    m_folders.clear();
 }

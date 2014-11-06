@@ -11,7 +11,7 @@
 
 class PHPDebugPane : public PHPDebugPaneBase
 {
-    PHPDebuggerImages m_images;
+    PHPImages m_images;
     TerminalEmulatorUI* m_console;
 
 public:

@@ -100,6 +100,19 @@ public:
     bool AddFile(const wxString& filename);
     bool RemoveFile(const wxString& filename);
     /**
+     * @brief delete list of files.
+     * Note that the files should be relative to the
+     * @param files list of files. Relative to the folder
+     * @param projectPath the project path
+     * @param filesRemoved [output] the list of files that were actually removed. The list of files removed are returned
+     * in their __full__ path
+     */
+    void RemoveFiles(const wxArrayString& files,
+                     const wxString& projectPath,
+                     wxArrayString& filesRemoved,
+                     bool removeFromFileSystem = false);
+
+    /**
      * @brief Rename file. old_filename _must_ be in full path
      * @param old_filename
      * @param new_filename new name only ( no need to for path )
@@ -139,13 +152,13 @@ public:
      * @brief delete children folder
      * @name the folder name. Must be a direct child of this folder
      */
-    void DeleteChildFolder(const wxString& name, const wxString& projectPath);
+    void DeleteChildFolder(const wxString& name, const wxString& projectPath, bool notify);
 
     /**
      * @brief delete the current folder files and all its children
      * notify about the file removal once done
      */
-    void RemoveFilesRecursively(const wxString& projectPath);
+    void RemoveFilesRecursively(const wxString& projectPath, bool notify);
 };
 
 #endif // PHP_FOLDER_H

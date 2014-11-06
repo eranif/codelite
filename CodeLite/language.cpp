@@ -1327,8 +1327,10 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
             }
 
             if(flags & PartialMatch && !tmpTagName.StartsWith(tmpName)) continue;
-
+            // Don't suggest what we have typed so far
+            if(flags & PartialMatch && tmpTagName == tmpName) continue;
             if(flags & ExactMatch && tmpTagName != tmpName) continue;
+            
         } // else no name is specified, collect all tags
 
         TagEntryPtr tag(new TagEntry());

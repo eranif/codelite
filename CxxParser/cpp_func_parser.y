@@ -57,7 +57,7 @@ extern void cl_scope_lex_clean();
 %token  LE_CLASS
 %token  LE_PUBLIC          LE_PROTECTED       LE_PRIVATE
 %token  LE_VIRTUAL         LE_FRIEND
-%token  LE_INLINE          LE_OVERLOAD
+%token  LE_INLINE          LE_OVERLOAD LE_OVERRIDE  LE_FINAL
 %token  LE_TEMPLATE		   LE_TYPENAME
 %token  LE_THROW		  	LE_CATCH
 /* ANSI C Grammar suggestions */
@@ -210,7 +210,7 @@ any_operator:
         ;
 
 /* functions */
-function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl const_spec nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec declare_throw opt_pure_virtual func_postfix
+function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl const_spec nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec declare_throw opt_pure_virtual override_final_specifier func_postfix
 					{
 						//trim down trailing '::' from scope name
 						$6.erase($6.find_last_not_of(":")+1);
@@ -236,6 +236,11 @@ declare_throw: 	/*empty*/ {$$ = "";}
 			|	LE_THROW '(' template_parameter_list ')' {$$ = $3;}
 			;
 
+override_final_specifier: /* empty */ {$$ = "";}
+    | LE_OVERRIDE
+    | LE_FINAL
+    ;
+    
 func_postfix: '{'
 				| ';'
 				;

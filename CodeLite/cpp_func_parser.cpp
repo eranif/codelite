@@ -111,55 +111,57 @@ extern void cl_scope_lex_clean();
 #define LE_FRIEND 299
 #define LE_INLINE 300
 #define LE_OVERLOAD 301
-#define LE_TEMPLATE 302
-#define LE_TYPENAME 303
-#define LE_THROW 304
-#define LE_CATCH 305
-#define LE_IDENTIFIER 306
-#define LE_STRINGliteral 307
-#define LE_FLOATINGconstant 308
-#define LE_INTEGERconstant 309
-#define LE_CHARACTERconstant 310
-#define LE_OCTALconstant 311
-#define LE_HEXconstant 312
-#define LE_POUNDPOUND 313
-#define LE_CComment 314
-#define LE_CPPComment 315
-#define LE_NAMESPACE 316
-#define LE_USING 317
-#define LE_TYPEDEFname 318
-#define LE_ARROW 319
-#define LE_ICR 320
-#define LE_DECR 321
-#define LE_LS 322
-#define LE_RS 323
-#define LE_LE 324
-#define LE_GE 325
-#define LE_EQ 326
-#define LE_NE 327
-#define LE_ANDAND 328
-#define LE_OROR 329
-#define LE_ELLIPSIS 330
-#define LE_CLCL 331
-#define LE_DOTstar 332
-#define LE_ARROWstar 333
-#define LE_MULTassign 334
-#define LE_DIVassign 335
-#define LE_MODassign 336
-#define LE_PLUSassign 337
-#define LE_MINUSassign 338
-#define LE_LSassign 339
-#define LE_RSassign 340
-#define LE_ANDassign 341
-#define LE_ERassign 342
-#define LE_ORassign 343
-#define LE_MACRO 344
-#define LE_DYNAMIC_CAST 345
-#define LE_STATIC_CAST 346
-#define LE_CONST_CAST 347
-#define LE_REINTERPRET_CAST 348
-#define LE_SIZE_T 349
-#define LE_TIME_T 350
+#define LE_OVERRIDE 302
+#define LE_FINAL 303
+#define LE_TEMPLATE 304
+#define LE_TYPENAME 305
+#define LE_THROW 306
+#define LE_CATCH 307
+#define LE_IDENTIFIER 308
+#define LE_STRINGliteral 309
+#define LE_FLOATINGconstant 310
+#define LE_INTEGERconstant 311
+#define LE_CHARACTERconstant 312
+#define LE_OCTALconstant 313
+#define LE_HEXconstant 314
+#define LE_POUNDPOUND 315
+#define LE_CComment 316
+#define LE_CPPComment 317
+#define LE_NAMESPACE 318
+#define LE_USING 319
+#define LE_TYPEDEFname 320
+#define LE_ARROW 321
+#define LE_ICR 322
+#define LE_DECR 323
+#define LE_LS 324
+#define LE_RS 325
+#define LE_LE 326
+#define LE_GE 327
+#define LE_EQ 328
+#define LE_NE 329
+#define LE_ANDAND 330
+#define LE_OROR 331
+#define LE_ELLIPSIS 332
+#define LE_CLCL 333
+#define LE_DOTstar 334
+#define LE_ARROWstar 335
+#define LE_MULTassign 336
+#define LE_DIVassign 337
+#define LE_MODassign 338
+#define LE_PLUSassign 339
+#define LE_MINUSassign 340
+#define LE_LSassign 341
+#define LE_RSassign 342
+#define LE_ANDassign 343
+#define LE_ERassign 344
+#define LE_ORassign 345
+#define LE_MACRO 346
+#define LE_DYNAMIC_CAST 347
+#define LE_STATIC_CAST 348
+#define LE_CONST_CAST 349
+#define LE_REINTERPRET_CAST 350
+#define LE_SIZE_T 351
+#define LE_TIME_T 352
 #define YYERRCODE 256
 short cl_func_lhs[] = {                                        -1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -169,9 +171,10 @@ short cl_func_lhs[] = {                                        -1,
    16,   16,   16,   16,   16,   16,   16,   16,   16,   16,
    16,   16,   16,   16,   16,   16,   16,   16,   16,   16,
    16,   16,   16,   16,   16,   16,   16,   16,   16,   16,
-   20,    4,   21,   21,   23,   23,   13,   13,   22,   22,
-   24,   25,   24,   18,   18,   12,   12,   26,   26,   27,
-   27,   14,   17,   17,   17,   19,   19,   19,
+   20,    4,   21,   21,   23,   23,   23,   24,   24,   13,
+   13,   22,   22,   25,   26,   25,   18,   18,   12,   12,
+   27,   27,   28,   28,   14,   17,   17,   17,   19,   19,
+   19,
 };
 short cl_func_len[] = {                                         2,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -181,184 +184,179 @@ short cl_func_len[] = {                                         2,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    2,    2,    1,    1,    1,
-    0,   14,    0,    4,    1,    1,    0,    2,    0,    2,
-    2,    0,    4,    0,    1,    0,    1,    0,    1,    0,
-    2,    2,    0,    1,    1,    3,    3,    6,
+    0,   15,    0,    4,    0,    1,    1,    1,    1,    0,
+    2,    0,    2,    2,    0,    4,    0,    1,    0,    1,
+    0,    1,    0,    2,    2,    0,    1,    1,    3,    3,
+    6,
 };
 short cl_func_defred[] = {                                     18,
-    0,   22,   19,    0,   94,   95,   21,    0,    0,    0,
-    0,   85,    0,   27,   28,   25,    0,    0,   87,   77,
+    0,   22,   19,    0,   97,   98,   21,    0,    0,    0,
+    0,   88,    0,   27,   28,   25,    0,    0,   90,   80,
    24,    0,   30,    0,    0,   26,    6,    1,    0,    2,
     5,    3,    0,   10,    0,    9,    0,   12,   11,   17,
-   90,   78,   77,   16,   15,    4,    8,    7,   13,   14,
-   81,    0,   97,    0,   96,    0,    0,   32,   77,    0,
-   91,   89,   92,    0,    0,    0,    0,    0,   90,    0,
-   83,   68,   69,   56,   60,   61,   52,   53,   62,   63,
+   93,   81,   80,   16,   15,    4,    8,    7,   13,   14,
+   84,    0,  100,    0,   99,    0,    0,   32,   80,    0,
+   94,   92,   95,    0,    0,    0,    0,    0,   93,    0,
+   86,   68,   69,   56,   60,   61,   52,   53,   62,   63,
    64,   65,   54,   55,   59,   57,   70,   50,   51,   48,
    40,   41,   42,   43,   44,   45,   46,   47,   49,   58,
-    0,    0,   39,   82,   38,   71,   33,   98,    0,   90,
+    0,    0,   39,   85,   38,   71,   33,  101,    0,   93,
    66,   67,    0,    0,   34,   35,    0,    0,    0,    0,
-   90,    0,    0,    0,   36,    0,   80,   75,   76,   72,
-   74,
+   93,    0,    0,    0,   36,    0,   83,   76,   77,    0,
+   74,   78,   79,   72,
 };
 short cl_func_dgoto[] = {                                       1,
    40,   41,    3,    7,    4,   16,   17,   18,   10,   57,
    58,   59,   24,   53,   67,  103,    8,   13,   25,  113,
-  120,  124,  130,   42,   60,   63,   54,
+  120,  124,  130,  134,   42,   60,   63,   54,
 };
 short cl_func_sindex[] = {                                      0,
- -236,    0,    0,   13,    0,    0,    0, -274,   -2, -232,
- -278,    0, -194,    0,    0,    0, -217,  -43,    0,    0,
-    0, -278,    0,  100, -194,    0,    0,    0, -226,    0,
-    0,    0,  177,    0,  177,    0,  -58,    0,    0,    0,
+ -247,    0,    0,   22,    0,    0,    0, -267,    7, -223,
+ -229,    0, -185,    0,    0,    0, -212,  -26,    0,    0,
+    0, -229,    0,   84, -185,    0,    0,    0, -181,    0,
+    0,    0,  142,    0,  142,    0,  -59,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0, -194,    0,   14,    0, -122,  -26,    0,    0, -233,
-    0,    0,    0,    1,  -54, -204,   65, -194,    0,  133,
+    0, -185,    0,   51,    0, -121,  -11,    0,    0, -235,
+    0,    0,    0,    1,  -58, -203,   67, -185,    0,  113,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-   71,   20,    0,    0,    0,    0,    0,    0,  -53,    0,
-    0,    0, -194, -194,    0,    0, -198,    5,   76,   62,
-    0, -194, -187,  -50,    0,   21,    0,    0,    0,    0,
-    0,
+   68,   17,    0,    0,    0,    0,    0,    0,  -56,    0,
+    0,    0, -185, -185,    0,    0, -191,    8,   81,   62,
+    0, -185, -189, -200,    0,   53,    0,    0,    0,  -52,
+    0,    0,    0,    0,
 };
 short cl_func_rindex[] = {                                      0,
-   -5,    0,    0, -141,    0,    0,    0,   80,    0, -199,
-    7,    0,  142,    0,    0,    0,    0,    0,    0,    0,
-    0,    7,    0,    0, -118,    0,    0,    0,  -27,    0,
-    0,    0,   42,    0,   59,    0,  -11,    0,    0,    0,
+   75,    0,    0, -190,    0,    0,    0, -128,    0,  -67,
+   12,    0,  122,    0,    0,    0,    0,    0,    0,    0,
+    0,   12,    0,    0, -120,    0,    0,    0,  -27,    0,
+    0,    0,  -22,    0,  -13,    0,  -15,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,  -32,    0,  -12,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,   86,    0,    0,  142,    0,    0,
+    0,  -32,    0,  -20,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,   88,    0,    0,  122,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   49,    0,
-    0,    0,   -4,  -32,    0,    0,  -38,    0,    0,  -35,
-    0,  -41,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,
+    0,    0,    0,    0,    0,    0,    0,    0,   78,    0,
+    0,    0,   -6,  -32,    0,    0,    3,    0,    0,  -46,
+    0,  -41,    0,  -51,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,
 };
 short cl_func_gindex[] = {                                      0,
-   61,   60,    0,    0,    0,  107,    0,    0,    0, -109,
-   63,   -3,  -17,   -1,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,
+   24,   59,    0,    0,    0,  110,    0,    0,    0,  -64,
+   69,   41,  -33,   -9,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
 };
-#define YYTABLESIZE 527
+#define YYTABLESIZE 494
 short cl_func_table[] = {                                      31,
-   22,   52,   31,   66,  118,  104,  114,   86,  129,   20,
-    4,   31,  126,    4,    4,   14,    4,   68,   23,    2,
-   73,   43,   73,   79,   15,   56,   90,    9,   88,   31,
-   90,   88,   44,   99,    4,   69,   45,   95,   97,   55,
-  101,   70,   93,   91,   87,   92,  100,   94,   68,   88,
-   23,   62,   20,   20,   86,   61,   86,   11,   84,   84,
-   88,  131,   89,   84,   68,   12,  121,  108,   23,   84,
-    6,    5,  128,   84,   84,   84,   84,   84,   19,    8,
-   84,   84,    8,    8,   73,    8,   90,   79,   21,   90,
-   90,  102,   90,   49,   96,   50,    7,   71,    4,    7,
-    7,  105,    7,    8,  106,  119,   84,  115,  116,  117,
-   90,  111,  112,   88,   90,  122,   93,   93,   86,  125,
-    7,   93,  123,  127,   98,   37,   90,   93,   26,  110,
-  107,   93,   93,   93,   93,   93,    0,    0,   93,   93,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,   84,
-   84,    0,    0,    0,    0,    0,   93,    0,    0,    0,
-   93,    0,    0,    0,   93,    0,    0,    8,    0,    0,
-   64,    0,    0,    0,   86,    0,    0,    0,    0,    0,
-    0,    0,    0,   65,    7,    0,    0,   86,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,   93,   93,    0,
-    0,    0,    0,    0,    0,    0,   86,   86,    0,    0,
-    0,   86,    0,    0,    0,   86,   86,   86,    0,    0,
-   86,    0,   86,   86,   86,   86,   86,    0,   86,   86,
-    0,   86,   86,   86,   86,    4,    0,   86,   86,    0,
-    0,    0,   20,   20,    0,    0,    0,   20,    0,    0,
-   88,   90,    0,   20,   86,    4,    0,   20,   20,   20,
-   20,   20,   51,   86,   20,   20,   51,   51,    4,    0,
-   88,   90,    0,    0,    0,    0,    0,    0,    0,    0,
-   72,   73,   20,   88,   90,    0,   20,    0,   82,   86,
-   20,    0,    0,    0,    0,    0,    0,   86,   86,    0,
-    0,    0,    0,    0,    8,    0,   86,   86,    0,   74,
-   75,   76,   77,   78,   79,   80,   81,   82,   83,   84,
-    0,    7,   85,   86,    8,    0,    0,   29,   29,    0,
-    0,    0,   29,   20,   20,    0,    0,    8,   29,    0,
-    0,    7,   29,   29,   29,   29,   29,   27,   28,   29,
-   29,    0,   29,    0,    7,    0,    0,    0,   30,    0,
-    0,    0,    0,   31,   32,   33,   34,   29,    0,   35,
-   36,    0,    0,    0,    0,   29,    0,    0,    0,    0,
-   27,   28,    0,    0,    0,   29,    0,    0,    0,   86,
-   86,   30,    0,    0,   86,   37,   31,   32,   33,   34,
-   86,    0,   35,   36,    0,   86,   86,   86,   86,    0,
-    0,   86,   86,    0,    0,    0,    0,    0,   29,   29,
-    0,    0,    0,    0,   27,   28,    0,    0,  109,   46,
-    0,    0,    0,    0,    0,   30,    0,   86,   38,   39,
-   31,   32,   47,   34,    0,    0,   48,   36,    0,    0,
+   52,  104,   31,  114,   66,   89,  133,   75,    2,   56,
+    4,   31,   82,    4,    4,    8,    4,   22,    8,    8,
+   91,    8,   93,   91,    7,   70,   93,    7,    7,   31,
+    7,   55,   68,   99,    4,   23,    9,   95,   97,    8,
+  101,   91,   93,   91,   87,   92,  100,   94,    7,  118,
+   69,   68,   89,   20,   89,   23,   49,  126,   50,  108,
+   88,   73,   89,   73,   14,   43,   11,   96,   96,  121,
+  132,   75,   96,   23,   12,   15,   82,   44,   96,    6,
+    5,   45,   96,   96,   96,   96,   96,   19,   62,   96,
+   96,  102,   61,  131,   96,   21,   68,   71,    4,  115,
+  116,  128,  129,    8,  105,   91,  106,   96,  111,  112,
+   93,  125,    7,   96,  119,   93,   89,   96,   93,   93,
+  122,   93,  123,  127,   98,   73,   90,   37,  110,   29,
+   29,   26,   20,   20,   29,    0,  107,    0,    0,   93,
+   29,    0,    0,    0,   29,   29,   29,   29,   29,    0,
+    0,   29,   29,  117,    0,    0,    0,    0,    0,    0,
+   96,   96,    0,    0,    0,    0,    0,    0,    0,   29,
+    0,   64,   89,    0,    0,    0,    0,    0,    0,   29,
+    0,    0,    0,    0,    0,    0,   65,   89,    0,    0,
+   87,   87,    0,    0,    0,   87,    0,    0,    0,    0,
+    0,   87,    0,    0,    0,   87,   87,   87,   87,   87,
+    0,    0,   87,   87,    0,    0,   89,   89,    0,    0,
+    0,   89,   29,   29,    0,   89,   89,   89,    0,    0,
+   89,    0,   89,   89,   89,   89,   89,    0,   89,   89,
+   87,   89,   89,   89,   89,    4,    0,   89,   89,    0,
+    8,    0,   91,    0,    0,   82,   82,   93,    0,    7,
+    0,    0,    0,    0,    0,    4,   89,    0,    0,    0,
+    8,    0,   91,   51,   51,   89,   51,   93,    0,    7,
+    4,    0,    0,   87,   87,    8,    0,   91,    0,    0,
+   72,   73,   93,    0,    7,   89,   89,    0,    0,   89,
+   85,    0,    0,    0,   73,   73,    0,    0,    0,   89,
+   89,    0,    0,    0,    0,    0,    0,    0,   89,   89,
+    0,   74,   75,   76,   77,   78,   79,   80,   81,   82,
+   83,   84,   20,   20,   85,   86,    0,   20,    0,    0,
+    0,   27,   28,   20,    0,    0,   29,   20,   20,   20,
+   20,   20,   30,    0,   20,   20,    0,   31,   32,   33,
+   34,    0,    0,   35,   36,    0,    0,    0,    0,    0,
+   27,   28,   20,    0,    0,   29,    0,    0,   20,   89,
+   89,   30,   20,    0,   89,    0,   31,   32,   33,   34,
+   89,   37,   35,   36,    0,   89,   89,   89,   89,   27,
+   28,   89,   89,    0,   46,    0,    0,    0,    0,    0,
+   30,    0,    0,    0,    0,   31,   32,   47,   34,    0,
+  109,   48,   36,    0,    0,   20,   20,    0,    0,   89,
+    0,    0,    0,    0,   38,   39,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,   38,   39,    0,    0,    0,    0,    0,    0,    0,
-   86,   86,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,   38,   39,    0,    0,    0,    0,    0,
+    0,    0,   89,   89,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,   38,   39,
+    0,    0,   38,   39,
 };
 short cl_func_check[] = {                                      41,
-   44,   60,   44,  126,  114,   60,   60,  126,   59,   13,
-   38,   44,  122,   41,   42,  294,   44,   44,   62,  256,
-   59,   25,   61,   59,  303,   43,   38,  302,   41,   62,
-   42,   44,  259,   33,   62,   62,  263,   37,   38,   41,
-   40,   59,   42,   43,   44,   45,   46,   47,   44,   62,
-   44,   38,   58,   59,   59,   42,   61,   60,  258,  259,
-   60,   41,   62,  263,   44,  298,   62,   69,   62,  269,
-   58,   59,  123,  273,  274,  275,  276,  277,  273,   38,
-  280,  281,   41,   42,  123,   44,   38,  123,  306,   41,
-   42,   91,   44,   33,   94,   35,   38,  331,  126,   41,
-   42,  306,   44,   62,   40,  304,  306,  109,  110,  113,
-   62,   41,   93,  126,  126,   40,  258,  259,  123,  121,
-   62,  263,   61,  311,  124,   40,  126,  269,   22,   70,
-   68,  273,  274,  275,  276,  277,   -1,   -1,  280,  281,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  349,
-  350,   -1,   -1,   -1,   -1,   -1,  298,   -1,   -1,   -1,
-  302,   -1,   -1,   -1,  306,   -1,   -1,  126,   -1,   -1,
-  293,   -1,   -1,   -1,  293,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,  306,  126,   -1,   -1,  306,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,  349,  350,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,  258,  259,   -1,   -1,
-   -1,  263,   -1,   -1,   -1,  258,  259,  269,   -1,   -1,
+   60,   60,   44,   60,  126,  126,   59,   59,  256,   43,
+   38,   44,   59,   41,   42,   38,   44,   44,   41,   42,
+   41,   44,   38,   44,   38,   59,   42,   41,   42,   62,
+   44,   41,   44,   33,   62,   62,  304,   37,   38,   62,
+   40,   62,   42,   43,   44,   45,   46,   47,   62,  114,
+   62,   44,   59,   13,   61,   44,   33,  122,   35,   69,
+   60,   59,   62,   61,  294,   25,   60,  258,  259,   62,
+  123,  123,  263,   62,  298,  305,  123,  259,  269,   58,
+   59,  263,  273,  274,  275,  276,  277,  273,   38,  280,
+  281,   91,   42,   41,   94,  308,   44,  333,  126,  109,
+  110,  302,  303,  126,  308,  126,   40,  298,   41,   93,
+  126,  121,  126,  304,  306,   38,  123,  308,   41,   42,
+   40,   44,   61,  313,  124,  123,  126,   40,   70,  258,
+  259,   22,   58,   59,  263,   -1,   68,   -1,   -1,   62,
+  269,   -1,   -1,   -1,  273,  274,  275,  276,  277,   -1,
+   -1,  280,  281,  113,   -1,   -1,   -1,   -1,   -1,   -1,
+  351,  352,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  298,
+   -1,  293,  293,   -1,   -1,   -1,   -1,   -1,   -1,  308,
+   -1,   -1,   -1,   -1,   -1,   -1,  308,  308,   -1,   -1,
+  258,  259,   -1,   -1,   -1,  263,   -1,   -1,   -1,   -1,
+   -1,  269,   -1,   -1,   -1,  273,  274,  275,  276,  277,
+   -1,   -1,  280,  281,   -1,   -1,  258,  259,   -1,   -1,
+   -1,  263,  351,  352,   -1,  258,  259,  269,   -1,   -1,
   263,   -1,  274,  275,  276,  277,  269,   -1,  280,  281,
-   -1,  274,  275,  276,  277,  273,   -1,  280,  281,   -1,
-   -1,   -1,  258,  259,   -1,   -1,   -1,  263,   -1,   -1,
-  273,  273,   -1,  269,  306,  293,   -1,  273,  274,  275,
-  276,  277,  331,  306,  280,  281,  331,  331,  306,   -1,
-  293,  293,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-  290,  291,  298,  306,  306,   -1,  302,   -1,  331,  304,
-  306,   -1,   -1,   -1,   -1,   -1,   -1,  349,  350,   -1,
-   -1,   -1,   -1,   -1,  273,   -1,  349,  350,   -1,  319,
-  320,  321,  322,  323,  324,  325,  326,  327,  328,  329,
-   -1,  273,  332,  333,  293,   -1,   -1,  258,  259,   -1,
-   -1,   -1,  263,  349,  350,   -1,   -1,  306,  269,   -1,
-   -1,  293,  273,  274,  275,  276,  277,  258,  259,  280,
-  281,   -1,  263,   -1,  306,   -1,   -1,   -1,  269,   -1,
-   -1,   -1,   -1,  274,  275,  276,  277,  298,   -1,  280,
-  281,   -1,   -1,   -1,   -1,  306,   -1,   -1,   -1,   -1,
-  258,  259,   -1,   -1,   -1,  263,   -1,   -1,   -1,  258,
-  259,  269,   -1,   -1,  263,  306,  274,  275,  276,  277,
-  269,   -1,  280,  281,   -1,  274,  275,  276,  277,   -1,
-   -1,  280,  281,   -1,   -1,   -1,   -1,   -1,  349,  350,
-   -1,   -1,   -1,   -1,  258,  259,   -1,   -1,  306,  263,
-   -1,   -1,   -1,   -1,   -1,  269,   -1,  306,  349,  350,
-  274,  275,  276,  277,   -1,   -1,  280,  281,   -1,   -1,
+  308,  274,  275,  276,  277,  273,   -1,  280,  281,   -1,
+  273,   -1,  273,   -1,   -1,  302,  303,  273,   -1,  273,
+   -1,   -1,   -1,   -1,   -1,  293,  308,   -1,   -1,   -1,
+  293,   -1,  293,  333,  333,  308,  333,  293,   -1,  293,
+  308,   -1,   -1,  351,  352,  308,   -1,  308,   -1,   -1,
+  290,  291,  308,   -1,  308,  302,  303,   -1,   -1,  306,
+  333,   -1,   -1,   -1,  302,  303,   -1,   -1,   -1,  351,
+  352,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  351,  352,
+   -1,  321,  322,  323,  324,  325,  326,  327,  328,  329,
+  330,  331,  258,  259,  334,  335,   -1,  263,   -1,   -1,
+   -1,  258,  259,  269,   -1,   -1,  263,  273,  274,  275,
+  276,  277,  269,   -1,  280,  281,   -1,  274,  275,  276,
+  277,   -1,   -1,  280,  281,   -1,   -1,   -1,   -1,   -1,
+  258,  259,  298,   -1,   -1,  263,   -1,   -1,  304,  258,
+  259,  269,  308,   -1,  263,   -1,  274,  275,  276,  277,
+  269,  308,  280,  281,   -1,  274,  275,  276,  277,  258,
+  259,  280,  281,   -1,  263,   -1,   -1,   -1,   -1,   -1,
+  269,   -1,   -1,   -1,   -1,  274,  275,  276,  277,   -1,
+  308,  280,  281,   -1,   -1,  351,  352,   -1,   -1,  308,
+   -1,   -1,   -1,   -1,  351,  352,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,  349,  350,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-  349,  350,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,  351,  352,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,  351,  352,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,  349,  350,
+   -1,   -1,  351,  352,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
 #define YYDEBUG 1
 #endif
-#define YYMAXTOKEN 350
+#define YYMAXTOKEN 352
 #if YYDEBUG
 char *cl_func_name[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -375,15 +373,16 @@ char *cl_func_name[] = {
 "LE_CONTINUE","LE_FOR","LE_SIGNED","LE_VOID","LE_DEFAULT","LE_GOTO","LE_SIZEOF",
 "LE_VOLATILE","LE_DO","LE_IF","LE_STATIC","LE_WHILE","LE_NEW","LE_DELETE",
 "LE_THIS","LE_OPERATOR","LE_CLASS","LE_PUBLIC","LE_PROTECTED","LE_PRIVATE",
-"LE_VIRTUAL","LE_FRIEND","LE_INLINE","LE_OVERLOAD","LE_TEMPLATE","LE_TYPENAME",
-"LE_THROW","LE_CATCH","LE_IDENTIFIER","LE_STRINGliteral","LE_FLOATINGconstant",
-"LE_INTEGERconstant","LE_CHARACTERconstant","LE_OCTALconstant","LE_HEXconstant",
-"LE_POUNDPOUND","LE_CComment","LE_CPPComment","LE_NAMESPACE","LE_USING",
-"LE_TYPEDEFname","LE_ARROW","LE_ICR","LE_DECR","LE_LS","LE_RS","LE_LE","LE_GE",
-"LE_EQ","LE_NE","LE_ANDAND","LE_OROR","LE_ELLIPSIS","LE_CLCL","LE_DOTstar",
-"LE_ARROWstar","LE_MULTassign","LE_DIVassign","LE_MODassign","LE_PLUSassign",
-"LE_MINUSassign","LE_LSassign","LE_RSassign","LE_ANDassign","LE_ERassign",
-"LE_ORassign","LE_MACRO","LE_DYNAMIC_CAST","LE_STATIC_CAST","LE_CONST_CAST",
+"LE_VIRTUAL","LE_FRIEND","LE_INLINE","LE_OVERLOAD","LE_OVERRIDE","LE_FINAL",
+"LE_TEMPLATE","LE_TYPENAME","LE_THROW","LE_CATCH","LE_IDENTIFIER",
+"LE_STRINGliteral","LE_FLOATINGconstant","LE_INTEGERconstant",
+"LE_CHARACTERconstant","LE_OCTALconstant","LE_HEXconstant","LE_POUNDPOUND",
+"LE_CComment","LE_CPPComment","LE_NAMESPACE","LE_USING","LE_TYPEDEFname",
+"LE_ARROW","LE_ICR","LE_DECR","LE_LS","LE_RS","LE_LE","LE_GE","LE_EQ","LE_NE",
+"LE_ANDAND","LE_OROR","LE_ELLIPSIS","LE_CLCL","LE_DOTstar","LE_ARROWstar",
+"LE_MULTassign","LE_DIVassign","LE_MODassign","LE_PLUSassign","LE_MINUSassign",
+"LE_LSassign","LE_RSassign","LE_ANDassign","LE_ERassign","LE_ORassign",
+"LE_MACRO","LE_DYNAMIC_CAST","LE_STATIC_CAST","LE_CONST_CAST",
 "LE_REINTERPRET_CAST","LE_SIZE_T","LE_TIME_T",
 };
 char *cl_func_rule[] = {
@@ -459,9 +458,12 @@ char *cl_func_rule[] = {
 "any_operator : LE_DELETE",
 "any_operator : ','",
 "$$2 :",
-"function_decl : stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl const_spec nested_scope_specifier func_name '(' $$2 const_spec declare_throw opt_pure_virtual func_postfix",
+"function_decl : stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl const_spec nested_scope_specifier func_name '(' $$2 const_spec declare_throw opt_pure_virtual override_final_specifier func_postfix",
 "declare_throw :",
 "declare_throw : LE_THROW '(' template_parameter_list ')'",
+"override_final_specifier :",
+"override_final_specifier : LE_OVERRIDE",
+"override_final_specifier : LE_FINAL",
 "func_postfix : '{'",
 "func_postfix : ';'",
 "nested_scope_specifier :",
@@ -873,17 +875,17 @@ break;
 case 72:
 {
 						/*trim down trailing '::' from scope name*/
-						yyvsp[-8].erase(yyvsp[-8].find_last_not_of(":")+1);
-						curr_func.m_isVirtual = yyvsp[-11].find("virtual") != std::string::npos;
-						curr_func.m_isPureVirtual = yyvsp[-1].find("=") != std::string::npos;
-						curr_func.m_isConst = yyvsp[-3].find("const") != std::string::npos;
-						curr_func.m_name = yyvsp[-6];
-						curr_func.m_scope = yyvsp[-7];
-						curr_func.m_retrunValusConst = yyvsp[-10];
+						yyvsp[-9].erase(yyvsp[-9].find_last_not_of(":")+1);
+						curr_func.m_isVirtual = yyvsp[-12].find("virtual") != std::string::npos;
+						curr_func.m_isPureVirtual = yyvsp[-2].find("=") != std::string::npos;
+						curr_func.m_isConst = yyvsp[-4].find("const") != std::string::npos;
+						curr_func.m_name = yyvsp[-7];
+						curr_func.m_scope = yyvsp[-8];
+						curr_func.m_retrunValusConst = yyvsp[-11];
 						curr_func.m_lineno = cl_scope_lineno;
-						curr_func.m_throws = yyvsp[-2];
-                        curr_func.m_returnValue.m_rightSideConst = yyvsp[-8];
-                        curr_func.m_returnValue.m_isConst = !yyvsp[-10].empty();
+						curr_func.m_throws = yyvsp[-3];
+                        curr_func.m_returnValue.m_rightSideConst = yyvsp[-9];
+                        curr_func.m_returnValue.m_isConst = !yyvsp[-11].empty();
 						if(g_funcs)
 						{
 							g_funcs->push_back(curr_func);
@@ -897,64 +899,67 @@ break;
 case 74:
 {yyval = yyvsp[-1];}
 break;
-case 77:
-{yyval = "";}
-break;
-case 78:
-{	yyval = yyvsp[-1] + yyvsp[0];}
-break;
-case 79:
+case 75:
 {yyval = "";}
 break;
 case 80:
-{yyval = yyvsp[-1] + yyvsp[0];}
-break;
-case 81:
-{yyval = yyvsp[-1]+ yyvsp[0];}
-break;
-case 82:
-{func_consumeTemplateDecl();}
-break;
-case 83:
-{yyval = yyvsp[-3] + yyvsp[0];}
-break;
-case 84:
-{yyval = ""; }
-break;
-case 85:
-{ yyval = yyvsp[0]; }
-break;
-case 86:
-{yyval = ""; }
-break;
-case 87:
-{ yyval = yyvsp[0]; }
-break;
-case 88:
-{yyval = ""; }
-break;
-case 89:
-{ yyval = yyvsp[0]; }
-break;
-case 90:
-{yyval = ""; }
-break;
-case 91:
-{yyval = yyvsp[-1] + yyvsp[0];}
-break;
-case 92:
-{ yyval = yyvsp[-1] + yyvsp[0]; }
-break;
-case 93:
 {yyval = "";}
 break;
+case 81:
+{	yyval = yyvsp[-1] + yyvsp[0];}
+break;
+case 82:
+{yyval = "";}
+break;
+case 83:
+{yyval = yyvsp[-1] + yyvsp[0];}
+break;
+case 84:
+{yyval = yyvsp[-1]+ yyvsp[0];}
+break;
+case 85:
+{func_consumeTemplateDecl();}
+break;
+case 86:
+{yyval = yyvsp[-3] + yyvsp[0];}
+break;
+case 87:
+{yyval = ""; }
+break;
+case 88:
+{ yyval = yyvsp[0]; }
+break;
+case 89:
+{yyval = ""; }
+break;
+case 90:
+{ yyval = yyvsp[0]; }
+break;
+case 91:
+{yyval = ""; }
+break;
+case 92:
+{ yyval = yyvsp[0]; }
+break;
+case 93:
+{yyval = ""; }
+break;
 case 94:
-{ yyval = ";";}
+{yyval = yyvsp[-1] + yyvsp[0];}
 break;
 case 95:
-{ yyval = ":";}
+{ yyval = yyvsp[-1] + yyvsp[0]; }
 break;
 case 96:
+{yyval = "";}
+break;
+case 97:
+{ yyval = ";";}
+break;
+case 98:
+{ yyval = ":";}
+break;
+case 99:
 {
 								yyvsp[-2].erase(yyvsp[-2].find_last_not_of(":")+1);
 								curr_func.m_returnValue.m_type = yyvsp[-1];
@@ -964,7 +969,7 @@ case 96:
 								yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];
 							}
 break;
-case 97:
+case 100:
 {
 								yyvsp[-2].erase(yyvsp[-2].find_last_not_of(":")+1);
 								curr_func.m_returnValue.m_type = yyvsp[-1];
@@ -974,7 +979,7 @@ case 97:
 								yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0]  ;
 							}
 break;
-case 98:
+case 101:
 {
 								yyvsp[-5].erase(yyvsp[-5].find_last_not_of(":")+1);
 								curr_func.m_returnValue.m_type = yyvsp[-4];

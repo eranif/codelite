@@ -68,7 +68,7 @@ extern void cl_scope_lex_clean();
 %token  LE_CLASS
 %token  LE_PUBLIC          LE_PROTECTED       LE_PRIVATE
 %token  LE_VIRTUAL         LE_FRIEND
-%token  LE_INLINE          LE_OVERLOAD
+%token  LE_INLINE          LE_OVERLOAD LE_OVERRIDE  LE_FINAL
 %token  LE_TEMPLATE           LE_TYPENAME
 %token  LE_THROW              LE_CATCH
 /* ANSI C Grammar suggestions */

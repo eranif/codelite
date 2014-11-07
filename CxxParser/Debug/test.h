@@ -1,1 +1,1 @@
-long double aa;
+void foo() const final;

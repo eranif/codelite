@@ -166,6 +166,8 @@ inline              {CPP_KEYWORD_RETURN(LE_INLINE);}
 new                 {CPP_KEYWORD_RETURN(LE_NEW);}
 operator            {CPP_KEYWORD_RETURN(LE_OPERATOR);}
 overload            {CPP_KEYWORD_RETURN(LE_OVERLOAD);}
+override            {CPP_KEYWORD_RETURN(LE_OVERRIDE);}
+final               {CPP_KEYWORD_RETURN(LE_FINAL);}
 protected           {CPP_KEYWORD_RETURN(LE_PROTECTED);}
 private             {CPP_KEYWORD_RETURN(LE_PRIVATE);}
 public              {CPP_KEYWORD_RETURN(LE_PUBLIC);}

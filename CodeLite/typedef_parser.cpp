@@ -120,55 +120,57 @@ extern void  setUseIgnoreMacros(bool ignore);
 #define LE_FRIEND 299
 #define LE_INLINE 300
 #define LE_OVERLOAD 301
-#define LE_TEMPLATE 302
-#define LE_TYPENAME 303
-#define LE_THROW 304
-#define LE_CATCH 305
-#define LE_IDENTIFIER 306
-#define LE_STRINGliteral 307
-#define LE_FLOATINGconstant 308
-#define LE_INTEGERconstant 309
-#define LE_CHARACTERconstant 310
-#define LE_OCTALconstant 311
-#define LE_HEXconstant 312
-#define LE_POUNDPOUND 313
-#define LE_CComment 314
-#define LE_CPPComment 315
-#define LE_NAMESPACE 316
-#define LE_USING 317
-#define LE_TYPEDEFname 318
-#define LE_ARROW 319
-#define LE_ICR 320
-#define LE_DECR 321
-#define LE_LS 322
-#define LE_RS 323
-#define LE_LE 324
-#define LE_GE 325
-#define LE_EQ 326
-#define LE_NE 327
-#define LE_ANDAND 328
-#define LE_OROR 329
-#define LE_ELLIPSIS 330
-#define LE_CLCL 331
-#define LE_DOTstar 332
-#define LE_ARROWstar 333
-#define LE_MULTassign 334
-#define LE_DIVassign 335
-#define LE_MODassign 336
-#define LE_PLUSassign 337
-#define LE_MINUSassign 338
-#define LE_LSassign 339
-#define LE_RSassign 340
-#define LE_ANDassign 341
-#define LE_ERassign 342
-#define LE_ORassign 343
-#define LE_MACRO 344
-#define LE_DYNAMIC_CAST 345
-#define LE_STATIC_CAST 346
-#define LE_CONST_CAST 347
-#define LE_REINTERPRET_CAST 348
-#define LE_SIZE_T 349
-#define LE_TIME_T 350
+#define LE_OVERRIDE 302
+#define LE_FINAL 303
+#define LE_TEMPLATE 304
+#define LE_TYPENAME 305
+#define LE_THROW 306
+#define LE_CATCH 307
+#define LE_IDENTIFIER 308
+#define LE_STRINGliteral 309
+#define LE_FLOATINGconstant 310
+#define LE_INTEGERconstant 311
+#define LE_CHARACTERconstant 312
+#define LE_OCTALconstant 313
+#define LE_HEXconstant 314
+#define LE_POUNDPOUND 315
+#define LE_CComment 316
+#define LE_CPPComment 317
+#define LE_NAMESPACE 318
+#define LE_USING 319
+#define LE_TYPEDEFname 320
+#define LE_ARROW 321
+#define LE_ICR 322
+#define LE_DECR 323
+#define LE_LS 324
+#define LE_RS 325
+#define LE_LE 326
+#define LE_GE 327
+#define LE_EQ 328
+#define LE_NE 329
+#define LE_ANDAND 330
+#define LE_OROR 331
+#define LE_ELLIPSIS 332
+#define LE_CLCL 333
+#define LE_DOTstar 334
+#define LE_ARROWstar 335
+#define LE_MULTassign 336
+#define LE_DIVassign 337
+#define LE_MODassign 338
+#define LE_PLUSassign 339
+#define LE_MINUSassign 340
+#define LE_LSassign 341
+#define LE_RSassign 342
+#define LE_ANDassign 343
+#define LE_ERassign 344
+#define LE_ORassign 345
+#define LE_MACRO 346
+#define LE_DYNAMIC_CAST 347
+#define LE_STATIC_CAST 348
+#define LE_CONST_CAST 349
+#define LE_REINTERPRET_CAST 350
+#define LE_SIZE_T 351
+#define LE_TIME_T 352
 #define YYERRCODE 256
 short cl_typedef_lhs[] = {                                        -1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -201,97 +203,99 @@ short cl_typedef_dgoto[] = {                                       1,
    60,   61,   62,   37,   53,   43,   23,   64,
 };
 short cl_typedef_sindex[] = {                                      0,
- -217,    0,    0,  -50,    0,    0,    0,    0,    0, -226,
- -248,   29, -224, -250,    0,  -98,   17,    0, -250,    0,
-   10,    0,   42,    0,    0,    0, -177,    0,    0,    0,
-  -89,    0,  -89,    0,    0,    0, -227,    0,   26,    0,
-    0,    0,    0, -218,    0,    0,    0,    0,    0,    0,
-    0,  -59,    0,    0,  -60,    0, -224, -224,    0,  -12,
-    0,    0,   -1,    0, -224, -242, -149, -242,    0,    0,
-  -58,    0, -224,    0,    0,    4, -242,    0,
+ -231,    0,    0,  -50,    0,    0,    0,    0,    0, -235,
+ -249,   42, -234, -266,    0, -119,    6,    0, -266,    0,
+   -4,    0,   52,    0,    0,    0, -140,    0,    0,    0,
+  -99,    0,  -99,    0,    0,    0, -242,    0,   10,    0,
+    0,    0,    0, -227,    0,    0,    0,    0,    0,    0,
+    0,  -59,    0,    0,  -60,    0, -234, -234,    0,  -17,
+    0,    0,  -12,    0, -234, -244, -163, -244,    0,    0,
+  -58,    0, -234,    0,    0,   -3, -244,    0,
 };
 short cl_typedef_rindex[] = {                                      0,
-  -55,    0,    0, -178,    0,    0,    0,    0,    0,    0,
- -223, -182, -223,    0,    0, -215, -158,    0,    0,    0,
+  -55,    0,    0, -161,    0,    0,    0,    0,    0,    0,
+ -223, -198, -223,    0,    0, -187, -172,    0,    0,    0,
     0,    0,  -28,    0,    0,    0,  -32,    0,    0,    0,
   -31,    0,  -24,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,  -23,    0,    0,  -21,    0,  -39,  -39,    0,    0,
-    0,    0,    0,    0, -125,  -16,    0,    0,    0,    0,
-    3,    0,  -39,    0,    0,    0,    3,    0,
+    0,    0,    0,    0, -143,  -16,    0,    0,    0,    0,
+    5,    0,  -39,    0,    0,    0,    5,    0,
 };
 short cl_typedef_gindex[] = {                                      0,
-   31,   30,    0,    0,    0,    0,   83,   84,    0,  -44,
-  -29,   39,   61,   -2,    0,    0,    0,    0,
+   41,   55,    0,    0,    0,    0,  111,  106,    0,   21,
+  -29,   62,   88,    2,    0,    0,    0,    0,
 };
-#define YYTABLESIZE 290
+#define YYTABLESIZE 292
 short cl_typedef_table[] = {                                      58,
    57,   73,   18,   18,   25,    4,    8,    8,    5,    4,
     8,    4,    8,    7,   51,   40,   55,    7,   51,    7,
-   55,   52,   25,   44,   12,   52,   74,   75,   63,    4,
-    8,   65,   78,   40,   35,   35,   35,    7,    2,   35,
-   42,   11,   65,   76,   42,   35,   42,   65,   12,   66,
-   35,   35,   35,   35,   13,   20,   35,   35,   38,   67,
-   68,   50,   59,   51,   42,   77,   18,   18,   40,   18,
-   17,   16,    6,   16,    7,   36,   36,   36,   52,   42,
-   36,   45,   35,   41,   54,   46,   36,   55,   70,   45,
-   33,   36,   36,   36,   36,   19,   72,   36,   36,   37,
-   37,   37,   39,   69,   37,    0,    0,    0,   24,   25,
-   37,    0,    0,   27,    0,   37,   37,   37,   37,   28,
-    0,   37,   37,   36,   29,   30,   31,   32,    0,    0,
-   33,   34,   35,   35,    0,    0,    0,   35,    0,    0,
-    0,    0,    0,   35,    0,    0,    0,   37,   35,   35,
-   35,   35,    0,    0,   35,   35,   71,    0,    0,   24,
-   25,   26,    0,    0,   27,    0,    0,    0,   24,   25,
-   28,    0,    0,   47,    0,   29,   30,   31,   32,   28,
-   35,   33,   34,    0,   29,   30,   48,   32,    0,    0,
+   55,   52,   25,   12,    2,   52,   65,   44,   63,    4,
+    8,   65,   11,   40,   35,   35,   35,    7,   12,   35,
+   65,   20,   42,   76,   66,   35,   42,   38,   42,   68,
+   35,   35,   35,   35,   40,   13,   35,   35,   77,   36,
+   36,   36,   59,   67,   36,   52,   42,   18,   54,   18,
+   36,   50,    6,   51,    7,   36,   36,   36,   36,   18,
+   55,   36,   36,   17,   35,   37,   37,   37,   70,   42,
+   37,   74,   75,   41,   24,   25,   37,   78,   16,   27,
+   16,   37,   37,   37,   37,   28,   45,   37,   37,   36,
+   29,   30,   31,   32,   35,   35,   33,   34,   45,   35,
+   33,   72,   46,   19,   39,   35,   69,    0,    0,    0,
+   35,   35,   35,   35,    0,   37,   35,   35,   24,   25,
+   26,    0,    0,   27,   71,    0,    0,    0,    0,   28,
+    0,    0,    0,    0,   29,   30,   31,   32,   24,   25,
+   33,   34,    0,   47,   35,    0,    0,    0,    0,   28,
+    0,    0,    0,    0,   29,   30,   48,   32,    0,    0,
    49,   34,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,   18,    0,    0,    0,    0,    0,   35,   35,
     0,    0,    0,   35,    0,    0,    0,    0,    0,   35,
     0,    0,    0,    0,   35,   35,   35,   35,    0,    0,
    35,   35,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,   35,    0,    0,    0,
-   56,   56,   56,    4,    8,    0,    0,   40,    0,    0,
-    0,    7,   51,    0,   55,    0,    0,    0,    0,   52,
+    0,    0,    0,    0,    0,    0,    0,    0,   35,    0,
+    0,    0,   56,   56,   56,    4,    8,    0,    0,   40,
+    0,    0,    0,    7,   51,    0,   55,    0,    0,    0,
+    0,   52,
 };
 short cl_typedef_check[] = {                                      60,
    60,   60,   58,   59,   44,   38,   38,   58,   59,   42,
    42,   44,   44,   38,   38,   44,   38,   42,   42,   44,
-   42,   38,   62,   26,  273,   42,   71,   72,   58,   62,
-   62,   44,   77,   62,  258,  259,  260,   62,  256,  263,
-   38,  268,   44,   73,   42,  269,   44,   44,  273,   62,
-  274,  275,  276,  277,  303,  306,  280,  281,   42,   62,
-   62,   31,  123,   33,   62,   62,   38,  123,   59,  125,
-   42,   11,  123,   13,  125,  258,  259,  260,  306,   38,
-  263,  259,  306,   42,   59,  263,  269,  306,  331,  268,
-  306,  274,  275,  276,  277,   13,   67,  280,  281,  258,
-  259,  260,   19,   65,  263,   -1,   -1,   -1,  258,  259,
-  269,   -1,   -1,  263,   -1,  274,  275,  276,  277,  269,
-   -1,  280,  281,  306,  274,  275,  276,  277,   -1,   -1,
-  280,  281,  258,  259,   -1,   -1,   -1,  263,   -1,   -1,
-   -1,   -1,   -1,  269,   -1,   -1,   -1,  306,  274,  275,
-  276,  277,   -1,   -1,  280,  281,  306,   -1,   -1,  258,
-  259,  260,   -1,   -1,  263,   -1,   -1,   -1,  258,  259,
-  269,   -1,   -1,  263,   -1,  274,  275,  276,  277,  269,
-  306,  280,  281,   -1,  274,  275,  276,  277,   -1,   -1,
+   42,   38,   62,  273,  256,   42,   44,   26,   58,   62,
+   62,   44,  268,   62,  258,  259,  260,   62,  273,  263,
+   44,  308,   38,   73,   62,  269,   42,   42,   44,   62,
+  274,  275,  276,  277,   59,  305,  280,  281,   62,  258,
+  259,  260,  123,   62,  263,  308,   62,  123,   59,  125,
+  269,   31,  123,   33,  125,  274,  275,  276,  277,   38,
+  308,  280,  281,   42,  308,  258,  259,  260,  333,   38,
+  263,   71,   72,   42,  258,  259,  269,   77,   11,  263,
+   13,  274,  275,  276,  277,  269,  268,  280,  281,  308,
+  274,  275,  276,  277,  258,  259,  280,  281,  259,  263,
+  308,   67,  263,   13,   19,  269,   65,   -1,   -1,   -1,
+  274,  275,  276,  277,   -1,  308,  280,  281,  258,  259,
+  260,   -1,   -1,  263,  308,   -1,   -1,   -1,   -1,  269,
+   -1,   -1,   -1,   -1,  274,  275,  276,  277,  258,  259,
+  280,  281,   -1,  263,  308,   -1,   -1,   -1,   -1,  269,
+   -1,   -1,   -1,   -1,  274,  275,  276,  277,   -1,   -1,
   280,  281,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,  268,   -1,   -1,   -1,   -1,   -1,  258,  259,
    -1,   -1,   -1,  263,   -1,   -1,   -1,   -1,   -1,  269,
    -1,   -1,   -1,   -1,  274,  275,  276,  277,   -1,   -1,
   280,  281,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,  306,   -1,   -1,   -1,
-  331,  331,  331,  306,  306,   -1,   -1,  306,   -1,   -1,
-   -1,  306,  306,   -1,  306,   -1,   -1,   -1,   -1,  306,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  308,   -1,
+   -1,   -1,  333,  333,  333,  308,  308,   -1,   -1,  308,
+   -1,   -1,   -1,  308,  308,   -1,  308,   -1,   -1,   -1,
+   -1,  308,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
 #define YYDEBUG 1
 #endif
-#define YYMAXTOKEN 350
+#define YYMAXTOKEN 352
 #if YYDEBUG
 char *cl_typedef_name[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -308,8 +312,8 @@ char *cl_typedef_name[] = {
 "LE_DEFAULT","LE_GOTO","LE_SIZEOF","LE_VOLATILE","LE_DO","LE_IF","LE_STATIC",
 "LE_WHILE","LE_NEW","LE_DELETE","LE_THIS","LE_OPERATOR","LE_CLASS","LE_PUBLIC",
 "LE_PROTECTED","LE_PRIVATE","LE_VIRTUAL","LE_FRIEND","LE_INLINE","LE_OVERLOAD",
-"LE_TEMPLATE","LE_TYPENAME","LE_THROW","LE_CATCH","LE_IDENTIFIER",
-"LE_STRINGliteral","LE_FLOATINGconstant","LE_INTEGERconstant",
+"LE_OVERRIDE","LE_FINAL","LE_TEMPLATE","LE_TYPENAME","LE_THROW","LE_CATCH",
+"LE_IDENTIFIER","LE_STRINGliteral","LE_FLOATINGconstant","LE_INTEGERconstant",
 "LE_CHARACTERconstant","LE_OCTALconstant","LE_HEXconstant","LE_POUNDPOUND",
 "LE_CComment","LE_CPPComment","LE_NAMESPACE","LE_USING","LE_TYPEDEFname",
 "LE_ARROW","LE_ICR","LE_DECR","LE_LS","LE_RS","LE_LE","LE_GE","LE_EQ","LE_NE",

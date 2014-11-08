@@ -135,13 +135,10 @@ Name: "{userdesktop}\CodeLite "; Filename: "{app}\codelite.exe"; WorkingDir: "{a
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite"; WorkingDir: "{app}"; Filename: "{app}\codelite.exe"; Tasks: quicklaunchicon
 
 [INI]
-Filename: "{app}\registry.ini"; Section: "environment"; Key: "mingw"; String: "{code:GetMinGWInstallDir}";
-Filename: "{app}\registry.ini"; Section: "environment"; Key: "unittestpp"; String: "{code:GetUnitTestPPInstallDir}";
 
 [Registry]
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\plugins"
-Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "MinGW"; ValueData: "{code:GetMinGWInstallDir}"
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "MinGW_Version"; ValueData: "4.8.1"
 
 [UninstallDelete]
@@ -167,30 +164,6 @@ begin
   MinGW_Page.Values[0] := ExpandConstant('{sd}\MinGW-4.8.1\');
 end;
 
-function GetMinGWInstallDir(Param: String): String;
-begin
-  Result := MinGW_Page.Values[0];
-end;
-
-procedure CreateUnitTestPPPage();
-begin
-  UnitTestPP_Page := CreateInputDirPage(wpSelectComponents,
-          'Select UnitTest++ Installation Folder', 'Where should setup place UnitTest++?',
-          'UnitTest++ framework will be stored in the following folder.'#13#10#13#10 +
-          'To continue, click Next. If you would like to select a different folder, click Browse.',
-          False, 'New Folder');
-
-  // Add item (with an empty caption)
-  UnitTestPP_Page.Add('');
-
-  // Set initial value (optional)
-  UnitTestPP_Page.Values[0] := ExpandConstant('{sd}\UnitTest++-1.3\');
-end;
-
-function GetUnitTestPPInstallDir(Param: String): String;
-begin
-  Result := UnitTestPP_Page.Values[0];
-end;
 
 procedure InitializeWizard();
 begin
@@ -240,18 +213,4 @@ begin
   end;
 end;
 
-function ShouldSkipPage(PageID: Integer): Boolean;
-begin
-  // by default dont skip the page
-  Result := False;
-
-  if PageID = MinGW_Page.ID then begin
-    if IsComponentSelected('MinGW') = False then
-      Result := True;
-  end
-  if PageID = UnitTestPP_Page.ID then begin
-    if IsComponentSelected('UnitTestPP') = False then
-      Result := True;
-  end
-end;
 

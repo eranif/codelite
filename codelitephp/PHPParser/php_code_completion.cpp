@@ -533,10 +533,16 @@ void PHPCodeCompletion::Close()
 void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
 {
     e.Skip();
+    
+    // Do we have a workspace open?
     CHECK_COND_RET(PHPWorkspace::Get()->IsOpen());
     
+    // Sanity
     IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
     CHECK_PTR_RET(editor);
+    
+    // Is this a PHP editor?
+    CHECK_COND_RET(IsPHPFile(editor));
     
     // Get the text from the caret current position
     // until the end of file

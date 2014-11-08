@@ -179,7 +179,12 @@ public:
      * @param tags [output]
      */
     virtual void GetTagsByFileAndLine (const wxString &file, int line, std::vector<TagEntryPtr> &tags) = 0;
-
+    
+    /**
+     * @brief return tag entry above (or equal) line
+     */
+    virtual TagEntryPtr GetTagAboveFileAndLine(const wxString& file, int line) = 0;
+    
     /**
      * @brief return list by kind and scope
      * @param scope

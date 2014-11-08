@@ -40,6 +40,7 @@
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
 #include "language.h"
+#include "code_completion_api.h"
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 

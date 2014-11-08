@@ -249,7 +249,12 @@ public:
      * @param path Database file name
      */
     void Store(TagTreePtr tree, const wxFileName& path = wxFileName());
-
+    
+    /**
+     * @brief parse source file (from memory) and return list of tags
+     */
+    TagEntryPtrVector_t ParseBuffer(const wxString &content);
+    
     /**
      * load all symbols of fileName from the database and return them
      * to user as tree
@@ -910,6 +915,13 @@ public:
     void
     GetFunctionTipFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<TagEntryPtr>& tips);
 
+    /**
+     * @brief create doxygen comment from a tag
+     * @param tag
+     * @param keyPrefix should we use @ or \\ to prefix doxy keywords?
+     */
+    DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
+    
 protected:
     void DoFindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags);
     void DoFilterDuplicatesByTagID(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
@@ -921,7 +933,6 @@ protected:
                       std::vector<TagEntryPtr>& tags,
                       size_t flags = PartialMatch);
     void TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<wxString>& tips);
-    DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
     bool ProcessExpression(const wxFileName& filename,
                            int lineno,
                            const wxString& expr,

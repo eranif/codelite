@@ -533,7 +533,7 @@ void PHPCodeCompletion::Close()
 void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
 {
     e.Skip();
-    
+        
     // Do we have a workspace open?
     CHECK_COND_RET(PHPWorkspace::Get()->IsOpen());
     

@@ -2137,20 +2137,50 @@ void ContextCpp::AutoAddComment()
     } break;
     case wxSTC_C_COMMENT:
     case wxSTC_C_COMMENTDOC: {
+        
+        CommentConfigData data;
+        EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+        
         // Check the text typed before this char
         int startPos = rCtrl.PositionBefore(curpos);
         startPos -= 3; // for "/**"
         if(startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(textTyped == "/**") {
+            if(textTyped == "/**" && data.IsAutoInsertAfterSlash2Stars()) {
+
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry
-                clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
-                event.SetEditor(&rCtrl);
-                if(EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
-                    // Replace the selection with the tip provided
+                wxCommandEvent dummy;
+                // Parse the source file
+                wxString text = rCtrl.GetTextRange(curpos, rCtrl.GetLength());
+                TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
+                if(tags.size()) {
+                    TagEntryPtr t = tags.at(0);
+                    
+                    // get doxygen comment based on file and line
+                    DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, '@');
+                    // do we have a comment?
+                    if(dc.comment.IsEmpty()) return;
+
+                    DoMakeDoxyCommentString(dc);
+                    // To make the doxy block fit in, we need to prepend each line
+                    // with the exact whitespace of the line that starts with "/**"
+                    int lineStartPos = rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos));
+                    wxString whitespace = rCtrl.GetTextRange(lineStartPos, startPos);
+                    
+                    // Prepare the doxy block 
+                    wxArrayString lines = ::wxStringTokenize(dc.comment, "\n", wxTOKEN_STRTOK);
+                    for(size_t i = 0; i < lines.GetCount(); ++i) {
+                        if(i) { // don't add it to the first line (it already exists in the editor)
+                            lines.Item(i).Prepend(whitespace);
+                        }
+                    }
+                    
+                    // Join the lines back
+                    wxString doxyBlock = ::wxJoin(lines, '\n');
                     rCtrl.SetSelection(startPos, curpos);
-                    rCtrl.ReplaceSelection(event.GetTooltip());
+                    rCtrl.ReplaceSelection(doxyBlock);
+                    rCtrl.SetCaretAt(startPos);
                     return;
                 }
             }

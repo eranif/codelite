@@ -761,6 +761,18 @@ void TagsStorageSQLite::GetTagsByFileAndLine(const wxString& file, int line, std
     DoFetchTags(sql, tags);
 }
 
+TagEntryPtr TagsStorageSQLite::GetTagAboveFileAndLine(const wxString& file, int line)
+{
+    wxString sql;
+    sql << wxT("select * from tags where file='") << file << wxT("' and line<=") << line << wxT(" LIMIT 1");
+    TagEntryPtrVector_t tags;
+    DoFetchTags(sql, tags);
+    if(tags.size()) {
+        return tags.at(0);
+    }
+    return NULL;
+}
+
 void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope,
                                               const wxArrayString& kinds,
                                               std::vector<TagEntryPtr>& tags,

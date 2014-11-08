@@ -1,1 +1,1 @@
-void foo() const final;
+void foo(int i, char* b) const final;

@@ -336,8 +336,11 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                     }
                 } else {
                     // this local variable does not exist in the current scope
+                    // This is probably a word-completion for local variable
+                    m_filter = token.text;
                     return "";
                 }
+
             } else if(token.type == kPHP_T_IDENTIFIER) {
                 // an identifier, convert it to the fullpath
                 firstToken = sourceFile->MakeIdentifierAbsolute(token.text);

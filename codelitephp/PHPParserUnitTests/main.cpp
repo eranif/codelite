@@ -446,6 +446,44 @@ TEST_FUNC(test_define_with_namespace)
     return true;
 }
 
+// test code completion for local variables
+TEST_FUNC(test_word_completion_local_variale_1)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variale_1.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+    
+    CHECK_SIZE(matches.size(), 1);
+    return true;
+}
+
+// test code completion for local variables
+TEST_FUNC(test_word_completion_local_variable_2)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_word_completion_local_variable_2.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+    
+    CHECK_SIZE(matches.size(), 1);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
 #if 0

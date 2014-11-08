@@ -59,6 +59,8 @@
     <File Name="Tests/test_define.php"/>
     <File Name="Tests/test_define_in_namespace.php"/>
     <File Name="Tests/test_define_with_namespace.php"/>
+    <File Name="Tests/test_word_completion_local_variale_1.php"/>
+    <File Name="Tests/test_word_completion_local_variable_2.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

@@ -296,6 +296,12 @@
 // Use evt.GetWord() to get the searched string
 #define wxEVT_CC_FIND_SYMBOL 3518
 
+// Event type: clCodeCompletionEvent
+// Sent by codelite to generate documentation block for class or function
+// after the user has typed "/**" followed by ENTER
+// Use event.SetTooltip(...) to provide the doxygen block comment
+#define wxEVT_CC_GENERATE_DOXY_BLOCK 3508
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events - END

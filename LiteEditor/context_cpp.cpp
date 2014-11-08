@@ -413,7 +413,8 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
                     // But do this only if "Fold PreProcessors" switch is OFF
                     // Otherwise, these keywords will be somewhat miss-aligned
                     if(!GetCtrl().GetOptions()->GetFoldPreprocessor()) {
-                        int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
+                        int foldLevel =
+                            (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
                         if(foldLevel) {
                             rCtrl.SetLineIndentation(prevLine, ((foldLevel - 1) * rCtrl.GetIndent()));
                             rCtrl.ChooseCaretX();
@@ -2135,11 +2136,31 @@ void ContextCpp::AutoAddComment()
         }
     } break;
     case wxSTC_C_COMMENT:
-    case wxSTC_C_COMMENTDOC:
+    case wxSTC_C_COMMENTDOC: {
+        // Check the text typed before this char
+        int startPos = rCtrl.PositionBefore(curpos);
+        startPos -= 3; // for "/**"
+        if(startPos >= 0) {
+            wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
+            if(textTyped == "/**") {
+                // Let the plugins/codelite check if they can provide a doxy comment
+                // for the current entry
+                clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
+                event.SetEditor(&rCtrl);
+                if(EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
+                    // Replace the selection with the tip provided
+                    rCtrl.SetSelection(startPos, curpos);
+                    rCtrl.ReplaceSelection(event.GetTooltip());
+                    return;
+                }
+            }
+        }
+        
         if(rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
             toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line - 1)) == wxT('*') ? wxT("* ") : wxT(" * ");
         }
         break;
+    }
     }
     rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
     int insertPos = rCtrl.GetLineIndentPosition(line);
@@ -2380,7 +2401,7 @@ void ContextCpp::OnUserTypedXChars(const wxString& word)
         std::vector<TagEntryPtr> tags;
         MakeCppKeywordsTags(word, tags);
         if(tags.empty() == false) {
-            GetCtrl().ShowCompletionBox(tags,   // list of tags
+            GetCtrl().ShowCompletionBox(tags,  // list of tags
                                         word); // do not automatically insert word if there is only single choice
         }
     }

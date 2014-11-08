@@ -11,14 +11,14 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "7.0.3";
+static wxString PHP_SCHEMA_VERSION = "7.0.5";
 
 //------------------------------------------------
 // Metadata table
 //------------------------------------------------
 const static wxString CREATE_METADATA_TABLE_SQL =
     "CREATE TABLE IF NOT EXISTS METADATA_TABLE(ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
-    "SCHEMA_NAME TEXT, " // The scope type: 0 for namespace, 1 for class
+    "SCHEMA_NAME TEXT, "
     "SCHEMA_VERSION TEXT)";
 const static wxString CREATE_METADATA_TABLE_SQL_IDX1 =
     "CREATE UNIQUE INDEX IF NOT EXISTS METADATA_TABLE_IDX_1 ON METADATA_TABLE(SCHEMA_NAME)";
@@ -73,6 +73,8 @@ const static wxString CREATE_FUNCTION_TABLE_SQL_IDX3 =
     "CREATE UNIQUE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_3 ON FUNCTION_TABLE(FULLNAME)";
 const static wxString CREATE_FUNCTION_TABLE_SQL_IDX4 =
     "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_4 ON FUNCTION_TABLE(NAME)";
+const static wxString CREATE_FUNCTION_TABLE_SQL_IDX5 =
+    "CREATE INDEX IF NOT EXISTS FUNCTION_TABLE_IDX_5 ON FUNCTION_TABLE(LINE_NUMBER)";
 
 //------------------------------------------------
 // Variables table
@@ -215,6 +217,7 @@ void PHPLookupTable::CreateSchema()
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX2);
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX3);
         m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX4);
+        m_db.ExecuteUpdate(CREATE_FUNCTION_TABLE_SQL_IDX5);
 
         // variables (function args, globals class members and consts)
         m_db.ExecuteUpdate(CREATE_VARIABLES_TABLE_SQL);
@@ -1035,4 +1038,25 @@ PHPEntityBase::List_t PHPLookupTable::FindNamespaces(const wxString& fullnameSta
         CL_WARNING("PHPLookupTable::FindNamespaces: %s", e.GetMessage());
     }
     return matches;
+}
+
+PHPEntityBase::Ptr_t PHPLookupTable::FindFunctionByLineAndFile(const wxFileName& filename, int line)
+{
+    try {
+        wxString sql;
+        // Try to locate function first
+        sql << "SELECT * from FUNCTION_TABLE WHERE FILE_NAME=:FILE_NAME AND LINE_NUMBER=:LINE_NUMBER LIMIT 1";
+        wxSQLite3Statement st = m_db.PrepareStatement(sql);
+        st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
+        st.Bind(st.GetParamIndex(":LINE_NUMBER"), line);
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        if(res.NextRow()) {
+            PHPEntityBase::Ptr_t match(new PHPEntityFunction());
+            match->FromResultSet(res);
+            return match;
+        }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::FindFunctionByLineAndFile: %s", e.GetMessage());
+    }
+    return NULL;
 }

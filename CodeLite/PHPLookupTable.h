@@ -68,7 +68,7 @@ private:
                                    std::vector<wxLongLong>& parents,
                                    std::set<wxLongLong>& parentsVisited,
                                    bool excludeSelf);
-
+    
     /**
      * @brief find namespace by fullname. If it does not exist, add it and return a pointer to it
      */
@@ -124,6 +124,11 @@ private:
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();
+    
+    /**
+     * @brief return the entity at a given file/line
+     */
+    PHPEntityBase::Ptr_t FindFunctionByLineAndFile(const wxFileName& filename, int line);
 
     /**
      * @brief open the lookup table database

@@ -732,12 +732,17 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     }
 
     bool bJustAddedIndicator = false;
-    // add complete quotes; but don't if the next char is alnum,
-    // which is annoying if you're trying to retrofit quotes around a string!
-    // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
-    // that someone is trying to type _don't_ than it's a burning desire to write _don''_
     int nextChar = SafeGetChar(pos), prevChar = SafeGetChar(pos - 2);
-    if(GetOptions()->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
+
+    if(GetOptions()->GetAutoCompleteDoubleQuotes() && (event.GetKey() == '"' || event.GetKey() == '\'') &&
+       event.GetKey() == GetCharAt(pos)) {
+        CharRight();
+        DeleteBack();
+    } else if(GetOptions()->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
+        // add complete quotes; but don't if the next char is alnum,
+        // which is annoying if you're trying to retrofit quotes around a string!
+        // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
+        // that someone is trying to type _don't_ than it's a burning desire to write _don''_
         if(event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
             InsertText(pos, wxT("\""));
             SetIndicatorCurrent(MATCH_INDICATOR);

@@ -68,6 +68,7 @@ private:
     void OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e);
     void OnCodeCompletionGetTagComment(clCodeCompletionEvent& e);
     void OnFindSymbol(clCodeCompletionEvent& e);
+    void OnInsertDoxyBlock(clCodeCompletionEvent& e);
     void OnDismissTooltip(wxCommandEvent& e);
     void OnRetagWorkspace(wxCommandEvent& event);
     

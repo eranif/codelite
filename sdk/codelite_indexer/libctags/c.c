@@ -400,7 +400,7 @@ static const keywordDesc KeywordTable [] = {
     { "explicit",       KEYWORD_EXPLICIT,       { 0, 1, 1, 0, 0 } },
     { "extends",        KEYWORD_EXTENDS,        { 0, 0, 0, 1, 1 } },
     { "extern",         KEYWORD_EXTERN,         { 1, 1, 1, 0, 1 } },
-    { "final",          KEYWORD_FINAL,          { 0, 0, 0, 1, 0 } },
+    { "final",          KEYWORD_FINAL,          { 1, 1, 0, 1, 0 } },
     { "float",          KEYWORD_FLOAT,          { 1, 1, 1, 1, 0 } },
     { "for",            KEYWORD_FOR,            { 1, 1, 1, 1, 0 } },
     { "foreach",        KEYWORD_FOREACH,        { 0, 0, 1, 0, 0 } },
@@ -431,7 +431,7 @@ static const keywordDesc KeywordTable [] = {
     { "operator",       KEYWORD_OPERATOR,       { 0, 1, 1, 0, 0 } },
     { "output",         KEYWORD_OUTPUT,         { 0, 0, 0, 0, 1 } },
     { "overload",       KEYWORD_OVERLOAD,       { 0, 1, 0, 0, 0 } },
-    { "override",       KEYWORD_OVERRIDE,       { 0, 0, 1, 0, 0 } },
+    { "override",       KEYWORD_OVERRIDE,       { 1, 1, 1, 0, 0 } },
     { "package",        KEYWORD_PACKAGE,        { 0, 0, 0, 1, 0 } },
     { "packed",         KEYWORD_PACKED,         { 0, 0, 0, 0, 1 } },
     { "port",           KEYWORD_PORT,           { 0, 0, 0, 0, 1 } },
@@ -2213,6 +2213,8 @@ static boolean skipPostArgumentStuff (
 
                 case KEYWORD_CONST:
                 case KEYWORD_VOLATILE:
+                case KEYWORD_OVERRIDE:
+                case KEYWORD_FINAL:
                     if (vStringLength (Signature) > 0) {
                         vStringPut (Signature, ' ');
                         vStringCat (Signature, token->name);

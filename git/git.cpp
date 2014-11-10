@@ -1052,6 +1052,11 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     wxString command = m_pathGITExecutable;
+    
+    // Wrap the executable with quotes if needed
+    command.Trim().Trim(false);
+    ::WrapWithQuotes(command);
+    
     switch(ga.action) {
     case gitStash:
         command << " stash";

@@ -1627,3 +1627,128 @@ PHPProjectSetupDlgBase::PHPProjectSetupDlgBase(wxWindow* parent, wxWindowID id, 
 PHPProjectSetupDlgBase::~PHPProjectSetupDlgBase()
 {
 }
+
+PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF01InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("xdebug-16"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
+    
+    wxBoxSizer* boxSizer359 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer359);
+    
+    wxArrayString m_choiceArr;
+    m_choiceArr.Add(wxT("Debug URL"));
+    m_choiceArr.Add(wxT("Debug command line"));
+    m_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceArr, 0);
+    m_choice->SetToolTip(_("Select the debugging method"));
+    m_choice->SetSelection(0);
+    
+    boxSizer359->Add(m_choice, 0, wxALL|wxEXPAND, 5);
+    
+    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
+    
+    boxSizer359->Add(m_simpleBook, 1, wxALL|wxEXPAND, 5);
+    
+    m_panelDebugURL = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_simpleBook->AddPage(m_panelDebugURL, _("Page"), false);
+    
+    wxBoxSizer* boxSizer387 = new wxBoxSizer(wxVERTICAL);
+    m_panelDebugURL->SetSizer(boxSizer387);
+    
+    wxFlexGridSizer* flexGridSizer375 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer375->SetFlexibleDirection( wxBOTH );
+    flexGridSizer375->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer375->AddGrowableCol(1);
+    
+    boxSizer387->Add(flexGridSizer375, 1, wxEXPAND, 5);
+    
+    m_staticText377 = new wxStaticText(m_panelDebugURL, wxID_ANY, _("URL to Debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer375->Add(m_staticText377, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_comboBoxURLArr;
+    m_comboBoxURL = new wxComboBox(m_panelDebugURL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_comboBoxURLArr, 0);
+    m_comboBoxURL->SetToolTip(_("Enter the URL to debug"));
+    m_comboBoxURL->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_comboBoxURL->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer375->Add(m_comboBoxURL, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_panelCommandLine = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_simpleBook->AddPage(m_panelCommandLine, _("Page"), false);
+    
+    wxBoxSizer* boxSizer386 = new wxBoxSizer(wxVERTICAL);
+    m_panelCommandLine->SetSizer(boxSizer386);
+    
+    wxFlexGridSizer* flexGridSizer381 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer381->SetFlexibleDirection( wxBOTH );
+    flexGridSizer381->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer381->AddGrowableCol(1);
+    
+    boxSizer386->Add(flexGridSizer381, 1, wxEXPAND, 5);
+    
+    m_staticText383 = new wxStaticText(m_panelCommandLine, wxID_ANY, _("Script to debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer381->Add(m_staticText383, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlScriptToDebug = new wxTextCtrl(m_panelCommandLine, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlScriptToDebug->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer381->Add(m_textCtrlScriptToDebug, 0, wxALL|wxEXPAND, 5);
+    
+    flexGridSizer381->Add(0, 0, 1, wxALL, 5);
+    
+    m_checkBoxDebugActiveEditor = new wxCheckBox(m_panelCommandLine, wxID_ANY, _("Debug the script opened in the editor"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxDebugActiveEditor->SetValue(true);
+    
+    flexGridSizer381->Add(m_checkBoxDebugActiveEditor, 0, wxALL, 5);
+    
+    m_stdBtnSizer361 = new wxStdDialogButtonSizer();
+    
+    boxSizer359->Add(m_stdBtnSizer361, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button363 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button363->SetDefault();
+    m_stdBtnSizer361->AddButton(m_button363);
+    
+    m_button365 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer361->AddButton(m_button365);
+    m_stdBtnSizer361->Realize();
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_choice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
+    m_textCtrlScriptToDebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
+    
+}
+
+PHPDebugStartDlgBase::~PHPDebugStartDlgBase()
+{
+    m_choice->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
+    m_textCtrlScriptToDebug->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
+    
+}

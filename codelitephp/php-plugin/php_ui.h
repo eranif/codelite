@@ -43,6 +43,8 @@
 #include <wx/bannerwindow.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/simplebook.h>
+#include <wx/combobox.h>
 
 class QuickOutlineDlgBase : public wxDialog
 {
@@ -553,6 +555,41 @@ public:
     wxCheckBox* GetCheckBoxImportFiles() { return m_checkBoxImportFiles; }
     PHPProjectSetupDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Project Setup"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPProjectSetupDlgBase();
+};
+
+
+class PHPDebugStartDlgBase : public wxDialog
+{
+protected:
+    wxChoice* m_choice;
+    wxSimplebook* m_simpleBook;
+    wxPanel* m_panelDebugURL;
+    wxStaticText* m_staticText377;
+    wxComboBox* m_comboBoxURL;
+    wxPanel* m_panelCommandLine;
+    wxStaticText* m_staticText383;
+    wxTextCtrl* m_textCtrlScriptToDebug;
+    wxCheckBox* m_checkBoxDebugActiveEditor;
+    wxStdDialogButtonSizer* m_stdBtnSizer361;
+    wxButton* m_button363;
+    wxButton* m_button365;
+
+protected:
+    virtual void OnDebugMethodChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnScriptToDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxChoice* GetChoice() { return m_choice; }
+    wxStaticText* GetStaticText377() { return m_staticText377; }
+    wxComboBox* GetComboBoxURL() { return m_comboBoxURL; }
+    wxPanel* GetPanelDebugURL() { return m_panelDebugURL; }
+    wxStaticText* GetStaticText383() { return m_staticText383; }
+    wxTextCtrl* GetTextCtrlScriptToDebug() { return m_textCtrlScriptToDebug; }
+    wxCheckBox* GetCheckBoxDebugActiveEditor() { return m_checkBoxDebugActiveEditor; }
+    wxPanel* GetPanelCommandLine() { return m_panelCommandLine; }
+    wxSimplebook* GetSimpleBook() { return m_simpleBook; }
+    PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~PHPDebugStartDlgBase();
 };
 
 #endif

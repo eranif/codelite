@@ -150,6 +150,8 @@
       <File Name="evalpane.cpp"/>
       <File Name="PHPDebugPane.cpp"/>
       <File Name="PHPDebugPane.h"/>
+      <File Name="PHPDebugStartDlg.h"/>
+      <File Name="PHPDebugStartDlg.cpp"/>
     </VirtualDirectory>
     <File Name="XDebugDiagDlg.h"/>
     <File Name="XDebugDiagDlg.cpp"/>

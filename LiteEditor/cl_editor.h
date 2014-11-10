@@ -916,7 +916,6 @@ private:
     void OnKeyUp(wxKeyEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnRightDown(wxMouseEvent& event);
-    void OnRightUp(wxMouseEvent& event);
     void OnMotion(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);

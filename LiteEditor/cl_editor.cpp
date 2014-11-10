@@ -125,7 +125,6 @@ EVT_KEY_DOWN(LEditor::OnKeyDown)
 EVT_KEY_UP(LEditor::OnKeyUp)
 EVT_LEFT_DOWN(LEditor::OnLeftDown)
 EVT_RIGHT_DOWN(LEditor::OnRightDown)
-EVT_RIGHT_UP(LEditor::OnRightUp)
 EVT_MOTION(LEditor::OnMotion)
 EVT_LEFT_UP(LEditor::OnLeftUp)
 EVT_LEAVE_WINDOW(LEditor::OnLeaveWindow)
@@ -1044,6 +1043,13 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
             Refresh();
 #endif
         }
+    } else {
+        // we got a selection
+        int wordStartPos = WordStartPos(pos, true);
+        int wordEndPos = WordEndPos(pos, true);
+        
+        GetTextRange(wordStartPos, wordEndPos);
+        
     }
 
     RecalcHorizontalScrollbar();
@@ -3125,8 +3131,6 @@ void LEditor::OnFocusLost(wxFocusEvent& event)
     m_isFocused = false;
     event.Skip();
 }
-
-void LEditor::OnRightUp(wxMouseEvent& event) { event.Skip(); }
 
 void LEditor::OnRightDown(wxMouseEvent& event)
 {

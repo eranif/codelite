@@ -772,14 +772,14 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
 
 void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)
 {
-    // Test which file we want to debug
-    PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
-    dlg.SetLabel("Run Project");
-    if(dlg.ShowModal() != wxID_OK) {
-        return;
-    }
-
     if(PHPWorkspace::Get()->IsOpen()) {
+        CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
+        // Test which file we want to debug
+        PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
+        dlg.SetLabel("Run Project");
+        if(dlg.ShowModal() != wxID_OK) {
+            return;
+        }
         PHPWorkspace::Get()->RunProject(false, dlg.GetPath());
 
     } else {

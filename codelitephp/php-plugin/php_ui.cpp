@@ -1520,27 +1520,38 @@ XDebugDiagDlgBase::XDebugDiagDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     
     boxSizer281->Add(m_htmlWin289, 1, wxALL|wxEXPAND, 5);
     
-    m_stdBtnSizer283 = new wxStdDialogButtonSizer();
+    wxBoxSizer* boxSizer401 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer281->Add(m_stdBtnSizer283, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer281->Add(boxSizer401, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button285 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_button285->SetDefault();
-    m_stdBtnSizer283->AddButton(m_button285);
+    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonOK->SetDefault();
     
-    m_button287 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_stdBtnSizer283->AddButton(m_button287);
-    m_stdBtnSizer283->Realize();
+    boxSizer401->Add(m_buttonOK, 0, wxALL, 5);
+    
+    m_button403 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer401->Add(m_button403, 0, wxALL, 5);
+    
+    m_button405 = new wxButton(this, wxID_COPY, _("Recommend"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button405->SetToolTip(_("Copy a recommended settings to the clipboard"));
+    
+    boxSizer401->Add(m_button405, 0, wxALL, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_button405->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(XDebugDiagDlgBase::OnRecommend), NULL, this);
+    
 }
 
 XDebugDiagDlgBase::~XDebugDiagDlgBase()
 {
+    m_button405->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(XDebugDiagDlgBase::OnRecommend), NULL, this);
+    
 }
 
 PHPProjectSetupDlgBase::PHPProjectSetupDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)

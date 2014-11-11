@@ -518,14 +518,18 @@ class XDebugDiagDlgBase : public wxDialog
 {
 protected:
     wxHtmlWindow* m_htmlWin289;
-    wxStdDialogButtonSizer* m_stdBtnSizer283;
-    wxButton* m_button285;
-    wxButton* m_button287;
+    wxButton* m_buttonOK;
+    wxButton* m_button403;
+    wxButton* m_button405;
 
 protected:
+    virtual void OnRecommend(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxHtmlWindow* GetHtmlWin289() { return m_htmlWin289; }
+    wxButton* GetButtonOK() { return m_buttonOK; }
+    wxButton* GetButton403() { return m_button403; }
+    wxButton* GetButton405() { return m_button405; }
     XDebugDiagDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Diagnostics"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~XDebugDiagDlgBase();
 };

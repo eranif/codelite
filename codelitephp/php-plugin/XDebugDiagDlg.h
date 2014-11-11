@@ -9,5 +9,7 @@ public:
     virtual ~XDebugDiagDlg();
     
     void Load(const wxString &html);
+protected:
+    virtual void OnRecommend(wxCommandEvent& event);
 };
 #endif // XDEBUGDIAGDLG_H

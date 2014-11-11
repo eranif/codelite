@@ -38,11 +38,17 @@ bool XDebugTester::RunTest()
                 std::make_pair(wxString("xdebug.remote_connect_back"),
                                std::make_pair(rootElement.namedObject("_remoteConnectBack").toString(),
                                               "If you don't know CodeLite's IP, set this directive to 1")));
-
-            m_results.insert(std::make_pair(wxString("xdebug.ide_key"),
-                                            std::make_pair(rootElement.namedObject("_ideKey").toString(),
-                                                           "The session name between CodeLite and XDebug")));
-
+            {
+                wxString msg;
+                if(rootElement.namedObject("_ideKey").toString() != globalConf.GetXdebugIdeKey()) {
+                    msg << "<font color=\"red\">Failed. This value should be set to \"" << globalConf.GetXdebugIdeKey()
+                        << "\"</font>";
+                } else {
+                    msg << "<font color=\"green\">OK</font>";
+                }
+                m_results.insert(std::make_pair(wxString("xdebug.ide_key"),
+                                                std::make_pair(rootElement.namedObject("_ideKey").toString(), msg)));
+            }
             m_results.insert(std::make_pair(
                 wxString("xdebug.remote_port"),
                 std::make_pair(rootElement.namedObject("_remotePort").toString(),
@@ -53,24 +59,45 @@ bool XDebugTester::RunTest()
                                                            "Selects the host where the debug client is running\nYou "
                                                            "can either use a host name or an IP address.\nThis setting "
                                                            "is ignored if xdebug.remote_connect_back is enabled")));
-            m_results.insert(
-                std::make_pair(wxString("xdebug.remote_enable"),
-                               std::make_pair(rootElement.namedObject("_remoteEnable").toString(),
-                                              "This switch controls whether Xdebug should try to contact a debug "
-                                              "client which is listening on the host and port as set with the settings "
-                                              "xdebug.remote_host and xdebug.remote_port. If a connection can not be "
-                                              "established the script will just continue as if this setting was 0")));
-
-            // XDebug loaded
-            m_results.insert(std::make_pair(wxString("XDebug Loaded"),
-                                            std::make_pair(rootElement.namedObject("_xdebugLoaded").toString(),
-                                                           "Is XDebug extension loaded? This value should be '1'")));
+            {
+                wxString msg;
+                if(rootElement.namedObject("_remoteEnable").toString() != "1") {
+                    msg << "<font color=\"red\">Failed. This value should be set to 1</font>";
+                } else {
+                    msg << "<font color=\"green\">OK</font>";
+                }
+                m_results.insert(
+                    std::make_pair(wxString("xdebug.remote_enable"),
+                                   std::make_pair(rootElement.namedObject("_remoteEnable").toString(), msg)));
+            }
+            {
+                // XDebug loaded
+                wxString msg;
+                if(rootElement.namedObject("_xdebugLoaded").toString() != "1") {
+                    msg << "<font color=\"red\">XDebug is NOT loaded</font>";
+                } else {
+                    msg << "<font color=\"green\">XDebug is loaded</font>";
+                }
+                m_results.insert(
+                    std::make_pair(wxString("XDebug Loaded"),
+                                   std::make_pair(rootElement.namedObject("_xdebugLoaded").toString(), msg)));
+            }
 
             // Zend Debugger loaded
-            m_results.insert(std::make_pair(wxString("Zend Debugger Loaded"),
-                                            std::make_pair(rootElement.namedObject("_zendDebuggerLoaded").toString(),
-                                                           "Is Zend Debugger extension loaded? When using XDebug, it "
-                                                           "is recommended to disable Zend Debugger")));
+            {
+                // If Zend Debugger is loaded, mark it the message with RED
+                wxString msg;
+                if(rootElement.namedObject("_zendDebuggerLoaded").toString() == "1") {
+                    msg << "<font color=\"red\">Zend Debugger is loaded. It is recommended to disable Zend "
+                           "Debugger</font>";
+                } else {
+                    msg << "<font color=\"green\">Zend Debugger is not loaded </font>";
+                }
+
+                m_results.insert(
+                    std::make_pair(wxString("Zend Debugger Loaded"),
+                                   std::make_pair(rootElement.namedObject("_zendDebuggerLoaded").toString(), msg)));
+            }
             return true;
         }
     }

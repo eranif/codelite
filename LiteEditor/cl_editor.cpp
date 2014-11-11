@@ -1034,22 +1034,22 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     }
 
     if(!hasSelection) {
-        // remove indicators
-        SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
-        int last = IndicatorEnd(2, 0);
-        if(last != wxNOT_FOUND) {
-            IndicatorClearRange(0, GetLength());
-#if defined(__WXMAC__) || (wxVERSION_NUMBER >= 2900 && defined(__WXMSW__))
-            Refresh();
-#endif
-        }
+        HighlightWord(false);
+        
     } else {
         // we got a selection
         int wordStartPos = WordStartPos(pos, true);
         int wordEndPos = WordEndPos(pos, true);
         
-        GetTextRange(wordStartPos, wordEndPos);
-        
+        wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
+        if(GetSelectedText() == selectedText) {
+            // The user has selected something with the keyboard which matches a complete word
+            // Highlight it
+            bool high = true;
+            CallAfter(&LEditor::DoHighlightWord);
+        } else {
+            HighlightWord(false);
+        }
     }
 
     RecalcHorizontalScrollbar();
@@ -1452,7 +1452,8 @@ wxString LEditor::GetWordAtCaret()
 void LEditor::CompleteWord(bool onlyRefresh)
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
-
+    if(AutoCompActive()) return; // Don't clobber the boxes
+    
     // Let the plugins a chance to override the default behavior
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
@@ -1481,7 +1482,8 @@ void LEditor::CompleteWord(bool onlyRefresh)
 void LEditor::CodeComplete()
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
-
+    if(AutoCompActive()) return; // Don't clobber the boxes..
+    
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
@@ -3172,10 +3174,8 @@ void LEditor::OnMotion(wxMouseEvent& event)
 
 void LEditor::OnLeftDown(wxMouseEvent& event)
 {
-#if wxVERSION_NUMBER >= 2900
     HighlightWord(false);
-#endif
-
+    
     // hide completion box
     HideCompletionBox();
     CodeCompletionBox::Get().CancelTip();

@@ -109,8 +109,7 @@ void ColoursAndFontsManager::LoadOldXmls(const wxString& path)
     wxArrayString files;
     wxDir::GetAllFiles(path, &files, "lexers_*.xml");
 
-    wxString activeTheme = EditorConfigST::Get()->GetStringValue("LexerTheme");
-    if(activeTheme.IsEmpty()) activeTheme = "Default";
+    wxString activeTheme = EditorConfigST::Get()->GetString("LexerTheme", "Default");
 
     // Each XMl represents a single lexer
     for(size_t i = 0; i < files.GetCount(); ++i) {

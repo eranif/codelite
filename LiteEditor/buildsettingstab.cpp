@@ -28,12 +28,12 @@
 #include "editor_config.h"
 #include "new_build_tab.h"
 
-BuildTabSetting::BuildTabSetting( wxWindow* parent )
-    : BuildTabSettingsBase( parent )
+BuildTabSetting::BuildTabSetting(wxWindow* parent)
+    : BuildTabSettingsBase(parent)
 {
     BuildTabSettingsData options;
     EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
-    m_checkBoxSkipWarnings->SetValue( options.GetSkipWarnings() );
+    m_checkBoxSkipWarnings->SetValue(options.GetSkipWarnings());
     m_colourPickerErrorFg->SetColour(options.GetErrorColour());
     m_colourPickerWarningsFg->SetColour(options.GetWarnColour());
     m_checkBoxBoldErrFont->SetValue(options.GetBoldErrFont());
@@ -57,18 +57,16 @@ void BuildTabSetting::Save()
     options.SetAutoHide(m_checkBoxAutoHide->IsChecked());
     options.SetBuildPaneScrollDestination(m_radioBuildPaneScrollDestination->GetSelection());
 
-    int flag (BuildTabSettingsData::EWS_NoMarkers);
-    if ( m_checkBoxDisplayMarkers->IsChecked() ) {
+    int flag(BuildTabSettingsData::EWS_NoMarkers);
+    if(m_checkBoxDisplayMarkers->IsChecked()) {
         flag |= BuildTabSettingsData::EWS_Bookmarks;
     }
-    if ( m_checkBoxDisplayAnnotations->IsChecked() ) {
+    if(m_checkBoxDisplayAnnotations->IsChecked()) {
         flag |= BuildTabSettingsData::EWS_Annotate;
     }
 
-    options.SetErrorWarningStyle( flag );
+    options.SetErrorWarningStyle(flag);
     EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
 }
 
-void BuildTabSetting::OnUpdateUI(wxUpdateUIEvent& event)
-{
-}
+void BuildTabSetting::OnUpdateUI(wxUpdateUIEvent& event) {}

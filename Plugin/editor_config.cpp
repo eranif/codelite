@@ -79,6 +79,9 @@ bool EditorConfig::DoLoadDefaultSettings()
 
 bool EditorConfig::Load()
 {
+    m_cacheLongValues.clear();
+    m_cacheStringValues.clear();
+    
     // first try to load the user's settings
     m_fileName = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
     wxString localFileName = m_fileName.GetFullPath();
@@ -170,11 +173,10 @@ OptionsConfigPtr EditorConfig::GetOptions() const
     OptionsConfigPtr opts = new OptionsConfig(node);
 
     // import legacy tab-width setting into opts
-    long tabWidth(opts->GetTabWidth());
-    if(const_cast<EditorConfig*>(this)->GetLongValue(wxT("EditorTabWidth"), tabWidth)) {
+    long tabWidth = const_cast<EditorConfig*>(this)->GetInteger(wxT("EditorTabWidth"), -1);
+    if(tabWidth != -1) {
         opts->SetTabWidth(tabWidth);
     }
-
     return opts;
 }
 
@@ -315,35 +317,52 @@ void EditorConfig::SetRevision(const wxString& rev)
     DoSave();
 }
 
-void EditorConfig::SaveLongValue(const wxString& name, long value)
+void EditorConfig::SetInteger(const wxString& name, long value)
 {
     SimpleLongValue data;
     data.SetValue(value);
     WriteObject(name, &data);
+    m_cacheLongValues[name] = value;
 }
 
-bool EditorConfig::GetLongValue(const wxString& name, long& value)
+long EditorConfig::GetInteger(const wxString& name, long defaultValue)
 {
+    // Check the cache first
+    std::map<wxString, long>::iterator iter = m_cacheLongValues.find(name);
+    if(iter != m_cacheLongValues.end()) return iter->second;
+    
     SimpleLongValue data;
-    if(ReadObject(name, &data)) {
-        value = data.GetValue();
-        return true;
+    if(!ReadObject(name, &data)) {
+        return defaultValue;
     }
-    return false;
-}
-
-wxString EditorConfig::GetStringValue(const wxString& key)
-{
-    SimpleStringValue data;
-    ReadObject(key, &data);
+    
+    // update the cache
+    m_cacheLongValues[name] = data.GetValue();
     return data.GetValue();
 }
 
-void EditorConfig::SaveStringValue(const wxString& key, const wxString& value)
+wxString EditorConfig::GetString(const wxString& key, const wxString &defaultValue)
+{
+    // Check the cache first
+    std::map<wxString, wxString>::iterator iter = m_cacheStringValues.find(key);
+    if(iter != m_cacheStringValues.end()) return iter->second;
+    
+    SimpleStringValue data;
+    if(!ReadObject(key, &data)) {
+        return defaultValue;
+    }
+    
+    m_cacheStringValues[key] = data.GetValue();
+    return data.GetValue();
+}
+
+void EditorConfig::SetString(const wxString& key, const wxString& value)
 {
     SimpleStringValue data;
     data.SetValue(value);
     WriteObject(key, &data);
+    // update the cache
+    m_cacheStringValues[key] = value;
 }
 
 void EditorConfig::Begin() { m_transcation = true; }

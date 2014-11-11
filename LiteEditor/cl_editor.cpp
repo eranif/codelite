@@ -624,7 +624,7 @@ void LEditor::SetProperties()
     SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, wxT("RED"));
 
     wxColour col2(wxT("LIGHT BLUE"));
-    wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
+    wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
     if(val2.IsEmpty() == false) {
         col2 = wxColour(val2);
     }
@@ -635,8 +635,8 @@ void LEditor::SetProperties()
     IndicatorSetStyle(MARKER_WORD_HIGHLIGHT, wxSTC_INDIC_ROUNDBOX);
     IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(MARKER_WORD_HIGHLIGHT, col2);
-    long alpha(1);
-    if(EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
+    long alpha = EditorConfigST::Get()->GetInteger(wxT("WordHighlightAlpha"));
+    if(alpha != wxNOT_FOUND) {
         IndicatorSetAlpha(MARKER_WORD_HIGHLIGHT, alpha);
     }
 
@@ -1037,18 +1037,20 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
         HighlightWord(false);
         
     } else {
-        // we got a selection
-        int wordStartPos = WordStartPos(pos, true);
-        int wordEndPos = WordEndPos(pos, true);
-        
-        wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
-        if(GetSelectedText() == selectedText) {
-            // The user has selected something with the keyboard which matches a complete word
-            // Highlight it
-            bool high = true;
-            CallAfter(&LEditor::DoHighlightWord);
-        } else {
-            HighlightWord(false);
+        if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
+            // we got a selection
+            int wordStartPos = WordStartPos(pos, true);
+            int wordEndPos = WordEndPos(pos, true);
+            
+            wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
+            if(GetSelectedText() == selectedText) {
+                // The user has selected something with the keyboard which matches a complete word
+                // Highlight it
+                bool high = true;
+                CallAfter(&LEditor::DoHighlightWord);
+            } else {
+                HighlightWord(false);
+            }
         }
     }
 
@@ -3105,14 +3107,10 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
 void LEditor::OnLeftUp(wxMouseEvent& event)
 {
     m_isDragging = false; // We can't still be in D'n'D, so stop disabling callticks
-
-    long value(0);
-    EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
-
+    long value = EditorConfigST::Get()->GetInteger(wxT("QuickCodeNavigationUsesMouseMiddleButton"), 0);
     if(!value) {
         DoQuickJump(event, false);
     }
-
     PostCmdEvent(wxEVT_EDITOR_CLICKED);
     event.Skip();
 }
@@ -3722,8 +3720,7 @@ void LEditor::HighlightWord(bool highlight)
 
 void LEditor::OnLeftDClick(wxStyledTextEvent& event)
 {
-    long highlight_word(0);
-    EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
+    long highlight_word = EditorConfigST::Get()->GetInteger(wxT("highlight_word"), 0);
     if(GetSelectedText().IsEmpty() == false && highlight_word) {
         DoHighlightWord();
     }

@@ -49,8 +49,7 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
     , m_isLinkedToEditor(true)
     , m_dlg(NULL)
 {
-    long link(1);
-    EditorConfigST::Get()->GetLongValue(wxT("LinkWorkspaceViewToEditor"), link);
+    long link = EditorConfigST::Get()->GetInteger(wxT("LinkWorkspaceViewToEditor"), 1);
     m_isLinkedToEditor = link ? true : false;
 
     CreateGUIControls();
@@ -174,7 +173,7 @@ void WorkspaceTab::ConnectEvents()
 void WorkspaceTab::OnLinkEditor(wxCommandEvent& e)
 {
     m_isLinkedToEditor = !m_isLinkedToEditor;
-    EditorConfigST::Get()->SaveLongValue(wxT("LinkWorkspaceViewToEditor"), m_isLinkedToEditor ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("LinkWorkspaceViewToEditor"), m_isLinkedToEditor ? 1 : 0);
     if(m_isLinkedToEditor) {
         OnActiveEditorChanged(e);
     }

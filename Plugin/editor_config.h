@@ -112,7 +112,10 @@ class WXDLLIMPEXP_SDK EditorConfig : public IConfigTool
     wxString m_svnRevision;
     wxString m_version;
     wxString m_installDir;
-
+    
+    std::map<wxString, long> m_cacheLongValues;
+    std::map<wxString, wxString> m_cacheStringValues;
+    
 private:
     bool DoSave() const;
     bool DoLoadDefaultSettings();
@@ -249,7 +252,7 @@ public:
      * \param name variable name
      * \param value value to store
      */
-    void SaveLongValue(const wxString& name, long value);
+    void SetInteger(const wxString& name, long value);
 
     /**
      * \brief convinience methods to retrieve a single long value stored using
@@ -258,21 +261,21 @@ public:
      * \param value value
      * \return return true on success, false otherwise
      */
-    bool GetLongValue(const wxString& name, long& value);
+    long GetInteger(const wxString& name, long defaultValue = wxNOT_FOUND);
 
     /**
      * \brief get string from the configuration identified by key
      * \param key key identifiying the string
      * \return wxEmptyString or the value
      */
-    wxString GetStringValue(const wxString& key);
+    wxString GetString(const wxString& key, const wxString &defaultValue = "");
 
     /**
      * \brief
      * \param key
      * \param value
      */
-    void SaveStringValue(const wxString& key, const wxString& value);
+    void SetString(const wxString& key, const wxString& value);
 
     /**
      * \brief should this pane remain open despite an editor click

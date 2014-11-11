@@ -93,9 +93,8 @@ void DebuggerPane::CreateGUIControls()
 #if !CL_USE_NATIVEBOOK
     bookStyle |= wxAUI_NB_SCROLL_BUTTONS;
 #endif
-
-    EditorConfigST::Get()->GetLongValue(wxT("DebuggerBook"), bookStyle);
-
+    bookStyle = EditorConfigST::Get()->GetInteger(wxT("DebuggerBook"), bookStyle);
+    
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
     mainSizer->Add(m_book, 1, wxEXPAND|wxALL, 0);
 

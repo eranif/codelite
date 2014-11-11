@@ -38,7 +38,7 @@ PerspectiveManager::PerspectiveManager()
     : m_active(NORMAL_LAYOUT)
     , m_aui(NULL)
 {
-    wxString active = EditorConfigST::Get()->GetStringValue(wxT("ActivePerspective"));
+    wxString active = EditorConfigST::Get()->GetString(wxT("ActivePerspective"));
     if(active.IsEmpty() == false) {
         m_active = active;
     }
@@ -71,7 +71,7 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
     if(ReadFileWithConversion(file, content)) {
         clMainFrame::Get()->GetDockingManager().LoadPerspective(content);
         m_active = pname;
-        EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
+        EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
 
         if(pname == DEBUG_LAYOUT) {
             DoEnsureDebuggerPanesAreVisible();
@@ -83,14 +83,14 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 
             SavePerspective(pname);
             m_active = pname;
-            EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
+            EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
 
         } else if(pname == NORMAL_LAYOUT) {
             // Requested to load the Normal layout but we got no such layout
             // Make the current one the default layout
             SavePerspective(pname);
             m_active = pname;
-            EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
+            EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
         }
     }
 }
@@ -105,7 +105,7 @@ void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
     WriteFileWithBackup(DoGetPathFromName(pname), clMainFrame::Get()->GetDockingManager().SavePerspective(), false);
     m_active = pname;
 
-    EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
+    EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
     if(notify) {
         wxCommandEvent evt(wxEVT_REFRESH_PERSPECTIVE_MENU);
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);

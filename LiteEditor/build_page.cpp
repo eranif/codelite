@@ -33,14 +33,13 @@
 
 #include "wx/wxprec.h"
 
-
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif //__BORLANDC__
 
 #else
 #include <wx/wx.h>
-#endif //WX_PRECOMP
+#endif // WX_PRECOMP
 
 #include "build_page.h"
 #include "build_settings_config.h"
@@ -49,39 +48,39 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-BuildPage::BuildPage( wxWindow* parent, int id, wxPoint pos, wxSize size, int style ) : wxPanel( parent, id, pos, size, style )
+BuildPage::BuildPage(wxWindow* parent, int id, wxPoint pos, wxSize size, int style)
+    : wxPanel(parent, id, pos, size, style)
 {
     wxBoxSizer* mainSizer;
-    mainSizer = new wxBoxSizer( wxVERTICAL );
+    mainSizer = new wxBoxSizer(wxVERTICAL);
 
-    m_staticText = new wxStaticText( this, wxID_ANY, _("Available Build Systems:"), wxDefaultPosition, wxDefaultSize, 0 );
-    mainSizer->Add( m_staticText, 0, wxALL, 5 );
+    m_staticText = new wxStaticText(this, wxID_ANY, _("Available Build Systems:"), wxDefaultPosition, wxDefaultSize, 0);
+    mainSizer->Add(m_staticText, 0, wxALL, 5);
 
-    m_bookBuildSystems = new wxChoicebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_DEFAULT );
-    mainSizer->Add( m_bookBuildSystems, 0, wxEXPAND | wxALL, 5 );
+    m_bookBuildSystems = new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_DEFAULT);
+    mainSizer->Add(m_bookBuildSystems, 0, wxEXPAND | wxALL, 5);
 
     m_fixOnStartup = new wxCheckBox(this, wxID_ANY, _("Fix build tool path on startup"));
-    mainSizer->Add( m_fixOnStartup, 0, wxEXPAND | wxALL, 5 );
+    mainSizer->Add(m_fixOnStartup, 0, wxEXPAND | wxALL, 5);
 
-    m_generateAsteriskCleanTarget = new wxCheckBox(this, wxID_ANY, _("Use asterisk (*) for the clean target (e.g. rm -f *.o)"));
-    mainSizer->Add( m_generateAsteriskCleanTarget, 0, wxEXPAND | wxALL, 5 );
+    m_generateAsteriskCleanTarget =
+        new wxCheckBox(this, wxID_ANY, _("Use asterisk (*) for the clean target (e.g. rm -f *.o)"));
+    mainSizer->Add(m_generateAsteriskCleanTarget, 0, wxEXPAND | wxALL, 5);
 
-    long fix(1);
-    EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
+    long fix = EditorConfigST::Get()->GetInteger(wxT("FixBuildToolOnStartup"), 1);
     m_fixOnStartup->SetValue(fix ? true : false);
 
-    long asterisk(0);
-    EditorConfigST::Get()->GetLongValue(wxT("CleanTragetWithAsterisk"), asterisk);
+    long asterisk = EditorConfigST::Get()->GetInteger(wxT("CleanTragetWithAsterisk"), 0);
     m_generateAsteriskCleanTarget->SetValue(asterisk ? true : false);
 
-    this->SetSizer( mainSizer );
+    this->SetSizer(mainSizer);
     this->Layout();
     CustomInit();
 }
 
 void BuildPage::CustomInit()
 {
-    //rest of builders list
+    // rest of builders list
     std::list<wxString> builders;
     BuildManagerST::Get()->GetBuilders(builders);
 
@@ -92,28 +91,29 @@ void BuildPage::CustomInit()
     }
 }
 
-wxPanel *BuildPage::CreateBuildSystemPage(const wxString &name)
+wxPanel* BuildPage::CreateBuildSystemPage(const wxString& name)
 {
     return new BuildSystemPage(m_bookBuildSystems, name);
 }
 
 void BuildPage::Save()
 {
-    EditorConfigST::Get()->SaveLongValue(wxT("FixBuildToolOnStartup"),    m_fixOnStartup->IsChecked()                ? 1 : 0);
-    EditorConfigST::Get()->SaveLongValue(wxT("CleanTragetWithAsterisk"),  m_generateAsteriskCleanTarget->IsChecked() ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("FixBuildToolOnStartup"), m_fixOnStartup->IsChecked() ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("CleanTragetWithAsterisk"),
+                                      m_generateAsteriskCleanTarget->IsChecked() ? 1 : 0);
 
     // Save current page displayed as 'selected' builder
-    int sel = (int) m_bookBuildSystems->GetSelection();
+    int sel = (int)m_bookBuildSystems->GetSelection();
 
-    //wxLogMessage(wxString::Format( wxT("selection:%d"), sel ));
-    BuildSystemPage *page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(sel));
-    if (page) {
+    // wxLogMessage(wxString::Format( wxT("selection:%d"), sel ));
+    BuildSystemPage* page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(sel));
+    if(page) {
         page->SetSelected();
     }
 
     int count = (int)m_bookBuildSystems->GetPageCount();
-    for(int i=0; i<count; i++) {
-        BuildSystemPage *page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(i));
+    for(int i = 0; i < count; i++) {
+        BuildSystemPage* page = dynamic_cast<BuildSystemPage*>(m_bookBuildSystems->GetPage(i));
         if(page) {
             page->Save();
         }
@@ -123,19 +123,19 @@ void BuildPage::Save()
 //---------------------------------------------------------------
 // Build system page
 //---------------------------------------------------------------
-BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
+BuildSystemPage::BuildSystemPage(wxWindow* parent, wxString name)
     : wxPanel(parent)
     , m_name(name)
 {
     wxBoxSizer* bSizer6;
-    bSizer6 = new wxBoxSizer( wxVERTICAL );
-    this->SetSizer( bSizer6 );
+    bSizer6 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(bSizer6);
     this->Layout();
 }
 
 void BuildSystemPage::Save()
 {
-    //update cached builders
+    // update cached builders
     BuilderPtr builder = BuildManagerST::Get()->GetBuilder(m_name);
     BuildManagerST::Get()->AddBuilder(builder);
 

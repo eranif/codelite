@@ -39,28 +39,28 @@ NavBar::NavBar(wxWindow* parent)
     m_func->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
 
-    long sashPos = -1;
-    EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), sashPos);
-
-    if ( sashPos != wxNOT_FOUND ) {
+    long sashPos = EditorConfigST::Get()->GetInteger(wxT("NavBarSashPos"));
+    if(sashPos != wxNOT_FOUND) {
         m_splitter->SetSashPosition(sashPos);
     }
 
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(NavBar::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(NavBar::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(NavBar::OnEditorChanged), NULL, this);
 }
 
 NavBar::~NavBar()
 {
-    EditorConfigST::Get()->SaveLongValue(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
+    EditorConfigST::Get()->SetInteger(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(NavBar::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(NavBar::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(NavBar::OnEditorChanged), NULL, this);
 }
 
 void NavBar::OnScope(wxCommandEvent& e)
 {
     size_t sel = e.GetSelection();
-    if (sel < m_scope->GetCount()) {
+    if(sel < m_scope->GetCount()) {
         m_tags.clear();
         m_func->Clear();
     }
@@ -71,13 +71,11 @@ void NavBar::OnScope(wxCommandEvent& e)
 
 void NavBar::OnFunction(wxCommandEvent& e)
 {
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
-        return;
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(!editor) return;
 
     size_t sel = e.GetSelection();
-    if (sel >= m_tags.size())
-        return;
+    if(sel >= m_tags.size()) return;
 
     wxString pattern = m_tags[sel]->GetPattern();
     wxString name = m_tags[sel]->GetName();
@@ -87,7 +85,7 @@ void NavBar::OnFunction(wxCommandEvent& e)
 
 void NavBar::DoShow(bool s)
 {
-    if (Show(s)) {
+    if(Show(s)) {
         GetParent()->GetSizer()->Layout();
     }
 }
@@ -95,8 +93,7 @@ void NavBar::DoShow(bool s)
 void NavBar::UpdateScope(TagEntryPtr tag)
 {
     size_t sel = m_func->GetSelection();
-    if (tag && sel < m_tags.size() && *m_tags[sel] == *tag)
-        return;
+    if(tag && sel < m_tags.size() && *m_tags[sel] == *tag) return;
 
     wxWindowUpdateLocker locker(this);
 
@@ -104,7 +101,7 @@ void NavBar::UpdateScope(TagEntryPtr tag)
     m_scope->Clear();
     m_func->Clear();
 
-    if (tag) {
+    if(tag) {
         m_tags.push_back(tag);
         m_scope->AppendString(tag->GetScope());
         m_func->AppendString(tag->GetDisplayName());
@@ -120,23 +117,20 @@ void NavBar::OnFileSaved(clCommandEvent& e)
     e.Skip();
 
     // sanity
-    if (!ManagerST::Get()->IsWorkspaceOpen())
-        return;
+    if(!ManagerST::Get()->IsWorkspaceOpen()) return;
 
     // get the active editor
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
-        return;
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(!editor) return;
 
     // is this the current file?
-    wxFileName fn( e.GetString() );
-    if ( fn != editor->GetFileName() ) {
+    wxFileName fn(e.GetString());
+    if(fn != editor->GetFileName()) {
         return;
     }
 
     // The save was for the active file, re-popuplate the tags in the navigation bar
     DoPopulateTags(fn);
-
 }
 
 void NavBar::DoPopulateTags(const wxFileName& fn)
@@ -148,18 +142,17 @@ void NavBar::DoPopulateTags(const wxFileName& fn)
 
     wxString cursel = m_scope->GetStringSelection();
     m_scope->Clear();
-    for (unsigned i = 0; i < scopes.size(); i++) {
+    for(unsigned i = 0; i < scopes.size(); i++) {
         m_scope->AppendString(scopes[i]);
     }
-    if (!cursel.IsEmpty()) {
+    if(!cursel.IsEmpty()) {
         m_scope->SetStringSelection(cursel);
     }
 
     m_scope->Thaw();
 
     wxString scope = m_scope->GetStringSelection();
-    if (scope.IsEmpty())
-        return;
+    if(scope.IsEmpty()) return;
     DoPopulateFunctions(fn, scope);
 }
 
@@ -167,7 +160,7 @@ void NavBar::OnEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
-    if ( !editor ) {
+    if(!editor) {
         return;
     }
 
@@ -184,22 +177,20 @@ void NavBar::DoPopulateFunctions(const wxFileName& fn, const wxString& scope)
 
     wxString func_cursel = m_func->GetStringSelection();
     m_func->Clear();
-    for (size_t i = 0; i < m_tags.size(); i++) {
+    for(size_t i = 0; i < m_tags.size(); i++) {
         m_func->AppendString(m_tags.at(i)->GetDisplayName());
     }
-    if (!func_cursel.IsEmpty()) {
+    if(!func_cursel.IsEmpty()) {
         m_func->SetStringSelection(func_cursel);
     }
 
     m_func->Thaw();
-
 }
 
 wxFileName NavBar::DoGetCurFileName() const
 {
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (!editor)
-        return wxFileName();
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(!editor) return wxFileName();
 
     const wxFileName& fn = editor->GetFileName();
     return fn;

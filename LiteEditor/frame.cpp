@@ -657,8 +657,7 @@ clMainFrame::clMainFrame(wxWindow* pParent,
 
 #endif
 
-    long value(0);
-    EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), value);
+    long value = EditorConfigST::Get()->GetInteger(wxT("highlight_word"), 0);
     m_highlightWord = (bool)value;
 
     m_statusbarTimer = new StatusbarTimer(this);
@@ -1060,8 +1059,7 @@ void clMainFrame::CreateGUIControls(void)
                       .MaximizeButton());
     RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
-    long show_nav(1);
-    EditorConfigST::Get()->GetLongValue(wxT("ShowNavBar"), show_nav);
+    long show_nav = EditorConfigST::Get()->GetInteger(wxT("ShowNavBar"), 1);
     if(!show_nav) {
         m_mainBook->ShowNavBar(false);
     }
@@ -1167,7 +1165,7 @@ void clMainFrame::CreateGUIControls(void)
     // try to locate the build tools
 
     long fix(1);
-    EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
+    fix = EditorConfigST::Get()->GetInteger(wxT("FixBuildToolOnStartup"), fix);
     if(fix) {
         UpdateBuildTools();
     }
@@ -3180,7 +3178,7 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
         wxLogMessage("Running under Cygwin environment");
     }
 
-    EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
+    updatePaths = EditorConfigST::Get()->GetInteger(wxT("UpdateParserPaths"), updatePaths);
     if(clConfig::Get().Read("CheckForNewVersion", true)) {
         JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
     }
@@ -4162,20 +4160,18 @@ void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e) { wxUnusedVar
 
 void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 {
-    long highlightWord(1);
-
-    EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
+    long highlightWord = EditorConfigST::Get()->GetInteger(wxT("highlight_word"), 1);
 
     // Notify all open editors that word hight is checked
     wxCommandEvent evtEnable(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT);
     if(!highlightWord) {
         GetMainBook()->HighlightWord(true);
-        EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 1);
+        EditorConfigST::Get()->SetInteger(wxT("highlight_word"), 1);
         evtEnable.SetInt(1);
 
     } else {
         GetMainBook()->HighlightWord(false);
-        EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 0);
+        EditorConfigST::Get()->SetInteger(wxT("highlight_word"), 0);
         evtEnable.SetInt(0);
     }
 
@@ -4995,7 +4991,7 @@ void clMainFrame::SaveLayoutAndSession()
 
     SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
     EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
-    EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();
 
     // save the current session before closing
@@ -5023,8 +5019,8 @@ void clMainFrame::SaveLayoutAndSession()
     }
 
     // save the notebooks styles
-    EditorConfigST::Get()->SaveLongValue(wxT("MainBook"), GetMainBook()->GetBookStyle());
-    EditorConfigST::Get()->SaveLongValue(wxT("FindResults"), GetOutputPane()->GetFindResultsTab()->GetBookStyle());
+    EditorConfigST::Get()->SetInteger(wxT("MainBook"), GetMainBook()->GetBookStyle());
+    EditorConfigST::Get()->SetInteger(wxT("FindResults"), GetOutputPane()->GetFindResultsTab()->GetBookStyle());
     EditorConfigST::Get()->Save();
 }
 
@@ -5578,19 +5574,19 @@ void clMainFrame::OnViewShowWorkspaceTabUI(wxUpdateUIEvent& event)
 void clMainFrame::DoEnableWorkspaceViewFlag(bool enable, int flag)
 {
     long flags = View_Show_Default;
-    EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
+    flags = EditorConfigST::Get()->GetInteger(wxT("view_workspace_view"), flags);
     if(enable) {
         flags |= flag;
     } else {
         flags &= ~flag;
     }
-    EditorConfigST::Get()->SaveLongValue(wxT("view_workspace_view"), flags);
+    EditorConfigST::Get()->SetInteger(wxT("view_workspace_view"), flags);
 }
 
 bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
 {
     long flags = View_Show_Default;
-    EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
+    flags = EditorConfigST::Get()->GetInteger(wxT("view_workspace_view"), flags);
     return (flags & flag);
 }
 

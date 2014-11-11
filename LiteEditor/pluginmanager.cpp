@@ -466,8 +466,8 @@ TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl)
 
 bool PluginManager::AllowToolbar()
 {
-    long v;
-    if(EditorConfigST::Get()->GetLongValue(wxT("UseSingleToolbar"), v)) {
+    long v = EditorConfigST::Get()->GetInteger(wxT("UseSingleToolbar"));
+    if(v != wxNOT_FOUND) {
         return v ? false : true;
     } else {
 // entry does not exist

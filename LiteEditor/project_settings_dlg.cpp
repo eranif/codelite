@@ -118,7 +118,7 @@ void ProjectSettingsDlg::DoClearDialog()
 
 void ProjectSettingsDlg::BuildTree()
 {
-    wxString selectedPage = EditorConfigST::Get()->GetStringValue(wxT("PSSelectedPage"));
+    wxString selectedPage = EditorConfigST::Get()->GetString(wxT("PSSelectedPage"));
     if(selectedPage.IsEmpty()) {
         selectedPage = _("General");
     }
@@ -163,7 +163,7 @@ ProjectSettingsDlg::~ProjectSettingsDlg()
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
 
     PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
-    EditorConfigST::Get()->SaveStringValue(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
+    EditorConfigST::Get()->SetString(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
     WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
 }
 

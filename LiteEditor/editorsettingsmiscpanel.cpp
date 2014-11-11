@@ -145,7 +145,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write("FrameTitlePattern", m_textCtrlPattern->GetValue());
 
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
-    EditorConfigST::Get()->SaveLongValue(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
 
     //check to see of the icon size was modified
     int oldIconSize(24);
@@ -178,11 +178,11 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
 
     if (oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
-        EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
+        EditorConfigST::Get()->SetInteger(wxT("LoadSavedPrespective"), 0);
         //notify the user
         m_restartRequired = true;
     } else {
-        EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
+        EditorConfigST::Get()->SetInteger(wxT("LoadSavedPrespective"), 1);
     }
 
     size_t flags    = options->GetOptions();

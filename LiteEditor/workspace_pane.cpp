@@ -185,14 +185,14 @@ void WorkspacePane::UpdateProgress(int val)
 
 void WorkspacePane::UpdateTabs()
 {
-    long flags = View_Show_Default;
-    EditorConfigST::Get()->GetLongValue(wxT("view_workspace_view"), flags);
+    long flags = EditorConfigST::Get()->GetInteger(wxT("view_workspace_view"), View_Show_Default);
 
     DoShowTab(flags & View_Show_Workspace_Tab, _("Workspace"));
     DoShowTab(flags & View_Show_Explorer_Tab,  _("Explorer"));
     DoShowTab(flags & View_Show_Tabs_Tab,      _("Tabs"));
     DoShowTab(flags & View_Show_Tabgroups_Tab, _("Tabgroups"));
 }
+
 typedef struct {
     wxString text;
     wxWindow* win;

@@ -43,8 +43,7 @@ FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
     , m_caption(caption)
     , m_isLinkedToEditor(false)
 {
-    long link(0);
-    EditorConfigST::Get()->GetLongValue(wxT("LinkFileExplorerToEditor"), link);
+    long link = EditorConfigST::Get()->GetInteger(wxT("LinkFileExplorerToEditor"), 0);
     m_isLinkedToEditor = link ? true : false;
     CreateGUIControls();
     m_themeHelper = new ThemeHandlerHelper(this);
@@ -104,7 +103,7 @@ void FileExplorer::OnGoHome(wxCommandEvent &e)
 void FileExplorer::OnLinkEditor(wxCommandEvent &e)
 {
     m_isLinkedToEditor = !m_isLinkedToEditor;
-    EditorConfigST::Get()->SaveLongValue(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
     if (m_isLinkedToEditor) {
         OnActiveEditorChanged(e);
     }

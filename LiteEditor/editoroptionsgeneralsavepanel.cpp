@@ -25,33 +25,30 @@
 
 #include "editoroptionsgeneralsavepanel.h"
 
-EditorOptionsGeneralSavePanel::EditorOptionsGeneralSavePanel( wxWindow* parent )
-	: EditorOptionsGeneralSavePanelBase( parent )
-	, TreeBookNode<EditorOptionsGeneralSavePanel>()
+EditorOptionsGeneralSavePanel::EditorOptionsGeneralSavePanel(wxWindow* parent)
+    : EditorOptionsGeneralSavePanelBase(parent)
+    , TreeBookNode<EditorOptionsGeneralSavePanel>()
 {
-	long trim(0);
-	EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
-	m_checkBoxTrimLine->SetValue(trim ? true : false);
+    long trim = EditorConfigST::Get()->GetInteger(wxT("EditorTrimEmptyLines"), 0);
+    m_checkBoxTrimLine->SetValue(trim ? true : false);
 
-	long appendLf(0);
-	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
-	m_checkBoxAppendLF->SetValue(appendLf ? true : false);
+    long appendLf = EditorConfigST::Get()->GetInteger(wxT("EditorAppendLf"), 0);
+    m_checkBoxAppendLF->SetValue(appendLf ? true : false);
 
-	long dontTrimCaretLine(0);
-	EditorConfigST::Get()->GetLongValue(wxT("DontTrimCaretLine"), dontTrimCaretLine);
-	m_checkBoxDontTrimCurrentLine->SetValue(dontTrimCaretLine ? true : false);
-	m_checkBoxTrimModifiedLines->SetValue( EditorConfigST::Get()->GetOptions()->GetTrimOnlyModifiedLines());
+    long dontTrimCaretLine = EditorConfigST::Get()->GetInteger(wxT("DontTrimCaretLine"), 0);
+    m_checkBoxDontTrimCurrentLine->SetValue(dontTrimCaretLine ? true : false);
+    m_checkBoxTrimModifiedLines->SetValue(EditorConfigST::Get()->GetOptions()->GetTrimOnlyModifiedLines());
 }
 
 void EditorOptionsGeneralSavePanel::Save(OptionsConfigPtr options)
 {
-	EditorConfigST::Get()->SaveLongValue(wxT("EditorTrimEmptyLines"), m_checkBoxTrimLine->IsChecked() ? 1 : 0);
-	EditorConfigST::Get()->SaveLongValue(wxT("EditorAppendLf"),       m_checkBoxAppendLF->IsChecked() ? 1 : 0);
-	EditorConfigST::Get()->SaveLongValue(wxT("DontTrimCaretLine"),    m_checkBoxDontTrimCurrentLine->IsChecked() ? 1 : 0);
-	options->SetTrimOnlyModifiedLines(m_checkBoxTrimModifiedLines->IsChecked());
+    EditorConfigST::Get()->SetInteger(wxT("EditorTrimEmptyLines"), m_checkBoxTrimLine->IsChecked() ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("EditorAppendLf"), m_checkBoxAppendLF->IsChecked() ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("DontTrimCaretLine"), m_checkBoxDontTrimCurrentLine->IsChecked() ? 1 : 0);
+    options->SetTrimOnlyModifiedLines(m_checkBoxTrimModifiedLines->IsChecked());
 }
 
 void EditorOptionsGeneralSavePanel::OnTrimCaretLineUI(wxUpdateUIEvent& event)
 {
-	event.Enable(m_checkBoxTrimLine->IsChecked());
+    event.Enable(m_checkBoxTrimLine->IsChecked());
 }

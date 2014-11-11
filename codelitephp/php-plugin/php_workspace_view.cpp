@@ -27,6 +27,7 @@
 #include "PHPLookupTable.h"
 #include "PHPProjectSetupDlg.h"
 #include <wx/wupdlock.h>
+#include "PHPDebugStartDlg.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -728,7 +729,15 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
 
 void PHPWorkspaceView::OnRunProject(wxCommandEvent& e)
 {
-    PHPWorkspace::Get()->RunProject(false, DoGetSelectedProject());
+    // Test which file we want to debug
+    PHPDebugStartDlg debugDlg(
+        EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
+    debugDlg.SetLabel("Run Project");
+    if(debugDlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    PHPWorkspace::Get()->RunProject(false, debugDlg.GetPath(), DoGetSelectedProject());
 }
 
 wxBitmap PHPWorkspaceView::DoGetBitmapForExt(const wxString& ext) const
@@ -763,8 +772,15 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
 
 void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)
 {
+    // Test which file we want to debug
+    PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
+    dlg.SetLabel("Run Project");
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
     if(PHPWorkspace::Get()->IsOpen()) {
-        PHPWorkspace::Get()->RunProject(false);
+        PHPWorkspace::Get()->RunProject(false, dlg.GetPath());
 
     } else {
         // Must call skip !
@@ -1282,7 +1298,7 @@ void PHPWorkspaceView::OnSyncProjectWithFileSystem(wxCommandEvent& e)
     CHECK_PTR_RET(pProject);
 
     pProject->SynchWithFileSystem();
-    
+
     // Reload the UI
     CallAfter(&PHPWorkspaceView::LoadWorkspace);
 }

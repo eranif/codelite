@@ -58,12 +58,12 @@ public:
     PHPProject::Ptr_t GetProject(const wxString& project) const;
     PHPProject::Ptr_t GetActiveProject() const;
     wxString GetPrivateFolder() const;
-    
+
     /**
      * @brief restore the session for this workspace
      */
     void RestoreWorkspaceSession();
-    
+
     /**
      * @brief return the PHPExecutor terminal emulator object
      */
@@ -173,6 +173,7 @@ public:
     // Project execution
     ////////////////////////////////////////////
     bool RunProject(bool debugging,
+                    const wxString& urlOrFilePath,
                     const wxString& projectName = wxEmptyString,
                     const wxString& xdebugSessionName = wxEmptyString);
     bool IsProjectRunning() const { return m_executor.IsRunning(); }

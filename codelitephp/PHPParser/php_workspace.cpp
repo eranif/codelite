@@ -125,10 +125,10 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
         event.SetString(GetFilename().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(event);
     }
-    
+
     // Perform a quick re-parse of the workspace
     ParseWorkspace(false);
-    
+
     CallAfter(&PHPWorkspace::RestoreWorkspaceSession);
     return true;
 }
@@ -326,7 +326,10 @@ bool PHPWorkspace::DelFile(const wxString& project, const wxString& folder, cons
     return res;
 }
 
-bool PHPWorkspace::RunProject(bool debugging, const wxString& projectName, const wxString& xdebugSessionName)
+bool PHPWorkspace::RunProject(bool debugging,
+                              const wxString& urlOrFilePath,
+                              const wxString& projectName,
+                              const wxString& xdebugSessionName)
 {
     wxString projectToRun = projectName;
     if(projectToRun.IsEmpty()) {
@@ -335,17 +338,8 @@ bool PHPWorkspace::RunProject(bool debugging, const wxString& projectName, const
 
     PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(projectToRun);
     CHECK_PTR_RET_FALSE(proj);
-    wxFileName indexFile(proj->GetSettings().GetIndexFile());
-    if(!indexFile.IsOk() || !indexFile.Exists()) {
-        // No index file is set
-        wxString message;
-        message << _("Failed to execute project:\n") << _("Index file is not set");
-        ::wxMessageBox(message, wxT("CodeLite"), wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
-        return false;
-    }
-
     // Error is reported inside 'Exec'
-    return m_executor.Exec(projectToRun, xdebugSessionName, debugging);
+    return m_executor.Exec(projectToRun, urlOrFilePath, xdebugSessionName, debugging);
 }
 
 bool PHPWorkspace::HasProject(const wxString& projectname) const

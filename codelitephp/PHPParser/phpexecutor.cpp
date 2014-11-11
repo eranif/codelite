@@ -24,21 +24,19 @@ PHPExecutor::PHPExecutor() {}
 
 PHPExecutor::~PHPExecutor() {}
 
-bool PHPExecutor::Exec(const wxString& projectName, const wxString& xdebugSessionName, bool neverPauseOnExit)
+bool PHPExecutor::Exec(const wxString& projectName,
+                       const wxString& urlOrFilePath,
+                       const wxString& xdebugSessionName,
+                       bool neverPauseOnExit)
 {
     PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(projectName);
     CHECK_PTR_RET_FALSE(proj);
 
     if(proj->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
-        // Execute the URL
-        if(proj->GetSettings().GetProjectURL().IsEmpty()) {
-            ::wxMessageBox(_("Empty URL is provided"), wxT("CodeLite"), wxOK | wxICON_ERROR, wxTheApp->GetTopWindow());
-            return false;
-        }
-        return RunRUL(proj, xdebugSessionName);
+        return RunRUL(proj, urlOrFilePath, xdebugSessionName);
 
     } else {
-        return DoRunCLI("", proj, xdebugSessionName, neverPauseOnExit);
+        return DoRunCLI(urlOrFilePath, proj, xdebugSessionName, neverPauseOnExit);
     }
 }
 
@@ -46,10 +44,10 @@ bool PHPExecutor::IsRunning() const { return m_terminal.IsRunning(); }
 
 void PHPExecutor::Stop() { m_terminal.Terminate(); }
 
-bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& xdebugSessionName)
+bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, const wxString& xdebugSessionName)
 {
     const PHPProjectSettingsData& data = pProject->GetSettings();
-    wxURI uri(data.GetProjectURL());
+    wxURI uri(urlToRun);
 
     wxString url;
     wxString queryStrnig = uri.GetQuery();
@@ -123,7 +121,7 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
         frame->GetTerminalUI()->SetTerminal(&m_terminal);
         frame->Show();
         if(!m_terminal.ExecuteNoConsole(cmd, wd)) {
-            ::wxMessageBox(wxString::Format("Could not execute: %s", cmd), "CodeLite", wxICON_ERROR|wxOK);
+            ::wxMessageBox(wxString::Format("Could not execute: %s", cmd), "CodeLite", wxICON_ERROR | wxOK);
             frame->Destroy();
             return false;
         }
@@ -163,7 +161,7 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
         args = ::wxStringTokenize(data.GetArgs(), wxT("\r"), wxTOKEN_STRTOK);
         includePath = data.GetIncludePathAsArray();
         php = data.GetPhpExe();
-        index = data.GetIndexFile();
+        index = script;
         ini = data.GetPhpIniFile();
 
     } else {
@@ -196,7 +194,7 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
     // Build the command for execution
     wxString cmd;
 
-    cmd << php;              // Wrap the php exe with qoutes
+    cmd << php; // Wrap the php exe with qoutes
 #ifdef __WXMSW__
     ::WrapWithQuotes(cmd);
 #else

@@ -21,6 +21,7 @@
 #include "php_utils.h"
 #include "XDebugCommThread.h"
 #include "XDebugUnknownCommand.h"
+#include "PHPDebugStartDlg.h"
 
 // Handlers
 #include "XDebugRunCmdHandler.h"
@@ -129,6 +130,15 @@ void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
 
 void XDebugManager::DoStartDebugger()
 {
+    CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
+
+    // Test which file we want to debug
+    PHPDebugStartDlg debugDlg(
+        EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_plugin->GetManager());
+    if(debugDlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
     wxDELETE(m_readerThread);
     m_readerThread = new XDebugComThread(this, GetPort(), GetHost());
     m_readerThread->Start();
@@ -160,7 +170,7 @@ void XDebugManager::DoStartDebugger()
     }
 
     // Now we can run the project
-    if(!PHPWorkspace::Get()->RunProject(true, "", conf.GetXdebugIdeKey())) {
+    if(!PHPWorkspace::Get()->RunProject(true, debugDlg.GetPath(), "", conf.GetXdebugIdeKey())) {
         DoStopDebugger();
         return;
     }

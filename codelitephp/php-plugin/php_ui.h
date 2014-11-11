@@ -577,6 +577,8 @@ protected:
 protected:
     virtual void OnDebugMethodChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnScriptToDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUseActiveEditor(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxChoice* GetChoice() { return m_choice; }
@@ -588,7 +590,7 @@ public:
     wxCheckBox* GetCheckBoxDebugActiveEditor() { return m_checkBoxDebugActiveEditor; }
     wxPanel* GetPanelCommandLine() { return m_panelCommandLine; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
-    PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPDebugStartDlgBase();
 };
 

@@ -14151,7 +14151,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "500,300"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -14945,7 +14945,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Label:",
-                 "m_value": "Script to debug:"
+                 "m_value": "Script to run:"
                 }, {
                  "type": "string",
                  "m_label": "Wrap:",
@@ -15133,13 +15133,20 @@
                 }, {
                  "type": "string",
                  "m_label": "Label:",
-                 "m_value": "Debug the script opened in the editor"
+                 "m_value": "Use the active file opened in the editor"
                 }, {
                  "type": "bool",
                  "m_label": "Value:",
                  "m_value": true
                 }],
-               "m_events": [],
+               "m_events": [{
+                 "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
+                 "m_eventClass": "wxCommandEvent",
+                 "m_eventHandler": "wxCommandEventHandler",
+                 "m_functionNameAndSignature": "OnUseActiveEditor(wxCommandEvent& event)",
+                 "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
+                 "m_noBody": false
+                }],
                "m_children": []
               }]
             }]
@@ -15237,7 +15244,14 @@
            "m_label": "Default Button",
            "m_value": true
           }],
-         "m_events": [],
+         "m_events": [{
+           "m_eventName": "wxEVT_UPDATE_UI",
+           "m_eventClass": "wxUpdateUIEvent",
+           "m_eventHandler": "wxUpdateUIEventHandler",
+           "m_functionNameAndSignature": "OnOkUI(wxUpdateUIEvent& event)",
+           "m_description": "Process a wxEVT_UPDATE_UI event",
+           "m_noBody": false
+          }],
          "m_children": []
         }, {
          "m_type": 4468,

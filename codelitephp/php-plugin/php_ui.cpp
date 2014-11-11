@@ -1705,7 +1705,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer386->Add(flexGridSizer381, 1, wxEXPAND, 5);
     
-    m_staticText383 = new wxStaticText(m_panelCommandLine, wxID_ANY, _("Script to debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText383 = new wxStaticText(m_panelCommandLine, wxID_ANY, _("Script to run:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer381->Add(m_staticText383, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -1718,7 +1718,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     
     flexGridSizer381->Add(0, 0, 1, wxALL, 5);
     
-    m_checkBoxDebugActiveEditor = new wxCheckBox(m_panelCommandLine, wxID_ANY, _("Debug the script opened in the editor"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxDebugActiveEditor = new wxCheckBox(m_panelCommandLine, wxID_ANY, _("Use the active file opened in the editor"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxDebugActiveEditor->SetValue(true);
     
     flexGridSizer381->Add(m_checkBoxDebugActiveEditor, 0, wxALL, 5);
@@ -1735,7 +1735,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer361->AddButton(m_button365);
     m_stdBtnSizer361->Realize();
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -1743,6 +1743,8 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     // Connect events
     m_choice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
     m_textCtrlScriptToDebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
+    m_checkBoxDebugActiveEditor->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
+    m_button363->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnOkUI), NULL, this);
     
 }
 
@@ -1750,5 +1752,7 @@ PHPDebugStartDlgBase::~PHPDebugStartDlgBase()
 {
     m_choice->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
     m_textCtrlScriptToDebug->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
+    m_checkBoxDebugActiveEditor->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
+    m_button363->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnOkUI), NULL, this);
     
 }

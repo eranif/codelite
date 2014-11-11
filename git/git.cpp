@@ -1019,11 +1019,20 @@ void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
     InitDefaults();
     RefreshFileListView();
 
-    // If we have a .git folder, set our repository to this path
-    wxFileName gitFolder(m_workspaceFilename.GetPath(), "");
-    gitFolder.AppendDir(".git");
-    if(gitFolder.DirExists()) {
-        DoSetRepoPath(gitFolder.GetPath(), false);
+    // See if we have a saved user-set repo path; if so, use it
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    wxString gitrepoPath = data.GetPath(GetWorkspaceName());
+    if(!gitrepoPath.empty()) {
+        DoSetRepoPath(gitrepoPath, false);
+    } else {
+        // Otherwise if we have a .git folder, set our repository to this path
+        wxFileName gitFolder(m_workspaceFilename.GetPath(), "");
+        gitFolder.AppendDir(".git");
+        if(gitFolder.DirExists()) {
+            DoSetRepoPath(gitFolder.GetPath(), false);
+        }
     }
 }
 

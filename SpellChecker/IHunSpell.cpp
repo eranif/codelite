@@ -118,7 +118,7 @@ void IHunSpell::CloseEngine()
     m_pSpell = NULL;
 }
 // ------------------------------------------------------------
-int IHunSpell::CheckWord(const wxString& word) { return Hunspell_spell(m_pSpell, word); }
+int IHunSpell::CheckWord(const wxString& word) { return Hunspell_spell(m_pSpell, word.ToUTF8()); }
 // ------------------------------------------------------------
 wxArrayString IHunSpell::GetSuggestions(const wxString& misspelled)
 {

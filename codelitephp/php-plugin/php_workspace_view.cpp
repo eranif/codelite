@@ -28,6 +28,7 @@
 #include "PHPProjectSetupDlg.h"
 #include <wx/wupdlock.h>
 #include "PHPDebugStartDlg.h"
+#include "file_logger.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -773,6 +774,7 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
 void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
+        CL_DEBUG("Running active project...");
         CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
         // Test which file we want to debug
         PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);

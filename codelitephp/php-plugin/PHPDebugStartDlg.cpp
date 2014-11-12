@@ -8,6 +8,12 @@ PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject,
     , m_manager(manager)
 {
     PHPProjectSettingsData& settings = m_project->GetSettings();
+#ifdef __WXOSX__
+    // On OSX, remove the 'show effect' or we will see a noticable delay
+    // when showing this dialog
+    m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
+#endif
+
     if(settings.GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
         m_choice->Select(0);
         m_simpleBook->SetSelection(0);

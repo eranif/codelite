@@ -300,6 +300,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // turn off PP tracking/updating by default
     ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+    
+#ifdef __WXOSX__
+    ctrl->SetUseAntiAliasing(true);
+#endif
 
     // Find the default style
     wxFont defaultFont;

@@ -33,18 +33,24 @@ bool XDebugTester::RunTest()
             //////////////////////////////////////////////////
             // Directives
             //////////////////////////////////////////////////
-
-            m_results.insert(
-                std::make_pair(wxString("xdebug.remote_connect_back"),
-                               std::make_pair(rootElement.namedObject("_remoteConnectBack").toString(),
-                                              "If you don't know CodeLite's IP, set this directive to 1")));
+            {
+                wxString msg;
+                if(rootElement.namedObject("_remoteConnectBack").toString() != "1") {
+                    msg << "<font color=\"red\">Failed. This value should be set to 1</font>";
+                } else {
+                    msg << "<font color=\"green\">Passed</font>";
+                }
+                m_results.insert(
+                    std::make_pair(wxString("xdebug.remote_connect_back"),
+                                   std::make_pair(rootElement.namedObject("_remoteConnectBack").toString(), msg)));
+            }
             {
                 wxString msg;
                 if(rootElement.namedObject("_ideKey").toString() != globalConf.GetXdebugIdeKey()) {
                     msg << "<font color=\"red\">Failed. This value should be set to \"" << globalConf.GetXdebugIdeKey()
                         << "\"</font>";
                 } else {
-                    msg << "<font color=\"green\">OK</font>";
+                    msg << "<font color=\"green\">Passed</font>";
                 }
                 m_results.insert(std::make_pair(wxString("xdebug.ide_key"),
                                                 std::make_pair(rootElement.namedObject("_ideKey").toString(), msg)));
@@ -64,7 +70,7 @@ bool XDebugTester::RunTest()
                 if(rootElement.namedObject("_remoteEnable").toString() != "1") {
                     msg << "<font color=\"red\">Failed. This value should be set to 1</font>";
                 } else {
-                    msg << "<font color=\"green\">OK</font>";
+                    msg << "<font color=\"green\">Passed</font>";
                 }
                 m_results.insert(
                     std::make_pair(wxString("xdebug.remote_enable"),
@@ -74,9 +80,9 @@ bool XDebugTester::RunTest()
                 // XDebug loaded
                 wxString msg;
                 if(rootElement.namedObject("_xdebugLoaded").toString() != "1") {
-                    msg << "<font color=\"red\">XDebug is NOT loaded</font>";
+                    msg << "<font color=\"red\">Failed. XDebug is NOT loaded</font>";
                 } else {
-                    msg << "<font color=\"green\">XDebug is loaded</font>";
+                    msg << "<font color=\"green\">Passed</font>";
                 }
                 m_results.insert(
                     std::make_pair(wxString("XDebug Loaded"),
@@ -88,10 +94,10 @@ bool XDebugTester::RunTest()
                 // If Zend Debugger is loaded, mark it the message with RED
                 wxString msg;
                 if(rootElement.namedObject("_zendDebuggerLoaded").toString() == "1") {
-                    msg << "<font color=\"red\">Zend Debugger is loaded. It is recommended to disable Zend "
-                           "Debugger</font>";
+                    msg << "<font color=\"red\">Failed. Unload Zend Debugger extension"
+                           "</font>";
                 } else {
-                    msg << "<font color=\"green\">Zend Debugger is not loaded </font>";
+                    msg << "<font color=\"green\">Passed</font>";
                 }
 
                 m_results.insert(

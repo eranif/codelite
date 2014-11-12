@@ -276,7 +276,6 @@ install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedS
 if [ -f ../lib/wxcrafter.dylib ]; then
     cp ../lib/wxcrafter.dylib ./codelite.app/Contents/SharedSupport/plugins/
     cp -pr ../../Runtime/../wxcrafter/wxgui.zip ./codelite.app/Contents/SharedSupport/
-    cp -pr ../../Runtime/../wxcrafter/wxcrafter.accelerators ./codelite.app/Contents/SharedSupport/plugins/resources
 fi
 
 ## PHP Plugin

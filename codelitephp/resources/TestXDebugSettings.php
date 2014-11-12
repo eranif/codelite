@@ -27,8 +27,8 @@ class TestXDebugSettings {
      * @return mixed
      */
     private function readIni($directive, $defaultValue){
-        $val = ini_get($directive);
-        if($val == false){
+        $val = get_cfg_var($directive);
+        if($val === false){
             return $defaultValue;
         }
         return (string)$val;

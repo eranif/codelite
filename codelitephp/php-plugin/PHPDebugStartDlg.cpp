@@ -8,7 +8,6 @@ PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject,
     , m_manager(manager)
 {
     PHPProjectSettingsData& settings = m_project->GetSettings();
-    m_simpleBook->SetEffect(wxSHOW_EFFECT_SLIDE_TO_RIGHT);
     if(settings.GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
         m_choice->Select(0);
         m_simpleBook->SetSelection(0);
@@ -51,11 +50,11 @@ void PHPDebugStartDlg::OnDebugMethodChanged(wxCommandEvent& event)
     event.Skip();
     if(event.GetSelection() == 0) {
         // Debug URL
-        m_simpleBook->SetSelection(0);
+        CallAfter( &PHPDebugStartDlg::SetBookSelection, 0);
         m_project->GetSettings().SetRunAs(PHPProjectSettingsData::kRunAsWebsite);
     } else {
         // Command line script
-        m_simpleBook->SetSelection(1);
+        CallAfter( &PHPDebugStartDlg::SetBookSelection, 1);
         m_project->GetSettings().SetRunAs(PHPProjectSettingsData::kRunAsCLI);
     }
 }

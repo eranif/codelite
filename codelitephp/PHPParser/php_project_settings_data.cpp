@@ -6,6 +6,7 @@
 #include <set>
 #include <wx/uri.h>
 #include "php_utils.h"
+#include "globals.h"
 
 PHPProjectSettingsData::PHPProjectSettingsData()
     : m_runAs(0)
@@ -154,15 +155,23 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
     }
 
     if(useUrlScheme) {
+        
         wxString asUrlScheme = sourcePath;
         asUrlScheme.Replace("\\", "/");
-        while(asUrlScheme.Replace("//", "/")) {
-        }
+        
+        while(asUrlScheme.Replace("//", "/"))
+            ;
+
         asUrlScheme = ::FileNameToURI(asUrlScheme);
         return asUrlScheme;
 
     } else {
+        wxString filePath;
+        if(sourcePath.Contains(" ")) {
+            filePath = sourcePath;
+            filePath.Prepend('"').Append('"');
+        }
         // return the path without changing it
-        return sourcePath;
+        return filePath;
     }
 }

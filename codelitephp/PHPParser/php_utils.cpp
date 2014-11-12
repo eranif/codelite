@@ -7,38 +7,30 @@
 #include "php_utils.h"
 #include <wx/uri.h>
 #include <wx/base64.h>
+#include <map>
 
 bool IsPHPCommentOrString(int styleAtPos)
 {
-    if( (styleAtPos == wxSTC_HPHP_HSTRING)      ||
-        (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
-        (styleAtPos == wxSTC_HPHP_COMMENT)      ||
-        (styleAtPos == wxSTC_HPHP_COMMENTLINE)
-      )
+    if((styleAtPos == wxSTC_HPHP_HSTRING) || (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
+       (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE))
         return true;
     return false;
 }
 
-bool IsPHPSection(int styleAtPos )
+bool IsPHPSection(int styleAtPos)
 {
-    if( (styleAtPos == wxSTC_HPHP_DEFAULT)          ||
-        (styleAtPos == wxSTC_HPHP_HSTRING)          ||
-        (styleAtPos == wxSTC_HPHP_SIMPLESTRING)     ||
-        (styleAtPos == wxSTC_HPHP_WORD)             ||
-        (styleAtPos == wxSTC_HPHP_NUMBER)           ||
-        (styleAtPos == wxSTC_HPHP_VARIABLE)         ||
-        (styleAtPos == wxSTC_HPHP_COMMENT)          ||
-        (styleAtPos == wxSTC_HPHP_COMMENTLINE)      ||
-        (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) ||
-        (styleAtPos == wxSTC_HPHP_OPERATOR))
+    if((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
+       (styleAtPos == wxSTC_HPHP_SIMPLESTRING) || (styleAtPos == wxSTC_HPHP_WORD) ||
+       (styleAtPos == wxSTC_HPHP_NUMBER) || (styleAtPos == wxSTC_HPHP_VARIABLE) || (styleAtPos == wxSTC_HPHP_COMMENT) ||
+       (styleAtPos == wxSTC_HPHP_COMMENTLINE) || (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) ||
+       (styleAtPos == wxSTC_HPHP_OPERATOR))
         return true;
     return false;
 }
 
 bool IsPHPFile(IEditor* editor)
 {
-    if(!editor)
-        return false;
+    if(!editor) return false;
     return ::IsPHPFile(editor->GetFileName().GetFullPath());
 }
 
@@ -55,40 +47,38 @@ bool IsPHPFile(const wxString& filename)
 
     } else {
         fileSpec = lexer->GetFileSpec();
-
     }
 
-    wxStringTokenizer tkz ( fileSpec, wxT ( ";" ) );
-    while ( tkz.HasMoreTokens() ) {
-        wxString fileExt  = tkz.NextToken();
+    wxStringTokenizer tkz(fileSpec, wxT(";"));
+    while(tkz.HasMoreTokens()) {
+        wxString fileExt = tkz.NextToken();
         wxString fullname = fileName.GetFullName();
 
         fileExt.MakeLower();
         fullname.MakeLower();
-        if ( wxMatchWild ( fileExt, fullname ) ) {
+        if(wxMatchWild(fileExt, fullname)) {
             return true;
         }
     }
     return false;
-
 }
 
 wxMemoryBuffer ReadFileContent(const wxString& filename)
 {
-    FILE *fp;
+    FILE* fp;
     long len;
     wxMemoryBuffer buffer;
 
     fp = fopen(filename.mb_str(wxConvUTF8).data(), "rb");
-    if (!fp) {
+    if(!fp) {
         return buffer;
     }
 
-    //read the whole file
-    fseek(fp, 0, SEEK_END);  //go to end
-    len = ftell(fp);         //get position at end (length)
-    fseek(fp, 0, SEEK_SET);  //go to begining
-    char *pbuf = static_cast<char*>(buffer.GetWriteBuf(len)); // make sure the buffer is large enough
+    // read the whole file
+    fseek(fp, 0, SEEK_END); // go to end
+    len = ftell(fp); // get position at end (length)
+    fseek(fp, 0, SEEK_SET); // go to begining
+    char* pbuf = static_cast<char*>(buffer.GetWriteBuf(len)); // make sure the buffer is large enough
 
     size_t bytes = fread(pbuf, sizeof(char), len, fp);
     buffer.SetDataLen(bytes);
@@ -99,50 +89,90 @@ wxString GetResourceDirectory()
 {
     wxFileName fn;
 #ifdef __WXGTK__
-    fn = wxFileName( PLUGINS_DIR, "");
-    fn.AppendDir( "resources" );
+    fn = wxFileName(PLUGINS_DIR, "");
+    fn.AppendDir("resources");
 #else
-#  ifdef USE_POSIX_LAYOUT
-    fn = wxFileName( wxStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR) );
-#  else
-    fn = wxFileName( wxStandardPaths::Get().GetExecutablePath() );
-    fn.AppendDir( "plugins" );
-#  endif
-    fn.AppendDir( "resources" );
+#ifdef USE_POSIX_LAYOUT
+    fn = wxFileName(wxStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
+#else
+    fn = wxFileName(wxStandardPaths::Get().GetExecutablePath());
+    fn.AppendDir("plugins");
 #endif
-    fn.AppendDir( "php" );
+    fn.AppendDir("resources");
+#endif
+    fn.AppendDir("php");
     return fn.GetPath();
 }
 
 wxString GetCCResourceDirectory()
 {
-    wxFileName fn( GetResourceDirectory(), "" );
-    fn.AppendDir( "cc" );
+    wxFileName fn(GetResourceDirectory(), "");
+    fn.AppendDir("cc");
     return fn.GetPath();
 }
 
 wxString URIToFileName(const wxString& uriFileName)
 {
-    wxString filename = uriFileName;
+    wxString filename = wxURI::Unescape(uriFileName);
     filename.StartsWith(FILE_SCHEME, &filename);
+    
 #ifdef __WXMSW__
-    if ( filename.StartsWith("/") ) {
+    if(filename.StartsWith("/")) {
         filename.Remove(0, 1);
     }
 #endif
     return wxFileName(filename).GetFullPath();
 }
 
+static std::map<int, wxString> sEncodeMap;
+
+static wxString URIEncode(const wxString& inputStr)
+{
+    if(sEncodeMap.empty()) {
+        sEncodeMap['!'] = "%21";
+        sEncodeMap['#'] = "%23";
+        sEncodeMap['$'] = "%24";
+        sEncodeMap['&'] = "%26";
+        sEncodeMap['\''] = "%27";
+        sEncodeMap['('] = "%28";
+        sEncodeMap[')'] = "%29";
+        sEncodeMap['*'] = "%2A";
+        sEncodeMap['+'] = "%2B";
+        sEncodeMap[','] = "%2C";
+        sEncodeMap[';'] = "%3B";
+        sEncodeMap['='] = "%3D";
+        sEncodeMap['?'] = "%3F";
+        sEncodeMap['@'] = "%40";
+        sEncodeMap['['] = "%5B";
+        sEncodeMap[']'] = "%5D";
+        sEncodeMap[' '] = "%20";
+        //sEncodeMap['/'] = "%2F";
+        //sEncodeMap[':'] = "%3A";
+    }
+
+    wxString encoded;
+    for(size_t i=0; i<inputStr.length(); ++i) {
+        std::map<int, wxString>::iterator iter = sEncodeMap.find(inputStr.at(i));
+        if(iter != sEncodeMap.end()) {
+            encoded << iter->second;
+        } else {
+            encoded << inputStr.at(i);
+        }
+    }
+    return encoded;
+}
+
 wxString FileNameToURI(const wxString& filename)
 {
     wxString sourceFullPath = wxFileName(filename).GetFullPath();
-    if ( !sourceFullPath.StartsWith(FILE_SCHEME) ) {
+    if(!sourceFullPath.StartsWith(FILE_SCHEME)) {
         sourceFullPath.Prepend(FILE_SCHEME);
     }
     sourceFullPath.Replace("\\", "/");
-    while (sourceFullPath.Replace("//", "/") ) {}
-    wxURI uri(sourceFullPath);
-    sourceFullPath = uri.BuildURI();
+    while(sourceFullPath.Replace("//", "/")) {
+    }
+//    wxURI uri(sourceFullPath);
+    sourceFullPath = URIEncode(sourceFullPath);
     sourceFullPath.Replace("file:", FILE_SCHEME);
     return sourceFullPath;
 }

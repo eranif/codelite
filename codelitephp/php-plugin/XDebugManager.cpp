@@ -226,7 +226,7 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 {
     if(buffer.IsEmpty()) return false;
 
-    CL_DEBUG("XDebug <<< " + buffer);
+    CL_DEBUGS(wxString() << "XDebug <<< " << buffer);
 
     wxXmlDocument doc;
     wxStringInputStream sis(buffer);
@@ -339,13 +339,15 @@ xInitStruct XDebugManager::ParseInitXML(wxXmlNode* init)
 {
     xInitStruct initData;
     wxURI fileuri(init->GetAttribute("fileuri"));
-    initData.filename = fileuri.GetPath();
+    initData.filename = fileuri.BuildUnescapedURI();
+    /*
 #ifdef __WXMSW__
     if(initData.filename.StartsWith("/")) {
         initData.filename.Remove(0, 1);
         initData.filename = wxFileName(initData.filename).GetFullPath(); // Convert to native format
     }
 #endif
+ */
     return initData;
 }
 

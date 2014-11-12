@@ -144,7 +144,7 @@ void XDebugComThread::DoSendCommand(const wxString& command, clSocketBase::Ptr_t
     if ( !client ) {
         return;
     }
-    CL_DEBUG("CodeLite >>> " + command );
+    CL_DEBUGS(wxString() << "CodeLite >>> " << command );
 
     wxMemoryBuffer buff;
     buff.AppendData(command.mb_str(wxConvISO8859_1), command.length());

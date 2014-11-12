@@ -1672,7 +1672,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer359->Add(m_choice, 0, wxALL|wxEXPAND, 5);
     
     m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
-    m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
+    m_simpleBook->SetEffect(wxSHOW_EFFECT_SLIDE_TO_BOTTOM);
     
     boxSizer359->Add(m_simpleBook, 1, wxALL|wxEXPAND, 5);
     

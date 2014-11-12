@@ -7,6 +7,8 @@ class PHPDebugStartDlg : public PHPDebugStartDlgBase
 {
     PHPProject::Ptr_t m_project;
     IManager* m_manager;
+protected:
+    void SetBookSelection(int sel) { m_simpleBook->SetSelection(sel); }
     
 public:
     PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject, IManager* manager);

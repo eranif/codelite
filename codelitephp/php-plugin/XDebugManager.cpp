@@ -268,7 +268,7 @@ void XDebugManager::DoApplyBreakpoints()
     CHECK_PTR_RET(pProject);
 
     const PHPProjectSettingsData& settings = pProject->GetSettings();
-    bool bRunAsWebserver = (pProject->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite);
+    //bool bRunAsWebserver = (pProject->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite);
 
     XDebugBreakpoint::List_t& breakpoints = m_breakpointsMgr.GetBreakpoints();
     XDebugBreakpoint::List_t::iterator iter = breakpoints.begin();
@@ -289,8 +289,7 @@ void XDebugManager::DoApplyBreakpoints()
 
         wxString command;
         XDebugCommandHandler::Ptr_t handler(new XDebugBreakpointCmdHandler(this, ++TranscationId, *iter));
-        wxString filepath =
-            bRunAsWebserver ? settings.GetMappdPath(iter->GetFileName(), true, sftpMapping) : iter->GetFileName();
+        wxString filepath = settings.GetMappdPath(iter->GetFileName(), true, sftpMapping);// : iter->GetFileName();
         command << "breakpoint_set -i " << handler->GetTransactionId() << " -t line"
                 << " -f " << filepath << " -n " << iter->GetLine();
         DoSocketWrite(command);

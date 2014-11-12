@@ -215,7 +215,8 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
         }
         cmd << wxT("\" ");
     }
-
+    
+    ::WrapWithQuotes(index);
     cmd << index;
 
     if(!args.IsEmpty()) {

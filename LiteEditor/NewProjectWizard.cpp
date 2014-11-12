@@ -211,7 +211,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
         }
     }
 
-    // Aet list of compilers from configuration file
+    // Get list of compilers from configuration file
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
     while(cmp) {
@@ -334,7 +334,7 @@ void NewProjectWizard::OnBrowseProjectPath(wxCommandEvent& event)
         static wxString INVALID_CHARS = ",'";
         if(new_path.find_first_of(INVALID_CHARS) != wxString::npos) {
             int answer = ::wxMessageBox(wxString() << _("The selected project path '") << new_path
-                                                   << _("'\nContains some invalid characters\nContinue anyways?"),
+                                                   << _("'\ncontains some invalid characters\nContinue anyway?"),
                                         "CodeLite",
                                         wxYES_NO | wxCANCEL | wxICON_WARNING,
                                         this);
@@ -412,31 +412,68 @@ void NewProjectWizard::OnFinish(wxWizardEvent& event)
 void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
 {
     if(event.GetDirection()) {
+        wxDataViewItem sel = m_dataviewTemplates->GetSelection();
+        NewProjectClientData* cd =
+            dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel));
+
+        if(event.GetPage() == m_wizardPageTemplate) {
         // -------------------------------------------------------
         // Switching from the Templates page
         // -------------------------------------------------------
-        if(event.GetPage() == m_wizardPageTemplate) {
             if(!CheckProjectTemplate()) {
                 event.Veto();
                 return;
             }
 
             // Test to see if the selected project allows enabling the 'Create under separate folder'
-            wxDataViewItem sel = m_dataviewTemplates->GetSelection();
-            NewProjectClientData* cd =
-                dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel));
-            if(!cd->IsCanUseSeparateFolder()) {
+            if(cd && !cd->IsCanUseSeparateFolder()) {
                 m_cbSeparateDir->SetValue(false);
                 m_cbSeparateDir->Enable(false);
             } else {
                 m_cbSeparateDir->Enable(true);
             }
 
+            m_txtProjName->SetFocus(); // This should have happened in the base-class ctor, but in practice it doesn't
+
         } else if(event.GetPage() == m_wizardPageDetails) {
+        // -------------------------------------------------------
+        // Switching from the Name/Path page
+        // -------------------------------------------------------
             if(!CheckProjectName() || !CheckProjectPath()) {
                 event.Veto();
                 return;
             }
+        }
+
+        // Try to offer a sensible toolchain/debugger combination as default
+        wxString defaultDebugger;
+        if (cd && cd->GetTemplate().Lower().Contains("php")) {
+            for (size_t n=0; n < m_choiceCompiler->GetCount(); ++n) {
+                if (m_choiceCompiler->GetString(n).Lower().Contains("php")) {
+                    m_choiceCompiler->SetSelection(n);
+                    break;
+                }
+            }
+            defaultDebugger = "XDebug";
+
+        } else {      
+            // If it's not a PHP project we can't be sure of anything except we don't want php tools; so select the first that isn't
+            for (size_t n=0; n < m_choiceCompiler->GetCount(); ++n) {
+                if (!m_choiceCompiler->GetString(n).Lower().Contains("php")) {
+                    m_choiceCompiler->SetSelection(n);
+                    break;
+                }
+            }
+#if defined(__WXMAC__)
+            defaultDebugger = "LLDB Debugger";
+#else
+            defaultDebugger = "GNU gdb debugger";
+#endif
+        }
+
+        int index = m_choiceDebugger->FindString(defaultDebugger);
+        if (index != wxNOT_FOUND) {
+           m_choiceDebugger->SetSelection(index);
         }
     }
     event.Skip();
@@ -449,7 +486,7 @@ bool NewProjectWizard::CheckProjectName()
     if(projectName.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")) !=
            wxString::npos ||
        projectName.IsEmpty()) {
-        wxMessageBox(_("Project name may contain the following characters [a-z0-9_-]"),
+        wxMessageBox(_("Project names may contain only the following characters [a-z0-9_-]"),
                      "CodeLite",
                      wxOK | wxICON_WARNING | wxCENTER,
                      this);

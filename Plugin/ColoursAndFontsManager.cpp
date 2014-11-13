@@ -17,6 +17,7 @@
 #include <wx/tokenzr.h>
 #include "EclipseThemeImporterManager.h"
 #include "fileextmanager.h"
+#include "file_logger.h"
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()
@@ -91,8 +92,10 @@ void ColoursAndFontsManager::LoadNewXmls(const wxString& path)
 {
     // load all XML files
     wxArrayString files;
+    CL_DEBUG("Loading lexers");
+    CL_DEBUG("Scanning for lexer files");
     wxDir::GetAllFiles(path, &files, "lexer_*.xml");
-
+    CL_DEBUG("Scanning for lexer files...done");
     // Each XMl represents a single lexer
     for(size_t i = 0; i < files.GetCount(); ++i) {
         wxXmlDocument doc;
@@ -101,6 +104,7 @@ void ColoursAndFontsManager::LoadNewXmls(const wxString& path)
         }
         DoAddLexer(doc.GetRoot());
     }
+    CL_DEBUG("Loading lexers...done");
 }
 
 void ColoursAndFontsManager::LoadOldXmls(const wxString& path)

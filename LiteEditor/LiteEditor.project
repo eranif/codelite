@@ -188,6 +188,10 @@
             <File Name="EditorOptionsCopyPaste.h"/>
             <File Name="EditorOptionsCopyPaste.cpp"/>
           </VirtualDirectory>
+          <VirtualDirectory Name="Edit">
+            <File Name="EditorOptionsGeneralEdit.h"/>
+            <File Name="EditorOptionsGeneralEdit.cpp"/>
+          </VirtualDirectory>
         </VirtualDirectory>
         <VirtualDirectory Name="Comments">
           <File Name="editorsettingscomments.cpp"/>

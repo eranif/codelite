@@ -45,39 +45,33 @@
 #include "manager.h"
 #include "windowattrmanager.h"
 #include "EditorOptionsCopyPaste.h"
+#include "EditorOptionsGeneralEdit.h"
 
-OptionsDlg2::OptionsDlg2( wxWindow* parent )
-    : OptionsBaseDlg2( parent )
+OptionsDlg2::OptionsDlg2(wxWindow* parent)
+    : OptionsBaseDlg2(parent)
     , m_contentObjects()
     , restartRquired(false)
 {
     Initialize();
     WindowAttrManager::Load(this, wxT("OptionsDlgAttr"), NULL);
-    MSWSetNativeTheme( m_treeBook->GetTreeCtrl() );
+    MSWSetNativeTheme(m_treeBook->GetTreeCtrl());
     GetSizer()->Layout();
 }
 
 OptionsDlg2::~OptionsDlg2()
 {
-    if ( !this->restartRquired )
-        WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
+    if(!this->restartRquired) WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
 }
 
-void OptionsDlg2::OnButtonOK( wxCommandEvent&)
+void OptionsDlg2::OnButtonOK(wxCommandEvent&)
 {
     DoSave();
     EndModal(wxID_OK);
 }
 
-void OptionsDlg2::OnButtonCancel( wxCommandEvent&)
-{
-    EndModal(wxID_CANCEL);
-}
+void OptionsDlg2::OnButtonCancel(wxCommandEvent&) { EndModal(wxID_CANCEL); }
 
-void OptionsDlg2::OnButtonApply( wxCommandEvent& )
-{
-    DoSave();
-}
+void OptionsDlg2::OnButtonApply(wxCommandEvent&) { DoSave(); }
 
 void OptionsDlg2::DoSave()
 {
@@ -88,12 +82,12 @@ void OptionsDlg2::DoSave()
     // file
     EditorConfigST::Get()->Begin();
     typedef std::list<TreeBookNodeBase*>::iterator ContentIter;
-    for (ContentIter it = m_contentObjects.begin(), end = m_contentObjects.end(); it != end; ++it) {
-        if (*it) {
+    for(ContentIter it = m_contentObjects.begin(), end = m_contentObjects.end(); it != end; ++it) {
+        if(*it) {
             TreeBookNodeBase* child = *it;
-            child->Save( options );
+            child->Save(options);
 
-            if ( !this->restartRquired ) {
+            if(!this->restartRquired) {
                 this->restartRquired = child->IsRestartRequired();
             }
         }
@@ -107,32 +101,33 @@ void OptionsDlg2::DoSave()
     clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 
     // Notify plugins about settings changed
-    PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
+    PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 
-    if ( this->restartRquired ) {
+    if(this->restartRquired) {
         WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
     }
 }
 
 void OptionsDlg2::Initialize()
 {
-    m_treeBook->AddPage(0,_("Editor"));
-    AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook),     _("Guides"), true);
-    AddSubPage(new EditorOptionsCopyPaste(m_treeBook),              _("Copy / Cut Behavior"), false);
-    AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook),_("Indentation"));
-    AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook),_("Right Margin Indicator"));
-    AddSubPage(new EditorSettingsCaret(m_treeBook),                 _("Caret & Scrolling"));
-    AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook),       _("Save Options"));
+    m_treeBook->AddPage(0, _("Editor"));
+    AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), _("Guides"), true);
+    AddSubPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
+    AddSubPage(new EditorOptionsCopyPaste(m_treeBook), _("Copy / Cut Behavior"), false);
+    AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
+    AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin Indicator"));
+    AddSubPage(new EditorSettingsCaret(m_treeBook), _("Caret & Scrolling"));
+    AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
 
     m_treeBook->AddPage(0, wxT("Tweaks"));
-    AddSubPage(new EditorSettingsComments(m_treeBook),             _("Code"));
+    AddSubPage(new EditorSettingsComments(m_treeBook), _("Code"));
     AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Doxygen"));
 
-    AddPage(new EditorSettingsFolding(m_treeBook),       _("Folding"));
-    AddPage(new EditorSettingsBookmarksPanel(m_treeBook),_("Bookmarks"));
-    AddPage(new EditorSettingsDockingWindows(m_treeBook),_("Windows & Tabs"));
+    AddPage(new EditorSettingsFolding(m_treeBook), _("Folding"));
+    AddPage(new EditorSettingsBookmarksPanel(m_treeBook), _("Bookmarks"));
+    AddPage(new EditorSettingsDockingWindows(m_treeBook), _("Windows & Tabs"));
 
     // the Terminal page should NOT be added under Windows
-    AddPage(new EditorSettingsTerminal(m_treeBook),      _("Terminal"));
-    AddPage(new EditorSettingsMiscPanel(m_treeBook),     _("Misc"));
+    AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
+    AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
 }

@@ -703,8 +703,27 @@ void LEditor::OnSavePoint(wxStyledTextEvent& event)
 
 void LEditor::OnCharAdded(wxStyledTextEvent& event)
 {
-    // allways cancel the tip
+    // Allways cancel the tip
     CodeCompletionBox::Get().CancelTip();
+    OptionsConfigPtr options = GetOptions();
+    if(m_prevSelectionInfo.IsOk()) {
+        if(event.GetKey() == '"' && options->IsWrapSelectionWithQuotes()) {
+            DoWrapPrevSelectionWithChars('"', '"');
+            return;
+        } else if(event.GetKey() == '[' && options->IsWrapSelectionBrackets()) {
+            DoWrapPrevSelectionWithChars('[', ']');
+            return;
+        } else if(event.GetKey() == '\'' && options->IsWrapSelectionWithQuotes()) {
+            DoWrapPrevSelectionWithChars('\'', '\'');
+            return;
+        } else if(event.GetKey() == '(' && options->IsWrapSelectionBrackets()) {
+            DoWrapPrevSelectionWithChars('(', ')');
+            return;
+        }
+    }
+
+    // reset the flag
+    m_prevSelectionInfo.Clear();
 
     int pos = GetCurrentPos();
     bool canShowCompletionBox(true);
@@ -733,11 +752,14 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     bool bJustAddedIndicator = false;
     int nextChar = SafeGetChar(pos), prevChar = SafeGetChar(pos - 2);
 
-    if(GetOptions()->GetAutoCompleteDoubleQuotes() && (event.GetKey() == '"' || event.GetKey() == '\'') &&
+    //-------------------------------------
+    // Smart quotes management
+    //-------------------------------------
+    if(options->GetAutoCompleteDoubleQuotes() && (event.GetKey() == '"' || event.GetKey() == '\'') &&
        event.GetKey() == GetCharAt(pos)) {
         CharRight();
         DeleteBack();
-    } else if(GetOptions()->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
+    } else if(options->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
         // add complete quotes; but don't if the next char is alnum,
         // which is annoying if you're trying to retrofit quotes around a string!
         // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
@@ -756,6 +778,9 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
         }
     }
 
+    //-------------------------------------
+    // Smart quotes management
+    //-------------------------------------
     if(!bJustAddedIndicator && IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
         CharRight();
         DeleteBack();
@@ -772,9 +797,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     wxChar matchChar(0);
     switch(event.GetKey()) {
     case ';':
-
         if(!m_disableSemicolonShift && !m_context->IsCommentOrString(pos)) m_context->SemicolonShift();
-
         break;
 
     case '(':
@@ -1035,13 +1058,13 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 
     if(!hasSelection) {
         HighlightWord(false);
-        
+
     } else {
         if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
             // we got a selection
             int wordStartPos = WordStartPos(pos, true);
             int wordEndPos = WordEndPos(pos, true);
-            
+
             wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
             if(GetSelectedText() == selectedText) {
                 // The user has selected something with the keyboard which matches a complete word
@@ -1455,7 +1478,7 @@ void LEditor::CompleteWord(bool onlyRefresh)
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
     if(AutoCompActive()) return; // Don't clobber the boxes
-    
+
     // Let the plugins a chance to override the default behavior
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
@@ -1485,7 +1508,7 @@ void LEditor::CodeComplete()
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
     if(AutoCompActive()) return; // Don't clobber the boxes..
-    
+
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
@@ -2994,6 +3017,11 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
 {
     // always cancel the tip
     CodeCompletionBox::Get().CancelTip();
+    m_prevSelectionInfo.Clear();
+    if(HasSelection()) {
+        m_prevSelectionInfo.start = GetSelectionStart();
+        m_prevSelectionInfo.end = GetSelectionEnd();
+    }
 
     bool escapeUsed = false; // If the quickfind bar is open we'll use an ESC to close it; but only if we've not already
                              // used it for something else
@@ -3100,7 +3128,6 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
         clMainFrame::Get()->GetMainBook()->ShowQuickBar(
             false); // There's no easy way to tell if it's actually showing, so just do a Close
     }
-
     m_context->OnKeyDown(event);
 }
 
@@ -3173,7 +3200,7 @@ void LEditor::OnMotion(wxMouseEvent& event)
 void LEditor::OnLeftDown(wxMouseEvent& event)
 {
     HighlightWord(false);
-    
+
     // hide completion box
     HideCompletionBox();
     CodeCompletionBox::Get().CancelTip();
@@ -3313,9 +3340,8 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()
-            ->GetBreakpointsMgr()
-            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
+           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -4772,4 +4798,25 @@ void LEditor::SetLineVisible(int lineno)
         // If the line is hidden - expand it
         EnsureVisible(lineno);
     }
+}
+
+void LEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
+{
+    // Undo the previous action
+    BeginUndoAction();
+    
+    // Restore the previous selection
+    Undo();
+    SetSelection(m_prevSelectionInfo.start, m_prevSelectionInfo.end);
+    
+    int selectionStart = GetSelectionStart();
+    int selectionEnd = GetSelectionEnd();
+
+    InsertText(selectionStart, first);
+    InsertText(PositionAfter(selectionEnd), last);
+
+    // Restore the selection
+    SetSelection(PositionAfter(selectionStart), PositionAfter(selectionEnd));
+
+    EndUndoAction();
 }

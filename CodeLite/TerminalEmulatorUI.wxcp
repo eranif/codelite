@@ -124,7 +124,7 @@
      "m_children": [{
        "m_type": 4466,
        "proportion": 1,
-       "border": 5,
+       "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],
@@ -243,7 +243,7 @@
       }, {
        "m_type": 4406,
        "proportion": 0,
-       "border": 5,
+       "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxTE_PROCESS_ENTER"],

@@ -1663,8 +1663,8 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     this->SetSizer(boxSizer359);
     
     wxArrayString m_choiceArr;
-    m_choiceArr.Add(wxT("Debug URL"));
-    m_choiceArr.Add(wxT("Debug command line"));
+    m_choiceArr.Add(wxT("Run / Debug URL"));
+    m_choiceArr.Add(wxT("Run / Debug with PHP command line"));
     m_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceArr, 0);
     m_choice->SetToolTip(_("Select the debugging method"));
     m_choice->SetSelection(0);
@@ -1689,7 +1689,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer387->Add(flexGridSizer375, 1, wxEXPAND, 5);
     
-    m_staticText377 = new wxStaticText(m_panelDebugURL, wxID_ANY, _("URL to Debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText377 = new wxStaticText(m_panelDebugURL, wxID_ANY, _("URL to Run / Debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer375->Add(m_staticText377, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -1716,7 +1716,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer386->Add(flexGridSizer381, 1, wxEXPAND, 5);
     
-    m_staticText383 = new wxStaticText(m_panelCommandLine, wxID_ANY, _("Script to run:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText383 = new wxStaticText(m_panelCommandLine, wxID_ANY, _("File to Run / Debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer381->Add(m_staticText383, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     

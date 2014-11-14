@@ -594,7 +594,7 @@ public:
     wxCheckBox* GetCheckBoxDebugActiveEditor() { return m_checkBoxDebugActiveEditor; }
     wxPanel* GetPanelCommandLine() { return m_panelCommandLine; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
-    PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Run / Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPDebugStartDlgBase();
 };
 

@@ -63,7 +63,7 @@ TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, 
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
     
-    boxSizer2->Add(m_stc, 1, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(m_stc, 1, wxALL|wxEXPAND, 2);
     
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
     m_textCtrl->SetFocus();
@@ -71,7 +71,7 @@ TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, 
     m_textCtrl->SetHint(_("Send command to the process"));
     #endif
     
-    boxSizer2->Add(m_textCtrl, 0, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(m_textCtrl, 0, wxALL|wxEXPAND, 2);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {

@@ -29,6 +29,8 @@ protected:
     virtual void OnSendCommand(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStyledTextCtrl* GetStc() { return m_stc; }
+    wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
     TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~TerminalEmulatorUIBase();
 };

@@ -14375,7 +14375,7 @@
     }, {
      "type": "string",
      "m_label": "Title:",
-     "m_value": "PHP Debug "
+     "m_value": "PHP Run / Debug"
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
@@ -14509,7 +14509,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Choices:",
-         "m_value": "Debug URL;Debug command line"
+         "m_value": "Run / Debug URL;Run / Debug with PHP command line"
         }, {
          "type": "string",
          "m_label": "Selection:",
@@ -14809,7 +14809,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Label:",
-                 "m_value": "URL to Debug:"
+                 "m_value": "URL to Run / Debug:"
                 }, {
                  "type": "string",
                  "m_label": "Wrap:",
@@ -15117,7 +15117,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Label:",
-                 "m_value": "Script to run:"
+                 "m_value": "File to Run / Debug:"
                 }, {
                  "type": "string",
                  "m_label": "Wrap:",

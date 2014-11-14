@@ -26,55 +26,36 @@
 #include "stringhighlighterjob.h"
 #include <vector>
 
-StringHighlighterJob::StringHighlighterJob(wxEvtHandler *parent, const wxChar *str, const wxChar *word, const wxChar* filename)
-		: Job(parent)
-		, m_str(str)
-		, m_word(word)
-		, m_filename(filename)
+StringHighlighterJob::StringHighlighterJob(const wxString& str, const wxString& word, int offset)
+    : m_str(str)
+    , m_word(word)
+    , m_offset(offset)
 {
 }
 
-StringHighlighterJob::~StringHighlighterJob()
+StringHighlighterJob::~StringHighlighterJob() {}
+
+void StringHighlighterJob::Process()
 {
-}
+    if(m_str.IsEmpty() || m_word.IsEmpty()) {
+        return;
+    }
 
-void StringHighlighterJob::Process(wxThread* thread)
-{
-	wxUnusedVar(thread);
-	if ( m_str.IsEmpty() || m_word.IsEmpty() ) {
-		return;
-	}
+    int pos(0);
+    int match_len(0);
 
-	int pos(0);
-	int match_len(0);
+    // remove reverse search
+    int offset(0);
 
-	// remove reverse search
-	int offset(0);
+    const wchar_t* pin = m_str.c_str().AsWChar();
+    const wchar_t* pwo = m_word.c_str().AsWChar();
 
-	// allocate result on the heap (will be freed by the caller)
-	StringHighlightOutput *results = new StringHighlightOutput;
-
-	results->filename = m_filename.c_str();
-	results->matches  = new std::vector<std::pair<int, int> >;
-
-#if wxVERSION_NUMBER >= 2900
-	const wchar_t* pin = m_str.c_str().AsWChar();
-	const wchar_t* pwo = m_word.c_str().AsWChar();
-#else
-	const wchar_t* pin = m_str.c_str();
-	const wchar_t* pwo = m_word.c_str();
-#endif
-
-	while ( StringFindReplacer::Search(pin, offset, pwo, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
-		// add result
-		std::pair<int, int> match;
-		match.first = pos;
-		match.second = match_len;
-
-		results->matches->push_back( match );
-		offset = pos + match_len;
-	}
-
-	// report the result back to parent
-	Post((void*) results);
+    while(StringFindReplacer::Search(pin, offset, pwo, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len)) {
+        // add result pair(offset, len)
+        std::pair<int, int> match;
+        match.first = pos + m_offset; // add the offset
+        match.second = match_len;
+        m_output.matches.push_back(match);
+        offset = pos + match_len;
+    }
 }

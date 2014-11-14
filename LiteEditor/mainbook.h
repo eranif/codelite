@@ -78,7 +78,6 @@ private:
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnDebugEnded(wxCommandEvent& e);
-    void OnStringHighlight(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
 

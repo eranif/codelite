@@ -28,35 +28,38 @@
 #include "job.h"
 #include <vector>
 
-struct StringHighlightOutput
-{
-	wxString                           filename;
-	std::vector<std::pair<int, int> >* matches;
+struct StringHighlightOutput {
+    wxString filename;
+    std::vector<std::pair<int, int> > matches;
 
-	StringHighlightOutput() : filename(wxT("")), matches(NULL)
-	{}
+    StringHighlightOutput()
+        : filename(wxT(""))
+    {
+    }
 
-	~StringHighlightOutput()
-	{
-		if(matches) {
-			delete matches;
-			matches = NULL;
-		}
-	}
+    ~StringHighlightOutput() {}
 };
 
-class StringHighlighterJob : public Job
+class StringHighlighterJob
 {
-
-	wxString m_str;
-	wxString m_word;
-	wxString m_filename;
-
-public:
-	StringHighlighterJob(wxEvtHandler *parent, const wxChar *str, const wxChar *word, const wxChar *filename);
-	virtual ~StringHighlighterJob();
+    wxString m_str;
+    wxString m_word;
+    int m_offset;
+    StringHighlightOutput m_output;
 
 public:
-	virtual void Process(wxThread *thread);
+    StringHighlighterJob(const wxString& str, const wxString& word, int offset);
+    virtual ~StringHighlighterJob();
+
+    void SetOffset(int offset) { this->m_offset = offset; }
+    void SetStr(const wxString& str) { this->m_str = str; }
+    void SetWord(const wxString& word) { this->m_word = word; }
+    int GetOffset() const { return m_offset; }
+    const StringHighlightOutput& GetOutput() const { return m_output; }
+    const wxString& GetStr() const { return m_str; }
+    const wxString& GetWord() const { return m_word; }
+
+public:
+    virtual void Process();
 };
 #endif // __stringhighlighterjob__

@@ -139,6 +139,7 @@ EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
 EVT_COMMAND(wxID_ANY, wxCMD_EVENT_SET_EDITOR_ACTIVE, LEditor::OnSetActive)
+EVT_IDLE(LEditor::OnIdle)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -1054,29 +1055,6 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int end = PositionFromLine(curLine + 1);
     if(end >= pos && end < GetTextLength()) {
         IndicatorClearRange(end, GetTextLength() - end);
-    }
-    
-    if(!hasSelection) {
-        HighlightWord(false);
-
-    } else {
-        // Check to see if we have marker already on
-        if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
-            // we got a selection
-            int wordStartPos = WordStartPos(pos, true);
-            int wordEndPos = WordEndPos(pos, true);
-
-            wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
-            bool textMatches = GetSelectedText() == selectedText;
-            if(textMatches && IndicatorStart(MARKER_WORD_HIGHLIGHT, wordStartPos) == 0) {
-                // No markers set yet
-                CallAfter(&LEditor::DoHighlightWord);
-                
-            } else if(!textMatches) {
-                // clear markers if the text does not match
-                HighlightWord(false);
-            }
-        }
     }
 
     RecalcHorizontalScrollbar();
@@ -3730,20 +3708,35 @@ void LEditor::DoHighlightWord()
     if(word.IsEmpty()) {
         return;
     }
-
-    // to make the code "smoother" we move the search task to different thread
-    StringHighlighterJob* j = new StringHighlighterJob(
-        clMainFrame::Get()->GetMainBook(), GetText().c_str(), word.c_str(), GetFileName().GetFullPath().c_str());
-    JobQueueSingleton::Instance()->PushJob(j);
+    
+    // Search only the visible areas
+    int firstVisibleLine = GetFirstVisibleLine();
+    int lastLine = firstVisibleLine + LinesOnScreen();
+    int lastDocLine = LineFromPosition(GetLength());
+    if(lastLine > lastDocLine) {
+        lastLine = lastDocLine;
+    }
+    int offset = PositionFromLine(GetFirstVisibleLine());
+    int lastPos = PositionFromLine(lastLine) + LineLength(lastLine);
+    wxString text = GetTextRange(offset, lastPos);
+    StringHighlighterJob j(text, word, offset);
+    j.Process();
+    
+    // Keep the first offset
+    m_hasMarkers.Clear();
+    m_hasMarkers.firstOffset = offset;
+    HighlightWord((StringHighlightOutput*)&j.GetOutput());
 }
 
 void LEditor::HighlightWord(bool highlight)
 {
     if(highlight) {
         DoHighlightWord();
+
     } else {
         SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
         IndicatorClearRange(0, GetLength());
+        m_hasMarkers.Clear();
     }
 }
 
@@ -4478,25 +4471,24 @@ void LEditor::SetLexerName(const wxString& lexerName) { SetSyntaxHighlight(lexer
 void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 {
     // the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
-    std::vector<std::pair<int, int> >* matches = highlightOutput->matches;
+    const std::vector<std::pair<int, int> >& matches = highlightOutput->matches;
     SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
-
-#ifdef __WXMAC__
-    IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
-#endif
 
     // clear the old markers
     IndicatorClearRange(0, GetLength());
+    if(!highlightOutput->matches.empty()) {
+        m_hasMarkers.hasMarkers = true;
+        int selStart = GetSelectionStart();
+        for(size_t i = 0; i < matches.size(); i++) {
+            const std::pair<int, int>& p = matches.at(i);
 
-    int selStart = GetSelectionStart();
-
-    for(size_t i = 0; i < matches->size(); i++) {
-        std::pair<int, int> p = matches->at(i);
-
-        // Dont highlight the current selection
-        if(p.first != selStart) {
-            IndicatorFillRange(p.first, p.second);
+            // Dont highlight the current selection
+            if(p.first != selStart) {
+                IndicatorFillRange(p.first, p.second);
+            }
         }
+    } else {
+        m_hasMarkers.Clear();
     }
 }
 
@@ -4822,4 +4814,33 @@ void LEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
     SetSelection(PositionAfter(selectionStart), PositionAfter(selectionEnd));
 
     EndUndoAction();
+}
+
+void LEditor::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(!HasSelection()) {
+        HighlightWord(false);
+
+    } else if(!m_hasMarkers.IsValid(this)) {
+        
+        // Check to see if we have marker already on
+        if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
+            // we got a selection
+            int pos = GetCurrentPos();
+            int wordStartPos = WordStartPos(pos, true);
+            int wordEndPos = WordEndPos(pos, true);
+
+            wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
+            bool textMatches = GetSelectedText() == selectedText;
+            if(textMatches) {
+                // No markers set yet
+                DoHighlightWord();
+
+            } else if(!textMatches) {
+                // clear markers if the text does not match
+                HighlightWord(false);
+            }
+        }
+    }
 }

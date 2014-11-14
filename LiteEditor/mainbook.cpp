@@ -117,9 +117,6 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
-
-    // Highlight Job
-    Connect(wxEVT_CMD_JOB_STATUS_VOID_PTR, wxCommandEventHandler(MainBook::OnStringHighlight), NULL, this);
 }
 
 MainBook::~MainBook()
@@ -144,7 +141,6 @@ MainBook::~MainBook()
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
-    Disconnect(wxEVT_CMD_JOB_STATUS_VOID_PTR, wxCommandEventHandler(MainBook::OnStringHighlight), NULL, this);
 }
 
 void MainBook::OnMouseDClick(NotebookEvent& e)
@@ -1152,20 +1148,6 @@ void MainBook::DoHandleFrameMenu(LEditor* editor)
     //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);
     //     }
     // }
-}
-
-void MainBook::OnStringHighlight(wxCommandEvent& e)
-{
-    StringHighlightOutput* result = reinterpret_cast<StringHighlightOutput*>(e.GetClientData());
-    if(result) {
-
-        // Locate the editor
-        LEditor* editor = FindEditor(result->filename);
-        if(editor) {
-            editor->HighlightWord(result);
-        }
-        delete result;
-    }
 }
 
 void MainBook::OnPageChanging(NotebookEvent& e)

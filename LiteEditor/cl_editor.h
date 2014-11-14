@@ -66,8 +66,7 @@ enum sci_annotation_styles { eAnnotationStyleError = 128, eAnnotationStyleWarnin
 * @class BPtoMarker
 * Holds which marker and mask are associated with each breakpoint type
 */
-typedef struct _BPtoMarker
-{
+typedef struct _BPtoMarker {
     enum BreakpointType bp_type; // An enum of possible break/watchpoint types. In debugger.h
     sci_marker_types marker;
     marker_mask_type mask;
@@ -100,8 +99,7 @@ extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
 class LEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
-    struct SelectionInfo
-    {
+    struct SelectionInfo {
         int start;
         int end;
         SelectionInfo()
@@ -114,8 +112,25 @@ private:
             start = wxNOT_FOUND;
             end = wxNOT_FOUND;
         }
-        bool IsOk() const {
-            return start != wxNOT_FOUND && end != wxNOT_FOUND;
+        bool IsOk() const { return start != wxNOT_FOUND && end != wxNOT_FOUND; }
+    };
+
+    struct MarkWordInfo {
+        bool hasMarkers;
+        int firstOffset;
+        MarkWordInfo()
+            : hasMarkers(false)
+            , firstOffset(wxNOT_FOUND)
+        {
+        }
+        
+        void Clear() {
+            hasMarkers = false;
+            firstOffset = wxNOT_FOUND;
+        }
+        
+        bool IsValid(wxStyledTextCtrl* ctrl) const {
+            return ctrl->PositionFromLine(ctrl->GetFirstVisibleLine()) == firstOffset && hasMarkers;
         }
     };
 
@@ -163,6 +178,7 @@ protected:
     CLCommandProcessor m_commandsProcessor;
     wxString m_preProcessorsWords;
     SelectionInfo m_prevSelectionInfo;
+    MarkWordInfo m_hasMarkers;
 
 public:
     static bool m_ccShowPrivateMembers;
@@ -850,6 +866,7 @@ private:
     void OnSetActive(wxCommandEvent& e);
     void OnFileFormatDone(wxCommandEvent& e);
     void OnFileFormatStarting(wxCommandEvent& e);
+    void OnIdle(wxIdleEvent& event);
 };
 
 #endif // LITEEDITOR_EDITOR_H

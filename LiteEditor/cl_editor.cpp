@@ -1055,23 +1055,25 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     if(end >= pos && end < GetTextLength()) {
         IndicatorClearRange(end, GetTextLength() - end);
     }
-
+    
     if(!hasSelection) {
         HighlightWord(false);
 
     } else {
+        // Check to see if we have marker already on
         if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
             // we got a selection
             int wordStartPos = WordStartPos(pos, true);
             int wordEndPos = WordEndPos(pos, true);
 
             wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
-            if(GetSelectedText() == selectedText) {
-                // The user has selected something with the keyboard which matches a complete word
-                // Highlight it
-                bool high = true;
+            bool textMatches = GetSelectedText() == selectedText;
+            if(textMatches && IndicatorStart(MARKER_WORD_HIGHLIGHT, wordStartPos) == 0) {
+                // No markers set yet
                 CallAfter(&LEditor::DoHighlightWord);
-            } else {
+                
+            } else if(!textMatches) {
+                // clear markers if the text does not match
                 HighlightWord(false);
             }
         }
@@ -3340,8 +3342,9 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
-           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()
+            ->GetBreakpointsMgr()
+            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -4804,11 +4807,11 @@ void LEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
 {
     // Undo the previous action
     BeginUndoAction();
-    
+
     // Restore the previous selection
     Undo();
     SetSelection(m_prevSelectionInfo.start, m_prevSelectionInfo.end);
-    
+
     int selectionStart = GetSelectionStart();
     int selectionEnd = GetSelectionEnd();
 

@@ -4670,6 +4670,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             si.cmds = cmds;
             si.bpList = bpList;
             si.ttyName = tty;
+            si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
 
             dbgr->Start(si);
 
@@ -4761,6 +4762,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             si.bpList = bpList;
             si.cmds = cmds;
             si.ttyName = tty;
+            si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
             dbgr->Start(si);
 
             // notify plugins that the debugger just started

@@ -54,7 +54,7 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
 
     CreateGUIControls();
     ConnectEvents();
-    m_themeHelper = new ThemeHandlerHelper(this);
+    m_themeHelper = NULL;//new ThemeHandlerHelper(this);
     int sashPos = clConfig::Get().Read("WorkspaceTabSashPosition", wxNOT_FOUND);
     if(sashPos != wxNOT_FOUND) {
         m_splitter->SetSashPosition(sashPos);

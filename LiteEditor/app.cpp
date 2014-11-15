@@ -282,6 +282,11 @@ CodeLiteApp::~CodeLiteApp(void)
 
 bool CodeLiteApp::OnInit()
 {
+    // Set the log file verbosity
+    FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
+    CL_DEBUG(wxT("Starting codelite..."));
+
+
 #if defined(__WXGTK__) || defined(__WXMAC__)
 
     // block signal pipe
@@ -555,11 +560,6 @@ bool CodeLiteApp::OnInit()
         wxUnusedVar(new_stdout);
     }
 #endif
-
-    // Set the log file verbosity
-    FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
-    CL_DEBUG(wxT("Starting codelite..."));
-
     // check for single instance
     if(!IsSingleInstance(parser, ManagerST::Get()->GetOriginalCwd())) {
         return false;

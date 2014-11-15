@@ -96,13 +96,10 @@ bool XDebugTester::RunTest()
                 if(rootElement.namedObject("_zendDebuggerLoaded").toString() == "1") {
                     msg << "<font color=\"red\">Failed. Unload Zend Debugger extension"
                            "</font>";
-                } else {
-                    msg << "<font color=\"green\">Passed</font>";
+                    m_results.insert(
+                        std::make_pair(wxString("Zend Debugger Loaded"),
+                                       std::make_pair(rootElement.namedObject("_zendDebuggerLoaded").toString(), msg)));
                 }
-
-                m_results.insert(
-                    std::make_pair(wxString("Zend Debugger Loaded"),
-                                   std::make_pair(rootElement.namedObject("_zendDebuggerLoaded").toString(), msg)));
             }
             return true;
         }

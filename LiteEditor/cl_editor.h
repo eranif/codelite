@@ -100,38 +100,82 @@ class LEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
     struct SelectionInfo {
-        int start;
-        int end;
-        SelectionInfo()
-            : start(wxNOT_FOUND)
-            , end(wxNOT_FOUND)
+        std::vector<std::pair<int, int> > selections;
+
+        SelectionInfo() {}
+
+        /**
+         * @brief add selection range
+         * @param from selection start position
+         * @param to selectio end position
+         */
+        void AddSelection(int from, int to) { this->selections.push_back(std::make_pair(from, to)); }
+
+        /**
+         * @brief return the number of selections
+         */
+        size_t GetCount() const { return this->selections.size(); }
+
+        /**
+         * @brief return the selection at position i
+         * @param from
+         * @param to
+         */
+        void At(size_t i, int& from, int& to) const
         {
+            const std::pair<int, int>& pair = this->selections.at(i);
+            from = pair.first;
+            to = pair.second;
         }
-        void Clear()
-        {
-            start = wxNOT_FOUND;
-            end = wxNOT_FOUND;
-        }
-        bool IsOk() const { return start != wxNOT_FOUND && end != wxNOT_FOUND; }
+
+        /**
+         * @brief clear the selection info
+         */
+        void Clear() { this->selections.clear(); }
+
+        /**
+         * @brief is this object OK?
+         */
+        bool IsOk() const { return !this->selections.empty(); }
+
+        /**
+         * @brief sort the selections from top to bottom
+         */
+        void Sort();
     };
 
     struct MarkWordInfo {
-        bool hasMarkers;
-        int firstOffset;
+    private:
+        bool m_hasMarkers;
+        int m_firstOffset;
+        wxString m_word;
+
+    public:
         MarkWordInfo()
-            : hasMarkers(false)
-            , firstOffset(wxNOT_FOUND)
+            : m_hasMarkers(false)
+            , m_firstOffset(wxNOT_FOUND)
         {
         }
-        
-        void Clear() {
-            hasMarkers = false;
-            firstOffset = wxNOT_FOUND;
+
+        void Clear()
+        {
+            m_hasMarkers = false;
+            m_firstOffset = wxNOT_FOUND;
+            m_word.Clear();
+        }
+
+        bool IsValid(wxStyledTextCtrl* ctrl) const
+        {
+            return ctrl->PositionFromLine(ctrl->GetFirstVisibleLine()) == m_firstOffset && m_hasMarkers;
         }
         
-        bool IsValid(wxStyledTextCtrl* ctrl) const {
-            return ctrl->PositionFromLine(ctrl->GetFirstVisibleLine()) == firstOffset && hasMarkers;
-        }
+        // setters/getters
+        void SetFirstOffset(int firstOffset) { this->m_firstOffset = firstOffset; }
+        void SetHasMarkers(bool hasMarkers) { this->m_hasMarkers = hasMarkers; }
+        void SetWord(const wxString& word) { this->m_word = word; }
+        int GetFirstOffset() const { return m_firstOffset; }
+        bool IsHasMarkers() const { return m_hasMarkers; }
+        const wxString& GetWord() const { return m_word; }
     };
 
 protected:
@@ -178,7 +222,7 @@ protected:
     CLCommandProcessor m_commandsProcessor;
     wxString m_preProcessorsWords;
     SelectionInfo m_prevSelectionInfo;
-    MarkWordInfo m_hasMarkers;
+    MarkWordInfo m_highlightedWordInfo;
 
 public:
     static bool m_ccShowPrivateMembers;

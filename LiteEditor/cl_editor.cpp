@@ -2998,9 +2998,13 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
     // always cancel the tip
     CodeCompletionBox::Get().CancelTip();
     m_prevSelectionInfo.Clear();
-    if(HasSelection()) {
-        m_prevSelectionInfo.start = GetSelectionStart();
-        m_prevSelectionInfo.end = GetSelectionEnd();
+    if(GetSelections()) {
+        for(int i = 0; i < GetSelections(); ++i) {
+            int selStart = GetSelectionNStart(i);
+            int selEnd = GetSelectionNEnd(i);
+            m_prevSelectionInfo.AddSelection(selStart, selEnd);
+        }
+        m_prevSelectionInfo.Sort();
     }
 
     bool escapeUsed = false; // If the quickfind bar is open we'll use an ESC to close it; but only if we've not already
@@ -3708,7 +3712,7 @@ void LEditor::DoHighlightWord()
     if(word.IsEmpty()) {
         return;
     }
-    
+
     // Search only the visible areas
     int firstVisibleLine = GetFirstVisibleLine();
     int lastLine = firstVisibleLine + LinesOnScreen();
@@ -3721,10 +3725,11 @@ void LEditor::DoHighlightWord()
     wxString text = GetTextRange(offset, lastPos);
     StringHighlighterJob j(text, word, offset);
     j.Process();
-    
+
     // Keep the first offset
-    m_hasMarkers.Clear();
-    m_hasMarkers.firstOffset = offset;
+    m_highlightedWordInfo.Clear();
+    m_highlightedWordInfo.SetFirstOffset(offset);
+    m_highlightedWordInfo.SetWord(word);
     HighlightWord((StringHighlightOutput*)&j.GetOutput());
 }
 
@@ -3736,7 +3741,7 @@ void LEditor::HighlightWord(bool highlight)
     } else {
         SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
         IndicatorClearRange(0, GetLength());
-        m_hasMarkers.Clear();
+        m_highlightedWordInfo.Clear();
     }
 }
 
@@ -4477,7 +4482,7 @@ void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
     // clear the old markers
     IndicatorClearRange(0, GetLength());
     if(!highlightOutput->matches.empty()) {
-        m_hasMarkers.hasMarkers = true;
+        m_highlightedWordInfo.SetHasMarkers(true);
         int selStart = GetSelectionStart();
         for(size_t i = 0; i < matches.size(); i++) {
             const std::pair<int, int>& p = matches.at(i);
@@ -4488,7 +4493,7 @@ void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
             }
         }
     } else {
-        m_hasMarkers.Clear();
+        m_highlightedWordInfo.Clear();
     }
 }
 
@@ -4802,17 +4807,37 @@ void LEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
 
     // Restore the previous selection
     Undo();
-    SetSelection(m_prevSelectionInfo.start, m_prevSelectionInfo.end);
+    ClearSelections();
 
-    int selectionStart = GetSelectionStart();
-    int selectionEnd = GetSelectionEnd();
+    int charsAdded(0);
+    std::vector<std::pair<int, int> > selections;
+    for(size_t i = 0; i < m_prevSelectionInfo.GetCount(); ++i) {
+        int startPos, endPos;
+        m_prevSelectionInfo.At(i, startPos, endPos);
 
-    InsertText(selectionStart, first);
-    InsertText(PositionAfter(selectionEnd), last);
+        // insert the wrappers characters
+        // Each time we add character into the document, we move the insertion
+        // point by 1 (this is why charsAdded is used)
+        startPos += charsAdded;
+        InsertText(startPos, first);
+        ++charsAdded;
 
-    // Restore the selection
-    SetSelection(PositionAfter(selectionStart), PositionAfter(selectionEnd));
+        endPos += charsAdded;
+        InsertText(endPos, last);
+        ++charsAdded;
 
+        selections.push_back(std::make_pair(startPos + 1, endPos));
+    }
+
+    // And select it
+    for(size_t i = 0; i < selections.size(); ++i) {
+        const std::pair<int, int>& range = selections.at(i);
+        if(i == 0) {
+            SetSelection(range.first, range.second);
+        } else {
+            AddSelection(range.first, range.second);
+        }
+    }
     EndUndoAction();
 }
 
@@ -4822,25 +4847,41 @@ void LEditor::OnIdle(wxIdleEvent& event)
     if(!HasSelection()) {
         HighlightWord(false);
 
-    } else if(!m_hasMarkers.IsValid(this)) {
-        
-        // Check to see if we have marker already on
+    } else {
         if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
-            // we got a selection
             int pos = GetCurrentPos();
             int wordStartPos = WordStartPos(pos, true);
             int wordEndPos = WordEndPos(pos, true);
+            wxString word = GetTextRange(wordStartPos, wordEndPos);
+            wxString selectedText = GetSelectedText();
+            
+            if(!m_highlightedWordInfo.IsValid(this)) {
+                // Check to see if we have marker already on
+                // we got a selection
+                bool textMatches = (selectedText == word);
+                if(textMatches) {
+                    // No markers set yet
+                    DoHighlightWord();
 
-            wxString selectedText = GetTextRange(wordStartPos, wordEndPos);
-            bool textMatches = GetSelectedText() == selectedText;
-            if(textMatches) {
-                // No markers set yet
-                DoHighlightWord();
-
-            } else if(!textMatches) {
-                // clear markers if the text does not match
-                HighlightWord(false);
+                } else if(!textMatches) {
+                    // clear markers if the text does not match
+                    HighlightWord(false);
+                }
+            } else {
+                // we got the markers on, check that they still matches the highlighted word
+                if(selectedText != m_highlightedWordInfo.GetWord()) {
+                    HighlightWord(false);
+                }
             }
         }
     }
 }
+
+// ----------------------------------
+// SelectionInfo
+// ----------------------------------
+struct SelectorSorter {
+    bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
+};
+
+void LEditor::SelectionInfo::Sort() { std::sort(this->selections.begin(), this->selections.end(), SelectorSorter()); }

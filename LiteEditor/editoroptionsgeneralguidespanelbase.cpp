@@ -216,7 +216,7 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropWrapQuotes->SetHelpString(_("When typing ' or \" on a selection, instead of replacing the selection with the character, wrap it with quotes"));
     
     m_pgPropWrapBrackets = m_pgMgrEdit->AppendIn( m_pgProp16,  new wxBoolProperty( _("Wrap with brackets"), wxPG_LABEL, 1) );
-    m_pgPropWrapBrackets->SetHelpString(_("When yyping '(' or '[' on a selection, instead of replacing the selection with the character, wrap it with brackets"));
+    m_pgPropWrapBrackets->SetHelpString(_("When typing '(' or '[' on a selection, instead of replacing the selection with the character, wrap it with brackets"));
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {

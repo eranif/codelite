@@ -2196,7 +2196,7 @@
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",
-             "m_value": "When yyping '(' or '[' on a selection, instead of replacing the selection with the character, wrap it with brackets"
+             "m_value": "When typing '(' or '[' on a selection, instead of replacing the selection with the character, wrap it with brackets"
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",

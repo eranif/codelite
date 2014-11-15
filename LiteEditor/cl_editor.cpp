@@ -2998,7 +2998,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
     // always cancel the tip
     CodeCompletionBox::Get().CancelTip();
     m_prevSelectionInfo.Clear();
-    if(GetSelections()) {
+    if(HasSelection()) {
         for(int i = 0; i < GetSelections(); ++i) {
             int selStart = GetSelectionNStart(i);
             int selEnd = GetSelectionNEnd(i);

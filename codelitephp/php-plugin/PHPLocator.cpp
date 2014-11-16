@@ -1,6 +1,11 @@
 #include "PHPLocator.h"
 #include <wx/tokenzr.h>
 #include "globals.h"
+#include "procutils.h"
+
+#ifdef __WXMSW__
+#include <wx/msw/registry.h>
+#endif
 
 PHPLocator::PHPLocator() {}
 

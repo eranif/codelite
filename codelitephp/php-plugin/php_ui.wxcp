@@ -10230,10 +10230,10 @@
       }, {
        "m_type": 4422,
        "proportion": 1,
-       "border": 2,
+       "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_FULL_ROW_HIGHLIGHT", "wxTR_NO_LINES"],
+       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_FULL_ROW_HIGHLIGHT", "wxTR_NO_LINES", "wxBORDER_NONE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -10258,7 +10258,7 @@
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
-         "colour": "<Default>"
+         "colour": "(230,230,230)"
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",

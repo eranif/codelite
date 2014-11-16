@@ -1015,9 +1015,10 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     }
     m_auibar29->Realize();
     
-    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES);
+    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxBORDER_NONE);
+    m_treeCtrlView->SetBackgroundColour(wxColour(wxT("rgb(230,230,230)")));
     
-    bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 2);
+    bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 0);
     
     m_gaugeParseProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,8), wxGA_HORIZONTAL);
     m_gaugeParseProgress->Hide();

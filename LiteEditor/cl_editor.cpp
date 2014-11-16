@@ -178,7 +178,7 @@ LEditor::LEditor(wxWindow* parent)
     
     // User timer to check if we need to highlight markers
     m_timerHighlightMarkers = new wxTimer(this);
-    m_timerHighlightMarkers->Start(300, true);
+    m_timerHighlightMarkers->Start(100, true);
     
     Connect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(LEditor::OnTimer), NULL, this);
     
@@ -4857,7 +4857,7 @@ void LEditor::OnTimer(wxTimerEvent& event)
 {
     event.Skip();
     
-    m_timerHighlightMarkers->Start(300, true);
+    m_timerHighlightMarkers->Start(100, true);
     if(!HasFocus()) return;
     
     CL_DEBUG1("Inside LEditor::OnTimer. File: %s", GetFileName().GetFullPath());

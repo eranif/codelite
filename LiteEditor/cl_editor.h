@@ -223,7 +223,8 @@ protected:
     wxString m_preProcessorsWords;
     SelectionInfo m_prevSelectionInfo;
     MarkWordInfo m_highlightedWordInfo;
-
+    wxTimer *m_timerHighlightMarkers;
+    
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
@@ -916,7 +917,7 @@ private:
     void OnSetActive(wxCommandEvent& e);
     void OnFileFormatDone(wxCommandEvent& e);
     void OnFileFormatStarting(wxCommandEvent& e);
-    void OnIdle(wxIdleEvent& event);
+    void OnTimer(wxTimerEvent& event);
 };
 
 #endif // LITEEDITOR_EDITOR_H

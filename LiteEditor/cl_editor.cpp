@@ -175,7 +175,13 @@ LEditor::LEditor(wxWindow* parent)
     , m_findBookmarksActive(false)
 {
     m_commandsProcessor.SetParent(this);
-
+    
+    // User timer to check if we need to highlight markers
+    m_timerHighlightMarkers = new wxTimer(this);
+    m_timerHighlightMarkers->Start(300, true);
+    
+    Connect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(LEditor::OnTimer), NULL, this);
+    
     ms_bookmarkShapes[wxT("Small Rectangle")] = wxSTC_MARK_SMALLRECT;
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
     ms_bookmarkShapes[wxT("Small Arrow")] = wxSTC_MARK_ARROW;
@@ -229,8 +235,14 @@ LEditor::~LEditor()
            this,
            XRCID("BookmarkTypes[start]"),
            XRCID("BookmarkTypes[end]"));
-
-    delete m_deltas;
+    
+    // free the timer
+    Disconnect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(LEditor::OnTimer), NULL, this);
+    m_timerHighlightMarkers->Stop();
+    wxDELETE(m_timerHighlightMarkers);
+    
+    // find deltas
+    wxDELETE(m_deltas);
 
     if(this->HasCapture()) {
         this->ReleaseMouse();
@@ -4841,14 +4853,22 @@ void LEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
     EndUndoAction();
 }
 
-void LEditor::OnIdle(wxIdleEvent& event)
+void LEditor::OnTimer(wxTimerEvent& event)
 {
     event.Skip();
+    
+    m_timerHighlightMarkers->Start(300, true);
+    if(!HasFocus()) return;
+    
+    CL_DEBUG1("Inside LEditor::OnTimer. File: %s", GetFileName().GetFullPath());
+    
     if(!HasSelection()) {
+        CL_DEBUG1("No selection - nothing to do here");
         HighlightWord(false);
 
     } else {
         if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
+            
             int pos = GetCurrentPos();
             int wordStartPos = WordStartPos(pos, true);
             int wordEndPos = WordEndPos(pos, true);
@@ -4856,23 +4876,31 @@ void LEditor::OnIdle(wxIdleEvent& event)
             wxString selectedText = GetSelectedText();
 
             if(!m_highlightedWordInfo.IsValid(this)) {
+                
                 // Check to see if we have marker already on
                 // we got a selection
                 bool textMatches = (selectedText == word);
                 if(textMatches) {
                     // No markers set yet
                     DoHighlightWord();
-
+                    CL_DEBUG1("Highlighting word");
+                    
                 } else if(!textMatches) {
                     // clear markers if the text does not match
                     HighlightWord(false);
+                    CL_DEBUG1("Clearing word highlight");
                 }
             } else {
                 // we got the markers on, check that they still matches the highlighted word
                 if(selectedText != m_highlightedWordInfo.GetWord()) {
+                    CL_DEBUG1("Clearing the markers");
                     HighlightWord(false);
+                } else {
+                    CL_DEBUG1("Markers are valid - nothing more to be done");
                 }
             }
+        } else {
+            CL_DEBUG1("highlight_word is OFF");
         }
     }
 }

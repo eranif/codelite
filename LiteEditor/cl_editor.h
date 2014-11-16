@@ -263,7 +263,13 @@ public:
     // Save content of the editor to a given file (Save As...)
     // this function prompts the user for selecting file name
     bool SaveFileAs();
-
+    
+    /**
+     * @brief split the current selection into multiple carets.
+     * i.e. place a caret at the end of each line in the selection
+     */
+    void SplitSelection();
+    
     void SetDisableSmartIndent(bool disableSmartIndent) { this->m_disableSmartIndent = disableSmartIndent; }
 
     bool GetDisableSmartIndent() const { return m_disableSmartIndent; }

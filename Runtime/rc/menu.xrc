@@ -101,10 +101,13 @@
             <object class="wxMenuItem" name="wxID_SELECTALL">
                 <label>Select &amp;All</label>
             </object>
+            <object class="wxMenuItem" name="selection_to_multi_caret">
+                <label>Split selection into lines</label>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenuItem" name="delete_line">
-				 <label>&amp;Delete Line</label>
-			 </object>
+            <object class="wxMenuItem" name="delete_line">
+                 <label>&amp;Delete Line</label>
+             </object>
 			<object class="wxMenuItem" name="delete_line_end">
 				 <label>Delete to Line &amp;End</label>
 			 </object>

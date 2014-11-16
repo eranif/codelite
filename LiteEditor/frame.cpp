@@ -248,6 +248,8 @@ EVT_MENU(XRCID("move_line_down"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("move_line_up"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("center_line"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("center_line_roll"), clMainFrame::DispatchCommandEvent)
+EVT_MENU(XRCID("selection_to_multi_caret"), clMainFrame::OnSplitSelection)
+EVT_UPDATE_UI(XRCID("selection_to_multi_caret"), clMainFrame::OnSplitSelectionUI)
 
 EVT_UPDATE_UI(wxID_UNDO, clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(wxID_REDO, clMainFrame::DispatchUpdateUIEvent)
@@ -753,6 +755,10 @@ clMainFrame::clMainFrame(wxWindow* pParent,
 
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
+    
+    // Register keyboard shortcuts
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "selection_to_multi_caret", "Ctrl-Shift-L", _("Break multi line selection into multiple carets"));
 }
 
 clMainFrame::~clMainFrame(void)
@@ -6040,4 +6046,18 @@ void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
     e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
     event.Enable(!ManagerST::Get()->IsWorkspaceOpen() && !e.IsAnswer());
+}
+
+void clMainFrame::OnSplitSelection(wxCommandEvent& event)
+{
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
+    CHECK_PTR_RET(editor);
+    
+    editor->SplitSelection();
+}
+
+void clMainFrame::OnSplitSelectionUI(wxUpdateUIEvent& event)
+{
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
+    event.Enable(editor && editor->HasSelection());
 }

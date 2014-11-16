@@ -4854,7 +4854,7 @@ void LEditor::OnIdle(wxIdleEvent& event)
             int wordEndPos = WordEndPos(pos, true);
             wxString word = GetTextRange(wordStartPos, wordEndPos);
             wxString selectedText = GetSelectedText();
-            
+
             if(!m_highlightedWordInfo.IsValid(this)) {
                 // Check to see if we have marker already on
                 // we got a selection
@@ -4872,6 +4872,33 @@ void LEditor::OnIdle(wxIdleEvent& event)
                 if(selectedText != m_highlightedWordInfo.GetWord()) {
                     HighlightWord(false);
                 }
+            }
+        }
+    }
+}
+
+void LEditor::SplitSelection()
+{
+    CHECK_COND_RET(HasSelection() && GetSelections() == 1);
+
+    int selLineStart = LineFromPosition(GetSelectionStart());
+    int selLineEnd = LineFromPosition(GetSelectionEnd());
+
+    if(selLineEnd != selLineStart) {
+        if(selLineStart > selLineEnd) {
+            // swap
+            std::swap(selLineEnd, selLineStart);
+        }
+
+        ClearSelections();
+        for(int i = selLineStart; i < selLineEnd; ++i) {
+            int caretPos = PositionBefore(LineEnd(i)); // We use PositionBefore here, because LineEnd
+                                                       // includes the EOL as well
+            if(i == selLineStart) {
+                // first selection
+                SetSelection(caretPos, caretPos);
+            } else {
+                AddSelection(caretPos, caretPos);
             }
         }
     }

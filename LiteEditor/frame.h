@@ -330,7 +330,10 @@ private:
      */
     void DispatchCommandEvent(wxCommandEvent& event);
     void DispatchUpdateUIEvent(wxUpdateUIEvent& event);
-
+    
+    void OnSplitSelection(wxCommandEvent &event);
+    void OnSplitSelectionUI(wxUpdateUIEvent& event);
+    
     /// Toolbar management
     void CreateToolbars24();
     void CreateToolbars16();

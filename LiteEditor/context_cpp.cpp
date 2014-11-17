@@ -116,7 +116,8 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort {
+struct SFileSort
+{
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -1110,20 +1111,47 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     if(data.GetUseShtroodel()) {
         keyPrefix = wxT('@');
     }
+    
+    int curpos = editor.GetCurrentPos();
+    int endPos = editor.LineEnd(editor.GetCurrentLine());
+    wxString text = editor.GetTextRange(0, endPos);
+    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
+    if(tags.size()) {
+        // the last tag is our function
+        TagEntryPtr t = tags.at(tags.size() - 1);
+        // get doxygen comment based on file and line
+        DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, keyPrefix);
+        // do we have a comment?
+        if(dc.comment.IsEmpty()) return;
 
-    DoxygenComment dc =
-        TagsManagerST::Get()->GenerateDoxygenComment(editor.GetFileName().GetFullPath(), lineno, keyPrefix);
-    // do we have a comment?
-    if(dc.comment.IsEmpty()) return;
+        DoMakeDoxyCommentString(dc);
+        // To make the doxy block fit in, we need to prepend each line
+        // with the exact whitespace of the current line
+        wxString lineContent = editor.GetLine(editor.GetCurrentLine());
+        wxString whitespace;
+        for(size_t i=0; i<lineContent.length(); ++i) {
+            if(lineContent[i] == ' ' || lineContent == '\t') {
+                whitespace << lineContent[i];
+            } else {
+                break;
+            }
+        }
 
-    DoMakeDoxyCommentString(dc);
-
-    editor.InsertTextWithIndentation(dc.comment, lineno);
-
-    // since we just inserted a text to the document, we force a save on the
-    // document, or else the parser will lose sync with the database
-    // but avoid saving it, if it not part of the workspace
-    editor.SaveFile();
+        // Prepare the doxy block
+        wxArrayString lines = ::wxStringTokenize(dc.comment, "\n", wxTOKEN_STRTOK);
+        for(size_t i = 0; i < lines.GetCount(); ++i) {
+            lines.Item(i).Prepend(whitespace);
+        }
+        
+        // Join the lines back
+        wxString doxyBlock = ::wxJoin(lines, '\n');
+        doxyBlock << "\n";
+        
+        // remove any selection
+        editor.ClearSelections();
+        editor.InsertText(editor.PositionFromLine(editor.GetCurrentLine()), doxyBlock);
+        return;
+    }
 }
 
 void ContextCpp::OnCommentSelection(wxCommandEvent& event)
@@ -2137,10 +2165,10 @@ void ContextCpp::AutoAddComment()
     } break;
     case wxSTC_C_COMMENT:
     case wxSTC_C_COMMENTDOC: {
-        
+
         CommentConfigData data;
         EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
-        
+
         // Check the text typed before this char
         int startPos = rCtrl.PositionBefore(curpos);
         startPos -= 3; // for "/**"
@@ -2156,7 +2184,7 @@ void ContextCpp::AutoAddComment()
                 TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
                 if(tags.size()) {
                     TagEntryPtr t = tags.at(0);
-                    
+
                     // get doxygen comment based on file and line
                     DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, '@');
                     // do we have a comment?
@@ -2167,15 +2195,15 @@ void ContextCpp::AutoAddComment()
                     // with the exact whitespace of the line that starts with "/**"
                     int lineStartPos = rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos));
                     wxString whitespace = rCtrl.GetTextRange(lineStartPos, startPos);
-                    
-                    // Prepare the doxy block 
+
+                    // Prepare the doxy block
                     wxArrayString lines = ::wxStringTokenize(dc.comment, "\n", wxTOKEN_STRTOK);
                     for(size_t i = 0; i < lines.GetCount(); ++i) {
                         if(i) { // don't add it to the first line (it already exists in the editor)
                             lines.Item(i).Prepend(whitespace);
                         }
                     }
-                    
+
                     // Join the lines back
                     wxString doxyBlock = ::wxJoin(lines, '\n');
                     rCtrl.SetSelection(startPos, curpos);
@@ -2185,7 +2213,7 @@ void ContextCpp::AutoAddComment()
                 }
             }
         }
-        
+
         if(rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
             toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line - 1)) == wxT('*') ? wxT("* ") : wxT(" * ");
         }

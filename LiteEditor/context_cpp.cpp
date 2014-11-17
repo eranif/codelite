@@ -1100,9 +1100,6 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
 
     VALIDATE_WORKSPACE();
 
-    // get the current line text
-    int lineno = editor.LineFromPosition(editor.GetCurrentPos());
-
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
@@ -1113,7 +1110,21 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     }
     
     int curpos = editor.GetCurrentPos();
-    int endPos = editor.LineEnd(editor.GetCurrentLine());
+    int newPos = curpos; // the new position to place the caret after the insertion of the doxy block
+    int curline = editor.GetCurrentLine();
+    int insertPos = editor.PositionFromLine(curline);
+    int endPos = curpos;
+    
+    // start moving from this position until we find '{'
+    for(int i=curpos; i<editor.GetLength(); ++i) {
+        endPos = i;
+        int ch = editor.SafeGetChar(i);
+        if(ch == '{' || ch == ';') {
+            ++endPos; // include this char as well
+            break;
+        }
+    }
+    
     wxString text = editor.GetTextRange(0, endPos);
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
     if(tags.size()) {
@@ -1149,7 +1160,9 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         
         // remove any selection
         editor.ClearSelections();
-        editor.InsertText(editor.PositionFromLine(editor.GetCurrentLine()), doxyBlock);
+        editor.InsertText(insertPos, doxyBlock);
+        newPos += doxyBlock.length();
+        editor.SetCaretAt(newPos);
         return;
     }
 }

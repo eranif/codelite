@@ -34,6 +34,7 @@
 #include "clZipReader.h"
 #include "cl_standard_paths.h"
 #include "php_configuration_data.h"
+#include "PHPLocator.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -137,9 +138,9 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
-    
+
     EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
-    CallAfter(&PhpPlugin::DoCreateDebuggerPanes);
+    CallAfter(&PhpPlugin::FinalizeStartup);
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
     wxFileName phpResources(clStandardPaths::Get().GetDataDir(), "PHP.zip");
@@ -249,7 +250,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
-    
+
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
@@ -265,10 +266,10 @@ void PhpPlugin::UnPlug()
         PHPWorkspace::Get()->Close();
         m_workspaceView->UnLoadWorkspace();
     }
-    
+
     m_workspaceView->Destroy();
     m_workspaceView = NULL;
-    
+
     PHPParserThread::Release();
     PHPWorkspace::Release();
     PHPCodeCompletion::Release();
@@ -430,7 +431,7 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
     if(index != Notebook::npos) {
         m_mgr->GetWorkspacePaneNotebook()->SetSelection(index);
     }
-    
+
     // and finally, request codelite to keep this workspace in the recently opened workspace list
     m_mgr->AddWorkspaceToRecentlyUsedList(filename);
 }
@@ -773,7 +774,7 @@ void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
     }
 }
 
-void PhpPlugin::DoCreateDebuggerPanes()
+void PhpPlugin::FinalizeStartup()
 {
     // Create the debugger windows (hidden)
     m_debuggerPane = new PHPDebugPane(EventNotifier::Get()->TopFrame());
@@ -790,6 +791,28 @@ void PhpPlugin::DoCreateDebuggerPanes()
     m_mgr->GetDockingManager()->AddPane(
         m_xdebugEvalPane,
         wxAuiPaneInfo().Name("XDebugEval").Caption("PHP").Hide().CloseButton().MaximizeButton().Bottom().Position(2));
+
+    // Check to see if the have a PHP executable setup
+    // if not - update it
+    PHPConfigurationData data;
+    data.Load();
+    
+    PHPLocator locator;
+    if(locator.Locate()) {
+        if(data.GetPhpExe().IsEmpty()) {
+            data.SetPhpExe(locator.GetPhpExe().GetFullPath());
+        }
+
+        wxArrayString ccPaths = data.GetCcIncludePath();
+        const wxArrayString& foundPaths = locator.GetIncludePaths();
+        for(size_t i = 0; i < foundPaths.GetCount(); ++i) {
+            if(ccPaths.Index(foundPaths.Item(i)) == wxNOT_FOUND) {
+                ccPaths.Add(foundPaths.Item(i));
+            }
+        }
+        data.SetCcIncludePath(ccPaths);
+        data.Save();
+    }
 }
 
 void PhpPlugin::OnGoingDown(clCommandEvent& event)

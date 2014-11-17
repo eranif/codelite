@@ -13,7 +13,8 @@ class PHPLocator
 protected:
     bool DoLocateBinary();
     bool DoLocateIniFile();
-
+    bool DoLocateIncludePaths();
+    
 public:
     PHPLocator();
     ~PHPLocator();

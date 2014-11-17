@@ -531,8 +531,6 @@ void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
     phpMenuBarMenu->Append(wxID_PHP_SETTINGS, _("Settings..."), _("Settings..."));
     phpMenuBarMenu->Append(
         wxID_PHP_RUN_XDEBUG_DIAGNOSTICS, _("Run XDebug Diagnostics..."), _("Run XDebug Diagnostics..."));
-    phpMenuBarMenu->AppendSeparator();
-    phpMenuBarMenu->Append(wxID_ADD_DOXY_COMMENT, _("Insert Doxygen Comment"));
 
     int helpLoc = menuBar->FindMenu(_("Help"));
     if(helpLoc != wxNOT_FOUND) {
@@ -549,11 +547,6 @@ void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
                             wxCommandEventHandler(PhpPlugin::OnRunXDebugDiagnostics),
                             NULL,
                             (wxEvtHandler*)this);
-    phpMenuBarMenu->Connect(wxID_ADD_DOXY_COMMENT,
-                            wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(PHPEditorContextMenu::OnInsertDoxyComment),
-                            NULL,
-                            (wxEvtHandler*)PHPEditorContextMenu::Instance());
 }
 
 void PhpPlugin::OnMenuCommand(wxCommandEvent& e)

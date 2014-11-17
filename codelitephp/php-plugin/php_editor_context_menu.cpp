@@ -790,6 +790,8 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         if(!textToAdd.IsEmpty()) {
             // Wrap the text insertion as a single transcation
             editor->GetSTC()->BeginUndoAction();
+            int curpos = editor->GetSTC()->GetCurrentPos();
+            
             clSTCLineKeeper lk(editor); // keep the current file line
             textToAdd =
                 editor->FormatTextKeepIndent(textToAdd, editor->GetCurrentPosition(), Format_Text_Save_Empty_Lines);
@@ -806,6 +808,8 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
             if(!evt.GetFormattedString().IsEmpty()) {
                 editor->GetSTC()->SetText(evt.GetFormattedString());
             }
+            // restore the position
+            editor->SetCaretAt(curpos);
             editor->GetSTC()->EndUndoAction();
         }
     }

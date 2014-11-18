@@ -8,6 +8,7 @@
 #include "php_event.h"
 #include <wx/sharedptr.h>
 #include "XDebugManager.h"
+#include "PHPLint.h"
 
 class EvalPane;
 class LocalsView;
@@ -29,7 +30,8 @@ protected:
     LocalsView* m_xdebugLocalsView;
     EvalPane* m_xdebugEvalPane;
     bool m_showWelcomePage;
-
+    PHPLint::Ptr_t m_lint;
+    
 public:
     enum {
         wxID_PHP_SETTINGS = 2000,
@@ -45,6 +47,7 @@ public:
     void SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name);
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();
+    void PhpLintDone(const wxString &lintOutput);
     
     PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
 

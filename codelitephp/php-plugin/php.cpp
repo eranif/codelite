@@ -68,6 +68,8 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_xdebugEvalPane(NULL)
     , m_showWelcomePage(false)
 {
+    m_lint.Reset(new PHPLint(this));
+    
     m_longName = wxT("PHP Plugin for the codelite IDE");
     m_shortName = wxT("PHP");
 
@@ -565,28 +567,35 @@ void PhpPlugin::OnMenuCommand(wxCommandEvent& e)
 void PhpPlugin::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
+    
+    if(PHPWorkspace::Get()->IsOpen()) {
+        // Check to see if we got a remote-upload setup
+        SSHWorkspaceSettings settings;
+        settings.Load();
 
-    // Check to see if we got a remote-upload setup
-    SSHWorkspaceSettings settings;
-    settings.Load();
+        if(settings.IsRemoteUploadSet() && settings.IsRemoteUploadEnabled()) {
+            // Post an event to the SFTP plugin and ask it to save our file
+            wxFileName fnLocalFile(e.GetString());
 
-    if(settings.IsRemoteUploadSet() && settings.IsRemoteUploadEnabled()) {
-        // Post an event to the SFTP plugin and ask it to save our file
-        wxFileName fnLocalFile(e.GetString());
+            fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
+            fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
+            wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
+            wxString localFile = e.GetString();
 
-        fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
-        fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
-        wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
-        wxString localFile = e.GetString();
+            JSONRoot root(cJSON_Object);
+            root.toElement().addProperty("account", settings.GetAccount());
+            root.toElement().addProperty("local_file", localFile);
+            root.toElement().addProperty("remote_file", remoteFile);
 
-        JSONRoot root(cJSON_Object);
-        root.toElement().addProperty("account", settings.GetAccount());
-        root.toElement().addProperty("local_file", localFile);
-        root.toElement().addProperty("remote_file", remoteFile);
-
-        clCommandEvent eventSave(XRCID("wxEVT_SFTP_SAVE_FILE"));
-        eventSave.SetString(root.toElement().format());
-        EventNotifier::Get()->AddPendingEvent(eventSave);
+            clCommandEvent eventSave(XRCID("wxEVT_SFTP_SAVE_FILE"));
+            eventSave.SetString(root.toElement().format());
+            EventNotifier::Get()->AddPendingEvent(eventSave);
+        }
+    }
+    
+    // Run php lint
+    if(::IsPHPFile(e.GetFileName())) {
+        m_lint->CheckCode(e.GetFileName());
     }
 }
 
@@ -819,4 +828,10 @@ void PhpPlugin::OnGoingDown(clCommandEvent& event)
             m_workspaceView->UnLoadWorkspace();
         }
     }
+}
+
+void PhpPlugin::PhpLintDone(const wxString& lintOutput)
+{
+    wxUnusedVar(lintOutput);
+    CL_DEBUG("PHP: lint output: %s", lintOutput);
 }

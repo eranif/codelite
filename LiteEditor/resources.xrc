@@ -3,7 +3,6 @@
 	<object class="wxBitmap" name="read_only">res/lock.png</object>
 	<object class="wxBitmap" name="memory_view">res/memory_view.png</object>
 	<object class="wxBitmap" name="About">res/about_img.png</object>
-	<object class="wxBitmap" name="link_editor">res/link_editor.png</object>
     <object class="wxBitmap" name="build">res/rebuild.png</object>
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
 	<object class="wxBitmap" name="debug_window">res/trace.png</object>
@@ -24,8 +23,6 @@
 	<object class="wxBitmap" name="new_class_title">res/new_class.png</object>
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
 	<object class="wxBitmap" name="colourise">res/package_utilities.png</object>
-	<object class="wxBitmap" name="collapse">res/collapse.png</object>
-	<object class="wxBitmap" name="gohome">res/gohome.png</object>
 	<object class="wxBitmap" name="text_view">res/view_text.png</object>
 	<object class="wxBitmap" name="eraser">res/eraser.png</object>
 	<object class="wxBitmap" name="cursor">res/cursor.png</object>

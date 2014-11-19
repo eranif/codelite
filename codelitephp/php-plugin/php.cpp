@@ -845,6 +845,7 @@ void PhpPlugin::OnGoingDown(clCommandEvent& event)
 void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString &filename)
 {
     // Find the editor
+    CL_DEBUG("PHPLint: searching editor for file: %s", filename);
     IEditor *editor = m_mgr->FindEditor(filename);
     CHECK_PTR_RET(editor);
     
@@ -859,6 +860,7 @@ void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString &filename
                 wxString strLine = reLine.GetMatch(errorString, 1);
                 long nLine(wxNOT_FOUND);
                 if(strLine.ToCLong(&nLine)) {
+                    CL_DEBUG("PHPLint: adding error marker @%d", nLine-1);
                     editor->SetErrorMarker(nLine-1, errorString);
                 }
             }

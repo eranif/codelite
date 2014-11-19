@@ -36,6 +36,7 @@ void PHPLint::DoProcessQueue()
 
 void PHPLint::OnProcessTerminated(wxCommandEvent& event)
 {
+    CL_DEBUG("PHPLint: process terminated. output: %s", m_output);
     ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
     wxDELETE(ped);
     wxDELETE(m_process);
@@ -84,6 +85,6 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
         
     } else {
         CL_DEBUG("PHP: running lint: %s", command);
-        m_currentFileBeingProcessed = file;
+        m_currentFileBeingProcessed = filename.GetFullPath();
     }
 }

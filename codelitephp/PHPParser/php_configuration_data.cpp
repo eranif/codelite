@@ -9,7 +9,7 @@ PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")
     , m_errorReporting(wxT("E_ALL & ~E_NOTICE"))
     , m_xdebugPort(9000)
-    , m_flags(0x0)
+    , m_flags(kRunLintOnFileSave)
 {
     if ( m_ccIncludePath.IsEmpty() ) {
         m_ccIncludePath.Add( ::GetCCResourceDirectory() );
@@ -27,7 +27,7 @@ void PHPConfigurationData::FromJSON(const JSONElement &json)
     m_errorReporting = json.namedObject("m_errorReporting").toString("E_ALL & ~E_NOTICE");
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(9000);
     m_xdebugHost = json.namedObject("m_xdebugHost").toString("127.0.0.1");
-    m_flags = json.namedObject("m_flags").toSize_t();
+    m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString("codeliteide");
     m_xdebugIdeKey.Trim().Trim(false);
     

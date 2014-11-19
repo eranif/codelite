@@ -122,8 +122,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("rename_php_file"), _("Rename"));
                 menu.AppendSeparator();
                 menu.Append(wxID_REMOVE, _("Remove file"));
-                menu.AppendSeparator();
-                menu.Append(XRCID("make_index"), _("Set as Index file"));
+                //menu.AppendSeparator();
+                //menu.Append(XRCID("make_index"), _("Set as Index file"));
                 m_treeCtrlView->PopupMenu(&menu);
             } break;
             case ItemData::Kind_Workspace: {

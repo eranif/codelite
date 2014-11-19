@@ -220,6 +220,8 @@ protected:
     wxTextCtrl* m_textCtrlXDebugPort;
     wxStaticText* m_staticText152;
     wxTextCtrl* m_textCtrlIdeKey;
+    wxPanel* m_panel407;
+    wxCheckBox* m_checkBoxRunLint;
     wxButton* m_button9;
     wxButton* m_button10;
 
@@ -247,6 +249,8 @@ public:
     wxStaticText* GetStaticText152() { return m_staticText152; }
     wxTextCtrl* GetTextCtrlIdeKey() { return m_textCtrlIdeKey; }
     wxPanel* GetPanel13() { return m_panel13; }
+    wxCheckBox* GetCheckBoxRunLint() { return m_checkBoxRunLint; }
+    wxPanel* GetPanel407() { return m_panel407; }
     wxTreebook* GetTreebook9() { return m_treebook9; }
     wxButton* GetButton9() { return m_button9; }
     wxButton* GetButton10() { return m_button10; }

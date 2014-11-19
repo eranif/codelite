@@ -455,7 +455,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     bSizer12->Add(m_treebook9, 1, wxALL|wxEXPAND, 5);
     
     m_panel11 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook9->AddPage(m_panel11, _("Command Line"), false, wxNOT_FOUND);
+    m_treebook9->AddPage(m_panel11, _("General"), false, wxNOT_FOUND);
     
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel11->SetSizer(bSizer13);
@@ -465,13 +465,14 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
     
-    bSizer13->Add(fgSizer4, 0, wxALL|wxEXPAND, 5);
+    bSizer13->Add(fgSizer4, 0, wxEXPAND, 5);
     
     m_staticText9 = new wxStaticText(m_panel11, wxID_ANY, _("PHP Executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer4->Add(m_staticText9, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_filePickerPHPPath = new wxFilePickerCtrl(m_panel11, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("All Files (*)|*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_FILE_MUST_EXIST);
+    m_filePickerPHPPath->SetToolTip(_("Select the PHP executable to use when debugging / running command line scripts"));
     m_filePickerPHPPath->SetFocus();
     
     fgSizer4->Add(m_filePickerPHPPath, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
@@ -481,6 +482,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     fgSizer4->Add(m_staticText11, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlErrorReporting = new wxTextCtrl(m_panel11, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlErrorReporting->SetToolTip(_("Set the PHP error reporting level (affects command line only)"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlErrorReporting->SetHint(wxT(""));
     #endif
@@ -491,15 +493,16 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer13->Add(bSizer18, 0, wxEXPAND|wxALIGN_RIGHT, 5);
     
-    bSizer18->Add(0, 0, 1, wxALL|wxEXPAND, 5);
-    
     m_staticText14 = new wxStaticText(m_panel11, wxID_ANY, _("Add include path:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer18->Add(m_staticText14, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonBrowseIncludePath = new wxButton(m_panel11, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonBrowseIncludePath->SetToolTip(_("Add include path for PHP"));
     
     bSizer18->Add(m_buttonBrowseIncludePath, 0, wxALL, 5);
+    
+    bSizer18->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
     m_textCtrlIncludePath = new wxTextCtrl(m_panel11, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
     #ifdef __WXMSW__
@@ -511,6 +514,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlIncludePathFont.SetFamily(wxFONTFAMILY_TELETYPE);
     #endif
     m_textCtrlIncludePath->SetFont(m_textCtrlIncludePathFont);
+    m_textCtrlIncludePath->SetToolTip(_("Additional include path for PHP (affects command line runs only)"));
     
     bSizer13->Add(m_textCtrlIncludePath, 1, wxALL|wxEXPAND, 5);
     
@@ -553,7 +557,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer5->AddGrowableCol(1);
     
-    bSizer14->Add(fgSizer5, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
+    bSizer14->Add(fgSizer5, 0, wxEXPAND, 5);
     
     m_staticText10 = new wxStaticText(m_panel13, wxID_ANY, _("XDebug port:"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_staticText10->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value must be the same as the value set in the 'xdebug.remote_port'\ndirective"));
@@ -574,12 +578,25 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer5->Add(m_staticText152, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlIdeKey = new wxTextCtrl(m_panel13, wxID_ANY, wxT("phplite"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlIdeKey = new wxTextCtrl(m_panel13, wxID_ANY, wxT("codeliteide"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlIdeKey->SetToolTip(_("The XDebug session name"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlIdeKey->SetHint(wxT(""));
     #endif
     
     fgSizer5->Add(m_textCtrlIdeKey, 0, wxALL|wxEXPAND, 5);
+    
+    m_panel407 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_treebook9->AddPage(m_panel407, _("Syntax Check"), false, wxNOT_FOUND);
+    
+    wxBoxSizer* boxSizer409 = new wxBoxSizer(wxVERTICAL);
+    m_panel407->SetSizer(boxSizer409);
+    
+    m_checkBoxRunLint = new wxCheckBox(m_panel407, wxID_ANY, _("Perform syntax check when saving file"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxRunLint->SetValue(true);
+    m_checkBoxRunLint->SetToolTip(_("When saving a PHP script, run syntax check and report errors in the editor"));
+    
+    boxSizer409->Add(m_checkBoxRunLint, 0, wxALL, 5);
     
     wxBoxSizer* bSizer16 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -597,6 +614,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_treebook9->ExpandNode( 0, true );
     m_treebook9->ExpandNode( 1, true );
     m_treebook9->ExpandNode( 2, true );
+    m_treebook9->ExpandNode( 3, true );
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

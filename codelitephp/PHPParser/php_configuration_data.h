@@ -19,7 +19,8 @@ protected:
 
 public:
     enum {
-        kDontPromptForMissingFileMapping = 0x00000001,
+        kDontPromptForMissingFileMapping = (1 << 0),
+        kRunLintOnFileSave = (1 << 1),
     };
 
 public:
@@ -43,7 +44,13 @@ public:
     }
 
     bool HasFlag(size_t flag) const { return m_flags & flag; }
-
+    bool IsRunLint() const {
+        return HasFlag(kRunLintOnFileSave);
+    }
+    void SetRunLint(bool b) {
+        EnableFlag(kRunLintOnFileSave, b);
+    }
+    
     // ----------------------------------------------------
     // Setters
     // ----------------------------------------------------
@@ -89,7 +96,7 @@ public:
 
     const wxArrayString& GetCcIncludePath() const { return m_ccIncludePath; }
     wxArrayString& GetCcIncludePath() { return m_ccIncludePath; }
-    
+
     const wxString& GetErrorReporting() const { return m_errorReporting; }
     const wxArrayString& GetIncludePaths() const { return m_includePaths; }
     wxString GetIncludePathsAsString() const;

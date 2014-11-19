@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 405,
+  "m_objCounter": 413,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCF01InitBitmapResources",
   "m_bitmapsFile": "php_ui_php-plugin_bitmaps.cpp",
@@ -4224,7 +4224,7 @@
           }, {
            "type": "string",
            "m_label": "Label:",
-           "m_value": "Command Line"
+           "m_value": "General"
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
@@ -4273,7 +4273,7 @@
              "gbSpan": ",",
              "gbPosition": ",",
              "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+             "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "string",
                "m_label": "Name:",
@@ -4410,7 +4410,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": ""
+                 "m_value": "Select the PHP executable to use when debugging / running command line scripts"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -4564,7 +4564,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": ""
+                 "m_value": "Set the PHP error reporting level (affects command line only)"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -4649,25 +4649,6 @@
               }],
              "m_events": [],
              "m_children": [{
-               "m_type": 4454,
-               "proportion": 1,
-               "border": 5,
-               "gbSpan": "1,1",
-               "gbPosition": "0,0",
-               "m_styles": [],
-               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-               "m_properties": [{
-                 "type": "string",
-                 "m_label": "Name:",
-                 "m_value": "Spacer7"
-                }, {
-                 "type": "string",
-                 "m_label": "Size:",
-                 "m_value": "0,0"
-                }],
-               "m_events": [],
-               "m_children": []
-              }, {
                "m_type": 4405,
                "proportion": 0,
                "border": 5,
@@ -4769,7 +4750,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": ""
+                 "m_value": "Add include path for PHP"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -4837,6 +4818,25 @@
                  "m_noBody": false
                 }],
                "m_children": []
+              }, {
+               "m_type": 4454,
+               "proportion": 1,
+               "border": 5,
+               "gbSpan": "1,1",
+               "gbPosition": "0,0",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+               "m_properties": [{
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "Spacer7"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": "0,0"
+                }],
+               "m_events": [],
+               "m_children": []
               }]
             }, {
              "m_type": 4406,
@@ -4865,7 +4865,7 @@
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
-               "m_value": ""
+               "m_value": "Additional include path for PHP (affects command line runs only)"
               }, {
                "type": "colour",
                "m_label": "Bg Colour:",
@@ -5461,7 +5461,7 @@
              "gbSpan": ",",
              "gbPosition": ",",
              "m_styles": [],
-             "m_sizerFlags": ["wxTOP", "wxBOTTOM", "wxEXPAND"],
+             "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "string",
                "m_label": "Name:",
@@ -5760,7 +5760,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": ""
+                 "m_value": "The XDebug session name"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -5800,7 +5800,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Value:",
-                 "m_value": "phplite"
+                 "m_value": "codeliteide"
                 }, {
                  "type": "string",
                  "m_label": "Text Hint",
@@ -5821,6 +5821,192 @@
                "m_events": [],
                "m_children": []
               }]
+            }]
+          }]
+        }, {
+         "m_type": 4441,
+         "proportion": 0,
+         "border": 5,
+         "gbSpan": "1,1",
+         "gbPosition": "0,0",
+         "m_styles": ["wxTAB_TRAVERSAL"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_properties": [{
+           "type": "winid",
+           "m_label": "ID:",
+           "m_winid": "wxID_ANY"
+          }, {
+           "type": "string",
+           "m_label": "Size:",
+           "m_value": "-1,-1"
+          }, {
+           "type": "string",
+           "m_label": "Minimum Size:",
+           "m_value": "-1,-1"
+          }, {
+           "type": "string",
+           "m_label": "Name:",
+           "m_value": "m_panel407"
+          }, {
+           "type": "multi-string",
+           "m_label": "Tooltip:",
+           "m_value": ""
+          }, {
+           "type": "colour",
+           "m_label": "Bg Colour:",
+           "colour": "<Default>"
+          }, {
+           "type": "colour",
+           "m_label": "Fg Colour:",
+           "colour": "<Default>"
+          }, {
+           "type": "font",
+           "m_label": "Font:",
+           "m_value": ""
+          }, {
+           "type": "bool",
+           "m_label": "Hidden",
+           "m_value": false
+          }, {
+           "type": "bool",
+           "m_label": "Disabled",
+           "m_value": false
+          }, {
+           "type": "bool",
+           "m_label": "Focused",
+           "m_value": false
+          }, {
+           "type": "string",
+           "m_label": "Class Name:",
+           "m_value": ""
+          }, {
+           "type": "string",
+           "m_label": "Include File:",
+           "m_value": ""
+          }, {
+           "type": "string",
+           "m_label": "Style:",
+           "m_value": ""
+          }, {
+           "type": "string",
+           "m_label": "Label:",
+           "m_value": "Syntax Check"
+          }, {
+           "type": "bitmapPicker",
+           "m_label": "Bitmap File:",
+           "m_path": ""
+          }, {
+           "type": "bool",
+           "m_label": "Selected",
+           "m_value": false
+          }, {
+           "type": "bool",
+           "m_label": "Null Page",
+           "m_value": false
+          }, {
+           "type": "bool",
+           "m_label": "Expand Node",
+           "m_value": true
+          }],
+         "m_events": [],
+         "m_children": [{
+           "m_type": 4401,
+           "proportion": 1,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "boxSizer409"
+            }, {
+             "type": "string",
+             "m_label": "Style:",
+             "m_value": ""
+            }, {
+             "type": "choice",
+             "m_label": "Orientation:",
+             "m_selection": 0,
+             "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+            }],
+           "m_events": [],
+           "m_children": [{
+             "m_type": 4415,
+             "proportion": 0,
+             "border": 5,
+             "gbSpan": "1,1",
+             "gbPosition": "0,0",
+             "m_styles": [],
+             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+             "m_properties": [{
+               "type": "winid",
+               "m_label": "ID:",
+               "m_winid": "wxID_ANY"
+              }, {
+               "type": "string",
+               "m_label": "Size:",
+               "m_value": "-1,-1"
+              }, {
+               "type": "string",
+               "m_label": "Minimum Size:",
+               "m_value": "-1,-1"
+              }, {
+               "type": "string",
+               "m_label": "Name:",
+               "m_value": "m_checkBoxRunLint"
+              }, {
+               "type": "multi-string",
+               "m_label": "Tooltip:",
+               "m_value": "When saving a PHP script, run syntax check and report errors in the editor"
+              }, {
+               "type": "colour",
+               "m_label": "Bg Colour:",
+               "colour": "<Default>"
+              }, {
+               "type": "colour",
+               "m_label": "Fg Colour:",
+               "colour": "<Default>"
+              }, {
+               "type": "font",
+               "m_label": "Font:",
+               "m_value": ""
+              }, {
+               "type": "bool",
+               "m_label": "Hidden",
+               "m_value": false
+              }, {
+               "type": "bool",
+               "m_label": "Disabled",
+               "m_value": false
+              }, {
+               "type": "bool",
+               "m_label": "Focused",
+               "m_value": false
+              }, {
+               "type": "string",
+               "m_label": "Class Name:",
+               "m_value": ""
+              }, {
+               "type": "string",
+               "m_label": "Include File:",
+               "m_value": ""
+              }, {
+               "type": "string",
+               "m_label": "Style:",
+               "m_value": ""
+              }, {
+               "type": "string",
+               "m_label": "Label:",
+               "m_value": "Perform syntax check when saving file"
+              }, {
+               "type": "bool",
+               "m_label": "Value:",
+               "m_value": true
+              }],
+             "m_events": [],
+             "m_children": []
             }]
           }]
         }]

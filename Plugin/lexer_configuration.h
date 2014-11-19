@@ -35,6 +35,9 @@
 #include <wx/sharedptr.h>
 #include <smart_ptr.h>
 
+#define ANNOTATION_STYLE_WARNING 210
+#define ANNOTATION_STYLE_ERROR 211
+
 class WXDLLIMPEXP_SDK LexerConf
 {
     StyleProperty::List_t m_properties;

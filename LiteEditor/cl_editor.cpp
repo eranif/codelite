@@ -92,8 +92,6 @@
 
 #define CL_LINE_MODIFIED_STYLE 200
 #define CL_LINE_SAVED_STYLE 201
-#define ANNOTATION_STYLE_WARNING 210
-#define ANNOTATION_STYLE_ERROR 211
 
 // debugger line marker xpms
 extern const char* arrow_right_green_xpm[];
@@ -4695,22 +4693,6 @@ void LEditor::DoSaveMarkers()
         }
         nFoundLine = MarkerNext(nFoundLine + 1, mmt_all_bookmarks);
     }
-}
-
-void LEditor::InitializeAnnotations()
-{
-    // Warning style
-    StyleSetBackground(ANNOTATION_STYLE_WARNING, wxColor(255, 215, 0));
-    StyleSetForeground(ANNOTATION_STYLE_WARNING, *wxBLACK);
-    StyleSetSizeFractional(ANNOTATION_STYLE_WARNING, (StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
-
-    // Error style
-    StyleSetBackground(ANNOTATION_STYLE_ERROR, wxColour(244, 220, 220));
-    StyleSetForeground(ANNOTATION_STYLE_ERROR, *wxBLACK);
-    StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, (StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
-
-    // default all line style
-    AnnotationSetVisible(wxSTC_ANNOTATION_STANDARD);
 }
 
 void LEditor::ToggleBreakpointEnablement()

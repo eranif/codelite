@@ -832,6 +832,11 @@ void PhpPlugin::OnGoingDown(clCommandEvent& event)
 
 void PhpPlugin::PhpLintDone(const wxString& lintOutput)
 {
-    wxUnusedVar(lintOutput);
-    CL_DEBUG("PHP: lint output: %s", lintOutput);
+    wxArrayString lines = ::wxStringTokenize(lintOutput, "\n", wxTOKEN_STRTOK);
+    for(size_t i=0; i<lines.GetCount(); ++i) {
+        lines.Item(i).Trim().Trim(false);
+        if(lines.Item(i).StartsWith("Parse error")) {
+            
+        }
+    }
 }

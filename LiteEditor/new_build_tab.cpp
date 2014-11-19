@@ -655,8 +655,6 @@ void NewBuildTab::MarkEditor(LEditor* editor)
 #endif
     }
 
-    editor->InitializeAnnotations();
-
     // Merge all the errors from the same line into a single error
     AnnotationInfoByLineMap_t annotations;
 

@@ -382,6 +382,23 @@ public:
      * @brief set the focus to the current editor, after a delay
      */
     virtual void DelayedSetActive() = 0;
+    
+    //-----------------------------------------------
+    // Error/Warnings markers
+    //-----------------------------------------------
+    
+    /**
+     * @brief set a warning marker in the editor with a given text
+     */
+    virtual void SetWarningMarker(int lineno, const wxString& annotationText) = 0;
+    /**
+     * @brief set a warning marker in the editor with a given text
+     */
+    virtual void SetErrorMarker(int lineno, const wxString& annotationText) = 0;
+    /**
+     * @brief delete all compiler markers (warnings/errors)
+     */
+    virtual void DelAllCompilerMarkers() = 0;
 };
 
 #endif //IEDITOR_H

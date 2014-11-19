@@ -618,10 +618,10 @@ public:
     virtual void UnHighlightAll();
 
     // compiler warnings and errors
-    void SetWarningMarker(int lineno, const wxString& annotationText);
-    void SetErrorMarker(int lineno, const wxString& annotationText);
-    void InitializeAnnotations();
-    void DelAllCompilerMarkers();
+    virtual void SetWarningMarker(int lineno, const wxString& annotationText);
+    virtual void SetErrorMarker(int lineno, const wxString& annotationText);
+    virtual void DelAllCompilerMarkers();
+    
     void DoShowCalltip(int pos, const wxString& tip);
     void DoCancelCalltip();
     int DoGetOpenBracePos();

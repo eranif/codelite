@@ -301,6 +301,20 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
     
+    // Annotations markers
+    // Warning style
+    ctrl->StyleSetBackground(ANNOTATION_STYLE_WARNING, wxColor(255, 215, 0));
+    ctrl->StyleSetForeground(ANNOTATION_STYLE_WARNING, *wxBLACK);
+    ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_WARNING, ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT));
+
+    // Error style
+    ctrl->StyleSetBackground(ANNOTATION_STYLE_ERROR, wxColour(244, 220, 220));
+    ctrl->StyleSetForeground(ANNOTATION_STYLE_ERROR, *wxBLACK);
+    ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT));
+
+    // annotation style 'boxed'
+    ctrl->AnnotationSetVisible(wxSTC_ANNOTATION_BOXED);
+    
 #ifdef __WXOSX__
     ctrl->SetUseAntiAliasing(true);
 #endif

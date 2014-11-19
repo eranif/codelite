@@ -858,6 +858,10 @@ void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString &filename
             // get the line number
             if(reLine.Matches(errorString)) {
                 wxString strLine = reLine.GetMatch(errorString, 1);
+                int where = errorString.Find(" in ");
+                if(where != wxNOT_FOUND) {
+                    errorString.Truncate(where);
+                }
                 long nLine(wxNOT_FOUND);
                 if(strLine.ToCLong(&nLine)) {
                     CL_DEBUG("PHPLint: adding error marker @%d", nLine-1);

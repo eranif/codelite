@@ -300,21 +300,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // turn off PP tracking/updating by default
     ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-    
-    // Annotations markers
-    // Warning style
-    ctrl->StyleSetBackground(ANNOTATION_STYLE_WARNING, wxColor(255, 215, 0));
-    ctrl->StyleSetForeground(ANNOTATION_STYLE_WARNING, *wxBLACK);
-    ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_WARNING, ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT));
 
-    // Error style
-    ctrl->StyleSetBackground(ANNOTATION_STYLE_ERROR, wxColour(244, 220, 220));
-    ctrl->StyleSetForeground(ANNOTATION_STYLE_ERROR, *wxBLACK);
-    ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT));
-
-    // annotation style 'boxed'
-    ctrl->AnnotationSetVisible(wxSTC_ANNOTATION_BOXED);
-    
 #ifdef __WXOSX__
     ctrl->SetUseAntiAliasing(true);
 #endif
@@ -347,15 +333,14 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
     }
 
-    // Define the styles for the editing margin
-    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("FOREST GREEN")));
-    ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
-
     if(foundDefaultStyle && defaultFont.IsOk()) {
         for(int i = 0; i < 256; i++) {
             ctrl->StyleSetFont(i, defaultFont);
         }
     }
+
+    bool isThemeDark = false;
+    wxUnusedVar(isThemeDark);
 
     iter = styles.begin();
     for(; iter != styles.end(); ++iter) {
@@ -500,6 +485,24 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetKeyWords(3, GetKeyWords(3));
         ctrl->SetKeyWords(4, GetKeyWords(4));
     }
+
+    // Annotations markers
+    // Warning style
+    ctrl->StyleSetBackground(ANNOTATION_STYLE_WARNING, defaultStyle.GetBgColour());
+    ctrl->StyleSetForeground(ANNOTATION_STYLE_WARNING, defaultStyle.GetFgColour());
+    ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_WARNING, (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
+
+    // Error style
+    ctrl->StyleSetBackground(ANNOTATION_STYLE_ERROR, defaultStyle.GetBgColour());
+    ctrl->StyleSetForeground(ANNOTATION_STYLE_ERROR, defaultStyle.GetFgColour());
+    ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
+
+    // annotation style 'boxed'
+    ctrl->AnnotationSetVisible(wxSTC_ANNOTATION_BOXED);
+
+    // Define the styles for the editing margin
+    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("FOREST GREEN")));
+    ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 }
 
 StyleProperty& LexerConf::GetProperty(int propertyId)

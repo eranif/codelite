@@ -510,8 +510,9 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
         }
         
         {
-            // Add $this incase we are inside a class
-            if(GetSourceFile()->Class()) {
+            // Add $this incase we are inside a class (but only if '$this' contains the filter string)
+            wxString lcFilter = GetFilter().Lower();
+            if(GetSourceFile()->Class() && wxString("$this").Contains(lcFilter)) {
                 PHPEntityBase::Ptr_t thiz(new PHPEntityVariable());
                 thiz->SetFullName("$this");
                 thiz->SetShortName("$this");

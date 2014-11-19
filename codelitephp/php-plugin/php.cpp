@@ -754,7 +754,7 @@ void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 
 void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }
 
-void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
+void PhpPlugin::RunXDebugDiagnostics()
 {
     XDebugTester xdebugTester;
     if(xdebugTester.RunTest()) {
@@ -780,6 +780,12 @@ void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
         dlg.Load(html);
         dlg.ShowModal();
     }
+}
+
+void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    RunXDebugDiagnostics();
 }
 
 void PhpPlugin::FinalizeStartup()

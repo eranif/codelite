@@ -66,7 +66,8 @@ public:
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
-
+    void RunXDebugDiagnostics();
+    
     IManager* GetManager() { return m_mgr; }
     // Event handlers
     

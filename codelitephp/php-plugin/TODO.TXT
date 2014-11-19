@@ -13,7 +13,6 @@ Code Completion / Code Generation
 Must:
 =====
 - Fix 'Outline' plugin to support PHP files
-- When codelite shows the "XDebug failed to connect in a timely manner" -> add button to run xdebug diag tool
 
 Usability:
 ==========

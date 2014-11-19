@@ -268,7 +268,7 @@ void XDebugManager::DoApplyBreakpoints()
     CHECK_PTR_RET(pProject);
 
     const PHPProjectSettingsData& settings = pProject->GetSettings();
-    //bool bRunAsWebserver = (pProject->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite);
+    // bool bRunAsWebserver = (pProject->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite);
 
     XDebugBreakpoint::List_t& breakpoints = m_breakpointsMgr.GetBreakpoints();
     XDebugBreakpoint::List_t::iterator iter = breakpoints.begin();
@@ -289,7 +289,7 @@ void XDebugManager::DoApplyBreakpoints()
 
         wxString command;
         XDebugCommandHandler::Ptr_t handler(new XDebugBreakpointCmdHandler(this, ++TranscationId, *iter));
-        wxString filepath = settings.GetMappdPath(iter->GetFileName(), true, sftpMapping);// : iter->GetFileName();
+        wxString filepath = settings.GetMappdPath(iter->GetFileName(), true, sftpMapping); // : iter->GetFileName();
         command << "breakpoint_set -i " << handler->GetTransactionId() << " -t line"
                 << " -f " << filepath << " -n " << iter->GetLine();
         DoSocketWrite(command);
@@ -733,7 +733,14 @@ void XDebugManager::OnCommThreadTerminated()
 
 void XDebugManager::XDebugNotConnecting()
 {
-    ::wxMessageBox(_("XDebug did not connect in timely manner"), "CodeLite", wxICON_ERROR | wxCENTER | wxOK);
+    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
+                            _("XDebug did not connect in a timely manner"),
+                            "CodeLite",
+                            wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
+    dlg.SetOKCancelLabels(_("Run XDebug Test"), _("OK"));
+    if(dlg.ShowModal() == wxID_OK) {
+        m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics);
+    }
     DoStopDebugger();
 }
 

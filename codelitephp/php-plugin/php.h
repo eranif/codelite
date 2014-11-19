@@ -47,7 +47,7 @@ public:
     void SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name);
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();
-    void PhpLintDone(const wxString &lintOutput);
+    void PhpLintDone(const wxString &lintOutput, const wxString &filename);
     
     PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
 

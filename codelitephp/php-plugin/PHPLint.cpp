@@ -13,6 +13,7 @@ END_EVENT_TABLE()
 
 PHPLint::PHPLint(PhpPlugin* plugin)
     : m_plugin(plugin)
+    , m_process(NULL)
 {
 }
 
@@ -26,7 +27,7 @@ void PHPLint::CheckCode(const wxFileName& filename)
 
 void PHPLint::DoProcessQueue()
 {
-    if(!m_queue.empty()) {
+    if(!m_process && !m_queue.empty()) {
         wxFileName filename = m_queue.front();
         m_queue.pop_front();
         DoCheckFile(filename);
@@ -36,10 +37,9 @@ void PHPLint::DoProcessQueue()
 void PHPLint::OnProcessTerminated(wxCommandEvent& event)
 {
     ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
-    IProcess *prc = ped->GetProcess();
-    wxDELETE(prc);
-    m_plugin->CallAfter(&PhpPlugin::PhpLintDone, m_output);
-    
+    wxDELETE(ped);
+    wxDELETE(m_process);
+    m_plugin->CallAfter(&PhpPlugin::PhpLintDone, m_output, m_currentFileBeingProcessed);
     // Check the queue for more files
     DoProcessQueue();
 }
@@ -60,6 +60,7 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
     // no php ?
     if(data.GetPhpExe().IsEmpty()) {
         m_queue.clear();
+        m_currentFileBeingProcessed.Clear();
         return;
     }
     
@@ -74,6 +75,15 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
     command << " -l " << file;
     
     // Run the lint command
-    ::CreateAsyncProcess(this, command);
-    CL_DEBUG("PHP: running lint: %s", command);
+    m_process = ::CreateAsyncProcess(this, command);
+    if(!m_process) {
+        // failed to run the command
+        CL_WARNING("PHPLint: could not run command '%s'", command);
+        DoProcessQueue();
+        m_currentFileBeingProcessed.Clear();
+        
+    } else {
+        CL_DEBUG("PHP: running lint: %s", command);
+        m_currentFileBeingProcessed = file;
+    }
 }

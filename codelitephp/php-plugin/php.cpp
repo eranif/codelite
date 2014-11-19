@@ -35,6 +35,7 @@
 #include "cl_standard_paths.h"
 #include "php_configuration_data.h"
 #include "PHPLocator.h"
+#include <wx/regex.h>
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -595,6 +596,9 @@ void PhpPlugin::OnFileSaved(clCommandEvent& e)
     
     // Run php lint
     if(::IsPHPFile(e.GetFileName())) {
+        if(m_mgr->GetActiveEditor()) {
+            m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
+        }
         m_lint->CheckCode(e.GetFileName());
     }
 }
@@ -830,13 +834,26 @@ void PhpPlugin::OnGoingDown(clCommandEvent& event)
     }
 }
 
-void PhpPlugin::PhpLintDone(const wxString& lintOutput)
+void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString &filename)
 {
+    // Find the editor
+    IEditor *editor = m_mgr->FindEditor(filename);
+    CHECK_PTR_RET(editor);
+    
+    wxRegEx reLine("[ \t]*on line ([0-9]+)");
     wxArrayString lines = ::wxStringTokenize(lintOutput, "\n", wxTOKEN_STRTOK);
     for(size_t i=0; i<lines.GetCount(); ++i) {
-        lines.Item(i).Trim().Trim(false);
-        if(lines.Item(i).StartsWith("Parse error")) {
-            
+        wxString errorString = lines.Item(i);
+        errorString.Trim().Trim(false);
+        if(errorString.StartsWith("Parse error")) {
+            // get the line number
+            if(reLine.Matches(errorString)) {
+                wxString strLine = reLine.GetMatch(errorString, 1);
+                long nLine(wxNOT_FOUND);
+                if(strLine.ToCLong(&nLine)) {
+                    editor->SetErrorMarker(nLine-1, errorString);
+                }
+            }
         }
     }
 }

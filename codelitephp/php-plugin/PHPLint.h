@@ -8,11 +8,15 @@
 #include "smart_ptr.h"
 
 class PhpPlugin;
+class IProcess;
 class PHPLint : public wxEvtHandler
 {
     PhpPlugin* m_plugin;
     std::list<wxFileName> m_queue;
     wxString m_output;
+    IProcess* m_process;
+    wxString m_currentFileBeingProcessed;
+    
 public:
     typedef SmartPtr<PHPLint> Ptr_t;
     

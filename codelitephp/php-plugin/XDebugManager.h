@@ -42,7 +42,8 @@ public:
 public:
     int GetPort() const;
     wxString GetHost() const;
-
+    void CenterEditor(wxStyledTextCtrl* ctrl, int lineNo);
+    
     void SetConnected(bool connected);
     bool IsConnected() const { return m_connected; }
     void DoSocketWrite(const wxString& command);

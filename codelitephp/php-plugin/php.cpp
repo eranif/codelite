@@ -36,6 +36,7 @@
 #include "php_configuration_data.h"
 #include "PHPLocator.h"
 #include <wx/regex.h>
+#include "bookmark_manager.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -139,7 +140,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL, this);
 
-    EventNotifier::Get()->Bind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
+    EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &PhpPlugin::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
 
     EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
@@ -250,7 +251,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_CONNECTED, &PhpPlugin::OnDebugSatrted, this);
+    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTED, &PhpPlugin::OnDebugStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
 
@@ -643,7 +644,7 @@ void PhpPlugin::OnDebugEnded(XDebugEvent& e)
     }
 }
 
-void PhpPlugin::OnDebugSatrted(XDebugEvent& e)
+void PhpPlugin::OnDebugStarted(XDebugEvent& e)
 {
     e.Skip();
     DoEnsureXDebugPanesVisible();
@@ -681,6 +682,14 @@ void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
     EnsureAuiPaneIsVisible("XDebug");
     EnsureAuiPaneIsVisible("XDebugEval");
     EnsureAuiPaneIsVisible("XDebugLocals", true);
+    
+    // if(m_mgr->GetActiveEditor()) {
+    //     wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetSTC();
+    //     int nFoundLine = stc->MarkerNext(0, mmt_indicator);
+    //     if(nFoundLine >= 0) {
+    //         XDebugManager::Get().CenterEditor(stc, nFoundLine);
+    //     }
+    // }
 }
 
 void PhpPlugin::SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name)

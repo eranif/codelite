@@ -850,20 +850,27 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
            !m_context->IsDefaultContext() &&                        // the editor's context is NOT the default one
            matchedPos == m_lastCharEnteredPos) { // and that open brace must be the one that we have inserted
 
-            // Add closing brace only if the last char that was entered is the match for it
             matchChar = '}';
-            InsertText(pos, matchChar);
             BeginUndoAction();
+            // Check to see if there are more chars on the line
+            int curline = GetCurrentLine();
+            
+            // get the line end position, but without the EOL 
+            int lineEndPos = LineEnd(curline) - GetEolString().length();
+            wxString restOfLine = GetTextRange(pos, lineEndPos);
+            
+            SetSelection(pos, lineEndPos);
+            ReplaceSelection("");
+            
+            InsertText(pos, matchChar);
             CharRight();
-
             m_context->AutoIndent(wxT('}'));
-
             InsertText(pos, GetEolString());
             CharRight();
             SetCaretAt(pos);
-
+            // restore the content that we just removed
+            InsertText(pos, restOfLine);
             m_context->AutoIndent(wxT('\n'));
-
             EndUndoAction();
 
         } else {

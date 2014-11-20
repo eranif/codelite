@@ -436,6 +436,7 @@ void XDebugManager::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
     stc->SetSelection(caretPos, caretPos);
     stc->SetCurrentPos(caretPos);
     stc->EnsureCaretVisible();
+    CenterEditor(stc, lineno);
 }
 
 void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
@@ -796,4 +797,12 @@ void XDebugManager::SetConnected(bool connected)
     this->m_connected = connected;
     XDebugEvent event(wxEVT_XDEBUG_CONNECTED);
     EventNotifier::Get()->AddPendingEvent(event);
+}
+
+void XDebugManager::CenterEditor(wxStyledTextCtrl* ctrl, int lineNo)
+{
+    // Place the debugger line at the center of the editor view
+    int linesOnScreen = ctrl->LinesOnScreen();
+    int topLine = lineNo - (linesOnScreen / 2);
+    ctrl->CallAfter(&wxStyledTextCtrl::SetFirstVisibleLine, topLine);
 }

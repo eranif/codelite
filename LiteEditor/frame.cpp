@@ -758,7 +758,7 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     
     // Register keyboard shortcuts
     clKeyboardManager::Get()->AddGlobalAccelerator(
-        "selection_to_multi_caret", "Ctrl-Shift-L", _("Break multi line selection into multiple carets"));
+        "selection_to_multi_caret", "Ctrl-Shift-L", _("Edit::Split selection into multiple carets"));
 }
 
 clMainFrame::~clMainFrame(void)
@@ -3879,7 +3879,6 @@ void clMainFrame::CompleteInitialization()
     clKeyboardManager::Get()->AddGlobalAccelerator("comment_selection", "Ctrl-Shift-/", "C++::Comment Selection");
     clKeyboardManager::Get()->AddGlobalAccelerator("comment_line", "Ctrl-/", "C++::Toggle Line Comment");
     clKeyboardManager::Get()->AddGlobalAccelerator("rename_symbol", "Ctrl-Shift-H", "C++::Rename Symbol");
-    clKeyboardManager::Get()->AddGlobalAccelerator("rename_local_variable", "Ctrl-Shift-L", "C++::Rename Local Variable");
     
     // Load the plugins
     PluginManager::Get()->Load();

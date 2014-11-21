@@ -8,6 +8,7 @@
 #include "PHPEntityVariable.h"
 #include "PHPSourceFile.h"
 #include "navigationmanager.h"
+#include "globals.h"
 
 #ifndef __WXMSW__
 #include <wx/imaglist.h>
@@ -29,6 +30,7 @@ public:
 PHPOutlineTree::PHPOutlineTree(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxTreeCtrl(parent, id, pos, size, style)
 {
+    MSWSetNativeTheme(this);
 }
 
 PHPOutlineTree::~PHPOutlineTree() {}
@@ -152,4 +154,11 @@ void PHPOutlineTree::ItemSelected(const wxTreeItemId& item)
                           itemData->m_entry->GetShortName(),
                           editor->PosFromLine(itemData->m_entry->GetLine()),
                           NavMgr::Get());
+    // set the focus to the editor
+    CallAfter( &PHPOutlineTree::SetEditorActive, editor);
+}
+
+void PHPOutlineTree::SetEditorActive(IEditor* editor)
+{
+    editor->SetActive();
 }

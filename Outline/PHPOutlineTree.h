@@ -14,7 +14,8 @@ class PHPOutlineTree : public wxTreeCtrl
 protected:
     void BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Ptr_t entity);
     int GetImageId(PHPEntityBase::Ptr_t entry);
-
+    void SetEditorActive(IEditor* editor);
+    
 public:
     PHPOutlineTree(wxWindow* parent,
                    wxWindowID id = wxID_ANY,

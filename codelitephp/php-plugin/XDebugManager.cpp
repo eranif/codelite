@@ -464,7 +464,7 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
 
     if(editor) {
         m_plugin->GetManager()->SelectPage(editor->GetSTC());
-        SetDebuggerMarker(editor->GetSTC(), e.GetLineNumber());
+        CallAfter(&XDebugManager::SetDebuggerMarker, editor->GetSTC(), e.GetLineNumber());
     }
 
     // Update the callstack/locals views
@@ -804,5 +804,5 @@ void XDebugManager::CenterEditor(wxStyledTextCtrl* ctrl, int lineNo)
     // Place the debugger line at the center of the editor view
     int linesOnScreen = ctrl->LinesOnScreen();
     int topLine = lineNo - (linesOnScreen / 2);
-    ctrl->CallAfter(&wxStyledTextCtrl::SetFirstVisibleLine, topLine);
+    ctrl->SetFirstVisibleLine(topLine);
 }

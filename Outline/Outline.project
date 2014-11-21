@@ -13,6 +13,8 @@
     <File Name="outline_tab.h"/>
     <File Name="outline_tab.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="PHPOutlineTree.h"/>
+    <File Name="PHPOutlineTree.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="outline_symbol_tree.h"/>

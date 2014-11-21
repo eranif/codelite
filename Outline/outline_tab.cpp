@@ -29,55 +29,72 @@
 #include "plugin.h"
 #include <wx/stc/stc.h>
 #include <wx/menu.h>
+#include <wx/wupdlock.h>
+#include "fileextmanager.h"
 
-const wxEventType wxEVT_SV_GOTO_DEFINITION  = wxNewEventType();
+const wxEventType wxEVT_SV_GOTO_DEFINITION = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
-const wxEventType wxEVT_SV_FIND_REFERENCES  = wxNewEventType();
-const wxEventType wxEVT_SV_RENAME_SYMBOL    = wxNewEventType();
-const wxEventType wxEVT_SV_OPEN_FILE        = wxNewEventType();
+const wxEventType wxEVT_SV_FIND_REFERENCES = wxNewEventType();
+const wxEventType wxEVT_SV_RENAME_SYMBOL = wxNewEventType();
+const wxEventType wxEVT_SV_OPEN_FILE = wxNewEventType();
+
+#define OUTLINE_TAB_CXX 0
+#define OUTLINE_TAB_PHP 1
 
 OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     : OutlineTabBaseClass(parent)
     , m_mgr(mgr)
 {
-    m_tree = new svSymbolTree(this, m_mgr, wxID_ANY);
+    m_tree = new svSymbolTree(m_panelCxx, m_mgr, wxID_ANY);
+    m_panelCxx->GetSizer()->Add(m_tree, 1, wxEXPAND);
     m_tree->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
+    m_tree->AssignImageList(svSymbolTree::CreateSymbolTreeImages());
+    m_treeCtrlPhp->SetManager(m_mgr);
     
-    m_tree->AssignImageList( svSymbolTree::CreateSymbolTreeImages() );
-
-    GetSizer()->Add(m_tree, 1, wxEXPAND);
-
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(OutlineTab::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OutlineTab::OnEditorClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OutlineTab::OnAllEditorsClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL, this);
-    
-    Connect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
-    Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
-    Connect(wxEVT_SV_FIND_REFERENCES,  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
-    Connect(wxEVT_SV_RENAME_SYMBOL,    wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OutlineTab::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL, this);
+
+    Connect(
+        wxEVT_SV_GOTO_DEFINITION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    Connect(
+        wxEVT_SV_GOTO_DECLARATION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    Connect(
+        wxEVT_SV_FIND_REFERENCES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    Connect(wxEVT_SV_RENAME_SYMBOL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     m_themeHelper = new ThemeHandlerHelper(this);
-    
 }
 
 OutlineTab::~OutlineTab()
 {
     wxDELETE(m_themeHelper);
     m_tree->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
-    
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(OutlineTab::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OutlineTab::OnEditorClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OutlineTab::OnAllEditorsClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL, this);
 
-    Disconnect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
-    Disconnect(wxEVT_SV_GOTO_DECLARATION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
-    Disconnect(wxEVT_SV_FIND_REFERENCES,  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
-    Disconnect(wxEVT_SV_RENAME_SYMBOL,    wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OutlineTab::OnEditorClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OutlineTab::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL, this);
+
+    Disconnect(
+        wxEVT_SV_GOTO_DEFINITION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    Disconnect(
+        wxEVT_SV_GOTO_DECLARATION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    Disconnect(
+        wxEVT_SV_FIND_REFERENCES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    Disconnect(
+        wxEVT_SV_RENAME_SYMBOL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
 }
 
 void OutlineTab::OnSearchSymbol(wxCommandEvent& event)
@@ -102,8 +119,15 @@ void OutlineTab::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
-    if(editor) {
+    CHECK_PTR_RET(editor);
+    
+    if(FileExtManager::IsCxxFile(editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName());
+        m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
+        
+    } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
+        m_treeCtrlPhp->BuildTree(editor->GetFileName());
+        m_simpleBook->SetSelection(OUTLINE_TAB_PHP);
     }
 }
 
@@ -111,41 +135,44 @@ void OutlineTab::OnAllEditorsClosed(wxCommandEvent& e)
 {
     e.Skip();
     m_tree->Clear();
+    m_treeCtrlPhp->Clear();
 }
 
 void OutlineTab::OnEditorClosed(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
-    if (editor && m_tree->GetFilename() == editor->GetFileName()) {
-        m_tree->Clear();
-        m_tree->ClearCache();
+    if(editor) {
+        if(m_tree->GetFilename() == editor->GetFileName()) {
+            m_tree->Clear();
+            m_tree->ClearCache();
+            
+        } else if(m_treeCtrlPhp->GetFilename() == editor->GetFileName()) {
+            m_treeCtrlPhp->Clear();
+        }
     }
 }
 
 void OutlineTab::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
+    wxWindowUpdateLocker locker(this);
     m_tree->Clear();
-}
-
-void OutlineTab::OnWorkspaceLoaded(wxCommandEvent& e)
-{
-    e.Skip();
+    m_treeCtrlPhp->DeleteAllItems();
 }
 
 void OutlineTab::OnFilesTagged(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
-    if( editor ) {
-        m_tree->BuildTree( editor->GetFileName() );
-        
+    if(editor) {
+        m_tree->BuildTree(editor->GetFileName());
+
         if(editor->GetSTC()) {
             // make sure we dont steal the focus from the editor...
             editor->GetSTC()->SetFocus();
         }
-        
+
     } else {
         m_tree->Clear();
     }
@@ -153,25 +180,42 @@ void OutlineTab::OnFilesTagged(wxCommandEvent& e)
 void OutlineTab::OnMenu(wxContextMenuEvent& e)
 {
     wxMenu menu;
-    
-    if ( IsIncludeFileNode() ) {
+
+    if(IsIncludeFileNode()) {
         menu.Append(wxEVT_SV_OPEN_FILE, _("Open..."));
-        menu.Connect(wxEVT_SV_OPEN_FILE,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnOpenFile), NULL, this);
-        
+        menu.Connect(
+            wxEVT_SV_OPEN_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnOpenFile), NULL, this);
+
     } else {
         menu.Append(wxEVT_SV_GOTO_DECLARATION, _("Goto Declaration"));
-        menu.Append(wxEVT_SV_GOTO_DEFINITION,  _("Goto Implementation"));
+        menu.Append(wxEVT_SV_GOTO_DEFINITION, _("Goto Implementation"));
         menu.AppendSeparator();
-        menu.Append(wxEVT_SV_FIND_REFERENCES , _("Find References..."));
+        menu.Append(wxEVT_SV_FIND_REFERENCES, _("Find References..."));
         menu.AppendSeparator();
-        menu.Append(wxEVT_SV_RENAME_SYMBOL , _("Rename Symbol..."));
-        
-        menu.Connect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnGotoImpl),      NULL, this);
-        menu.Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnGotoDecl),      NULL, this);
-        menu.Connect(wxEVT_SV_FIND_REFERENCES , wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnFindReferenes), NULL, this);
-        menu.Connect(wxEVT_SV_RENAME_SYMBOL ,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnRenameSymbol),  NULL, this);
+        menu.Append(wxEVT_SV_RENAME_SYMBOL, _("Rename Symbol..."));
+
+        menu.Connect(wxEVT_SV_GOTO_DEFINITION,
+                     wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(OutlineTab::OnGotoImpl),
+                     NULL,
+                     this);
+        menu.Connect(wxEVT_SV_GOTO_DECLARATION,
+                     wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(OutlineTab::OnGotoDecl),
+                     NULL,
+                     this);
+        menu.Connect(wxEVT_SV_FIND_REFERENCES,
+                     wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(OutlineTab::OnFindReferenes),
+                     NULL,
+                     this);
+        menu.Connect(wxEVT_SV_RENAME_SYMBOL,
+                     wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(OutlineTab::OnRenameSymbol),
+                     NULL,
+                     this);
     }
-    
+
     m_tree->PopupMenu(&menu);
 }
 
@@ -188,7 +232,7 @@ void OutlineTab::OnGotoImpl(wxCommandEvent& e)
 }
 
 void OutlineTab::OnFindReferenes(wxCommandEvent& e)
-{    
+{
     wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_references"));
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
 }
@@ -201,23 +245,24 @@ void OutlineTab::OnRenameSymbol(wxCommandEvent& e)
 
 void OutlineTab::OnItemSelectedUI(wxUpdateUIEvent& e)
 {
-    IEditor *editor = m_mgr->GetActiveEditor();
+    IEditor* editor = m_mgr->GetActiveEditor();
     e.Enable(editor && editor->GetSelection().IsEmpty() == false);
 }
 
-bool OutlineTab::IsIncludeFileNode()
-{
-    return m_tree->IsSelectedItemIncludeFile();
-}
+bool OutlineTab::IsIncludeFileNode() { return m_tree->IsSelectedItemIncludeFile(); }
 
 void OutlineTab::OnOpenFile(wxCommandEvent& e)
 {
     wxString includedFile = m_tree->GetSelectedIncludeFile();
-    if(includedFile.IsEmpty())
-        return;
-    
+    if(includedFile.IsEmpty()) return;
+
     wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("open_include_file"));
     evt.SetString(includedFile);
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
 }
 
+void OutlineTab::OnPhpItemSelected(wxTreeEvent& event)
+{
+    event.Skip();
+    m_treeCtrlPhp->ItemSelected(event.GetItem());
+}

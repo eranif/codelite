@@ -35,10 +35,12 @@ class svSymbolTree;
 class OutlineTab : public OutlineTabBaseClass
 {
 protected:
+    virtual void OnPhpItemSelected(wxTreeEvent& event);
     IManager* m_mgr;
     svSymbolTree* m_tree;
     ThemeHandlerHelper* m_themeHelper;
     bool IsIncludeFileNode();
+    wxFileName m_phpFile;
     
 public:
     OutlineTab(wxWindow* parent, IManager* mgr);
@@ -48,7 +50,6 @@ public:
 
     // Event Handlers
     ////////////////////////////////////////////////
-    void OnWorkspaceLoaded(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnEditorClosed(wxCommandEvent &e);

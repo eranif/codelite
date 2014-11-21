@@ -71,7 +71,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_showWelcomePage(false)
 {
     m_lint.Reset(new PHPLint(this));
-    
+
     m_longName = wxT("PHP Plugin for the codelite IDE");
     m_shortName = wxT("PHP");
 
@@ -569,7 +569,7 @@ void PhpPlugin::OnMenuCommand(wxCommandEvent& e)
 void PhpPlugin::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
-    
+
     if(PHPWorkspace::Get()->IsOpen()) {
         // Check to see if we got a remote-upload setup
         SSHWorkspaceSettings settings;
@@ -594,7 +594,7 @@ void PhpPlugin::OnFileSaved(clCommandEvent& e)
             EventNotifier::Get()->AddPendingEvent(eventSave);
         }
     }
-    
+
     // Run php lint
     PHPConfigurationData conf;
     conf.Load();
@@ -682,14 +682,6 @@ void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
     EnsureAuiPaneIsVisible("XDebug");
     EnsureAuiPaneIsVisible("XDebugEval");
     EnsureAuiPaneIsVisible("XDebugLocals", true);
-    
-    // if(m_mgr->GetActiveEditor()) {
-    //     wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetSTC();
-    //     int nFoundLine = stc->MarkerNext(0, mmt_indicator);
-    //     if(nFoundLine >= 0) {
-    //         XDebugManager::Get().CenterEditor(stc, nFoundLine);
-    //     }
-    // }
 }
 
 void PhpPlugin::SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name)
@@ -801,9 +793,14 @@ void PhpPlugin::FinalizeStartup()
 {
     // Create the debugger windows (hidden)
     m_debuggerPane = new PHPDebugPane(EventNotifier::Get()->TopFrame());
-    m_mgr->GetDockingManager()->AddPane(
-        m_debuggerPane,
-        wxAuiPaneInfo().Name("XDebug").Caption("Call Stack & Breakpoints").Hide().CloseButton().MaximizeButton().Top());
+    m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
+                                        wxAuiPaneInfo()
+                                            .Name("XDebug")
+                                            .Caption("Call Stack & Breakpoints")
+                                            .Hide()
+                                            .CloseButton()
+                                            .MaximizeButton()
+                                            .Bottom().Position(3));
 
     m_xdebugLocalsView = new LocalsView(EventNotifier::Get()->TopFrame());
     m_mgr->GetDockingManager()->AddPane(
@@ -819,7 +816,7 @@ void PhpPlugin::FinalizeStartup()
     // if not - update it
     PHPConfigurationData data;
     data.Load();
-    
+
     PHPLocator locator;
     if(locator.Locate()) {
         if(data.GetPhpExe().IsEmpty()) {
@@ -851,16 +848,16 @@ void PhpPlugin::OnGoingDown(clCommandEvent& event)
     }
 }
 
-void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString &filename)
+void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString& filename)
 {
     // Find the editor
     CL_DEBUG("PHPLint: searching editor for file: %s", filename);
-    IEditor *editor = m_mgr->FindEditor(filename);
+    IEditor* editor = m_mgr->FindEditor(filename);
     CHECK_PTR_RET(editor);
-    
+
     wxRegEx reLine("[ \t]*on line ([0-9]+)");
     wxArrayString lines = ::wxStringTokenize(lintOutput, "\n", wxTOKEN_STRTOK);
-    for(size_t i=0; i<lines.GetCount(); ++i) {
+    for(size_t i = 0; i < lines.GetCount(); ++i) {
         wxString errorString = lines.Item(i);
         errorString.Trim().Trim(false);
         if(errorString.StartsWith("Parse error")) {
@@ -873,8 +870,8 @@ void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString &filename
                 }
                 long nLine(wxNOT_FOUND);
                 if(strLine.ToCLong(&nLine)) {
-                    CL_DEBUG("PHPLint: adding error marker @%d", nLine-1);
-                    editor->SetErrorMarker(nLine-1, errorString);
+                    CL_DEBUG("PHPLint: adding error marker @%d", nLine - 1);
+                    editor->SetErrorMarker(nLine - 1, errorString);
                 }
             }
         }

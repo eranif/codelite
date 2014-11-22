@@ -2853,7 +2853,7 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "Excplicitly Include PCH"
+             "m_value": "Explicitly Include PCH"
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",

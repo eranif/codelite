@@ -266,7 +266,7 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_pgPropPreCmpHeaderFile->SetHelpString(_("Pre compiled header"));
     m_pgPropPreCmpHeaderFile->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropIncludePCH = m_pgMgr->AppendIn( CATEGORY_PCH,  new wxBoolProperty( _("Excplicitly Include PCH"), wxPG_LABEL, 1) );
+    m_pgPropIncludePCH = m_pgMgr->AppendIn( CATEGORY_PCH,  new wxBoolProperty( _("Explicitly Include PCH"), wxPG_LABEL, 1) );
     m_pgPropIncludePCH->SetHelpString(_("Explicitly include the PCH file in the command line using a compiler switch (.e.g -include /path/to/pch)"));
     
     m_pgPropPCHCompileLine = m_pgMgr->AppendIn( CATEGORY_PCH,  new wxLongStringProperty( _("PCH Compile Flags"), wxPG_LABEL, wxT("")) );

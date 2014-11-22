@@ -549,6 +549,8 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName,
     wxString scope;
     wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
 
+    bool showLanguageKeywords = (GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST);
+
     if(GetCtagsOptions().GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING) {
         // Do a deep scan for 'using namespace'
         GetLanguage()->SetAdditionalScopes(additionlScopes, fileName.GetFullPath());
@@ -570,6 +572,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName,
     TagEntryPtrVector_t locals;
     TagEntryPtrVector_t scoped;
     TagEntryPtrVector_t globals;
+    TagEntryPtrVector_t keywords;
 
     if(tmpExp.IsEmpty()) {
         // Collect all the tags from the current scope, and
@@ -587,6 +590,12 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName,
             // No need to call it twice...
             GetGlobalTags(word, globals);
         }
+        
+        if(showLanguageKeywords) {
+            // Collect language keywords
+            GetKeywordsTagsForLanguage(word, kCxx, keywords);
+        }
+
         // Allways collect the local and the function argument tags
         GetLocalTags(word, scope, locals, PartialMatch | IgnoreCaseSensitive | ReplaceTokens);
         GetLocalTags(word, funcSig, locals, PartialMatch | IgnoreCaseSensitive);
@@ -607,6 +616,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName,
 
         // unified the results into a single match
         candidates.insert(candidates.end(), locals.begin(), locals.end());
+        candidates.insert(candidates.end(), keywords.begin(), keywords.end());
         candidates.insert(candidates.end(), scoped.begin(), scoped.end());
         candidates.insert(candidates.end(), globals.begin(), globals.end());
 
@@ -3228,7 +3238,7 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content)
     if(!m_codeliteIndexerProcess) {
         return TagEntryPtrVector_t();
     }
-    
+
     // Write the content into temporary file
     wxString filename = wxFileName::CreateTempFileName("ctagstemp");
     wxFFile fp(filename, "w+b");
@@ -3236,15 +3246,14 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content)
     fp.Write(content, wxConvUTF8);
     fp.Close();
 
-
     wxString tags;
     SourceToTags(filename, tags);
-    
+
     {
         wxLogNull noLog;
         ::wxRemoveFile(filename);
     }
-    
+
     TagEntryPtrVector_t tagsVec;
     wxArrayString lines = ::wxStringTokenize(tags, "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines.GetCount(); ++i) {
@@ -3256,8 +3265,44 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content)
         tag->FromLine(line);
 
         if(tag->GetKind() != "local") {
-            tagsVec.push_back( tag );
+            tagsVec.push_back(tag);
         }
     }
     return tagsVec;
+}
+
+void TagsManager::GetKeywordsTagsForLanguage(const wxString& filter, eLanguage lang, std::vector<TagEntryPtr>& tags)
+{
+    wxString keywords;
+    if(lang == kCxx) {
+        keywords = wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast "
+                       "continue default delete "
+                       "do double dynamic_cast else enum explicit export extern false float for friend goto if "
+                       "inline int long mutable namespace "
+                       "new not not_eq operator or or_eq private protected public register reinterpret_cast return "
+                       "short signed sizeof size_t static "
+                       "static_cast struct switch template this throw true try typedef typeid typename union "
+                       "unsigned using virtual void volatile "
+                       "wchar_t while xor xor_eq ifdef undef define defined include endif elif ifndef");
+    } else if(lang == kJavaScript) {
+        keywords = "abstract boolean break byte case catch char class "
+                   "const continue debugger default delete do double else enum export extends "
+                   "final finally float for function goto if implements import in instanceof "
+                   "int interface long native new package private protected public "
+                   "return short static super switch synchronized this throw throws "
+                   "transient try typeof var void volatile while with";
+    }
+
+    std::set<wxString> uniqueWords;
+    wxArrayString wordsArr = wxStringTokenize(keywords, wxT(" \r\t\n"));
+    uniqueWords.insert(wordsArr.begin(), wordsArr.end());
+    std::set<wxString>::iterator iter = uniqueWords.begin();
+    for(; iter != uniqueWords.end(); ++iter) {
+        if(iter->Contains(filter)) {
+            TagEntryPtr tag(new TagEntry());
+            tag->SetName(*iter);
+            tag->SetKind(wxT("cpp_keyword"));
+            tags.push_back(tag);
+        }
+    }
 }

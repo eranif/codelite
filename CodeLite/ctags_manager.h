@@ -135,7 +135,8 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 
 public:
     enum RetagType { Retag_Full, Retag_Quick, Retag_Quick_No_Scan };
-
+    enum eLanguage { kCxx, kJavaScript };
+    
 public:
     wxCriticalSection m_crawlerLocker;
 
@@ -620,7 +621,14 @@ public:
      * @param tags
      */
     void TagsFromFileAndScope(const wxFileName& fileName, const wxString& scopeName, std::vector<TagEntryPtr>& tags);
-
+    
+    /**
+     * @brief return list of tags for the given language
+     * @param tags [output]
+     * @param lang the requested language
+     */
+    void GetKeywordsTagsForLanguage(const wxString &filter, eLanguage lang, std::vector<TagEntryPtr>& tags);
+    
     /**
      * @brief
      * @param scope

@@ -116,8 +116,7 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort
-{
+struct SFileSort {
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -1108,15 +1107,15 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     if(data.GetUseShtroodel()) {
         keyPrefix = wxT('@');
     }
-    
+
     int curpos = editor.GetCurrentPos();
     int newPos = curpos; // the new position to place the caret after the insertion of the doxy block
     int curline = editor.GetCurrentLine();
     int insertPos = editor.PositionFromLine(curline);
     int endPos = curpos;
-    
+
     // start moving from this position until we find '{'
-    for(int i=curpos; i<editor.GetLength(); ++i) {
+    for(int i = curpos; i < editor.GetLength(); ++i) {
         endPos = i;
         int ch = editor.SafeGetChar(i);
         if(ch == '{' || ch == ';') {
@@ -1124,7 +1123,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
             break;
         }
     }
-    
+
     wxString text = editor.GetTextRange(0, endPos);
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
     if(tags.size()) {
@@ -1140,7 +1139,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         // with the exact whitespace of the current line
         wxString lineContent = editor.GetLine(editor.GetCurrentLine());
         wxString whitespace;
-        for(size_t i=0; i<lineContent.length(); ++i) {
+        for(size_t i = 0; i < lineContent.length(); ++i) {
             if(lineContent[i] == ' ' || lineContent == '\t') {
                 whitespace << lineContent[i];
             } else {
@@ -1153,11 +1152,11 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         for(size_t i = 0; i < lines.GetCount(); ++i) {
             lines.Item(i).Prepend(whitespace);
         }
-        
+
         // Join the lines back
         wxString doxyBlock = ::wxJoin(lines, '\n');
         doxyBlock << "\n";
-        
+
         // remove any selection
         editor.ClearSelections();
         editor.InsertText(insertPos, doxyBlock);
@@ -2480,6 +2479,9 @@ void ContextCpp::OnUserTypedXChars(const wxString& word)
 
 void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags)
 {
+    // C++ keywords are handled differently
+    if(!IsJavaScript()) return;
+
     LexerConf::Ptr_t lexPtr;
     // Read the configuration file
     if(EditorConfigST::Get()->IsOk()) {
@@ -2489,38 +2491,15 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
     wxString cppWords;
 
     if(lexPtr) {
-        if(IsJavaScript()) {
-            cppWords = lexPtr->GetKeyWords(1);
-        } else {
-            cppWords = lexPtr->GetKeyWords(0);
-        }
+        cppWords = lexPtr->GetKeyWords(1);
 
     } else {
-
-        if(IsJavaScript()) {
-            cppWords = "abstract boolean break byte case catch char class "
-                       "const continue debugger default delete do double else enum export extends "
-                       "final finally float for function goto if implements import in instanceof "
-                       "int interface long native new package private protected public "
-                       "return short static super switch synchronized this throw throws "
-                       "transient try typeof var void volatile while with";
-
-        } else {
-            cppWords = wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast "
-                           "continue default delete "
-                           "do double dynamic_cast else enum explicit export extern false float for friend goto if "
-                           "inline int long mutable namespace "
-                           "new not not_eq operator or or_eq private protected public register reinterpret_cast return "
-                           "short signed sizeof size_t static "
-                           "static_cast struct switch template this throw true try typedef typeid typename union "
-                           "unsigned using virtual void volatile "
-                           "wchar_t while xor xor_eq ");
-        }
-    }
-
-    if(!IsJavaScript()) {
-        // add preprocessors
-        cppWords << wxT(" ifdef undef define defined include endif elif ifndef ");
+        cppWords = "abstract boolean break byte case catch char class "
+                   "const continue debugger default delete do double else enum export extends "
+                   "final finally float for function goto if implements import in instanceof "
+                   "int interface long native new package private protected public "
+                   "return short static super switch synchronized this throw throws "
+                   "transient try typeof var void volatile while with";
     }
 
     wxString s1(word);

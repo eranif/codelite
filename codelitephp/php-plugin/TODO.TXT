@@ -12,7 +12,6 @@ Code Completion / Code Generation
 
 Must:
 =====
-- Fix 'Outline' plugin to support PHP files
 
 Usability:
 ==========

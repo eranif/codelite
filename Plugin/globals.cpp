@@ -853,8 +853,8 @@ void WrapInShell(wxString& cmd)
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
     if(!shell) shell = (wxChar*)wxT("CMD.EXE");
 
-    command << shell << wxT(" /c \"");
-    command << cmd << wxT("\"");
+    command << shell << wxT(" /C ");
+    command << cmd;
     cmd = command;
 
 #else

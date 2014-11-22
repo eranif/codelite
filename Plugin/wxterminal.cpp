@@ -35,7 +35,7 @@
 #ifdef __WXMSW__
 #include "windows.h"
 #define SHELL_PREFIX  wxT("cmd /c ")
-#define SHELL_WRAPPER wxT("\"")
+#define SHELL_WRAPPER wxT("")
 #else
 
 #if defined(__WXMAC__) || defined(__FreeBSD__)

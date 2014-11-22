@@ -7,8 +7,9 @@
 #include <map>
 #include <wx/string.h>
 #include <wx/filename.h>
+#include <wx/event.h>
 
-class WXDLLIMPEXP_SDK ColoursAndFontsManager
+class WXDLLIMPEXP_SDK ColoursAndFontsManager : public wxEvtHandler
 {
     typedef std::vector<LexerConf::Ptr_t> Vec_t;
     typedef std::map<wxString, ColoursAndFontsManager::Vec_t> Map_t;
@@ -19,12 +20,13 @@ protected:
     ColoursAndFontsManager::Vec_t m_allLexers;
     wxColour m_globalBgColour;
     wxColour m_globalFgColour;
+    LexerConf::Ptr_t m_defaultLexer;
 
 private:
     ColoursAndFontsManager();
     virtual ~ColoursAndFontsManager();
 
-    void LoadNewXmls(const wxString& path);
+    void LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles);
     void LoadOldXmls(const wxString& path);
     LexerConf::Ptr_t DoAddLexer(wxXmlNode* node);
     void Clear();
@@ -100,17 +102,24 @@ public:
      * @brief return lexer for a file
      */
     LexerConf::Ptr_t GetLexerForFile(const wxString& filename) const;
-    
+
     /**
      * @brief restore the default colours
      * This is done by deleting the user defined XML files and
      */
     void RestoreDefaults();
-    
+
     /**
      * @brief import an eclipse theme into codelite
      */
-    bool ImportEclipseTheme(const wxString &eclipseXml);
+    bool ImportEclipseTheme(const wxString& eclipseXml);
+
+    /**
+     * @brief callback called by the helper thread indicating that it finished caching
+     * the XML files
+     */
+    void OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& defaultLexers,
+                            const std::vector<wxXmlDocument*>& userLexers);
 };
 
 #endif // LEXERCONFMANAGER_H

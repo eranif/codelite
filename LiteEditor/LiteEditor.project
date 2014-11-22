@@ -1610,8 +1610,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>
@@ -1632,7 +1631,7 @@ resources.cpp: resources.xrc
         <IncludePath Value="../sdk/clang/include"/>
         <Preprocessor Value="HAS_LIBCLANG=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid);-Wl,--subsystem,windows -mwindows;-O2" Required="yes">
+      <Linker Options="-s;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid);-Wl,--subsystem,windows -mwindows;-O2;-s" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/clang/lib"/>
@@ -1669,7 +1668,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>

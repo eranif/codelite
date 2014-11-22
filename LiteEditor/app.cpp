@@ -547,6 +547,7 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
+    // Make sure that the colours and fonts manager is instantiated
     ColoursAndFontsManager::Get().Load();
 
 #ifdef __WXGTK__

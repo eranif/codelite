@@ -3875,7 +3875,7 @@ void clMainFrame::CompleteInitialization()
     // Register C++ keyboard shortcuts
     clKeyboardManager::Get()->AddGlobalAccelerator("swap_files", "F12", "C++::Swap Header/Implementation file");
     clKeyboardManager::Get()->AddGlobalAccelerator(
-        "insert_doxy_comment", "C++::Ctrl-Shift-D", "Insert Doxygen Comment");
+        "insert_doxy_comment", "Ctrl-Shift-D", "C++::Insert Doxygen Comment");
     clKeyboardManager::Get()->AddGlobalAccelerator("comment_selection", "Ctrl-Shift-/", "C++::Comment Selection");
     clKeyboardManager::Get()->AddGlobalAccelerator("comment_line", "Ctrl-/", "C++::Toggle Line Comment");
     clKeyboardManager::Get()->AddGlobalAccelerator("rename_symbol", "Ctrl-Shift-H", "C++::Rename Symbol");

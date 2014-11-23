@@ -18,7 +18,7 @@ More information can be found here:
 ![Linux logo][7] Building CodeLite on Linux
 ----
 
-To build CodeLite on you computer you will need these packages:
+To build CodeLite on your computer you will need these packages:
 
  - wxWidgets 3.0 or later
  - The gtk development package: often called libgtk2.0-dev or wxGTK-devel or similar

@@ -582,6 +582,7 @@
     <File Name="../InnoSetup/modpath.iss"/>
     <File Name="../codelite-icons-dark/manifest.ini"/>
     <File Name="../README.md"/>
+    <File Name="../InnoSetup/codelite_php.iss"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>

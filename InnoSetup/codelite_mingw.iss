@@ -40,19 +40,19 @@ Source: "..\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversi
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 
 ;; ---- wxWidgets DLLs
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxbase30u_gcc_cl.dll";         DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxbase30u_net_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxbase30u_xml_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_adv_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_aui_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_core_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_html_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_xrc_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_stc_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_webview_gcc_cl.dll";  DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "D:\src\wxWidgets-3.0.1\lib\gcc_dll\wxmsw30u_ribbon_gcc_cl.dll";   DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxbase30u_gcc_cl.dll";         DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxbase30u_net_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxbase30u_xml_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_adv_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_aui_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_core_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_html_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_xrc_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_stc_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_webview_gcc_cl.dll";  DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wxWidgets-3.0.2\lib\gcc_dll\wxmsw30u_ribbon_gcc_cl.dll";   DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 
 
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

@@ -58,6 +58,7 @@
 #include "GitApplyPatchDlg.h"
 #include "DiffSideBySidePanel.h"
 #include <wx/ffile.h>
+#include "file_logger.h"
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -1703,7 +1704,13 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
     } else if(ga.action == gitRevertCommit) {
         AddDefaultActions();
     }
-
+    
+    if(ga.action == gitResetRepo || ga.action == gitResetFile) {
+        // Reload externally modified files
+        CL_DEBUG("Git: posting a 'reload externally modified files' event");
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+    }
+    
     wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop();

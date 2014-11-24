@@ -2186,7 +2186,7 @@ void ContextCpp::AutoAddComment()
         startPos -= 3; // for "/**"
         if(startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(textTyped == "/**" && data.IsAutoInsertAfterSlash2Stars()) {
+            if(textTyped == "/**" && data.IsAutoInsertAfterSlash2Stars() && !IsJavaScript()) {
 
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry

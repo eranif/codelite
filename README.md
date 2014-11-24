@@ -61,7 +61,10 @@ Prerequisites:
  - (Optional) Make a separate folder for building if you want to get rid of all except the .app file after building
  - Install XCode from Mac App Store
  - Install XCode command-line tools `xcode-select --install`
- - Install HomeBrew : `ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+ - Install HomeBrew :
+```
+ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
  - Update HomeBrew : `brew update`
  - (Optional) Upgrade HomeBrew packages : `brew upgrade`
  - Install git : `brew install git`

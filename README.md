@@ -87,7 +87,7 @@ Clone the repo :
   cd /Your/experiments/dir
   mkdir codelite-build-local
   cd codelite-build-local
-  cmake .. -DCMAKE_BUILD_TYPE=Release
+  sudo cmake .. -DCMAKE_BUILD_TYPE=Release
   make -j4
   ```
  

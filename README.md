@@ -49,6 +49,52 @@ Run cmake and build codelite:
 
 ----------
 
+![Apple logo][12] Building CodeLite on OS X
+----
+Prerequisites:
+ - wxWidgets 3.x
+ - HomeBrew
+ - git
+ - XCode
+ - XCode command-line tools
+ Preparation:
+ - (Optional)Make a separate folder for building if you want to get rid of all except the .app file after building
+ - Install XCode from Mac App Store
+ - Install XCode command-line tools `xcode-select --install`
+ - Install HomeBrew : `ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+ - Update HomeBrew : `brew update`
+ - (Optional)Upgrade HomeBrew packages : `brew upgrade`
+ - Install git : `brew install git`
+ - Install wxWidgets : `brew install wxmac --dev --use-llvm`
+ 
+
+Clone the repo :
+
+  `cd /Your/experiments/dir`
+  `git clone https://github.com/eranif/codelite.git`
+ 
+ Make the build directories and run cmake :
+ 
+  `cd /Your/experiments/dir`
+  
+  `mkdir codelite-build-local`
+  
+  `cd codelite-build-local`
+  
+  `cmake .. -DCMAKE_BUILD_TYPE=Release`
+  
+  `make -j4`
+ 
+ Make the .app file :
+ Assuming you're in `codelite-build-local` directory
+ 
+  `cd pack`
+  
+  `./make_mac_bundle.sh`
+
+ Now you will see the .app file.Happy coding!
+----------
+
 ![Windows Logo][9] Building CodeLite on Windows
 ----
 Git clone the sources
@@ -78,3 +124,4 @@ Git clone the sources
   [9]: http://wxcrafter.codelite.org/img/windows.png
   [10]: http://codelite.org/support.php
   [11]: http://codelite.org/support.php
+  [12]: https://lh6.googleusercontent.com/-OMHi1w_3gNk/AAAAAAAAAAI/AAAAAAAAAAA/NrDEagpDUQI/s46-c-k-no/photo.jpg

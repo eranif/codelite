@@ -53,6 +53,7 @@ Run cmake and build codelite:
 ----
 Prerequisites:
  - wxWidgets 3.x
+ - CMake
  - HomeBrew
  - git
  - XCode
@@ -68,6 +69,7 @@ Prerequisites:
  - Update HomeBrew : `brew update`
  - (Optional) Upgrade HomeBrew packages : `brew upgrade`
  - Install git : `brew install git`
+ - Install CMake : `brew install cmake`
  - Install wxWidgets : `brew install wxmac --dev --use-llvm`
  
 

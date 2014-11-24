@@ -602,4 +602,37 @@ public:
     virtual ~PHPDebugStartDlgBase();
 };
 
+
+class NewPHPProjectDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText435;
+    wxTextCtrl* m_textCtrlName;
+    wxStaticText* m_staticText427;
+    wxDirPickerCtrl* m_dirPickerPath;
+    wxCheckBox* m_checkBoxSeparateFolder;
+    wxCheckBox* m_checkBoxImportFiles;
+    wxTextCtrl* m_textCtrlPreview;
+    wxStdDialogButtonSizer* m_stdBtnSizer421;
+    wxButton* m_button423;
+    wxButton* m_button425;
+
+protected:
+    virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPathUpdated(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnCreateUnderSeparateFolder(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText435() { return m_staticText435; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText427() { return m_staticText427; }
+    wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
+    wxCheckBox* GetCheckBoxSeparateFolder() { return m_checkBoxSeparateFolder; }
+    wxCheckBox* GetCheckBoxImportFiles() { return m_checkBoxImportFiles; }
+    wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
+    NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~NewPHPProjectDlgBase();
+};
+
 #endif

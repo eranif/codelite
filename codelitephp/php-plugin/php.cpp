@@ -37,6 +37,7 @@
 #include "PHPLocator.h"
 #include <wx/regex.h>
 #include "bookmark_manager.h"
+#include "NewPHPProjectDlg.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -507,16 +508,25 @@ void PhpPlugin::OnGetWorkspaceFiles(wxCommandEvent& e)
 
 void PhpPlugin::OnNewProject(clNewProjectEvent& e)
 {
-    e.Skip();
-    clNewProjectEvent::Template phpTemplate;
-    phpTemplate.m_category = "PHP";
-    phpTemplate.m_categoryPng = "m_bmpElephant";
-    phpTemplate.m_template = "PHP Project";
-    phpTemplate.m_templatePng = "m_bmpPhpFile";
-    phpTemplate.m_debugger = "XDebug";
-    phpTemplate.m_toolchain = "PHP Tools";
-    phpTemplate.m_allowSeparateFolder = true;
-    e.GetTemplates().push_back(phpTemplate);
+    if(!PHPWorkspace::Get()->IsOpen()) {
+        // No workspace is opened yet, let codelite process this event normally
+        e.Skip();
+        clNewProjectEvent::Template phpTemplate;
+        phpTemplate.m_category = "PHP";
+        phpTemplate.m_categoryPng = "m_bmpElephant";
+        phpTemplate.m_template = "PHP Project";
+        phpTemplate.m_templatePng = "m_bmpPhpFile";
+        phpTemplate.m_debugger = "XDebug";
+        phpTemplate.m_toolchain = "PHP Tools";
+        phpTemplate.m_allowSeparateFolder = true;
+        e.GetTemplates().push_back(phpTemplate);
+    } else {
+        // we have a PHP workspace opened - handle it ourself
+        NewPHPProjectDlg dlg(EventNotifier::Get()->TopFrame());
+        if(dlg.ShowModal() == wxID_OK) {
+            m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, dlg.GetCreateData());
+        }
+    }
 }
 
 void PhpPlugin::OnGetFiFMask(clCommandEvent& e)

@@ -1786,3 +1786,101 @@ PHPDebugStartDlgBase::~PHPDebugStartDlgBase()
     m_button363->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnOkUI), NULL, this);
     
 }
+
+NewPHPProjectDlgBase::NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF01InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer417 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer417);
+    
+    wxFlexGridSizer* flexGridSizer419 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer419->SetFlexibleDirection( wxBOTH );
+    flexGridSizer419->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer419->AddGrowableCol(1);
+    
+    boxSizer417->Add(flexGridSizer419, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText435 = new wxStaticText(this, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer419->Add(m_staticText435, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlName->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer419->Add(m_textCtrlName, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText427 = new wxStaticText(this, wxID_ANY, _("Project folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer419->Add(m_staticText427, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_dirPickerPath = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL|wxDIRP_DIR_MUST_EXIST);
+    m_dirPickerPath->SetToolTip(_("select the project folder"));
+    
+    flexGridSizer419->Add(m_dirPickerPath, 0, wxALL|wxEXPAND, 5);
+    
+    flexGridSizer419->Add(0, 0, 1, wxALL, 5);
+    
+    m_checkBoxSeparateFolder = new wxCheckBox(this, wxID_ANY, _("Create the project in a separate folder"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxSeparateFolder->SetValue(false);
+    
+    flexGridSizer419->Add(m_checkBoxSeparateFolder, 0, wxALL, 2);
+    
+    flexGridSizer419->Add(0, 0, 1, wxALL, 5);
+    
+    m_checkBoxImportFiles = new wxCheckBox(this, wxID_ANY, _("Import all files under the project folder"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxImportFiles->SetValue(false);
+    
+    flexGridSizer419->Add(m_checkBoxImportFiles, 0, wxALL|wxEXPAND, 2);
+    
+    m_textCtrlPreview = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlPreview->SetToolTip(_("The project file"));
+    m_textCtrlPreview->Enable(false);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlPreview->SetHint(wxT(""));
+    #endif
+    
+    boxSizer417->Add(m_textCtrlPreview, 0, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer421 = new wxStdDialogButtonSizer();
+    
+    boxSizer417->Add(m_stdBtnSizer421, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button423 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button423->SetDefault();
+    m_stdBtnSizer421->AddButton(m_button423);
+    
+    m_button425 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer421->AddButton(m_button425);
+    m_stdBtnSizer421->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectDlgBase::OnNameUpdated), NULL, this);
+    m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectDlgBase::OnPathUpdated), NULL, this);
+    m_checkBoxSeparateFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectDlgBase::OnCreateUnderSeparateFolder), NULL, this);
+    m_button423->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnOKUI), NULL, this);
+    
+}
+
+NewPHPProjectDlgBase::~NewPHPProjectDlgBase()
+{
+    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectDlgBase::OnNameUpdated), NULL, this);
+    m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectDlgBase::OnPathUpdated), NULL, this);
+    m_checkBoxSeparateFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectDlgBase::OnCreateUnderSeparateFolder), NULL, this);
+    m_button423->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnOKUI), NULL, this);
+    
+}

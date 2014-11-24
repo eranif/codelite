@@ -58,7 +58,8 @@ Prerequisites:
  - git
  - XCode
  - XCode command-line tools
- Preparation:
+ 
+Preparation:
  - (Optional) Make a separate folder for building if you want to get rid of all except the .app file after building
  - Install XCode from Mac App Store
  - Install XCode command-line tools `xcode-select --install`

@@ -906,6 +906,9 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
         DoAddFileWithContent(
             folderId, pcd.GetFilepath(), pcd.ToString(EditorConfigST::Get()->GetOptions()->GetEOLAsString(), "    "));
         DoSortItems();
+        
+        // Trigger parsing
+        PHPWorkspace::Get()->ParseWorkspace(false);
     }
 }
 

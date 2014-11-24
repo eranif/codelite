@@ -32,7 +32,7 @@ PHPProject::CreateData NewPHPProjectDlg::GetCreateData()
     cd.importFilesUnderPath = m_checkBoxImportFiles->IsChecked();
     cd.name = m_textCtrlName->GetValue();
     cd.phpExe = conf.GetPhpExe();
-    cd.path = m_dirPickerPath->GetPath();
+    cd.path = wxFileName(m_textCtrlPreview->GetValue()).GetPath();
     return cd;
 }
 void NewPHPProjectDlg::OnNameUpdated(wxCommandEvent& event)

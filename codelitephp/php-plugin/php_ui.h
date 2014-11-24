@@ -631,7 +631,7 @@ public:
     wxCheckBox* GetCheckBoxSeparateFolder() { return m_checkBoxSeparateFolder; }
     wxCheckBox* GetCheckBoxImportFiles() { return m_checkBoxImportFiles; }
     wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
-    NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewPHPProjectDlgBase();
 };
 

@@ -3859,7 +3859,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "-2"
+           "m_value": "150"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -3897,7 +3897,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "-2"
+           "m_value": "80"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -3935,7 +3935,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "-2"
+           "m_value": "250"
           }, {
            "type": "choice",
            "m_label": "Column Type",

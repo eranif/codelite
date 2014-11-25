@@ -1635,7 +1635,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
         dlg.ShowModal();
 
     } else if(ga.action == gitResetFile || ga.action == gitApplyPatch) {
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
 
         gitAction newAction;
         newAction.action = gitListModified;
@@ -1708,7 +1708,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
     if(ga.action == gitResetRepo || ga.action == gitResetFile) {
         // Reload externally modified files
         CL_DEBUG("Git: posting a 'reload externally modified files' event");
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     }
     
     wxDELETE(m_process);

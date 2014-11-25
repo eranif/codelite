@@ -45,9 +45,6 @@ BitmapLoader::BitmapLoader()
     wxString zipname;
     wxFileName fn;
 
-#ifdef __WXMAC__
-    zipname = wxT("codelite-icons-fresh-farm.zip");
-#else
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
         zipname = wxT("codelite-icons-fresh-farm.zip");
 
@@ -56,7 +53,7 @@ BitmapLoader::BitmapLoader()
 
     else
         zipname = wxT("codelite-icons.zip");
-#endif
+
     // Under linux, take into account the --prefix
 #ifdef __WXGTK__
     wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);

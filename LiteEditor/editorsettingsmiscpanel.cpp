@@ -53,13 +53,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
         m_toolbarIconSize->SetSelection(1);
     }
 
-#ifdef __WXMAC__
-    // On Mac we support only this image type
-    m_choiceIconSet->Clear();
-    m_choiceIconSet->Append("Fresh Farm");
-    m_choiceIconSet->SetSelection(0);
-
-#else
     if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
         m_choiceIconSet->SetSelection(1);
 
@@ -68,7 +61,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 
     else
         m_choiceIconSet->SetSelection(0); // Default
-#endif
 
     m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
     m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());

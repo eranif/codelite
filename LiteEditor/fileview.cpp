@@ -154,7 +154,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
 {
     Create(parent, id, pos, size, style);
     MSWSetNativeTheme(this);
-    SetBackgroundColour("rgb(230, 230, 230)");
+//    SetBackgroundColour("rgb(230, 230, 230)");
 
     // Initialise images map
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();

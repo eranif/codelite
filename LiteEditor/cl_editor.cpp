@@ -428,8 +428,8 @@ void LEditor::SetProperties()
     SetMarginMask(EDIT_TRACKER_MARGIN_ID, 0);
 
     // Separators
-    // SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_FORE);
-    // SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
+    SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_FORE);
+    SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
 
     // Fold margin - allow only folder symbols to display
     SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);

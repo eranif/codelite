@@ -58,8 +58,6 @@ protected:
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
-    PHPFileLayoutTree* GetTreeCtrlLayout() { return m_treeCtrlLayout; }
     QuickOutlineDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxBORDER_SUNKEN);
     virtual ~QuickOutlineDlgBase();
 };
@@ -80,10 +78,6 @@ protected:
     virtual void OnPHPWorkspace(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText9() { return m_staticText9; }
-    wxButton* GetButton1() { return m_button1; }
-    wxButton* GetButton2() { return m_button2; }
-    wxPanel* GetPanel1() { return m_panel1; }
     NewWorkspaceSelectionDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace Type..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~NewWorkspaceSelectionDlgBase();
 };
@@ -110,15 +104,6 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText2() { return m_staticText2; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxTextCtrl* GetTextCtrlPath() { return m_textCtrlPath; }
-    wxButton* GetButton49() { return m_button49; }
-    wxCheckBox* GetCheckBoxCreateInSeparateDir() { return m_checkBoxCreateInSeparateDir; }
-    wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
-    wxButton* GetButton6() { return m_button6; }
-    wxButton* GetButton7() { return m_button7; }
     NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewPHPWorkspaceBaseDlg();
 };
@@ -137,12 +122,6 @@ protected:
 protected:
 
 public:
-    wxStaticText* GetStaticText4() { return m_staticText4; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    wxStaticText* GetStaticText5() { return m_staticText5; }
-    wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
-    wxButton* GetButton5() { return m_button5; }
-    wxButton* GetButton6() { return m_button6; }
     NewFileDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New File"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewFileDlgBase();
 };
@@ -166,12 +145,6 @@ protected:
     virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText7() { return m_staticText7; }
-    wxTextCtrl* GetTextCtrlFolderPath() { return m_textCtrlFolderPath; }
-    wxButton* GetButton61() { return m_button61; }
-    wxStaticText* GetStaticText8() { return m_staticText8; }
-    wxTextCtrl* GetTextCtrlFileExtension() { return m_textCtrlFileExtension; }
-    wxCheckBox* GetCheckBoxSubDirs() { return m_checkBoxSubDirs; }
     ImportFilesBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Import files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~ImportFilesBaseDlg();
 };
@@ -191,9 +164,6 @@ protected:
     virtual void OnDVItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText9() { return m_staticText9; }
-    wxTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     OpenResourceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open resource..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~OpenResourceDlgBase();
 };
@@ -232,28 +202,6 @@ protected:
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText9() { return m_staticText9; }
-    wxFilePickerCtrl* GetFilePickerPHPPath() { return m_filePickerPHPPath; }
-    wxStaticText* GetStaticText11() { return m_staticText11; }
-    wxTextCtrl* GetTextCtrlErrorReporting() { return m_textCtrlErrorReporting; }
-    wxStaticText* GetStaticText14() { return m_staticText14; }
-    wxButton* GetButtonBrowseIncludePath() { return m_buttonBrowseIncludePath; }
-    wxTextCtrl* GetTextCtrlIncludePath() { return m_textCtrlIncludePath; }
-    wxPanel* GetPanel11() { return m_panel11; }
-    wxStaticText* GetStaticText13() { return m_staticText13; }
-    wxButton* GetButton15() { return m_button15; }
-    wxTextCtrl* GetTextCtrCClIncludePath() { return m_textCtrCClIncludePath; }
-    wxPanel* GetPanel15() { return m_panel15; }
-    wxStaticText* GetStaticText10() { return m_staticText10; }
-    wxTextCtrl* GetTextCtrlXDebugPort() { return m_textCtrlXDebugPort; }
-    wxStaticText* GetStaticText152() { return m_staticText152; }
-    wxTextCtrl* GetTextCtrlIdeKey() { return m_textCtrlIdeKey; }
-    wxPanel* GetPanel13() { return m_panel13; }
-    wxCheckBox* GetCheckBoxRunLint() { return m_checkBoxRunLint; }
-    wxPanel* GetPanel407() { return m_panel407; }
-    wxTreebook* GetTreebook9() { return m_treebook9; }
-    wxButton* GetButton9() { return m_button9; }
-    wxButton* GetButton10() { return m_button10; }
     PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPSettingsBaseDlg();
 };
@@ -315,39 +263,6 @@ protected:
     virtual void OnApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText19() { return m_staticText19; }
-    wxFilePickerCtrl* GetFilePickerPHPExe() { return m_filePickerPHPExe; }
-    wxStaticText* GetStaticText75() { return m_staticText75; }
-    wxFilePickerCtrl* GetFilePickerPhpIni() { return m_filePickerPhpIni; }
-    wxStaticText* GetStaticText15() { return m_staticText15; }
-    wxFilePickerCtrl* GetFilePickerIndex() { return m_filePickerIndex; }
-    wxStaticText* GetStaticText18() { return m_staticText18; }
-    wxDirPickerCtrl* GetDirPickerWorkingDirectory() { return m_dirPickerWorkingDirectory; }
-    wxStaticText* GetStaticText41() { return m_staticText41; }
-    wxTextCtrl* GetTextCtrlProgramArgs() { return m_textCtrlProgramArgs; }
-    wxCheckBox* GetCheckBoxPauseWhenExecutionEnds() { return m_checkBoxPauseWhenExecutionEnds; }
-    wxPanel* GetPanel5() { return m_panel5; }
-    wxStaticText* GetStaticText16() { return m_staticText16; }
-    wxTextCtrl* GetTextCtrlWebSiteURL() { return m_textCtrlWebSiteURL; }
-    wxCheckBox* GetCheckBoxSystemBrowser() { return m_checkBoxSystemBrowser; }
-    wxPanel* GetPanel6() { return m_panel6; }
-    wxChoicebook* GetChoicebook1() { return m_choicebook1; }
-    wxStaticText* GetStaticText20() { return m_staticText20; }
-    wxButton* GetButton17() { return m_button17; }
-    wxTextCtrl* GetTextCtrlPHPIncludePath() { return m_textCtrlPHPIncludePath; }
-    wxPanel* GetPanel59() { return m_panel59; }
-    wxPanel* GetPanel43() { return m_panel43; }
-    wxStaticText* GetStaticText105() { return m_staticText105; }
-    wxDataViewListCtrl* GetDvListCtrlFileMapping() { return m_dvListCtrlFileMapping; }
-    wxPanel* GetPanel45() { return m_panel45; }
-    wxStaticText* GetStaticText13() { return m_staticText13; }
-    wxButton* GetButton15() { return m_button15; }
-    wxTextCtrl* GetTextCtrlCCIncludePath() { return m_textCtrlCCIncludePath; }
-    wxPanel* GetPanel47() { return m_panel47; }
-    wxTreebook* GetTreebook41() { return m_treebook41; }
-    wxButton* GetButton12() { return m_button12; }
-    wxButton* GetButton13() { return m_button13; }
-    wxButton* GetButton14() { return m_button14; }
     PHPProjectSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPProjectSettingsBase();
 };
@@ -368,10 +283,6 @@ protected:
     virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText119() { return m_staticText119; }
-    wxDirPickerCtrl* GetDirPickerSource() { return m_dirPickerSource; }
-    wxStaticText* GetStaticText123() { return m_staticText123; }
-    wxDirPickerCtrl* GetDirPickerTarget() { return m_dirPickerTarget; }
     FileMappingDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~FileMappingDlgBase();
 };
@@ -401,9 +312,6 @@ protected:
 public:
 
     virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
-    wxAuiToolBar* GetAuibar29() { return m_auibar29; }
-    MyTreeView* GetTreeCtrlView() { return m_treeCtrlView; }
-    wxGauge* GetGaugeParseProgress() { return m_gaugeParseProgress; }
     PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(100,200), long style = wxTAB_TRAVERSAL);
     virtual ~PHPWorkspaceViewBase();
 };
@@ -433,12 +341,6 @@ protected:
     virtual void OnClearAllUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrlStackTrace() { return m_dvListCtrlStackTrace; }
-    wxPanel* GetPanel140() { return m_panel140; }
-    wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
-    wxAuiToolBar* GetAuibar218() { return m_auibar218; }
-    wxPanel* GetPanel142() { return m_panel142; }
-    wxAuiNotebook* GetAuiBook() { return m_auiBook; }
     PHPDebugPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,300), long style = wxTAB_TRAVERSAL);
     virtual ~PHPDebugPaneBase();
 };
@@ -457,7 +359,6 @@ protected:
     virtual void OnLocalExpanding(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewCtrl* GetDataview() { return m_dataview; }
     LocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~LocalsViewBase();
 };
@@ -504,15 +405,6 @@ protected:
     virtual void OnSendXDebugCommandUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
-    wxTextCtrl* GetTextCtrlExpression() { return m_textCtrlExpression; }
-    wxButton* GetButtonSend() { return m_buttonSend; }
-    wxPanel* GetPanel259() { return m_panel259; }
-    wxStyledTextCtrl* GetStcOutputXDebug() { return m_stcOutputXDebug; }
-    wxTextCtrl* GetTextCtrlExpressionXdebug() { return m_textCtrlExpressionXdebug; }
-    wxButton* GetButtonSendXdebug() { return m_buttonSendXdebug; }
-    wxPanel* GetPanel261() { return m_panel261; }
-    wxNotebook* GetNotebook257() { return m_notebook257; }
     EvalPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~EvalPaneBase();
 };
@@ -530,10 +422,6 @@ protected:
     virtual void OnRecommend(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxHtmlWindow* GetHtmlWin289() { return m_htmlWin289; }
-    wxButton* GetButtonOK() { return m_buttonOK; }
-    wxButton* GetButton403() { return m_button403; }
-    wxButton* GetButton405() { return m_button405; }
     XDebugDiagDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Diagnostics"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~XDebugDiagDlgBase();
 };
@@ -555,12 +443,6 @@ protected:
 protected:
 
 public:
-    wxBannerWindow* GetBanner313() { return m_banner313; }
-    wxStaticText* GetStaticText317() { return m_staticText317; }
-    wxChoice* GetChoiceProjectType() { return m_choiceProjectType; }
-    wxStaticText* GetStaticText321() { return m_staticText321; }
-    wxFilePickerCtrl* GetFilePickerPhpExe() { return m_filePickerPhpExe; }
-    wxCheckBox* GetCheckBoxImportFiles() { return m_checkBoxImportFiles; }
     PHPProjectSetupDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Project Setup"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPProjectSetupDlgBase();
 };
@@ -589,15 +471,6 @@ protected:
     virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxChoice* GetChoice() { return m_choice; }
-    wxStaticText* GetStaticText377() { return m_staticText377; }
-    wxComboBox* GetComboBoxURL() { return m_comboBoxURL; }
-    wxPanel* GetPanelDebugURL() { return m_panelDebugURL; }
-    wxStaticText* GetStaticText383() { return m_staticText383; }
-    wxTextCtrl* GetTextCtrlScriptToDebug() { return m_textCtrlScriptToDebug; }
-    wxCheckBox* GetCheckBoxDebugActiveEditor() { return m_checkBoxDebugActiveEditor; }
-    wxPanel* GetPanelCommandLine() { return m_panelCommandLine; }
-    wxSimplebook* GetSimpleBook() { return m_simpleBook; }
     PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Run / Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PHPDebugStartDlgBase();
 };
@@ -624,13 +497,6 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText435() { return m_staticText435; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    wxStaticText* GetStaticText427() { return m_staticText427; }
-    wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
-    wxCheckBox* GetCheckBoxSeparateFolder() { return m_checkBoxSeparateFolder; }
-    wxCheckBox* GetCheckBoxImportFiles() { return m_checkBoxImportFiles; }
-    wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
     NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewPHPProjectDlgBase();
 };

@@ -714,7 +714,7 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "Standard Workspace"
+             "m_value": "C++ Workspace"
             }, {
              "type": "bool",
              "m_label": "Default Button",
@@ -10444,7 +10444,7 @@
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
-         "colour": "(230,230,230)"
+         "colour": "<Default>"
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",

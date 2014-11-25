@@ -84,7 +84,7 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     
     bSizer11->Add(m_staticText9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button1 = new wxButton(m_panel1, wxID_ANY, _("Standard Workspace"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button1 = new wxButton(m_panel1, wxID_ANY, _("C++ Workspace"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button1->SetDefault();
     
     bSizer11->Add(m_button1, 0, wxALL|wxEXPAND, 5);
@@ -1034,7 +1034,6 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     m_auibar29->Realize();
     
     m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxBORDER_NONE);
-    m_treeCtrlView->SetBackgroundColour(wxColour(wxT("rgb(230,230,230)")));
     
     bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 0);
     

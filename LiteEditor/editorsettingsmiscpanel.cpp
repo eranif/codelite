@@ -202,12 +202,6 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
     flags &= ~(OptionsConfig::Opt_IconSet_Classic_Dark);
 
-#ifdef __WXMAC__
-    flags |= OptionsConfig::Opt_IconSet_FreshFarm;
-    oldIconFlags = OptionsConfig::Opt_IconSet_FreshFarm;
-    newIconFlags = OptionsConfig::Opt_IconSet_FreshFarm;
-
-#else
     if(m_choiceIconSet->GetSelection() == 0) {
         newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
         flags |= OptionsConfig::Opt_IconSet_Classic;
@@ -221,7 +215,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
         flags |= OptionsConfig::Opt_IconSet_FreshFarm;
 
     }
-#endif
+
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
 
     options->SetOptions(flags);

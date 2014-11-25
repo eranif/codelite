@@ -140,11 +140,19 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
     memDc.SetPen( bgColour );
     if(!is_dark_theme) {
+#ifdef __WXMAC__
+        memDc.SetBrush(wxColour("rgb(162, 162, 162)"));
+#else
         memDc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION) );
+#endif
     } else {
+#ifdef __WXMAC__
+        memDc.SetBrush(wxColour("rgb(162, 162, 162)"));
+#else
         // set the bg colour a bit darker than the bg colour
         bgColour = bgColour.ChangeLightness(80);
         memDc.SetBrush( bgColour );
+#endif
     }
     memDc.DrawRectangle( tmpRect );
     

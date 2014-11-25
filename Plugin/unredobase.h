@@ -163,7 +163,7 @@ public:
     void ClearRedos() { // Remove any redos invalidated by a new addition
         while (GetCurrentCommand() < (int)(GetCommands().size() - 1)) {
             GetCommands().pop_back();        
-        }
+        }             
     }
 
     void SetUserLabel(const wxString& label);

@@ -33,13 +33,18 @@ CLCommandProcessor::CLCommandProcessor() : CommandProcessorBase()
     m_initialCommand->Close();
 }
 
+void CLCommandProcessor::CloseSciUndoAction() const
+{
+    wxCHECK_RET(GetParent(), "A parentless CLCommandProcessor");
+    GetParent()->BeginUndoAction(); // Tell scintilla to stop trying to append to the stale 'current' CLCommand. Yes, we *do* need both the Begin and End.
+    GetParent()->EndUndoAction();
+}
+
 void CLCommandProcessor::ProcessOpenCommand()
 {
     CommandProcessorBase::ProcessOpenCommand(); // Do the real work
     
-    wxCHECK_RET(GetParent(), "A parentless CLCommandProcessor");
-    GetParent()->BeginUndoAction(); // Tell scintilla to stop trying to append to the stale 'current' CLCommand. Yes, we *do* need both the Begin and End.
-    GetParent()->EndUndoAction();
+    CloseSciUndoAction();
 }
 
 void CLCommandProcessor::StartNewTextCommand(CLC_types type, const wxString& text)
@@ -75,7 +80,9 @@ bool CLCommandProcessor::DoUndo()
 {
     wxCHECK_MSG(CanUndo(), false, "Trying to Undo when you can't");
     wxCHECK_MSG(GetParent(), false, "A parentless CLCommandProcessor");
+
     GetParent()->Undo();
+    CloseSciUndoAction();
 
     return true;
 }
@@ -84,7 +91,9 @@ bool CLCommandProcessor::DoRedo()
 {
     wxCHECK_MSG(CanRedo(), false, "Trying to Redo when you can't");
     wxCHECK_MSG(GetParent(), false, "A parentless CLCommandProcessor");
+
     GetParent()->Redo();
+    CloseSciUndoAction();
 
     return true;
 }

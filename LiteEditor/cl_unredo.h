@@ -90,6 +90,8 @@ public:
        m_commands.clear();
     }
 
+    void CloseSciUndoAction() const; // Closes any open undo action at the scintilla level
+
     virtual bool DoUndo();
 
     virtual bool DoRedo();

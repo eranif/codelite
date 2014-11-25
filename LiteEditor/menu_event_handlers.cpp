@@ -110,12 +110,14 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     } else if (event.GetId() == wxID_UNDO) {
         if (editor->GetCommandsProcessor().CanUndo()) {
             editor->Undo();
+            editor->GetCommandsProcessor().CloseSciUndoAction();
             editor->GetCommandsProcessor().DecrementCurrentCommand();
         }
 
     } else if (event.GetId() == wxID_REDO) {
         if (editor->GetCommandsProcessor().CanRedo()) {
             editor->Redo();
+            editor->GetCommandsProcessor().CloseSciUndoAction(); // Is this necessary? At least it does no harm
             editor->GetCommandsProcessor().IncrementCurrentCommand();
         }
 

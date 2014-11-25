@@ -436,7 +436,7 @@ if ( USE_PCH )
 endif ( USE_PCH )
 
 if ( APPLE )
-    add_definitions( -mmacosx-version-min=10.7 )
+    add_definitions( -mmacosx-version-min=10.8 )
 endif()
 
 add_subdirectory(sqlite3)

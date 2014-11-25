@@ -103,6 +103,11 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     // Prepare the colours
     bool is_dark_theme = DrawingUtils::IsThemeDark();
     wxColour bgColour, penColour, textColour;
+#ifdef __WXMAC__
+    bgColour = wxColour("rgb(162, 162, 162)");
+    penColour = wxColour("rgb(102, 102, 102)");
+    textColour = wxColour("rgb(56, 62, 78)");
+#else
     if ( is_dark_theme ) {
         //bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
         bgColour = DrawingUtils::GetAUIPaneBGColour();
@@ -131,7 +136,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
             textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
         }
     }
-    
+#endif
+
     memDc.SetPen( bgColour );
     if(!is_dark_theme) {
         memDc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION) );

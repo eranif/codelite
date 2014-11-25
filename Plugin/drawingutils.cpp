@@ -607,8 +607,8 @@ wxBrush DrawingUtils::GetStippleBrush()
     wxMemoryDC memDC;
     wxColour bgColour = GetAUIPaneBGColour();
     wxBitmap bmpStipple(3, 3);
-    wxColour lightPen = DrawingUtils::DarkColour(bgColour, 1.0);
-    wxColour darkPen  = DrawingUtils::LightColour(bgColour, 1.0);
+    wxColour lightPen = DrawingUtils::DarkColour(bgColour, 5.0);
+    wxColour darkPen  = DrawingUtils::LightColour(bgColour, 3.0);
     memDC.SelectObject(bmpStipple);
     memDC.SetBrush( bgColour );
     memDC.SetPen( bgColour );

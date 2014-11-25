@@ -648,8 +648,12 @@
 // CodeLite is going down. This event can not be vetoed
 #define wxEVT_GOING_DOWN 3704
 
-/////////////////////////////////////////////////
-// NOTE: update this counter: Next event ID: 3704
-/////////////////////////////////////////////////
+// Event: clColourEvent
+// Sent when all the colours and fonts were successfully loaded from the configuration 
+// files into the ColoursAndFonts manager
+#define wxEVT_COLOURS_AND_FONTS_LOADED 3705
 
+/////////////////////////////////////////////////
+// NOTE: update this counter: Next event ID: 3706
+/////////////////////////////////////////////////
 #endif // CODELITE_EVENTS_H

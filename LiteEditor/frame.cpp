@@ -742,6 +742,8 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     EventNotifier::Get()->Bind(
         wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
 
+    EventNotifier::Get()->Connect(
+        wxEVT_COLOURS_AND_FONTS_LOADED, clColourEventHandler(clMainFrame::OnColoursAndFontsLoaded), NULL, this);
     Connect(wxID_UNDO,
             wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN,
             wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo),
@@ -847,6 +849,8 @@ clMainFrame::~clMainFrame(void)
                wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo),
                NULL,
                this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_COLOURS_AND_FONTS_LOADED, clColourEventHandler(clMainFrame::OnColoursAndFontsLoaded), NULL, this);
 
     wxDELETE(m_timer);
     wxDELETE(m_statusbarTimer);
@@ -990,7 +994,6 @@ void clMainFrame::CreateGUIControls(void)
     SetMenuBar(mb);
 
     // Set up dynamic parts of menu.
-    CreateViewAsSubMenu();
     CreateRecentlyOpenedWorkspacesMenu();
     DoUpdatePerspectiveMenu();
 
@@ -1163,10 +1166,6 @@ void clMainFrame::CreateGUIControls(void)
 
     m_mgr.Update();
     SetAutoLayout(true);
-
-    wxString sessConfFile;
-    sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
-    SessionManager::Get().Load(sessConfFile);
 
     // try to locate the build tools
 
@@ -3199,12 +3198,6 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     // clear navigation queue
     if(GetMainBook()->GetCurrentPage() == 0) {
         NavMgr::Get()->Clear();
-    }
-
-    // Load last session?
-    if(clConfig::Get().Read("RestoreLastSession", true) && m_loadLastSession) {
-        wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
-        EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
 
     // ReTag workspace database if needed (this can happen due to schema version changes)
@@ -6059,4 +6052,23 @@ void clMainFrame::OnSplitSelectionUI(wxUpdateUIEvent& event)
 {
     LEditor *editor = GetMainBook()->GetActiveEditor(true);
     event.Enable(editor && editor->HasSelection());
+}
+
+void clMainFrame::OnColoursAndFontsLoaded(clColourEvent& event)
+{
+    event.Skip();
+    
+    // Build the "View As" menu
+    CreateViewAsSubMenu();
+    
+    // Load the session
+    wxString sessConfFile;
+    sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
+    SessionManager::Get().Load(sessConfFile);
+    
+    // Load last session?
+    if(clConfig::Get().Read("RestoreLastSession", true) && m_loadLastSession) {
+        wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
+        EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
+    }
 }

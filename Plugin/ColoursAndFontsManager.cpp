@@ -19,6 +19,7 @@
 #include "fileextmanager.h"
 #include "file_logger.h"
 #include <wx/sstream.h>
+#include "cl_command_event.h"
 
 static const wxString LexerTextDefaultXML =
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -604,4 +605,8 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
             LoadNewXmls(userLexers);
         }
     }
+    
+    // Notify about colours and fonts configuration loaded
+    clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);
+    EventNotifier::Get()->AddPendingEvent(event);
 }

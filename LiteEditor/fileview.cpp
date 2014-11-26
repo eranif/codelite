@@ -80,6 +80,7 @@ EVT_TREE_SEL_CHANGED(wxID_ANY, FileViewTree::OnSelectionChanged)
 EVT_MENU(XRCID("local_workspace_prefs"), FileViewTree::OnLocalPrefs)
 EVT_MENU(XRCID("local_workspace_settings"), FileViewTree::OnLocalWorkspaceSettings)
 EVT_MENU(XRCID("remove_project"), FileViewTree::OnRemoveProject)
+EVT_MENU(XRCID("rename_project"), FileViewTree::OnRenameProject)
 EVT_MENU(XRCID("set_as_active"), FileViewTree::OnSetActive)
 EVT_MENU(XRCID("new_item"), FileViewTree::OnNewItem)
 EVT_MENU(XRCID("add_existing_item"), FileViewTree::OnAddExistingItem)
@@ -112,6 +113,7 @@ EVT_MENU(XRCID("rename_virtual_folder"), FileViewTree::OnRenameVirtualFolder)
 EVT_MENU(XRCID("open_with_default_application"), FileViewTree::OnOpenWithDefaultApplication)
 
 EVT_UPDATE_UI(XRCID("remove_project"), FileViewTree::OnBuildInProgress)
+EVT_UPDATE_UI(XRCID("rename_project"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("set_as_active"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("new_item"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("add_existing_item"), FileViewTree::OnBuildInProgress)
@@ -2325,5 +2327,29 @@ void FileViewTree::DoGetProjectIconIndex(const wxString& projectName, int& iconI
 
     } else {
         iconIndex = PROJECT_IMG_IDX;
+    }
+}
+
+void FileViewTree::OnRenameProject(wxCommandEvent& event)
+{
+    CHECK_COND_RET(WorkspaceST::Get()->IsOpen());
+    wxTreeItemId item = GetSingleSelection();
+    CHECK_ITEM_RET(item);
+    
+    FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
+    if(data->GetData().GetKind() == ProjectItem::TypeProject) {
+        wxString newname = ::wxGetTextFromUser(_("Project new name:"), _("Rename project"));
+        newname.Trim().Trim(false);
+        CHECK_COND_RET(!newname.IsEmpty());
+        if(data->GetData().GetDisplayName() == newname) return;
+        
+        // Calling 'RenameProject' will trigger a wxEVT_PROJ_RENAMED event
+        WorkspaceST::Get()->RenameProject(data->GetData().GetDisplayName(), newname);
+        
+        // Update the display name
+        SetItemText(item, newname);
+        
+        // Update the user data
+        data->GetData().SetDisplayName(newname);
     }
 }

@@ -44,8 +44,7 @@
 #include "macros.h"
 #include "json_node.h"
 
-struct VisualWorkspaceNode
-{
+struct VisualWorkspaceNode {
     wxString name;
     int type;
     wxTreeItemId itemId;
@@ -730,7 +729,7 @@ public:
     {
     }
     const ProjectItem& GetData() const { return m_item; }
-
+    ProjectItem& GetData() { return m_item; }
     void SetDisplayName(const wxString& displayName) { m_item.SetDisplayName(displayName); }
 
     void SetFile(const wxString& file) { m_item.SetFile(file); }

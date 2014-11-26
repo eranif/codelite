@@ -993,6 +993,9 @@
         <object class="wxMenuItem" name="remove_project">
             <label>Remove Project</label>
         </object>
+        <object class="wxMenuItem" name="rename_project">
+            <label>Rename Project</label>
+        </object>
 
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="save_as_template">

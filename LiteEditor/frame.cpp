@@ -755,9 +755,10 @@ clMainFrame::clMainFrame(wxWindow* pParent,
             NULL,
             this);
 
+    EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
-    
+
     // Register keyboard shortcuts
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "selection_to_multi_caret", "Ctrl-Shift-L", _("Edit::Split selection into multiple carets"));
@@ -851,7 +852,8 @@ clMainFrame::~clMainFrame(void)
                this);
     EventNotifier::Get()->Disconnect(
         wxEVT_COLOURS_AND_FONTS_LOADED, clColourEventHandler(clMainFrame::OnColoursAndFontsLoaded), NULL, this);
-
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     wxDELETE(m_timer);
     wxDELETE(m_statusbarTimer);
 
@@ -954,8 +956,6 @@ clMainFrame* clMainFrame::Get() { return m_theFrame; }
 
 void clMainFrame::CreateGUIControls(void)
 {
-// this->Freeze();
-
 #ifdef __WXMSW__
     SetIcon(wxICON(aaaaa));
 #else
@@ -2184,11 +2184,11 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     event.Skip();
     wxString msg;
     ManagerST::Get()->SetShutdownInProgress(true);
-    
+
     // Notify the plugins that we are going down
     clCommandEvent eventGoingDown(wxEVT_GOING_DOWN);
     EventNotifier::Get()->ProcessEvent(eventGoingDown);
-    
+
     // Stop the retag thread
     ParseThreadST::Get()->Stop();
 
@@ -2198,15 +2198,13 @@ void clMainFrame::OnClose(wxCloseEvent& event)
 
     // Stop any debugging session if any
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
-    if(debugger && debugger->IsRunning())
-        ManagerST::Get()->DbgStop();
+    if(debugger && debugger->IsRunning()) ManagerST::Get()->DbgStop();
 
     SaveLayoutAndSession();
 
     // In case we got some data in the clipboard, flush it so it will be available
     // after our process exits
     wxTheClipboard->Flush();
-
 }
 
 void clMainFrame::LoadSession(const wxString& sessionName)
@@ -2218,13 +2216,13 @@ void clMainFrame::LoadSession(const wxString& sessionName)
 
             // Load the workspace only if it exists
             wxFileName fnWorkspace(wspFile);
-            
+
             if(fnWorkspace.Exists()) {
                 wxCommandEvent eventOpenWorkspace;
                 eventOpenWorkspace.SetString(fnWorkspace.GetFullPath());
                 OnSwitchWorkspace(eventOpenWorkspace);
             }
-            
+
         } else {
             // no workspace to open, so just restore any previously open editors
             GetMainBook()->RestoreSession(session);
@@ -2581,8 +2579,7 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent& event)
     // let the plugins handle this event first
     wxCommandEvent e(wxEVT_CMD_CREATE_NEW_WORKSPACE, GetId());
     e.SetEventObject(this);
-    if(EventNotifier::Get()->ProcessEvent(e))
-        return;
+    if(EventNotifier::Get()->ProcessEvent(e)) return;
 
     wxUnusedVar(event);
     NewWorkspaceDlg* dlg = new NewWorkspaceDlg(this);
@@ -2803,23 +2800,19 @@ void clMainFrame::ToggleToolBars(bool std)
         wxAuiPaneInfoArray& allPanes = m_mgr.GetAllPanes();
         for(size_t i = 0; i < allPanes.GetCount(); ++i) {
             wxAuiPaneInfo& pane = allPanes.Item(i);
-            if(!pane.IsOk() || !pane.IsToolbar())
-                continue;
+            if(!pane.IsOk() || !pane.IsToolbar()) continue;
 
             if(std) {
                 // collect core toolbars
-                if(m_coreToolbars.count(pane.name))
-                    toolbars.insert(pane.name);
+                if(m_coreToolbars.count(pane.name)) toolbars.insert(pane.name);
             } else {
                 // collect plugins toolbars
-                if(m_coreToolbars.count(pane.name) == 0)
-                    toolbars.insert(pane.name);
+                if(m_coreToolbars.count(pane.name) == 0) toolbars.insert(pane.name);
             }
         }
     }
 
-    if(toolbars.empty())
-        return;
+    if(toolbars.empty()) return;
 
     // determine that state based on the first toolbar
     bool currentStateVisible = m_mgr.GetPane((*toolbars.begin())).IsShown();
@@ -3092,8 +3085,7 @@ void clMainFrame::OnStopBuild(wxCommandEvent& event)
 void clMainFrame::OnStopExecutedProgram(wxCommandEvent& event)
 {
     wxCommandEvent evtExecute(wxEVT_CMD_STOP_EXECUTED_PROGRAM);
-    if(EventNotifier::Get()->ProcessEvent(evtExecute))
-        return;
+    if(EventNotifier::Get()->ProcessEvent(evtExecute)) return;
 
     wxUnusedVar(event);
     Manager* mgr = ManagerST::Get();
@@ -3129,8 +3121,7 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
         // set the project name
         evtExecute.SetTargetName(WorkspaceST::Get()->GetActiveProject()->GetName());
     }
-    if(EventNotifier::Get()->ProcessEvent(evtExecute))
-        return;
+    if(EventNotifier::Get()->ProcessEvent(evtExecute)) return;
 
     if(!WorkspaceST::Get()->IsOpen()) {
         return;
@@ -3237,8 +3228,7 @@ void clMainFrame::UpdateParserSearchPathsFromDefaultCompiler()
 
     // Try to locate the paths automatically
     CompilerPtr pCompiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(wxEmptyString);
-    if(!pCompiler)
-        return;
+    if(!pCompiler) return;
 
     wxArrayString paths;
     paths = pCompiler->GetDefaultIncludePaths();
@@ -3278,15 +3268,12 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     evt.SetEventObject(this);
     evt.SetEditor(activeEditor);
 
-    if(EventNotifier::Get()->ProcessEvent(evt))
-        return;
+    if(EventNotifier::Get()->ProcessEvent(evt)) return;
 
     wxUnusedVar(event);
-    if(ManagerST::Get()->IsWorkspaceOpen() == false)
-        return;
+    if(ManagerST::Get()->IsWorkspaceOpen() == false) return;
 
-    if(activeEditor->GetProject().IsEmpty())
-        return;
+    if(activeEditor->GetProject().IsEmpty()) return;
 
     QuickOutlineDlg dlg(::wxGetTopLevelParent(activeEditor),
                         activeEditor->GetFileName().GetFullPath(),
@@ -3595,8 +3582,7 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
                 dbgEvent.SetDebuggerName(buildConfig->GetDebuggerType());
             }
         }
-        if(EventNotifier::Get()->ProcessEvent(dbgEvent))
-            return;
+        if(EventNotifier::Get()->ProcessEvent(dbgEvent)) return;
     }
 
     Manager* mgr = ManagerST::Get();
@@ -3648,8 +3634,7 @@ void clMainFrame::OnDebugUI(wxUpdateUIEvent& e)
 void clMainFrame::OnDebugRestart(wxCommandEvent& e)
 {
     clDebugEvent event(wxEVT_DBG_UI_RESTART);
-    if(EventNotifier::Get()->ProcessEvent(event))
-        return;
+    if(EventNotifier::Get()->ProcessEvent(event)) return;
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
@@ -3872,7 +3857,7 @@ void clMainFrame::CompleteInitialization()
     clKeyboardManager::Get()->AddGlobalAccelerator("comment_selection", "Ctrl-Shift-/", "C++::Comment Selection");
     clKeyboardManager::Get()->AddGlobalAccelerator("comment_line", "Ctrl-/", "C++::Toggle Line Comment");
     clKeyboardManager::Get()->AddGlobalAccelerator("rename_symbol", "Ctrl-Shift-H", "C++::Rename Symbol");
-    
+
     // Load the plugins
     PluginManager::Get()->Load();
 
@@ -4380,8 +4365,7 @@ void clMainFrame::OnReloadWorkspace(wxCommandEvent& event)
     // let the plugins close any custom workspace
     clCommandEvent e(wxEVT_CMD_RELOAD_WORKSPACE, GetId());
     e.SetEventObject(this);
-    if(EventNotifier::Get()->ProcessEvent(e))
-        return; // this event was handled by a plugin
+    if(EventNotifier::Get()->ProcessEvent(e)) return; // this event was handled by a plugin
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr && dbgr->IsRunning()) {
@@ -4849,8 +4833,7 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
     bool fullRetag = !(event.GetId() == XRCID("retag_workspace"));
     wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());
     e.SetEventObject(this);
-    if(EventNotifier::Get()->ProcessEvent(e))
-        return;
+    if(EventNotifier::Get()->ProcessEvent(e)) return;
 
     TagsManager::RetagType type = TagsManager::Retag_Quick_No_Scan;
     if(event.GetId() == XRCID("retag_workspace"))
@@ -4946,8 +4929,7 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
         }
     }
 
-    if(!project_modified && !workspace_modified)
-        return false;
+    if(!project_modified && !workspace_modified) return false;
 
     // Make sure we don't have the mouse captured in any editor or we might get a crash somewhere
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Workspace or project settings have been modified outside "
@@ -5004,7 +4986,7 @@ void clMainFrame::SaveLayoutAndSession()
         SessionManager::Get().Save(sessionName, session);
         SessionManager::Get().SetLastWorkspaceName(sessionName);
     }
-    
+
     // make sure there are no 'unsaved documents'
     GetMainBook()->CloseAll(false);
 
@@ -5054,8 +5036,7 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     // Let the plugins a chance before we handle this event
     wxCommandEvent eventOpenResource(wxEVT_CMD_OPEN_RESOURCE, GetId());
     eventOpenResource.SetEventObject(this);
-    if(EventNotifier::Get()->ProcessEvent(eventOpenResource))
-        return;
+    if(EventNotifier::Get()->ProcessEvent(eventOpenResource)) return;
 
     OpenResourceDialog dlg(this, PluginManager::Get());
     if(dlg.ShowModal() == wxID_OK) {
@@ -5464,13 +5445,11 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
 {
     CHECK_SHUTDOWN();
     LEditor* editor = GetMainBook()->GetActiveEditor();
-    if(!editor || editor->GetSelectedText().IsEmpty())
-        return;
+    if(!editor || editor->GetSelectedText().IsEmpty()) return;
 
     // Prepare the search data
     bool singleFileSearch(true);
-    if(e.GetId() == XRCID("grep_current_workspace"))
-        singleFileSearch = false;
+    if(e.GetId() == XRCID("grep_current_workspace")) singleFileSearch = false;
 
     SearchData data;
     data.SetFindString(editor->GetSelectedText());
@@ -5696,8 +5675,7 @@ void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event)
 void clMainFrame::OnActivateEditor(wxCommandEvent& e)
 {
     LEditor* editor = dynamic_cast<LEditor*>(e.GetEventObject());
-    if(editor)
-        editor->SetActive();
+    if(editor) editor->SetActive();
 }
 
 void clMainFrame::OnActiveEditorChanged(wxCommandEvent& e)
@@ -5850,32 +5828,23 @@ void clMainFrame::OnShowDebuggerWindow(wxCommandEvent& e)
     conf.ReadItem(&item);
 
     bool show = e.IsChecked();
-    if(e.GetId() == XRCID("debugger_win_locals"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Locals, show);
+    if(e.GetId() == XRCID("debugger_win_locals")) item.ShowDebuggerWindow(DebuggerPaneConfig::Locals, show);
 
-    if(e.GetId() == XRCID("debugger_win_watches"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Watches, show);
+    if(e.GetId() == XRCID("debugger_win_watches")) item.ShowDebuggerWindow(DebuggerPaneConfig::Watches, show);
 
-    if(e.GetId() == XRCID("debugger_win_output"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Output, show);
+    if(e.GetId() == XRCID("debugger_win_output")) item.ShowDebuggerWindow(DebuggerPaneConfig::Output, show);
 
-    if(e.GetId() == XRCID("debugger_win_threads"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Threads, show);
+    if(e.GetId() == XRCID("debugger_win_threads")) item.ShowDebuggerWindow(DebuggerPaneConfig::Threads, show);
 
-    if(e.GetId() == XRCID("debugger_win_callstack"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Callstack, show);
+    if(e.GetId() == XRCID("debugger_win_callstack")) item.ShowDebuggerWindow(DebuggerPaneConfig::Callstack, show);
 
-    if(e.GetId() == XRCID("debugger_win_memory"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Memory, show);
+    if(e.GetId() == XRCID("debugger_win_memory")) item.ShowDebuggerWindow(DebuggerPaneConfig::Memory, show);
 
-    if(e.GetId() == XRCID("debugger_win_breakpoints"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Breakpoints, show);
+    if(e.GetId() == XRCID("debugger_win_breakpoints")) item.ShowDebuggerWindow(DebuggerPaneConfig::Breakpoints, show);
 
-    if(e.GetId() == XRCID("debugger_win_asciiview"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::AsciiViewer, show);
+    if(e.GetId() == XRCID("debugger_win_asciiview")) item.ShowDebuggerWindow(DebuggerPaneConfig::AsciiViewer, show);
 
-    if(e.GetId() == XRCID("debugger_win_disassemble"))
-        item.ShowDebuggerWindow(DebuggerPaneConfig::Disassemble, show);
+    if(e.GetId() == XRCID("debugger_win_disassemble")) item.ShowDebuggerWindow(DebuggerPaneConfig::Disassemble, show);
 
     conf.WriteItem(&item);
     // Reload the perspective
@@ -5891,29 +5860,21 @@ void clMainFrame::OnShowDebuggerWindowUI(wxUpdateUIEvent& e)
 
     DebuggerPaneConfig::eDebuggerWindows winid = DebuggerPaneConfig::None;
 
-    if(e.GetId() == XRCID("debugger_win_locals"))
-        winid = DebuggerPaneConfig::Locals;
+    if(e.GetId() == XRCID("debugger_win_locals")) winid = DebuggerPaneConfig::Locals;
 
-    if(e.GetId() == XRCID("debugger_win_watches"))
-        winid = DebuggerPaneConfig::Watches;
+    if(e.GetId() == XRCID("debugger_win_watches")) winid = DebuggerPaneConfig::Watches;
 
-    if(e.GetId() == XRCID("debugger_win_output"))
-        winid = DebuggerPaneConfig::Output;
+    if(e.GetId() == XRCID("debugger_win_output")) winid = DebuggerPaneConfig::Output;
 
-    if(e.GetId() == XRCID("debugger_win_threads"))
-        winid = DebuggerPaneConfig::Threads;
+    if(e.GetId() == XRCID("debugger_win_threads")) winid = DebuggerPaneConfig::Threads;
 
-    if(e.GetId() == XRCID("debugger_win_callstack"))
-        winid = DebuggerPaneConfig::Callstack;
+    if(e.GetId() == XRCID("debugger_win_callstack")) winid = DebuggerPaneConfig::Callstack;
 
-    if(e.GetId() == XRCID("debugger_win_memory"))
-        winid = DebuggerPaneConfig::Memory;
+    if(e.GetId() == XRCID("debugger_win_memory")) winid = DebuggerPaneConfig::Memory;
 
-    if(e.GetId() == XRCID("debugger_win_breakpoints"))
-        winid = DebuggerPaneConfig::Breakpoints;
+    if(e.GetId() == XRCID("debugger_win_breakpoints")) winid = DebuggerPaneConfig::Breakpoints;
 
-    if(e.GetId() == XRCID("debugger_win_asciiview"))
-        winid = DebuggerPaneConfig::AsciiViewer;
+    if(e.GetId() == XRCID("debugger_win_asciiview")) winid = DebuggerPaneConfig::AsciiViewer;
 
     if(winid != DebuggerPaneConfig::None) {
         e.Check(item.IsDebuggerWindowShown(winid));
@@ -6042,33 +6003,39 @@ void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnSplitSelection(wxCommandEvent& event)
 {
-    LEditor *editor = GetMainBook()->GetActiveEditor(true);
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
     CHECK_PTR_RET(editor);
-    
+
     editor->SplitSelection();
 }
 
 void clMainFrame::OnSplitSelectionUI(wxUpdateUIEvent& event)
 {
-    LEditor *editor = GetMainBook()->GetActiveEditor(true);
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
     event.Enable(editor && editor->HasSelection());
 }
 
 void clMainFrame::OnColoursAndFontsLoaded(clColourEvent& event)
 {
     event.Skip();
-    
+
     // Build the "View As" menu
     CreateViewAsSubMenu();
-    
+
     // Load the session
     wxString sessConfFile;
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
-    
+
     // Load last session?
     if(clConfig::Get().Read("RestoreLastSession", true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
         EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
+}
+
+void clMainFrame::OnProjectRenamed(clCommandEvent& event)
+{
+    event.Skip();
+    SetFrameTitle(GetMainBook()->GetActiveEditor());
 }

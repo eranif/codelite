@@ -137,6 +137,7 @@ protected:
     virtual void OnSelectionChanged(wxTreeEvent& e);
     virtual void OnOpenInEditor(wxCommandEvent& event);
     virtual void OnRemoveProject(wxCommandEvent& event);
+    virtual void OnRenameProject(wxCommandEvent& event);
     virtual void OnSetActive(wxCommandEvent& event);
     virtual void OnNewItem(wxCommandEvent& event);
     virtual void OnAddExistingItem(wxCommandEvent& event);

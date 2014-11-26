@@ -221,7 +221,10 @@ protected:
 
     void OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e);
     void OnParserThreadSuggestColourTokens(clCommandEvent& event);
-
+    /**
+     * @brief a project was renamed, reload the workspace
+     */
+    void OnProjectRenamed(clCommandEvent &event);
     //--------------------------- Workspace Projects Mgmt -----------------------------
 public:
     /**
@@ -541,18 +544,6 @@ public:
      * \brief update the menu bar accelerators
      */
     void UpdateMenuAccelerators(wxFrame* frame = NULL);
-
-    /**
-     * \brief load accelerator table from the configuration section
-     * \param file
-     * \param map
-     */
-    void LoadAcceleratorTable(const wxArrayString& files, MenuItemDataMap_t& map);
-
-    /**
-     * \brief retrun map of the accelerator table. the StringMap maps between the actions and their accelerators
-     */
-    void GetAcceleratorMap(MenuItemDataMap_t& accelMap);
 
     //--------------------------- Run Program (No Debug) -----------------------------
 public:

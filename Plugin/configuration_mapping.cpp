@@ -212,7 +212,7 @@ void WorkspaceConfiguration::RenameProject(const wxString& oldname, const wxStri
     ConfigMappingList::iterator iter = m_mappingList.begin();
     for(; iter != m_mappingList.end(); ++iter) {
         if(iter->m_project == oldname) {
-            iter->m_project = oldname;
+            iter->m_project = newname;
         }
     }
 }

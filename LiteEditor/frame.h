@@ -572,7 +572,7 @@ protected:
     void OnShowBookmarkMenu(wxAuiToolBarEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
     void OnEditMenuOpened(wxMenuEvent& e);
-    
+    void OnProjectRenamed(clCommandEvent &event);
     void OnColoursAndFontsLoaded(clColourEvent &event);
     DECLARE_EVENT_TABLE()
 };

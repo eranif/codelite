@@ -942,9 +942,35 @@ void Workspace::DoUpdateBuildMatrix()
 
 void Workspace::RenameProject(const wxString& oldname, const wxString& newname)
 {
-    // Update the build matrix
-    m_buildMatrix->RenameProject(oldname, newname);
+    // Update the build matrix (we work on the XML directly here)
+    wxXmlNode* buildMatrixNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "BuildMatrix");
+    if(buildMatrixNode) {
+        wxXmlNode* child = buildMatrixNode->GetChildren();
+        while(child) {
+            if(child->GetName() == "WorkspaceConfiguration") {
+                wxXmlNode* projectNode = child->GetChildren();
+                while(projectNode) {
+                    if(projectNode->GetName() == "Project") {
+                        wxString name = projectNode->GetAttribute("Name");
+                        if(name == oldname) {
+                            XmlUtils::UpdateProperty(projectNode, "Name", newname);
+                        }
+                    }
+                    projectNode = projectNode->GetNext();
+                }
+            }
+            child = child->GetNext();
+        }
+    }
     
+    // Update the list of projects in the workspace
+    wxXmlNode* projectNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Project");
+    while(projectNode) {
+        if(projectNode->GetAttribute("Name") == oldname) {
+            XmlUtils::UpdateProperty(projectNode, "Name", newname);
+        }
+        projectNode = projectNode->GetNext();
+    }
     // Update dependenices for each project
     Workspace::ProjectMap_t::iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {

@@ -653,7 +653,9 @@
 // files into the ColoursAndFonts manager
 #define wxEVT_COLOURS_AND_FONTS_LOADED 3705
 
-/////////////////////////////////////////////////
-// NOTE: update this counter: Next event ID: 3706
-/////////////////////////////////////////////////
+// Event: clCommandEvent
+// Use GetString() to get the new project name
+// Use GetOldName() to get the old project name
+#define wxEVT_PROJ_RENAMED 3706
+
 #endif // CODELITE_EVENTS_H

@@ -554,7 +554,7 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
             return; // The user probably pressed Cancel
         }
     }
-    
+
     wxFileName fnDir(dir, "");
     if(fnDir.GetDirs().Last() != ".git") {
         fnDir.AppendDir(".git");
@@ -564,7 +564,7 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
     if(fnDir.DirExists()) {
         fnDir.RemoveLastDir();
         dir = fnDir.GetPath();
-        
+
         if(m_repositoryDirectory != dir) {
             m_repositoryDirectory = dir;
 
@@ -1062,11 +1062,11 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     wxString command = m_pathGITExecutable;
-    
+
     // Wrap the executable with quotes if needed
     command.Trim().Trim(false);
     ::WrapWithQuotes(command);
-    
+
     switch(ga.action) {
     case gitStash:
         command << " stash";
@@ -1304,6 +1304,7 @@ void GitPlugin::ProcessGitActionQueue()
         this, command, createFlags, ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory);
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
+        DoRecoverFromGitCommandError();
     }
 }
 
@@ -1560,12 +1561,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
         msg << m_commandOutput;
         wxMessageBox(msg, _("git error"), wxICON_ERROR | wxOK, m_topWindow);
         // Last action failed, clear queue
-        while(!m_gitActionQueue.empty()) {
-            m_gitActionQueue.pop();
-        }
-
-        wxDELETE(m_process);
-        m_commandOutput.Clear();
+        DoRecoverFromGitCommandError();
         return;
     }
 
@@ -1704,13 +1700,13 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
     } else if(ga.action == gitRevertCommit) {
         AddDefaultActions();
     }
-    
+
     if(ga.action == gitResetRepo || ga.action == gitResetFile) {
         // Reload externally modified files
         CL_DEBUG("Git: posting a 'reload externally modified files' event");
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     }
-    
+
     wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop();
@@ -2333,4 +2329,15 @@ void GitPlugin::OnMainFrameTitle(clCommandEvent& e)
         e.SetString(newTitle);
         e.Skip(false);
     }
+}
+
+void GitPlugin::DoRecoverFromGitCommandError()
+{
+    // Last action failed, clear queue
+    while(!m_gitActionQueue.empty()) {
+        m_gitActionQueue.pop();
+    }
+
+    wxDELETE(m_process);
+    m_commandOutput.Clear();
 }

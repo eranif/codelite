@@ -168,6 +168,7 @@ private:
     void DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo);
     void DoShowDiffsForFiles(const wxArrayString& files);
     void DoSetRepoPath(const wxString &repoPath = "", bool promptUser = true);
+    void DoRecoverFromGitCommandError();
     
     DECLARE_EVENT_TABLE()
 

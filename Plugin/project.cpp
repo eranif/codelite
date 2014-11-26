@@ -1859,3 +1859,42 @@ wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bo
     }
     return options;
 }
+
+void Project::ProjectRenamed(const wxString& oldname, const wxString& newname)
+{
+    std::map<wxString, wxArrayString> configs;
+    // dependencies are located directly under the root level
+    wxXmlNode* node = m_doc.GetRoot()->GetChildren();
+    while(node) {
+        if(node->GetName() == wxT("Dependencies")) {
+            wxString config = node->GetAttribute("Name");
+            if(config.IsEmpty()) continue;
+            wxArrayString deps;
+            
+            wxXmlNode* child = node->GetChildren();
+            while(child) {
+                if(child->GetName() == wxT("Project")) {
+                    wxString projectName = XmlUtils::ReadString(child, "Name");
+                    if(projectName == oldname) {
+                        projectName = newname;
+                    }
+                    deps.Add(projectName);
+                }
+                child = child->GetNext();
+            }
+            configs.insert(std::make_pair(config, deps));
+        }
+        node = node->GetNext();
+    }
+    
+    // Update the dependencies
+    std::map<wxString, wxArrayString>::iterator iter = configs.begin();
+    for(; iter != configs.end(); ++iter) {
+        SetDependencies(iter->second, iter->first);
+    }
+    
+    if(GetName() == oldname) {
+        // Update the name
+        XmlUtils::UpdateProperty(m_doc.GetRoot(), "Name", newname);
+    }
+}

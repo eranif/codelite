@@ -45,6 +45,7 @@ protected:
     wxSharedPtr<wxClientData> m_ptr;
     wxArrayString m_strings;
     wxString m_fileName;
+    wxString m_oldName;
     bool m_answer;
     bool m_allowed;
 
@@ -53,16 +54,18 @@ public:
     clCommandEvent(const clCommandEvent& event);
     clCommandEvent& operator=(const clCommandEvent& src);
     virtual ~clCommandEvent();
-    
+
     // Veto management
     void SetAllowed(bool allowed) { this->m_allowed = allowed; }
     bool IsAllowed() const { return m_allowed; }
     void Veto() { this->m_allowed = false; }
     void Allow() { this->m_allowed = true; }
-    
+
     // Hides wxCommandEvent::Set{Get}ClientObject
     void SetClientObject(wxClientData* clientObject);
 
+    void SetOldName(const wxString& oldName) { this->m_oldName = oldName; }
+    const wxString& GetOldName() const { return m_oldName; }
     wxClientData* GetClientObject() const;
 
     virtual wxEvent* Clone() const;
@@ -246,7 +249,8 @@ typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
 class WXDLLIMPEXP_CL clNewProjectEvent : public clCommandEvent
 {
 public:
-    struct Template {
+    struct Template
+    {
         wxString m_category;
         wxString m_categoryPng;
         wxString m_template;
@@ -254,7 +258,10 @@ public:
         wxString m_toolchain;
         wxString m_debugger;
         bool m_allowSeparateFolder;
-        Template() : m_allowSeparateFolder(true) {}
+        Template()
+            : m_allowSeparateFolder(true)
+        {
+        }
         typedef std::vector<clNewProjectEvent::Template> Vec_t;
     };
 

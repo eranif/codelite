@@ -91,14 +91,9 @@ public:
     {
     }
 
-    virtual ~ProjectItem()
-    {
-    }
+    virtual ~ProjectItem() {}
 
-    ProjectItem(const ProjectItem& item)
-    {
-        *this = item;
-    }
+    ProjectItem(const ProjectItem& item) { *this = item; }
 
     ProjectItem& operator=(const ProjectItem& item)
     {
@@ -116,38 +111,17 @@ public:
     //-----------------------------------------
     // Setters / Getters
     //-----------------------------------------
-    const wxString& GetDisplayName() const
-    {
-        return m_displayName;
-    }
-    const wxString& GetFile() const
-    {
-        return m_file;
-    }
-    int GetKind() const
-    {
-        return m_kind;
-    }
+    const wxString& GetDisplayName() const { return m_displayName; }
+    const wxString& GetFile() const { return m_file; }
+    int GetKind() const { return m_kind; }
 
-    void SetDisplayName(const wxString& displayName)
-    {
-        m_displayName = displayName;
-    }
-    void SetFile(const wxString& file)
-    {
-        m_file = file;
-    }
-    void SetKind(int kind)
-    {
-        m_kind = kind;
-    }
+    void SetDisplayName(const wxString& displayName) { m_displayName = displayName; }
+    void SetFile(const wxString& file) { m_file = file; }
+    void SetKind(int kind) { m_kind = kind; }
 
     //------------------------------------------
     // operations
-    const wxString& Key() const
-    {
-        return m_key;
-    }
+    const wxString& Key() const { return m_key; }
 };
 
 // useful typedefs
@@ -227,63 +201,28 @@ public:
             : m_flags(0)
         {
         }
-        ~FileInfo()
-        {
-        }
+        ~FileInfo() {}
 
-        void SetExcludeConfigs(const wxStringSet_t& excludeConfigs)
-        {
-            this->m_excludeConfigs = excludeConfigs;
-        }
+        void SetExcludeConfigs(const wxStringSet_t& excludeConfigs) { this->m_excludeConfigs = excludeConfigs; }
         void SetExcludeConfigs(const wxArrayString& excludeConfigs)
         {
             this->m_excludeConfigs.clear();
             this->m_excludeConfigs.insert(excludeConfigs.begin(), excludeConfigs.end());
         }
 
-        const wxStringSet_t& GetExcludeConfigs() const
-        {
-            return m_excludeConfigs;
-        }
-        void SetFilenameRelpath(const wxString& filenameRelpath)
-        {
-            this->m_filenameRelpath = filenameRelpath;
-        }
-        const wxString& GetFilenameRelpath() const
-        {
-            return m_filenameRelpath;
-        }
-        void SetFilename(const wxString& filename)
-        {
-            this->m_filename = filename;
-        }
-        void SetVirtualFolder(const wxString& virtualFolder)
-        {
-            this->m_virtualFolder = virtualFolder;
-        }
-        const wxString& GetFilename() const
-        {
-            return m_filename;
-        }
-        const wxString& GetVirtualFolder() const
-        {
-            return m_virtualFolder;
-        }
-        void SetFlags(size_t flags)
-        {
-            this->m_flags = flags;
-        }
-        size_t GetFlags() const
-        {
-            return m_flags;
-        }
+        const wxStringSet_t& GetExcludeConfigs() const { return m_excludeConfigs; }
+        void SetFilenameRelpath(const wxString& filenameRelpath) { this->m_filenameRelpath = filenameRelpath; }
+        const wxString& GetFilenameRelpath() const { return m_filenameRelpath; }
+        void SetFilename(const wxString& filename) { this->m_filename = filename; }
+        void SetVirtualFolder(const wxString& virtualFolder) { this->m_virtualFolder = virtualFolder; }
+        const wxString& GetFilename() const { return m_filename; }
+        const wxString& GetVirtualFolder() const { return m_virtualFolder; }
+        void SetFlags(size_t flags) { this->m_flags = flags; }
+        size_t GetFlags() const { return m_flags; }
         /**
          * @brief return true if this file should be execluded from the build of a specific configuration
          */
-        bool IsExcludeFromConfiguration(const wxString& config) const
-        {
-            return m_excludeConfigs.count(config);
-        }
+        bool IsExcludeFromConfiguration(const wxString& config) const { return m_excludeConfigs.count(config); }
     };
     typedef std::vector<Project::FileInfo> FileInfoVector_t;
 
@@ -294,14 +233,12 @@ public:
      */
     Workspace* GetWorkspace();
 
-    void SetIconPath(const wxString& iconPath)
-    {
-        this->m_iconPath = iconPath;
-    }
-    const wxString& GetIconPath() const
-    {
-        return m_iconPath;
-    }
+    /**
+     * @brief a project was renamed - update our dependeices if needed
+     */
+    void ProjectRenamed(const wxString& oldname, const wxString& newname);
+    void SetIconPath(const wxString& iconPath) { this->m_iconPath = iconPath; }
+    const wxString& GetIconPath() const { return m_iconPath; }
     /**
      * @brief return set of compilers used by this project for the active build configuraion
      */
@@ -317,15 +254,9 @@ public:
      * @brief the const version of the above
      */
     const Workspace* GetWorkspace() const;
-    const wxFileName& GetFileName() const
-    {
-        return m_fileName;
-    }
+    const wxFileName& GetFileName() const { return m_fileName; }
 
-    const wxString& GetProjectPath() const
-    {
-        return m_projectPath;
-    }
+    const wxString& GetProjectPath() const { return m_projectPath; }
     /**
      * \brief copy this project and all the files under to new_path
      * \param file_name the new path of the project
@@ -562,18 +493,9 @@ public:
     void SetModified(bool mod);
 
     // Transaction support to reduce overhead of disk writing
-    void BeginTranscation()
-    {
-        m_tranActive = true;
-    }
-    void CommitTranscation()
-    {
-        Save();
-    }
-    bool InTransaction() const
-    {
-        return m_tranActive;
-    }
+    void BeginTranscation() { m_tranActive = true; }
+    void CommitTranscation() { Save(); }
+    bool InTransaction() const { return m_tranActive; }
 
     wxString GetVDByFileName(const wxString& file);
 
@@ -653,14 +575,8 @@ public:
     /**
      * return/set the last modification time that was made by the editor
      */
-    time_t GetProjectLastModifiedTime() const
-    {
-        return m_modifyTime;
-    }
-    void SetProjectLastModifiedTime(time_t modificationTime)
-    {
-        m_modifyTime = modificationTime;
-    }
+    time_t GetProjectLastModifiedTime() const { return m_modifyTime; }
+    void SetProjectLastModifiedTime(time_t modificationTime) { m_modifyTime = modificationTime; }
 
     wxString GetBestPathForVD(const wxString& vdPath);
 
@@ -813,20 +729,11 @@ public:
         : m_item(item)
     {
     }
-    const ProjectItem& GetData() const
-    {
-        return m_item;
-    }
+    const ProjectItem& GetData() const { return m_item; }
 
-    void SetDisplayName(const wxString& displayName)
-    {
-        m_item.SetDisplayName(displayName);
-    }
+    void SetDisplayName(const wxString& displayName) { m_item.SetDisplayName(displayName); }
 
-    void SetFile(const wxString& file)
-    {
-        m_item.SetFile(file);
-    }
+    void SetFile(const wxString& file) { m_item.SetFile(file); }
 };
 
 #endif // PROJECT_H

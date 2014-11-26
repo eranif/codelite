@@ -48,7 +48,9 @@ class StringHighlighterJob
     StringHighlightOutput m_output;
 
 public:
+    StringHighlighterJob() {}
     StringHighlighterJob(const wxString& str, const wxString& word, int offset);
+    void Set(const wxString& str, const wxString& word, int offset);
     virtual ~StringHighlighterJob();
 
     void SetOffset(int offset) { this->m_offset = offset; }

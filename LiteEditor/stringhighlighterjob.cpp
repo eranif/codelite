@@ -35,6 +35,13 @@ StringHighlighterJob::StringHighlighterJob(const wxString& str, const wxString& 
 
 StringHighlighterJob::~StringHighlighterJob() {}
 
+void StringHighlighterJob::Set(const wxString& str, const wxString& word, int offset)
+{
+    SetStr(str);
+    SetWord(word);
+    SetOffset(offset);
+}
+
 void StringHighlighterJob::Process()
 {
     if(m_str.IsEmpty() || m_word.IsEmpty()) {

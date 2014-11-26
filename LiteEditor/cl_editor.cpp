@@ -3731,17 +3731,58 @@ void LEditor::DoHighlightWord()
     }
 
     // Search only the visible areas
+    StringHighlighterJob j;
     int firstVisibleLine = GetFirstVisibleLine();
-    int lastLine = firstVisibleLine + LinesOnScreen();
     int lastDocLine = LineFromPosition(GetLength());
-    if(lastLine > lastDocLine) {
-        lastLine = lastDocLine;
+    int offset = PositionFromLine(firstVisibleLine);
+
+    if (GetAllLinesVisible()) {
+        // The simple case: there aren't any folds
+        int lastLine = firstVisibleLine + LinesOnScreen();
+        if(lastLine > lastDocLine) {
+            lastLine = lastDocLine;
+        }
+        int lastPos = PositionFromLine(lastLine) + LineLength(lastLine);
+        wxString text = GetTextRange(offset, lastPos);
+        j.Set(text, word, offset);
+        j.Process();
+    } else {
+
+        // There are folds, so we have to process each visible section separately
+        firstVisibleLine = DocLineFromVisible(firstVisibleLine); // This copes with folds above the displayed lines
+        int lineCount(0);
+        int nextLineToProcess(firstVisibleLine);
+        int screenLines(LinesOnScreen());
+        while (lineCount < screenLines && nextLineToProcess <= lastDocLine) {
+            int offset(-1);
+            int line = nextLineToProcess;
+
+            // Skip over any invisible lines
+            while (!GetLineVisible(line) && line < lastDocLine) {
+                ++line;
+            }
+
+            while (GetLineVisible(line) && line <= lastDocLine) {
+                if (offset == -1) {
+                    offset = PositionFromLine(line); // Get offset value the first time through
+                }
+                ++line;
+                ++lineCount;
+                if (lineCount >= screenLines) {
+                   break;
+                }
+            }
+            if (line > lastDocLine) {
+               line = lastDocLine;
+            }
+            nextLineToProcess = line;
+
+            int lastPos = PositionFromLine(nextLineToProcess) + LineLength(nextLineToProcess);
+            wxString text = GetTextRange(offset, lastPos);
+            j.Set(text, word, offset);
+            j.Process();
+        }
     }
-    int offset = PositionFromLine(GetFirstVisibleLine());
-    int lastPos = PositionFromLine(lastLine) + LineLength(lastLine);
-    wxString text = GetTextRange(offset, lastPos);
-    StringHighlighterJob j(text, word, offset);
-    j.Process();
 
     // Keep the first offset
     m_highlightedWordInfo.Clear();

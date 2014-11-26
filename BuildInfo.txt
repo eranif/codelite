@@ -42,6 +42,8 @@ Step 1:
 
 Load the workspace codelite-sources/LiteEditor.workspace - and hit 'F7'
 
+    ** Make sure that the active project (bold text) is set to "CodeLiteIDE" **
+
 Step 2:
 
 Close the current workspace

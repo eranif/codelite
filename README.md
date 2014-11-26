@@ -110,6 +110,7 @@ Git clone the sources
  - Download codelite installer for Windows from our [Download Page][10]
  - Download wxWidgets 3.0 installer. Also from our [Download Page][11]
  - Open the workspace **LiteEditor.workspace** (located in the codelite folder)
+ - Make sure that the project **CodeLiteIDE** is selected (the active project uses **bold** font)
  - Select the configuration **Win Release Unicode** hit **F7**
  - When the compilation is over, close the workspace
  - Next, locate the workspace **codelite_utils/codelite_utils.workspce** and open it

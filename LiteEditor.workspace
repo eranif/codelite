@@ -8,7 +8,7 @@
   </Ctags>
   <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+  <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
   <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
@@ -52,7 +52,7 @@
   <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -75,7 +75,7 @@
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
       <Project Name="LLDBDebugger" ConfigName="WinReleaseUnicode"/>
-      <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CodeLiteIDE" ConfigName="WinReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="hunspell" ConfigName="Release"/>
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
@@ -95,7 +95,7 @@
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
@@ -118,7 +118,7 @@
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
       <Project Name="LLDBDebugger" ConfigName="WinDebugUnicode"/>
-      <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
+      <Project Name="CodeLiteIDE" ConfigName="WinDebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
@@ -161,7 +161,7 @@
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
-      <Project Name="LiteEditor" ConfigName="CMake_Release"/>
+      <Project Name="CodeLiteIDE" ConfigName="CMake_Release"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
@@ -204,7 +204,7 @@
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
-      <Project Name="LiteEditor" ConfigName="CMake_Debug"/>
+      <Project Name="CodeLiteIDE" ConfigName="CMake_Debug"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
@@ -239,7 +239,7 @@
       <Project Name="PCH" ConfigName="Release"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
-      <Project Name="LiteEditor" ConfigName="OSX_Debug"/>
+      <Project Name="CodeLiteIDE" ConfigName="OSX_Debug"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
       <Project Name="git" ConfigName="DebugUnicode"/>
@@ -283,7 +283,7 @@
       <Project Name="PCH" ConfigName="Release"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
-      <Project Name="LiteEditor" ConfigName="OSX_Release"/>
+      <Project Name="CodeLiteIDE" ConfigName="OSX_Release"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
       <Project Name="git" ConfigName="DebugUnicode"/>

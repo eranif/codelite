@@ -38,6 +38,7 @@
 #include <wx/dcgraph.h>
 #include <wx/dc.h>
 #include "macros.h"
+#include <wx/propgrid/propgrid.h>
 
 class wxStyledTextCtrl;
 class IProcess;
@@ -495,4 +496,8 @@ WXDLLIMPEXP_SDK bool clIsMSYSEnvironment();
  */
 WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString& cmd);
 
+/**
+ * @brief enable use of checkbox for boolean properties
+ */
+WXDLLIMPEXP_SDK void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid);
 #endif // GLOBALS_H

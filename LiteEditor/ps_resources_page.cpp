@@ -25,6 +25,7 @@
 
 #include "ps_resources_page.h"
 #include "macros.h"
+#include "globals.h"
 
 #ifdef __WXMSW__
 #    define IS_WINDOWS true
@@ -36,9 +37,7 @@ PSResourcesPage::PSResourcesPage( wxWindow* parent, ProjectSettingsDlg *dlg )
     : PSResourcesPageBase( parent )
     , m_dlg(dlg)
 {
-#ifndef __WXOSX__
-    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-#endif
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
 }
 
 void PSResourcesPage::Load(BuildConfigPtr buildConf)

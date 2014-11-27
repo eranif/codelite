@@ -32,6 +32,7 @@
 #include "ps_general_page.h"
 #include "manager.h"
 #include <wx/filedlg.h>
+#include "globals.h"
 
 PSCompilerPage::PSCompilerPage(wxWindow* parent,
                                const wxString& projectName,
@@ -42,9 +43,7 @@ PSCompilerPage::PSCompilerPage(wxWindow* parent,
     , m_projectName(projectName)
     , m_gp(gp)
 {
-#ifndef __WXOSX__
-    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-#endif
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
 }
 
 void PSCompilerPage::Load(BuildConfigPtr buildConf)

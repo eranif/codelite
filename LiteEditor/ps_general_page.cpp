@@ -31,6 +31,7 @@
 #include "manager.h"
 #include <wx/filedlg.h>
 #include <wx/dirdlg.h>
+#include "globals.h"
 
 PSGeneralPage::PSGeneralPage(wxWindow* parent,
                              const wxString& projectName,
@@ -41,9 +42,7 @@ PSGeneralPage::PSGeneralPage(wxWindow* parent,
     , m_projectName(projectName)
     , m_configName(conf)
 {
-#ifndef __WXOSX__
-    m_pgMgr136->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-#endif
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr136->GetGrid());
 }
 
 void PSGeneralPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event)

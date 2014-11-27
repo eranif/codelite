@@ -1,12 +1,11 @@
 #include "WordCompletionSettingsDlg.h"
 #include "windowattrmanager.h"
+#include "globals.h"
 
 WordCompletionSettingsDlg::WordCompletionSettingsDlg(wxWindow* parent)
     : WordCompletionSettingsBaseDlg(parent)
 {
-#ifndef __WXOSX__
-    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-#endif
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
     WordCompletionSettings settings;
     size_t completeTypes = settings.Load().GetCompleteTypes();
     m_pgPropTypes->SetValueFromInt(completeTypes);

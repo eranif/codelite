@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "codeformatter.h"
+#include "globals.h"
 #include "windowattrmanager.h"
 #include "codeformatterdlg.h"
 #include "editor_config.h"
@@ -68,9 +69,7 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     , m_isDirty(false)
     , m_mgr(mgr)
 {
-#ifndef __WXOSX__
-    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-#endif
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
     // center the dialog
     Centre();
 

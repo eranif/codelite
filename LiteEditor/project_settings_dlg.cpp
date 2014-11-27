@@ -54,6 +54,7 @@
 #include "plugin.h"
 #include "event_notifier.h"
 #include "workspacetab.h"
+#include "globals.h"
 
 BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()
@@ -439,9 +440,7 @@ GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent,
 {
     GetSizer()->Fit(this);
     Centre();
-#ifndef __WXOSX__
-    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-#endif
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
 }
 
 void GlobalSettingsPanel::Clear()

@@ -2112,3 +2112,10 @@ wxString MakeCommandRunInBackground(const wxString& cmd)
 #endif
     return alteredCommand;
 }
+
+void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid)
+{
+#ifndef __WXOSX__
+    grid->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
+#endif
+}

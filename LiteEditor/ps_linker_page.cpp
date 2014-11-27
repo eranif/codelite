@@ -27,15 +27,14 @@
 #include "compiler.h"
 #include "build_settings_config.h"
 #include "ps_general_page.h"
+#include "globals.h"
 
 PSLinkerPage::PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneralPage *gp )
     : PSLinkPageBase( parent )
     , m_dlg(dlg)
     , m_gp(gp)
 {
-#ifndef __WXOSX__
-    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-#endif
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
 }
 
 void PSLinkerPage::OnLinkerNotNeededUI( wxUpdateUIEvent& event )

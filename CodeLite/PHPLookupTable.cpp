@@ -176,7 +176,16 @@ void PHPLookupTable::CreateSchema()
 {
     wxString schemaVersion;
     try {
-        m_db.ExecuteUpdate("pragma synchronous = off");
+        wxString sql;
+        sql = wxT("PRAGMA journal_mode= OFF;");
+        m_db.ExecuteUpdate(sql);
+
+        sql = wxT("PRAGMA synchronous = OFF;");
+        m_db.ExecuteUpdate(sql);
+
+        sql = wxT("PRAGMA temp_store = MEMORY;");
+        m_db.ExecuteUpdate(sql);
+        
         wxSQLite3Statement st =
             m_db.PrepareStatement("select SCHEMA_VERSION from METADATA_TABLE where SCHEMA_NAME=:SCHEMA_NAME");
         st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");

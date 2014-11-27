@@ -851,6 +851,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
            matchedPos == m_lastCharEnteredPos) { // and that open brace must be the one that we have inserted
 
             matchChar = '}';
+            
             BeginUndoAction();
             // Check to see if there are more chars on the line
             int curline = GetCurrentLine();
@@ -858,18 +859,25 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
             // get the line end position, but without the EOL 
             int lineEndPos = LineEnd(curline) - GetEolString().length();
             wxString restOfLine = GetTextRange(pos, lineEndPos);
+            wxString restOfLineTrimmed = restOfLine;
+            restOfLineTrimmed.Trim().Trim(false);
+            bool shiftCode = !restOfLineTrimmed.StartsWith(")");
             
-            SetSelection(pos, lineEndPos);
-            ReplaceSelection("");
-            
+            if(shiftCode) {
+                SetSelection(pos, lineEndPos);
+                ReplaceSelection("");
+            }
             InsertText(pos, matchChar);
             CharRight();
             m_context->AutoIndent(wxT('}'));
             InsertText(pos, GetEolString());
             CharRight();
             SetCaretAt(pos);
-            // restore the content that we just removed
-            InsertText(pos, restOfLine);
+            if(shiftCode) {
+                // restore the content that we just removed
+                InsertText(pos, restOfLine);
+            }
+            
             m_context->AutoIndent(wxT('\n'));
             EndUndoAction();
 

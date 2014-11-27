@@ -150,7 +150,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_import_files"), _("Import files from a directory..."));
                 wxMenuItem* menuItem =
-                    new wxMenuItem(NULL, XRCID("php_synch_with_filesystem"), _("Synch project with file system..."));
+                    new wxMenuItem(NULL, XRCID("php_synch_with_filesystem"), _("Sync project with file system..."));
                 menuItem->SetBitmap(images.Bitmap("m_bmpSync"));
                 menu.Append(menuItem);
                 menu.AppendSeparator();

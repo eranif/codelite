@@ -3162,11 +3162,6 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnTimer(wxTimerEvent& event)
 {
-    // since there is a bug in wxURL, which it can not be used while constucting a wxFrame,
-    // it must be called *after* the frame constuction
-    // add new version notification updater
-    long updatePaths(1);
-
     wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
     wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
     wxLogMessage("Using " + wxStyledTextCtrl::GetLibraryVersionInfo().ToString());
@@ -3174,15 +3169,21 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
         wxLogMessage("Running under Cygwin environment");
     }
 
-    updatePaths = EditorConfigST::Get()->GetInteger(wxT("UpdateParserPaths"), updatePaths);
     if(clConfig::Get().Read("CheckForNewVersion", true)) {
         JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
     }
 
     // enable/disable plugins toolbar functionality
     PluginManager::Get()->EnableToolbars();
-
-    UpdateParserSearchPathsFromDefaultCompiler();
+    
+    // Do we need to update the parser paths?
+    bool updateParserPaths = clConfig::Get().Read("updateParserPaths", true);
+    if(updateParserPaths) {
+        UpdateParserSearchPathsFromDefaultCompiler();
+        // Now that we have updated them, mark it as done, so next
+        // startups we won't do this again
+        clConfig::Get().Write("updateParserPaths", false);
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////

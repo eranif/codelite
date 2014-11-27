@@ -130,7 +130,8 @@ class clMainFrame : public wxFrame
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);
-
+    void DoShowToolbars(bool show);
+    
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);

@@ -958,6 +958,7 @@ void clMainFrame::CreateGUIControls(void)
 {
 #ifdef __WXMSW__
     SetIcon(wxICON(aaaaa));
+    wxWindowUpdateLocker locker(this);
 #else
     wxImage img(cubes_xpm);
     img.SetAlpha(cubes_alpha, true);
@@ -1142,9 +1143,9 @@ void clMainFrame::CreateGUIControls(void)
              wxID_UNDO,
              wxID_REDO);
     } else {
-        CreateToolbars24();
+        CreateNativeToolbar16();
     }
-
+    
     // Connect the custom build target events range: !USE_AUI_TOOLBAR only
     if(GetToolBar()) {
         GetToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST,
@@ -1180,6 +1181,21 @@ void clMainFrame::CreateGUIControls(void)
 
     // Ditto the workspace pane auinotebook
     GetWorkspacePane()->SendSizeEvent(wxSEND_EVENT_POST);
+}
+
+void clMainFrame::DoShowToolbars(bool show)
+{
+    if(GetToolBar()) {
+        GetToolBar()->Show(show);
+    } else {
+        // AUI bars
+        wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
+        for(size_t i = 0; i < panes.GetCount(); ++i) {
+            if(panes.Item(i).IsOk() && panes.Item(i).IsToolbar()) {
+                panes.Item(i).Show(show);
+            }
+        }
+    }
 }
 
 void clMainFrame::CreateViewAsSubMenu()
@@ -3162,6 +3178,10 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnTimer(wxTimerEvent& event)
 {
+#ifdef __WXMSW__
+    wxWindowUpdateLocker locker(this);
+#endif
+
     wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
     wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
     wxLogMessage("Using " + wxStyledTextCtrl::GetLibraryVersionInfo().ToString());
@@ -3842,6 +3862,10 @@ void clMainFrame::OnShowWelcomePage(wxCommandEvent& event) { ShowWelcomePage(); 
 
 void clMainFrame::CompleteInitialization()
 {
+#ifdef __WXMSW__
+    wxWindowUpdateLocker locker(this);
+#endif
+
     // Populate the list of core toolbars before we start loading
     // the plugins
     wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
@@ -3896,11 +3920,9 @@ void clMainFrame::CompleteInitialization()
     m_zombieReaper.Start();
 #endif
 
-    // Hide / Show status/tool bar
-    if(GetToolBar() && !clConfig::Get().Read("ShowToolBar", true)) {
-        GetToolBar()->Hide();
-    }
-
+    // Hide / Show status/tool bar (native)
+    DoShowToolbars(clConfig::Get().Read("ShowToolBar", false));
+    
     if(!clConfig::Get().Read("ShowStatusBar", true)) {
         GetStatusBar()->Hide();
     }

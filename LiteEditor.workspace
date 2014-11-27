@@ -10,7 +10,7 @@
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
   <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
-  <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
+  <Project Name="libCodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
   <Project Name="Interfaces" Path="Interfaces/Interfaces.project" Active="No"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
@@ -89,7 +89,7 @@
       <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLiteDiff" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
+      <Project Name="libCodeLite" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
@@ -132,7 +132,7 @@
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLiteDiff" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
+      <Project Name="libCodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
@@ -175,7 +175,7 @@
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLiteDiff" ConfigName="DebugUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
+      <Project Name="libCodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
@@ -218,7 +218,7 @@
       <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLiteDiff" ConfigName="DebugUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
+      <Project Name="libCodeLite" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
@@ -251,7 +251,7 @@
       <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
+      <Project Name="libCodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
@@ -295,7 +295,7 @@
       <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
+      <Project Name="libCodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>

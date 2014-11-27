@@ -186,7 +186,7 @@
     <File Name="php_ui.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode">
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="PHPParser"/>
   </Dependencies>
   <Settings Type="Dynamic Library">

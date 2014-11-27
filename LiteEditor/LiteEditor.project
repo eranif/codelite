@@ -645,7 +645,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -703,7 +703,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -720,7 +720,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -742,7 +742,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="DebuggerGDB"/>
   </Dependencies>
@@ -782,7 +782,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="DebuggerGDB"/>
     <Project Name="CodeFormatter"/>
@@ -894,7 +894,7 @@
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -906,7 +906,7 @@
   <Dependencies Name="Unix_Make_J">
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -919,7 +919,7 @@
   <Dependencies Name="Unix_Wx_29">
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -932,7 +932,7 @@
   <Dependencies Name="Win_wxWidgets_29">
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -971,7 +971,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -985,7 +985,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -999,7 +999,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -1013,7 +1013,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -1027,7 +1027,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -1041,7 +1041,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -1055,7 +1055,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -1069,7 +1069,7 @@
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -1085,7 +1085,7 @@
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
     <Project Name="wxshapeframework"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>
@@ -1123,7 +1123,7 @@
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
     <Project Name="wxshapeframework"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="DebuggerGDB"/>
     <Project Name="CodeFormatter"/>
@@ -1161,7 +1161,7 @@
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
     <Project Name="wxshapeframework"/>
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
     <Project Name="DebuggerGDB"/>

@@ -67,10 +67,10 @@
   </Dependencies>
   <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Release">
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
   </Dependencies>
   <Dependencies Name="Debug">
-    <Project Name="CodeLite"/>
+    <Project Name="libCodeLite"/>
   </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>

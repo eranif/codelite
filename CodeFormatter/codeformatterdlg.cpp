@@ -68,8 +68,9 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     , m_isDirty(false)
     , m_mgr(mgr)
 {
+#ifndef __WXOSX__
     m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
-
+#endif
     // center the dialog
     Centre();
 

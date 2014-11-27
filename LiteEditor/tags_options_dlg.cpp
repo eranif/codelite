@@ -49,7 +49,9 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     , m_data(data)
 {
     MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
+#ifndef __WXOSX__
     m_pgMgrColouring->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
+#endif
     Centre();
     GetSizer()->Fit(this);
     WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);

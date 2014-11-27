@@ -33,7 +33,9 @@ PSLinkerPage::PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneral
     , m_dlg(dlg)
     , m_gp(gp)
 {
+#ifndef __WXOSX__
     m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
+#endif
 }
 
 void PSLinkerPage::OnLinkerNotNeededUI( wxUpdateUIEvent& event )

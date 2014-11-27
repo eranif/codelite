@@ -5,7 +5,9 @@
 EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
     : EditorOptionsGeneralEditBase(parent)
 {
+#ifndef __WXOSX__
     m_pgMgrEdit->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
+#endif
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_pgPropSmartCurly->SetValue(options->GetAutoAddMatchedCurlyBraces());
     m_pgPropSmartParentheses->SetValue(options->GetAutoAddMatchedNormalBraces());
@@ -20,7 +22,7 @@ EditorOptionsGeneralEdit::~EditorOptionsGeneralEdit()
 
 void EditorOptionsGeneralEdit::OnValueChanged(wxPropertyGridEvent& event)
 {
-    event.Skip();
+    // event.Skip();
 }
 
 void EditorOptionsGeneralEdit::Save(OptionsConfigPtr options)

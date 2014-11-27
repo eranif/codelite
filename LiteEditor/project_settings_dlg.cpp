@@ -439,7 +439,9 @@ GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent,
 {
     GetSizer()->Fit(this);
     Centre();
+#ifndef __WXOSX__
     m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
+#endif
 }
 
 void GlobalSettingsPanel::Clear()

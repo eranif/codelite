@@ -115,23 +115,7 @@ void AdvancedDlg::OnButtonNewClicked()
 
 void AdvancedDlg::OnButtonOKClicked(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
-    // save all compiler pages
-    SaveCompilers();
-
-    // save the build page
-    m_buildPage->Save();
-    m_buildSettings->Save();
-
-    // mark all the projects as dirty
-    wxArrayString projects;
-    WorkspaceST::Get()->GetProjectList(projects);
-    for(size_t i = 0; i < projects.size(); i++) {
-        ProjectPtr proj = ManagerST::Get()->GetProject(projects.Item(i));
-        if(proj) {
-            proj->SetModified(true);
-        }
-    }
+    OnApply(event);
     EndModal(wxID_OK);
 }
 
@@ -255,7 +239,23 @@ void AdvancedDlg::OnCompilersDetected(const ICompilerLocator::CompilerVec_t& com
     }
 }
 
-void AdvancedDlg::OnApply(wxCommandEvent& event) { m_compilersPage->Save(); }
+void AdvancedDlg::OnApply(wxCommandEvent& event)
+{ 
+    // save the build page
+    m_compilersPage->Save();
+    m_buildPage->Save();
+    m_buildSettings->Save();
+
+    // mark all the projects as dirty
+    wxArrayString projects;
+    WorkspaceST::Get()->GetProjectList(projects);
+    for(size_t i = 0; i < projects.size(); i++) {
+        ProjectPtr proj = ManagerST::Get()->GetProject(projects.Item(i));
+        if(proj) {
+            proj->SetModified(true);
+        }
+    }
+}
 
 void AdvancedDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_compilersPage->IsDirty()); }
 

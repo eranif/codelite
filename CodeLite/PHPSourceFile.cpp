@@ -785,6 +785,11 @@ bool PHPSourceFile::ReadExpression(wxString& expression)
         }
 
         switch(token.type) {
+        case kPHP_T_REQUIRE:
+        case kPHP_T_REQUIRE_ONCE:
+            expression.clear();
+            return false;
+            
         case kPHP_T_C_COMMENT:
         case kPHP_T_CXX_COMMENT:
             // skip comments
@@ -902,6 +907,7 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
     PHPEntityBase::Ptr_t var(new PHPEntityVariable());
     var->SetFullName(tok.text);
     var->SetFilename(m_filename.GetFullPath());
+    var->SetLine(tok.lineNumber);
     if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
         CurrentScope()->AddChild(var);
     }

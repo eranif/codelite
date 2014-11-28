@@ -61,6 +61,7 @@
     <File Name="Tests/test_define_with_namespace.php"/>
     <File Name="Tests/test_word_completion_local_variale_1.php"/>
     <File Name="Tests/test_word_completion_local_variable_2.php"/>
+    <File Name="Tests/test_var_assigned_from_require.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>
@@ -156,6 +157,7 @@ PATH=C:\src\codelite\lib\gcc_lib;$PATH]]>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
+        <Target Name="install">make install</Target>
         <RebuildCommand>make clean &amp;&amp; make -j4</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make -j4</BuildCommand>
@@ -163,7 +165,7 @@ PATH=C:\src\codelite\lib\gcc_lib;$PATH]]>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory>$(WorkspacePath)/build-debug</WorkingDirectory>
+        <WorkingDirectory>$(WorkspacePath)/build-debug/</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>

@@ -358,14 +358,14 @@ TEST_FUNC(test_locals)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
 
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
-    
+
     CHECK_SIZE(matches.size(), 3);
     return true;
 }
@@ -377,14 +377,14 @@ TEST_FUNC(test_word_complete_of_aliases)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
-    
+
     CHECK_SIZE(matches.size(), 2);
     return true;
 }
@@ -396,14 +396,14 @@ TEST_FUNC(test_define)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
-    
+
     CHECK_SIZE(matches.size(), 1);
     return true;
 }
@@ -415,14 +415,14 @@ TEST_FUNC(test_define_in_namespace)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
-    
+
     CHECK_SIZE(matches.size(), 1);
     return true;
 }
@@ -434,14 +434,14 @@ TEST_FUNC(test_define_with_namespace)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
-    
+
     CHECK_SIZE(matches.size(), 2);
     return true;
 }
@@ -453,14 +453,14 @@ TEST_FUNC(test_word_completion_local_variale_1)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
-    
+
     CHECK_SIZE(matches.size(), 1);
     return true;
 }
@@ -472,14 +472,32 @@ TEST_FUNC(test_word_completion_local_variable_2)
     sourceFile.SetParseFunctionBody(true);
     sourceFile.Parse();
     lookup.UpdateSourceFile(sourceFile);
-    
+
     PHPExpression expr(sourceFile.GetText());
     PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
     CHECK_BOOL(resolved);
-    
+
     PHPEntityBase::List_t matches;
     expr.Suggest(resolved, lookup, matches);
-    
+
+    CHECK_SIZE(matches.size(), 1);
+    return true;
+}
+
+TEST_FUNC(test_var_assigned_from_require)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_var_assigned_from_require.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
     CHECK_SIZE(matches.size(), 1);
     return true;
 }

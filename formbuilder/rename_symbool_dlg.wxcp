@@ -1433,7 +1433,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LiteEditor:Dialogs:CodeCompletion"
+					"m_path":	"CodeLiteIDE:Dialogs:CodeCompletion"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

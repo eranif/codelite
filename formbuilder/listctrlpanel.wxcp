@@ -411,7 +411,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LiteEditor:Debugger"
+					"m_path":	"CodeLiteIDE:Debugger"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",

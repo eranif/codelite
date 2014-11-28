@@ -1664,7 +1664,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Dialogs:Misc:EditorOptionsDlg:General:Edit"
+     "m_path": "CodeLiteIDE:Dialogs:Misc:EditorOptionsDlg:General:Edit"
     }, {
      "type": "choice",
      "m_label": "Centre:",

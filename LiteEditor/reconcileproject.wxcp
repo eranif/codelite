@@ -72,7 +72,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LiteEditor:ReconcileProject"
+					"m_path":	"CodeLiteIDE:ReconcileProject"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

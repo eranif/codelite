@@ -11193,7 +11193,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Dialogs:ProjectSettings"
+     "m_path": "CodeLiteIDE:Dialogs:ProjectSettings"
     }, {
      "type": "choice",
      "m_label": "Centre:",

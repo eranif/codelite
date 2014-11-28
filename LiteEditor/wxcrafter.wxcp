@@ -78,7 +78,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Dialogs:ProjectManagement"
+     "m_path": "CodeLiteIDE:Dialogs:ProjectManagement"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -777,7 +777,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Controls"
+     "m_path": "CodeLiteIDE:Controls"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -1319,7 +1319,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Docking Windows:BuildTab"
+     "m_path": "CodeLiteIDE:Docking Windows:BuildTab"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -1803,7 +1803,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:wxcrafter"
+     "m_path": "CodeLiteIDE:wxcrafter"
     }, {
      "type": "string",
      "m_label": "Class Decorator",
@@ -2114,7 +2114,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Dialogs:ProjectManagement"
+     "m_path": "CodeLiteIDE:Dialogs:ProjectManagement"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -2700,7 +2700,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Dialogs"
+     "m_path": "CodeLiteIDE:Dialogs"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -3599,7 +3599,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:wxcrafter"
+     "m_path": "CodeLiteIDE:wxcrafter"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -4587,7 +4587,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:src"
+     "m_path": "CodeLiteIDE:src"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -4803,7 +4803,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Docking Windows"
+     "m_path": "CodeLiteIDE:Docking Windows"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -5685,7 +5685,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Editor"
+     "m_path": "CodeLiteIDE:Editor"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -6320,7 +6320,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Dialogs:ProjectManagement"
+     "m_path": "CodeLiteIDE:Dialogs:ProjectManagement"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -8146,7 +8146,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Docking Windows"
+     "m_path": "CodeLiteIDE:Docking Windows"
     }, {
      "type": "choice",
      "m_label": "Centre:",

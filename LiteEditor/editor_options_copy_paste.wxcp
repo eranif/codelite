@@ -78,7 +78,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LiteEditor:Dialogs:Misc:EditorOptionsDlg:General:CopyPaste"
+					"m_path":	"CodeLiteIDE:Dialogs:Misc:EditorOptionsDlg:General:CopyPaste"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

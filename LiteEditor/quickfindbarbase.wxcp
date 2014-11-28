@@ -190,7 +190,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Controls"
+     "m_path": "CodeLiteIDE:Controls"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -745,7 +745,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "LiteEditor:Controls"
+     "m_path": "CodeLiteIDE:Controls"
     }, {
      "type": "string",
      "m_label": "Class Decorator",

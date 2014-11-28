@@ -78,7 +78,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LiteEditor:Dialogs:ProjectManagement"
+					"m_path":	"CodeLiteIDE:Dialogs:ProjectManagement"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

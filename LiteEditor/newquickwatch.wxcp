@@ -78,7 +78,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LiteEditor:Dialogs:Debugger"
+					"m_path":	"CodeLiteIDE:Dialogs:Debugger"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -663,7 +663,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LiteEditor:Dialogs:Debugger"
+					"m_path":	"CodeLiteIDE:Dialogs:Debugger"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

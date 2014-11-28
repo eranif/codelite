@@ -45,7 +45,7 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
 {
     wxStringSet_t files;
     PHPWorkspace::Get()->GetWorkspaceFiles(files);
-
+    m_table.Open(PHPWorkspace::Get()->GetFilename().GetPath());
     m_allFiles.reserve(files.size());
     std::set<wxString>::iterator iter = files.begin();
     for(; iter != files.end(); iter++) {
@@ -154,10 +154,9 @@ void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
 void OpenResourceDlg::DoGetResources(const wxString& filter)
 {
     m_resources.clear();
-    PHPLookupTable table;
-    table.Open(PHPWorkspace::Get()->GetFilename().GetPath());
+    
     PHPEntityBase::List_t matches;
-    table.LoadAllByFilter(matches, filter);
+    m_table.LoadAllByFilter(matches, filter);
     
     // Convert the PHP matches into resources
     PHPEntityBase::List_t::iterator iter = matches.begin();

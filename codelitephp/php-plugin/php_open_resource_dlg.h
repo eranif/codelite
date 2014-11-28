@@ -5,6 +5,7 @@
 #include <vector>
 #include "PHPEntityVariable.h"
 #include "PHPEntityBase.h"
+#include "PHPLookupTable.h"
 
 struct ResourceItem {
     enum { kRI_Invalid = -1, kRI_File, kRI_Class, kRI_Constant, kRI_Function, kRI_Member, kRI_Variable, kRI_Namespace };
@@ -74,7 +75,8 @@ public:
     ResourceVector_t m_allFiles;
     ResourceVector_t m_resources;
     ResourceItem* m_selectedItem;
-
+    PHPLookupTable m_table;
+    
 protected:
     virtual void OnDVItemActivated(wxDataViewEvent& event);
     

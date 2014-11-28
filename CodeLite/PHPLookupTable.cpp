@@ -11,7 +11,7 @@ wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_PROGRESS, clParseEvent);
 
-static wxString PHP_SCHEMA_VERSION = "7.0.5";
+static wxString PHP_SCHEMA_VERSION = "7.0.6";
 
 //------------------------------------------------
 // Metadata table

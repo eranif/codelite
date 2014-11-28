@@ -18,6 +18,7 @@ Usability:
 - Function calltip should include the return value
 - Allow user to define a deployment folder for his files 
   (in addition to the SFTP, it should also allow user to copy files by simply saving them)
+- Add support for laravel wizard
 
 NICE TO HAVE: 
 

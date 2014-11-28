@@ -47,6 +47,7 @@ enum {
 // Class flags
 enum {
     kClass_Interface = (1 << 1),
+    kClass_Trait = (1 << 2),
 };
 
 class WXDLLIMPEXP_CL PHPEntityBase
@@ -55,7 +56,7 @@ public:
     typedef SmartPtr<PHPEntityBase> Ptr_t;
     typedef std::list<PHPEntityBase::Ptr_t> List_t;
     typedef std::map<wxString, PHPEntityBase::Ptr_t> Map_t;
-    
+
 protected:
     PHPEntityBase::Map_t m_childrenMap;
     PHPEntityBase::List_t m_children;

@@ -143,11 +143,18 @@ void PHPSourceFile::Parse(int exitDepth)
             break;
         case kPHP_T_USE:
             // Found outer 'use' statement - construct the alias table
-            OnUse();
+            if(Class()) {
+                // inside a class, this means that this is a 'use <trait>;'
+                OnUseTrait();
+            } else {
+                // alias table
+                OnUse();
+            }
             m_lookBackTokens.clear();
             break;
         case kPHP_T_CLASS:
         case kPHP_T_INTERFACE:
+        case kPHP_T_TRAIT:
             // Found class
             OnClass(token);
             m_lookBackTokens.clear();
@@ -696,6 +703,7 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
     PHPEntityClass* pClass = klass->Cast<PHPEntityClass>();
     // Is the class an interface?
     pClass->SetIsInterface(tok.type == kPHP_T_INTERFACE);
+    pClass->SetIsTrait(tok.type == kPHP_T_TRAIT);
     pClass->SetFullName(MakeIdentifierAbsolute(token.text));
     pClass->SetLine(token.lineNumber);
 
@@ -789,7 +797,7 @@ bool PHPSourceFile::ReadExpression(wxString& expression)
         case kPHP_T_REQUIRE_ONCE:
             expression.clear();
             return false;
-            
+
         case kPHP_T_C_COMMENT:
         case kPHP_T_CXX_COMMENT:
             // skip comments
@@ -990,4 +998,39 @@ void PHPSourceFile::OnDefine(const phpLexerToken& tok)
     }
     // Always consume the 'define' statement
     ConsumeUntil(';');
+}
+
+void PHPSourceFile::OnUseTrait()
+{
+    PHPEntityBase::Ptr_t clas = CurrentScope();
+    if(!clas) return;
+    
+    // Collect the identifiers followed the 'use' statement
+    wxArrayString identifiers;
+    wxString tempname;
+    phpLexerToken token;
+    while(NextToken(token)) {
+        switch(token.type) {
+        case ',': {
+            if(!tempname.IsEmpty()) {
+                identifiers.Add(MakeIdentifierAbsolute(tempname));
+            }
+            tempname.clear();
+        }
+        break;
+        case ';': {
+            if(!tempname.IsEmpty()) {
+                identifiers.Add(MakeIdentifierAbsolute(tempname));
+            }
+            tempname.clear();
+            
+            // add the traits as list of 'extends'
+            clas->Cast<PHPEntityClass>()->SetTraits(identifiers);
+            return;
+        } break;
+        default:
+            tempname << token.text;
+            break;
+        }
+    }
 }

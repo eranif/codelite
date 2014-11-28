@@ -502,11 +502,58 @@ TEST_FUNC(test_var_assigned_from_require)
     return true;
 }
 
+TEST_FUNC(test_simple_trait)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_simple_trait.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPEntityBase::Ptr_t tr = lookup.FindClass("\\test_simple_trait");
+    CHECK_BOOL(tr);
+    return true;
+}
+
+TEST_FUNC(test_use_trait)
+{
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_use_trait.php"));
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 2);
+    return true;
+}
+
+//======================-------------------------------------------------
+// Main
+//======================-------------------------------------------------
+
+static const wxString PERFORMANCE_CODE = 
+"<?php\n"
+"$app = new \\Illuminate\\Foundation\\Application();\n"
+"$app->";
+
 int main(int argc, char** argv)
 {
 #if 0
-    PHPExpression expr("<?php wx\\msg");
-    wxPrintf("%s\n", expr.GetExpressionAsString());
+    PHPLookupTable table;
+    table.Open("/home/eran/laravel-test/");
+    for(size_t i=0; i<100; ++i) {
+        PHPExpression expr(PERFORMANCE_CODE);
+        PHPEntityBase::Ptr_t resolved = expr.Resolve(table, "buildin.php");
+        if(resolved) {
+            PHPEntityBase::List_t matches;
+            expr.Suggest(resolved, table, matches);
+        }
+    }
 #else
     wxFileName symbolsDBPath(SYMBOLS_DB_PATH, "phpsymbols.db");
     symbolsDBPath.Normalize();

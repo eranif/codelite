@@ -19,7 +19,6 @@ public:
     virtual void Store(wxSQLite3Database& db);
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;
-    
 
     /**
      * @brief return an array of inheritance (extends, implementes and traits)
@@ -36,10 +35,12 @@ public:
     const wxArrayString& GetTraits() const { return m_traits; }
     wxString GetImplementsAsString() const { return ::wxJoin(m_implements, ';'); }
     wxString GetTraitsAsString() const { return ::wxJoin(m_traits, ';'); }
-    
+
     // Aliases
     void SetIsInterface(bool b) { SetFlag(kClass_Interface, b); }
     bool IsInterface() const { return HasFlag(kClass_Interface); }
+    void SetIsTrait(bool b) { SetFlag(kClass_Trait, b); }
+    bool IsTrait() const { return HasFlag(kClass_Trait); }
 };
 
 #endif // PHPENTITYCLASSIMPL_H

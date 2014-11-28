@@ -75,7 +75,12 @@ protected:
      * @brief parse 'use' statements (outer scope, for aliasing)
      */
     void OnUse();
-
+    
+    /**
+     * @brief parse 'use' statements inside class (usually this is done for 'traits')
+     */
+    void OnUseTrait();
+    
     /**
      * @brief 'namespace' keyword found
      */

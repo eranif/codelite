@@ -62,6 +62,8 @@
     <File Name="Tests/test_word_completion_local_variale_1.php"/>
     <File Name="Tests/test_word_completion_local_variable_2.php"/>
     <File Name="Tests/test_var_assigned_from_require.php"/>
+    <File Name="Tests/test_simple_trait.php"/>
+    <File Name="Tests/test_use_trait.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>

@@ -282,11 +282,6 @@ CodeLiteApp::~CodeLiteApp(void)
 
 bool CodeLiteApp::OnInit()
 {
-    // Set the log file verbosity
-    FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
-    CL_DEBUG(wxT("Starting codelite..."));
-
-
 #if defined(__WXGTK__) || defined(__WXMAC__)
 
     // block signal pipe
@@ -394,6 +389,10 @@ bool CodeLiteApp::OnInit()
     if(parser.Found(wxT("d"), &newDataDir)) {
         clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
+
+    // Set the log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging CodeLite itself :/
+    FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
+    CL_DEBUG(wxT("Starting codelite..."));
 
     // Copy gdb pretty printers from the installation folder to a writeable location
     // this is  needed because python complies the files and in most cases the user

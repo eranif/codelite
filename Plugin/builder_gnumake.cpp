@@ -1185,6 +1185,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << wxT("ProjectName            :=") << projectName << wxT("\n");
     text << wxT("ConfigurationName      :=") << name << wxT("\n");
     text << wxT("WorkspacePath          := \"") << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxT("\"\n");
+    text << wxT("CompilerName           :=") << cmp->GetTool(wxT("LinkerName")).AfterLast('/') << wxT("\n");
+    text << wxT("DependsPath            :=$(WorkspacePath)/.deps/$(CompilerPrefix)") << wxT("\n");
     text << wxT("ProjectPath            := \"") << proj->GetFileName().GetPath() << wxT("\"\n");
     text << wxT("IntermediateDirectory  :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
     text << wxT("OutDir                 := $(IntermediateDirectory)\n");

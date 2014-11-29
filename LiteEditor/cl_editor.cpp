@@ -1509,24 +1509,29 @@ void LEditor::CompleteWord(bool onlyRefresh)
 // the '.', '->' operator and to display a popup menu with
 // list of possible matches
 //------------------------------------------------------------------
-void LEditor::CodeComplete()
+void LEditor::CodeComplete(bool refreshingList)
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
     if(AutoCompActive()) return; // Don't clobber the boxes..
+    
+    if(!refreshingList) {
+        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
+        evt.SetPosition(GetCurrentPosition());
+        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+        evt.SetEventObject(this);
+        evt.SetEditor(this);
 
-    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
-    evt.SetPosition(GetCurrentPosition());
-    evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    evt.SetEventObject(this);
-    evt.SetEditor(this);
+        if(EventNotifier::Get()->ProcessEvent(evt))
+            // the plugin handled the code-complete request
+            return;
 
-    if(EventNotifier::Get()->ProcessEvent(evt))
-        // the plugin handled the code-complete request
-        return;
+        else {
+            // let the built-in context do the job
+            m_context->CodeComplete();
+        }
 
-    else {
-        // let the built-in context do the job
-        m_context->CodeComplete();
+    } else {
+        CompleteWord();
     }
 }
 

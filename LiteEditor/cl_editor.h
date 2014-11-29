@@ -299,11 +299,15 @@ public:
     const wxString& GetProject() const { return m_project; }
     // Set the project name
     void SetProject(const wxString& proj) { m_project = proj; }
-
-    // Attempt to display a list of members
-    // after a '.' or '->' operator has been inserted into
-    // the code
-    void CodeComplete();
+    
+    /**
+     * @brief attempt to code complete the expression up until the caret position
+     * @param refreshingList when set to true, it means that the 'CodeComplete' was invoked
+     * by the code completion box itself in attempt to request new items for the list
+     * This feature is only supported internally for C++ and is not exposed to plugins
+     * i.e. the event wxEVT_CC_CODE_COMPLETE is fired only when refreshingList == false
+     */
+    void CodeComplete(bool refreshingList = false);
 
     // User clicked Ctrl+.
     void GotoDefinition();

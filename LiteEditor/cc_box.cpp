@@ -295,9 +295,27 @@ bool CCBox::SelectWord(const wxString& word)
         }
 
     } else {
-        // Clear the selection
-        if(m_selectedItem != wxNOT_FOUND) {
+        // Before we dismiss the code completion box, test to see if the cause
+        // of the 'no-match' is due to typo
+        bool typoError = false;
+        if(word.length() > 1) {
+            wxString word2 = word.Mid(0, word.length()-1);
+            long where = m_listCtrl->FindMatch(word2, fullMatch);
+            if(where != wxNOT_FOUND) {
+                typoError = true;
+            }
+        }
+        
+        if(typoError) {
+            // typo error, just unselect the match
             m_listCtrl->Select(m_selectedItem, false);
+        } else {
+            // Not a typo, the match does not exist in the results
+            // hide the code completion box
+            if(m_editor) {
+                m_editor->CallAfter(&LEditor::CodeComplete, true);
+            }
+            HideCCBox();
         }
         return false;
     }

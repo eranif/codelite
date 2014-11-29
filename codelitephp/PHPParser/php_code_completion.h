@@ -99,6 +99,18 @@ public:
      * @brief close the lookup database
      */
     void Close();
+    
+    /**
+     * @brief called by the PHP symbols cache job.
+     * This is to optimize the searching the database (loading the symbols into the 
+     * memory forces a kernel caching)
+     */
+    void OnSymbolsCached();
+    
+    /**
+     * @brief same as the above function, but the caching went bad...
+     */
+    void OnSymbolsCacheError();
 };
 
 #endif // PHPCODECOMPLETION_H

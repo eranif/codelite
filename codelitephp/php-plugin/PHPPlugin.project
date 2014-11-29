@@ -96,6 +96,8 @@
     <File Name="PHPLocator.cpp"/>
     <File Name="PHPLint.h"/>
     <File Name="PHPLint.cpp"/>
+    <File Name="PHPSymbolsCacher.h"/>
+    <File Name="PHPSymbolsCacher.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="php.h"/>

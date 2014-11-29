@@ -82,6 +82,10 @@ JSONElement TweaksSettings::ToJSON() const
 TweaksSettings& TweaksSettings::Load()
 {
     // Get the file name
+    if(!WorkspaceST::Get()->IsOpen()) {
+        return *this;
+    }
+    
     wxFileName fn(WorkspaceST::Get()->GetPrivateFolder(), "tweaks.conf");
     clConfig conf( fn.GetFullPath() );
     conf.ReadItem( this );
@@ -90,6 +94,9 @@ TweaksSettings& TweaksSettings::Load()
 
 void TweaksSettings::Save()
 {
+    if(!WorkspaceST::Get()->IsOpen()) {
+        return;
+    }
     wxFileName fn(WorkspaceST::Get()->GetPrivateFolder(), "tweaks.conf");
     clConfig conf( fn.GetFullPath() );
     conf.WriteItem( this );

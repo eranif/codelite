@@ -19,6 +19,9 @@
 #include "php_parser_thread.h"
 #include "macros.h"
 #include "PHPEntityClass.h"
+#include "jobqueue.h"
+#include <wx/log.h>
+#include "PHPSymbolsCacher.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -521,6 +524,12 @@ void PHPCodeCompletion::Open(const wxFileName& workspaceFile)
 {
     Close();
     m_lookupTable.Open(workspaceFile.GetPath());
+    
+    // Cache the symbols into the OS caching, this is done by simply reading the entire file content and 
+    // then closing it
+    wxFileName fnDBFile(workspaceFile.GetPath(), "phpsymbols.db");
+    fnDBFile.AppendDir(".codelite");
+    JobQueueSingleton::Instance()->PushJob(new PHPSymbolsCacher(this, fnDBFile.GetFullPath()));
 }
 
 void PHPCodeCompletion::Close()
@@ -565,4 +574,14 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
             }
         }
     }
+}
+
+void PHPCodeCompletion::OnSymbolsCached()
+{
+    wxLogMessage("PHP Symbols cached into OS cache");
+}
+
+void PHPCodeCompletion::OnSymbolsCacheError()
+{
+    wxLogMessage("Error encountered while caching PHP symbols");
 }

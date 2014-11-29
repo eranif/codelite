@@ -877,7 +877,28 @@ bool Workspace::IsVirtualDirectoryExists(const wxString& vdFullPath)
 
 wxString Workspace::GetPrivateFolder() const
 {
-    return (wxString() << GetWorkspaceFileName().GetPath() << wxFILE_SEP_PATH << ".codelite");
+    wxFileName workspacePath;
+    if(IsOpen()) {
+        workspacePath = GetWorkspaceFileName();
+    } else {
+        // try maybe the workspace is opened by a plugin
+        clCommandEvent event(wxEVT_CMD_IS_WORKSPACE_OPEN);
+        event.SetAnswer(false);
+        EventNotifier::Get()->ProcessEvent(event);
+        if(event.IsAnswer()) {
+            workspacePath = event.GetFileName();
+        }
+    }
+    if(workspacePath.Exists()) {
+        // append the .codelite folder
+        workspacePath.AppendDir(".codelite");
+        
+        // ensure the path exists
+        workspacePath.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        
+        return workspacePath.GetPath();
+    }
+    return "";
 }
 
 wxFileName Workspace::GetTagsFileName() const

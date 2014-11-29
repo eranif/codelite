@@ -5798,8 +5798,6 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
             menu->Append(winid, iter->second.first);
         }
 
-    } else {
-        wxLogMessage("Could not locate build configuration for project: " + WorkspaceST::Get()->GetActiveProjectName());
     }
 }
 

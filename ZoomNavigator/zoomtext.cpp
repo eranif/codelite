@@ -149,5 +149,7 @@ void ZoomText::HighlightLines(int start, int end)
 void ZoomText::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    UpdateLexer(m_filename);
+    if(!m_filename.IsEmpty()) {
+        UpdateLexer(m_filename);
+    }
 }

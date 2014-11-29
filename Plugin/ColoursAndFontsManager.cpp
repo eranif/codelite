@@ -384,6 +384,8 @@ wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
 
 LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filename) const
 {
+    if(filename.IsEmpty()) return GetLexer("text");
+    
     wxFileName fnFileName(filename);
     wxString fileNameLowercase = fnFileName.GetFullName();
     fileNameLowercase.MakeLower();

@@ -295,9 +295,10 @@ bool CCBox::SelectWord(const wxString& word)
         }
 
     } else {
-        // When there is no match and the list box is of type "Keywords"
-        // hide it...
-        HideCCBox();
+        // Clear the selection
+        if(m_selectedItem != wxNOT_FOUND) {
+            m_listCtrl->Select(m_selectedItem, false);
+        }
         return false;
     }
 

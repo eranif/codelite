@@ -1073,7 +1073,7 @@ void clMainFrame::CreateGUIControls(void)
                       .MaximizeButton());
     RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
-    long show_nav = EditorConfigST::Get()->GetInteger(wxT("ShowNavBar"), 1);
+    long show_nav = EditorConfigST::Get()->GetInteger(wxT("ShowNavBar"), 0);
     if(!show_nav) {
         m_mainBook->ShowNavBar(false);
     }

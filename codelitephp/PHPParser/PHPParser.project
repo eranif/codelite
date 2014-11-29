@@ -68,6 +68,8 @@
     <File Name="PHPRefactoring.cpp"/>
     <File Name="PHPSetterGetterEntry.h"/>
     <File Name="PHPSetterGetterEntry.cpp"/>
+    <File Name="PHPSymbolsCacher.cpp"/>
+    <File Name="PHPSymbolsCacher.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Workspace">
     <File Name="php_project.cpp"/>

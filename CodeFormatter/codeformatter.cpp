@@ -683,10 +683,10 @@ bool CodeFormatter::BatchFormat(const std::vector<wxFileName>& files)
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
 
     if(options.GetEngine() == kFormatEngineAStyle) {
-        AStyleBatchFOrmat(files, options);
+        return AStyleBatchFOrmat(files, options);
 
     } else if(options.GetEngine() == kFormatEngineClangFormat) {
-        ClangBatchFormat(files, options);
+        return ClangBatchFormat(files, options);
     }
 }
 
@@ -766,6 +766,7 @@ bool CodeFormatter::AStyleBatchFOrmat(const std::vector<wxFileName>& files, cons
             CL_WARNING("Failed to write file content. File: %s", files.at(i).GetFullPath());
         }
     }
+    return true;
 }
 
 bool CodeFormatter::PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options)

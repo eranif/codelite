@@ -215,7 +215,6 @@ protected:
     BOM m_fileBom;
     int m_positionToEnsureVisible;
     bool m_preserveSelection;
-    bool m_fullLineCopyCut;
     std::vector<std::pair<int, int> > m_savedMarkers;
     bool m_findBookmarksActive;
     std::map<int, wxString> m_compilerMessagesMap;
@@ -244,11 +243,6 @@ public:
     clEditorTipWindow* GetFunctionTip() { return m_functionTip; }
 
     bool IsFocused() const;
-
-    void SetFullLineCopyCut(bool fullLineCopyCut) { this->m_fullLineCopyCut = fullLineCopyCut; }
-
-    bool IsFullLineCopyCut() const { return m_fullLineCopyCut; }
-
     CLCommandProcessor& GetCommandsProcessor() { return m_commandsProcessor; }
 
 public:

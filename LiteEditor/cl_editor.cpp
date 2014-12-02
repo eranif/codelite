@@ -169,7 +169,6 @@ LEditor::LEditor(wxWindow* parent)
     , m_isFocused(true)
     , m_pluginInitializedRMenu(false)
     , m_positionToEnsureVisible(wxNOT_FOUND)
-    , m_fullLineCopyCut(false)
     , m_findBookmarksActive(false)
 {
     m_commandsProcessor.SetParent(this);

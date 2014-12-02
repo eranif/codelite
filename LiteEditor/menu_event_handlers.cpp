@@ -44,68 +44,13 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     bool isSelectionEmpty = editor->GetSelectedText().IsEmpty();
     
     if (event.GetId() == wxID_COPY) {
-        
-        // reset the 'full line' copy/cut flag
-        editor->SetFullLineCopyCut(false);
-        
-        if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyNothing) ) {
-            // do nothing
-            
-        } else if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyLineIfLineNotEmpty ) ) {
-            // Copy the line content only when the caret line is not empty
-            int lineNumber = editor->GetCurrentLine();
-            wxString lineContent = editor->GetLine(lineNumber);
-            if ( !lineContent.Trim().Trim(false).IsEmpty() ) {
-                editor->CopyAllowLine();
-                editor->SetFullLineCopyCut(true);
-            }
-        } else if ( isSelectionEmpty ) {
-            // default behavior
-            editor->CopyAllowLine();
-            editor->SetFullLineCopyCut(true);
-
-        } else {
-            editor->Copy();
-        }
+        editor->CopyAllowLine();
 
     } else if (event.GetId() == wxID_CUT) {
+        editor->Cut();
         
-        // reset the 'full line' copy/cut flag
-        editor->SetFullLineCopyCut(false);
-        
-        if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyNothing) ) {
-            // do nothing
-            
-        } else if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyLineIfLineNotEmpty ) ) {
-            // Copy the line content only when the caret line is not empty
-            int lineNumber = editor->GetCurrentLine();
-            wxString lineContent = editor->GetLine(lineNumber);
-            if ( !lineContent.Trim().Trim(false).IsEmpty() ) {
-                editor->CopyAllowLine();
-                editor->LineDelete();
-                editor->SetFullLineCopyCut(true);
-            }
-        } else if ( isSelectionEmpty ) {
-            
-            // default behavior
-            editor->CopyAllowLine();
-            editor->LineDelete();
-            editor->SetFullLineCopyCut(true);
-        
-        } else {
-            editor->Cut();
-        }
-
     } else if (event.GetId() == wxID_PASTE) {
-        if ( editor->IsFullLineCopyCut() ) {
-            // paste one line above the caret
-            editor->PasteLineAbove();
-            
-        } else {
-            // paste at caret position
-            editor->Paste();
-            
-        }
+        editor->Paste();
 
     } else if (event.GetId() == wxID_UNDO) {
         if (editor->GetCommandsProcessor().CanUndo()) {

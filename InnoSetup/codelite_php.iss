@@ -200,3 +200,62 @@ begin
 end;
 
 
+//--------------------
+// Uninstall
+//--------------------
+
+function GetUninstallString(): String;
+var
+  sUnInstPath: String;
+  sUnInstallString: String;
+begin
+  sUnInstPath := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\CodeLite_is1';
+  sUnInstallString := '';
+  if not RegQueryStringValue(HKLM, sUnInstPath, 'UninstallString', sUnInstallString) then
+    RegQueryStringValue(HKCU, sUnInstPath, 'UninstallString', sUnInstallString);
+  Result := sUnInstallString;
+end;
+
+function UnInstallOldVersion(): Integer;
+var
+  sUnInstallString: String;
+  sUnInstallStringOld: String;
+  iResultCode: Integer;
+begin
+    // Return Values:
+    // 1 - uninstall string is empty
+    // 2 - error executing the UnInstallString
+    // 3 - successfully executed the UnInstallString
+
+  // default return value
+  Result := 0;
+  sUnInstallString    := GetUninstallString();
+  if sUnInstallString <> '' then begin
+    sUnInstallString := RemoveQuotes(sUnInstallString);
+    if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+      Result := 3
+    else
+      Result := 2;
+  end else
+    Result := 1;
+end;
+
+function IsUpgrade(): Boolean;
+begin
+  Result := (GetUninstallString() <> '');
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ResultCode: Integer;
+begin
+    case CurStep of
+    ssInstall:
+        begin
+          if (IsUpgrade()) then
+            begin
+              UnInstallOldVersion();
+            end;
+        end;
+    end;
+end;

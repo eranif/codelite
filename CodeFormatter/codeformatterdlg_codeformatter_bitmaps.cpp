@@ -218,11 +218,11 @@ void wxCrafterGgLOZbInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$astyle.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$clang.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._LiteEditor_res_configure.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._codelite-icons_mime_16_page_white_cplusplus.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._codelite-icons_mime_16_php.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_eran_devl_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"), xml_res_file_5, xml_res_size_5, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$_home_eran_devl_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$astyle.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$clang.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._LiteEditor_res_configure.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._codelite-icons_mime_16_page_white_cplusplus.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$.._codelite-icons_mime_16_php.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$C__src_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"), xml_res_file_5, xml_res_size_5, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/codeformatterdlg_codeformatter_bitmaps.cpp$C__src_codelite_CodeFormatter_codeformatterdlg_codeformatter_bitmaps.xrc"));
 }

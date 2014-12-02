@@ -39,11 +39,15 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_panel133ImgIndex = m_treebook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("configure")));
     m_treebook->AddPage(m_panel133, _("General"), true, m_panel133ImgIndex);
     
+    wxBoxSizer* boxSizer179 = new wxBoxSizer(wxVERTICAL);
+    m_panel133->SetSizer(boxSizer179);
+    
     wxFlexGridSizer* flexGridSizer158 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer158->SetFlexibleDirection( wxBOTH );
     flexGridSizer158->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer158->AddGrowableCol(1);
-    m_panel133->SetSizer(flexGridSizer158);
+    
+    boxSizer179->Add(flexGridSizer158, 1, wxALL|wxEXPAND, 2);
     
     m_staticText162 = new wxStaticText(m_panel133, wxID_ANY, _("Format editor on file save:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -97,7 +101,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrAstyleIntArr);
     m_pgMgrAstyle = new wxPropertyGridManager(m_splitterPage149, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer155->Add(m_pgMgrAstyle, 1, wxEXPAND, 5);
+    boxSizer155->Add(m_pgMgrAstyle, 1, wxALL|wxEXPAND, 2);
     
     m_pgPropAstyleOptions = m_pgMgrAstyle->Append(  new wxPropertyCategory( _("AStyle Options") ) );
     m_pgPropAstyleOptions->SetHelpString(wxT(""));
@@ -176,7 +180,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     wxBoxSizer* bCustomSettingsSizer = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer155->Add(bCustomSettingsSizer, 0, wxEXPAND, 0);
+    boxSizer155->Add(bCustomSettingsSizer, 0, wxALL|wxEXPAND, 2);
     
     wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -241,7 +245,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlPreview->SetKeyWords(3, wxT(""));
     m_textCtrlPreview->SetKeyWords(4, wxT(""));
     
-    boxSizer157->Add(m_textCtrlPreview, 1, wxEXPAND, 5);
+    boxSizer157->Add(m_textCtrlPreview, 1, wxALL|wxEXPAND, 2);
     
     m_panelClang = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     int m_panelClangImgIndex;
@@ -268,13 +272,15 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrClangIntArr);
     m_pgMgrClang = new wxPropertyGridManager(m_splitterPage169, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer175->Add(m_pgMgrClang, 1, wxEXPAND, 5);
+    boxSizer175->Add(m_pgMgrClang, 1, wxALL|wxEXPAND, 2);
     
     m_pgPropClangFormat = m_pgMgrClang->Append(  new wxPropertyCategory( _("ClangFormat Options") ) );
     m_pgPropClangFormat->SetHelpString(wxT(""));
     
     m_pgPropClangFormatExePath = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
+    #ifndef __WXOSX__
     m_pgMgrClang->SetPropertyAttribute(m_pgPropClangFormatExePath, wxPG_FILE_WILDCARD, wxT(""));
+    #endif // __WXOSX__
     m_pgPropClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
     
     m_pgPropColumnLimit = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxIntProperty( _("Column Limit"), wxPG_LABEL, 0) );
@@ -395,7 +401,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlPreview_Clang->SetKeyWords(3, wxT(""));
     m_textCtrlPreview_Clang->SetKeyWords(4, wxT(""));
     
-    boxSizer177->Add(m_textCtrlPreview_Clang, 1, wxEXPAND, 5);
+    boxSizer177->Add(m_textCtrlPreview_Clang, 1, wxALL|wxEXPAND, 2);
     
     m_panelPHP = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     int m_panelPHPImgIndex;
@@ -422,7 +428,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrPhpIntArr);
     m_pgMgrPhp = new wxPropertyGridManager(m_splitterPage123, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer129->Add(m_pgMgrPhp, 1, wxEXPAND, 5);
+    boxSizer129->Add(m_pgMgrPhp, 1, wxALL|wxEXPAND, 2);
     
     m_pgPropPhpFormatter = m_pgMgrPhp->Append(  new wxPropertyCategory( _("PHP") ) );
     m_pgPropPhpFormatter->SetHelpString(_("PHP related settings"));
@@ -486,7 +492,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stcPhpPreview->SetKeyWords(3, wxT(""));
     m_stcPhpPreview->SetKeyWords(4, wxT(""));
     
-    boxSizer131->Add(m_stcPhpPreview, 1, wxEXPAND, 5);
+    boxSizer131->Add(m_stcPhpPreview, 1, wxALL|wxEXPAND, 2);
     
     wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
     
@@ -510,6 +516,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer30->AddButton(m_buttonHelp);
     m_stdBtnSizer30->Realize();
     
+    m_treebook->ExpandNode( 0, true );
     m_treebook->ExpandNode( 1, true );
     m_treebook->ExpandNode( 2, true );
     m_treebook->ExpandNode( 3, true );

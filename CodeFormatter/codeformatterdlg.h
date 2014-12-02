@@ -40,15 +40,18 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
     IManager* m_mgr;
 
 protected:
+    virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event);
+    virtual void OnFormatOnSave(wxCommandEvent& event);
+    virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event);
+    virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event);
+    virtual void OnPgmgrphpPgChanged(wxPropertyGridEvent& event);
     virtual void OnApply(wxCommandEvent& event);
     virtual void OnCustomAstyleFlags(wxCommandEvent& event);
     virtual void OnApplyUI(wxUpdateUIEvent& event);
-    virtual void OnAStylePropertyChanged(wxPropertyGridEvent& event);
     void OnOK(wxCommandEvent& e);
     void OnHelp(wxCommandEvent& e);
     void InitDialog();
     void UpdatePreview();
-    void ExpandCollapsUneededOptions();
 
 public:
     /** Constructor */

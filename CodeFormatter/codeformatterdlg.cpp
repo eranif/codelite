@@ -69,7 +69,10 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     , m_isDirty(false)
     , m_mgr(mgr)
 {
-    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgrAstyle->GetGrid());
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgrClang->GetGrid());
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgrPhp->GetGrid());
+
     // center the dialog
     Centre();
 
@@ -78,14 +81,17 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     GetSizer()->Fit(this);
     InitDialog();
     UpdatePreview();
-    ExpandCollapsUneededOptions();
-    
-    // If the current file is PHP, select the PHP preview tab
+
+    // set the selection based on the editor
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {
-        m_notebook65->SetSelection(1);
+        m_treebook->SetSelection(4);
+    } else if(editor && FileExtManager::IsCxxFile(editor->GetFileName())) {
+        m_treebook->SetSelection(1);
+    } else {
+        m_treebook->SetSelection(0);
     }
-    
+
     WindowAttrManager::Load(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
 }
 
@@ -122,6 +128,7 @@ void CodeFormatterDlg::InitDialog()
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer("C++");
     if(lexer) {
         lexer->Apply(m_textCtrlPreview, true);
+        lexer->Apply(m_textCtrlPreview_Clang, true);
     }
 
     LexerConf::Ptr_t phpLexer = EditorConfigST::Get()->GetLexer("php");
@@ -129,10 +136,11 @@ void CodeFormatterDlg::InitDialog()
         phpLexer->Apply(m_stcPhpPreview, true);
     }
     m_textCtrlPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
+    m_textCtrlPreview_Clang->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
     m_stcPhpPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
 
     // Select the proper engine
-    m_pgPropEngine->SetValueFromInt((int)m_options.GetEngine());
+    m_choiceCxxEngine->SetSelection((int)m_options.GetEngine());
 
     //------------------------------------------------------------------
     // Clang options
@@ -159,10 +167,10 @@ void CodeFormatterDlg::InitDialog()
 
     // PHP flags
     m_pgPropPhpFormatterOptions->SetValue((int)m_options.GetPHPFormatterOptions());
-    
+
     // General Options
-    m_pgPropAutoSave->SetValue(m_options.HasFlag(kCF_AutoFormatOnFileSave));
-    
+    m_checkBoxFormatOnSave->SetValue(m_options.HasFlag(kCF_AutoFormatOnFileSave));
+
     // User custom flags
     m_textCtrlUserFlags->ChangeValue(m_options.GetCustomFlags());
 }
@@ -200,32 +208,35 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 
 void CodeFormatterDlg::UpdatePreview()
 {
-    // C++ preview
-    FormatterEngine engine = (FormatterEngine)m_pgPropEngine->GetValue().GetInteger();
     wxString output;
-    if(engine == kFormatEngineAStyle) {
-        m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
-
-    } else {
-        m_cf->ClangPreviewFormat(m_sampleCode, output, m_options);
-    }
-    m_textCtrlPreview->SetEditable(true);
-
     {
+        // Astyle
+        output.Clear();
+        m_cf->AstyleFormat(m_sampleCode, m_options.AstyleOptionsAsString(), output);
+        m_textCtrlPreview->SetEditable(true);
         clSTCLineKeeper lk(m_textCtrlPreview);
         m_textCtrlPreview->SetText(output);
+        m_textCtrlPreview->SetEditable(false);
     }
-    m_textCtrlPreview->SetEditable(false);
 
-    // PHP preview
-    output.Clear();
-    m_cf->PhpFormat(PHPSample, output, m_options);
-    m_stcPhpPreview->SetEditable(true);
     {
+        // Clang
+        output.Clear();
+        m_cf->ClangPreviewFormat(m_sampleCode, output, m_options);
+        m_textCtrlPreview_Clang->SetEditable(true);
+        clSTCLineKeeper lk(m_textCtrlPreview_Clang);
+        m_textCtrlPreview_Clang->SetText(output);
+        m_textCtrlPreview_Clang->SetEditable(false);
+    }
+    {
+        // PHP preview
+        output.Clear();
+        m_cf->PhpFormat(PHPSample, output, m_options);
+        m_stcPhpPreview->SetEditable(true);
         clSTCLineKeeper lk(m_stcPhpPreview);
         m_stcPhpPreview->SetText(output);
+        m_stcPhpPreview->SetEditable(false);
     }
-    m_stcPhpPreview->SetEditable(false);
 }
 
 CodeFormatterDlg::~CodeFormatterDlg()
@@ -233,10 +244,25 @@ CodeFormatterDlg::~CodeFormatterDlg()
     WindowAttrManager::Save(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
 }
 
-void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
+void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
+
+void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
+{
+    event.Skip();
+    m_isDirty = true;
+}
+
+void CodeFormatterDlg::OnApply(wxCommandEvent& event)
+{
+    m_isDirty = false;
+    m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
+    m_mgr->GetConfigTool()->WriteObject(wxT("FormatterOptions"), &m_options);
+    UpdatePreview();
+}
+
+void CodeFormatterDlg::OnPgmgrastylePgChanged(wxPropertyGridEvent& event)
 {
     m_isDirty = true;
-
     size_t options(0);
     // Build the options
 
@@ -271,9 +297,12 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     options |= m_pgPropIndentation->GetValue().GetInteger();
     m_options.SetOption(options);
 
-    // Save the selected engine
-    m_options.SetEngine((FormatterEngine)m_pgPropEngine->GetValue().GetInteger());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
+}
 
+void CodeFormatterDlg::OnPgmgrclangPgChanged(wxPropertyGridEvent& event)
+{
+    m_isDirty = true;
     // Save clang options
     size_t clangOptions(0);
     clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
@@ -283,42 +312,26 @@ void CodeFormatterDlg::OnAStylePropertyChanged(wxPropertyGridEvent& event)
     m_options.SetClangFormatExe(m_pgPropClangFormatExePath->GetValueAsString());
     m_options.SetClangColumnLimit(m_pgPropColumnLimit->GetValue().GetInteger());
 
-    // save php options
-    m_options.SetPHPFormatterOptions(m_pgPropPhpFormatterOptions->GetValue().GetInteger());
-    
-    // Save general options
-    m_options.SetFlag(kCF_AutoFormatOnFileSave, m_pgPropAutoSave->GetValue().GetBool());
-    
-    // Check the active engine
-    ExpandCollapsUneededOptions();
     CallAfter(&CodeFormatterDlg::UpdatePreview);
 }
 
-void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
-
-void CodeFormatterDlg::OnCustomAstyleFlags(wxCommandEvent& event)
+void CodeFormatterDlg::OnPgmgrphpPgChanged(wxPropertyGridEvent& event)
 {
-    event.Skip();
     m_isDirty = true;
+    // save php options
+    m_options.SetPHPFormatterOptions(m_pgPropPhpFormatterOptions->GetValue().GetInteger());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
 }
 
-void CodeFormatterDlg::OnApply(wxCommandEvent& event)
+void CodeFormatterDlg::OnChoicecxxengineChoiceSelected(wxCommandEvent& event)
 {
-    m_isDirty = false;
-    m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
-    m_mgr->GetConfigTool()->WriteObject(wxT("FormatterOptions"), &m_options);
-    UpdatePreview();
+    m_isDirty = true;
+    m_options.SetEngine((FormatterEngine)event.GetSelection());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
 }
 
-void CodeFormatterDlg::ExpandCollapsUneededOptions()
+void CodeFormatterDlg::OnFormatOnSave(wxCommandEvent& event)
 {
-    wxString engine = m_pgPropEngine->GetValueAsString();
-    if(engine == "AStyle") {
-        m_pgMgr->Collapse(m_pgPropClangFormat);
-        m_pgMgr->Expand(m_pgPropAstyleOptions);
-
-    } else {
-        m_pgMgr->Expand(m_pgPropClangFormat);
-        m_pgMgr->Collapse(m_pgPropAstyleOptions);
-    }
+    m_isDirty = true;
+    m_options.SetFlag(kCF_AutoFormatOnFileSave, event.IsChecked());
 }

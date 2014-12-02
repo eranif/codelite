@@ -29,7 +29,7 @@
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
-    , m_engine(kFormatEngineAStyle)
+    , m_engine(kFormatEngineClangFormat)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
                            kSpaceBeforeAssignmentOperators |
                            kAlignEscapedNewlinesLeft)
@@ -50,8 +50,9 @@ void FormatOptions::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_options"), m_astyleOptions);
     arch.Read(wxT("m_customFlags"), m_customFlags);
-
-    int engine = kFormatEngineAStyle;
+    
+    // By default, use clang-format as it is more robust and advanced
+    int engine = kFormatEngineClangFormat;
     arch.Read("m_engine", engine);
     m_engine = static_cast<FormatterEngine>(engine);
 

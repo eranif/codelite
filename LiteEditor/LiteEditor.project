@@ -184,10 +184,6 @@
             <File Name="editoroptionsgeneralsavepanelbase.cpp"/>
             <File Name="editoroptionsgeneralsavepanelbase.h"/>
           </VirtualDirectory>
-          <VirtualDirectory Name="CopyPaste">
-            <File Name="EditorOptionsCopyPaste.h"/>
-            <File Name="EditorOptionsCopyPaste.cpp"/>
-          </VirtualDirectory>
           <VirtualDirectory Name="Edit">
             <File Name="EditorOptionsGeneralEdit.h"/>
             <File Name="EditorOptionsGeneralEdit.cpp"/>
@@ -829,8 +825,6 @@
       <File Name="compiler_pages.cpp"/>
       <File Name="AccelTableBaseDlg.h"/>
       <File Name="AccelTableBaseDlg.cpp"/>
-      <File Name="editor_options_copy_paste.h"/>
-      <File Name="editor_options_copy_paste.cpp"/>
       <File Name="new_virtual_folder.h"/>
       <File Name="new_virtual_folder.cpp"/>
       <File Name="editor_options_caret.h"/>
@@ -864,7 +858,6 @@
       <File Name="AddIncludeFile_liteeditor_bitmaps.cpp"/>
       <File Name="tags_options_base_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="editor_options_guides_liteeditor_bitmaps.cpp"/>
-      <File Name="editor_options_copy_paste_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_terminal_liteeditor_bitmaps.cpp"/>
       <File Name="optionsdialogbase2_liteeditor_bitmaps.cpp"/>
       <File Name="new_virtual_folder_liteeditor_bitmaps.cpp"/>
@@ -886,7 +879,6 @@
     <File Name="newquickwatch.wxcp"/>
     <File Name="../formbuilder/listctrlpanel.wxcp"/>
     <File Name="editor_options_comments_doxygen.wxcp"/>
-    <File Name="editor_options_copy_paste.wxcp"/>
     <File Name="new_virtual_folder.wxcp"/>
     <File Name="quickfindbarbase.wxcp"/>
     <File Name="CompilersFoundDlg.wxcp"/>

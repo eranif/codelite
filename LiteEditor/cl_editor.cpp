@@ -353,8 +353,8 @@ void LEditor::SetProperties()
     m_autoAdjustHScrollbarWidth = options->GetAutoAdjustHScrollBarWidth();
     m_disableSmartIndent = options->GetDisableSmartIndent();
     m_disableSemicolonShift = options->GetDisableSemicolonShift();
-    SetMultipleSelection(!options->HasOption(OptionsConfig::Opt_Disable_Multiselect));
-    SetMultiPaste(options->HasOption(OptionsConfig::Opt_Disable_Multipaste) ? 0 : 1);
+    SetMultipleSelection(true);
+    SetMultiPaste(1);
 
     if(!m_hightlightMatchedBraces) {
         wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);

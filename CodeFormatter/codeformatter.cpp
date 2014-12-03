@@ -613,7 +613,6 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
 
     // Log the command
     CL_DEBUG("CodeForamtter: running:\n%s\n", command);
-    wxLogMessage(command);
 
     // Execute clang-format and reand the output
     formattedOutput.Clear();

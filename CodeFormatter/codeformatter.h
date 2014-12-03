@@ -28,6 +28,7 @@
 #include "plugin.h"
 #include "cl_command_event.h"
 #include "formatoptions.h"
+#include "fileextmanager.h"
 
 class CodeFormatter : public IPlugin
 {
@@ -57,30 +58,31 @@ public:
      * @param startOffset start of chunk to format
      * @param length chunk length
      */
-    bool ClangFormat(const wxFileName& filename,
-                     wxString& formattedOutput,
-                     int& cursorPosition,
-                     int startOffset = wxNOT_FOUND,
-                     int length = wxNOT_FOUND);
+    bool ClangFormatFile(const wxFileName& filename,
+                         wxString& formattedOutput,
+                         int& cursorPosition,
+                         int startOffset = wxNOT_FOUND,
+                         int length = wxNOT_FOUND);
     /**
      * @brief same as the above, but work on a buffer instead
      */
-    bool ClangFormat(const wxString& content,
-                     wxString& formattedOutput,
-                     int& cursorPosition,
-                     int startOffset = wxNOT_FOUND,
-                     int length = wxNOT_FOUND);
+    bool ClangFormatBuffer(const wxString& content,
+                           const wxFileName& filename,
+                           wxString& formattedOutput,
+                           int& cursorPosition,
+                           int startOffset = wxNOT_FOUND,
+                           int length = wxNOT_FOUND);
 
     /**
      * @brief same as the above, but work on a buffer instead
      */
     bool ClangPreviewFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
-    
+
     /**
      * @brief format a PHP content
      */
-    bool PhpFormat(const wxString &content, wxString& formattedOutput, const FormatOptions& options);
-    
+    bool PhpFormat(const wxString& content, wxString& formattedOutput, const FormatOptions& options);
+
     /**
      * @brief format list of files
      */

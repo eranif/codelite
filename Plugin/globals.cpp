@@ -854,9 +854,9 @@ void WrapInShell(wxString& cmd)
     if(!shell) shell = (wxChar*)wxT("CMD.EXE");
 
     command << shell << wxT(" /C ");
-    command << cmd;
+    command << "\"" << cmd << "\"";
     cmd = command;
-
+    
 #else
     command << wxT("/bin/sh -c '");
     // escape any single quoutes

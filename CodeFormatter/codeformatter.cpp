@@ -278,8 +278,9 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             }
 
             // Make sure we format the editor string and _not_ the file (there might be some newly added lines
-            // the could be missing ...)
-            if(!ClangFormat(editor->GetSTC()->GetText(), formattedOutput, curpos, from, length)) {
+            // that could be missing ...)
+            if(!ClangFormatBuffer(
+                   editor->GetSTC()->GetText(), editor->GetFileName(), formattedOutput, curpos, from, length)) {
                 ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
@@ -517,14 +518,17 @@ wxString CodeFormatter::DoGetGlobalEOLString() const
 
 void CodeFormatter::OnFormatFile(clSourceFormatEvent& e) { wxUnusedVar(e); }
 
-bool CodeFormatter::ClangFormat(const wxString& content,
-                                wxString& formattedOutput,
-                                int& cursorPosition,
-                                int startOffset,
-                                int length)
+bool CodeFormatter::ClangFormatBuffer(const wxString& content,
+                                      const wxFileName& filename,
+                                      wxString& formattedOutput,
+                                      int& cursorPosition,
+                                      int startOffset,
+                                      int length)
 {
     // Write the content into a temporary file
     wxFileName fn(wxStandardPaths::Get().GetTempDir(), "code-formatter-tmp.cpp");
+    fn.SetExt(filename.GetExt());
+
     wxFFile fp(fn.GetFullPath(), "w+b");
     if(fp.IsOpened()) {
         fp.Write(content, wxConvUTF8);
@@ -542,11 +546,11 @@ bool CodeFormatter::ClangFormat(const wxString& content,
     return res;
 }
 
-bool CodeFormatter::ClangFormat(const wxFileName& filename,
-                                wxString& formattedOutput,
-                                int& cursorPosition,
-                                int startOffset,
-                                int length)
+bool CodeFormatter::ClangFormatFile(const wxFileName& filename,
+                                    wxString& formattedOutput,
+                                    int& cursorPosition,
+                                    int startOffset,
+                                    int length)
 {
     FormatOptions options;
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &options);
@@ -609,6 +613,7 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
 
     // Log the command
     CL_DEBUG("CodeForamtter: running:\n%s\n", command);
+    wxLogMessage(command);
 
     // Execute clang-format and reand the output
     formattedOutput.Clear();
@@ -795,7 +800,7 @@ void CodeFormatter::OnBeforeFileSave(clCommandEvent& e)
     m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
     if(fmtroptions.HasFlag(kCF_AutoFormatOnFileSave)) {
         // format the file before we save it
-        IEditor *editor = m_mgr->FindEditor(e.GetFileName());
+        IEditor* editor = m_mgr->FindEditor(e.GetFileName());
         if(editor && m_mgr->GetActiveEditor() == editor) {
             // we have our editor, format it
             DoFormatFile(editor);

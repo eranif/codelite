@@ -187,7 +187,7 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename) c
         forceLanguage << "Language : JavaScript";
         
     } else if(FileExtManager::IsCxxFile(filename)) {
-        forceLanguage << "Language : JavaScript";
+        forceLanguage << "Language : Cpp";
         
     } else if(FileExtManager::IsJavaFile(filename)) {
         forceLanguage << "Language : Java";

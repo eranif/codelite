@@ -73,6 +73,7 @@ public:
         TypeWorkspacePHPTags,
         TypeWorkspaceDatabase,
         TypeAsm,
+        TypeJava,
         TypeOther = wxNOT_FOUND
     };
 
@@ -126,6 +127,12 @@ public:
      */
     static bool IsPHPFile(const wxString& filename);
     static bool IsPHPFile(const wxFileName& filename) { return IsPHPFile(filename.GetFullName()); }
+
+    /**
+     * @param return true if a file is a Java file
+     */
+    static bool IsJavaFile(const wxString& filename);
+    static bool IsJavaFile(const wxFileName& filename) { return IsJavaFile(filename.GetFullName()); }
 
     /**
      * @brief attempt to autodetect the file type by examining its content

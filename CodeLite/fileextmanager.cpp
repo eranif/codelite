@@ -75,7 +75,10 @@ void FileExtManager::Init()
         m_map[wxT("js")] = TypeJS;
         m_map[wxT("javascript")] = TypeJS;
         m_map[wxT("py")] = TypePython;
-
+        
+        // Java file
+        m_map[wxT("java")] = TypeJava;
+        
         m_map[wxT("exe")] = TypeExe;
         m_map[wxT("html")] = TypeHtml;
         m_map[wxT("htm")] = TypeHtml;
@@ -198,4 +201,10 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
         }
     }
     return false;
+}
+
+bool FileExtManager::IsJavaFile(const wxString& filename)
+{
+    FileType ft = GetType(filename);
+    return ft == TypeJava;
 }

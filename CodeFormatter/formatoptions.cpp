@@ -178,9 +178,21 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatOptionsAsString() const
+wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename) const
 {
-    wxString options;
+    wxString options, forceLanguage;
+    
+    // Try to autodetect the file type
+    if(FileExtManager::IsJavascriptFile(filename)) {
+        forceLanguage << "Language : JavaScript";
+        
+    } else if(FileExtManager::IsCxxFile(filename)) {
+        forceLanguage << "Language : JavaScript";
+        
+    } else if(FileExtManager::IsJavaFile(filename)) {
+        forceLanguage << "Language : Java";
+    }
+    
     options << " -style=\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
         options << "Chromium";
@@ -196,7 +208,11 @@ wxString FormatOptions::ClangFormatOptionsAsString() const
 
     // add tab width and space vs tabs based on the global editor settings
     options << ClangGlobalSettings();
-
+    
+    // Language
+    if(!forceLanguage.IsEmpty()) {
+        options << ", " << forceLanguage << " ";
+    }
     options << ", AlignEscapedNewlinesLeft: " << ClangFlagToBool(kAlignEscapedNewlinesLeft);
     options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
     options << ", AllowAllParametersOfDeclarationOnNextLine : "

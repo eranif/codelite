@@ -594,7 +594,7 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
     ::WrapWithQuotes(command);
     ::WrapWithQuotes(file);
 
-    command << options.ClangFormatOptionsAsString();
+    command << options.ClangFormatOptionsAsString(filename);
     if(cursorPosition != wxNOT_FOUND) {
         command << " -cursor=" << cursorPosition;
     }
@@ -705,7 +705,7 @@ bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const
         ::WrapWithQuotes(command);
 
         command << " -i "; // inline editing
-        command << options.ClangFormatOptionsAsString();
+        command << options.ClangFormatOptionsAsString(files.at(i));
         file = files.at(i).GetFullPath();
         ::WrapWithQuotes(file);
         command << " " << file;

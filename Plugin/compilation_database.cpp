@@ -166,11 +166,12 @@ void CompilationDatabase::Initialize()
     // - append it the list of files
     wxFileName clCustomCompileFile = GetFileName();
     clCustomCompileFile.SetExt("db.txt");
-    wxFileName compile_commands = ConvertCodeLiteCompilationDatabaseToCMake(clCustomCompileFile);
-    if(compile_commands.IsOk()) {
-        files.push_back(compile_commands);
+    if(clCustomCompileFile.Exists()) {
+        wxFileName compile_commands = ConvertCodeLiteCompilationDatabaseToCMake(clCustomCompileFile);
+        if(compile_commands.IsOk()) {
+            files.push_back(compile_commands);
+        }
     }
-
     // Sort the files by modification time
     std::sort(files.begin(), files.end(), wxFileNameSorter());
 

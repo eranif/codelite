@@ -43,6 +43,7 @@ public:
     void Save(OptionsConfigPtr options);
 
 protected:
+    virtual void OnCheckboxmswwrapdoublequotesUpdateUi(wxUpdateUIEvent& event);
     virtual void OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event);
 };
 

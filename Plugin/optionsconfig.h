@@ -62,6 +62,7 @@ public:
         Opt_HideDockingWindowCaption = 0x00400000,
         Opt_WrapQuotes = 0x00800000,
         Opt_WrapBrackets = 0x01000000,
+        Opt_WrapCmdWithDoubleQuotes = 0x02000000,
     };
 
 protected:
@@ -391,6 +392,9 @@ public:
     bool IsWrapSelectionBrackets() const { return HasOption(Opt_WrapBrackets); }
     void SetWrapSelectionWithQuotes(bool b) { return EnableOption(Opt_WrapQuotes, b); }
     void SetWrapSelectionBrackets(bool b) { return EnableOption(Opt_WrapBrackets, b); }
+
+    void MSWWrapCmdWithDoubleQuotes(bool b) { EnableOption(Opt_WrapCmdWithDoubleQuotes, b); }
+    bool MSWIsWrapCmdWithDoubleQuotes() const { return HasOption(Opt_WrapCmdWithDoubleQuotes); }
     
     /**
      * Return an XML representation of this object

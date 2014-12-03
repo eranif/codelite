@@ -26,27 +26,36 @@
 #include "editorsettingsterminal.h"
 #include "editor_config.h"
 
-EditorSettingsTerminal::EditorSettingsTerminal( wxWindow* parent )
-    : EditorSettingsTerminalBase( parent )
+EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent)
+    : EditorSettingsTerminalBase(parent)
     , TreeBookNode<EditorSettingsTerminal>()
-
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_textCtrlProgramConsoleCmd->SetValue(options->GetProgramConsoleCommand());
-    m_checkBoxUseCodeLiteTerminal->SetValue( options->HasOption( OptionsConfig::Opt_Use_CodeLite_Terminal) );
+    m_checkBoxUseCodeLiteTerminal->SetValue(options->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal));
+    m_checkBoxMSWWrapDoubleQuotes->SetValue(options->MSWIsWrapCmdWithDoubleQuotes());
 }
 
 void EditorSettingsTerminal::Save(OptionsConfigPtr options)
 {
-    options->SetProgramConsoleCommand (m_textCtrlProgramConsoleCmd->GetValue());
-    options->EnableOption( OptionsConfig::Opt_Use_CodeLite_Terminal, m_checkBoxUseCodeLiteTerminal->IsChecked() );
+    options->SetProgramConsoleCommand(m_textCtrlProgramConsoleCmd->GetValue());
+    options->EnableOption(OptionsConfig::Opt_Use_CodeLite_Terminal, m_checkBoxUseCodeLiteTerminal->IsChecked());
+    options->MSWWrapCmdWithDoubleQuotes(m_checkBoxMSWWrapDoubleQuotes->IsChecked());
 }
 
 void EditorSettingsTerminal::OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event)
 {
 #ifdef __WXMSW__
-    event.Enable( false );
+    event.Enable(false);
 #else
-    event.Enable( !m_checkBoxUseCodeLiteTerminal->IsChecked() );
+    event.Enable(!m_checkBoxUseCodeLiteTerminal->IsChecked());
+#endif
+}
+void EditorSettingsTerminal::OnCheckboxmswwrapdoublequotesUpdateUi(wxUpdateUIEvent& event)
+{
+#ifdef __WXMSW__
+    event.Enable(true);
+#else
+    event.Enable(false);
 #endif
 }

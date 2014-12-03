@@ -58,7 +58,7 @@ wxString SetDefaultBookmarkColours()
 OptionsConfig::OptionsConfig(wxXmlNode* node)
     : m_displayFoldMargin(true)
     , m_underlineFoldLine(false)
-    , m_scrollBeyondLastLine(false)
+    , m_scrollBeyondLastLine(true)
     , m_foldStyle(wxT("Arrows with Background Colour"))
     , m_displayBookmarkMargin(true)
     , m_bookmarkShape(wxT("Small Arrow"))
@@ -116,7 +116,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_caretLineAlpha(50)
     , m_dontAutoFoldResults(false)
     , m_showDebugOnRun(true)
-    , m_caretUseCamelCase(false)
+    , m_caretUseCamelCase(true)
     , m_wordWrap(false)
     , m_dockingStyle(0)
     , m_preferredLocale(wxT("en_US"))
@@ -125,7 +125,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_options(TabClassic | Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift |
                 Opt_WrapBrackets |
                 Opt_WrapQuotes |
-                Opt_AutoCompleteDoubleQuotes)
+                Opt_AutoCompleteDoubleQuotes |
+                Opt_WrapCmdWithDoubleQuotes)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
@@ -179,7 +180,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
         m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
-        m_scrollBeyondLastLine = XmlUtils::ReadBool(node, wxT("ScrollBeyondLastLine"));
+        m_scrollBeyondLastLine = XmlUtils::ReadBool(node, wxT("ScrollBeyondLastLine"), m_scrollBeyondLastLine);
         m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
         m_hideOutputPaneNotIfBuild = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuild"));
         m_hideOutputPaneNotIfSearch = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfSearch"));

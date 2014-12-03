@@ -256,7 +256,6 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     int xx, yy;
     memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &fnt);
     int style = wxDV_NO_HEADER | wxDV_MULTIPLE;
-    // style |= wxDV_ROW_LINES;
 
     m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_listctrl->Connect(
@@ -294,6 +293,9 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     m_textRenderer = new MyTextRenderer(m_listctrl);
 
     m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 0, screenWidth, wxALIGN_LEFT));
+#ifdef __WXMSW__
+    m_listctrl->AppendTextColumn("");
+#endif
 
     EventNotifier::Get()->Connect(
         wxEVT_SHELL_COMMAND_STARTED, clCommandEventHandler(NewBuildTab::OnBuildStarted), NULL, this);
@@ -797,6 +799,9 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
 
         wxVector<wxVariant> data;
         data.push_back(wxVariant(buildLine));
+#ifdef __WXMSW__
+        data.push_back(wxString());
+#endif
 
         // Keep the line number in the build tab
         buildLineInfo->SetLineInBuildTab(m_listctrl->GetItemCount());

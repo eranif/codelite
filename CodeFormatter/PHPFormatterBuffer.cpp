@@ -342,6 +342,8 @@ void PHPFormatterBuffer::format()
             } else {
                 m_sequence->push_back(token);
             }
+        } else {
+            ProcessToken(token);
         }
     }
 }

@@ -72,7 +72,7 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrAstyle->GetGrid());
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrClang->GetGrid());
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrPhp->GetGrid());
-
+    
     // center the dialog
     Centre();
 
@@ -81,7 +81,12 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     GetSizer()->Fit(this);
     InitDialog();
     UpdatePreview();
-
+    
+    // Clear the modified status 
+    m_pgMgrPhp->GetGrid()->ClearModifiedStatus();
+    m_pgMgrAstyle->GetGrid()->ClearModifiedStatus();
+    m_pgMgrClang->GetGrid()->ClearModifiedStatus();
+    
     // set the selection based on the editor
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {

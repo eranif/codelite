@@ -1113,17 +1113,21 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     int curline = editor.GetCurrentLine();
     int insertPos = editor.PositionFromLine(curline);
     int endPos = curpos;
-
-    // start moving from this position until we find '{'
-    for(int i = curpos; i < editor.GetLength(); ++i) {
-        endPos = i;
-        int ch = editor.SafeGetChar(i);
-        if(ch == '{' || ch == ';') {
-            ++endPos; // include this char as well
-            break;
+    
+    if(editor.SafeGetChar(curpos-1) == ';' || editor.SafeGetChar(curpos-1) == '{') {
+        endPos = curpos;
+    } else {
+        // start moving from this position until we find '{'
+        for(int i = curpos; i < editor.GetLength(); ++i) {
+            endPos = i;
+            int ch = editor.SafeGetChar(i);
+            if(ch == '{' || ch == ';') {
+                ++endPos; // include this char as well
+                break;
+            }
         }
     }
-
+    
     wxString text = editor.GetTextRange(0, endPos);
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
     if(tags.size()) {

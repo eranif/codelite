@@ -58,7 +58,17 @@ public:
     PHPProject::Ptr_t GetProject(const wxString& project) const;
     PHPProject::Ptr_t GetActiveProject() const;
     wxString GetPrivateFolder() const;
-
+    
+    /**
+     * @brief sync the workspace with the file system
+     */
+    void SyncWithFileSystem();
+    
+    /**
+     * @brief return the project that owns filename
+     */
+    PHPProject::Ptr_t GetProjectForFile(const wxFileName& filename) const;
+    
     /**
      * @brief restore the session for this workspace
      */
@@ -120,22 +130,17 @@ public:
      * @brief synonym to HasProject()
      */
     bool IsProjectExists(const wxString& project);
-    bool IsFolderExists(const wxString& project, const wxString& folder);
 
     /////////////////////////////////////
     // Workspace construction
     /////////////////////////////////////
     void CreateProject(const PHPProject::CreateData& createData);
     void DeleteProject(const wxString& project);
-    void CreateFolder(const wxString& project, const wxString& folder);
-    bool AddFile(const wxString& project, const wxString& folder, const wxString& file);
-    void
-    AddFiles(const wxString& project, const wxString& folder, const wxArrayString& files, wxArrayString& filesAdded);
     void SetProjectActive(const wxString& project);
     /**
      * @brief delete a file from a project/folder
      */
-    bool DelFile(const wxString& project, const wxString& folder, const wxString& filename);
+    void DelFile(const wxString& project, const wxString& filename);
 
     /**
      * @brief return map with all projects
@@ -159,11 +164,6 @@ public:
      * @brief return the active project name
      */
     wxString GetActiveProjectName() const;
-    /**
-     * @brief return a list of files owned by 'filename' project
-     */
-    void GetFileProjectFiles(const wxString& filename, wxArrayString& files);
-
     /**
      * @brief save the workspace file
      */

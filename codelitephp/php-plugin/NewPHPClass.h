@@ -85,6 +85,7 @@ public:
 class NewPHPClass : public NewPHPClassBase
 {
     bool m_userModifiedFileName;
+    wxString m_outputPath;
 public:
     NewPHPClass(wxWindow* parent, const wxString &classPath);
     virtual ~NewPHPClass();
@@ -93,7 +94,6 @@ protected:
     virtual void OnEditExtends(wxCommandEvent& event);
     virtual void OnEditImplements(wxCommandEvent& event);
     virtual void OnFolderUpdated(wxCommandEvent& event);
-    virtual void OnBrowse(wxCommandEvent& event);
     virtual void OnFileNameUpdated(wxCommandEvent& event);
     virtual void OnMakeSingletonUI(wxUpdateUIEvent& event);
     virtual void OnFolderPerNamespace(wxCommandEvent& event);

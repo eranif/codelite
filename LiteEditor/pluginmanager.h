@@ -148,7 +148,7 @@ public:
     virtual void AddWorkspaceToRecentlyUsedList(const wxFileName& filename);
     virtual void StoreWorkspaceSession(const wxFileName& workspaceFile);
     virtual void LoadWorkspaceSession(const wxFileName& workspaceFile);
-
+    virtual void OpenFindInFileForPath(const wxString &path);
     //------------------------------------
     // End of IManager interface
     //------------------------------------

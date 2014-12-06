@@ -11,7 +11,7 @@ public:
     virtual ~PHPProjectSetupDlg();
     
     bool IsImportFiles() const {
-        return m_checkBoxImportFiles->IsChecked();
+        return true;
     }
     
     wxString GetPhpExecutable() const {

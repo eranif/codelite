@@ -10,6 +10,7 @@ private:
     wxString m_projectName;
 
 protected:
+    virtual void OnTextctrlviewfilterTextUpdated(wxCommandEvent& event);
     virtual void OnFileMappingItemActivated(wxDataViewEvent& event);
     virtual void OnFileMappingMenu(wxDataViewEvent& event);
     virtual void OnUseSystemBrowser(wxCommandEvent& event);

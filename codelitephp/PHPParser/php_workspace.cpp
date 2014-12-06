@@ -135,61 +135,6 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
 
 bool PHPWorkspace::IsOpen() const { return m_workspaceFile.IsOk() && m_workspaceFile.FileExists(); }
 
-bool PHPWorkspace::AddFile(const wxString& project, const wxString& folder, const wxString& file)
-{
-    // locate the project
-    PHPProject::Ptr_t p = GetProject(project);
-    CHECK_PTR_RET_FALSE(p);
-
-    PHPFolder::Ptr_t pFolder = p->Folder(folder);
-    CHECK_PTR_RET_FALSE(pFolder);
-
-    if(pFolder->AddFile(file)) {
-        p->Save();
-
-        // Notify about the file added
-        PHPEvent evt(wxEVT_PHP_FILES_ADDED);
-        wxArrayString files_added;
-        files_added.Add(file);
-        evt.SetFileList(files_added);
-        EventNotifier::Get()->AddPendingEvent(evt);
-    }
-
-    return true;
-}
-
-void PHPWorkspace::AddFiles(const wxString& project,
-                            const wxString& folder,
-                            const wxArrayString& files,
-                            wxArrayString& filesAdded)
-{
-    PHPProject::Ptr_t proj = GetProject(project);
-    CHECK_PTR_RET(proj);
-
-    PHPFolder::Ptr_t pFolder = proj->Folder(folder);
-    CHECK_PTR_RET(pFolder);
-
-    for(size_t i = 0; i < files.GetCount(); ++i) {
-        if(pFolder->AddFile(files.Item(i))) {
-            filesAdded.Add(files.Item(i));
-        }
-    }
-    proj->Save();
-
-    PHPEvent evt(wxEVT_PHP_FILES_ADDED);
-    evt.SetFileList(filesAdded);
-    EventNotifier::Get()->AddPendingEvent(evt);
-}
-
-void PHPWorkspace::CreateFolder(const wxString& project, const wxString& folder)
-{
-    PHPProject::Ptr_t proj = GetProject(project);
-    CHECK_PTR_RET(proj);
-
-    proj->AddFolder(folder);
-    proj->Save();
-}
-
 void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
 {
     wxString projectName;
@@ -217,11 +162,6 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     proj->Save();
 }
 
-bool PHPWorkspace::IsFolderExists(const wxString& project, const wxString& folder)
-{
-    return HasProject(project) && GetProject(project)->Folder(folder);
-}
-
 bool PHPWorkspace::IsProjectExists(const wxString& project) { return HasProject(project); }
 
 const PHPProject::Map_t& PHPWorkspace::GetProjects() const { return m_projects; }
@@ -230,12 +170,8 @@ void PHPWorkspace::DeleteProject(const wxString& project)
 {
     PHPProject::Ptr_t p = GetProject(project);
     CHECK_PTR_RET(p);
-
-    wxArrayString filesRemoved;
-    p->GetFiles(filesRemoved);
     m_projects.erase(project);
     Save(); // save the workspace
-    DoNotifyFilesRemoved(filesRemoved);
 }
 
 void PHPWorkspace::SetProjectActive(const wxString& project)
@@ -250,8 +186,7 @@ void PHPWorkspace::GetWorkspaceFiles(wxStringSet_t& workspaceFiles) const
 {
     PHPProject::Map_t::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {
-        wxArrayString files;
-        iter->second->GetFiles(files);
+        const wxArrayString &files = iter->second->GetFiles();
         workspaceFiles.insert(files.begin(), files.end());
     }
 }
@@ -295,35 +230,14 @@ wxString PHPWorkspace::GetActiveProjectName() const
     return "";
 }
 
-void PHPWorkspace::GetFileProjectFiles(const wxString& filename, wxArrayString& files)
-{
-    PHPProject::Map_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        wxArrayString projFiles;
-        iter->second->GetFiles(projFiles);
-        if(projFiles.Index(filename) != wxNOT_FOUND) {
-            files.swap(projFiles);
-            return;
-        }
-    }
-}
-
-bool PHPWorkspace::DelFile(const wxString& project, const wxString& folder, const wxString& filename)
+void PHPWorkspace::DelFile(const wxString& project, const wxString& filename)
 {
     PHPProject::Ptr_t proj = GetProject(project);
-    CHECK_PTR_RET_FALSE(proj);
+    CHECK_PTR_RET(proj);
 
-    PHPFolder::Ptr_t pFolder = proj->Folder(folder);
-    CHECK_PTR_RET_FALSE(pFolder);
-
-    bool res = pFolder->RemoveFile(filename);
-    if(res) {
-        proj->Save();
-        wxArrayString filesRemoved;
-        filesRemoved.Add(filename);
-        DoNotifyFilesRemoved(filesRemoved);
-    }
-    return res;
+    wxArrayString files;
+    files.Add(filename);
+    proj->FilesDeleted(files, true);
 }
 
 bool PHPWorkspace::RunProject(bool debugging,
@@ -510,4 +424,21 @@ void PHPWorkspace::RestoreWorkspaceSession()
     if(m_manager && IsOpen()) {
         m_manager->LoadWorkspaceSession(m_workspaceFile);
     }
+}
+
+void PHPWorkspace::SyncWithFileSystem()
+{
+    PHPProject::Map_t::const_iterator iter = m_projects.begin();
+    for(; iter != m_projects.end(); ++iter) {
+        iter->second->SynchWithFileSystem();
+    }
+}
+
+PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) const
+{
+    PHPProject::Map_t::const_iterator iter = m_projects.begin();
+    for(; iter != m_projects.end(); ++iter) {
+        if(iter->second->HasFile(filename)) return iter->second;
+    }
+    return PHPProject::Ptr_t(NULL);
 }

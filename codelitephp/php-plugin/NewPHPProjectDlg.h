@@ -12,6 +12,7 @@ public:
     PHPProject::CreateData GetCreateData();
 
 protected:
+    virtual void OnCreateUnderSeparateFolderUI(wxUpdateUIEvent& event);
     virtual void OnCreateUnderSeparateFolder(wxCommandEvent& event);
     virtual void OnNameUpdated(wxCommandEvent& event);
     virtual void OnPathUpdated(wxFileDirPickerEvent& event);

@@ -128,8 +128,6 @@
     <File Name="php_workspace_view.h"/>
     <File Name="new_file_dlg.cpp"/>
     <File Name="new_file_dlg.h"/>
-    <File Name="import_files_dlg.cpp"/>
-    <File Name="import_files_dlg.h"/>
     <File Name="php_open_resource_dlg.cpp"/>
     <File Name="php_open_resource_dlg.h"/>
     <File Name="php_settings_dlg.cpp"/>
@@ -349,7 +347,7 @@
         <Library Value="libPHPParser-dbg.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite-dbg.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>

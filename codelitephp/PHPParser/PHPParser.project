@@ -87,6 +87,8 @@
     <File Name="PHPUserWorkspace.cpp"/>
     <File Name="PHPTerminal.cpp"/>
     <File Name="PHPTerminal.h"/>
+    <File Name="FilesCollector.h"/>
+    <File Name="FilesCollector.cpp"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
     <GlobalSettings>

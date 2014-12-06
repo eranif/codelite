@@ -43,6 +43,6 @@ void wxC847AInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/new_class_php-plugin_bitmaps.cpp$_home_eran_devl_codelitegit_codelitephp_php-plugin_new_class_php-plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/new_class_php-plugin_bitmaps.cpp$_home_eran_devl_codelitegit_codelitephp_php-plugin_new_class_php-plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/new_class_php-plugin_bitmaps.cpp$C__src_codelite_codelitephp_php-plugin_new_class_php-plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/new_class_php-plugin_bitmaps.cpp$C__src_codelite_codelitephp_php-plugin_new_class_php-plugin_bitmaps.xrc"));
 }

@@ -4,17 +4,16 @@
 #include <map>
 #include <vector>
 #include <set>
-#include "php_folder.h"
 #include "php_project_settings_data.h"
 
 class PHPProject
 {
     wxString m_name;
     bool m_isActive;
-    PHPFolder::Map_t m_folders;
     PHPProjectSettingsData m_settings;
     wxFileName m_filename;
     wxString m_importFileSpec;
+    wxArrayString m_files;
 
 public:
     typedef wxSharedPtr<PHPProject> Ptr_t;
@@ -48,6 +47,7 @@ public:
     void Load(const wxFileName& filename);
     void Save();
 
+    const wxString& GetImportFileSpec() const { return m_importFileSpec; }
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     const wxFileName& GetFilename() const { return m_filename; }
     void SetSettings(const PHPProjectSettingsData& settings) { this->m_settings = settings; }
@@ -63,69 +63,49 @@ public:
     /**
      * @brief return a list of all project files (fullpath)
      */
-    void GetFiles(wxArrayString& files) const;
+    wxArrayString& GetFiles();
+
+    /**
+     * @brief check if filename is part of this project
+     * @param filename
+     */
+    bool HasFile(const wxFileName& filename) const;
+
+    /**
+     * @brief folder was deleted from the file system. Update the cached files
+     * @param name folder path
+     * @param notify when set to true, fire wxEVT_PROJ_FILE_REMOVED event (useful if you wish to update
+     * other plugins such as git or subversion)
+     */
+    void FolderDeleted(const wxString& name, bool notify);
 
     void SetImportFileSpec(const wxString& importFileSpec) { this->m_importFileSpec = importFileSpec; }
-    const wxString& GetImportFileSpec() const { return m_importFileSpec; }
-    /**
-     * @brief find and return a folder
-     * @param name the folder name (relative to the project)
-     * @return the folder object or NULL
-     */
-    PHPFolder::Ptr_t Folder(const wxString& name) const;
-
-    /**
-     * @brief return a folder by file full path
-     */
-    PHPFolder::Ptr_t FolderByFileFullPath(const wxString& filename) const;
-    /**
-     * @brief return the parent folder of a folder
-     * @param name path to the child folder
-     * @return return the parent folder of a folder
-     */
-    PHPFolder::Ptr_t GetParentFolder(const wxString& child_folder) const;
-    /**
-     * @brief add folder to project
-     */
-    PHPFolder::Ptr_t AddFolder(const wxString& name);
-
-    /**
-     * @brief delete folder
-     * @param name (e.g. A/B/C)
-     */
-    void DeleteFolder(const wxString& name, bool notify = true);
-    
-    /**
-     * @brief delete all folders + their files from the project
-     * @param notify should this action be notified by an event?
-     */
-    void DeleteAllFolders(bool notify);
-    
-    bool HasFolder(const wxString& name) const { return m_folders.count(name); }
     void SetName(const wxString& name) { this->m_name = name; }
-    const PHPFolder::Map_t& GetFolders() const { return m_folders; }
-    PHPFolder::Map_t& GetFolders() { return m_folders; }
     const wxString& GetName() const { return m_name; }
 
     /**
-     * @brief import a directory to the project
-     * @param path
-     * @param filespec
-     * @param recursive
+     * @brief file was renamed on the file system, update the cache and notify if needed
      */
-    void ImportDirectory(const wxString& path, const wxString& filespec, bool recursive);
-    
+    void FileRenamed(const wxString& oldname, const wxString& newname, bool notify);
+
+    /**
+     * @brief file was added on the file syste, update the cache and notify
+     */
+    void FileAdded(const wxString& filename, bool notify);
+
+    /**
+     * @brief file was added on the file system update the cache
+     */
+    void FolderAdded(const wxString& folderpath);
+
+    /**
+     * @brief files were deleted, remove them from the files cache and notify
+     */
+    void FilesDeleted(const wxArrayString& files, bool notify);
+
     /**
      * @brief synch the project folders with the file system
      */
     void SynchWithFileSystem();
-    
-    /**
-     * @brief rename a file (the file stays on the same path, only its name is renamed)
-     * @param filename
-     * @param newFullName
-     * @return true on success, false otherwise
-     */
-    bool RenameFile(const wxFileName& filename, const wxString& newFullName);
 };
 #endif

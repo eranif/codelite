@@ -474,7 +474,8 @@ void PhpPlugin::OnGetActiveProjectFiles(wxCommandEvent& e)
             wxString activeProjectName = PHPWorkspace::Get()->GetActiveProjectName();
             PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(activeProjectName);
             CHECK_PTR_RET(proj);
-            proj->GetFiles(*pfiles);
+            const wxArrayString &projfiles = proj->GetFiles();
+            pfiles->insert(pfiles->end(), projfiles.begin(), projfiles.end());
         }
     } else {
         e.Skip();
@@ -487,10 +488,11 @@ void PhpPlugin::OnGetCurrentFileProjectFiles(wxCommandEvent& e)
         IEditor* editor = m_mgr->GetActiveEditor();
         wxArrayString* pfiles = (wxArrayString*)e.GetClientData();
         if(editor && pfiles) {
-            PHPWorkspace::Get()->GetFileProjectFiles(editor->GetFileName().GetFullPath(), *pfiles);
+            ::wxMessageBox("Not implemented for PHP!");
         }
-    } else
+    } else { 
         e.Skip();
+    }
 }
 
 void PhpPlugin::OnGetWorkspaceFiles(wxCommandEvent& e)

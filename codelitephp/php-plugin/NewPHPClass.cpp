@@ -4,180 +4,144 @@
 #include <wx/tokenzr.h>
 #include <wx/textdlg.h>
 
-NewPHPClass::NewPHPClass(wxWindow* parent, const wxString &classPath)
+NewPHPClass::NewPHPClass(wxWindow* parent, const wxString& classPath)
     : NewPHPClassBase(parent)
     , m_userModifiedFileName(false)
+    , m_outputPath(classPath)
 {
-    m_textCtrlFilePath->SetValue( classPath );
     WindowAttrManager::Load(this, "NewPHPClass");
 }
 
-NewPHPClass::~NewPHPClass()
-{
-    WindowAttrManager::Save(this, "NewPHPClass");
-}
+NewPHPClass::~NewPHPClass() { WindowAttrManager::Save(this, "NewPHPClass"); }
 
-void NewPHPClass::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable( !m_textCtrlClassName->GetValue().IsEmpty() &&
-                  !m_textCtrlFileName->GetValue().IsEmpty()  &&
-                  !m_textCtrlFilePath->IsEmpty() );
-}
+void NewPHPClass::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlClassName->GetValue().IsEmpty()); }
 
 PHPClassDetails NewPHPClass::GetDetails() const
 {
     PHPClassDetails pcd;
     size_t flags = 0;
-    if ( m_checkBoxCtor->IsChecked() ) flags |= PHPClassDetails::GEN_CTOR;
-    if ( m_checkBoxDtor->IsChecked() ) flags |= PHPClassDetails::GEN_DTOR;
-    if ( m_checkBoxSingleton->IsChecked() ) flags |= PHPClassDetails::GEN_SINGLETON;
-    if ( m_checkBoxFolderPerNamespace->IsChecked() ) flags |= PHPClassDetails::GEN_FOLDER_PER_NAMESPACE;
-    pcd.SetFlags( flags );
-    
+    if(m_checkBoxCtor->IsChecked()) flags |= PHPClassDetails::GEN_CTOR;
+    if(m_checkBoxDtor->IsChecked()) flags |= PHPClassDetails::GEN_DTOR;
+    if(m_checkBoxSingleton->IsChecked()) flags |= PHPClassDetails::GEN_SINGLETON;
+    if(m_checkBoxFolderPerNamespace->IsChecked()) flags |= PHPClassDetails::GEN_FOLDER_PER_NAMESPACE;
+    pcd.SetFlags(flags);
+
     wxString filepath;
-    filepath << m_textCtrlFilePath->GetValue() << wxFILE_SEP_PATH;
-    if ( pcd.GetFlags() & PHPClassDetails::GEN_FOLDER_PER_NAMESPACE ) {
+    filepath << m_outputPath << wxFILE_SEP_PATH;
+    if(pcd.GetFlags() & PHPClassDetails::GEN_FOLDER_PER_NAMESPACE) {
         filepath << m_textCtrlNamespace->GetValue() << wxFILE_SEP_PATH;
     }
-    filepath << m_textCtrlFileName->GetValue();
-    
-    wxFileName fn(filepath);
-    fn.Normalize(wxPATH_NORM_DOTS|wxPATH_NORM_TILDE|wxPATH_NORM_ENV_VARS);
-    
-    pcd.SetFilepath( fn );
-    pcd.SetName( m_textCtrlClassName->GetValue( ));
-    pcd.SetClassNamespace(m_textCtrlNamespace->GetValue());
-    pcd.SetType( m_choiceType->GetStringSelection() );
+    filepath << m_textCtrlClassName->GetValue() << ".php";
 
-    pcd.SetExtends( ::wxStringTokenize(m_textCtrlExtends->GetValue(), ",", wxTOKEN_STRTOK) );
-    pcd.SetImplements( ::wxStringTokenize(m_textCtrlImplements->GetValue(), ",", wxTOKEN_STRTOK ));
+    wxFileName fn(filepath);
+    fn.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ENV_VARS);
+
+    pcd.SetFilepath(fn);
+    pcd.SetName(m_textCtrlClassName->GetValue());
+    pcd.SetClassNamespace(m_textCtrlNamespace->GetValue());
+    pcd.SetType(m_choiceType->GetStringSelection());
+
+    pcd.SetExtends(::wxStringTokenize(m_textCtrlExtends->GetValue(), ",", wxTOKEN_STRTOK));
+    pcd.SetImplements(::wxStringTokenize(m_textCtrlImplements->GetValue(), ",", wxTOKEN_STRTOK));
     return pcd;
 }
 
-void NewPHPClass::OnClassNameUpdate(wxCommandEvent& event)
-{
-    wxString class_name = m_textCtrlClassName->GetValue();
-    wxString file_name  = wxFileName("", m_textCtrlFileName->GetValue()).GetName(); // the filename without the extension
+void NewPHPClass::OnClassNameUpdate(wxCommandEvent& event) { event.Skip(); }
 
-    if ( file_name.IsEmpty() || !m_userModifiedFileName ) {
-        m_textCtrlFileName->ChangeValue( class_name + ".php" );
-    }
-}
+void NewPHPClass::OnFolderPerNamespace(wxCommandEvent& event) { wxUnusedVar(event); }
 
-void NewPHPClass::OnFolderPerNamespace(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-}
+void NewPHPClass::OnNamespaceTextUpdated(wxCommandEvent& event) { wxUnusedVar(event); }
 
-void NewPHPClass::OnNamespaceTextUpdated(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-}
-
-void NewPHPClass::OnFileNameUpdated(wxCommandEvent& event)
-{
-    m_userModifiedFileName = true;
-}
+void NewPHPClass::OnFileNameUpdated(wxCommandEvent& event) { m_userModifiedFileName = true; }
 
 void NewPHPClass::OnMakeSingletonUI(wxUpdateUIEvent& event)
 {
-    event.Enable( m_choiceType->GetStringSelection() == "class" );
+    event.Enable(m_choiceType->GetStringSelection() == "class");
 }
 
-void NewPHPClass::OnBrowse(wxCommandEvent& event)
-{
-    wxString path = ::wxDirSelector(_("Select a folder"), m_textCtrlFilePath->GetValue(), wxDD_DIR_MUST_EXIST);
-    if ( !path.IsEmpty() ) {
-        m_textCtrlFilePath->ChangeValue( path );
-    }
-}
-
-void NewPHPClass::OnFolderUpdated(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-}
+void NewPHPClass::OnFolderUpdated(wxCommandEvent& event) { wxUnusedVar(event); }
 
 void NewPHPClass::OnEditExtends(wxCommandEvent& event)
 {
-    wxTextEntryDialog dlg(this, 
-                          _("Place each parent in a separate line"), 
-                          _("Edit Class Extends"), 
-                          ::wxJoin( ::wxSplit(m_textCtrlExtends->GetValue(), ','), '\n'), 
+    wxTextEntryDialog dlg(this,
+                          _("Place each parent in a separate line"),
+                          _("Edit Class Extends"),
+                          ::wxJoin(::wxSplit(m_textCtrlExtends->GetValue(), ','), '\n'),
                           wxTE_MULTILINE | wxTextEntryDialogStyle);
-    if ( dlg.ShowModal() == wxID_OK ) {
-        m_textCtrlExtends->ChangeValue( ::wxJoin( ::wxSplit(dlg.GetValue(), '\n'), ',' ) );
+    if(dlg.ShowModal() == wxID_OK) {
+        m_textCtrlExtends->ChangeValue(::wxJoin(::wxSplit(dlg.GetValue(), '\n'), ','));
     }
 }
 
 void NewPHPClass::OnEditImplements(wxCommandEvent& event)
 {
-    wxTextEntryDialog dlg(this, 
-                          _("Place each parent in a separate line"), 
-                          _("Edit Class Interfaces"), 
-                          ::wxJoin( ::wxSplit(m_textCtrlImplements->GetValue(), ','), '\n'), 
+    wxTextEntryDialog dlg(this,
+                          _("Place each parent in a separate line"),
+                          _("Edit Class Interfaces"),
+                          ::wxJoin(::wxSplit(m_textCtrlImplements->GetValue(), ','), '\n'),
                           wxTE_MULTILINE | wxTextEntryDialogStyle);
 
-    if ( dlg.ShowModal() == wxID_OK ) {
-        m_textCtrlImplements->ChangeValue( ::wxJoin( ::wxSplit(dlg.GetValue(), '\n'), ',' ) );
+    if(dlg.ShowModal() == wxID_OK) {
+        m_textCtrlImplements->ChangeValue(::wxJoin(::wxSplit(dlg.GetValue(), '\n'), ','));
     }
 }
 
-wxString PHPClassDetails::ToString(const wxString & EOL, const wxString &indent) const
+wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) const
 {
     wxString classString;
-    if ( !GetNamespace().IsEmpty() ) {
+    if(!GetNamespace().IsEmpty()) {
         classString << "namespace " << GetNamespace() << ";" << EOL << EOL;
     }
 
     classString << GetType() << " " << GetName() << " ";
-    
+
     // Add extends
-    const wxArrayString &extends    = GetExtends();
-    const wxArrayString &implements = GetImplements();
-    
-    if ( !extends.IsEmpty() ) {
+    const wxArrayString& extends = GetExtends();
+    const wxArrayString& implements = GetImplements();
+
+    if(!extends.IsEmpty()) {
         classString << "extends ";
-        for(size_t i=0; i<extends.GetCount(); ++i) {
+        for(size_t i = 0; i < extends.GetCount(); ++i) {
             classString << extends.Item(i) << ", ";
         }
         classString.RemoveLast(2).Append(" ");
     }
 
-    if ( !implements.IsEmpty() ) {
+    if(!implements.IsEmpty()) {
         classString << "implements ";
-        for(size_t i=0; i<implements.GetCount(); ++i) {
+        for(size_t i = 0; i < implements.GetCount(); ++i) {
             classString << implements.Item(i) << ", ";
         }
         classString.RemoveLast(2).Append(" ");
     }
-    
+
     classString << "{" << EOL;
-    
-    if ( IsClass() && (GetFlags() & GEN_CTOR) ) {
+
+    if(IsClass() && (GetFlags() & GEN_CTOR)) {
         classString << indent << "public function __construct() {" << EOL;
         classString << indent << indent << EOL;
         classString << indent << "}" << EOL << EOL;
     }
 
-    if ( IsClass() && (GetFlags() & GEN_DTOR) ) {
+    if(IsClass() && (GetFlags() & GEN_DTOR)) {
         classString << indent << "public function __destruct() {" << EOL;
         classString << indent << indent << EOL;
         classString << indent << "}" << EOL << EOL;
     }
 
-    if ( IsClass() && (GetFlags() & GEN_SINGLETON)) {
+    if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
         wxString returnType;
-        if ( GetNamespace().IsEmpty() ) {
+        if(GetNamespace().IsEmpty()) {
             returnType = GetName();
         } else {
             // user provided a namespace
             returnType << GetNamespace() << "\\" << GetName();
-            
         }
-        
+
         // Remove duplicate backslahes
-        while(returnType.Replace("\\\\", "\\")) {}
-        
+        while(returnType.Replace("\\\\", "\\")) {
+        }
+
         classString << indent << "/** @return " << returnType << " **/" << EOL;
         classString << indent << "static public function instance() {" << EOL;
         classString << indent << indent << "static $s_instance = null;" << EOL;
@@ -186,7 +150,6 @@ wxString PHPClassDetails::ToString(const wxString & EOL, const wxString &indent)
         classString << indent << indent << "}" << EOL;
         classString << indent << indent << "return $s_instance;" << EOL;
         classString << indent << "}" << EOL << EOL;
-
     }
     classString << "}" << EOL;
     return classString;

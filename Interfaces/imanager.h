@@ -515,6 +515,12 @@ public:
      * this function also makes sure that the 'Perspective' menu is updated
      */
     virtual void SavePerspective(const wxString& perspectiveName) = 0;
+    
+    // Search 
+    /**
+     * @brief open the find in files dialog and select 'path' to search in
+     */
+    virtual void OpenFindInFileForPath(const wxString &path) = 0;
 };
 
 #endif // IMANAGER_H

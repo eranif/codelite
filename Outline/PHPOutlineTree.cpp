@@ -108,12 +108,6 @@ void PHPOutlineTree::BuildTree(const wxFileName& filename)
     BuildTree(root, sourceFile.Namespace());
 
     if(HasChildren(GetRootItem())) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = GetFirstChild(GetRootItem(), cookie);
-        if(child.IsOk()) {
-            SelectItem(child);
-            ScrollTo(child);
-        }
         ExpandAll();
     }
 }

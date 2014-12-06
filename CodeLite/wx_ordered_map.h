@@ -33,7 +33,7 @@
 /// A container that allows fast insertions / retrieval of elements
 /// And also maintains the order of which elements where inserted
 template<typename Key, typename Value>
-class WXDLLIMPEXP_CL wxOrderedMap
+class wxOrderedMap
 {
     typedef std::pair<Key, Value> Pair_t;
     typedef std::list<Pair_t> List_t;

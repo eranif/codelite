@@ -27,6 +27,7 @@
 #include "wx/string.h"
 #include <wx/strconv.h>
 #include <wx/utils.h>
+#include "dirsaver.h"
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -60,7 +61,13 @@ void FileUtils::OpenTerminal(const wxString& path)
     wxString cmd;
 #ifdef __WXMSW__
     cmd << "cmd";
+    DirSaver ds;
+    ::wxSetWorkingDirectory(path);
+    
 #elif defined(__WXGTK__)
+    DirSaver ds;
+    ::wxSetWorkingDirectory(path);
+    
     // Try to locate gnome-terminal
     if(wxFileName::FileExists("/usr/bin/gnome-terminal")) {
         cmd << "/usr/bin/gnome-terminal";

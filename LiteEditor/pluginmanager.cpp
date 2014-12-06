@@ -789,3 +789,10 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
         SessionManager::Get().SetLastWorkspaceName(workspaceFile.GetFullPath());
     }
 }
+
+void PluginManager::OpenFindInFileForPath(const wxString& path)
+{
+    wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
+    ff.SetString(path);
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
+}

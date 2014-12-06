@@ -5,75 +5,75 @@
 #include <event_notifier.h>
 #include "FileMappingDlg.h"
 
-PHPProjectSettingsDlg::PHPProjectSettingsDlg( wxWindow* parent, const wxString &projectName )
-    : PHPProjectSettingsBase( parent )
-    , m_dirty (false)
+PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& projectName)
+    : PHPProjectSettingsBase(parent)
+    , m_dirty(false)
     , m_projectName(projectName)
 {
     MSWSetNativeTheme(m_treebook41->GetTreeCtrl());
     const PHPProjectSettingsData& data = PHPWorkspace::Get()->GetProject(m_projectName)->GetSettings();
 
     // General settings
-    m_choicebook1->SetSelection( data.GetRunAs() == PHPProjectSettingsData::kRunAsCLI ? 0 : 1 );
-    m_filePickerPHPExe->SetPath( data.GetPhpExe() );
-    m_filePickerIndex->SetPath ( data.GetIndexFile() );
-    m_textCtrlProgramArgs->ChangeValue( data.GetArgs() );
-    m_dirPickerWorkingDirectory->SetPath( data.GetWorkingDirectory() );
-    m_textCtrlPHPIncludePath->ChangeValue( data.GetIncludePath() );
-    m_checkBoxPauseWhenExecutionEnds->SetValue( data.IsPauseWhenExeTerminates() );
-    m_textCtrlWebSiteURL->ChangeValue( data.GetProjectURL() );
-    m_checkBoxSystemBrowser->SetValue( data.IsUseSystemBrowser() );
-
-    if ( !data.GetPhpIniFile().IsEmpty() ) {
-        m_filePickerPhpIni->SetPath( data.GetPhpIniFile() );
+    m_choicebook1->SetSelection(data.GetRunAs() == PHPProjectSettingsData::kRunAsCLI ? 0 : 1);
+    m_filePickerPHPExe->SetPath(data.GetPhpExe());
+    m_filePickerIndex->SetPath(data.GetIndexFile());
+    m_textCtrlProgramArgs->ChangeValue(data.GetArgs());
+    m_dirPickerWorkingDirectory->SetPath(data.GetWorkingDirectory());
+    m_textCtrlPHPIncludePath->ChangeValue(data.GetIncludePath());
+    m_checkBoxPauseWhenExecutionEnds->SetValue(data.IsPauseWhenExeTerminates());
+    m_textCtrlWebSiteURL->ChangeValue(data.GetProjectURL());
+    m_checkBoxSystemBrowser->SetValue(data.IsUseSystemBrowser());
+    m_textCtrlViewFilter->ChangeValue(PHPWorkspace::Get()->GetProject(m_projectName)->GetImportFileSpec());
+    if(!data.GetPhpIniFile().IsEmpty()) {
+        m_filePickerPhpIni->SetPath(data.GetPhpIniFile());
     }
-    
+
     const JSONElement::wxStringMap_t& mapping = data.GetFileMapping();
     JSONElement::wxStringMap_t::const_iterator iter = mapping.begin();
-    for(; iter != mapping.end(); ++iter ) {
+    for(; iter != mapping.end(); ++iter) {
         wxVector<wxVariant> cols;
-        cols.push_back( iter->first);
-        cols.push_back( iter->second);
-        m_dvListCtrlFileMapping->AppendItem( cols );
+        cols.push_back(iter->first);
+        cols.push_back(iter->second);
+        m_dvListCtrlFileMapping->AppendItem(cols);
     }
 
     // Code Completion settings
-    m_textCtrlCCIncludePath->ChangeValue( data.GetCcIncludePath() );
+    m_textCtrlCCIncludePath->ChangeValue(data.GetCcIncludePath());
 
     SetDirty(false);
     GetSizer()->Fit(this);
     WindowAttrManager::Load(this, wxT("PHPProjectSettingsDlg"), NULL);
-    
-    m_dvListCtrlFileMapping->Bind(wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);
-    m_dvListCtrlFileMapping->Bind(wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnDeleteFileMapping, this, wxID_DELETE);
-    m_dvListCtrlFileMapping->Bind(wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnEditFileMapping, this, wxID_EDIT);
+
+    m_dvListCtrlFileMapping->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);
+    m_dvListCtrlFileMapping->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnDeleteFileMapping, this, wxID_DELETE);
+    m_dvListCtrlFileMapping->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnEditFileMapping, this, wxID_EDIT);
 }
 
 PHPProjectSettingsDlg::~PHPProjectSettingsDlg()
 {
     WindowAttrManager::Save(this, wxT("PHPProjectSettingsDlg"), NULL);
-    m_dvListCtrlFileMapping->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);
-    m_dvListCtrlFileMapping->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnDeleteFileMapping, this, wxID_DELETE);
-    m_dvListCtrlFileMapping->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnEditFileMapping, this, wxID_EDIT);
+    m_dvListCtrlFileMapping->Unbind(
+        wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);
+    m_dvListCtrlFileMapping->Unbind(
+        wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnDeleteFileMapping, this, wxID_DELETE);
+    m_dvListCtrlFileMapping->Unbind(
+        wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnEditFileMapping, this, wxID_EDIT);
 }
 
-void PHPProjectSettingsDlg::OnOK( wxCommandEvent& event )
+void PHPProjectSettingsDlg::OnOK(wxCommandEvent& event)
 {
-    if ( IsDirty() ) {
+    if(IsDirty()) {
         OnApply(event);
     }
     EndModal(wxID_OK);
 }
 
-void PHPProjectSettingsDlg::OnApply( wxCommandEvent& event )
-{
-    Save();
-}
+void PHPProjectSettingsDlg::OnApply(wxCommandEvent& event) { Save(); }
 
-void PHPProjectSettingsDlg::OnApplyUI( wxUpdateUIEvent& event )
-{
-    event.Enable(this->m_dirty);
-}
+void PHPProjectSettingsDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(this->m_dirty); }
 
 void PHPProjectSettingsDlg::OnAddCCPath(wxCommandEvent& event)
 {
@@ -94,49 +94,28 @@ void PHPProjectSettingsDlg::OnAddCCPath(wxCommandEvent& event)
 void PHPProjectSettingsDlg::OnAddIncludePath(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector(_("Select folder"));
-    if ( !path.IsEmpty() ) {
+    if(!path.IsEmpty()) {
         wxArrayString curIncPaths = wxStringTokenize(m_textCtrlPHPIncludePath->GetValue(), "\n", wxTOKEN_STRTOK);
-        if ( curIncPaths.Index( path ) == wxNOT_FOUND ) {
-            curIncPaths.Add( path );
+        if(curIncPaths.Index(path) == wxNOT_FOUND) {
+            curIncPaths.Add(path);
         }
-        m_textCtrlPHPIncludePath->ChangeValue( wxJoin(curIncPaths, '\n') );
+        m_textCtrlPHPIncludePath->ChangeValue(wxJoin(curIncPaths, '\n'));
     }
 }
 
-void PHPProjectSettingsDlg::OnArgumentsEntered(wxCommandEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnArgumentsEntered(wxCommandEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnIndexFileSelected(wxFileDirPickerEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnIndexFileSelected(wxFileDirPickerEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnPHPExecChanged(wxFileDirPickerEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnPHPExecChanged(wxFileDirPickerEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnPageChanged(wxChoicebookEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnPageChanged(wxChoicebookEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnPauseWhenExeTerminates(wxCommandEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnPauseWhenExeTerminates(wxCommandEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnProjectURLChanged(wxCommandEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnProjectURLChanged(wxCommandEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnWorkingDirectoryChanged(wxFileDirPickerEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnWorkingDirectoryChanged(wxFileDirPickerEvent& event) { SetDirty(true); }
 
 void PHPProjectSettingsDlg::Save()
 {
@@ -146,58 +125,48 @@ void PHPProjectSettingsDlg::Save()
     PHPProjectSettingsData& data = pProject->GetSettings();
 
     // General settings
-    data.SetRunAs( m_choicebook1->GetSelection() == 0 ? PHPProjectSettingsData::kRunAsCLI : PHPProjectSettingsData::kRunAsWebsite );
+    data.SetRunAs(m_choicebook1->GetSelection() == 0 ? PHPProjectSettingsData::kRunAsCLI :
+                                                       PHPProjectSettingsData::kRunAsWebsite);
     data.SetPhpExe(m_filePickerPHPExe->GetPath());
     data.SetIndexFile(m_filePickerIndex->GetPath());
     data.SetArgs(m_textCtrlProgramArgs->GetValue());
     data.SetWorkingDirectory(m_dirPickerWorkingDirectory->GetPath());
     data.SetIncludePath(m_textCtrlPHPIncludePath->GetValue());
-    data.SetPauseWhenExeTerminates( m_checkBoxPauseWhenExecutionEnds->IsChecked() );
-    data.SetPhpIniFile( m_filePickerPhpIni->GetPath() );
-    data.SetProjectURL( m_textCtrlWebSiteURL->GetValue() );
-    data.SetUseSystemBrowser( m_checkBoxSystemBrowser->IsChecked() );
+    data.SetPauseWhenExeTerminates(m_checkBoxPauseWhenExecutionEnds->IsChecked());
+    data.SetPhpIniFile(m_filePickerPhpIni->GetPath());
+    data.SetProjectURL(m_textCtrlWebSiteURL->GetValue());
+    data.SetUseSystemBrowser(m_checkBoxSystemBrowser->IsChecked());
 
     // Code Completion settings
     data.SetCcIncludePath(m_textCtrlCCIncludePath->GetValue());
-    
+
     // Save the file mapping
     JSONElement::wxStringMap_t mapping;
     int itemCount = m_dvListCtrlFileMapping->GetItemCount();
-    for(int i=0; i<itemCount; ++i) {
+    for(int i = 0; i < itemCount; ++i) {
         wxVariant source, target;
         m_dvListCtrlFileMapping->GetValue(source, i, 0);
         m_dvListCtrlFileMapping->GetValue(target, i, 1);
-        mapping.insert( std::make_pair(source.GetString(), target.GetString()) );
+        mapping.insert(std::make_pair(source.GetString(), target.GetString()));
     }
-    data.SetFileMapping( mapping );
-    
+    data.SetFileMapping(mapping);
+    pProject->SetImportFileSpec(m_textCtrlViewFilter->GetValue());
+
     // Save the project content
     pProject->Save();
     SetDirty(false);
 
-    wxCommandEvent evtRetag( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent( evtRetag );
+    wxCommandEvent evtRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtRetag);
 }
 
-void PHPProjectSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnPHPIniSelected(wxFileDirPickerEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnPHPIniSelected(wxFileDirPickerEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnUseSystemBrowser(wxCommandEvent& event)
-{
-    SetDirty(true);
-}
+void PHPProjectSettingsDlg::OnUseSystemBrowser(wxCommandEvent& event) { SetDirty(true); }
 
-void PHPProjectSettingsDlg::OnFileMappingItemActivated(wxDataViewEvent& event)
-{
-    EditItem( event.GetItem() );
-}
+void PHPProjectSettingsDlg::OnFileMappingItemActivated(wxDataViewEvent& event) { EditItem(event.GetItem()); }
 
 void PHPProjectSettingsDlg::OnFileMappingMenu(wxDataViewEvent& event)
 {
@@ -205,18 +174,18 @@ void PHPProjectSettingsDlg::OnFileMappingMenu(wxDataViewEvent& event)
     menu.Append(wxID_NEW);
     menu.Append(wxID_EDIT);
     menu.Append(wxID_DELETE);
-    
+
     menu.Enable(wxID_EDIT, m_dvListCtrlFileMapping->GetSelectedItemsCount() == 1);
     menu.Enable(wxID_DELETE, event.GetItem().IsOk());
-    m_dvListCtrlFileMapping->PopupMenu( &menu );
+    m_dvListCtrlFileMapping->PopupMenu(&menu);
 }
 
 void PHPProjectSettingsDlg::OnDeleteFileMapping(wxCommandEvent& e)
 {
     wxDataViewItemArray items;
-    m_dvListCtrlFileMapping->GetSelections( items );
-    for(size_t i=0; i<items.GetCount(); ++i) {
-        m_dvListCtrlFileMapping->DeleteItem( m_dvListCtrlFileMapping->ItemToRow(items.Item(i)) );
+    m_dvListCtrlFileMapping->GetSelections(items);
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        m_dvListCtrlFileMapping->DeleteItem(m_dvListCtrlFileMapping->ItemToRow(items.Item(i)));
         SetDirty(true);
     }
 }
@@ -224,21 +193,20 @@ void PHPProjectSettingsDlg::OnDeleteFileMapping(wxCommandEvent& e)
 void PHPProjectSettingsDlg::OnEditFileMapping(wxCommandEvent& e)
 {
     wxDataViewItemArray items;
-    m_dvListCtrlFileMapping->GetSelections( items );
-    if ( items.GetCount() != 1 )
-        return;
-        
+    m_dvListCtrlFileMapping->GetSelections(items);
+    if(items.GetCount() != 1) return;
+
     wxDataViewItem item = items.Item(0);
-    EditItem( item );
+    EditItem(item);
 }
 
 void PHPProjectSettingsDlg::OnNewFileMapping(wxCommandEvent& e)
 {
     FileMappingDlg dlg(this);
-    if ( dlg.ShowModal() == wxID_OK ) {
+    if(dlg.ShowModal() == wxID_OK) {
         wxVector<wxVariant> cols;
-        cols.push_back( dlg.GetSourceFolder() );
-        cols.push_back( dlg.GetTargetFolder() );
+        cols.push_back(dlg.GetSourceFolder());
+        cols.push_back(dlg.GetTargetFolder());
         m_dvListCtrlFileMapping->AppendItem(cols);
         SetDirty(true);
     }
@@ -246,21 +214,25 @@ void PHPProjectSettingsDlg::OnNewFileMapping(wxCommandEvent& e)
 
 void PHPProjectSettingsDlg::EditItem(const wxDataViewItem& item)
 {
-    if ( !item.IsOk() ) {
+    if(!item.IsOk()) {
         return;
     }
-    
+
     wxVariant source, target;
     unsigned int row = m_dvListCtrlFileMapping->ItemToRow(item);
     m_dvListCtrlFileMapping->GetValue(source, row, 0);
     m_dvListCtrlFileMapping->GetValue(target, row, 1);
-    
+
     FileMappingDlg dlg(this);
-    dlg.SetSourceFolder( source.GetString() );
-    dlg.SetTargetFolder( target.GetString() );
-    if ( dlg.ShowModal() == wxID_OK ) {
+    dlg.SetSourceFolder(source.GetString());
+    dlg.SetTargetFolder(target.GetString());
+    if(dlg.ShowModal() == wxID_OK) {
         m_dvListCtrlFileMapping->SetValue(dlg.GetSourceFolder(), row, 0);
         m_dvListCtrlFileMapping->SetValue(dlg.GetTargetFolder(), row, 1);
         SetDirty(true);
     }
+}
+void PHPProjectSettingsDlg::OnTextctrlviewfilterTextUpdated(wxCommandEvent& event)
+{
+    SetDirty(true);
 }

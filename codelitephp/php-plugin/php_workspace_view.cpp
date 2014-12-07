@@ -240,6 +240,8 @@ void PHPWorkspaceView::LoadWorkspace()
     }
 
     DoSortItems();
+    wxCommandEvent dummy;
+    OnEditorChanged(dummy);
 }
 
 void PHPWorkspaceView::UnLoadWorkspace() { m_treeCtrlView->DeleteAllItems(); }

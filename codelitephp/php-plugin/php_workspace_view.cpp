@@ -59,6 +59,7 @@ EVT_MENU(XRCID("php_project_settings"), PHPWorkspaceView::OnProjectSettings)
 EVT_MENU(XRCID("php_run_project"), PHPWorkspaceView::OnRunProject)
 EVT_MENU(XRCID("make_index"), PHPWorkspaceView::OnMakeIndexPHP)
 EVT_MENU(XRCID("php_synch_with_filesystem"), PHPWorkspaceView::OnSyncProjectWithFileSystem)
+EVT_MENU(XRCID("php_open_with_default_app"), PHPWorkspaceView::OnOpenWithDefaultApp)
 END_EVENT_TABLE()
 
 PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
@@ -124,6 +125,9 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
                 menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
+                menu.AppendSeparator();
+                menu.Append(XRCID("php_open_with_default_app"), _("Open with Default Application"));
+                
                 m_treeCtrlView->PopupMenu(&menu);
             } break;
             case ItemData::Kind_Workspace: {
@@ -1156,4 +1160,17 @@ void PHPWorkspaceView::OnFindInFiles(wxCommandEvent& e)
     
     // Open the find in files dialg for the folder path
     m_mgr->OpenFindInFileForPaths(paths);
+}
+
+void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
+{
+    wxArrayTreeItemIds items;
+    DoGetSelectedItems(items);
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        wxTreeItemId item = items.Item(i);
+        ItemData* itemData = DoGetItemData(item);
+        if(itemData->IsFile()) {
+            ::wxLaunchDefaultApplication(itemData->GetFile());
+        }
+    }
 }

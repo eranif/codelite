@@ -341,6 +341,10 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         wxDELETE(paths);
     }
     dlg->Show();
+#ifdef __WXOSX__
+    dlg->Raise();
+#endif
+
 }
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)

@@ -301,7 +301,7 @@ void FindInFilesDialog::OnClearPaths(wxCommandEvent& event) { m_listPaths->Clear
 
 bool FindInFilesDialog::Show()
 {
-    bool res = IsShown() || wxDialog::Show();
+    bool res = IsShown() || wxFrame::Show();
     if(res) {
 
         // update the combobox

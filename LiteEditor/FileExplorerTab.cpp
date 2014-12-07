@@ -43,6 +43,11 @@ FileExplorerTab::FileExplorerTab(wxWindow* parent)
     : FileExplorerBase(parent)
 {
     m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("file_explorer_menu"));
+    wxMenuItem* searchNodeItem = m_rclickMenu->FindItem(XRCID("search_node"));
+    if(searchNodeItem) {
+        searchNodeItem->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
+    }
+    
     Connect(XRCID("open_file"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(FileExplorerTab::OnOpenFile),
@@ -296,12 +301,10 @@ void FileExplorerTab::OnRefreshNode(wxCommandEvent& event)
 
 void FileExplorerTab::OnSearchNode(wxCommandEvent& event)
 {
-    wxFileName fn;
-    if(!GetSelection(fn)) return;
-
-    wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
-    ff.SetString(fn.GetPath());
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
+    wxArrayString paths;
+    GetSelectedDirectories(paths);
+    if(paths.IsEmpty()) return;
+    PluginManager::Get()->OpenFindInFileForPaths(paths);
 }
 
 void FileExplorerTab::OnTagNode(wxCommandEvent& event)
@@ -412,4 +415,16 @@ bool FileExplorerTab::GetSelection(wxFileName& path)
         path = wxFileName(paths.Item(0));
     }
     return true;
+}
+
+void FileExplorerTab::GetSelectedDirectories(wxArrayString& paths)
+{
+    wxArrayString selections;
+    m_genericDirCtrl->GetPaths(selections);
+    
+    for(size_t i=0; i<selections.GetCount(); ++i) {
+        if(wxFileName::DirExists(selections.Item(i))) {
+            paths.Add(selections.Item(i));
+        }
+    }
 }

@@ -793,6 +793,15 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
 void PluginManager::OpenFindInFileForPath(const wxString& path)
 {
     wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
-    ff.SetString(path);
+    wxArrayString paths;
+    paths.Add(path);
+    ff.SetClientData(new wxArrayString(paths));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
+}
+
+void PluginManager::OpenFindInFileForPaths(const wxArrayString& paths)
+{
+    wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
+    ff.SetClientData(new wxArrayString(paths));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
 }

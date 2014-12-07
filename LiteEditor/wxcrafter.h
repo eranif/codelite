@@ -59,12 +59,6 @@ protected:
     virtual void OnCreate(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
-    wxTextCtrl* GetTxtDescription() { return m_txtDescription; }
-    wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
-    wxSplitterWindow* GetSplitter5() { return m_splitter5; }
-    wxButton* GetButton3() { return m_button3; }
-    wxButton* GetButton4() { return m_button4; }
     NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewProjectDlgBaseClass();
 };
@@ -84,11 +78,6 @@ protected:
     virtual void OnFunction(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxChoice* GetScope() { return m_scope; }
-    wxPanel* GetSplitterPage39() { return m_splitterPage39; }
-    wxChoice* GetFunc() { return m_func; }
-    wxPanel* GetSplitterPage41() { return m_splitterPage41; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
     NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW);
     virtual ~NavBarControlBaseClass();
 };
@@ -113,7 +102,6 @@ protected:
     virtual void OnPasteUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar48() { return m_auibar48; }
     BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~BuildTabTopPanelBaseClass();
 };
@@ -153,11 +141,6 @@ protected:
     virtual void OnIgnoreTheError(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxBannerWindow* GetBanner76() { return m_banner76; }
-    wxCommandLinkButton* GetCmdLnkBtnDownload() { return m_cmdLnkBtnDownload; }
-    wxCommandLinkButton* GetCmdLnkBtnContinue() { return m_cmdLnkBtnContinue; }
-    wxPanel* GetPanel75() { return m_panel75; }
-    wxPanel* GetPanel81() { return m_panel81; }
     wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plugin is missing"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~wxcDownloadDlgBaseClass();
 };
@@ -182,13 +165,6 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxBannerWindow* GetBanner125() { return m_banner125; }
-    wxFilePickerCtrl* GetFilePicker() { return m_filePicker; }
-    wxDataViewCtrl* GetDataview() { return m_dataview; }
-    wxButton* GetButton133() { return m_button133; }
-    wxButton* GetButton135() { return m_button135; }
-    wxButton* GetButton121() { return m_button121; }
-    wxButton* GetButton123() { return m_button123; }
     AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add function implementation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddFunctionsImplBaseDlg();
 };
@@ -219,15 +195,6 @@ protected:
     virtual void OnOpenWiki(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticBitmap* GetStaticBitmap161() { return m_staticBitmap161; }
-    wxCommandLinkButton* GetCmdLnkBtnWorkspaces() { return m_cmdLnkBtnWorkspaces; }
-    wxCommandLinkButton* GetCmdLnkBtnFilesMenu() { return m_cmdLnkBtnFilesMenu; }
-    wxCommandLinkButton* GetCmdLnkBtn157() { return m_cmdLnkBtn157; }
-    wxCommandLinkButton* GetCmdLnkBtn231() { return m_cmdLnkBtn231; }
-    wxCommandLinkButton* GetCmdLnkBtn155() { return m_cmdLnkBtn155; }
-    wxCommandLinkButton* GetCmdLnkBtn151() { return m_cmdLnkBtn151; }
-    wxPanel* GetPanel191() { return m_panel191; }
-    wxScrolledWindow* GetScrollWin247() { return m_scrollWin247; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~WelcomePageBase();
 };
@@ -244,7 +211,6 @@ protected:
     virtual void OnKeyDown(wxTreeEvent& event) { event.Skip(); }
 
 public:
-    wxGenericDirCtrl* GetGenericDirCtrl() { return m_genericDirCtrl; }
     FileExplorerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~FileExplorerBase();
 };
@@ -282,12 +248,6 @@ protected:
     virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
-    wxChoice* GetChoiceActiveProject() { return m_choiceActiveProject; }
-    wxPanel* GetSplitterPage308() { return m_splitterPage308; }
-    wxChoice* GetWorkspaceConfig() { return m_workspaceConfig; }
-    wxPanel* GetSplitterPage312() { return m_splitterPage312; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
     WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~WorkspaceTabBase();
 };
@@ -306,8 +266,6 @@ protected:
     virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxPanel* GetMainPanel() { return m_mainPanel; }
-    wxToolBar* GetToolbar() { return m_toolbar; }
     EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_NO_TASKBAR|wxFRAME_FLOAT_ON_PARENT);
     virtual ~EditorFrameBase();
 };
@@ -348,24 +306,6 @@ protected:
     virtual void OnBrowseProjectPath(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxBannerWindow* GetBanner386() { return m_banner386; }
-    wxDataViewCtrl* GetDataviewTemplates() { return m_dataviewTemplates; }
-    wxWizardPageSimple* GetWizardPageTemplate() { return m_wizardPageTemplate; }
-    wxBannerWindow* GetBanner398() { return m_banner398; }
-    wxStaticText* GetStaticText16() { return m_staticText16; }
-    wxTextCtrl* GetTxtProjName() { return m_txtProjName; }
-    wxStaticText* GetStaticText18() { return m_staticText18; }
-    wxTextCtrl* GetTextCtrlProjectPath() { return m_textCtrlProjectPath; }
-    wxButton* GetButtonBrowse() { return m_buttonBrowse; }
-    wxCheckBox* GetCbSeparateDir() { return m_cbSeparateDir; }
-    wxStaticText* GetStxtFullFileName() { return m_stxtFullFileName; }
-    wxWizardPageSimple* GetWizardPageDetails() { return m_wizardPageDetails; }
-    wxBannerWindow* GetBanner390() { return m_banner390; }
-    wxStaticText* GetStaticText414() { return m_staticText414; }
-    wxChoice* GetChoiceCompiler() { return m_choiceCompiler; }
-    wxStaticText* GetStaticText418() { return m_staticText418; }
-    wxChoice* GetChoiceDebugger() { return m_choiceDebugger; }
-    wxWizardPageSimple* GetWizardPageToolchain() { return m_wizardPageToolchain; }
     NewProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project Wizard"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~NewProjectWizardBase();
@@ -395,10 +335,6 @@ protected:
     virtual void OnPolicyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxCheckBox* GetCheckBoxEnableClang() { return m_checkBoxEnableClang; }
-    wxChoice* GetChoiceCache() { return m_choiceCache; }
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
-    wxStyledTextCtrl* GetStc() { return m_stc; }
     ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~ClangOutputTabBase();
 };

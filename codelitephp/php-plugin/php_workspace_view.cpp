@@ -105,6 +105,7 @@ PHPWorkspaceView::~PHPWorkspaceView()
 
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 {
+    wxBitmap bmpFiF = m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/search/find_in_files");
     PHPImages images;
     wxTreeItemId item = event.GetItem();
     if(item.IsOk()) {
@@ -112,6 +113,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
         m_treeCtrlView->SelectItem(event.GetItem());
         ItemData* data = DoGetItemData(item);
         if(data) {
+            wxMenuItem* menuItem = NULL;
             switch(data->GetKind()) {
             case ItemData::Kind_File: {
                 wxMenu menu;
@@ -138,6 +140,10 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
                 menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
+                menu.AppendSeparator();
+                menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
+                menuItem->SetBitmap(bmpFiF);
+                menu.Append(menuItem);
                 m_treeCtrlView->PopupMenu(&menu);
             } break;
             case ItemData::Kind_Project: {
@@ -150,11 +156,15 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_new_folder"), _("New Folder..."));
                 menu.Append(XRCID("php_new_file"), _("New File..."));
                 menu.AppendSeparator();
+                menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
+                menuItem->SetBitmap(bmpFiF);
+                menu.Append(menuItem);
+                menu.AppendSeparator();
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
                 menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
                 menu.AppendSeparator();
 
-                wxMenuItem* menuItem =
+                menuItem =
                     new wxMenuItem(NULL, XRCID("php_synch_with_filesystem"), _("Sync project with file system..."));
                 menuItem->SetBitmap(images.Bitmap("m_bmpSync"));
                 menu.Append(menuItem);
@@ -176,7 +186,9 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
                 menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_folder_find_in_files"), _("Find In Files..."));
+                menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
+                menuItem->SetBitmap(bmpFiF);
+                menu.Append(menuItem);
                 m_treeCtrlView->PopupMenu(&menu);
             } break;
             default:
@@ -688,11 +700,11 @@ void PHPWorkspaceView::OnEditorChanged(wxCommandEvent& e)
     if(PHPWorkspace::Get()->IsOpen()) {
         IEditor* editor = m_mgr->GetActiveEditor();
         CHECK_PTR_RET(editor);
-        
+
         if(m_filesItems.count(editor->GetFileName().GetFullPath())) {
             const wxTreeItemId& item = m_filesItems.find(editor->GetFileName().GetFullPath())->second;
             CHECK_ITEM_RET(item);
-            
+
             wxArrayTreeItemIds items;
             if(m_treeCtrlView->GetSelections(items)) {
                 m_treeCtrlView->UnselectAll();
@@ -1114,15 +1126,34 @@ void PHPWorkspaceView::OnOpenShell(wxCommandEvent& e)
 
 void PHPWorkspaceView::OnFindInFiles(wxCommandEvent& e)
 {
-    wxTreeItemId item = m_treeCtrlView->GetFocusedItem();
-    CHECK_ITEM_RET(item);
+    wxArrayTreeItemIds items;
+    DoGetSelectedItems(items);
+    
+    wxArrayString paths;
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        wxTreeItemId item = items.Item(i);
+        ItemData* itemData = DoGetItemData(item);
+        if(itemData->IsFolder()) {
+            paths.Add(itemData->GetFolderPath());
 
-    ItemData* itemData = DoGetItemData(item);
-    CHECK_PTR_RET(itemData);
+        } else if(itemData->IsProject()) {
+            wxString projectPath = wxFileName(itemData->GetFile()).GetPath();
+            paths.Add(projectPath);
 
-    CHECK_COND_RET(itemData->IsFolder());
-
+        } else if(itemData->IsWorkspace()) {
+            // If the workspace is included, use the project paths and nothing more
+            paths.Clear();
+            const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
+            PHPProject::Map_t::const_iterator iter = projects.begin();
+            for(; iter != projects.end(); ++iter) {
+                paths.Add(iter->second->GetFilename().GetPath());
+            }
+            break;
+        }
+    }
+    
+    CHECK_COND_RET(!paths.IsEmpty());
+    
     // Open the find in files dialg for the folder path
-    wxFileName fn(itemData->GetFolderPath(), "");
-    m_mgr->OpenFindInFileForPath(fn.GetPath());
+    m_mgr->OpenFindInFileForPaths(paths);
 }

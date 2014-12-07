@@ -57,6 +57,11 @@ public:
      * If multiple selections are made, return the first one
      */
     bool GetSelection(wxFileName& path);
+        
+    /**
+     * @brief return list of selected folders only (filter out non folder entries)
+     */
+    void GetSelectedDirectories(wxArrayString& paths);
     
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);

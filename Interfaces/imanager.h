@@ -521,6 +521,11 @@ public:
      * @brief open the find in files dialog and select 'path' to search in
      */
     virtual void OpenFindInFileForPath(const wxString &path) = 0;
+    
+    /**
+     * @brief open the find in files dialog with multiple search paths
+     */
+    virtual void OpenFindInFileForPaths(const wxArrayString &paths) = 0;
 };
 
 #endif // IMANAGER_H

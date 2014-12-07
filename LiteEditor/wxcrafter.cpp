@@ -323,6 +323,15 @@ NewProjImgList::NewProjImgList()
         m_bitmaps.insert( std::make_pair(wxT("clang16"), bmp ) );
     }
     
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpFindInFiles"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("m_bmpFindInFiles"), bmp ) );
+    }
+    
 }
 
 NewProjImgList::~NewProjImgList()

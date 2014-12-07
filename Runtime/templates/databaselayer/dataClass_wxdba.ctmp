@@ -88,20 +88,26 @@ void %%classColName%%::Fill(wxGrid* pGrid)
 
 // %%classTableName%% utilities ////////////////////////////////////////////////
 
-int %%classUtilName%%::Create(wxdba::SQLArchive &ar
-			, bool drop
-			)
+int %%classUtilName%%::Create(wxdba::SQLArchive &ar)
 {
 	if( ar.IsOpen() ) {
 		wxString query = wxT(
 			%%classUtilsCreateStatement%%
 			);
 		
-		if( drop ) {
-			query = wxT(
-				%%classUtilsDropStatement%%
-				) + query;
-		}
+		ar.GetOStream().SendUpdate( wxdba::SQL( query ) );
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int %%classUtilName%%::Drop(wxdba::SQLArchive &ar)
+{
+	if( ar.IsOpen() ) {
+		wxString query = wxT(
+			%%classUtilsDropStatement%%
+			);
 		
 		ar.GetOStream().SendUpdate( wxdba::SQL( query ) );
 		return 0;

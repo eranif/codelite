@@ -61,17 +61,21 @@ class %%classUtilName%% {
 
 public:
 	/*! \brief Create new %%classTableName%% table */
-	static int Create(DatabaseLayer* pDbLayer
-			, bool drop
-			);
+	static int Create(DatabaseLayer* pDbLayer);
+	
+	/*! \brief Drop %%classTableName%% table */
+	static int Drop(DatabaseLayer* pDbLayer);
+	
 	/*! \brief Add new item into %%classTableName%% table */
 	static int Add(DatabaseLayer* pDbLayer
 			%%classUtilsAddParameters%%			
 			);
+			
 	/*! \brief Edit item in %%classTableName%% table */	
 	static int Edit(DatabaseLayer* pDbLayer
 			%%classUtilsAddParameters%%			
 			);
+			
 	/*! \brief Delete item from %%classTableName%% table */
 	static int Delete(DatabaseLayer* pDbLayer
 			%%classUtilsDeleteParameters%%			

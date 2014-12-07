@@ -29,7 +29,10 @@ class %%classUtilName%% {
 
 public:
 	/*! \brief Get CREATE SQL query for %%classTableName%% table */
-	static std::string CreateSql(bool drop);
+	static std::string CreateSql();
+	
+	/*! \brief Get DROP SQL query for %%classTableName%% table */
+	static std::string DropSql();
 };
 
 #endif // %%classItemDef%%

@@ -11,17 +11,20 @@
 
 // %%classTableName%% utilities ////////////////////////////////////////////////
 
-std::string %%classUtilName%%::CreateSql(bool drop)
+std::string %%classUtilName%%::CreateSql()
 {
 	std::string query(
 		%%classUtilsCreateStatement%%
 		);
 	
-	if( drop ) {
-		query = std::string(
-			%%classUtilsDropStatement%%
-			) + query;
-	}
+	return query;
+}
+
+std::string %%classUtilName%%::DropSql()
+{
+	std::string query(
+		%%classUtilsDropStatement%%
+		);
 	
 	return query;
 }

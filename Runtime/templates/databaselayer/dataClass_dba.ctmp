@@ -69,20 +69,26 @@ END_STORE_TABLE()
 
 // %%classTableName%% utilities ////////////////////////////////////////////////
 
-int %%classUtilName%%::Create(dba::SQLArchive &ar
-			, bool drop
-			)
+int %%classUtilName%%::Create(dba::SQLArchive &ar)
 {
 	if( ar.isOpen() ) {
 		std::string query(
 			%%classUtilsCreateStatement%%
 			);
-			
-		if( drop ) {
-			query = std::string(
-				%%classUtilsDropStatement%%
-				) + query;
-		}
+					
+		ar.getOStream().sendUpdate( dba::SQL( query) );
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int %%classUtilName%%::Drop(dba::SQLArchive &ar)
+{
+	if( ar.isOpen() ) {
+		std::string query(
+			%%classUtilsDropStatement%%
+			);
 		
 		ar.getOStream().sendUpdate( dba::SQL( query) );
 		return 0;

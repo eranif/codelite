@@ -352,6 +352,18 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             }
             lastEditParam = i;
 
+        } else if (str.Contains(wxT("%%classUtilsEditSetParams%%"))) {
+            int i = 1;
+            SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
+            while( node ) {
+                Column* pCol = wxDynamicCast(node->GetData(),Column);
+                if (pCol && ( !pPKCol || (pCol->GetName() != pPKCol->GetName()) ) ) {
+                    hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pCol->GetType()->GetUniversalType()).c_str(),i++,pCol->GetName().c_str()) << "\n";
+                }
+                node = node->GetNext();
+            }
+            lastEditParam = i;
+
         } else if (str.Contains(wxT("%%classUtilsAddSetDebeaParams%%"))) {
             SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
             while( node ) {
@@ -388,7 +400,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
             while( node ) {
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
-                if (pCol) {
+                if (pCol && ( !pPKCol || (pCol->GetName() != pPKCol->GetName()) ) ) {
                     if (!cols.IsEmpty()) cols = cols + wxT(",");
                     cols += pCol->GetName() + wxT(" = ?");
                 }
@@ -415,7 +427,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             if (pPKCol) hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pPKCol->GetType()->GetUniversalType()).c_str(),lastEditParam,pPKCol->GetName().c_str()) << "\n";
 
         } else if (str.Contains(wxT("%%classUtilsCreateStatement%%"))) {
-            wxStringTokenizer tknz( m_pDbAdapter->GetCreateTableSql( pTab, true ), wxT("\n"), wxTOKEN_STRTOK );
+            wxStringTokenizer tknz( m_pDbAdapter->GetCreateTableSql( pTab, false ), wxT("\n"), wxTOKEN_STRTOK );
             while( true ) {
                 wxString line = tknz.GetNextToken();
                 if( !tknz.HasMoreTokens() ) break; // omit last line

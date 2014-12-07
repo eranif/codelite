@@ -80,7 +80,7 @@ public:
             Remove(k);
         }
         Iterator iter = m_list.insert(m_list.end(), Pair_t(k, v));
-        m_map.insert(std::make_pair<Key, Iterator>(k, iter));
+        m_map.insert(std::make_pair(k, iter));
     }
     
     void PushFront(const Key& k, const Value& v) {

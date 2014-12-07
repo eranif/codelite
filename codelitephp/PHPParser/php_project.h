@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include "php_project_settings_data.h"
+#include <wx/sharedptr.h>
 
 class PHPProject
 {

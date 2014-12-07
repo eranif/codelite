@@ -1,6 +1,7 @@
 #include "FilesCollector.h"
 #include <wx/tokenzr.h>
 #include <wx/filefn.h>
+#include <wx/filename.h>
 
 FilesCollector::FilesCollector(const wxString& filespec)
 {

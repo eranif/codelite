@@ -347,9 +347,10 @@
         <Library Value="libPHPParser-dbg.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple
+PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="..\..\..\..\GDB-7.4.5\bin\gdb.exe" IsExtended="no">
         <DebuggerSearchPaths/>

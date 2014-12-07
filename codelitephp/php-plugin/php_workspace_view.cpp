@@ -482,7 +482,7 @@ void PHPWorkspaceView::OnOpenFile(wxCommandEvent& e)
     wxArrayTreeItemIds items;
     DoGetSelectedItems(items);
     if(items.IsEmpty()) return;
-    
+
     for(size_t i = 0; i < items.GetCount(); ++i) {
         const wxTreeItemId& item = items.Item(i);
         ItemData* itemData = DoGetItemData(item);
@@ -680,7 +680,26 @@ void PHPWorkspaceView::OnStopExecutedProgram(wxCommandEvent& e)
     }
 }
 
-void PHPWorkspaceView::OnEditorChanged(wxCommandEvent& e) { e.Skip(); }
+void PHPWorkspaceView::OnEditorChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        IEditor* editor = m_mgr->GetActiveEditor();
+        CHECK_PTR_RET(editor);
+        
+        if(m_filesItems.count(editor->GetFileName().GetFullPath())) {
+            const wxTreeItemId& item = m_filesItems.find(editor->GetFileName().GetFullPath())->second;
+            CHECK_ITEM_RET(item);
+            
+            wxArrayTreeItemIds items;
+            if(m_treeCtrlView->GetSelections(items)) {
+                m_treeCtrlView->UnselectAll();
+            }
+            m_treeCtrlView->SelectItem(item);
+            m_treeCtrlView->EnsureVisible(item);
+        }
+    }
+}
 
 void PHPWorkspaceView::OnFileRenamed(PHPEvent& e) { e.Skip(); }
 
@@ -1098,9 +1117,9 @@ void PHPWorkspaceView::OnFindInFiles(wxCommandEvent& e)
 
     ItemData* itemData = DoGetItemData(item);
     CHECK_PTR_RET(itemData);
-    
+
     CHECK_COND_RET(itemData->IsFolder());
-    
+
     // Open the find in files dialg for the folder path
     wxFileName fn(itemData->GetFolderPath(), "");
     m_mgr->OpenFindInFileForPath(fn.GetPath());

@@ -14,7 +14,7 @@ FilesCollector::~FilesCollector() {}
 wxDirTraverseResult FilesCollector::OnDir(const wxString& dirname)
 {
     if(m_progress) {
-        m_progress->Pulse(wxString::Format("Loading files from folder: %s", dirname));
+        m_progress->Pulse(wxString::Format("Scanning folder...\n%s", dirname));
     }
     wxFileName fn(dirname, FOLDER_MARKER);
     m_filesAndFolders.Add(fn.GetFullPath());

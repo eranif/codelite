@@ -130,7 +130,7 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     // Get list of the workspace files
     wxProgressDialog* progress =
         new wxProgressDialog(_("Loading workspace"),
-                             wxString(' ', 150),
+                             wxString(' ', 150) + "\n\n",
                              100,
                              EventNotifier::Get()->TopFrame(),
                              wxPD_APP_MODAL | wxPD_AUTO_HIDE |

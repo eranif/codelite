@@ -876,7 +876,7 @@ void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString& filename
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         wxString errorString = lines.Item(i);
         errorString.Trim().Trim(false);
-        if(errorString.StartsWith("Parse error")) {
+        if(errorString.Contains("syntax error")) {
             // get the line number
             if(reLine.Matches(errorString)) {
                 wxString strLine = reLine.GetMatch(errorString, 1);
@@ -886,7 +886,7 @@ void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString& filename
                 }
                 long nLine(wxNOT_FOUND);
                 if(strLine.ToCLong(&nLine)) {
-                    CL_DEBUG("PHPLint: adding error marker @%d", nLine - 1);
+                    CL_DEBUG("PHPLint: adding error marker @%d", (int)nLine - 1);
                     editor->SetErrorMarker(nLine - 1, errorString);
                 }
             }

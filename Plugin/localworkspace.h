@@ -339,9 +339,12 @@ public:
     size_t GetParserFlags();
     void SetParserFlags(size_t flags);
 
-    void GetParserMacros(wxString &macros);
+    void GetParserMacros(wxString& macros);
     void SetParserMacros(const wxString &macros);
-
+    
+    void SetSearchInFilesMask(const wxString &findInFileMask);
+    void GetSearchInFilesMask(wxString &findInFileMask);
+    
     void SetCustomData(const wxString &name, const wxString &value);
     wxString GetCustomData(const wxString &name);
 

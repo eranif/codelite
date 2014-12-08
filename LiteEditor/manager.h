@@ -145,7 +145,8 @@ public:
     void SetCodeLiteLauncherPath(const wxString& path);
     void OnRestart(wxCommandEvent& event);
     void GenerateCompileCommands();
-
+    void OnGetFindInFilesMask(clCommandEvent &event);
+    
 protected:
     void DoRestartCodeLite();
 

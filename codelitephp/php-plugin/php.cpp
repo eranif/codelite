@@ -541,6 +541,8 @@ void PhpPlugin::OnGetFiFMask(clCommandEvent& e)
     e.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
         e.GetStrings().Add("*.php;*.inc;*.phtml;*.js;*.html;*.css");
+        // set this as the default search mask
+        e.SetString("*.php;*.inc;*.phtml;*.js;*.html;*.css");
     }
 }
 

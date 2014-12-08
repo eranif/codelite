@@ -60,7 +60,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_findString->SetToolTip(_("String to search"));
     m_findString->SetFocus();
     #if wxVERSION_NUMBER >= 3000
-    m_findString->SetHint(wxT(""));
+    m_findString->SetHint(_("Type a string to search..."));
     #endif
     
     fgSizer41->Add(m_findString, 0, wxALL|wxEXPAND, 5);
@@ -235,19 +235,19 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_replaceAll = new wxButton(m_panel48, wxID_REPLACE, _("&Replace"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_replaceAll->SetToolTip(_("Search for matches and place them in the 'Replace' window as candidates for possible replace operation"));
     
-    bSizer2->Add(m_replaceAll, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    bSizer2->Add(m_replaceAll, 0, wxALL|wxEXPAND, 5);
     
     m_stop = new wxButton(m_panel48, wxID_STOP, _("Sto&p"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stop->SetToolTip(_("Stop the current search"));
     
-    bSizer2->Add(m_stop, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    bSizer2->Add(m_stop, 0, wxALL|wxEXPAND, 5);
     
     m_cancel = new wxButton(m_panel48, wxID_CANCEL, _("Close"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_cancel->SetToolTip(_("Close this dialog"));
     
     bSizer2->Add(m_cancel, 0, wxALL|wxEXPAND, 5);
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

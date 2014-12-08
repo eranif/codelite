@@ -227,7 +227,8 @@ void PHPWorkspaceView::LoadWorkspace()
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
     m_itemsToSort.PushBack(root, true);
     
-    wxBusyInfo info(_("Loading Workspace View"));
+    wxBusyInfo busy(_("Loading Workspace View..."), EventNotifier::Get()->TopFrame());
+    wxYieldIfNeeded();
     
     // add projects
     wxStringSet_t files;

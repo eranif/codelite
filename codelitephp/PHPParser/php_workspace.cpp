@@ -126,19 +126,24 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
         event.SetString(GetFilename().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(event);
     }
-
+    
+    wxBusyInfo busy(_("Scanning for workspace files..."), EventNotifier::Get()->TopFrame());
+    wxYieldIfNeeded();
+    
     // Get list of the workspace files
-    wxProgressDialog* progress =
-        new wxProgressDialog(_("Loading workspace"),
-                             wxString(' ', 150) + "\n\n",
-                             100,
-                             EventNotifier::Get()->TopFrame(),
-                             wxPD_APP_MODAL | wxPD_AUTO_HIDE |
-                                 wxPD_SMOOTH // - makes indeterminate mode bar on WinXP very small
-                             );
+    // wxProgressDialog* progress =
+    //     new wxProgressDialog(_("Loading workspace"),
+    //                          wxString(' ', 150) + "\n\n",
+    //                          1000,
+    //                          EventNotifier::Get()->TopFrame(),
+    //                          wxPD_APP_MODAL | wxPD_AUTO_HIDE |
+    //                              wxPD_SMOOTH // - makes indeterminate mode bar on WinXP very small
+    //                          );
+
     wxArrayString dummy;
-    GetWorkspaceFiles(dummy, progress);
-    progress->Destroy();
+    GetWorkspaceFiles(dummy);
+    
+    // progress->Destroy();
     
     // Perform a quick re-parse of the workspace
     ParseWorkspace(false);

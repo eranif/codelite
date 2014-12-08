@@ -9,6 +9,7 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
     : PHPProjectSettingsBase(parent)
     , m_dirty(false)
     , m_projectName(projectName)
+    , m_resyncNeeded(false)
 {
     MSWSetNativeTheme(m_treebook41->GetTreeCtrl());
     const PHPProjectSettingsData& data = PHPWorkspace::Get()->GetProject(m_projectName)->GetSettings();
@@ -23,7 +24,15 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
     m_checkBoxPauseWhenExecutionEnds->SetValue(data.IsPauseWhenExeTerminates());
     m_textCtrlWebSiteURL->ChangeValue(data.GetProjectURL());
     m_checkBoxSystemBrowser->SetValue(data.IsUseSystemBrowser());
-    m_textCtrlViewFilter->ChangeValue(PHPWorkspace::Get()->GetProject(m_projectName)->GetImportFileSpec());
+
+    wxString fileExts = PHPWorkspace::Get()->GetProject(m_projectName)->GetImportFileSpec();
+    fileExts.Replace(";", ",");
+    m_pgPropFileTypes->SetValueFromString(fileExts);
+    
+    wxString excludeFolders = PHPWorkspace::Get()->GetProject(m_projectName)->GetExcludeFolders();
+    excludeFolders.Replace(";", ",");
+    m_pgPropExcludeFolders->SetValueFromString(excludeFolders);
+
     if(!data.GetPhpIniFile().IsEmpty()) {
         m_filePickerPhpIni->SetPath(data.GetPhpIniFile());
     }
@@ -150,14 +159,18 @@ void PHPProjectSettingsDlg::Save()
         mapping.insert(std::make_pair(source.GetString(), target.GetString()));
     }
     data.SetFileMapping(mapping);
-    pProject->SetImportFileSpec(m_textCtrlViewFilter->GetValue());
+
+    wxString fileExts = m_pgPropFileTypes->GetValue().GetString();
+    fileExts.Replace(",", ";");
+    pProject->SetImportFileSpec(fileExts);
+
+    wxString excludeDirs = m_pgPropExcludeFolders->GetValue().GetString();
+    excludeDirs.Replace(",", ";");
+    pProject->SetExcludeFolders(excludeDirs);
 
     // Save the project content
     pProject->Save();
     SetDirty(false);
-
-    wxCommandEvent evtRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtRetag);
 }
 
 void PHPProjectSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event) { SetDirty(true); }
@@ -232,7 +245,10 @@ void PHPProjectSettingsDlg::EditItem(const wxDataViewItem& item)
         SetDirty(true);
     }
 }
-void PHPProjectSettingsDlg::OnTextctrlviewfilterTextUpdated(wxCommandEvent& event)
+void PHPProjectSettingsDlg::OnTextctrlviewfilterTextUpdated(wxCommandEvent& event) { SetDirty(true); }
+void PHPProjectSettingsDlg::OnPgmgrviewPgChanged(wxPropertyGridEvent& event)
 {
+    event.Skip();
     SetDirty(true);
+    m_resyncNeeded = true;
 }

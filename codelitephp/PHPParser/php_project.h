@@ -16,6 +16,7 @@ class PHPProject
     wxFileName m_filename;
     wxString m_importFileSpec;
     wxArrayString m_files;
+    wxString m_excludeFolders;
 
 public:
     typedef wxSharedPtr<PHPProject> Ptr_t;
@@ -24,7 +25,8 @@ public:
     /**
      * @class CreateData
      */
-    struct CreateData {
+    struct CreateData
+    {
         wxString path;
         wxString name;
         wxString phpExe;
@@ -41,6 +43,7 @@ public:
     PHPProject()
         : m_isActive(false)
         , m_importFileSpec("*.php;*.html;*.phtml;*.inc;*.css;*.js;.htaccess")
+        , m_excludeFolders(".git;.svn;.codelite")
     {
     }
     ~PHPProject() {}
@@ -49,6 +52,8 @@ public:
     void Load(const wxFileName& filename);
     void Save();
 
+    void SetExcludeFolders(const wxString& excludeFolders) { this->m_excludeFolders = excludeFolders; }
+    const wxString& GetExcludeFolders() const { return m_excludeFolders; }
     const wxString& GetImportFileSpec() const { return m_importFileSpec; }
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     const wxFileName& GetFilename() const { return m_filename; }

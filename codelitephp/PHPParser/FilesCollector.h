@@ -4,6 +4,7 @@
 #include <wx/dir.h>
 #include <wx/arrstr.h>
 #include <wx/progdlg.h>
+#include "macros.h"
 
 #define FOLDER_MARKER "folder.marker"
 
@@ -12,9 +13,12 @@ class FilesCollector : public wxDirTraverser
     wxArrayString m_specArray;
     wxArrayString m_filesAndFolders;
     wxProgressDialog* m_progress;
- 
+    wxStringSet_t m_excludeFolders;
+    
 public:
-    FilesCollector(const wxString& filespec, wxProgressDialog* progress = NULL);
+    FilesCollector(const wxString& filespec,
+                   const wxString& excludeFolders = "",
+                   wxProgressDialog* progress = NULL);
     virtual ~FilesCollector();
 
     const wxArrayString& GetFilesAndFolders() const { return m_filesAndFolders; }

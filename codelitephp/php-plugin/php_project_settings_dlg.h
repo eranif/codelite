@@ -6,10 +6,12 @@
 class PHPProjectSettingsDlg : public PHPProjectSettingsBase
 {
 private:
-    bool     m_dirty;
+    bool m_dirty;
     wxString m_projectName;
+    bool m_resyncNeeded;
 
 protected:
+    virtual void OnPgmgrviewPgChanged(wxPropertyGridEvent& event);
     virtual void OnTextctrlviewfilterTextUpdated(wxCommandEvent& event);
     virtual void OnFileMappingItemActivated(wxDataViewEvent& event);
     virtual void OnFileMappingMenu(wxDataViewEvent& event);
@@ -25,35 +27,29 @@ protected:
     virtual void OnPauseWhenExeTerminates(wxCommandEvent& event);
     virtual void OnProjectURLChanged(wxCommandEvent& event);
     virtual void OnWorkingDirectoryChanged(wxFileDirPickerEvent& event);
-    
-    void OnNewFileMapping(wxCommandEvent &e);
-    void OnDeleteFileMapping(wxCommandEvent &e);
-    void OnEditFileMapping(wxCommandEvent &e);
-    
+
+    void OnNewFileMapping(wxCommandEvent& e);
+    void OnDeleteFileMapping(wxCommandEvent& e);
+    void OnEditFileMapping(wxCommandEvent& e);
+
     void Save();
-    void EditItem(const wxDataViewItem &item);
-    
+    void EditItem(const wxDataViewItem& item);
+
 protected:
     // Handlers for PHPProjectSettingsBase events.
-    void OnOK( wxCommandEvent& event );
-    void OnApply( wxCommandEvent& event );
-    void OnApplyUI( wxUpdateUIEvent& event );
-    
-    
+    void OnOK(wxCommandEvent& event);
+    void OnApply(wxCommandEvent& event);
+    void OnApplyUI(wxUpdateUIEvent& event);
+
 public:
     /** Constructor */
-    PHPProjectSettingsDlg( wxWindow* parent, const wxString &projectName );
+    PHPProjectSettingsDlg(wxWindow* parent, const wxString& projectName);
     virtual ~PHPProjectSettingsDlg();
 
-    bool IsDirty() const {
-        return m_dirty;
-    }
-    void SetDirty(bool dirty) {
-        this->m_dirty = dirty;
-    }
-    const wxString& GetProjectName() const {
-        return m_projectName;
-    }
+    bool IsDirty() const { return m_dirty; }
+    void SetDirty(bool dirty) { this->m_dirty = dirty; }
+    const wxString& GetProjectName() const { return m_projectName; }
+    bool IsResyncNeeded() const { return m_resyncNeeded; }
 };
 
 #endif // __php_project_settings_dlg__

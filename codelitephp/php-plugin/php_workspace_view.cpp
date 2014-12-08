@@ -226,10 +226,10 @@ void PHPWorkspaceView::LoadWorkspace()
                                                 data);
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
     m_itemsToSort.PushBack(root, true);
-    
+
     wxBusyInfo busy(_("Loading Workspace View..."), EventNotifier::Get()->TopFrame());
     wxYieldIfNeeded();
-    
+
     // add projects
     wxStringSet_t files;
     PHPProject::Map_t::const_iterator iter_project = projects.begin();
@@ -646,7 +646,16 @@ wxBitmap PHPWorkspaceView::DoGetBitmapForExt(const wxString& ext) const
 void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
 {
     PHPProjectSettingsDlg settingsDlg(FRAME, PHPWorkspace::Get()->GetActiveProjectName());
-    settingsDlg.ShowModal();
+    if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
+        // Re-sync the project with the file system
+        PHPWorkspace::Get()->GetActiveProject()->SynchWithFileSystem();
+        
+        // Incase files were added - reparse
+        PHPWorkspace::Get()->ParseWorkspace(false);
+        
+        // reload the workspace
+        CallAfter(&PHPWorkspaceView::LoadWorkspace);
+    }
 }
 
 void PHPWorkspaceView::OnActiveProjectSettingsUI(wxUpdateUIEvent& event)
@@ -656,8 +665,18 @@ void PHPWorkspaceView::OnActiveProjectSettingsUI(wxUpdateUIEvent& event)
 
 void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
 {
-    PHPProjectSettingsDlg settingsDlg(FRAME, DoGetSelectedProject());
-    settingsDlg.ShowModal();
+    wxString selectedProject = DoGetSelectedProject();
+    PHPProjectSettingsDlg settingsDlg(FRAME, selectedProject);
+    if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
+        // Re-sync the project with the file system
+        PHPWorkspace::Get()->GetProject(selectedProject)->SynchWithFileSystem();
+        
+        // Incase files were added - reparse
+        PHPWorkspace::Get()->ParseWorkspace(false);
+        
+        // reload the workspace
+        CallAfter(&PHPWorkspaceView::LoadWorkspace);
+    }
 }
 
 void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)

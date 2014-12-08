@@ -300,8 +300,17 @@ void PHPWorkspace::FromJSON(const JSONElement& e)
     }
 }
 
+#define PHP_WORKSPACE_VERSION "1.0"
+#define PHP_WORKSPACE_IDE "CodeLite"
+
 JSONElement PHPWorkspace::ToJSON(JSONElement& e) const
 {
+    JSONElement metadata = JSONElement::createObject("metadata");
+    e.append(metadata);
+    
+    metadata.addProperty("Version", PHP_WORKSPACE_VERSION);
+    metadata.addProperty("IDE", PHP_WORKSPACE_IDE);
+    
     // Store the list of files
     JSONElement projectsArr = JSONElement::createArray("projects");
     e.append(projectsArr);
@@ -312,6 +321,8 @@ JSONElement PHPWorkspace::ToJSON(JSONElement& e) const
         projectFile.MakeRelativeTo(m_workspaceFile.GetPath());
         projectsArr.arrayAppend(projectFile.GetFullPath(wxPATH_UNIX));
     }
+    
+    
     return e;
 }
 

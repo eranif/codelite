@@ -25,6 +25,9 @@
 #include <wx/treebook.h>
 #include <wx/imaglist.h>
 #include <wx/choicebk.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
@@ -259,8 +262,9 @@ protected:
     wxButton* m_button17;
     wxTextCtrl* m_textCtrlPHPIncludePath;
     wxPanel* m_panel447;
-    wxStaticText* m_staticText453;
-    wxTextCtrl* m_textCtrlViewFilter;
+    wxPropertyGridManager* m_pgMgrView;
+    wxPGProperty* m_pgPropFileTypes;
+    wxPGProperty* m_pgPropExcludeFolders;
     wxPanel* m_panel45;
     wxStaticText* m_staticText105;
     wxDataViewListCtrl* m_dvListCtrlFileMapping;
@@ -283,7 +287,7 @@ protected:
     virtual void OnProjectURLChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseSystemBrowser(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddIncludePath(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnTextctrlviewfilterTextUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPgmgrviewPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnFileMappingMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnFileMappingItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnAddCCPath(wxCommandEvent& event) { event.Skip(); }
@@ -314,8 +318,7 @@ public:
     wxButton* GetButton17() { return m_button17; }
     wxTextCtrl* GetTextCtrlPHPIncludePath() { return m_textCtrlPHPIncludePath; }
     wxPanel* GetPanel59() { return m_panel59; }
-    wxStaticText* GetStaticText453() { return m_staticText453; }
-    wxTextCtrl* GetTextCtrlViewFilter() { return m_textCtrlViewFilter; }
+    wxPropertyGridManager* GetPgMgrView() { return m_pgMgrView; }
     wxPanel* GetPanel447() { return m_panel447; }
     wxPanel* GetPanel43() { return m_panel43; }
     wxStaticText* GetStaticText105() { return m_staticText105; }

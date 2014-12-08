@@ -14,6 +14,7 @@
 void PHPProject::FromJSON(const JSONElement& element)
 {
     m_importFileSpec = element.namedObject("m_importFileSpec").toString(m_importFileSpec);
+    m_excludeFolders = element.namedObject("m_excludeFolders").toString(m_excludeFolders);
     m_name = element.namedObject("m_name").toString();
     m_isActive = element.namedObject("m_isActive").toBool();
     m_settings.FromJSON(element.namedObject("settings"));
@@ -24,13 +25,14 @@ void PHPProject::ToJSON(JSONElement& pro) const
     pro.addProperty("m_name", m_name);
     pro.addProperty("m_isActive", m_isActive);
     pro.addProperty("m_importFileSpec", m_importFileSpec);
+    pro.addProperty("m_excludeFolders", m_excludeFolders);
     pro.append(m_settings.ToJSON());
 }
 
 wxArrayString& PHPProject::GetFiles(wxProgressDialog* progress)
 {
     if(m_files.IsEmpty()) {
-        FilesCollector traverser(m_importFileSpec, progress);
+        FilesCollector traverser(m_importFileSpec, m_excludeFolders, progress);
         wxDir dir(GetFilename().GetPath());
         dir.Traverse(traverser);
         m_files.swap(traverser.GetFilesAndFolders());

@@ -728,17 +728,21 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer449 = new wxBoxSizer(wxVERTICAL);
     m_panel447->SetSizer(boxSizer449);
     
-    m_staticText453 = new wxStaticText(m_panel447, wxID_ANY, _("Select the file types to include in the project:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxArrayString m_pgMgrViewArr;
+    wxUnusedVar(m_pgMgrViewArr);
+    wxArrayInt m_pgMgrViewIntArr;
+    wxUnusedVar(m_pgMgrViewIntArr);
+    m_pgMgrView = new wxPropertyGridManager(m_panel447, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer449->Add(m_staticText453, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer449->Add(m_pgMgrView, 1, wxALL|wxEXPAND, 5);
     
-    m_textCtrlViewFilter = new wxTextCtrl(m_panel447, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlViewFilter->SetToolTip(_("Select the file types to include in the project.\nThis is a semi-colon delimited list"));
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlViewFilter->SetHint(wxT(""));
-    #endif
+    m_pgMgrViewArr.Clear();
+    m_pgPropFileTypes = m_pgMgrView->Append(  new wxArrayStringProperty( _("Project file types"), wxPG_LABEL, m_pgMgrViewArr) );
+    m_pgPropFileTypes->SetHelpString(_("Set the file extensions to include in this project\nCodeLite will only display these file types in the project view"));
     
-    boxSizer449->Add(m_textCtrlViewFilter, 0, wxALL|wxEXPAND, 5);
+    m_pgMgrViewArr.Clear();
+    m_pgPropExcludeFolders = m_pgMgrView->Append(  new wxArrayStringProperty( _("Exclude folders"), wxPG_LABEL, m_pgMgrViewArr) );
+    m_pgPropExcludeFolders->SetHelpString(_("Set a list of folders to exclude from the project.\nIf the last part of the folder path is equal to one of the entries in this exclude list, it will not\nbe shown in the project view"));
     
     m_panel45 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook41->AddPage(m_panel45, _("Debug"), false, wxNOT_FOUND);
@@ -846,7 +850,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_checkBoxSystemBrowser->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
     m_button17->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath), NULL, this);
     m_textCtrlPHPIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_textCtrlViewFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnTextctrlviewfilterTextUpdated), NULL, this);
+    m_pgMgrView->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged), NULL, this);
     m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
     m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated), NULL, this);
     m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath), NULL, this);
@@ -870,7 +874,7 @@ PHPProjectSettingsBase::~PHPProjectSettingsBase()
     m_checkBoxSystemBrowser->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
     m_button17->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath), NULL, this);
     m_textCtrlPHPIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_textCtrlViewFilter->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnTextctrlviewfilterTextUpdated), NULL, this);
+    m_pgMgrView->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged), NULL, this);
     m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
     m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated), NULL, this);
     m_button15->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath), NULL, this);

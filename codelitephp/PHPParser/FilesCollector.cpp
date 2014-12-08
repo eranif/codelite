@@ -3,7 +3,8 @@
 #include <wx/filefn.h>
 #include <wx/filename.h>
 
-FilesCollector::FilesCollector(const wxString& filespec)
+FilesCollector::FilesCollector(const wxString& filespec, wxProgressDialog* progress)
+    : m_progress(progress)
 {
     m_specArray = ::wxStringTokenize(filespec, ";", wxTOKEN_STRTOK);
 }
@@ -12,6 +13,9 @@ FilesCollector::~FilesCollector() {}
 
 wxDirTraverseResult FilesCollector::OnDir(const wxString& dirname)
 {
+    if(m_progress) {
+        m_progress->Pulse(wxString::Format("Loading files from folder: %s", dirname));
+    }
     wxFileName fn(dirname, FOLDER_MARKER);
     m_filesAndFolders.Add(fn.GetFullPath());
     return wxDIR_CONTINUE;

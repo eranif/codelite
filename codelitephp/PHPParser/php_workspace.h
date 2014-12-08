@@ -29,6 +29,7 @@
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
 
+class wxProgressDialog;
 class PHPWorkspace : public wxEvtHandler
 {
     static PHPWorkspace* ms_instance;
@@ -155,11 +156,11 @@ public:
      * @brief return list of files from the entire workspace
      * note that files are returned as fullpath
      */
-    void GetWorkspaceFiles(wxStringSet_t& workspaceFiles) const;
+    void GetWorkspaceFiles(wxStringSet_t& workspaceFiles, wxProgressDialog* progress = NULL) const;
     /**
      * @brief same as above, but return the files in the form of an array
      */
-    void GetWorkspaceFiles(wxArrayString& workspaceFiles) const;
+    void GetWorkspaceFiles(wxArrayString& workspaceFiles, wxProgressDialog* progress = NULL) const;
     /**
      * @brief return the active project name
      */

@@ -14,6 +14,7 @@
 #include "php_strings.h"
 #include <wx/msgdlg.h>
 #include "php_parser_thread.h"
+#include <wx/progdlg.h>
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -126,6 +127,19 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
         EventNotifier::Get()->AddPendingEvent(event);
     }
 
+    // Get list of the workspace files
+    wxProgressDialog* progress =
+        new wxProgressDialog(_("Loading workspace"),
+                             wxString(' ', 150),
+                             100,
+                             EventNotifier::Get()->TopFrame(),
+                             wxPD_APP_MODAL | wxPD_AUTO_HIDE |
+                                 wxPD_SMOOTH // - makes indeterminate mode bar on WinXP very small
+                             );
+    wxArrayString dummy;
+    GetWorkspaceFiles(dummy, progress);
+    progress->Destroy();
+    
     // Perform a quick re-parse of the workspace
     ParseWorkspace(false);
 
@@ -182,11 +196,11 @@ void PHPWorkspace::SetProjectActive(const wxString& project)
     }
 }
 
-void PHPWorkspace::GetWorkspaceFiles(wxStringSet_t& workspaceFiles) const
+void PHPWorkspace::GetWorkspaceFiles(wxStringSet_t& workspaceFiles, wxProgressDialog* progress) const
 {
     PHPProject::Map_t::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {
-        const wxArrayString &files = iter->second->GetFiles();
+        const wxArrayString& files = iter->second->GetFiles(progress);
         workspaceFiles.insert(files.begin(), files.end());
     }
 }
@@ -389,10 +403,10 @@ void PHPWorkspace::DoPromptWorkspaceModifiedDialog()
     }
 }
 
-void PHPWorkspace::GetWorkspaceFiles(wxArrayString& workspaceFiles) const
+void PHPWorkspace::GetWorkspaceFiles(wxArrayString& workspaceFiles, wxProgressDialog* progress) const
 {
     wxStringSet_t files;
-    GetWorkspaceFiles(files);
+    GetWorkspaceFiles(files, progress);
     workspaceFiles.clear();
     wxStringSet_t::const_iterator iter = files.begin();
     for(; iter != files.end(); ++iter) {

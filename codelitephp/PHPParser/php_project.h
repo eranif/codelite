@@ -6,6 +6,7 @@
 #include <set>
 #include "php_project_settings_data.h"
 #include <wx/sharedptr.h>
+#include <wx/progdlg.h>
 
 class PHPProject
 {
@@ -64,7 +65,7 @@ public:
     /**
      * @brief return a list of all project files (fullpath)
      */
-    wxArrayString& GetFiles();
+    wxArrayString& GetFiles(wxProgressDialog* progress = NULL);
 
     /**
      * @brief check if filename is part of this project

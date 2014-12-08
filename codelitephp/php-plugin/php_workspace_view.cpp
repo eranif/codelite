@@ -30,6 +30,7 @@
 #include "file_logger.h"
 #include "FilesCollector.h"
 #include "fileutils.h"
+#include <wx/busyinfo.h>
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -127,7 +128,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_with_default_app"), _("Open with Default Application"));
-                
+
                 m_treeCtrlView->PopupMenu(&menu);
             } break;
             case ItemData::Kind_Workspace: {
@@ -225,7 +226,9 @@ void PHPWorkspaceView::LoadWorkspace()
                                                 data);
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
     m_itemsToSort.PushBack(root, true);
-
+    
+    wxBusyInfo info(_("Loading Workspace View"));
+    
     // add projects
     wxStringSet_t files;
     PHPProject::Map_t::const_iterator iter_project = projects.begin();
@@ -254,7 +257,6 @@ void PHPWorkspaceView::LoadWorkspace()
     if(m_treeCtrlView->HasChildren(root)) {
         m_treeCtrlView->Expand(root);
     }
-
     DoSortItems();
     wxCommandEvent dummy;
     OnEditorChanged(dummy);
@@ -1132,9 +1134,9 @@ void PHPWorkspaceView::OnFindInFiles(wxCommandEvent& e)
 {
     wxArrayTreeItemIds items;
     DoGetSelectedItems(items);
-    
+
     wxArrayString paths;
-    for(size_t i=0; i<items.GetCount(); ++i) {
+    for(size_t i = 0; i < items.GetCount(); ++i) {
         wxTreeItemId item = items.Item(i);
         ItemData* itemData = DoGetItemData(item);
         if(itemData->IsFolder()) {
@@ -1155,9 +1157,9 @@ void PHPWorkspaceView::OnFindInFiles(wxCommandEvent& e)
             break;
         }
     }
-    
+
     CHECK_COND_RET(!paths.IsEmpty());
-    
+
     // Open the find in files dialg for the folder path
     m_mgr->OpenFindInFileForPaths(paths);
 }
@@ -1166,7 +1168,7 @@ void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
 {
     wxArrayTreeItemIds items;
     DoGetSelectedItems(items);
-    for(size_t i=0; i<items.GetCount(); ++i) {
+    for(size_t i = 0; i < items.GetCount(); ++i) {
         wxTreeItemId item = items.Item(i);
         ItemData* itemData = DoGetItemData(item);
         if(itemData->IsFile()) {

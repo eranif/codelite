@@ -27,10 +27,10 @@ void PHPProject::ToJSON(JSONElement& pro) const
     pro.append(m_settings.ToJSON());
 }
 
-wxArrayString& PHPProject::GetFiles()
+wxArrayString& PHPProject::GetFiles(wxProgressDialog* progress)
 {
     if(m_files.IsEmpty()) {
-        FilesCollector traverser(m_importFileSpec);
+        FilesCollector traverser(m_importFileSpec, progress);
         wxDir dir(GetFilename().GetPath());
         dir.Traverse(traverser);
         m_files.swap(traverser.GetFilesAndFolders());

@@ -146,6 +146,8 @@ public:
     void OnRestart(wxCommandEvent& event);
     void GenerateCompileCommands();
     void OnGetFindInFilesMask(clCommandEvent &event);
+    void OnFindInFilesDismissed(clCommandEvent &event);
+    
     
 protected:
     void DoRestartCodeLite();

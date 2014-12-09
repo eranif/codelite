@@ -392,7 +392,15 @@
 // *.a;*.b
 // and should be placed at:
 // event.GetStrings().Add("*.a;*.b");
+// In order to set the mask that will be used (there can be multiple entries), use
+// event.SetString("*.mask");
 #define wxEVT_CMD_GET_FIND_IN_FILES_MASK 3521
+
+// Event type: clCommandEvent
+// Sent by the Find IN Files dialog when the dialog is dismissed
+// The information passed in the event contains the selected 'file mask'
+// used for the search. Use event.GetString() to get it
+#define wxEVT_CMD_FIND_IN_FILES_DISMISSED 3522
 
 /////////////////////////////////////////////////////////
 

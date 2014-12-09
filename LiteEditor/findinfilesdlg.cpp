@@ -142,6 +142,13 @@ FindInFilesDialog::~FindInFilesDialog()
     m_data.SetSearchPaths(m_dirPicker->GetValues());
 
     clConfig::Get().WriteItem(&m_data);
+    
+    // Notify about the dialog dismissal
+    clCommandEvent event(wxEVT_CMD_FIND_IN_FILES_DISMISSED, GetId());
+    event.SetEventObject(this);
+    event.SetString(m_data.GetSelectedMask());
+    EventNotifier::Get()->AddPendingEvent(event);
+    
     WindowAttrManager::Save(this, "FindInFilesDialog", NULL);
 }
 
@@ -173,10 +180,17 @@ void FindInFilesDialog::DoSetFileMask()
     m_fileTypes->Clear();
     if(!mergedArr.IsEmpty()) {
         m_fileTypes->Append(mergedArr);
-
-        int where = m_fileTypes->FindString(m_data.GetSelectedMask());
+        
+        // Let the plugins override the default selected mask
+        wxString selectedMask = m_data.GetSelectedMask();
+        if(!getFileMaskEvent.GetString().IsEmpty()) {
+            selectedMask = getFileMaskEvent.GetString();
+        }
+        
+        int where = m_fileTypes->FindString(selectedMask);
         if(where == wxNOT_FOUND) {
-            where = 0;
+            // Add it
+            where = m_fileTypes->Append(selectedMask);
         }
         m_fileTypes->SetSelection(where);
     }

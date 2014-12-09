@@ -41,7 +41,6 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     OptionsConfigPtr options = editor->GetOptions();
     // hide completion box
     editor->HideCompletionBox();
-    bool isSelectionEmpty = editor->GetSelectedText().IsEmpty();
     
     if (event.GetId() == wxID_COPY) {
         editor->CopyAllowLine();

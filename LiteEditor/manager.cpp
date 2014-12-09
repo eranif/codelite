@@ -207,6 +207,8 @@ Manager::Manager(void)
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(Manager::OnGetFindInFilesMask), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
 }
 
 Manager::~Manager(void)
@@ -218,6 +220,8 @@ Manager::~Manager(void)
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(Manager::OnGetFindInFilesMask), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
     // stop background processes
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -3688,14 +3692,24 @@ void Manager::OnProjectRenamed(clCommandEvent& event)
     }
 }
 
-void Manager::OnGetFindInFilesMask(clCommandEvent& event) 
+void Manager::OnGetFindInFilesMask(clCommandEvent& event)
 {
     event.Skip();
     if(WorkspaceST::Get()->IsOpen()) {
         wxString findInFilesMask;
-        LocalWorkspaceST::Get()->GetSearchInFilesMask(findInFilesMask);
+        LocalWorkspaceST::Get()->GetSearchInFilesMask(findInFilesMask,
+                                                      "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.xml");
         if(!findInFilesMask.IsEmpty()) {
             event.SetString(findInFilesMask);
         }
+    }
+}
+
+void Manager::OnFindInFilesDismissed(clCommandEvent& event)
+{
+    event.Skip();
+    if(WorkspaceST::Get()->IsOpen()) {
+        LocalWorkspaceST::Get()->SetSearchInFilesMask(event.GetString());
+        LocalWorkspaceST::Get()->Flush();
     }
 }

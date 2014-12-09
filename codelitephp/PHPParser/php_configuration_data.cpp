@@ -10,6 +10,7 @@ PHPConfigurationData::PHPConfigurationData()
     , m_errorReporting(wxT("E_ALL & ~E_NOTICE"))
     , m_xdebugPort(9000)
     , m_flags(kRunLintOnFileSave)
+    , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css")
 {
     if ( m_ccIncludePath.IsEmpty() ) {
         m_ccIncludePath.Add( ::GetCCResourceDirectory() );
@@ -23,6 +24,8 @@ PHPConfigurationData::~PHPConfigurationData()
 void PHPConfigurationData::FromJSON(const JSONElement &json)
 {
     m_includePaths = json.namedObject("m_includePaths").toArrayString();
+    m_findInFilesMask = json.namedObject("m_findInFilesMask").toString(m_findInFilesMask);
+    
     m_phpExe = json.namedObject("m_phpExe").toString("php");
     m_errorReporting = json.namedObject("m_errorReporting").toString("E_ALL & ~E_NOTICE");
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(9000);
@@ -55,6 +58,7 @@ JSONElement PHPConfigurationData::ToJSON() const
     e.addProperty("m_ccIncludePath", m_ccIncludePath);
     e.addProperty("m_flags", m_flags);
     e.addProperty("m_xdebugIdeKey", m_xdebugIdeKey);
+    e.addProperty("m_findInFilesMask", m_findInFilesMask);
     return e;
 }
 

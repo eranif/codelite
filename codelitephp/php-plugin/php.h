@@ -93,6 +93,7 @@ public:
     void OnNewProject(clNewProjectEvent& e);
     void OnNewProjectFinish(clNewProjectEvent& e);
     void OnGetFiFMask(clCommandEvent& e);
+    void OnFindInFilesDismissed(clCommandEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
     void OnFileSaved(clCommandEvent& e);

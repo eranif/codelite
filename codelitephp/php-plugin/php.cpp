@@ -136,6 +136,9 @@ PhpPlugin::PhpPlugin(IManager* manager)
         wxEVT_CMD_GET_ACTIVE_PROJECT_FILES, wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(PhpPlugin::OnGetFiFMask), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
+
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Connect(
@@ -239,6 +242,8 @@ void PhpPlugin::UnPlug()
         wxEVT_CMD_OPEN_RESOURCE, wxCommandEventHandler(PhpPlugin::OnOpenResource), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_GET_WORKSPACE_FILES, wxCommandEventHandler(PhpPlugin::OnGetWorkspaceFiles), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES,
                                      wxCommandEventHandler(PhpPlugin::OnGetCurrentFileProjectFiles),
                                      NULL,
@@ -540,9 +545,9 @@ void PhpPlugin::OnGetFiFMask(clCommandEvent& e)
     // always skip this event so other plugins could modify it as well
     e.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
-        e.GetStrings().Add("*.php;*.inc;*.phtml;*.js;*.html;*.css");
-        // set this as the default search mask
-        e.SetString("*.php;*.inc;*.phtml;*.js;*.html;*.css");
+        // set the default find in files mask
+        PHPConfigurationData conf;
+        e.SetString(conf.Load().GetFindInFilesMask());
     }
 }
 
@@ -893,5 +898,15 @@ void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString& filename
                 }
             }
         }
+    }
+}
+
+void PhpPlugin::OnFindInFilesDismissed(clCommandEvent& e)
+{
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        // store the find in files mask
+        PHPConfigurationData conf;
+        conf.Load().SetFindInFilesMask(e.GetString()).Save();
     }
 }

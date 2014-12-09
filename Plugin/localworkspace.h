@@ -343,7 +343,7 @@ public:
     void SetParserMacros(const wxString &macros);
     
     void SetSearchInFilesMask(const wxString &findInFileMask);
-    void GetSearchInFilesMask(wxString &findInFileMask);
+    void GetSearchInFilesMask(wxString &findInFileMask, const wxString &defaultValue = "");
     
     void SetCustomData(const wxString &name, const wxString &value);
     wxString GetCustomData(const wxString &name);

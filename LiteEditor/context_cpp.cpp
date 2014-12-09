@@ -257,8 +257,7 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
     if(tips.size() > 0) {
 
         tooltip << tips[0];
-        for(size_t i = 1; i < tips.size(); i++)
-            tooltip << wxT("\n") << tips[i];
+        for(size_t i = 1; i < tips.size(); i++) tooltip << wxT("\n") << tips[i];
 
         // cancel any old calltip and display the new one
         rCtrl.DoCancelCalltip();
@@ -1113,8 +1112,8 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     int curline = editor.GetCurrentLine();
     int insertPos = editor.PositionFromLine(curline);
     int endPos = curpos;
-    
-    if(editor.SafeGetChar(curpos-1) == ';' || editor.SafeGetChar(curpos-1) == '{') {
+
+    if(editor.SafeGetChar(curpos - 1) == ';' || editor.SafeGetChar(curpos - 1) == '{') {
         endPos = curpos;
     } else {
         // start moving from this position until we find '{'
@@ -1127,7 +1126,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
             }
         }
     }
-    
+
     wxString text = editor.GetTextRange(0, endPos);
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
     if(tags.size()) {
@@ -2109,6 +2108,10 @@ void ContextCpp::Initialize()
     if(!IsJavaScript()) {
         // load the context menu from the resource manager
         m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
+        wxMenuItem* item = m_rclickMenu->FindItem(XRCID("grep_current_workspace"));
+        if(item) {
+            item->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
+        }
         m_completionTriggerStrings.insert(".");
         m_completionTriggerStrings.insert("->");
         m_completionTriggerStrings.insert("::");

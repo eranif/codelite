@@ -16,6 +16,7 @@ protected:
     size_t m_flags;
     wxString m_xdebugIdeKey;
     wxString m_xdebugHost;
+    wxString m_findInFilesMask;
 
 public:
     enum {
@@ -44,13 +45,16 @@ public:
     }
 
     bool HasFlag(size_t flag) const { return m_flags & flag; }
-    bool IsRunLint() const {
-        return HasFlag(kRunLintOnFileSave);
-    }
-    void SetRunLint(bool b) {
-        EnableFlag(kRunLintOnFileSave, b);
+    bool IsRunLint() const { return HasFlag(kRunLintOnFileSave); }
+    void SetRunLint(bool b) { EnableFlag(kRunLintOnFileSave, b); }
+
+    PHPConfigurationData& SetFindInFilesMask(const wxString& findInFilesMask)
+    {
+        this->m_findInFilesMask = findInFilesMask;
+        return *this;
     }
     
+    const wxString& GetFindInFilesMask() const { return m_findInFilesMask; }
     // ----------------------------------------------------
     // Setters
     // ----------------------------------------------------

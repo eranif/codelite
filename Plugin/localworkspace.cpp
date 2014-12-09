@@ -533,11 +533,10 @@ wxFileName LocalWorkspace::DoGetFilePath() const
     return localWorkspaceFile;
 }
 
-void LocalWorkspace::GetSearchInFilesMask(wxString& findInFileMask)
+void LocalWorkspace::GetSearchInFilesMask(wxString& findInFileMask, const wxString& defaultValue)
 {
-    if(!SanityCheck()) return;
-
     findInFileMask.Clear();
+    findInFileMask = defaultValue;
     if(!SanityCheck()) return;
 
     wxXmlNode* optsNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("FindInFilesMask"));

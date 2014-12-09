@@ -11,7 +11,7 @@
   "m_useEnum": false,
   "m_templateClasses": [{
     "m_includeFile": "#include \"dirpicker.h\"",
-    "m_allocationLine": "m_dirPicker = new DirPicker(this, wxID_ANY, wxT(\"...\"), wxEmptyString, _(\"Select a folder:\"), wxDefaultPosition, wxDefaultSize, wxDP_USE_COMBOBOX);",
+    "m_allocationLine": "m_dirPicker = new DirPicker($parent, wxID_ANY, wxT(\"...\"), wxEmptyString, _(\"Select a folder:\"), wxDefaultPosition, wxDefaultSize, wxDP_USE_COMBOBOX);",
     "m_className": "DirPicker",
     "m_xrcPreviewClass": "wxTextCtrl",
     "m_events": []
@@ -175,7 +175,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_panel48"
+         "m_value": "m_panelMainPanel"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",

@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 14,
+  "m_objCounter": 16,
   "m_includeFiles": ["WordCompletionSettings.h"],
   "m_bitmapFunction": "wxC69AFInitBitmapResources",
   "m_bitmapsFile": "UI_wordcompletion_bitmaps.cpp",
@@ -477,6 +477,60 @@
          "m_children": []
         }]
       }]
+    }]
+  }, {
+   "m_type": 4481,
+   "proportion": 0,
+   "border": 5,
+   "gbSpan": "1,1",
+   "gbPosition": "0,0",
+   "m_styles": [],
+   "m_sizerFlags": [],
+   "m_properties": [{
+     "type": "string",
+     "m_label": "Name:",
+     "m_value": "WordCompletionImages"
+    }, {
+     "type": "string",
+     "m_label": "File:",
+     "m_value": ""
+    }, {
+     "type": "virtualFolderPicker",
+     "m_label": "Virtual Folder:",
+     "m_path": "WordCompletion:src"
+    }, {
+     "type": "string",
+     "m_label": "Class Decorator",
+     "m_value": ""
+    }, {
+     "type": "integer",
+     "m_label": "Bitmap Size:",
+     "m_value": 16
+    }, {
+     "type": "bool",
+     "m_label": "Bitmap Mask",
+     "m_value": true
+    }],
+   "m_events": [],
+   "m_children": [{
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "m_bmpWord"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "../codelite-icons/cc/16/word.png"
+      }],
+     "m_events": [],
+     "m_children": []
     }]
   }]
 }

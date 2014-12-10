@@ -80,3 +80,28 @@ WordCompletionSettingsBaseDlg::~WordCompletionSettingsBaseDlg()
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WordCompletionSettingsBaseDlg::OnValueChanged), NULL, this);
     
 }
+
+WordCompletionImages::WordCompletionImages()
+    : wxImageList(16, 16, true)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC69AFInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpWord"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("m_bmpWord"), bmp ) );
+    }
+    
+}
+
+WordCompletionImages::~WordCompletionImages()
+{
+}

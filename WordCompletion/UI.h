@@ -18,6 +18,10 @@
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/button.h>
+#include <wx/imaglist.h>
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
 #include "WordCompletionSettings.h"
 
 class WordCompletionSettingsBaseDlg : public wxDialog
@@ -37,6 +41,26 @@ public:
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     WordCompletionSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Word Completion Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~WordCompletionSettingsBaseDlg();
+};
+
+
+class WordCompletionImages : public wxImageList
+{
+protected:
+    // Maintain a map of all bitmaps representd by their name
+    std::map<wxString, wxBitmap> m_bitmaps;
+
+
+protected:
+
+public:
+    WordCompletionImages();
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
+        return m_bitmaps.find(name)->second;
+    }
+    virtual ~WordCompletionImages();
 };
 
 #endif

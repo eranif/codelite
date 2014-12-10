@@ -6,6 +6,7 @@
 #include <wx/app.h>
 #include "WordCompletionSettingsDlg.h"
 #include "event_notifier.h"
+#include "cl_command_event.h"
 
 static WordCompletionPlugin* thePlugin = NULL;
 
@@ -116,7 +117,7 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
     // Build the suggetsion list
     wxString suggestString;
     for(wxStringSet_t::iterator iter = reply.suggest.begin(); iter != reply.suggest.end(); ++iter) {
-        suggestString << *iter << " ";
+        suggestString << *iter << "?1 ";
     }
     if(!suggestString.IsEmpty()) {
         suggestString.RemoveLast();
@@ -124,6 +125,7 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
 
     // Auto insert single match
     activeEditor->GetSTC()->AutoCompSetChooseSingle(true);
+    activeEditor->GetSTC()->AutoCompSetAutoHide(true);
     activeEditor->GetSTC()->AutoCompShow(reply.filter.length(), suggestString);
 }
 
@@ -161,8 +163,8 @@ void WordCompletionPlugin::OnSettings(wxCommandEvent& event)
 void WordCompletionPlugin::OnEditorHandler(clCommandEvent& event)
 {
     event.Skip();
-    IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientObject());
+    wxStyledTextCtrl* editor = reinterpret_cast<wxStyledTextCtrl*>(event.GetEventObject());
     if(editor) {
-        editor->GetSTC()->RegisterImage()
+        editor->RegisterImage(1, m_images.Bitmap("m_bmpWord"));
     }
 }

@@ -3,11 +3,15 @@
 
 #include "plugin.h"
 #include "WordCompletionRequestReply.h"
+#include "UI.h"
+#include "cl_command_event.h"
 
 class WordCompletionThread;
 class WordCompletionPlugin : public IPlugin
 {
     WordCompletionThread* m_thread;
+    WordCompletionImages m_images;
+    
 public:
     /**
      * @brief this function is called by the word completion thread when parsing phase is done

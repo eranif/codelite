@@ -83,6 +83,8 @@
       <File Name="EclipseDiffThemeImporter.cpp"/>
       <File Name="EclipsePHPThemeImporter.h"/>
       <File Name="EclipsePHPThemeImporter.cpp"/>
+      <File Name="EclipseCSSThemeImporter.h"/>
+      <File Name="EclipseCSSThemeImporter.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include">

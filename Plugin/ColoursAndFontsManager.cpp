@@ -269,7 +269,16 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
         lexer->SetFileSpec("*.htm;*.html;*.xhtml");
     }
-
+    
+    // Hack3: all the HTML support to PHP which have much more colour themes
+    if(lexer->GetName() == "html" && lexer->GetFileSpec().Contains(".html")) {
+        lexer->SetFileSpec("*.vbs;*.vbe;*.wsf;*.wsc;*.asp;*.aspx");
+    }
+    
+    if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
+    }
+    
     if(m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
     }

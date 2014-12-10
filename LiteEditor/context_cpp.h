@@ -39,24 +39,8 @@ class ContextCpp : public ContextBase
     std::map<wxString, int> m_propertyInt;
     wxMenu *m_rclickMenu;
 
-    //images used by the C++ context
-    static wxBitmap m_classBmp;
-    static wxBitmap m_structBmp;
-    static wxBitmap m_namespaceBmp;
-    static wxBitmap m_variableBmp;
-    static wxBitmap m_tpyedefBmp;
-    static wxBitmap m_memberPrivateBmp;
-    static wxBitmap m_memberPublicBmp;
-    static wxBitmap m_memberProtectedeBmp;
-    static wxBitmap m_functionPrivateBmp;
-    static wxBitmap m_functionPublicBmp;
-    static wxBitmap m_functionProtectedeBmp;
-    static wxBitmap m_macroBmp;
-    static wxBitmap m_enumBmp;
-    static wxBitmap m_enumeratorBmp;
     static wxBitmap m_cppFileBmp;
     static wxBitmap m_hFileBmp;
-    static wxBitmap m_otherFileBmp;
 protected:
     void OnShowCodeNavMenu(clCodeCompletionEvent &e);
 

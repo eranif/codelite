@@ -125,24 +125,8 @@ struct SFileSort {
 
 //----------------------------------------------------------------------------------
 
-// Images initialization
-wxBitmap ContextCpp::m_classBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_structBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_namespaceBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_variableBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_tpyedefBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_memberPrivateBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_memberPublicBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_memberProtectedeBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_functionPrivateBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_functionPublicBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_functionProtectedeBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_macroBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_enumBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_enumeratorBmp = wxNullBitmap;
 wxBitmap ContextCpp::m_cppFileBmp = wxNullBitmap;
 wxBitmap ContextCpp::m_hFileBmp = wxNullBitmap;
-wxBitmap ContextCpp::m_otherFileBmp = wxNullBitmap;
 
 BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 EVT_UPDATE_UI(XRCID("find_decl"), ContextCpp::OnUpdateUI)
@@ -2036,49 +2020,12 @@ void ContextCpp::ApplySettings()
     DoApplySettings(lexPtr);
 
     // create all images used by the cpp context
-    if(m_classBmp.IsOk() == false) {
-
+    if(m_cppFileBmp.IsOk() == false) {
         // Initialise the file bitmaps
         BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
-
-        m_classBmp = bmpLoader->LoadBitmap(wxT("cc/16/class"));
-        m_structBmp = bmpLoader->LoadBitmap(wxT("cc/16/struct"));
-        m_namespaceBmp = bmpLoader->LoadBitmap(wxT("cc/16/namespace"));
-        m_variableBmp = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
-        m_tpyedefBmp = bmpLoader->LoadBitmap(wxT("cc/16/typedef"));
-        m_memberPrivateBmp = bmpLoader->LoadBitmap(wxT("cc/16/member_private"));
-        m_memberPublicBmp = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
-        m_memberProtectedeBmp = bmpLoader->LoadBitmap(wxT("cc/16/member_protected"));
-        m_functionPrivateBmp = bmpLoader->LoadBitmap(wxT("cc/16/function_private"));
-        m_functionPublicBmp = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
-        m_functionProtectedeBmp = bmpLoader->LoadBitmap(wxT("cc/16/function_protected"));
-        m_macroBmp = bmpLoader->LoadBitmap(wxT("cc/16/typedef"));
-        m_enumBmp = bmpLoader->LoadBitmap(wxT("cc/16/enum"));
-        m_enumeratorBmp = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
         m_cppFileBmp = bmpLoader->LoadBitmap(wxT("mime/16/cpp"));
         m_hFileBmp = bmpLoader->LoadBitmap(wxT("mime/16/h"));
-        m_otherFileBmp = bmpLoader->LoadBitmap(wxT("mime/16/text"));
     }
-
-    // register the images
-    rCtrl.ClearRegisteredImages();
-    rCtrl.RegisterImage(1, m_classBmp);
-    rCtrl.RegisterImage(2, m_structBmp);
-    rCtrl.RegisterImage(3, m_namespaceBmp);
-    rCtrl.RegisterImage(4, m_variableBmp);
-    rCtrl.RegisterImage(5, m_tpyedefBmp);
-    rCtrl.RegisterImage(6, m_memberPrivateBmp);
-    rCtrl.RegisterImage(7, m_memberPublicBmp);
-    rCtrl.RegisterImage(8, m_memberProtectedeBmp);
-    rCtrl.RegisterImage(9, m_functionPrivateBmp);
-    rCtrl.RegisterImage(10, m_functionPublicBmp);
-    rCtrl.RegisterImage(11, m_functionProtectedeBmp);
-    rCtrl.RegisterImage(12, m_macroBmp);
-    rCtrl.RegisterImage(13, m_enumBmp);
-    rCtrl.RegisterImage(14, m_enumeratorBmp);
-    rCtrl.RegisterImage(15, m_cppFileBmp);
-    rCtrl.RegisterImage(16, m_hFileBmp);
-    rCtrl.RegisterImage(17, m_otherFileBmp);
 
     // delete uneeded commands
     rCtrl.CmdKeyClear('/', wxSTC_SCMOD_CTRL);

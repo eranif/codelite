@@ -666,4 +666,9 @@
 // Use GetOldName() to get the old project name
 #define wxEVT_PROJ_RENAMED 3706
 
+// An editor is being instantiated
+// codelite will send a clCommandEvent with the editor pointer
+// set in the event.GetEventObject() member
+#define wxEVT_EDITOR_INITIALIZING 3707
+
 #endif // CODELITE_EVENTS_H

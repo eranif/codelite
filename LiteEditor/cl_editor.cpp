@@ -216,6 +216,11 @@ LEditor::LEditor(wxWindow* parent)
          this,
          XRCID("BookmarkTypes[start]"),
          XRCID("BookmarkTypes[end]"));
+
+    // Notify that this instance is being instantiated
+    clCommandEvent initEvent(wxEVT_EDITOR_INITIALIZING);
+    initEvent.SetEventObject(this);
+    EventNotifier::Get()->AddPendingEvent(initEvent);
 }
 
 LEditor::~LEditor()

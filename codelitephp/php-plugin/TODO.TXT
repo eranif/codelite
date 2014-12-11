@@ -12,16 +12,19 @@ Code Completion / Code Generation
 
 Must:
 =====
-Fix nav bar for PHP plugin
+- Fix nav bar for PHP plugin
+- Unified the keywords with the code completion box
+- css: add hyphen "-" to the list of words
+- Implement click (shift click) for navigation
 
 Usability:
 ==========
+- Open resource dialog: by default, list there a list of recently opened files
 - Function calltip should include the return value
 - Allow user to define a deployment folder for his files 
   (in addition to the SFTP, it should also allow user to copy files by simply saving them)
 - Add support for laravel wizard
 
 NICE TO HAVE: 
-
 - Watches
 - Workspace view: make it multi selection

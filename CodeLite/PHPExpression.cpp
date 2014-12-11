@@ -6,6 +6,7 @@
 #include <stack>
 #include <algorithm>
 #include <set>
+#include "PHPEntityNamespace.h"
 
 PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText, bool functionCalltipExpr)
     : m_type(kNone)
@@ -110,13 +111,11 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case ':':
         case ',':
         case '!':
-            if(current)
-                current->clear();
+            if(current) current->clear();
             break;
         case '(':
         case '[':
-            if(current)
-                current->push_back(token);
+            if(current) current->push_back(token);
             stack.push(phpLexerToken::Vet_t());
             current = &stack.top();
             break;
@@ -129,12 +128,10 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
             // switch back to the previous set of tokens
             stack.pop();
             current = &stack.top();
-            if(current)
-                current->push_back(token);
+            if(current) current->push_back(token);
             break;
         default:
-            if(current)
-                current->push_back(token);
+            if(current) current->push_back(token);
             break;
         }
     }
@@ -160,8 +157,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
 PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
 {
-    if(m_expression.empty())
-        return PHPEntityBase::Ptr_t(NULL);
+    if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
 
     m_sourceFile.reset(new PHPSourceFile(m_text));
     m_sourceFile->SetParseFunctionBody(true);
@@ -216,8 +212,22 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
             // first token
             currentToken = lookpTable.FindScope(part.m_text);
             if(!currentToken) {
-                // Maybe its a global function..
-                currentToken = lookpTable.FindFunction(part.m_text);
+                // If we are inside a namespace, try prepending the namespace
+                // to the first token
+                if(m_sourceFile->Namespace() && m_sourceFile->Namespace()->GetFullName() != "\\") {
+                    // Not the global namespace
+                    wxString fullns =
+                        PHPEntityNamespace::BuildNamespace(m_sourceFile->Namespace()->GetFullName(), part.m_text);
+                    // Check if it exists
+                    PHPEntityBase::Ptr_t pGuess = lookpTable.FindScope(fullns);
+                    if(pGuess) {
+                        currentToken = pGuess;
+                        part.m_text = fullns;
+                    } else {
+                        // Maybe its a global function..
+                        currentToken = lookpTable.FindFunction(part.m_text);
+                    }
+                }
             }
 
         } else {
@@ -280,28 +290,24 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             // Perform basic replacements that we can conduct here without the need of the global
             // lookup table
             if(token.type == kPHP_T_PARENT) {
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName();
                 firstTokenType = kPHP_T_PARENT;
 
             } else if(token.type == kPHP_T_THIS) {
                 // the first token is $this
                 // replace it with the current class absolute path
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_SELF) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass)
-                    return "";
+                if(!innerClass) return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
             } else if(token.type == kPHP_T_VARIABLE) {
@@ -442,8 +448,7 @@ wxString PHPExpression::GetExpressionAsString() const
 size_t PHPExpression::GetLookupFlags() const
 {
     size_t flags(0);
-    if(m_parts.empty())
-        return flags;
+    if(m_parts.empty()) return flags;
 
     if(m_parts.size() == 1 && m_parts.back().m_textType == kPHP_T_PARENT) {
         Part firstPart = m_parts.back();
@@ -465,8 +470,7 @@ size_t PHPExpression::GetLookupFlags() const
 void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches)
 {
     // sanity
-    if(!resolved)
-        return;
+    if(!resolved) return;
     PHPEntityBase::Ptr_t currentScope = GetSourceFile()->CurrentScope();
 
     // GetCount() == 0 && !GetFilter().IsEmpty() i.e. a word completion is required.
@@ -508,7 +512,7 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
                 }
             }
         }
-        
+
         {
             // Add $this incase we are inside a class (but only if '$this' contains the filter string)
             wxString lcFilter = GetFilter().Lower();
@@ -530,13 +534,13 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
     }
     PHPEntityBase::List_t scopeChildren = lookup.FindChildren(resolved->GetDbId(), flags, GetFilter());
     matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
-    
+
     // Incase the resolved is a namespace, suggest all children namespaces
     if(resolved->Is(kEntityTypeNamespace)) {
         PHPEntityBase::List_t namespaces = lookup.FindNamespaces(resolved->GetFullName(), GetFilter());
         matches.insert(matches.end(), namespaces.begin(), namespaces.end());
     }
-    
+
     // and make the list unique
     DoMakeUnique(matches);
 }

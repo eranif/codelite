@@ -532,6 +532,32 @@ TEST_FUNC(test_use_trait)
     return true;
 }
 
+TEST_FUNC(test_partial_namespace)
+{
+    {
+        // parse the helper file first
+        PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace_helper.php"));
+        sourceFile.SetParseFunctionBody(false);
+        sourceFile.Parse();
+        lookup.UpdateSourceFile(sourceFile);
+    }
+
+    PHPSourceFile sourceFile(wxFileName("../Tests/test_partial_namespace.php"));
+    sourceFile.SetParseFunctionBody(false);
+    sourceFile.Parse();
+    lookup.UpdateSourceFile(sourceFile);
+    
+    PHPExpression expr(sourceFile.GetText());
+    PHPEntityBase::Ptr_t resolved = expr.Resolve(lookup, sourceFile.GetFilename().GetFullPath());
+    CHECK_BOOL(resolved);
+    
+    PHPEntityBase::List_t matches;
+    expr.Suggest(resolved, lookup, matches);
+
+    CHECK_SIZE(matches.size(), 1);
+    return true;
+}
+
 //======================-------------------------------------------------
 // Main
 //======================-------------------------------------------------
@@ -543,6 +569,7 @@ static const wxString PERFORMANCE_CODE =
 
 int main(int argc, char** argv)
 {
+    wxInitialize(argc, argv);
 #if 0
     PHPLookupTable table;
     table.Open("/home/eran/laravel-test/");
@@ -555,11 +582,14 @@ int main(int argc, char** argv)
         }
     }
 #else
-    wxFileName symbolsDBPath(SYMBOLS_DB_PATH, "phpsymbols.db");
-    symbolsDBPath.Normalize();
-    lookup.Open(symbolsDBPath.GetPath());
-    lookup.ClearAll();
-    Tester::Instance()->RunTests(); // Run all tests
+    {
+        wxFileName symbolsDBPath(SYMBOLS_DB_PATH, "phpsymbols.db");
+        symbolsDBPath.Normalize();
+        lookup.Open(symbolsDBPath.GetPath());
+        lookup.ClearAll();
+        Tester::Instance()->RunTests(); // Run all tests
+    }
 #endif
+    wxUninitialize();
     return 0;
 }

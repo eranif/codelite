@@ -64,6 +64,8 @@
     <File Name="Tests/test_var_assigned_from_require.php"/>
     <File Name="Tests/test_simple_trait.php"/>
     <File Name="Tests/test_use_trait.php"/>
+    <File Name="Tests/test_partial_namespace.php"/>
+    <File Name="Tests/test_partial_namespace_helper.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>
@@ -108,7 +110,7 @@
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="PHPParserUnitTests.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple
-PATH=C:\src\codelite\lib\gcc_lib;$PATH]]>
+PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>

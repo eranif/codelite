@@ -21,6 +21,11 @@ public:
     virtual void PrintStdout(int indent) const;
     PHPEntityNamespace();
     virtual ~PHPEntityNamespace();
+    
+    /**
+     * @brief build namespace from 2 strings
+     */
+    static wxString BuildNamespace(const wxString &part1, const wxString &part2);
 };
 
 #endif // PHPENTITYNAMESPACE_H

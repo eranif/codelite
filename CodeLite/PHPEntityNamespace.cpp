@@ -37,11 +37,11 @@ void PHPEntityNamespace::Store(wxSQLite3Database& db)
                 return;
             }
         }
-    
+
         // Get the 'parent' namespace part
         wxString parentPath = GetFullName().BeforeLast('\\');
         DoEnsureNamespacePathExists(db, parentPath);
-        
+
         {
             wxSQLite3Statement statement = db.PrepareStatement(
                 "INSERT INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, LINE_NUMBER, FILE_NAME) "
@@ -100,9 +100,9 @@ void PHPEntityNamespace::DoEnsureNamespacePathExists(wxSQLite3Database& db, cons
             statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
             statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
             statement.ExecuteUpdate();
-            //SetDbId(db.GetLastRowId());
+            // SetDbId(db.GetLastRowId());
         }
-        
+
     } catch(wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }
@@ -117,4 +117,13 @@ wxString PHPEntityNamespace::GetParentNamespace() const
     wxString parentPath = GetFullName().BeforeLast('\\');
     if(parentPath.IsEmpty()) return "\\";
     return parentPath;
+}
+
+wxString PHPEntityNamespace::BuildNamespace(const wxString& part1, const wxString& part2)
+{
+    wxString ns;
+    ns << part1 << "\\" << part2;
+    while(ns.Replace("\\\\", "\\")) {
+    }
+    return ns;
 }

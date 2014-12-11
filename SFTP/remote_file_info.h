@@ -29,12 +29,13 @@
 #include "ssh_account_info.h"
 #include <wx/filename.h>
 #include <map>
+#include <wx/clntdata.h>
 
-class RemoteFileInfo
+class RemoteFileInfo : public wxClientData
 {
     SSHAccountInfo m_account; // the account for which this file belongs to
-    wxString       m_localFile;
-    wxString       m_remoteFile;
+    wxString m_localFile;
+    wxString m_remoteFile;
 
 public:
     typedef std::map<wxString, RemoteFileInfo> Map_t;
@@ -43,20 +44,12 @@ public:
     RemoteFileInfo();
     virtual ~RemoteFileInfo();
 
-    void SetAccount(const SSHAccountInfo& account) {
-        this->m_account = account;
-    }
-    const SSHAccountInfo& GetAccount() const {
-        return m_account;
-    }
-    const wxString& GetLocalFile() const {
-        return m_localFile;
-    }
-    void SetRemoteFile(const wxString& remoteFile) ;
-    const wxString& GetRemoteFile() const {
-        return m_remoteFile;
-    }
-    
+    void SetAccount(const SSHAccountInfo& account) { this->m_account = account; }
+    const SSHAccountInfo& GetAccount() const { return m_account; }
+    const wxString& GetLocalFile() const { return m_localFile; }
+    void SetRemoteFile(const wxString& remoteFile);
+    const wxString& GetRemoteFile() const { return m_remoteFile; }
+
     static wxString GetTempFolder();
 };
 

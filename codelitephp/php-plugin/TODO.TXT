@@ -12,10 +12,11 @@ Code Completion / Code Generation
 
 Must:
 =====
-- Fix nav bar for PHP plugin
 - Unified the keywords with the code completion box
 - css: add hyphen "-" to the list of words
 - Implement click (shift click) for navigation
+- Open include file is broken
+- Fix nav bar for PHP plugin
 
 Usability:
 ==========

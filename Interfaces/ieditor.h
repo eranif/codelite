@@ -34,13 +34,15 @@
 #include <vector>
 #include "cl_calltip.h"
 #include <list>
+#include <map>
 
 class wxStyledTextCtrl;
 
 class NavMgr;
+class wxClientData;
 
 enum {
-    Format_Text_Default          = 0x00000000,
+    Format_Text_Default = 0x00000000,
     Format_Text_Indent_Prev_Line = 0x00000001,
     Format_Text_Save_Empty_Lines = 0x00000002,
 };
@@ -59,10 +61,21 @@ class IEditor
 {
 public:
     typedef std::list<IEditor*> List_t;
-    
+    typedef std::map<wxString, wxClientData*> ClientDataMap_t;
+
+protected:
+    IEditor::ClientDataMap_t m_data;
+
 public:
     IEditor() {}
-    virtual ~IEditor() {}
+    virtual ~IEditor()
+    {
+        IEditor::ClientDataMap_t::iterator iter = m_data.begin();
+        for(; iter != m_data.end(); ++iter) {
+            wxDELETE(iter->second);
+        }
+        m_data.clear();
+    }
 
     /**
      * @brief return true if the editor is modified
@@ -77,20 +90,20 @@ public:
     /**
      * \brief sets the current editor's content with 'text'
      */
-    virtual void SetEditorText(const wxString &text) = 0;
+    virtual void SetEditorText(const wxString& text) = 0;
 
     /**
      * @brief append text to the editor
      * @param text text to append
      */
-    virtual void AppendText(const wxString &text) = 0;
+    virtual void AppendText(const wxString& text) = 0;
 
     /**
      * @brief insert text at a given position
      * @param text test to insert
      * @param pos position to insert it
      */
-    virtual void InsertText(int pos, const wxString &text) = 0;
+    virtual void InsertText(int pos, const wxString& text) = 0;
 
     /**
      * @brief return the document length
@@ -118,25 +131,25 @@ public:
     /**
      * \brief return the current file name
      */
-    virtual const wxFileName &GetFileName() const = 0;
+    virtual const wxFileName& GetFileName() const = 0;
 
     /**
      * \brief return the project which owns the current file name. return wxEmptyString
      * if this file has not project owner
      */
-    virtual const wxString &GetProjectName() const = 0;
+    virtual const wxString& GetProjectName() const = 0;
 
     /**
      * \brief return the current word under the caret. May return wxEmptyString
      */
     virtual wxString GetWordAtCaret() = 0;
-    
+
     /**
-     * @brief return the word under the mouse pointer. 
+     * @brief return the word under the mouse pointer.
      * If a selection exists, return it instead
      */
     virtual wxString GetWordAtMousePointer() = 0;
-    
+
     /**
      * @brief return the EOL mode of the editor.
      * 	wxSCI_EOL_CRLF 	0
@@ -155,7 +168,7 @@ public:
      * \brief replace the selection with 'text'. This function does nothing if there is no selected text
      * \param text text to replace the selection
      */
-    virtual void ReplaceSelection (const wxString& text) = 0;
+    virtual void ReplaceSelection(const wxString& text) = 0;
 
     /**
      * \brief return the selected text start position in bytes.
@@ -193,7 +206,7 @@ public:
      *  #define wxSCI_INDIC_ROUNDBOX 7
      * \param colour indicator colour
      */
-    virtual void SetUserIndicatorStyleAndColour(int style, const wxColour &colour) = 0;
+    virtual void SetUserIndicatorStyleAndColour(int style, const wxColour& colour) = 0;
     /**
      * \brief set indicator at startPos with given length
      * \param startPos position to set the indicator
@@ -212,13 +225,13 @@ public:
      * \param pos position to search from
      * \return start position of the indicator
      */
-    virtual int  GetUserIndicatorStart(int pos) = 0;
+    virtual int GetUserIndicatorStart(int pos) = 0;
     /**
      * \brief return end of indicator range from pos
      * \param pos position to search from
      * \return end of indicator range
      */
-    virtual int  GetUserIndicatorEnd(int pos) = 0;
+    virtual int GetUserIndicatorEnd(int pos) = 0;
 
     /**
      * \brief return the style at given position. Depends on the current lexer (Different lexers have different styles)
@@ -233,26 +246,30 @@ public:
     virtual int GetLexerId() = 0;
 
     /**
-    * @brief displays teh code completion box. Unlike the previous metho, this method accepts owner and sends an event once selection is made
+    * @brief displays teh code completion box. Unlike the previous metho, this method accepts owner and sends an event
+    * once selection is made
     * @param tags list if tags to display
     * @param word part of the word
     * @param owner event handler to be notified once a selection is made
     */
-    virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool autoRefreshList, wxEvtHandler *owner) = 0;
+    virtual void ShowCompletionBox(const std::vector<TagEntryPtr>& tags,
+                                   const wxString& word,
+                                   bool autoRefreshList,
+                                   wxEvtHandler* owner) = 0;
 
     /**
      * @brief display codelite calltip at the current position
      * @param tip tip to display
      */
     virtual void ShowCalltip(clCallTipPtr tip) = 0;
-    
+
     /**
      * @brief display a rich tooltip (a tip that supports basic markup, such as <a></a>, <strong></strong> etc)
      * @param tip tip text
      * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
      */
-    virtual void ShowRichTooltip(const wxString &tip, int pos = wxNOT_FOUND) = 0;
-    
+    virtual void ShowRichTooltip(const wxString& tip, int pos = wxNOT_FOUND) = 0;
+
     /**
      * @brief register new user image fot TagEntry kind
      * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())
@@ -275,14 +292,14 @@ public:
      * @param pos from position
      * @param onlyWordCharacters
      */
-    virtual int WordStartPos (int pos, bool onlyWordCharacters) = 0;
+    virtual int WordStartPos(int pos, bool onlyWordCharacters) = 0;
 
     /**
      * @brief  Get position of end of word.
      * @param pos from position
      * @param onlyWordCharacters
      */
-    virtual int WordEndPos (int pos, bool onlyWordCharacters) = 0;
+    virtual int WordEndPos(int pos, bool onlyWordCharacters) = 0;
 
     /**
      * Prepend the indentation level found at line at 'pos' to each line in the input string
@@ -290,7 +307,7 @@ public:
      * \param pos position to insert the text
      * \param flags set the formatting flags
      */
-    virtual wxString FormatTextKeepIndent(const wxString &text, int pos, size_t flags = 0) = 0;
+    virtual wxString FormatTextKeepIndent(const wxString& text, int pos, size_t flags = 0) = 0;
 
     /**
      * @brief creating a browsing record that can be stored in the navigation manager
@@ -306,17 +323,18 @@ public:
      * @param navmgr  Navigation manager to place browsing recrods
      * @return return true if a match was found, false otherwise
      */
-    virtual bool FindAndSelect(const wxString &pattern, const wxString &what, int from_pos, NavMgr *navmgr) = 0;
+    virtual bool FindAndSelect(const wxString& pattern, const wxString& what, int from_pos, NavMgr* navmgr) = 0;
     /**
      * @brief Similar to the above but returns void, and is implemented asynchronously
      */
-    virtual void FindAndSelectV(const wxString &pattern, const wxString &what, int from_pos = 0, NavMgr *navmgr = NULL) = 0;
+    virtual void
+    FindAndSelectV(const wxString& pattern, const wxString& what, int from_pos = 0, NavMgr* navmgr = NULL) = 0;
 
     /**
      * @brief set a lexer to the editor
      * @param lexerName
      */
-    virtual void SetLexerName(const wxString &lexerName) = 0;
+    virtual void SetLexerName(const wxString& lexerName) = 0;
 
     /**
      * @brief return the line numebr containing 'pos'
@@ -351,7 +369,7 @@ public:
      * @param wantWhitespace set to false if whitespace chars should be skipped
      * @return return the matched char or 0 if at the start of document
      */
-    virtual wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace) = 0;
+    virtual wxChar PreviousChar(const int& pos, int& foundPos, bool wantWhitespace) = 0;
 
     /**
      * @brief The minimum position returned is 0 and the maximum is the last position in the document
@@ -372,21 +390,21 @@ public:
      * @brief return a pointer to the underlying scintilla control
      */
     virtual wxStyledTextCtrl* GetSTC() = 0;
-    
+
     /**
      * @brief set the focus to the current editor
      */
     virtual void SetActive() = 0;
- 
+
     /**
      * @brief set the focus to the current editor, after a delay
      */
     virtual void DelayedSetActive() = 0;
-    
+
     //-----------------------------------------------
     // Error/Warnings markers
     //-----------------------------------------------
-    
+
     /**
      * @brief set a warning marker in the editor with a given text
      */
@@ -399,6 +417,53 @@ public:
      * @brief delete all compiler markers (warnings/errors)
      */
     virtual void DelAllCompilerMarkers() = 0;
+
+    //-------------------------------------------------
+    // Provide a user client data API
+    //-------------------------------------------------
+    /**
+     * @brief set client data to this editor with key. If client data with this key
+     * already exists, delete and replace  it
+     * @param key
+     * @param data
+     */
+    void SetClientData(const wxString& key, wxClientData* data)
+    {
+        IEditor::ClientDataMap_t::iterator iter = m_data.find(key);
+        if(iter != m_data.end()) {
+            wxDELETE(iter->second);
+            m_data.erase(iter);
+        }
+        m_data.insert(std::make_pair(key, data));
+    }
+
+    /**
+     * @brief return the client data associated with this editor and identified by key
+     * @param key
+     * @return client data or NULL
+     */
+    wxClientData* GetClientData(const wxString& key) const
+    {
+        IEditor::ClientDataMap_t::const_iterator iter = m_data.find(key);
+        if(iter != m_data.end()) {
+            return iter->second;
+        }
+        return NULL;
+    }
+
+    /**
+     * @brief delete the client data associated with this editor and identified by 'key'
+     * this method also delete the memory allocated by the data
+     * @param key
+     */
+    void DeleteClientData(const wxString& key)
+    {
+        IEditor::ClientDataMap_t::iterator iter = m_data.find(key);
+        if(iter != m_data.end()) {
+            wxDELETE(iter->second);
+            m_data.erase(iter);
+        }
+    }
 };
 
-#endif //IEDITOR_H
+#endif // IEDITOR_H

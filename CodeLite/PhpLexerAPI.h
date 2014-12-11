@@ -1,10 +1,12 @@
 #ifndef CppLexerAPI_H__
 #define CppLexerAPI_H__
 
+#include <string>
+#include <vector>
+#include <wx/filename.h>
+
 #include "codelite_exports.h"
 #include "PHPScannerTokens.h"
-#include <vector>
-#include <string>
 
 enum eLexerOptions {
     kPhpLexerOpt_None = 0x00000000,

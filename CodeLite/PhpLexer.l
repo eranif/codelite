@@ -18,8 +18,9 @@ extern "C" int yywrap(void*) { return 1; }
 #include <wx/filename.h>
 #include "PhpLexerAPI.h"
 #include "PHPScannerTokens.h"
+#include "StdToWX.h" // Conversion methods from wxString -> std::string
 
-#define YYSTYPE wxString
+#define YYSTYPE std::string
 #define ECHO
 
 #define YY_NO_UNISTD_H
@@ -131,20 +132,22 @@ horizontal_white [ ]|{h_tab}
 <PHP>"$"{LABEL}             {LEX_RETURN(kPHP_T_VARIABLE);}
 <PHP>b?"<<<"{TABS_AND_SPACES}({LABEL}|([']{LABEL}['])|(["]{LABEL}["])){NEWLINE} {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    wxString label = yytext;
-    label.Remove(0, 3).Trim(); // remove the "<<<" from the begining of the string
-    if(label.StartsWith("'")) label.Remove(0, 1);
-    if(label.EndsWith("'")) label.RemoveLast();
+    std::string label = yytext;
+    StdToWX::Remove(label, 0, 3);
+    StdToWX::Trim(label);
+    
+    if(StdToWX::StartsWith(label, "'")) StdToWX::Remove(label, 0, 1);
+    if(StdToWX::EndsWith(label, "'")) StdToWX::RemoveLast(label, 1);
     
     userData->SetRawStringLabel(label);
-    userData->GetString() << yytext;
+    userData->GetString().append(yytext);
     BEGIN(HEREDOC);
     return kPHP_T_START_HEREDOC;
 }
 <HEREDOC>{LABEL} {
     // anything else
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString() << yytext;
+    userData->GetString().append(yytext);
     if(yytext == userData->GetRawStringLabel()) {
         // end of HEREDOC
         BEGIN(PHP);
@@ -153,12 +156,12 @@ horizontal_white [ ]|{h_tab}
 }
 <HEREDOC>\n {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString() << yytext;
+    userData->GetString().append(yytext);
 }
 <HEREDOC>. {
     // anything else
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString() << yytext;
+    userData->GetString().append(yytext);
 }
 <PHP>"/*" {
     // Clear the comment collected
@@ -379,40 +382,40 @@ horizontal_white [ ]|{h_tab}
 }
 <SINGLE_STRING>"\n" {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append("\n");
+    userData->GetString().append("\n");
 }
 <SINGLE_STRING>{c_char}  {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append(yytext);
+    userData->GetString().append(yytext);
 }
 <SINGLE_STRING>"'"               {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append("'");
+    userData->GetString().append("'");
     return kPHP_T_CONSTANT_ENCAPSED_STRING;
 }
 <SINGLE_STRING>. {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append(yytext[0]);
+    userData->GetString().append(std::string(1, yytext[0]));
 }
 <DSTRING>"\n" {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append("\n");
+    userData->GetString().append("\n");
 }
 <DSTRING>{s_char}  {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append(yytext);
+    userData->GetString().append(yytext);
 }
 
 <DSTRING>"\"" {
     BEGIN(PHP);
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append("\"");
+    userData->GetString().append("\"");
     return kPHP_T_CONSTANT_ENCAPSED_STRING;
 }
 <DSTRING>. {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
-    userData->GetString().Append(yytext[0]);
+    userData->GetString().append(std::string(1, yytext[0]));
 }
 %%
 
@@ -487,16 +490,16 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
         case kPHP_T_END_HEREDOC:
             token.lineNumber = yylineno; 
             token.text = userData->GetString();
-            userData->GetString().Clear();
+            userData->GetString().clear();
             break;
         case kPHP_T_START_HEREDOC:
             token.lineNumber = yylineno;
-            token.text.Clear();
+            token.text.clear();
             break;
         case kPHP_T_CONSTANT_ENCAPSED_STRING:
             token.lineNumber = yylineno;
             token.text = userData->GetString();
-            userData->GetString().Clear();
+            userData->GetString().clear();
             break;
         case kPHP_T_CXX_COMMENT:
             // One line up for CXX comments
@@ -517,7 +520,7 @@ bool phpLexerNext(void* scanner, phpLexerToken& token)
         }
 
     } else {
-        token.text.Clear();
+        token.text.clear();
         token.lineNumber = 0;
     }
     return token.type != 0;

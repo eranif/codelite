@@ -88,6 +88,8 @@
     <File Name="cl_exception.h"/>
     <File Name="browse_record.h"/>
     <File Name="cl_defs.h"/>
+    <File Name="StdToWX.h"/>
+    <File Name="StdToWX.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>

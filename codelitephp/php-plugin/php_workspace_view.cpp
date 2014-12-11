@@ -67,6 +67,7 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     : PHPWorkspaceViewBase(parent)
     , m_mgr(mgr)
 {
+    MSWSetNativeTheme(m_treeCtrlView);
     // Initialise images map
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
     m_bitmaps = bmpLoader->MakeStandardMimeMap();

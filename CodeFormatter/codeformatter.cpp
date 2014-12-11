@@ -251,13 +251,15 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
 
         // Restore line
         clSTCLineKeeper lk(editor);
-
+        editor->GetSTC()->BeginUndoAction();
         // Replace the text with the new formatted buffer
         editor->SetEditorText(buffer.GetBuffer());
 
         // Restore caret position
         editor->SetCaretAt(curpos);
-
+        
+        editor->GetSTC()->EndUndoAction();
+        
     } else {
         // We allow ClangFormat to work only when the source file is known to be
         // a C/C++ source file or JavaScript (these are the types of files that clang-format can handle properly)
@@ -286,8 +288,10 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             }
 
             clSTCLineKeeper lk(editor);
+            editor->GetSTC()->BeginUndoAction();
             editor->SetEditorText(formattedOutput);
             editor->SetCaretAt(curpos);
+            editor->GetSTC()->EndUndoAction();
 
         } else {
             // AStyle

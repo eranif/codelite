@@ -1,11 +1,10 @@
 #ifndef CppLexerAPI_H__
 #define CppLexerAPI_H__
 
-#include <wx/filename.h>
-#include <wx/string.h>
 #include "codelite_exports.h"
 #include "PHPScannerTokens.h"
 #include <vector>
+#include <string>
 
 enum eLexerOptions {
     kPhpLexerOpt_None = 0x00000000,
@@ -16,7 +15,7 @@ enum eLexerOptions {
 
 struct WXDLLIMPEXP_CL phpLexerToken {
     int type;
-    wxString text;
+    std::string text;
     int lineNumber;
     int endLineNumber; // Usually, this is the same as lineNumber. Unless a multiple line token is found (heredoc,
                        // c-style comment etc)
@@ -50,9 +49,9 @@ struct WXDLLIMPEXP_CL phpLexerToken {
 struct WXDLLIMPEXP_CL phpLexerUserData {
 private:
     size_t m_flags;
-    wxString m_comment;
-    wxString m_rawStringLabel;
-    wxString m_string;
+    std::string m_comment;
+    std::string m_rawStringLabel;
+    std::string m_string;
     int m_commentStartLine;
     int m_commentEndLine;
     bool m_insidePhp;
@@ -67,8 +66,8 @@ public:
         m_fp = NULL;
         m_insidePhp = false;
         ClearComment();
-        m_rawStringLabel.Clear();
-        m_string.Clear();
+        m_rawStringLabel.clear();
+        m_string.clear();
     }
 
     phpLexerUserData(size_t options)
@@ -92,27 +91,28 @@ public:
     void SetInsidePhp(bool insidePhp) { this->m_insidePhp = insidePhp; }
     bool IsInsidePhp() const { return m_insidePhp; }
 
-    void SetString(const wxString& string) { this->m_string = string; }
-    wxString& GetString() { return m_string; }
+    void SetString(const std::string& string) { this->m_string = string; }
+    std::string& GetString() { return m_string; }
 
-    void SetRawStringLabel(const wxString& rawStringLabel) { this->m_rawStringLabel = rawStringLabel; }
-    const wxString& GetRawStringLabel() const { return m_rawStringLabel; }
+    void SetRawStringLabel(const std::string& rawStringLabel) { this->m_rawStringLabel = rawStringLabel; }
+    const std::string& GetRawStringLabel() const { return m_rawStringLabel; }
     //==--------------------
     // Comment management
     //==--------------------
-    void AppendToComment(const wxString& str) { m_comment << str; }
+    void AppendToComment(const std::string& str) { m_comment.append(str); }
+    void AppendToComment(char c) { m_comment.append(std::string(1, c)); }
     void SetCommentEndLine(int commentEndLine) { this->m_commentEndLine = commentEndLine; }
     void SetCommentStartLine(int commentStartLine) { this->m_commentStartLine = commentStartLine; }
     int GetCommentEndLine() const { return m_commentEndLine; }
     int GetCommentStartLine() const { return m_commentStartLine; }
-    const wxString& GetComment() const { return m_comment; }
-    bool HasComment() const { return !m_comment.IsEmpty(); }
+    const std::string& GetComment() const { return m_comment; }
+    bool HasComment() const { return !m_comment.empty(); }
     /**
      * @brief clear all info collected for the last comment
      */
     void ClearComment()
     {
-        m_comment.Clear();
+        m_comment.clear();
         m_commentEndLine = wxNOT_FOUND;
         m_commentEndLine = wxNOT_FOUND;
     }

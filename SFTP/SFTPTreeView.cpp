@@ -39,12 +39,14 @@
 #include "sftp_item_comparator.h"
 #include "SFTPBookmark.h"
 #include "SFTPManageBookmarkDlg.h"
+#include <wx/progdlg.h>
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
 static const int ID_DELETE = ::wxNewId();
 static const int ID_OPEN = ::wxNewId();
 static const int ID_NEW_FILE = ::wxNewId();
+static const int ID_REFRESH_FOLDER = ::wxNewId();
 
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
@@ -80,6 +82,11 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
         ID_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuRename), NULL, this);
     m_treeListCtrl->Connect(
         ID_NEW_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuNewFile), NULL, this);
+    m_treeListCtrl->Connect(ID_REFRESH_FOLDER,
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
+                            NULL,
+                            this);
 }
 
 SFTPTreeView::~SFTPTreeView() {}
@@ -290,6 +297,8 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
     } else {
         menu.Append(ID_NEW, _("Create new directory..."));
         menu.Append(ID_NEW_FILE, _("Create new file..."));
+        menu.AppendSeparator();
+        menu.Append(ID_REFRESH_FOLDER, _("Refresh"));
         menu.AppendSeparator();
     }
     menu.Append(ID_DELETE, _("Delete"));
@@ -600,24 +609,64 @@ void SFTPTreeView::DoOpenSession()
     clSSH::Ptr_t ssh(
         new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()));
     try {
+        wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10);
+        dlg.Show();
         wxString message;
-        m_plugin->GetManager()->SetStatusMessage(wxString() << _("Connecting to: ") << accountName << "...");
+        dlg.Update(1,
+                   wxString() << _("Connecting to: ") << accountName << "..." << _("\n(this may take a few seconds)"));
         ssh->Connect();
+        dlg.Update(5, _("Connected!"));
+        dlg.Update(6, _("Authenticating server..."));
         if(!ssh->AuthenticateServer(message)) {
             if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
+                dlg.Update(7, _("Accepting server authentication server..."));
                 ssh->AcceptServerAuthentication();
             }
+        } else {
+            dlg.Update(7, _("Server authenticated"));
         }
 
+        dlg.Update(8, _("Logging..."));
         ssh->Login();
         m_sftp.reset(new clSFTP(ssh));
         m_sftp->Initialize();
         m_sftp->SetAccount(m_account.GetAccountName());
         m_plugin->GetManager()->SetStatusMessage(wxString() << _("Done!"));
+
+        dlg.Update(9, _("Fetching directory list..."));
         DoBuildTree("/");
+        dlg.Update(10, _("Done"));
 
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "codelite", wxICON_ERROR | wxOK);
         DoCloseSession();
     }
+}
+
+void SFTPTreeView::OnMenuRefreshFolder(wxCommandEvent& event)
+{
+    wxTreeListItems items;
+    m_treeListCtrl->GetSelections(items);
+    if(items.size() != 1) return;
+
+    wxTreeListItem item = items.at(0);
+    MyClientData* cd = GetItemData(item);
+    if(!cd || !cd->IsFolder()) {
+        return;
+    }
+
+    // Uninitialize the folder
+    cd->SetInitialized(false);
+
+    // Delete all the children
+    wxTreeListItem child = m_treeListCtrl->GetFirstChild(item);
+    while(child.IsOk()) {
+        wxTreeListItem nextChild = m_treeListCtrl->GetNextSibling(child);
+        m_treeListCtrl->DeleteItem(child);
+        child = nextChild;
+    }
+
+    // Re-append the dummy item
+    m_treeListCtrl->AppendItem(item, "<dummy>");
+    m_treeListCtrl->Collapse(item);
 }

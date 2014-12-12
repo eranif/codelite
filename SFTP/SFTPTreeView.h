@@ -75,6 +75,7 @@ protected:
     virtual void OnMenuDelete(wxCommandEvent& event);
     virtual void OnMenuRename(wxCommandEvent& event);
     virtual void OnMenuNewFile(wxCommandEvent& event);
+    virtual void OnMenuRefreshFolder(wxCommandEvent& event);
 
     void DoCloseSession();
     void DoOpenSession();

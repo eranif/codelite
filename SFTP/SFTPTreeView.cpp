@@ -87,9 +87,38 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
                             wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
                             NULL,
                             this);
+    wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCopy, this, wxID_COPY);
+    wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCut, this, wxID_CUT);
+    wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnPaste, this, wxID_PASTE);
+    wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnSelectAll, this, wxID_SELECTALL);
+    wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnUndo, this, wxID_UNDO);
+    wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnRedo, this, wxID_REDO);
 }
 
-SFTPTreeView::~SFTPTreeView() {}
+SFTPTreeView::~SFTPTreeView()
+{
+    wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCopy, this, wxID_COPY);
+    wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCut, this, wxID_CUT);
+    wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnPaste, this, wxID_PASTE);
+    wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnSelectAll, this, wxID_SELECTALL);
+    wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnUndo, this, wxID_UNDO);
+    wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnRedo, this, wxID_REDO);
+    m_treeListCtrl->Disconnect(
+        ID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
+    m_treeListCtrl->Disconnect(
+        ID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
+    m_treeListCtrl->Disconnect(
+        ID_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);
+    m_treeListCtrl->Disconnect(
+        ID_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuRename), NULL, this);
+    m_treeListCtrl->Disconnect(
+        ID_NEW_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuNewFile), NULL, this);
+    m_treeListCtrl->Disconnect(ID_REFRESH_FOLDER,
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
+                            NULL,
+                            this);
+}
 
 void SFTPTreeView::OnDisconnect(wxCommandEvent& event) { DoCloseSession(); }
 void SFTPTreeView::OnConnect(wxCommandEvent& event) { DoOpenSession(); }
@@ -669,4 +698,57 @@ void SFTPTreeView::OnMenuRefreshFolder(wxCommandEvent& event)
     // Re-append the dummy item
     m_treeListCtrl->AppendItem(item, "<dummy>");
     m_treeListCtrl->Collapse(item);
+}
+
+void SFTPTreeView::OnCopy(wxCommandEvent& event)
+{
+    event.Skip();
+    if(m_textCtrlQuickJump->HasFocus()) {
+        event.Skip(false);
+    }
+}
+
+void SFTPTreeView::OnPaste(wxCommandEvent& event)
+{
+    event.Skip();
+    if(m_textCtrlQuickJump->HasFocus()) {
+        event.Skip(false);
+        m_textCtrlQuickJump->Paste();
+    }
+}
+
+void SFTPTreeView::OnRedo(wxCommandEvent& event)
+{
+    event.Skip();
+    if(m_textCtrlQuickJump->HasFocus()) {
+        event.Skip(false);
+        m_textCtrlQuickJump->Redo();
+    }
+}
+
+void SFTPTreeView::OnSelectAll(wxCommandEvent& event)
+{
+    event.Skip();
+    if(m_textCtrlQuickJump->HasFocus()) {
+        event.Skip(false);
+        m_textCtrlQuickJump->SelectAll();
+    }
+}
+
+void SFTPTreeView::OnUndo(wxCommandEvent& event)
+{
+    event.Skip();
+    if(m_textCtrlQuickJump->HasFocus()) {
+        event.Skip(false);
+        m_textCtrlQuickJump->Undo();
+    }
+}
+
+void SFTPTreeView::OnCut(wxCommandEvent& event)
+{
+    event.Skip();
+    if(m_textCtrlQuickJump->HasFocus()) {
+        event.Skip(false);
+        m_textCtrlQuickJump->Cut();
+    }
 }

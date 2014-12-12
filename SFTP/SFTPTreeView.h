@@ -76,7 +76,15 @@ protected:
     virtual void OnMenuRename(wxCommandEvent& event);
     virtual void OnMenuNewFile(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
-
+    
+    // Edit events
+    void OnCopy(wxCommandEvent& event);
+    void OnCut(wxCommandEvent& event);
+    void OnPaste(wxCommandEvent& event);
+    void OnSelectAll(wxCommandEvent& event);
+    void OnUndo(wxCommandEvent& event);
+    void OnRedo(wxCommandEvent& event);
+    
     void DoCloseSession();
     void DoOpenSession();
     bool DoExpandItem(const wxTreeListItem& item);

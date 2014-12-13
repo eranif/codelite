@@ -55,7 +55,7 @@ NewIneritanceDlg::~NewIneritanceDlg()
 void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
 {
     m_textCtrlInhertiance->SetFocus();
-    OpenResourceDialog dlg(this, m_mgr);
+    OpenResourceDialog dlg(this, m_mgr, "");
 
     // Open the resource dialog with 'class' and 'struct' only
     dlg.GetFilters().Add(TagEntry::KIND_CLASS);

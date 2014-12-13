@@ -5064,8 +5064,16 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     wxCommandEvent eventOpenResource(wxEVT_CMD_OPEN_RESOURCE, GetId());
     eventOpenResource.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(eventOpenResource)) return;
-
-    OpenResourceDialog dlg(this, PluginManager::Get());
+    
+    wxString initialText;
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if(editor && editor->HasSelection()) {
+        int start = editor->GetSelectionNStart(0);
+        int end = editor->GetSelectionNEnd(0);
+        initialText = editor->GetTextRange(start, end);
+    }
+    OpenResourceDialog dlg(this, PluginManager::Get(), initialText);
+    
     if(dlg.ShowModal() == wxID_OK) {
         OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());
     }

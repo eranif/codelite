@@ -40,7 +40,8 @@
 
 static const wxDouble X_RADIUS = 6.0;
 static const wxDouble X_DIAMETER = 2 * X_RADIUS;
-#define TAB_RADIUS ((double)0.0)
+
+#define TAB_RADIUS ((double)2.5)
 
 #ifdef __WXMAC__
 #include <wx/osx/private.h>
@@ -318,9 +319,13 @@ void clAuiMainNotebookTabArt::DoSetColours()
             m_tabTextColour = *wxWHITE;
             m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(80);
             m_tabBgColour = m_activeTabBgColour.ChangeLightness(110);
+#ifdef __WXMAC__
+            m_bgColour = m_activeTabBgColour.ChangeLightness(150);
+#else
             m_bgColour = m_activeTabBgColour.ChangeLightness(130);
+#endif
             m_penColour = m_activeTabPenColour.ChangeLightness(110);
-            m_innerPenColour = m_penColour.ChangeLightness(130);
+            m_innerPenColour = m_penColour.ChangeLightness(115);
             
         } else {
             m_activeTabTextColour = *wxBLACK;

@@ -57,6 +57,11 @@ void ContextGeneric::ApplySettings()
             keyWords.Replace(wxT("\r"), wxT(" "));
             rCtrl.SetKeyWords(i, keyWords);
         }
+        
+        if(lexPtr->GetName() == "css") {
+            // set the word characters for the CSS lexer
+            GetCtrl().SetWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-@");
+        }
     } else {
         rCtrl.SetLexer(wxSTC_LEX_NULL);
     }

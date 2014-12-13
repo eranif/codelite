@@ -64,14 +64,34 @@ ContextBase::~ContextBase() {}
 // provide basic indentation
 void ContextBase::AutoIndent(const wxChar& ch)
 {
+    LEditor& rCtrl = GetCtrl();
+    int prevpos(wxNOT_FOUND);
+    int curpos = rCtrl.GetCurrentPos();
+    int line = rCtrl.LineFromPosition(curpos);
+    
     if(ch == wxT('\n')) {
-        // just copy the previous line indentation
-        LEditor& rCtrl = GetCtrl();
-        int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
-        rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
-        // place the caret at the end of the line
-        rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-        rCtrl.ChooseCaretX();
+        wxChar prevCh = rCtrl.PreviousChar(curpos, prevpos);
+        if(prevCh == '{') {
+            // an enter was hit just after an open brace
+            int prevLine = rCtrl.LineFromPosition(prevpos);
+            rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+            rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+            
+        } else {
+            // just copy the previous line indentation
+            int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
+            rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
+            // place the caret at the end of the line
+            rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+            rCtrl.ChooseCaretX();
+            
+        }
+    } else if (ch == '}') {
+        long matchPos = wxNOT_FOUND;
+        if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos)) return;
+        int secondLine = rCtrl.LineFromPosition(matchPos);
+        if(secondLine == line) return;
+        rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
     }
 }
 

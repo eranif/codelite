@@ -86,6 +86,8 @@
       <File Name="EclipseCSSThemeImporter.h"/>
       <File Name="EclipseCSSThemeImporter.cpp"/>
     </VirtualDirectory>
+    <File Name="clNotebookTheme.h"/>
+    <File Name="clNotebookTheme.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>
@@ -265,6 +267,8 @@
       <File Name="cl_aui_tb_are.h"/>
       <File Name="cl_aui_notebook_art.cpp"/>
       <File Name="cl_aui_notebook_art.h"/>
+      <File Name="clAuiMainNotebookTabArt.h"/>
+      <File Name="clAuiMainNotebookTabArt.cpp"/>
     </VirtualDirectory>
     <File Name="cl_aui_tool_stickness.h"/>
     <File Name="cl_aui_tool_stickness.cpp"/>

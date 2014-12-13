@@ -40,6 +40,8 @@
 #include "editorframe.h"
 #include "FilesModifiedDlg.h"
 #include <wx/regex.h>
+#include "clAuiMainNotebookTabArt.h"
+#include "pluginmanager.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -83,7 +85,8 @@ void MainBook::CreateGuiControls()
 
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
+    m_book->SetArtProvider(new clAuiMainNotebookTabArt(PluginManager::Get()));
+    
     wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
     m_book->SetRightClickMenu(contextMenu);
 

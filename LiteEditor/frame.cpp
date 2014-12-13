@@ -5952,6 +5952,8 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
     // Hide the _native_ toolbar
     if(GetToolBar()) {
         GetToolBar()->Show(event.IsChecked());
+        GetToolBar()->Realize();
+
     } else {
         wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
         for(size_t i = 0; i < panes.GetCount(); ++i) {
@@ -5959,8 +5961,8 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
                 panes.Item(i).Show(event.IsChecked());
             }
         }
-        m_mgr.Update();
     }
+    m_mgr.Update();
     SendSizeEvent();
     clConfig::Get().Write("ShowToolBar", event.IsChecked());
 }

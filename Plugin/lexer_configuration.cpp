@@ -287,10 +287,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 
-    // by default indicators are set to be opaque rounded box
-    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
-    ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
-
     bool tooltip(false);
 
     std::list<StyleProperty> styles;
@@ -338,9 +334,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             ctrl->StyleSetFont(i, defaultFont);
         }
     }
-
-    bool isThemeDark = false;
-    wxUnusedVar(isThemeDark);
 
     iter = styles.begin();
     for(; iter != styles.end(); ++iter) {
@@ -485,7 +478,16 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetKeyWords(3, GetKeyWords(3));
         ctrl->SetKeyWords(4, GetKeyWords(4));
     }
-
+    
+    // by default indicators are set to be opaque rounded box
+    if(DrawingUtils::IsDark(defaultStyle.GetBgColour())) {
+        ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
+        ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
+    } else {
+        ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
+        ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
+    }
+    
     // Annotations markers
     // Warning style
     ctrl->StyleSetBackground(ANNOTATION_STYLE_WARNING, defaultStyle.GetBgColour());

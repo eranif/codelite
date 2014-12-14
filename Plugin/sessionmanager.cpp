@@ -174,6 +174,9 @@ bool SessionManager::Save(const wxString& name,
 
 void SessionManager::SetLastWorkspaceName(const wxString& name)
 {
+    if(!m_doc.GetRoot()) {
+        return;
+    }
     // first delete the old entry
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {
@@ -196,6 +199,9 @@ void SessionManager::SetLastWorkspaceName(const wxString& name)
 
 wxString SessionManager::GetLastSession()
 {
+    if(!m_doc.GetRoot()) {
+        return defaultSessionName;
+    }
     // try to locate the 'LastActiveWorkspace' entry
     // if it does not exist or it exist with value empty return 'Default'
     // otherwise, return its content

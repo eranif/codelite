@@ -52,6 +52,7 @@
 #include "CompilerLocatorCygwin.h"
 #include "ColoursAndFontsManager.h"
 #include "clKeyboardManager.h"
+#include "clInitializeDialog.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -546,9 +547,6 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
-    // Make sure that the colours and fonts manager is instantiated
-    ColoursAndFontsManager::Get().Load();
-
 #ifdef __WXGTK__
     bool redirect = clConfig::Get().Read("RedirectLogOutput", true);
     if(redirect) {
@@ -651,13 +649,24 @@ bool CodeLiteApp::OnInit()
 
     // If running under Cygwin terminal, adjust the environment variables
     AdjustPathForMSYSIfNeeded();
-
+    
+    // determine if the 'upgrade' frame needs to be started instead of the 
+    // standard main frame
+    if(ColoursAndFontsManager::Get().IsUpgradeNeeded()) {
+        clInitializeDialog initDialog(NULL);
+        SetTopWindow(&initDialog);
+        initDialog.ShowModal();
+    } else {
+        // Make sure that the colours and fonts manager is instantiated
+        ColoursAndFontsManager::Get().Load();
+    }
+    
     // Create the main application window
     clMainFrame::Initialize(parser.GetParamCount() == 0);
     m_pMainFrame = clMainFrame::Get();
     m_pMainFrame->Show(TRUE);
     SetTopWindow(m_pMainFrame);
-
+    
     long lineNumber(0);
     parser.Found(wxT("l"), &lineNumber);
     if(lineNumber > 0) {

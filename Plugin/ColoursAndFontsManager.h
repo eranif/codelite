@@ -8,6 +8,21 @@
 #include <wx/string.h>
 #include <wx/filename.h>
 #include <wx/event.h>
+#include "cl_command_event.h"
+
+// Upgrade macros
+#define LEXERS_VERSION_STRING "LexersVersion"
+#define LEXERS_VERSION 1
+
+// Define the upgrade steps
+
+// When the version is 0, it means that we need to upgrade the colours for the line numbers
+// and for the default state
+#define LEXERS_UPGRADE_LINENUM_DEFAULT_COLOURS 0
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_UPGRADE_LEXERS_PROGRESS, clCommandEvent);
 
 class WXDLLIMPEXP_SDK ColoursAndFontsManager : public wxEvtHandler
 {
@@ -21,7 +36,7 @@ protected:
     wxColour m_globalBgColour;
     wxColour m_globalFgColour;
     LexerConf::Ptr_t m_defaultLexer;
-    bool m_tuneColours;
+    int m_lexersVersion;
     
 private:
     ColoursAndFontsManager();
@@ -39,7 +54,11 @@ public:
 
     const wxColour& GetGlobalBgColour() const { return m_globalBgColour; }
     const wxColour& GetGlobalFgColour() const { return m_globalFgColour; }
-
+    
+    bool IsUpgradeNeeded() const {
+        return m_lexersVersion != LEXERS_VERSION;
+    }
+    
     /**
      * @brief create new theme for a lexer by copying an existing theme 'sourceTheme'
      * @param lexerName the lexer name

@@ -473,6 +473,8 @@
     <File Name="theme_handler.cpp"/>
     <File Name="wxcl_log_text_ctrl.h"/>
     <File Name="wxcl_log_text_ctrl.cpp"/>
+    <File Name="clInitializeDialog.h"/>
+    <File Name="clInitializeDialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>
@@ -835,6 +837,8 @@
       <File Name="compilersfoundmodel.h"/>
       <File Name="CompilersFoundDlgBase.h"/>
       <File Name="CompilersFoundDlgBase.cpp"/>
+      <File Name="CodeLiteUpgradeFrameBase.h"/>
+      <File Name="CodeLiteUpgradeFrameBase.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -871,6 +875,7 @@
       <File Name="CompilersFoundDlg_liteeditor_bitmaps.cpp"/>
       <File Name="new_workspace_dlg_liteeditor_bitmaps.cpp"/>
       <File Name="quickdebug_formbuilder_bitmaps.cpp"/>
+      <File Name="CodeLiteUpgradeFrame_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -883,6 +888,7 @@
     <File Name="quickfindbarbase.wxcp"/>
     <File Name="CompilersFoundDlg.wxcp"/>
     <File Name="ReplaceInFilesPageBase.wxcp"/>
+    <File Name="CodeLiteUpgradeFrame.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

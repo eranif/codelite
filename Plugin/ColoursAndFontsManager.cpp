@@ -22,7 +22,9 @@
 #include "cl_command_event.h"
 #include <wx/busyinfo.h>
 
-#define TUNE_COLOURS_CONF "tuneColours"
+wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_PROGRESS, clCommandEvent);
 
 static const wxString LexerTextDefaultXML =
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -90,10 +92,10 @@ ColoursAndFontsManager::ColoursAndFontsManager()
 
     m_globalBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     m_globalFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    m_tuneColours = clConfig::Get().Read(TUNE_COLOURS_CONF, true);
+    m_lexersVersion = clConfig::Get().Read(LEXERS_VERSION_STRING, LEXERS_UPGRADE_LINENUM_DEFAULT_COLOURS);
 }
 
-ColoursAndFontsManager::~ColoursAndFontsManager() { clConfig::Get().Write(TUNE_COLOURS_CONF, false); }
+ColoursAndFontsManager::~ColoursAndFontsManager() { clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION); }
 
 ColoursAndFontsManager& ColoursAndFontsManager::Get()
 {
@@ -105,7 +107,8 @@ ColoursAndFontsManager& ColoursAndFontsManager::Get()
  * @class ColoursAndFontsManager_HelperThread
  * @brief
  */
-struct ColoursAndFontsManager_HelperThread : public wxThread {
+struct ColoursAndFontsManager_HelperThread : public wxThread
+{
     ColoursAndFontsManager* m_manager;
     ColoursAndFontsManager_HelperThread(ColoursAndFontsManager* manager)
         : wxThread(wxTHREAD_DETACHED)
@@ -184,7 +187,12 @@ void ColoursAndFontsManager::Load()
     if(m_initialized) return;
     m_lexersMap.clear();
     m_initialized = true;
-
+    
+    if(IsUpgradeNeeded()) {
+        clCommandEvent event(wxEVT_UPGRADE_LEXERS_START);
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
+    
     // Load the global settings
     if(GetConfigFile().FileExists()) {
         JSONRoot root(GetConfigFile());
@@ -207,11 +215,16 @@ void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlF
         wxXmlDocument* doc = xmlFiles.at(i);
         DoAddLexer(doc->GetRoot());
     }
-    
-    if(m_tuneColours) {
-        wxBusyInfo info(_("Upgrading Lexers..."));
+
+    if(IsUpgradeNeeded()) {
         // We tuned the colours, save them back to the file system
         Save();
+        
+        clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
+        clCommandEvent event(wxEVT_UPGRADE_LEXERS_END);
+        EventNotifier::Get()->AddPendingEvent(event);
+        
+        m_lexersVersion = LEXERS_VERSION;
     }
 }
 
@@ -289,14 +302,14 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
 
-    if(m_tuneColours) {
+    if(m_lexersVersion < 1) {
         // adjust line numbers
         if(lexer->IsDark()) {
             StyleProperty& defaultProp = lexer->GetProperty(0);                    // Default
             StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
             if(!defaultProp.IsNull()) {
-                if(lexer->GetName() != "php" && lexer->GetName() != "html") {
-                    // don't adjust PHP and HTML default colours, since they also affects the various operators
+                if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text") {
+                    // don't adjust PHP, HTML and Text default colours, since they also affects the various operators
                     // foreground colours
                     defaultProp.SetFgColour(
                         wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
@@ -311,7 +324,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
             lexer->SetLineNumbersFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
             // don't adjust PHP and HTML default colours, since they also affects the various operators
             // foreground colours
-            if(lexer->GetName() != "php" && lexer->GetName() != "html") {
+            if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text") {
                 lexer->SetDefaultFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
             }
         }
@@ -403,10 +416,34 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
 
 void ColoursAndFontsManager::Save()
 {
+    // count the total lexers count
+    int lexersCount(0);
     ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
     for(; iter != m_lexersMap.end(); ++iter) {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
+        for(size_t i = 0; i < lexers.size(); ++i) { ++lexersCount; }
+    }
+    
+    if(IsUpgradeNeeded()) {
+        clCommandEvent event(wxEVT_UPGRADE_LEXERS_START);
+        event.SetInt(lexersCount);
+        EventNotifier::Get()->ProcessEvent(event);
+    }
+    
+    iter = m_lexersMap.begin();
+    lexersCount = 0;
+    for(; iter != m_lexersMap.end(); ++iter) {
+        const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
+            ++lexersCount;
+            // report the progress
+            if(IsUpgradeNeeded()) {
+                clCommandEvent event(wxEVT_UPGRADE_LEXERS_PROGRESS);
+                event.SetInt(lexersCount); // the progress range
+                event.SetString(wxString() << _("Upgrading theme: ") << lexers.at(i)->GetThemeName() << ", "
+                                           << lexers.at(i)->GetName());
+                EventNotifier::Get()->ProcessEvent(event);
+            }
             Save(lexers.at(i));
         }
     }

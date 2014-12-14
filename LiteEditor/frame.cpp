@@ -186,10 +186,13 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
     wxMemoryDC memDC;
     bmp = wxBitmap(origBmp.GetWidth(), origBmp.GetHeight());
     memDC.SelectObject(bmp);
-    memDC.SetBrush(*wxWHITE);
-    memDC.SetPen(*wxWHITE);
+    memDC.SetBrush(wxColour(63, 80, 24));
+    memDC.SetPen(*wxBLACK);
     memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
     memDC.DrawBitmap(origBmp, 0, 0, true);
+    memDC.SetPen(*wxBLACK);
+    memDC.SetBrush(*wxTRANSPARENT_BRUSH);
+    memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
     
     wxCoord ww, hh;
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -204,10 +207,10 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
     memDC.GetMultiLineTextExtent(versionString, &ww, &hh);
     wxCoord bmpW = origBmp.GetWidth();
     memDC.SetTextForeground( *wxWHITE );
-    wxCoord textX = (bmpW - ww)/2;
-    memDC.DrawText(versionString, textX, 31);
+    wxCoord textX = 157;
+    memDC.DrawText(versionString, textX, 37);
     memDC.SetTextForeground( wxColour("#003D00") );
-    memDC.DrawText(versionString, textX, 30);
+    memDC.DrawText(versionString, textX, 36);
     memDC.SelectObject(wxNullBitmap);
     
     return bmp;

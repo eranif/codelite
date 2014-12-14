@@ -252,7 +252,8 @@ enum ssh_keytypes_e{
   SSH_KEYTYPE_DSS=1,
   SSH_KEYTYPE_RSA,
   SSH_KEYTYPE_RSA1,
-  SSH_KEYTYPE_ECDSA
+  SSH_KEYTYPE_ECDSA,
+  SSH_KEYTYPE_ED25519
 };
 
 enum ssh_keycmp_e {
@@ -657,6 +658,7 @@ LIBSSH_API int ssh_event_remove_session(ssh_event event, ssh_session session);
 LIBSSH_API void ssh_event_free(ssh_event event);
 LIBSSH_API const char* ssh_get_clientbanner(ssh_session session);
 LIBSSH_API const char* ssh_get_serverbanner(ssh_session session);
+LIBSSH_API const char* ssh_get_kex_algo(ssh_session session);
 LIBSSH_API const char* ssh_get_cipher_in(ssh_session session);
 LIBSSH_API const char* ssh_get_cipher_out(ssh_session session);
 LIBSSH_API const char* ssh_get_hmac_in(ssh_session session);

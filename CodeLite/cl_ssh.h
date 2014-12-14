@@ -40,12 +40,12 @@ typedef struct ssh_session_struct* SSHSession_t;
 
 class WXDLLIMPEXP_CL clSSH
 {
-    wxString     m_host;
-    wxString     m_username;
-    wxString     m_password;
-    int          m_port;
+    wxString m_host;
+    wxString m_username;
+    wxString m_password;
+    int m_port;
     SSHSession_t m_session;
-    bool         m_connected;
+    bool m_connected;
 
 public:
     typedef wxSharedPtr<clSSH> Ptr_t;
@@ -55,10 +55,11 @@ public:
     clSSH();
     virtual ~clSSH();
 
+    bool IsConnected() const { return m_connected; }
     /**
      * @brief connect to the remote server
      */
-    void Connect() throw (clException);
+    void Connect(int seconds = 10) throw(clException);
 
     /**
      * @brief authenticate the server
@@ -66,38 +67,38 @@ public:
      * @return true if the server could be authenticated, otherwise return false.
      * In case an error occurs, throw a clException
      */
-    bool AuthenticateServer(wxString& message) throw (clException);
+    bool AuthenticateServer(wxString& message) throw(clException);
 
     /**
      * @brief accepts the server authentication and add it to the "known_hosts"
      */
-    void AcceptServerAuthentication() throw (clException);
+    void AcceptServerAuthentication() throw(clException);
 
     /**
      * @brief login to the server with the user credentials
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginPassword(bool throwExc = true) throw (clException);
+    bool LoginPassword(bool throwExc = true) throw(clException);
 
     /**
      * @brief login using public key
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginPublicKey(bool throwExc = true) throw (clException);
+    bool LoginPublicKey(bool throwExc = true) throw(clException);
 
     /**
      * @brief login using interactive-keyboard method
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginInteractiveKBD(bool throwExc = true) throw (clException);
+    bool LoginInteractiveKBD(bool throwExc = true) throw(clException);
 
     /**
      * @brief try to login using all the methods we support (interactive-kbd, user/pass and public key)
      */
-    void Login() throw (clException);
+    void Login() throw(clException);
 
     /**
      * @brief close the SSH session
@@ -105,35 +106,17 @@ public:
      */
     void Close();
 
-    SSHSession_t GetSession() {
-        return m_session;
-    }
+    SSHSession_t GetSession() { return m_session; }
 
-    void SetPassword(const wxString& password) {
-        this->m_password = password;
-    }
-    void SetPort(int port) {
-        this->m_port = port;
-    }
+    void SetPassword(const wxString& password) { this->m_password = password; }
+    void SetPort(int port) { this->m_port = port; }
 
-    const wxString& GetPassword() const {
-        return m_password;
-    }
-    int GetPort() const {
-        return m_port;
-    }
-    void SetHost(const wxString& host) {
-        this->m_host = host;
-    }
-    void SetUsername(const wxString& username) {
-        this->m_username = username;
-    }
-    const wxString& GetHost() const {
-        return m_host;
-    }
-    const wxString& GetUsername() const {
-        return m_username;
-    }
+    const wxString& GetPassword() const { return m_password; }
+    int GetPort() const { return m_port; }
+    void SetHost(const wxString& host) { this->m_host = host; }
+    void SetUsername(const wxString& username) { this->m_username = username; }
+    const wxString& GetHost() const { return m_host; }
+    const wxString& GetUsername() const { return m_username; }
 };
 #endif // USE_SFTP
 #endif // CLSSH_H

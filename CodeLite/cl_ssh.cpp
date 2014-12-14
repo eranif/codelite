@@ -51,7 +51,7 @@ clSSH::~clSSH()
     Close();
 }
 
-void clSSH::Connect() throw(clException)
+void clSSH::Connect(int seconds) throw(clException)
 {
     m_session = ssh_new();
     if ( !m_session ) {
@@ -59,7 +59,7 @@ void clSSH::Connect() throw(clException)
     }
 
     int verbosity = SSH_LOG_NOLOG;
-    int timeout = 10;
+    int timeout = seconds;
     ssh_options_set(m_session, SSH_OPTIONS_HOST,          m_host.mb_str(wxConvUTF8).data());
     ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     ssh_options_set(m_session, SSH_OPTIONS_PORT,          &m_port);

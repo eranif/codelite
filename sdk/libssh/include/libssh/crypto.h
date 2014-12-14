@@ -115,9 +115,9 @@ struct ssh_cipher_struct {
     /* sets the new key for immediate use */
     int (*set_encrypt_key)(struct ssh_cipher_struct *cipher, void *key, void *IV);
     int (*set_decrypt_key)(struct ssh_cipher_struct *cipher, void *key, void *IV);
-    void (*cbc_encrypt)(struct ssh_cipher_struct *cipher, void *in, void *out,
+    void (*encrypt)(struct ssh_cipher_struct *cipher, void *in, void *out,
         unsigned long len);
-    void (*cbc_decrypt)(struct ssh_cipher_struct *cipher, void *in, void *out,
+    void (*decrypt)(struct ssh_cipher_struct *cipher, void *in, void *out,
         unsigned long len);
 };
 

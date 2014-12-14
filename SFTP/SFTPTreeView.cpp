@@ -114,10 +114,10 @@ SFTPTreeView::~SFTPTreeView()
     m_treeListCtrl->Disconnect(
         ID_NEW_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuNewFile), NULL, this);
     m_treeListCtrl->Disconnect(ID_REFRESH_FOLDER,
-                            wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
-                            NULL,
-                            this);
+                               wxEVT_COMMAND_MENU_SELECTED,
+                               wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
+                               NULL,
+                               this);
 }
 
 void SFTPTreeView::OnDisconnect(wxCommandEvent& event) { DoCloseSession(); }
@@ -635,15 +635,25 @@ void SFTPTreeView::DoOpenSession()
         return;
     }
 
+    wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10);
+    dlg.Show();
+    wxString message;
+    dlg.Update(1, wxString() << _("Connecting to: ") << accountName << "..." << _("\n(this may take a few seconds)"));
+
+    // We know that there is a bug that libssh succeeded on connecting only on the second attempt..
+    // to workaround it, we issue first connect with 1 second timeout, and then re-open the connection
     clSSH::Ptr_t ssh(
         new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()));
     try {
-        wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10);
-        dlg.Show();
-        wxString message;
-        dlg.Update(1,
-                   wxString() << _("Connecting to: ") << accountName << "..." << _("\n(this may take a few seconds)"));
-        ssh->Connect();
+        ssh->Connect(1);
+    } catch(...) {
+    }
+
+    try {
+        if(!ssh->IsConnected()) {
+            // try again
+            ssh->Connect(5);
+        }
         dlg.Update(5, _("Connected!"));
         dlg.Update(6, _("Authenticating server..."));
         if(!ssh->AuthenticateServer(message)) {

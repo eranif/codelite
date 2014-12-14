@@ -138,7 +138,7 @@
 #include "clang_code_completion.h"
 #include "cl_defs.h"
 
-clSplashScreen* clMainFrame::m_splashScreen = NULL;
+wxSplashScreen* clMainFrame::m_splashScreen = NULL;
 
 //////////////////////////////////////////////////
 
@@ -179,6 +179,39 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #else
 #define TB_SEPARATOR() tb->AddSeparator()
 #endif
+
+static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
+{
+    wxBitmap bmp;
+    wxMemoryDC memDC;
+    bmp = wxBitmap(origBmp.GetWidth(), origBmp.GetHeight());
+    memDC.SelectObject(bmp);
+    memDC.SetBrush(*wxWHITE);
+    memDC.SetPen(*wxWHITE);
+    memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
+    memDC.DrawBitmap(origBmp, 0, 0, true);
+    
+    wxCoord ww, hh;
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    font.SetPointSize(12);
+    font.SetWeight(wxFONTWEIGHT_BOLD);
+    
+    memDC.SetFont(font);
+    
+    wxString versionString = CODELITE_VERSION_STR;
+    //versionString = versionString.BeforeLast('-');
+    
+    memDC.GetMultiLineTextExtent(versionString, &ww, &hh);
+    wxCoord bmpW = origBmp.GetWidth();
+    memDC.SetTextForeground( *wxWHITE );
+    wxCoord textX = (bmpW - ww)/2;
+    memDC.DrawText(versionString, textX, 31);
+    memDC.SetTextForeground( wxColour("#003D00") );
+    memDC.DrawText(versionString, textX, 30);
+    memDC.SelectObject(wxNullBitmap);
+    
+    return bmp;
+}
 
 //----------------------------------------------------------------
 // Our main frame
@@ -780,11 +813,6 @@ clMainFrame::~clMainFrame(void)
     delete m_myMenuBar;
 #endif
 
-    if(m_splashScreen) {
-        m_splashScreen->Destroy();
-        m_splashScreen = NULL;
-    }
-
     wxTheApp->Disconnect(
         wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
     wxTheApp->Disconnect(
@@ -910,7 +938,12 @@ void clMainFrame::Initialize(bool loadLastSession)
         wxString splashName(ManagerST::Get()->GetStartupDirectory() + wxT("/images/splashscreen.png"));
         if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
             wxString mainTitle = CODELITE_VERSION_STR;
-            clMainFrame::m_splashScreen = new clSplashScreen(NULL, bitmap);
+            clMainFrame::m_splashScreen = new wxSplashScreen(CreateSplashScreenBitmap(bitmap), 
+                                                             wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 
+                                                             -1, 
+                                                             NULL, 
+                                                             wxID_ANY);
+            wxYield();
         }
     }
 #endif
@@ -2039,6 +2072,12 @@ void clMainFrame::LocateCompilersIfNeeded()
                 CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
             }
         }
+    }
+    
+    if(m_splashScreen) {
+        m_splashScreen->Hide();
+        m_splashScreen->Destroy();
+        m_splashScreen = NULL;
     }
 }
 

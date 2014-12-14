@@ -25,7 +25,7 @@
 
 #ifndef CLSPLASHSCREEN_H
 #define CLSPLASHSCREEN_H
-
+#if 0
 #include <wx/frame.h>
 #include <wx/timer.h>
 #include <wx/bitmap.h>
@@ -44,5 +44,5 @@ public:
     void OnEraseBg(wxEraseEvent& e);
     void OnTimer(wxTimerEvent &e);
 };
-
+#endif
 #endif // CLSPLASHSCREEN_H

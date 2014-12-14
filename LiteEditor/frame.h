@@ -48,6 +48,7 @@
 #include "cl_command_event.h"
 #include "ZombieReaperPOSIX.h"
 #include "macros.h"
+#include <wx/splash.h>
 
 // forward decls
 class TagEntry;
@@ -120,7 +121,7 @@ class clMainFrame : public wxFrame
     MyMenuBar* m_myMenuBar;
     wxMenu* m_bookmarksDropDownMenu;
     ThemeHandler m_themeHandler;
-    static clSplashScreen* m_splashScreen;
+    static wxSplashScreen* m_splashScreen;
 #ifndef __WXMSW__
     ZombieReaperPOSIX m_zombieReaper;
 #endif

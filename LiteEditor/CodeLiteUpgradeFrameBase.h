@@ -28,9 +28,6 @@ protected:
 protected:
 
 public:
-    wxBannerWindow* GetBanner() { return m_banner; }
-    wxGauge* GetGauge() { return m_gauge; }
-    wxPanel* GetPanel4() { return m_panel4; }
     clInitializeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Initializing CodeLite"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~clInitializeDialogBase();
 };

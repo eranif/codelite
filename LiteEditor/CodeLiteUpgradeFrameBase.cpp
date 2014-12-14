@@ -26,7 +26,7 @@ clInitializeDialogBase::clInitializeDialogBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer26 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer26);
     
-    m_panel4 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel4 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxTAB_TRAVERSAL);
     
     boxSizer26->Add(m_panel4, 1, wxEXPAND, 5);
     
@@ -51,6 +51,7 @@ clInitializeDialogBase::clInitializeDialogBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer20 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer6->Add(boxSizer20, 0, wxALL|wxALIGN_RIGHT, 5);
+    m_panel4->SetMinSize(wxSize(500,-1));
     
     SetSizeHints(500,-1);
     if ( GetSizer() ) {

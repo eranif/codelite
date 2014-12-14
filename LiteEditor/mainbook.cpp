@@ -85,8 +85,10 @@ void MainBook::CreateGuiControls()
 
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+#if CL_USE_NATIVEBOOK == 0
     m_book->SetArtProvider(new clAuiMainNotebookTabArt(PluginManager::Get()));
-    
+#endif
+ 
     wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
     m_book->SetRightClickMenu(contextMenu);
 

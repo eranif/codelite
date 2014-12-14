@@ -209,7 +209,7 @@ void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlF
     }
     
     if(m_tuneColours) {
-        wxBusyInfo info(wxBusyInfoFlags().Text(_("Upgrading Lexers...")).Label(_("CodeLite")));
+        wxBusyInfo info(_("Upgrading Lexers..."));
         // We tuned the colours, save them back to the file system
         Save();
     }

@@ -21,7 +21,8 @@ protected:
     wxColour m_globalBgColour;
     wxColour m_globalFgColour;
     LexerConf::Ptr_t m_defaultLexer;
-
+    bool m_tuneColours;
+    
 private:
     ColoursAndFontsManager();
     virtual ~ColoursAndFontsManager();

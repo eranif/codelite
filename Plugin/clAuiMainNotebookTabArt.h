@@ -38,22 +38,23 @@ class WXDLLIMPEXP_SDK clAuiMainNotebookTabArt : public wxAuiDefaultTabArt
     IManager* m_manager;
     // The tab area background colour
     wxColour m_bgColour;
-    
+
     // The tab area pen colour (used to mark the tab area borders)
     wxColour m_penColour;
     wxColour m_activeTabPenColour;
     wxColour m_innerPenColour;
-    
+
     // The text colour
     wxColour m_activeTabTextColour;
     wxColour m_tabTextColour;
-    
+
     // A singe tab background colour
     wxColour m_activeTabBgColour;
     wxColour m_tabBgColour;
-    
+
 protected:
     void DoSetColours();
+    void DoInitializeColoursFromTheme();
 
 public:
     clAuiMainNotebookTabArt(IManager* manager);

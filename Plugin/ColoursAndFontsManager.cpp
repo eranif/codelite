@@ -20,6 +20,9 @@
 #include "file_logger.h"
 #include <wx/sstream.h>
 #include "cl_command_event.h"
+#include <wx/busyinfo.h>
+
+#define TUNE_COLOURS_CONF "tuneColours"
 
 static const wxString LexerTextDefaultXML =
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -87,9 +90,10 @@ ColoursAndFontsManager::ColoursAndFontsManager()
 
     m_globalBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     m_globalFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    m_tuneColours = clConfig::Get().Read(TUNE_COLOURS_CONF, true);
 }
 
-ColoursAndFontsManager::~ColoursAndFontsManager() {}
+ColoursAndFontsManager::~ColoursAndFontsManager() { clConfig::Get().Write(TUNE_COLOURS_CONF, false); }
 
 ColoursAndFontsManager& ColoursAndFontsManager::Get()
 {
@@ -200,8 +204,14 @@ void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlF
 {
     // Each XMl represents a single lexer
     for(size_t i = 0; i < xmlFiles.size(); ++i) {
-        wxXmlDocument *doc = xmlFiles.at(i);
+        wxXmlDocument* doc = xmlFiles.at(i);
         DoAddLexer(doc->GetRoot());
+    }
+    
+    if(m_tuneColours) {
+        wxBusyInfo info(wxBusyInfoFlags().Text(_("Upgrading Lexers...")).Label(_("CodeLite")));
+        // We tuned the colours, save them back to the file system
+        Save();
     }
 }
 
@@ -269,16 +279,44 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
         lexer->SetFileSpec("*.htm;*.html;*.xhtml");
     }
-    
+
     // Hack3: all the HTML support to PHP which have much more colour themes
     if(lexer->GetName() == "html" && lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec("*.vbs;*.vbe;*.wsf;*.wsc;*.asp;*.aspx");
     }
-    
+
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-    
+
+    if(m_tuneColours) {
+        // adjust line numbers
+        if(lexer->IsDark()) {
+            StyleProperty& defaultProp = lexer->GetProperty(0);                    // Default
+            StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
+            if(!defaultProp.IsNull()) {
+                if(lexer->GetName() != "php" && lexer->GetName() != "html") {
+                    // don't adjust PHP and HTML default colours, since they also affects the various operators
+                    // foreground colours
+                    defaultProp.SetFgColour(
+                        wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
+                }
+                if(!lineNumbers.IsNull()) {
+                    lineNumbers.SetFgColour(
+                        wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
+                }
+            }
+
+        } else {
+            lexer->SetLineNumbersFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+            // don't adjust PHP and HTML default colours, since they also affects the various operators
+            // foreground colours
+            if(lexer->GetName() != "php" && lexer->GetName() != "html") {
+                lexer->SetDefaultFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+            }
+        }
+    }
+
     if(m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
     }
@@ -394,7 +432,7 @@ wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
 LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filename) const
 {
     if(filename.IsEmpty()) return GetLexer("text");
-    
+
     wxFileName fnFileName(filename);
     wxString fileNameLowercase = fnFileName.GetFullName();
     fileNameLowercase.MakeLower();
@@ -616,7 +654,7 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
             LoadNewXmls(userLexers);
         }
     }
-    
+
     // Notify about colours and fonts configuration loaded
     clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);
     EventNotifier::Get()->AddPendingEvent(event);

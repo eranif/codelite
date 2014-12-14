@@ -478,7 +478,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetKeyWords(3, GetKeyWords(3));
         ctrl->SetKeyWords(4, GetKeyWords(4));
     }
-    
+
     // by default indicators are set to be opaque rounded box
     if(DrawingUtils::IsDark(defaultStyle.GetBgColour())) {
         ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
@@ -487,7 +487,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
         ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
     }
-    
+
     // Annotations markers
     // Warning style
     ctrl->StyleSetBackground(ANNOTATION_STYLE_WARNING, defaultStyle.GetBgColour());
@@ -507,6 +507,18 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 }
 
+const StyleProperty& LexerConf::GetProperty(int propertyId) const
+{
+    StyleProperty::List_t::const_iterator iter =
+        std::find_if(m_properties.begin(), m_properties.end(), StyleProperty::FindByID(propertyId));
+    if(iter == m_properties.end()) {
+        static StyleProperty NullProperty;
+        NullProperty.SetId(STYLE_PROPERTY_NULL_ID);
+        return NullProperty;
+    }
+    return *iter;
+}
+
 StyleProperty& LexerConf::GetProperty(int propertyId)
 {
     StyleProperty::List_t::iterator iter =
@@ -517,4 +529,29 @@ StyleProperty& LexerConf::GetProperty(int propertyId)
         return NullProperty;
     }
     return *iter;
+}
+
+bool LexerConf::IsDark() const 
+{
+    const StyleProperty& prop = GetProperty(0);
+    if(prop.IsNull()) {
+        return false;
+    }
+    return DrawingUtils::IsDark(prop.GetBgColour());
+}
+
+void LexerConf::SetDefaultFgColour(const wxColour& colour)
+{
+    StyleProperty& style = GetProperty(0);
+    if(!style.IsNull()) {
+        style.SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+    }
+}
+
+void LexerConf::SetLineNumbersFgColour(const wxColour& colour)
+{
+    StyleProperty& style = GetProperty(LINE_NUMBERS_ATTR_ID);
+    if(!style.IsNull()) {
+        style.SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+    }
 }

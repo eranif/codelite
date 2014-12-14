@@ -294,20 +294,12 @@ void clAuiMainNotebookTabArt::DoSetColours()
     // Set the colours
     // based on the selected book theme
     if(!m_bgColour.IsOk()) {
-        clNotebookTheme theme = clNotebookTheme::GetTheme(clNotebookTheme::kDefault);
-        m_penColour = theme.GetPenColour();
-        m_activeTabPenColour = theme.GetActiveTabPenColour();
-        m_innerPenColour = theme.GetInnerPenColour();
-        m_bgColour = theme.GetBgColour();
-        m_activeTabTextColour = theme.GetActiveTabTextColour();
-        m_tabTextColour = theme.GetTabTextColour();
-        m_tabBgColour = theme.GetTabBgColour();
-        m_activeTabBgColour = theme.GetActiveTabBgColour();
+        DoInitializeColoursFromTheme();
     }
-    
+
     // If we have an active editor, update the colours, if not - keep the old ones
     IEditor* editor = m_manager->GetActiveEditor();
-    
+
     // We use the colour theme based on the active editor
     if(editor) {
         // Change lightness ranges between 0-200
@@ -326,15 +318,24 @@ void clAuiMainNotebookTabArt::DoSetColours()
 #endif
             m_penColour = m_activeTabPenColour.ChangeLightness(110);
             m_innerPenColour = m_penColour.ChangeLightness(115);
-            
+
         } else {
-            m_activeTabTextColour = *wxBLACK;
-            m_tabTextColour = *wxBLACK;
-            m_tabBgColour = m_activeTabBgColour.ChangeLightness(90);
-            m_bgColour = m_activeTabBgColour.ChangeLightness(70);
-            m_penColour = wxColour(*wxBLACK).ChangeLightness(160);
-            m_activeTabPenColour = wxColour(*wxBLACK).ChangeLightness(150);
-            m_innerPenColour = *wxWHITE;
+            wxColour tmp = m_activeTabBgColour;
+            DoInitializeColoursFromTheme();
+            m_activeTabBgColour = tmp;
         }
     }
+}
+
+void clAuiMainNotebookTabArt::DoInitializeColoursFromTheme()
+{
+    clNotebookTheme theme = clNotebookTheme::GetTheme(clNotebookTheme::kDefault);
+    m_activeTabPenColour = theme.GetActiveTabPenColour();
+    m_tabBgColour = theme.GetTabBgColour().ChangeLightness(150);
+    m_penColour = m_activeTabPenColour.ChangeLightness(130);
+    m_innerPenColour = m_tabBgColour.ChangeLightness(180);
+    m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    m_activeTabTextColour = theme.GetActiveTabTextColour();
+    m_tabTextColour = theme.GetTabTextColour();
+    m_activeTabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 }

@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLAUI_TAB_ART_H
-#define CLAUI_TAB_ART_H
+#ifndef CLAUINOTEBOOKTABART_H
+#define CLAUINOTEBOOKTABART_H
 
 #include <wx/aui/auibook.h>
 #include <wx/pen.h>
@@ -32,25 +32,35 @@
 #include <wx/dcgraph.h>
 #include <wx/colour.h>
 
-// -- GUI helper classes and functions --
-
+class IManager;
 class WXDLLIMPEXP_SDK clAuiGlossyTabArt : public wxAuiDefaultTabArt
 {
+    // The tab area background colour
     wxColour m_bgColour;
+
+    // The tab area pen colour (used to mark the tab area borders)
     wxColour m_penColour;
-    
+    wxColour m_activeTabPenColour;
+    wxColour m_innerPenColour;
+
+    // The text colour
+    wxColour m_activeTabTextColour;
+    wxColour m_tabTextColour;
+
+    // A singe tab background colour
+    wxColour m_activeTabBgColour;
+    wxColour m_tabBgColour;
+
 protected:
-    void DoDrawInactiveTabSeparator(wxGCDC& gdc, const wxRect& tabRect);
-    void DoGetTabAreaBackgroundColour(wxColour& bgColour, wxColour& penColour);
-    
+    void DoSetColours();
+    void DoInitializeColoursFromTheme();
+
 public:
     clAuiGlossyTabArt();
     virtual ~clAuiGlossyTabArt();
 
-    virtual wxAuiTabArt* Clone() {
-        return new clAuiGlossyTabArt(*this);
-    }
-    virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) ;
+    virtual wxAuiTabArt* Clone() { return new clAuiGlossyTabArt(*this); }
+    virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     virtual void DrawTab(wxDC& dc,
                          wxWindow* wnd,
                          const wxAuiNotebookPage& page,
@@ -59,7 +69,13 @@ public:
                          wxRect* out_tab_rect,
                          wxRect* out_button_rect,
                          int* x_extent);
-    virtual wxSize GetTabSize(wxDC& dc, wxWindow* wnd, const wxString& caption, const wxBitmap& bitmap, bool active, int closeButtonState, int* xExtent) ;
+    virtual wxSize GetTabSize(wxDC& dc,
+                              wxWindow* wnd,
+                              const wxString& caption,
+                              const wxBitmap& bitmap,
+                              bool active,
+                              int closeButtonState,
+                              int* xExtent);
 };
 
-#endif // CLAUI_TAB_ART_H
+#endif // CLAUINOTEBOOKTABART_H

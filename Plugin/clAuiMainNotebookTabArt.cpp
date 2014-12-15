@@ -44,7 +44,7 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #ifdef __WXMAC__
 #define TAB_RADIUS ((double)0.0)
 #else
-#define TAB_RADIUS ((double)2.5)
+#define TAB_RADIUS ((double)0.0)
 #endif
 
 #ifdef __WXMAC__

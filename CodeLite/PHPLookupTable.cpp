@@ -185,7 +185,7 @@ void PHPLookupTable::CreateSchema()
 
         sql = wxT("PRAGMA temp_store = MEMORY;");
         m_db.ExecuteUpdate(sql);
-        
+
         wxSQLite3Statement st =
             m_db.PrepareStatement("select SCHEMA_VERSION from METADATA_TABLE where SCHEMA_NAME=:SCHEMA_NAME");
         st.Bind(st.GetParamIndex(":SCHEMA_NAME"), "CODELITEPHP");
@@ -641,7 +641,20 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
         }
 
     } catch(wxSQLite3Exception& e) {
-        m_db.Rollback();
+        try {
+            m_db.Rollback();
+
+        } catch(...) {
+        }
+
+        {
+            // always make sure that the end event is sent
+            clParseEvent event(wxPHP_PARSE_ENDED);
+            event.SetTotalFiles(files.GetCount());
+            event.SetCurfileIndex(files.GetCount());
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
+
         CL_WARNING("PHPLookupTable::UpdateSourceFiles: %s", e.GetMessage());
     }
 }

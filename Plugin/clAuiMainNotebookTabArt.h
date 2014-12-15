@@ -35,6 +35,7 @@
 class IManager;
 class WXDLLIMPEXP_SDK clAuiMainNotebookTabArt : public wxAuiDefaultTabArt
 {
+protected:
     IManager* m_manager;
     // The tab area background colour
     wxColour m_bgColour;
@@ -53,8 +54,8 @@ class WXDLLIMPEXP_SDK clAuiMainNotebookTabArt : public wxAuiDefaultTabArt
     wxColour m_tabBgColour;
 
 protected:
-    void DoSetColours();
-    void DoInitializeColoursFromTheme();
+    virtual void DoSetColours();
+    virtual void DoInitializeColoursFromTheme();
 
 public:
     clAuiMainNotebookTabArt(IManager* manager);

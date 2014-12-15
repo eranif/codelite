@@ -138,7 +138,8 @@
 #include "clang_code_completion.h"
 #include "cl_defs.h"
 
-wxSplashScreen* clMainFrame::m_splashScreen = NULL;
+static clSplashScreen* g_splashScreen = NULL;
+static bool g_splashDestroyed = false;
 
 //////////////////////////////////////////////////
 
@@ -180,6 +181,7 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #define TB_SEPARATOR() tb->AddSeparator()
 #endif
 
+#if !defined(__WXMAC__)
 static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
 {
     wxBitmap bmp;
@@ -193,28 +195,28 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
     memDC.SetPen(*wxBLACK);
     memDC.SetBrush(*wxTRANSPARENT_BRUSH);
     memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
-    
+
     wxCoord ww, hh;
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     font.SetPointSize(12);
     font.SetWeight(wxFONTWEIGHT_BOLD);
-    
+
     memDC.SetFont(font);
-    
+
     wxString versionString = CODELITE_VERSION_STR;
-    //versionString = versionString.BeforeLast('-');
-    
+    // versionString = versionString.BeforeLast('-');
+
     memDC.GetMultiLineTextExtent(versionString, &ww, &hh);
-    wxCoord bmpW = origBmp.GetWidth();
-    memDC.SetTextForeground( *wxWHITE );
+    memDC.SetTextForeground(*wxWHITE);
     wxCoord textX = 157;
     memDC.DrawText(versionString, textX, 37);
-    memDC.SetTextForeground( wxColour("#003D00") );
+    memDC.SetTextForeground(wxColour("#003D00"));
     memDC.DrawText(versionString, textX, 36);
     memDC.SelectObject(wxNullBitmap);
-    
+
     return bmp;
 }
+#endif
 
 //----------------------------------------------------------------
 // Our main frame
@@ -934,18 +936,19 @@ void clMainFrame::Initialize(bool loadLastSession)
 
     inf.SetFrameSize(frameSize);
 
-#if defined(NDEBUG) && !defined(__WXMAC__)
+#if !defined(__WXMAC__)
     // we show splash only when using Release builds of codelite
     if(inf.GetFlags() & CL_SHOW_SPLASH) {
         wxBitmap bitmap;
         wxString splashName(ManagerST::Get()->GetStartupDirectory() + wxT("/images/splashscreen.png"));
         if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
             wxString mainTitle = CODELITE_VERSION_STR;
-            clMainFrame::m_splashScreen = new wxSplashScreen(CreateSplashScreenBitmap(bitmap), 
-                                                             wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 
-                                                             -1, 
-                                                             NULL, 
-                                                             wxID_ANY);
+            g_splashScreen = new clSplashScreen(g_splashDestroyed,
+                                                CreateSplashScreenBitmap(bitmap),
+                                                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
+                                                -1,
+                                                NULL,
+                                                wxID_ANY);
             wxYield();
         }
     }
@@ -1185,7 +1188,7 @@ void clMainFrame::CreateGUIControls(void)
     } else {
         CreateNativeToolbar16();
     }
-    
+
     // Connect the custom build target events range: !USE_AUI_TOOLBAR only
     if(GetToolBar()) {
         GetToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST,
@@ -2076,11 +2079,11 @@ void clMainFrame::LocateCompilersIfNeeded()
             }
         }
     }
-    
-    if(m_splashScreen) {
-        m_splashScreen->Hide();
-        m_splashScreen->Destroy();
-        m_splashScreen = NULL;
+
+    if(!g_splashDestroyed && g_splashScreen) {
+        g_splashScreen->Hide();
+        g_splashScreen->Destroy();
+        g_splashScreen = NULL;
     }
 }
 
@@ -3241,7 +3244,7 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
 
     // enable/disable plugins toolbar functionality
     PluginManager::Get()->EnableToolbars();
-    
+
     // Do we need to update the parser paths?
     bool updateParserPaths = clConfig::Get().Read("updateParserPaths", true);
     if(updateParserPaths) {
@@ -3968,7 +3971,7 @@ void clMainFrame::CompleteInitialization()
 
     // Hide / Show status/tool bar (native)
     DoShowToolbars(clConfig::Get().Read("ShowToolBar", false));
-    
+
     if(!clConfig::Get().Read("ShowStatusBar", true)) {
         GetStatusBar()->Hide();
     }
@@ -5106,16 +5109,16 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     wxCommandEvent eventOpenResource(wxEVT_CMD_OPEN_RESOURCE, GetId());
     eventOpenResource.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(eventOpenResource)) return;
-    
+
     wxString initialText;
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor* editor = GetMainBook()->GetActiveEditor();
     if(editor && editor->HasSelection()) {
         int start = editor->GetSelectionNStart(0);
         int end = editor->GetSelectionNEnd(0);
         initialText = editor->GetTextRange(start, end);
     }
     OpenResourceDialog dlg(this, PluginManager::Get(), initialText);
-    
+
     if(dlg.ShowModal() == wxID_OK) {
         OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());
     }
@@ -5847,7 +5850,6 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
             int winid = iter->first; // contains the menu ID
             menu->Append(winid, iter->second.first);
         }
-
     }
 }
 

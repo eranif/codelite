@@ -121,7 +121,7 @@ class clMainFrame : public wxFrame
     MyMenuBar* m_myMenuBar;
     wxMenu* m_bookmarksDropDownMenu;
     ThemeHandler m_themeHandler;
-    static wxSplashScreen* m_splashScreen;
+
 #ifndef __WXMSW__
     ZombieReaperPOSIX m_zombieReaper;
 #endif

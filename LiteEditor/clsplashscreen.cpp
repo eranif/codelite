@@ -24,65 +24,27 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "clsplashscreen.h"
-#if 0
-#include <wx/dcscreen.h>
-#include <wx/dcbuffer.h>
-#include <wx/settings.h>
 
-extern wxString CODELITE_VERSION_STR;
-
-clSplashScreen::clSplashScreen(wxWindow* parent, const wxBitmap& bmp)
+clSplashScreen::clSplashScreen(bool& flag,
+                               const wxBitmap& bitmap,
+                               long splashStyle,
+                               int milliseconds,
+                               wxWindow* parent,
+                               wxWindowID id,
+                               const wxPoint& pos,
+                               const wxSize& size,
+                               long style)
+    : wxSplashScreen(bitmap, splashStyle, milliseconds, parent, id, pos, size, style)
+    , m_flag(flag)
 {
-    wxMemoryDC label_dc;
-    m_bmp = wxBitmap(bmp.GetWidth(), bmp.GetHeight());
-    label_dc.SelectObject(m_bmp);
-    label_dc.DrawBitmap(bmp, 0, 0, true);
-    
-    wxCoord ww, hh;
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    font.SetPointSize(12);
-    font.SetWeight(wxFONTWEIGHT_BOLD);
-    
-    label_dc.SetFont(font);
-    
-    wxString versionString = CODELITE_VERSION_STR;
-    //versionString = versionString.BeforeLast('-');
-    
-    label_dc.GetMultiLineTextExtent(versionString, &ww, &hh);
-    wxCoord bmpW = bmp.GetWidth();
-    label_dc.SetTextForeground( *wxWHITE );
-    wxCoord textX = (bmpW - ww)/2;
-    label_dc.DrawText(versionString, textX, 31);
-    label_dc.SetTextForeground( wxColour("#003D00") );
-    label_dc.DrawText(versionString, textX, 30);
-    label_dc.SelectObject(wxNullBitmap);
-    
-    // m_bmp contains an updated version of the bitmap
-    wxSplashScreen::Create()
-    Show(true);
-    SetThemeEnabled(false);
-    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+    Bind(wxEVT_CLOSE_WINDOW, &clSplashScreen::OnCloseWindow, this);
 }
 
-clSplashScreen::~clSplashScreen()
+void clSplashScreen::OnCloseWindow(wxCloseEvent& event)
 {
+    // mark the splash as "destroyed" so we won't destroy it again later
+    m_flag = true;
+    event.Skip();
 }
 
-void clSplashScreen::OnPaint(wxPaintEvent& e)
-{
-    wxUnusedVar(e);
-    wxBufferedPaintDC dc(this);
-    dc.DrawBitmap( m_bmp , 0, 0 , true);
-}
-
-void clSplashScreen::OnEraseBg(wxEraseEvent& e)
-{
-    wxUnusedVar(e);
-}
-
-void clSplashScreen::OnTimer(wxTimerEvent& e)
-{
-    wxUnusedVar(e);
-    Hide();
-}
-#endif
+clSplashScreen::~clSplashScreen() {}

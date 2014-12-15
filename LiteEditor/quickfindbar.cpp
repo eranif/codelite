@@ -179,6 +179,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_findWhat->Bind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBar::OnEnter, this);
     m_findWhat->Bind(wxEVT_COMMAND_TEXT_UPDATED, &QuickFindBar::OnText, this);
     m_findWhat->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
+    m_findWhat->Bind(wxEVT_MOUSEWHEEL, &QuickFindBar::OnFindMouseWheel, this);
     m_replaceWith->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnReplaceKeyDown, this);
     m_replaceWith->Bind(wxEVT_COMMAND_TEXT_ENTER, &QuickFindBar::OnReplace, this);
     btnNext->Bind(wxEVT_KEY_DOWN, &QuickFindBar::OnKeyDown, this);
@@ -1050,4 +1051,11 @@ void QuickFindBar::OnButtonReplaceUI(wxUpdateUIEvent& e)
 void QuickFindBar::OnHideBar(wxFlatButtonEvent& e)
 {
     OnHide(e);
+}
+
+void QuickFindBar::OnFindMouseWheel(wxMouseEvent& e)
+{
+    // Do nothing and disable the mouse wheel
+    // by not calling 'skip'
+    wxUnusedVar(e);
 }

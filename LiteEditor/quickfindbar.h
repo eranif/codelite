@@ -114,6 +114,7 @@ protected:
     void OnButtonPrevUI(wxUpdateUIEvent& e);
     void OnText(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
+    void OnFindMouseWheel(wxMouseEvent& e);
     void OnShowReplaceControls(wxFlatButtonEvent& e);
     void OnButtonReplace(wxFlatButtonEvent& e);
     void OnButtonReplaceUI(wxUpdateUIEvent& e);

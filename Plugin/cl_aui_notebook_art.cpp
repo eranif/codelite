@@ -40,9 +40,9 @@ void clAuiGlossyTabArt::DoSetColours()
     DoInitializeColoursFromTheme();
 #ifdef __WXMSW__
     wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
-    m_tabBgColour = baseColour.ChangeLightness(130);
+    m_tabBgColour = baseColour.ChangeLightness(150);
     m_penColour = baseColour.ChangeLightness(80);
-    m_innerPenColour = baseColour.ChangeLightness(180);
+    m_innerPenColour = baseColour.ChangeLightness(175);
 #else
     m_tabTextColour = wxColour("rgb(60, 60, 60)");
 #endif

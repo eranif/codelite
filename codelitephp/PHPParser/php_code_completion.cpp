@@ -87,6 +87,8 @@ PHPCodeCompletion::PHPCodeCompletion()
         wxEVT_CC_FIND_SYMBOL, clCodeCompletionEventHandler(PHPCodeCompletion::OnFindSymbol), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_EDITOR_TIP_DWELL_END, wxCommandEventHandler(PHPCodeCompletion::OnDismissTooltip), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CC_JUMP_HYPER_LINK, clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
 }
 
 PHPCodeCompletion::~PHPCodeCompletion()
@@ -124,6 +126,8 @@ PHPCodeCompletion::~PHPCodeCompletion()
         wxEVT_CC_GENERATE_DOXY_BLOCK, clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_EDITOR_TIP_DWELL_END, wxCommandEventHandler(PHPCodeCompletion::OnDismissTooltip), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CC_JUMP_HYPER_LINK, clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
 }
 
 PHPCodeCompletion* PHPCodeCompletion::Instance()
@@ -524,8 +528,8 @@ void PHPCodeCompletion::Open(const wxFileName& workspaceFile)
 {
     Close();
     m_lookupTable.Open(workspaceFile.GetPath());
-    
-    // Cache the symbols into the OS caching, this is done by simply reading the entire file content and 
+
+    // Cache the symbols into the OS caching, this is done by simply reading the entire file content and
     // then closing it
     wxFileName fnDBFile(workspaceFile.GetPath(), "phpsymbols.db");
     fnDBFile.AppendDir(".codelite");
@@ -542,17 +546,17 @@ void PHPCodeCompletion::Close()
 void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
 {
     e.Skip();
-        
+
     // Do we have a workspace open?
     CHECK_COND_RET(PHPWorkspace::Get()->IsOpen());
-    
+
     // Sanity
     IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
     CHECK_PTR_RET(editor);
-    
+
     // Is this a PHP editor?
     CHECK_COND_RET(IsPHPFile(editor));
-    
+
     // Get the text from the caret current position
     // until the end of file
     wxString unsavedBuffer = editor->GetTextRange(editor->GetCurrentPosition(), editor->GetLength());
@@ -560,7 +564,7 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
     PHPSourceFile source("<?php " + unsavedBuffer);
     source.SetParseFunctionBody(false);
     source.Parse();
-    
+
     PHPEntityBase::Ptr_t ns = source.Namespace();
     if(ns) {
         const PHPEntityBase::List_t& children = ns->GetChildren();
@@ -576,12 +580,45 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
     }
 }
 
-void PHPCodeCompletion::OnSymbolsCached()
+void PHPCodeCompletion::OnSymbolsCached() { wxLogMessage("PHP Symbols cached into OS cache"); }
+
+void PHPCodeCompletion::OnSymbolsCacheError() { wxLogMessage("Error encountered while caching PHP symbols"); }
+
+void PHPCodeCompletion::OnQuickJump(clCodeCompletionEvent& e)
 {
-    wxLogMessage("PHP Symbols cached into OS cache");
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        e.Skip(false);
+        GotoDefinition(m_manager->GetActiveEditor(), e.GetInt());
+    }
 }
 
-void PHPCodeCompletion::OnSymbolsCacheError()
+void PHPCodeCompletion::GotoDefinition(IEditor* editor, int pos)
 {
-    wxLogMessage("Error encountered while caching PHP symbols");
+
+    CHECK_PTR_RET(editor);
+    wxStyledTextCtrl* sci = editor->GetSTC();
+    CHECK_PTR_RET(sci);
+
+    PHPLocation::Ptr_t definitionLocation = FindDefinition(editor, pos);
+    CHECK_PTR_RET(definitionLocation);
+
+    // Open the file (make sure we use the 'OpenFile' so we will get a browsing record)
+    if(m_manager->OpenFile(definitionLocation->filename, wxEmptyString, definitionLocation->linenumber)) {
+        // Select the word in the editor (its a new one)
+        IEditor* activeEditor = m_manager->GetActiveEditor();
+        if(activeEditor) {
+            int selectFromPos = activeEditor->GetSTC()->PositionFromLine(definitionLocation->linenumber);
+            CallAfter(&PHPCodeCompletion::DoSelectInEditor, definitionLocation->what, selectFromPos);
+        }
+    }
+}
+
+void PHPCodeCompletion::DoSelectInEditor(const wxString& what, int from)
+{
+    IEditor* activeEditor = m_manager->GetActiveEditor();
+    if(activeEditor) {
+        activeEditor->GetSTC()->ClearSelections();
+        activeEditor->FindAndSelect(what, what, from, NULL);
+    }
 }

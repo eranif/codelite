@@ -279,22 +279,9 @@ void PHPEditorContextMenu::DoGotoEndOfScope()
 
 void PHPEditorContextMenu::DoGotoDefinition()
 {
-    wxStyledTextCtrl* sci = DoGetActiveScintila();
-    CHECK_PTR_RET(sci);
-
-    PHPLocation::Ptr_t definitionLocation =
-        PHPCodeCompletion::Instance()->FindDefinition(m_manager->GetActiveEditor(), sci->GetCurrentPos());
-    CHECK_PTR_RET(definitionLocation);
-
-    // Open the file (make sure we use the 'OpenFile' so we will get a browsing record)
-    if(m_manager->OpenFile(definitionLocation->filename, wxEmptyString, definitionLocation->linenumber)) {
-        // Select the word in the editor (its a new one)
-        IEditor* activeEditor = m_manager->GetActiveEditor();
-        if(activeEditor) {
-            int selectFromPos = activeEditor->GetSTC()->PositionFromLine(definitionLocation->linenumber);
-            activeEditor->FindAndSelect(definitionLocation->what, definitionLocation->what, selectFromPos, NULL);
-        }
-    }
+    CHECK_PTR_RET(m_manager->GetActiveEditor());
+    PHPCodeCompletion::Instance()->GotoDefinition(m_manager->GetActiveEditor(),
+                                                  m_manager->GetActiveEditor()->GetSTC()->GetCurrentPos());
 }
 
 int PHPEditorContextMenu::GetTokenPosInScope(wxStyledTextCtrl* sci,
@@ -669,8 +656,7 @@ int PHPEditorContextMenu::RemoveComment(wxStyledTextCtrl* sci, int posFrom, cons
 {
     sci->SetAnchor(posFrom);
     int posTo = posFrom;
-    for(int i = 0; i < (int)value.Length(); i++)
-        posTo = sci->PositionAfter(posTo);
+    for(int i = 0; i < (int)value.Length(); i++) posTo = sci->PositionAfter(posTo);
 
     sci->SetSelection(posFrom, posTo);
     sci->DeleteBack();
@@ -754,7 +740,7 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             // insert the comment above the current line
             int pos = editor->PosFromLine(curline);
             editor->InsertText(pos, comment);
-            
+
             // Format the source code after generation
             clSourceFormatEvent evt(wxEVT_FORMAT_STRING);
             evt.SetInputString(editor->GetSTC()->GetText());
@@ -791,7 +777,7 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
             // Wrap the text insertion as a single transcation
             editor->GetSTC()->BeginUndoAction();
             int curpos = editor->GetSTC()->GetCurrentPos();
-            
+
             clSTCLineKeeper lk(editor); // keep the current file line
             textToAdd =
                 editor->FormatTextKeepIndent(textToAdd, editor->GetCurrentPosition(), Format_Text_Save_Empty_Lines);

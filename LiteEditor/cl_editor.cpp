@@ -2141,6 +2141,7 @@ void LEditor::FindAndSelectV(const wxString& _pattern,
     // Use CallAfter() here. With wxGTK-3.1 (perhaps due to its scintilla update) if the file wasn't already loaded,
     // EnsureVisible() is called too early and fails
     wxArrayString strings; // CallAfter can only cope with 2 parameters, so combine the wxStrings
+    ClearSelections();
     strings.Add(_pattern);
     strings.Add(name);
     CallAfter(&LEditor::DoFindAndSelectV, strings, pos);
@@ -3994,8 +3995,14 @@ void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
     if(event.m_controlDown || isMiddle) {
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
-
-        IndicatorSetForeground(HYPERLINK_INDICATOR, wxT("NAVY"));
+        
+        wxColour bgCol = StyleGetBackground(0);
+        if(DrawingUtils::IsDark(bgCol)) {
+            IndicatorSetForeground(HYPERLINK_INDICATOR, *wxWHITE);
+        } else {
+            IndicatorSetForeground(HYPERLINK_INDICATOR, *wxBLUE);
+        }
+        
 
         if(pos != wxSTC_INVALID_POSITION) {
             m_hyperLinkType = m_context->GetHyperlinkRange(pos, m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd);
@@ -4008,6 +4015,7 @@ void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
         }
     }
 }
+
 void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 {
     if(m_hyperLinkIndicatroStart != wxNOT_FOUND && m_hyperLinkIndicatroEnd != wxNOT_FOUND) {
@@ -4015,6 +4023,16 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
         if(m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
             bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
+            
+            // Let the plugins handle it first
+            clCodeCompletionEvent event(wxEVT_CC_JUMP_HYPER_LINK);
+            event.SetString(GetTextRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd));
+            event.SetInt(m_hyperLinkIndicatroStart);
+            if(EventNotifier::Get()->ProcessEvent(event)) {
+                return;
+            }
+            
+            // Run the default action
             m_context->GoHyperlink(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd, m_hyperLinkType, altLink);
         }
     }
@@ -4446,7 +4464,10 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
                 } else {
 
                     // as a fallback, mark the whole line
-                    SetSelection(pos, pos + match_len);
+                    ClearSelections();
+                    SetCurrentPos(pos);
+                    SetSelectionStart(pos);
+                    SetSelectionEnd(pos + match_len);
                     res = true;
                 }
 

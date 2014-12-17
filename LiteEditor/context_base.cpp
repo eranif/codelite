@@ -101,7 +101,7 @@ int ContextBase::GetHyperlinkRange(int pos, int& start, int& end)
 {
     LEditor& rCtrl = GetCtrl();
     int curstyle = rCtrl.GetStyleAt(pos);
-    if(curstyle == wxSTC_C_WORD2 || curstyle == wxSTC_C_GLOBALCLASS || curstyle == wxSTC_C_IDENTIFIER) {
+    if(!IsCommentOrString(rCtrl.GetCurrentPos())) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(pos, true);
         end = rCtrl.WordEndPos(pos, true);

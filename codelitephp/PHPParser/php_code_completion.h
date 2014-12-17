@@ -68,14 +68,23 @@ private:
     void OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e);
     void OnCodeCompletionGetTagComment(clCodeCompletionEvent& e);
     void OnFindSymbol(clCodeCompletionEvent& e);
+    void OnQuickJump(clCodeCompletionEvent& e);
     void OnInsertDoxyBlock(clCodeCompletionEvent& e);
     void OnDismissTooltip(wxCommandEvent& e);
     void OnRetagWorkspace(wxCommandEvent& event);
     
     // Workspace events
     void OnFileSaved(clCommandEvent& event);
-
+    void DoSelectInEditor(const wxString &what, int from);
+    
 public:
+    /**
+     * @brief go to the definition of the word starting at pos
+     * @param editor
+     * @param pos
+     */
+    void GotoDefinition(IEditor* editor, int pos);
+    
     void SetManager(IManager* manager) { this->m_manager = manager; }
     /**
      * @brief return a PHPLocation::Ptr_t for the declaration of the

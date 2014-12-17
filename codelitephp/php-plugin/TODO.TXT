@@ -13,9 +13,6 @@ Code Completion / Code Generation
 Must:
 =====
 - Unified the keywords with the code completion box
-- In some cases the parsing bar remains active and never goes away (assertion?)
-- css: add hyphen "-" to the list of words
-- Implement click (shift click) for navigation
 - Open include file is broken
 - Fix nav bar for PHP plugin
 

@@ -292,6 +292,12 @@
 // Codelite is about to show the completion box for language keywords
 #define wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD 3505
 
+// Send clCodeCompletionEvent
+// User clicked on hyper link inside the editor
+// If the plugin wants to handle it, simple avoid calling event.Skip()
+// Use event.GetString() to get the hyperlink text
+#define wxEVT_CC_JUMP_HYPER_LINK 3507
+
 // User requested to perform a raw search for a symbol
 // Use evt.GetWord() to get the searched string
 #define wxEVT_CC_FIND_SYMBOL 3518

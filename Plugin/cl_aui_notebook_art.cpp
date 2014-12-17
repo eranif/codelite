@@ -28,6 +28,7 @@
 clAuiGlossyTabArt::clAuiGlossyTabArt()
     : clAuiMainNotebookTabArt(NULL)
 {
+    m_tabRadius = 0.0;
 }
 
 clAuiGlossyTabArt::~clAuiGlossyTabArt() {}
@@ -37,5 +38,12 @@ void clAuiGlossyTabArt::DoSetColours()
     // Set the colours
     // based on the selected book theme
     DoInitializeColoursFromTheme();
+#ifdef __WXMSW__
+    wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
+    m_tabBgColour = baseColour.ChangeLightness(130);
+    m_penColour = baseColour.ChangeLightness(80);
+    m_innerPenColour = baseColour.ChangeLightness(180);
+#else
     m_tabTextColour = wxColour("rgb(60, 60, 60)");
+#endif
 }

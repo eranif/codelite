@@ -52,7 +52,9 @@ protected:
     // A singe tab background colour
     wxColour m_activeTabBgColour;
     wxColour m_tabBgColour;
-
+    
+    double m_tabRadius;
+    
 protected:
     virtual void DoSetColours();
     virtual void DoInitializeColoursFromTheme();

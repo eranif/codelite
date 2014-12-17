@@ -42,12 +42,6 @@ static const wxDouble X_RADIUS = 6.0;
 static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
 #ifdef __WXMAC__
-#define TAB_RADIUS ((double)0.0)
-#else
-#define TAB_RADIUS ((double)0.0)
-#endif
-
-#ifdef __WXMAC__
 #include <wx/osx/private.h>
 #define TAB_HEIGHT_SPACER 10
 #define TAB_Y_OFFSET 2
@@ -64,6 +58,7 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
 clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
     : m_manager(manager)
+    , m_tabRadius(0.0)
 {
 }
 
@@ -140,18 +135,18 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
 
     if(page.active) {
         gdc.SetBrush(m_activeTabBgColour);
-        path.AddRoundedRectangle(rr.x, rr.y, rr.width - 1, rr.height, TAB_RADIUS);
+        path.AddRoundedRectangle(rr.x, rr.y, rr.width - 1, rr.height, m_tabRadius);
         gdc.GetGraphicsContext()->FillPath(path);
         gdc.GetGraphicsContext()->StrokePath(path);
 
     } else {
         wxGraphicsPath outerPath = gdc.GetGraphicsContext()->CreatePath();
         gdc.SetPen(penColour);
-        outerPath.AddRoundedRectangle(rr.x, rr.y, rr.width - 1, rr.height, TAB_RADIUS);
+        outerPath.AddRoundedRectangle(rr.x, rr.y, rr.width - 1, rr.height, m_tabRadius);
         gdc.GetGraphicsContext()->StrokePath(outerPath);
 
         gdc.SetPen(m_innerPenColour);
-        path.AddRoundedRectangle(rr.x + 1, rr.y + 1, rr.width - 3, rr.height - 1, TAB_RADIUS);
+        path.AddRoundedRectangle(rr.x + 1, rr.y + 1, rr.width - 3, rr.height - 1, m_tabRadius);
         gdc.GetGraphicsContext()->StrokePath(path);
 
         gdc.SetBrush(m_tabBgColour);
@@ -172,9 +167,9 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     }
 
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    if(page.active) {
-        fnt.SetWeight(wxFONTWEIGHT_BOLD);
-    }
+    // if(page.active) {
+    //     fnt.SetWeight(wxFONTWEIGHT_BOLD);
+    // }
     gdc.SetFont(fnt);
     wxSize ext = gdc.GetTextExtent(caption);
     if(caption == "Tp") caption.Clear();

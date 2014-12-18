@@ -158,6 +158,9 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
     
 #else
     wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
+    if(DrawingUtils::IsDark(baseColour)) {
+        baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
     penColour = baseColour.ChangeLightness(110);
 #endif
 

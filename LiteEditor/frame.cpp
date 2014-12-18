@@ -198,7 +198,7 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
 
     wxCoord ww, hh;
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    font.SetPointSize(12);
+    font.SetPointSize(18);
     font.SetWeight(wxFONTWEIGHT_BOLD);
 
     memDC.SetFont(font);
@@ -208,10 +208,10 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
 
     memDC.GetMultiLineTextExtent(versionString, &ww, &hh);
     memDC.SetTextForeground(*wxWHITE);
-    wxCoord textX = 157;
-    memDC.DrawText(versionString, textX, 37);
-    memDC.SetTextForeground(wxColour("#003D00"));
-    memDC.DrawText(versionString, textX, 36);
+    wxCoord textX = 300;
+    memDC.DrawText(versionString, textX, 10);
+    memDC.SetTextForeground(*wxBLACK);
+    memDC.DrawText(versionString, textX, 9);
     memDC.SelectObject(wxNullBitmap);
 
     return bmp;

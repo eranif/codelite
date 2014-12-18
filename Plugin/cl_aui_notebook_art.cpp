@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_aui_notebook_art.h"
+#include "drawingutils.h"
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
     : clAuiMainNotebookTabArt(NULL)
@@ -40,9 +41,17 @@ void clAuiGlossyTabArt::DoSetColours()
     DoInitializeColoursFromTheme();
 #ifdef __WXMSW__
     wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
-    m_tabBgColour = baseColour.ChangeLightness(150);
-    m_penColour = baseColour.ChangeLightness(80);
-    m_innerPenColour = baseColour.ChangeLightness(175);
+    if(!DrawingUtils::IsDark(baseColour)) {
+        m_tabBgColour = baseColour.ChangeLightness(150);
+        m_penColour = m_tabBgColour.ChangeLightness(80);
+        m_activeTabPenColour = baseColour.ChangeLightness(90);
+        m_innerPenColour = m_tabBgColour;
+    } else {
+        m_tabBgColour = baseColour.ChangeLightness(165);
+        m_penColour = m_tabBgColour.ChangeLightness(80);
+        m_activeTabPenColour = m_tabBgColour.ChangeLightness(60);
+        m_innerPenColour = m_tabBgColour;
+    }
 #else
     m_tabTextColour = wxColour("rgb(60, 60, 60)");
 #endif

@@ -80,7 +80,7 @@ private:
     void DoBuildMenu(wxMenu *menu, IEditor* editor);
     void DoBuildMarginMenu(wxMenu *menu, IEditor* editor);
     bool IsIncludeOrRequireStatement(wxString &includeWhat);
-    bool GetIncludeOrRequireFileName(wxFileName &fn);
+    bool GetIncludeOrRequireFileName(wxString &fn);
     bool IsLineMarked(); // does a bookmark exist in the current lines
     int RemoveComment(wxStyledTextCtrl *sci, int posFrom, const wxString &value); // return the number of characters removed
     void CommentSingleLine(wxStyledTextCtrl *sci, int style, int line_number, int &caret_pos);

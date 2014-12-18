@@ -120,6 +120,11 @@ public:
      * @brief same as the above function, but the caching went bad...
      */
     void OnSymbolsCacheError();
+    /**
+     * @brief expand 'require_once' line (or any require) by replacing __file__ etc with the proper
+     * values and appending everything
+     */
+    wxString ExpandRequire(const wxFileName& curfile, const wxString &require);
 };
 
 #endif // PHPCODECOMPLETION_H

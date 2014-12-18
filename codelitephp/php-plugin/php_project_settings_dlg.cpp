@@ -108,7 +108,9 @@ void PHPProjectSettingsDlg::OnAddIncludePath(wxCommandEvent& event)
         if(curIncPaths.Index(path) == wxNOT_FOUND) {
             curIncPaths.Add(path);
         }
-        m_textCtrlPHPIncludePath->ChangeValue(wxJoin(curIncPaths, '\n'));
+        
+        // User SetValue to trigger an event
+        m_textCtrlPHPIncludePath->SetValue(wxJoin(curIncPaths, '\n'));
     }
 }
 

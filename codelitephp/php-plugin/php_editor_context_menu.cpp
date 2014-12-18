@@ -232,7 +232,7 @@ bool PHPEditorContextMenu::IsIncludeOrRequireStatement(wxString& includeWhat)
     return false;
 }
 
-bool PHPEditorContextMenu::GetIncludeOrRequireFileName(wxFileName& fn)
+bool PHPEditorContextMenu::GetIncludeOrRequireFileName(wxString& fn)
 {
     GET_EDITOR_SCI_BOOL();
 
@@ -240,16 +240,18 @@ bool PHPEditorContextMenu::GetIncludeOrRequireFileName(wxFileName& fn)
     int lineStart = editor->PosFromLine(editor->GetCurrentLine());
     int lineEnd = editor->LineEnd(editor->GetCurrentLine());
     wxString lineText = editor->GetTextRange(lineStart, lineEnd);
+    fn.swap(lineText);
     return true;
 }
 
 void PHPEditorContextMenu::DoOpenPHPFile()
 {
-    wxFileName fn;
-
+    wxString fn;
     if(!GetIncludeOrRequireFileName(fn)) return; // no editor...
-
-    m_manager->OpenFile(fn.GetFullPath());
+    wxString outFile = PHPCodeCompletion::Instance()->ExpandRequire(m_manager->GetActiveEditor()->GetFileName(), fn);
+    if(!outFile.IsEmpty()) {
+        m_manager->OpenFile(outFile);
+    }
 }
 
 void PHPEditorContextMenu::DoGotoBeginningOfScope()
@@ -656,7 +658,8 @@ int PHPEditorContextMenu::RemoveComment(wxStyledTextCtrl* sci, int posFrom, cons
 {
     sci->SetAnchor(posFrom);
     int posTo = posFrom;
-    for(int i = 0; i < (int)value.Length(); i++) posTo = sci->PositionAfter(posTo);
+    for(int i = 0; i < (int)value.Length(); i++)
+        posTo = sci->PositionAfter(posTo);
 
     sci->SetSelection(posFrom, posTo);
     sci->DeleteBack();

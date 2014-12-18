@@ -13,7 +13,6 @@ Code Completion / Code Generation
 Must:
 =====
 - Unified the keywords with the code completion box
-- Open include file is broken
 - Fix nav bar for PHP plugin
 
 Usability:

@@ -622,3 +622,64 @@ void PHPCodeCompletion::DoSelectInEditor(const wxString& what, int from)
         activeEditor->FindAndSelect(what, what, from, NULL);
     }
 }
+
+wxString PHPCodeCompletion::ExpandRequire(const wxFileName& curfile, const wxString& require)
+{
+    PHPScanner_t scanner = ::phpLexerNew("<?php " + require);
+    if(!scanner) return "";
+    
+    wxString outFile;
+    phpLexerToken token;
+    while (::phpLexerNext(scanner, token)) {
+        if(token.IsAnyComment()) continue;
+        switch(token.type) {
+        case kPHP_T_REQUIRE:
+        case kPHP_T_REQUIRE_ONCE:
+            break;
+        case kPHP_T_CONSTANT_ENCAPSED_STRING: {
+            wxString str = token.text;
+            str.Trim().Trim(false);
+            // strip the " or ' from the string
+            str.Remove(0, 1).RemoveLast();
+            outFile << str;
+            break;
+        }
+        case kPHP_T_FILE:
+            outFile << curfile.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+            break;
+        case kPHP_T_DIR:
+            outFile << curfile.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+            break;
+        }
+    }
+    
+    wxFileName fileName(outFile);
+    if(fileName.IsOk() && fileName.IsRelative()) {
+        wxArrayString paths;
+        paths.Add(curfile.GetPath());
+        // Relative path, we try to resolve it by looking at the include path give to us
+        PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetActiveProject();
+        if(proj) {
+            wxArrayString incpaths = proj->GetSettings().GetIncludePathAsArray();
+            paths.insert(paths.end(), incpaths.begin(), incpaths.end());
+        }
+        
+        for(size_t i=0; i<paths.GetCount(); ++i) {
+            wxFileName tmpFile = fileName;
+            if(tmpFile.MakeAbsolute(paths.Item(i))) {
+                wxString fullpath = tmpFile.GetFullPath();
+                if(wxFileName::Exists(fullpath)) {
+                    fileName = tmpFile;
+                    break;
+                }
+            }
+        }
+    } 
+    
+    if(fileName.IsOk()) {
+        fileName.Normalize();
+        outFile = fileName.GetFullPath();
+    }
+    ::phpLexerDestroy(&scanner);
+    return outFile;
+}

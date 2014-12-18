@@ -40,6 +40,8 @@
 #include "tabgroupspane.h"
 #include "globals.h"
 #include <algorithm>
+#include "pluginmanager.h"
+#include "ieditor.h"
 
 TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPanel(parent, wxID_ANY)
 {
@@ -471,8 +473,14 @@ void TabgroupsPane::AddTabgroupItem()
     if (!selection.IsOk()) {
         return;
     }
-
-    wxString newfilepath = wxGetTextFromUser(_("What is the filepath to use for the new tabgroup item?"), _("Add a new tabgroup item"), wxT(""), this);
+    
+    wxString defaultPath;
+    IEditor* editor = PluginManager::Get()->GetActiveEditor();
+    if(editor) {
+        defaultPath = editor->GetFileName().GetPath();
+    }
+    
+    wxString newfilepath = ::wxFileSelector(_("Select the file you want to add"), defaultPath);
     if (newfilepath.IsEmpty()) {
         return;
     }

@@ -23,8 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-
-
 #ifndef TABGROUPSPANE_H
 #define TABGROUPSPANE_H
 
@@ -40,60 +38,59 @@ class TabGrpTreeItemData : public wxTreeItemData
 {
 public:
     TabGrpTreeItemData() {}
-    TabGrpTreeItemData(const wxString& fp, enum tabgrouptype type = TGT_item) : m_filepath(fp), m_type(type)  {}
+    TabGrpTreeItemData(const wxString& fp, enum tabgrouptype type = TGT_item)
+        : m_filepath(fp)
+        , m_type(type)
+    {
+    }
 
-    wxString GetFilepath() const {
-        return m_filepath;
-    }
-    tabgrouptype GetType() const {
-        return m_type;
-    }
+    wxString GetFilepath() const { return m_filepath; }
+    tabgrouptype GetType() const { return m_type; }
 
 protected:
     wxString m_filepath;
-    tabgrouptype m_type;	// Is this item a tabgroup or a contained tab?
+    tabgrouptype m_type; // Is this item a tabgroup or a contained tab?
 };
-
 
 class TabgroupsPane : public wxPanel
 {
-    enum tabgroupmenuitems { TGM_ID_Add = 10000, TGM_ID_Paste, TGM_ID_Delete, TGM_ID_Duplicate, TGM_ID_CopyItem, TGM_ID_CutItem, TGM_ID_RemoveItem };
+    enum tabgroupmenuitems {
+        TGM_ID_Add = 10000,
+        TGM_ID_Paste,
+        TGM_ID_Delete,
+        TGM_ID_Duplicate,
+        TGM_ID_CopyItem,
+        TGM_ID_CutItem,
+        TGM_ID_RemoveItem
+    };
     std::map<wxString, int> _imgIdx;
     ThemeHandlerHelper* m_themeHelper;
-    
+
 public:
-    TabgroupsPane() {
-        m_node = NULL;
-    }
+    TabgroupsPane() { m_node = NULL; }
     TabgroupsPane(wxWindow* parent, const wxString& caption);
     ~TabgroupsPane();
     void DisplayTabgroups();
-    void ClearTabgroups() {
-        m_tree->DeleteChildren(m_tree->GetRootItem());
-    }
+    void ClearTabgroups() { m_tree->DeleteChildren(m_tree->GetRootItem()); }
     bool AddNewTabgroupToTree(const wxString& newfilepath, wxTreeItemId selection = wxTreeItemId());
 
 protected:
-    void AddTreeItem(const wxString& tabgroupname, const wxArrayString& tabfilepaths, const wxTreeItemId insertafter = wxTreeItemId());
+    void AddTreeItem(const wxString& tabgroupname,
+                     const wxArrayString& tabfilepaths,
+                     const wxTreeItemId insertafter = wxTreeItemId());
     void AddTabgroupItem();
     void PasteTabgroupItem(wxTreeItemId itemtopaste = wxTreeItemId());
     void DeleteTabgroup();
     void DuplicateTabgroup();
     void CopyTabgroupItem(wxTreeItemId itemtocopy = wxTreeItemId());
     void DeleteTabgroupItem(bool DoCut = false, wxTreeItemId itemtocopy = wxTreeItemId());
-    int  DoGetIconIndex(const wxString &filename);
+    int DoGetIconIndex(const wxString& filename);
 
     void OnContextMenu(wxCommandEvent& event);
     // The next 4 methods deal with keypresses, not the context menu
-    void OnCopy(wxCommandEvent& WXUNUSED(event)) {
-        CopyTabgroupItem();
-    }
-    void OnPaste(wxCommandEvent& WXUNUSED(event)) {
-        PasteTabgroupItem();
-    }
-    void OnCut(wxCommandEvent& WXUNUSED(event)) {
-        DeleteTabgroupItem(true);
-    }
+    void OnCopy(wxCommandEvent& WXUNUSED(event)) { CopyTabgroupItem(); }
+    void OnPaste(wxCommandEvent& WXUNUSED(event)) { PasteTabgroupItem(); }
+    void OnCut(wxCommandEvent& WXUNUSED(event)) { DeleteTabgroupItem(true); }
     void OnDelete(wxCommandEvent& WXUNUSED(event));
 
     void OnItemActivated(wxTreeEvent& event);

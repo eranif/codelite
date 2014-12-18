@@ -1473,7 +1473,7 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
     diffPanel->SetFilesDetails(l, r);
     diffPanel->Diff();
     diffPanel->SetOriginSourceControl();
-    m_plugin->GetManager()->AddPage(diffPanel, _("Svn Diff: ") + fileBeingDiffed.GetFullName(), wxNullBitmap, true);
+    m_plugin->GetManager()->AddPage(diffPanel, _("Svn Diff: ") + fileBeingDiffed.GetFullName(), _("Svn Diff: ") + fileBeingDiffed.GetFullPath(),wxNullBitmap, true);
 
     wxDELETE(m_codeliteEcho);
 }

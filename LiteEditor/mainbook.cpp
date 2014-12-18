@@ -465,7 +465,7 @@ LEditor* MainBook::NewEditor()
 
     LEditor* editor = new LEditor(m_book);
     editor->SetFileName(fileName);
-    AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
+    AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(),wxNullBitmap, true);
 
 #ifdef __WXMAC__
     m_book->GetSizer()->Layout();
@@ -557,9 +557,9 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
 #endif
 
         if((extra & OF_PlaceNextToCurrent) && (sel != Notebook::npos)) {
-            AddPage(editor, fileName.GetFullName(), wxNullBitmap, false, sel + 1);
+            AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(), wxNullBitmap, false, sel + 1);
         } else {
-            AddPage(editor, fileName.GetFullName());
+            AddPage(editor, fileName.GetFullName(), fileName.GetFullPath());
         }
         editor->SetSyntaxHighlight();
 
@@ -629,6 +629,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
 
 bool MainBook::AddPage(wxWindow* win,
                        const wxString& text,
+					   const wxString& tooltip,
                        const wxBitmap& bmp,
                        bool selected,
                        size_t insert_at_index /*=wxNOT_FOUND*/)
@@ -679,6 +680,8 @@ bool MainBook::AddPage(wxWindow* win,
         m_book->GetSizer()->Layout();
     }
 #endif
+	if (!tooltip.IsEmpty())
+		m_book->SetPageToolTip(m_book->GetPageIndex(win),tooltip);
     return true;
 }
 

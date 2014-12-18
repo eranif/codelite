@@ -158,7 +158,7 @@ public:
     virtual void ClearOutputTab(eOutputPaneTab tab) = 0;
     
     virtual wxPanel* GetEditorPaneNotebook() = 0;
-    virtual void AddEditorPage(wxWindow* page, const wxString& name) = 0;
+    virtual void AddEditorPage(wxWindow* page, const wxString& name,const wxString& tooltip = wxEmptyString) = 0;
     virtual wxWindow* GetActivePage() = 0;
     virtual wxWindow* GetPage(size_t page) = 0;
 
@@ -398,7 +398,7 @@ public:
      * @brief add a page to the mainbook
      */
     virtual bool
-        AddPage(wxWindow* win, const wxString& text, const wxBitmap& bmp = wxNullBitmap, bool selected = false) = 0;
+        AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString, const wxBitmap& bmp = wxNullBitmap, bool selected = false) = 0;
 
     /**
      * @brief select a window in mainbook

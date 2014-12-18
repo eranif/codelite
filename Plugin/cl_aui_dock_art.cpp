@@ -103,7 +103,11 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
     wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
     bgColour = baseColour.ChangeLightness(130);
     penColour = baseColour.ChangeLightness(80);
-    textColour = *wxBLACK;
+    if (DrawingUtils::IsDark(bgColour)) {
+        textColour = *wxWHITE;
+    } else {
+        textColour = *wxBLACK;
+    }
 #endif
 
     memDc.SetPen(bgColour);

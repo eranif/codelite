@@ -208,10 +208,10 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
 
     memDC.GetMultiLineTextExtent(versionString, &ww, &hh);
     memDC.SetTextForeground(*wxWHITE);
-    wxCoord textX = 300;
-    memDC.DrawText(versionString, textX, 10);
+    wxCoord textX = 315;
+    memDC.DrawText(versionString, textX, 24);
     memDC.SetTextForeground(*wxBLACK);
-    memDC.DrawText(versionString, textX, 9);
+    memDC.DrawText(versionString, textX, 23);
     memDC.SelectObject(wxNullBitmap);
 
     return bmp;

@@ -2410,29 +2410,7 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 
     // Is it an internal command? (usually the workspace file name to load is set in the
     // event.SetString() )
-    if(event.GetString().IsEmpty() || wxFileName(event.GetString()).GetExt() != WSP_EXT) {
-
-        clCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
-        e.SetEventObject(this);
-        e.SetFileName(event.GetString());
-        if(EventNotifier::Get()->ProcessEvent(e)) {
-            // the plugin processed it by itself
-            return;
-        }
-
-        if(e.GetFileName().IsEmpty() == false) {
-            // the plugin processed it by itself and the user already selected a file
-            // don't bother to prompt the user again just use what he already selected
-            promptUser = false;
-            wspFile = e.GetFileName();
-        }
-
-    } else if(!event.GetString().IsEmpty()) {
-        promptUser = false;
-        wspFile = event.GetString();
-    }
-
-    if(promptUser) {
+    if(event.GetString().IsEmpty()) {
         // now it is time to prompt user for new workspace to open
         const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|") wxT("All Files (*)|*"));
         wxFileDialog dlg(this,
@@ -2445,19 +2423,31 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
         if(dlg.ShowModal() == wxID_OK) {
             wspFile = dlg.GetPath();
         }
+    } else {
+        wspFile = event.GetString();
     }
 
-    if(!wspFile.IsEmpty()) {
-
-        // Make sure that the 'Workspace' tab is visible
-        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_workspace_tab"));
-        event.SetEventObject(this);
-        event.SetInt(1);
-        GetEventHandler()->ProcessEvent(event);
-
-        // Open the workspace
-        ManagerST::Get()->OpenWorkspace(wspFile);
+    if(wspFile.IsEmpty()) return;
+    
+    // Let the plugins a chance of handling this workspace first
+    clCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
+    e.SetEventObject(this);
+    e.SetFileName(wspFile);
+    if(EventNotifier::Get()->ProcessEvent(e)) {
+        // the plugin processed it by itself
+        return;
     }
+
+    // Make sure that the 'Workspace' tab is visible
+    {
+        wxCommandEvent showTabEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_workspace_tab"));
+        showTabEvent.SetEventObject(this);
+        showTabEvent.SetInt(1);
+        GetEventHandler()->ProcessEvent(showTabEvent);
+    }
+    
+    // Open the workspace
+    ManagerST::Get()->OpenWorkspace(wspFile);
 }
 
 void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event)

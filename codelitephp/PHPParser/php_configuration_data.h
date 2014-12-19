@@ -17,6 +17,7 @@ protected:
     wxString m_xdebugIdeKey;
     wxString m_xdebugHost;
     wxString m_findInFilesMask;
+    int m_workspaceType;
 
 public:
     enum {
@@ -34,6 +35,13 @@ public:
     PHPConfigurationData();
     virtual ~PHPConfigurationData();
 
+    PHPConfigurationData& SetWorkspaceType(int workspaceType)
+    {
+        this->m_workspaceType = workspaceType;
+        return *this;
+    }
+    
+    int GetWorkspaceType() const { return m_workspaceType; }
     PHPConfigurationData& EnableFlag(size_t flag, bool b)
     {
         if(b) {
@@ -53,7 +61,7 @@ public:
         this->m_findInFilesMask = findInFilesMask;
         return *this;
     }
-    
+
     const wxString& GetFindInFilesMask() const { return m_findInFilesMask; }
     // ----------------------------------------------------
     // Setters

@@ -79,6 +79,17 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     }
 
     m_workspaceFile = filename;
+    wxFileName fnNewWspFile = m_workspaceFile;
+    fnNewWspFile.SetExt("workspace");
+    
+    if(!fnNewWspFile.Exists()) {
+        wxLogNull nolog;
+        if(::wxCopyFile(m_workspaceFile.GetFullPath(), fnNewWspFile.GetFullPath())) {
+            m_workspaceFile = fnNewWspFile;
+        }
+    }
+    
+    // Ensure that the workspace file is renamed to .workspace
     {
         // Create the private folder if needed
         wxFileName fn(m_workspaceFile);
@@ -130,16 +141,6 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     wxBusyInfo busy(_("Scanning for workspace files..."), EventNotifier::Get()->TopFrame());
     wxYieldIfNeeded();
     
-    // Get list of the workspace files
-    // wxProgressDialog* progress =
-    //     new wxProgressDialog(_("Loading workspace"),
-    //                          wxString(' ', 150) + "\n\n",
-    //                          1000,
-    //                          EventNotifier::Get()->TopFrame(),
-    //                          wxPD_APP_MODAL | wxPD_AUTO_HIDE |
-    //                              wxPD_SMOOTH // - makes indeterminate mode bar on WinXP very small
-    //                          );
-
     wxArrayString dummy;
     GetWorkspaceFiles(dummy);
     
@@ -149,6 +150,8 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
     ParseWorkspace(false);
 
     CallAfter(&PHPWorkspace::RestoreWorkspaceSession);
+    
+    // Change the workspace extension
     return true;
 }
 

@@ -514,13 +514,21 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);
     
-    m_staticBitmap161 = new wxStaticBitmap(m_panel191, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("splashscreen")), wxDefaultPosition, wxSize(-1,-1), 0 );
+    m_staticBitmap161 = new wxStaticBitmap(m_panel191, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("codelite-logo-no-bg")), wxDefaultPosition, wxSize(-1,-1), 0 );
     
     boxSizer195->Add(m_staticBitmap161, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_TOP, 5);
     
     wxGridSizer* gridSizer235 = new wxGridSizer(3, 2, 0, 0);
     
     boxSizer195->Add(gridSizer235, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_cmdLnkBtnNewWorkspace = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New"), _("Create a new workspace"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    
+    gridSizer235->Add(m_cmdLnkBtnNewWorkspace, 0, wxALL|wxEXPAND, 5);
+    
+    m_cmdLnkBtnNewProject = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New"), _("Create a new project"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    
+    gridSizer235->Add(m_cmdLnkBtnNewProject, 0, wxALL|wxEXPAND, 5);
     
     m_cmdLnkBtnWorkspaces = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"), wxDefaultPosition, wxSize(-1,100), wxBU_LEFT);
     
@@ -530,21 +538,13 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     gridSizer235->Add(m_cmdLnkBtnFilesMenu, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn157 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New"), _("Start a new project"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnForum = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Forums"), _("Visit codelite's forums"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
-    gridSizer235->Add(m_cmdLnkBtn157, 0, wxALL|wxEXPAND, 5);
+    gridSizer235->Add(m_cmdLnkBtnForum, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn231 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Open"), _("Open a workspace"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
+    m_cmdLnkBtnWiki = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
-    gridSizer235->Add(m_cmdLnkBtn231, 0, wxALL|wxEXPAND, 5);
-    
-    m_cmdLnkBtn155 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Forums"), _("Visit codelite's forums"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
-    
-    gridSizer235->Add(m_cmdLnkBtn155, 0, wxALL|wxEXPAND, 5);
-    
-    m_cmdLnkBtn151 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
-    
-    gridSizer235->Add(m_cmdLnkBtn151, 0, wxALL|wxEXPAND, 5);
+    gridSizer235->Add(m_cmdLnkBtnWiki, 0, wxALL|wxEXPAND, 5);
     
     boxSizer195->Add(0, 0, 0, wxALL|wxEXPAND, 5);
     
@@ -555,28 +555,28 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     Centre(wxBOTH);
     // Connect events
     this->Connect(wxEVT_SIZE, wxSizeEventHandler(WelcomePageBase::OnSize), NULL, this);
+    m_cmdLnkBtnNewWorkspace->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewWorkspace), NULL, this);
+    m_cmdLnkBtnNewProject->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewProject), NULL, this);
     m_cmdLnkBtnWorkspaces->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowWorkspaceMenu), NULL, this);
     m_cmdLnkBtnWorkspaces->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentProjectUI), NULL, this);
     m_cmdLnkBtnFilesMenu->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowFileseMenu), NULL, this);
     m_cmdLnkBtnFilesMenu->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentFileUI), NULL, this);
-    m_cmdLnkBtn157->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewProject), NULL, this);
-    m_cmdLnkBtn231->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWorkspace), NULL, this);
-    m_cmdLnkBtn155->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenForums), NULL, this);
-    m_cmdLnkBtn151->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWiki), NULL, this);
+    m_cmdLnkBtnForum->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenForums), NULL, this);
+    m_cmdLnkBtnWiki->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWiki), NULL, this);
     
 }
 
 WelcomePageBase::~WelcomePageBase()
 {
     this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(WelcomePageBase::OnSize), NULL, this);
+    m_cmdLnkBtnNewWorkspace->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewWorkspace), NULL, this);
+    m_cmdLnkBtnNewProject->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewProject), NULL, this);
     m_cmdLnkBtnWorkspaces->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowWorkspaceMenu), NULL, this);
     m_cmdLnkBtnWorkspaces->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentProjectUI), NULL, this);
     m_cmdLnkBtnFilesMenu->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowFileseMenu), NULL, this);
     m_cmdLnkBtnFilesMenu->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentFileUI), NULL, this);
-    m_cmdLnkBtn157->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewProject), NULL, this);
-    m_cmdLnkBtn231->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWorkspace), NULL, this);
-    m_cmdLnkBtn155->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenForums), NULL, this);
-    m_cmdLnkBtn151->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWiki), NULL, this);
+    m_cmdLnkBtnForum->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenForums), NULL, this);
+    m_cmdLnkBtnWiki->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWiki), NULL, this);
     
 }
 

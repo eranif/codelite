@@ -367,48 +367,25 @@ void PhpPlugin::OnCloseWorkspace(clCommandEvent& e)
 
 void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
 {
-    const wxString WPS_EXT = "phpwsp";
-    wxString workspace_file = e.GetFileName();
-    if(!workspace_file.IsEmpty() && wxFileName(workspace_file).GetExt() != WPS_EXT) {
-        // the event already contains a workspace name - don't do anything with the event
-        e.Skip();
-        return;
-    }
+    e.Skip();
+    wxFileName workspaceFile(e.GetFileName());
+    JSONRoot root(workspaceFile);
+    if(!root.isOk()) return;
 
-    wxString filename;
-    if(!workspace_file.IsEmpty()) {
-        filename = workspace_file;
-
+    wxString type = root.toElement().namedObject("metadata").namedObject("type").toString();
+    bool hasProjects = root.toElement().hasNamedObject("projects");
+    if(type == "php" || hasProjects) {
+        // this is our to handle
+        e.Skip(false);
     } else {
-
-        // Prompt the user to see if he wants to open a PHP workspace or standard workspace
-        wxString filter;
-        PluginSettings settings;
-
-        PluginSettings::Load(settings);
-
-        filter = "All Files (*)|*|Standard Workspace (*.workspace)|*.workspace|PHP Workspace (*.phpwsp)|*.phpwsp";
-        filename =
-            wxFileSelector(wxT("Open workspace"), wxT(""), wxT(""), wxT(""), filter, wxFD_FILE_MUST_EXIST | wxFD_OPEN);
-    }
-
-    if(filename.IsEmpty()) {
         return;
     }
 
+    // Check if this is a PHP workspace
     if(PHPWorkspace::Get()->IsOpen()) {
         PHPWorkspace::Get()->Close();
     }
-
-    wxFileName fn(filename);
-    if(fn.GetExt() == PHPStrings::PHP_WORKSPACE_EXT) {
-        DoOpenWorkspace(fn.GetFullPath());
-
-    } else {
-        // set the file selection and pass it on to codelite
-        e.SetFileName(fn.GetFullPath());
-        e.Skip();
-    }
+    DoOpenWorkspace(workspaceFile.GetFullPath());
 }
 
 void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
@@ -479,7 +456,7 @@ void PhpPlugin::OnGetActiveProjectFiles(wxCommandEvent& e)
             wxString activeProjectName = PHPWorkspace::Get()->GetActiveProjectName();
             PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(activeProjectName);
             CHECK_PTR_RET(proj);
-            const wxArrayString &projfiles = proj->GetFiles();
+            const wxArrayString& projfiles = proj->GetFiles();
             pfiles->insert(pfiles->end(), projfiles.begin(), projfiles.end());
         }
     } else {
@@ -495,7 +472,7 @@ void PhpPlugin::OnGetCurrentFileProjectFiles(wxCommandEvent& e)
         if(editor && pfiles) {
             ::wxMessageBox("Not implemented for PHP!");
         }
-    } else { 
+    } else {
         e.Skip();
     }
 }
@@ -823,7 +800,8 @@ void PhpPlugin::FinalizeStartup()
                                             .Hide()
                                             .CloseButton()
                                             .MaximizeButton()
-                                            .Bottom().Position(3));
+                                            .Bottom()
+                                            .Position(3));
 
     m_xdebugLocalsView = new LocalsView(EventNotifier::Get()->TopFrame());
     m_mgr->GetDockingManager()->AddPane(

@@ -11,6 +11,7 @@ PHPConfigurationData::PHPConfigurationData()
     , m_xdebugPort(9000)
     , m_flags(kRunLintOnFileSave)
     , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css")
+    , m_workspaceType(0)
 {
     if ( m_ccIncludePath.IsEmpty() ) {
         m_ccIncludePath.Add( ::GetCCResourceDirectory() );
@@ -32,6 +33,7 @@ void PHPConfigurationData::FromJSON(const JSONElement &json)
     m_xdebugHost = json.namedObject("m_xdebugHost").toString("127.0.0.1");
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString("codeliteide");
+    m_workspaceType = json.namedObject("m_workspaceType").toInt(m_workspaceType);
     m_xdebugIdeKey.Trim().Trim(false);
     
     // xdebug IDE can not be an empty string, or else debugging in command line 
@@ -59,6 +61,7 @@ JSONElement PHPConfigurationData::ToJSON() const
     e.addProperty("m_flags", m_flags);
     e.addProperty("m_xdebugIdeKey", m_xdebugIdeKey);
     e.addProperty("m_findInFilesMask", m_findInFilesMask);
+    e.addProperty("m_workspaceType", m_workspaceType);
     return e;
 }
 

@@ -322,14 +322,10 @@
 #define wxEVT_CMD_CREATE_NEW_WORKSPACE 3506
 
 // Event type: clCommandEvent
-// User requested to open a workspace
-// By default codelite will open a dialog to open a workspace with the '.workspace' suffix.
-// If a plugin wishes to offer a user a dialog with other extension (for example: .myworkspace)
-// it should handle this event and open the dialog itself and then based on the selected
-// file extension it should decide what to do: pass the selected file to codelite (assuming user selected the
-// standard .workspace file, or handle it by itself).
-// to pass the selection to codelite, simply set it in the evt.SetFileName(...) function
-// If the plugin wishes to handle the file by itself, it should avoid calling evt.Skip()
+// A workspace file was selected by the user.
+// use event.GetFileName() to get the file name 
+// If the plugin wishes to process this file, it should call
+// event.Skip(false) on the event
 #define wxEVT_CMD_OPEN_WORKSPACE 3509
 
 // Event type: clCommandEvent

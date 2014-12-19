@@ -72,28 +72,32 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     
     m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxWANTS_CHARS|wxTAB_TRAVERSAL);
     
-    bSizer2->Add(m_panel1, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer2->Add(m_panel1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
     
-    m_staticText9 = new wxStaticText(m_panel1, wxID_ANY, _("Select the workspace type"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText9Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText9Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText9->SetFont(m_staticText9Font);
+    wxArrayString m_radioBoxArr;
+    m_radioBoxArr.Add(wxT("C++ Workspace"));
+    m_radioBoxArr.Add(wxT("PHP Workspace"));
+    m_radioBox = new wxRadioBox(m_panel1, wxID_ANY, _("Select the workspace type:"), wxDefaultPosition, wxSize(-1,-1), m_radioBoxArr, 1, wxRA_SPECIFY_COLS);
+    m_radioBox->SetSelection(0);
     
-    bSizer11->Add(m_staticText9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer11->Add(m_radioBox, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button1 = new wxButton(m_panel1, wxID_ANY, _("C++ Workspace"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_button1->SetDefault();
+    m_stdBtnSizer469 = new wxStdDialogButtonSizer();
     
-    bSizer11->Add(m_button1, 0, wxALL|wxEXPAND, 5);
+    bSizer2->Add(m_stdBtnSizer469, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button2 = new wxButton(m_panel1, wxID_ANY, _("PHP Workspace"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer469->AddButton(m_buttonOK);
     
-    bSizer11->Add(m_button2, 0, wxALL|wxEXPAND, 5);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer469->AddButton(m_buttonCancel);
+    m_stdBtnSizer469->Realize();
     
-    SetSizeHints(300,-1);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -102,11 +106,6 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(NewWorkspaceSelectionDlgBase::OnClose), NULL, this);
     this->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
     m_panel1->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
-    m_staticText9->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
-    m_button1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceSelectionDlgBase::OnStandardWorkspace), NULL, this);
-    m_button1->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
-    m_button2->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceSelectionDlgBase::OnPHPWorkspace), NULL, this);
-    m_button2->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
     
 }
 
@@ -115,11 +114,6 @@ NewWorkspaceSelectionDlgBase::~NewWorkspaceSelectionDlgBase()
     this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(NewWorkspaceSelectionDlgBase::OnClose), NULL, this);
     this->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
     m_panel1->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
-    m_staticText9->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
-    m_button1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceSelectionDlgBase::OnStandardWorkspace), NULL, this);
-    m_button1->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
-    m_button2->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceSelectionDlgBase::OnPHPWorkspace), NULL, this);
-    m_button2->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
     
 }
 

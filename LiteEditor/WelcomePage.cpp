@@ -38,21 +38,23 @@
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
 }
 
 WelcomePage::~WelcomePage()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
 }
 
 void WelcomePage::OnNewProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
-    e.SetEventObject( clMainFrame::Get() );
+    e.SetEventObject(clMainFrame::Get());
 
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent( e );
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 
 void WelcomePage::OnOpenForums(wxCommandEvent& event)
@@ -73,15 +75,6 @@ void WelcomePage::OnSize(wxSizeEvent& event)
     m_staticBitmap161->Refresh();
 }
 
-void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("switch_to_workspace"));
-    e.SetEventObject( clMainFrame::Get() );
-
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent( e );
-}
-
 void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)
 {
     wxArrayString recentFiles;
@@ -89,9 +82,9 @@ void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)
     recentFiles.Sort();
 
     int id = DoGetPopupMenuSelection(m_cmdLnkBtnFilesMenu, recentFiles, _("Select file to open"));
-    if ( id != wxID_NONE ) {
+    if(id != wxID_NONE) {
         wxString filename = m_idToName[id];
-        clMainFrame::Get()->GetMainBook()->OpenFile( filename );
+        clMainFrame::Get()->GetMainBook()->OpenFile(filename);
     }
 }
 
@@ -99,42 +92,43 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
 {
     wxArrayString files;
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
-//  files.Sort();
+    //  files.Sort();
 
     wxArrayString recentWorkspaces;
-    for(size_t i=files.GetCount(); i > 0; --i) {
+    for(size_t i = files.GetCount(); i > 0; --i) {
         wxFileName fn(files.Item(i - 1));
-        recentWorkspaces.Add( fn.GetName() + " @ " + fn.GetFullPath() );
+        recentWorkspaces.Add(fn.GetName() + " @ " + fn.GetFullPath());
     }
 
     int id = DoGetPopupMenuSelection(m_cmdLnkBtnWorkspaces, recentWorkspaces, _("Open workspace"));
-    if ( id != wxID_NONE ) {
+    if(id != wxID_NONE) {
         wxString filename = m_idToName[id];
         filename = filename.AfterFirst('@');
         filename.Trim().Trim(false);
 
         // post an event to the main frame requesting a workspace open
         wxCommandEvent evtOpenworkspace(wxEVT_COMMAND_MENU_SELECTED, XRCID("switch_to_workspace"));
-        evtOpenworkspace.SetString( filename );
-        evtOpenworkspace.SetEventObject( clMainFrame::Get() );
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent( evtOpenworkspace );
+        evtOpenworkspace.SetString(filename);
+        evtOpenworkspace.SetEventObject(clMainFrame::Get());
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
     }
 }
 
-int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayString& strings, const wxString &menuTitle)
+int
+WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayString& strings, const wxString& menuTitle)
 {
     BitmapLoader bl;
     BitmapLoader::BitmapMap_t bmps = bl.MakeStandardMimeMap();
 
     m_idToName.clear();
-    wxUnusedVar( menuTitle );
+    wxUnusedVar(menuTitle);
     wxMenu menu;
 
-    for(size_t i=0; i<strings.GetCount(); i++) {
+    for(size_t i = 0; i < strings.GetCount(); i++) {
 
         wxBitmap bmp = bmps[FileExtManager::TypeText];
-        FileExtManager::FileType type = FileExtManager::GetType( strings.Item(i) );
-        if( bmps.count(type) ) {
+        FileExtManager::FileType type = FileExtManager::GetType(strings.Item(i));
+        if(bmps.count(type)) {
             bmp = bmps[type];
         }
 
@@ -165,24 +159,25 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
 void WelcomePage::OnRecentFileUI(wxUpdateUIEvent& event)
 {
     wxArrayString files;
-    clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles( files );
-    event.Enable( !files.IsEmpty() );
+    clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(files);
+    event.Enable(!files.IsEmpty());
 }
 
 void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
 {
     wxArrayString files;
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
-    event.Enable( !files.IsEmpty() );
+    event.Enable(!files.IsEmpty());
 }
 
 void WelcomePage::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    //wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    //wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    //
-    //SetBackgroundColour( bgColour );
-    //SetForegroundColour( fgColour );
-    //Refresh();
+}
+
+void WelcomePage::OnNewWorkspace(wxCommandEvent& event)
+{
+    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_workspace"));
+    e.SetEventObject(clMainFrame::Get());
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }

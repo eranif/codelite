@@ -1,33 +1,19 @@
 #include "new_workspace_selection_dlg.h"
+#include "windowattrmanager.h"
+#include "php_configuration_data.h"
 
-NewWorkspaceSelectionDlg::NewWorkspaceSelectionDlg( wxWindow* parent )
-	: NewWorkspaceSelectionDlgBase( parent )
-	, m_isPHPWorkspace(false)
+NewWorkspaceSelectionDlg::NewWorkspaceSelectionDlg(wxWindow* parent)
+    : NewWorkspaceSelectionDlgBase(parent)
 {
-	GetSizer()->Fit(this);
+    GetSizer()->Fit(this);
+    PHPConfigurationData conf;
+    m_radioBox->SetSelection(conf.Load().GetWorkspaceType());
+    WindowAttrManager::Load(this, "NewWorkspaceSelectionDlg");
 }
 
-void NewWorkspaceSelectionDlg::OnStandardWorkspace( wxCommandEvent& event )
+NewWorkspaceSelectionDlg::~NewWorkspaceSelectionDlg()
 {
-	m_isPHPWorkspace = false;
-	EndModal(wxID_OK);
-}
-
-void NewWorkspaceSelectionDlg::OnPHPWorkspace( wxCommandEvent& event )
-{
-	m_isPHPWorkspace = true;
-	EndModal(wxID_OK);
-}
-
-void NewWorkspaceSelectionDlg::OnClose(wxCloseEvent& event)
-{
-	EndModal(wxID_CANCEL);
-}
-
-void NewWorkspaceSelectionDlg::OnKeyDown(wxKeyEvent& event)
-{
-	if(event.GetKeyCode() == WXK_ESCAPE) {
-		Close();
-	} else 
-		event.Skip();
+    PHPConfigurationData conf;
+    conf.Load().SetWorkspaceType(m_radioBox->GetSelection()).Save();
+    WindowAttrManager::Save(this, "NewWorkspaceSelectionDlg");
 }

@@ -17,8 +17,9 @@
 #include <wx/textctrl.h>
 #include "php_file_layout_tree.h"
 #include <wx/panel.h>
-#include <wx/stattext.h>
+#include <wx/radiobox.h>
 #include <wx/button.h>
+#include <wx/stattext.h>
 #include <wx/checkbox.h>
 #include <wx/filepicker.h>
 #include <wx/dataview.h>
@@ -73,22 +74,19 @@ class NewWorkspaceSelectionDlgBase : public wxDialog
 {
 protected:
     wxPanel* m_panel1;
-    wxStaticText* m_staticText9;
-    wxButton* m_button1;
-    wxButton* m_button2;
+    wxRadioBox* m_radioBox;
+    wxStdDialogButtonSizer* m_stdBtnSizer469;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
 
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnStandardWorkspace(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPHPWorkspace(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText9() { return m_staticText9; }
-    wxButton* GetButton1() { return m_button1; }
-    wxButton* GetButton2() { return m_button2; }
+    wxRadioBox* GetRadioBox() { return m_radioBox; }
     wxPanel* GetPanel1() { return m_panel1; }
-    NewWorkspaceSelectionDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace Type..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    NewWorkspaceSelectionDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace Type..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewWorkspaceSelectionDlgBase();
 };
 

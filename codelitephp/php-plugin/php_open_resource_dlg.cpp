@@ -62,6 +62,12 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     m_timer = new wxTimer(this, TIMER_ID);
     m_timer->Start(500, true);
     WindowAttrManager::Load(this, "PHPOpenResourceDlg", NULL);
+    
+    if(m_mgr->GetActiveEditor()) {
+        wxString sel = m_mgr->GetActiveEditor()->GetSelection();
+        m_textCtrlFilter->ChangeValue(sel);
+        m_textCtrlFilter->SelectAll();
+    }
 }
 
 void OpenResourceDlg::DoInitialize()

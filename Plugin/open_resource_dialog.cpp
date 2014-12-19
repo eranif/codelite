@@ -107,11 +107,12 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
             }
         }
     }
+
     m_listOptions->Connect(
         wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(OpenResourceDialog::OnItemActivated), NULL, this);
     m_listOptions->Connect(
         wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(OpenResourceDialog::OnItemSelected), NULL, this);
-        
+
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
     if(!initialSelection.IsEmpty()) {

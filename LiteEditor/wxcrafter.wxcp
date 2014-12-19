@@ -3986,7 +3986,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": ""
+                   "m_value": "Create a new workspace"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -4026,7 +4026,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Label:",
-                   "m_value": "New"
+                   "m_value": "New Workspace"
                   }, {
                    "type": "string",
                    "m_label": "Note",
@@ -4076,7 +4076,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": ""
+                   "m_value": "Click to create a new project.\\nIf NO workspace is open, it will auto create a workspace before creating the project"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -4116,7 +4116,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Label:",
-                   "m_value": "New"
+                   "m_value": "New Project"
                   }, {
                    "type": "string",
                    "m_label": "Note",
@@ -4166,7 +4166,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": ""
+                   "m_value": "Open a workspace from a list of recently opened workspaces"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -4263,7 +4263,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": ""
+                   "m_value": "Open a file from the revcently opened files"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -4360,7 +4360,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": ""
+                   "m_value": "Click to open a web browser in CodeLite's forums"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -4450,7 +4450,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": ""
+                   "m_value": "Click to open a web browser in CodeLite's wiki main documentation page"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",

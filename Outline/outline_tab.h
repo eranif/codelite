@@ -28,6 +28,7 @@
 
 #include "wxcrafter.h"
 #include "theme_handler_helper.h"
+#include "cl_command_event.h"
 
 class IManager;
 class svSymbolTree;
@@ -41,7 +42,7 @@ protected:
     ThemeHandlerHelper* m_themeHelper;
     bool IsIncludeFileNode();
     wxFileName m_phpFile;
-    
+
 public:
     OutlineTab(wxWindow* parent, IManager* mgr);
     virtual ~OutlineTab();
@@ -50,18 +51,19 @@ public:
 
     // Event Handlers
     ////////////////////////////////////////////////
-    void OnWorkspaceClosed(wxCommandEvent &e);
-    void OnActiveEditorChanged(wxCommandEvent &e);
-    void OnEditorClosed(wxCommandEvent &e);
-    void OnAllEditorsClosed(wxCommandEvent &e);
-    void OnFilesTagged(wxCommandEvent &e);
-    void OnMenu(wxContextMenuEvent &e);
-    void OnGotoImpl(wxCommandEvent &e);
-    void OnOpenFile(wxCommandEvent &e);
-    void OnGotoDecl(wxCommandEvent &e);
-    void OnFindReferenes(wxCommandEvent &e);
-    void OnRenameSymbol(wxCommandEvent &e);
-    void OnItemSelectedUI(wxUpdateUIEvent &e);
+    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnActiveEditorChanged(wxCommandEvent& e);
+    void OnEditorClosed(wxCommandEvent& e);
+    void OnAllEditorsClosed(wxCommandEvent& e);
+    void OnFilesTagged(wxCommandEvent& e);
+    void OnMenu(wxContextMenuEvent& e);
+    void OnGotoImpl(wxCommandEvent& e);
+    void OnOpenFile(wxCommandEvent& e);
+    void OnGotoDecl(wxCommandEvent& e);
+    void OnFindReferenes(wxCommandEvent& e);
+    void OnRenameSymbol(wxCommandEvent& e);
+    void OnItemSelectedUI(wxUpdateUIEvent& e);
+    void OnEditorSaved(clCommandEvent& event);
 };
 
 #endif // SYMBOLVIEWTABPANEL_H

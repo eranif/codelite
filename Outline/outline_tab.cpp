@@ -50,7 +50,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     m_tree->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
     m_tree->AssignImageList(svSymbolTree::CreateSymbolTreeImages());
     m_treeCtrlPhp->SetManager(m_mgr);
-    
+
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OutlineTab::OnEditorClosed), NULL, this);
@@ -60,7 +60,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL, this);
-
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(OutlineTab::OnEditorSaved), NULL, this);
     Connect(
         wxEVT_SV_GOTO_DEFINITION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     Connect(
@@ -86,7 +86,7 @@ OutlineTab::~OutlineTab()
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL, this);
-
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(OutlineTab::OnEditorSaved), NULL, this);
     Disconnect(
         wxEVT_SV_GOTO_DEFINITION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     Disconnect(
@@ -120,11 +120,11 @@ void OutlineTab::OnActiveEditorChanged(wxCommandEvent& e)
     e.Skip();
     IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
     CHECK_PTR_RET(editor);
-    
+
     if(FileExtManager::IsCxxFile(editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
-        
+
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         m_treeCtrlPhp->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_PHP);
@@ -146,7 +146,7 @@ void OutlineTab::OnEditorClosed(wxCommandEvent& e)
         if(m_tree->GetFilename() == editor->GetFileName()) {
             m_tree->Clear();
             m_tree->ClearCache();
-            
+
         } else if(m_treeCtrlPhp->GetFilename() == editor->GetFileName()) {
             m_treeCtrlPhp->Clear();
         }
@@ -265,4 +265,13 @@ void OutlineTab::OnPhpItemSelected(wxTreeEvent& event)
 {
     event.Skip();
     m_treeCtrlPhp->ItemSelected(event.GetItem());
+}
+
+void OutlineTab::OnEditorSaved(clCommandEvent& event)
+{
+    event.Skip();
+    wxFileName filename(event.GetFileName());
+    if(FileExtManager::IsPHPFile(filename)) {
+        m_treeCtrlPhp->BuildTree(filename);
+    }
 }

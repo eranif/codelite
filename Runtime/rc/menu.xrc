@@ -8,10 +8,10 @@
                 <object class="wxMenuItem" name="new_file">
                     <label>&amp;New Empty File</label>
                 </object>
-                <object class="wxMenuItem" name="new_workspace">
+                <object class="wxMenuItem" name="file_new_workspace">
                     <label>New &amp;Workspace</label>
                 </object>
-                <object class="wxMenuItem" name="new_project">
+                <object class="wxMenuItem" name="file_new_project">
                     <label>New &amp;Project</label>
                 </object>
             </object>
@@ -20,7 +20,7 @@
                 <object class="wxMenuItem" name="open_file">
                     <label>&amp;Open File...</label>
                 </object>
-                <object class="wxMenuItem" name="switch_to_workspace">
+                <object class="wxMenuItem" name="file_switch_to_workspace">
                     <label>Open &amp;Workspace...</label>
                 </object>
             </object>

@@ -421,12 +421,16 @@ EVT_UPDATE_UI(XRCID("grep_current_workspace"), clMainFrame::OnGrepWordUI)
 EVT_MENU(XRCID("local_workspace_prefs"), clMainFrame::OnWorkspaceEditorPreferences)
 EVT_MENU(XRCID("local_workspace_settings"), clMainFrame::OnWorkspaceSettings)
 EVT_MENU(XRCID("new_workspace"), clMainFrame::OnProjectNewWorkspace)
+EVT_MENU(XRCID("file_new_workspace"), clMainFrame::OnProjectNewWorkspace)
 EVT_MENU(XRCID("switch_to_workspace"), clMainFrame::OnSwitchWorkspace)
+EVT_MENU(XRCID("file_switch_to_workspace"), clMainFrame::OnSwitchWorkspace)
 EVT_UPDATE_UI(XRCID("switch_to_workspace"), clMainFrame::OnSwitchWorkspaceUI)
+EVT_UPDATE_UI(XRCID("file_switch_to_workspace"), clMainFrame::OnSwitchWorkspaceUI)
 EVT_MENU(XRCID("close_workspace"), clMainFrame::OnCloseWorkspace)
 EVT_MENU(XRCID("reload_workspace"), clMainFrame::OnReloadWorkspace)
 EVT_MENU(XRCID("import_from_msvs"), clMainFrame::OnImportMSVS)
 EVT_MENU(XRCID("new_project"), clMainFrame::OnProjectNewProject)
+EVT_MENU(XRCID("file_new_project"), clMainFrame::OnProjectNewProject)
 EVT_MENU(XRCID("add_project"), clMainFrame::OnProjectAddProject)
 EVT_MENU(XRCID("reconcile_project"), clMainFrame::OnReconcileProject)
 EVT_MENU(XRCID("retag_workspace"), clMainFrame::OnRetagWorkspace)
@@ -2403,8 +2407,6 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
-    bool promptUser = true;
     wxString wspFile;
     const wxString WSP_EXT = "workspace";
 
@@ -6067,7 +6069,9 @@ void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
     e.SetEventObject(this);
     e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
-    event.Enable(!ManagerST::Get()->IsWorkspaceOpen() && !e.IsAnswer());
+    bool isCxxWorkspaceOpened = ManagerST::Get()->IsWorkspaceOpen();
+    bool isOtherWorkspaceOpened = e.IsAnswer();
+    event.Enable(!isCxxWorkspaceOpened && !isOtherWorkspaceOpened);
 }
 
 void clMainFrame::OnSplitSelection(wxCommandEvent& event)

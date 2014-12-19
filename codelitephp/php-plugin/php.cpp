@@ -325,8 +325,9 @@ void PhpPlugin::OnNewWorkspace(wxCommandEvent& e)
 void PhpPlugin::OnIsWorkspaceOpen(clCommandEvent& e)
 {
     e.Skip();
-    e.SetAnswer(PHPWorkspace::Get()->IsOpen());
-    if(PHPWorkspace::Get()->IsOpen()) {
+    bool isOpen = PHPWorkspace::Get()->IsOpen();
+    e.SetAnswer(isOpen);
+    if(isOpen) {
         e.SetFileName(PHPWorkspace::Get()->GetFilename().GetFullPath());
         e.SetString(e.GetFileName());
     }

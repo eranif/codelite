@@ -25,4 +25,3 @@ Usability:
 
 NICE TO HAVE: 
 - Watches
-- Workspace view: make it multi selection

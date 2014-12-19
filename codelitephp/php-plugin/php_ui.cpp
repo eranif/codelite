@@ -961,7 +961,7 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     m_auibar29 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar29->SetToolBitmapSize(wxSize(16,16));
     
-    bSizer5->Add(m_auibar29, 0, wxEXPAND, 5);
+    bSizer5->Add(m_auibar29, 0, wxEXPAND, 2);
     
     m_auibar29->AddTool(ID_PHP_PROJECT_SETTINGS, _("Open Active Project Settings..."), wxXmlResource::Get()->LoadBitmap(wxT("php-project-settings")), wxNullBitmap, wxITEM_NORMAL, _("Open Active Project Settings..."), _("Open Active Project Settings..."), NULL);
     
@@ -978,9 +978,9 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer5->Add(m_gaugeParseProgress, 0, wxALL|wxEXPAND, 2);
     
-    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_NO_LINES|wxBORDER_NONE);
+    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES);
     
-    bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 0);
+    bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 2);
     
     SetSizeHints(100,200);
     if ( GetSizer() ) {
@@ -1785,12 +1785,12 @@ NewPHPProjectDlgBase::NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer417->Add(m_stdBtnSizer421, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button423 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_button423->SetDefault();
-    m_stdBtnSizer421->AddButton(m_button423);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer421->AddButton(m_buttonOK);
     
-    m_button425 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_stdBtnSizer421->AddButton(m_button425);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer421->AddButton(m_buttonCancel);
     m_stdBtnSizer421->Realize();
     
     SetSizeHints(-1,-1);
@@ -1803,7 +1803,8 @@ NewPHPProjectDlgBase::NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id, cons
     m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectDlgBase::OnPathUpdated), NULL, this);
     m_checkBoxSeparateFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectDlgBase::OnCreateUnderSeparateFolder), NULL, this);
     m_checkBoxSeparateFolder->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnCreateUnderSeparateFolderUI), NULL, this);
-    m_button423->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnOKUI), NULL, this);
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnOKUI), NULL, this);
+    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPProjectDlgBase::OnOK), NULL, this);
     
 }
 
@@ -1813,6 +1814,7 @@ NewPHPProjectDlgBase::~NewPHPProjectDlgBase()
     m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectDlgBase::OnPathUpdated), NULL, this);
     m_checkBoxSeparateFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectDlgBase::OnCreateUnderSeparateFolder), NULL, this);
     m_checkBoxSeparateFolder->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnCreateUnderSeparateFolderUI), NULL, this);
-    m_button423->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnOKUI), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPProjectDlgBase::OnOKUI), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPProjectDlgBase::OnOK), NULL, this);
     
 }

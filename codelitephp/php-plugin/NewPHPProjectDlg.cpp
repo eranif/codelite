@@ -39,32 +39,6 @@ void NewPHPProjectDlg::OnNameUpdated(wxCommandEvent& event)
 void NewPHPProjectDlg::OnPathUpdated(wxFileDirPickerEvent& event)
 {
     event.Skip();
-    
-    // newpath: C:\src\codelite-web.1\  .
-    // project path: C:\src\codelite-web .
-    
-    wxString newpath = wxFileName(event.GetPath(), "").GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME);
-    const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
-    PHPProject::Map_t::const_iterator iter = projects.begin();
-    for(; iter != projects.end(); ++iter) {
-        if(newpath.StartsWith(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME))) {
-            // The new path is a sub folder of a project
-            wxString message;
-            message << _("Invalid path.\n") << _("Path '") << newpath << _("' is already part of project '")
-                    << iter->second->GetName() << "'";
-            m_infobar->ShowMessage(message, wxICON_WARNING);
-            m_dirPickerPath->SetPath("");
-
-        } else if(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR|wxPATH_GET_VOLUME).StartsWith(newpath)) {
-            // The new project is a parent of an existing project
-            wxString message;
-            message << _("Invalid path. ") << _("Project '") << iter->second->GetName()
-                    << _("' is located under this path");
-            m_infobar->ShowMessage(message, wxICON_WARNING);
-            m_dirPickerPath->SetPath("");
-
-        }
-    }
     DoUpdateProjectFolder();
 }
 
@@ -89,4 +63,32 @@ void NewPHPProjectDlg::OnCreateUnderSeparateFolder(wxCommandEvent& event)
 void NewPHPProjectDlg::OnCreateUnderSeparateFolderUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlName->IsEmpty());
+}
+
+void NewPHPProjectDlg::OnOK(wxCommandEvent& event)
+{
+    wxFileName projectFilePath(m_textCtrlPreview->GetValue());
+    wxString newpath = projectFilePath.GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
+    const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
+    PHPProject::Map_t::const_iterator iter = projects.begin();
+    for(; iter != projects.end(); ++iter) {
+        if(newpath.StartsWith(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME))) {
+            // The new path is a sub folder of a project
+            wxString message;
+            message << _("Unable to create a project at the selected path. ") << _("Path '") << newpath
+                    << _("' is already part of project '") << iter->second->GetName() << "'";
+            m_infobar->ShowMessage(message, wxICON_WARNING);
+            return;
+            
+        } else if(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME).StartsWith(newpath)) {
+            // The new project is a parent of an existing project
+            wxString message;
+            message << _("Unable to create a project at the selected path. ") << _("Project '")
+                    << iter->second->GetName() << _("' is located under this path");
+            m_infobar->ShowMessage(message, wxICON_WARNING);
+            return;
+        }
+    }
+    
+    EndModal(wxID_OK);
 }

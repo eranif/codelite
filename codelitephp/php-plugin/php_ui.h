@@ -594,8 +594,8 @@ protected:
     wxCheckBox* m_checkBoxSeparateFolder;
     wxTextCtrl* m_textCtrlPreview;
     wxStdDialogButtonSizer* m_stdBtnSizer421;
-    wxButton* m_button423;
-    wxButton* m_button425;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
 
 protected:
     virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
@@ -603,6 +603,7 @@ protected:
     virtual void OnCreateUnderSeparateFolder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCreateUnderSeparateFolderUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxInfoBar* GetInfobar() { return m_infobar; }

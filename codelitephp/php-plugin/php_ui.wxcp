@@ -9738,7 +9738,7 @@
      "m_children": [{
        "m_type": 4463,
        "proportion": 0,
-       "border": 5,
+       "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
@@ -9972,10 +9972,10 @@
       }, {
        "m_type": 4422,
        "proportion": 1,
-       "border": 0,
+       "border": 2,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_MULTIPLE", "wxTR_NO_LINES", "wxBORDER_NONE"],
+       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_MULTIPLE", "wxTR_FULL_ROW_HIGHLIGHT", "wxTR_NO_LINES"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -15891,7 +15891,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_button423"
+           "m_value": "m_buttonOK"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -15907,6 +15907,13 @@
            "m_eventHandler": "wxUpdateUIEventHandler",
            "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)",
            "m_description": "Process a wxEVT_UPDATE_UI event",
+           "m_noBody": false
+          }, {
+           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+           "m_eventClass": "wxCommandEvent",
+           "m_eventHandler": "wxCommandEventHandler",
+           "m_functionNameAndSignature": "OnOK(wxCommandEvent& event)",
+           "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
            "m_noBody": false
           }],
          "m_children": []
@@ -15926,7 +15933,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_button425"
+           "m_value": "m_buttonCancel"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",

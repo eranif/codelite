@@ -165,7 +165,10 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     fnProjectFileName.SetFullName(projectName);
 
     if(HasProject(projectName)) return;
-
+    
+    // Ensure that the path to the file exists
+    fnProjectFileName.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    
     // Create an empty project and initialize it with the global settings
     PHPProject::Ptr_t proj(new PHPProject());
     // Setup the file path + name
@@ -303,16 +306,17 @@ void PHPWorkspace::FromJSON(const JSONElement& e)
     }
 }
 
-#define PHP_WORKSPACE_VERSION "1.0"
-#define PHP_WORKSPACE_IDE "CodeLite"
+#define PHP_WORKSPACE_VERSION wxString("1.0")
+#define PHP_WORKSPACE_IDE wxString("CodeLite")
 
 JSONElement PHPWorkspace::ToJSON(JSONElement& e) const
 {
     JSONElement metadata = JSONElement::createObject("metadata");
     e.append(metadata);
     
-    metadata.addProperty("Version", PHP_WORKSPACE_VERSION);
-    metadata.addProperty("IDE", PHP_WORKSPACE_IDE);
+    metadata.addProperty("version", PHP_WORKSPACE_VERSION);
+    metadata.addProperty("ide", PHP_WORKSPACE_IDE);
+    metadata.addProperty("type", wxString("php"));
     
     // Store the list of files
     JSONElement projectsArr = JSONElement::createArray("projects");

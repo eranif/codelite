@@ -114,7 +114,10 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
-    m_textCtrlResourceName->SetValue(initialSelection);
+    if(!initialSelection.IsEmpty()) {
+        m_textCtrlResourceName->SetValue(initialSelection);
+        m_textCtrlResourceName->SelectAll();
+    }
 }
 
 OpenResourceDialog::~OpenResourceDialog()

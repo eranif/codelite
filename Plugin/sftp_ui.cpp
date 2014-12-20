@@ -210,6 +210,18 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     flexGridSizer31->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText110 = new wxStaticText(this, wxID_ANY, _("Default folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer31->Add(m_staticText110, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlHomeFolder = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlHomeFolder->SetToolTip(_("Set the home folder for this account"));
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlHomeFolder->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer31->Add(m_textCtrlHomeFolder, 0, wxALL|wxEXPAND, 5);
+    
     m_button51 = new wxButton(this, wxID_ANY, _("Test Connection"), wxDefaultPosition, wxSize(-1,-1), 0);
     #if wxVERSION_NUMBER >= 2904
     m_button51->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("connect")), wxLEFT);

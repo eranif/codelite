@@ -44,6 +44,12 @@ protected:
     virtual void OnEditAccount(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxDataViewListCtrl* GetDvListCtrlAccounts() { return m_dvListCtrlAccounts; }
+    wxButton* GetButtonNew() { return m_buttonNew; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
+    wxButton* GetButtonEdit() { return m_buttonEdit; }
+    wxButton* GetButton6() { return m_button6; }
+    wxButton* GetButton8() { return m_button8; }
     SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SSH Account Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SSHAccountManagerDlgBase();
 };
@@ -62,6 +68,8 @@ protected:
     wxTextCtrl* m_textCtrlUsername;
     wxStaticText* m_staticText41;
     wxTextCtrl* m_textCtrlPassword;
+    wxStaticText* m_staticText110;
+    wxTextCtrl* m_textCtrlHomeFolder;
     wxButton* m_button51;
     wxButton* m_button27;
     wxButton* m_button25;
@@ -72,6 +80,21 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText98() { return m_staticText98; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticHostIp() { return m_staticHostIp; }
+    wxTextCtrl* GetTextCtrlHost() { return m_textCtrlHost; }
+    wxStaticText* GetStaticText45() { return m_staticText45; }
+    wxTextCtrl* GetTextCtrlPort() { return m_textCtrlPort; }
+    wxStaticText* GetStaticText37() { return m_staticText37; }
+    wxTextCtrl* GetTextCtrlUsername() { return m_textCtrlUsername; }
+    wxStaticText* GetStaticText41() { return m_staticText41; }
+    wxTextCtrl* GetTextCtrlPassword() { return m_textCtrlPassword; }
+    wxStaticText* GetStaticText110() { return m_staticText110; }
+    wxTextCtrl* GetTextCtrlHomeFolder() { return m_textCtrlHomeFolder; }
+    wxButton* GetButton51() { return m_button51; }
+    wxButton* GetButton27() { return m_button27; }
+    wxButton* GetButton25() { return m_button25; }
     AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add Account"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddSSHAcountDlgBase();
 };
@@ -114,6 +137,16 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText66() { return m_staticText66; }
+    wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
+    wxButton* GetButtonRefresh() { return m_buttonRefresh; }
+    wxStaticText* GetStaticText82() { return m_staticText82; }
+    wxChoice* GetChoiceAccount() { return m_choiceAccount; }
+    wxToolBar* GetToolbar() { return m_toolbar; }
+    wxDataViewCtrl* GetDataview() { return m_dataview; }
+    wxTextCtrl* GetTextCtrlInlineSearch() { return m_textCtrlInlineSearch; }
+    wxButton* GetButton59() { return m_button59; }
+    wxButton* GetButton61() { return m_button61; }
     SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SFTPBrowserBaseDlg();
 };

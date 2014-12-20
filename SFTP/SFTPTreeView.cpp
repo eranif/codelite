@@ -673,7 +673,7 @@ void SFTPTreeView::DoOpenSession()
         m_plugin->GetManager()->SetStatusMessage(wxString() << _("Done!"));
 
         dlg.Update(9, _("Fetching directory list..."));
-        DoBuildTree("/");
+        DoBuildTree(m_account.GetDefaultFolder().IsEmpty() ? "/" : m_account.GetDefaultFolder());
         dlg.Update(10, _("Done"));
 
     } catch(clException& e) {

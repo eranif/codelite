@@ -33,12 +33,13 @@
 
 class WXDLLIMPEXP_SDK SSHAccountInfo : public clConfigItem
 {
-    wxString      m_accountName;
-    wxString      m_username;
-    wxString      m_password;
-    int           m_port;
-    wxString      m_host;
+    wxString m_accountName;
+    wxString m_username;
+    wxString m_password;
+    int m_port;
+    wxString m_host;
     wxArrayString m_bookmarks;
+    wxString m_defaultFolder;
 
 public:
     typedef std::vector<SSHAccountInfo> Vect_t;
@@ -48,45 +49,23 @@ public:
 
     virtual ~SSHAccountInfo();
     SSHAccountInfo& operator=(const SSHAccountInfo& other);
-    
-    void AddBookmark(const wxString &location);
-    
-    void SetBookmarks(const wxArrayString& bookmarks) {
-        this->m_bookmarks = bookmarks;
-    }
-    const wxArrayString& GetBookmarks() const {
-        return m_bookmarks;
-    }
-    void SetAccountName(const wxString& accountName) {
-        this->m_accountName = accountName;
-    }
-    const wxString& GetAccountName() const {
-        return m_accountName;
-    }
-    void SetHost(const wxString& host) {
-        this->m_host = host;
-    }
-    void SetPassword(const wxString& password) {
-        this->m_password = password;
-    }
-    void SetPort(int port) {
-        this->m_port = port;
-    }
-    void SetUsername(const wxString& username) {
-        this->m_username = username;
-    }
-    const wxString& GetHost() const {
-        return m_host;
-    }
-    const wxString& GetPassword() const {
-        return m_password;
-    }
-    int GetPort() const {
-        return m_port;
-    }
-    const wxString& GetUsername() const {
-        return m_username;
-    }
+
+    void AddBookmark(const wxString& location);
+
+    void SetBookmarks(const wxArrayString& bookmarks) { this->m_bookmarks = bookmarks; }
+    const wxArrayString& GetBookmarks() const { return m_bookmarks; }
+    void SetAccountName(const wxString& accountName) { this->m_accountName = accountName; }
+    const wxString& GetAccountName() const { return m_accountName; }
+    void SetHost(const wxString& host) { this->m_host = host; }
+    void SetPassword(const wxString& password) { this->m_password = password; }
+    void SetPort(int port) { this->m_port = port; }
+    void SetUsername(const wxString& username) { this->m_username = username; }
+    const wxString& GetHost() const { return m_host; }
+    const wxString& GetPassword() const { return m_password; }
+    int GetPort() const { return m_port; }
+    const wxString& GetUsername() const { return m_username; }
+    void SetDefaultFolder(const wxString& defaultFolder) { this->m_defaultFolder = defaultFolder; }
+    const wxString& GetDefaultFolder() const { return m_defaultFolder; }
 
 public:
     virtual void FromJSON(const JSONElement& json);

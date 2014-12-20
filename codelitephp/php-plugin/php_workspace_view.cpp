@@ -232,6 +232,7 @@ void PHPWorkspaceView::LoadWorkspace()
     wxYieldIfNeeded();
 
     // add projects
+    wxTreeItemId activeProjectId;
     wxStringSet_t files;
     PHPProject::Map_t::const_iterator iter_project = projects.begin();
     for(; iter_project != projects.end(); ++iter_project) {
@@ -254,10 +255,17 @@ void PHPWorkspaceView::LoadWorkspace()
         m_foldersItems.insert(std::make_pair(iter_project->second->GetFilename().GetPath(), projectItemId));
         m_itemsToSort.PushBack(projectItemId, true);
         DoBuildProjectNode(projectItemId, iter_project->second);
+        if(data->IsActive()) {
+            activeProjectId = projectItemId;
+        }
     }
 
     if(m_treeCtrlView->HasChildren(root)) {
         m_treeCtrlView->Expand(root);
+    }
+    
+    if(activeProjectId.IsOk() && m_treeCtrlView->ItemHasChildren(activeProjectId)) {
+        m_treeCtrlView->Expand(activeProjectId);
     }
     DoSortItems();
     wxCommandEvent dummy;

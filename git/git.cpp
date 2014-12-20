@@ -1650,6 +1650,12 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                 wxMessageBox(
                     _("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
             } else {
+                
+                // Post event about file system updated
+                clFileSystemEvent fsEvent(wxEVT_FILE_SYSTEM_UPDATED);
+                fsEvent.SetPath(m_repositoryDirectory);
+                EventNotifier::Get()->AddPendingEvent(fsEvent);
+                
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
                 if(!log.IsEmpty()) {
                     GitLogDlg dlg(m_topWindow, _("Pull log"));

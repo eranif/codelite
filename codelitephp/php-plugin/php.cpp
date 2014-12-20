@@ -148,6 +148,8 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
 
     EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
+    
     CallAfter(&PhpPlugin::FinalizeStartup);
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
@@ -260,7 +262,8 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTED, &PhpPlugin::OnDebugStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
+    
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
@@ -887,5 +890,14 @@ void PhpPlugin::OnFindInFilesDismissed(clCommandEvent& e)
         // store the find in files mask
         PHPConfigurationData conf;
         conf.Load().SetFindInFilesMask(e.GetString()).Save();
+    }
+}
+
+void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
+{
+    event.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        PHPWorkspace::Get()->SyncWithFileSystem();
+        m_workspaceView->ReloadWorkspace(true);
     }
 }

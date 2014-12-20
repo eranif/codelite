@@ -105,6 +105,7 @@ public:
     void OnGoingDown(clCommandEvent& event);
     void OnDebugStarted(XDebugEvent& e);
     void OnDebugEnded(XDebugEvent& e);
+    void OnFileSysetmUpdated(clFileSystemEvent &event);
 };
 
 #endif // PHP

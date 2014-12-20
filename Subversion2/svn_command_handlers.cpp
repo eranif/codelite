@@ -71,6 +71,11 @@ void SvnUpdateHandler::Process(const wxString& output)
         }
     }
 
+    // Post event about file system updated
+    clFileSystemEvent fsEvent(wxEVT_FILE_SYSTEM_UPDATED);
+    fsEvent.SetPath(GetPlugin()->GetSvnView()->GetRootDir());
+    EventNotifier::Get()->AddPendingEvent(fsEvent);
+
     // And finally, update the Subversion view
     SvnDefaultCommandHandler::Process(output);
 }

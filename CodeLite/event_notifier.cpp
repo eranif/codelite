@@ -24,9 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "event_notifier.h"
+#include "codelite_events.h"
 #include <wx/app.h>
-#include "cl_command_event.h"
-#include "../Interfaces/codelite_events.h"
 
 static EventNotifier *eventNotifier = NULL;
 

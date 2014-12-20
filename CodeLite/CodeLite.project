@@ -46,6 +46,8 @@
     <File Name="xor_string.cpp"/>
     <File Name="clcommandlineparser.h"/>
     <File Name="clcommandlineparser.cpp"/>
+    <File Name="clFileSystemEvent.h"/>
+    <File Name="clFileSystemEvent.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
@@ -90,6 +92,8 @@
     <File Name="cl_defs.h"/>
     <File Name="StdToWX.h"/>
     <File Name="StdToWX.cpp"/>
+    <File Name="codelite_events.h"/>
+    <File Name="codelite_events.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>

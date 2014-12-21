@@ -41,6 +41,7 @@ protected:
     virtual void OnContentMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
+    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     SFTPStatusPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPStatusPageBase();
 };
@@ -73,6 +74,7 @@ public:
         ID_ADD_BOOKMARK = 1001,
         ID_OPEN_ACCOUNT_MANAGER = 1002,
         ID_SFTP_CONNECT = 1003,
+        ID_SSH_OPEN_TERMINAL = 1004,
     };
 protected:
     wxAuiToolBar* m_auibar;
@@ -82,13 +84,13 @@ protected:
     wxTextCtrl* m_textCtrlQuickJump;
     wxTreeListCtrl* m_treeListCtrl;
 
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
-
 protected:
     virtual void OnOpenAccountManager(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConnection(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddBookmark(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOpenTerminal(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOpenTerminalUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnChoiceAccount(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoiceAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -99,6 +101,13 @@ protected:
     virtual void OnSelectionChanged(wxTreeListEvent& event) { event.Skip(); }
 
 public:
+
+    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    wxChoice* GetChoiceAccount() { return m_choiceAccount; }
+    wxStaticText* GetStaticText49() { return m_staticText49; }
+    wxTextCtrl* GetTextCtrlQuickJump() { return m_textCtrlQuickJump; }
+    wxTreeListCtrl* GetTreeListCtrl() { return m_treeListCtrl; }
     SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPTreeViewBase();
 };
@@ -118,6 +127,8 @@ protected:
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxListBox* GetListBoxBookmarks() { return m_listBoxBookmarks; }
+    wxButton* GetButton70() { return m_button70; }
     SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Bookmarks"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SFTPManageBookmarkDlgBase();
 };

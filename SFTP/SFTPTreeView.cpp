@@ -40,6 +40,7 @@
 #include "SFTPBookmark.h"
 #include "SFTPManageBookmarkDlg.h"
 #include <wx/progdlg.h>
+#include "SSHTerminal.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -52,6 +53,7 @@ static const int ID_EXECUTE_COMMAND = ::wxNewId();
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
     , m_plugin(plugin)
+    , m_terminal(NULL)
 {
     wxImageList* il = m_bmpLoader.MakeStandardMimeImageList();
     m_treeListCtrl->AssignImageList(il);
@@ -209,6 +211,13 @@ void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
 
 void SFTPTreeView::DoCloseSession()
 {
+    if(m_terminal) {
+        m_plugin->GetManager()->GetDockingManager()->DetachPane(m_terminal);
+        m_plugin->GetManager()->GetDockingManager()->Update();
+        m_terminal->Destroy();
+        m_terminal = NULL;
+    }
+
     m_sftp.reset(NULL);
     m_treeListCtrl->DeleteAllItems();
 }
@@ -338,6 +347,8 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
 #endif
 
     menu.Append(ID_RENAME, _("Rename"));
+    menu.AppendSeparator();
+    menu.Append(ID_EXECUTE_COMMAND, _("Run command here..."));
     m_treeListCtrl->PopupMenu(&menu);
 }
 
@@ -762,4 +773,26 @@ void SFTPTreeView::OnCut(wxCommandEvent& event)
         event.Skip(false);
         m_textCtrlQuickJump->Cut();
     }
+}
+
+void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
+{
+    if(!m_terminal) {
+        m_terminal = new SSHTerminal(this, m_sftp->GetSsh());
+        m_plugin->GetManager()->GetDockingManager()->AddPane(
+            m_terminal,
+            wxAuiPaneInfo().Name("SSH").CloseButton(false).MaximizeButton().Caption("SSH Terminal").Float());
+        m_plugin->GetManager()->GetDockingManager()->Update();
+    } else if(m_terminal) {
+        m_plugin->GetManager()->GetDockingManager()->DetachPane(m_terminal);
+        m_plugin->GetManager()->GetDockingManager()->Update();
+        m_terminal->Destroy();
+        m_terminal = NULL;
+    }
+}
+
+void SFTPTreeView::OnOpenTerminalUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_sftp);
+    event.Check(m_sftp && m_terminal != NULL);
 }

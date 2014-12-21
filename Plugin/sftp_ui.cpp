@@ -393,3 +393,87 @@ SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
     m_button59->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
     
 }
+
+SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCE8CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer116 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer116);
+    
+    m_stcOutput = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_stcOutput->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcOutput->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcOutput->SetMarginSensitive(4, true);
+    m_stcOutput->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcOutput->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcOutput->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcOutput->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcOutput->SetMarginWidth(2, 0);
+    m_stcOutput->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcOutput->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcOutput->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcOutput->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcOutput->SetMarginMask(3, 0);
+    m_stcOutput->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcOutput->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcOutput->StyleClearAll();
+    m_stcOutput->SetWrapMode(0);
+    m_stcOutput->SetIndentationGuides(0);
+    m_stcOutput->SetKeyWords(0, wxT(""));
+    m_stcOutput->SetKeyWords(1, wxT(""));
+    m_stcOutput->SetKeyWords(2, wxT(""));
+    m_stcOutput->SetKeyWords(3, wxT(""));
+    m_stcOutput->SetKeyWords(4, wxT(""));
+    
+    boxSizer116->Add(m_stcOutput, 1, wxALL|wxEXPAND, 2);
+    
+    m_textCtrl1 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrl1Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrl1Font.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_textCtrl1Font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrl1Font.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
+    m_textCtrl1->SetFont(m_textCtrl1Font);
+    m_textCtrl1->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrl1->SetHint(_("Type a command and hit ENTER"));
+    #endif
+    
+    boxSizer116->Add(m_textCtrl1, 0, wxALL|wxEXPAND, 2);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_textCtrl1->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SSHTerminalBase::OnSendCommand), NULL, this);
+    
+}
+
+SSHTerminalBase::~SSHTerminalBase()
+{
+    m_textCtrl1->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SSHTerminalBase::OnSendCommand), NULL, this);
+    
+}

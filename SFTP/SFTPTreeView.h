@@ -31,7 +31,9 @@
 #include "bitmap_loader.h"
 #include "ssh_account_info.h"
 #include <vector>
+#include "cl_command_event.h"
 
+class SSHTerminal;
 class MyClientData;
 class SFTP;
 
@@ -43,20 +45,24 @@ class SFTPTreeView : public SFTPTreeViewBase
     BitmapLoader m_bmpLoader;
     SSHAccountInfo m_account;
     SFTP* m_plugin;
-
+    wxString m_commandOutput;
+    SSHTerminal* m_terminal;
+    
 public:
     enum {
         ID_SFTP_BOOKMARK_FIRST = 13000,
         ID_SFTP_BOOKMARK_LAST = 13100,
         ID_SFTP_BOOKMARK_SETTINGS = 13101,
     };
-
+    
 public:
     SFTPTreeView(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPTreeView();
     bool IsConnected() const { return m_sftp && m_sftp->IsConnected(); }
 
 protected:
+    virtual void OnOpenTerminal(wxCommandEvent& event);
+    virtual void OnOpenTerminalUI(wxUpdateUIEvent& event);
     virtual void OnConnection(wxCommandEvent& event);
     virtual void OnSelectionChanged(wxTreeListEvent& event);
     virtual void OnChoiceAccount(wxCommandEvent& event);
@@ -76,7 +82,7 @@ protected:
     virtual void OnMenuRename(wxCommandEvent& event);
     virtual void OnMenuNewFile(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
-    
+
     // Edit events
     void OnCopy(wxCommandEvent& event);
     void OnCut(wxCommandEvent& event);
@@ -84,7 +90,7 @@ protected:
     void OnSelectAll(wxCommandEvent& event);
     void OnUndo(wxCommandEvent& event);
     void OnRedo(wxCommandEvent& event);
-    
+
     void DoCloseSession();
     void DoOpenSession();
     bool DoExpandItem(const wxTreeListItem& item);

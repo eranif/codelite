@@ -47,6 +47,7 @@ typedef struct ssh_channel_struct* SSHChannel_t;
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
 // Sent when a remote command over ssh has completed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_ERROR, clCommandEvent);
 
 class WXDLLIMPEXP_CL clSSH : public wxEvtHandler
 {
@@ -65,15 +66,17 @@ public:
     typedef wxSharedPtr<clSSH> Ptr_t;
 
 protected:
-    void OnRemoteCommandDone();
     void OnCheckRemoteOutut(wxTimerEvent& event);
-
+    void DoCloseChannel();
+    
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
     clSSH();
     virtual ~clSSH();
 
     bool IsConnected() const { return m_connected; }
+    bool IsCommandRunning() const { return m_channel != NULL; }
+    
     /**
      * @brief connect to the remote server
      */

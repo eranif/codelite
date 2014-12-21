@@ -100,7 +100,6 @@ void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr) { lexPtr->Apply(&GetC
 int ContextBase::GetHyperlinkRange(int pos, int& start, int& end)
 {
     LEditor& rCtrl = GetCtrl();
-    int curstyle = rCtrl.GetStyleAt(pos);
     if(!IsCommentOrString(rCtrl.GetCurrentPos())) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(pos, true);

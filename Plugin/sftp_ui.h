@@ -23,6 +23,8 @@
 #include <wx/arrstr.h>
 #include <wx/toolbar.h>
 #include "sftptreemodel.h"
+#include <wx/panel.h>
+#include <wx/stc/stc.h>
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK SSHAccountManagerDlgBase : public wxDialog
@@ -149,6 +151,23 @@ public:
     wxButton* GetButton61() { return m_button61; }
     SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SFTPBrowserBaseDlg();
+};
+
+
+class WXDLLIMPEXP_SDK SSHTerminalBase : public wxPanel
+{
+protected:
+    wxStyledTextCtrl* m_stcOutput;
+    wxTextCtrl* m_textCtrl1;
+
+protected:
+    virtual void OnSendCommand(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
+    wxTextCtrl* GetTextCtrl1() { return m_textCtrl1; }
+    SSHTerminalBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~SSHTerminalBase();
 };
 
 #endif

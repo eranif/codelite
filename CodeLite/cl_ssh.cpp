@@ -34,6 +34,7 @@
 
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_COMMAND_ERROR, clCommandEvent);
 
 clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, int port)
     : m_host(host)
@@ -241,12 +242,7 @@ void clSSH::Close()
     Unbind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutut, this, m_timer->GetId());
     wxDELETE(m_timer);
 
-    if(m_channel) {
-        // Properly close the channel
-        ssh_channel_close(m_channel);
-        ssh_channel_send_eof(m_channel);
-        ssh_channel_free(m_channel);
-    }
+    DoCloseChannel();
 
     if(m_session && m_connected) {
         ssh_disconnect(m_session);
@@ -285,7 +281,6 @@ void clSSH::Login() throw(clException)
         }
     }
 
-    // Connected
     m_channel = ssh_channel_new(m_session);
     if(!m_channel) {
         throw clException(ssh_get_error(m_session));
@@ -295,51 +290,80 @@ void clSSH::Login() throw(clException)
     if(rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
-}
 
-void clSSH::ExecuteCommand(wxEvtHandler* owner, const wxString& command) throw(clException)
-{
-    // Run the command
-    if(m_timer && m_timer->IsRunning()) {
-        throw clException("Another command is already running");
-    }
-    
-    m_owner = owner;
-    if(!m_owner) {
-        throw clException(wxString() << "No owner specified for output");
-    }
-    
-    wxCharBuffer buffer = command.mb_str(wxConvUTF8);
-    int rc = ssh_channel_request_exec(m_channel, buffer.data());
+    rc = ssh_channel_request_pty(m_channel);
     if(rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
     
-    // Start a timer to check for the output on 10ms intervals
-    m_timer->Start(10);
+    rc = ssh_channel_change_pty_size(m_channel, 80, 24);
+    if(rc != SSH_OK) {
+        throw clException(ssh_get_error(m_session));
+    }
+
+    rc = ssh_channel_request_shell(m_channel);
+    if(rc != SSH_OK) {
+        throw clException(ssh_get_error(m_session));
+    }
 }
 
-void clSSH::OnRemoteCommandDone() {}
+void clSSH::ExecuteCommand(wxEvtHandler* owner, const wxString& command) throw(clException)
+{
+    m_owner = owner;
+    if(!m_owner) {
+        throw clException(wxString() << "No owner specified for output");
+    }
+
+    wxCharBuffer buffer = command.mb_str(wxConvUTF8);
+    int rc = ssh_channel_write(m_channel, buffer.data(), buffer.length());
+    if(rc != (int)buffer.length()) {
+        throw clException("SSH Socket error");
+    }
+
+    // Start a timer to check for the output on 10ms intervals
+    if(!m_timer->IsRunning()) {
+        m_timer->Start(50);
+    }
+}
 
 void clSSH::OnCheckRemoteOutut(wxTimerEvent& event)
 {
+    if(!m_channel) return;
+
     char buffer[1024];
-    unsigned int nbytes;
-    nbytes = ssh_channel_read_nonblocking(m_channel, buffer, sizeof(buffer), 0);
-    if(nbytes) {
-        wxString strOutput(buffer, nbytes);
-        clCommandEvent eventOutput(wxEVT_SSH_COMMAND_OUTPUT);
-        eventOutput.SetString(strOutput);
-        m_owner->AddPendingEvent(eventOutput);
-        
+    int nbytes = ssh_channel_read_nonblocking(m_channel, buffer, sizeof(buffer), 0);
+    if(nbytes > 0) {
+        wxString strOutput = wxString::FromUTF8((const char*)buffer, nbytes);
+        clCommandEvent sshEvent(wxEVT_SSH_COMMAND_OUTPUT);
+        sshEvent.SetString(strOutput);
+        m_owner->AddPendingEvent(sshEvent);
+
+    } else if(nbytes == SSH_ERROR) {
+        m_timer->Stop();
+        clCommandEvent sshEvent(wxEVT_SSH_COMMAND_ERROR);
+        sshEvent.SetString(ssh_get_error(m_session));
+        m_owner->AddPendingEvent(sshEvent);
+
     } else {
         // nbytes == 0
         if(ssh_channel_is_eof(m_channel)) {
             // EOF was sent, nothing more to read
-            wxString strOutput(buffer, nbytes);
-            clCommandEvent eventOutput(wxEVT_SSH_COMMAND_COMPLETED);
-            m_owner->AddPendingEvent(eventOutput);
+            clCommandEvent sshEvent(wxEVT_SSH_COMMAND_COMPLETED);
+            m_owner->AddPendingEvent(sshEvent);
+        } else {
+            // Nothing to read, no error
         }
     }
+}
+
+void clSSH::DoCloseChannel()
+{
+    // Properly close the channel
+    if(m_channel) {
+        ssh_channel_close(m_channel);
+        ssh_channel_send_eof(m_channel);
+        ssh_channel_free(m_channel);
+    }
+    m_channel = NULL;
 }
 #endif // USE_SFTP

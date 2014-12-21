@@ -36,7 +36,9 @@
 
 // We do it this way to avoid exposing the include to ssh/libssh.h to files including this header
 struct ssh_session_struct;
+struct ssh_channel_struct;
 typedef struct ssh_session_struct* SSHSession_t;
+typedef struct ssh_channel_struct* SSHChannel_t;
 
 class WXDLLIMPEXP_CL clSSH
 {
@@ -44,8 +46,9 @@ class WXDLLIMPEXP_CL clSSH
     wxString m_username;
     wxString m_password;
     int m_port;
-    SSHSession_t m_session;
     bool m_connected;
+    SSHSession_t m_session;
+    SSHChannel_t m_channel;
 
 public:
     typedef wxSharedPtr<clSSH> Ptr_t;

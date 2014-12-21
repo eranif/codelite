@@ -47,6 +47,7 @@ static const int ID_DELETE = ::wxNewId();
 static const int ID_OPEN = ::wxNewId();
 static const int ID_NEW_FILE = ::wxNewId();
 static const int ID_REFRESH_FOLDER = ::wxNewId();
+static const int ID_EXECUTE_COMMAND = ::wxNewId();
 
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)

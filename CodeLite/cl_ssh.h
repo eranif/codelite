@@ -33,6 +33,9 @@
 #include "cl_exception.h"
 #include "codelite_exports.h"
 #include <wx/sharedptr.h>
+#include <wx/event.h>
+#include "cl_command_event.h"
+#include <wx/timer.h>
 
 // We do it this way to avoid exposing the include to ssh/libssh.h to files including this header
 struct ssh_session_struct;
@@ -40,8 +43,14 @@ struct ssh_channel_struct;
 typedef struct ssh_session_struct* SSHSession_t;
 typedef struct ssh_channel_struct* SSHChannel_t;
 
-class WXDLLIMPEXP_CL clSSH
+// Sent when a remote command over ssh has an output
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
+// Sent when a remote command over ssh has completed
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
+
+class WXDLLIMPEXP_CL clSSH : public wxEvtHandler
 {
+protected:
     wxString m_host;
     wxString m_username;
     wxString m_password;
@@ -49,9 +58,15 @@ class WXDLLIMPEXP_CL clSSH
     bool m_connected;
     SSHSession_t m_session;
     SSHChannel_t m_channel;
-
+    wxTimer* m_timer;
+    wxEvtHandler* m_owner;
+    
 public:
     typedef wxSharedPtr<clSSH> Ptr_t;
+
+protected:
+    void OnRemoteCommandDone();
+    void OnCheckRemoteOutut(wxTimerEvent& event);
 
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
@@ -108,6 +123,11 @@ public:
      * IMPORTANT: this will invalidate all other channels (like: scp)
      */
     void Close();
+
+    /**
+     * @brief execute a remote command and return the output
+     */
+    void ExecuteCommand(wxEvtHandler* owner, const wxString& command) throw(clException);
 
     SSHSession_t GetSession() { return m_session; }
 

@@ -45,7 +45,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     NavBar* m_navBar;
-    Notebook* m_book;
+    Notebook2* m_book;
     QuickFindBar* m_quickFindBar;
     MessagePane* m_messagePane;
     bool m_useBuffereLimit;

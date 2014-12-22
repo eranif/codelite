@@ -26,6 +26,8 @@
 #define __Notebook__
 #include "cl_defs.h"
 
+#include "codelite_exports.h"
+
 #if CL_USE_NATIVEBOOK
 #    include "gtk_notebook_ex.h"
 #else
@@ -34,7 +36,6 @@
 #include <wx/aui/auibook.h>
 #include <vector>
 #include <set>
-#include "codelite_exports.h"
 
 enum {
     wxVB_LEFT                   = wxAUI_NB_LEFT,
@@ -172,13 +173,13 @@ public:
      * \param vector in which to return the editors
      */
     void GetEditorsInOrder(std::vector<wxWindow*> &editors);
-    
+
     /**
      * @brief return an array of pages text in order
      */
     wxArrayString GetPagesTextInOrder() const;
 
-    
+
     /**
      * @brief return a set of the used wxAuiTabControl in the notebook
      */
@@ -294,5 +295,15 @@ typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
     wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_BG_DCLICK, winid, NotebookEventHandler(fn))
 
 #endif // __WXGTK__
+
+
+class WXDLLIMPEXP_SDK Notebook2 : public Notebook {
+public:
+    Notebook2(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
+    virtual ~Notebook2();
+public:
+   bool  SetPageToolTip (size_t page, const wxString &text);
+};
+
 
 #endif // __Notebook__

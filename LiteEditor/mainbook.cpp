@@ -84,11 +84,11 @@ void MainBook::CreateGuiControls()
 #endif
 
     // load the notebook style from the configuration settings
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_book = new Notebook2(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 #if CL_USE_NATIVEBOOK == 0
     m_book->SetArtProvider(new clAuiMainNotebookTabArt(PluginManager::Get()));
 #endif
- 
+
     wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
     m_book->SetRightClickMenu(contextMenu);
 
@@ -629,7 +629,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
 
 bool MainBook::AddPage(wxWindow* win,
                        const wxString& text,
-					   const wxString& tooltip,
+		const wxString& tooltip,
                        const wxBitmap& bmp,
                        bool selected,
                        size_t insert_at_index /*=wxNOT_FOUND*/)
@@ -1249,7 +1249,7 @@ FilesModifiedDlg* MainBook::GetFilesModifiedDlg()
     return m_filesModifiedDlg;
 }
 
-void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr) 
+void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
 {
     std::vector<LEditor*> editors;
     GetAllEditors(editors, kGetAll_RetainOrder);

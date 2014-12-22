@@ -24,6 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_defs.h"
+
+#include "notebook_ex.h"
+
 #if !CL_USE_NATIVEBOOK
 
 #include <wx/app.h>
@@ -35,7 +38,6 @@
 #include <wx/choicebk.h>
 #include <wx/notebook.h>
 #include "notebook_ex_nav_dlg.h"
-#include "notebook_ex.h"
 #include <wx/button.h>
 #include "wx/sizer.h"
 #include <wx/log.h>
@@ -71,7 +73,7 @@ const wxEventType wxEVT_COMMAND_BOOK_BG_DCLICK            = XRCID("notebook_page
         return;\
     }\
 }
-    
+
 Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
     : wxAuiNotebook(parent, id, pos, size, style | wxNO_BORDER | wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_SPLIT)
     , m_popupWin(NULL)
@@ -81,10 +83,10 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
     , m_notify (true)
 {
     Initialize();
-    
+
     // Set our docking art provider for this notebook
     m_mgr.SetArtProvider(new clAuiDockArt(NULL));
-    
+
     m_leftDownPos = wxPoint();
 
     // Connect events
@@ -658,7 +660,7 @@ void Notebook::OnTabRightUp(wxAuiNotebookEvent& e)
 void Notebook::OnTabButton(wxAuiNotebookEvent& e)
 {
     CHECK_OWNERSHIP(e);
-    
+
     // Notebook button was clicked
     NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_X_CLICKED, GetId());
     event.SetSelection   ( GetSelection() );
@@ -698,3 +700,18 @@ void Notebook::OnEndDrag(wxAuiNotebookEvent& event)
 }
 
 #endif // !CL_USE_NATIVEBOOK
+
+
+
+Notebook2::Notebook2(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
+: Notebook(parent,id,pos,size,style) {}
+
+Notebook2::~Notebook2() {}
+
+bool  Notebook2::SetPageToolTip (size_t page, const wxString &text) {
+    #if !CL_USE_NATIVEBOOK
+        return Notebook::SetPageToolTip(page,text);
+    #endif
+
+    return false;
+}

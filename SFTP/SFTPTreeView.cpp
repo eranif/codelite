@@ -347,8 +347,6 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
 #endif
 
     menu.Append(ID_RENAME, _("Rename"));
-    menu.AppendSeparator();
-    menu.Append(ID_EXECUTE_COMMAND, _("Run command here..."));
     m_treeListCtrl->PopupMenu(&menu);
 }
 

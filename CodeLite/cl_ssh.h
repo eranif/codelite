@@ -68,6 +68,7 @@ public:
 protected:
     void OnCheckRemoteOutut(wxTimerEvent& event);
     void DoCloseChannel();
+    void DoOpenChannel()  throw(clException);
     
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
@@ -128,9 +129,9 @@ public:
     void Close();
 
     /**
-     * @brief execute a remote command and return the output
+     * @brief execute a remote command and return the output. open the shell if no is opened
      */
-    void ExecuteCommand(wxEvtHandler* owner, const wxString& command) throw(clException);
+    void ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) throw(clException);
 
     SSHSession_t GetSession() { return m_session; }
 

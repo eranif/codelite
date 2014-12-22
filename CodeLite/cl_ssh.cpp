@@ -280,35 +280,12 @@ void clSSH::Login() throw(clException)
             LoginInteractiveKBD();
         }
     }
-
-    m_channel = ssh_channel_new(m_session);
-    if(!m_channel) {
-        throw clException(ssh_get_error(m_session));
-    }
-
-    rc = ssh_channel_open_session(m_channel);
-    if(rc != SSH_OK) {
-        throw clException(ssh_get_error(m_session));
-    }
-
-    rc = ssh_channel_request_pty(m_channel);
-    if(rc != SSH_OK) {
-        throw clException(ssh_get_error(m_session));
-    }
-    
-    rc = ssh_channel_change_pty_size(m_channel, 80, 24);
-    if(rc != SSH_OK) {
-        throw clException(ssh_get_error(m_session));
-    }
-
-    rc = ssh_channel_request_shell(m_channel);
-    if(rc != SSH_OK) {
-        throw clException(ssh_get_error(m_session));
-    }
 }
 
-void clSSH::ExecuteCommand(wxEvtHandler* owner, const wxString& command) throw(clException)
+void clSSH::ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) throw(clException)
 {
+    DoOpenChannel();
+    
     m_owner = owner;
     if(!m_owner) {
         throw clException(wxString() << "No owner specified for output");
@@ -340,6 +317,7 @@ void clSSH::OnCheckRemoteOutut(wxTimerEvent& event)
 
     } else if(nbytes == SSH_ERROR) {
         m_timer->Stop();
+        DoCloseChannel();
         clCommandEvent sshEvent(wxEVT_SSH_COMMAND_ERROR);
         sshEvent.SetString(ssh_get_error(m_session));
         m_owner->AddPendingEvent(sshEvent);
@@ -347,6 +325,8 @@ void clSSH::OnCheckRemoteOutut(wxTimerEvent& event)
     } else {
         // nbytes == 0
         if(ssh_channel_is_eof(m_channel)) {
+            m_timer->Stop();
+            DoCloseChannel();
             // EOF was sent, nothing more to read
             clCommandEvent sshEvent(wxEVT_SSH_COMMAND_COMPLETED);
             m_owner->AddPendingEvent(sshEvent);
@@ -365,5 +345,36 @@ void clSSH::DoCloseChannel()
         ssh_channel_free(m_channel);
     }
     m_channel = NULL;
+}
+
+void clSSH::DoOpenChannel() throw(clException)
+{
+    if(m_channel) return;
+    
+    m_channel = ssh_channel_new(m_session);
+    if(!m_channel) {
+        throw clException(ssh_get_error(m_session));
+    }
+
+    int rc = ssh_channel_open_session(m_channel);
+    if(rc != SSH_OK) {
+        throw clException(ssh_get_error(m_session));
+    }
+
+    rc = ssh_channel_request_pty(m_channel);
+    if(rc != SSH_OK) {
+        throw clException(ssh_get_error(m_session));
+    }
+    
+    rc = ssh_channel_change_pty_size(m_channel, 80, 24);
+    if(rc != SSH_OK) {
+        throw clException(ssh_get_error(m_session));
+    }
+
+    rc = ssh_channel_request_shell(m_channel);
+    if(rc != SSH_OK) {
+        throw clException(ssh_get_error(m_session));
+    }
+
 }
 #endif // USE_SFTP

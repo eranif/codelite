@@ -65,7 +65,7 @@ void SSHTerminal::OnSshCommandDone(clCommandEvent& event) { m_textCtrl1->CallAft
 void SSHTerminal::OnSendCommand(wxCommandEvent& event)
 {
     try {
-        m_ssh->ExecuteCommand(this, m_textCtrl1->GetValue() + "\n");
+        m_ssh->ExecuteShellCommand(this, m_textCtrl1->GetValue() + "\n");
 
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "SSH", wxICON_ERROR | wxOK | wxCENTER);

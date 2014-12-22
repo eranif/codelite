@@ -5,6 +5,7 @@
 #include "cl_command_event.h"
 #include "cl_ssh.h"
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SSH_TERMINAL_CLOSING, clCommandEvent);
 class WXDLLIMPEXP_SDK SSHTerminal : public SSHTerminalBase
 {
     clSSH::Ptr_t m_ssh;
@@ -22,6 +23,8 @@ public:
     void AppendText(const wxString &text);
     
 protected:
+    virtual void OnClear(wxCommandEvent& event);
+    virtual void OnClearUI(wxUpdateUIEvent& event);
     virtual void OnSendCommand(wxCommandEvent& event);
 };
 #endif // SSHTERMINAL_H

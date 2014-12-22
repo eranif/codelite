@@ -23,6 +23,11 @@
 #include <wx/arrstr.h>
 #include <wx/toolbar.h>
 #include "sftptreemodel.h"
+#include <wx/frame.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
 #include "codelite_exports.h"
@@ -154,19 +159,25 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK SSHTerminalBase : public wxPanel
+class WXDLLIMPEXP_SDK SSHTerminalBase : public wxFrame
 {
 protected:
+    wxAuiToolBar* m_auibar135;
+    wxPanel* m_panel126;
     wxStyledTextCtrl* m_stcOutput;
     wxTextCtrl* m_textCtrl1;
 
 protected:
+    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSendCommand(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxAuiToolBar* GetAuibar135() { return m_auibar135; }
     wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
     wxTextCtrl* GetTextCtrl1() { return m_textCtrl1; }
-    SSHTerminalBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    wxPanel* GetPanel126() { return m_panel126; }
+    SSHTerminalBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SSHTerminalBase"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE);
     virtual ~SSHTerminalBase();
 };
 

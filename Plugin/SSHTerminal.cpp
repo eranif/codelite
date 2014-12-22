@@ -3,11 +3,16 @@
 #include "lexer_configuration.h"
 #include "cl_ssh.h"
 #include <wx/msgdlg.h>
+#include "windowattrmanager.h"
+#include "event_notifier.h"
+
+wxDEFINE_EVENT(wxEVT_SSH_TERMINAL_CLOSING, clCommandEvent);
+#define EVT_COMMAND_SSH(evt, func) wx__DECLARE_EVT1(evt, wxID_ANY, clCommandEventHandler(func))
 
 BEGIN_EVENT_TABLE(SSHTerminal, SSHTerminalBase)
-wx__DECLARE_EVT1(wxEVT_SSH_COMMAND_OUTPUT, wxID_ANY, clCommandEventHandler(SSHTerminal::OnSshOutput))
-wx__DECLARE_EVT1(wxEVT_SSH_COMMAND_ERROR, wxID_ANY, clCommandEventHandler(SSHTerminal::OnSshCommandDoneWithError))
-wx__DECLARE_EVT1(wxEVT_SSH_COMMAND_COMPLETED, wxID_ANY, clCommandEventHandler(SSHTerminal::OnSshCommandDone))
+EVT_COMMAND_SSH(wxEVT_SSH_COMMAND_OUTPUT, SSHTerminal::OnSshOutput)
+EVT_COMMAND_SSH(wxEVT_SSH_COMMAND_ERROR, SSHTerminal::OnSshCommandDoneWithError)
+EVT_COMMAND_SSH(wxEVT_SSH_COMMAND_COMPLETED, SSHTerminal::OnSshCommandDone)
 END_EVENT_TABLE()
 
 #define BUFF_STATE_NORMAL 0
@@ -20,8 +25,9 @@ static void __RemoveTerminalColoring(const wxString& buffer, wxString& modbuffer
     wxString::const_iterator iter = buffer.begin();
     for(; iter != buffer.end(); ++iter) {
         wxChar ch = *iter;
-        switch(state)
-        {
+        if(ch == 7) continue; // BELL
+        
+        switch(state) {
         case BUFF_STATE_NORMAL:
             if(ch == 0x1B) { // found ESC char
                 state = BUFF_STATE_IN_ESC;
@@ -49,9 +55,17 @@ SSHTerminal::SSHTerminal(wxWindow* parent, clSSH::Ptr_t ssh)
         lexer->Apply(m_stcOutput);
     }
     m_stcOutput->SetEditable(false);
+    WindowAttrManager::Load(this, "SSHTerminal");
+    m_ssh->ExecuteShellCommand(this, "\n");
 }
 
-SSHTerminal::~SSHTerminal() {}
+SSHTerminal::~SSHTerminal()
+{
+    clCommandEvent event(wxEVT_SSH_TERMINAL_CLOSING);
+    event.SetEventObject(this);
+    GetEventHandler()->ProcessEvent(event);
+    WindowAttrManager::Save(this, "SSHTerminal");
+}
 
 void SSHTerminal::OnSshOutput(clCommandEvent& event)
 {
@@ -90,3 +104,10 @@ void SSHTerminal::Clear()
     m_stcOutput->ClearAll();
     m_stcOutput->SetEditable(false);
 }
+void SSHTerminal::OnClear(wxCommandEvent& event)
+{
+    m_stcOutput->SetEditable(true);
+    m_stcOutput->ClearAll();
+    m_stcOutput->SetEditable(false);
+}
+void SSHTerminal::OnClearUI(wxUpdateUIEvent& event) { event.Enable(!m_stcOutput->IsEmpty()); }

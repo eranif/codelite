@@ -776,14 +776,12 @@ void SFTPTreeView::OnCut(wxCommandEvent& event)
 void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
 {
     if(!m_terminal) {
-        m_terminal = new SSHTerminal(this, m_sftp->GetSsh());
-        m_plugin->GetManager()->GetDockingManager()->AddPane(
-            m_terminal,
-            wxAuiPaneInfo().Name("SSH").CloseButton(false).MaximizeButton().Caption("SSH Terminal").Float());
-        m_plugin->GetManager()->GetDockingManager()->Update();
+        m_terminal = new SSHTerminal(NULL, m_sftp->GetSsh());
+        m_terminal->SetTitle(m_sftp->GetAccount());
+        m_terminal->Show();
+        m_terminal->Bind(wxEVT_SSH_TERMINAL_CLOSING, &SFTPTreeView::OnTerminalClosed, this);
+        
     } else if(m_terminal) {
-        m_plugin->GetManager()->GetDockingManager()->DetachPane(m_terminal);
-        m_plugin->GetManager()->GetDockingManager()->Update();
         m_terminal->Destroy();
         m_terminal = NULL;
     }
@@ -793,4 +791,10 @@ void SFTPTreeView::OnOpenTerminalUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_sftp);
     event.Check(m_sftp && m_terminal != NULL);
+}
+
+void SFTPTreeView::OnTerminalClosed(clCommandEvent& event)
+{
+    // terminal was closed by the user
+    m_terminal = NULL;
 }

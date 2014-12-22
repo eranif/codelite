@@ -394,8 +394,8 @@ SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
     
 }
 
-SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
+SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxFrame(parent, id, title, pos, size, style)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -403,11 +403,42 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint&
         wxCE8CInitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("terminal-16"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("terminal-32"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
+    
+    wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer124);
+    
+    m_auibar135 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar135->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer124->Add(m_auibar135, 0, wxEXPAND, 5);
+    
+    m_auibar135->AddTool(wxID_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear"), _("Clear"), NULL);
+    m_auibar135->Realize();
+    
+    m_panel126 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    boxSizer124->Add(m_panel126, 1, wxEXPAND, 5);
     
     wxBoxSizer* boxSizer116 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer116);
+    m_panel126->SetSizer(boxSizer116);
     
-    m_stcOutput = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcOutput = new wxStyledTextCtrl(m_panel126, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     // Configure the fold margin
     m_stcOutput->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -445,7 +476,7 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer116->Add(m_stcOutput, 1, wxALL|wxEXPAND, 2);
     
-    m_textCtrl1 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrl1 = new wxTextCtrl(m_panel126, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_textCtrl1Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -462,18 +493,22 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer116->Add(m_textCtrl1, 0, wxALL|wxEXPAND, 2);
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
     // Connect events
+    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SSHTerminalBase::OnClear), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHTerminalBase::OnClearUI), NULL, this);
     m_textCtrl1->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SSHTerminalBase::OnSendCommand), NULL, this);
     
 }
 
 SSHTerminalBase::~SSHTerminalBase()
 {
+    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SSHTerminalBase::OnClear), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHTerminalBase::OnClearUI), NULL, this);
     m_textCtrl1->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SSHTerminalBase::OnSendCommand), NULL, this);
     
 }

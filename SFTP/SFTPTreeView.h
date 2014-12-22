@@ -82,7 +82,7 @@ protected:
     virtual void OnMenuRename(wxCommandEvent& event);
     virtual void OnMenuNewFile(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
-
+    virtual void OnTerminalClosed(clCommandEvent& event);
     // Edit events
     void OnCopy(wxCommandEvent& event);
     void OnCut(wxCommandEvent& event);

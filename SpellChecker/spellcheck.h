@@ -73,7 +73,6 @@ public:
     void OnWspLoaded(wxCommandEvent& e);
     void OnWspClosed(wxCommandEvent& e);
     void OnEditorContextMenuShowing(clContextMenuEvent& e);
-    void OnEditorContextMenuDismissed(clContextMenuEvent& e);
 
     wxMenuItem* m_sepItem;
     wxEvtHandler* m_topWin;

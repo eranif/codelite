@@ -249,8 +249,7 @@ typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
 class WXDLLIMPEXP_CL clNewProjectEvent : public clCommandEvent
 {
 public:
-    struct Template
-    {
+    struct Template {
         wxString m_category;
         wxString m_categoryPng;
         wxString m_template;
@@ -345,6 +344,7 @@ class WXDLLIMPEXP_CL clContextMenuEvent : public clCommandEvent
 {
     wxMenu* m_menu;
     wxObject* m_editor;
+    wxString m_path;
 
 public:
     clContextMenuEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -356,6 +356,7 @@ public:
     wxMenu* GetMenu() { return m_menu; }
     void SetEditor(wxObject* editor) { this->m_editor = editor; }
     wxObject* GetEditor() { return m_editor; }
+    const wxString& GetPath() const { return m_path; }
 };
 
 typedef void (wxEvtHandler::*clContextMenuEventFunction)(clContextMenuEvent&);

@@ -620,14 +620,29 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FORMAT_FILE, clSourceFormatEvent)
 // Context menu events
 //----------------------------------------------------------------------
 
-// codelite is about to show the context menu for the
-// editor
-// Event type: clContextMenuEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_EDITOR_SHOWING, clContextMenuEvent);
+// codelite is about to show the context menu for an editor
+// Event type: clContextMenuEvent. You can use event.GetEditor() to get the editor
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_EDITOR, clContextMenuEvent);
 
-// editor context menu was dismissed
-// Event type: clContextMenuEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_EDITOR_DISMISSED, clContextMenuEvent);
+// A context menu for a folder is about to be shown, you may alter the menu using event.GetMenu()
+// Use event.GetPath() to get the path of the folder
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_FOLDER, clContextMenuEvent);
+
+// A context menu for a virtual folder is about to be shown, you may alter the menu using event.GetMenu()
+// Use event.GetPath() to get the virtual folder path
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_VIRTUAL_FOLDER, clContextMenuEvent);
+
+// A context menu for a file is about to be shown, you may alter the menu using event.GetMenu()
+// use event.GetFileName() to get the file
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_FILE, clContextMenuEvent);
+
+// A context menu for a project is about to be shown, you may alter the menu using event.GetMenu()
+// use event.GetFileName() to get the project file (if any). event.GetString() will return the project name
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_PROJECT, clContextMenuEvent);
+
+// A context menu for a file is about to be shown, you may alter the menu using event.GetMenu()
+// use event.GetFileName() to get the workspace file (if any). event.GetString() will return the workspace name
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_WORKSPACE, clContextMenuEvent);
 
 // User modified the colours and font of the IDE
 // event type: clCommandEvent

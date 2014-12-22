@@ -2053,18 +2053,11 @@ void ContextCpp::ApplySettings()
 void ContextCpp::Initialize()
 {
     if(!IsJavaScript()) {
-        // load the context menu from the resource manager
-        m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
-        wxMenuItem* item = m_rclickMenu->FindItem(XRCID("grep_current_workspace"));
-        if(item) {
-            item->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
-        }
         m_completionTriggerStrings.insert(".");
         m_completionTriggerStrings.insert("->");
         m_completionTriggerStrings.insert("::");
 
     } else {
-        m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
         m_completionTriggerStrings.insert(".");
     }
 }
@@ -3169,4 +3162,20 @@ void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
     } else {
         ctrl.SetKeyWords(3, wxEmptyString);
     }
+}
+
+wxMenu* ContextCpp::GetMenu()
+{
+    wxMenu *menu = NULL;
+    if(!IsJavaScript()) {
+        // load the context menu from the resource manager
+        menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
+        wxMenuItem* item = menu->FindItem(XRCID("grep_current_workspace"));
+        if(item) {
+            item->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
+        }
+    } else {
+        menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
+    }
+    return menu;
 }

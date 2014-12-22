@@ -108,9 +108,7 @@ public:
 
     //Capture menu events
     //return this context specific right click menu
-    virtual wxMenu *GetMenu() {
-        return m_rclickMenu;
-    }
+    virtual wxMenu *GetMenu() ;
     virtual void OnSwapFiles(wxCommandEvent &event);
     virtual void OnInsertDoxyComment(wxCommandEvent &event);
     virtual void OnCommentSelection(wxCommandEvent &event);

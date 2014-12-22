@@ -150,7 +150,6 @@ bool LEditor::m_ccInitialized = false;
 
 LEditor::LEditor(wxWindow* parent)
     : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
-    , m_rightClickMenu(NULL)
     , m_popupIsOn(false)
     , m_isDragging(false)
     , m_modifyTime(0)
@@ -257,8 +256,6 @@ void LEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
     ClearDocumentStyle();
     m_context = ContextManager::Get()->NewContext(this, lexerName);
-    m_rightClickMenu = m_context->GetMenu();
-    m_rightClickMenu->AppendSeparator(); // separates plugins
 
     SetProperties();
 
@@ -273,9 +270,7 @@ void LEditor::SetSyntaxHighlight(bool bUpdateColors)
 {
     ClearDocumentStyle();
     m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
-    m_rightClickMenu = m_context->GetMenu();
-    m_rightClickMenu->AppendSeparator(); // separates plugins
-
+    
     SetProperties();
 
     m_context->SetActive();
@@ -344,6 +339,7 @@ void LEditor::SetCaretAt(long pos)
 /// Setup some scintilla properties
 void LEditor::SetProperties()
 {
+    UsePopUp(false);
     SetRectangularSelectionModifier(wxSTC_SCMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
@@ -626,10 +622,6 @@ void LEditor::SetProperties()
 
     size_t frame_flags = clMainFrame::Get()->GetFrameGeneralInfo().GetFlags();
     SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
-
-    // if no right click menu is provided by the context, use scintilla default
-    // right click menu
-    UsePopUp(m_rightClickMenu ? false : true);
 
     IndicatorSetUnder(1, true);
     IndicatorSetUnder(HYPERLINK_INDICATOR, true);
@@ -2979,16 +2971,17 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
     wxCommandEvent contextMenuEvent(wxEVT_CMD_EDITOR_CONTEXT_MENU, GetId());
     contextMenuEvent.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(contextMenuEvent)) return;
-
-    if(!m_rightClickMenu) return;
-
+    
+    wxMenu* menu = m_context->GetMenu();
+    if(!menu) return;
+    
     // Let the context add it dynamic content
-    m_context->AddMenuDynamicContent(m_rightClickMenu);
+    m_context->AddMenuDynamicContent(menu);
 
     // add the debugger (if currently running) to add its dynamic content
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
     if(debugger && debugger->IsRunning()) {
-        AddDebuggerContextMenu(m_rightClickMenu);
+        AddDebuggerContextMenu(menu);
     }
 
     // turn the popupIsOn value to avoid annoying
@@ -2996,35 +2989,21 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
     m_popupIsOn = true;
 
     // let the plugins hook their content
-    if(!m_pluginInitializedRMenu) {
-        PluginManager::Get()->HookPopupMenu(m_rightClickMenu, MenuTypeEditor);
-        m_pluginInitializedRMenu = true;
-    }
+    PluginManager::Get()->HookPopupMenu(menu, MenuTypeEditor);
 
     {
         // Notify about menu is about to be shown
-        clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR_SHOWING);
+        clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR);
         menuEvent.SetEditor(this);
-        menuEvent.SetMenu(m_rightClickMenu);
+        menuEvent.SetMenu(menu);
         EventNotifier::Get()->ProcessEvent(menuEvent);
     }
+    
     // Popup the menu
-    PopupMenu(m_rightClickMenu);
-
-    {
-        // notify that the menu was dismissed
-        clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR_DISMISSED);
-        menuEvent.SetEditor(this);
-        menuEvent.SetMenu(m_rightClickMenu);
-        EventNotifier::Get()->ProcessEvent(menuEvent);
-    }
-
+    PopupMenu(menu);
+    wxDELETE(menu);
+    
     m_popupIsOn = false;
-
-    // Let the context remove the dynamic content
-    m_context->RemoveMenuDynamicContent(m_rightClickMenu);
-    RemoveDebuggerContextMenu(m_rightClickMenu);
-
     event.Skip();
 }
 

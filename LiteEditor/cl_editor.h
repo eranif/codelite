@@ -183,7 +183,6 @@ protected:
     wxString m_project;
     wxStopWatch m_watch;
     ContextBasePtr m_context;
-    wxMenu* m_rightClickMenu;
     EditorDeltasHolder* m_deltas; // Holds any text position changes, in case they affect FindinFiles results
     std::vector<wxMenuItem*> m_dynItems;
     std::vector<BPtoMarker> m_BPstoMarkers;

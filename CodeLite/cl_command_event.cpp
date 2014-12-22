@@ -272,6 +272,7 @@ clContextMenuEvent& clContextMenuEvent::operator=(const clContextMenuEvent& src)
     clCommandEvent::operator=(src);
     m_editor = src.m_editor;
     m_menu = src.m_menu;
+    m_path = src.m_path;
     return *this;
 }
 

@@ -156,7 +156,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
 {
     Create(parent, id, pos, size, style);
     MSWSetNativeTheme(this);
-//    SetBackgroundColour("rgb(230, 230, 230)");
+    //    SetBackgroundColour("rgb(230, 230, 230)");
 
     // Initialise images map
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
@@ -188,12 +188,6 @@ FileViewTree::~FileViewTree()
         wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
-
-    wxDELETE(m_folderMenu);
-    wxDELETE(m_projectMenu);
-    wxDELETE(m_fileMenu);
-    wxDELETE(m_workspaceMenu);
-    wxDELETE(m_emptyTreeMenu);
 }
 
 void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -205,13 +199,6 @@ void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& 
     wxTreeCtrl::Create(parent, id, pos, size, style);
 
     BuildTree();
-
-    // Load the popup menu
-    m_folderMenu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_folder"));
-    m_projectMenu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_project"));
-    m_fileMenu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_file"));
-    m_workspaceMenu = wxXmlResource::Get()->LoadMenu(wxT("workspace_popup_menu"));
-    m_emptyTreeMenu = wxXmlResource::Get()->LoadMenu(wxT("file_view_empty"));
 }
 
 void FileViewTree::BuildTree()
@@ -379,91 +366,125 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
 // Event handlers
 //-----------------------------------------------
 
-void FileViewTree::PopupContextMenu(wxMenu* menu, MenuType type, const wxString& projectName)
+
+void FileViewTree::ShowFileContextMenu(FilewViewTreeItemData* itemData)
 {
-    std::vector<wxMenuItem*> dynItems;
-    wxMenuItem* item(NULL);
-    std::map<wxString, wxString> targets;
+    wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_file"));
+    if(!ManagerST::Get()->IsBuildInProgress()) {
+        // Let the plugins alter it
+        clContextMenuEvent event(wxEVT_CONTEXT_MENU_FILE);
+        event.SetMenu(menu);
+        event.SetFileName(itemData->GetData().GetFile());
+        EventNotifier::Get()->ProcessEvent(event);
 
-    if(type == MenuTypeFileView_Project) {
-
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-        if(bldConf && bldConf->IsCustomBuild()) {
-            wxString toolName = bldConf->GetToolName();
-            if(toolName != wxT("None")) {
-                // add the custom execution command
-                item = new wxMenuItem(menu, wxID_SEPARATOR);
-                menu->Prepend(item);
-                dynItems.push_back(item);
-
-                wxString menu_text(_("Run ") + toolName);
-
-                item = new wxMenuItem(menu, XRCID("generate_makefile"), menu_text, wxEmptyString, wxITEM_NORMAL);
-                menu->Prepend(item);
-                dynItems.push_back(item);
-            }
-
-            // append the custom build targets
-            targets = bldConf->GetCustomTargets();
-            if(targets.empty() == false) {
-                wxMenu* customTargetsMenu = new wxMenu();
-                CustomTargetsMgr::Get().SetTargets(projectName, targets);
-                const CustomTargetsMgr::Map_t& targetsMap = CustomTargetsMgr::Get().GetTargets();
-                // get list of custom targets, and create menu entry for each target
-                CustomTargetsMgr::Map_t::const_iterator iter = targetsMap.begin();
-                for(; iter != targetsMap.end(); ++iter) {
-                    item = new wxMenuItem(customTargetsMenu,
-                                          iter->first,        // Menu ID
-                                          iter->second.first, // Menu Name
-                                          wxEmptyString,
-                                          wxITEM_NORMAL);
-                    customTargetsMenu->Append(item);
-                }
-
-                // iterator over the menu items and search for 'Project Only' target
-                // this is the position that we want to place our custom targets menu
-                wxMenuItemList items = menu->GetMenuItems();
-                wxMenuItemList::iterator liter = items.begin();
-                size_t position(0);
-                for(; liter != items.end(); liter++) {
-                    wxMenuItem* mi = *liter;
-                    if(mi->GetId() == XRCID("project_only")) {
-                        break;
-                    }
-                    position++;
-                }
-                menu->Insert(position, XRCID("custom_targets"), gsCustomTargetsMenu, customTargetsMenu);
-            }
-        }
-    }
-
-    if(ManagerST::Get()->IsBuildInProgress() == false) {
-        PluginManager::Get()->HookPopupMenu(menu, type);
-    }
-
-    if(type == MenuTypeFileView_File) {
-        // Now the menu has definitely been constructed, do updateUI for "Open with wxFormBuilder..."
-        TreeItemInfo item = GetSelectedItemInfo();
-        if(item.m_item.IsOk()) {
-            wxMenuItem* OpenWithFB = menu->FindItem(XRCID("wxfb_open"));
-            if(OpenWithFB) {
-                OpenWithFB->Enable(item.m_fileName.GetExt() == wxT("fbp"));
-            }
-        }
+        // Let the plugin hook their content (using the deprecated way)
+        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileView_File);
     }
 
     PopupMenu(menu);
+    wxDELETE(menu);
+}
 
-    // remove the custom makefile hooked menu items
-    for(size_t i = 0; i < dynItems.size(); i++) {
-        menu->Destroy(dynItems.at(i));
+void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
+{
+    wxMenu* menu = wxXmlResource::Get()->LoadMenu("file_tree_folder");
+    if(!ManagerST::Get()->IsBuildInProgress()) {
+        // Let the plugins alter it
+        clContextMenuEvent event(wxEVT_CONTEXT_MENU_VIRTUAL_FOLDER);
+        event.SetMenu(menu);
+        EventNotifier::Get()->ProcessEvent(event);
+
+        // Let the plugin hook their content (using the deprecated way)
+        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileView_Folder);
     }
 
-    // remove the dynamic menus added by the 'Custom Targets'
-    int customTargetsID = menu->FindItem(gsCustomTargetsMenu);
-    if(customTargetsID != wxNOT_FOUND) {
-        menu->Destroy(customTargetsID);
+    PopupMenu(menu);
+    wxDELETE(menu);
+}
+
+void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
+{
+    wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_project"));
+    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+    if(bldConf && bldConf->IsCustomBuild()) {
+        wxString toolName = bldConf->GetToolName();
+        wxMenuItem *item = NULL;
+        if(toolName != wxT("None")) {
+            
+            // add the custom execution command
+            item = new wxMenuItem(menu, wxID_SEPARATOR);
+            menu->Prepend(item);
+            wxString menu_text(_("Run ") + toolName);
+
+            item = new wxMenuItem(menu, XRCID("generate_makefile"), menu_text, wxEmptyString, wxITEM_NORMAL);
+            menu->Prepend(item);
+        }
+
+        // append the custom build targets
+        const BuildConfig::StringMap_t& targets = bldConf->GetCustomTargets();
+        if(targets.empty() == false) {
+            wxMenu* customTargetsMenu = new wxMenu();
+            CustomTargetsMgr::Get().SetTargets(projectName, targets);
+            const CustomTargetsMgr::Map_t& targetsMap = CustomTargetsMgr::Get().GetTargets();
+            // get list of custom targets, and create menu entry for each target
+            CustomTargetsMgr::Map_t::const_iterator iter = targetsMap.begin();
+            for(; iter != targetsMap.end(); ++iter) {
+                item = new wxMenuItem(customTargetsMenu,
+                                      iter->first,        // Menu ID
+                                      iter->second.first, // Menu Name
+                                      wxEmptyString,
+                                      wxITEM_NORMAL);
+                customTargetsMenu->Append(item);
+            }
+
+            // iterator over the menu items and search for 'Project Only' target
+            // this is the position that we want to place our custom targets menu
+            wxMenuItemList items = menu->GetMenuItems();
+            wxMenuItemList::iterator liter = items.begin();
+            size_t position(0);
+            for(; liter != items.end(); liter++) {
+                wxMenuItem* mi = *liter;
+                if(mi->GetId() == XRCID("project_only")) {
+                    break;
+                }
+                position++;
+            }
+            menu->Insert(position, XRCID("custom_targets"), gsCustomTargetsMenu, customTargetsMenu);
+        }
     }
+    
+    if(!ManagerST::Get()->IsBuildInProgress()) {
+        // Let the plugins alter it
+        clContextMenuEvent event(wxEVT_CONTEXT_MENU_PROJECT);
+        event.SetMenu(menu);
+        EventNotifier::Get()->ProcessEvent(event);
+
+        // Use the old system
+        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileView_Workspace);
+    }
+    
+    PopupMenu(menu);
+    wxDELETE(menu);
+}
+
+void FileViewTree::ShowWorkspaceContextMenu()
+{
+    // Load the basic menu
+    wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("workspace_popup_menu"));
+    
+    if(!ManagerST::Get()->IsBuildInProgress()) {
+        // Let the plugins alter it
+        clContextMenuEvent event(wxEVT_CONTEXT_MENU_WORKSPACE);
+        event.SetMenu(menu);
+        EventNotifier::Get()->ProcessEvent(event);
+
+        // Use the old system
+        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileView_Workspace);
+    }
+    
+    // Show it
+    PopupMenu(menu);
+    wxDELETE(menu);
 }
 
 void FileViewTree::OnPopupMenu(wxTreeEvent& event)
@@ -479,23 +500,23 @@ void FileViewTree::OnPopupMenu(wxTreeEvent& event)
             FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
             switch(data->GetData().GetKind()) {
             case ProjectItem::TypeProject:
-                PopupContextMenu(m_projectMenu, MenuTypeFileView_Project, data->GetData().GetDisplayName());
+                ShowProjectContextMenu(data->GetData().GetDisplayName());
                 break;
             case ProjectItem::TypeVirtualDirectory:
-                PopupContextMenu(m_folderMenu, MenuTypeFileView_Folder);
+                ShowVirtualFolderContextMenu(data);
                 break;
             case ProjectItem::TypeFile:
-                PopupContextMenu(m_fileMenu, MenuTypeFileView_File);
+                ShowFileContextMenu(data);
                 break;
             case ProjectItem::TypeWorkspace:
-                PopupContextMenu(m_workspaceMenu, MenuTypeFileView_Workspace);
+                ShowWorkspaceContextMenu();
                 break;
             default:
                 break;
             }
         }
     } else {
-        PopupMenu(m_emptyTreeMenu);
+        PopupMenu(wxXmlResource::Get()->LoadMenu(wxT("file_view_empty")));
     }
 }
 
@@ -1872,8 +1893,8 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
                     }
                 } // p
             }     // parent.IsOk()
-        } // TypeFile
-    } // item.IsOk()
+        }         // TypeFile
+    }             // item.IsOk()
 }
 
 void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
@@ -2335,21 +2356,22 @@ void FileViewTree::OnRenameProject(wxCommandEvent& event)
     CHECK_COND_RET(WorkspaceST::Get()->IsOpen());
     wxTreeItemId item = GetSingleSelection();
     CHECK_ITEM_RET(item);
-    
+
     FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
     if(data->GetData().GetKind() == ProjectItem::TypeProject) {
         wxString newname = ::wxGetTextFromUser(_("Project new name:"), _("Rename project"));
         newname.Trim().Trim(false);
         CHECK_COND_RET(!newname.IsEmpty());
         if(data->GetData().GetDisplayName() == newname) return;
-        
+
         // Calling 'RenameProject' will trigger a wxEVT_PROJ_RENAMED event
         WorkspaceST::Get()->RenameProject(data->GetData().GetDisplayName(), newname);
-        
+
         // Update the display name
         SetItemText(item, newname);
-        
+
         // Update the user data
         data->GetData().SetDisplayName(newname);
     }
 }
+

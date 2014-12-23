@@ -42,12 +42,6 @@
 FileExplorerTab::FileExplorerTab(wxWindow* parent)
     : FileExplorerBase(parent)
 {
-    m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("file_explorer_menu"));
-    wxMenuItem* searchNodeItem = m_rclickMenu->FindItem(XRCID("search_node"));
-    if(searchNodeItem) {
-        searchNodeItem->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
-    }
-    
     Connect(XRCID("open_file"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(FileExplorerTab::OnOpenFile),
@@ -112,17 +106,19 @@ FileExplorerTab::FileExplorerTab(wxWindow* parent)
             this);
 }
 
-FileExplorerTab::~FileExplorerTab() { wxDELETE(m_rclickMenu); }
+FileExplorerTab::~FileExplorerTab() {}
 
 void FileExplorerTab::OnContextMenu(wxTreeEvent& event)
 {
     wxTreeItemId item = event.GetItem();
-    if(item.IsOk() && m_rclickMenu) {
+    wxMenu* menu = GetBaseContextMenu();
+    if(item.IsOk() && menu) {
         // let the plugins hook their content. HookPopupMenu can work only once
         // further calls are harmless
-        PluginManager::Get()->HookPopupMenu(m_rclickMenu, MenuTypeFileExplorer);
-        PopupMenu(m_rclickMenu);
+        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileExplorer);
+        PopupMenu(menu);
     }
+    wxDELETE(menu);
 }
 
 void FileExplorerTab::OnItemActivated(wxTreeEvent& event)
@@ -421,10 +417,20 @@ void FileExplorerTab::GetSelectedDirectories(wxArrayString& paths)
 {
     wxArrayString selections;
     m_genericDirCtrl->GetPaths(selections);
-    
-    for(size_t i=0; i<selections.GetCount(); ++i) {
+
+    for(size_t i = 0; i < selections.GetCount(); ++i) {
         if(wxFileName::DirExists(selections.Item(i))) {
             paths.Add(selections.Item(i));
         }
     }
+}
+
+wxMenu* FileExplorerTab::GetBaseContextMenu()
+{
+    wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("file_explorer_menu"));
+    wxMenuItem* searchNodeItem = menu->FindItem(XRCID("search_node"));
+    if(searchNodeItem) {
+        searchNodeItem->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
+    }
+    return menu;
 }

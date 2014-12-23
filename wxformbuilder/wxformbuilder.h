@@ -28,46 +28,46 @@
 
 #include "wxfbitemdlg.h"
 #include "plugin.h"
+#include "cl_command_event.h"
 class wxMenuItem;
 
 class wxFormBuilder : public IPlugin
 {
-	wxEvtHandler *m_topWin;
-	wxMenuItem*   m_separatorItem;
-	wxMenuItem*   m_openWithWxFbItem;
-	wxMenuItem*   m_openWithWxFbSepItem;
-	bool          m_addFileMenu;
-	
+    wxEvtHandler* m_topWin;
+    wxMenuItem* m_separatorItem;
+    wxMenuItem* m_openWithWxFbItem;
+    wxMenuItem* m_openWithWxFbSepItem;
+
 public:
-	wxFormBuilder(IManager *manager);
-	~wxFormBuilder();
+    wxFormBuilder(IManager* manager);
+    ~wxFormBuilder();
 
 protected:
-	DECLARE_EVENT_TABLE()
-	
-	void OnSettings(wxCommandEvent &e);
-	void OnNewDialog(wxCommandEvent &e);
-	void OnNewDialogWithButtons(wxCommandEvent &e);
-	void OnNewFrame(wxCommandEvent &e);
-	void OnNewPanel(wxCommandEvent &e);
-	void OpenWithWxFb(wxCommandEvent &e);
-	void OnOpenFile(wxCommandEvent &e);
-	void OnWxFBTerminated(wxCommandEvent &e);
-	
-	wxMenu *CreatePopupMenu();
-	void DoCreateWxFormBuilderProject(const wxFBItemInfo &data);
-	void DoLaunchWxFB(const wxString &file);
-	wxString GetWxFBPath();
+    DECLARE_EVENT_TABLE()
+
+    void OnSettings(wxCommandEvent& e);
+    void OnNewDialog(wxCommandEvent& e);
+    void OnNewDialogWithButtons(wxCommandEvent& e);
+    void OnNewFrame(wxCommandEvent& e);
+    void OnNewPanel(wxCommandEvent& e);
+    void OpenWithWxFb(wxCommandEvent& e);
+    void OnOpenFile(wxCommandEvent& e);
+    void OnWxFBTerminated(wxCommandEvent& e);
+    void OnShowFileContextMenu(clContextMenuEvent &event);
+    
+    wxMenu* CreatePopupMenu();
+    void DoCreateWxFormBuilderProject(const wxFBItemInfo& data);
+    void DoLaunchWxFB(const wxString& file);
+    wxString GetWxFBPath();
 
 public:
-	//--------------------------------------------
-	//Abstract methods
-	//--------------------------------------------
-	virtual clToolBar *CreateToolBar(wxWindow *parent);
-	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
-	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-	virtual void UnPlug();
+    //--------------------------------------------
+    // Abstract methods
+    //--------------------------------------------
+    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu);
+    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
+    virtual void UnPlug();
 };
 
-#endif //wxFormBuilder
-
+#endif // wxFormBuilder

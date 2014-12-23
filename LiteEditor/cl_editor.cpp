@@ -2987,18 +2987,16 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
     // turn the popupIsOn value to avoid annoying
     // calltips from firing while our menu is popped
     m_popupIsOn = true;
+    
+    // Notify about menu is about to be shown
+    clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR);
+    menuEvent.SetEditor(this);
+    menuEvent.SetMenu(menu);
+    EventNotifier::Get()->ProcessEvent(menuEvent);
 
     // let the plugins hook their content
     PluginManager::Get()->HookPopupMenu(menu, MenuTypeEditor);
 
-    {
-        // Notify about menu is about to be shown
-        clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR);
-        menuEvent.SetEditor(this);
-        menuEvent.SetMenu(menu);
-        EventNotifier::Get()->ProcessEvent(menuEvent);
-    }
-    
     // Popup the menu
     PopupMenu(menu);
     wxDELETE(menu);

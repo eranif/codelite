@@ -32,9 +32,7 @@
 
 class FileExplorerTab : public FileExplorerBase
 {
-protected:
-    wxMenu* m_rclickMenu;
-    
+    wxMenu* GetBaseContextMenu();
 public:
     FileExplorerTab(wxWindow* parent);
     virtual ~FileExplorerTab();

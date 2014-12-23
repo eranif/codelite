@@ -42,12 +42,6 @@ struct FileViewItem {
 class FileViewTree : public wxTreeCtrl
 {
     DECLARE_DYNAMIC_CLASS()
-    wxMenu* m_folderMenu;
-    wxMenu* m_projectMenu;
-    wxMenu* m_fileMenu;
-    wxMenu* m_workspaceMenu;
-    wxMenu* m_emptyTreeMenu;
-
     std::map<void*, bool> m_itemsToSort;
     wxArrayTreeItemIds m_draggedItems;
 
@@ -183,8 +177,11 @@ protected:
     virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
     int OnCompareItems(const FilewViewTreeItemData* a, const FilewViewTreeItemData* b);
 
-    void PopupContextMenu(wxMenu* menu, MenuType type, const wxString& projectName = wxEmptyString);
-
+    void ShowWorkspaceContextMenu();
+    void ShowProjectContextMenu(const wxString& projectName);
+    void ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData);
+    void ShowFileContextMenu(FilewViewTreeItemData* itemData);
+    
     // internal
     void OnBuildProjectOnlyInternal(wxCommandEvent& e);
     void OnCleanProjectOnlyInternal(wxCommandEvent& e);

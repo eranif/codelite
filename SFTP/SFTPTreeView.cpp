@@ -652,18 +652,18 @@ void SFTPTreeView::DoOpenSession()
 
     // We know that there is a bug that libssh succeeded on connecting only on the second attempt..
     // to workaround it, we issue first connect with 1 second timeout, and then re-open the connection
-    clSSH::Ptr_t ssh(
-        new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()));
+
     try {
-        ssh->Connect(1);
+        clSSH::Ptr_t ssh(
+            new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()));
+        ssh->Connect(wxNOT_FOUND);
     } catch(...) {
     }
 
     try {
-        if(!ssh->IsConnected()) {
-            // try again
-            ssh->Connect(5);
-        }
+        clSSH::Ptr_t ssh(
+            new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()));
+        ssh->Connect(5);
         dlg.Update(5, _("Connected!"));
         dlg.Update(6, _("Authenticating server..."));
         if(!ssh->AuthenticateServer(message)) {
@@ -780,7 +780,7 @@ void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
         m_terminal->SetTitle(m_sftp->GetAccount());
         m_terminal->Show();
         m_terminal->Bind(wxEVT_SSH_TERMINAL_CLOSING, &SFTPTreeView::OnTerminalClosed, this);
-        
+
     } else if(m_terminal) {
         m_terminal->Destroy();
         m_terminal = NULL;

@@ -48,6 +48,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_OUTPUT, clCommandEven
 // Sent when a remote command over ssh has completed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_ERROR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CONNECTED, clCommandEvent);
 
 class WXDLLIMPEXP_CL clSSH : public wxEvtHandler
 {
@@ -69,6 +70,7 @@ protected:
     void OnCheckRemoteOutut(wxTimerEvent& event);
     void DoCloseChannel();
     void DoOpenChannel()  throw(clException);
+    void DoConnectWithRetries(int retries) throw(clException);
     
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);

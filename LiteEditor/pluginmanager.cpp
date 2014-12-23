@@ -296,24 +296,9 @@ IConfigTool* PluginManager::GetConfigTool() { return EditorConfigST::Get(); }
 
 void PluginManager::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    // Hook each menu once!
-    std::set<MenuType>::iterator it = m_menusToBeHooked.find(type);
-    if(it != m_menusToBeHooked.end()) {
-        // Call 'HookPopupMenu'
-        std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-        for(; iter != m_plugins.end(); iter++) {
-            iter->second->HookPopupMenu(menu, type);
-        }
-
-        // remove this menu entry from the set to avoid
-        // further hooking
-        if(type != MenuTypeEditor) {
-
-            // Dont remove the MenuTypeEditor from the set, since there can be multiple
-            // instances of that menu (each editor holds a copy of the menu)
-            // LEditor itself will make sure to call this method only once
-            m_menusToBeHooked.erase(it);
-        }
+    std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
+    for(; iter != m_plugins.end(); iter++) {
+        iter->second->HookPopupMenu(menu, type);
     }
 }
 

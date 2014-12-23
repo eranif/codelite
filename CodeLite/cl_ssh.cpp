@@ -35,6 +35,47 @@
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SSH_CONNECTED, clCommandEvent);
+
+#if 0
+class SSHConnectThread : public wxThread
+{
+    size_t m_seconds;
+    SSHSession_t m_session;
+    clSSH* m_handler;
+
+public:
+    SSHConnectThread(clSSH* handler, SSHSession_t session, size_t seconds)
+        : wxThread(wxTHREAD_JOINABLE)
+        , m_handler(handler)
+        , m_session(session)
+        , m_seconds(seconds)
+    {
+    }
+    virtual ~SSHConnectThread() {}
+
+    void* Entry()
+    {
+        size_t retries = m_seconds * 100;
+        while(retries) {
+            int rc = ssh_connect(m_session);
+            if(rc == SSH_AGAIN) {
+                wxThread::Sleep(10);
+                --retries;
+                continue;
+            }
+            if(rc == SSH_OK) {
+                m_handler->CallAfter(&clSSH::OnConnectSuccess);
+                return NULL;
+            } else {
+                break;
+            }
+        }
+        m_handler->CallAfter(&clSSH::OnConnectError);
+        return NULL;
+    }
+};
+#endif
 
 clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, int port)
     : m_host(host)
@@ -64,21 +105,21 @@ void clSSH::Connect(int seconds) throw(clException)
     if(!m_session) {
         throw clException("ssh_new failed!");
     }
-
+    
+    ssh_set_blocking(m_session, 0);
     int verbosity = SSH_LOG_NOLOG;
-    int timeout = seconds;
     ssh_options_set(m_session, SSH_OPTIONS_HOST, m_host.mb_str(wxConvUTF8).data());
     ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     ssh_options_set(m_session, SSH_OPTIONS_PORT, &m_port);
     ssh_options_set(m_session, SSH_OPTIONS_USER, GetUsername().mb_str().data());
-    ssh_options_set(m_session, SSH_OPTIONS_TIMEOUT, &timeout);
-
+    
     // Connect the session
-    int rc = ssh_connect(m_session);
-    if(rc != SSH_OK) {
-        throw clException(ssh_get_error(m_session));
+    int retries = seconds * 100;
+    if(retries < 0) {
+        retries = 1;
     }
-    m_connected = true;
+    DoConnectWithRetries(retries);
+    ssh_set_blocking(m_session, 1);
 }
 
 bool clSSH::AuthenticateServer(wxString& message) throw(clException)
@@ -285,7 +326,7 @@ void clSSH::Login() throw(clException)
 void clSSH::ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) throw(clException)
 {
     DoOpenChannel();
-    
+
     m_owner = owner;
     if(!m_owner) {
         throw clException(wxString() << "No owner specified for output");
@@ -350,7 +391,7 @@ void clSSH::DoCloseChannel()
 void clSSH::DoOpenChannel() throw(clException)
 {
     if(m_channel) return;
-    
+
     m_channel = ssh_channel_new(m_session);
     if(!m_channel) {
         throw clException(ssh_get_error(m_session));
@@ -365,7 +406,7 @@ void clSSH::DoOpenChannel() throw(clException)
     if(rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
-    
+
     rc = ssh_channel_change_pty_size(m_channel, 80, 24);
     if(rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
@@ -375,6 +416,28 @@ void clSSH::DoOpenChannel() throw(clException)
     if(rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
     }
-
 }
+
+void clSSH::DoConnectWithRetries(int retries) throw(clException)
+{
+    while(retries) {
+        int rc = ssh_connect(m_session);
+        if(rc == SSH_AGAIN) {
+            if(wxThread::IsMain()) {
+                ::wxSafeYield();
+            }
+            wxThread::Sleep(10);
+            --retries;
+            continue;
+        }
+        if(rc == SSH_OK) {
+            m_connected = true;
+            return;
+        } else {
+            throw clException(ssh_get_error(m_session));
+        }
+    }
+    throw clException("Connect timeout");
+}
+
 #endif // USE_SFTP

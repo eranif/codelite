@@ -460,7 +460,7 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
         EventNotifier::Get()->ProcessEvent(event);
 
         // Use the old system
-        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileView_Workspace);
+        PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileView_Project);
     }
     
     PopupMenu(menu);

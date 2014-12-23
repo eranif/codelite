@@ -1,4 +1,6 @@
 #include "SSHTerminal.h"
+#if USE_SFTP
+
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
 #include "cl_ssh.h"
@@ -111,3 +113,4 @@ void SSHTerminal::OnClear(wxCommandEvent& event)
     m_stcOutput->SetEditable(false);
 }
 void SSHTerminal::OnClearUI(wxUpdateUIEvent& event) { event.Enable(!m_stcOutput->IsEmpty()); }
+#endif

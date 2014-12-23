@@ -375,7 +375,7 @@ protected:
 protected:
     virtual void OnActiveProjectSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSetupRemoteUpload(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnMenu(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }

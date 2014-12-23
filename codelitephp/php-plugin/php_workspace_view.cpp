@@ -835,6 +835,7 @@ void PHPWorkspaceView::OnRenameWorkspace(wxCommandEvent& e)
     }
 }
 
+#if USE_SFTP
 void PHPWorkspaceView::OnSetupRemoteUpload(wxAuiToolBarEvent& event)
 {
     if(!event.IsDropDownClicked()) {
@@ -871,6 +872,7 @@ void PHPWorkspaceView::OnSetupRemoteUpload(wxAuiToolBarEvent& event)
         }
     }
 }
+#endif
 
 void PHPWorkspaceView::OnToggleAutoUpload(wxCommandEvent& e)
 {
@@ -880,6 +882,7 @@ void PHPWorkspaceView::OnToggleAutoUpload(wxCommandEvent& e)
     settings.Save();
 }
 
+#if USE_SFTP
 void PHPWorkspaceView::DoOpenSSHAccountManager()
 {
     SSHWorkspaceSettings settings;
@@ -897,6 +900,7 @@ void PHPWorkspaceView::DoOpenSSHAccountManager()
         settings.Save();
     }
 }
+#endif
 
 void PHPWorkspaceView::ReloadWorkspace(bool saveBeforeReload)
 {
@@ -1204,4 +1208,12 @@ void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
             ::wxLaunchDefaultApplication(itemData->GetFile());
         }
     }
+}
+void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event)
+{
+#if USE_SFTP
+    event.Enable( PHPWorkspace::Get()->IsOpen() );
+#else
+    event.Enable(false);
+#endif
 }

@@ -26,9 +26,12 @@ private:
     };
 
 protected:
+    virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnMenu(wxTreeEvent& event);
+#if USE_SFTP
     virtual void OnSetupRemoteUpload(wxAuiToolBarEvent& event);
+#endif
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
     virtual void OnActiveProjectSettings(wxCommandEvent& event);
     virtual void OnProjectSettings(wxCommandEvent& event);
@@ -50,8 +53,10 @@ protected:
     int DoGetItemImgIdx(const wxString& filename);
     wxBitmap DoGetBitmapForExt(const wxString& ext) const;
     void DoDeleteSelectedFileItem();
+#if USE_SFTP
     void DoOpenSSHAccountManager();
-    
+#endif
+
     /**
      * @brief construct the project in the tree view
      * @param projectItem

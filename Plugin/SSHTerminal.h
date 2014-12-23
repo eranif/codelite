@@ -2,6 +2,7 @@
 #define SSHTERMINAL_H
 
 #include "sftp_ui.h"
+#if USE_SFTP
 #include "cl_command_event.h"
 #include "cl_ssh.h"
 
@@ -27,4 +28,5 @@ protected:
     virtual void OnClearUI(wxUpdateUIEvent& event);
     virtual void OnSendCommand(wxCommandEvent& event);
 };
+#endif
 #endif // SSHTERMINAL_H

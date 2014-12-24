@@ -36,7 +36,6 @@
 #include "plugin.h"
 #include "dockablepane.h"
 #include "windowstack.h"
-#include "dropbutton.h"
 #include "globals.h"
 
 class SymbolViewPlugin : public IPlugin

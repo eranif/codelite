@@ -423,7 +423,10 @@ void SFTPTreeView::OnMenuNewFile(wxCommandEvent& event)
     if(!new_name.IsEmpty()) {
         wxString fullpath = cd->GetFullPath();
         fullpath << "/" << new_name;
-        DoAddFile(items.at(0), fullpath);
+        wxTreeListItem fileItem = DoAddFile(items.at(0), fullpath);
+        if(fileItem.IsOk()) {
+            DoOpenFile(fileItem);
+        }
     }
 }
 
@@ -797,4 +800,22 @@ void SFTPTreeView::OnTerminalClosed(clCommandEvent& event)
 {
     // terminal was closed by the user
     m_terminal = NULL;
+}
+
+bool SFTPTreeView::DoOpenFile(const wxTreeListItem& item)
+{
+    MyClientData* cd = GetItemData(item);
+    if(!cd || cd->IsFolder()) {
+        return false;
+    }
+
+    RemoteFileInfo remoteFile;
+    remoteFile.SetAccount(m_account);
+    remoteFile.SetRemoteFile(cd->GetFullPath());
+
+    SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
+    SFTPWorkerThread::Instance()->Add(req);
+
+    m_plugin->AddRemoteFile(remoteFile);
+    return true;
 }

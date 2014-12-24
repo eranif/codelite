@@ -167,9 +167,6 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     }
 
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    // if(page.active) {
-    //     fnt.SetWeight(wxFONTWEIGHT_BOLD);
-    // }
     gdc.SetFont(fnt);
     wxSize ext = gdc.GetTextExtent(caption);
     if(caption == "Tp") caption.Clear();
@@ -185,8 +182,11 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     /// Draw the text
     wxColour textColour = page.active ? m_activeTabTextColour : m_tabTextColour;
     gdc.SetTextForeground(textColour);
-    gdc.GetGraphicsContext()->DrawText(
-        page.caption, curx, (rr.y + (rr.height - ext.y) / 2) - TAB_Y_OFFSET + TEXT_Y_SPACER);
+    wxDouble textYOffCorrd = (rr.y + (rr.height - ext.y) / 2) - TAB_Y_OFFSET + TEXT_Y_SPACER;
+#ifdef __WXGTK__
+    textYOffCorrd -= 2;
+#endif
+    gdc.GetGraphicsContext()->DrawText(page.caption, curx, textYOffCorrd);
 
     // advance the X offset
     curx += ext.x;
@@ -243,9 +243,9 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
     wxCoord tmp;
 
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    if(active) {
-        f.SetWeight(wxFONTWEIGHT_BOLD);
-    }
+    // if(active) {
+    //     f.SetWeight(wxFONTWEIGHT_BOLD);
+    // }
 
     dc.SetFont(f);
     dc.GetTextExtent(caption, &measured_textx, &tmp);

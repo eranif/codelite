@@ -119,14 +119,14 @@ public:
     virtual bool ClosePage(const wxString& text);
     virtual wxWindow* FindPage(const wxString& text);
     virtual bool
-    AddPage(wxWindow* win, const wxString& text, const wxBitmap& bmp = wxNullBitmap, bool selected = false);
+    AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString, const wxBitmap& bmp = wxNullBitmap, bool selected = false);
     virtual bool SelectPage(wxWindow* win);
     virtual NavMgr* GetNavigationMgr();
     virtual IEditor* NewEditor();
     virtual bool IsShutdownInProgress() const;
     virtual BitmapLoader* GetStdIcons();
     virtual wxArrayString GetProjectCompileFlags(const wxString& projectName, bool isCppFile);
-    virtual void AddEditorPage(wxWindow* page, const wxString& name);
+    virtual void AddEditorPage(wxWindow* page, const wxString& name,const wxString& tooltip = wxEmptyString);
     virtual wxPanel* GetEditorPaneNotebook();
     virtual wxWindow* GetActivePage();
     virtual wxWindow* GetPage(size_t page);

@@ -2293,7 +2293,7 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     p->SetFilesDetails(l, r);
     p->Diff();
     p->SetOriginSourceControl();
-    m_mgr->AddPage(p, _("Git Diff: ") + fnWorkingCopy.GetFullName(), wxNullBitmap, true);
+    m_mgr->AddPage(p, _("Git Diff: ") + fnWorkingCopy.GetFullName(),_("Git Diff: ") + fnWorkingCopy.GetFullPath(), wxNullBitmap, true);
 }
 
 void GitPlugin::OnRebase(wxCommandEvent& e)

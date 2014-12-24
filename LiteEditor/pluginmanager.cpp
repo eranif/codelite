@@ -507,9 +507,9 @@ bool PluginManager::ClosePage(const wxString& text) { return clMainFrame::Get()-
 
 wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
-bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxBitmap& bmp, bool selected)
+bool PluginManager::AddPage(wxWindow* win, const wxString& text,const wxString& tooltip, const wxBitmap& bmp, bool selected)
 {
-    return clMainFrame::Get()->GetMainBook()->AddPage(win, text, bmp, selected);
+    return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp, selected);
 }
 
 bool PluginManager::SelectPage(wxWindow* win) { return clMainFrame::Get()->GetMainBook()->SelectPage(win); }
@@ -622,9 +622,9 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString& projectName,
     return args;
 }
 
-void PluginManager::AddEditorPage(wxWindow* page, const wxString& name)
+void PluginManager::AddEditorPage(wxWindow* page, const wxString& name, const wxString& tooltip)
 {
-    clMainFrame::Get()->GetMainBook()->AddPage(page, name, wxNullBitmap, true);
+    clMainFrame::Get()->GetMainBook()->AddPage(page, name, tooltip, wxNullBitmap, true);
 }
 
 wxPanel* PluginManager::GetEditorPaneNotebook() { return clMainFrame::Get()->GetMainBook(); }

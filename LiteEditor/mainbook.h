@@ -45,7 +45,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     NavBar* m_navBar;
-    Notebook* m_book;
+    Notebook2* m_book;
     QuickFindBar* m_quickFindBar;
     MessagePane* m_messagePane;
     bool m_useBuffereLimit;
@@ -147,6 +147,7 @@ public:
 
     bool AddPage(wxWindow* win,
                  const wxString& text,
+                 const wxString& tooltip = wxEmptyString,
                  const wxBitmap& bmp = wxNullBitmap,
                  bool selected = false,
                  size_t insert_at_index = wxNOT_FOUND);

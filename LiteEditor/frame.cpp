@@ -3576,7 +3576,7 @@ void clMainFrame::CreateWelcomePage()
 
     welcomePage->SetPage(content);*/
     WelcomePage* welcomePage = new WelcomePage(GetMainBook());
-    GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxNullBitmap, true);
+    GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxEmptyString, wxNullBitmap, true);
 
     GetMainBook()->Layout();
     // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first

@@ -452,6 +452,7 @@ void PHPWorkspaceView::OnNewFile(wxCommandEvent& e)
             if(!m_treeCtrlView->IsExpanded(folderId)) {
                 m_treeCtrlView->Expand(folderId);
             }
+            CallAfter(&PHPWorkspaceView::DoOpenFile, fileItem);
         }
     }
 }
@@ -598,7 +599,8 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
                                                           _("Remember my answer and don't ask me again"),
                                                           wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
     if(res != wxID_YES) return;
-
+    wxArrayTreeItemIds filesDeleted;
+    bool reloadWorkspaceNeeded = false;
     for(size_t i = 0; i < items.GetCount(); ++i) {
         ItemData* itemData = static_cast<ItemData*>(m_treeCtrlView->GetItemData(items.Item(i)));
         if(!itemData || (!itemData->IsFile() && !itemData->IsFolder())) continue;
@@ -617,14 +619,26 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
                                                      wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
             if(res != wxID_YES) continue; // Don't delete the folder
             wxFileName::Rmdir(itemData->GetFolderPath(), wxPATH_RMDIR_RECURSIVE);
+            reloadWorkspaceNeeded = true;
+
         } else {
             ::wxRemoveFile(itemData->GetFile());
+            filesDeleted.Add(items.Item(i));
         }
     }
 
     // Sync the workspace with the file system
     PHPWorkspace::Get()->SyncWithFileSystem();
-    LoadWorkspace();
+    if(reloadWorkspaceNeeded) {
+        // If a folder was deleted, reload the workspace view
+        LoadWorkspace();
+        
+    } else {
+        // Just delete the file items, no folders were deleted
+        for(size_t i = 0; i < filesDeleted.GetCount(); ++i) {
+            m_treeCtrlView->Delete(filesDeleted.Item(i));
+        }
+    }
 }
 
 void PHPWorkspaceView::OnRunProject(wxCommandEvent& e)

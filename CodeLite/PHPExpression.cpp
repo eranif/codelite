@@ -266,10 +266,16 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
 
 wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sourceFile)
 {
-    if(depth > 5) {
+    if(depth > 5 || sourceFile == NULL) {
         // avoid infinite recursion, by limiting the nest level to 5
         return "";
     }
+    
+    // Use the provided sourceFile if 'm_sourceFile' is NULL
+    if(!m_sourceFile) {
+        m_sourceFile = sourceFile;
+    }
+    
     // Parse the input source file
     PHPEntityBase::Ptr_t scope = sourceFile->CurrentScope();
     const PHPEntityBase* innerClass = sourceFile->Class();

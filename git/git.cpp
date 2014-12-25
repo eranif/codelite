@@ -142,6 +142,25 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
+
+    // Connect the file context menu event handlers
+    m_eventHandler->Connect(XRCID("git_add_file"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnFileAddSelected),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_reset_file"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnFileResetSelected),
+                            NULL,
+                            this);
+    m_eventHandler->Connect(XRCID("git_diff_file"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
+                            NULL,
+                            this);
+
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, wxT("git"), false, m_images.Bitmap("git"));
@@ -387,36 +406,10 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 /*******************************************************************************/
 void GitPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileView_File) {
-        menu->AppendSeparator();
-        wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"), _("Git: Add file"));
-        item->SetBitmap(m_images.Bitmap("gitFileAdd"));
-        menu->Append(item);
-        m_eventHandler->Connect(XRCID("git_add_file"),
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(GitPlugin::OnFileAddSelected),
-                                NULL,
-                                this);
-
-        item = new wxMenuItem(menu, XRCID("git_reset_file"), _("Git: Reset file"));
-        item->SetBitmap(m_images.Bitmap("gitReset"));
-        menu->Append(item);
-        m_eventHandler->Connect(XRCID("git_reset_file"),
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(GitPlugin::OnFileResetSelected),
-                                NULL,
-                                this);
-
-        item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Git: Show file diff"));
-        item->SetBitmap(m_images.Bitmap("gitDiffs"));
-        menu->Append(item);
-        m_eventHandler->Connect(XRCID("git_diff_file"),
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
-                                NULL,
-                                this);
-    }
+    wxUnusedVar(menu);
+    wxUnusedVar(type);
 }
+
 /*******************************************************************************/
 void GitPlugin::UnPlug()
 {
@@ -529,6 +522,7 @@ void GitPlugin::UnPlug()
                                wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                                NULL,
                                this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
 }
 /*******************************************************************************/
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
@@ -623,8 +617,8 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     wxUnusedVar(e);
 
     wxArrayString files;
-    DoGetFileViewSelectedFiles(files, true);
-
+    files.swap(m_filesSelected);
+    
     if(!files.IsEmpty()) {
         DoAddFiles(files);
     }
@@ -634,25 +628,8 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
 void GitPlugin::OnFileDeleteSelected(wxCommandEvent& e)
 {
     RefreshFileListView();
-    // Experimental
-    /*
-    wxUnusedVar(e);
-    TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    wxString path = info.m_fileName.GetFullPath();
-    if(wxMessageBox(wxT("Really delete file ")+path+wxT(" from the index (not from disk)?")
-
-
-                    , wxT("Confirm file deletion"), wxYES_NO, m_topWindow) == wxNO)
-      return;
-    path.Replace(m_repositoryDirectory,wxT(""));
-    if(path.StartsWith(wxT("/")))
-      path.Remove(0,1);
-    gitAction ga = {gitDeleteFile,path};
-    m_gitActionQueue.push(ga);
-    AddDefaultActions();
-    ProcessGitActionQueue();
-    */
 }
+
 /*******************************************************************************/
 void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
 {
@@ -660,7 +637,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
 
     // fetch the list of files
     wxArrayString files;
-    DoGetFileViewSelectedFiles(files, true);
+    files.swap(m_filesSelected);
     DoShowDiffsForFiles(files);
 }
 
@@ -1650,12 +1627,12 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                 wxMessageBox(
                     _("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
             } else {
-                
+
                 // Post event about file system updated
                 clFileSystemEvent fsEvent(wxEVT_FILE_SYSTEM_UPDATED);
                 fsEvent.SetPath(m_repositoryDirectory);
                 EventNotifier::Get()->AddPendingEvent(fsEvent);
-                
+
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
                 if(!log.IsEmpty()) {
                     GitLogDlg dlg(m_topWindow, _("Pull log"));
@@ -2022,6 +1999,7 @@ void GitPlugin::DoCleanup()
     }
     m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View"));
     m_mgr->GetDockingManager()->Update();
+    m_filesSelected.Clear();
 }
 
 void GitPlugin::DoCreateTreeImages()
@@ -2293,7 +2271,11 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     p->SetFilesDetails(l, r);
     p->Diff();
     p->SetOriginSourceControl();
-    m_mgr->AddPage(p, _("Git Diff: ") + fnWorkingCopy.GetFullName(),_("Git Diff: ") + fnWorkingCopy.GetFullPath(), wxNullBitmap, true);
+    m_mgr->AddPage(p,
+                   _("Git Diff: ") + fnWorkingCopy.GetFullName(),
+                   _("Git Diff: ") + fnWorkingCopy.GetFullPath(),
+                   wxNullBitmap,
+                   true);
 }
 
 void GitPlugin::OnRebase(wxCommandEvent& e)
@@ -2346,4 +2328,24 @@ void GitPlugin::DoRecoverFromGitCommandError()
 
     wxDELETE(m_process);
     m_commandOutput.Clear();
+}
+
+void GitPlugin::OnFileMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    wxMenu* menu = event.GetMenu();
+    m_filesSelected = event.GetStrings();
+    
+    menu->AppendSeparator();
+    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"), _("Git: Add file"));
+    item->SetBitmap(m_images.Bitmap("gitFileAdd"));
+    menu->Append(item);
+
+    item = new wxMenuItem(menu, XRCID("git_reset_file"), _("Git: Reset file"));
+    item->SetBitmap(m_images.Bitmap("gitReset"));
+    menu->Append(item);
+
+    item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Git: Show file diff"));
+    item->SetBitmap(m_images.Bitmap("gitDiffs"));
+    menu->Append(item);
 }

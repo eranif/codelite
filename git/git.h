@@ -46,6 +46,7 @@
 #include "overlaytool.h"
 #include "cl_command_event.h"
 #include "gitentry.h"
+#include "cl_command_event.h"
 
 class gitAction
 {
@@ -137,7 +138,8 @@ class GitPlugin : public IPlugin
     GitConsole* m_console;
     wxFileName m_workspaceFilename;
     GitCommitListDlg* m_commitListDlg;
-
+    wxArrayString m_filesSelected;
+    
 private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
@@ -177,7 +179,8 @@ private:
     void OnProgressTimer(wxTimerEvent& Event);
     void OnProcessTerminated(wxCommandEvent& event);
     void OnProcessOutput(wxCommandEvent& event);
-
+    void OnFileMenu(clContextMenuEvent& event);
+    
     void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);

@@ -633,7 +633,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_FOLDER, clContextMen
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_VIRTUAL_FOLDER, clContextMenuEvent);
 
 // A context menu for a file is about to be shown, you may alter the menu using event.GetMenu()
-// use event.GetFileName() to get the file
+// use event.GetStrings() to get the list of files selected (since there can be multiple items, we use 
+// event.GetStrings() a not event.GetFileName())
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_FILE, clContextMenuEvent);
 
 // A context menu for a project is about to be shown, you may alter the menu using event.GetMenu()

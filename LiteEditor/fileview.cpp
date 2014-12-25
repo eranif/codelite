@@ -367,14 +367,26 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
 //-----------------------------------------------
 
 
-void FileViewTree::ShowFileContextMenu(FilewViewTreeItemData* itemData)
+void FileViewTree::ShowFileContextMenu()
 {
+    wxArrayTreeItemIds items;
+    GetSelections(items);
+    if(items.IsEmpty()) return;
+    
     wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_file"));
     if(!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it
         clContextMenuEvent event(wxEVT_CONTEXT_MENU_FILE);
         event.SetMenu(menu);
-        event.SetFileName(itemData->GetData().GetFile());
+        
+        wxArrayString files;
+        for(size_t i=0; i<items.GetCount(); ++i) {
+            FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(items.Item(i)));
+            if(data->GetData().GetKind() == ProjectItem::TypeFile) {
+                files.Add(data->GetData().GetFile());
+            }
+        }
+        event.SetStrings(files);
         EventNotifier::Get()->ProcessEvent(event);
 
         // Let the plugin hook their content (using the deprecated way)
@@ -506,7 +518,7 @@ void FileViewTree::OnPopupMenu(wxTreeEvent& event)
                 ShowVirtualFolderContextMenu(data);
                 break;
             case ProjectItem::TypeFile:
-                ShowFileContextMenu(data);
+                ShowFileContextMenu();
                 break;
             case ProjectItem::TypeWorkspace:
                 ShowWorkspaceContextMenu();

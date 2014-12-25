@@ -180,7 +180,7 @@ protected:
     void ShowWorkspaceContextMenu();
     void ShowProjectContextMenu(const wxString& projectName);
     void ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData);
-    void ShowFileContextMenu(FilewViewTreeItemData* itemData);
+    void ShowFileContextMenu();
     
     // internal
     void OnBuildProjectOnlyInternal(wxCommandEvent& e);

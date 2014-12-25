@@ -60,6 +60,9 @@ clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
     : m_manager(manager)
     , m_tabRadius(0.0)
 {
+#ifdef __WXGTK__
+    m_tabRadius = 2.5;
+#endif
 }
 
 clAuiMainNotebookTabArt::~clAuiMainNotebookTabArt() {}

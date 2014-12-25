@@ -29,7 +29,9 @@
 clAuiGlossyTabArt::clAuiGlossyTabArt()
     : clAuiMainNotebookTabArt(NULL)
 {
-    m_tabRadius = 0.0;
+#ifdef __WXGTK__
+    m_tabRadius = 2.5;
+#endif
 }
 
 clAuiGlossyTabArt::~clAuiGlossyTabArt() {}

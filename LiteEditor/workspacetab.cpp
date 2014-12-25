@@ -288,10 +288,8 @@ void WorkspaceTab::OnWorkspaceLoaded(wxCommandEvent& e)
         DoUpdateChoiceWithProjects();
 
         // Tree construction
-        Freeze();
         m_fileView->BuildTree();
-        OnGoHome(e);
-        Thaw();
+        CallAfter(&WorkspaceTab::DoGoHome);
         SendCmdEvent(wxEVT_FILE_VIEW_INIT_DONE);
     }
 }
@@ -326,10 +324,8 @@ void WorkspaceTab::OnProjectAdded(clCommandEvent& e)
 void WorkspaceTab::OnProjectRemoved(clCommandEvent& e)
 {
     e.Skip();
-    Freeze();
     m_fileView->BuildTree();
-    OnGoHome(e);
-    Thaw();
+    CallAfter(&WorkspaceTab::DoGoHome);
     DoUpdateChoiceWithProjects();
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
@@ -495,3 +491,20 @@ void WorkspaceTab::OnActiveProjectChanged(clProjectSettingsEvent& e)
     // Update the choice control
     m_choiceActiveProject->SetStringSelection(e.GetProjectName());
 }
+
+void WorkspaceTab::DoGoHome()
+{
+    wxString activeProject = ManagerST::Get()->GetActiveProjectName();
+    if(activeProject.IsEmpty()) return;
+    m_fileView->ExpandToPath(activeProject, wxFileName());
+
+    wxArrayTreeItemIds arr;
+    size_t count = m_fileView->GetSelections(arr);
+
+    if(count == 1) {
+        wxTreeItemId sel = arr.Item(0);
+        if(sel.IsOk() && m_fileView->ItemHasChildren(sel)) m_fileView->Expand(sel);
+    }
+    ManagerST::Get()->ShowWorkspacePane(m_caption);
+}
+

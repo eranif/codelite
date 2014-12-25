@@ -688,8 +688,7 @@ void LEditor::OnSavePoint(wxStyledTextEvent& event)
 
         if(GetMarginWidth(EDIT_TRACKER_MARGIN_ID)) {
 
-            Freeze();
-
+            wxWindowUpdateLocker locker(this);
             int numlines = GetLineCount();
             for(int i = 0; i < numlines; i++) {
                 int style = MarginGetStyle(i);
@@ -699,7 +698,6 @@ void LEditor::OnSavePoint(wxStyledTextEvent& event)
                 }
             }
             Refresh();
-            Thaw();
         }
     }
 

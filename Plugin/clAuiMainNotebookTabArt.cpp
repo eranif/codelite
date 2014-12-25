@@ -52,7 +52,7 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #define TEXT_Y_SPACER 0
 #else // GTK/FreeBSD
 #define TAB_Y_OFFSET 5
-#define TAB_HEIGHT_SPACER TAB_Y_OFFSET + 6
+#define TAB_HEIGHT_SPACER TAB_Y_OFFSET + 4
 #define TEXT_Y_SPACER 2
 #endif
 
@@ -183,9 +183,9 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     wxColour textColour = page.active ? m_activeTabTextColour : m_tabTextColour;
     gdc.SetTextForeground(textColour);
     wxDouble textYOffCorrd = (rr.y + (rr.height - ext.y) / 2) - TAB_Y_OFFSET + TEXT_Y_SPACER;
-#ifdef __WXGTK__
-    textYOffCorrd -= 2;
-#endif
+//#ifdef __WXGTK__
+//    textYOffCorrd -= 2;
+//#endif
     gdc.GetGraphicsContext()->DrawText(page.caption, curx, textYOffCorrd);
 
     // advance the X offset

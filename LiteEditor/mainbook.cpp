@@ -180,6 +180,7 @@ void MainBook::OnPageClosing(NotebookEvent& e)
 
 void MainBook::OnPageClosed(NotebookEvent& e)
 {
+    e.Skip();
     SelectPage(m_book->GetCurrentPage());
     m_quickFindBar->SetEditor(GetActiveEditor());
 

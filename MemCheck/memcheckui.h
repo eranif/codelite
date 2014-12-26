@@ -87,7 +87,7 @@ class MemCheckOutputViewBase : public wxPanel
 {
 public:
     enum {
-        ID_TOOL_STOP_PROCESS = 1001,
+        ID_TOOL_STOP_PROCESS = 8001,
     };
 protected:
     wxAuiToolBar* m_auibar223;
@@ -160,6 +160,34 @@ protected:
     virtual void OnSuppressSelected(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxAuiToolBar* GetAuibar223() { return m_auibar223; }
+    wxDataViewCtrl* GetDataViewCtrlErrors() { return m_dataViewCtrlErrors; }
+    wxBitmapButton* GetBmpButtonPageFirst() { return m_bmpButtonPageFirst; }
+    wxBitmapButton* GetBmpButtonPagePrev() { return m_bmpButtonPagePrev; }
+    wxTextCtrl* GetTextCtrlPageNumber() { return m_textCtrlPageNumber; }
+    wxStaticText* GetStaticText622() { return m_staticText622; }
+    wxStaticText* GetStaticTextPageMax() { return m_staticTextPageMax; }
+    wxBitmapButton* GetBmpButtonPageNext() { return m_bmpButtonPageNext; }
+    wxBitmapButton* GetBmpButtonPageLast() { return m_bmpButtonPageLast; }
+    wxPanel* GetPanelErrors() { return m_panelErrors; }
+    wxStaticText* GetStaticText657() { return m_staticText657; }
+    wxChoice* GetChoiceSuppFile() { return m_choiceSuppFile; }
+    wxButton* GetButtonSuppOpen() { return m_buttonSuppOpen; }
+    wxSearchCtrl* GetSearchCtrlFilter() { return m_searchCtrlFilter; }
+    wxBitmapButton* GetButtonClearFilter() { return m_buttonClearFilter; }
+    wxCheckBox* GetCheckBoxInvert() { return m_checkBoxInvert; }
+    wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
+    wxCheckBox* GetCheckBoxWord() { return m_checkBoxWord; }
+    wxCheckBox* GetCheckBoxRegexp() { return m_checkBoxRegexp; }
+    wxStaticText* GetStaticTextSuppStatus() { return m_staticTextSuppStatus; }
+    wxPanel* GetSplitterPageFilter() { return m_splitterPageFilter; }
+    MemCheckListCtrlErrors* GetListCtrlErrors() { return m_listCtrlErrors; }
+    wxButton* GetButtonSuppressAll() { return m_buttonSuppressAll; }
+    wxButton* GetButtonSuppressSelected() { return m_buttonSuppressSelected; }
+    wxPanel* GetSplitterPageList() { return m_splitterPageList; }
+    wxSplitterWindow* GetSplitter542() { return m_splitter542; }
+    wxPanel* GetPanelSupp() { return m_panelSupp; }
+    wxNotebook* GetNotebookOutputView() { return m_notebookOutputView; }
     MemCheckOutputViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~MemCheckOutputViewBase();
 };
@@ -204,6 +232,30 @@ protected:
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText349() { return m_staticText349; }
+    wxChoice* GetChoiceEngine() { return m_choiceEngine; }
+    wxStaticText* GetStaticText638() { return m_staticText638; }
+    wxSlider* GetSliderPageCapacity() { return m_sliderPageCapacity; }
+    wxCheckBox* GetCheckBoxOmitNonWorkspace() { return m_checkBoxOmitNonWorkspace; }
+    wxCheckBox* GetCheckBoxOmitDuplications() { return m_checkBoxOmitDuplications; }
+    wxCheckBox* GetCheckBoxOmitSuppressed() { return m_checkBoxOmitSuppressed; }
+    wxCheckBox* GetCheckBoxOmitSuppressionsUnchanged() { return m_checkBoxOmitSuppressionsUnchanged; }
+    wxPanel* GetPanel259() { return m_panel259; }
+    wxStaticText* GetStaticText271() { return m_staticText271; }
+    wxFilePickerCtrl* GetFilePickerValgrindBinary() { return m_filePickerValgrindBinary; }
+    wxStaticText* GetStaticText333() { return m_staticText333; }
+    wxTextCtrl* GetTextCtrlValgrindMandatoryOptions() { return m_textCtrlValgrindMandatoryOptions; }
+    wxStaticText* GetStaticText337() { return m_staticText337; }
+    wxTextCtrl* GetTextCtrlValgrindOptions() { return m_textCtrlValgrindOptions; }
+    wxBitmapButton* GetBmpButton341() { return m_bmpButton341; }
+    wxCheckBox* GetCheckBoxOutputInPrivateFolder() { return m_checkBoxOutputInPrivateFolder; }
+    wxFilePickerCtrl* GetFilePickerValgrindOutputFile() { return m_filePickerValgrindOutputFile; }
+    wxPanel* GetPanel669() { return m_panel669; }
+    wxCheckBox* GetCheckBoxSuppFileInPrivateFolder() { return m_checkBoxSuppFileInPrivateFolder; }
+    wxListBox* GetListBoxSuppFiles() { return m_listBoxSuppFiles; }
+    wxPanel* GetPanel671() { return m_panel671; }
+    wxPanel* GetPanel263() { return m_panel263; }
+    wxTreebook* GetTreebook251() { return m_treebook251; }
     MemCheckSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("MemCheck Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~MemCheckSettingsDialogBase();
 };

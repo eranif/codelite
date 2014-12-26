@@ -7,7 +7,7 @@
   "m_bitmapsFile": "memcheckui_bitmaps.cpp",
   "m_GenerateCodeTypes": 1,
   "m_outputFileName": "memcheckui",
-  "m_firstWindowId": 1000,
+  "m_firstWindowId": 8000,
   "m_useEnum": true,
   "m_templateClasses": []
  },

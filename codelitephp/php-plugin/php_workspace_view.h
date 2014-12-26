@@ -36,7 +36,7 @@ protected:
     virtual void OnActiveProjectSettings(wxCommandEvent& event);
     virtual void OnProjectSettings(wxCommandEvent& event);
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event);
-    
+    void DoGetSelectedFiles(wxArrayString& files);
     // Helpers
     void DoSortItems();
     wxTreeItemId DoAddFolder(const wxString &project, const wxString& path);

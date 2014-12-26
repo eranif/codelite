@@ -2333,19 +2333,24 @@ void GitPlugin::DoRecoverFromGitCommandError()
 void GitPlugin::OnFileMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    wxMenu* menu = event.GetMenu();
+    wxMenu* menu = new wxMenu();
+    wxMenu* parentMenu = event.GetMenu();
     m_filesSelected = event.GetStrings();
     
-    menu->AppendSeparator();
-    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"), _("Git: Add file"));
+    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"), _("Add file"));
     item->SetBitmap(m_images.Bitmap("gitFileAdd"));
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("git_reset_file"), _("Git: Reset file"));
+    item = new wxMenuItem(menu, XRCID("git_reset_file"), _("Reset file"));
     item->SetBitmap(m_images.Bitmap("gitReset"));
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Git: Show file diff"));
+    item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Show file diff"));
     item->SetBitmap(m_images.Bitmap("gitDiffs"));
     menu->Append(item);
+    
+    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
+    item->SetBitmap(m_images.Bitmap("git"));
+    parentMenu->AppendSeparator();
+    parentMenu->Append(item);
 }

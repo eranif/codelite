@@ -129,8 +129,18 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_with_default_app"), _("Open with Default Application"));
-
+                
+                // Allow other plugins to hook their context menu into our 
+                // file context menu
+                clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_FILE);
+                menuEvent.SetMenu(&menu);
+                wxArrayString files;
+                DoGetSelectedFiles(files);
+                menuEvent.SetStrings(files);
+                EventNotifier::Get()->ProcessEvent(menuEvent);
+                
                 m_treeCtrlView->PopupMenu(&menu);
+                
             } break;
             case ItemData::Kind_Workspace: {
                 wxMenu menu;
@@ -1230,4 +1240,19 @@ void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event)
 #else
     event.Enable(false);
 #endif
+}
+
+void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
+{
+    wxArrayTreeItemIds items;
+    DoGetSelectedItems(items);
+    if(items.IsEmpty()) return;
+
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        const wxTreeItemId& item = items.Item(i);
+        ItemData* itemData = DoGetItemData(item);
+        if(itemData->IsFile()) {
+            files.Add(itemData->GetFile());
+        }
+    }
 }

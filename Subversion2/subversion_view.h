@@ -184,6 +184,10 @@ public:
     void BuildExplorerTree(const wxString& root);
 
     wxString GetRootDir() const { return DoGetCurRepoPath(); }
+    bool IsValid() const {
+        wxString curpath = DoGetCurRepoPath();
+        return !curpath.IsEmpty() && curpath != _("<No repository path is selected>");
+    }
 };
 
 #endif // __subversion_page__

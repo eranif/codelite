@@ -357,6 +357,7 @@ public:
     void SetEditor(wxObject* editor) { this->m_editor = editor; }
     wxObject* GetEditor() { return m_editor; }
     const wxString& GetPath() const { return m_path; }
+    void SetPath(const wxString& path) { m_path = path; }
 };
 
 typedef void (wxEvtHandler::*clContextMenuEventFunction)(clContextMenuEvent&);

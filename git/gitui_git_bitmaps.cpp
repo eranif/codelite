@@ -893,8 +893,44 @@ static unsigned char xml_res_file_20[] = {
 18,115,3,152,78,181,233,15,187,221,46,22,252,168,151,152,0,0,0,0,73,69,
 78,68,174,66,96,130};
 
-static size_t xml_res_size_21 = 412;
+static size_t xml_res_size_21 = 685;
 static unsigned char xml_res_file_21[] = {
+137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
+0,31,243,255,97,0,0,0,6,98,75,71,68,0,255,0,255,0,255,160,189,167,147,0,
+0,0,9,112,72,89,115,0,0,13,215,0,0,13,215,1,66,40,155,120,0,0,0,7,116,73,
+77,69,7,222,12,27,6,28,48,98,43,251,35,0,0,2,58,73,68,65,84,56,203,149,
+147,223,75,211,97,20,198,63,239,187,239,182,54,55,157,77,52,80,209,178,
+204,36,65,80,218,34,177,155,136,132,110,186,177,171,36,237,215,127,224,
+93,93,68,221,245,7,8,210,69,134,130,212,77,65,129,94,4,43,93,209,6,77,92,
+70,53,43,35,113,216,134,43,135,186,125,127,188,93,216,196,217,146,122,46,
+223,207,121,158,151,115,56,7,182,41,56,48,174,130,3,227,138,191,104,87,
+30,184,56,170,66,177,101,21,138,45,171,192,197,81,245,95,60,208,63,166,
+38,35,73,53,56,52,163,6,135,102,212,100,36,169,2,253,99,234,95,184,56,126,
+249,161,186,113,229,4,47,223,166,208,141,77,143,195,46,9,182,250,185,57,
+60,13,192,110,92,4,47,61,248,169,44,221,219,122,248,32,141,251,220,0,124,
+73,174,49,247,62,129,64,38,245,92,54,170,57,221,103,75,113,75,207,61,7,
+104,7,58,142,245,141,168,217,79,25,117,107,100,174,208,99,7,208,6,52,22,
+120,252,243,15,117,251,126,17,111,210,128,24,128,144,54,214,115,38,154,
+38,80,150,73,103,79,95,116,251,156,148,178,88,219,48,176,107,18,132,160,
+179,231,66,212,52,205,235,178,80,32,132,141,112,60,77,87,91,21,87,123,187,
+112,84,119,109,153,197,222,32,215,206,119,147,55,44,28,154,68,32,1,1,74,
+157,178,21,138,106,90,207,116,151,149,251,247,111,228,45,90,26,188,212,
+214,214,242,53,101,39,47,171,233,239,61,205,161,58,15,111,62,102,72,44,
+102,89,152,143,33,242,203,40,203,90,216,10,88,154,125,60,101,248,218,143,
+120,124,213,77,150,130,230,122,47,149,254,42,142,54,55,210,210,80,193,187,
+133,85,18,139,89,194,47,38,208,191,191,66,179,59,139,3,128,149,165,248,
+147,105,189,236,64,95,121,85,189,11,4,150,5,66,72,86,178,58,137,197,44,
+83,161,9,244,212,107,156,110,239,230,92,118,4,0,100,124,62,199,185,197,
+84,174,206,235,111,160,166,114,15,54,155,224,195,183,85,66,207,158,98,164,
+35,91,230,66,128,220,185,178,46,79,197,134,145,142,18,142,196,113,57,109,
+184,156,54,194,145,56,70,58,90,100,46,72,43,117,23,78,183,23,41,237,120,
+92,155,88,74,123,73,115,201,0,129,48,0,172,124,134,59,247,194,133,199,210,
+82,202,248,35,192,48,115,119,165,105,156,92,159,127,164,89,166,241,123,
+71,4,46,111,101,241,71,74,25,74,24,195,191,0,149,7,31,205,160,181,250,148,
+0,0,0,0,73,69,78,68,174,66,96,130};
+
+static size_t xml_res_size_22 = 412;
+static unsigned char xml_res_file_22[] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
 0,31,243,255,97,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,
 65,100,111,98,101,32,73,109,97,103,101,82,101,97,100,121,113,201,101,60,
@@ -916,8 +952,8 @@ static unsigned char xml_res_file_21[] = {
 147,101,249,13,53,223,2,12,0,96,247,127,18,253,82,202,104,0,0,0,0,73,69,
 78,68,174,66,96,130};
 
-static size_t xml_res_size_22 = 727;
-static unsigned char xml_res_file_22[] = {
+static size_t xml_res_size_23 = 727;
+static unsigned char xml_res_file_23[] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
 0,31,243,255,97,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,
 65,100,111,98,101,32,73,109,97,103,101,82,101,97,100,121,113,201,101,60,
@@ -955,8 +991,8 @@ static unsigned char xml_res_file_22[] = {
 223,22,60,177,7,248,45,192,0,110,152,27,248,91,48,100,146,0,0,0,0,73,69,
 78,68,174,66,96,130};
 
-static size_t xml_res_size_23 = 2749;
-static unsigned char xml_res_file_23[] = {
+static size_t xml_res_size_24 = 2868;
+static unsigned char xml_res_file_24[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
@@ -1084,16 +1120,22 @@ static unsigned char xml_res_file_23[] = {
 110,103,95,103,105,116,45,98,114,97,110,99,104,46,112,110,103,60,47,111,
 98,106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,
 115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,103,
-105,116,84,114,97,115,104,34,62,103,105,116,117,105,95,103,105,116,95,98,
-105,116,109,97,112,115,46,99,112,112,36,105,99,111,110,115,95,112,110,103,
-95,103,105,116,45,116,114,97,115,104,46,112,110,103,60,47,111,98,106,101,
-99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,34,
-119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,115,116,111,112,
+105,116,83,119,105,116,99,104,82,101,109,111,116,101,66,114,97,110,99,104,
 34,62,103,105,116,117,105,95,103,105,116,95,98,105,116,109,97,112,115,46,
-99,112,112,36,46,46,95,99,111,100,101,108,105,116,101,45,105,99,111,110,
-115,45,102,114,101,115,104,45,102,97,114,109,95,115,117,98,118,101,114,
-115,105,111,110,95,49,54,95,115,116,111,112,46,112,110,103,60,47,111,98,
-106,101,99,116,62,10,60,47,114,101,115,111,117,114,99,101,62,10};
+99,112,112,36,105,99,111,110,115,95,112,110,103,95,103,105,116,45,98,114,
+97,110,99,104,45,114,101,109,111,116,101,46,112,110,103,60,47,111,98,106,
+101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,
+34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,103,105,116,
+84,114,97,115,104,34,62,103,105,116,117,105,95,103,105,116,95,98,105,116,
+109,97,112,115,46,99,112,112,36,105,99,111,110,115,95,112,110,103,95,103,
+105,116,45,116,114,97,115,104,46,112,110,103,60,47,111,98,106,101,99,116,
+62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,34,119,120,
+66,105,116,109,97,112,34,32,110,97,109,101,61,34,115,116,111,112,34,62,
+103,105,116,117,105,95,103,105,116,95,98,105,116,109,97,112,115,46,99,112,
+112,36,46,46,95,99,111,100,101,108,105,116,101,45,105,99,111,110,115,45,
+102,114,101,115,104,45,102,97,114,109,95,115,117,98,118,101,114,115,105,
+111,110,95,49,54,95,115,116,111,112,46,112,110,103,60,47,111,98,106,101,
+99,116,62,10,60,47,114,101,115,111,117,114,99,101,62,10};
 
 void wxCrafterpca4kKInitBitmapResources()
 {
@@ -1108,29 +1150,30 @@ void wxCrafterpca4kKInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_clear.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-add-file.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_apply-patch.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_arrow-up.png"), xml_res_file_5, xml_res_size_5, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-clone.png"), xml_res_file_6, xml_res_size_6, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-arrow-down.png"), xml_res_file_7, xml_res_size_7, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-commits.png"), xml_res_file_8, xml_res_size_8, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-diffs.png"), xml_res_file_9, xml_res_size_9, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-modified.png"), xml_res_file_10, xml_res_size_10, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch-new.png"), xml_res_file_11, xml_res_size_11, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_toolbars_16_standard_document-open.png"), xml_res_file_12, xml_res_size_12, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-pull.png"), xml_res_file_13, xml_res_size_13, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-push.png"), xml_res_file_14, xml_res_size_14, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-rebase.png"), xml_res_file_15, xml_res_size_15, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-refresh.png"), xml_res_file_16, xml_res_size_16, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset-repo.png"), xml_res_file_17, xml_res_size_17, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-settings.png"), xml_res_file_18, xml_res_size_18, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-start.png"), xml_res_file_19, xml_res_size_19, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch.png"), xml_res_file_20, xml_res_size_20, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-trash.png"), xml_res_file_21, xml_res_size_21, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_subversion_16_stop.png"), xml_res_file_22, xml_res_size_22, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"), xml_res_file_23, xml_res_size_23, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_clear.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-add-file.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_apply-patch.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_arrow-up.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-clone.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-arrow-down.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-commits.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-diffs.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-modified.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch-new.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_toolbars_16_standard_document-open.png"), xml_res_file_12, xml_res_size_12, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-pull.png"), xml_res_file_13, xml_res_size_13, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-push.png"), xml_res_file_14, xml_res_size_14, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-rebase.png"), xml_res_file_15, xml_res_size_15, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-refresh.png"), xml_res_file_16, xml_res_size_16, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset-repo.png"), xml_res_file_17, xml_res_size_17, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-settings.png"), xml_res_file_18, xml_res_size_18, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-start.png"), xml_res_file_19, xml_res_size_19, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch.png"), xml_res_file_20, xml_res_size_20, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch-remote.png"), xml_res_file_21, xml_res_size_21, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-trash.png"), xml_res_file_22, xml_res_size_22, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_subversion_16_stop.png"), xml_res_file_23, xml_res_size_23, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$C__src_codelite_git_gitui_git_bitmaps.xrc"), xml_res_file_24, xml_res_size_24, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$C__src_codelite_git_gitui_git_bitmaps.xrc"));
 }

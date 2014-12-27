@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 316,
+  "m_objCounter": 318,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterpca4kKInitBitmapResources",
   "m_bitmapsFile": "gitui_git_bitmaps.cpp",
@@ -7162,6 +7162,25 @@
      "m_properties": [{
        "type": "string",
        "m_label": "Name:",
+       "m_value": "gitSwitchRemoteBranch"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "icons/png/git-branch-remote.png"
+      }],
+     "m_events": [],
+     "m_children": []
+    }, {
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
        "m_value": "gitNewBranch"
       }, {
        "type": "filePicker",
@@ -8224,7 +8243,7 @@
        "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE", "wxAUI_TB_OVERFLOW"],
+       "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
        "m_sizerFlags": ["wxLEFT", "wxRIGHT"],
        "m_properties": [{
          "type": "winid",

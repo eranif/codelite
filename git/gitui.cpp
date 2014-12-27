@@ -857,6 +857,15 @@ GitImages::GitImages()
     {
         wxBitmap bmp;
         wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitSwitchRemoteBranch"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("gitSwitchRemoteBranch"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitNewBranch"));
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
@@ -1110,7 +1119,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_OVERFLOW);
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer36->Add(m_auibar, 0, wxLEFT|wxRIGHT, 0);

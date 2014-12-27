@@ -137,9 +137,10 @@ void PopulateAuiToolbarOverflow(
                                     wxTRANSLATE("Garbage collect"),         "",
                                     wxTRANSLATE("Plugin settings"),         wxTRANSLATE("Set repository path"),
                                     wxTRANSLATE("Clone a git repository") };
-    static const char* bitmapnames[] = { "gitNewBranch", "gitSwitchLocalBranch", "",         "",         "gitRefresh",
-                                         "gitApply",     "",                     "gitStart", "gitTrash", "",
-                                         "gitSettings",  "gitPath",              "gitClone" };
+    static const char* bitmapnames[] = { "gitNewBranch", "gitSwitchLocalBranch", "gitSwitchRemoteBranch", "",
+                                         "gitRefresh",   "gitApply",             "",                      "gitStart",
+                                         "gitTrash",     "",                     "gitSettings",           "gitPath",
+                                         "gitClone" };
     static const int IDs[] = { XRCID("git_create_branch"),           XRCID("git_switch_branch"),
                                XRCID("git_switch_to_remote_branch"), 0,
                                XRCID("git_refresh"),                 XRCID("git_apply_patch"),
@@ -222,8 +223,12 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     wxAuiToolBarItemArray prepend_items;
     wxAuiToolBarItemArray append_items;
     PopulateAuiToolbarOverflow(append_items, m_images);
-    m_auibar->SetCustomOverflowItems(prepend_items, append_items);
 
+    // m_auibar->SetCustomOverflowItems(prepend_items, append_items);
+    for(size_t i = 0; i < append_items.GetCount(); ++i) {
+        const wxAuiToolBarItem& item = append_items.Item(i);
+        m_auibar->AddTool(item.GetId(), item.GetLabel(), item.GetBitmap(), item.GetLabel(), (wxItemKind)item.GetKind());
+    }
     m_auibar->Realize();
 
     Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN,
@@ -560,8 +565,7 @@ void GitConsole::OnEditorThemeChanged(wxCommandEvent& e)
     m_stcLog->Refresh();
 }
 
-struct GitCommandData : public wxObject
-{
+struct GitCommandData : public wxObject {
     GitCommandData(const wxArrayString a, const wxString n, int i)
         : arr(a)
         , name(n)

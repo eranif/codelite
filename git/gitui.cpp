@@ -1025,6 +1025,15 @@ GitImages::GitImages()
         m_bitmaps.insert( std::make_pair(wxT("gitRebase"), bmp ) );
     }
     
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("msysgit"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("msysgit"), bmp ) );
+    }
+    
 }
 
 GitImages::~GitImages()

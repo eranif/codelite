@@ -30,6 +30,7 @@
 #include <wx/fileconf.h>
 #include <wx/msgdlg.h>
 #include <wx/ffile.h>
+#include "GitLocator.h"
 
 const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 
@@ -56,7 +57,14 @@ GitEntry::GitEntry()
     , m_gitDiffDlgSashPos(0)
     , m_gitConsoleSashPos(0)
     , m_gitCommitDlgHSashPos(0)
-    , m_gitCommitDlgVSashPos(0) {}
+    , m_gitCommitDlgVSashPos(0) 
+{
+    GitLocator locator;
+    wxFileName gitpath;
+    if(locator.GetExecutable(gitpath)) {
+        m_pathGIT = gitpath.GetFullPath();
+    }
+}
 
 GitEntry::~GitEntry() {}
 
@@ -66,8 +74,8 @@ void GitEntry::FromJSON(const JSONElement& json)
     wxString track, diff;
     track = json.namedObject("m_colourTrackedFile").toString();
     diff = json.namedObject("m_colourDiffFile").toString();
-    m_pathGIT = json.namedObject("m_pathGIT").toString();
-    m_pathGITK = json.namedObject("m_pathGITK").toString();
+    m_pathGIT = json.namedObject("m_pathGIT").toString(m_pathGIT);
+    m_pathGITK = json.namedObject("m_pathGITK").toString(m_pathGITK);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_gitDiffDlgSashPos = json.namedObject("m_gitDiffDlgSashPos").toInt(m_gitDiffDlgSashPos);
     m_gitConsoleSashPos = json.namedObject("m_gitConsoleSashPos").toInt(m_gitConsoleSashPos);

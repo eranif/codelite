@@ -20,6 +20,8 @@
     <File Name="gitLogDlg.h"/>
     <File Name="gitSettingsDlg.cpp"/>
     <File Name="gitSettingsDlg.h"/>
+    <File Name="GitLocator.h"/>
+    <File Name="GitLocator.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="icons">
     <File Name="icons/icon_git.xpm"/>

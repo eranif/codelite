@@ -59,6 +59,10 @@
 #include "DiffSideBySidePanel.h"
 #include <wx/ffile.h>
 #include "file_logger.h"
+#include "GitLocator.h"
+#include "dirsaver.h"
+#include <wx/msgdlg.h>
+#include <wx/utils.h>
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -268,7 +272,8 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     item->SetSubMenu(m_pluginMenu);
     item->SetBitmap(m_images.Bitmap("git"));
     pluginsMenu->Append(item);
-
+    
+    m_eventHandler->Bind(wxEVT_COMMAND_MENU_SELECTED, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
     m_eventHandler->Connect(XRCID("git_set_repository"),
                             wxEVT_COMMAND_MENU_SELECTED,
                             wxCommandEventHandler(GitPlugin::OnSetGitRepoPath),
@@ -423,6 +428,7 @@ void GitPlugin::UnPlug()
     }
 
     /*MENU*/
+    m_eventHandler->Unbind(wxEVT_COMMAND_MENU_SELECTED, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
     m_eventHandler->Disconnect(XRCID("git_set_repository"),
                                wxEVT_COMMAND_MENU_SELECTED,
                                wxCommandEventHandler(GitPlugin::OnSetGitRepoPath),
@@ -2354,3 +2360,22 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
     parentMenu->AppendSeparator();
     parentMenu->Append(item);
 }
+
+void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
+{
+    GitLocator locator;
+    wxString bashcommand;
+    if(locator.MSWGetGitShellCommand(bashcommand)) {
+        DirSaver ds;
+        IEditor *editor = m_mgr->GetActiveEditor();
+        if(editor) {
+            ::wxSetWorkingDirectory(editor->GetFileName().GetPath());
+        }
+        ::WrapInShell(bashcommand);
+        ::wxExecute(bashcommand);
+    } else {
+        ::wxMessageBox(_("Don't know how to start MSYSGit..."), "Git", wxICON_WARNING|wxOK|wxCENTER);
+    }
+}
+
+

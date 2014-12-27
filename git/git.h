@@ -139,7 +139,7 @@ class GitPlugin : public IPlugin
     wxFileName m_workspaceFilename;
     GitCommitListDlg* m_commitListDlg;
     wxArrayString m_filesSelected;
-    
+
 private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
@@ -169,9 +169,9 @@ private:
     void DoResetFiles(const wxArrayString& files);
     void DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo);
     void DoShowDiffsForFiles(const wxArrayString& files);
-    void DoSetRepoPath(const wxString &repoPath = "", bool promptUser = true);
+    void DoSetRepoPath(const wxString& repoPath = "", bool promptUser = true);
     void DoRecoverFromGitCommandError();
-    
+
     DECLARE_EVENT_TABLE()
 
     // Event handlers
@@ -180,7 +180,7 @@ private:
     void OnProcessTerminated(wxCommandEvent& event);
     void OnProcessOutput(wxCommandEvent& event);
     void OnFileMenu(clContextMenuEvent& event);
-    
+
     void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);
@@ -210,6 +210,8 @@ private:
     void OnListModified(wxCommandEvent& e);
     void OnRefresh(wxCommandEvent& e);
     void OnGarbageColletion(wxCommandEvent& e);
+    void OnOpenMSYSGit(wxCommandEvent& e);
+
 #if 0
     void OnBisectStart(wxCommandEvent& e);
     void OnBisectGood(wxCommandEvent& e);

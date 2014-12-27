@@ -219,12 +219,17 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
     m_auibar->AddTool(
         XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"), _("Browse commit history"));
+#ifdef __WXMSW__
+    m_auibar->AddSeparator();
+    m_auibar->AddTool(XRCID("git_msysgit"),
+                      _("Open MSYS Git"),
+                      m_images.Bitmap("msysgit"),
+                      _("Open MSYS Git at the current file location"));
+#endif
 
-    wxAuiToolBarItemArray prepend_items;
     wxAuiToolBarItemArray append_items;
     PopulateAuiToolbarOverflow(append_items, m_images);
-
-    // m_auibar->SetCustomOverflowItems(prepend_items, append_items);
+    m_auibar->AddSeparator();
     for(size_t i = 0; i < append_items.GetCount(); ++i) {
         const wxAuiToolBarItem& item = append_items.Item(i);
         m_auibar->AddTool(item.GetId(), item.GetLabel(), item.GetBitmap(), item.GetLabel(), (wxItemKind)item.GetKind());

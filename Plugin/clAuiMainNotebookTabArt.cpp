@@ -43,17 +43,17 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
 #ifdef __WXMAC__
 #include <wx/osx/private.h>
-#define TAB_HEIGHT_SPACER 10
-#define TAB_Y_OFFSET 2
-#define TEXT_Y_SPACER 0
+#   define TAB_HEIGHT_SPACER 10
+#   define TAB_Y_OFFSET 2
+#   define TEXT_Y_SPACER 0
 #elif defined(__WXMSW__)
-#define TAB_HEIGHT_SPACER 10
-#define TAB_Y_OFFSET 3
-#define TEXT_Y_SPACER 0
+#   define TAB_HEIGHT_SPACER 10
+#   define TAB_Y_OFFSET 3
+#   define TEXT_Y_SPACER 0
 #else // GTK/FreeBSD
-#define TAB_Y_OFFSET 5
-#define TAB_HEIGHT_SPACER TAB_Y_OFFSET + 4
-#define TEXT_Y_SPACER 2
+#   define TAB_HEIGHT_SPACER 10
+#   define TAB_Y_OFFSET 5
+#   define TEXT_Y_SPACER 5
 #endif
 
 clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)

@@ -25,6 +25,9 @@
 
 #include "cl_aui_notebook_art.h"
 #include "drawingutils.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
     : clAuiMainNotebookTabArt(NULL)
@@ -57,4 +60,19 @@ void clAuiGlossyTabArt::DoSetColours()
 #else
     m_tabTextColour = wxColour("rgb(60, 60, 60)");
 #endif
+    // And finally let the plugins override the colours
+    clColourEvent tabColourEvent(wxEVT_COLOUR_TAB);
+    if(EventNotifier::Get()->ProcessEvent(tabColourEvent)) {
+        m_activeTabBgColour = tabColourEvent.GetBgColour();
+        m_activeTabTextColour = tabColourEvent.GetFgColour();
+        m_tabTextColour = tabColourEvent.GetFgColour();
+        m_tabBgColour = m_activeTabBgColour.ChangeLightness(120);
+    }
+
+    clColourEvent tabPenColour(wxEVT_GET_TAB_BORDER_COLOUR);
+    if(EventNotifier::Get()->ProcessEvent(tabPenColour)) {
+        m_activeTabPenColour = tabPenColour.GetBorderColour();
+        m_penColour = m_activeTabPenColour.ChangeLightness(120);
+        m_innerPenColour = m_activeTabPenColour.ChangeLightness(150);
+    }
 }

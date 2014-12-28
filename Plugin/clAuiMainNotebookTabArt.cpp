@@ -46,14 +46,16 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #   define TAB_HEIGHT_SPACER 10
 #   define TAB_Y_OFFSET 2
 #   define TEXT_Y_SPACER 0
+#   define BMP_Y_SPACER 0
 #elif defined(__WXMSW__)
 #   define TAB_HEIGHT_SPACER 10
 #   define TAB_Y_OFFSET 3
 #   define TEXT_Y_SPACER 0
+#   define BMP_Y_SPACER 0
 #else // GTK/FreeBSD
-#   define TAB_HEIGHT_SPACER 10
-#   define TAB_Y_OFFSET 5
-#   define TEXT_Y_SPACER 5
+#   define TAB_Y_OFFSET 4
+#   define TEXT_Y_SPACER 2
+#   define BMP_Y_SPACER 2
 #endif
 
 clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
@@ -119,12 +121,6 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     }
 #endif
 
-#ifdef __WXGTK__
-    rr.height += TAB_HEIGHT_SPACER;
-#else
-    rr.height += 4;
-#endif
-
     /// the tab start position (x)
     curx = rr.x + 7;
 
@@ -176,7 +172,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
 
     /// Draw the bitmap
     if(page.bitmap.IsOk()) {
-        int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight()) / 2) - TAB_Y_OFFSET;
+        int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight()) / 2) - TAB_Y_OFFSET + BMP_Y_SPACER;
         gdc.GetGraphicsContext()->DrawBitmap(page.bitmap, curx, bmpy, page.bitmap.GetWidth(), page.bitmap.GetHeight());
         curx += page.bitmap.GetWidth();
         curx += 3;
@@ -186,9 +182,6 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     wxColour textColour = page.active ? m_activeTabTextColour : m_tabTextColour;
     gdc.SetTextForeground(textColour);
     wxDouble textYOffCorrd = (rr.y + (rr.height - ext.y) / 2) - TAB_Y_OFFSET + TEXT_Y_SPACER;
-//#ifdef __WXGTK__
-//    textYOffCorrd -= 2;
-//#endif
     gdc.GetGraphicsContext()->DrawText(page.caption, curx, textYOffCorrd);
 
     // advance the X offset
@@ -260,6 +253,10 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
     wxCoord tab_width = measured_textx;
     wxCoord tab_height = measured_texty;
 
+#ifdef __WXGTK__
+    tab_height = TAB_CTRL_HEIGHT;
+#endif
+
     if(tab_height < 16) tab_height = 16;
 
     // if the close button is showing, add space for it
@@ -269,7 +266,6 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
 
     // NOTE: we only support 16 pixels bitmap (or smaller)
     // so there is no need to adjust the tab height!
-    tab_height += TAB_HEIGHT_SPACER;
     if(bitmap.IsOk()) {
         tab_width += bitmap.GetWidth();
         tab_width += 3; // right side bitmap padding

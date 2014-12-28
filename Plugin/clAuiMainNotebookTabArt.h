@@ -32,6 +32,8 @@
 #include <wx/dcgraph.h>
 #include <wx/colour.h>
 
+#define TAB_CTRL_HEIGHT 30
+
 class IManager;
 class WXDLLIMPEXP_SDK clAuiMainNotebookTabArt : public wxAuiDefaultTabArt
 {

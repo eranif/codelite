@@ -121,6 +121,10 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     }
 #endif
 
+#ifndef __WXGTK__
+    rr.height += 4;
+#endif
+
     /// the tab start position (x)
     curx = rr.x + 7;
 
@@ -266,6 +270,10 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
 
     // NOTE: we only support 16 pixels bitmap (or smaller)
     // so there is no need to adjust the tab height!
+#ifndef __WXGTK__
+    tab_height += TAB_HEIGHT_SPACER;
+#endif
+
     if(bitmap.IsOk()) {
         tab_width += bitmap.GetWidth();
         tab_width += 3; // right side bitmap padding

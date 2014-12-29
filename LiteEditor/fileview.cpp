@@ -602,9 +602,10 @@ void FileViewTree::DoItemActivated(wxTreeItemId& item, wxEvent& event)
 
         // send event to the plugins to see if they want the file opening in another way
         wxString file_path = fn.GetFullPath();
-        if(SendCmdEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED, &file_path)) {
-            return;
-        }
+        clCommandEvent activateEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED);
+        activateEvent.SetFileName(file_path);
+        if(EventNotifier::Get()->ProcessEvent(activateEvent)) return;
+        
         clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), project, -1);
 
     } else if(itemData->GetData().GetKind() == ProjectItem::TypeProject) {

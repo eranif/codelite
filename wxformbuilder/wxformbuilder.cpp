@@ -104,7 +104,7 @@ wxFormBuilder::wxFormBuilder(IManager* manager)
                       NULL,
                       this);
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(wxFormBuilder::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxFormBuilder::OnOpenFile), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &wxFormBuilder::OnShowFileContextMenu, this);
 }
 
@@ -335,7 +335,7 @@ void wxFormBuilder::DoLaunchWxFB(const wxString& file)
     wxString fbpath = GetWxFBPath();
     //	if (fbpath.IsEmpty()) {
     //		wxMessageBox(_("Failed to launch wxFormBuilder, no path specified\nPlease set wxFormBuilder path from
-    //Plugins
+    // Plugins
     //-> wxFormBuilder -> Settings..."),
     //		             _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
     //		return;
@@ -383,40 +383,34 @@ void wxFormBuilder::OnNewDialogWithButtons(wxCommandEvent& e)
     }
 }
 
-void wxFormBuilder::OnOpenFile(wxCommandEvent& e)
+void wxFormBuilder::OnOpenFile(clCommandEvent& e)
 {
-    wxString* fn = (wxString*)e.GetClientData();
-    if(fn) {
-        // launch it with the default application
-        wxFileName fullpath(*fn);
-        if(fullpath.GetExt().MakeLower() != wxT("fbp")) {
-            e.Skip();
-            return;
-        }
-#ifdef __WXGTK__
-        // Under Linux, use xdg-open
-        wxString cmd;
-        cmd << wxT("/bin/sh -c 'xdg-open \"") << fullpath.GetFullPath() << wxT("\"' 2> /dev/null");
-        wxExecute(cmd);
-        return;
-#else
-
-        wxMimeTypesManager* mgr = wxTheMimeTypesManager;
-        wxFileType* type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
-        if(type) {
-            wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
-            delete type;
-
-            if(cmd.IsEmpty() == false) {
-                wxExecute(cmd);
-                return;
-            }
-        }
-#endif
-    }
-
-    // we failed, call event.Skip()
     e.Skip();
+    // launch it with the default application
+    wxFileName fullpath(e.GetFileName());
+    if(fullpath.GetExt().MakeLower() != wxT("fbp")) {
+        return;
+    }
+    
+#ifdef __WXGTK__
+    e.Skip(false);
+    // Under Linux, use xdg-open
+    wxString cmd;
+    cmd << wxT("/bin/sh -c 'xdg-open \"") << fullpath.GetFullPath() << wxT("\"' 2> /dev/null");
+    wxExecute(cmd);
+    return;
+#else
+    wxMimeTypesManager* mgr = wxTheMimeTypesManager;
+    wxFileType* type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
+    if(type) {
+        wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
+        wxDELETE(type);
+        if(cmd.IsEmpty() == false) {
+            e.Skip(false);
+            wxExecute(cmd);
+        }
+    }
+#endif
 }
 
 void wxFormBuilder::OnWxFBTerminated(wxCommandEvent& e)

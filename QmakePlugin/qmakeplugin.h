@@ -68,7 +68,7 @@ public:
     void OnGetBuildCommand(clBuildEvent& event);
     void OnGetIsPluginMakefile(clBuildEvent& event);
     void OnNewQmakeBasedProject(wxCommandEvent& event);
-    void OnOpenFile(wxCommandEvent& event);
+    void OnOpenFile(clCommandEvent& event);
     void OnExportMakefile(wxCommandEvent& event);
     void OnQmakeOutput(wxCommandEvent& event);
     void OnQmakeTerminated(wxCommandEvent &event);

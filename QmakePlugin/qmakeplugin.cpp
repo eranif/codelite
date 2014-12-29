@@ -100,7 +100,7 @@ QMakePlugin::QMakePlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
 }
 
 QMakePlugin::~QMakePlugin() { delete m_conf; }
@@ -206,7 +206,7 @@ void QMakePlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
     wxTheApp->Disconnect(XRCID("new_qmake_project"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject),
@@ -528,31 +528,27 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
     }
 }
 
-void QMakePlugin::OnOpenFile(wxCommandEvent& event)
+void QMakePlugin::OnOpenFile(clCommandEvent& event)
 {
-    wxString* fn = (wxString*)event.GetClientData();
-    if(fn) {
-        // launch it with the default application
-        wxFileName fullpath(*fn);
-        if(fullpath.GetExt().MakeLower() != wxT("ui")) {
-            event.Skip();
-            return;
-        }
+    event.Skip();
+    
+    // launch it with the default application
+    wxFileName fullpath(event.GetFileName());
+    if(fullpath.GetExt().MakeLower() != wxT("ui")) {
+        return;
+    }
 
-        wxMimeTypesManager* mgr = wxTheMimeTypesManager;
-        wxFileType* type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
-        if(type) {
-            wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
-            delete type;
+    wxMimeTypesManager* mgr = wxTheMimeTypesManager;
+    wxFileType* type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
+    if(type) {
+        wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
+        delete type;
 
-            if(cmd.IsEmpty() == false) {
-                wxExecute(cmd);
-                return;
-            }
+        if(cmd.IsEmpty() == false) {
+            event.Skip(false);
+            ::wxExecute(cmd);
         }
     }
-    // we failed, call event.Skip()
-    event.Skip();
 }
 
 void QMakePlugin::OnExportMakefile(wxCommandEvent& event)

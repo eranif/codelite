@@ -51,7 +51,7 @@ protected:
     void OnNewFrame(wxCommandEvent& e);
     void OnNewPanel(wxCommandEvent& e);
     void OpenWithWxFb(wxCommandEvent& e);
-    void OnOpenFile(wxCommandEvent& e);
+    void OnOpenFile(clCommandEvent& e);
     void OnWxFBTerminated(wxCommandEvent& e);
     void OnShowFileContextMenu(clContextMenuEvent &event);
     

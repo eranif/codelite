@@ -38,6 +38,7 @@
 #include <wx/mimetype.h>
 #include "editor_config.h"
 #include "fileutils.h"
+#include "cl_command_event.h"
 
 FileExplorerTab::FileExplorerTab(wxWindow* parent)
     : FileExplorerBase(parent)
@@ -113,8 +114,16 @@ void FileExplorerTab::OnContextMenu(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     wxMenu* menu = GetBaseContextMenu();
     if(item.IsOk() && menu) {
-        // let the plugins hook their content. HookPopupMenu can work only once
-        // further calls are harmless
+        wxArrayString folders, files;
+        GetSelections(folders, files);
+        if(!files.IsEmpty()) {
+            // Let the plugins alter it
+            clContextMenuEvent event(wxEVT_CONTEXT_MENU_FILE);
+            event.SetMenu(menu);
+            event.SetStrings(files);
+            EventNotifier::Get()->ProcessEvent(event);
+        }
+
         PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileExplorer);
         PopupMenu(menu);
     }
@@ -144,9 +153,9 @@ void FileExplorerTab::DoOpenItem(const wxString& path)
     } else {
 
         // Send event to the plugins to see if any plugin want to handle this file differently
-        if(SendCmdEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED, &fp)) {
-            return;
-        }
+        clCommandEvent event(wxEVT_TREE_ITEM_FILE_ACTIVATED);
+        event.SetFileName(fp);
+        if(EventNotifier::Get()->ProcessEvent(event)) return;
 
         clMainFrame::Get()->GetMainBook()->OpenFile(fp, wxEmptyString);
     }
@@ -415,14 +424,8 @@ bool FileExplorerTab::GetSelection(wxFileName& path)
 
 void FileExplorerTab::GetSelectedDirectories(wxArrayString& paths)
 {
-    wxArrayString selections;
-    m_genericDirCtrl->GetPaths(selections);
-
-    for(size_t i = 0; i < selections.GetCount(); ++i) {
-        if(wxFileName::DirExists(selections.Item(i))) {
-            paths.Add(selections.Item(i));
-        }
-    }
+    wxArrayString files;
+    GetSelections(paths, files);
 }
 
 wxMenu* FileExplorerTab::GetBaseContextMenu()
@@ -433,4 +436,18 @@ wxMenu* FileExplorerTab::GetBaseContextMenu()
         searchNodeItem->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
     }
     return menu;
+}
+
+void FileExplorerTab::GetSelections(wxArrayString& folders, wxArrayString& files)
+{
+    wxArrayString selections;
+    m_genericDirCtrl->GetPaths(selections);
+
+    for(size_t i = 0; i < selections.GetCount(); ++i) {
+        if(wxFileName::DirExists(selections.Item(i))) {
+            folders.Add(selections.Item(i));
+        } else if(wxFileName::FileExists(selections.Item(i))) {
+            files.Add(selections.Item(i));
+        }
+    }
 }

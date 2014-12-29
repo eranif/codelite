@@ -40,6 +40,7 @@
 #include "windowattrmanager.h"
 #include <vector>
 #include <codelite_events.h>
+#include "event_notifier.h"
 
 BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
@@ -328,9 +329,9 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
     // send event to the plugins to see if they want
     // to open this file
     wxString file_path = selection.m_file;
-    if(SendCmdEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED, &file_path)) {
-        return;
-    }
+    clCommandEvent activateEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED);
+    activateEvent.SetFileName(file_path);
+    if(EventNotifier::Get()->ProcessEvent(activateEvent)) return;
 
     if(manager && manager->OpenFile(selection.m_file, wxEmptyString, selection.m_line)) {
         IEditor* editor = manager->GetActiveEditor();

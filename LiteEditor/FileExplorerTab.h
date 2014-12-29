@@ -60,6 +60,10 @@ public:
      * @brief return list of selected folders only (filter out non folder entries)
      */
     void GetSelectedDirectories(wxArrayString& paths);
+    /**
+     * @brief return 2 arrays one for files and second for folders
+     */
+    void GetSelections(wxArrayString &folders, wxArrayString &files);
     
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);

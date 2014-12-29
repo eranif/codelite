@@ -68,9 +68,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_EXP_REFRESHED, wxCommandEven
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_FILE_EXP_ITEM_EXPANDING, wxCommandEvent);
 
 // an attempt to open a file using double click / ENTER was made
-// on an item in the 'File Explorer' OR from the 'Workspace' tree
-// clientData is the full path of the file (wxString*)
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEvent);
+// Use clCommandEvent.GetFileName() to get the file name
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEvent);
 
 // File(s) were added to the project
 // Event type: clCommandEvent

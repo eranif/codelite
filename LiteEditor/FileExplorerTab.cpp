@@ -39,6 +39,7 @@
 #include "editor_config.h"
 #include "fileutils.h"
 #include "cl_command_event.h"
+#include "event_notifier.h"
 
 FileExplorerTab::FileExplorerTab(wxWindow* parent)
     : FileExplorerBase(parent)
@@ -118,10 +119,10 @@ void FileExplorerTab::OnContextMenu(wxTreeEvent& event)
         GetSelections(folders, files);
         if(!files.IsEmpty()) {
             // Let the plugins alter it
-            clContextMenuEvent event(wxEVT_CONTEXT_MENU_FILE);
-            event.SetMenu(menu);
-            event.SetStrings(files);
-            EventNotifier::Get()->ProcessEvent(event);
+            clContextMenuEvent fileMenuEvent(wxEVT_CONTEXT_MENU_FILE);
+            fileMenuEvent.SetMenu(menu);
+            fileMenuEvent.SetStrings(files);
+            EventNotifier::Get()->ProcessEvent(fileMenuEvent);
         }
 
         PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileExplorer);

@@ -22,6 +22,8 @@
     <File Name="gitSettingsDlg.h"/>
     <File Name="GitLocator.h"/>
     <File Name="GitLocator.cpp"/>
+    <File Name="GitCommandProcessor.h"/>
+    <File Name="GitCommandProcessor.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="icons">
     <File Name="icons/icon_git.xpm"/>

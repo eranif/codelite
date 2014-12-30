@@ -117,12 +117,17 @@ void FileExplorerTab::OnContextMenu(wxTreeEvent& event)
     if(item.IsOk() && menu) {
         wxArrayString folders, files;
         GetSelections(folders, files);
-        if(!files.IsEmpty()) {
+        if(!files.IsEmpty() && folders.IsEmpty()) {
             // Let the plugins alter it
             clContextMenuEvent fileMenuEvent(wxEVT_CONTEXT_MENU_FILE);
             fileMenuEvent.SetMenu(menu);
             fileMenuEvent.SetStrings(files);
             EventNotifier::Get()->ProcessEvent(fileMenuEvent);
+        } else if(folders.GetCount() == 1) {
+            clContextMenuEvent folderMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
+            folderMenuEvent.SetMenu(menu);
+            folderMenuEvent.SetPath(folders.Item(0));
+            EventNotifier::Get()->ProcessEvent(folderMenuEvent);
         }
 
         PluginManager::Get()->HookPopupMenu(menu, MenuTypeFileExplorer);

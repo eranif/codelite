@@ -63,6 +63,7 @@
 #include "dirsaver.h"
 #include <wx/msgdlg.h>
 #include <wx/utils.h>
+#include "GitCommandProcessor.h"
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -147,6 +148,7 @@ GitPlugin::GitPlugin(IManager* manager)
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
 
     // Connect the file context menu event handlers
     m_eventHandler->Connect(XRCID("git_add_file"),
@@ -272,7 +274,7 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     item->SetSubMenu(m_pluginMenu);
     item->SetBitmap(m_images.Bitmap("git"));
     pluginsMenu->Append(item);
-    
+
     m_eventHandler->Bind(wxEVT_COMMAND_MENU_SELECTED, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
     m_eventHandler->Connect(XRCID("git_set_repository"),
                             wxEVT_COMMAND_MENU_SELECTED,
@@ -529,6 +531,7 @@ void GitPlugin::UnPlug()
                                NULL,
                                this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
 }
 /*******************************************************************************/
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
@@ -624,17 +627,14 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
 
     wxArrayString files;
     files.swap(m_filesSelected);
-    
+
     if(!files.IsEmpty()) {
         DoAddFiles(files);
     }
 }
 
 /*******************************************************************************/
-void GitPlugin::OnFileDeleteSelected(wxCommandEvent& e)
-{
-    RefreshFileListView();
-}
+void GitPlugin::OnFileDeleteSelected(wxCommandEvent& e) { RefreshFileListView(); }
 
 /*******************************************************************************/
 void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
@@ -1595,8 +1595,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
 
                 wxArrayString files = dlg.GetSelectedFiles();
                 if(files.GetCount() != 0) {
-                    for(unsigned i = 0; i < files.GetCount(); ++i)
-                        arg << files.Item(i) << wxT(" ");
+                    for(unsigned i = 0; i < files.GetCount(); ++i) arg << files.Item(i) << wxT(" ");
                 }
                 gitAction ga(gitCommit, arg);
                 m_gitActionQueue.push(ga);
@@ -2006,6 +2005,7 @@ void GitPlugin::DoCleanup()
     m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View"));
     m_mgr->GetDockingManager()->Update();
     m_filesSelected.Clear();
+    m_selectedFolder.Clear();
 }
 
 void GitPlugin::DoCreateTreeImages()
@@ -2342,7 +2342,7 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
     wxMenu* menu = new wxMenu();
     wxMenu* parentMenu = event.GetMenu();
     m_filesSelected = event.GetStrings();
-    
+
     wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"), _("Add file"));
     item->SetBitmap(m_images.Bitmap("gitFileAdd"));
     menu->Append(item);
@@ -2354,7 +2354,7 @@ void GitPlugin::OnFileMenu(clContextMenuEvent& event)
     item = new wxMenuItem(menu, XRCID("git_diff_file"), _("Show file diff"));
     item->SetBitmap(m_images.Bitmap("gitDiffs"));
     menu->Append(item);
-    
+
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
     item->SetBitmap(m_images.Bitmap("git"));
     parentMenu->AppendSeparator();
@@ -2367,15 +2367,48 @@ void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
     wxString bashcommand;
     if(locator.MSWGetGitShellCommand(bashcommand)) {
         DirSaver ds;
-        IEditor *editor = m_mgr->GetActiveEditor();
+        IEditor* editor = m_mgr->GetActiveEditor();
         if(editor) {
             ::wxSetWorkingDirectory(editor->GetFileName().GetPath());
         }
         ::WrapInShell(bashcommand);
         ::wxExecute(bashcommand);
     } else {
-        ::wxMessageBox(_("Don't know how to start MSYSGit..."), "Git", wxICON_WARNING|wxOK|wxCENTER);
+        ::wxMessageBox(_("Don't know how to start MSYSGit..."), "Git", wxICON_WARNING | wxOK | wxCENTER);
     }
 }
 
+void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    wxMenu* menu = new wxMenu();
+    wxMenu* parentMenu = event.GetMenu();
+    m_selectedFolder = event.GetPath();
 
+    wxMenuItem* item = new wxMenuItem(menu, XRCID("get_pull_rebase_folder"), _("pull --rebase"));
+    item->SetBitmap(m_images.Bitmap("gitPull"));
+    menu->Append(item);
+
+    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
+    item->SetBitmap(m_images.Bitmap("git"));
+    parentMenu->AppendSeparator();
+    parentMenu->Append(item);
+
+    parentMenu->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
+}
+
+void GitPlugin::OnCommandCompleted(const wxString& output) { m_console->AddText(output); }
+
+void GitPlugin::OnSimplePullRebase(wxCommandEvent& event)
+{
+    wxString command = m_pathGITExecutable;
+    // Wrap the executable with quotes if needed
+    command.Trim().Trim(false);
+    ::WrapWithQuotes(command);
+
+    command << " --no-pager pull --rebase";
+    GitCommandProcessor* commandProcessor = new GitCommandProcessor(this);
+    commandProcessor->ExecuteCommand(command, m_selectedFolder);
+    m_selectedFolder.Clear();
+}

@@ -47,6 +47,7 @@
 #include "cl_command_event.h"
 #include "gitentry.h"
 #include "cl_command_event.h"
+#include "gitui.h"
 
 class gitAction
 {
@@ -139,7 +140,8 @@ class GitPlugin : public IPlugin
     wxFileName m_workspaceFilename;
     GitCommitListDlg* m_commitListDlg;
     wxArrayString m_filesSelected;
-
+    wxString m_selectedFolder;
+    
 private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
@@ -180,7 +182,8 @@ private:
     void OnProcessTerminated(wxCommandEvent& event);
     void OnProcessOutput(wxCommandEvent& event);
     void OnFileMenu(clContextMenuEvent& event);
-
+    void OnFolderMenu(clContextMenuEvent& event);
+    
     void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);
@@ -221,6 +224,9 @@ private:
     void OnEnableGitRepoExists(wxUpdateUIEvent& e);
     void OnClone(wxCommandEvent& e);
 
+    // Event handlers from folder context menu
+    void OnSimplePullRebase(wxCommandEvent& event);
+
 public:
     GitPlugin(IManager* manager);
     ~GitPlugin();
@@ -242,6 +248,11 @@ public:
     void UndoAddFiles(const wxArrayString& files);
 
     void RefreshFileListView();
+
+    /**
+     * @brief simple git command executioin completed. Display its output etc
+     */
+    void OnCommandCompleted(const wxString& output);
 
     //--------------------------------------------
     // Abstract methods

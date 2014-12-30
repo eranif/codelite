@@ -53,6 +53,7 @@
 #include "ColoursAndFontsManager.h"
 #include "clKeyboardManager.h"
 #include "clInitializeDialog.h"
+#include "event_notifier.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -652,10 +653,12 @@ bool CodeLiteApp::OnInit()
     
     // determine if the 'upgrade' frame needs to be started instead of the 
     // standard main frame
+    bool needsLexerLoadedEvent(false);
     if(ColoursAndFontsManager::Get().IsUpgradeNeeded()) {
         clInitializeDialog initDialog(NULL);
         SetTopWindow(&initDialog);
         initDialog.ShowModal();
+        needsLexerLoadedEvent = true;
     } else {
         // Make sure that the colours and fonts manager is instantiated
         ColoursAndFontsManager::Get().Load();
@@ -666,6 +669,13 @@ bool CodeLiteApp::OnInit()
     m_pMainFrame = clMainFrame::Get();
     m_pMainFrame->Show(TRUE);
     SetTopWindow(m_pMainFrame);
+    
+    if (needsLexerLoadedEvent) {
+        // Though a wxEVT_COLOURS_AND_FONTS_LOADED will already have been sent, it won't have done anything because
+        // the frame wasn't instantiated/Connect()ed at that time. So a session won't be loaded unless...
+        clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
     
     long lineNumber(0);
     parser.Found(wxT("l"), &lineNumber);

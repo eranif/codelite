@@ -2393,8 +2393,11 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     item->SetBitmap(m_images.Bitmap("git"));
     parentMenu->AppendSeparator();
     parentMenu->Append(item);
-
-    parentMenu->Bind(
+    
+    // this is needed in order for the events to route to the git plugin
+    // this is only needed when the menu is a popup menu
+    menu->SetNextHandler(this);
+    menu->Bind(
         wxEVT_COMMAND_MENU_SELECTED, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
 }
 

@@ -1,5 +1,6 @@
 #include "GitCommandProcessor.h"
 #include "git.h"
+#include "GitConsole.h"
 
 BEGIN_EVENT_TABLE(GitCommandProcessor, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, GitCommandProcessor::OnProcessOutput)
@@ -17,8 +18,11 @@ GitCommandProcessor::~GitCommandProcessor() { wxDELETE(m_process); }
 void GitCommandProcessor::ExecuteCommand(const wxString& command, const wxString& workingDirectory)
 {
     m_output.Clear();
+    m_plugin->GetManager()->ShowOutputPane("git");
+    m_plugin->GetConsole()->AddText(command + " [wd: " + workingDirectory + "]");
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
     if(!m_process) {
+        m_plugin->GetConsole()->AddText(_("Git command execution failed!"));
         delete this;
     }
 }

@@ -141,7 +141,7 @@ class GitPlugin : public IPlugin
     GitCommitListDlg* m_commitListDlg;
     wxArrayString m_filesSelected;
     wxString m_selectedFolder;
-    
+
 private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
@@ -183,7 +183,7 @@ private:
     void OnProcessOutput(wxCommandEvent& event);
     void OnFileMenu(clContextMenuEvent& event);
     void OnFolderMenu(clContextMenuEvent& event);
-    
+
     void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);
@@ -231,6 +231,7 @@ public:
     GitPlugin(IManager* manager);
     ~GitPlugin();
 
+    GitConsole* GetConsole() { return m_console; }
     const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }
     IProcess* GetProcess() { return m_process; }
 

@@ -88,7 +88,14 @@ class IManager
 public:
     IManager() {}
     virtual ~IManager() {}
-
+    
+    /**
+     * @brief show the output pane and if provided, select 'selectedWindow'
+     * @param selectWindow tab within the 'Output Pane' to select, if empty don't change
+     * the selection
+     */
+    virtual void ShowOutputPane(const wxString &selectWindow = "") = 0;
+    
     // return the current editor
     /**
      * @brief return the active editor

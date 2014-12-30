@@ -150,6 +150,7 @@ public:
     virtual void LoadWorkspaceSession(const wxFileName& workspaceFile);
     virtual void OpenFindInFileForPath(const wxString &path);
     virtual void OpenFindInFileForPaths(const wxArrayString &paths);
+    virtual void ShowOutputPane(const wxString &selectedWindow = "");
     //------------------------------------
     // End of IManager interface
     //------------------------------------

@@ -790,3 +790,8 @@ void PluginManager::OpenFindInFileForPaths(const wxArrayString& paths)
     ff.SetClientData(new wxArrayString(paths));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
 }
+
+void PluginManager::ShowOutputPane(const wxString& selectedWindow)
+{
+    ManagerST::Get()->ShowOutputPane(selectedWindow);
+}

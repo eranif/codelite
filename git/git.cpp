@@ -149,7 +149,8 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
-
+    Bind(wxEVT_MENU, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
+    
     // Connect the file context menu event handlers
     m_eventHandler->Connect(XRCID("git_add_file"),
                             wxEVT_COMMAND_MENU_SELECTED,
@@ -532,7 +533,9 @@ void GitPlugin::UnPlug()
                                this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
+    Unbind(wxEVT_MENU, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
 }
+
 /*******************************************************************************/
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 {
@@ -2393,12 +2396,10 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     item->SetBitmap(m_images.Bitmap("git"));
     parentMenu->AppendSeparator();
     parentMenu->Append(item);
-    
+
     // this is needed in order for the events to route to the git plugin
     // this is only needed when the menu is a popup menu
-    menu->SetNextHandler(this);
-    menu->Bind(
-        wxEVT_COMMAND_MENU_SELECTED, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
+    parentMenu->SetNextHandler(this);
 }
 
 void GitPlugin::OnCommandCompleted(const wxString& output) { m_console->AddText(output); }

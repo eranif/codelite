@@ -42,7 +42,7 @@ private:
     ColoursAndFontsManager();
     virtual ~ColoursAndFontsManager();
 
-    void LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles);
+    void LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers = false);
     void LoadOldXmls(const wxString& path);
     LexerConf::Ptr_t DoAddLexer(wxXmlNode* node);
     void Clear();
@@ -90,7 +90,7 @@ public:
     /**
      * @brief save the lexers into their proper file name
      */
-    void Save();
+    void Save(bool userLexers = false);
 
     /**
      * @brief save a single lexer

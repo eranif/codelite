@@ -208,7 +208,7 @@ void ColoursAndFontsManager::Load()
     thr->Run();
 }
 
-void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles)
+void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers)
 {
     // Each XMl represents a single lexer
     for(size_t i = 0; i < xmlFiles.size(); ++i) {
@@ -218,7 +218,7 @@ void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlF
 
     if(IsUpgradeNeeded()) {
         // We tuned the colours, save them back to the file system
-        Save();
+        Save(userLexers);
     }
 }
 
@@ -408,7 +408,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
     }
 }
 
-void ColoursAndFontsManager::Save()
+void ColoursAndFontsManager::Save(bool userLexers)
 {
     // count the total lexers count
     int lexersCount(0);
@@ -434,7 +434,8 @@ void ColoursAndFontsManager::Save()
             if(IsUpgradeNeeded()) {
                 clCommandEvent event(wxEVT_UPGRADE_LEXERS_PROGRESS);
                 event.SetInt(lexersCount); // the progress range
-                event.SetString(wxString() << _("Upgrading theme: ") << lexers.at(i)->GetThemeName() << ", "
+                wxString label = userLexers ? _("Upgrading user theme: ") : _("Upgrading theme: ");
+                event.SetString(wxString() << label << lexers.at(i)->GetThemeName() << ", "
                                            << lexers.at(i)->GetName());
                 EventNotifier::Get()->ProcessEvent(event);
             }
@@ -682,7 +683,7 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
             CL_DEBUG("Using user lexer XML files from %s ...", cppLexerDefault.GetPath());
             // this function loads and delete the old xml files so they won't be located
             // next time we search for them
-            LoadNewXmls(userLexers);
+            LoadNewXmls(userLexers, true);
         }
     }
 

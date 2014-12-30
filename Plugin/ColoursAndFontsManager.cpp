@@ -219,12 +219,6 @@ void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlF
     if(IsUpgradeNeeded()) {
         // We tuned the colours, save them back to the file system
         Save();
-        
-        clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
-        clCommandEvent event(wxEVT_UPGRADE_LEXERS_END);
-        EventNotifier::Get()->AddPendingEvent(event);
-        
-        m_lexersVersion = LEXERS_VERSION;
     }
 }
 
@@ -692,6 +686,15 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
         }
     }
 
+    if(IsUpgradeNeeded()) {
+        // The upgrade has now completed; so tell everyone, and set the new version
+        clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
+        clCommandEvent event(wxEVT_UPGRADE_LEXERS_END);
+        EventNotifier::Get()->AddPendingEvent(event);
+        
+        m_lexersVersion = LEXERS_VERSION;
+    }
+        
     // Notify about colours and fonts configuration loaded
     clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);
     EventNotifier::Get()->AddPendingEvent(event);

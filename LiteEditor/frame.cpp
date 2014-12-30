@@ -2639,14 +2639,12 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent& event)
     if(EventNotifier::Get()->ProcessEvent(e)) return;
 
     wxUnusedVar(event);
-    NewWorkspaceDlg* dlg = new NewWorkspaceDlg(this);
-    if(dlg->ShowModal() == wxID_OK) {
-        wxString fullname = dlg->GetFilePath();
-
+    NewWorkspaceDlg dlg(this);
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString fullname = dlg.GetFilePath();
         wxFileName fn(fullname);
         ManagerST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath());
     }
-    dlg->Destroy();
 }
 
 // Project->New Project

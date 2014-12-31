@@ -166,6 +166,8 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED, wxCommandEventHandler(SubversionView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+    
+    ::clRecalculateSTCHScrollBar(m_sci);
 }
 
 SubversionView::~SubversionView()
@@ -1476,4 +1478,9 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
     m_plugin->GetManager()->AddPage(diffPanel, _("Svn Diff: ") + fileBeingDiffed.GetFullName(), _("Svn Diff: ") + fileBeingDiffed.GetFullPath(),wxNullBitmap, true);
 
     wxDELETE(m_codeliteEcho);
+}
+void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
+{
+    event.Skip();
+    ::clRecalculateSTCHScrollBar(m_sci);
 }

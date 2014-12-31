@@ -70,6 +70,7 @@ public:
     void PulseProgress();
 
 protected:
+    virtual void OnStclogStcChange(wxStyledTextEvent& event);
     virtual void OnApplyPatch(wxCommandEvent& event);
     virtual void OnFileActivated(wxDataViewEvent& event);
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event);

@@ -1802,34 +1802,7 @@ bool LEditor::MatchBraceBack(const wxChar& chCloseBrace, const long& pos, long& 
 void LEditor::RecalcHorizontalScrollbar()
 {
     if(m_autoAdjustHScrollbarWidth) {
-
-        // recalculate and set the length of horizontal scrollbar
-        int maxPixel = 0;
-        int startLine = GetFirstVisibleLine();
-        int endLine = startLine + LinesOnScreen();
-        if(endLine >= (GetLineCount() - 1)) endLine--;
-
-        for(int i = startLine; i <= endLine; i++) {
-            int visibleLine = (int)DocLineFromVisible(i);      // get actual visible line, folding may offset lines
-            int endPosition = GetLineEndPosition(visibleLine); // get character position from begin
-            int beginPosition = PositionFromLine(visibleLine); // and end of line
-
-            wxPoint beginPos = PointFromPosition(beginPosition);
-            wxPoint endPos = PointFromPosition(endPosition);
-
-            int curLen = endPos.x - beginPos.x;
-
-            if(maxPixel < curLen) // If its the largest line yet
-                maxPixel = curLen;
-        }
-
-        if(maxPixel == 0) maxPixel++; // make sure maxPixel is valid
-
-        int currentLength = GetScrollWidth(); // Get current scrollbar size
-        if(currentLength != maxPixel) {
-            // And if it is not the same, update it
-            SetScrollWidth(maxPixel);
-        }
+        ::clRecalculateSTCHScrollBar(this);
     }
 }
 

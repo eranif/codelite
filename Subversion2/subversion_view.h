@@ -89,6 +89,7 @@ public:
     void FinishDiff(wxString output, wxFileName fileBeingDiffed);
 
 protected:
+    virtual void OnSciStcChange(wxStyledTextEvent& event);
     virtual void OnCharAdded(wxStyledTextEvent& event);
     virtual void OnKeyDown(wxKeyEvent& event);
     virtual void OnUpdateUI(wxStyledTextEvent& event);
@@ -191,4 +192,3 @@ public:
 };
 
 #endif // __subversion_page__
-

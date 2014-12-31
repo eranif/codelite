@@ -8593,7 +8593,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
+       "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -8765,7 +8765,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxDV_NO_HEADER", "wxDV_MULTIPLE", "wxBORDER_THEME"],
+             "m_styles": ["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxBORDER_THEME"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -9335,7 +9335,14 @@
                "m_label": "Keywords Set 5",
                "m_value": ""
               }],
-             "m_events": [],
+             "m_events": [{
+               "m_eventName": "wxEVT_STC_CHANGE",
+               "m_eventClass": "wxStyledTextEvent",
+               "m_eventHandler": "wxStyledTextEventHandler",
+               "m_functionNameAndSignature": "OnStclogStcChange(wxStyledTextEvent& event)",
+               "m_description": "",
+               "m_noBody": false
+              }],
              "m_children": []
             }]
           }]

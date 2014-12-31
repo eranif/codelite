@@ -52,6 +52,7 @@ protected:
     virtual void OnUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnCharAdded(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnSciStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }

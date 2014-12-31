@@ -39,6 +39,7 @@
 #include "drawingutils.h"
 #include "cl_aui_tool_stickness.h"
 #include "macros.h"
+#include "globals.h"
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                       \
@@ -244,6 +245,9 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
          wxAuiToolBarEventHandler(GitConsole::OnGitRebaseDropdown),
          this,
          XRCID("git_rebase"));
+
+    // Adjust the h-scrollbar of git log
+    ::clRecalculateSTCHScrollBar(m_stcLog);
 }
 
 GitConsole::~GitConsole()
@@ -324,16 +328,6 @@ void GitConsole::OnConfigurationChanged(wxCommandEvent& e)
     GitEntry data;
     conf.ReadItem(&data);
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
-}
-
-static wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
-{
-    wxIcon icn;
-    icn.CopyFromBitmap(bmp);
-    wxDataViewIconText ict(text, icn);
-    wxVariant v;
-    v << ict;
-    return v;
 }
 
 void GitConsole::UpdateTreeView(const wxString& output)
@@ -695,4 +689,9 @@ bool GitConsole::IsDirty() const
     bool hasNew = m_itemNew.IsOk() && m_dvFilesModel->HasChildren(m_itemNew);
 
     return hasDeleted || hasModified || hasNew;
+}
+void GitConsole::OnStclogStcChange(wxStyledTextEvent& event)
+{
+    event.Skip();
+    ::clRecalculateSTCHScrollBar(m_stcLog);
 }

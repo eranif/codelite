@@ -331,6 +331,7 @@ protected:
     virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnFileActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxAuiToolBar* GetAuibar() { return m_auibar; }

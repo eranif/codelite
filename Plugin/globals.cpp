@@ -110,23 +110,11 @@ public:
     {
     }
 
-    virtual ~clInternalEventHandlerData()
-    {
-        wxDELETE(m_arg);
-    }
+    virtual ~clInternalEventHandlerData() { wxDELETE(m_arg); }
 
-    wxClientData* GetArg() const
-    {
-        return m_arg;
-    }
-    clEventFunc_t GetFuncPtr() const
-    {
-        return m_funcPtr;
-    }
-    wxObject* GetThis()
-    {
-        return m_this;
-    }
+    wxClientData* GetArg() const { return m_arg; }
+    clEventFunc_t GetFuncPtr() const { return m_funcPtr; }
+    wxObject* GetThis() { return m_this; }
 };
 
 class clInternalEventHandler : public wxEvtHandler
@@ -233,12 +221,8 @@ static wxString MacGetInstallPath()
 #include <dirent.h>
 #endif
 
-struct ProjListCompartor
-{
-    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const
-    {
-        return p1->GetName() > p2->GetName();
-    }
+struct ProjListCompartor {
+    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
 };
 
 static bool IsBOMFile(const char* file_name)
@@ -325,20 +309,14 @@ static bool ReadFile8BitData(const char* file_name, wxString& content)
     return content.IsEmpty() == false;
 }
 
-bool SendCmdEvent(int eventId, void* clientData)
-{
-    return EventNotifier::Get()->SendCommandEvent(eventId, clientData);
-}
+bool SendCmdEvent(int eventId, void* clientData) { return EventNotifier::Get()->SendCommandEvent(eventId, clientData); }
 
 bool SendCmdEvent(int eventId, void* clientData, const wxString& str)
 {
     return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str);
 }
 
-void PostCmdEvent(int eventId, void* clientData)
-{
-    EventNotifier::Get()->PostCommandEvent(eventId, clientData);
-}
+void PostCmdEvent(int eventId, void* clientData) { EventNotifier::Get()->PostCommandEvent(eventId, clientData); }
 
 void SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText, int imgId)
 {
@@ -720,10 +698,7 @@ bool CopyToClipboard(const wxString& text)
     return ret;
 }
 
-wxColour MakeColourLighter(wxColour color, float level)
-{
-    return DrawingUtils::LightColour(color, level);
-}
+wxColour MakeColourLighter(wxColour color, float level) { return DrawingUtils::LightColour(color, level); }
 
 bool IsFileReadOnly(const wxFileName& filename)
 {
@@ -769,10 +744,7 @@ wxString ArrayToSmiColonString(const wxArrayString& array)
     return result.BeforeLast(wxT(';'));
 }
 
-void StripSemiColons(wxString& str)
-{
-    str.Replace(wxT(";"), wxT(" "));
-}
+void StripSemiColons(wxString& str) { str.Replace(wxT(";"), wxT(" ")); }
 
 wxString NormalizePath(const wxString& path)
 {
@@ -784,10 +756,7 @@ wxString NormalizePath(const wxString& path)
     return normalized_path;
 }
 
-time_t GetFileModificationTime(const wxFileName& filename)
-{
-    return GetFileModificationTime(filename.GetFullPath());
-}
+time_t GetFileModificationTime(const wxFileName& filename) { return GetFileModificationTime(filename.GetFullPath()); }
 
 time_t GetFileModificationTime(const wxString& filename)
 {
@@ -1270,18 +1239,11 @@ wxString wxIntToString(int val)
 // BOM
 ////////////////////////////////////////
 
-BOM::BOM(const char* buffer, size_t len)
-{
-    m_bom.AppendData(buffer, len);
-}
+BOM::BOM(const char* buffer, size_t len) { m_bom.AppendData(buffer, len); }
 
-BOM::BOM()
-{
-}
+BOM::BOM() {}
 
-BOM::~BOM()
-{
-}
+BOM::~BOM() {}
 
 wxFontEncoding BOM::Encoding()
 {
@@ -1321,10 +1283,10 @@ wxFontEncoding BOM::Encoding(const char* buff)
     wxFontEncoding encoding = wxFONTENCODING_SYSTEM; /* -1 */
 
     static const char UTF32be[] = { 0x00, 0x00, (char)0xfe, (char)0xff };
-    static const char UTF32le[] = {(char)0xff, (char)0xfe, 0x00, 0x00 };
-    static const char UTF16be[] = {(char)0xfe, (char)0xff };
-    static const char UTF16le[] = {(char)0xff, (char)0xfe };
-    static const char UTF8[] = {(char)0xef, (char)0xbb, (char)0xbf };
+    static const char UTF32le[] = { (char)0xff, (char)0xfe, 0x00, 0x00 };
+    static const char UTF16be[] = { (char)0xfe, (char)0xff };
+    static const char UTF16le[] = { (char)0xff, (char)0xfe };
+    static const char UTF8[] = { (char)0xef, (char)0xbb, (char)0xbf };
 
     if(memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
         encoding = wxFONTENCODING_UTF32BE;
@@ -1351,10 +1313,7 @@ void BOM::SetData(const char* buffer, size_t len)
     m_bom.AppendData(buffer, len);
 }
 
-int BOM::Len() const
-{
-    return m_bom.GetDataLen();
-}
+int BOM::Len() const { return m_bom.GetDataLen(); }
 
 void BOM::Clear()
 {
@@ -1364,15 +1323,9 @@ void BOM::Clear()
 
 /////////////////////////////////////////////////////////////////
 
-clEventDisabler::clEventDisabler()
-{
-    EventNotifier::Get()->DisableEvents(true);
-}
+clEventDisabler::clEventDisabler() { EventNotifier::Get()->DisableEvents(true); }
 
-clEventDisabler::~clEventDisabler()
-{
-    EventNotifier::Get()->DisableEvents(false);
-}
+clEventDisabler::~clEventDisabler() { EventNotifier::Get()->DisableEvents(false); }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // UTF8/16 conversions methods copied from wxScintilla
@@ -1713,7 +1666,7 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     pid = wxNOT_FOUND;
     tty.Clear();
     realPts.Clear();
-    
+
 #ifdef __WXMSW__
     // Windows
     wxUnusedVar(title);
@@ -1757,10 +1710,10 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
 #ifdef __WXGTK__
             // On GTK, redirection to TTY does not work with lldb
             // as a workaround, we create a symlink with different name
-            
+
             // Keep the real tty
             realPts = tty;
-            
+
             wxString symlinkName = tty;
             symlinkName.Replace("/dev/pts/", "/tmp/pts");
             wxString lnCommand;
@@ -2120,4 +2073,35 @@ wxString MakeCommandRunInBackground(const wxString& cmd)
 void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid)
 {
     grid->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
+}
+
+void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
+{
+    // recalculate and set the length of horizontal scrollbar
+    int maxPixel = 0;
+    int startLine = ctrl->GetFirstVisibleLine();
+    int endLine = startLine + ctrl->LinesOnScreen();
+    if(endLine >= (ctrl->GetLineCount() - 1)) endLine--;
+
+    for(int i = startLine; i <= endLine; i++) {
+        int visibleLine = (int)ctrl->DocLineFromVisible(i);      // get actual visible line, folding may offset lines
+        int endPosition = ctrl->GetLineEndPosition(visibleLine); // get character position from begin
+        int beginPosition = ctrl->PositionFromLine(visibleLine); // and end of line
+
+        wxPoint beginPos = ctrl->PointFromPosition(beginPosition);
+        wxPoint endPos = ctrl->PointFromPosition(endPosition);
+
+        int curLen = endPos.x - beginPos.x;
+
+        if(maxPixel < curLen) // If its the largest line yet
+            maxPixel = curLen;
+    }
+
+    if(maxPixel == 0) maxPixel++; // make sure maxPixel is valid
+
+    int currentLength = ctrl->GetScrollWidth(); // Get current scrollbar size
+    if(currentLength != maxPixel) {
+        // And if it is not the same, update it
+        ctrl->SetScrollWidth(maxPixel);
+    }
 }

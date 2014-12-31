@@ -500,4 +500,10 @@ WXDLLIMPEXP_SDK wxString MakeCommandRunInBackground(const wxString& cmd);
  * @brief enable use of checkbox for boolean properties
  */
 WXDLLIMPEXP_SDK void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid);
+
+/**
+ * @brief adjust the h-scroll bar of the control to fit the content
+ * @param ctrl
+ */
+WXDLLIMPEXP_SDK void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl);
 #endif // GLOBALS_H

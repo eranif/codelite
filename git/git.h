@@ -166,6 +166,7 @@ private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
     void DoExecuteCommands(const GitCommand::Vec_t& commands, const wxString& workingDir);
+    void DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput);
 
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
     void InitDefaults();
@@ -174,6 +175,7 @@ private:
     void ProcessGitActionQueue();
     void ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
+    void DoShowCommitDialog(const wxString& diff, wxString& commitArgs);
 
     /// Workspace management
     bool IsWorkspaceOpened() const;
@@ -246,7 +248,9 @@ private:
     void OnClone(wxCommandEvent& e);
 
     // Event handlers from folder context menu
-    void OnSimplePullRebase(wxCommandEvent& event);
+    void OnFolderPullRebase(wxCommandEvent& event);
+    void OnFolderCommit(wxCommandEvent& event);
+    void OnFolderPush(wxCommandEvent& event);
 
 public:
     GitPlugin(IManager* manager);

@@ -39,10 +39,8 @@
 class GitCommitDlg : public GitCommitDlgBase
 {
     std::map<wxString, wxString> m_diffMap;
-    wxString m_workingDir;
-
 public:
-    GitCommitDlg(wxWindow* parent, const wxString& repoDir);
+    GitCommitDlg(wxWindow* parent);
     ~GitCommitDlg();
 
     void AppendDiff(const wxString& diff);

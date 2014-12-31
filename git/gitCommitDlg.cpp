@@ -31,9 +31,8 @@
 #include "lexer_configuration.h"
 #include "editor_config.h"
 
-GitCommitDlg::GitCommitDlg(wxWindow* parent, const wxString& repoDir)
+GitCommitDlg::GitCommitDlg(wxWindow* parent)
     : GitCommitDlgBase(parent)
-    , m_workingDir(repoDir)
 {
     // read the configuration
     clConfig conf("git.conf");

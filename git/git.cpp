@@ -150,7 +150,10 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
-    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
+
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
 
     // Connect the file context menu event handlers
     m_eventHandler->Connect(XRCID("git_add_file"),
@@ -534,7 +537,9 @@ void GitPlugin::UnPlug()
                                this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
-    wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
+    wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
+    wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
+    wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
 }
 
 /*******************************************************************************/
@@ -1573,42 +1578,12 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
         DoShowDiffViewer(m_commandOutput, ga.arguments);
 
     } else if(ga.action == gitDiffRepoCommit) {
-        GitCommitDlg dlg(m_topWindow, m_repositoryDirectory);
-        dlg.AppendDiff(m_commandOutput);
-        if(dlg.ShowModal() == wxID_OK) {
-            wxString message = dlg.GetCommitMessage();
-            if(!message.IsEmpty() || dlg.IsAmending()) {
-
-                // amending?
-                wxString arg;
-                if(dlg.IsAmending()) {
-                    arg << " --amend ";
-                }
-
-                // Add the message
-                if(!message.IsEmpty()) {
-                    arg << "-m \"";
-                    arg << message;
-                    arg << "\" ";
-
-                } else {
-                    // we are amending previous commit, use the previous commit message
-                    // by passing the --no-edit switch
-                    arg << " --no-edit ";
-                }
-
-                wxArrayString files = dlg.GetSelectedFiles();
-                if(files.GetCount() != 0) {
-                    for(unsigned i = 0; i < files.GetCount(); ++i) arg << files.Item(i) << wxT(" ");
-                }
-                gitAction ga(gitCommit, arg);
-                m_gitActionQueue.push(ga);
-                AddDefaultActions();
-
-            } else {
-                wxMessageBox(
-                    _("No commit message given, aborting..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
-            }
+        wxString commitArgs;
+        DoShowCommitDialog(m_commandOutput, commitArgs);
+        if(!commitArgs.IsEmpty()) {
+            gitAction ga(gitCommit, commitArgs);
+            m_gitActionQueue.push(ga);
+            AddDefaultActions();
         }
 
     } else if(ga.action == gitDiffRepoShow) {
@@ -2389,17 +2364,25 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     wxMenu* parentMenu = event.GetMenu();
     m_selectedFolder = event.GetPath();
 
-    wxMenuItem* item = new wxMenuItem(menu, XRCID("get_pull_rebase_folder"), _("pull --rebase"));
+    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
     item->SetBitmap(m_images.Bitmap("gitPull"));
     menu->Append(item);
 
+    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit changes"));
+    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
+    menu->Append(item);
+    
+    item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
+    item->SetBitmap(m_images.Bitmap("gitPush"));
+    menu->Append(item);
+    
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
     item->SetBitmap(m_images.Bitmap("git"));
     parentMenu->AppendSeparator();
     parentMenu->Append(item);
 }
 
-void GitPlugin::OnSimplePullRebase(wxCommandEvent& event)
+void GitPlugin::OnFolderPullRebase(wxCommandEvent& event)
 {
     GitCommand::Vec_t commands;
     commands.push_back(GitCommand("stash", IProcessCreateWithHiddenConsole));
@@ -2414,6 +2397,10 @@ void GitPlugin::OnCommandEnded(clCommandEvent& event)
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
     m_commandProcessor = NULL;
+    
+    // Perform a tree refresh
+    wxCommandEvent dummy;
+    OnRefresh(dummy);
 }
 
 void GitPlugin::OnCommandOutput(clCommandEvent& event) { m_console->AddText(event.GetString()); }
@@ -2444,4 +2431,79 @@ void GitPlugin::DoExecuteCommands(const GitCommand::Vec_t& commands, const wxStr
     m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
     m_mgr->ShowOutputPane("git");
     m_commandProcessor->ExecuteCommand();
+}
+
+void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
+{
+    commitArgs.Clear();
+    GitCommitDlg dlg(m_topWindow);
+    dlg.AppendDiff(diff);
+    if(dlg.ShowModal() == wxID_OK) {
+        if(dlg.GetSelectedFiles().IsEmpty()) return;
+        wxString message = dlg.GetCommitMessage();
+        if(!message.IsEmpty() || dlg.IsAmending()) {
+
+            // amending?
+            if(dlg.IsAmending()) {
+                commitArgs << " --amend ";
+            }
+
+            // Add the message
+            if(!message.IsEmpty()) {
+                commitArgs << "-m \"";
+                commitArgs << message;
+                commitArgs << "\" ";
+
+            } else {
+                // we are amending previous commit, use the previous commit message
+                // by passing the --no-edit switch
+                commitArgs << " --no-edit ";
+            }
+            wxArrayString selectedFiles = dlg.GetSelectedFiles();
+            for(unsigned i = 0; i < selectedFiles.GetCount(); ++i) commitArgs << selectedFiles.Item(i) << wxT(" ");
+
+        } else {
+            wxMessageBox(_("No commit message given, aborting."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+        }
+    }
+}
+
+void GitPlugin::OnFolderCommit(wxCommandEvent& event)
+{
+    GitCommand::Vec_t commands;
+    // 1. Get diff output
+    wxString diff;
+    DoExecuteCommandSync("diff --no-color HEAD", m_selectedFolder, diff);
+    if(!diff.IsEmpty()) {
+        wxString commitArgs;
+        DoShowCommitDialog(diff, commitArgs);
+        if(!commitArgs.IsEmpty()) {
+            GitCommand::Vec_t commands;
+            commands.push_back(GitCommand("commit " + commitArgs, IProcessCreateDefault));
+            DoExecuteCommands(commands, m_selectedFolder);
+        }
+    }
+}
+
+void GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput)
+{
+    commandOutput.Clear();
+    wxString git = m_pathGITExecutable;
+    // Wrap the executable with quotes if needed
+    git.Trim().Trim(false);
+    ::WrapWithQuotes(git);
+    git << " --no-pager ";
+    git << command;
+    
+    IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync, workingDir));
+    if(gitProc) {
+        gitProc->WaitForTerminate(commandOutput);
+    }
+}
+
+void GitPlugin::OnFolderPush(wxCommandEvent& event)
+{
+    GitCommand::Vec_t commands;
+    commands.push_back(GitCommand("push", IProcessCreateConsole));
+    DoExecuteCommands(commands, m_selectedFolder);
 }

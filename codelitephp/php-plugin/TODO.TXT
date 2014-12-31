@@ -24,4 +24,4 @@ Usability:
 - Add support for laravel wizard
 
 NICE TO HAVE: 
-- Watches
+- XDebug watches

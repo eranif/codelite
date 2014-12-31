@@ -48,6 +48,7 @@
 #include "gitentry.h"
 #include "cl_command_event.h"
 #include "gitui.h"
+#include <vector>
 
 class clCommandProcessor;
 class gitAction
@@ -71,8 +72,25 @@ public:
     }
     ~gitAction() {}
 };
+
 class GitConsole;
 class GitCommitListDlg;
+
+struct GitCommand {
+    wxString baseCommand;
+    size_t processFlags;
+
+    GitCommand(const wxString& cmd, size_t console)
+        : baseCommand(cmd)
+        , processFlags(console)
+    {
+    }
+    GitCommand()
+        : processFlags(IProcessCreateDefault)
+    {
+    }
+    typedef std::vector<GitCommand> Vec_t;
+};
 
 class GitPlugin : public IPlugin
 {
@@ -143,12 +161,12 @@ class GitPlugin : public IPlugin
     wxArrayString m_filesSelected;
     wxString m_selectedFolder;
     clCommandProcessor* m_commandProcessor;
-    
+
 private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
-    void DoExecuteCommands(const wxArrayString& commands, const wxString& workingDir);
-    
+    void DoExecuteCommands(const GitCommand::Vec_t& commands, const wxString& workingDir);
+
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
     void InitDefaults();
     void AddDefaultActions();

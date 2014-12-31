@@ -2401,10 +2401,10 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
 
 void GitPlugin::OnSimplePullRebase(wxCommandEvent& event)
 {
-    wxArrayString commands;
-    commands.Add("stash");
-    commands.Add("pull --rebase");
-    commands.Add("stash pop");
+    GitCommand::Vec_t commands;
+    commands.push_back(GitCommand("stash", IProcessCreateWithHiddenConsole));
+    commands.push_back(GitCommand("pull --rebase", IProcessCreateConsole));
+    commands.push_back(GitCommand("stash pop", IProcessCreateWithHiddenConsole));
     DoExecuteCommands(commands, m_selectedFolder);
     m_selectedFolder.Clear();
 }
@@ -2413,13 +2413,14 @@ void GitPlugin::OnCommandEnded(clCommandEvent& event)
 {
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
+    m_commandProcessor = NULL;
 }
 
 void GitPlugin::OnCommandOutput(clCommandEvent& event) { m_console->AddText(event.GetString()); }
 
-void GitPlugin::DoExecuteCommands(const wxArrayString& commands, const wxString& workingDir)
+void GitPlugin::DoExecuteCommands(const GitCommand::Vec_t& commands, const wxString& workingDir)
 {
-    if(commands.IsEmpty()) return;
+    if(commands.empty()) return;
 
     if(m_commandProcessor) {
         // another command is already running, don't do anything
@@ -2431,11 +2432,12 @@ void GitPlugin::DoExecuteCommands(const wxArrayString& commands, const wxString&
     command.Trim().Trim(false);
     ::WrapWithQuotes(command);
     command << " --no-pager ";
-    m_commandProcessor = new clCommandProcessor(command + commands.Item(0), workingDir, IProcessCreateConsole);
+    m_commandProcessor =
+        new clCommandProcessor(command + commands.at(0).baseCommand, workingDir, commands.at(0).processFlags);
     clCommandProcessor* cur = m_commandProcessor;
-    for(size_t i = 1; i < commands.GetCount(); ++i) {
+    for(size_t i = 1; i < commands.size(); ++i) {
         clCommandProcessor* next =
-            new clCommandProcessor(command + commands.Item(i), workingDir, IProcessCreateConsole);
+            new clCommandProcessor(command + commands.at(i).baseCommand, workingDir, commands.at(i).processFlags);
         cur = cur->Link(next);
     }
     m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);

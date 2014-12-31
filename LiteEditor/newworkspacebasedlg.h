@@ -43,6 +43,14 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxTextCtrl* GetTextCtrlWorkspaceName() { return m_textCtrlWorkspaceName; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxTextCtrl* GetTextCtrlWorkspacePath() { return m_textCtrlWorkspacePath; }
+    wxButton* GetButtonWorkspaceDirPicker() { return m_buttonWorkspaceDirPicker; }
+    wxCheckBox* GetCheckBoxCreateSeparateDir() { return m_checkBoxCreateSeparateDir; }
+    wxStaticText* GetStaticTextWorkspaceFileName() { return m_staticTextWorkspaceFileName; }
+    wxPanel* GetPanelWorkspace() { return m_panelWorkspace; }
     NewWorkspaceBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewWorkspaceBase();
 };

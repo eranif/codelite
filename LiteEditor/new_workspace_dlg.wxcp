@@ -599,7 +599,7 @@
                 }, {
                  "type": "bool",
                  "m_label": "Auto Complete Directories:",
-                 "m_value": false
+                 "m_value": true
                 }, {
                  "type": "bool",
                  "m_label": "Auto Complete Files:",

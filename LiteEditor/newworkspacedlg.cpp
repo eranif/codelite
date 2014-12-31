@@ -85,8 +85,9 @@ void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
                 return;
             }
         }
-
-        m_textCtrlWorkspacePath->ChangeValue(dir);
+        
+        // Use SetValue to ensure that an TEXT_UPDATE event is fired
+        m_textCtrlWorkspacePath->SetValue(dir);
     }
 }
 

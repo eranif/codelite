@@ -61,6 +61,7 @@ NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxStri
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlWorkspacePath->SetHint(wxT(""));
     #endif
+    m_textCtrlWorkspacePath->AutoCompleteDirectories();
     
     bSizer3->Add(m_textCtrlWorkspacePath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     

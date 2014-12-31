@@ -63,7 +63,7 @@
 #include "dirsaver.h"
 #include <wx/msgdlg.h>
 #include <wx/utils.h>
-#include "GitCommandProcessor.h"
+#include "clCommandProcessor.h"
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -129,6 +129,7 @@ GitPlugin::GitPlugin(IManager* manager)
     , m_pluginToolbar(NULL)
     , m_pluginMenu(NULL)
     , m_commitListDlg(NULL)
+    , m_commandProcessor(NULL)
 {
     m_longName = wxT("GIT plugin");
     m_shortName = wxT("Git");
@@ -150,7 +151,7 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnSimplePullRebase, this, XRCID("get_pull_rebase_folder"));
-    
+
     // Connect the file context menu event handlers
     m_eventHandler->Connect(XRCID("git_add_file"),
                             wxEVT_COMMAND_MENU_SELECTED,
@@ -2398,17 +2399,47 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     parentMenu->Append(item);
 }
 
-void GitPlugin::OnCommandCompleted(const wxString& output) { m_console->AddText(output); }
-
 void GitPlugin::OnSimplePullRebase(wxCommandEvent& event)
 {
+    wxArrayString commands;
+    commands.Add("stash");
+    commands.Add("pull --rebase");
+    commands.Add("stash pop");
+    DoExecuteCommands(commands, m_selectedFolder);
+    m_selectedFolder.Clear();
+}
+
+void GitPlugin::OnCommandEnded(clCommandEvent& event)
+{
+    m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
+    m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
+}
+
+void GitPlugin::OnCommandOutput(clCommandEvent& event) { m_console->AddText(event.GetString()); }
+
+void GitPlugin::DoExecuteCommands(const wxArrayString& commands, const wxString& workingDir)
+{
+    if(commands.IsEmpty()) return;
+
+    if(m_commandProcessor) {
+        // another command is already running, don't do anything
+        return;
+    }
+
     wxString command = m_pathGITExecutable;
     // Wrap the executable with quotes if needed
     command.Trim().Trim(false);
     ::WrapWithQuotes(command);
-
-    command << " --no-pager pull --rebase";
-    GitCommandProcessor* commandProcessor = new GitCommandProcessor(this);
-    commandProcessor->ExecuteCommand(command, m_selectedFolder);
-    m_selectedFolder.Clear();
+    command << " --no-pager ";
+    m_commandProcessor = new clCommandProcessor(command + commands.Item(0), workingDir, IProcessCreateConsole);
+    clCommandProcessor* cur = m_commandProcessor;
+    for(size_t i = 1; i < commands.GetCount(); ++i) {
+        clCommandProcessor* next =
+            new clCommandProcessor(command + commands.Item(i), workingDir, IProcessCreateConsole);
+        cur = cur->Link(next);
+    }
+    m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
+    m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
+    m_mgr->ShowOutputPane("git");
+    m_commandProcessor->ExecuteCommand();
 }

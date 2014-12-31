@@ -168,6 +168,8 @@
     <File Name="TerminalEmulatorUI.cpp"/>
     <File Name="TerminalEmulatorFrame.h"/>
     <File Name="TerminalEmulatorFrame.cpp"/>
+    <File Name="clCommandProcessor.cpp"/>
+    <File Name="clCommandProcessor.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include_finder">
     <File Name="include_finder.h"/>

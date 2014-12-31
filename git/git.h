@@ -49,6 +49,7 @@
 #include "cl_command_event.h"
 #include "gitui.h"
 
+class clCommandProcessor;
 class gitAction
 {
 public:
@@ -141,11 +142,13 @@ class GitPlugin : public IPlugin
     GitCommitListDlg* m_commitListDlg;
     wxArrayString m_filesSelected;
     wxString m_selectedFolder;
-
+    clCommandProcessor* m_commandProcessor;
+    
 private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
-
+    void DoExecuteCommands(const wxArrayString& commands, const wxString& workingDir);
+    
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
     void InitDefaults();
     void AddDefaultActions();
@@ -253,7 +256,8 @@ public:
     /**
      * @brief simple git command executioin completed. Display its output etc
      */
-    void OnCommandCompleted(const wxString& output);
+    void OnCommandOutput(clCommandEvent& event);
+    void OnCommandEnded(clCommandEvent& event);
 
     //--------------------------------------------
     // Abstract methods

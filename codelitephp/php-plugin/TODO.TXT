@@ -14,6 +14,8 @@ Must:
 =====
 - Unified the keywords with the code completion box
 - Fix nav bar for PHP plugin
+- Add collapse tree in the PHP tab toolbar
+- File Explorer tab: add "Go To Path" and "Bookmarks" support to make it more usable
 
 Usability:
 ==========

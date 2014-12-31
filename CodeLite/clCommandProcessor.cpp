@@ -10,15 +10,15 @@ EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, clCommandProcessor::OnProcessOutput)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, clCommandProcessor::OnProcessTerminated)
 END_EVENT_TABLE()
 
-clCommandProcessor::clCommandProcessor(const wxString& command,
-                                       const wxString& wd,
-                                       size_t processFlags)
+clCommandProcessor::clCommandProcessor(const wxString& command, const wxString& wd, size_t processFlags)
     : m_next(NULL)
     , m_prev(NULL)
     , m_process(NULL)
     , m_command(command)
     , m_workingDirectory(wd)
     , m_processFlags(processFlags)
+    , m_postExecCallback(NULL)
+    , m_obj(NULL)
 {
 }
 
@@ -28,11 +28,12 @@ void clCommandProcessor::ExecuteCommand()
 {
     wxString message;
     message << _("Executing: ") << m_command << " [ wd: " << m_workingDirectory << " ]";
-    
+
     clCommandEvent eventStart(wxEVT_COMMAND_PROCESSOR_OUTPUT);
     eventStart.SetString(message);
     GetFirst()->ProcessEvent(eventStart);
-
+    
+    m_output.Clear();
     m_process = ::CreateAsyncProcess(this, m_command, m_processFlags, m_workingDirectory);
     if(!m_process) {
         clCommandEvent eventEnd(wxEVT_COMMAND_PROCESSOR_ENDED);
@@ -46,6 +47,7 @@ void clCommandProcessor::OnProcessOutput(wxCommandEvent& event)
 {
     ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
     clCommandEvent eventStart(wxEVT_COMMAND_PROCESSOR_OUTPUT);
+    m_output << ped->GetData();
     eventStart.SetString(ped->GetData());
     GetFirst()->ProcessEvent(eventStart);
     wxDELETE(ped);
@@ -55,11 +57,21 @@ void clCommandProcessor::OnProcessTerminated(wxCommandEvent& event)
 {
     ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
     wxDELETE(ped);
+    if(m_obj && m_postExecCallback) {
+        // Call the user callback, if the user returns false
+        // stop the processor
+        if(!(m_obj->*m_postExecCallback)(this)) {
+            clCommandEvent eventEnd(wxEVT_COMMAND_PROCESSOR_ENDED);
+            GetFirst()->ProcessEvent(eventEnd);
+            DeleteChain();
+            return;
+        }
+    }
 
     if(m_next) {
         // more commands, don't report an 'END' event
         m_next->ExecuteCommand();
-        
+
     } else {
         // no more commands to execute, delete the entire chain
         clCommandEvent eventEnd(wxEVT_COMMAND_PROCESSOR_ENDED);

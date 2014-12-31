@@ -10,6 +10,8 @@
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COMMAND_PROCESSOR_ENDED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COMMAND_PROCESSOR_OUTPUT, clCommandEvent);
 
+class clCommandProcessor;
+typedef bool (wxEvtHandler::*clCommandProcessorFunc)(const clCommandProcessor* processor);
 class WXDLLIMPEXP_CL clCommandProcessor : public wxEvtHandler
 {
     clCommandProcessor* m_next;
@@ -18,16 +20,44 @@ class WXDLLIMPEXP_CL clCommandProcessor : public wxEvtHandler
     wxString m_command;
     wxString m_workingDirectory;
     size_t m_processFlags;
+    wxString m_output;
+
+    clCommandProcessorFunc m_postExecCallback;
+    wxEvtHandler* m_obj;
 
 protected:
     void DeleteChain();
     clCommandProcessor* GetFirst();
-    
+
 public:
     clCommandProcessor(const wxString& command, const wxString& wd, size_t processFlags = IProcessCreateDefault);
     virtual ~clCommandProcessor();
 
     void ExecuteCommand();
+
+    const wxString& GetCommand() const { return m_command; }
+    void SetCommand(const wxString& command) { this->m_command = command; }
+    
+    const wxString& GetOutput() const { return m_output; }
+    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
+    
+    void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
+    void SetPrev(clCommandProcessor* prev) { this->m_prev = prev; }
+    clCommandProcessor* GetPrev() { return m_prev; }
+    clCommandProcessor* GetNext() { return m_next; }
+    void SetNext(clCommandProcessor* next) { this->m_next = next; }
+    
+    /**
+     * @brief set a callback to be called by the processor when the current command execution
+     * is completed. The callback signature is:
+     * bool Class::CallbackName(const clCommandProcessor* processor)
+     * if the callback returns false, the execution of the rest of the chain is stopped
+     */
+    void SetPostExecCallback(wxEvtHandler* handler, clCommandProcessorFunc func)
+    {
+        m_obj = handler;
+        m_postExecCallback = func;
+    }
 
     /**
      * @brief link two command so they will be executed one after the other

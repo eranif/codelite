@@ -8,6 +8,10 @@
 #include "cl_command_event.h"
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COMMAND_PROCESSOR_ENDED, clCommandEvent);
+
+// A process printed output to stdout/err (the process output is accessible via event.GetString())
+// The caller may handle this event, incase the process is waiting for input the caller
+// may send its input via event.SetString()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COMMAND_PROCESSOR_OUTPUT, clCommandEvent);
 
 class clCommandProcessor;
@@ -28,6 +32,7 @@ class WXDLLIMPEXP_CL clCommandProcessor : public wxEvtHandler
 protected:
     void DeleteChain();
     clCommandProcessor* GetFirst();
+    clCommandProcessor* GetActiveProcess();
 
 public:
     clCommandProcessor(const wxString& command, const wxString& wd, size_t processFlags = IProcessCreateDefault);
@@ -37,16 +42,17 @@ public:
 
     const wxString& GetCommand() const { return m_command; }
     void SetCommand(const wxString& command) { this->m_command = command; }
-    
+
     const wxString& GetOutput() const { return m_output; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
-    
+
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     void SetPrev(clCommandProcessor* prev) { this->m_prev = prev; }
     clCommandProcessor* GetPrev() { return m_prev; }
     clCommandProcessor* GetNext() { return m_next; }
     void SetNext(clCommandProcessor* next) { this->m_next = next; }
-    
+
+    IProcess* GetProcess() { return m_process; }
     /**
      * @brief set a callback to be called by the processor when the current command execution
      * is completed. The callback signature is:
@@ -64,6 +70,12 @@ public:
      * @return a pointer to the next command ("next")
      */
     clCommandProcessor* Link(clCommandProcessor* next);
+
+    /**
+     * @brief terminate the process. If we are part of the chain, search the active process
+     * within the chain and terminate it (this will cause the next process to start)
+     */
+    void Terminate();
 
     DECLARE_EVENT_TABLE()
     void OnProcessOutput(wxCommandEvent& event);

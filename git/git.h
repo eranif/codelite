@@ -259,7 +259,8 @@ public:
     GitConsole* GetConsole() { return m_console; }
     const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }
     IProcess* GetProcess() { return m_process; }
-
+    clCommandProcessor* GetFolderProcess() { return m_commandProcessor; }
+    
     IManager* GetManager() { return m_mgr; }
 
     void ShowDiff(const wxArrayString& files) { DoShowDiffsForFiles(files); }

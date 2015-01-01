@@ -40,6 +40,7 @@
 #include "cl_aui_tool_stickness.h"
 #include "macros.h"
 #include "globals.h"
+#include "clCommandProcessor.h"
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                       \
@@ -284,9 +285,16 @@ void GitConsole::OnStopGitProcess(wxCommandEvent& event)
     if(m_git->GetProcess()) {
         m_git->GetProcess()->Terminate();
     }
+
+    if(m_git->GetFolderProcess()) {
+        m_git->GetFolderProcess()->Terminate();
+    }
 }
 
-void GitConsole::OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Enable(m_git->GetProcess()); }
+void GitConsole::OnStopGitProcessUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_git->GetProcess() || m_git->GetFolderProcess());
+}
 
 void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_stcLog->IsEmpty()); }
 
@@ -564,7 +572,8 @@ void GitConsole::OnEditorThemeChanged(wxCommandEvent& e)
     m_stcLog->Refresh();
 }
 
-struct GitCommandData : public wxObject {
+struct GitCommandData : public wxObject
+{
     GitCommandData(const wxArrayString a, const wxString n, int i)
         : arr(a)
         , name(n)

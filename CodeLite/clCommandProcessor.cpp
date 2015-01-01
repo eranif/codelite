@@ -41,6 +41,7 @@ void clCommandProcessor::ExecuteCommand()
         GetFirst()->ProcessEvent(eventEnd);
         DeleteChain();
     }
+    m_process->SetHardKill(true);
 }
 
 void clCommandProcessor::OnProcessOutput(wxCommandEvent& event)
@@ -50,6 +51,10 @@ void clCommandProcessor::OnProcessOutput(wxCommandEvent& event)
     m_output << ped->GetData();
     eventStart.SetString(ped->GetData());
     GetFirst()->ProcessEvent(eventStart);
+    if(eventStart.GetString() != ped->GetData()) {
+        // user provided some input, write it to the running process
+        m_process->WriteToConsole(event.GetString());
+    }
     wxDELETE(ped);
 }
 
@@ -69,6 +74,7 @@ void clCommandProcessor::OnProcessTerminated(wxCommandEvent& event)
     }
 
     if(m_next) {
+        wxDELETE(m_process);
         // more commands, don't report an 'END' event
         m_next->ExecuteCommand();
 
@@ -109,4 +115,28 @@ clCommandProcessor* clCommandProcessor::GetFirst()
         first = first->m_prev;
     }
     return first;
+}
+
+void clCommandProcessor::Terminate()
+{
+    clCommandProcessor* first = GetFirst();
+    while(first) {
+        if(first->m_process) {
+            first->m_process->Terminate();
+            break;
+        }
+        first = first->m_next;
+    }
+}
+
+clCommandProcessor* clCommandProcessor::GetActiveProcess()
+{
+    clCommandProcessor* first = GetFirst();
+    while(first) {
+        if(first->m_process) {
+            return first;
+        }
+        first = first->m_next;
+    }
+    return NULL;
 }

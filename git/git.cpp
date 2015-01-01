@@ -2371,11 +2371,11 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit changes"));
     item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
     menu->Append(item);
-    
+
     item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
     item->SetBitmap(m_images.Bitmap("gitPush"));
     menu->Append(item);
-    
+
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
     item->SetBitmap(m_images.Bitmap("git"));
     parentMenu->AppendSeparator();
@@ -2397,13 +2397,24 @@ void GitPlugin::OnCommandEnded(clCommandEvent& event)
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
     m_commandProcessor = NULL;
-    
+
     // Perform a tree refresh
     wxCommandEvent dummy;
     OnRefresh(dummy);
 }
 
-void GitPlugin::OnCommandOutput(clCommandEvent& event) { m_console->AddText(event.GetString()); }
+void GitPlugin::OnCommandOutput(clCommandEvent& event)
+{
+    m_console->AddText(event.GetString());
+    wxString processOutput = event.GetString();
+    processOutput.MakeLower();
+    if(processOutput.Contains("password for")) {
+        wxString pass = ::wxGetPasswordFromUser(event.GetString(), "Git");
+        if(!pass.IsEmpty()) {
+            event.SetString(pass);
+        }
+    }
+}
 
 void GitPlugin::DoExecuteCommands(const GitCommand::Vec_t& commands, const wxString& workingDir)
 {
@@ -2460,7 +2471,8 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 commitArgs << " --no-edit ";
             }
             wxArrayString selectedFiles = dlg.GetSelectedFiles();
-            for(unsigned i = 0; i < selectedFiles.GetCount(); ++i) commitArgs << selectedFiles.Item(i) << wxT(" ");
+            for(unsigned i = 0; i < selectedFiles.GetCount(); ++i)
+                commitArgs << selectedFiles.Item(i) << wxT(" ");
 
         } else {
             wxMessageBox(_("No commit message given, aborting."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
@@ -2494,7 +2506,7 @@ void GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
     ::WrapWithQuotes(git);
     git << " --no-pager ";
     git << command;
-    
+
     IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync, workingDir));
     if(gitProc) {
         gitProc->WaitForTerminate(commandOutput);

@@ -251,6 +251,8 @@ private:
     void OnFolderPullRebase(wxCommandEvent& event);
     void OnFolderCommit(wxCommandEvent& event);
     void OnFolderPush(wxCommandEvent& event);
+    void OnFolderStash(wxCommandEvent& event);
+    void OnFolderStashPop(wxCommandEvent& event);
 
 public:
     GitPlugin(IManager* manager);
@@ -260,7 +262,7 @@ public:
     const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }
     IProcess* GetProcess() { return m_process; }
     clCommandProcessor* GetFolderProcess() { return m_commandProcessor; }
-    
+
     IManager* GetManager() { return m_mgr; }
 
     void ShowDiff(const wxArrayString& files) { DoShowDiffsForFiles(files); }

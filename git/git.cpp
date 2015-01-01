@@ -154,6 +154,8 @@ GitPlugin::GitPlugin(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStash, this, XRCID("git_stash_folder"));
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
 
     // Connect the file context menu event handlers
     m_eventHandler->Connect(XRCID("git_add_file"),
@@ -540,6 +542,9 @@ void GitPlugin::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
     wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStash, this, XRCID("git_stash_folder"));
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
+
 }
 
 /*******************************************************************************/
@@ -2368,14 +2373,24 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     item->SetBitmap(m_images.Bitmap("gitPull"));
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit changes"));
+    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
     item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
     item->SetBitmap(m_images.Bitmap("gitPush"));
     menu->Append(item);
-
+    
+    menu->AppendSeparator();
+    
+    item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
+    item->SetBitmap(m_images.Bitmap("gitStash"));
+    menu->Append(item);
+    
+    item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
+    item->SetBitmap(m_images.Bitmap("gitStashPop"));
+    menu->Append(item);
+    
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
     item->SetBitmap(m_images.Bitmap("git"));
     parentMenu->AppendSeparator();
@@ -2517,5 +2532,19 @@ void GitPlugin::OnFolderPush(wxCommandEvent& event)
 {
     GitCommand::Vec_t commands;
     commands.push_back(GitCommand("push", IProcessCreateConsole));
+    DoExecuteCommands(commands, m_selectedFolder);
+}
+
+void GitPlugin::OnFolderStash(wxCommandEvent& event)
+{
+    GitCommand::Vec_t commands;
+    commands.push_back(GitCommand("stash", IProcessCreateDefault));
+    DoExecuteCommands(commands, m_selectedFolder);
+}
+
+void GitPlugin::OnFolderStashPop(wxCommandEvent& event)
+{
+    GitCommand::Vec_t commands;
+    commands.push_back(GitCommand("stash pop", IProcessCreateDefault));
     DoExecuteCommands(commands, m_selectedFolder);
 }

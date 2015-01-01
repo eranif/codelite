@@ -28,7 +28,7 @@
 
 #include <wx/splash.h>
 #ifdef __WXMSW__
-#define SPLASH_STYLE wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP | wxRESIZE_BORDER
+#define SPLASH_STYLE wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP
 #else
 #define SPLASH_STYLE wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR | wxSTAY_ON_TOP
 #endif

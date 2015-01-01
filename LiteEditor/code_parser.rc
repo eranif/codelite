@@ -26,7 +26,11 @@
 aaaaa ICON "res/cubes.ico"
 #include "wx/msw/wx.rc"
 #ifndef __GNUC__
+#ifdef WIN64
+1 24 "wx/msw/amd64.manifest"
+#else
 1 24 "wx/msw/wx.manifest"
+#endif
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +63,7 @@ VS_VERSION_INFO    VERSIONINFO
       VALUE "FileDescription",  "CodeLite, an Open Source, free, cross platform IDE for C/C++/PHP"
       VALUE "FileVersion",      "7.0.0"
       VALUE "InternalName",     "CodeLite"
-      VALUE "LegalCopyright",   "Copyright (C) 2007-2014 CodeLite Team"
+      VALUE "LegalCopyright",   "Copyright (C) 2007-2015 CodeLite Team"
       VALUE "LegalTrademarks",  "All rights reserved."
       VALUE "OriginalFilename", "codelite.exe"
       VALUE "PrivateBuild",     ""

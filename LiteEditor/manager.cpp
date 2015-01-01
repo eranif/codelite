@@ -2022,8 +2022,9 @@ void Manager::DbgStart(long attachPid)
     DebuggerMgr::Get().GetDebuggerInformation(debuggerName, dinfo);
 
     // if user override the debugger path, apply it
+    wxString userDebuggr;
     if(bldConf) {
-        wxString userDebuggr = bldConf->GetDebuggerPath();
+        userDebuggr = bldConf->GetDebuggerPath();
         userDebuggr.Trim().Trim(false);
         if(userDebuggr.IsEmpty() == false) {
             // expand project macros
@@ -2043,6 +2044,7 @@ void Manager::DbgStart(long attachPid)
             // User specified a different compiler for this compiler - use it
             userDebuggr = bldConf->GetCompiler()->GetTool("Debugger");
             CL_DEBUG("Debugger is set to: '%s'", userDebuggr);
+            dinfo.path = userDebuggr;
         }
     }
 
@@ -2140,6 +2142,7 @@ void Manager::DbgStart(long attachPid)
     // read
     wxArrayString dbg_cmds;
     DebugSessionInfo si;
+    
     si.debuggerPath = dbgname;
     si.exeName = exepath;
     si.cwd = wd;

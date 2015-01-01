@@ -346,6 +346,8 @@ protected:
     virtual void OnProjectNameChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnProjectPathUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseProjectPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCompilerSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDebuggerSelected(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxBannerWindow* GetBanner386() { return m_banner386; }

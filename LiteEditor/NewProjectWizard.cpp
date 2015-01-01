@@ -116,6 +116,7 @@ public:
 
 NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Template::Vec_t& additionalTemplates)
     : NewProjectWizardBase(parent)
+    , m_selectionMade(false)
 {
     m_additionalTemplates = additionalTemplates;
     NewProjectDlgData info;
@@ -413,13 +414,12 @@ void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
 {
     if(event.GetDirection()) {
         wxDataViewItem sel = m_dataviewTemplates->GetSelection();
-        NewProjectClientData* cd =
-            dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel));
+        NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel));
 
         if(event.GetPage() == m_wizardPageTemplate) {
-        // -------------------------------------------------------
-        // Switching from the Templates page
-        // -------------------------------------------------------
+            // -------------------------------------------------------
+            // Switching from the Templates page
+            // -------------------------------------------------------
             if(!CheckProjectTemplate()) {
                 event.Veto();
                 return;
@@ -436,9 +436,9 @@ void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
             m_txtProjName->SetFocus(); // This should have happened in the base-class ctor, but in practice it doesn't
 
         } else if(event.GetPage() == m_wizardPageDetails) {
-        // -------------------------------------------------------
-        // Switching from the Name/Path page
-        // -------------------------------------------------------
+            // -------------------------------------------------------
+            // Switching from the Name/Path page
+            // -------------------------------------------------------
             if(!CheckProjectName() || !CheckProjectPath()) {
                 event.Veto();
                 return;
@@ -446,34 +446,37 @@ void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
         }
 
         // Try to offer a sensible toolchain/debugger combination as default
-        wxString defaultDebugger;
-        if (cd && cd->GetTemplate().Lower().Contains("php")) {
-            for (size_t n=0; n < m_choiceCompiler->GetCount(); ++n) {
-                if (m_choiceCompiler->GetString(n).Lower().Contains("php")) {
-                    m_choiceCompiler->SetSelection(n);
-                    break;
+        if(!m_selectionMade) {
+            wxString defaultDebugger;
+            if(cd && cd->GetTemplate().Lower().Contains("php")) {
+                for(size_t n = 0; n < m_choiceCompiler->GetCount(); ++n) {
+                    if(m_choiceCompiler->GetString(n).Lower().Contains("php")) {
+                        m_choiceCompiler->SetSelection(n);
+                        break;
+                    }
                 }
-            }
-            defaultDebugger = "XDebug";
+                defaultDebugger = "XDebug";
 
-        } else {      
-            // If it's not a PHP project we can't be sure of anything except we don't want php tools; so select the first that isn't
-            for (size_t n=0; n < m_choiceCompiler->GetCount(); ++n) {
-                if (!m_choiceCompiler->GetString(n).Lower().Contains("php")) {
-                    m_choiceCompiler->SetSelection(n);
-                    break;
+            } else {
+                // If it's not a PHP project we can't be sure of anything except we don't want php tools; so select the
+                // first that isn't
+                for(size_t n = 0; n < m_choiceCompiler->GetCount(); ++n) {
+                    if(!m_choiceCompiler->GetString(n).Lower().Contains("php")) {
+                        m_choiceCompiler->SetSelection(n);
+                        break;
+                    }
                 }
-            }
 #if defined(__WXMAC__)
-            defaultDebugger = "LLDB Debugger";
+                defaultDebugger = "LLDB Debugger";
 #else
-            defaultDebugger = "GNU gdb debugger";
+                defaultDebugger = "GNU gdb debugger";
 #endif
-        }
+            }
 
-        int index = m_choiceDebugger->FindString(defaultDebugger);
-        if (index != wxNOT_FOUND) {
-           m_choiceDebugger->SetSelection(index);
+            int index = m_choiceDebugger->FindString(defaultDebugger);
+            if(index != wxNOT_FOUND) {
+                m_choiceDebugger->SetSelection(index);
+            }
         }
     }
     event.Skip();
@@ -515,4 +518,16 @@ bool NewProjectWizard::CheckProjectTemplate()
         return false;
     }
     return true;
+}
+
+void NewProjectWizard::OnCompilerSelected(wxCommandEvent& event)
+{
+    event.Skip();
+    m_selectionMade = true;
+}
+
+void NewProjectWizard::OnDebuggerSelected(wxCommandEvent& event)
+{
+    event.Skip();
+    m_selectionMade = true;
 }

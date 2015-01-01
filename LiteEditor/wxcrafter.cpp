@@ -944,6 +944,8 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_textCtrlProjectPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectWizardBase::OnProjectPathUpdated), NULL, this);
     m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectWizardBase::OnBrowseProjectPath), NULL, this);
     m_cbSeparateDir->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectWizardBase::OnProjectNameChanged), NULL, this);
+    m_choiceCompiler->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectWizardBase::OnCompilerSelected), NULL, this);
+    m_choiceDebugger->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectWizardBase::OnDebuggerSelected), NULL, this);
     
 }
 
@@ -956,6 +958,8 @@ NewProjectWizardBase::~NewProjectWizardBase()
     m_textCtrlProjectPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectWizardBase::OnProjectPathUpdated), NULL, this);
     m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectWizardBase::OnBrowseProjectPath), NULL, this);
     m_cbSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectWizardBase::OnProjectNameChanged), NULL, this);
+    m_choiceCompiler->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectWizardBase::OnCompilerSelected), NULL, this);
+    m_choiceDebugger->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectWizardBase::OnDebuggerSelected), NULL, this);
     
 }
 

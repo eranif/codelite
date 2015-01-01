@@ -38,7 +38,8 @@ class NewProjectWizard : public NewProjectWizardBase
     std::map<wxString, int> m_mapImages;
     ProjectData m_projectData;
     clNewProjectEvent::Template::Vec_t m_additionalTemplates;
-
+    bool m_selectionMade;
+    
 public:
     NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Template::Vec_t& additionalTemplates);
     virtual ~NewProjectWizard();
@@ -57,6 +58,8 @@ private:
     bool CheckProjectTemplate();
 
 protected:
+    virtual void OnCompilerSelected(wxCommandEvent& event);
+    virtual void OnDebuggerSelected(wxCommandEvent& event);
     virtual void OnFinish(wxWizardEvent& event);
     virtual void OnPageChanging(wxWizardEvent& event);
     virtual void OnBrowseProjectPath(wxCommandEvent& event);

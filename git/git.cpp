@@ -2384,10 +2384,10 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
 
 void GitPlugin::OnFolderPullRebase(wxCommandEvent& event)
 {
+    // Just perform a 'pull --rebase' 
+    // if an error occurs, let the user handle it first
     GitCommand::Vec_t commands;
-    commands.push_back(GitCommand("stash", IProcessCreateWithHiddenConsole));
     commands.push_back(GitCommand("pull --rebase", IProcessCreateConsole));
-    commands.push_back(GitCommand("stash pop", IProcessCreateWithHiddenConsole));
     DoExecuteCommands(commands, m_selectedFolder);
     m_selectedFolder.Clear();
 }

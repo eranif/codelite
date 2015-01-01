@@ -249,6 +249,11 @@ void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& n
             AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
         }
     }
+    
+    toolFile.SetFullName("gdb.exe");
+    if(toolFile.Exists()) {
+        AddTool(compiler, "Debugger", toolFile.GetFullPath());
+    }
 }
 
 void CompilerLocatorMinGW::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs)

@@ -177,6 +177,11 @@ void CompilerLocatorGCC::AddTools(CompilerPtr compiler,
 
     toolFile.SetFullName("as");
     AddTool(compiler, "AS", toolFile.GetFullPath(), "");
+    
+    toolFile.SetFullName("gdb");
+    if(toolFile.Exists()) {
+        AddTool(compiler, "Debugger", toolFile.GetFullPath(), "");
+    }
 }
 
 void CompilerLocatorGCC::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& suffix, const wxString& extraArgs)

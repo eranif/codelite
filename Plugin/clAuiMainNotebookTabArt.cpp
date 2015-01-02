@@ -37,6 +37,7 @@
 #include <wx/stc/stc.h>
 #include "ieditor.h"
 #include "clNotebookTheme.h"
+#include <wx/xrc/xmlres.h>
 
 static const wxDouble X_RADIUS = 6.0;
 static const wxDouble X_DIAMETER = 2 * X_RADIUS;
@@ -58,6 +59,7 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #   define BMP_Y_SPACER 2
 #endif
 
+static int x_button_height = 16;
 clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
     : m_manager(manager)
     , m_tabRadius(0.0)
@@ -65,6 +67,12 @@ clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
 #ifdef __WXGTK__
     m_tabRadius = 2.5;
 #endif
+    // Default buttons
+    m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
+    m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
+    m_bmpClosePressed = wxXmlResource::Get()->LoadBitmap("tab_x_close_pressed");
+    
+    x_button_height = m_bmpClose.GetHeight();
 }
 
 clAuiMainNotebookTabArt::~clAuiMainNotebookTabArt() {}
@@ -194,37 +202,23 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
 
     /// Draw the X button on the tab
     if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN) {
-        int btny = (rr.y + (rr.height / 2)) - TAB_Y_OFFSET + TEXT_Y_SPACER;
-        if(close_button_state == wxAUI_BUTTON_STATE_PRESSED) {
-            curx += 1;
-            btny += 1;
+        curx += 1;
+        wxBitmap xBmp = m_bmpClose;
+        switch(close_button_state) {
+        case wxAUI_BUTTON_STATE_HOVER:
+            xBmp = m_bmpCloseHover;
+            break;
+        case wxAUI_BUTTON_STATE_PRESSED:
+            xBmp = m_bmpClosePressed;
+            break;
+        
         }
-
-        /// Defines the rectangle surrounding the X button
-        wxRect xRect = wxRect(curx, btny - X_RADIUS, X_DIAMETER, X_DIAMETER);
-        *out_button_rect = xRect;
-
-        /// Defines the 'x' inside the circle
-        wxPoint circleCenter(curx + X_RADIUS, btny);
-        wxDouble xx_width = ::sqrt(::pow(X_DIAMETER, 2.0) / 2.0);
-        wxDouble x_square = (circleCenter.x - (xx_width / 2.0));
-        wxDouble y_square = (circleCenter.y - (xx_width / 2.0));
-
-        wxPoint2DDouble ptXTopLeft(x_square, y_square);
-        wxRect2DDouble insideRect(ptXTopLeft.m_x, ptXTopLeft.m_y, xx_width, xx_width);
-        insideRect.Inset(1.0, 1.0); // Shrink it by 1 pixle
-
-        /// Draw the 'x' itself
-        wxGraphicsPath xpath = gdc.GetGraphicsContext()->CreatePath();
-        xpath.MoveToPoint(insideRect.GetLeftTop());
-        xpath.AddLineToPoint(insideRect.GetRightBottom());
-        xpath.MoveToPoint(insideRect.GetRightTop());
-        xpath.AddLineToPoint(insideRect.GetLeftBottom());
-        gdc.SetPen(wxPen(textColour, 1));
-        gdc.GetGraphicsContext()->StrokePath(xpath);
-
-        curx += X_DIAMETER;
+        int btny = (rr.y + (rr.height - x_button_height) / 2) - TAB_Y_OFFSET + BMP_Y_SPACER;
+        gdc.GetGraphicsContext()->DrawBitmap(xBmp, curx, btny, x_button_height, x_button_height);
+        *out_button_rect = wxRect(curx, btny, x_button_height, x_button_height);
+        curx += x_button_height;
     }
+    
     *out_tab_rect = rr;
     gdc.DestroyClippingRegion();
 }
@@ -305,13 +299,24 @@ void clAuiMainNotebookTabArt::DoSetColours()
 
     // If we have an active editor, update the colours, if not - keep the old ones
     IEditor* editor = m_manager->GetActiveEditor();
-
+    
+    // Default buttons
+    m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
+    m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
+    m_bmpClosePressed = wxXmlResource::Get()->LoadBitmap("tab_x_close_pressed");
+    
     // We use the colour theme based on the active editor
     if(editor) {
         // Change lightness ranges between 0-200
         // 0 would be completely black, 200 completely white an ialpha of 100 returns the same colour.
         m_activeTabBgColour = editor->GetSTC()->StyleGetBackground(0);
         if(DrawingUtils::IsDark(m_activeTabBgColour)) {
+            
+            // Adjust the button colours
+            m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close_dark");
+            m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_dark_hover");
+            m_bmpClosePressed = wxXmlResource::Get()->LoadBitmap("tab_x_close_dark_pressed");
+    
             // adjust some colours
             m_activeTabTextColour = *wxWHITE;
             m_tabTextColour = *wxWHITE;

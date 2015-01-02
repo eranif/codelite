@@ -57,6 +57,10 @@ protected:
     
     double m_tabRadius;
     
+    wxBitmap m_bmpClose;
+    wxBitmap m_bmpCloseHover;
+    wxBitmap m_bmpClosePressed;
+    
 protected:
     virtual void DoSetColours();
     virtual void DoInitializeColoursFromTheme();

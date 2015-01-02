@@ -34,26 +34,26 @@
 #include "quickfindbar.h"
 #include "event_notifier.h"
 #include "lexer_configuration.h"
+#include "globals.h"
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
-    EVT_MENU(XRCID("scroll_on_output"),      OutputTabWindow::OnOutputScrolls)
-    EVT_MENU(XRCID("clear_all_output"),      OutputTabWindow::OnClearAll)
-    EVT_MENU(XRCID("word_wrap_output"),      OutputTabWindow::OnWordWrap)
-    EVT_MENU(XRCID("collapse_all"),          OutputTabWindow::OnCollapseAll)
-    EVT_MENU(XRCID("repeat_output"),         OutputTabWindow::OnRepeatOutput)
-    EVT_MENU(XRCID("hold_pane_open"),        OutputTabWindow::OnToggleHoldOpen)
-    EVT_UPDATE_UI(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrollsUI)
-    EVT_UPDATE_UI(XRCID("clear_all_output"), OutputTabWindow::OnClearAllUI)
-    EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
-    EVT_UPDATE_UI(XRCID("collapse_all"),     OutputTabWindow::OnCollapseAllUI)
-    EVT_UPDATE_UI(XRCID("repeat_output"),    OutputTabWindow::OnRepeatOutputUI)
-    EVT_STC_DOUBLECLICK(wxID_ANY,            OutputTabWindow::OnMouseDClick)
-    EVT_STC_HOTSPOT_CLICK(wxID_ANY,          OutputTabWindow::OnHotspotClicked)
-    EVT_STC_MARGINCLICK(wxID_ANY,            OutputTabWindow::OnMarginClick)
+EVT_MENU(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrolls)
+EVT_MENU(XRCID("clear_all_output"), OutputTabWindow::OnClearAll)
+EVT_MENU(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrap)
+EVT_MENU(XRCID("collapse_all"), OutputTabWindow::OnCollapseAll)
+EVT_MENU(XRCID("repeat_output"), OutputTabWindow::OnRepeatOutput)
+EVT_MENU(XRCID("hold_pane_open"), OutputTabWindow::OnToggleHoldOpen)
+EVT_UPDATE_UI(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrollsUI)
+EVT_UPDATE_UI(XRCID("clear_all_output"), OutputTabWindow::OnClearAllUI)
+EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
+EVT_UPDATE_UI(XRCID("collapse_all"), OutputTabWindow::OnCollapseAllUI)
+EVT_UPDATE_UI(XRCID("repeat_output"), OutputTabWindow::OnRepeatOutputUI)
+EVT_STC_DOUBLECLICK(wxID_ANY, OutputTabWindow::OnMouseDClick)
+EVT_STC_HOTSPOT_CLICK(wxID_ANY, OutputTabWindow::OnHotspotClicked)
+EVT_STC_MARGINCLICK(wxID_ANY, OutputTabWindow::OnMarginClick)
 END_EVENT_TABLE()
 
-
-OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name)
+OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString& name)
     : wxPanel(parent, id)
     , m_name(name)
     , m_tb(NULL)
@@ -64,38 +64,45 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
     , m_errorsFirstLine(false)
 {
     CreateGUIControls();
-    wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
-    wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
-    wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+    wxTheApp->Connect(
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
+    wxTheApp->Connect(
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
+    wxTheApp->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
     wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
     m_themeHelper = new ThemeHandlerHelper(this);
 }
 
 OutputTabWindow::~OutputTabWindow()
 {
     wxDELETE(m_themeHelper);
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
-    wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
-    wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
+    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
 }
 
-void OutputTabWindow::DefineMarker(wxStyledTextCtrl *sci, int marker, int markerType, wxColor fore, wxColor back)
+void OutputTabWindow::DefineMarker(wxStyledTextCtrl* sci, int marker, int markerType, wxColor fore, wxColor back)
 {
     sci->MarkerDefine(marker, markerType);
     sci->MarkerSetForeground(marker, fore);
     sci->MarkerSetBackground(marker, back);
 }
 
-void OutputTabWindow::InitStyle(wxStyledTextCtrl *sci, int lexer, bool folding)
+void OutputTabWindow::InitStyle(wxStyledTextCtrl* sci, int lexer, bool folding)
 {
     sci->SetLexer(lexer);
     sci->StyleClearAll();
 
-    for(int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
-        sci->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour() );
+    for(int i = 0; i <= wxSTC_STYLE_DEFAULT; i++) {
+        sci->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
         sci->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
     }
 
@@ -116,10 +123,10 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl *sci, int lexer, bool folding)
     sci->IndicatorSetUnder(1, true);
     sci->IndicatorSetUnder(2, true);
 
-    //sci->IndicatorSetAlpha(1, 70);
-    //sci->IndicatorSetAlpha(2, 70);
+    // sci->IndicatorSetAlpha(1, 70);
+    // sci->IndicatorSetAlpha(2, 70);
 
-    sci->SetHotspotActiveUnderline (true);
+    sci->SetHotspotActiveUnderline(true);
     sci->SetHotspotActiveForeground(true, wxT("BLUE"));
     sci->SetHotspotSingleLine(true);
     sci->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
@@ -129,7 +136,7 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl *sci, int lexer, bool folding)
     sci->SetMarginWidth(1, 0);
     sci->SetMarginWidth(2, 0);
 
-    if (folding) {
+    if(folding) {
         sci->SetMarginWidth(4, 16);
         sci->SetProperty(wxT("fold"), wxT("1"));
         sci->SetMarginSensitive(4, true);
@@ -140,12 +147,12 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl *sci, int lexer, bool folding)
 
     wxColor fore(0xff, 0xff, 0xff);
     wxColor back(0x80, 0x80, 0x80);
-    DefineMarker(sci, wxSTC_MARKNUM_FOLDEROPEN,    wxSTC_MARK_ARROWDOWN,  fore, back);
-    DefineMarker(sci, wxSTC_MARKNUM_FOLDER,        wxSTC_MARK_ARROW,      fore, back);
-    DefineMarker(sci, wxSTC_MARKNUM_FOLDERSUB,     wxSTC_MARK_BACKGROUND, fore, back);
-    DefineMarker(sci, wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_BACKGROUND, fore, back);
-    DefineMarker(sci, wxSTC_MARKNUM_FOLDEREND,     wxSTC_MARK_ARROW,      fore, back);
-    DefineMarker(sci, wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN,  fore, back);
+    DefineMarker(sci, wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN, fore, back);
+    DefineMarker(sci, wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW, fore, back);
+    DefineMarker(sci, wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND, fore, back);
+    DefineMarker(sci, wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND, fore, back);
+    DefineMarker(sci, wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW, fore, back);
+    DefineMarker(sci, wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN, fore, back);
     DefineMarker(sci, wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, fore, back);
 
     sci->SetWrapStartIndent(4);
@@ -158,18 +165,18 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl *sci, int lexer, bool folding)
 
 void OutputTabWindow::CreateGUIControls()
 {
-    wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
     m_hSizer = new wxBoxSizer(wxHORIZONTAL);
 
-
-    // Create the default scintilla control
+// Create the default scintilla control
 #ifdef __WXGTK__
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
 #else
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
 #endif
+    ::clRecalculateSTCHScrollBar(m_sci);
 
     // We dont really want to collect undo in the output tabs...
     m_sci->SetUndoCollection(false);
@@ -178,13 +185,14 @@ void OutputTabWindow::CreateGUIControls()
     InitStyle(m_sci, wxSTC_LEX_CONTAINER, false);
 
     // Add the find bar
-    mainSizer->Add(m_hSizer, 1, wxEXPAND|wxALL, 0);
-    BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+    mainSizer->Add(m_hSizer, 1, wxEXPAND | wxALL, 0);
+    BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
-    //Create the toolbar
-    m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
+    // Create the toolbar
+    m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_NODIVIDER);
 
-    m_tb->AddTool(XRCID("hold_pane_open"), _("Keep open"),
+    m_tb->AddTool(XRCID("hold_pane_open"),
+                  _("Keep open"),
                   bmpLoader->LoadBitmap(wxT("output-pane/16/ToolPin")),
                   _("Don't close this pane when an editor gets focus"),
                   wxITEM_CHECK);
@@ -202,18 +210,16 @@ void OutputTabWindow::CreateGUIControls()
                   _("Word Wrap"),
                   wxITEM_CHECK);
 
-    m_tb->AddTool(XRCID("clear_all_output"),
-                  _("Clear All"),
-                  bmpLoader->LoadBitmap(wxT("output-pane/16/clear")),
-                  _("Clear All"));
+    m_tb->AddTool(
+        XRCID("clear_all_output"), _("Clear All"), bmpLoader->LoadBitmap(wxT("output-pane/16/clear")), _("Clear All"));
 
-    m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"),
+    m_tb->AddTool(XRCID("collapse_all"),
+                  _("Fold All Results"),
                   wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
                   _("Fold All Results"));
 
-    m_tb->AddTool(XRCID("repeat_output"), _("Repeat"),
-                  bmpLoader->LoadBitmap(wxT("output-pane/16/reload")),
-                  _("Repeat"));
+    m_tb->AddTool(
+        XRCID("repeat_output"), _("Repeat"), bmpLoader->LoadBitmap(wxT("output-pane/16/reload")), _("Repeat"));
 
     m_tb->Realize();
 
@@ -231,7 +237,7 @@ void OutputTabWindow::CreateGUIControls()
 
 void OutputTabWindow::Clear()
 {
-    if (m_sci) {
+    if(m_sci) {
         m_sci->SetReadOnly(false);
         m_sci->ClearAll();
         m_sci->EmptyUndoBuffer();
@@ -240,10 +246,10 @@ void OutputTabWindow::Clear()
     }
 }
 
-void OutputTabWindow::AppendText(const wxString &text)
+void OutputTabWindow::AppendText(const wxString& text)
 {
-    if (m_sci) {
-        if (m_autoAppear && m_sci->GetLength() == 0) {
+    if(m_sci) {
+        if(m_autoAppear && m_sci->GetLength() == 0) {
             ManagerST::Get()->ShowOutputPane(m_name);
         }
 
@@ -251,7 +257,7 @@ void OutputTabWindow::AppendText(const wxString &text)
         // enable writing
         m_sci->SetReadOnly(false);
 
-        if (m_outputScrolls) {
+        if(m_outputScrolls) {
             // the next 4 lines make sure that the caret is at last line
             // and is visible
             m_sci->SetSelectionEnd(m_sci->GetLength());
@@ -261,9 +267,9 @@ void OutputTabWindow::AppendText(const wxString &text)
         }
 
         // add the text
-        m_sci->InsertText(m_sci->GetLength(), text );
+        m_sci->InsertText(m_sci->GetLength(), text);
 
-        if (m_outputScrolls) {
+        if(m_outputScrolls) {
             // the next 4 lines make sure that the caret is at last line
             // and is visible
             m_sci->SetSelectionEnd(m_sci->GetLength());
@@ -275,40 +281,26 @@ void OutputTabWindow::AppendText(const wxString &text)
         // enable readonly mode
         m_sci->SetReadOnly(true);
 
+        ::clRecalculateSTCHScrollBar(m_sci);
     }
 }
 
-void OutputTabWindow::OnOutputScrolls(wxCommandEvent &e)
-{
-    m_outputScrolls = !m_outputScrolls;
-}
+void OutputTabWindow::OnOutputScrolls(wxCommandEvent& e) { m_outputScrolls = !m_outputScrolls; }
 
-void OutputTabWindow::OnOutputScrollsUI(wxUpdateUIEvent& e)
-{
-    e.Enable(true);
-}
+void OutputTabWindow::OnOutputScrollsUI(wxUpdateUIEvent& e) { e.Enable(true); }
 
-void OutputTabWindow::OnClearAll(wxCommandEvent &e)
-{
-    Clear();
-}
+void OutputTabWindow::OnClearAll(wxCommandEvent& e) { Clear(); }
 
-void OutputTabWindow::OnClearAllUI(wxUpdateUIEvent& e)
-{
-    e.Enable(m_sci && m_sci->GetLength() > 0);
-}
+void OutputTabWindow::OnClearAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci && m_sci->GetLength() > 0); }
 
-void OutputTabWindow::OnWordWrap(wxCommandEvent &e)
+void OutputTabWindow::OnWordWrap(wxCommandEvent& e)
 {
     if(m_sci) {
         m_sci->SetWrapMode(m_sci->GetWrapMode() == wxSTC_WRAP_WORD ? wxSTC_WRAP_NONE : wxSTC_WRAP_WORD);
     }
 }
 
-void OutputTabWindow::OnWordWrapUI(wxUpdateUIEvent& e)
-{
-    e.Enable(true);
-}
+void OutputTabWindow::OnWordWrapUI(wxUpdateUIEvent& e) { e.Enable(true); }
 
 void OutputTabWindow::OnCollapseAll(wxCommandEvent& e)
 {
@@ -317,14 +309,14 @@ void OutputTabWindow::OnCollapseAll(wxCommandEvent& e)
         // do two passes: first see if any folds can be collapsed
         // if not, then expand instead
         bool done = false;
-        for (int pass = 0; pass < 2 && !done; pass++) {
-            for (int line = 0; line < maxLine; line++) {
+        for(int pass = 0; pass < 2 && !done; pass++) {
+            for(int line = 0; line < maxLine; line++) {
                 // Only test fold-header lines, otherwise we get false positives from "=== Searching for..."
-                if (! (m_sci->GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG)) {
+                if(!(m_sci->GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG)) {
                     continue;
                 }
                 int foldLevel = (m_sci->GetFoldLevel(line) & wxSTC_FOLDLEVELNUMBERMASK);
-                if (foldLevel == 2 && m_sci->GetFoldExpanded(line) == !pass) {
+                if(foldLevel == 2 && m_sci->GetFoldExpanded(line) == !pass) {
                     m_sci->ToggleFold(line);
                     done = true;
                 }
@@ -333,53 +325,38 @@ void OutputTabWindow::OnCollapseAll(wxCommandEvent& e)
     }
 }
 
-void OutputTabWindow::OnCollapseAllUI(wxUpdateUIEvent& e)
-{
-    e.Enable(m_sci && m_sci->GetLength() > 0);
-}
+void OutputTabWindow::OnCollapseAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci && m_sci->GetLength() > 0); }
 
-void OutputTabWindow::OnRepeatOutput(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void OutputTabWindow::OnRepeatOutput(wxCommandEvent& e) { e.Skip(); }
 
-void OutputTabWindow::OnRepeatOutputUI(wxUpdateUIEvent& e)
-{
-    e.Enable(false);
-}
+void OutputTabWindow::OnRepeatOutputUI(wxUpdateUIEvent& e) { e.Enable(false); }
 
-void OutputTabWindow::OnMouseDClick(wxStyledTextEvent& e)
-{
-    e.Skip();
-}
+void OutputTabWindow::OnMouseDClick(wxStyledTextEvent& e) { e.Skip(); }
 
-void OutputTabWindow::OnHotspotClicked(wxStyledTextEvent& e)
-{
-    OnMouseDClick(e);
-}
+void OutputTabWindow::OnHotspotClicked(wxStyledTextEvent& e) { OnMouseDClick(e); }
 
 void OutputTabWindow::OnMarginClick(wxStyledTextEvent& e)
 {
-    if (m_sci && e.GetMargin() == 4) {
+    if(m_sci && e.GetMargin() == 4) {
         m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
     }
 }
 
 bool OutputTabWindow::IsFocused()
 {
-    wxWindow *win = wxWindow::FindFocus();
+    wxWindow* win = wxWindow::FindFocus();
     return (win && win == m_sci);
 }
 
 void OutputTabWindow::OnEditUI(wxUpdateUIEvent& e)
 {
-    if ( !IsFocused() || !m_sci ) {
+    if(!IsFocused() || !m_sci) {
         return;
     }
 
-    switch (e.GetId()) {
+    switch(e.GetId()) {
     case wxID_COPY:
-        e.Enable( m_sci->GetSelectedText().IsEmpty() == false );
+        e.Enable(m_sci->GetSelectedText().IsEmpty() == false);
         break;
     case wxID_SELECTALL:
         e.Enable(true);
@@ -389,14 +366,14 @@ void OutputTabWindow::OnEditUI(wxUpdateUIEvent& e)
     }
 }
 
-void OutputTabWindow::OnEdit(wxCommandEvent &e)
+void OutputTabWindow::OnEdit(wxCommandEvent& e)
 {
-    if ( !IsFocused() || !m_sci ) {
+    if(!IsFocused() || !m_sci) {
         e.Skip();
         return;
     }
 
-    switch (e.GetId()) {
+    switch(e.GetId()) {
     case wxID_COPY:
         m_sci->Copy();
         break;
@@ -408,11 +385,11 @@ void OutputTabWindow::OnEdit(wxCommandEvent &e)
     }
 }
 
-void OutputTabWindow::OnToggleHoldOpen(wxCommandEvent &e)
+void OutputTabWindow::OnToggleHoldOpen(wxCommandEvent& e)
 {
     size_t sel;
     Notebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-    if (book && (sel=book->GetSelection()) != Notebook::npos) {
+    if(book && (sel = book->GetSelection()) != Notebook::npos) {
         EditorConfigST::Get()->SetPaneStickiness(book->GetPageText(sel), e.IsChecked());
     }
 }
@@ -420,7 +397,7 @@ void OutputTabWindow::OnToggleHoldOpen(wxCommandEvent &e)
 void OutputTabWindow::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    if ( m_sci ) {
-        InitStyle( m_sci, m_sci->GetLexer(), m_sci->GetMarginWidth(4) == 6);
+    if(m_sci) {
+        InitStyle(m_sci, m_sci->GetLexer(), m_sci->GetMarginWidth(4) == 6);
     }
 }

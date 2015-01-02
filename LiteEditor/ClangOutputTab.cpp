@@ -8,6 +8,7 @@
 #include "clang_code_completion.h"
 #include "ctags_manager.h"
 #include "cl_config.h"
+#include "globals.h"
 
 ClangOutputTab::ClangOutputTab(wxWindow* parent)
     : ClangOutputTabBase(parent)
@@ -20,7 +21,8 @@ ClangOutputTab::ClangOutputTab(wxWindow* parent)
     if(lexer) {
         lexer->Apply(m_stc);
     }
-
+    
+    ::clRecalculateSTCHScrollBar(m_stc);
     // defaults
     m_choiceCache->Clear();
     m_choiceCache->Append(TagsOptionsData::CLANG_CACHE_LAZY);
@@ -69,6 +71,8 @@ void ClangOutputTab::DoAppendText(const wxString& text)
     m_stc->SetSelectionEnd(pos);
     m_stc->ScrollToEnd();
     m_stc->SetReadOnly(true);
+    
+    ::clRecalculateSTCHScrollBar(m_stc);
 }
 
 void ClangOutputTab::DoClear()

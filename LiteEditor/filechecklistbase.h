@@ -38,6 +38,11 @@ protected:
     virtual void OnCheckAll(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetCaption() { return m_caption; }
+    wxCheckListBox* GetFileCheckList() { return m_fileCheckList; }
+    wxButton* GetClearAll() { return m_clearAll; }
+    wxButton* GetCheckAllButton() { return m_checkAllButton; }
+    wxTextCtrl* GetSelectedFilePath() { return m_selectedFilePath; }
     FileCheckListBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxRESIZE_BORDER);
     virtual ~FileCheckListBase();
 };
@@ -48,7 +53,8 @@ class FilesModifiedDlgBase : public wxDialog
 public:
     enum {
         ID_BUTTON_CHOOSE = 5842,
-        ID_BUTTON_LOAD = 5843,
+        ID_BUTTON_IGNORE = 5843,
+        ID_BUTTON_LOAD = 5844,
     };
 protected:
     wxStaticText* m_staticText34;
@@ -60,8 +66,14 @@ protected:
 protected:
     virtual void OnLoad(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoose(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnIgnore(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText34() { return m_staticText34; }
+    wxCommandLinkButton* GetCmdLnkBtn30() { return m_cmdLnkBtn30; }
+    wxCommandLinkButton* GetCmdLnkBtn28() { return m_cmdLnkBtn28; }
+    wxCommandLinkButton* GetCmdLnkBtnNone() { return m_cmdLnkBtnNone; }
+    wxCheckBox* GetCheckBoxRemember() { return m_checkBoxRemember; }
     FilesModifiedDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Files were modified outside the editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~FilesModifiedDlgBase();
 };

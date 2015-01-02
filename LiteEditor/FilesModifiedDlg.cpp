@@ -45,3 +45,9 @@ void FilesModifiedDlg::OnLoad(wxCommandEvent& event)
     event.StopPropagation();
     CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_LOAD );
 }
+
+void FilesModifiedDlg::OnIgnore(wxCommandEvent& event)
+{
+    event.StopPropagation();
+    CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_IGNORE );
+}

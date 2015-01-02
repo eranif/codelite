@@ -794,7 +794,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
                 clConfig::Get().SetAnnoyingDlgAnswer("FilesModifiedDlg", res);
             }
 
-            if(res == wxID_CANCEL) {
+            if(res == FilesModifiedDlg::kID_BUTTON_IGNORE) {
                 return;
             }
         }

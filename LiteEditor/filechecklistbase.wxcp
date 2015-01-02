@@ -1133,7 +1133,7 @@
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
-         "m_winid": "wxID_CANCEL"
+         "m_winid": "ID_BUTTON_IGNORE"
         }, {
          "type": "string",
          "m_label": "Size:",
@@ -1203,7 +1203,14 @@
          "m_label": "Default Button",
          "m_value": false
         }],
-       "m_events": [],
+       "m_events": [{
+         "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+         "m_eventClass": "wxCommandEvent",
+         "m_eventHandler": "wxCommandEventHandler",
+         "m_functionNameAndSignature": "OnIgnore(wxCommandEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+         "m_noBody": false
+        }],
        "m_children": []
       }, {
        "m_type": 4415,

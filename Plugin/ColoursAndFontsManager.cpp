@@ -314,11 +314,17 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
                 if(!lineNumbers.IsNull()) {
                     lineNumbers.SetFgColour(
                         wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
+                    lineNumbers.SetBgColour(defaultProp.GetBgColour());
                 }
             }
 
         } else {
             lexer->SetLineNumbersFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+            StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
+            if(!lineNumbers.IsNull()) {
+                lineNumbers.SetBgColour(defaultProp.GetBgColour());
+            }
+            
             // don't adjust PHP and HTML default colours, since they also affects the various operators
             // foreground colours
             if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&

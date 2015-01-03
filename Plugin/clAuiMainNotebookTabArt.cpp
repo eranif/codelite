@@ -64,9 +64,14 @@ clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
     : m_manager(manager)
     , m_tabRadius(0.0)
 {
-#ifdef __WXGTK__
+#ifdef __WXMSW__
+    m_tabRadius = 0.0;
+#elif defined(__WXGTK__)
     m_tabRadius = 2.5;
+#else
+    m_tabRadius = 0.0;
 #endif
+
     // Default buttons
     m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
     m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
@@ -319,7 +324,7 @@ void clAuiMainNotebookTabArt::DoSetColours()
     
             // adjust some colours
             m_activeTabTextColour = *wxWHITE;
-            m_tabTextColour = *wxWHITE;
+            m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
             m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(80);
             m_tabBgColour = m_activeTabBgColour.ChangeLightness(110);
 #ifdef __WXMAC__
@@ -334,6 +339,10 @@ void clAuiMainNotebookTabArt::DoSetColours()
             wxColour tmp = m_activeTabBgColour;
             DoInitializeColoursFromTheme();
             m_activeTabBgColour = tmp;
+            m_activeTabTextColour = *wxBLACK;
+            m_tabTextColour = m_activeTabTextColour.ChangeLightness(130);
+            m_tabBgColour = m_tabBgColour.ChangeLightness(120);
+            m_penColour = m_innerPenColour.ChangeLightness(90);
         }
     }
 }
@@ -344,7 +353,7 @@ void clAuiMainNotebookTabArt::DoInitializeColoursFromTheme()
     m_activeTabPenColour = theme.GetActiveTabPenColour();
     m_tabBgColour = theme.GetTabBgColour().ChangeLightness(150);
     m_penColour = m_activeTabPenColour.ChangeLightness(130);
-    m_innerPenColour = m_tabBgColour.ChangeLightness(180);
+    m_innerPenColour = m_tabBgColour.ChangeLightness(150);
     m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     m_activeTabTextColour = theme.GetActiveTabTextColour();
     m_tabTextColour = theme.GetTabTextColour();

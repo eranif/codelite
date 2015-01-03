@@ -438,10 +438,9 @@ void LEditor::SetProperties()
     // Set margins' width
     SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? 16 : 0); // Symbol margin
 
-    // If the symbols margin is hidden, hide its related separator margin
-    // as well
-    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, /*
-                   options->GetDisplayBookmarkMargin() ? 1 : 0*/ 0); // Symbol margin which acts as separator
+    // Show the separator margin only if the fold margin is hidden
+    // (otherwise the fold margin is the separator)
+    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, options->GetDisplayFoldMargin() ? 0 : 1);
 
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
@@ -479,13 +478,13 @@ void LEditor::SetProperties()
     if(lexer && lexer->IsDark()) {
         const StyleProperty& defaultProperty = lexer->GetProperty(0);
         if(!defaultProperty.IsNull()) {
-            foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(120);
+            foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(130);
             foldBgColour = wxColour(defaultProperty.GetBgColour());
-        }            
+        }
     } else if(lexer) {
         const StyleProperty& defaultProperty = lexer->GetProperty(0);
         if(!defaultProperty.IsNull()) {
-            foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(80);
+            foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(70);
             foldBgColour = wxColour(defaultProperty.GetBgColour());
         }
     }

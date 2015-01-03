@@ -1,5 +1,6 @@
 #include "clNotebookTheme.h"
 #include <wx/gdicmn.h>
+#include <wx/settings.h>
 
 clNotebookTheme clNotebookTheme::GetTheme(clNotebookTheme::eNotebookTheme theme)
 {

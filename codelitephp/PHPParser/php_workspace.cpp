@@ -185,6 +185,9 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     }
     Save();
     proj->Save();
+    
+    // Retag the workspace (there could be new files that were added to the workspace)
+    ParseWorkspace(false);
 }
 
 bool PHPWorkspace::IsProjectExists(const wxString& project) { return HasProject(project); }

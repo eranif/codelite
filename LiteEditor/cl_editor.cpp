@@ -71,6 +71,7 @@
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "clSTCLineKeeper.h"
+#include "ColoursAndFontsManager.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -171,13 +172,13 @@ LEditor::LEditor(wxWindow* parent)
     , m_findBookmarksActive(false)
 {
     m_commandsProcessor.SetParent(this);
-    
+
     // User timer to check if we need to highlight markers
     m_timerHighlightMarkers = new wxTimer(this);
     m_timerHighlightMarkers->Start(100, true);
-    
+
     Connect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(LEditor::OnTimer), NULL, this);
-    
+
     ms_bookmarkShapes[wxT("Small Rectangle")] = wxSTC_MARK_SMALLRECT;
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
     ms_bookmarkShapes[wxT("Small Arrow")] = wxSTC_MARK_ARROW;
@@ -236,12 +237,12 @@ LEditor::~LEditor()
            this,
            XRCID("BookmarkTypes[start]"),
            XRCID("BookmarkTypes[end]"));
-    
+
     // free the timer
     Disconnect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(LEditor::OnTimer), NULL, this);
     m_timerHighlightMarkers->Stop();
     wxDELETE(m_timerHighlightMarkers);
-    
+
     // find deltas
     wxDELETE(m_deltas);
 
@@ -270,7 +271,7 @@ void LEditor::SetSyntaxHighlight(bool bUpdateColors)
 {
     ClearDocumentStyle();
     m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
-    
+
     SetProperties();
 
     m_context->SetActive();
@@ -439,8 +440,8 @@ void LEditor::SetProperties()
 
     // If the symbols margin is hidden, hide its related separator margin
     // as well
-    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID,
-                   options->GetDisplayBookmarkMargin() ? 1 : 0); // Symbol margin which acts as separator
+    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, /*
+                   options->GetDisplayBookmarkMargin() ? 1 : 0*/ 0); // Symbol margin which acts as separator
 
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
@@ -470,67 +471,61 @@ void LEditor::SetProperties()
     //---------------------------------------------------
     // Fold settings
     //---------------------------------------------------
+    // Determine the folding symbols colours
+    wxColour foldFgColour = wxColor(0xff, 0xff, 0xff);
+    wxColour foldBgColour = wxColor(0x80, 0x80, 0x80);
+
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer(GetContext()->GetName());
+    if(lexer && lexer->IsDark()) {
+        const StyleProperty& defaultProperty = lexer->GetProperty(0);
+        if(!defaultProperty.IsNull()) {
+            foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(120);
+            foldBgColour = wxColour(defaultProperty.GetBgColour());
+        }            
+    } else if(lexer) {
+        const StyleProperty& defaultProperty = lexer->GetProperty(0);
+        if(!defaultProperty.IsNull()) {
+            foldFgColour = wxColour(defaultProperty.GetBgColour()).ChangeLightness(80);
+            foldBgColour = wxColour(defaultProperty.GetBgColour());
+        }
+    }
+
     // Define the folding style to be square
     if(options->GetFoldStyle() == wxT("Flatten Tree Square Headers")) {
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_BOXPLUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID,
-                     wxSTC_MARK_BOXMINUSCONNECTED,
-                     wxColor(0xff, 0xff, 0xff),
-                     wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNER, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_BOXPLUSCONNECTED, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUSCONNECTED, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, foldFgColour, foldBgColour);
 
     } else if(options->GetFoldStyle() == wxT("Flatten Tree Circular Headers")) {
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_CIRCLEMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_CIRCLEPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNERCURVE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDEREND,
-                     wxSTC_MARK_CIRCLEPLUSCONNECTED,
-                     wxColor(0xff, 0xff, 0xff),
-                     wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID,
-                     wxSTC_MARK_CIRCLEMINUSCONNECTED,
-                     wxColor(0xff, 0xff, 0xff),
-                     wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_CIRCLEMINUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_CIRCLEPLUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNERCURVE, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_CIRCLEPLUSCONNECTED, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_CIRCLEMINUSCONNECTED, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, foldFgColour, foldBgColour);
 
     } else if(options->GetFoldStyle() == wxT("Simple")) {
-        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_PLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_PLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_MINUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_PLUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_PLUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_MINUS, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, foldFgColour, foldBgColour);
 
     } else { // use wxT("Arrows") as the default
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(
-            wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN, foldFgColour, foldBgColour);
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, foldFgColour, foldBgColour);
     }
 
     // Bookmark
@@ -845,18 +840,18 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
            matchedPos == m_lastCharEnteredPos) { // and that open brace must be the one that we have inserted
 
             matchChar = '}';
-            
+
             BeginUndoAction();
             // Check to see if there are more chars on the line
             int curline = GetCurrentLine();
-            
-            // get the line end position, but without the EOL 
+
+            // get the line end position, but without the EOL
             int lineEndPos = LineEnd(curline) - GetEolString().length();
             wxString restOfLine = GetTextRange(pos, lineEndPos);
             wxString restOfLineTrimmed = restOfLine;
             restOfLineTrimmed.Trim().Trim(false);
             bool shiftCode = !restOfLineTrimmed.StartsWith(")");
-            
+
             if(shiftCode) {
                 SetSelection(pos, lineEndPos);
                 ReplaceSelection("");
@@ -871,7 +866,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
                 // restore the content that we just removed
                 InsertText(pos, restOfLine);
             }
-            
+
             m_context->AutoIndent(wxT('\n'));
             EndUndoAction();
 
@@ -1507,7 +1502,7 @@ void LEditor::CodeComplete(bool refreshingList)
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
     if(AutoCompActive()) return; // Don't clobber the boxes..
-    
+
     if(!refreshingList) {
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
         evt.SetPosition(GetCurrentPosition());
@@ -2942,10 +2937,10 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
     wxCommandEvent contextMenuEvent(wxEVT_CMD_EDITOR_CONTEXT_MENU, GetId());
     contextMenuEvent.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(contextMenuEvent)) return;
-    
+
     wxMenu* menu = m_context->GetMenu();
     if(!menu) return;
-    
+
     // Let the context add it dynamic content
     m_context->AddMenuDynamicContent(menu);
 
@@ -2958,7 +2953,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
     // turn the popupIsOn value to avoid annoying
     // calltips from firing while our menu is popped
     m_popupIsOn = true;
-    
+
     // Notify about menu is about to be shown
     clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_EDITOR);
     menuEvent.SetEditor(this);
@@ -2971,7 +2966,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
     // Popup the menu
     PopupMenu(menu);
     wxDELETE(menu);
-    
+
     m_popupIsOn = false;
     event.Skip();
 }
@@ -3702,7 +3697,7 @@ void LEditor::DoHighlightWord()
     int lastDocLine = LineFromPosition(GetLength());
     int offset = PositionFromLine(firstVisibleLine);
 
-    if (GetAllLinesVisible()) {
+    if(GetAllLinesVisible()) {
         // The simple case: there aren't any folds
         int lastLine = firstVisibleLine + LinesOnScreen();
         if(lastLine > lastDocLine) {
@@ -3719,27 +3714,27 @@ void LEditor::DoHighlightWord()
         int lineCount(0);
         int nextLineToProcess(firstVisibleLine);
         int screenLines(LinesOnScreen());
-        while (lineCount < screenLines && nextLineToProcess <= lastDocLine) {
+        while(lineCount < screenLines && nextLineToProcess <= lastDocLine) {
             int offset(-1);
             int line = nextLineToProcess;
 
             // Skip over any invisible lines
-            while (!GetLineVisible(line) && line < lastDocLine) {
+            while(!GetLineVisible(line) && line < lastDocLine) {
                 ++line;
             }
 
-            while (GetLineVisible(line) && line <= lastDocLine) {
-                if (offset == -1) {
+            while(GetLineVisible(line) && line <= lastDocLine) {
+                if(offset == -1) {
                     offset = PositionFromLine(line); // Get offset value the first time through
                 }
                 ++line;
                 ++lineCount;
-                if (lineCount >= screenLines) {
-                   break;
+                if(lineCount >= screenLines) {
+                    break;
                 }
             }
-            if (line > lastDocLine) {
-               line = lastDocLine;
+            if(line > lastDocLine) {
+                line = lastDocLine;
             }
             nextLineToProcess = line;
 
@@ -3943,14 +3938,13 @@ void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
     if(event.m_controlDown || isMiddle) {
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
-        
+
         wxColour bgCol = StyleGetBackground(0);
         if(DrawingUtils::IsDark(bgCol)) {
             IndicatorSetForeground(HYPERLINK_INDICATOR, *wxWHITE);
         } else {
             IndicatorSetForeground(HYPERLINK_INDICATOR, *wxBLUE);
         }
-        
 
         if(pos != wxSTC_INVALID_POSITION) {
             m_hyperLinkType = m_context->GetHyperlinkRange(pos, m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd);
@@ -3971,7 +3965,7 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
         if(m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
             bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
-            
+
             // Let the plugins handle it first
             clCodeCompletionEvent event(wxEVT_CC_JUMP_HYPER_LINK);
             event.SetString(GetTextRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd));
@@ -3979,7 +3973,7 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
             if(EventNotifier::Get()->ProcessEvent(event)) {
                 return;
             }
-            
+
             // Run the default action
             m_context->GoHyperlink(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd, m_hyperLinkType, altLink);
         }
@@ -4872,19 +4866,19 @@ void LEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
 void LEditor::OnTimer(wxTimerEvent& event)
 {
     event.Skip();
-    
+
     m_timerHighlightMarkers->Start(100, true);
     if(!HasFocus()) return;
-    
+
     CL_DEBUG1("Inside LEditor::OnTimer. File: %s", GetFileName().GetFullPath());
-    
+
     if(!HasSelection()) {
         CL_DEBUG1("No selection - nothing to do here");
         HighlightWord(false);
 
     } else {
         if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
-            
+
             int pos = GetCurrentPos();
             int wordStartPos = WordStartPos(pos, true);
             int wordEndPos = WordEndPos(pos, true);
@@ -4892,7 +4886,7 @@ void LEditor::OnTimer(wxTimerEvent& event)
             wxString selectedText = GetSelectedText();
 
             if(!m_highlightedWordInfo.IsValid(this)) {
-                
+
                 // Check to see if we have marker already on
                 // we got a selection
                 bool textMatches = (selectedText == word);
@@ -4900,7 +4894,7 @@ void LEditor::OnTimer(wxTimerEvent& event)
                     // No markers set yet
                     DoHighlightWord();
                     CL_DEBUG1("Highlighting word");
-                    
+
                 } else if(!textMatches) {
                     // clear markers if the text does not match
                     HighlightWord(false);

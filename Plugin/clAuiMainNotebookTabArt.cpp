@@ -44,19 +44,19 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
 #ifdef __WXMAC__
 #include <wx/osx/private.h>
-#   define TAB_HEIGHT_SPACER 10
-#   define TAB_Y_OFFSET 2
-#   define TEXT_Y_SPACER 0
-#   define BMP_Y_SPACER 0
+#define TAB_HEIGHT_SPACER 10
+#define TAB_Y_OFFSET 2
+#define TEXT_Y_SPACER 0
+#define BMP_Y_SPACER 0
 #elif defined(__WXMSW__)
-#   define TAB_HEIGHT_SPACER 10
-#   define TAB_Y_OFFSET 3
-#   define TEXT_Y_SPACER 0
-#   define BMP_Y_SPACER 0
+#define TAB_HEIGHT_SPACER 10
+#define TAB_Y_OFFSET 3
+#define TEXT_Y_SPACER 0
+#define BMP_Y_SPACER 0
 #else // GTK/FreeBSD
-#   define TAB_Y_OFFSET 4
-#   define TEXT_Y_SPACER 2
-#   define BMP_Y_SPACER 2
+#define TAB_Y_OFFSET 4
+#define TEXT_Y_SPACER 2
+#define BMP_Y_SPACER 2
 #endif
 
 static int x_button_height = 16;
@@ -76,7 +76,7 @@ clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
     m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
     m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
     m_bmpClosePressed = wxXmlResource::Get()->LoadBitmap("tab_x_close_pressed");
-    
+
     x_button_height = m_bmpClose.GetHeight();
 }
 
@@ -89,7 +89,8 @@ void clAuiMainNotebookTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRe
     wxDC& gdc = dc;
 #else
     wxGCDC gdc;
-    if(!DrawingUtils::GetGCDC(dc, gdc)) return;
+    if(!DrawingUtils::GetGCDC(dc, gdc))
+        return;
 #endif
 
     DoSetColours();
@@ -115,8 +116,9 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
 {
     int curx = 0;
     wxGCDC gdc;
-    if(!DrawingUtils::GetGCDC(dc, gdc)) return;
-    
+    if(!DrawingUtils::GetGCDC(dc, gdc))
+        return;
+
     wxColour penColour = page.active ? m_activeTabPenColour : m_penColour;
     wxGraphicsPath path = gdc.GetGraphicsContext()->CreatePath();
     gdc.SetPen(penColour);
@@ -143,7 +145,8 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
 
     // Set clipping region
     int clip_width = rr.width;
-    if(rr.x + clip_width > in_rect.x + in_rect.width) clip_width = (in_rect.x + in_rect.width) - rr.x;
+    if(rr.x + clip_width > in_rect.x + in_rect.width)
+        clip_width = (in_rect.x + in_rect.width) - rr.x;
 
     gdc.SetClippingRegion(rr.x, rr.y, clip_width, rr.height);
     gdc.SetBrush(m_bgColour);
@@ -185,7 +188,8 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     gdc.SetFont(fnt);
     wxSize ext = gdc.GetTextExtent(caption);
-    if(caption == "Tp") caption.Clear();
+    if(caption == "Tp")
+        caption.Clear();
 
     /// Draw the bitmap
     if(page.bitmap.IsOk()) {
@@ -216,14 +220,13 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
         case wxAUI_BUTTON_STATE_PRESSED:
             xBmp = m_bmpClosePressed;
             break;
-        
         }
         int btny = (rr.y + (rr.height - x_button_height) / 2) - TAB_Y_OFFSET + BMP_Y_SPACER;
         gdc.GetGraphicsContext()->DrawBitmap(xBmp, curx, btny, x_button_height, x_button_height);
         *out_button_rect = wxRect(curx, btny, x_button_height, x_button_height);
         curx += x_button_height;
     }
-    
+
     *out_tab_rect = rr;
     gdc.DestroyClippingRegion();
 }
@@ -250,7 +253,8 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
     dc.GetTextExtent(caption, &measured_textx, &tmp);
 
     // do it once
-    if(measured_texty == wxNOT_FOUND) dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+    if(measured_texty == wxNOT_FOUND)
+        dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
 
     // add padding around the text
     wxCoord tab_width = measured_textx;
@@ -260,15 +264,17 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
     tab_height = TAB_CTRL_HEIGHT;
 #endif
 
-    if(tab_height < 16) tab_height = 16;
+    if(tab_height < 16)
+        tab_height = 16;
 
     // if the close button is showing, add space for it
-    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN) tab_width += X_DIAMETER + 3;
+    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
+        tab_width += X_DIAMETER + 3;
 
-    // if there's a bitmap, add space for it
+// if there's a bitmap, add space for it
 
-    // NOTE: we only support 16 pixels bitmap (or smaller)
-    // so there is no need to adjust the tab height!
+// NOTE: we only support 16 pixels bitmap (or smaller)
+// so there is no need to adjust the tab height!
 #ifndef __WXGTK__
     tab_height += TAB_HEIGHT_SPACER;
 #endif
@@ -304,24 +310,24 @@ void clAuiMainNotebookTabArt::DoSetColours()
 
     // If we have an active editor, update the colours, if not - keep the old ones
     IEditor* editor = m_manager->GetActiveEditor();
-    
+
     // Default buttons
     m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
     m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
     m_bmpClosePressed = wxXmlResource::Get()->LoadBitmap("tab_x_close_pressed");
-    
+
     // We use the colour theme based on the active editor
     if(editor) {
         // Change lightness ranges between 0-200
         // 0 would be completely black, 200 completely white an ialpha of 100 returns the same colour.
         m_activeTabBgColour = editor->GetSTC()->StyleGetBackground(0);
         if(DrawingUtils::IsDark(m_activeTabBgColour)) {
-            
+
             // Adjust the button colours
             m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close_dark");
             m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_dark_hover");
             m_bmpClosePressed = wxXmlResource::Get()->LoadBitmap("tab_x_close_dark_pressed");
-    
+
             // adjust some colours
             m_activeTabTextColour = *wxWHITE;
             m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
@@ -341,8 +347,15 @@ void clAuiMainNotebookTabArt::DoSetColours()
             m_activeTabBgColour = tmp;
             m_activeTabTextColour = *wxBLACK;
             m_tabTextColour = m_activeTabTextColour.ChangeLightness(130);
+#ifdef __WXOSX__
+            // use a bit darker colour on OSX
+            m_tabBgColour = m_tabBgColour.ChangeLightness(90);
+            m_innerPenColour = m_tabBgColour.ChangeLightness(110);
+            m_penColour = m_innerPenColour.ChangeLightness(90);
+#else
             m_tabBgColour = m_tabBgColour.ChangeLightness(120);
             m_penColour = m_innerPenColour.ChangeLightness(90);
+#endif
         }
     }
 }

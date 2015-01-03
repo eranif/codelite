@@ -189,16 +189,16 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
     bmp = wxBitmap(origBmp.GetWidth(), origBmp.GetHeight());
     memDC.SelectObject(bmp);
     memDC.SetBrush(wxColour(63, 80, 24));
-    memDC.SetPen(*wxBLACK);
+    memDC.SetPen(wxColour(63, 80, 24));
     memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
     memDC.DrawBitmap(origBmp, 0, 0, true);
-    memDC.SetPen(*wxBLACK);
+    memDC.SetPen(*wxWHITE);
     memDC.SetBrush(*wxTRANSPARENT_BRUSH);
     memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
 
     wxCoord ww, hh;
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    font.SetPointSize(18);
+    font.SetPointSize(20);
     font.SetWeight(wxFONTWEIGHT_BOLD);
 
     memDC.SetFont(font);

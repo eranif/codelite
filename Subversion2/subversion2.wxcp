@@ -127,7 +127,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxSP_LIVE_UPDATE"],
+       "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",

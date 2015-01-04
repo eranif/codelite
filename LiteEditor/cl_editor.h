@@ -382,7 +382,12 @@ public:
      * marker (warning or error)
      */
     bool HasCompilerMarkers();
-
+    
+    /**
+     * @brief center the line in the editor
+     */
+    void CenterLine(int line, int col = wxNOT_FOUND);
+    
     // Is there currently a marker at the current line?
     bool LineIsMarked(enum marker_mask_type mask);
     // Toggle marker at the current line
@@ -415,21 +420,9 @@ public:
     void OnChangeActiveBookmarkType(wxCommandEvent& event);
 
     /**
-     * Sets the currently-active bookmark level, caching the old value
-     * \param type the new type
-     */
-    void SetActiveBookmarkType(sci_marker_types type);
-
-    /**
      * Returns the currently-active bookmark level
      */
     int GetActiveBookmarkType() const;
-
-    /**
-     * Sets the currently-active bookmark mask
-     * \param mask the new mask
-     */
-    void SetActiveBookmarkMask(marker_mask_type mask);
 
     /**
      * Returns the mask for the currently-active bookmark level

@@ -2516,13 +2516,13 @@ void LEditor::FindNextMarker()
     int nFoundLine = MarkerNext(nLine + 1, GetActiveBookmarkMask());
     if(nFoundLine >= 0) {
         // mark this place before jumping to next marker
-        GotoLine(nFoundLine);
+        CenterLine(nFoundLine);
     } else {
         // We reached the last marker, try again from top
         nLine = LineFromPosition(0);
         nFoundLine = MarkerNext(nLine, GetActiveBookmarkMask());
         if(nFoundLine >= 0) {
-            GotoLine(nFoundLine);
+            CenterLine(nFoundLine);
         }
     }
     if(nFoundLine >= 0) {
@@ -2538,14 +2538,14 @@ void LEditor::FindPrevMarker()
     int mask = GetActiveBookmarkMask();
     int nFoundLine = MarkerPrevious(nLine - 1, mask);
     if(nFoundLine >= 0) {
-        GotoLine(nFoundLine);
+        CenterLine(nFoundLine);
     } else {
         // We reached first marker, try again from button
         int nFileSize = GetLength();
         nLine = LineFromPosition(nFileSize);
         nFoundLine = MarkerPrevious(nLine, mask);
         if(nFoundLine >= 0) {
-            GotoLine(nFoundLine);
+            CenterLine(nFoundLine);
         }
     }
     if(nFoundLine >= 0) {
@@ -4939,6 +4939,25 @@ void LEditor::SplitSelection()
             }
         }
     }
+}
+
+void LEditor::CenterLine(int line, int col)
+{
+    int linesOnScreen = LinesOnScreen();
+    // To place our line in the middle, the first visible line should be
+    // the: line - (linesOnScreen / 2)
+    int firstVisibleLine = line - (linesOnScreen / 2);
+    if(firstVisibleLine < 0) {
+        firstVisibleLine = 0;
+    }
+    EnsureVisible(firstVisibleLine);
+    SetFirstVisibleLine(firstVisibleLine);
+    
+    int pos = PositionFromLine(line);
+    if(col != wxNOT_FOUND) {
+        pos += col;
+    }
+    SetCaretAt(pos);
 }
 
 // ----------------------------------

@@ -385,7 +385,12 @@ public:
      * @brief return the char at the 'pos', 0 if an error occurs
      */
     virtual int GetCharAtPos(int pos) = 0;
-
+    
+    /**
+     * @brief center the editor around line and optionally a column
+     */
+    virtual void CenterLine(int line, int col = wxNOT_FOUND) = 0;
+    
     /**
      * @brief return a pointer to the underlying scintilla control
      */

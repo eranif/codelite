@@ -13,6 +13,8 @@
 #include "cl_command_event.h"
 #include <codelite_events.h>
 #include "clSTCLineKeeper.h"
+#include "PHPSourceFile.h"
+#include "PHPEntityClass.h"
 
 PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
 
@@ -658,8 +660,7 @@ int PHPEditorContextMenu::RemoveComment(wxStyledTextCtrl* sci, int posFrom, cons
 {
     sci->SetAnchor(posFrom);
     int posTo = posFrom;
-    for(int i = 0; i < (int)value.Length(); i++)
-        posTo = sci->PositionAfter(posTo);
+    for(int i = 0; i < (int)value.Length(); i++) posTo = sci->PositionAfter(posTo);
 
     sci->SetSelection(posFrom, posTo);
     sci->DeleteBack();
@@ -765,6 +766,25 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
     // CHeck the current context
     IEditor* editor = m_manager->GetActiveEditor();
     if(editor) {
+
+        // determine the scope name at the current position
+        // Parse until the current position
+        wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
+        PHPSourceFile sourceFile(text);
+        sourceFile.SetParseFunctionBody(true);
+        sourceFile.SetFilename(editor->GetFileName());
+        sourceFile.Parse();
+
+        const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
+        if(!scopeAtPoint) {
+            // Could not determine the scope at the give location
+            return;
+        }
+
+        // get the class name
+        wxString className = scopeAtPoint->GetShortName();
+
+        // generate the code to generate
         wxString textToAdd;
         PHPSetterGetterEntry::Vec_t setters = PHPRefactoring::Get().GetSetters(editor);
         PHPSetterGetterEntry::Vec_t getters = PHPRefactoring::Get().GetGetters(editor);
@@ -776,30 +796,11 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
             textToAdd << getters.at(i).GetGetter() << "\n";
         }
 
-        if(!textToAdd.IsEmpty()) {
-            // Wrap the text insertion as a single transcation
-            editor->GetSTC()->BeginUndoAction();
-            int curpos = editor->GetSTC()->GetCurrentPos();
+        int line = PHPCodeCompletion::Instance()->GetLocationForSettersGetters(
+            editor->GetTextRange(0, editor->GetLength()), className);
 
-            clSTCLineKeeper lk(editor); // keep the current file line
-            textToAdd =
-                editor->FormatTextKeepIndent(textToAdd, editor->GetCurrentPosition(), Format_Text_Save_Empty_Lines);
-            editor->InsertText(editor->GetCurrentPosition(), textToAdd);
-
-            // Format the source code after generation
-            clSourceFormatEvent evt(wxEVT_FORMAT_STRING);
-            evt.SetInputString(editor->GetSTC()->GetText());
-
-            // Send also the filename, this will help the formatter to determine which fomratter engine to use
-            evt.SetFileName(editor->GetFileName().GetFullName());
-
-            EventNotifier::Get()->ProcessEvent(evt);
-            if(!evt.GetFormattedString().IsEmpty()) {
-                editor->GetSTC()->SetText(evt.GetFormattedString());
-            }
-            // restore the position
-            editor->SetCaretAt(curpos);
-            editor->GetSTC()->EndUndoAction();
+        if(!textToAdd.IsEmpty() && line != wxNOT_FOUND) {
+            editor->GetSTC()->InsertText(editor->PosFromLine(line), textToAdd);
         }
     }
 }

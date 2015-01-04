@@ -125,6 +125,13 @@ public:
      * values and appending everything
      */
     wxString ExpandRequire(const wxFileName& curfile, const wxString &require);
+    
+    /**
+     * @brief return the best location for inserting generated code inside a class name
+     * @param filecontent
+     * @return wxNOT_FOUND when could not determine the location
+     */
+    int GetLocationForSettersGetters(const wxString& filecontent, const wxString &classname);
 };
 
 #endif // PHPCODECOMPLETION_H

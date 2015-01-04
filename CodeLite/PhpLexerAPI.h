@@ -33,15 +33,11 @@ struct WXDLLIMPEXP_CL phpLexerToken {
     /**
      * @brief is the current token a comment? (c++ or c comment)
      */
-    bool IsAnyComment() const {
-        return type == kPHP_T_C_COMMENT || type == kPHP_T_CXX_COMMENT;
-    }
+    bool IsAnyComment() const { return type == kPHP_T_C_COMMENT || type == kPHP_T_CXX_COMMENT; }
     /**
      * @brief is the current token a PHP Doc comment?
      */
-    bool IsDocComment() const {
-        return type == kPHP_T_C_COMMENT;
-    }
+    bool IsDocComment() const { return type == kPHP_T_C_COMMENT; }
     typedef std::vector<phpLexerToken> Vet_t;
 };
 
@@ -151,5 +147,35 @@ WXDLLIMPEXP_CL bool phpLexerIsPHPCode(PHPScanner_t scanner);
  * @brief peek at the next token
  */
 WXDLLIMPEXP_CL void phpLexerUnget(PHPScanner_t scanner);
+
+/**
+ * @class PHPScannerLocker
+ * @brief a wrapper around the C API for PHPScanner
+ */
+struct WXDLLIMPEXP_CL PHPScannerLocker {
+    PHPScanner_t scanner;
+    PHPScannerLocker(const wxString& content, size_t options = kPhpLexerOpt_None)
+    {
+        scanner = ::phpLexerNew(content, options);
+    }
+
+    PHPScannerLocker(const wxFileName& filename, size_t options = kPhpLexerOpt_None)
+    {
+        scanner = ::phpLexerNew(filename, options);
+    }
+
+    PHPScannerLocker(PHPScanner_t phpScanner)
+        : scanner(phpScanner)
+    {
+    }
+
+    ~PHPScannerLocker()
+    {
+        if(scanner) {
+            ::phpLexerDestroy(&scanner);
+        }
+    }
+};
+
 
 #endif

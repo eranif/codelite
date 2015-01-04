@@ -627,10 +627,10 @@ wxString PHPCodeCompletion::ExpandRequire(const wxFileName& curfile, const wxStr
 {
     PHPScanner_t scanner = ::phpLexerNew("<?php " + require);
     if(!scanner) return "";
-    
+
     wxString outFile;
     phpLexerToken token;
-    while (::phpLexerNext(scanner, token)) {
+    while(::phpLexerNext(scanner, token)) {
         if(token.IsAnyComment()) continue;
         switch(token.type) {
         case kPHP_T_REQUIRE:
@@ -645,14 +645,14 @@ wxString PHPCodeCompletion::ExpandRequire(const wxFileName& curfile, const wxStr
             break;
         }
         case kPHP_T_FILE:
-            outFile << curfile.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+            outFile << curfile.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
             break;
         case kPHP_T_DIR:
-            outFile << curfile.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+            outFile << curfile.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
             break;
         }
     }
-    
+
     wxFileName fileName(outFile);
     if(fileName.IsOk() && fileName.IsRelative()) {
         wxArrayString paths;
@@ -663,8 +663,8 @@ wxString PHPCodeCompletion::ExpandRequire(const wxFileName& curfile, const wxStr
             wxArrayString incpaths = proj->GetSettings().GetIncludePathAsArray();
             paths.insert(paths.end(), incpaths.begin(), incpaths.end());
         }
-        
-        for(size_t i=0; i<paths.GetCount(); ++i) {
+
+        for(size_t i = 0; i < paths.GetCount(); ++i) {
             wxFileName tmpFile = fileName;
             if(tmpFile.MakeAbsolute(paths.Item(i))) {
                 wxString fullpath = tmpFile.GetFullPath();
@@ -674,12 +674,65 @@ wxString PHPCodeCompletion::ExpandRequire(const wxFileName& curfile, const wxStr
                 }
             }
         }
-    } 
-    
+    }
+
     if(fileName.IsOk()) {
         fileName.Normalize();
         outFile = fileName.GetFullPath();
     }
     ::phpLexerDestroy(&scanner);
     return outFile;
+}
+
+int PHPCodeCompletion::GetLocationForSettersGetters(const wxString& filecontent, const wxString& classname)
+{
+    PHPScannerLocker locker(filecontent);
+    PHPScanner_t scanner = locker.scanner;
+    if(!scanner) return wxNOT_FOUND;
+
+    phpLexerToken token;
+    bool isOK = false;
+    while(::phpLexerNext(scanner, token)) {
+        if(token.type != kPHP_T_CLASS) {
+            continue;
+        }
+
+        if(::phpLexerNext(scanner, token) && token.type == kPHP_T_IDENTIFIER && token.text == classname) {
+            // we found the class definition
+            isOK = true;
+            break;
+        }
+    }
+
+    if(!isOK) return wxNOT_FOUND;
+
+    int depth = 0;
+    int line = wxNOT_FOUND;
+
+    // searc for the open brace
+    while(::phpLexerNext(scanner, token)) {
+        if(token.type == '{') {
+            ++depth;
+            break;
+        }
+    }
+
+    if(!depth) return wxNOT_FOUND;
+    // Now search for the closing brace
+    while(::phpLexerNext(scanner, token)) {
+        if(token.type == '}') {
+            line = token.lineNumber;
+            --depth;
+            if(depth == 0) {
+                break;
+            }
+        } else if(token.type == '{') {
+            ++depth;
+        }
+    }
+    
+    if(depth == 0) {
+        return line;
+    }
+    return wxNOT_FOUND;
 }

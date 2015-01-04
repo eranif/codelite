@@ -265,7 +265,6 @@ void GotoHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
             }
 
             if (line > 0) {
-                int pos = editor->PositionFromLine(line - 1);
                 editor->CenterLine(line-1);
                 break;
             } else {

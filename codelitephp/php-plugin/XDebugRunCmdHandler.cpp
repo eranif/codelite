@@ -9,6 +9,7 @@
 #include <event_notifier.h>
 #include "php_utils.h"
 #include "xdebugevent.h"
+#include <wx/msgdlg.h>
 
 XDebugRunCmdHandler::XDebugRunCmdHandler(XDebugManager* mgr, int transcationId)
     : XDebugCommandHandler(mgr, transcationId)
@@ -44,6 +45,11 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
                 focusEvent.SetFileName( fnFilename.GetFullPath() );
                 focusEvent.SetLineNumber( line_number - 1 ); // scintilla is counting from 0
                 EventNotifier::Get()->AddPendingEvent( focusEvent );
+            } else {
+                wxString message;
+                message << _("Failed to map remote file: ") << filename << "\n"
+                        << _("Check your project settings->Debug to define folder mapping");
+                ::wxMessageBox(message, "CodeLite", wxICON_WARNING|wxOK|wxCENTER);
             }
         }
     }

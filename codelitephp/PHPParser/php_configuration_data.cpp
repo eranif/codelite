@@ -12,6 +12,7 @@ PHPConfigurationData::PHPConfigurationData()
     , m_flags(kRunLintOnFileSave)
     , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css")
     , m_workspaceType(0)
+    , m_xdebugHost("127.0.0.1")
 {
     if ( m_ccIncludePath.IsEmpty() ) {
         m_ccIncludePath.Add( ::GetCCResourceDirectory() );
@@ -30,7 +31,7 @@ void PHPConfigurationData::FromJSON(const JSONElement &json)
     m_phpExe = json.namedObject("m_phpExe").toString("php");
     m_errorReporting = json.namedObject("m_errorReporting").toString("E_ALL & ~E_NOTICE");
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(9000);
-    m_xdebugHost = json.namedObject("m_xdebugHost").toString("127.0.0.1");
+    m_xdebugHost = json.namedObject("m_xdebugHost").toString(m_xdebugHost);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString("codeliteide");
     m_workspaceType = json.namedObject("m_workspaceType").toInt(m_workspaceType);
@@ -57,6 +58,7 @@ JSONElement PHPConfigurationData::ToJSON() const
     e.addProperty("m_phpExe", m_phpExe);
     e.addProperty("m_errorReporting", m_errorReporting);
     e.addProperty("m_xdebugPort", m_xdebugPort);
+    e.addProperty("m_xdebugHost", m_xdebugHost);
     e.addProperty("m_ccIncludePath", m_ccIncludePath);
     e.addProperty("m_flags", m_flags);
     e.addProperty("m_xdebugIdeKey", m_xdebugIdeKey);

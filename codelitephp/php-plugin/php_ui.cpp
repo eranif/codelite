@@ -464,14 +464,26 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer14->Add(fgSizer5, 0, wxEXPAND, 5);
     
-    m_staticText10 = new wxStaticText(m_panel13, wxID_ANY, _("XDebug port:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticTextHost = new wxStaticText(m_panel13, wxID_ANY, _("Listen host:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer5->Add(m_staticTextHost, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlHost = new wxTextCtrl(m_panel13, wxID_ANY, wxT("127.0.0.1"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlHost->SetToolTip(_("Wait for connection from XDebug on this host"));
+    m_textCtrlHost->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlHost->SetHint(wxT(""));
+    #endif
+    
+    fgSizer5->Add(m_textCtrlHost, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText10 = new wxStaticText(m_panel13, wxID_ANY, _("Port:"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_staticText10->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value must be the same as the value set in the 'xdebug.remote_port'\ndirective"));
     
     fgSizer5->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlXDebugPort = new wxTextCtrl(m_panel13, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_textCtrlXDebugPort->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value must be the same as the value set in the 'xdebug.remote_port'\ndirective"));
-    m_textCtrlXDebugPort->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlXDebugPort->SetHint(wxT(""));
     #endif

@@ -189,6 +189,8 @@ protected:
     wxButton* m_button15;
     wxTextCtrl* m_textCtrCClIncludePath;
     wxPanel* m_panel13;
+    wxStaticText* m_staticTextHost;
+    wxTextCtrl* m_textCtrlHost;
     wxStaticText* m_staticText10;
     wxTextCtrl* m_textCtrlXDebugPort;
     wxStaticText* m_staticText152;
@@ -217,6 +219,8 @@ public:
     wxButton* GetButton15() { return m_button15; }
     wxTextCtrl* GetTextCtrCClIncludePath() { return m_textCtrCClIncludePath; }
     wxPanel* GetPanel15() { return m_panel15; }
+    wxStaticText* GetStaticTextHost() { return m_staticTextHost; }
+    wxTextCtrl* GetTextCtrlHost() { return m_textCtrlHost; }
     wxStaticText* GetStaticText10() { return m_staticText10; }
     wxTextCtrl* GetTextCtrlXDebugPort() { return m_textCtrlXDebugPort; }
     wxStaticText* GetStaticText152() { return m_staticText152; }

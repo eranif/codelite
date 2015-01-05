@@ -1293,7 +1293,6 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
         if(menuitem) {
             event.GetMenu()->Delete(menuitem);
         }
-        event.Skip();
     }
 }
 

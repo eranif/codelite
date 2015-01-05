@@ -38,5 +38,8 @@ wxString FileNameToURI(const wxString &filename);
  * @brief encode a string into base64
  */
 wxString Base64Encode(const wxString &str);
+
+wxString MapRemoteFileToLocalFile(const wxString &remoteFile);
+
 #endif // PHP_UTILS
 

@@ -911,23 +911,26 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer109->Add(flexGridSizer117, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText119 = new wxStaticText(this, wxID_ANY, _("Source folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText119 = new wxStaticText(this, wxID_ANY, _("Local folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer117->Add(m_staticText119, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_dirPickerSource = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPickerSource->SetToolTip(_("The source folder usually points to the location where you develop your code"));
+    m_dirPickerSource->SetFocus();
     
     flexGridSizer117->Add(m_dirPickerSource, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText123 = new wxStaticText(this, wxID_ANY, _("Target folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText123 = new wxStaticText(this, wxID_ANY, _("Remote folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer117->Add(m_staticText123, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_dirPickerTarget = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
-    m_dirPickerTarget->SetToolTip(_("The target folder points to the location on the webserver where you files are deployed"));
+    m_textCtrlRemote = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlRemote->SetHint(wxT(""));
+    #endif
     
-    flexGridSizer117->Add(m_dirPickerTarget, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer117->Add(m_textCtrlRemote, 0, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer111 = new wxStdDialogButtonSizer();
     
@@ -1071,7 +1074,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer144 = new wxBoxSizer(wxVERTICAL);
     m_panel140->SetSizer(boxSizer144);
     
-    m_dvListCtrlStackTrace = new wxDataViewListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_SINGLE);
+    m_dvListCtrlStackTrace = new wxDataViewListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_dvListCtrlStackTraceFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

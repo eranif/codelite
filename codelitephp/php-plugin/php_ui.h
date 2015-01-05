@@ -345,7 +345,7 @@ protected:
     wxStaticText* m_staticText119;
     wxDirPickerCtrl* m_dirPickerSource;
     wxStaticText* m_staticText123;
-    wxDirPickerCtrl* m_dirPickerTarget;
+    wxTextCtrl* m_textCtrlRemote;
     wxStdDialogButtonSizer* m_stdBtnSizer111;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
@@ -357,7 +357,7 @@ public:
     wxStaticText* GetStaticText119() { return m_staticText119; }
     wxDirPickerCtrl* GetDirPickerSource() { return m_dirPickerSource; }
     wxStaticText* GetStaticText123() { return m_staticText123; }
-    wxDirPickerCtrl* GetDirPickerTarget() { return m_dirPickerTarget; }
+    wxTextCtrl* GetTextCtrlRemote() { return m_textCtrlRemote; }
     FileMappingDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~FileMappingDlgBase();
 };

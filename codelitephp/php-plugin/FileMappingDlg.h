@@ -13,7 +13,7 @@ public:
     }
     
     wxString GetTargetFolder() const {
-        return m_dirPickerTarget->GetPath();
+        return m_textCtrlRemote->GetValue();
     }
     
     void SetSourceFolder( const wxString &path) {
@@ -21,7 +21,7 @@ public:
     }
     
     void SetTargetFolder( const wxString &path) {
-        m_dirPickerTarget->SetPath( path );
+        m_textCtrlRemote->ChangeValue( path );
     }
     
 protected:

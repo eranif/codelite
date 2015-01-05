@@ -38,7 +38,9 @@ void* XDebugComThread::Entry()
     try {
         wxCharBuffer cb = m_host.mb_str(wxConvUTF8);
         m_server.CreateServer(cb.data(), m_port);
-
+        
+        CL_DEBUG("CodeLite >>> Listening on %s:%d", m_host, m_port);
+        
         // Wait for new connection (up to 5 seconds )
         do {
             if ( retry > 5 ) {
@@ -48,9 +50,9 @@ void* XDebugComThread::Entry()
             }
             client = m_server.WaitForNewConnection(1);
             ++retry;
-
+            CL_DEBUG("CodeLite >>> waiting for connection..");
         } while( !TestDestroy() && !client );
-
+        
         CL_DEBUG("CodeLite >>> Successfully accepted connection from XDebug!");
         m_xdebugMgr->CallAfter( &XDebugManager::SetConnected, true );
 

@@ -6,6 +6,7 @@
 #include <event_notifier.h>
 #include "XDebugManager.h"
 #include "xdebugevent.h"
+#include "php_utils.h"
 XDebugStackGetCmdHandler::XDebugStackGetCmdHandler(XDebugManager* mgr, int transcationId, int requestedStack)
     : XDebugCommandHandler(mgr, transcationId)
     , m_requestedStack(requestedStack)
@@ -27,9 +28,10 @@ void XDebugStackGetCmdHandler::Process(const wxXmlNode* response)
             wxString filename = child->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(child, "lineno");
             
+            wxString localFile = ::MapRemoteFileToLocalFile(filename);
             // Use pipe to separate the attributes
             wxString stackEntry;
-            stackEntry << level << "|" << where << "|" << filename << "|" << line_number;
+            stackEntry << level << "|" << where << "|" << localFile << "|" << line_number;
             stackTrace.Add( stackEntry );
         }
         child = child->GetNext();

@@ -35,20 +35,15 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
             wxString filename = msg->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(msg, "lineno");
             
-            filename = ::URIToFileName(filename);
-
-            wxFileName fnFilename( filename );
-            if ( fnFilename.Exists() ) {
-
+            wxString localFile = ::MapRemoteFileToLocalFile(filename);
+            CL_DEBUG("Mapping remote file: %s => %s", filename, localFile);
+            wxFileName fnFilename( localFile );
+            if(fnFilename.Exists()) {
                 // Notify about control
                 XDebugEvent focusEvent(wxEVT_XDEBUG_IDE_GOT_CONTROL);
                 focusEvent.SetFileName( fnFilename.GetFullPath() );
                 focusEvent.SetLineNumber( line_number - 1 ); // scintilla is counting from 0
                 EventNotifier::Get()->AddPendingEvent( focusEvent );
-                
-            } else {
-                // FIXME: do a reverse mapping to open the local file
-                
             }
         }
     }

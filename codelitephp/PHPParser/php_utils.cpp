@@ -8,6 +8,9 @@
 #include <wx/uri.h>
 #include <wx/base64.h>
 #include <map>
+#include "php_project.h"
+#include "php_workspace.h"
+#include "json_node.h"
 
 bool IsPHPCommentOrString(int styleAtPos)
 {
@@ -30,7 +33,8 @@ bool IsPHPSection(int styleAtPos)
 
 bool IsPHPFile(IEditor* editor)
 {
-    if(!editor) return false;
+    if(!editor)
+        return false;
     return ::IsPHPFile(editor->GetFileName().GetFullPath());
 }
 
@@ -75,9 +79,9 @@ wxMemoryBuffer ReadFileContent(const wxString& filename)
     }
 
     // read the whole file
-    fseek(fp, 0, SEEK_END); // go to end
-    len = ftell(fp); // get position at end (length)
-    fseek(fp, 0, SEEK_SET); // go to begining
+    fseek(fp, 0, SEEK_END);                                   // go to end
+    len = ftell(fp);                                          // get position at end (length)
+    fseek(fp, 0, SEEK_SET);                                   // go to begining
     char* pbuf = static_cast<char*>(buffer.GetWriteBuf(len)); // make sure the buffer is large enough
 
     size_t bytes = fread(pbuf, sizeof(char), len, fp);
@@ -115,7 +119,7 @@ wxString URIToFileName(const wxString& uriFileName)
 {
     wxString filename = wxURI::Unescape(uriFileName);
     filename.StartsWith(FILE_SCHEME, &filename);
-    
+
 #ifdef __WXMSW__
     if(filename.StartsWith("/")) {
         filename.Remove(0, 1);
@@ -146,12 +150,12 @@ static wxString URIEncode(const wxString& inputStr)
         sEncodeMap['['] = "%5B";
         sEncodeMap[']'] = "%5D";
         sEncodeMap[' '] = "%20";
-        //sEncodeMap['/'] = "%2F";
-        //sEncodeMap[':'] = "%3A";
+        // sEncodeMap['/'] = "%2F";
+        // sEncodeMap[':'] = "%3A";
     }
 
     wxString encoded;
-    for(size_t i=0; i<inputStr.length(); ++i) {
+    for(size_t i = 0; i < inputStr.length(); ++i) {
         std::map<int, wxString>::iterator iter = sEncodeMap.find(inputStr.at(i));
         if(iter != sEncodeMap.end()) {
             encoded << iter->second;
@@ -171,7 +175,7 @@ wxString FileNameToURI(const wxString& filename)
     sourceFullPath.Replace("\\", "/");
     while(sourceFullPath.Replace("//", "/")) {
     }
-//    wxURI uri(sourceFullPath);
+    //    wxURI uri(sourceFullPath);
     sourceFullPath = URIEncode(sourceFullPath);
     sourceFullPath.Replace("file:", FILE_SCHEME);
     return sourceFullPath;
@@ -181,4 +185,50 @@ wxString Base64Encode(const wxString& str)
 {
     wxString encodedString = ::wxBase64Encode(str.mb_str(wxConvUTF8).data(), str.length());
     return encodedString;
+}
+
+wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
+{
+    // Check that a workspace is opened
+    if(!PHPWorkspace::Get()->IsOpen())
+        return remoteFile;
+
+    // Sanity
+    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
+    if(!pProject)
+        return remoteFile;
+
+    // Map filename file attribute returned by xdebug to local filename
+    wxString filename = remoteFile;
+    
+    // Remote the "file://" from the file path
+    filename.StartsWith(FILE_SCHEME, &filename);
+    // On Windows, the file is returned like (after removing the file://)
+    // /C:/Http/htdocs/file.php - remote the leading "/"
+    wxRegEx reMSWPrefix("/[a-zA-Z]{1}:/");
+    if(reMSWPrefix.IsValid() && reMSWPrefix.Matches(filename)) {
+        // Windows file
+        filename.Remove(0, 1);
+    }
+    
+    // First check if the remote file exists locally
+    if(wxFileName(filename).Exists()) {
+        return wxFileName(filename).GetFullPath();
+    }
+    
+    // Use the active project file mapping
+    const PHPProjectSettingsData& settings = pProject->GetSettings();
+    const JSONElement::wxStringMap_t& mapping = settings.GetFileMapping();
+    JSONElement::wxStringMap_t::const_iterator iter = mapping.begin();
+    for(; iter != mapping.end(); ++iter) {
+        const wxString& localFolder = iter->first;
+        const wxString& remoteFolder = iter->second;
+        if(filename.StartsWith(remoteFolder)) {
+            filename.Replace(remoteFolder, localFolder);
+            return wxFileName(filename).GetFullPath();
+        }
+    }
+    
+    // No matching was found
+    return remoteFile;
 }

@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 477,
+  "m_objCounter": 479,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCF01InitBitmapResources",
   "m_bitmapsFile": "php_ui_php-plugin_bitmaps.cpp",
@@ -9249,7 +9249,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "PHP:UI:ProjectSettings"
+     "m_path": "PHPPlugin:UI:ProjectSettings"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -9421,7 +9421,7 @@
           }, {
            "type": "multi-string",
            "m_label": "Label:",
-           "m_value": "Source folder:"
+           "m_value": "Local folder:"
           }, {
            "type": "string",
            "m_label": "Wrap:",
@@ -9480,7 +9480,7 @@
           }, {
            "type": "bool",
            "m_label": "Focused",
-           "m_value": false
+           "m_value": true
           }, {
            "type": "string",
            "m_label": "Class Name:",
@@ -9571,7 +9571,7 @@
           }, {
            "type": "multi-string",
            "m_label": "Label:",
-           "m_value": "Target folder:"
+           "m_value": "Remote folder:"
           }, {
            "type": "string",
            "m_label": "Wrap:",
@@ -9580,12 +9580,12 @@
          "m_events": [],
          "m_children": []
         }, {
-         "m_type": 4432,
+         "m_type": 4406,
          "proportion": 0,
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxDIRP_DEFAULT_STYLE", "wxDIRP_USE_TEXTCTRL"],
+         "m_styles": [],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
@@ -9602,11 +9602,11 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_dirPickerTarget"
+           "m_value": "m_textCtrlRemote"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
-           "m_value": "The target folder points to the location on the webserver where you files are deployed"
+           "m_value": ""
           }, {
            "type": "colour",
            "m_label": "Bg Colour:",
@@ -9649,8 +9649,20 @@
            "m_value": ""
           }, {
            "type": "string",
-           "m_label": "Message:",
-           "m_value": "Select a folder"
+           "m_label": "Text Hint",
+           "m_value": ""
+          }, {
+           "type": "string",
+           "m_label": "Max Length:",
+           "m_value": "0"
+          }, {
+           "type": "bool",
+           "m_label": "Auto Complete Directories:",
+           "m_value": false
+          }, {
+           "type": "bool",
+           "m_label": "Auto Complete Files:",
+           "m_value": false
           }],
          "m_events": [],
          "m_children": []
@@ -10281,7 +10293,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "PHP:src:XDebug"
+     "m_path": "PHPPlugin:src:XDebug"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -10501,7 +10513,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxDV_SINGLE"],
+             "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -11295,7 +11307,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "PHP:UI:Debugger"
+     "m_path": "PHPPlugin:UI:Debugger"
     }, {
      "type": "choice",
      "m_label": "Centre:",

@@ -159,6 +159,8 @@
     <File Name="XDebugDiagDlg.cpp"/>
     <File Name="NewPHPProjectDlg.h"/>
     <File Name="NewPHPProjectDlg.cpp"/>
+    <File Name="NewPHPProjectWizard.h"/>
+    <File Name="NewPHPProjectWizard.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="PHPParser"/>

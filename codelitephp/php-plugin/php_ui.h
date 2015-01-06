@@ -50,6 +50,8 @@
 #include <wx/simplebook.h>
 #include <wx/combobox.h>
 #include <wx/infobar.h>
+#include <wx/wizard.h>
+#include <vector>
 
 class QuickOutlineDlgBase : public wxDialog
 {
@@ -619,6 +621,45 @@ public:
     wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
     NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewPHPProjectDlgBase();
+};
+
+
+class NewPHPProjectWizardBase : public wxWizard
+{
+protected:
+    std::vector<wxWizardPageSimple*> m_pages;
+
+    wxWizardPageSimple* m_wizardPageCreateMethod;
+    wxBannerWindow* m_banner495;
+    wxRadioBox* m_radioBoxCreateMethod;
+    wxWizardPageSimple* m_wizardPageEmptyProject;
+    wxBannerWindow* m_banner517;
+    wxStaticText* m_staticText521;
+    wxTextCtrl* m_textCtrlName;
+    wxStaticText* m_staticText525;
+    wxDirPickerCtrl* m_dirPickerPath;
+    wxCheckBox* m_checkBoxSeparateFolder;
+    wxStaticText* m_staticText535;
+    wxTextCtrl* m_textCtrlPreview;
+
+protected:
+
+public:
+    wxBannerWindow* GetBanner495() { return m_banner495; }
+    wxRadioBox* GetRadioBoxCreateMethod() { return m_radioBoxCreateMethod; }
+    wxWizardPageSimple* GetWizardPageCreateMethod() { return m_wizardPageCreateMethod; }
+    wxBannerWindow* GetBanner517() { return m_banner517; }
+    wxStaticText* GetStaticText521() { return m_staticText521; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText525() { return m_staticText525; }
+    wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
+    wxCheckBox* GetCheckBoxSeparateFolder() { return m_checkBoxSeparateFolder; }
+    wxStaticText* GetStaticText535() { return m_staticText535; }
+    wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
+    wxWizardPageSimple* GetWizardPageEmptyProject() { return m_wizardPageEmptyProject; }
+    NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Project"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
+    virtual ~NewPHPProjectWizardBase();
 };
 
 #endif

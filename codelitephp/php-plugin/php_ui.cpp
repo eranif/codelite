@@ -1861,14 +1861,14 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     wxArrayString m_radioBoxCreateMethodArr;
     m_radioBoxCreateMethodArr.Add(wxT("Create an empty PHP project"));
     m_radioBoxCreateMethodArr.Add(wxT("Create a project from an existing source files"));
-    m_radioBoxCreateMethod = new wxRadioBox(m_wizardPageCreateMethod, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_radioBoxCreateMethodArr, 1, 0);
+    m_radioBoxCreateMethod = new wxRadioBox(m_wizardPageCreateMethod, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_radioBoxCreateMethodArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxCreateMethod->SetFocus();
     m_radioBoxCreateMethod->SetSelection(0);
     
     boxSizer491->Add(m_radioBoxCreateMethod, 0, wxALL|wxEXPAND, 5);
     
-    m_wizardPageEmptyProject = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
-    m_pages.push_back(m_wizardPageEmptyProject);
+    m_wizardPageProjectDetails = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
+    m_pages.push_back(m_wizardPageProjectDetails);
     if (m_pages.size() > 1) {
         for(size_t i=1; i<m_pages.size(); i++) {
             wxWizardPageSimple::Chain(m_pages.at(i-1), m_pages.at(i));
@@ -1877,15 +1877,20 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     GetPageAreaSizer()->Add(m_pages.at(0));
     
     wxBoxSizer* boxSizer493 = new wxBoxSizer(wxVERTICAL);
-    m_wizardPageEmptyProject->SetSizer(boxSizer493);
+    m_wizardPageProjectDetails->SetSizer(boxSizer493);
     
-    m_banner517 = new wxBannerWindow(m_wizardPageEmptyProject, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_banner517 = new wxBannerWindow(m_wizardPageProjectDetails, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner517->SetBitmap(wxNullBitmap);
     m_banner517->SetText(_("Project Details"), _("Set the project name and path"));
     m_banner517->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_banner517->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer493->Add(m_banner517, 0, wxALL|wxEXPAND, 5);
+    
+    m_infobar = new wxInfoBar(m_wizardPageProjectDetails, wxID_ANY);
+    m_infobar->SetSize(wxSize(-1,-1));
+    
+    boxSizer493->Add(m_infobar, 0, wxALL|wxEXPAND, 5);
     
     wxFlexGridSizer* flexGridSizer519 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer519->SetFlexibleDirection( wxBOTH );
@@ -1895,11 +1900,11 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     boxSizer493->Add(flexGridSizer519, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText521 = new wxStaticText(m_wizardPageEmptyProject, wxID_ANY, _("Project Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText521 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Project Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer519->Add(m_staticText521, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlName = new wxTextCtrl(m_wizardPageEmptyProject, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlName = new wxTextCtrl(m_wizardPageProjectDetails, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     m_textCtrlName->SetToolTip(_("Set the project name"));
     m_textCtrlName->SetFocus();
     #if wxVERSION_NUMBER >= 3000
@@ -1908,18 +1913,18 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     flexGridSizer519->Add(m_textCtrlName, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText525 = new wxStaticText(m_wizardPageEmptyProject, wxID_ANY, _("Project path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText525 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Project path:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer519->Add(m_staticText525, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_dirPickerPath = new wxDirPickerCtrl(m_wizardPageEmptyProject, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerPath = new wxDirPickerCtrl(m_wizardPageProjectDetails, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPickerPath->SetToolTip(_("Select the project path"));
     
     flexGridSizer519->Add(m_dirPickerPath, 0, wxALL|wxEXPAND, 5);
     
     flexGridSizer519->Add(0, 0, 1, wxALL, 5);
     
-    m_checkBoxSeparateFolder = new wxCheckBox(m_wizardPageEmptyProject, wxID_ANY, _("Create the project under a separate folder"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxSeparateFolder = new wxCheckBox(m_wizardPageProjectDetails, wxID_ANY, _("Create the project under a separate folder"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxSeparateFolder->SetValue(false);
     
     flexGridSizer519->Add(m_checkBoxSeparateFolder, 0, wxALL, 5);
@@ -1928,11 +1933,11 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     flexGridSizer519->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText535 = new wxStaticText(m_wizardPageEmptyProject, wxID_ANY, _("Preview:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText535 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Preview:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer519->Add(m_staticText535, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlPreview = new wxTextCtrl(m_wizardPageEmptyProject, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlPreview = new wxTextCtrl(m_wizardPageProjectDetails, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     m_textCtrlPreview->Enable(false);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlPreview->SetHint(wxT(""));
@@ -1945,8 +1950,21 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewPHPProjectWizardBase::OnFinish), NULL, this);
+    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL, this);
+    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
+    m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
+    m_checkBoxSeparateFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL, this);
+    
 }
 
 NewPHPProjectWizardBase::~NewPHPProjectWizardBase()
 {
+    this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewPHPProjectWizardBase::OnFinish), NULL, this);
+    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL, this);
+    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
+    m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
+    m_checkBoxSeparateFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL, this);
+    
 }

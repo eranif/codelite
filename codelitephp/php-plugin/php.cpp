@@ -37,7 +37,7 @@
 #include "PHPLocator.h"
 #include <wx/regex.h>
 #include "bookmark_manager.h"
-#include "NewPHPProjectDlg.h"
+#include "NewPHPProjectWizard.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -514,9 +514,9 @@ void PhpPlugin::OnNewProject(clNewProjectEvent& e)
         e.GetTemplates().push_back(phpTemplate);
     } else {
         // we have a PHP workspace opened - handle it ourself
-        NewPHPProjectDlg dlg(EventNotifier::Get()->TopFrame());
-        if(dlg.ShowModal() == wxID_OK) {
-            m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, dlg.GetCreateData());
+        NewPHPProjectWizard wiz(EventNotifier::Get()->TopFrame());
+        if(wiz.RunWizard(wiz.GetFirstPage())) {
+            m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, wiz.GetCreateData());
         }
     }
 }

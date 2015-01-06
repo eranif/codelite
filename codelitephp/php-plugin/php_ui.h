@@ -632,8 +632,9 @@ protected:
     wxWizardPageSimple* m_wizardPageCreateMethod;
     wxBannerWindow* m_banner495;
     wxRadioBox* m_radioBoxCreateMethod;
-    wxWizardPageSimple* m_wizardPageEmptyProject;
+    wxWizardPageSimple* m_wizardPageProjectDetails;
     wxBannerWindow* m_banner517;
+    wxInfoBar* m_infobar;
     wxStaticText* m_staticText521;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText525;
@@ -643,12 +644,18 @@ protected:
     wxTextCtrl* m_textCtrlPreview;
 
 protected:
+    virtual void OnFinish(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnPageChanging(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDirSelected(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnCheckSeparateFolder(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxBannerWindow* GetBanner495() { return m_banner495; }
     wxRadioBox* GetRadioBoxCreateMethod() { return m_radioBoxCreateMethod; }
     wxWizardPageSimple* GetWizardPageCreateMethod() { return m_wizardPageCreateMethod; }
     wxBannerWindow* GetBanner517() { return m_banner517; }
+    wxInfoBar* GetInfobar() { return m_infobar; }
     wxStaticText* GetStaticText521() { return m_staticText521; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText525() { return m_staticText525; }
@@ -656,7 +663,7 @@ public:
     wxCheckBox* GetCheckBoxSeparateFolder() { return m_checkBoxSeparateFolder; }
     wxStaticText* GetStaticText535() { return m_staticText535; }
     wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
-    wxWizardPageSimple* GetWizardPageEmptyProject() { return m_wizardPageEmptyProject; }
+    wxWizardPageSimple* GetWizardPageProjectDetails() { return m_wizardPageProjectDetails; }
     NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Project"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~NewPHPProjectWizardBase();

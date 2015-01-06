@@ -56,6 +56,7 @@ public:
     bool IsReference() const { return HasFlag(kVar_Reference); }
     bool IsStatic() const { return HasFlag(kVar_Static); }
     bool IsDefine() const { return HasFlag(kVar_Define); }
+    bool IsBoolean() const { return GetTypeHint() == "boolean" || GetTypeHint() == "bool"; }
 };
 
 #endif // PHPENTITYVARIABLE_H

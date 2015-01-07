@@ -634,6 +634,8 @@
     <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>
     <File Name="ClangOutputTab.h"/>
     <File Name="ClangOutputTab.cpp"/>
+    <File Name="FileExplorerTabToolBar.h"/>
+    <File Name="FileExplorerTabToolBar.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

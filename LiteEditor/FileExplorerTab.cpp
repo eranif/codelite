@@ -108,7 +108,71 @@ FileExplorerTab::FileExplorerTab(wxWindow* parent)
             this);
 }
 
-FileExplorerTab::~FileExplorerTab() {}
+FileExplorerTab::~FileExplorerTab()
+{
+    Disconnect(XRCID("open_file"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnOpenFile),
+            NULL,
+            this);
+    Disconnect(XRCID("open_file_in_text_editor"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnOpenFileInTextEditor),
+            NULL,
+            this);
+    Disconnect(XRCID("refresh_node"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnRefreshNode),
+            NULL,
+            this);
+    Disconnect(XRCID("delete_node"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnDeleteNode),
+            NULL,
+            this);
+    Disconnect(XRCID("search_node"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnSearchNode),
+            NULL,
+            this);
+    Disconnect(XRCID("tags_add_global_include"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnTagNode),
+            NULL,
+            this);
+    Disconnect(XRCID("tags_add_global_exclude"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnTagNode),
+            NULL,
+            this);
+    Disconnect(XRCID("tags_add_workspace_include"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnTagNode),
+            NULL,
+            this);
+    Disconnect(XRCID("tags_add_workspace_exclude"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnTagNode),
+            NULL,
+            this);
+    Disconnect(XRCID("open_shell"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnOpenShell),
+            NULL,
+            this);
+    Disconnect(XRCID("fe_open_file_explorer"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnOpenExplorer),
+            NULL,
+            this);
+    Disconnect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerTab::OnKeyDown));
+
+    Disconnect(XRCID("open_with_default_application"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(FileExplorerTab::OnOpenWidthDefaultApp),
+            NULL,
+            this);
+}
 
 void FileExplorerTab::OnContextMenu(wxTreeEvent& event)
 {

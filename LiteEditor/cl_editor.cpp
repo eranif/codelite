@@ -1054,7 +1054,7 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     // update line number
     wxString message;
 
-    message << wxT("Ln ") << curLine + 1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos;
+    message << wxT("Ln ") << curLine + 1 << wxT(" Col ") << GetColumn(pos) << wxT(" Pos ") << pos;
 
     wxString bookmarkString = GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
     message << ", " << bookmarkString;

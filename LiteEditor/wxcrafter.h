@@ -405,4 +405,16 @@ public:
     virtual ~ClangOutputTabBase();
 };
 
+
+class FileExplorerTabToolBarBase : public wxAuiToolBar
+{
+protected:
+
+protected:
+
+public:
+    FileExplorerTabToolBarBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &position = wxDefaultPosition, const wxSize &size = wxSize(-1,-1), long style = wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    virtual ~FileExplorerTabToolBarBase();
+};
+
 #endif

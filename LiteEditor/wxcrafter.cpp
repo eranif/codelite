@@ -1066,3 +1066,27 @@ ClangOutputTabBase::~ClangOutputTabBase()
     m_choiceCache->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnPolicyUI), NULL, this);
     
 }
+
+FileExplorerTabToolBarBase::FileExplorerTabToolBarBase(wxWindow *parent, wxWindowID id, const wxPoint &position, const wxSize &size, long style)
+    : wxAuiToolBar(parent, id, position, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    SetToolBitmapSize(wxSize(16,16));
+    
+    this->AddTool(XRCID("link_editor"), _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
+    
+    this->AddTool(XRCID("collapse_all"), _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
+    
+    this->AddTool(XRCID("go_home"), _("Go Home"), wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxNullBitmap, wxITEM_NORMAL, _("Go Home"), _("Go Home"), NULL);
+    this->Realize();
+    
+}
+
+FileExplorerTabToolBarBase::~FileExplorerTabToolBarBase()
+{
+}

@@ -24,7 +24,6 @@
 #include "tree_item_data.h"
 #include <bitmap_loader.h>
 #include "PHPLookupTable.h"
-#include "PHPProjectSetupDlg.h"
 #include <wx/wupdlock.h>
 #include "PHPDebugStartDlg.h"
 #include "file_logger.h"
@@ -292,12 +291,6 @@ void PHPWorkspaceView::UnLoadWorkspace() { m_treeCtrlView->DeleteAllItems(); }
 
 void PHPWorkspaceView::CreateNewProject(PHPProject::CreateData cd)
 {
-    PHPProjectSetupDlg setupDlg(FRAME);
-    if(setupDlg.ShowModal() == wxID_OK) {
-        cd.importFilesUnderPath = setupDlg.IsImportFiles();
-        cd.projectType = setupDlg.GetProjectType();
-        cd.phpExe = setupDlg.GetPhpExecutable();
-    }
     PHPWorkspace::Get()->CreateProject(cd);
     // Update the UI
     LoadWorkspace();

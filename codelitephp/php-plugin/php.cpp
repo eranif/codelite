@@ -501,6 +501,8 @@ void PhpPlugin::OnGetWorkspaceFiles(wxCommandEvent& e)
 void PhpPlugin::OnNewProject(clNewProjectEvent& e)
 {
     if(!PHPWorkspace::Get()->IsOpen()) {
+        e.Skip();
+#if 0
         // No workspace is opened yet, let codelite process this event normally
         e.Skip();
         clNewProjectEvent::Template phpTemplate;
@@ -512,6 +514,7 @@ void PhpPlugin::OnNewProject(clNewProjectEvent& e)
         phpTemplate.m_toolchain = "PHP Tools";
         phpTemplate.m_allowSeparateFolder = true;
         e.GetTemplates().push_back(phpTemplate);
+#endif
     } else {
         // we have a PHP workspace opened - handle it ourself
         NewPHPProjectWizard wiz(EventNotifier::Get()->TopFrame());

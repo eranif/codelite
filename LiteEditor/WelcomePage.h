@@ -34,6 +34,7 @@ class WelcomePage : public WelcomePageBase
     IntStringMap_t m_idToName;
 
 protected:
+    virtual void OnOpenWorkspace(wxCommandEvent& event);
     virtual void OnNewWorkspace(wxCommandEvent& event);
     virtual void OnRecentFileUI(wxUpdateUIEvent& event);
     virtual void OnRecentProjectUI(wxUpdateUIEvent& event);
@@ -46,7 +47,6 @@ protected:
     virtual void OnShowFileseMenu(wxCommandEvent& event);
     virtual void OnShowWorkspaceMenu(wxCommandEvent& event);
     virtual void OnSize(wxSizeEvent& event);
-    virtual void OnNewProject(wxCommandEvent& event);
     virtual void OnOpenForums(wxCommandEvent& event);
     virtual void OnOpenWiki(wxCommandEvent& event);
     void OnThemeChanged(wxCommandEvent &e);

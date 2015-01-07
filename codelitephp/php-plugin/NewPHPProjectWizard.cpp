@@ -8,6 +8,10 @@ NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent)
     : NewPHPProjectWizardBase(parent)
     , m_nameModified(false)
 {
+    // Use the default PHP 
+    PHPConfigurationData conf;
+    conf.Load();
+    m_filePickerPhpExe->SetPath(conf.GetPhpExe());
 }
 
 NewPHPProjectWizard::~NewPHPProjectWizard() {}
@@ -33,9 +37,9 @@ void NewPHPProjectWizard::OnPageChanging(wxWizardEvent& event)
             if(newpath.StartsWith(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME))) {
                 // The new path is a sub folder of a project
                 wxString message;
-                message << _("Unable to create a project at the selected path. ") << _("Path '") << newpath
+                message << _("Unable to create a project at the selected path\n") << _("Path '") << newpath
                         << _("' is already part of project '") << iter->second->GetName() << "'";
-                m_infobar->ShowMessage(message, wxICON_WARNING);
+                ::wxMessageBox(message, "CodeLite", wxOK|wxICON_ERROR|wxCENTER, this);
                 event.Skip(false);
                 event.Veto();
                 return;
@@ -44,9 +48,9 @@ void NewPHPProjectWizard::OnPageChanging(wxWizardEvent& event)
                           newpath)) {
                 // The new project is a parent of an existing project
                 wxString message;
-                message << _("Unable to create a project at the selected path. ") << _("Project '")
+                message << _("Unable to create a project at the selected path\n") << _("Project '")
                         << iter->second->GetName() << _("' is located under this path");
-                m_infobar->ShowMessage(message, wxICON_WARNING);
+                ::wxMessageBox(message, "CodeLite", wxOK|wxICON_ERROR|wxCENTER, this);
                 event.Skip(false);
                 event.Veto();
                 return;
@@ -89,10 +93,12 @@ PHPProject::CreateData NewPHPProjectWizard::GetCreateData()
     conf.Load();
     cd.importFilesUnderPath = true;
     cd.name = m_textCtrlName->GetValue();
-    cd.phpExe = conf.GetPhpExe();
+    cd.phpExe = m_filePickerPhpExe->GetPath().IsEmpty() ? conf.GetPhpExe() : m_filePickerPhpExe->GetPath();
     cd.path = wxFileName(m_textCtrlPreview->GetValue()).GetPath();
+    cd.projectType = GetProjectType();
     return cd;
 }
+
 void NewPHPProjectWizard::OnCheckSeparateFolder(wxCommandEvent& event)
 {
     DoUpdateProjectFolder();

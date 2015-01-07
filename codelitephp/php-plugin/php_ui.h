@@ -44,14 +44,13 @@
 #include <wx/notebook.h>
 #include <wx/stc/stc.h>
 #include <wx/html/htmlwin.h>
-#include <wx/bannerwindow.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/simplebook.h>
 #include <wx/combobox.h>
-#include <wx/infobar.h>
 #include <wx/wizard.h>
 #include <vector>
+#include <wx/bannerwindow.h>
 
 class QuickOutlineDlgBase : public wxDialog
 {
@@ -527,31 +526,6 @@ public:
 };
 
 
-class PHPProjectSetupDlgBase : public wxDialog
-{
-protected:
-    wxBannerWindow* m_banner313;
-    wxStaticText* m_staticText317;
-    wxChoice* m_choiceProjectType;
-    wxStaticText* m_staticText321;
-    wxFilePickerCtrl* m_filePickerPhpExe;
-    wxStdDialogButtonSizer* m_stdBtnSizer338;
-    wxButton* m_button340;
-    wxButton* m_button342;
-
-protected:
-
-public:
-    wxBannerWindow* GetBanner313() { return m_banner313; }
-    wxStaticText* GetStaticText317() { return m_staticText317; }
-    wxChoice* GetChoiceProjectType() { return m_choiceProjectType; }
-    wxStaticText* GetStaticText321() { return m_staticText321; }
-    wxFilePickerCtrl* GetFilePickerPhpExe() { return m_filePickerPhpExe; }
-    PHPProjectSetupDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Project Setup"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-    virtual ~PHPProjectSetupDlgBase();
-};
-
-
 class PHPDebugStartDlgBase : public wxDialog
 {
 protected:
@@ -589,41 +563,6 @@ public:
 };
 
 
-class NewPHPProjectDlgBase : public wxDialog
-{
-protected:
-    wxInfoBar* m_infobar;
-    wxStaticText* m_staticText435;
-    wxTextCtrl* m_textCtrlName;
-    wxStaticText* m_staticText427;
-    wxDirPickerCtrl* m_dirPickerPath;
-    wxCheckBox* m_checkBoxSeparateFolder;
-    wxTextCtrl* m_textCtrlPreview;
-    wxStdDialogButtonSizer* m_stdBtnSizer421;
-    wxButton* m_buttonOK;
-    wxButton* m_buttonCancel;
-
-protected:
-    virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPathUpdated(wxFileDirPickerEvent& event) { event.Skip(); }
-    virtual void OnCreateUnderSeparateFolder(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCreateUnderSeparateFolderUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxInfoBar* GetInfobar() { return m_infobar; }
-    wxStaticText* GetStaticText435() { return m_staticText435; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    wxStaticText* GetStaticText427() { return m_staticText427; }
-    wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
-    wxCheckBox* GetCheckBoxSeparateFolder() { return m_checkBoxSeparateFolder; }
-    wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
-    NewPHPProjectDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-    virtual ~NewPHPProjectDlgBase();
-};
-
-
 class NewPHPProjectWizardBase : public wxWizard
 {
 protected:
@@ -634,7 +573,6 @@ protected:
     wxRadioBox* m_radioBoxCreateMethod;
     wxWizardPageSimple* m_wizardPageProjectDetails;
     wxBannerWindow* m_banner517;
-    wxInfoBar* m_infobar;
     wxStaticText* m_staticText521;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText525;
@@ -642,6 +580,12 @@ protected:
     wxCheckBox* m_checkBoxSeparateFolder;
     wxStaticText* m_staticText535;
     wxTextCtrl* m_textCtrlPreview;
+    wxWizardPageSimple* m_wizardPageFinalize;
+    wxBannerWindow* m_banner4951;
+    wxStaticText* m_staticText3173;
+    wxChoice* m_choiceProjectType;
+    wxStaticText* m_staticText3215;
+    wxFilePickerCtrl* m_filePickerPhpExe;
 
 protected:
     virtual void OnFinish(wxWizardEvent& event) { event.Skip(); }
@@ -655,7 +599,6 @@ public:
     wxRadioBox* GetRadioBoxCreateMethod() { return m_radioBoxCreateMethod; }
     wxWizardPageSimple* GetWizardPageCreateMethod() { return m_wizardPageCreateMethod; }
     wxBannerWindow* GetBanner517() { return m_banner517; }
-    wxInfoBar* GetInfobar() { return m_infobar; }
     wxStaticText* GetStaticText521() { return m_staticText521; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText525() { return m_staticText525; }
@@ -664,6 +607,12 @@ public:
     wxStaticText* GetStaticText535() { return m_staticText535; }
     wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
     wxWizardPageSimple* GetWizardPageProjectDetails() { return m_wizardPageProjectDetails; }
+    wxBannerWindow* GetBanner4951() { return m_banner4951; }
+    wxStaticText* GetStaticText3173() { return m_staticText3173; }
+    wxChoice* GetChoiceProjectType() { return m_choiceProjectType; }
+    wxStaticText* GetStaticText3215() { return m_staticText3215; }
+    wxFilePickerCtrl* GetFilePickerPhpExe() { return m_filePickerPhpExe; }
+    wxWizardPageSimple* GetWizardPageFinalize() { return m_wizardPageFinalize; }
     NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Project"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~NewPHPProjectWizardBase();

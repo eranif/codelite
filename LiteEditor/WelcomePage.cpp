@@ -48,15 +48,6 @@ WelcomePage::~WelcomePage()
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
 }
 
-void WelcomePage::OnNewProject(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
-    e.SetEventObject(clMainFrame::Get());
-
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
-}
-
 void WelcomePage::OnOpenForums(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -178,6 +169,13 @@ void WelcomePage::OnThemeChanged(wxCommandEvent& e)
 void WelcomePage::OnNewWorkspace(wxCommandEvent& event)
 {
     wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_workspace"));
+    e.SetEventObject(clMainFrame::Get());
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
+}
+void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("switch_to_workspace"));
     e.SetEventObject(clMainFrame::Get());
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }

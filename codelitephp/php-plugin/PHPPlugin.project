@@ -137,8 +137,6 @@
       <File Name="php_project_settings_dlg.h"/>
       <File Name="FileMappingDlg.h"/>
       <File Name="FileMappingDlg.cpp"/>
-      <File Name="PHPProjectSetupDlg.h"/>
-      <File Name="PHPProjectSetupDlg.cpp"/>
     </VirtualDirectory>
     <File Name="NewPHPClass.h"/>
     <File Name="NewPHPClass.cpp"/>

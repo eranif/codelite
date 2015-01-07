@@ -13,13 +13,17 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/listbox.h>
 
 class OpenWindowsPanelBase : public wxPanel
 {
 protected:
-    wxToolBar* m_toolbarTabs;
+    wxAuiToolBar* m_auibar;
     wxListBox* m_fileList;
 
 protected:
@@ -32,7 +36,7 @@ protected:
     virtual void OnRightDown(wxMouseEvent& event) { event.Skip(); }
 
 public:
-    wxToolBar* GetToolbarTabs() { return m_toolbarTabs; }
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxListBox* GetFileList() { return m_fileList; }
     OpenWindowsPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL);
     virtual ~OpenWindowsPanelBase();

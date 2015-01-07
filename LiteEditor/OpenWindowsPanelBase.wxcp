@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 4,
+  "m_objCounter": 6,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterKq0OgDInitBitmapResources",
   "m_bitmapsFile": "OpenWindowsPanelBase_liteeditor_bitmaps.cpp",
@@ -122,12 +122,12 @@
       }],
      "m_events": [],
      "m_children": [{
-       "m_type": 4461,
+       "m_type": 4463,
        "proportion": 0,
-       "border": 0,
+       "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTB_NODIVIDER", "wxTB_FLAT"],
+       "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -140,7 +140,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_toolbarTabs"
+         "m_value": "m_auibar"
         }, {
          "type": "string",
          "m_label": "Tooltip:",
@@ -153,14 +153,6 @@
          "type": "string",
          "m_label": "Margins:",
          "m_value": "-1,-1"
-        }, {
-         "type": "string",
-         "m_label": "Padding:",
-         "m_value": "1"
-        }, {
-         "type": "string",
-         "m_label": "Separator Size:",
-         "m_value": "5"
         }],
        "m_events": [],
        "m_children": [{
@@ -190,7 +182,7 @@
           }, {
            "type": "string",
            "m_label": "Help String:",
-           "m_value": ""
+           "m_value": "If checked, sort alphabetically. Otherwise display in the same order as the editors."
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",

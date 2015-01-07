@@ -26,13 +26,13 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_toolbarTabs = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTB_NODIVIDER|wxTB_FLAT);
-    m_toolbarTabs->SetToolBitmapSize(wxSize(16,16));
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    mainSizer->Add(m_toolbarTabs, 0, wxEXPAND, 0);
+    mainSizer->Add(m_auibar, 0, wxEXPAND, 5);
     
-    m_toolbarTabs->AddTool(XRCID("TabsSortTool"), wxT(""), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_CHECK, _("If checked, sort alphabetically. Otherwise display in the same order as the editors."), wxT(""), NULL);
-    m_toolbarTabs->Realize();
+    m_auibar->AddTool(XRCID("TabsSortTool"), wxT(""), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_CHECK, _("If checked, sort alphabetically. Otherwise display in the same order as the editors."), _("If checked, sort alphabetically. Otherwise display in the same order as the editors."), NULL);
+    m_auibar->Realize();
     
     wxArrayString m_fileListArr;
     m_fileList = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListArr, wxLB_EXTENDED|wxWANTS_CHARS);

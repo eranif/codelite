@@ -48,7 +48,7 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     MSWSetNativeTheme(m_fileList);
 
     clConfig cfg;
-    m_toolbarTabs->ToggleTool(XRCID("TabsSortTool"), cfg.Read("TabsPaneSortAlphabetically", true));
+    m_auibar->ToggleTool(XRCID("TabsSortTool"), cfg.Read("TabsPaneSortAlphabetically", true));
 
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
@@ -186,8 +186,7 @@ void OpenWindowsPanel::OnListBoxIsDirty(wxCommandEvent& e) // Called from OnActi
     }
 
     if(i == wxNOT_FOUND) {
-        wxToolBarToolBase* sorttool = m_toolbarTabs->FindById(XRCID("TabsSortTool"));
-        if(sorttool && sorttool->IsToggled()) {
+        if(m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
             SortAlphabetically();
         } else {
             SortByEditorOrder();
@@ -281,8 +280,7 @@ void OpenWindowsPanel::DoSelectItem(int item)
 void OpenWindowsPanel::DoSelectItem(const LEditor* editor)
 {
     DoClearSelections();
-    wxToolBarToolBase* sorttool = m_toolbarTabs->FindById(XRCID("TabsSortTool"));
-    if(sorttool && !sorttool->IsToggled()) {
+    if(!m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
         // If we're sorting-by-editor-order, in wxAuiNotebook we can't rely on m_fileList's order
         std::vector<LEditor*> editors;
         clMainFrame::Get()->GetMainBook()->GetAllEditors(
@@ -314,8 +312,7 @@ int OpenWindowsPanel::DoGetSingleSelection()
 void OpenWindowsPanel::OnDragEnded(wxAuiNotebookEvent& event)
 {
     // We only care about editor re-ordering if we sort by editor order
-    wxToolBarToolBase* sorttool = m_toolbarTabs->FindById(XRCID("TabsSortTool"));
-    if(sorttool && !sorttool->IsToggled()) {
+    if(!m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
         // First find which editor is being dragged. We'll need it to identify which tab to select afterwards
         // and there's no point asking wxAuiNotebook or GetActiveEditor(), which return the wrong one.
         LEditor* editor = NULL;

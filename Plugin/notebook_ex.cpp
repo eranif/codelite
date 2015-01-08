@@ -76,8 +76,14 @@ const wxEventType wxEVT_COMMAND_BOOK_BG_DCLICK = XRCID("notebook_page_bg_dclick"
     \
 }
 
+#ifdef __WXGTK__
+#define BK_DEFAULT_STYLE wxBORDER_THEME
+#else
+#define BK_DEFAULT_STYLE wxNO_BORDER
+#endif
+
 Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxAuiNotebook(parent, id, pos, size, style | wxNO_BORDER | wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_SPLIT)
+    : wxAuiNotebook(parent, id, pos, size, style | BK_DEFAULT_STYLE | wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_SPLIT)
     , m_popupWin(NULL)
     , m_contextMenu(NULL)
     , m_style(style)

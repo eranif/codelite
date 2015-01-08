@@ -91,9 +91,7 @@ void MainBook::CreateGuiControls()
 
     wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
     m_book->SetRightClickMenu(contextMenu);
-
     sz->Add(m_book, 1, wxEXPAND);
-
     m_quickFindBar = new QuickFindBar(this);
     DoPositionFindBar(2);
 

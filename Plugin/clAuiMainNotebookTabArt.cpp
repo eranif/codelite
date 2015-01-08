@@ -114,6 +114,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
                                       wxRect* out_button_rect,
                                       int* x_extent)
 {
+    if(in_rect.GetHeight() == 0) return; // Tabs are not visible
     int curx = 0;
     wxGCDC gdc;
     if(!DrawingUtils::GetGCDC(dc, gdc))

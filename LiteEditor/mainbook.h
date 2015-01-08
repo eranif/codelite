@@ -110,7 +110,8 @@ public:
                      const ButtonDetails& btn2 = ButtonDetails(),
                      const ButtonDetails& btn3 = ButtonDetails(),
                      const CheckboxDetails& cb = CheckboxDetails());
-
+    
+    void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);
     void UpdateNavBar(LEditor* editor);
     bool IsNavBarShown() { return m_navBar->IsShown(); }

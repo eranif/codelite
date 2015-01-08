@@ -362,7 +362,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
             // Make sure we can add more tabs, if not delete the last used tab and then add
             // a new tab
 
-            long MaxBuffers = clConfig::Get().Read("MaxOpenedTabs", 15);
+            long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
             if((long)m_book->GetPageCount() >= MaxBuffers) {
                 // We have reached the limit of the number of open buffers
                 // Close the last used buffer

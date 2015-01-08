@@ -48,7 +48,7 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     MSWSetNativeTheme(m_fileList);
 
     clConfig cfg;
-    m_auibar->ToggleTool(XRCID("TabsSortTool"), cfg.Read("TabsPaneSortAlphabetically", true));
+    m_auibar->ToggleTool(XRCID("TabsSortTool"), cfg.Read(kConfigTabsPaneSortAlphabetically, true));
 
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
@@ -343,7 +343,7 @@ void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
     LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     DoSelectItem(editor);
 
-    clConfig::Get().Write("TabsPaneSortAlphabetically", event.IsChecked());
+    clConfig::Get().Write(kConfigTabsPaneSortAlphabetically, event.IsChecked());
 }
 
 void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_fileList->GetCount() > 0); }

@@ -336,6 +336,8 @@ EVT_MENU(XRCID("hide_status_bar"), clMainFrame::OnShowStatusBar)
 EVT_UPDATE_UI(XRCID("hide_status_bar"), clMainFrame::OnShowStatusBarUI)
 EVT_MENU(XRCID("hide_tool_bar"), clMainFrame::OnShowToolbar)
 EVT_UPDATE_UI(XRCID("hide_tool_bar"), clMainFrame::OnShowToolbarUI)
+EVT_MENU(XRCID("show_tab_bar"), clMainFrame::OnShowTabBar)
+EVT_UPDATE_UI(XRCID("show_tab_bar"), clMainFrame::OnShowTabBarUI)
 EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchCommandEvent)
 
 EVT_UPDATE_UI(XRCID("word_wrap"), clMainFrame::DispatchUpdateUIEvent)
@@ -2067,11 +2069,11 @@ void clMainFrame::CreateToolbars16()
 
 void clMainFrame::LocateCompilersIfNeeded()
 {
-    bool bAutoDetectCompilers = clConfig::Get().Read("AutoDetectCompilerOnStartup", true);
+    bool bAutoDetectCompilers = clConfig::Get().Read(kConfigAutoDetectCompilerOnStartup, true);
     if(bAutoDetectCompilers) {
 
         // Unset the flag so next time we won't get this
-        clConfig::Get().Write("AutoDetectCompilerOnStartup", false);
+        clConfig::Get().Write(kConfigAutoDetectCompilerOnStartup, false);
 
         // First time, trigger the auto-compiler detection code
         CompilersDetectorManager detector;
@@ -3230,7 +3232,7 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
         wxLogMessage("Running under Cygwin environment");
     }
 
-    if(clConfig::Get().Read("CheckForNewVersion", true)) {
+    if(clConfig::Get().Read(kConfigCheckForNewVersion, true)) {
         JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
     }
 
@@ -3238,12 +3240,12 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     PluginManager::Get()->EnableToolbars();
 
     // Do we need to update the parser paths?
-    bool updateParserPaths = clConfig::Get().Read("updateParserPaths", true);
+    bool updateParserPaths = clConfig::Get().Read(kConfigUpdateParserPaths, true);
     if(updateParserPaths) {
         UpdateParserSearchPathsFromDefaultCompiler();
         // Now that we have updated them, mark it as done, so next
         // startups we won't do this again
-        clConfig::Get().Write("updateParserPaths", false);
+        clConfig::Get().Write(kConfigUpdateParserPaths, false);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -3962,12 +3964,17 @@ void clMainFrame::CompleteInitialization()
 #endif
 
     // Hide / Show status/tool bar (native)
-    DoShowToolbars(clConfig::Get().Read("ShowToolBar", false));
+    DoShowToolbars(clConfig::Get().Read(kConfigShowToolBar, false));
 
-    if(!clConfig::Get().Read("ShowStatusBar", true)) {
+    if(!clConfig::Get().Read(kConfigShowStatusBar, true)) {
         GetStatusBar()->Hide();
     }
-
+    
+    // Hide / Show tab bar
+    wxCommandEvent eventShowTabBar;
+    eventShowTabBar.SetInt(clConfig::Get().Read(kConfigShowTabBar, true));
+    OnShowTabBar(eventShowTabBar);
+    
     ShowOrHideCaptions();
 }
 
@@ -4515,7 +4522,7 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
         title << wxT("*");
     }
 
-    wxString pattern = clConfig::Get().Read("FrameTitlePattern", wxString("$workspace $fullpath"));
+    wxString pattern = clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath"));
     wxString username = ::wxGetUserId();
     username.Prepend("[ ").Append(" ]");
 
@@ -5986,7 +5993,7 @@ void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {
     GetStatusBar()->Show(event.IsChecked());
     SendSizeEvent();
-    clConfig::Get().Write("ShowStatusBar", event.IsChecked());
+    clConfig::Get().Write(kConfigShowStatusBar, event.IsChecked());
 }
 
 void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetStatusBar()->IsShown()); }
@@ -6008,7 +6015,7 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
     }
     m_mgr.Update();
     SendSizeEvent();
-    clConfig::Get().Write("ShowToolBar", event.IsChecked());
+    clConfig::Get().Write(kConfigShowToolBar, event.IsChecked());
 }
 
 void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
@@ -6101,7 +6108,7 @@ void clMainFrame::OnColoursAndFontsLoaded(clColourEvent& event)
     SessionManager::Get().Load(sessConfFile);
 
     // Load last session?
-    if(clConfig::Get().Read("RestoreLastSession", true) && m_loadLastSession) {
+    if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
         EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
@@ -6111,4 +6118,15 @@ void clMainFrame::OnProjectRenamed(clCommandEvent& event)
 {
     event.Skip();
     SetFrameTitle(GetMainBook()->GetActiveEditor());
+}
+
+void clMainFrame::OnShowTabBar(wxCommandEvent& event)
+{
+    clConfig::Get().Write(kConfigShowTabBar, event.IsChecked());
+    GetMainBook()->ShowTabBar(event.IsChecked());
+}
+
+void clMainFrame::OnShowTabBarUI(wxUpdateUIEvent& event)
+{
+    event.Check(clConfig::Get().Read(kConfigShowTabBar, true));
 }

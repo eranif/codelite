@@ -31,7 +31,7 @@
 NewVirtualFolderDlg::NewVirtualFolderDlg(wxWindow* parent, const wxString& currentVD)
     : NewVirtualFolderDlgBase(parent)
 {
-    m_checkBoxCreateOnDisk->SetValue( clConfig::Get().Read("CreateVirtualFoldersOnDisk", false) );
+    m_checkBoxCreateOnDisk->SetValue( clConfig::Get().Read(kConfigCreateVirtualFoldersOnDisk, false) );
     wxString project_name = currentVD.BeforeFirst(':');
     wxString vd_path = currentVD.AfterFirst(':');
     vd_path.Replace(":", wxFILE_SEP_PATH);
@@ -45,7 +45,7 @@ NewVirtualFolderDlg::NewVirtualFolderDlg(wxWindow* parent, const wxString& curre
 NewVirtualFolderDlg::~NewVirtualFolderDlg()
 {
     WindowAttrManager::Save(this, "NewVirtualFolderDlg");
-    clConfig::Get().Write("CreateVirtualFoldersOnDisk", m_checkBoxCreateOnDisk->IsChecked());
+    clConfig::Get().Write(kConfigCreateVirtualFoldersOnDisk, m_checkBoxCreateOnDisk->IsChecked());
 }
 
 void NewVirtualFolderDlg::OnCreateOnDiskUI(wxUpdateUIEvent& event)

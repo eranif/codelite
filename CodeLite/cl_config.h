@@ -59,6 +59,26 @@ public:
 
 ////////////////////////////////////////////////////////
 
+#define kConfigLLDBTooltipW "LLDBTooltipW"
+#define kConfigLLDBTooltipH "LLDBTooltipH"
+#define kConfigBuildAutoScroll "build-auto-scroll"
+#define kConfigCreateVirtualFoldersOnDisk "CreateVirtualFoldersOnDisk"
+#define kConfigLogVerbosity "LogVerbosity"
+#define kConfigRedirectLogOutput "RedirectLogOutput"
+#define kConfigSingleInstance "SingleInstance"
+#define kConfigCheckForNewVersion "CheckForNewVersion"
+#define kConfigMaxItemsInFindReplaceDialog "MaxItemsInFindReplaceDialog"
+#define kConfigMaxOpenedTabs "MaxOpenedTabs"
+#define kConfigRestoreLastSession "RestoreLastSession"
+#define kConfigFrameTitlePattern "FrameTitlePattern"
+#define kConfigAutoDetectCompilerOnStartup "AutoDetectCompilerOnStartup"
+#define kConfigUpdateParserPaths "updateParserPaths"
+#define kConfigShowToolBar "ShowToolBar"
+#define kConfigShowTabBar "ShowTabBar"
+#define kConfigShowStatusBar "ShowStatusBar"
+#define kConfigWorkspaceTabSashPosition "WorkspaceTabSashPosition"
+#define kConfigTabsPaneSortAlphabetically "TabsPaneSortAlphabetically"
+
 class WXDLLIMPEXP_CL clConfig
 {
 protected:

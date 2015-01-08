@@ -393,7 +393,7 @@ bool CodeLiteApp::OnInit()
     }
 
     // Set the log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging CodeLite itself :/
-    FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
+    FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
     CL_DEBUG(wxT("Starting codelite..."));
 
     // Copy gdb pretty printers from the installation folder to a writeable location
@@ -549,7 +549,7 @@ bool CodeLiteApp::OnInit()
     }
 
 #ifdef __WXGTK__
-    bool redirect = clConfig::Get().Read("RedirectLogOutput", true);
+    bool redirect = clConfig::Get().Read(kConfigRedirectLogOutput, true);
     if(redirect) {
         // Redirect stdout/error to a file
         wxFileName stdout_err(clStandardPaths::Get().GetUserDataDir(), "codelite-stdout-stderr.log");
@@ -759,7 +759,7 @@ void CodeLiteApp::OnFatalException()
 bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser, const wxString& curdir)
 {
     // check for single instance
-    if(clConfig::Get().Read("SingleInstance", false)) {
+    if(clConfig::Get().Read(kConfigSingleInstance, false)) {
         const wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
 
         m_singleInstance = new wxSingleInstanceChecker(name);

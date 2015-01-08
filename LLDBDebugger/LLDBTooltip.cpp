@@ -35,8 +35,8 @@ LLDBTooltip::LLDBTooltip(wxWindow* parent, LLDBPlugin* plugin)
     , m_plugin(plugin)
     , m_dragging(false)
 {
-    int initialSizeW = clConfig::Get().Read("LLDBTooltipW", wxNOT_FOUND);
-    int initialSizeH = clConfig::Get().Read("LLDBTooltipH", wxNOT_FOUND);
+    int initialSizeW = clConfig::Get().Read(kConfigLLDBTooltipW, wxNOT_FOUND);
+    int initialSizeH = clConfig::Get().Read(kConfigLLDBTooltipH, wxNOT_FOUND);
 
     if(initialSizeH != wxNOT_FOUND && initialSizeW != wxNOT_FOUND) {
         wxSize initSize(initialSizeW, initialSizeH);
@@ -61,8 +61,8 @@ LLDBTooltip::~LLDBTooltip()
 
     // store the size
     wxSize sz = GetSize();
-    clConfig::Get().Write("LLDBTooltipW", sz.GetWidth());
-    clConfig::Get().Write("LLDBTooltipH", sz.GetHeight());
+    clConfig::Get().Write(kConfigLLDBTooltipW, sz.GetWidth());
+    clConfig::Get().Write(kConfigLLDBTooltipH, sz.GetHeight());
 
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBTooltip::OnLLDBVariableExpanded, this);
     m_panelStatus->Unbind(wxEVT_MOUSE_CAPTURE_LOST, &LLDBTooltip::OnCaptureLost, this);

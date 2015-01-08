@@ -411,6 +411,8 @@ protected:
     void OnShowStatusBarUI(wxUpdateUIEvent& event);
     void OnShowToolbar(wxCommandEvent& event);
     void OnShowToolbarUI(wxUpdateUIEvent& event);
+    void OnShowTabBar(wxCommandEvent& event);
+    void OnShowTabBarUI(wxUpdateUIEvent& event);
     void OnProjectNewWorkspace(wxCommandEvent& event);
     void OnProjectNewProject(wxCommandEvent& event);
     void OnReloadWorkspace(wxCommandEvent& event);

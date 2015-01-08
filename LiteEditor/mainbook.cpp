@@ -637,7 +637,7 @@ bool MainBook::AddPage(wxWindow* win,
 {
     if(m_book->GetPageIndex(win) != Notebook::npos) return false;
 
-    long MaxBuffers = clConfig::Get().Read("MaxOpenedTabs", 15);
+    long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
     bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
     if((insert_at_index == (size_t)wxNOT_FOUND) || (insert_at_index >= m_book->GetPageCount())) {
 
@@ -1283,4 +1283,10 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
         vTabInfoArr.push_back(oTabInfo);
     }
     session.SetTabInfoArr(vTabInfoArr);
+}
+
+void MainBook::ShowTabBar(bool b)
+{
+    m_book->SetTabCtrlHeight(b ? 30 : 0);
+    m_book->Refresh();
 }

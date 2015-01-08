@@ -807,7 +807,7 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
         buildLineInfo->SetLineInBuildTab(m_listctrl->GetItemCount());
         m_listctrl->AppendItem(data, (wxUIntPtr)buildLineInfo);
 
-        if(clConfig::Get().Read("build-auto-scroll", true)) {
+        if(clConfig::Get().Read(kConfigBuildAutoScroll, true)) {
             unsigned int count = m_listctrl->GetStore()->GetItemCount();
             wxDataViewItem lastItem = m_listctrl->GetStore()->GetItem(count - 1);
             m_listctrl->EnsureVisible(lastItem);

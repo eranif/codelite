@@ -77,7 +77,7 @@ const wxEventType wxEVT_COMMAND_BOOK_BG_DCLICK = XRCID("notebook_page_bg_dclick"
 }
 
 #ifdef __WXGTK__
-#define BK_DEFAULT_STYLE wxBORDER_THEME
+#define BK_DEFAULT_STYLE wxBORDER_STATIC
 #else
 #define BK_DEFAULT_STYLE wxNO_BORDER
 #endif

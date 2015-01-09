@@ -411,8 +411,10 @@ void OpenWindowsPanel::OnInitDone(wxCommandEvent& event)
 void OpenWindowsPanel::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    if(m_initDone && m_mgr->GetPageCount() && m_dvListCtrl->GetItemCount() == 0) {
+    static bool once = false;
+    if(!once && m_initDone && m_mgr->GetPageCount() && m_dvListCtrl->GetItemCount() == 0) {
         // populate the control
+        once = true;
         PopulateView();
     }
 }
@@ -447,4 +449,5 @@ void OpenWindowsPanel::DoMarkModify(const wxString& filename, bool b)
         newvalue = ::MakeIconText("", wxNullBitmap);
     }
     m_dvListCtrl->SetValue(newvalue, m_dvListCtrl->ItemToRow(item), 0);
+    m_dvListCtrl->Refresh();
 }

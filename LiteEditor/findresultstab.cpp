@@ -488,7 +488,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 
         AppendText(summary->GetMessage() + wxT("\n"));
         m_recv = NULL;
-        if(m_tb->GetToolState(XRCID("scroll_on_output"))) {
+        if(m_tb->GetToolToggled(XRCID("scroll_on_output"))) {
             m_sci->GotoLine(0);
         }
 
@@ -509,7 +509,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     } else if(m_recv == m_sci) {
         // Replace In Files...
         AppendText(summary->GetMessage() + wxT("\n"));
-        if(m_tb->GetToolState(XRCID("scroll_on_output"))) {
+        if(m_tb->GetToolToggled(XRCID("scroll_on_output"))) {
             m_sci->GotoLine(0);
         }
 

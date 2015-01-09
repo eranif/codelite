@@ -189,7 +189,8 @@ void OutputTabWindow::CreateGUIControls()
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
     // Create the toolbar
-    m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_NODIVIDER);
+    m_tb = new wxAuiToolBar(
+        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_VERTICAL);
 
     m_tb->AddTool(XRCID("hold_pane_open"),
                   _("Keep open"),

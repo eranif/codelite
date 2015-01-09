@@ -27,6 +27,7 @@
 #include "cl_defs.h"
 
 #include "codelite_exports.h"
+#include <wx/filename.h>
 
 #if CL_USE_NATIVEBOOK
 #include "gtk_notebook_ex.h"

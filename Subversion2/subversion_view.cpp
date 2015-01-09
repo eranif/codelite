@@ -68,6 +68,7 @@
 #include "dirsaver.h"
 #include "clcommandlineparser.h"
 #include "DiffSideBySidePanel.h"
+#include <wx/aui/auibar.h>
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 EVT_UPDATE_UI(XRCID("svn_stop"), SubversionView::OnStopUI)
@@ -166,7 +167,7 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED, wxCommandEventHandler(SubversionView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
-    
+
     ::clRecalculateSTCHScrollBar(m_sci);
 }
 
@@ -247,8 +248,7 @@ void SubversionView::CreatGUIControls()
     // Add toolbar
     // Create the toolbar
     BitmapLoader* bmpLdr = m_plugin->GetManager()->GetStdIcons();
-    wxToolBar* tb =
-        new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_HORIZONTAL | wxTB_NODIVIDER);
+    wxAuiToolBar* tb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_PLAIN_BACKGROUND);
     tb->AddTool(XRCID("svn_link_editor"),
                 _("Link Editor"),
                 wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),
@@ -1475,7 +1475,11 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
     diffPanel->SetFilesDetails(l, r);
     diffPanel->Diff();
     diffPanel->SetOriginSourceControl();
-    m_plugin->GetManager()->AddPage(diffPanel, _("Svn Diff: ") + fileBeingDiffed.GetFullName(), _("Svn Diff: ") + fileBeingDiffed.GetFullPath(),wxNullBitmap, true);
+    m_plugin->GetManager()->AddPage(diffPanel,
+                                    _("Svn Diff: ") + fileBeingDiffed.GetFullName(),
+                                    _("Svn Diff: ") + fileBeingDiffed.GetFullPath(),
+                                    wxNullBitmap,
+                                    true);
 
     wxDELETE(m_codeliteEcho);
 }

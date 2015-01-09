@@ -4173,12 +4173,18 @@ void LEditor::SetEOL()
 
 void LEditor::OnChange(wxStyledTextEvent& event)
 {
+    event.Skip();
     bool isCoalesceStart = event.GetModificationType() & wxSTC_STARTACTION;
     bool isInsert = event.GetModificationType() & wxSTC_MOD_INSERTTEXT;
     bool isDelete = event.GetModificationType() & wxSTC_MOD_DELETETEXT;
     bool isUndo = event.GetModificationType() & wxSTC_PERFORMED_UNDO;
     bool isRedo = event.GetModificationType() & wxSTC_PERFORMED_REDO;
-
+    
+    // Notify about this editor being changed
+    clCommandEvent eventMod(wxEVT_EDITOR_MODIFIED);
+    eventMod.SetFileName(GetFileName().GetFullPath());
+    EventNotifier::Get()->AddPendingEvent(eventMod);
+    
     if((m_autoAddNormalBraces && !m_disableSmartIndent) || GetOptions()->GetAutoCompleteDoubleQuotes()) {
         if((event.GetModificationType() & wxSTC_MOD_BEFOREDELETE) &&
            (event.GetModificationType() & wxSTC_PERFORMED_USER)) {
@@ -4212,13 +4218,6 @@ void LEditor::OnChange(wxStyledTextEvent& event)
                 }
             }
         }
-    }
-
-    if(event.GetModificationType() & wxSTC_MOD_CHANGESTYLE) {
-#ifdef __WXGTK__
-// Contents, styling or markers have been changed
-// Refresh();
-#endif
     }
 
     if(isCoalesceStart && GetCommandsProcessor().HasOpenCommand()) {

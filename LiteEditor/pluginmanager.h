@@ -116,7 +116,8 @@ public:
     virtual wxString GetProjectNameByFile(const wxString& fullPathFileName);
     virtual BuildManager* GetBuildManager();
     virtual BuildSettingsConfig* GetBuildSettingsConfigManager();
-    virtual bool ClosePage(const wxString& text);
+    virtual bool ClosePage(const wxString& title);
+    virtual bool ClosePage(const wxFileName& filename);
     virtual wxWindow* FindPage(const wxString& text);
     virtual bool
     AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString, const wxBitmap& bmp = wxNullBitmap, bool selected = false);
@@ -137,6 +138,7 @@ public:
     virtual void RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files);
     virtual IEditor* FindEditor(const wxString& filename) const;
     virtual size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false);
+    virtual size_t GetAllTabs(clTab::Vec_t& tabs);
     virtual size_t GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints);
     virtual void DeleteAllBreakpoints();
     virtual void SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints);

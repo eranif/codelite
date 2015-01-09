@@ -122,7 +122,12 @@ public:
      * to the  current file
      */
     virtual void ReloadFile() = 0;
-
+    
+    /**
+     * @brief save the editor
+     */
+    virtual void Save() = 0;
+    
     /**
      * \brief return the current position of the caret
      */

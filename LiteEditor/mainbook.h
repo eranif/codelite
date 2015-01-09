@@ -124,7 +124,17 @@ public:
     void CreateSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
 
     LEditor* GetActiveEditor(bool includeDetachedEditors = false);
+    /**
+     * @brief return vector of all editors in the notebook. This function only returns instances of type LEditor
+     * @param editors [output]
+     * @param flags kGetAll_*
+     */
     void GetAllEditors(LEditor::Vec_t& editors, size_t flags);
+    /**
+     * @brief return vector of all tabs in the notebook
+     * @param tabs [output]
+     */
+    void GetAllTabs(clTab::Vec_t& tabs);
     LEditor* FindEditor(const wxString& fileName);
     bool CloseEditor(const wxString& fileName) { return ClosePage(FindEditor(fileName)); }
 

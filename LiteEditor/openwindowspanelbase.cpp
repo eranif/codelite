@@ -34,10 +34,12 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
     m_auibar->AddTool(XRCID("TabsSortTool"), wxT(""), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap, wxITEM_CHECK, _("If checked, sort alphabetically. Otherwise display in the same order as the editors."), _("If checked, sort alphabetically. Otherwise display in the same order as the editors."), NULL);
     m_auibar->Realize();
     
-    wxArrayString m_fileListArr;
-    m_fileList = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListArr, wxLB_EXTENDED|wxWANTS_CHARS);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
     
-    mainSizer->Add(m_fileList, 1, wxALL|wxEXPAND, 0);
+    mainSizer->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 2);
+    
+    m_dvListCtrl->AppendIconTextColumn(_("Modified"), wxDATAVIEW_CELL_INERT, 28, wxALIGN_LEFT);
+    m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -47,11 +49,9 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
     // Connect events
     this->Connect(XRCID("TabsSortTool"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OpenWindowsPanelBase::OnSortItems), NULL, this);
     this->Connect(XRCID("TabsSortTool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenWindowsPanelBase::OnSortItemsUpdateUI), NULL, this);
-    m_fileList->Connect(wxEVT_CHAR, wxKeyEventHandler(OpenWindowsPanelBase::OnChar), NULL, this);
-    m_fileList->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenWindowsPanelBase::OnKeyDown), NULL, this);
-    m_fileList->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(OpenWindowsPanelBase::OnItemSelected), NULL, this);
-    m_fileList->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(OpenWindowsPanelBase::OnItemDClicked), NULL, this);
-    m_fileList->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(OpenWindowsPanelBase::OnRightDown), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabSelected), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(OpenWindowsPanelBase::OnMenu), NULL, this);
     
 }
 
@@ -59,10 +59,8 @@ OpenWindowsPanelBase::~OpenWindowsPanelBase()
 {
     this->Disconnect(XRCID("TabsSortTool"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OpenWindowsPanelBase::OnSortItems), NULL, this);
     this->Disconnect(XRCID("TabsSortTool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenWindowsPanelBase::OnSortItemsUpdateUI), NULL, this);
-    m_fileList->Disconnect(wxEVT_CHAR, wxKeyEventHandler(OpenWindowsPanelBase::OnChar), NULL, this);
-    m_fileList->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenWindowsPanelBase::OnKeyDown), NULL, this);
-    m_fileList->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(OpenWindowsPanelBase::OnItemSelected), NULL, this);
-    m_fileList->Disconnect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(OpenWindowsPanelBase::OnItemDClicked), NULL, this);
-    m_fileList->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(OpenWindowsPanelBase::OnRightDown), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabSelected), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(OpenWindowsPanelBase::OnTabActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(OpenWindowsPanelBase::OnMenu), NULL, this);
     
 }

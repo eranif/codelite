@@ -503,7 +503,13 @@ BuildManager* PluginManager::GetBuildManager() { return BuildManagerST::Get(); }
 
 BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager() { return BuildSettingsConfigST::Get(); }
 
-bool PluginManager::ClosePage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->ClosePage(text); }
+bool PluginManager::ClosePage(const wxString& title) { return clMainFrame::Get()->GetMainBook()->ClosePage(title); }
+bool PluginManager::ClosePage(const wxFileName& filename) 
+{
+    MainBook* book = clMainFrame::Get()->GetMainBook();
+    LEditor* editor = book->FindEditor(filename.GetFullPath());
+    return clMainFrame::Get()->GetMainBook()->ClosePage(editor);
+}
 
 wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
@@ -794,4 +800,10 @@ void PluginManager::OpenFindInFileForPaths(const wxArrayString& paths)
 void PluginManager::ShowOutputPane(const wxString& selectedWindow)
 {
     ManagerST::Get()->ShowOutputPane(selectedWindow);
+}
+
+size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
+{
+    clMainFrame::Get()->GetMainBook()->GetAllTabs(tabs);
+    return tabs.size();
 }

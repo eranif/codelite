@@ -291,10 +291,7 @@ void MainBook::ShowNavBar(bool s)
     UpdateNavBar(GetActiveEditor());
 }
 
-void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr)
-{
-    CreateSession(session, excludeArr);
-}
+void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { CreateSession(session, excludeArr); }
 
 void MainBook::RestoreSession(SessionEntry& session)
 {
@@ -341,6 +338,22 @@ LEditor* MainBook::GetActiveEditor(bool includeDetachedEditors)
         return NULL;
     }
     return dynamic_cast<LEditor*>(GetCurrentPage());
+}
+
+void MainBook::GetAllTabs(clTab::Vec_t& tabs)
+{
+    tabs.clear();
+    m_book->GetAllTabs(tabs);
+    
+    // Go over the tabs, and for each tab that represents a file
+    // populate the filename member
+    for(size_t i=0; i<tabs.size(); ++i) {
+        LEditor* editor = dynamic_cast<LEditor*>(tabs.at(i).window);
+        if(editor) {
+            tabs.at(i).isFile = true;
+            tabs.at(i).filename = editor->GetFileName();
+        }
+    }
 }
 
 void MainBook::GetAllEditors(LEditor::Vec_t& editors, size_t flags)
@@ -464,7 +477,7 @@ LEditor* MainBook::NewEditor()
 
     LEditor* editor = new LEditor(m_book);
     editor->SetFileName(fileName);
-    AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(),wxNullBitmap, true);
+    AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(), wxNullBitmap, true);
 
 #ifdef __WXMAC__
     m_book->GetSizer()->Layout();
@@ -628,7 +641,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
 
 bool MainBook::AddPage(wxWindow* win,
                        const wxString& text,
-		const wxString& tooltip,
+                       const wxString& tooltip,
                        const wxBitmap& bmp,
                        bool selected,
                        size_t insert_at_index /*=wxNOT_FOUND*/)
@@ -679,8 +692,7 @@ bool MainBook::AddPage(wxWindow* win,
         m_book->GetSizer()->Layout();
     }
 #endif
-	if (!tooltip.IsEmpty())
-		m_book->SetPageToolTip(m_book->GetPageIndex(win),tooltip);
+    if(!tooltip.IsEmpty()) m_book->SetPageToolTip(m_book->GetPageIndex(win), tooltip);
     return true;
 }
 

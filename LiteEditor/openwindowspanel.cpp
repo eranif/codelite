@@ -25,309 +25,190 @@
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include <wx/clntdata.h>
-#include "frame.h"
 #include "event_notifier.h"
-#include "manager.h"
 #include "openwindowspanel.h"
 #include "cl_config.h"
-
-wxDECLARE_EVENT(wxEVT_TAB_LISTBOX_ISDIRTY, wxNotifyEvent);
-wxDEFINE_EVENT(wxEVT_TAB_LISTBOX_ISDIRTY, wxNotifyEvent);
+#include "globals.h"
+#include "pluginmanager.h"
+#include <wx/wupdlock.h>
+#include "macros.h"
+#include <wx/filename.h>
+#include <algorithm>
+#include <wx/stc/stc.h>
 
 BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
 EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
 EVT_MENU(XRCID("wxID_SAVE_SELECTED"), OpenWindowsPanel::OnSaveSelectedFiles)
 END_EVENT_TABLE()
 
+struct TabSorter {
+    bool operator()(const clTab& t1, const clTab& t2)
+    {
+        wxString file1, file2;
+        if(t1.isFile) {
+            file1 = t1.filename.GetFullName().Lower();
+        } else {
+            file1 = t1.text;
+        }
+
+        if(t2.isFile) {
+            file2 = t2.filename.GetFullName().Lower();
+        } else {
+            file2 = t2.text;
+        }
+        return file1.CmpNoCase(file2);
+    }
+};
+
+struct TabClientData : public wxClientData {
+    clTab tab;
+    bool isModified;
+    TabClientData() {}
+    TabClientData(const clTab& t)
+        : tab(t)
+        , isModified(false)
+    {
+    }
+    virtual ~TabClientData() {}
+    bool IsFile() const { return tab.isFile; }
+};
+
 OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     : OpenWindowsPanelBase(parent)
     , m_caption(caption)
-    , m_rclickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")))
-    , m_mutliMenu(wxXmlResource::Get()->LoadMenu(wxT("tabs_multi_sels_menu")))
+    , m_mgr(PluginManager::Get())
+    , m_initDone(false)
 {
-    MSWSetNativeTheme(m_fileList);
+    BitmapLoader bmpLoader;
+    m_bitmaps = bmpLoader.MakeStandardMimeMap();
 
     clConfig cfg;
     m_auibar->ToggleTool(XRCID("TabsSortTool"), cfg.Read(kConfigTabsPaneSortAlphabetically, true));
 
-    EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
-    wxTheApp->Connect(
-        wxEVT_COMMAND_AUINOTEBOOK_END_DRAG, wxAuiNotebookEventHandler(OpenWindowsPanel::OnDragEnded), NULL, this);
-    Connect(wxEVT_TAB_LISTBOX_ISDIRTY, wxCommandEventHandler(OpenWindowsPanel::OnListBoxIsDirty), NULL, this);
-    m_themeHelper = new ThemeHandlerHelper(this);
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(OpenWindowsPanel::OnInitDone), NULL, this);
+    Bind(wxEVT_IDLE, &OpenWindowsPanel::OnIdle, this);
 }
 
 OpenWindowsPanel::~OpenWindowsPanel()
 {
-    wxDELETE(m_themeHelper);
-    if(m_rclickMenu) {
-        delete m_rclickMenu;
-        m_rclickMenu = NULL;
-    }
-
-    if(m_mutliMenu) {
-        delete m_mutliMenu;
-        m_mutliMenu = NULL;
-    }
-
     // clear list now, or wxGTK seems to crash on exit
-    m_fileList->Clear();
-
+    Clear();
+    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(OpenWindowsPanel::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
+        wxEVT_CMD_PAGE_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
-    wxTheApp->Disconnect(
-        wxEVT_COMMAND_AUINOTEBOOK_END_DRAG, wxAuiNotebookEventHandler(OpenWindowsPanel::OnDragEnded), NULL, this);
-    Disconnect(wxEVT_TAB_LISTBOX_ISDIRTY, wxCommandEventHandler(OpenWindowsPanel::OnListBoxIsDirty), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_MODIFIED, &OpenWindowsPanel::OnEditorModified, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &OpenWindowsPanel::OnEditorSaved, this);
+    Unbind(wxEVT_IDLE, &OpenWindowsPanel::OnIdle, this);
 }
-
-int OpenWindowsPanel::EditorItem(const LEditor* editor)
-{
-    if(editor) {
-        wxString path = editor->GetFileName().GetFullPath();
-        for(unsigned i = 0; i < m_fileList->GetCount(); i++) {
-            MyStringClientData* data = dynamic_cast<MyStringClientData*>(m_fileList->GetClientObject(i));
-            if(data->GetData() == path) return i;
-        }
-    }
-    return wxNOT_FOUND;
-}
-
-void OpenWindowsPanel::DoOpenSelectedItem(int item)
-{
-    MyStringClientData* data = dynamic_cast<MyStringClientData*>(m_fileList->GetClientObject(item));
-    if(data) {
-        LEditor* editor = dynamic_cast<LEditor*>(clMainFrame::Get()->GetMainBook()->FindPage(data->GetData()));
-
-        if(editor && editor->GetFileName().FileExists() == false) {
-            // "Untitled" document, this means that 'OpenFile' will probably fail for it
-            clMainFrame::Get()->GetMainBook()->SelectPage(editor);
-        } else {
-            clMainFrame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
-            editor->DelayedSetActive(); // At least in wxGTK, this won't work synchronously
-        }
-    }
-}
-
-void OpenWindowsPanel::DoCloseSelectedItem(int item)
-{
-    DoOpenSelectedItem(item); // make sure the editor is selected in MainBook
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_file"));
-    ProcessEvent(e);
-}
-
-void OpenWindowsPanel::OnKeyDown(wxKeyEvent& event)
-{
-    switch(event.GetKeyCode()) {
-    case WXK_RETURN:
-    case WXK_NUMPAD_ENTER:
-    case WXK_SPACE:
-        if(DoGetSingleSelection() != wxNOT_FOUND) {
-            DoOpenSelectedItem(DoGetSingleSelection());
-        }
-        break;
-    case WXK_DELETE:
-    case WXK_NUMPAD_DELETE: {
-        wxCommandEvent dummyEvent;
-        OnCloseSelectedFiles(dummyEvent);
-        m_fileList->SetFocus();
-    } break;
-    default:
-        event.Skip();
-        break;
-    }
-}
-
-void OpenWindowsPanel::OnItemDClicked(wxCommandEvent& event) { DoOpenSelectedItem(event.GetSelection()); }
-
-void OpenWindowsPanel::OnRightDown(wxMouseEvent& event)
-{
-    wxUnusedVar(event);
-    wxArrayInt sels;
-    m_fileList->GetSelections(sels);
-
-    if(sels.GetCount() == 1) {
-        DoOpenSelectedItem(sels.Item(0));
-        PopupMenu(m_rclickMenu);
-    } else {
-        PopupMenu(m_mutliMenu);
-    }
-}
-
-void OpenWindowsPanel::OnChar(wxKeyEvent& event) { OnKeyDown(event); }
 
 void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-
-    // We may get here when an editor has just been closed (and so a different one become active).
-    // So do nothing immediately, otherwise GetMainBook()->GetAllEditors() may still return the stale value
-    wxNotifyEvent event(wxEVT_TAB_LISTBOX_ISDIRTY);
-    wxPostEvent(this, event);
-}
-
-void OpenWindowsPanel::OnListBoxIsDirty(wxCommandEvent& e) // Called from OnActiveEditorChanged(), after a delay
-{
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(!editor) return;
-
-    int i = EditorItem(editor);
-    if(i != wxNOT_FOUND) {
-        DoSelectItem(editor);
-        return;
+    PopulateView();
+    if(m_mgr->GetActiveEditor()) {
+        DoSelectItem(m_mgr->GetActiveEditor());
+    } else {
+        DoSelectItem((wxWindow*)e.GetClientData());
     }
-
-    if(i == wxNOT_FOUND) {
-        if(m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
-            SortAlphabetically();
-        } else {
-            SortByEditorOrder();
-        }
-    }
-    DoSelectItem(editor);
 }
 
 void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
 {
     e.Skip();
-    m_fileList->Clear();
-}
-
-void OpenWindowsPanel::OnEditorClosing(wxCommandEvent& e)
-{
-    e.Skip();
-    LEditor* editor = dynamic_cast<LEditor*>((IEditor*)e.GetClientData());
-    if(!editor) return;
-
-    int i = EditorItem(editor);
-    if(i != wxNOT_FOUND) {
-        m_fileList->Delete(i);
-    }
+    Clear();
 }
 
 void OpenWindowsPanel::OnCloseSelectedFiles(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    wxArrayInt sels;
-    m_fileList->GetSelections(sels);
-    if(sels.IsEmpty()) return;
+    wxDataViewItemArray items;
+    m_dvListCtrl->GetSelections(items);
 
-    wxArrayString files;
-    for(size_t i = 0; i < sels.GetCount(); i++) {
-        MyStringClientData* data = dynamic_cast<MyStringClientData*>(m_fileList->GetClientObject(sels.Item(i)));
-        if(data) {
-            files.Add(data->GetData());
+    if(items.IsEmpty()) return;
+
+    wxArrayString paths;  // list of files
+    wxArrayString others; // list of non files editors
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(items.Item(i)));
+        if(data->IsFile()) {
+            paths.Add(data->tab.filename.GetFullPath());
+        } else {
+            others.Add(data->tab.text);
         }
+
+        // Delete the item data
+        wxDELETE(data);
+
+        // Remove the item from the list
+        int row = m_dvListCtrl->ItemToRow(items.Item(i));
+        m_dvListCtrl->DeleteItem(row);
     }
 
-    for(size_t i = 0; i < sels.GetCount(); i++) {
-        DoCloseItem(files.Item(i));
+    // Close the files
+    for(size_t i = 0; i < paths.GetCount(); ++i) {
+        wxFileName fn(paths.Item(i));
+        m_mgr->ClosePage(fn);
+    }
+
+    // Close non file tabs
+    for(size_t i = 0; i < others.GetCount(); ++i) {
+        m_mgr->ClosePage(others.Item(i));
     }
 }
 
 void OpenWindowsPanel::OnSaveSelectedFiles(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    wxArrayInt sels;
-    m_fileList->GetSelections(sels);
-    if(sels.IsEmpty()) return;
+    wxDataViewItemArray items;
+    m_dvListCtrl->GetSelections(items);
 
-    for(int i = 0; i < (int)sels.GetCount(); i++) {
-        DoSaveItem(sels.Item(i));
+    if(items.IsEmpty()) return;
+
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        DoSaveItem(items.Item(i));
     }
 }
 
-void OpenWindowsPanel::DoSaveItem(int item)
+void OpenWindowsPanel::DoSaveItem(wxDataViewItem item)
 {
-    MyStringClientData* data = dynamic_cast<MyStringClientData*>(m_fileList->GetClientObject(item));
+    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
     if(data) {
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(data->GetData());
-        if(editor) {
-            editor->SaveFile();
+        if(data->IsFile()) {
+            IEditor* editor = m_mgr->FindEditor(data->tab.filename.GetFullPath());
+            if(editor) {
+                editor->Save();
+            }
         }
     }
 }
 
-void OpenWindowsPanel::DoCloseItem(const wxString& filename)
+void OpenWindowsPanel::DoCloseItem(wxDataViewItem item)
 {
-    clMainFrame::Get()->GetMainBook()->CloseEditor(filename);
-}
-
-void OpenWindowsPanel::DoClearSelections()
-{
-    wxArrayInt sels;
-    m_fileList->GetSelections(sels);
-    if(sels.IsEmpty()) return;
-
-    for(size_t i = 0; i < sels.GetCount(); i++) m_fileList->SetSelection(sels.Item(i), false);
-}
-
-void OpenWindowsPanel::DoSelectItem(int item)
-{
-    DoClearSelections();
-    m_fileList->SetSelection(item, true);
-    m_fileList->EnsureVisible(item);
-}
-
-void OpenWindowsPanel::DoSelectItem(const LEditor* editor)
-{
-    DoClearSelections();
-    if(!m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
-        // If we're sorting-by-editor-order, in wxAuiNotebook we can't rely on m_fileList's order
-        std::vector<LEditor*> editors;
-        clMainFrame::Get()->GetMainBook()->GetAllEditors(
-            editors, MainBook::kGetAll_IncludeDetached | MainBook::kGetAll_RetainOrder);
-        for(size_t n = 0; n < editors.size(); ++n) {
-            if(editors.at(n)->GetFileName().GetFullPath() == editor->GetFileName().GetFullPath()) {
-                DoSelectItem(n);
-                return;
-            }
-            wxASSERT("Passed an editor which doesn't exist");
-        }
-    } else {
-        int i = EditorItem(editor);
-        if(i != wxNOT_FOUND) {
-            DoSelectItem(i);
+    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+    if(data) {
+        if(data->IsFile()) {
+            m_mgr->ClosePage(data->tab.filename);
+        } else {
+            m_mgr->ClosePage(data->tab.text);
         }
     }
 }
 
-int OpenWindowsPanel::DoGetSingleSelection()
+void OpenWindowsPanel::DoSelectItem(IEditor* editor)
 {
-    wxArrayInt sels;
-    m_fileList->GetSelections(sels);
-    if(sels.IsEmpty()) return wxNOT_FOUND;
-
-    return sels.Item(0);
-}
-
-void OpenWindowsPanel::OnDragEnded(wxAuiNotebookEvent& event)
-{
-    // We only care about editor re-ordering if we sort by editor order
-    if(!m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
-        // First find which editor is being dragged. We'll need it to identify which tab to select afterwards
-        // and there's no point asking wxAuiNotebook or GetActiveEditor(), which return the wrong one.
-        LEditor* editor = NULL;
-        int sel = DoGetSingleSelection();
-        if(sel != wxNOT_FOUND) {
-            MyStringClientData* data = dynamic_cast<MyStringClientData*>(m_fileList->GetClientObject(sel));
-            if(data) {
-                editor = clMainFrame::Get()->GetMainBook()->FindEditor(data->GetData());
+    CHECK_PTR_RET(editor);
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+        if(data->IsFile()) {
+            if(editor->GetFileName() == data->tab.filename) {
+                m_dvListCtrl->Select(item);
+                break;
             }
-        }
-
-        SortByEditorOrder();
-
-        if(editor) {
-            DoSelectItem(editor);
         }
     }
 }
@@ -340,50 +221,230 @@ void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
         SortByEditorOrder();
     }
 
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    IEditor* editor = m_mgr->GetActiveEditor();
     DoSelectItem(editor);
 
     clConfig::Get().Write(kConfigTabsPaneSortAlphabetically, event.IsChecked());
 }
 
-void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_fileList->GetCount() > 0); }
+void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetItemCount()); }
 
 void OpenWindowsPanel::SortAlphabetically()
 {
-    m_fileList->Clear();
-    std::vector<LEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors,
-                                                     MainBook::kGetAll_IncludeDetached | MainBook::kGetAll_RetainOrder);
-    for(size_t n = 0; n < editors.size(); ++n) {
-        LEditor* editor = editors.at(n);
-        wxString name = editor->GetFileName().GetFullName();
-        MyStringClientData* data = new MyStringClientData(editor->GetFileName().GetFullPath());
-        bool inserted(false);
-        for(size_t i = 0; i < m_fileList->GetCount(); ++i) {
-            if(name.Cmp(m_fileList->GetString(i)) < 0) {
-                m_fileList->Insert(name, i, data);
-                inserted = true;
-                break;
-            }
-        }
-        if(!inserted) {
-            m_fileList->Append(name, data);
-        }
+    wxWindowUpdateLocker locker(m_dvListCtrl);
+    clTab::Vec_t tabs;
+    m_mgr->GetAllTabs(tabs);
+
+    // Sort editors
+    std::sort(tabs.begin(), tabs.end(), TabSorter());
+    Clear();
+
+    clTab::Vec_t::iterator iter = tabs.begin();
+    for(; iter != tabs.end(); ++iter) {
+        AppendEditor(*iter);
     }
 }
 
 void OpenWindowsPanel::SortByEditorOrder()
 {
-    std::vector<LEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors,
-                                                     MainBook::kGetAll_IncludeDetached | MainBook::kGetAll_RetainOrder);
+    wxWindowUpdateLocker locker(m_dvListCtrl);
+    clTab::Vec_t tabs;
+    m_mgr->GetAllTabs(tabs);
 
-    m_fileList->Clear();
-    for(size_t n = 0; n < editors.size(); ++n) {
-        LEditor* editor = editors.at(n);
-        wxString name = editor->GetFileName().GetFullName();
-        MyStringClientData* data = new MyStringClientData(editor->GetFileName().GetFullPath());
-        m_fileList->Append(name, data);
+    // Sort editors
+    Clear();
+
+    clTab::Vec_t::iterator iter = tabs.begin();
+    for(; iter != tabs.end(); ++iter) {
+        AppendEditor(*iter);
     }
 }
-void OpenWindowsPanel::OnItemSelected(wxCommandEvent& event) {}
+
+void OpenWindowsPanel::OnTabActivated(wxDataViewEvent& event)
+{
+    event.Skip();
+    wxDataViewItem item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+    if(data->IsFile()) {
+        m_mgr->OpenFile(data->tab.filename.GetFullPath());
+    } else {
+        m_mgr->SelectPage(m_mgr->FindPage(data->tab.text));
+    }
+}
+
+void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
+{
+    event.Skip();
+    if(::wxGetKeyState(WXK_CONTROL)) {
+        // multiple selection in progress
+        return;
+    }
+
+    wxDataViewItem item = event.GetItem();
+    CHECK_ITEM_RET(item);
+    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+    if(data->IsFile()) {
+        m_mgr->OpenFile(data->tab.filename.GetFullPath());
+    } else {
+        m_mgr->SelectPage(m_mgr->FindPage(data->tab.text));
+    }
+}
+
+void OpenWindowsPanel::AppendEditor(const clTab& tab)
+{
+    TabClientData* data = new TabClientData(tab);
+    wxString title;
+    wxStyledTextCtrl* editor(NULL);
+    if(data->IsFile()) {
+        title = tab.filename.GetFullName();
+        editor = dynamic_cast<wxStyledTextCtrl*>(tab.window);
+    } else {
+        title = tab.text;
+    }
+
+    wxVector<wxVariant> cols;
+    FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
+    wxBitmap bmp;
+
+    int itemIndex = m_dvListCtrl->GetItemCount();
+    // If the tab had an icon, use it, otherwise, use a bitmap by the file type
+    if(tab.bitmap.IsOk()) {
+        bmp = tab.bitmap;
+    } else {
+        bmp = m_bitmaps.find(ft)->second;
+    }
+    
+    wxVariant modCol = ::MakeIconText("", wxNullBitmap);;
+    if(editor && editor->GetModify()) {
+        modCol = ::MakeIconText("", m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/standard/file_save"));
+    }
+
+    cols.push_back(modCol);
+    cols.push_back(::MakeIconText(title, bmp));
+    m_dvListCtrl->AppendItem(cols, (wxUIntPtr)data);
+    if(editor) {
+        m_editors.insert(std::make_pair(tab.filename.GetFullPath(), m_dvListCtrl->RowToItem(itemIndex)));
+    }
+}
+
+wxString OpenWindowsPanel::GetEditorPath(wxDataViewItem item)
+{
+    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+    return data->tab.text;
+}
+
+void OpenWindowsPanel::Clear()
+{
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+        wxDELETE(data);
+    }
+    m_dvListCtrl->DeleteAllItems();
+    m_editors.clear();
+}
+
+void OpenWindowsPanel::PopulateView()
+{
+    if(m_auibar->GetToolToggled(XRCID("TabsSortTool"))) {
+        SortAlphabetically();
+    } else {
+        SortByEditorOrder();
+    }
+}
+
+void OpenWindowsPanel::OnMenu(wxDataViewEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dvListCtrl->GetSelections(items);
+    if(items.IsEmpty()) return;
+
+    wxMenu* menu;
+    if(items.GetCount() == 1) {
+        // single item
+        menu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
+    } else {
+        menu = wxXmlResource::Get()->LoadMenu(wxT("tabs_multi_sels_menu"));
+    }
+    PopupMenu(menu);
+    wxDELETE(menu);
+}
+
+bool OpenWindowsPanel::IsEditor(wxDataViewItem item) const
+{
+    TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+    return data->IsFile();
+}
+
+void OpenWindowsPanel::DoSelectItem(wxWindow* win)
+{
+    CHECK_PTR_RET(win);
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+        if(data->tab.window == win) {
+            m_dvListCtrl->Select(item);
+            break;
+        }
+    }
+}
+
+void OpenWindowsPanel::OnInitDone(wxCommandEvent& event)
+{
+    event.Skip();
+    m_initDone = true;
+
+    // Connect the events only after the initialization has completed
+    EventNotifier::Get()->Connect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_PAGE_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
+
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_MODIFIED, &OpenWindowsPanel::OnEditorModified, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &OpenWindowsPanel::OnEditorSaved, this);
+}
+
+void OpenWindowsPanel::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(m_initDone && m_mgr->GetPageCount() && m_dvListCtrl->GetItemCount() == 0) {
+        // populate the control
+        PopulateView();
+    }
+}
+
+void OpenWindowsPanel::OnEditorModified(clCommandEvent& event)
+{
+    event.Skip();
+    if(!m_initDone) return;
+    IEditor* editor = m_mgr->FindEditor(event.GetFileName());
+    if(editor) {
+        DoMarkModify(event.GetFileName(), editor->IsModified());
+    }
+}
+
+void OpenWindowsPanel::OnEditorSaved(clCommandEvent& event)
+{
+    event.Skip();
+    if(!m_initDone) return;
+    DoMarkModify(event.GetFileName(), false);
+}
+
+void OpenWindowsPanel::DoMarkModify(const wxString& filename, bool b)
+{
+    std::map<wxString, wxDataViewItem>::iterator iter = m_editors.find(filename);
+    if(iter == m_editors.end()) return;
+
+    wxDataViewItem item = iter->second;
+    wxVariant newvalue;
+    if(b) {
+        newvalue = ::MakeIconText("", m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/standard/file_save"));
+    } else {
+        newvalue = ::MakeIconText("", wxNullBitmap);
+    }
+    m_dvListCtrl->SetValue(newvalue, m_dvListCtrl->ItemToRow(item), 0);
+}

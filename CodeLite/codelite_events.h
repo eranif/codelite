@@ -661,9 +661,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CL_FRAME_TITLE, clCommandEvent);
 // Event: clCommandEvent
 // CodeLite is about to save a file. Use event.GetFilename() to get the file name
 // This event can be vetoed by calling event.Veto()
-// Note tis this event is sent for editor files (i.e. it is not sent for internal files like project file being saved
+// Note that this event is sent for editor files (i.e. it is not sent for internal files like project file being saved
 // etc) only for editors (hence the name)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_BEFORE_EDITOR_SAVE, clCommandEvent);
+
+// Editor has been modified. Use event.GetFilename() to get the file name of the editor
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_MODIFIED, clCommandEvent);
 
 // Event: clCommandEvent
 // Sent when clang code completion encountered an error

@@ -718,6 +718,7 @@ public:
     virtual void InsertText(int pos, const wxString& text) { wxStyledTextCtrl::InsertText(pos, text); }
     virtual int GetLength() { return wxStyledTextCtrl::GetLength(); }
     virtual bool IsModified() { return wxStyledTextCtrl::GetModify(); }
+    virtual void Save() { SaveFile(); }
     virtual int GetEOL() { return wxStyledTextCtrl::GetEOLMode(); }
     virtual int GetCurrentLine();
     virtual void ReplaceSelection(const wxString& text);

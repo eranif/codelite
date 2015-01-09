@@ -126,7 +126,7 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 #endif
     Connect(wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(Notebook::OnNavigationKey), NULL, this);
     Connect(SHOW_POPUP_MENU, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Notebook::OnInternalMenu), NULL, this);
-    
+
 #if 0
     // On Linux, we disable the transparent drag since it will lead to crash when used with compiz / KDE4
 #if defined(__WXGTK__) && defined(__WXDEBUG__)
@@ -709,6 +709,17 @@ void Notebook::OnEndDrag(wxAuiNotebookEvent& event)
 {
     event.Skip();
     wxPostEvent(wxTheApp, event); // The Workspace View 'Tabs' pane grabs it from wxTheApp
+}
+
+void Notebook::GetAllTabs(clTab::Vec_t& tabs)
+{
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        clTab t;
+        t.bitmap = GetPageBitmap(i);
+        t.text = GetPageText(i);
+        t.window = GetPage(i);
+        tabs.push_back(t);
+    }
 }
 
 #endif // !CL_USE_NATIVEBOOK

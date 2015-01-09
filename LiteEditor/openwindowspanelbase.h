@@ -18,26 +18,24 @@
 #include <map>
 #include <wx/menu.h>
 #include <wx/toolbar.h>
-#include <wx/listbox.h>
+#include <wx/dataview.h>
 
 class OpenWindowsPanelBase : public wxPanel
 {
 protected:
     wxAuiToolBar* m_auibar;
-    wxListBox* m_fileList;
+    wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
     virtual void OnSortItems(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSortItemsUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnChar(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnItemSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnItemDClicked(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRightDown(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnTabSelected(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnTabActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     wxAuiToolBar* GetAuibar() { return m_auibar; }
-    wxListBox* GetFileList() { return m_fileList; }
+    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     OpenWindowsPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL);
     virtual ~OpenWindowsPanelBase();
 };

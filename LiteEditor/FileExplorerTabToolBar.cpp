@@ -8,4 +8,3 @@ FileExplorerTabToolBar::FileExplorerTabToolBar(wxWindow* parent)
 FileExplorerTabToolBar::~FileExplorerTabToolBar()
 {
 }
-

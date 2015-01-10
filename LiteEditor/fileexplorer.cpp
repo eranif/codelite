@@ -38,6 +38,7 @@
 #include "FileExplorerTab.h"
 #include "file_logger.h"
 #include "FileExplorerTabToolBar.h"
+#include "cl_config.h"
 
 FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
@@ -64,6 +65,13 @@ FileExplorer::~FileExplorer()
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(FileExplorer::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(FileExplorer::OnActiveEditorChanged), NULL, this);
+    Disconnect(XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnLinkEditor));
+    Disconnect(XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnCollapseAll));
+    Disconnect(XRCID("go_home"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnGoHome));
+    Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN,
+           &FileExplorer::OnBookmark,
+           this,
+           FileExplorerTabToolBar::ID_TOOL_EXPLORER_BOOKMARKS);
 }
 
 void FileExplorer::CreateGUIControls()
@@ -81,7 +89,10 @@ void FileExplorer::CreateGUIControls()
     Connect(XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnLinkEditor));
     Connect(XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnCollapseAll));
     Connect(XRCID("go_home"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnGoHome));
-
+    Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN,
+         &FileExplorer::OnBookmark,
+         this,
+         FileExplorerTabToolBar::ID_TOOL_EXPLORER_BOOKMARKS);
     mainSizer->Layout();
 
     wxTheApp->Connect(XRCID("show_in_explorer"),
@@ -156,5 +167,46 @@ void FileExplorer::OnWorkspaceLoaded(wxCommandEvent& e)
     wxUnusedVar(e);
     if(m_isLinkedToEditor) {
         m_fileTree->Tree()->ExpandPath(wxGetCwd());
+    }
+}
+
+void FileExplorer::OnBookmark(wxAuiToolBarEvent& event)
+{
+    wxAuiToolBar* tb = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
+    if(event.IsDropDownClicked()) {
+        // Show the drop down menu
+        wxArrayString folders = clConfig::Get().Read(kConfigFileExplorerBookmarks, wxArrayString());
+        if(folders.IsEmpty()) return;
+
+        std::map<int, wxString> entries;
+        wxMenu menu;
+        for(size_t i = 0; i < folders.GetCount(); ++i) {
+            int id = ::wxNewId();
+            entries.insert(std::make_pair(id, folders.Item(i)));
+            menu.Append(id, folders.Item(i));
+        }
+
+        wxPoint pt = event.GetItemRect().GetBottomLeft();
+        pt.y++;
+
+        int sel = tb->GetPopupMenuSelectionFromUser(menu, pt);
+        if(entries.count(sel)) {
+            wxString path = entries.find(sel)->second;
+            m_fileTree->GetGenericDirCtrl()->ExpandPath(path);
+        }
+
+    } else {
+        wxArrayString paths;
+        m_fileTree->GetSelectedDirectories(paths);
+        if(paths.IsEmpty()) return;
+
+        wxArrayString folders = clConfig::Get().Read(kConfigFileExplorerBookmarks, wxArrayString());
+        for(size_t i = 0; i < paths.GetCount(); ++i) {
+            if(folders.Index(paths.Item(i)) == wxNOT_FOUND) {
+                folders.Add(paths.Item(i));
+            }
+        }
+        folders.Sort();
+        clConfig::Get().Write(kConfigFileExplorerBookmarks, folders);
     }
 }

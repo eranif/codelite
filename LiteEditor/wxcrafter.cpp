@@ -1083,6 +1083,12 @@ FileExplorerTabToolBarBase::FileExplorerTabToolBarBase(wxWindow *parent, wxWindo
     this->AddTool(XRCID("collapse_all"), _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
     
     this->AddTool(XRCID("go_home"), _("Go Home"), wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxNullBitmap, wxITEM_NORMAL, _("Go Home"), _("Go Home"), NULL);
+    
+    this->AddTool(ID_TOOL_EXPLORER_BOOKMARKS, _("Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark")), wxNullBitmap, wxITEM_NORMAL, _("Bookmark Selected Folder"), _("Bookmark Selected Folder"), NULL);
+    wxAuiToolBarItem* m_toolbarItemBookmark = this->FindToolByIndex(this->GetToolCount()-1);
+    if (m_toolbarItemBookmark) {
+        m_toolbarItemBookmark->SetHasDropDown(true);
+    }
     this->Realize();
     
 }

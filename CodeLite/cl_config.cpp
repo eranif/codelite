@@ -347,3 +347,23 @@ wxArrayString clConfig::GetQuickFindSearchItems() const
     ADD_ARR_IF_NOT_EXISTS( quickFindBar, "SearchHistory" );
     return quickFindBar.namedObject("SearchHistory").toArrayString();
 }
+
+wxArrayString clConfig::Read(const wxString& name, const wxArrayString& defaultValue)
+{
+    JSONElement general = GetGeneralSetting();
+    if (general.hasNamedObject(name)) {
+        return general.namedObject(name).toArrayString();
+    }
+    return defaultValue;
+}
+
+void clConfig::Write(const wxString& name, const wxArrayString& value)
+{
+    JSONElement general = GetGeneralSetting();
+    if (general.hasNamedObject(name)) {
+        general.removeProperty(name);
+    }
+
+    general.addProperty(name, value);
+    Save();
+}

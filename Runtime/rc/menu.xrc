@@ -380,7 +380,7 @@
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
             <object class="wxMenuItem" name="goto_linenumber">
-                <label>&amp;Go To...</label>
+                <label>&amp;Goto Line...</label>
             </object>
 
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>

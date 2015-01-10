@@ -408,6 +408,10 @@ public:
 
 class FileExplorerTabToolBarBase : public wxAuiToolBar
 {
+public:
+    enum {
+        ID_TOOL_EXPLORER_BOOKMARKS = 8001,
+    };
 protected:
 
 protected:

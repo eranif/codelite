@@ -28,6 +28,7 @@
 #include "wx/panel.h"
 #include "wx/choice.h"
 #include "theme_handler_helper.h"
+#include <wx/aui/auibar.h>
 
 class FileExplorerTab;
 
@@ -48,7 +49,8 @@ private:
     void OnShowFileUI(wxUpdateUIEvent &e);
     void OnWorkspaceLoaded(wxCommandEvent &e);
     void OnActiveEditorChanged(wxCommandEvent &e);
-
+    void OnBookmark(wxAuiToolBarEvent& event);
+    
 public:
     FileExplorer(wxWindow *parent, const wxString &caption);
     virtual ~FileExplorer();

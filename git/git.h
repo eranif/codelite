@@ -253,6 +253,7 @@ private:
     void OnFolderPush(wxCommandEvent& event);
     void OnFolderStash(wxCommandEvent& event);
     void OnFolderStashPop(wxCommandEvent& event);
+    void OnFolderGitBash(wxCommandEvent& event);
 
 public:
     GitPlugin(IManager* manager);

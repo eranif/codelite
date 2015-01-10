@@ -156,6 +156,7 @@ GitPlugin::GitPlugin(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStash, this, XRCID("git_stash_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
+    wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderGitBash, this, XRCID("git_bash_folder"));
 
     // Connect the file context menu event handlers
     m_eventHandler->Connect(XRCID("git_add_file"),
@@ -2390,7 +2391,14 @@ void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
     item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
     item->SetBitmap(m_images.Bitmap("gitStashPop"));
     menu->Append(item);
-    
+
+#ifdef __WXMSW__
+    menu->AppendSeparator();
+    item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
+    item->SetBitmap(m_images.Bitmap("msysgit"));
+    menu->Append(item);
+#endif
+
     item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
     item->SetBitmap(m_images.Bitmap("git"));
     parentMenu->AppendSeparator();
@@ -2547,4 +2555,18 @@ void GitPlugin::OnFolderStashPop(wxCommandEvent& event)
     GitCommand::Vec_t commands;
     commands.push_back(GitCommand("stash pop", IProcessCreateDefault));
     DoExecuteCommands(commands, m_selectedFolder);
+}
+
+void GitPlugin::OnFolderGitBash(wxCommandEvent& event)
+{
+    GitLocator locator;
+    wxString bashcommand;
+    if(locator.MSWGetGitShellCommand(bashcommand)) {
+        DirSaver ds;
+        ::wxSetWorkingDirectory(m_selectedFolder);
+        ::WrapInShell(bashcommand);
+        ::wxExecute(bashcommand);
+    } else {
+        ::wxMessageBox(_("Don't know how to start MSYSGit..."), "Git", wxICON_WARNING | wxOK | wxCENTER);
+    }
 }

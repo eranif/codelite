@@ -47,6 +47,8 @@ void PHPWorkspace::Release()
 
 bool PHPWorkspace::Close(bool saveBeforeClose)
 {
+    SendCmdEvent(wxEVT_WORKSPACE_CLOSING);
+    
     if(IsOpen()) {
         if(m_manager) {
             m_manager->StoreWorkspaceSession(m_workspaceFile);

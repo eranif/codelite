@@ -55,7 +55,7 @@
 #undef GSocket
 #endif
 
-WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
+WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr)
     : wxPanel(parent)
     , m_caption(caption)
     , m_mgr(mgr)
@@ -64,21 +64,19 @@ WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiMan
     Connect();
 }
 
-WorkspacePane::~WorkspacePane()
-{
-}
+WorkspacePane::~WorkspacePane() {}
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
 
 void WorkspacePane::CreateGUIControls()
 {
-    wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
     // add notebook for tabs
     long bookStyle = wxVB_LEFT | wxAUI_NB_WINDOWLIST_BUTTON | wxBORDER_NONE;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
-    
+
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -88,10 +86,11 @@ void WorkspacePane::CreateGUIControls()
 
     // Add the parsing progress controls
     m_staticText = new wxStaticText(this, wxID_ANY, _("Parsing workspace..."));
-    mainSizer->Add(m_staticText, 0, wxEXPAND|wxALL, 2);
+    mainSizer->Add(m_staticText, 0, wxEXPAND | wxALL, 2);
 
-    m_parsingProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL|wxGA_SMOOTH);
-    mainSizer->Add(m_parsingProgress, 0, wxEXPAND|wxALL, 1);
+    m_parsingProgress =
+        new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL | wxGA_SMOOTH);
+    mainSizer->Add(m_parsingProgress, 0, wxEXPAND | wxALL, 1);
     m_parsingProgress->Hide();
     m_staticText->Hide();
 
@@ -99,16 +98,15 @@ void WorkspacePane::CreateGUIControls()
     DetachedPanesInfo dpi;
     EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 
-
     wxArrayString detachedPanes;
     detachedPanes = dpi.GetPanes();
 
     // Add the workspace tab
-    wxString  name;
+    wxString name;
 
     name = _("Workspace");
     if(IS_DETACHED(name)) {
-        DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
         m_workspaceTab = new WorkspaceTab(cp, name);
         cp->SetChildNoReparent(m_workspaceTab);
     } else {
@@ -119,7 +117,7 @@ void WorkspacePane::CreateGUIControls()
     // Add the explorer tab
     name = _("Explorer");
     if(IS_DETACHED(name)) {
-        DockablePane *cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
         m_explorer = new FileExplorer(cp, name);
         cp->SetChildNoReparent(m_explorer);
     } else {
@@ -127,21 +125,23 @@ void WorkspacePane::CreateGUIControls()
         m_book->AddPage(m_explorer, name, false);
     }
 
-    // Add the Open Windows Panel (Tabs)
+// Add the Open Windows Panel (Tabs)
+#ifndef __WXOSX__
     name = _("Tabs");
     if(IS_DETACHED(name)) {
-        DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
         m_openWindowsPane = new OpenWindowsPanel(cp, name);
         cp->SetChildNoReparent(m_openWindowsPane);
     } else {
         m_openWindowsPane = new OpenWindowsPanel(m_book, name);
         m_book->AddPage(m_openWindowsPane, name, false);
     }
+#endif
 
     // Add the Tabgroups tab
     name = _("Tabgroups");
     if(IS_DETACHED(name)) {
-        DockablePane *cp = new DockablePane(GetParent(), m_book,  name, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, wxNullBitmap, wxSize(200, 200));
         m_TabgroupsPane = new TabgroupsPane(cp, name);
         cp->SetChildNoReparent(m_TabgroupsPane);
     } else {
@@ -149,16 +149,14 @@ void WorkspacePane::CreateGUIControls()
         m_book->AddPage(m_TabgroupsPane, name, false);
     }
 
-    if (m_book->GetPageCount() > 0) {
+    if(m_book->GetPageCount() > 0) {
         m_book->SetSelection((size_t)0);
     }
     UpdateTabs();
     m_mgr->Update();
 }
 
-void WorkspacePane::Connect()
-{
-}
+void WorkspacePane::Connect() {}
 
 void WorkspacePane::ClearProgress()
 {
@@ -188,8 +186,8 @@ void WorkspacePane::UpdateTabs()
     long flags = EditorConfigST::Get()->GetInteger(wxT("view_workspace_view"), View_Show_Default);
 
     DoShowTab(flags & View_Show_Workspace_Tab, _("Workspace"));
-    DoShowTab(flags & View_Show_Explorer_Tab,  _("Explorer"));
-    DoShowTab(flags & View_Show_Tabs_Tab,      _("Tabs"));
+    DoShowTab(flags & View_Show_Explorer_Tab, _("Explorer"));
+    DoShowTab(flags & View_Show_Tabs_Tab, _("Tabs"));
     DoShowTab(flags & View_Show_Tabgroups_Tab, _("Tabgroups"));
 }
 
@@ -202,29 +200,27 @@ typedef struct {
 #include "file_logger.h"
 void WorkspacePane::ApplySavedTabOrder() const
 {
-    
 
     wxArrayString tabs;
     int index = -1;
-    if ( !clConfig::Get().GetWorkspaceTabOrder(tabs, index) )
-        return;
+    if(!clConfig::Get().GetWorkspaceTabOrder(tabs, index)) return;
 
     // There are (currently) 4 'standard' panes and a variable number of plugin ones
     // NB Since we're only dealing with panes currently in the notebook, this shouldn't
     // be broken by floating panes or non-loaded plugins
     std::vector<tagTabInfo> vTempstore;
-    for (size_t t=0; t < tabs.GetCount(); ++t) {
+    for(size_t t = 0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
-        if (title.empty()) {
+        if(title.empty()) {
             continue;
         }
-        for (size_t n=0; n < m_book->GetPageCount(); ++n) {
-            if (title == m_book->GetPageText(n)) {
+        for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
+            if(title == m_book->GetPageText(n)) {
                 tagTabInfo Tab;
                 Tab.text = title;
-                Tab.win  = m_book->GetPage(n);
-                Tab.bmp  = m_book->GetPageBitmap(n);
-                
+                Tab.win = m_book->GetPage(n);
+                Tab.bmp = m_book->GetPageBitmap(n);
+
                 vTempstore.push_back(Tab);
                 m_book->RemovePage(n);
                 break;
@@ -235,16 +231,18 @@ void WorkspacePane::ApplySavedTabOrder() const
 
     // All the matched tabs are now stored in the vector. Any left in m_book are presumably new additions
     // Now prepend the ordered tabs, so that any additions will effectively be appended
-    for (size_t n=0; n < vTempstore.size(); ++n) {
+    for(size_t n = 0; n < vTempstore.size(); ++n) {
         m_book->InsertPage(n, vTempstore.at(n).win, vTempstore.at(n).text, false, vTempstore.at(n).bmp);
     }
 
-//wxPrintf("After load");for (size_t n=0; n < m_book->GetPageCount(); ++n)  CL_DEBUG1(wxString::Format("Tab %i:  %zs",(int)n,m_book->GetPageText(n)));
+    // wxPrintf("After load");for (size_t n=0; n < m_book->GetPageCount(); ++n)  CL_DEBUG1(wxString::Format("Tab %i:
+    // %zs",(int)n,m_book->GetPageText(n)));
 
     // Restore any saved last selection
-    // NB: this doesn't actually work atm: the selection is set correctly, but presumably something else changes is later
+    // NB: this doesn't actually work atm: the selection is set correctly, but presumably something else changes is
+    // later
     // I've left the code in case anyone ever has time/inclination to fix it
-    if ((index >= 0) && (index < (int)m_book->GetPageCount())) {
+    if((index >= 0) && (index < (int)m_book->GetPageCount())) {
         m_book->SetSelection(index);
     }
 
@@ -254,13 +252,13 @@ void WorkspacePane::ApplySavedTabOrder() const
 void WorkspacePane::SaveWorkspaceViewTabOrder() const
 {
     wxArrayString panes = m_book->GetPagesTextInOrder();
-    clConfig::Get().SetWorkspaceTabOrder( panes, m_book->GetSelection() );
+    clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
 }
 
 void WorkspacePane::DoShowTab(bool show, const wxString& title)
 {
     if(!show) {
-        for(size_t i=0; i<m_book->GetPageCount(); i++) {
+        for(size_t i = 0; i < m_book->GetPageCount(); i++) {
             if(m_book->GetPageText(i) == title) {
                 // we've got a match
                 m_book->RemovePage(i);
@@ -272,7 +270,7 @@ void WorkspacePane::DoShowTab(bool show, const wxString& title)
             }
         }
     } else {
-        for(size_t i=0; i<m_book->GetPageCount(); i++) {
+        for(size_t i = 0; i < m_book->GetPageCount(); i++) {
             if(m_book->GetPageText(i) == title) {
                 // requested to add a page which already exists
                 return;
@@ -306,8 +304,10 @@ wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
         return m_explorer;
     else if(title == _("Workspace"))
         return m_workspaceTab;
+#ifndef __WXOSX__
     else if(title == _("Tabs"))
         return m_openWindowsPane;
+#endif
     else if(title == _("Tabgroups"))
         return m_TabgroupsPane;
     return NULL;
@@ -315,8 +315,8 @@ wxWindow* WorkspacePane::DoGetControlByName(const wxString& title)
 
 bool WorkspacePane::IsTabVisible(int flag)
 {
-    wxWindow *win (NULL);
-    wxString  title;
+    wxWindow* win(NULL);
+    wxString title;
 
     switch(flag) {
     case View_Show_Workspace_Tab:
@@ -327,21 +327,22 @@ bool WorkspacePane::IsTabVisible(int flag)
         title = _("Explorer");
         win = DoGetControlByName(_("Explorer"));
         break;
+#ifndef __WXOSX__
     case View_Show_Tabs_Tab:
         title = _("Tabs");
         win = DoGetControlByName(_("Tabs"));
         break;
+#endif
     case View_Show_Tabgroups_Tab:
         title = _("Tabgroups");
         win = DoGetControlByName(_("Tabgroups"));
         break;
     }
 
-    if(!win || title.IsEmpty())
-        return false;
+    if(!win || title.IsEmpty()) return false;
 
     // if the control exists in the notebook, return true
-    for(size_t i=0; i<m_book->GetPageCount(); i++) {
+    for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         if(m_book->GetPageText(i) == title) {
             return true;
         }

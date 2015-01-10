@@ -387,7 +387,10 @@ void Manager::DoSetupWorkspace(const wxString& path)
 void Manager::CloseWorkspace()
 {
     m_workspceClosing = true;
-
+    if(!IsShutdownInProgress()) {
+        SendCmdEvent(wxEVT_WORKSPACE_CLOSING);
+    }
+    
     DbgClearWatches();
 
     // If we got a running debugging session - terminate it
@@ -412,9 +415,7 @@ void Manager::CloseWorkspace()
     SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
 
     WorkspaceST::Get()->CloseWorkspace();
-    if(!IsShutdownInProgress()) {
-        SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
-    }
+    
 
 #ifdef __WXMSW__
     // Under Windows, and in order to avoid locking the directory set the working directory back to the start up
@@ -434,6 +435,9 @@ void Manager::CloseWorkspace()
     clMainFrame::Get()->SelectBestEnvSet();
 
     UpdateParserPaths();
+    if(!IsShutdownInProgress()) {
+        SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
+    }
     m_workspceClosing = false;
 }
 

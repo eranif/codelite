@@ -78,6 +78,8 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     , m_caption(caption)
     , m_mgr(PluginManager::Get())
     , m_initDone(false)
+    , m_workspaceClosing(false)
+    , m_workspaceOpened(false)
 {
     BitmapLoader bmpLoader;
     m_bitmaps = bmpLoader.MakeStandardMimeMap();
@@ -102,12 +104,18 @@ OpenWindowsPanel::~OpenWindowsPanel()
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_MODIFIED, &OpenWindowsPanel::OnEditorModified, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &OpenWindowsPanel::OnEditorSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &OpenWindowsPanel::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSING, &OpenWindowsPanel::OnWorkspaceClosing, this);
     Unbind(wxEVT_IDLE, &OpenWindowsPanel::OnIdle, this);
 }
+
+#define CHECK_WORKSPACE_CLOSING() if(m_workspaceClosing) return
 
 void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
+    CHECK_WORKSPACE_CLOSING();
+    
     PopulateView();
     if(m_mgr->GetActiveEditor()) {
         DoSelectItem(m_mgr->GetActiveEditor());
@@ -119,6 +127,8 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
 {
     e.Skip();
+    CHECK_WORKSPACE_CLOSING();
+    
     Clear();
 }
 
@@ -263,6 +273,8 @@ void OpenWindowsPanel::SortByEditorOrder()
 void OpenWindowsPanel::OnTabActivated(wxDataViewEvent& event)
 {
     event.Skip();
+    CHECK_WORKSPACE_CLOSING();
+    
     wxDataViewItem item = event.GetItem();
     CHECK_ITEM_RET(item);
 
@@ -277,6 +289,8 @@ void OpenWindowsPanel::OnTabActivated(wxDataViewEvent& event)
 void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
 {
     event.Skip();
+    CHECK_WORKSPACE_CLOSING();
+    
     if(::wxGetKeyState(WXK_CONTROL)) {
         // multiple selection in progress
         return;
@@ -288,7 +302,10 @@ void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
     if(data->IsFile()) {
         m_mgr->OpenFile(data->tab.filename.GetFullPath());
     } else {
-        m_mgr->SelectPage(m_mgr->FindPage(data->tab.text));
+        wxWindow* page = m_mgr->FindPage(data->tab.text);
+        if(page) {
+            m_mgr->SelectPage(page);
+        }
     }
 }
 
@@ -385,6 +402,8 @@ void OpenWindowsPanel::OnInitDone(wxCommandEvent& event)
 
     EventNotifier::Get()->Bind(wxEVT_EDITOR_MODIFIED, &OpenWindowsPanel::OnEditorModified, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &OpenWindowsPanel::OnEditorSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &OpenWindowsPanel::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSING, &OpenWindowsPanel::OnWorkspaceClosing, this);
 }
 
 void OpenWindowsPanel::OnIdle(wxIdleEvent& event)
@@ -456,4 +475,17 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     
     wxVariant value = ::MakeIconText(title, bmp);
     return value;
+}
+
+void OpenWindowsPanel::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    m_workspaceClosing = false;
+}
+
+void OpenWindowsPanel::OnWorkspaceClosing(wxCommandEvent& event)
+{
+    event.Skip();
+    Clear();
+    m_workspaceClosing = true;
 }

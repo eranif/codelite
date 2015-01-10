@@ -40,6 +40,8 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     IManager* m_mgr;
     bool m_initDone;
     std::map<wxString, wxDataViewItem> m_editors;
+    bool m_workspaceClosing;
+    bool m_workspaceOpened;
     
     wxString GetEditorPath(wxDataViewItem item);
     bool IsEditor(wxDataViewItem item) const;
@@ -74,7 +76,9 @@ protected:
     void OnIdle(wxIdleEvent &event);
     void OnEditorModified(clCommandEvent &event);
     void OnEditorSaved(clCommandEvent &event);
-    
+    void OnWorkspaceClosed(wxCommandEvent &event);
+    void OnWorkspaceClosing(wxCommandEvent &event);
+
     DECLARE_EVENT_TABLE()
 
 public:

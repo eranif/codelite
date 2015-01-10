@@ -1039,7 +1039,13 @@ void clMainFrame::CreateGUIControls(void)
 
     // Load the menubar from XRC and set this frame's menubar to it.
     wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
-
+#ifdef __WXOSX__
+    wxMenu *view = NULL;
+    wxMenuItem* item = mb->FindItem(XRCID("show_tabs_tab"), &view);
+    if(item && view) {
+        view->Remove(item);
+    }
+#endif
     // Under wxGTK < 2.9.4 we need this wrapper class to avoid warnings on ubuntu when codelite exits
     m_myMenuBar = new MyMenuBar();
     m_myMenuBar->Set(mb);

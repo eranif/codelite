@@ -40,39 +40,40 @@ class wxGauge;
 class WorkspacePane : public wxPanel
 {
 private:
-	wxString          m_caption;
-	wxAuiManager     *m_mgr;
-	wxGauge          *m_parsingProgress;
-	wxStaticText     *m_staticText;
-	Notebook         *m_book;
-	TabgroupsPane    *m_TabgroupsPane;
-	OpenWindowsPanel *m_openWindowsPane;
-	FileExplorer     *m_explorer;
-	WorkspaceTab     *m_workspaceTab;
+    wxString m_caption;
+    wxAuiManager* m_mgr;
+    wxGauge* m_parsingProgress;
+    wxStaticText* m_staticText;
+    Notebook* m_book;
+    TabgroupsPane* m_TabgroupsPane;
+#ifndef __WXOSX__
+    OpenWindowsPanel* m_openWindowsPane;
+#endif
+    FileExplorer* m_explorer;
+    WorkspaceTab* m_workspaceTab;
 
-	void CreateGUIControls();
+    void CreateGUIControls();
     void Connect();
-	void DoShowTab(bool show, const wxString &title);
-	wxWindow* DoGetControlByName(const wxString &title);
-	
-public:
-	WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr);
-	~WorkspacePane();
+    void DoShowTab(bool show, const wxString& title);
+    wxWindow* DoGetControlByName(const wxString& title);
 
-	void UpdateProgress(int val);
-	void ClearProgress ();
-	void UpdateTabs();
-	void ApplySavedTabOrder() const;
+public:
+    WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);
+    ~WorkspacePane();
+
+    void UpdateProgress(int val);
+    void ClearProgress();
+    void UpdateTabs();
+    void ApplySavedTabOrder() const;
     void SaveWorkspaceViewTabOrder() const;
-	bool IsTabVisible(int flag);
-	
-	// Getters
-	const wxString &GetCaption      () const    { return m_caption;      }
-	Notebook       *GetNotebook     ()          { return m_book;         }
-    WorkspaceTab   *GetWorkspaceTab ()          { return m_workspaceTab; }
-	FileExplorer   *GetFileExplorer ()          { return m_explorer;     }
-	TabgroupsPane  *GetTabgroupsTab()           { return m_TabgroupsPane;}
+    bool IsTabVisible(int flag);
+
+    // Getters
+    const wxString& GetCaption() const { return m_caption; }
+    Notebook* GetNotebook() { return m_book; }
+    WorkspaceTab* GetWorkspaceTab() { return m_workspaceTab; }
+    FileExplorer* GetFileExplorer() { return m_explorer; }
+    TabgroupsPane* GetTabgroupsTab() { return m_TabgroupsPane; }
 };
 
 #endif // WORKSPACE_PANE_H
-

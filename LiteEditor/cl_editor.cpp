@@ -2904,12 +2904,6 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
     }
     if(clientPt.x < margin) {
         GotoPos(PositionFromPoint(clientPt));
-
-        // Let the plugins handle this event first
-        wxCommandEvent marginContextMenuEvent(wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU, GetId());
-        marginContextMenuEvent.SetEventObject(this);
-        if(EventNotifier::Get()->ProcessEvent(marginContextMenuEvent)) return;
-
         DoBreakptContextMenu(clientPt);
         return;
     }
@@ -3252,6 +3246,10 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
         menu.Connect(
             ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
     }
+    
+    clContextMenuEvent event(wxEVT_CONTEXT_MENU_EDITOR_MARGIN);
+    event.SetMenu(&menu);
+    if(EventNotifier::Get()->ProcessEvent(event)) return;
 
     PopupMenu(&menu, pt.x, pt.y);
     m_popupIsOn = false;

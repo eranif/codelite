@@ -385,13 +385,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_OPEN_RESOURCE, wxCommandEvent
 // the menu
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEvent);
 
-// codelite is about to display the editor's *left margin* context menu
-// A plugin can override the default menu display by catching this event and
-// handling it differently
-// event.GetEventObject() holds a pointer to the editor triggered
-// the menu
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU, wxCommandEvent);
-
 // Event type: clCommandEvent
 // The Find In Files dialog requests an additional file mask
 // the format should be:
@@ -625,6 +618,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FORMAT_FILE, clSourceFormatEvent)
 // codelite is about to show the context menu for an editor
 // Event type: clContextMenuEvent. You can use event.GetEditor() to get the editor
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_EDITOR, clContextMenuEvent);
+
+// codelite is about to show the context menu for the editor margin
+// Event type: clContextMenuEvent. You can use event.GetEditor() to get the editor
+// Calling event.Skip(false) will cancel the menu. A plugin may also 
+// alter the context menu
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CONTEXT_MENU_EDITOR_MARGIN, clContextMenuEvent);
 
 // A context menu for a folder is about to be shown, you may alter the menu using event.GetMenu()
 // Use event.GetPath() to get the path of the folder

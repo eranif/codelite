@@ -31,10 +31,7 @@ PHPEditorContextMenu::~PHPEditorContextMenu()
 {
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEventHandler(PHPEditorContextMenu::OnContextMenu), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU,
-                                     wxCommandEventHandler(PHPEditorContextMenu::OnMarginContextMenu),
-                                     NULL,
-                                     this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
 
     wxTheApp->Disconnect(wxID_COMMENT_LINE,
                          wxID_FIND_REFERENCES,
@@ -66,10 +63,7 @@ void PHPEditorContextMenu::ConnectEvents()
 {
     EventNotifier::Get()->Connect(
         wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEventHandler(PHPEditorContextMenu::OnContextMenu), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU,
-                                  wxCommandEventHandler(PHPEditorContextMenu::OnMarginContextMenu),
-                                  NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
     // The below Connect catches *all* the menu events there is no need to
     // call it per menu entry
     wxTheApp->Connect(wxID_COMMENT_LINE,
@@ -399,15 +393,20 @@ void PHPEditorContextMenu::OnContextMenu(wxCommandEvent& e)
     e.Skip();
 }
 
-void PHPEditorContextMenu::OnMarginContextMenu(wxCommandEvent& e)
+void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
 {
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEventObject());
-    if(editor && IsPHPFile(editor)) {
-        // get the position
-        DoMarginContextMenu(editor);
-        return;
-    }
     e.Skip();
+    IEditor* editor = m_manager->GetActiveEditor();
+    if(editor && IsPHPFile(editor)) {
+        wxMenu* menu = e.GetMenu();
+        // Remove non-PHP related entries from the menu
+        menu->Remove(XRCID("insert_temp_breakpoint"));
+        menu->Remove(XRCID("insert_disabled_breakpoint"));
+        menu->Remove(XRCID("insert_cond_breakpoint"));
+        menu->Remove(XRCID("ignore_breakpoint"));
+        menu->Remove(XRCID("toggle_breakpoint_enabled_status"));
+        menu->Remove(XRCID("edit_breakpoint"));
+    }
 }
 
 void PHPEditorContextMenu::OnContextOpenDocument(wxCommandEvent& event) { wxUnusedVar(event); }

@@ -3,6 +3,7 @@
 
 #include <ieditor.h>
 #include <wx/event.h>
+#include "cl_command_event.h"
 
 enum PhpEditorEventIds {
     wxID_COMMENT_LINE             = 10100,
@@ -45,7 +46,7 @@ protected:
 protected:
     // Event handlers
     void OnContextMenu(wxCommandEvent &e);
-    void OnMarginContextMenu(wxCommandEvent &e);
+    void OnMarginContextMenu(clContextMenuEvent &e);
     void OnContextOpenDocument(wxCommandEvent &event);
     void OnPopupClicked(wxCommandEvent &event);
 

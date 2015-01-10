@@ -35,6 +35,7 @@ const int BUTTON_DROPDOWN_WIDTH = 10;
 static const unsigned char DISABLED_TEXT_GREY_HUE = wxColour::AlphaBlend(0, 255, 0.4);
 const wxColour DISABLED_TEXT_COLOR(DISABLED_TEXT_GREY_HUE, DISABLED_TEXT_GREY_HUE, DISABLED_TEXT_GREY_HUE);
 
+#if 0
 static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp)
 {
     wxImage img = bmp.ConvertToImage();
@@ -47,6 +48,7 @@ static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp)
         return greyBmp.ConvertToDisabled(150);
     }
 }
+#endif
 
 CLMainAuiTBArt::CLMainAuiTBArt()
 {

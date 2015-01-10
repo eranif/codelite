@@ -728,7 +728,7 @@ bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const
         msg << "[ " << i << " / " << files.size() << " ] " << files.at(i).GetFullName();
         dlg.Update(i, msg);
 
-        // Execute clang-format and reand the output
+        // Execute clang-format and read the output
         IProcess::Ptr_t clangFormatProc(
             ::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
         CHECK_PTR_RET_FALSE(clangFormatProc);
@@ -737,7 +737,8 @@ bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const
         clangFormatProc->WaitForTerminate(output);
         CL_DEBUG("clang-format returned with:\n%s\n", output);
     }
-
+    
+    EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
     return true;
 }
 

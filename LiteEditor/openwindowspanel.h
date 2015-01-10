@@ -53,6 +53,7 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     void Clear();
     void PopulateView();
     void DoMarkModify(const wxString& filename, bool b);
+    wxVariant PrepareValue(const clTab& tab);
     
 protected:
     virtual void OnMenu(wxDataViewEvent& event);

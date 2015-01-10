@@ -38,7 +38,6 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
     
     mainSizer->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 2);
     
-    m_dvListCtrl->AppendIconTextColumn(_("Modified"), wxDATAVIEW_CELL_INERT, 28, wxALIGN_LEFT);
     m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
     SetSizeHints(500,300);

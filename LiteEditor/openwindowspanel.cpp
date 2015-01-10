@@ -295,36 +295,15 @@ void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
 void OpenWindowsPanel::AppendEditor(const clTab& tab)
 {
     TabClientData* data = new TabClientData(tab);
-    wxString title;
-    wxStyledTextCtrl* editor(NULL);
-    if(data->IsFile()) {
-        title = tab.filename.GetFullName();
-        editor = dynamic_cast<wxStyledTextCtrl*>(tab.window);
-    } else {
-        title = tab.text;
-    }
-
-    wxVector<wxVariant> cols;
-    FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
-    wxBitmap bmp;
-
-    int itemIndex = m_dvListCtrl->GetItemCount();
-    // If the tab had an icon, use it, otherwise, use a bitmap by the file type
-    if(tab.bitmap.IsOk()) {
-        bmp = tab.bitmap;
-    } else {
-        bmp = m_bitmaps.find(ft)->second;
-    }
+    wxVariant value = PrepareValue(tab);
     
-    wxVariant modCol = ::MakeIconText("", wxNullBitmap);;
-    if(editor && editor->GetModify()) {
-        modCol = ::MakeIconText("", m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/standard/file_save"));
-    }
-
-    cols.push_back(modCol);
-    cols.push_back(::MakeIconText(title, bmp));
+    // the row index is the same as the row count (before we add the new entry)
+    int itemIndex = m_dvListCtrl->GetItemCount();
+    
+    wxVector<wxVariant> cols;
+    cols.push_back(value);
     m_dvListCtrl->AppendItem(cols, (wxUIntPtr)data);
-    if(editor) {
+    if(tab.isFile) {
         m_editors.insert(std::make_pair(tab.filename.GetFullPath(), m_dvListCtrl->RowToItem(itemIndex)));
     }
 }
@@ -440,14 +419,41 @@ void OpenWindowsPanel::DoMarkModify(const wxString& filename, bool b)
 {
     std::map<wxString, wxDataViewItem>::iterator iter = m_editors.find(filename);
     if(iter == m_editors.end()) return;
-
     wxDataViewItem item = iter->second;
-    wxVariant newvalue;
-    if(b) {
-        newvalue = ::MakeIconText("", m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/standard/file_save"));
-    } else {
-        newvalue = ::MakeIconText("", wxNullBitmap);
-    }
-    m_dvListCtrl->SetValue(newvalue, m_dvListCtrl->ItemToRow(item), 0);
+    
+    wxBitmap bmp;
+    TabClientData* cd = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
+    const clTab& tab = cd->tab;
+    wxVariant value = PrepareValue(tab);
+    m_dvListCtrl->SetValue(value, m_dvListCtrl->ItemToRow(item), 0);
     m_dvListCtrl->Refresh();
+}
+
+wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
+{
+    wxString title;
+    wxStyledTextCtrl* editor(NULL);
+    if(tab.isFile) {
+        title = tab.filename.GetFullName();
+        editor = dynamic_cast<wxStyledTextCtrl*>(tab.window);
+    } else {
+        title = tab.text;
+    }
+
+    FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
+    wxBitmap bmp;
+    
+    // If the tab had an icon, use it, otherwise, use a bitmap by the file type
+    if(tab.bitmap.IsOk()) {
+        bmp = tab.bitmap;
+    } else {
+        bmp = m_bitmaps.find(ft)->second;
+    }
+    
+    if(editor && editor->GetModify()) {
+        title.Prepend("*");
+    }
+    
+    wxVariant value = ::MakeIconText(title, bmp);
+    return value;
 }

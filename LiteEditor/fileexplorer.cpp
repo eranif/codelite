@@ -195,6 +195,8 @@ void FileExplorer::OnBookmark(wxAuiToolBarEvent& event)
         int sel = tb->GetPopupMenuSelectionFromUser(menu, pt);
         if(entries.count(sel)) {
             wxString path = entries.find(sel)->second;
+            m_fileTree->ClearSelections();
+            m_fileTree->GetGenericDirCtrl()->ExpandPath(path);
             m_fileTree->GetGenericDirCtrl()->SelectPath(path);
         }
 
@@ -221,6 +223,8 @@ void FileExplorer::OnGotoFolder(wxCommandEvent& event)
     if(dlg.ShowModal() == wxID_OK) {
         wxString path = dlg.GetTextCtrlFolder()->GetValue();
         if(wxFileName::DirExists(path)) {
+            m_fileTree->ClearSelections();
+            m_fileTree->GetGenericDirCtrl()->ExpandPath(path);
             m_fileTree->GetGenericDirCtrl()->SelectPath(path);
         }
     }

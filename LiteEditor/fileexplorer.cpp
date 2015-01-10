@@ -39,6 +39,7 @@
 #include "file_logger.h"
 #include "FileExplorerTabToolBar.h"
 #include "cl_config.h"
+#include "OpenFolderDlg.h"
 
 FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
@@ -72,6 +73,7 @@ FileExplorer::~FileExplorer()
            &FileExplorer::OnBookmark,
            this,
            FileExplorerTabToolBar::ID_TOOL_EXPLORER_BOOKMARKS);
+    Unbind(wxEVT_MENU, &FileExplorer::OnGotoFolder, this, FileExplorerTabToolBar::ID_TOOL_GOTO_FOLDER);
 }
 
 void FileExplorer::CreateGUIControls()
@@ -93,6 +95,7 @@ void FileExplorer::CreateGUIControls()
          &FileExplorer::OnBookmark,
          this,
          FileExplorerTabToolBar::ID_TOOL_EXPLORER_BOOKMARKS);
+    Bind(wxEVT_MENU, &FileExplorer::OnGotoFolder, this, FileExplorerTabToolBar::ID_TOOL_GOTO_FOLDER);
     mainSizer->Layout();
 
     wxTheApp->Connect(XRCID("show_in_explorer"),
@@ -192,7 +195,7 @@ void FileExplorer::OnBookmark(wxAuiToolBarEvent& event)
         int sel = tb->GetPopupMenuSelectionFromUser(menu, pt);
         if(entries.count(sel)) {
             wxString path = entries.find(sel)->second;
-            m_fileTree->GetGenericDirCtrl()->ExpandPath(path);
+            m_fileTree->GetGenericDirCtrl()->SelectPath(path);
         }
 
     } else {
@@ -208,5 +211,17 @@ void FileExplorer::OnBookmark(wxAuiToolBarEvent& event)
         }
         folders.Sort();
         clConfig::Get().Write(kConfigFileExplorerBookmarks, folders);
+    }
+}
+
+void FileExplorer::OnGotoFolder(wxCommandEvent& event)
+{
+    // Quickly jump to folder
+    OpenFolderDlg dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString path = dlg.GetTextCtrlFolder()->GetValue();
+        if(wxFileName::DirExists(path)) {
+            m_fileTree->GetGenericDirCtrl()->SelectPath(path);
+        }
     }
 }

@@ -1089,10 +1089,68 @@ FileExplorerTabToolBarBase::FileExplorerTabToolBarBase(wxWindow *parent, wxWindo
     if (m_toolbarItemBookmark) {
         m_toolbarItemBookmark->SetHasDropDown(true);
     }
+    
+    this->AddTool(ID_TOOL_GOTO_FOLDER, _("GoTo"), wxXmlResource::Get()->LoadBitmap(wxT("goto")), wxNullBitmap, wxITEM_NORMAL, _("Goto Folder"), _("Goto Folder"), NULL);
     this->Realize();
     
 }
 
 FileExplorerTabToolBarBase::~FileExplorerTabToolBarBase()
+{
+}
+
+OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer471 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer471);
+    
+    wxFlexGridSizer* flexGridSizer483 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer483->SetFlexibleDirection( wxBOTH );
+    flexGridSizer483->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer483->AddGrowableCol(1);
+    
+    boxSizer471->Add(flexGridSizer483, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText479 = new wxStaticText(this, wxID_ANY, _("Goto Folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer483->Add(m_staticText479, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlFolder = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlFolder->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlFolder->SetHint(_("Type the folder path"));
+    #endif
+    m_textCtrlFolder->AutoCompleteDirectories();
+    
+    flexGridSizer483->Add(m_textCtrlFolder, 0, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer473 = new wxStdDialogButtonSizer();
+    
+    boxSizer471->Add(m_stdBtnSizer473, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button475 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button475->SetDefault();
+    m_stdBtnSizer473->AddButton(m_button475);
+    
+    m_button477 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer473->AddButton(m_button477);
+    m_stdBtnSizer473->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+OpenFolderDlgBase::~OpenFolderDlgBase()
 {
 }

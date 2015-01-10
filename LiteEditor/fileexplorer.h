@@ -50,6 +50,7 @@ private:
     void OnWorkspaceLoaded(wxCommandEvent &e);
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnBookmark(wxAuiToolBarEvent& event);
+    void OnGotoFolder(wxCommandEvent& event);
     
 public:
     FileExplorer(wxWindow *parent, const wxString &caption);

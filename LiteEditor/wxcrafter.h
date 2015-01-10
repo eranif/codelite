@@ -411,6 +411,7 @@ class FileExplorerTabToolBarBase : public wxAuiToolBar
 public:
     enum {
         ID_TOOL_EXPLORER_BOOKMARKS = 8001,
+        ID_TOOL_GOTO_FOLDER = 8002,
     };
 protected:
 
@@ -419,6 +420,25 @@ protected:
 public:
     FileExplorerTabToolBarBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &position = wxDefaultPosition, const wxSize &size = wxSize(-1,-1), long style = wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     virtual ~FileExplorerTabToolBarBase();
+};
+
+
+class OpenFolderDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText479;
+    wxTextCtrl* m_textCtrlFolder;
+    wxStdDialogButtonSizer* m_stdBtnSizer473;
+    wxButton* m_button475;
+    wxButton* m_button477;
+
+protected:
+
+public:
+    wxStaticText* GetStaticText479() { return m_staticText479; }
+    wxTextCtrl* GetTextCtrlFolder() { return m_textCtrlFolder; }
+    OpenFolderDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Folder"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~OpenFolderDlgBase();
 };
 
 #endif

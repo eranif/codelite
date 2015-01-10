@@ -445,6 +445,8 @@
       <File Name="../formbuilder/setters_getters.wxcp"/>
       <File Name="../formbuilder/rename_symbool_dlg.wxcp"/>
     </VirtualDirectory>
+    <File Name="OpenFolderDlg.h"/>
+    <File Name="OpenFolderDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

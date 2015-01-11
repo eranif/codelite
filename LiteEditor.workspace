@@ -52,7 +52,7 @@
   <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -224,7 +224,7 @@
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -267,7 +267,7 @@
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -309,6 +309,49 @@
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+      <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
+      <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
+      <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>
+      <Project Name="CodeFormatter" ConfigName="Win_x64_Release"/>
+      <Project Name="CodeLiteDiff" ConfigName="Win_x64_Release"/>
+      <Project Name="CodeLiteIDE" ConfigName="Win_x64_Release"/>
+      <Project Name="ContinuousBuild" ConfigName="Win_x64_Release"/>
+      <Project Name="Copyright" ConfigName="Win_x64_Release"/>
+      <Project Name="CppChecker" ConfigName="Win_x64_Release"/>
+      <Project Name="Cscope" ConfigName="Win_x64_Release"/>
+      <Project Name="DatabaseExplorer" ConfigName="Win_x64_Release"/>
+      <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Release"/>
+      <Project Name="DebuggerGDB" ConfigName="Win_x64_Release"/>
+      <Project Name="ExternalTools" ConfigName="Win_x64_Release"/>
+      <Project Name="git" ConfigName="Win_x64_Release"/>
+      <Project Name="Gizmos" ConfigName="Win_x64_Release"/>
+      <Project Name="hunspell" ConfigName="Win_x64_Release"/>
+      <Project Name="Interfaces" ConfigName="Win_x64_Release"/>
+      <Project Name="libCodeLite" ConfigName="Win_x64_Release"/>
+      <Project Name="LLDBDebugger" ConfigName="Win_x64_Release"/>
+      <Project Name="MacBundler" ConfigName="Win_x64_Release"/>
+      <Project Name="MemCheck" ConfigName="Win_x64_Release"/>
+      <Project Name="Outline" ConfigName="Win_x64_Release"/>
+      <Project Name="PCH" ConfigName="Win_x64_Release"/>
+      <Project Name="PHPParser" ConfigName="Win_x64_Release"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Win_x64_Release"/>
+      <Project Name="PHPPlugin" ConfigName="Win_x64_Release"/>
+      <Project Name="plugin_sdk" ConfigName="Win_x64_Release"/>
+      <Project Name="QMakePlugin" ConfigName="Win_x64_Release"/>
+      <Project Name="SFTP" ConfigName="Win_x64_Release"/>
+      <Project Name="snipwiz" ConfigName="Win_x64_Release"/>
+      <Project Name="SpellCheck" ConfigName="Win_x64_Release"/>
+      <Project Name="sqlite3" ConfigName="Win_x64_Release"/>
+      <Project Name="Subversion2" ConfigName="Win_x64_Release"/>
+      <Project Name="Tweaks" ConfigName="Win_x64_Release"/>
+      <Project Name="UnitTestPP" ConfigName="Win_x64_Release"/>
+      <Project Name="WordCompletion" ConfigName="Win_x64_Release"/>
+      <Project Name="wxFormBuilder" ConfigName="Win_x64_Release"/>
+      <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
+      <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
+      <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

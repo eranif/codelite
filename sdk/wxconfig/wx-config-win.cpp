@@ -91,9 +91,7 @@ public:
                 if (line.find_first_of('#') != std::string::npos)
                     continue;
 
-                // strip spaces
-                line.erase( std::remove(line.begin(), line.end(), ' '), line.end() );
-
+                
                 split(line);
             }
             file.close();
@@ -112,6 +110,10 @@ protected:
         if (sep != std::string::npos) {
             std::string key = line.substr(0, sep);
             std::string val = line.substr(sep+1, line.size()-sep-1);
+            
+            // trim whitespaces
+            val.erase(val.find_last_not_of(" \n\r\t\v")+1);
+            val.erase(0, val.find_first_not_of(" \n\r\v\t"));
             m_vars[key] = val;
         }
     }

@@ -985,6 +985,8 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     if (m_toolbarItemRemoteSave) {
         m_toolbarItemRemoteSave->SetHasDropDown(true);
     }
+    
+    m_auibar29->AddTool(ID_TOOL_COLLAPSE, _("Collapse"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
     m_auibar29->Realize();
     
     m_gaugeParseProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,8), wxGA_HORIZONTAL);
@@ -997,7 +999,7 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 2);
     
-    SetSizeHints(100,200);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -1007,6 +1009,8 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     this->Connect(ID_PHP_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettingsUI), NULL, this);
     this->Connect(ID_UPLOAD_CLOUD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUploadUI), NULL, this);
     this->Connect(ID_UPLOAD_CLOUD, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUpload), NULL, this);
+    this->Connect(ID_TOOL_COLLAPSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPWorkspaceViewBase::OnCollapse), NULL, this);
+    this->Connect(ID_TOOL_COLLAPSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnCollapseUI), NULL, this);
     m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
     m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
     
@@ -1019,6 +1023,8 @@ PHPWorkspaceViewBase::~PHPWorkspaceViewBase()
     this->Disconnect(ID_PHP_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettingsUI), NULL, this);
     this->Disconnect(ID_UPLOAD_CLOUD, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUploadUI), NULL, this);
     this->Disconnect(ID_UPLOAD_CLOUD, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(PHPWorkspaceViewBase::OnSetupRemoteUpload), NULL, this);
+    this->Disconnect(ID_TOOL_COLLAPSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPWorkspaceViewBase::OnCollapse), NULL, this);
+    this->Disconnect(ID_TOOL_COLLAPSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnCollapseUI), NULL, this);
     m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
     m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
     

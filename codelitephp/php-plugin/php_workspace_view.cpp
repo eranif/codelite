@@ -1255,3 +1255,22 @@ void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
         }
     }
 }
+
+void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
+{
+    // Collapse the projects
+    wxTreeItemId root = m_treeCtrlView->GetRootItem();
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = m_treeCtrlView->GetFirstChild(root, cookie);
+    while(child.IsOk()) {
+        if(m_treeCtrlView->IsExpanded(child)) {
+            m_treeCtrlView->Collapse(child);
+        }
+        child = m_treeCtrlView->GetNextChild(root, cookie);
+    }
+}
+
+void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event)
+{
+    event.Enable(PHPWorkspace::Get()->IsOpen());
+}

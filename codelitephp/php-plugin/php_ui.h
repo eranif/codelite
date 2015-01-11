@@ -368,8 +368,9 @@ class PHPWorkspaceViewBase : public wxPanel
 {
 public:
     enum {
-        ID_PHP_PROJECT_SETTINGS = 1001,
-        ID_UPLOAD_CLOUD = 1002,
+        ID_PHP_PROJECT_SETTINGS = 8001,
+        ID_TOOL_COLLAPSE = 8002,
+        ID_UPLOAD_CLOUD = 8003,
     };
 protected:
     wxAuiToolBar* m_auibar29;
@@ -382,6 +383,8 @@ protected:
     virtual void OnActiveProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSetupRemoteUpload(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnCollapse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCollapseUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnMenu(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
 
@@ -391,7 +394,7 @@ public:
     wxAuiToolBar* GetAuibar29() { return m_auibar29; }
     wxGauge* GetGaugeParseProgress() { return m_gaugeParseProgress; }
     MyTreeView* GetTreeCtrlView() { return m_treeCtrlView; }
-    PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(100,200), long style = wxTAB_TRAVERSAL);
+    PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PHPWorkspaceViewBase();
 };
 
@@ -400,8 +403,8 @@ class PHPDebugPaneBase : public wxPanel
 {
 public:
     enum {
-        ID_DELETE_ALL_BREAKPOINTS = 1001,
-        ID_DELETE_BREAKPOINTS = 1002,
+        ID_DELETE_ALL_BREAKPOINTS = 8001,
+        ID_DELETE_BREAKPOINTS = 8002,
     };
 protected:
     wxAuiNotebook* m_auiBook;

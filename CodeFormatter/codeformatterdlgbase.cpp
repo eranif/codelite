@@ -278,9 +278,9 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropClangFormat->SetHelpString(wxT(""));
     
     m_pgPropClangFormatExePath = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
-    #ifndef __WXOSX__
+    #if !defined(__WXOSX__) && !defined(_WIN64)
     m_pgMgrClang->SetPropertyAttribute(m_pgPropClangFormatExePath, wxPG_FILE_WILDCARD, wxT(""));
-    #endif // __WXOSX__
+    #endif // !defined(__WXOSX__) && !defined(_WIN64)
     m_pgPropClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
     
     m_pgPropColumnLimit = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxIntProperty( _("Column Limit"), wxPG_LABEL, 0) );

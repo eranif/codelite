@@ -94,34 +94,6 @@ protected:
     virtual void OnHelp(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText162() { return m_staticText162; }
-    wxCheckBox* GetCheckBoxFormatOnSave() { return m_checkBoxFormatOnSave; }
-    wxStaticText* GetStaticText115() { return m_staticText115; }
-    wxChoice* GetChoiceCxxEngine() { return m_choiceCxxEngine; }
-    wxPanel* GetPanel133() { return m_panel133; }
-    wxPropertyGridManager* GetPgMgrAstyle() { return m_pgMgrAstyle; }
-    wxStaticText* GetStaticText59() { return m_staticText59; }
-    wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxTextCtrl* GetTextCtrlUserFlags() { return m_textCtrlUserFlags; }
-    wxPanel* GetSplitterPage149() { return m_splitterPage149; }
-    wxStyledTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
-    wxPanel* GetSplitterPage153() { return m_splitterPage153; }
-    wxSplitterWindow* GetSplitter145() { return m_splitter145; }
-    wxPanel* GetPanelAstyle() { return m_panelAstyle; }
-    wxPropertyGridManager* GetPgMgrClang() { return m_pgMgrClang; }
-    wxPanel* GetSplitterPage169() { return m_splitterPage169; }
-    wxStyledTextCtrl* GetTextCtrlPreview_Clang() { return m_textCtrlPreview_Clang; }
-    wxPanel* GetSplitterPage173() { return m_splitterPage173; }
-    wxSplitterWindow* GetSplitter165() { return m_splitter165; }
-    wxPanel* GetPanelClang() { return m_panelClang; }
-    wxPanel* GetPanelCxx() { return m_panelCxx; }
-    wxPropertyGridManager* GetPgMgrPhp() { return m_pgMgrPhp; }
-    wxPanel* GetSplitterPage123() { return m_splitterPage123; }
-    wxStyledTextCtrl* GetStcPhpPreview() { return m_stcPhpPreview; }
-    wxPanel* GetSplitterPage127() { return m_splitterPage127; }
-    wxSplitterWindow* GetSplitter119() { return m_splitter119; }
-    wxPanel* GetPanelPHP() { return m_panelPHP; }
-    wxTreebook* GetTreebook() { return m_treebook; }
     CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Source Code Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CodeFormatterBaseDlg();
 };

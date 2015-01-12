@@ -444,11 +444,9 @@
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="ASTYLE_LIB"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
-        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXMAKINGDLL_SDK"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>

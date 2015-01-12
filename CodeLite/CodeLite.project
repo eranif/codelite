@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="libCodeLite">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00060001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
+  "name": "WinDebugUnicode",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
   "name": "WinReleaseUnicode",
   "enabled": false,
   "buildDirectory": "build",
@@ -21,9 +33,6 @@
   "arguments": [],
   "parentProject": ""
  }]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00060001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Source Files">
@@ -493,7 +502,7 @@ PhpLexer.cpp: PhpLexer.l
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3u.dll"/>
-        <Library Value="libssh"/>
+        <Library Value="libssh64"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../lib/gcc_lib/libcodeliteu.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>

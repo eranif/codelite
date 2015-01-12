@@ -45,7 +45,7 @@
 
 // On Windows lower than XP, the function DebugBreakProcess does not exist
 // so we need to bind it dynamically
-typedef WINBASEAPI BOOL WINAPI ( *DBG_BREAK_PROC_FUNC_PTR )( HANDLE );
+typedef BOOL WINAPI ( *DBG_BREAK_PROC_FUNC_PTR )( HANDLE );
 DBG_BREAK_PROC_FUNC_PTR DebugBreakProcessFunc = NULL;
 HINSTANCE Kernel32Dll = NULL;
 

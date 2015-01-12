@@ -93,6 +93,7 @@
         <IncludePath Value="."/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>

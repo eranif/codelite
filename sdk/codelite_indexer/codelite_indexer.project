@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="codelite_indexer">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00040001N0010Debug_Unix0000000000000001N0009Debug_Win0000000000000001N0012Release_Unix0000000000000001N0011Release_Win000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
   "name": "Win_x64_Release",
@@ -12,9 +15,6 @@
   "arguments": [],
   "parentProject": ""
  }]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00040001N0010Debug_Unix0000000000000001N0009Debug_Win0000000000000001N0012Release_Unix0000000000000001N0011Release_Win000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -362,7 +362,7 @@
       </Compiler>
       <Linker Options="-s;-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="./Release/codelite_indexer" IntermediateDirectory="./Release" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite_indexer.exe" IntermediateDirectory="$(ConfigurationName)" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -373,7 +373,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy Release\codelite_indexer.exe ..\..\Runtime\codelite_indexer.exe</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite_indexer.exe" ..\..\Runtime\codelite_indexer.exe</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="Interfaces">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0006Common0000000000000001N0015Win_x64_Release000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
   "name": "Win_x64_Release",
@@ -12,9 +15,6 @@
   "arguments": [],
   "parentProject": ""
  }]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00010001N0006Common000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Header Files">
@@ -137,7 +137,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

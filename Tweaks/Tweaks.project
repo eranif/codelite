@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="Tweaks">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0015Win_x64_Release000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
   "name": "Win_x64_Release",
@@ -275,15 +278,12 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="MinGW ( tdm64-1, 4.9.2 )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="_WIN32_WINNT=0x501"/>
         <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
@@ -296,7 +296,7 @@
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/Tweaks.dll" IntermediateDirectory="./WinReleaseUnicode" Command=".\codelite.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/Tweaks.dll" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

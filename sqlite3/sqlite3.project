@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="sqlite3">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0015Win_x64_Release000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
+  "name": "Win_x64_Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
   "name": "Win_x64_Release",
   "enabled": false,
   "buildDirectory": "build",
@@ -81,7 +93,7 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libsqlite3.a" IntermediateDirectory="./Release_static" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/libsqlite3.a" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -91,7 +103,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\libsqlite3.a" ..\lib\gcc_lib</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand>mingw32-make -f sqlite3.mk type=ReleaseANSIStaticLibrary clean</CleanCommand>

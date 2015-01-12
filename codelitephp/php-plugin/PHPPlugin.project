@@ -2,7 +2,7 @@
 <CodeLite_Project Name="PHPPlugin">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00040001N0010Debug_Unix0000000000000001N0012Release_Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000]]>
+      <![CDATA[00050001N0010Debug_Unix0000000000000001N0012Release_Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -458,7 +458,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="MinGW ( tdm64-1, 4.9.2 )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>
@@ -481,7 +481,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./codelite.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="$(ConfigurationName)" Command="./codelite.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -492,7 +492,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy WinReleaseUnicode\*.dll ..\..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy $(IntermediateDirectory)\*.dll ..\..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

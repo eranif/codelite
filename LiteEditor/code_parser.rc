@@ -1,81 +1,69 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : code_parser.rc              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : code_parser.rc
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 aaaaa ICON "res/cubes.ico"
 #include "wx/msw/wx.rc"
-#ifndef __GNUC__
-#ifdef WIN64
+#if WIN64
 1 24 "wx/msw/amd64.manifest"
 #else
 1 24 "wx/msw/wx.manifest"
-#endif
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Version information
 VS_VERSION_INFO    VERSIONINFO
-  FILEVERSION      7,0,0,0
-  PRODUCTVERSION   7,0,0,1
-  FILEFLAGSMASK    0x3fL // VS_FFI_FILEFLAGSMASK
-  FILEFLAGS        0x0L  // final version
-  FILEOS           VOS_NT_WINDOWS32
-  // Can be one of the following values:
-  //   VFT_UNKNOWN, VFT_APP, VFT_DLL, VFT_DRV, VFT_FONT, VFT_VXD, VFT_STATIC_LIB
-  FILETYPE         VFT_APP
-  // In case of VFT_DRV in FILETYPE:
-  //   VFT2_UNKNOWN,         VFT2_DRV_COMM,     VFT2_DRV_PRINTER,
-  //   VFT2_DRV_KEYBOARD,    VFT2_DRV_LANGUAGE, VFT2_DRV_DISPLAY,
-  //   VFT2_DRV_MOUSE,       VFT2_DRV_NETWORK,  VFT2_DRV_SYSTEM,
-  //   VFT2_DRV_INSTALLABLE, VFT2_DRV_SOUND,    VFT2_DRV_VERSIONED_PRINTER
-  // In case of VFT_FONT in FILETYPE:
-  //   VFT2_UNKNOWN, VFT2_FONT_RASTER, VFT2_FONT_VECTOR, VFT2_FONT_TRUETYPE
-  FILESUBTYPE      VFT2_UNKNOWN // not used
-{
-  BLOCK "StringFileInfo"
-  {
-    BLOCK "040904E4" // Lang=US English, CharSet=Windows Multilingual
-    {
-      VALUE "Comments",         "Licensed under GPL2."
-      VALUE "CompanyName",      "The CodeLite Team"
-      VALUE "Developer",        "Eran Ifrah"
-      VALUE "FileDescription",  "CodeLite, an Open Source, free, cross platform IDE for C/C++/PHP"
-      VALUE "FileVersion",      "7.0.0"
-      VALUE "InternalName",     "CodeLite"
-      VALUE "LegalCopyright",   "Copyright (C) 2007-2015 CodeLite Team"
-      VALUE "LegalTrademarks",  "All rights reserved."
-      VALUE "OriginalFilename", "codelite.exe"
-      VALUE "PrivateBuild",     ""
-      VALUE "ProductName",      "CodeLite"
-      VALUE "ProductVersion",   "7.0.0"
-      VALUE "SpecialBuild",     ""
-      VALUE "Support",          "http://forums.codelite.org"
-      VALUE "Users",            "Unlimited."
-    } // BLOCK "040904E4"
-  } // BLOCK "StringFileInfo"
-  BLOCK "VarFileInfo"
-  {
-    VALUE "Translation", 0x409, 1252 // 1252 = 0x04E4
-  } // BLOCK "VarFileInfo"
+FILEVERSION      7,0,0,0
+PRODUCTVERSION   7,0,0,1
+FILEFLAGSMASK    0x3fL // VS_FFI_FILEFLAGSMASK
+FILEFLAGS        0x0L  // final version
+FILEOS           VOS_NT_WINDOWS32
+FILETYPE         VFT_APP
+FILESUBTYPE      VFT2_UNKNOWN { // not used
+	BLOCK "StringFileInfo"
+	{
+		BLOCK "040904E4" // Lang=US English, CharSet=Windows Multilingual
+		{
+			VALUE "Comments",         "Licensed under GPL2."
+			VALUE "CompanyName",      "The CodeLite Team"
+			VALUE "Developer",        "Eran Ifrah"
+			VALUE "FileDescription",  "CodeLite, an Open Source, free, cross platform IDE for C/C++/PHP"
+			VALUE "FileVersion",      "7.0.0"
+			VALUE "InternalName",     "CodeLite"
+			VALUE "LegalCopyright",   "Copyright (C) 2007-2015 CodeLite Team"
+			VALUE "LegalTrademarks",  "All rights reserved."
+			VALUE "OriginalFilename", "codelite.exe"
+			VALUE "PrivateBuild",     ""
+			VALUE "ProductName",      "CodeLite"
+			VALUE "ProductVersion",   "7.0.0"
+			VALUE "SpecialBuild",     ""
+			VALUE "Support",          "http://forums.codelite.org"
+			VALUE "Users",            "Unlimited."
+		} // BLOCK "040904E4"
+	} // BLOCK "StringFileInfo"
+	BLOCK "VarFileInfo"
+	{
+		VALUE "Translation", 0x409, 1252 // 1252 = 0x04E4
+	} // BLOCK "VarFileInfo"
 }

@@ -2,7 +2,7 @@
 <CodeLite_Project Name="databaselayer_sqlite" InternalType="Others">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00060001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
+      <![CDATA[00070001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -305,7 +305,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no --unicode=yes)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libdatabaselayersqliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/libdatabaselayersqliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[]]>
       </Environment>
@@ -316,7 +316,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy ..\..\lib\gcc_lib\libdatabaselayersqliteu.dll ..\..\Runtime</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\libdatabaselayersqliteu.dll" ..\..\lib\gcc_lib</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\libdatabaselayersqliteu.dll" ..\..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

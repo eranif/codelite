@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="wxshapeframework" InternalType="Others">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00070001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0015Win_x64_Release000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
   "name": "Win_x64_Release",
@@ -12,9 +15,6 @@
   "arguments": [],
   "parentProject": ""
  }]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00060001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
@@ -378,7 +378,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no --unicode=yes)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxshapeframeworku.dll" IntermediateDirectory="WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="WinReleaseUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/libwxshapeframeworku.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="WinReleaseUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[]]>
       </Environment>
@@ -389,7 +389,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy ..\..\lib\gcc_lib\libwxshapeframeworku.dll ..\..\Runtime</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\libwxshapeframeworku.dll" ..\..\Runtime</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\libwxshapeframeworku.dll" ..\..\lib\gcc_lib</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

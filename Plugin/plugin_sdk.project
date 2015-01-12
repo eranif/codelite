@@ -2,7 +2,7 @@
 <CodeLite_Project Name="plugin_sdk">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00040001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
+      <![CDATA[00050001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -649,7 +649,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="MinGW ( tdm64-1, 4.9.2 )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch;-O2" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
@@ -666,7 +666,7 @@
         <Library Value="libUxTheme.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
-      <General OutputFile="../lib/gcc_lib/libplugin_sdku.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../lib/gcc_lib/libplugin_sdku.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

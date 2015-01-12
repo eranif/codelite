@@ -2,7 +2,7 @@
 <CodeLite_Project Name="PHPParserUnitTests" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+      <![CDATA[00030001N0005Debug0000000000000001N0007Release0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -290,7 +290,7 @@ PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="MinGW ( tdm64-1, 4.9.2 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cflags --debug=no);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-std=c++11;-Wall;$(shell wx-config --cflags --debug=no)" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
         <IncludePath Value="."/>
         <IncludePath Value="../../sdk/wxsqlite3/include"/>
@@ -309,7 +309,7 @@ PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
         <Library Value="plugin_sdku.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=C:\src\codelite\Runtime;$PATH]]>
       </Environment>

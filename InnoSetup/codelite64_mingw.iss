@@ -7,11 +7,11 @@ AppVerName=CodeLite
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
-DefaultDirName={reg:HKLM\Software\codelite\settings,InstallPath|{pf}\CodeLite}
+DefaultDirName={reg:HKLM\Software\codelite\settings,InstallPath|{pf64}\CodeLite}
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-7.0-BETA-mingw4.8.1
+OutputBaseFilename=codelite-64-7.0-BETA-mingw4.8.1
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -19,16 +19,6 @@ Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
 PrivilegesRequired=none
-
-;;==================================
-;; 32 bit setup
-;;==================================
-;#define CODELITE_ROOT "C:\src\codelite"
-;#define WXWIN "D:\src\wxWidgets"
-;#define RUNTIME_MINGW "C:\MinGW-4.8.1"
-;#define RUNTIME_MINGW32 "C:\MinGW-4.8.1"
-;#define BUILD "32"
-;#define MINGWM10_DLL "{#RUNTIME_MINGW}\bin\mingwm10.dll"
 
 ;;==================================
 ;; 64 bit setup
@@ -123,7 +113,8 @@ Source: "{#CODELITE_ROOT}\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Fla
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\libclang.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
-Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
+Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
+Source: "{#CODELITE_ROOT}\sdk\libssh\lib\zlib64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
@@ -136,17 +127,8 @@ Source: "{#CODELITE_ROOT}\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignorev
 Source: "{#CODELITE_ROOT}\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
+Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "{#RUNTIME_MINGW32}\bin\mingwm10.dll"; DestDir: "{app}"; Check: Is32Build; Flags: ignoreversion ; Components: Editor; 
-Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor; Check: Is32Build;
 Source: "{#USER_MINGW}\*"; Excludes: "*.~*,msys\*,mingw-get\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "{#CODELITE_ROOT}\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
 Source: "{#CODELITE_ROOT}\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
@@ -343,5 +325,5 @@ end;
 
 function Is32Build(): Boolean;
 begin
-  Result := (CompareStr(ExpandConstant('{#BUILD}'), '32') = 0);
+  Result := True;
 end;

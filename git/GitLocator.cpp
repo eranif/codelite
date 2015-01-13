@@ -3,12 +3,16 @@
 #include "globals.h"
 
 #ifdef __WXMSW__
-#include <wx/msw/registry.h>
+#   include <wx/msw/registry.h>
 #endif
 
-GitLocator::GitLocator() {}
+GitLocator::GitLocator()
+{
+}
 
-GitLocator::~GitLocator() {}
+GitLocator::~GitLocator()
+{
+}
 
 bool GitLocator::GetExecutable(wxFileName& gitpath) const
 {
@@ -29,10 +33,13 @@ bool GitLocator::GetExecutable(wxFileName& gitpath) const
 #ifdef __WXMSW__
     // Under Windows search the registry for git executable as well
     wxRegKey regGit(wxRegKey::HKLM, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
-    wxString installLocatiokn;
-    if(regGit.QueryValue("InstallLocation", installLocatiokn) && ::wxDirExists(installLocatiokn)) {
+    wxRegKey regGit2(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
+    wxString installLocation;
+    if((regGit.QueryValue("InstallLocation", installLocation) ||
+        regGit2.QueryValue("InstallLocation", installLocation)) &&
+       ::wxDirExists(installLocation)) {
         wxString gitExeFullPath;
-        if(DoCheckGitInFolder(installLocatiokn, gitExeFullPath)) {
+        if(DoCheckGitInFolder(installLocation, gitExeFullPath)) {
             gitpath = gitExeFullPath;
             return true;
         }
@@ -62,10 +69,13 @@ bool GitLocator::MSWGetGitShellCommand(wxString& bashCommand) const
 {
 #ifdef __WXMSW__
     wxRegKey regGit(wxRegKey::HKLM, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
-    wxString installLocatiokn;
-    if(regGit.QueryValue("InstallLocation", installLocatiokn) && ::wxDirExists(installLocatiokn)) {
+    wxRegKey regGit2(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
+    wxString installLocation;
+    if((regGit.QueryValue("InstallLocation", installLocation) ||
+        regGit2.QueryValue("InstallLocation", installLocation)) &&
+       ::wxDirExists(installLocation)) {
         wxString gitExeFullPath;
-        if(DoCheckGitInFolder(installLocatiokn, gitExeFullPath)) {
+        if(DoCheckGitInFolder(installLocation, gitExeFullPath)) {
             wxFileName gitpath = gitExeFullPath;
             gitpath.SetName("bash");
             if(gitpath.Exists()) {

@@ -28,7 +28,10 @@
 
 #ifdef __WXMSW__
 // Windows
-#include <WinSock2.h>
+#ifndef _WIN64
+#   include <WinSock2.h>
+#endif
+
 #include <Windows.h>
 #include <string>
 

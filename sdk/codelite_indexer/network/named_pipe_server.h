@@ -28,8 +28,10 @@
 
 #include <stdlib.h>
 #ifdef __WXMSW__
-#include <WinSock2.h>
 #include <Windows.h>
+#ifndef _WIN64
+#   include <WinSock2.h>
+#endif
 #else
 #include <unistd.h>
 #endif

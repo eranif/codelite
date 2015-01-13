@@ -336,7 +336,7 @@ php_expr_lexer.cpp: php_expr.l
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no);-Os" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/lib$(ProjectName).a" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -347,7 +347,7 @@ php_expr_lexer.cpp: php_expr.l
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes"/>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\lib$(ProjectName).a" ..\..\lib\gcc_lib</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

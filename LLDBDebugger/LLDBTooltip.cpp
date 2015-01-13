@@ -143,6 +143,7 @@ LLDBVariableClientData* LLDBTooltip::ItemData(const wxTreeItemId& item) const
 void LLDBTooltip::OnLLDBVariableExpanded(LLDBEvent& event)
 {
     int variableId = event.GetVariableId();
+	wxUnusedVar(variableId);
     std::map<int, wxTreeItemId>::iterator iter = m_itemsPendingExpansion.find(event.GetVariableId());
     if(iter == m_itemsPendingExpansion.end()) {
         // does not belong to us

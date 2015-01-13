@@ -37,7 +37,7 @@
 #   include <sys/socket.h>
 #endif
 
-clSocketBase::clSocketBase(int sockfd)
+clSocketBase::clSocketBase(socket_t sockfd)
     : m_socket(sockfd)
     , m_closeOnExit(true)
 {

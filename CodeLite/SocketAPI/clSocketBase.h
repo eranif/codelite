@@ -32,7 +32,10 @@
 #include "codelite_exports.h"
 
 #ifdef _WIN32
-#include <winsock2.h>
+#ifndef _WIN64
+#	include <winsock2.h>
+#endif
+
 typedef SOCKET socket_t;
 typedef int socklen_t;
 #else
@@ -76,7 +79,7 @@ public:
      */
     void MakeSocketBlocking(bool blocking);
 
-    clSocketBase(int sockfd = INVALID_SOCKET);
+    clSocketBase(socket_t sockfd = INVALID_SOCKET);
     virtual ~clSocketBase();
 
     void SetCloseOnExit(bool closeOnExit) {

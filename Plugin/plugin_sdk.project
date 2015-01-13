@@ -447,6 +447,7 @@
         <Preprocessor Value="ASTYLE_LIB"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="WXMAKINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>

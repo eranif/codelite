@@ -6,6 +6,15 @@
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
+  "name": "WinDebugUnicode",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
   "name": "WinReleaseUnicode",
   "enabled": false,
   "buildDirectory": "build",
@@ -90,7 +99,7 @@
         <LibraryPath Value="../../lib/gcc_lib/"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <ResourceCompiler Options="" Required="no"/>
+      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../../lib/gcc_lib/libwxsqlite3ud.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

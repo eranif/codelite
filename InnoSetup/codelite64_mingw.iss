@@ -29,10 +29,6 @@ PrivilegesRequired=none
 #define RUNTIME_MINGW32 "C:\MinGW-4.8.1"
 #define BINUTILS_DIR "D:\bin"
 
-#define BUILD "64"
-
-;; Define the path to the MinGW that we offer to the users
-#define USER_MINGW "C:\MinGW-4.8.1"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -254,9 +250,4 @@ begin
             end;
         end;
     end;
-end;
-
-function Is32Build(): Boolean;
-begin
-  Result := True;
 end;

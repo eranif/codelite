@@ -465,8 +465,10 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     // If the tab had an icon, use it, otherwise, use a bitmap by the file type
     if(tab.bitmap.IsOk()) {
         bmp = tab.bitmap;
-    } else {
+    } else if(m_bitmaps.count(ft)) {
         bmp = m_bitmaps.find(ft)->second;
+    } else {
+        bmp = m_bitmaps.find(FileExtManager::TypeText)->second;
     }
     
     if(editor && editor->GetModify()) {

@@ -49,6 +49,7 @@ Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 ;; ---- wxWidgets DLLs
 Source: "{#WXWIN}\lib\gcc_dll\wxmsw310u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion
 
+; ---- Binaries needed by codelite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"
 Source: "{#CODELITE_ROOT}\Runtime\config\codelite.xml.default"; DestDir: "{app}\config";
@@ -62,6 +63,16 @@ Source: "{#CODELITE_ROOT}\Runtime\config\codelite.layout.default"; DestDir: "{ap
 Source: "{#CODELITE_ROOT}\sdk\codelite_cppcheck\cfg\*.cfg"; DestDir: "{app}\config\cppcheck"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\SpellChecker\dics\*"; DestDir: "{app}\dics"; Flags: recursesubdirs 
+
+;; ------- Bin Utils ------------------
+Source: "{#BINUTILS_DIR}\rm.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\cp.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\ls.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\grep.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\flex.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\mv.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\yacc.exe"; DestDir: "{app}"; Flags: ignoreversion;
 
 ; Override with Windows specific files
 Source: "{#CODELITE_ROOT}\Runtime\templates\projects\dynamic-library\dynamic-library.project.windows"; DestName: dynamic-library.project; DestDir: "{app}\templates\projects\dynamic-library"; Flags: ignoreversion 

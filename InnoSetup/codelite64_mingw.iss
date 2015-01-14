@@ -69,6 +69,9 @@ Source: "{#BINUTILS_DIR}\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BINUTILS_DIR}\ls.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BINUTILS_DIR}\grep.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BINUTILS_DIR}\flex.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\mv.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#BINUTILS_DIR}\yacc.exe"; DestDir: "{app}"; Flags: ignoreversion;
+
 
 ; Override with Windows specific files
 Source: "{#CODELITE_ROOT}\Runtime\templates\projects\dynamic-library\dynamic-library.project.windows"; DestName: dynamic-library.project; DestDir: "{app}\templates\projects\dynamic-library"; Flags: ignoreversion ; 

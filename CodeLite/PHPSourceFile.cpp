@@ -38,7 +38,7 @@ PHPSourceFile::PHPSourceFile(const wxFileName& filename)
     wxString content;
     wxFFile fp(filename.GetFullPath(), "rb");
     if(fp.IsOpened()) {
-        fp.ReadAll(&content, wxConvUTF8);
+        fp.ReadAll(&content, wxConvISO8859_1);
         fp.Close();
     }
     m_text.swap(content);

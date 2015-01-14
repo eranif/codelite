@@ -6,6 +6,8 @@
 #include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
 #include "event_notifier.h"
+#include "fileutils.h"
+#include <wx/stopwatch.h>
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
@@ -581,11 +583,16 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
         }
 
         m_db.Begin();
+        
         // If the parsing mode is 'Full' - clear the database first
         if(updateMode == kUpdateMode_Full) {
+            CL_DEBUG("PHP: Clearing symbols database before parsing...");
             ClearAll(false);
+            CL_DEBUG("PHP: Clearing symbols database before parsing...done");
         }
-
+        
+        wxStopWatch sw;
+        sw.Start();
         for(size_t i = 0; i < files.GetCount(); ++i) {
             {
                 clParseEvent event(wxPHP_PARSE_PROGRESS);
@@ -623,8 +630,14 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
                 reParseNeeded = false;
 
             if(reParseNeeded) {
+                // For performance reaons, load the file into memory and then parse it
                 wxFileName fnSourceFile(files.Item(i));
-                PHPSourceFile sourceFile(fnSourceFile);
+                wxString content;
+                if(!FileUtils::ReadFileContent(fnSourceFile, content, wxConvISO8859_1)) {
+                    CL_WARNING("PHP: Failed to read file: %s for parsing", fnSourceFile.GetFullPath());
+                    continue;
+                }
+                PHPSourceFile sourceFile(content);
                 sourceFile.SetFilename(fnSourceFile);
                 sourceFile.SetParseFunctionBody(parseFuncBodies);
                 sourceFile.Parse();
@@ -632,7 +645,11 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
             }
         }
         m_db.Commit();
-
+        long elapsedMs = sw.Time();
+        wxString message;
+        message << _("PHP: parsed ") << files.GetCount() << " in " << elapsedMs << " milliseconds";
+        CL_DEBUGS(message);
+        
         {
             clParseEvent event(wxPHP_PARSE_ENDED);
             event.SetTotalFiles(files.GetCount());

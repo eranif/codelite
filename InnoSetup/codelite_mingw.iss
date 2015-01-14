@@ -120,16 +120,16 @@ Source: "{#CODELITE_ROOT}\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignorever
 Source: "{#CODELITE_ROOT}\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion 
-Source: "{#RUNTIME_MINGW32}\bin\mingwm10.dll"; DestDir: "{app}"; Check: Is32Build; Flags: ignoreversion ; 
-Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
-Source: "{#RUNTIME_MINGW32}\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Check: Is32Build;
+Source: "{#RUNTIME_MINGW32}\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#RUNTIME_MINGW32}\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#RUNTIME_MINGW32}\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\wxgui.zip";  DestDir: "{app}"; Flags: ignoreversion
@@ -314,9 +314,4 @@ begin
             end;
         end;
     end;
-end;
-
-function Is32Build(): Boolean;
-begin
-  Result := (CompareStr(ExpandConstant('{#BUILD}'), '32') = 0);
 end;

@@ -124,7 +124,10 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
     }
 
     // Auto insert single match
+#ifndef __WXGTK__
+    // On GTK, AutoCompSetChooseSingle causes a mess when inserting the match
     activeEditor->GetSTC()->AutoCompSetChooseSingle(true);
+#endif
     activeEditor->GetSTC()->AutoCompSetAutoHide(true);
     activeEditor->GetSTC()->AutoCompShow(reply.filter.length(), suggestString);
 }

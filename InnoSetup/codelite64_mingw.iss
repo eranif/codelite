@@ -112,10 +112,10 @@ Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "{#CODELITE_ROOT}\sdk\clang\lib\libclang.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
+Source: "{#CODELITE_ROOT}\sdk\clang\lib\libclang64.dll"; DestDir: "{app}\"; DestName: "libclang.dll"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib\zlib64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
-Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; Components: Editor
+Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format-64.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "{#CODELITE_ROOT}\Runtime\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

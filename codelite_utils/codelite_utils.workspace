@@ -30,20 +30,7 @@
       <Project Name="codelite_terminal" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
-      <Project Name="build_all" ConfigName="Release"/>
-      <Project Name="codelite_cppcheck" ConfigName="Release"/>
-      <Project Name="codelite_echo" ConfigName="Release"/>
-      <Project Name="codelite_indexer" ConfigName="Release_Win"/>
-      <Project Name="codelite_launcher" ConfigName="Release"/>
-      <Project Name="codelite_make" ConfigName="Release"/>
-      <Project Name="codelite_terminal" ConfigName="Release"/>
-      <Project Name="codelitegcc" ConfigName="Release"/>
-      <Project Name="le_exec" ConfigName="Release"/>
-      <Project Name="makedir" ConfigName="ReleaseUnicode"/>
-      <Project Name="wx-config" ConfigName="Release"/>
-    </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Project Name="build_all" ConfigName="Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
@@ -55,6 +42,19 @@
       <Project Name="le_exec" ConfigName="Win_x64_Release"/>
       <Project Name="makedir" ConfigName="Win_x64_Release"/>
       <Project Name="wx-config" ConfigName="Win_x64_Release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
+      <Project Name="build_all" ConfigName="Release"/>
+      <Project Name="codelite_cppcheck" ConfigName="Release"/>
+      <Project Name="codelite_echo" ConfigName="Release"/>
+      <Project Name="codelite_indexer" ConfigName="Release_Win"/>
+      <Project Name="codelite_launcher" ConfigName="Release"/>
+      <Project Name="codelite_make" ConfigName="Release"/>
+      <Project Name="codelite_terminal" ConfigName="Release"/>
+      <Project Name="codelitegcc" ConfigName="Release"/>
+      <Project Name="le_exec" ConfigName="Release"/>
+      <Project Name="makedir" ConfigName="ReleaseUnicode"/>
+      <Project Name="wx-config" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

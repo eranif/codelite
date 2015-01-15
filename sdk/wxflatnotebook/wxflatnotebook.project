@@ -83,8 +83,8 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="">
-      <General OutputFile="../../lib/gcc_lib/libwxflatnotebooku.a" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../../lib/gcc_lib/libwxflatnotebooku.a" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" WorkingDirectory=""/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>

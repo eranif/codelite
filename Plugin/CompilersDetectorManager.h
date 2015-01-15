@@ -38,7 +38,13 @@ class WXDLLIMPEXP_SDK CompilersDetectorManager
 public:
     CompilersDetectorManager();
     virtual ~CompilersDetectorManager();
-
+    
+    /**
+     * @brief return true if the locator found at least one instance 
+     * on MinGW installed on this machine
+     */
+    bool FoundMinGWCompiler() const;
+    
     void SetCompilersFound(const ICompilerLocator::CompilerVec_t& compilersFound) {
         this->m_compilersFound = compilersFound;
     }

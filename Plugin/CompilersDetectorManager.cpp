@@ -85,3 +85,15 @@ CompilerPtr CompilersDetectorManager::Locate(const wxString& folder)
     }
     return NULL;
 }
+
+bool CompilersDetectorManager::FoundMinGWCompiler() const
+{
+    for(size_t i=0; i<m_compilersFound.size(); ++i) {
+        CompilerPtr compiler = m_compilersFound.at(i);
+        if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
+            // we found at least one MinGW compiler
+            return true;
+        }
+    }
+    return false;
+}

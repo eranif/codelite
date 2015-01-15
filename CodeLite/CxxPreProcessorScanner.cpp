@@ -10,7 +10,7 @@ CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename, size_
     , m_filename(filename)
     , m_options(options)
 {
-    m_scanner = ::LexerNew(m_filename.GetFullPath(), m_options);
+    m_scanner = ::LexerNew(m_filename, m_options);
 }
 
 CxxPreProcessorScanner::~CxxPreProcessorScanner()

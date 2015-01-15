@@ -632,7 +632,7 @@ void Compiler::AddDefaultGnuLinkerOptions()
     AddLinkerOption("-s", "Remove all symbol table and relocation information from the executable");
 }
 
-wxArrayString Compiler::GetDefaultIncludePaths() const
+wxArrayString Compiler::GetDefaultIncludePaths()
 {
     wxArrayString defaultPaths;
     if(GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
@@ -640,14 +640,27 @@ wxArrayString Compiler::GetDefaultIncludePaths() const
         if(ver.IsEmpty()) {
             return defaultPaths;
         }
-
-        // FIXME : support 64 bit compilers
-        defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++"));
-        defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/mingw32"));
-        defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/backward"));
-        defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include"));
-        defaultPaths.Add(GetIncludePath("include"));
-        defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include-fixed"));
+        
+        const wxArrayString& macros = GetBuiltinMacros();
+        bool is64Bit = macros.Index("_WIN64=1") != wxNOT_FOUND;
+        
+        if(!is64Bit) {
+            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++"));
+            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/mingw32"));
+            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include/c++/backward"));
+            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include"));
+            defaultPaths.Add(GetIncludePath("include"));
+            defaultPaths.Add(GetIncludePath("lib/gcc/mingw32/" + ver + "/include-fixed"));
+        } else {
+            // for 64 bits, the include paths are a bit different
+            // G:\mingw64\x86_64-w64-mingw32\include\c++
+            // G:\mingw64\x86_64-w64-mingw32\include
+            // G:\mingw64\lib\gcc\x86_64-w64-mingw32\4.9.2\include
+            defaultPaths.Add(GetIncludePath("x86_64-w64-mingw32/include/c++"));
+            defaultPaths.Add(GetIncludePath("x86_64-w64-mingw32/include"));
+            defaultPaths.Add(GetIncludePath("include"));
+            defaultPaths.Add(GetIncludePath("lib/gcc/x86_64-w64-mingw32/" + ver + "/include"));
+        }
 
     } else if(GetCompilerFamily() == COMPILER_FAMILY_CLANG || GetCompilerFamily() == COMPILER_FAMILY_GCC) {
 #ifndef __WXMSW__

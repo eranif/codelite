@@ -2075,6 +2075,12 @@ void clMainFrame::CreateToolbars16()
 
 void clMainFrame::LocateCompilersIfNeeded()
 {
+    if(!g_splashDestroyed && g_splashScreen) {
+        g_splashScreen->Hide();
+        g_splashScreen->Destroy();
+        g_splashScreen = NULL;
+    }
+    
     bool bAutoDetectCompilers = clConfig::Get().Read(kConfigAutoDetectCompilerOnStartup, true);
     if(bAutoDetectCompilers) {
 
@@ -2092,12 +2098,6 @@ void clMainFrame::LocateCompilersIfNeeded()
                 CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
             }
         }
-    }
-
-    if(!g_splashDestroyed && g_splashScreen) {
-        g_splashScreen->Hide();
-        g_splashScreen->Destroy();
-        g_splashScreen = NULL;
     }
 }
 

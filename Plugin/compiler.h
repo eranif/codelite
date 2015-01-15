@@ -116,7 +116,7 @@ public:
     /**
      * @brief return the compiler default include paths
      */
-    wxArrayString GetDefaultIncludePaths() const;
+    wxArrayString GetDefaultIncludePaths();
 
     /**
      * @brief return true if this compiler is compatible with GNU compilers

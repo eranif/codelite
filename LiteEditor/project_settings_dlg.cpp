@@ -237,6 +237,11 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
         if(!page) continue; // NULL page ...
         IProjectSettingsPage* p = dynamic_cast<IProjectSettingsPage*>(page);
         if(p) {
+            GlobalSettingsPanel* globalPage = dynamic_cast<GlobalSettingsPanel*>(page);
+            if(globalPage) {
+                // update the project name
+                //globalPage->SetProjectName(m_projectName);
+            }
             p->Load(buildConf);
         }
     }

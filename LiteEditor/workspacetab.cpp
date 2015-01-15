@@ -40,6 +40,7 @@
 #include "workspacetab.h"
 #include "event_notifier.h"
 #include "plugin.h"
+#include <algorithm>
 
 #define OPEN_CONFIG_MGR_STR _("<Open Configuration Manager...>")
 
@@ -330,6 +331,14 @@ void WorkspaceTab::OnProjectRemoved(clCommandEvent& e)
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
+struct wxStringSorter
+{
+    bool operator()(WorkspaceConfigurationPtr one, WorkspaceConfigurationPtr two) const
+    {
+        return one->GetName().Lower().CmpNoCase(two->GetName().Lower()) < 0;
+    }
+};
+
 void WorkspaceTab::DoWorkspaceConfig()
 {
     // Update the workspace configuration
@@ -339,6 +348,9 @@ void WorkspaceTab::DoWorkspaceConfig()
     m_workspaceConfig->Freeze();
     m_workspaceConfig->Enable(true);
     m_workspaceConfig->Clear();
+    
+    confs.sort(wxStringSorter());
+    
     for(std::list<WorkspaceConfigurationPtr>::iterator iter = confs.begin(); iter != confs.end(); iter++) {
         m_workspaceConfig->Append((*iter)->GetName());
     }

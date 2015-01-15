@@ -111,12 +111,12 @@ Git clone the sources
  - Download wxWidgets 3.0 installer. Also from our [Download Page][11]
  - Open the workspace **LiteEditor.workspace** (located in the codelite folder)
  - Make sure that the project **CodeLiteIDE** is selected (the active project uses **bold** font)
- - Select the configuration **Win Release Unicode** hit **F7**
+ - Select the **Win_x64_Release** or  **Win_x86_Release** (depending if you want to build a 32 or 64 bit version of CodeLite) and hit **F7**
  - When the compilation is over, close the workspace
  - Next, locate the workspace **codelite_utils/codelite_utils.workspce** and open it
- - Select the **Release** build configuration hit F7 and wait for the compilation to end
+ - Select the **Win_x64_Release** or  **Win_x86_Release** (depending if you want to build a 32 or 64 bit version of CodeLite) hit **F7** and wait for the compilation to end
  - Close CodeLite
- - To update your installation with the new codelite, close codelite and from a CMD.EXE window navigate to codelite-sources/Runtime/ and run the file 
+ - To update your installation with the new codelite, close codelite and from a CMD.EXE window navigate to codelite-sources/Runtime/ and run the file **update.bat** OR **update64.bat** (again, depending on your selected arch)
 
 
   [1]: http://codelite.org/images/logo.png

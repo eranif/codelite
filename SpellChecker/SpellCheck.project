@@ -2,7 +2,7 @@
 <CodeLite_Project Name="SpellCheck">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0015Win_x64_Release000000000000]]>
+      <![CDATA[00020001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -25,6 +25,15 @@
   "parentProject": ""
  }, {
   "name": "WinReleaseUnicode",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Win_x64_Debug",
   "enabled": false,
   "buildDirectory": "build",
   "sourceDirectory": "$(ProjectPath)",
@@ -73,7 +82,7 @@
   <Dependencies Name="ReleaseUnicode">
     <Project Name="hunspell"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="Win_x64_Debug"/>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="hunspell"/>
   </Dependencies>
@@ -196,58 +205,6 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g" PCHFlagsPolicy="0">
-        <IncludePath Value="."/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sqlite3"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-      </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <LibraryPath Value="./hunspell/lib"/>
-        <Library Value="libplugin_sdkud.dll"/>
-        <Library Value="libCodeLiteud.dll"/>
-        <Library Value="libwxsqlite3ud.dll"/>
-        <Library Value="libhunspelld.a"/>
-      </Linker>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/$(ProjectName)-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
-      </Environment>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
-        <DebuggerSearchPaths/>
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName)-dbg.dll" ..\Runtime\plugins</Command>
-      </PostBuild>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-      <Completion EnableCpp11="no">
-        <ClangCmpFlagsC/>
-        <ClangCmpFlags/>
-        <ClangPP/>
-        <SearchPaths/>
-      </Completion>
-    </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
@@ -280,6 +237,58 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName).dll" ..\Runtime\plugins</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="./hunspell/lib"/>
+        <Library Value="libplugin_sdkud.dll"/>
+        <Library Value="libCodeLiteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libhunspell.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ConfigurationName)/$(ProjectName)-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName)-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

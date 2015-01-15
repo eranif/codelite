@@ -2,7 +2,7 @@
 <CodeLite_Project Name="PHPParser" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00050001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release0000000000000001N0012Release_Unix0000000000000001N0015Win_x64_Release000000000000]]>
+      <![CDATA[00060001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release0000000000000001N0012Release_Unix0000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -16,6 +16,15 @@
   "parentProject": ""
  }, {
   "name": "Release",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Win_x64_Debug",
   "enabled": false,
   "buildDirectory": "build",
   "sourceDirectory": "$(ProjectPath)",
@@ -114,55 +123,6 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cflags --debug=yes);-O0;-Wall" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g" PCHFlagsPolicy="0">
-        <IncludePath Value="."/>
-        <IncludePath Value="../../Interfaces"/>
-        <IncludePath Value="../../CodeLite"/>
-        <IncludePath Value="../../Plugin"/>
-        <IncludePath Value="../../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../../PCH"/>
-        <Preprocessor Value="WXUSINGDLL_SCI"/>
-        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
-        <Preprocessor Value="WXUSINGDLL_SDK"/>
-        <Preprocessor Value="WXUSINGDLL_CL"/>
-      </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/lib$(ProjectName)-dbg.a" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
-        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
-      </Environment>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
-        <DebuggerSearchPaths/>
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild>
-        <Command Enabled="yes"/>
-      </PostBuild>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-      <Completion EnableCpp11="no">
-        <ClangCmpFlagsC/>
-        <ClangCmpFlags/>
-        <ClangPP/>
-        <SearchPaths/>
-      </Completion>
-    </Configuration>
     <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cflags --debug=yes);-O0;-fPIC" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
@@ -312,6 +272,55 @@ php_expr_parser.cpp: php_expr.y
 php_expr_lexer.cpp: php_expr.l
 	flex -L  -Pphp_expr_ php_expr.l
 	mv lex.php_expr_.c php_expr_lexer.cpp</CustomPreBuild>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Win_x64_Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cflags --debug=yes);-O0;-Wall" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <IncludePath Value="../../Interfaces"/>
+        <IncludePath Value="../../CodeLite"/>
+        <IncludePath Value="../../Plugin"/>
+        <IncludePath Value="../../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../PCH"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName)-dbg.a" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\lib$(ProjectName)-dbg.a" ..\..\lib\gcc_lib</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

@@ -2,10 +2,19 @@
 <CodeLite_Project Name="wxshapeframework" InternalType="Others">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00070001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0015Win_x64_Release000000000000]]>
+      <![CDATA[00080001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
+  "name": "Win_x64_Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
   "name": "Win_x64_Release",
   "enabled": false,
   "buildDirectory": "build",
@@ -120,7 +129,7 @@
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="Win_x64_Debug"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
@@ -231,50 +240,6 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g" PCHFlagsPolicy="0">
-        <IncludePath Value="include"/>
-        <IncludePath Value="src"/>
-        <Preprocessor Value="WXMAKINGDLL_WXXS"/>
-        <Preprocessor Value="WXMAKINGDLL_WXSF"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes --unicode=yes)" Required="yes"/>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxshapeframeworkud.dll" IntermediateDirectory="WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="WinDebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
-      </Environment>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
-        <DebuggerSearchPaths/>
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild>
-        <Command Enabled="yes">copy ..\..\lib\gcc_lib\libwxshapeframeworkud.dll ..\..\Runtime</Command>
-      </PostBuild>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-      <Completion EnableCpp11="no">
-        <ClangCmpFlagsC/>
-        <ClangCmpFlags/>
-        <ClangPP/>
-        <SearchPaths/>
-      </Completion>
-    </Configuration>
     <Configuration Name="WinDebug_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
@@ -345,6 +310,50 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy ..\..\lib\gcc_lib\libwxshapeframeworku.dll ..\..\Runtime</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="include"/>
+        <IncludePath Value="src"/>
+        <Preprocessor Value="WXMAKINGDLL_WXXS"/>
+        <Preprocessor Value="WXMAKINGDLL_WXSF"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs --debug=yes --unicode=yes)" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../../lib/gcc_lib/libwxshapeframeworkud.dll" IntermediateDirectory="WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="WinDebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy ..\..\lib\gcc_lib\libwxshapeframeworkud.dll ..\..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

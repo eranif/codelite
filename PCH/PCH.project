@@ -210,7 +210,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes)" C_Options="" Assembler="" Required="yes" PreCompiledHeader="precompiled_header_dbg.h" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="" Assembler="" Required="yes" PreCompiledHeader="precompiled_header_dbg.h" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --libs --debug=no --unicode=yes)" Required="yes"/>

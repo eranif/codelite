@@ -2,18 +2,19 @@ Code Completion / Code Generation
 =================================
 
 - code completion: better comment for ctor/dtor functions
-- code completion: add a menu option for a class to implements all its parent interface functions
 - code completion: add ctor function calltip... (its annoying!) NOTE: __constuct is not called by default. Only the child __construct should be called
 - When typing inside 'require{_once}' auto complete file names
 - code completion: add option to 'add include for ...'
-- Must: SFTP: add a per file destination folder to allow overriding the global settings
+- SFTP: add a per file destination folder to allow overriding the global settings
 - Better parsing for functions' return value
-- Navigation Bar
 
 Must:
 =====
 - Unified the keywords with the code completion box
-- Fix nav bar for PHP plugin
+- Make a "XDebug" wizard to help the user configure his/her xdebug in both the IDE and on PHP
+- Setter/Getter dialog
+- code completion: don't auto-fill the code completion paths, instead, offer the user paths in the "New Project" wizard
+
 
 Usability:
 ==========
@@ -22,6 +23,7 @@ Usability:
 - Allow user to define a deployment folder for his files 
   (in addition to the SFTP, it should also allow user to copy files by simply saving them)
 - Add support for laravel wizard
+- Fix nav bar for PHP plugin
 
 NICE TO HAVE: 
 - XDebug watches

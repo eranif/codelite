@@ -69,10 +69,10 @@ void PHPParserThread::ParseFiles(PHPParserThreadRequest* request)
 
     // Get list of PHP files under
     lookuptable.RecreateSymbolsDatabase(allFiles,
-                                  request->requestType == PHPParserThreadRequest::kParseWorkspaceFilesFull ?
-                                      PHPLookupTable::kUpdateMode_Full :
-                                      PHPLookupTable::kUpdateMode_Fast,
-                                  false);
+                                        request->requestType == PHPParserThreadRequest::kParseWorkspaceFilesFull ?
+                                            PHPLookupTable::kUpdateMode_Full :
+                                            PHPLookupTable::kUpdateMode_Fast,
+                                        false);
 }
 
 void PHPParserThread::ParseFile(PHPParserThreadRequest* request)
@@ -80,12 +80,12 @@ void PHPParserThread::ParseFile(PHPParserThreadRequest* request)
     wxFileName fnWorkspaceFile(request->workspaceFile);
     PHPLookupTable lookuptable;
     lookuptable.Open(fnWorkspaceFile.GetPath());
-        
+
     // Parse the source file
     PHPSourceFile sourceFile(wxFileName(request->file));
     sourceFile.SetParseFunctionBody(false);
     sourceFile.Parse();
-    
+
     // Save its symbols
     lookuptable.UpdateSourceFile(sourceFile);
 }

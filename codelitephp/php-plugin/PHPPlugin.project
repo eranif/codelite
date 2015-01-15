@@ -2,7 +2,7 @@
 <CodeLite_Project Name="PHPPlugin">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00050001N0010Debug_Unix0000000000000001N0012Release_Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode0000000000000001N0015Win_x64_Release000000000000]]>
+      <![CDATA[00060001N0010Debug_Unix0000000000000001N0012Release_Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode0000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -34,6 +34,15 @@
   "parentProject": ""
  }, {
   "name": "WinReleaseUnicode",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Win_x64_Debug",
   "enabled": false,
   "buildDirectory": "build",
   "sourceDirectory": "$(ProjectPath)",
@@ -190,7 +199,7 @@
     <File Name="new_class.wxcp"/>
     <File Name="php_ui.wxcp"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode">
+  <Dependencies Name="Win_x64_Debug">
     <Project Name="libCodeLite"/>
     <Project Name="PHPParser"/>
   </Dependencies>
@@ -335,68 +344,6 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-O0;-Wall" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g" PCHFlagsPolicy="0">
-        <IncludePath Value="."/>
-        <IncludePath Value="../../Interfaces"/>
-        <IncludePath Value="../../CodeLite"/>
-        <IncludePath Value="../../Plugin"/>
-        <IncludePath Value="../../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../../PCH"/>
-        <IncludePath Value="../PHPParser"/>
-        <Preprocessor Value="WXUSINGDLL_SCI"/>
-        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
-        <Preprocessor Value="WXUSINGDLL_SDK"/>
-        <Preprocessor Value="WXUSINGDLL_CL"/>
-        <Preprocessor Value="USE_SFTP=1"/>
-      </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
-        <LibraryPath Value="../../lib/gcc_lib"/>
-        <LibraryPath Value="../lib"/>
-        <Library Value="libplugin_sdkud.dll"/>
-        <Library Value="libCodeLiteud.dll"/>
-        <Library Value="libwxsqlite3ud.dll"/>
-        <Library Value="libPHPParser-dbg.a"/>
-      </Linker>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[BISON_SIMPLE=../bin/bison.simple
-PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
-      </Environment>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="..\..\..\..\GDB-7.4.5\bin\gdb.exe" IsExtended="no">
-        <DebuggerSearchPaths/>
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild>
-        <Command Enabled="yes">copy WinDebugUnicode\PHP-dbg.dll ..\..\Runtime\plugins</Command>
-      </PostBuild>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-      <Completion EnableCpp11="no">
-        <ClangCmpFlagsC/>
-        <ClangCmpFlags/>
-        <ClangPP/>
-        <SearchPaths>../CodeLite
-../Interfaces
-../Plugin
-../sdk/wxscintilla/include</SearchPaths>
-      </Completion>
-    </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
@@ -455,6 +402,68 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <SearchPaths>../Interfaces
 ../Plugin
 ../CodeLite</SearchPaths>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-O0;-Wall" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <IncludePath Value="../../Interfaces"/>
+        <IncludePath Value="../../CodeLite"/>
+        <IncludePath Value="../../Plugin"/>
+        <IncludePath Value="../../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../PCH"/>
+        <IncludePath Value="../PHPParser"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="USE_SFTP=1"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+        <LibraryPath Value="../../lib/gcc_lib"/>
+        <LibraryPath Value="../lib"/>
+        <Library Value="libplugin_sdkud.dll"/>
+        <Library Value="libCodeLiteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libPHPParser-dbg.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="./codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[BISON_SIMPLE=../bin/bison.simple
+PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="..\..\..\..\GDB-7.4.5\bin\gdb.exe" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy $(IntermediateDirectory)\PHP-dbg.dll ..\..\Runtime\plugins</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths>../CodeLite
+../Interfaces
+../Plugin
+../sdk/wxscintilla/include</SearchPaths>
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

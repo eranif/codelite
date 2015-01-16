@@ -32,6 +32,10 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 
+#ifdef __WXMSW__
+#   include <wx/msw/registry.h>
+#endif
+
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
 // See http://trac.wxwidgets.org/ticket/10883^M
@@ -645,4 +649,24 @@ bool DrawingUtils::DrawStippleBackground(const wxRect& rect, wxDC& dc)
     dc.SetBrush( GetStippleBrush() );
     dc.DrawRectangle(rect);
     return true;
+}
+
+wxColour DrawingUtils::GetCaptionColour()
+{
+#ifdef __WXMSW__
+    wxRegKey re(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\DWM");
+    
+    unsigned long colVal = -1;
+    if(re.Exists() && re.QueryValue("ColorizationColor", (long*)&colVal)) {
+        // Colour format is: 0xAARRGGBB
+        int r = (colVal >> 16) & 0xff;
+        int g = (colVal >> 8) & 0xff;
+        int b = colVal & 0xff;
+        return wxColour(r, g, b);
+    } else {
+        return wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+    }
+#else
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+#endif
 }

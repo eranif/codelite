@@ -100,7 +100,7 @@ clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, cons
     penColour = wxColour("rgb(102, 102, 102)");
     textColour = wxColour("rgb(56, 62, 78)");
 #else
-    wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
+    wxColour baseColour = DrawingUtils::GetCaptionColour();
     bgColour = baseColour.ChangeLightness(130);
     penColour = baseColour.ChangeLightness(80);
     if (DrawingUtils::IsDark(bgColour)) {
@@ -161,7 +161,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
     penColour = wxColour("rgb(102, 102, 102)");
     
 #else
-    wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
+    wxColour baseColour = DrawingUtils::GetCaptionColour();
     if(DrawingUtils::IsDark(baseColour)) {
         baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }

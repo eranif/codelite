@@ -15,6 +15,11 @@ Must:
 - Setter/Getter dialog
 - code completion: don't auto-fill the code completion paths, instead, offer the user paths in the "New Project" wizard
 
+Misc:
+=====
+- PHP indenter: 
+    Keep array initialization 
+    Break string concatenation
 
 Usability:
 ==========

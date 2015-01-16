@@ -904,7 +904,11 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToB
     text << wxT("clean:\n");
 
     wxString cwd = proj->GetFileName().GetPath();
-    if(OS_WINDOWS) {
+    if(!imd.IsEmpty()) {
+        // Remove the entire build folder
+        text << wxT("\t") << wxT("$(RM) -r ") << imd << "\n";
+        
+    } else if(OS_WINDOWS) {
         text << wxT("\t") << wxT("$(RM) ") << imd << "*$(ObjectSuffix)" << wxT("\n");
         text << wxT("\t") << wxT("$(RM) ") << imd << "*$(DependSuffix)" << wxT("\n");
         // delete the output file as well
@@ -944,7 +948,6 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToB
             text << wxT("\t") << wxT("$(RM) ") << pchFile << wxT(".gch") << wxT("\n");
         }
     }
-
     text << wxT("\n\n");
 }
 

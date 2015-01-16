@@ -97,6 +97,11 @@ public:
     static wxColour GetAUIPaneBGColour();
     
     /**
+     * @brief get the caption colour
+     */
+    static wxColour GetCaptionColour();
+    
+    /**
      * @brief stipple brush used for painting on various wxPanels
      */
     static wxBrush GetStippleBrush();

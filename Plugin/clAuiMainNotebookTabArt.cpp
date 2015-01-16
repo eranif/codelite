@@ -89,8 +89,7 @@ void clAuiMainNotebookTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRe
     wxDC& gdc = dc;
 #else
     wxGCDC gdc;
-    if(!DrawingUtils::GetGCDC(dc, gdc))
-        return;
+    if(!DrawingUtils::GetGCDC(dc, gdc)) return;
 #endif
 
     DoSetColours();
@@ -117,8 +116,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     if(in_rect.GetHeight() == 0) return; // Tabs are not visible
     int curx = 0;
     wxGCDC gdc;
-    if(!DrawingUtils::GetGCDC(dc, gdc))
-        return;
+    if(!DrawingUtils::GetGCDC(dc, gdc)) return;
 
     wxColour penColour = page.active ? m_activeTabPenColour : m_penColour;
     wxGraphicsPath path = gdc.GetGraphicsContext()->CreatePath();
@@ -146,13 +144,12 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
 
     // Set clipping region
     int clip_width = rr.width;
-    if(rr.x + clip_width > in_rect.x + in_rect.width)
-        clip_width = (in_rect.x + in_rect.width) - rr.x;
+    if(rr.x + clip_width > in_rect.x + in_rect.width) clip_width = (in_rect.x + in_rect.width) - rr.x;
 
     gdc.SetClippingRegion(rr.x, rr.y, clip_width, rr.height);
     gdc.SetBrush(m_bgColour);
     gdc.SetPen(penColour);
-
+    
     if(page.active) {
         gdc.SetBrush(m_activeTabBgColour);
         path.AddRoundedRectangle(rr.x, rr.y, rr.width - 1, rr.height, m_tabRadius);
@@ -189,8 +186,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     gdc.SetFont(fnt);
     wxSize ext = gdc.GetTextExtent(caption);
-    if(caption == "Tp")
-        caption.Clear();
+    if(caption == "Tp") caption.Clear();
 
     /// Draw the bitmap
     if(page.bitmap.IsOk()) {
@@ -254,8 +250,7 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
     dc.GetTextExtent(caption, &measured_textx, &tmp);
 
     // do it once
-    if(measured_texty == wxNOT_FOUND)
-        dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+    if(measured_texty == wxNOT_FOUND) dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
 
     // add padding around the text
     wxCoord tab_width = measured_textx;
@@ -265,12 +260,10 @@ wxSize clAuiMainNotebookTabArt::GetTabSize(wxDC& dc,
     tab_height = TAB_CTRL_HEIGHT;
 #endif
 
-    if(tab_height < 16)
-        tab_height = 16;
+    if(tab_height < 16) tab_height = 16;
 
     // if the close button is showing, add space for it
-    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
-        tab_width += X_DIAMETER + 3;
+    if(close_button_state != wxAUI_BUTTON_STATE_HIDDEN) tab_width += X_DIAMETER + 3;
 
 // if there's a bitmap, add space for it
 

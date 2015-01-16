@@ -660,6 +660,7 @@ wxArrayString Compiler::GetDefaultIncludePaths()
             defaultPaths.Add(GetIncludePath("x86_64-w64-mingw32/include"));
             defaultPaths.Add(GetIncludePath("include"));
             defaultPaths.Add(GetIncludePath("lib/gcc/x86_64-w64-mingw32/" + ver + "/include"));
+            defaultPaths.Add(GetIncludePath("lib/gcc/x86_64-w64-mingw32/" + ver + "/include/c++"));
         }
 
     } else if(GetCompilerFamily() == COMPILER_FAMILY_CLANG || GetCompilerFamily() == COMPILER_FAMILY_GCC) {

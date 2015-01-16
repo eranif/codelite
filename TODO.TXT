@@ -1,2 +1,4 @@
 - Allow multiple file open in open-resource dialog
 - Allow open <file>:<line> in open-resource dialog
+- Add icons to the common actions in the project settings dialog
+- Clicking on the 'Open active project settings' button should open the selected project and not the active one

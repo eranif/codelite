@@ -180,7 +180,21 @@ void FileExplorer::OnBookmark(wxAuiToolBarEvent& event)
         // Show the drop down menu
         wxArrayString folders = clConfig::Get().Read(kConfigFileExplorerBookmarks, wxArrayString());
         if(folders.IsEmpty()) return;
-
+    
+        // Remove non existing folders from the bookmark
+        wxArrayString existingFolders;
+        for(size_t i=0; i<folders.GetCount(); ++i) {
+            if(wxFileName::DirExists(folders.Item(i))) {
+                existingFolders.Add(folders.Item(i));
+            }
+        }
+        
+        // Update the list
+        clConfig::Get().Write(kConfigFileExplorerBookmarks, folders);
+        
+        folders.swap(existingFolders);
+        if(folders.IsEmpty()) return;
+        
         std::map<int, wxString> entries;
         wxMenu menu;
         for(size_t i = 0; i < folders.GetCount(); ++i) {

@@ -1259,18 +1259,25 @@ void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
 void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
 {
     // Collapse the projects
+	wxWindowUpdateLocker locker(m_treeCtrlView);
     wxTreeItemId root = m_treeCtrlView->GetRootItem();
-    wxTreeItemIdValue cookie;
-    wxTreeItemId child = m_treeCtrlView->GetFirstChild(root, cookie);
-    while(child.IsOk()) {
-        if(m_treeCtrlView->IsExpanded(child)) {
-            m_treeCtrlView->Collapse(child);
-        }
-        child = m_treeCtrlView->GetNextChild(root, cookie);
-    }
+	DoCollapseItem(root);
 }
 
 void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event)
 {
     event.Enable(PHPWorkspace::Get()->IsOpen());
+}
+
+void PHPWorkspaceView::DoCollapseItem(wxTreeItemId& item)
+{
+	if(m_treeCtrlView->ItemHasChildren(item)) {
+		wxTreeItemIdValue cookie;
+		wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
+		while(child.IsOk()) {
+			DoCollapseItem(child);
+			child = m_treeCtrlView->GetNextChild(item, cookie);
+		}
+		m_treeCtrlView->Collapse(item);
+	}
 }

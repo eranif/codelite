@@ -27,6 +27,8 @@ private:
 
 protected:
     virtual void OnCollapse(wxCommandEvent& event);
+	virtual void DoCollapseItem(wxTreeItemId& item);
+	
     virtual void OnCollapseUI(wxUpdateUIEvent& event);
     virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

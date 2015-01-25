@@ -417,10 +417,20 @@ void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
 void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
 {
     wxMenu* menu = wxXmlResource::Get()->LoadMenu(wxT("file_tree_project"));
+    // set the icon for the default actions (build, clean and settings)
+    wxBitmap bmpBuild = PluginManager::Get()->GetStdIcons()->LoadBitmap("toolbars/16/build/build");
+    wxBitmap bmpClean = PluginManager::Get()->GetStdIcons()->LoadBitmap("toolbars/16/build/clean");
+    wxBitmap bmpSettings = wxXmlResource::Get()->LoadBitmap(wxT("configure"));
+    
+    menu->FindItem(XRCID("build_project"))->SetBitmap(bmpBuild);
+    menu->FindItem(XRCID("clean_project"))->SetBitmap(bmpClean);
+    menu->FindItem(XRCID("project_properties"))->SetBitmap(bmpSettings);
+    
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if(bldConf && bldConf->IsCustomBuild()) {
-        wxString toolName = bldConf->GetToolName();
         wxMenuItem *item = NULL;
+#if 0
+        wxString toolName = bldConf->GetToolName();
         if(toolName != wxT("None")) {
             
             // add the custom execution command
@@ -431,7 +441,7 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
             item = new wxMenuItem(menu, XRCID("generate_makefile"), menu_text, wxEmptyString, wxITEM_NORMAL);
             menu->Prepend(item);
         }
-
+#endif
         // append the custom build targets
         const BuildConfig::StringMap_t& targets = bldConf->GetCustomTargets();
         if(targets.empty() == false) {

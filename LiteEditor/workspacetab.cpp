@@ -232,7 +232,8 @@ void WorkspaceTab::OnGoHomeUI(wxUpdateUIEvent& e)
 void WorkspaceTab::OnProjectSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    OpenProjectSettings();
+    ProjectPtr proj = m_fileView->GetSelectedProject();
+    OpenProjectSettings(proj ? proj->GetName() : "");
 }
 
 void WorkspaceTab::OnProjectSettingsUI(wxUpdateUIEvent& e)

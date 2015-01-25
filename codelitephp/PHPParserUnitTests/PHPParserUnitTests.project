@@ -84,6 +84,7 @@
     <File Name="Tests/test_use_trait.php"/>
     <File Name="Tests/test_partial_namespace.php"/>
     <File Name="Tests/test_partial_namespace_helper.php"/>
+    <File Name="Tests/test_cc_with_keywords.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix">
     <Project Name="PHPParser"/>
@@ -351,4 +352,8 @@ PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
 </CodeLite_Project>

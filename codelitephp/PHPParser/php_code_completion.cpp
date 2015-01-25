@@ -22,6 +22,8 @@
 #include "jobqueue.h"
 #include <wx/log.h>
 #include "PHPSymbolsCacher.h"
+#include "ColoursAndFontsManager.h"
+#include "PHPEntityKeyword.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -262,7 +264,12 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
     } else if(entry->Is(kEntityTypeNamespace)) {
         t->SetAccess("public");
         t->SetKind("namespace");
+        
+    } else if(entry->Is(kEntityTypeKeyword)) {
+        t->SetAccess("public");
+        t->SetKind("cpp_keyword");
     }
+    
     t->SetFlags(TagEntry::Tag_No_Signature_Format);
     return t;
 }
@@ -291,7 +298,14 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                         // Suggets members for the resolved entity
                         PHPEntityBase::List_t matches;
                         expr->Suggest(entity, m_lookupTable, matches);
-
+                        if(!expr->GetFilter().IsEmpty() && expr->GetCount() == 0) {
+                            // Word completion
+                            PHPEntityBase::List_t keywords = PhpKeywords(expr->GetFilter());
+                            
+                            // Preprend the keywords
+                            matches.insert(matches.end(), keywords.begin(), keywords.end());
+                        }
+                        
                         // Remove duplicates from the list
                         if(!matches.empty()) {
                             // Show the code completion box
@@ -403,7 +417,12 @@ PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
     return loc;
 }
 
-void PHPCodeCompletion::OnCodeCompleteLangKeywords(clCodeCompletionEvent& e) { e.Skip(); }
+void PHPCodeCompletion::OnCodeCompleteLangKeywords(clCodeCompletionEvent& e)
+{
+    // disable the default behavior of the keyword CC
+    // by simply hooking into this event and calling Skip(false);
+    e.Skip(false);
+}
 
 PHPEntityBase::Ptr_t PHPCodeCompletion::GetPHPEntryUnderTheAtPos(IEditor* editor, int pos)
 {
@@ -730,9 +749,29 @@ int PHPCodeCompletion::GetLocationForSettersGetters(const wxString& filecontent,
             ++depth;
         }
     }
-    
+
     if(depth == 0) {
         return line;
     }
     return wxNOT_FOUND;
+}
+
+PHPEntityBase::List_t PHPCodeCompletion::PhpKeywords(const wxString& prefix) const
+{
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("php");
+    if(!lexer) return PHPEntityBase::List_t();
+    wxString lcPrefix = prefix.Lower();
+    PHPEntityBase::List_t lst;
+    wxString phpKeywords = lexer->GetKeyWords(4);
+    wxArrayString phpKeywordsArr = ::wxStringTokenize(phpKeywords, " \t", wxTOKEN_STRTOK);
+    for(size_t i=0; i<phpKeywordsArr.GetCount(); ++i) {
+        wxString lcWord = phpKeywordsArr.Item(i).Lower();
+        if(lcWord.StartsWith(lcPrefix)) {
+            PHPEntityBase::Ptr_t keyword(new PHPEntityKeyword());
+            keyword->SetFullName(phpKeywordsArr.Item(i));
+            keyword->SetShortName(phpKeywordsArr.Item(i));
+            lst.push_back(keyword);
+        }
+    }
+    return lst;
 }

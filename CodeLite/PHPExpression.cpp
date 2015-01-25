@@ -227,6 +227,9 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
                         // Maybe its a global function..
                         currentToken = lookpTable.FindFunction(part.m_text);
                     }
+                } else {
+                    // Maybe its a global function..
+                    currentToken = lookpTable.FindFunction(part.m_text);
                 }
             }
 
@@ -481,13 +484,14 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
 
     // GetCount() == 0 && !GetFilter().IsEmpty() i.e. a word completion is required.
     // We enhance the list with the following:
+    // - PHP keywords
     // - Global functions
     // - Global constants
     // - Function arguments
     // - Local variables (of the current scope)
     // - And aliases e.g. 'use foo\bar as Bar;'
     if(GetCount() == 0 && !GetFilter().IsEmpty()) {
-
+        
         // For functions and constants, PHP will fall back to global functions or constants if a
         // namespaced function or constant does not exist.
         PHPEntityBase::List_t globals =

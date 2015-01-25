@@ -10,7 +10,6 @@ Code Completion / Code Generation
 
 Must:
 =====
-- Unified the keywords with the code completion box
 - Make a "XDebug" wizard to help the user configure his/her xdebug in both the IDE and on PHP
 - Setter/Getter dialog
 - code completion: don't auto-fill the code completion paths, instead, offer the user paths in the "New Project" wizard

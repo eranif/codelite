@@ -323,6 +323,8 @@
     <File Name="PHPDocComment.h"/>
     <File Name="PHPIndex.h"/>
     <File Name="PHPIndex.cpp"/>
+    <File Name="PHPEntityKeyword.h"/>
+    <File Name="PHPEntityKeyword.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="TerminalEmulatorUI.wxcp"/>

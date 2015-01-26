@@ -32,6 +32,8 @@ public:
         wxString phpExe;
         int projectType;
         bool importFilesUnderPath;
+        wxString ccPaths;
+        
         CreateData()
             : projectType(0)
             , importFilesUnderPath(false)

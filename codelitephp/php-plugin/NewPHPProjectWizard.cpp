@@ -3,6 +3,7 @@
 #include "php_workspace.h"
 #include "php_project.h"
 #include "php_configuration_data.h"
+#include <wx/tokenzr.h>
 
 NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent)
     : NewPHPProjectWizardBase(parent)
@@ -96,10 +97,25 @@ PHPProject::CreateData NewPHPProjectWizard::GetCreateData()
     cd.phpExe = m_filePickerPhpExe->GetPath().IsEmpty() ? conf.GetPhpExe() : m_filePickerPhpExe->GetPath();
     cd.path = wxFileName(m_textCtrlPreview->GetValue()).GetPath();
     cd.projectType = GetProjectType();
+    cd.ccPaths = m_textCtrlCCPaths->GetValue();
     return cd;
 }
 
 void NewPHPProjectWizard::OnCheckSeparateFolder(wxCommandEvent& event)
 {
     DoUpdateProjectFolder();
+}
+void NewPHPProjectWizard::OnBrowseForCCFolder(wxCommandEvent& event)
+{
+    wxString path = ::wxDirSelector();
+    if(path.IsEmpty()) return;
+    
+    wxString currentContent = m_textCtrlCCPaths->GetValue();
+    wxArrayString paths = ::wxStringTokenize(currentContent, "\n", wxTOKEN_STRTOK);
+    if(paths.Index(path) == wxNOT_FOUND) {
+        paths.Add(path);
+    }
+    paths.Sort();
+    currentContent = ::wxJoin(paths, '\n');
+    m_textCtrlCCPaths->ChangeValue(currentContent);
 }

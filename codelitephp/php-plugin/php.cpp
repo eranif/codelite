@@ -163,6 +163,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
         // Don't extract the zip if one of the files on disk is newer or equal to the zip timestamp
         wxFileName fnSampleFile(targetDir.GetPath(), "basic.php");
         fnSampleFile.AppendDir("cc");
+        PHPConfigurationData config;
         if(!fnSampleFile.Exists() || // the sample file does not exists
                                      // Or the resource file (PHP.zip) is newer than the sample file
            (phpResources.GetModificationTime().GetTicks() > fnSampleFile.GetModificationTime().GetTicks())) {
@@ -172,9 +173,15 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
             // Make sure we add this path to the general PHP settings
             targetDir.AppendDir("cc"); // the CC files are located under an internal folder named "cc" (lowercase)
-            PHPConfigurationData config;
+            
             if(config.Load().GetCcIncludePath().Index(targetDir.GetPath()) == wxNOT_FOUND) {
                 config.Load().GetCcIncludePath().Add(targetDir.GetPath());
+                config.Save();
+            }
+        } else if(fnSampleFile.Exists()) {
+            // Ensure that we have the core PHP code completion methods
+            if(config.Load().GetCcIncludePath().Index(fnSampleFile.GetPath()) == wxNOT_FOUND) {
+                config.Load().GetCcIncludePath().Add(fnSampleFile.GetPath());
                 config.Save();
             }
         }
@@ -833,18 +840,10 @@ void PhpPlugin::FinalizeStartup()
 
     PHPLocator locator;
     if(locator.Locate()) {
+        // update a PHP executable in the settings
         if(data.GetPhpExe().IsEmpty()) {
             data.SetPhpExe(locator.GetPhpExe().GetFullPath());
         }
-
-        wxArrayString ccPaths = data.GetCcIncludePath();
-        const wxArrayString& foundPaths = locator.GetIncludePaths();
-        for(size_t i = 0; i < foundPaths.GetCount(); ++i) {
-            if(ccPaths.Index(foundPaths.Item(i)) == wxNOT_FOUND) {
-                ccPaths.Add(foundPaths.Item(i));
-            }
-        }
-        data.SetCcIncludePath(ccPaths);
         data.Save();
     }
 }

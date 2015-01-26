@@ -126,7 +126,6 @@
     <File Name="doc-gen.php"/>
     <File Name="TODO.TXT"/>
     <File Name="../CMakeLists.txt"/>
-    <File Name="phplite.accelerators"/>
     <File Name="../resources/TestXDebugSettings.php"/>
     <File Name="../resources/pack-resources.sh"/>
     <File Name="../../Runtime/PHP.zip"/>

@@ -108,13 +108,6 @@ wxString GetResourceDirectory()
     return fn.GetPath();
 }
 
-wxString GetCCResourceDirectory()
-{
-    wxFileName fn(GetResourceDirectory(), "");
-    fn.AppendDir("cc");
-    return fn.GetPath();
-}
-
 wxString URIToFileName(const wxString& uriFileName)
 {
     wxString filename = wxURI::Unescape(uriFileName);

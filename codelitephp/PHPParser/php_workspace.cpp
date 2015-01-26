@@ -180,7 +180,7 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
         proj->GetSettings().SetPhpExe(createData.phpExe);
     }
     proj->GetSettings().SetRunAs(createData.projectType);
-
+    proj->GetSettings().SetCcIncludePath(createData.ccPaths);
     m_projects.insert(std::make_pair(proj->GetName(), proj));
     if(m_projects.size() == 1) {
         SetProjectActive(proj->GetName());

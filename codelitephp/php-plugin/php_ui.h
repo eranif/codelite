@@ -567,6 +567,11 @@ protected:
     wxChoice* m_choiceProjectType;
     wxStaticText* m_staticText3215;
     wxFilePickerCtrl* m_filePickerPhpExe;
+    wxWizardPageSimple* m_wizardPage634;
+    wxBannerWindow* m_banner49511;
+    wxStaticText* m_staticText653;
+    wxButton* m_button651;
+    wxTextCtrl* m_textCtrlCCPaths;
 
 protected:
     virtual void OnFinish(wxWizardEvent& event) { event.Skip(); }
@@ -574,6 +579,7 @@ protected:
     virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDirSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnCheckSeparateFolder(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBrowseForCCFolder(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxBannerWindow* GetBanner495() { return m_banner495; }
@@ -594,6 +600,11 @@ public:
     wxStaticText* GetStaticText3215() { return m_staticText3215; }
     wxFilePickerCtrl* GetFilePickerPhpExe() { return m_filePickerPhpExe; }
     wxWizardPageSimple* GetWizardPageFinalize() { return m_wizardPageFinalize; }
+    wxBannerWindow* GetBanner49511() { return m_banner49511; }
+    wxStaticText* GetStaticText653() { return m_staticText653; }
+    wxButton* GetButton651() { return m_button651; }
+    wxTextCtrl* GetTextCtrlCCPaths() { return m_textCtrlCCPaths; }
+    wxWizardPageSimple* GetWizardPage634() { return m_wizardPage634; }
     NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Project"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~NewPHPProjectWizardBase();

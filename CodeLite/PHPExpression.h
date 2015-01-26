@@ -46,9 +46,16 @@ protected:
      * @brief make 'matches' a unique list by removing duplicates
      */
     void DoMakeUnique(PHPEntityBase::List_t& matches);
-    
+
 protected:
     phpLexerToken::Vet_t CreateExpression(const wxString& text);
+    /**
+     * @brief fix the return value full path
+     */
+    bool FixReturnValueNamespace(PHPLookupTable& lookup,
+                                 PHPEntityBase::Ptr_t parent,
+                                 const wxString& classFullpath,
+                                 wxString& fixedpath);
 
 public:
     PHPExpression(const wxString& fulltext, const wxString& exprText = wxString(), bool functionCalltipExpr = false);
@@ -59,7 +66,7 @@ public:
      * @brief return the parse expression as string. Useful for debuggin purposes
      */
     wxString GetExpressionAsString() const;
-    
+
     /**
      * @brief suggest matches for this expression.
      * This function must be called after a successfull call to 'Resolve'
@@ -67,7 +74,7 @@ public:
      * @param matches [output]
      */
     void Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches);
-    
+
     /**
      * @brief return the elements count in the expression.
      * For example:
@@ -75,7 +82,7 @@ public:
      * will return 3 ($a, foo, bar)
      */
     size_t GetCount() const { return m_parts.size(); }
-    
+
     /**
      * @brief return the source file used to create and parse this expression
      */

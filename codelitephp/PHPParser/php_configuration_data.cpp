@@ -15,9 +15,6 @@ PHPConfigurationData::PHPConfigurationData()
     , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css")
     , m_workspaceType(0)
 {
-    if ( m_ccIncludePath.IsEmpty() ) {
-        m_ccIncludePath.Add( ::GetCCResourceDirectory() );
-    }
 }
 
 PHPConfigurationData::~PHPConfigurationData()
@@ -43,13 +40,7 @@ void PHPConfigurationData::FromJSON(const JSONElement &json)
     if(m_xdebugIdeKey.IsEmpty()) {
         m_xdebugIdeKey = "codeliteide";
     }
-    
-    bool nodeExists = json.hasNamedObject("m_ccIncludePath");
     m_ccIncludePath = json.namedObject("m_ccIncludePath").toArrayString();
-    
-    if ( !nodeExists && m_ccIncludePath.IsEmpty() ) {
-        m_ccIncludePath.Add( ::GetCCResourceDirectory() );
-    }
 }
 
 JSONElement PHPConfigurationData::ToJSON() const

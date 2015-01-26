@@ -20,7 +20,6 @@ bool IsPHPCommentOrString(int styleAtPos);
 wxMemoryBuffer ReadFileContent(const wxString& filename);
 
 wxString GetResourceDirectory();
-wxString GetCCResourceDirectory();
 
 #define FILE_SCHEME "file://"
 

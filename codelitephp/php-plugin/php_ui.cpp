@@ -409,7 +409,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer18->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
-    m_textCtrlIncludePath = new wxTextCtrl(m_panel11, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_textCtrlIncludePath = new wxTextCtrl(m_panel11, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP);
     #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlIncludePathFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -446,7 +446,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer23->Add(m_button15, 0, wxALL, 5);
     
-    m_textCtrCClIncludePath = new wxTextCtrl(m_panel15, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_textCtrCClIncludePath = new wxTextCtrl(m_panel15, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP);
     m_textCtrCClIncludePath->SetToolTip(_("Paths added here will only be used for code completion and NOT during runtime.\nIf you want to add search paths for runtime (CLI mode only), Use the 'PHP CLI' tab"));
     
     bSizer20->Add(m_textCtrCClIncludePath, 1, wxALL|wxEXPAND, 5);
@@ -1711,19 +1711,13 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     m_wizardPageFinalize = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageFinalize);
-    if (m_pages.size() > 1) {
-        for(size_t i=1; i<m_pages.size(); i++) {
-            wxWizardPageSimple::Chain(m_pages.at(i-1), m_pages.at(i));
-        }
-    }
-    GetPageAreaSizer()->Add(m_pages.at(0));
     
     wxBoxSizer* boxSizer549 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageFinalize->SetSizer(boxSizer549);
     
     m_banner4951 = new wxBannerWindow(m_wizardPageFinalize, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner4951->SetBitmap(wxNullBitmap);
-    m_banner4951->SetText(_("Finalize"), _("Set PHP execution method"));
+    m_banner4951->SetText(_("PHP Execution"), _("Set PHP execution method"));
     m_banner4951->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_banner4951->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
@@ -1758,6 +1752,57 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     flexGridSizer3152->Add(m_filePickerPhpExe, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
+    m_wizardPage634 = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
+    m_pages.push_back(m_wizardPage634);
+    if (m_pages.size() > 1) {
+        for(size_t i=1; i<m_pages.size(); i++) {
+            wxWizardPageSimple::Chain(m_pages.at(i-1), m_pages.at(i));
+        }
+    }
+    GetPageAreaSizer()->Add(m_pages.at(0));
+    
+    wxBoxSizer* boxSizer636 = new wxBoxSizer(wxVERTICAL);
+    m_wizardPage634->SetSizer(boxSizer636);
+    
+    m_banner49511 = new wxBannerWindow(m_wizardPage634, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_banner49511->SetBitmap(wxNullBitmap);
+    m_banner49511->SetText(_("Code Completion"), _("Add include paths for Code Completion"));
+    m_banner49511->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
+    m_banner49511->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    
+    boxSizer636->Add(m_banner49511, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer645 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer636->Add(boxSizer645, 1, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer649 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer645->Add(boxSizer649, 0, wxEXPAND, 5);
+    
+    m_staticText653 = new wxStaticText(m_wizardPage634, wxID_ANY, _("Browse for code completion folder..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer649->Add(m_staticText653, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_button651 = new wxButton(m_wizardPage634, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button651->SetDefault();
+    
+    boxSizer649->Add(m_button651, 0, wxALL, 5);
+    
+    m_textCtrlCCPaths = new wxTextCtrl(m_wizardPage634, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlCCPathsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlCCPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_textCtrlCCPathsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlCCPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
+    m_textCtrlCCPaths->SetFont(m_textCtrlCCPathsFont);
+    m_textCtrlCCPaths->SetToolTip(_("You can add folders here for better code completion.\nCodeLite will scan these folder for any PHP files for better code complete\n\nThere is no need to add the project folders, these are parsed automatically"));
+    
+    boxSizer645->Add(m_textCtrlCCPaths, 1, wxALL|wxEXPAND, 5);
+    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -1769,6 +1814,7 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
     m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
     m_checkBoxSeparateFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL, this);
+    m_button651->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
     
 }
 
@@ -1779,6 +1825,7 @@ NewPHPProjectWizardBase::~NewPHPProjectWizardBase()
     m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
     m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
     m_checkBoxSeparateFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL, this);
+    m_button651->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
     
 }
 

@@ -206,6 +206,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     // Now, use the lookup table
     std::list<PHPExpression::Part>::iterator iter = m_parts.begin();
     PHPEntityBase::Ptr_t currentToken(NULL);
+    PHPEntityBase::Ptr_t parentToken(NULL);
     for(; iter != m_parts.end(); ++iter) {
         Part& part = *iter;
         if(!currentToken) {
@@ -252,7 +253,12 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
                     // return the type hint
                     actualType = currentToken->Cast<PHPEntityVariable>()->GetTypeHint();
                 }
-
+                
+                wxString fixedpath;
+                if(!actualType.IsEmpty() && FixReturnValueNamespace(lookpTable, parentToken, actualType, fixedpath)) {
+                    actualType.swap(fixedpath);
+                }
+                
                 if(!actualType.IsEmpty()) {
                     currentToken = lookpTable.FindScope(actualType);
                 }
@@ -263,6 +269,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
             // return NULL
             return currentToken;
         }
+        parentToken = currentToken;
     }
     return currentToken;
 }
@@ -273,12 +280,12 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
         // avoid infinite recursion, by limiting the nest level to 5
         return "";
     }
-    
+
     // Use the provided sourceFile if 'm_sourceFile' is NULL
     if(!m_sourceFile) {
         m_sourceFile = sourceFile;
     }
-    
+
     // Parse the input source file
     PHPEntityBase::Ptr_t scope = sourceFile->CurrentScope();
     const PHPEntityBase* innerClass = sourceFile->Class();
@@ -491,7 +498,7 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
     // - Local variables (of the current scope)
     // - And aliases e.g. 'use foo\bar as Bar;'
     if(GetCount() == 0 && !GetFilter().IsEmpty()) {
-        
+
         // For functions and constants, PHP will fall back to global functions or constants if a
         // namespaced function or constant does not exist.
         PHPEntityBase::List_t globals =
@@ -566,4 +573,28 @@ void PHPExpression::DoMakeUnique(PHPEntityBase::List_t& matches)
         }
     }
     matches.swap(uniqueList);
+}
+
+bool PHPExpression::FixReturnValueNamespace(PHPLookupTable& lookup,
+                                            PHPEntityBase::Ptr_t parent,
+                                            const wxString& classFullpath,
+                                            wxString& fixedpath)
+{
+    if(!parent) return false;
+    PHPEntityBase::Ptr_t pClass = lookup.FindClass(classFullpath);
+    if(!pClass) {
+        // classFullpath does not exist
+        // prepend the parent namespace to its path and check again
+        wxString parentNamespace = parent->GetFullName().BeforeLast('\\');
+        wxString returnValueNamespace = classFullpath.BeforeLast('\\');
+        wxString returnValueName = classFullpath.AfterLast('\\');
+        wxString newType = PHPEntityNamespace::BuildNamespace(parentNamespace, returnValueNamespace);
+        newType << "\\" << returnValueName;
+        pClass = lookup.FindClass(newType);
+        if(pClass) {
+            fixedpath = newType;
+            return true;
+        }
+    }
+    return false;
 }

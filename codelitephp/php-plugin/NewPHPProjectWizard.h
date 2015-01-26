@@ -24,6 +24,7 @@ public:
     }
 
 protected:
+    virtual void OnBrowseForCCFolder(wxCommandEvent& event);
     virtual void OnCheckSeparateFolder(wxCommandEvent& event);
     virtual void OnDirSelected(wxFileDirPickerEvent& event);
     virtual void OnNameUpdated(wxCommandEvent& event);

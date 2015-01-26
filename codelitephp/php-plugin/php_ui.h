@@ -43,7 +43,6 @@
 #include <wx/icon.h>
 #include <wx/notebook.h>
 #include <wx/stc/stc.h>
-#include <wx/html/htmlwin.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/simplebook.h>
@@ -508,27 +507,6 @@ public:
 };
 
 
-class XDebugDiagDlgBase : public wxDialog
-{
-protected:
-    wxHtmlWindow* m_htmlWin289;
-    wxButton* m_buttonOK;
-    wxButton* m_button403;
-    wxButton* m_button405;
-
-protected:
-    virtual void OnRecommend(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxHtmlWindow* GetHtmlWin289() { return m_htmlWin289; }
-    wxButton* GetButtonOK() { return m_buttonOK; }
-    wxButton* GetButton403() { return m_button403; }
-    wxButton* GetButton405() { return m_button405; }
-    XDebugDiagDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Diagnostics"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-    virtual ~XDebugDiagDlgBase();
-};
-
-
 class PHPDebugStartDlgBase : public wxDialog
 {
 protected:
@@ -619,6 +597,55 @@ public:
     NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Project"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~NewPHPProjectWizardBase();
+};
+
+
+class PHPXDebugSetupWizardBase : public wxWizard
+{
+protected:
+    std::vector<wxWizardPageSimple*> m_pages;
+
+    wxWizardPageSimple* m_wizardPagePort;
+    wxBannerWindow* m_bannerPort;
+    wxStaticText* m_staticText585;
+    wxTextCtrl* m_textCtrlPort;
+    wxWizardPageSimple* m_wizardPageHost;
+    wxBannerWindow* m_bannerHost;
+    wxStaticText* m_staticText5853;
+    wxTextCtrl* m_textCtrlIP;
+    wxWizardPageSimple* m_wizardPageIDEKey;
+    wxBannerWindow* m_bannerSessionID;
+    wxStaticText* m_staticText58537;
+    wxTextCtrl* m_textCtrlKey;
+    wxWizardPageSimple* m_wizardPagePHP;
+    wxBannerWindow* m_bannerSessionID10;
+    wxStaticText* m_staticText625;
+    wxTextCtrl* m_textCtrlPHPIni;
+
+protected:
+    virtual void OnPageChanging(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnFinished(wxWizardEvent& event) { event.Skip(); }
+
+public:
+    wxBannerWindow* GetBannerPort() { return m_bannerPort; }
+    wxStaticText* GetStaticText585() { return m_staticText585; }
+    wxTextCtrl* GetTextCtrlPort() { return m_textCtrlPort; }
+    wxWizardPageSimple* GetWizardPagePort() { return m_wizardPagePort; }
+    wxBannerWindow* GetBannerHost() { return m_bannerHost; }
+    wxStaticText* GetStaticText5853() { return m_staticText5853; }
+    wxTextCtrl* GetTextCtrlIP() { return m_textCtrlIP; }
+    wxWizardPageSimple* GetWizardPageHost() { return m_wizardPageHost; }
+    wxBannerWindow* GetBannerSessionID() { return m_bannerSessionID; }
+    wxStaticText* GetStaticText58537() { return m_staticText58537; }
+    wxTextCtrl* GetTextCtrlKey() { return m_textCtrlKey; }
+    wxWizardPageSimple* GetWizardPageIDEKey() { return m_wizardPageIDEKey; }
+    wxBannerWindow* GetBannerSessionID10() { return m_bannerSessionID10; }
+    wxStaticText* GetStaticText625() { return m_staticText625; }
+    wxTextCtrl* GetTextCtrlPHPIni() { return m_textCtrlPHPIni; }
+    wxWizardPageSimple* GetWizardPagePHP() { return m_wizardPagePHP; }
+    PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Setup"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
+    virtual ~PHPXDebugSetupWizardBase();
 };
 
 #endif

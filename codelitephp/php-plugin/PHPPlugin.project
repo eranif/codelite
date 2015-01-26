@@ -170,9 +170,9 @@
       <File Name="PHPDebugPane.h"/>
       <File Name="PHPDebugStartDlg.h"/>
       <File Name="PHPDebugStartDlg.cpp"/>
+      <File Name="PHPXDebugSetupWizard.h"/>
+      <File Name="PHPXDebugSetupWizard.cpp"/>
     </VirtualDirectory>
-    <File Name="XDebugDiagDlg.h"/>
-    <File Name="XDebugDiagDlg.cpp"/>
     <File Name="NewPHPProjectWizard.h"/>
     <File Name="NewPHPProjectWizard.cpp"/>
   </VirtualDirectory>

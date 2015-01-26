@@ -30,7 +30,6 @@
 #include "localsview.h"
 #include "evalpane.h"
 #include "XDebugTester.h"
-#include "XDebugDiagDlg.h"
 #include "clZipReader.h"
 #include "cl_standard_paths.h"
 #include "php_configuration_data.h"
@@ -38,6 +37,7 @@
 #include <wx/regex.h>
 #include "bookmark_manager.h"
 #include "NewPHPProjectWizard.h"
+#include "PHPXDebugSetupWizard.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -764,6 +764,11 @@ void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }
 
 void PhpPlugin::RunXDebugDiagnostics()
 {
+    PHPXDebugSetupWizard wiz(EventNotifier::Get()->TopFrame());
+    if(wiz.RunWizard(wiz.GetFirstPage())) {
+        
+    }
+#if 0
     XDebugTester xdebugTester;
     if(xdebugTester.RunTest()) {
         // Display the result
@@ -788,6 +793,7 @@ void PhpPlugin::RunXDebugDiagnostics()
         dlg.Load(html);
         dlg.ShowModal();
     }
+#endif
 }
 
 void PhpPlugin::OnRunXDebugDiagnostics(wxCommandEvent& e)

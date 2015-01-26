@@ -351,6 +351,9 @@ void clAuiMainNotebookTabArt::DoSetColours()
             m_penColour = m_innerPenColour.ChangeLightness(90);
 #endif
         }
+    } else {
+        m_activeTabBgColour = DrawingUtils::GetPanelBgColour();
+        m_activeTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     }
 }
 

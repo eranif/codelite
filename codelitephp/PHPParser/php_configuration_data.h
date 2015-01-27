@@ -14,11 +14,11 @@ protected:
     size_t m_xdebugPort;
     wxArrayString m_ccIncludePath;
     size_t m_flags;
-    size_t m_settersGettersFlags;
     wxString m_xdebugIdeKey;
     wxString m_xdebugHost;
     wxString m_findInFilesMask;
     int m_workspaceType;
+    size_t m_settersGettersFlags;
 
 public:
     enum {

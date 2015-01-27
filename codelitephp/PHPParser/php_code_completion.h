@@ -133,6 +133,16 @@ public:
      * @return wxNOT_FOUND when could not determine the location
      */
     int GetLocationForSettersGetters(const wxString& filecontent, const wxString &classname);
+    
+    /**
+     * @brief list members of a class defined in an editor at the current position
+     * This only returns member variables (i.e. no constants, nor static members)
+     */
+    PHPEntityBase::List_t GetMembers(IEditor* editor);
+    /**
+     * @brief list functins members of a class defined in an editor at the current position
+     */
+    PHPEntityBase::List_t GetFunctions(IEditor* editor);
 };
 
 #endif // PHPCODECOMPLETION_H

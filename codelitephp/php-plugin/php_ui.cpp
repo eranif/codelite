@@ -1993,3 +1993,70 @@ PHPXDebugSetupWizardBase::~PHPXDebugSetupWizardBase()
     this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnFinished), NULL, this);
     
 }
+
+PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF01InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer657 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer657);
+    
+    m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer657->Add(m_dvListCtrlFunctions, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlFunctions->AppendIconTextColumn(_("Variable"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlFunctions->AppendIconTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    wxFlexGridSizer* flexGridSizer667 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer667->SetFlexibleDirection( wxBOTH );
+    flexGridSizer667->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    
+    boxSizer657->Add(flexGridSizer667, 0, wxALL|wxEXPAND, 5);
+    
+    m_checkBoxLowercase = new wxCheckBox(this, wxID_ANY, _("Functions start with lowercase"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxLowercase->SetValue(false);
+    m_checkBoxLowercase->SetToolTip(_("Generated functions start with lowercase letter"));
+    
+    flexGridSizer667->Add(m_checkBoxLowercase, 0, wxALL, 5);
+    
+    m_checkBoxPrefixGetter = new wxCheckBox(this, wxID_ANY, _("Prefix the getter with 'get' or 'is'"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxPrefixGetter->SetValue(true);
+    m_checkBoxPrefixGetter->SetToolTip(_("When checked, the getter function is prefixed with 'get', otherwise, the getter is same as the variable name (without the $ sign)"));
+    
+    flexGridSizer667->Add(m_checkBoxPrefixGetter, 0, wxALL, 5);
+    
+    m_checkBoxReurnThis = new wxCheckBox(this, wxID_ANY, _("Getter returns $this"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxReurnThis->SetValue(false);
+    m_checkBoxReurnThis->SetToolTip(_("The getter returns $this object"));
+    
+    flexGridSizer667->Add(m_checkBoxReurnThis, 0, wxALL, 5);
+    
+    m_stdBtnSizer659 = new wxStdDialogButtonSizer();
+    
+    boxSizer657->Add(m_stdBtnSizer659, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer659->AddButton(m_buttonOK);
+    
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer659->AddButton(m_buttonCancel);
+    m_stdBtnSizer659->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+PHPSettersGettersDialogBase::~PHPSettersGettersDialogBase()
+{
+}

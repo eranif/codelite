@@ -15,6 +15,7 @@
 #include "clSTCLineKeeper.h"
 #include "PHPSourceFile.h"
 #include "PHPEntityClass.h"
+#include "PHPSettersGettersDialog.h"
 
 PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
 
@@ -787,19 +788,25 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         wxString textToAdd;
         PHPSetterGetterEntry::Vec_t setters = PHPRefactoring::Get().GetSetters(editor);
         PHPSetterGetterEntry::Vec_t getters = PHPRefactoring::Get().GetGetters(editor);
+        
+        PHPSettersGettersDialog dlg(EventNotifier::Get()->TopFrame(), editor);
+        if(dlg.ShowModal() == wxID_OK) {
+            
+            for(size_t i = 0; i < setters.size(); ++i) {
+                textToAdd << setters.at(i).GetSetter() << "\n";
+            }
+            for(size_t i = 0; i < getters.size(); ++i) {
+                textToAdd << getters.at(i).GetGetter() << "\n";
+            }
+            
+            if(!textToAdd.IsEmpty()) {
+                int line = PHPCodeCompletion::Instance()->GetLocationForSettersGetters(
+                    editor->GetTextRange(0, editor->GetLength()), className);
 
-        for(size_t i = 0; i < setters.size(); ++i) {
-            textToAdd << setters.at(i).GetSetter() << "\n";
-        }
-        for(size_t i = 0; i < getters.size(); ++i) {
-            textToAdd << getters.at(i).GetGetter() << "\n";
-        }
-
-        int line = PHPCodeCompletion::Instance()->GetLocationForSettersGetters(
-            editor->GetTextRange(0, editor->GetLength()), className);
-
-        if(!textToAdd.IsEmpty() && line != wxNOT_FOUND) {
-            editor->GetSTC()->InsertText(editor->PosFromLine(line), textToAdd);
+                if(!textToAdd.IsEmpty() && line != wxNOT_FOUND) {
+                    editor->GetSTC()->InsertText(editor->PosFromLine(line), textToAdd);
+                }
+            }
         }
     }
 }

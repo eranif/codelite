@@ -294,68 +294,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-
-    //=====================================================================
-    // First upgrade stage: adjust line numbers and default colour settings
-    //=====================================================================
-    StyleProperty& defaultProp = lexer->GetProperty(0); // Default
-    if(m_lexersVersion < 1) {
-        // adjust line numbers
-        if(lexer->IsDark()) {
-            StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
-            if(!defaultProp.IsNull()) {
-                if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
-                   lexer->GetName() != "cmake") {
-                    // don't adjust PHP, HTML and Text default colours, since they also affects the various operators
-                    // foreground colours
-                    defaultProp.SetFgColour(
-                        wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
-                }
-                if(!lineNumbers.IsNull()) {
-                    lineNumbers.SetFgColour(
-                        wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
-                    lineNumbers.SetBgColour(defaultProp.GetBgColour());
-                }
-            }
-
-        } else {
-            lexer->SetLineNumbersFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-            StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
-            if(!lineNumbers.IsNull()) {
-                lineNumbers.SetBgColour(defaultProp.GetBgColour());
-            }
-            
-            // don't adjust PHP and HTML default colours, since they also affects the various operators
-            // foreground colours
-            if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
-               lexer->GetName() != "cmake") {
-                lexer->SetDefaultFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-            }
-        }
-    }
-
-    //=====================================================================
-    // Second upgrade stage: adjust whitespace colour and fold margin
-    //=====================================================================
-    if(m_lexersVersion < 2) {
-        // adjust line numbers
-        StyleProperty& fold = lexer->GetProperty(FOLD_MARGIN_ATTR_ID);       // fold margin
-        StyleProperty& whitespace = lexer->GetProperty(WHITE_SPACE_ATTR_ID); // whitespace
-        if(lexer->IsDark()) {
-            fold.SetFgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
-            fold.SetBgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
-
-            whitespace.SetFgColour(
-                wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
-
-        } else {
-            fold.SetFgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
-            fold.SetBgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
-
-            whitespace.SetFgColour(
-                wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
-        }
-    }
+    
+    // Upgrade the lexer colours
+    UpdateLexerColours(lexer, false);
 
     if(m_lexersMap.count(lexerName) == 0) {
         m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
@@ -733,4 +674,66 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
     // Notify about colours and fonts configuration loaded
     clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);
     EventNotifier::Get()->AddPendingEvent(event);
+}
+
+void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool force)
+{
+    StyleProperty& defaultProp = lexer->GetProperty(0); // Default
+    if(force || m_lexersVersion < 1) {
+        // adjust line numbers
+        if(lexer->IsDark()) {
+            StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
+            if(!defaultProp.IsNull()) {
+                if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
+                   lexer->GetName() != "cmake") {
+                    // don't adjust PHP, HTML and Text default colours, since they also affects the various operators
+                    // foreground colours
+                    defaultProp.SetFgColour(
+                        wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
+                }
+                if(!lineNumbers.IsNull()) {
+                    lineNumbers.SetFgColour(
+                        wxColour(defaultProp.GetBgColour()).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX));
+                    lineNumbers.SetBgColour(defaultProp.GetBgColour());
+                }
+            }
+
+        } else {
+            lexer->SetLineNumbersFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+            StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
+            if(!lineNumbers.IsNull()) {
+                lineNumbers.SetBgColour(defaultProp.GetBgColour());
+            }
+
+            // don't adjust PHP and HTML default colours, since they also affects the various operators
+            // foreground colours
+            if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
+               lexer->GetName() != "cmake") {
+                lexer->SetDefaultFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+            }
+        }
+    }
+
+    //=====================================================================
+    // Second upgrade stage: adjust whitespace colour and fold margin
+    //=====================================================================
+    if(force || m_lexersVersion < 2) {
+        // adjust line numbers
+        StyleProperty& fold = lexer->GetProperty(FOLD_MARGIN_ATTR_ID);       // fold margin
+        StyleProperty& whitespace = lexer->GetProperty(WHITE_SPACE_ATTR_ID); // whitespace
+        if(lexer->IsDark()) {
+            fold.SetFgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
+            fold.SetBgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
+
+            whitespace.SetFgColour(
+                wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
+
+        } else {
+            fold.SetFgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
+            fold.SetBgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
+
+            whitespace.SetFgColour(
+                wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
+        }
+    }
 }

@@ -264,12 +264,12 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
     } else if(entry->Is(kEntityTypeNamespace)) {
         t->SetAccess("public");
         t->SetKind("namespace");
-        
+
     } else if(entry->Is(kEntityTypeKeyword)) {
         t->SetAccess("public");
         t->SetKind("cpp_keyword");
     }
-    
+
     t->SetFlags(TagEntry::Tag_No_Signature_Format);
     return t;
 }
@@ -301,11 +301,11 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
                         if(!expr->GetFilter().IsEmpty() && expr->GetCount() == 0) {
                             // Word completion
                             PHPEntityBase::List_t keywords = PhpKeywords(expr->GetFilter());
-                            
+
                             // Preprend the keywords
                             matches.insert(matches.end(), keywords.begin(), keywords.end());
                         }
-                        
+
                         // Remove duplicates from the list
                         if(!matches.empty()) {
                             // Show the code completion box
@@ -764,7 +764,7 @@ PHPEntityBase::List_t PHPCodeCompletion::PhpKeywords(const wxString& prefix) con
     PHPEntityBase::List_t lst;
     wxString phpKeywords = lexer->GetKeyWords(4);
     wxArrayString phpKeywordsArr = ::wxStringTokenize(phpKeywords, " \t", wxTOKEN_STRTOK);
-    for(size_t i=0; i<phpKeywordsArr.GetCount(); ++i) {
+    for(size_t i = 0; i < phpKeywordsArr.GetCount(); ++i) {
         wxString lcWord = phpKeywordsArr.Item(i).Lower();
         if(lcWord.StartsWith(lcPrefix)) {
             PHPEntityBase::Ptr_t keyword(new PHPEntityKeyword());
@@ -774,4 +774,70 @@ PHPEntityBase::List_t PHPCodeCompletion::PhpKeywords(const wxString& prefix) con
         }
     }
     return lst;
+}
+
+PHPEntityBase::List_t PHPCodeCompletion::GetMembers(IEditor* editor)
+{
+    PHPEntityBase::List_t members;
+    if(!editor) {
+        return members;
+    }
+
+    // Parse until the current position
+    wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
+    PHPSourceFile sourceFile(text);
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.SetFilename(editor->GetFileName());
+    sourceFile.Parse();
+
+    const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
+    if(!scopeAtPoint) {
+        return members;
+    }
+
+    // filter out
+    const PHPEntityBase::List_t& children = scopeAtPoint->GetChildren();
+    PHPEntityBase::List_t::const_iterator iter = children.begin();
+
+    for(; iter != children.end(); ++iter) {
+        PHPEntityBase::Ptr_t child = *iter;
+        if(child->Is(kEntityTypeVariable) && child->Cast<PHPEntityVariable>()->IsMember() &&
+           !child->Cast<PHPEntityVariable>()->IsConst() && !child->Cast<PHPEntityVariable>()->IsStatic()) {
+            // a member of a class
+            members.push_back(child);
+        }
+    }
+    return members;
+}
+
+PHPEntityBase::List_t PHPCodeCompletion::GetFunctions(IEditor* editor)
+{
+    PHPEntityBase::List_t functions;
+    if(!editor) {
+        return functions;
+    }
+
+    // Parse until the current position
+    wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
+    PHPSourceFile sourceFile(text);
+    sourceFile.SetParseFunctionBody(true);
+    sourceFile.SetFilename(editor->GetFileName());
+    sourceFile.Parse();
+
+    const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
+    if(!scopeAtPoint) {
+        return functions;
+    }
+
+    // filter out
+    const PHPEntityBase::List_t& children = scopeAtPoint->GetChildren();
+    PHPEntityBase::List_t::const_iterator iter = children.begin();
+
+    for(; iter != children.end(); ++iter) {
+        PHPEntityBase::Ptr_t child = *iter;
+        if(child->Is(kEntityTypeFunction)) {
+            functions.push_back(child);
+        }
+    }
+    return functions;
 }

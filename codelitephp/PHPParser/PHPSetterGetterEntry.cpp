@@ -11,15 +11,15 @@ PHPSetterGetterEntry::PHPSetterGetterEntry(PHPEntityBase::Ptr_t entry)
 
 PHPSetterGetterEntry::~PHPSetterGetterEntry() {}
 
-wxString PHPSetterGetterEntry::GetGetter(eSettersGettersFlags flags) const
+wxString PHPSetterGetterEntry::GetGetter(size_t flags) const
 {
     wxString nameNoDollar = m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar();
     wxString nameWithDollar = m_entry->GetShortName();
     
-    wxString prefix = (flags & kSG_StartWithUpperCase) ? "Get" : "get";
+    wxString prefix = (flags & kSG_StartWithLowercase) ? "get" : "Get";
     if(m_entry->Cast<PHPEntityVariable>()->IsBoolean()) {
         // A boolean member, use "is" as the prefix for the getter
-        prefix = (flags & kSG_StartWithUpperCase) ? "Is" : "is";
+        prefix = (flags & kSG_StartWithLowercase) ? "is" : "Is";
     }
     
     // Remove user prefixes
@@ -41,7 +41,7 @@ wxString PHPSetterGetterEntry::GetGetter(eSettersGettersFlags flags) const
     return body;
 }
 
-wxString PHPSetterGetterEntry::GetSetter(eSettersGettersFlags flags) const
+wxString PHPSetterGetterEntry::GetSetter(size_t flags) const
 {
     wxString nameNoDollar = m_entry->Cast<PHPEntityVariable>()->GetNameNoDollar();
     wxString nameWithDollar = m_entry->GetShortName();
@@ -49,7 +49,7 @@ wxString PHPSetterGetterEntry::GetSetter(eSettersGettersFlags flags) const
     // Remove user prefixes
     wxString functionName = nameNoDollar;
     FormatName(functionName);
-    wxString prefix = (flags & kSG_StartWithUpperCase) ? "Set" : "set";
+    wxString prefix = (flags & kSG_StartWithLowercase) ? "set" : "Set";
     functionName.Prepend(prefix);
     if(flags & kSG_NameOnly) {
         return functionName;

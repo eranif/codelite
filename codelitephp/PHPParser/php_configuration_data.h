@@ -14,6 +14,7 @@ protected:
     size_t m_xdebugPort;
     wxArrayString m_ccIncludePath;
     size_t m_flags;
+    size_t m_settersGettersFlags;
     wxString m_xdebugIdeKey;
     wxString m_xdebugHost;
     wxString m_findInFilesMask;
@@ -40,7 +41,7 @@ public:
         this->m_workspaceType = workspaceType;
         return *this;
     }
-    
+
     int GetWorkspaceType() const { return m_workspaceType; }
     PHPConfigurationData& EnableFlag(size_t flag, bool b)
     {
@@ -120,6 +121,8 @@ public:
     const wxString& GetXdebugIdeKey() const { return m_xdebugIdeKey; }
     void SetXdebugHost(const wxString& xdebugHost) { this->m_xdebugHost = xdebugHost; }
     const wxString& GetXdebugHost() const { return m_xdebugHost; }
+    void SetSettersGettersFlags(size_t settersGettersFlags) { this->m_settersGettersFlags = settersGettersFlags; }
+    size_t GetSettersGettersFlags() const { return m_settersGettersFlags; }
 };
 
 #endif // PHPCONFIGURATIONDATA_H

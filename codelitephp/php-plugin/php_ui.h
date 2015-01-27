@@ -659,4 +659,27 @@ public:
     virtual ~PHPXDebugSetupWizardBase();
 };
 
+
+class PHPSettersGettersDialogBase : public wxDialog
+{
+protected:
+    wxDataViewListCtrl* m_dvListCtrlFunctions;
+    wxCheckBox* m_checkBoxLowercase;
+    wxCheckBox* m_checkBoxPrefixGetter;
+    wxCheckBox* m_checkBoxReurnThis;
+    wxStdDialogButtonSizer* m_stdBtnSizer659;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
+
+protected:
+
+public:
+    wxDataViewListCtrl* GetDvListCtrlFunctions() { return m_dvListCtrlFunctions; }
+    wxCheckBox* GetCheckBoxLowercase() { return m_checkBoxLowercase; }
+    wxCheckBox* GetCheckBoxPrefixGetter() { return m_checkBoxPrefixGetter; }
+    wxCheckBox* GetCheckBoxReurnThis() { return m_checkBoxReurnThis; }
+    PHPSettersGettersDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Generate Setters / Getters"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~PHPSettersGettersDialogBase();
+};
+
 #endif

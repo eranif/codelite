@@ -4,6 +4,8 @@
 #include <wx/colour.h>
 #include "cl_standard_paths.h"
 #include "globals.h"
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 
 EclipseThemeImporterBase::EclipseThemeImporterBase() {}
 
@@ -78,6 +80,15 @@ bool EclipseThemeImporterBase::FinalizeImport(wxXmlNode* propertiesNode)
     AddCommonProperties(propertiesNode);
     wxString codeliteXmlFile =
         wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile(m_langName)).GetFullPath();
+    
+    // Update the lexer colours
+    LexerConf::Ptr_t lexer(new LexerConf);
+    lexer->FromXml(m_codeliteDoc.GetRoot());
+    ColoursAndFontsManager::Get().UpdateLexerColours(lexer, true);
+    wxXmlNode* xmlnode = lexer->ToXml();
+    m_codeliteDoc.SetRoot(xmlnode);
+    
+    // Save the lexer to xml
     return ::SaveXmlToFile(&m_codeliteDoc, codeliteXmlFile);
 }
 

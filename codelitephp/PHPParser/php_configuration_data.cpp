@@ -4,6 +4,7 @@
 #include <wx/stdpaths.h>
 #include "php_utils.h"
 #include <cl_config.h>
+#include "PHPSetterGetterEntry.h"
 
 PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")
@@ -14,6 +15,7 @@ PHPConfigurationData::PHPConfigurationData()
     , m_xdebugHost("127.0.0.1")
     , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css")
     , m_workspaceType(0)
+    , m_settersGettersFlags(kSG_None)
 {
 }
 
@@ -31,6 +33,7 @@ void PHPConfigurationData::FromJSON(const JSONElement &json)
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(m_xdebugPort);
     m_xdebugHost = json.namedObject("m_xdebugHost").toString(m_xdebugHost);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
+    m_settersGettersFlags = json.namedObject("m_settersGettersFlags").toSize_t(m_settersGettersFlags);
     m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString(m_xdebugIdeKey);
     m_workspaceType = json.namedObject("m_workspaceType").toInt(m_workspaceType);
     m_xdebugIdeKey.Trim().Trim(false);
@@ -56,6 +59,7 @@ JSONElement PHPConfigurationData::ToJSON() const
     e.addProperty("m_xdebugIdeKey", m_xdebugIdeKey);
     e.addProperty("m_findInFilesMask", m_findInFilesMask);
     e.addProperty("m_workspaceType", m_workspaceType);
+    e.addProperty("m_settersGettersFlags", m_settersGettersFlags);
     return e;
 }
 

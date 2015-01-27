@@ -51,7 +51,12 @@ private:
 
 public:
     static ColoursAndFontsManager& Get();
-
+    
+    /**
+     * @brief adjust the lexer colours to fit codelite's general look and feel
+     */
+    void UpdateLexerColours(LexerConf::Ptr_t lexer, bool force);
+    
     const wxColour& GetGlobalBgColour() const { return m_globalBgColour; }
     const wxColour& GetGlobalFgColour() const { return m_globalFgColour; }
     

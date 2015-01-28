@@ -48,6 +48,7 @@
 #include <wx/menuitem.h>
 #include <wx/menu.h>
 #include "codelite_events.h"
+#include <wx/msgdlg.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -533,6 +534,7 @@ void UnitTestPP::OnProcessTerminated(wxCommandEvent& e)
     parser.Parse(&summary);
 
     if(summary.totalTests == 0) {
+        ::wxMessageBox(_("Project contains 0 tests. Nothing to be done"), "CodeLite");
         return;
     }
 

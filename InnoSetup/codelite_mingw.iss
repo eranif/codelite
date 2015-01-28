@@ -4,6 +4,8 @@
 [Setup]
 AppName=CodeLite
 AppVerName=CodeLite
+AppPublisher=Eran Ifrah
+AppVersion=7.0.0
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org

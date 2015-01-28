@@ -2984,7 +2984,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
     // Hide tooltip dialog if its ON
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     bool dbgTipIsShown = ManagerST::Get()->GetDebuggerTip()->IsShown();
-    bool keyIsControl = event.GetKeyCode() == WXK_CONTROL;
+    bool keyIsControl = event.GetModifiers() == wxMOD_CONTROL;
 
     if(keyIsControl) {
         // Debugger tooltip is shown when clicking 'Control/CMD'
@@ -3246,7 +3246,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
         menu.Connect(
             ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
     }
-    
+
     clContextMenuEvent event(wxEVT_CONTEXT_MENU_EDITOR_MARGIN);
     event.SetMenu(&menu);
     if(EventNotifier::Get()->ProcessEvent(event)) return;
@@ -4177,12 +4177,12 @@ void LEditor::OnChange(wxStyledTextEvent& event)
     bool isDelete = event.GetModificationType() & wxSTC_MOD_DELETETEXT;
     bool isUndo = event.GetModificationType() & wxSTC_PERFORMED_UNDO;
     bool isRedo = event.GetModificationType() & wxSTC_PERFORMED_REDO;
-    
+
     // Notify about this editor being changed
     clCommandEvent eventMod(wxEVT_EDITOR_MODIFIED);
     eventMod.SetFileName(GetFileName().GetFullPath());
     EventNotifier::Get()->AddPendingEvent(eventMod);
-    
+
     if((m_autoAddNormalBraces && !m_disableSmartIndent) || GetOptions()->GetAutoCompleteDoubleQuotes()) {
         if((event.GetModificationType() & wxSTC_MOD_BEFOREDELETE) &&
            (event.GetModificationType() & wxSTC_PERFORMED_USER)) {
@@ -4648,7 +4648,8 @@ void LEditor::PasteLineAbove()
 void LEditor::OnKeyUp(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetKeyCode() == WXK_SHIFT || event.GetKeyCode() == WXK_CONTROL || event.GetKeyCode() == WXK_ALT) {
+    if(event.GetModifiers() == wxMOD_SHIFT || event.GetModifiers() == wxMOD_CONTROL ||
+       event.GetModifiers() == wxMOD_ALT) {
 
         // Clear hyperlink markers
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
@@ -4949,7 +4950,7 @@ void LEditor::CenterLine(int line, int col)
     }
     EnsureVisible(firstVisibleLine);
     SetFirstVisibleLine(firstVisibleLine);
-    
+
     int pos = PositionFromLine(line);
     if(col != wxNOT_FOUND) {
         pos += col;

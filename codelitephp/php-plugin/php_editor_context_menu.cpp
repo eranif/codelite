@@ -786,19 +786,14 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
 
         // generate the code to generate
         wxString textToAdd;
-        PHPSetterGetterEntry::Vec_t setters = PHPRefactoring::Get().GetSetters(editor);
-        PHPSetterGetterEntry::Vec_t getters = PHPRefactoring::Get().GetGetters(editor);
-        
-        PHPSettersGettersDialog dlg(EventNotifier::Get()->TopFrame(), editor);
+        PHPSettersGettersDialog dlg(EventNotifier::Get()->TopFrame(), editor, m_manager);
         if(dlg.ShowModal() == wxID_OK) {
-            
-            for(size_t i = 0; i < setters.size(); ++i) {
-                textToAdd << setters.at(i).GetSetter() << "\n";
+            PHPSetterGetterEntry::Vec_t members = dlg.GetMembers();
+            for(size_t i = 0; i < members.size(); ++i) {
+                textToAdd << members.at(i).GetSetter(dlg.GetScope(), dlg.GetFlags()) << "\n";
+                textToAdd << members.at(i).GetGetter(dlg.GetFlags()) << "\n";
             }
-            for(size_t i = 0; i < getters.size(); ++i) {
-                textToAdd << getters.at(i).GetGetter() << "\n";
-            }
-            
+
             if(!textToAdd.IsEmpty()) {
                 int line = PHPCodeCompletion::Instance()->GetLocationForSettersGetters(
                     editor->GetTextRange(0, editor->GetLength()), className);

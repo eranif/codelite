@@ -9,7 +9,7 @@ enum eSettersGettersFlags {
     kSG_None = 0,
     kSG_StartWithLowercase = (1 << 0),
     kSG_NameOnly = (1 << 1),
-    kSG_Prefix = (1 << 2),
+    kSG_NoPrefix = (1 << 2),
     kSG_ReturnThis = (1 << 3),
 };
 
@@ -22,7 +22,7 @@ protected:
     PHPEntityBase::Ptr_t m_entry;
 
 protected:
-    void FormatName(wxString& name) const;
+    void FormatName(wxString& name, size_t flags) const;
 
 public:
     PHPSetterGetterEntry();
@@ -39,7 +39,7 @@ public:
      * @brief generate setter for the this PHPEntry
      * @param flags generation flags
      */
-    wxString GetSetter(size_t flags = kSG_None) const;
+    wxString GetSetter(const wxString& scope, size_t flags = kSG_None) const;
 };
 
 #endif // PHPSETTERGETTERENTRY_H

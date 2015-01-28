@@ -548,7 +548,7 @@ void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
     wxMenu* phpMenuBarMenu = new wxMenu();
     phpMenuBarMenu->Append(wxID_PHP_SETTINGS, _("Settings..."), _("Settings..."));
     phpMenuBarMenu->Append(
-        wxID_PHP_RUN_XDEBUG_DIAGNOSTICS, _("Run XDebug Diagnostics..."), _("Run XDebug Diagnostics..."));
+        wxID_PHP_RUN_XDEBUG_DIAGNOSTICS, _("Run XDebug Setup Wizard..."), _("Run XDebug Setup Wizard..."));
 
     int helpLoc = menuBar->FindMenu(_("Help"));
     if(helpLoc != wxNOT_FOUND) {

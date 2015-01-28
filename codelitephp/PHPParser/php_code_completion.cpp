@@ -776,27 +776,42 @@ PHPEntityBase::List_t PHPCodeCompletion::PhpKeywords(const wxString& prefix) con
     return lst;
 }
 
-PHPEntityBase::List_t PHPCodeCompletion::GetMembers(IEditor* editor)
+void PHPCodeCompletion::GetMembers(IEditor* editor, PHPEntityBase::List_t& members, wxString& scope)
 {
-    PHPEntityBase::List_t members;
+    members.clear();
+    scope.clear();
     if(!editor) {
-        return members;
+        return;
     }
 
-    // Parse until the current position
-    wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
+    // Parse until the current position to get the current scope name
+    {
+        wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
+        PHPSourceFile sourceFile(text);
+        sourceFile.SetParseFunctionBody(true);
+        sourceFile.SetFilename(editor->GetFileName());
+        sourceFile.Parse();
+
+        const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
+        if(!scopeAtPoint) {
+            return;
+        }
+        scope = scopeAtPoint->GetFullName();
+    }
+    
+    // Second parse: parse the entire buffer so we are not limited by the caret position
+    wxString text = editor->GetTextRange(0, editor->GetLength());
     PHPSourceFile sourceFile(text);
     sourceFile.SetParseFunctionBody(true);
     sourceFile.SetFilename(editor->GetFileName());
     sourceFile.Parse();
-
-    const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
-    if(!scopeAtPoint) {
-        return members;
-    }
-
+    
+    // Locate the scope
+    PHPEntityBase::Ptr_t parentClass = sourceFile.Namespace()->FindChild(scope);
+    if(!parentClass) return;
+    
     // filter out
-    const PHPEntityBase::List_t& children = scopeAtPoint->GetChildren();
+    const PHPEntityBase::List_t& children = parentClass->GetChildren();
     PHPEntityBase::List_t::const_iterator iter = children.begin();
 
     for(; iter != children.end(); ++iter) {
@@ -807,37 +822,4 @@ PHPEntityBase::List_t PHPCodeCompletion::GetMembers(IEditor* editor)
             members.push_back(child);
         }
     }
-    return members;
-}
-
-PHPEntityBase::List_t PHPCodeCompletion::GetFunctions(IEditor* editor)
-{
-    PHPEntityBase::List_t functions;
-    if(!editor) {
-        return functions;
-    }
-
-    // Parse until the current position
-    wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
-    PHPSourceFile sourceFile(text);
-    sourceFile.SetParseFunctionBody(true);
-    sourceFile.SetFilename(editor->GetFileName());
-    sourceFile.Parse();
-
-    const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
-    if(!scopeAtPoint) {
-        return functions;
-    }
-
-    // filter out
-    const PHPEntityBase::List_t& children = scopeAtPoint->GetChildren();
-    PHPEntityBase::List_t::const_iterator iter = children.begin();
-
-    for(; iter != children.end(); ++iter) {
-        PHPEntityBase::Ptr_t child = *iter;
-        if(child->Is(kEntityTypeFunction)) {
-            functions.push_back(child);
-        }
-    }
-    return functions;
 }

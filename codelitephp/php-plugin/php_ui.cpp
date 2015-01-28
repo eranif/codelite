@@ -2011,9 +2011,8 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     
     boxSizer657->Add(m_dvListCtrlFunctions, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
     m_dvListCtrlFunctions->AppendIconTextColumn(_("Variable"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlFunctions->AppendIconTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     wxFlexGridSizer* flexGridSizer667 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer667->SetFlexibleDirection( wxBOTH );
     flexGridSizer667->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -2026,13 +2025,13 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     
     flexGridSizer667->Add(m_checkBoxLowercase, 0, wxALL, 5);
     
-    m_checkBoxPrefixGetter = new wxCheckBox(this, wxID_ANY, _("Prefix the getter with 'get' or 'is'"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxPrefixGetter = new wxCheckBox(this, wxID_ANY, _("Prefix getter with 'get' or 'is'"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxPrefixGetter->SetValue(true);
     m_checkBoxPrefixGetter->SetToolTip(_("When checked, the getter function is prefixed with 'get', otherwise, the getter is same as the variable name (without the $ sign)"));
     
     flexGridSizer667->Add(m_checkBoxPrefixGetter, 0, wxALL, 5);
     
-    m_checkBoxReurnThis = new wxCheckBox(this, wxID_ANY, _("Getter returns $this"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxReurnThis = new wxCheckBox(this, wxID_ANY, _("Setter returns $this"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxReurnThis->SetValue(false);
     m_checkBoxReurnThis->SetToolTip(_("The getter returns $this object"));
     

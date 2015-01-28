@@ -138,11 +138,7 @@ public:
      * @brief list members of a class defined in an editor at the current position
      * This only returns member variables (i.e. no constants, nor static members)
      */
-    PHPEntityBase::List_t GetMembers(IEditor* editor);
-    /**
-     * @brief list functins members of a class defined in an editor at the current position
-     */
-    PHPEntityBase::List_t GetFunctions(IEditor* editor);
+    void GetMembers(IEditor* editor, PHPEntityBase::List_t& members, wxString& scope);
 };
 
 #endif // PHPCODECOMPLETION_H

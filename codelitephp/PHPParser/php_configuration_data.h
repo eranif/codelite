@@ -119,9 +119,17 @@ public:
 
     size_t GetFlags() const { return m_flags; }
     const wxString& GetXdebugIdeKey() const { return m_xdebugIdeKey; }
-    void SetXdebugHost(const wxString& xdebugHost) { this->m_xdebugHost = xdebugHost; }
+    PHPConfigurationData& SetXdebugHost(const wxString& xdebugHost)
+    {
+        this->m_xdebugHost = xdebugHost;
+        return *this;
+    }
     const wxString& GetXdebugHost() const { return m_xdebugHost; }
-    void SetSettersGettersFlags(size_t settersGettersFlags) { this->m_settersGettersFlags = settersGettersFlags; }
+    PHPConfigurationData& SetSettersGettersFlags(size_t settersGettersFlags)
+    {
+        this->m_settersGettersFlags = settersGettersFlags;
+        return *this;
+    }
     size_t GetSettersGettersFlags() const { return m_settersGettersFlags; }
 };
 

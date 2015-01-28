@@ -1113,7 +1113,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
 
     wxString text = editor.GetTextRange(0, endPos);
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
-    if(tags.size()) {
+    if(!tags.empty()) {
         // the last tag is our function
         TagEntryPtr t = tags.at(tags.size() - 1);
         // get doxygen comment based on file and line
@@ -2141,7 +2141,7 @@ void ContextCpp::AutoAddComment()
                 // Parse the source file
                 wxString text = rCtrl.GetTextRange(curpos, rCtrl.GetLength());
                 TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
-                if(tags.size()) {
+                if(!tags.empty()) {
                     TagEntryPtr t = tags.at(0);
 
                     // get doxygen comment based on file and line

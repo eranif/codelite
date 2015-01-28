@@ -909,7 +909,7 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
         }
     }
 
-    if(hasMatch && tags.size()) {
+    if(hasMatch && !tags.empty()) {
         if(token->GetPrev() == NULL) {
 
             // we are first in the chain, but still we exists in the database

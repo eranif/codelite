@@ -767,7 +767,7 @@ TagEntryPtr TagsStorageSQLite::GetTagAboveFileAndLine(const wxString& file, int 
     sql << wxT("select * from tags where file='") << file << wxT("' and line<=") << line << wxT(" LIMIT 1");
     TagEntryPtrVector_t tags;
     DoFetchTags(sql, tags);
-    if(tags.size()) {
+    if(!tags.empty()) {
         return tags.at(0);
     }
     return NULL;

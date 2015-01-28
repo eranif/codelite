@@ -56,13 +56,14 @@ DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
 void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
 {
-#if wxVERSION_NUMBER >= 2900
     // Posts an event that signals for SelectAll() to be done after a delay
     // This is often needed in >2.9, as scintilla seems to steal the selection
+    const static int DELAY_COUNT = 10;
+
     wxCommandEvent event(QUICKFIND_COMMAND_EVENT);
+    event.SetInt(DELAY_COUNT);
     event.SetEventObject(FocusedControl);
     wxPostEvent(destination, event);
-#endif
 }
 
 QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
@@ -818,10 +819,18 @@ void QuickFindBar::OnReceivingFocus(wxFocusEvent& event)
 
 void QuickFindBar::OnQuickFindCommandEvent(wxCommandEvent& event)
 {
+    if (event.GetInt() > 0) {
+        // We need to delay further, or focus might be set too soon
+        event.SetInt(event.GetInt()-1);
+        wxPostEvent(this, event);
+    }
+
     if(event.GetEventObject() == m_findWhat) {
+        m_findWhat->SetFocus();
         m_findWhat->SelectAll();
 
     } else if(event.GetEventObject() == m_replaceWith) {
+        m_replaceWith->SetFocus();
         m_replaceWith->SelectAll();
     }
 }

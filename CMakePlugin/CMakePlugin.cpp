@@ -657,7 +657,7 @@ void CMakePlugin::OnExportMakefile(clBuildEvent& event)
                                                   "BUILD_DIR  := " << buildDirEsc << "\n"
                                                                                      "SOURCE_DIR := " << sourceDirEsc
                 << "\n"
-                   "CMAKE_ARGS := " << CreateArguments(*settings, *m_configuration.get())
+                   "CMAKE_ARGS := " << CreateArguments(*settings, *m_configuration)
                 << "\n"
                    "\n"
                    "# Building project(s)\n"

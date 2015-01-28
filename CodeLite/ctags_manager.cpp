@@ -2257,7 +2257,7 @@ TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags, std::vector
     if(paramLen) {
         paramLen->clear();
     }
-    if(flags & Normalize_Func_Arg_Per_Line && li.size()) {
+    if(flags & Normalize_Func_Arg_Per_Line && !li.empty()) {
         str_output << wxT("\n    ");
     }
 
@@ -2328,7 +2328,7 @@ TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags, std::vector
             paramLen->push_back(std::pair<int, int>(start_offset, str_output.length() - start_offset));
         }
         str_output << wxT(", ");
-        if(flags & Normalize_Func_Arg_Per_Line && li.size()) {
+        if(flags & Normalize_Func_Arg_Per_Line && !li.empty()) {
             str_output << wxT("\n    ");
         }
     }
@@ -2707,7 +2707,7 @@ void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagE
         tmpScope = DoReplaceMacros(tmpScope);
 
         GetDatabase()->GetDereferenceOperator(tmpScope, tags);
-        if(tags.size()) {
+        if(!tags.empty()) {
 
             // No need to further check
             break;
@@ -2731,7 +2731,7 @@ void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEnt
         tmpScope = DoReplaceMacros(tmpScope);
 
         GetDatabase()->GetSubscriptOperator(scope, tags);
-        if(tags.size()) {
+        if(!tags.empty()) {
 
             // No need to further check
             break;

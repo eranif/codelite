@@ -1198,7 +1198,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
     GdbChildrenInfo info;
     gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
-    if(info.children.size()) {
+    if(info.children.empty() == false) {
         std::map<std::string, std::string> attr = info.children.at(0);
         VariableObject vo;
         std::map<std::string, std::string>::const_iterator iter;
@@ -1515,7 +1515,7 @@ bool DbgCmdHandlerDisassebleCurLine::ProcessOutput(const wxString& line)
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
     DebuggerEventData* evtData = new DebuggerEventData();
-    if(info.children.size()) {
+    if(info.children.empty() == false) {
 
         DisassembleEntry entry;
         GdbStringMap_t& attrs = info.children.at(0);

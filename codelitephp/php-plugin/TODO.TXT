@@ -10,7 +10,6 @@ Code Completion / Code Generation
 
 Must:
 =====
-- Setter/Getter dialog
 
 Misc:
 =====

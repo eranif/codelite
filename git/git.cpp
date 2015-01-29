@@ -677,7 +677,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     }
 
     gitAction ga(gitResetFile, filelist);
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     ProcessGitActionQueue();
     RefreshFileListView();
@@ -707,7 +707,7 @@ void GitPlugin::OnSwitchLocalBranch(wxCommandEvent& e)
     if(selection.IsEmpty()) return;
 
     gitAction ganew(gitBranchSwitch, selection);
-    m_gitActionQueue.push(ganew);
+    m_gitActionQueue.push_back(ganew);
     AddDefaultActions();
     m_mgr->SaveAll();
     ProcessGitActionQueue();
@@ -741,7 +741,7 @@ void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent& e)
     if(localBranch.IsEmpty()) return;
 
     gitAction ganew(gitBranchSwitchRemote, localBranch + wxT(" ") + selection);
-    m_gitActionQueue.push(ganew);
+    m_gitActionQueue.push_back(ganew);
 
     AddDefaultActions();
     m_mgr->SaveAll();
@@ -756,13 +756,13 @@ void GitPlugin::OnCreateBranch(wxCommandEvent& e)
     if(newBranch.IsEmpty()) return;
 
     gitAction ga(gitBranchCreate, newBranch);
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     if(wxMessageBox(_("Switch to new branch once it is created?"), _("Switch to new branch"), wxYES_NO, m_topWindow) ==
        wxYES) {
         ga.action = gitBranchSwitch;
         ga.arguments = newBranch;
-        m_gitActionQueue.push(ga);
+        m_gitActionQueue.push_back(ga);
         AddDefaultActions();
         m_mgr->SaveAll();
     }
@@ -774,7 +774,7 @@ void GitPlugin::OnCommit(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     gitAction ga(gitDiffRepoCommit, wxT(""));
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
 
@@ -783,7 +783,7 @@ void GitPlugin::OnCommitList(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     gitAction ga(gitCommitList, wxT(""));
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
 
@@ -793,7 +793,7 @@ void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     gitAction ga(gitDiffRepoShow, wxT(""));
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
 
@@ -825,7 +825,7 @@ void GitPlugin::OnPush(wxCommandEvent& e)
             }
         }
         gitAction ga(gitPush, remote + wxT(" ") + m_currentBranch);
-        m_gitActionQueue.push(ga);
+        m_gitActionQueue.push_back(ga);
         ProcessGitActionQueue();
     }
 }
@@ -846,15 +846,15 @@ void GitPlugin::OnPull(wxCommandEvent& e)
         m_mgr->SaveAll();
         if(m_console->IsDirty()) {
             gitAction ga(gitStash, wxT(""));
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
         }
         {
             gitAction ga(gitPull, argumentString);
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
         }
         if(m_console->IsDirty()) {
             gitAction ga(gitStashPop, wxT(""));
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
         }
         AddDefaultActions();
         ProcessGitActionQueue();
@@ -870,7 +870,7 @@ void GitPlugin::OnResetRepository(wxCommandEvent& e)
                     wxYES_NO,
                     m_topWindow) == wxYES) {
         gitAction ga(gitResetRepo, wxT(""));
-        m_gitActionQueue.push(ga);
+        m_gitActionQueue.push_back(ga);
         AddDefaultActions();
         ProcessGitActionQueue();
     }
@@ -916,7 +916,7 @@ void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     gitAction ga(gitListAll, wxT(""));
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     AddDefaultActions();
     ProcessGitActionQueue();
 }
@@ -925,7 +925,7 @@ void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     gitAction ga(gitGarbageCollection, wxT(""));
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
 
@@ -976,14 +976,14 @@ void GitPlugin::OnFileSaved(clCommandEvent& e)
         if(!it->second.IsOk()) {
             GIT_MESSAGE(wxT("Stored item not found in tree, rebuilding item IDs"));
             gitAction ga(gitListAll, wxT(""));
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
             break;
         }
         DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), it->second, OverlayTool::Bmp_Modified);
     }
 
     gitAction ga(gitListModified, wxT(""));
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 
     RefreshFileListView();
@@ -1051,7 +1051,7 @@ void GitPlugin::ProcessGitActionQueue()
     // return
     gitAction ga = m_gitActionQueue.front();
     if(m_repositoryDirectory.IsEmpty() && ga.action != gitClone) {
-        m_gitActionQueue.pop();
+        m_gitActionQueue.pop_front();
         return;
     }
 
@@ -1546,7 +1546,8 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
     m_commandOutput.append(ped->GetData());
 
     wxDELETE(ped);
-
+    if(m_gitActionQueue.empty()) return;
+    
     gitAction ga = m_gitActionQueue.front();
     if(ga.action != gitDiffFile) {
         // Dont manipulate the output if its a diff...
@@ -1588,7 +1589,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
         DoShowCommitDialog(m_commandOutput, commitArgs);
         if(!commitArgs.IsEmpty()) {
             gitAction ga(gitCommit, commitArgs);
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
             AddDefaultActions();
         }
 
@@ -1602,7 +1603,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
 
         gitAction newAction;
         newAction.action = gitListModified;
-        m_gitActionQueue.push(newAction);
+        m_gitActionQueue.push_back(newAction);
 
     } else if(ga.action == gitBranchCurrent) {
         GetCurrentBranchAction(ga);
@@ -1646,7 +1647,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                         if(selection.IsEmpty()) return;
 
                         gitAction ga(gitRebase, selection);
-                        m_gitActionQueue.push(ga);
+                        m_gitActionQueue.push_back(ga);
                     }
                 } else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
                     wxMessageBox(wxT("There was a conflict during merge.\n"
@@ -1661,9 +1662,9 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
         } else if(ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote) {
             // update the tree
             gitAction ga(gitListAll, wxT(""));
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
             ga.action = gitListModified;
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
         }
     } else if(ga.action == gitCommitList) {
         GitCommitListDlg* dlg = new GitCommitListDlg(m_topWindow, m_repositoryDirectory, this);
@@ -1682,7 +1683,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
 
     wxDELETE(m_process);
     m_commandOutput.Clear();
-    m_gitActionQueue.pop();
+    m_gitActionQueue.pop_front();
     ProcessGitActionQueue();
 }
 
@@ -1811,7 +1812,7 @@ void GitPlugin::InitDefaults()
         m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
 #endif
         gitAction ga(gitListAll, wxT(""));
-        m_gitActionQueue.push(ga);
+        m_gitActionQueue.push_back(ga);
         AddDefaultActions();
         ProcessGitActionQueue();
     }
@@ -1821,28 +1822,28 @@ void GitPlugin::InitDefaults()
 void GitPlugin::AddDefaultActions()
 {
     gitAction ga(gitBranchCurrent, wxT(""));
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     //    ga.action = gitListAll;
-    //    m_gitActionQueue.push(ga);
+    //    m_gitActionQueue.push_back(ga);
 
     ga.action = gitListModified;
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     // ga.action = gitUpdateRemotes;
-    // m_gitActionQueue.push(ga);
+    // m_gitActionQueue.push_back(ga);
 
     ga.action = gitBranchList;
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     ga.action = gitBranchListRemote;
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     ga.action = gitListRemotes;
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     ga.action = gitStatus;
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 }
 
 /*******************************************************************************/
@@ -1972,7 +1973,7 @@ void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 
 void GitPlugin::DoCleanup()
 {
-    m_gitActionQueue = std::queue<gitAction>();
+    m_gitActionQueue.clear();
     m_repositoryDirectory.Clear();
     m_remotes.Clear();
     m_localBranchList.Clear();
@@ -2055,7 +2056,7 @@ void GitPlugin::OnClone(wxCommandEvent& e)
         ga.action = gitClone;
         ga.arguments = dlg.GetCloneURL();
         ga.workingDirectory = dlg.GetTargetDirectory();
-        m_gitActionQueue.push(ga);
+        m_gitActionQueue.push_back(ga);
         ProcessGitActionQueue();
         RefreshFileListView();
     }
@@ -2073,7 +2074,7 @@ void GitPlugin::DoAddFiles(const wxArrayString& files)
     }
 
     gitAction ga(gitAddFile, filesToAdd);
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     AddDefaultActions();
     ProcessGitActionQueue();
@@ -2089,7 +2090,7 @@ void GitPlugin::DoResetFiles(const wxArrayString& files)
     }
 
     gitAction ga(gitResetFile, filesToDelete);
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
     AddDefaultActions();
     RefreshFileListView();
@@ -2105,7 +2106,7 @@ void GitPlugin::UndoAddFiles(const wxArrayString& files)
     }
 
     gitAction ga(gitUndoAdd, filesToDelete);
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 
     RefreshFileListView();
@@ -2115,7 +2116,7 @@ void GitPlugin::RefreshFileListView()
 {
     gitAction ga;
     ga.action = gitStatus;
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
 
@@ -2155,7 +2156,7 @@ void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files)
         wxFileName fn(files.Item(i));
         fn.MakeRelativeTo(m_repositoryDirectory);
         gitAction ga(gitDiffFile, fn.GetFullPath(wxPATH_UNIX));
-        m_gitActionQueue.push(ga);
+        m_gitActionQueue.push_back(ga);
     }
 
     ProcessGitActionQueue();
@@ -2169,11 +2170,11 @@ void GitPlugin::OnStartGitkUI(wxUpdateUIEvent& e)
 void GitPlugin::ApplyPatch(const wxString& filename, const wxString& extraFlags)
 {
     gitAction ga(gitApplyPatch, wxString() << extraFlags << " \"" << filename << "\" ");
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
 
     // Trigger a refresh
     gitAction gaStatus(gitStatus, "");
-    m_gitActionQueue.push(gaStatus);
+    m_gitActionQueue.push_back(gaStatus);
 
     ProcessGitActionQueue();
 }
@@ -2184,7 +2185,7 @@ void GitPlugin::OnWorkspaceConfigurationChanged(wxCommandEvent& e)
 
     // Trigger a refresh
     gitAction gaStatus(gitStatus, "");
-    m_gitActionQueue.push(gaStatus);
+    m_gitActionQueue.push_back(gaStatus);
     ProcessGitActionQueue();
 }
 
@@ -2197,7 +2198,7 @@ wxFileName GitPlugin::GetWorkspaceFileName() const { return m_workspaceFilename;
 void GitPlugin::RevertCommit(const wxString& commitId)
 {
     gitAction ga(gitRevertCommit, commitId);
-    m_gitActionQueue.push(ga);
+    m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
 
@@ -2283,15 +2284,15 @@ void GitPlugin::OnRebase(wxCommandEvent& e)
         m_mgr->SaveAll();
         if(m_console->IsDirty()) {
             gitAction ga(gitStash, wxT(""));
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
         }
         {
             gitAction ga(gitRebase, argumentString);
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
         }
         if(m_console->IsDirty()) {
             gitAction ga(gitStashPop, wxT(""));
-            m_gitActionQueue.push(ga);
+            m_gitActionQueue.push_back(ga);
         }
         AddDefaultActions();
         ProcessGitActionQueue();
@@ -2314,7 +2315,7 @@ void GitPlugin::DoRecoverFromGitCommandError()
 {
     // Last action failed, clear queue
     while(!m_gitActionQueue.empty()) {
-        m_gitActionQueue.pop();
+        m_gitActionQueue.pop_front();
     }
 
     wxDELETE(m_process);

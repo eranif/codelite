@@ -142,7 +142,7 @@ class GitPlugin : public IPlugin
     wxString m_pathGITKExecutable;
     wxString m_repositoryDirectory;
     wxString m_currentBranch;
-    std::queue<gitAction> m_gitActionQueue;
+    std::list<gitAction> m_gitActionQueue;
     wxTimer m_progressTimer;
     wxString m_progressMessage;
     wxString m_commandOutput;

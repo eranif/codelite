@@ -39,6 +39,7 @@
 #include "workspace.h"
 #include "plugin.h"
 #include "cl_command_event.h"
+#include "ICompilerLocator.h"
 
 CleanRequest::CleanRequest(const QueueCommand &info)
     : ShellCommand(info)
@@ -86,12 +87,13 @@ void CleanRequest::Process(IManager *manager)
     BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
     if(bldConf) {
         wxString cmpType = bldConf->GetCompilerType();
-        CompilerPtr cmp = bsc->GetCompiler(cmpType);
-        if(cmp) {
-            wxString value( cmp->GetPathVariable() );
-            if(value.Trim().Trim(false).IsEmpty() == false) {
-                wxLogMessage(wxString::Format(wxT("Setting PATH to '%s'"), value.c_str()));
-                om[wxT("PATH")] = value.Trim().Trim(false);
+        if (bldConf) {
+            wxString cmpType = bldConf->GetCompilerType();
+            CompilerPtr cmp = bsc->GetCompiler(cmpType);
+            if (cmp) {
+                // Add the 'bin' folder of the compiler to the PATH environment variable
+                wxFileName cxx = cmp->GetTool("CXX");
+                om["PATH"] = wxString() << cxx.GetPath() << clPATH_SEPARATOR << "$PATH";
             }
         }
     } else {

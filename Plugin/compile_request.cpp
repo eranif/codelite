@@ -40,6 +40,7 @@
 #include "dirsaver.h"
 #include "plugin.h"
 #include "cl_command_event.h"
+#include "ICompilerLocator.h"
 
 CompileRequest::CompileRequest(const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly, bool preprocessOnly)
     : ShellCommand(buildInfo)
@@ -126,11 +127,9 @@ void CompileRequest::Process(IManager *manager)
         wxString cmpType = bldConf->GetCompilerType();
         CompilerPtr cmp = bsc->GetCompiler(cmpType);
         if (cmp) {
-            wxString value( cmp->GetPathVariable() );
-            if (value.Trim().Trim(false).IsEmpty() == false) {
-                wxLogMessage(wxString::Format(wxT("Setting PATH to '%s'"), value.c_str()));
-                om[wxT("PATH")] = value.Trim().Trim(false);
-            }
+            // Add the 'bin' folder of the compiler to the PATH environment variable
+            wxFileName cxx = cmp->GetTool("CXX");
+            om["PATH"] = wxString() << cxx.GetPath() << clPATH_SEPARATOR << "$PATH";
         }
     }
 

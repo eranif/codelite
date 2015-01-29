@@ -149,4 +149,11 @@ typedef std::map<wxString, wxString> wxStringMap_t;
 #define CHECK_ITEM_RET_NULL(item) if ( !item.IsOk() ) return NULL
 #define CHECK_ITEM_RET_EMPTY_STRING(item) if ( !item.IsOk() ) return wxEmptyString
 
+// PATH environment variable separator
+#ifdef __WXMSW__
+#define clPATH_SEPARATOR ";"
+#else
+#define clPATH_SEPARATOR ":"
+#endif
+
 #endif // MACROS_H

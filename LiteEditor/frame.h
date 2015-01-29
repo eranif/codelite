@@ -290,7 +290,7 @@ public:
     /**
      * @brief save the current IDE layout and session
      */
-    void SaveLayoutAndSession();
+    bool SaveLayoutAndSession();
 
     /**
      * @brief create the recently-opened-workspaces menu

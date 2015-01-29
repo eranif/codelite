@@ -2307,6 +2307,12 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
+    if(!SaveLayoutAndSession()) {
+        event.Veto();
+        event.Skip(false);
+        return;
+    }
+    
     event.Skip();
     wxString msg;
     ManagerST::Get()->SetShutdownInProgress(true);
@@ -2326,7 +2332,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
     if(debugger && debugger->IsRunning()) ManagerST::Get()->DbgStop();
 
-    SaveLayoutAndSession();
+    
 
     // In case we got some data in the clipboard, flush it so it will be available
     // after our process exits
@@ -5077,10 +5083,13 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
     return true;
 }
 
-void clMainFrame::SaveLayoutAndSession()
+bool clMainFrame::SaveLayoutAndSession()
 {
-    // EditorConfigST::Get()->SaveLexers();
-
+    // make sure there are no 'unsaved documents'
+    if(!GetMainBook()->CloseAll(true)) {
+        return false;
+    }
+    
     // save general information
     if(IsMaximized()) {
         m_frameGeneralInfo.SetFrameSize(wxSize(800, 600));
@@ -5111,9 +5120,6 @@ void clMainFrame::SaveLayoutAndSession()
         SessionManager::Get().SetLastWorkspaceName(sessionName);
     }
 
-    // make sure there are no 'unsaved documents'
-    GetMainBook()->CloseAll(false);
-
     // keep list of all detached panes
     wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
     DetachedPanesInfo dpi(panes);
@@ -5128,6 +5134,7 @@ void clMainFrame::SaveLayoutAndSession()
     EditorConfigST::Get()->SetInteger(wxT("MainBook"), GetMainBook()->GetBookStyle());
     EditorConfigST::Get()->SetInteger(wxT("FindResults"), GetOutputPane()->GetFindResultsTab()->GetBookStyle());
     EditorConfigST::Get()->Save();
+    return true;
 }
 
 void clMainFrame::OnNextFiFMatch(wxCommandEvent& e)

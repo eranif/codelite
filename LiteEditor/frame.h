@@ -51,6 +51,7 @@
 #include <wx/splash.h>
 
 // forward decls
+class wxCustomStatusBar;
 class TagEntry;
 class WorkspacePane;
 class wxToolBar;
@@ -107,7 +108,6 @@ class clMainFrame : public wxFrame
     GeneralInfo m_frameGeneralInfo;
     std::map<int, wxString> m_toolbars;
     std::map<int, wxString> m_panes;
-    std::vector<std::map<int, wxString> > m_status;
     wxMenu* m_cppMenu;
     bool m_highlightWord;
     DockablePaneMenuManager* m_DPmenuMgr;
@@ -127,7 +127,7 @@ class clMainFrame : public wxFrame
 #endif
     // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
     wxStringSet_t m_coreToolbars;
-    
+    wxCustomStatusBar* m_statusBar;
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);

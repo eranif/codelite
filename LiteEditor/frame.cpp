@@ -61,6 +61,7 @@
 #include "cl_standard_paths.h"
 #include "ColoursAndFontsManager.h"
 #include "fileutils.h"
+#include "wxCustomStatusBar.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1169,12 +1170,18 @@ void clMainFrame::CreateGUIControls(void)
     ParseThreadST::Get()->SetNotifyWindow(this);
 
     // And finally create a status bar
-    wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
-    SetStatusBar(statusBar);
-    m_status.resize(3);
-    GetStatusBar()->SetFieldsCount(m_status.size());
-    SetStatusMessage(_("Ready"), 0);
-    SetStatusMessage(_("Done"), m_status.size() - 1);
+    m_statusBar = new wxCustomStatusBar(this, wxID_ANY);
+    SetStatusBar(m_statusBar);
+    
+    // Add 2 text fields (in addition to the main one)
+    wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(350));
+    m_statusBar->AddField(messages);
+
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(250));
+    m_statusBar->AddField(lineCol);
+    
+    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(100));
+    m_statusBar->AddField(language);
 
     // update ctags options
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
@@ -4470,15 +4477,15 @@ void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent& e)
 
 void clMainFrame::SetStatusMessage(const wxString& msg, int col, int seconds_to_live /*=wxID_ANY*/)
 {
-    SetStatusText(msg, col);
-    // if ((col > 0)						// We only auto-delete in column 0
-    //     || (seconds_to_live == 0)	// which means keep forever
-    //     || msg.empty()) {			// not much point deleting an empty string
-    //     return;
-    // }
-    //
-    // int seconds = (seconds_to_live > 0 ? seconds_to_live : 30);
-    // m_statusbarTimer->Start(seconds * 1000, wxTIMER_ONE_SHOT);
+    if(col == -1) {
+        m_statusBar->SetText(msg);
+        
+    } else {
+        wxCustomStatusBarField::Ptr_t field = m_statusBar->GetField(col);
+        CHECK_PTR_RET(field);
+        field->Cast<wxCustomStatusBarFieldText>()->SetText(msg);
+        m_statusBar->Refresh();
+    }
 }
 
 void clMainFrame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
@@ -4595,6 +4602,16 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     if(editor) {
         fullname = editor->GetFileName().GetFullName();
         fullpath = editor->GetFileName().GetFullPath();
+        m_statusBar->SetText(fullpath);
+        wxString lang;
+        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(fullpath);
+        if(lexer) {
+            lang = lexer->GetName().Capitalize();
+        }
+        m_statusBar->GetField(2)->Cast<wxCustomStatusBarFieldText>()->SetText(lang);
+    } else {
+        m_statusBar->SetText("");
+        m_statusBar->GetField(2)->Cast<wxCustomStatusBarFieldText>()->SetText("");
     }
 
     pattern.Replace("$workspace", workspace);
@@ -5328,11 +5345,6 @@ void clMainFrame::SelectBestEnvSet()
 
     preDefTypeMap.SetActive(dbgSetName);
     DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefTypeMap);
-
-    wxString displayString = wxString::Format(
-        wxT("Env: %s, Dbg: %s"), activeSetName.c_str(), preDefTypeMap.GetActiveSet().GetName().c_str());
-
-    SetStatusMessage(displayString, 2);
 }
 
 void clMainFrame::OnClearTagsCache(wxCommandEvent& e)

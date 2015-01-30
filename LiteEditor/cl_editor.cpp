@@ -1054,10 +1054,7 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     // update line number
     wxString message;
 
-    message << wxT("Ln ") << curLine + 1 << wxT(" Col ") << GetColumn(pos) << wxT(" Pos ") << pos;
-
-    wxString bookmarkString = GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
-    message << ", " << bookmarkString;
+    message << wxT("Ln ") << curLine + 1 << wxT(", Col ") << GetColumn(pos) << wxT(", Pos ") << pos;
 
     // Always update the status bar with event, calling it directly causes performance degredation
     DoSetStatusMessage(message, 1);

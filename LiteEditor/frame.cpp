@@ -709,8 +709,6 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     long value = EditorConfigST::Get()->GetInteger(wxT("highlight_word"), 0);
     m_highlightWord = (bool)value;
 
-    m_statusbarTimer = new StatusbarTimer(this);
-
     CreateGUIControls();
 
     ManagerST::Get();              // Dummy call
@@ -897,8 +895,7 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(
         wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     wxDELETE(m_timer);
-    wxDELETE(m_statusbarTimer);
-
+    
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
     ManagerST::Get()->GetPerspectiveManager().DisconnectEvents();

@@ -78,20 +78,6 @@ struct StartPageData {
     wxString action;
 };
 
-class StatusbarTimer : public wxTimer // Notify() clears pane 0 of the statusbar
-{
-public:
-    StatusbarTimer(wxFrame* frame)
-        : m_frame(frame)
-    {
-    }
-
-protected:
-    void Notify() { m_frame->SetStatusText(wxT(""), 0); }
-
-    wxFrame* m_frame;
-};
-
 class clMainFrame : public wxFrame
 {
     MainBook* m_mainBook;
@@ -117,7 +103,6 @@ class clMainFrame : public wxFrame
     bool m_workspaceRetagIsRequired;
     bool m_loadLastSession;
     wxSizer* m_horzSizer;
-    StatusbarTimer* m_statusbarTimer;
     MyMenuBar* m_myMenuBar;
     wxMenu* m_bookmarksDropDownMenu;
     ThemeHandler m_themeHandler;

@@ -153,6 +153,8 @@ public:
     virtual void OpenFindInFileForPath(const wxString &path);
     virtual void OpenFindInFileForPaths(const wxArrayString &paths);
     virtual void ShowOutputPane(const wxString &selectedWindow = "");
+    virtual clStatusBar* GetStatusBar();
+    
     //------------------------------------
     // End of IManager interface
     //------------------------------------

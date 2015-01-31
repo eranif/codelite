@@ -807,3 +807,8 @@ size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
     clMainFrame::Get()->GetMainBook()->GetAllTabs(tabs);
     return tabs.size();
 }
+
+clStatusBar* PluginManager::GetStatusBar()
+{
+    return static_cast<clStatusBar*>(return clMainFrame::Get()->GetStatusBar());
+}

@@ -4645,8 +4645,8 @@ void LEditor::PasteLineAbove()
 void LEditor::OnKeyUp(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetModifiers() == wxMOD_SHIFT || event.GetModifiers() == wxMOD_CONTROL ||
-       event.GetModifiers() == wxMOD_ALT) {
+    if(event.GetKeyCode() == WXK_CONTROL || event.GetKeyCode() == WXK_SHIFT ||
+       event.GetKeyCode() == WXK_ALT) {
 
         // Clear hyperlink markers
         SetIndicatorCurrent(HYPERLINK_INDICATOR);

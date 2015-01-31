@@ -38,6 +38,7 @@
 #include "notebook_ex.h"
 #include <vector>
 #include "debugger.h"
+#include "clStatusBar.h"
 
 class TagsManager;
 class Workspace;
@@ -103,6 +104,12 @@ public:
      * editor open
      */
     virtual IEditor* GetActiveEditor() = 0;
+    
+    /**
+     * @brief return the main frame's status bar
+     */
+    virtual clStatusBar* GetStatusBar() = 0;
+    
     /**
      * @brief open file and make it the active editor
      * @param fileName the file to open - use absolute path

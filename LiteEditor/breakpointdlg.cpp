@@ -90,7 +90,7 @@ void BreakpointDlg::OnDelete(wxCommandEvent &e)
         ManagerST::Get()->GetBreakpointsMgr()->DelBreakpoint(id);
         m_selectedItem = wxNOT_FOUND;
 
-        clMainFrame::Get()->SetStatusMessage(_("Breakpoint successfully deleted"), 0);
+        clMainFrame::Get()->GetStatusBar()->SetMessage(_("Breakpoint successfully deleted"));
     }
 
     Initialize(); // ReInitialise, as either a bp was deleted, or the data was corrupt
@@ -103,7 +103,7 @@ void BreakpointDlg::OnDeleteAll(wxCommandEvent &e)
     m_selectedItem = wxNOT_FOUND;
     Initialize();
 
-    clMainFrame::Get()->SetStatusMessage(_("All Breakpoints deleted"), 0);
+    clMainFrame::Get()->GetStatusBar()->SetMessage(_("All Breakpoints deleted"));
     
     wxCommandEvent evtDelAll(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED);
     EventNotifier::Get()->AddPendingEvent( evtDelAll );
@@ -115,7 +115,7 @@ void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
     ManagerST::Get()->GetBreakpointsMgr()->ApplyPendingBreakpoints();
     Initialize();
 
-    clMainFrame::Get()->SetStatusMessage(_("Pending Breakpoints reapplied"), 0);
+    clMainFrame::Get()->GetStatusBar()->SetMessage(_("Pending Breakpoints reapplied"));
 }
 
 void BreakpointDlg::OnItemSelected(wxListEvent &e)

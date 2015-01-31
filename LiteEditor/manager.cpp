@@ -929,7 +929,7 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
         parsingRequest->_evtHandler = this;
         parsingRequest->_quickRetag = (type == TagsManager::Retag_Quick);
         ParseThreadST::Get()->Add(parsingRequest);
-        clMainFrame::Get()->SetStatusMessage(_("Scanning for include files to parse..."), 0);
+        clMainFrame::Get()->GetStatusBar()->SetMessage("Scanning for include files to parse...");
 
     } else if(type == TagsManager::Retag_Quick_No_Scan) {
         parsingRequest->setType(ParseRequest::PR_PARSE_FILE_NO_INCLUDES);
@@ -961,7 +961,7 @@ void Manager::RetagFile(const wxString& filename)
     ParseThreadST::Get()->Add(req);
 
     wxString msg = wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str());
-    clMainFrame::Get()->SetStatusMessage(msg, 0);
+    clMainFrame::Get()->GetStatusBar()->SetMessage(msg);
 }
 
 //--------------------------- Project Files Mgmt -----------------------------
@@ -3419,7 +3419,7 @@ void Manager::UpdateParserPaths(bool notify)
 
 void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
 {
-    clMainFrame::Get()->SetStatusMessage(_("Retagging..."), 0);
+    clMainFrame::Get()->GetStatusBar()->SetMessage(_("Retagging..."));
 
     wxBusyCursor busyCursor;
     std::set<wxString>* fileSet = (std::set<wxString>*)event.GetClientData();
@@ -3590,7 +3590,7 @@ void Manager::GenerateCompileCommands()
     if(WorkspaceST::Get()->IsOpen()) {
         CompileCommandsCreateor* job = new CompileCommandsCreateor(WorkspaceST::Get()->GetWorkspaceFileName());
         JobQueueSingleton::Instance()->PushJob(job);
-        clMainFrame::Get()->SetStatusMessage(_("Generating compile_commands.json file..."), 0);
+        clMainFrame::Get()->GetStatusBar()->SetMessage(_("Generating compile_commands.json file..."));
     }
 }
 

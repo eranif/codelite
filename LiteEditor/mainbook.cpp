@@ -1071,7 +1071,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
 
     if(!editor) {
         clMainFrame::Get()->SetFrameTitle(NULL);
-        clMainFrame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator
+        clMainFrame::Get()->GetStatusBar()->SetLinePosColumn(wxEmptyString);
         UpdateNavBar(NULL);
         SendCmdEvent(wxEVT_CMD_PAGE_CHANGED, win);
 

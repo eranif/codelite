@@ -52,6 +52,7 @@
 #define USER_INDICATOR 3
 #define HYPERLINK_INDICATOR 4
 
+class IManager;
 class wxFindReplaceDialog;
 class CCBox;
 class clEditorTipWindow;
@@ -222,13 +223,15 @@ protected:
     SelectionInfo m_prevSelectionInfo;
     MarkWordInfo m_highlightedWordInfo;
     wxTimer *m_timerHighlightMarkers;
-    
+    IManager* m_mgr;
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
     static bool m_ccInitialized;
     typedef std::vector<LEditor*> Vec_t;
-
+    
+    IManager* GetManager() { return m_mgr; }
+    
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 
@@ -855,7 +858,6 @@ private:
     void BraceMatch(const bool& bSelRegion);
     void BraceMatch(long pos);
     void DoHighlightWord();
-    void DoSetStatusMessage(const wxString& msg, int col, int seconds_to_live = wxID_ANY);
     bool IsOpenBrace(int position);
     bool IsCloseBrace(int position);
     size_t GetCodeNavModifier();

@@ -49,7 +49,6 @@ const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started
 const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED = XRCID("clang_pch_cache_ended");
 const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED = XRCID("clang_pch_cache_cleared");
 const wxEventType wxEVT_CLANG_TU_CREATE_ERROR = XRCID("clang_pch_create_error");
-extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
 
 ClangWorkerThread::ClangWorkerThread() { clang_toggleCrashRecovery(1); }
 

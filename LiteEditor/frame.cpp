@@ -156,7 +156,6 @@ extern unsigned char cubes_alpha[];
 
 static int FrameTimerId = wxNewId();
 
-const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
 const wxEventType wxEVT_LOAD_PERSPECTIVE = XRCID("load_perspective");
 const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU = XRCID("refresh_perspective_menu");
 const wxEventType wxEVT_ACTIVATE_EDITOR = XRCID("activate_editor");
@@ -665,7 +664,6 @@ EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_READY, clMainFrame::OnParserThreadReady
 
 EVT_COMMAND(wxID_ANY, wxEVT_ACTIVATE_EDITOR, clMainFrame::OnActivateEditor)
 
-EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, clMainFrame::OnSetStatusMessage)
 EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE, clMainFrame::OnDatabaseUpgrade)
 EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE_INTER, clMainFrame::OnDatabaseUpgradeInternally)
 EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU, clMainFrame::OnRefreshPerspectiveMenu)
@@ -2663,7 +2661,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             previousgroups.Insert(filepath, 0);
             EditorConfigST::Get()->SetRecentItems(previousgroups, wxT("RecentTabgroups"));
 
-            SetStatusMessage(_("Tab group saved"), 0);
+            m_statusBar->SetMessage(_("Tab group saved"));
         }
 
         return;
@@ -3078,7 +3076,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         wxString workspacePath = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
         ::wxSetWorkingDirectory(workspacePath);
         wxLogMessage("Setting working directory to: %s", workspacePath);
-        SetStatusMessage(_("Build starting..."), 0);
+        m_statusBar->SetMessage(_("Build starting..."));
 
         wxString conf, projectName;
         projectName = ManagerST::Get()->GetActiveProjectName();
@@ -3097,7 +3095,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         ManagerST::Get()->PushQueueCommand(info);
         ManagerST::Get()->ProcessCommandQueue();
 
-        SetStatusMessage(_("Done"), 0);
+        m_statusBar->SetMessage(_("Done"));
     }
 }
 
@@ -4465,12 +4463,6 @@ void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent& e)
     }
 }
 
-void clMainFrame::SetStatusMessage(const wxString& msg, int col, int seconds_to_live)
-{
-    wxUnusedVar(seconds_to_live);
-    m_statusBar->SetMessage(msg, col);
-}
-
 void clMainFrame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
@@ -4585,16 +4577,6 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     if(editor) {
         fullname = editor->GetFileName().GetFullName();
         fullpath = editor->GetFileName().GetFullPath();
-        m_statusBar->SetText(fullpath);
-        wxString lang;
-        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(fullpath);
-        if(lexer) {
-            lang = lexer->GetName().Capitalize();
-        }
-        m_statusBar->GetField(2)->Cast<wxCustomStatusBarFieldText>()->SetText(lang);
-    } else {
-        m_statusBar->SetText("");
-        m_statusBar->GetField(2)->Cast<wxCustomStatusBarFieldText>()->SetText("");
     }
 
     pattern.Replace("$workspace", workspace);
@@ -5000,16 +4982,6 @@ void clMainFrame::OnShowFullScreen(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnSetStatusMessage(wxCommandEvent& e)
-{
-    CHECK_SHUTDOWN();
-
-    wxString msg = e.GetString();
-    int col = e.GetInt();
-    int seconds_to_live = e.GetId();
-    SetStatusMessage(msg, col, seconds_to_live);
-}
-
 void clMainFrame::OnReloadExternallModified(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -5334,7 +5306,7 @@ void clMainFrame::OnClearTagsCache(wxCommandEvent& e)
 {
     e.Skip();
     TagsManagerST::Get()->ClearTagsCache();
-    SetStatusMessage(_("Tags cache cleared"), 0);
+    m_statusBar->SetMessage(_("Tags cache cleared"));
 }
 
 void clMainFrame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
@@ -5465,7 +5437,7 @@ void clMainFrame::UpdateAUI()
 void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 {
     e.Skip();
-    SetStatusMessage(_("Done"), 0);
+    m_statusBar->SetMessage(_("Done"));
     GetWorkspacePane()->ClearProgress();
 
     // Clear all cached tags now that we got our database updated
@@ -5776,7 +5748,7 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
     }
 
     wxUnusedVar(e);
-    SetStatusMessage(wxEmptyString, 0);
+    m_statusBar->SetMessage(wxEmptyString);
 
     if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS)
         // no need to trigger another UpdateColour

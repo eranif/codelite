@@ -120,7 +120,7 @@ void BreakptMgr::AddBreakpoint()
         } else {
             msg = _("Breakpoint successfully added");
         }
-        clMainFrame::Get()->SetStatusMessage(msg, 0);
+        clMainFrame::Get()->GetStatusBar()->SetMessage(msg);
     }
 }
 
@@ -490,7 +490,7 @@ void BreakptMgr::SetAllBreakpointsEnabledState(bool enabled)
 
         wxString msg = wxString::Format(wxT("%u "), successes);
         msg << (enabled ? _("breakpoints enabled") : _("breakpoints disabled"));
-        clMainFrame::Get()->SetStatusMessage(msg, 0);
+        clMainFrame::Get()->GetStatusBar()->SetMessage(msg);
     }
 }
 

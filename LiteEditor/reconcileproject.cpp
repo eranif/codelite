@@ -678,7 +678,7 @@ void ReconcileProjectDlg::OnDeleteSelectedNewFiles(wxCommandEvent& e)
             ++successes;
         }
     }
-    clMainFrame::Get()->SetStatusMessage(wxString::Format(_("%i file(s) successfully deleted"), successes), 0);
+    clMainFrame::Get()->GetStatusBar()->SetMessage(wxString::Format(_("%i file(s) successfully deleted"), successes));
 }
 
 

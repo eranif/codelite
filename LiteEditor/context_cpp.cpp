@@ -2375,7 +2375,7 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const std::list<CppToken>&
     clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
 
     if(success) {
-        clMainFrame::Get()->SetStatusMessage(_("Symbol renamed"), 0);
+        GetCtrl().GetManager()->GetStatusBar()->SetMessage(_("Symbol renamed"));
     }
 }
 

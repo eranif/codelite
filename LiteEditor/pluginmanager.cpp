@@ -479,9 +479,11 @@ void PluginManager::EnableToolbars()
     }
 }
 
-void PluginManager::SetStatusMessage(const wxString& msg, int col, int seconds_to_live /*=wxID_ANY*/)
+void PluginManager::SetStatusMessage(const wxString& msg, int col, int seconds_to_live)
 {
-    clMainFrame::Get()->SetStatusMessage(msg, col, seconds_to_live);
+    wxUnusedVar(col);
+    wxUnusedVar(seconds_to_live);
+    GetStatusBar()->SetMessage(msg);
 }
 
 void PluginManager::ProcessCommandQueue() { ManagerST::Get()->ProcessCommandQueue(); }
@@ -810,5 +812,5 @@ size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
 
 clStatusBar* PluginManager::GetStatusBar()
 {
-    return static_cast<clStatusBar*>(return clMainFrame::Get()->GetStatusBar());
+    return static_cast<clStatusBar*>(clMainFrame::Get()->GetStatusBar());
 }

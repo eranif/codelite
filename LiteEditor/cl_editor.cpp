@@ -170,6 +170,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_pluginInitializedRMenu(false)
     , m_positionToEnsureVisible(wxNOT_FOUND)
     , m_findBookmarksActive(false)
+    , m_mgr(PluginManager::Get())
 {
     m_commandsProcessor.SetParent(this);
 
@@ -1057,7 +1058,7 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     message << wxT("Ln ") << curLine + 1 << wxT(", Col ") << GetColumn(pos) << wxT(", Pos ") << pos;
 
     // Always update the status bar with event, calling it directly causes performance degredation
-    DoSetStatusMessage(message, 1);
+    m_mgr->GetStatusBar()->SetLinePosColumn(message);
 
     SetIndicatorCurrent(MATCH_INDICATOR);
     IndicatorClearRange(0, pos);
@@ -2012,14 +2013,14 @@ void LEditor::FindNext(const FindReplaceData& data)
             // restore the caret
             DoSetCaretAt(saved_pos);
             // Kill the "...continued from start" statusbar message
-            clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
-            wxMessageBox(
+            m_mgr->GetStatusBar()->SetMessage("");
+            ::wxMessageBox(
                 _("Can not find the string '") + data.GetFindString() + wxT("'"), _("CodeLite"), wxOK | wxICON_WARNING);
         }
     } else {
         // The string *was* found, without needing to restart from the top
         // So cancel any previous statusbar restart message
-        clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
+        m_mgr->GetStatusBar()->SetMessage("");
     }
 }
 
@@ -2766,8 +2767,7 @@ void LEditor::ReloadFile()
     StoreCollapsedFoldsToArray(folds);
 
     int lineNumber = GetCurrentLine();
-
-    clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0);
+    m_mgr->GetStatusBar()->SetMessage(_("Loading file..."));
 
     wxString text;
 
@@ -2812,7 +2812,7 @@ void LEditor::ReloadFile()
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
     LoadMarkersFromArray(bookmarks);
     LoadCollapsedFoldsFromArray(folds);
-    clMainFrame::Get()->SetStatusMessage(_("Ready"), 0);
+    m_mgr->GetStatusBar()->SetMessage(_("Ready"));
 }
 
 void LEditor::SetEditorText(const wxString& text)
@@ -3312,7 +3312,7 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
         } else if(!conditions.IsEmpty()) {
             prefix = _("Conditional ");
         }
-        DoSetStatusMessage(prefix + message, 0);
+        m_mgr->GetStatusBar()->SetMessage(prefix + message);
     }
 }
 
@@ -3331,7 +3331,7 @@ void LEditor::DelBreakpoint(int lineno /*= -1*/)
     switch(result) {
     case true:
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-        DoSetStatusMessage(_("Breakpoint successfully deleted"), 0);
+        m_mgr->GetStatusBar()->SetMessage(_("Breakpoint successfully deleted"));
         return;
     case wxID_CANCEL:
         return;
@@ -4075,16 +4075,6 @@ void LEditor::OnDbgJumpToCursor(wxCommandEvent& event)
     }
 }
 
-void LEditor::DoSetStatusMessage(const wxString& msg, int col, int seconds_to_live /*=wxID_ANY*/)
-{
-    wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
-    e.SetEventObject(this);
-    e.SetString(msg);
-    e.SetInt(col);
-    e.SetId(seconds_to_live);
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
-}
-
 void LEditor::DoShowCalltip(int pos, const wxString& tip)
 {
     CodeCompletionBox::Get().CancelTip();
@@ -4645,8 +4635,7 @@ void LEditor::PasteLineAbove()
 void LEditor::OnKeyUp(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetKeyCode() == WXK_CONTROL || event.GetKeyCode() == WXK_SHIFT ||
-       event.GetKeyCode() == WXK_ALT) {
+    if(event.GetKeyCode() == WXK_CONTROL || event.GetKeyCode() == WXK_SHIFT || event.GetKeyCode() == WXK_ALT) {
 
         // Clear hyperlink markers
         SetIndicatorCurrent(HYPERLINK_INDICATOR);

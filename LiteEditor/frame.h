@@ -68,7 +68,6 @@ class clSplashScreen;
 //--------------------------------
 // Helper class
 //--------------------------------
-extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
 extern const wxEventType wxEVT_LOAD_PERSPECTIVE;
 extern const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU;
 extern const wxEventType wxEVT_ACTIVATE_EDITOR;
@@ -137,6 +136,11 @@ protected:
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
+    
+    /**
+     * @brief return the status bar
+     */
+    clStatusBar* GetStatusBar() { return m_statusBar; }
     
     /**
      * @brief update the parser (code completion) search paths using the
@@ -279,14 +283,6 @@ public:
      * @brief handle custom build targets events
      */
     void OnBuildCustomTarget(wxCommandEvent& event);
-
-    /**
-     * @brief set a status message
-     * @param msg the string to display
-     * @param col the statusbar pane to use
-     * @param seconds_to_live how many seconds to display it for; 0 == forever; -1 == use the default
-     */
-    void SetStatusMessage(const wxString& msg, int col, int seconds_to_live = wxID_ANY);
 
     /**
      * @brief save the current IDE layout and session
@@ -554,7 +550,6 @@ protected:
     void OnShowWhitespaceUI(wxUpdateUIEvent& e);
     void OnShowWhitespace(wxCommandEvent& e);
     void OnShowFullScreen(wxCommandEvent& e);
-    void OnSetStatusMessage(wxCommandEvent& e);
     void OnFindResourceXXX(wxCommandEvent& e);
     void OnShowActiveProjectSettings(wxCommandEvent& e);
     void OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e);

@@ -304,7 +304,7 @@ void QuickFindBar::DoSearch(size_t searchFlags, int posToSearchFrom)
 void QuickFindBar::OnHide(wxCommandEvent& e)
 {
     // Kill any "...continued from start" statusbar message
-    clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
+    clMainFrame::Get()->GetStatusBar()->SetMessage(wxEmptyString);
 
     Show(false);
     e.Skip();

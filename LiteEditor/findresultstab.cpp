@@ -700,12 +700,9 @@ void FindResultsTab::NextMatch()
                 return;
             }
         }
+        
         // if we are here, it means we are the end of the search results list, add a status message
-        wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
-        e.SetEventObject(this);
-        e.SetString(wxString::Format(_("Reached the end of 'find in files' search results list")));
-        e.SetInt(0);
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
+        clMainFrame::Get()->GetStatusBar()->SetMessage(_("Reached the end of the 'Find In Files' results"));
     }
 }
 
@@ -735,11 +732,7 @@ void FindResultsTab::PrevMatch()
             }
         }
         // if we are here, it means we are the top of the search results list, add a status message
-        wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
-        e.SetEventObject(this);
-        e.SetString(wxString::Format(_("Reached the beginning of 'find in files' search results list")));
-        e.SetInt(0);
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
+        clMainFrame::Get()->GetStatusBar()->SetMessage(_("Reached the start of the 'Find In Files' results"));
     }
 }
 
@@ -768,12 +761,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                     // We can't easily tell, so assume the worst and label the result invalid
                     removed = true;
                     // Explain the failure
-                    wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
-                    e.SetEventObject(this);
-                    e.SetString(wxString::Format(_("Search result no longer valid")));
-                    e.SetInt(0);
-                    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
-
+                    clMainFrame::Get()->GetStatusBar()->SetMessage(_("Search result is no longer valid"));
                     break;
                 } else if(changePosition <= position) {
                     position += changeLength;

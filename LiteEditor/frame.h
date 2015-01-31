@@ -49,6 +49,7 @@
 #include "ZombieReaperPOSIX.h"
 #include "macros.h"
 #include <wx/splash.h>
+#include "clStatusBar.h"
 
 // forward decls
 class wxCustomStatusBar;
@@ -127,7 +128,7 @@ class clMainFrame : public wxFrame
 #endif
     // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
     wxStringSet_t m_coreToolbars;
-    wxCustomStatusBar* m_statusBar;
+    clStatusBar* m_statusBar;
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);

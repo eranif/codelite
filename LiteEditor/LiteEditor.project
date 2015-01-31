@@ -536,6 +536,8 @@
     <File Name="save_perspective_as_dlg.h"/>
     <File Name="messagepane.wxcp"/>
     <File Name="quickfindbarbase_liteeditor_bitmaps.cpp"/>
+    <File Name="clStatusBar.h"/>
+    <File Name="clStatusBar.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

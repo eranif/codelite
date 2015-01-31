@@ -1170,19 +1170,9 @@ void clMainFrame::CreateGUIControls(void)
     ParseThreadST::Get()->SetNotifyWindow(this);
 
     // And finally create a status bar
-    m_statusBar = new wxCustomStatusBar(this, wxID_ANY);
+    m_statusBar = new clStatusBar(this);
     SetStatusBar(m_statusBar);
     
-    // Add 2 text fields (in addition to the main one)
-    wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(350));
-    m_statusBar->AddField(messages);
-
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(250));
-    m_statusBar->AddField(lineCol);
-    
-    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(100));
-    m_statusBar->AddField(language);
-
     // update ctags options
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
 
@@ -4475,17 +4465,10 @@ void clMainFrame::OnDockablePaneClosed(wxAuiManagerEvent& e)
     }
 }
 
-void clMainFrame::SetStatusMessage(const wxString& msg, int col, int seconds_to_live /*=wxID_ANY*/)
+void clMainFrame::SetStatusMessage(const wxString& msg, int col, int seconds_to_live)
 {
-    if(col == -1) {
-        m_statusBar->SetText(msg);
-        
-    } else {
-        wxCustomStatusBarField::Ptr_t field = m_statusBar->GetField(col);
-        CHECK_PTR_RET(field);
-        field->Cast<wxCustomStatusBarFieldText>()->SetText(msg);
-        m_statusBar->Refresh();
-    }
+    wxUnusedVar(seconds_to_live);
+    m_statusBar->SetMessage(msg, col);
 }
 
 void clMainFrame::OnFunctionCalltipUI(wxUpdateUIEvent& event)

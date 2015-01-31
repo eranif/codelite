@@ -5,11 +5,10 @@
 #include "imanager.h"
 #include "drawingutils.h"
 #include <wx/settings.h>
-#include "pluginmanager.h"
 #include "codelite_events.h"
 #include <wx/stc/stc.h>
 
-class clStatusBarArtNormal : public wxCustomStatusBarArt
+class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 {
 public:
     clStatusBarArtNormal()
@@ -22,11 +21,11 @@ public:
     virtual ~clStatusBarArtNormal() {}
 };
 
-clStatusBar::clStatusBar(wxWindow* parent, wxWindowID id)
-    : wxCustomStatusBar(parent, id)
+clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
+    : wxCustomStatusBar(parent)
+    , m_mgr(mgr)
 {
     SetArt(wxCustomStatusBarArt::Ptr_t(new clStatusBarArtNormal));
-    m_mgr = PluginManager::Get();
     
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clStatusBar::OnUpdateColour, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clStatusBar::OnUpdateColour, this);

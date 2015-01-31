@@ -1170,7 +1170,7 @@ void clMainFrame::CreateGUIControls(void)
     ParseThreadST::Get()->SetNotifyWindow(this);
 
     // And finally create a status bar
-    m_statusBar = new clStatusBar(this);
+    m_statusBar = new clStatusBar(this, PluginManager::Get());
     SetStatusBar(m_statusBar);
     
     // update ctags options

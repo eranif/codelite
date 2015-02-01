@@ -63,7 +63,9 @@ wxFlatButtonBarBase::wxFlatButtonBarBase(wxWindow* parent, wxWindowID id, const 
         bBitmapLoaded = true;
     }
     
-    m_mainSizer = new wxBoxSizer(wxHORIZONTAL);
+    m_mainSizer = new wxFlexGridSizer(0, 2, 0, 0);
+    m_mainSizer->SetFlexibleDirection( wxBOTH );
+    m_mainSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     this->SetSizer(m_mainSizer);
     
     SetSizeHints(-1,-1);

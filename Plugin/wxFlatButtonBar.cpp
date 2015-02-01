@@ -1,17 +1,17 @@
 #include "wxFlatButtonBar.h"
 #include <wx/dcbuffer.h>
 
-wxFlatButtonBar::wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme theme, int flags)
+wxFlatButtonBar::wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme theme, int rows, int cols)
     : wxFlatButtonBarBase(parent)
     , m_theme(theme)
-    , m_style(flags)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-
-    // Colours - dark theme
+    
+    m_mainSizer = new wxFlexGridSizer(rows, cols, 0, 0);
+    SetSizer(m_mainSizer);
+    
     SetBgColour(wxFlatButton::GetBarBgColour(theme));
     SetPenColour(wxFlatButton::GetBarBgColour(theme));
-    AddSpacer(2);
 }
 
 wxFlatButtonBar::~wxFlatButtonBar() {}
@@ -47,5 +47,10 @@ void wxFlatButtonBar::OnIdle(wxIdleEvent& event) { event.Skip(); }
 
 void wxFlatButtonBar::AddSpacer(int size)
 {
-    m_mainSizer->Add(size, 0, 0, wxEXPAND, 0);
+    m_mainSizer->Add(size, 0, 1, wxEXPAND, 0);
+}
+
+void wxFlatButtonBar::SetExpandableColumn(int col)
+{
+    m_mainSizer->AddGrowableCol(col, 1);
 }

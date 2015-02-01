@@ -34,7 +34,7 @@ wxFlatButtonEvent& wxFlatButtonEvent::operator=(const wxFlatButtonEvent& src)
 //++++++++---------------------------------
 #define X_SPACER 5
 #define Y_SPACER 3
-#define BTN_RADIUS 3
+#define BTN_RADIUS 0
 
 wxFlatButton::wxFlatButton(wxWindow* parent,
                            const wxString& label,

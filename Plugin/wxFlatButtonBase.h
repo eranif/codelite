@@ -37,7 +37,7 @@ public:
 class wxFlatButtonBarBase : public wxPanel
 {
 protected:
-    wxBoxSizer* m_mainSizer;
+    wxFlexGridSizer* m_mainSizer;
 
 protected:
     virtual void OnPaint(wxPaintEvent& event) { event.Skip(); }

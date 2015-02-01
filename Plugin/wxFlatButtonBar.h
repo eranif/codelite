@@ -10,7 +10,6 @@ class WXDLLIMPEXP_SDK wxFlatButtonBar : public wxFlatButtonBarBase
     wxFlatButton::eTheme m_theme;
     wxColour m_penColour;
     wxColour m_bgColour;
-    int m_style;
     
 public:
     /**
@@ -19,7 +18,8 @@ public:
      * @param theme the theme. Can be Dark or Normal
      * @param flags bar style flags. Only supported flag is wxNO_BORDER or 0
      */
-    wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme theme, int flags = 0);
+    wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme theme, int rows, int cols);
+    void SetExpandableColumn(int col);
     virtual ~wxFlatButtonBar();
 
     wxFlatButton*

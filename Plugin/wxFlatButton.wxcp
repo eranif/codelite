@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 29,
+  "m_objCounter": 32,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC9ED9InitBitmapResources",
   "m_bitmapsFile": "wxFlatButtonBaseBitmaps.cpp",
@@ -78,7 +78,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "wxFlatButtonBar:src"
+     "m_path": "plugin_sdk:GUI:Controls"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -222,7 +222,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "wxFlatButtonBar:src"
+     "m_path": "plugin_sdk:GUI:Controls"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -257,7 +257,7 @@
      "m_noBody": false
     }],
    "m_children": [{
-     "m_type": 4401,
+     "m_type": 4403,
      "proportion": 1,
      "border": 5,
      "gbSpan": "1,1",
@@ -273,13 +273,51 @@
        "m_label": "Style:",
        "m_value": ""
       }, {
-       "type": "choice",
-       "m_label": "Orientation:",
-       "m_selection": 1,
-       "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+       "type": "string",
+       "m_label": "# Columns:",
+       "m_value": "2"
+      }, {
+       "type": "string",
+       "m_label": "# Rows:",
+       "m_value": "0"
+      }, {
+       "type": "string",
+       "m_label": "Growable columns:",
+       "m_value": ""
+      }, {
+       "type": "string",
+       "m_label": "Growable rows:",
+       "m_value": ""
+      }, {
+       "type": "string",
+       "m_label": "Horizontal gap:",
+       "m_value": "0"
+      }, {
+       "type": "string",
+       "m_label": "Vertical gap:",
+       "m_value": "0"
       }],
      "m_events": [],
-     "m_children": []
+     "m_children": [{
+       "m_type": 4454,
+       "proportion": 1,
+       "border": 5,
+       "gbSpan": "1,1",
+       "gbPosition": "0,0",
+       "m_styles": [],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+       "m_properties": [{
+         "type": "string",
+         "m_label": "Name:",
+         "m_value": "Spacer32"
+        }, {
+         "type": "string",
+         "m_label": "Size:",
+         "m_value": "0,0"
+        }],
+       "m_events": [],
+       "m_children": []
+      }]
     }]
   }]
 }

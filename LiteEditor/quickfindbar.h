@@ -52,10 +52,10 @@ protected:
     wxComboBox* m_findWhat;
     wxComboBox* m_replaceWith;
     wxFlatButtonBar* m_bar;
+    
     wxFlatButton* m_caseSensitive;
     wxFlatButton* m_wholeWord;
     wxFlatButton* m_regexOrWildButton;
-    wxFlatButton* m_showReplaceControls;
     wxFlatButton* m_buttonReplace;
     wxFlatButton* m_closeButton;
     wxMenu* m_regexOrWildMenu;

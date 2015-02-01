@@ -43,6 +43,6 @@ void wxC9ED9InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxFlatButtonBaseBitmaps.cpp$D__src_wxFlatButtonBar_wxFlatButtonBaseBitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxFlatButtonBaseBitmaps.cpp$D__src_wxFlatButtonBar_wxFlatButtonBaseBitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxFlatButtonBaseBitmaps.cpp$C__src_codelite_Plugin_wxFlatButtonBaseBitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxFlatButtonBaseBitmaps.cpp$C__src_codelite_Plugin_wxFlatButtonBaseBitmaps.xrc"));
 }

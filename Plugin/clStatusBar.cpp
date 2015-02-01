@@ -36,10 +36,10 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(300));
     AddField(messages);
 
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(250));
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(200));
     AddField(lineCol);
 
-    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(150));
+    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(100));
     AddField(language);
 }
 

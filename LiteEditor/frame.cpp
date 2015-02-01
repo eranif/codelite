@@ -1164,10 +1164,6 @@ void clMainFrame::CreateGUIControls(void)
     // Connect this tree to the parse thread
     ParseThreadST::Get()->SetNotifyWindow(this);
 
-    // And finally create a status bar
-    m_statusBar = new clStatusBar(this, PluginManager::Get());
-    SetStatusBar(m_statusBar);
-    
     // update ctags options
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
 
@@ -2657,8 +2653,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             }
             previousgroups.Insert(filepath, 0);
             EditorConfigST::Get()->SetRecentItems(previousgroups, wxT("RecentTabgroups"));
-
-            m_statusBar->SetMessage(_("Tab group saved"));
+            GetMainBook()->GetStatusBar()->SetMessage(_("Tab group saved"));
         }
 
         return;
@@ -3073,7 +3068,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         wxString workspacePath = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
         ::wxSetWorkingDirectory(workspacePath);
         wxLogMessage("Setting working directory to: %s", workspacePath);
-        m_statusBar->SetMessage(_("Build starting..."));
+        GetMainBook()->GetStatusBar()->SetMessage(_("Build starting..."));
 
         wxString conf, projectName;
         projectName = ManagerST::Get()->GetActiveProjectName();
@@ -3092,7 +3087,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         ManagerST::Get()->PushQueueCommand(info);
         ManagerST::Get()->ProcessCommandQueue();
 
-        m_statusBar->SetMessage(_("Done"));
+        GetMainBook()->GetStatusBar()->SetMessage(_("Done"));
     }
 }
 
@@ -4018,7 +4013,7 @@ void clMainFrame::CompleteInitialization()
     DoShowToolbars(clConfig::Get().Read(kConfigShowToolBar, false));
 
     if(!clConfig::Get().Read(kConfigShowStatusBar, true)) {
-        GetStatusBar()->Hide();
+        GetMainBook()->ShowStatusBar(false);
     }
 
     // Hide / Show tab bar
@@ -5303,7 +5298,7 @@ void clMainFrame::OnClearTagsCache(wxCommandEvent& e)
 {
     e.Skip();
     TagsManagerST::Get()->ClearTagsCache();
-    m_statusBar->SetMessage(_("Tags cache cleared"));
+    GetMainBook()->GetStatusBar()->SetMessage(_("Tags cache cleared"));
 }
 
 void clMainFrame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
@@ -5434,7 +5429,7 @@ void clMainFrame::UpdateAUI()
 void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 {
     e.Skip();
-    m_statusBar->SetMessage(_("Done"));
+    GetMainBook()->GetStatusBar()->SetMessage(_("Done"));
     GetWorkspacePane()->ClearProgress();
 
     // Clear all cached tags now that we got our database updated
@@ -5745,7 +5740,7 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
     }
 
     wxUnusedVar(e);
-    m_statusBar->SetMessage(wxEmptyString);
+    GetMainBook()->GetStatusBar()->SetMessage(wxEmptyString);
 
     if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS)
         // no need to trigger another UpdateColour
@@ -6015,12 +6010,12 @@ void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()-
 
 void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {
-    GetStatusBar()->Show(event.IsChecked());
+    GetMainBook()->ShowStatusBar(event.IsChecked());
     SendSizeEvent();
     clConfig::Get().Write(kConfigShowStatusBar, event.IsChecked());
 }
 
-void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetStatusBar()->IsShown()); }
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetMainBook()->GetStatusBar()->IsShown()); }
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {

@@ -42,6 +42,7 @@
 #include <wx/regex.h>
 #include "clAuiMainNotebookTabArt.h"
 #include "pluginmanager.h"
+#include "clStatusBar.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -92,6 +93,10 @@ void MainBook::CreateGuiControls()
     wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
     m_book->SetRightClickMenu(contextMenu);
     sz->Add(m_book, 1, wxEXPAND);
+
+    m_statusBar = new clStatusBar(this, PluginManager::Get());
+    sz->Add(m_statusBar, 0, wxEXPAND);
+
     m_quickFindBar = new QuickFindBar(this);
     DoPositionFindBar(2);
 
@@ -344,10 +349,10 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
 {
     tabs.clear();
     m_book->GetAllTabs(tabs);
-    
+
     // Go over the tabs, and for each tab that represents a file
     // populate the filename member
-    for(size_t i=0; i<tabs.size(); ++i) {
+    for(size_t i = 0; i < tabs.size(); ++i) {
         LEditor* editor = dynamic_cast<LEditor*>(tabs.at(i).window);
         if(editor) {
             tabs.at(i).isFile = true;
@@ -1136,11 +1141,20 @@ void MainBook::DoPositionFindBar(int where)
     GetSizer()->Detach(m_quickFindBar);
 
     bool placeAtBottom = EditorConfigST::Get()->GetOptions()->GetFindBarAtBottom();
-    if(placeAtBottom)
-        GetSizer()->Add(m_quickFindBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
-    else
-        GetSizer()->Insert(where, m_quickFindBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
-
+    size_t itemCount = GetSizer()->GetItemCount();
+    for(size_t i = 0; i < itemCount; ++i) {
+        wxSizerItem* sizerItem = GetSizer()->GetItem(i);
+        if(!sizerItem) continue;
+        if(sizerItem->GetWindow() == m_book) {
+            // we found the main book
+            if(placeAtBottom) {
+                GetSizer()->Insert(i + 1, m_quickFindBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
+            } else {
+                GetSizer()->Insert(i, m_quickFindBar, 0, wxTOP | wxBOTTOM | wxEXPAND);
+            }
+            break;
+        }
+    }
     GetSizer()->Layout();
 }
 
@@ -1299,4 +1313,10 @@ void MainBook::ShowTabBar(bool b)
 {
     m_book->SetTabCtrlHeight(b ? 30 : 0);
     m_book->Refresh();
+}
+
+void MainBook::ShowStatusBar(bool s)
+{
+    m_statusBar->Show(s);
+    Layout();
 }

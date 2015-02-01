@@ -36,6 +36,7 @@
 #include "cl_command_event.h"
 #include "editorframe.h"
 
+class clStatusBar;
 class FilesModifiedDlg;
 enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
 
@@ -53,7 +54,8 @@ private:
     bool m_isWorkspaceReloading;
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
-
+    clStatusBar *m_statusBar;
+    
 public:
     enum {
         kGetAll_Default = 0x00000000,         // booked editors only
@@ -98,9 +100,9 @@ public:
     void ClearFileHistory();
     void GetRecentlyOpenedFiles(wxArrayString& files);
     FileHistory& GetRecentlyOpenedFilesClass() { return m_recentFiles; }
-
+    clStatusBar* GetStatusBar() { return m_statusBar; }
     void ShowQuickBarForPlugins() { m_quickFindBar->ShowForPlugins(); }
-
+    void ShowStatusBar(bool s = true);
     void ShowQuickBar(bool s = true) { m_quickFindBar->Show(s); }
     void ShowQuickBar(const wxString& findWhat) { m_quickFindBar->Show(findWhat); }
     void ShowMessage(const wxString& message,

@@ -18,6 +18,7 @@ public:
         m_textShadowColour = DrawingUtils::GetPanelBgColour();
         m_penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
         m_bgColour = DrawingUtils::GetPanelBgColour();
+        m_separatorColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
     }
     virtual ~clStatusBarArtNormal() {}
 };

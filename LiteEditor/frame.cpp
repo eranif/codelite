@@ -1048,7 +1048,11 @@ void clMainFrame::CreateGUIControls(void)
     m_myMenuBar = new MyMenuBar();
     m_myMenuBar->Set(mb);
     SetMenuBar(mb);
-
+    
+    // Create the status bar
+    m_statusBar = new clStatusBar(this, PluginManager::Get());
+    SetStatusBar(m_statusBar);
+    
     // Set up dynamic parts of menu.
     CreateRecentlyOpenedWorkspacesMenu();
     DoUpdatePerspectiveMenu();
@@ -2653,7 +2657,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             }
             previousgroups.Insert(filepath, 0);
             EditorConfigST::Get()->SetRecentItems(previousgroups, wxT("RecentTabgroups"));
-            GetMainBook()->GetStatusBar()->SetMessage(_("Tab group saved"));
+            GetStatusBar()->SetMessage(_("Tab group saved"));
         }
 
         return;
@@ -3068,7 +3072,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         wxString workspacePath = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
         ::wxSetWorkingDirectory(workspacePath);
         wxLogMessage("Setting working directory to: %s", workspacePath);
-        GetMainBook()->GetStatusBar()->SetMessage(_("Build starting..."));
+        GetStatusBar()->SetMessage(_("Build starting..."));
 
         wxString conf, projectName;
         projectName = ManagerST::Get()->GetActiveProjectName();
@@ -3087,7 +3091,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         ManagerST::Get()->PushQueueCommand(info);
         ManagerST::Get()->ProcessCommandQueue();
 
-        GetMainBook()->GetStatusBar()->SetMessage(_("Done"));
+        GetStatusBar()->SetMessage(_("Done"));
     }
 }
 
@@ -4013,7 +4017,7 @@ void clMainFrame::CompleteInitialization()
     DoShowToolbars(clConfig::Get().Read(kConfigShowToolBar, false));
 
     if(!clConfig::Get().Read(kConfigShowStatusBar, true)) {
-        GetMainBook()->ShowStatusBar(false);
+        GetStatusBar()->Show(false);
     }
 
     // Hide / Show tab bar
@@ -5298,7 +5302,7 @@ void clMainFrame::OnClearTagsCache(wxCommandEvent& e)
 {
     e.Skip();
     TagsManagerST::Get()->ClearTagsCache();
-    GetMainBook()->GetStatusBar()->SetMessage(_("Tags cache cleared"));
+    GetStatusBar()->SetMessage(_("Tags cache cleared"));
 }
 
 void clMainFrame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
@@ -5429,7 +5433,7 @@ void clMainFrame::UpdateAUI()
 void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 {
     e.Skip();
-    GetMainBook()->GetStatusBar()->SetMessage(_("Done"));
+    GetStatusBar()->SetMessage(_("Done"));
     GetWorkspacePane()->ClearProgress();
 
     // Clear all cached tags now that we got our database updated
@@ -5587,17 +5591,11 @@ void clMainFrame::OnGrepWordUI(wxUpdateUIEvent& e)
 void clMainFrame::OnPchCacheEnded(wxCommandEvent& e)
 {
     e.Skip();
-    //	SetStatusMessage(wxString::Format(wxT("Generating PCH completed")), 0);
 }
 
 void clMainFrame::OnPchCacheStarted(wxCommandEvent& e)
 {
     e.Skip();
-    //	wxString *filename = (wxString*)e.GetClientData();
-    //	wxFileName fn(*filename);
-    //	delete filename;
-    //
-    //	SetStatusMessage(wxString::Format(wxT("Generating PCH for file: %s"), fn.GetFullName().c_str()), 0);
 }
 
 ////////////////// View -> Workspace View -> /////////////////////////////////////
@@ -5740,7 +5738,7 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
     }
 
     wxUnusedVar(e);
-    GetMainBook()->GetStatusBar()->SetMessage(wxEmptyString);
+    GetStatusBar()->SetMessage(wxEmptyString);
 
     if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS)
         // no need to trigger another UpdateColour
@@ -6010,12 +6008,12 @@ void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()-
 
 void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {
-    GetMainBook()->ShowStatusBar(event.IsChecked());
+    GetMainBook()->Show(event.IsChecked());
     SendSizeEvent();
     clConfig::Get().Write(kConfigShowStatusBar, event.IsChecked());
 }
 
-void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetMainBook()->GetStatusBar()->IsShown()); }
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(GetStatusBar()->IsShown()); }
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {

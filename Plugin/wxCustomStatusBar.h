@@ -15,6 +15,7 @@ protected:
     wxColour m_bgColour;
     wxColour m_textColour;
     wxColour m_textShadowColour;
+    wxColour m_separatorColour;
 
 public:
     typedef wxSharedPtr<wxCustomStatusBarArt> Ptr_t;
@@ -24,7 +25,8 @@ public:
     virtual ~wxCustomStatusBarArt() {}
 
     void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
-
+    void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
+    
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
     void SetPenColour(const wxColour& penColour) { this->m_penColour = penColour; }
     void SetTextColour(const wxColour& textColour) { this->m_textColour = textColour; }
@@ -33,6 +35,8 @@ public:
     const wxColour& GetTextColour() const { return m_textColour; }
     void SetTextShadowColour(const wxColour& textShadowColour) { this->m_textShadowColour = textShadowColour; }
     const wxColour& GetTextShadowColour() const { return m_textShadowColour; }
+    void SetSeparatorColour(const wxColour& separatorColour) { this->m_separatorColour = separatorColour; }
+    const wxColour& GetSeparatorColour() const { return m_separatorColour; }
 };
 
 //================---------------

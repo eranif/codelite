@@ -42,7 +42,6 @@
 #include <wx/regex.h>
 #include "clAuiMainNotebookTabArt.h"
 #include "pluginmanager.h"
-#include "clStatusBar.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -93,9 +92,6 @@ void MainBook::CreateGuiControls()
     wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
     m_book->SetRightClickMenu(contextMenu);
     sz->Add(m_book, 1, wxEXPAND);
-
-    m_statusBar = new clStatusBar(this, PluginManager::Get());
-    sz->Add(m_statusBar, 0, wxEXPAND);
 
     m_quickFindBar = new QuickFindBar(this);
     DoPositionFindBar(2);
@@ -1313,10 +1309,4 @@ void MainBook::ShowTabBar(bool b)
 {
     m_book->SetTabCtrlHeight(b ? 30 : 0);
     m_book->Refresh();
-}
-
-void MainBook::ShowStatusBar(bool s)
-{
-    m_statusBar->Show(s);
-    Layout();
 }

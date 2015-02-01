@@ -112,7 +112,7 @@ class clMainFrame : public wxFrame
 #endif
     // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
     wxStringSet_t m_coreToolbars;
-    
+    clStatusBar* m_statusBar;
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);
@@ -125,7 +125,7 @@ public:
     /**
      * @brief return the status bar
      */
-    clStatusBar* GetStatusBar() { return GetMainBook()->GetStatusBar(); }
+    clStatusBar* GetStatusBar() { return m_statusBar; }
     
     /**
      * @brief update the parser (code completion) search paths using the

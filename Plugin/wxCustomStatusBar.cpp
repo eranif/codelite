@@ -27,7 +27,7 @@ void wxCustomStatusBarArt::DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxStri
 //========================------------------------------------
 //========================------------------------------------
 
-void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art, bool isLast)
+void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
 {
     m_rect = rect;
     wxSize textSize = dc.GetTextExtent(m_text);
@@ -44,13 +44,6 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
     bottomPt.y += 1;
     dc.DrawLine(rect.GetTopLeft(), bottomPt);
     
-    // draw right side border
-    if(isLast) {
-        bottomPt = rect.GetBottomRight();
-        bottomPt.y += 1;
-        dc.DrawLine(rect.GetTopRight(), bottomPt);
-    }
-    
     // Draw the text
     art->DrawText(dc, textX, textY, m_text);
 }
@@ -58,7 +51,7 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
 //========================------------------------------------
 //========================------------------------------------
 
-void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art, bool isLast)
+void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
 {
     m_rect = rect;
     // draw border line
@@ -68,13 +61,6 @@ void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustom
     bottomPt = rect.GetBottomLeft();
     bottomPt.y += 1;
     dc.DrawLine(rect.GetTopLeft(), bottomPt);
-    
-    // draw right side border
-    if(isLast) {
-        bottomPt = rect.GetBottomRight();
-        bottomPt.y += 1;
-        dc.DrawLine(rect.GetTopRight(), bottomPt);
-    }
 
     // Center bitmap
     if(m_bitmap.IsOk()) {
@@ -111,7 +97,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 
     // Fill the background
     dc.SetBrush(m_art->GetBgColour());
-    dc.SetPen(m_art->GetBgColour());
+    dc.SetPen(m_art->GetPenColour());
     dc.DrawRectangle(rect);
 
     dc.SetPen(m_art->GetPenColour());
@@ -149,7 +135,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
         // Prepare the rect
         wxRect fieldRect(offsetX, rect.y, m_fields.at(i)->GetWidth(), rect.height);
         dc.SetClippingRegion(fieldRect);
-        m_fields.at(i)->Render(dc, fieldRect, m_art, (i == (m_fields.size()-1)));
+        m_fields.at(i)->Render(dc, fieldRect, m_art);
         dc.DestroyClippingRegion();
         offsetX += m_fields.at(i)->GetWidth();
     }

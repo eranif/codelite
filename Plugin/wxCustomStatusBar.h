@@ -55,7 +55,7 @@ public:
      * @param dc the device content
      * @param rect the field bounding rect
      */
-    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art, bool isLast) = 0;
+    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) = 0;
 
     /**
      * @brief return the field length
@@ -91,7 +91,7 @@ public:
     {
     }
     virtual ~wxCustomStatusBarFieldText() {}
-    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art, bool isLast);
+    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
     void SetText(const wxString& text) { this->m_text = text; }
     const wxString& GetText() const { return m_text; }
     void SetWidth(size_t width) { this->m_width = width; }
@@ -112,7 +112,7 @@ public:
     {
     }
     virtual ~wxCustomStatusBarBitmapField() {}
-    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art, bool isLast);
+    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
     void SetBitmap(const wxBitmap& bitmap) { this->m_bitmap = bitmap; }

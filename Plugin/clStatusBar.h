@@ -12,13 +12,20 @@ class WXDLLIMPEXP_SDK clStatusBar : public wxCustomStatusBar
 protected:
     void OnPageChanged(wxCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
+    void OnAllEditorsClosed(wxCommandEvent& event);
+    
     void DoUpdateColour();
     void DoSetLinePosColumn(const wxString &message);
     
 public:
     clStatusBar(wxWindow* parent, IManager* mgr);
     virtual ~clStatusBar();
-
+    
+    /**
+     * @brief clear all text fields from the status bar
+     */
+    void Clear();
+    
     /**
      * @brief set a status bar message
      */

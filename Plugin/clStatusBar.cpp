@@ -31,15 +31,15 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clStatusBar::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clStatusBar::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clStatusBar::OnPageChanged, this);
-
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clStatusBar::OnAllEditorsClosed, this);
     // Add 2 text fields (in addition to the main one)
     wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(300));
     AddField(messages);
 
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(200));
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(150));
     AddField(lineCol);
 
-    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(100));
+    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(80));
     AddField(language);
 }
 
@@ -48,6 +48,7 @@ clStatusBar::~clStatusBar()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clStatusBar::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clStatusBar::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clStatusBar::OnPageChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clStatusBar::OnAllEditorsClosed, this);
 }
 
 void clStatusBar::SetMessage(const wxString& message)
@@ -202,4 +203,18 @@ void clStatusBar::DoSetLinePosColumn(const wxString& message)
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
     Refresh();
+}
+
+void clStatusBar::OnAllEditorsClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    Clear();
+}
+
+void clStatusBar::Clear()
+{
+    SetFileName("");
+    SetLinePosColumn("");
+    SetMessage("");
+    SetText("");
 }

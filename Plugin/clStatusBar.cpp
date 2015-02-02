@@ -8,6 +8,7 @@
 #include "codelite_events.h"
 #include <wx/stc/stc.h>
 #include "fileextmanager.h"
+#include <wx/xrc/xmlres.h>
 
 class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 {
@@ -50,10 +51,9 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(50));
     AddField(build);
 
-    BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
-    m_bmpBuild = bmpLoader->LoadBitmap("toolbars/16/build/build");
-    m_bmpBuildError = bmpLoader->LoadBitmap("status/16/error");
-    m_bmpBuildWarnings = bmpLoader->LoadBitmap("status/16/warning");
+    m_bmpBuildError = wxXmlResource::Get()->LoadBitmap("build-error");
+    m_bmpBuildWarnings = wxXmlResource::Get()->LoadBitmap("build-warning");
+    m_bmpBuild = wxXmlResource::Get()->LoadBitmap("build-building");
 }
 
 clStatusBar::~clStatusBar()

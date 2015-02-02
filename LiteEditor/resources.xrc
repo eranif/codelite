@@ -51,4 +51,9 @@
     <object class="wxBitmap" name="tab_x_close_dark_pressed">res/notebook/fileclose.png</object>
     <object class="wxBitmap" name="tab_x_close_dark_hover">res/notebook/fileclose-white.png</object>
 
+    <!-- dark theme buttons -->
+    <object class="wxBitmap" name="build-error">../icons/build-error.png</object>
+    <object class="wxBitmap" name="build-warning">../icons/build-warning.png</object>
+    <object class="wxBitmap" name="build-building">../icons/cogs.png</object>
+
 </resource>

@@ -55,7 +55,7 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
     art->DrawFieldSeparator(dc, rect);
     
     // Draw the text
-    art->DrawText(dc, textX, textY, m_text);
+    art->DrawText(dc, textX, textY + 1, m_text);
 }
 
 //========================------------------------------------

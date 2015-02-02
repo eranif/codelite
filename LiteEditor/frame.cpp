@@ -6008,7 +6008,7 @@ void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()-
 
 void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {
-    GetMainBook()->Show(event.IsChecked());
+    GetStatusBar()->Show(event.IsChecked());
     SendSizeEvent();
     clConfig::Get().Write(kConfigShowStatusBar, event.IsChecked());
 }

@@ -151,6 +151,8 @@ clBuildEvent::clBuildEvent(const clBuildEvent& event) { *this = event; }
 clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
     , m_projectOnly(false)
+    , m_warningCount(0)
+    , m_errorCount(0)
 {
 }
 
@@ -164,6 +166,8 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
     m_configurationName = src.m_configurationName;
     m_command = src.m_command;
     m_projectOnly = src.m_projectOnly;
+    m_errorCount = src.m_errorCount;
+    m_warningCount = src.m_warningCount;
     return *this;
 }
 

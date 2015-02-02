@@ -73,7 +73,7 @@ void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustom
         wxCoord bmpY = (rect.GetHeight() - m_bitmap.GetHeight()) / 2 + rect.y;
         wxCoord bmpX = (rect.GetWidth() - m_bitmap.GetWidth()) / 2 + rect.x;
         // Draw the bitmap
-        dc.DrawBitmap(m_bitmap, bmpX, bmpY);
+        dc.DrawBitmap(m_bitmap, bmpX, bmpY + 1);
     }
 }
 

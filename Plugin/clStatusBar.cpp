@@ -33,6 +33,10 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clStatusBar::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clStatusBar::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clStatusBar::OnAllEditorsClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &clStatusBar::OnBuildStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
+
     // Add 2 text fields (in addition to the main one)
     wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(300));
     AddField(messages);
@@ -42,6 +46,14 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(80));
     AddField(language);
+
+    wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(50));
+    AddField(build);
+
+    BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
+    m_bmpBuild = bmpLoader->LoadBitmap("toolbars/16/build/build");
+    m_bmpBuildError = bmpLoader->LoadBitmap("status/16/error");
+    m_bmpBuildWarnings = bmpLoader->LoadBitmap("status/16/warning");
 }
 
 clStatusBar::~clStatusBar()
@@ -50,6 +62,9 @@ clStatusBar::~clStatusBar()
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clStatusBar::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clStatusBar::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clStatusBar::OnAllEditorsClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &clStatusBar::OnBuildStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
 }
 
 void clStatusBar::SetMessage(const wxString& message)
@@ -218,4 +233,37 @@ void clStatusBar::Clear()
     SetLinePosColumn("");
     SetMessage("");
     SetText("");
+    SetBuildBitmap(wxNullBitmap);
+}
+
+void clStatusBar::OnBuildEnded(clBuildEvent& event)
+{
+    event.Skip();
+    if(event.GetErrorCount()) {
+        SetBuildBitmap(m_bmpBuildError);
+    } else if(event.GetWarningCount()) {
+        SetBuildBitmap(m_bmpBuildWarnings);
+    } else {
+        SetBuildBitmap(wxNullBitmap);
+    }
+}
+
+void clStatusBar::OnBuildStarted(clBuildEvent& event)
+{
+    event.Skip();
+    SetBuildBitmap(m_bmpBuild);
+}
+
+void clStatusBar::SetBuildBitmap(const wxBitmap& bmp)
+{
+    wxCustomStatusBarField::Ptr_t field = GetField(3);
+    CHECK_PTR_RET(field);
+    field->Cast<wxCustomStatusBarBitmapField>()->SetBitmap(bmp);
+    Refresh();
+}
+
+void clStatusBar::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    Clear();
 }

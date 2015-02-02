@@ -178,6 +178,8 @@ class WXDLLIMPEXP_CL clBuildEvent : public clCommandEvent
     wxString m_configurationName;
     wxString m_command;
     bool m_projectOnly;
+    size_t m_warningCount;
+    size_t m_errorCount;
 
 public:
     clBuildEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -194,6 +196,11 @@ public:
     void SetProjectName(const wxString& projectName) { this->m_projectName = projectName; }
     const wxString& GetConfigurationName() const { return m_configurationName; }
     const wxString& GetProjectName() const { return m_projectName; }
+
+    void SetErrorCount(size_t errorCount) { this->m_errorCount = errorCount; }
+    void SetWarningCount(size_t warningCount) { this->m_warningCount = warningCount; }
+    size_t GetErrorCount() const { return m_errorCount; }
+    size_t GetWarningCount() const { return m_warningCount; }
 };
 
 typedef void (wxEvtHandler::*clBuildEventFunction)(clBuildEvent&);

@@ -396,6 +396,8 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
 
     // notify the plugins that the build has ended
     clBuildEvent buildEvent(wxEVT_BUILD_ENDED);
+    buildEvent.SetErrorCount(m_errorCount);
+    buildEvent.SetWarningCount(m_warnCount);
     EventNotifier::Get()->AddPendingEvent(buildEvent);
 }
 

@@ -36,7 +36,7 @@ class BuildTabSettingsData : public SerializedObject
     wxString m_errorColourBg;
     bool m_boldErrFont;
     bool m_boldWarnFont;
-    bool m_showBuildPane;
+    int m_showBuildPane;
     bool m_autoHide;
     bool m_autoShow;
     bool m_errorsFirstLine;

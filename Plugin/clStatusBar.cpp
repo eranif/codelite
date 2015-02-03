@@ -10,6 +10,12 @@
 #include "fileextmanager.h"
 #include <wx/xrc/xmlres.h>
 
+#define STATUSBAR_MESSAGES_COL_IDX 0
+#define STATUSBAR_ANIMATION_COL_IDX 1
+#define STATUSBAR_LINECOL_COL_IDX 2
+#define STATUSBAR_LANG_COL_IDX 3
+#define STATUSBAR_ICON_COL_IDX 4
+
 class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 {
 public:
@@ -38,17 +44,20 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
 
-    // Add 2 text fields (in addition to the main one)
     wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(300));
     AddField(messages);
 
+    wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(
+        this, wxXmlResource::Get()->LoadBitmap("build-animation-sprite"), wxHORIZONTAL, wxSize(80, 7)));
+    AddField(buildAnimation);
+    
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(150));
     AddField(lineCol);
 
     wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(80));
     AddField(language);
 
-    wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(50));
+    wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(30));
     AddField(build);
 
     m_bmpBuildError = wxXmlResource::Get()->LoadBitmap("build-error");
@@ -70,7 +79,7 @@ clStatusBar::~clStatusBar()
 void clStatusBar::SetMessage(const wxString& message)
 {
     // Col 0
-    wxCustomStatusBarField::Ptr_t field = GetField(0);
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_MESSAGES_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
     Refresh();
@@ -202,7 +211,7 @@ void clStatusBar::SetFileName(const wxString& filename) { SetText(filename); }
 void clStatusBar::SetLanguage(const wxString& lang)
 {
     // Col 2
-    wxCustomStatusBarField::Ptr_t field = GetField(2);
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LANG_COL_IDX);
     CHECK_PTR_RET(field);
 
     wxString ucLang = lang.Upper();
@@ -215,7 +224,7 @@ void clStatusBar::SetLinePosColumn(const wxString& lineCol) { CallAfter(&clStatu
 void clStatusBar::DoSetLinePosColumn(const wxString& message)
 {
     // Col 1
-    wxCustomStatusBarField::Ptr_t field = GetField(1);
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LINECOL_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
     Refresh();
@@ -239,6 +248,7 @@ void clStatusBar::Clear()
 void clStatusBar::OnBuildEnded(clBuildEvent& event)
 {
     event.Skip();
+    StopAnimation();
     if(event.GetErrorCount()) {
         SetBuildBitmap(m_bmpBuildError);
     } else if(event.GetWarningCount()) {
@@ -251,12 +261,13 @@ void clStatusBar::OnBuildEnded(clBuildEvent& event)
 void clStatusBar::OnBuildStarted(clBuildEvent& event)
 {
     event.Skip();
-    SetBuildBitmap(m_bmpBuild);
+    SetBuildBitmap(wxNullBitmap);
+    StartAnimation(50, "");
 }
 
 void clStatusBar::SetBuildBitmap(const wxBitmap& bmp)
 {
-    wxCustomStatusBarField::Ptr_t field = GetField(3);
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarBitmapField>()->SetBitmap(bmp);
     Refresh();
@@ -266,4 +277,19 @@ void clStatusBar::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
     Clear();
+}
+
+void clStatusBar::StartAnimation(long refreshRate, const wxString& tooltip)
+{
+    wxUnusedVar(tooltip);
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
+    CHECK_PTR_RET(field);
+    field->Cast<wxCustomStatusBarAnimationField>()->Start(refreshRate);
+}
+
+void clStatusBar::StopAnimation()
+{
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
+    CHECK_PTR_RET(field);
+    field->Cast<wxCustomStatusBarAnimationField>()->Stop();
 }

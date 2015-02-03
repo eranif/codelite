@@ -12,9 +12,9 @@ class WXDLLIMPEXP_SDK wxPNGAnimation : public wxPanel
 {
     wxVector<wxBitmap> m_bitmaps;
     size_t m_index;
-    wxTimer *m_timer;
+    wxTimer* m_timer;
     wxColour m_bgColour;
-    
+
 protected:
     void OnPaint(wxPaintEvent& event);
     void OnEraseBG(wxEraseEvent& event);
@@ -26,26 +26,28 @@ public:
      * The bitmap map must contains all bitmaps that consists the animation
      * Each bitmap in the map must have the same size (height and width)
      * @param parent parent window
-     * @param pngSprite the bitmap map 
+     * @param pngSprite the bitmap map
+     * @param spriteOrientation the sprite orientation (wxVERTICAL || wxHORIZONTAL)
      * @param singleImageSize the size of a single bitmap within the map
      * @param id the control ID
      */
     wxPNGAnimation(wxWindow* parent,
                    const wxBitmap& pngSprite,
+                   wxOrientation spriteOrientation,
                    const wxSize& singleImageSize,
                    wxWindowID id = wxID_ANY);
     virtual ~wxPNGAnimation();
-    
+
     /**
      * @brief start the animation
-     * @param refreshRate refresh the animation every milliseconds 
+     * @param refreshRate refresh the animation every milliseconds
      */
     void Start(int refereshRate);
     /**
      * @brief stop the animation
      */
     void Stop();
-    
+
     /**
      * @brief set the animation background colour
      * @param colour

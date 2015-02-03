@@ -136,12 +136,15 @@ public:
     /**
      * @brief construct animation field.
      */
-    wxCustomStatusBarAnimationField(wxWindow* parent, const wxBitmap& sprite, const wxSize& animSize)
+    wxCustomStatusBarAnimationField(wxWindow* parent,
+                                    const wxBitmap& sprite,
+                                    wxOrientation spriteOrientation,
+                                    const wxSize& animSize)
     {
-        m_animation = new wxPNGAnimation(parent, sprite, animSize);
+        m_animation = new wxPNGAnimation(parent, sprite, spriteOrientation, animSize);
         m_width = animSize.GetWidth() + (2 * 5); // 2*5 here for spaces from the left and right
     }
-    
+
     virtual ~wxCustomStatusBarAnimationField() {}
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
     void SetWidth(size_t width) { this->m_width = width; }

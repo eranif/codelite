@@ -3,6 +3,7 @@
 
 wxPNGAnimation::wxPNGAnimation(wxWindow* parent,
                                const wxBitmap& pngSprite,
+                               wxOrientation spriteOrientation,
                                const wxSize& singleImageSize,
                                wxWindowID id)
     : wxPanel(parent, id)
@@ -11,15 +12,26 @@ wxPNGAnimation::wxPNGAnimation(wxWindow* parent,
     m_bgColour = GetParent()->GetBackgroundColour();
     Hide();
     m_timer = new wxTimer(this);
-    int numImages = pngSprite.GetHeight() / singleImageSize.GetHeight();
-    wxPoint copyFromPt;
-    for(int i = 0; i < numImages; ++i) {
-        copyFromPt.x = 0;
-        copyFromPt.y = i * singleImageSize.GetHeight();
-        wxBitmap bmp = pngSprite.GetSubBitmap(wxRect(copyFromPt, singleImageSize));
-        m_bitmaps.push_back(bmp);
+    if(spriteOrientation == wxVERTICAL) {
+        int numImages = pngSprite.GetHeight() / singleImageSize.GetHeight();
+        wxPoint copyFromPt;
+        for(int i = 0; i < numImages; ++i) {
+            copyFromPt.x = 0;
+            copyFromPt.y = i * singleImageSize.GetHeight();
+            wxBitmap bmp = pngSprite.GetSubBitmap(wxRect(copyFromPt, singleImageSize));
+            m_bitmaps.push_back(bmp);
+        }
+    } else {
+        int numImages = pngSprite.GetWidth() / singleImageSize.GetWidth();
+        wxPoint copyFromPt;
+        for(int i = 0; i < numImages; ++i) {
+            copyFromPt.x = i * singleImageSize.GetWidth();
+            copyFromPt.y = 0;
+            wxBitmap bmp = pngSprite.GetSubBitmap(wxRect(copyFromPt, singleImageSize));
+            m_bitmaps.push_back(bmp);
+        }
     }
-
+    
     Bind(wxEVT_PAINT, &wxPNGAnimation::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &wxPNGAnimation::OnEraseBG, this);
     Bind(wxEVT_TIMER, &wxPNGAnimation::OnTimer, this, m_timer->GetId());
@@ -32,7 +44,7 @@ wxPNGAnimation::~wxPNGAnimation()
     Unbind(wxEVT_TIMER, &wxPNGAnimation::OnTimer, this, m_timer->GetId());
     Unbind(wxEVT_PAINT, &wxPNGAnimation::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &wxPNGAnimation::OnEraseBG, this);
-    
+
     m_timer->Stop();
     wxDELETE(m_timer);
 }
@@ -49,7 +61,7 @@ void wxPNGAnimation::OnPaint(wxPaintEvent& event)
     dc.DrawBitmap(m_bitmaps.at(m_index), wxPoint(0, 0), true);
 }
 
-void wxPNGAnimation::OnTimer(wxTimerEvent& event) 
+void wxPNGAnimation::OnTimer(wxTimerEvent& event)
 {
     ++m_index;
     if(m_index >= m_bitmaps.size()) {
@@ -70,7 +82,4 @@ void wxPNGAnimation::Stop()
     Hide();
 }
 
-void wxPNGAnimation::SetPanelColour(const wxColour& colour)
-{
-    m_bgColour = colour;
-}
+void wxPNGAnimation::SetPanelColour(const wxColour& colour) { m_bgColour = colour; }

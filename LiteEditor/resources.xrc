@@ -55,5 +55,6 @@
     <object class="wxBitmap" name="build-error">../icons/build-error.png</object>
     <object class="wxBitmap" name="build-warning">../icons/build-warning.png</object>
     <object class="wxBitmap" name="build-building">../icons/cogs.png</object>
+    <object class="wxBitmap" name="build-animation-sprite">../icons/build-animation-sprite.png</object>
 
 </resource>

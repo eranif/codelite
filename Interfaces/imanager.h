@@ -96,7 +96,14 @@ public:
      * the selection
      */
     virtual void ShowOutputPane(const wxString& selectWindow = "") = 0;
-
+    
+    /**
+     * @brief toggle the output pane
+     * @param selectWindow tab within the 'Output Pane' to select, if empty don't change
+     * the selection
+     */
+    virtual void ToggleOutputPane(const wxString& selectedWindow = "") = 0;
+    
     // return the current editor
     /**
      * @brief return the active editor

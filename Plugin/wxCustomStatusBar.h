@@ -157,6 +157,12 @@ public:
      */
     void Start(long refreshRate = 50);
     void Stop();
+    /**
+     * @brief is the animation running?
+     */
+    bool IsRunning() const {
+        return m_animation->IsRunning();
+    }
 };
 
 //================---------------

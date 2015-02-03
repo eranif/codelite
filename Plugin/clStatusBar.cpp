@@ -292,7 +292,7 @@ void clStatusBar::StartAnimation(long refreshRate, const wxString& tooltip)
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarAnimationField>()->Start(refreshRate);
-    field->SetTooltip(_("Build is in progress..."));
+    field->SetTooltip(_("Build is in progress\nClick to view the Build Log"));
 }
 
 void clStatusBar::StopAnimation()
@@ -306,6 +306,18 @@ void clStatusBar::StopAnimation()
 void clStatusBar::OnFieldClicked(clCommandEvent& event)
 {
     if(event.GetInt() == STATUSBAR_ICON_COL_IDX) {
-        m_mgr->ShowOutputPane("Build");
+        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
+        CHECK_PTR_RET(field);
+        // Open the output view only if the bitmap is valid
+        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) {
+            m_mgr->ToggleOutputPane("Build");
+        }
+    } else if(event.GetInt() == STATUSBAR_ANIMATION_COL_IDX) {
+        wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
+        CHECK_PTR_RET(field);
+        // Open the output view only if the bitmap is valid
+        if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) {
+            m_mgr->ToggleOutputPane("Build");
+        }
     }
 }

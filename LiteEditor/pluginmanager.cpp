@@ -814,3 +814,12 @@ clStatusBar* PluginManager::GetStatusBar()
 {
     return static_cast<clStatusBar*>(clMainFrame::Get()->GetStatusBar());
 }
+
+void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
+{
+    if(ManagerST::Get()->IsPaneVisible(wxT("Output View"))) {
+        ManagerST::Get()->HidePane("Output View");
+    } else {
+        ManagerST::Get()->ShowOutputPane(selectedWindow);
+    }
+}

@@ -30,10 +30,10 @@ void wxCustomStatusBarArt::DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect)
     // draw border line
     dc.SetPen(GetPenColour());
     wxPoint bottomPt, topPt;
-    
+
     topPt = fieldRect.GetTopLeft();
     topPt.y += 1;
-    
+
     bottomPt = fieldRect.GetBottomLeft();
     bottomPt.y += 1;
     dc.DrawLine(topPt, bottomPt);
@@ -53,7 +53,7 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
 
     // draw border line
     art->DrawFieldSeparator(dc, rect);
-    
+
     // Draw the text
     art->DrawText(dc, textX, textY + 1, m_text);
 }
@@ -61,10 +61,37 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
 //========================------------------------------------
 //========================------------------------------------
 
+void wxCustomStatusBarAnimationField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) 
+{
+    // Draw the left side border
+    art->DrawFieldSeparator(dc, rect);
+    
+    // Position the animation
+    wxSize animSize = m_animation->GetSize();
+    wxCoord y = (rect.GetHeight() - animSize.GetHeight()) / 2 + rect.y;
+    wxCoord x = (rect.GetWidth() - animSize.GetWidth()) / 2 + rect.x;
+    m_animation->SetPanelColour(art->GetBgColour());
+    m_animation->Move(wxPoint(x, y + 1));
+}
+
+void wxCustomStatusBarAnimationField::Start(long refreshRate)
+{
+    m_animation->Start(refreshRate);
+}
+
+void wxCustomStatusBarAnimationField::Stop()
+{
+    m_animation->Stop();
+}
+
+
+//========================------------------------------------
+//========================------------------------------------
+
 void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
 {
     m_rect = rect;
-    
+
     // draw border line
     art->DrawFieldSeparator(dc, rect);
 
@@ -111,14 +138,14 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     wxPoint topRight = rect.GetTopRight();
     dc.SetPen(m_art->GetSeparatorColour());
     dc.DrawLine(topLeft, topRight);
-    
+
     // Draw the bottom separator using the pen colour
     // this will give a "sink" look to the status bar
     topLeft.y += 1;
     topRight.y += 1;
     dc.SetPen(m_art->GetPenColour());
     dc.DrawLine(topLeft, topRight);
-    
+
     // Calculate the fields length
     size_t totalLength = rect.GetWidth();
     size_t fieldsLength = DoGetFieldsWidth();

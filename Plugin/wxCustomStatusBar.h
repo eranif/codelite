@@ -7,6 +7,7 @@
 #include <wx/bitmap.h>
 #include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "wxPNGAnimation.h"
 
 class WXDLLIMPEXP_SDK wxCustomStatusBarArt
 {
@@ -26,7 +27,7 @@ public:
 
     void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
     void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
-    
+
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
     void SetPenColour(const wxColour& penColour) { this->m_penColour = penColour; }
     void SetTextColour(const wxColour& textColour) { this->m_textColour = textColour; }
@@ -121,6 +122,35 @@ public:
     size_t GetWidth() const { return m_width; }
     void SetBitmap(const wxBitmap& bitmap) { this->m_bitmap = bitmap; }
     const wxBitmap& GetBitmap() const { return m_bitmap; }
+};
+
+//================---------------
+// Bitmap field
+//================---------------
+class WXDLLIMPEXP_SDK wxCustomStatusBarAnimationField : public wxCustomStatusBarField
+{
+    size_t m_width;
+    wxPNGAnimation* m_animation;
+
+public:
+    /**
+     * @brief construct animation field.
+     */
+    wxCustomStatusBarAnimationField(wxWindow* parent, const wxBitmap& sprite, const wxSize& animSize)
+    {
+        m_animation = new wxPNGAnimation(parent, sprite, animSize);
+        m_width = animSize.GetWidth() + (2 * 5); // 2*5 here for spaces from the left and right
+    }
+    
+    virtual ~wxCustomStatusBarAnimationField() {}
+    virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
+    void SetWidth(size_t width) { this->m_width = width; }
+    size_t GetWidth() const { return m_width; }
+    /**
+     * @brief start the animation with a given refresh rate (milliseconds)
+     */
+    void Start(long refreshRate = 50);
+    void Stop();
 };
 
 //================---------------

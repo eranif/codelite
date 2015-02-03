@@ -238,6 +238,8 @@
       <File Name="wxCustomStatusBar.h"/>
       <File Name="clStatusBar.cpp"/>
       <File Name="clStatusBar.h"/>
+      <File Name="wxPNGAnimation.cpp"/>
+      <File Name="wxPNGAnimation.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

@@ -43,7 +43,8 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &clStatusBar::OnBuildStarted, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
-
+    Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
+    
     wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(300));
     AddField(messages);
 
@@ -74,6 +75,7 @@ clStatusBar::~clStatusBar()
     EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &clStatusBar::OnBuildStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
+    Unbind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 }
 
 void clStatusBar::SetMessage(const wxString& message)
@@ -82,6 +84,7 @@ void clStatusBar::SetMessage(const wxString& message)
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_MESSAGES_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
+    field->SetTooltip(message);
     Refresh();
 }
 
@@ -216,6 +219,7 @@ void clStatusBar::SetLanguage(const wxString& lang)
 
     wxString ucLang = lang.Upper();
     field->Cast<wxCustomStatusBarFieldText>()->SetText(ucLang);
+    field->SetTooltip(lang);
     Refresh();
 }
 
@@ -227,6 +231,7 @@ void clStatusBar::DoSetLinePosColumn(const wxString& message)
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LINECOL_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
+    field->SetTooltip(message);
     Refresh();
 }
 
@@ -242,7 +247,8 @@ void clStatusBar::Clear()
     SetLinePosColumn("");
     SetMessage("");
     SetText("");
-    SetBuildBitmap(wxNullBitmap);
+    SetBuildBitmap(wxNullBitmap, "");
+    StopAnimation();
 }
 
 void clStatusBar::OnBuildEnded(clBuildEvent& event)
@@ -250,26 +256,27 @@ void clStatusBar::OnBuildEnded(clBuildEvent& event)
     event.Skip();
     StopAnimation();
     if(event.GetErrorCount()) {
-        SetBuildBitmap(m_bmpBuildError);
+        SetBuildBitmap(m_bmpBuildError, _("Build ended with errors. Click to view"));
     } else if(event.GetWarningCount()) {
-        SetBuildBitmap(m_bmpBuildWarnings);
+        SetBuildBitmap(m_bmpBuildWarnings, _("Build ended with warnings. Click to view"));
     } else {
-        SetBuildBitmap(wxNullBitmap);
+        SetBuildBitmap(wxNullBitmap, "");
     }
 }
 
 void clStatusBar::OnBuildStarted(clBuildEvent& event)
 {
     event.Skip();
-    SetBuildBitmap(wxNullBitmap);
+    SetBuildBitmap(wxNullBitmap, "");
     StartAnimation(50, "");
 }
 
-void clStatusBar::SetBuildBitmap(const wxBitmap& bmp)
+void clStatusBar::SetBuildBitmap(const wxBitmap& bmp, const wxString& tooltip)
 {
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarBitmapField>()->SetBitmap(bmp);
+    field->SetTooltip(tooltip);
     Refresh();
 }
 
@@ -285,6 +292,7 @@ void clStatusBar::StartAnimation(long refreshRate, const wxString& tooltip)
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarAnimationField>()->Start(refreshRate);
+    field->SetTooltip(_("Build is in progress..."));
 }
 
 void clStatusBar::StopAnimation()
@@ -292,4 +300,12 @@ void clStatusBar::StopAnimation()
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarAnimationField>()->Stop();
+    field->SetTooltip("");
+}
+
+void clStatusBar::OnFieldClicked(clCommandEvent& event)
+{
+    if(event.GetInt() == STATUSBAR_ICON_COL_IDX) {
+        m_mgr->ShowOutputPane("Build");
+    }
 }

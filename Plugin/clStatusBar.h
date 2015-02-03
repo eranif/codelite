@@ -4,6 +4,7 @@
 #include "wxCustomStatusBar.h" // Base class: wxCustomStatusBar
 #include "codelite_exports.h"
 #include <wx/bitmap.h>
+#include "cl_command_event.h"
 
 class IManager;
 class WXDLLIMPEXP_SDK clStatusBar : public wxCustomStatusBar
@@ -20,11 +21,12 @@ protected:
     void OnBuildStarted(clBuildEvent& event);
     void OnBuildEnded(clBuildEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnFieldClicked(clCommandEvent& event);
 
     void DoUpdateColour();
     void DoSetLinePosColumn(const wxString& message);
 
-    void SetBuildBitmap(const wxBitmap& bmp);
+    void SetBuildBitmap(const wxBitmap& bmp, const wxString& tooltip);
 
 public:
     clStatusBar(wxWindow* parent, IManager* mgr);

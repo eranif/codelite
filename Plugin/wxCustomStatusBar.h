@@ -47,6 +47,7 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarField : public wxEvtHandler
 {
 protected:
     wxRect m_rect;
+    wxString m_tooltip;
 
 public:
     typedef wxSharedPtr<wxCustomStatusBarField> Ptr_t;
@@ -79,6 +80,8 @@ public:
      */
     bool HitTest(const wxPoint& point) const;
 
+    void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
+    const wxString& GetTooltip() const { return m_tooltip; }
     template <typename T> T* Cast() const { return dynamic_cast<T*>(const_cast<wxCustomStatusBarField*>(this)); }
 };
 
@@ -172,7 +175,8 @@ protected:
     void OnPaint(wxPaintEvent& event);
     void OnEraseBackround(wxEraseEvent& event);
     void OnLeftDown(wxMouseEvent& event);
-
+    void OnMouseMotion(wxMouseEvent& event);
+    
 public:
     wxCustomStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = 0);
     virtual ~wxCustomStatusBar();

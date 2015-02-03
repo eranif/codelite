@@ -63,6 +63,8 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
 
 void wxCustomStatusBarAnimationField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) 
 {
+    m_rect = rect;
+    
     // Draw the left side border
     art->DrawFieldSeparator(dc, rect);
     
@@ -83,7 +85,6 @@ void wxCustomStatusBarAnimationField::Stop()
 {
     m_animation->Stop();
 }
-
 
 //========================------------------------------------
 //========================------------------------------------
@@ -114,6 +115,7 @@ wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style
     Bind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
     Bind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
+    Bind(wxEVT_MOTION, &wxCustomStatusBar::OnMouseMotion, this);
 }
 
 wxCustomStatusBar::~wxCustomStatusBar()
@@ -121,6 +123,7 @@ wxCustomStatusBar::~wxCustomStatusBar()
     Unbind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
     Unbind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
+    Unbind(wxEVT_MOTION, &wxCustomStatusBar::OnMouseMotion, this);
 }
 
 void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
@@ -231,7 +234,22 @@ void wxCustomStatusBar::ClearText()
 void wxCustomStatusBar::SetText(const wxString& message)
 {
     m_text = message;
+    SetToolTip(message);
     Refresh();
+}
+
+void wxCustomStatusBar::OnMouseMotion(wxMouseEvent& event)
+{
+    event.Skip();
+    SetToolTip(wxEmptyString);
+    wxPoint point = event.GetPosition();
+    for(size_t i = 0; i < m_fields.size(); ++i) {
+        if(m_fields.at(i)->HitTest(point)) {
+            SetToolTip(m_fields.at(i)->GetTooltip());
+            return;
+        }
+    }
+    SetToolTip(m_text);
 }
 
 bool wxCustomStatusBarField::HitTest(const wxPoint& point) const { return m_rect.Contains(point); }

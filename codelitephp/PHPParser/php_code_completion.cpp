@@ -475,8 +475,14 @@ void PHPCodeCompletion::OnRetagWorkspace(wxCommandEvent& event)
     event.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
         event.Skip(false);
+        bool isFull = (event.GetEventType() == wxEVT_CMD_RETAG_WORKSPACE_FULL);
+        if(isFull) {
+            // Delete the file
+            m_lookupTable.ResetDatabase();
+        }
+        
         // Reparse the workspace
-        PHPWorkspace::Get()->ParseWorkspace(event.GetEventType() == wxEVT_CMD_RETAG_WORKSPACE_FULL);
+        PHPWorkspace::Get()->ParseWorkspace(isFull);
     }
 }
 

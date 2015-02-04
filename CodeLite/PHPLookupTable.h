@@ -30,6 +30,7 @@ enum ePhpScopeType {
 class WXDLLIMPEXP_CL PHPLookupTable
 {
     wxSQLite3Database m_db;
+    wxFileName m_filename;
     size_t m_sizeLimit;
 
 public:
@@ -134,7 +135,12 @@ public:
      * @brief open the lookup table database
      */
     void Open(const wxString& workspacePath);
-
+    
+    /**
+     * @brief open the symbols database
+     */
+    void Open(const wxFileName& dbfile);
+    
     /**
      * @brief
      * @return
@@ -145,7 +151,12 @@ public:
      * @brief close the lookup table database
      */
     void Close();
-
+    
+    /**
+     * @brief delete the symbols database file from the file system and recreate an empty one
+     */
+    void ResetDatabase();
+    
     /**
      * @brief clear all cached data from the database
      */

@@ -8,6 +8,7 @@
 #include "event_notifier.h"
 #include "fileutils.h"
 #include <wx/stopwatch.h>
+#include <wx/log.h>
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
@@ -155,6 +156,20 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname)
     return DoFindScope(scopeName);
 }
 
+void PHPLookupTable::Open(const wxFileName& dbfile)
+{
+    try {
+        wxFileName::Mkdir(dbfile.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        m_db.Open(dbfile.GetFullPath());
+        m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
+        m_filename = dbfile;
+        CreateSchema();
+
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::Open: %s", e.GetMessage());
+    }
+}
+
 void PHPLookupTable::Open(const wxString& workspacePath)
 {
     wxFileName fnDBFile(workspacePath, "phpsymbols.db");
@@ -162,16 +177,7 @@ void PHPLookupTable::Open(const wxString& workspacePath)
     // ensure that the database directory exists
     fnDBFile.AppendDir(".codelite");
     fnDBFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-
-    try {
-        wxFileName::Mkdir(fnDBFile.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        m_db.Open(fnDBFile.GetFullPath());
-        m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
-        CreateSchema();
-
-    } catch(wxSQLite3Exception& e) {
-        CL_WARNING("PHPLookupTable::Open: %s", e.GetMessage());
-    }
+    Open(fnDBFile);
 }
 
 void PHPLookupTable::CreateSchema()
@@ -809,6 +815,8 @@ void PHPLookupTable::Close()
         if(m_db.IsOpen()) {
             m_db.Close();
         }
+        m_filename.Clear();
+        
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::Close: %s", e.GetMessage());
     }
@@ -1098,4 +1106,19 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindFunctionByLineAndFile(const wxFileName&
         CL_WARNING("PHPLookupTable::FindFunctionByLineAndFile: %s", e.GetMessage());
     }
     return NULL;
+}
+
+void PHPLookupTable::ResetDatabase()
+{
+    wxFileName curfile = m_filename;
+    Close(); // Close the databse releasing any file capture we have
+    // Delete the file
+    if(curfile.IsOk() && curfile.Exists()) {
+        // Delete it from the file system
+        wxLogNull noLog;
+        if(!::wxRemoveFile(curfile.GetFullPath())) {
+            CL_WARNING("PHPLookupTable::ResetDatabase: failed to remove file '%s'", curfile.GetFullPath());
+        }
+    }
+    Open(curfile);
 }

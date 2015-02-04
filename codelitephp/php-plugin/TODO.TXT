@@ -8,10 +8,6 @@ Code Completion / Code Generation
 - SFTP: add a per file destination folder to allow overriding the global settings
 - Better parsing for functions' return value
 
-Must:
-=====
-- When full retag is taken place - delete the database file (to overcome malformed image file on the disk errors)
-
 Misc:
 =====
 - PHP indenter: 

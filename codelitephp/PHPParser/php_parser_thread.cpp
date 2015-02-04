@@ -47,15 +47,20 @@ void PHPParserThread::ParseFiles(PHPParserThreadRequest* request)
 {
     wxFileName fnWorkspaceFile(request->workspaceFile);
     bool isFull = request->requestType == PHPParserThreadRequest::kParseWorkspaceFilesFull;
+    wxUnusedVar(isFull);
+    
     wxStringSet_t uniqueFilesSet;
     uniqueFilesSet.insert(request->files.begin(), request->files.end());
 
     // Open the database
     PHPLookupTable lookuptable;
     lookuptable.Open(fnWorkspaceFile.GetPath());
+
+#if 0
     if(isFull) {
         lookuptable.ResetDatabase();
     }
+#endif
 
     for(size_t i = 0; i < request->frameworksPaths.GetCount(); ++i) {
         wxArrayString frameworkFiles;

@@ -1117,7 +1117,7 @@ void PHPLookupTable::ResetDatabase()
         // Delete it from the file system
         wxLogNull noLog;
         if(!::wxRemoveFile(curfile.GetFullPath())) {
-            CL_WARNING("PHPLookupTable::ResetDatabase: failed to remove file '%s'", curfile.GetFullPath());
+            //CL_WARNING("PHPLookupTable::ResetDatabase: failed to remove file '%s'", curfile.GetFullPath());
         }
     }
     Open(curfile);

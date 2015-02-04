@@ -137,6 +137,13 @@ public:
     /////////////////////////////////////
     void CreateProject(const PHPProject::CreateData& createData);
     void DeleteProject(const wxString& project);
+    
+    /**
+     * @brief add an existing project file to the workspace
+     * @param projectFile
+     */
+    bool AddProject(const wxFileName& projectFile, wxString& errmsg);
+    
     void SetProjectActive(const wxString& project);
     /**
      * @brief delete a file from a project/folder

@@ -201,6 +201,12 @@ void PHPWorkspace::DeleteProject(const wxString& project)
     PHPProject::Ptr_t p = GetProject(project);
     CHECK_PTR_RET(p);
     m_projects.erase(project);
+    if(p->IsActive() && !m_projects.empty()) {
+        // we are removing the active project, select a new project to be the active
+        PHPProject::Ptr_t newActiveProject = m_projects.begin()->second;
+        newActiveProject->SetIsActive(true);
+        newActiveProject->Save();
+    }
     Save(); // save the workspace
 }
 
@@ -483,4 +489,39 @@ PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) co
         if(iter->second->HasFile(filename)) return iter->second;
     }
     return PHPProject::Ptr_t(NULL);
+}
+
+bool PHPWorkspace::AddProject(const wxFileName& projectFile, wxString& errmsg)
+{
+    PHPProject::Ptr_t proj(new PHPProject());
+    proj->Load(projectFile);
+    
+    if(proj->IsOk()) {
+        if(HasProject(proj->GetName())) {
+            errmsg = _("A project with similar name already exists in the workspace");
+            return false;
+        }
+        // Keep the active project name _before_ we add the new project
+        wxString activeProjectName = GetActiveProjectName();
+        
+        proj->GetSettings().MergeWithGlobalSettings();
+        m_projects.insert(std::make_pair(proj->GetName(), proj));
+        
+        if(m_projects.size() == 1) {
+            // if we have a single project in the workspace, make it the active
+            SetProjectActive(proj->GetName());
+        } else {
+            // Restore the active project name. This also removes the "Active project" flag (if any)
+            // from the newly added project
+            SetProjectActive(activeProjectName);
+        }
+        
+        Save();
+        proj->Save();
+        
+        // Retag the workspace (there could be new files that were added to the workspace)
+        ParseWorkspace(false);
+        return true;
+    }
+    return false;
 }

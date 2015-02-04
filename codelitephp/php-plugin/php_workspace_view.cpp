@@ -30,6 +30,7 @@
 #include "FilesCollector.h"
 #include "fileutils.h"
 #include <wx/busyinfo.h>
+#include <wx/filedlg.h>
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -50,6 +51,7 @@ EVT_MENU(XRCID("php_delete_folder"), PHPWorkspaceView::OnDeleteFolder)
 EVT_MENU(XRCID("php_open_folder_in_explorer"), PHPWorkspaceView::OnOpenInExplorer)
 EVT_MENU(XRCID("php_open_shell"), PHPWorkspaceView::OnOpenShell)
 EVT_MENU(XRCID("php_reparse_workspace"), PHPWorkspaceView::OnRetagWorkspace)
+EVT_MENU(XRCID("add_existing_project"), PHPWorkspaceView::OnAddExistingProject)
 EVT_MENU(XRCID("php_folder_find_in_files"), PHPWorkspaceView::OnFindInFiles)
 EVT_MENU(XRCID("php_remove_file"), PHPWorkspaceView::OnRemoveFile)
 EVT_MENU(XRCID("php_open_file"), PHPWorkspaceView::OnOpenFile)
@@ -128,8 +130,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_with_default_app"), _("Open with Default Application"));
-                
-                // Allow other plugins to hook their context menu into our 
+
+                // Allow other plugins to hook their context menu into our
                 // file context menu
                 clContextMenuEvent menuEvent(wxEVT_CONTEXT_MENU_FILE);
                 menuEvent.SetMenu(&menu);
@@ -137,19 +139,19 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 DoGetSelectedFiles(files);
                 menuEvent.SetStrings(files);
                 EventNotifier::Get()->ProcessEvent(menuEvent);
-                
+
                 m_treeCtrlView->PopupMenu(&menu);
-                
+
             } break;
             case ItemData::Kind_Workspace: {
                 wxMenu menu;
                 menu.Append(XRCID("php_reload_workspace"), _("Reload workspace"));
                 menu.Append(XRCID("php_close_workspace"), _("Close workspace"));
                 menu.AppendSeparator();
-                menu.Append(XRCID("new_project"),
-                            _("Add a new project...")); // This will trigger codelite's "New Project Wizard"
+                menu.Append(XRCID("new_project"), _("Create a new project..."));
+                menu.Append(XRCID("add_existing_project"), _("Add an existing project..."));
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_reparse_workspace"), _("Retag workspace..."));
+                menu.Append(XRCID("php_reparse_workspace"), _("Parse workspace"));
                 menu.AppendSeparator();
                 menu.Append(XRCID("rename_php_workspace"), _("Rename"));
                 menu.AppendSeparator();
@@ -187,7 +189,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_run_project"), _("Run project..."));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_project_settings"), _("Project settings..."));
-                
+
                 clContextMenuEvent folderMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
                 folderMenuEvent.SetMenu(&menu);
                 folderMenuEvent.SetPath(wxFileName(data->GetFile()).GetPath());
@@ -278,7 +280,7 @@ void PHPWorkspaceView::LoadWorkspace()
     if(m_treeCtrlView->HasChildren(root)) {
         m_treeCtrlView->Expand(root);
     }
-    
+
     if(activeProjectId.IsOk() && m_treeCtrlView->ItemHasChildren(activeProjectId)) {
         m_treeCtrlView->Expand(activeProjectId);
     }
@@ -319,13 +321,17 @@ void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
     if(selection.IsOk()) {
         ItemData* itemData = DoGetItemData(selection);
         if(itemData && itemData->IsProject()) {
-            if(wxMessageBox(wxString() << _("Are you sure you want to delete project '") << itemData->GetProjectName()
+            if(wxMessageBox(wxString() << _("Are you sure you want to remove project '") << itemData->GetProjectName()
                                        << "'?",
                             _("CodeLite"),
                             wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
                             wxTheApp->GetTopWindow()) == wxYES) {
                 PHPWorkspace::Get()->DeleteProject(itemData->GetProjectName());
                 m_treeCtrlView->Delete(selection);
+                
+                // Highlight the active project (incase we removed the currently active project
+                // from the view)
+                DoSetProjectActive(PHPWorkspace::Get()->GetActiveProjectName());
             }
         }
     }
@@ -392,18 +398,8 @@ void PHPWorkspaceView::OnSetProjectActive(wxCommandEvent& e)
 {
     wxString project = DoGetSelectedProject();
     if(project.IsEmpty()) return;
-
-    PHPWorkspace::Get()->SetProjectActive(project);
-    wxTreeItemIdValue cookie;
-    wxTreeItemId child = m_treeCtrlView->GetFirstChild(m_treeCtrlView->GetRootItem(), cookie);
-    while(child.IsOk()) {
-        ItemData* id = DoGetItemData(child);
-        if(id && id->IsProject()) {
-            id->SetActive(id->GetProjectName() == project);
-            m_treeCtrlView->SetItemBold(child, id->IsActive());
-        }
-        child = m_treeCtrlView->GetNextChild(m_treeCtrlView->GetRootItem(), cookie);
-    }
+    
+    DoSetProjectActive(project);
 }
 
 wxString PHPWorkspaceView::DoGetSelectedProject()
@@ -641,7 +637,7 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
     if(reloadWorkspaceNeeded) {
         // If a folder was deleted, reload the workspace view
         LoadWorkspace();
-        
+
     } else {
         // Just delete the file items, no folders were deleted
         for(size_t i = 0; i < filesDeleted.GetCount(); ++i) {
@@ -681,10 +677,10 @@ void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
     if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
         // Re-sync the project with the file system
         PHPWorkspace::Get()->GetActiveProject()->SynchWithFileSystem();
-        
+
         // Incase files were added - reparse
         PHPWorkspace::Get()->ParseWorkspace(false);
-        
+
         // reload the workspace
         CallAfter(&PHPWorkspaceView::LoadWorkspace);
     }
@@ -702,10 +698,10 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
     if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
         // Re-sync the project with the file system
         PHPWorkspace::Get()->GetProject(selectedProject)->SynchWithFileSystem();
-        
+
         // Incase files were added - reparse
         PHPWorkspace::Get()->ParseWorkspace(false);
-        
+
         // reload the workspace
         CallAfter(&PHPWorkspaceView::LoadWorkspace);
     }
@@ -1235,7 +1231,7 @@ void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
 void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event)
 {
 #if USE_SFTP
-    event.Enable( PHPWorkspace::Get()->IsOpen() );
+    event.Enable(PHPWorkspace::Get()->IsOpen());
 #else
     event.Enable(false);
 #endif
@@ -1259,25 +1255,59 @@ void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
 void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
 {
     // Collapse the projects
-	wxWindowUpdateLocker locker(m_treeCtrlView);
+    wxWindowUpdateLocker locker(m_treeCtrlView);
     wxTreeItemId root = m_treeCtrlView->GetRootItem();
-	DoCollapseItem(root);
+    DoCollapseItem(root);
 }
 
-void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event)
-{
-    event.Enable(PHPWorkspace::Get()->IsOpen());
-}
+void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }
 
 void PHPWorkspaceView::DoCollapseItem(wxTreeItemId& item)
 {
-	if(m_treeCtrlView->ItemHasChildren(item)) {
-		wxTreeItemIdValue cookie;
-		wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
-		while(child.IsOk()) {
-			DoCollapseItem(child);
-			child = m_treeCtrlView->GetNextChild(item, cookie);
-		}
-		m_treeCtrlView->Collapse(item);
-	}
+    if(m_treeCtrlView->ItemHasChildren(item)) {
+        wxTreeItemIdValue cookie;
+        wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
+        while(child.IsOk()) {
+            DoCollapseItem(child);
+            child = m_treeCtrlView->GetNextChild(item, cookie);
+        }
+        m_treeCtrlView->Collapse(item);
+    }
+}
+
+void PHPWorkspaceView::OnAddExistingProject(wxCommandEvent& e)
+{
+    // Prompt user for project path
+    const wxString ALL("CodeLite PHP Projects (*.phprj)|*.phprj");
+    wxFileDialog dlg(this,
+                     _("Open Project"),
+                     wxEmptyString,
+                     wxEmptyString,
+                     ALL,
+                     wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+                     wxDefaultPosition);
+    if(dlg.ShowModal() == wxID_OK && !dlg.GetPath().IsEmpty()) {
+        wxString projectToAdd = dlg.GetPath();
+        wxString errmsg;
+        if(!PHPWorkspace::Get()->AddProject(projectToAdd, errmsg)) {
+            ::wxMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+            return;
+        }
+        LoadWorkspace();
+    }
+}
+
+void PHPWorkspaceView::DoSetProjectActive(const wxString& projectName)
+{
+    PHPWorkspace::Get()->SetProjectActive(projectName);
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = m_treeCtrlView->GetFirstChild(m_treeCtrlView->GetRootItem(), cookie);
+    while(child.IsOk()) {
+        ItemData* id = DoGetItemData(child);
+        if(id && id->IsProject()) {
+            id->SetActive(id->GetProjectName() == projectName);
+            m_treeCtrlView->SetItemBold(child, id->IsActive());
+        }
+        child = m_treeCtrlView->GetNextChild(m_treeCtrlView->GetRootItem(), cookie);
+    }
 }

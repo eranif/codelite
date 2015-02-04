@@ -72,6 +72,9 @@ protected:
      * @brief open an item into an editor
      */
     void DoOpenFile(const wxTreeItemId& item);
+    
+    void DoSetProjectActive(const wxString& projectName);
+    
 protected:
     // Handlers for PHPWorkspaceViewBase events.
 
@@ -89,6 +92,7 @@ protected:
     void OnOpenInExplorer(wxCommandEvent& e);
     void OnOpenShell(wxCommandEvent& e);
     void OnRetagWorkspace(wxCommandEvent& e);
+    void OnAddExistingProject(wxCommandEvent& e);
     void OnFindInFiles(wxCommandEvent& e);
     void OnRemoveFile(wxCommandEvent& e);
     void OnOpenFile(wxCommandEvent& e);

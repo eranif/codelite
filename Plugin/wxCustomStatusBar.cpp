@@ -61,13 +61,30 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
 //========================------------------------------------
 //========================------------------------------------
 
-void wxCustomStatusBarAnimationField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) 
+wxCustomStatusBarAnimationField::wxCustomStatusBarAnimationField(wxCustomStatusBar* parent,
+                                                                 const wxBitmap& sprite,
+                                                                 wxOrientation spriteOrientation,
+                                                                 const wxSize& animSize)
+{
+    m_animation = new wxPNGAnimation(parent, sprite, spriteOrientation, animSize);
+    
+    m_width = animSize.GetWidth() + (2 * 5); // 2*5 here for spaces from the left and right
+    // We need to tie the animation mouse events to the status bar, otherwise, whenever we hover or
+    // move over the animation control - it will not be seen by the status bar
+    m_animation->Bind(wxEVT_LEFT_DOWN, &wxCustomStatusBarAnimationField::OnAnimationClicked, this);
+}
+
+wxCustomStatusBarAnimationField::~wxCustomStatusBarAnimationField()
+{
+}
+
+void wxCustomStatusBarAnimationField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
 {
     m_rect = rect;
-    
+
     // Draw the left side border
     art->DrawFieldSeparator(dc, rect);
-    
+
     // Position the animation
     wxSize animSize = m_animation->GetSize();
     wxCoord y = (rect.GetHeight() - animSize.GetHeight()) / 2 + rect.y;
@@ -76,14 +93,18 @@ void wxCustomStatusBarAnimationField::Render(wxDC& dc, const wxRect& rect, wxCus
     m_animation->Move(wxPoint(x, y + 1));
 }
 
-void wxCustomStatusBarAnimationField::Start(long refreshRate)
-{
-    m_animation->Start(refreshRate);
-}
+void wxCustomStatusBarAnimationField::Start(long refreshRate) { m_animation->Start(refreshRate); }
 
-void wxCustomStatusBarAnimationField::Stop()
+void wxCustomStatusBarAnimationField::Stop() { m_animation->Stop(); }
+
+void wxCustomStatusBarAnimationField::OnAnimationClicked(wxMouseEvent& event)
 {
-    m_animation->Stop();
+    event.Skip();
+    wxCustomStatusBar* bar = dynamic_cast<wxCustomStatusBar*>(m_animation->GetParent());
+    if(bar) {
+        // Notify the bar that the animation owned by this field was clicked
+        bar->AnimationClicked(this);
+    }
 }
 
 //========================------------------------------------
@@ -250,6 +271,20 @@ void wxCustomStatusBar::OnMouseMotion(wxMouseEvent& event)
         }
     }
     SetToolTip(m_text);
+}
+
+void wxCustomStatusBar::AnimationClicked(wxCustomStatusBarField* field)
+{
+    for(size_t i = 0; i < m_fields.size(); ++i) {
+        if(m_fields.at(i).get() == field) {
+            // fire an event
+            clCommandEvent event(wxEVT_STATUSBAR_CLICKED);
+            event.SetEventObject(this);
+            event.SetInt(i);
+            GetEventHandler()->AddPendingEvent(event);
+            break;
+        }
+    }
 }
 
 bool wxCustomStatusBarField::HitTest(const wxPoint& point) const { return m_rect.Contains(point); }

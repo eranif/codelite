@@ -10,6 +10,7 @@ Code Completion / Code Generation
 
 Must:
 =====
+- When full retag is taken place - delete the database file (to overcome malformed image file on the disk errors)
 
 Misc:
 =====

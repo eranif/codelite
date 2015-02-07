@@ -9,7 +9,7 @@ AppVersion=7.0.0
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
-DefaultDirName={reg:HKLM\Software\codelite\settings,InstallPath|{pf64}\CodeLite}
+DefaultDirName={pf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
@@ -27,8 +27,6 @@ PrivilegesRequired=none
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
 #define WXWIN "D:\src\wxWidgets_x64"
-#define RUNTIME_MINGW "C:\TDM-GCC-64"
-#define RUNTIME_MINGW32 "C:\MinGW-4.8.1"
 #define BINUTILS_DIR "D:\bin"
 
 
@@ -186,7 +184,7 @@ begin
       begin
         RegDeleteKeyIncludingSubkeys(HKCR, '*\shell\Open With CodeLite');
         // Prompt the user to delete all his settings, default to "No"
-        if MsgBox('Do you want to delete all user settings as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES 
+        if MsgBox('Would you like to keep your user settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO 
         then begin
             DeleteFolder(ExpandConstant('{userappdata}') + '\codelite');
         end;
@@ -215,26 +213,32 @@ end;
 
 function UnInstallOldVersion(): Integer;
 var
-  sUnInstallString: String;
-  sUnInstallStringOld: String;
-  iResultCode: Integer;
+    sUnInstallString: String;
+    sUnInstallStringOld: String;
+    iResultCode: Integer;
+    
 begin
     // Return Values:
     // 1 - uninstall string is empty
     // 2 - error executing the UnInstallString
     // 3 - successfully executed the UnInstallString
 
-  // default return value
-  Result := 0;
-  sUnInstallString    := GetUninstallString();
-  if sUnInstallString <> '' then begin
-    sUnInstallString := RemoveQuotes(sUnInstallString);
-    if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
-      Result := 3
-    else
-      Result := 2;
-  end else
-    Result := 1;
+    // default return value
+    Result := 0;
+  
+    if MsgBox('Would you like to uninstall CodeLite and its components (MinGW, UnitTest++) before installing the new version?', 
+             mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES 
+    then begin
+        sUnInstallString    := GetUninstallString();
+        if sUnInstallString <> '' then begin
+            sUnInstallString := RemoveQuotes(sUnInstallString);
+        if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES ','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+            Result := 3
+        else
+            Result := 2;
+        end else
+            Result := 1;
+    end;
 end;
 
 function IsUpgrade(): Boolean;
@@ -251,7 +255,8 @@ begin
         begin
           if (IsUpgrade()) then
             begin
-              UnInstallOldVersion();
+                // Uninstall CodeLite
+                UnInstallOldVersion();
             end;
         end;
     end;

@@ -9,7 +9,7 @@ AppVersion=7.0.0
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
-DefaultDirName={reg:HKLM\Software\codelite\settings,InstallPath|{pf}\CodeLite}
+DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
@@ -162,56 +162,6 @@ Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: 
 Type: filesandordirs; Name: "{app}"
 
 [Code]
-// var
-//   MinGW_Page:      TInputDirWizardPage;
-//   UnitTestPP_Page: TInputDirWizardPage;
-// 
-// procedure CreateMinGWPage();
-// begin
-//   MinGW_Page := CreateInputDirPage(wpSelectComponents,
-//           'Select MinGW Installation Folder', 'Where should setup place MinGW?',
-//           'MinGW will be stored in the following folder.'#13#10#13#10 +
-//           'To continue, click Next. If you would like to select a different folder, click Browse.',
-//           False, 'New Folder');
-// 
-//   // Add item (with an empty caption)
-//   MinGW_Page.Add('');
-// 
-//   // Set initial value (optional)
-//   MinGW_Page.Values[0] := ExpandConstant('{sd}\MinGW-4.8.1\');
-// end;
-// 
-// function GetMinGWInstallDir(Param: String): String;
-// begin
-//   Result := MinGW_Page.Values[0];
-// end;
-// 
-// procedure CreateUnitTestPPPage();
-// begin
-//   UnitTestPP_Page := CreateInputDirPage(wpSelectComponents,
-//           'Select UnitTest++ Installation Folder', 'Where should setup place UnitTest++?',
-//           'UnitTest++ framework will be stored in the following folder.'#13#10#13#10 +
-//           'To continue, click Next. If you would like to select a different folder, click Browse.',
-//           False, 'New Folder');
-// 
-//   // Add item (with an empty caption)
-//   UnitTestPP_Page.Add('');
-// 
-//   // Set initial value (optional)
-//   UnitTestPP_Page.Values[0] := ExpandConstant('{sd}\UnitTest++-1.3\');
-// end;
-// 
-// function GetUnitTestPPInstallDir(Param: String): String;
-// begin
-//   Result := UnitTestPP_Page.Values[0];
-// end;
-// 
-// procedure InitializeWizard();
-// begin
-//   CreateMinGWPage();
-//   CreateUnitTestPPPage();
-// end;
-
 procedure DeleteFolder(ADirName: string);
 var
   FindRec: TFindRec;
@@ -243,7 +193,7 @@ begin
       begin
         RegDeleteKeyIncludingSubkeys(HKCR, '*\shell\Open With CodeLite');
         // Prompt the user to delete all his settings, default to "No"
-        if MsgBox('Do you want to delete all user settings as well?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES 
+        if MsgBox('Would you like to keep your user settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO 
         then begin
             DeleteFolder(ExpandConstant('{userappdata}') + '\codelite');
         end;
@@ -253,21 +203,6 @@ begin
       end;
   end;
 end;
-
-// function ShouldSkipPage(PageID: Integer): Boolean;
-// begin
-//   // by default dont skip the page
-//   Result := False;
-// 
-//   if PageID = MinGW_Page.ID then begin
-//     if IsComponentSelected('MinGW') = False then
-//       Result := True;
-//   end
-//   if PageID = UnitTestPP_Page.ID then begin
-//     if IsComponentSelected('UnitTestPP') = False then
-//       Result := True;
-//   end
-// end;
 
 //--------------------
 // Uninstall
@@ -287,26 +222,32 @@ end;
 
 function UnInstallOldVersion(): Integer;
 var
-  sUnInstallString: String;
-  sUnInstallStringOld: String;
-  iResultCode: Integer;
+    sUnInstallString: String;
+    sUnInstallStringOld: String;
+    iResultCode: Integer;
+    
 begin
     // Return Values:
     // 1 - uninstall string is empty
     // 2 - error executing the UnInstallString
     // 3 - successfully executed the UnInstallString
 
-  // default return value
-  Result := 0;
-  sUnInstallString    := GetUninstallString();
-  if sUnInstallString <> '' then begin
-    sUnInstallString := RemoveQuotes(sUnInstallString);
-    if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
-      Result := 3
-    else
-      Result := 2;
-  end else
-    Result := 1;
+    // default return value
+    Result := 0;
+  
+    if MsgBox('Would you like to uninstall CodeLite and its components (MinGW, UnitTest++) before installing the new version?', 
+             mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES 
+    then begin
+        sUnInstallString    := GetUninstallString();
+        if sUnInstallString <> '' then begin
+            sUnInstallString := RemoveQuotes(sUnInstallString);
+        if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES ','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+            Result := 3
+        else
+            Result := 2;
+        end else
+            Result := 1;
+    end;
 end;
 
 function IsUpgrade(): Boolean;
@@ -323,7 +264,8 @@ begin
         begin
           if (IsUpgrade()) then
             begin
-              UnInstallOldVersion();
+                // Uninstall CodeLite
+                UnInstallOldVersion();
             end;
         end;
     end;

@@ -86,20 +86,36 @@ bool CompilerLocatorMinGW::Locate()
     
     // for wxRegKey
 #ifdef __WXMSW__ 
-
-    // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
-    wxRegKey regClMinGW(wxRegKey::HKLM, "SOFTWARE\\codelite\\settings");
-    wxString clInstallFolder;
-    if ( regClMinGW.QueryValue("MinGW", clInstallFolder) && wxDirExists(clInstallFolder)) {
-        wxFileName gccExe(clInstallFolder, "gcc.exe");
-        wxString ver;
-        regClMinGW.QueryValue("MinGW_Version", ver);
-        gccExe.AppendDir("bin");
-        if ( gccExe.FileExists() ) {
-            AddTools(gccExe.GetPath(), "CodeLite-" + ver);
+    
+    {
+        // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
+        wxRegKey regClMinGW(wxRegKey::HKLM, "SOFTWARE\\codelite\\settings");
+        wxString clInstallFolder;
+        if ( regClMinGW.QueryValue("MinGW", clInstallFolder) && wxDirExists(clInstallFolder)) {
+            wxFileName gccExe(clInstallFolder, "gcc.exe");
+            wxString ver;
+            regClMinGW.QueryValue("MinGW_Version", ver);
+            gccExe.AppendDir("bin");
+            if ( gccExe.FileExists() ) {
+                AddTools(gccExe.GetPath(), "CodeLite-" + ver);
+            }
         }
     }
-
+    
+    {
+        // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
+        wxRegKey regClMinGW(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\codelite\\settings");
+        wxString clInstallFolder;
+        if ( regClMinGW.QueryValue("MinGW", clInstallFolder) && wxDirExists(clInstallFolder)) {
+            wxFileName gccExe(clInstallFolder, "gcc.exe");
+            wxString ver;
+            regClMinGW.QueryValue("MinGW_Version", ver);
+            gccExe.AppendDir("bin");
+            if ( gccExe.FileExists() ) {
+                AddTools(gccExe.GetPath(), "CodeLite-" + ver);
+            }
+        }
+    }
     // Check registry for TDM-GCC-64 
     wxRegKey regTDM(wxRegKey::HKCU, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TDM-GCC");
     wxString tdmInstallFolder;

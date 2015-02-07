@@ -153,29 +153,11 @@ Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: 
 Type: filesandordirs; Name: "{app}"
 
 [Code]
-procedure DeleteFolder(ADirName: string);
 var
-  FindRec: TFindRec;
-begin
-  if FindFirst(ADirName + '\*', FindRec) then begin
-    try
-      repeat
-        if FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0 then begin
-          if (FindRec.Name <> '.') and (FindRec.Name <> '..') then begin
-            DeleteFolder(ADirName + '\' + FindRec.Name);
-            RemoveDir(ADirName + '\' + FindRec.Name);
-          end;
-        end else
-          DeleteFile(ADirName + '\' + FindRec.Name);
-      until not FindNext(FindRec);
-    finally
-      FindClose(FindRec);
-    end;
-  end;
-  // Remove the folder itself
-  RemoveDir(ADirName);
-end;
-
+    // Globals
+    sMinGWFolderName: String;
+    bMinGWBackedUp: Boolean;
+    
 // Uninstall
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
@@ -186,7 +168,7 @@ begin
         // Prompt the user to delete all his settings, default to "No"
         if MsgBox('Would you like to keep your user settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO 
         then begin
-            DeleteFolder(ExpandConstant('{userappdata}') + '\codelite');
+            DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True);
         end;
       end;
     usPostUninstall:
@@ -225,26 +207,140 @@ begin
 
     // default return value
     Result := 0;
-  
-    if MsgBox('Would you like to uninstall CodeLite and its components (MinGW, UnitTest++) before installing the new version?', 
-             mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES 
-    then begin
-        sUnInstallString    := GetUninstallString();
-        if sUnInstallString <> '' then begin
-            sUnInstallString := RemoveQuotes(sUnInstallString);
-        if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES ','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
-            Result := 3
-        else
-            Result := 2;
-        end else
-            Result := 1;
-    end;
+
+    sUnInstallString    := GetUninstallString();
+    if sUnInstallString <> '' then begin
+        sUnInstallString := RemoveQuotes(sUnInstallString);
+    if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES ','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+        Result := 3
+    else
+        Result := 2;
+    end else
+        Result := 1;
+end;
+
+function GetCodeLiteInstallPath(): String;
+var
+    sRegKey: String;
+    sCodeLitePath: String;
+begin
+    sRegKey := 'Software\codelite\settings';
+    sCodeLitePath := '';
+    if not RegQueryStringValue(HKLM, sRegKey, 'InstallPath', sCodeLitePath) then
+        RegQueryStringValue(HKCU, sRegKey, 'InstallPath', sCodeLitePath);
+    Result := sCodeLitePath;
+end;
+
+function UnInstallVersion6(): Integer;
+var
+    sCodeLitePath: String;
+    
+begin
+    if GetCodeLiteInstallPath() <> '' then
+    BEGIN
+        // Uninstall codelite 6.X
+        sCodeLitePath := GetCodeLiteInstallPath()
+        
+        // Delete the following folders:
+        DelTree(sCodeLitePath + '\plugins', True, True, True )
+        DelTree(sCodeLitePath + '\lexers', True, True, True)
+        DelTree(sCodeLitePath + '\debuggers', True, True, True)
+        DelTree(sCodeLitePath + '\templates', True, True, True)
+        DelTree(sCodeLitePath + '\gdb_printers', True, True, True)
+        DelTree(sCodeLitePath + '\config', True, True, True)
+        DelTree(sCodeLitePath + '\dics', True, True, True)
+        DelTree(sCodeLitePath + '\locale', True, True, True)
+
+        // Clear the content of CodeLite installation folder (*.exe, *.zip, *.dll)
+        DelTree(sCodeLitePath + '\*.exe', False, True, False)
+        DelTree(sCodeLitePath + '\*.zip', False, True, False)
+        DelTree(sCodeLitePath + '\*.dll', False, True, False)
+        DelTree(sCodeLitePath + '\*.RPT', False, True, False)
+        DelTree(sCodeLitePath + '\*.ini', False, True, False)
+        DelTree(sCodeLitePath + '\*.html', False, True, False)
+        DelTree(sCodeLitePath + '\*.dat', False, True, False)
+        
+        if MsgBox('Would you like to keep your local settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO 
+        then 
+        BEGIN
+            DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True)
+        END
+    END
 end;
 
 function IsUpgrade(): Boolean;
 begin
   Result := (GetUninstallString() <> '');
 end;
+
+function GetMinGWInstallLocation(): String;
+var
+    sMinGWPath: String;
+    sMinGWPathLocation: String;
+begin
+    sMinGWPath := 'Software\codelite\settings';
+    sMinGWPathLocation := '';
+    if not RegQueryStringValue(HKLM, sMinGWPath, 'MinGW', sMinGWPathLocation) then
+        RegQueryStringValue(HKCU, sMinGWPath, 'MinGW', sMinGWPathLocation);
+    Result := sMinGWPathLocation;
+end;
+
+//-------------------------------------------------------
+// Backup MinGW installation before uninstalling CodeLite
+//-------------------------------------------------------
+//procedure BackupMinGW();
+//var
+//    sMinGWLocation: String;
+//    sTempFolder: String;
+//    sMinGWBackupPath: String;
+//    sMinGWDrive: String;
+//    
+//begin
+//    bMinGWBackedUp := False;
+//    sMinGWLocation := GetMinGWInstallLocation();
+//    if sMinGWLocation <> '' then
+//    begin
+//        sMinGWFolderName := ExtractFileName(sMinGWLocation);
+//        sMinGWDrive := ExtractFileDrive(sMinGWLocation);
+//        sMinGWBackupPath := sMinGWDrive + '\' + sMinGWFolderName + '.backup'; // Rename the folder so it won't get deleted
+//        bMinGWBackedUp := RenameFile(sMinGWLocation, sMinGWBackupPath);
+//    end;
+//end;
+
+//----------------------------------------------------
+// Restore MinGW from a previously back up
+//----------------------------------------------------
+//procedure RestoreMinGW();
+//var
+//    sMinGWLocation: String;
+//    sTempFolder: String;
+//    sMinGWBackupPath: String;
+//    sMinGWNewLocation: String;
+//begin
+//    sMinGWLocation := GetMinGWInstallLocation();
+//    sMinGWNewLocation := sMinGWLocation; // By default restore to the old location
+//    if (sMinGWLocation <> '') AND (bMinGWBackedUp = True) then
+//    BEGIN
+//        sMinGWBackupPath := GetEnv('TEMP') + '\' + sMinGWFolderName;
+//        if not CreateDir(sMinGWNewLocation) then
+//        BEGIN
+//            // Could not create the restore location, prompt the user
+//            sMinGWNewLocation := ''
+//            if BrowseForFolder('Could not restore MinGW to its previous location' + #13#10 + 'Please select a new location to restore MinGW (Setup will restore it into a separate folder):', sMinGWNewLocation, False) = True then
+//            BEGIN
+//                sMinGWNewLocation := sMinGWNewLocation + sMinGWFolderName;
+//            END
+//        END else BEGIN
+//            // We can safely restore the folder
+//            RemoveDir(sMinGWNewLocation)
+//        END
+//    END
+//
+//	if sMinGWNewLocation <> '' then
+//    BEGIN
+//        RenameFile(sMinGWBackupPath, sMinGWNewLocation)
+//    END
+//end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 var
@@ -256,7 +352,7 @@ begin
           if (IsUpgrade()) then
             begin
                 // Uninstall CodeLite
-                UnInstallOldVersion();
+                UnInstallVersion6()
             end;
         end;
     end;

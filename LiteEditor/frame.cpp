@@ -5053,6 +5053,19 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
 
 bool clMainFrame::SaveLayoutAndSession()
 {
+    // save the current session before closing
+    // We do this before 'CloseAll' so the session will 
+    // store the list of tabs
+    if(ManagerST::Get()->IsWorkspaceOpen()) {
+        wxString sessionName = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
+        SessionEntry session;
+        session.SetWorkspaceName(sessionName);
+        GetMainBook()->SaveSession(session);
+        ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
+        SessionManager::Get().Save(sessionName, session);
+        SessionManager::Get().SetLastWorkspaceName(sessionName);
+    }
+    
     // make sure there are no 'unsaved documents'
     if(!GetMainBook()->CloseAll(true)) {
         return false;
@@ -5076,17 +5089,6 @@ bool clMainFrame::SaveLayoutAndSession()
     EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
     EditorConfigST::Get()->SetInteger(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();
-
-    // save the current session before closing
-    if(ManagerST::Get()->IsWorkspaceOpen()) {
-        wxString sessionName = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
-        SessionEntry session;
-        session.SetWorkspaceName(sessionName);
-        GetMainBook()->SaveSession(session);
-        ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
-        SessionManager::Get().Save(sessionName, session);
-        SessionManager::Get().SetLastWorkspaceName(sessionName);
-    }
 
     // keep list of all detached panes
     wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();

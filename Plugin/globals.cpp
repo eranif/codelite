@@ -75,6 +75,7 @@
 #include "macros.h"
 #include <wx/sstream.h>
 #include "cl_standard_paths.h"
+#include "clGetTextFromUserDialog.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -110,11 +111,23 @@ public:
     {
     }
 
-    virtual ~clInternalEventHandlerData() { wxDELETE(m_arg); }
+    virtual ~clInternalEventHandlerData()
+    {
+        wxDELETE(m_arg);
+    }
 
-    wxClientData* GetArg() const { return m_arg; }
-    clEventFunc_t GetFuncPtr() const { return m_funcPtr; }
-    wxObject* GetThis() { return m_this; }
+    wxClientData* GetArg() const
+    {
+        return m_arg;
+    }
+    clEventFunc_t GetFuncPtr() const
+    {
+        return m_funcPtr;
+    }
+    wxObject* GetThis()
+    {
+        return m_this;
+    }
 };
 
 class clInternalEventHandler : public wxEvtHandler
@@ -222,7 +235,10 @@ static wxString MacGetInstallPath()
 #endif
 
 struct ProjListCompartor {
-    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
+    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const
+    {
+        return p1->GetName() > p2->GetName();
+    }
 };
 
 static bool IsBOMFile(const char* file_name)
@@ -235,7 +251,8 @@ static bool IsBOMFile(const char* file_name)
 
             // Read the first 4 bytes (or less)
             size_t size = buff.st_size;
-            if(size > 4) size = 4;
+            if(size > 4)
+                size = 4;
 
             char* buffer = new char[size];
             if(fread(buffer, sizeof(char), size, fp) == size) {
@@ -265,7 +282,8 @@ static bool ReadBOMFile(const char* file_name, wxString& content, BOM& bom)
                 wxFontEncoding encoding(wxFONTENCODING_SYSTEM);
                 size_t bomSize(size);
 
-                if(bomSize > 4) bomSize = 4;
+                if(bomSize > 4)
+                    bomSize = 4;
                 bom.SetData(buffer, bomSize);
                 encoding = bom.Encoding();
 
@@ -309,14 +327,20 @@ static bool ReadFile8BitData(const char* file_name, wxString& content)
     return content.IsEmpty() == false;
 }
 
-bool SendCmdEvent(int eventId, void* clientData) { return EventNotifier::Get()->SendCommandEvent(eventId, clientData); }
+bool SendCmdEvent(int eventId, void* clientData)
+{
+    return EventNotifier::Get()->SendCommandEvent(eventId, clientData);
+}
 
 bool SendCmdEvent(int eventId, void* clientData, const wxString& str)
 {
     return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str);
 }
 
-void PostCmdEvent(int eventId, void* clientData) { EventNotifier::Get()->PostCommandEvent(eventId, clientData); }
+void PostCmdEvent(int eventId, void* clientData)
+{
+    EventNotifier::Get()->PostCommandEvent(eventId, clientData);
+}
 
 void SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText, int imgId)
 {
@@ -353,7 +377,8 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
             return ReadBOMFile(name.data(), content, *bom);
         }
 
-        if(encoding == wxFONTENCODING_DEFAULT) encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
+        if(encoding == wxFONTENCODING_DEFAULT)
+            encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
 
         // first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
         if(encoding != wxFONTENCODING_UTF8) {
@@ -698,7 +723,10 @@ bool CopyToClipboard(const wxString& text)
     return ret;
 }
 
-wxColour MakeColourLighter(wxColour color, float level) { return DrawingUtils::LightColour(color, level); }
+wxColour MakeColourLighter(wxColour color, float level)
+{
+    return DrawingUtils::LightColour(color, level);
+}
 
 bool IsFileReadOnly(const wxFileName& filename)
 {
@@ -744,7 +772,10 @@ wxString ArrayToSmiColonString(const wxArrayString& array)
     return result.BeforeLast(wxT(';'));
 }
 
-void StripSemiColons(wxString& str) { str.Replace(wxT(";"), wxT(" ")); }
+void StripSemiColons(wxString& str)
+{
+    str.Replace(wxT(";"), wxT(" "));
+}
 
 wxString NormalizePath(const wxString& path)
 {
@@ -756,7 +787,10 @@ wxString NormalizePath(const wxString& path)
     return normalized_path;
 }
 
-time_t GetFileModificationTime(const wxFileName& filename) { return GetFileModificationTime(filename.GetFullPath()); }
+time_t GetFileModificationTime(const wxFileName& filename)
+{
+    return GetFileModificationTime(filename.GetFullPath());
+}
 
 time_t GetFileModificationTime(const wxString& filename)
 {
@@ -820,7 +854,8 @@ void WrapInShell(wxString& cmd)
     wxString command;
 #ifdef __WXMSW__
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
-    if(!shell) shell = (wxChar*)wxT("CMD.EXE");
+    if(!shell)
+        shell = (wxChar*)wxT("CMD.EXE");
 
     command << shell << wxT(" /C ");
     if(EditorConfigST::Get()->GetOptions()->MSWIsWrapCmdWithDoubleQuotes()) {
@@ -1172,7 +1207,8 @@ bool wxIsFileSymlink(const wxFileName& filename)
 #else
     wxCharBuffer cb = filename.GetFullPath().mb_str(wxConvUTF8).data();
     struct stat stat_buff;
-    if(::stat(cb.data(), &stat_buff) < 0) return false;
+    if(::stat(cb.data(), &stat_buff) < 0)
+        return false;
     return S_ISLNK(stat_buff.st_mode);
 #endif
 }
@@ -1221,9 +1257,11 @@ int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
         return defval;
     }
 
-    if(minval != -1 && v < minval) return defval;
+    if(minval != -1 && v < minval)
+        return defval;
 
-    if(maxval != -1 && v > maxval) return defval;
+    if(maxval != -1 && v > maxval)
+        return defval;
 
     return v;
 }
@@ -1239,11 +1277,18 @@ wxString wxIntToString(int val)
 // BOM
 ////////////////////////////////////////
 
-BOM::BOM(const char* buffer, size_t len) { m_bom.AppendData(buffer, len); }
+BOM::BOM(const char* buffer, size_t len)
+{
+    m_bom.AppendData(buffer, len);
+}
 
-BOM::BOM() {}
+BOM::BOM()
+{
+}
 
-BOM::~BOM() {}
+BOM::~BOM()
+{
+}
 
 wxFontEncoding BOM::Encoding()
 {
@@ -1313,7 +1358,10 @@ void BOM::SetData(const char* buffer, size_t len)
     m_bom.AppendData(buffer, len);
 }
 
-int BOM::Len() const { return m_bom.GetDataLen(); }
+int BOM::Len() const
+{
+    return m_bom.GetDataLen();
+}
 
 void BOM::Clear()
 {
@@ -1323,9 +1371,15 @@ void BOM::Clear()
 
 /////////////////////////////////////////////////////////////////
 
-clEventDisabler::clEventDisabler() { EventNotifier::Get()->DisableEvents(true); }
+clEventDisabler::clEventDisabler()
+{
+    EventNotifier::Get()->DisableEvents(true);
+}
 
-clEventDisabler::~clEventDisabler() { EventNotifier::Get()->DisableEvents(false); }
+clEventDisabler::~clEventDisabler()
+{
+    EventNotifier::Get()->DisableEvents(false);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // UTF8/16 conversions methods copied from wxScintilla
@@ -1887,7 +1941,8 @@ static wxChar sPreviousChar(wxStyledTextCtrl* ctrl, int pos, int& foundPos, bool
 
             long tmpPos = curpos;
             curpos = ctrl->PositionBefore(curpos);
-            if(curpos == 0 && tmpPos == curpos) break;
+            if(curpos == 0 && tmpPos == curpos)
+                break;
         } else {
             foundPos = curpos;
             return ch;
@@ -2012,7 +2067,8 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         }
     }
 
-    if(at < 0) at = 0;
+    if(at < 0)
+        at = 0;
     wxString expr = ctrl->GetTextRange(at, pos);
     if(!forCC) {
         // If we do not require the expression for CodeCompletion
@@ -2081,7 +2137,8 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
     int maxPixel = 0;
     int startLine = ctrl->GetFirstVisibleLine();
     int endLine = startLine + ctrl->LinesOnScreen();
-    if(endLine >= (ctrl->GetLineCount() - 1)) endLine--;
+    if(endLine >= (ctrl->GetLineCount() - 1))
+        endLine--;
 
     for(int i = startLine; i <= endLine; i++) {
         int visibleLine = (int)ctrl->DocLineFromVisible(i);      // get actual visible line, folding may offset lines
@@ -2097,11 +2154,24 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
             maxPixel = curLen;
     }
 
-    if(maxPixel == 0) maxPixel++; // make sure maxPixel is valid
+    if(maxPixel == 0)
+        maxPixel++; // make sure maxPixel is valid
 
     int currentLength = ctrl->GetScrollWidth(); // Get current scrollbar size
     if(currentLength != maxPixel) {
         // And if it is not the same, update it
         ctrl->SetScrollWidth(maxPixel);
     }
+}
+wxString clGetTextFromUser(const wxString& title,
+                           const wxString& message,
+                           const wxString& initialValue,
+                           int charsToSelect,
+                           wxWindow* parent)
+{
+    clGetTextFromUserDialog dialog(parent, title, message, initialValue, charsToSelect);
+    if(dialog.ShowModal() == wxID_OK) {
+        return dialog.GetValue();
+    }
+    return "";
 }

@@ -43,7 +43,7 @@ EditDlg::~EditDlg()
 }
 
 
-wxString clGetTextFromUser(const wxString &initialValue, wxWindow* parent)
+wxString clGetStringFromUser(const wxString &initialValue, wxWindow* parent)
 {
     EditDlg dlg(parent, initialValue);
     if ( dlg.ShowModal() == wxID_OK ) {

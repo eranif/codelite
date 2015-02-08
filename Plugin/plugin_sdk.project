@@ -240,6 +240,8 @@
       <File Name="clStatusBar.h"/>
       <File Name="wxPNGAnimation.cpp"/>
       <File Name="wxPNGAnimation.h"/>
+      <File Name="clGetTextFromUserDialog.h"/>
+      <File Name="clGetTextFromUserDialog.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

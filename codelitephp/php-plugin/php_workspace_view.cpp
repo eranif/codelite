@@ -441,7 +441,7 @@ void PHPWorkspaceView::OnNewFile(wxCommandEvent& e)
     wxTreeItemId folderId = DoGetSingleSelection();
     ItemData* data = DoGetItemData(folderId);
     if(data->IsFolder() || data->IsProject()) {
-        wxString filename = ::wxGetTextFromUser(_("File Name:"), _("New File"), "Untitled.php");
+        wxString filename = ::clGetTextFromUser(_("New File"), _("Set the file name:"), "Untitled.php", wxStrlen("Untitled"));
         if(filename.IsEmpty()) return;
         wxFileName fn;
         if(data->IsFolder()) {

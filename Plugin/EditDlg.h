@@ -38,5 +38,5 @@ public:
     }
 };
 
-WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString &initialValue, wxWindow* parent = NULL);
+WXDLLIMPEXP_SDK wxString clGetStringFromUser(const wxString &initialValue, wxWindow* parent = NULL);
 #endif // EDITDLG_H

@@ -369,7 +369,7 @@ public:
  * @return the amended entries
  */
 WXDLLIMPEXP_SDK wxArrayString
-ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
+    ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
 
 /**
  * @brief return true if filename is a symbolic link
@@ -446,13 +446,13 @@ WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& 
  * @return wxRichMessageDialog::ShowModal() return value
  */
 WXDLLIMPEXP_SDK wxStandardID
-PromptForYesNoDialogWithCheckbox(const wxString& message,
-                                 const wxString& dlgId,
-                                 const wxString& yesLabel = _("Yes"),
-                                 const wxString& noLabel = _("No"),
-                                 const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
-                                 long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT,
-                                 bool checkboxInitialValue = false);
+    PromptForYesNoDialogWithCheckbox(const wxString& message,
+                                     const wxString& dlgId,
+                                     const wxString& yesLabel = _("Yes"),
+                                     const wxString& noLabel = _("No"),
+                                     const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
+                                     long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT,
+                                     bool checkboxInitialValue = false);
 
 /**
  * @brief wrap string with quotes if needed
@@ -506,4 +506,10 @@ WXDLLIMPEXP_SDK void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid);
  * @param ctrl
  */
 WXDLLIMPEXP_SDK void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl);
+
+WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title,
+                                           const wxString& message,
+                                           const wxString& initialValue = "",
+                                           int charsToSelect = wxNOT_FOUND,
+                                           wxWindow* parent = NULL);
 #endif // GLOBALS_H

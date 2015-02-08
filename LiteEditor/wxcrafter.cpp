@@ -13,71 +13,6 @@ extern void wxC3F25InitBitmapResources();
 static bool bBitmapLoaded = false;
 
 
-NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC3F25InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer1);
-    
-    m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(600,400), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
-    m_splitter5->SetSashGravity(0);
-    m_splitter5->SetMinimumPaneSize(10);
-    
-    boxSizer1->Add(m_splitter5, 1, wxALL|wxEXPAND, 5);
-    
-    m_splitterPageRight = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPageRight->SetSizer(boxSizer10);
-    
-    m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, 300);
-    
-    wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPageLeft->SetSizer(boxSizer11);
-    
-    m_txtDescription = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE);
-    
-    boxSizer11->Add(m_txtDescription, 1, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer1->Add(boxSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button3 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button3->SetDefault();
-    
-    boxSizer2->Add(m_button3, 0, wxALL, 5);
-    
-    m_button4 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer2->Add(m_button4, 0, wxALL, 5);
-    
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    Centre(wxBOTH);
-    // Connect events
-    m_button3->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDlgBaseClass::OnOKUI), NULL, this);
-    m_button3->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCreate), NULL, this);
-    
-}
-
-NewProjectDlgBaseClass::~NewProjectDlgBaseClass()
-{
-    m_button3->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDlgBaseClass::OnOKUI), NULL, this);
-    m_button3->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCreate), NULL, this);
-    
-}
-
 NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
@@ -422,7 +357,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer117->Add(m_banner125, 0, wxALL|wxEXPAND, 5);
     
-    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE);
+    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE);
     m_filePicker->SetToolTip(_("The functions will be placed into this file"));
     
     boxSizer117->Add(m_filePicker, 0, wxALL|wxEXPAND, 5);

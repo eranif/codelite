@@ -170,7 +170,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_toolbarItem4"
+           "m_value": "m_toolbarItemSort1"
           }, {
            "type": "string",
            "m_label": "Label:",

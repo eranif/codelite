@@ -1,4 +1,4 @@
-<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+<resource xmlns="http://www.wxwindows.org/wxxrc">
     <object class="wxMenuBar" name="main_menu">
         <object class="wxMenu" name="file_tool_or_menuitem">
             <label>&amp;File</label>

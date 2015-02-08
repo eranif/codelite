@@ -10,14 +10,10 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
+#include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
-#include <wx/panel.h>
-#include <wx/textctrl.h>
-#include <wx/button.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/pen.h>
@@ -28,11 +24,14 @@
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <wx/icon.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
 #include <wx/bannerwindow.h>
 #include <wx/commandlinkbutton.h>
 #include <wx/filepicker.h>
 #include <wx/dataview.h>
 #include "addfunctionsmodel.h"
+#include <wx/button.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include <wx/dirctrl.h>
@@ -41,34 +40,9 @@
 #include <vector>
 #include "dvtemplatesmodel.h"
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/stc/stc.h>
-
-class NewProjectDlgBaseClass : public wxDialog
-{
-protected:
-    wxSplitterWindow* m_splitter5;
-    wxPanel* m_splitterPageRight;
-    wxPanel* m_splitterPageLeft;
-    wxTextCtrl* m_txtDescription;
-    wxButton* m_button3;
-    wxButton* m_button4;
-
-protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCreate(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
-    wxTextCtrl* GetTxtDescription() { return m_txtDescription; }
-    wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
-    wxSplitterWindow* GetSplitter5() { return m_splitter5; }
-    wxButton* GetButton3() { return m_button3; }
-    wxButton* GetButton4() { return m_button4; }
-    NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-    virtual ~NewProjectDlgBaseClass();
-};
-
 
 class NavBarControlBaseClass : public wxPanel
 {

@@ -142,7 +142,7 @@ bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool notif
     wxString filename = itemData->GetFileName();
     wxString project = m_manager->GetWorkspace()->GetActiveProjectName();
     wxString pattern = itemData->GetPattern();
-    int      lineno  = itemData->GetLine();
+    //int      lineno  = itemData->GetLine();
 
     /*
     	// Open the file and set the cursor to line number

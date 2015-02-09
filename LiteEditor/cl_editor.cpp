@@ -172,6 +172,8 @@ LEditor::LEditor(wxWindow* parent)
     , m_findBookmarksActive(false)
     , m_mgr(PluginManager::Get())
 {
+    DoUpdateOptions();
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
     m_commandsProcessor.SetParent(this);
 
     // User timer to check if we need to highlight markers
@@ -226,6 +228,8 @@ LEditor::LEditor(wxWindow* parent)
 
 LEditor::~LEditor()
 {
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
+    
     EventNotifier::Get()->Disconnect(
         wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -4446,17 +4450,15 @@ wxMenu* LEditor::DoCreateDebuggerWatchMenu(const wxString& word)
     return menu;
 }
 
-OptionsConfigPtr LEditor::GetOptions()
+void LEditor::DoUpdateOptions()
 {
     // Start by getting the global settings
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    m_options = EditorConfigST::Get()->GetOptions();
 
     // Now let any local preferences overwrite the global equivalent
     if(ManagerST::Get()->IsWorkspaceOpen()) {
-        LocalWorkspaceST::Get()->GetOptions(options, GetProject());
+        LocalWorkspaceST::Get()->GetOptions(m_options, GetProject());
     }
-
-    return options;
 }
 
 bool LEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replaceWith)
@@ -4853,15 +4855,11 @@ void LEditor::OnTimer(wxTimerEvent& event)
     m_timerHighlightMarkers->Start(100, true);
     if(!HasFocus()) return;
 
-    CL_DEBUG1("Inside LEditor::OnTimer. File: %s", GetFileName().GetFullPath());
-
     if(!HasSelection()) {
-        CL_DEBUG1("No selection - nothing to do here");
         HighlightWord(false);
 
     } else {
         if(EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
-
             int pos = GetCurrentPos();
             int wordStartPos = WordStartPos(pos, true);
             int wordEndPos = WordEndPos(pos, true);
@@ -4942,6 +4940,13 @@ void LEditor::CenterLine(int line, int col)
         pos += col;
     }
     SetCaretAt(pos);
+}
+
+void LEditor::OnEditorConfigChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    DoUpdateOptions();
+    SetProperties();
 }
 
 // ----------------------------------

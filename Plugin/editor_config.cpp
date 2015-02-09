@@ -379,6 +379,10 @@ bool EditorConfig::DoSave() const
     if(m_transcation) {
         return true;
     }
+    
+    // Notify that the editor configuration was modified
+    wxCommandEvent event(wxEVT_EDITOR_CONFIG_CHANGED);
+    EventNotifier::Get()->AddPendingEvent(event);
     return ::SaveXmlToFile(m_doc, m_fileName.GetFullPath());
 }
 

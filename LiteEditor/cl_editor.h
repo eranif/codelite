@@ -224,6 +224,8 @@ protected:
     MarkWordInfo m_highlightedWordInfo;
     wxTimer *m_timerHighlightMarkers;
     IManager* m_mgr;
+    OptionsConfigPtr m_options;
+    
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
@@ -823,7 +825,7 @@ public:
     /**
      * Get editor options. Takes any workspace/project overrides into account
      */
-    OptionsConfigPtr GetOptions();
+    OptionsConfigPtr GetOptions() { return m_options; }
 
     void SetIsVisible(const bool& isVisible) { this->m_isVisible = isVisible; }
     const bool& GetIsVisible() const { return m_isVisible; }
@@ -849,7 +851,8 @@ public:
 private:
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
-
+    void DoUpdateOptions();
+    
     void FillBPtoMarkerArray();
     BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);
     void SetProperties();
@@ -911,6 +914,7 @@ private:
     void OnFileFormatDone(wxCommandEvent& e);
     void OnFileFormatStarting(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
+    void OnEditorConfigChanged(wxCommandEvent &event);
 };
 
 #endif // LITEEDITOR_EDITOR_H

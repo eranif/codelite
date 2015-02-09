@@ -97,8 +97,6 @@ void OptionsDlg2::DoSave()
     // save the modifications to the disk
     EditorConfigST::Get()->Save();
 
-    clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
-
     // Notify plugins about settings changed
     PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 

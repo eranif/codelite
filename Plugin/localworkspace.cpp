@@ -36,6 +36,8 @@
 #include "macros.h"
 
 #include "wx_xml_compatibility.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 
 //-----------------------------------------------------------------------------
 
@@ -304,7 +306,12 @@ bool LocalWorkspace::SetProjectOptions(LocalOptionsConfigPtr opts, const wxStrin
     return SaveXmlFile();
 }
 
-bool LocalWorkspace::SaveXmlFile() { return ::SaveXmlToFile(&m_doc, m_fileName.GetFullPath()); }
+bool LocalWorkspace::SaveXmlFile() 
+{
+    wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
+    EventNotifier::Get()->AddPendingEvent(evt);
+    return ::SaveXmlToFile(&m_doc, m_fileName.GetFullPath()); 
+}
 
 bool LocalWorkspace::SanityCheck()
 {

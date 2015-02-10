@@ -114,8 +114,10 @@ void CompilerLocatorCygwin::AddTool(CompilerPtr compiler, const wxString& toolna
     
     // Cygwin does not like backslahes... replace the tools to use / 
     tool.Replace("\\", "/");
-    
-    compiler->SetTool(toolname, tool + " " + extraArgs);
+    if(!extraArgs.IsEmpty()) {
+        tool << " " << extraArgs;
+    }
+    compiler->SetTool(toolname, tool);
 }
 
 wxString CompilerLocatorCygwin::GetGCCVersion(const wxString& gccBinary)

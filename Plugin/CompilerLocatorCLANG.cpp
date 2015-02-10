@@ -153,7 +153,10 @@ void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolnam
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
-    compiler->SetTool(toolname, tool + " " + extraArgs);
+    if(!extraArgs.IsEmpty()) {
+        tool << " " << extraArgs;
+    }
+    compiler->SetTool(toolname, tool);
 }
 
 void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &installFolder)

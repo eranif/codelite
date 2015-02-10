@@ -178,6 +178,9 @@ void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler,
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
-    compiler->SetTool(toolname, tool + " " + extraArgs);
+    if(!extraArgs.IsEmpty()) {
+        tool << " " << extraArgs;
+    }
+    compiler->SetTool(toolname, tool);
     CL_DEBUG("Adding tool: %s => %s", toolname, tool);
 }

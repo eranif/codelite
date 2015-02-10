@@ -274,7 +274,10 @@ void CompilerLocatorMinGW::AddTool(CompilerPtr compiler, const wxString& toolnam
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
-    compiler->SetTool(toolname, tool + " " + extraArgs);
+    if(!extraArgs.IsEmpty()) {
+        tool << " " << extraArgs;
+    }
+    compiler->SetTool(toolname, tool);
 }
 
 wxString CompilerLocatorMinGW::FindBinFolder(const wxString& parentPath)

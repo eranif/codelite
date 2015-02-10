@@ -590,7 +590,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName,
             // No need to call it twice...
             GetGlobalTags(word, globals);
         }
-        
+
         if(showLanguageKeywords) {
             // Collect language keywords
             GetKeywordsTagsForLanguage(word, kCxx, keywords);
@@ -999,8 +999,7 @@ void TagsManager::FindImplDecl(const wxFileName& fileName,
         if(scopeName != wxT("<global>")) {
             visibleScopes.push_back(scopeName);
             wxArrayString outerScopes = BreakToOuterScopes(scopeName);
-            for(size_t i = 0; i < outerScopes.GetCount(); i++)
-                visibleScopes.push_back(outerScopes.Item(i));
+            for(size_t i = 0; i < outerScopes.GetCount(); i++) visibleScopes.push_back(outerScopes.Item(i));
         }
 
         // collect tags from all the visible scopes
@@ -3275,22 +3274,101 @@ void TagsManager::GetKeywordsTagsForLanguage(const wxString& filter, eLanguage l
 {
     wxString keywords;
     if(lang == kCxx) {
-        keywords = wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast "
-                       "continue default delete "
-                       "do double dynamic_cast else enum explicit export extern false float for friend goto if "
-                       "inline int long mutable namespace "
-                       "new not not_eq operator or or_eq private protected public register reinterpret_cast return "
-                       "short signed sizeof size_t static "
-                       "static_cast struct switch template this throw true try typedef typeid typename union "
-                       "unsigned using virtual void volatile "
-                       "wchar_t while xor xor_eq ifdef undef define defined include endif elif ifndef");
+        keywords =
+            wxT(" alignas"
+                " alignof"
+                " and"
+                " and_eq"
+                " asm"
+                " auto"
+                " bitand"
+                " bitor"
+                " bool"
+                " break"
+                " case"
+                " catch"
+                " char"
+                " char16_t"
+                " char32_t"
+                " class"
+                " compl"
+                " concept"
+                " const"
+                " constexpr"
+                " const_cast"
+                " continue"
+                " decltype"
+                " default"
+                " delete"
+                " do"
+                " double"
+                " dynamic_cast"
+                " else"
+                " enum"
+                " explicit"
+                " export"
+                " extern"
+                " false"
+                " float"
+                " for"
+                " friend"
+                " goto"
+                " if"
+                " inline"
+                " int"
+                " long"
+                " mutable"
+                " namespace"
+                " new"
+                " noexcept"
+                " not"
+                " not_eq"
+                " nullptr"
+                " operator"
+                " or"
+                " or_eq"
+                " private"
+                " protected"
+                " public"
+                " register"
+                " reinterpret_cast"
+                " requires"
+                " return"
+                " short"
+                " signed"
+                " sizeof"
+                " static"
+                " static_assert"
+                " static_cast"
+                " struct"
+                " switch"
+                " template"
+                " this"
+                " thread_local"
+                " throw"
+                " true"
+                " try"
+                " typedef"
+                " typeid"
+                " typename"
+                " union"
+                " unsigned"
+                " using"
+                " virtual"
+                " void"
+                " volatile"
+                " wchar_t"
+                " while"
+                " xor"
+                " xor_eq");
     } else if(lang == kJavaScript) {
-        keywords = "abstract boolean break byte case catch char class "
-                   "const continue debugger default delete do double else enum export extends "
-                   "final finally float for function goto if implements import in instanceof "
-                   "int interface long native new package private protected public "
-                   "return short static super switch synchronized this throw throws "
-                   "transient try typeof var void volatile while with";
+        keywords =
+            "abstract boolean break byte case catch char class "
+            "const continue debugger default delete do double else enum export extends "
+            "final finally float for function goto if implements import in instanceof "
+            "int interface long native new package private protected public "
+            "return short static super switch synchronized this throw throws "
+            "transient try typeof var void volatile while with";
     }
 
     std::set<wxString> uniqueWords;

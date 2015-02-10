@@ -407,12 +407,9 @@ void LEditor::SetProperties()
     // Mark current line
     SetCaretLineVisible(options->GetHighlightCaretLine());
     SetCaretLineBackground(options->GetCaretLineColour());
-    SetCaretLineBackAlpha(30);
-
-    // MarkerSetAlpha(smt_bookmark, 30);
+    SetCaretLineBackAlpha(options->GetCaretLineAlpha());
 
     SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
-
     SetEndAtLastLine(!options->GetScrollBeyondLastLine());
 
     //------------------------------------------

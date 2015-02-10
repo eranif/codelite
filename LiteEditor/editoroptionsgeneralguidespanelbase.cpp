@@ -26,154 +26,84 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("General:")), wxVERTICAL);
+    wxArrayString m_pgMgrGeneralArr;
+    wxUnusedVar(m_pgMgrGeneralArr);
+    wxArrayInt m_pgMgrGeneralIntArr;
+    wxUnusedVar(m_pgMgrGeneralIntArr);
+    m_pgMgrGeneral = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    bSizer1->Add(sbSizer3, 0, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_pgMgrGeneral, 1, wxALL|wxEXPAND, 0);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer1->AddGrowableCol(0);
-    fgSizer1->AddGrowableCol(1);
+    m_pgPropCategoryGeneral = m_pgMgrGeneral->Append(  new wxPropertyCategory( _("General") ) );
+    m_pgPropCategoryGeneral->SetHelpString(wxT(""));
     
-    sbSizer3->Add(fgSizer1, 0, wxALL|wxEXPAND, 5);
+    m_pgPropDisplayLineNumbers = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Show line numbers margin"), wxPG_LABEL, 1) );
+    m_pgPropDisplayLineNumbers->SetHelpString(_("Show line numbers margin"));
     
-    m_displayLineNumbers = new wxCheckBox(this, wxID_ANY, _("Display line numbers"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_displayLineNumbers->SetValue(false);
-    m_displayLineNumbers->SetToolTip(_("Show line numbers margin"));
+    m_pgPropHighlightMatchedBrace = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Highlight matched braces"), wxPG_LABEL, 1) );
+    m_pgPropHighlightMatchedBrace->SetHelpString(_("Highlight matched braces"));
     
-    fgSizer1->Add(m_displayLineNumbers, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropHideEditMargin = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Hide / Display the change marker margin (red/green marks when line is modified)"), wxPG_LABEL, 1) );
+    m_pgPropHideEditMargin->SetHelpString(_("Hide / Display the change marker margin (red/green marks when line is modified)"));
     
-    m_showIndentationGuideLines = new wxCheckBox(this, wxID_ANY, _("Show indentation guidelines"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_showIndentationGuideLines->SetValue(false);
-    m_showIndentationGuideLines->SetToolTip(_("Turn on indentation highlights guides (small vertical lines)"));
+    m_pgPropShowIndentGuidelines = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Show indentation gudelines"), wxPG_LABEL, 1) );
+    m_pgPropShowIndentGuidelines->SetHelpString(_("Show indentation guidelines (vertical lines)"));
     
-    fgSizer1->Add(m_showIndentationGuideLines, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropDisableSemiColonShift = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Disable semicolon shift"), wxPG_LABEL, 1) );
+    m_pgPropDisableSemiColonShift->SetHelpString(_("By default when typing \";\" next to a close brace \")\" CodeLite will move the \";\" to the right\nThis option enables or disables this behavior"));
     
-    m_checkBoxMatchBraces = new wxCheckBox(this, wxID_ANY, _("Highlight matched braces"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxMatchBraces->SetValue(false);
-    m_checkBoxMatchBraces->SetToolTip(_("Highlight matched braces"));
+    m_pgPropWhitespaces = m_pgMgrGeneral->Append(  new wxPropertyCategory( _("Whitespaces") ) );
+    m_pgPropWhitespaces->SetHelpString(wxT(""));
     
-    fgSizer1->Add(m_checkBoxMatchBraces, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgMgrGeneralArr.Clear();
+    m_pgMgrGeneralIntArr.Clear();
+    m_pgMgrGeneralArr.Add(_("Invisible"));
+    m_pgMgrGeneralArr.Add(_("Visible always"));
+    m_pgMgrGeneralArr.Add(_("Visible after indentation"));
+    m_pgPropWhitespaceVisibility = m_pgMgrGeneral->AppendIn( m_pgPropWhitespaces,  new wxEnumProperty( _("Whitespace visibility"), wxPG_LABEL, m_pgMgrGeneralArr, m_pgMgrGeneralIntArr, 0) );
+    m_pgPropWhitespaceVisibility->SetHelpString(_("Whitespace visibility policy"));
     
-    m_checkBoxDisableSemicolonShift = new wxCheckBox(this, wxID_ANY, _("Disable semicolon shift"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxDisableSemicolonShift->SetValue(false);
-    m_checkBoxDisableSemicolonShift->SetToolTip(_("Auto swap between semicolon and closing brace"));
+    m_pgMgrGeneralArr.Clear();
+    m_pgMgrGeneralIntArr.Clear();
+    m_pgMgrGeneralArr.Add(_("Default"));
+    m_pgMgrGeneralArr.Add(_("Mac (CR)"));
+    m_pgMgrGeneralArr.Add(_("Windows (CRLF)"));
+    m_pgMgrGeneralArr.Add(_("Unix (LF)"));
+    m_pgPropEOLMode = m_pgMgrGeneral->AppendIn( m_pgPropWhitespaces,  new wxEnumProperty( _("EOL Mode"), wxPG_LABEL, m_pgMgrGeneralArr, m_pgMgrGeneralIntArr, 0) );
+    m_pgPropEOLMode->SetHelpString(_("Set the editor's EOL mode (End Of Line)"));
     
-    fgSizer1->Add(m_checkBoxDisableSemicolonShift, 0, wxALL|wxEXPAND, 5);
+    m_pgPropCaretLine = m_pgMgrGeneral->Append(  new wxPropertyCategory( _("Caret line") ) );
+    m_pgPropCaretLine->SetHelpString(wxT(""));
     
-    m_checkBoxHideChangeMarkerMargin = new wxCheckBox(this, wxID_ANY, _("Hide change marker margin"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideChangeMarkerMargin->SetValue(false);
-    m_checkBoxHideChangeMarkerMargin->SetToolTip(_("Hide / Display the change marker margin (red/green marks when line is modified)"));
+    m_pgPropEnableCaretLine = m_pgMgrGeneral->AppendIn( m_pgPropCaretLine,  new wxBoolProperty( _("Highlight caret line"), wxPG_LABEL, 0) );
+    m_pgPropEnableCaretLine->SetHelpString(_("Highlight caret line with a background colour"));
     
-    fgSizer1->Add(m_checkBoxHideChangeMarkerMargin, 0, wxALL, 5);
+    m_pgPropCaretLineColour = m_pgMgrGeneral->AppendIn( m_pgPropCaretLine,  new wxSystemColourProperty( _("Caret line background colour")) );
+    m_pgPropCaretLineColour->SetValueToUnspecified();
+    m_pgPropCaretLineColour->SetHelpString(_("Caret line background colour"));
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Whitespaces:")), wxVERTICAL);
+    m_pgPropCaretLineAlpha = m_pgMgrGeneral->AppendIn( m_pgPropCaretLine,  new wxIntProperty( _("Caret line colour alpha"), wxPG_LABEL, 30) );
+    m_pgPropCaretLineAlpha->SetHelpString(_("Set the caret line colour transparency value. Where 0 mean complete transparent and 255 means fully opaque"));
     
-    bSizer1->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
+    m_pgPropDebuggerMarker = m_pgMgrGeneral->Append(  new wxPropertyCategory( _("Debugger Marker") ) );
+    m_pgPropDebuggerMarker->SetHelpString(_("Debugger Marker"));
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer3->SetFlexibleDirection( wxBOTH );
-    fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer3->AddGrowableCol(1);
+    m_pgPropHighlightDebuggerMarker = m_pgMgrGeneral->AppendIn( m_pgPropDebuggerMarker,  new wxBoolProperty( _("Highlight debugger line"), wxPG_LABEL, 0) );
+    m_pgPropHighlightDebuggerMarker->SetHelpString(_("When debugging, highlight the current line with a background colour"));
     
-    sbSizer1->Add(fgSizer3, 1, wxEXPAND, 5);
+    m_pgPropDebuggerLineColour = m_pgMgrGeneral->AppendIn( m_pgPropDebuggerMarker,  new wxSystemColourProperty( _("Debugger line background colour")) );
+    m_pgPropDebuggerLineColour->SetValueToUnspecified();
+    m_pgPropDebuggerLineColour->SetHelpString(_("Debugger line background colour"));
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Whitespace visibility:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer3->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxArrayString m_whitespaceStyleArr;
-    m_whitespaceStyle = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_whitespaceStyleArr, 0);
-    
-    fgSizer3->Add(m_whitespaceStyle, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("EOL Mode:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_staticText4->SetToolTip(_("Set the editor's EOL mode (End Of Line)"));
-    
-    fgSizer3->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxArrayString m_choiceEOLArr;
-    m_choiceEOL = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceEOLArr, 0);
-    m_choiceEOL->SetToolTip(_("Set the editor's EOL mode (End Of Line). When set to 'Default' CodeLite will set the EOL according to the hosting OS"));
-    
-    fgSizer3->Add(m_choiceEOL, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Caret line:")), wxVERTICAL);
-    
-    bSizer1->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
-    
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(3, 2, 0, 0);
-    fgSizer2->SetFlexibleDirection( wxBOTH );
-    fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer2->AddGrowableCol(1);
-    
-    sbSizer2->Add(fgSizer2, 0, wxALL|wxEXPAND, 5);
-    
-    m_highlightCaretLine = new wxCheckBox(this, wxID_ANY, _("Highlight caret line"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_highlightCaretLine->SetValue(false);
-    m_highlightCaretLine->SetToolTip(_("Highlight the caret line"));
-    
-    fgSizer2->Add(m_highlightCaretLine, 0, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    fgSizer2->Add(0, 0, 1, wxEXPAND, 5);
-    
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Caret line background colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer2->Add(m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_caretLineColourPicker = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_SHOW_LABEL|wxCLRP_DEFAULT_STYLE);
-    
-    fgSizer2->Add(m_caretLineColourPicker, 0, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Debugger Marker:")), wxVERTICAL);
-    
-    bSizer1->Add(sbSizer4, 0, wxALL|wxEXPAND, 5);
-    
-    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer4->SetFlexibleDirection( wxBOTH );
-    fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer4->AddGrowableCol(1);
-    
-    sbSizer4->Add(fgSizer4, 0, wxEXPAND, 5);
-    
-    m_checkBoxMarkdebuggerLine = new wxCheckBox(this, wxID_ANY, _("Highlight debugger line"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxMarkdebuggerLine->SetValue(false);
-    
-    fgSizer4->Add(m_checkBoxMarkdebuggerLine, 0, wxALL, 5);
-    
-    fgSizer4->Add(0, 0, 1, wxEXPAND, 5);
-    
-    m_staticText41 = new wxStaticText(this, wxID_ANY, _("Debugger line colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer4->Add(m_staticText41, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_colourPickerDbgLine = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_SHOW_LABEL|wxCLRP_DEFAULT_STYLE);
-    
-    fgSizer4->Add(m_colourPickerDbgLine, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    SetSizeHints(-1,-1);
+    SetSizeHints(500,500);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
-    // Connect events
-    m_highlightCaretLine->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLine), NULL, this);
-    m_staticText1->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI), NULL, this);
-    m_caretLineColourPicker->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI), NULL, this);
-    m_staticText41->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI), NULL, this);
-    m_colourPickerDbgLine->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI), NULL, this);
-    
 }
 
 EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
 {
-    m_highlightCaretLine->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLine), NULL, this);
-    m_staticText1->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI), NULL, this);
-    m_caretLineColourPicker->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI), NULL, this);
-    m_staticText41->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI), NULL, this);
-    m_colourPickerDbgLine->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI), NULL, this);
-    
 }
 
 EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

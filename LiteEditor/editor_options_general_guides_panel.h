@@ -33,15 +33,8 @@ class EditorOptionsGeneralGuidesPanel
     : public EditorOptionsGeneralGuidesPanelBase
     , public TreeBookNode<EditorOptionsGeneralGuidesPanel>
 {
-    void OnhighlightCaretLineUI(wxUpdateUIEvent& event);
-
-    StringManager m_EOLstringManager;
-    StringManager m_WSstringManager;
 public:
-    virtual void OnDebuggerLineUI(wxUpdateUIEvent& event);
-    /** Constructor */
     EditorOptionsGeneralGuidesPanel( wxWindow* parent );
-
     void Save(OptionsConfigPtr options);
 };
 

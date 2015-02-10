@@ -31,73 +31,54 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     : EditorOptionsGeneralGuidesPanelBase(parent)
     , TreeBookNode<EditorOptionsGeneralGuidesPanel>()
 {
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgrGeneral->GetGrid());
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-
-    m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
-    m_checkBoxMatchBraces->SetValue(options->GetHighlightMatchedBraces());
-    m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
-    m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
-    m_caretLineColourPicker->SetColour(options->GetCaretLineColour());
-    const wxString EOLChoices[] = { wxTRANSLATE("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
-    m_EOLstringManager.AddStrings(
-        sizeof(EOLChoices) / sizeof(wxString), EOLChoices, options->GetEolMode(), m_choiceEOL);
-    m_checkBoxHideChangeMarkerMargin->SetValue(options->GetHideChangeMarkerMargin());
-    m_checkBoxDisableSemicolonShift->SetValue(options->GetDisableSemicolonShift());
-
-    m_checkBoxMarkdebuggerLine->SetValue(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line));
-    m_colourPickerDbgLine->SetColour(options->GetDebuggerMarkerLine());
-
-    const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"),
-                                         wxTRANSLATE("Visible always"),
-                                         wxTRANSLATE("Visible after indentation") };
-    wxString currentWhitespace;
-    switch(options->GetShowWhitspaces()) {
-    case wxSTC_WS_VISIBLEALWAYS:
-        currentWhitespace = wxT("Visible always");
-        break;
-    case wxSTC_WS_VISIBLEAFTERINDENT:
-        currentWhitespace = wxT("Visible after indentation");
-        break;
-    default:
-        currentWhitespace = wxT("Invisible");
-        break;
+    m_pgPropDisplayLineNumbers->SetValue(options->GetDisplayLineNumbers());
+    m_pgPropHighlightMatchedBrace->SetValue(options->GetHighlightMatchedBraces());
+    m_pgPropShowIndentGuidelines->SetValue(options->GetShowIndentationGuidelines());
+    m_pgPropEnableCaretLine->SetValue(options->GetHighlightCaretLine());
+    wxVariant caretLineColour, debuggerLineColour;
+    caretLineColour << options->GetCaretLineColour();
+    m_pgPropCaretLineColour->SetValue(caretLineColour);
+    m_pgPropDisableSemiColonShift->SetValue(options->GetDisableSemicolonShift());
+    m_pgPropHideEditMargin->SetValue(options->GetHideChangeMarkerMargin());
+    m_pgPropHighlightDebuggerMarker->SetValue(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line));
+    debuggerLineColour << options->GetDebuggerMarkerLine();
+    m_pgPropDebuggerLineColour->SetValue(debuggerLineColour);
+    m_pgPropWhitespaceVisibility->SetChoiceSelection(options->GetShowWhitspaces());
+    m_pgPropCaretLineAlpha->SetValue(options->GetCaretLineAlpha());
+    
+    // EOL
+    // Default;Mac (CR);Windows (CRLF);Unix (LF)
+    wxArrayString eolOptions;
+    eolOptions.Add("Default");
+    eolOptions.Add("Mac (CR)");
+    eolOptions.Add("Windows (CRLF)");
+    eolOptions.Add("Unix (LF)");
+    int eolSel = eolOptions.Index(options->GetEolMode());
+    if(eolSel != wxNOT_FOUND) {
+        m_pgPropEOLMode->SetChoiceSelection(eolSel);
     }
-    m_WSstringManager.AddStrings(
-        sizeof(WhitespaceStyle) / sizeof(wxString), WhitespaceStyle, currentWhitespace, m_whitespaceStyle);
 }
 
 void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 {
-    options->SetDisplayLineNumbers(m_displayLineNumbers->IsChecked());
-    options->SetHighlightMatchedBraces(m_checkBoxMatchBraces->IsChecked());
-    options->SetShowIndentationGuidelines(m_showIndentationGuideLines->IsChecked());
-    options->SetHighlightCaretLine(m_highlightCaretLine->IsChecked());
-    options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
-    options->SetEolMode(m_EOLstringManager.GetStringSelection());
-    options->SetHideChangeMarkerMargin(m_checkBoxHideChangeMarkerMargin->IsChecked());
-    options->SetDisableSemicolonShift(m_checkBoxDisableSemicolonShift->IsChecked());
-    options->SetDebuggerMarkerLine(m_colourPickerDbgLine->GetColour());
-    options->EnableOption(OptionsConfig::Opt_Mark_Debugger_Line, m_checkBoxMarkdebuggerLine->IsChecked());
-
-    // save the whitespace visibility
-    wxString Whitespace = m_WSstringManager.GetStringSelection();
-    int style(wxSTC_WS_INVISIBLE); // invisible
-    if(Whitespace == wxT("Visible always")) {
-        style = wxSTC_WS_VISIBLEALWAYS;
-    } else if(Whitespace == wxT("Visible after indentation")) {
-        style = wxSTC_WS_VISIBLEAFTERINDENT;
-    } else if(Whitespace == wxT("Indentation only")) {
-        style = wxSTC_WS_VISIBLEAFTERINDENT;
-    }
-    options->SetShowWhitspaces(style);
-}
-
-void EditorOptionsGeneralGuidesPanel::OnhighlightCaretLineUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_highlightCaretLine->IsChecked());
-}
-
-void EditorOptionsGeneralGuidesPanel::OnDebuggerLineUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxMarkdebuggerLine->IsChecked());
+    options->SetDisplayLineNumbers(m_pgPropDisplayLineNumbers->GetValue().GetBool());
+    options->SetHighlightMatchedBraces(m_pgPropHighlightMatchedBrace->GetValue().GetBool());
+    options->SetShowIndentationGuidelines(m_pgPropShowIndentGuidelines->GetValue().GetBool());
+    options->SetHighlightCaretLine(m_pgPropEnableCaretLine->GetValue().GetBool());
+    
+    wxColourPropertyValue carteLineColour, debuggerLineColour;
+    carteLineColour << m_pgPropCaretLineColour->GetValue();
+    debuggerLineColour << m_pgPropDebuggerLineColour->GetValue();
+    options->SetCaretLineColour(carteLineColour.m_colour);
+    
+    wxString eolMode = m_pgPropEOLMode->GetValueAsString();
+    options->SetEolMode(eolMode);
+    options->SetHideChangeMarkerMargin(m_pgPropHideEditMargin->GetValue().GetBool());
+    options->SetDisableSemicolonShift(m_pgPropDisableSemiColonShift->GetValue().GetBool());
+    options->SetDebuggerMarkerLine(debuggerLineColour.m_colour);
+    options->EnableOption(OptionsConfig::Opt_Mark_Debugger_Line, m_pgPropHighlightDebuggerMarker->GetValue().GetBool());
+    options->SetShowWhitspaces(m_pgPropWhitespaceVisibility->GetValue().GetInteger());
+    options->SetCaretLineAlpha(m_pgPropCaretLineAlpha->GetValue().GetInteger());
 }

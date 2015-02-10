@@ -29,15 +29,15 @@
 #include <wx/ffile.h>
 
 #ifdef __WXMAC__
-    static const wxString s_DefaultTypes =
-    "type summary add wxString --summary-string \"${var.m_impl}\"\n"
-    "type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"\n"
-    "type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"\n";
+static const wxString s_DefaultTypes = "type summary add wxString --summary-string \"${var.m_impl}\"\n"
+                                       "type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"\n"
+                                       "type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width "
+                                       "= ${var.width}, height = ${var.height})\"\n";
 #else
-    static const wxString s_DefaultTypes =
-    "type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"\n"
-    "type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"\n"
-    "type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"\n";
+static const wxString s_DefaultTypes = "type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"\n"
+                                       "type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"\n"
+                                       "type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width "
+                                       "= ${var.width}, height = ${var.height})\"\n";
 #endif
 
 LLDBSettings::LLDBSettings()
@@ -50,32 +50,30 @@ LLDBSettings::LLDBSettings()
     m_types = s_DefaultTypes;
 }
 
-LLDBSettings::~LLDBSettings()
-{
-}
+LLDBSettings::~LLDBSettings() {}
 
 wxString LLDBSettings::LoadPerspective()
 {
-    wxFileName fn( clStandardPaths::Get().GetUserDataDir(), "lldb.perspective");
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "lldb.perspective");
     fn.AppendDir("config");
-    
+
     wxFFile fp(fn.GetFullPath(), "rb");
-    if ( fp.IsOpened() ) {
+    if(fp.IsOpened()) {
         wxString content;
-        fp.ReadAll( &content, wxConvUTF8 );
+        fp.ReadAll(&content, wxConvUTF8);
         return content;
     }
     return "";
 }
 
-void LLDBSettings::SavePerspective(const wxString &perspective)
+void LLDBSettings::SavePerspective(const wxString& perspective)
 {
-    wxFileName fn( clStandardPaths::Get().GetUserDataDir(), "lldb.perspective");
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "lldb.perspective");
     fn.AppendDir("config");
-    
+
     wxFFile fp(fn.GetFullPath(), "w+b");
-    if ( fp.IsOpened() ) {
-        fp.Write( perspective );
+    if(fp.IsOpened()) {
+        fp.Write(perspective);
         fp.Close();
     }
 }
@@ -108,28 +106,31 @@ JSONElement LLDBSettings::ToJSON() const
 
 LLDBSettings& LLDBSettings::Load()
 {
-    wxFileName fn( clStandardPaths::Get().GetUserDataDir(), "lldb.conf");
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "lldb.conf");
     fn.AppendDir("config");
-     wxFFile fp(fn.GetFullPath(), "rb");
-    if ( fp.IsOpened() ) {
-        wxString content;
-        fp.ReadAll( &content, wxConvUTF8 );
-        
-        JSONRoot root(content);
-        FromJSON( root.toElement() );
-        fp.Close();
+    if(fn.Exists()) { // check for existance, or we will get an error in the Trace tab
+        // Open the file
+        wxFFile fp(fn.GetFullPath(), "rb");
+        if(fp.IsOpened()) {
+            wxString content;
+            fp.ReadAll(&content, wxConvUTF8);
+
+            JSONRoot root(content);
+            FromJSON(root.toElement());
+            fp.Close();
+        }
     }
     return *this;
 }
 
 LLDBSettings& LLDBSettings::Save()
 {
-    wxFileName fn( clStandardPaths::Get().GetUserDataDir(), "lldb.conf");
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "lldb.conf");
     fn.AppendDir("config");
-    
+
     wxFFile fp(fn.GetFullPath(), "w+b");
-    if ( fp.IsOpened() ) {
-        fp.Write( ToJSON().format() );
+    if(fp.IsOpened()) {
+        fp.Write(ToJSON().format());
         fp.Close();
     }
     return *this;

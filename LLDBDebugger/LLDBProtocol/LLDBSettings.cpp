@@ -42,8 +42,8 @@ static const wxString s_DefaultTypes = "type summary add wxString --summary-stri
 
 LLDBSettings::LLDBSettings()
     : m_arrItems(50)
-    , m_flags(kLLDBOptionRaiseCodeLite)
     , m_stackFrames(100)
+    , m_flags(kLLDBOptionRaiseCodeLite)
     , m_proxyIp("127.0.0.1")
     , m_proxyPort(13610)
 {

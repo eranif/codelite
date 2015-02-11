@@ -1619,17 +1619,10 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                     _("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
             } else {
 
-                // Post event about file system updated
-                clFileSystemEvent fsEvent(wxEVT_FILE_SYSTEM_UPDATED);
-                fsEvent.SetPath(m_repositoryDirectory);
-                EventNotifier::Get()->AddPendingEvent(fsEvent);
-
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
-                if(!log.IsEmpty()) {
-                    GitLogDlg dlg(m_topWindow, _("Pull log"));
-                    dlg.SetLog(log);
-                    dlg.ShowModal();
-                }
+                // Write the pull log to the console
+                m_console->AddText(wxString() << "\nPull Log\n" << log << "\n");
+                
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
                     if(wxMessageBox(_("Merged after pull. Rebase?"), _("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
                         wxString selection;
@@ -1658,7 +1651,15 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                                  m_topWindow);
                 }
                 if(m_commandOutput.Contains(wxT("Updating"))) m_bActionRequiresTreUpdate = true;
+                
+                if(m_bActionRequiresTreUpdate) {
+                    // Post event about file system updated
+                    clFileSystemEvent fsEvent(wxEVT_FILE_SYSTEM_UPDATED);
+                    fsEvent.SetPath(m_repositoryDirectory);
+                    EventNotifier::Get()->AddPendingEvent(fsEvent);
+                }
             }
+            
         } else if(ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote) {
             // update the tree
             gitAction ga(gitListAll, wxT(""));

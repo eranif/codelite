@@ -270,11 +270,16 @@ wxFont LexerConf::GetFontForSyle(int styleId) const
 static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
 {
     wxColor inactiveColor;
+    wxColour fgColour = defaultStyle.GetFgColour();
     if(DrawingUtils::IsDark(defaultStyle.GetBgColour())) {
         // a dark theme
-        inactiveColor = wxColour(defaultStyle.GetFgColour()).ChangeLightness(30);
+        if(DrawingUtils::IsDark(fgColour)) {
+            // this style is using a dark colour, this means that making it darker will not look good - replace it
+            fgColour = wxColour(defaultStyle.GetBgColour()).ChangeLightness(140);
+        }
+        inactiveColor = fgColour.ChangeLightness(30);
     } else {
-        inactiveColor = wxColour(defaultStyle.GetFgColour()).ChangeLightness(170);
+        inactiveColor = wxColour(defaultStyle.GetFgColour()).MakeDisabled();
     }
     return inactiveColor;
 }

@@ -332,18 +332,14 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         return;
     }
 
-    FindInFilesDialog* dlg = new FindInFilesDialog(EventNotifier::Get()->TopFrame(), "FindInFilesData");
-
+    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), "FindInFilesData");
     wxArrayString* paths = (wxArrayString*)e.GetClientData();
     if(paths) {
-        dlg->SetSearchPaths(*paths);
+        dlg.SetSearchPaths(*paths);
         e.SetClientData(NULL);
         wxDELETE(paths);
     }
-    // Show the frame and 'raise' it
-    dlg->Show();
-    dlg->SetFocus();
-    dlg->Raise();
+    dlg.ShowDialog();
 }
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)

@@ -67,7 +67,7 @@ public:
     FindReplaceData& GetData() { return m_data; }
 
     const FindReplaceData& GetData() const { return m_data; }
-    virtual bool Show();
+    int ShowDialog();
 };
 
 #endif // FIND_IN_FILES_DLG_H

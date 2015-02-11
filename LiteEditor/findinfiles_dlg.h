@@ -10,7 +10,7 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
-#include <wx/frame.h>
+#include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
@@ -26,7 +26,7 @@
 #include <wx/imaglist.h>
 #include <wx/checkbox.h>
 
-class FindInFilesDialogBase : public wxFrame
+class FindInFilesDialogBase : public wxDialog
 {
 protected:
     wxPanel* m_panelMainPanel;
@@ -74,7 +74,37 @@ protected:
     virtual void OnButtonClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find in Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_NO_TASKBAR|wxFRAME_FLOAT_ON_PARENT|wxRESIZE_BORDER);
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxComboBox* GetFindString() { return m_findString; }
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    DirPicker* GetDirPicker() { return m_dirPicker; }
+    wxButton* GetBtnAddPath() { return m_btnAddPath; }
+    wxListBox* GetListPaths() { return m_listPaths; }
+    wxButton* GetBtnRemovelPath() { return m_btnRemovelPath; }
+    wxButton* GetBtnClearPaths() { return m_btnClearPaths; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxComboBox* GetFileTypes() { return m_fileTypes; }
+    wxStaticText* GetStaticText5() { return m_staticText5; }
+    wxChoice* GetChoiceEncoding() { return m_choiceEncoding; }
+    wxStaticText* GetStaticText7() { return m_staticText7; }
+    wxCheckBox* GetMatchCase() { return m_matchCase; }
+    wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
+    wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
+    wxCheckBox* GetCheckBoxSaveFilesBeforeSearching() { return m_checkBoxSaveFilesBeforeSearching; }
+    wxCheckBox* GetCheckBoxSeparateTab() { return m_checkBoxSeparateTab; }
+    wxPanel* GetPanel1() { return m_panel1; }
+    wxCheckBox* GetPrintScope() { return m_printScope; }
+    wxCheckBox* GetCheckBoxSkipMatchesFoundInComments() { return m_checkBoxSkipMatchesFoundInComments; }
+    wxCheckBox* GetCheckBoxSkipMatchesFoundInStrings() { return m_checkBoxSkipMatchesFoundInStrings; }
+    wxCheckBox* GetCheckBoxHighlighStringComments() { return m_checkBoxHighlighStringComments; }
+    wxPanel* GetPanel2() { return m_panel2; }
+    wxNotebook* GetNotebook1() { return m_notebook1; }
+    wxButton* GetFind() { return m_find; }
+    wxButton* GetReplaceAll() { return m_replaceAll; }
+    wxButton* GetStop() { return m_stop; }
+    wxButton* GetCancel() { return m_cancel; }
+    wxPanel* GetPanelMainPanel() { return m_panelMainPanel; }
+    FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~FindInFilesDialogBase();
 };
 

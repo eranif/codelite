@@ -14,7 +14,7 @@ static bool bBitmapLoaded = false;
 
 
 FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : wxFrame(parent, id, title, pos, size, style)
+    : wxDialog(parent, id, title, pos, size, style)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler

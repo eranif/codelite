@@ -313,30 +313,26 @@ void FindInFilesDialog::OnRemovePath(wxCommandEvent& event)
 
 void FindInFilesDialog::OnClearPaths(wxCommandEvent& event) { m_listPaths->Clear(); }
 
-bool FindInFilesDialog::Show()
+int FindInFilesDialog::ShowDialog()
 {
-    bool res = IsShown() || wxFrame::Show();
-    if(res) {
+    // update the combobox
+    m_findString->Clear();
+    m_findString->Append(m_data.GetFindStringArr());
+    DoSetFileMask();
+    m_findString->SetValue(m_data.GetFindString());
 
-        // update the combobox
-        m_findString->Clear();
-        m_findString->Append(m_data.GetFindStringArr());
-        DoSetFileMask();
-        m_findString->SetValue(m_data.GetFindString());
-
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-        if(editor) {
-            // if we have an open editor, and a selected text, make this text the search string
-            wxString selText = editor->GetSelectedText();
-            if(!selText.IsEmpty()) {
-                m_findString->SetValue(selText);
-            }
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(editor) {
+        // if we have an open editor, and a selected text, make this text the search string
+        wxString selText = editor->GetSelectedText();
+        if(!selText.IsEmpty()) {
+            m_findString->SetValue(selText);
         }
-
-        m_findString->SetSelection(-1, -1); // select all
-        m_findString->CallAfter(&wxTextCtrl::SetFocus);
     }
-    return res;
+
+    m_findString->SetSelection(-1, -1); // select all
+    m_findString->CallAfter(&wxTextCtrl::SetFocus);
+    return wxDialog::ShowModal();
 }
 
 void FindInFilesDialog::DoSaveSearchPaths()

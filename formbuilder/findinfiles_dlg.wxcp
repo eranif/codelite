@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": "../LiteEditor/",
-  "m_objCounter": 50,
+  "m_objCounter": 94,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCABC4InitBitmapResources",
   "m_bitmapsFile": "findinfiles_dlg_formbuilder_bitmaps.cpp",
@@ -18,12 +18,12 @@
    }]
  },
  "windows": [{
-   "m_type": 4402,
+   "m_type": 4421,
    "proportion": 0,
    "border": 5,
    "gbSpan": "1,1",
    "gbPosition": "0,0",
-   "m_styles": ["wxDEFAULT_FRAME_STYLE", "wxFRAME_NO_TASKBAR", "wxFRAME_FLOAT_ON_PARENT", "wxRESIZE_BORDER"],
+   "m_styles": ["wxDEFAULT_DIALOG_STYLE"],
    "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
    "m_properties": [{
      "type": "string",
@@ -80,11 +80,11 @@
     }, {
      "type": "string",
      "m_label": "Title:",
-     "m_value": "Find in Files"
+     "m_value": "Find In Files"
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "CodeLiteIDE:Dialogs"
+     "m_path": "CodeLiteIDE:Dialogs:Misc"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -102,11 +102,6 @@
      "type": "string",
      "m_label": "Class Decorator",
      "m_value": ""
-    }, {
-     "type": "choice",
-     "m_label": "wxFrame Type",
-     "m_selection": 0,
-     "m_options": ["wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame", "wxDocParentFrame", "wxDocChildFrame"]
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",

@@ -1621,7 +1621,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
 
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
                 // Write the pull log to the console
-                m_console->AddText(wxString() << "\nPull Log\n" << log << "\n");
+                m_console->AddText(wxString() << "\n===============\nPull Log\n===============\n" << log << "\n");
                 
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
                     if(wxMessageBox(_("Merged after pull. Rebase?"), _("Rebase"), wxYES_NO, m_topWindow) == wxYES) {

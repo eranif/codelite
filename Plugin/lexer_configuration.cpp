@@ -272,9 +272,9 @@ static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
     wxColor inactiveColor;
     if(DrawingUtils::IsDark(defaultStyle.GetBgColour())) {
         // a dark theme
-        inactiveColor = wxColour(defaultStyle.GetBgColour()).ChangeLightness(110);
+        inactiveColor = wxColour(defaultStyle.GetFgColour()).ChangeLightness(30);
     } else {
-        inactiveColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).ChangeLightness(170);
+        inactiveColor = wxColour(defaultStyle.GetFgColour()).ChangeLightness(170);
     }
     return inactiveColor;
 }
@@ -452,7 +452,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 ctrl->StyleSetForeground(sp.GetId(), sp.GetFgColour());
 
                 // Inactive state is greater by 64 from its counterpart
-                wxColor inactiveColor = GetInactiveColor(defaultStyle);
+                wxColor inactiveColor = GetInactiveColor(sp);
                 ctrl->StyleSetForeground(sp.GetId() + 64, inactiveColor);
                 ctrl->StyleSetFont(sp.GetId() + 64, font);
                 ctrl->StyleSetSize(sp.GetId() + 64, size);

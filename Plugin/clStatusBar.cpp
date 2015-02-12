@@ -45,20 +45,20 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
     
-    wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(300));
+    wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(this, 300));
     AddField(messages);
 
     wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(
         this, wxXmlResource::Get()->LoadBitmap("build-animation-sprite"), wxHORIZONTAL, wxSize(80, 7)));
     AddField(buildAnimation);
     
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(150));
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 150));
     AddField(lineCol);
 
-    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(80));
+    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, 80));
     AddField(language);
 
-    wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(30));
+    wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(this, 30));
     AddField(build);
 
     m_bmpBuildError = wxXmlResource::Get()->LoadBitmap("build-error");
@@ -85,7 +85,6 @@ void clStatusBar::SetMessage(const wxString& message)
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
     field->SetTooltip(message);
-    Refresh();
 }
 
 void clStatusBar::OnPageChanged(wxCommandEvent& event)
@@ -220,7 +219,6 @@ void clStatusBar::SetLanguage(const wxString& lang)
     wxString ucLang = lang.Upper();
     field->Cast<wxCustomStatusBarFieldText>()->SetText(ucLang);
     field->SetTooltip(lang);
-    Refresh();
 }
 
 void clStatusBar::SetLinePosColumn(const wxString& lineCol) { CallAfter(&clStatusBar::DoSetLinePosColumn, lineCol); }
@@ -232,7 +230,6 @@ void clStatusBar::DoSetLinePosColumn(const wxString& message)
     CHECK_PTR_RET(field);
     field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
     field->SetTooltip(message);
-    Refresh();
 }
 
 void clStatusBar::OnAllEditorsClosed(wxCommandEvent& event)

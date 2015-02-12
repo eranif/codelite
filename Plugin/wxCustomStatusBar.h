@@ -49,12 +49,16 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarField : public wxEvtHandler
 protected:
     wxRect m_rect;
     wxString m_tooltip;
+    wxCustomStatusBar* m_parent;
 
 public:
     typedef wxSharedPtr<wxCustomStatusBarField> Ptr_t;
     typedef std::vector<wxCustomStatusBarField::Ptr_t> Vect_t;
 
-    wxCustomStatusBarField() {}
+    wxCustomStatusBarField(wxCustomStatusBar* parent)
+        : m_parent(parent)
+    {
+    }
     virtual ~wxCustomStatusBarField() {}
 
     /**
@@ -95,13 +99,14 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarFieldText : public wxCustomStatusBarField
     size_t m_width;
 
 public:
-    wxCustomStatusBarFieldText(size_t width)
-        : m_width(width)
+    wxCustomStatusBarFieldText(wxCustomStatusBar* parent, size_t width)
+        : wxCustomStatusBarField(parent)
+        , m_width(width)
     {
     }
     virtual ~wxCustomStatusBarFieldText() {}
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
-    void SetText(const wxString& text) { this->m_text = text; }
+    void SetText(const wxString& text);
     const wxString& GetText() const { return m_text; }
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
@@ -116,8 +121,9 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarBitmapField : public wxCustomStatusBarFie
     wxBitmap m_bitmap;
 
 public:
-    wxCustomStatusBarBitmapField(size_t width)
-        : m_width(width)
+    wxCustomStatusBarBitmapField(wxCustomStatusBar* parent, size_t width)
+        : wxCustomStatusBarField(parent)
+        , m_width(width)
     {
     }
     virtual ~wxCustomStatusBarBitmapField() {}
@@ -135,9 +141,10 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarAnimationField : public wxCustomStatusBar
 {
     size_t m_width;
     wxPNGAnimation* m_animation;
+
 protected:
     void OnAnimationClicked(wxMouseEvent& event);
-    
+
 public:
     /**
      * @brief construct animation field.
@@ -160,7 +167,7 @@ public:
      * @brief is the animation running?
      */
     bool IsRunning() const { return m_animation->IsRunning(); }
-    
+
     /**
      * @brief set the tooltip to the animation as well
      */
@@ -196,7 +203,7 @@ public:
      * @brief animation control owned by 'field' was clicked
      */
     void AnimationClicked(wxCustomStatusBarField* field);
-    
+
 public:
     wxCustomStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = 0);
     virtual ~wxCustomStatusBar();

@@ -118,7 +118,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     GetSizer()->Fit(this);
 
     WindowAttrManager::Load(this, "FindInFilesDialog", NULL);
-    Centre();
+    CentreOnParent();
 }
 
 FindInFilesDialog::~FindInFilesDialog()
@@ -202,7 +202,7 @@ void FindInFilesDialog::DoSearchReplace()
     data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetReplaceResultsTab());
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
-    Close();
+    EndModal(wxID_OK);
 }
 
 void FindInFilesDialog::DoSearch()
@@ -213,7 +213,7 @@ void FindInFilesDialog::DoSearch()
     // check to see if we require to save the files
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
-    Close();
+    EndModal(wxID_OK);
 }
 
 SearchData FindInFilesDialog::DoGetSearchData()
@@ -379,7 +379,7 @@ void FindInFilesDialog::OnReplace(wxCommandEvent& event)
 
 void FindInFilesDialog::OnStop(wxCommandEvent& event) { SearchThreadST::Get()->StopSearch(); }
 
-void FindInFilesDialog::OnButtonClose(wxCommandEvent& event) { Destroy(); }
+void FindInFilesDialog::OnButtonClose(wxCommandEvent& event) { EndModal(wxID_CANCEL); }
 
 size_t FindInFilesDialog::GetSearchFlags()
 {

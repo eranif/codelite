@@ -1754,7 +1754,7 @@ resources.cpp: resources.xrc
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="OSX_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="OSX_Release" CompilerType="" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g -Wall" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
@@ -1775,15 +1775,15 @@ resources.cpp: resources.xrc
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="CMake_Plus_Build">./mac-build.sh --cmake --wxc</Target>
-        <RebuildCommand>cd build-release &amp;&amp; make clean &amp;&amp; cd .. &amp;&amp; ./mac-build.sh --wxc</RebuildCommand>
-        <CleanCommand>cd build-release &amp;&amp; make clean</CleanCommand>
-        <BuildCommand>./mac-build.sh --wxc</BuildCommand>
+        <Target Name="CMake_Plus_Build">cmake -DCMAKE_BUILD_TYPE=Release -DWITH_WXC=1 .. &amp;&amp; make -j4</Target>
+        <RebuildCommand>make clean &amp;&amp; make -j4 &amp;&amp; cd pack &amp;&amp; ./make_mac_bundle.sh</RebuildCommand>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make -j4 &amp;&amp; cd pack &amp;&amp; ./make_mac_bundle.sh</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName/>
-        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+        <WorkingDirectory>$(WorkspacePath)/build-release</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
@@ -1848,8 +1848,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>

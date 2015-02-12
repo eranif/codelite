@@ -29,6 +29,9 @@
 #include <wx/utils.h>
 #include "dirsaver.h"
 #include <wx/log.h>
+#include "file_logger.h"
+#include "procutils.h"
+#include <wx/tokenzr.h>
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -125,18 +128,24 @@ void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
 #endif
 }
 
-void FileUtils::OSXOpenTerminalAndGetTTY(const wxString& path, wxString& tty)
+void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid)
 {
     tty.Clear();
     wxString command;
     wxString tmpfile;
-    tmpfile << "/tmp/terminal.tty." << wxGetProcessId();
-    command << "osascript -e 'tell app \"Terminal\" to do script \"cd " << path << "\" && tty > " << tmpfile
-            << " && clear \"'";
-    ::wxExecute(command);
+    tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
+    command << "osascript -e 'tell app \"Terminal\" to do script \"cd " << path << " && tty > " << tmpfile
+            << " && clear && sleep 12345\"'";
+    CL_DEBUG("Executing: %s", command);
+    long res = ::wxExecute(command);
+    if(res == 0) {
+        CL_WARNING("Failed to execute command");
+        return;
+    }
 
     // Read the tty from the file, wait for it up to 10 seconds
     wxFileName ttyFile(tmpfile);
+    pid = wxNOT_FOUND;
     for(size_t i = 0; i < 10; ++i) {
         if(!ttyFile.Exists()) {
             ::wxSleep(1);
@@ -144,10 +153,28 @@ void FileUtils::OSXOpenTerminalAndGetTTY(const wxString& path, wxString& tty)
         }
         ReadFileContent(ttyFile, tty);
         tty.Trim().Trim(false);
-        
+
         // Remove the file
         wxLogNull noLog;
         ::wxRemoveFile(ttyFile.GetFullPath());
+
+        // Get the parent process ID (we want the parent PID and not
+        // the sleep command PID)
+        wxString psCommand;
+        psCommand << "ps -A -o ppid,command";
+        wxString psOutput = ProcUtils::SafeExecuteCommand(psCommand);
+        wxArrayString lines = ::wxStringTokenize(psOutput, "\n", wxTOKEN_STRTOK);
+        for(size_t u = 0; u < lines.GetCount(); ++u) {
+            wxString ppidString = lines.Item(u).BeforeFirst(' ');
+            wxString pidCommand = lines.Item(u).AfterFirst(' ');
+            ppidString.Trim().Trim(false);
+            pidCommand.Trim().Trim(false);
+            if(pidCommand.Contains("sleep") && pidCommand.Contains("12345")) {
+                // we got a match
+                ppidString.ToCLong(&pid);
+                break;
+            }
+        }
         break;
     }
 }

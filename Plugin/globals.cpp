@@ -1723,7 +1723,7 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     realPts.Clear();
 
 #if defined(__WXMAC__)
-    FileUtils::OSXOpenTerminalAndGetTTY(::wxGetCwd(), tty);
+    FileUtils::OSXOpenDebuggerTerminalAndGetTTY(::wxGetCwd(), tty, pid);
     
 #elif defined(__WXMSW__)
     // Windows

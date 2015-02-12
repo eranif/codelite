@@ -578,25 +578,19 @@ void LEditor::SetProperties()
     // turning off these two greatly improves performance
     // on Mac
     SetTwoPhaseDraw(true);
-    SetBufferedDraw(false);
-
-//    // Using BufferedDraw as 'false'
-//    // improves performance *alot*, however
-//    // the downside is that the word hightlight does
-//    // not work...
-//    // this is why we enable / disable it according to the "highlight word" toggle state
-//    long highlightWord(1);
-//    EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
-//    SetBufferedDraw(highlightWord == 1 ? true : false);
-//    //wxLogMessage("Buffered draw is set to %d", (int)highlightWord);
-
+    SetBufferedDraw(true);
+    SetLayoutCache(wxSTC_CACHE_DOCUMENT);
+    
 #elif defined(__WXGTK__)
     SetTwoPhaseDraw(true);
     SetBufferedDraw(false);
-
+    SetLayoutCache(wxSTC_CACHE_PAGE);
+    
 #else // MSW
     SetTwoPhaseDraw(true);
     SetBufferedDraw(true);
+    SetLayoutCache(wxSTC_CACHE_PAGE);
+    
 #endif
 
     // indentation settings
@@ -614,7 +608,7 @@ void LEditor::SetProperties()
     SetIndent(options->GetIndentWidth());
     SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);
 
-    SetLayoutCache(wxSTC_CACHE_PAGE);
+    
 
     size_t frame_flags = clMainFrame::Get()->GetFrameGeneralInfo().GetFlags();
     SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
@@ -633,9 +627,6 @@ void LEditor::SetProperties()
     }
 
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
-
-    // Word highlight indicator
-    IndicatorSetStyle(MARKER_WORD_HIGHLIGHT, wxSTC_INDIC_ROUNDBOX);
     IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(MARKER_WORD_HIGHLIGHT, col2);
     long alpha = EditorConfigST::Get()->GetInteger(wxT("WordHighlightAlpha"));

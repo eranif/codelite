@@ -28,6 +28,7 @@
 #include <wx/strconv.h>
 #include <wx/utils.h>
 #include "dirsaver.h"
+#include <wx/log.h>
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -143,6 +144,10 @@ void FileUtils::OSXOpenTerminalAndGetTTY(const wxString& path, wxString& tty)
         }
         ReadFileContent(ttyFile, tty);
         tty.Trim().Trim(false);
+        
+        // Remove the file
+        wxLogNull noLog;
+        ::wxRemoveFile(ttyFile.GetFullPath());
         break;
     }
 }

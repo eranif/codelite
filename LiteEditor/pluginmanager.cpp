@@ -61,6 +61,7 @@
 PluginManager* PluginManager::Get()
 {
     static PluginManager theManager;
+    ::clSetManager(&theManager);
     return &theManager;
 }
 

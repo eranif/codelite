@@ -2175,3 +2175,15 @@ wxString clGetTextFromUser(const wxString& title,
     }
     return "";
 }
+
+static IManager* s_pluginManager = NULL;
+IManager* clGetManager()
+{
+    wxASSERT(s_pluginManager);
+    return s_pluginManager;
+}
+
+void clSetManager(IManager* manager)
+{
+    s_pluginManager = manager;
+}

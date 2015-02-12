@@ -40,6 +40,7 @@
 #include "macros.h"
 #include <wx/propgrid/propgrid.h>
 
+class IManager;
 class wxStyledTextCtrl;
 class IProcess;
 class IProcessCallback;
@@ -512,4 +513,15 @@ WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title,
                                            const wxString& initialValue = "",
                                            int charsToSelect = wxNOT_FOUND,
                                            wxWindow* parent = NULL);
+/**
+ * @brief return the instance to the plugin manager. A convinience method
+ */
+WXDLLIMPEXP_SDK IManager* clGetManager();
+/**
+ * @brief set the plugin manager
+ * @param manager
+ */
+WXDLLIMPEXP_SDK void clSetManager(IManager* manager);
+
 #endif // GLOBALS_H
+

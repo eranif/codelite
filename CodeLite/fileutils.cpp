@@ -63,11 +63,11 @@ void FileUtils::OpenTerminal(const wxString& path)
     cmd << "cmd";
     DirSaver ds;
     ::wxSetWorkingDirectory(path);
-    
+
 #elif defined(__WXGTK__)
     DirSaver ds;
     ::wxSetWorkingDirectory(path);
-    
+
     // Try to locate gnome-terminal
     if(wxFileName::FileExists("/usr/bin/gnome-terminal")) {
         cmd << "/usr/bin/gnome-terminal";
@@ -86,13 +86,13 @@ void FileUtils::OpenTerminal(const wxString& path)
     ::wxExecute(cmd);
 }
 
-bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv) 
+bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
 {
     wxFFile file(fn.GetFullPath(), wxT("w+b"));
     if(!file.IsOpened()) {
         return false;
     }
-    
+
     if(!file.Write(content, conv)) {
         return false;
     }
@@ -122,4 +122,27 @@ void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
 #else
     OpenFileExplorer(filename.GetPath());
 #endif
+}
+
+void FileUtils::OSXOpenTerminalAndGetTTY(const wxString& path, wxString& tty)
+{
+    tty.Clear();
+    wxString command;
+    wxString tmpfile;
+    tmpfile << "/tmp/terminal.tty." << wxGetProcessId();
+    command << "osascript -e 'tell app \"Terminal\" to do script \"cd " << path << "\" && tty > " << tmpfile
+            << " && clear \"'";
+    ::wxExecute(command);
+
+    // Read the tty from the file, wait for it up to 10 seconds
+    wxFileName ttyFile(tmpfile);
+    for(size_t i = 0; i < 10; ++i) {
+        if(!ttyFile.Exists()) {
+            ::wxSleep(1);
+            continue;
+        }
+        ReadFileContent(ttyFile, tty);
+        tty.Trim().Trim(false);
+        break;
+    }
 }

@@ -45,14 +45,20 @@ void clDebuggerTerminalPOSIX::Launch(const wxString &title)
     m_title = title;
     wxString symblink;
     ::LaunchTerminalForDebugger(m_title, symblink, m_tty, m_pid);
+    wxUnusedVar(symblink);
+    
     if ( IsValid() ) {
-        CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d", (int)m_pid);
+        CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d. TTY: %s", (int)m_pid, m_tty);
     }
 }
 
 bool clDebuggerTerminalPOSIX::IsValid() const
 {
+#ifdef __WXMAC__
+    return !m_tty.IsEmpty();
+#else
     return m_pid != wxNOT_FOUND && !m_tty.IsEmpty();
+#endif
 }
 
 void clDebuggerTerminalPOSIX::Clear()

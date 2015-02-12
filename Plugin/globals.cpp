@@ -76,6 +76,7 @@
 #include <wx/sstream.h>
 #include "cl_standard_paths.h"
 #include "clGetTextFromUserDialog.h"
+#include "fileutils.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1739,16 +1740,7 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     SLEEP_COMMAND << "sleep " << secondsToSleep;
 
 #if defined(__WXMAC__)
-    wxString consoleCommand;
-    wxString codelite_terminal;
-    wxFileName fnCodeLiteTerminal(wxStandardPaths::Get().GetExecutablePath());
-    fnCodeLiteTerminal.AppendDir("codelite-terminal.app");
-
-    consoleCommand << "/usr/bin/open " << fnCodeLiteTerminal.GetPath() << " --args "
-                   << "--dbg-terminal "
-                   << "--exit "
-                   << "--title \"" << title << "\" "
-                   << "--cmd " << SLEEP_COMMAND;
+    FileUtils::OSXOpenTerminalAndGetTTY(::wxGetCwd(), tty);
 
 #else // Linux / FreeBSD
     wxString consoleCommand = TERMINAL_CMD;

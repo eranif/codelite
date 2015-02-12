@@ -378,11 +378,13 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
             if(!bldConf->IsGUIProgram() && !isWindows) {
                 wxString realPts;
+                m_terminalPID = wxNOT_FOUND;
                 ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), m_terminalTTY, realPts, m_terminalPID);
                 wxUnusedVar(realPts);
-                
-                if(m_terminalPID != wxNOT_FOUND) {
-                    CL_DEBUG("Successfully launched terminal");
+
+
+                if(!m_terminalTTY.IsEmpty()) {
+                    CL_DEBUG("Successfully launched terminal %s", m_terminalTTY);
 
                 } else {
                     // Failed to launch it...

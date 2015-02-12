@@ -53,5 +53,12 @@ public:
      * @brief launch the OS default terminal at a given path
      */
     static void OpenTerminal(const wxString& path);
+    
+    /**
+     * @brief OSX only: open Terminal and return its TTY
+     * @param path working directory
+     * @param [output] tty the TTY of the launched terminal
+     */
+    static void OSXOpenTerminalAndGetTTY(const wxString& path, wxString &tty);
 };
 #endif // FILEUTILS_H

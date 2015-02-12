@@ -119,7 +119,8 @@ bool CompilerLocatorMinGW::Locate()
     // Check registry for TDM-GCC-64 
     wxRegKey regTDM(wxRegKey::HKCU, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TDM-GCC");
     wxString tdmInstallFolder;
-    if ( regTDM.QueryValue("InstallLocation", tdmInstallFolder) ) {
+    tdmInstallFolder.Clear();
+    if ( regTDM.QueryValue("InstallLocation", tdmInstallFolder) && wxFileName::DirExists(tdmInstallFolder)) {
         wxFileName fnTDMBinFolder( tdmInstallFolder, "" );
         fnTDMBinFolder.AppendDir("bin");
         AddTools(fnTDMBinFolder.GetPath(), "TDM-GCC-64");
@@ -127,7 +128,8 @@ bool CompilerLocatorMinGW::Locate()
     
     // Check for 32 bit
     wxRegKey regTDM_32(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TDM-GCC");
-    if ( regTDM_32.QueryValue("InstallLocation", tdmInstallFolder) ) {
+    tdmInstallFolder.Clear();
+    if ( regTDM_32.QueryValue("InstallLocation", tdmInstallFolder) && wxFileName::DirExists(tdmInstallFolder)) {
         wxFileName fnTDMBinFolder( tdmInstallFolder, "" );
         fnTDMBinFolder.AppendDir("bin");
         AddTools(fnTDMBinFolder.GetPath(), "TDM-GCC-32");

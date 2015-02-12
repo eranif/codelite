@@ -42,11 +42,23 @@ bool CompilerLocatorCygwin::Locate()
 {
     m_compilers.clear();
 #ifdef __WXMSW__ // for wxRegKey
-    wxRegKey regClMinGW(wxRegKey::HKLM, "SOFTWARE\\Cygwin\\setup");
-    wxString cygwinInstallDir;
-    if ( regClMinGW.QueryValue("rootdir", cygwinInstallDir) && wxDirExists(cygwinInstallDir)) {
-        Locate( cygwinInstallDir );
+    {
+        wxRegKey regkey(wxRegKey::HKLM, "SOFTWARE\\Cygwin\\setup");
+        wxString cygwinInstallDir;
+        if ( regkey.QueryValue("rootdir", cygwinInstallDir) && wxDirExists(cygwinInstallDir)) {
+            Locate( cygwinInstallDir );
+        }
+    }   
+    {
+        // If we are running a 64 bit version of CodeLite, we should search under the 
+        // Wow6432Node
+        wxRegKey regkey(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Cygwin\\setup");
+        wxString cygwinInstallDir;
+        if ( regkey.QueryValue("rootdir", cygwinInstallDir) && wxDirExists(cygwinInstallDir)) {
+            Locate( cygwinInstallDir );
+        }
     }
+    
 #endif
     return !m_compilers.empty();
 }

@@ -1722,7 +1722,10 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     tty.Clear();
     realPts.Clear();
 
-#ifdef __WXMSW__
+#if defined(__WXMAC__)
+    FileUtils::OSXOpenTerminalAndGetTTY(::wxGetCwd(), tty);
+    
+#elif defined(__WXMSW__)
     // Windows
     wxUnusedVar(title);
 
@@ -1739,15 +1742,10 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     wxString SLEEP_COMMAND;
     SLEEP_COMMAND << "sleep " << secondsToSleep;
 
-#if defined(__WXMAC__)
-    FileUtils::OSXOpenTerminalAndGetTTY(::wxGetCwd(), tty);
 
-#else // Linux / FreeBSD
     wxString consoleCommand = TERMINAL_CMD;
     consoleCommand.Replace("$(CMD)", SLEEP_COMMAND);
     consoleCommand.Replace("$(TITLE)", title);
-#endif
-
     ::wxExecute(consoleCommand);
 
     // Let it start ... (wait for it up to 5 seconds)

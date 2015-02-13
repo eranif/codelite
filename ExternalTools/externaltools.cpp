@@ -115,7 +115,7 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     for(int i = 0; i < MAX_TOOLS; i++) {
         clKeyboardManager::Get()->AddGlobalAccelerator(
             wxString::Format("external_tool_%d", i),
-            wxString::Format("Ctrl-Alt-%d", i),
+            wxString::Format("Ctrl-Shift-%d", i),
             wxString::Format("Plugins::External Tools::External Tool %d", i));
     }
 }

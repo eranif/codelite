@@ -242,6 +242,11 @@
       <File Name="wxPNGAnimation.h"/>
       <File Name="clGetTextFromUserDialog.h"/>
       <File Name="clGetTextFromUserDialog.cpp"/>
+      <VirtualDirectory Name="CodeCompletionBox">
+        <File Name="wxCodeCompletionBox.cpp"/>
+        <File Name="wxCodeCompletionBox.h"/>
+        <File Name="wxCodeCompletionBox.wxcp"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>
@@ -347,6 +352,7 @@
       <File Name="plugin_general_wxcp_plugin_bitmaps.cpp"/>
       <File Name="sftp_ui_sftp_bitmaps.cpp"/>
       <File Name="wxcrafter_plugin_bitmaps.cpp"/>
+      <File Name="wxCodeCompletionBox_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -357,6 +363,8 @@
       <File Name="sftp_ui.cpp"/>
       <File Name="wxcrafter_plugin.h"/>
       <File Name="wxcrafter_plugin.cpp"/>
+      <File Name="wxCodeCompletionBoxBase.h"/>
+      <File Name="wxCodeCompletionBoxBase.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>

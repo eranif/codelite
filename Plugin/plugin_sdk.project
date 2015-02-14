@@ -246,6 +246,8 @@
         <File Name="wxCodeCompletionBox.cpp"/>
         <File Name="wxCodeCompletionBox.h"/>
         <File Name="wxCodeCompletionBox.wxcp"/>
+        <File Name="wxCodeCompletionBoxManager.h"/>
+        <File Name="wxCodeCompletionBoxManager.cpp"/>
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">

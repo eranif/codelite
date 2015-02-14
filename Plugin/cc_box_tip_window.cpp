@@ -235,9 +235,10 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     m_links.clear();
     wxBufferedPaintDC dc(this);
 
-    wxColour penColour = DrawingUtils::GetThemeBorderColour();
-    wxColour brushColour = DrawingUtils::GetThemeTipBgColour();
-
+    wxColour penColour("rgb(77, 77, 77)");
+    wxColour brushColour("rgb(64, 64, 64)");
+    wxColour textColour("rgb(200, 200, 200)");
+    
     dc.SetBrush(brushColour);
     dc.SetPen(penColour);
 
@@ -249,7 +250,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     m_rightTipRect = wxRect();
 
     dc.SetFont(m_commentFont);
-    dc.SetTextForeground(DrawingUtils::GetThemeTextColour());
+    dc.SetTextForeground(textColour);
 
     wxString curtext;
     MarkupParser parser(m_tip);
@@ -269,7 +270,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             f.SetWeight(wxFONTWEIGHT_NORMAL);
             f.SetUnderlined(true);
             dc.SetFont(f);
-            dc.SetTextForeground(DrawingUtils::GetThemeLinkColour());
+            dc.SetTextForeground(textColour);
             wxRect url_rect = DoPrintText(dc, curtext, pt);
 
             // keep info about this URL
@@ -281,7 +282,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             // Restore font and colour
             f.SetUnderlined(false);
             dc.SetFont(f);
-            dc.SetTextForeground(DrawingUtils::GetThemeTextColour());
+            dc.SetTextForeground(textColour);
 
             break;
         }
@@ -361,7 +362,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         case COLOR_END: {
             DoPrintText(dc, curtext, pt);
             // restore default colour
-            dc.SetTextForeground(DrawingUtils::GetThemeTextColour());
+            dc.SetTextForeground(textColour);
             break;
         }
         case MARKUP_VOID:

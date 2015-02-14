@@ -72,6 +72,7 @@
 #include "codelite_events.h"
 #include "clSTCLineKeeper.h"
 #include "ColoursAndFontsManager.h"
+#include "wxCodeCompletionBoxManager.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -3759,7 +3760,7 @@ void LEditor::OnLeftDClick(wxStyledTextEvent& event)
     event.Skip();
 }
 
-bool LEditor::IsCompletionBoxShown() { return CodeCompletionBox::Get().IsShown(); }
+bool LEditor::IsCompletionBoxShown() { return CodeCompletionBox::Get().IsShown() || wxCodeCompletionBoxManager::Get().IsShown(); }
 
 int LEditor::GetCurrentLine()
 {

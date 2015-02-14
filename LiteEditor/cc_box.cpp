@@ -299,13 +299,13 @@ bool CCBox::SelectWord(const wxString& word)
         // of the 'no-match' is due to typo
         bool typoError = false;
         if(word.length() > 1) {
-            wxString word2 = word.Mid(0, word.length()-1);
+            wxString word2 = word.Mid(0, word.length() - 1);
             long where = m_listCtrl->FindMatch(word2, fullMatch);
             if(where != wxNOT_FOUND) {
                 typoError = true;
             }
         }
-        
+
         if(typoError) {
             // typo error, just unselect the match
             m_listCtrl->Select(m_selectedItem, false);
@@ -565,7 +565,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
                 } else {
                     m_editor->CodeComplete();
                 }
-                
+
                 // post an event to select the proper signature
                 if(!tips.empty()) {
                     m_editor->GetFunctionTip()->SelectSignature(tips.at(0).str);
@@ -755,116 +755,101 @@ void CCBox::DoShowTagTip()
     size_t numOfTips = m_currentItem.listOfTags.size();
 
     // Send the plugins an event requesting tooltip for this tag
-    bool gotAComment(false);
-    if(m_owner) {
-        TagEntryPtr tagPtr(new TagEntry(tag));
-        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_TAG_COMMENT, GetId());
-        evt.SetEventObject(this);
-        evt.SetTagEntry(tagPtr);
+    if(tag.IsMethod()) {
 
-        if(EventNotifier::Get()->ProcessEvent(evt)) {
-            prefix << evt.GetTooltip();
-            gotAComment = true;
+        if(tag.IsConstructor())
+            prefix << wxT("<b>[Constructor]</b>\n");
+
+        else if(tag.IsDestructor())
+            prefix << wxT("<b>[Destructor]</b>\n");
+
+        TagEntryPtr p(new TagEntry(tag));
+        prefix << wxT("<code>")
+               << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual | FunctionFormat_Arg_Per_Line)
+               << wxT("</code>\n");
+        prefix.Replace(tag.GetName(), wxT("<b>") + tag.GetName() + wxT("</b>"));
+    } else if(tag.IsClass()) {
+
+        prefix << wxT("<b>Kind:</b> ");
+        prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str());
+
+        if(tag.GetInheritsAsString().IsEmpty() == false) {
+            prefix << wxT("<b>Inherits:</b> ");
+            prefix << tag.GetInheritsAsString() << wxT("\n");
         }
+
+    } else if(tag.IsMacro() || tag.IsTypedef() || tag.IsContainer() || tag.GetKind() == wxT("member") ||
+              tag.GetKind() == wxT("variable")) {
+
+        prefix << wxT("<b>Kind:</b> ");
+        prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str());
+
+        prefix << wxT("<b>Match Pattern:</b> ");
+
+        // Prettify the match pattern
+        wxString matchPattern(tag.GetPattern());
+        matchPattern.Trim().Trim(false);
+
+        if(matchPattern.StartsWith(wxT("/^"))) {
+            matchPattern.Replace(wxT("/^"), wxT(""));
+        }
+
+        if(matchPattern.EndsWith(wxT("$/"))) {
+            matchPattern.Replace(wxT("$/"), wxT(""));
+        }
+
+        matchPattern.Replace(wxT("\t"), wxT(" "));
+        while(matchPattern.Replace(wxT("  "), wxT(" "))) {
+        }
+
+        matchPattern.Trim().Trim(false);
+
+        // BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
+        matchPattern = TagsManagerST::Get()->WrapLines(matchPattern);
+        matchPattern.Replace(tag.GetName(), wxT("<b>") + tag.GetName() + wxT("</b>"));
+        prefix << wxT("<code>") << matchPattern << wxT("</code>\n");
+
+    } else {
+        // non valid tag entry
+        return;
     }
 
-    if(!gotAComment) {
-        if(tag.IsMethod()) {
-
-            if(tag.IsConstructor())
-                prefix << wxT("<b>[Constructor]</b>\n");
-
-            else if(tag.IsDestructor())
-                prefix << wxT("<b>[Destructor]</b>\n");
-
-            TagEntryPtr p(new TagEntry(tag));
-            prefix << wxT("<code>")
-                   << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual | FunctionFormat_Arg_Per_Line)
-                   << wxT("</code>\n");
-            prefix.Replace(tag.GetName(), wxT("<b>") + tag.GetName() + wxT("</b>"));
-        } else if(tag.IsClass()) {
-
-            prefix << wxT("<b>Kind:</b> ");
-            prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str());
-
-            if(tag.GetInheritsAsString().IsEmpty() == false) {
-                prefix << wxT("<b>Inherits:</b> ");
-                prefix << tag.GetInheritsAsString() << wxT("\n");
-            }
-
-        } else if(tag.IsMacro() || tag.IsTypedef() || tag.IsContainer() || tag.GetKind() == wxT("member") ||
-                  tag.GetKind() == wxT("variable")) {
-
-            prefix << wxT("<b>Kind:</b> ");
-            prefix << wxString::Format(wxT("%s\n"), tag.GetKind().c_str());
-
-            prefix << wxT("<b>Match Pattern:</b> ");
-
-            // Prettify the match pattern
-            wxString matchPattern(tag.GetPattern());
-            matchPattern.Trim().Trim(false);
-
-            if(matchPattern.StartsWith(wxT("/^"))) {
-                matchPattern.Replace(wxT("/^"), wxT(""));
-            }
-
-            if(matchPattern.EndsWith(wxT("$/"))) {
-                matchPattern.Replace(wxT("$/"), wxT(""));
-            }
-
-            matchPattern.Replace(wxT("\t"), wxT(" "));
-            while(matchPattern.Replace(wxT("  "), wxT(" "))) {
-            }
-
-            matchPattern.Trim().Trim(false);
-
-            // BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
-            matchPattern = TagsManagerST::Get()->WrapLines(matchPattern);
-            matchPattern.Replace(tag.GetName(), wxT("<b>") + tag.GetName() + wxT("</b>"));
-            prefix << wxT("<code>") << matchPattern << wxT("</code>\n");
-
-        } else {
-            // non valid tag entry
-            return;
+    // Add comment section
+    wxString filename(m_comments.getFilename().c_str(), wxConvUTF8);
+    if(filename != tag.GetFile()) {
+        m_comments.clear();
+        ParseComments(tag.GetFile().mb_str(wxConvUTF8).data(), m_comments);
+        m_comments.setFilename(tag.GetFile().mb_str(wxConvUTF8).data());
+    }
+    wxString tagComment;
+    bool foundComment(false);
+    std::string comment;
+    // search for comment in the current line, the line above it and 2 above it
+    // use the first match we got
+    for(size_t i = 0; i < 3; i++) {
+        comment = m_comments.getCommentForLine(tag.GetLine() - i);
+        if(comment.empty() == false) {
+            foundComment = true;
+            break;
         }
+    }
+    if(foundComment || !tag.GetComment().IsEmpty()) {
 
-        // Add comment section
-        wxString filename(m_comments.getFilename().c_str(), wxConvUTF8);
-        if(filename != tag.GetFile()) {
-            m_comments.clear();
-            ParseComments(tag.GetFile().mb_str(wxConvUTF8).data(), m_comments);
-            m_comments.setFilename(tag.GetFile().mb_str(wxConvUTF8).data());
-        }
-        wxString tagComment;
-        bool foundComment(false);
-        std::string comment;
-        // search for comment in the current line, the line above it and 2 above it
-        // use the first match we got
-        for(size_t i = 0; i < 3; i++) {
-            comment = m_comments.getCommentForLine(tag.GetLine() - i);
-            if(comment.empty() == false) {
-                foundComment = true;
-                break;
-            }
-        }
-        if(foundComment || !tag.GetComment().IsEmpty()) {
+        wxString theComment;
+        if(!tag.GetComment().IsEmpty())
+            theComment = tag.GetComment();
+        else
+            theComment = wxString(comment.c_str(), wxConvUTF8);
 
-            wxString theComment;
-            if(!tag.GetComment().IsEmpty())
-                theComment = tag.GetComment();
-            else
-                theComment = wxString(comment.c_str(), wxConvUTF8);
-
-            theComment = TagsManagerST::Get()->WrapLines(theComment);
-            theComment.Trim(false);
-            tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
-            if(prefix.IsEmpty() == false) {
-                prefix.Trim().Trim(false);
-                prefix << wxT("\n<hr>");
-            }
-            prefix << tagComment;
+        theComment = TagsManagerST::Get()->WrapLines(theComment);
+        theComment.Trim(false);
+        tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
+        if(prefix.IsEmpty() == false) {
+            prefix.Trim().Trim(false);
+            prefix << wxT("\n<hr>");
         }
-    } // gotAComment = true
+        prefix << tagComment;
+    }
 
     // Update all "doxy" comments and surround them with <green> tags
     static wxRegEx reDoxyParam("([@\\\\]{1}param)[ \\t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT | wxRE_ICASE);
@@ -1025,11 +1010,11 @@ void CCBox::OnRefreshList(wxTimerEvent& event)
 
         // clang is already slow... don't re-invoke the list
         if(m_tags.empty() == false && m_tags.at(0)->GetIsClangTag()) return;
-        
-        // Tags with user data are from plugins. So we disable the auto-refresh feature of the 
+
+        // Tags with user data are from plugins. So we disable the auto-refresh feature of the
         // completion box
-        if(!m_tags.empty() && m_tags.at(0)->GetUserData()) return;
-        
+        if(!m_tags.empty() /*&& m_tags.at(0)->GetUserData()*/) return;
+
         wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("complete_word_refresh_list"));
         event.SetEventObject(clMainFrame::Get());
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);

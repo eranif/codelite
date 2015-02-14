@@ -67,7 +67,6 @@ private:
     void OnFunctionCallTip(clCodeCompletionEvent& e);
     void OnTypeinfoTip(clCodeCompletionEvent& e);
     void OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e);
-    void OnCodeCompletionGetTagComment(clCodeCompletionEvent& e);
     void OnFindSymbol(clCodeCompletionEvent& e);
     void OnQuickJump(clCodeCompletionEvent& e);
     void OnInsertDoxyBlock(clCodeCompletionEvent& e);

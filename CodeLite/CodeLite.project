@@ -133,6 +133,7 @@
     <File Name="StdToWX.cpp"/>
     <File Name="codelite_events.h"/>
     <File Name="codelite_events.cpp"/>
+    <File Name="wxCodeCompletionBoxEntry.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>

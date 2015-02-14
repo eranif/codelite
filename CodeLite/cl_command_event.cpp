@@ -84,17 +84,17 @@ clCodeCompletionEvent::clCodeCompletionEvent(const clCodeCompletionEvent& event)
     : clCommandEvent(event)
     , m_editor(NULL)
     , m_insideCommentOrString(false)
-    , m_tagEntry(NULL)
 {
     *this = event;
+    m_entry.reset(NULL);
 }
 
 clCodeCompletionEvent::clCodeCompletionEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
     , m_editor(NULL)
     , m_insideCommentOrString(false)
-    , m_tagEntry(NULL)
 {
+    m_entry.reset(NULL);
 }
 
 clCodeCompletionEvent::~clCodeCompletionEvent() {}
@@ -110,7 +110,7 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     m_position = src.m_position;
     m_tooltip = src.m_tooltip;
     m_insideCommentOrString = src.m_insideCommentOrString;
-    m_tagEntry = src.m_tagEntry;
+    m_entry = src.m_entry;
     m_definitions = src.m_definitions;
     return *this;
 }

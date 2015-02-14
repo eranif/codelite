@@ -32,6 +32,7 @@
 #include "entry.h"
 #include <wx/arrstr.h>
 #include <vector>
+#include "wxCodeCompletionBoxEntry.h"
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -92,7 +93,7 @@ class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
     int m_position;
     wxString m_tooltip;
     bool m_insideCommentOrString;
-    TagEntryPtr m_tagEntry;
+    wxCodeCompletionBoxEntry::Ptr_t m_entry;
     wxArrayString m_definitions;
 
 public:
@@ -104,14 +105,9 @@ public:
 
     void SetDefinitions(const wxArrayString& definitions) { this->m_definitions = definitions; }
     const wxArrayString& GetDefinitions() const { return m_definitions; }
-    void SetTagEntry(TagEntryPtr tag) { this->m_tagEntry = tag; }
-
-    /**
-     * @brief return the tag entry associated with this event.
-     * This usually makes sense for event wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED
-     */
-    TagEntryPtr GetTagEntry() const { return m_tagEntry; }
-
+    void SetEntry(wxCodeCompletionBoxEntry::Ptr_t entry) { this->m_entry = entry; }
+    wxCodeCompletionBoxEntry::Ptr_t GetEntry() { return m_entry; }
+    
     void SetInsideCommentOrString(bool insideCommentOrString) { this->m_insideCommentOrString = insideCommentOrString; }
 
     bool IsInsideCommentOrString() const { return m_insideCommentOrString; }

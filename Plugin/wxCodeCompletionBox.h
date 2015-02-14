@@ -2,6 +2,7 @@
 #define WXCODECOMPLETIONBOX_H
 
 #include "wxCodeCompletionBoxBase.h"
+#include "wxCodeCompletionBoxEntry.h"
 #include <wx/arrstr.h>
 #include <wx/sharedptr.h>
 #include <vector>
@@ -9,62 +10,10 @@
 #include <wx/bitmap.h>
 #include <wx/stc/stc.h>
 #include <wx/font.h>
+#include "entry.h"
 
+class CCBoxTipWindow;
 class wxCodeCompletionBox;
-class wxStyledTextCtrl;
-class WXDLLIMPEXP_SDK wxCodeCompletionBoxEntry
-{
-    wxString m_text;
-    int m_imgIndex;
-    wxClientData* m_clientData;
-    wxRect m_itemRect;
-    friend class wxCodeCompletionBox;
-public:
-    typedef wxSharedPtr<wxCodeCompletionBoxEntry> Ptr_t;
-    typedef std::vector<wxCodeCompletionBoxEntry::Ptr_t> Vec_t;
-
-public:
-    wxCodeCompletionBoxEntry(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)
-        : m_text(text)
-        , m_imgIndex(imgId)
-        , m_clientData(userData)
-    {
-    }
-
-    virtual ~wxCodeCompletionBoxEntry()
-    {
-        wxDELETE(m_clientData);
-        m_imgIndex = wxNOT_FOUND;
-        m_text.Clear();
-    }
-
-    /**
-     * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
-     * @return
-     */
-    static wxCodeCompletionBoxEntry::Ptr_t
-    New(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)
-    {
-        wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, imgId, userData));
-        return pEntry;
-    }
-
-    void SetImgIndex(int imgIndex) { this->m_imgIndex = imgIndex; }
-    void SetText(const wxString& text) { this->m_text = text; }
-    int GetImgIndex() const { return m_imgIndex; }
-    const wxString& GetText() const { return m_text; }
-    /**
-     * @brief set client data, deleting the old client data
-     * @param clientData
-     */
-    void SetClientData(wxClientData* clientData)
-    {
-        wxDELETE(this->m_clientData);
-        this->m_clientData = clientData;
-    }
-    wxClientData* GetClientData() { return m_clientData; }
-};
-
 class WXDLLIMPEXP_SDK wxCodeCompletionBox : public wxCodeCompletionBoxBase
 {
 public:
@@ -78,7 +27,16 @@ protected:
     int m_index;
     wxStyledTextCtrl* m_stc;
     wxFont m_ccFont;
-
+    int m_startPos;
+    
+    /// When firing the various "clCodeCompletionEvent"s, set the event object
+    /// to this member. This help distinguish the real trigger of the code completion
+    /// box
+    wxEvtHandler* m_eventObject;
+    
+    /// Code completion tooltip that is shown next to the code completion box
+    CCBoxTipWindow* m_tipWindow;
+    
 protected:
     // Event handlers
     void OnUpdateList(wxStyledTextEvent& event);
@@ -89,14 +47,24 @@ protected:
     virtual void OnPaint(wxPaintEvent& event);
 
 public:
-    wxCodeCompletionBox(wxWindow* parent);
     virtual ~wxCodeCompletionBox();
-
     /**
-     * @brief show the completion box, filter
-     * @param word
+     * @brief construct a code completion box
+     * @param parent the parent window
+     * @param eventObject will be passed as the eventObject of the various clCodeCompletionEvent 
+     * events fired from this object
+     */
+    wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject = NULL);
+    
+    /**
+     * @brief show the completion box
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries);
+    
+    /**
+     * @brief show the completion box
+     */
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags);
 
     void SetBitmaps(const wxCodeCompletionBox::BmpVec_t& bitmaps) { this->m_bitmaps = bitmaps; }
     const wxCodeCompletionBox::BmpVec_t& GetBitmaps() const { return m_bitmaps; }
@@ -104,6 +72,13 @@ public:
 protected:
     int GetSingleLineHeight() const;
     void FilterResults();
-    void InsertSelection();
+    void HideAndInsertSelection();
+    
+    // For backward compatability, we support initializing the list with TagEntryPtrVector_t
+    // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr
+    wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);
+    int GetImageId(TagEntryPtr entry);
+    void DoDisplayTipWindow();
+    
 };
 #endif // WXCODECOMPLETIONBOX_H

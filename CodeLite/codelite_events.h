@@ -264,15 +264,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_GOT_CONTROL, wxComma
 // event.
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE, clCodeCompletionEvent);
 
-// clientData is the selected word (wxString*)
+// User selected an entry from the code completion box. call event.Skip(false)
+// if you wish to perform something unique instead of the default "insert selection into editor"
+// The selected string can be retrieved by calling: event.GetWord()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEvent);
-
-// A tooltip is requested for the selected entry in the completion box
-// clientData is set to the client data set by the user
-// the plugin returns the tooltip to the IDE using the:
-// evt.SetTooltip(..) method
-// Use evt.GetTagEntry() to retrieve the tag
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_TAG_COMMENT, clCodeCompletionEvent);
 
 // A function calltip is requesed
 // clientData is set to the client data set by the user

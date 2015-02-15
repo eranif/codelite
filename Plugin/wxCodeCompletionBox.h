@@ -39,12 +39,13 @@ protected:
     
 protected:
     // Event handlers
-    void OnUpdateList(wxStyledTextEvent& event);
+    void OnStcModified(wxStyledTextEvent& event);
+    void OnStcCharAdded(wxStyledTextEvent& event);
     void OnStcKey(wxKeyEvent& event);
     void OnStcLeftDown(wxMouseEvent& event);
     void OnLeftDClick(wxMouseEvent& event);
-    virtual void OnEraseBackground(wxEraseEvent& event);
-    virtual void OnPaint(wxPaintEvent& event);
+    void OnEraseBackground(wxEraseEvent& event);
+    void OnPaint(wxPaintEvent& event);
 
 public:
     virtual ~wxCodeCompletionBox();
@@ -79,6 +80,6 @@ protected:
     wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);
     int GetImageId(TagEntryPtr entry);
     void DoDisplayTipWindow();
-    
+    void DoUpdateList();
 };
 #endif // WXCODECOMPLETIONBOX_H

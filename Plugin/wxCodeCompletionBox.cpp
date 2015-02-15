@@ -79,7 +79,8 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
     m_canvas->Unbind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Unbind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
     if(m_stc) {
-        m_stc->Unbind(wxEVT_STC_MODIFIED, &wxCodeCompletionBox::OnUpdateList, this);
+        m_stc->Unbind(wxEVT_STC_MODIFIED, &wxCodeCompletionBox::OnStcModified, this);
+        m_stc->Unbind(wxEVT_STC_CHARADDED, &wxCodeCompletionBox::OnStcCharAdded, this);
         m_stc->Unbind(wxEVT_KEY_DOWN, &wxCodeCompletionBox::OnStcKey, this);
         m_stc->Unbind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnStcLeftDown, this);
     }
@@ -207,13 +208,14 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     Show();
 
     if(m_stc) {
-        m_stc->Bind(wxEVT_STC_MODIFIED, &wxCodeCompletionBox::OnUpdateList, this);
+        m_stc->Bind(wxEVT_STC_MODIFIED, &wxCodeCompletionBox::OnStcModified, this);
+        m_stc->Bind(wxEVT_STC_CHARADDED, &wxCodeCompletionBox::OnStcCharAdded, this);
         m_stc->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBox::OnStcKey, this);
         m_stc->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnStcLeftDown, this);
         // Set the focus back to the completion control
         m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
     }
-    
+
     // Display the help window
     DoDisplayTipWindow();
 }
@@ -226,26 +228,15 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
         m_tipWindow->Destroy();
         m_tipWindow = NULL;
     }
-    
+
     if(m_index >= 0 && m_index < (int)m_entries.size()) {
-        m_tipWindow = new CCBoxTipWindow(GetParent(), m_entries.at(m_index)->GetComment());
-        m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
-        m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
-    }
-}
-
-void wxCodeCompletionBox::OnUpdateList(wxStyledTextEvent& event)
-{
-    event.Skip();
-    FilterResults();
-
-    int curpos = m_stc->GetCurrentPos();
-    if(m_entries.empty() || curpos < m_startPos) {
-        Hide();
-        Destroy();
-    } else {
-        DoDisplayTipWindow();
-        Refresh();
+        wxString docComment = m_entries.at(m_index)->GetComment();
+        docComment.Trim().Trim(false);
+        if(!docComment.IsEmpty()) {
+            m_tipWindow = new CCBoxTipWindow(GetParent(), docComment);
+            m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
+            m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
+        }
     }
 }
 
@@ -420,4 +411,39 @@ int wxCodeCompletionBox::GetImageId(TagEntryPtr entry)
 void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags)
 {
     ShowCompletionBox(ctrl, TagsToEntries(tags));
+}
+
+void wxCodeCompletionBox::DoUpdateList()
+{
+    FilterResults();
+
+    int curpos = m_stc->GetCurrentPos();
+    if(m_entries.empty() || curpos < m_startPos) {
+        Hide();
+        Destroy();
+    } else {
+        DoDisplayTipWindow();
+        Refresh();
+    }
+}
+
+void wxCodeCompletionBox::OnStcCharAdded(wxStyledTextEvent& event)
+{
+    event.Skip();
+    wxChar charAdded = m_stc->GetCharAt(m_stc->GetCurrentPos());
+    switch(charAdded) {
+    case '(':
+        Hide();
+        Destroy();
+        break;
+    default:
+        DoUpdateList();
+        break;
+    }
+}
+
+void wxCodeCompletionBox::OnStcModified(wxStyledTextEvent& event)
+{
+    event.Skip();
+    DoUpdateList();
 }

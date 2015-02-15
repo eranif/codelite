@@ -38,3 +38,16 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 }
 
 void wxCodeCompletionBoxManager::WindowDestroyed() { m_box = NULL; }
+
+void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                                                   const wxCodeCompletionBoxEntry::Vec_t& entries,
+                                                   const wxCodeCompletionBox::BmpVec_t& bitmaps,
+                                                   wxEvtHandler* eventObject)
+{
+    if(m_box) {
+        m_box->Destroy();
+    }
+    m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    m_box->SetBitmaps(bitmaps);
+    m_box->ShowCompletionBox(ctrl, entries);
+}

@@ -37,6 +37,8 @@
 #include "cl_config.h"
 #include "macromanager.h"
 #include "clKeyboardManager.h"
+#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxManager.h"
 
 static AbbreviationPlugin* thePlugin = NULL;
 
@@ -166,19 +168,17 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
     if(!autoInsert) {
         static wxBitmap bmp = LoadBitmapFile(wxT("abbrev.png"));
         if(bmp.IsOk()) {
-            editor->RegisterImageForKind(wxT("Abbreviation"), bmp);
-            std::vector<TagEntryPtr> tags;
-
+            wxCodeCompletionBoxEntry::Vec_t ccEntries;
+            wxCodeCompletionBox::BmpVec_t bitmaps;
+            bitmaps.push_back(bmp);
+            
             // search for the old item
             const JSONElement::wxStringMap_t& entries = jsonData.GetEntries();
             JSONElement::wxStringMap_t::const_iterator iter = entries.begin();
             for(; iter != entries.end(); ++iter) {
-                TagEntryPtr t(new TagEntry());
-                t->SetName(iter->first);
-                t->SetKind(wxT("Abbreviation"));
-                tags.push_back(t);
+                ccEntries.push_back(wxCodeCompletionBoxEntry::New(iter->first, 0));
             }
-            editor->ShowCompletionBox(tags, editor->GetWordAtCaret(), false, this);
+            wxCodeCompletionBoxManager::Get().ShowCompletionBox(editor->GetSTC(), ccEntries, bitmaps, this);
         }
     }
 }

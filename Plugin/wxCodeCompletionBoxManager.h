@@ -28,6 +28,13 @@ public:
     void ShowCompletionBox(wxStyledTextCtrl* ctrl,
                            const wxCodeCompletionBoxEntry::Vec_t& entries,
                            wxEvtHandler* eventObject = NULL);
+    /**
+     * @brief show the completion box
+     */
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                           const wxCodeCompletionBoxEntry::Vec_t& entries,
+                           const wxCodeCompletionBox::BmpVec_t& bitmaps,
+                           wxEvtHandler* eventObject = NULL);
 
     /**
      * @brief show the completion box

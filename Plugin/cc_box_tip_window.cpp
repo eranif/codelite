@@ -238,9 +238,11 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     wxColour penColour("rgb(77, 77, 77)");
     wxColour brushColour("rgb(64, 64, 64)");
     wxColour textColour("rgb(200, 200, 200)");
+    wxColour tagsColour("rgb(255, 198, 0)");
+    wxColour linkColour("rgb(204, 153, 255)");
     
     dc.SetBrush(brushColour);
-    dc.SetPen(penColour);
+    dc.SetPen(wxPen(penColour, 2));
 
     wxRect rr = GetClientRect();
     dc.DrawRectangle(rr);
@@ -270,7 +272,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             f.SetWeight(wxFONTWEIGHT_NORMAL);
             f.SetUnderlined(true);
             dc.SetFont(f);
-            dc.SetTextForeground(textColour);
+            dc.SetTextForeground(linkColour);
             wxRect url_rect = DoPrintText(dc, curtext, pt);
 
             // keep info about this URL
@@ -292,6 +294,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             wxFont f = dc.GetFont();
             f.SetWeight(wxFONTWEIGHT_BOLD);
             dc.SetFont(f);
+            dc.SetTextBackground(*wxWHITE);
             break;
         }
         case BOLD_END: {
@@ -301,6 +304,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             wxFont f = dc.GetFont();
             f.SetWeight(wxFONTWEIGHT_NORMAL);
             dc.SetFont(f);
+            dc.SetTextBackground(textColour);
             break;
         }
         case ITALIC_START: {

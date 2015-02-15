@@ -72,6 +72,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_canvas->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
 }
 
 wxCodeCompletionBox::~wxCodeCompletionBox()
@@ -90,6 +91,7 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
         m_tipWindow->Destroy();
         m_tipWindow = NULL;
     }
+    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
     wxCodeCompletionBoxManager::Get().WindowDestroyed();
 }
 
@@ -476,4 +478,12 @@ void wxCodeCompletionBox::OnStcModified(wxStyledTextEvent& event)
 {
     event.Skip();
     DoUpdateList();
+}
+
+void wxCodeCompletionBox::OnAppActivate(wxActivateEvent& event)
+{
+    event.Skip();
+    // Application lost / got focus - reset the tooltip
+    Hide();
+    Destroy();
 }

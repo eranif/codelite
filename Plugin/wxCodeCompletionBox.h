@@ -11,6 +11,7 @@
 #include <wx/stc/stc.h>
 #include <wx/font.h>
 #include "entry.h"
+#include <wx/event.h>
 
 class CCBoxTipWindow;
 class wxCodeCompletionBox;
@@ -46,7 +47,8 @@ protected:
     void OnLeftDClick(wxMouseEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
-
+    void OnAppActivate(wxActivateEvent& event);
+    
 public:
     virtual ~wxCodeCompletionBox();
     /**

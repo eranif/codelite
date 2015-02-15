@@ -90,7 +90,7 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
         m_tipWindow->Destroy();
         m_tipWindow = NULL;
     }
-    wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::WindowDestroyed);
+    wxCodeCompletionBoxManager::Get().WindowDestroyed();
 }
 
 void wxCodeCompletionBox::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(event); }

@@ -18,7 +18,8 @@ private:
 
 protected:
     void WindowDestroyed();
-
+    void DestroyCurrent();
+    
 public:
     static wxCodeCompletionBoxManager& Get();
 

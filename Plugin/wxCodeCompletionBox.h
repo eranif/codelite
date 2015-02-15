@@ -20,6 +20,11 @@ class WXDLLIMPEXP_SDK wxCodeCompletionBox : public wxCodeCompletionBoxBase
 public:
     typedef std::vector<wxBitmap> BmpVec_t;
 
+public:
+    enum {
+        kInsertSingleMatch = (1 << 0),
+    };
+
 protected:
     wxCodeCompletionBoxEntry::Vec_t m_allEntries;
     wxCodeCompletionBoxEntry::Vec_t m_entries;
@@ -29,14 +34,17 @@ protected:
     wxStyledTextCtrl* m_stc;
     wxFont m_ccFont;
     int m_startPos;
-    
+
     /// When firing the various "clCodeCompletionEvent"s, set the event object
     /// to this member. This help distinguish the real trigger of the code completion
     /// box
     wxEvtHandler* m_eventObject;
-    
+
     /// Code completion tooltip that is shown next to the code completion box
     CCBoxTipWindow* m_tipWindow;
+    
+    /// The code completion box flags, see above enum for possible values
+    size_t m_flags;
     
 protected:
     // Event handlers
@@ -48,22 +56,22 @@ protected:
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
     void OnAppActivate(wxActivateEvent& event);
-    
+
 public:
     virtual ~wxCodeCompletionBox();
     /**
      * @brief construct a code completion box
      * @param parent the parent window
-     * @param eventObject will be passed as the eventObject of the various clCodeCompletionEvent 
+     * @param eventObject will be passed as the eventObject of the various clCodeCompletionEvent
      * events fired from this object
      */
-    wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject = NULL);
-    
+    wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject = NULL, size_t flags = 0);
+
     /**
      * @brief show the completion box
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries);
-    
+
     /**
      * @brief show the completion box
      */
@@ -76,7 +84,7 @@ protected:
     int GetSingleLineHeight() const;
     void FilterResults();
     void HideAndInsertSelection();
-    
+
     // For backward compatability, we support initializing the list with TagEntryPtrVector_t
     // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr
     wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);

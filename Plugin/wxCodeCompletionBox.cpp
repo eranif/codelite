@@ -26,13 +26,14 @@
 #define DEFAULT_FONT_SIZE 11
 #endif
 
-wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject)
+wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject, size_t flags)
     : wxCodeCompletionBoxBase(parent)
     , m_index(0)
     , m_stc(NULL)
     , m_startPos(wxNOT_FOUND)
     , m_eventObject(eventObject)
     , m_tipWindow(NULL)
+    , m_flags(flags)
 {
     m_ccFont = wxFont(wxFontInfo(DEFAULT_FONT_SIZE).Family(wxFONTFAMILY_TELETYPE).FaceName(DEFAULT_FACE_NAME));
     SetCursor(wxCURSOR_HAND);
@@ -195,7 +196,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
 
     // If we got a single match - insert it
-    if(m_entries.size() == 1) {
+    if((m_entries.size() == 1) && (m_flags & kInsertSingleMatch)) {
         // single match
         HideAndInsertSelection();
         Destroy();
@@ -244,6 +245,22 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
 
 void wxCodeCompletionBox::OnStcKey(wxKeyEvent& event)
 {
+//    switch(event.GetKeyCode()) {
+//        case WXK_NUMPAD_ENTER:
+//        case WXK_RETURN:
+//        case WXK_TAB:
+//            CodeCompletionBox::Get().InsertSelection();
+//            HideCompletionBox();
+//            return;
+//
+//        case WXK_ESCAPE:
+//        case WXK_LEFT:
+//        case WXK_RIGHT:
+//        case WXK_HOME:
+//        case WXK_END:
+//        case WXK_DELETE:
+//        case WXK_NUMPAD_DELETE:
+//        
     if(event.GetKeyCode() == WXK_UP) {
         if((m_index - 1) >= 0) {
             --m_index;
@@ -261,7 +278,8 @@ void wxCodeCompletionBox::OnStcKey(wxKeyEvent& event)
         Hide();
         Destroy();
 
-    } else if(event.GetKeyCode() == WXK_TAB || event.GetKeyCode() == WXK_RETURN) {
+    } else if(event.GetKeyCode() == WXK_TAB || event.GetKeyCode() == WXK_RETURN ||
+              event.GetKeyCode() == WXK_NUMPAD_ENTER) {
         // Insert the selection
         HideAndInsertSelection();
         Destroy();
@@ -309,7 +327,7 @@ void wxCodeCompletionBox::FilterResults()
         wxString entryText = m_allEntries.at(i)->GetText().BeforeFirst('(');
         entryText.Trim().Trim(false);
         wxString lcEntryText = entryText.Lower();
-        
+
         // Exact match:
         if(word == entryText) {
             exactMatches.push_back(m_allEntries.at(i));
@@ -321,7 +339,7 @@ void wxCodeCompletionBox::FilterResults()
             contains.push_back(m_allEntries.at(i));
         }
     }
-    
+
     // Merge the results
     m_entries.insert(m_entries.end(), exactMatches.begin(), exactMatches.end());
     m_entries.insert(m_entries.end(), exactMatchesI.begin(), exactMatchesI.end());
@@ -368,7 +386,7 @@ void wxCodeCompletionBox::HideAndInsertSelection()
                 int caretPos = start + textToInsert.Len() - 1;
                 m_stc->SetCurrentPos(caretPos);
                 m_stc->SetSelection(caretPos, caretPos);
-                
+
                 // trigger a code complete for function calltip.
                 // We do this by simply mimicing the user action of going to the menubar:
                 // Edit->Display Function Calltip

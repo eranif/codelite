@@ -366,6 +366,12 @@ void wxCodeCompletionBox::HideAndInsertSelection()
                 int caretPos = start + textToInsert.Len() - 1;
                 m_stc->SetCurrentPos(caretPos);
                 m_stc->SetSelection(caretPos, caretPos);
+                
+                // trigger a code complete for function calltip.
+                // We do this by simply mimicing the user action of going to the menubar:
+                // Edit->Display Function Calltip
+                wxCommandEvent event(wxEVT_MENU, XRCID("function_call_tip"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
             }
         } else {
             m_stc->ReplaceSelection(entryText);

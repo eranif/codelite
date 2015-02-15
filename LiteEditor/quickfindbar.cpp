@@ -1062,7 +1062,7 @@ void QuickFindBar::OnButtonReplace(wxFlatButtonEvent& e)
 
 void QuickFindBar::OnButtonReplaceUI(wxUpdateUIEvent& e)
 {
-    e.Enable(!m_replaceWith->GetValue().IsEmpty());
+    e.Enable(!m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnHideBar(wxFlatButtonEvent& e)

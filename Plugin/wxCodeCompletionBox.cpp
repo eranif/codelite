@@ -354,6 +354,7 @@ void wxCodeCompletionBox::HideAndInsertSelection()
 void wxCodeCompletionBox::OnStcLeftDown(wxMouseEvent& event)
 {
     event.Skip();
+    Hide(); // Hide before we destroy, it reduces the flicker on screen
     Destroy();
 }
 

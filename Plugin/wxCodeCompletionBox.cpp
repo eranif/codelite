@@ -296,12 +296,35 @@ void wxCodeCompletionBox::FilterResults()
 
     m_entries.clear();
     wxString lcFilter = word.Lower();
+    // Smart sorting:
+    // We preare the list of matches in the following order:
+    // Exact matches (case sensitive)
+    // Exact matches (case in-sensitive)
+    // Starts with
+    // Contains
+    wxCodeCompletionBoxEntry::Vec_t exactMatches, exactMatchesI, startsWith, contains;
     for(size_t i = 0; i < m_allEntries.size(); ++i) {
-        wxString lcText = m_allEntries.at(i)->GetText().Lower();
-        if(lcText.Contains(lcFilter)) {
-            m_entries.push_back(m_allEntries.at(i));
+        wxString entryText = m_allEntries.at(i)->GetText().BeforeFirst('(');
+        entryText.Trim().Trim(false);
+        wxString lcEntryText = entryText.Lower();
+        
+        // Exact match:
+        if(word == entryText) {
+            exactMatches.push_back(m_allEntries.at(i));
+        } else if(lcEntryText == lcFilter) {
+            exactMatchesI.push_back(m_allEntries.at(i));
+        } else if(lcEntryText.StartsWith(lcFilter)) {
+            startsWith.push_back(m_allEntries.at(i));
+        } else if(lcEntryText.Contains(lcFilter)) {
+            contains.push_back(m_allEntries.at(i));
         }
     }
+    
+    // Merge the results
+    m_entries.insert(m_entries.end(), exactMatches.begin(), exactMatches.end());
+    m_entries.insert(m_entries.end(), exactMatchesI.begin(), exactMatchesI.end());
+    m_entries.insert(m_entries.end(), startsWith.begin(), startsWith.end());
+    m_entries.insert(m_entries.end(), contains.begin(), contains.end());
     m_index = 0;
 }
 

@@ -1015,7 +1015,7 @@ void clMainFrame::CreateGUIControls(void)
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
     EnableFullScreenView();
 #endif
-
+    
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(this);
     m_mgr.SetArtProvider(new clAuiDockArt(PluginManager::Get()));
@@ -1139,7 +1139,13 @@ void clMainFrame::CreateGUIControls(void)
 
     clConfig ccConfig("code-completion.conf");
     ccConfig.ReadItem(&m_tagsOptionsData);
-
+    
+    // If the cc options value has changed, construct a new instance
+    // with default values and call the "Merge" method
+    TagsOptionsData tmp;
+    m_tagsOptionsData.Merge(tmp);
+    ccConfig.WriteItem(&m_tagsOptionsData);
+    
     TagsManager* tagsManager = TagsManagerST::Get();
 
     // start ctags process

@@ -34,7 +34,7 @@
 wxString TagsOptionsData::CLANG_CACHE_LAZY = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
-size_t TagsOptionsData::CURRENT_VERSION = 105;
+size_t TagsOptionsData::CURRENT_VERSION = 710;
 
 static bool _IsValidCppIndetifier(const wxString& id)
 {
@@ -83,7 +83,7 @@ TagsOptionsData::TagsOptionsData()
     , m_clangOptions(0)
     , m_clangBinary(wxT(""))
     , m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
-    , m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
+    , m_ccNumberOfDisplayItems(1000)
     , m_version(0)
 {
     // Initialize defaults
@@ -381,7 +381,7 @@ void TagsOptionsData::FromJSON(const JSONElement& json)
     m_clangSearchPaths = json.namedObject(wxT("m_clangSearchPaths")).toArrayString();
     m_clangMacros = json.namedObject(wxT("m_clangMacros")).toString();
     m_clangCachePolicy = json.namedObject(wxT("m_clangCachePolicy")).toString();
-    m_ccNumberOfDisplayItems = json.namedObject(wxT("m_ccNumberOfDisplayItems")).toSize_t();
+    m_ccNumberOfDisplayItems = json.namedObject(wxT("m_ccNumberOfDisplayItems")).toSize_t(m_ccNumberOfDisplayItems);
 
     if(!m_fileSpec.Contains("*.hxx")) {
         m_fileSpec = "*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hxx;*.h++";
@@ -438,6 +438,7 @@ void TagsOptionsData::Merge(const TagsOptionsData& tod)
     DoUpdateTokensWxMap();
     if(m_version != TagsOptionsData::CURRENT_VERSION) {
         m_ccFlags |= CC_WORD_ASSIST;
+        m_ccNumberOfDisplayItems = tod.m_ccNumberOfDisplayItems;
     }
     m_version = TagsOptionsData::CURRENT_VERSION;
 }

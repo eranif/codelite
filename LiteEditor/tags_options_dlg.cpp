@@ -148,7 +148,7 @@ void TagsOptionsDlg::CopyData()
     SetFlag(CC_DISABLE_AUTO_PARSING, m_checkDisableParseOnSave->IsChecked());
     SetFlag(CC_IS_CASE_SENSITIVE, m_checkBoxEnableCaseSensitiveCompletion->IsChecked());
     SetFlag(CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED, m_checkBoxKeepFunctionSignature->IsChecked());
-    m_data.SetCcNumberOfDisplayItems(::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100, 50));
+    m_data.SetCcNumberOfDisplayItems(::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 500, 100));
 
     //----------------------------------------------------
     // Colouring

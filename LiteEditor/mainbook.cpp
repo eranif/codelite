@@ -1183,7 +1183,6 @@ void MainBook::OnPageChanging(NotebookEvent& e)
 {
     LEditor* editor = GetActiveEditor();
     if(editor) {
-        editor->HideCompletionBox();
         editor->CallTipCancel();
     }
 #if HAS_LIBCLANG

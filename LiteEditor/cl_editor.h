@@ -650,33 +650,9 @@ public:
     void ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word);
 
     /**
-     * @brief displays teh code completion box. Unlike the previous metho, this method accepts owner and sends an event
-     * once selection is made
-     * @param tags list if tags to display
-     * @param word part of the word
-     * @param owner event handler to be notified once a selection is made
-     */
-    virtual void ShowCompletionBox(const std::vector<TagEntryPtr>& tags,
-                                   const wxString& word,
-                                   bool autoRefreshList,
-                                   wxEvtHandler* owner);
-
-    /**
-     * @brief register new user image fot TagEntry kind
-     * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())
-     * @param bmp 16x16 bitmap
-     */
-    virtual void RegisterImageForKind(const wxString& kind, const wxBitmap& bmp);
-
-    /**
      * @brief return true if the completion box is visible
      */
     virtual bool IsCompletionBoxShown();
-
-    /**
-     * @brief hide the completion box if it is active.
-     */
-    virtual void HideCompletionBox();
 
     /**
      * @brief highlight the word where the cursor is at
@@ -910,7 +886,6 @@ private:
     void OnDragStart(wxStyledTextEvent& e);
     void OnDragEnd(wxStyledTextEvent& e);
     void DoSetCaretAt(long pos);
-    void OnSetActive(wxCommandEvent& e);
     void OnFileFormatDone(wxCommandEvent& e);
     void OnFileFormatStarting(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);

@@ -39,9 +39,6 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     LEditor *editor = (LEditor*)owner;
     
     OptionsConfigPtr options = editor->GetOptions();
-    // hide completion box
-    editor->HideCompletionBox();
-    
     if (event.GetId() == wxID_COPY) {
         editor->CopyAllowLine();
 

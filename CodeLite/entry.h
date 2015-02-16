@@ -333,7 +333,13 @@ public:
      * @brief return 0 if the values are the same. < 0 if a < b and > 0 if a > b
      */
     int CompareDisplayString(const TagEntryPtr& rhs) const;
-
+    
+    /**
+     * @brief format a comment for this tag. The format uses codelite's syntax formatting
+     * that can be used later on in the various tooltip windows
+     */
+    wxString FormatComment() const;
+    
 private:
     /**
      * Update the path with full path (e.g. namespace::class)

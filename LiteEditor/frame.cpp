@@ -44,7 +44,6 @@
 #include <wx/splash.h>
 #include "clsplashscreen.h"
 #include "WelcomePage.h"
-#include "code_completion_box.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_command_event.h"
 #include "refactoring_storage.h"
@@ -4030,9 +4029,6 @@ void clMainFrame::CompleteInitialization()
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
 {
-#ifndef __WXMAC__
-    CodeCompletionBox::Get().CancelTip();
-#endif
     if(m_theFrame && e.GetActive()) {
 
         // if workspace or project was modified, don't prompt for
@@ -4054,7 +4050,6 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
         if(editor) {
             // we are loosing the focus
             editor->CallTipCancel();
-            editor->HideCompletionBox();
         }
 #endif
     }

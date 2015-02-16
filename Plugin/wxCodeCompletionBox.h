@@ -42,10 +42,10 @@ protected:
 
     /// Code completion tooltip that is shown next to the code completion box
     CCBoxTipWindow* m_tipWindow;
-    
+
     /// The code completion box flags, see above enum for possible values
     size_t m_flags;
-    
+
 protected:
     // Event handlers
     void OnStcModified(wxStyledTextEvent& event);
@@ -56,6 +56,7 @@ protected:
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
     void OnAppActivate(wxActivateEvent& event);
+    void OnDismissBox(wxCommandEvent& event);
 
 public:
     virtual ~wxCodeCompletionBox();

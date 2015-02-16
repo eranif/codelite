@@ -39,7 +39,6 @@
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
 #include "parse_thread.h"
-#include "cc_box.h"
 #include <wx/progdlg.h>
 #include "renamesymboldlg.h"
 #include "cpptoken.h"
@@ -77,6 +76,7 @@
 #include <parse_thread.h>
 #include "cl_command_event.h"
 #include "codelite_events.h"
+#include "wxCodeCompletionBoxManager.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -773,21 +773,20 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
     files.Sort();
 
     if(!files.IsEmpty()) {
-        GetCtrl().RegisterImageForKind(wxT("FileCpp"), m_cppFileBmp);
-        GetCtrl().RegisterImageForKind(wxT("FileHeader"), m_hFileBmp);
-        std::vector<TagEntryPtr> tags;
+        // Show completion box for files
+        wxCodeCompletionBoxEntry::Vec_t entries;
+        wxCodeCompletionBox::BmpVec_t bitmaps;
+        bitmaps.push_back(m_cppFileBmp);
+        bitmaps.push_back(m_hFileBmp);
 
         for(size_t i = 0; i < files.GetCount(); ++i) {
             wxFileName fn(files.Item(i));
             if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeHeader ||
                FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeOther) {
-                TagEntryPtr t(new TagEntry());
-                t->SetName(files.Item(i));
-                t->SetKind(IsSource(fn.GetExt()) ? wxT("FileCpp") : wxT("FileHeader"));
-                tags.push_back(t);
+                entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), IsSource(fn.GetExt()) ? 1 : 0));
             }
         }
-        GetCtrl().ShowCompletionBox(tags, fileName);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(&GetCtrl(), entries, bitmaps);
     }
 }
 
@@ -2441,12 +2440,13 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
         cppWords = lexPtr->GetKeyWords(1);
 
     } else {
-        cppWords = "abstract boolean break byte case catch char class "
-                   "const continue debugger default delete do double else enum export extends "
-                   "final finally float for function goto if implements import in instanceof "
-                   "int interface long native new package private protected public "
-                   "return short static super switch synchronized this throw throws "
-                   "transient try typeof var void volatile while with";
+        cppWords =
+            "abstract boolean break byte case catch char class "
+            "const continue debugger default delete do double else enum export extends "
+            "final finally float for function goto if implements import in instanceof "
+            "int interface long native new package private protected public "
+            "return short static super switch synchronized this throw throws "
+            "transient try typeof var void volatile while with";
     }
 
     wxString s1(word);
@@ -3166,7 +3166,7 @@ void ContextCpp::ColourContextTokens(const wxArrayString& workspaceTokens)
 
 wxMenu* ContextCpp::GetMenu()
 {
-    wxMenu *menu = NULL;
+    wxMenu* menu = NULL;
     if(!IsJavaScript()) {
         // load the context menu from the resource manager
         menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));

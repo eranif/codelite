@@ -30,7 +30,6 @@
 #include "compilation_database.h"
 #include "pluginmanager.h"
 #include <wx/regex.h>
-#include "code_completion_box.h"
 #include "clangpch_cache.h"
 #include "asyncprocess.h"
 #include "frame.h"
@@ -62,6 +61,7 @@
 #include "browse_record.h"
 #include "mainbook.h"
 #include "macromanager.h"
+#include "wxCodeCompletionBoxManager.h"
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -220,13 +220,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 void ClangDriver::CodeCompletion(IEditor* editor)
 {
     if(m_isBusy) {
-        if(editor) {
-            CodeCompletionBox::Get().CancelTip();
-            CodeCompletionBox::Get().ShowTip(
-                wxT("<b>clang: </b>Code Completion Message:<hr>A lengthy operation is in progress..."),
-                dynamic_cast<LEditor*>(m_activeEditor));
-        }
-        return;
+         return;
     }
 
     CL_DEBUG(wxT(" ==========> ClangDriver::CodeCompletion() started <=============="));
@@ -708,7 +702,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         m_activeEditor->ShowCalltip(new clCallTip(tips));
 
     } else {
-        m_activeEditor->ShowCompletionBox(tags, filterWord, true, NULL);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_activeEditor->GetSTC(), tags);
     }
 }
 

@@ -510,10 +510,6 @@
     <File Name="checktreectrl.h"/>
     <File Name="checkdirtreectrl.cpp"/>
     <File Name="checkdirtreectrl.h"/>
-    <File Name="cc_boxbase.h"/>
-    <File Name="cc_box.cpp"/>
-    <File Name="cc_box.h"/>
-    <File Name="cc_boxbase.cpp"/>
     <File Name="ccvirtuallistctrl.cpp"/>
     <File Name="ccvirtuallistctrl.h"/>
     <File Name="quickfindbar.h"/>
@@ -798,8 +794,6 @@
     <File Name="clang_utils.cpp"/>
     <File Name="clang_unsaved_files.h"/>
     <File Name="clang_unsaved_files.cpp"/>
-    <File Name="code_completion_box.h"/>
-    <File Name="code_completion_box.cpp"/>
     <File Name="clang_compilation_db_thread.h"/>
     <File Name="clang_compilation_db_thread.cpp"/>
     <File Name="clang_cleaner_thread.h"/>

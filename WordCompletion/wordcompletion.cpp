@@ -7,6 +7,7 @@
 #include "WordCompletionSettingsDlg.h"
 #include "event_notifier.h"
 #include "cl_command_event.h"
+#include "wxCodeCompletionBoxManager.h"
 
 static WordCompletionPlugin* thePlugin = NULL;
 
@@ -51,8 +52,6 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
                       wxCommandEventHandler(WordCompletionPlugin::OnSettings),
                       NULL,
                       this);
-    EventNotifier::Get()->Connect(
-        wxEVT_EDITOR_INITIALIZING, clCommandEventHandler(WordCompletionPlugin::OnEditorHandler), NULL, this);
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "text_word_complete", "Ctrl-ENTER", "Plugins::Word Completion::Show word completion");
 }
@@ -102,8 +101,6 @@ void WordCompletionPlugin::UnPlug()
                          wxCommandEventHandler(WordCompletionPlugin::OnSettings),
                          NULL,
                          this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_INITIALIZING, clCommandEventHandler(WordCompletionPlugin::OnEditorHandler), NULL, this);
 }
 
 void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& reply)
@@ -116,20 +113,15 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
 
     // Build the suggetsion list
     wxString suggestString;
+    wxCodeCompletionBoxEntry::Vec_t entries;
+    wxCodeCompletionBox::BmpVec_t bitmaps;
+    bitmaps.push_back(m_images.Bitmap("m_bmpWord"));
+    
     for(wxStringSet_t::iterator iter = reply.suggest.begin(); iter != reply.suggest.end(); ++iter) {
-        suggestString << *iter << "?1 ";
+        entries.push_back( wxCodeCompletionBoxEntry::New(*iter, 0));
     }
-    if(!suggestString.IsEmpty()) {
-        suggestString.RemoveLast();
-    }
-
-    // Auto insert single match
-#ifndef __WXGTK__
-    // On GTK, AutoCompSetChooseSingle causes a mess when inserting the match
-    activeEditor->GetSTC()->AutoCompSetChooseSingle(true);
-#endif
-    activeEditor->GetSTC()->AutoCompSetAutoHide(true);
-    activeEditor->GetSTC()->AutoCompShow(reply.filter.length(), suggestString);
+    
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(activeEditor->GetSTC(), entries, bitmaps);
 }
 
 void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
@@ -137,11 +129,6 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     event.Skip();
     IEditor* activeEditor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(activeEditor);
-
-    // If the code completion box is shown, hide it
-    if(activeEditor->IsCompletionBoxShown()) {
-        activeEditor->HideCompletionBox();
-    }
 
     wxStyledTextCtrl* stc = activeEditor->GetSTC();
     int curPos = stc->GetCurrentPos();
@@ -163,11 +150,12 @@ void WordCompletionPlugin::OnSettings(wxCommandEvent& event)
     dlg.ShowModal();
 }
 
-void WordCompletionPlugin::OnEditorHandler(clCommandEvent& event)
-{
-    event.Skip();
-    wxStyledTextCtrl* editor = reinterpret_cast<wxStyledTextCtrl*>(event.GetEventObject());
-    if(editor) {
-        editor->RegisterImage(1, m_images.Bitmap("m_bmpWord"));
-    }
-}
+//void WordCompletionPlugin::OnEditorHandler(clCommandEvent& event)
+//{
+//    event.Skip();
+//    wxStyledTextCtrl* editor = reinterpret_cast<wxStyledTextCtrl*>(event.GetEventObject());
+//    if(editor) {
+//        editor->RegisterImage(1, m_images.Bitmap("m_bmpWord"));
+//    }
+//}
+//

@@ -30,7 +30,6 @@
 #include "macromanager.h"
 #include <wx/log.h>
 #include "event_notifier.h"
-#include "code_completion_box.h"
 #include "event_notifier.h"
 #include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
@@ -39,7 +38,6 @@
 #include "stringhighlighterjob.h"
 #include "job.h"
 #include "drawingutils.h"
-#include "cc_box.h"
 #include "stringsearcher.h"
 #include "colourrequest.h"
 #include "colourthread.h"
@@ -138,7 +136,6 @@ EVT_COMMAND(wxID_ANY, wxEVT_FRD_BOOKMARKALL, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
 EVT_COMMAND(wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
-EVT_COMMAND(wxID_ANY, wxCMD_EVENT_SET_EDITOR_ACTIVE, LEditor::OnSetActive)
 EVT_IDLE(LEditor::OnIdle)
 END_EVENT_TABLE()
 
@@ -697,7 +694,6 @@ void LEditor::OnSavePoint(wxStyledTextEvent& event)
 void LEditor::OnCharAdded(wxStyledTextEvent& event)
 {
     // Allways cancel the tip
-    CodeCompletionBox::Get().CancelTip();
     OptionsConfigPtr options = GetOptions();
     if(m_prevSelectionInfo.IsOk()) {
         if(event.GetKey() == '"' && options->IsWrapSelectionWithQuotes()) {
@@ -720,22 +716,6 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
 
     int pos = GetCurrentPos();
     bool canShowCompletionBox(true);
-
-    // get the word and select it in the completion box
-    if(IsCompletionBoxShown()) {
-        int start = WordStartPosition(pos, true);
-        wxString word = GetTextRange(start, pos);
-
-        if(word.IsEmpty()) {
-            HideCompletionBox();
-        } else {
-            if(CodeCompletionBox::Get().SelectWord(word)) {
-                canShowCompletionBox = false;
-                HideCompletionBox();
-            }
-        }
-    }
-
     // make sure line is visible
     int curLine = LineFromPosition(pos);
     if(!GetFoldExpanded(curLine)) {
@@ -1104,8 +1084,6 @@ void LEditor::OnMarginClick(wxStyledTextEvent& event)
                     bm = wxBitmap(wxImage(stop_xpm));
                 }
 
-                // There'll probably be a tooltip from the marker. Kill it
-                DoCancelCalltip();
                 // The breakpoint manager organises the actual drag/drop
                 BreakptMgr* bpm = ManagerST::Get()->GetBreakpointsMgr();
                 bpm->DragBreakpoint(this, nLine, bm);
@@ -1578,7 +1556,7 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
         tmpTip.Trim().Trim(false);
 
         if(!tmpTip.IsEmpty()) {
-            DoShowCalltip(-1, tooltip);
+            DoShowCalltip(-1, tmpTip);
         }
 
     } else if(ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
@@ -2742,7 +2720,6 @@ void LEditor::ReloadFile()
     wxWindowUpdateLocker locker(this);
     SetReloadingFile(true);
 
-    HideCompletionBox();
     DoCancelCalltip();
 
     if(m_fileName.GetFullPath().IsEmpty() == true || !m_fileName.FileExists()) {
@@ -2811,7 +2788,6 @@ void LEditor::ReloadFile()
 void LEditor::SetEditorText(const wxString& text)
 {
     wxWindowUpdateLocker locker(this);
-    HideCompletionBox();
     SetText(text);
 
     // remove breakpoints belongs to this file
@@ -2957,7 +2933,6 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
 void LEditor::OnKeyDown(wxKeyEvent& event)
 {
     // always cancel the tip
-    CodeCompletionBox::Get().CancelTip();
     m_prevSelectionInfo.Clear();
     if(HasSelection()) {
         for(int i = 0; i < GetSelections(); ++i) {
@@ -3013,59 +2988,6 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
     if(GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE) {
         GetFunctionTip()->Deactivate();
         escapeUsed = true;
-    }
-
-    if(IsCompletionBoxShown()) {
-        switch(event.GetKeyCode()) {
-        case WXK_NUMPAD_ENTER:
-        case WXK_RETURN:
-        case WXK_TAB:
-            CodeCompletionBox::Get().InsertSelection();
-            HideCompletionBox();
-            return;
-
-        case WXK_ESCAPE:
-        case WXK_LEFT:
-        case WXK_RIGHT:
-        case WXK_HOME:
-        case WXK_END:
-        case WXK_DELETE:
-        case WXK_NUMPAD_DELETE:
-            HideCompletionBox();
-            return;
-        case WXK_UP:
-            CodeCompletionBox::Get().Previous();
-            return;
-        case WXK_DOWN:
-            CodeCompletionBox::Get().Next();
-            return;
-        case WXK_PAGEUP:
-            CodeCompletionBox::Get().PreviousPage();
-            return;
-        case WXK_PAGEDOWN:
-            CodeCompletionBox::Get().NextPage();
-            return;
-        case WXK_BACK: {
-
-            if(event.ControlDown()) {
-                HideCompletionBox();
-            } else {
-
-                wxString word = GetWordAtCaret();
-                if(word.IsEmpty()) {
-                    HideCompletionBox();
-                } else {
-                    word.RemoveLast();
-                    if(CodeCompletionBox::Get().SelectWord(word)) {
-                        HideCompletionBox();
-                    }
-                }
-            }
-            break;
-        }
-        default:
-            break;
-        }
     }
 
     // If we've not already used ESC, there's a reasonable chance that the user wants to close the QuickFind bar
@@ -3147,8 +3069,6 @@ void LEditor::OnLeftDown(wxMouseEvent& event)
     HighlightWord(false);
 
     // hide completion box
-    HideCompletionBox();
-    CodeCompletionBox::Get().CancelTip();
     GetFunctionTip()->Deactivate();
 
     if(ManagerST::Get()->GetDebuggerTip()->IsShown()) {
@@ -3620,28 +3540,13 @@ void LEditor::OnDragEnd(wxStyledTextEvent& e)
     e.Skip();
 }
 
-void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags,
-                                const wxString& word,
-                                bool autoRefreshList,
-                                wxEvtHandler* owner)
-{
-    if(tags.empty()) {
-        return;
-    }
-    CodeCompletionBox::Get().Display(this, tags, word, autoRefreshList, owner);
-}
-
 void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word)
 {
     if(tags.empty()) {
         return;
     }
-
-    bool autoRefresh = !(tags.at(0)->GetKind() == wxT("cpp_keyword"));
-    CodeCompletionBox::Get().Display(this, tags, word, autoRefresh, NULL);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(this, tags);
 }
-
-void LEditor::HideCompletionBox() { CodeCompletionBox::Get().Hide(); }
 
 int LEditor::GetCurrLineHeight()
 {
@@ -3760,7 +3665,7 @@ void LEditor::OnLeftDClick(wxStyledTextEvent& event)
     event.Skip();
 }
 
-bool LEditor::IsCompletionBoxShown() { return CodeCompletionBox::Get().IsShown() || wxCodeCompletionBoxManager::Get().IsShown(); }
+bool LEditor::IsCompletionBoxShown() { return wxCodeCompletionBoxManager::Get().IsShown(); }
 
 int LEditor::GetCurrentLine()
 {
@@ -3904,11 +3809,6 @@ void LEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
 int LEditor::GetLexerId() { return GetLexer(); }
 
 int LEditor::GetStyleAtPos(int pos) { return GetStyleAt(pos); }
-
-void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
-{
-    CodeCompletionBox::Get().RegisterImage(kind, bmp);
-}
 
 int LEditor::WordStartPos(int pos, bool onlyWordCharacters)
 {
@@ -4070,21 +3970,14 @@ void LEditor::OnDbgJumpToCursor(wxCommandEvent& event)
 
 void LEditor::DoShowCalltip(int pos, const wxString& tip)
 {
-    CodeCompletionBox::Get().CancelTip();
-    if(pos == wxNOT_FOUND) {
-        CodeCompletionBox::Get().ShowTip(tip, wxGetMousePosition(), this);
-
-    } else {
-        CodeCompletionBox::Get().ShowTip(tip, this);
-    }
+    // FIXME: implement tooltip support at a give position
 }
 
 void LEditor::DoCancelCalltip()
 {
-    CodeCompletionBox::Get().CancelTip();
     CallTipCancel();
     GetFunctionTip()->Deactivate();
-    m_context->OnCalltipCancel();
+    // FIXME: dismiss the tooltip as well
 }
 
 int LEditor::DoGetOpenBracePos()
@@ -4542,12 +4435,6 @@ int LEditor::LineEnd(int line)
 wxString LEditor::GetTextRange(int startPos, int endPos) { return wxStyledTextCtrl::GetTextRange(startPos, endPos); }
 
 void LEditor::DelayedSetActive() { CallAfter(&LEditor::SetActive); }
-
-void LEditor::OnSetActive(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    SetActive();
-}
 
 void LEditor::OnFocus(wxFocusEvent& event)
 {

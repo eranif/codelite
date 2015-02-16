@@ -122,12 +122,12 @@ public:
      * to the  current file
      */
     virtual void ReloadFile() = 0;
-    
+
     /**
      * @brief save the editor
      */
     virtual void Save() = 0;
-    
+
     /**
      * \brief return the current position of the caret
      */
@@ -251,18 +251,6 @@ public:
     virtual int GetLexerId() = 0;
 
     /**
-    * @brief displays teh code completion box. Unlike the previous metho, this method accepts owner and sends an event
-    * once selection is made
-    * @param tags list if tags to display
-    * @param word part of the word
-    * @param owner event handler to be notified once a selection is made
-    */
-    virtual void ShowCompletionBox(const std::vector<TagEntryPtr>& tags,
-                                   const wxString& word,
-                                   bool autoRefreshList,
-                                   wxEvtHandler* owner) = 0;
-
-    /**
      * @brief display codelite calltip at the current position
      * @param tip tip to display
      */
@@ -276,21 +264,9 @@ public:
     virtual void ShowRichTooltip(const wxString& tip, int pos = wxNOT_FOUND) = 0;
 
     /**
-     * @brief register new user image fot TagEntry kind
-     * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())
-     * @param bmp 16x16 bitmap
-     */
-    virtual void RegisterImageForKind(const wxString& kind, const wxBitmap& bmp) = 0;
-
-    /**
      * @brief return true if the completion box is visible
      */
     virtual bool IsCompletionBoxShown() = 0;
-
-    /**
-     * @brief hide the completion box if it is active.
-     */
-    virtual void HideCompletionBox() = 0;
 
     /**
      * @brief Get position of start of word.
@@ -390,12 +366,12 @@ public:
      * @brief return the char at the 'pos', 0 if an error occurs
      */
     virtual int GetCharAtPos(int pos) = 0;
-    
+
     /**
      * @brief center the editor around line and optionally a column
      */
     virtual void CenterLine(int line, int col = wxNOT_FOUND) = 0;
-    
+
     /**
      * @brief return a pointer to the underlying scintilla control
      */

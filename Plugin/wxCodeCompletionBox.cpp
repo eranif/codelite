@@ -10,10 +10,11 @@
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "cc_box_tip_window.h"
+#include "file_logger.h"
 
 #define MAX_NUM_LINES 8
 #define Y_SPACER 2
-#define BOX_WIDTH 300
+#define BOX_WIDTH 400
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -73,6 +74,10 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_canvas->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
+
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBox::OnDismissBox, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
 }
 
@@ -93,6 +98,9 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
         m_tipWindow = NULL;
     }
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBox::OnDismissBox, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
+    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
     wxCodeCompletionBoxManager::Get().WindowDestroyed();
 }
 
@@ -215,6 +223,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
         m_stc->Bind(wxEVT_STC_CHARADDED, &wxCodeCompletionBox::OnStcCharAdded, this);
         m_stc->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBox::OnStcKey, this);
         m_stc->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnStcLeftDown, this);
+
         // Set the focus back to the completion control
         m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
     }
@@ -236,7 +245,7 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
         wxString docComment = m_entries.at(m_index)->GetComment();
         docComment.Trim().Trim(false);
         if(!docComment.IsEmpty()) {
-            m_tipWindow = new CCBoxTipWindow(GetParent(), docComment);
+            m_tipWindow = new CCBoxTipWindow(GetParent(), docComment, 1, false);
             m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
             m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
         }
@@ -245,47 +254,41 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
 
 void wxCodeCompletionBox::OnStcKey(wxKeyEvent& event)
 {
-//    switch(event.GetKeyCode()) {
-//        case WXK_NUMPAD_ENTER:
-//        case WXK_RETURN:
-//        case WXK_TAB:
-//            CodeCompletionBox::Get().InsertSelection();
-//            HideCompletionBox();
-//            return;
-//
-//        case WXK_ESCAPE:
-//        case WXK_LEFT:
-//        case WXK_RIGHT:
-//        case WXK_HOME:
-//        case WXK_END:
-//        case WXK_DELETE:
-//        case WXK_NUMPAD_DELETE:
-//        
-    if(event.GetKeyCode() == WXK_UP) {
+    switch(event.GetKeyCode()) {
+    case WXK_UP:
         if((m_index - 1) >= 0) {
             --m_index;
             DoDisplayTipWindow();
             Refresh();
         }
-
-    } else if(event.GetKeyCode() == WXK_DOWN) {
+        break;
+    case WXK_DOWN:
         if((m_index + 1) < (int)m_entries.size()) {
             ++m_index;
             DoDisplayTipWindow();
             Refresh();
         }
-    } else if(event.GetKeyCode() == WXK_ESCAPE) {
+        break;
+    case WXK_ESCAPE:
+    case WXK_LEFT:
+    case WXK_RIGHT:
+    case WXK_HOME:
+    case WXK_END:
+    case WXK_DELETE:
+    case WXK_NUMPAD_DELETE:
         Hide();
         Destroy();
-
-    } else if(event.GetKeyCode() == WXK_TAB || event.GetKeyCode() == WXK_RETURN ||
-              event.GetKeyCode() == WXK_NUMPAD_ENTER) {
+        break;
+    case WXK_TAB:
+    case WXK_RETURN:
+    case WXK_NUMPAD_ENTER:
         // Insert the selection
         HideAndInsertSelection();
         Destroy();
-
-    } else {
+        break;
+    default:
         event.Skip();
+        break;
     }
 }
 
@@ -427,7 +430,7 @@ wxCodeCompletionBoxEntry::Vec_t wxCodeCompletionBox::TagsToEntries(const TagEntr
         wxString text = tag->GetDisplayName().Trim().Trim(false);
         int imgIndex = GetImageId(tag);
         wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
-        entry->SetComment(tag->GetComment());
+        //entry->SetComment(tag->FormatComment());
         entries.push_back(entry);
     }
     return entries;
@@ -480,15 +483,16 @@ void wxCodeCompletionBox::DoUpdateList()
 void wxCodeCompletionBox::OnStcCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
-    wxChar charAdded = m_stc->GetCharAt(m_stc->GetCurrentPos());
-    switch(charAdded) {
-    case '(':
+    int keychar = m_stc->GetCharAt(m_stc->PositionBefore(m_stc->GetCurrentPos()));
+    if(((keychar >= 65) && (keychar <= 90)) ||  // A-Z
+       ((keychar >= 97) && (keychar <= 122)) || // a-z
+       ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
+       (keychar == 95))                         // Underscore
+    {
+        DoUpdateList();
+    } else {
         Hide();
         Destroy();
-        break;
-    default:
-        DoUpdateList();
-        break;
     }
 }
 
@@ -502,6 +506,13 @@ void wxCodeCompletionBox::OnAppActivate(wxActivateEvent& event)
 {
     event.Skip();
     // Application lost / got focus - reset the tooltip
+    Hide();
+    Destroy();
+}
+
+void wxCodeCompletionBox::OnDismissBox(wxCommandEvent& event)
+{
+    event.Skip();
     Hide();
     Destroy();
 }

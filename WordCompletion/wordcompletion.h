@@ -20,7 +20,8 @@ public:
     void OnSuggestThread(const WordCompletionThreadReply& reply);
     void OnWordComplete(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
-    void OnEditorHandler(clCommandEvent &event);
+    //void OnEditorHandler(clCommandEvent &event);
+    
 public:
     WordCompletionPlugin(IManager* manager);
     ~WordCompletionPlugin();

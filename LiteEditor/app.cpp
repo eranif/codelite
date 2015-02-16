@@ -28,7 +28,6 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "evnvarlist.h"
-#include "code_completion_box.h"
 #include "environmentconfig.h"
 #include "conffilelocator.h"
 #include "app.h"

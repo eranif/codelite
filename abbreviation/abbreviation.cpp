@@ -231,11 +231,6 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 
     if(!editor || !abbreviation) return false;
 
-    // hide the completion box
-    if(editor->IsCompletionBoxShown()) {
-        editor->HideCompletionBox();
-    }
-
     // search for abbreviation that matches str
     // prepate list of abbreviations
     AbbreviationJSONEntry jsonData;

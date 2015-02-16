@@ -11,6 +11,7 @@
 #include "event_notifier.h"
 #include "cc_box_tip_window.h"
 #include "file_logger.h"
+#include "drawingutils.h"
 
 #define MAX_NUM_LINES 8
 #define Y_SPACER 2
@@ -182,7 +183,12 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
         // Draw the text
         dc.SetClippingRegion(itemRect);
-        dc.DrawText(entry->GetText(), x, y);
+        
+        // Truncate the text to fit the screen
+        wxString choppedText;
+        DrawingUtils::TruncateText(entry->GetText(), itemRect.GetWidth(), dc, choppedText);
+        
+        dc.DrawText(choppedText, x, y);
         dc.DestroyClippingRegion();
         y += textSize.y;
         y += Y_SPACER;

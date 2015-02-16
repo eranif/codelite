@@ -292,9 +292,9 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
         dirs.pop();
 
         wxFileName fn(curdir, "compile_commands.json");
-        if(fn.Exists() && // file exists
+        if(fn.Exists() /*&& // file exists
            (fn.GetModificationTime().GetTicks() >
-            databaseFile.GetModificationTime().GetTicks())) // and its newer than the database file
+            databaseFile.GetModificationTime().GetTicks())*/) // and its newer than the database file
         {
             CL_DEBUGS("CompilationDatabase: found file: " + fn.GetFullPath());
             files.push_back(fn);

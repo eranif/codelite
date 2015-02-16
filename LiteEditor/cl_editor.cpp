@@ -954,9 +954,9 @@ void LEditor::OnScnPainted(wxStyledTextEvent& event)
     if(m_positionToEnsureVisible == wxNOT_FOUND) {
         return;
     }
-    CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"),
-                               m_positionToEnsureVisible,
-                               m_preserveSelection ? wxT("true") : wxT("false")));
+    //CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"),
+    //                           m_positionToEnsureVisible,
+    //                           m_preserveSelection ? wxT("true") : wxT("false")));
     DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
     m_positionToEnsureVisible = wxNOT_FOUND;
 }

@@ -755,13 +755,6 @@ void ContextCpp::CompleteWord()
     CodeCompletionManager::Get().WordCompletion(&GetCtrl(), expr, word);
 }
 
-void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word)
-{
-    CHECK_JS_RETURN_VOID();
-    // calculate the position to display the completion box
-    GetCtrl().ShowCompletionBox(tags, word);
-}
-
 void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
 {
     CHECK_JS_RETURN_VOID();
@@ -778,9 +771,12 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
         wxCodeCompletionBox::BmpVec_t bitmaps;
         bitmaps.push_back(m_cppFileBmp);
         bitmaps.push_back(m_hFileBmp);
-
+        // Make sure that the file list is unique
+        wxStringSet_t matches;
         for(size_t i = 0; i < files.GetCount(); ++i) {
             wxFileName fn(files.Item(i));
+            if(matches.count(files.Item(i))) continue; // we already have this file in the list, don't add another one
+            matches.insert(files.Item(i));
             if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeHeader ||
                FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeOther) {
                 entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), IsSource(fn.GetExt()) ? 1 : 0));

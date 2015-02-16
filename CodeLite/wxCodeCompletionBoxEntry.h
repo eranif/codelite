@@ -7,6 +7,7 @@
 #include "codelite_exports.h"
 #include <wx/gdicmn.h>
 #include <wx/string.h>
+#include "entry.h" // TagEntryPtr
 
 class wxStyledTextCtrl;
 class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
@@ -17,7 +18,8 @@ class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
     wxClientData* m_clientData;
     wxRect m_itemRect;
     friend class wxCodeCompletionBox;
-
+    TagEntryPtr m_tag; // Internal
+    
 public:
     typedef wxSharedPtr<wxCodeCompletionBoxEntry> Ptr_t;
     typedef std::vector<wxCodeCompletionBoxEntry::Ptr_t> Vec_t;

@@ -244,6 +244,11 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
     if(m_index >= 0 && m_index < (int)m_entries.size()) {
         wxString docComment = m_entries.at(m_index)->GetComment();
         docComment.Trim().Trim(false);
+        if(docComment.IsEmpty() && m_entries.at(m_index)->m_tag) {
+            // Format the comment on demand if the origin was a tag entry
+            docComment = m_entries.at(m_index)->m_tag->FormatComment();
+        }
+
         if(!docComment.IsEmpty()) {
             m_tipWindow = new CCBoxTipWindow(GetParent(), docComment, 1, false);
             m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
@@ -430,7 +435,7 @@ wxCodeCompletionBoxEntry::Vec_t wxCodeCompletionBox::TagsToEntries(const TagEntr
         wxString text = tag->GetDisplayName().Trim().Trim(false);
         int imgIndex = GetImageId(tag);
         wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
-        //entry->SetComment(tag->FormatComment());
+        entry->m_tag = tag;
         entries.push_back(entry);
     }
     return entries;
@@ -515,4 +520,12 @@ void wxCodeCompletionBox::OnDismissBox(wxCommandEvent& event)
     event.Skip();
     Hide();
     Destroy();
+}
+
+wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
+{
+    wxString text = tag->GetDisplayName().Trim().Trim(false);
+    int imgIndex = GetImageId(tag);
+    wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
+    return entry;
 }

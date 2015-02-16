@@ -758,7 +758,11 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName& fileName,
     }
 
     PERF_END();
-
+    
+    std::vector<TagEntryPtr> noDupsVec;
+    DoFilterDuplicatesBySignature(candidates, noDupsVec);
+    noDupsVec.swap(candidates);
+    
     DoSortByVisibility(candidates);
     return candidates.empty() == false;
 }

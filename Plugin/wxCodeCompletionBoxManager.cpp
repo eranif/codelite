@@ -19,6 +19,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
+    if(tags.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->ShowCompletionBox(ctrl, tags);
 }
@@ -28,6 +29,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
+    if(entries.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->ShowCompletionBox(ctrl, entries);
 }
@@ -40,6 +42,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
+    if(entries.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);
     m_box->ShowCompletionBox(ctrl, entries);

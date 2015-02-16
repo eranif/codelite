@@ -68,6 +68,9 @@ class WXDLLIMPEXP_CL TagEntry
     bool m_isClangTag;
     size_t m_flags;     // This member is not saved into the database
     wxString m_comment; // This member is not saved into the database
+    wxString m_formattedComment;
+    bool m_isCommentForamtted;
+    
 public:
     enum {
         Tag_No_Signature_Format = 0x00000001, // Do not attempt to format the signature. Use the GetSignature() as is
@@ -338,7 +341,7 @@ public:
      * @brief format a comment for this tag. The format uses codelite's syntax formatting
      * that can be used later on in the various tooltip windows
      */
-    wxString FormatComment() const;
+    wxString FormatComment();
     
 private:
     /**

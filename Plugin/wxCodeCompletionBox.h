@@ -80,7 +80,12 @@ public:
 
     void SetBitmaps(const wxCodeCompletionBox::BmpVec_t& bitmaps) { this->m_bitmaps = bitmaps; }
     const wxCodeCompletionBox::BmpVec_t& GetBitmaps() const { return m_bitmaps; }
-
+    
+    /**
+     * @brief convert TagEntryPtr into Code Completion entry
+     */
+    static wxCodeCompletionBoxEntry::Ptr_t TagToEntry(TagEntryPtr tag);
+    
 protected:
     int GetSingleLineHeight() const;
     void FilterResults();
@@ -89,7 +94,7 @@ protected:
     // For backward compatability, we support initializing the list with TagEntryPtrVector_t
     // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr
     wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);
-    int GetImageId(TagEntryPtr entry);
+    static int GetImageId(TagEntryPtr entry);
     void DoDisplayTipWindow();
     void DoUpdateList();
 };

@@ -143,6 +143,7 @@ void PHPCodeCompletion::Release()
 
 void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr)
 {
+    wxCodeCompletionBoxEntry::Vec_t ccEntries;
     TagEntryPtrVector_t tags;
     wxStringSet_t uniqueEntries;
 
@@ -159,44 +160,20 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
 
         PHPEntityBase::Ptr_t ns = expr->GetSourceFile()->Namespace(); // the namespace at the source file
         TagEntryPtr t = DoPHPEntityToTagEntry(entry);
+        
         tags.push_back(t);
     }
 
-    if(tags.empty()) return;
     std::sort(tags.begin(), tags.end(), _SAscendingSort());
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_manager->GetActiveEditor()->GetSTC(), tags);
+    for(size_t i=0; i<tags.size(); ++i) {
+        wxCodeCompletionBoxEntry::Ptr_t ccEntry =  wxCodeCompletionBox::TagToEntry(tags.at(i));
+        ccEntry->SetComment(tags.at(i)->GetComment());
+        ccEntries.push_back(ccEntry);
+    }
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_manager->GetActiveEditor()->GetSTC(), ccEntries);
 }
 
 void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }
-
-//void PHPCodeCompletion::OnCodeCompletionGetTagComment(clCodeCompletionEvent& e)
-//{
-//    if(PHPWorkspace::Get()->IsOpen()) {
-//
-//        TagEntryPtr tag = e.GetTagEntry();
-//        void* data = tag->GetUserData();
-//
-//        if(data) {
-//            PHPCCUserData* userData = reinterpret_cast<PHPCCUserData*>(data);
-//
-//            wxString comment, docComment;
-//            docComment = userData->entry->GetDocComment();
-//            if(docComment.IsEmpty() == false) {
-//                docComment.Trim().Trim(false);          // The Doc comment
-//                comment << docComment << wxT("\n<hr>"); // HLine
-//            }
-//
-//            wxFileName fn(userData->entry->GetFilename());
-//            fn.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
-//            comment << fn.GetFullName() << wxT(" : ") << userData->entry->GetLine();
-//            e.SetTooltip(comment);
-//        }
-//
-//    } else {
-//        e.Skip();
-//    }
-//    e.Skip();
-//}
 
 TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
 {

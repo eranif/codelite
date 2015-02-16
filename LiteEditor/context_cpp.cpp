@@ -779,7 +779,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
             matches.insert(files.Item(i));
             if(FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeHeader ||
                FileExtManager::GetType(fn.GetFullName()) == FileExtManager::TypeOther) {
-                entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), IsSource(fn.GetExt()) ? 1 : 0));
+                entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), IsSource(fn.GetExt()) ? 0 : 1));
             }
         }
         wxCodeCompletionBoxManager::Get().ShowCompletionBox(&GetCtrl(), entries, bitmaps);

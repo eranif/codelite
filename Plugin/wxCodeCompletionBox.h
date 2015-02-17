@@ -15,11 +15,14 @@
 
 class CCBoxTipWindow;
 class wxCodeCompletionBox;
+class wxCodeCompletionBoxManager;
+
 class WXDLLIMPEXP_SDK wxCodeCompletionBox : public wxCodeCompletionBoxBase
 {
 public:
     typedef std::vector<wxBitmap> BmpVec_t;
-
+    friend class wxCodeCompletionBoxManager;
+    
 public:
     enum {
         kInsertSingleMatch = (1 << 0),
@@ -45,13 +48,19 @@ protected:
 
     /// The code completion box flags, see above enum for possible values
     size_t m_flags;
-
+    
+    /// Contains the scrollbar rectangle
+    wxRect m_scrollArea;
+    wxRect m_scrollTopRect;
+    wxRect m_scrollBottomRect;
+    
 protected:
+    void StcKeyDown(wxKeyEvent& event);
+    void StcLeftDown(wxMouseEvent& event);
+    void StcModified(wxStyledTextEvent& event);
+    void StcCharAdded(wxStyledTextEvent& event);
+    
     // Event handlers
-    void OnStcModified(wxStyledTextEvent& event);
-    void OnStcCharAdded(wxStyledTextEvent& event);
-    void OnStcKey(wxKeyEvent& event);
-    void OnStcLeftDown(wxMouseEvent& event);
     void OnLeftDClick(wxMouseEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
@@ -97,5 +106,8 @@ protected:
     static int GetImageId(TagEntryPtr entry);
     void DoDisplayTipWindow();
     void DoUpdateList();
+    void DoScrollDown();
+    void DoScrollUp();
+    void DoDestroy();
 };
 #endif // WXCODECOMPLETIONBOX_H

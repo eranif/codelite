@@ -56,5 +56,8 @@
     <object class="wxBitmap" name="build-warning">../icons/build-warning.png</object>
     <object class="wxBitmap" name="build-building">../icons/cogs.png</object>
     <object class="wxBitmap" name="build-animation-sprite">../icons/build-animation-sprite.png</object>
-
+    
+    <!-- code completion box up/down bitmaps -->
+    <object class="wxBitmap" name="cc-box-up">res/up-10.png</object>
+    <object class="wxBitmap" name="cc-box-up-down">res/down-10.png</object>
 </resource>

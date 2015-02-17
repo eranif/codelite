@@ -17,9 +17,16 @@ private:
     ~wxCodeCompletionBoxManager();
 
 protected:
-    void WindowDestroyed();
+    void WindowDestroyed(wxWindow* window);
     void DestroyCurrent();
     void InsertSelection(const wxString& selection);
+    
+    // Handle the current editor events
+    void OnStcModified(wxStyledTextEvent& event);
+    void OnStcCharAdded(wxStyledTextEvent& event);
+    
+    void DoShowCCBoxTags(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags);
+    void DoShowCCBoxEntries(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries);
     
 public:
     static wxCodeCompletionBoxManager& Get();

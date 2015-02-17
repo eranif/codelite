@@ -7,13 +7,24 @@
 #include "codelite_events.h"
 #include "imanager.h"
 #include "file_logger.h"
+#include <wx/app.h>
 
 wxCodeCompletionBoxManager::wxCodeCompletionBoxManager()
     : m_box(NULL)
 {
+    if(wxTheApp) {
+        wxTheApp->Bind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
+        wxTheApp->Bind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
+    }
 }
 
-wxCodeCompletionBoxManager::~wxCodeCompletionBoxManager() {}
+wxCodeCompletionBoxManager::~wxCodeCompletionBoxManager()
+{
+    if(wxTheApp) {
+        wxTheApp->Unbind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
+        wxTheApp->Unbind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
+    }
+}
 
 wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 {
@@ -28,7 +39,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     DestroyCurrent();
     if(tags.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
-    m_box->ShowCompletionBox(ctrl, tags);
+    CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxTags, ctrl, tags);
 }
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
@@ -38,10 +49,15 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     DestroyCurrent();
     if(entries.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
-    m_box->ShowCompletionBox(ctrl, entries);
+    CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, ctrl, entries);
 }
 
-void wxCodeCompletionBoxManager::WindowDestroyed() { m_box = NULL; }
+void wxCodeCompletionBoxManager::WindowDestroyed(wxWindow* window)
+{
+    if(m_box == window) {
+        m_box = NULL;
+    }
+}
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
@@ -52,7 +68,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     if(entries.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);
-    m_box->ShowCompletionBox(ctrl, entries);
+    CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, ctrl, entries);
 }
 
 void wxCodeCompletionBoxManager::DestroyCurrent()
@@ -106,5 +122,36 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
         } else {
             ctrl->ReplaceSelection(entryText);
         }
+    }
+}
+
+void wxCodeCompletionBoxManager::OnStcCharAdded(wxStyledTextEvent& event)
+{
+    event.Skip();
+    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) {
+        m_box->StcCharAdded(event);
+    }
+}
+
+void wxCodeCompletionBoxManager::OnStcModified(wxStyledTextEvent& event)
+{
+    event.Skip();
+    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) {
+        m_box->StcModified(event);
+    }
+}
+
+void wxCodeCompletionBoxManager::DoShowCCBoxEntries(wxStyledTextCtrl* ctrl,
+                                                    const wxCodeCompletionBoxEntry::Vec_t& entries)
+{
+    if(m_box) {
+        m_box->ShowCompletionBox(ctrl, entries);
+    }
+}
+
+void wxCodeCompletionBoxManager::DoShowCCBoxTags(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags)
+{
+    if(m_box) {
+        m_box->ShowCompletionBox(ctrl, tags);
     }
 }

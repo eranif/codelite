@@ -7755,8 +7755,41 @@ static unsigned char xml_res_file_37[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 49,48,50,52,48};
 
-static size_t xml_res_size_38 = 4026;
+static size_t xml_res_size_38 = 282;
 static unsigned char xml_res_file_38[] = {
+137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,10,0,0,0,10,8,6,0,0,
+0,141,50,207,189,0,0,0,6,98,75,71,68,0,255,0,255,0,255,160,189,167,147,
+0,0,0,9,112,72,89,115,0,0,13,215,0,0,13,215,1,66,40,155,120,0,0,0,7,116,
+73,77,69,7,223,2,17,17,29,24,76,61,90,205,0,0,0,167,73,68,65,84,24,211,
+197,138,161,10,194,80,24,70,207,239,253,125,9,131,96,145,173,234,35,152,
+55,131,220,102,49,56,48,249,44,38,177,216,12,114,195,170,86,131,81,196,
+116,95,192,52,176,8,150,221,49,147,162,93,240,164,239,227,28,248,53,242,
+121,172,181,38,132,176,4,122,170,58,116,206,93,95,174,241,26,89,150,53,
+171,170,218,2,83,160,95,150,229,49,73,146,206,87,104,173,53,69,81,172,235,
+186,30,1,103,96,37,34,109,85,221,165,105,218,122,135,33,132,57,48,6,78,
+170,58,200,243,124,6,44,128,174,49,102,3,96,0,226,56,190,139,136,168,234,
+196,57,119,3,240,222,239,163,40,122,0,7,239,253,133,255,241,4,202,134,51,
+140,251,44,179,206,0,0,0,0,73,69,78,68,174,66,96,130};
+
+static size_t xml_res_size_39 = 295;
+static unsigned char xml_res_file_39[] = {
+137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,10,0,0,0,10,8,6,0,0,
+0,141,50,207,189,0,0,0,6,98,75,71,68,0,255,0,255,0,255,160,189,167,147,
+0,0,0,9,112,72,89,115,0,0,13,215,0,0,13,215,1,66,40,155,120,0,0,0,7,116,
+73,77,69,7,223,2,17,17,29,42,132,234,11,77,0,0,0,180,73,68,65,84,24,211,
+197,144,177,105,195,80,20,69,207,139,164,5,210,121,135,223,120,131,52,118,
+173,71,80,229,116,1,25,167,119,231,5,92,25,239,16,72,33,130,4,42,141,7,
+72,161,5,210,24,84,184,18,158,224,125,189,52,86,54,8,185,229,61,23,14,92,
+248,183,8,128,170,6,17,121,75,146,100,87,85,213,109,98,121,158,111,129,
+107,211,52,239,15,247,114,233,238,27,51,59,21,69,241,8,136,170,30,68,100,
+47,34,175,0,41,64,154,166,71,51,155,3,47,102,118,86,213,47,96,13,124,199,
+24,87,191,106,128,178,44,179,97,24,62,220,253,25,192,221,251,24,227,83,
+219,182,23,128,100,26,118,93,55,134,16,62,199,113,156,1,100,89,182,168,
+235,186,255,187,123,126,0,114,38,63,247,77,98,169,51,0,0,0,0,73,69,78,68,
+174,66,96,130};
+
+static size_t xml_res_size_40 = 4242;
+static unsigned char xml_res_file_40[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,
@@ -7956,7 +7989,18 @@ static unsigned char xml_res_file_38[] = {
 34,62,114,101,115,111,117,114,99,101,115,46,99,112,112,36,46,46,95,105,
 99,111,110,115,95,98,117,105,108,100,45,97,110,105,109,97,116,105,111,110,
 45,115,112,114,105,116,101,46,112,110,103,60,47,111,98,106,101,99,116,62,
-10,60,47,114,101,115,111,117,114,99,101,62,10};
+10,32,32,60,33,45,45,32,99,111,100,101,32,99,111,109,112,108,101,116,105,
+111,110,32,98,111,120,32,117,112,47,100,111,119,110,32,98,105,116,109,97,
+112,115,32,45,45,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,
+115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,99,99,
+45,98,111,120,45,117,112,34,62,114,101,115,111,117,114,99,101,115,46,99,
+112,112,36,114,101,115,95,117,112,45,49,48,46,112,110,103,60,47,111,98,
+106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,
+61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,99,99,45,
+98,111,120,45,117,112,45,100,111,119,110,34,62,114,101,115,111,117,114,
+99,101,115,46,99,112,112,36,114,101,115,95,100,111,119,110,45,49,48,46,
+112,110,103,60,47,111,98,106,101,99,116,62,10,60,47,114,101,115,111,117,
+114,99,101,62,10};
 
 void InitXmlResource()
 {
@@ -7971,44 +8015,46 @@ void InitXmlResource()
         else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_outbox.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_lock.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_memory_view.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_about_img.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_rebuild.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_wrap_arrow.png"), xml_res_file_5, xml_res_size_5, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_trace.png"), xml_res_file_6, xml_res_size_6, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_debug_windows.png"), xml_res_file_7, xml_res_size_7, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_help_about.png"), xml_res_file_8, xml_res_size_8, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_reload.png"), xml_res_file_9, xml_res_size_9, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_svn_repo.png"), xml_res_file_10, xml_res_size_10, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_svn_checkout.png"), xml_res_file_11, xml_res_size_11, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_configure.png"), xml_res_file_12, xml_res_size_12, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_locals_view.png"), xml_res_file_13, xml_res_size_13, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_watches.png"), xml_res_file_14, xml_res_size_14, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_window_duplicate.png"), xml_res_file_15, xml_res_size_15, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_breakpoint.png"), xml_res_file_16, xml_res_size_16, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_puzzle.png"), xml_res_file_17, xml_res_size_17, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_question_and_answer.png"), xml_res_file_18, xml_res_size_18, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_kstars.png"), xml_res_file_19, xml_res_size_19, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_threads.png"), xml_res_file_20, xml_res_size_20, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_new_class.png"), xml_res_file_21, xml_res_size_21, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_wxproject.png"), xml_res_file_22, xml_res_size_22, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_package_utilities.png"), xml_res_file_23, xml_res_size_23, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_view_text.png"), xml_res_file_24, xml_res_size_24, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_eraser.png"), xml_res_file_25, xml_res_size_25, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_cursor.png"), xml_res_file_26, xml_res_size_26, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_24_formatter.png"), xml_res_file_27, xml_res_size_27, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_24_formatter_settings.png"), xml_res_file_28, xml_res_size_28, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_16_formatter_settings.png"), xml_res_file_29, xml_res_size_29, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_16_formatter.png"), xml_res_file_30, xml_res_size_30, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_notebook_fileclose-dark.png"), xml_res_file_31, xml_res_size_31, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_notebook_fileclose.png"), xml_res_file_32, xml_res_size_32, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_notebook_fileclose-white.png"), xml_res_file_33, xml_res_size_33, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_build-error.png"), xml_res_file_34, xml_res_size_34, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_build-warning.png"), xml_res_file_35, xml_res_size_35, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_cogs.png"), xml_res_file_36, xml_res_size_36, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_build-animation-sprite.png"), xml_res_file_37, xml_res_size_37, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$resources.xrc"), xml_res_file_38, xml_res_size_38, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/resources.cpp$resources.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_outbox.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_lock.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_memory_view.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_about_img.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_rebuild.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_wrap_arrow.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_trace.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_debug_windows.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_help_about.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_reload.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_svn_repo.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_svn_checkout.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_configure.png"), xml_res_file_12, xml_res_size_12, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_locals_view.png"), xml_res_file_13, xml_res_size_13, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_watches.png"), xml_res_file_14, xml_res_size_14, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_window_duplicate.png"), xml_res_file_15, xml_res_size_15, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_breakpoint.png"), xml_res_file_16, xml_res_size_16, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_puzzle.png"), xml_res_file_17, xml_res_size_17, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_question_and_answer.png"), xml_res_file_18, xml_res_size_18, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_kstars.png"), xml_res_file_19, xml_res_size_19, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_threads.png"), xml_res_file_20, xml_res_size_20, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_new_class.png"), xml_res_file_21, xml_res_size_21, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_wxproject.png"), xml_res_file_22, xml_res_size_22, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_package_utilities.png"), xml_res_file_23, xml_res_size_23, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_view_text.png"), xml_res_file_24, xml_res_size_24, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_eraser.png"), xml_res_file_25, xml_res_size_25, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_cursor.png"), xml_res_file_26, xml_res_size_26, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_24_formatter.png"), xml_res_file_27, xml_res_size_27, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_24_formatter_settings.png"), xml_res_file_28, xml_res_size_28, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_16_formatter_settings.png"), xml_res_file_29, xml_res_size_29, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_16_formatter.png"), xml_res_file_30, xml_res_size_30, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_notebook_fileclose-dark.png"), xml_res_file_31, xml_res_size_31, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_notebook_fileclose.png"), xml_res_file_32, xml_res_size_32, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_notebook_fileclose-white.png"), xml_res_file_33, xml_res_size_33, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_build-error.png"), xml_res_file_34, xml_res_size_34, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_build-warning.png"), xml_res_file_35, xml_res_size_35, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_cogs.png"), xml_res_file_36, xml_res_size_36, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$.._icons_build-animation-sprite.png"), xml_res_file_37, xml_res_size_37, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_up-10.png"), xml_res_file_38, xml_res_size_38, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$res_down-10.png"), xml_res_file_39, xml_res_size_39, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/resources.cpp$._resources.xrc"), xml_res_file_40, xml_res_size_40, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/resources.cpp$._resources.xrc"));
 }

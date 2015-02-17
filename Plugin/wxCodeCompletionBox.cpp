@@ -372,52 +372,13 @@ void wxCodeCompletionBox::HideAndInsertSelection()
 {
     if((m_index >= 0 && m_index < (int)m_entries.size()) && m_stc) {
         wxCodeCompletionBoxEntry::Ptr_t match = m_entries.at(m_index);
-
         // Let the owner override the default behavior
         clCodeCompletionEvent e(wxEVT_CCBOX_SELECTION_MADE);
         e.SetWord(match->GetText());
         e.SetEventObject(m_eventObject);
-        if(EventNotifier::Get()->ProcessEvent(e)) {
-            // A plugin handled the insertion, hide and return
-            Hide();
-            return;
-        }
-
-        // Default behviour: remove the partial text from teh editor and replace it
-        // with the selection
-        int start = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
-        int end = m_stc->WordEndPosition(m_stc->GetCurrentPos(), true);
-        m_stc->SetSelection(start, end);
-
-        wxString entryText = match->GetText();
-        if(entryText.Find("(") != wxNOT_FOUND) {
-            // a function like
-            wxString textToInsert = entryText.BeforeFirst('(');
-            
-            // Build the function signature
-            wxString funcSig = entryText.AfterFirst('(');
-            funcSig = funcSig.BeforeLast(')');
-            funcSig.Trim().Trim(false);
-                        
-            CL_DEBUG("Inserting selection: %s", textToInsert);
-            CL_DEBUG("Signature is: %s", funcSig);
-            
-            textToInsert << "()";
-            m_stc->CallAfter(&wxStyledTextCtrl::ReplaceSelection, textToInsert);
-            if(!funcSig.IsEmpty()) {
-                // Place the caret between the parenthesis
-                int caretPos = start + textToInsert.Len() - 1;
-                m_stc->SetCurrentPos(caretPos);
-                m_stc->SetSelection(caretPos, caretPos);
-
-                // trigger a code complete for function calltip.
-                // We do this by simply mimicing the user action of going to the menubar:
-                // Edit->Display Function Calltip
-                wxCommandEvent event(wxEVT_MENU, XRCID("function_call_tip"));
-                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
-            }
-        } else {
-            m_stc->CallAfter(&wxStyledTextCtrl::ReplaceSelection, entryText);
+        if(!EventNotifier::Get()->ProcessEvent(e)) {
+            // execute the default behavior
+            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match->GetText());
         }
         Hide();
     }

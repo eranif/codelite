@@ -19,6 +19,7 @@ private:
 protected:
     void WindowDestroyed();
     void DestroyCurrent();
+    void InsertSelection(const wxString& selection);
     
 public:
     static wxCodeCompletionBoxManager& Get();

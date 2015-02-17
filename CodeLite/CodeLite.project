@@ -87,6 +87,7 @@
     <File Name="clcommandlineparser.cpp"/>
     <File Name="clFileSystemEvent.h"/>
     <File Name="clFileSystemEvent.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

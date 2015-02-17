@@ -30,6 +30,17 @@ set( LIBLLDB_INCLUDE "" )
 set( LIBLLDB_INSTALL_NEEDED 0)
 set( LLDB_OFFICIAL_FOUND 0)
 
+
+if (UNIX AND NOT APPLE)
+    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+endif()
+
+if ( APPLE )
+    add_definitions(-fPIC)
+endif()
+
+
 if (WITH_LLDB MATCHES 1)
     if ( APPLE )
         set ( LIBLLDB ${CL_SRC_ROOT}/sdk/lldb/unix/lib/liblldb.3.5.0.dylib )

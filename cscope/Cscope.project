@@ -36,6 +36,7 @@
     <File Name="cscopestatusmessage.h"/>
     <File Name="csscopeconfdata.cpp"/>
     <File Name="csscopeconfdata.h"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="cscope.h"/>

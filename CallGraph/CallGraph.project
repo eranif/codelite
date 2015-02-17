@@ -33,6 +33,7 @@
     <File Name="gprofparser.cpp"/>
     <File Name="lineparser.cpp"/>
     <File Name="confcallgraph.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="callgraph.h"/>

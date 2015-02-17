@@ -67,6 +67,7 @@
     <File Name="imageexportdialog.cpp"/>
     <File Name="DbViewerPanel.cpp"/>
     <File Name="TableSettings.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="databaseexplorer.h"/>

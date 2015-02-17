@@ -71,6 +71,15 @@ if ( USE_PCH )
     add_definitions(-Winvalid-pch)
 endif ( USE_PCH )
 
+if (UNIX AND NOT APPLE)
+    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+endif()
+
+if ( APPLE )
+    add_definitions(-fPIC)
+endif()
+
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 
 # Add RPATH

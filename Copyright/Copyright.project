@@ -28,6 +28,7 @@
   </Plugins>
   <VirtualDirectory Name="src">
     <File Name="copyright.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="copyright.h"/>

@@ -30,6 +30,7 @@
     <File Name="abbreviation.cpp"/>
     <File Name="abbreviationentry.cpp"/>
     <File Name="abbreviationentry.h"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="abbreviation.h"/>

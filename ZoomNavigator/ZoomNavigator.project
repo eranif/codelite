@@ -24,6 +24,7 @@
     <File Name="znSettingsDlg.cpp"/>
     <File Name="zn_config_item.h"/>
     <File Name="zn_config_item.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="zoomnavigator.h"/>

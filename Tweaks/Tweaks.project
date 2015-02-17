@@ -21,6 +21,7 @@
     <File Name="tweaks.cpp"/>
     <File Name="tweaks_settings.h"/>
     <File Name="tweaks_settings.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="tweaks.h"/>

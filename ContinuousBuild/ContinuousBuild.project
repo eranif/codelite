@@ -38,6 +38,7 @@
   <VirtualDirectory Name="src">
     <File Name="continuousbuild.cpp"/>
     <File Name="buildprocess.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="continuousbuild.h"/>

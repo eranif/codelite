@@ -20,6 +20,16 @@ if ( (LIBHUNSPELL STREQUAL "LIBHUNSPELL-NOTFOUND" OR HUNSPELL_H STREQUAL "HUNSPE
     message("    ** NOTICE ** Try installing libhunspell-dev package")
     message("    **")
 else ()
+    
+    if (UNIX AND NOT APPLE)
+        set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
+        set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+    endif()
+
+    if ( APPLE )
+        add_definitions(-fPIC)
+    endif()
+
     if ( APPLE) 
         set(LIBHUNSPELL ${CL_SRC_ROOT}/sdk/hunspell/lib/osx/libhunspell-1.3.dylib)
         set(HUNSPELL_H ${CL_SRC_ROOT}/sdk/hunspell/include/)

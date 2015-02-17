@@ -1293,7 +1293,7 @@
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <Target Name="install">make install</Target>
-        <Target Name="cmake">cmake -DWITH_WXC=1 -DPREFIX=/home/eran/root   -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DWITH_FLEX=1</Target>
+        <Target Name="cmake">cmake -DWITH_WXC=1 -DPREFIX=/home/eran/root   -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1</Target>
         <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make -j8</BuildCommand>
@@ -1842,8 +1842,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>

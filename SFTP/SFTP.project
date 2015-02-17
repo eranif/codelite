@@ -38,6 +38,7 @@
     <File Name="sftp_item_comparator.cpp"/>
     <File Name="SFTPBookmark.h"/>
     <File Name="SFTPBookmark.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="sftp.h"/>

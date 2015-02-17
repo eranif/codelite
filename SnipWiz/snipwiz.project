@@ -30,6 +30,7 @@
     <File Name="snipwiz.cpp"/>
     <File Name="wxSerialize.cpp"/>
     <File Name="swStringDb.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="snipwiz.h"/>

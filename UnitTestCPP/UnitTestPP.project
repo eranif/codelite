@@ -32,6 +32,7 @@
     <File Name="unittestcppoutputparser.h"/>
     <File Name="unittestdata.cpp"/>
     <File Name="unittestdata.h"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="unittestpp.h"/>

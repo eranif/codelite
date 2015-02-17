@@ -44,6 +44,7 @@
     <File Name="cppchecksettingsdlg_cppchecker_bitmaps.cpp"/>
     <File Name="cppchecktestresults.cpp"/>
     <File Name="cppchecktestresults.h"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="cppchecker.h"/>

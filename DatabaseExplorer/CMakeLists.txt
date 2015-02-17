@@ -14,6 +14,16 @@ find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
+if (UNIX AND NOT APPLE)
+    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
+    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+endif()
+
+if ( APPLE )
+    add_definitions(-fPIC)
+endif()
+
+
 if ( WITH_MYSQL )
     find_library(LIBMYSQLCLIENT NAMES libmysqlclient.so)
     if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND") 

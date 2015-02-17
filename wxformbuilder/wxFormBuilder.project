@@ -30,6 +30,7 @@
     <File Name="wxformbuilder.cpp"/>
     <File Name="confformbuilder.cpp"/>
     <File Name="confformbuilder.h"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="wxformbuilder.h"/>

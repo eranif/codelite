@@ -58,6 +58,7 @@
     <File Name="formatoptions.cpp"/>
     <File Name="clClangFormatLocator.h"/>
     <File Name="clClangFormatLocator.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="codeformatter.h"/>

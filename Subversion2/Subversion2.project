@@ -44,6 +44,7 @@
     <File Name="SvnInfoDialog.cpp"/>
     <File Name="workspacesvnsettings.h"/>
     <File Name="workspacesvnsettings.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>

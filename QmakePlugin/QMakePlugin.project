@@ -41,6 +41,7 @@
     <File Name="qmakeconf.h"/>
     <File Name="qmakeplugindata.cpp"/>
     <File Name="qmakeplugindata.h"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="qmakeplugin.h"/>

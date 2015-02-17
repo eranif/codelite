@@ -15,7 +15,7 @@
 
 #define MAX_NUM_LINES 8
 #define Y_SPACER 2
-#define BOX_WIDTH 400
+#define BOX_WIDTH (400 + 8)
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -131,15 +131,21 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     int singleLineHeight = GetSingleLineHeight();
 
     m_canvas->PrepareDC(dc);
+    // Draw the entire box with single solid colour
     dc.SetBrush(lightBorder);
     dc.SetPen(lightBorder);
     dc.DrawRectangle(rect);
 
+    // Shrink the rectangle by 2 to provide a 2 pixle
+    // border
     rect.Deflate(2, 2);
     dc.SetBrush(bgColour);
     dc.SetPen(bgColour);
     dc.DrawRectangle(rect);
 
+    // We want to have a scrollbar alike. We do this by reducing the size of the
+    // items area by 5 pixels
+    rect.SetWidth(rect.GetWidth() - 8);
     int firstIndex = m_index;
     int lastIndex = m_index + MAX_NUM_LINES;
     if(lastIndex > (int)m_entries.size()) {
@@ -183,11 +189,11 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
         // Draw the text
         dc.SetClippingRegion(itemRect);
-        
+
         // Truncate the text to fit the screen
         wxString choppedText;
         DrawingUtils::TruncateText(entry->GetText(), itemRect.GetWidth(), dc, choppedText);
-        
+
         dc.DrawText(choppedText, x, y);
         dc.DestroyClippingRegion();
         y += textSize.y;
@@ -320,8 +326,8 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
 void wxCodeCompletionBox::FilterResults()
 {
     int start = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    int end = m_stc->GetCurrentPos();
 
-    int end = m_stc->WordEndPosition(m_stc->GetCurrentPos(), true);
     wxString word = m_stc->GetTextRange(start, end); // the current word
     if(word.IsEmpty()) {
         m_entries = m_allEntries;
@@ -387,12 +393,15 @@ void wxCodeCompletionBox::HideAndInsertSelection()
         if(entryText.Find("(") != wxNOT_FOUND) {
             // a function like
             wxString textToInsert = entryText.BeforeFirst('(');
+            
+            // Build the function signature
             wxString funcSig = entryText.AfterFirst('(');
+            funcSig = funcSig.BeforeLast(')');
             funcSig.Trim().Trim(false);
-            if(funcSig.EndsWith(")")) {
-                funcSig.RemoveLast();
-            }
-
+                        
+            CL_DEBUG("Inserting selection: %s", textToInsert);
+            CL_DEBUG("Signature is: %s", funcSig);
+            
             textToInsert << "()";
             m_stc->ReplaceSelection(textToInsert);
             if(!funcSig.IsEmpty()) {

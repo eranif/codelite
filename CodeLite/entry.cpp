@@ -826,34 +826,32 @@ wxString TagEntry::FormatComment()
         m_formattedComment << wxT("<code>") << matchPattern << wxT("</code>\n");
 
     }
-    return m_formattedComment;
-    
-#if 0
-    // Add comment section
-    // m_comments.clear();
-    // ParseComments(GetFile().mb_str(wxConvUTF8).data(), m_comments);
-    
-    wxString tagComment;
-    // bool foundComment(false);
-    // std::string comment;
-    // // search for comment in the current line, the line above it and 2 above it
-    // // use the first match we got
-    // for(size_t i = 0; i < 3; i++) {
-    //     comment = m_comments.getCommentForLine(GetLine() - i);
-    //     if(comment.empty() == false) {
-    //         foundComment = true;
-    //         break;
-    //     }
-    // }
-    
-    if(GetComment().IsEmpty()) {
 
+    // Add comment section
+    wxString tagComment;
+    if(!GetFile().IsEmpty()) {
+        
+        CommentParseResult comments;
+        ::ParseComments(GetFile().mb_str(wxConvUTF8).data(), comments);
+    
+        // search for comment in the current line, the line above it and 2 above it
+        // use the first match we got
+        for(size_t i = 0; i < 3; i++) {
+            wxString comment = comments.getCommentForLine(GetLine()-i);
+            if(!comment.IsEmpty()) {
+                SetComment(comment);
+                break;
+            }
+        }
+    }
+    
+    if(!GetComment().IsEmpty()) {
         wxString theComment;
         theComment = GetComment();
 
         theComment = TagsManagerST::Get()->WrapLines(theComment);
         theComment.Trim(false);
-        tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
+        wxString tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
         if(m_formattedComment.IsEmpty() == false) {
             m_formattedComment.Trim().Trim(false);
             m_formattedComment << wxT("\n<hr>");
@@ -913,5 +911,4 @@ wxString TagEntry::FormatComment()
     // if nothing to display skip this
     m_formattedComment.Trim().Trim(false);
     return m_formattedComment;
-#endif
 }

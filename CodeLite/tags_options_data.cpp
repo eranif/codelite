@@ -34,7 +34,7 @@
 wxString TagsOptionsData::CLANG_CACHE_LAZY = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
-size_t TagsOptionsData::CURRENT_VERSION = 710;
+size_t TagsOptionsData::CURRENT_VERSION = 7100;
 
 static bool _IsValidCppIndetifier(const wxString& id)
 {
@@ -83,7 +83,7 @@ TagsOptionsData::TagsOptionsData()
     , m_clangOptions(0)
     , m_clangBinary(wxT(""))
     , m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
-    , m_ccNumberOfDisplayItems(1000)
+    , m_ccNumberOfDisplayItems(500)
     , m_version(0)
 {
     // Initialize defaults

@@ -403,7 +403,7 @@ void wxCodeCompletionBox::HideAndInsertSelection()
             CL_DEBUG("Signature is: %s", funcSig);
             
             textToInsert << "()";
-            m_stc->ReplaceSelection(textToInsert);
+            m_stc->CallAfter(&wxStyledTextCtrl::ReplaceSelection, textToInsert);
             if(!funcSig.IsEmpty()) {
                 // Place the caret between the parenthesis
                 int caretPos = start + textToInsert.Len() - 1;
@@ -417,7 +417,7 @@ void wxCodeCompletionBox::HideAndInsertSelection()
                 wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
             }
         } else {
-            m_stc->ReplaceSelection(entryText);
+            m_stc->CallAfter(&wxStyledTextCtrl::ReplaceSelection, entryText);
         }
         Hide();
     }

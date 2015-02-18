@@ -251,7 +251,9 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     }
 
     int lineHeight = GetSingleLineHeight();
-    wxPoint pt = m_stc->PointFromPosition(m_stc->GetCurrentPos());
+    // determine the box x position
+    int wordStart = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    wxPoint pt = m_stc->PointFromPosition(wordStart);
     pt = m_stc->ClientToScreen(pt);
     pt.y += lineHeight;
     Move(pt);

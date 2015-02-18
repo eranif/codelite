@@ -249,7 +249,13 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
         DoDestroy();
         return;
     }
-
+    
+    if(m_entries.empty()) {
+        // no entries to display
+        DoDestroy();
+        return;
+    }
+    
     int lineHeight = GetSingleLineHeight();
     // determine the box x position
     int wordStart = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);

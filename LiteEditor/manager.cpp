@@ -98,6 +98,7 @@
 #include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
 #include "clKeyboardManager.h"
+#include "wxCodeCompletionBoxManager.h"
 #include "localworkspace.h"
 
 #ifndef __WXMSW__
@@ -260,6 +261,7 @@ Manager::~Manager(void)
     wxDELETE(m_breakptsmgr);
     TabGroupsManager::Free();
     clKeyboardManager::Release();
+    wxCodeCompletionBoxManager::Free();
 }
 
 //--------------------------- Workspace Loading -----------------------------

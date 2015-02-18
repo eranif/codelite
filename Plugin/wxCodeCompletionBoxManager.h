@@ -26,13 +26,22 @@ protected:
     // Handle the current editor events
     void OnStcModified(wxStyledTextEvent& event);
     void OnStcCharAdded(wxStyledTextEvent& event);
-
+    void OnStcKeyDown(wxKeyEvent& event);
+    void OnStcLeftDown(wxMouseEvent& event);
+    void OnDismissBox(wxCommandEvent &event);
+    void OnAppActivate(wxActivateEvent& event);
+    
     void DoShowCCBoxTags(const TagEntryPtrVector_t& tags);
     void DoShowCCBoxEntries(const wxCodeCompletionBoxEntry::Vec_t& entries);
 
 public:
     static wxCodeCompletionBoxManager& Get();
-
+    
+    /**
+     * @brief uninitialize all event handlers and destroy the CC box manager
+     */
+    static void Free();
+    
     /**
      * @brief show the completion box
      * @param ctrl the wxSTC control requesting the completion box

@@ -77,11 +77,6 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
 
-    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
-    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBox::OnDismissBox, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
-    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
-
     /// Set the colours
     m_lightBorder = wxColour("rgb(77, 77, 77)");
     m_darkBorder = wxColour("rgb(54, 54, 54)");
@@ -100,22 +95,7 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
 {
     m_canvas->Unbind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Unbind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
-    if(m_stc) {
-        m_stc->Unbind(wxEVT_KEY_DOWN, &wxCodeCompletionBox::StcKeyDown, this);
-        m_stc->Unbind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::StcLeftDown, this);
-    }
-
-    if(m_tipWindow) {
-        m_tipWindow->Hide();
-        m_tipWindow->Destroy();
-        m_tipWindow = NULL;
-        m_displayedTip.Clear();
-    }
-
-    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
-    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBox::OnDismissBox, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
-    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
+    DoDestroyTipWindow();
 }
 
 void wxCodeCompletionBox::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(event); }
@@ -265,9 +245,6 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     Show();
 
     if(m_stc) {
-        m_stc->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBox::StcKeyDown, this);
-        m_stc->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::StcLeftDown, this);
-
         // Set the focus back to the completion control
         m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
     }
@@ -289,12 +266,7 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
 
         if(!docComment.IsEmpty() && docComment != m_displayedTip) {
             // destroy old tip window
-            if(m_tipWindow) {
-                m_displayedTip.Clear();
-                m_tipWindow->Hide();
-                m_tipWindow->Destroy();
-                m_tipWindow = NULL;
-            }
+            DoDestroyTipWindow();
 
             // keep the old tip
             m_displayedTip = docComment;
@@ -307,12 +279,9 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
             m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
         }
 
-    } else if(m_tipWindow) {
+    } else {
         // Nothing to display, just destroy the old tooltip
-        m_displayedTip.Clear();
-        m_tipWindow->Hide();
-        m_tipWindow->Destroy();
-        m_tipWindow = NULL;
+        DoDestroyTipWindow();
     }
 }
 
@@ -379,6 +348,9 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
     case WXK_END:
     case WXK_DELETE:
     case WXK_NUMPAD_DELETE:
+    case WXK_ALT:
+    case WXK_WINDOWS_LEFT:
+    case WXK_WINDOWS_RIGHT:
         DoDestroy();
         break;
     case WXK_TAB:
@@ -567,19 +539,6 @@ void wxCodeCompletionBox::DoUpdateList()
     }
 }
 
-void wxCodeCompletionBox::OnAppActivate(wxActivateEvent& event)
-{
-    event.Skip();
-    // Application lost / got focus - reset the tooltip
-    DoDestroy();
-}
-
-void wxCodeCompletionBox::OnDismissBox(wxCommandEvent& event)
-{
-    event.Skip();
-    DoDestroy();
-}
-
 wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
 {
     wxString text = tag->GetDisplayName().Trim().Trim(false);
@@ -606,10 +565,7 @@ void wxCodeCompletionBox::DoScrollUp()
     }
 }
 
-void wxCodeCompletionBox::DoDestroy()
-{
-    wxCodeCompletionBoxManager::Get().DestroyCCBox();
-}
+void wxCodeCompletionBox::DoDestroy() { wxCodeCompletionBoxManager::Get().DestroyCCBox(); }
 
 void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
 {
@@ -665,3 +621,13 @@ void wxCodeCompletionBox::DoDrawTopScrollButton(wxDC& dc)
 bool wxCodeCompletionBox::CanScrollDown() { return ((m_index + 1) < (int)m_entries.size()); }
 
 bool wxCodeCompletionBox::CanScrollUp() { return ((m_index - 1) >= 0); }
+
+void wxCodeCompletionBox::DoDestroyTipWindow()
+{
+    if(m_tipWindow) {
+        m_tipWindow->Hide();
+        m_tipWindow->Destroy();
+        m_tipWindow = NULL;
+        m_displayedTip.Clear();
+    }
+}

@@ -2329,8 +2329,6 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
     if(debugger && debugger->IsRunning()) ManagerST::Get()->DbgStop();
 
-    
-
     // In case we got some data in the clipboard, flush it so it will be available
     // after our process exits
     wxTheClipboard->Flush();

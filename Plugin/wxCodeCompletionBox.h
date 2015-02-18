@@ -81,9 +81,7 @@ protected:
     void OnLeftDClick(wxMouseEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
-    void OnAppActivate(wxActivateEvent& event);
-    void OnDismissBox(wxCommandEvent& event);
-
+    
 public:
     virtual ~wxCodeCompletionBox();
     /**
@@ -126,6 +124,8 @@ protected:
     wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);
     static int GetImageId(TagEntryPtr entry);
     void DoDisplayTipWindow();
+    void DoDestroyTipWindow();
+    
     void DoUpdateList();
     void DoScrollDown();
     void DoScrollUp();

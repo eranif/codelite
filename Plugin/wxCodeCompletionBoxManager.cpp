@@ -8,29 +8,41 @@
 #include "imanager.h"
 #include "file_logger.h"
 #include <wx/app.h>
+#include "event_notifier.h"
 
 wxCodeCompletionBoxManager::wxCodeCompletionBoxManager()
     : m_box(NULL)
     , m_stc(NULL)
 {
-    if(wxTheApp) {
-        wxTheApp->Bind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
-        wxTheApp->Bind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
-    }
+
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBoxManager::OnDismissBox, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
+    
+    wxTheApp->Bind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
+    wxTheApp->Bind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBoxManager::OnAppActivate, this);
 }
 
 wxCodeCompletionBoxManager::~wxCodeCompletionBoxManager()
 {
-    if(wxTheApp) {
-        wxTheApp->Unbind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
-        wxTheApp->Unbind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
-    }
+    DestroyCurrent();
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBoxManager::OnDismissBox, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
+    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
+    
+    wxTheApp->Unbind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
+    wxTheApp->Unbind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
+    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBoxManager::OnAppActivate, this);
 }
 
+static wxCodeCompletionBoxManager *manager = NULL;
 wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 {
-    static wxCodeCompletionBoxManager manager;
-    return manager;
+    if(!manager) {
+        manager = new wxCodeCompletionBoxManager();
+    }
+    return *manager;
 }
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
@@ -66,10 +78,11 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 void wxCodeCompletionBoxManager::DestroyCCBox()
 {
     if(m_box) {
-        if(m_box->IsShown()) m_box->Hide();
+        if(m_box->IsShown()) {
+            m_box->Hide();
+        }
         m_box->Destroy();
     }
-
     m_box = NULL;
     m_stc = NULL;
 }
@@ -91,10 +104,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, entries);
 }
 
-void wxCodeCompletionBoxManager::DestroyCurrent()
-{
-    DestroyCCBox();
-}
+void wxCodeCompletionBoxManager::DestroyCurrent() { DestroyCCBox(); }
 
 void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
 {
@@ -161,6 +171,8 @@ void wxCodeCompletionBoxManager::DoShowCCBoxEntries(const wxCodeCompletionBoxEnt
 {
     if(m_box && m_stc) {
         m_box->ShowCompletionBox(m_stc, entries);
+        m_stc->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
+        m_stc->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
     }
 }
 
@@ -168,5 +180,46 @@ void wxCodeCompletionBoxManager::DoShowCCBoxTags(const TagEntryPtrVector_t& tags
 {
     if(m_box && m_stc) {
         m_box->ShowCompletionBox(m_stc, tags);
+        m_stc->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
+        m_stc->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
+    }
+}
+
+void wxCodeCompletionBoxManager::OnStcKeyDown(wxKeyEvent& event)
+{
+    if(m_box && m_stc && m_box->IsShown() && event.GetEventObject() == m_stc) {
+        m_box->StcKeyDown(event);
+    } else {
+        event.Skip();
+    }
+}
+
+void wxCodeCompletionBoxManager::OnStcLeftDown(wxMouseEvent& event)
+{
+    if(m_box && m_stc && m_box->IsShown() && event.GetEventObject() == m_stc) {
+        m_box->StcLeftDown(event);
+    } else {
+        event.Skip();
+    }
+}
+
+void wxCodeCompletionBoxManager::OnDismissBox(wxCommandEvent& event)
+{
+    event.Skip();
+    DestroyCCBox();
+}
+
+void wxCodeCompletionBoxManager::OnAppActivate(wxActivateEvent& event)
+{
+    event.Skip();
+    DestroyCCBox();
+}
+
+void wxCodeCompletionBoxManager::Free()
+{
+    // Destroy the manager, Unbinding all events
+    if(manager) {
+        delete manager;
+        manager = NULL;
     }
 }

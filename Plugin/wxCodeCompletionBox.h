@@ -119,7 +119,7 @@ public:
 protected:
     int GetSingleLineHeight() const;
     void FilterResults();
-    void HideAndInsertSelection();
+    void InsertSelection();
 
     // For backward compatability, we support initializing the list with TagEntryPtrVector_t
     // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr

@@ -5,19 +5,21 @@
 #include "wxCodeCompletionBox.h"
 #include "codelite_exports.h"
 
+class wxStyledTextCtrl;
 class WXDLLIMPEXP_SDK wxCodeCompletionBoxManager : public wxEvtHandler
 {
     friend class wxCodeCompletionBox;
 
 protected:
     wxCodeCompletionBox* m_box;
-
+    wxStyledTextCtrl* m_stc;
+    
 private:
     wxCodeCompletionBoxManager();
     ~wxCodeCompletionBoxManager();
 
 protected:
-    void WindowDestroyed(wxWindow* window);
+    void DestroyCCBox();
     void DestroyCurrent();
     void InsertSelection(const wxString& selection);
 
@@ -25,8 +27,8 @@ protected:
     void OnStcModified(wxStyledTextEvent& event);
     void OnStcCharAdded(wxStyledTextEvent& event);
 
-    void DoShowCCBoxTags(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags);
-    void DoShowCCBoxEntries(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries);
+    void DoShowCCBoxTags(const TagEntryPtrVector_t& tags);
+    void DoShowCCBoxEntries(const wxCodeCompletionBoxEntry::Vec_t& entries);
 
 public:
     static wxCodeCompletionBoxManager& Get();

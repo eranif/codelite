@@ -116,7 +116,6 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBox::OnDismissBox, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
-    wxCodeCompletionBoxManager::Get().WindowDestroyed(this);
 }
 
 void wxCodeCompletionBox::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(event); }
@@ -245,17 +244,17 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     // If we got a single match - insert it
     if((m_entries.size() == 1) && (m_flags & kInsertSingleMatch)) {
         // single match
-        HideAndInsertSelection();
+        InsertSelection();
         DoDestroy();
         return;
     }
-    
+
     if(m_entries.empty()) {
         // no entries to display
         DoDestroy();
         return;
     }
-    
+
     int lineHeight = GetSingleLineHeight();
     // determine the box x position
     int wordStart = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
@@ -296,18 +295,18 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
                 m_tipWindow->Destroy();
                 m_tipWindow = NULL;
             }
-            
+
             // keep the old tip
             m_displayedTip = docComment;
-            
+
             // Construct a new tip window and display the tip
             m_tipWindow = new CCBoxTipWindow(GetParent(), docComment, 1, false);
             m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
-            
+
             // restore focus to the editor
             m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
         }
-        
+
     } else if(m_tipWindow) {
         // Nothing to display, just destroy the old tooltip
         m_displayedTip.Clear();
@@ -328,7 +327,6 @@ void wxCodeCompletionBox::StcCharAdded(wxStyledTextEvent& event)
     {
         DoUpdateList();
     } else {
-        Hide();
         DoDestroy();
     }
 }
@@ -381,14 +379,13 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
     case WXK_END:
     case WXK_DELETE:
     case WXK_NUMPAD_DELETE:
-        Hide();
         DoDestroy();
         break;
     case WXK_TAB:
     case WXK_RETURN:
     case WXK_NUMPAD_ENTER:
         // Insert the selection
-        HideAndInsertSelection();
+        InsertSelection();
         DoDestroy();
         break;
     default:
@@ -467,7 +464,7 @@ void wxCodeCompletionBox::FilterResults()
     m_index = 0;
 }
 
-void wxCodeCompletionBox::HideAndInsertSelection()
+void wxCodeCompletionBox::InsertSelection()
 {
     if((m_index >= 0 && m_index < (int)m_entries.size()) && m_stc) {
         wxCodeCompletionBoxEntry::Ptr_t match = m_entries.at(m_index);
@@ -479,14 +476,12 @@ void wxCodeCompletionBox::HideAndInsertSelection()
             // execute the default behavior
             wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match->GetText());
         }
-        Hide();
     }
 }
 
 void wxCodeCompletionBox::StcLeftDown(wxMouseEvent& event)
 {
     event.Skip();
-    Hide(); // Hide before we destroy, it reduces the flicker on screen
     DoDestroy();
 }
 
@@ -501,7 +496,7 @@ void wxCodeCompletionBox::OnLeftDClick(wxMouseEvent& event)
         for(size_t i = 0; i < m_entries.size(); ++i) {
             if(m_entries.at(i)->m_itemRect.Contains(event.GetPosition())) {
                 m_index = i;
-                HideAndInsertSelection();
+                InsertSelection();
                 DoDestroy();
                 return;
             }
@@ -564,7 +559,6 @@ void wxCodeCompletionBox::DoUpdateList()
             wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
             wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
         }
-        Hide();
         DoDestroy();
 
     } else {
@@ -577,14 +571,12 @@ void wxCodeCompletionBox::OnAppActivate(wxActivateEvent& event)
 {
     event.Skip();
     // Application lost / got focus - reset the tooltip
-    Hide();
     DoDestroy();
 }
 
 void wxCodeCompletionBox::OnDismissBox(wxCommandEvent& event)
 {
     event.Skip();
-    Hide();
     DoDestroy();
 }
 
@@ -614,7 +606,10 @@ void wxCodeCompletionBox::DoScrollUp()
     }
 }
 
-void wxCodeCompletionBox::DoDestroy() { Destroy(); }
+void wxCodeCompletionBox::DoDestroy()
+{
+    wxCodeCompletionBoxManager::Get().DestroyCCBox();
+}
 
 void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
 {

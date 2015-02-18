@@ -49,7 +49,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     wxRect rect(boxSize);
 
     // Set the default bitmap list
-    BitmapLoader* bmpLoader = ::clGetManager()->GetStdIcons();
+    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
 
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/class"));              // 0
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/struct"));             // 1
@@ -81,6 +81,19 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBox::OnDismissBox, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
+
+    /// Set the colours
+    m_lightBorder = wxColour("rgb(77, 77, 77)");
+    m_darkBorder = wxColour("rgb(54, 54, 54)");
+    m_bgColour = wxColour("rgb(64, 64, 64)");
+    m_textColour = wxColour("rgb(200, 200, 200)");
+    m_selection = wxColour("rgb(87, 87, 87)");
+
+    m_bmpDown = wxXmlResource::Get()->LoadBitmap("cc-box-down");
+    m_bmpUp = wxXmlResource::Get()->LoadBitmap("cc-box-up");
+
+    m_bmpDownEnabled = m_bmpDown.ConvertToDisabled();
+    m_bmpUpEnabled = m_bmpUp.ConvertToDisabled();
 }
 
 wxCodeCompletionBox::~wxCodeCompletionBox()
@@ -116,12 +129,6 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         m_entries.at(i)->m_itemRect = wxRect();
     }
 
-    wxColour lightBorder("rgb(77, 77, 77)");
-    wxColour darkBorder("rgb(54, 54, 54)");
-    wxColour bgColour("rgb(64, 64, 64)");
-    wxColour textColour("rgb(200, 200, 200)");
-    wxColour selection("rgb(87, 87, 87)");
-
     // scrollbar gradient colours
     wxColour scrollBgColourRight("rgb(50, 50, 50)");
     wxColour scrollBgColourLeft("rgb(33, 33, 33)");
@@ -139,15 +146,15 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     m_canvas->PrepareDC(dc);
     // Draw the entire box with single solid colour
-    dc.SetBrush(lightBorder);
-    dc.SetPen(lightBorder);
+    dc.SetBrush(m_lightBorder);
+    dc.SetPen(m_lightBorder);
     dc.DrawRectangle(rect);
 
     // Shrink the rectangle by 2 to provide a 2 pixle
     // border
     rect.Deflate(2, 2);
-    dc.SetBrush(bgColour);
-    dc.SetPen(bgColour);
+    dc.SetBrush(m_bgColour);
+    dc.SetPen(m_bgColour);
     dc.DrawRectangle(rect);
 
     // We want to have a scrollbar alike. We do this by reducing the size of the
@@ -175,14 +182,14 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         wxRect itemRect(2, y, rect.GetWidth(), singleLineHeight);
         if(isSelected) {
             // highlight the selection
-            dc.SetBrush(selection);
-            dc.SetPen(selection);
+            dc.SetBrush(m_selection);
+            dc.SetPen(m_selection);
             dc.DrawRectangle(itemRect);
         }
 
-        dc.SetTextForeground(isSelected ? *wxWHITE : textColour);
-        dc.SetPen(lightBorder);
-        dc.DrawLine(2, y, itemRect.GetWidth() + 1, y);
+        dc.SetTextForeground(isSelected ? *wxWHITE : m_textColour);
+        dc.SetPen(m_lightBorder);
+        dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
         y += 1;
         y += Y_SPACER;
 
@@ -205,8 +212,8 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         dc.DestroyClippingRegion();
         y += textSize.y;
         y += Y_SPACER;
-        dc.SetPen(darkBorder);
-        dc.DrawLine(2, y, itemRect.GetWidth() + 1, y);
+        dc.SetPen(m_darkBorder);
+        dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
         y += 1;
         entry->m_itemRect = itemRect;
     }
@@ -218,25 +225,9 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     wxRect scrollRect = m_scrollArea;
     scrollRect.Deflate(0, 2);
     scrollRect.SetWidth(scrollRect.GetWidth() - 2);
-    dc.GradientFillLinear(scrollRect, scrollBgColourLeft, scrollBgColourRight);
-
-    // Separate the scrollbar area into 2 big buttons: up and down
-    m_scrollTopRect = wxRect(scrollRect.GetTopLeft(), wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
-    m_scrollBottomRect =
-        wxRect(wxPoint(scrollRect.GetTopLeft().x, scrollRect.GetTopLeft().y + scrollRect.GetHeight() / 2),
-               wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
-
-    wxPoint topRightPt, bottomRightPt;
-    topRightPt = m_scrollTopRect.GetBottomRight();
-    topRightPt.x += 1;
-    bottomRightPt = m_scrollBottomRect.GetTopLeft();
-    bottomRightPt.x += 1;
-
-    dc.SetPen(darkBorder);
-    dc.DrawLine(m_scrollTopRect.GetBottomLeft(), topRightPt);
-
-    dc.SetPen(lightBorder);
-    dc.DrawLine(m_scrollBottomRect.GetTopLeft(), bottomRightPt);
+    dc.GradientFillLinear(scrollRect, scrollBgColourRight, scrollBgColourLeft);
+    DoDrawBottomScrollButton(dc);
+    DoDrawTopScrollButton(dc);
 }
 
 void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries)
@@ -410,11 +401,11 @@ void wxCodeCompletionBox::FilterResults()
     wxString lcFilter = word.Lower();
     // Smart sorting:
     // We preare the list of matches in the following order:
-    // Exact matches (case sensitive)
-    // Exact matches (case in-sensitive)
+    // Exact matches
     // Starts with
     // Contains
-    wxCodeCompletionBoxEntry::Vec_t exactMatches, exactMatchesI, startsWith, contains;
+
+    wxCodeCompletionBoxEntry::Vec_t exactMatches, exactMatchesI, startsWith, startsWithI, contains, containsI;
     for(size_t i = 0; i < m_allEntries.size(); ++i) {
         wxString entryText = m_allEntries.at(i)->GetText().BeforeFirst('(');
         entryText.Trim().Trim(false);
@@ -423,12 +414,21 @@ void wxCodeCompletionBox::FilterResults()
         // Exact match:
         if(word == entryText) {
             exactMatches.push_back(m_allEntries.at(i));
+
         } else if(lcEntryText == lcFilter) {
             exactMatchesI.push_back(m_allEntries.at(i));
-        } else if(lcEntryText.StartsWith(lcFilter)) {
+
+        } else if(entryText.StartsWith(word)) {
             startsWith.push_back(m_allEntries.at(i));
-        } else if(lcEntryText.Contains(lcFilter)) {
+            
+        } else if(lcEntryText.StartsWith(lcFilter)) {
+            startsWithI.push_back(m_allEntries.at(i));
+
+        } else if(entryText.Contains(word)) {
             contains.push_back(m_allEntries.at(i));
+            
+        } else if(lcEntryText.Contains(lcFilter)) {
+            containsI.push_back(m_allEntries.at(i));
         }
     }
 
@@ -436,7 +436,9 @@ void wxCodeCompletionBox::FilterResults()
     m_entries.insert(m_entries.end(), exactMatches.begin(), exactMatches.end());
     m_entries.insert(m_entries.end(), exactMatchesI.begin(), exactMatchesI.end());
     m_entries.insert(m_entries.end(), startsWith.begin(), startsWith.end());
+    m_entries.insert(m_entries.end(), startsWithI.begin(), startsWithI.end());
     m_entries.insert(m_entries.end(), contains.begin(), contains.end());
+    m_entries.insert(m_entries.end(), containsI.begin(), containsI.end());
     m_index = 0;
 }
 
@@ -565,7 +567,7 @@ wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
 
 void wxCodeCompletionBox::DoScrollDown()
 {
-    if((m_index + 1) < (int)m_entries.size()) {
+    if(CanScrollDown()) {
         ++m_index;
         DoDisplayTipWindow();
         Refresh();
@@ -574,7 +576,7 @@ void wxCodeCompletionBox::DoScrollDown()
 
 void wxCodeCompletionBox::DoScrollUp()
 {
-    if((m_index - 1) >= 0) {
+    if(CanScrollUp()) {
         --m_index;
         DoDisplayTipWindow();
         Refresh();
@@ -582,3 +584,58 @@ void wxCodeCompletionBox::DoScrollUp()
 }
 
 void wxCodeCompletionBox::DoDestroy() { Destroy(); }
+
+void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
+{
+    wxRect scrollRect = m_scrollArea;
+    scrollRect.Deflate(0, 2);
+    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
+
+    // Separate the scrollbar area into 2 big buttons: up and down
+    m_scrollBottomRect =
+        wxRect(wxPoint(scrollRect.GetTopLeft().x, scrollRect.GetTopLeft().y + scrollRect.GetHeight() / 2),
+               wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
+
+    wxPoint topRight;
+    topRight = m_scrollBottomRect.GetTopRight();
+    topRight.x += 1;
+
+    dc.SetPen(m_lightBorder);
+    dc.DrawLine(m_scrollBottomRect.GetTopLeft(), topRight);
+
+    // Draw the up arrow
+    wxCoord x, y;
+    x = m_scrollBottomRect.x + ((m_scrollBottomRect.GetWidth() - m_bmpDown.GetWidth()) / 2);
+    y = m_scrollBottomRect.y + ((m_scrollBottomRect.GetHeight() - m_bmpDown.GetHeight()) / 2);
+
+    wxBitmap bmp = CanScrollDown() ? m_bmpDownEnabled : m_bmpDown;
+    dc.DrawBitmap(bmp, x, y);
+}
+
+void wxCodeCompletionBox::DoDrawTopScrollButton(wxDC& dc)
+{
+    wxRect scrollRect = m_scrollArea;
+    scrollRect.Deflate(0, 2);
+    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
+
+    // Separate the scrollbar area into 2 big buttons: up and down
+    m_scrollTopRect = wxRect(scrollRect.GetTopLeft(), wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
+    wxPoint bottomRight;
+    bottomRight = m_scrollTopRect.GetBottomRight();
+    bottomRight.x += 1;
+
+    dc.SetPen(m_darkBorder);
+    dc.DrawLine(m_scrollTopRect.GetBottomLeft(), bottomRight);
+
+    // Draw the up arrow
+    wxCoord x, y;
+    x = m_scrollTopRect.x + ((m_scrollTopRect.GetWidth() - m_bmpUp.GetWidth()) / 2);
+    y = m_scrollTopRect.y + ((m_scrollTopRect.GetHeight() - m_bmpUp.GetHeight()) / 2);
+
+    wxBitmap bmp = CanScrollUp() ? m_bmpUpEnabled : m_bmpUp;
+    dc.DrawBitmap(bmp, x, y);
+}
+
+bool wxCodeCompletionBox::CanScrollDown() { return ((m_index + 1) < (int)m_entries.size()); }
+
+bool wxCodeCompletionBox::CanScrollUp() { return ((m_index - 1) >= 0); }

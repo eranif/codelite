@@ -12,6 +12,7 @@
 #include <wx/font.h>
 #include "entry.h"
 #include <wx/event.h>
+#include <wx/bitmap.h>
 
 class CCBoxTipWindow;
 class wxCodeCompletionBox;
@@ -53,6 +54,19 @@ protected:
     wxRect m_scrollArea;
     wxRect m_scrollTopRect;
     wxRect m_scrollBottomRect;
+    
+    /// Colours used by this class
+    wxColour m_lightBorder;
+    wxColour m_darkBorder;
+    wxColour m_bgColour;
+    wxColour m_textColour;
+    wxColour m_selection;
+    
+    /// Scrollbar bitmaps
+    wxBitmap m_bmpUp;
+    wxBitmap m_bmpDown;
+    wxBitmap m_bmpUpEnabled;
+    wxBitmap m_bmpDownEnabled;
     
 protected:
     void StcKeyDown(wxKeyEvent& event);
@@ -109,5 +123,9 @@ protected:
     void DoScrollDown();
     void DoScrollUp();
     void DoDestroy();
+    void DoDrawBottomScrollButton(wxDC& dc);
+    void DoDrawTopScrollButton(wxDC& dc);
+    bool CanScrollDown();
+    bool CanScrollUp();
 };
 #endif // WXCODECOMPLETIONBOX_H

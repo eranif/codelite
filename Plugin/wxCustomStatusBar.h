@@ -18,12 +18,13 @@ protected:
     wxColour m_textColour;
     wxColour m_textShadowColour;
     wxColour m_separatorColour;
+    wxString m_name;
 
 public:
     typedef wxSharedPtr<wxCustomStatusBarArt> Ptr_t;
 
 public:
-    wxCustomStatusBarArt();
+    wxCustomStatusBarArt(const wxString& name);
     virtual ~wxCustomStatusBarArt() {}
 
     void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
@@ -39,6 +40,8 @@ public:
     const wxColour& GetTextShadowColour() const { return m_textShadowColour; }
     void SetSeparatorColour(const wxColour& separatorColour) { this->m_separatorColour = separatorColour; }
     const wxColour& GetSeparatorColour() const { return m_separatorColour; }
+    void SetName(const wxString& name) { this->m_name = name; }
+    const wxString& GetName() const { return m_name; }
 };
 
 //================---------------
@@ -188,6 +191,7 @@ class WXDLLIMPEXP_SDK wxCustomStatusBar : public wxStatusBar
     wxCustomStatusBarArt::Ptr_t m_art;
     wxCustomStatusBarField::Vect_t m_fields;
     wxString m_text;
+    wxString m_lastArtNameUsedForPaint;
 
 protected:
     size_t DoGetFieldsWidth();
@@ -204,11 +208,18 @@ public:
      */
     void AnimationClicked(wxCustomStatusBarField* field);
 
+    void SetLastArtNameUsedForPaint(const wxString& lastArtNameUsedForPaint)
+    {
+        this->m_lastArtNameUsedForPaint = lastArtNameUsedForPaint;
+    }
+    const wxString& GetLastArtNameUsedForPaint() const { return m_lastArtNameUsedForPaint; }
+
 public:
     wxCustomStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = 0);
     virtual ~wxCustomStatusBar();
 
-    void SetArt(wxCustomStatusBarArt::Ptr_t art) { this->m_art = art; }
+    void SetArt(wxCustomStatusBarArt::Ptr_t art);
+
     wxCustomStatusBarArt::Ptr_t GetArt() { return m_art; }
 
     void AddField(wxCustomStatusBarField::Ptr_t field) { m_fields.push_back(field); }

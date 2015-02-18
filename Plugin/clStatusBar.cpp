@@ -20,6 +20,7 @@ class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 {
 public:
     clStatusBarArtNormal()
+        : wxCustomStatusBarArt("Light")
     {
         m_textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
         m_textShadowColour = DrawingUtils::GetPanelBgColour();
@@ -44,14 +45,14 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clStatusBar::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
-    
+
     wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(this, 300));
     AddField(messages);
 
     wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(
         this, wxXmlResource::Get()->LoadBitmap("build-animation-sprite"), wxHORIZONTAL, wxSize(80, 7)));
     AddField(buildAnimation);
-    
+
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 150));
     AddField(lineCol);
 
@@ -194,7 +195,7 @@ void clStatusBar::DoUpdateColour()
         wxColour bgColour = editor->GetSTC()->StyleGetBackground(0);
         if(DrawingUtils::IsDark(bgColour)) {
             // Using dark theme background
-            art.reset(new wxCustomStatusBarArt);
+            art.reset(new wxCustomStatusBarArt("Dark"));
             SetArt(art);
         } else {
             art.reset(new clStatusBarArtNormal);

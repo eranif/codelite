@@ -89,7 +89,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
         // Default behviour: remove the partial text from teh editor and replace it
         // with the selection
         int start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
-        int end = ctrl->WordEndPosition(ctrl->GetCurrentPos(), true);
+        int end = ctrl->GetCurrentPos();
         ctrl->SetSelection(start, end);
 
         wxString entryText = selection;

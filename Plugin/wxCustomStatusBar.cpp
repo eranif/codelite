@@ -10,7 +10,8 @@
 
 wxDEFINE_EVENT(wxEVT_STATUSBAR_CLICKED, clCommandEvent);
 
-wxCustomStatusBarArt::wxCustomStatusBarArt()
+wxCustomStatusBarArt::wxCustomStatusBarArt(const wxString& name)
+    : m_name(name)
 {
     m_penColour = wxColour(125, 125, 125);
     m_bgColour = wxColour(86, 86, 86);
@@ -53,7 +54,7 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
     // Center text
     wxCoord textY = (rect.GetHeight() - textSize.GetHeight()) / 2 + rect.y;
     wxCoord textX = (rect.GetWidth() - textSize.GetWidth()) / 2 + rect.x;
-    
+
     // draw border line
     art->DrawFieldSeparator(dc, rect);
 
@@ -68,38 +69,42 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
     if(m_rect != wxRect() && m_parent) {
         // valid rect
         wxCustomStatusBarArt::Ptr_t art = m_parent->GetArt();
-        wxBitmap bmp(m_rect.GetSize());
-        wxMemoryDC memDc;
-        memDc.SelectObject(bmp);
-        memDc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-        wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
-        
-        // Draw the field background
-        memDc.SetBrush(art->GetBgColour());
-        memDc.SetPen(art->GetBgColour());
-        memDc.DrawRectangle(rect);
-        
-         // Draw top separator line
-        wxPoint topLeft = rect.GetTopLeft();
-        wxPoint topRight = rect.GetTopRight();
-        memDc.SetPen(art->GetSeparatorColour());
-        memDc.DrawLine(topLeft, topRight);
+        if(art->GetName() == m_parent->GetLastArtNameUsedForPaint()) {
+            // Make sure we draw only when the "art" objects are in sync with the field
+            // and with the bar itself
+            wxBitmap bmp(m_rect.GetSize());
+            wxMemoryDC memDc;
+            memDc.SelectObject(bmp);
+            memDc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+            wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
 
-        // Draw the bottom separator using the pen colour
-        // this will give a "sink" look to the status bar
-        topLeft.y += 1;
-        topRight.y += 1;
-        memDc.SetPen(art->GetPenColour());
-        memDc.DrawLine(topLeft, topRight);
-        
-        // Render will override m_rect, we so keep a copy
-        wxRect origRect = m_rect;
-        Render(memDc, rect, art);
-        m_rect = origRect;
-        memDc.SelectObject(wxNullBitmap);
-        // bmp contains the field content, draw it
-        wxClientDC dc(m_parent);
-        dc.DrawBitmap(bmp, m_rect.GetTopLeft());
+            // Draw the field background
+            memDc.SetBrush(art->GetBgColour());
+            memDc.SetPen(art->GetBgColour());
+            memDc.DrawRectangle(rect);
+
+            // Draw top separator line
+            wxPoint topLeft = rect.GetTopLeft();
+            wxPoint topRight = rect.GetTopRight();
+            memDc.SetPen(art->GetSeparatorColour());
+            memDc.DrawLine(topLeft, topRight);
+
+            // Draw the bottom separator using the pen colour
+            // this will give a "sink" look to the status bar
+            topLeft.y += 1;
+            topRight.y += 1;
+            memDc.SetPen(art->GetPenColour());
+            memDc.DrawLine(topLeft, topRight);
+
+            // Render will override m_rect, we so keep a copy
+            wxRect origRect = m_rect;
+            Render(memDc, rect, art);
+            m_rect = origRect;
+            memDc.SelectObject(wxNullBitmap);
+            // bmp contains the field content, draw it
+            wxClientDC dc(m_parent);
+            dc.DrawBitmap(bmp, m_rect.GetTopLeft());
+        }
     }
 }
 
@@ -175,7 +180,7 @@ void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustom
 
 wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style)
     : wxStatusBar(parent, id, style)
-    , m_art(new wxCustomStatusBarArt)
+    , m_art(new wxCustomStatusBarArt("Dark"))
 {
     Bind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
@@ -195,7 +200,10 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
     wxRect rect = GetClientRect();
-
+    
+    // Remember which art name used for painting
+    SetLastArtNameUsedForPaint(m_art->GetName());
+    
     // Fill the background
     dc.SetBrush(m_art->GetBgColour());
     dc.SetPen(m_art->GetBgColour());
@@ -329,6 +337,12 @@ void wxCustomStatusBar::AnimationClicked(wxCustomStatusBarField* field)
             break;
         }
     }
+}
+
+void wxCustomStatusBar::SetArt(wxCustomStatusBarArt::Ptr_t art)
+{
+    this->m_art = art;
+    Refresh();
 }
 
 bool wxCustomStatusBarField::HitTest(const wxPoint& point) const { return m_rect.Contains(point); }

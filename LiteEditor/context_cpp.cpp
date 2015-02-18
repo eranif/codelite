@@ -116,7 +116,8 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort {
+struct SFileSort
+{
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -241,7 +242,8 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
     if(tips.size() > 0) {
 
         tooltip << tips[0];
-        for(size_t i = 1; i < tips.size(); i++) tooltip << wxT("\n") << tips[i];
+        for(size_t i = 1; i < tips.size(); i++)
+            tooltip << wxT("\n") << tips[i];
 
         // cancel any old calltip and display the new one
         rCtrl.DoCancelCalltip();
@@ -782,7 +784,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
                 entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), IsSource(fn.GetExt()) ? 0 : 1));
             }
         }
-        wxCodeCompletionBoxManager::Get().ShowCompletionBox(&GetCtrl(), entries, bitmaps);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(&GetCtrl(), entries, bitmaps, wxCodeCompletionBox::kNone);
     }
 }
 
@@ -2436,13 +2438,12 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
         cppWords = lexPtr->GetKeyWords(1);
 
     } else {
-        cppWords =
-            "abstract boolean break byte case catch char class "
-            "const continue debugger default delete do double else enum export extends "
-            "final finally float for function goto if implements import in instanceof "
-            "int interface long native new package private protected public "
-            "return short static super switch synchronized this throw throws "
-            "transient try typeof var void volatile while with";
+        cppWords = "abstract boolean break byte case catch char class "
+                   "const continue debugger default delete do double else enum export extends "
+                   "final finally float for function goto if implements import in instanceof "
+                   "int interface long native new package private protected public "
+                   "return short static super switch synchronized this throw throws "
+                   "transient try typeof var void volatile while with";
     }
 
     wxString s1(word);

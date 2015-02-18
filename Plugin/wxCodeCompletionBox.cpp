@@ -109,7 +109,9 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
         m_tipWindow->Hide();
         m_tipWindow->Destroy();
         m_tipWindow = NULL;
+        m_displayedTip.Clear();
     }
+
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBox::OnAppActivate, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBox::OnDismissBox, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBox::OnDismissBox, this);
@@ -270,12 +272,6 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
 void wxCodeCompletionBox::DoDisplayTipWindow()
 {
     // Display the tooltip
-    if(m_tipWindow) {
-        m_tipWindow->Hide();
-        m_tipWindow->Destroy();
-        m_tipWindow = NULL;
-    }
-
     if(m_index >= 0 && m_index < (int)m_entries.size()) {
         wxString docComment = m_entries.at(m_index)->GetComment();
         docComment.Trim().Trim(false);
@@ -284,11 +280,32 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
             docComment = m_entries.at(m_index)->m_tag->FormatComment();
         }
 
-        if(!docComment.IsEmpty()) {
+        if(!docComment.IsEmpty() && docComment != m_displayedTip) {
+            // destroy old tip window
+            if(m_tipWindow) {
+                m_displayedTip.Clear();
+                m_tipWindow->Hide();
+                m_tipWindow->Destroy();
+                m_tipWindow = NULL;
+            }
+            
+            // keep the old tip
+            m_displayedTip = docComment;
+            
+            // Construct a new tip window and display the tip
             m_tipWindow = new CCBoxTipWindow(GetParent(), docComment, 1, false);
             m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
+            
+            // restore focus to the editor
             m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
         }
+        
+    } else if(m_tipWindow) {
+        // Nothing to display, just destroy the old tooltip
+        m_displayedTip.Clear();
+        m_tipWindow->Hide();
+        m_tipWindow->Destroy();
+        m_tipWindow = NULL;
     }
 }
 
@@ -420,13 +437,13 @@ void wxCodeCompletionBox::FilterResults()
 
         } else if(entryText.StartsWith(word)) {
             startsWith.push_back(m_allEntries.at(i));
-            
+
         } else if(lcEntryText.StartsWith(lcFilter)) {
             startsWithI.push_back(m_allEntries.at(i));
 
         } else if(entryText.Contains(word)) {
             contains.push_back(m_allEntries.at(i));
-            
+
         } else if(lcEntryText.Contains(lcFilter)) {
             containsI.push_back(m_allEntries.at(i));
         }
@@ -534,8 +551,14 @@ void wxCodeCompletionBox::DoUpdateList()
 
     int curpos = m_stc->GetCurrentPos();
     if(m_entries.empty() || curpos < m_startPos) {
+        if(m_entries.empty() && m_flags & kRefreshOnKeyType) {
+            // Trigger a new CC box
+            wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
+            wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
+        }
         Hide();
         DoDestroy();
+
     } else {
         DoDisplayTipWindow();
         Refresh();

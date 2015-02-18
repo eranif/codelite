@@ -34,21 +34,25 @@ wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const TagEntryPtrVector_t& tags,
+                                                   size_t flags,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     if(tags.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    m_box->SetFlags(flags);
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxTags, ctrl, tags);
 }
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
+                                                   size_t flags,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     if(entries.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    m_box->SetFlags(flags);
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, ctrl, entries);
 }
 
@@ -62,12 +66,14 @@ void wxCodeCompletionBoxManager::WindowDestroyed(wxWindow* window)
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
                                                    const wxCodeCompletionBox::BmpVec_t& bitmaps,
+                                                   size_t flags,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     if(entries.empty()) return;
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);
+    m_box->SetFlags(flags);
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, ctrl, entries);
 }
 

@@ -171,14 +171,15 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
             wxCodeCompletionBoxEntry::Vec_t ccEntries;
             wxCodeCompletionBox::BmpVec_t bitmaps;
             bitmaps.push_back(bmp);
-            
+
             // search for the old item
             const JSONElement::wxStringMap_t& entries = jsonData.GetEntries();
             JSONElement::wxStringMap_t::const_iterator iter = entries.begin();
             for(; iter != entries.end(); ++iter) {
                 ccEntries.push_back(wxCodeCompletionBoxEntry::New(iter->first, 0));
             }
-            wxCodeCompletionBoxManager::Get().ShowCompletionBox(editor->GetSTC(), ccEntries, bitmaps, this);
+            wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+                editor->GetSTC(), ccEntries, bitmaps, wxCodeCompletionBox::kNone, this);
         }
     }
 }

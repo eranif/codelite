@@ -3545,7 +3545,9 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
     if(tags.empty()) {
         return;
     }
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(this, tags);
+    
+    // When using this method, use an automated refresh completion box
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(this, tags, wxCodeCompletionBox::kRefreshOnKeyType);
 }
 
 int LEditor::GetCurrLineHeight()

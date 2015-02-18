@@ -54,7 +54,7 @@
 #include "clInitializeDialog.h"
 #include "event_notifier.h"
 
-#define __PERFORMANCE
+//#define __PERFORMANCE
 #include "performance.h"
 
 //////////////////////////////////////////////

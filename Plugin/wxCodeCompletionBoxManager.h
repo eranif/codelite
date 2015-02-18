@@ -20,35 +20,59 @@ protected:
     void WindowDestroyed(wxWindow* window);
     void DestroyCurrent();
     void InsertSelection(const wxString& selection);
-    
+
     // Handle the current editor events
     void OnStcModified(wxStyledTextEvent& event);
     void OnStcCharAdded(wxStyledTextEvent& event);
-    
+
     void DoShowCCBoxTags(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags);
     void DoShowCCBoxEntries(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries);
-    
+
 public:
     static wxCodeCompletionBoxManager& Get();
 
     /**
      * @brief show the completion box
+     * @param ctrl the wxSTC control requesting the completion box
+     * @param entries list of entries to display
+     * @param flags code completion box options. See wxCodeCompletionBox::eOptions
+     * for possible values
+     * @param eventObject all events fired by the cc box will have eventObject
+     * as the event object (wxEvent::GetEventObject())
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl,
                            const wxCodeCompletionBoxEntry::Vec_t& entries,
+                           size_t flags,
                            wxEvtHandler* eventObject = NULL);
     /**
      * @brief show the completion box
+     * @param ctrl the wxSTC control requesting the completion box
+     * @param entries list of entries to display
+     * @param bitmaps alternative bitmap list to use
+     * @param flags code completion box options. See wxCodeCompletionBox::eOptions
+     * for possible values
+     * @param eventObject all events fired by the cc box will have eventObject
+     * as the event object (wxEvent::GetEventObject())
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl,
                            const wxCodeCompletionBoxEntry::Vec_t& entries,
                            const wxCodeCompletionBox::BmpVec_t& bitmaps,
+                           size_t flags,
                            wxEvtHandler* eventObject = NULL);
 
     /**
      * @brief show the completion box
+     * @param ctrl the wxSTC control requesting the completion box
+     * @param tags list of entries to display
+     * @param flags code completion box options. See wxCodeCompletionBox::eOptions
+     * for possible values
+     * @param eventObject all events fired by the cc box will have eventObject
+     * as the event object (wxEvent::GetEventObject())
      */
-    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags, wxEvtHandler* eventObject = NULL);
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                           const TagEntryPtrVector_t& tags,
+                           size_t flags,
+                           wxEvtHandler* eventObject = NULL);
 
     /**
      * @brief do we have a completion box shown?

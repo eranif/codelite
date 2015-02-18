@@ -116,12 +116,13 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
     wxCodeCompletionBoxEntry::Vec_t entries;
     wxCodeCompletionBox::BmpVec_t bitmaps;
     bitmaps.push_back(m_images.Bitmap("m_bmpWord"));
-    
+
     for(wxStringSet_t::iterator iter = reply.suggest.begin(); iter != reply.suggest.end(); ++iter) {
-        entries.push_back( wxCodeCompletionBoxEntry::New(*iter, 0));
+        entries.push_back(wxCodeCompletionBoxEntry::New(*iter, 0));
     }
-    
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(activeEditor->GetSTC(), entries, bitmaps);
+
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        activeEditor->GetSTC(), entries, bitmaps, wxCodeCompletionBox::kNone);
 }
 
 void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
@@ -150,7 +151,7 @@ void WordCompletionPlugin::OnSettings(wxCommandEvent& event)
     dlg.ShowModal();
 }
 
-//void WordCompletionPlugin::OnEditorHandler(clCommandEvent& event)
+// void WordCompletionPlugin::OnEditorHandler(clCommandEvent& event)
 //{
 //    event.Skip();
 //    wxStyledTextCtrl* editor = reinterpret_cast<wxStyledTextCtrl*>(event.GetEventObject());

@@ -28,7 +28,8 @@
 
 ///////////////////////////////////////////////////////////////////
 
-struct PHPCCUserData : public wxClientData {
+struct PHPCCUserData : public wxClientData
+{
     PHPEntityBase::Ptr_t entry;
     PHPCCUserData(PHPEntityBase::Ptr_t e)
         : entry(e)
@@ -37,14 +38,16 @@ struct PHPCCUserData : public wxClientData {
 };
 
 /// Ascending sorting function
-struct _SDescendingSort {
+struct _SDescendingSort
+{
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rStart->GetName().Cmp(rEnd->GetName()) > 0;
     }
 };
 
-struct _SAscendingSort {
+struct _SAscendingSort
+{
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rEnd->GetName().Cmp(rStart->GetName()) > 0;
@@ -160,17 +163,18 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
 
         PHPEntityBase::Ptr_t ns = expr->GetSourceFile()->Namespace(); // the namespace at the source file
         TagEntryPtr t = DoPHPEntityToTagEntry(entry);
-        
+
         tags.push_back(t);
     }
 
     std::sort(tags.begin(), tags.end(), _SAscendingSort());
-    for(size_t i=0; i<tags.size(); ++i) {
-        wxCodeCompletionBoxEntry::Ptr_t ccEntry =  wxCodeCompletionBox::TagToEntry(tags.at(i));
+    for(size_t i = 0; i < tags.size(); ++i) {
+        wxCodeCompletionBoxEntry::Ptr_t ccEntry = wxCodeCompletionBox::TagToEntry(tags.at(i));
         ccEntry->SetComment(tags.at(i)->GetComment());
         ccEntries.push_back(ccEntry);
     }
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_manager->GetActiveEditor()->GetSTC(), ccEntries);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        m_manager->GetActiveEditor()->GetSTC(), ccEntries, wxCodeCompletionBox::kNone);
 }
 
 void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }
@@ -191,7 +195,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
     t->SetName(name);
     t->SetParent(entry->Parent() ? entry->Parent()->GetFullName() : "");
     t->SetPattern(t->GetName());
-    
+
     // Set the document comment
     wxString comment, docComment;
     docComment = entry->GetDocComment();

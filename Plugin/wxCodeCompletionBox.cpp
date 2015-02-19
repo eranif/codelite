@@ -351,6 +351,7 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
     case WXK_ALT:
     case WXK_WINDOWS_LEFT:
     case WXK_WINDOWS_RIGHT:
+    case WXK_CONTROL:
         DoDestroy();
         break;
     case WXK_TAB:

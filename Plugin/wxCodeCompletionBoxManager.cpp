@@ -13,7 +13,10 @@
 struct wxCodeCompletionClientData : public wxClientData
 {
     bool m_connected;
-    wxCodeCompletionClientData() : m_connected(false) {}
+    wxCodeCompletionClientData()
+        : m_connected(false)
+    {
+    }
     virtual ~wxCodeCompletionClientData() {}
 };
 
@@ -25,7 +28,7 @@ wxCodeCompletionBoxManager::wxCodeCompletionBoxManager()
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBoxManager::OnDismissBox, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
-    
+
     wxTheApp->Bind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
     wxTheApp->Bind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBoxManager::OnAppActivate, this);
@@ -37,13 +40,13 @@ wxCodeCompletionBoxManager::~wxCodeCompletionBoxManager()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBoxManager::OnDismissBox, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSING, &wxCodeCompletionBoxManager::OnDismissBox, this);
-    
+
     wxTheApp->Unbind(wxEVT_STC_MODIFIED, &wxCodeCompletionBoxManager::OnStcModified, this);
     wxTheApp->Unbind(wxEVT_STC_CHARADDED, &wxCodeCompletionBoxManager::OnStcCharAdded, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBoxManager::OnAppActivate, this);
 }
 
-static wxCodeCompletionBoxManager *manager = NULL;
+static wxCodeCompletionBoxManager* manager = NULL;
 wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 {
     if(!manager) {
@@ -231,15 +234,17 @@ void wxCodeCompletionBoxManager::Free()
 
 void wxCodeCompletionBoxManager::DoConnectStcEventHandlers(wxStyledTextCtrl* ctrl)
 {
-    // Connect the event handlers only once. We ensure that we do that only once by attaching
-    // a client data to the stc control with a single member "m_connected"
-    wxCodeCompletionClientData* cd = dynamic_cast<wxCodeCompletionClientData*>(ctrl->GetClientObject());
-    if(cd && cd->m_connected) {
-        return;
+    if(ctrl) {
+        // Connect the event handlers only once. We ensure that we do that only once by attaching
+        // a client data to the stc control with a single member "m_connected"
+        wxCodeCompletionClientData* cd = dynamic_cast<wxCodeCompletionClientData*>(ctrl->GetClientObject());
+        if(cd && cd->m_connected) {
+            return;
+        }
+        cd = new wxCodeCompletionClientData();
+        cd->m_connected = true;
+        ctrl->SetClientObject(cd);
+        ctrl->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
+        ctrl->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
     }
-    cd = new wxCodeCompletionClientData();
-    cd->m_connected = true;
-    ctrl->SetClientObject(cd);
-    ctrl->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
-    ctrl->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
 }

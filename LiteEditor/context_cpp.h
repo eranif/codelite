@@ -37,22 +37,24 @@ class RefactorSource;
 class ContextCpp : public ContextBase
 {
     std::map<wxString, int> m_propertyInt;
-    wxMenu *m_rclickMenu;
+    wxMenu* m_rclickMenu;
 
     static wxBitmap m_cppFileBmp;
     static wxBitmap m_hFileBmp;
+
 protected:
-    void OnShowCodeNavMenu(clCodeCompletionEvent &e);
+    void OnShowCodeNavMenu(clCodeCompletionEvent& e);
+    void OnCodeCompleteFiles(clCodeCompletionEvent& event);
 
 private:
-    bool TryOpenFile(const wxFileName &fileName, bool lookInEntireWorkspace = true);
+    bool TryOpenFile(const wxFileName& fileName, bool lookInEntireWorkspace = true);
     bool IsJavaScript() const;
 
-    void DisplayFilesCompletionBox(const wxString &word);
-    bool DoGetFunctionBody(long curPos, long &blockStartPos, long &blockEndPos, wxString &content);
+    void DisplayFilesCompletionBox(const wxString& word);
+    bool DoGetFunctionBody(long curPos, long& blockStartPos, long& blockEndPos, wxString& content);
     void Initialize();
     void DoCodeComplete(long pos);
-    void DoCreateFile(const wxFileName &fn);
+    void DoCreateFile(const wxFileName& fn);
     void DoUpdateCalltipHighlight();
 
 public:
@@ -67,22 +69,22 @@ public:
      * @return
      */
     virtual bool IsAtLineComment() const;
-    ContextCpp(LEditor *container);
+    ContextCpp(LEditor* container);
     virtual bool IsDefaultContext() const;
 
     virtual ~ContextCpp();
     ContextCpp();
-    virtual ContextBase *NewInstance(LEditor *container);
+    virtual ContextBase* NewInstance(LEditor* container);
     virtual void CompleteWord();
     virtual void CodeComplete(long pos = wxNOT_FOUND);
     virtual void GotoDefinition();
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
     virtual wxString GetCurrentScopeName();
     virtual void AutoIndent(const wxChar&);
-    virtual	bool IsCommentOrString(long pos);
-    virtual	bool IsComment(long pos);
-    virtual void AddMenuDynamicContent(wxMenu *menu);
-    virtual void RemoveMenuDynamicContent(wxMenu *menu);
+    virtual bool IsCommentOrString(long pos);
+    virtual bool IsComment(long pos);
+    virtual void AddMenuDynamicContent(wxMenu* menu);
+    virtual void RemoveMenuDynamicContent(wxMenu* menu);
     virtual void ApplySettings();
     virtual void RetagFile();
     virtual wxString CallTipContent();
@@ -90,68 +92,68 @@ public:
     virtual void SemicolonShift();
 
     // ctrl-click style navigation support
-    virtual int GetHyperlinkRange(int pos, int &start, int &end);
+    virtual int GetHyperlinkRange(int pos, int& start, int& end);
     virtual void GoHyperlink(int start, int end, int type, bool alt);
 
-    //override swapfiles features
-    virtual void SwapFiles(const wxFileName &fileName);
+    // override swapfiles features
+    virtual void SwapFiles(const wxFileName& fileName);
 
-    //Event handlers
-    virtual void OnDwellEnd(wxStyledTextEvent &event);
-    virtual void OnDwellStart(wxStyledTextEvent &event);
-    virtual void OnDbgDwellEnd(wxStyledTextEvent &event);
-    virtual void OnDbgDwellStart(wxStyledTextEvent &event);
-    virtual void OnSciUpdateUI(wxStyledTextEvent &event);
+    // Event handlers
+    virtual void OnDwellEnd(wxStyledTextEvent& event);
+    virtual void OnDwellStart(wxStyledTextEvent& event);
+    virtual void OnDbgDwellEnd(wxStyledTextEvent& event);
+    virtual void OnDbgDwellStart(wxStyledTextEvent& event);
+    virtual void OnSciUpdateUI(wxStyledTextEvent& event);
     virtual void OnFileSaved();
     virtual void AutoAddComment();
 
-    //Capture menu events
-    //return this context specific right click menu
-    virtual wxMenu *GetMenu() ;
-    virtual void OnSwapFiles(wxCommandEvent &event);
-    virtual void OnInsertDoxyComment(wxCommandEvent &event);
-    virtual void OnCommentSelection(wxCommandEvent &event);
-    virtual void OnCommentLine(wxCommandEvent &event);
-    virtual void OnGenerateSettersGetters(wxCommandEvent &event);
-    virtual void OnFindImpl(wxCommandEvent &event);
-    virtual void OnFindDecl(wxCommandEvent &event);
-    virtual void OnGotoFunctionStart(wxCommandEvent &event);
+    // Capture menu events
+    // return this context specific right click menu
+    virtual wxMenu* GetMenu();
+    virtual void OnSwapFiles(wxCommandEvent& event);
+    virtual void OnInsertDoxyComment(wxCommandEvent& event);
+    virtual void OnCommentSelection(wxCommandEvent& event);
+    virtual void OnCommentLine(wxCommandEvent& event);
+    virtual void OnGenerateSettersGetters(wxCommandEvent& event);
+    virtual void OnFindImpl(wxCommandEvent& event);
+    virtual void OnFindDecl(wxCommandEvent& event);
+    virtual void OnGotoFunctionStart(wxCommandEvent& event);
     virtual void OnGotoNextFunction(wxCommandEvent& event);
-    virtual void OnKeyDown(wxKeyEvent &event);
-    virtual void OnUpdateUI(wxUpdateUIEvent &event);
-    virtual void OnContextOpenDocument(wxCommandEvent &event);
-    virtual void OnAddIncludeFile(wxCommandEvent &e);
-    virtual void OnAddForwardDecl(wxCommandEvent &e);
-    virtual void OnMoveImpl(wxCommandEvent &e);
-    virtual void OnAddImpl(wxCommandEvent &e);
-    virtual void OnAddMultiImpl(wxCommandEvent &e);
-    virtual void OnOverrideParentVritualFunctions(wxCommandEvent &e);
-    virtual void OnRenameGlobalSymbol(wxCommandEvent &e);
-    virtual void OnRenameLocalSymbol (wxCommandEvent &e);
-    virtual void OnFindReferences (wxCommandEvent &e);
-    virtual void OnSyncSignatures(wxCommandEvent &e);
-    virtual void OnRetagFile(wxCommandEvent &e);
-    virtual void OnUserTypedXChars(const wxString &word);
-    virtual void OnCallTipClick(wxStyledTextEvent &e);
+    virtual void OnKeyDown(wxKeyEvent& event);
+    virtual void OnUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnContextOpenDocument(wxCommandEvent& event);
+    virtual void OnAddIncludeFile(wxCommandEvent& e);
+    virtual void OnAddForwardDecl(wxCommandEvent& e);
+    virtual void OnMoveImpl(wxCommandEvent& e);
+    virtual void OnAddImpl(wxCommandEvent& e);
+    virtual void OnAddMultiImpl(wxCommandEvent& e);
+    virtual void OnOverrideParentVritualFunctions(wxCommandEvent& e);
+    virtual void OnRenameGlobalSymbol(wxCommandEvent& e);
+    virtual void OnRenameLocalSymbol(wxCommandEvent& e);
+    virtual void OnFindReferences(wxCommandEvent& e);
+    virtual void OnSyncSignatures(wxCommandEvent& e);
+    virtual void OnRetagFile(wxCommandEvent& e);
+    virtual void OnUserTypedXChars(const wxString& word);
+    virtual void OnCallTipClick(wxStyledTextEvent& e);
     virtual void OnCalltipCancel();
     DECLARE_EVENT_TABLE()
 
 private:
-    wxString      GetWordUnderCaret();
-    wxString      GetFileImageString(const wxString &ext);
-    wxString      GetImageString(const TagEntry &entry);
-    wxString      GetExpression(long pos, bool onlyWord, LEditor *editor = NULL, bool forCC = true);
-    void          DoGotoSymbol(TagEntryPtr tag);
-    bool          IsIncludeStatement(const wxString &line, wxString *fileName = NULL, wxString *fileNameUpToCaret = NULL);
-    void          RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
-    int           FindLineToAddInclude();
-    void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
-    void          DoOpenWorkspaceFile();
-    void          DoSetProjectPaths();
-    bool          DoGetSingatureRange(int line, int &start, int &end, LEditor *ctrl);
+    wxString GetWordUnderCaret();
+    wxString GetFileImageString(const wxString& ext);
+    wxString GetImageString(const TagEntry& entry);
+    wxString GetExpression(long pos, bool onlyWord, LEditor* editor = NULL, bool forCC = true);
+    void DoGotoSymbol(TagEntryPtr tag);
+    bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
+    void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
+    int FindLineToAddInclude();
+    void MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags);
+    void DoOpenWorkspaceFile();
+    void DoSetProjectPaths();
+    bool DoGetSingatureRange(int line, int& start, int& end, LEditor* ctrl);
 
 public:
-    void          DoMakeDoxyCommentString(DoxygenComment &dc);
+    void DoMakeDoxyCommentString(DoxygenComment& dc);
 
 private:
     /**
@@ -161,21 +163,21 @@ private:
      * \param lhs output
      * \return true if such sibling file exist, false otherwise
      */
-    bool FindSwappedFile(const wxFileName &rhs, wxString &lhs);
+    bool FindSwappedFile(const wxFileName& rhs, wxString& lhs);
 
     /**
      * \brief replace list of tokens representd by li with 'word'
      * \param li
      * \return
      */
-    void ReplaceInFiles(const wxString &word, const std::list<CppToken> &li);
+    void ReplaceInFiles(const wxString& word, const std::list<CppToken>& li);
 
     /**
      * @brief format editor
      * @param editor
      */
-    void DoFormatEditor(LEditor *editor);
-    
+    void DoFormatEditor(LEditor* editor);
+
     /**
      * @brief return position of the first C++ comment style on a line
      * the line number is calculated from the 'from' value

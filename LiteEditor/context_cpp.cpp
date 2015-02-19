@@ -170,6 +170,7 @@ ContextCpp::ContextCpp(LEditor* container)
     SetName("c++");
     EventNotifier::Get()->Connect(
         wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
 }
 
 ContextCpp::ContextCpp()
@@ -178,6 +179,7 @@ ContextCpp::ContextCpp()
 {
     EventNotifier::Get()->Connect(
         wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
 }
 
 ContextCpp::~ContextCpp()
@@ -784,7 +786,8 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
                 entries.push_back(wxCodeCompletionBoxEntry::New(files.Item(i), IsSource(fn.GetExt()) ? 0 : 1));
             }
         }
-        wxCodeCompletionBoxManager::Get().ShowCompletionBox(&GetCtrl(), entries, bitmaps, wxCodeCompletionBox::kNone);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+            &GetCtrl(), entries, bitmaps, wxCodeCompletionBox::kNone, this);
     }
 }
 
@@ -3175,4 +3178,32 @@ wxMenu* ContextCpp::GetMenu()
         menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
     }
     return menu;
+}
+
+void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event) 
+{
+    if(event.GetEventObject() == this) {
+        const wxString& selection = event.GetWord();
+        wxString origWordChars = GetCtrl().GetWordChars();
+        // for proper string selection, we want to replace all the #include statement 
+        // including any / and . 
+        // to do that, we temporary replace the word-chars of the wxSTC control to include
+        // these chars, perform the selection and then restore the word chars
+        wxString newWordChars = origWordChars;
+        newWordChars << "./";
+        GetCtrl().SetWordChars(newWordChars);
+        int startPos = GetCtrl().WordStartPos(GetCtrl().GetCurrentPos(), true);
+        int endPos = GetCtrl().GetCurrentPos();
+        GetCtrl().SetSelection(startPos, endPos);
+        GetCtrl().ReplaceSelection(selection);
+        GetCtrl().SetCaretAt(startPos + selection.Len());
+        GetCtrl().CallAfter(&wxStyledTextCtrl::SetFocus);
+        
+        // Restore the original word chars
+        GetCtrl().SetWordChars(origWordChars);
+        
+    } else {
+        // not ours
+        event.Skip();
+    }
 }

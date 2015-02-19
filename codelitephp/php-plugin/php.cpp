@@ -38,6 +38,7 @@
 #include "bookmark_manager.h"
 #include "NewPHPProjectWizard.h"
 #include "PHPXDebugSetupWizard.h"
+#include "globals.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -149,7 +150,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     EventNotifier::Get()->Connect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
-    
+    EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
     CallAfter(&PhpPlugin::FinalizeStartup);
 
     // Extract all CC files from PHP.zip into the folder ~/.codelite/php-plugin/cc
@@ -270,6 +271,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PhpPlugin::OnDebugEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
+    EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
     
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
@@ -283,7 +285,7 @@ void PhpPlugin::UnPlug()
 
     // Close any open workspace
     if(PHPWorkspace::Get()->IsOpen()) {
-        PHPWorkspace::Get()->Close();
+        PHPWorkspace::Get()->Close(true, false);
         m_workspaceView->UnLoadWorkspace();
     }
 
@@ -348,7 +350,7 @@ void PhpPlugin::OnCloseWorkspace(clCommandEvent& e)
     if(PHPWorkspace::Get()->IsOpen()) {
 
         m_mgr->EnableClangCodeCompletion(m_clangOldFlag);
-        PHPWorkspace::Get()->Close();
+        PHPWorkspace::Get()->Close(true, true);
         m_workspaceView->UnLoadWorkspace();
 
         // notify codelite to close the currently opened workspace
@@ -394,7 +396,7 @@ void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
 
     // Check if this is a PHP workspace
     if(PHPWorkspace::Get()->IsOpen()) {
-        PHPWorkspace::Get()->Close();
+        PHPWorkspace::Get()->Close(true, true);
     }
     DoOpenWorkspace(workspaceFile.GetFullPath());
 }
@@ -851,14 +853,6 @@ void PhpPlugin::FinalizeStartup()
 void PhpPlugin::OnGoingDown(clCommandEvent& event)
 {
     event.Skip();
-    // Close the workspace. We do this here so have a chance to save the current session properly
-    //  before we exit
-    if(PHPWorkspace::Get()->IsOpen()) {
-        PHPWorkspace::Get()->Close();
-        if(m_workspaceView) {
-            m_workspaceView->UnLoadWorkspace();
-        }
-    }
 }
 
 void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString& filename)
@@ -907,5 +901,15 @@ void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
     if(PHPWorkspace::Get()->IsOpen()) {
         PHPWorkspace::Get()->SyncWithFileSystem();
         m_workspaceView->ReloadWorkspace(true);
+    }
+}
+
+void PhpPlugin::OnSaveSession(clCommandEvent& event)
+{
+    if(PHPWorkspace::Get()->IsOpen()) {
+        // CodeLite requires us to store the session, do it
+        m_mgr->StoreWorkspaceSession(PHPWorkspace::Get()->GetFilename());
+    } else {
+        event.Skip();
     }
 }

@@ -924,7 +924,7 @@ void PHPWorkspaceView::DoOpenSSHAccountManager()
 void PHPWorkspaceView::ReloadWorkspace(bool saveBeforeReload)
 {
     wxFileName fnWorkspace = PHPWorkspace::Get()->GetFilename();
-    PHPWorkspace::Get()->Close(saveBeforeReload);
+    PHPWorkspace::Get()->Close(saveBeforeReload, true);
     PHPWorkspace::Get()->Open(fnWorkspace.GetFullPath());
     UnLoadWorkspace();
     LoadWorkspace();

@@ -46,12 +46,12 @@ void PHPWorkspace::Release()
     ms_instance = 0;
 }
 
-bool PHPWorkspace::Close(bool saveBeforeClose)
+bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
 {
     SendCmdEvent(wxEVT_WORKSPACE_CLOSING);
     
     if(IsOpen()) {
-        if(m_manager) {
+        if(m_manager && saveSession) {
             m_manager->StoreWorkspaceSession(m_workspaceFile);
         }
         if(saveBeforeClose) {
@@ -78,7 +78,7 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
 {
     // Close the currently opened workspace
     if(IsOpen()) {
-        Close();
+        Close(true, true);
     }
 
     m_workspaceFile = filename;

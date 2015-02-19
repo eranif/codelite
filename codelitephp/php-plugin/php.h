@@ -31,7 +31,7 @@ protected:
     EvalPane* m_xdebugEvalPane;
     bool m_showWelcomePage;
     PHPLint::Ptr_t m_lint;
-    
+
 public:
     enum {
         wxID_PHP_SETTINGS = 2000,
@@ -47,8 +47,8 @@ public:
     void SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name);
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();
-    void PhpLintDone(const wxString &lintOutput, const wxString &filename);
-    
+    void PhpLintDone(const wxString& lintOutput, const wxString& filename);
+
     PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
 
 protected:
@@ -67,12 +67,12 @@ public:
     virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
     void RunXDebugDiagnostics();
-    
+
     IManager* GetManager() { return m_mgr; }
     // Event handlers
-    
+
     void SetEditorActive(IEditor* editor);
-    
+
     //////////////////////////////////////////////
     // Code completion related events
     //////////////////////////////////////////////
@@ -105,7 +105,8 @@ public:
     void OnGoingDown(clCommandEvent& event);
     void OnDebugStarted(XDebugEvent& e);
     void OnDebugEnded(XDebugEvent& e);
-    void OnFileSysetmUpdated(clFileSystemEvent &event);
+    void OnFileSysetmUpdated(clFileSystemEvent& event);
+    void OnSaveSession(clCommandEvent& event);
 };
 
 #endif // PHP

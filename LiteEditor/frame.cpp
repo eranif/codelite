@@ -894,7 +894,7 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(
         wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     wxDELETE(m_timer);
-    
+
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
     ManagerST::Get()->GetPerspectiveManager().DisconnectEvents();
@@ -1015,7 +1015,7 @@ void clMainFrame::CreateGUIControls(void)
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
     EnableFullScreenView();
 #endif
-    
+
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(this);
     m_mgr.SetArtProvider(new clAuiDockArt(PluginManager::Get()));
@@ -1047,11 +1047,11 @@ void clMainFrame::CreateGUIControls(void)
     m_myMenuBar = new MyMenuBar();
     m_myMenuBar->Set(mb);
     SetMenuBar(mb);
-    
+
     // Create the status bar
     m_statusBar = new clStatusBar(this, PluginManager::Get());
     SetStatusBar(m_statusBar);
-    
+
     // Set up dynamic parts of menu.
     CreateRecentlyOpenedWorkspacesMenu();
     DoUpdatePerspectiveMenu();
@@ -1139,13 +1139,13 @@ void clMainFrame::CreateGUIControls(void)
 
     clConfig ccConfig("code-completion.conf");
     ccConfig.ReadItem(&m_tagsOptionsData);
-    
+
     // If the cc options value has changed, construct a new instance
     // with default values and call the "Merge" method
     TagsOptionsData tmp;
     m_tagsOptionsData.Merge(tmp);
     ccConfig.WriteItem(&m_tagsOptionsData);
-    
+
     TagsManager* tagsManager = TagsManagerST::Get();
 
     // start ctags process
@@ -2309,7 +2309,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
         event.Skip(false);
         return;
     }
-    
+
     event.Skip();
     wxString msg;
     ManagerST::Get()->SetShutdownInProgress(true);
@@ -5053,23 +5053,29 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
 bool clMainFrame::SaveLayoutAndSession()
 {
     // save the current session before closing
-    // We do this before 'CloseAll' so the session will 
+    // We do this before 'CloseAll' so the session will
     // store the list of tabs
-    if(ManagerST::Get()->IsWorkspaceOpen()) {
-        wxString sessionName = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
-        SessionEntry session;
-        session.SetWorkspaceName(sessionName);
-        GetMainBook()->SaveSession(session);
-        ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
-        SessionManager::Get().Save(sessionName, session);
-        SessionManager::Get().SetLastWorkspaceName(sessionName);
+
+    // Let the plugin process this first
+    clCommandEvent eventSaveSession(wxEVT_SAVE_SESSION_NEEDED);
+    if(!EventNotifier::Get()->ProcessEvent(eventSaveSession)) {
+        // Do the default session store
+        if(ManagerST::Get()->IsWorkspaceOpen()) {
+            wxString sessionName = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
+            SessionEntry session;
+            session.SetWorkspaceName(sessionName);
+            GetMainBook()->SaveSession(session);
+            ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
+            SessionManager::Get().Save(sessionName, session);
+            SessionManager::Get().SetLastWorkspaceName(sessionName);
+        }
     }
-    
+
     // make sure there are no 'unsaved documents'
     if(!GetMainBook()->CloseAll(true)) {
         return false;
     }
-    
+
     // save general information
     if(IsMaximized()) {
         m_frameGeneralInfo.SetFrameSize(wxSize(800, 600));
@@ -5589,15 +5595,9 @@ void clMainFrame::OnGrepWordUI(wxUpdateUIEvent& e)
     e.Enable(editor && !editor->GetSelectedText().IsEmpty());
 }
 
-void clMainFrame::OnPchCacheEnded(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void clMainFrame::OnPchCacheEnded(wxCommandEvent& e) { e.Skip(); }
 
-void clMainFrame::OnPchCacheStarted(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void clMainFrame::OnPchCacheStarted(wxCommandEvent& e) { e.Skip(); }
 
 ////////////////// View -> Workspace View -> /////////////////////////////////////
 

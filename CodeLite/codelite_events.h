@@ -694,4 +694,11 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_INITIALIZING, clCommandEve
 // after git pull, svn update etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SYSTEM_UPDATED, clFileSystemEvent);
 
+// Event: clCommandEvent
+// Sent when CodeLite requires to store the current workspace session
+// Call event.Skip(false) to instruct codelite to skip the default session-save
+// action (this is useful if the session is managed by an external plugin)
+// A good example for this is the PHP plugin which manages its own session
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SAVE_SESSION_NEEDED, clCommandEvent);
+
 #endif // CODELITE_EVENTS_H

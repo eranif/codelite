@@ -93,7 +93,7 @@ public:
     /**
      * @brief close the currently opened workspace
      */
-    bool Close(bool saveBeforeClose = false);
+    bool Close(bool saveBeforeClose, bool saveSession);
 
     /**
      * @brief open a workspace

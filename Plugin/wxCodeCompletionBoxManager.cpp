@@ -10,6 +10,13 @@
 #include <wx/app.h>
 #include "event_notifier.h"
 
+struct wxCodeCompletionClientData : public wxClientData
+{
+    bool m_connected;
+    wxCodeCompletionClientData() : m_connected(false) {}
+    virtual ~wxCodeCompletionClientData() {}
+};
+
 wxCodeCompletionBoxManager::wxCodeCompletionBoxManager()
     : m_box(NULL)
     , m_stc(NULL)
@@ -171,8 +178,7 @@ void wxCodeCompletionBoxManager::DoShowCCBoxEntries(const wxCodeCompletionBoxEnt
 {
     if(m_box && m_stc) {
         m_box->ShowCompletionBox(m_stc, entries);
-        m_stc->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
-        m_stc->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
+        DoConnectStcEventHandlers(m_stc);
     }
 }
 
@@ -180,8 +186,7 @@ void wxCodeCompletionBoxManager::DoShowCCBoxTags(const TagEntryPtrVector_t& tags
 {
     if(m_box && m_stc) {
         m_box->ShowCompletionBox(m_stc, tags);
-        m_stc->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
-        m_stc->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
+        DoConnectStcEventHandlers(m_stc);
     }
 }
 
@@ -222,4 +227,19 @@ void wxCodeCompletionBoxManager::Free()
         delete manager;
         manager = NULL;
     }
+}
+
+void wxCodeCompletionBoxManager::DoConnectStcEventHandlers(wxStyledTextCtrl* ctrl)
+{
+    // Connect the event handlers only once. We ensure that we do that only once by attaching
+    // a client data to the stc control with a single member "m_connected"
+    wxCodeCompletionClientData* cd = dynamic_cast<wxCodeCompletionClientData*>(ctrl->GetClientObject());
+    if(cd && cd->m_connected) {
+        return;
+    }
+    cd = new wxCodeCompletionClientData();
+    cd->m_connected = true;
+    ctrl->SetClientObject(cd);
+    ctrl->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
+    ctrl->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
 }

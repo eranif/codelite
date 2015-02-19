@@ -33,7 +33,8 @@ protected:
     
     void DoShowCCBoxTags(const TagEntryPtrVector_t& tags);
     void DoShowCCBoxEntries(const wxCodeCompletionBoxEntry::Vec_t& entries);
-
+    void DoConnectStcEventHandlers(wxStyledTextCtrl* ctrl);
+    
 public:
     static wxCodeCompletionBoxManager& Get();
     

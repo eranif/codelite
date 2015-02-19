@@ -161,11 +161,14 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
     penColour = wxColour("rgb(102, 102, 102)");
     
 #else
-    wxColour baseColour = DrawingUtils::GetCaptionColour();
+    wxColour baseColour = DrawingUtils::GetPanelBgColour();
+#if 0
     if(DrawingUtils::IsDark(baseColour)) {
         baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
     penColour = baseColour.ChangeLightness(110);
+#endif
+	penColour = baseColour;
 #endif
 
     dc.SetPen(penColour);

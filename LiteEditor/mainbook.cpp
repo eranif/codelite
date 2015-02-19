@@ -42,6 +42,7 @@
 #include <wx/regex.h>
 #include "clAuiMainNotebookTabArt.h"
 #include "pluginmanager.h"
+#include <algorithm>
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -761,7 +762,15 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 void MainBook::ReloadExternallyModified(bool prompt)
 {
     if(m_isWorkspaceReloading) return;
-
+    static int depth = wxNOT_FOUND;
+    ++depth;
+    
+    // Protect against recursion
+    if(depth == 2) {
+        depth = wxNOT_FOUND;
+        return;
+    }
+    
     LEditor::Vec_t editors;
     GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
@@ -826,6 +835,26 @@ void MainBook::ReloadExternallyModified(bool prompt)
         return;
     }
 
+    // See issue: https://github.com/eranif/codelite/issues/663
+    LEditor::Vec_t editorsAgain;
+    GetAllEditors(editorsAgain, MainBook::kGetAll_IncludeDetached);
+
+    // Make sure that the tabs that we have opened
+    // are still available in the main book
+    LEditor::Vec_t realEditorsList;
+    std::set_intersection(
+        editorsAgain.begin(), editorsAgain.end(), editors.begin(), editors.end(), std::back_inserter(realEditorsList));
+    
+    // Update the "files" list
+    if(editors.size() != realEditorsList.size()) {
+        // something went wrong here... 
+        CallAfter(&MainBook::ReloadExternallyModified, prompt);
+        return;
+    }
+    
+    // reset the recursive protector
+    depth = wxNOT_FOUND;
+    
     std::vector<wxFileName> filesToRetag;
     for(size_t i = 0; i < files.size(); i++) {
         if(files[i].second) {

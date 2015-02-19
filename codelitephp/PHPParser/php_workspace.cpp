@@ -15,6 +15,7 @@
 #include <wx/msgdlg.h>
 #include "php_parser_thread.h"
 #include <wx/progdlg.h>
+#include "cl_command_event.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -213,8 +214,20 @@ void PHPWorkspace::DeleteProject(const wxString& project)
 void PHPWorkspace::SetProjectActive(const wxString& project)
 {
     PHPProject::Map_t::iterator iter = m_projects.begin();
+    PHPProject::Ptr_t activeProject;
     for(; iter != m_projects.end(); ++iter) {
+        if(iter->first == project) {
+            activeProject = iter->second;
+        }
         iter->second->SetIsActive(iter->first == project);
+    }
+    
+    // notify about this change
+    if(activeProject) {
+        clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
+        evt.SetProjectName(project);
+        evt.SetFileName(activeProject->GetFilename().GetFullPath());
+        EventNotifier::Get()->AddPendingEvent(evt);
     }
 }
 
@@ -313,6 +326,15 @@ void PHPWorkspace::FromJSON(const JSONElement& e)
             fnProject.MakeAbsolute(m_workspaceFile.GetPath());
             p->Load(fnProject);
             m_projects.insert(std::make_pair(p->GetName(), p));
+        }
+        
+        PHPProject::Ptr_t activeProject = GetActiveProject();
+        if(activeProject) {
+            // Notify about active project been set
+            clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
+            evt.SetProjectName(activeProject->GetName());
+            evt.SetFileName(activeProject->GetFilename().GetFullPath());
+            EventNotifier::Get()->AddPendingEvent(evt);
         }
     }
 }

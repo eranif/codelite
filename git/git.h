@@ -237,6 +237,8 @@ private:
     void OnRefresh(wxCommandEvent& e);
     void OnGarbageColletion(wxCommandEvent& e);
     void OnOpenMSYSGit(wxCommandEvent& e);
+    void OnActiveProjectChanged(clProjectSettingsEvent& event);
+    
 
 #if 0
     void OnBisectStart(wxCommandEvent& e);

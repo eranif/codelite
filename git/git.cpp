@@ -150,7 +150,9 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
-
+    
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
+    
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
@@ -519,7 +521,8 @@ void GitPlugin::UnPlug()
         wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
+    
     /*Context Menu*/
     m_eventHandler->Disconnect(XRCID("git_add_file"),
                                wxEVT_COMMAND_MENU_SELECTED,
@@ -558,8 +561,13 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
 {
     wxString dir = repoPath;
-    wxString workspaceName = GetWorkspaceName();
-    if(dir.IsEmpty()) {
+    
+    // Sanity
+    if(dir.IsEmpty() && !promptUser) {
+        return;
+    }
+    
+    if(dir.IsEmpty() && promptUser) {
         // use the current repository as the starting path
         // if current repository is empty, use the current workspace path
         wxString startPath = m_repositoryDirectory;
@@ -567,50 +575,38 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
             startPath = GetWorkspaceFileName().GetPath();
         }
 
-        dir = ::wxDirSelector(_("Select git root directory for this workspace"), startPath);
+        dir = ::wxDirSelector(_("Select git root directory"), startPath);
         if(dir.empty()) {
             return; // The user probably pressed Cancel
         }
     }
-
-    wxFileName fnDir(dir, "");
-    if(fnDir.GetDirs().Last() != ".git") {
-        fnDir.AppendDir(".git");
-    }
-
-    // Make sure that this is a valid git path
-    if(fnDir.DirExists()) {
-        fnDir.RemoveLastDir();
-        dir = fnDir.GetPath();
-
-        if(m_repositoryDirectory != dir) {
-            m_repositoryDirectory = dir;
-
-            if(!workspaceName.IsEmpty()) {
-                clConfig conf("git.conf");
-                GitEntry data;
-                conf.ReadItem(&data);
-                data.SetEntry(workspaceName, dir);
-                conf.WriteItem(&data);
+    
+    if(!dir.IsEmpty()) {
+        // we were given a path, scan the folder and its parent
+        // searching for .git folder, when we find one - its our git root
+        // folder
+        wxFileName fnDir(dir, "");
+        while(fnDir.GetDirCount()) {
+            wxFileName gitDotFolder(fnDir.GetPath(), "");
+            gitDotFolder.AppendDir(".git");
+            if(gitDotFolder.DirExists()) {
+                // a match
+                gitDotFolder.RemoveLastDir(); // Remove the .git folder
+                dir = gitDotFolder.GetPath();
+                break;
             }
-
-            if(!dir.IsEmpty()) {
-                AddDefaultActions();
-                ProcessGitActionQueue();
-
-            } else {
-                m_repositoryDirectory.Clear();
-            }
+            fnDir.RemoveLastDir();
         }
-    } else {
-        if(promptUser) {
-            wxMessageBox(
-                _("The selected directory does not contain a .git directory.\nAre you sure this is a git repository?"),
-                wxT("CodeLite"),
-                wxICON_WARNING | wxOK | wxCENTER,
-                m_topWindow);
+        
+        if(!fnDir.GetDirCount()) {
+            // scanned the entire folders, no match...
+            return;
         }
-        return;
+        
+        m_repositoryDirectory = dir;
+        GIT_MESSAGE("Git repo path is now set to '%s'", m_repositoryDirectory);
+        AddDefaultActions();
+        ProcessGitActionQueue();
     }
 }
 
@@ -1017,22 +1013,9 @@ void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
     DoCleanup();
     InitDefaults();
     RefreshFileListView();
-
-    // See if we have a saved user-set repo path; if so, use it
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-    wxString gitrepoPath = data.GetPath(GetWorkspaceName());
-    if(!gitrepoPath.empty()) {
-        DoSetRepoPath(gitrepoPath, false);
-    } else {
-        // Otherwise if we have a .git folder, set our repository to this path
-        wxFileName gitFolder(m_workspaceFilename.GetPath(), "");
-        gitFolder.AppendDir(".git");
-        if(gitFolder.DirExists()) {
-            DoSetRepoPath(gitFolder.GetPath(), false);
-        }
-    }
+    
+    // Try to set the repo to the workspace path
+    DoSetRepoPath(GetWorkspaceFileName().GetPath(), false);
 }
 
 /*******************************************************************************/
@@ -1985,10 +1968,7 @@ void GitPlugin::DoCleanup()
     m_progressMessage.Clear();
     m_commandOutput.Clear();
     m_bActionRequiresTreUpdate = false;
-    if(m_process) {
-        delete m_process;
-        m_process = NULL;
-    }
+    wxDELETE(m_process);
     m_mgr->GetDockingManager()->GetPane(wxT("Workspace View")).Caption(wxT("Workspace View"));
     m_mgr->GetDockingManager()->Update();
     m_filesSelected.Clear();
@@ -2571,4 +2551,11 @@ void GitPlugin::OnFolderGitBash(wxCommandEvent& event)
     } else {
         ::wxMessageBox(_("Don't know how to start MSYSGit..."), "Git", wxICON_WARNING | wxOK | wxCENTER);
     }
+}
+
+void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
+{
+    event.Skip();
+    wxFileName projectFile(event.GetFileName());
+    DoSetRepoPath(projectFile.GetPath(), false);
 }

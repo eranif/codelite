@@ -175,6 +175,15 @@ bool Workspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
 
     // Update the build matrix
     DoUpdateBuildMatrix();
+    
+    // Notify about active project changed
+    ProjectPtr activeProject = GetActiveProject();
+    if(activeProject) {
+        clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
+        evt.SetProjectName(activeProject->GetName());
+        evt.SetFileName(activeProject->GetFileName().GetFullPath());
+        EventNotifier::Get()->AddPendingEvent(evt);
+    }
     return true;
 }
 

@@ -206,7 +206,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     wxRect scrollRect = m_scrollArea;
     scrollRect.Deflate(0, 2);
     scrollRect.SetWidth(scrollRect.GetWidth() - 2);
-    dc.GradientFillLinear(scrollRect, scrollBgColourRight, scrollBgColourLeft);
+    dc.GradientFillLinear(scrollRect, scrollBgColourRight, scrollBgColourRight);
     DoDrawBottomScrollButton(dc);
     DoDrawTopScrollButton(dc);
 }
@@ -577,18 +577,19 @@ void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
     m_scrollBottomRect =
         wxRect(wxPoint(scrollRect.GetTopLeft().x, scrollRect.GetTopLeft().y + scrollRect.GetHeight() / 2),
                wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
-
+#if 0
     wxPoint topRight;
     topRight = m_scrollBottomRect.GetTopRight();
     topRight.x += 1;
 
     dc.SetPen(m_lightBorder);
     dc.DrawLine(m_scrollBottomRect.GetTopLeft(), topRight);
+#endif
 
     // Draw the up arrow
     wxCoord x, y;
     x = m_scrollBottomRect.x + ((m_scrollBottomRect.GetWidth() - m_bmpDown.GetWidth()) / 2);
-    y = m_scrollBottomRect.y + ((m_scrollBottomRect.GetHeight() - m_bmpDown.GetHeight()) / 2);
+    y = m_scrollBottomRect.y + m_scrollBottomRect.GetHeight() - (2 * m_bmpDown.GetHeight());
 
     wxBitmap bmp = CanScrollDown() ? m_bmpDownEnabled : m_bmpDown;
     dc.DrawBitmap(bmp, x, y);
@@ -602,17 +603,19 @@ void wxCodeCompletionBox::DoDrawTopScrollButton(wxDC& dc)
 
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollTopRect = wxRect(scrollRect.GetTopLeft(), wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
+#if 0
     wxPoint bottomRight;
     bottomRight = m_scrollTopRect.GetBottomRight();
     bottomRight.x += 1;
 
     dc.SetPen(m_darkBorder);
     dc.DrawLine(m_scrollTopRect.GetBottomLeft(), bottomRight);
+#endif
 
     // Draw the up arrow
     wxCoord x, y;
     x = m_scrollTopRect.x + ((m_scrollTopRect.GetWidth() - m_bmpUp.GetWidth()) / 2);
-    y = m_scrollTopRect.y + ((m_scrollTopRect.GetHeight() - m_bmpUp.GetHeight()) / 2);
+    y = m_scrollTopRect.y + m_bmpUp.GetHeight();
 
     wxBitmap bmp = CanScrollUp() ? m_bmpUpEnabled : m_bmpUp;
     dc.DrawBitmap(bmp, x, y);

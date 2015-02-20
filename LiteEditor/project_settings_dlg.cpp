@@ -188,7 +188,6 @@ void ProjectSettingsDlg::OnButtonApply(wxCommandEvent& event)
 
 void ProjectSettingsDlg::SaveValues()
 {
-
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
     BuildConfigPtr buildConf = projSettingsPtr->GetBuildConfiguration(m_configName);
     if(!buildConf) {

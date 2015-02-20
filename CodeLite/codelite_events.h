@@ -701,4 +701,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SYSTEM_UPDATED, clFileSystem
 // A good example for this is the PHP plugin which manages its own session
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SAVE_SESSION_NEEDED, clCommandEvent);
 
+// Event: clCommandEvent
+// User modified its environment variables
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, clCommandEvent);
+
 #endif // CODELITE_EVENTS_H

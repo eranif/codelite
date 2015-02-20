@@ -1887,3 +1887,8 @@ void Project::ProjectRenamed(const wxString& oldname, const wxString& newname)
         XmlUtils::UpdateProperty(m_doc.GetRoot(), "Name", newname);
     }
 }
+
+void Project::ClearBacktickCache()
+{
+    s_backticks.clear();
+}

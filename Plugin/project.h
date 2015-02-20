@@ -655,7 +655,12 @@ public:
      * that matches the current workspace configuration
      */
     BuildConfigPtr GetBuildConfiguration(const wxString& configName = "");
-
+    
+    /**
+     * @brief clear the backtick expansion info
+     */
+    static void ClearBacktickCache();
+    
 private:
     /**
      * @brief associate this project with a workspace

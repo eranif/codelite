@@ -73,6 +73,7 @@ protected:
     void OnFileLoaded(clCommandEvent& event);
     void OnWorkspaceConfig(wxCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnEnvironmentVariablesModified(clCommandEvent &event);
     
 public:
     CodeCompletionManager();

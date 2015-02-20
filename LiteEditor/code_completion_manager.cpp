@@ -58,7 +58,9 @@ struct EditorDimmerDisabler {
         }
     }
 
-    ~EditorDimmerDisabler() {}
+    ~EditorDimmerDisabler()
+    {
+    }
 };
 
 CodeCompletionManager::CodeCompletionManager()
@@ -85,6 +87,8 @@ CodeCompletionManager::CodeCompletionManager()
 
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &CodeCompletionManager::OnEnvironmentVariablesModified, this);
     // Start the worker threads
     m_preProcessorThread.Start();
     m_usingNamespaceThread.Start();
@@ -111,6 +115,8 @@ CodeCompletionManager::~CodeCompletionManager()
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &CodeCompletionManager::OnEnvironmentVariablesModified, this);
 }
 
 void CodeCompletionManager::WordCompletion(LEditor* editor, const wxString& expr, const wxString& word)
@@ -167,7 +173,8 @@ void CodeCompletionManager::DoClangWordCompletion(LEditor* editor)
 {
 #if HAS_LIBCLANG
     DoUpdateOptions();
-    if(GetOptions() & CC_CLANG_ENABLED) ClangCodeCompletion::Instance()->WordComplete(editor);
+    if(GetOptions() & CC_CLANG_ENABLED)
+        ClangCodeCompletion::Instance()->WordComplete(editor);
 #else
     wxUnusedVar(editor);
 #endif
@@ -193,7 +200,8 @@ void CodeCompletionManager::DoClangCalltip(LEditor* editor)
 {
 #if HAS_LIBCLANG
     DoUpdateOptions();
-    if(GetOptions() & CC_CLANG_ENABLED) ClangCodeCompletion::Instance()->Calltip(editor);
+    if(GetOptions() & CC_CLANG_ENABLED)
+        ClangCodeCompletion::Instance()->Calltip(editor);
 #else
     wxUnusedVar(editor);
 #endif
@@ -208,7 +216,8 @@ void CodeCompletionManager::Calltip(LEditor* editor,
     bool res(false);
     DoUpdateOptions();
 
-    if(::IsCppKeyword(word)) return;
+    if(::IsCppKeyword(word))
+        return;
 
     if(GetOptions() & CC_CTAGS_ENABLED) {
         res = DoCtagsCalltip(editor, line, expr, text, word);
@@ -276,7 +285,8 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 
     wxArrayString macros;
     wxArrayString includePaths;
-    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros)) return;
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
+        return;
 
     // Queue this request in the worker thread
     m_preProcessorThread.QueueFile(editor->GetFileName().GetFullPath(), macros, includePaths);
@@ -373,9 +383,15 @@ void CodeCompletionManager::DoUpdateCompilationDatabase()
     ClangCompilationDbThreadST::Get()->AddFile(db.GetFileName().GetFullPath());
 }
 
-void CodeCompletionManager::OnAppActivated(wxActivateEvent& e) { e.Skip(); }
+void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
+{
+    e.Skip();
+}
 
-void CodeCompletionManager::Release() { wxDELETE(ms_CodeCompletionManager); }
+void CodeCompletionManager::Release()
+{
+    wxDELETE(ms_CodeCompletionManager);
+}
 
 void CodeCompletionManager::OnBuildStarted(clBuildEvent& e)
 {
@@ -471,6 +487,7 @@ void CodeCompletionManager::RefreshPreProcessorColouring()
 void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
 {
     event.Skip();
+    Project::ClearBacktickCache();
     RefreshPreProcessorColouring();
 }
 
@@ -499,7 +516,8 @@ void CodeCompletionManager::ProcessUsingNamespace(LEditor* editor)
 
     wxArrayString macros;
     wxArrayString includePaths;
-    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros)) return;
+    if(!GetDefinitionsAndSearchPaths(editor, includePaths, macros))
+        return;
 
     wxUnusedVar(macros);
     // Queue this request in the worker thread
@@ -513,11 +531,14 @@ bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
     // Sanity
     CHECK_PTR_RET_FALSE(editor);
 
-    if(editor->GetProjectName().IsEmpty()) return false;
-    if(!WorkspaceST::Get()->IsOpen()) return false;
+    if(editor->GetProjectName().IsEmpty())
+        return false;
+    if(!WorkspaceST::Get()->IsOpen())
+        return false;
 
     // Support only C/C++ files
-    if(!FileExtManager::IsCxxFile(editor->GetFileName().GetFullName())) return false;
+    if(!FileExtManager::IsCxxFile(editor->GetFileName().GetFullName()))
+        return false;
 
     // Get the file's project and get the build configuration settings
     // for it
@@ -575,4 +596,12 @@ void CodeCompletionManager::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
     LanguageST::Get()->ClearAdditionalScopesCache();
+    Project::ClearBacktickCache();
+}
+
+void CodeCompletionManager::OnEnvironmentVariablesModified(clCommandEvent& event)
+{
+    event.Skip();
+    Project::ClearBacktickCache();
+    RefreshPreProcessorColouring();
 }

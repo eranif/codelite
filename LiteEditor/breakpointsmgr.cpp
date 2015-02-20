@@ -157,57 +157,51 @@ const BreakpointInfo& BreakptMgr::GetBreakpoint(const wxString &fileName, const 
     return *iter;
 }
 
-wxString BreakptMgr::GetTooltip(const wxString& fileName, const int lineno)
+void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip, wxString &title)
 {
     if (fileName.IsEmpty() || lineno < 0) {
-        return wxEmptyString;
+        return ;
     }
 
     const BreakpointInfo &bp = GetBreakpoint(fileName, lineno);
     if ( bp.IsNull() ) {
-        return wxEmptyString;
+        return ;
     }
 
-    wxString tooltip;
-    if (! tooltip.IsEmpty()) {
-        tooltip << wxT("<hr>");
-    }
-    
     int id = (bp.debugger_id > 0 ? bp.debugger_id : bp.internal_id - FIRST_INTERNAL_ID);
-    tooltip << _("<b>Breakpoint: ") << id << _("</b>\n");
+    title << _("Breakpoint: ") << id;
     
     bool isSimple = true;
     if (bp.is_temp) {
-        tooltip << _("Temporary \n");
+        tip << _("Temporary \n");
         isSimple = false;
     }
     
     if (! bp.is_enabled) {
-        tooltip << _(" (disabled)\n");
+        tip << _(" (disabled)\n");
         isSimple = false;
     }
     
     if (bp.ignore_number > 0) {
-        tooltip << wxString::Format(_("Ignore-count = %u\n"), bp.ignore_number);
+        tip << wxString::Format(_("Ignore-count = %u\n"), bp.ignore_number);
         isSimple = false;
     }
 
     if (! bp.conditions.IsEmpty()) {
-        tooltip << wxString::Format(_("Condition:\n<code>%s</code>\n"), bp.conditions.c_str());
+        tip << wxString::Format(_("Condition:\n<code>%s</code>\n"), bp.conditions.c_str());
         isSimple = false;
     }
 
     if (! bp.commandlist.IsEmpty()) {
-        tooltip << wxString::Format(_("Commands:\n<code>%s</code>\n"), bp.commandlist.c_str());
+        tip << wxString::Format(_("Commands:\n<code>%s</code>\n"), bp.commandlist.c_str());
         isSimple = false;
     }
     
     if ( isSimple ) {
-        tooltip << _("Normal breakpoint\n");
+        tip << _("Normal breakpoint\n");
     }
 
-    tooltip.Trim().Trim(false);
-    return tooltip;
+    tip.Trim().Trim(false);
 }
 
 // Delete all line-type breakpoint markers in all editors

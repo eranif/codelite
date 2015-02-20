@@ -82,12 +82,14 @@ const wxEventType wxEVT_TAGS_DB_UPGRADE_INTER = XRCID("tags_db_upgraded_now");
 //---------------------------------------------------------------------------
 // Misc
 
+#if 0
 static bool isDarkColor(const wxColour& color)
 {
     int evg = (color.Red() + color.Green() + color.Blue()) / 3;
     if(evg < 127) return true;
     return false;
 }
+#endif
 
 // Descending sorting function
 struct SDescendingSort {
@@ -1569,12 +1571,7 @@ bool TagsManager::GetDerivationList(const wxString& path,
 
 void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<wxString>& tips)
 {
-    bool isDarkBG = isDarkColor(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    wxString retValueColour = "\"BLUE\"";
-    if(isDarkBG) {
-        retValueColour = "\"YELLOW\"";
-    }
-
+    wxString retValueColour = "\"white\"";
     for(size_t i = 0; i < tags.size(); i++) {
         if(tags.at(i)->GetName() != word) continue;
 
@@ -1611,21 +1608,21 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxStr
 
             wxString ret_value = GetFunctionReturnValueFromPattern(t);
             if(ret_value.IsEmpty() == false) {
-                tip << "<b><color=" << retValueColour << ">" << ret_value << wxT("</color></b> ");
+                tip << "<b>" << ret_value << wxT("</b> ");
             } else {
                 wxString retValue = t->GetReturnValue();
                 if(retValue.IsEmpty() == false) {
-                    tip << "<b><color=" << retValueColour << ">" << retValue << wxT("</color></b> ");
+                    tip << "<b>" << retValue << wxT("</b> ");
                 }
             }
 
             // add the scope
-            if(!t->IsScopeGlobal()) {
+            if(!t->IsScopeGlobal() && !t->IsConstructor() && !t->IsDestructor()) {
                 tip << t->GetScope() << wxT("::");
             }
 
             // name
-            tip << "<b>" << t->GetName() << "</b>";
+            tip << "<b><color=\"white\">" << t->GetName() << "</color></b>";
 
             // method signature
             tip << NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Name | Normalize_Func_Default_value);
@@ -1639,7 +1636,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxStr
         tip = WrapLines(tip);
 
         if(!tips.empty()) {
-            tip.Prepend("\n<hr>\n");
+            tip.Prepend("\n");
         }
 
         // prepend any comment if exists

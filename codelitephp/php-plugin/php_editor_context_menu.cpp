@@ -401,12 +401,29 @@ void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
     if(editor && IsPHPFile(editor)) {
         wxMenu* menu = e.GetMenu();
         // Remove non-PHP related entries from the menu
-        menu->Remove(XRCID("insert_temp_breakpoint"));
-        menu->Remove(XRCID("insert_disabled_breakpoint"));
-        menu->Remove(XRCID("insert_cond_breakpoint"));
-        menu->Remove(XRCID("ignore_breakpoint"));
-        menu->Remove(XRCID("toggle_breakpoint_enabled_status"));
-        menu->Remove(XRCID("edit_breakpoint"));
+        if(menu->FindItem(XRCID("insert_temp_breakpoint"))) {
+            menu->Remove(XRCID("insert_temp_breakpoint"));
+        }
+        
+        if(menu->FindItem(XRCID("insert_disabled_breakpoint"))) {
+            menu->Remove(XRCID("insert_disabled_breakpoint"));
+        }
+
+        if(menu->FindItem(XRCID("insert_cond_breakpoint"))) {
+            menu->Remove(XRCID("insert_cond_breakpoint"));
+        }
+
+        if(menu->FindItem(XRCID("ignore_breakpoint"))) {
+            menu->Remove(XRCID("ignore_breakpoint"));
+        }
+        
+        if(menu->FindItem(XRCID("toggle_breakpoint_enabled_status"))) {
+            menu->Remove(XRCID("toggle_breakpoint_enabled_status"));
+        }
+        
+        if(menu->FindItem(XRCID("edit_breakpoint"))) {
+            menu->Remove(XRCID("edit_breakpoint"));
+        }
     }
 }
 

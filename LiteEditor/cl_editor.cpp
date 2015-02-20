@@ -71,6 +71,8 @@
 #include "clSTCLineKeeper.h"
 #include "ColoursAndFontsManager.h"
 #include "wxCodeCompletionBoxManager.h"
+#include <wx/richtooltip.h> // wxRichToolTip
+#include "cc_box_tip_window.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -162,6 +164,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_autoAdjustHScrollbarWidth(true)
     , m_reloadingFile(false)
     , m_functionTip(NULL)
+    , m_calltip(NULL)
     , m_lastCharEntered(0)
     , m_lastCharEnteredPos(0)
     , m_isFocused(true)
@@ -1532,31 +1535,34 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
     } else if(event.GetX() > 0 // It seems that we can get spurious events with x == 0
               &&
               event.GetX() < margin) {
+                  
         // We can't use event.GetPosition() here, as in the margin it returns -1
         int position = PositionFromPoint(wxPoint(event.GetX(), event.GetY()));
         int line = LineFromPosition(position);
-        wxString tooltip;
+        wxString tooltip, title;
         wxString fname = GetFileName().GetFullPath();
 
         if(MarkerGet(line) & mmt_all_breakpoints) {
-            tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line + 1);
+            ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line + 1, tooltip, title);
         }
 
         else if(MarkerGet(line) & mmt_all_bookmarks) {
-            tooltip = GetBookmarkTooltip(line);
+            GetBookmarkTooltip(line, tooltip, title);
         }
 
         // Compiler marker takes precedence over any other tooltip on that margin
         if((MarkerGet(line) & mmt_compiler) && m_compilerMessagesMap.count(line)) {
             // Get the compiler tooltip
             tooltip = m_compilerMessagesMap.find(line)->second;
+            if(MarkerGet(line) & (1 << smt_warning)) {
+                title = "<color=\"yellow\">Build warning</color>";
+            } else {
+                title = "<color=\"yellow\">Build error</color>";
+            }
         }
 
-        wxString tmpTip = tooltip;
-        tmpTip.Trim().Trim(false);
-
-        if(!tmpTip.IsEmpty()) {
-            DoShowCalltip(-1, tmpTip);
+        if(!title.IsEmpty() && !tooltip.IsEmpty()) {
+            DoShowCalltip(-1, title, tooltip);
         }
 
     } else if(ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
@@ -2683,36 +2689,30 @@ void LEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
     clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
 }
 
-wxString LEditor::GetBookmarkTooltip(const int lineno)
+void LEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
 {
-    wxString active, others;
-
+    title << "<b>Bookmarks</b>";
     // If we've arrived here we know there's a bookmark on the line; however we don't know which type(s)
     // If multiple, list each, with the visible one first
     int linebits = MarkerGet(lineno);
     if(linebits & GetActiveBookmarkMask()) {
         wxString label = GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
         wxString suffix = label.Lower().Contains("bookmark") ? "" : " bookmark";
-        active = "<b>" + label + suffix + "</b>";
+        tip << label << suffix;
     }
 
     for(int bmt = smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
         if(bmt != GetActiveBookmarkType()) {
             if(linebits & (1 << bmt)) {
-                if(!others.empty()) {
-                    others << "\n";
+                if(!tip.empty()) {
+                    tip << "\n";
                 }
                 wxString label = GetBookmarkLabel((sci_marker_types)bmt);
                 wxString suffix = label.Lower().Contains("bookmark") ? "" : " bookmark";
-                others << label << suffix << "";
+                tip << label << suffix;
             }
         }
     }
-
-    if(!active.empty() && !others.empty()) {
-        active << "\n<hr>";
-    }
-    return active + others;
 }
 
 void LEditor::ReloadFile()
@@ -3970,16 +3970,38 @@ void LEditor::OnDbgJumpToCursor(wxCommandEvent& event)
     }
 }
 
-void LEditor::DoShowCalltip(int pos, const wxString& tip)
+void LEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip)
 {
-    // FIXME: implement tooltip support at a give position
+    DoCancelCalltip();
+    wxPoint pt;
+    wxString tooltip;
+    tooltip << title;
+    tooltip.Trim().Trim(false);
+    if(!tooltip.IsEmpty()) {
+        tooltip << "\n<hr>";
+    }
+    tooltip << tip;
+    m_calltip = new CCBoxTipWindow(this, tooltip);
+    if(pos == wxNOT_FOUND) {
+        pt = ::wxGetMousePosition();
+    } else {
+        pt = PointFromPosition(pos);
+    }
+    
+    // Place the tip on top of the mouse position, not under it
+    pt.y -= m_calltip->GetSize().GetHeight();
+    m_calltip->PositionAt(pt, this);
 }
 
 void LEditor::DoCancelCalltip()
 {
     CallTipCancel();
     GetFunctionTip()->Deactivate();
-    // FIXME: dismiss the tooltip as well
+    if(m_calltip) {
+        m_calltip->Hide();
+        m_calltip->Destroy();
+        m_calltip = NULL;
+    }
 }
 
 int LEditor::DoGetOpenBracePos()
@@ -4648,7 +4670,7 @@ wxString LEditor::GetWordAtMousePointer()
     }
 }
 
-void LEditor::ShowRichTooltip(const wxString& tip, int pos) { DoShowCalltip(pos, tip); }
+void LEditor::ShowRichTooltip(const wxString& tip, const wxString& title, int pos) { DoShowCalltip(pos, title, tip); }
 
 wxString LEditor::GetFirstSelection()
 {

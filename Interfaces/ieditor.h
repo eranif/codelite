@@ -261,7 +261,7 @@ public:
      * @param tip tip text
      * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
      */
-    virtual void ShowRichTooltip(const wxString& tip, int pos = wxNOT_FOUND) = 0;
+    virtual void ShowRichTooltip(const wxString& tip, const wxString& title, int pos = wxNOT_FOUND) = 0;
 
     /**
      * @brief return true if the completion box is visible

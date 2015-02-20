@@ -748,12 +748,12 @@ void XDebugManager::XDebugNotConnecting()
 void XDebugManager::OnShowTooltip(XDebugEvent& e)
 {
     if(e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForTooltip) {
-        wxString str;
+        wxString tip, title;
+        title << e.GetString();
+        
         if(!e.IsEvalSucceeded()) {
-            str << _("<color=\"red\">*** Error evaluating expression : </color><strong>") << e.GetString()
-                << "</strong>\n<hr>" << e.GetErrorString();
+            tip << _("Error evaluating expression ");
         } else {
-            str << "<b>" << e.GetString() << "</b>\n<hr>";
             wxString evaluated = e.GetEvaluted();
             // Reomve extra escapes
             evaluated.Replace("\\n", "\n");
@@ -761,10 +761,10 @@ void XDebugManager::OnShowTooltip(XDebugEvent& e)
             evaluated.Replace("\\r", "\r");
             evaluated.Replace("\\v", "\v");
             evaluated.Replace("\\b", "\b");
-            str << evaluated;
-            str.Trim();
+            tip << evaluated;
+            tip.Trim();
         }
-        m_plugin->GetManager()->GetActiveEditor()->ShowRichTooltip(str, wxNOT_FOUND);
+        m_plugin->GetManager()->GetActiveEditor()->ShowRichTooltip(tip, title, wxNOT_FOUND);
     } else {
         e.Skip();
     }

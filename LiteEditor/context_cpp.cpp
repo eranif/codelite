@@ -252,7 +252,7 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
 
         tooltip.Trim().Trim(false);
         if(tooltip.IsEmpty() == false) {
-            rCtrl.DoShowCalltip(-1, tooltip);
+            rCtrl.DoShowCalltip(-1, "", tooltip);
         }
     }
 }

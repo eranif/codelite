@@ -245,7 +245,7 @@ public:
     /**
      * Returns a string containing details of any breakpoints on this line
      */
-    wxString GetTooltip(const wxString& fileName, const int lineno);
+    void GetTooltip(const wxString& fileName, int lineno, wxString& tip, wxString& title);
 
     /**
      * Update the m_bps with what the debugger really contains

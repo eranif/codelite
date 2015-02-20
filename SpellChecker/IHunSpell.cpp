@@ -145,7 +145,6 @@ void IHunSpell::CheckCppSpelling(const wxString& check)
 
     if(!pEditor) return;
 
-    int offset = 0;
     int retVal = kNoSpellingError;
     wxString text = check + wxT(" ");
     m_parseValues.clear();

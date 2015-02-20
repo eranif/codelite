@@ -52,6 +52,7 @@
 #define USER_INDICATOR 3
 #define HYPERLINK_INDICATOR 4
 
+class CCBoxTipWindow;
 class IManager;
 class wxFindReplaceDialog;
 class CCBox;
@@ -208,6 +209,7 @@ protected:
     bool m_disableSmartIndent;
     bool m_disableSemicolonShift;
     clEditorTipWindow* m_functionTip;
+    CCBoxTipWindow* m_calltip;
     wxChar m_lastCharEntered;
     int m_lastCharEnteredPos;
     bool m_isFocused;
@@ -442,7 +444,7 @@ public:
     /**
      * Returns a tooltip for the most significant bookmark on the passed line
      */
-    wxString GetBookmarkTooltip(const int lineno);
+    void GetBookmarkTooltip(int lineno, wxString& tip, wxString& title);
 
     // Replace all
     bool ReplaceAll();
@@ -617,7 +619,7 @@ public:
     virtual void SetErrorMarker(int lineno, const wxString& annotationText);
     virtual void DelAllCompilerMarkers();
     
-    void DoShowCalltip(int pos, const wxString& tip);
+    void DoShowCalltip(int pos, const wxString& title, const wxString& tip);
     void DoCancelCalltip();
     int DoGetOpenBracePos();
 
@@ -784,11 +786,11 @@ public:
     bool IsDetached() const;
 
     /**
-     * @brief display a rich tooltip (a tip that supports basic markup, such as <a></a>, <strong></strong> etc)
+     * @brief display a rich tooltip (title + tip)
      * @param tip tip text
-     * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
+     * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at mouse cursor position
      */
-    void ShowRichTooltip(const wxString& tip, int pos = wxNOT_FOUND);
+    void ShowRichTooltip(const wxString& tip, const wxString& title, int pos = wxNOT_FOUND);
 
     /**
      * @brief return the first selection (in case there are multiple selections enabled)

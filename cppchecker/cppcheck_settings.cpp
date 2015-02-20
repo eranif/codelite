@@ -47,7 +47,6 @@ const wxEventType wxEVT_CPPCHECKJOB_CHECK_COMPLETED = XRCID("cppcheck_check_comp
 const wxEventType wxEVT_CPPCHECKJOB_REPORT = XRCID("cppcheck_report");
 
 //------------------------------------------------------
-
 CppCheckSettings::CppCheckSettings()
     : m_Style(true)
     , m_Performance(true)
@@ -60,6 +59,10 @@ CppCheckSettings::CppCheckSettings()
     , m_Cpp11Standards(true)
     , m_Force(true)
     , m_Jobs(2)
+    , m_CheckConfig(false)
+    , m_saveSuppressedWarnings(false)
+    , m_SuppressSystemIncludes(false)
+    , m_saveIncludeDirs(false)
 {
 }
 

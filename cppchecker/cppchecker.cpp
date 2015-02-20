@@ -622,7 +622,7 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
         wxArrayString projectSearchPaths = proj->GetIncludePaths();
         for(size_t i = 0; i < projectSearchPaths.GetCount(); ++i) {
             wxFileName fnIncPath(projectSearchPaths.Item(i), "");
-            wxString includePath = fnIncPath.GetPath(true);
+            wxString includePath = fnIncPath.GetPath();
             ::WrapWithQuotes(includePath);
             cmd << " -I" << includePath;
         }
@@ -636,6 +636,7 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
     cmd << wxT(" --file-list=");
     cmd << wxT("\"") << fileList << wxT("\"");
     CL_DEBUG("cppcheck command: %s", cmd);
+    ::WrapInShell(cmd);
     return cmd;
 }
 

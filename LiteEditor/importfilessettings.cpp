@@ -22,9 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "importfilessettings.h"
+#include "importfilessettings.h"
 
 ImportFilesSettings::ImportFilesSettings()
+    : m_flags(0)
 {
 }
 
@@ -32,16 +33,16 @@ ImportFilesSettings::~ImportFilesSettings()
 {
 }
 
-void ImportFilesSettings::DeSerialize(Archive &arch)
+void ImportFilesSettings::DeSerialize(Archive& arch)
 {
-	arch.Read(wxT("m_fileMask"), m_fileMask);
-	arch.Read(wxT("m_flags"),    m_flags);
-	arch.Read(wxT("m_baseDir"),  m_baseDir);
+    arch.Read(wxT("m_fileMask"), m_fileMask);
+    arch.Read(wxT("m_flags"), m_flags);
+    arch.Read(wxT("m_baseDir"), m_baseDir);
 }
 
-void ImportFilesSettings::Serialize(Archive &arch)
+void ImportFilesSettings::Serialize(Archive& arch)
 {
-	arch.Write(wxT("m_fileMask"), m_fileMask);
-	arch.Write(wxT("m_flags"),    m_flags);
-	arch.Write(wxT("m_baseDir"),  m_baseDir);
+    arch.Write(wxT("m_fileMask"), m_fileMask);
+    arch.Write(wxT("m_flags"), m_flags);
+    arch.Write(wxT("m_baseDir"), m_baseDir);
 }

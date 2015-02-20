@@ -43,6 +43,7 @@
 #include "clAuiMainNotebookTabArt.h"
 #include "pluginmanager.h"
 #include <algorithm>
+#include "clFileOrFolderDropTarget.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -96,7 +97,6 @@ void MainBook::CreateGuiControls()
 
     m_quickFindBar = new QuickFindBar(this);
     DoPositionFindBar(2);
-
     sz->Layout();
 }
 

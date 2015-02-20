@@ -169,7 +169,7 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
     }
 
     int id = (bp.debugger_id > 0 ? bp.debugger_id : bp.internal_id - FIRST_INTERNAL_ID);
-    title << _("Breakpoint: ") << id;
+    title << _("<b>Breakpoint# ") << id << "</b>";
     
     bool isSimple = true;
     if (bp.is_temp) {

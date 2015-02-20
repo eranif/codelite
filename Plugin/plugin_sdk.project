@@ -106,6 +106,8 @@
     </VirtualDirectory>
     <File Name="clNotebookTheme.h"/>
     <File Name="clNotebookTheme.cpp"/>
+    <File Name="clFileOrFolderDropTarget.h"/>
+    <File Name="clFileOrFolderDropTarget.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

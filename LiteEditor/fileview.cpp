@@ -66,6 +66,7 @@
 #include "NewVirtualFolderDlg.h"
 #include "workspacetab.h"
 #include "file_logger.h"
+#include "clFileOrFolderDropTarget.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -197,7 +198,7 @@ void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& 
     if(multi) style |= wxTR_MULTIPLE;
 
     wxTreeCtrl::Create(parent, id, pos, size, style);
-
+    SetDropTarget(new clFileOrFolderDropTarget(this));
     BuildTree();
 }
 

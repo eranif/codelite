@@ -73,6 +73,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/richtooltip.h> // wxRichToolTip
 #include "cc_box_tip_window.h"
+//#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -176,7 +177,9 @@ LEditor::LEditor(wxWindow* parent)
     DoUpdateOptions();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
     m_commandsProcessor.SetParent(this);
-
+    
+    //SetDropTarget(new clFileOrFolderDropTarget(clMainFrame::Get()->GetMainBook()));
+    
     // User timer to check if we need to highlight markers
     m_timerHighlightMarkers = new wxTimer(this);
     m_timerHighlightMarkers->Start(100, true);

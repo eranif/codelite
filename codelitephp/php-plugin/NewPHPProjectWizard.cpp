@@ -9,7 +9,7 @@ NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent)
     : NewPHPProjectWizardBase(parent)
     , m_nameModified(false)
 {
-    // Use the default PHP 
+    // Use the default PHP
     PHPConfigurationData conf;
     conf.Load();
     m_filePickerPhpExe->SetPath(conf.GetPhpExe());
@@ -31,31 +31,10 @@ void NewPHPProjectWizard::OnPageChanging(wxWizardEvent& event)
         }
     } else if(event.GetDirection() && event.GetPage() == m_wizardPageProjectDetails) {
         wxFileName projectFilePath(m_textCtrlPreview->GetValue());
-        wxString newpath = projectFilePath.GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
-        const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
-        PHPProject::Map_t::const_iterator iter = projects.begin();
-        for(; iter != projects.end(); ++iter) {
-            if(newpath.StartsWith(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME))) {
-                // The new path is a sub folder of a project
-                wxString message;
-                message << _("Unable to create a project at the selected path\n") << _("Path '") << newpath
-                        << _("' is already part of project '") << iter->second->GetName() << "'";
-                ::wxMessageBox(message, "CodeLite", wxOK|wxICON_ERROR|wxCENTER, this);
-                event.Skip(false);
-                event.Veto();
-                return;
-
-            } else if(iter->second->GetFilename().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME).StartsWith(
-                          newpath)) {
-                // The new project is a parent of an existing project
-                wxString message;
-                message << _("Unable to create a project at the selected path\n") << _("Project '")
-                        << iter->second->GetName() << _("' is located under this path");
-                ::wxMessageBox(message, "CodeLite", wxOK|wxICON_ERROR|wxCENTER, this);
-                event.Skip(false);
-                event.Veto();
-                return;
-            }
+        if(!PHPWorkspace::Get()->CanCreateProjectAtPath(projectFilePath, true)) {
+            event.Skip(false);
+            event.Veto();
+            return;
         }
     }
 }
@@ -101,15 +80,12 @@ PHPProject::CreateData NewPHPProjectWizard::GetCreateData()
     return cd;
 }
 
-void NewPHPProjectWizard::OnCheckSeparateFolder(wxCommandEvent& event)
-{
-    DoUpdateProjectFolder();
-}
+void NewPHPProjectWizard::OnCheckSeparateFolder(wxCommandEvent& event) { DoUpdateProjectFolder(); }
 void NewPHPProjectWizard::OnBrowseForCCFolder(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector();
     if(path.IsEmpty()) return;
-    
+
     wxString currentContent = m_textCtrlCCPaths->GetValue();
     wxArrayString paths = ::wxStringTokenize(currentContent, "\n", wxTOKEN_STRTOK);
     if(paths.Index(path) == wxNOT_FOUND) {

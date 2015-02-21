@@ -31,6 +31,8 @@
 #include "fileutils.h"
 #include <wx/busyinfo.h>
 #include <wx/filedlg.h>
+#include "clFileOrFolderDropTarget.h"
+#include "php_configuration_data.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -88,6 +90,10 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
     m_treeCtrlView->AssignImageList(imageList);
+
+    // Allow the PHP view to accepts folders
+    m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
+    Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
 }
 
 PHPWorkspaceView::~PHPWorkspaceView()
@@ -105,6 +111,59 @@ PHPWorkspaceView::~PHPWorkspaceView()
     EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
+    Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
+}
+
+void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
+{
+    const wxArrayString& folders = event.GetStrings();
+    if(folders.GetCount() != 1) {
+        ::wxMessageBox(_("Can only import one folder at a time"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+        return;
+    }
+
+    wxFileName workspaceFileName;
+    wxFileName projectFileName(folders.Item(0), "");
+    projectFileName.SetName(projectFileName.GetDirs().Last());
+    projectFileName.SetExt("phprj");
+
+    if(!PHPWorkspace::Get()->IsOpen()) {
+        workspaceFileName = wxFileName(folders.Item(0), "");
+        workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
+        workspaceFileName.SetExt("workspace");
+
+        // Create an empty workspace
+        if(!PHPWorkspace::Get()->Open(workspaceFileName.GetFullPath(), true)) {
+            wxString message;
+            message << _("Failed to create workspace '") << workspaceFileName.GetFullPath() << "'\n"
+                    << _("File exists");
+            ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+            return;
+        }
+        
+        // We just created and opened a new workspace, add it to the "Recently used"
+        m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
+        
+    } else {
+        workspaceFileName = PHPWorkspace::Get()->GetFilename();
+    }
+
+    // Make sure that this folder is not part of any of the existing projects
+    if(!PHPWorkspace::Get()->CanCreateProjectAtPath(projectFileName, true)) {
+        return;
+    }
+
+    // We can safely create the project
+    PHPConfigurationData conf;
+    const wxString& phpExe = conf.Load().GetPhpExe();
+
+    PHPProject::CreateData cd;
+    cd.importFilesUnderPath = true;
+    cd.name = projectFileName.GetName();
+    cd.path = projectFileName.GetPath();
+    cd.phpExe = phpExe;
+    cd.projectType = PHPProjectSettingsData::kRunAsCLI;
+    CreateNewProject(cd);
 }
 
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
@@ -328,7 +387,7 @@ void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
                             wxTheApp->GetTopWindow()) == wxYES) {
                 PHPWorkspace::Get()->DeleteProject(itemData->GetProjectName());
                 m_treeCtrlView->Delete(selection);
-                
+
                 // Highlight the active project (incase we removed the currently active project
                 // from the view)
                 DoSetProjectActive(PHPWorkspace::Get()->GetActiveProjectName());
@@ -398,7 +457,7 @@ void PHPWorkspaceView::OnSetProjectActive(wxCommandEvent& e)
 {
     wxString project = DoGetSelectedProject();
     if(project.IsEmpty()) return;
-    
+
     DoSetProjectActive(project);
 }
 
@@ -441,7 +500,8 @@ void PHPWorkspaceView::OnNewFile(wxCommandEvent& e)
     wxTreeItemId folderId = DoGetSingleSelection();
     ItemData* data = DoGetItemData(folderId);
     if(data->IsFolder() || data->IsProject()) {
-        wxString filename = ::clGetTextFromUser(_("New File"), _("Set the file name:"), "Untitled.php", wxStrlen("Untitled"));
+        wxString filename =
+            ::clGetTextFromUser(_("New File"), _("Set the file name:"), "Untitled.php", wxStrlen("Untitled"));
         if(filename.IsEmpty()) return;
         wxFileName fn;
         if(data->IsFolder()) {

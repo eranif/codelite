@@ -19,7 +19,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     wxOrderedMap<wxTreeItemId, bool> m_itemsToSort;
     std::map<wxString, wxTreeItemId> m_filesItems;
     std::map<wxString, wxTreeItemId> m_foldersItems;
-    
+
 private:
     enum {
         ID_TOGGLE_AUTOMATIC_UPLOAD = wxID_HIGHEST + 1,
@@ -27,8 +27,9 @@ private:
 
 protected:
     virtual void OnCollapse(wxCommandEvent& event);
-	virtual void DoCollapseItem(wxTreeItemId& item);
-	
+    virtual void DoCollapseItem(wxTreeItemId& item);
+    void OnFolderDropped(clCommandEvent& event);
+    
     virtual void OnCollapseUI(wxUpdateUIEvent& event);
     virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
@@ -43,13 +44,13 @@ protected:
     void DoGetSelectedFiles(wxArrayString& files);
     // Helpers
     void DoSortItems();
-    wxTreeItemId DoAddFolder(const wxString &project, const wxString& path);
+    wxTreeItemId DoAddFolder(const wxString& project, const wxString& path);
     wxTreeItemId DoCreateFile(const wxTreeItemId& parent, const wxString& fullpath, const wxString& content = "");
-    wxTreeItemId DoGetProject(const wxString &project);
+    wxTreeItemId DoGetProject(const wxString& project);
     PHPProject::Ptr_t DoGetProjectForItem(const wxTreeItemId& item);
     wxTreeItemId DoGetSingleSelection();
     void DoGetSelectedItems(wxArrayTreeItemIds& items);
-    
+
     wxString DoGetSelectedProject();
     ItemData* DoGetItemData(const wxTreeItemId& item);
     const ItemData* DoGetItemData(const wxTreeItemId& item) const;
@@ -72,9 +73,9 @@ protected:
      * @brief open an item into an editor
      */
     void DoOpenFile(const wxTreeItemId& item);
-    
+
     void DoSetProjectActive(const wxString& projectName);
-    
+
 protected:
     // Handlers for PHPWorkspaceViewBase events.
 
@@ -107,7 +108,7 @@ protected:
     void OnIsProgramRunning(wxCommandEvent& e);
     void OnEditorChanged(wxCommandEvent& e);
     void OnFileRenamed(PHPEvent& e);
-    void OnWorkspaceRenamed(PHPEvent &e);
+    void OnWorkspaceRenamed(PHPEvent& e);
     void OnToggleAutoUpload(wxCommandEvent& e);
 
     // Php parser events

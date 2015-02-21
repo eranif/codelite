@@ -61,6 +61,14 @@ public:
     wxString GetPrivateFolder() const;
     
     /**
+     * @brief check if we can create a project with the given file name
+     * This function checks that the project's path is not already included
+     * in any other projects and vise versa. i.e. the new project path does
+     * not include any of the other project path
+     */
+    bool CanCreateProjectAtPath(const wxFileName& projectFileName, bool prompt) const;
+    
+    /**
      * @brief sync the workspace with the file system
      */
     void SyncWithFileSystem();

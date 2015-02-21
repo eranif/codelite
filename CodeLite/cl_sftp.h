@@ -33,6 +33,7 @@
 #include <wx/filename.h>
 #include "codelite_exports.h"
 #include "cl_sftp_attribute.h"
+#include <wx/buffer.h>
 
 // We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
 struct sftp_session_struct;
@@ -95,13 +96,14 @@ public:
     /**
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
-    void Write(const wxString &fileContent, const wxString &remotePath) throw (clException);
+    void Write(const wxMemoryBuffer &fileContent, const wxString &remotePath) throw (clException);
 
     /**
      * @brief read remote file and return its content
      * @return the file content.
      */
-    wxString Read(const wxString &remotePath) throw (clException);
+    void Read(const wxString &remotePath, wxMemoryBuffer& buffer) throw (clException);
+    
     /**
      * @brief list the content of a folder
      * @param folder

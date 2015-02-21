@@ -87,12 +87,14 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
 
             } else {
                 DoReportStatusBarMessage(wxString() << _("Downloading file: ") << req->GetRemoteFile());
-                wxString fileContent = m_sftp->Read(req->GetRemoteFile());
+                wxMemoryBuffer buffer;
+                m_sftp->Read(req->GetRemoteFile(), buffer);
                 wxFFile fp(req->GetLocalFile(), "w+b");
                 if ( fp.IsOpened() ) {
-                    fp.Write( fileContent, wxConvISO8859_1 );
+                    fp.Write(buffer.GetData(), buffer.GetDataLen());
                     fp.Close();
                 }
+                
                 msg << "Successfully downloaded file: " << req->GetLocalFile() << " <- " << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
                 DoReportStatusBarMessage("");

@@ -25,7 +25,8 @@
 #include "importfilessettings.h"
 
 ImportFilesSettings::ImportFilesSettings()
-    : m_flags(0)
+    : m_fileMask("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hxx;*.h++")
+    , m_flags(0)
 {
 }
 

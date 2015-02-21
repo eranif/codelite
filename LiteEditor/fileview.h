@@ -172,6 +172,7 @@ protected:
     virtual void OnLocalWorkspaceSettings(wxCommandEvent& e);
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnBuildTree(wxCommandEvent& e);
+    void OnFolderDropped(clCommandEvent& event);
 
     // Tree sorting
     virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
@@ -181,7 +182,7 @@ protected:
     void ShowProjectContextMenu(const wxString& projectName);
     void ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData);
     void ShowFileContextMenu();
-    
+
     // internal
     void OnBuildProjectOnlyInternal(wxCommandEvent& e);
     void OnCleanProjectOnlyInternal(wxCommandEvent& e);
@@ -202,6 +203,12 @@ private:
     void DoRemoveItems();
     void DoItemActivated(wxTreeItemId& item, wxEvent& event);
     void DoAddItem(ProjectPtr proj, const FileViewItem& item);
+    void DoImportFolder(ProjectPtr proj,
+                        const wxString& baseDir,
+                        const wxArrayString& all_files,
+                        const wxString& filespec,
+                        bool extlessFiles);
+
     wxTreeItemId DoGetItemByText(const wxTreeItemId& parent, const wxString& text);
 
     wxTreeItemId GetSingleSelection();

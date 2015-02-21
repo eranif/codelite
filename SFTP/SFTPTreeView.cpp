@@ -42,6 +42,7 @@
 #include <wx/progdlg.h>
 #include "SSHTerminal.h"
 #include <wx/busyinfo.h>
+#include "globals.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -656,8 +657,8 @@ void SFTPTreeView::DoOpenSession()
     dlg.Show();
     dlg.Update(1, wxString() << _("Connecting to: ") << accountName << "..." << _("\n(this may take a few seconds)"));
 #else
-    wxBusyInfo busyInfo(
-        _("Connecting...\nNote that when connecting for the first time, this operation may take up to 30 seconds"));
+    wxBusyCursor bc;
+    clGetManager()->SetStatusMessage(wxString() << _("Connecting to: ") << accountName);
 #endif
 
     // We know that there is a bug that libssh succeeded on connecting only on the second attempt..

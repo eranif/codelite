@@ -63,6 +63,8 @@ Project::Project()
     , m_isModified(false)
     , m_workspace(NULL)
 {
+    // initialize it with default settings
+    m_settings.Reset(new ProjectSettings(NULL));
 }
 
 Project::~Project()
@@ -680,6 +682,9 @@ void Project::SetFiles(ProjectPtr src)
         vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
     }
 
+    // sanity
+    if(!src || !src->m_doc.GetRoot()) return;
+
     // copy the virtual directories from the src project
     wxXmlNode* child = src->m_doc.GetRoot()->GetChildren();
     while(child) {
@@ -989,11 +994,13 @@ bool Project::SetUserData(const wxString& name, SerializedObject* obj)
 
 void Project::SetProjectInternalType(const wxString& internalType)
 {
+    if(!m_doc.GetRoot()) return;
     XmlUtils::UpdateProperty(m_doc.GetRoot(), wxT("InternalType"), internalType);
 }
 
 wxString Project::GetProjectInternalType() const
 {
+    if(!m_doc.GetRoot()) return "";
     return m_doc.GetRoot()->GetPropVal(wxT("InternalType"), wxEmptyString);
 }
 

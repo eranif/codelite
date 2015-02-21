@@ -38,6 +38,14 @@
 #define COMPILER_FAMILY_VC     "Visual C++"
 #define COMPILER_FAMILY_CYGWIN "Cygwin"
 
+#ifdef __WXMSW__
+#define COMPILER_DEFAULT_FAMILY COMPILER_FAMILY_MINGW
+#elif defined(__WXMAC__)
+#define COMPILER_DEFAULT_FAMILY COMPILER_FAMILY_CLANG
+#else
+#define COMPILER_DEFAULT_FAMILY COMPILER_FAMILY_GCC
+#endif
+
 class WXDLLIMPEXP_SDK ICompilerLocator
 {
 public:

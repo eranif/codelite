@@ -68,6 +68,9 @@
 #include "file_logger.h"
 #include "clFileOrFolderDropTarget.h"
 #include "importfilessettings.h"
+#include <project.h>
+#include "compiler.h"
+#include "ICompilerLocator.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -2414,32 +2417,89 @@ void FileViewTree::OnRenameProject(wxCommandEvent& event)
 void FileViewTree::OnFolderDropped(clCommandEvent& event)
 {
     // User dragged a folder into our workspace
-
-    // sanity
-    if(!WorkspaceST::Get()->IsOpen()) return;
     const wxArrayString& folders = event.GetStrings();
     if(folders.size() != 1) {
         ::wxMessageBox(_("You can only drag one folder at a time"), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
         return;
     }
-
+    
+    bool reloadWorkspaceIsNeeded(false);
     const wxString& folder = folders.Item(0);
+    wxFileName workspaceFileName(folder, "");
+    wxString errMsg;
+    if(!WorkspaceST::Get()->IsOpen()) {
+        
+        wxFileName fnWorkspace(folder, "");
+        
+        workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
+        workspaceFileName.SetExt("workspace");
+        
+        // Create an empty workspace
+        if(!WorkspaceST::Get()->CreateWorkspace(fnWorkspace.GetDirs().Last(), folder, errMsg)) {
+            ::wxMessageBox(_("Failed to create workspace:\n") + errMsg, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            return;
+        }
+        
+        
+        // Create an empty project with sensible defaults
+        ProjectData pd;
+        CompilerPtr cmp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
+        if(cmp) {
+            pd.m_cmpType = cmp->GetName();
+        } else {
+            pd.m_cmpType = "gnu g++"; // Default :/
+        }
+        
+        pd.m_name = fnWorkspace.GetDirs().Last();
+        pd.m_path = folder;
+        
+        // Set a default empty project
+        pd.m_srcProject.Reset(new Project());
+        
+        // Use sensible debugger defaults
+#ifdef __WXMAC__
+        pd.m_debuggerType = "LLDB Debugger";
+#else
+        pd.m_debuggerType = "GNU gdb debugger";
+#endif
+        ManagerST::Get()->CreateProject(pd);
+        reloadWorkspaceIsNeeded = true;
+    }
+
     // to which project should we import the folder?
     wxArrayString projects;
     WorkspaceST::Get()->GetProjectList(projects);
-
-    int selection = projects.Index(WorkspaceST::Get()->GetActiveProjectName());
-    wxString projectName = ::wxGetSingleChoice(_("Select project:"), _("Import files to project"), projects, selection);
-
+    
+    wxString projectName;
+    if(projects.GetCount() > 1) {
+        int selection = projects.Index(WorkspaceST::Get()->GetActiveProjectName());
+        projectName = ::wxGetSingleChoice(_("Select project:"), _("Import files to project"), projects, selection);
+    } else {
+        // single project, just add it
+        projectName = projects.Item(0);
+    }
+    
     // user cancelled?
     if(projectName.IsEmpty()) return;
     ProjectPtr pProj = WorkspaceST::Get()->GetProject(projectName);
     CHECK_PTR_RET(pProj);
-
+    
     wxBusyCursor bc;
     wxArrayString all_files;
     wxDir::GetAllFiles(folder, &all_files, wxEmptyString, wxDIR_DIRS | wxDIR_FILES);
 
     ImportFilesSettings ifs;
     DoImportFolder(pProj, folder, all_files, ifs.GetFileMask(), ifs.GetFlags() & IFS_INCLUDE_FILES_WO_EXT);
+    
+    if(reloadWorkspaceIsNeeded) {
+        // Now that we have created a workspace + one project reload the workspace
+        wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("switch_to_workspace"));
+        evtOpenworkspace.SetString(workspaceFileName.GetFullPath());
+        evtOpenworkspace.SetEventObject(clMainFrame::Get());
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
+    }
+    
+    // And trigger a full reparse of the workspace
+    wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("full_retag_workspace"));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
 }

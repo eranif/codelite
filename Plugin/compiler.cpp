@@ -99,7 +99,9 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
             }
 
             else if(child->GetName() == wxT("Tool")) {
-                m_tools[XmlUtils::ReadString(child, wxT("Name"))] = XmlUtils::ReadString(child, wxT("Value"));
+                wxString toolpath = XmlUtils::ReadString(child, wxT("Value"));
+                toolpath.Trim();
+                m_tools[XmlUtils::ReadString(child, wxT("Name"))] = toolpath;
             }
 
             else if(child->GetName() == wxT("Option")) {

@@ -2422,25 +2422,24 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
         ::wxMessageBox(_("You can only drag one folder at a time"), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
         return;
     }
-    
+
     bool reloadWorkspaceIsNeeded(false);
     const wxString& folder = folders.Item(0);
     wxFileName workspaceFileName(folder, "");
     wxString errMsg;
     if(!WorkspaceST::Get()->IsOpen()) {
-        
+
         wxFileName fnWorkspace(folder, "");
-        
+
         workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
         workspaceFileName.SetExt("workspace");
-        
+
         // Create an empty workspace
         if(!WorkspaceST::Get()->CreateWorkspace(fnWorkspace.GetDirs().Last(), folder, errMsg)) {
             ::wxMessageBox(_("Failed to create workspace:\n") + errMsg, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
-        
-        
+
         // Create an empty project with sensible defaults
         ProjectData pd;
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
@@ -2449,14 +2448,14 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
         } else {
             pd.m_cmpType = "gnu g++"; // Default :/
         }
-        
+
         pd.m_name = fnWorkspace.GetDirs().Last();
         pd.m_path = folder;
-        
+
         // Set a default empty project
         pd.m_srcProject.Reset(new Project());
-        
-        // Use sensible debugger defaults
+
+// Use sensible debugger defaults
 #ifdef __WXMAC__
         pd.m_debuggerType = "LLDB Debugger";
 #else
@@ -2469,6 +2468,11 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
     // to which project should we import the folder?
     wxArrayString projects;
     WorkspaceST::Get()->GetProjectList(projects);
+    if(projects.IsEmpty()) {
+        ::wxMessageBox(
+            _("Can't import files to workspace without projects"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
     
     wxString projectName;
     if(projects.GetCount() > 1) {
@@ -2478,19 +2482,19 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
         // single project, just add it
         projectName = projects.Item(0);
     }
-    
+
     // user cancelled?
     if(projectName.IsEmpty()) return;
     ProjectPtr pProj = WorkspaceST::Get()->GetProject(projectName);
     CHECK_PTR_RET(pProj);
-    
+
     wxBusyCursor bc;
     wxArrayString all_files;
     wxDir::GetAllFiles(folder, &all_files, wxEmptyString, wxDIR_DIRS | wxDIR_FILES);
 
     ImportFilesSettings ifs;
     DoImportFolder(pProj, folder, all_files, ifs.GetFileMask(), ifs.GetFlags() & IFS_INCLUDE_FILES_WO_EXT);
-    
+
     if(reloadWorkspaceIsNeeded) {
         // Now that we have created a workspace + one project reload the workspace
         wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("switch_to_workspace"));
@@ -2498,7 +2502,7 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
         evtOpenworkspace.SetEventObject(clMainFrame::Get());
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
     }
-    
+
     // And trigger a full reparse of the workspace
     wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("full_retag_workspace"));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);

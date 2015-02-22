@@ -4814,8 +4814,13 @@ void LEditor::SplitSelection()
 
         ClearSelections();
         for(int i = selLineStart; i <= selLineEnd; ++i) {
-            int caretPos = PositionBefore(LineEnd(i)); // We use PositionBefore here, because LineEnd
-                                                       // includes the EOL as well
+            int caretPos;
+            if (i != GetLineCount()-1) {
+                // Normally use PositionBefore as LineEnd includes the EOL as well
+                caretPos = PositionBefore(LineEnd(i));
+            } else {
+                caretPos = LineEnd(i); // but it seems not for the last line of the doc
+            }
             if(i == selLineStart) {
                 // first selection
                 SetSelection(caretPos, caretPos);

@@ -103,8 +103,9 @@ bool CompilersDetectorManager::FoundMinGWCompiler() const
     return false;
 }
 
-void CompilersDetectorManager::SuggestToDownloadMinGW()
+void CompilersDetectorManager::MSWSuggestToDownloadMinGW()
 {
+#ifdef __WXMSW__
     if(::wxMessageBox(_("Could not locate any MinGW compiler installed on your machine, would you like to "
                         "install one now?"),
                       "CodeLite",
@@ -142,4 +143,5 @@ void CompilersDetectorManager::SuggestToDownloadMinGW()
                 _("After install is completed, restart CodeLite"), "CodeLite", wxOK | wxCENTER | wxICON_INFORMATION);
         }
     }
+#endif // __WXMSW__
 }

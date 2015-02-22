@@ -63,7 +63,7 @@ public:
     /**
      * @brief prompt the user to download MinGW installer
      */
-    static void SuggestToDownloadMinGW();
+    static void MSWSuggestToDownloadMinGW();
 };
 
 #endif // COMPILERSDETECTORMANAGER_H

@@ -2094,15 +2094,13 @@ void clMainFrame::LocateCompilersIfNeeded()
                 // Replace the current compilers with a new one
                 BuildSettingsConfigST::Get()->SetCompilers(compilersFound);
                 CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
-#ifdef __WXMSW__
                 if(!detector.FoundMinGWCompiler()) {
-                    CompilersDetectorManager::SuggestToDownloadMinGW();
+                    CompilersDetectorManager::MSWSuggestToDownloadMinGW();
                 }
-#endif
             }
         } else {
             // nothing found on this machine, offer to download
-            CompilersDetectorManager::SuggestToDownloadMinGW();
+            CompilersDetectorManager::MSWSuggestToDownloadMinGW();
         }
     }
 }

@@ -122,7 +122,7 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
     }
 
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        activeEditor->GetSTC(), entries, bitmaps, wxCodeCompletionBox::kNone);
+        activeEditor->GetSTC(), entries, bitmaps, wxCodeCompletionBox::kInsertSingleMatch);
 }
 
 void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)

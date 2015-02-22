@@ -797,10 +797,12 @@ bool PHPSourceFile::ReadExpression(wxString& expression)
         case kPHP_T_REQUIRE_ONCE:
             expression.clear();
             return false;
-
+        
+        case kPHP_T_STRING_CAST:
+        case kPHP_T_CONSTANT_ENCAPSED_STRING:
         case kPHP_T_C_COMMENT:
         case kPHP_T_CXX_COMMENT:
-            // skip comments
+            // skip comments and strings
             break;
         case '(':
             depth++;

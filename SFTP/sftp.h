@@ -59,6 +59,7 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnFileSaved(clCommandEvent &e);
     void OnEditorClosed(wxCommandEvent &e);
+    void MSWInitiateConnection();
     
     bool IsWorkspaceOpened() const {
         return m_workspaceFile.IsOk();

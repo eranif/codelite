@@ -39,6 +39,7 @@
 #include "SFTPStatusPage.h"
 #include "SFTPTreeView.h"
 #include <wx/log.h>
+#include "sftp_settings.h"
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
@@ -127,6 +128,11 @@ SFTP::SFTP(IManager* manager)
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);
     SFTPWorkerThread::Instance()->Start();
+    
+    // Establish connection to "warm up" the sftp library
+#if 0
+    CallAfter(&SFTP::MSWInitiateConnection);
+#endif
 }
 
 SFTP::~SFTP() {}
@@ -411,4 +417,19 @@ void SFTP::OnEditorClosed(wxCommandEvent& e)
             m_remoteFiles.erase(localFile);
         }
     }
+}
+
+void SFTP::MSWInitiateConnection()
+{
+#ifdef __WXMSW__
+    // Under Windows, there seems to be a small problem with the connection establishment
+    // only the first connection seems to be unstable (i.e. it takes up to 30 seconds to create it)
+    // to workaround this, we initiate a dummy connection to the first connection we can find
+    SFTPSettings settings;
+    settings.Load();
+    const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
+    if(accounts.empty()) return;
+    const SSHAccountInfo& account = accounts.at(0);
+    SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account));
+#endif
 }

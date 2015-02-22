@@ -86,6 +86,8 @@ public:
                               bool active,
                               int closeButtonState,
                               int* xExtent);
+                              
+    int GetAdditionalBorderSpace(wxWindow* wnd) { return 0; }
 };
 
 #endif // CLAUIMAINNOTEBOOKTABART_H

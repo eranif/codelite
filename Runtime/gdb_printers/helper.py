@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Helper module for pretty-printers
 
-# Copyright (C) 2013 Kevin Funk <kevin@kfunk.org>
+# Copyright (C) 2013 Kevin Funk <kfunk@kde.org>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,6 +41,18 @@ else:
 # END
 
 # BEGIN: Helper functions for pretty-printers
+
+def has_field(val, name):
+    """Check whether @p val (gdb.Value) has a field named @p name"""
+    try:
+        val[name]
+        return True
+    except Exception:
+        return False
+
+def default_iterator(val):
+    for field in val.type.fields():
+        yield field.name, val[field.name]
 
 class FunctionLookup:
 

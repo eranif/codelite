@@ -59,6 +59,11 @@ public:
     }
     bool Locate();
     CompilerPtr Locate(const wxString &folder);
+    
+    /**
+     * @brief prompt the user to download MinGW installer
+     */
+    static void SuggestToDownloadMinGW();
 };
 
 #endif // COMPILERSDETECTORMANAGER_H

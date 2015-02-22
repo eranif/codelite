@@ -2080,8 +2080,7 @@ void clMainFrame::LocateCompilersIfNeeded()
         g_splashScreen = NULL;
     }
 
-    bool bAutoDetectCompilers = clConfig::Get().Read(kConfigAutoDetectCompilerOnStartup, true);
-    if(bAutoDetectCompilers) {
+    if(clConfig::Get().Read(kConfigAutoDetectCompilerOnStartup, true)) {
 
         // Unset the flag so next time we won't get this
         clConfig::Get().Write(kConfigAutoDetectCompilerOnStartup, false);
@@ -2097,50 +2096,13 @@ void clMainFrame::LocateCompilersIfNeeded()
                 CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
 #ifdef __WXMSW__
                 if(!detector.FoundMinGWCompiler()) {
-                    if(::wxMessageBox(
-                           _("Could not locate any MinGW compiler installed on your machine, would you like to "
-                             "install one now?"),
-                           "CodeLite",
-                           wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER | wxICON_QUESTION,
-                           this) == wxYES) {
-                        // No MinGW compiler detected!, offer the user to download one
-                        wxStringMap_t mingwCompilers;
-                        wxArrayString options;
-                        mingwCompilers.insert(std::make_pair("MinGW 4.9.2 - 32 Bit",
-                                                             "http://sourceforge.net/projects/"
-                                                             "tdm-gcc/files/TDM-GCC%20Installer/"
-                                                             "tdm-gcc-4.9.2.exe/download"));
-                        mingwCompilers.insert(std::make_pair("MinGW 4.9.2 - 64 Bit",
-                                                             "http://sourceforge.net/projects/"
-                                                             "tdm-gcc/files/TDM-GCC%20Installer/"
-                                                             "tdm64-gcc-4.9.2-3.exe/download"));
-                        wxStringMap_t::iterator iter = mingwCompilers.begin();
-                        for(; iter != mingwCompilers.end(); ++iter) {
-                            options.Add(iter->first);
-                        }
-#ifdef _WIN64
-                        int sel = 1;
-#else
-                        int sel = 0;
-#endif
-                        wxString selection = ::wxGetSingleChoice(
-                            _("Select a compiler to download"), _("Choose compiler"), options, sel, this);
-                        if(!selection.IsEmpty()) {
-                            // Reset the compiler detection flag so next time codelite is restarted, it will
-                            // rescan the machine
-                            clConfig::Get().Write(kConfigAutoDetectCompilerOnStartup, true);
-
-                            // Open the browser to start downloading the compiler
-                            ::wxLaunchDefaultBrowser(mingwCompilers.find(selection)->second);
-                            ::wxMessageBox(_("After install is completed, restart CodeLite"),
-                                           "CodeLite",
-                                           wxOK | wxCENTER | wxICON_INFORMATION,
-                                           this);
-                        }
-                    }
+                    CompilersDetectorManager::SuggestToDownloadMinGW();
                 }
 #endif
             }
+        } else {
+            // nothing found on this machine, offer to download
+            CompilersDetectorManager::SuggestToDownloadMinGW();
         }
     }
 }

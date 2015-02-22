@@ -12,6 +12,7 @@
 #include "cc_box_tip_window.h"
 #include "file_logger.h"
 #include "drawingutils.h"
+#include <wx/font.h>
 
 #define LINES_PER_PAGE 8
 #define Y_SPACER 2
@@ -236,13 +237,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     }
 
     int lineHeight = GetSingleLineHeight();
-    // determine the box x position
-    int wordStart = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
-    wxPoint pt = m_stc->PointFromPosition(wordStart);
-    pt = m_stc->ClientToScreen(pt);
-    pt.y += lineHeight;
-    Move(pt);
-    Show();
+    DoShowCompletionBox();
 
     if(m_stc) {
         // Set the focus back to the completion control
@@ -634,4 +629,42 @@ void wxCodeCompletionBox::DoDestroyTipWindow()
         m_tipWindow = NULL;
         m_displayedTip.Clear();
     }
+}
+
+void wxCodeCompletionBox::DoShowCompletionBox()
+{
+    CHECK_PTR_RET(m_stc);
+    
+    // guesstimate a line height
+    wxMemoryDC dc;
+    wxBitmap bmp(1, 1);
+    dc.SelectObject(bmp);
+    wxFont font = m_stc->StyleGetFont(0);
+    dc.SetFont(font);
+    wxSize textSize = dc.GetTextExtent("Tp");
+    
+    int lineHeight = textSize.y;
+    wxRect rect = GetRect();
+    wxSize screenSize = ::wxGetDisplaySize();
+    
+    // determine the box x position
+    int wordStart = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    wxPoint pt = m_stc->PointFromPosition(wordStart);
+    pt = m_stc->ClientToScreen(pt);
+    pt.y += lineHeight;
+    
+    // Check Y axis
+    if((pt.y + rect.GetHeight()) > screenSize.GetHeight()) {
+        // the completion box goes out of the Y axis, move it up
+        pt.y -= lineHeight;
+        pt.y -= rect.GetHeight();
+    }
+    
+    // Check X axis
+    if((pt.x + rect.GetWidth()) > screenSize.GetWidth()) {
+        // the completion box goes out of the X axis. Move it to the left
+        pt.x -= ((pt.x + rect.GetWidth()) - screenSize.GetWidth());
+    }
+    Move(pt);
+    Show();
 }

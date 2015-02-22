@@ -134,5 +134,6 @@ protected:
     void DoDrawTopScrollButton(wxDC& dc);
     bool CanScrollDown();
     bool CanScrollUp();
+    void DoShowCompletionBox();
 };
 #endif // WXCODECOMPLETIONBOX_H

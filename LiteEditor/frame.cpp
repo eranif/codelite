@@ -3054,7 +3054,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         ManagerST::Get()->PushQueueCommand(info);
         ManagerST::Get()->ProcessCommandQueue();
 
-        GetStatusBar()->SetMessage(_("Done"));
+        GetStatusBar()->SetMessage("");
     }
 }
 

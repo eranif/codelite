@@ -4813,7 +4813,7 @@ void LEditor::SplitSelection()
         }
 
         ClearSelections();
-        for(int i = selLineStart; i < selLineEnd; ++i) {
+        for(int i = selLineStart; i <= selLineEnd; ++i) {
             int caretPos = PositionBefore(LineEnd(i)); // We use PositionBefore here, because LineEnd
                                                        // includes the EOL as well
             if(i == selLineStart) {

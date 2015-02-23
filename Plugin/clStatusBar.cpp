@@ -12,7 +12,7 @@
 
 #define STATUSBAR_MESSAGES_COL_IDX 0
 #define STATUSBAR_ANIMATION_COL_IDX 1
-#define STATUSBAR_LINECOL_COL_IDX 2
+#define STATUSBAR_WHITESPACE_INFO_IDX 2
 #define STATUSBAR_LANG_COL_IDX 3
 #define STATUSBAR_ICON_COL_IDX 4
 
@@ -53,7 +53,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
         this, wxXmlResource::Get()->LoadBitmap("build-animation-sprite"), wxHORIZONTAL, wxSize(80, 7)));
     AddField(buildAnimation);
 
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 150));
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 80));
     AddField(lineCol);
 
     wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, 80));
@@ -95,12 +95,6 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
 
     // Update the file name
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor) {
-        SetFileName(editor->GetFileName().GetFullPath());
-    } else {
-        SetFileName("");
-    }
-
     // update the language
     wxString language;
     if(editor) {
@@ -177,6 +171,9 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
             break;
         }
         language.MakeUpper();
+        
+        // Set the "TABS/SPACES" field
+        SetWhitespaceInfo(editor->GetSTC()->GetUseTabs() ? "tabs" : "spaces");
     }
     SetLanguage(language);
 }
@@ -209,8 +206,6 @@ void clStatusBar::DoUpdateColour()
     Refresh();
 }
 
-void clStatusBar::SetFileName(const wxString& filename) { SetText(filename); }
-
 void clStatusBar::SetLanguage(const wxString& lang)
 {
     // Col 2
@@ -224,14 +219,7 @@ void clStatusBar::SetLanguage(const wxString& lang)
 
 void clStatusBar::SetLinePosColumn(const wxString& lineCol) { CallAfter(&clStatusBar::DoSetLinePosColumn, lineCol); }
 
-void clStatusBar::DoSetLinePosColumn(const wxString& message)
-{
-    // Col 1
-    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LINECOL_COL_IDX);
-    CHECK_PTR_RET(field);
-    field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
-    field->SetTooltip(message);
-}
+void clStatusBar::DoSetLinePosColumn(const wxString& message) { SetText(message); }
 
 void clStatusBar::OnAllEditorsClosed(wxCommandEvent& event)
 {
@@ -241,12 +229,11 @@ void clStatusBar::OnAllEditorsClosed(wxCommandEvent& event)
 
 void clStatusBar::Clear()
 {
-    SetFileName("");
-    SetLinePosColumn("");
     SetMessage("");
     SetText("");
     SetBuildBitmap(wxNullBitmap, "");
     StopAnimation();
+    SetLanguage("");
 }
 
 void clStatusBar::OnBuildEnded(clBuildEvent& event)
@@ -317,5 +304,55 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
         if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) {
             m_mgr->ToggleOutputPane("Build");
         }
+    } else if(event.GetInt() == STATUSBAR_WHITESPACE_INFO_IDX) {
+        if(m_mgr->GetActiveEditor()) {
+            // show a popup menu when clicking on the TABS/SPACES 
+            // field
+            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_WHITESPACE_INFO_IDX);
+            CHECK_PTR_RET(field);
+            wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetSTC();
+            wxMenu menu;
+            wxMenuItem* idConvertToTabs = menu.Append(wxID_ANY, "Convert Indentations to Tabs");
+            wxMenuItem* idConvertToSpaces = menu.Append(wxID_ANY, "Convert Indentations to Spaces");
+            menu.AppendSeparator();
+            wxMenuItem* idUseTabs = menu.Append(wxID_ANY, "Use Tabs", "", wxITEM_CHECK);
+            wxMenuItem* idUseSpaces = menu.Append(wxID_ANY, "Use Spaces", "", wxITEM_CHECK);
+            
+            // Check the proper tabs vs spaces option
+            menu.Check(idUseSpaces->GetId(), !stc->GetUseTabs());
+            menu.Check(idUseTabs->GetId(), stc->GetUseTabs());
+            
+            //wxPoint pt = field->GetRect().GetTopLeft();
+            //int menuHeight = 20;
+            //menuHeight *= 5;
+            //
+            //pt.y -= menuHeight;
+            
+            int selectedId = GetPopupMenuSelectionFromUser(menu);
+            if(selectedId == wxID_NONE) return;
+
+            if(selectedId == idConvertToTabs->GetId()) {
+                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_tabs"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
+            } else if(selectedId == idConvertToSpaces->GetId()) {
+                wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_spaces"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
+            } else if(selectedId == idUseSpaces->GetId()) {
+                stc->SetUseTabs(false);
+            } else if(selectedId == idUseTabs->GetId()) {
+                stc->SetUseTabs(true);
+            }
+            SetWhitespaceInfo(stc->GetUseTabs() ? "tabs" : "spaces");
+        }
     }
+}
+
+void clStatusBar::SetWhitespaceInfo(const wxString& whitespaceInfo) 
+{
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_WHITESPACE_INFO_IDX);
+    CHECK_PTR_RET(field);
+
+    wxString ws = whitespaceInfo.Upper();
+    field->Cast<wxCustomStatusBarFieldText>()->SetText(ws);
+    field->SetTooltip(ws);
 }

@@ -90,6 +90,7 @@ public:
 
     virtual void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
     const wxString& GetTooltip() const { return m_tooltip; }
+    const wxRect& GetRect() const { return m_rect; }
     template <typename T> T* Cast() const { return dynamic_cast<T*>(const_cast<wxCustomStatusBarField*>(this)); }
 };
 

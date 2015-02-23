@@ -90,19 +90,19 @@ Cscope::Cscope(IManager* manager)
     CScopeThreadST::Get()->Start();
 
     // Register keyboard shortcuts for CScope
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_find_user_symbol", "Ctrl-Shift-)", "Plugins::CScope::Find");
+    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_find_user_symbol", "Alt-)", "Plugins::CScope::Find");
     clKeyboardManager::Get()->AddGlobalAccelerator(
-        "cscope_find_symbol", "Ctrl-Alt-0", "Plugins::CScope::Find selected text");
+        "cscope_find_symbol", "Alt-0", "Plugins::CScope::Find selected text");
     clKeyboardManager::Get()->AddGlobalAccelerator(
-        "cscope_find_global_definition", "Ctrl-Alt-1", "Plugins::CScope::Find this global definition");
+        "cscope_find_global_definition", "Alt-1", "Plugins::CScope::Find this global definition");
     clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_calling_this_function",
-                                                   "Ctrl-Alt-2",
+                                                   "Alt-2",
                                                    "Plugins::CScope::Find functions called by this function");
     clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_called_by_this_function",
-                                                   "Ctrl-Alt-3",
+                                                   "Alt-3",
                                                    "Plugins::CScope::Find functions calling this function");
     clKeyboardManager::Get()->AddGlobalAccelerator(
-        "cscope_create_db", "Ctrl-Alt-4", "Plugins::CScope::Create CScope database");
+        "cscope_create_db", "Alt-4", "Plugins::CScope::Create CScope database");
 }
 
 Cscope::~Cscope() {}

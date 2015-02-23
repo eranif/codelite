@@ -41,13 +41,13 @@ public:
      * @brief set a status bar message
      */
     void SetMessage(const wxString& message);
-
+    
     /**
-     * @brief update the file name part of the status bar
-     * @param filename
+     * @brief set the whitespace information (Tabs vs Spaces)
+     * @param whitespaceInfo
      */
-    void SetFileName(const wxString& filename);
-
+    void SetWhitespaceInfo(const wxString& whitespaceInfo);
+    
     /**
      * @brief update the language field
      */

@@ -86,7 +86,7 @@ void ContextBase::AutoIndent(const wxChar& ch)
             rCtrl.ChooseCaretX();
             
         }
-    } else if (ch == '}') {
+    } else if (ch == '}' && !IsCommentOrString(curpos)) {
         long matchPos = wxNOT_FOUND;
         if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos)) return;
         int secondLine = rCtrl.LineFromPosition(matchPos);

@@ -73,6 +73,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/richtooltip.h> // wxRichToolTip
 #include "cc_box_tip_window.h"
+#include "clSTCLineKeeper.h"
 //#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
@@ -177,9 +178,9 @@ LEditor::LEditor(wxWindow* parent)
     DoUpdateOptions();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
     m_commandsProcessor.SetParent(this);
-    
-    //SetDropTarget(new clFileOrFolderDropTarget(clMainFrame::Get()->GetMainBook()));
-    
+
+    // SetDropTarget(new clFileOrFolderDropTarget(clMainFrame::Get()->GetMainBook()));
+
     // User timer to check if we need to highlight markers
     m_timerHighlightMarkers = new wxTimer(this);
     m_timerHighlightMarkers->Start(100, true);
@@ -233,7 +234,7 @@ LEditor::LEditor(wxWindow* parent)
 LEditor::~LEditor()
 {
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
-    
+
     EventNotifier::Get()->Disconnect(
         wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -584,17 +585,17 @@ void LEditor::SetProperties()
     SetTwoPhaseDraw(true);
     SetBufferedDraw(true);
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
-    
+
 #elif defined(__WXGTK__)
     SetTwoPhaseDraw(true);
     SetBufferedDraw(false);
     SetLayoutCache(wxSTC_CACHE_PAGE);
-    
+
 #else // MSW
     SetTwoPhaseDraw(true);
     SetBufferedDraw(true);
     SetLayoutCache(wxSTC_CACHE_PAGE);
-    
+
 #endif
 
     // indentation settings
@@ -611,8 +612,6 @@ void LEditor::SetProperties()
     SetTabWidth(options->GetTabWidth());
     SetIndent(options->GetIndentWidth());
     SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);
-
-    
 
     size_t frame_flags = clMainFrame::Get()->GetFrameGeneralInfo().GetFlags();
     SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
@@ -960,7 +959,7 @@ void LEditor::OnScnPainted(wxStyledTextEvent& event)
     if(m_positionToEnsureVisible == wxNOT_FOUND) {
         return;
     }
-    //CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"),
+    // CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"),
     //                           m_positionToEnsureVisible,
     //                           m_preserveSelection ? wxT("true") : wxT("false")));
     DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
@@ -1538,7 +1537,7 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
     } else if(event.GetX() > 0 // It seems that we can get spurious events with x == 0
               &&
               event.GetX() < margin) {
-                  
+
         // We can't use event.GetPosition() here, as in the margin it returns -1
         int position = PositionFromPoint(wxPoint(event.GetX(), event.GetY()));
         int line = LineFromPosition(position);
@@ -3212,9 +3211,8 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()
-            ->GetBreakpointsMgr()
-            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
+           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -3548,7 +3546,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
     if(tags.empty()) {
         return;
     }
-    
+
     // When using this method, use an automated refresh completion box
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(this, tags, wxCodeCompletionBox::kRefreshOnKeyType);
 }
@@ -3990,7 +3988,7 @@ void LEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip)
     } else {
         pt = PointFromPosition(pos);
     }
-    
+
     // Place the tip on top of the mouse position, not under it
     pt.y -= m_calltip->GetSize().GetHeight();
     m_calltip->PositionAt(pt, this);
@@ -4815,7 +4813,7 @@ void LEditor::SplitSelection()
         ClearSelections();
         for(int i = selLineStart; i <= selLineEnd; ++i) {
             int caretPos;
-            if (i != GetLineCount()-1) {
+            if(i != GetLineCount() - 1) {
                 // Normally use PositionBefore as LineEnd includes the EOL as well
                 caretPos = PositionBefore(LineEnd(i));
             } else {
@@ -4859,16 +4857,51 @@ void LEditor::OnEditorConfigChanged(wxCommandEvent& event)
 
 void LEditor::ConvertIndentToSpaces()
 {
+    clSTCLineKeeper lk(GetSTC());
+    bool useTabs = GetUseTabs();
+    SetUseTabs(false);
+    int lineCount = GetLineCount();
+    for(int i = 0; i < lineCount; ++i) {
+        int indentStart = PositionFromLine(i);
+        int indentEnd = GetLineIndentPosition(i);
+        int lineIndentSize = GetLineIndentation(i);
+        
+        if(indentEnd > indentStart) {
+            // this line have indentation
+            // delete it
+            DeleteRange(indentStart, indentEnd - indentStart);
+            SetLineIndentation(i, lineIndentSize);
+        }
+    }
+    SetUseTabs(useTabs);
 }
 
 void LEditor::ConvertIndentToTabs()
 {
+    clSTCLineKeeper lk(GetSTC());
+    bool useTabs = GetUseTabs();
+    SetUseTabs(true);
+    int lineCount = GetLineCount();
+    for(int i = 0; i < lineCount; ++i) {
+        int indentStart = PositionFromLine(i);
+        int indentEnd = GetLineIndentPosition(i);
+        int lineIndentSize = GetLineIndentation(i);
+        
+        if(indentEnd > indentStart) {
+            // this line have indentation
+            // delete it
+            DeleteRange(indentStart, indentEnd - indentStart);
+            SetLineIndentation(i, lineIndentSize);
+        }
+    }
+    SetUseTabs(useTabs);
 }
 
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------
-struct SelectorSorter {
+struct SelectorSorter
+{
     bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 

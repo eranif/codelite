@@ -127,9 +127,6 @@
 			<object class="wxMenuItem" name="move_line_down">
 				 <label>Move Line Down</label>
 			 </object>
-			<object class="wxMenuItem" name="center_line">
-				 <label>Center &amp;Line in Editor</label>
-			 </object>
 			<object class="wxMenuItem" name="center_line_roll">
 				 <label>Center &amp;Line in Editor by Rolling</label>
 			 </object>
@@ -158,18 +155,20 @@
             <object class="wxMenuItem" name="function_call_tip">
                 <label>Display &amp;Function Calltip</label>
             </object>
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenuItem" name="convert_eol_win">
-				<label>Convert to Windows Format</label>
-			</object>
-			<object class="wxMenuItem" name="convert_eol_unix">
-				<label>Convert to Unix Format</label>
-			</object>
-			<!--
-			<object class="wxMenuItem" name="convert_eol_mac">
-				<label>Convert to Mac Format</label>
-			</object>
-			-->
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="convert_eol_win">
+                <label>Convert to Windows Format</label>
+            </object>
+            <object class="wxMenuItem" name="convert_eol_unix">
+                <label>Convert to Unix Format</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="convert_indent_to_tabs">
+                <label>Convert Indentation to Tabs</label>
+            </object>
+            <object class="wxMenuItem" name="convert_indent_to_spaces">
+                <label>Convert Indentation to Spaces</label>
+            </object>
         </object>
 
         <object class="wxMenu" name="view_menu">

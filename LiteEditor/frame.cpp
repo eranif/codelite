@@ -286,6 +286,8 @@ EVT_MENU(XRCID("move_line_up"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("center_line"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("center_line_roll"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("selection_to_multi_caret"), clMainFrame::OnSplitSelection)
+EVT_MENU(XRCID("convert_indent_to_tabs"), clMainFrame::DispatchCommandEvent)
+EVT_MENU(XRCID("convert_indent_to_spaces"), clMainFrame::DispatchCommandEvent)
 EVT_UPDATE_UI(XRCID("selection_to_multi_caret"), clMainFrame::OnSplitSelectionUI)
 
 EVT_UPDATE_UI(wxID_UNDO, clMainFrame::DispatchUpdateUIEvent)
@@ -307,8 +309,9 @@ EVT_UPDATE_UI(XRCID("convert_eol_unix"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("convert_eol_mac"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("move_line_down"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("move_line_up"), clMainFrame::OnFileExistUpdateUI)
-EVT_UPDATE_UI(XRCID("center_line"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("center_line_roll"), clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(XRCID("convert_indent_to_tabs"), clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(XRCID("convert_indent_to_spaces"), clMainFrame::OnFileExistUpdateUI)
 
 //-------------------------------------------------------
 // View menu

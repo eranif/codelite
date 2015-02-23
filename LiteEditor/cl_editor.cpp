@@ -4857,6 +4857,14 @@ void LEditor::OnEditorConfigChanged(wxCommandEvent& event)
     SetProperties();
 }
 
+void LEditor::ConvertIndentToSpaces()
+{
+}
+
+void LEditor::ConvertIndentToTabs()
+{
+}
+
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------

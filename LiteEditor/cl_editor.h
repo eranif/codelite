@@ -395,6 +395,16 @@ public:
      */
     void CenterLine(int line, int col = wxNOT_FOUND);
     
+    /**
+     * @brief convert the editor indentation to spaces
+     */
+    void ConvertIndentToSpaces();
+    
+    /**
+     * @brief convert the editor indentation to tabs
+     */
+    void ConvertIndentToTabs();
+    
     // Is there currently a marker at the current line?
     bool LineIsMarked(enum marker_mask_type mask);
     // Toggle marker at the current line

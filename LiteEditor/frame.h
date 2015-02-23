@@ -511,7 +511,7 @@ protected:
     void OnViewWordWrap(wxCommandEvent& e);
     void OnViewWordWrapUI(wxUpdateUIEvent& e);
     void OnViewDisplayEOL_UI(wxUpdateUIEvent& e);
-
+    
     // Docking windows events
     void OnAuiManagerRender(wxAuiManagerEvent& e);
     void OnDockablePaneClosed(wxAuiManagerEvent& e);

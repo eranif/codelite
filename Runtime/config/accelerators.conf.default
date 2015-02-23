@@ -22,7 +22,8 @@ to_upper|Edit|Make Uppercase|Ctrl-Shift-U
 transpose_lines|Edit|Transpose Lines|Ctrl-T
 move_line_up|Edit|Move Line Up|Ctrl-Shift-UP
 move_line_down|Edit|Move Line Down|Ctrl-Shift-DOWN
-center_line|Edit|Center Line in Editor|
+convert_indent_to_tabs|Edit|Convert Indentation to Tabs|
+convert_indent_to_spaces|Edit|Convert Indentation to Spaces|
 center_line_roll|Edit|Center Line in Editor by Rolling|
 wxID_SELECTALL|Edit|Select All|Ctrl-A
 match_brace|Edit|Match Brace|Ctrl-]

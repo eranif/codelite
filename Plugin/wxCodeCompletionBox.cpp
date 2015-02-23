@@ -236,7 +236,6 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
         return;
     }
 
-    int lineHeight = GetSingleLineHeight();
     DoShowCompletionBox();
 
     if(m_stc) {

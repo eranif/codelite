@@ -1592,7 +1592,8 @@ void LEditor::OnDwellEnd(wxStyledTextEvent& event)
     wxCommandEvent evtTypeinfo(wxEVT_CMD_EDITOR_TIP_DWELL_END, GetId());
     evtTypeinfo.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(evtTypeinfo)) return;
-
+    
+    DoCancelCalltip();
     m_context->OnDwellEnd(event);
     m_context->OnDbgDwellEnd(event);
 }

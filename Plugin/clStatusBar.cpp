@@ -234,6 +234,7 @@ void clStatusBar::Clear()
     SetBuildBitmap(wxNullBitmap, "");
     StopAnimation();
     SetLanguage("");
+    SetWhitespaceInfo("");
 }
 
 void clStatusBar::OnBuildEnded(clBuildEvent& event)

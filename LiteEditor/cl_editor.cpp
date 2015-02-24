@@ -1524,7 +1524,10 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
     int margin = 0;
     wxPoint pt(ScreenToClient(wxGetMousePosition()));
     wxRect clientRect = GetClientRect();
-
+    
+    // Always cancel the previous tooltip...
+    DoCancelCalltip();
+    
     for(int n = 0; n < FOLD_MARGIN_ID; ++n) {
         margin += GetMarginWidth(n);
     }
@@ -1557,9 +1560,9 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
             // Get the compiler tooltip
             tooltip = m_compilerMessagesMap.find(line)->second;
             if(MarkerGet(line) & (1 << smt_warning)) {
-                title = "<color=\"yellow\">Build warning</color>";
+                title = "<color=\"yellow\">WARNING</color>";
             } else {
-                title = "<color=\"yellow\">Build error</color>";
+                title = "<color=\"pink\">ERROR</color>";
             }
         }
 
@@ -2936,6 +2939,8 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
 void LEditor::OnKeyDown(wxKeyEvent& event)
 {
     // always cancel the tip
+    DoCancelCalltip();
+    
     m_prevSelectionInfo.Clear();
     if(HasSelection()) {
         for(int i = 0; i < GetSelections(); ++i) {
@@ -3070,8 +3075,9 @@ void LEditor::OnMotion(wxMouseEvent& event)
 void LEditor::OnLeftDown(wxMouseEvent& event)
 {
     HighlightWord(false);
-
+    
     // hide completion box
+    DoCancelCalltip();
     GetFunctionTip()->Deactivate();
 
     if(ManagerST::Get()->GetDebuggerTip()->IsShown()) {
@@ -4555,10 +4561,8 @@ size_t LEditor::GetCodeNavModifier()
 {
     size_t mod = wxMOD_NONE;
     if(GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt) mod |= wxMOD_ALT;
-
     if(GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control) mod |= wxMOD_CONTROL;
-
-    if(GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Shift) mod |= wxMOD_SHIFT;
+    if(GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Shift) mod |= wxMOD_ALT;
     return mod;
 }
 

@@ -2050,8 +2050,9 @@ void GitPlugin::DoAddFiles(const wxArrayString& files)
     wxString filesToAdd;
     for(size_t i = 0; i < files.GetCount(); ++i) {
         wxFileName fn(files.Item(i));
-        if(fn.IsAbsolute()) fn.MakeRelativeTo(m_repositoryDirectory);
-        filesToAdd << "\"" << fn.GetFullPath(wxPATH_UNIX) << "\" ";
+        wxString file = fn.GetFullPath();
+        ::WrapWithQuotes(file);
+        filesToAdd << file << " ";
     }
 
     gitAction ga(gitAddFile, filesToAdd);
@@ -2066,8 +2067,9 @@ void GitPlugin::DoResetFiles(const wxArrayString& files)
     wxString filesToDelete;
     for(size_t i = 0; i < files.GetCount(); ++i) {
         wxFileName fn(files.Item(i));
-        if(fn.IsAbsolute()) fn.MakeAbsolute(m_repositoryDirectory);
-        filesToDelete << "\"" << fn.GetFullPath() << "\" ";
+        wxString file = fn.GetFullPath();
+        ::WrapWithQuotes(file);
+        filesToDelete << file << " ";
     }
 
     gitAction ga(gitResetFile, filesToDelete);

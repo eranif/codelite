@@ -264,6 +264,9 @@
         <File Name="optionsdialogbase2.wxcp"/>
         <File Name="editor_options_misc.wxcp"/>
         <File Name="editor_options_caret.wxcp"/>
+        <VirtualDirectory Name="Code">
+          <File Name="editor_options_comments_base.wxcp"/>
+        </VirtualDirectory>
       </VirtualDirectory>
       <File Name="env_var_dlg_base.h"/>
       <File Name="env_var_dlg_base.cpp"/>
@@ -903,6 +906,7 @@
       <File Name="new_workspace_dlg_liteeditor_bitmaps.cpp"/>
       <File Name="quickdebug_formbuilder_bitmaps.cpp"/>
       <File Name="CodeLiteUpgradeFrame_liteeditor_bitmaps.cpp"/>
+      <File Name="editor_options_comments_base_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

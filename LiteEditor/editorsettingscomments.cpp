@@ -45,7 +45,7 @@ EditorSettingsComments::EditorSettingsComments( wxWindow* parent )
     
     m_checkBoxAlt->SetValue( flags & OptionsConfig::Opt_NavKey_Alt );
     m_checkBoxCtrl->SetValue( flags & OptionsConfig::Opt_NavKey_Control );
-    m_checkBoxShift->SetValue( flags & OptionsConfig::Opt_NavKey_Shift );
+    m_checkBoxAlt->SetValue( flags & OptionsConfig::Opt_NavKey_Shift );
 }
 
 void EditorSettingsComments::Save(OptionsConfigPtr options)
@@ -65,10 +65,7 @@ void EditorSettingsComments::Save(OptionsConfigPtr options)
     
     // clear the navigation key code
     flags &= ~(OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control|OptionsConfig::Opt_NavKey_Shift);
-    
-    if( m_checkBoxShift->IsChecked() )
-        flags |= OptionsConfig::Opt_NavKey_Shift;
-    
+   
     if( m_checkBoxCtrl->IsChecked() )
         flags |= OptionsConfig::Opt_NavKey_Control;
         

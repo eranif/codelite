@@ -103,6 +103,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case kPHP_T_CONST:
         case kPHP_T_REQUIRE:
         case kPHP_T_REQUIRE_ONCE:
+        case kPHP_T_USE:
         case '.':
         case ';':
         case '{':

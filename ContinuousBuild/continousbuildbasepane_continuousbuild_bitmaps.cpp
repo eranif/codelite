@@ -29,7 +29,7 @@ static unsigned char xml_res_file_0[] = {
 47,47,119,119,119,46,119,120,119,105,110,100,111,119,115,46,111,114,103,
 47,119,120,120,114,99,34,47,62,10};
 
-void wxCrafterRo2g8MInitBitmapResources()
+void wxC47E7InitBitmapResources()
 {
 
     // Check for memory FS. If not present, load the handler:
@@ -42,6 +42,6 @@ void wxCrafterRo2g8MInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/cppchecksettingsdlg_cppchecker_bitmaps.cpp$C__src_codelite_cppchecker_cppchecksettingsdlg_cppchecker_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/cppchecksettingsdlg_cppchecker_bitmaps.cpp$C__src_codelite_cppchecker_cppchecksettingsdlg_cppchecker_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/continousbuildbasepane_continuousbuild_bitmaps.cpp$C__src_codelite_ContinuousBuild_continousbuildbasepane_continuousbuild_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/continousbuildbasepane_continuousbuild_bitmaps.cpp$C__src_codelite_ContinuousBuild_continousbuildbasepane_continuousbuild_bitmaps.xrc"));
 }

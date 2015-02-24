@@ -1173,7 +1173,7 @@ void GitPlugin::ProcessGitActionQueue()
     case gitCommit:
         GIT_MESSAGE(wxT("Commit local changes (") + ga.arguments + wxT(")"));
         command << wxT(" --no-pager commit ") << ga.arguments;
-        ShowProgress(wxT("Commiting local changes..."));
+        ShowProgress(wxT("Committing local changes..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 

@@ -2153,7 +2153,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": "When there is only a single match dont show the code completion box but rather insert the match"
+                   "m_value": "When there is only a single match don't show the code completion box but rather insert the match"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -2193,7 +2193,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Label:",
-                   "m_value": "Auto-Insert single match"
+                   "m_value": "Auto insert single match"
                   }, {
                    "type": "bool",
                    "m_label": "Value:",

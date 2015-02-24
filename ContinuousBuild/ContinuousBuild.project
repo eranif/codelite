@@ -50,6 +50,7 @@
     <File Name="continousbuildbasepane.h"/>
     <File Name="continousbuildpane.cpp"/>
     <File Name="continousbuildpane.h"/>
+    <File Name="continousbuildbasepane.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="continousbuildbasepane.fbp"/>
@@ -281,4 +282,9 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="continousbuildbasepane_continuousbuild_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

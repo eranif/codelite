@@ -423,7 +423,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     
     bSizer161->Add(sbSizer2, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText22 = new wxStaticText(m_panel5, wxID_ANY, _("The SSH client field should contain the command to be\nused by the SVN command line client for establishing a secured channel. \n\nFor example, on Windows it should contain something like:\n/path/to/plink.exe -l <user name> -pw <svn password>\n\nIf you dont need SSH channel, leave this field empty"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText22 = new wxStaticText(m_panel5, wxID_ANY, _("The SSH client field should contain the command to be\nused by the SVN command line client for establishing a secured channel.\n\nFor example, on Windows it should contain something like:\n/path/to/plink.exe -l <user name> -pw <svn password>\n\nIf you don't need SSH channel, leave this field empty"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     sbSizer2->Add(m_staticText22, 0, wxALL|wxEXPAND, 5);
     
@@ -1026,14 +1026,14 @@ PatchDlgBase::PatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     
     bSizer31->Add(fgSizer11, 1, wxALL|wxEXPAND, 5);
     
-    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|All Files (*)|*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
+    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|All Files (*)|*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
     
     fgSizer11->Add(m_filePicker, 0, wxALL|wxEXPAND, 5);
     
     wxArrayString m_radioBoxEOLPolicyArr;
-    m_radioBoxEOLPolicyArr.Add(wxT("Do not change EOL, apply patch as it is"));
-    m_radioBoxEOLPolicyArr.Add(wxT("Change to Windows style (CRLF)"));
-    m_radioBoxEOLPolicyArr.Add(wxT("Change to UNIX style (LF)"));
+    m_radioBoxEOLPolicyArr.Add(_("Do not change EOL, apply patch as it is"));
+    m_radioBoxEOLPolicyArr.Add(_("Change to Windows style (CRLF)"));
+    m_radioBoxEOLPolicyArr.Add(_("Change to UNIX style (LF)"));
     m_radioBoxEOLPolicy = new wxRadioBox(this, wxID_ANY, _("Change patch line endings (EOL):"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxEOLPolicyArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxEOLPolicy->SetSelection(0);
     
@@ -1086,7 +1086,7 @@ SvnSelectLocalRepoBase::SvnSelectLocalRepoBase(wxWindow* parent, wxWindowID id, 
     
     fgSizer13->Add(m_staticText37, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_dirPicker1 = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1, -1), wxDIRP_DEFAULT_STYLE);
+    m_dirPicker1 = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1, -1), wxDIRP_DEFAULT_STYLE);
     
     fgSizer13->Add(m_dirPicker1, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     

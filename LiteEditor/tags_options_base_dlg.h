@@ -116,6 +116,67 @@ protected:
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText14() { return m_staticText14; }
+    wxTextCtrl* GetSpinCtrlNumberOfCCItems() { return m_spinCtrlNumberOfCCItems; }
+    wxCheckBox* GetCheckBoxEnableCaseSensitiveCompletion() { return m_checkBoxEnableCaseSensitiveCompletion; }
+    wxCheckBox* GetCheckDisplayTypeInfo() { return m_checkDisplayTypeInfo; }
+    wxCheckBox* GetCheckDisplayFunctionTip() { return m_checkDisplayFunctionTip; }
+    wxCheckBox* GetCheckCppKeywordAssist() { return m_checkCppKeywordAssist; }
+    wxCheckBox* GetCheckBoxKeepFunctionSignature() { return m_checkBoxKeepFunctionSignature; }
+    wxCheckBox* GetCheckBoxretagWorkspaceOnStartup() { return m_checkBoxretagWorkspaceOnStartup; }
+    wxCheckBox* GetCheckDisableParseOnSave() { return m_checkDisableParseOnSave; }
+    wxCheckBox* GetCheckBoxDeepUsingNamespaceResolving() { return m_checkBoxDeepUsingNamespaceResolving; }
+    wxPanel* GetPaneDisplayAndBehavior() { return m_paneDisplayAndBehavior; }
+    wxPropertyGridManager* GetPgMgrColouring() { return m_pgMgrColouring; }
+    wxPanel* GetPaneColouring() { return m_paneColouring; }
+    wxCheckBox* GetCheckWordAssist() { return m_checkWordAssist; }
+    wxStaticText* GetStaticTextMinWordLen() { return m_staticTextMinWordLen; }
+    wxSlider* GetSliderMinWordLen() { return m_sliderMinWordLen; }
+    wxCheckBox* GetCheckAutoInsertSingleChoice() { return m_checkAutoInsertSingleChoice; }
+    wxPanel* GetPaneTriggering() { return m_paneTriggering; }
+    wxBannerWindow* GetBanner34() { return m_banner34; }
+    wxTextCtrl* GetTextCtrlCtagsSearchPaths() { return m_textCtrlCtagsSearchPaths; }
+    wxButton* GetButtonAddSearchPath() { return m_buttonAddSearchPath; }
+    wxButton* GetButtonCtagsSuggest() { return m_buttonCtagsSuggest; }
+    wxPanel* GetPanel38() { return m_panel38; }
+    wxBannerWindow* GetBanner44() { return m_banner44; }
+    wxTextCtrl* GetTextCtrlCtagsExcludePaths() { return m_textCtrlCtagsExcludePaths; }
+    wxButton* GetButtonAddExcludePath() { return m_buttonAddExcludePath; }
+    wxPanel* GetPanel40() { return m_panel40; }
+    wxNotebook* GetNotebook36() { return m_notebook36; }
+    wxPanel* GetPanelCtagsSearchPaths() { return m_panelCtagsSearchPaths; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxTextCtrl* GetTextFileSpec() { return m_textFileSpec; }
+    wxStaticText* GetStaticText92() { return m_staticText92; }
+    wxTextCtrl* GetTextCtrlFilesList() { return m_textCtrlFilesList; }
+    wxButton* GetButtonParse() { return m_buttonParse; }
+    wxTextCtrl* GetTextPrep() { return m_textPrep; }
+    wxStaticText* GetStaticText9() { return m_staticText9; }
+    wxHyperlinkCtrl* GetHyperlink1() { return m_hyperlink1; }
+    wxPanel* GetPanelClangGeneral() { return m_panelClangGeneral; }
+    wxStaticText* GetStaticText91() { return m_staticText91; }
+    wxTextCtrl* GetTextTypes() { return m_textTypes; }
+    wxPanel* GetPanel5() { return m_panel5; }
+    wxNotebook* GetNotebook2() { return m_notebook2; }
+    wxPanel* GetPanelCtagsAdvanced() { return m_panelCtagsAdvanced; }
+    wxPanel* GetPanelCtags() { return m_panelCtags; }
+    wxCheckBox* GetCheckBoxEnableClangCC() { return m_checkBoxEnableClangCC; }
+    wxCheckBox* GetCheckBoxClangFirst() { return m_checkBoxClangFirst; }
+    wxStaticText* GetStaticText13() { return m_staticText13; }
+    wxTextCtrl* GetTextCtrlClangSearchPaths() { return m_textCtrlClangSearchPaths; }
+    wxButton* GetButtonSuggest() { return m_buttonSuggest; }
+    wxPanel* GetPanel8() { return m_panel8; }
+    wxPanel* GetPanel3() { return m_panel3; }
+    wxStaticText* GetStaticText101() { return m_staticText101; }
+    wxButton* GetButtonClearCache() { return m_buttonClearCache; }
+    wxStaticText* GetStaticText12() { return m_staticText12; }
+    wxChoice* GetChoiceCachePolicy() { return m_choiceCachePolicy; }
+    wxPanel* GetPanel4() { return m_panel4; }
+    wxNotebook* GetNotebookClang() { return m_notebookClang; }
+    wxPanel* GetPanelClang() { return m_panelClang; }
+    wxTreebook* GetTreebook2() { return m_treebook2; }
+    wxButton* GetButtonOK() { return m_buttonOK; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
     TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Code Completion"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~TagsOptionsBaseDlg();
 };

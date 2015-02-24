@@ -207,9 +207,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer4->Add(m_sliderMinWordLen, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_checkAutoInsertSingleChoice = new wxCheckBox(m_paneTriggering, wxID_ANY, _("Auto-Insert single match"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkAutoInsertSingleChoice = new wxCheckBox(m_paneTriggering, wxID_ANY, _("Auto insert single match"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkAutoInsertSingleChoice->SetValue(true);
-    m_checkAutoInsertSingleChoice->SetToolTip(_("When there is only a single match dont show the code completion box but rather insert the match"));
+    m_checkAutoInsertSingleChoice->SetToolTip(_("When there is only a single match don't show the code completion box but rather insert the match"));
     
     fgSizer4->Add(m_checkAutoInsertSingleChoice, 0, wxALL, 5);
     

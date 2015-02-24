@@ -4446,7 +4446,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Label:",
-                 "m_value": "The SSH client field should contain the command to be\\nused by the SVN command line client for establishing a secured channel. \\n\\nFor example, on Windows it should contain something like:\\n/path/to/plink.exe -l <user name> -pw <svn password>\\n\\nIf you dont need SSH channel, leave this field empty"
+                 "m_value": "The SSH client field should contain the command to be\\nused by the SVN command line client for establishing a secured channel.\\n\\nFor example, on Windows it should contain something like:\\n/path/to/plink.exe -l <user name> -pw <svn password>\\n\\nIf you don't need SSH channel, leave this field empty"
                 }, {
                  "type": "string",
                  "m_label": "Wrap:",

@@ -56,7 +56,7 @@ EclipseCSSThemeImporter::EclipseCSSThemeImporter()
         "ThreeDLightShadow ThreeDShadow Window WindowFrame WindowText silent x-soft soft medium loud x-loud spell-out "
         "mix left-side far-left center-left center-right far-right right-side behind leftwards rightwards below level "
         "above higher lower x-slow slow medium fast x-fast faster slower male female child x-low low high x-high code "
-        "digits continous");
+        "digits continuous");
 
     SetKeywords3("background-size border-radius border-top-right-radius border-bottom-right-radius "
                  "border-bottom-left-radius border-top-left-radius box-shadow columns column-width "

@@ -99,10 +99,6 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 
     // Set our docking art provider for this notebook
     m_mgr.SetArtProvider(new clAuiDockArt(NULL));
-    m_mgr.SetFlags(wxAUI_MGR_DEFAULT | wxAUI_MGR_LIVE_RESIZE);
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 0);
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
-
     m_leftDownPos = wxPoint();
 
     // Connect events

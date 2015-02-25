@@ -31,6 +31,7 @@
 #include "wx_xml_compatibility.h"
 #include "drawingutils.h"
 #include <algorithm>
+#include "editor_config.h"
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -291,7 +292,9 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-
+    
+    ctrl->SetUseTabs(EditorConfigST::Get()->GetOptions()->GetIndentUsesTabs());
+    ctrl->SetIndent(EditorConfigST::Get()->GetOptions()->GetIndentWidth());
     bool tooltip(false);
 
     std::list<StyleProperty> styles;

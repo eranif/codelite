@@ -136,7 +136,7 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 
 #endif //
 #endif
-
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
     // Set the notebook theme
     wxAuiTabArt* artProvider;
     size_t flags = EditorConfigST::Get()->GetOptions()->GetOptions();

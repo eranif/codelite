@@ -206,11 +206,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     
     // Fill the background
     dc.SetBrush(m_art->GetBgColour());
-#ifdef __WXGTK__
-    dc.SetPen(m_art->GetPenColour());
-#else
     dc.SetPen(m_art->GetBgColour());
-#endif
 
     dc.DrawRectangle(rect);
 

@@ -36,7 +36,6 @@ class PHPEditorContextMenu : public wxEvtHandler
 protected:
     // Helpers
     void DoContextMenu(IEditor* editor, wxCommandEvent& e);
-    void DoMarginContextMenu(IEditor* editor);
     wxStyledTextCtrl* DoGetActiveScintila();
 
 protected:
@@ -56,8 +55,6 @@ protected:
     void DoGotoDefinition();
     void OnInsertDoxyComment(wxCommandEvent& e);
     void OnGenerateSettersGetters(wxCommandEvent& e);
-    // void DoFindReferences();
-    void DoNotifyCommonCommand(int cmdId);
 
 public:
     static PHPEditorContextMenu* Instance();
@@ -77,7 +74,6 @@ private:
     void OnCommentLine(wxCommandEvent &event);
     
     void DoBuildMenu(wxMenu* menu, IEditor* editor);
-    void DoBuildMarginMenu(wxMenu* menu, IEditor* editor);
     bool IsIncludeOrRequireStatement(wxString& includeWhat);
     bool GetIncludeOrRequireFileName(wxString& fn);
     bool IsLineMarked(); // does a bookmark exist in the current lines

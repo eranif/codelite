@@ -157,17 +157,6 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
     }
 }
 
-void PHPEditorContextMenu::DoBuildMarginMenu(wxMenu* menu, IEditor* editor)
-{
-    menu->Append(XRCID("toggle_bookmark"),
-                 IsLineMarked() ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")));
-
-    // The below Connect catches *all* the menu events there is no need to
-    // call it per menu entry
-    // menu->Connect(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked), NULL,
-    // this);
-}
-
 bool PHPEditorContextMenu::IsPHPCommentOrString(int styleAtPos) const
 {
     if((styleAtPos == wxSTC_HPHP_HSTRING) || (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
@@ -342,33 +331,6 @@ void PHPEditorContextMenu::DoContextMenu(IEditor* editor, wxCommandEvent& e)
     // Menu can be allocated on the stack otherwise we need to delete it later
     wxMenu menu;
     DoBuildMenu(&menu, editor);
-    editor->GetSTC()->PopupMenu(&menu);
-}
-
-void PHPEditorContextMenu::DoMarginContextMenu(IEditor* editor)
-{
-    long closePos = editor->GetCurrentPosition();
-    if(closePos != wxNOT_FOUND) {
-        if(!editor->GetSelection().IsEmpty()) {
-            // If the selection text is placed under the cursor,
-            // keep it selected, else, unselect the text
-            // and place the caret to be under cursor
-            int selStart = editor->GetSelectionStart();
-            int selEnd = editor->GetSelectionEnd();
-            if(closePos < selStart || closePos > selEnd) {
-                // Cursor is not over the selected text, unselect and re-position caret
-                editor->SetCaretAt(closePos);
-            }
-        } else {
-            // No selection, just place the caret
-            editor->SetCaretAt(closePos);
-        }
-    }
-
-    // Create the context menu.
-    // Menu can be allocated on the stack otherwise we need to delete it later
-    wxMenu menu;
-    DoBuildMarginMenu(&menu, editor);
     editor->GetSTC()->PopupMenu(&menu);
 }
 
@@ -696,16 +658,6 @@ void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
     }
 }
 
-void PHPEditorContextMenu::DoNotifyCommonCommand(int cmdId)
-{
-    // Let codelite do the default action for the cmdId
-    wxStyledTextCtrl* sci = dynamic_cast<wxStyledTextCtrl*>(m_manager->GetActiveEditor());
-    if(sci) {
-        wxCommandEvent eventClose(wxEVT_COMMAND_MENU_SELECTED, cmdId);
-        eventClose.SetEventObject(sci);
-        wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(eventClose);
-    }
-}
 wxStyledTextCtrl* PHPEditorContextMenu::DoGetActiveScintila()
 {
     IEditor* editor = m_manager->GetActiveEditor();

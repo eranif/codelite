@@ -696,6 +696,8 @@ void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
             event.Skip();
             break;
         }
+    } else {
+        event.Skip();
     }
 }
 

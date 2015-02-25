@@ -10,7 +10,7 @@
 #include "fileextmanager.h"
 #include <wx/xrc/xmlres.h>
 
-#define STATUSBAR_MESSAGES_COL_IDX 0
+#define STATUSBAR_LINE_COL_IDX 0
 #define STATUSBAR_ANIMATION_COL_IDX 1
 #define STATUSBAR_WHITESPACE_INFO_IDX 2
 #define STATUSBAR_LANG_COL_IDX 3
@@ -46,7 +46,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
-    wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(this, 300));
+    wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(this, 150));
     AddField(messages);
 
     wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(
@@ -79,14 +79,7 @@ clStatusBar::~clStatusBar()
     Unbind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 }
 
-void clStatusBar::SetMessage(const wxString& message)
-{
-    // Col 0
-    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_MESSAGES_COL_IDX);
-    CHECK_PTR_RET(field);
-    field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
-    field->SetTooltip(message);
-}
+void clStatusBar::SetMessage(const wxString& message) { SetText(message); }
 
 void clStatusBar::OnPageChanged(wxCommandEvent& event)
 {
@@ -171,7 +164,7 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
             break;
         }
         language.MakeUpper();
-        
+
         // Set the "TABS/SPACES" field
         SetWhitespaceInfo(editor->GetSTC()->GetUseTabs() ? "tabs" : "spaces");
     }
@@ -219,7 +212,14 @@ void clStatusBar::SetLanguage(const wxString& lang)
 
 void clStatusBar::SetLinePosColumn(const wxString& lineCol) { CallAfter(&clStatusBar::DoSetLinePosColumn, lineCol); }
 
-void clStatusBar::DoSetLinePosColumn(const wxString& message) { SetText(message); }
+void clStatusBar::DoSetLinePosColumn(const wxString& message)
+{
+    wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LINE_COL_IDX);
+    CHECK_PTR_RET(field);
+
+    field->Cast<wxCustomStatusBarFieldText>()->SetText(message);
+    field->SetTooltip(message);
+}
 
 void clStatusBar::OnAllEditorsClosed(wxCommandEvent& event)
 {
@@ -307,7 +307,7 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
         }
     } else if(event.GetInt() == STATUSBAR_WHITESPACE_INFO_IDX) {
         if(m_mgr->GetActiveEditor()) {
-            // show a popup menu when clicking on the TABS/SPACES 
+            // show a popup menu when clicking on the TABS/SPACES
             // field
             wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_WHITESPACE_INFO_IDX);
             CHECK_PTR_RET(field);
@@ -318,17 +318,17 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
             menu.AppendSeparator();
             wxMenuItem* idUseTabs = menu.Append(wxID_ANY, "Use Tabs", "", wxITEM_CHECK);
             wxMenuItem* idUseSpaces = menu.Append(wxID_ANY, "Use Spaces", "", wxITEM_CHECK);
-            
+
             // Check the proper tabs vs spaces option
             menu.Check(idUseSpaces->GetId(), !stc->GetUseTabs());
             menu.Check(idUseTabs->GetId(), stc->GetUseTabs());
-            
-            //wxPoint pt = field->GetRect().GetTopLeft();
-            //int menuHeight = 20;
-            //menuHeight *= 5;
+
+            // wxPoint pt = field->GetRect().GetTopLeft();
+            // int menuHeight = 20;
+            // menuHeight *= 5;
             //
-            //pt.y -= menuHeight;
-            
+            // pt.y -= menuHeight;
+
             int selectedId = GetPopupMenuSelectionFromUser(menu);
             if(selectedId == wxID_NONE) return;
 
@@ -348,7 +348,7 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
     }
 }
 
-void clStatusBar::SetWhitespaceInfo(const wxString& whitespaceInfo) 
+void clStatusBar::SetWhitespaceInfo(const wxString& whitespaceInfo)
 {
     wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_WHITESPACE_INFO_IDX);
     CHECK_PTR_RET(field);

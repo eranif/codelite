@@ -4405,15 +4405,15 @@
           }, {
            "type": "string",
            "m_label": "Label:",
-           "m_value": "Open Active Project Settings"
+           "m_value": "Project Settings"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
-           "m_value": "Open Active Project Settings"
+           "m_value": "Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"
           }, {
            "type": "string",
            "m_label": "Help String:",
-           "m_value": "Open Active Project Settings"
+           "m_value": "Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",

@@ -82,6 +82,8 @@ new_workspace|Workspace|New Workspace...|
 switch_to_workspace|Workspace|Open Workspace...|
 close_workspace|Workspace|Close Workspace|
 reload_workspace|Workspace|Reload Workspace|
+local_workspace_settings|Workspace|Workspace Settings...|
+local_workspace_prefs|Workspace|Workspace Editor Preferences...|
 import_from_msvs|Workspace|Import MS Visual Studio Solution File...|
 project_properties|Workspace|Open Active Project Settings...|Alt-F7
 new_project|Workspace|Create New Project|

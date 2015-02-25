@@ -99,9 +99,6 @@
             <object class="wxMenuItem" name="wxID_PASTE">
                 <label>Past&amp;e</label>
             </object>
-            <object class="wxMenuItem" name="wxID_DUPLICATE">
-                <label>D&amp;uplicate Selection / Line</label>
-            </object>
             <object class="wxMenuItem" name="wxID_SELECTALL">
                 <label>Select &amp;All</label>
             </object>
@@ -109,37 +106,71 @@
                 <label>Split selection into lines</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="delete_line">
-                 <label>&amp;Delete Line</label>
-             </object>
-            <object class="wxMenuItem" name="delete_line_end">
-                 <label>Delete to Line &amp;End</label>
-             </object>
-            <object class="wxMenuItem" name="delete_line_start">
-                 <label>Delete to Line &amp;Start</label>
-             </object>
-            <object class="wxMenuItem" name="transpose_lines">
-                 <label>&amp;Transpose Lines</label>
-             </object>
-            <object class="wxMenuItem" name="move_line_up">
-                 <label>Move Line Up</label>
-             </object>
-            <object class="wxMenuItem" name="move_line_down">
-                 <label>Move Line Down</label>
-             </object>
-            <object class="wxMenuItem" name="center_line_roll">
-                 <label>Center &amp;Line in Editor by Rolling</label>
-             </object>
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Line</label>
+                <object class="wxMenuItem" name="delete_line">
+                     <label>&amp;Delete Line</label>
+                 </object>
+                <object class="wxMenuItem" name="wxID_DUPLICATE">
+                    <label>D&amp;uplicate Selection / Line</label>
+                </object>
+                <object class="wxMenuItem" name="delete_line_end">
+                     <label>Delete to Line &amp;End</label>
+                 </object>
+                <object class="wxMenuItem" name="delete_line_start">
+                     <label>Delete to Line &amp;Start</label>
+                 </object>
+                <object class="wxMenuItem" name="transpose_lines">
+                     <label>&amp;Transpose Lines</label>
+                 </object>
+                <object class="wxMenuItem" name="move_line_up">
+                     <label>Move Line Up</label>
+                 </object>
+                <object class="wxMenuItem" name="move_line_down">
+                     <label>Move Line Down</label>
+                 </object>
+                <object class="wxMenuItem" name="center_line_roll">
+                     <label>Center Line in Editor</label>
+                 </object>
+            </object>
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Comment</label>
+                <object class="wxMenuItem" name="comment_selection">
+                     <label>Comment Selection</label>
+                 </object>
+                <object class="wxMenuItem" name="comment_line">
+                    <label>Comment Line</label>
+                </object>
+                <object class="wxMenuItem" name="insert_doxy_comment">
+                    <label>Insert Comment Block</label>
+                </object>
+            </object>
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Text Conversion</label>
+                <object class="wxMenuItem" name="to_upper">
+                    <label>Make Upper&amp;case</label>
+                </object>
+                <object class="wxMenuItem" name="to_lower">
+                     <label>Make &amp;Lowercase</label>
+                 </object>
+                <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+                <object class="wxMenuItem" name="convert_eol_win">
+                    <label>Convert to Windows Format</label>
+                </object>
+                <object class="wxMenuItem" name="convert_eol_unix">
+                    <label>Convert to Unix Format</label>
+                </object>
+                <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+                <object class="wxMenuItem" name="convert_indent_to_tabs">
+                    <label>Convert Indentation to Tabs</label>
+                </object>
+                <object class="wxMenuItem" name="convert_indent_to_spaces">
+                    <label>Convert Indentation to Spaces</label>
+                </object>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="trim_trailing">
                  <label>Trim T&amp;railing Spaces</label>
-             </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="to_upper">
-                 <label>Make Upper&amp;case</label>
-             </object>
-            <object class="wxMenuItem" name="to_lower">
-                 <label>Make &amp;Lowercase</label>
              </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="match_brace">
@@ -154,20 +185,6 @@
             </object>
             <object class="wxMenuItem" name="function_call_tip">
                 <label>Display &amp;Function Calltip</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="convert_eol_win">
-                <label>Convert to Windows Format</label>
-            </object>
-            <object class="wxMenuItem" name="convert_eol_unix">
-                <label>Convert to Unix Format</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="convert_indent_to_tabs">
-                <label>Convert Indentation to Tabs</label>
-            </object>
-            <object class="wxMenuItem" name="convert_indent_to_spaces">
-                <label>Convert Indentation to Spaces</label>
             </object>
         </object>
 

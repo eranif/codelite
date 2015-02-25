@@ -26,6 +26,7 @@ PHPEditorContextMenu::PHPEditorContextMenu()
     m_comment_line_2 = wxT("#");
     m_start_comment = wxT("/*");
     m_close_comment = wxT("*/");
+    
 }
 
 PHPEditorContextMenu::~PHPEditorContextMenu()
@@ -34,7 +35,7 @@ PHPEditorContextMenu::~PHPEditorContextMenu()
         wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEventHandler(PHPEditorContextMenu::OnContextMenu), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
 
-    wxTheApp->Disconnect(wxID_COMMENT_LINE,
+    wxTheApp->Disconnect(wxID_OPEN_PHP_FILE,
                          wxID_FIND_REFERENCES,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked),
@@ -67,7 +68,7 @@ void PHPEditorContextMenu::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
     // The below Connect catches *all* the menu events there is no need to
     // call it per menu entry
-    wxTheApp->Connect(wxID_COMMENT_LINE,
+    wxTheApp->Connect(wxID_OPEN_PHP_FILE,
                       wxID_FIND_REFERENCES,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked),
@@ -93,6 +94,9 @@ void PHPEditorContextMenu::ConnectEvents()
     wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_DELETE);
     wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_UNDO);
     wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_REDO);
+    
+    wxTheApp->Bind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentLine, this, XRCID("comment_line"));
+    wxTheApp->Bind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentSelection, this, XRCID("comment_selection"));
 }
 
 PHPEditorContextMenu* PHPEditorContextMenu::Instance()
@@ -145,26 +149,6 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
     if(IsIncludeOrRequireStatement(includeWhat)) {
         menu->PrependSeparator();
         menu->Prepend(wxID_OPEN_PHP_FILE, wxString::Format(_("Open '%s'"), includeWhat.c_str()));
-    }
-
-    // this is not an include/require line.
-    // check other options.
-    // add an option to remove a comment line
-    if((styleAtPos == wxSTC_HPHP_COMMENTLINE) || (styleAtPos == wxSTC_HPHP_COMMENT)) {
-        menu->AppendSeparator();
-
-        if(!editor->GetTextRange(editor->GetSelectionStart(), editor->GetSelectionEnd()).IsEmpty()) {
-            menu->Append(wxID_UNCOMMENT_SELECTION, _("Uncomment selection"));
-        }
-
-        menu->Append(wxID_UNCOMMENT_LINE, _("Uncomment line"));
-        menu->Append(wxID_UNCOMMENT, _("Uncomment"));
-
-    } else { // add an option to comment a complete line
-        menu->AppendSeparator();
-        if(!editor->GetTextRange(editor->GetSelectionStart(), editor->GetSelectionEnd()).IsEmpty())
-            menu->Append(wxID_COMMENT_SELECTION, _("Comment selection"));
-        menu->Append(wxID_COMMENT_LINE, _("Comment line"));
     }
 }
 
@@ -404,7 +388,7 @@ void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
         if(menu->FindItem(XRCID("insert_temp_breakpoint"))) {
             menu->Remove(XRCID("insert_temp_breakpoint"));
         }
-        
+
         if(menu->FindItem(XRCID("insert_disabled_breakpoint"))) {
             menu->Remove(XRCID("insert_disabled_breakpoint"));
         }
@@ -416,11 +400,11 @@ void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
         if(menu->FindItem(XRCID("ignore_breakpoint"))) {
             menu->Remove(XRCID("ignore_breakpoint"));
         }
-        
+
         if(menu->FindItem(XRCID("toggle_breakpoint_enabled_status"))) {
             menu->Remove(XRCID("toggle_breakpoint_enabled_status"));
         }
-        
+
         if(menu->FindItem(XRCID("edit_breakpoint"))) {
             menu->Remove(XRCID("edit_breakpoint"));
         }
@@ -687,19 +671,8 @@ int PHPEditorContextMenu::RemoveComment(wxStyledTextCtrl* sci, int posFrom, cons
 void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
 {
     IEditor* editor = m_manager->GetActiveEditor();
-    if(editor) {
+    if(editor && IsPHPFile(editor)) {
         switch(event.GetId()) {
-        case wxID_COMMENT_LINE:
-        case wxID_UNCOMMENT_LINE:
-            DoCommentLine();
-            break;
-        case wxID_COMMENT_SELECTION:
-        case wxID_UNCOMMENT_SELECTION:
-            DoCommentSelection();
-            break;
-        case wxID_UNCOMMENT:
-            DoUncomment();
-            break;
         case wxID_OPEN_PHP_FILE:
             DoOpenPHPFile();
             break;
@@ -820,5 +793,25 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
                 }
             }
         }
+    }
+}
+
+void PHPEditorContextMenu::OnCommentLine(wxCommandEvent& event)
+{
+    IEditor* editor = m_manager->GetActiveEditor();
+    if(editor && IsPHPFile(editor)) {
+        DoCommentLine();
+    } else {
+        event.Skip();
+    }
+}
+
+void PHPEditorContextMenu::OnCommentSelection(wxCommandEvent& event)
+{
+    IEditor* editor = m_manager->GetActiveEditor();
+    if(editor && IsPHPFile(editor)) {
+        DoCommentSelection();
+    } else {
+        event.Skip();
     }
 }

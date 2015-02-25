@@ -3939,10 +3939,6 @@ void clMainFrame::CompleteInitialization()
 
     // Register C++ keyboard shortcuts
     clKeyboardManager::Get()->AddGlobalAccelerator("swap_files", "F12", "C++::Swap Header/Implementation file");
-    clKeyboardManager::Get()->AddGlobalAccelerator(
-        "insert_doxy_comment", "Ctrl-Shift-D", "C++::Insert Doxygen Comment");
-    clKeyboardManager::Get()->AddGlobalAccelerator("comment_selection", "Ctrl-Shift-/", "C++::Comment Selection");
-    clKeyboardManager::Get()->AddGlobalAccelerator("comment_line", "Ctrl-/", "C++::Toggle Line Comment");
     clKeyboardManager::Get()->AddGlobalAccelerator("rename_symbol", "Ctrl-Shift-H", "C++::Rename Symbol");
 
     // Load the plugins
@@ -4212,7 +4208,6 @@ void clMainFrame::OnManagePlugins(wxCommandEvent& e)
 
 void clMainFrame::OnCppContextMenu(wxCommandEvent& e)
 {
-    wxUnusedVar(e);
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
     if(editor) {
         editor->GetContext()->ProcessEvent(e);

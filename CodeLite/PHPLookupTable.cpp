@@ -165,6 +165,24 @@ void PHPLookupTable::Open(const wxFileName& dbfile)
         m_filename = dbfile;
         CreateSchema();
 
+#if 0
+        if(!CheckDiskImage()) {
+            // database is corrupted.
+            Close();
+            
+            // Remove the file
+            {
+                wxLogNull noLog;
+                ::wxRemoveFile(m_filename.GetFullPath());
+            }
+            
+            // Reopen the database
+            m_db.Open(dbfile.GetFullPath());
+            m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
+            CreateSchema();
+        }
+#endif
+
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::Open: %s", e.GetMessage());
     }
@@ -1121,4 +1139,27 @@ void PHPLookupTable::ResetDatabase()
         }
     }
     Open(curfile);
+}
+
+bool PHPLookupTable::CheckDiskImage()
+{
+    wxArrayString tables;
+    tables.Add("METADATA_TABLE");
+    tables.Add("SCOPE_TABLE");
+    tables.Add("FUNCTION_TABLE");
+    tables.Add("VARIABLES_TABLE");
+    tables.Add("FILES_TABLE");
+    
+    try {
+        for(size_t i=0; i<tables.GetCount(); ++i) {
+            wxString sql;
+            sql << "select count(*) from " << tables.Item(i) << " LIMIT 1";
+            m_db.ExecuteQuery(sql);
+        }
+    } catch(wxSQLite3Exception &exec) {
+        // this can only happen if we have a corrupt disk image
+        CL_WARNING("PHP: database image is corrupted %s", m_filename.GetFullPath());
+        return false;
+    }
+    return true;
 }

@@ -122,6 +122,11 @@ private:
      */
     void UpdateFileLastParsedTimestamp(const wxFileName& filename);
 
+    /**
+     * @brief check the database disk image to see if it corrupted
+     */
+    bool CheckDiskImage();
+    
 public:
     PHPLookupTable();
     virtual ~PHPLookupTable();

@@ -631,6 +631,7 @@ public:
     
     void DoShowCalltip(int pos, const wxString& title, const wxString& tip);
     void DoCancelCalltip();
+    void DoCancelCodeCompletionBox();
     int DoGetOpenBracePos();
 
     //----------------------------------

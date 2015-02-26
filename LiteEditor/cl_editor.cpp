@@ -1524,10 +1524,10 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
     int margin = 0;
     wxPoint pt(ScreenToClient(wxGetMousePosition()));
     wxRect clientRect = GetClientRect();
-    
+
     // Always cancel the previous tooltip...
     DoCancelCalltip();
-    
+
     for(int n = 0; n < FOLD_MARGIN_ID; ++n) {
         margin += GetMarginWidth(n);
     }
@@ -1595,7 +1595,7 @@ void LEditor::OnDwellEnd(wxStyledTextEvent& event)
     wxCommandEvent evtTypeinfo(wxEVT_CMD_EDITOR_TIP_DWELL_END, GetId());
     evtTypeinfo.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(evtTypeinfo)) return;
-    
+
     DoCancelCalltip();
     m_context->OnDwellEnd(event);
     m_context->OnDbgDwellEnd(event);
@@ -2939,8 +2939,8 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
 void LEditor::OnKeyDown(wxKeyEvent& event)
 {
     // always cancel the tip
-    DoCancelCalltip();
-    
+    DoCancelCodeCompletionBox();
+
     m_prevSelectionInfo.Clear();
     if(HasSelection()) {
         for(int i = 0; i < GetSelections(); ++i) {
@@ -3075,7 +3075,7 @@ void LEditor::OnMotion(wxMouseEvent& event)
 void LEditor::OnLeftDown(wxMouseEvent& event)
 {
     HighlightWord(false);
-    
+
     // hide completion box
     DoCancelCalltip();
     GetFunctionTip()->Deactivate();
@@ -4005,11 +4005,7 @@ void LEditor::DoCancelCalltip()
 {
     CallTipCancel();
     GetFunctionTip()->Deactivate();
-    if(m_calltip) {
-        m_calltip->Hide();
-        m_calltip->Destroy();
-        m_calltip = NULL;
-    }
+    DoCancelCodeCompletionBox();
 }
 
 int LEditor::DoGetOpenBracePos()
@@ -4870,7 +4866,7 @@ void LEditor::ConvertIndentToSpaces()
         int indentStart = PositionFromLine(i);
         int indentEnd = GetLineIndentPosition(i);
         int lineIndentSize = GetLineIndentation(i);
-        
+
         if(indentEnd > indentStart) {
             // this line have indentation
             // delete it
@@ -4891,7 +4887,7 @@ void LEditor::ConvertIndentToTabs()
         int indentStart = PositionFromLine(i);
         int indentEnd = GetLineIndentPosition(i);
         int lineIndentSize = GetLineIndentation(i);
-        
+
         if(indentEnd > indentStart) {
             // this line have indentation
             // delete it
@@ -4900,6 +4896,15 @@ void LEditor::ConvertIndentToTabs()
         }
     }
     SetUseTabs(useTabs);
+}
+
+void LEditor::DoCancelCodeCompletionBox()
+{
+    if(m_calltip) {
+        m_calltip->Hide();
+        m_calltip->Destroy();
+        m_calltip = NULL;
+    }
 }
 
 // ----------------------------------

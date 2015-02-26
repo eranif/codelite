@@ -174,7 +174,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
         ccEntries.push_back(ccEntry);
     }
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        m_manager->GetActiveEditor()->GetSTC(), ccEntries, wxCodeCompletionBox::kNone);
+        m_manager->GetActiveEditor()->GetSTC(), ccEntries, wxCodeCompletionBox::kRefreshOnKeyType);
 }
 
 void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }

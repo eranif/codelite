@@ -116,7 +116,7 @@ const static wxString CREATE_FILES_TABLE_SQL_IDX1 =
     "CREATE UNIQUE INDEX IF NOT EXISTS FILES_TABLE_IDX_1 ON FILES_TABLE(FILE_NAME)";
 
 PHPLookupTable::PHPLookupTable()
-    : m_sizeLimit(250)
+    : m_sizeLimit(50)
 {
 }
 

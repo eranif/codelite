@@ -9,6 +9,7 @@
 #include <wx/stc/stc.h>
 #include "fileextmanager.h"
 #include <wx/xrc/xmlres.h>
+#include "editor_config.h"
 
 #define STATUSBAR_LINE_COL_IDX 0
 #define STATUSBAR_ANIMATION_COL_IDX 1
@@ -340,8 +341,20 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
                 wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
             } else if(selectedId == idUseSpaces->GetId()) {
                 stc->SetUseTabs(false);
+                
+                // Update the configuration
+                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+                options->SetIndentUsesTabs(false);
+                EditorConfigST::Get()->SetOptions(options);
+                
             } else if(selectedId == idUseTabs->GetId()) {
                 stc->SetUseTabs(true);
+                
+                // Update the configuration
+                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+                options->SetIndentUsesTabs(true);
+                EditorConfigST::Get()->SetOptions(options);
+                
             }
             SetWhitespaceInfo(stc->GetUseTabs() ? "tabs" : "spaces");
         }

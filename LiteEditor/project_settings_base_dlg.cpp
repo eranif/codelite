@@ -1156,6 +1156,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_textCtrlSearchPaths->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_textCtrlMacros->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxC11->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
+    m_checkBoxC14->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     
 }
 
@@ -1165,6 +1166,7 @@ PSCompletionBase::~PSCompletionBase()
     m_textCtrlSearchPaths->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_textCtrlMacros->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxC11->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
+    m_checkBoxC14->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     
 }
 

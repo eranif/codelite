@@ -47,6 +47,7 @@ CodeCompletionPage::CodeCompletionPage(wxWindow *parent, int type)
         m_textCtrlMacros->SetValue(macros );
         
         m_checkBoxCpp11->SetValue( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp11 );
+        m_checkBoxCpp14->SetValue( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp14 );
     }
 }
 
@@ -77,6 +78,7 @@ void CodeCompletionPage::Save()
         LocalWorkspaceST::Get()->SetParserMacros(GetMacros());
 
         if ( m_checkBoxCpp11->IsChecked() ) flags |= LocalWorkspace::EnableCpp11;
+        if ( m_checkBoxCpp14->IsChecked() ) flags |= LocalWorkspace::EnableCpp14;
         LocalWorkspaceST::Get()->SetParserFlags( flags );
         LocalWorkspaceST::Get()->Flush();
 

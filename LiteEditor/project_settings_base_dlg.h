@@ -345,6 +345,7 @@ protected:
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlMacros;
     wxCheckBox* m_checkBoxC11;
+    wxCheckBox* m_checkBoxC14;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }

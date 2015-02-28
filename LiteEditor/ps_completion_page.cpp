@@ -54,6 +54,7 @@ void PSCompletionPage::Load(BuildConfigPtr buildConf)
     m_textCtrlMacros->SetValue(buildConf->GetClangPPFlags());
     m_textCtrlSearchPaths->SetValue(buildConf->GetCcSearchPaths());
     m_checkBoxC11->SetValue(buildConf->IsClangC11());
+    m_checkBoxC14->SetValue(buildConf->IsClangC14());
 }
 
 void PSCompletionPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -61,7 +62,7 @@ void PSCompletionPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSet
     buildConf->SetClangPPFlags(m_textCtrlMacros->GetValue());
     buildConf->SetCcSearchPaths(m_textCtrlSearchPaths->GetValue());
     buildConf->SetClangC11(m_checkBoxC11->IsChecked());
-
+    buildConf->SetClangC14(m_checkBoxC14->IsChecked());
     // Save was requested
     if(m_ccSettingsModified) {
         m_ccSettingsModified = false;

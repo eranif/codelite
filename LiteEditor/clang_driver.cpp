@@ -394,6 +394,10 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             cppCompileArgs.Add(wxT("-std=c++11"));
             cCompileArgs.Add(wxT("-std=c++11"));
         }
+        if(buildConf->IsClangC14()) {
+            cppCompileArgs.Add(wxT("-std=c++14"));
+            cCompileArgs.Add(wxT("-std=c++14"));
+        }
     }
 
     cppCompileArgs.insert(cppCompileArgs.end(), args.begin(), args.end());

@@ -1130,14 +1130,21 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     bSizer36->Add(m_textCtrlMacros, 1, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer40 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer40 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer36->Add(bSizer40, 0, wxEXPAND, 5);
+    bSizer36->Add(bSizer40, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_checkBoxC11 = new wxCheckBox(m_panel15, wxID_ANY, _("Enable C++11 Standard"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxC11->SetValue(false);
+    m_checkBoxC11->SetToolTip(_("If checked, pass -std=c++11 to the clang code completion engine to ensure that all c++11 features are recognized properly"));
     
-    bSizer40->Add(m_checkBoxC11, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer40->Add(m_checkBoxC11, 0, wxALL|wxALIGN_LEFT, 5);
+    
+    m_checkBoxC14 = new wxCheckBox(m_panel15, wxID_ANY, _("Enable C++14 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxC14->SetValue(false);
+    m_checkBoxC14->SetToolTip(_("If checked, pass -std=c++14 to the clang code completion engine to ensure that all c++14 features are recognized properly"));
+    
+    bSizer40->Add(m_checkBoxC14, 0, wxALL, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

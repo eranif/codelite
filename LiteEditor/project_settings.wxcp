@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 269,
+  "m_objCounter": 271,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCA3F0InitBitmapResources",
   "m_bitmapsFile": "project_settings_liteeditor_bitmaps.cpp",
@@ -11022,7 +11022,7 @@
              "gbSpan": ",",
              "gbPosition": ",",
              "m_styles": [],
-             "m_sizerFlags": ["wxEXPAND"],
+             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
              "m_properties": [{
                "type": "string",
                "m_label": "Name:",
@@ -11034,7 +11034,7 @@
               }, {
                "type": "choice",
                "m_label": "Orientation:",
-               "m_selection": 0,
+               "m_selection": 1,
                "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
               }],
              "m_events": [],
@@ -11045,7 +11045,7 @@
                "gbSpan": ",",
                "gbPosition": ",",
                "m_styles": [],
-               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_LEFT"],
                "m_properties": [{
                  "type": "winid",
                  "m_label": "ID:",
@@ -11065,7 +11065,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": ""
+                 "m_value": "If checked, pass -std=c++11 to the clang code completion engine to ensure that all c++11 features are recognized properly"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -11119,6 +11119,81 @@
                  "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                  "m_noBody": false
                 }],
+               "m_children": []
+              }, {
+               "m_type": 4415,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": "1,1",
+               "gbPosition": "0,0",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_checkBoxC14"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "If checked, pass -std=c++14 to the clang code completion engine to ensure that all c++14 features are recognized properly"
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Label:",
+                 "m_value": "Enable C++14 Standard"
+                }, {
+                 "type": "bool",
+                 "m_label": "Value:",
+                 "m_value": false
+                }],
+               "m_events": [],
                "m_children": []
               }]
             }]

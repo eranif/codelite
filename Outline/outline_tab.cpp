@@ -40,6 +40,7 @@ const wxEventType wxEVT_SV_OPEN_FILE = wxNewEventType();
 
 #define OUTLINE_TAB_CXX 0
 #define OUTLINE_TAB_PHP 1
+#define OUTLINE_PLACE_HOLDER_PAGE 2
 
 OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     : OutlineTabBaseClass(parent)
@@ -61,6 +62,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Connect(
         wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(OutlineTab::OnEditorSaved), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &OutlineTab::OnActiveEditorChanged, this);
     Connect(
         wxEVT_SV_GOTO_DEFINITION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     Connect(
@@ -78,6 +80,7 @@ OutlineTab::~OutlineTab()
 
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &OutlineTab::OnActiveEditorChanged, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OutlineTab::OnEditorClosed), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -118,16 +121,21 @@ void OutlineTab::OnSearchEnter(wxCommandEvent& event)
 void OutlineTab::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
-    CHECK_PTR_RET(editor);
-
-    if(FileExtManager::IsCxxFile(editor->GetFileName())) {
+    IEditor* editor = m_mgr->GetActiveEditor();
+    
+    if(editor && FileExtManager::IsCxxFile(editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
+        m_textCtrlSearch->Enable(true);
 
-    } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
+    } else if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {
         m_treeCtrlPhp->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_PHP);
+        m_textCtrlSearch->Enable(true);
+
+    } else {
+        m_simpleBook->SetSelection(OUTLINE_PLACE_HOLDER_PAGE);
+        m_textCtrlSearch->Enable(false);
     }
 }
 

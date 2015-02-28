@@ -117,22 +117,6 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     wxUnusedVar(pluginsMenu);
 }
 
-void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
-{
-    if (type == MenuTypeEditor) {
-
-    } else if (type == MenuTypeFileExplorer) {
-
-    } else if (type == MenuTypeFileView_Workspace) {
-
-    } else if (type == MenuTypeFileView_Project) {
-
-    } else if (type == MenuTypeFileView_Folder) {
-
-    } else if (type == MenuTypeFileView_File) {
-    }
-}
-
 void SymbolViewPlugin::UnPlug()
 {
     size_t where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);

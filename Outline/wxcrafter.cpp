@@ -55,6 +55,16 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
     
     boxSizer13->Add(m_treeCtrlPhp, 1, wxEXPAND, 5);
     
+    m_panelPlaceHolder = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_simpleBook->AddPage(m_panelPlaceHolder, _("Page"), false);
+    
+    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
+    m_panelPlaceHolder->SetSizer(boxSizer19);
+    
+    m_panelEmpty = new wxPanel(m_panelPlaceHolder, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    boxSizer19->Add(m_panelEmpty, 1, wxEXPAND, 5);
+    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);

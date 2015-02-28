@@ -27,6 +27,8 @@ protected:
     wxPanel* m_panelCxx;
     wxPanel* m_panelPhp;
     PHPOutlineTree* m_treeCtrlPhp;
+    wxPanel* m_panelPlaceHolder;
+    wxPanel* m_panelEmpty;
 
 protected:
     virtual void OnSearchSymbol(wxCommandEvent& event) { event.Skip(); }
@@ -38,6 +40,8 @@ public:
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     PHPOutlineTree* GetTreeCtrlPhp() { return m_treeCtrlPhp; }
     wxPanel* GetPanelPhp() { return m_panelPhp; }
+    wxPanel* GetPanelEmpty() { return m_panelEmpty; }
+    wxPanel* GetPanelPlaceHolder() { return m_panelPlaceHolder; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
     OutlineTabBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~OutlineTabBaseClass();

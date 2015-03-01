@@ -50,9 +50,14 @@ const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED = XRCID("clang_pch_cache_ended");
 const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED = XRCID("clang_pch_cache_cleared");
 const wxEventType wxEVT_CLANG_TU_CREATE_ERROR = XRCID("clang_pch_create_error");
 
-ClangWorkerThread::ClangWorkerThread() { clang_toggleCrashRecovery(1); }
+ClangWorkerThread::ClangWorkerThread()
+{
+    clang_toggleCrashRecovery(1);
+}
 
-ClangWorkerThread::~ClangWorkerThread() {}
+ClangWorkerThread::~ClangWorkerThread()
+{
+}
 
 void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 {
@@ -236,8 +241,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                 // Failed to reparse
                 cr.SetCancelled(true); // cancel the re-caching of the TU
 
-                DoSetStatusMsg(wxString::Format("clang: clang_reparseTranslationUnit '%s' failed\n",
-                               cacheEntry.sourceFile));
+                DoSetStatusMsg(
+                    wxString::Format("clang: clang_reparseTranslationUnit '%s' failed\n", cacheEntry.sourceFile));
 
                 clang_disposeTranslationUnit(TU);
                 wxDELETE(reply);
@@ -245,8 +250,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                 return;
             }
 
-            DoSetStatusMsg(wxString::Format("clang: clang_reparseTranslationUnit '%s' - done\n",
-                           cacheEntry.sourceFile));
+            DoSetStatusMsg(
+                wxString::Format("clang: clang_reparseTranslationUnit '%s' - done\n", cacheEntry.sourceFile));
             // Update the 'lastReparse' field
             cacheEntry.lastReparse = time(NULL);
         }
@@ -434,9 +439,9 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
     // First time, need to create it
     unsigned flags;
     if(reparse) {
-        flags = CXTranslationUnit_CXXPrecompiledPreamble | CXTranslationUnit_CacheCompletionResults |
-                CXTranslationUnit_PrecompiledPreamble | CXTranslationUnit_Incomplete |
-                CXTranslationUnit_DetailedPreprocessingRecord | CXTranslationUnit_CXXChainedPCH;
+        flags = CXTranslationUnit_CacheCompletionResults | CXTranslationUnit_PrecompiledPreamble |
+                CXTranslationUnit_Incomplete | CXTranslationUnit_DetailedPreprocessingRecord |
+                CXTranslationUnit_CXXChainedPCH;
     } else {
         flags = CXTranslationUnit_Incomplete | CXTranslationUnit_SkipFunctionBodies |
                 CXTranslationUnit_DetailedPreprocessingRecord;

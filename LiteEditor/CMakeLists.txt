@@ -113,15 +113,6 @@ install(FILES ${CL_SRC_ROOT}/Runtime/clg++ DESTINATION ${CL_PREFIX}/bin PERMISSI
 install(FILES ${CL_SRC_ROOT}/Runtime/clgcc DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
 endif (UNIX)
 
-# Install clang-format
-# We name it codelite-clang-format to avoid collision with any official installation
-if ( UNIX AND NOT APPLE )
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        install(FILES ${CL_SRC_ROOT}/sdk/clang/Linux/x86_64/bin/codelite-clang-format DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-    else()
-        install(FILES ${CL_SRC_ROOT}/sdk/clang/Linux/i386/bin/codelite-clang-format DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-    endif()
-endif()
 
 ## codelite icons
 install(FILES ${CL_SRC_ROOT}/Runtime/codelite-icons-fresh-farm.zip DESTINATION ${CL_PREFIX}/share/codelite)
@@ -192,6 +183,6 @@ if (UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
     install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
 endif()
 
-if ( USE_CLANG )
+if ( USE_CLANG AND MINGW )
   install(FILES ${CLANG_BINARY} DESTINATION ${PLUGINS_DIR})
-endif( USE_CLANG )
+endif( USE_CLANG AND MINGW )

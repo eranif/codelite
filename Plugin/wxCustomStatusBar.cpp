@@ -92,6 +92,7 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
             // Draw top separator line
             wxPoint topLeft = rect.GetTopLeft();
             wxPoint topRight = rect.GetTopRight();
+            topRight.x += 1;
             memDc.SetPen(art->GetSeparatorColour());
             memDc.DrawLine(topLeft, topRight);
 

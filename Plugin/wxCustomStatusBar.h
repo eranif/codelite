@@ -91,6 +91,7 @@ public:
     virtual void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
     const wxString& GetTooltip() const { return m_tooltip; }
     const wxRect& GetRect() const { return m_rect; }
+    void SetRect(const wxRect& rect) { this->m_rect = rect; }
     template <typename T> T* Cast() const { return dynamic_cast<T*>(const_cast<wxCustomStatusBarField*>(this)); }
 };
 
@@ -101,11 +102,13 @@ class WXDLLIMPEXP_SDK wxCustomStatusBarFieldText : public wxCustomStatusBarField
 {
     wxString m_text;
     size_t m_width;
-
+    wxAlignment m_textAlign;
+    
 public:
     wxCustomStatusBarFieldText(wxCustomStatusBar* parent, size_t width)
         : wxCustomStatusBarField(parent)
         , m_width(width)
+        , m_textAlign(wxALIGN_CENTER)
     {
     }
     virtual ~wxCustomStatusBarFieldText() {}
@@ -114,6 +117,7 @@ public:
     const wxString& GetText() const { return m_text; }
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
+    void SetTextAlignment(wxAlignment align) { m_textAlign = align; }
 };
 
 //================---------------
@@ -193,7 +197,8 @@ class WXDLLIMPEXP_SDK wxCustomStatusBar : public wxStatusBar
     wxCustomStatusBarField::Vect_t m_fields;
     wxString m_text;
     wxString m_lastArtNameUsedForPaint;
-
+    wxCustomStatusBarField::Ptr_t m_mainText;
+    
 protected:
     size_t DoGetFieldsWidth();
 
@@ -202,7 +207,8 @@ protected:
     void OnEraseBackround(wxEraseEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnMouseMotion(wxMouseEvent& event);
-
+    wxRect DoGetMainFieldRect();
+    
 public:
     /**
      * @brief animation control owned by 'field' was clicked

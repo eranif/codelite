@@ -36,7 +36,7 @@ void wxCustomStatusBarArt::DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect)
     wxPoint bottomPt, topPt;
 
     topPt = fieldRect.GetTopLeft();
-    topPt.y += 1;
+    topPt.y += 2;
 
     bottomPt = fieldRect.GetBottomLeft();
     bottomPt.y += 1;
@@ -53,7 +53,13 @@ void wxCustomStatusBarFieldText::Render(wxDC& dc, const wxRect& rect, wxCustomSt
 
     // Center text
     wxCoord textY = (rect.GetHeight() - textSize.GetHeight()) / 2 + rect.y;
-    wxCoord textX = (rect.GetWidth() - textSize.GetWidth()) / 2 + rect.x;
+    wxCoord textX;
+    if(m_textAlign == wxALIGN_CENTER) {
+        textX = (rect.GetWidth() - textSize.GetWidth()) / 2 + rect.x;
+    } else {
+        // left
+        textX = rect.x + 5;
+    }
 
     // draw border line
     art->DrawFieldSeparator(dc, rect);
@@ -181,7 +187,10 @@ void wxCustomStatusBarBitmapField::Render(wxDC& dc, const wxRect& rect, wxCustom
 wxCustomStatusBar::wxCustomStatusBar(wxWindow* parent, wxWindowID id, long style)
     : wxStatusBar(parent, id, style)
     , m_art(new wxCustomStatusBarArt("Dark"))
+    , m_mainText(new wxCustomStatusBarFieldText(this, 0))
 {
+    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTextAlignment(wxALIGN_LEFT);
+    
     Bind(wxEVT_PAINT, &wxCustomStatusBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &wxCustomStatusBar::OnEraseBackround, this);
     Bind(wxEVT_LEFT_DOWN, &wxCustomStatusBar::OnLeftDown, this);
@@ -200,10 +209,10 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
     wxRect rect = GetClientRect();
-    
+
     // Remember which art name used for painting
     SetLastArtNameUsedForPaint(m_art->GetName());
-    
+
     // Fill the background
     dc.SetBrush(m_art->GetBgColour());
     dc.SetPen(m_art->GetBgColour());
@@ -238,17 +247,19 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     //===----------------------
     // Draw the main field
     //===----------------------
+    // update the rect
+    
     wxRect mainRect(0, rect.y, offsetX, rect.height);
     dc.SetClippingRegion(mainRect);
-    wxSize textSize = dc.GetTextExtent(m_text);
-    wxCoord textY = (rect.GetHeight() - textSize.GetHeight()) / 2 + rect.y;
-    wxCoord textX = 3;
-    m_art->DrawText(dc, textX, textY, m_text);
+    m_mainText->SetRect(mainRect);
+    m_mainText->Cast<wxCustomStatusBarFieldText>()->Render(dc, mainRect, m_art);
+    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTooltip(m_text);
     dc.DestroyClippingRegion();
 
     //===----------------------
     // Draw the fields
     //===----------------------
+    
     for(size_t i = 0; i < m_fields.size(); ++i) {
         // Prepare the rect
         wxRect fieldRect(offsetX, rect.y, m_fields.at(i)->GetWidth(), rect.height);
@@ -309,7 +320,18 @@ void wxCustomStatusBar::SetText(const wxString& message)
 {
     m_text = message;
     SetToolTip(message);
-    Refresh();
+    
+    // Make sure we draw only when the "art" objects are in sync with the field
+    // and with the bar itself
+    wxRect mainRect = DoGetMainFieldRect();
+    wxBitmap bmp(mainRect.GetSize());
+    wxMemoryDC memDc;
+    memDc.SelectObject(bmp);
+    
+    // update the rect
+    m_mainText->SetRect(mainRect);
+    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetText(m_text);
+    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTooltip(m_text);
 }
 
 void wxCustomStatusBar::OnMouseMotion(wxMouseEvent& event)
@@ -344,6 +366,23 @@ void wxCustomStatusBar::SetArt(wxCustomStatusBarArt::Ptr_t art)
 {
     this->m_art = art;
     Refresh();
+}
+
+wxRect wxCustomStatusBar::DoGetMainFieldRect()
+{
+    // Calculate the fields length
+    wxRect rect = GetClientRect();
+    size_t totalLength = rect.GetWidth();
+    size_t fieldsLength = DoGetFieldsWidth();
+
+    size_t offsetX = 0;
+    if(totalLength <= fieldsLength) {
+        offsetX = 0;
+    } else {
+        offsetX = totalLength - fieldsLength;
+    }
+    wxRect mainRect(0, rect.y, offsetX, rect.height);
+    return mainRect;
 }
 
 bool wxCustomStatusBarField::HitTest(const wxPoint& point) const { return m_rect.Contains(point); }

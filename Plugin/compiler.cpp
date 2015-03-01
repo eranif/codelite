@@ -196,11 +196,11 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         }
 
         // For backward compatibility, if the compiler / linker options are empty - add them
-        if(IsGnuCompatibleCompiler() && m_compilerOptions.empty()) {
+        if(IsGnuCompatibleCompiler()) {
             AddDefaultGnuComplierOptions();
         }
 
-        if(IsGnuCompatibleCompiler() && m_linkerOptions.empty()) {
+        if(IsGnuCompatibleCompiler()) {
             AddDefaultGnuLinkerOptions();
         }
 
@@ -623,6 +623,7 @@ void Compiler::AddDefaultGnuComplierOptions()
     AddCompilerOption("-w", "Inhibit all warning messages");
     AddCompilerOption("-std=c99", "Enable ANSI C99 features");
     AddCompilerOption("-std=c++11", "Enable C++11 features");
+    AddCompilerOption("-std=c++14", "Enable C++14 features");
 }
 
 void Compiler::AddDefaultGnuLinkerOptions()

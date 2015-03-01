@@ -117,6 +117,7 @@ public:
 protected:
     int GetSingleLineHeight() const;
     void FilterResults();
+    void RemoveDuplicateEntries();
     void InsertSelection();
 
     // For backward compatability, we support initializing the list with TagEntryPtrVector_t

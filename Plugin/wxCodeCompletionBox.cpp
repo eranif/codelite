@@ -13,6 +13,7 @@
 #include "file_logger.h"
 #include "drawingutils.h"
 #include <wx/font.h>
+#include "macros.h"
 
 #define LINES_PER_PAGE 8
 #define Y_SPACER 2
@@ -217,6 +218,9 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_index = 0;
     m_stc = ctrl;
     m_allEntries = entries;
+    // Filter all duplicate entries from the list (based on simple string match)
+    RemoveDuplicateEntries();
+    // Filter results based on user input
     FilterResults();
 
     // Keep the start position
@@ -667,4 +671,19 @@ void wxCodeCompletionBox::DoShowCompletionBox()
     }
     Move(pt);
     Show();
+}
+
+void wxCodeCompletionBox::RemoveDuplicateEntries()
+{
+    wxStringSet_t matches;
+    wxCodeCompletionBoxEntry::Vec_t uniqueList;
+    for(size_t i=0; i<m_allEntries.size(); ++i) {
+        wxCodeCompletionBoxEntry::Ptr_t entry = m_allEntries.at(i);
+        if(matches.count(entry->GetText()) == 0) {
+            // new entry
+            matches.insert(entry->GetText());
+            uniqueList.push_back(entry);
+        }
+    }
+    m_allEntries.swap(uniqueList);
 }

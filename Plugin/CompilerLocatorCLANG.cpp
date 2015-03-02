@@ -30,17 +30,13 @@
 #include "build_settings_config.h"
 
 #ifdef __WXMSW__
-#   include <wx/msw/registry.h>
+#include <wx/msw/registry.h>
 #endif
 #include <wx/filename.h>
 
-CompilerLocatorCLANG::CompilerLocatorCLANG()
-{
-}
+CompilerLocatorCLANG::CompilerLocatorCLANG() {}
 
-CompilerLocatorCLANG::~CompilerLocatorCLANG()
-{
-}
+CompilerLocatorCLANG::~CompilerLocatorCLANG() {}
 
 bool CompilerLocatorCLANG::Locate()
 {
@@ -49,15 +45,24 @@ bool CompilerLocatorCLANG::Locate()
 
     // POSIX locate
     wxFileName clang("/usr/bin", "clang");
-    if ( clang.FileExists() ) {
-        CompilerPtr compiler( new Compiler(NULL) );
-        compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
-        // get the compiler version
-        compiler->SetName( GetCompilerFullName(clang.GetFullPath() ) );
-        compiler->SetGenerateDependeciesFile(true);
-        m_compilers.push_back( compiler );
-        clang.RemoveLastDir();
-        AddTools(compiler, clang.GetPath());
+    wxArrayString suffixes;
+    suffixes.Add("");
+    suffixes.Add("-3.3");
+    suffixes.Add("-3.4");
+    suffixes.Add("-3.5");
+    suffixes.Add("-3.6");
+    for(size_t i = 0; i < suffixes.GetCount(); ++i) {
+        clang.SetFullName("clang" + suffixes.Item(i));
+        if(clang.FileExists()) {
+            CompilerPtr compiler(new Compiler(NULL));
+            compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
+            // get the compiler version
+            compiler->SetName(GetCompilerFullName(clang.GetFullPath()));
+            compiler->SetGenerateDependeciesFile(true);
+            m_compilers.push_back(compiler);
+            clang.RemoveLastDir();
+            AddTools(compiler, clang.GetPath(), suffixes.Item(i));
+        }
     }
     return true;
 }
@@ -70,37 +75,37 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
     clang.SetExt("exe");
 #endif
     bool found = clang.FileExists();
-    if ( ! found ) {
+    if(!found) {
         // try to see if we have a bin folder here
         clang.AppendDir("bin");
         found = clang.FileExists();
     }
-    
-    if ( found ) {
-        CompilerPtr compiler( new Compiler(NULL) );
+
+    if(found) {
+        CompilerPtr compiler(new Compiler(NULL));
         compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
         // get the compiler version
-        compiler->SetName( GetCompilerFullName(clang.GetFullPath() ) );
+        compiler->SetName(GetCompilerFullName(clang.GetFullPath()));
         compiler->SetGenerateDependeciesFile(true);
-        m_compilers.push_back( compiler );
+        m_compilers.push_back(compiler);
         clang.RemoveLastDir();
         AddTools(compiler, clang.GetPath());
-        
-        // Update the toolchain (if Windows)
+
+// Update the toolchain (if Windows)
 #ifdef __WXMSW__
         CompilerPtr defaultMinGWCmp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_MINGW);
-        if ( defaultMinGWCmp ) {
+        if(defaultMinGWCmp) {
             compiler->SetTool("MAKE", defaultMinGWCmp->GetTool("MAKE"));
             compiler->SetTool("ResourceCompiler", defaultMinGWCmp->GetTool("ResourceCompiler"));
-            
+
             // Update the include paths
             IncludePathLocator locator(NULL);
             wxArrayString includePaths, excludePaths;
             locator.Locate(includePaths, excludePaths, false, defaultMinGWCmp->GetTool("CXX"));
-            
+
             // Convert the include paths to semi colon separated list
             wxString mingwIncludePaths = wxJoin(includePaths, ';');
-            compiler->SetGlobalIncludePath( mingwIncludePaths );
+            compiler->SetGlobalIncludePath(mingwIncludePaths);
         }
 #endif
         return compiler;
@@ -116,40 +121,42 @@ void CompilerLocatorCLANG::MSWLocate()
         wxRegKey reg(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LLVM");
         wxString llvmInstallPath;
         wxString llvmVersion;
-        if ( reg.Exists() ) {
+        if(reg.Exists()) {
             found = true;
-            reg.QueryValue("DisplayIcon",    llvmInstallPath);
+            reg.QueryValue("DisplayIcon", llvmInstallPath);
             reg.QueryValue("DisplayVersion", llvmVersion);
 
-            CompilerPtr compiler( new Compiler(NULL) );
+            CompilerPtr compiler(new Compiler(NULL));
             compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
             compiler->SetGenerateDependeciesFile(true);
-            compiler->SetName( wxString() << "clang ( " << llvmVersion << " )");
-            m_compilers.push_back( compiler );
+            compiler->SetName(wxString() << "clang ( " << llvmVersion << " )");
+            m_compilers.push_back(compiler);
             AddTools(compiler, llvmInstallPath);
         }
     }
-    if ( !found ) {
+    if(!found) {
         wxRegKey reg(wxRegKey::HKLM, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LLVM");
         wxString llvmInstallPath;
         wxString llvmVersion;
-        if ( reg.Exists() ) {
-            reg.QueryValue("DisplayIcon",    llvmInstallPath);
+        if(reg.Exists()) {
+            reg.QueryValue("DisplayIcon", llvmInstallPath);
             reg.QueryValue("DisplayVersion", llvmVersion);
 
-            CompilerPtr compiler( new Compiler(NULL) );
+            CompilerPtr compiler(new Compiler(NULL));
             compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
             compiler->SetGenerateDependeciesFile(true);
-            compiler->SetName( wxString() << "clang ( " << llvmVersion << " )");
-            m_compilers.push_back( compiler );
+            compiler->SetName(wxString() << "clang ( " << llvmVersion << " )");
+            m_compilers.push_back(compiler);
             AddTools(compiler, llvmInstallPath);
         }
     }
 #endif
-
 }
 
-void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs)
+void CompilerLocatorCLANG::AddTool(CompilerPtr compiler,
+                                   const wxString& toolname,
+                                   const wxString& toolpath,
+                                   const wxString& extraArgs)
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
@@ -159,16 +166,16 @@ void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolnam
     compiler->SetTool(toolname, tool);
 }
 
-void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &installFolder)
+void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& installFolder, const wxString& suffix)
 {
-    compiler->SetInstallationPath( installFolder );
+    compiler->SetInstallationPath(installFolder);
     wxFileName toolFile(installFolder, "");
     toolFile.AppendDir("bin");
 #ifdef __WXMSW__
     toolFile.SetExt("exe");
 #endif
 
-    toolFile.SetName("clang++");
+    toolFile.SetName("clang++" + suffix);
     AddTool(compiler, "CXX", toolFile.GetFullPath());
     AddTool(compiler, "LinkerName", toolFile.GetFullPath());
 
@@ -178,19 +185,19 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
     AddTool(compiler, "SharedObjectLinkerName", toolFile.GetFullPath(), "-shared -fPIC");
 #endif
 
-    toolFile.SetName("clang");
+    toolFile.SetName("clang" + suffix);
     AddTool(compiler, "CC", toolFile.GetFullPath());
-    
+
     // Add the archive tool
     toolFile.SetName("llvm-ar");
-    if ( toolFile.FileExists() ) {
+    if(toolFile.FileExists()) {
         AddTool(compiler, "AR", toolFile.GetFullPath(), "rcu");
-        
+
     } else {
         toolFile.SetName("ar");
         AddTool(compiler, "AR", toolFile.GetFullPath(), "rcu");
     }
-    
+
 #ifdef __WXMSW__
     AddTool(compiler, "ResourceCompiler", "windres.exe");
 #else
@@ -199,16 +206,16 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
 
     // Add the assembler tool
     toolFile.SetName("llvm-as");
-    if ( toolFile.FileExists() ) {
+    if(toolFile.FileExists()) {
         AddTool(compiler, "AS", toolFile.GetFullPath());
-        
+
     } else {
         toolFile.SetName("as");
         AddTool(compiler, "AS", toolFile.GetFullPath());
     }
 
     wxString makeExtraArgs;
-    if ( wxThread::GetCPUCount() > 1 ) {
+    if(wxThread::GetCPUCount() > 1) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
 
@@ -225,7 +232,7 @@ wxString CompilerLocatorCLANG::GetClangVersion(const wxString& clangBinary)
     wxArrayString stdoutArr;
     command << clangBinary << " --version";
     ProcUtils::SafeExecuteCommand(command, stdoutArr);
-    if ( !stdoutArr.IsEmpty() ) {
+    if(!stdoutArr.IsEmpty()) {
         wxString versionString = stdoutArr.Item(0);
         versionString = versionString.AfterLast('(');
         versionString = versionString.BeforeLast(')');
@@ -236,10 +243,10 @@ wxString CompilerLocatorCLANG::GetClangVersion(const wxString& clangBinary)
 
 wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
 {
-    wxString version = GetClangVersion( clangBinary );
+    wxString version = GetClangVersion(clangBinary);
     wxString fullname;
     fullname << "clang";
-    if ( !version.IsEmpty() ) {
+    if(!version.IsEmpty()) {
         fullname << "( " << version << " )";
     }
     return fullname;

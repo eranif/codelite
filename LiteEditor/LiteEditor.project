@@ -1976,4 +1976,10 @@ resources.cpp: resources.xrc
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="CMake">
+    <File Name="CMakeLists.txt"/>
+    <File Name="../cmake/Modules/FindLibClang.cmake"/>
+    <File Name="../cmake/Modules/FindLibLLDB.cmake"/>
+    <File Name="../CMakeLists.txt"/>
+  </VirtualDirectory>
 </CodeLite_Project>

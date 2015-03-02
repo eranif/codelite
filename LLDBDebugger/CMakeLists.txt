@@ -1,35 +1,10 @@
-macro( FIND_LLDB_OFFICIAL )
-
-    ## Locate the official packages
-    find_library(LIBLLDB_T
-                 NAMES liblldb.so
-                 HINTS  /usr/lib /usr/local/lib ${CMAKE_INSTALL_LIBDIR})
-
-    find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
-              HINTS 
-              /usr/lib/llvm-3.5/include 
-              /usr/include/llvm-3.5 
-              /usr/include/llvm
-              /usr/local/include
-              )
-
-    if ( LIBLLDB_T STREQUAL "LIBLLDB_T-NOTFOUND" OR LIBLLDB_INCLUDE_T STREQUAL "LIBLLDB_INCLUDE_T-NOTFOUND" )
-        set(LIBLLDB "LIBLLDB-NOTFOUND")
-        set(LIBLLDB_INCLUDE "LIBLLDB_INCLUDE-NOTFOUND")
-    else()
-        set( LLDB_OFFICIAL_FOUND 1 )
-        set(LIBLLDB ${LIBLLDB_T})
-        set(LIBLLDB_INCLUDE ${LIBLLDB_INCLUDE_T})
-        set(LIBLLDB_INSTALL_NEEDED 0)
-    endif()
-endmacro()
-
 set( BUILD_LLDB 0 )
 set( LIBLLDB "" )
 set( LIBLLDB_INCLUDE "" )
 set( LIBLLDB_INSTALL_NEEDED 0)
 set( LLDB_OFFICIAL_FOUND 0)
 
+include(FindLibLLDB)
 
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
@@ -54,11 +29,8 @@ if (WITH_LLDB MATCHES 1)
         if ( LIBLLDB STREQUAL "LIBLLDB-NOTFOUND" )
         ## could not locate an official package, try a custom build
             find_library(LIBEDIT_LIB NAMES libedit.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR}) # Our liblldb.so depends on libedit.so
-            if(NOT LIBEDIT_LIB STREQUAL "LIBEDIT_LIB-NOTFOUND")
-                set ( LIBLLDB ${CL_SRC_ROOT}/sdk/lldb/unix/lib/${ARCH_NAME}/liblldb.so )
-                set ( LIBLLDB_INCLUDE ${CL_SRC_ROOT}/sdk/lldb/unix/include )
-                set ( BUILD_LLDB 1 )
-                set ( LIBLLDB_INSTALL_NEEDED 1 )
+            if(LLDB_OFFICIAL_FOUND MATCHES 0)
+                set ( BUILD_LLDB 0 )
             else()
                 message("-- libedit.so is not installed. For lldb support, please install the libedit development package and try again.")
             endif()
@@ -133,17 +105,17 @@ if (WITH_LLDB MATCHES 1)
         # Installation destination
         install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
 
-        if ( LIBLLDB_INSTALL_NEEDED MATCHES 1 )
-            set(LLDB_LIB_ABS ${LIBLLDB})
-            if ( IS_SYMLINK ${LIBLLDB} )
-                message( "-- ${LIBLLDB} is a symbolic link ")
-                get_filename_component(LLDB_LIB_TMP ${LIBLLDB} REALPATH)
-                set( LLDB_LIB_ABS ${LLDB_LIB_TMP})
-            endif()
-
-            message("-- Will install file ${LLDB_LIB_ABS}")
-            install(FILES ${LLDB_LIB_ABS} DESTINATION ${PLUGINS_DIR} PERMISSIONS ${EXE_PERM})
-        endif()
+##        if ( LIBLLDB_INSTALL_NEEDED MATCHES 1 )
+##            set(LLDB_LIB_ABS ${LIBLLDB})
+##            if ( IS_SYMLINK ${LIBLLDB} )
+##                message( "-- ${LIBLLDB} is a symbolic link ")
+##                get_filename_component(LLDB_LIB_TMP ${LIBLLDB} REALPATH)
+##                set( LLDB_LIB_ABS ${LLDB_LIB_TMP})
+##            endif()
+##
+##            message("-- Will install file ${LLDB_LIB_ABS}")
+##            install(FILES ${LLDB_LIB_ABS} DESTINATION ${PLUGINS_DIR} PERMISSIONS ${EXE_PERM})
+##        endif()
 
         add_subdirectory(LLDBProtocol)
         add_subdirectory(codelite-lldb)
@@ -151,9 +123,7 @@ if (WITH_LLDB MATCHES 1)
         add_dependencies(codelite-lldb LLDBProtocol)
         add_dependencies(LLDBDebugger LLDBProtocol)
     else()
-        if (LLDB_OFFICIAL_FOUND MATCHES 0)
-            message(" **** NOTICE: lldb is not available. You could try installing >= the lldb-3.5-dev (or equivalent) package")
-        endif()
+        message(" **** NOTICE: lldb is not available. You could try installing >= the lldb-3.5-dev (or equivalent) package")
     endif()
 endif(WITH_LLDB MATCHES 1)
 

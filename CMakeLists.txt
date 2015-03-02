@@ -403,7 +403,7 @@ if (USE_CLANG)
     message( "-- wx-config   is set to => " ${WX_TOOL} )
 else()
     message( "-- *** NOTICE ***: clang code completion support is disabled" )
-    message( "-- *** NOTICE ***: On Ubuntu / Debian you might want to install libclang-3.5-dev package")
+    message( "-- *** NOTICE ***: On Ubuntu / Debian you might want to install libclang-3.4-dev package")
 endif()
 
 else()

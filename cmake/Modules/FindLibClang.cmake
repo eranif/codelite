@@ -1,19 +1,21 @@
 if (UNIX)
     macro( FIND_LIBCLANG_OFFICIAL )
-        ## Locate the official packages
+        ## Locate the official packages, we intentionally skip
+        ## version 3.5 as it does not work on Linux when LLDB is loaded (causes crash)
         find_library(LIBCLANG_T
                      NAMES libclang.so
                      HINTS  
                      /usr/lib 
                      /usr/local/lib 
-                     /usr/lib/llvm-3.5/lib
+                     /usr/lib/llvm-3.4/lib
                      /usr/lib/llvm-3.6/lib
                      ${CMAKE_INSTALL_LIBDIR})
 
         find_path(LIBCLANG_INCLUDE_T NAMES clang-c/Index.h
                   HINTS 
-                  /usr/lib/llvm-3.5/include 
-                  /usr/include/llvm-3.5  
+                  /usr/lib/llvm-3.4/include 
+                  /usr/lib/llvm-3.6/include 
+                  /usr/include/llvm-3.4  
                   /usr/include/llvm-3.6 
                   /usr/include/llvm
                   /usr/local/include
@@ -22,7 +24,9 @@ if (UNIX)
         if ( LIBCLANG_T STREQUAL "LIBCLANG_T-NOTFOUND" OR LIBCLANG_INCLUDE_T STREQUAL "LIBCLANG_INCLUDE_T-NOTFOUND" )
             set(LIBCLANG "LIBCLANG-NOTFOUND")
             set(LIBCLANG_INCLUDE "LIBCLANG_INCLUDE-NOTFOUND")
+            set( LIBCLANG_OFFICIAL_FOUND 0 )
         else()
+            set( LIBCLANG_OFFICIAL_FOUND 1 )
             set(LIBCLANG ${LIBCLANG_T})
             set(LIBCLANG_INCLUDE ${LIBCLANG_INCLUDE_T})
             set(LIBCLANG_INSTALL_NEEDED 0)
@@ -34,10 +38,6 @@ if (UNIX)
            if (BRIEF_COMMENTS_OUTPUT STREQUAL "")
                 message("-- Could not find method clang_getCompletionBriefComment, disabling brief comments support")
                 add_definitions(-DHAS_LIBCLANG_BRIEFCOMMENTS=0)
-                ## enabling LLDB with this version of clang will definitly cause a segfault
-                set(ENABLE_LLDB 0)
-                set(WITH_LLDB 0)
-                message("-- Disabling LLDB support")
            else()
               add_definitions(-DHAS_LIBCLANG_BRIEFCOMMENTS=1)
               message("-- Found method clang_getCompletionBriefComment, enabling brief comments support")

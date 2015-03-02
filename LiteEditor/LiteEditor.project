@@ -1297,6 +1297,7 @@
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <Target Name="install">make install</Target>
+        <Target Name="cmake no wxCrafter">cmake -DPREFIX=/home/eran/root   -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DWITH_FLEX=1</Target>
         <Target Name="cmake">cmake -DWITH_WXC=1 -DPREFIX=/home/eran/root   -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DWITH_FLEX=1</Target>
         <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
@@ -1311,7 +1312,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="yes">
+      <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1367,7 +1368,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1410,7 +1411,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1453,7 +1454,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1508,7 +1509,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1563,7 +1564,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1605,7 +1606,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1648,7 +1649,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1703,7 +1704,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1745,7 +1746,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1787,7 +1788,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1848,7 +1849,7 @@ resources.cpp: resources.xrc
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="yes">
+      <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1906,7 +1907,7 @@ resources.cpp: resources.xrc
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="yes">
+      <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -1964,7 +1965,7 @@ resources.cpp: resources.xrc
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="yes">
+      <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>

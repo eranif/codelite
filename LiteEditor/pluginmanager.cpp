@@ -159,6 +159,14 @@ void PluginManager::Load()
             }
 #endif
 
+#ifdef __WXGTK__
+            wxFileName fnDLL(fileName);
+            if(fnDLL.GetFullName().StartsWith("lib")) {
+                // don't attempt to load a library
+                continue;
+            }
+#endif
+
             clDynamicLibrary* dl = new clDynamicLibrary();
             if(!dl->Load(fileName)) {
                 CL_ERROR(wxT("Failed to load plugin's dll: ") + fileName);

@@ -642,7 +642,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         tag->SetSignature(entrySignature);
 
 // Add support for clang comment parsing
-#ifndef __FreeBSD__
+#if HAS_LIBCLANG_BRIEFCOMMENTS
         CXString BriefComment = clang_getCompletionBriefComment(str);
         const char* comment = clang_getCString(BriefComment);
         if(comment && comment[0] != '\0') {

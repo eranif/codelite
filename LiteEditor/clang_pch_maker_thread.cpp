@@ -159,7 +159,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                                               usf.GetUnsavedFiles(),
                                               usf.GetCount(),
                                               clang_defaultCodeCompleteOptions()
-#ifndef __FreeBSD__
+#if HAS_LIBCLANG_BRIEFCOMMENTS
                                                   |
                                                   CXCodeComplete_IncludeBriefComments
 #endif
@@ -443,7 +443,10 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
                 CXTranslationUnit_Incomplete | CXTranslationUnit_DetailedPreprocessingRecord |
                 CXTranslationUnit_CXXChainedPCH;
     } else {
-        flags = CXTranslationUnit_Incomplete | CXTranslationUnit_SkipFunctionBodies |
+        flags = CXTranslationUnit_Incomplete | 
+#if HAS_LIBCLANG_BRIEFCOMMENTS
+		CXTranslationUnit_SkipFunctionBodies |
+#endif
                 CXTranslationUnit_DetailedPreprocessingRecord;
     }
 

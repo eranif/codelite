@@ -59,6 +59,18 @@ if (UNIX)
             set(LIBCLANG ${LIBCLANG_T})
             set(LIBCLANG_INCLUDE ${LIBCLANG_INCLUDE_T})
             set(LIBCLANG_INSTALL_NEEDED 0)
+            ## Check to see if we have a recent version of clang to include clang_getBriefComment
+            execute_process(COMMAND /bin/grep clang_getCompletionBriefComment ${LIBCLANG_INCLUDE_T}/clang-c/Index.h 
+                            OUTPUT_VARIABLE BRIEF_COMMENTS_OUTPUT 
+                            OUTPUT_STRIP_TRAILING_WHITESPACE)
+           message("-- Find libClang result: ${BRIEF_COMMENTS_OUTPUT}")
+           if (BRIEF_COMMENTS_OUTPUT STREQUAL "")
+               message("-- Could not find method clang_getCompletionBriefComment, disabling brief comments support")
+              add_definitions(-DHAS_LIBCLANG_BRIEFCOMMENTS=0)
+           else()
+              add_definitions(-DHAS_LIBCLANG_BRIEFCOMMENTS=1)
+              message("-- Found method clang_getCompletionBriefComment, enabling brief comments support")
+       endif()
         endif()
     endmacro()
 endif()

@@ -33,6 +33,6 @@ add_dependencies(codelite-lldb plugin)
 install(TARGETS codelite-lldb DESTINATION ${CL_PREFIX}/bin)
 
 if ( MAKE_DEB AND LLDB_OFFICIAL_FOUND MATCHES 1 )
-    message("-- Adding lldb-3.5-dev to deb dependencies")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS  "${CPACK_DEBIAN_PACKAGE_DEPENDS} lldb-3.5-dev")
+    message("-- Adding lldb-3.4-dev to deb dependencies")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS  "${CPACK_DEBIAN_PACKAGE_DEPENDS} lldb-3.4-dev")
 endif()

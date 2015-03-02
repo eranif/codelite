@@ -123,7 +123,7 @@ if (WITH_LLDB MATCHES 1)
         add_dependencies(codelite-lldb LLDBProtocol)
         add_dependencies(LLDBDebugger LLDBProtocol)
     else()
-        message(" **** NOTICE: lldb is not available. You could try installing >= the lldb-3.5-dev (or equivalent) package")
+        message(" **** NOTICE: lldb is not available. You could try installing the lldb-3.4-dev (or equivalent) package")
     endif()
 endif(WITH_LLDB MATCHES 1)
 

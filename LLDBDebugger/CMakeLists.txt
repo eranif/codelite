@@ -90,7 +90,6 @@ if (WITH_LLDB MATCHES 1)
             ${LINKER_OPTIONS}
             ${PLUGIN_EXTRA_LIBS}
             ${wxWidgets_LIBRARIES}
-            ${LIBLLDB}
             -L"${CL_LIBPATH}"
             -lLLDBProtocol
             -llibcodelite
@@ -104,24 +103,12 @@ if (WITH_LLDB MATCHES 1)
         
         # Installation destination
         install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
-
-##        if ( LIBLLDB_INSTALL_NEEDED MATCHES 1 )
-##            set(LLDB_LIB_ABS ${LIBLLDB})
-##            if ( IS_SYMLINK ${LIBLLDB} )
-##                message( "-- ${LIBLLDB} is a symbolic link ")
-##                get_filename_component(LLDB_LIB_TMP ${LIBLLDB} REALPATH)
-##                set( LLDB_LIB_ABS ${LLDB_LIB_TMP})
-##            endif()
-##
-##            message("-- Will install file ${LLDB_LIB_ABS}")
-##            install(FILES ${LLDB_LIB_ABS} DESTINATION ${PLUGINS_DIR} PERMISSIONS ${EXE_PERM})
-##        endif()
-
+		
         add_subdirectory(LLDBProtocol)
         add_subdirectory(codelite-lldb)
-
         add_dependencies(codelite-lldb LLDBProtocol)
         add_dependencies(LLDBDebugger LLDBProtocol)
+
     else()
         message(" **** NOTICE: lldb is not available. You could try installing the lldb-3.4-dev (or equivalent) package")
     endif()

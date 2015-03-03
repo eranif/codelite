@@ -93,19 +93,31 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
 
 // Update the toolchain (if Windows)
 #ifdef __WXMSW__
-        CompilerPtr defaultMinGWCmp = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_FAMILY_MINGW);
-        if(defaultMinGWCmp) {
-            compiler->SetTool("MAKE", defaultMinGWCmp->GetTool("MAKE"));
-            compiler->SetTool("ResourceCompiler", defaultMinGWCmp->GetTool("ResourceCompiler"));
+        BuildSettingsConfigCookie cookie;
+        CompilerPtr mingwCmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+        while(mingwCmp) {
+            if(mingwCmp->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
+                // We need to complete the toolchain from the 32 bit version of the MinGW compiler
+                // However, since clang does not have a 64 bit version, we need to make sure
+                // that the tools used are 32 bit bit (a 32 bit application, can not execute a 64 bit version)
+                const wxArrayString& macros = mingwCmp->GetBuiltinMacros();
+                bool is32Bit = macros.Index("_WIN64=1") == wxNOT_FOUND;
+                if(is32Bit) {
+                    compiler->SetTool("MAKE", mingwCmp->GetTool("MAKE"));
+                    compiler->SetTool("ResourceCompiler", mingwCmp->GetTool("ResourceCompiler"));
 
-            // Update the include paths
-            IncludePathLocator locator(NULL);
-            wxArrayString includePaths, excludePaths;
-            locator.Locate(includePaths, excludePaths, false, defaultMinGWCmp->GetTool("CXX"));
+                    // Update the include paths
+                    IncludePathLocator locator(NULL);
+                    wxArrayString includePaths, excludePaths;
+                    locator.Locate(includePaths, excludePaths, false, mingwCmp->GetTool("CXX"));
 
-            // Convert the include paths to semi colon separated list
-            wxString mingwIncludePaths = wxJoin(includePaths, ';');
-            compiler->SetGlobalIncludePath(mingwIncludePaths);
+                    // Convert the include paths to semi colon separated list
+                    wxString mingwIncludePaths = wxJoin(includePaths, ';');
+                    compiler->SetGlobalIncludePath(mingwIncludePaths);
+                    break;
+                }
+            }
+            mingwCmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
         }
 #endif
         return compiler;
@@ -116,38 +128,19 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
 void CompilerLocatorCLANG::MSWLocate()
 {
 #ifdef __WXMSW__
-    bool found = false;
-    {
-        wxRegKey reg(wxRegKey::HKCU, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LLVM");
-        wxString llvmInstallPath;
-        wxString llvmVersion;
-        if(reg.Exists()) {
-            found = true;
-            reg.QueryValue("DisplayIcon", llvmInstallPath);
-            reg.QueryValue("DisplayVersion", llvmVersion);
-
+    wxString llvmInstallPath, llvmVersion;
+    wxArrayString regKeys;
+    regKeys.Add("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LLVM");
+    regKeys.Add("Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LLVM");
+    for(size_t i = 0; i < regKeys.size(); ++i) {
+        if(ReadMSWInstallLocation(regKeys.Item(i), llvmInstallPath, llvmVersion)) {
             CompilerPtr compiler(new Compiler(NULL));
             compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
             compiler->SetGenerateDependeciesFile(true);
             compiler->SetName(wxString() << "clang ( " << llvmVersion << " )");
             m_compilers.push_back(compiler);
             AddTools(compiler, llvmInstallPath);
-        }
-    }
-    if(!found) {
-        wxRegKey reg(wxRegKey::HKLM, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\LLVM");
-        wxString llvmInstallPath;
-        wxString llvmVersion;
-        if(reg.Exists()) {
-            reg.QueryValue("DisplayIcon", llvmInstallPath);
-            reg.QueryValue("DisplayVersion", llvmVersion);
-
-            CompilerPtr compiler(new Compiler(NULL));
-            compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
-            compiler->SetGenerateDependeciesFile(true);
-            compiler->SetName(wxString() << "clang ( " << llvmVersion << " )");
-            m_compilers.push_back(compiler);
-            AddTools(compiler, llvmInstallPath);
+            break;
         }
     }
 #endif
@@ -250,4 +243,16 @@ wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
         fullname << "( " << version << " )";
     }
     return fullname;
+}
+
+bool CompilerLocatorCLANG::ReadMSWInstallLocation(const wxString& regkey, wxString& installPath, wxString& llvmVersion)
+{
+    wxRegKey reg(wxRegKey::HKLM, regkey);
+    installPath.Clear();
+    llvmVersion.Clear();
+    if(reg.Exists()) {
+        reg.QueryValue("DisplayIcon", installPath);
+        reg.QueryValue("DisplayVersion", llvmVersion);
+    }
+    return !installPath.IsEmpty() && !llvmVersion.IsEmpty();
 }

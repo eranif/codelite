@@ -37,6 +37,7 @@ protected:
     AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs = "");
     wxString GetClangVersion(const wxString& clangBinary);
     wxString GetCompilerFullName(const wxString& clangBinary);
+    bool ReadMSWInstallLocation(const wxString& regkey, wxString& installPath, wxString& llvmVersion);
 
 public:
     CompilerLocatorCLANG();

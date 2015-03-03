@@ -38,32 +38,30 @@ class WXDLLIMPEXP_SDK CompilersDetectorManager
 public:
     CompilersDetectorManager();
     virtual ~CompilersDetectorManager();
-    
+
     /**
-     * @brief return true if the locator found at least one instance 
+     * @brief return true if the locator found at least one instance
      * on MinGW installed on this machine
      */
     bool FoundMinGWCompiler() const;
-    
-    void SetCompilersFound(const ICompilerLocator::CompilerVec_t& compilersFound) {
+
+    void SetCompilersFound(const ICompilerLocator::CompilerVec_t& compilersFound)
+    {
         this->m_compilersFound = compilersFound;
     }
-    void SetDetectors(const ICompilerLocator::Vect_t& detectors) {
-        this->m_detectors = detectors;
-    }
-    const ICompilerLocator::CompilerVec_t& GetCompilersFound() const {
-        return m_compilersFound;
-    }
-    const ICompilerLocator::Vect_t& GetDetectors() const {
-        return m_detectors;
-    }
+    void SetDetectors(const ICompilerLocator::Vect_t& detectors) { this->m_detectors = detectors; }
+    const ICompilerLocator::CompilerVec_t& GetCompilersFound() const { return m_compilersFound; }
+    const ICompilerLocator::Vect_t& GetDetectors() const { return m_detectors; }
     bool Locate();
-    CompilerPtr Locate(const wxString &folder);
-    
+    CompilerPtr Locate(const wxString& folder);
+
     /**
      * @brief prompt the user to download MinGW installer
      */
     static void MSWSuggestToDownloadMinGW();
+
+    void MSWFixClangToolChain(CompilerPtr compiler,
+                              const ICompilerLocator::CompilerVec_t& allCompilers = ICompilerLocator::CompilerVec_t());
 };
 
 #endif // COMPILERSDETECTORMANAGER_H

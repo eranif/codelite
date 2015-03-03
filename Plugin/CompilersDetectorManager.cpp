@@ -39,6 +39,8 @@
 #include "macros.h"
 #include <wx/arrstr.h>
 #include <wx/choicdlg.h>
+#include "includepathlocator.h"
+#include "build_settings_config.h"
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
@@ -75,6 +77,9 @@ bool CompilersDetectorManager::Locate()
                 m_compilersFound.end(), (*iter)->GetCompilers().begin(), (*iter)->GetCompilers().end());
         }
     }
+    for(size_t i = 0; i < m_compilersFound.size(); ++i) {
+        MSWFixClangToolChain(m_compilersFound.at(i), m_compilersFound);
+    }
     return !m_compilersFound.empty();
 }
 
@@ -85,6 +90,7 @@ CompilerPtr CompilersDetectorManager::Locate(const wxString& folder)
     for(; iter != m_detectors.end(); ++iter) {
         CompilerPtr comp = (*iter)->Locate(folder);
         if(comp) {
+            MSWFixClangToolChain(comp);
             return comp;
         }
     }
@@ -144,4 +150,47 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW()
         }
     }
 #endif // __WXMSW__
+}
+
+void CompilersDetectorManager::MSWFixClangToolChain(CompilerPtr compiler,
+                                                    const ICompilerLocator::CompilerVec_t& allCompilers)
+{
+// Update the toolchain (if Windows)
+#ifdef __WXMSW__
+    ICompilerLocator::CompilerVec_t compilers;
+    if(allCompilers.empty()) {
+        BuildSettingsConfigCookie cookie;
+        CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+        while(cmp) {
+            compilers.push_back(cmp);
+            cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
+        }
+    } else {
+        compilers.insert(compilers.end(), allCompilers.begin(), allCompilers.end());
+    }
+
+    if(compiler->GetCompilerFamily() == COMPILER_FAMILY_CLANG) {
+        for(size_t i = 0; i < compilers.size(); ++i) {
+            CompilerPtr mingwCmp = compilers.at(i);
+            if(mingwCmp->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
+                compiler->SetTool("MAKE", mingwCmp->GetTool("MAKE"));
+                compiler->SetTool("ResourceCompiler", mingwCmp->GetTool("ResourceCompiler"));
+
+                // Update the include paths
+                IncludePathLocator locator(NULL);
+                wxArrayString includePaths, excludePaths;
+                locator.Locate(includePaths, excludePaths, false, mingwCmp->GetTool("CXX"));
+
+                // Convert the include paths to semi colon separated list
+                wxString mingwIncludePaths = wxJoin(includePaths, ';');
+                compiler->SetGlobalIncludePath(mingwIncludePaths);
+
+                // Keep the mingw's bin path
+                wxFileName mingwGCC(mingwCmp->GetTool("CXX"));
+                compiler->SetPathVariable(mingwGCC.GetPath());
+                break;
+            }
+        }
+    }
+#endif
 }

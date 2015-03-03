@@ -90,36 +90,6 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
         m_compilers.push_back(compiler);
         clang.RemoveLastDir();
         AddTools(compiler, clang.GetPath());
-
-// Update the toolchain (if Windows)
-#ifdef __WXMSW__
-        BuildSettingsConfigCookie cookie;
-        CompilerPtr mingwCmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
-        while(mingwCmp) {
-            if(mingwCmp->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
-                // We need to complete the toolchain from the 32 bit version of the MinGW compiler
-                // However, since clang does not have a 64 bit version, we need to make sure
-                // that the tools used are 32 bit bit (a 32 bit application, can not execute a 64 bit version)
-                const wxArrayString& macros = mingwCmp->GetBuiltinMacros();
-                bool is32Bit = macros.Index("_WIN64=1") == wxNOT_FOUND;
-                if(is32Bit) {
-                    compiler->SetTool("MAKE", mingwCmp->GetTool("MAKE"));
-                    compiler->SetTool("ResourceCompiler", mingwCmp->GetTool("ResourceCompiler"));
-
-                    // Update the include paths
-                    IncludePathLocator locator(NULL);
-                    wxArrayString includePaths, excludePaths;
-                    locator.Locate(includePaths, excludePaths, false, mingwCmp->GetTool("CXX"));
-
-                    // Convert the include paths to semi colon separated list
-                    wxString mingwIncludePaths = wxJoin(includePaths, ';');
-                    compiler->SetGlobalIncludePath(mingwIncludePaths);
-                    break;
-                }
-            }
-            mingwCmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
-        }
-#endif
         return compiler;
     }
     return NULL;

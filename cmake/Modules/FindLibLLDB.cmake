@@ -3,7 +3,12 @@ if (UNIX)
         ## Locate the official packages
         find_library(LIBLLDB_T
                      NAMES liblldb.so liblldb.so.1
-                     HINTS  /usr/lib /usr/local/lib ${CMAKE_INSTALL_LIBDIR})
+                     HINTS  
+                     	/usr/lib 
+			/usr/local/lib 
+			/usr/lib/llvm-3.6/lib
+			/usr/lib/llvm-3.4/lib
+			${CMAKE_INSTALL_LIBDIR})
 
         find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
                   HINTS 

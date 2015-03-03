@@ -247,6 +247,7 @@ wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
 
 bool CompilerLocatorCLANG::ReadMSWInstallLocation(const wxString& regkey, wxString& installPath, wxString& llvmVersion)
 {
+#ifdef __WXMSW__
     wxRegKey reg(wxRegKey::HKLM, regkey);
     installPath.Clear();
     llvmVersion.Clear();
@@ -255,4 +256,7 @@ bool CompilerLocatorCLANG::ReadMSWInstallLocation(const wxString& regkey, wxStri
         reg.QueryValue("DisplayVersion", llvmVersion);
     }
     return !installPath.IsEmpty() && !llvmVersion.IsEmpty();
+#else
+    return false;
+#endif
 }

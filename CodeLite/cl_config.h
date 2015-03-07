@@ -66,6 +66,7 @@ public:
 #define kConfigRestoreLastSession "RestoreLastSession"
 #define kConfigFrameTitlePattern "FrameTitlePattern"
 #define kConfigAutoDetectCompilerOnStartup "AutoDetectCompilerOnStartup"
+#define kConfigBootstrapCompleted "BootstrapCompleted"
 #define kConfigUpdateParserPaths "updateParserPaths"
 #define kConfigShowToolBar "ShowToolBar"
 #define kConfigShowTabBar "ShowTabBar"

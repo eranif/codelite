@@ -380,7 +380,7 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
     return singleLineHeight;
 }
 
-void wxCodeCompletionBox::FilterResults()
+bool wxCodeCompletionBox::FilterResults()
 {
     int start = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
     int end = m_stc->GetCurrentPos();
@@ -388,7 +388,7 @@ void wxCodeCompletionBox::FilterResults()
     wxString word = m_stc->GetTextRange(start, end); // the current word
     if(word.IsEmpty()) {
         m_entries = m_allEntries;
-        return;
+        return false;
     }
 
     m_entries.clear();
@@ -434,6 +434,7 @@ void wxCodeCompletionBox::FilterResults()
     m_entries.insert(m_entries.end(), contains.begin(), contains.end());
     m_entries.insert(m_entries.end(), containsI.begin(), containsI.end());
     m_index = 0;
+    return exactMatches.empty() && exactMatchesI.empty() && startsWith.empty() && startsWithI.empty();
 }
 
 void wxCodeCompletionBox::InsertSelection()
@@ -522,11 +523,11 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEnt
 
 void wxCodeCompletionBox::DoUpdateList()
 {
-    FilterResults();
+    bool refreshList = FilterResults();
 
     int curpos = m_stc->GetCurrentPos();
-    if(m_entries.empty() || curpos < m_startPos) {
-        if(m_entries.empty() && m_flags & kRefreshOnKeyType) {
+    if(m_entries.empty() || curpos < m_startPos || refreshList) {
+        if((m_entries.empty() || refreshList) && (m_flags & kRefreshOnKeyType)) {
             // Trigger a new CC box
             wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
             wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
@@ -638,7 +639,7 @@ void wxCodeCompletionBox::DoDestroyTipWindow()
 void wxCodeCompletionBox::DoShowCompletionBox()
 {
     CHECK_PTR_RET(m_stc);
-    
+
     // guesstimate a line height
     wxMemoryDC dc;
     wxBitmap bmp(1, 1);
@@ -646,24 +647,24 @@ void wxCodeCompletionBox::DoShowCompletionBox()
     wxFont font = m_stc->StyleGetFont(0);
     dc.SetFont(font);
     wxSize textSize = dc.GetTextExtent("Tp");
-    
+
     int lineHeight = textSize.y;
     wxRect rect = GetRect();
     wxSize screenSize = ::wxGetDisplaySize();
-    
+
     // determine the box x position
     int wordStart = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
     wxPoint pt = m_stc->PointFromPosition(wordStart);
     pt = m_stc->ClientToScreen(pt);
     pt.y += lineHeight;
-    
+
     // Check Y axis
     if((pt.y + rect.GetHeight()) > screenSize.GetHeight()) {
         // the completion box goes out of the Y axis, move it up
         pt.y -= lineHeight;
         pt.y -= rect.GetHeight();
     }
-    
+
     // Check X axis
     if((pt.x + rect.GetWidth()) > screenSize.GetWidth()) {
         // the completion box goes out of the X axis. Move it to the left
@@ -677,7 +678,7 @@ void wxCodeCompletionBox::RemoveDuplicateEntries()
 {
     wxStringSet_t matches;
     wxCodeCompletionBoxEntry::Vec_t uniqueList;
-    for(size_t i=0; i<m_allEntries.size(); ++i) {
+    for(size_t i = 0; i < m_allEntries.size(); ++i) {
         wxCodeCompletionBoxEntry::Ptr_t entry = m_allEntries.at(i);
         if(matches.count(entry->GetText()) == 0) {
             // new entry

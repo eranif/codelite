@@ -294,7 +294,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-    
+
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 
@@ -736,4 +736,29 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
                 wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
         }
     }
+}
+
+void ColoursAndFontsManager::SetTheme(const wxString& themeName)
+{
+    LexerConf::Ptr_t lexer = GetLexer("c++", themeName);
+    CHECK_PTR_RET(lexer);
+
+    bool isDark = lexer->IsDark();
+    wxString fallbackTheme;
+    if(isDark) {
+        fallbackTheme = "Zmrok-like";
+    } else {
+        fallbackTheme = "Default";
+    }
+    
+    const wxArrayString& lexers = GetAllLexersNames();
+    for(size_t i = 0; i < lexers.size(); ++i) {
+        wxArrayString themesForLexer = GetAvailableThemesForLexer(lexers.Item(i));
+        if(themesForLexer.Index(themeName) == wxNOT_FOUND) {
+            SetActiveTheme(lexers.Item(i), fallbackTheme);
+        } else {
+            SetActiveTheme(lexers.Item(i), themeName);
+        }
+    }
+    Save();
 }

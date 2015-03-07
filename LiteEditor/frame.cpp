@@ -61,6 +61,7 @@
 #include "ColoursAndFontsManager.h"
 #include "fileutils.h"
 #include "wxCustomStatusBar.h"
+#include "clBoostrapWizard.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2078,36 +2079,38 @@ void clMainFrame::CreateToolbars16()
     }
 }
 
-void clMainFrame::LocateCompilersIfNeeded()
+void clMainFrame::Bootstrap()
 {
     if(!g_splashDestroyed && g_splashScreen) {
         g_splashScreen->Hide();
         g_splashScreen->Destroy();
         g_splashScreen = NULL;
     }
-
-    if(clConfig::Get().Read(kConfigAutoDetectCompilerOnStartup, true)) {
-
-        // Unset the flag so next time we won't get this
-        clConfig::Get().Write(kConfigAutoDetectCompilerOnStartup, false);
-
-        // First time, trigger the auto-compiler detection code
-        CompilersDetectorManager detector;
-        if(detector.Locate()) {
-            const ICompilerLocator::CompilerVec_t& compilersFound = detector.GetCompilersFound();
-            CompilersFoundDlg dlg(this, compilersFound);
-            if(dlg.ShowModal() == wxID_OK) {
-                // Replace the current compilers with a new one
-                BuildSettingsConfigST::Get()->SetCompilers(compilersFound);
-                CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
-                if(!detector.FoundMinGWCompiler()) {
-                    CompilersDetectorManager::MSWSuggestToDownloadMinGW();
-                }
-            }
-        } else {
-            // nothing found on this machine, offer to download
-            CompilersDetectorManager::MSWSuggestToDownloadMinGW();
+    
+    if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
+        clConfig::Get().Write(kConfigBootstrapCompleted, true);
+        clBoostrapWizard wiz(this);
+        if(wiz.RunWizard(wiz.GetFirstPage())) {
+            wxBusyInfo bi(_("Applying your choices, this may take a few seconds..."));
+            
+            clBootstrapData data = wiz.GetData();
+            // update the compilers
+            BuildSettingsConfigST::Get()->SetCompilers(data.compilers);
+            CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
+            OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+            options->SetIndentUsesTabs(data.useTabs);
+            options->SetShowWhitspaces(data.whitespaceVisibility);
+            EditorConfigST::Get()->SetOptions(options);
+            
+            // Update the theme
+            ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
         }
+    }
+    
+    // Load last session?
+    if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
+        wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
+        EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
 }
 
@@ -3293,7 +3296,7 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
 
     // Send initialization end event
     EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
-    CallAfter(&clMainFrame::LocateCompilersIfNeeded);
+    CallAfter(&clMainFrame::Bootstrap);
 
     event.Skip();
 }
@@ -6085,12 +6088,6 @@ void clMainFrame::OnColoursAndFontsLoaded(clColourEvent& event)
     wxString sessConfFile;
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
-
-    // Load last session?
-    if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
-        wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
-        EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
-    }
 }
 
 void clMainFrame::OnProjectRenamed(clCommandEvent& event)

@@ -116,7 +116,11 @@ public:
 
 protected:
     int GetSingleLineHeight() const;
-    void FilterResults();
+    /**
+     * @brief filter the results based on what the user typed in the editor
+     * @return Should we refresh the content of the CC box (based on number of "Exact matches" / "Starts with" found)
+     */
+    bool FilterResults();
     void RemoveDuplicateEntries();
     void InsertSelection();
 

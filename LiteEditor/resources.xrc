@@ -1,45 +1,47 @@
+<!-- wxrc /c /v /o resources.cpp resources.xrc -->
 <resource>
-	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
-	<object class="wxBitmap" name="read_only">res/lock.png</object>
-	<object class="wxBitmap" name="memory_view">res/memory_view.png</object>
-	<object class="wxBitmap" name="About">res/about_img.png</object>
+    <object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
+    <object class="wxBitmap" name="read_only">res/lock.png</object>
+    <object class="wxBitmap" name="memory_view">res/memory_view.png</object>
+    <object class="wxBitmap" name="About">res/about_img.png</object>
     <object class="wxBitmap" name="build">res/rebuild.png</object>
-	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
-	<object class="wxBitmap" name="debug_window">res/trace.png</object>
-	<object class="wxBitmap" name="debugger_tab">res/debug_windows.png</object>
-	<object class="wxBitmap" name="svn_info">res/help_about.png</object>
-	<object class="wxBitmap" name="svn_refresh">res/reload.png</object>
-	<object class="wxBitmap" name="svn_repo">res/svn_repo.png</object>
-	<object class="wxBitmap" name="svn_checkout">res/svn_checkout.png</object>
-	<object class="wxBitmap" name="svn_settings">res/configure.png</object>
-	<object class="wxBitmap" name="locals_view">res/locals_view.png</object>
-	<object class="wxBitmap" name="watches">res/watches.png</object>
-	<object class="wxBitmap" name="frames">res/window_duplicate.png</object>
-	<object class="wxBitmap" name="breakpoint">res/breakpoint.png</object>
-	<object class="wxBitmap" name="new_plugin_wiz_bmp">res/puzzle.png</object>
-	<object class="wxBitmap" name="question_and_answer">res/question_and_answer.png</object>
-	<object class="wxBitmap" name="cscope">res/kstars.png</object>
-	<object class="wxBitmap" name="threads">res/threads.png</object>
-	<object class="wxBitmap" name="new_class_title">res/new_class.png</object>
-	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
-	<object class="wxBitmap" name="colourise">res/package_utilities.png</object>
-	<object class="wxBitmap" name="text_view">res/view_text.png</object>
-	<object class="wxBitmap" name="eraser">res/eraser.png</object>
-	<object class="wxBitmap" name="cursor">res/cursor.png</object>
+    <object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
+    <object class="wxBitmap" name="debug_window">res/trace.png</object>
+    <object class="wxBitmap" name="debugger_tab">res/debug_windows.png</object>
+    <object class="wxBitmap" name="svn_info">res/help_about.png</object>
+    <object class="wxBitmap" name="svn_refresh">res/reload.png</object>
+    <object class="wxBitmap" name="svn_repo">res/svn_repo.png</object>
+    <object class="wxBitmap" name="svn_checkout">res/svn_checkout.png</object>
+    <object class="wxBitmap" name="svn_settings">res/configure.png</object>
+    <object class="wxBitmap" name="locals_view">res/locals_view.png</object>
+    <object class="wxBitmap" name="watches">res/watches.png</object>
+    <object class="wxBitmap" name="frames">res/window_duplicate.png</object>
+    <object class="wxBitmap" name="breakpoint">res/breakpoint.png</object>
+    <object class="wxBitmap" name="new_plugin_wiz_bmp">res/puzzle.png</object>
+    <object class="wxBitmap" name="question_and_answer">res/question_and_answer.png</object>
+    <object class="wxBitmap" name="cscope">res/kstars.png</object>
+    <object class="wxBitmap" name="threads">res/threads.png</object>
+    <object class="wxBitmap" name="new_class_title">res/new_class.png</object>
+    <object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
+    <object class="wxBitmap" name="colourise">res/package_utilities.png</object>
+    <object class="wxBitmap" name="text_view">res/view_text.png</object>
+    <object class="wxBitmap" name="eraser">res/eraser.png</object>
+    <object class="wxBitmap" name="cursor">res/cursor.png</object>
+    <object class="wxBitmap" name="next-16">res/quickfindbar/next-16.png</object>
+    
+    <!--
+        Toolbar bitmaps (24x24)
+    -->
+    <object class="wxBitmap" name="code_format24">res/24/formatter.png</object>
+    <object class="wxBitmap" name="code_format_options24">res/24/formatter_settings.png</object>
 
-	<!--
-		Toolbar bitmaps (24x24)
-	-->
-	<object class="wxBitmap" name="code_format24">res/24/formatter.png</object>
-	<object class="wxBitmap" name="code_format_options24">res/24/formatter_settings.png</object>
+    <!--
+        Toolbar bitmaps (16x16)
+    -->
+    <object class="wxBitmap" name="code_format_options16">res/16/formatter_settings.png</object>
+    <object class="wxBitmap" name="code_format16">res/16/formatter.png</object>
 
-	<!--
-		Toolbar bitmaps (16x16)
-	-->
-	<object class="wxBitmap" name="code_format_options16">res/16/formatter_settings.png</object>
-	<object class="wxBitmap" name="code_format16">res/16/formatter.png</object>
-
-	<!-- Notebook icons -->
+    <!-- Notebook icons -->
     
     <!-- light theme buttons -->
     <object class="wxBitmap" name="tab_x_close">res/notebook/fileclose-dark.png</object>

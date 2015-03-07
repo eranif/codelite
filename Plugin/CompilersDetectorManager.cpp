@@ -141,7 +141,7 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW()
         if(!selection.IsEmpty()) {
             // Reset the compiler detection flag so next time codelite is restarted, it will
             // rescan the machine
-            clConfig::Get().Write(kConfigAutoDetectCompilerOnStartup, true);
+            clConfig::Get().Write(kConfigBootstrapCompleted, false);
 
             // Open the browser to start downloading the compiler
             ::wxLaunchDefaultBrowser(mingwCompilers.find(selection)->second);

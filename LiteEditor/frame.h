@@ -280,7 +280,7 @@ public:
     void CreateRecentlyOpenedWorkspacesMenu();
     void DoSuggestRestart();
 
-    void LocateCompilersIfNeeded();
+    void Bootstrap();
 
 private:
     // make our frame's constructor private

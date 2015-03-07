@@ -9,9 +9,9 @@ class WXDLLIMPEXP_SDK clBoostrapWizardPageCompilers : public wxWizardPageSimple
 {
 public:
     clBoostrapWizardPageCompilers(wxWizard* parent,
-                         wxWizardPage* prev = NULL,
-                         wxWizardPage* next = NULL,
-                         const wxBitmap& bitmap = wxNullBitmap);
+                                  wxWizardPage* prev = NULL,
+                                  wxWizardPage* next = NULL,
+                                  const wxBitmap& bitmap = wxNullBitmap);
     virtual ~clBoostrapWizardPageCompilers() {}
 };
 
@@ -19,9 +19,9 @@ class WXDLLIMPEXP_SDK clBoostrapWizardPageColours : public wxWizardPageSimple
 {
 public:
     clBoostrapWizardPageColours(wxWizard* parent,
-                         wxWizardPage* prev = NULL,
-                         wxWizardPage* next = NULL,
-                         const wxBitmap& bitmap = wxNullBitmap);
+                                wxWizardPage* prev = NULL,
+                                wxWizardPage* next = NULL,
+                                const wxBitmap& bitmap = wxNullBitmap);
     virtual ~clBoostrapWizardPageColours() {}
 };
 
@@ -29,10 +29,20 @@ class WXDLLIMPEXP_SDK clBoostrapWizardPageWhitespace : public wxWizardPageSimple
 {
 public:
     clBoostrapWizardPageWhitespace(wxWizard* parent,
-                         wxWizardPage* prev = NULL,
-                         wxWizardPage* next = NULL,
-                         const wxBitmap& bitmap = wxNullBitmap);
+                                   wxWizardPage* prev = NULL,
+                                   wxWizardPage* next = NULL,
+                                   const wxBitmap& bitmap = wxNullBitmap);
     virtual ~clBoostrapWizardPageWhitespace() {}
+};
+
+class WXDLLIMPEXP_SDK clBoostrapWizardPageWelcome : public wxWizardPageSimple
+{
+public:
+    clBoostrapWizardPageWelcome(wxWizard* parent,
+                                wxWizardPage* prev = NULL,
+                                wxWizardPage* next = NULL,
+                                const wxBitmap& bitmap = wxNullBitmap);
+    virtual ~clBoostrapWizardPageWelcome() {}
 };
 
 #endif // CLBOOSTRAPWIZARDPAGE_H

@@ -6,8 +6,7 @@
 #include <wx/wupdlock.h>
 #include <wx/dcmemory.h>
 
-const wxString sampleText = "class Demo\n"
-                            "{\n"
+const wxString sampleText = "class Demo {\n"
                             "private:\n"
                             "    std::string m_str;\n"
                             "    int m_integer;\n"
@@ -15,7 +14,7 @@ const wxString sampleText = "class Demo\n"
                             "public:\n"
                             "    /**\n"
                             "     * Creates a new demo.\n"
-                            "     * @param o The object to demonstrate.\n"
+                            "     * @param o The object\n"
                             "     */\n"
                             "    Demo(const Demo &other) {\n"
                             "        m_str = other.m_str;\n"
@@ -61,11 +60,13 @@ void clBoostrapWizard::OnScanForCompilers(wxCommandEvent& event)
     wxBusyCursor bc;
     m_compilers.clear();
     wxWindowUpdateLocker locker(m_wizardPageCompilers);
-    m_cmdLnkBtnScanForCompilers->Hide();
-    m_dvListCtrlCompilers->Show();
 
     CompilersDetectorManager detector;
     if(detector.Locate()) {
+        m_cmdLnkBtnScanForCompilers->Hide();
+        m_cmdLnkBtnDownloadCompiler->Hide();
+        m_dvListCtrlCompilers->Show();
+        
         m_compilers = detector.GetCompilersFound();
         for(size_t i = 0; i < m_compilers.size(); ++i) {
             wxVector<wxVariant> cols;
@@ -75,12 +76,12 @@ void clBoostrapWizard::OnScanForCompilers(wxCommandEvent& event)
         }
 
         if(!detector.FoundMinGWCompiler()) {
-            CompilersDetectorManager::MSWSuggestToDownloadMinGW();
+            CompilersDetectorManager::MSWSuggestToDownloadMinGW(true);
         }
 
     } else {
         // nothing found on this machine, offer to download
-        CompilersDetectorManager::MSWSuggestToDownloadMinGW();
+        CompilersDetectorManager::MSWSuggestToDownloadMinGW(true);
     }
     m_wizardPageCompilers->GetSizer()->Layout();
 }
@@ -88,6 +89,7 @@ void clBoostrapWizard::OnScanForCompilers(wxCommandEvent& event)
 wxBitmap clBoostrapWizard::GenerateBitmap(size_t labelIndex)
 {
     wxArrayString labels;
+    labels.Add("Welcome");
     labels.Add("Compilers");
     labels.Add("Colours");
     labels.Add("Whitespace");
@@ -136,4 +138,17 @@ clBootstrapData clBoostrapWizard::GetData()
     data.useTabs = (m_radioBoxSpacesVsTabs->GetSelection() == 1);
     data.whitespaceVisibility = m_radioBoxWhitespaceVisibility->GetSelection();
     return data;
+}
+void clBoostrapWizard::OnInstallCompiler(wxCommandEvent& event)
+{
+    CompilersDetectorManager::MSWSuggestToDownloadMinGW(false);
+}
+
+void clBoostrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
+{
+#ifdef __WXMSW__
+    event.Enable(true);
+#else
+    event.Enable(false);
+#endif
 }

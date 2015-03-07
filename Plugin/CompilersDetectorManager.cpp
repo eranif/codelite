@@ -109,10 +109,11 @@ bool CompilersDetectorManager::FoundMinGWCompiler() const
     return false;
 }
 
-void CompilersDetectorManager::MSWSuggestToDownloadMinGW()
+void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
 {
 #ifdef __WXMSW__
-    if(::wxMessageBox(_("Could not locate any MinGW compiler installed on your machine, would you like to "
+    if(!prompt ||
+       ::wxMessageBox(_("Could not locate any MinGW compiler installed on your machine, would you like to "
                         "install one now?"),
                       "CodeLite",
                       wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER | wxICON_QUESTION) == wxYES) {
@@ -145,8 +146,9 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW()
 
             // Open the browser to start downloading the compiler
             ::wxLaunchDefaultBrowser(mingwCompilers.find(selection)->second);
-            ::wxMessageBox(
-                _("After install is completed, restart CodeLite"), "CodeLite", wxOK | wxCENTER | wxICON_INFORMATION);
+            ::wxMessageBox(_("After install is completed, click the 'Scan' button"),
+                           "CodeLite",
+                           wxOK | wxCENTER | wxICON_INFORMATION);
         }
     }
 #endif // __WXMSW__

@@ -842,6 +842,8 @@ void MainBook::ReloadExternallyModified(bool prompt)
     // Make sure that the tabs that we have opened
     // are still available in the main book
     LEditor::Vec_t realEditorsList;
+    std::sort(editors.begin(), editors.end());
+    std::sort(editorsAgain.begin(), editorsAgain.end());
     std::set_intersection(
         editorsAgain.begin(), editorsAgain.end(), editors.begin(), editors.end(), std::back_inserter(realEditorsList));
     

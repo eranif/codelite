@@ -33,6 +33,7 @@ PluginMgrDlg::PluginMgrDlg( wxWindow* parent )
 {
     this->Initialize();
     WindowAttrManager::Load(this, wxT("PluginMgrDlgAttr"), NULL);
+    this->PostSizeEvent();
 }
 
 PluginMgrDlg::~PluginMgrDlg()

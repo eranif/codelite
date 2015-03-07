@@ -648,7 +648,7 @@ void wxCodeCompletionBox::DoShowCompletionBox()
     dc.SetFont(font);
     wxSize textSize = dc.GetTextExtent("Tp");
 
-    int lineHeight = textSize.y;
+    int lineHeight = textSize.y + 3; // 3 pixels margins
     wxRect rect = GetRect();
     wxSize screenSize = ::wxGetDisplaySize();
 

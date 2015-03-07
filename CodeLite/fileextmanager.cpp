@@ -27,6 +27,7 @@
 #include <wx/filename.h>
 #include "fileutils.h"
 #include <wx/regex.h>
+#include <wx/xml/xml.h>
 
 std::map<wxString, FileExtManager::FileType> FileExtManager::m_map;
 std::vector<FileExtManager::Matcher::Ptr_t> FileExtManager::m_matchers;
@@ -162,6 +163,18 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
             return TypeMakefile;
         }
         return defaultType;
+    }
+    
+    FileExtManager::FileType type = iter->second;
+    if(fn.Exists() && type == TypeWorkspace) {
+        // try to decide if this is a PHP workspace or a standard workspace
+        wxXmlDocument doc;
+        if(doc.Load(fn.GetFullPath())) {
+            // an XML type, assume standard workspace
+            return TypeWorkspace;
+        } else {
+            return TypeWorkspacePHP;
+        }
     }
     return iter->second;
 }

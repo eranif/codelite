@@ -118,7 +118,12 @@ WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayStri
     for(size_t i = 0; i < strings.GetCount(); i++) {
 
         wxBitmap bmp = bmps[FileExtManager::TypeText];
-        FileExtManager::FileType type = FileExtManager::GetType(strings.Item(i));
+        wxString filename = strings.Item(i);
+        if(filename.Find("@") != wxNOT_FOUND) {
+            filename = filename.AfterFirst('@');
+        }
+        filename.Trim().Trim(false);
+        FileExtManager::FileType type = FileExtManager::GetType(filename);
         if(bmps.count(type)) {
             bmp = bmps[type];
         }

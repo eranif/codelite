@@ -58,7 +58,7 @@ public:
     /**
      * @brief prompt the user to download MinGW installer
      */
-    static void MSWSuggestToDownloadMinGW();
+    static void MSWSuggestToDownloadMinGW(bool prompt);
 
     void MSWFixClangToolChain(CompilerPtr compiler,
                               const ICompilerLocator::CompilerVec_t& allCompilers = ICompilerLocator::CompilerVec_t());

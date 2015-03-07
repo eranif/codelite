@@ -25,6 +25,8 @@ public:
     virtual ~clBoostrapWizard();
     clBootstrapData GetData();
 protected:
+    virtual void OnInstallCompiler(wxCommandEvent& event);
+    virtual void OnInstallCompilerUI(wxUpdateUIEvent& event);
     virtual void OnScanForCompilers(wxCommandEvent& event);
     virtual void OnThemeSelected(wxCommandEvent& event);
 };

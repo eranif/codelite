@@ -45,4 +45,14 @@ public:
     virtual ~clBoostrapWizardPageWelcome() {}
 };
 
+class WXDLLIMPEXP_SDK clBoostrapWizardPagePlugins : public wxWizardPageSimple
+{
+public:
+    clBoostrapWizardPagePlugins(wxWizard* parent,
+                                wxWizardPage* prev = NULL,
+                                wxWizardPage* next = NULL,
+                                const wxBitmap& bitmap = wxNullBitmap);
+    virtual ~clBoostrapWizardPagePlugins() {}
+};
+
 #endif // CLBOOSTRAPWIZARDPAGE_H

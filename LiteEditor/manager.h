@@ -143,7 +143,8 @@ public:
     void SetRepositionEditor(bool b) { m_repositionEditor = b; }
 
     void SetCodeLiteLauncherPath(const wxString& path);
-    void OnRestart(wxCommandEvent& event);
+    void OnRestart(clCommandEvent& event);
+    void OnCmdRestart(wxCommandEvent& event);
     void GenerateCompileCommands();
     void OnGetFindInFilesMask(clCommandEvent &event);
     void OnFindInFilesDismissed(clCommandEvent &event);

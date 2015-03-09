@@ -1,1 +1,2 @@
-
+1. Add to the Bootstrap wizard another page which allows the user to enable/disable plugins
+2. SFTP: Replace the builtin terminal with the native terminal (putty on Windows)

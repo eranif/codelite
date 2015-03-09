@@ -17,8 +17,9 @@
 #include "clBoostrapWizardPage.h"
 #include <wx/sizer.h>
 #include <wx/bannerwindow.h>
-#include <wx/commandlinkbutton.h>
 #include <wx/dataview.h>
+#include <wx/button.h>
+#include <wx/commandlinkbutton.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/stc/stc.h>
@@ -31,6 +32,12 @@ protected:
 
     clBoostrapWizardPageWelcome* m_wizardPageWelcome;
     wxBannerWindow* m_banner81;
+    clBoostrapWizardPagePlugins* m_wizardPagePlugins;
+    wxBannerWindow* m_banner811;
+    wxDataViewListCtrl* m_dvListCtrlPlugins;
+    wxButton* m_button99;
+    wxButton* m_button101;
+    wxButton* m_button103;
     clBoostrapWizardPageCompilers* m_wizardPageCompilers;
     wxBannerWindow* m_banner69;
     wxCommandLinkButton* m_cmdLnkBtnScanForCompilers;
@@ -46,6 +53,12 @@ protected:
     wxRadioBox* m_radioBoxWhitespaceVisibility;
 
 protected:
+    virtual void OnFinish(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnCheckAllPlugins(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckAllPluginsUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUnCheckAllPlugins(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUnCheckAllPluginsUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnToggleCxxPlugins(wxCommandEvent& event) { event.Skip(); }
     virtual void OnScanForCompilers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInstallCompilerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnInstallCompiler(wxCommandEvent& event) { event.Skip(); }
@@ -54,6 +67,12 @@ protected:
 public:
     wxBannerWindow* GetBanner81() { return m_banner81; }
     clBoostrapWizardPageWelcome* GetWizardPageWelcome() { return m_wizardPageWelcome; }
+    wxBannerWindow* GetBanner811() { return m_banner811; }
+    wxDataViewListCtrl* GetDvListCtrlPlugins() { return m_dvListCtrlPlugins; }
+    wxButton* GetButton99() { return m_button99; }
+    wxButton* GetButton101() { return m_button101; }
+    wxButton* GetButton103() { return m_button103; }
+    clBoostrapWizardPagePlugins* GetWizardPagePlugins() { return m_wizardPagePlugins; }
     wxBannerWindow* GetBanner69() { return m_banner69; }
     wxCommandLinkButton* GetCmdLnkBtnScanForCompilers() { return m_cmdLnkBtnScanForCompilers; }
     wxCommandLinkButton* GetCmdLnkBtnDownloadCompiler() { return m_cmdLnkBtnDownloadCompiler; }
@@ -67,7 +86,7 @@ public:
     wxRadioBox* GetRadioBoxSpacesVsTabs() { return m_radioBoxSpacesVsTabs; }
     wxRadioBox* GetRadioBoxWhitespaceVisibility() { return m_radioBoxWhitespaceVisibility; }
     clBoostrapWizardPageWhitespace* GetWizardPageWhitespace() { return m_wizardPageWhitespace; }
-    clBoostrapWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Setup CodeLite"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
+    clBoostrapWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Welcome!"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~clBoostrapWizardBase();
 };

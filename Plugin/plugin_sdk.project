@@ -307,10 +307,12 @@
     <File Name="cl_aui_tool_stickness.cpp"/>
     <File Name="art_metro.cpp"/>
     <File Name="art_metro.h"/>
-    <File Name="clBoostrapWizard.h"/>
-    <File Name="clBoostrapWizard.cpp"/>
     <File Name="clBoostrapWizardPage.h"/>
     <File Name="clBoostrapWizardPage.cpp"/>
+    <File Name="clBootstrapWizard.h"/>
+    <File Name="clBootstrapWizard.cpp"/>
+    <File Name="clBoostrapWizard.h"/>
+    <File Name="clBoostrapWizard.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

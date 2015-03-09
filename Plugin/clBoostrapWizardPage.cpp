@@ -1,5 +1,5 @@
 #include "clBoostrapWizardPage.h"
-#include "clBoostrapWizard.h"
+#include "clBootstrapWizard.h"
 
 clBoostrapWizardPageWelcome::clBoostrapWizardPageWelcome(wxWizard* parent,
                                                          wxWizardPage* prev,
@@ -7,7 +7,16 @@ clBoostrapWizardPageWelcome::clBoostrapWizardPageWelcome(wxWizard* parent,
                                                          const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBoostrapWizard::GenerateBitmap(0));
+    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(0));
+}
+
+clBoostrapWizardPagePlugins::clBoostrapWizardPagePlugins(wxWizard* parent,
+                                                         wxWizardPage* prev,
+                                                         wxWizardPage* next,
+                                                         const wxBitmap& bitmap)
+{
+    wxUnusedVar(bitmap);
+    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(1));
 }
 
 clBoostrapWizardPageCompilers::clBoostrapWizardPageCompilers(wxWizard* parent,
@@ -16,7 +25,7 @@ clBoostrapWizardPageCompilers::clBoostrapWizardPageCompilers(wxWizard* parent,
                                                              const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBoostrapWizard::GenerateBitmap(1));
+    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(2));
 }
 
 clBoostrapWizardPageColours::clBoostrapWizardPageColours(wxWizard* parent,
@@ -25,7 +34,7 @@ clBoostrapWizardPageColours::clBoostrapWizardPageColours(wxWizard* parent,
                                                          const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBoostrapWizard::GenerateBitmap(2));
+    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(3));
 }
 
 clBoostrapWizardPageWhitespace::clBoostrapWizardPageWhitespace(wxWizard* parent,
@@ -34,6 +43,6 @@ clBoostrapWizardPageWhitespace::clBoostrapWizardPageWhitespace(wxWizard* parent,
                                                                const wxBitmap& bitmap)
 {
     wxUnusedVar(bitmap);
-    Create(parent, prev, next, clBoostrapWizard::GenerateBitmap(3));
+    Create(parent, prev, next, clBootstrapWizard::GenerateBitmap(4));
 }
 

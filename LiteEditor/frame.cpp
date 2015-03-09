@@ -61,7 +61,7 @@
 #include "ColoursAndFontsManager.h"
 #include "fileutils.h"
 #include "wxCustomStatusBar.h"
-#include "clBoostrapWizard.h"
+#include "clBootstrapWizard.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2089,21 +2089,40 @@ void clMainFrame::Bootstrap()
     
     if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
-        clBoostrapWizard wiz(this);
+        clBootstrapWizard wiz(this);
         if(wiz.RunWizard(wiz.GetFirstPage())) {
-            wxBusyInfo bi(_("Applying your choices, this may take a few seconds..."));
+            {
+                wxString message;
+                
+                if(wiz.IsRestartRequired()) {
+                    message << _("Applying your choices and restarting CodeLite");
+                } else {
+                    message << _("Applying your choices, this may take a few seconds");
+                }
+
+                wxBusyInfo bi(message);
+                
+                clBootstrapData data = wiz.GetData();
+                
+                // update the compilers if not empty
+                if(!data.compilers.empty()) {
+                    BuildSettingsConfigST::Get()->SetCompilers(data.compilers);
+                    CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
+                }
+                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+                options->SetIndentUsesTabs(data.useTabs);
+                options->SetShowWhitspaces(data.whitespaceVisibility);
+                EditorConfigST::Get()->SetOptions(options);
+                
+                // Update the theme
+                ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
+            }
             
-            clBootstrapData data = wiz.GetData();
-            // update the compilers
-            BuildSettingsConfigST::Get()->SetCompilers(data.compilers);
-            CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
-            OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-            options->SetIndentUsesTabs(data.useTabs);
-            options->SetShowWhitspaces(data.whitespaceVisibility);
-            EditorConfigST::Get()->SetOptions(options);
-            
-            // Update the theme
-            ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
+            if(wiz.IsRestartRequired()) {
+                clCommandEvent restartEvent(wxEVT_RESTART_CODELITE);
+                ManagerST::Get()->AddPendingEvent(restartEvent);
+                return;
+            }
         }
     }
     

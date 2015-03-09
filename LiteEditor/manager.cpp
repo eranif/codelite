@@ -193,7 +193,9 @@ Manager::Manager(void)
     , m_repositionEditor(true)
 {
     m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
-    Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnRestart), NULL, this);
+    Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
+    Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
+
     Connect(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
     Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED, wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
     Connect(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS,
@@ -214,6 +216,9 @@ Manager::Manager(void)
 
 Manager::~Manager(void)
 {
+    Unbind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
+    Disconnect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
+
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
@@ -392,7 +397,7 @@ void Manager::CloseWorkspace()
     if(!IsShutdownInProgress()) {
         SendCmdEvent(wxEVT_WORKSPACE_CLOSING);
     }
-    
+
     DbgClearWatches();
 
     // If we got a running debugging session - terminate it
@@ -417,7 +422,6 @@ void Manager::CloseWorkspace()
     SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
 
     WorkspaceST::Get()->CloseWorkspace();
-    
 
 #ifdef __WXMSW__
     // Under Windows, and in order to avoid locking the directory set the working directory back to the start up
@@ -2153,7 +2157,7 @@ void Manager::DbgStart(long attachPid)
     // read
     wxArrayString dbg_cmds;
     DebugSessionInfo si;
-    
+
     si.debuggerPath = dbgname;
     si.exeName = exepath;
     si.cwd = wd;
@@ -3255,12 +3259,26 @@ void Manager::DoRestartCodeLite()
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 
     wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC | wxEXEC_NOHIDE);
+#else // OSX
+
+    // on OSX, we use the open command
+    wxFileName bundlePath(wxStandardPaths::Get().GetExecutablePath());
+    bundlePath.RemoveLastDir();
+    bundlePath.RemoveLastDir();
+    wxString bundlePathStr = bundlePath.GetPath();
+    ::WrapWithQuotes(bundlePathStr);
+    restartCodeLiteCommand << "/usr/bin/open " << bundlePathStr;
+
+    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+
+    wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC | wxEXEC_NOHIDE);
 #endif
 }
 
 void Manager::SetCodeLiteLauncherPath(const wxString& path) { m_codeliteLauncher = path; }
 
-void Manager::OnRestart(wxCommandEvent& event)
+void Manager::OnRestart(clCommandEvent& event)
 {
     wxUnusedVar(event);
     DoRestartCodeLite();
@@ -3726,4 +3744,10 @@ void Manager::OnFindInFilesDismissed(clCommandEvent& event)
         LocalWorkspaceST::Get()->SetSearchInFilesMask(event.GetString());
         LocalWorkspaceST::Get()->Flush();
     }
+}
+
+void Manager::OnCmdRestart(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoRestartCodeLite();
 }

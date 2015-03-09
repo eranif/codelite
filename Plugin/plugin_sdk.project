@@ -311,8 +311,6 @@
     <File Name="clBoostrapWizardPage.cpp"/>
     <File Name="clBootstrapWizard.h"/>
     <File Name="clBootstrapWizard.cpp"/>
-    <File Name="clBoostrapWizard.h"/>
-    <File Name="clBoostrapWizard.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

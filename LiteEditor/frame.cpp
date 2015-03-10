@@ -2126,7 +2126,11 @@ void clMainFrame::Bootstrap()
         }
     }
     
-    // Load last session?
+    // Load the session manager
+    wxString sessConfFile;
+    sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
+    SessionManager::Get().Load(sessConfFile);
+    
     if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
         EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
@@ -6102,11 +6106,6 @@ void clMainFrame::OnColoursAndFontsLoaded(clColourEvent& event)
 
     // Build the "View As" menu
     CreateViewAsSubMenu();
-
-    // Load the session
-    wxString sessConfFile;
-    sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
-    SessionManager::Get().Load(sessConfFile);
 }
 
 void clMainFrame::OnProjectRenamed(clCommandEvent& event)

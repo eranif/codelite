@@ -32,9 +32,7 @@
 #include "codelite_exports.h"
 
 #ifdef _WIN32
-#ifndef _WIN64
-#	include <winsock2.h>
-#endif
+#include <winsock2.h>
 
 typedef SOCKET socket_t;
 typedef int socklen_t;

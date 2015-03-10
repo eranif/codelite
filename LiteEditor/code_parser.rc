@@ -25,10 +25,12 @@
 
 aaaaa ICON "res/cubes.ico"
 #include "wx/msw/wx.rc"
+#ifndef __MINGW32__
 #if WIN64
 1 24 "wx/msw/amd64.manifest"
 #else
 1 24 "wx/msw/wx.manifest"
+#endif
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////

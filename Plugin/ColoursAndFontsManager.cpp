@@ -203,8 +203,13 @@ void ColoursAndFontsManager::Load()
 
     // Load the lexers in the bg thread
     ColoursAndFontsManager_HelperThread* thr = new ColoursAndFontsManager_HelperThread(this);
+#ifdef __WXGTK__
+    thr->Entry();
+    wxDELETE(thr);
+#else    
     thr->Create();
     thr->Run();
+#endif    
 }
 
 void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers)

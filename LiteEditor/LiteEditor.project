@@ -869,8 +869,6 @@
       <File Name="CompilersFoundDlgBase.cpp"/>
       <File Name="CodeLiteUpgradeFrameBase.h"/>
       <File Name="CodeLiteUpgradeFrameBase.cpp"/>
-      <File Name="m_dataview273model.cpp"/>
-      <File Name="m_dataview273model.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>

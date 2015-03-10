@@ -42,20 +42,18 @@ class ProjectSettingsDlg;
 class PSCustomBuildPage : public PSCustomBuildBasePage, public IProjectSettingsPage
 {
     const wxString& m_projectName;
-    long m_selecteCustomTaregt;
-
+    
     ProjectSettingsDlg* m_dlg;
     StringManager m_stringManager;
 
 protected:
+    virtual void OnTargetActivated(wxDataViewEvent& event);
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
     // Handlers for PSCustomBuildBasePage events.
     void OnCustomBuildEnabled(wxCommandEvent& event);
     void OnCustomBuildEnabledUI(wxUpdateUIEvent& event);
     void OnCmdEvtVModified(wxCommandEvent& event);
     void OnBrowseCustomBuildWD(wxCommandEvent& event);
-    void OnItemActivated(wxListEvent& event);
-    void OnItemSelected(wxListEvent& event);
     void OnNewTarget(wxCommandEvent& event);
     void OnEditTarget(wxCommandEvent& event);
     void OnEditTargetUI(wxUpdateUIEvent& event);
@@ -73,8 +71,8 @@ public:
     virtual void Clear();
 
 protected:
-    void DoEditTarget(long item);
-    void DoUpdateTarget(long item, const wxString& target, const wxString& cmd);
+    void DoEditTarget(wxDataViewItem item);
+    void DoUpdateTarget(wxDataViewItem item, const wxString& target, const wxString& cmd);
     wxString GetTargetCommand(const wxString& target);
     ProjectSettingsDlg* GetDlg();
 };

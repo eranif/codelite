@@ -782,11 +782,7 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     m_checkEnableCustomBuild = new wxCheckBox(m_customBuildPage, wxID_ANY, _("Enable custom build"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkEnableCustomBuild->SetValue(false);
     
-    bSizer15->Add(m_checkEnableCustomBuild, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_staticline12 = new wxStaticLine(m_customBuildPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer15->Add(m_staticline12, 0, wxALL|wxEXPAND, 5);
+    bSizer15->Add(m_checkEnableCustomBuild, 0, wxALL|wxALIGN_LEFT, 5);
     
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -811,10 +807,12 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     
     bSizer15->Add(bSizer211, 1, wxEXPAND, 5);
     
-    m_listCtrlTargets = new wxListCtrl(m_customBuildPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT|wxBORDER_THEME);
+    m_dvListCtrlTargets = new wxDataViewListCtrl(m_customBuildPage, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
-    bSizer211->Add(m_listCtrlTargets, 1, wxALL|wxEXPAND, 5);
+    bSizer211->Add(m_dvListCtrlTargets, 1, wxALL|wxEXPAND, 5);
     
+    m_dvListCtrlTargets->AppendTextColumn(_("Target"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_dvListCtrlTargets->AppendTextColumn(_("Command"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
     wxBoxSizer* bSizer221 = new wxBoxSizer(wxVERTICAL);
     
     bSizer211->Add(bSizer221, 0, wxEXPAND, 5);
@@ -845,9 +843,7 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     m_textCtrlCustomBuildWD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_buttonBrowseCustomBuildWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
     m_buttonBrowseCustomBuildWD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_listCtrlTargets->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(PSCustomBuildBasePage::OnItemActivated), NULL, this);
-    m_listCtrlTargets->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(PSCustomBuildBasePage::OnItemSelected), NULL, this);
-    m_listCtrlTargets->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
     m_buttonNewCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
     m_buttonNewCustomTarget->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_buttonEditCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);
@@ -867,9 +863,7 @@ PSCustomBuildBasePage::~PSCustomBuildBasePage()
     m_textCtrlCustomBuildWD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_buttonBrowseCustomBuildWD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
     m_buttonBrowseCustomBuildWD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_listCtrlTargets->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(PSCustomBuildBasePage::OnItemActivated), NULL, this);
-    m_listCtrlTargets->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(PSCustomBuildBasePage::OnItemSelected), NULL, this);
-    m_listCtrlTargets->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_dvListCtrlTargets->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
     m_buttonNewCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
     m_buttonNewCustomTarget->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_buttonEditCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);

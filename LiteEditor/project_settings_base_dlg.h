@@ -30,7 +30,6 @@
 #include <wx/imaglist.h>
 #include <wx/dataview.h>
 #include <wx/statline.h>
-#include <wx/listctrl.h>
 #include <wx/statbox.h>
 #include <wx/splitter.h>
 
@@ -57,6 +56,10 @@ protected:
     virtual void OnButtonHelp(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxChoice* GetChoiceConfig() { return m_choiceConfig; }
+    wxTreebook* GetTreebook() { return m_treebook; }
+    wxPanel* GetPanelSettings() { return m_panelSettings; }
+    wxInfoBar* GetInfobar() { return m_infobar; }
     ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~ProjectSettingsBaseDlg();
 };
@@ -90,6 +93,8 @@ protected:
     virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
+    wxPropertyGridManager* GetPgMgr136() { return m_pgMgr136; }
     PSGeneralPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSGeneralPageBase();
 };
@@ -121,6 +126,8 @@ protected:
     virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckCompilerNeeded() { return m_checkCompilerNeeded; }
+    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     PSCompilerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCompilerPageBase();
 };
@@ -146,6 +153,8 @@ protected:
     virtual void OnPropertyChanged(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckLinkerNeeded() { return m_checkLinkerNeeded; }
+    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     PSLinkPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSLinkPageBase();
 };
@@ -187,6 +196,27 @@ protected:
     virtual void OnRemoteDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText321() { return m_staticText321; }
+    wxTextCtrl* GetTextCtrlDebuggerPath() { return m_textCtrlDebuggerPath; }
+    wxButton* GetButton39() { return m_button39; }
+    wxDataViewListCtrl* GetDvListCtrlDebuggerSearchPaths() { return m_dvListCtrlDebuggerSearchPaths; }
+    wxButton* GetButton88() { return m_button88; }
+    wxButton* GetButton90() { return m_button90; }
+    wxPanel* GetPanel80() { return m_panel80; }
+    wxStaticText* GetStaticText301() { return m_staticText301; }
+    wxTextCtrl* GetTextCtrlDbgCmds() { return m_textCtrlDbgCmds; }
+    wxPanel* GetPanel71() { return m_panel71; }
+    wxStaticText* GetStaticText311() { return m_staticText311; }
+    wxTextCtrl* GetTextCtrlDbgPostConnectCmds() { return m_textCtrlDbgPostConnectCmds; }
+    wxPanel* GetPanel74() { return m_panel74; }
+    wxNotebook* GetNotebook67() { return m_notebook67; }
+    wxCheckBox* GetCheckBoxDbgRemote() { return m_checkBoxDbgRemote; }
+    wxStaticText* GetStaticText31() { return m_staticText31; }
+    wxTextCtrl* GetTextCtrl1DbgHost() { return m_textCtrl1DbgHost; }
+    wxStaticText* GetStaticText32() { return m_staticText32; }
+    wxTextCtrl* GetTextCtrlDbgPort() { return m_textCtrlDbgPort; }
+    wxCheckBox* GetCheckBoxDbgRemoteExt() { return m_checkBoxDbgRemoteExt; }
+    wxPanel* GetPanelDebugger() { return m_panelDebugger; }
     PSDebuggerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSDebuggerPageBase();
 };
@@ -208,6 +238,7 @@ protected:
     virtual void OnResourcesEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     PSResourcesPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSResourcesPageBase();
 };
@@ -230,6 +261,14 @@ protected:
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText44() { return m_staticText44; }
+    wxChoice* GetChoiceEnv() { return m_choiceEnv; }
+    wxStaticText* GetStaticText45() { return m_staticText45; }
+    wxChoice* GetChoiceDbgEnv() { return m_choiceDbgEnv; }
+    wxStaticLine* GetStaticline12() { return m_staticline12; }
+    wxStaticText* GetStaticText47() { return m_staticText47; }
+    wxTextCtrl* GetTextCtrlEnvvars() { return m_textCtrlEnvvars; }
+    wxPanel* GetPanelEnv() { return m_panelEnv; }
     PSEnvironmentBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSEnvironmentBasePage();
 };
@@ -246,6 +285,9 @@ protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText11() { return m_staticText11; }
+    wxTextCtrl* GetTextCtrlBuildEvents() { return m_textCtrlBuildEvents; }
+    wxPanel* GetPreBuildPage() { return m_preBuildPage; }
     PSBuildEventsBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSBuildEventsBasePage();
 };
@@ -256,11 +298,10 @@ class PSCustomBuildBasePage : public wxPanel
 protected:
     wxPanel* m_customBuildPage;
     wxCheckBox* m_checkEnableCustomBuild;
-    wxStaticLine* m_staticline12;
     wxStaticText* m_staticText33;
     wxTextCtrl* m_textCtrlCustomBuildWD;
     wxButton* m_buttonBrowseCustomBuildWD;
-    wxListCtrl* m_listCtrlTargets;
+    wxDataViewListCtrl* m_dvListCtrlTargets;
     wxButton* m_buttonNewCustomTarget;
     wxButton* m_buttonEditCustomTarget;
     wxButton* m_buttonDeleteCustomTarget;
@@ -272,8 +313,7 @@ protected:
     virtual void OnCustomBuildEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseCustomBuildWD(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnItemActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnItemSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnTargetActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnNewTarget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditTarget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -281,6 +321,15 @@ protected:
     virtual void OnDeleteTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckEnableCustomBuild() { return m_checkEnableCustomBuild; }
+    wxStaticText* GetStaticText33() { return m_staticText33; }
+    wxTextCtrl* GetTextCtrlCustomBuildWD() { return m_textCtrlCustomBuildWD; }
+    wxButton* GetButtonBrowseCustomBuildWD() { return m_buttonBrowseCustomBuildWD; }
+    wxDataViewListCtrl* GetDvListCtrlTargets() { return m_dvListCtrlTargets; }
+    wxButton* GetButtonNewCustomTarget() { return m_buttonNewCustomTarget; }
+    wxButton* GetButtonEditCustomTarget() { return m_buttonEditCustomTarget; }
+    wxButton* GetButtonDeleteCustomTarget() { return m_buttonDeleteCustomTarget; }
+    wxPanel* GetCustomBuildPage() { return m_customBuildPage; }
     PSCustomBuildBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCustomBuildBasePage();
 };
@@ -308,6 +357,7 @@ protected:
     virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~GlobalSettingsBasePanel();
 };
@@ -329,6 +379,12 @@ protected:
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText25() { return m_staticText25; }
+    wxTextCtrl* GetTextDeps() { return m_textDeps; }
+    wxStaticText* GetStaticText26() { return m_staticText26; }
+    wxTextCtrl* GetTextPreBuildRule() { return m_textPreBuildRule; }
+    wxStaticText* GetStaticText24() { return m_staticText24; }
+    wxPanel* GetCustomMakefileStep() { return m_customMakefileStep; }
     PSCustomMakefileBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCustomMakefileBasePage();
 };
@@ -352,6 +408,15 @@ protected:
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText47() { return m_staticText47; }
+    wxTextCtrl* GetTextCtrlSearchPaths() { return m_textCtrlSearchPaths; }
+    wxPanel* GetPanel14() { return m_panel14; }
+    wxStaticText* GetStaticText49() { return m_staticText49; }
+    wxTextCtrl* GetTextCtrlMacros() { return m_textCtrlMacros; }
+    wxCheckBox* GetCheckBoxC11() { return m_checkBoxC11; }
+    wxCheckBox* GetCheckBoxC14() { return m_checkBoxC14; }
+    wxPanel* GetPanel15() { return m_panel15; }
+    wxSplitterWindow* GetSplitter1() { return m_splitter1; }
     PSCompletionBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCompletionBase();
 };
@@ -372,6 +437,10 @@ protected:
     virtual void OnEditTargetNameUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticTextTargetName() { return m_staticTextTargetName; }
+    wxTextCtrl* GetTextCtrlTargetName() { return m_textCtrlTargetName; }
+    wxStaticText* GetStaticTextCommand() { return m_staticTextCommand; }
+    wxTextCtrl* GetTextCtrlCommand() { return m_textCtrlCommand; }
     ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~ProjectCustomBuildTragetDlgBase();
 };

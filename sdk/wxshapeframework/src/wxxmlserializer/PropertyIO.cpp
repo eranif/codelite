@@ -162,7 +162,7 @@ wxString xsDoublePropIO::ToString(const double& value)
 {
     wxString sVal;
 
-    if( wxIsNaN(value) )
+    if( wxIsNaN((long double)value) )
     {
         sVal = wxT("NAN");
     }

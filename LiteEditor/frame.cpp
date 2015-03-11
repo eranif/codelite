@@ -186,6 +186,7 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
 {
     wxBitmap bmp;
     wxMemoryDC memDC;
+    
     bmp = wxBitmap(origBmp.GetWidth(), origBmp.GetHeight());
     memDC.SelectObject(bmp);
     memDC.SetBrush(wxColour(63, 80, 24));
@@ -198,22 +199,19 @@ static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
 
     wxCoord ww, hh;
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    font.SetPointSize(20);
+    font.SetPointSize(14);
     font.SetWeight(wxFONTWEIGHT_BOLD);
-
+    
+    
     memDC.SetFont(font);
-
-    wxString versionString = CODELITE_VERSION_STR;
-    // versionString = versionString.BeforeLast('-');
-
-    memDC.GetMultiLineTextExtent(versionString, &ww, &hh);
-    memDC.SetTextForeground(*wxWHITE);
-    wxCoord textX = 315;
-    memDC.DrawText(versionString, textX, 24);
-    memDC.SetTextForeground(*wxBLACK);
-    memDC.DrawText(versionString, textX, 23);
+    wxString versionString;
+    versionString << "v" << CODELITE_VERSION_STR;
+    wxSize textSize = memDC.GetTextExtent(versionString);
+    wxCoord textx, texty;
+    textx = (bmp.GetWidth() - textSize.GetWidth()) - 5;
+    texty = 5;
+    memDC.DrawText(versionString, textx, texty);
     memDC.SelectObject(wxNullBitmap);
-
     return bmp;
 }
 #endif

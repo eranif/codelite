@@ -55,6 +55,38 @@ void FileUtils::OpenFileExplorer(const wxString& path)
     }
 }
 
+#ifdef __WXGTK__
+static wxString GTKGetTerminal(const wxString& command)
+{
+    // Try to locate gnome-terminal
+    wxString cmd;
+    if(wxFileName::FileExists("/usr/bin/gnome-terminal")) {
+        cmd << "/usr/bin/gnome-terminal";
+        if(!command.IsEmpty()) {
+            cmd << " -e \"" << command << "\"";
+        }
+        
+    } else if(wxFileName::FileExists("/usr/bin/konsole")) {
+        cmd << "/usr/bin/konsole";
+        if(!command.IsEmpty()) {
+            cmd << " -e " << command;
+        }
+        
+    } else if(wxFileName::FileExists("/usr/bin/xterm")) {
+        cmd << "/usr/bin/xterm";
+        if(!command.IsEmpty()) {
+            cmd << " -e \"" << command << "\"";
+        }
+    } else if(wxFileName::FileExists("/usr/bin/uxterm")) {
+        cmd << "/usr/bin/uxterm";
+        if(!command.IsEmpty()) {
+            cmd << " -e \"" << command << "\"";
+        }
+    }
+    return cmd;
+}
+#endif
+
 void FileUtils::OpenTerminal(const wxString& path)
 {
     wxString strPath = path;
@@ -71,17 +103,8 @@ void FileUtils::OpenTerminal(const wxString& path)
 #elif defined(__WXGTK__)
     DirSaver ds;
     ::wxSetWorkingDirectory(path);
-
-    // Try to locate gnome-terminal
-    if(wxFileName::FileExists("/usr/bin/gnome-terminal")) {
-        cmd << "/usr/bin/gnome-terminal";
-    } else if(wxFileName::FileExists("/usr/bin/konsole")) {
-        cmd << "/usr/bin/konsole";
-    } else if(wxFileName::FileExists("/usr/bin/xterm")) {
-        cmd << "/usr/bin/xterm";
-    } else if(wxFileName::FileExists("/usr/bin/uxterm")) {
-        cmd << "/usr/bin/uxterm";
-    }
+    cmd = GTKGetTerminal("");
+    
 #elif defined(__WXMAC__)
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath << "\"'";
@@ -188,8 +211,12 @@ FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectStr
     ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE);
 
 #elif defined(__WXGTK__)
-// Linux
+    // Linux, we can't pass the password in the command line
+    wxString command;
+    command << sshClient << " -p " << port << " " << connectString;
+    command = GTKGetTerminal(command);
+    ::wxExecute(command);
 #else
-// OSX
+    // OSX
 #endif
 }

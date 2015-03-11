@@ -1,10 +1,10 @@
 ifeq ($(type),release)
   WX_COMMAND=`wx-config --cflags --debug=no`
-  FLAGS=-O2 -DNDEBUG -fPIC
+  FLAGS=-O2 -DNDEBUG -fPIC -std=c++11
   TARGET=precompiled_header_release.h.gch
 else
   WX_COMMAND=`wx-config --cflags --debug=no`
-  FLAGS=-g -O0 -fPIC
+  FLAGS=-g -O0 -fPIC -std=c++11
   TARGET=precompiled_header_dbg.h.gch
 endif
 

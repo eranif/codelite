@@ -40,9 +40,11 @@
 #include "SFTPTreeView.h"
 #include <wx/log.h>
 #include "sftp_settings.h"
+#include "SFTPSettingsDialog.h"
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
+const wxEventType wxEVT_SFTP_SETTINGS = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 
@@ -89,18 +91,16 @@ SFTP::SFTP(IManager* manager)
     m_longName = wxT("SFTP plugin for codelite IDE");
     m_shortName = wxT("SFTP");
 
-    wxTheApp->Connect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER,
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(SFTP::OnSettings),
-                      NULL,
-                      this);
+    wxTheApp->Connect(
+        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
+    wxTheApp->Connect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
     wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
-                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxEVT_MENU,
                       wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
                       NULL,
                       this);
     wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
-                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxEVT_MENU,
                       wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
                       NULL,
                       this);
@@ -128,8 +128,8 @@ SFTP::SFTP(IManager* manager)
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);
     SFTPWorkerThread::Instance()->Start();
-    
-    // Establish connection to "warm up" the sftp library
+
+// Establish connection to "warm up" the sftp library
 #if 0
     CallAfter(&SFTP::MSWInitiateConnection);
 #endif
@@ -154,6 +154,9 @@ void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)
                           _("Open SSH Account Manager"),
                           _("Open SSH Account Manager"),
                           wxITEM_NORMAL);
+    menu->Append(item);
+    menu->AppendSeparator();
+    item = new wxMenuItem(menu, wxEVT_SFTP_SETTINGS, _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("SFTP"), menu);
 }
@@ -206,18 +209,16 @@ void SFTP::UnPlug()
     }
 
     SFTPWorkerThread::Release();
-    wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER,
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(SFTP::OnSettings),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(
+        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
-                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxEVT_MENU,
                          wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
                          NULL,
                          this);
     wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
-                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxEVT_MENU,
                          wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
                          NULL,
                          this);
@@ -237,7 +238,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
 }
 
-void SFTP::OnSettings(wxCommandEvent& e)
+void SFTP::OnAccountManager(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     SSHAccountManagerDlg dlg(wxTheApp->GetTopWindow());
@@ -432,4 +433,17 @@ void SFTP::MSWInitiateConnection()
     const SSHAccountInfo& account = accounts.at(0);
     SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account));
 #endif
+}
+
+void SFTP::OnSettings(wxCommandEvent& e)
+{
+    // Show the SFTP settings dialog
+    SFTPSettingsDialog dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        // Save the data
+        SFTPSettings settings;
+        settings.Load();
+        settings.SetSshClient(dlg.GetSshClientPath()->GetPath());
+        settings.Save();
+    }
 }

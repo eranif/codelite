@@ -31,6 +31,7 @@
 #include <wx/iconbndl.h>
 #include <wx/listbox.h>
 #include <wx/button.h>
+#include <wx/filepicker.h>
 
 class SFTPStatusPageBase : public wxPanel
 {
@@ -131,6 +132,25 @@ public:
     wxButton* GetButton70() { return m_button70; }
     SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Bookmarks"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SFTPManageBookmarkDlgBase();
+};
+
+
+class SFTPSettingsDialogBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticSSHClient;
+    wxFilePickerCtrl* m_sshClientPath;
+    wxStdDialogButtonSizer* m_stdBtnSizer85;
+    wxButton* m_button87;
+    wxButton* m_button89;
+
+protected:
+
+public:
+    wxStaticText* GetStaticSSHClient() { return m_staticSSHClient; }
+    wxFilePickerCtrl* GetSshClientPath() { return m_sshClientPath; }
+    SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP / SSH Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~SFTPSettingsDialogBase();
 };
 
 #endif

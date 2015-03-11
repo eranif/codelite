@@ -33,7 +33,6 @@
 #include <vector>
 #include "cl_command_event.h"
 
-class SSHTerminal;
 class MyClientData;
 class SFTP;
 
@@ -46,7 +45,6 @@ class SFTPTreeView : public SFTPTreeViewBase
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;
-    SSHTerminal* m_terminal;
     
 public:
     enum {
@@ -82,7 +80,6 @@ protected:
     virtual void OnMenuRename(wxCommandEvent& event);
     virtual void OnMenuNewFile(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
-    virtual void OnTerminalClosed(clCommandEvent& event);
     // Edit events
     void OnCopy(wxCommandEvent& event);
     void OnCut(wxCommandEvent& event);

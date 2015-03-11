@@ -149,7 +149,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
         m_toolbarItemAddBookmark->SetHasDropDown(true);
     }
     
-    m_auibar->AddTool(ID_SSH_OPEN_TERMINAL, _("Open Terminal"), wxXmlResource::Get()->LoadBitmap(wxT("terminal")), wxNullBitmap, wxITEM_CHECK, _("Open Terminal"), _("Open Terminal"), NULL);
+    m_auibar->AddTool(ID_SSH_OPEN_TERMINAL, _("Open Terminal"), wxXmlResource::Get()->LoadBitmap(wxT("terminal")), wxNullBitmap, wxITEM_NORMAL, _("Open Terminal"), _("Open Terminal"), NULL);
     m_auibar->Realize();
     
     wxArrayString m_choiceAccountArr;
@@ -314,4 +314,55 @@ SFTPManageBookmarkDlgBase::~SFTPManageBookmarkDlgBase()
     m_button70->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPManageBookmarkDlgBase::OnDelete), NULL, this);
     m_button70->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPManageBookmarkDlgBase::OnDeleteUI), NULL, this);
     
+}
+
+SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC32BEInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer83 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer83);
+    
+    wxFlexGridSizer* flexGridSizer91 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer91->SetFlexibleDirection( wxBOTH );
+    flexGridSizer91->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer91->AddGrowableCol(1);
+    
+    boxSizer83->Add(flexGridSizer91, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticSSHClient = new wxStaticText(this, wxID_ANY, _("SSH Client:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer91->Add(m_staticSSHClient, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_sshClientPath = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+    
+    flexGridSizer91->Add(m_sshClientPath, 0, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer85 = new wxStdDialogButtonSizer();
+    
+    boxSizer83->Add(m_stdBtnSizer85, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button87 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button87->SetDefault();
+    m_stdBtnSizer85->AddButton(m_button87);
+    
+    m_button89 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer85->AddButton(m_button89);
+    m_stdBtnSizer85->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+SFTPSettingsDialogBase::~SFTPSettingsDialogBase()
+{
 }

@@ -43,6 +43,7 @@
 #include "SSHTerminal.h"
 #include <wx/busyinfo.h>
 #include "globals.h"
+#include "fileutils.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -55,7 +56,6 @@ static const int ID_EXECUTE_COMMAND = ::wxNewId();
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
     , m_plugin(plugin)
-    , m_terminal(NULL)
 {
     wxImageList* il = m_bmpLoader.MakeStandardMimeImageList();
     m_treeListCtrl->AssignImageList(il);
@@ -213,13 +213,6 @@ void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
 
 void SFTPTreeView::DoCloseSession()
 {
-    if(m_terminal) {
-        m_plugin->GetManager()->GetDockingManager()->DetachPane(m_terminal);
-        m_plugin->GetManager()->GetDockingManager()->Update();
-        m_terminal->Destroy();
-        m_terminal = NULL;
-    }
-
     m_sftp.reset(NULL);
     m_treeListCtrl->DeleteAllItems();
 }
@@ -798,29 +791,29 @@ void SFTPTreeView::OnCut(wxCommandEvent& event)
 
 void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
 {
-    if(!m_terminal) {
-        m_terminal = new SSHTerminal(NULL, m_sftp->GetSsh());
-        m_terminal->SetTitle(m_sftp->GetAccount());
-        m_terminal->Show();
-        m_terminal->Bind(wxEVT_SSH_TERMINAL_CLOSING, &SFTPTreeView::OnTerminalClosed, this);
-
-    } else if(m_terminal) {
-        m_terminal->Destroy();
-        m_terminal = NULL;
+    // Open terminal to the selected account
+    SFTPSettings settings;
+    settings.Load();
+    
+    wxString accountName = m_choiceAccount->GetStringSelection();
+    if(accountName.IsEmpty()) {
+        return;
     }
+
+    SSHAccountInfo account;
+    if(!settings.GetAccount(accountName, account)) {
+        ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR | wxOK);
+        return;
+    }
+    
+    wxString connectString;
+    connectString << account.GetUsername() << "@" << account.GetHost();
+    
+    const wxString& sshClient = settings.GetSshClient();
+    FileUtils::OpenSSHTerminal(sshClient, connectString, account.GetPassword(), account.GetPort());
 }
 
-void SFTPTreeView::OnOpenTerminalUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_sftp);
-    event.Check(m_sftp && m_terminal != NULL);
-}
-
-void SFTPTreeView::OnTerminalClosed(clCommandEvent& event)
-{
-    // terminal was closed by the user
-    m_terminal = NULL;
-}
+void SFTPTreeView::OnOpenTerminalUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 bool SFTPTreeView::DoOpenFile(const wxTreeListItem& item)
 {

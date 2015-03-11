@@ -178,3 +178,18 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
         break;
     }
 }
+
+void
+FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password, int port)
+{
+#ifdef __WXMSW__
+    wxString command;
+    command << "cmd /C \"" << sshClient << " -P " << port << " " << connectString << " -pw " << password << "\"";
+    ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE);
+
+#elif defined(__WXGTK__)
+// Linux
+#else
+// OSX
+#endif
+}

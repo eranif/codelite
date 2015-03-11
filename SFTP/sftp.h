@@ -51,6 +51,7 @@ public:
     void AddRemoteFile(const RemoteFileInfo& remoteFile);
     
 protected:
+    void OnAccountManager(wxCommandEvent &e);
     void OnSettings(wxCommandEvent &e);
     void OnSetupWorkspaceMirroring(wxCommandEvent &e);
     void OnDisableWorkspaceMirroring(wxCommandEvent &e);

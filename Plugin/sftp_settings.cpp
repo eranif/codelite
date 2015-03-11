@@ -28,6 +28,11 @@
 
 SFTPSettings::SFTPSettings()
     : clConfigItem("sftp-settings")
+#ifdef __WXMSW__
+    , m_sshClient("putty")
+#else
+    , m_sshClient("ssh")
+#endif
 {
 }
 
@@ -38,6 +43,7 @@ SFTPSettings::~SFTPSettings()
 void SFTPSettings::FromJSON(const JSONElement& json)
 {
     m_accounts.clear();
+    m_sshClient = json.namedObject("sshClient").toString(m_sshClient);
     JSONElement arrAccounts = json.namedObject("accounts");
     int size = arrAccounts.arraySize();
     for(int i=0; i<size; ++i) {
@@ -50,6 +56,7 @@ void SFTPSettings::FromJSON(const JSONElement& json)
 JSONElement SFTPSettings::ToJSON() const
 {
     JSONElement element = JSONElement::createObject(GetName());
+    element.addProperty("sshClient", m_sshClient);
     JSONElement arrAccounts = JSONElement::createArray("accounts");
     element.append(arrAccounts);
     for(size_t i=0; i<m_accounts.size(); ++i) {

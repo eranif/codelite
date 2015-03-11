@@ -55,6 +55,16 @@ public:
     static void OpenTerminal(const wxString& path);
 
     /**
+     * @brief open ssh terminal
+     * @param sshClient ssh client to use (putty, ssh etc)
+     * @param connectString e.g. eran@host
+     * @param password the password
+     * @param port ssh port
+     */
+    static void
+    OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
+
+    /**
      * @brief OSX only: open Terminal and return its TTY
      * @param path working directory
      * @param [output] tty the TTY of the launched terminal

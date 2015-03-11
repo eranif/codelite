@@ -51,6 +51,8 @@
     <File Name="SFTPTreeView.cpp"/>
     <File Name="SFTPManageBookmarkDlg.h"/>
     <File Name="SFTPManageBookmarkDlg.cpp"/>
+    <File Name="SFTPSettingsDialog.h"/>
+    <File Name="SFTPSettingsDialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="UI.wxcp"/>

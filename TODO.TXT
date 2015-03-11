@@ -1,4 +1,3 @@
-SFTP: Replace the builtin terminal with the native terminal (putty on Windows)
 XML - add support for XML colouring
 Add code completion for XML / HTML
 Word completion: suggest based on all files opened

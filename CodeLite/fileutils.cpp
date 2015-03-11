@@ -65,13 +65,13 @@ static wxString GTKGetTerminal(const wxString& command)
         if(!command.IsEmpty()) {
             cmd << " -e \"" << command << "\"";
         }
-        
+
     } else if(wxFileName::FileExists("/usr/bin/konsole")) {
         cmd << "/usr/bin/konsole";
         if(!command.IsEmpty()) {
             cmd << " -e " << command;
         }
-        
+
     } else if(wxFileName::FileExists("/usr/bin/xterm")) {
         cmd << "/usr/bin/xterm";
         if(!command.IsEmpty()) {
@@ -104,7 +104,7 @@ void FileUtils::OpenTerminal(const wxString& path)
     DirSaver ds;
     ::wxSetWorkingDirectory(path);
     cmd = GTKGetTerminal("");
-    
+
 #elif defined(__WXMAC__)
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath << "\"'";
@@ -218,5 +218,9 @@ FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectStr
     ::wxExecute(command);
 #else
     // OSX
+    wxString command;
+    command << "osascript -e 'tell app \"Terminal\" to do script \"" << sshClient << " " << connectString << " -p "
+            << port << "\"'";
+    ::wxExecute(command);
 #endif
 }

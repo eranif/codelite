@@ -3589,7 +3589,9 @@ int LEditor::GetCurrLineHeight()
 void LEditor::DoHighlightWord()
 {
     wxString word = GetSelectedText();
-    if(word.IsEmpty()) {
+    wxString selectedTextTrimmed = word;
+    selectedTextTrimmed.Trim().Trim(false);
+    if(selectedTextTrimmed.IsEmpty()) {
         return;
     }
 

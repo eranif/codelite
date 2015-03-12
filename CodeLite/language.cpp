@@ -202,6 +202,15 @@ ParsedToken* Language::ParseTokens(const wxString& scopeName)
         delim.Clear();
         subscript = false;
     }
+    
+    if(header && header->GetNext() && header->GetName().IsEmpty() && header->GetOperator() == "::") {
+        // a chain with more than one token and the first token is simple "::"
+        // Delete the first token from the list
+        ParsedToken *newHeader = header->GetNext();
+        newHeader->SetPrev(NULL);
+        wxDELETE(header);
+        header = newHeader;
+    }
     return header;
 }
 

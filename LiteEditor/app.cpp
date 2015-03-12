@@ -303,10 +303,10 @@ bool CodeLiteApp::OnInit()
 #endif
     wxSocketBase::Initialize();
 
-// #if wxUSE_ON_FATAL_EXCEPTION
-//     //trun on fatal exceptions handler
-//     wxHandleFatalExceptions(true);
-// #endif
+#if wxUSE_ON_FATAL_EXCEPTION
+    //trun on fatal exceptions handler
+    wxHandleFatalExceptions(true);
+#endif
 
 #ifdef __WXMSW__
     // as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/

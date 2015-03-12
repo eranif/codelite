@@ -7,7 +7,7 @@
   <KeyWords4/>
   <Extensions>*.xml;*.project;*.xrc;*.plist</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#4F4F4F" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="white" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="1" Name="Tag" Bold="no" Face="" Colour="#8ac6f2" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="2" Name="Tag Unknown" Bold="no" Face="" Colour="#8ac6f2" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="3" Name="Attribute" Bold="no" Face="" Colour="#cae682" BgColour="#242424" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>

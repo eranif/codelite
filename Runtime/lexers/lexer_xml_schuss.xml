@@ -7,7 +7,7 @@
   <KeyWords4/>
   <Extensions>*.xml;*.project;*.xrc;*.plist</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#6D6D6D" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="1" Name="Tag" Bold="no" Face="" Colour="#606060" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="2" Name="Tag Unknown" Bold="no" Face="" Colour="#606060" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="3" Name="Attribute" Bold="no" Face="" Colour="#ca3349" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
@@ -31,6 +31,6 @@
     <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#F7F7F7" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#430400" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#6D6D6D" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#92918E" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
   </Properties>
 </Lexer>

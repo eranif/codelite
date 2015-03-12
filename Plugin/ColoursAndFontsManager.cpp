@@ -690,7 +690,7 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
             StyleProperty& lineNumbers = lexer->GetProperty(LINE_NUMBERS_ATTR_ID); // Line numbers
             if(!defaultProp.IsNull()) {
                 if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
-                   lexer->GetName() != "cmake") {
+                   lexer->GetName() != "cmake" && lexer->GetName() != "xml") {
                     // don't adjust PHP, HTML and Text default colours, since they also affects the various operators
                     // foreground colours
                     defaultProp.SetFgColour(
@@ -713,7 +713,7 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
             // don't adjust PHP and HTML default colours, since they also affects the various operators
             // foreground colours
             if(lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
-               lexer->GetName() != "cmake") {
+               lexer->GetName() != "cmake" && lexer->GetName() != "xml") {
                 lexer->SetDefaultFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
             }
         }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="xml" Theme="ColorCode" IsActive="No" UseCustomTextSelFgColour="Yes" StylingWithinPreProcessor="yes" Id="5">
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.xml;*.project;*.xrc;*.plist</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#5F6163" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Tag" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="Tag Unknown" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="Attribute" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="Attribute Unknown" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="Attribute Unknown" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="Number" Bold="no" Face="" Colour="#FFFF00" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="6" Name="Double String" Bold="no" Face="" Colour="#FFA500" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="7" Name="Single String" Bold="no" Face="" Colour="#FFA500" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="8" Name="Other" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#36AA70" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="10" Name="Entity" Bold="no" Face="" Colour="#FFFF00" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="11" Name="Tag End" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="12" Name="XML Start" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="13" Name="XML End" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="17" Name="CDATA" Bold="no" Face="" Colour="white" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="yellow" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#9B9C9D" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#414345" BgColour="#414345" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#949494" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="white" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#414345" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#5F6163" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+  </Properties>
+</Lexer>

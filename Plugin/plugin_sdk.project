@@ -103,6 +103,8 @@
       <File Name="EclipsePHPThemeImporter.cpp"/>
       <File Name="EclipseCSSThemeImporter.h"/>
       <File Name="EclipseCSSThemeImporter.cpp"/>
+      <File Name="EclipseXMLThemeImporter.h"/>
+      <File Name="EclipseXMLThemeImporter.cpp"/>
     </VirtualDirectory>
     <File Name="clNotebookTheme.h"/>
     <File Name="clNotebookTheme.cpp"/>

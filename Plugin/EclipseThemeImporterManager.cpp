@@ -6,6 +6,7 @@
 #include "EclipseDiffThemeImporter.h"
 #include "EclipsePHPThemeImporter.h"
 #include "EclipseCSSThemeImporter.h"
+#include "EclipseXMLThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -16,6 +17,7 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseDiffThemeImporter());
     m_importers.push_back(new EclipsePHPThemeImporter());
     m_importers.push_back(new EclipseCSSThemeImporter());
+    m_importers.push_back(new EclipseXMLThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

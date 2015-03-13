@@ -27,10 +27,13 @@
 
 #include <wx/string.h>
 #include <wx/translation.h>
-#include "cl_ssh.h"
-#include <libssh/libssh.h>
 #include <wx/textdlg.h>
 #include <wx/thread.h>
+#ifdef __WXMSW__
+#include "wx/msw/winundef.h"
+#endif
+#include "cl_ssh.h"
+#include <libssh/libssh.h>
 
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);

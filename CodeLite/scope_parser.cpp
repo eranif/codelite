@@ -596,41 +596,41 @@ YYSTYPE yyvs[YYSTACKSIZE];
 void yyerror(char *s) {}
 
 void syncParser(){
-	//move lexer to the next ';' line or scope opening '{'
-	//int ch = cl_scope_lex();
+    //move lexer to the next ';' line or scope opening '{'
+    //int ch = cl_scope_lex();
 }
 
 //swallow all tokens up to the first '{'
 void consumeInitializationList(){
-	while( true ){
-		int ch = cl_scope_lex();
-		if(ch == 0){
-			break;
-		}
+    while( true ){
+        int ch = cl_scope_lex();
+        if(ch == 0){
+            break;
+        }
 
-		if(ch == '{'){
-			break;
-		}
-	}
+        if(ch == '{'){
+            break;
+        }
+    }
 }
 
 void consumeFuncArgList(){
-	int depth = 1;
-	while(depth > 0){
-		int ch = cl_scope_lex();
-		if(ch == 0){
-			break;
-		}
+    int depth = 1;
+    while(depth > 0){
+        int ch = cl_scope_lex();
+        if(ch == 0){
+            break;
+        }
 
-		if(ch == ')'){
-			depth--;
-			continue;
-		}
-		else if(ch == '('){
-			depth ++ ;
-			continue;
-		}
-	}
+        if(ch == ')'){
+            depth--;
+            continue;
+        }
+        else if(ch == '('){
+            depth ++ ;
+            continue;
+        }
+    }
 }
 
 void readClassName()
@@ -640,56 +640,56 @@ void readClassName()
 #define BREAK_IF_NOT2(x, y) if(c != (int)x && c != (int)y) break;
 #define BREAK_IF(x)         if(c == (int)x) break;
 
-	className.clear();
-	
-	// look ahead and see if we can see another 
-	while( true ){
-		int c = cl_scope_lex();
-		if(c == 0){ // EOF?
-			className.clear();
-			break;
-		}
-		
-		if(c == LE_MACRO) {
-			continue;
-			
-		} else if(c == LE_IDENTIFIER) {
-			className = cl_scope_text;
-		
-		} else if(c == LE_DECLSPEC && className.empty()) {
-			// found decl sepc
-			
-			// Next token is '('
-			NEXT_TOK();
-			BREAK_IF_NOT('(');
-			
-			// Next token is LE_DLLIMPORT or LE_DLLEXPORT
-			NEXT_TOK();
-			BREAK_IF_NOT2(LE_DLLIEXPORT, LE_DLLIMPORT);
-			
-			// Next token should be closing brace
-			NEXT_TOK();
-			BREAK_IF_NOT(')');
-			
-		} else if( (c == '{') && (!className.empty()) ){
-			// The following is the class content
-			break;
-			
-		} else if( c == ':' && !className.empty() ) {
-			// we got the class name, and we found ':'
-			// read all tokens up until the first open brace
-			while (true) {
-				NEXT_TOK();
-				if( c == (int)'{') {
-					return;
-				}
-			}
-		} else {
-			className.clear();
-			break;
-			
-		}
-	}
+    className.clear();
+    
+    // look ahead and see if we can see another 
+    while( true ){
+        int c = cl_scope_lex();
+        if(c == 0){ // EOF?
+            className.clear();
+            break;
+        }
+        
+        if(c == LE_MACRO) {
+            continue;
+            
+        } else if(c == LE_IDENTIFIER) {
+            className = cl_scope_text;
+        
+        } else if(c == LE_DECLSPEC && className.empty()) {
+            // found decl sepc
+            
+            // Next token is '('
+            NEXT_TOK();
+            BREAK_IF_NOT('(');
+            
+            // Next token is LE_DLLIMPORT or LE_DLLEXPORT
+            NEXT_TOK();
+            BREAK_IF_NOT2(LE_DLLIEXPORT, LE_DLLIMPORT);
+            
+            // Next token should be closing brace
+            NEXT_TOK();
+            BREAK_IF_NOT(')');
+            
+        } else if( (c == '{') && (!className.empty()) ){
+            // The following is the class content
+            break;
+            
+        } else if( c == ':' && !className.empty() ) {
+            // we got the class name, and we found ':'
+            // read all tokens up until the first open brace
+            while (true) {
+                NEXT_TOK();
+                if( c == (int)'{') {
+                    return;
+                }
+            }
+        } else {
+            className.clear();
+            break;
+            
+        }
+    }
 }
 
 /**
@@ -697,132 +697,132 @@ void readClassName()
  */
 void consumeDecl()
 {
-	int depth = 1;
-	while(depth > 0)
-	{
-		int ch = cl_scope_lex();
-		if(ch ==0)
-		{
-			break;
-		}
-		if(ch == '}')
-		{
-			depth--;
-			if(depth == 0) currentScope.pop_back();//reduce the scope
-			continue;
-		}
-		else if(ch == '{')
-		{
-			depth ++ ;
-			continue;
-		}
-	}
+    int depth = 1;
+    while(depth > 0)
+    {
+        int ch = cl_scope_lex();
+        if(ch ==0)
+        {
+            break;
+        }
+        if(ch == '}')
+        {
+            depth--;
+            if(depth == 0) currentScope.pop_back();//reduce the scope
+            continue;
+        }
+        else if(ch == '{')
+        {
+            depth ++ ;
+            continue;
+        }
+    }
 
 }
 
 void consumeTemplateDecl()
 {
-	templateInitList.clear();
-	int dep = 0;
-	while( true ){
-		int c = cl_scope_lex();
-		if(c == 0){ // EOF?
-			break;
-		}
+    templateInitList.clear();
+    int dep = 0;
+    while( true ){
+        int c = cl_scope_lex();
+        if(c == 0){ // EOF?
+            break;
+        }
 
-		if(c == '>' && dep == 0){
-			templateInitList += cl_scope_text;
-			break;
-			
-		} else {
-			templateInitList += cl_scope_text;
-			templateInitList += " ";
-		}
-		
-		switch(c) {
-		case (int)'<':
-			dep++;
-			break;
-		case (int)'>':
-			dep--;
-			break;
-		default:
-			break;
-		}
-	}
-	
-	if(templateInitList.empty() == false)
-		templateInitList.insert(0, "<");
+        if(c == '>' && dep == 0){
+            templateInitList += cl_scope_text;
+            break;
+            
+        } else {
+            templateInitList += cl_scope_text;
+            templateInitList += " ";
+        }
+        
+        switch(c) {
+        case (int)'<':
+            dep++;
+            break;
+        case (int)'>':
+            dep--;
+            break;
+        default:
+            break;
+        }
+    }
+    
+    if(templateInitList.empty() == false)
+        templateInitList.insert(0, "<");
 }
 
 std::string readInitializer(const char* delim)
 {
-	std::string intializer;
-	int dep = 0;
-	while( true ){
-		int c = cl_scope_lex();
-		if(c == 0){ // EOF?
-			break;
-		}
-		
-		if(strchr(delim, (char)c) && dep == 0){
-			cl_scope_less(0);
-			break;
-			
-		} else {
-			intializer += cl_scope_text;
-			intializer += " ";
-		}
-		
-		switch(c) {
-		case (int)'<':
-			dep++;
-			break;
-		case (int)'>':
-			dep--;
-			break;
-		default:
-			break;
-		}
-	}
-	return intializer;
+    std::string intializer;
+    int dep = 0;
+    while( true ){
+        int c = cl_scope_lex();
+        if(c == 0){ // EOF?
+            break;
+        }
+        
+        if(strchr(delim, (char)c) && dep == 0){
+            cl_scope_less(0);
+            break;
+            
+        } else {
+            intializer += cl_scope_text;
+            intializer += " ";
+        }
+        
+        switch(c) {
+        case (int)'<':
+            dep++;
+            break;
+        case (int)'>':
+            dep--;
+            break;
+        default:
+            break;
+        }
+    }
+    return intializer;
 }
 //swallow all tokens up to the first '{'
 void consumeNotIncluding(int ch){
-	while( true ){
-		int c = cl_scope_lex();
-		if(c == 0){ // EOF?
-			break;
-		}
+    while( true ){
+        int c = cl_scope_lex();
+        if(c == 0){ // EOF?
+            break;
+        }
 
-		//keep the function signature
-		if(c == ch){
-			cl_scope_less(0);
-			break;
-		}
-	}
+        //keep the function signature
+        if(c == ch){
+            cl_scope_less(0);
+            break;
+        }
+    }
 }
 
 // return the scope name at the end of the input string
 std::string get_scope_name(	const std::string &in,
-							std::vector<std::string> &additionalNS,
-							const std::map<std::string, std::string> &ignoreTokens)
+                            std::vector<std::string> &additionalNS,
+                            const std::map<std::string, std::string> &ignoreTokens)
 {
-	if( !setLexerInput(in, ignoreTokens) ){
-		return "";
-	}
+    if( !setLexerInput(in, ignoreTokens) ){
+        return "";
+    }
 
-	//call tghe main parsing routine
-	cl_scope_parse();
-	std::string scope = getCurrentScope();
-	//do the lexer cleanup
-	cl_scope_lex_clean();
+    //call tghe main parsing routine
+    cl_scope_parse();
+    std::string scope = getCurrentScope();
+    //do the lexer cleanup
+    cl_scope_lex_clean();
 
-	for(size_t i=0; i<gs_additionlNS.size(); i++){
-		additionalNS.push_back(gs_additionlNS.at(i));
-	}
-	gs_additionlNS.clear();
-	return scope;
+    for(size_t i=0; i<gs_additionlNS.size(); i++){
+        additionalNS.push_back(gs_additionlNS.at(i));
+    }
+    gs_additionlNS.clear();
+    return scope;
 }
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
@@ -1014,9 +1014,9 @@ case 16:
 break;
 case 29:
 {
-								/*printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);*/
-								/*syncParser();*/
-							}
+                                /*printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);*/
+                                /*syncParser();*/
+                            }
 break;
 case 30:
 { yyval = "";}
@@ -1041,8 +1041,8 @@ case 36:
 break;
 case 38:
 { 
-								yyval = yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0];
-							}
+                                yyval = yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0];
+                            }
 break;
 case 39:
 {yyval = "";}
@@ -1055,72 +1055,72 @@ case 41:
 break;
 case 42:
 {
-							yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
-						}
+                            yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+                        }
 break;
 case 43:
 {
-							yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
-						}
+                            yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+                        }
 break;
 case 44:
 {
-							yyval = yyvsp[-6] + yyvsp[-5] + yyvsp[-4] +yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0] + " " ;
-						}
+                            yyval = yyvsp[-6] + yyvsp[-5] + yyvsp[-4] +yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0] + " " ;
+                        }
 break;
 case 45:
 {
-						gs_additionlNS.push_back(yyvsp[-2]+yyvsp[-1]);
-					}
+                        gs_additionlNS.push_back(yyvsp[-2]+yyvsp[-1]);
+                    }
 break;
 case 46:
 {
-							currentScope.push_back(yyvsp[-1]);
-							
-						}
+                            currentScope.push_back(yyvsp[-1]);
+                            
+                        }
 break;
 case 47:
 {
-							/*anonymouse namespace*/
-							increaseScope();
-							
-						}
+                            /*anonymouse namespace*/
+                            increaseScope();
+                            
+                        }
 break;
 case 48:
 {
-					readClassName();
-					/*increase the scope level*/
-					if(className.empty() == false) {
-						currentScope.push_back( className );
-						printScopeName();
-					}
-				}
+                    readClassName();
+                    /*increase the scope level*/
+                    if(className.empty() == false) {
+                        currentScope.push_back( className );
+                        printScopeName();
+                    }
+                }
 break;
 case 49:
 {
-								if(currentScope.empty())
-								{
-									/*fatal error!*/
-									/*printf("CodeLite: fatal error - cant go beyond global scope!\n");*/
-								}
-								else
-								{
-									currentScope.pop_back();
-									printScopeName();
-								}
-							}
+                                if(currentScope.empty())
+                                {
+                                    /*fatal error!*/
+                                    /*printf("CodeLite: fatal error - cant go beyond global scope!\n");*/
+                                }
+                                else
+                                {
+                                    currentScope.pop_back();
+                                    printScopeName();
+                                }
+                            }
 break;
 case 50:
 {
-								/*increase random scope*/
-								increaseScope();
-								printScopeName();
-							 }
+                                /*increase random scope*/
+                                increaseScope();
+                                printScopeName();
+                             }
 break;
 case 51:
 {
-							consumeNotIncluding(';');
-						}
+                            consumeNotIncluding(';');
+                        }
 break;
 case 52:
 {yyval = yyvsp[0];}
@@ -1154,8 +1154,8 @@ case 100:
 break;
 case 101:
 {
-	/* eat up all tokens not including the ':'*/
-	consumeNotIncluding(':');
+    /* eat up all tokens not including the ':'*/
+    consumeNotIncluding(':');
 }
 break;
 case 102:
@@ -1164,13 +1164,13 @@ break;
 case 103:
 {
                         /*printf("found function %s\n", $7.c_str());*/
-						/*trim down trailing '::' from scope name*/
-						if(yyvsp[-6].find_last_not_of(":") != std::string::npos){
-							yyvsp[-6].erase(yyvsp[-6].find_last_not_of(":")+1);
-						}
-						currentScope.push_back(yyvsp[-6]);
-						printScopeName();
-					}
+                        /*trim down trailing '::' from scope name*/
+                        if(yyvsp[-6].find_last_not_of(":") != std::string::npos){
+                            yyvsp[-6].erase(yyvsp[-6].find_last_not_of(":")+1);
+                        }
+                        currentScope.push_back(yyvsp[-6]);
+                        printScopeName();
+                    }
 break;
 case 104:
 {consumeFuncArgList();}
@@ -1178,13 +1178,13 @@ break;
 case 105:
 {
 
-						/*trim down trailing '::' from scope name*/
-						if(yyvsp[-4].find_last_not_of(":") != std::string::npos){
-							yyvsp[-4].erase(yyvsp[-4].find_last_not_of(":")+1);
-						}
-						currentScope.push_back(yyvsp[-4]);
-						printScopeName();
-					}
+                        /*trim down trailing '::' from scope name*/
+                        if(yyvsp[-4].find_last_not_of(":") != std::string::npos){
+                            yyvsp[-4].erase(yyvsp[-4].find_last_not_of(":")+1);
+                        }
+                        currentScope.push_back(yyvsp[-4]);
+                        printScopeName();
+                    }
 break;
 case 106:
 {consumeFuncArgList();}
@@ -1192,13 +1192,13 @@ break;
 case 107:
 {
 
-						/*trim down trailing '::' from scope name*/
-						if(yyvsp[-6].find_last_not_of(":") != std::string::npos){
-							yyvsp[-6].erase(yyvsp[-6].find_last_not_of(":")+1);
-						}
-						currentScope.push_back(yyvsp[-6]);
-						printScopeName();
-					}
+                        /*trim down trailing '::' from scope name*/
+                        if(yyvsp[-6].find_last_not_of(":") != std::string::npos){
+                            yyvsp[-6].erase(yyvsp[-6].find_last_not_of(":")+1);
+                        }
+                        currentScope.push_back(yyvsp[-6]);
+                        printScopeName();
+                    }
 break;
 case 108:
 {yyval = "";}
@@ -1265,10 +1265,10 @@ case 128:
 break;
 case 129:
 {
-							currentScope.pop_back();/*reduce the scope*/
-							printScopeName();
-							/*printf("found enum: %s, args are: %s\n", $2.c_str(), $5.c_str());*/
-						}
+                            currentScope.pop_back();/*reduce the scope*/
+                            printScopeName();
+                            /*printf("found enum: %s, args are: %s\n", $2.c_str(), $5.c_str());*/
+                        }
 break;
 case 130:
 {yyval = "";}
@@ -1296,11 +1296,11 @@ case 137:
 break;
 case 138:
 {
-								currentScope.push_back(yyvsp[-1]);
-								printScopeName();
-								consumeDecl();
-								printScopeName();
-							}
+                                currentScope.push_back(yyvsp[-1]);
+                                printScopeName();
+                                consumeDecl();
+                                printScopeName();
+                            }
 break;
     }
     yyssp -= yym;

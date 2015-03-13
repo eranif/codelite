@@ -125,7 +125,11 @@ wxString clStandardPaths::GetLexersDir() const
 
 wxString clStandardPaths::GetProjectTemplatesDir() const
 {
+#ifdef USE_POSIX_LAYOUT
+    wxFileName fn(GetDataDir() + wxT(INSTALL_DIR), "");
+#else
     wxFileName fn(GetDataDir(), "");
+#endif
     fn.AppendDir("templates");
     fn.AppendDir("projects");
     return fn.GetPath();

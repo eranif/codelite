@@ -8,10 +8,10 @@
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="codelite_make" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="codelite_make" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Linux" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_Linux" Selected="no">
       <Project Name="codelite_make" ConfigName="Debug_Linux"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

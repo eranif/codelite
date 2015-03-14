@@ -38,6 +38,8 @@
 #include "macros.h"
 #include "workspace.h"
 #include "globals.h"
+#include <algorithm>
+#include "fileutils.h"
 
 const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
@@ -551,52 +553,17 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
 
 void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 {
-    std::map<wxString, bool> spec;
-    wxString exts = data->GetExtensions();
-    if(exts.Trim().Trim(false) == wxT("*.*") || exts.Trim().Trim(false) == wxT("*")) {
-        spec.clear();
-    } else {
-        wxStringTokenizer tok(exts, wxT(";"));
-        while(tok.HasMoreTokens()) {
-            std::pair<wxString, bool> val;
-            val.first = tok.GetNextToken().AfterLast(wxT('*')).c_str();
-            val.first = val.first.AfterLast(wxT('.')).MakeLower().c_str();
-            val.second = true;
-            spec.insert(val);
+    wxArrayString tmpFiles;
+    std::set<wxString> uniqueFiles;
+    const wxString& mask = data->GetExtensions();
+    std::for_each(files.begin(), files.end(), [&](wxString& filename) {
+        if(uniqueFiles.count(filename)) return;
+        uniqueFiles.insert(filename);
+        if(FileUtils::WildMatch(mask, filename)) {
+            tmpFiles.Add(filename);
         }
-    }
-
-    std::set<wxString> uniqueFileList;
-    for(size_t i = 0; i < files.GetCount(); i++) {
-        uniqueFileList.insert(files.Item(i));
-    }
-
-    files.Clear();
-    // remove duplicate files from the file array
-    std::set<wxString>::iterator iter = uniqueFileList.begin();
-    for(; iter != uniqueFileList.end(); iter++) {
-        files.Add(*iter);
-    }
-
-    // if there is no spec, we are done here
-    if(spec.empty()) {
-        return;
-    }
-
-    // loop over the files and compare against the list of spec
-    wxArrayString f = files;
-    files.Clear();
-
-    // filter files by extension
-    for(size_t i = 0; i < f.GetCount(); i++) {
-        wxString ext = f.Item(i).AfterLast(wxT('.'));
-        if(ext.empty()) {
-            // add extensionless files (first checking for duplicates)
-            files.Add(f.Item(i));
-        } else if(spec.find(ext.MakeLower()) != spec.end()) {
-            files.Add(f.Item(i));
-        }
-    }
+    });
+    files.swap(tmpFiles);
 }
 
 static SearchThread* gs_SearchThread = NULL;

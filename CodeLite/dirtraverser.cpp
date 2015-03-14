@@ -26,6 +26,7 @@
 #include "wx/tokenzr.h"
 #include "wx/filename.h"
 #include "wx/log.h"
+#include "fileutils.h"
 
 DirTraverser::DirTraverser(const wxString &filespec, bool includeExtLessFiles)
     : wxDirTraverser()
@@ -39,12 +40,10 @@ wxDirTraverseResult DirTraverser::OnFile(const wxString& filename)
 {
     // add the file to our array
     wxFileName fn(filename);
-
-    for(size_t i=0; i<m_specArray.GetCount(); i++) {
-        if(wxMatchWild(m_specArray.Item(i), fn.GetFullName())) {
-            m_files.Add(filename);
-            return wxDIR_CONTINUE;
-        }
+    
+    if(FileUtils::WildMatch(m_filespec, fn)) {
+        m_files.Add(filename);
+        return wxDIR_CONTINUE;
     }
 
     // if we reached this point, no pattern was suitable for our file

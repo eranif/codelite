@@ -70,5 +70,14 @@ public:
      * @param [output] tty the TTY of the launched terminal
      */
     static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid);
+    
+    /**
+     * @brief file masking search
+     */
+    static bool WildMatch(const wxString& mask, const wxString& filename);
+    /**
+     * @brief file masking search
+     */
+    static bool WildMatch(const wxString& mask, const wxFileName& filename);
 };
 #endif // FILEUTILS_H

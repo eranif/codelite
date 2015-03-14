@@ -224,3 +224,28 @@ FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectStr
     ::wxExecute(command);
 #endif
 }
+
+bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
+{
+    wxString lcMask = mask.Lower();
+    wxArrayString masks = ::wxStringTokenize(lcMask, ";", wxTOKEN_STRTOK);
+    if(masks.Index("*") != wxNOT_FOUND) {
+        // If one of the masks is plain "*" - we match everything
+        return true;
+    }
+    wxString lcFilename = filename.GetFullName().Lower();
+    for(size_t i = 0; i < masks.size(); ++i) {
+        const wxString& pattern = masks.Item(i);
+        if((!pattern.Contains("*") && lcFilename == pattern) ||
+           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+            // use exact match
+            return true;
+        }
+    }
+    return false;
+}
+
+bool FileUtils::WildMatch(const wxString& mask, const wxString& filename)
+{
+    return WildMatch(mask, wxFileName(filename));
+}

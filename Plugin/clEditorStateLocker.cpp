@@ -20,14 +20,23 @@ clEditorStateLocker::~clEditorStateLocker()
 {
     m_ctrl->SetFirstVisibleLine(m_firstVisibleLine);
     
+    // restore the position.
     if(m_position > m_ctrl->GetLastPosition()) {
         m_position = m_ctrl->GetLastPosition();
+    }
+    
+    // If the caret is out of screen, scroll the editor to make it visible again
+    int caretLine = m_ctrl->LineFromPosition(m_position);
+    if(caretLine < m_ctrl->GetFirstVisibleLine() || (caretLine > (m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen()))) {
+        // center the caret line
+        m_ctrl->SetFirstVisibleLine(caretLine - (m_ctrl->LinesOnScreen() / 2));
     }
     
     m_ctrl->ClearSelections();
     m_ctrl->SetCurrentPos(m_position);
     m_ctrl->SetSelectionStart(m_position);
     m_ctrl->SetSelectionEnd(m_position);
+    m_ctrl->EnsureVisible(m_ctrl->LineFromPosition(m_position));
     
     ApplyBookmarks();
     ApplyBreakpoints();

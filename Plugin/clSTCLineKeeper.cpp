@@ -1,21 +1,18 @@
 #include "clSTCLineKeeper.h"
+#include "clEditorStateLocker.h"
 
 clSTCLineKeeper::clSTCLineKeeper(IEditor* editor)
-    : m_stc(editor->GetSTC())
 {
-    m_firstVisibleLine = m_stc->GetFirstVisibleLine();
+    m_locker = new clEditorStateLocker(editor->GetSTC());
 }
 
 clSTCLineKeeper::clSTCLineKeeper(wxStyledTextCtrl* stc)
-    : m_stc(stc)
 {
-    m_firstVisibleLine = m_stc->GetFirstVisibleLine();
+    m_locker = new clEditorStateLocker(stc);
 }
 
 clSTCLineKeeper::~clSTCLineKeeper()
 {
-    if ( m_stc ) {
-        m_stc->SetFirstVisibleLine( m_firstVisibleLine );
-    }
+    wxDELETE(m_locker);
 }
 

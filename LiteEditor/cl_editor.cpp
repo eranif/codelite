@@ -74,6 +74,7 @@
 #include <wx/richtooltip.h> // wxRichToolTip
 #include "cc_box_tip_window.h"
 #include "clSTCLineKeeper.h"
+#include "clEditorStateLocker.h"
 //#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
@@ -2364,27 +2365,15 @@ void LEditor::ToggleTopmostFoldsInSelection()
     }
 }
 
-void LEditor::StoreCollapsedFoldsToArray(std::vector<int>& folds) const
+void LEditor::StoreCollapsedFoldsToArray(clEditorStateLocker::VecInt_t& folds) const
 {
-    for(int line = 0; line < GetLineCount(); ++line) {
-        if((GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) && (GetFoldExpanded(line) == false)) {
-            folds.push_back(line);
-        }
-    }
+    clEditorStateLocker::SerializeFolds(const_cast<wxStyledTextCtrl*>(static_cast<const wxStyledTextCtrl*>(this)),
+                                        folds);
 }
 
-void LEditor::LoadCollapsedFoldsFromArray(const std::vector<int>& folds)
+void LEditor::LoadCollapsedFoldsFromArray(const clEditorStateLocker::VecInt_t& folds)
 {
-    for(size_t i = 0; i < folds.size(); ++i) {
-        int line = folds.at(i);
-        // 'line' was collapsed when serialised, so collapse it now. That assumes that the line-numbers haven't changed
-        // in the meanwhile.
-        // If we cared enough, we could have saved a fold-level too, and/or the function name +/- the line's
-        // displacement within the function. But for now...
-        if(GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
-            ToggleFold(line);
-        }
-    }
+    clEditorStateLocker::ApplyFolds(GetSTC(), folds);
 }
 
 //----------------------------------------------
@@ -2424,33 +2413,12 @@ bool LEditor::LineIsMarked(enum marker_mask_type mask)
 
 void LEditor::StoreMarkersToArray(wxArrayString& bookmarks)
 {
-    for(int line = 0; (line = MarkerNext(line, mmt_all_bookmarks)) >= 0; ++line) {
-        for(int type = smt_FIRST_BMK_TYPE; type <= smt_LAST_BMK_TYPE; ++type) {
-            int mask = (1 << type);
-            if(MarkerGet(line) & mask) {
-                // We need to serialise both the line and BM type. To keep things simple in sessionmanager, just merge
-                // their strings
-                bookmarks.Add(wxString::Format("%d:%d", line, type));
-            }
-        }
-    }
+    clEditorStateLocker::SerializeBookmarks(GetSTC(), bookmarks);
 }
 
 void LEditor::LoadMarkersFromArray(const wxArrayString& bookmarks)
 {
-    for(size_t i = 0; i < bookmarks.GetCount(); i++) {
-        // Unless this is an old file, each bookmark will have been stored in the form: "linenumber:type"
-        wxString lineno = bookmarks.Item(i).BeforeFirst(':');
-        long bmt = smt_bookmark1;
-        wxString type = bookmarks.Item(i).AfterFirst(':');
-        if(!type.empty()) {
-            type.ToLong(&bmt);
-        }
-        long line = 0;
-        if(lineno.ToLong(&line)) {
-            MarkerAdd(line, bmt);
-        }
-    }
+    clEditorStateLocker::ApplyBookmarks(GetSTC(), bookmarks);
 }
 
 void LEditor::DelAllMarkers(int which_type)
@@ -2734,13 +2702,8 @@ void LEditor::ReloadFile()
         return;
     }
 
-    clSTCLineKeeper lk(static_cast<wxStyledTextCtrl*>(this));
-    // Store a 'template' of the current file, so that it can be reapplied after
-    wxArrayString bookmarks;
-    StoreMarkersToArray(bookmarks);
-
-    std::vector<int> folds;
-    StoreCollapsedFoldsToArray(folds);
+    // State locker (on dtor it restores: bookmarks, current line, breakpoints and folds)
+    clEditorStateLocker stateLocker(GetSTC());
 
     int lineNumber = GetCurrentLine();
     m_mgr->GetStatusBar()->SetMessage(_("Loading file..."));
@@ -2759,9 +2722,6 @@ void LEditor::ReloadFile()
     SetSavePoint();
     EmptyUndoBuffer();
     GetCommandsProcessor().Reset();
-
-    // remove breakpoints belongs to this file
-    DelAllBreakpointMarkers();
 
     UpdateColours();
     SetEOL();
@@ -2783,11 +2743,6 @@ void LEditor::ReloadFile()
 
     SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-
-    // Now restore as far as possible the look'n'feel of the file
-    ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
-    LoadMarkersFromArray(bookmarks);
-    LoadCollapsedFoldsFromArray(folds);
     m_mgr->GetStatusBar()->SetMessage(_("Ready"));
 }
 
@@ -3218,8 +3173,9 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
-           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()
+            ->GetBreakpointsMgr()
+            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -4912,8 +4868,7 @@ void LEditor::DoCancelCodeCompletionBox()
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------
-struct SelectorSorter
-{
+struct SelectorSorter {
     bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 

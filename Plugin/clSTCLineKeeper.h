@@ -9,11 +9,12 @@
 #include "ieditor.h"
 #include "codelite_exports.h"
 
+// For backward compatibility we keep this class,
+// but now its just a wrapper to clEditorStateLocker
+class clEditorStateLocker;
 class WXDLLIMPEXP_SDK clSTCLineKeeper
 {
-    wxStyledTextCtrl* m_stc;
-    int m_firstVisibleLine;
-
+    clEditorStateLocker* m_locker;
 public:
     clSTCLineKeeper(IEditor* editor);
     clSTCLineKeeper(wxStyledTextCtrl* stc);

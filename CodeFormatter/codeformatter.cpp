@@ -46,6 +46,7 @@
 #include <wx/progdlg.h>
 #include "fileutils.h"
 #include "clClangFormatLocator.h"
+#include "clEditorStateLocker.h"
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
@@ -288,7 +289,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 return;
             }
 
-            clSTCLineKeeper lk(editor);
+            clEditorStateLocker lk(editor->GetSTC());
             editor->GetSTC()->BeginUndoAction();
             editor->SetEditorText(formattedOutput);
             editor->SetCaretAt(curpos);
@@ -325,7 +326,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             }
 
             AstyleFormat(inputString, options, output);
-            if(output.IsEmpty() == false) {
+            if(!output.IsEmpty()) {
 
                 // append new-line
                 wxString eol;
@@ -340,6 +341,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 if(!formatSelectionOnly) output << eol;
 
                 if(formatSelectionOnly) {
+                    clEditorStateLocker lk(editor->GetSTC());
                     // format the text (add the indentation)
                     output = editor->FormatTextKeepIndent(output,
                                                           editor->GetSelectionStart(),
@@ -347,9 +349,8 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                     editor->ReplaceSelection(output);
 
                 } else {
-                    clSTCLineKeeper lk(editor);
+                    clEditorStateLocker lk(editor->GetSTC());
                     editor->SetEditorText(output);
-                    editor->SetCaretAt(curpos);
                 }
             }
         }

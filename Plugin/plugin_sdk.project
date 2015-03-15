@@ -80,8 +80,6 @@
     <File Name="unredobase.h"/>
     <File Name="CompileCommandsCreateor.h"/>
     <File Name="CompileCommandsCreateor.cpp"/>
-    <File Name="clSTCLineKeeper.cpp"/>
-    <File Name="clSTCLineKeeper.h"/>
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
     <VirtualDirectory Name="EclipseImporters">
@@ -110,6 +108,12 @@
     <File Name="clNotebookTheme.cpp"/>
     <File Name="clFileOrFolderDropTarget.h"/>
     <File Name="clFileOrFolderDropTarget.cpp"/>
+    <VirtualDirectory Name="Editor">
+      <File Name="clEditorStateLocker.cpp"/>
+      <File Name="clEditorStateLocker.h"/>
+      <File Name="clSTCLineKeeper.cpp"/>
+      <File Name="clSTCLineKeeper.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

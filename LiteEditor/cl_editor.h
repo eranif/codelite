@@ -45,6 +45,7 @@
 #include "cl_defs.h"
 #include "bookmark_manager.h"
 #include "cl_unredo.h"
+#include "clEditorStateLocker.h"
 
 #define DEBUGGER_INDICATOR 11
 #define MATCH_INDICATOR 10
@@ -480,11 +481,11 @@ public:
     /**
      * Load collapsed folds from a vector
      */
-    void LoadCollapsedFoldsFromArray(const std::vector<int>& folds);
+    void LoadCollapsedFoldsFromArray(const clEditorStateLocker::VecInt_t& folds);
     /**
      * Store any collapsed folds to a vector, so they can be serialised
      */
-    void StoreCollapsedFoldsToArray(std::vector<int>& folds) const;
+    void StoreCollapsedFoldsToArray(clEditorStateLocker::VecInt_t& folds) const;
 
     static FindReplaceDialog* GetFindReplaceDialog() { return m_findReplaceDlg; }
 

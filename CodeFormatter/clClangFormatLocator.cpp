@@ -5,6 +5,7 @@
 #include "globals.h"
 #include <wx/tokenzr.h>
 #include "procutils.h"
+#include <wx/log.h>
 
 clClangFormatLocator::clClangFormatLocator() {}
 
@@ -42,12 +43,14 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
 
 double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
 {
+    double double_version = 3.3;
+#ifdef __WXGTK__
     //    Ubuntu clang-format version 3.5.0-4ubuntu2~trusty2 (tags/RELEASE_350/final) (based on LLVM 3.5.0) // Linux
     //    LLVM version 3.3 // Linux, old format
     //    clang-format version 3.6.0 (217570) // Windows
-    double double_version = 3.3;
+    double_version = 3.3;
     
-    static wxRegEx reClangFormatVersion("version (\\d\\.\\d)");
+    static wxRegEx reClangFormatVersion("version ([0-9]+\\.[0-9]+)");
     wxString command;
     command << clangFormat;
     ::WrapWithQuotes(command);
@@ -58,9 +61,15 @@ double clClangFormatLocator::GetVersion(const wxString& clangFormat) const
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         if(reClangFormatVersion.Matches(lines.Item(i))) {
             wxString version = reClangFormatVersion.GetMatch(lines.Item(i), 1);
+            //wxLogMessage("clang-format version is %s", version);
             version.ToCDouble(&double_version);
             return double_version;
         }
     }
+#elif defined(__WXMSW__)
+    double_version = 3.6;
+#else
+    double_version = 3.5;
+#endif
     return double_version; // Default
 }

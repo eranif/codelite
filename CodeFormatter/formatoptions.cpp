@@ -193,7 +193,7 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, d
     wxString options, forceLanguage;
 
     // Try to autodetect the file type
-    if(clangFormatVersion >= 3.4) {
+    if(clangFormatVersion >= 3.5) {
         if(FileExtManager::IsJavascriptFile(filename)) {
             forceLanguage << "Language : JavaScript";
 
@@ -204,7 +204,7 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, d
             forceLanguage << "Language : Java";
         }
     }
-    
+
     options << " -style=\"{ BasedOnStyle: ";
     if(m_clangFormatOptions & kClangFormatChromium) {
         options << "Chromium";
@@ -229,8 +229,10 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, d
     options << ", AlignTrailingComments : " << ClangFlagToBool(kAlignTrailingComments);
     options << ", AllowAllParametersOfDeclarationOnNextLine : "
             << ClangFlagToBool(kAllowAllParametersOfDeclarationOnNextLine);
-    options << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
-    options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
+    if(clangFormatVersion >= 3.5) {
+        options << ", AllowShortFunctionsOnASingleLine : " << ClangFlagToBool(kAllowShortFunctionsOnASingleLine);
+        options << ", AllowShortBlocksOnASingleLine : " << ClangFlagToBool(kAllowShortBlocksOnASingleLine);
+    }
     options << ", AllowShortLoopsOnASingleLine : " << ClangFlagToBool(kAllowShortLoopsOnASingleLine);
     options << ", AllowShortIfStatementsOnASingleLine : " << ClangFlagToBool(kAllowShortIfStatementsOnASingleLine);
     options << ", AlwaysBreakBeforeMultilineStrings : " << ClangFlagToBool(kAlwaysBreakBeforeMultilineStrings);
@@ -243,11 +245,15 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, d
     options << ", IndentCaseLabels : " << ClangFlagToBool(kIndentCaseLabels);
     options << ", IndentFunctionDeclarationAfterType : " << ClangFlagToBool(kIndentFunctionDeclarationAfterType);
     options << ", SpaceBeforeAssignmentOperators : " << ClangFlagToBool(kSpaceBeforeAssignmentOperators);
-    options << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
+    if(clangFormatVersion >= 3.5) {
+        options << ", SpaceBeforeParens : " << (m_clangFormatOptions & kSpaceBeforeParens ? "Always" : "Never");
+    }
     options << ", SpacesInParentheses : " << ClangFlagToBool(kSpacesInParentheses);
     options << ", BreakBeforeBraces : " << ClangBreakBeforeBrace();
     options << ", ColumnLimit : " << m_clangColumnLimit;
-    options << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+    if(clangFormatVersion >= 3.5) {
+        options << ", PointerAlignment : " << (m_clangFormatOptions & kPointerAlignmentRight ? "Right" : "Left");
+    }
     options << " }\" ";
     return options;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Lexer Name="xml" Theme="Monokai_2" IsActive="Yes" UseCustomTextSelFgColour="Yes" StylingWithinPreProcessor="yes" Id="5">
+<Lexer Name="xml" Theme="Monokai_2" IsActive="No" UseCustomTextSelFgColour="Yes" StylingWithinPreProcessor="yes" Id="5">
   <KeyWords0/>
   <KeyWords1/>
   <KeyWords2/>

@@ -6,7 +6,8 @@ clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
 {
     // store the first visible line
     m_firstVisibleLine = m_ctrl->GetFirstVisibleLine();
-
+    m_position = m_ctrl->GetCurrentPos();
+    
     // Store the bookmarks
     SerializeBookmarks();
     // Store breakpoints
@@ -18,6 +19,16 @@ clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
 clEditorStateLocker::~clEditorStateLocker()
 {
     m_ctrl->SetFirstVisibleLine(m_firstVisibleLine);
+    
+    if(m_position > m_ctrl->GetLastPosition()) {
+        m_position = m_ctrl->GetLastPosition();
+    }
+    
+    m_ctrl->ClearSelections();
+    m_ctrl->SetCurrentPos(m_position);
+    m_ctrl->SetSelectionStart(m_position);
+    m_ctrl->SetSelectionEnd(m_position);
+    
     ApplyBookmarks();
     ApplyBreakpoints();
     ApplyFolds();

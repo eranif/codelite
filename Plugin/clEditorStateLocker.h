@@ -28,6 +28,9 @@ private:
     // Folds
     clEditorStateLocker::VecInt_t m_folds;
     
+    // Caret position
+    int m_position;
+    
 private:
     void SerializeBookmarks();
     void SerializeFolds();

@@ -7,7 +7,7 @@ clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
     // store the first visible line
     m_firstVisibleLine = m_ctrl->GetFirstVisibleLine();
     m_position = m_ctrl->GetCurrentPos();
-    
+
     // Store the bookmarks
     SerializeBookmarks();
     // Store breakpoints
@@ -19,25 +19,26 @@ clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
 clEditorStateLocker::~clEditorStateLocker()
 {
     m_ctrl->SetFirstVisibleLine(m_firstVisibleLine);
-    
+
     // restore the position.
     if(m_position > m_ctrl->GetLastPosition()) {
         m_position = m_ctrl->GetLastPosition();
     }
-    
+
     // If the caret is out of screen, scroll the editor to make it visible again
     int caretLine = m_ctrl->LineFromPosition(m_position);
-    if(caretLine < m_ctrl->GetFirstVisibleLine() || (caretLine > (m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen()))) {
+    if(caretLine < m_ctrl->GetFirstVisibleLine() ||
+       (caretLine > (m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen()))) {
         // center the caret line
         m_ctrl->SetFirstVisibleLine(caretLine - (m_ctrl->LinesOnScreen() / 2));
     }
-    
+
     m_ctrl->ClearSelections();
     m_ctrl->SetCurrentPos(m_position);
     m_ctrl->SetSelectionStart(m_position);
     m_ctrl->SetSelectionEnd(m_position);
     m_ctrl->EnsureVisible(m_ctrl->LineFromPosition(m_position));
-    
+
     ApplyBookmarks();
     ApplyBreakpoints();
     ApplyFolds();
@@ -102,7 +103,7 @@ void clEditorStateLocker::SerializeFolds(wxStyledTextCtrl* ctrl, clEditorStateLo
     }
 }
 
-void clEditorStateLocker::ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArrayString &breapoints)
+void clEditorStateLocker::ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArrayString& breapoints)
 {
     for(size_t i = 0; i < breapoints.GetCount(); i++) {
         // Unless this is an old file, each bookmark will have been stored in the form: "linenumber:type"
@@ -119,7 +120,7 @@ void clEditorStateLocker::ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArray
     }
 }
 
-void clEditorStateLocker::SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArrayString &breapoints)
+void clEditorStateLocker::SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArrayString& breapoints)
 {
     for(int line = 0; (line = ctrl->MarkerNext(line, mmt_all_breakpoints)) >= 0; ++line) {
         for(int type = smt_FIRST_BP_TYPE; type <= smt_LAST_BP_TYPE; ++type) {
@@ -133,12 +134,6 @@ void clEditorStateLocker::SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArraySt
     }
 }
 
-void clEditorStateLocker::ApplyBreakpoints()
-{
-    ApplyBreakpoints(m_ctrl, m_breakpoints);
-}
+void clEditorStateLocker::ApplyBreakpoints() { ApplyBreakpoints(m_ctrl, m_breakpoints); }
 
-void clEditorStateLocker::SerializeBreakpoints()
-{
-    SerializeBreakpoints(m_ctrl, m_breakpoints);
-}
+void clEditorStateLocker::SerializeBreakpoints() { SerializeBreakpoints(m_ctrl, m_breakpoints); }

@@ -50,7 +50,7 @@ void FormatOptions::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_options"), m_astyleOptions);
     arch.Read(wxT("m_customFlags"), m_customFlags);
-    
+
     // By default, use clang-format as it is more robust and advanced
     int engine = kFormatEngineClangFormat;
     arch.Read("m_engine", engine);
@@ -63,7 +63,7 @@ void FormatOptions::DeSerialize(Archive& arch)
     if(!clangFormat.IsEmpty()) {
         m_clangFormatExe.swap(clangFormat);
     }
-    
+
     // Make sure that clang-format exists on the file system
     if(m_clangFormatExe.IsEmpty() || !wxFileName::Exists(m_clangFormatExe)) {
         clClangFormatLocator locator;
@@ -73,7 +73,7 @@ void FormatOptions::DeSerialize(Archive& arch)
             m_clangFormatExe.Clear();
         }
     }
-    
+
     arch.Read("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Read("m_clangColumnLimit", m_clangColumnLimit);
     arch.Read("m_phpFormatOptions", m_phpFormatOptions);
@@ -188,19 +188,21 @@ wxString FormatOptions::AstyleOptionsAsString() const
     return options;
 }
 
-wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename) const
+wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const
 {
     wxString options, forceLanguage;
-    
+
     // Try to autodetect the file type
-    if(FileExtManager::IsJavascriptFile(filename)) {
-        forceLanguage << "Language : JavaScript";
-        
-    } else if(FileExtManager::IsCxxFile(filename)) {
-        forceLanguage << "Language : Cpp";
-        
-    } else if(FileExtManager::IsJavaFile(filename)) {
-        forceLanguage << "Language : Java";
+    if(clangFormatVersion >= 3.4) {
+        if(FileExtManager::IsJavascriptFile(filename)) {
+            forceLanguage << "Language : JavaScript";
+
+        } else if(FileExtManager::IsCxxFile(filename)) {
+            forceLanguage << "Language : Cpp";
+
+        } else if(FileExtManager::IsJavaFile(filename)) {
+            forceLanguage << "Language : Java";
+        }
     }
     
     options << " -style=\"{ BasedOnStyle: ";
@@ -218,7 +220,7 @@ wxString FormatOptions::ClangFormatOptionsAsString(const wxFileName& filename) c
 
     // add tab width and space vs tabs based on the global editor settings
     options << ClangGlobalSettings();
-    
+
     // Language
     if(!forceLanguage.IsEmpty()) {
         options << ", " << forceLanguage << " ";

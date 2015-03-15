@@ -45,6 +45,7 @@
 #include "macros.h"
 #include <wx/progdlg.h>
 #include "fileutils.h"
+#include "clClangFormatLocator.h"
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
@@ -596,13 +597,16 @@ bool CodeFormatter::DoClangFormat(const wxFileName& filename,
     }
 
     wxString command, file;
-
+    
+    clClangFormatLocator locator;
+    double version = locator.GetVersion(options.GetClangFormatExe());
+    
     command << options.GetClangFormatExe();
     file = filename.GetFullPath();
     ::WrapWithQuotes(command);
     ::WrapWithQuotes(file);
 
-    command << options.ClangFormatOptionsAsString(filename);
+    command << options.ClangFormatOptionsAsString(filename, version);
     if(cursorPosition != wxNOT_FOUND) {
         command << " -cursor=" << cursorPosition;
     }
@@ -706,14 +710,17 @@ bool CodeFormatter::ClangBatchFormat(const std::vector<wxFileName>& files, const
 
     wxProgressDialog dlg(
         _("Source Code Formatter"), _("Formatting files..."), (int)files.size(), m_mgr->GetTheApp()->GetTopWindow());
-
+    
+    clClangFormatLocator locator;
+    double version = locator.GetVersion(options.GetClangFormatExe());
+    
     for(size_t i = 0; i < files.size(); ++i) {
         wxString command, file;
         command << options.GetClangFormatExe();
         ::WrapWithQuotes(command);
 
         command << " -i "; // inline editing
-        command << options.ClangFormatOptionsAsString(files.at(i));
+        command << options.ClangFormatOptionsAsString(files.at(i), version);
         file = files.at(i).GetFullPath();
         ::WrapWithQuotes(file);
         command << " " << file;

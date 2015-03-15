@@ -148,7 +148,7 @@ public:
     virtual ~FormatOptions();
 
     wxString AstyleOptionsAsString() const;
-    wxString ClangFormatOptionsAsString(const wxFileName& filename) const;
+    wxString ClangFormatOptionsAsString(const wxFileName& filename, double clangFormatVersion) const;
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
 

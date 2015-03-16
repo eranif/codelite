@@ -136,10 +136,16 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     mainSizer->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
     
-    m_checkBoxFindBarAtBottom = new wxCheckBox(this, wxID_ANY, _("Place the find bar at the bottom"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxFindBarAtBottom->SetValue(false);
+    m_checkBoxFindBarAtBottom = new wxCheckBox(this, wxID_ANY, _("Place the Find bar at the bottom"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxFindBarAtBottom->SetValue(true);
     
     sbSizer2->Add(m_checkBoxFindBarAtBottom, 0, wxALL|wxEXPAND, 5);
+    
+    m_checkBoxShowReplaceBar = new wxCheckBox(this, wxID_ANY, _("Also show the 'Replace' section of the Find bar"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxShowReplaceBar->SetValue(false);
+    m_checkBoxShowReplaceBar->SetToolTip(_("When ticked, extra 'replace' fields will be added. You can also Show/Hide these using a keyboard shortcut."));
+    
+    sbSizer2->Add(m_checkBoxShowReplaceBar, 0, wxALL|wxEXPAND, 5);
     
     wxStaticBoxSizer* sbSizer11 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Debug Pane:")), wxVERTICAL);
     
@@ -156,17 +162,17 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     mainSizer->Add(bSizer2, 0, wxEXPAND, 5);
     
     wxArrayString m_radioBoxHintArr;
-    m_radioBoxHintArr.Add(wxT("Transparent hint"));
-    m_radioBoxHintArr.Add(wxT("Rectangle hint"));
-    m_radioBoxHintArr.Add(wxT("Venetian blinds hints"));
+    m_radioBoxHintArr.Add(_("Transparent hint"));
+    m_radioBoxHintArr.Add(_("Rectangle hint"));
+    m_radioBoxHintArr.Add(_("Venetian blinds hints"));
     m_radioBoxHint = new wxRadioBox(this, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxHintArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxHint->SetSelection(0);
     
     bSizer2->Add(m_radioBoxHint, 1, wxALL|wxEXPAND, 5);
     
     wxArrayString m_radioBoxTabControlStyleArr;
-    m_radioBoxTabControlStyleArr.Add(wxT("Glossy"));
-    m_radioBoxTabControlStyleArr.Add(wxT("Curved"));
+    m_radioBoxTabControlStyleArr.Add(_("Glossy"));
+    m_radioBoxTabControlStyleArr.Add(_("Curved"));
     m_radioBoxTabControlStyle = new wxRadioBox(this, wxID_ANY, _("Tab Control Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxTabControlStyleArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxTabControlStyle->SetSelection(0);
     

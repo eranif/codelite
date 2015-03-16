@@ -25,6 +25,7 @@
 
 #include "editorsettingsdockingwidows.h"
 #include "editor_config.h"
+#include "frame.h"
 
 EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
     : EditorSettingsDockingWindowsBase( parent )
@@ -47,6 +48,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows( wxWindow* parent )
     m_checkBoxHideOutputPaneNotIfDebug->SetValue     (options->GetHideOutputPaneNotIfDebug());
     m_checkBoxHideOutputPaneNotIfMemCheck->SetValue  (options->GetHideOutputPaneNotIfMemCheck());
     m_checkBoxFindBarAtBottom->SetValue              (options->GetFindBarAtBottom());
+    m_checkBoxShowReplaceBar->SetValue               (options->GetShowReplaceBar());
     m_checkBoxDontFoldSearchResults->SetValue        (options->GetDontAutoFoldResults());
     m_checkBoxShowDebugOnRun->SetValue               (options->GetShowDebugOnRun());
     m_radioBoxHint->SetSelection                     (options->GetDockingStyle());
@@ -85,11 +87,15 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetHideOutputPaneNotIfDebug( m_checkBoxHideOutputPaneNotIfDebug->IsChecked() );
     options->SetHideOutputPaneNotIfMemCheck( m_checkBoxHideOutputPaneNotIfMemCheck->IsChecked() );
     options->SetFindBarAtBottom( m_checkBoxFindBarAtBottom->IsChecked() );
+    options->SetShowReplaceBar( m_checkBoxShowReplaceBar->IsChecked() );
     options->SetDontAutoFoldResults( m_checkBoxDontFoldSearchResults->IsChecked() );
     options->SetShowDebugOnRun( m_checkBoxShowDebugOnRun->IsChecked() );
     options->SetDockingStyle( m_radioBoxHint->GetSelection() );
     options->SetShowDockingWindowCaption( !m_checkBoxHideCaptions->IsChecked() );
-    
+ 
+    // Keep the quickreplacebar in sync
+    clMainFrame::Get()->GetMainBook()->ShowQuickReplaceBar(m_checkBoxShowReplaceBar->IsChecked());
+   
     size_t flags(options->GetOptions());
     m_endFlags = 0;
     // set the tab control options:

@@ -371,6 +371,7 @@ protected:
     void OnCompleteWordUpdateUI(wxUpdateUIEvent& event);
     void OnFunctionCalltipUI(wxUpdateUIEvent& event);
     void OnIncrementalSearch(wxCommandEvent& event);
+    void OnIncrementalReplace(wxCommandEvent& event);
     void OnIncrementalSearchUI(wxUpdateUIEvent& event);
     void OnViewToolbar(wxCommandEvent& event);
     void OnViewToolbarUI(wxUpdateUIEvent& event);

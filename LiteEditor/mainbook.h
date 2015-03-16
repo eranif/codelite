@@ -101,6 +101,8 @@ public:
     void ShowQuickBarForPlugins() { m_quickFindBar->ShowForPlugins(); }
     void ShowQuickBar(bool s = true) { m_quickFindBar->Show(s); }
     void ShowQuickBar(const wxString& findWhat) { m_quickFindBar->Show(findWhat); }
+    void ShowQuickReplaceBar(bool show) { m_quickFindBar->ShowReplacebar(show); }
+    void ToggleQuickReplaceBar() { m_quickFindBar->ToggleReplacebar(); }
     void ShowMessage(const wxString& message,
                      bool showHideButton = true,
                      const wxBitmap& bmp = wxNullBitmap,

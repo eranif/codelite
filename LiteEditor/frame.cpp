@@ -374,6 +374,7 @@ EVT_MENU(wxID_FIND, clMainFrame::DispatchCommandEvent)
 EVT_MENU(wxID_REPLACE, clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("find_resource"), clMainFrame::OnFindResourceXXX)
 EVT_MENU(XRCID("incremental_search"), clMainFrame::OnIncrementalSearch)
+EVT_MENU(XRCID("incremental_replace"), clMainFrame::OnIncrementalReplace)
 EVT_MENU(XRCID("find_symbol"), clMainFrame::OnQuickOutline)
 EVT_MENU(XRCID("goto_definition"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("goto_previous_definition"), clMainFrame::DispatchCommandEvent)
@@ -808,6 +809,8 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     // Register keyboard shortcuts
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "selection_to_multi_caret", "Ctrl-Shift-L", _("Edit::Split selection into multiple carets"));
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "incremental_replace", "", _("Search::Toggle the Quick-Replace Bar"));
 }
 
 clMainFrame::~clMainFrame(void)
@@ -4917,6 +4920,12 @@ void clMainFrame::OnIncrementalSearch(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     GetMainBook()->ShowQuickBar(true);
+}
+
+void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    GetMainBook()->ToggleQuickReplaceBar();
 }
 
 void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)

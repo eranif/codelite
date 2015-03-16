@@ -116,6 +116,7 @@ protected:
     bool m_hideOutputPaneNotIfDebug;
     bool m_hideOutputPaneNotIfMemCheck;
     bool m_findBarAtBottom;
+    bool m_showReplaceBar;
     bool m_TrimLine;
     bool m_AppendLF;
     bool m_disableSmartIndent;
@@ -185,6 +186,8 @@ public:
     const bool& GetAppendLF() const { return m_AppendLF; }
     void SetFindBarAtBottom(const bool& findBarAtBottom) { this->m_findBarAtBottom = findBarAtBottom; }
     const bool& GetFindBarAtBottom() const { return m_findBarAtBottom; }
+    void SetShowReplaceBar(bool show) { m_showReplaceBar = show; }
+    bool GetShowReplaceBar() const { return m_showReplaceBar; }
     void SetHideOutpuPaneOnUserClick(const bool& hideOutpuPaneOnUserClick)
     {
         this->m_hideOutpuPaneOnUserClick = hideOutpuPaneOnUserClick;

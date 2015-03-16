@@ -115,7 +115,6 @@ protected:
     void OnText(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
     void OnFindMouseWheel(wxMouseEvent& e);
-    void OnShowReplaceControls(wxFlatButtonEvent& e);
     void OnButtonReplace(wxFlatButtonEvent& e);
     void OnButtonReplaceUI(wxUpdateUIEvent& e);
     void OnEnter(wxCommandEvent& e);
@@ -141,6 +140,7 @@ protected:
 
 protected:
     bool DoShow(bool s, const wxString& findWhat);
+    void DoToggleReplacebar();
     wxStyledTextCtrl* DoCheckPlugins();
 
 public:
@@ -150,6 +150,8 @@ public:
     bool ShowForPlugins();
     bool Show(bool s = true);
     bool Show(const wxString& findWhat);
+    void ShowReplacebar(bool show);
+    void ToggleReplacebar();
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);
 };

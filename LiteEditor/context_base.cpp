@@ -68,7 +68,7 @@ void ContextBase::AutoIndent(const wxChar& ch)
     int prevpos(wxNOT_FOUND);
     int curpos = rCtrl.GetCurrentPos();
     int line = rCtrl.LineFromPosition(curpos);
-    
+
     if(ch == wxT('\n')) {
         wxChar prevCh = rCtrl.PreviousChar(curpos, prevpos);
         if(prevCh == '{') {
@@ -76,7 +76,7 @@ void ContextBase::AutoIndent(const wxChar& ch)
             int prevLine = rCtrl.LineFromPosition(prevpos);
             rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
             rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-            
+
         } else {
             // just copy the previous line indentation
             int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
@@ -84,9 +84,8 @@ void ContextBase::AutoIndent(const wxChar& ch)
             // place the caret at the end of the line
             rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
             rCtrl.ChooseCaretX();
-            
         }
-    } else if (ch == '}' && !IsCommentOrString(curpos)) {
+    } else if(ch == '}' && !IsCommentOrString(curpos)) {
         long matchPos = wxNOT_FOUND;
         if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos)) return;
         int secondLine = rCtrl.LineFromPosition(matchPos);
@@ -224,40 +223,9 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
 
         if(EventNotifier::Get()->ProcessEvent(ccEvt)) {
             tags = ccEvt.GetTags();
-
-        } else if(GetActiveKeywordSet() != wxNOT_FOUND) {
-
-            // the default action is to use the lexer keywords
-            LexerConf::Ptr_t lexPtr;
-            // Read the configuration file
-            if(EditorConfigST::Get()->IsOk()) {
-                lexPtr = EditorConfigST::Get()->GetLexer(GetName());
-            }
-
-            if(!lexPtr) return;
-
-            wxString Words = lexPtr->GetKeyWords(GetActiveKeywordSet());
-
-            wxString s1(word);
-            wxStringSet_t uniqueWords;
-            wxArrayString wordsArr = ::wxStringTokenize(Words, wxT(" \r\t\n"));
-            for(size_t i = 0; i < wordsArr.GetCount(); i++) {
-
-                // Dont add duplicate words
-                if(uniqueWords.count(wordsArr.Item(i))) continue;
-
-                uniqueWords.insert(wordsArr.Item(i));
-                wxString s2(wordsArr.Item(i));
-                if(s2.StartsWith(s1) || s2.Lower().StartsWith(s1.Lower())) {
-                    TagEntryPtr tag(new TagEntry());
-                    tag->SetName(wordsArr.Item(i));
-                    tag->SetKind("cpp_keyword");
-                    tags.push_back(tag);
-                }
-            }
         }
 
-        if(tags.empty() == false) {
+        if(!tags.empty()) {
             GetCtrl().ShowCompletionBox(tags,  // list of tags
                                         word); // do not automatically insert word if there is only single choice
         }
@@ -319,7 +287,7 @@ void ContextBase::AutoAddComment()
                             lines.Item(i).Prepend(whitespace);
                         }
                     }
-                    
+
                     // Join the lines back
                     wxString doxyBlock = ::wxJoin(lines, '\n');
 

@@ -12,7 +12,7 @@
 
 // Upgrade macros
 #define LEXERS_VERSION_STRING "LexersVersion"
-#define LEXERS_VERSION 2
+#define LEXERS_VERSION 3
 
 // Define the upgrade steps
 

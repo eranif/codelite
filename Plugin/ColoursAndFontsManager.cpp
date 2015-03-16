@@ -741,6 +741,16 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
                 wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
         }
     }
+    
+    //=====================================================================
+    // Third upgrade stage: adjust whitespace colour and fold margin
+    //=====================================================================
+    if(force || m_lexersVersion < 3) {
+        // remove the *.js;*.javascript from the C++ lexer
+        if(lexer->GetName() == "c++") {
+            lexer->SetFileSpec("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++");
+        }
+    }
 }
 
 void ColoursAndFontsManager::SetTheme(const wxString& themeName)

@@ -564,6 +564,8 @@
     <File Name="cl_unredo.h"/>
     <File Name="ContextPhp.h"/>
     <File Name="ContextPhp.cpp"/>
+    <File Name="ContextJavaScript.h"/>
+    <File Name="ContextJavaScript.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

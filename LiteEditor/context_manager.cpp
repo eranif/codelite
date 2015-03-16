@@ -32,6 +32,7 @@
 #include "generic_context.h"
 #include "editor_config.h"
 #include "ColoursAndFontsManager.h"
+#include "ContextJavaScript.h"
 
 ContextManager::ContextManager()
 {
@@ -75,6 +76,7 @@ void ContextManager::Initialize()
     m_contextPool["diff"] = new ContextDiff();
     m_contextPool["html"] = new ContextHtml();
     m_contextPool["php"] = new ContextPhp();
+    m_contextPool["javascript"] = new ContextJavaScript();
 
     // load generic lexers
     wxArrayString names = ColoursAndFontsManager::Get().GetAllLexersNames();

@@ -129,10 +129,10 @@ wxBitmap clBootstrapWizard::GenerateBitmap(size_t labelIndex)
     labels.Add("Colours");
     labels.Add("Whitespace");
 
-    wxBitmap bmp(100, 400);
+    wxBitmap bmp(150, 500);
     wxMemoryDC memDC(bmp);
     memDC.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    memDC.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    memDC.SetBrush(*wxWHITE);
     memDC.DrawRectangle(wxRect(bmp.GetSize()));
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxFont boldFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

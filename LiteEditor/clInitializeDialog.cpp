@@ -13,6 +13,7 @@ clInitializeDialog::clInitializeDialog(wxWindow* parent)
         wxEVT_UPGRADE_LEXERS_END, clCommandEventHandler(clInitializeDialog::OnLexersUpgradeEnd), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_UPGRADE_LEXERS_PROGRESS, clCommandEventHandler(clInitializeDialog::OnLexersUpgradeProgress), NULL, this);
+    CenterOnScreen();
 }
 
 clInitializeDialog::~clInitializeDialog()

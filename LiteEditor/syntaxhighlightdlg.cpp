@@ -51,7 +51,7 @@
 #include <wx/msgdlg.h>
 #include "EclipseThemeImporterManager.h"
 
-#define CXX_AND_JAVASCRIPT "c++/javascript"
+#define CXX_AND_JAVASCRIPT "c++"
 
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)

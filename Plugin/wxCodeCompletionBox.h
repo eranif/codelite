@@ -63,8 +63,10 @@ protected:
     wxColour m_darkBorder;
     wxColour m_bgColour;
     wxColour m_textColour;
+    wxColour m_selectedTextColour;
     wxColour m_selection;
-
+    wxColour m_penColour;
+    wxColour m_scrollBgColour;
     /// Scrollbar bitmaps
     wxBitmap m_bmpUp;
     wxBitmap m_bmpDown;

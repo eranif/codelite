@@ -14,6 +14,9 @@
 #include "drawingutils.h"
 #include <wx/font.h>
 #include "macros.h"
+#include <wx/stc/stc.h>
+#include "ieditor.h"
+#include "imanager.h"
 
 #define LINES_PER_PAGE 8
 #define Y_SPACER 2
@@ -22,13 +25,13 @@
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 10
+#define DEFAULT_FONT_SIZE 9
 #elif defined(__WXMAC__)
 #define DEFAULT_FACE_NAME "monaco"
-#define DEFAULT_FONT_SIZE 12
+#define DEFAULT_FONT_SIZE 10
 #else // GTK, FreeBSD etc
 #define DEFAULT_FACE_NAME "monospace"
-#define DEFAULT_FONT_SIZE 11
+#define DEFAULT_FONT_SIZE 10
 #endif
 
 wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject, size_t flags)
@@ -79,13 +82,35 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
 
-    /// Set the colours
+    // Default colorus (dark theme)
     m_lightBorder = wxColour("rgb(77, 77, 77)");
     m_darkBorder = wxColour("rgb(54, 54, 54)");
+    m_penColour = wxColour("rgb(54, 54, 54)");
     m_bgColour = wxColour("rgb(64, 64, 64)");
     m_textColour = wxColour("rgb(200, 200, 200)");
+    m_selectedTextColour = *wxWHITE;
     m_selection = wxColour("rgb(87, 87, 87)");
-
+    m_scrollBgColour = wxColour("rgb(50, 50, 50)");
+    
+    IManager* manager = ::clGetManager();
+    if(manager) {
+        IEditor* editor = manager->GetActiveEditor();
+        if(editor) {
+            wxColour bgColour = editor->GetSTC()->StyleGetBackground(0);
+            if(!DrawingUtils::IsDark(bgColour)) {
+                // Need bright colours
+                m_bgColour = wxColour("rgb(230, 230, 230)");
+                m_lightBorder = m_bgColour;
+                m_darkBorder = m_bgColour;
+                m_textColour = *wxBLACK;
+                m_selectedTextColour = *wxWHITE;
+                m_selection = wxColour("rgb(157, 157, 157)");
+                m_penColour = wxColour("rgb(130, 130, 130)");
+                m_scrollBgColour = wxColour("rgb(167, 167, 167)");
+            }
+        }
+    }
+    
     m_bmpDown = wxXmlResource::Get()->LoadBitmap("cc-box-down");
     m_bmpUp = wxXmlResource::Get()->LoadBitmap("cc-box-up");
 
@@ -112,10 +137,6 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         m_entries.at(i)->m_itemRect = wxRect();
     }
 
-    // scrollbar gradient colours
-    wxColour scrollBgColourRight("rgb(50, 50, 50)");
-    wxColour scrollBgColourLeft("rgb(33, 33, 33)");
-
     wxRect rect = GetClientRect();
     m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x,
                           rect.GetTopLeft().y,
@@ -130,7 +151,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     m_canvas->PrepareDC(dc);
     // Draw the entire box with single solid colour
     dc.SetBrush(m_lightBorder);
-    dc.SetPen(m_lightBorder);
+    dc.SetPen(m_penColour);
     dc.DrawRectangle(rect);
 
     // Shrink the rectangle by 2 to provide a 2 pixle
@@ -170,7 +191,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
             dc.DrawRectangle(itemRect);
         }
 
-        dc.SetTextForeground(isSelected ? *wxWHITE : m_textColour);
+        dc.SetTextForeground(isSelected ? m_selectedTextColour : m_textColour);
         dc.SetPen(m_lightBorder);
         dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
         y += 1;
@@ -208,7 +229,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     wxRect scrollRect = m_scrollArea;
     scrollRect.Deflate(0, 2);
     scrollRect.SetWidth(scrollRect.GetWidth() - 2);
-    dc.GradientFillLinear(scrollRect, scrollBgColourRight, scrollBgColourRight);
+    dc.GradientFillLinear(scrollRect, m_scrollBgColour, m_scrollBgColour);
     DoDrawBottomScrollButton(dc);
     DoDrawTopScrollButton(dc);
 }

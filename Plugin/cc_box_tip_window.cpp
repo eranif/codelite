@@ -37,6 +37,9 @@
 #include "editor_config.h"
 #include <wx/stc/stc.h>
 #include "file_logger.h"
+#include "globals.h"
+#include <wx/stc/stc.h>
+#include "drawingutils.h"
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -70,6 +73,7 @@ static void CCBoxTipWindow_ShrinkTip(wxString& str)
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
     : wxPopupWindow(parent)
     , m_tip(tip)
+    , m_useLightColours(false)
 {
     CCBoxTipWindow_ShrinkTip(m_tip);
     DoInitialize(m_tip, 1, true);
@@ -78,6 +82,7 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, size_t numOfTips, bool simpleTip)
     : wxPopupWindow(parent)
     , m_tip(tip)
+    , m_useLightColours(false)
 {
     CCBoxTipWindow_ShrinkTip(m_tip);
     DoInitialize(m_tip, numOfTips, simpleTip);
@@ -87,6 +92,14 @@ CCBoxTipWindow::~CCBoxTipWindow() {}
 
 void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool simpleTip)
 {
+    IEditor* editor = ::clGetManager()->GetActiveEditor();
+    if(editor) {
+        wxColour bgColour = editor->GetSTC()->StyleGetBackground(0);
+        if(!DrawingUtils::IsDark(bgColour)) {
+            m_useLightColours = true;
+        }
+    }
+    
     m_tip = tip;
     m_numOfTips = numOfTips;
 
@@ -238,11 +251,18 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     wxColour penColour("rgb(77, 77, 77)");
     wxColour brushColour("rgb(64, 64, 64)");
     wxColour textColour("rgb(200, 200, 200)");
-    wxColour tagsColour("rgb(255, 198, 0)");
     wxColour linkColour("rgb(204, 153, 255)");
     
+    if(m_useLightColours) {
+        // Use different colours to match the editor theme
+        penColour = wxColour("rgb(207, 207, 207)");
+        brushColour = wxColour("rgb(230, 230, 230)");
+        textColour = wxColour("rgb(83, 83, 83)");
+        linkColour = wxColour("rgb(51, 153, 255)");
+    }
+    
     dc.SetBrush(brushColour);
-    dc.SetPen(wxPen(penColour, 2));
+    dc.SetPen(wxPen(penColour, 1));
 
     wxRect rr = GetClientRect();
     dc.DrawRectangle(rr);

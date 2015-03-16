@@ -102,13 +102,13 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
                 m_useLightColours = true;
                 // Need bright colours
                 m_bgColour = wxColour("rgb(230, 230, 230)");
-                m_lightBorder = m_bgColour;
-                m_darkBorder = m_bgColour;
-                m_textColour = *wxBLACK;
+                m_lightBorder = *wxWHITE;
+                m_darkBorder = wxColour("rgb(207, 207, 207)");
+                m_textColour = wxColour("rgb(83, 83, 83)");
                 m_selectedTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
                 m_selection = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-                m_penColour = wxColour("rgb(130, 130, 130)");
-                m_scrollBgColour = wxColour("rgb(167, 167, 167)");
+                m_penColour = wxColour("rgb(207, 207, 207)");
+                m_scrollBgColour = wxColour("rgb(198, 198, 198)");
             }
         }
     }
@@ -169,7 +169,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     m_canvas->PrepareDC(dc);
     // Draw the entire box with single solid colour
-    dc.SetBrush(m_lightBorder);
+    dc.SetBrush(m_useLightColours ? m_bgColour : m_lightBorder);
     dc.SetPen(m_penColour);
     dc.DrawRectangle(rect);
 

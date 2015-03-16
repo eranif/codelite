@@ -41,7 +41,8 @@ protected:
     wxStyledTextCtrl* m_stc;
     wxFont m_ccFont;
     int m_startPos;
-
+    bool m_useLightColours;
+    
     /// When firing the various "clCodeCompletionEvent"s, set the event object
     /// to this member. This help distinguish the real trigger of the code completion
     /// box

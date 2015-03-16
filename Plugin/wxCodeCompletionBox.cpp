@@ -39,6 +39,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_index(0)
     , m_stc(NULL)
     , m_startPos(wxNOT_FOUND)
+    , m_useLightColours(false)
     , m_eventObject(eventObject)
     , m_tipWindow(NULL)
     , m_flags(flags)
@@ -91,31 +92,49 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_selectedTextColour = *wxWHITE;
     m_selection = wxColour("rgb(87, 87, 87)");
     m_scrollBgColour = wxColour("rgb(50, 50, 50)");
-    
+
     IManager* manager = ::clGetManager();
     if(manager) {
         IEditor* editor = manager->GetActiveEditor();
         if(editor) {
             wxColour bgColour = editor->GetSTC()->StyleGetBackground(0);
             if(!DrawingUtils::IsDark(bgColour)) {
+                m_useLightColours = true;
                 // Need bright colours
                 m_bgColour = wxColour("rgb(230, 230, 230)");
                 m_lightBorder = m_bgColour;
                 m_darkBorder = m_bgColour;
                 m_textColour = *wxBLACK;
-                m_selectedTextColour = *wxWHITE;
-                m_selection = wxColour("rgb(157, 157, 157)");
+                m_selectedTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+                m_selection = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
                 m_penColour = wxColour("rgb(130, 130, 130)");
                 m_scrollBgColour = wxColour("rgb(167, 167, 167)");
             }
         }
     }
-    
-    m_bmpDown = wxXmlResource::Get()->LoadBitmap("cc-box-down");
-    m_bmpUp = wxXmlResource::Get()->LoadBitmap("cc-box-up");
 
+    m_bmpDown = wxXmlResource::Get()->LoadBitmap("cc-box-down");
     m_bmpDownEnabled = m_bmpDown.ConvertToDisabled();
+
+    m_bmpUp = wxXmlResource::Get()->LoadBitmap("cc-box-up");
     m_bmpUpEnabled = m_bmpUp.ConvertToDisabled();
+
+    if(m_useLightColours) {
+        // swap between the disabled and enabeld bitmaps
+        {
+            wxBitmap tmpBitmap;
+            tmpBitmap = m_bmpDown;
+            m_bmpDown = m_bmpDownEnabled;
+            m_bmpDownEnabled = tmpBitmap;
+        }
+        
+        {
+            wxBitmap tmpBitmap;
+            tmpBitmap = m_bmpUp;
+            m_bmpUp = m_bmpUpEnabled;
+            m_bmpUpEnabled = tmpBitmap;
+        }
+    }
 }
 
 wxCodeCompletionBox::~wxCodeCompletionBox()

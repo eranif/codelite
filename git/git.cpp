@@ -1696,7 +1696,16 @@ void GitPlugin::OnProcessOutput(wxCommandEvent& event)
            ga.action != gitDiffRepoShow)
 
         {
-            if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
+            if(tmpOutput.Contains("username for")) {
+                // username is required
+                wxString username = ::wxGetTextFromUser(output);
+                if(username.IsEmpty()) {
+                    m_process->Terminate();
+                } else {
+                    m_process->WriteToConsole(username);
+                }
+                
+            } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
                 m_process->Terminate();
                 ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
 

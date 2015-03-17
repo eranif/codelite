@@ -131,14 +131,17 @@ wxBitmap clBootstrapWizard::GenerateBitmap(size_t labelIndex)
 
     wxBitmap bmp(150, 500);
     wxMemoryDC memDC(bmp);
-    memDC.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    memDC.SetPen(*wxWHITE);
     memDC.SetBrush(*wxWHITE);
     memDC.DrawRectangle(wxRect(bmp.GetSize()));
+    memDC.SetPen(*wxBLACK_PEN);
+    memDC.DrawLine(149, 0, 149, 500);
+    
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxFont boldFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     boldFont.SetWeight(wxFONTWEIGHT_BOLD);
 
-    wxBitmap arrowRight = wxXmlResource::Get()->LoadBitmap("next-16");
+    wxBitmap arrowRight = wxXmlResource::Get()->LoadBitmap("arrow-right-24");
     for(size_t i = 0; i < labels.size(); ++i) {
         wxSize textSize = memDC.GetTextExtent("Tp");
         int rectHeight = textSize.y + 20; // 10 pixels margin x 2
@@ -156,7 +159,7 @@ wxBitmap clBootstrapWizard::GenerateBitmap(size_t labelIndex)
         memDC.DrawText(labels.Item(i), textX, textY);
 
         if(i == labelIndex) {
-            bmpX = 0;
+            bmpX = rect.GetWidth() - arrowRight.GetWidth();
             bmpY = ((rect.GetHeight() - arrowRight.GetHeight()) / 2) + rect.GetY();
             memDC.DrawBitmap(arrowRight, bmpX, bmpY);
         }

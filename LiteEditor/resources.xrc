@@ -28,6 +28,7 @@
     <object class="wxBitmap" name="eraser">res/eraser.png</object>
     <object class="wxBitmap" name="cursor">res/cursor.png</object>
     <object class="wxBitmap" name="next-16">res/quickfindbar/next-16.png</object>
+    <object class="wxBitmap" name="arrow-right-24">res/arrow-left-24.png</object>
     
     <!--
         Toolbar bitmaps (24x24)

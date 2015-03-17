@@ -351,7 +351,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
         EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString());
         wxString exepath = bldConf->GetCommand();
         wxString args;
-        wxString wd;
+        wxString workingDirectory;
         // Get the debugging arguments.
         if(bldConf->GetUseSeparateDebugArgs()) {
             args = bldConf->GetDebugArgs();
@@ -359,12 +359,12 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             args = bldConf->GetCommandArguments();
         }
 
-        wd = ::ExpandVariables(bldConf->GetWorkingDirectory(), pProject, m_mgr->GetActiveEditor());
+        workingDirectory = ::ExpandVariables(bldConf->GetWorkingDirectory(), pProject, m_mgr->GetActiveEditor());
         exepath = ::ExpandVariables(exepath, pProject, m_mgr->GetActiveEditor());
 
         {
             DirSaver ds;
-            ::wxSetWorkingDirectory(wd);
+            ::wxSetWorkingDirectory(workingDirectory);
             wxFileName execToDebug(exepath);
             if(execToDebug.IsRelative()) {
                 execToDebug.MakeAbsolute();
@@ -394,9 +394,13 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                     return;
                 }
             }
-
+            
+            if(!isWindows) {
+                workingDirectory = ::wxGetCwd();
+            }
+            
             CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
-            CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
+            CL_DEBUG("LLDB: Working directory: " + workingDirectory);
 
             //////////////////////////////////////////////////////////////////////
             // Initiate the connection to codelite-lldb
@@ -427,7 +431,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 startCommand.SetCommandArguments(args);
                 // Since we called 'wxSetWorkingDirectory' earlier, wxGetCwd() should give use the
                 // correct working directory for the debugger
-                startCommand.SetWorkingDirectory(::wxGetCwd());
+                startCommand.SetWorkingDirectory(workingDirectory);
                 startCommand.SetRedirectTTY(m_terminalTTY);
                 m_connector.Start(startCommand);
 

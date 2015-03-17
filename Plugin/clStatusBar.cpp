@@ -57,7 +57,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 80));
     AddField(lineCol);
 
-    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, 80));
+    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, 100));
     AddField(language);
 
     wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(this, 30));

@@ -986,13 +986,12 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString& workingDire
     wxArrayString xmlArr;
 
     wxLog::EnableLogging(false);
-    ProcUtils::ExecuteCommand(svnInfoCommand, xmlArr);
-
-    for(size_t i = 0; i < xmlArr.GetCount(); i++) {
-        xmlStr << xmlArr.Item(i);
+    IProcess::Ptr_t proc(::CreateSyncProcess(svnInfoCommand, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+    if(proc) {
+        proc->WaitForTerminate(xmlStr);
+        SvnXML::GetSvnInfo(xmlStr, svnInfo);
     }
 
-    SvnXML::GetSvnInfo(xmlStr, svnInfo);
     wxLog::EnableLogging(true);
 }
 
@@ -1111,8 +1110,7 @@ void Subversion2::DoLockFile(const wxString& workingDirectory,
         command << wxT(" unlock ");
     }
 
-    for(size_t i = 0; i < fullpaths.size(); i++)
-        command << wxT("\"") << fullpaths.Item(i) << wxT("\" ");
+    for(size_t i = 0; i < fullpaths.size(); i++) command << wxT("\"") << fullpaths.Item(i) << wxT("\" ");
 
     GetConsole()->Execute(
         command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));

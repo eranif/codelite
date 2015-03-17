@@ -29,6 +29,7 @@
 #include <wx/wupdlock.h>
 #include "macros.h"
 #include "globals.h"
+#include "file_logger.h"
 
 LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBConnector* connector)
     : LLDBCallStackBase(parent)
@@ -98,10 +99,11 @@ bool CallstackModel::GetAttr(const wxDataViewItem& item, unsigned int col, wxDat
 void LLDBCallStackPane::OnContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
-    menu.Append(wxID_COPY, _("Copy backtrace"), _("Copy backtrace"));
+    
+    menu.Append(11981, _("Copy backtrace"), _("Copy backtrace"));
     int selection = GetPopupMenuSelectionFromUser(menu);
     switch(selection) {
-    case wxID_COPY:
+    case 11981:
         DoCopyBacktraceToClipboard();
         break;
     default:
@@ -121,5 +123,6 @@ void LLDBCallStackPane::DoCopyBacktraceToClipboard()
         }
         callstack << line << "\n";
     }
+    CL_DEBUG("LLDB: Copying stack to clipboard");
     ::CopyToClipboard(callstack);
 }

@@ -45,8 +45,10 @@ protected:
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
+    wxDataViewListCtrl* GetDvListCtrlBacktrace() { return m_dvListCtrlBacktrace; }
     LLDBCallStackBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBCallStackBase();
 };
@@ -76,6 +78,13 @@ protected:
     virtual void OnBreakpointActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
+    wxStyledTextCtrl* GetStcConsole() { return m_stcConsole; }
+    wxTextCtrl* GetTextCtrlConsoleSend() { return m_textCtrlConsoleSend; }
+    wxPanel* GetPanelConsole() { return m_panelConsole; }
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    wxDataViewCtrl* GetDataview() { return m_dataview; }
+    wxPanel* GetPageBreakpoints() { return m_pageBreakpoints; }
+    wxNotebook* GetNotebook205() { return m_notebook205; }
     LLDBOutputViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBOutputViewBase();
 };
@@ -100,6 +109,11 @@ protected:
     virtual void OnFuncNameUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckBoxFileLine() { return m_checkBoxFileLine; }
+    wxTextCtrl* GetTextCtrlFile() { return m_textCtrlFile; }
+    wxTextCtrl* GetTextCtrlLine() { return m_textCtrlLine; }
+    wxCheckBox* GetCheckBoxFuncName() { return m_checkBoxFuncName; }
+    wxTextCtrl* GetTextCtrlFunctionName() { return m_textCtrlFunctionName; }
     LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Breakpoint"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~LLDBNewBreakpointDlgBase();
 };
@@ -116,6 +130,7 @@ protected:
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxAuiToolBar* GetAuibar199() { return m_auibar199; }
     LLDBLocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBLocalsViewBase();
 };
@@ -154,6 +169,14 @@ protected:
     virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxPropertyGridManager* GetPgMgrDisplayProperties() { return m_pgMgrDisplayProperties; }
+    wxPanel* GetPanel89() { return m_panel89; }
+    wxStyledTextCtrl* GetStcTypes() { return m_stcTypes; }
+    wxHyperlinkCtrl* GetHyperLink111() { return m_hyperLink111; }
+    wxPanel* GetPanel91() { return m_panel91; }
+    wxPropertyGridManager* GetPgMgrAdvanced() { return m_pgMgrAdvanced; }
+    wxPanel* GetPanel142() { return m_panel142; }
+    wxNotebook* GetNotebook87() { return m_notebook87; }
     LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~LLDBSettingDialogBase();
 };
@@ -168,6 +191,7 @@ protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
+    wxDataViewListCtrl* GetDvListCtrlThreads() { return m_dvListCtrlThreads; }
     LLDBThreadsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBThreadsViewBase();
 };
@@ -191,6 +215,10 @@ protected:
     virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
 
 public:
+    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    wxPanel* GetPanelStatus() { return m_panelStatus; }
+    wxPanel* GetPanel134() { return m_panel134; }
+    wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
     LLDBTooltipBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~LLDBTooltipBase();
 };
@@ -212,6 +240,11 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText197() { return m_staticText197; }
+    wxStaticText* GetStaticText189() { return m_staticText189; }
+    wxDirPickerCtrl* GetDirPickerLocal() { return m_dirPickerLocal; }
+    wxStaticText* GetStaticText193() { return m_staticText193; }
+    wxTextCtrl* GetTextCtrlRemote() { return m_textCtrlRemote; }
     FolderMappingBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Folder Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~FolderMappingBaseDlg();
 };

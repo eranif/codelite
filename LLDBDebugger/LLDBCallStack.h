@@ -49,8 +49,11 @@ class LLDBCallStackPane : public LLDBCallStackBase
     LLDBConnector* m_connector;
     int m_selectedFrame;
     wxObjectDataPtr<CallstackModel> m_model;
+private:
+    void DoCopyBacktraceToClipboard();
     
 protected:
+    virtual void OnContextMenu(wxDataViewEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
     void OnBacktrace(LLDBEvent &event);
     void OnRunning(LLDBEvent &event);

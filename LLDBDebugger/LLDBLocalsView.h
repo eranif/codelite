@@ -60,6 +60,7 @@ protected:
     
     // UI events
     void OnItemExpanding(wxTreeEvent &event);
+    void OnLocalsContextMenu(wxContextMenuEvent &event);
     
 public:
     LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin);

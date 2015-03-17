@@ -42,12 +42,14 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
     Centre(wxBOTH);
     // Connect events
     m_dvListCtrlBacktrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBCallStackBase::OnItemActivated), NULL, this);
+    m_dvListCtrlBacktrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LLDBCallStackBase::OnContextMenu), NULL, this);
     
 }
 
 LLDBCallStackBase::~LLDBCallStackBase()
 {
     m_dvListCtrlBacktrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBCallStackBase::OnItemActivated), NULL, this);
+    m_dvListCtrlBacktrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LLDBCallStackBase::OnContextMenu), NULL, this);
     
 }
 
@@ -639,7 +641,7 @@ FolderMappingBaseDlg::FolderMappingBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     flexGridSizer187->Add(m_staticText189, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_dirPickerLocal = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerLocal = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPickerLocal->SetToolTip(_("Local Folder"));
     
     flexGridSizer187->Add(m_dirPickerLocal, 0, wxALL|wxEXPAND, 5);

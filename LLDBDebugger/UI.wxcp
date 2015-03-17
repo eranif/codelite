@@ -193,6 +193,13 @@
          "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
          "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
          "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+         "m_eventClass": "wxDataViewEvent",
+         "m_eventHandler": "wxDataViewEventHandler",
+         "m_functionNameAndSignature": "OnContextMenu(wxDataViewEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
+         "m_noBody": false
         }],
        "m_children": [{
          "m_type": 4472,

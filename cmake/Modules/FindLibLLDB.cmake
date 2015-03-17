@@ -7,15 +7,21 @@ if (UNIX)
                      	/usr/lib 
 			/usr/local/lib 
 			/usr/lib/llvm-3.6/lib
+			/usr/lib/llvm-3.5/lib
 			/usr/lib/llvm-3.4/lib
+			/usr/lib/llvm-3.3/lib
 			${CMAKE_INSTALL_LIBDIR})
 
         find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
                   HINTS 
                   /usr/lib/llvm-3.6/include 
+                  /usr/lib/llvm-3.5/include 
                   /usr/lib/llvm-3.4/include 
-                  /usr/include/llvm-3.4 
+                  /usr/lib/llvm-3.3/include 
                   /usr/include/llvm-3.6 
+                  /usr/include/llvm-3.5 
+                  /usr/include/llvm-3.4 
+                  /usr/include/llvm-3.3 
                   /usr/include/llvm
                   /usr/local/include
                   )

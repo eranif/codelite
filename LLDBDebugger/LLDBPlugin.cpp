@@ -904,12 +904,6 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 
 void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 {
-#ifdef __WXMSW__
-    ::wxMessageBox(
-        _("Quick Debug with LLDB is not supported under Windows"), "CodeLite", wxOK | wxCENTER | wxICON_WARNING);
-    return;
-#endif
-
     if(!DoInitializeDebugger(event, true)) {
         return;
     }
@@ -933,7 +927,10 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         // In 'Quick Debug' we stop on main
         m_connector.AddBreakpoint("main");
         m_connector.AddBreakpoints(gdbBps);
-
+        
+        // Setup pivot folder if needed
+        SetupPivotFolder(retObj);
+        
         LLDBCommand startCommand;
         startCommand.FillEnvFromMemory();
         startCommand.SetExecutable(event.GetExecutableName());
@@ -942,6 +939,7 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         startCommand.SetStartupCommands(event.GetStartupCommands());
         startCommand.SetRedirectTTY(m_terminalTTY);
         m_connector.Start(startCommand);
+        
     } else {
         // Failed to connect, notify and perform cleanup
         DoCleanup();
@@ -1017,7 +1015,8 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
     TerminateTerminal();
 
     // If terminal is required, launch it now
-    if(redirectOutput) {
+    bool isWindows = wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS;
+    if(redirectOutput && !isWindows) {
         wxString realPts;
         ::LaunchTerminalForDebugger(
             terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle, m_terminalTTY, realPts, m_terminalPID);

@@ -2403,7 +2403,7 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 
     clWindowUpdateLocker locker(this);
     TabGroupEntry session;
-    if(SessionManager::Get().GetSession(sessionFilepath, session, wxString(wxT(".tabgroup")), tabgroupTag)) {
+    if(SessionManager::Get().GetSession(sessionFilepath, session, "tabgroup", tabgroupTag)) {
         // We've 'loaded' the requested tabs. If required, delete any current ones
         if(dlg.GetReplaceCheck()) {
             GetMainBook()->CloseAll(true);

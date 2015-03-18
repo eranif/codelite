@@ -62,9 +62,9 @@ protected:
     wxStaticText* m_staticText2;
     wxButton* m_clearButton;
     wxStaticText* m_staticText3;
-    wxTextCtrl* m_spinCtrlMaxOpenTabs;
-    wxStaticText* m_staticText4;
     wxTextCtrl* m_maxItemsFindReplace;
+    wxStaticText* m_staticText4;
+    wxTextCtrl* m_spinCtrlMaxOpenTabs;
     wxStaticText* m_staticText53;
     wxButton* m_buttonAnnoyingDialogs;
     wxPanel* m_panel4;
@@ -86,6 +86,51 @@ protected:
     virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText7() { return m_staticText7; }
+    wxChoice* GetChoiceIconSet() { return m_choiceIconSet; }
+    wxStaticText* GetStaticText8() { return m_staticText8; }
+    wxChoice* GetToolbarIconSize() { return m_toolbarIconSize; }
+    wxCheckBox* GetUseSingleToolbar() { return m_useSingleToolbar; }
+    wxCheckBox* GetCheckBoxEnableMSWTheme() { return m_checkBoxEnableMSWTheme; }
+    wxCheckBox* GetShowSplashScreen() { return m_showSplashScreen; }
+    wxCheckBox* GetSingleAppInstance() { return m_singleAppInstance; }
+    wxCheckBox* GetVersionCheckOnStartup() { return m_versionCheckOnStartup; }
+    wxCheckBox* GetCheckBoxRestoreSession() { return m_checkBoxRestoreSession; }
+    wxPanel* GetPanel1() { return m_panel1; }
+    wxBannerWindow* GetBanner27() { return m_banner27; }
+    wxStaticText* GetStaticText31() { return m_staticText31; }
+    wxStaticText* GetStaticText33() { return m_staticText33; }
+    wxStaticText* GetStaticText35() { return m_staticText35; }
+    wxStaticText* GetStaticText37() { return m_staticText37; }
+    wxStaticText* GetStaticText39() { return m_staticText39; }
+    wxStaticText* GetStaticText41() { return m_staticText41; }
+    wxStaticText* GetStaticText43() { return m_staticText43; }
+    wxStaticText* GetStaticText45() { return m_staticText45; }
+    wxStaticText* GetStaticText47() { return m_staticText47; }
+    wxStaticText* GetStaticText49() { return m_staticText49; }
+    wxTextCtrl* GetTextCtrlPattern() { return m_textCtrlPattern; }
+    wxPanel* GetPanel23() { return m_panel23; }
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxChoice* GetFileEncoding() { return m_fileEncoding; }
+    wxCheckBox* GetSetLocale() { return m_SetLocale; }
+    wxStaticText* GetStaticTextLocale() { return m_staticTextLocale; }
+    wxChoice* GetAvailableLocales() { return m_AvailableLocales; }
+    wxPanel* GetPanel2() { return m_panel2; }
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    wxButton* GetClearButton() { return m_clearButton; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxTextCtrl* GetMaxItemsFindReplace() { return m_maxItemsFindReplace; }
+    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxTextCtrl* GetSpinCtrlMaxOpenTabs() { return m_spinCtrlMaxOpenTabs; }
+    wxStaticText* GetStaticText53() { return m_staticText53; }
+    wxButton* GetButtonAnnoyingDialogs() { return m_buttonAnnoyingDialogs; }
+    wxPanel* GetPanel3() { return m_panel3; }
+    wxStaticText* GetStaticText6() { return m_staticText6; }
+    wxChoice* GetChoice4() { return m_choice4; }
+    wxButton* GetButtonOpenLog() { return m_buttonOpenLog; }
+    wxCheckBox* GetRedirectLogOutput() { return m_redirectLogOutput; }
+    wxPanel* GetPanel4() { return m_panel4; }
+    wxNotebook* GetNotebook2() { return m_notebook2; }
     EditorSettingsMiscBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(449,382), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsMiscBasePanel();
 };

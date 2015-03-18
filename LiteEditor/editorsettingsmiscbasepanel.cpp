@@ -253,23 +253,23 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_spinCtrlMaxOpenTabs = new wxTextCtrl(m_panel3, wxID_ANY, wxT("15"), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
-    m_spinCtrlMaxOpenTabs->SetHint(wxT(""));
-    #endif
-    
-    fgSizer2->Add(m_spinCtrlMaxOpenTabs, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
-    
-    m_staticText4 = new wxStaticText(m_panel3, wxID_ANY, _("Maximum number of tabs opened in the editor:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_maxItemsFindReplace = new wxTextCtrl(m_panel3, wxID_ANY, wxT("10"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_maxItemsFindReplace = new wxTextCtrl(m_panel3, wxID_ANY, wxT("15"), wxDefaultPosition, wxSize(-1, -1), 0);
     #if wxVERSION_NUMBER >= 3000
     m_maxItemsFindReplace->SetHint(wxT(""));
     #endif
     
     fgSizer2->Add(m_maxItemsFindReplace, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
+    
+    m_staticText4 = new wxStaticText(m_panel3, wxID_ANY, _("Maximum number of tabs opened in the editor:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_spinCtrlMaxOpenTabs = new wxTextCtrl(m_panel3, wxID_ANY, wxT("10"), wxDefaultPosition, wxSize(-1, -1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_spinCtrlMaxOpenTabs->SetHint(wxT(""));
+    #endif
+    
+    fgSizer2->Add(m_spinCtrlMaxOpenTabs, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
     
     m_staticText53 = new wxStaticText(m_panel3, wxID_ANY, _("Reset annoying dialogs answers:"), wxDefaultPosition, wxSize(-1,-1), 0);
     

@@ -3193,7 +3193,7 @@
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_spinCtrlMaxOpenTabs"
+               "m_value": "m_maxItemsFindReplace"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
@@ -3355,7 +3355,7 @@
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_maxItemsFindReplace"
+               "m_value": "m_spinCtrlMaxOpenTabs"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",

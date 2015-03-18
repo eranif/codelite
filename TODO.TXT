@@ -1,2 +1,4 @@
-Add code completion for XML / HTML
-Word completion: suggest based on all files opened
+* Better JavaScrit highlight
+* Add code completion for XML / HTML
+* Word completion: suggest based on all files opened
+* Single instance checker

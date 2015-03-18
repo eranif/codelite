@@ -3,6 +3,10 @@
   <VirtualDirectory Name="src">
     <File Name="webtools.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="JavaScriptSyntaxColourThread.h"/>
+    <File Name="JavaScriptSyntaxColourThread.cpp"/>
+    <File Name="JavaScriptFunctionsLocator.h"/>
+    <File Name="JavaScriptFunctionsLocator.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="webtools.h"/>

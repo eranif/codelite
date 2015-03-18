@@ -51,6 +51,7 @@
   <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
   <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
+  <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
@@ -94,6 +95,7 @@
       <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
+      <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -137,13 +139,15 @@
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
+      <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
+      <Project Name="WebTools" ConfigName="CMake_Linux"/>
       <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
       <Project Name="Tweaks" ConfigName="DebugUnicode"/>
       <Project Name="Subversion2" ConfigName="Win_x86_Release"/>
@@ -161,7 +165,7 @@
       <Project Name="MemCheck" ConfigName="DebugUnicode"/>
       <Project Name="MacBundler" ConfigName="Win_x86_Release"/>
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
-      <Project Name="CodeLiteIDE" ConfigName="CMake_Debug"/>
+      <Project Name="libCodeLite" ConfigName="Win_x86_Release"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="Gizmos" ConfigName="Win_x86_Release"/>
@@ -174,14 +178,14 @@
       <Project Name="CppChecker" ConfigName="Win_x86_Release"/>
       <Project Name="Copyright" ConfigName="Win_x86_Release"/>
       <Project Name="ContinuousBuild" ConfigName="Win_x86_Release"/>
+      <Project Name="CodeLiteIDE" ConfigName="CMake_Debug"/>
       <Project Name="CodeLiteDiff" ConfigName="DebugUnicode"/>
-      <Project Name="libCodeLite" ConfigName="Win_x86_Release"/>
       <Project Name="CodeFormatter" ConfigName="Win_x86_Release"/>
-      <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
+      <Project Name="CMakePlugin" ConfigName="Win_wxWidgets_29"/>
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
@@ -223,8 +227,9 @@
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
+      <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
@@ -266,6 +271,7 @@
       <Project Name="PHPParserUnitTests" ConfigName="Debug"/>
       <Project Name="PHPPlugin" ConfigName="Debug_Unix"/>
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
+      <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
@@ -309,8 +315,9 @@
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
+      <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>
@@ -352,6 +359,7 @@
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
+      <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

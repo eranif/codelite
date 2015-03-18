@@ -525,6 +525,7 @@ add_subdirectory(codelite_terminal)
 add_subdirectory(sdk/codelite_indexer)
 add_subdirectory(sdk/codelite_cppcheck)
 add_subdirectory(codelite_echo)
+add_subdirectory(WebTools)
 
 ##
 ## Setup the proper dependencies

@@ -1,25 +1,26 @@
 if (UNIX)
     macro( FIND_LIBCLANG_OFFICIAL )
-        ## Locate the official packages, we intentionally skip
-        ## version 3.5 as it does not work on Linux when LLDB is loaded (causes crash)
         find_library(LIBCLANG_T
                      NAMES libclang.so
                      HINTS  
                      /usr/lib 
                      /usr/local/lib 
-                     /usr/lib/llvm-3.4/lib
-                     /usr/lib/llvm-3.5/lib
                      /usr/lib/llvm-3.6/lib
+                     /usr/lib/llvm-3.5/lib
+                     /usr/lib/llvm-3.4/lib
+                     /usr/lib/llvm-3.3/lib
                      ${CMAKE_INSTALL_LIBDIR})
 
         find_path(LIBCLANG_INCLUDE_T NAMES clang-c/Index.h
                   HINTS 
-                  /usr/lib/llvm-3.4/include 
-                  /usr/lib/llvm-3.5/include 
                   /usr/lib/llvm-3.6/include 
-                  /usr/include/llvm-3.4  
-                  /usr/include/llvm-3.5  
+                  /usr/lib/llvm-3.5/include 
+                  /usr/lib/llvm-3.4/include 
+                  /usr/lib/llvm-3.3/include 
                   /usr/include/llvm-3.6 
+                  /usr/include/llvm-3.5  
+                  /usr/include/llvm-3.4  
+                  /usr/include/llvm-3.3  
                   /usr/include/llvm
                   /usr/local/include
                   )

@@ -58,7 +58,7 @@ wxString JavaScriptFunctionsLocator::GetString() const
 {
     wxString str;
     std::for_each(m_functions.begin(), m_functions.end(), [&](const wxString& func) {
-        str << " ";
+        str << func << " ";
     });
     return str;
 }

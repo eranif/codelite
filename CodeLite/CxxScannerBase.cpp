@@ -1,12 +1,15 @@
 #include "CxxScannerBase.h"
 #include "CxxPreProcessor.h"
+#include "fileutils.h"
 
 CxxScannerBase::CxxScannerBase(CxxPreProcessor* preProcessor, const wxFileName& filename)
     : m_scanner(NULL)
     , m_filename(filename)
     , m_preProcessor(preProcessor)
 {
-    m_scanner = ::LexerNew(m_filename.GetFullPath(), m_preProcessor->GetOptions());
+    wxString content;
+    FileUtils::ReadFileContent(filename, content);
+    m_scanner = ::LexerNew(content, m_preProcessor->GetOptions());
 }
 
 CxxScannerBase::~CxxScannerBase()

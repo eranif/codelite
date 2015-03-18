@@ -3,17 +3,25 @@
 
 #include "worker_thread.h" // Base class: WorkerThread
 
+class WebTools;
 class JavaScriptSyntaxColourThread : public WorkerThread
 {
+private:
+    WebTools* m_plugin;
+
 public:
-    struct Request : public ThreadRequest
-    {
+    struct Request : public ThreadRequest {
         wxString filename;
         Request() {}
     };
 
+    struct Reply {
+        wxString filename;
+        wxString functions;
+    };
+
 public:
-    JavaScriptSyntaxColourThread();
+    JavaScriptSyntaxColourThread(WebTools* plugin);
     virtual ~JavaScriptSyntaxColourThread();
 
 public:

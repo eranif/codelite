@@ -276,3 +276,7 @@ void PSCustomBuildPage::OnTargetActivated(wxDataViewEvent& event)
     wxCommandEvent dummy;
     OnEditTarget(dummy);
 }
+void PSCustomBuildPage::OnEnableTableUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_checkEnableCustomBuild->IsChecked());
+}

@@ -47,6 +47,7 @@ class PSCustomBuildPage : public PSCustomBuildBasePage, public IProjectSettingsP
     StringManager m_stringManager;
 
 protected:
+    virtual void OnEnableTableUI(wxUpdateUIEvent& event);
     virtual void OnTargetActivated(wxDataViewEvent& event);
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
     // Handlers for PSCustomBuildBasePage events.

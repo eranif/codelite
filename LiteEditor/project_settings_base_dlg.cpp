@@ -844,6 +844,7 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     m_buttonBrowseCustomBuildWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
     m_buttonBrowseCustomBuildWD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
+    m_dvListCtrlTargets->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEnableTableUI), NULL, this);
     m_buttonNewCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
     m_buttonNewCustomTarget->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_buttonEditCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);
@@ -864,6 +865,7 @@ PSCustomBuildBasePage::~PSCustomBuildBasePage()
     m_buttonBrowseCustomBuildWD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
     m_buttonBrowseCustomBuildWD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_dvListCtrlTargets->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
+    m_dvListCtrlTargets->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEnableTableUI), NULL, this);
     m_buttonNewCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
     m_buttonNewCustomTarget->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
     m_buttonEditCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);

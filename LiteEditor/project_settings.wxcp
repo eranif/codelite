@@ -8169,6 +8169,13 @@
                "m_functionNameAndSignature": "OnTargetActivated(wxDataViewEvent& event)",
                "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                "m_noBody": false
+              }, {
+               "m_eventName": "wxEVT_UPDATE_UI",
+               "m_eventClass": "wxUpdateUIEvent",
+               "m_eventHandler": "wxUpdateUIEventHandler",
+               "m_functionNameAndSignature": "OnEnableTableUI(wxUpdateUIEvent& event)",
+               "m_description": "Process a wxEVT_UPDATE_UI event",
+               "m_noBody": false
               }],
              "m_children": [{
                "m_type": 4472,

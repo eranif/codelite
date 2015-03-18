@@ -314,6 +314,7 @@ protected:
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseCustomBuildWD(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTargetActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnEnableTableUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnNewTarget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditTarget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }

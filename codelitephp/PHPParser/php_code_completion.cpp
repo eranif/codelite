@@ -262,47 +262,41 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
 
 void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
 {
+    e.Skip(true);
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e)) return;
-
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
-        if(editor) {
-            // we handle only .php files
-            if(IsPHPFile(editor)) {
+        if(editor && IsPHPFile(editor)) {
+            e.Skip(false);
+            // Check if the code completion was triggered due to user
+            // typing '(', in this case, call OnFunctionCallTip()
+            wxChar charAtPos = editor->GetCharAtPos(editor->GetCurrentPosition() - 1);
+            if(charAtPos == '(') {
+                OnFunctionCallTip(e);
 
-                // Check if the code completion was triggered due to user
-                // typing '(', in this case, call OnFunctionCallTip()
-                wxChar charAtPos = editor->GetCharAtPos(editor->GetCurrentPosition() - 1);
-                if(charAtPos == '(') {
-                    OnFunctionCallTip(e);
+            } else {
+                // Perform the code completion here
+                PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
+                PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
+                if(entity) {
+                    // Suggets members for the resolved entity
+                    PHPEntityBase::List_t matches;
+                    expr->Suggest(entity, m_lookupTable, matches);
+                    if(!expr->GetFilter().IsEmpty() && expr->GetCount() == 0) {
+                        // Word completion
+                        PHPEntityBase::List_t keywords = PhpKeywords(expr->GetFilter());
 
-                } else {
-                    // Perform the code completion here
-                    PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
-                    PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
-                    if(entity) {
-                        // Suggets members for the resolved entity
-                        PHPEntityBase::List_t matches;
-                        expr->Suggest(entity, m_lookupTable, matches);
-                        if(!expr->GetFilter().IsEmpty() && expr->GetCount() == 0) {
-                            // Word completion
-                            PHPEntityBase::List_t keywords = PhpKeywords(expr->GetFilter());
+                        // Preprend the keywords
+                        matches.insert(matches.end(), keywords.begin(), keywords.end());
+                    }
 
-                            // Preprend the keywords
-                            matches.insert(matches.end(), keywords.begin(), keywords.end());
-                        }
-
-                        // Remove duplicates from the list
-                        if(!matches.empty()) {
-                            // Show the code completion box
-                            DoShowCompletionBox(matches, expr);
-                        }
+                    // Remove duplicates from the list
+                    if(!matches.empty()) {
+                        // Show the code completion box
+                        DoShowCompletionBox(matches, expr);
                     }
                 }
             }
         }
-    } else {
-        e.Skip();
     }
 }
 

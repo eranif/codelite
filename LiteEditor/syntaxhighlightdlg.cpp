@@ -56,6 +56,7 @@
 SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     : SyntaxHighlightBaseDlg(parent)
     , m_isModified(false)
+    , m_globalThemeChanged(false)
 {
     // Get list of available lexers
     wxString lexerName;
@@ -85,6 +86,9 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     // Load the global colours
     m_colourPickerOutputPanesFgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalFgColour());
     m_colourPickerOutputPanesBgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalBgColour());
+    m_choiceGlobalTheme->Append(ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++"));
+    m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
+    
     m_isModified = false;
     WindowAttrManager::Load(this, wxT("SyntaxHighlightDlgAttr"), NULL);
 }
@@ -171,7 +175,12 @@ void SyntaxHighlightDlg::SaveChanges()
     ColoursAndFontsManager::Get().Save(m_lexer);
     // Update the active theme for the lexer
     ColoursAndFontsManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
-
+    
+    if(m_globalThemeChanged) {
+        ColoursAndFontsManager::Get().SetGlobalTheme(m_choiceGlobalTheme->GetStringSelection());
+        ColoursAndFontsManager::Get().SetTheme(m_choiceGlobalTheme->GetStringSelection());
+    }
+    
     wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     wxString oldBg = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
 
@@ -640,4 +649,10 @@ void SyntaxHighlightDlg::OnLoadEclipseThemeWebsite(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ::wxLaunchDefaultBrowser("http://eclipsecolorthemes.org/");
+}
+
+void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
+{
+    m_globalThemeChanged = true;
+    m_isModified = true;
 }

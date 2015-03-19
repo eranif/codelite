@@ -89,6 +89,8 @@ protected:
     wxStaticText* m_staticText84;
     wxColourPickerCtrl* m_colourPickerSelTextFgColour;
     wxPanel* m_panelGlobalColours;
+    wxStaticText* m_staticText155;
+    wxChoice* m_choiceGlobalTheme;
     wxStaticText* m_staticText91;
     wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
     wxStaticText* m_staticText911;
@@ -97,8 +99,6 @@ protected:
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
     wxButton* m_buttonApply;
-
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
 
 protected:
     virtual void OnNewTheme(wxCommandEvent& event) { event.Skip(); }
@@ -127,6 +127,7 @@ protected:
     virtual void OnUseCustomFgTextColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTextSelFgUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOutputViewColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
@@ -134,6 +135,54 @@ protected:
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+
+    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    wxListBox* GetListBox() { return m_listBox; }
+    wxStaticText* GetStaticText70() { return m_staticText70; }
+    wxChoice* GetChoiceLexerThemes() { return m_choiceLexerThemes; }
+    wxStaticText* GetStaticText6() { return m_staticText6; }
+    wxFontPickerCtrl* GetGlobalFontPicker() { return m_globalFontPicker; }
+    wxStaticText* GetStaticText7() { return m_staticText7; }
+    wxColourPickerCtrl* GetGlobalBgColourPicker() { return m_globalBgColourPicker; }
+    wxStaticText* GetStaticText8() { return m_staticText8; }
+    wxTextCtrl* GetFileSpec() { return m_fileSpec; }
+    wxPanel* GetPanelGlobalSettings() { return m_panelGlobalSettings; }
+    wxListBox* GetProperties() { return m_properties; }
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    wxFontPickerCtrl* GetFontPicker() { return m_fontPicker; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxColourPickerCtrl* GetColourPicker() { return m_colourPicker; }
+    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxColourPickerCtrl* GetBgColourPicker() { return m_bgColourPicker; }
+    wxCheckBox* GetEolFilled() { return m_eolFilled; }
+    wxCheckBox* GetStyleWithinPreProcessor() { return m_styleWithinPreProcessor; }
+    wxStaticLine* GetStaticline1() { return m_staticline1; }
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxButton* GetButton5() { return m_button5; }
+    wxButton* GetButton6() { return m_button6; }
+    wxButton* GetButton7() { return m_button7; }
+    wxButton* GetButton8() { return m_button8; }
+    wxButton* GetButton9() { return m_button9; }
+    wxPanel* GetPanelCustomize() { return m_panelCustomize; }
+    wxStaticText* GetStaticText9() { return m_staticText9; }
+    wxColourPickerCtrl* GetColourPickerSelTextBgColour() { return m_colourPickerSelTextBgColour; }
+    wxStaticText* GetStaticText94() { return m_staticText94; }
+    wxCheckBox* GetCheckBoxCustomSelectionFgColour() { return m_checkBoxCustomSelectionFgColour; }
+    wxStaticText* GetStaticText84() { return m_staticText84; }
+    wxColourPickerCtrl* GetColourPickerSelTextFgColour() { return m_colourPickerSelTextFgColour; }
+    wxPanel* GetPanelTextSelection() { return m_panelTextSelection; }
+    wxNotebook* GetNotebook2() { return m_notebook2; }
+    wxPanel* GetPanel25() { return m_panel25; }
+    wxPanel* GetPanelSyntaxHighlight() { return m_panelSyntaxHighlight; }
+    wxStaticText* GetStaticText155() { return m_staticText155; }
+    wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
+    wxStaticText* GetStaticText91() { return m_staticText91; }
+    wxColourPickerCtrl* GetColourPickerOutputPanesFgColour() { return m_colourPickerOutputPanesFgColour; }
+    wxStaticText* GetStaticText911() { return m_staticText911; }
+    wxColourPickerCtrl* GetColourPickerOutputPanesBgColour() { return m_colourPickerOutputPanesBgColour; }
+    wxPanel* GetPanelGlobalColours() { return m_panelGlobalColours; }
+    wxNotebook* GetNotebook76() { return m_notebook76; }
     SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
 };
@@ -157,6 +206,12 @@ protected:
     virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText127() { return m_staticText127; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText131() { return m_staticText131; }
+    wxChoice* GetChoiceLanguage() { return m_choiceLanguage; }
+    wxStaticText* GetStaticText135() { return m_staticText135; }
+    wxChoice* GetChoiceBaseTheme() { return m_choiceBaseTheme; }
     NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewThemeDialogBase();
 };

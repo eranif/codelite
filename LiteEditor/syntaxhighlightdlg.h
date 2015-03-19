@@ -41,9 +41,11 @@ class wxTreebook;
 class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 {
     bool m_isModified;
+    bool m_globalThemeChanged;
     LexerConf::Ptr_t m_lexer;
 
 protected:
+    virtual void OnGlobalThemeSelected(wxCommandEvent& event);
     virtual void OnLoadEclipseThemeWebsite(wxCommandEvent& event);
     virtual void OnImportEclipseTheme(wxAuiToolBarEvent& event);
     virtual void OnRestoreDefaults(wxCommandEvent& event);

@@ -107,7 +107,8 @@ ColoursAndFontsManager& ColoursAndFontsManager::Get()
  * @class ColoursAndFontsManager_HelperThread
  * @brief
  */
-struct ColoursAndFontsManager_HelperThread : public wxThread {
+struct ColoursAndFontsManager_HelperThread : public wxThread
+{
     ColoursAndFontsManager* m_manager;
     ColoursAndFontsManager_HelperThread(ColoursAndFontsManager* manager)
         : wxThread(wxTHREAD_DETACHED)
@@ -186,7 +187,8 @@ void ColoursAndFontsManager::Load()
     if(m_initialized) return;
     m_lexersMap.clear();
     m_initialized = true;
-
+    m_globalTheme = "Default";
+    
     if(IsUpgradeNeeded()) {
         clCommandEvent event(wxEVT_UPGRADE_LEXERS_START);
         EventNotifier::Get()->AddPendingEvent(event);
@@ -198,6 +200,7 @@ void ColoursAndFontsManager::Load()
         if(root.isOk()) {
             m_globalBgColour = root.toElement().namedObject("m_globalBgColour").toColour(m_globalBgColour);
             m_globalFgColour = root.toElement().namedObject("m_globalFgColour").toColour(m_globalFgColour);
+            m_globalTheme = root.toElement().namedObject("m_globalTheme").toString("Default");
         }
     }
 
@@ -206,10 +209,10 @@ void ColoursAndFontsManager::Load()
 #ifdef __WXGTK__
     thr->Entry();
     wxDELETE(thr);
-#else    
+#else
     thr->Create();
     thr->Run();
-#endif    
+#endif
 }
 
 void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers)
@@ -572,8 +575,10 @@ void ColoursAndFontsManager::SaveGlobalSettings()
 {
     // save the global settings
     JSONRoot root(cJSON_Object);
-    root.toElement().addProperty("m_globalBgColour", m_globalBgColour).addProperty("m_globalFgColour",
-                                                                                   m_globalFgColour);
+    root.toElement()
+        .addProperty("m_globalBgColour", m_globalBgColour)
+        .addProperty("m_globalFgColour", m_globalFgColour)
+        .addProperty("m_globalTheme", m_globalTheme);
     wxFileName fnSettings = GetConfigFile();
     root.save(fnSettings.GetFullPath());
 
@@ -741,7 +746,7 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
                 wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
         }
     }
-    
+
     //=====================================================================
     // Third upgrade stage: adjust whitespace colour and fold margin
     //=====================================================================
@@ -765,7 +770,7 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
     } else {
         fallbackTheme = "Default";
     }
-    
+
     const wxArrayString& lexers = GetAllLexersNames();
     for(size_t i = 0; i < lexers.size(); ++i) {
         wxArrayString themesForLexer = GetAvailableThemesForLexer(lexers.Item(i));
@@ -775,5 +780,6 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
             SetActiveTheme(lexers.Item(i), themeName);
         }
     }
+    SetGlobalTheme(themeName);
     Save();
 }

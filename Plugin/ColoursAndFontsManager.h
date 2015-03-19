@@ -35,6 +35,7 @@ protected:
     ColoursAndFontsManager::Vec_t m_allLexers;
     wxColour m_globalBgColour;
     wxColour m_globalFgColour;
+    wxString m_globalTheme;
     LexerConf::Ptr_t m_defaultLexer;
     int m_lexersVersion;
 
@@ -47,11 +48,14 @@ private:
     LexerConf::Ptr_t DoAddLexer(wxXmlNode* node);
     void Clear();
     wxFileName GetConfigFile() const;
-    void SaveGlobalSettings();
 
 public:
     static ColoursAndFontsManager& Get();
-
+    
+    /**
+     * @brief save the global settings 
+     */
+    void SaveGlobalSettings();
     /**
      * @brief adjust the lexer colours to fit codelite's general look and feel
      */
@@ -80,6 +84,8 @@ public:
         this->m_globalFgColour = globalFgColour;
         SaveGlobalSettings();
     }
+    void SetGlobalTheme(const wxString& globalTheme) { this->m_globalTheme = globalTheme; }
+    const wxString& GetGlobalTheme() const { return m_globalTheme; }
     /**
      * @brief reload the lexers from the configuration files
      */
@@ -143,7 +149,7 @@ public:
      */
     void OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& defaultLexers,
                             const std::vector<wxXmlDocument*>& userLexers);
-    
+
     /**
      * @brief set a unified theme for all lexers. If the requested theme is not available for a given lexer,
      * use the closest one

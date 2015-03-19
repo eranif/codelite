@@ -77,7 +77,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     bSizer1->Add(m_notebook76, 1, wxALL|wxEXPAND, 5);
     
     m_panelSyntaxHighlight = new wxPanel(m_notebook76, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook76->AddPage(m_panelSyntaxHighlight, _("Syntax Highlight"), false);
+    m_notebook76->AddPage(m_panelSyntaxHighlight, _("Customize"), true);
     
     wxBoxSizer* boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
     m_panelSyntaxHighlight->SetSizer(boxSizer21);
@@ -155,7 +155,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     fgSizer2->Add(m_fileSpec, 0, wxALL|wxEXPAND, 5);
     
     m_panelCustomize = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook2->AddPage(m_panelCustomize, _("Customize"), false);
+    m_notebook2->AddPage(m_panelCustomize, _("Styles"), false);
     
     wxBoxSizer* bSizer51 = new wxBoxSizer(wxVERTICAL);
     m_panelCustomize->SetSizer(bSizer51);
@@ -306,6 +306,16 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     
     boxSizer82->Add(fgSizer4, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText155 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Global theme:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer4->Add(m_staticText155, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceGlobalThemeArr;
+    m_choiceGlobalTheme = new wxChoice(m_panelGlobalColours, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceGlobalThemeArr, 0);
+    m_choiceGlobalTheme->SetToolTip(_("Set a global theme for all the supported languages.\nIf the theme is not available for a given language, CodeLite will use the next available theme from\nthe same family"));
+    
+    fgSizer4->Add(m_choiceGlobalTheme, 0, wxALL|wxEXPAND, 5);
+    
     m_staticText91 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Global foreground Colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer4->Add(m_staticText91, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
@@ -379,6 +389,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_staticText84->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged), NULL, this);
+    m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
     m_colourPickerOutputPanesFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_colourPickerOutputPanesBgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK), NULL, this);
@@ -421,6 +432,7 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_staticText84->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged), NULL, this);
+    m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
     m_colourPickerOutputPanesFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_colourPickerOutputPanesBgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK), NULL, this);

@@ -51,7 +51,8 @@ void JavaScriptFunctionsLocator::OnToken(CxxLexerToken& token)
         }
         case '.':
             if(!m_lastIdentifier.IsEmpty()) {
-                m_functions.insert(m_lastIdentifier);
+                // a property 
+                m_properties.insert(m_lastIdentifier);
             }
             m_lastIdentifier.Clear();
             m_state = kScopeOperator;
@@ -79,7 +80,7 @@ void JavaScriptFunctionsLocator::OnToken(CxxLexerToken& token)
             }
             m_lastIdentifier.clear();
         }
-        
+
         // Back to normal state
         m_lastIdentifier.Clear();
         m_state = kNormal;
@@ -88,9 +89,16 @@ void JavaScriptFunctionsLocator::OnToken(CxxLexerToken& token)
     }
 }
 
-wxString JavaScriptFunctionsLocator::GetString() const
+wxString JavaScriptFunctionsLocator::GetFunctionsString() const
 {
     wxString str;
     std::for_each(m_functions.begin(), m_functions.end(), [&](const wxString& func) { str << func << " "; });
+    return str;
+}
+
+wxString JavaScriptFunctionsLocator::GetPropertiesString() const
+{
+    wxString str;
+    std::for_each(m_properties.begin(), m_properties.end(), [&](const wxString& prop) { str << prop << " "; });
     return str;
 }

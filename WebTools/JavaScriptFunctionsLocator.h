@@ -10,6 +10,7 @@ class JavaScriptFunctionsLocator : public CxxScannerBase
     enum eState { kNormal, kScopeOperator };
     wxString m_lastIdentifier;
     wxStringSet_t m_functions;
+    wxStringSet_t m_properties;
     wxStringSet_t m_keywords;
     eState m_state;
     
@@ -20,7 +21,8 @@ public:
     JavaScriptFunctionsLocator(CxxPreProcessor* preProcessor, const wxFileName& filename);
     virtual ~JavaScriptFunctionsLocator();
 
-    wxString GetString() const;
+    wxString GetFunctionsString() const;
+    wxString GetPropertiesString() const;
 };
 
 #endif // JAVASCRIPTFUNCTIONSLOCATOR_H

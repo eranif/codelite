@@ -18,6 +18,7 @@ public:
     struct Reply {
         wxString filename;
         wxString functions;
+        wxString properties;
     };
 
 public:

@@ -41,6 +41,8 @@ WebTools::WebTools(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
 }
 
 WebTools::~WebTools() {}
@@ -58,6 +60,8 @@ void WebTools::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
     m_jsColourThread->Stop();
     wxDELETE(m_jsColourThread);
 }
@@ -75,7 +79,8 @@ void WebTools::ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply
     IEditor* editor = m_mgr->FindEditor(reply.filename);
     if(editor) {
         wxStyledTextCtrl* ctrl = editor->GetSTC();
-        ctrl->SetKeyWords(1, reply.functions);
+        ctrl->SetKeyWords(1, reply.properties);
+        ctrl->SetKeyWords(3, reply.functions);
     }
 }
 
@@ -87,8 +92,30 @@ void WebTools::OnThemeChanged(wxCommandEvent& event)
     IEditor::List_t::iterator iter = editors.begin();
     for(; iter != editors.end(); ++iter) {
         // Refresh the files' colouring
-        if(FileExtManager::GetType((*iter)->GetFileName().GetFullName()) == FileExtManager::TypeJS) {
+        if(IsJavaScriptFile((*iter)->GetFileName())) {
             m_jsColourThread->QueueFile((*iter)->GetFileName().GetFullPath());
         }
     }
+}
+
+void WebTools::OnCodeComplete(clCodeCompletionEvent& event) 
+{
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor && IsJavaScriptFile(editor->GetFileName())) {
+        // We emulate CC for JS by triggering the word-completion plugin
+        wxCommandEvent ccWordComplete(wxEVT_MENU, XRCID("text_word_complete"));
+        wxTheApp->AddPendingEvent(ccWordComplete);
+    } else {
+        event.Skip();
+    }
+}
+
+bool WebTools::IsJavaScriptFile(const wxFileName& filename)
+{
+    return FileExtManager::GetType(filename.GetFullName()) == FileExtManager::TypeJS;
+}
+
+bool WebTools::IsJavaScriptFile(const wxString& filename)
+{
+    return FileExtManager::GetType(filename) == FileExtManager::TypeJS;
 }

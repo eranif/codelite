@@ -23,7 +23,9 @@ void JavaScriptSyntaxColourThread::ProcessRequest(ThreadRequest* request)
     
     JavaScriptSyntaxColourThread::Reply reply;
     reply.filename = req->filename;
-    reply.functions = collector.GetString();
+    reply.functions = collector.GetFunctionsString();
+    reply.properties = collector.GetPropertiesString();
+    
     m_plugin->CallAfter(&WebTools::ColourJavaScript, reply);
 }
 

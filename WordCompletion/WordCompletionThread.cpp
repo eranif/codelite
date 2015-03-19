@@ -28,6 +28,8 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
     WordCompletionThreadReply reply;
     reply.filename = req->filename;
     reply.filter = req->filter;
+    reply.insertSingleMatch = req->insertSingleMatch;
+    
     while(::wordsLexerNext(scanner, token)) {
         switch(token.type) {
         case kWORD_T_NUMBER:

@@ -42,16 +42,9 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
     m_thread = new WordCompletionThread(this);
     m_thread->Start();
 
-    wxTheApp->Connect(XRCID("text_word_complete"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(WordCompletionPlugin::OnWordComplete),
-                      NULL,
-                      this);
-    wxTheApp->Connect(XRCID("text_word_complete_settings"),
-                      wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(WordCompletionPlugin::OnSettings),
-                      NULL,
-                      this);
+    wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("text_word_complete"));
+    wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("word_complete_no_single_insert"));
+    wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnSettings, this, XRCID("text_word_complete_settings"));
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "text_word_complete", "Ctrl-ENTER", "Plugins::Word Completion::Show word completion");
 }
@@ -91,16 +84,9 @@ void WordCompletionPlugin::UnPlug()
     m_thread->Stop();   // Stop the thread
     wxDELETE(m_thread); // Delete it
 
-    wxTheApp->Disconnect(XRCID("text_word_complete"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(WordCompletionPlugin::OnWordComplete),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(XRCID("text_word_complete_settings"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(WordCompletionPlugin::OnSettings),
-                         NULL,
-                         this);
+    wxTheApp->Unbind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("text_word_complete"));
+    wxTheApp->Unbind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("word_complete_no_single_insert"));
+    wxTheApp->Unbind(wxEVT_MENU, &WordCompletionPlugin::OnSettings, this, XRCID("text_word_complete_settings"));
 }
 
 void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& reply)
@@ -122,7 +108,10 @@ void WordCompletionPlugin::OnSuggestThread(const WordCompletionThreadReply& repl
     }
 
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        activeEditor->GetSTC(), entries, bitmaps, wxCodeCompletionBox::kInsertSingleMatch);
+        activeEditor->GetSTC(),
+        entries,
+        bitmaps,
+        reply.insertSingleMatch ? wxCodeCompletionBox::kInsertSingleMatch : wxCodeCompletionBox::kNone);
 }
 
 void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
@@ -142,6 +131,7 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     req->buffer = stc->GetText();
     req->filename = activeEditor->GetFileName();
     req->filter = filter;
+    req->insertSingleMatch = (event.GetId() == XRCID("text_word_complete"));
     m_thread->Add(req);
 }
 
@@ -150,13 +140,3 @@ void WordCompletionPlugin::OnSettings(wxCommandEvent& event)
     WordCompletionSettingsDlg dlg(EventNotifier::Get()->TopFrame());
     dlg.ShowModal();
 }
-
-// void WordCompletionPlugin::OnEditorHandler(clCommandEvent& event)
-//{
-//    event.Skip();
-//    wxStyledTextCtrl* editor = reinterpret_cast<wxStyledTextCtrl*>(event.GetEventObject());
-//    if(editor) {
-//        editor->RegisterImage(1, m_images.Bitmap("m_bmpWord"));
-//    }
-//}
-//

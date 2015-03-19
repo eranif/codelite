@@ -103,7 +103,7 @@ void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && IsJavaScriptFile(editor->GetFileName())) {
         // We emulate CC for JS by triggering the word-completion plugin
-        wxCommandEvent ccWordComplete(wxEVT_MENU, XRCID("text_word_complete"));
+        wxCommandEvent ccWordComplete(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
         wxTheApp->AddPendingEvent(ccWordComplete);
     } else {
         event.Skip();

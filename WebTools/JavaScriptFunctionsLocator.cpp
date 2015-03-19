@@ -5,6 +5,7 @@
 
 JavaScriptFunctionsLocator::JavaScriptFunctionsLocator(CxxPreProcessor* preProcessor, const wxFileName& filename)
     : CxxScannerBase(preProcessor, filename)
+    , m_state(kNormal)
 {
     const wxString jsKeywords = "abstract	arguments	boolean	break	byte "
                                 "case	catch	char	class*	const "
@@ -30,35 +31,66 @@ JavaScriptFunctionsLocator::~JavaScriptFunctionsLocator() {}
 void JavaScriptFunctionsLocator::OnToken(CxxLexerToken& token)
 {
     // We collect every word which is followed by "(" (except for keywords)
-    switch(token.type) {
-    case T_IDENTIFIER: {
-        wxString word = token.text;
-        if(m_keywords.count(word) == 0) {
-            // keep it
-            m_lastIdentifier.swap(word);
-        } else {
-            // a keyword, skip it
-            m_lastIdentifier.clear();
+
+    switch(m_state) {
+    //---------------------------------------------------------
+    // Normal parsing state, nothing special here
+    //---------------------------------------------------------
+    case kNormal: {
+        switch(token.type) {
+        case T_IDENTIFIER: {
+            wxString word = token.text;
+            if(m_keywords.count(word) == 0) {
+                // keep it
+                m_lastIdentifier.swap(word);
+            } else {
+                // a keyword, skip it
+                m_lastIdentifier.clear();
+            }
+            break;
+        }
+        case '.':
+            if(!m_lastIdentifier.IsEmpty()) {
+                m_functions.insert(m_lastIdentifier);
+            }
+            m_lastIdentifier.Clear();
+            m_state = kScopeOperator;
+            break;
+        case '(':
+            if(!m_lastIdentifier.IsEmpty()) {
+                m_functions.insert(m_lastIdentifier);
+            }
+            m_lastIdentifier.Clear();
+            break;
+        default:
+            m_lastIdentifier.Clear();
+            break;
         }
         break;
     }
-    case '(':
-        if(!m_lastIdentifier.IsEmpty()) {
-            m_functions.insert(m_lastIdentifier);
+    //---------------------------------------------------------
+    // Previous match was "."
+    //---------------------------------------------------------
+    case kScopeOperator: {
+        if(token.type == T_IDENTIFIER) {
+            wxString word = token.text;
+            if(m_keywords.count(word) == 0) {
+                m_functions.insert(word);
+            }
+            m_lastIdentifier.clear();
         }
+        
+        // Back to normal state
         m_lastIdentifier.Clear();
+        m_state = kNormal;
         break;
-    default:
-        m_lastIdentifier.Clear();
-        break;
+    }
     }
 }
 
 wxString JavaScriptFunctionsLocator::GetString() const
 {
     wxString str;
-    std::for_each(m_functions.begin(), m_functions.end(), [&](const wxString& func) {
-        str << func << " ";
-    });
+    std::for_each(m_functions.begin(), m_functions.end(), [&](const wxString& func) { str << func << " "; });
     return str;
 }

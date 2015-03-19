@@ -7,17 +7,19 @@
 
 class JavaScriptFunctionsLocator : public CxxScannerBase
 {
+    enum eState { kNormal, kScopeOperator };
     wxString m_lastIdentifier;
     wxStringSet_t m_functions;
     wxStringSet_t m_keywords;
-
+    eState m_state;
+    
 protected:
     void OnToken(CxxLexerToken& token);
 
 public:
     JavaScriptFunctionsLocator(CxxPreProcessor* preProcessor, const wxFileName& filename);
     virtual ~JavaScriptFunctionsLocator();
-    
+
     wxString GetString() const;
 };
 

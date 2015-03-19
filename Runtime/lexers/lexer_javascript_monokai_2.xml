@@ -8,9 +8,9 @@
   <Extensions>*.js;*.javascript</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#52534E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="1" Name="Block comment" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Block comment" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="yes" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="2" Name="Single line comment" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="3" Name="Doxygen block comment" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="Doxygen block comment" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="yes" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="4" Name="Number" Bold="no" Face="" Colour="#AE81FF" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="5" Name="JavaScript keyword" Bold="no" Face="" Colour="#F92772" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="6" Name="String" Bold="no" Face="" Colour="#E6DA74" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
@@ -18,11 +18,11 @@
     <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#FFFFFF" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#FFFFFF" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="12" Name="Open String" Bold="no" Face="" Colour="#E6DA74" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="15" Name="Doxygen single line comment" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="16" Name="JavaScript functions" Bold="no" Face="" Colour="#FFFFFF" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="19" Name="JavaScript global classes" Bold="no" Face="" Colour="#A7E22E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="15" Name="Doxygen single line comment" Bold="no" Face="" Colour="#74715E" BgColour="#272822" Italic="yes" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="16" Name="JavaScript functions" Bold="no" Face="" Colour="#66D9EE" BgColour="#272822" Italic="yes" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="19" Name="JavaScript global classes" Bold="no" Face="" Colour="#A7E22E" BgColour="#272822" Italic="yes" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#D9E577" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#D9E577" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="yellow" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#939390" BgColour="#272822" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>

@@ -61,7 +61,7 @@ EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const w
     if(!GetProperty("class", m_klass)) {
         m_klass = m_foreground;
     }
-    if(!GetProperty("localVariable", m_variable)) {
+    if(!GetProperty("parameterVariable", m_variable)) {
         m_variable = m_foreground;
     }
     if(!GetProperty("javadoc", m_javadoc)) {

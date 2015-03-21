@@ -7,38 +7,38 @@
   <KeyWords4>first-letter first-line before after selection</KeyWords4>
   <Extensions>*.css</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="1" Name="Tag" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="2" Name="Class" Bold="no" Italic="no" Face="" Colour="#D25252" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="3" Name="Pseudo Class" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="4" Name="Unknown Pseudo Class" Bold="no" Italic="no" Face="" Colour="PINK" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="5" Name="Operator" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="6" Name="Indentifier" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="7" Name="Unknow Indentifier" Bold="no" Italic="no" Face="" Colour="PINK" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="8" Name="Value" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="9" Name="Comment" Bold="no" Italic="no" Face="" Colour="#C7DD0C" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="10" Name="ID" Bold="no" Italic="no" Face="" Colour="#79ABFF" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="11" Name="Important" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="12" Name="Directive" Bold="no" Italic="no" Face="" Colour="#D25252" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="13" Name="String" Bold="no" Italic="no" Face="" Colour="#FFC600" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="14" Name="Double String" Bold="no" Italic="no" Face="" Colour="#FFC600" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="15" Name="Indentifier 2" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="16" Name="Attribute" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="17" Name="Indentifier 3" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="18" Name="Pseudo Element" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="19" Name="Extended Indentifier" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="20" Name="Extended Pseudo Class" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="21" Name="Extended Pseudo Element" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="22" Name="Media" Bold="no" Italic="no" Face="" Colour="#D25252" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="23" Name="Variable" Bold="no" Italic="no" Face="" Colour="#79ABFF" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="34" Name="Brace match" Bold="yes" Italic="no" Face="" Colour="yellow" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="35" Name="Brace bad match" Bold="yes" Italic="no" Face="" Colour="red" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="37" Name="Indent Guide" Bold="no" Italic="no" Face="" Colour="#8E8E8E" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-1" Name="Fold Margin" Bold="no" Italic="no" Face="" Colour="#1E1E1E" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-2" Name="Text Selection" Bold="no" Italic="no" Face="" Colour="#D0D0D0" BgColour="#000000" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Italic="no" Face="" Colour="white" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-4" Name="Whitespace" Bold="no" Italic="no" Face="" Colour="#8E8E8E" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="38" Name="Calltip" Bold="no" Italic="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Italic="no" Face="" Colour="#D0D0D0" BgColour="#1E1E1E" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#4B4B4B" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Tag" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="Class" Bold="no" Face="" Colour="#D25252" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="Pseudo Class" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="Unknown Pseudo Class" Bold="no" Face="" Colour="PINK" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="Operator" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="6" Name="Indentifier" Bold="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="7" Name="Unknow Indentifier" Bold="no" Face="" Colour="PINK" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="8" Name="Value" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#C7DD0C" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="10" Name="ID" Bold="no" Face="" Colour="#79ABFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="11" Name="Important" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="12" Name="Directive" Bold="no" Face="" Colour="#D25252" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="13" Name="String" Bold="no" Face="" Colour="#FFC600" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="14" Name="Double String" Bold="no" Face="" Colour="#FFC600" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="15" Name="Indentifier 2" Bold="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="16" Name="Attribute" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="17" Name="Indentifier 3" Bold="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="18" Name="Pseudo Element" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="19" Name="Extended Indentifier" Bold="no" Face="" Colour="#FFFFFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="20" Name="Extended Pseudo Class" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="21" Name="Extended Pseudo Element" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="22" Name="Media" Bold="no" Face="" Colour="#D25252" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="23" Name="Variable" Bold="no" Face="" Colour="#79ABFF" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="yellow" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#8E8E8E" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#292929" BgColour="#292929" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#D0D0D0" BgColour="#000000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="white" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#292929" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#D8D8D8" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#4B4B4B" BgColour="#1E1E1E" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
   </Properties>
 </Lexer>

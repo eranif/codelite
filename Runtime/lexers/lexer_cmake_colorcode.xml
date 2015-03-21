@@ -7,29 +7,29 @@
   <KeyWords4/>
   <Extensions>*.cmake;*.CMAKE;*CMakeLists.txt</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="1" Name="Comment" Bold="no" Italic="no" Face="" Colour="#36AA70" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="2" Name="String DQ" Bold="no" Italic="no" Face="" Colour="#FFA500" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="3" Name="String LQ" Bold="no" Italic="no" Face="" Colour="#FFA500" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="4" Name="String RQ" Bold="no" Italic="no" Face="" Colour="#FFA500" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="5" Name="Commands" Bold="no" Italic="no" Face="" Colour="#73E110" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="6" Name="Parameters" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="7" Name="Variables" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="8" Name="UserDefined" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="9" Name="While Def" Bold="no" Italic="no" Face="" Colour="#73E110" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="10" Name="Foreach Def" Bold="no" Italic="no" Face="" Colour="#73E110" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="11" Name="If Defined Def" Bold="no" Italic="no" Face="" Colour="#73E110" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="12" Name="Macro Def" Bold="no" Italic="no" Face="" Colour="#73E110" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="13" Name="String Var" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="14" Name="Number" Bold="no" Italic="no" Face="" Colour="#FFFF00" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="34" Name="Brace match" Bold="yes" Italic="no" Face="" Colour="yellow" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="35" Name="Brace bad match" Bold="yes" Italic="no" Face="" Colour="red" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="37" Name="Indent Guide" Bold="no" Italic="no" Face="" Colour="#9B9C9D" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-1" Name="Fold Margin" Bold="no" Italic="no" Face="" Colour="#373A3C" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-2" Name="Text Selection" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#949494" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Italic="no" Face="" Colour="white" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="-4" Name="Whitespace" Bold="no" Italic="no" Face="" Colour="#9B9C9D" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="38" Name="Calltip" Bold="no" Italic="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Italic="no" Face="" Colour="#787878" BgColour="#373A3C" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#36AA70" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="2" Name="String DQ" Bold="no" Face="" Colour="#FFA500" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="3" Name="String LQ" Bold="no" Face="" Colour="#FFA500" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="4" Name="String RQ" Bold="no" Face="" Colour="#FFA500" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="5" Name="Commands" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="6" Name="Parameters" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="7" Name="Variables" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="8" Name="UserDefined" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="9" Name="While Def" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="10" Name="Foreach Def" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="11" Name="If Defined Def" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="12" Name="Macro Def" Bold="no" Face="" Colour="#73E110" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="13" Name="String Var" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="14" Name="Number" Bold="no" Face="" Colour="#FFFF00" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="yellow" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#9B9C9D" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#414345" BgColour="#414345" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#949494" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="white" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="#414345" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#FFFFFF" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#5F6163" BgColour="#373A3C" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
   </Properties>
 </Lexer>

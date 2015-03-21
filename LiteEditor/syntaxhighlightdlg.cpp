@@ -99,6 +99,7 @@ void SyntaxHighlightDlg::OnButtonOK(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     SaveChanges();
+    
     clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
     // and close the dialog
     EndModal(wxID_OK);
@@ -184,6 +185,9 @@ void SyntaxHighlightDlg::SaveChanges()
         ColoursAndFontsManager::Get().SetGlobalTheme(m_choiceGlobalTheme->GetStringSelection());
         ColoursAndFontsManager::Get().SetTheme(m_choiceGlobalTheme->GetStringSelection());
         m_globalThemeChanged = false;
+        
+        m_lexer =  ColoursAndFontsManager::Get().GetLexer(m_lexer->GetName());
+        CallAfter(&SyntaxHighlightDlg::LoadLexer, m_lexer->GetThemeName());
     }
     
     wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
@@ -194,7 +198,7 @@ void SyntaxHighlightDlg::SaveChanges()
 
     wxString newBg = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
     EditorConfigST::Get()->SetCurrentOutputviewBgColour(newBg);
-
+    
     m_isModified = false;
 }
 

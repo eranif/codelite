@@ -23,17 +23,6 @@
 #define SCROLLBAR_WIDTH 12
 #define BOX_WIDTH (400 + SCROLLBAR_WIDTH)
 
-#ifdef __WXMSW__
-#define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 9
-#elif defined(__WXMAC__)
-#define DEFAULT_FACE_NAME "monaco"
-#define DEFAULT_FONT_SIZE 10
-#else // GTK, FreeBSD etc
-#define DEFAULT_FACE_NAME "monospace"
-#define DEFAULT_FONT_SIZE 10
-#endif
-
 wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject, size_t flags)
     : wxCodeCompletionBoxBase(parent)
     , m_index(0)
@@ -44,7 +33,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_tipWindow(NULL)
     , m_flags(flags)
 {
-    m_ccFont = wxFont(wxFontInfo(DEFAULT_FONT_SIZE).Family(wxFONTFAMILY_TELETYPE).FaceName(DEFAULT_FACE_NAME));
+    m_ccFont = DrawingUtils::GetDefaultFixedFont();
     SetCursor(wxCURSOR_HAND);
 
     // Calculate the size of the box

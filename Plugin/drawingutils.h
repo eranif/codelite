@@ -52,6 +52,8 @@ public:
     static float GetDdkShadowLightFactor2();
     static wxColour GetGradient();
     
+    static wxFont GetDefaultFixedFont();
+    
     /// -------------------------------------------------------------
     /// New theme related API
     /// -------------------------------------------------------------

@@ -115,16 +115,8 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     wxMemoryDC dc(bmp);
 
     wxSize size;
-
-    LexerConf::Ptr_t cppLex = EditorConfigST::Get()->GetLexer("C++");
-    if(cppLex) {
-        // use the lexer default font
-        m_codeFont = cppLex->GetFontForSyle(0);
-
-    } else {
-        m_codeFont = wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    }
-
+    
+    m_codeFont = DrawingUtils::GetDefaultFixedFont();
     m_commentFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 
     wxString codePart, commentPart;

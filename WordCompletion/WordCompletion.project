@@ -31,6 +31,8 @@
     <File Name="WordCompletionSettings.cpp"/>
     <File Name="WordCompletionSettingsDlg.h"/>
     <File Name="WordCompletionSettingsDlg.cpp"/>
+    <File Name="WordCompletionDictionary.h"/>
+    <File Name="WordCompletionDictionary.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="wxcrafter">

@@ -7,13 +7,14 @@
 #include "macros.h"
 #include "WordCompletionRequestReply.h"
 
-class WordCompletionPlugin;
+class WordCompletionDictionary;
 class WordCompletionThread : public WorkerThread
 {
 protected:
-    WordCompletionPlugin* m_plugin;
+    WordCompletionDictionary* m_dict;
+
 public:
-    WordCompletionThread(WordCompletionPlugin* plugin);
+    WordCompletionThread(WordCompletionDictionary* dict);
     ~WordCompletionThread();
     virtual void ProcessRequest(ThreadRequest* request);
 };

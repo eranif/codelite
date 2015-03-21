@@ -3,9 +3,10 @@
 #include "WordsTokens.h"
 #include "macros.h"
 #include "WordCompletionSettings.h"
+#include "WordCompletionDictionary.h"
 
-WordCompletionThread::WordCompletionThread(WordCompletionPlugin* plugin)
-    : m_plugin(plugin)
+WordCompletionThread::WordCompletionThread(WordCompletionDictionary* dict)
+    : m_dict(dict)
 {
 }
 
@@ -52,24 +53,5 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
         }
     }
     ::wordsLexerDestroy(&scanner);
-
-    // Remove non matched words
-    wxStringSet_t::iterator iter = reply.suggest.begin();
-    wxStringSet_t filterdSet;
-    for(; iter != reply.suggest.end(); ++iter) {
-        wxString lcFilter = req->filter.Lower();
-        wxString lcKey = iter->Lower();
-        if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
-            if(lcKey.StartsWith(lcFilter) && req->filter != (*iter)) {
-                filterdSet.insert(*iter);
-            }
-        } else {
-            if(lcKey.Contains(lcFilter) && req->filter != (*iter)) {
-                filterdSet.insert(*iter);
-            }
-        }
-    }
-    
-    reply.suggest.swap(filterdSet);
-    m_plugin->CallAfter(&WordCompletionPlugin::OnSuggestThread, reply);
+    m_dict->CallAfter(&WordCompletionDictionary::OnSuggestThread, reply);
 }

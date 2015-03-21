@@ -5,23 +5,18 @@
 #include "WordCompletionRequestReply.h"
 #include "UI.h"
 #include "cl_command_event.h"
+#include "macros.h"
 
-class WordCompletionThread;
+class WordCompletionDictionary;
 class WordCompletionPlugin : public IPlugin
 {
-    WordCompletionThread* m_thread;
     WordCompletionImages m_images;
+    WordCompletionDictionary* m_dictionary;
     
 public:
-    /**
-     * @brief this function is called by the word completion thread when parsing phase is done
-     * @param reply
-     */
-    void OnSuggestThread(const WordCompletionThreadReply& reply);
     void OnWordComplete(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
-    //void OnEditorHandler(clCommandEvent &event);
-    
+        
 public:
     WordCompletionPlugin(IManager* manager);
     ~WordCompletionPlugin();
@@ -31,8 +26,6 @@ public:
     //--------------------------------------------
     virtual clToolBar* CreateToolBar(wxWindow* parent);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
 };
 

@@ -50,6 +50,8 @@
 #include "EclipseCXXThemeImporter.h"
 #include <wx/msgdlg.h>
 #include "EclipseThemeImporterManager.h"
+#include <wx/busyinfo.h>
+#include <wx/utils.h>
 
 #define CXX_AND_JAVASCRIPT "c++"
 
@@ -177,8 +179,11 @@ void SyntaxHighlightDlg::SaveChanges()
     ColoursAndFontsManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
     
     if(m_globalThemeChanged) {
+        wxBusyInfo bi(_("Applying changes..."));
+        wxBusyCursor bc;
         ColoursAndFontsManager::Get().SetGlobalTheme(m_choiceGlobalTheme->GetStringSelection());
         ColoursAndFontsManager::Get().SetTheme(m_choiceGlobalTheme->GetStringSelection());
+        m_globalThemeChanged = false;
     }
     
     wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();

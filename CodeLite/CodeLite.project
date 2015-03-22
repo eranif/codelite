@@ -560,4 +560,16 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="JavaScriptScanner">
+    <File Name="JSFunction.h"/>
+    <File Name="JSFunction.cpp"/>
+    <File Name="JSSourceFile.h"/>
+    <File Name="JSSourceFile.cpp"/>
+    <File Name="JSObject.h"/>
+    <File Name="JSObject.cpp"/>
+    <File Name="JSLexer.l"/>
+    <File Name="JSLexerAPI.h"/>
+    <File Name="JSLexerTokens.h"/>
+    <File Name="JSLexer.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

@@ -18,22 +18,30 @@ if (UNIX AND NOT APPLE)
         find_package(FLEX REQUIRED)
         
         set(CxxFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/CxxLexer.cpp)
-        set(PhpFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.cpp)
-        
         set(CxxFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/CxxScanner.l)
+        
+        set(PhpFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.cpp)
         set(PhpFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/PhpLexer.l)
+        
+        set(JSFlexOutput ${CMAKE_SOURCE_DIR}/CodeLite/JSLexer.cpp)
+        set(JSFlexInput ${CMAKE_SOURCE_DIR}/CodeLite/JSLexer.l)
         
         if(FLEX_FOUND)
             add_custom_command(
                 OUTPUT ${CxxFlexOutput}
-                COMMAND ${FLEX_EXECUTABLE} --noline --batch --outfile=${CxxFlexOutput} ${CxxFlexInput}
+                COMMAND ${FLEX_EXECUTABLE} --noline --yylineno --batch --outfile=${CxxFlexOutput} ${CxxFlexInput}
                 DEPENDS ${CxxFlexInput}
                 COMMENT "Generating ${CxxFlexOutput}")
             add_custom_command(
                 OUTPUT ${PhpFlexOutput}
-                COMMAND ${FLEX_EXECUTABLE} -Pphp --noline --batch --outfile=${PhpFlexOutput} ${PhpFlexInput}
+                COMMAND ${FLEX_EXECUTABLE} -Pphp --yylineno --noline --batch --outfile=${PhpFlexOutput} ${PhpFlexInput}
                 DEPENDS ${PhpFlexInput}
                 COMMENT "Generating ${PhpFlexOutput}")
+            add_custom_command(
+                OUTPUT ${JSFlexOutput}
+                COMMAND ${FLEX_EXECUTABLE} -Pjs --yylineno --noline --batch --outfile=${JSFlexOutput} ${JSFlexInput}
+                DEPENDS ${JSFlexInput}
+                COMMENT "Generating ${JSFlexOutput}")
         endif()
     else()
         message("-- Flex support is disabled")

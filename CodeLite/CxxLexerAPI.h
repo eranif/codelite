@@ -61,6 +61,14 @@ struct WXDLLIMPEXP_CL CxxLexerToken
         , type(0)
     {
     }
+    
+    CxxLexerToken(int tokenType)
+        : lineNumber(0)
+        , column(0)
+        , text(NULL)
+        , type(tokenType)
+    {
+    }
 };
 
 struct WXDLLIMPEXP_CL CxxPreProcessorToken

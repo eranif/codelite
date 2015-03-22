@@ -4,6 +4,7 @@
 #include <wx/stc/stc.h>
 #include "event_notifier.h"
 #include "codelite_events.h"
+#include "JSSourceFile.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -71,6 +72,9 @@ void WebTools::OnFileLoaded(clCommandEvent& event)
     event.Skip();
     if(FileExtManager::GetType(event.GetFileName()) == FileExtManager::TypeJS) {
         m_jsColourThread->QueueFile(event.GetFileName());
+        // for testing purposes, parse the source file if JS
+        JSSourceFile sourceFile(wxFileName(event.GetFileName()));
+        sourceFile.Parse();
     }
 }
 

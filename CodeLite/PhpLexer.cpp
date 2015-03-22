@@ -1,5 +1,5 @@
 
-#line 3 "PhpLexer.cpp"
+#line 3 "/home/eran/devl/codelite/CodeLite/PhpLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -3296,7 +3296,7 @@ void* phpLexerNew(const wxString& content, size_t options )
 {
     yyscan_t scanner;
     phplex_init(&scanner);
-    wxCharBuffer cb = content.mb_str(wxConvISO8859_1);
+    wxCharBuffer cb = content.mb_str(wxConvUTF8);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     yyg->yyextra_r = new phpLexerUserData(options);
     php_switch_to_buffer(php_scan_string(cb.data(), scanner), scanner);

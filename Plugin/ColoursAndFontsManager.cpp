@@ -21,6 +21,7 @@
 #include <wx/sstream.h>
 #include "cl_command_event.h"
 #include <wx/busyinfo.h>
+#include "fileutils.h"
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
@@ -188,7 +189,7 @@ void ColoursAndFontsManager::Load()
     m_lexersMap.clear();
     m_initialized = true;
     m_globalTheme = "Default";
-    
+
     if(IsUpgradeNeeded()) {
         clCommandEvent event(wxEVT_UPGRADE_LEXERS_START);
         EventNotifier::Get()->AddPendingEvent(event);
@@ -458,19 +459,16 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     // Scan the list of lexers, locate the active lexer for it and return it
     ColoursAndFontsManager::Vec_t::const_iterator iter = m_allLexers.begin();
     for(; iter != m_allLexers.end(); ++iter) {
-        wxString fileMask = (*iter)->GetFileSpec().Lower();
-        wxArrayString masks = ::wxStringTokenize(fileMask, ";", wxTOKEN_STRTOK);
-        for(size_t i = 0; i < masks.GetCount(); ++i) {
-            if(::wxMatchWild(masks.Item(i), fileNameLowercase)) {
-                if((*iter)->IsActive()) {
-                    return *iter;
+        wxString fileMask = (*iter)->GetFileSpec();
+        if(FileUtils::WildMatch(fileMask, filename)) {
+            if((*iter)->IsActive()) {
+                return *iter;
+                
+            } else if(!firstLexer) {
+                firstLexer = *iter;
 
-                } else if(!firstLexer) {
-                    firstLexer = *iter;
-
-                } else if(!defaultLexer && (*iter)->GetThemeName() == "Default") {
-                    defaultLexer = *iter;
-                }
+            } else if(!defaultLexer && (*iter)->GetThemeName() == "Default") {
+                defaultLexer = *iter;
             }
         }
     }

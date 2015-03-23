@@ -334,6 +334,20 @@
       <File Name="TerminalEmulatorUI_codelite_bitmaps.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <VirtualDirectory Name="JavaScriptScanner">
+    <File Name="JSFunction.h"/>
+    <File Name="JSFunction.cpp"/>
+    <File Name="JSSourceFile.h"/>
+    <File Name="JSSourceFile.cpp"/>
+    <File Name="JSObject.h"/>
+    <File Name="JSObject.cpp"/>
+    <File Name="JSLexer.l"/>
+    <File Name="JSLexerAPI.h"/>
+    <File Name="JSLexerTokens.h"/>
+    <File Name="JSLexer.cpp"/>
+    <File Name="JSLookUpTable.h"/>
+    <File Name="JSLookUpTable.cpp"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -346,61 +360,6 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/codelite_indexer/network"/>
-        <IncludePath Value="../PCH"/>
-        <IncludePath Value="../sdk/libssh/include"/>
-        <Preprocessor Value="USE_SFTP=1"/>
-      </Compiler>
-      <Linker Options="-s;$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <LibraryPath Value="../sdk/libssh/lib"/>
-        <Library Value="libwxsqlite3u.dll"/>
-        <Library Value="libssh"/>
-      </Linker>
-      <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../lib/gcc_lib/libcodeliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
-      </Environment>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
-        <DebuggerSearchPaths/>
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <PreBuild/>
-      <PostBuild>
-        <Command Enabled="yes">copy ..\lib\gcc_lib\libcodeliteu.dll ..\Runtime</Command>
-      </PostBuild>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp
-CxxLexer.cpp: CxxScanner.l
-	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
-PhpLexer.cpp: PhpLexer.l
-	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l</CustomPreBuild>
-      </AdditionalRules>
-      <Completion EnableCpp11="no">
-        <ClangCmpFlagsC/>
-        <ClangCmpFlags/>
-        <ClangPP/>
-        <SearchPaths/>
-      </Completion>
-    </Configuration>
     <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
@@ -440,7 +399,7 @@ PhpLexer.cpp: PhpLexer.l
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -489,14 +448,15 @@ PhpLexer.cpp: PhpLexer.l
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp
+        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp JSLexer.cpp
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
-</CustomPreBuild>
+JSLexer.cpp: JSLexer.l
+	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -546,13 +506,71 @@ PhpLexer.cpp: PhpLexer.l
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
+        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp JSLexer.cpp
+CxxLexer.cpp: CxxScanner.l
+	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
+PhpLexer.cpp: PhpLexer.l
+	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
+JSLexer.cpp: JSLexer.l
+	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
+</CustomPreBuild>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/codelite_indexer/network"/>
+        <IncludePath Value="../PCH"/>
+        <IncludePath Value="../sdk/libssh/include"/>
+        <Preprocessor Value="USE_SFTP=1"/>
+      </Compiler>
+      <Linker Options="-s;$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="../sdk/libssh/lib"/>
+        <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libssh"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../lib/gcc_lib/libcodeliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy ..\lib\gcc_lib\libcodeliteu.dll ..\Runtime</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
         <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -560,16 +578,4 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="JavaScriptScanner">
-    <File Name="JSFunction.h"/>
-    <File Name="JSFunction.cpp"/>
-    <File Name="JSSourceFile.h"/>
-    <File Name="JSSourceFile.cpp"/>
-    <File Name="JSObject.h"/>
-    <File Name="JSObject.cpp"/>
-    <File Name="JSLexer.l"/>
-    <File Name="JSLexerAPI.h"/>
-    <File Name="JSLexerTokens.h"/>
-    <File Name="JSLexer.cpp"/>
-  </VirtualDirectory>
 </CodeLite_Project>

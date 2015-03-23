@@ -7,34 +7,33 @@
 #include <vector>
 #include "JSLexerAPI.h"
 #include "JSObject.h"
+#include "JSLookUpTable.h"
 
 class WXDLLIMPEXP_CL JSSourceFile
 {
     JSScanner_t m_scanner;
     wxFileName m_filename;
+    JSLookUpTable::Ptr_t m_lookup;
     JSObject::Vec_t m_objects;
     JSObject::Vec_t m_scopes;
     int m_depth;
     
 protected:
-    bool ProcessStatement();
-    void ReadSignature(JSObject::Ptr_t scope);
-    
+    bool ReadSignature(JSObject::Ptr_t scope);
+    bool ReadUntil(int until, wxString& content);
     
     // Actions
-    void OnGlobalFunction();
-    
-    void printStatement();
-    void skipToNextStatement();
-    
+    void OnFunction();
+
     bool NextToken(JSLexerToken& token);
+    wxString GetCurrentPath();
     
 public:
-    JSSourceFile(const wxString& fileContent, const wxFileName& filename);
-    JSSourceFile(const wxFileName& filename);
+    JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxString& fileContent, const wxFileName& filename);
+    JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxFileName& filename);
 
     virtual ~JSSourceFile();
-    
+
     void Parse(int exitDepth = -1);
 };
 

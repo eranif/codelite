@@ -74,9 +74,10 @@ void WebTools::OnFileLoaded(clCommandEvent& event)
     if(FileExtManager::GetType(event.GetFileName()) == FileExtManager::TypeJS) {
         m_jsColourThread->QueueFile(event.GetFileName());
         // for testing purposes, parse the source file if JS
-        JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
-        JSSourceFile sourceFile(lookup, wxFileName(event.GetFileName()));
-        sourceFile.Parse();
+        // JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+        // JSSourceFile sourceFile(lookup, wxFileName(event.GetFileName()));
+        // sourceFile.Parse();
+        // lookup->Print();
     }
 }
 

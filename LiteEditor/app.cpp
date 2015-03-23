@@ -669,7 +669,16 @@ bool CodeLiteApp::OnInit()
     m_pMainFrame->Show(TRUE);
     SetTopWindow(m_pMainFrame);
     
-    if (needsLexerLoadedEvent) {
+#ifdef __WXGTK__
+    // On GTK, the colours-and-events are loadedin sync mode, this means
+    // that the main frame will never get the event "wxEVT_COLOURS_AND_FONTS_LOADED"
+    // so we need to force it
+    bool fireColourEvent = true;
+#else
+    bool fireColourEvent = false;
+#endif
+
+    if (needsLexerLoadedEvent || fireColourEvent) {
         // Though a wxEVT_COLOURS_AND_FONTS_LOADED will already have been sent, it won't have done anything because
         // the frame wasn't instantiated/Connect()ed at that time. So a session won't be loaded unless...
         clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);

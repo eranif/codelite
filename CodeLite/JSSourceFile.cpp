@@ -6,6 +6,11 @@
 #include "JSFunction.h"
 
 #define JS_NEXT_TOKEN() ::jsLexerNext(m_scanner, token)
+#define JS_NEXT_TOKEN_RETURN() \
+    if(!::jsLexerNext(m_scanner, token)) return
+#define JS_NEXT_TOKEN_RETURN_FALSE() \
+    if(!::jsLexerNext(m_scanner, token)) return false
+
 #define JS_CHECK_TYPE_RET_FALSE(t) \
     if(token.type != t) return false
 
@@ -40,34 +45,37 @@ JSSourceFile::~JSSourceFile()
 // function Foo (
 void JSSourceFile::OnFunction()
 {
-    CL_DEBUG("OnFunction called");
-
     JSLexerToken token;
     if(!NextToken(token)) return;
 
     // Named function
     if(token.type == kJS_IDENTIFIER) {
+        JSObject::Ptr_t func(new JSFunction());
+        func->SetName(token.text);
+        func->SetPath(m_lookup->MakePath(token.text));
+        ParseFunction(func);
+    }
+}
 
-        JSObject::Ptr_t scope(new JSFunction());
-        scope->SetName(token.text);
-        scope->SetPath(BuildPath(scope->GetName()));
+void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
+{
+    JSLexerToken token;
+    m_lookup->CurrentScope()->AddChild(func);
+    // read the signature of the function
+    if(ReadSignature(func)) {
+        // Read the open curly brace
+        JS_NEXT_TOKEN();
+        JS_CHECK_TYPE_RET_VOID('{');
+        ++m_depth;
 
-        // read the signature of the function
-        if(ReadSignature(scope)) {
-            // Read the open curly brace
-            JS_NEXT_TOKEN();
-            JS_CHECK_TYPE_RET_VOID('{');
-            ++m_depth;
+        // Increase the scope
+        m_lookup->PushScope(func);
+        
+        // store this match
+        m_lookup->AddObject(func);
 
-            // Increase the scope
-            m_scopes.push_back(scope);
-
-            // store this match
-            m_lookup->AddObject(scope);
-
-            Parse(m_depth - 1);
-            m_scopes.pop_back();
-        }
+        Parse(m_depth - 1);
+        m_lookup->PopScope();
     }
 }
 
@@ -132,7 +140,9 @@ bool JSSourceFile::ReadUntil(int until, wxString& content)
     return false;
 }
 
-// statement => Foo.bar =
+//========================================
+// The main loop
+//========================================
 void JSSourceFile::Parse(int exitDepth)
 {
     JSLexerToken token;
@@ -151,10 +161,16 @@ void JSSourceFile::Parse(int exitDepth)
         case kJS_VAR:
             // variable
             break;
-        case kJS_IDENTIFIER:
-            break;
+        case kJS_IDENTIFIER: {
+            JSObject::Ptr_t klass = m_lookup->FindObject(token.text);
+            if(klass) {
+                m_lookup->SetTempScope(klass);
+                OnPropertyOrFunction();
+                m_lookup->SwapScopes();
+            }
+        } break;
         case kJS_THIS:
-            if(!m_scopes.empty()) {
+            if(!m_lookup->CurrentPath().IsEmpty()) {
                 // try to process a :
                 // this.foo =
                 // or
@@ -164,7 +180,6 @@ void JSSourceFile::Parse(int exitDepth)
                 wxString dummy;
                 // Read until we hit the } or ; (taking the current depth into account)
                 ReadUntil2(';', '}', dummy);
-                CL_DEBUG("JS parser: skipped: %s", dummy);
             }
             break;
         default:
@@ -174,23 +189,6 @@ void JSSourceFile::Parse(int exitDepth)
 }
 
 bool JSSourceFile::NextToken(JSLexerToken& token) { return ::jsLexerNext(m_scanner, token); }
-
-wxString JSSourceFile::GetCurrentPath()
-{
-    wxString path;
-    if(m_scopes.empty()) return path;
-    for(size_t i = 0; i < m_scopes.size(); ++i) {
-        path << m_scopes.at(i)->GetName() << ".";
-    }
-    path.RemoveLast();
-    return path;
-}
-
-JSObject::Ptr_t JSSourceFile::CurrentScope()
-{
-    if(m_scopes.empty()) m_lookup->GetGlobalScope();
-    return m_scopes.at(m_scopes.size() - 1);
-}
 
 void JSSourceFile::OnFunctionThisProperty()
 {
@@ -223,32 +221,57 @@ void JSSourceFile::OnFunctionThisProperty()
         // Allocate new function obj and add it
         JSObject::Ptr_t func(new JSFunction());
         func->SetName(name);
-        func->SetPath(BuildPath(func->GetName()));
-        if(!ReadSignature(func)) return;
-        CurrentScope()->AddChild(func);
-
-        // Parse the anon function (collect variables)
-        OnAnonFunction();
+        func->SetPath(m_lookup->MakePath(func->GetName()));
+        
+        // From here on, its the same as normal function
+        ParseFunction(func);
 
     } else {
         wxString assigment;
         ReadUntil(';', assigment);
         JSObject::Ptr_t property(new JSObject());
         property->SetName(name);
-        property->SetPath(BuildPath(property->GetName()));
-        CurrentScope()->AddChild(property);
+        property->SetPath(m_lookup->MakePath(property->GetName()));
+        m_lookup->CurrentScope()->AddChild(property);
     }
 }
 
-wxString JSSourceFile::BuildPath(const wxString& name) 
+void JSSourceFile::OnPropertyOrFunction()
 {
-    if(m_scopes.empty()) return name;
-    else return CurrentScope()->GetPath() + "." + name;
-}
+    JSLexerToken token;
+    JS_NEXT_TOKEN_RETURN();
+    JS_CHECK_TYPE_RET_VOID(kJS_DOT);
 
-void JSSourceFile::OnAnonFunction()
-{
-    // parse anonymous function (we currently supporting collecting local variables only)
-    wxString content;
-    ReadUntil2(';', '}', content);
+    if(!JS_NEXT_TOKEN()) return;
+    if(token.type == kJS_PROTOTYPE) {
+        JS_NEXT_TOKEN_RETURN();
+        JS_CHECK_TYPE_RET_VOID(kJS_DOT);
+
+        JS_NEXT_TOKEN_RETURN();
+    }
+
+    JS_CHECK_TYPE_RET_VOID(kJS_IDENTIFIER);
+    wxString name = token.text;
+
+    JS_NEXT_TOKEN_RETURN();
+    JS_CHECK_TYPE_RET_VOID('=');
+
+    JS_NEXT_TOKEN_RETURN();
+    if(token.type == kJS_FUNCTION) {
+        // Allocate new function obj and add it
+        JSObject::Ptr_t func(new JSFunction());
+        func->SetName(name);
+        func->SetPath(m_lookup->MakePath(func->GetName()));
+        
+        // From here on, its the same as normal function
+        ParseFunction(func);
+    } else {
+        // variable
+        wxString assigment;
+        ReadUntil(';', assigment);
+        JSObject::Ptr_t property(new JSObject());
+        property->SetName(name);
+        property->SetPath(m_lookup->MakePath(property->GetName()));
+        m_lookup->CurrentScope()->AddChild(property);
+    }
 }

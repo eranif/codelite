@@ -26,7 +26,12 @@ protected:
 public:
     JSObject();
     virtual ~JSObject();
-
+    
+    /**
+     * @brief print this object to the log file
+     */
+    virtual void Print(int depth);
+    
     void AddChild(JSObject::Ptr_t child) { m_properties.insert(std::make_pair(child->GetName(), child)); }
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<JSObject*>(this)); }
 

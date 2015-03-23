@@ -17,6 +17,8 @@ public:
 
     void SetSignature(const wxString& signature) { this->m_signature = signature; }
     const wxString& GetSignature() const { return m_signature; }
+    
+    virtual void Print(int depth);
 };
 
 #endif // JSFUNCTION_H

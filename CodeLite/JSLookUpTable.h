@@ -9,7 +9,7 @@
 
 class WXDLLIMPEXP_CL JSLookUpTable
 {
-    std::map<wxString, JSObject::Ptr_t> m_objects;
+    JSObject::Map_t m_objects;
     JSObject::Vec_t m_actualScopes;
     JSObject::Vec_t m_tempScopes;
     JSObject::Vec_t* m_scopes;
@@ -57,6 +57,11 @@ public:
      * @brief switch back to the normal scopes
      */
     void SwapScopes();
+    
+    /**
+     * @brief return map of visible variables
+     */
+    JSObject::Map_t GetVisibleVariables();
     
     void Print();
 };

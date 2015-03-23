@@ -14,7 +14,7 @@
 #define JS_CHECK_TYPE_RET_FALSE(t) \
     if(token.type != t) return false
 
-#define JS_CHECK_TYPE_RET_VOID(t) \
+#define JS_CHECK_TYPE_RETURN(t) \
     if(token.type != t) return
 
 JSSourceFile::JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxFileName& filename)
@@ -53,6 +53,7 @@ void JSSourceFile::OnFunction()
         JSObject::Ptr_t func(new JSFunction());
         func->SetName(token.text);
         func->SetPath(m_lookup->MakePath(token.text));
+        m_lookup->CurrentScope()->AddChild(func);
         ParseFunction(func);
     }
 }
@@ -60,22 +61,25 @@ void JSSourceFile::OnFunction()
 void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
 {
     JSLexerToken token;
-    m_lookup->CurrentScope()->AddChild(func);
     // read the signature of the function
     if(ReadSignature(func)) {
         // Read the open curly brace
         JS_NEXT_TOKEN();
-        JS_CHECK_TYPE_RET_VOID('{');
+        JS_CHECK_TYPE_RETURN('{');
         ++m_depth;
-
-        // Increase the scope
-        m_lookup->PushScope(func);
         
         // store this match
         m_lookup->AddObject(func);
-
-        Parse(m_depth - 1);
-        m_lookup->PopScope();
+        
+        // Increase the scope
+        m_lookup->PushScope(func);
+        
+        int exitDepth = m_depth - 1;
+        Parse(exitDepth);
+        // if the current scope not closed properly, don't remove it from list of scopes
+        if(exitDepth == m_depth) {
+            m_lookup->PopScope();
+        }
     }
 }
 
@@ -88,8 +92,38 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
     JS_CHECK_TYPE_RET_FALSE('(');
 
     sig << "(";
-    // read until we find the closing brace
-    if(!ReadUntil(')', sig)) return false;
+    
+    wxString curarg;
+    int startDepth = m_depth;
+    while(JS_NEXT_TOKEN()) {
+        
+        if(curarg.IsEmpty() && token.type == kJS_IDENTIFIER) {
+            curarg << token.text;
+        }
+        sig << token.text;
+        
+        if(token.type == '{') {
+            ++m_depth;
+        } else if(token.type == '}') {
+            --m_depth;
+        } else if(!curarg.IsEmpty() && (token.type == ',' || token.type == ')')) {
+            JSObject::Ptr_t arg(new JSObject());
+            arg->SetName(curarg);
+            // FIXME: set the type based on the doc
+            arg->SetFile(m_filename);
+            arg->SetLine(token.lineNumber);
+            scope->As<JSFunction>()->AddVariable(arg);
+            curarg.Clear();
+        }
+        
+        // breaking condition
+        if((token.type == ')') && (m_depth == startDepth)) {
+            break;
+        } else if(m_depth < startDepth) {
+            return false;
+        }
+    }
+    
     scope->As<JSFunction>()->SetSignature(sig);
     return true;
 }
@@ -160,10 +194,11 @@ void JSSourceFile::Parse(int exitDepth)
             break;
         case kJS_VAR:
             // variable
+            OnVariable();
             break;
         case kJS_IDENTIFIER: {
             JSObject::Ptr_t klass = m_lookup->FindObject(token.text);
-            if(klass) {
+            if(klass && klass->IsFunction()) {
                 m_lookup->SetTempScope(klass);
                 OnPropertyOrFunction();
                 m_lookup->SwapScopes();
@@ -195,7 +230,7 @@ void JSSourceFile::OnFunctionThisProperty()
     JSLexerToken token;
     // we are inside a function body and found "this"
     if(!JS_NEXT_TOKEN()) return;
-    JS_CHECK_TYPE_RET_VOID(kJS_DOT);
+    JS_CHECK_TYPE_RETURN(kJS_DOT);
 
     if(!JS_NEXT_TOKEN()) return;
 
@@ -205,16 +240,16 @@ void JSSourceFile::OnFunctionThisProperty()
     // we found "prototype" - read the next dot
     if(token.type == kJS_PROTOTYPE) {
         if(!JS_NEXT_TOKEN()) return;
-        JS_CHECK_TYPE_RET_VOID(kJS_DOT);
+        JS_CHECK_TYPE_RETURN(kJS_DOT);
 
         // the property name
         if(!JS_NEXT_TOKEN()) return;
     }
-    JS_CHECK_TYPE_RET_VOID(kJS_IDENTIFIER);
+    JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
     name = token.text;
 
     if(!JS_NEXT_TOKEN()) return;
-    JS_CHECK_TYPE_RET_VOID('=');
+    JS_CHECK_TYPE_RETURN('=');
 
     if(!JS_NEXT_TOKEN()) return;
     if(token.type == kJS_FUNCTION) {
@@ -222,6 +257,7 @@ void JSSourceFile::OnFunctionThisProperty()
         JSObject::Ptr_t func(new JSFunction());
         func->SetName(name);
         func->SetPath(m_lookup->MakePath(func->GetName()));
+        m_lookup->CurrentScope()->AddChild(func);
         
         // From here on, its the same as normal function
         ParseFunction(func);
@@ -240,21 +276,21 @@ void JSSourceFile::OnPropertyOrFunction()
 {
     JSLexerToken token;
     JS_NEXT_TOKEN_RETURN();
-    JS_CHECK_TYPE_RET_VOID(kJS_DOT);
+    JS_CHECK_TYPE_RETURN(kJS_DOT);
 
     if(!JS_NEXT_TOKEN()) return;
     if(token.type == kJS_PROTOTYPE) {
         JS_NEXT_TOKEN_RETURN();
-        JS_CHECK_TYPE_RET_VOID(kJS_DOT);
+        JS_CHECK_TYPE_RETURN(kJS_DOT);
 
         JS_NEXT_TOKEN_RETURN();
     }
 
-    JS_CHECK_TYPE_RET_VOID(kJS_IDENTIFIER);
+    JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
     wxString name = token.text;
 
     JS_NEXT_TOKEN_RETURN();
-    JS_CHECK_TYPE_RET_VOID('=');
+    JS_CHECK_TYPE_RETURN('=');
 
     JS_NEXT_TOKEN_RETURN();
     if(token.type == kJS_FUNCTION) {
@@ -262,6 +298,7 @@ void JSSourceFile::OnPropertyOrFunction()
         JSObject::Ptr_t func(new JSFunction());
         func->SetName(name);
         func->SetPath(m_lookup->MakePath(func->GetName()));
+        m_lookup->CurrentScope()->AddChild(func);
         
         // From here on, its the same as normal function
         ParseFunction(func);
@@ -273,5 +310,33 @@ void JSSourceFile::OnPropertyOrFunction()
         property->SetName(name);
         property->SetPath(m_lookup->MakePath(property->GetName()));
         m_lookup->CurrentScope()->AddChild(property);
+    }
+}
+
+void JSSourceFile::OnVariable()
+{
+    JSLexerToken token;
+    JS_NEXT_TOKEN_RETURN();
+    JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
+    
+    wxString name = token.text;
+    if(!NextToken(token)) return;
+
+    JSObject::Ptr_t var(new JSObject());
+    var->SetName(name);
+    m_lookup->CurrentScope()->As<JSFunction>()->AddVariable(var);
+    if(token.type != '=') {
+        return;
+    }
+    
+    wxString content;
+    if(ReadUntil(';', content)) {
+        content.Trim().Trim(false);
+        if(content.StartsWith("new")) {
+            content = content.Mid(3);
+            content = content.BeforeFirst('(');
+            content.Trim().Trim(false);
+            var->SetType(content);
+        }
     }
 }

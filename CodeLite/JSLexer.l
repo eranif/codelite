@@ -80,6 +80,8 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>switch {return kJS_SWITCH;}
 <INITIAL>case {return kJS_CASE;}
 <INITIAL>for {return kJS_FOR;}
+<INITIAL>return {return kJS_RETURN;}
+<INITIAL>new {return kJS_NEW;}
 <INITIAL>"." {return kJS_DOT;}
 <INITIAL>{horizontal_white}+ { RETURN_WHITESPACE(); }
 <INITIAL>({v_tab}|{c_return}|{form_feed})+ {RETURN_WHITESPACE();}

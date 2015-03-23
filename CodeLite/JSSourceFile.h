@@ -24,6 +24,7 @@ protected:
     
     // Actions
     void OnFunction();
+    void OnVariable();
     
     /**
      * @brief handle this.<something>... while inside a function

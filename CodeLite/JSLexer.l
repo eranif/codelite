@@ -72,7 +72,7 @@ horizontal_white [ ]|{h_tab}
 %% 
 <<EOF>> {yyterminate();}
 <INITIAL>function {return kJS_FUNCTION;}
-<INITIAL>prototype {return KJS_PROTOTYPE;}
+<INITIAL>prototype {return kJS_PROTOTYPE;}
 <INITIAL>var {return kJS_VAR;}
 <INITIAL>this {return kJS_THIS;}
 <INITIAL>catch {return kJS_CATCH;}

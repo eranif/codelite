@@ -14,7 +14,7 @@ enum {
     kJS_FOR,
     kJS_STRING,
     kJS_IDENTIFIER,
-    KJS_PROTOTYPE,
+    kJS_PROTOTYPE,
 };
 
 // Numbers

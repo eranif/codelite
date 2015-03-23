@@ -6,12 +6,14 @@
 #include <wx/filename.h>
 #include "smart_ptr.h"
 #include <vector>
+#include <map>
 
 class WXDLLIMPEXP_CL JSObject
 {
 public:
     typedef SmartPtr<JSObject> Ptr_t;
     typedef std::vector<JSObject::Ptr_t> Vec_t;
+    typedef std::map<wxString, JSObject::Ptr_t> Map_t;
 
 protected:
     wxString m_name;
@@ -19,11 +21,13 @@ protected:
     wxString m_comment;
     wxFileName m_file;
     int m_line;
+    JSObject::Map_t m_properties;
 
 public:
     JSObject();
     virtual ~JSObject();
 
+    void AddChild(JSObject::Ptr_t child) { m_properties.insert(std::make_pair(child->GetName(), child)); }
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<JSObject*>(this)); }
 
     void SetComment(const wxString& comment) { this->m_comment = comment; }

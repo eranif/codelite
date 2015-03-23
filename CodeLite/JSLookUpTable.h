@@ -10,14 +10,17 @@
 class WXDLLIMPEXP_CL JSLookUpTable
 {
     std::map<wxString, JSObject::Ptr_t> m_objects;
+    JSObject::Ptr_t m_globalScope;
+
 public:
     typedef SmartPtr<JSLookUpTable> Ptr_t;
-    
+
 public:
     JSLookUpTable();
     virtual ~JSLookUpTable();
-    
+
     void AddObject(JSObject::Ptr_t obj);
+    JSObject::Ptr_t GetGlobalScope() { return m_globalScope; }
 };
 
 #endif // JSLOOKUPTABLE_H

@@ -22,6 +22,7 @@ protected:
     void DestroyCCBox();
     void DestroyCurrent();
     void InsertSelection(const wxString& selection);
+    void InsertSelectionTemplateFunction(const wxString& selection);
 
     // Handle the current editor events
     void OnStcModified(wxStyledTextEvent& event);

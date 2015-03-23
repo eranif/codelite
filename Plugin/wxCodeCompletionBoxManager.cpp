@@ -10,8 +10,7 @@
 #include <wx/app.h>
 #include "event_notifier.h"
 
-struct wxCodeCompletionClientData : public wxClientData
-{
+struct wxCodeCompletionClientData : public wxClientData {
     bool m_connected;
     wxCodeCompletionClientData()
         : m_connected(false)
@@ -246,5 +245,34 @@ void wxCodeCompletionBoxManager::DoConnectStcEventHandlers(wxStyledTextCtrl* ctr
         ctrl->SetClientObject(cd);
         ctrl->Bind(wxEVT_KEY_DOWN, &wxCodeCompletionBoxManager::OnStcKeyDown, this);
         ctrl->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBoxManager::OnStcLeftDown, this);
+    }
+}
+
+void wxCodeCompletionBoxManager::InsertSelectionTemplateFunction(const wxString& selection)
+{
+    IManager* manager = ::clGetManager();
+    IEditor* editor = manager->GetActiveEditor();
+    if(editor) {
+        wxStyledTextCtrl* ctrl = editor->GetSTC();
+        // Default behviour: remove the partial text from teh editor and replace it
+        // with the selection
+        int start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
+        int end = ctrl->GetCurrentPos();
+        ctrl->SetSelection(start, end);
+
+        wxString entryText = selection;
+        if(entryText.Find("(") != wxNOT_FOUND) {
+            // a function like
+            wxString textToInsert = entryText.BeforeFirst('(');
+            textToInsert << "<>()";
+            ctrl->ReplaceSelection(textToInsert);
+            // Place the caret between the angle brackets
+            int caretPos = start + textToInsert.Len() - 3;
+            ctrl->SetCurrentPos(caretPos);
+            ctrl->SetSelection(caretPos, caretPos);
+
+        } else {
+            ctrl->ReplaceSelection(entryText);
+        }
     }
 }

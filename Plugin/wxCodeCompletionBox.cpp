@@ -17,6 +17,7 @@
 #include <wx/stc/stc.h>
 #include "ieditor.h"
 #include "imanager.h"
+#include "CxxTemplateFunction.h"
 
 #define LINES_PER_PAGE 8
 #define Y_SPACER 2
@@ -116,7 +117,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
             m_bmpDown = m_bmpDownEnabled;
             m_bmpDownEnabled = tmpBitmap;
         }
-        
+
         {
             wxBitmap tmpBitmap;
             tmpBitmap = m_bmpUp;
@@ -476,6 +477,15 @@ void wxCodeCompletionBox::InsertSelection()
         e.SetEventObject(m_eventObject);
         if(!EventNotifier::Get()->ProcessEvent(e)) {
             // execute the default behavior
+            if(match->m_tag && match->m_tag->IsTemplateFunction()) {
+                CxxTemplateFunction tf(match->m_tag);
+                if(!tf.CanTemplateArgsDeduced()) {
+                    // Insert a template function
+                    wxCodeCompletionBoxManager::Get().CallAfter(
+                        &wxCodeCompletionBoxManager::InsertSelectionTemplateFunction, match->GetText());
+                    return;
+                }
+            }
             wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match->GetText());
         }
     }

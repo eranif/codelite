@@ -100,6 +100,30 @@ TEST_FUNC(parse_locals_in_callback_function)
     return true;
 }
 
+// Test parsing function and attaching the return value from the doc comment
+TEST_FUNC(parse_function_doc_return_value)
+{
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSSourceFile source(lookup, wxFileName("../TestFiles/parse_function_doc_return_value.js"));
+    source.Parse();
+        
+    
+    JSObject::Ptr_t Foo = lookup->FindObject("Foo");
+    const JSObject::Map_t& variables = Foo->As<JSFunction>()->GetVariables();
+    CHECK_BOOL(Foo);
+    CHECK_SIZE(Foo->GetProperties().size(), 2);
+    CHECK_SIZE(variables.size(), 2);
+    CHECK_STRING(Foo->GetType(), "Array");
+    CHECK_SIZE(variables.count("name"), 1);
+    CHECK_SIZE(variables.count("arrOfNames"), 1);
+    
+    // Check the function arguments
+    CHECK_STRING(variables.find("arrOfNames")->second->GetType(), "Array");
+    CHECK_STRING(variables.find("name")->second->GetType(), "string");
+    return true;
+}
+
+
 int main(int argc, char** argv)
 {
     wxInitialize(argc, argv);

@@ -347,6 +347,8 @@
     <File Name="JSLexer.cpp"/>
     <File Name="JSLookUpTable.h"/>
     <File Name="JSLookUpTable.cpp"/>
+    <File Name="JSDocComment.h"/>
+    <File Name="JSDocComment.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

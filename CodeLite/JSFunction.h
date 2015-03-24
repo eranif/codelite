@@ -23,6 +23,7 @@ public:
     const wxString& GetSignature() const { return m_signature; }
 
     const JSObject::Map_t& GetVariables() const { return m_variables; }
+    JSObject::Map_t& GetVariables() { return m_variables; }
     void AddVariable(JSObject::Ptr_t var);
     virtual void Print(int depth);
 };

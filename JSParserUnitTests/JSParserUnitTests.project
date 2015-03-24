@@ -28,6 +28,7 @@
     <File Name="TestFiles/parse_global_function.js"/>
     <File Name="TestFiles/parse_local_variables_in_functions.js"/>
     <File Name="TestFiles/parse_locals_in_callback_function.js"/>
+    <File Name="TestFiles/parse_function_doc_return_value.js"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

@@ -4,6 +4,7 @@
 #include "JSLexerAPI.h"
 #include "file_logger.h"
 #include "JSFunction.h"
+#include "JSDocComment.h"
 
 #define JS_NEXT_TOKEN() NextToken(token)
 #define JS_NEXT_TOKEN_RETURN() \
@@ -59,7 +60,11 @@ void JSSourceFile::OnFunction()
 
         m_lookup->CurrentScope()->AddChild(func);
         ParseFunction(func);
-
+        
+        // Now, parse the comment
+        JSDocComment commenter;
+        commenter.Process(func);
+        
     } else if(token.type == '(') {
         // Unget the current token (ParseFunction requires the open brace)
         UngetToken(token);
@@ -74,6 +79,11 @@ void JSSourceFile::OnFunction()
         AssociateComment(func);
         m_lookup->CurrentScope()->AddChild(func);
         ParseFunction(func);
+        
+        // Now, parse the comment
+        JSDocComment commenter;
+        commenter.Process(func);
+
     }
 }
 
@@ -135,7 +145,6 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
             arg->SetName(curarg);
             arg->SetFile(m_filename);
             arg->SetLine(token.lineNumber);
-            AssociateComment(arg);
             scope->As<JSFunction>()->AddVariable(arg);
             curarg.Clear();
         }
@@ -226,7 +235,10 @@ void JSSourceFile::Parse(int exitDepth)
                 m_lookup->SetTempScope(klass);
                 OnPropertyOrFunction();
                 m_lookup->SwapScopes();
-            } // if
+            }/* else if(m_lookup->GetVisibleVariables().count(token.text)) {
+                // we have a variable with this name, its probably an expression
+                // skip it
+            }*/
         } break;
         case kJS_THIS:
             if(!m_lookup->CurrentPath().IsEmpty()) {
@@ -287,6 +299,10 @@ void JSSourceFile::OnFunctionThisProperty()
         // From here on, its the same as normal function
         ParseFunction(func);
 
+        // Now, parse the comment
+        JSDocComment commenter;
+        commenter.Process(func);
+
     } else {
         wxString assigment;
         ReadUntil(';', assigment);
@@ -334,6 +350,11 @@ void JSSourceFile::OnPropertyOrFunction()
 
         // From here on, its the same as normal function
         ParseFunction(func);
+        
+        // Now, parse the comment
+        JSDocComment commenter;
+        commenter.Process(func);
+
     } else {
         // variable
         wxString assigment;
@@ -403,5 +424,15 @@ void JSSourceFile::AssociateComment(JSObject::Ptr_t obj)
 {
     if((obj->GetLine() -1) == m_lastCommentBlock.lineNumber ) {
         obj->SetComment(m_lastCommentBlock.comment);
+        
+        // For objects, we can parse the comment now.
+        // For function, we need to wait until the entire function is parsed
+        // (we need the function signature, which is not avilable at this point)
+        if(!obj->IsFunction()) {
+            // parse the comment
+            JSDocComment commenter;
+            commenter.Process(obj);
+        }
+        
     }
 }

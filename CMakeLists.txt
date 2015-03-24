@@ -494,6 +494,10 @@ endif ( UNIX AND NOT APPLE )
     endif ( APPLE )
 endif ( NOT NO_CPP_PLUGINS )
 
+if(UNIX AND NOT APPLE)
+    add_subdirectory(JSParserUnitTests)
+endif()
+
 add_subdirectory(Tweaks)
 add_subdirectory(CodeFormatter)
 add_subdirectory(Copyright)

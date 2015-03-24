@@ -144,7 +144,7 @@
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="JSParserUnitTests" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
@@ -169,6 +169,7 @@
       <Project Name="MacBundler" ConfigName="Win_x86_Release"/>
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
       <Project Name="libCodeLite" ConfigName="Win_x86_Release"/>
+      <Project Name="JSParserUnitTests" ConfigName="Linux_Debug"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="hunspell" ConfigName="Debug"/>
       <Project Name="Gizmos" ConfigName="Win_x86_Release"/>
@@ -187,7 +188,6 @@
       <Project Name="CMakePlugin" ConfigName="Win_wxWidgets_29"/>
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
-      <Project Name="JSParserUnitTests" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -324,7 +324,7 @@
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="JSParserUnitTests" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>

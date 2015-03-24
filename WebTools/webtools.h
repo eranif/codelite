@@ -4,6 +4,7 @@
 #include "plugin.h"
 #include "JavaScriptSyntaxColourThread.h"
 #include "cl_command_event.h"
+#include "JSCodeCompletion.h"
 
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
@@ -11,7 +12,8 @@ class WebTools : public IPlugin
     friend class JavaScriptSyntaxColourThread;
 
     JavaScriptSyntaxColourThread* m_jsColourThread;
-
+    JSCodeCompletion::Ptr_t m_jsCodeComplete;
+    
 protected:
     void OnFileLoaded(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);

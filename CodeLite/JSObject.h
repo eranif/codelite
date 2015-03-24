@@ -55,7 +55,7 @@ public:
     void SetPath(const wxString& path) { this->m_path = path; }
     const wxString& GetPath() const { return m_path; }
     void SetType(const wxString& type) { this->m_type = type; }
-    const wxString& GetType() const { return m_type; }
+    const wxString& GetType() const;
 };
 
 #endif // JSOBJECT_H

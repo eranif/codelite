@@ -55,7 +55,9 @@ void NewPHPProjectWizard::OnDirSelected(wxFileDirPickerEvent& event)
 {
     if(!m_nameModified) {
         wxFileName path(event.GetPath(), "");
-        m_textCtrlName->ChangeValue(path.GetDirs().Last());
+        if(!path.GetDirs().IsEmpty()) {
+            m_textCtrlName->ChangeValue(path.GetDirs().Last());
+        }
     }
     DoUpdateProjectFolder();
 }

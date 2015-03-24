@@ -39,6 +39,8 @@
     <File Name="JavaScriptSyntaxColourThread.cpp"/>
     <File Name="JavaScriptFunctionsLocator.h"/>
     <File Name="JavaScriptFunctionsLocator.cpp"/>
+    <File Name="JSCodeCompletion.h"/>
+    <File Name="JSCodeCompletion.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="webtools.h"/>

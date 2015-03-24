@@ -5,6 +5,7 @@
 #include <wx/string.h>
 #include <wx/variant.h>
 #include <map>
+#include <vector>
 #include <codelite_exports.h>
 
 #define DEBUGMSG(...) \
@@ -52,6 +53,7 @@ struct WXDLLIMPEXP_CL JSLexerToken
         type = 0;
         text.Clear();
     }
+    typedef std::vector<JSLexerToken> Vec_t;
 };
 
 /**
@@ -117,7 +119,7 @@ typedef void* JSScanner_t;
 /**
  * @brief create a new Lexer for a file content
  */
-WXDLLIMPEXP_CL JSScanner_t jsLexerNew(const wxString& filename, size_t options = kJSLexerOpt_None);
+WXDLLIMPEXP_CL JSScanner_t jsLexerNew(const wxString& content, size_t options = kJSLexerOpt_None);
 
 /**
  * @brief create a scanner for a given file name

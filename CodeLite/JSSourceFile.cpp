@@ -33,7 +33,7 @@ JSSourceFile::JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxString& fileCont
     , m_lookup(lookup)
     , m_depth(0)
 {
-    m_scanner = ::jsLexerNew(fileContent);
+    m_scanner = ::jsLexerNew(fileContent, kJSLexerOpt_ReturnComments);
 }
 
 JSSourceFile::~JSSourceFile()
@@ -391,12 +391,26 @@ void JSSourceFile::OnVariable()
 
     wxString content;
     if(ReadUntil(';', content)) {
+        content.Replace(" ", "");
+        content.Replace("\t", "");
+        
+        // FIXME: create a json parser to parse the assigment 
+        // and allocate anon object / array based on the assigment type
+        // should be:
+        // string, Array "[...]", number, Object "{...}" and RegExp
         content.Trim().Trim(false);
         if(content.StartsWith("new")) {
             content = content.Mid(3);
             content = content.BeforeFirst('(');
             content.Trim().Trim(false);
             var->SetType(content);
+            
+        } else if(content.StartsWith("{}")) {
+            var->SetType("Object");
+            
+        } else if(content.StartsWith("[]")) {
+            var->SetType("Array");
+            
         }
     }
 }
@@ -433,6 +447,5 @@ void JSSourceFile::AssociateComment(JSObject::Ptr_t obj)
             JSDocComment commenter;
             commenter.Process(obj);
         }
-        
     }
 }

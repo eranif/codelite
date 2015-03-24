@@ -45,6 +45,8 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
+    
+    m_jsCodeComplete.Reset(new JSCodeCompletion());
 }
 
 WebTools::~WebTools() {}
@@ -66,6 +68,7 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
     m_jsColourThread->Stop();
     wxDELETE(m_jsColourThread);
+    m_jsCodeComplete.Reset(NULL);
 }
 
 void WebTools::OnFileLoaded(clCommandEvent& event)
@@ -109,9 +112,7 @@ void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
 {
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && IsJavaScriptFile(editor->GetFileName())) {
-        // We emulate CC for JS by triggering the word-completion plugin
-        wxCommandEvent ccWordComplete(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
-        wxTheApp->AddPendingEvent(ccWordComplete);
+        m_jsCodeComplete->CodeComplete(editor);
     } else {
         event.Skip();
     }

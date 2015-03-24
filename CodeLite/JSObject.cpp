@@ -19,3 +19,12 @@ void JSObject::Print(int depth)
         });
     }
 }
+
+const wxString& JSObject::GetType() const
+{
+    if(m_type.IsEmpty() && IsFunction()) {
+        return GetPath();
+    } else {
+        return m_type;
+    }
+}

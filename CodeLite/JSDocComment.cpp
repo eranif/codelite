@@ -10,8 +10,12 @@ JSDocComment::~JSDocComment() {}
 void JSDocComment::ProcessVarDoc(JSObject::Ptr_t obj)
 {
     static wxRegEx reVarType(wxT("@(var|variable)[ \t]+([$a-zA-Z_]+)[ \t]+([$a-zA-Z_]+)"));
+    static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([$a-zA-Z_]+)"));
     if(reVarType.IsValid() && reVarType.Matches(obj->GetComment())) {
-        wxString type = reVarType.GetMatch(obj->GetComment(), 1);
+        wxString type = reVarType.GetMatch(obj->GetComment(), 2);
+        obj->SetType(type);
+    } else if(reVarType2.IsValid() && reVarType2.Matches(obj->GetComment())) {
+        wxString type = reVarType2.GetMatch(obj->GetComment(), 2);
         obj->SetType(type);
     }
 }

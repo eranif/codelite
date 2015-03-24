@@ -349,6 +349,8 @@
     <File Name="JSLookUpTable.cpp"/>
     <File Name="JSDocComment.h"/>
     <File Name="JSDocComment.cpp"/>
+    <File Name="JSExpressionParser.h"/>
+    <File Name="JSExpressionParser.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

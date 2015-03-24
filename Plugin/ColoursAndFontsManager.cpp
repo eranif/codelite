@@ -411,6 +411,7 @@ void ColoursAndFontsManager::Save(bool userLexers)
                 wxString label = userLexers ? _("Upgrading user theme: ") : _("Upgrading theme: ");
                 event.SetString(wxString() << label << lexers.at(i)->GetThemeName() << ", " << lexers.at(i)->GetName());
                 EventNotifier::Get()->ProcessEvent(event);
+                wxSafeYield();
             }
             Save(lexers.at(i));
         }

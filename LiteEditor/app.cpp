@@ -673,12 +673,10 @@ bool CodeLiteApp::OnInit()
 
     // determine if the 'upgrade' frame needs to be started instead of the
     // standard main frame
-    bool needsLexerLoadedEvent(false);
     if(ColoursAndFontsManager::Get().IsUpgradeNeeded()) {
-        clInitializeDialog initDialog(NULL);
+        clInitializeDialog initDialog(clSplashScreen::g_splashScreen);
         SetTopWindow(&initDialog);
         initDialog.ShowModal();
-        needsLexerLoadedEvent = true;
     } else {
         // Make sure that the colours and fonts manager is instantiated
         ColoursAndFontsManager::Get().Load();

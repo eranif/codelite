@@ -33,7 +33,7 @@ clInitializeDialogBase::clInitializeDialogBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer6 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(boxSizer6);
     
-    m_banner = new wxBannerWindow(m_panel4, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_banner = new wxBannerWindow(m_panel4, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner->SetBitmap(wxNullBitmap);
     m_banner->SetText(_("Initializing CodeLite"), wxT(""));
     m_banner->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));

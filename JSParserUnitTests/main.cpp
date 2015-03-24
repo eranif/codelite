@@ -18,6 +18,7 @@ TEST_FUNC(test_parse_simple_class)
     JSObject::Ptr_t Foo = lookup->FindObject("Foo");
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 2);
+    Foo->Print(0);
     return true;
 }
 
@@ -80,6 +81,22 @@ TEST_FUNC(parse_local_variables_in_functions)
     JSObject::Map_t variables = lookup->GetVisibleVariables();
     CHECK_SIZE(variables.size(), 5);
     
+    return true;
+}
+
+// Parse local variables declare inside a callback function
+TEST_FUNC(parse_locals_in_callback_function)
+{
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSSourceFile source(lookup, wxFileName("../TestFiles/parse_locals_in_callback_function.js"));
+    source.Parse();
+    
+    JSObject::Map_t vars = lookup->GetVisibleVariables();
+    CHECK_SIZE(vars.size(), 3);
+    
+    CHECK_SIZE(vars.count("event"), 1);
+    CHECK_SIZE(vars.count("local_var"), 1);
+    CHECK_SIZE(vars.count("element"), 1);
     return true;
 }
 

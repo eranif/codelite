@@ -454,7 +454,8 @@ CxxLexer.cpp: CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 JSLexer.cpp: JSLexer.l
-	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l</CustomPreBuild>
+	flex -Pjs --batch --outfile=JSLexer.cpp JSLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -512,8 +513,7 @@ CxxLexer.cpp: CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 JSLexer.cpp: JSLexer.l
-	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
-</CustomPreBuild>
+	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>

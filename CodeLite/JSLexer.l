@@ -273,7 +273,9 @@ bool jsLexerNext(void* scanner, JSLexerToken& token)
         case kJS_C_COMMENT:
             token.comment = userData->GetComment();
             userData->ClearComment();
-            token.lineNumber = userData->GetCommentStartLine();
+            // for block comments, we want the last line of the comment
+            // because we usually want to match it to the statement under it
+            token.lineNumber = yylineno;
             break;
         default:
             token.lineNumber = yylineno;

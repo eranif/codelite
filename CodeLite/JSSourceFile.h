@@ -15,6 +15,8 @@ class WXDLLIMPEXP_CL JSSourceFile
     wxFileName m_filename;
     JSLookUpTable::Ptr_t m_lookup;
     int m_depth;
+    JSLexerToken m_lastToken;
+    JSLexerToken m_lastCommentBlock;
     
 protected:
     bool ReadSignature(JSObject::Ptr_t scope);
@@ -36,6 +38,12 @@ protected:
     void OnPropertyOrFunction();
     
     bool NextToken(JSLexerToken& token);
+    void UngetToken(const JSLexerToken& token);
+    
+    /**
+     * @brief try to match the comment to an object
+     */
+    void AssociateComment(JSObject::Ptr_t obj);
     
 public:
     JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxString& fileContent, const wxFileName& filename);

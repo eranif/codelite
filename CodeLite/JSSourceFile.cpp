@@ -5,11 +5,11 @@
 #include "file_logger.h"
 #include "JSFunction.h"
 
-#define JS_NEXT_TOKEN() ::jsLexerNext(m_scanner, token)
+#define JS_NEXT_TOKEN() NextToken(token)
 #define JS_NEXT_TOKEN_RETURN() \
-    if(!::jsLexerNext(m_scanner, token)) return
+    if(!NextToken(token)) return
 #define JS_NEXT_TOKEN_RETURN_FALSE() \
-    if(!::jsLexerNext(m_scanner, token)) return false
+    if(!NextToken(token)) return false
 
 #define JS_CHECK_TYPE_RET_FALSE(t) \
     if(token.type != t) return false
@@ -52,7 +52,26 @@ void JSSourceFile::OnFunction()
     if(token.type == kJS_IDENTIFIER) {
         JSObject::Ptr_t func(new JSFunction());
         func->SetName(token.text);
-        func->SetPath(m_lookup->MakePath(token.text));
+        func->SetPath(m_lookup->MakePath(func->GetName()));
+        func->SetFile(m_filename);
+        func->SetLine(token.lineNumber);
+        AssociateComment(func);
+
+        m_lookup->CurrentScope()->AddChild(func);
+        ParseFunction(func);
+
+    } else if(token.type == '(') {
+        // Unget the current token (ParseFunction requires the open brace)
+        UngetToken(token);
+        
+        // Anon function
+        static int anonCounter = 0;
+        JSObject::Ptr_t func(new JSFunction());
+        func->SetName(wxString::Format("__anon%d", ++anonCounter));
+        func->SetPath(func->GetName());
+        func->SetFile(m_filename);
+        func->SetLine(token.lineNumber);
+        AssociateComment(func);
         m_lookup->CurrentScope()->AddChild(func);
         ParseFunction(func);
     }
@@ -67,15 +86,20 @@ void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
         JS_NEXT_TOKEN();
         JS_CHECK_TYPE_RETURN('{');
         ++m_depth;
-        
+
         // store this match
         m_lookup->AddObject(func);
-        
+
         // Increase the scope
         m_lookup->PushScope(func);
-        
+
         int exitDepth = m_depth - 1;
         Parse(exitDepth);
+        
+        // FIXME: finalize the function by setting its type and param
+        // based on the document comment block
+        
+        
         // if the current scope not closed properly, don't remove it from list of scopes
         if(exitDepth == m_depth) {
             m_lookup->PopScope();
@@ -92,16 +116,16 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
     JS_CHECK_TYPE_RET_FALSE('(');
 
     sig << "(";
-    
+
     wxString curarg;
     int startDepth = m_depth;
     while(JS_NEXT_TOKEN()) {
-        
+
         if(curarg.IsEmpty() && token.type == kJS_IDENTIFIER) {
             curarg << token.text;
         }
         sig << token.text;
-        
+
         if(token.type == '{') {
             ++m_depth;
         } else if(token.type == '}') {
@@ -109,13 +133,13 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
         } else if(!curarg.IsEmpty() && (token.type == ',' || token.type == ')')) {
             JSObject::Ptr_t arg(new JSObject());
             arg->SetName(curarg);
-            // FIXME: set the type based on the doc
             arg->SetFile(m_filename);
             arg->SetLine(token.lineNumber);
+            AssociateComment(arg);
             scope->As<JSFunction>()->AddVariable(arg);
             curarg.Clear();
         }
-        
+
         // breaking condition
         if((token.type == ')') && (m_depth == startDepth)) {
             break;
@@ -123,7 +147,7 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
             return false;
         }
     }
-    
+
     scope->As<JSFunction>()->SetSignature(sig);
     return true;
 }
@@ -202,7 +226,7 @@ void JSSourceFile::Parse(int exitDepth)
                 m_lookup->SetTempScope(klass);
                 OnPropertyOrFunction();
                 m_lookup->SwapScopes();
-            }
+            } // if
         } break;
         case kJS_THIS:
             if(!m_lookup->CurrentPath().IsEmpty()) {
@@ -222,8 +246,6 @@ void JSSourceFile::Parse(int exitDepth)
         }
     }
 }
-
-bool JSSourceFile::NextToken(JSLexerToken& token) { return ::jsLexerNext(m_scanner, token); }
 
 void JSSourceFile::OnFunctionThisProperty()
 {
@@ -257,8 +279,11 @@ void JSSourceFile::OnFunctionThisProperty()
         JSObject::Ptr_t func(new JSFunction());
         func->SetName(name);
         func->SetPath(m_lookup->MakePath(func->GetName()));
+        func->SetFile(m_filename);
+        func->SetLine(token.lineNumber);
+        AssociateComment(func);
         m_lookup->CurrentScope()->AddChild(func);
-        
+
         // From here on, its the same as normal function
         ParseFunction(func);
 
@@ -268,6 +293,9 @@ void JSSourceFile::OnFunctionThisProperty()
         JSObject::Ptr_t property(new JSObject());
         property->SetName(name);
         property->SetPath(m_lookup->MakePath(property->GetName()));
+        property->SetFile(m_filename);
+        property->SetLine(token.lineNumber);
+        AssociateComment(property);
         m_lookup->CurrentScope()->AddChild(property);
     }
 }
@@ -298,8 +326,12 @@ void JSSourceFile::OnPropertyOrFunction()
         JSObject::Ptr_t func(new JSFunction());
         func->SetName(name);
         func->SetPath(m_lookup->MakePath(func->GetName()));
-        m_lookup->CurrentScope()->AddChild(func);
+        func->SetFile(m_filename);
+        func->SetLine(token.lineNumber);
+        AssociateComment(func);
         
+        m_lookup->CurrentScope()->AddChild(func);
+
         // From here on, its the same as normal function
         ParseFunction(func);
     } else {
@@ -309,6 +341,10 @@ void JSSourceFile::OnPropertyOrFunction()
         JSObject::Ptr_t property(new JSObject());
         property->SetName(name);
         property->SetPath(m_lookup->MakePath(property->GetName()));
+        property->SetFile(m_filename);
+        property->SetLine(token.lineNumber);
+        AssociateComment(property);
+        
         m_lookup->CurrentScope()->AddChild(property);
     }
 }
@@ -318,17 +354,20 @@ void JSSourceFile::OnVariable()
     JSLexerToken token;
     JS_NEXT_TOKEN_RETURN();
     JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
-    
+
     wxString name = token.text;
     if(!NextToken(token)) return;
 
     JSObject::Ptr_t var(new JSObject());
     var->SetName(name);
+    var->SetLine(token.lineNumber);
+    var->SetFile(m_filename);
+    AssociateComment(var);
     m_lookup->CurrentScope()->As<JSFunction>()->AddVariable(var);
     if(token.type != '=') {
         return;
     }
-    
+
     wxString content;
     if(ReadUntil(';', content)) {
         content.Trim().Trim(false);
@@ -338,5 +377,31 @@ void JSSourceFile::OnVariable()
             content.Trim().Trim(false);
             var->SetType(content);
         }
+    }
+}
+
+bool JSSourceFile::NextToken(JSLexerToken& token)
+{
+    if(m_lastToken.type != 0) {
+        // Reuse the last token
+        token = m_lastToken;
+        m_lastToken.Clear();
+        return true;
+    } else {
+        bool res = ::jsLexerNext(m_scanner, token);
+        if(res && token.type == kJS_C_COMMENT) {
+            // doc comment
+            m_lastCommentBlock = token;
+        }
+        return res;
+    }
+}
+
+void JSSourceFile::UngetToken(const JSLexerToken& token) { m_lastToken = token; }
+
+void JSSourceFile::AssociateComment(JSObject::Ptr_t obj)
+{
+    if((obj->GetLine() -1) == m_lastCommentBlock.lineNumber ) {
+        obj->SetComment(m_lastCommentBlock.comment);
     }
 }

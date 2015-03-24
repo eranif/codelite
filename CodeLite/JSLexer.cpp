@@ -1,5 +1,6 @@
+#line 2 "JSLexer.cpp"
 
-#line 3 "JSLexer.cpp"
+#line 4 "JSLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -594,6 +595,8 @@ static yyconst flex_int32_t yy_rule_can_match_eol[54] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
+#line 1 "JSLexer.l"
+#line 2 "JSLexer.l"
 //
 //====================--------------------------------------------------------------
 // Eran Ifrah 2014 (c)
@@ -628,6 +631,10 @@ extern "C" int jswrap(void*) { return 1; }
 
 /* regex and modes */
 /* options */
+
+
+
+#line 638 "JSLexer.cpp"
 
 #define INITIAL 0
 #define WRAP_PREP 1
@@ -855,6 +862,10 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
+#line 72 "JSLexer.l"
+
+#line 868 "JSLexer.cpp"
+
 	if ( !yyg->yy_init )
 		{
 		yyg->yy_init = 1;
@@ -948,179 +959,222 @@ case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(WRAP_PREP):
 case YY_STATE_EOF(CPP_COMMENT):
 case YY_STATE_EOF(C_COMMENT):
+#line 73 "JSLexer.l"
 {yyterminate();}
 	YY_BREAK
 case 1:
 YY_RULE_SETUP
+#line 74 "JSLexer.l"
 {return kJS_FUNCTION;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
+#line 75 "JSLexer.l"
 {return kJS_PROTOTYPE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
+#line 76 "JSLexer.l"
 {return kJS_VAR;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
+#line 77 "JSLexer.l"
 {return kJS_THIS;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
+#line 78 "JSLexer.l"
 {return kJS_CATCH;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
+#line 79 "JSLexer.l"
 {return kJS_THROW;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
+#line 80 "JSLexer.l"
 {return kJS_SWITCH;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
+#line 81 "JSLexer.l"
 {return kJS_CASE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
+#line 82 "JSLexer.l"
 {return kJS_FOR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
+#line 83 "JSLexer.l"
 {return kJS_RETURN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
+#line 84 "JSLexer.l"
 {return kJS_NEW;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
+#line 85 "JSLexer.l"
 {return kJS_DOT;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
+#line 86 "JSLexer.l"
 { RETURN_WHITESPACE(); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
+#line 87 "JSLexer.l"
 {RETURN_WHITESPACE();}
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
+#line 88 "JSLexer.l"
 { RETURN_NEWLINE(); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
+#line 89 "JSLexer.l"
 { return kJS_DEC_NUMBER;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
+#line 90 "JSLexer.l"
 { return kJS_OCTAL_NUMBER;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
+#line 91 "JSLexer.l"
 { return kJS_HEX_NUMBER; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
+#line 92 "JSLexer.l"
 { return kJS_FLOAT_NUMBER;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
+#line 93 "JSLexer.l"
 { return kJS_PLUS_PLUS; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
+#line 94 "JSLexer.l"
 { return kJS_MINUS_MINUS; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
+#line 95 "JSLexer.l"
 { return kJS_LS; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
+#line 96 "JSLexer.l"
 { return kJS_RS; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
+#line 97 "JSLexer.l"
 { return kJS_LE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
+#line 98 "JSLexer.l"
 { return kJS_GE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
+#line 99 "JSLexer.l"
 { return kJS_EQUAL; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
+#line 100 "JSLexer.l"
 { return kJS_NOT_EQUAL; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
+#line 101 "JSLexer.l"
 { return kJS_AND_AND;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
+#line 102 "JSLexer.l"
 { return kJS_OR_OR;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
+#line 103 "JSLexer.l"
 { return kJS_STAR_EQUAL;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
+#line 104 "JSLexer.l"
 { return kJS_SLASH_EQUAL;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
+#line 105 "JSLexer.l"
 { return kJS_DIV_EQUAL;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
+#line 106 "JSLexer.l"
 { return kJS_PLUS_EQUAL;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
+#line 107 "JSLexer.l"
 { return kJS_MINUS_EQUAL;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
+#line 108 "JSLexer.l"
 { return kJS_LS_ASSIGN;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
+#line 109 "JSLexer.l"
 { return kJS_RS_ASSIGN;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
+#line 110 "JSLexer.l"
 { return kJS_AND_EQUAL;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
+#line 111 "JSLexer.l"
 { return kJS_POW_EQUAL;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
+#line 112 "JSLexer.l"
 { return kJS_OR_EQUAL;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
+#line 113 "JSLexer.l"
 {
     return kJS_STRING;
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
+#line 116 "JSLexer.l"
 {
     return kJS_STRING;
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
+#line 119 "JSLexer.l"
 {
     // Clear the comment collected
     BEGIN C_COMMENT;
@@ -1135,6 +1189,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
+#line 130 "JSLexer.l"
 {
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1150,6 +1205,7 @@ YY_RULE_SETUP
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
+#line 141 "JSLexer.l"
 { 
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1159,6 +1215,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
+#line 147 "JSLexer.l"
 {
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1169,6 +1226,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
+#line 155 "JSLexer.l"
 {
     int oldState = yyg->yy_start;
     BEGIN CPP_COMMENT;
@@ -1183,18 +1241,21 @@ YY_RULE_SETUP
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
+#line 166 "JSLexer.l"
 { 
 }
 	YY_BREAK
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
+#line 168 "JSLexer.l"
 { 
 }
 	YY_BREAK
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
+#line 170 "JSLexer.l"
 {
     BEGIN INITIAL;
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
@@ -1206,6 +1267,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
+#line 178 "JSLexer.l"
 { 
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1216,20 +1278,24 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
+#line 185 "JSLexer.l"
 { 
     return kJS_IDENTIFIER;
 }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
+#line 188 "JSLexer.l"
 { 
     return yytext[0];
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
+#line 192 "JSLexer.l"
 ECHO;
 	YY_BREAK
+#line 1299 "JSLexer.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2391,6 +2457,10 @@ void jsfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
+#line 191 "JSLexer.l"
+
+
+
 //=============-------------------------------
 // API methods implementation
 //=============-------------------------------
@@ -2473,7 +2543,9 @@ bool jsLexerNext(void* scanner, JSLexerToken& token)
         case kJS_C_COMMENT:
             token.comment = userData->GetComment();
             userData->ClearComment();
-            token.lineNumber = userData->GetCommentStartLine();
+            // for block comments, we want the last line of the comment
+            // because we usually want to match it to the statement under it
+            token.lineNumber = yylineno;
             break;
         default:
             token.lineNumber = yylineno;

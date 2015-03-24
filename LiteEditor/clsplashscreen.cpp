@@ -25,6 +25,7 @@
 
 #include "clsplashscreen.h"
 #include <wx/dcmemory.h>
+#include <wx/settings.h>
 extern wxString CODELITE_VERSION_STR;
 
 clSplashScreen* clSplashScreen::g_splashScreen = NULL;

@@ -534,6 +534,7 @@ EVT_MENU(XRCID("tags_options"), clMainFrame::OnCtagsOptions)
 //-------------------------------------------------------
 EVT_MENU(wxID_ABOUT, clMainFrame::OnAbout)
 EVT_MENU(XRCID("check_for_update"), clMainFrame::OnCheckForUpdate)
+EVT_MENU(XRCID("run_setup_wizard"), clMainFrame::OnRunSetupWizard)
 
 //-------------------------------------------------------
 // Perspective menu
@@ -2018,6 +2019,46 @@ void clMainFrame::CreateToolbars16()
     }
 }
 
+bool clMainFrame::StartSetupWizard()
+{
+    clBootstrapWizard wiz(this);
+    if(wiz.RunWizard(wiz.GetFirstPage())) {
+        {
+            wxString message;
+
+            if(wiz.IsRestartRequired()) {
+                message << _("Applying your choices and restarting CodeLite");
+            } else {
+                message << _("Applying your choices, this may take a few seconds");
+            }
+
+            wxBusyInfo bi(message);
+
+            clBootstrapData data = wiz.GetData();
+
+            // update the compilers if not empty
+            if(!data.compilers.empty()) {
+                BuildSettingsConfigST::Get()->SetCompilers(data.compilers);
+                CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
+            }
+            OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+            options->SetIndentUsesTabs(data.useTabs);
+            options->SetShowWhitspaces(data.whitespaceVisibility);
+            EditorConfigST::Get()->SetOptions(options);
+
+            // Update the theme
+            ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
+        }
+
+        if(wiz.IsRestartRequired()) {
+            clCommandEvent restartEvent(wxEVT_RESTART_CODELITE);
+            ManagerST::Get()->AddPendingEvent(restartEvent);
+            return true;
+        }
+    }
+    return false;
+}
+
 void clMainFrame::Bootstrap()
 {
     if(!clSplashScreen::g_destroyed && clSplashScreen::g_splashScreen) {
@@ -2025,54 +2066,20 @@ void clMainFrame::Bootstrap()
         clSplashScreen::g_splashScreen->Destroy();
         clSplashScreen::g_splashScreen = NULL;
     }
-    
+
     if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
-        clBootstrapWizard wiz(this);
-        if(wiz.RunWizard(wiz.GetFirstPage())) {
-            {
-                wxString message;
-                
-                if(wiz.IsRestartRequired()) {
-                    message << _("Applying your choices and restarting CodeLite");
-                } else {
-                    message << _("Applying your choices, this may take a few seconds");
-                }
-
-                wxBusyInfo bi(message);
-                
-                clBootstrapData data = wiz.GetData();
-                
-                // update the compilers if not empty
-                if(!data.compilers.empty()) {
-                    BuildSettingsConfigST::Get()->SetCompilers(data.compilers);
-                    CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
-                }
-                OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-                options->SetIndentUsesTabs(data.useTabs);
-                options->SetShowWhitspaces(data.whitespaceVisibility);
-                EditorConfigST::Get()->SetOptions(options);
-                
-                // Update the theme
-                ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
-            }
-            
-            if(wiz.IsRestartRequired()) {
-                clCommandEvent restartEvent(wxEVT_RESTART_CODELITE);
-                ManagerST::Get()->AddPendingEvent(restartEvent);
-                return;
-            }
-        }
+        if(StartSetupWizard()) return;
     }
-    
+
     // Build the "View As" menu
     CreateViewAsSubMenu();
-    
+
     // Load the session manager
     wxString sessConfFile;
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
-    
+
     // restore last session if needed
     if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
@@ -6061,3 +6068,11 @@ void clMainFrame::OnShowTabBar(wxCommandEvent& event)
 }
 
 void clMainFrame::OnShowTabBarUI(wxUpdateUIEvent& event) { event.Check(clConfig::Get().Read(kConfigShowTabBar, true)); }
+
+void clMainFrame::OnRunSetupWizard(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    if(!StartSetupWizard()) {
+        GetMainBook()->ApplySettingsChanges();
+    }
+}

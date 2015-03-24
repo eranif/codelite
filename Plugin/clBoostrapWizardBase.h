@@ -17,9 +17,9 @@
 #include "clBoostrapWizardPage.h"
 #include <wx/sizer.h>
 #include <wx/bannerwindow.h>
+#include <wx/commandlinkbutton.h>
 #include <wx/dataview.h>
 #include <wx/button.h>
-#include <wx/commandlinkbutton.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/stc/stc.h>
@@ -32,6 +32,7 @@ protected:
 
     clBoostrapWizardPageWelcome* m_wizardPageWelcome;
     wxBannerWindow* m_banner81;
+    wxCommandLinkButton* m_cmdLnkBtn107;
     clBoostrapWizardPagePlugins* m_wizardPagePlugins;
     wxBannerWindow* m_banner811;
     wxDataViewListCtrl* m_dvListCtrlPlugins;
@@ -54,6 +55,7 @@ protected:
 
 protected:
     virtual void OnFinish(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnCancelWizard(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckAllPlugins(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckAllPluginsUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUnCheckAllPlugins(wxCommandEvent& event) { event.Skip(); }
@@ -66,6 +68,7 @@ protected:
 
 public:
     wxBannerWindow* GetBanner81() { return m_banner81; }
+    wxCommandLinkButton* GetCmdLnkBtn107() { return m_cmdLnkBtn107; }
     clBoostrapWizardPageWelcome* GetWizardPageWelcome() { return m_wizardPageWelcome; }
     wxBannerWindow* GetBanner811() { return m_banner811; }
     wxDataViewListCtrl* GetDvListCtrlPlugins() { return m_dvListCtrlPlugins; }

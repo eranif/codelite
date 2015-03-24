@@ -8,6 +8,7 @@
 #include "plugindata.h"
 #include <algorithm>
 #include "macros.h"
+#include <wx/msgdlg.h>
 
 class clBootstrapWizardPluginData : public wxClientData
 {
@@ -131,12 +132,12 @@ wxBitmap clBootstrapWizard::GenerateBitmap(size_t labelIndex)
 
     wxBitmap bmp(150, 500);
     wxMemoryDC memDC(bmp);
-    memDC.SetPen(*wxWHITE);
-    memDC.SetBrush(*wxWHITE);
+    memDC.SetPen(wxColour("rgb(64, 64, 64)"));
+    memDC.SetBrush(wxColour("rgb(64, 64, 64)"));
     memDC.DrawRectangle(wxRect(bmp.GetSize()));
     memDC.SetPen(*wxBLACK_PEN);
     memDC.DrawLine(149, 0, 149, 500);
-    
+
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxFont boldFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     boldFont.SetWeight(wxFONTWEIGHT_BOLD);
@@ -150,8 +151,7 @@ wxBitmap clBootstrapWizard::GenerateBitmap(size_t labelIndex)
         // Draw the text (align to the right)
         wxCoord textX, textY, bmpX, bmpY;
         memDC.SetFont(font);
-        memDC.SetTextForeground(i == labelIndex ? wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT) :
-                                                  wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        memDC.SetTextForeground(i == labelIndex ? *wxWHITE : wxColour("rgb(200, 200, 200)"));
         memDC.SetFont(i == labelIndex ? boldFont : font);
         textSize = memDC.GetTextExtent(labels.Item(i));
         textX = /*bmp.GetWidth() - textSize.GetWidth() - 16*/ 16;
@@ -204,7 +204,7 @@ void clBootstrapWizard::OnCheckAllPluginsUI(wxUpdateUIEvent& event)
     event.Enable((int)enabledPlugins.size() != m_dvListCtrlPlugins->GetItemCount());
 }
 
-void clBootstrapWizard::OnToggleCxxPlugins(wxCommandEvent& event) 
+void clBootstrapWizard::OnToggleCxxPlugins(wxCommandEvent& event)
 {
     static bool enablePlugins = false;
     wxArrayString cxxPlugins;
@@ -219,7 +219,7 @@ void clBootstrapWizard::OnToggleCxxPlugins(wxCommandEvent& event)
     cxxPlugins.Add("Wizards");
     cxxPlugins.Add("wxFormBuilder");
     cxxPlugins.Add("wxcrafter");
-    
+
     for(int i = 0; i < m_dvListCtrlPlugins->GetItemCount(); ++i) {
         wxVariant newState(enablePlugins);
         wxVariant pluginName;
@@ -287,8 +287,17 @@ void clBootstrapWizard::OnFinish(wxWizardEvent& event)
         clConfig conf("plugins.conf");
         PluginInfoArray plugins;
         conf.ReadItem(&plugins);
-        
+
         plugins.DisablePugins(GetUnSelectedPlugins());
         conf.WriteItem(&plugins);
     }
+}
+
+void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
+{
+    ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"),
+                   "CodeLite",
+                   wxOK | wxCENTER | wxICON_INFORMATION,
+                   this);
+    CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
 }

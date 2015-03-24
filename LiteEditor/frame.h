@@ -333,7 +333,12 @@ private:
     void DoEnableWorkspaceViewFlag(bool enable, int flag);
     void DoUpdatePerspectiveMenu();
     bool IsWorkspaceViewFlagEnabled(int flag);
-
+    /**
+     * @brief show the startup wizard
+     * @return true if a restart is needed
+     */
+    bool StartSetupWizard();
+    
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
@@ -360,6 +365,7 @@ protected:
     void OnFunctionCalltip(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnCheckForUpdate(wxCommandEvent& e);
+    void OnRunSetupWizard(wxCommandEvent& e);
     void OnFileNew(wxCommandEvent& event);
     void OnFileOpen(wxCommandEvent& event);
     void OnFileClose(wxCommandEvent& event);

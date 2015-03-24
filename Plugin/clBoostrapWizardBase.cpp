@@ -32,10 +32,22 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner81 = new wxBannerWindow(m_wizardPageWelcome, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner81->SetBitmap(wxNullBitmap);
     m_banner81->SetText(_("Welcome to the setup wizard"), _("This wizard will help you setup CodeLite to fit your coding style. Click Next to continue"));
-    m_banner81->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner81->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    m_banner81->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
+    m_banner81->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer79->Add(m_banner81, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer105 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer79->Add(boxSizer105, 1, wxALL|wxEXPAND, 5);
+    
+    boxSizer105->Add(0, 0, 1, wxALL|wxEXPAND, 5);
+    
+    m_cmdLnkBtn107 = new wxCommandLinkButton(m_wizardPageWelcome, wxID_ANY, _("Not this time!"), _("If your CodeLite is already configured the way you like it, click to skip the Wizard"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer105->Add(m_cmdLnkBtn107, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    boxSizer105->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
     m_wizardPagePlugins = new clBoostrapWizardPagePlugins(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPagePlugins);
@@ -46,8 +58,8 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner811 = new wxBannerWindow(m_wizardPagePlugins, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner811->SetBitmap(wxNullBitmap);
     m_banner811->SetText(_("Plugins"), _("By default CodeLite comes with many plugins. Here you can disable some if needed"));
-    m_banner811->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner811->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    m_banner811->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
+    m_banner811->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer89->Add(m_banner811, 0, wxALL|wxEXPAND, 5);
     
@@ -90,8 +102,8 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner69 = new wxBannerWindow(m_wizardPageCompilers, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner69->SetBitmap(wxNullBitmap);
     m_banner69->SetText(_("Setup compilers"), _("Let CodeLite configure your installed compilers or help you install one"));
-    m_banner69->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner69->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    m_banner69->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
+    m_banner69->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer52->Add(m_banner69, 0, wxALL|wxEXPAND, 5);
     
@@ -119,14 +131,15 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner71 = new wxBannerWindow(m_wizardPageColoursAndFonts, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner71->SetBitmap(wxNullBitmap);
     m_banner71->SetText(_("Customize colours"), _("Select the editor theme from the list below"));
-    m_banner71->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner71->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    m_banner71->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
+    m_banner71->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer12->Add(m_banner71, 0, wxALL|wxEXPAND, 5);
     
     wxArrayString m_choiceThemeArr;
     m_choiceTheme = new wxChoice(m_wizardPageColoursAndFonts, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceThemeArr, wxBORDER_NONE);
     m_choiceTheme->SetToolTip(_("Select the theme from a list.\nIf the selected theme does not exist for a given language, CodeLite will select the closest one available"));
+    m_choiceTheme->SetFocus();
     
     boxSizer12->Add(m_choiceTheme, 0, wxALL|wxEXPAND, 5);
     
@@ -192,8 +205,8 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner73 = new wxBannerWindow(m_wizardPageWhitespace, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner73->SetBitmap(wxNullBitmap);
     m_banner73->SetText(_("Whitespace & Indentation"), _("Should CodeLite use TABS or SPACES for indentation?"));
-    m_banner73->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner73->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    m_banner73->SetGradient(wxColour(wxT("rgb(64,64,64)")), wxColour(wxT("rgb(64,64,64)")));
+    m_banner73->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer30->Add(m_banner73, 0, wxALL|wxEXPAND, 5);
     
@@ -225,6 +238,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     Centre(wxBOTH);
     // Connect events
     this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(clBoostrapWizardBase::OnFinish), NULL, this);
+    m_cmdLnkBtn107->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCancelWizard), NULL, this);
     m_button99->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCheckAllPlugins), NULL, this);
     m_button99->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnCheckAllPluginsUI), NULL, this);
     m_button101->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnUnCheckAllPlugins), NULL, this);
@@ -240,6 +254,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
 clBoostrapWizardBase::~clBoostrapWizardBase()
 {
     this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(clBoostrapWizardBase::OnFinish), NULL, this);
+    m_cmdLnkBtn107->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCancelWizard), NULL, this);
     m_button99->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCheckAllPlugins), NULL, this);
     m_button99->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnCheckAllPluginsUI), NULL, this);
     m_button101->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnUnCheckAllPlugins), NULL, this);

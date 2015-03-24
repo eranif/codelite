@@ -30,6 +30,7 @@ public:
     bool IsRestartRequired();
     
 protected:
+    virtual void OnCancelWizard(wxCommandEvent& event);
     virtual void OnFinish(wxWizardEvent& event);
     virtual void OnCheckAllPlugins(wxCommandEvent& event);
     virtual void OnCheckAllPluginsUI(wxUpdateUIEvent& event);

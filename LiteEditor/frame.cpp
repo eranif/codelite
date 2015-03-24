@@ -139,9 +139,6 @@
 #include "clang_code_completion.h"
 #include "cl_defs.h"
 
-static clSplashScreen* g_splashScreen = NULL;
-static bool g_splashDestroyed = false;
-
 //////////////////////////////////////////////////
 
 // from auto-generated file svninfo.cpp:
@@ -179,40 +176,6 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #define TB_SEPARATOR()
 #else
 #define TB_SEPARATOR() tb->AddSeparator()
-#endif
-
-#if !defined(__WXMAC__)
-static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp)
-{
-    wxBitmap bmp;
-    wxMemoryDC memDC;
-    
-    bmp = wxBitmap(origBmp.GetWidth(), origBmp.GetHeight());
-    memDC.SelectObject(bmp);
-    memDC.SetBrush(wxColour(63, 80, 24));
-    memDC.SetPen(wxColour(63, 80, 24));
-    memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
-    memDC.DrawBitmap(origBmp, 0, 0, true);
-    memDC.SetPen(*wxWHITE);
-    memDC.SetBrush(*wxTRANSPARENT_BRUSH);
-    memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
-
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    font.SetPointSize(14);
-    font.SetWeight(wxFONTWEIGHT_BOLD);
-    
-    
-    memDC.SetFont(font);
-    wxString versionString;
-    versionString << "v" << CODELITE_VERSION_STR;
-    wxSize textSize = memDC.GetTextExtent(versionString);
-    wxCoord textx, texty;
-    textx = (bmp.GetWidth() - textSize.GetWidth()) - 5;
-    texty = 5;
-    memDC.DrawText(versionString, textx, texty);
-    memDC.SelectObject(wxNullBitmap);
-    return bmp;
-}
 #endif
 
 //----------------------------------------------------------------
@@ -787,9 +750,6 @@ clMainFrame::clMainFrame(wxWindow* pParent,
                                this);
     EventNotifier::Get()->Bind(
         wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
-
-    EventNotifier::Get()->Connect(
-        wxEVT_COLOURS_AND_FONTS_LOADED, clColourEventHandler(clMainFrame::OnColoursAndFontsLoaded), NULL, this);
     Connect(wxID_UNDO,
             wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN,
             wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo),
@@ -894,8 +854,6 @@ clMainFrame::~clMainFrame(void)
                NULL,
                this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_COLOURS_AND_FONTS_LOADED, clColourEventHandler(clMainFrame::OnColoursAndFontsLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect(
         wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     wxDELETE(m_timer);
 
@@ -944,25 +902,6 @@ void clMainFrame::Initialize(bool loadLastSession)
     }
 
     inf.SetFrameSize(frameSize);
-
-#if !defined(__WXMAC__)
-    // we show splash only when using Release builds of codelite
-    if(inf.GetFlags() & CL_SHOW_SPLASH) {
-        wxBitmap bitmap;
-        wxString splashName(ManagerST::Get()->GetStartupDirectory() + wxT("/images/splashscreen.png"));
-        if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-            wxString mainTitle = CODELITE_VERSION_STR;
-            g_splashScreen = new clSplashScreen(g_splashDestroyed,
-                                                CreateSplashScreenBitmap(bitmap),
-                                                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
-                                                -1,
-                                                NULL,
-                                                wxID_ANY);
-            wxYield();
-        }
-    }
-#endif
-
     m_theFrame = new clMainFrame(NULL,
                                  wxID_ANY,
                                  title,
@@ -2081,10 +2020,10 @@ void clMainFrame::CreateToolbars16()
 
 void clMainFrame::Bootstrap()
 {
-    if(!g_splashDestroyed && g_splashScreen) {
-        g_splashScreen->Hide();
-        g_splashScreen->Destroy();
-        g_splashScreen = NULL;
+    if(!clSplashScreen::g_destroyed && clSplashScreen::g_splashScreen) {
+        clSplashScreen::g_splashScreen->Hide();
+        clSplashScreen::g_splashScreen->Destroy();
+        clSplashScreen::g_splashScreen = NULL;
     }
     
     if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
@@ -2124,6 +2063,20 @@ void clMainFrame::Bootstrap()
                 return;
             }
         }
+    }
+    
+    // Build the "View As" menu
+    CreateViewAsSubMenu();
+    
+    // Load the session manager
+    wxString sessConfFile;
+    sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
+    SessionManager::Get().Load(sessConfFile);
+    
+    // restore last session if needed
+    if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
+        wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
+        EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
 }
 
@@ -4005,7 +3958,6 @@ void clMainFrame::CompleteInitialization()
     wxCommandEvent eventShowTabBar;
     eventShowTabBar.SetInt(clConfig::Get().Read(kConfigShowTabBar, true));
     OnShowTabBar(eventShowTabBar);
-
     ShowOrHideCaptions();
 }
 
@@ -6094,25 +6046,6 @@ void clMainFrame::OnSplitSelectionUI(wxUpdateUIEvent& event)
 {
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
     event.Enable(editor && editor->HasSelection());
-}
-
-void clMainFrame::OnColoursAndFontsLoaded(clColourEvent& event)
-{
-    event.Skip();
-
-    // Build the "View As" menu
-    CreateViewAsSubMenu();
-    
-    // Load the session manager
-    wxString sessConfFile;
-    sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
-    SessionManager::Get().Load(sessConfFile);
-    
-    // restore last session if needed
-    if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
-        wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
-        EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
-    }
 }
 
 void clMainFrame::OnProjectRenamed(clCommandEvent& event)

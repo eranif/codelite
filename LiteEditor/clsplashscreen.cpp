@@ -24,9 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "clsplashscreen.h"
+#include <wx/dcmemory.h>
+extern wxString CODELITE_VERSION_STR;
 
-clSplashScreen::clSplashScreen(bool& flag,
-                               const wxBitmap& bitmap,
+clSplashScreen* clSplashScreen::g_splashScreen = NULL;
+bool clSplashScreen::g_destroyed = false;
+
+clSplashScreen::clSplashScreen(const wxBitmap& bitmap,
                                long splashStyle,
                                int milliseconds,
                                wxWindow* parent,
@@ -35,7 +39,6 @@ clSplashScreen::clSplashScreen(bool& flag,
                                const wxSize& size,
                                long style)
     : wxSplashScreen(bitmap, splashStyle, milliseconds, parent, id, pos, size, style)
-    , m_flag(flag)
 {
     Bind(wxEVT_CLOSE_WINDOW, &clSplashScreen::OnCloseWindow, this);
 }
@@ -43,8 +46,39 @@ clSplashScreen::clSplashScreen(bool& flag,
 void clSplashScreen::OnCloseWindow(wxCloseEvent& event)
 {
     // mark the splash as "destroyed" so we won't destroy it again later
-    m_flag = true;
+    g_destroyed = true;
     event.Skip();
 }
 
 clSplashScreen::~clSplashScreen() {}
+
+wxBitmap clSplashScreen::CreateSplashScreenBitmap(const wxBitmap& origBmp)
+{
+    wxBitmap bmp;
+    wxMemoryDC memDC;
+    
+    bmp = wxBitmap(origBmp.GetWidth(), origBmp.GetHeight());
+    memDC.SelectObject(bmp);
+    memDC.SetBrush(wxColour(63, 80, 24));
+    memDC.SetPen(wxColour(63, 80, 24));
+    memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
+    memDC.DrawBitmap(origBmp, 0, 0, true);
+    memDC.SetPen(*wxWHITE);
+    memDC.SetBrush(*wxTRANSPARENT_BRUSH);
+    memDC.DrawRectangle(0, 0, origBmp.GetWidth(), origBmp.GetHeight());
+
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    font.SetPointSize(14);
+    font.SetWeight(wxFONTWEIGHT_BOLD);
+    
+    memDC.SetFont(font);
+    wxString versionString;
+    versionString << "v" << CODELITE_VERSION_STR;
+    wxSize textSize = memDC.GetTextExtent(versionString);
+    wxCoord textx, texty;
+    textx = (bmp.GetWidth() - textSize.GetWidth()) - 5;
+    texty = 5;
+    memDC.DrawText(versionString, textx, texty);
+    memDC.SelectObject(wxNullBitmap);
+    return bmp;
+}

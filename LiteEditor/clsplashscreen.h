@@ -35,9 +35,8 @@
 
 class clSplashScreen : public wxSplashScreen
 {
-    bool& m_flag;
 public:
-    clSplashScreen(bool& flag, const wxBitmap& bitmap,
+    clSplashScreen(const wxBitmap& bitmap,
                    long splashStyle,
                    int milliseconds,
                    wxWindow* parent,
@@ -47,6 +46,9 @@ public:
                    long style = SPLASH_STYLE);
     virtual ~clSplashScreen();
     void OnCloseWindow(wxCloseEvent& event);
+    static wxBitmap CreateSplashScreenBitmap(const wxBitmap& origBmp);
+    static clSplashScreen* g_splashScreen;
+    static bool g_destroyed;
 };
 
 #endif // CLSPLASHSCREEN_H

@@ -105,22 +105,18 @@ ColoursAndFontsManager& ColoursAndFontsManager::Get()
 }
 
 /**
- * @class ColoursAndFontsManager_HelperThread
+ * @class ColoursAndFontsManagerLoaderHelper
  * @brief
  */
-struct ColoursAndFontsManager_HelperThread : public wxThread
+struct ColoursAndFontsManagerLoaderHelper
 {
     ColoursAndFontsManager* m_manager;
-    ColoursAndFontsManager_HelperThread(ColoursAndFontsManager* manager)
-        : wxThread(wxTHREAD_DETACHED)
-        , m_manager(manager)
+    ColoursAndFontsManagerLoaderHelper(ColoursAndFontsManager* manager)
+        : m_manager(manager)
     {
     }
 
-    /**
-     * @brief the lexer reader thread entry point
-     */
-    virtual void* Entry()
+    void Load()
     {
         std::vector<wxXmlDocument*> defaultLexers;
         std::vector<wxXmlDocument*> userLexers;
@@ -178,8 +174,7 @@ struct ColoursAndFontsManager_HelperThread : public wxThread
             }
         }
         CL_DEBUG("Loading users lexers...done");
-        m_manager->CallAfter(&ColoursAndFontsManager::OnLexerFilesLoaded, defaultLexers, userLexers);
-        return NULL;
+        m_manager->OnLexerFilesLoaded(defaultLexers, userLexers);
     }
 };
 
@@ -205,15 +200,9 @@ void ColoursAndFontsManager::Load()
         }
     }
 
-    // Load the lexers in the bg thread
-    ColoursAndFontsManager_HelperThread* thr = new ColoursAndFontsManager_HelperThread(this);
-#ifdef __WXGTK__
-    thr->Entry();
-    wxDELETE(thr);
-#else
-    thr->Create();
-    thr->Run();
-#endif
+    // Load the lexers
+    ColoursAndFontsManagerLoaderHelper loader(this);
+    loader.Load();
 }
 
 void ColoursAndFontsManager::LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers)
@@ -678,10 +667,6 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
 
         m_lexersVersion = LEXERS_VERSION;
     }
-
-    // Notify about colours and fonts configuration loaded
-    clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);
-    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool force)

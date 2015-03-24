@@ -122,7 +122,6 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_COLOURS_AND_FONTS_LOADED, &MainBook::OnColoursAndFontsLoaded, this);
 }
 
 MainBook::~MainBook()
@@ -147,7 +146,6 @@ MainBook::~MainBook()
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_COLOURS_AND_FONTS_LOADED, &MainBook::OnColoursAndFontsLoaded, this);
 }
 
 void MainBook::OnMouseDClick(NotebookEvent& e)
@@ -1341,10 +1339,4 @@ void MainBook::ShowTabBar(bool b)
 {
     m_book->SetTabCtrlHeight(b ? 30 : 0);
     m_book->Refresh();
-}
-
-void MainBook::OnColoursAndFontsLoaded(clColourEvent& e)
-{
-    e.Skip();
-    // Colourise the files
 }

@@ -80,7 +80,6 @@ private:
     void OnDebugEnded(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
-    void OnColoursAndFontsLoaded(clColourEvent& e);
 
     bool AskUserToSave(LEditor* editor);
     bool DoSelectPage(wxWindow* win);

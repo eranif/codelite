@@ -53,6 +53,7 @@
 #include "clKeyboardManager.h"
 #include "clInitializeDialog.h"
 #include "event_notifier.h"
+#include "clsplashscreen.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -304,7 +305,7 @@ bool CodeLiteApp::OnInit()
     wxSocketBase::Initialize();
 
 #if wxUSE_ON_FATAL_EXCEPTION
-    //trun on fatal exceptions handler
+    // trun on fatal exceptions handler
     wxHandleFatalExceptions(true);
 #endif
 
@@ -321,6 +322,11 @@ bool CodeLiteApp::OnInit()
     wxStandardPaths::Get().IgnoreAppSubDir("bin");
 #endif
 
+    // Show splash screen
+    GeneralInfo inf;
+    EditorConfigST::Get()->ReadObject(wxT("GeneralInfo"), &inf);
+    
+
     // Init resources and add the PNG handler
     wxSystemOptions::SetOption(_T("msw.remap"), 0);
     wxSystemOptions::SetOption("msw.notebook.themed-background", 1);
@@ -331,7 +337,24 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxXPMHandler);
     wxImage::AddHandler(new wxGIFHandler);
     InitXmlResource();
-
+    
+    // After all image handlers have been added, load the splash screen image and show it
+#if !defined(__WXMAC__)
+    // we show splash only when using Release builds of codelite
+    if(inf.GetFlags() & CL_SHOW_SPLASH) {
+        wxBitmap bitmap;
+        wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
+        if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
+            wxString mainTitle = CODELITE_VERSION_STR;
+            clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
+                                                                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
+                                                                -1,
+                                                                NULL,
+                                                                wxID_ANY);
+            wxYield();
+        }
+    }
+#endif
     wxLog::EnableLogging(false);
     wxString homeDir(wxEmptyString);
 
@@ -348,9 +371,9 @@ bool CodeLiteApp::OnInit()
         parser.Usage();
         return false;
     }
-    
+
     if(parser.Found(wxT("v"))) {
-        // print version
+// print version
 #ifdef __WXMSW__
         ::wxMessageBox(wxString() << "CodeLite IDE v" << clGitRevision, "CodeLite");
 #else
@@ -391,7 +414,8 @@ bool CodeLiteApp::OnInit()
         clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
 
-    // Set the log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging CodeLite itself :/
+    // Set the log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging CodeLite
+    // itself :/
     FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
     CL_DEBUG(wxT("Starting codelite..."));
 
@@ -469,11 +493,11 @@ bool CodeLiteApp::OnInit()
 
 #else //__WXMSW__
     if(homeDir.IsEmpty()) { // did we got a basedir from user?
-#  ifdef USE_POSIX_LAYOUT
+#ifdef USE_POSIX_LAYOUT
         homeDir = wxStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR);
-#  else
+#else
         homeDir = ::wxGetCwd();
-#  endif
+#endif
     }
     wxFileName fnHomdDir(homeDir + wxT("/"));
 
@@ -495,11 +519,11 @@ bool CodeLiteApp::OnInit()
 
     // Update codelite revision and Version
     EditorConfigST::Get()->Init(clGitRevision, wxT("2.0.2"));
-    
+
     // Make sure we have an instance if the keyboard manager allocated before we create the main frame class
     // (the keyboard manager needs to connect to the main frame events)
     clKeyboardManager::Get();
-    
+
     ManagerST::Get()->SetOriginalCwd(wxGetCwd());
     ::wxSetWorkingDirectory(homeDir);
     // Load all of the XRC files that will be used. You can put everything
@@ -583,9 +607,6 @@ bool CodeLiteApp::OnInit()
 
 #endif
 
-    GeneralInfo inf;
-    cfg->ReadObject(wxT("GeneralInfo"), &inf);
-
     // Set up the locale if appropriate
     if(EditorConfigST::Get()->GetOptions()->GetUseLocale()) {
         int preferredLocale = wxLANGUAGE_ENGLISH;
@@ -609,11 +630,11 @@ bool CodeLiteApp::OnInit()
         wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
 
 #elif defined(__WXMSW__)
-#   ifdef USE_POSIX_LAYOUT
+#ifdef USE_POSIX_LAYOUT
         wxLocale::AddCatalogLookupPathPrefix(wxStandardPaths::Get().GetDataDir() + wxT("/share/locale"));
-#   else
+#else
         wxLocale::AddCatalogLookupPathPrefix(ManagerST::Get()->GetInstallDir() + wxT("\\locale"));
-#   endif
+#endif
 #endif
 
         // This has to be done before the catalogues are added, as otherwise the wrong one (or none) will be found
@@ -649,8 +670,8 @@ bool CodeLiteApp::OnInit()
 
     // If running under Cygwin terminal, adjust the environment variables
     AdjustPathForMSYSIfNeeded();
-    
-    // determine if the 'upgrade' frame needs to be started instead of the 
+
+    // determine if the 'upgrade' frame needs to be started instead of the
     // standard main frame
     bool needsLexerLoadedEvent(false);
     if(ColoursAndFontsManager::Get().IsUpgradeNeeded()) {
@@ -662,29 +683,13 @@ bool CodeLiteApp::OnInit()
         // Make sure that the colours and fonts manager is instantiated
         ColoursAndFontsManager::Get().Load();
     }
-    
+
     // Create the main application window
     clMainFrame::Initialize(parser.GetParamCount() == 0);
     m_pMainFrame = clMainFrame::Get();
     m_pMainFrame->Show(TRUE);
     SetTopWindow(m_pMainFrame);
-    
-#ifdef __WXGTK__
-    // On GTK, the colours-and-events are loadedin sync mode, this means
-    // that the main frame will never get the event "wxEVT_COLOURS_AND_FONTS_LOADED"
-    // so we need to force it
-    bool fireColourEvent = true;
-#else
-    bool fireColourEvent = false;
-#endif
 
-    if (needsLexerLoadedEvent || fireColourEvent) {
-        // Though a wxEVT_COLOURS_AND_FONTS_LOADED will already have been sent, it won't have done anything because
-        // the frame wasn't instantiated/Connect()ed at that time. So a session won't be loaded unless...
-        clColourEvent event(wxEVT_COLOURS_AND_FONTS_LOADED);
-        EventNotifier::Get()->AddPendingEvent(event);
-    }
-    
     long lineNumber(0);
     parser.Found(wxT("l"), &lineNumber);
     if(lineNumber > 0) {
@@ -919,12 +924,12 @@ void CodeLiteApp::DoCopyGdbPrinters()
 #ifdef __WXGTK__
     printersInstallDir = wxFileName(wxString(INSTALL_DIR, wxConvUTF8), "gdb_printers");
 #else
-#   ifdef USE_POSIX_LAYOUT
-    wxString commdir(wxStandardPaths::Get().GetDataDir() + wxT( INSTALL_DIR ));
+#ifdef USE_POSIX_LAYOUT
+    wxString commdir(wxStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
     printersInstallDir = wxFileName(commdir, "gdb_printers");
-#   else
+#else
     printersInstallDir = wxFileName(wxStandardPaths::Get().GetDataDir(), "gdb_printers");
-#   endif
+#endif
 #endif
 
     // copy the files to ~/.codelite/gdb_printers
@@ -942,9 +947,9 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
         CL_DEBUG("Not running under Cygwin - nothing be done");
         return;
     }
-    
+
     CL_SYSTEM("Cygwin environment detected");
-    
+
     wxString cygwinRootDir;
     CompilerLocatorCygwin cygwin;
     if(cygwin.Locate()) {
@@ -1003,9 +1008,9 @@ void CodeLiteApp::AdjustPathForMSYSIfNeeded()
         CL_DEBUG("Not running under MSYS - nothing be done");
         return;
     }
-    
+
     CL_SYSTEM("MSYS environment detected");
-    
+
     // Running under Cygwin
     // Adjust the PATH environment variable
     wxString pathEnv;

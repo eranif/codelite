@@ -674,11 +674,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CLANG_CODE_COMPLETE_MESSAGE, clCo
 // CodeLite is going down. This event can not be vetoed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOING_DOWN, clCommandEvent);
 
-// Event: clColourEvent
-// Sent when all the colours and fonts were successfully loaded from the configuration 
-// files into the ColoursAndFonts manager
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COLOURS_AND_FONTS_LOADED, clColourEvent);
-
 // Event: clCommandEvent
 // Use GetString() to get the new project name
 // Use GetOldName() to get the old project name

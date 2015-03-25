@@ -93,3 +93,12 @@ wxString JSLookUpTable::GenerateNewType()
     type << "__object" << ++m_objSeed;
     return type;
 }
+
+void JSLookUpTable::Clear()
+{ 
+    // Clear this one
+    m_objects.clear();
+    m_actualScopes.clear();
+    m_tempScopes.clear();
+    m_scopes = NULL;
+}

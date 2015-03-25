@@ -1,21 +1,21 @@
-#include "JSJSONObjectParser.h"
+#include "JSObjectParser.h"
 #include "JSLexerAPI.h"
 #include "JSLexerTokens.h"
 
-JSJSONObjectParser::JSJSONObjectParser(const wxString& text, JSLookUpTable::Ptr_t lookup)
+JSObjectParser::JSObjectParser(const wxString& text, JSLookUpTable::Ptr_t lookup)
     : m_lookup(lookup)
 {
     m_scanner = ::jsLexerNew(text);
 }
 
-JSJSONObjectParser::~JSJSONObjectParser()
+JSObjectParser::~JSObjectParser()
 {
     if(m_scanner) {
         ::jsLexerDestroy(&m_scanner);
     }
 }
 
-bool JSJSONObjectParser::ReadUntil(int until)
+bool JSObjectParser::ReadUntil(int until)
 {
     JSLexerToken token;
     int depth(0);
@@ -36,7 +36,7 @@ bool JSJSONObjectParser::ReadUntil(int until)
     return false;
 }
 
-bool JSJSONObjectParser::Parse(JSObject::Ptr_t parent)
+bool JSObjectParser::Parse(JSObject::Ptr_t parent)
 {
     JSLexerToken token;
     if(!parent) {
@@ -59,6 +59,31 @@ bool JSJSONObjectParser::Parse(JSObject::Ptr_t parent)
             }
             return false;
 
+        } else if(token.type == kJS_NEW) {
+            // an instation of an object
+            if(!::jsLexerNext(m_scanner, token)) return false;
+            if(token.type == kJS_IDENTIFIER) {
+                m_result.Reset(new JSObject());
+                m_result->SetType("String");
+                m_result->SetPath("String");
+                return true;
+            }
+        } else if(token.type == kJS_DEC_NUMBER || token.type == kJS_OCTAL_NUMBER || token.type == kJS_HEX_NUMBER ||
+                  token.type == kJS_FLOAT_NUMBER) {
+                m_result.Reset(new JSObject());
+                m_result->SetType("Number");
+                m_result->SetPath("Number");
+                return true;
+        } else if(token.type == kJS_TRUE || token.type == kJS_FALSE) {
+                m_result.Reset(new JSObject());
+                m_result->SetType("Boolean");
+                m_result->SetPath("Boolean");
+                return true;
+        } else if(token.type == kJS_NULL) {
+                m_result.Reset(new JSObject());
+                m_result->SetType("null");
+                m_result->SetPath("null");
+                return true;
         } else {
             return false;
         }
@@ -66,7 +91,7 @@ bool JSJSONObjectParser::Parse(JSObject::Ptr_t parent)
 
     // searching for "[" or "{"
     JSObject::Ptr_t curobj(NULL);
-    
+
     wxString tmpLabel;
     wxString label;
     while(::jsLexerNext(m_scanner, token)) {
@@ -116,6 +141,15 @@ bool JSJSONObjectParser::Parse(JSObject::Ptr_t parent)
         } break;
         case '}':
             return true;
+        case kJS_NULL: {
+            if(!label.IsEmpty()) {
+                JSObject::Ptr_t obj(new JSObject());
+                obj->SetName(label);
+                obj->SetType("null");
+                parent->AddChild(obj);
+                label.Clear();
+            }
+        } break;
         case kJS_TRUE:
         case kJS_FALSE: {
             if(!label.IsEmpty()) {
@@ -160,7 +194,4 @@ bool JSJSONObjectParser::Parse(JSObject::Ptr_t parent)
     return true;
 }
 
-wxString JSJSONObjectParser::GenerateName()
-{
-    return m_lookup->GenerateNewType();
-}
+wxString JSObjectParser::GenerateName() { return m_lookup->GenerateNewType(); }

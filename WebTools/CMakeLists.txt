@@ -64,3 +64,4 @@ target_link_libraries(${PLUGIN_NAME}
 # Make sure that the plugin will not start build before 'plugin.so' is ready
 add_dependencies(${PLUGIN_NAME} plugin)
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
+install(FILES "${CL_SRC_ROOT}/WebTools/javascript.zip" DESTINATION ${CL_PREFIX}/share/codelite)

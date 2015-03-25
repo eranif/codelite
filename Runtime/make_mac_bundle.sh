@@ -283,6 +283,11 @@ cp -pr ../../Runtime/PHP.zip ./codelite.app/Contents/SharedSupport/
 cp ../lib/codelitephp.dylib ./codelite.app/Contents/SharedSupport/plugins/
 ## PHP Plugin - END
 
+## WebTools
+cp -pr ../../WebTools/javascript.zip ./codelite.app/Contents/SharedSupport/
+cp ../lib/WebTools.dylib ./codelite.app/Contents/SharedSupport/plugins/
+## WebTools Plugin - END
+
 cp ../lib/libplugin.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/liblibcodelite.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3.dylib ./codelite.app/Contents/MacOS/

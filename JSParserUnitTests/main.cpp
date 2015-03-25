@@ -8,7 +8,7 @@
 #include "JSFunction.h"
 #include "fileutils.h"
 #include "JSExpressionParser.h"
-#include "JSJSONObjectParser.h"
+#include "JSObjectParser.h"
 
 // Parse class with 2 properties defined using
 // this.<name> = ...
@@ -144,7 +144,7 @@ TEST_FUNC(parse_json_object)
     JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
     wxString fileContent;
     FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_json_object.js"), fileContent);
-    JSJSONObjectParser jsonParser(fileContent, lookup);
+    JSObjectParser jsonParser(fileContent, lookup);
     CHECK_BOOL(jsonParser.Parse(NULL));
     
     JSObject::Ptr_t o1 = lookup->FindObject("__object1");

@@ -6,7 +6,7 @@
 #include "JSObject.h"
 #include "JSLookUpTable.h"
 
-class WXDLLIMPEXP_CL JSJSONObjectParser
+class WXDLLIMPEXP_CL JSObjectParser
 {
     JSLookUpTable::Ptr_t m_lookup;
     JSScanner_t m_scanner;
@@ -17,8 +17,8 @@ private:
     bool ReadUntil(int until);
 
 public:
-    JSJSONObjectParser(const wxString& text, JSLookUpTable::Ptr_t lookup);
-    virtual ~JSJSONObjectParser();
+    JSObjectParser(const wxString& text, JSLookUpTable::Ptr_t lookup);
+    virtual ~JSObjectParser();
 
     bool Parse(JSObject::Ptr_t parent);
     JSObject::Ptr_t GetResult() const { return m_result; }

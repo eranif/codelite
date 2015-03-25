@@ -5,6 +5,7 @@
 #include "file_logger.h"
 #include "JSFunction.h"
 #include "JSDocComment.h"
+#include "JSObjectParser.h"
 
 #define JS_NEXT_TOKEN() NextToken(token)
 #define JS_NEXT_TOKEN_RETURN() \
@@ -391,26 +392,9 @@ void JSSourceFile::OnVariable()
 
     wxString content;
     if(ReadUntil(';', content)) {
-        content.Replace(" ", "");
-        content.Replace("\t", "");
-        
-        // FIXME: create a json parser to parse the assigment 
-        // and allocate anon object / array based on the assigment type
-        // should be:
-        // string, Array "[...]", number, Object "{...}" and RegExp
-        content.Trim().Trim(false);
-        if(content.StartsWith("new")) {
-            content = content.Mid(3);
-            content = content.BeforeFirst('(');
-            content.Trim().Trim(false);
-            var->SetType(content);
-            
-        } else if(content.StartsWith("{}")) {
-            var->SetType("Object");
-            
-        } else if(content.StartsWith("[]")) {
-            var->SetType("Array");
-            
+        JSObjectParser parser(content, m_lookup);
+        if(parser.Parse(NULL)) {
+            var->SetType(parser.GetResult()->GetType());
         }
     }
 }

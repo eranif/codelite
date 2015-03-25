@@ -14,16 +14,16 @@ class WXDLLIMPEXP_CL JSLookUpTable
     JSObject::Vec_t m_tempScopes;
     JSObject::Vec_t* m_scopes;
     int m_objSeed;
-    
+
 public:
     typedef SmartPtr<JSLookUpTable> Ptr_t;
 
 public:
     JSLookUpTable();
     virtual ~JSLookUpTable();
-    
+
     wxString GenerateNewType();
-    
+
     void AddObject(JSObject::Ptr_t obj);
     JSObject::Ptr_t CurrentScope() const;
     /**
@@ -55,18 +55,26 @@ public:
      * @brief set scope to obj
      */
     void SetTempScope(JSObject::Ptr_t obj);
-    
+
     /**
      * @brief switch back to the normal scopes
      */
     void SwapScopes();
-    
+
     /**
      * @brief return map of visible variables
      */
     JSObject::Map_t GetVisibleVariables();
-    
+
     void Print();
+
+    /**
+     * @brief clear this lookup content
+     */
+    void Clear();
+    
+    const JSObject::Map_t& GetObjects() const { return m_objects; }
+    JSObject::Map_t& GetObjects() { return m_objects; }
 };
 
 #endif // JSLOOKUPTABLE_H

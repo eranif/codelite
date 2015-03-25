@@ -35,12 +35,6 @@
   <VirtualDirectory Name="src">
     <File Name="webtools.cpp"/>
     <File Name="CMakeLists.txt"/>
-    <File Name="JavaScriptSyntaxColourThread.h"/>
-    <File Name="JavaScriptSyntaxColourThread.cpp"/>
-    <File Name="JavaScriptFunctionsLocator.h"/>
-    <File Name="JavaScriptFunctionsLocator.cpp"/>
-    <File Name="JSCodeCompletion.h"/>
-    <File Name="JSCodeCompletion.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="webtools.h"/>
@@ -239,4 +233,14 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="JS">
+    <File Name="JavaScriptFunctionsLocator.cpp"/>
+    <File Name="JavaScriptFunctionsLocator.h"/>
+    <File Name="JavaScriptSyntaxColourThread.cpp"/>
+    <File Name="JavaScriptSyntaxColourThread.h"/>
+    <File Name="JSCodeCompletion.cpp"/>
+    <File Name="JSCodeCompletion.h"/>
+    <File Name="JSParserThread.cpp"/>
+    <File Name="JSParserThread.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

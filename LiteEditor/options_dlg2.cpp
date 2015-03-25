@@ -126,4 +126,6 @@ void OptionsDlg2::Initialize()
     // the Terminal page should NOT be added under Windows
     AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
+    
+    SetMinSize(wxSize(300,200));
 }

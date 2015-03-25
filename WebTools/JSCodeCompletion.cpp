@@ -31,6 +31,7 @@ JSCodeCompletion::JSCodeCompletion()
 
         m_thread = new JSParserThread(this);
         m_thread->Start();
+        m_thread->ParseFiles(targetDir.GetPath());
     }
 }
 

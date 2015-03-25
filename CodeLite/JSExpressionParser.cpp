@@ -39,7 +39,6 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
         case kJS_SWITCH:
         case kJS_CASE:
         case kJS_FOR:
-        case kJS_STRING:
         case kJS_RETURN:
         case kJS_DEC_NUMBER:
         case kJS_OCTAL_NUMBER:
@@ -89,6 +88,10 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
             // switch back to the previous set of tokens
             stack.pop();
             current = &stack.top();
+            if(current) current->push_back(token);
+            break;
+        case kJS_STRING:
+            token.text = "String";
             if(current) current->push_back(token);
             break;
         default:

@@ -64,26 +64,31 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!::jsLexerNext(m_scanner, token)) return false;
             if(token.type == kJS_IDENTIFIER) {
                 m_result.Reset(new JSObject());
-                m_result->SetType("String");
-                m_result->SetPath("String");
+                m_result->SetType(token.text);
+                m_result->SetPath(token.text);
                 return true;
             }
         } else if(token.type == kJS_DEC_NUMBER || token.type == kJS_OCTAL_NUMBER || token.type == kJS_HEX_NUMBER ||
                   token.type == kJS_FLOAT_NUMBER) {
-                m_result.Reset(new JSObject());
-                m_result->SetType("Number");
-                m_result->SetPath("Number");
-                return true;
+            m_result.Reset(new JSObject());
+            m_result->SetType("Number");
+            m_result->SetPath("Number");
+            return true;
         } else if(token.type == kJS_TRUE || token.type == kJS_FALSE) {
-                m_result.Reset(new JSObject());
-                m_result->SetType("Boolean");
-                m_result->SetPath("Boolean");
-                return true;
+            m_result.Reset(new JSObject());
+            m_result->SetType("Boolean");
+            m_result->SetPath("Boolean");
+            return true;
         } else if(token.type == kJS_NULL) {
-                m_result.Reset(new JSObject());
-                m_result->SetType("null");
-                m_result->SetPath("null");
-                return true;
+            m_result.Reset(new JSObject());
+            m_result->SetType("null");
+            m_result->SetPath("null");
+            return true;
+        } else if(token.type == kJS_STRING) {
+            m_result.Reset(new JSObject());
+            m_result->SetType("String");
+            m_result->SetPath("String");
+            return true;
         } else {
             return false;
         }

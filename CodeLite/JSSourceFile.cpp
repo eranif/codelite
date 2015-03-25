@@ -190,7 +190,7 @@ bool JSSourceFile::ReadUntil(int until, wxString& content)
     JSLexerToken token;
     int startDepth = m_depth;
     while(JS_NEXT_TOKEN()) {
-        content << token.text;
+        content << token.text << " ";
 
         if(token.type == '{') {
             ++m_depth;

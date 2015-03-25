@@ -83,6 +83,9 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>return {return kJS_RETURN;}
 <INITIAL>new {return kJS_NEW;}
 <INITIAL>"." {return kJS_DOT;}
+<INITIAL>true {return kJS_TRUE;}
+<INITIAL>false {return kJS_FALSE;}
+<INITIAL>null {return kJS_NULL;}
 <INITIAL>{horizontal_white}+ { RETURN_WHITESPACE(); }
 <INITIAL>({v_tab}|{c_return}|{form_feed})+ {RETURN_WHITESPACE();}
 <INITIAL>({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n" { RETURN_NEWLINE(); }

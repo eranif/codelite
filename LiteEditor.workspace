@@ -8,7 +8,7 @@
   </Ctags>
   <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+  <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="No"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
   <Project Name="libCodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
@@ -52,7 +52,7 @@
   <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
-  <Project Name="JSParserUnitTests" Path="JSParserUnitTests/JSParserUnitTests.project" Active="No"/>
+  <Project Name="JSParserUnitTests" Path="JSParserUnitTests/JSParserUnitTests.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
@@ -279,7 +279,7 @@
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
       <Project Name="JSParserUnitTests" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>
@@ -324,7 +324,7 @@
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Release"/>
       <Project Name="JSParserUnitTests" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>

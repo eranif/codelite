@@ -351,6 +351,8 @@
     <File Name="JSDocComment.cpp"/>
     <File Name="JSExpressionParser.h"/>
     <File Name="JSExpressionParser.cpp"/>
+    <File Name="JSJSONObjectParser.h"/>
+    <File Name="JSJSONObjectParser.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

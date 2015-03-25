@@ -30,6 +30,7 @@
     <File Name="TestFiles/parse_locals_in_callback_function.js"/>
     <File Name="TestFiles/parse_function_doc_return_value.js"/>
     <File Name="TestFiles/parse_expression.js"/>
+    <File Name="TestFiles/parse_json_object.js"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

@@ -28,6 +28,9 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
         switch(token.type) {
         // the following are tokens that once seen
         // we should start a new expression:
+        case kJS_TRUE:
+        case kJS_FALSE:
+        case kJS_NULL:
         case kJS_NEW:
         case kJS_FUNCTION:
         case kJS_VAR:

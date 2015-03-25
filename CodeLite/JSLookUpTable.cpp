@@ -3,6 +3,7 @@
 #include "JSFunction.h"
 
 JSLookUpTable::JSLookUpTable()
+    : m_objSeed(0)
 {
     m_scopes = &m_actualScopes;
 
@@ -84,4 +85,11 @@ JSObject::Map_t JSLookUpTable::GetVisibleVariables()
         variables.insert(scopeVariables.begin(), scopeVariables.end());
     }
     return variables;
+}
+
+wxString JSLookUpTable::GenerateNewType()
+{
+    wxString type;
+    type << "__object" << ++m_objSeed;
+    return type;
 }

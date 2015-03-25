@@ -449,3 +449,8 @@ void JSSourceFile::AssociateComment(JSObject::Ptr_t obj)
         }
     }
 }
+
+JSObject::Ptr_t JSSourceFile::ParseJSONObject(const wxString& content)
+{
+    return NULL;
+}

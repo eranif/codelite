@@ -45,6 +45,11 @@ protected:
      */
     void AssociateComment(JSObject::Ptr_t obj);
     
+    /**
+     * @brief create a JS object from a JSON string
+     */
+    JSObject::Ptr_t ParseJSONObject(const wxString& content);
+  
 public:
     JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxString& fileContent, const wxFileName& filename);
     JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxFileName& filename);

@@ -8,6 +8,7 @@
 #include "JSFunction.h"
 #include "fileutils.h"
 #include "JSExpressionParser.h"
+#include "JSJSONObjectParser.h"
 
 // Parse class with 2 properties defined using
 // this.<name> = ...
@@ -135,6 +136,35 @@ TEST_FUNC(parse_expression)
     CHECK_BOOL(resolved);
     
     CHECK_STRING(resolved->GetType(), "Array");
+    return true;
+}
+
+TEST_FUNC(parse_json_object)
+{
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    wxString fileContent;
+    FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_json_object.js"), fileContent);
+    JSJSONObjectParser jsonParser(fileContent, lookup);
+    CHECK_BOOL(jsonParser.Parse(NULL));
+    
+    JSObject::Ptr_t o1 = lookup->FindObject("__object1");
+    JSObject::Ptr_t o2 = lookup->FindObject("__object2");
+    
+    CHECK_BOOL(o1);
+    CHECK_BOOL(o2);
+    
+    // __object1 should have the following properties:
+    // width, height, doc and position
+    CHECK_SIZE(o1->GetProperties().count("width"), 1);
+    CHECK_SIZE(o1->GetProperties().count("height"), 1);
+    CHECK_SIZE(o1->GetProperties().count("doc"), 1);
+    CHECK_SIZE(o1->GetProperties().count("position"), 1);
+    
+    // __object2: x (Number), y (Number), dims (Array)
+    CHECK_SIZE(o2->GetProperties().count("x"), 1);
+    CHECK_SIZE(o2->GetProperties().count("y"), 1);
+    CHECK_SIZE(o2->GetProperties().count("dims"), 1);
+    
     return true;
 }
 

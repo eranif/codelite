@@ -13,6 +13,7 @@ class WXDLLIMPEXP_CL JSLookUpTable
     JSObject::Vec_t m_actualScopes;
     JSObject::Vec_t m_tempScopes;
     JSObject::Vec_t* m_scopes;
+    int m_objSeed;
     
 public:
     typedef SmartPtr<JSLookUpTable> Ptr_t;
@@ -20,7 +21,9 @@ public:
 public:
     JSLookUpTable();
     virtual ~JSLookUpTable();
-
+    
+    wxString GenerateNewType();
+    
     void AddObject(JSObject::Ptr_t obj);
     JSObject::Ptr_t CurrentScope() const;
     /**

@@ -17,6 +17,9 @@ enum {
     kJS_PROTOTYPE,
     kJS_RETURN,
     kJS_NEW,
+    kJS_TRUE,
+    kJS_FALSE,
+    kJS_NULL,
 };
 
 // Numbers

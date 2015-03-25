@@ -18,7 +18,7 @@ TEST_FUNC(test_parse_simple_class)
     JSSourceFile source(lookup, wxFileName("../TestFiles/simple_class.js"));
     source.Parse();
 
-    JSObject::Ptr_t Foo = lookup->FindObject("Foo");
+    JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 2);
     Foo->Print(0);
@@ -32,7 +32,7 @@ TEST_FUNC(class_with_static_method)
     JSSourceFile source(lookup, wxFileName("../TestFiles/class_with_static_method.js"));
     source.Parse();
 
-    JSObject::Ptr_t Foo = lookup->FindObject("Foo");
+    JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 3);
     return true;
@@ -45,7 +45,7 @@ TEST_FUNC(parse_global_function)
     JSSourceFile source(lookup, wxFileName("../TestFiles/parse_global_function.js"));
     source.Parse();
 
-    JSObject::Ptr_t Foo = lookup->FindObject("Foo");
+    JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 0);
     CHECK_SIZE(Foo->As<JSFunction>()->GetVariables().size(), 2);
@@ -60,10 +60,10 @@ TEST_FUNC(parse_local_variables_in_functions)
     source.Parse();
 
     // Check that both classes exist
-    JSObject::Ptr_t Array = lookup->FindObject("Array");
+    JSObject::Ptr_t Array = lookup->FindClass("Array");
     CHECK_BOOL(Array);
 
-    JSObject::Ptr_t Foo = lookup->FindObject("Foo");
+    JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     CHECK_BOOL(Foo);
 
     // Check that Foo has 3 local variables
@@ -118,7 +118,7 @@ TEST_FUNC(parse_locals_self_executed_function)
     CHECK_SIZE(vars.count("e"), 1);
     
     JSObject::Ptr_t retObj = vars.find("retObj")->second;
-    JSObject::Ptr_t proto = lookup->FindObject(retObj->GetType());
+    JSObject::Ptr_t proto = lookup->FindClass(retObj->GetType());
     CHECK_BOOL(proto);
     CHECK_SIZE(proto->GetProperties().size(), 2);
     return true;
@@ -131,7 +131,7 @@ TEST_FUNC(parse_function_doc_return_value)
     JSSourceFile source(lookup, wxFileName("../TestFiles/parse_function_doc_return_value.js"));
     source.Parse();
 
-    JSObject::Ptr_t Foo = lookup->FindObject("Foo");
+    JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     const JSObject::Map_t& variables = Foo->As<JSFunction>()->GetVariables();
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 2);
@@ -170,8 +170,8 @@ TEST_FUNC(parse_json_object)
     JSObjectParser objectParser(sourceFile, lookup);
     CHECK_BOOL(objectParser.Parse(NULL));
     
-    JSObject::Ptr_t o1 = lookup->FindObject("__object1");
-    JSObject::Ptr_t o2 = lookup->FindObject("__object2");
+    JSObject::Ptr_t o1 = lookup->FindClass("__object1");
+    JSObject::Ptr_t o2 = lookup->FindClass("__object2");
     
     CHECK_BOOL(o1);
     CHECK_BOOL(o2);

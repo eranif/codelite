@@ -3,13 +3,15 @@
 
 #include "codelite_exports.h"
 #include <map>
-#include "JSObject.h"
 #include "smart_ptr.h"
 #include <wx/string.h>
+#include "JSObject.h"
+#include "JSLexerAPI.h"
 
 class WXDLLIMPEXP_CL JSLookUpTable
 {
-    JSObject::Map_t m_objects;
+    JSObject::Map_t m_classes;
+    JSObject::Map_t m_globals;
     JSObject::Vec_t m_actualScopes;
     JSObject::Vec_t m_tempScopes;
     JSObject::Vec_t* m_scopes;
@@ -26,6 +28,7 @@ public:
 
     void AddObject(JSObject::Ptr_t obj);
     JSObject::Ptr_t CurrentScope() const;
+    
     /**
      * @brief pop the current scope (this function does not remove the global scope)
      */
@@ -49,8 +52,18 @@ public:
     /**
      * @brief return an object with given path
      */
-    JSObject::Ptr_t FindObject(const wxString& path) const;
-
+    JSObject::Ptr_t FindClass(const wxString& path) const;
+    
+    /**
+     * @brief allocate new JS object
+     */
+    JSObject::Ptr_t NewObject() const;
+    
+    /**
+     * @brief allocate new JS function
+     */
+    JSObject::Ptr_t NewFunction() const;
+    
     /**
      * @brief set scope to obj
      */
@@ -78,8 +91,14 @@ public:
      */
     void PrepareLookup();
     
-    const JSObject::Map_t& GetObjects() const { return m_objects; }
-    JSObject::Map_t& GetObjects() { return m_objects; }
+    /**
+     * @brief populate the lookup table with the global
+     * objects (e.g. document, window, console etc)
+     */
+    void PopulateWithGlobals();
+    
+    const JSObject::Map_t& GetObjects() const { return m_classes; }
+    JSObject::Map_t& GetObjects() { return m_classes; }
 };
 
 #endif // JSLOOKUPTABLE_H

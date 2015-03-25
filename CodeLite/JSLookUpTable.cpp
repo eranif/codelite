@@ -6,19 +6,17 @@ JSLookUpTable::JSLookUpTable()
     : m_objSeed(0)
 {
     m_scopes = &m_actualScopes;
-
-    JSObject::Ptr_t globalScope(new JSFunction());
-    m_scopes->push_back(globalScope);
+    m_scopes->push_back(NewFunction());
 }
 
 JSLookUpTable::~JSLookUpTable() {}
 
 void JSLookUpTable::AddObject(JSObject::Ptr_t obj)
 {
-    std::map<wxString, JSObject::Ptr_t>::iterator iter = m_objects.find(obj->GetPath());
-    if(iter != m_objects.end()) m_objects.erase(iter);
+    std::map<wxString, JSObject::Ptr_t>::iterator iter = m_classes.find(obj->GetPath());
+    if(iter != m_classes.end()) m_classes.erase(iter);
 
-    m_objects.insert(std::make_pair(obj->GetPath(), obj));
+    m_classes.insert(std::make_pair(obj->GetPath(), obj));
 }
 
 JSObject::Ptr_t JSLookUpTable::CurrentScope() const { return m_scopes->at(m_scopes->size() - 1); }
@@ -48,10 +46,10 @@ wxString JSLookUpTable::MakePath(const wxString& pathLastPart)
     return curpath;
 }
 
-JSObject::Ptr_t JSLookUpTable::FindObject(const wxString& path) const
+JSObject::Ptr_t JSLookUpTable::FindClass(const wxString& path) const
 {
-    std::map<wxString, JSObject::Ptr_t>::const_iterator iter = m_objects.find(path);
-    if(iter != m_objects.end()) return iter->second;
+    std::map<wxString, JSObject::Ptr_t>::const_iterator iter = m_classes.find(path);
+    if(iter != m_classes.end()) return iter->second;
     return NULL;
 }
 
@@ -72,7 +70,7 @@ void JSLookUpTable::SwapScopes() { m_scopes = &m_actualScopes; }
 void JSLookUpTable::Print()
 {
     std::for_each(
-        m_objects.begin(), m_objects.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) { p.second->Print(0); });
+        m_classes.begin(), m_classes.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) { p.second->Print(0); });
 }
 
 JSObject::Map_t JSLookUpTable::GetVisibleVariables()
@@ -80,6 +78,10 @@ JSObject::Map_t JSLookUpTable::GetVisibleVariables()
     // we start from the inner scope so incase we have a collision
     // the inner scope variable "wins"
     JSObject::Map_t variables;
+    
+    // Copy the globals
+    variables.insert(m_globals.begin(), m_globals.end());
+    
     for(int i = (int)m_scopes->size() - 1; i >= 0; --i) {
         const JSObject::Map_t& scopeVariables = m_scopes->at(i)->As<JSFunction>()->GetVariables();
         variables.insert(scopeVariables.begin(), scopeVariables.end());
@@ -97,7 +99,7 @@ wxString JSLookUpTable::GenerateNewType()
 void JSLookUpTable::Clear()
 { 
     // Clear this one
-    m_objects.clear();
+    m_classes.clear();
     m_actualScopes.clear();
     m_tempScopes.clear();
     m_scopes = NULL;
@@ -108,7 +110,36 @@ void JSLookUpTable::PrepareLookup()
     m_actualScopes.clear();
     m_tempScopes.clear();
     m_scopes = &m_actualScopes;
-
-    JSObject::Ptr_t globalScope(new JSFunction());
-    m_scopes->push_back(globalScope);
+    m_scopes->push_back(NewFunction());
 }
+
+JSObject::Ptr_t JSLookUpTable::NewObject() const
+{
+    JSObject::Ptr_t obj(new JSObject(this));
+    return obj;
+}
+
+JSObject::Ptr_t JSLookUpTable::NewFunction() const
+{
+    JSObject::Ptr_t obj(new JSFunction(this));
+    return obj;
+}
+
+void JSLookUpTable::PopulateWithGlobals()
+{
+    {
+        JSObject::Ptr_t objTemplate = FindClass("Document");
+        if(objTemplate) {
+            JSObject::Ptr_t objInstance = objTemplate->NewInstance("document", this);
+            m_globals.insert(std::make_pair("document", objInstance));
+        }
+    }
+    {
+        JSObject::Ptr_t objTemplate = FindClass("Window");
+        if(objTemplate) {
+            JSObject::Ptr_t objInstance = objTemplate->NewInstance("window", this);
+            m_globals.insert(std::make_pair("window", objInstance));
+        }
+    }
+}
+

@@ -90,7 +90,16 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
             // switch back to the previous set of tokens
             stack.pop();
             current = &stack.top();
-            if(current) current->push_back(token);
+            if(current) {
+                current->push_back(token);
+                // pop both the "[]" token from the current sequence and replace it with "Array"
+                current->pop_back();                       // ]
+                if(!current->empty()) current->pop_back(); // [
+                JSLexerToken tok;
+                tok.type = kJS_IDENTIFIER;
+                tok.text = "Array";
+                current->push_back(tok);
+            }
             break;
         case kJS_STRING:
             token.text = "String";
@@ -114,34 +123,29 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
 JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const wxString& filename)
 {
     if(m_expression.empty()) return NULL;
-    
+
     // Prepare the lookup for parsing a source file
     lookup->PrepareLookup();
-    
+
     // Reparse the current file
     JSSourceFile sourceFile(lookup, m_text, wxFileName(filename));
     sourceFile.Parse();
 
-    JSObject::Map_t locals = lookup->GetVisibleVariables();
-    std::for_each(locals.begin(), locals.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) {
-        wxFprintf(stderr, "%\n", p.second->GetName());
-    });
-    
     JSObject::Ptr_t resolved(NULL);
     for(size_t i = 0; i < m_expression.size(); ++i) {
-        JSLexerToken &token = m_expression.at(i);
+        JSLexerToken& token = m_expression.at(i);
         if(token.type == kJS_DOT) {
             if(resolved) {
                 // locate the type in the lookup table
-                resolved = lookup->FindObject(resolved->GetType());
+                resolved = lookup->FindClass(resolved->GetType());
                 if(!resolved) return NULL;
             }
             continue;
         }
-        
+
         if(i == 0) {
             // check to see if token is class name or a variable
-            resolved = lookup->FindObject(token.text);
+            resolved = lookup->FindClass(token.text);
             if(!resolved) {
                 // Check to see if this is a variable
                 JSObject::Map_t localVars = lookup->GetVisibleVariables();

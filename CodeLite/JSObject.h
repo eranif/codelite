@@ -7,7 +7,9 @@
 #include "smart_ptr.h"
 #include <vector>
 #include <map>
+#include <set>
 
+class JSLookUpTable;
 class WXDLLIMPEXP_CL JSObject
 {
 public:
@@ -23,15 +25,22 @@ protected:
     int m_line;
     JSObject::Map_t m_properties;
     wxString m_type;
-
+    std::set<wxString> m_extends;
+    
 public:
-    JSObject();
+    JSObject(const JSLookUpTable* lookup);
     virtual ~JSObject();
+    
+    /**
+     * @brief make this object extending 'className'
+     * @param className
+     */
+    void Extends(const wxString& className, const JSLookUpTable* lookup);
     
     /**
      * @brief allocate a new instance of this object
      */
-    virtual JSObject::Ptr_t NewInstance(const wxString& name);
+    virtual JSObject::Ptr_t NewInstance(const wxString& name, const JSLookUpTable* lookup);
     
     /**
      * @brief print this object to the log file

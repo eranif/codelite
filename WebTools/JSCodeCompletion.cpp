@@ -88,6 +88,8 @@ void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply)
     if(reply && reply->lookup) {
         m_lookup->GetObjects().insert(reply->lookup->GetObjects().begin(), reply->lookup->GetObjects().end());
         reply->lookup->Clear();
+        // Fill the lookup with the common global objects
+        m_lookup->PopulateWithGlobals(); 
     }
     wxDELETE(reply);
 }

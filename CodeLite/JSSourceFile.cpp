@@ -52,7 +52,7 @@ void JSSourceFile::OnFunction()
 
     // Named function
     if(token.type == kJS_IDENTIFIER) {
-        JSObject::Ptr_t func(new JSFunction());
+        JSObject::Ptr_t func = m_lookup->NewFunction();
         func->SetName(token.text);
         func->SetPath(m_lookup->MakePath(func->GetName()));
         func->SetFile(m_filename);
@@ -72,11 +72,12 @@ void JSSourceFile::OnFunction()
         
         // Anon function
         static int anonCounter = 0;
-        JSObject::Ptr_t func(new JSFunction());
+        JSObject::Ptr_t func = m_lookup->NewFunction();
         func->SetName(wxString::Format("__anon%d", ++anonCounter));
         func->SetPath(func->GetName());
         func->SetFile(m_filename);
         func->SetLine(token.lineNumber);
+        
         AssociateComment(func);
         m_lookup->CurrentScope()->AddChild(func);
         ParseFunction(func);
@@ -137,11 +138,11 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
         sig << token.text;
 
         if(!curarg.IsEmpty() && (token.type == ',' || token.type == ')')) {
-            JSObject::Ptr_t arg(new JSObject());
-            arg->SetName(curarg);
-            arg->SetFile(m_filename);
-            arg->SetLine(token.lineNumber);
-            scope->As<JSFunction>()->AddVariable(arg);
+            JSObject::Ptr_t obj = m_lookup->NewObject();
+            obj->SetLine(token.lineNumber);
+            obj->SetName(curarg);
+            obj->SetFile(m_filename);
+            scope->As<JSFunction>()->AddVariable(obj);
             curarg.Clear();
         }
 
@@ -211,7 +212,7 @@ void JSSourceFile::Parse(int exitDepth)
             OnVariable();
             break;
         case kJS_IDENTIFIER: {
-            JSObject::Ptr_t klass = m_lookup->FindObject(token.text);
+            JSObject::Ptr_t klass = m_lookup->FindClass(token.text);
             if(klass && klass->IsFunction()) {
                 m_lookup->SetTempScope(klass);
                 OnPropertyOrFunction();
@@ -269,7 +270,7 @@ void JSSourceFile::OnFunctionThisProperty()
     if(!JS_NEXT_TOKEN()) return;
     if(token.type == kJS_FUNCTION) {
         // Allocate new function obj and add it
-        JSObject::Ptr_t func(new JSFunction());
+        JSObject::Ptr_t func = m_lookup->NewFunction();
         func->SetName(name);
         func->SetPath(m_lookup->MakePath(func->GetName()));
         func->SetFile(m_filename);
@@ -287,13 +288,13 @@ void JSSourceFile::OnFunctionThisProperty()
     } else {
         wxString assigment;
         ReadUntil(';', assigment);
-        JSObject::Ptr_t property(new JSObject());
-        property->SetName(name);
-        property->SetPath(m_lookup->MakePath(property->GetName()));
-        property->SetFile(m_filename);
-        property->SetLine(token.lineNumber);
-        AssociateComment(property);
-        m_lookup->CurrentScope()->AddChild(property);
+        JSObject::Ptr_t obj = m_lookup->NewObject();
+        obj->SetName(name);
+        obj->SetPath(m_lookup->MakePath(obj->GetName()));
+        obj->SetFile(m_filename);
+        obj->SetLine(token.lineNumber);
+        AssociateComment(obj);
+        m_lookup->CurrentScope()->AddChild(obj);
     }
 }
 
@@ -320,7 +321,7 @@ void JSSourceFile::OnPropertyOrFunction()
     JS_NEXT_TOKEN_RETURN();
     if(token.type == kJS_FUNCTION) {
         // Allocate new function obj and add it
-        JSObject::Ptr_t func(new JSFunction());
+        JSObject::Ptr_t func = m_lookup->NewFunction();
         func->SetName(name);
         func->SetPath(m_lookup->MakePath(func->GetName()));
         func->SetFile(m_filename);
@@ -340,14 +341,14 @@ void JSSourceFile::OnPropertyOrFunction()
         // variable
         wxString assigment;
         ReadUntil(';', assigment);
-        JSObject::Ptr_t property(new JSObject());
-        property->SetName(name);
-        property->SetPath(m_lookup->MakePath(property->GetName()));
-        property->SetFile(m_filename);
-        property->SetLine(token.lineNumber);
-        AssociateComment(property);
+        JSObject::Ptr_t obj = m_lookup->NewObject();
+        obj->SetName(name);
+        obj->SetPath(m_lookup->MakePath(obj->GetName()));
+        obj->SetFile(m_filename);
+        obj->SetLine(token.lineNumber);
+        AssociateComment(obj);
         
-        m_lookup->CurrentScope()->AddChild(property);
+        m_lookup->CurrentScope()->AddChild(obj);
     }
 }
 
@@ -360,19 +361,19 @@ void JSSourceFile::OnVariable()
     wxString name = token.text;
     if(!NextToken(token)) return;
 
-    JSObject::Ptr_t var(new JSObject());
-    var->SetName(name);
-    var->SetLine(token.lineNumber);
-    var->SetFile(m_filename);
-    AssociateComment(var);
-    m_lookup->CurrentScope()->As<JSFunction>()->AddVariable(var);
+    JSObject::Ptr_t obj = m_lookup->NewObject();
+    obj->SetName(name);
+    obj->SetLine(token.lineNumber);
+    obj->SetFile(m_filename);
+    AssociateComment(obj);
+    m_lookup->CurrentScope()->As<JSFunction>()->AddVariable(obj);
     if(token.type != '=') {
         return;
     }
 
     JSObjectParser parser(*this, m_lookup);
     if(parser.Parse(NULL)) {
-        var->SetType(parser.GetResult()->GetType());
+        obj->SetType(parser.GetResult()->GetType());
     }
 }
 

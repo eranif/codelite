@@ -44,8 +44,8 @@
 template <class T> class SmartPtr
 {
     /**
- * The reference counting class
- *
+     * The reference counting class
+     *
      * \ingroup CodeLite
      * \version 1.0
      * first version
@@ -72,7 +72,10 @@ template <class T> class SmartPtr
         /**
          * Destructor
          */
-        virtual ~SmartPtrRef() { delete m_data; }
+        virtual ~SmartPtrRef()
+        {
+            wxDELETE(m_data);
+        }
 
         /**
          * \return Pointer to the row data
@@ -83,17 +86,27 @@ template <class T> class SmartPtr
         /**
          * Increase reference counting by 1
          */
-        void IncRef() { m_refCount++; }
+        void IncRef() { ++m_refCount; }
 
         /**
          * Decrease reference counting by 1
          */
-        void DecRef() { m_refCount--; }
+        void DecRef() { --m_refCount; }
         /**
          * Return the current reference counting
          * \return current reference counting
          */
         int GetRefCount() { return m_refCount; }
+
+        /**
+         * @brief clear the reference count. This function does not delete the
+         * underlying pointer, it simply clears the members
+         */
+        void Clear()
+        {
+            m_refCount = 1;
+            m_data = NULL;
+        }
     };
 
     SmartPtrRef* m_ref;
@@ -201,6 +214,19 @@ public:
      */
     operator bool() const { return m_ref && m_ref->GetData(); }
 
+    /**
+     * @brief Release the underlying pointer without deleting it
+     */
+    inline T* Release()
+    {
+        T* ptr(NULL);
+        if(m_ref) {
+            ptr = m_ref->GetData();
+            m_ref->Clear();
+        }
+        return ptr;
+    }
+
 private:
     void DeleteRefCount()
     {
@@ -209,8 +235,9 @@ private:
             if(m_ref->GetRefCount() == 1) {
                 delete m_ref;
                 m_ref = NULL;
-            } else
+            } else {
                 m_ref->DecRef();
+            }
         }
     };
 

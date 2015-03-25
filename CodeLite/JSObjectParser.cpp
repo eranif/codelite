@@ -46,13 +46,13 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
         if(token.type == '[') {
             // an array
             if(!ReadUntil(']')) return false;
-            m_result.Reset(new JSObject());
+            m_result = m_lookup->NewObject();
             m_result->SetType("Array");
             return true;
 
         } else if(token.type == '{') {
             // An object, recurse it
-            m_result.Reset(new JSObject());
+            m_result = m_lookup->NewObject();
             m_result->SetType(GenerateName());
             m_result->SetPath(m_result->GetType());
             if(Parse(m_result)) {
@@ -65,34 +65,34 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             // an instation of an object
             if(!m_sourceFile.NextToken(token)) return false;
             if(token.type == kJS_IDENTIFIER) {
-                m_result.Reset(new JSObject());
+                m_result = m_lookup->NewObject();
                 m_result->SetType(token.text);
                 m_result->SetPath(token.text);
                 return true;
             }
         } else if(token.type == kJS_DEC_NUMBER || token.type == kJS_OCTAL_NUMBER || token.type == kJS_HEX_NUMBER ||
                   token.type == kJS_FLOAT_NUMBER) {
-            m_result.Reset(new JSObject());
+            m_result = m_lookup->NewObject();
             m_result->SetType("Number");
             m_result->SetPath("Number");
             return true;
         } else if(token.type == kJS_TRUE || token.type == kJS_FALSE) {
-            m_result.Reset(new JSObject());
+            m_result = m_lookup->NewObject();
             m_result->SetType("Boolean");
             m_result->SetPath("Boolean");
             return true;
         } else if(token.type == kJS_NULL) {
-            m_result.Reset(new JSObject());
+            m_result = m_lookup->NewObject();
             m_result->SetType("null");
             m_result->SetPath("null");
             return true;
         } else if(token.type == kJS_STRING) {
-            m_result.Reset(new JSObject());
+            m_result = m_lookup->NewObject();
             m_result->SetType("String");
             m_result->SetPath("String");
             return true;
         } else if(token.type == kJS_FUNCTION) {
-            m_result.Reset(new JSFunction());
+            m_result = m_lookup->NewFunction();
             m_sourceFile.OnFunction();
             return true;
 
@@ -115,12 +115,12 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!label.IsEmpty()) {
                 // we already have a label, so this is the value
                 JSObject::Ptr_t obj;
-                JSObject::Ptr_t templ = m_lookup->FindObject(token.text);
+                JSObject::Ptr_t templ = m_lookup->FindClass(token.text);
                 if(templ) {
                     // Create a new instance of this object
-                    obj = templ->NewInstance(label);
+                    obj = templ->NewInstance(label, m_lookup.Get());
                 } else {
-                    obj.Reset(new JSObject());
+                    obj = m_lookup->NewObject();
                     obj->SetName(label);
                     obj->SetType(token.text);
                 }
@@ -134,7 +134,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             // looking for "[" or "}" or any possible value...
             // found an array, consume its body
             if(!ReadUntil(']')) return false;
-            JSObject::Ptr_t arr(new JSObject());
+            JSObject::Ptr_t arr = m_lookup->NewObject();
             arr->SetName(label);
             arr->SetType("Array");
             parent->AddChild(arr);
@@ -151,7 +151,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
         case '{': {
             // found a new object
             if(!label.IsEmpty()) {
-                JSObject::Ptr_t obj(new JSObject());
+                JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType(GenerateName());
                 obj->SetPath(obj->GetType());
@@ -174,7 +174,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             return true;
         case kJS_NULL: {
             if(!label.IsEmpty()) {
-                JSObject::Ptr_t obj(new JSObject());
+                JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("null");
                 parent->AddChild(obj);
@@ -184,7 +184,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
         case kJS_TRUE:
         case kJS_FALSE: {
             if(!label.IsEmpty()) {
-                JSObject::Ptr_t obj(new JSObject());
+                JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("Boolean");
                 parent->AddChild(obj);
@@ -196,7 +196,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
         case kJS_HEX_NUMBER:
         case kJS_FLOAT_NUMBER: {
             if(!label.IsEmpty()) {
-                JSObject::Ptr_t obj(new JSObject());
+                JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("Number");
                 parent->AddChild(obj);
@@ -205,7 +205,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
         } break;
         case kJS_STRING: {
             if(!label.IsEmpty()) {
-                JSObject::Ptr_t obj(new JSObject());
+                JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("String");
                 parent->AddChild(obj);
@@ -222,7 +222,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             }
         } break;
         case kJS_FUNCTION: {
-            JSObject::Ptr_t func(new JSFunction());
+            JSObject::Ptr_t func = m_lookup->NewFunction();
             func->SetName(label);
             parent->AddChild(func);
             label.Clear();
@@ -263,7 +263,7 @@ bool JSObjectParser::ReadSignature(JSObject::Ptr_t scope)
         } else if(token.type == '}') {
             --depth;
         } else if(!curarg.IsEmpty() && (token.type == ',' || token.type == ')')) {
-            JSObject::Ptr_t arg(new JSObject());
+            JSObject::Ptr_t arg = m_lookup->NewObject();
             arg->SetName(curarg);
             arg->SetLine(token.lineNumber);
             scope->As<JSFunction>()->AddVariable(arg);

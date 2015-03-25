@@ -14,6 +14,9 @@ protected:
 public:
     JSFunction();
     virtual ~JSFunction();
+    
+    virtual JSObject::Ptr_t NewInstance(const wxString& name);
+    
     /**
      * @brief is this object a function?
      */

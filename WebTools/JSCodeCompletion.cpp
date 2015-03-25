@@ -47,7 +47,9 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     wxStyledTextCtrl* ctrl = editor->GetSTC();
-    wxString buffer = ctrl->GetText();
+    
+    // work until the current buffer
+    wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
     CHECK_COND_RET(!buffer.IsEmpty());
 
     JSExpressionParser parser(buffer);

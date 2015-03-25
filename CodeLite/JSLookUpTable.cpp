@@ -102,3 +102,13 @@ void JSLookUpTable::Clear()
     m_tempScopes.clear();
     m_scopes = NULL;
 }
+
+void JSLookUpTable::PrepareLookup()
+{
+    m_actualScopes.clear();
+    m_tempScopes.clear();
+    m_scopes = &m_actualScopes;
+
+    JSObject::Ptr_t globalScope(new JSFunction());
+    m_scopes->push_back(globalScope);
+}

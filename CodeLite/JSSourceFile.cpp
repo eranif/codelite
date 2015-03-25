@@ -96,8 +96,7 @@ void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
         // Read the open curly brace
         JS_NEXT_TOKEN();
         JS_CHECK_TYPE_RETURN('{');
-        ++m_depth;
-
+        
         // store this match
         m_lookup->AddObject(func);
 
@@ -137,11 +136,7 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
         }
         sig << token.text;
 
-        if(token.type == '{') {
-            ++m_depth;
-        } else if(token.type == '}') {
-            --m_depth;
-        } else if(!curarg.IsEmpty() && (token.type == ',' || token.type == ')')) {
+        if(!curarg.IsEmpty() && (token.type == ',' || token.type == ')')) {
             JSObject::Ptr_t arg(new JSObject());
             arg->SetName(curarg);
             arg->SetFile(m_filename);
@@ -168,13 +163,6 @@ bool JSSourceFile::ReadUntil2(int until, int until2, wxString& content)
     int startDepth = m_depth;
     while(JS_NEXT_TOKEN()) {
         content << token.text;
-
-        if(token.type == '{') {
-            ++m_depth;
-        } else if(token.type == '}') {
-            --m_depth;
-        }
-
         // breaking condition
         if((token.type == until && m_depth == startDepth) || (token.type == until2 && m_depth == startDepth)) {
             return true;
@@ -191,12 +179,6 @@ bool JSSourceFile::ReadUntil(int until, wxString& content)
     int startDepth = m_depth;
     while(JS_NEXT_TOKEN()) {
         content << token.text << " ";
-
-        if(token.type == '{') {
-            ++m_depth;
-        } else if(token.type == '}') {
-            --m_depth;
-        }
 
         // breaking condition
         if(token.type == until && m_depth == startDepth) {
@@ -217,11 +199,9 @@ void JSSourceFile::Parse(int exitDepth)
     while(NextToken(token)) {
         switch(token.type) {
         case '}':
-            m_depth--;
             if(m_depth == exitDepth) return;
             break;
         case '{':
-            m_depth++;
             break;
         case kJS_FUNCTION:
             OnFunction();
@@ -390,12 +370,9 @@ void JSSourceFile::OnVariable()
         return;
     }
 
-    wxString content;
-    if(ReadUntil(';', content)) {
-        JSObjectParser parser(content, m_lookup);
-        if(parser.Parse(NULL)) {
-            var->SetType(parser.GetResult()->GetType());
-        }
+    JSObjectParser parser(*this, m_lookup);
+    if(parser.Parse(NULL)) {
+        var->SetType(parser.GetResult()->GetType());
     }
 }
 
@@ -411,6 +388,10 @@ bool JSSourceFile::NextToken(JSLexerToken& token)
         if(res && token.type == kJS_C_COMMENT) {
             // doc comment
             m_lastCommentBlock = token;
+        } else if(res && token.type == '{') {
+            ++m_depth;
+        } else if(res && token.type == '}') {
+            --m_depth;
         }
         return res;
     }

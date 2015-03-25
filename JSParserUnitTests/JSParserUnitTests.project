@@ -31,6 +31,8 @@
     <File Name="TestFiles/parse_function_doc_return_value.js"/>
     <File Name="TestFiles/parse_expression.js"/>
     <File Name="TestFiles/parse_json_object.js"/>
+    <File Name="TestFiles/parse_json_object_2.js"/>
+    <File Name="TestFiles/parse_local_variables_2.js"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

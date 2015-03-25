@@ -73,6 +73,11 @@ public:
      */
     void Clear();
     
+    /**
+     * @brief prepare the lookup table for parsing a source file
+     */
+    void PrepareLookup();
+    
     const JSObject::Map_t& GetObjects() const { return m_objects; }
     JSObject::Map_t& GetObjects() { return m_objects; }
 };

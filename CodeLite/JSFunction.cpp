@@ -29,3 +29,12 @@ void JSFunction::AddVariable(JSObject::Ptr_t var)
     
     m_variables.insert(std::make_pair(var->GetName(), var));
 }
+
+JSObject::Ptr_t JSFunction::NewInstance(const wxString& name)
+{
+    JSObject::Ptr_t inst(new JSFunction());
+    inst->SetName(name);
+    inst->SetType(GetType());
+    inst->SetPath(GetPath());
+    return inst;
+}

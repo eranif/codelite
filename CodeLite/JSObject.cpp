@@ -29,3 +29,12 @@ const wxString& JSObject::GetType() const
         return m_type;
     }
 }
+
+JSObject::Ptr_t JSObject::NewInstance(const wxString& name)
+{
+    JSObject::Ptr_t inst(new JSObject());
+    inst->SetName(name);
+    inst->SetType(GetType());
+    inst->SetPath(GetPath());
+    return inst;
+}

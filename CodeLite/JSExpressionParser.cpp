@@ -2,6 +2,8 @@
 #include <stack>
 #include "JSLexerTokens.h"
 #include "JSSourceFile.h"
+#include <algorithm>
+#include <wx/wxcrtvararg.h>
 
 JSExpressionParser::JSExpressionParser(const wxString& fulltext)
     : m_text(fulltext)
@@ -112,11 +114,19 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
 JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const wxString& filename)
 {
     if(m_expression.empty()) return NULL;
-
+    
+    // Prepare the lookup for parsing a source file
+    lookup->PrepareLookup();
+    
     // Reparse the current file
     JSSourceFile sourceFile(lookup, m_text, wxFileName(filename));
     sourceFile.Parse();
 
+    JSObject::Map_t locals = lookup->GetVisibleVariables();
+    std::for_each(locals.begin(), locals.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) {
+        wxFprintf(stderr, "%\n", p.second->GetName());
+    });
+    
     JSObject::Ptr_t resolved(NULL);
     for(size_t i = 0; i < m_expression.size(); ++i) {
         JSLexerToken &token = m_expression.at(i);

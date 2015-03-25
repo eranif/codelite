@@ -9,6 +9,7 @@
 #include "JSObject.h"
 #include "JSLookUpTable.h"
 
+class JSObjectParser;
 class WXDLLIMPEXP_CL JSSourceFile
 {
     JSScanner_t m_scanner;
@@ -17,6 +18,8 @@ class WXDLLIMPEXP_CL JSSourceFile
     int m_depth;
     JSLexerToken m_lastToken;
     JSLexerToken m_lastCommentBlock;
+    
+    friend class JSObjectParser;
     
 protected:
     bool ReadSignature(JSObject::Ptr_t scope);

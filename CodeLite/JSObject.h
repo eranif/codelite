@@ -27,7 +27,12 @@ protected:
 public:
     JSObject();
     virtual ~JSObject();
-
+    
+    /**
+     * @brief allocate a new instance of this object
+     */
+    virtual JSObject::Ptr_t NewInstance(const wxString& name);
+    
     /**
      * @brief print this object to the log file
      */

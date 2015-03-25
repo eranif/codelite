@@ -103,6 +103,27 @@ TEST_FUNC(parse_locals_in_callback_function)
     return true;
 }
 
+// Parse local variables declare inside a callback function
+TEST_FUNC(parse_locals_self_executed_function)
+{
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSSourceFile source(lookup, wxFileName("../TestFiles/parse_local_variables_2.js"));
+    source.Parse();
+
+    JSObject::Map_t vars = lookup->GetVisibleVariables();
+    // 3 local variables: innerObj, retObj and 'e' (the function argument)
+    CHECK_SIZE(vars.size(), 3);
+    CHECK_SIZE(vars.count("retObj"), 1);
+    CHECK_SIZE(vars.count("innerObj"), 1);
+    CHECK_SIZE(vars.count("e"), 1);
+    
+    JSObject::Ptr_t retObj = vars.find("retObj")->second;
+    JSObject::Ptr_t proto = lookup->FindObject(retObj->GetType());
+    CHECK_BOOL(proto);
+    CHECK_SIZE(proto->GetProperties().size(), 2);
+    return true;
+}
+
 // Test parsing function and attaching the return value from the doc comment
 TEST_FUNC(parse_function_doc_return_value)
 {
@@ -141,11 +162,13 @@ TEST_FUNC(parse_expression)
 
 TEST_FUNC(parse_json_object)
 {
-    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
     wxString fileContent;
     FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_json_object.js"), fileContent);
-    JSObjectParser jsonParser(fileContent, lookup);
-    CHECK_BOOL(jsonParser.Parse(NULL));
+        
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSSourceFile sourceFile(lookup, fileContent, wxFileName("../TestFiles/parse_json_object.js"));
+    JSObjectParser objectParser(sourceFile, lookup);
+    CHECK_BOOL(objectParser.Parse(NULL));
     
     JSObject::Ptr_t o1 = lookup->FindObject("__object1");
     JSObject::Ptr_t o2 = lookup->FindObject("__object2");
@@ -165,6 +188,24 @@ TEST_FUNC(parse_json_object)
     CHECK_SIZE(o2->GetProperties().count("y"), 1);
     CHECK_SIZE(o2->GetProperties().count("dims"), 1);
     
+    return true;
+}
+
+TEST_FUNC(parse_json_object_2)
+{
+    wxString fileContent;
+    FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_json_object_2.js"), fileContent);
+        
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSSourceFile sourceFile(lookup, fileContent, wxFileName("../TestFiles/parse_json_object_2.js"));
+    JSObjectParser objectParser(sourceFile, lookup);
+    CHECK_BOOL(objectParser.Parse(NULL));
+    
+    JSObject::Ptr_t obj = objectParser.GetResult();
+    CHECK_SIZE(obj->GetProperties().count("open"), 1);
+    CHECK_SIZE(obj->GetProperties().count("close"), 1);
+    
+    obj->Print(0);
     return true;
 }
 

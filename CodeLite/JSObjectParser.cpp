@@ -1,25 +1,21 @@
 #include "JSObjectParser.h"
 #include "JSLexerAPI.h"
 #include "JSLexerTokens.h"
+#include "JSFunction.h"
 
-JSObjectParser::JSObjectParser(const wxString& text, JSLookUpTable::Ptr_t lookup)
-    : m_lookup(lookup)
+JSObjectParser::JSObjectParser(JSSourceFile& sourceFile, JSLookUpTable::Ptr_t lookup)
+    : m_sourceFile(sourceFile)
+    , m_lookup(lookup)
 {
-    m_scanner = ::jsLexerNew(text);
 }
 
-JSObjectParser::~JSObjectParser()
-{
-    if(m_scanner) {
-        ::jsLexerDestroy(&m_scanner);
-    }
-}
+JSObjectParser::~JSObjectParser() {}
 
 bool JSObjectParser::ReadUntil(int until)
 {
     JSLexerToken token;
     int depth(0);
-    while(::jsLexerNext(m_scanner, token)) {
+    while(m_sourceFile.NextToken(token)) {
         if(token.type == '{') {
             ++depth;
         } else if(token.type == '}') {
@@ -40,7 +36,13 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
 {
     JSLexerToken token;
     if(!parent) {
-        if(!::jsLexerNext(m_scanner, token)) return false;
+        // read the first non "(" token ("(" might be a self executing function)
+        while(true) {
+            if(!m_sourceFile.NextToken(token)) return false;
+            if(token.type == '(') continue;
+            break;
+        }
+        
         if(token.type == '[') {
             // an array
             if(!ReadUntil(']')) return false;
@@ -61,7 +63,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
 
         } else if(token.type == kJS_NEW) {
             // an instation of an object
-            if(!::jsLexerNext(m_scanner, token)) return false;
+            if(!m_sourceFile.NextToken(token)) return false;
             if(token.type == kJS_IDENTIFIER) {
                 m_result.Reset(new JSObject());
                 m_result->SetType(token.text);
@@ -89,6 +91,11 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             m_result->SetType("String");
             m_result->SetPath("String");
             return true;
+        } else if(token.type == kJS_FUNCTION) {
+            m_result.Reset(new JSFunction());
+            m_sourceFile.OnFunction();
+            return true;
+
         } else {
             return false;
         }
@@ -99,10 +106,29 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
 
     wxString tmpLabel;
     wxString label;
-    while(::jsLexerNext(m_scanner, token)) {
+    while(m_sourceFile.NextToken(token)) {
         switch(token.type) {
+        case kJS_VAR:
+            m_sourceFile.OnVariable();
+            break;
         case kJS_IDENTIFIER:
-            tmpLabel = token.text;
+            if(!label.IsEmpty()) {
+                // we already have a label, so this is the value
+                JSObject::Ptr_t obj;
+                JSObject::Ptr_t templ = m_lookup->FindObject(token.text);
+                if(templ) {
+                    // Create a new instance of this object
+                    obj = templ->NewInstance(label);
+                } else {
+                    obj.Reset(new JSObject());
+                    obj->SetName(label);
+                    obj->SetType(token.text);
+                }
+                parent->AddChild(obj);
+                label.clear();
+            } else {
+                tmpLabel = token.text;
+            }
             break;
         case '[': {
             // looking for "[" or "}" or any possible value...
@@ -184,13 +210,25 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 obj->SetType("String");
                 parent->AddChild(obj);
                 label.Clear();
+            } else {
+                wxString strippedLabel = token.text;
+                if(strippedLabel.StartsWith("\"") || strippedLabel.StartsWith("'")) {
+                    strippedLabel.Remove(0, 1);
+                }
+                if(strippedLabel.EndsWith("\"") || strippedLabel.EndsWith("'")) {
+                    strippedLabel.RemoveLast();
+                }
+                tmpLabel = strippedLabel;
             }
         } break;
-        case kJS_FUNCTION:
-            // FIXME: parse function, for now, just consume its body
-            if(!ReadUntil('}')) return false;
+        case kJS_FUNCTION: {
+            JSObject::Ptr_t func(new JSFunction());
+            func->SetName(label);
+            parent->AddChild(func);
             label.Clear();
-            break;
+            
+            m_sourceFile.OnFunction();
+        } break;
         default:
             label.Clear();
             break;
@@ -200,3 +238,46 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
 }
 
 wxString JSObjectParser::GenerateName() { return m_lookup->GenerateNewType(); }
+
+bool JSObjectParser::ReadSignature(JSObject::Ptr_t scope)
+{
+    wxString sig;
+    JSLexerToken token;
+
+    if(!m_sourceFile.NextToken(token)) return false;
+    if(token.type != '(') return false;
+
+    sig << "(";
+
+    wxString curarg;
+    int depth = 1;
+    while(m_sourceFile.NextToken(token)) {
+
+        if(curarg.IsEmpty() && token.type == kJS_IDENTIFIER) {
+            curarg << token.text;
+        }
+        sig << token.text;
+
+        if(token.type == '{') {
+            ++depth;
+        } else if(token.type == '}') {
+            --depth;
+        } else if(!curarg.IsEmpty() && (token.type == ',' || token.type == ')')) {
+            JSObject::Ptr_t arg(new JSObject());
+            arg->SetName(curarg);
+            arg->SetLine(token.lineNumber);
+            scope->As<JSFunction>()->AddVariable(arg);
+            curarg.Clear();
+        }
+
+        // breaking condition
+        if((token.type == ')') && (1 == depth)) {
+            break;
+        } else if(depth < 1) {
+            return false;
+        }
+    }
+
+    scope->As<JSFunction>()->SetSignature(sig);
+    return true;
+}

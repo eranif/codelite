@@ -41,7 +41,8 @@ WebTools::WebTools(IManager* manager)
     m_jsColourThread->Create();
     m_jsColourThread->Run();
 
-    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &WebTools::OnRefreshColours, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &WebTools::OnRefreshColours, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
@@ -62,7 +63,8 @@ void WebTools::CreatePluginMenu(wxMenu* pluginsMenu) {}
 
 void WebTools::UnPlug()
 {
-    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnRefreshColours, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &WebTools::OnRefreshColours, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
@@ -71,16 +73,11 @@ void WebTools::UnPlug()
     m_jsCodeComplete.Reset(NULL);
 }
 
-void WebTools::OnFileLoaded(clCommandEvent& event)
+void WebTools::OnRefreshColours(clCommandEvent& event)
 {
     event.Skip();
     if(FileExtManager::GetType(event.GetFileName()) == FileExtManager::TypeJS) {
         m_jsColourThread->QueueFile(event.GetFileName());
-        // for testing purposes, parse the source file if JS
-        // JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
-        // JSSourceFile sourceFile(lookup, wxFileName(event.GetFileName()));
-        // sourceFile.Parse();
-        // lookup->Print();
     }
 }
 

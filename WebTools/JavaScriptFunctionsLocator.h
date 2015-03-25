@@ -1,11 +1,11 @@
 #ifndef JAVASCRIPTFUNCTIONSLOCATOR_H
 #define JAVASCRIPTFUNCTIONSLOCATOR_H
 
-#include "CxxScannerBase.h"
 #include <wx/string.h>
 #include "macros.h"
+#include "JSLexerAPI.h"
 
-class JavaScriptFunctionsLocator : public CxxScannerBase
+class JavaScriptFunctionsLocator
 {
     enum eState { kNormal, kScopeOperator };
     wxString m_lastIdentifier;
@@ -13,16 +13,19 @@ class JavaScriptFunctionsLocator : public CxxScannerBase
     wxStringSet_t m_properties;
     wxStringSet_t m_keywords;
     eState m_state;
+    JSScanner_t m_scanner;
     
 protected:
-    void OnToken(CxxLexerToken& token);
+    void OnToken(JSLexerToken& token);
 
 public:
-    JavaScriptFunctionsLocator(CxxPreProcessor* preProcessor, const wxFileName& filename);
+    JavaScriptFunctionsLocator(const wxFileName& filename);
     virtual ~JavaScriptFunctionsLocator();
 
     wxString GetFunctionsString() const;
     wxString GetPropertiesString() const;
+    
+    void Parse();
 };
 
 #endif // JAVASCRIPTFUNCTIONSLOCATOR_H

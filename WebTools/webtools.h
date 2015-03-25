@@ -15,7 +15,7 @@ class WebTools : public IPlugin
     JSCodeCompletion::Ptr_t m_jsCodeComplete;
     
 protected:
-    void OnFileLoaded(clCommandEvent& event);
+    void OnRefreshColours(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);

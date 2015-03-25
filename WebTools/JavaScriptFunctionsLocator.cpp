@@ -2,10 +2,11 @@
 #include <algorithm>
 #include <wx/tokenzr.h>
 #include "CxxScannerTokens.h"
+#include "JSLexerTokens.h"
+#include "fileutils.h"
 
-JavaScriptFunctionsLocator::JavaScriptFunctionsLocator(CxxPreProcessor* preProcessor, const wxFileName& filename)
-    : CxxScannerBase(preProcessor, filename)
-    , m_state(kNormal)
+JavaScriptFunctionsLocator::JavaScriptFunctionsLocator(const wxFileName& filename)
+    : m_state(kNormal)
 {
     const wxString jsKeywords = "abstract	arguments	boolean	break	byte "
                                 "case	catch	char	class*	const "
@@ -24,11 +25,21 @@ JavaScriptFunctionsLocator::JavaScriptFunctionsLocator(CxxPreProcessor* preProce
     for(size_t i = 0; i < keywords.size(); ++i) {
         m_keywords.insert(keywords.Item(i));
     }
+
+    wxString fileContent;
+    if(FileUtils::ReadFileContent(filename, fileContent)) {
+        m_scanner = ::jsLexerNew(fileContent);
+    }
 }
 
-JavaScriptFunctionsLocator::~JavaScriptFunctionsLocator() {}
+JavaScriptFunctionsLocator::~JavaScriptFunctionsLocator()
+{
+    if(m_scanner) {
+        ::jsLexerDestroy(&m_scanner);
+    }
+}
 
-void JavaScriptFunctionsLocator::OnToken(CxxLexerToken& token)
+void JavaScriptFunctionsLocator::OnToken(JSLexerToken& token)
 {
     // We collect every word which is followed by "(" (except for keywords)
 
@@ -38,20 +49,19 @@ void JavaScriptFunctionsLocator::OnToken(CxxLexerToken& token)
     //---------------------------------------------------------
     case kNormal: {
         switch(token.type) {
-        case T_IDENTIFIER: {
-            wxString word = token.text;
-            if(m_keywords.count(word) == 0) {
+        case kJS_IDENTIFIER: {
+            if(m_keywords.count(token.text) == 0) {
                 // keep it
-                m_lastIdentifier.swap(word);
+                m_lastIdentifier = token.text;
             } else {
                 // a keyword, skip it
                 m_lastIdentifier.clear();
             }
             break;
         }
-        case '.':
+        case kJS_DOT:
             if(!m_lastIdentifier.IsEmpty()) {
-                // a property 
+                // a property
                 m_properties.insert(m_lastIdentifier);
             }
             m_lastIdentifier.Clear();
@@ -73,7 +83,7 @@ void JavaScriptFunctionsLocator::OnToken(CxxLexerToken& token)
     // Previous match was "."
     //---------------------------------------------------------
     case kScopeOperator: {
-        if(token.type == T_IDENTIFIER) {
+        if(token.type == kJS_IDENTIFIER) {
             wxString word = token.text;
             if(m_keywords.count(word) == 0) {
                 m_functions.insert(word);
@@ -101,4 +111,13 @@ wxString JavaScriptFunctionsLocator::GetPropertiesString() const
     wxString str;
     std::for_each(m_properties.begin(), m_properties.end(), [&](const wxString& prop) { str << prop << " "; });
     return str;
+}
+
+void JavaScriptFunctionsLocator::Parse()
+{
+    if(!m_scanner) return;
+    JSLexerToken token;
+    while(::jsLexerNext(m_scanner, token)) {
+        OnToken(token);
+    }
 }

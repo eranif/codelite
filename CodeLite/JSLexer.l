@@ -44,7 +44,7 @@ extern "C" int yywrap(void*) { return 1; }
 %x CPP_COMMENT
 %x C_COMMENT
 
-identifier [a-zA-Z_][0-9a-zA-Z_]*
+identifier [$a-zA-Z_][$0-9a-zA-Z_]*
 exponent_part [eE][-+]?[0-9]+
 fractional_constant ([0-9]*"."[0-9]+)|([0-9]+".")
 floating_constant (({fractional_constant}{exponent_part}?)|([0-9]+{exponent_part}))[FfLl]?

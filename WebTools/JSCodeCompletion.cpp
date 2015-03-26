@@ -47,7 +47,7 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     wxStyledTextCtrl* ctrl = editor->GetSTC();
-    
+
     // work until the current buffer
     wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
     CHECK_COND_RET(!buffer.IsEmpty());
@@ -63,22 +63,48 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     }
 
     // Code complete succeeded!
+    wxString wordCompleteFilter = parser.GetWordCompleteFilter().Lower();
     wxCodeCompletionBoxEntry::Vec_t entries;
-    const JSObject::Map_t& properties = resolved->GetProperties();
+    JSObject::Map_t properties;
+    if(parser.IsWordComplete()) {
+        // use the resolved object properties 
+        properties = resolved->GetProperties();
+        
+        // plus the visible variables
+        JSObject::Map_t locals = m_lookup->GetVisibleVariables();
+        properties.insert(locals.begin(), locals.end());
+        
+    } else {
+        properties = resolved->GetProperties();
+    }
+    
     std::for_each(properties.begin(), properties.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) {
         JSObject::Ptr_t obj = p.second;
 
         wxString displayText;
         displayText << obj->GetName();
+        wxString displayTextLower = displayText.Lower();
         if(obj->As<JSFunction>() && !obj->As<JSFunction>()->GetSignature().IsEmpty()) {
             displayText << obj->As<JSFunction>()->GetSignature();
         }
+        
+        // If word complete is requsted, suggest only words that starts with the filter
+        // if no filter is provided, display all entries
+        if(parser.IsWordComplete() && !wordCompleteFilter.IsEmpty() &&
+           displayTextLower.StartsWith(wordCompleteFilter)) {
+            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New("");
+            entry->SetImgIndex(obj->IsFunction() ? 9 : 6);
+            entry->SetComment(obj->GetComment());
+            entry->SetText(displayText);
+            entries.push_back(entry);
 
-        wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New("");
-        entry->SetImgIndex(obj->IsFunction() ? 9 : 6);
-        entry->SetComment(obj->GetComment());
-        entry->SetText(displayText);
-        entries.push_back(entry);
+        } else {
+            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New("");
+            entry->SetImgIndex(obj->IsFunction() ? 9 : 6);
+            entry->SetComment(obj->GetComment());
+            entry->SetText(displayText);
+            entries.push_back(entry);
+        }
     });
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, 0, this);
 }
@@ -86,10 +112,10 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
 void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply)
 {
     if(reply && reply->lookup) {
-        m_lookup->GetObjects().insert(reply->lookup->GetObjects().begin(), reply->lookup->GetObjects().end());
+        m_lookup->GetClassTable().insert(reply->lookup->GetClassTable().begin(), reply->lookup->GetClassTable().end());
         reply->lookup->Clear();
         // Fill the lookup with the common global objects
-        m_lookup->PopulateWithGlobals(); 
+        m_lookup->PopulateWithGlobals();
     }
     wxDELETE(reply);
 }

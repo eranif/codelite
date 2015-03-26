@@ -72,10 +72,7 @@ template <class T> class SmartPtr
         /**
          * Destructor
          */
-        virtual ~SmartPtrRef()
-        {
-            wxDELETE(m_data);
-        }
+        virtual ~SmartPtrRef() { delete m_data; }
 
         /**
          * \return Pointer to the row data
@@ -86,27 +83,17 @@ template <class T> class SmartPtr
         /**
          * Increase reference counting by 1
          */
-        void IncRef() { ++m_refCount; }
+        void IncRef() { m_refCount++; }
 
         /**
          * Decrease reference counting by 1
          */
-        void DecRef() { --m_refCount; }
+        void DecRef() { m_refCount--; }
         /**
          * Return the current reference counting
          * \return current reference counting
          */
         int GetRefCount() { return m_refCount; }
-
-        /**
-         * @brief clear the reference count. This function does not delete the
-         * underlying pointer, it simply clears the members
-         */
-        void Clear()
-        {
-            m_refCount = 1;
-            m_data = NULL;
-        }
     };
 
     SmartPtrRef* m_ref;
@@ -213,19 +200,6 @@ public:
      * \return true of the internal raw data exist and it is not null
      */
     operator bool() const { return m_ref && m_ref->GetData(); }
-
-    /**
-     * @brief Release the underlying pointer without deleting it
-     */
-    inline T* Release()
-    {
-        T* ptr(NULL);
-        if(m_ref) {
-            ptr = m_ref->GetData();
-            m_ref->Clear();
-        }
-        return ptr;
-    }
 
 private:
     void DeleteRefCount()

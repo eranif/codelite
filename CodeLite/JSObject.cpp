@@ -6,6 +6,7 @@
 
 JSObject::JSObject(const JSLookUpTable* lookup)
     : m_line(wxNOT_FOUND)
+    , m_parent(NULL)
 {
     Extends("Object", lookup);
 }
@@ -48,5 +49,14 @@ void JSObject::Extends(const wxString& className, const JSLookUpTable* lookup)
     if(parent) {
         m_extends.insert(className);
         m_properties.insert(parent->GetProperties().begin(), parent->GetProperties().end());
+    }
+}
+
+void JSObject::AddProperty(JSObject::Ptr_t child)
+{
+    std::pair<JSObject::Map_t::iterator, bool> res = m_properties.insert(std::make_pair(child->GetName(), child));
+    if(res.second) {
+        // success insert
+        child->m_parent = this;
     }
 }

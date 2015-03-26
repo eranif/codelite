@@ -126,11 +126,32 @@ JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const w
 
     // Prepare the lookup for parsing a source file
     lookup->PrepareLookup();
+    
+    // Determing the type of completion requested
+    m_completeType = kCodeComplete;
 
+    if(m_expression.at(m_expression.size() - 1).type == '(') {
+        m_completeType = kFunctionTipComplete;
+    } else if(m_expression.at(m_expression.size() - 1).type == kJS_IDENTIFIER) {
+        m_completeType = kWordComplete;
+    }
+    
     // Reparse the current file
     JSSourceFile sourceFile(lookup, m_text, wxFileName(filename));
     sourceFile.Parse();
 
+    if(IsWordComplete()) {
+        // Remove the last token so it is now a "code-complete" expression
+        m_wordCompleteFilter = m_expression.back().text;
+        m_expression.pop_back();
+        
+        if(m_expression.empty()) {
+            // after removing the last element, we have no more tokens in the expression
+            // return the global scope
+            return lookup->GetGlobalScope();
+        }
+    }
+    
     JSObject::Ptr_t resolved(NULL);
     for(size_t i = 0; i < m_expression.size(); ++i) {
         JSLexerToken& token = m_expression.at(i);

@@ -11,7 +11,7 @@
 class WXDLLIMPEXP_CL JSLookUpTable
 {
     JSObject::Map_t m_classes;
-    JSObject::Map_t m_globals;
+    JSObject::Ptr_t m_globalScope;
     JSObject::Vec_t m_actualScopes;
     JSObject::Vec_t m_tempScopes;
     JSObject::Vec_t* m_scopes;
@@ -97,8 +97,14 @@ public:
      */
     void PopulateWithGlobals();
     
-    const JSObject::Map_t& GetObjects() const { return m_classes; }
-    JSObject::Map_t& GetObjects() { return m_classes; }
+    const JSObject::Map_t& GetClassTable() const { return m_classes; }
+    JSObject::Map_t& GetClassTable() { return m_classes; }
+    
+    /**
+     * @brief return the global scope
+     * @return 
+     */
+    JSObject::Ptr_t GetGlobalScope() const { return m_globalScope; }
 };
 
 #endif // JSLOOKUPTABLE_H

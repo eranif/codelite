@@ -26,6 +26,7 @@ protected:
     JSObject::Map_t m_properties;
     wxString m_type;
     std::set<wxString> m_extends;
+    JSObject* m_parent; 
     
 public:
     JSObject(const JSLookUpTable* lookup);
@@ -55,7 +56,10 @@ public:
      * @brief return this object properties
      */
     const JSObject::Map_t& GetProperties() const { return m_properties; }
-    void AddChild(JSObject::Ptr_t child) { m_properties.insert(std::make_pair(child->GetName(), child)); }
+    /**
+     * @brief add a property to the object 
+     */
+    void AddProperty(JSObject::Ptr_t property);
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<JSObject*>(this)); }
 
     void SetComment(const wxString& comment) { this->m_comment = comment; }

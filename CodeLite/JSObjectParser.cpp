@@ -124,7 +124,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                     obj->SetName(label);
                     obj->SetType(token.text);
                 }
-                parent->AddChild(obj);
+                parent->AddProperty(obj);
                 label.clear();
             } else {
                 tmpLabel = token.text;
@@ -137,7 +137,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             JSObject::Ptr_t arr = m_lookup->NewObject();
             arr->SetName(label);
             arr->SetType("Array");
-            parent->AddChild(arr);
+            parent->AddProperty(arr);
             label.Clear();
         } break;
         case ',':
@@ -155,7 +155,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 obj->SetName(label);
                 obj->SetType(GenerateName());
                 obj->SetPath(obj->GetType());
-                parent->AddChild(obj);
+                parent->AddProperty(obj);
 
                 // Recurse into this object
                 if(!Parse(obj)) return false;
@@ -177,7 +177,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("null");
-                parent->AddChild(obj);
+                parent->AddProperty(obj);
                 label.Clear();
             }
         } break;
@@ -187,7 +187,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("Boolean");
-                parent->AddChild(obj);
+                parent->AddProperty(obj);
                 label.Clear();
             }
         } break;
@@ -199,7 +199,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("Number");
-                parent->AddChild(obj);
+                parent->AddProperty(obj);
                 label.Clear();
             }
         } break;
@@ -208,7 +208,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->SetType("String");
-                parent->AddChild(obj);
+                parent->AddProperty(obj);
                 label.Clear();
             } else {
                 wxString strippedLabel = token.text;
@@ -224,7 +224,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
         case kJS_FUNCTION: {
             JSObject::Ptr_t func = m_lookup->NewFunction();
             func->SetName(label);
-            parent->AddChild(func);
+            parent->AddProperty(func);
             label.Clear();
             
             m_sourceFile.OnFunction();

@@ -59,7 +59,7 @@ void JSSourceFile::OnFunction()
         func->SetLine(token.lineNumber);
         AssociateComment(func);
 
-        m_lookup->CurrentScope()->AddChild(func);
+        m_lookup->CurrentScope()->AddProperty(func);
         ParseFunction(func);
         
         // Now, parse the comment
@@ -79,7 +79,7 @@ void JSSourceFile::OnFunction()
         func->SetLine(token.lineNumber);
         
         AssociateComment(func);
-        m_lookup->CurrentScope()->AddChild(func);
+        m_lookup->CurrentScope()->AddProperty(func);
         ParseFunction(func);
         
         // Now, parse the comment
@@ -276,7 +276,7 @@ void JSSourceFile::OnFunctionThisProperty()
         func->SetFile(m_filename);
         func->SetLine(token.lineNumber);
         AssociateComment(func);
-        m_lookup->CurrentScope()->AddChild(func);
+        m_lookup->CurrentScope()->AddProperty(func);
 
         // From here on, its the same as normal function
         ParseFunction(func);
@@ -294,7 +294,7 @@ void JSSourceFile::OnFunctionThisProperty()
         obj->SetFile(m_filename);
         obj->SetLine(token.lineNumber);
         AssociateComment(obj);
-        m_lookup->CurrentScope()->AddChild(obj);
+        m_lookup->CurrentScope()->AddProperty(obj);
     }
 }
 
@@ -328,7 +328,7 @@ void JSSourceFile::OnPropertyOrFunction()
         func->SetLine(token.lineNumber);
         AssociateComment(func);
         
-        m_lookup->CurrentScope()->AddChild(func);
+        m_lookup->CurrentScope()->AddProperty(func);
 
         // From here on, its the same as normal function
         ParseFunction(func);
@@ -348,7 +348,7 @@ void JSSourceFile::OnPropertyOrFunction()
         obj->SetLine(token.lineNumber);
         AssociateComment(obj);
         
-        m_lookup->CurrentScope()->AddChild(obj);
+        m_lookup->CurrentScope()->AddProperty(obj);
     }
 }
 

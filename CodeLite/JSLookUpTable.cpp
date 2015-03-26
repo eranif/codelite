@@ -112,6 +112,7 @@ void JSLookUpTable::PrepareLookup()
     m_tempScopes.clear();
     m_scopes = &m_actualScopes;
     m_globalScope.Reset(NULL); // Delete the current global scope
+    m_globalScope = NewFunction();
     PopulateWithGlobals(); // populate the global scope with the classes
     m_scopes->push_back(m_globalScope);
 }

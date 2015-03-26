@@ -19,7 +19,10 @@ class WXDLLIMPEXP_CL JSLookUpTable
 
 public:
     typedef SmartPtr<JSLookUpTable> Ptr_t;
-
+    
+private:
+    void InitializeGlobalScope();
+    
 public:
     JSLookUpTable();
     virtual ~JSLookUpTable();

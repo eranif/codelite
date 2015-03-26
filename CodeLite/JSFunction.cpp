@@ -4,8 +4,8 @@
 #include <wx/crt.h>
 #include "JSLookUpTable.h"
 
-JSFunction::JSFunction(const JSLookUpTable* lookup)
-    : JSObject(lookup)
+JSFunction::JSFunction()
+    : JSObject()
 {
 }
 
@@ -30,9 +30,9 @@ void JSFunction::AddVariable(JSObject::Ptr_t var)
     m_variables.insert(std::make_pair(var->GetName(), var));
 }
 
-JSObject::Ptr_t JSFunction::NewInstance(const wxString& name, const JSLookUpTable* lookup)
+JSObject::Ptr_t JSFunction::NewInstance(const wxString& name)
 {
-    JSObject::Ptr_t inst = lookup->NewFunction();
+    JSObject::Ptr_t inst(new JSFunction());
     inst->SetName(name);
     inst->SetType(GetType());
     inst->SetPath(GetPath());

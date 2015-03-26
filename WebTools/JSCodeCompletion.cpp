@@ -68,14 +68,17 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     JSObject::Map_t properties;
     if(parser.IsWordComplete()) {
         // use the resolved object properties
-        properties = resolved->GetProperties();
+        properties = GetObjectProperties(resolved);
 
-        // plus the visible variables
-        JSObject::Map_t locals = m_lookup->GetVisibleVariables();
-        properties.insert(locals.begin(), locals.end());
+        // if the resolved object is the global scope,
+        // add the visible variables
+        if(resolved->IsGlobalScope()) {
+            JSObject::Map_t locals = m_lookup->GetVisibleVariables();
+            properties.insert(locals.begin(), locals.end());
+        }
 
     } else {
-        properties = resolved->GetProperties();
+        properties = GetObjectProperties(resolved);
     }
 
     std::for_each(properties.begin(), properties.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) {
@@ -128,4 +131,17 @@ int JSCodeCompletion::GetImgIndex(JSObject::Ptr_t obj)
     else if(obj->IsFunction())
         return 9;
     return 6; // Variable
+}
+
+JSObject::Map_t JSCodeCompletion::GetObjectProperties(JSObject::Ptr_t o)
+{
+    JSObject::Map_t properties;
+    properties.insert(o->GetProperties().begin(), o->GetProperties().end());
+    
+    const std::set<wxString>& extends = o->GetExtends();
+    std::for_each(extends.begin(), extends.end(), [&](const wxString& className){
+        JSObject::Ptr_t cls = m_lookup->FindClass(className);
+        properties.insert(cls->GetProperties().begin(), cls->GetProperties().end());
+    });
+    return properties;
 }

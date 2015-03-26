@@ -9,7 +9,6 @@
 #include <map>
 #include <set>
 
-class JSLookUpTable;
 class WXDLLIMPEXP_CL JSObject
 {
 public:
@@ -30,19 +29,26 @@ protected:
     size_t m_flags;
     
 public:
-    JSObject(const JSLookUpTable* lookup);
+    JSObject();
     virtual ~JSObject();
+    
+    bool IsGlobalScope() const { return GetName() == "__GLOBAL__"; }
+    
+    /**
+     * @brief return the "extends" list of this object
+     */
+    const std::set<wxString>& GetExtends() const { return m_extends; }
     
     /**
      * @brief make this object extending 'className'
      * @param className
      */
-    void Extends(const wxString& className, const JSLookUpTable* lookup);
+    void Extends(const wxString& className);
     
     /**
      * @brief allocate a new instance of this object
      */
-    virtual JSObject::Ptr_t NewInstance(const wxString& name, const JSLookUpTable* lookup);
+    virtual JSObject::Ptr_t NewInstance(const wxString& name);
     
     /**
      * @brief print this object to the log file

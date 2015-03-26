@@ -118,7 +118,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 JSObject::Ptr_t templ = m_lookup->FindClass(token.text);
                 if(templ) {
                     // Create a new instance of this object
-                    obj = templ->NewInstance(label, m_lookup.Get());
+                    obj = templ->NewInstance(label);
                 } else {
                     obj = m_lookup->NewObject();
                     obj->SetName(label);

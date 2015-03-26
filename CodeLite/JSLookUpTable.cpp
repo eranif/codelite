@@ -6,7 +6,7 @@ JSLookUpTable::JSLookUpTable()
     : m_objSeed(0)
 {
     m_scopes = &m_actualScopes;
-    m_globalScope = NewFunction();
+    InitializeGlobalScope();
     m_scopes->push_back(m_globalScope);
 }
 
@@ -112,20 +112,20 @@ void JSLookUpTable::PrepareLookup()
     m_tempScopes.clear();
     m_scopes = &m_actualScopes;
     m_globalScope.Reset(NULL); // Delete the current global scope
-    m_globalScope = NewFunction();
+    InitializeGlobalScope();
     PopulateWithGlobals(); // populate the global scope with the classes
     m_scopes->push_back(m_globalScope);
 }
 
 JSObject::Ptr_t JSLookUpTable::NewObject() const
 {
-    JSObject::Ptr_t obj(new JSObject(this));
+    JSObject::Ptr_t obj(new JSObject());
     return obj;
 }
 
 JSObject::Ptr_t JSLookUpTable::NewFunction() const
 {
-    JSObject::Ptr_t obj(new JSFunction(this));
+    JSObject::Ptr_t obj(new JSFunction());
     return obj;
 }
 
@@ -135,14 +135,14 @@ void JSLookUpTable::PopulateWithGlobals()
     {
         JSObject::Ptr_t objTemplate = FindClass("Document");
         if(objTemplate) {
-            JSObject::Ptr_t objInstance = objTemplate->NewInstance("document", this);
+            JSObject::Ptr_t objInstance = objTemplate->NewInstance("document");
             m_globalScope->As<JSFunction>()->AddVariable(objInstance);
         }
     }
     {
         JSObject::Ptr_t objTemplate = FindClass("Window");
         if(objTemplate) {
-            JSObject::Ptr_t objInstance = objTemplate->NewInstance("window", this);
+            JSObject::Ptr_t objInstance = objTemplate->NewInstance("window");
             m_globalScope->As<JSFunction>()->AddVariable(objInstance);
         }
     }
@@ -152,3 +152,9 @@ void JSLookUpTable::PopulateWithGlobals()
     m_globalScope->GetProperties().insert(m_classes.begin(), m_classes.end());
 }
 
+void JSLookUpTable::InitializeGlobalScope()
+{
+    m_globalScope.Reset(NULL);
+    m_globalScope = NewFunction();
+    m_globalScope->SetName("__GLOBAL__");
+}

@@ -4,11 +4,11 @@
 #include <wx/crt.h>
 #include "JSLookUpTable.h"
 
-JSObject::JSObject(const JSLookUpTable* lookup)
+JSObject::JSObject()
     : m_line(wxNOT_FOUND)
     , m_parent(NULL)
 {
-    Extends("Object", lookup);
+    Extends("Object");
 }
 
 JSObject::~JSObject() {}
@@ -33,23 +33,18 @@ const wxString& JSObject::GetType() const
     }
 }
 
-JSObject::Ptr_t JSObject::NewInstance(const wxString& name, const JSLookUpTable* lookup)
+JSObject::Ptr_t JSObject::NewInstance(const wxString& name)
 {
-    JSObject::Ptr_t inst = lookup->NewObject();
+    JSObject::Ptr_t inst(new JSObject());
     inst->SetName(name);
     inst->SetType(GetType());
     inst->SetPath(GetPath());
     return inst;
 }
 
-void JSObject::Extends(const wxString& className, const JSLookUpTable* lookup)
+void JSObject::Extends(const wxString& className)
 {
-    if(!lookup) return;
-    JSObject::Ptr_t parent = lookup->FindClass(className);
-    if(parent) {
-        m_extends.insert(className);
-        m_properties.insert(parent->GetProperties().begin(), parent->GetProperties().end());
-    }
+    m_extends.insert(className);
 }
 
 void JSObject::AddProperty(JSObject::Ptr_t child)

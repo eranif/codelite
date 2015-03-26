@@ -6,7 +6,6 @@
 #include "JSObject.h"
 #include "smart_ptr.h"
 
-class JSLookUpTable;
 class WXDLLIMPEXP_CL JSFunction : public JSObject
 {
 protected:
@@ -14,10 +13,10 @@ protected:
     JSObject::Map_t m_variables; // include local variables + function arguments
 
 public:
-    JSFunction(const JSLookUpTable* lookup);
+    JSFunction();
     virtual ~JSFunction();
     
-    virtual JSObject::Ptr_t NewInstance(const wxString& name, const JSLookUpTable* lookup);
+    virtual JSObject::Ptr_t NewInstance(const wxString& name);
     
     /**
      * @brief is this object a function?

@@ -1063,6 +1063,10 @@ int phpget_lineno (yyscan_t yyscanner );
 
 void phpset_lineno (int line_number ,yyscan_t yyscanner );
 
+int phpget_column  (yyscan_t yyscanner );
+
+void phpset_column (int column_no ,yyscan_t yyscanner );
+
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
  */

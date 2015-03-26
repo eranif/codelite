@@ -1096,6 +1096,10 @@ int yyget_lineno (yyscan_t yyscanner );
 
 void yyset_lineno (int line_number ,yyscan_t yyscanner );
 
+int yyget_column  (yyscan_t yyscanner );
+
+void yyset_column (int column_no ,yyscan_t yyscanner );
+
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
  */

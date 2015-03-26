@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef CODELITE_SMART_PTR_H
 #define CODELITE_SMART_PTR_H
-
+#include <stdlib.h>
 /**
  * A smart pointer class that provides a reference counting and auto delete memory.
  *

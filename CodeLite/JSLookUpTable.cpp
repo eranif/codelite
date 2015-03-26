@@ -146,5 +146,9 @@ void JSLookUpTable::PopulateWithGlobals()
             m_globalScope->As<JSFunction>()->AddVariable(objInstance);
         }
     }
+    
+    // And finally, add all the classes we found during the initial parsing as properties
+    // of the global scope
+    m_globalScope->GetProperties().insert(m_classes.begin(), m_classes.end());
 }
 

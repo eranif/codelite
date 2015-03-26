@@ -15,6 +15,9 @@ class JSCodeCompletion : public wxEvtHandler
 public:
     typedef SmartPtr<JSCodeCompletion> Ptr_t;
     
+protected:
+    int GetImgIndex(JSObject::Ptr_t obj);
+    
 public:
     JSCodeCompletion();
     virtual ~JSCodeCompletion();

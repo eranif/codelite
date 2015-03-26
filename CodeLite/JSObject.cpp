@@ -60,3 +60,8 @@ void JSObject::AddProperty(JSObject::Ptr_t child)
         child->m_parent = this;
     }
 }
+
+bool JSObject::IsClass() const
+{
+    return !m_properties.empty();
+}

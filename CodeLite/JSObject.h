@@ -27,6 +27,7 @@ protected:
     wxString m_type;
     std::set<wxString> m_extends;
     JSObject* m_parent; 
+    size_t m_flags;
     
 public:
     JSObject(const JSLookUpTable* lookup);
@@ -52,10 +53,14 @@ public:
      * @brief is this object a function?
      */
     virtual bool IsFunction() const { return false; }
+    
+    virtual bool IsClass() const;
+    
     /**
      * @brief return this object properties
      */
     const JSObject::Map_t& GetProperties() const { return m_properties; }
+    JSObject::Map_t& GetProperties() { return m_properties; }
     /**
      * @brief add a property to the object 
      */

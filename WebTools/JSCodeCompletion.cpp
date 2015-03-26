@@ -67,40 +67,41 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     wxCodeCompletionBoxEntry::Vec_t entries;
     JSObject::Map_t properties;
     if(parser.IsWordComplete()) {
-        // use the resolved object properties 
+        // use the resolved object properties
         properties = resolved->GetProperties();
-        
+
         // plus the visible variables
         JSObject::Map_t locals = m_lookup->GetVisibleVariables();
         properties.insert(locals.begin(), locals.end());
-        
+
     } else {
         properties = resolved->GetProperties();
     }
-    
+
     std::for_each(properties.begin(), properties.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) {
         JSObject::Ptr_t obj = p.second;
 
         wxString displayText;
         displayText << obj->GetName();
         wxString displayTextLower = displayText.Lower();
-        if(obj->As<JSFunction>() && !obj->As<JSFunction>()->GetSignature().IsEmpty()) {
+        if(obj->IsFunction() && !obj->IsClass() && obj->As<JSFunction>() &&
+           !obj->As<JSFunction>()->GetSignature().IsEmpty()) {
             displayText << obj->As<JSFunction>()->GetSignature();
         }
-        
+
         // If word complete is requsted, suggest only words that starts with the filter
         // if no filter is provided, display all entries
         if(parser.IsWordComplete() && !wordCompleteFilter.IsEmpty() &&
            displayTextLower.StartsWith(wordCompleteFilter)) {
             wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New("");
-            entry->SetImgIndex(obj->IsFunction() ? 9 : 6);
+            entry->SetImgIndex(GetImgIndex(obj));
             entry->SetComment(obj->GetComment());
             entry->SetText(displayText);
             entries.push_back(entry);
 
         } else {
             wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New("");
-            entry->SetImgIndex(obj->IsFunction() ? 9 : 6);
+            entry->SetImgIndex(GetImgIndex(obj));
             entry->SetComment(obj->GetComment());
             entry->SetText(displayText);
             entries.push_back(entry);
@@ -118,4 +119,13 @@ void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply)
         m_lookup->PopulateWithGlobals();
     }
     wxDELETE(reply);
+}
+
+int JSCodeCompletion::GetImgIndex(JSObject::Ptr_t obj)
+{
+    if(obj->IsClass())
+        return 0;
+    else if(obj->IsFunction())
+        return 9;
+    return 6; // Variable
 }

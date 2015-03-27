@@ -16,4 +16,4 @@ FILE(GLOB SRCS "*.cpp")
 add_executable(codelite-cc ${SRCS})
 target_link_libraries(codelite-cc ${LINKER_OPTIONS})
 
-install(TARGETS codelite-cc DESTINATION ${CL_PREFIX}/bin)
+CL_INSTALL_EXECUTABLE(codelite-cc)

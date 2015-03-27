@@ -106,13 +106,33 @@ FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp"
 # Define the output
 add_library(libcodelite SHARED ${SRCS})
 if (UNIX AND NOT APPLE )
-    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB} ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(libcodelite 
+                         ${LINKER_OPTIONS} 
+                         ${wxWidgets_LIBRARIES} 
+                         -L"${CL_LIBPATH}" 
+                         sqlite3lib 
+                         wxsqlite3 
+                         ${LIBSSH_LIB} 
+                         ${ADDITIONAL_LIBRARIES})
 else (UNIX AND NOT APPLE)
-    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB} ${ADDITIONAL_LIBRARIES} -lz -lcrypto)
+    target_link_libraries(libcodelite 
+                          ${LINKER_OPTIONS} 
+                          ${wxWidgets_LIBRARIES} 
+                          -L"${CL_LIBPATH}" 
+                          sqlite3lib 
+                          wxsqlite3 
+                          ${LIBSSH_LIB} 
+                          ${ADDITIONAL_LIBRARIES} 
+                          -lz -lcrypto)
 endif ( UNIX AND NOT APPLE )
 
 if (NOT MINGW)
-install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
+    if(APPLE)
+        install(TARGETS libcodelite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
+        CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/liblibcodelite.dylib)
+    else()
+        install(TARGETS ${_target_} DESTINATION ${PLUGINS_DIR})
+    endif()
 else ()
-install(TARGETS libcodelite RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
+    install(TARGETS libcodelite RUNTIME DESTINATION ${CL_PREFIX}/bin LIBRARY DESTINATION ${CL_PREFIX}/lib ARCHIVE DESTINATION ${CL_PREFIX}/lib)
 endif()

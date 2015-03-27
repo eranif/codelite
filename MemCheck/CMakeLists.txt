@@ -1,59 +1,64 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 2.6.2)
-message("-- Adding Valgrind Plugin")
-# set the plugin name here
-set( PLUGIN_NAME "MemCheck")
 
-# Our project is called 'plugin' this is how it will be called in
-# visual studio, and in our makefiles. 
-project( ${PLUGIN_NAME} )
+# Not supported under OSX
+if(UNIX AND NOT APPLE)
+    message("-- Adding Valgrind Plugin")
+    # set the plugin name here
+    set( PLUGIN_NAME "MemCheck")
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
+    # Our project is called 'plugin' this is how it will be called in
+    # visual studio, and in our makefiles. 
+    project( ${PLUGIN_NAME} )
 
-# wxWidgets include (this will do all the magic to configure everything)
-include( "${wxWidgets_USE_FILE}" )
+    # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
+    find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 
-# Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" 
-                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
-                    "${CL_SRC_ROOT}/CodeLite" 
-                    "${CL_SRC_ROOT}/PCH" 
-                    "${CL_SRC_ROOT}/Interfaces")
+    # wxWidgets include (this will do all the magic to configure everything)
+    include( "${wxWidgets_USE_FILE}" )
 
-add_definitions(-DWXUSINGDLL_WXSQLITE3)
-add_definitions(-DWXUSINGDLL_CL)
-add_definitions(-DWXUSINGDLL_SDK)
+    # Include paths
+    include_directories("${CL_SRC_ROOT}/Plugin" 
+                        "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
+                        "${CL_SRC_ROOT}/CodeLite" 
+                        "${CL_SRC_ROOT}/PCH" 
+                        "${CL_SRC_ROOT}/Interfaces")
 
-if ( USE_PCH )
-    add_definitions(-include "${CL_PCH_FILE}")
-    add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+    add_definitions(-DWXUSINGDLL_WXSQLITE3)
+    add_definitions(-DWXUSINGDLL_CL)
+    add_definitions(-DWXUSINGDLL_SDK)
+
+    if ( USE_PCH )
+        add_definitions(-include "${CL_PCH_FILE}")
+        add_definitions(-Winvalid-pch)
+    endif ( USE_PCH )
 
 
-if (UNIX AND NOT APPLE)
-    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+    if (UNIX AND NOT APPLE)
+        set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
+        set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+    endif()
+
+    if ( APPLE )
+        add_definitions(-fPIC)
+    endif()
+
+
+
+    # Add RPATH
+    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+
+    FILE(GLOB SRCS "*.cpp")
+
+    # Define the output
+    add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
+    # Remove the "lib" prefix from the plugin name
+    set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin)
+
+    # Make sure that the plugin will not start build before 'plugin.so' is ready
+    add_dependencies(${PLUGIN_NAME} plugin)
+    install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
+
 endif()
-
-if ( APPLE )
-    add_definitions(-fPIC)
-endif()
-
-
-
-# Add RPATH
-set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-
-FILE(GLOB SRCS "*.cpp")
-
-# Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
-
-# Remove the "lib" prefix from the plugin name
-set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin)
-
-# Make sure that the plugin will not start build before 'plugin.so' is ready
-add_dependencies(${PLUGIN_NAME} plugin)
-install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

@@ -43,5 +43,5 @@ include_directories("${CL_SRC_ROOT}/sdk/codelite_indexer/libctags")
 add_executable(codelite_indexer ${SRCS})
 target_link_libraries(codelite_indexer ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
 
-install(TARGETS codelite_indexer DESTINATION ${CL_PREFIX}/bin)
+CL_INSTALL_EXECUTABLE(codelite_indexer)
 

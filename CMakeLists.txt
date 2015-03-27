@@ -216,16 +216,21 @@ if (COPY_WX_LIBS MATCHES 1)
 endif()
 unset(COPY_WX_LIBS CACHE)
 
-set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
+## Will set PLUGINS_DIR to the proper location on Linux / OSX
+include(OSXInstall)
+
+## Under OSX, create the skeleton bundle directory
+OSX_MAKE_BUNDLE_DIRECTORY()
+
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 
 if (NOT MINGW)
-add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
-add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
+    add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
+    add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 else()
-add_definitions(-DNDEBUG)
-add_definitions(-DUSE_POSIX_LAYOUT)
+    add_definitions(-DNDEBUG)
+    add_definitions(-DUSE_POSIX_LAYOUT)
 endif()
 
 message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")

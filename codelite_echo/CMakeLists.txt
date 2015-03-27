@@ -10,4 +10,4 @@ set(SRCS "main.c")
 
 # Define the output
 add_executable(codelite-echo ${SRCS})
-install(TARGETS codelite-echo DESTINATION ${CL_PREFIX}/bin)
+CL_INSTALL_EXECUTABLE(codelite-echo)

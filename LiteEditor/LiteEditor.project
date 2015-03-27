@@ -612,6 +612,28 @@
     <File Name="../README.md"/>
     <File Name="../InnoSetup/codelite_php.iss"/>
     <File Name="../InnoSetup/codelite64_mingw.iss"/>
+    <VirtualDirectory Name="CMakeModules">
+      <File Name="../cmake/Modules/FindClang.cmake"/>
+      <File Name="../cmake/Modules/FindGLIB2.cmake"/>
+      <File Name="../cmake/Modules/FindGTK3.cmake"/>
+      <File Name="../cmake/Modules/FindLLVM.cmake"/>
+      <File Name="../cmake/Modules/OSXInstall.cmake"/>
+      <File Name="../cmake/Modules/plugin.cmake"/>
+      <File Name="../cmake/Modules/FindLibClang.cmake"/>
+      <File Name="../cmake/Modules/FindLibLLDB.cmake"/>
+    </VirtualDirectory>
+    <File Name="../Runtime/Info.plist"/>
+    <VirtualDirectory Name="SDKCMakeFiles">
+      <File Name="../sdk/wxshapeframework/CMakeLists.txt"/>
+      <File Name="../sdk/wxsqlite3/CMakeLists.txt"/>
+      <File Name="../sdk/databaselayer/CMakeLists.txt"/>
+      <File Name="../sdk/codelite_cppcheck/CMakeLists.txt"/>
+      <File Name="../sdk/codelite_indexer/CMakeLists.txt"/>
+      <File Name="../codelitegcc/CMakeLists.txt"/>
+      <File Name="../codelite_make/CMakeLists.txt"/>
+      <File Name="../codelite_terminal/CMakeLists.txt"/>
+      <File Name="../codelite_echo/CMakeLists.txt"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>
@@ -1151,8 +1173,6 @@
   </Dependencies>
   <VirtualDirectory Name="CMake">
     <File Name="CMakeLists.txt"/>
-    <File Name="../cmake/Modules/FindLibClang.cmake"/>
-    <File Name="../cmake/Modules/FindLibLLDB.cmake"/>
     <File Name="../CMakeLists.txt"/>
   </VirtualDirectory>
   <Dependencies Name="Win_x64_Release">

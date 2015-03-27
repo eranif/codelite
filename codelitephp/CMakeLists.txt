@@ -88,15 +88,28 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" -L"${CL_LIBPATH}" -lPHPParser -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES})
-target_link_libraries(PHPUnitTests ${LINKER_OPTIONS} -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" -L"${CL_LIBPATH}" -lPHPParser -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES})
+target_link_libraries(${PLUGIN_NAME}
+                      ${LINKER_OPTIONS}
+                      ${wxWidgets_LIBRARIES}
+                      PHPParser
+                      libcodelite
+                      plugin
+                      wxsqlite3 
+                      sqlite3lib
+                      )
+# Installation destination
+CL_INSTALL_PLUGIN(${PLUGIN_NAME})
+CL_INSTALL_FILE_SHARED("${CL_SRC_ROOT}/Runtime/PHP.zip")
 
-# Make sure that the plugin will not start build before 'plugin.so' is ready
-add_dependencies(${PLUGIN_NAME} plugin PHPParser)
-add_dependencies(PHPUnitTests plugin PHPParser)
+target_link_libraries(PHPUnitTests 
+                     ${LINKER_OPTIONS} 
+                     -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" 
+                     -L"${CL_LIBPATH}" 
+                     PHPParser 
+                     wxsqlite3 
+                     sqlite3lib 
+                     libcodelite 
+                     plugin 
+                     ${ADDITIONAL_LIBRARIES} 
+                     ${wxWidgets_LIBRARIES})
 
-install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
-install(FILES "${CL_SRC_ROOT}/Runtime/PHP.zip" DESTINATION ${CL_PREFIX}/share/codelite)
-
-target_link_libraries(${PLUGIN_NAME} PHPParser)
-target_link_libraries(PHPUnitTests PHPParser)

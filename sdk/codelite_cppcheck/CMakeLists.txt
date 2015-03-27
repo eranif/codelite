@@ -35,13 +35,14 @@ endif()
 add_executable(codelite_cppcheck ${SRCS})
 target_link_libraries(codelite_cppcheck ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES})
 
-install(TARGETS codelite_cppcheck DESTINATION ${CL_PREFIX}/bin)
+CL_INSTALL_EXECUTABLE(codelite_cppcheck)
 
-install(
-  DIRECTORY ${CL_SRC_ROOT}/sdk/codelite_cppcheck/cfg
-  DESTINATION ${CL_PREFIX}/share/codelite/config
-  USE_SOURCE_PERMISSIONS
-  PATTERN ".svn" EXCLUDE
-  PATTERN ".git" EXCLUDE
-) 
-
+if(NOT APPLE)
+    install(
+          DIRECTORY ${CL_SRC_ROOT}/sdk/codelite_cppcheck/cfg
+          DESTINATION ${CL_PREFIX}/share/codelite/config
+          USE_SOURCE_PERMISSIONS
+          PATTERN ".svn" EXCLUDE
+          PATTERN ".git" EXCLUDE
+    ) 
+endif()

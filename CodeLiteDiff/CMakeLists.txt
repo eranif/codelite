@@ -57,17 +57,12 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 # Codelite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME}
-    ${LINKER_OPTIONS}
-    ${wxWidgets_LIBRARIES}
-    -L"${CL_LIBPATH}"
-    -llibcodelite
-    -lplugin
-    -lwxsqlite3 
-    -lsqlite3lib
-)
-
-# The plugin library is required
-add_dependencies(${PLUGIN_NAME} plugin)
-
+                      ${LINKER_OPTIONS}
+                      ${wxWidgets_LIBRARIES}
+                      libcodelite
+                      plugin
+                      wxsqlite3 
+                      sqlite3lib
+                      )
 # Installation destination
-install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
+CL_INSTALL_PLUGIN(${PLUGIN_NAME})

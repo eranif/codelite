@@ -63,4 +63,10 @@ endif ( WITH_MYSQL )
 # Define the output
 add_library(databaselayersqlite SHARED ${SRCS} ${MYSQL_SRCS})
 target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
-install(TARGETS databaselayersqlite DESTINATION ${PLUGINS_DIR})
+
+if(APPLE)
+    install(TARGETS databaselayersqlite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
+    CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/libdatabaselayersqlite.dylib)
+else()
+    install(TARGETS ${_target_} DESTINATION ${PLUGINS_DIR})
+endif()

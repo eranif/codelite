@@ -50,7 +50,12 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin)
-# Make sure that the plugin will not start build before 'plugin.so' is ready
-add_dependencies(${PLUGIN_NAME} plugin)
-install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
+target_link_libraries(${PLUGIN_NAME}
+                      ${LINKER_OPTIONS}
+                      ${wxWidgets_LIBRARIES}
+                      libcodelite
+                      plugin
+                      wxsqlite3 
+                      sqlite3lib
+                      )
+CL_INSTALL_PLUGIN(${PLUGIN_NAME})

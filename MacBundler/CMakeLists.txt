@@ -15,7 +15,11 @@ find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin" 
+                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
+                    "${CL_SRC_ROOT}/CodeLite" 
+                    "${CL_SRC_ROOT}/PCH" 
+                    "${CL_SRC_ROOT}/Interfaces")
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -38,7 +42,12 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin)
-# Make sure that the plugin will not start build before 'plugin.so' is ready
-add_dependencies(${PLUGIN_NAME} plugin)
+target_link_libraries(${PLUGIN_NAME} 
+                      ${LINKER_OPTIONS} 
+                      ${wxWidgets_LIBRARIES} 
+                      wxsqlite3 
+                      sqlite3lib 
+                      libcodelite 
+                      plugin)
+
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

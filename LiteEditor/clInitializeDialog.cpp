@@ -47,5 +47,9 @@ void clInitializeDialog::StartUpgrade()
 void clInitializeDialog::OnLexersUpgradeStart(clCommandEvent& e)
 {
     e.Skip();
-    m_gauge->SetRange(e.GetInt());
+    static bool rangeSet = false;
+    if(!rangeSet) {
+        m_gauge->SetRange(e.GetInt());
+        rangeSet = true;
+    }
 }

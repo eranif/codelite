@@ -27,7 +27,7 @@
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs std,stc --unicode=yes);">
-        <LibraryPath Value="$(CodeLitePath)/lib"/>
+        <LibraryPath Value="$(CodeLitePath)/lib/gcc_lib"/>
         <Library Value="libpluginud.dll"/>
         <Library Value="libcodeliteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
@@ -62,7 +62,7 @@
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s">
-        <LibraryPath Value="$(CodeLitePath)/lib"/>
+        <LibraryPath Value="$(CodeLitePath)/lib/gcc_lib"/>
         <Library Value="libpluginu.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>

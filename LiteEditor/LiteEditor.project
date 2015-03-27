@@ -710,7 +710,6 @@
   </Dependencies>
   <VirtualDirectory Name="scripts">
     <File Name="../Runtime/update.bat"/>
-    <File Name="../Runtime/make_mac_bundle.sh"/>
     <File Name="../make_src_targz.sh"/>
     <File Name="../mac-build.sh"/>
     <File Name="../Runtime/excludes"/>

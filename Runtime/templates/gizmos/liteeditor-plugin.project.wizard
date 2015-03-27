@@ -6,6 +6,9 @@
   <VirtualDirectory Name="include">
     <File Name="$(BaseFileName).h"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="CMake">
+    <File Name="CMakeLists.txt"/>
+  </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="">

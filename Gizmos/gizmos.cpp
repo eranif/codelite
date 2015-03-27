@@ -44,6 +44,8 @@
 #include "PluginWizard.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
+#include "cl_standard_paths.h"
+#include "fileutils.h"
 
 static wxString MI_NEW_WX_PROJECT      = wxT("Create new wxWidgets project...");
 static wxString MI_NEW_CODELITE_PLUGIN = wxT("Create new CodeLite plugin...");
@@ -364,7 +366,8 @@ void WizardsPlugin::DoCreateNewPlugin()
         content.Replace(wxT("$(PluginShortName)"), data.GetPluginName());
         content.Replace(wxT("$(PluginLongName)"), data.GetPluginDescription());
         content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
-
+        
+       
         // format the content
         evtFormat.SetString(content);
         EventNotifier::Get()->ProcessEvent( evtFormat );
@@ -374,7 +377,21 @@ void WizardsPlugin::DoCreateNewPlugin()
         file.Open(headerFile.GetFullPath(), wxT("w+b"));
         file.Write(content);
         file.Close();
-
+        
+        // Read the CMakeLists.txt.plugin.wizard file
+        wxFileName cmakeFile(clStandardPaths::Get().GetDataDir(), "CMakeLists.txt.plugin.wizard");
+        cmakeFile.AppendDir("templates");
+        cmakeFile.AppendDir("gizmos");
+        if(cmakeFile.FileExists()) {
+            wxString cmakeContent;
+            if(FileUtils::ReadFileContent(cmakeFile, cmakeContent)) {
+                cmakeContent.Replace("$(PluginName)", data.GetPluginName());
+                cmakeFile.SetFullName("CMakeLists.txt");
+                cmakeFile.SetPath(headerFile.GetPath());
+                FileUtils::WriteFileContent(cmakeFile, cmakeContent);
+            }
+        }
+        
         //add the new project to the workspace
         wxString errMsg;
 

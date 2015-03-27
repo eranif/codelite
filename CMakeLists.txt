@@ -433,11 +433,6 @@ else(WITH_SFTP)
 
 endif(WITH_SFTP)
 
-if ( APPLE )
-    execute_process(COMMAND mkdir -p pack)
-    execute_process(COMMAND cp ${CMAKE_SOURCE_DIR}/Runtime/make_mac_bundle.sh pack)
-endif( APPLE )
-
 ###########################################
 ## RPATH settings
 ###########################################

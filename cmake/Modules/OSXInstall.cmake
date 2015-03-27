@@ -201,7 +201,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
 
         # Copy Info.plist
         file(COPY ${CL_SRC_ROOT}/Runtime/Info.plist DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents)
-        file(COPY ${CL_SRC_ROOT}/../../codelite_terminal/Info.plist 
+        file(COPY ${CL_SRC_ROOT}/codelite_terminal/Info.plist 
             DESTINATION 
             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents)
         

@@ -372,23 +372,17 @@ void WorkspaceTab::OnWorkspaceConfig(wxCommandEvent& e)
 
 void WorkspaceTab::OnConfigurationManagerChoice(wxCommandEvent& e)
 {
+    e.Skip();
     wxString selection = m_workspaceConfig->GetStringSelection();
     if(selection == OPEN_CONFIG_MGR_STR) {
+        e.Skip(false);
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("configuration_manager"));
         e.SetEventObject(this);
         ProcessEvent(e);
         return;
     }
-
-    BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    matrix->SetSelectedConfigurationName(selection);
-    ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
-
-    // Set the focus to the active editor if any
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(editor) editor->SetActive();
-
-    ManagerST::Get()->UpdateParserPaths(true);
+    
+    CallAfter(&WorkspaceTab::DoConfigChanged);
 }
 
 void WorkspaceTab::OnConfigurationManager(wxCommandEvent& e)
@@ -521,3 +515,17 @@ void WorkspaceTab::DoGoHome()
     ManagerST::Get()->ShowWorkspacePane(m_caption);
 }
 
+void WorkspaceTab::DoConfigChanged()
+{
+    wxBusyCursor bc;
+    wxString selection = m_workspaceConfig->GetStringSelection();
+    BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
+    matrix->SetSelectedConfigurationName(selection);
+    ManagerST::Get()->SetWorkspaceBuildMatrix(matrix);
+
+    // Set the focus to the active editor if any
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(editor) editor->SetActive();
+
+    ManagerST::Get()->UpdateParserPaths(true);
+}

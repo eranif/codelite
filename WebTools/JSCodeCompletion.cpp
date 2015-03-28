@@ -116,8 +116,8 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
 void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply)
 {
     if(reply && reply->lookup) {
-        m_lookup->GetClassTable().insert(reply->lookup->GetClassTable().begin(), reply->lookup->GetClassTable().end());
-        reply->lookup->Clear();
+        JSLookUpTable::Ptr_t other(reply->lookup);
+        m_lookup->CopyClassTable(other);
         // Fill the lookup with the common global objects
         m_lookup->PopulateWithGlobals();
     }

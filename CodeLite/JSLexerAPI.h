@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <codelite_exports.h>
+#include "JSLookUpTable.h"
 
 #define DEBUGMSG(...) \
     do {              \
@@ -67,7 +68,10 @@ private:
     int m_commentStartLine;
     int m_commentEndLine;
     FILE* m_currentPF;
-
+    
+public:
+    JSLookUpTable::Ptr_t m_lookup;
+    
 public:
     void Clear()
     {

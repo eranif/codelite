@@ -24,9 +24,6 @@ public:
         }
         ~Reply()
         {
-            if(lookup) {
-                wxDELETE(lookup);
-            }
         }
     };
 

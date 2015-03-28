@@ -6,11 +6,11 @@
 #include "smart_ptr.h"
 #include <wx/string.h>
 #include "JSObject.h"
-#include "JSLexerAPI.h"
 
 class WXDLLIMPEXP_CL JSLookUpTable
 {
     JSObject::Map_t m_classes;
+    JSObject::Map_t m_tmpClasses;
     JSObject::Ptr_t m_globalScope;
     JSObject::Vec_t m_actualScopes;
     JSObject::Vec_t m_tempScopes;
@@ -19,10 +19,10 @@ class WXDLLIMPEXP_CL JSLookUpTable
 
 public:
     typedef SmartPtr<JSLookUpTable> Ptr_t;
-    
+
 private:
     void InitializeGlobalScope();
-    
+
 public:
     JSLookUpTable();
     virtual ~JSLookUpTable();
@@ -31,7 +31,7 @@ public:
 
     void AddObject(JSObject::Ptr_t obj);
     JSObject::Ptr_t CurrentScope() const;
-    
+
     /**
      * @brief pop the current scope (this function does not remove the global scope)
      */
@@ -58,15 +58,26 @@ public:
     JSObject::Ptr_t FindClass(const wxString& path) const;
     
     /**
+     * @brief the temp class table is maintained per file
+     * and it contains annonymous classes (usually instantiated via JSONLiteral)
+     */
+    void ClearTempClassTable();
+    
+    /**
+     * @brief create new temporary object
+     */
+    JSObject::Ptr_t NewTempObject();
+    
+    /**
      * @brief allocate new JS object
      */
     JSObject::Ptr_t NewObject() const;
-    
+
     /**
      * @brief allocate new JS function
      */
     JSObject::Ptr_t NewFunction() const;
-    
+
     /**
      * @brief set scope to obj
      */
@@ -88,24 +99,29 @@ public:
      * @brief clear this lookup content
      */
     void Clear();
-    
+
     /**
      * @brief prepare the lookup table for parsing a source file
      */
     void PrepareLookup();
-    
+
     /**
      * @brief populate the lookup table with the global
      * objects (e.g. document, window, console etc)
      */
     void PopulateWithGlobals();
-    
-    const JSObject::Map_t& GetClassTable() const { return m_classes; }
-    JSObject::Map_t& GetClassTable() { return m_classes; }
+
+    /**
+     * @brief initialize our class table from 'other'
+     * @param other the source lookup table to copy from
+     * @param move if set to true, the class table is moved. i.e. 
+     * after the copy it will be cleared from the 'other' lookup
+     */
+    void CopyClassTable(JSLookUpTable::Ptr_t other, bool move = true);
     
     /**
      * @brief return the global scope
-     * @return 
+     * @return
      */
     JSObject::Ptr_t GetGlobalScope() const { return m_globalScope; }
 };

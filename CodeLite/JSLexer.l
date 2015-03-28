@@ -82,10 +82,14 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>for {return kJS_FOR;}
 <INITIAL>return {return kJS_RETURN;}
 <INITIAL>new {return kJS_NEW;}
+<INITIAL>delete {return kJS_DELETE;}
 <INITIAL>"." {return kJS_DOT;}
 <INITIAL>true {return kJS_TRUE;}
 <INITIAL>false {return kJS_FALSE;}
 <INITIAL>null {return kJS_NULL;}
+<INITIAL>typeof {return kJS_TYPEOF;}
+<INITIAL>void {return kJS_VOID;}
+<INITIAL>instanceof {return kJS_INSTANCEOF;}
 <INITIAL>{horizontal_white}+ { RETURN_WHITESPACE(); }
 <INITIAL>({v_tab}|{c_return}|{form_feed})+ {RETURN_WHITESPACE();}
 <INITIAL>({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n" { RETURN_NEWLINE(); }
@@ -100,6 +104,7 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>"<="                { return kJS_LE; }
 <INITIAL>">="                { return kJS_GE; }
 <INITIAL>"=="                { return kJS_EQUAL; }
+<INITIAL>"==="               { return kJS_EQUAL3; }
 <INITIAL>"!="                { return kJS_NOT_EQUAL; }
 <INITIAL>"&&"                { return kJS_AND_AND;}
 <INITIAL>"||"                { return kJS_OR_OR;}
@@ -156,7 +161,6 @@ horizontal_white [ ]|{h_tab}
 }
 
 <INITIAL>"//" {
-    int oldState = yyg->yy_start;
     BEGIN CPP_COMMENT;
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {

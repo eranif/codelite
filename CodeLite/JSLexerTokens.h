@@ -20,6 +20,16 @@ enum {
     kJS_TRUE,
     kJS_FALSE,
     kJS_NULL,
+    kJS_TYPEOF,
+    kJS_VOID,
+    kJS_IF,
+    kJS_ELSE,
+    kJS_WHILE,
+    kJS_IN,
+    kJS_BREAK,
+    kJS_CONTINUE,
+    kJS_DELETE,
+    kJS_INSTANCEOF,
 };
 
 // Numbers
@@ -40,6 +50,7 @@ enum {
     kJS_GE, // greater than-equal
     kJS_EQUAL,
     kJS_NOT_EQUAL,
+    kJS_EQUAL3,
     kJS_AND_AND,
     kJS_OR_OR,
     kJS_STAR_EQUAL,

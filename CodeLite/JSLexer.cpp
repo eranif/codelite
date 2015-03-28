@@ -1,5 +1,6 @@
+#line 2 "JSLexer.cpp"
 
-#line 3 "/home/eran/devl/codelite/CodeLite/JSLexer.cpp"
+#line 4 "JSLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -8,7 +9,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 35
+#define YY_FLEX_SUBMINOR_VERSION 37
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -152,21 +153,13 @@ typedef void* yyscan_t;
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 
 /* Special action meaning "start processing a new file". */
-#define YY_NEW_FILE jsrestart(yyin ,yyscanner )
+#define YY_NEW_FILE js_restart(yyin ,yyscanner )
 
 #define YY_END_OF_BUFFER_CHAR 0
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
-#ifdef __ia64__
-/* On IA-64, the buffer size is 16k, not 8k.
- * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
- * Ditto for the __ia64__ case accordingly.
- */
-#define YY_BUF_SIZE 32768
-#else
 #define YY_BUF_SIZE 16384
-#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -178,13 +171,18 @@ typedef void* yyscan_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
+#ifndef YY_TYPEDEF_YY_SIZE_T
+#define YY_TYPEDEF_YY_SIZE_T
+typedef size_t yy_size_t;
+#endif
+
 #define EOB_ACT_CONTINUE_SCAN 0
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
     /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
      *       access to the local variable yy_act. Since yyless() is a macro, it would break
-     *       existing scanners that call yyless() from OUTSIDE jslex. 
+     *       existing scanners that call yyless() from OUTSIDE js_lex. 
      *       One obvious solution it to make yy_act a global. I tried that, and saw
      *       a 5% performance hit in a non-yylineno scanner, because yy_act is
      *       normally declared as a register variable-- so it is not worth it.
@@ -213,11 +211,6 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 #define unput(c) yyunput( c, yyg->yytext_ptr , yyscanner )
 
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef size_t yy_size_t;
-#endif
-
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
@@ -235,7 +228,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	int yy_n_chars;
+	yy_size_t yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -275,7 +268,7 @@ struct yy_buffer_state
 	 * possible backing-up.
 	 *
 	 * When we actually see the EOF, we change the status to "new"
-	 * (via jsrestart()), so that the user can continue scanning by
+	 * (via js_restart()), so that the user can continue scanning by
 	 * just pointing yyin at a new input file.
 	 */
 #define YY_BUFFER_EOF_PENDING 2
@@ -298,36 +291,36 @@ struct yy_buffer_state
  */
 #define YY_CURRENT_BUFFER_LVALUE yyg->yy_buffer_stack[yyg->yy_buffer_stack_top]
 
-void jsrestart (FILE *input_file ,yyscan_t yyscanner );
-void js_switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-YY_BUFFER_STATE js_create_buffer (FILE *file,int size ,yyscan_t yyscanner );
-void js_delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void js_flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void jspush_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-void jspop_buffer_state (yyscan_t yyscanner );
+void js_restart (FILE *input_file ,yyscan_t yyscanner );
+void js__switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+YY_BUFFER_STATE js__create_buffer (FILE *file,int size ,yyscan_t yyscanner );
+void js__delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void js__flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void js_push_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+void js_pop_buffer_state (yyscan_t yyscanner );
 
-static void jsensure_buffer_stack (yyscan_t yyscanner );
-static void js_load_buffer_state (yyscan_t yyscanner );
-static void js_init_buffer (YY_BUFFER_STATE b,FILE *file ,yyscan_t yyscanner );
+static void js_ensure_buffer_stack (yyscan_t yyscanner );
+static void js__load_buffer_state (yyscan_t yyscanner );
+static void js__init_buffer (YY_BUFFER_STATE b,FILE *file ,yyscan_t yyscanner );
 
-#define YY_FLUSH_BUFFER js_flush_buffer(YY_CURRENT_BUFFER ,yyscanner)
+#define YY_FLUSH_BUFFER js__flush_buffer(YY_CURRENT_BUFFER ,yyscanner)
 
-YY_BUFFER_STATE js_scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
-YY_BUFFER_STATE js_scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
-YY_BUFFER_STATE js_scan_bytes (yyconst char *bytes,int len ,yyscan_t yyscanner );
+YY_BUFFER_STATE js__scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
+YY_BUFFER_STATE js__scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
+YY_BUFFER_STATE js__scan_bytes (yyconst char *bytes,yy_size_t len ,yyscan_t yyscanner );
 
-void *jsalloc (yy_size_t ,yyscan_t yyscanner );
-void *jsrealloc (void *,yy_size_t ,yyscan_t yyscanner );
-void jsfree (void * ,yyscan_t yyscanner );
+void *js_alloc (yy_size_t ,yyscan_t yyscanner );
+void *js_realloc (void *,yy_size_t ,yyscan_t yyscanner );
+void js_free (void * ,yyscan_t yyscanner );
 
-#define yy_new_buffer js_create_buffer
+#define yy_new_buffer js__create_buffer
 
 #define yy_set_interactive(is_interactive) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){ \
-        jsensure_buffer_stack (yyscanner); \
+        js_ensure_buffer_stack (yyscanner); \
 		YY_CURRENT_BUFFER_LVALUE =    \
-            js_create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
+            js__create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
 	} \
 	YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
 	}
@@ -335,9 +328,9 @@ void jsfree (void * ,yyscan_t yyscanner );
 #define yy_set_bol(at_bol) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){\
-        jsensure_buffer_stack (yyscanner); \
+        js_ensure_buffer_stack (yyscanner); \
 		YY_CURRENT_BUFFER_LVALUE =    \
-            js_create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
+            js__create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
 	} \
 	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
 	}
@@ -367,8 +360,8 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 56
-#define YY_END_OF_BUFFER 57
+#define YY_NUM_RULES 61
+#define YY_END_OF_BUFFER 62
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -376,27 +369,30 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[176] =
+static yyconst flex_int16_t yy_accept[201] =
     {   0,
-        0,    0,    0,    0,    0,    0,    0,    0,   57,   55,
-       16,   18,   17,   55,   55,   54,   55,   55,   55,   55,
-       55,   55,   12,   55,   20,   19,   55,   55,   55,   54,
-       55,   54,   54,   54,   54,   54,   54,   54,   54,   55,
-       56,   53,   52,   53,   48,   47,   48,   16,   18,    0,
-       17,   30,    0,   44,    0,   54,   35,   31,   40,    0,
-        0,   33,   23,   36,   24,   37,   22,   45,   49,   34,
-       22,   20,    0,    0,   20,   20,    0,   19,   19,   19,
-       25,   27,   29,   28,   26,    0,    0,   41,   54,   54,
-       54,   54,   54,   54,   54,   54,   54,   54,   54,   54,
+        0,    0,    0,    0,    0,    0,    0,    0,   62,   60,
+       20,   22,   21,   60,   60,   59,   60,   60,   60,   60,
+       60,   60,   13,   60,   24,   23,   60,   60,   60,   59,
+       60,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   60,   61,   58,   57,   58,   53,   52,   53,   20,
+       22,    0,   21,   35,    0,   49,    0,   59,   40,   36,
+       45,    0,    0,   38,   27,   41,   28,   42,   26,   50,
+       54,   39,   26,   24,    0,    0,   24,   24,    0,   23,
+       23,   23,   29,   31,   33,   32,   30,    0,    0,   46,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
 
-       42,   32,   50,    0,   46,    0,    0,   43,    0,    0,
-        0,   22,    0,   22,   20,   21,   19,   38,   39,   54,
-       54,   54,    9,   54,   11,   54,   54,   54,   54,   54,
-       54,   54,    3,   51,    0,    0,    0,    0,    0,   22,
-       21,   21,    8,   54,   54,   54,   15,   54,   54,   54,
-        4,   54,   13,    0,    0,    0,    0,   21,    5,   14,
-       54,   54,   54,   54,    6,   54,   54,   10,    7,   54,
-       54,    1,   54,    2,    0
+       59,   59,   59,   59,   59,   59,   47,   37,   55,    0,
+       51,    0,    0,   48,    0,    0,    0,   26,    0,   26,
+       24,   25,   23,   43,   34,   44,   59,   59,   59,   59,
+        9,   59,   59,   11,   59,   59,   59,   59,   59,   59,
+       59,   59,    3,   59,   56,    0,    0,    0,    0,    0,
+       26,   25,   25,    8,   59,   59,   59,   59,   59,   16,
+       59,   59,   59,    4,   59,   14,   59,   18,    0,    0,
+        0,    0,   25,    5,   59,   15,   59,   59,   59,   59,
+       59,    6,   59,   12,   59,   59,   59,   10,    7,   17,
+       59,   59,   59,    1,   59,   59,   59,    2,   19,    0
+
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -410,11 +406,11 @@ static yyconst flex_int32_t yy_ec[256] =
        23,   24,   25,    1,   26,   26,   26,   26,   27,   28,
        10,   10,   10,   10,   10,   29,   10,   10,   10,   10,
        10,   10,   10,   10,   30,   10,   10,   31,   10,   10,
-        1,   32,    1,   33,   10,    1,   34,   35,   36,   26,
+        1,   32,    1,   33,   10,    1,   34,   35,   36,   37,
 
-       37,   38,   10,   39,   40,   10,   10,   41,   10,   42,
-       43,   44,   10,   45,   46,   47,   48,   49,   50,   51,
-       52,   10,    1,   53,    1,    1,    1,    1,    1,    1,
+       38,   39,   10,   40,   41,   10,   10,   42,   10,   43,
+       44,   45,   10,   46,   47,   48,   49,   50,   51,   52,
+       53,   10,    1,   54,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -431,176 +427,187 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[54] =
+static yyconst flex_int32_t yy_meta[55] =
     {   0,
         1,    1,    2,    1,    1,    1,    1,    1,    3,    4,
         1,    1,    5,    1,    1,    1,    1,    1,    6,    6,
         7,    1,    1,    1,    3,    7,    7,    7,    4,    4,
-        4,    3,    1,    6,    6,    7,    7,    6,    4,    4,
-        4,    8,    4,    4,    8,    4,    8,    4,    8,    4,
-        8,    4,    1
+        4,    3,    1,    6,    6,    7,    7,    7,    6,    4,
+        4,    4,    8,    4,    4,    8,    4,    8,    4,    8,
+        4,    8,    4,    1
     } ;
 
-static yyconst flex_int16_t yy_base[187] =
+static yyconst flex_int16_t yy_base[212] =
     {   0,
-        0,    0,    0,    0,   51,   52,   53,   54,  321,  396,
-       56,  396,   67,  295,   55,    0,  294,   53,  284,  292,
-       62,   59,   59,   72,   79,  114,   66,  291,   68,   84,
-      290,  270,   69,   57,  257,  264,  250,   62,  262,   58,
-      396,  396,  396,  112,  396,  396,  277,  119,  396,  143,
-      154,  396,  104,  396,  118,    0,  396,  396,  396,  139,
-      134,  396,  396,  396,  396,  396,  167,  396,  396,  396,
-        0,   88,  146,  159,   84,   99,    0,    0,  134,  143,
-      271,  396,  396,  396,  270,  159,  257,  396,  130,  247,
-      242,  244,  235,  237,  233,  228,  234,  152,  222,  224,
+        0,    0,    0,    0,   52,   53,   54,   55,  404,  405,
+       57,  405,   68,  380,   56,    0,  379,   54,  369,  377,
+       63,   60,   60,   73,   80,  116,   67,  376,   69,   85,
+      375,  356,  349,   68,  341,   57,  335,  338,  322,   68,
+       69,   93,  405,  405,  405,  117,  405,  405,  350,  146,
+      405,  157,  164,  405,   73,  405,  105,    0,  405,  405,
+      405,  102,  120,  405,  405,  405,  405,  405,  154,  405,
+      405,  405,    0,  124,  167,  182,   89,   99,    0,    0,
+      150,  102,  337,  405,  310,  405,  309,   95,  298,  405,
+      130,  287,  286,  281,  283,  278,  273,  281,  278,  271,
 
-      396,  396,  396,  265,  396,  180,    0,  396,  190,    0,
-      198,  396,  204,  207,  396,  191,  396,  396,  396,  230,
-      227,  216,    0,  225,    0,  219,  212,  210,  210,  210,
-      212,  215,    0,  396,  221,  245,  218,  271,  223,  291,
-      163,  161,    0,  212,  212,  200,    0,  203,  188,  180,
-        0,  157,    0,  197,    0,  202,    0,  396,    0,    0,
-      161,  151,  139,  131,    0,   99,   77,    0,    0,   62,
-       58,    0,   29,    0,  396,  332,  340,  348,  356,  361,
-      369,  375,  381,  384,  386,  388
+      277,  144,  268,  271,  269,  273,  405,  405,  405,  301,
+      405,  191,    0,  405,  193,    0,  199,  405,  188,  207,
+      405,  192,  405,  405,  405,  405,  264,  265,  262,  249,
+        0,  259,  246,    0,  251,  241,  239,  239,  239,  241,
+      239,  237,    0,  237,  405,  220,  244,  211,  271,  235,
+      292,  202,  162,    0,  233,  221,  230,  219,  232,    0,
+      218,  215,  224,    0,  208,    0,  214,    0,  147,    0,
+      225,    0,  405,    0,  212,    0,  207,  204,  197,  201,
+      202,    0,  198,    0,  189,  181,  163,    0,    0,    0,
+      152,  151,   97,    0,   86,   88,   28,    0,    0,  405,
+
+      334,  342,  350,  358,  363,  371,  377,  383,  386,  388,
+      390
     } ;
 
-static yyconst flex_int16_t yy_def[187] =
+static yyconst flex_int16_t yy_def[212] =
     {   0,
-      175,    1,  176,  176,  177,  177,  178,  178,  175,  175,
-      175,  175,  175,  175,  179,  180,  175,  175,  181,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  180,
-      175,  180,  180,  180,  180,  180,  180,  180,  180,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  179,  175,  182,  180,  175,  175,  175,  181,
-      183,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-       67,   25,  175,  175,  175,  175,  184,   26,  175,  175,
-      175,  175,  175,  175,  175,  179,  181,  175,  180,  180,
-      180,  180,  180,  180,  180,  180,  180,  180,  180,  180,
+      200,    1,  201,  201,  202,  202,  203,  203,  200,  200,
+      200,  200,  200,  200,  204,  205,  200,  200,  206,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  205,
+      200,  205,  205,  205,  205,  205,  205,  205,  205,  205,
+      205,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  204,  200,  207,  205,  200,  200,
+      200,  206,  208,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,   69,   25,  200,  200,  200,  200,  209,   26,
+      200,  200,  200,  200,  200,  200,  200,  204,  206,  200,
+      205,  205,  205,  205,  205,  205,  205,  205,  205,  205,
 
-      175,  175,  175,  175,  175,  179,  185,  175,  181,  186,
-      175,  175,  175,  175,  175,  184,  175,  175,  175,  180,
-      180,  180,  180,  180,  180,  180,  180,  180,  180,  180,
-      180,  180,  180,  175,  179,  179,  181,  181,  175,  175,
-      175,  175,  180,  180,  180,  180,  180,  180,  180,  180,
-      180,  180,  180,  179,  136,  181,  138,  175,  180,  180,
-      180,  180,  180,  180,  180,  180,  180,  180,  180,  180,
-      180,  180,  180,  180,    0,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175
+      205,  205,  205,  205,  205,  205,  200,  200,  200,  200,
+      200,  204,  210,  200,  206,  211,  200,  200,  200,  200,
+      200,  209,  200,  200,  200,  200,  205,  205,  205,  205,
+      205,  205,  205,  205,  205,  205,  205,  205,  205,  205,
+      205,  205,  205,  205,  200,  204,  204,  206,  206,  200,
+      200,  200,  200,  205,  205,  205,  205,  205,  205,  205,
+      205,  205,  205,  205,  205,  205,  205,  205,  204,  147,
+      206,  149,  200,  205,  205,  205,  205,  205,  205,  205,
+      205,  205,  205,  205,  205,  205,  205,  205,  205,  205,
+      205,  205,  205,  205,  205,  205,  205,  205,  205,    0,
+
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200
     } ;
 
-static yyconst flex_int16_t yy_nxt[450] =
+static yyconst flex_int16_t yy_nxt[460] =
     {   0,
        10,   11,   12,   13,   13,   13,   11,   14,   15,   16,
        17,   18,   19,   20,   21,   22,   23,   24,   25,   26,
        26,   27,   28,   29,   10,   16,   16,   16,   30,   16,
-       16,   10,   31,   16,   16,   32,   16,   33,   16,   16,
-       16,   34,   16,   35,   36,   37,   38,   16,   39,   16,
-       16,   16,   40,   43,   43,   46,   46,   48,   49,   50,
-       50,   50,   48,   54,   58,  174,   47,   47,   50,   49,
-       51,   51,   51,   50,   65,   59,   63,   67,   67,   67,
-      101,   66,   44,   44,   64,   68,   55,   81,   82,   69,
-       84,   85,   86,   93,   70,   71,   87,   72,   72,   73,
+       16,   10,   31,   16,   16,   32,   33,   16,   34,   16,
+       35,   16,   36,   16,   37,   38,   39,   40,   16,   41,
+       16,   16,   16,   42,   45,   45,   48,   48,   50,   51,
+       52,   52,   52,   50,   56,   60,  199,   49,   49,   52,
+       51,   53,   53,   53,   52,   67,   61,   65,   69,   69,
+       69,   56,   68,   46,   46,   66,   70,   57,   83,   84,
+       71,   86,   87,   88,   97,   72,   73,   89,   74,   74,
 
-       98,  173,   90,  172,   94,   74,   99,   75,   76,   77,
-      102,   91,   54,  115,  103,   74,   92,  104,  175,   75,
-       48,   49,   50,   50,   50,   48,   76,  115,  171,   77,
-       71,  115,   78,   78,   78,   55,  106,  106,  175,  115,
-       74,  170,   79,   80,   50,   49,   50,   50,   50,   50,
-       74,  108,  109,  109,   79,   50,   49,   51,   51,   51,
-       50,   80,   71,  117,   73,   73,   73,   54,  107,  169,
-       61,  117,   74,  113,  113,  120,  121,  114,  114,  114,
-      168,  117,   74,  117,  110,   67,   67,   67,   54,  158,
-       55,  130,  158,  111,  112,  112,  131,  167,  135,  135,
+       75,   93,  105,   56,   57,   98,   76,  102,   77,   78,
+       79,   94,  106,  103,  114,  107,   95,   76,  121,  109,
+      104,   77,  110,  112,  112,  198,   57,  121,   78,  197,
+      123,   79,   73,   63,   80,   80,   80,  121,  115,  115,
+      121,  196,   76,  123,   81,   82,  108,   50,   51,   52,
+       52,   52,   50,   76,  200,   56,  113,   81,   52,   51,
+       52,   52,   52,   52,   82,   52,   51,   53,   53,   53,
+       52,  116,   69,   69,   69,  200,  127,  128,   57,  123,
+      117,  118,  118,   73,  139,   75,   75,   75,  195,  140,
+      173,  117,  118,   76,  194,  118,  119,  119,  123,   56,
 
-      166,  158,  108,  111,  112,   54,  165,  112,  137,  137,
-      158,   55,  139,  139,  108,  164,  140,  140,  140,  141,
-      142,   61,  114,  114,  114,  114,  114,  114,   55,   54,
-      108,  141,  163,   61,  112,  112,  156,  156,  142,  154,
-      154,  140,  140,  140,  112,  162,  161,  112,  160,   61,
-      159,  153,   55,   54,  152,  151,  150,  149,  148,  147,
-      146,  145,  144,  155,  155,  155,  143,  134,  133,  132,
-      155,  155,  155,  129,  128,  127,   55,  126,  155,  155,
-      155,  155,  155,  108,  125,  124,  123,  122,   61,  157,
-      157,  157,  119,  118,  105,  100,  157,  157,  157,   97,
+      120,  120,  120,  173,   76,  114,  120,  120,  120,  146,
+      146,  148,  148,  150,  150,  193,  192,  151,  151,  151,
+      152,  153,   57,  114,   63,  120,  120,  120,   56,  171,
+      171,  173,  191,  152,  118,  118,  190,  114,  169,  169,
+      153,  189,   63,  188,  187,  118,  186,  185,  118,  184,
+      173,   57,   56,  151,  151,  151,   63,  183,  182,  181,
+      180,  179,  170,  170,  170,  178,  177,  176,  175,  170,
+      170,  170,  174,  168,  167,   57,  166,  170,  170,  170,
+      170,  170,  170,  114,  165,  164,  163,  162,  161,  172,
+      172,  172,  160,  159,  158,  157,  172,  172,  172,  156,
 
-       96,   95,   61,   89,  157,  157,  157,  157,  157,  140,
-      140,  140,   88,   83,   62,   61,   57,   52,  112,  112,
-      175,  175,  175,  175,  175,  175,  175,  175,  112,  175,
-      175,  112,   41,   41,   41,   41,   41,   41,   41,   41,
-       42,   42,   42,   42,   42,   42,   42,   42,   45,   45,
-       45,   45,   45,   45,   45,   45,   53,  175,   53,   53,
-       53,   53,   53,   53,   56,  175,   56,   56,   56,   60,
-      175,   60,   60,  175,   60,   60,   60,   53,  175,   53,
-       53,  175,   53,   60,  175,   60,   60,  175,   60,  116,
-      116,  136,  136,  138,  138,    9,  175,  175,  175,  175,
+      155,  154,   63,  145,  172,  172,  172,  172,  172,  172,
+      151,  151,  151,  144,  143,  142,  141,  138,  137,  118,
+      118,  136,  135,  134,  133,  132,  131,  130,  129,   63,
+      118,  126,  125,  118,   43,   43,   43,   43,   43,   43,
+       43,   43,   44,   44,   44,   44,   44,   44,   44,   44,
+       47,   47,   47,   47,   47,   47,   47,   47,   55,  124,
+       55,   55,   55,   55,   55,   55,   58,  111,   58,   58,
+       58,   62,  101,   62,   62,  100,   62,   62,   62,   55,
+       99,   55,   55,   96,   55,   62,   92,   62,   62,   91,
+       62,  122,  122,  147,  147,  149,  149,   90,   85,   64,
 
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175
+       63,   59,   54,  200,    9,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200
     } ;
 
-static yyconst flex_int16_t yy_chk[450] =
+static yyconst flex_int16_t yy_chk[460] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    5,    6,    7,    8,   11,   11,   11,
-       11,   11,   11,   15,   18,  173,    7,    8,   13,   13,
-       13,   13,   13,   13,   22,   18,   21,   23,   23,   23,
-       40,   22,    5,    6,   21,   24,   15,   27,   27,   24,
-       29,   29,   30,   34,   24,   25,   30,   25,   25,   25,
+        1,    1,    1,    1,    5,    6,    7,    8,   11,   11,
+       11,   11,   11,   11,   15,   18,  197,    7,    8,   13,
+       13,   13,   13,   13,   13,   22,   18,   21,   23,   23,
+       23,   55,   22,    5,    6,   21,   24,   15,   27,   27,
+       24,   29,   29,   30,   36,   24,   25,   30,   25,   25,
 
-       38,  171,   33,  170,   34,   25,   38,   25,   25,   25,
-       40,   33,   53,   75,   44,   25,   33,   44,   72,   25,
-       48,   48,   48,   48,   48,   48,   25,   76,  167,   25,
-       26,   75,   26,   26,   26,   53,   55,   55,   72,   76,
-       26,  166,   26,   26,   50,   50,   50,   50,   50,   50,
-       26,   60,   61,   61,   26,   51,   51,   51,   51,   51,
-       51,   26,   73,   79,   73,   73,   73,   86,   55,  164,
-       60,   80,   73,   74,   74,   89,   89,   74,   74,   74,
-      163,   79,   73,   80,   61,   67,   67,   67,  106,  142,
-       86,   98,  141,   67,   67,   67,   98,  162,  106,  106,
+       25,   34,   41,   88,   55,   36,   25,   40,   25,   25,
+       25,   34,   41,   40,   62,   42,   34,   25,   77,   46,
+       40,   25,   46,   57,   57,  196,   88,   78,   25,  195,
+       82,   25,   26,   62,   26,   26,   26,   77,   63,   63,
+       78,  193,   26,   82,   26,   26,   42,   50,   50,   50,
+       50,   50,   50,   26,   74,  169,   57,   26,   52,   52,
+       52,   52,   52,   52,   26,   53,   53,   53,   53,   53,
+       53,   63,   69,   69,   69,   74,   91,   91,  169,   81,
+       69,   69,   69,   75,  102,   75,   75,   75,  192,  102,
+      153,   69,   69,   75,  191,   69,   76,   76,   81,  112,
 
-      161,  142,  109,   67,   67,  154,  152,   67,  109,  109,
-      141,  106,  111,  111,  156,  150,  111,  111,  111,  116,
-      116,  109,  113,  113,  113,  114,  114,  114,  154,  135,
-      137,  116,  149,  156,  114,  114,  137,  137,  116,  135,
-      135,  139,  139,  139,  114,  148,  146,  114,  145,  137,
-      144,  132,  135,  136,  131,  130,  129,  128,  127,  126,
-      124,  122,  121,  136,  136,  136,  120,  104,  100,   99,
-      136,  136,  136,   97,   96,   95,  136,   94,  136,  136,
-      136,  136,  136,  138,   93,   92,   91,   90,   87,  138,
-      138,  138,   85,   81,   47,   39,  138,  138,  138,   37,
+       76,   76,   76,  153,   75,  115,  119,  119,  119,  112,
+      112,  115,  115,  117,  117,  187,  186,  117,  117,  117,
+      122,  122,  112,  148,  115,  120,  120,  120,  146,  148,
+      148,  152,  185,  122,  120,  120,  183,  171,  146,  146,
+      122,  181,  148,  180,  179,  120,  178,  177,  120,  175,
+      152,  146,  147,  150,  150,  150,  171,  167,  165,  163,
+      162,  161,  147,  147,  147,  159,  158,  157,  156,  147,
+      147,  147,  155,  144,  142,  147,  141,  147,  147,  147,
+      147,  147,  147,  149,  140,  139,  138,  137,  136,  149,
+      149,  149,  135,  133,  132,  130,  149,  149,  149,  129,
 
-       36,   35,  138,   32,  138,  138,  138,  138,  138,  140,
-      140,  140,   31,   28,   20,   19,   17,   14,  140,  140,
-        9,    0,    0,    0,    0,    0,    0,    0,  140,    0,
-        0,  140,  176,  176,  176,  176,  176,  176,  176,  176,
-      177,  177,  177,  177,  177,  177,  177,  177,  178,  178,
-      178,  178,  178,  178,  178,  178,  179,    0,  179,  179,
-      179,  179,  179,  179,  180,    0,  180,  180,  180,  181,
-        0,  181,  181,    0,  181,  181,  181,  182,    0,  182,
-      182,    0,  182,  183,    0,  183,  183,    0,  183,  184,
-      184,  185,  185,  186,  186,  175,  175,  175,  175,  175,
+      128,  127,  149,  110,  149,  149,  149,  149,  149,  149,
+      151,  151,  151,  106,  105,  104,  103,  101,  100,  151,
+      151,   99,   98,   97,   96,   95,   94,   93,   92,   89,
+      151,   87,   85,  151,  201,  201,  201,  201,  201,  201,
+      201,  201,  202,  202,  202,  202,  202,  202,  202,  202,
+      203,  203,  203,  203,  203,  203,  203,  203,  204,   83,
+      204,  204,  204,  204,  204,  204,  205,   49,  205,  205,
+      205,  206,   39,  206,  206,   38,  206,  206,  206,  207,
+       37,  207,  207,   35,  207,  208,   33,  208,  208,   32,
+      208,  209,  209,  210,  210,  211,  211,   31,   28,   20,
 
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
-      175,  175,  175,  175,  175,  175,  175,  175,  175
+       19,   17,   14,    9,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      200,  200,  200,  200,  200,  200,  200,  200,  200
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static yyconst flex_int32_t yy_rule_can_match_eol[57] =
+static yyconst flex_int32_t yy_rule_can_match_eol[62] =
     {   0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0,     };
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 
+    0, 0,     };
 
 /* The intent behind this definition is that it'll catch
  * any uses of REJECT which flex missed.
@@ -609,6 +616,8 @@ static yyconst flex_int32_t yy_rule_can_match_eol[57] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
+#line 1 "JSLexer.l"
+#line 2 "JSLexer.l"
 //
 //====================--------------------------------------------------------------
 // Eran Ifrah 2014 (c)
@@ -622,7 +631,7 @@ static yyconst flex_int32_t yy_rule_can_match_eol[57] =
 //
 //====================--------------------------------------------------------------
 //
-extern "C" int jswrap(void*) { return 1; }
+extern "C" int js_wrap(void*) { return 1; }
 
 #include <wx/string.h>
 #include <string>
@@ -644,6 +653,10 @@ extern "C" int jswrap(void*) { return 1; }
 /* regex and modes */
 /* options */
 
+
+
+#line 659 "JSLexer.cpp"
+
 #define INITIAL 0
 #define WRAP_PREP 1
 #define CPP_COMMENT 2
@@ -656,7 +669,7 @@ extern "C" int jswrap(void*) { return 1; }
  */
 #include <unistd.h>
 #endif
-
+    
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *
 #endif
@@ -674,8 +687,8 @@ struct yyguts_t
     size_t yy_buffer_stack_max; /**< capacity of stack. */
     YY_BUFFER_STATE * yy_buffer_stack; /**< Stack as an array. */
     char yy_hold_char;
-    int yy_n_chars;
-    int yyleng_r;
+    yy_size_t yy_n_chars;
+    yy_size_t yyleng_r;
     char *yy_c_buf_p;
     int yy_init;
     int yy_start;
@@ -697,38 +710,42 @@ struct yyguts_t
 
 static int yy_init_globals (yyscan_t yyscanner );
 
-int jslex_init (yyscan_t* scanner);
+int js_lex_init (yyscan_t* scanner);
 
-int jslex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
+int js_lex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
 
 /* Accessor methods to globals.
    These are made visible to non-reentrant scanners for convenience. */
 
-int jslex_destroy (yyscan_t yyscanner );
+int js_lex_destroy (yyscan_t yyscanner );
 
-int jsget_debug (yyscan_t yyscanner );
+int js_get_debug (yyscan_t yyscanner );
 
-void jsset_debug (int debug_flag ,yyscan_t yyscanner );
+void js_set_debug (int debug_flag ,yyscan_t yyscanner );
 
-YY_EXTRA_TYPE jsget_extra (yyscan_t yyscanner );
+YY_EXTRA_TYPE js_get_extra (yyscan_t yyscanner );
 
-void jsset_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
+void js_set_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
 
-FILE *jsget_in (yyscan_t yyscanner );
+FILE *js_get_in (yyscan_t yyscanner );
 
-void jsset_in  (FILE * in_str ,yyscan_t yyscanner );
+void js_set_in  (FILE * in_str ,yyscan_t yyscanner );
 
-FILE *jsget_out (yyscan_t yyscanner );
+FILE *js_get_out (yyscan_t yyscanner );
 
-void jsset_out  (FILE * out_str ,yyscan_t yyscanner );
+void js_set_out  (FILE * out_str ,yyscan_t yyscanner );
 
-int jsget_leng (yyscan_t yyscanner );
+yy_size_t js_get_leng (yyscan_t yyscanner );
 
-char *jsget_text (yyscan_t yyscanner );
+char *js_get_text (yyscan_t yyscanner );
 
-int jsget_lineno (yyscan_t yyscanner );
+int js_get_lineno (yyscan_t yyscanner );
 
-void jsset_lineno (int line_number ,yyscan_t yyscanner );
+void js_set_lineno (int line_number ,yyscan_t yyscanner );
+
+int js_get_column  (yyscan_t yyscanner );
+
+void js_set_column (int column_no ,yyscan_t yyscanner );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -736,9 +753,9 @@ void jsset_lineno (int line_number ,yyscan_t yyscanner );
 
 #ifndef YY_SKIP_YYWRAP
 #ifdef __cplusplus
-extern "C" int jswrap (yyscan_t yyscanner );
+extern "C" int js_wrap (yyscan_t yyscanner );
 #else
-extern int jswrap (yyscan_t yyscanner );
+extern int js_wrap (yyscan_t yyscanner );
 #endif
 #endif
 
@@ -764,12 +781,7 @@ static int input (yyscan_t yyscanner );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
-#ifdef __ia64__
-/* On IA-64, the buffer size is 16k, not 8k */
-#define YY_READ_BUF_SIZE 16384
-#else
 #define YY_READ_BUF_SIZE 8192
-#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -842,9 +854,9 @@ static int input (yyscan_t yyscanner );
 #ifndef YY_DECL
 #define YY_DECL_IS_OURS 1
 
-extern int jslex (yyscan_t yyscanner);
+extern int js_lex (yyscan_t yyscanner);
 
-#define YY_DECL int jslex (yyscan_t yyscanner)
+#define YY_DECL int js_lex (yyscan_t yyscanner)
 #endif /* !YY_DECL */
 
 /* Code executed at the beginning of each rule, after yytext and yyleng
@@ -871,6 +883,10 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
+#line 72 "JSLexer.l"
+
+#line 889 "JSLexer.cpp"
+
 	if ( !yyg->yy_init )
 		{
 		yyg->yy_init = 1;
@@ -889,12 +905,12 @@ YY_DECL
 			yyout = stdout;
 
 		if ( ! YY_CURRENT_BUFFER ) {
-			jsensure_buffer_stack (yyscanner);
+			js_ensure_buffer_stack (yyscanner);
 			YY_CURRENT_BUFFER_LVALUE =
-				js_create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
+				js__create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
 		}
 
-		js_load_buffer_state(yyscanner );
+		js__load_buffer_state(yyscanner );
 		}
 
 	while ( 1 )		/* loops until end-of-file is reached */
@@ -922,13 +938,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 176 )
+				if ( yy_current_state >= 201 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_current_state != 175 );
+		while ( yy_current_state != 200 );
 		yy_cp = yyg->yy_last_accepting_cpos;
 		yy_current_state = yyg->yy_last_accepting_state;
 
@@ -939,7 +955,7 @@ yy_find_action:
 
 		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
 			{
-			int yyl;
+			yy_size_t yyl;
 			for ( yyl = 0; yyl < yyleng; ++yyl )
 				if ( yytext[yyl] == '\n' )
 					   
@@ -964,191 +980,262 @@ case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(WRAP_PREP):
 case YY_STATE_EOF(CPP_COMMENT):
 case YY_STATE_EOF(C_COMMENT):
+#line 73 "JSLexer.l"
 {yyterminate();}
 	YY_BREAK
 case 1:
 YY_RULE_SETUP
+#line 74 "JSLexer.l"
 {return kJS_FUNCTION;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
+#line 75 "JSLexer.l"
 {return kJS_PROTOTYPE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
+#line 76 "JSLexer.l"
 {return kJS_VAR;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
+#line 77 "JSLexer.l"
 {return kJS_THIS;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
+#line 78 "JSLexer.l"
 {return kJS_CATCH;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
+#line 79 "JSLexer.l"
 {return kJS_THROW;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
+#line 80 "JSLexer.l"
 {return kJS_SWITCH;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
+#line 81 "JSLexer.l"
 {return kJS_CASE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
+#line 82 "JSLexer.l"
 {return kJS_FOR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
+#line 83 "JSLexer.l"
 {return kJS_RETURN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
+#line 84 "JSLexer.l"
 {return kJS_NEW;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-{return kJS_DOT;}
+#line 85 "JSLexer.l"
+{return kJS_DELETE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-{return kJS_TRUE;}
+#line 86 "JSLexer.l"
+{return kJS_DOT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-{return kJS_FALSE;}
+#line 87 "JSLexer.l"
+{return kJS_TRUE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-{return kJS_NULL;}
+#line 88 "JSLexer.l"
+{return kJS_FALSE;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-{ RETURN_WHITESPACE(); }
+#line 89 "JSLexer.l"
+{return kJS_NULL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-{RETURN_WHITESPACE();}
+#line 90 "JSLexer.l"
+{return kJS_TYPEOF;}
 	YY_BREAK
 case 18:
-/* rule 18 can match eol */
 YY_RULE_SETUP
-{ RETURN_NEWLINE(); }
+#line 91 "JSLexer.l"
+{return kJS_VOID;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-{ return kJS_DEC_NUMBER;}
+#line 92 "JSLexer.l"
+{return kJS_INSTANCEOF;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-{ return kJS_OCTAL_NUMBER;}
+#line 93 "JSLexer.l"
+{ RETURN_WHITESPACE(); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-{ return kJS_HEX_NUMBER; }
+#line 94 "JSLexer.l"
+{RETURN_WHITESPACE();}
 	YY_BREAK
 case 22:
+/* rule 22 can match eol */
 YY_RULE_SETUP
-{ return kJS_FLOAT_NUMBER;}
+#line 95 "JSLexer.l"
+{ RETURN_NEWLINE(); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-{ return kJS_PLUS_PLUS; }
+#line 96 "JSLexer.l"
+{ return kJS_DEC_NUMBER;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-{ return kJS_MINUS_MINUS; }
+#line 97 "JSLexer.l"
+{ return kJS_OCTAL_NUMBER;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-{ return kJS_LS; }
+#line 98 "JSLexer.l"
+{ return kJS_HEX_NUMBER; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-{ return kJS_RS; }
+#line 99 "JSLexer.l"
+{ return kJS_FLOAT_NUMBER;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-{ return kJS_LE; }
+#line 100 "JSLexer.l"
+{ return kJS_PLUS_PLUS; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-{ return kJS_GE; }
+#line 101 "JSLexer.l"
+{ return kJS_MINUS_MINUS; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-{ return kJS_EQUAL; }
+#line 102 "JSLexer.l"
+{ return kJS_LS; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-{ return kJS_NOT_EQUAL; }
+#line 103 "JSLexer.l"
+{ return kJS_RS; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-{ return kJS_AND_AND;}
+#line 104 "JSLexer.l"
+{ return kJS_LE; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-{ return kJS_OR_OR;}
+#line 105 "JSLexer.l"
+{ return kJS_GE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-{ return kJS_STAR_EQUAL;}
+#line 106 "JSLexer.l"
+{ return kJS_EQUAL; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-{ return kJS_SLASH_EQUAL;}
+#line 107 "JSLexer.l"
+{ return kJS_EQUAL3; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-{ return kJS_DIV_EQUAL;}
+#line 108 "JSLexer.l"
+{ return kJS_NOT_EQUAL; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-{ return kJS_PLUS_EQUAL;}
+#line 109 "JSLexer.l"
+{ return kJS_AND_AND;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-{ return kJS_MINUS_EQUAL;}
+#line 110 "JSLexer.l"
+{ return kJS_OR_OR;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-{ return kJS_LS_ASSIGN;}
+#line 111 "JSLexer.l"
+{ return kJS_STAR_EQUAL;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-{ return kJS_RS_ASSIGN;}
+#line 112 "JSLexer.l"
+{ return kJS_SLASH_EQUAL;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-{ return kJS_AND_EQUAL;}
+#line 113 "JSLexer.l"
+{ return kJS_DIV_EQUAL;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-{ return kJS_POW_EQUAL;}
+#line 114 "JSLexer.l"
+{ return kJS_PLUS_EQUAL;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-{ return kJS_OR_EQUAL;}
+#line 115 "JSLexer.l"
+{ return kJS_MINUS_EQUAL;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-{
-    return kJS_STRING;
-}
+#line 116 "JSLexer.l"
+{ return kJS_LS_ASSIGN;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
+#line 117 "JSLexer.l"
+{ return kJS_RS_ASSIGN;}
+	YY_BREAK
+case 45:
+YY_RULE_SETUP
+#line 118 "JSLexer.l"
+{ return kJS_AND_EQUAL;}
+	YY_BREAK
+case 46:
+YY_RULE_SETUP
+#line 119 "JSLexer.l"
+{ return kJS_POW_EQUAL;}
+	YY_BREAK
+case 47:
+YY_RULE_SETUP
+#line 120 "JSLexer.l"
+{ return kJS_OR_EQUAL;}
+	YY_BREAK
+case 48:
+YY_RULE_SETUP
+#line 121 "JSLexer.l"
 {
     return kJS_STRING;
 }
 	YY_BREAK
-case 45:
+case 49:
 YY_RULE_SETUP
+#line 124 "JSLexer.l"
+{
+    return kJS_STRING;
+}
+	YY_BREAK
+case 50:
+YY_RULE_SETUP
+#line 127 "JSLexer.l"
 {
     // Clear the comment collected
     BEGIN C_COMMENT;
@@ -1161,8 +1248,9 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 46:
+case 51:
 YY_RULE_SETUP
+#line 138 "JSLexer.l"
 {
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
@@ -1175,66 +1263,21 @@ YY_RULE_SETUP
     }
 }
 	YY_BREAK
-case 47:
-/* rule 47 can match eol */
-YY_RULE_SETUP
-{ 
-    JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
-    if(userData->IsCollectingComments()) {
-        userData->AppendToComment("\n");
-    }
-}
-	YY_BREAK
-case 48:
-YY_RULE_SETUP
-{
-    JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
-    if(userData->IsCollectingComments()) {
-        std::string stdstr = std::string(1, yytext[0]);
-        userData->AppendToComment(wxString(stdstr.c_str(), wxConvUTF8));
-    }
-}
-	YY_BREAK
-case 49:
-YY_RULE_SETUP
-{
-    int oldState = yyg->yy_start;
-    BEGIN CPP_COMMENT;
-    JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
-    if(userData->IsCollectingComments()) {
-        userData->ClearComment();
-        userData->AppendToComment("//");
-        userData->SetCommentStartLine(yylineno);
-    }
-}
-	YY_BREAK
-case 50:
-/* rule 50 can match eol */
-YY_RULE_SETUP
-{ 
-}
-	YY_BREAK
-case 51:
-/* rule 51 can match eol */
-YY_RULE_SETUP
-{ 
-}
-	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-{
-    BEGIN INITIAL;
+#line 149 "JSLexer.l"
+{ 
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment("\n");
-        return kJS_CXX_COMMENT;
     }
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-{ 
+#line 155 "JSLexer.l"
+{
     JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         std::string stdstr = std::string(1, yytext[0]);
@@ -1244,20 +1287,75 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
+#line 163 "JSLexer.l"
+{
+    BEGIN CPP_COMMENT;
+    JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
+    if(userData->IsCollectingComments()) {
+        userData->ClearComment();
+        userData->AppendToComment("//");
+        userData->SetCommentStartLine(yylineno);
+    }
+}
+	YY_BREAK
+case 55:
+/* rule 55 can match eol */
+YY_RULE_SETUP
+#line 173 "JSLexer.l"
+{ 
+}
+	YY_BREAK
+case 56:
+/* rule 56 can match eol */
+YY_RULE_SETUP
+#line 175 "JSLexer.l"
+{ 
+}
+	YY_BREAK
+case 57:
+/* rule 57 can match eol */
+YY_RULE_SETUP
+#line 177 "JSLexer.l"
+{
+    BEGIN INITIAL;
+    JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
+    if(userData->IsCollectingComments()) {
+        userData->AppendToComment("\n");
+        return kJS_CXX_COMMENT;
+    }
+}
+	YY_BREAK
+case 58:
+YY_RULE_SETUP
+#line 185 "JSLexer.l"
+{ 
+    JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;
+    if(userData->IsCollectingComments()) {
+        std::string stdstr = std::string(1, yytext[0]);
+        userData->AppendToComment(wxString(stdstr.c_str(), wxConvUTF8));
+    }
+}
+	YY_BREAK
+case 59:
+YY_RULE_SETUP
+#line 192 "JSLexer.l"
 { 
     return kJS_IDENTIFIER;
 }
 	YY_BREAK
-case 55:
+case 60:
 YY_RULE_SETUP
+#line 195 "JSLexer.l"
 { 
     return yytext[0];
 }
 	YY_BREAK
-case 56:
+case 61:
 YY_RULE_SETUP
+#line 199 "JSLexer.l"
 ECHO;
 	YY_BREAK
+#line 1359 "JSLexer.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1273,7 +1371,7 @@ ECHO;
 			/* We're scanning a new file or input source.  It's
 			 * possible that this happened because the user
 			 * just pointed yyin at a new source and called
-			 * jslex().  If so, then we have to assure
+			 * js_lex().  If so, then we have to assure
 			 * consistency between YY_CURRENT_BUFFER and our
 			 * globals.  Here is the right place to do so, because
 			 * this is the first action (other than possibly a
@@ -1334,7 +1432,7 @@ ECHO;
 				{
 				yyg->yy_did_buffer_switch_on_eof = 0;
 
-				if ( jswrap(yyscanner ) )
+				if ( js_wrap(yyscanner ) )
 					{
 					/* Note: because we've taken care in
 					 * yy_get_next_buffer() to have set up
@@ -1387,7 +1485,7 @@ ECHO;
 			"fatal flex scanner internal error--no action found" );
 	} /* end of action switch */
 		} /* end of scanning one token */
-} /* end of jslex */
+} /* end of js_lex */
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
@@ -1443,21 +1541,21 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 
 	else
 		{
-			int num_to_read =
+			yy_size_t num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
 			{ /* Not enough room in the buffer - grow it. */
 
 			/* just a shorter name for the current buffer */
-			YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
+			YY_BUFFER_STATE b = YY_CURRENT_BUFFER_LVALUE;
 
 			int yy_c_buf_p_offset =
 				(int) (yyg->yy_c_buf_p - b->yy_ch_buf);
 
 			if ( b->yy_is_our_buffer )
 				{
-				int new_size = b->yy_buf_size * 2;
+				yy_size_t new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -1466,7 +1564,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 
 				b->yy_ch_buf = (char *)
 					/* Include room in for 2 EOB chars. */
-					jsrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2 ,yyscanner );
+					js_realloc((void *) b->yy_ch_buf,b->yy_buf_size + 2 ,yyscanner );
 				}
 			else
 				/* Can't grow it, we don't own it. */
@@ -1488,7 +1586,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			yyg->yy_n_chars, (size_t) num_to_read );
+			yyg->yy_n_chars, num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = yyg->yy_n_chars;
 		}
@@ -1498,7 +1596,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		if ( number_to_move == YY_MORE_ADJ )
 			{
 			ret_val = EOB_ACT_END_OF_FILE;
-			jsrestart(yyin  ,yyscanner);
+			js_restart(yyin  ,yyscanner);
 			}
 
 		else
@@ -1515,7 +1613,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	if ((yy_size_t) (yyg->yy_n_chars + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
 		/* Extend the array by 50%, plus the number we really need. */
 		yy_size_t new_size = yyg->yy_n_chars + number_to_move + (yyg->yy_n_chars >> 1);
-		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) jsrealloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size ,yyscanner );
+		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) js_realloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size ,yyscanner );
 		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
 			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
 	}
@@ -1550,7 +1648,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 176 )
+			if ( yy_current_state >= 201 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1579,12 +1677,13 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 176 )
+		if ( yy_current_state >= 201 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 175);
+	yy_is_jam = (yy_current_state == 200);
 
+	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
 }
 
@@ -1601,7 +1700,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		register int number_to_move = yyg->yy_n_chars + 2;
+		register yy_size_t number_to_move = yyg->yy_n_chars + 2;
 		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
 		register char *source =
@@ -1655,7 +1754,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 
 		else
 			{ /* need more input */
-			int offset = yyg->yy_c_buf_p - yyg->yytext_ptr;
+			yy_size_t offset = yyg->yy_c_buf_p - yyg->yytext_ptr;
 			++yyg->yy_c_buf_p;
 
 			switch ( yy_get_next_buffer( yyscanner ) )
@@ -1672,13 +1771,13 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 					 */
 
 					/* Reset buffer status. */
-					jsrestart(yyin ,yyscanner);
+					js_restart(yyin ,yyscanner);
 
 					/*FALLTHROUGH*/
 
 				case EOB_ACT_END_OF_FILE:
 					{
-					if ( jswrap(yyscanner ) )
+					if ( js_wrap(yyscanner ) )
 						return EOF;
 
 					if ( ! yyg->yy_did_buffer_switch_on_eof )
@@ -1717,34 +1816,34 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  * @note This function does not reset the start condition to @c INITIAL .
  */
-    void jsrestart  (FILE * input_file , yyscan_t yyscanner)
+    void js_restart  (FILE * input_file , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 	if ( ! YY_CURRENT_BUFFER ){
-        jsensure_buffer_stack (yyscanner);
+        js_ensure_buffer_stack (yyscanner);
 		YY_CURRENT_BUFFER_LVALUE =
-            js_create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
+            js__create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
 	}
 
-	js_init_buffer(YY_CURRENT_BUFFER,input_file ,yyscanner);
-	js_load_buffer_state(yyscanner );
+	js__init_buffer(YY_CURRENT_BUFFER,input_file ,yyscanner);
+	js__load_buffer_state(yyscanner );
 }
 
 /** Switch to a different input buffer.
  * @param new_buffer The new input buffer.
  * @param yyscanner The scanner object.
  */
-    void js_switch_to_buffer  (YY_BUFFER_STATE  new_buffer , yyscan_t yyscanner)
+    void js__switch_to_buffer  (YY_BUFFER_STATE  new_buffer , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 	/* TODO. We should be able to replace this entire function body
 	 * with
-	 *		jspop_buffer_state();
-	 *		jspush_buffer_state(new_buffer);
+	 *		js_pop_buffer_state();
+	 *		js_push_buffer_state(new_buffer);
      */
-	jsensure_buffer_stack (yyscanner);
+	js_ensure_buffer_stack (yyscanner);
 	if ( YY_CURRENT_BUFFER == new_buffer )
 		return;
 
@@ -1757,17 +1856,17 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		}
 
 	YY_CURRENT_BUFFER_LVALUE = new_buffer;
-	js_load_buffer_state(yyscanner );
+	js__load_buffer_state(yyscanner );
 
 	/* We don't actually know whether we did this switch during
-	 * EOF (jswrap()) processing, but the only time this flag
-	 * is looked at is after jswrap() is called, so it's safe
+	 * EOF (js_wrap()) processing, but the only time this flag
+	 * is looked at is after js_wrap() is called, so it's safe
 	 * to go ahead and always set it.
 	 */
 	yyg->yy_did_buffer_switch_on_eof = 1;
 }
 
-static void js_load_buffer_state  (yyscan_t yyscanner)
+static void js__load_buffer_state  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	yyg->yy_n_chars = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
@@ -1782,35 +1881,35 @@ static void js_load_buffer_state  (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  * @return the allocated buffer state.
  */
-    YY_BUFFER_STATE js_create_buffer  (FILE * file, int  size , yyscan_t yyscanner)
+    YY_BUFFER_STATE js__create_buffer  (FILE * file, int  size , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
     
-	b = (YY_BUFFER_STATE) jsalloc(sizeof( struct yy_buffer_state ) ,yyscanner );
+	b = (YY_BUFFER_STATE) js_alloc(sizeof( struct yy_buffer_state ) ,yyscanner );
 	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in js_create_buffer()" );
+		YY_FATAL_ERROR( "out of dynamic memory in js__create_buffer()" );
 
 	b->yy_buf_size = size;
 
 	/* yy_ch_buf has to be 2 characters longer than the size given because
 	 * we need to put in 2 end-of-buffer characters.
 	 */
-	b->yy_ch_buf = (char *) jsalloc(b->yy_buf_size + 2 ,yyscanner );
+	b->yy_ch_buf = (char *) js_alloc(b->yy_buf_size + 2 ,yyscanner );
 	if ( ! b->yy_ch_buf )
-		YY_FATAL_ERROR( "out of dynamic memory in js_create_buffer()" );
+		YY_FATAL_ERROR( "out of dynamic memory in js__create_buffer()" );
 
 	b->yy_is_our_buffer = 1;
 
-	js_init_buffer(b,file ,yyscanner);
+	js__init_buffer(b,file ,yyscanner);
 
 	return b;
 }
 
 /** Destroy the buffer.
- * @param b a buffer created with js_create_buffer()
+ * @param b a buffer created with js__create_buffer()
  * @param yyscanner The scanner object.
  */
-    void js_delete_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
+    void js__delete_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
@@ -1821,32 +1920,28 @@ static void js_load_buffer_state  (yyscan_t yyscanner)
 		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
 
 	if ( b->yy_is_our_buffer )
-		jsfree((void *) b->yy_ch_buf ,yyscanner );
+		js_free((void *) b->yy_ch_buf ,yyscanner );
 
-	jsfree((void *) b ,yyscanner );
+	js_free((void *) b ,yyscanner );
 }
 
-#ifndef __cplusplus
-extern int isatty (int );
-#endif /* __cplusplus */
-    
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
- * such as during a jsrestart() or at EOF.
+ * such as during a js_restart() or at EOF.
  */
-    static void js_init_buffer  (YY_BUFFER_STATE  b, FILE * file , yyscan_t yyscanner)
+    static void js__init_buffer  (YY_BUFFER_STATE  b, FILE * file , yyscan_t yyscanner)
 
 {
 	int oerrno = errno;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-	js_flush_buffer(b ,yyscanner);
+	js__flush_buffer(b ,yyscanner);
 
 	b->yy_input_file = file;
 	b->yy_fill_buffer = 1;
 
-    /* If b is the current buffer, then js_init_buffer was _probably_
-     * called from jsrestart() or through yy_get_next_buffer.
+    /* If b is the current buffer, then js__init_buffer was _probably_
+     * called from js_restart() or through yy_get_next_buffer.
      * In that case, we don't want to reset the lineno or column.
      */
     if (b != YY_CURRENT_BUFFER){
@@ -1863,7 +1958,7 @@ extern int isatty (int );
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
  * @param yyscanner The scanner object.
  */
-    void js_flush_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
+    void js__flush_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	if ( ! b )
@@ -1884,7 +1979,7 @@ extern int isatty (int );
 	b->yy_buffer_status = YY_BUFFER_NEW;
 
 	if ( b == YY_CURRENT_BUFFER )
-		js_load_buffer_state(yyscanner );
+		js__load_buffer_state(yyscanner );
 }
 
 /** Pushes the new state onto the stack. The new state becomes
@@ -1893,15 +1988,15 @@ extern int isatty (int );
  *  @param new_buffer The new state.
  *  @param yyscanner The scanner object.
  */
-void jspush_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
+void js_push_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	if (new_buffer == NULL)
 		return;
 
-	jsensure_buffer_stack(yyscanner);
+	js_ensure_buffer_stack(yyscanner);
 
-	/* This block is copied from js_switch_to_buffer. */
+	/* This block is copied from js__switch_to_buffer. */
 	if ( YY_CURRENT_BUFFER )
 		{
 		/* Flush out information for old buffer. */
@@ -1915,8 +2010,8 @@ void jspush_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
 		yyg->yy_buffer_stack_top++;
 	YY_CURRENT_BUFFER_LVALUE = new_buffer;
 
-	/* copied from js_switch_to_buffer. */
-	js_load_buffer_state(yyscanner );
+	/* copied from js__switch_to_buffer. */
+	js__load_buffer_state(yyscanner );
 	yyg->yy_did_buffer_switch_on_eof = 1;
 }
 
@@ -1924,19 +2019,19 @@ void jspush_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
  *  The next element becomes the new top.
  *  @param yyscanner The scanner object.
  */
-void jspop_buffer_state (yyscan_t yyscanner)
+void js_pop_buffer_state (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	if (!YY_CURRENT_BUFFER)
 		return;
 
-	js_delete_buffer(YY_CURRENT_BUFFER ,yyscanner);
+	js__delete_buffer(YY_CURRENT_BUFFER ,yyscanner);
 	YY_CURRENT_BUFFER_LVALUE = NULL;
 	if (yyg->yy_buffer_stack_top > 0)
 		--yyg->yy_buffer_stack_top;
 
 	if (YY_CURRENT_BUFFER) {
-		js_load_buffer_state(yyscanner );
+		js__load_buffer_state(yyscanner );
 		yyg->yy_did_buffer_switch_on_eof = 1;
 	}
 }
@@ -1944,9 +2039,9 @@ void jspop_buffer_state (yyscan_t yyscanner)
 /* Allocates the stack if it does not exist.
  *  Guarantees space for at least one push.
  */
-static void jsensure_buffer_stack (yyscan_t yyscanner)
+static void js_ensure_buffer_stack (yyscan_t yyscanner)
 {
-	int num_to_alloc;
+	yy_size_t num_to_alloc;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 	if (!yyg->yy_buffer_stack) {
@@ -1956,11 +2051,11 @@ static void jsensure_buffer_stack (yyscan_t yyscanner)
 		 * immediate realloc on the next call.
          */
 		num_to_alloc = 1;
-		yyg->yy_buffer_stack = (struct yy_buffer_state**)jsalloc
+		yyg->yy_buffer_stack = (struct yy_buffer_state**)js_alloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								, yyscanner);
 		if ( ! yyg->yy_buffer_stack )
-			YY_FATAL_ERROR( "out of dynamic memory in jsensure_buffer_stack()" );
+			YY_FATAL_ERROR( "out of dynamic memory in js_ensure_buffer_stack()" );
 								  
 		memset(yyg->yy_buffer_stack, 0, num_to_alloc * sizeof(struct yy_buffer_state*));
 				
@@ -1975,12 +2070,12 @@ static void jsensure_buffer_stack (yyscan_t yyscanner)
 		int grow_size = 8 /* arbitrary grow size */;
 
 		num_to_alloc = yyg->yy_buffer_stack_max + grow_size;
-		yyg->yy_buffer_stack = (struct yy_buffer_state**)jsrealloc
+		yyg->yy_buffer_stack = (struct yy_buffer_state**)js_realloc
 								(yyg->yy_buffer_stack,
 								num_to_alloc * sizeof(struct yy_buffer_state*)
 								, yyscanner);
 		if ( ! yyg->yy_buffer_stack )
-			YY_FATAL_ERROR( "out of dynamic memory in jsensure_buffer_stack()" );
+			YY_FATAL_ERROR( "out of dynamic memory in js_ensure_buffer_stack()" );
 
 		/* zero only the new slots.*/
 		memset(yyg->yy_buffer_stack + yyg->yy_buffer_stack_max, 0, grow_size * sizeof(struct yy_buffer_state*));
@@ -1994,7 +2089,7 @@ static void jsensure_buffer_stack (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  * @return the newly allocated buffer state object. 
  */
-YY_BUFFER_STATE js_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscanner)
+YY_BUFFER_STATE js__scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
     
@@ -2004,9 +2099,9 @@ YY_BUFFER_STATE js_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
 		/* They forgot to leave room for the EOB's. */
 		return 0;
 
-	b = (YY_BUFFER_STATE) jsalloc(sizeof( struct yy_buffer_state ) ,yyscanner );
+	b = (YY_BUFFER_STATE) js_alloc(sizeof( struct yy_buffer_state ) ,yyscanner );
 	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in js_scan_buffer()" );
+		YY_FATAL_ERROR( "out of dynamic memory in js__scan_buffer()" );
 
 	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
@@ -2018,53 +2113,53 @@ YY_BUFFER_STATE js_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
 	b->yy_fill_buffer = 0;
 	b->yy_buffer_status = YY_BUFFER_NEW;
 
-	js_switch_to_buffer(b ,yyscanner );
+	js__switch_to_buffer(b ,yyscanner );
 
 	return b;
 }
 
-/** Setup the input buffer state to scan a string. The next call to jslex() will
+/** Setup the input buffer state to scan a string. The next call to js_lex() will
  * scan from a @e copy of @a str.
  * @param yystr a NUL-terminated string to scan
  * @param yyscanner The scanner object.
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
- *       js_scan_bytes() instead.
+ *       js__scan_bytes() instead.
  */
-YY_BUFFER_STATE js_scan_string (yyconst char * yystr , yyscan_t yyscanner)
+YY_BUFFER_STATE js__scan_string (yyconst char * yystr , yyscan_t yyscanner)
 {
     
-	return js_scan_bytes(yystr,strlen(yystr) ,yyscanner);
+	return js__scan_bytes(yystr,strlen(yystr) ,yyscanner);
 }
 
-/** Setup the input buffer state to scan the given bytes. The next call to jslex() will
+/** Setup the input buffer state to scan the given bytes. The next call to js_lex() will
  * scan from a @e copy of @a bytes.
  * @param yybytes the byte buffer to scan
  * @param _yybytes_len the number of bytes in the buffer pointed to by @a bytes.
  * @param yyscanner The scanner object.
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE js_scan_bytes  (yyconst char * yybytes, int  _yybytes_len , yyscan_t yyscanner)
+YY_BUFFER_STATE js__scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
 	char *buf;
 	yy_size_t n;
-	int i;
+	yy_size_t i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
-	buf = (char *) jsalloc(n ,yyscanner );
+	buf = (char *) js_alloc(n ,yyscanner );
 	if ( ! buf )
-		YY_FATAL_ERROR( "out of dynamic memory in js_scan_bytes()" );
+		YY_FATAL_ERROR( "out of dynamic memory in js__scan_bytes()" );
 
 	for ( i = 0; i < _yybytes_len; ++i )
 		buf[i] = yybytes[i];
 
 	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
 
-	b = js_scan_buffer(buf,n ,yyscanner);
+	b = js__scan_buffer(buf,n ,yyscanner);
 	if ( ! b )
-		YY_FATAL_ERROR( "bad buffer in js_scan_bytes()" );
+		YY_FATAL_ERROR( "bad buffer in js__scan_bytes()" );
 
 	/* It's okay to grow etc. this buffer, and we should throw it
 	 * away when we're done.
@@ -2106,7 +2201,7 @@ static void yy_fatal_error (yyconst char* msg , yyscan_t yyscanner)
 /** Get the user-defined data for this scanner.
  * @param yyscanner The scanner object.
  */
-YY_EXTRA_TYPE jsget_extra  (yyscan_t yyscanner)
+YY_EXTRA_TYPE js_get_extra  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyextra;
@@ -2115,7 +2210,7 @@ YY_EXTRA_TYPE jsget_extra  (yyscan_t yyscanner)
 /** Get the current line number.
  * @param yyscanner The scanner object.
  */
-int jsget_lineno  (yyscan_t yyscanner)
+int js_get_lineno  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     
@@ -2128,7 +2223,7 @@ int jsget_lineno  (yyscan_t yyscanner)
 /** Get the current column number.
  * @param yyscanner The scanner object.
  */
-int jsget_column  (yyscan_t yyscanner)
+int js_get_column  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     
@@ -2141,7 +2236,7 @@ int jsget_column  (yyscan_t yyscanner)
 /** Get the input stream.
  * @param yyscanner The scanner object.
  */
-FILE *jsget_in  (yyscan_t yyscanner)
+FILE *js_get_in  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyin;
@@ -2150,7 +2245,7 @@ FILE *jsget_in  (yyscan_t yyscanner)
 /** Get the output stream.
  * @param yyscanner The scanner object.
  */
-FILE *jsget_out  (yyscan_t yyscanner)
+FILE *js_get_out  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyout;
@@ -2159,7 +2254,7 @@ FILE *jsget_out  (yyscan_t yyscanner)
 /** Get the length of the current token.
  * @param yyscanner The scanner object.
  */
-int jsget_leng  (yyscan_t yyscanner)
+yy_size_t js_get_leng  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyleng;
@@ -2169,7 +2264,7 @@ int jsget_leng  (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  */
 
-char *jsget_text  (yyscan_t yyscanner)
+char *js_get_text  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yytext;
@@ -2179,7 +2274,7 @@ char *jsget_text  (yyscan_t yyscanner)
  * @param user_defined The data to be associated with this scanner.
  * @param yyscanner The scanner object.
  */
-void jsset_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
+void js_set_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yyextra = user_defined ;
@@ -2189,13 +2284,13 @@ void jsset_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
  * @param line_number
  * @param yyscanner The scanner object.
  */
-void jsset_lineno (int  line_number , yyscan_t yyscanner)
+void js_set_lineno (int  line_number , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
         /* lineno is only valid if an input buffer exists. */
         if (! YY_CURRENT_BUFFER )
-           yy_fatal_error( "jsset_lineno called with no buffer" , yyscanner); 
+           YY_FATAL_ERROR( "js_set_lineno called with no buffer" );
     
     yylineno = line_number;
 }
@@ -2204,13 +2299,13 @@ void jsset_lineno (int  line_number , yyscan_t yyscanner)
  * @param line_number
  * @param yyscanner The scanner object.
  */
-void jsset_column (int  column_no , yyscan_t yyscanner)
+void js_set_column (int  column_no , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
         /* column is only valid if an input buffer exists. */
         if (! YY_CURRENT_BUFFER )
-           yy_fatal_error( "jsset_column called with no buffer" , yyscanner); 
+           YY_FATAL_ERROR( "js_set_column called with no buffer" );
     
     yycolumn = column_no;
 }
@@ -2219,27 +2314,27 @@ void jsset_column (int  column_no , yyscan_t yyscanner)
  * input buffer.
  * @param in_str A readable stream.
  * @param yyscanner The scanner object.
- * @see js_switch_to_buffer
+ * @see js__switch_to_buffer
  */
-void jsset_in (FILE *  in_str , yyscan_t yyscanner)
+void js_set_in (FILE *  in_str , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yyin = in_str ;
 }
 
-void jsset_out (FILE *  out_str , yyscan_t yyscanner)
+void js_set_out (FILE *  out_str , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yyout = out_str ;
 }
 
-int jsget_debug  (yyscan_t yyscanner)
+int js_get_debug  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yy_flex_debug;
 }
 
-void jsset_debug (int  bdebug , yyscan_t yyscanner)
+void js_set_debug (int  bdebug , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yy_flex_debug = bdebug ;
@@ -2249,12 +2344,12 @@ void jsset_debug (int  bdebug , yyscan_t yyscanner)
 
 /* User-visible API */
 
-/* jslex_init is special because it creates the scanner itself, so it is
+/* js_lex_init is special because it creates the scanner itself, so it is
  * the ONLY reentrant function that doesn't take the scanner as the last argument.
  * That's why we explicitly handle the declaration, instead of using our macros.
  */
 
-int jslex_init(yyscan_t* ptr_yy_globals)
+int js_lex_init(yyscan_t* ptr_yy_globals)
 
 {
     if (ptr_yy_globals == NULL){
@@ -2262,7 +2357,7 @@ int jslex_init(yyscan_t* ptr_yy_globals)
         return 1;
     }
 
-    *ptr_yy_globals = (yyscan_t) jsalloc ( sizeof( struct yyguts_t ), NULL );
+    *ptr_yy_globals = (yyscan_t) js_alloc ( sizeof( struct yyguts_t ), NULL );
 
     if (*ptr_yy_globals == NULL){
         errno = ENOMEM;
@@ -2275,27 +2370,27 @@ int jslex_init(yyscan_t* ptr_yy_globals)
     return yy_init_globals ( *ptr_yy_globals );
 }
 
-/* jslex_init_extra has the same functionality as jslex_init, but follows the
+/* js_lex_init_extra has the same functionality as js_lex_init, but follows the
  * convention of taking the scanner as the last argument. Note however, that
  * this is a *pointer* to a scanner, as it will be allocated by this call (and
  * is the reason, too, why this function also must handle its own declaration).
- * The user defined value in the first argument will be available to jsalloc in
+ * The user defined value in the first argument will be available to js_alloc in
  * the yyextra field.
  */
 
-int jslex_init_extra(YY_EXTRA_TYPE yy_user_defined,yyscan_t* ptr_yy_globals )
+int js_lex_init_extra(YY_EXTRA_TYPE yy_user_defined,yyscan_t* ptr_yy_globals )
 
 {
     struct yyguts_t dummy_yyguts;
 
-    jsset_extra (yy_user_defined, &dummy_yyguts);
+    js_set_extra (yy_user_defined, &dummy_yyguts);
 
     if (ptr_yy_globals == NULL){
         errno = EINVAL;
         return 1;
     }
 	
-    *ptr_yy_globals = (yyscan_t) jsalloc ( sizeof( struct yyguts_t ), &dummy_yyguts );
+    *ptr_yy_globals = (yyscan_t) js_alloc ( sizeof( struct yyguts_t ), &dummy_yyguts );
 	
     if (*ptr_yy_globals == NULL){
         errno = ENOMEM;
@@ -2306,7 +2401,7 @@ int jslex_init_extra(YY_EXTRA_TYPE yy_user_defined,yyscan_t* ptr_yy_globals )
     yy_init_globals. Leave at 0x00 for releases. */
     memset(*ptr_yy_globals,0x00,sizeof(struct yyguts_t));
     
-    jsset_extra (yy_user_defined, *ptr_yy_globals);
+    js_set_extra (yy_user_defined, *ptr_yy_globals);
     
     return yy_init_globals ( *ptr_yy_globals );
 }
@@ -2315,7 +2410,7 @@ static int yy_init_globals (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     /* Initialization is the same as for the non-reentrant scanner.
-     * This function is called from jslex_destroy(), so don't allocate here.
+     * This function is called from js_lex_destroy(), so don't allocate here.
      */
 
     yyg->yy_buffer_stack = 0;
@@ -2339,37 +2434,37 @@ static int yy_init_globals (yyscan_t yyscanner)
 #endif
 
     /* For future reference: Set errno on error, since we are called by
-     * jslex_init()
+     * js_lex_init()
      */
     return 0;
 }
 
-/* jslex_destroy is for both reentrant and non-reentrant scanners. */
-int jslex_destroy  (yyscan_t yyscanner)
+/* js_lex_destroy is for both reentrant and non-reentrant scanners. */
+int js_lex_destroy  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
     /* Pop the buffer stack, destroying each element. */
 	while(YY_CURRENT_BUFFER){
-		js_delete_buffer(YY_CURRENT_BUFFER ,yyscanner );
+		js__delete_buffer(YY_CURRENT_BUFFER ,yyscanner );
 		YY_CURRENT_BUFFER_LVALUE = NULL;
-		jspop_buffer_state(yyscanner);
+		js_pop_buffer_state(yyscanner);
 	}
 
 	/* Destroy the stack itself. */
-	jsfree(yyg->yy_buffer_stack ,yyscanner);
+	js_free(yyg->yy_buffer_stack ,yyscanner);
 	yyg->yy_buffer_stack = NULL;
 
     /* Destroy the start condition stack. */
-        jsfree(yyg->yy_start_stack ,yyscanner );
+        js_free(yyg->yy_start_stack ,yyscanner );
         yyg->yy_start_stack = NULL;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
-     * jslex() is called, initialization will occur. */
+     * js_lex() is called, initialization will occur. */
     yy_init_globals( yyscanner);
 
     /* Destroy the main struct (reentrant only). */
-    jsfree ( yyscanner , yyscanner );
+    js_free ( yyscanner , yyscanner );
     yyscanner = NULL;
     return 0;
 }
@@ -2398,12 +2493,12 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *jsalloc (yy_size_t  size , yyscan_t yyscanner)
+void *js_alloc (yy_size_t  size , yyscan_t yyscanner)
 {
 	return (void *) malloc( size );
 }
 
-void *jsrealloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
+void *js_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
 {
 	/* The cast to (char *) in the following accommodates both
 	 * implementations that use char* generic pointers, and those
@@ -2415,12 +2510,16 @@ void *jsrealloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
 	return (void *) realloc( (char *) ptr, size );
 }
 
-void jsfree (void * ptr , yyscan_t yyscanner)
+void js_free (void * ptr , yyscan_t yyscanner)
 {
-	free( (char *) ptr );	/* see jsrealloc() for (char *) cast */
+	free( (char *) ptr );	/* see js_realloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"
+
+#line 198 "JSLexer.l"
+
+
 
 //=============-------------------------------
 // API methods implementation
@@ -2429,7 +2528,7 @@ void jsfree (void * ptr , yyscan_t yyscanner)
 void* jsLexerNew(const wxString& content, size_t options )
 {
     yyscan_t scanner;
-    jslex_init(&scanner);
+    js_lex_init(&scanner);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     JSLexerUserData *userData = new JSLexerUserData(options);
     
@@ -2438,7 +2537,7 @@ void* jsLexerNew(const wxString& content, size_t options )
     yyg->yyextra_r = userData;
     
     wxCharBuffer cb = content.mb_str(wxConvUTF8);
-    js_switch_to_buffer(js_scan_string(cb.data(),scanner),scanner);
+    js__switch_to_buffer(js__scan_string(cb.data(),scanner),scanner);
     yycolumn = 1;
     yylineno = 0;
     return scanner;
@@ -2456,7 +2555,7 @@ void* jsLexerNew(const wxFileName& filename, size_t options )
         return NULL;
     }
     yyscan_t scanner;
-    jslex_init(&scanner);
+    js_lex_init(&scanner);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     JSLexerUserData *userData = new JSLexerUserData(options);
     
@@ -2464,7 +2563,7 @@ void* jsLexerNew(const wxFileName& filename, size_t options )
     userData->SetCurrentPF(fp);
     yyg->yyextra_r = userData;
     
-    js_switch_to_buffer(js_create_buffer(fp,YY_BUF_SIZE,scanner),scanner);
+    js__switch_to_buffer(js__create_buffer(fp,YY_BUF_SIZE,scanner),scanner);
     yycolumn = 1;
     yylineno = 0;
     return scanner;
@@ -2474,9 +2573,9 @@ void jsLexerDestroy(void** scanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)(*scanner);
     delete (JSLexerUserData*)yyg->yyextra_r;
-    js_delete_buffer(YY_CURRENT_BUFFER,*scanner);
+    js__delete_buffer(YY_CURRENT_BUFFER,*scanner);
 
-    jslex_destroy(*scanner);
+    js_lex_destroy(*scanner);
     *scanner = NULL;
 }
 
@@ -2490,7 +2589,7 @@ void jsLexerUnget(void* scanner)
 bool jsLexerNext(void* scanner, JSLexerToken& token)
 {
     token.column = 0;
-    token.type = jslex(scanner);
+    token.type = js_lex(scanner);
     if(token.type != 0) {
         struct yyguts_t * yyg = (struct yyguts_t*)scanner;
         JSLexerUserData* userData = (JSLexerUserData*)yyg->yyextra_r;

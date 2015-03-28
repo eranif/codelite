@@ -41,7 +41,8 @@ void JSParserThread::ProcessRequest(ThreadRequest* request)
 
     Reply* reply = new Reply;
     reply->lookup = new JSLookUpTable();
-    lookup->GetClassTable().swap(reply->lookup->GetClassTable());
-    lookup->Clear();
+    
+    // Copy the class table to the reply's lookup table
+    reply->lookup->CopyClassTable(lookup);
     m_jsCC->CallAfter(&JSCodeCompletion::PraserThreadCompleted, reply);
 }

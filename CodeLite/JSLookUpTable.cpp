@@ -1,6 +1,7 @@
 #include "JSLookUpTable.h"
 #include <algorithm>
 #include "JSFunction.h"
+#include "JSLexerAPI.h"
 
 JSLookUpTable::JSLookUpTable()
     : m_objSeed(0)
@@ -52,6 +53,10 @@ JSObject::Ptr_t JSLookUpTable::FindClass(const wxString& path) const
 {
     std::map<wxString, JSObject::Ptr_t>::const_iterator iter = m_classes.find(path);
     if(iter != m_classes.end()) return iter->second;
+    
+    // try the temp classes
+    iter = m_tmpClasses.find(path);
+    if(iter != m_classes.end()) return iter->second;
     return NULL;
 }
 
@@ -101,6 +106,7 @@ void JSLookUpTable::Clear()
 { 
     // Clear this one
     m_classes.clear();
+    m_tmpClasses.clear();
     m_actualScopes.clear();
     m_tempScopes.clear();
     m_scopes = NULL;
@@ -157,4 +163,29 @@ void JSLookUpTable::InitializeGlobalScope()
     m_globalScope.Reset(NULL);
     m_globalScope = NewFunction();
     m_globalScope->SetName("__GLOBAL__");
+}
+
+void JSLookUpTable::CopyClassTable(JSLookUpTable::Ptr_t other, bool move)
+{
+    m_tmpClasses.clear();
+    m_classes.clear();
+    m_classes.insert(other->m_classes.begin(), other->m_classes.end());
+    m_tmpClasses.insert(other->m_tmpClasses.begin(), other->m_tmpClasses.end());
+    if(move) {
+        other->m_classes.clear();
+        other->m_tmpClasses.clear();
+    }
+}
+
+void JSLookUpTable::ClearTempClassTable()
+{
+    m_tempScopes.clear();
+}
+
+JSObject::Ptr_t JSLookUpTable::NewTempObject()
+{
+    JSObject::Ptr_t obj = NewObject();
+    obj->SetType(GenerateNewType());
+    m_tmpClasses.insert(std::make_pair(obj->GetType(), obj));
+    return obj;
 }

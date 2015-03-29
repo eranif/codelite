@@ -81,12 +81,12 @@ Clone the repo (lets assume that you have a folder `/Users/YOU/src`)
   cd /Users/YOU/src
   git clone https://github.com/eranif/codelite.git
   ```
- the above will create the folder `/User/YOU/codelite`
+ the above will create the folder `/Users/YOU/codelite`
  
  To build CodeLite:
  
   ```bash
-  cd /User/YOU/codelite
+  cd /Users/YOU/codelite
   mkdir build-release
   cd build-release
   cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -94,11 +94,11 @@ Clone the repo (lets assume that you have a folder `/Users/YOU/src`)
   make install
   ```
  
-You should now have an app bundle `/User/YOU/codelite/build-release/codelite.app`
+You should now have an app bundle `/Users/YOU/codelite/build-release/codelite.app`
  
 To launch CodeLite:
 
-`open /User/YOU/codelite/build-release/codelite.app`
+`open /Users/YOU/codelite/build-release/codelite.app`
 
 ![Windows Logo][9] Building CodeLite on Windows
 ----

@@ -113,6 +113,30 @@ CodeFormatter::CodeFormatter(IManager* manager)
                                 NULL,
                                 this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
+    
+    // Migrate settings if needed
+    FormatOptions fmtroptions;
+    m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &fmtroptions);
+    if(fmtroptions.GetEngine() == kFormatEngineClangFormat) {
+        // check to see that the selected clang executable exists
+        wxFileName clangFomatExe(fmtroptions.GetClangFormatExe());
+        if(fmtroptions.GetClangFormatExe().IsEmpty() || !clangFomatExe.Exists()) {
+            // No valid clang executable found, try to locate one
+            clClangFormatLocator locator;
+            wxString clangFormatPath;
+            if(locator.Locate(clangFormatPath)) {
+                fmtroptions.SetClangFormatExe(clangFormatPath);
+            } else {
+                // Change the active engine to AStyle
+                fmtroptions.SetEngine(kFormatEngineAStyle);
+                fmtroptions.SetClangFormatExe(""); // Clear the non existed executable
+            }
+            
+            
+        }
+    }
+    // Save the options
+    EditorConfigST::Get()->WriteObject("FormatterOptions", &fmtroptions);
 }
 
 CodeFormatter::~CodeFormatter()

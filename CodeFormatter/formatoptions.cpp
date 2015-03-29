@@ -55,25 +55,8 @@ void FormatOptions::DeSerialize(Archive& arch)
     int engine = kFormatEngineClangFormat;
     arch.Read("m_engine", engine);
     m_engine = static_cast<FormatterEngine>(engine);
-
     arch.Read("m_clangFormatOptions", m_clangFormatOptions);
-
-    wxString clangFormat;
-    arch.Read("m_clangFormatExe", clangFormat);
-    if(!clangFormat.IsEmpty()) {
-        m_clangFormatExe.swap(clangFormat);
-    }
-
-    // Make sure that clang-format exists on the file system
-    if(m_clangFormatExe.IsEmpty() || !wxFileName::Exists(m_clangFormatExe)) {
-        clClangFormatLocator locator;
-        if(!locator.Locate(m_clangFormatExe)) {
-            // could not locate a valid clang-format executable, fallback to astyle
-            m_engine = kFormatEngineAStyle;
-            m_clangFormatExe.Clear();
-        }
-    }
-
+    arch.Read("m_clangFormatExe", m_clangFormatExe);
     arch.Read("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Read("m_clangColumnLimit", m_clangColumnLimit);
     arch.Read("m_phpFormatOptions", m_phpFormatOptions);

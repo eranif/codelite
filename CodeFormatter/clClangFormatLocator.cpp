@@ -17,11 +17,11 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
     wxFileName fnClangFormat("/usr/bin", "");
     wxArrayString nameOptions;
     nameOptions.Add("clang-format");
-    nameOptions.Add("clang-format-3.3");
-    nameOptions.Add("clang-format-3.4");
-    nameOptions.Add("clang-format-3.5");
-    nameOptions.Add("clang-format-3.6");
     nameOptions.Add("clang-format-3.7");
+    nameOptions.Add("clang-format-3.6");
+    nameOptions.Add("clang-format-3.5");
+    nameOptions.Add("clang-format-3.4");
+    nameOptions.Add("clang-format-3.3");
 
     for(size_t i = 0; i < nameOptions.GetCount(); ++i) {
         fnClangFormat.SetFullName(nameOptions.Item(i));

@@ -1,7 +1,7 @@
 
 /**
  * @brief The Number JavaScript object is a wrapper object allowing you to work with numerical values. A Number object is created using the Number() constructor.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
  */
 function Number() {
 

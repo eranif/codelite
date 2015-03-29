@@ -1,7 +1,7 @@
 
 /**
  * @brief The CharacterData abstract interface represents a Node object that contains characters. This is an abstract interface, meaning there aren't any object of type CharacterData: it is implemented by other interfaces, like Text, Comment, or ProcessingInstruction which aren't abstract.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/CharacterData
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
  */
 function CharacterData() {
 
@@ -21,7 +21,7 @@ function CharacterData() {
 	 * @brief The ChildNode.remove() method removes the object from the tree it belongs to.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
 	 */
-	this.remove = function() {};
+	this.hildNode.remove = function() {};
 
 }
 

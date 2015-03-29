@@ -21,7 +21,7 @@ class WXDLLIMPEXP_CL JSExpressionParser
 
 private:
     JSLexerToken::Vec_t CreateExpression(const wxString& text);
-
+    
 public:
     JSExpressionParser(const wxString& fulltext);
     virtual ~JSExpressionParser();
@@ -40,6 +40,11 @@ public:
      * @brief return true if the expression is a word complete (i.e. it does not end with ".")
      */
     bool IsWordComplete() const { return m_completeType == kWordComplete; }
+    
+    /**
+     * @brief function tip requested?
+     */
+    bool IsFunctionTipComplete() const { return m_completeType == kFunctionTipComplete; }
 };
 
 #endif // JSEXPRESSIONPARSER_H

@@ -11,13 +11,14 @@ class WXDLLIMPEXP_CL JSFunction : public JSObject
 protected:
     wxString m_signature;
     JSObject::Map_t m_variables; // include local variables + function arguments
+    JSObject::Vec_t m_arguments; // Functions arguments, in order
 
 public:
     JSFunction();
     virtual ~JSFunction();
-    
+
     virtual JSObject::Ptr_t NewInstance(const wxString& name);
-    
+
     /**
      * @brief is this object a function?
      */
@@ -29,6 +30,10 @@ public:
     const JSObject::Map_t& GetVariables() const { return m_variables; }
     JSObject::Map_t& GetVariables() { return m_variables; }
     void AddVariable(JSObject::Ptr_t var);
+    void AddArgument(JSObject::Ptr_t arg) { m_arguments.push_back(arg); }
+
+    void SetArguments(const JSObject::Vec_t& arguments) { this->m_arguments = arguments; }
+    const JSObject::Vec_t& GetArguments() const { return m_arguments; }
     virtual void Print(int depth);
 };
 

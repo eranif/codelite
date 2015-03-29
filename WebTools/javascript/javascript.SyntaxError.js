@@ -1,7 +1,7 @@
 
 /**
  * @brief The SyntaxError object represents an error when trying to interpret syntactically invalid code.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError
  */
 function SyntaxError() {
 

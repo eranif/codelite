@@ -1,7 +1,7 @@
 
 /**
  * @brief The EvalError object indicates an error regarding the global eval() function.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError
  */
 function EvalError() {
 

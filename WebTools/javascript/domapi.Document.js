@@ -1,7 +1,7 @@
 
 /**
  * @brief Each web page loaded in the browser has its own document object. The Document interface serves as an entry point into the web page's content (the DOM tree, including elements such as &lt;body> and &lt;table>) and provides functionality which is global to the document (such as obtaining the page's URL and creating new elements in the document).
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/Document
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Document
  */
 function Document() {
 
@@ -150,7 +150,7 @@ function Document() {
 	this.head = '';
 
 	/**
-	 * @brief Returns the height of the &lt;body> element of the current document.
+	 * @brief Returns the height of the document object. In most cases, this is equal to the &lt;body> element of the current document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/height
 	 */
 	this.height = '';
@@ -351,7 +351,7 @@ function Document() {
 	 * @brief Adopts a node from an external document. The node and its subtree is removed from the document it's in (if any), and its ownerDocument is changed to the current document. The node can then be inserted into the current document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptNode
 	 */
-	this.adoptNode = function() {};
+	this.ocument.adoptNode = function() {};
 
 	/**
 	 * @brief This method is used to retrieve the caret position in a document based on two coordinates. A CaretPosition is returned, containing the found DOM node and the character offset in that node.
@@ -359,104 +359,104 @@ function Document() {
 	 * @param x - Horizontal point on the current viewport where to determine the caret position.
 	 * @param y - Vertical point on the current viewport at where to determine the caret position.
 	 */
-	this.caretPositionFromPoint = function(x, y) {};
+	this.ocument.caretPositionFromPoint = function(x, y) {};
 
 	/**
 	 * @brief This method used to clear the whole specified document in early (pre-1.0) versions of Mozilla.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/clear
 	 */
-	this.clear = function() {};
+	this.ocument.clear = function() {};
 
 	/**
 	 * @brief The document.close() method finishes writing to a document, opened with document.open().
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/close
 	 */
-	this.close = function() {};
+	this.ocument.close = function() {};
 
 	/**
 	 * @brief createAttribute creates a new attribute node, and returns it.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createAttribute
 	 */
-	this.createAttribute = function() {};
+	this.ocument.createAttribute = function() {};
 
 	/**
 	 * @brief createCDATASection() creates a new CDATA section node, and returns it.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createCDATASection
 	 */
-	this.createCDATASection = function() {};
+	this.ocument.createCDATASection = function() {};
 
 	/**
 	 * @brief createComment() creates a new comment node, and returns it.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createComment
 	 * @param data - A string containing the data to be added to the Comment.
 	 */
-	this.createComment = function(data) {};
+	this.ocument.createComment = function(data) {};
 
 	/**
 	 * @brief Creates a new empty DocumentFragment.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createDocumentFragment
 	 */
-	this.createDocumentFragment = function() {};
+	this.ocument.createDocumentFragment = function() {};
 
 	/**
 	 * @brief In an HTML document, the Document.createElement() method creates the specified HTML element or an HTMLUnknownElement if the given element name isn't a known one.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
 	 */
-	this.createElement = function() {};
+	this.ocument.createElement = function() {};
 
 	/**
 	 * @brief Creates an element with the specified namespace URI and qualified name.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS
 	 */
-	this.createElementNS = function() {};
+	this.ocument.createElementNS = function() {};
 
 	/**
 	 * @brief Prior to Gecko 7.0 this method showed up as present, due to bug bug 9850, it always only returned null. The only workaround is to create a text node, CDATA section, attribute node value, etc. which has the value referred to by the entity, using Unicode escape sequences or fromCharCode() as necessary.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createEntityReference
 	 */
-	this.createEntityReference = function() {};
+	this.ocument.createEntityReference = function() {};
 
 	/**
 	 * @brief Creates an event of the type specified. The returned object should be first initialized and can then be passed to element.dispatchEvent.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
 	 */
-	this.createEvent = function() {};
+	this.ocument.createEvent = function() {};
 
 	/**
 	 * @brief This method compiles an XPathExpression which can then be used for (repeated) evaluations.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createExpression
 	 */
-	this.createExpression = function() {};
+	this.ocument.createExpression = function() {};
 
 	/**
 	 * @brief Returns a new NodeIterator object.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createNodeIterator
 	 */
-	this.createNodeIterator = function() {};
+	this.ocument.createNodeIterator = function() {};
 
 	/**
 	 * @brief Creates an XPathNSResolver which resolves namespaces with respect to the definitions in scope for a specified node.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createNSResolver
 	 */
-	this.createNSResolver = function() {};
+	this.ocument.createNSResolver = function() {};
 
 	/**
 	 * @brief createProcessingInstruction() creates a new processing instruction node, and returns it.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createProcessingInstruction
 	 */
-	this.createProcessingInstruction = function() {};
+	this.ocument.createProcessingInstruction = function() {};
 
 	/**
 	 * @brief Returns a new Range object.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange
 	 */
-	this.createRange = function() {};
+	this.ocument.createRange = function() {};
 
 	/**
 	 * @brief Creates a new Text node.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createTextNode
 	 */
-	this.createTextNode = function() {};
+	this.ocument.createTextNode = function() {};
 
 	/**
 	 * @brief This method creates and returns a new Touch object.
@@ -475,14 +475,14 @@ function Document() {
 	 * @param rotationAngle - The value for Touch.rotationAngle.
 	 * @param force - The value for Touch.force.
 	 */
-	this.createTouch = function(view, target, identifier, pageX, pageY, screenX, screenY, clientX, clientY, radiusX, radiusY, rotationAngle, force) {};
+	this.ocument.createTouch = function(view, target, identifier, pageX, pageY, screenX, screenY, clientX, clientY, radiusX, radiusY, rotationAngle, force) {};
 
 	/**
 	 * @brief This method creates and returns a new TouchList object.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/createTouchList
 	 * @param touches - Either a single Touch object or an array of Touch objects.
 	 */
-	this.createTouchList = function(touches) {};
+	this.ocument.createTouchList = function(touches) {};
 
 	/**
 	 * @brief The Document.createTreeWalker() creator method returns a newly created TreeWalker object.
@@ -492,26 +492,26 @@ function Document() {
 	 * @param filter Optional - Is an optional NodeFilter, that is an object with a method acceptNode, which is called by the TreeWalker to determine whether or not to accept a node that has passed the whatToShow check.
 	 * @param entityReferenceExpansion Optional - Is a Boolean flag indicating if when discarding an EntityReference its whole sub-tree must be discarded at the same time.
 	 */
-	this.createTreeWalker = function(root, whatToShow Optional, filter Optional, entityReferenceExpansion Optional) {};
+	this.ocument.createTreeWalker = function(root, whatToShow Optional, filter Optional, entityReferenceExpansion Optional) {};
 
 	/**
 	 * @brief Returns the element from the document whose elementFromPoint method is being called which is the topmost element which lies under the given point.  To get an element, specify the point via coordinates, in CSS pixels, relative to the upper-left-most point in the window or frame containing the document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
 	 */
-	this.elementFromPoint = function() {};
+	this.ocument.elementFromPoint = function() {};
 
 	/**
 	 * @brief Enables the style sheets matching the specified name in the current style sheet set, and disables all other style sheets (except those without a title, which are always enabled).
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/enableStyleSheetsForSet
 	 * @param name - The name of the style sheets to enable. All style sheets with a title that match this name will be enabled, while all others that have a title will be disabled. Specify an empty string for the name parameter to disable all alternate and preferred style sheets (but not the persistent style sheets; that is, those with no title attribute).
 	 */
-	this.enableStyleSheetsForSet = function(name) {};
+	this.ocument.enableStyleSheetsForSet = function(name) {};
 
 	/**
 	 * @brief Returns an XPathResult based on an XPath expression and other given parameters.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate
 	 */
-	this.evaluate = function() {};
+	this.ocument.evaluate = function() {};
 
 	/**
 	 * @brief When an HTML document has been switched to designMode, the document object exposes the execCommand method which allows one to run commands to manipulate the contents of the editable region. Most commands affect the document's selection (bold, italics, etc), while others insert new elements (adding a link) or affect an entire line (indenting). When using contentEditable, calling execCommand will affect the currently active editable element.
@@ -520,109 +520,109 @@ function Document() {
 	 * @param aShowDefaultUI - A Boolean indicating whether the default user interface should be shown. This is not implemented in Mozilla.
 	 * @param aValueArgument - A DOMString representing some commands (such as insertimage) require an extra value argument (the image's url). Pass an argument of null if no argument is needed.
 	 */
-	this.execCommand = function(aCommandName, aShowDefaultUI, aValueArgument) {};
+	this.ocument.execCommand = function(aCommandName, aShowDefaultUI, aValueArgument) {};
 
 	/**
 	 * @brief The exitPointerLock asynchronously releases a pointer lock previously requested through Element.requestPointerLock.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/exitPointerLock
 	 */
-	this.exitPointerLock = function() {};
+	this.ocument.exitPointerLock = function() {};
 
 	/**
 	 * @brief Returns a boxObject (x, y, width, height) for a specified element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/getBoxObjectFor
 	 */
-	this.getBoxObjectFor = function() {};
+	this.ocument.getBoxObjectFor = function() {};
 
 	/**
 	 * @brief Returns a reference to the element by its ID.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById
 	 */
-	this.getElementById = function() {};
+	this.ocument.getElementById = function() {};
 
 	/**
 	 * @brief Returns an array-like object of all child elements which have all of the given class names. When called on the document object, the complete document is searched, including the root node. You may also call getElementsByClassName() on any element; it will return only elements which are descendants of the specified root element with the given class names.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName
 	 */
-	this.getElementsByClassName = function() {};
+	this.ocument.getElementsByClassName = function() {};
 
 	/**
 	 * @brief Returns a nodelist collection with a given name in the (X)HTML document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByName
 	 */
-	this.getElementsByName = function() {};
+	this.ocument.getElementsByName = function() {};
 
 	/**
 	 * @brief Returns an HTMLCollection of elements with the given tag name.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/document/getElementsByTagName
 	 */
-	this.getElementsByTagName = function() {};
+	this.ocument.getElementsByTagName = function() {};
 
 	/**
 	 * @brief Returns a list of elements with the given tag name belonging to the given namespace. The complete document is searched, including the root node.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByTagNameNS
 	 */
-	this.getElementsByTagNameNS = function() {};
+	this.ocument.getElementsByTagNameNS = function() {};
 
 	/**
 	 * @brief This method functions identically to the Window.getSelection() method; it returns a Selection object representing the text currently selected in the document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/getSelection
 	 */
-	this.getSelection = function() {};
+	this.ocument.getSelection = function() {};
 
 	/**
 	 * @brief Returns a Boolean value indicating whether the document or any element inside the document has focus. This method can be used to determine whether the active element in a document has focus.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/hasFocus
 	 */
-	this.hasFocus = function() {};
+	this.ocument.hasFocus = function() {};
 
 	/**
 	 * @brief Creates a copy of a node from an external document that can be inserted into the current document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/importNode
 	 */
-	this.importNode = function() {};
+	this.ocument.importNode = function() {};
 
 	/**
 	 * @brief Loads a XUL overlay and merges it with the current document, notifying an observer when the merge is complete.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/loadOverlay
 	 */
-	this.loadOverlay = function() {};
+	this.ocument.loadOverlay = function() {};
 
 	/**
 	 * @brief Takes the document out of full-screen mode; this is used to reverse the effects of a call to make an element in the document full-screen using its element.mozRequestFullScreen() method.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/mozCancelFullScreen
 	 */
-	this.mozCancelFullScreen = function() {};
+	this.ocument.mozCancelFullScreen = function() {};
 
 	/**
 	 * @brief Changes the element being used as the CSS background for a background with a given background element ID.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/mozSetImageElement
 	 */
-	this.mozSetImageElement = function() {};
+	this.ocument.mozSetImageElement = function() {};
 
 	/**
 	 * @brief The document.open() method opens a document for writing.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/open
 	 */
-	this.open = function() {};
+	this.ocument.open = function() {};
 
 	/**
 	 * @brief Reports whether or not the specified editor query command is supported by the browser.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/queryCommandSupported
 	 */
-	this.queryCommandSupported = function() {};
+	this.ocument.queryCommandSupported = function() {};
 
 	/**
 	 * @brief Returns the first element within the document (using depth-first pre-order traversal of the document's nodes) that matches the specified group of selectors.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector
 	 */
-	this.querySelector = function() {};
+	this.ocument.querySelector = function() {};
 
 	/**
 	 * @brief Returns a list of the elements within the document (using depth-first pre-order traversal of the document's nodes) that match the specified group of selectors. The object returned is a NodeList.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll
 	 */
-	this.querySelectorAll = function() {};
+	this.ocument.querySelectorAll = function() {};
 
 	/**
 	 * @brief The Document.registerElement() method registers a new custom element in the browser and returns a constructor for the new element.
@@ -630,25 +630,25 @@ function Document() {
 	 * @param tag-name - The name of the custom element. The name must contain a dash (-), for example my-tag.
 	 * @param options Optional - An object that names the prototype to base the custom element on, and an existing tag to extend. Both of these are optional.
 	 */
-	this.registerElement = function(tag-name, options Optional) {};
+	this.ocument.registerElement = function(tag-name, options Optional) {};
 
 	/**
 	 * @brief Releases mouse capture if it's currently enabled on an element within this document. Enabling mouse capture on an element is done by calling element.setCapture().
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/releaseCapture
 	 */
-	this.releaseCapture = function() {};
+	this.ocument.releaseCapture = function() {};
 
 	/**
 	 * @brief Writes a string of text to a document stream opened by document.open().
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/write
 	 */
-	this.write = function() {};
+	this.ocument.write = function() {};
 
 	/**
 	 * @brief Writes a string of text followed by a newline character to a document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Document/writeln
 	 */
-	this.writeln = function() {};
+	this.ocument.writeln = function() {};
 
 }
 

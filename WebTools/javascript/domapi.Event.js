@@ -1,7 +1,7 @@
 
 /**
  * @brief The Event interface represents any event of the DOM. It contains common properties and methods to any event.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/Event
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Event
  */
 function Event() {
 
@@ -81,31 +81,31 @@ function Event() {
 	 * @brief Creates a new event, which must then be initialized by calling its init() method.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Event/createEvent
 	 */
-	this.createEvent = function() {};
+	this.vent.createEvent = function() {};
 
 	/**
 	 * @brief The Event.initEvent() method is used to initialize the value of an event created using Document.createEvent().
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Event/initEvent
 	 */
-	this.initEvent = function() {};
+	this.vent.initEvent = function() {};
 
 	/**
 	 * @brief Cancels the event if it is cancelable, without stopping further propagation of the event.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
 	 */
-	this.preventDefault = function() {};
+	this.vent.preventDefault = function() {};
 
 	/**
 	 * @brief Prevents other listeners of the same event from being called.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Event/stopImmediatePropagation
 	 */
-	this.stopImmediatePropagation = function() {};
+	this.vent.stopImmediatePropagation = function() {};
 
 	/**
 	 * @brief Prevents further propagation of the current event.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation
 	 */
-	this.stopPropagation = function() {};
+	this.vent.stopPropagation = function() {};
 
 }
 

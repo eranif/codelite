@@ -1,7 +1,7 @@
 
 /**
  * @brief The String global object is a constructor for strings, or a sequence of characters.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
  */
 function String() {
 
@@ -16,14 +16,14 @@ function String() {
 	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode
 	 * @param num1, ..., numN - A sequence of numbers that are Unicode values.
 	 */
-	this., numN) {};
+	this.fromCharCode = function(num1, ..., numN) {};
 
 	/**
 	 * @brief The static String.fromCodePoint() method returns a string created by using the specified sequence of code points.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCodePoint
 	 * @param num1, ..., numN - A sequence of code points.
 	 */
-	this., numN) {};
+	this.fromCodePoint = function(num1, ..., numN) {};
 
 	/**
 	 * @brief The static String.raw() method is a tag function of template strings, like the r prefix in Python or the @ prefix in C# for string literals, this function is used to get the raw string form of template strings.
@@ -32,7 +32,7 @@ function String() {
 	 * @param ...substitutions - Contains substitution values.
 	 * @param templateString - A template string, optionally with substitutions (${...}).
 	 */
-	this.substitutions, templateString) {};
+	this.raw = function(callSite, ...substitutions, templateString) {};
 
 }
 
@@ -197,7 +197,7 @@ String.prototype.repeat = function() {};
  * @param substr - A String that is to be replaced by newSubStr.
  * @param newSubStr - The String that replaces the substring received from parameter #1. A number of special replacement patterns are supported; see the "Specifying a string as a parameter" section below.
  * @param function - A function to be invoked to create the new substring (to put in place of the substring received from parameter #1). The arguments supplied to this function are described in the "Specifying a function as a parameter" section below.
- * @param flags - Note: The flags argument does not work in v8 Core (Chrome and Node.js). A string specifying a combination of regular expression flags. The use of the flags parameter in the String.prototype.replace() method is non-standard. Instead of using this parameter, use a RegExp object with the corresponding flags. The value of this parameter if it is used should be a string consisting of one or more of the following characters to affect the operation as described:   g  global match
+ * @param flags - Note: The flags argument does not work in v8 Core (Chrome and Node.js). A string specifying a combination of regular expression flags. The use of the flags parameter in the String.prototype.replace() method is non-standard and deprecated. Instead of using this parameter, use a RegExp object with the corresponding flags. The value of this parameter if it is used should be a string consisting of one or more of the following characters to affect the operation as described:   g  global match
  * @param i - ignore case
  * @param m - match over multiple lines
  * @param y - sticky
@@ -207,7 +207,7 @@ String.prototype.replace = function(regexp, substr, newSubStr, function, flags, 
 /**
  * @brief The search() method executes a search for a match between a regular expression and this String object.
  * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/search
- * @param regexp - Optional. A regular expression object. If a non-RegExp object obj is passed, it is implicitly converted to a RegExp by using new RegExp(obj).
+ * @param regexp - A regular expression object. If a non-RegExp object obj is passed, it is implicitly converted to a RegExp by using new RegExp(obj).
  */
 String.prototype.search = function(regexp) {};
 

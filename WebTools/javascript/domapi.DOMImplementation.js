@@ -1,7 +1,7 @@
 
 /**
  * @brief The DOMImplementation interface represent an object providing methods which are not dependent on any particular document. Such an object is returned by the Document.implementation property.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/DOMImplementation
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/DOMImplementation
  */
 function DOMImplementation() {
 
@@ -12,7 +12,7 @@ function DOMImplementation() {
 	 * @param qualifiedNameStr - Is a DOMString containing the qualified name, that is an optional prefix and colon plus the local root element name, of the document to be created.
 	 * @param documentType Optional - Is the DocumentType of the document to be created. It defaults to null.
 	 */
-	this.createDocument = function(namespaceURI, qualifiedNameStr, documentType Optional) {};
+	this.OMImplementation.createDocument = function(namespaceURI, qualifiedNameStr, documentType Optional) {};
 
 	/**
 	 * @brief The DOMImplementation.createDocumentType() method returns a DocumentType object which can either be used with DOMImplementation.createDocument upon document creation or can be put into the document via methods like Node.insertBefore() or Node.replaceChild().
@@ -21,14 +21,14 @@ function DOMImplementation() {
 	 * @param publicId - Is a DOMString containing the PUBLIC identifier.
 	 * @param systemId - Is a DOMString containing the SYSTEM identifiers.
 	 */
-	this.createDocumentType = function(qualifiedNameStr, publicId, systemId) {};
+	this.OMImplementation.createDocumentType = function(qualifiedNameStr, publicId, systemId) {};
 
 	/**
 	 * @brief The DOMImplementation.createHTMLDocument() method creates a new HTML Document.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/DOMImplementation/createHTMLDocument
 	 * @param title  Optional - Is a DOMString containing the title to give the new HTML document.
 	 */
-	this.createHTMLDocument = function(title  Optional) {};
+	this.OMImplementation.createHTMLDocument = function(title  Optional) {};
 
 	/**
 	 * @brief The DOMImplementation.hasFeature() method returns a Boolean flag indicating if a given feature is supported.
@@ -36,7 +36,7 @@ function DOMImplementation() {
 	 * @param feature - Is a DOMString representing the feature name.
 	 * @param version - Is a DOMString representing the version of the specification defining the feature.
 	 */
-	this.hasFeature = function(feature, version) {};
+	this.OMImplementation.hasFeature = function(feature, version) {};
 
 }
 

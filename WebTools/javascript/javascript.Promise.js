@@ -1,7 +1,7 @@
 
 /**
  * @brief The&nbsp;Promise&nbsp;object is used for deferred and asynchronous computations. A&nbsp;Promise&nbsp;is in one of these&nbsp;states:
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
  */
 function Promise() {
 

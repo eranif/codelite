@@ -302,6 +302,7 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
 
 void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
 {
+    e.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
         if(!CanCodeComplete(e)) return;
 
@@ -309,6 +310,10 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
         if(editor) {
             // we handle only .php files
             if(IsPHPFile(editor)) {
+                
+                // this is our to complete
+                e.Skip(false);
+                
                 // get the position
                 PHPEntityBase::Ptr_t resolved = DoGetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition(), true);
                 if(resolved) {
@@ -322,8 +327,6 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
             }
         }
 
-    } else {
-        e.Skip();
     }
 }
 

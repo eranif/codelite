@@ -1,7 +1,7 @@
 
 /**
  * @brief The Intl.NumberFormat object is a constructor for objects that enable language sensitive number formatting.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat
  */
 function Intl.NumberFormat() {
 

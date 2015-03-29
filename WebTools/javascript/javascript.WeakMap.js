@@ -1,7 +1,7 @@
 
 /**
  * @brief The WeakMap object is a collection of key/value pairs in which the keys are objects and the values can be arbitrary values.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap
  */
 function WeakMap() {
 

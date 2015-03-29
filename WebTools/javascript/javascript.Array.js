@@ -1,7 +1,7 @@
 
 /**
  * @brief The JavaScript Array global object is a constructor for arrays, which are high-level, list-like objects.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
  */
 function Array() {
 

@@ -1,7 +1,7 @@
 
 /**
  * @brief The DocumentFragment interface represents a minimal document object that has no parent. It is used as a light-weight version of Document to store well-formed or potentially non-well-formed fragments of XML.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
  */
 function DocumentFragment() {
 
@@ -34,14 +34,14 @@ function DocumentFragment() {
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/querySelector
 	 * @param selectors - Is a DOMString containing one or more CSS selectors separated by commas.
 	 */
-	this.querySelector = function(selectors) {};
+	this.ocumentFragment.querySelector = function(selectors) {};
 
 	/**
 	 * @brief The DocumentFragment.querySelectorAll() method returns a NodeList of elements within the DocumentFragment (using depth-first pre-order traversal of the document's nodes) that matches the specified group of selectors.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment/querySelectorAll
 	 * @param selectors - Is a DOMString containing one or more CSS selectors separated by commas.
 	 */
-	this.querySelectorAll = function(selectors) {};
+	this.ocumentFragment.querySelectorAll = function(selectors) {};
 
 }
 

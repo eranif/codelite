@@ -46,7 +46,9 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
-    
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
+
     m_jsCodeComplete.Reset(new JSCodeCompletion());
 }
 
@@ -68,6 +70,9 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     m_jsColourThread->Stop();
     wxDELETE(m_jsColourThread);
     m_jsCodeComplete.Reset(NULL);
@@ -105,13 +110,13 @@ void WebTools::OnThemeChanged(wxCommandEvent& event)
     }
 }
 
-void WebTools::OnCodeComplete(clCodeCompletionEvent& event) 
+void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
 {
+    event.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && IsJavaScriptFile(editor->GetFileName())) {
+        event.Skip(false);
         m_jsCodeComplete->CodeComplete(editor);
-    } else {
-        event.Skip();
     }
 }
 
@@ -123,4 +128,22 @@ bool WebTools::IsJavaScriptFile(const wxFileName& filename)
 bool WebTools::IsJavaScriptFile(const wxString& filename)
 {
     return FileExtManager::GetType(filename) == FileExtManager::TypeJS;
+}
+
+void WebTools::OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(editor && IsJavaScriptFile(editor->GetFileName())) {
+        event.Skip(false);
+        m_jsCodeComplete->CodeComplete(editor);
+    }
+}
+
+void WebTools::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    // When a workspace is closed, perform a cleanup
+    m_jsCodeComplete.Reset(NULL);
+    m_jsCodeComplete.Reset(new JSCodeCompletion());
 }

@@ -1,7 +1,7 @@
 
 /**
  * @brief The Promise interface represents a proxy for a value not necessarily known at its creation time. It allows you to associate handlers to an asynchronous action's eventual success or failure. This lets asynchronous methods return values like synchronous methods: instead of the final value, the asynchronous method returns a promise of having a value at some point in the future.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/Promise
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Promise
  */
 function Promise() {
 
@@ -10,21 +10,21 @@ function Promise() {
 	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
 	 * @param iterable - An iterable object, such as an Array. See iterable.
 	 */
-	this.all = function(iterable) {};
+	this.romise.all = function(iterable) {};
 
 	/**
 	 * @brief The Promise.race(iterable) method returns a promise that resolves or rejects as soon as one of the promises in the iterable resolves or rejects, with the value or reason from that promise.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race
 	 * @param iterable - An iterable object, such as an Array. See iterable.
 	 */
-	this.race = function(iterable) {};
+	this.romise.race = function(iterable) {};
 
 	/**
 	 * @brief The Promise.reject(reason) method returns a Promise object that is rejected with the given reason.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject
 	 * @param reason - Reason why this Promise rejected.
 	 */
-	this.reject = function(reason) {};
+	this.romise.reject = function(reason) {};
 
 }
 

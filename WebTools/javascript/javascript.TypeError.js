@@ -1,7 +1,7 @@
 
 /**
  * @brief The TypeError object represents an error when a value is not of the expected type.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError
  */
 function TypeError() {
 

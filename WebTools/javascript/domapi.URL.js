@@ -1,7 +1,7 @@
 
 /**
  * @brief The URL interface represent an object providing static methods used for creating object URLs.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/URL
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/URL
  */
 function URL() {
 
@@ -81,19 +81,19 @@ function URL() {
 	 * @brief The URL.createObjectURL() static method creates a DOMString containing an URL representing the object given in parameter. The URL lifetime is tied to the document in the window on which it was created. The new object URL represents the specified File object or Blob object.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
 	 */
-	this.createObjectURL = function() {};
+	this.RL.createObjectURL = function() {};
 
 	/**
 	 * @brief The URL.revokeObjectURL() static method releases an existing object URL which was previously created by calling window.URL.createObjectURL().  Call this method when you've finished using a object URL, in order to let the browser know it doesn't need to keep the reference to the file any longer.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
 	 */
-	this.revokeObjectURL = function() {};
+	this.RL.revokeObjectURL = function() {};
 
 	/**
 	 * @brief The URLUtils.toString() stringifier method returns a DOMString containing the whole URL. It is a read-only version of URLUtilsReadOnly.href.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/URLUtils/toString
 	 */
-	this.toString = function() {};
+	this.RLUtils.toString = function() {};
 
 }
 

@@ -1,7 +1,7 @@
 
 /**
  * @brief The Worker interface of the Web Workers API represents a background task that can be easily created and can send messages back to its creator. Creating a worker is as simple as calling the Worker() constructor and specifying a script to be run in the worker thread.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/Worker
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Worker
  */
 function Worker() {
 
@@ -23,13 +23,13 @@ function Worker() {
 	 * @param aMessage - The object to deliver to the worker; this will be in the data field in the event delivered to the DedicatedWorkerGlobalScope.onmessage handler. This may be any value or JavaScript object handled by the structured clone algorithm, which includes cyclical references.
 	 * @param transferList Optional - An optional array of Transferable objects to transfer ownership of. If the ownership of an object is transferred, it becomes unusable (neutered) in the context it was sent from and it becomes available only to the worker it was sent to.
 	 */
-	this.postMessage = function(aMessage, transferList Optional) {};
+	this.orker.postMessage = function(aMessage, transferList Optional) {};
 
 	/**
 	 * @brief The terminate() method of the Worker interface immediately terminates the Worker. This does not offer the worker an opportunity to finish its operations; it is simply stopped at once.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Worker/terminate
 	 */
-	this.terminate = function() {};
+	this.orker.terminate = function() {};
 
 }
 

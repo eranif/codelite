@@ -1,7 +1,7 @@
 
 /**
  * @brief The Map object is a simple key/value map. Any value (both objects and primitive values) may be used as either a key or a value.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
  */
 function Map() {
 

@@ -1,7 +1,7 @@
 
 /**
  * @brief The WeakSet object lets you store weakly held objects in a collection.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet
  */
 function WeakSet() {
 

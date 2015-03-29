@@ -18,8 +18,12 @@ public:
 
     struct Reply {
         JSLookUpTable* lookup;
+        int num_files;
+        long total_time;
         Reply()
             : lookup(NULL)
+            , num_files(0)
+            , total_time(0)
         {
         }
         ~Reply()

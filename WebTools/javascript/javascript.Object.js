@@ -1,7 +1,7 @@
 
 /**
  * @brief The Object constructor creates an object wrapper.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
  */
 function Object() {
 

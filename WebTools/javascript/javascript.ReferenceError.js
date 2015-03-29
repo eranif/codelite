@@ -1,7 +1,7 @@
 
 /**
  * @brief The ReferenceError object represents an error when a non-existent variable is referenced.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError
  */
 function ReferenceError() {
 

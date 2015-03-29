@@ -1,7 +1,7 @@
 
 /**
  * @brief The Function constructor creates a new Function object. In JavaScript every function is actually a Function object.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
  */
 function Function() {
 

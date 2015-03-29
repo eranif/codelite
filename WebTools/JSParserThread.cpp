@@ -6,6 +6,7 @@
 #include "JSSourceFile.h"
 #include "JSCodeCompletion.h"
 #include "JSLookUpTable.h"
+#include <wx/stopwatch.h>
 
 JSParserThread::JSParserThread(JSCodeCompletion* jsCC)
     : m_jsCC(jsCC)
@@ -26,7 +27,10 @@ void JSParserThread::ProcessRequest(ThreadRequest* request)
 {
     Request* r = dynamic_cast<Request*>(request);
     if(!r) return;
-
+    
+    wxStopWatch sw;
+    
+    sw.Start();
     wxArrayString files;
     wxDir::GetAllFiles(r->path, &files, "*.js");
 
@@ -38,8 +42,10 @@ void JSParserThread::ProcessRequest(ThreadRequest* request)
         JSSourceFile source(lookup, fileContent, wxFileName(files.Item(i)));
         source.Parse();
     }
-
+    
     Reply* reply = new Reply;
+    reply->total_time = sw.Time();
+    reply->num_files = files.GetCount();
     reply->lookup = new JSLookUpTable();
     
     // Copy the class table to the reply's lookup table

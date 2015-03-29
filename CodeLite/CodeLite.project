@@ -464,8 +464,7 @@ CxxLexer.cpp: CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 JSLexer.cpp: JSLexer.l
-	flex -Pjs_ --batch --outfile=JSLexer.cpp JSLexer.l
-</CustomPreBuild>
+	flex -Pjs_ --batch --outfile=JSLexer.cpp JSLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -549,7 +548,7 @@ JSLexer.cpp: JSLexer.l
         <Library Value="libssh"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../lib/gcc_lib/libcodeliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../lib/gcc_lib/libcodeliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -578,7 +577,8 @@ JSLexer.cpp: JSLexer.l
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
-	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l</CustomPreBuild>
+	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>

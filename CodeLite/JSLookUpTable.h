@@ -28,7 +28,12 @@ public:
     virtual ~JSLookUpTable();
 
     wxString GenerateNewType();
-
+    
+    /**
+     * @brief return object properties (parent's properties included)
+     */
+    JSObject::Map_t GetObjectProperties(JSObject::Ptr_t o) const;
+    
     void AddObject(JSObject::Ptr_t obj);
     JSObject::Ptr_t CurrentScope() const;
 

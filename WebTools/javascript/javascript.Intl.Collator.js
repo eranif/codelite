@@ -1,7 +1,7 @@
 
 /**
  * @brief The Intl.Collator object is a constructor for collators, objects that enable language sensitive string comparison.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator
  */
 function Intl.Collator() {
 

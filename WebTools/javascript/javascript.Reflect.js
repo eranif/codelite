@@ -1,7 +1,7 @@
 
 /**
  * @brief Reflect is a built-in object that provides methods for interceptable JavaScript operations. The methods are the same as those of the proxy handlers. Reflect It is not a function object.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect
  */
 function Reflect() {
 

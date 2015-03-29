@@ -1,7 +1,7 @@
 
 /**
  * @brief The DataView view provides a low-level interface for reading data from and writing it to an ArrayBuffer.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView
  */
 function DataView() {
 

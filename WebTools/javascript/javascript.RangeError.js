@@ -1,7 +1,7 @@
 
 /**
  * @brief The RangeError object indicates an error when a value is not in the set or range of allowed values.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError
  */
 function RangeError() {
 

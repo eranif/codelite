@@ -1,7 +1,7 @@
 
 /**
  * @brief The Boolean object is an object wrapper for a boolean value.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean
  */
 function Boolean() {
 

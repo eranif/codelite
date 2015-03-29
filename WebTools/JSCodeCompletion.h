@@ -17,7 +17,6 @@ public:
     
 protected:
     int GetImgIndex(JSObject::Ptr_t obj);
-    JSObject::Map_t GetObjectProperties(JSObject::Ptr_t o);
     
 public:
     JSCodeCompletion();

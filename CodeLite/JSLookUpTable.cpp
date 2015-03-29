@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "JSFunction.h"
 #include "JSLexerAPI.h"
+#include <algorithm>
 
 JSLookUpTable::JSLookUpTable()
     : m_objSeed(0)
@@ -188,4 +189,17 @@ JSObject::Ptr_t JSLookUpTable::NewTempObject()
     obj->AddType(GenerateNewType(), true);
     m_tmpClasses.insert(std::make_pair(obj->GetTypes().Item(0), obj));
     return obj;
+}
+
+JSObject::Map_t JSLookUpTable::GetObjectProperties(JSObject::Ptr_t o) const
+{
+    JSObject::Map_t properties;
+    properties.insert(o->GetProperties().begin(), o->GetProperties().end());
+
+    const std::set<wxString>& extends = o->GetExtends();
+    std::for_each(extends.begin(), extends.end(), [&](const wxString& className) {
+        JSObject::Ptr_t cls = FindClass(className);
+        properties.insert(cls->GetProperties().begin(), cls->GetProperties().end());
+    });
+    return properties;
 }

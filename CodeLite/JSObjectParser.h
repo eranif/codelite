@@ -18,6 +18,8 @@ private:
     bool ReadUntil(int until);
     bool ReadSignature(JSObject::Ptr_t scope);
     
+    void SetResultObject(const wxString& type);
+    
 public:
     JSObjectParser(JSSourceFile& sourceFile, JSLookUpTable::Ptr_t lookup);
     virtual ~JSObjectParser();

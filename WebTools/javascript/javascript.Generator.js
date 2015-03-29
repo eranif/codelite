@@ -1,7 +1,7 @@
 
 /**
  * @brief The Generator object is returned by a generator function and it conforms to both the iterator and the Iterable protocol.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator
  */
 function Generator() {
 

@@ -211,6 +211,7 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
             obj->SetName(curarg);
             obj->SetFile(m_filename);
             scope->As<JSFunction>()->AddVariable(obj);
+            scope->As<JSFunction>()->AddArgument(obj);
             curarg.Clear();
         }
 
@@ -284,7 +285,11 @@ void JSSourceFile::OnFunctionThisProperty()
 
     if(!JS_NEXT_TOKEN()) return;
     JS_CHECK_TYPE_RETURN('=');
-
+    
+    // When a function has a property, it becomes a class
+    // We mark the function's type as its Path
+    m_lookup->CurrentScope()->SetType(m_lookup->CurrentScope()->GetPath());
+    
     if(!JS_NEXT_TOKEN()) return;
     if(token.type == kJS_FUNCTION) {
         // Allocate new function obj and add it
@@ -295,7 +300,7 @@ void JSSourceFile::OnFunctionThisProperty()
         func->SetLine(token.lineNumber);
         AssociateComment(func);
         m_lookup->CurrentScope()->AddProperty(func);
-
+        
         // From here on, its the same as normal function
         ParseFunction(func);
 
@@ -442,11 +447,7 @@ JSObject::Ptr_t JSSourceFile::ParseJSONObject(const wxString& content)
 
 JSObject::Ptr_t JSSourceFile::OnReturnValue()
 {
-    JSLexerToken token;
-    JS_NEXT_TOKEN_RETURN_NULL();
-    
     // void return
-    if(token.type == ';') return NULL;
     JSObjectParser parser(*this, m_lookup);
     if(parser.Parse(NULL)) {
         return parser.GetResult();

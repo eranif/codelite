@@ -1,7 +1,7 @@
 
 /**
  * @brief The URIError object represents an error when a global URI handling function was used in a wrong way.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError
  */
 function URIError() {
 

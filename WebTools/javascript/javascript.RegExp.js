@@ -1,7 +1,7 @@
 
 /**
  * @brief The RegExp constructor creates a regular expression object for matching text with a pattern.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
  */
 function RegExp() {
 

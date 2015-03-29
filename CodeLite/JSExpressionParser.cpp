@@ -76,12 +76,30 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
             if(current) current->clear();
             break;
         case '(':
-        case '[':
             if(current) current->push_back(token);
             stack.push(JSLexerToken::Vec_t());
             current = &stack.top();
             break;
         case ')':
+            if(stack.size() < 2) {
+                // parse error...
+                return JSLexerToken::Vec_t();
+            }
+            // switch back to the previous set of tokens
+            stack.pop();
+            current = &stack.top();
+
+            // remove the open brace
+            if(current && !current->empty() && current->back().type == '(') {
+                current->pop_back();
+            }
+
+            break;
+        case '[':
+            if(current) current->push_back(token);
+            stack.push(JSLexerToken::Vec_t());
+            current = &stack.top();
+            break;
         case ']':
             if(stack.size() < 2) {
                 // parse error...
@@ -114,6 +132,17 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
     ::jsLexerDestroy(&scanner);
     JSLexerToken::Vec_t result;
 
+    // special check: if the current sequence is empty and the previous one ends with "("
+    // use the previous one
+    // e.g. user typed: Fooname(
+    if(current && current->empty() && (stack.size() > 1)) {
+        stack.pop();
+        current = &stack.top();
+        // sanity
+        if(current->empty()) return result;
+        if(current->back().type != '(') return result;
+    }
+    
     if(current) {
         result.swap(*current);
     }
@@ -126,7 +155,7 @@ JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const w
 
     // Prepare the lookup for parsing a source file
     lookup->PrepareLookup();
-    
+
     // Determing the type of completion requested
     m_completeType = kCodeComplete;
 
@@ -135,7 +164,7 @@ JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const w
     } else if(m_expression.at(m_expression.size() - 1).type == kJS_IDENTIFIER) {
         m_completeType = kWordComplete;
     }
-    
+
     // Reparse the current file
     JSSourceFile sourceFile(lookup, m_text, wxFileName(filename));
     sourceFile.Parse();
@@ -144,17 +173,26 @@ JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const w
         // Remove the last token so it is now a "code-complete" expression
         m_wordCompleteFilter = m_expression.back().text;
         m_expression.pop_back();
-        
+
         if(m_expression.empty()) {
             // after removing the last element, we have no more tokens in the expression
             // return the global scope
-            return lookup->GetGlobalScope();
+            return lookup->CurrentScope();
         }
+    } else if(IsFunctionTipComplete()) {
+        // Function calltip
+        m_expression.pop_back();
+        if(m_expression.empty()) return NULL;
     }
-    
+
     JSObject::Ptr_t resolved(NULL);
     for(size_t i = 0; i < m_expression.size(); ++i) {
         JSLexerToken& token = m_expression.at(i);
+
+        // ignore open paren
+        if(token.type == '(') continue;
+
+        // scope resolve operator
         if(token.type == kJS_DOT) {
             if(resolved) {
                 // locate the type in the lookup table
@@ -181,7 +219,7 @@ JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const w
             }
             if(!resolved) return NULL;
         } else {
-            const JSObject::Map_t& properties = resolved->GetProperties();
+            JSObject::Map_t properties = lookup->GetObjectProperties(resolved);
             JSObject::Map_t::const_iterator iter = properties.find(token.text);
             if(iter == properties.end()) {
                 return NULL;

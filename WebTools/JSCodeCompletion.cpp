@@ -12,6 +12,9 @@
 #include "cl_standard_paths.h"
 #include "clZipReader.h"
 #include <wx/filename.h>
+#include "entry.h"
+#include "cl_calltip.h"
+#include <wx/log.h>
 
 JSCodeCompletion::JSCodeCompletion()
     : m_thread(NULL)
@@ -41,6 +44,7 @@ JSCodeCompletion::~JSCodeCompletion()
         m_thread->Stop();
         wxDELETE(m_thread);
     }
+    m_lookup.Reset(NULL);
 }
 
 void JSCodeCompletion::CodeComplete(IEditor* editor)
@@ -68,17 +72,29 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     JSObject::Map_t properties;
     if(parser.IsWordComplete()) {
         // use the resolved object properties
-        properties = GetObjectProperties(resolved);
+        properties = m_lookup->GetObjectProperties(resolved);
 
-        // if the resolved object is the global scope,
         // add the visible variables
-        if(resolved->IsGlobalScope()) {
-            JSObject::Map_t locals = m_lookup->GetVisibleVariables();
-            properties.insert(locals.begin(), locals.end());
-        }
+        JSObject::Map_t locals = m_lookup->GetVisibleVariables();
+        properties.insert(locals.begin(), locals.end());
+    } else if(parser.IsFunctionTipComplete()) {
+        if(!resolved->IsFunction()) return;
+
+        // Convert the function arguments into TagEntryPtrVector_t
+        TagEntryPtrVector_t tags;
+        TagEntryPtr tag(new TagEntry());
+        tag->SetName(resolved->GetName());
+        tag->SetKind("function");
+        tag->SetFlags(TagEntry::Tag_No_Signature_Format);
+        tag->SetSignature(resolved->As<JSFunction>()->GetSignature());
+        tags.push_back(tag);
+
+        clCallTipPtr callTip(new clCallTip(tags));
+        editor->ShowCalltip(callTip);
+        return;
 
     } else {
-        properties = GetObjectProperties(resolved);
+        properties = m_lookup->GetObjectProperties(resolved);
     }
 
     std::for_each(properties.begin(), properties.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) {
@@ -121,6 +137,9 @@ void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply)
         // Fill the lookup with the common global objects
         m_lookup->PopulateWithGlobals();
     }
+    wxLogMessage("JavaScript: parsing of Core API completed. %d files parsed (time elapsed: %ld seconds)",
+                 reply->num_files,
+                 reply->total_time);
     wxDELETE(reply);
 }
 
@@ -131,17 +150,4 @@ int JSCodeCompletion::GetImgIndex(JSObject::Ptr_t obj)
     else if(obj->IsFunction())
         return 9;
     return 6; // Variable
-}
-
-JSObject::Map_t JSCodeCompletion::GetObjectProperties(JSObject::Ptr_t o)
-{
-    JSObject::Map_t properties;
-    properties.insert(o->GetProperties().begin(), o->GetProperties().end());
-    
-    const std::set<wxString>& extends = o->GetExtends();
-    std::for_each(extends.begin(), extends.end(), [&](const wxString& className){
-        JSObject::Ptr_t cls = m_lookup->FindClass(className);
-        properties.insert(cls->GetProperties().begin(), cls->GetProperties().end());
-    });
-    return properties;
 }

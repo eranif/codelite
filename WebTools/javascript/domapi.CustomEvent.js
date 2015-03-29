@@ -1,7 +1,7 @@
 
 /**
  * @brief This interface inherits properties from its parent, Event.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
  */
 function CustomEvent() {
 
@@ -13,7 +13,7 @@ function CustomEvent() {
 	 * @param cancelable - Is a Boolean indicating whether the event is cancelable.
 	 * @param detail - The data passed when initializing the event.
 	 */
-	this.initCustomEvent = function(type, canBubble, cancelable, detail) {};
+	this.ustomEvent.initCustomEvent = function(type, canBubble, cancelable, detail) {};
 
 }
 

@@ -1,7 +1,7 @@
 
 /**
  * @brief The Element interface represents an object of a Document. This interface describes methods and properties common to all kinds of elements. Specific behaviors are described in interfaces which inherit from Element but add additional functionality.
- * @link https://developer.mozilla.orghttps://developer.mozilla.org/en-US/docs/Web/API/Element
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Element
  */
 function Element() {
 
@@ -165,25 +165,25 @@ function Element() {
 	 * @brief The Element.closest() method returns the closest ancestor of the current element (or the current element itself) which matches the selectors given in parameter. If there isn't such an ancestor, it returns null.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
 	 */
-	this.closest = function() {};
+	this.lement.closest = function() {};
 
 	/**
 	 * @brief getAttribute() returns the value of a specified attribute on the element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute
 	 */
-	this.getAttribute = function() {};
+	this.lement.getAttribute = function() {};
 
 	/**
 	 * @brief Returns the specified attribute of the specified element, as an Attr node.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNode
 	 */
-	this.getAttributeNode = function() {};
+	this.lement.getAttributeNode = function() {};
 
 	/**
 	 * @brief Returns the Attr node for the attribute with the given namespace and name.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNodeNS
 	 */
-	this.getAttributeNodeNS = function() {};
+	this.lement.getAttributeNodeNS = function() {};
 
 	/**
 	 * @brief The Element.getBoundingClientRect() method returns the size of an element and its position relative to the viewport.
@@ -191,109 +191,109 @@ function Element() {
 	 * @param namespace - The namespace in which to look for the specified attribute.
 	 * @param name - The name of the attribute to look for.
 	 */
-	this.getBoundingClientRect = function(namespace, name) {};
+	this.lement.getBoundingClientRect = function(namespace, name) {};
 
 	/**
 	 * @brief The Element.getClientRects() method returns a collection of rectangles that indicate the bounding rectangles for each box in a client.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/getClientRects
 	 */
-	this.getClientRects = function() {};
+	this.lement.getClientRects = function() {};
 
 	/**
 	 * @brief The Element.getElementsByClassName() method returns a live HTMLCollection containing all child elements which have all of the given class names. When called on the document object, the complete document is searched, including the root node.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByClassName
 	 */
-	this.getElementsByClassName = function() {};
+	this.lement.getElementsByClassName = function() {};
 
 	/**
 	 * @brief The Element.getElementsByTagName() method returns a live HTMLCollection of elements with the given tag name. The subtree underneath the specified element is searched, excluding the element itself. The returned list is live, meaning that it updates itself with the DOM tree automatically. Consequently, there is no need to call several times Element.getElementsByTagName() with the same element and arguments.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName
 	 */
-	this.getElementsByTagName = function() {};
+	this.lement.getElementsByTagName = function() {};
 
 	/**
 	 * @brief The Element.getElementsByTagNameNS() method returns a live HTMLCollection of elements with the given tag name belonging to the given namespace. It is similar to Document.getElementsByTagNameNS, except that its search is restricted to descendants of the specified element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagNameNS
 	 */
-	this.getElementsByTagNameNS = function() {};
+	this.lement.getElementsByTagNameNS = function() {};
 
 	/**
 	 * @brief The Element.hasAttribute() method returns a Boolean value indicating whether the specified element has the specified attribute or not.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttribute
 	 */
-	this.hasAttribute = function() {};
+	this.lement.hasAttribute = function() {};
 
 	/**
 	 * @brief hasAttributeNS returns a boolean value indicating whether the current element has the specified attribute.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttributeNS
 	 */
-	this.hasAttributeNS = function() {};
+	this.lement.hasAttributeNS = function() {};
 
 	/**
 	 * @brief The Element.hasAttributes() method returns a Boolean value, true or false, indicating if the current element has any attributes or not.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttributes
 	 */
-	this.hasAttributes = function() {};
+	this.lement.hasAttributes = function() {};
 
 	/**
 	 * @brief insertAdjacentHTML() parses the specified text as HTML or XML and inserts the resulting nodes into the DOM tree at a specified position. It does not reparse the element it is being used on and thus it does not corrupt the existing elements inside the element. This, and avoiding the extra step of serialization make it much faster than direct innerHTML manipulation.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
 	 */
-	this.insertAdjacentHTML = function() {};
+	this.lement.insertAdjacentHTML = function() {};
 
 	/**
 	 * @brief The Element.matches() method returns true if the element would be selected by the specified selector string; otherwise, returns false.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 	 */
-	this.matches = function() {};
+	this.lement.matches = function() {};
 
 	/**
 	 * @brief Returns the first element that is a descendant of the element on which it is invoked that matches the specified group of selectors.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
 	 */
-	this.querySelector = function() {};
+	this.lement.querySelector = function() {};
 
 	/**
 	 * @brief Returns a non-live NodeList of all elements descended from the element on which it is invoked that match the specified group of CSS selectors.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
 	 */
-	this.querySelectorAll = function() {};
+	this.lement.querySelectorAll = function() {};
 
 	/**
 	 * @brief The ChildNode.remove() method removes the object from the tree it belongs to.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
 	 */
-	this.remove = function() {};
+	this.hildNode.remove = function() {};
 
 	/**
 	 * @brief removeAttribute removes an attribute from the specified element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute
 	 */
-	this.removeAttribute = function() {};
+	this.lement.removeAttribute = function() {};
 
 	/**
 	 * @brief removeAttributeNode removes the specified attribute from the current element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttributeNode
 	 */
-	this.removeAttributeNode = function() {};
+	this.lement.removeAttributeNode = function() {};
 
 	/**
 	 * @brief removeAttributeNS removes the specified attribute from an element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttributeNS
 	 */
-	this.removeAttributeNS = function() {};
+	this.lement.removeAttributeNS = function() {};
 
 	/**
 	 * @brief Asynchronously requests that the element be made full-screen.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullScreen
 	 */
-	this.requestFullscreen = function() {};
+	this.lement.requestFullscreen = function() {};
 
 	/**
 	 * @brief The Element.requestPointerLock() method allows to asynchronously ask for the pointer to be locked on the given element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/requestPointerLock
 	 */
-	this.requestPointerLock = function() {};
+	this.lement.requestPointerLock = function() {};
 
 	/**
 	 * @brief The Element.scrollIntoView() method scrolls the current element into the visible area of the browser window.
@@ -301,37 +301,37 @@ function Element() {
 	 * @param alignToTop - Is a Boolean value:   If true, the top of the element will be aligned to the top of the visible area of the scrollable ancestor.  If false, the bottom of the element will be aligned to the bottom of the visible area of the scrollable ancestor.
 	 * @param scrollIntoViewOptions - A boolean or an object with the following options:
 	 */
-	this.scrollIntoView = function(alignToTop, scrollIntoViewOptions) {};
+	this.lement.scrollIntoView = function(alignToTop, scrollIntoViewOptions) {};
 
 	/**
 	 * @brief Adds a new attribute or changes the value of an existing attribute on the specified element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
 	 */
-	this.setAttribute = function() {};
+	this.lement.setAttribute = function() {};
 
 	/**
 	 * @brief setAttributeNode() adds a new Attr node to the specified element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttributeNode
 	 */
-	this.setAttributeNode = function() {};
+	this.lement.setAttributeNode = function() {};
 
 	/**
 	 * @brief setAttributeNodeNS adds a new namespaced attribute node to an element.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttributeNodeNS
 	 */
-	this.setAttributeNodeNS = function() {};
+	this.lement.setAttributeNodeNS = function() {};
 
 	/**
 	 * @brief setAttributeNS adds a new attribute or changes the value of an attribute with the given namespace and name.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttributeNS
 	 */
-	this.setAttributeNS = function() {};
+	this.lement.setAttributeNS = function() {};
 
 	/**
 	 * @brief Call this method during the handling of a mousedown event to retarget all mouse events to this element until the mouse button is released or document.releaseCapture() is called.
 	 * @link https://developer.mozilla.org/en-US/docs/Web/API/Element/setCapture
 	 */
-	this.setCapture = function() {};
+	this.lement.setCapture = function() {};
 
 }
 

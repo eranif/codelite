@@ -25,6 +25,7 @@
 #include "ContextJavaScript.h"
 #include "cl_editor.h"
 #include "editor_config.h"
+#include "cl_editor_tip_window.h"
 
 ContextJavaScript::ContextJavaScript(LEditor* editor)
     : ContextBase(editor)
@@ -213,7 +214,13 @@ void ContextJavaScript::OnFileSaved() {}
 
 void ContextJavaScript::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 
-void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event) { wxUnusedVar(event); }
+void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event)
+{
+    LEditor& ctrl = GetCtrl();
+    if(ctrl.GetFunctionTip()->IsActive()) {
+        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+    }
+}
 
 void ContextJavaScript::RemoveMenuDynamicContent(wxMenu* menu) {}
 

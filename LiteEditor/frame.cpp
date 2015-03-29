@@ -5515,18 +5515,38 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
 
     wxArrayString files;
     wxArrayString rootDirs;
+    wxString mask;
     if(singleFileSearch) {
         rootDirs.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
         files.Add(editor->GetFileName().GetFullPath());
+        mask << editor->GetFileName().GetFullName(); // this will ensure that this file is scanned
+        
     } else {
         rootDirs.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
         ManagerST::Get()->GetWorkspaceFiles(files);
+        wxStringSet_t masks;
+        // Build a mask that matches the workspace content
+        std::for_each(files.begin(), files.end(), [&](const wxString& filename){
+            wxFileName fn(filename);
+            wxString curfileMask = fn.GetExt();
+            if(fn.GetExt().IsEmpty()) {
+                curfileMask = "*";
+            } else {
+                curfileMask = "*." + fn.GetExt();
+            }
+           
+            if(masks.count(curfileMask) == 0) {
+                masks.insert(curfileMask);
+                mask << curfileMask << ";";
+            }
+        });
     }
 
     data.SetRootDirs(rootDirs);
     data.SetFiles(files);
     data.UseNewTab(true);
     data.SetOwner(GetOutputPane()->GetFindResultsTab());
+    data.SetExtensions(mask);
     SearchThreadST::Get()->PerformSearch(data);
 }
 

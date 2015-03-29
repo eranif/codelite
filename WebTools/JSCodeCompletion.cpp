@@ -137,7 +137,7 @@ void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply)
         // Fill the lookup with the common global objects
         m_lookup->PopulateWithGlobals();
     }
-    wxLogMessage("JavaScript: parsing of Core API completed. %d files parsed (time elapsed: %ld seconds)",
+    wxLogMessage("JavaScript: parsing of Core API completed. %d files parsed (time elapsed: %ld ms)",
                  reply->num_files,
                  reply->total_time);
     wxDELETE(reply);

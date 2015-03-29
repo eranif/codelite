@@ -47,13 +47,13 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             // an array
             if(!ReadUntil(']')) return false;
             m_result = m_lookup->NewObject();
-            m_result->SetType("Array");
+            m_result->AddType("Array");
             return true;
 
         } else if(token.type == '{') {
             // An object, recurse it
             m_result = m_lookup->NewObject();
-            m_result->SetType(GenerateName());
+            m_result->AddType(GenerateName());
             m_result->SetPath(m_result->GetType());
             if(Parse(m_result)) {
                 m_lookup->AddObject(m_result);
@@ -66,29 +66,29 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!m_sourceFile.NextToken(token)) return false;
             if(token.type == kJS_IDENTIFIER) {
                 m_result = m_lookup->NewObject();
-                m_result->SetType(token.text);
+                m_result->AddType(token.text);
                 m_result->SetPath(token.text);
                 return true;
             }
         } else if(token.type == kJS_DEC_NUMBER || token.type == kJS_OCTAL_NUMBER || token.type == kJS_HEX_NUMBER ||
                   token.type == kJS_FLOAT_NUMBER) {
             m_result = m_lookup->NewObject();
-            m_result->SetType("Number");
+            m_result->AddType("Number");
             m_result->SetPath("Number");
             return true;
         } else if(token.type == kJS_TRUE || token.type == kJS_FALSE) {
             m_result = m_lookup->NewObject();
-            m_result->SetType("Boolean");
+            m_result->AddType("Boolean");
             m_result->SetPath("Boolean");
             return true;
         } else if(token.type == kJS_NULL) {
             m_result = m_lookup->NewObject();
-            m_result->SetType("null");
+            m_result->AddType("null");
             m_result->SetPath("null");
             return true;
         } else if(token.type == kJS_STRING) {
             m_result = m_lookup->NewObject();
-            m_result->SetType("String");
+            m_result->AddType("String");
             m_result->SetPath("String");
             return true;
         } else if(token.type == kJS_FUNCTION) {
@@ -122,7 +122,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 } else {
                     obj = m_lookup->NewObject();
                     obj->SetName(label);
-                    obj->SetType(token.text);
+                    obj->AddType(token.text);
                 }
                 parent->AddProperty(obj);
                 label.clear();
@@ -136,7 +136,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!ReadUntil(']')) return false;
             JSObject::Ptr_t arr = m_lookup->NewObject();
             arr->SetName(label);
-            arr->SetType("Array");
+            arr->AddType("Array");
             parent->AddProperty(arr);
             label.Clear();
         } break;
@@ -153,7 +153,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!label.IsEmpty()) {
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
-                obj->SetType(GenerateName());
+                obj->AddType(GenerateName());
                 obj->SetPath(obj->GetType());
                 parent->AddProperty(obj);
 
@@ -176,7 +176,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!label.IsEmpty()) {
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
-                obj->SetType("null");
+                obj->AddType("null");
                 parent->AddProperty(obj);
                 label.Clear();
             }
@@ -186,7 +186,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!label.IsEmpty()) {
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
-                obj->SetType("Boolean");
+                obj->AddType("Boolean");
                 parent->AddProperty(obj);
                 label.Clear();
             }
@@ -198,7 +198,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!label.IsEmpty()) {
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
-                obj->SetType("Number");
+                obj->AddType("Number");
                 parent->AddProperty(obj);
                 label.Clear();
             }
@@ -207,7 +207,7 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(!label.IsEmpty()) {
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
-                obj->SetType("String");
+                obj->AddType("String");
                 parent->AddProperty(obj);
                 label.Clear();
             } else {

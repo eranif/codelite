@@ -63,25 +63,51 @@
 #define YYLSP_NEEDED 0
 
 /* Substitute the variable and function names.  */
-#define yyparse         js_parse
-#define yylex           js_lex
-#define yyerror         js_error
-#define yylval          js_lval
-#define yychar          js_char
-#define yydebug         js_debug
-#define yynerrs         js_nerrs
+#define yyparse         json_parse
+#define yylex           json_lex
+#define yyerror         json_error
+#define yylval          json_lval
+#define yychar          json_char
+#define yydebug         json_debug
+#define yynerrs         json_nerrs
 
 
 /* Copy the first part of user declarations.  */
 
 
-    #include <wx/string.h>
-    #include "JSLexerTokens.h"
-    #define YYSTYPE char*
-    #define YYTOKENTYPE
-    typedef void* JSScanner_t;
-    void yyerror (JSScanner_t yyscanner, char const *msg);
-    extern int js_lex(JSScanner_t yyscanner);
+#define YYTOKENTYPE
+#define YYSTYPE_IS_DECLARED
+
+#define YYSTYPE char*
+
+#include <wx/string.h>
+#include "JSLexerTokens.h"
+#include "JSLexerAPI.h" // Contains yygut definition
+#include "JSLookUpTable.h"
+
+
+void yyerror (void* yyscanner, char const *msg);
+
+/* our parser will invoke this function json_lex
+ * which is a wrapper to the real lex function: js_lex
+ */
+extern int json_lex(void* yyscanner);
+
+/* the real lex function */
+extern int js_lex(void* yyscanner);
+
+/* consume tokens until found 'until' */
+static void clParseJS_ReadUntil(void *scanner, int until);
+
+
+struct clJSONParserData {
+    JSLookUpTable::Ptr_t lookup;
+    JSObject::Vec_t objStack;
+};
+
+static void clParseJS_FinalizeObject(clJSONParserData* parserData, const wxString& objType);
+#define PARSER_DATA() static_cast<clJSONParserData*>(static_cast<JSLexerUserData*>(jsLexerGetUserData(scanner))->parserData)
+
 
 
 
@@ -151,7 +177,11 @@
      kJS_POW_EQUAL = 296,
      kJS_OR_EQUAL = 297,
      kJS_VOID = 298,
-     kJS_TYPEOF = 299
+     kJS_TYPEOF = 299,
+     kJS_DELETE = 300,
+     kJS_INSTANCEOF = 301,
+     kJS_EQUAL3 = 302,
+     kJS_LS_ASSIGN = 303
    };
 #endif
 
@@ -380,22 +410,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  2
+#define YYFINAL  20
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   48
+#define YYLAST   51
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  54
+#define YYNTOKENS  55
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  13
+#define YYNNTS  9
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  34
+#define YYNRULES  27
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  53
+#define YYNSTATES  33
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   299
+#define YYMAXUTOK   303
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -404,18 +434,18 @@ union yyalloc
 static const yytype_uint8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      45,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      46,    47,     2,     2,    53,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    52,    51,
-       2,    50,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    53,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    54,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    48,     2,    49,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    51,     2,    52,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    49,     2,    50,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -432,7 +462,8 @@ static const yytype_uint8 yytranslate[] =
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36,    37,    38,    39,    40,    41,    42,    43,    44
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48
 };
 
 #if YYDEBUG
@@ -440,34 +471,30 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     7,     8,    17,    19,    20,    22,    27,
-      32,    34,    36,    38,    40,    41,    45,    49,    51,    53,
-      54,    58,    62,    66,    70,    74,    78,    80,    84,    86,
-      88,    90,    92,    93,    95
+       0,     0,     3,     4,     6,     8,    10,    12,    14,    16,
+      20,    21,    25,    27,    29,    31,    35,    36,    40,    44,
+      48,    52,    56,    60,    64,    66,    68,    70
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      55,     0,    -1,    55,    56,    45,    -1,    -1,     3,    13,
-      46,    66,    47,    48,    57,    49,    -1,    58,    -1,    -1,
-      58,    -1,     4,    13,    50,    59,    -1,    16,    13,    60,
-      51,    -1,    61,    -1,    65,    -1,    12,    -1,    13,    -1,
-      -1,    46,    66,    47,    -1,    48,    64,    49,    -1,    13,
-      -1,    12,    -1,    -1,    62,    52,    65,    -1,    62,    52,
-      61,    -1,    62,    52,    12,    -1,    62,    52,    19,    -1,
-      62,    52,    17,    -1,    62,    52,    18,    -1,    63,    -1,
-      64,    53,    63,    -1,    20,    -1,    22,    -1,    21,    -1,
-      23,    -1,    -1,    13,    -1,    66,    53,    13,    -1
+      56,     0,    -1,    -1,    57,    -1,    58,    -1,    63,    -1,
+      12,    -1,    17,    -1,    18,    -1,    49,    61,    50,    -1,
+      -1,    51,    59,    52,    -1,    13,    -1,    12,    -1,    62,
+      -1,    61,    53,    62,    -1,    -1,    60,    54,    63,    -1,
+      60,    54,    57,    -1,    60,    54,    58,    -1,    60,    54,
+      12,    -1,    60,    54,    19,    -1,    60,    54,    17,    -1,
+      60,    54,    18,    -1,    20,    -1,    22,    -1,    21,    -1,
+      23,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    33,    33,    34,    37,    38,    41,    42,    45,    48,
-      49,    50,    51,    52,    55,    56,    59,    62,    63,    67,
-      68,    69,    70,    71,    72,    73,    76,    77,    80,    81,
-      82,    83,    86,    87,    88
+       0,    61,    61,    62,    66,    70,    74,    78,    82,    88,
+      91,    91,    94,   100,   110,   111,   115,   116,   120,   124,
+     128,   132,   136,   140,   146,   147,   148,   149
 };
 #endif
 
@@ -485,11 +512,10 @@ static const char *const yytname[] =
   "kJS_GE", "kJS_EQUAL", "kJS_NOT_EQUAL", "kJS_AND_AND", "kJS_OR_OR",
   "kJS_STAR_EQUAL", "kJS_SLASH_EQUAL", "kJS_DIV_EQUAL", "kJS_PLUS_EQUAL",
   "kJS_MINUS_EQUAL", "kJS_RS_ASSIGN", "kJS_AND_EQUAL", "kJS_POW_EQUAL",
-  "kJS_OR_EQUAL", "kJS_VOID", "kJS_TYPEOF", "'\\n'", "'('", "')'", "'{'",
-  "'}'", "'='", "';'", "':'", "','", "$accept", "program", "statement",
-  "statements", "variableDecl", "varAssignment", "ctorArgumentList",
-  "literalObject", "propertyKey", "keyValue", "keyValues", "number",
-  "argumentList", 0
+  "kJS_OR_EQUAL", "kJS_VOID", "kJS_TYPEOF", "kJS_DELETE", "kJS_INSTANCEOF",
+  "kJS_EQUAL3", "kJS_LS_ASSIGN", "'{'", "'}'", "'['", "']'", "','", "':'",
+  "$accept", "program", "literalObject", "literalArray", "$@1",
+  "propertyKey", "keyValues", "keyValue", "number", 0
 };
 #endif
 
@@ -502,27 +528,25 @@ static const yytype_uint16 yytoknum[] =
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
-     295,   296,   297,   298,   299,    10,    40,    41,   123,   125,
-      61,    59,    58,    44
+     295,   296,   297,   298,   299,   300,   301,   302,   303,   123,
+     125,    91,    93,    44,    58
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    54,    55,    55,    56,    56,    57,    57,    58,    59,
-      59,    59,    59,    59,    60,    60,    61,    62,    62,    63,
-      63,    63,    63,    63,    63,    63,    64,    64,    65,    65,
-      65,    65,    66,    66,    66
+       0,    55,    56,    56,    56,    56,    56,    56,    56,    57,
+      59,    58,    60,    60,    61,    61,    62,    62,    62,    62,
+      62,    62,    62,    62,    63,    63,    63,    63
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     3,     0,     8,     1,     0,     1,     4,     4,
-       1,     1,     1,     1,     0,     3,     3,     1,     1,     0,
-       3,     3,     3,     3,     3,     3,     1,     3,     1,     1,
-       1,     1,     0,     1,     3
+       0,     2,     0,     1,     1,     1,     1,     1,     1,     3,
+       0,     3,     1,     1,     1,     3,     0,     3,     3,     3,
+       3,     3,     3,     3,     1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -530,39 +554,33 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       3,     0,     1,     0,     0,     0,     5,     0,     0,     2,
-      32,     0,    33,     0,    12,    13,     0,    28,    30,    29,
-      31,    19,     8,    10,    11,     0,     0,    14,    18,    17,
-       0,    26,     0,     6,    34,    32,     0,     0,    16,    19,
-       0,     7,     0,     9,    22,    24,    25,    23,    21,    20,
-      27,     4,    15
+       2,     6,     7,     8,    24,    26,    25,    27,    16,    10,
+       0,     3,     4,     5,    13,    12,     0,     0,    14,     0,
+       1,     0,     9,    16,    11,    20,    22,    23,    21,    18,
+      19,    17,    15
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     5,    40,     6,    22,    36,    23,    30,    31,
-      32,    24,    13
+      -1,    10,    11,    12,    19,    16,    17,    18,    13
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -36
+#define YYPACT_NINF -50
 static const yytype_int8 yypact[] =
 {
-     -36,    26,   -36,   -10,    -9,   -31,   -36,   -18,   -35,   -36,
-       4,     0,   -36,   -29,   -36,   -36,    19,   -36,   -36,   -36,
-     -36,   -11,   -36,   -36,   -36,   -15,    21,    -8,   -36,   -36,
-     -17,   -36,   -22,    33,   -36,     4,    -7,   -12,   -36,   -11,
-      -6,   -36,   -28,   -36,   -36,   -36,   -36,   -36,   -36,   -36,
-     -36,   -36,   -36
+       0,   -50,   -50,   -50,   -50,   -50,   -50,   -50,   -10,   -50,
+      13,   -50,   -50,   -50,   -50,   -50,   -40,   -49,   -50,   -37,
+     -50,   -12,   -50,   -10,   -50,   -50,   -50,   -50,   -50,   -50,
+     -50,   -50,   -50
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -36,   -36,   -36,   -36,     6,   -36,   -36,     3,   -36,     2,
-     -36,     5,    10
+     -50,   -50,    -5,    -2,   -50,   -50,   -50,     1,     4
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -572,32 +590,32 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      44,    28,    29,     7,     8,    45,    46,    47,    17,    18,
-      19,    20,    14,    15,     9,    11,    16,    12,    25,    52,
-      17,    18,    19,    20,    26,    26,     2,    38,    10,     3,
-       4,    39,    27,    33,    34,    37,    21,     4,    35,    41,
-      48,    50,    49,    51,    43,    42,     0,     0,    21
+      25,    22,    14,    15,    23,    26,    27,    28,     4,     5,
+       6,     7,     1,    20,    21,    24,    29,     2,     3,    30,
+       4,     5,     6,     7,    32,    31,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     8,     0,     9,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     8,
+       0,     9
 };
 
 static const yytype_int8 yycheck[] =
 {
-      12,    12,    13,    13,    13,    17,    18,    19,    20,    21,
-      22,    23,    12,    13,    45,    50,    16,    13,    47,    47,
-      20,    21,    22,    23,    53,    53,     0,    49,    46,     3,
-       4,    53,    13,    48,    13,    52,    48,     4,    46,    33,
-      37,    39,    37,    49,    51,    35,    -1,    -1,    48
+      12,    50,    12,    13,    53,    17,    18,    19,    20,    21,
+      22,    23,    12,     0,    54,    52,    21,    17,    18,    21,
+      20,    21,    22,    23,    23,    21,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    49,    -1,    51,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    49,
+      -1,    51
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    55,     0,     3,     4,    56,    58,    13,    13,    45,
-      46,    50,    13,    66,    12,    13,    16,    20,    21,    22,
-      23,    48,    59,    61,    65,    47,    53,    13,    12,    13,
-      62,    63,    64,    48,    13,    46,    60,    52,    49,    53,
-      57,    58,    66,    51,    12,    17,    18,    19,    61,    65,
-      63,    49,    47
+       0,    12,    17,    18,    20,    21,    22,    23,    49,    51,
+      56,    57,    58,    63,    12,    13,    60,    61,    62,    59,
+       0,    54,    50,    53,    52,    12,    17,    18,    19,    57,
+      58,    63,    62
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -733,14 +751,14 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, JSScanner_t scanner)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void* scanner)
 #else
 static void
 yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
-    JSScanner_t scanner;
+    void* scanner;
 #endif
 {
   if (!yyvaluep)
@@ -767,14 +785,14 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, JSScanner_t scanner)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void* scanner)
 #else
 static void
 yy_symbol_print (yyoutput, yytype, yyvaluep, scanner)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
-    JSScanner_t scanner;
+    void* scanner;
 #endif
 {
   if (yytype < YYNTOKENS)
@@ -825,13 +843,13 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule, JSScanner_t scanner)
+yy_reduce_print (YYSTYPE *yyvsp, int yyrule, void* scanner)
 #else
 static void
 yy_reduce_print (yyvsp, yyrule, scanner)
     YYSTYPE *yyvsp;
     int yyrule;
-    JSScanner_t scanner;
+    void* scanner;
 #endif
 {
   int yynrhs = yyr2[yyrule];
@@ -1104,14 +1122,14 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, JSScanner_t scanner)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, void* scanner)
 #else
 static void
 yydestruct (yymsg, yytype, yyvaluep, scanner)
     const char *yymsg;
     int yytype;
     YYSTYPE *yyvaluep;
-    JSScanner_t scanner;
+    void* scanner;
 #endif
 {
   YYUSE (yyvaluep);
@@ -1138,7 +1156,7 @@ int yyparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse (JSScanner_t scanner);
+int yyparse (void* scanner);
 #else
 int yyparse ();
 #endif
@@ -1174,11 +1192,11 @@ yyparse (YYPARSE_PARAM)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 int
-yyparse (JSScanner_t scanner)
+yyparse (void* scanner)
 #else
 int
 yyparse (scanner)
-    JSScanner_t scanner;
+    void* scanner;
 #endif
 #endif
 {
@@ -1423,7 +1441,138 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 3:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, parserData->lookup->GenerateNewType());
+    ;}
+    break;
+
+  case 4:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Array");
+    ;}
+    break;
+
+  case 5:
+
+    { 
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Number");
+    ;}
+    break;
+
+  case 6:
+
+    { 
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "String");
+    ;}
+    break;
+
+  case 7:
+
+    { 
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Boolean");
+    ;}
+    break;
+
+  case 8:
+
+    { 
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Boolean");
+    ;}
+    break;
+
+  case 10:
+
+    { clParseJS_ReadUntil(scanner, ']'); ;}
+    break;
+
+  case 12:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        JSObject::Ptr_t o = parserData->lookup->NewObject();
+        o->SetName(::jsLexerCurrentToken(scanner));
+        parserData->objStack.push_back(o);
+    ;}
+    break;
+
+  case 13:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        JSObject::Ptr_t o = parserData->lookup->NewObject();
+        wxString name = ::jsLexerCurrentToken(scanner);
+        name.Remove(0, 1).RemoveLast();
+        o->SetName(name);
+        parserData->objStack.push_back(o);
+    ;}
+    break;
+
+  case 17:
+
+    { 
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Number");
+    ;}
+    break;
+
+  case 18:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, parserData->lookup->GenerateNewType());
+    ;}
+    break;
+
+  case 19:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Array");
+    ;}
+    break;
+
+  case 20:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "String");
+    ;}
+    break;
+
+  case 21:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "null");
+    ;}
+    break;
+
+  case 22:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Boolean");
+    ;}
+    break;
+
+  case 23:
+
+    {
+        clJSONParserData *parserData = PARSER_DATA();
+        clParseJS_FinalizeObject(parserData, "Boolean");
+    ;}
+    break;
+
+
 
       default: break;
     }
@@ -1636,4 +1785,77 @@ yyreturn:
 
 
 
-void yyerror (JSScanner_t yyscanner, char const *msg) {}
+
+void yyerror (void* yyscanner, char const *msg) {}
+
+/**
+ * @brief a wrapper for the common used lexer
+ */
+int json_lex(void* yyscanner) { return js_lex(yyscanner); }
+
+static void clParseJS_FinalizeObject(clJSONParserData* parserData, const wxString& objType)
+{
+    // take the current object
+    JSObject::Ptr_t o = parserData->objStack.at(parserData->objStack.size() - 1);
+    o->SetType(objType);
+    o->SetPath(objType);
+    
+    if(parserData->objStack.size() > 1) {
+        // we are done with this object, remove it from the stack
+        parserData->objStack.pop_back();
+        JSObject::Ptr_t parent = parserData->objStack.at(parserData->objStack.size() - 1);
+        parent->AddProperty(o);
+    }
+}
+//--------------------------
+// Public API
+//--------------------------
+JSObject::Ptr_t clParseJSVariable(const wxString& content, JSLookUpTable::Ptr_t lookup)
+{
+    void* scanner = ::jsLexerNew(content);
+    
+    // set the parser data
+    JSLexerUserData *lexerData = ::jsLexerGetUserData(scanner);
+    clJSONParserData *parserData = new clJSONParserData;
+    parserData->lookup = lookup;
+    lexerData->parserData = parserData;
+    
+    // we start the parsing with an object in the stack
+    JSObject::Ptr_t result = lookup->NewObject();
+    result->SetUndefined();
+    
+    parserData->objStack.push_back(result);
+    
+    // parse
+    json_parse(scanner);
+    wxDELETE(parserData);
+    
+    // destroy the scanner
+    ::jsLexerDestroy(&scanner);
+    return result;
+}
+
+static void clParseJS_ReadUntil(void *scanner, int until)
+{
+    JSLexerToken token;
+    int depth(0);
+    while(true) {
+        
+        // EOF?
+        int type = json_lex(scanner);
+        if(type == 0) break;
+        
+        if(type == '{') {
+            ++depth;
+        } else if(type == '}') {
+            --depth;
+        }
+
+        // breaking condition
+        if((type == until) && (depth == 0)) {
+            ::jsLexerUnget(scanner);
+            break;
+        }
+    }
+}
+

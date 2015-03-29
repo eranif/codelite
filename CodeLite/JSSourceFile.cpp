@@ -10,6 +10,10 @@
 #define JS_NEXT_TOKEN() NextToken(token)
 #define JS_NEXT_TOKEN_RETURN() \
     if(!NextToken(token)) return
+
+#define JS_NEXT_TOKEN_RETURN_NULL() \
+    if(!NextToken(token)) return NULL
+
 #define JS_NEXT_TOKEN_RETURN_FALSE() \
     if(!NextToken(token)) return false
 
@@ -18,6 +22,9 @@
 
 #define JS_CHECK_TYPE_RETURN(t) \
     if(token.type != t) return
+
+#define JS_CHECK_TYPE_RETURN_NULL(t) \
+    if(token.type != t) return NULL;
 
 JSSourceFile::JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxFileName& filename)
     : m_filename(filename)
@@ -44,11 +51,70 @@ JSSourceFile::~JSSourceFile()
     }
 }
 
-// function Foo (
-void JSSourceFile::OnFunction()
+//========================================
+// The main loop
+//========================================
+void JSSourceFile::Parse(int exitDepth)
 {
     JSLexerToken token;
-    if(!NextToken(token)) return;
+    while(NextToken(token)) {
+        switch(token.type) {
+        case kJS_RETURN:
+            if(m_lookup->CurrentScope()->IsFunction()) {
+                // Current scope is a function
+                JSObject::Ptr_t ret = OnReturnValue();
+                if(ret) {
+                    m_lookup->CurrentScope()->As<JSFunction>()->AddType(ret->GetPath());
+                }
+            }
+            break;
+        case '}':
+            if(m_depth == exitDepth) return;
+            break;
+        case '{':
+            break;
+        case kJS_FUNCTION:
+            OnFunction();
+            break;
+        case kJS_VAR:
+            // variable
+            OnVariable();
+            break;
+        case kJS_IDENTIFIER: {
+            JSObject::Ptr_t klass = m_lookup->FindClass(token.text);
+            if(klass && klass->IsFunction()) {
+                m_lookup->SetTempScope(klass);
+                OnPropertyOrFunction();
+                m_lookup->SwapScopes();
+            }/* else if(m_lookup->GetVisibleVariables().count(token.text)) {
+                // we have a variable with this name, its probably an expression
+                // skip it
+            }*/
+        } break;
+        case kJS_THIS:
+            if(!m_lookup->CurrentPath().IsEmpty()) {
+                // try to process a :
+                // this.foo =
+                // or
+                // this.prototype.foo =
+                OnFunctionThisProperty();
+            } else {
+                wxString dummy;
+                // Read until we hit the } or ; (taking the current depth into account)
+                ReadUntil2(';', '}', dummy);
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+// function Foo (
+JSObject::Ptr_t JSSourceFile::OnFunction()
+{
+    JSLexerToken token;
+    if(!NextToken(token)) return NULL;
 
     // Named function
     if(token.type == kJS_IDENTIFIER) {
@@ -65,6 +131,7 @@ void JSSourceFile::OnFunction()
         // Now, parse the comment
         JSDocComment commenter;
         commenter.Process(func);
+        return func;
         
     } else if(token.type == '(') {
         // Unget the current token (ParseFunction requires the open brace)
@@ -85,8 +152,9 @@ void JSSourceFile::OnFunction()
         // Now, parse the comment
         JSDocComment commenter;
         commenter.Process(func);
-
+        return func;
     }
+    return NULL;
 }
 
 void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
@@ -189,56 +257,6 @@ bool JSSourceFile::ReadUntil(int until, wxString& content)
         }
     }
     return false;
-}
-
-//========================================
-// The main loop
-//========================================
-void JSSourceFile::Parse(int exitDepth)
-{
-    JSLexerToken token;
-    while(NextToken(token)) {
-        switch(token.type) {
-        case '}':
-            if(m_depth == exitDepth) return;
-            break;
-        case '{':
-            break;
-        case kJS_FUNCTION:
-            OnFunction();
-            break;
-        case kJS_VAR:
-            // variable
-            OnVariable();
-            break;
-        case kJS_IDENTIFIER: {
-            JSObject::Ptr_t klass = m_lookup->FindClass(token.text);
-            if(klass && klass->IsFunction()) {
-                m_lookup->SetTempScope(klass);
-                OnPropertyOrFunction();
-                m_lookup->SwapScopes();
-            }/* else if(m_lookup->GetVisibleVariables().count(token.text)) {
-                // we have a variable with this name, its probably an expression
-                // skip it
-            }*/
-        } break;
-        case kJS_THIS:
-            if(!m_lookup->CurrentPath().IsEmpty()) {
-                // try to process a :
-                // this.foo =
-                // or
-                // this.prototype.foo =
-                OnFunctionThisProperty();
-            } else {
-                wxString dummy;
-                // Read until we hit the } or ; (taking the current depth into account)
-                ReadUntil2(';', '}', dummy);
-            }
-            break;
-        default:
-            break;
-        }
-    }
 }
 
 void JSSourceFile::OnFunctionThisProperty()
@@ -352,14 +370,14 @@ void JSSourceFile::OnPropertyOrFunction()
     }
 }
 
-void JSSourceFile::OnVariable()
+JSObject::Ptr_t JSSourceFile::OnVariable()
 {
     JSLexerToken token;
-    JS_NEXT_TOKEN_RETURN();
-    JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
+    JS_NEXT_TOKEN_RETURN_NULL();
+    JS_CHECK_TYPE_RETURN_NULL(kJS_IDENTIFIER);
 
     wxString name = token.text;
-    if(!NextToken(token)) return;
+    if(!NextToken(token)) return NULL;
 
     JSObject::Ptr_t obj = m_lookup->NewObject();
     obj->SetName(name);
@@ -368,13 +386,14 @@ void JSSourceFile::OnVariable()
     AssociateComment(obj);
     m_lookup->CurrentScope()->As<JSFunction>()->AddVariable(obj);
     if(token.type != '=') {
-        return;
+        return obj;
     }
 
     JSObjectParser parser(*this, m_lookup);
     if(parser.Parse(NULL)) {
-        obj->SetType(parser.GetResult()->GetType());
+        obj->SetTypes(parser.GetResult()->GetTypes());
     }
+    return obj;
 }
 
 bool JSSourceFile::NextToken(JSLexerToken& token)
@@ -418,5 +437,19 @@ void JSSourceFile::AssociateComment(JSObject::Ptr_t obj)
 
 JSObject::Ptr_t JSSourceFile::ParseJSONObject(const wxString& content)
 {
+    return NULL;
+}
+
+JSObject::Ptr_t JSSourceFile::OnReturnValue()
+{
+    JSLexerToken token;
+    JS_NEXT_TOKEN_RETURN_NULL();
+    
+    // void return
+    if(token.type == ';') return NULL;
+    JSObjectParser parser(*this, m_lookup);
+    if(parser.Parse(NULL)) {
+        return parser.GetResult();
+    }
     return NULL;
 }

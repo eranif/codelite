@@ -13,10 +13,10 @@ void JSDocComment::ProcessVarDoc(JSObject::Ptr_t obj)
     static wxRegEx reVarType2(wxT("@(var|variable)[ \t]+([$a-zA-Z_]+)"));
     if(reVarType.IsValid() && reVarType.Matches(obj->GetComment())) {
         wxString type = reVarType.GetMatch(obj->GetComment(), 2);
-        obj->SetType(type);
+        obj->AddType(type, true);
     } else if(reVarType2.IsValid() && reVarType2.Matches(obj->GetComment())) {
         wxString type = reVarType2.GetMatch(obj->GetComment(), 2);
-        obj->SetType(type);
+        obj->AddType(type, true);
     }
 }
 
@@ -41,7 +41,7 @@ void JSDocComment::ProcessFunction(JSObject::Ptr_t func)
                 wxString paramName = reParam.GetMatch(line, 3);
                 JSObject::Map_t::iterator iter = variables.find(paramName);
                 if(iter != variables.end()) {
-                    iter->second->SetType(paramHint);
+                    iter->second->AddType(paramHint, true);
                 }
             }
         }
@@ -50,7 +50,7 @@ void JSDocComment::ProcessFunction(JSObject::Ptr_t func)
     // Parse @return Array
     static wxRegEx reReturnStatement(wxT("@(return)[ \t]+([$\\a-zA-Z0-9_]*)"));
     if(reReturnStatement.IsValid() && reReturnStatement.Matches(comment)) {
-       func->SetType(reReturnStatement.GetMatch(comment, 2));
+       func->AddType(reReturnStatement.GetMatch(comment, 2), true);
     }
 }
 

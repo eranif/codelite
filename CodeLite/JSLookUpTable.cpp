@@ -56,7 +56,7 @@ JSObject::Ptr_t JSLookUpTable::FindClass(const wxString& path) const
     
     // try the temp classes
     iter = m_tmpClasses.find(path);
-    if(iter != m_classes.end()) return iter->second;
+    if(iter != m_tmpClasses.end()) return iter->second;
     return NULL;
 }
 
@@ -162,7 +162,7 @@ void JSLookUpTable::InitializeGlobalScope()
 {
     m_globalScope.Reset(NULL);
     m_globalScope = NewFunction();
-    m_globalScope->SetName("__GLOBAL__");
+    m_globalScope->SetGlobalScope();
 }
 
 void JSLookUpTable::CopyClassTable(JSLookUpTable::Ptr_t other, bool move)
@@ -185,7 +185,7 @@ void JSLookUpTable::ClearTempClassTable()
 JSObject::Ptr_t JSLookUpTable::NewTempObject()
 {
     JSObject::Ptr_t obj = NewObject();
-    obj->SetType(GenerateNewType());
-    m_tmpClasses.insert(std::make_pair(obj->GetType(), obj));
+    obj->AddType(GenerateNewType(), true);
+    m_tmpClasses.insert(std::make_pair(obj->GetTypes().Item(0), obj));
     return obj;
 }

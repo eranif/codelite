@@ -70,8 +70,8 @@ private:
     FILE* m_currentPF;
     
 public:
-    JSLookUpTable::Ptr_t m_lookup;
-    
+    void* parserData;
+
 public:
     void Clear()
     {
@@ -81,6 +81,7 @@ public:
         }
 
         ClearComment();
+        parserData = NULL;
     }
 
     JSLexerUserData(size_t options)
@@ -88,6 +89,7 @@ public:
         , m_commentStartLine(wxNOT_FOUND)
         , m_commentEndLine(wxNOT_FOUND)
         , m_currentPF(NULL)
+        , parserData(NULL)
     {
     }
 
@@ -153,5 +155,6 @@ WXDLLIMPEXP_CL wxString jsLexerCurrentToken(JSScanner_t scanner);
  * @brief return the associated data with this scanner
  */
 WXDLLIMPEXP_CL JSLexerUserData* jsLexerGetUserData(JSScanner_t scanner);
-
+WXDLLIMPEXP_CL JSObject::Ptr_t clParseJSVariable(const wxString& content, JSLookUpTable::Ptr_t lookup);
+ 
 #endif

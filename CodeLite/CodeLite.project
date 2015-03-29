@@ -353,9 +353,9 @@
     <File Name="JSObjectParser.h"/>
     <File Name="JSObjectParser.cpp"/>
     <VirtualDirectory Name="BisonJSParser">
-      <File Name="JSLexer.y"/>
-      <File Name="JSParser.cpp"/>
       <File Name="JSLexer.l"/>
+      <File Name="clJSONObjectParser.y"/>
+      <File Name="clJSONObjectParser.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
@@ -433,7 +433,7 @@
         <Library Value="libssh64"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../lib/gcc_lib/libcodeliteud.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../lib/gcc_lib/libcodeliteud.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="--no-plugins" UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

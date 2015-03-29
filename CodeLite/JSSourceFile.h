@@ -28,8 +28,9 @@ protected:
     bool ReadUntil2(int until, int until2, wxString& content);
     
     // Actions
-    void OnFunction();
-    void OnVariable();
+    JSObject::Ptr_t OnFunction();
+    JSObject::Ptr_t OnVariable();
+    JSObject::Ptr_t OnReturnValue();
     
     /**
      * @brief handle this.<something>... while inside a function

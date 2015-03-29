@@ -339,7 +339,7 @@ bool CodeLiteApp::OnInit()
     InitXmlResource();
     
     // After all image handlers have been added, load the splash screen image and show it
-#if !defined(__WXMAC__)
+#if !defined(__WXMAC__) && defined(NDEBUG)
     // we show splash only when using Release builds of codelite
     if(inf.GetFlags() & CL_SHOW_SPLASH) {
         wxBitmap bitmap;
@@ -355,6 +355,7 @@ bool CodeLiteApp::OnInit()
         }
     }
 #endif
+
     wxLog::EnableLogging(false);
     wxString homeDir(wxEmptyString);
 
@@ -674,7 +675,7 @@ bool CodeLiteApp::OnInit()
     // determine if the 'upgrade' frame needs to be started instead of the
     // standard main frame
     if(ColoursAndFontsManager::Get().IsUpgradeNeeded()) {
-        clInitializeDialog initDialog(clSplashScreen::g_splashScreen);
+        clInitializeDialog initDialog(NULL);
         SetTopWindow(&initDialog);
         initDialog.ShowModal();
     } else {

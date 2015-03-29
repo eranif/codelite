@@ -34,7 +34,7 @@ JSObject::Ptr_t JSFunction::NewInstance(const wxString& name)
 {
     JSObject::Ptr_t inst(new JSFunction());
     inst->SetName(name);
-    inst->SetType(GetType());
+    inst->SetTypes(GetTypes());
     inst->SetPath(GetPath());
     return inst;
 }

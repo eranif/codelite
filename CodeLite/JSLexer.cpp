@@ -2586,6 +2586,12 @@ void jsLexerUnget(void* scanner)
     yyless(0);
 }
 
+wxString jsLexerText(void* scanner)
+{
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner;
+    return wxString(yytext, wxConvUTF8);
+}
+
 bool jsLexerNext(void* scanner, JSLexerToken& token)
 {
     token.column = 0;
@@ -2625,7 +2631,7 @@ bool jsLexerNext(void* scanner, JSLexerToken& token)
 wxString jsLexerCurrentToken(void* scanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
-    return yytext;
+    return wxString(yytext, wxConvUTF8);
 }
 
 JSLexerUserData* jsLexerGetUserData(void* scanner)

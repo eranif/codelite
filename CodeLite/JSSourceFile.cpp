@@ -64,7 +64,7 @@ void JSSourceFile::Parse(int exitDepth)
                 // Current scope is a function
                 JSObject::Ptr_t ret = OnReturnValue();
                 if(ret) {
-                    m_lookup->CurrentScope()->As<JSFunction>()->AddType(ret->GetPath());
+                    m_lookup->CurrentScope()->As<JSFunction>()->AddType(ret->GetPath(), false);
                 }
             }
             break;

@@ -52,6 +52,7 @@ Run cmake and build codelite:
 ![Apple logo][12] Building CodeLite on OS X
 ----
 Prerequisites:
+
  - wxWidgets 3.x
  - CMake
  - HomeBrew
@@ -74,31 +75,30 @@ Preparation:
  - Install wxWidgets : `brew install wxmac --dev --use-llvm`
  
 
-Clone the repo :
+Clone the repo (lets assume that you have a folder `/Users/YOU/src`)
 
   ```bash
-  cd /Your/experiments/dir
+  cd /Users/YOU/src
   git clone https://github.com/eranif/codelite.git
   ```
+ the above will create the folder `/User/YOU/codelite`
  
- Make the build directories and run cmake :
+ To build CodeLite:
  
   ```bash
-  cd /Your/experiments/dir
-  mkdir codelite-build-local
-  cd codelite-build-local
-  sudo cmake .. -DCMAKE_BUILD_TYPE=Release
+  cd /User/YOU/codelite
+  mkdir build-release
+  cd build-release
+  cmake .. -DCMAKE_BUILD_TYPE=Release
   make -j4
+  make install
   ```
  
- Make the .app file :
- Assuming you're in `codelite-build-local` directory
+You should now have an app bundle `/User/YOU/codelite/build-release/codelite.app`
  
-  ```bash
-  cd pack
-  ./make_mac_bundle.sh
-  ```
-Now you will see the .app file. Happy coding!
+To launch CodeLite:
+
+`open /User/YOU/codelite/build-release/codelite.app`
 
 ![Windows Logo][9] Building CodeLite on Windows
 ----

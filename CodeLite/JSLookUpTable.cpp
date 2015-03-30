@@ -59,12 +59,12 @@ JSObject::Ptr_t JSLookUpTable::FindClass(const wxString& path) const
 
     } else {
         // Multiple types, create a mega objects from all the various types and return it
-        JSObject::Ptr_t result(NULL);
+        JSObject* result(NULL);
         for(size_t i = 0; i < types.size(); ++i) {
             JSObject::Ptr_t o = DoFindSingleType(types.Item(i));
             if(o) {
                 if(!result) {
-                    result.Reset(new JSObject());
+                    result= new JSObject();
                 }
                 // Merge the object into 'results'
                 result->AddType(o->GetType());

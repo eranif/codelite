@@ -36,6 +36,8 @@
     <File Name="TestFiles/parse_func_with_multiple_return_values.js"/>
     <File Name="TestFiles/parse_var_assigment_of_function.js"/>
     <File Name="TestFiles/parse_this_expression.js"/>
+    <File Name="TestFiles/parse_this_of_prototype.js"/>
+    <File Name="TestFiles/parse_class_properties_assigned_by_object.js"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>

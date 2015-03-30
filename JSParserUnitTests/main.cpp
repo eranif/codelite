@@ -21,7 +21,9 @@ TEST_FUNC(test_parse_simple_class)
     JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 2);
+#if 0    
     Foo->Print(0);
+#endif
     return true;
 }
 
@@ -35,6 +37,22 @@ TEST_FUNC(class_with_static_method)
     JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 3);
+    return true;
+}
+
+// Parse class with 3 properties defined outside of the class
+TEST_FUNC(parse_class_properties_assigned_by_object)
+{
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSSourceFile source(lookup, wxFileName("../TestFiles/parse_class_properties_assigned_by_object.js"));
+    source.Parse();
+
+    JSObject::Ptr_t Foo = lookup->FindClass("Foo");
+    CHECK_BOOL(Foo);
+    CHECK_SIZE(Foo->GetProperties().size(), 3);
+    CHECK_SIZE(Foo->GetProperties().count("name"), 1);
+    CHECK_SIZE(Foo->GetProperties().count("foo"), 1);
+    CHECK_SIZE(Foo->GetProperties().count("anotherFunc"), 1);
     return true;
 }
 
@@ -116,7 +134,7 @@ TEST_FUNC(parse_locals_self_executed_function)
     CHECK_SIZE(vars.count("retObj"), 1);
     CHECK_SIZE(vars.count("innerObj"), 1);
     CHECK_SIZE(vars.count("e"), 1);
-    
+
     JSObject::Ptr_t retObj = vars.find("retObj")->second;
     JSObject::Ptr_t proto = lookup->FindClass(retObj->GetType());
     CHECK_BOOL(proto);
@@ -155,7 +173,7 @@ TEST_FUNC(parse_expression)
     JSExpressionParser expr(fileContent);
     JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_expression.js");
     CHECK_BOOL(resolved);
-    //resolved->Print(0);
+    // resolved->Print(0);
     CHECK_SIZE(resolved->GetProperties().size(), 3);
     CHECK_STRING(resolved->GetName(), "Array");
     return true;
@@ -165,30 +183,30 @@ TEST_FUNC(parse_json_object)
 {
     wxString fileContent;
     FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_json_object.js"), fileContent);
-        
+
     JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
     JSSourceFile sourceFile(lookup, fileContent, wxFileName("../TestFiles/parse_json_object.js"));
     JSObjectParser objectParser(sourceFile, lookup);
     CHECK_BOOL(objectParser.Parse(NULL));
-    
+
     JSObject::Ptr_t o1 = lookup->FindClass("__object1");
     JSObject::Ptr_t o2 = lookup->FindClass("__object2");
-    
+
     CHECK_BOOL(o1);
     CHECK_BOOL(o2);
-    
+
     // __object1 should have the following properties:
     // width, height, doc and position
     CHECK_SIZE(o1->GetProperties().count("width"), 1);
     CHECK_SIZE(o1->GetProperties().count("height"), 1);
     CHECK_SIZE(o1->GetProperties().count("doc"), 1);
     CHECK_SIZE(o1->GetProperties().count("position"), 1);
-    
+
     // __object2: x (Number), y (Number), dims (Array)
     CHECK_SIZE(o2->GetProperties().count("x"), 1);
     CHECK_SIZE(o2->GetProperties().count("y"), 1);
     CHECK_SIZE(o2->GetProperties().count("dims"), 1);
-    
+
     return true;
 }
 
@@ -196,17 +214,17 @@ TEST_FUNC(parse_json_object_2)
 {
     wxString fileContent;
     FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_json_object_2.js"), fileContent);
-        
+
     JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
     JSSourceFile sourceFile(lookup, fileContent, wxFileName("../TestFiles/parse_json_object_2.js"));
     JSObjectParser objectParser(sourceFile, lookup);
     CHECK_BOOL(objectParser.Parse(NULL));
-    
+
     JSObject::Ptr_t obj = objectParser.GetResult();
     CHECK_SIZE(obj->GetProperties().count("open"), 1);
     CHECK_SIZE(obj->GetProperties().count("close"), 1);
-    
-    //obj->Print(0);
+
+    // obj->Print(0);
     return true;
 }
 
@@ -214,12 +232,16 @@ TEST_FUNC(parse_func_with_multiple_return_values)
 {
     wxString fileContent;
     FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_func_with_multiple_return_values.js"), fileContent);
-        
+
     JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
     JSExpressionParser expr(fileContent);
     JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_func_with_multiple_return_values.js");
     CHECK_BOOL(resolved);
+
+#if 0
     resolved->Print(0);
+#endif
+
     CHECK_STRING(resolved->GetType(), "Boolean|Number|String");
     return true;
 }
@@ -228,7 +250,7 @@ TEST_FUNC(parse_var_assigment_of_function)
 {
     wxString fileContent;
     FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_var_assigment_of_function.js"), fileContent);
-        
+
     JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
     JSExpressionParser expr(fileContent);
     JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_var_assigment_of_function.js");
@@ -241,12 +263,24 @@ TEST_FUNC(parse_this_expression)
 {
     wxString fileContent;
     FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_this_expression.js"), fileContent);
-        
+
     JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
     JSExpressionParser expr(fileContent);
     JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_this_expression.js");
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetType(), "String");
+    return true;
+}
+
+TEST_FUNC(parse_this_of_prototype)
+{
+    wxString fileContent;
+    FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_this_of_prototype.js"), fileContent);
+
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSExpressionParser expr(fileContent);
+    JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_this_of_prototype.js");
+    CHECK_BOOL(resolved);
     return true;
 }
 

@@ -83,13 +83,8 @@ void JSSourceFile::Parse(int exitDepth)
         case kJS_IDENTIFIER: {
             JSObject::Ptr_t klass = m_lookup->FindClass(token.text);
             if(klass && klass->IsFunction()) {
-                m_lookup->SetTempScope(klass);
-                OnPropertyOrFunction();
-                m_lookup->SwapScopes();
-            }/* else if(m_lookup->GetVisibleVariables().count(token.text)) {
-                // we have a variable with this name, its probably an expression
-                // skip it
-            }*/
+                OnPropertyOrFunction(klass);
+            }
         } break;
         case kJS_THIS:
             // try to process a :
@@ -115,37 +110,37 @@ JSObject::Ptr_t JSSourceFile::OnFunction()
         JSObject::Ptr_t func = m_lookup->NewFunction();
         m_lookup->CurrentScope()->AddProperty(func);
         func->SetName(token.text);
-        //func->SetType(token.text);
+        // func->SetType(token.text);
         func->SetFile(m_filename);
         func->SetLine(token.lineNumber);
         AssociateComment(func);
 
         ParseFunction(func);
-        
+
         // Check the function type, if it contains "|" i.e. return statement was found
         // remove the function name from the type itself
-        
+
         // Now, parse the comment
         JSDocComment commenter;
         commenter.Process(func);
         return func;
-        
+
     } else if(token.type == '(') {
         // Unget the current token (ParseFunction requires the open brace)
         UngetToken(token);
-        
+
         // Anon function
         static int anonCounter = 0;
         JSObject::Ptr_t func = m_lookup->NewFunction();
-        //m_lookup->CurrentScope()->AddProperty(func);
+        // m_lookup->CurrentScope()->AddProperty(func);
         func->SetName(wxString::Format("__anon%d", ++anonCounter));
         func->SetFile(m_filename);
-        //func->SetType(token.text);
+        // func->SetType(token.text);
         func->SetLine(token.lineNumber);
-        
+
         AssociateComment(func);
         ParseFunction(func);
-        
+
         // Now, parse the comment
         JSDocComment commenter;
         commenter.Process(func);
@@ -162,7 +157,7 @@ void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
         // Read the open curly brace
         JS_NEXT_TOKEN();
         JS_CHECK_TYPE_RETURN('{');
-        
+
         // store this match
         m_lookup->AddObject(func);
 
@@ -171,11 +166,10 @@ void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
 
         int exitDepth = m_depth - 1;
         Parse(exitDepth);
-        
+
         // FIXME: finalize the function by setting its type and param
         // based on the document comment block
-        
-        
+
         // if the current scope not closed properly, don't remove it from list of scopes
         if(exitDepth == m_depth) {
             m_lookup->PopScope();
@@ -290,17 +284,17 @@ void JSSourceFile::OnFunctionThisProperty()
 
     // Keep the name
     wxString name;
-    
+
     JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
     name = token.text;
 
     if(!JS_NEXT_TOKEN()) return;
     JS_CHECK_TYPE_RETURN('=');
-    
+
     // When a function has a property, it becomes a class
     JSObject::Ptr_t curScope = m_lookup->CurrentScope();
     curScope->SetClass();
-    
+
     if(!JS_NEXT_TOKEN()) return;
     if(token.type == kJS_FUNCTION) {
         // Allocate new function obj and add it
@@ -311,7 +305,7 @@ void JSSourceFile::OnFunctionThisProperty()
         func->SetLine(token.lineNumber);
         AssociateComment(func);
         curScope->AddProperty(func);
-        
+
         // From here on, its the same as normal function
         ParseFunction(func);
 
@@ -332,7 +326,7 @@ void JSSourceFile::OnFunctionThisProperty()
     }
 }
 
-void JSSourceFile::OnPropertyOrFunction()
+void JSSourceFile::OnPropertyOrFunction(JSObject::Ptr_t This)
 {
     JSLexerToken token;
     JS_NEXT_TOKEN_RETURN();
@@ -341,48 +335,55 @@ void JSSourceFile::OnPropertyOrFunction()
     if(!JS_NEXT_TOKEN()) return;
     if(token.type == kJS_PROTOTYPE) {
         JS_NEXT_TOKEN_RETURN();
-        JS_CHECK_TYPE_RETURN(kJS_DOT);
 
-        JS_NEXT_TOKEN_RETURN();
-    }
+        if(token.type == '=') {
+            JS_NEXT_TOKEN_RETURN();
+            JS_CHECK_TYPE_RETURN('{');
 
-    JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
-    wxString name = token.text;
+            // TypeClass.prototype = { ... }
+            JSObjectParser op(*this, m_lookup);
+            if(op.Parse(This)) {
+                This->SetClass();
+            }
 
-    JS_NEXT_TOKEN_RETURN();
-    JS_CHECK_TYPE_RETURN('=');
+        } else if(token.type == kJS_DOT) {
+            // direct assignment
+            JS_NEXT_TOKEN_RETURN();
+            JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
 
-    JS_NEXT_TOKEN_RETURN();
-    if(token.type == kJS_FUNCTION) {
-        // Allocate new function obj and add it
-        JSObject::Ptr_t func = m_lookup->NewFunction();
-        func->SetName(name);
-        func->SetType(m_lookup->MakePath(func->GetName()));
-        func->SetFile(m_filename);
-        func->SetLine(token.lineNumber);
-        AssociateComment(func);
-        
-        m_lookup->CurrentScope()->AddProperty(func);
+            wxString prototypeName = token.text;
 
-        // From here on, its the same as normal function
-        ParseFunction(func);
-        
-        // Now, parse the comment
-        JSDocComment commenter;
-        commenter.Process(func);
+            JS_NEXT_TOKEN_RETURN();
+            JS_CHECK_TYPE_RETURN('=');
+
+            // TypeClass.prototype.fooname =
+            JSObjectParser op(*this, m_lookup);
+            if(op.Parse(NULL)) {
+                JSObject::Ptr_t obj = op.GetResult()->NewInstance(prototypeName);
+                obj->SetFile(m_filename);
+                obj->SetLine(token.lineNumber);
+                AssociateComment(obj);
+                This->AddProperty(obj);
+                This->SetClass();
+            }
+        }
 
     } else {
-        // variable
-        wxString assigment;
-        ReadUntil(';', assigment);
-        JSObject::Ptr_t obj = m_lookup->NewObject();
-        obj->SetName(name);
-        obj->SetType(m_lookup->MakePath(obj->GetName()));
-        obj->SetFile(m_filename);
-        obj->SetLine(token.lineNumber);
-        AssociateComment(obj);
-        
-        m_lookup->CurrentScope()->AddProperty(obj);
+        wxString prototypeName = token.text;
+        JS_NEXT_TOKEN_RETURN();
+        if(token.type == '=') {
+            // "Static methods / properties"
+            // TypeClass.fooname =
+            JSObjectParser op(*this, m_lookup);
+            if(op.Parse(NULL)) {
+                JSObject::Ptr_t obj = op.GetResult()->NewInstance(prototypeName);
+                obj->SetFile(m_filename);
+                obj->SetLine(token.lineNumber);
+                AssociateComment(obj);
+                This->AddProperty(obj);
+                This->SetClass();
+            }
+        }
     }
 }
 
@@ -437,9 +438,9 @@ void JSSourceFile::UngetToken(const JSLexerToken& token) { m_lastToken = token; 
 
 void JSSourceFile::AssociateComment(JSObject::Ptr_t obj)
 {
-    if((obj->GetLine() -1) == m_lastCommentBlock.lineNumber ) {
+    if((obj->GetLine() - 1) == m_lastCommentBlock.lineNumber) {
         obj->SetComment(m_lastCommentBlock.comment);
-        
+
         // For objects, we can parse the comment now.
         // For function, we need to wait until the entire function is parsed
         // (we need the function signature, which is not avilable at this point)
@@ -451,10 +452,7 @@ void JSSourceFile::AssociateComment(JSObject::Ptr_t obj)
     }
 }
 
-JSObject::Ptr_t JSSourceFile::ParseJSONObject(const wxString& content)
-{
-    return NULL;
-}
+JSObject::Ptr_t JSSourceFile::ParseJSONObject(const wxString& content) { return NULL; }
 
 JSObject::Ptr_t JSSourceFile::OnReturnValue()
 {

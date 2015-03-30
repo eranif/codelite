@@ -40,7 +40,7 @@ protected:
     /**
      * @brief Attempt to parse Class[.prototype].Foo
      */
-    void OnPropertyOrFunction();
+    void OnPropertyOrFunction(JSObject::Ptr_t This);
     
     bool NextToken(JSLexerToken& token);
     void UngetToken(const JSLexerToken& token);

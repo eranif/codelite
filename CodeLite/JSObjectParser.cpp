@@ -101,11 +101,11 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 if(locals.count(token.text)) {
                     JSObject::Ptr_t o = locals.find(token.text)->second;
                     m_result = o->NewInstance(token.text);
-                    return true;
                 } else {
                     // an Object
                     SetResultObject("Object");
                 }
+                return true;
             }
         } else {
             return false;

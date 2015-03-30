@@ -226,7 +226,9 @@ JSObject::Map_t JSLookUpTable::GetObjectProperties(JSObject::Ptr_t o) const
     const std::set<wxString>& extends = o->GetExtends();
     std::for_each(extends.begin(), extends.end(), [&](const wxString& className) {
         JSObject::Ptr_t cls = FindClass(className);
-        properties.insert(cls->GetProperties().begin(), cls->GetProperties().end());
+        if(cls) {
+            properties.insert(cls->GetProperties().begin(), cls->GetProperties().end());
+        }
     });
     return properties;
 }

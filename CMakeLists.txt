@@ -485,7 +485,9 @@ if ( UNIX AND NOT APPLE )
 endif ( UNIX AND NOT APPLE )
 
     if ( BUILD_WXC )
-        add_subdirectory(wxcrafter)
+        if(IS_DIRECTORY "${CL_SRC_ROOT}/wxcrafter")
+            add_subdirectory(wxcrafter)
+        endif()
     endif( BUILD_WXC )
 
     if ( APPLE )

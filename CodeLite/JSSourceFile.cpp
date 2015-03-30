@@ -396,7 +396,7 @@ JSObject::Ptr_t JSSourceFile::OnVariable()
 
     JSObjectParser parser(*this, m_lookup);
     if(parser.Parse(NULL)) {
-        obj->SetTypes(parser.GetResult()->GetTypes());
+        obj->SetType(parser.GetResult()->GetType());
     }
     return obj;
 }

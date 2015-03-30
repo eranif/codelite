@@ -23,7 +23,7 @@ protected:
     wxFileName m_file;
     int m_line;
     JSObject::Map_t m_properties;
-    wxArrayString m_types;
+    wxString m_type;
     std::set<wxString> m_extends;
     JSObject* m_parent;
     size_t m_flags;
@@ -45,19 +45,7 @@ protected:
     }
 
 protected:
-    wxString GetTypesAsString() const
-    {
-        wxString s;
-        s << "[";
-        for(size_t i = 0; i < m_types.size(); ++i) {
-            s << m_types.Item(i) << ",";
-        }
-        if(!m_types.IsEmpty()) {
-            s.RemoveLast();
-        }
-        s << "]";
-        return s;
-    }
+    const wxString& GetTypesAsString() const { return m_type; }
 
 public:
     JSObject();
@@ -125,21 +113,17 @@ public:
     void AddType(const wxString& type, bool clear = true)
     {
         if(clear) {
-            this->m_types.Clear();
+            m_type.Clear();
         }
-        this->m_types.Add(type);
+
+        if(!m_type.IsEmpty()) {
+            m_type << "|";
+        }
+        m_type << type;
     }
 
     void SetType(const wxString& type) { AddType(type, true); }
-
-    wxString GetType() const
-    {
-        if(this->m_types.IsEmpty()) return "";
-        return m_types.Item(0);
-    }
-
-    void SetTypes(const wxArrayString& types) { this->m_types = types; }
-    const wxArrayString& GetTypes() const { return m_types; }
+    const wxString& GetType() const { return m_type; }
 };
 
 #endif // JSOBJECT_H

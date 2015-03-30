@@ -29,7 +29,7 @@ JSObject::Ptr_t JSObject::NewInstance(const wxString& name)
 {
     JSObject::Ptr_t inst(new JSObject());
     inst->SetName(name);
-    inst->SetTypes(GetTypes());
+    inst->SetType(GetType());
     inst->SetPath(GetPath());
     return inst;
 }

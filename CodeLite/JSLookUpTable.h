@@ -22,7 +22,8 @@ public:
 
 private:
     void InitializeGlobalScope();
-
+    JSObject::Ptr_t DoFindSingleType(const wxString& type) const;
+    
 public:
     JSLookUpTable();
     virtual ~JSLookUpTable();

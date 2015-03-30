@@ -137,7 +137,7 @@ JSObject::Ptr_t JSSourceFile::OnFunction()
         // Anon function
         static int anonCounter = 0;
         JSObject::Ptr_t func = m_lookup->NewFunction();
-        m_lookup->CurrentScope()->AddProperty(func);
+        //m_lookup->CurrentScope()->AddProperty(func);
         func->SetName(wxString::Format("__anon%d", ++anonCounter));
         func->SetFile(m_filename);
         //func->SetType(token.text);
@@ -257,6 +257,28 @@ bool JSSourceFile::ReadUntil(int until, wxString& content)
     return false;
 }
 
+bool JSSourceFile::ReadUntilExcluding(int until, wxString& content)
+{
+    JSLexerToken token;
+    int startDepth = m_depth;
+    while(JS_NEXT_TOKEN()) {
+        if(!content.IsEmpty()) {
+            content << " ";
+        }
+        content << token.text;
+
+        // breaking condition
+        if(token.type == until && m_depth == startDepth) {
+            UngetToken(token);
+            content = content.BeforeLast(' ');
+            return true;
+        } else if(m_depth < startDepth) {
+            return false;
+        }
+    }
+    return false;
+}
+
 void JSSourceFile::OnFunctionThisProperty()
 {
     JSLexerToken token;
@@ -268,15 +290,7 @@ void JSSourceFile::OnFunctionThisProperty()
 
     // Keep the name
     wxString name;
-
-    // we found "prototype" - read the next dot
-    if(token.type == kJS_PROTOTYPE) {
-        if(!JS_NEXT_TOKEN()) return;
-        JS_CHECK_TYPE_RETURN(kJS_DOT);
-
-        // the property name
-        if(!JS_NEXT_TOKEN()) return;
-    }
+    
     JS_CHECK_TYPE_RETURN(kJS_IDENTIFIER);
     name = token.text;
 

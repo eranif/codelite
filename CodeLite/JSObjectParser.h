@@ -19,6 +19,7 @@ private:
     bool ReadSignature(JSObject::Ptr_t scope);
     
     void SetResultObject(const wxString& type);
+    JSObject::Ptr_t OnThisExpression();
     
 public:
     JSObjectParser(JSSourceFile& sourceFile, JSLookUpTable::Ptr_t lookup);

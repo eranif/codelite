@@ -2,6 +2,7 @@
 #include "JSLexerAPI.h"
 #include "JSLexerTokens.h"
 #include "JSFunction.h"
+#include "JSExpressionParser.h"
 
 JSObjectParser::JSObjectParser(JSSourceFile& sourceFile, JSLookUpTable::Ptr_t lookup)
     : m_sourceFile(sourceFile)
@@ -48,8 +49,13 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             if(token.type == '(') continue;
             break;
         }
-
-        if(token.type == '[') {
+        
+        if(token.type == kJS_THIS) {
+            m_sourceFile.UngetToken(token);
+            m_result = OnThisExpression();
+            return m_result;
+            
+        } else if(token.type == '[') {
             // an array
             if(!ReadUntil(']')) return false;
             SetResultObject("Array");
@@ -85,9 +91,12 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             SetResultObject("String");
             return true;
         } else if(token.type == kJS_FUNCTION) {
-            m_result = m_lookup->NewFunction();
-            m_sourceFile.OnFunction();
-            return true;
+            
+            // the variable is assigned to a function
+            m_result = m_sourceFile.OnFunction();
+            if(m_result) return true;
+            return false;
+            
         } else if(token.type == kJS_IDENTIFIER) {
             // Check to see if this is a type
             JSObject::Ptr_t t = m_lookup->FindClass(token.text);
@@ -231,12 +240,13 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
             }
         } break;
         case kJS_FUNCTION: {
-            JSObject::Ptr_t func = m_lookup->NewFunction();
+            JSObject::Ptr_t func = m_sourceFile.OnFunction();
+            if(!func) {
+                return false;
+            }
             func->SetName(label);
             parent->AddProperty(func);
             label.Clear();
-
-            m_sourceFile.OnFunction();
         } break;
         default:
             label.Clear();
@@ -290,4 +300,19 @@ bool JSObjectParser::ReadSignature(JSObject::Ptr_t scope)
 
     scope->As<JSFunction>()->SetSignature(sig);
     return true;
+}
+
+JSObject::Ptr_t JSObjectParser::OnThisExpression()
+{
+    wxString content;
+    if(!m_sourceFile.ReadUntilExcluding(';', content)) return NULL;
+    
+    // the epxression parser is designed to parse expressions for code-completion
+    // this means that it will look for the DOT at the end of the expression
+    // if no DOT is found, it will assume word-completion is requested
+    // For our purposes, we need the code-complete behavior so we append
+    // a DOT to the end of the "content" string
+    content << ".";
+    JSExpressionParser p(content);
+    return p.Resolve(m_lookup, "", &m_sourceFile);
 }

@@ -4,6 +4,7 @@
 #include "JSSourceFile.h"
 #include <algorithm>
 #include <wx/wxcrtvararg.h>
+#include "JSSourceFile.h"
 
 JSExpressionParser::JSExpressionParser(const wxString& fulltext)
     : m_text(fulltext)
@@ -149,12 +150,11 @@ JSLexerToken::Vec_t JSExpressionParser::CreateExpression(const wxString& text)
     return result;
 }
 
-JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const wxString& filename)
+JSObject::Ptr_t
+JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const wxString& filename, JSSourceFile* pSourceFile)
 {
     if(m_expression.empty()) return NULL;
 
-    // Prepare the lookup for parsing a source file
-    lookup->PrepareLookup();
 
     // Determing the type of completion requested
     m_completeType = kCodeComplete;
@@ -167,7 +167,12 @@ JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const w
 
     // Reparse the current file
     JSSourceFile sourceFile(lookup, m_text, wxFileName(filename));
-    sourceFile.Parse();
+    if(!pSourceFile) {
+        // Prepare the lookup for parsing a source file
+        lookup->PrepareLookup();
+        sourceFile.Parse();
+        pSourceFile = &sourceFile;
+    }
 
     if(IsWordComplete()) {
         // Remove the last token so it is now a "code-complete" expression
@@ -203,8 +208,13 @@ JSObject::Ptr_t JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const w
         }
 
         if(i == 0) {
+            wxString classType = token.text;
+            if(token.type == kJS_THIS) {
+                classType = lookup->CurrentScope()->GetType();
+            }
+            
             // check to see if token is class name or a variable
-            resolved = lookup->FindClass(token.text);
+            resolved = lookup->FindClass(classType);
             if(!resolved) {
                 // Check to see if this is a variable
                 JSObject::Map_t localVars = lookup->GetVisibleVariables();

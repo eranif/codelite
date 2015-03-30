@@ -224,6 +224,32 @@ TEST_FUNC(parse_func_with_multiple_return_values)
     return true;
 }
 
+TEST_FUNC(parse_var_assigment_of_function)
+{
+    wxString fileContent;
+    FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_var_assigment_of_function.js"), fileContent);
+        
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSExpressionParser expr(fileContent);
+    JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_var_assigment_of_function.js");
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetType(), "Boolean|String");
+    return true;
+}
+
+TEST_FUNC(parse_this_expression)
+{
+    wxString fileContent;
+    FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_this_expression.js"), fileContent);
+        
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSExpressionParser expr(fileContent);
+    JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_this_expression.js");
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetType(), "String");
+    return true;
+}
+
 int main(int argc, char** argv)
 {
     wxInitialize(argc, argv);

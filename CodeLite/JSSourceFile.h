@@ -25,6 +25,7 @@ protected:
     bool ReadSignature(JSObject::Ptr_t scope);
     void ParseFunction(JSObject::Ptr_t scope);
     bool ReadUntil(int until, wxString& content);
+    bool ReadUntilExcluding(int until, wxString& content);
     bool ReadUntil2(int until, int until2, wxString& content);
     
     // Actions

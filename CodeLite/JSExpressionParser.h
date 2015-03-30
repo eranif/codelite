@@ -6,6 +6,7 @@
 #include "JSLexerAPI.h"
 #include "JSLookUpTable.h"
 
+class JSSourceFile;
 class WXDLLIMPEXP_CL JSExpressionParser
 {
     wxString m_text;
@@ -21,7 +22,7 @@ class WXDLLIMPEXP_CL JSExpressionParser
 
 private:
     JSLexerToken::Vec_t CreateExpression(const wxString& text);
-    
+
 public:
     JSExpressionParser(const wxString& fulltext);
     virtual ~JSExpressionParser();
@@ -29,18 +30,18 @@ public:
     /**
      * @brief resolve an expression into JSObject
      */
-    JSObject::Ptr_t Resolve(JSLookUpTable::Ptr_t lookup, const wxString& filename);
-    
+    JSObject::Ptr_t Resolve(JSLookUpTable::Ptr_t lookup, const wxString& filename, JSSourceFile* pSourceFile = NULL);
+
     /**
      * @brief return the word complete filter
      */
     const wxString& GetWordCompleteFilter() const { return m_wordCompleteFilter; }
-    
+
     /**
      * @brief return true if the expression is a word complete (i.e. it does not end with ".")
      */
     bool IsWordComplete() const { return m_completeType == kWordComplete; }
-    
+
     /**
      * @brief function tip requested?
      */

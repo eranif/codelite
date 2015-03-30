@@ -34,6 +34,8 @@
     <File Name="TestFiles/parse_json_object_2.js"/>
     <File Name="TestFiles/parse_local_variables_2.js"/>
     <File Name="TestFiles/parse_func_with_multiple_return_values.js"/>
+    <File Name="TestFiles/parse_var_assigment_of_function.js"/>
+    <File Name="TestFiles/parse_this_expression.js"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>
@@ -108,7 +110,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp ./lib/liblibcodelite.so /home/eran/root/lib/codelite/</Command>
+      </PostBuild>
       <CustomBuild Enabled="yes">
         <Target Name="install">make install</Target>
         <RebuildCommand>cd JSParserUnitTests &amp;&amp; make clean &amp;&amp; cd .. &amp;&amp; make -j4</RebuildCommand>

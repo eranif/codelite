@@ -18,7 +18,6 @@ public:
 
 protected:
     wxString m_name;
-    wxString m_path;
     wxString m_comment;
     wxFileName m_file;
     int m_line;
@@ -31,6 +30,8 @@ protected:
     enum eJSObjectFlags {
         kJS_Undefined = (1 << 0),
         kJS_GlobalScope = (1 << 1),
+        kJS_Class = (1 << 2),
+        kJS_TypeSetByDocComment = (1 << 3),
     };
 
 protected:
@@ -52,9 +53,12 @@ public:
     virtual ~JSObject();
 
     inline bool IsUndefined() const { return HasFlag(kJS_Undefined); }
+    inline bool IsClass() const { return HasFlag(kJS_Class); }
     inline bool IsGlobalScope() const { return HasFlag(kJS_Undefined); }
     inline void SetUndefined() { EnableFlag(kJS_Undefined); }
     inline void SetGlobalScope() { EnableFlag(kJS_GlobalScope); }
+    inline void SetClass() { EnableFlag(kJS_Class); }
+    inline void SetTypeByDocComment() { EnableFlag(kJS_TypeSetByDocComment); }
 
     /**
      * @brief return the "extends" list of this object
@@ -82,8 +86,6 @@ public:
      */
     virtual bool IsFunction() const { return false; }
 
-    virtual bool IsClass() const;
-
     /**
      * @brief return this object properties
      */
@@ -103,8 +105,6 @@ public:
     void SetLine(int line) { this->m_line = line; }
     const wxFileName& GetFile() const { return m_file; }
     int GetLine() const { return m_line; }
-    void SetPath(const wxString& path) { this->m_path = path; }
-    const wxString& GetPath() const { return m_path; }
     /**
      * @brief add possible type to this object.
      * @param type Class name
@@ -123,7 +123,7 @@ public:
     }
 
     void SetType(const wxString& type) { AddType(type, true); }
-    const wxString& GetType() const { return m_type; }
+    wxString GetType() const;
 };
 
 #endif // JSOBJECT_H

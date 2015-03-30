@@ -17,15 +17,22 @@ JSLookUpTable::~JSLookUpTable() {}
 
 void JSLookUpTable::AddObject(JSObject::Ptr_t obj)
 {
-    std::map<wxString, JSObject::Ptr_t>::iterator iter = m_classes.find(obj->GetPath());
-    if(iter != m_classes.end()) m_classes.erase(iter);
-
-    m_classes.insert(std::make_pair(obj->GetPath(), obj));
+    if(obj->IsFunction()) {
+        // if the object is a function, we add it under its name
+        std::map<wxString, JSObject::Ptr_t>::iterator iter = m_classes.find(obj->GetName());
+        if(iter != m_classes.end()) m_classes.erase(iter);
+        m_classes.insert(std::make_pair(obj->GetName(), obj));
+    } else {
+        // if the object is a function, we add it under its name
+        std::map<wxString, JSObject::Ptr_t>::iterator iter = m_classes.find(obj->GetType());
+        if(iter != m_classes.end()) m_classes.erase(iter);
+        m_classes.insert(std::make_pair(obj->GetType(), obj));
+    }
 }
 
 JSObject::Ptr_t JSLookUpTable::CurrentScope() const { return m_scopes->at(m_scopes->size() - 1); }
 
-const wxString& JSLookUpTable::CurrentPath() const { return CurrentScope()->GetPath(); }
+wxString JSLookUpTable::CurrentPath() const { return CurrentScope()->GetType(); }
 
 void JSLookUpTable::PopScope()
 {
@@ -67,7 +74,7 @@ JSObject::Ptr_t JSLookUpTable::FindClass(const wxString& path) const
                     result= new JSObject();
                 }
                 // Merge the object into 'results'
-                result->AddType(o->GetType());
+                result->AddType(o->GetType(), false);
                 JSObject::Map_t props = GetObjectProperties(o);
                 result->GetProperties().insert(props.begin(), props.end());
                 const std::set<wxString>& extends = o->GetExtends();

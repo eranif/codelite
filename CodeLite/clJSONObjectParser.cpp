@@ -1798,7 +1798,6 @@ static void clParseJS_FinalizeObject(clJSONParserData* parserData, const wxStrin
     // take the current object
     JSObject::Ptr_t o = parserData->objStack.at(parserData->objStack.size() - 1);
     o->SetType(objType);
-    o->SetPath(objType);
     
     if(parserData->objStack.size() > 1) {
         // we are done with this object, remove it from the stack

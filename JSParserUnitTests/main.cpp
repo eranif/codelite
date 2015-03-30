@@ -155,8 +155,9 @@ TEST_FUNC(parse_expression)
     JSExpressionParser expr(fileContent);
     JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_expression.js");
     CHECK_BOOL(resolved);
-    
-    CHECK_STRING(resolved->GetType(), "Array");
+    //resolved->Print(0);
+    CHECK_SIZE(resolved->GetProperties().size(), 3);
+    CHECK_STRING(resolved->GetName(), "Array");
     return true;
 }
 
@@ -205,7 +206,21 @@ TEST_FUNC(parse_json_object_2)
     CHECK_SIZE(obj->GetProperties().count("open"), 1);
     CHECK_SIZE(obj->GetProperties().count("close"), 1);
     
-    obj->Print(0);
+    //obj->Print(0);
+    return true;
+}
+
+TEST_FUNC(parse_func_with_multiple_return_values)
+{
+    wxString fileContent;
+    FileUtils::ReadFileContent(wxFileName("../TestFiles/parse_func_with_multiple_return_values.js"), fileContent);
+        
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    JSExpressionParser expr(fileContent);
+    JSObject::Ptr_t resolved = expr.Resolve(lookup, "../TestFiles/parse_func_with_multiple_return_values.js");
+    CHECK_BOOL(resolved);
+    resolved->Print(0);
+    CHECK_STRING(resolved->GetType(), "Boolean|Number|String");
     return true;
 }
 

@@ -1,14 +1,13 @@
 function Array() {
     this.count = 0;
     this.allocated = 4;
-    this.elements;
+    this.elements = [];
 }
 
 function MyClass() {
     /* @var Array */
-    this.items = null;
+    this.items = 0;
 }
 
-
 var v = new MyClass();
-v.items. // 3 items to suggest here (members of Array)
+v.items.

@@ -51,7 +51,7 @@ public:
     /**
      * @brief return the current path (based on the current scope)
      */
-    const wxString& CurrentPath() const;
+    wxString CurrentPath() const;
 
     /**
      * @brief make path from the current path + input provided

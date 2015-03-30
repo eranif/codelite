@@ -64,7 +64,7 @@ void JSSourceFile::Parse(int exitDepth)
                 // Current scope is a function
                 JSObject::Ptr_t ret = OnReturnValue();
                 if(ret) {
-                    m_lookup->CurrentScope()->As<JSFunction>()->AddType(ret->GetPath(), false);
+                    m_lookup->CurrentScope()->As<JSFunction>()->AddType(ret->GetType(), false);
                 }
             }
             break;
@@ -92,17 +92,11 @@ void JSSourceFile::Parse(int exitDepth)
             }*/
         } break;
         case kJS_THIS:
-            if(!m_lookup->CurrentPath().IsEmpty()) {
-                // try to process a :
-                // this.foo =
-                // or
-                // this.prototype.foo =
-                OnFunctionThisProperty();
-            } else {
-                wxString dummy;
-                // Read until we hit the } or ; (taking the current depth into account)
-                ReadUntil2(';', '}', dummy);
-            }
+            // try to process a :
+            // this.foo =
+            // or
+            // this.prototype.foo =
+            OnFunctionThisProperty();
             break;
         default:
             break;
@@ -119,14 +113,17 @@ JSObject::Ptr_t JSSourceFile::OnFunction()
     // Named function
     if(token.type == kJS_IDENTIFIER) {
         JSObject::Ptr_t func = m_lookup->NewFunction();
+        m_lookup->CurrentScope()->AddProperty(func);
         func->SetName(token.text);
-        func->SetPath(m_lookup->MakePath(func->GetName()));
+        //func->SetType(token.text);
         func->SetFile(m_filename);
         func->SetLine(token.lineNumber);
         AssociateComment(func);
 
-        m_lookup->CurrentScope()->AddProperty(func);
         ParseFunction(func);
+        
+        // Check the function type, if it contains "|" i.e. return statement was found
+        // remove the function name from the type itself
         
         // Now, parse the comment
         JSDocComment commenter;
@@ -140,13 +137,13 @@ JSObject::Ptr_t JSSourceFile::OnFunction()
         // Anon function
         static int anonCounter = 0;
         JSObject::Ptr_t func = m_lookup->NewFunction();
+        m_lookup->CurrentScope()->AddProperty(func);
         func->SetName(wxString::Format("__anon%d", ++anonCounter));
-        func->SetPath(func->GetName());
         func->SetFile(m_filename);
+        //func->SetType(token.text);
         func->SetLine(token.lineNumber);
         
         AssociateComment(func);
-        m_lookup->CurrentScope()->AddProperty(func);
         ParseFunction(func);
         
         // Now, parse the comment
@@ -287,19 +284,19 @@ void JSSourceFile::OnFunctionThisProperty()
     JS_CHECK_TYPE_RETURN('=');
     
     // When a function has a property, it becomes a class
-    // We mark the function's type as its Path
-    m_lookup->CurrentScope()->SetType(m_lookup->CurrentScope()->GetPath());
+    JSObject::Ptr_t curScope = m_lookup->CurrentScope();
+    curScope->SetClass();
     
     if(!JS_NEXT_TOKEN()) return;
     if(token.type == kJS_FUNCTION) {
         // Allocate new function obj and add it
         JSObject::Ptr_t func = m_lookup->NewFunction();
         func->SetName(name);
-        func->SetPath(m_lookup->MakePath(func->GetName()));
+        func->SetType(m_lookup->MakePath(func->GetName()));
         func->SetFile(m_filename);
         func->SetLine(token.lineNumber);
         AssociateComment(func);
-        m_lookup->CurrentScope()->AddProperty(func);
+        curScope->AddProperty(func);
         
         // From here on, its the same as normal function
         ParseFunction(func);
@@ -309,15 +306,15 @@ void JSSourceFile::OnFunctionThisProperty()
         commenter.Process(func);
 
     } else {
-        wxString assigment;
-        ReadUntil(';', assigment);
-        JSObject::Ptr_t obj = m_lookup->NewObject();
-        obj->SetName(name);
-        obj->SetPath(m_lookup->MakePath(obj->GetName()));
-        obj->SetFile(m_filename);
-        obj->SetLine(token.lineNumber);
-        AssociateComment(obj);
-        m_lookup->CurrentScope()->AddProperty(obj);
+        UngetToken(token);
+        JSObjectParser op(*this, m_lookup);
+        if(op.Parse(NULL)) {
+            JSObject::Ptr_t obj = op.GetResult()->NewInstance(name);
+            obj->SetFile(m_filename);
+            obj->SetLine(token.lineNumber);
+            AssociateComment(obj);
+            curScope->AddProperty(obj);
+        }
     }
 }
 
@@ -346,7 +343,7 @@ void JSSourceFile::OnPropertyOrFunction()
         // Allocate new function obj and add it
         JSObject::Ptr_t func = m_lookup->NewFunction();
         func->SetName(name);
-        func->SetPath(m_lookup->MakePath(func->GetName()));
+        func->SetType(m_lookup->MakePath(func->GetName()));
         func->SetFile(m_filename);
         func->SetLine(token.lineNumber);
         AssociateComment(func);
@@ -366,7 +363,7 @@ void JSSourceFile::OnPropertyOrFunction()
         ReadUntil(';', assigment);
         JSObject::Ptr_t obj = m_lookup->NewObject();
         obj->SetName(name);
-        obj->SetPath(m_lookup->MakePath(obj->GetName()));
+        obj->SetType(m_lookup->MakePath(obj->GetName()));
         obj->SetFile(m_filename);
         obj->SetLine(token.lineNumber);
         AssociateComment(obj);

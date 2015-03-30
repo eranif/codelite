@@ -17,7 +17,7 @@ JSObject::~JSObject() {}
 void JSObject::Print(int depth)
 {
     wxString indent(' ', (size_t)depth);
-    CL_DEBUG("%s{[%s] Name: \"%s\", Path: \"%s\"\n", indent, GetTypesAsString(), m_name, m_path);
+    wxPrintf("%s{[%s] Name: \"%s\", Type: \"%s\"\n", indent, GetTypesAsString(), m_name, GetType());
     if(!m_properties.empty()) {
         std::for_each(m_properties.begin(), m_properties.end(), [&](const std::pair<wxString, JSObject::Ptr_t>& p) {
             (p.second)->Print(depth + 2);
@@ -30,7 +30,6 @@ JSObject::Ptr_t JSObject::NewInstance(const wxString& name)
     JSObject::Ptr_t inst(new JSObject());
     inst->SetName(name);
     inst->SetType(GetType());
-    inst->SetPath(GetPath());
     return inst;
 }
 
@@ -48,7 +47,9 @@ void JSObject::AddProperty(JSObject::Ptr_t child)
     }
 }
 
-bool JSObject::IsClass() const
+wxString JSObject::GetType() const
 {
-    return !m_properties.empty();
+    if(HasFlag(kJS_TypeSetByDocComment)) return m_type;
+    if(IsClass()) return GetName();
+    return m_type;
 }

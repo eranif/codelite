@@ -14,9 +14,12 @@ void JSDocComment::ProcessVarDoc(JSObject::Ptr_t obj)
     if(reVarType.IsValid() && reVarType.Matches(obj->GetComment())) {
         wxString type = reVarType.GetMatch(obj->GetComment(), 2);
         obj->AddType(type, true);
+        obj->SetTypeByDocComment();
+        
     } else if(reVarType2.IsValid() && reVarType2.Matches(obj->GetComment())) {
         wxString type = reVarType2.GetMatch(obj->GetComment(), 2);
         obj->AddType(type, true);
+        obj->SetTypeByDocComment();
     }
 }
 
@@ -42,6 +45,7 @@ void JSDocComment::ProcessFunction(JSObject::Ptr_t func)
                 JSObject::Map_t::iterator iter = variables.find(paramName);
                 if(iter != variables.end()) {
                     iter->second->AddType(paramHint, true);
+                    iter->second->SetTypeByDocComment();
                 }
             }
         }
@@ -51,6 +55,7 @@ void JSDocComment::ProcessFunction(JSObject::Ptr_t func)
     static wxRegEx reReturnStatement(wxT("@(return)[ \t]+([$\\a-zA-Z0-9_]*)"));
     if(reReturnStatement.IsValid() && reReturnStatement.Matches(comment)) {
        func->AddType(reReturnStatement.GetMatch(comment, 2), true);
+       func->SetTypeByDocComment();
     }
 }
 

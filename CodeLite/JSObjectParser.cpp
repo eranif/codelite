@@ -36,7 +36,6 @@ void JSObjectParser::SetResultObject(const wxString& type)
 {
     m_result = m_lookup->NewObject();
     m_result->SetType(type);
-    m_result->SetPath(type);
 }
 
 bool JSObjectParser::Parse(JSObject::Ptr_t parent)
@@ -165,7 +164,6 @@ bool JSObjectParser::Parse(JSObject::Ptr_t parent)
                 JSObject::Ptr_t obj = m_lookup->NewObject();
                 obj->SetName(label);
                 obj->AddType(GenerateName());
-                obj->SetPath(obj->GetType());
                 parent->AddProperty(obj);
 
                 // Recurse into this object

@@ -118,7 +118,7 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>"&="                { return kJS_AND_EQUAL;}
 <INITIAL>"^="                { return kJS_POW_EQUAL;}
 <INITIAL>"|="                { return kJS_OR_EQUAL;}
-<INITIAL>"L"?[']{c_char}+['] {
+<INITIAL>"L"?[']{c_char}*['] {
     return kJS_STRING;
 }
 <INITIAL>"L"?["]{s_char}*["] {

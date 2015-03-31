@@ -3,7 +3,6 @@
 #include "JSLexerTokens.h"
 #include "JSLexerAPI.h"
 #include "file_logger.h"
-#include "JSFunction.h"
 #include "JSDocComment.h"
 #include "JSObjectParser.h"
 
@@ -64,7 +63,7 @@ void JSSourceFile::Parse(int exitDepth)
                 // Current scope is a function
                 JSObject::Ptr_t ret = OnReturnValue();
                 if(ret) {
-                    m_lookup->CurrentScope()->As<JSFunction>()->AddType(ret->GetType(), false);
+                    m_lookup->CurrentScope()->AddType(ret->GetType(), false);
                 }
             }
             break;
@@ -201,8 +200,7 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
             obj->SetLine(token.lineNumber);
             obj->SetName(curarg);
             obj->SetFile(m_filename);
-            scope->As<JSFunction>()->AddVariable(obj);
-            scope->As<JSFunction>()->AddArgument(obj);
+            scope->AddVariable(obj);
             curarg.Clear();
         }
 
@@ -214,7 +212,7 @@ bool JSSourceFile::ReadSignature(JSObject::Ptr_t scope)
         }
     }
 
-    scope->As<JSFunction>()->SetSignature(sig);
+    scope->SetSignature(sig);
     return true;
 }
 
@@ -401,7 +399,7 @@ JSObject::Ptr_t JSSourceFile::OnVariable()
     obj->SetLine(token.lineNumber);
     obj->SetFile(m_filename);
     AssociateComment(obj);
-    m_lookup->CurrentScope()->As<JSFunction>()->AddVariable(obj);
+    m_lookup->CurrentScope()->AddVariable(obj);
     if(token.type != '=') {
         return obj;
     }

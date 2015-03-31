@@ -1,6 +1,5 @@
 #include "JSLookUpTable.h"
 #include <algorithm>
-#include "JSFunction.h"
 #include "JSLexerAPI.h"
 #include <algorithm>
 #include <wx/tokenzr.h>
@@ -127,7 +126,7 @@ JSObject::Map_t JSLookUpTable::GetVisibleVariables()
 
     for(int i = (int)m_scopes->size() - 1; i >= 0; --i) {
         JSObject::Ptr_t scope = m_scopes->at(i);
-        const JSObject::Map_t& scopeVariables = scope->As<JSFunction>()->GetVariables();
+        const JSObject::Map_t& scopeVariables = scope->GetVariables();
         variables.insert(scopeVariables.begin(), scopeVariables.end());
     }
     return variables;
@@ -169,7 +168,8 @@ JSObject::Ptr_t JSLookUpTable::NewObject() const
 
 JSObject::Ptr_t JSLookUpTable::NewFunction() const
 {
-    JSObject::Ptr_t obj(new JSFunction());
+    JSObject::Ptr_t obj(new JSObject());
+    obj->SetFunction();
     return obj;
 }
 
@@ -180,14 +180,14 @@ void JSLookUpTable::PopulateWithGlobals()
         JSObject::Ptr_t objTemplate = FindClass("Document");
         if(objTemplate) {
             JSObject::Ptr_t objInstance = objTemplate->NewInstance("document");
-            m_globalScope->As<JSFunction>()->AddVariable(objInstance);
+            m_globalScope->AddVariable(objInstance);
         }
     }
     {
         JSObject::Ptr_t objTemplate = FindClass("Window");
         if(objTemplate) {
             JSObject::Ptr_t objInstance = objTemplate->NewInstance("window");
-            m_globalScope->As<JSFunction>()->AddVariable(objInstance);
+            m_globalScope->AddVariable(objInstance);
         }
     }
 

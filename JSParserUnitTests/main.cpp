@@ -5,10 +5,11 @@
 #include <wx/init.h>
 #include <wx/module.h>
 #include <wx/filename.h>
-#include "JSFunction.h"
 #include "fileutils.h"
 #include "JSExpressionParser.h"
 #include "JSObjectParser.h"
+#include "json_node.h"
+#include <wx/tokenzr.h>
 
 // Parse class with 2 properties defined using
 // this.<name> = ...
@@ -66,7 +67,7 @@ TEST_FUNC(parse_global_function)
     JSObject::Ptr_t Foo = lookup->FindClass("Foo");
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 0);
-    CHECK_SIZE(Foo->As<JSFunction>()->GetVariables().size(), 2);
+    CHECK_SIZE(Foo->GetVariables().size(), 2);
     return true;
 }
 
@@ -85,10 +86,10 @@ TEST_FUNC(parse_local_variables_in_functions)
     CHECK_BOOL(Foo);
 
     // Check that Foo has 3 local variables
-    CHECK_SIZE(Foo->As<JSFunction>()->GetVariables().size(), 3);
+    CHECK_SIZE(Foo->GetVariables().size(), 3);
 
     // Check the variables names
-    const JSObject::Map_t& vars = Foo->As<JSFunction>()->GetVariables();
+    const JSObject::Map_t& vars = Foo->GetVariables();
     CHECK_SIZE(vars.count("a"), 1);
     CHECK_SIZE(vars.count("b"), 1);
     CHECK_SIZE(vars.count("c"), 1);
@@ -150,7 +151,7 @@ TEST_FUNC(parse_function_doc_return_value)
     source.Parse();
 
     JSObject::Ptr_t Foo = lookup->FindClass("Foo");
-    const JSObject::Map_t& variables = Foo->As<JSFunction>()->GetVariables();
+    const JSObject::Map_t& variables = Foo->GetVariables();
     CHECK_BOOL(Foo);
     CHECK_SIZE(Foo->GetProperties().size(), 2);
     CHECK_SIZE(variables.size(), 2);
@@ -284,12 +285,138 @@ TEST_FUNC(parse_this_of_prototype)
     return true;
 }
 
+void ParseJSONFile(JSLookUpTable::Ptr_t lookup);
 int main(int argc, char** argv)
 {
-    wxInitialize(argc, argv);
-    {
-        Tester::Instance()->RunTests();
-    }
-    wxUninitialize();
+    ::wxInitialize(argc, argv);
+    
+#if 1  
+    Tester::Instance()->RunTests();
+#else
+    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
+    ParseJSONFile(lookup);
+#endif    
+    ::wxUninitialize();
     return 0;
+}
+
+bool ProcessSignature(const wxString& type, wxString& sig, wxString& returnValue) {}
+
+wxString PrepareDoc(const wxString& doc, const wxString& url)
+{
+    wxString d = doc;
+    d.Replace("\\n", " ");
+
+    wxArrayString tokens = ::wxStringTokenize(d, " ", wxTOKEN_STRTOK);
+    wxString content;
+    wxString curline;
+    for(size_t i = 0; i < tokens.size(); ++i) {
+        curline << tokens.Item(i) << " ";
+        if(curline.length() > 80) {
+            content << curline << "\n";
+            curline.clear();
+        }
+    }
+
+    if(!curline.IsEmpty()) {
+        content << curline << "\n";
+    }
+    content << "@link " << url;
+    return content;
+}
+
+JSObject::Ptr_t ProcessEntry(JSONElement entry, JSLookUpTable::Ptr_t lookup)
+{
+    wxString name = entry.getName();
+    if(name.IsEmpty()) return NULL;
+
+    wxString type = entry.namedObject("!type").toString();
+    type.Trim().Trim(false);
+    if(type.IsEmpty()) return NULL;
+
+    wxString url = entry.namedObject("!url").toString();
+    wxString doc = entry.namedObject("!doc").toString();
+    doc = PrepareDoc(doc, url);
+    
+    JSObject::Ptr_t prop = lookup->NewObject();
+    prop->SetName(name);
+    prop->SetComment(doc);
+
+    if(type.StartsWith("fn(")) {
+        doc = PrepareDoc(doc, url);
+        prop->SetFunction();
+        type = type.Mid(2);
+        wxString sig, returnValue;
+        if(!ProcessSignature(type, sig, returnValue)) return NULL;
+        
+    } else if(type == "number") {
+        prop->SetType("Number");
+    
+    } else if(type == "string") {
+        prop->SetType("String");
+    
+    } else if(type == "bool") {
+        prop->SetType("Boolean");
+
+    }
+    
+    
+    {
+        JSONElement child = entry.firstChild();
+        while(child.isOk()) {
+            if(!child.getName().StartsWith("!")) {
+                // an item with properties -> a class
+                prop->SetClass();
+                break;
+            }
+            child = entry.nextChild();
+        }
+    }
+    
+    {
+        if(prop->IsClass()) {
+            JSONElement child = entry.firstChild();
+            while(child.isOk()) {
+                if(!child.getName().StartsWith("!") && child.getName() != "prototype") {
+                    // an item with properties -> a class
+                    JSObject::Ptr_t o = ProcessEntry(child, lookup);
+                    if(o) {
+                        prop->AddProperty(o);
+                    }
+                }
+                child = entry.nextChild();
+            }
+        }
+    }
+    // register this class / function / constant
+    lookup->AddObject(prop);
+    return prop;
+}
+
+void ProcessJSONTopLevel(JSONElement element, JSLookUpTable::Ptr_t lookup)
+{
+    if(!element.isOk()) return;
+
+    // Scan the global functions / classes
+    JSONElement child = element.firstChild();
+    while(child.isOk()) {
+        const wxString& name = child.getName();
+        if(name.StartsWith("!")) {
+            // skip any property that starts with "!"
+            child = element.nextChild();
+            continue;
+        }
+        
+        ProcessEntry(child, lookup);
+        child = element.nextChild();
+    }
+}
+
+void ParseJSONFile(JSLookUpTable::Ptr_t lookup)
+{
+    JSONRoot root(wxFileName("/home/eran/devl/codelite/WebTools/json/ecma5.json"));
+    JSONElement element = root.toElement();
+    if(!element.hasNamedObject("!name")) return;
+    wxString libraryName = element.namedObject("!name").toString();
+    ProcessJSONTopLevel(element, lookup);
 }

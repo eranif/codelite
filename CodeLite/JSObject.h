@@ -27,11 +27,18 @@ protected:
     JSObject* m_parent;
     size_t m_flags;
 
+    // include local variables + function arguments
+    JSObject::Map_t m_variables;
+
+    // Function signature
+    wxString m_signature;
+
     enum eJSObjectFlags {
         kJS_Undefined = (1 << 0),
         kJS_GlobalScope = (1 << 1),
         kJS_Class = (1 << 2),
-        kJS_TypeSetByDocComment = (1 << 3),
+        kJS_Function = (1 << 3),
+        kJS_TypeSetByDocComment = (1 << 4),
     };
 
 protected:
@@ -57,8 +64,32 @@ public:
     inline bool IsGlobalScope() const { return HasFlag(kJS_Undefined); }
     inline void SetUndefined() { EnableFlag(kJS_Undefined); }
     inline void SetGlobalScope() { EnableFlag(kJS_GlobalScope); }
-    inline void SetClass() { EnableFlag(kJS_Class); }
+    inline void SetClass()
+    {
+        EnableFlag(kJS_Class);
+        EnableFlag(kJS_Function, false);
+    }
+    inline void SetFunction()
+    {
+        EnableFlag(kJS_Function);
+        EnableFlag(kJS_Class, false);
+    }
+
     inline void SetTypeByDocComment() { EnableFlag(kJS_TypeSetByDocComment); }
+
+    /**
+     * @brief add a variable to this object
+     */
+    void AddVariable(JSObject::Ptr_t var);
+
+    /**
+     * @brief return list of variables available for this object
+     */
+    const JSObject::Map_t& GetVariables() const { return m_variables; }
+    /**
+     * @brief return list of variables available for this object (non-const version)
+     */
+    JSObject::Map_t& GetVariables() { return m_variables; }
 
     /**
      * @brief return the "extends" list of this object
@@ -84,7 +115,7 @@ public:
     /**
      * @brief is this object a function?
      */
-    virtual bool IsFunction() const { return false; }
+    virtual bool IsFunction() const { HasFlag(kJS_Function); }
 
     /**
      * @brief return this object properties
@@ -105,6 +136,8 @@ public:
     void SetLine(int line) { this->m_line = line; }
     const wxFileName& GetFile() const { return m_file; }
     int GetLine() const { return m_line; }
+    void SetSignature(const wxString& signature) { this->m_signature = signature; }
+    const wxString& GetSignature() const { return m_signature; }
     /**
      * @brief add possible type to this object.
      * @param type Class name

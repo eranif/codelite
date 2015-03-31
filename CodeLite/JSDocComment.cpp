@@ -1,5 +1,4 @@
 #include "JSDocComment.h"
-#include "JSFunction.h"
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
@@ -27,7 +26,7 @@ void JSDocComment::ProcessFunction(JSObject::Ptr_t func)
 {
     if(!func->IsFunction()) return;
     
-    JSObject::Map_t &variables = func->As<JSFunction>()->GetVariables();
+    JSObject::Map_t &variables = func->GetVariables();
     
     // @param Array arr
     const wxString& comment = func->GetComment();

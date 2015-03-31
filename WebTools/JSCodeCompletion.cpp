@@ -7,7 +7,6 @@
 #include <wx/app.h>
 #include "wxCodeCompletionBoxEntry.h"
 #include <algorithm>
-#include "JSFunction.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "cl_standard_paths.h"
 #include "clZipReader.h"
@@ -86,7 +85,7 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         tag->SetName(resolved->GetName());
         tag->SetKind("function");
         tag->SetFlags(TagEntry::Tag_No_Signature_Format);
-        tag->SetSignature(resolved->As<JSFunction>()->GetSignature());
+        tag->SetSignature(resolved->GetSignature());
         tags.push_back(tag);
 
         clCallTipPtr callTip(new clCallTip(tags));
@@ -103,9 +102,8 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         wxString displayText;
         displayText << obj->GetName();
         wxString displayTextLower = displayText.Lower();
-        if(obj->IsFunction() && !obj->IsClass() && obj->As<JSFunction>() &&
-           !obj->As<JSFunction>()->GetSignature().IsEmpty()) {
-            displayText << obj->As<JSFunction>()->GetSignature();
+        if(obj && obj->IsFunction() && !obj->GetSignature().IsEmpty()) {
+            displayText << obj->GetSignature();
         }
 
         // If word complete is requsted, suggest only words that starts with the filter

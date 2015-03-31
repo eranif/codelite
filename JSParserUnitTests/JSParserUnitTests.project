@@ -18,9 +18,11 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
-    <File Name="Tester.h"/>
-    <File Name="Tester.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <VirtualDirectory Name="TestFramework">
+      <File Name="Tester.cpp"/>
+      <File Name="Tester.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="TestFiles">
     <File Name="TestFiles/simple_class.js"/>

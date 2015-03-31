@@ -53,3 +53,11 @@ wxString JSObject::GetType() const
     if(IsClass()) return GetName();
     return m_type;
 }
+
+void JSObject::AddVariable(JSObject::Ptr_t var)
+{
+    JSObject::Map_t::iterator iter = m_variables.find(var->GetName());
+    if(iter != m_variables.end()) m_variables.erase(iter);
+
+    m_variables.insert(std::make_pair(var->GetName(), var));
+}

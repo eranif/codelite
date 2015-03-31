@@ -335,8 +335,6 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="JavaScriptScanner">
-    <File Name="JSFunction.h"/>
-    <File Name="JSFunction.cpp"/>
     <File Name="JSSourceFile.h"/>
     <File Name="JSSourceFile.cpp"/>
     <File Name="JSObject.h"/>

@@ -1,7 +1,6 @@
 #include "JSObjectParser.h"
 #include "JSLexerAPI.h"
 #include "JSLexerTokens.h"
-#include "JSFunction.h"
 #include "JSExpressionParser.h"
 
 JSObjectParser::JSObjectParser(JSSourceFile& sourceFile, JSLookUpTable::Ptr_t lookup)
@@ -285,8 +284,7 @@ bool JSObjectParser::ReadSignature(JSObject::Ptr_t scope)
             JSObject::Ptr_t arg = m_lookup->NewObject();
             arg->SetName(curarg);
             arg->SetLine(token.lineNumber);
-            scope->As<JSFunction>()->AddVariable(arg);
-            scope->As<JSFunction>()->AddArgument(arg);
+            scope->AddVariable(arg);
             curarg.Clear();
         }
 
@@ -298,7 +296,7 @@ bool JSObjectParser::ReadSignature(JSObject::Ptr_t scope)
         }
     }
 
-    scope->As<JSFunction>()->SetSignature(sig);
+    scope->SetSignature(sig);
     return true;
 }
 

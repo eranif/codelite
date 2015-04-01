@@ -242,5 +242,7 @@
     <File Name="JSCodeCompletion.h"/>
     <File Name="JSParserThread.cpp"/>
     <File Name="JSParserThread.h"/>
+    <File Name="clTernServer.h"/>
+    <File Name="clTernServer.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

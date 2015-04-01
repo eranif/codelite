@@ -8,7 +8,7 @@
   </Ctags>
   <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+  <Project Name="CodeLiteIDE" Path="LiteEditor/LiteEditor.project" Active="No"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
   <Project Name="libCodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
@@ -51,7 +51,7 @@
   <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
   <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
-  <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
+  <Project Name="WebTools" Path="WebTools/WebTools.project" Active="Yes"/>
   <Project Name="JSParserUnitTests" Path="JSParserUnitTests/JSParserUnitTests.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">

@@ -3,9 +3,7 @@
 #include <wx/dir.h>
 #include <wx/arrstr.h>
 #include "fileutils.h"
-#include "JSSourceFile.h"
 #include "JSCodeCompletion.h"
-#include "JSLookUpTable.h"
 #include <wx/stopwatch.h>
 
 JSParserThread::JSParserThread(JSCodeCompletion* jsCC)
@@ -33,22 +31,4 @@ void JSParserThread::ProcessRequest(ThreadRequest* request)
     sw.Start();
     wxArrayString files;
     wxDir::GetAllFiles(r->path, &files, "*.js");
-
-    // Parse the files
-    JSLookUpTable::Ptr_t lookup(new JSLookUpTable());
-    for(size_t i = 0; i < files.GetCount(); ++i) {
-        wxString fileContent;
-        FileUtils::ReadFileContent(files.Item(i), fileContent);
-        JSSourceFile source(lookup, fileContent, wxFileName(files.Item(i)));
-        source.Parse();
-    }
-    
-    Reply* reply = new Reply;
-    reply->total_time = sw.Time();
-    reply->num_files = files.GetCount();
-    reply->lookup = new JSLookUpTable();
-    
-    // Copy the class table to the reply's lookup table
-    reply->lookup->CopyClassTable(lookup);
-    m_jsCC->CallAfter(&JSCodeCompletion::PraserThreadCompleted, reply);
 }

@@ -335,25 +335,12 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="JavaScriptScanner">
-    <File Name="JSSourceFile.h"/>
-    <File Name="JSSourceFile.cpp"/>
-    <File Name="JSObject.h"/>
-    <File Name="JSObject.cpp"/>
     <File Name="JSLexerAPI.h"/>
     <File Name="JSLexerTokens.h"/>
     <File Name="JSLexer.cpp"/>
-    <File Name="JSLookUpTable.h"/>
-    <File Name="JSLookUpTable.cpp"/>
-    <File Name="JSDocComment.h"/>
-    <File Name="JSDocComment.cpp"/>
-    <File Name="JSExpressionParser.h"/>
-    <File Name="JSExpressionParser.cpp"/>
-    <File Name="JSObjectParser.h"/>
-    <File Name="JSObjectParser.cpp"/>
     <VirtualDirectory Name="BisonJSParser">
       <File Name="JSLexer.l"/>
       <File Name="clJSONObjectParser.y"/>
-      <File Name="clJSONObjectParser.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">

@@ -4,8 +4,6 @@
 #include <wx/stc/stc.h>
 #include "event_notifier.h"
 #include "codelite_events.h"
-#include "JSSourceFile.h"
-#include "JSLookUpTable.h"
 
 static WebTools* thePlugin = NULL;
 

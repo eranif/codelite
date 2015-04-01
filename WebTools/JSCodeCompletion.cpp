@@ -1,7 +1,5 @@
 #include "JSCodeCompletion.h"
 #include <wx/stc/stc.h>
-#include "JSExpressionParser.h"
-#include "JSObject.h"
 #include "macros.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/app.h>
@@ -18,8 +16,9 @@
 JSCodeCompletion::JSCodeCompletion()
     : m_thread(NULL)
 {
-    m_lookup.Reset(new JSLookUpTable());
-    // Extract all CC files from PHP.zip into the folder ~/.codelite/webtools/js
+    m_thread = new JSParserThread(this);
+    m_thread->Start();
+
     wxFileName jsResources(clStandardPaths::Get().GetDataDir(), "javascript.zip");
     if(jsResources.Exists()) {
 
@@ -43,7 +42,6 @@ JSCodeCompletion::~JSCodeCompletion()
         m_thread->Stop();
         wxDELETE(m_thread);
     }
-    m_lookup.Reset(NULL);
 }
 
 void JSCodeCompletion::CodeComplete(IEditor* editor)
@@ -55,6 +53,7 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
     CHECK_COND_RET(!buffer.IsEmpty());
 
+#if 0
     JSExpressionParser parser(buffer);
     JSObject::Ptr_t resolved = parser.Resolve(m_lookup, editor->GetFileName().GetFullPath());
     if(!resolved) {
@@ -125,27 +124,7 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         }
     });
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, 0, this);
+#endif
 }
 
-void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply)
-{
-    if(reply && reply->lookup) {
-        JSLookUpTable::Ptr_t other(reply->lookup);
-        m_lookup->CopyClassTable(other);
-        // Fill the lookup with the common global objects
-        m_lookup->PopulateWithGlobals();
-    }
-    wxLogMessage("JavaScript: parsing of Core API completed. %d files parsed (time elapsed: %ld ms)",
-                 reply->num_files,
-                 reply->total_time);
-    wxDELETE(reply);
-}
-
-int JSCodeCompletion::GetImgIndex(JSObject::Ptr_t obj)
-{
-    if(obj->IsClass())
-        return 0;
-    else if(obj->IsFunction())
-        return 9;
-    return 6; // Variable
-}
+void JSCodeCompletion::PraserThreadCompleted(JSParserThread::Reply* reply) { wxDELETE(reply); }

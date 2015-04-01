@@ -16,6 +16,19 @@ public:
     typedef std::vector<JSObject::Ptr_t> Vec_t;
     typedef std::map<wxString, JSObject::Ptr_t> Map_t;
 
+    enum eJSObjectFlags {
+        kJS_Undefined = (1 << 0),
+        kJS_GlobalScope = (1 << 1),
+        kJS_TypeSetByDocComment = (1 << 2),
+        kJS_AnonFunction = (1 << 3),
+    };
+
+    enum eKind {
+        kKindFunction = 0,
+        kKindClass,
+        kKindOther,
+    };
+
 protected:
     wxString m_name;
     wxString m_comment;
@@ -33,15 +46,10 @@ protected:
     // Function signature
     wxString m_signature;
 
-    enum eJSObjectFlags {
-        kJS_Undefined = (1 << 0),
-        kJS_GlobalScope = (1 << 1),
-        kJS_Class = (1 << 2),
-        kJS_Function = (1 << 3),
-        kJS_TypeSetByDocComment = (1 << 4),
-    };
+    // The object kind
+    eKind m_kind;
 
-protected:
+public:
     inline bool HasFlag(JSObject::eJSObjectFlags flag) const { return (m_flags & flag); }
     inline void EnableFlag(JSObject::eJSObjectFlags flag, bool b = true)
     {
@@ -60,20 +68,15 @@ public:
     virtual ~JSObject();
 
     inline bool IsUndefined() const { return HasFlag(kJS_Undefined); }
-    inline bool IsClass() const { return HasFlag(kJS_Class); }
-    inline bool IsGlobalScope() const { return HasFlag(kJS_Undefined); }
     inline void SetUndefined() { EnableFlag(kJS_Undefined); }
+    inline bool IsGlobalScope() const { return HasFlag(kJS_GlobalScope); }
     inline void SetGlobalScope() { EnableFlag(kJS_GlobalScope); }
-    inline void SetClass()
-    {
-        EnableFlag(kJS_Class);
-        EnableFlag(kJS_Function, false);
-    }
-    inline void SetFunction()
-    {
-        EnableFlag(kJS_Function);
-        EnableFlag(kJS_Class, false);
-    }
+
+    inline void SetClass() { m_kind = kKindClass; }
+    inline bool IsClass() const { return (m_kind == kKindClass); }
+
+    inline void SetFunction() { m_kind = kKindFunction; }
+    virtual bool IsFunction() const { return (m_kind == kKindFunction); }
 
     inline void SetTypeByDocComment() { EnableFlag(kJS_TypeSetByDocComment); }
 
@@ -111,11 +114,6 @@ public:
      * @brief print this object to the log file
      */
     virtual void Print(int depth);
-
-    /**
-     * @brief is this object a function?
-     */
-    virtual bool IsFunction() const { HasFlag(kJS_Function); }
 
     /**
      * @brief return this object properties

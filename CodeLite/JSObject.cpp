@@ -8,6 +8,7 @@ JSObject::JSObject()
     : m_line(wxNOT_FOUND)
     , m_parent(NULL)
     , m_flags(0)
+    , m_kind(kKindOther)
 {
     Extends("Object");
 }

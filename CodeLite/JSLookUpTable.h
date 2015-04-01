@@ -7,6 +7,7 @@
 #include <wx/string.h>
 #include "JSObject.h"
 
+class JSSourceFile;
 class WXDLLIMPEXP_CL JSLookUpTable
 {
     JSObject::Map_t m_classes;
@@ -15,6 +16,8 @@ class WXDLLIMPEXP_CL JSLookUpTable
     JSObject::Vec_t m_actualScopes;
     JSObject::Vec_t m_tempScopes;
     JSObject::Vec_t* m_scopes;
+    JSObject::Ptr_t m_This;
+
     int m_objSeed;
 
 public:
@@ -23,18 +26,21 @@ public:
 private:
     void InitializeGlobalScope();
     JSObject::Ptr_t DoFindSingleType(const wxString& type) const;
-    
+
 public:
     JSLookUpTable();
     virtual ~JSLookUpTable();
 
     wxString GenerateNewType();
-    
+
+    void SetThis(const JSObject::Ptr_t& This) { this->m_This = This; }
+    JSObject::Ptr_t GetThis() const { return m_This; }
+
     /**
      * @brief return object properties (parent's properties included)
      */
     JSObject::Map_t GetObjectProperties(JSObject::Ptr_t o) const;
-    
+
     void AddObject(JSObject::Ptr_t obj);
     JSObject::Ptr_t CurrentScope() const;
 
@@ -62,18 +68,18 @@ public:
      * @brief return an object with given path
      */
     JSObject::Ptr_t FindClass(const wxString& path) const;
-    
+
     /**
      * @brief the temp class table is maintained per file
      * and it contains annonymous classes (usually instantiated via JSONLiteral)
      */
     void ClearTempClassTable();
-    
+
     /**
      * @brief create new temporary object
      */
     JSObject::Ptr_t NewTempObject();
-    
+
     /**
      * @brief allocate new JS object
      */
@@ -120,11 +126,11 @@ public:
     /**
      * @brief initialize our class table from 'other'
      * @param other the source lookup table to copy from
-     * @param move if set to true, the class table is moved. i.e. 
+     * @param move if set to true, the class table is moved. i.e.
      * after the copy it will be cleared from the 'other' lookup
      */
     void CopyClassTable(JSLookUpTable::Ptr_t other, bool move = true);
-    
+
     /**
      * @brief return the global scope
      * @return
@@ -132,4 +138,14 @@ public:
     JSObject::Ptr_t GetGlobalScope() const { return m_globalScope; }
 };
 
+struct WXDLLIMPEXP_CL JSThisLocker {
+
+    JSLookUpTable::Ptr_t m_lookup;
+    JSObject::Ptr_t m_oldThis;
+    JSSourceFile* m_sourceFile;
+    int m_exitDepth;
+    
+    JSThisLocker(JSLookUpTable::Ptr_t lookup, int exitDepth, JSSourceFile* source, JSObject::Ptr_t This);
+    ~JSThisLocker();
+};
 #endif // JSLOOKUPTABLE_H

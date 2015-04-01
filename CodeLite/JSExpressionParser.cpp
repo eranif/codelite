@@ -210,7 +210,7 @@ JSExpressionParser::Resolve(JSLookUpTable::Ptr_t lookup, const wxString& filenam
         if(i == 0) {
             wxString classType = token.text;
             if(token.type == kJS_THIS) {
-                classType = lookup->CurrentScope()->GetType();
+                classType = lookup->GetThis()->GetType();
             }
             
             // check to see if token is class name or a variable

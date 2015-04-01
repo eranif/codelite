@@ -24,7 +24,7 @@ void JSDocComment::ProcessVarDoc(JSObject::Ptr_t obj)
 
 void JSDocComment::ProcessFunction(JSObject::Ptr_t func)
 {
-    if(!func->IsFunction()) return;
+    if(!func->IsFunction() && !func->IsClass()) return;
     
     JSObject::Map_t &variables = func->GetVariables();
     
@@ -60,7 +60,7 @@ void JSDocComment::ProcessFunction(JSObject::Ptr_t func)
 
 void JSDocComment::Process(JSObject::Ptr_t obj)
 {
-    if(obj->IsFunction()) {
+    if(obj->IsFunction() || obj->IsClass()) {
         ProcessFunction(obj);
     } else {
         ProcessVarDoc(obj);

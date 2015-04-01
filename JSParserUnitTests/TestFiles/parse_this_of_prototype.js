@@ -3,4 +3,4 @@ function MyClass() {
     this.lastName = "ifrah";
 }
 
-MyClass.prototype = function(e) { if(this. // This is resolved to MyClass
+MyClass.prototype = { prop: function(e) { if(this. // This is resolved to MyClass

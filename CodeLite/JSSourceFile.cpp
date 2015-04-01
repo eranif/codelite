@@ -29,6 +29,7 @@ JSSourceFile::JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxFileName& filena
     : m_filename(filename)
     , m_lookup(lookup)
     , m_depth(0)
+    , m_EOF(false)
 {
     wxString fileContent;
     FileUtils::ReadFileContent(filename, fileContent);
@@ -39,6 +40,7 @@ JSSourceFile::JSSourceFile(JSLookUpTable::Ptr_t lookup, const wxString& fileCont
     : m_filename(filename)
     , m_lookup(lookup)
     , m_depth(0)
+    , m_EOF(false)
 {
     m_scanner = ::jsLexerNew(fileContent, kJSLexerOpt_ReturnComments);
 }
@@ -81,7 +83,7 @@ void JSSourceFile::Parse(int exitDepth)
             break;
         case kJS_IDENTIFIER: {
             JSObject::Ptr_t klass = m_lookup->FindClass(token.text);
-            if(klass && klass->IsFunction()) {
+            if(klass) {
                 OnPropertyOrFunction(klass);
             }
         } break;
@@ -131,10 +133,10 @@ JSObject::Ptr_t JSSourceFile::OnFunction()
         // Anon function
         static int anonCounter = 0;
         JSObject::Ptr_t func = m_lookup->NewFunction();
-        // m_lookup->CurrentScope()->AddProperty(func);
+        // Mark this function as anon func
+        func->EnableFlag(JSObject::kJS_AnonFunction);
         func->SetName(wxString::Format("__anon%d", ++anonCounter));
         func->SetFile(m_filename);
-        // func->SetType(token.text);
         func->SetLine(token.lineNumber);
 
         AssociateComment(func);
@@ -153,6 +155,7 @@ void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
     JSLexerToken token;
     // read the signature of the function
     if(ReadSignature(func)) {
+
         // Read the open curly brace
         JS_NEXT_TOKEN();
         JS_CHECK_TYPE_RETURN('{');
@@ -163,11 +166,10 @@ void JSSourceFile::ParseFunction(JSObject::Ptr_t func)
         // Increase the scope
         m_lookup->PushScope(func);
 
+        // update the "this" property
         int exitDepth = m_depth - 1;
+        JSThisLocker thisLocker(m_lookup, exitDepth, this, func);
         Parse(exitDepth);
-
-        // FIXME: finalize the function by setting its type and param
-        // based on the document comment block
 
         // if the current scope not closed properly, don't remove it from list of scopes
         if(exitDepth == m_depth) {
@@ -340,6 +342,7 @@ void JSSourceFile::OnPropertyOrFunction(JSObject::Ptr_t This)
 
             // TypeClass.prototype = { ... }
             JSObjectParser op(*this, m_lookup);
+            JSThisLocker thisLocker(m_lookup, (GetDepth() - 1), this, This);
             if(op.Parse(This)) {
                 This->SetClass();
             }
@@ -355,6 +358,9 @@ void JSSourceFile::OnPropertyOrFunction(JSObject::Ptr_t This)
             JS_CHECK_TYPE_RETURN('=');
 
             // TypeClass.prototype.fooname =
+
+            // Set "this" to "TypeClass"
+            JSThisLocker thisLocker(m_lookup, GetDepth(), this, This);
             JSObjectParser op(*this, m_lookup);
             if(op.Parse(NULL)) {
                 JSObject::Ptr_t obj = op.GetResult()->NewInstance(prototypeName);
@@ -420,6 +426,10 @@ bool JSSourceFile::NextToken(JSLexerToken& token)
         return true;
     } else {
         bool res = ::jsLexerNext(m_scanner, token);
+        if(!res) {
+            m_EOF = true;
+        }
+
         if(res && token.type == kJS_C_COMMENT) {
             // doc comment
             m_lastCommentBlock = token;

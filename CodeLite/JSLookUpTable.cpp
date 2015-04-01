@@ -3,6 +3,7 @@
 #include "JSLexerAPI.h"
 #include <algorithm>
 #include <wx/tokenzr.h>
+#include "JSSourceFile.h"
 
 JSLookUpTable::JSLookUpTable()
     : m_objSeed(0)
@@ -16,13 +17,13 @@ JSLookUpTable::~JSLookUpTable() {}
 
 void JSLookUpTable::AddObject(JSObject::Ptr_t obj)
 {
-    if(obj->IsFunction()) {
+    if(obj->IsFunction() || obj->IsClass()) {
         // if the object is a function, we add it under its name
         std::map<wxString, JSObject::Ptr_t>::iterator iter = m_classes.find(obj->GetName());
         if(iter != m_classes.end()) m_classes.erase(iter);
         m_classes.insert(std::make_pair(obj->GetName(), obj));
     } else {
-        // if the object is a function, we add it under its name
+        // This usually means that we are registering an annonymous object
         std::map<wxString, JSObject::Ptr_t>::iterator iter = m_classes.find(obj->GetType());
         if(iter != m_classes.end()) m_classes.erase(iter);
         m_classes.insert(std::make_pair(obj->GetType(), obj));
@@ -70,7 +71,7 @@ JSObject::Ptr_t JSLookUpTable::FindClass(const wxString& path) const
             JSObject::Ptr_t o = DoFindSingleType(types.Item(i));
             if(o) {
                 if(!result) {
-                    result= new JSObject();
+                    result = new JSObject();
                 }
                 // Merge the object into 'results'
                 result->AddType(o->GetType(), false);
@@ -201,6 +202,7 @@ void JSLookUpTable::InitializeGlobalScope()
     m_globalScope.Reset(NULL);
     m_globalScope = NewFunction();
     m_globalScope->SetGlobalScope();
+    SetThis(m_globalScope);
 }
 
 void JSLookUpTable::CopyClassTable(JSLookUpTable::Ptr_t other, bool move)
@@ -238,4 +240,24 @@ JSObject::Map_t JSLookUpTable::GetObjectProperties(JSObject::Ptr_t o) const
         }
     });
     return properties;
+}
+
+JSThisLocker::JSThisLocker(JSLookUpTable::Ptr_t lookup, int exitDepth, JSSourceFile* source, JSObject::Ptr_t This)
+    : m_lookup(lookup)
+    , m_sourceFile(source)
+    , m_exitDepth(exitDepth)
+{
+    if(!This->HasFlag(JSObject::kJS_AnonFunction)) {
+        m_oldThis = m_lookup->GetThis();
+        m_lookup->SetThis(This);
+    } else {
+        m_oldThis.Reset(NULL);
+    }
+}
+
+JSThisLocker::~JSThisLocker()
+{
+    if(m_oldThis && m_sourceFile && (m_exitDepth == m_sourceFile->GetDepth())) {
+        m_lookup->SetThis(m_oldThis);
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "errorlogger.h"
 
 #include <list>
-#include <iostream>
 #include <set>
 
 /// @addtogroup Core
@@ -49,36 +48,12 @@ public:
     }
 
     virtual ~Check() {
-#if !defined(DJGPP) && !defined(__sun)
-        instances().remove(this);
-#endif
+        if (!_tokenizer)
+            instances().remove(this);
     }
 
     /** List of registered check classes. This is used by Cppcheck to run checks and generate documentation */
-    static std::list<Check *> &instances() {
-        static std::list<Check *> _instances;
-        return _instances;
-    }
-
-    /**
-     * analyse code - must be thread safe
-     * @param tokens The tokens to analyse
-     * @param result container where results are stored
-     */
-    virtual void analyse(const Token *tokens, std::set<std::string> &result) const {
-        // suppress compiler warnings
-        (void)tokens;
-        (void)result;
-    }
-
-    /**
-     * Save analysis data - the caller ensures thread safety
-     * @param data The data where the results are saved
-     */
-    virtual void saveAnalysisData(const std::set<std::string> &data) const {
-        // suppress compiler warnings
-        (void)data;
-    }
+    static std::list<Check *> &instances();
 
     /** run checks, the token list is not simplified */
     virtual void runChecks(const Tokenizer *, const Settings *, ErrorLogger *) {
@@ -103,12 +78,28 @@ public:
      * This is for for printout out the error list with --errorlist
      * @param errmsg Error message to write
      */
-    static void reportError(const ErrorLogger::ErrorMessage &errmsg) {
-        std::cout << errmsg.toXML(true, 1) << std::endl;
-    }
+    static void reportError(const ErrorLogger::ErrorMessage &errmsg);
 
     bool inconclusiveFlag() const {
         return _settings && _settings->inconclusive;
+    }
+
+    /** Base class used for whole-program analysis */
+    class FileInfo {
+    public:
+        FileInfo() {}
+        virtual ~FileInfo() {}
+    };
+
+    virtual FileInfo * getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const {
+        (void)tokenizer;
+        (void)settings;
+        return nullptr;
+    }
+
+    virtual void analyseWholeProgram(const std::list<FileInfo*> &fileInfo, ErrorLogger &errorLogger) {
+        (void)fileInfo;
+        (void)errorLogger;
     }
 
 protected:
@@ -117,13 +108,15 @@ protected:
     ErrorLogger * const _errorLogger;
 
     /** report an error */
-    void reportError(const Token *tok, const Severity::SeverityType severity, const std::string &id, const std::string &msg, bool inconclusive = false) {
+    template<typename T, typename U>
+    void reportError(const Token *tok, const Severity::SeverityType severity, const T id, const U msg, bool inconclusive = false) {
         std::list<const Token *> callstack(1, tok);
         reportError(callstack, severity, id, msg, inconclusive);
     }
 
     /** report an error */
-    void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const std::string &id, const std::string& msg, bool inconclusive = false) {
+    template<typename T, typename U>
+    void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const T id, const U msg, bool inconclusive = false) {
         ErrorLogger::ErrorMessage errmsg(callstack, _tokenizer?&_tokenizer->list:0, severity, id, msg, inconclusive);
         if (_errorLogger)
             _errorLogger->reportErr(errmsg);
@@ -138,22 +131,6 @@ private:
     void operator=(const Check &);
     Check(const Check &);
 };
-
-namespace std {
-    /** compare the names of Check classes, used when sorting the Check descendants */
-    template <> struct less<Check *> {
-        bool operator()(const Check *p1, const Check *p2) const {
-            return (p1->name() < p2->name());
-        }
-    };
-}
-
-inline Check::Check(const std::string &aname)
-    : _tokenizer(0), _settings(0), _errorLogger(0), _name(aname)
-{
-    instances().push_back(this);
-    instances().sort(std::less<Check *>());
-}
 
 /// @}
 //---------------------------------------------------------------------------

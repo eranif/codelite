@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,7 @@
 
 #include "config.h"
 #include "check.h"
-#include "settings.h"
 
-class Token;
 class Scope;
 class Variable;
 
@@ -52,6 +50,7 @@ public:
         CheckUninitVar checkUninitVar(tokenizer, settings, errorLogger);
         checkUninitVar.executionPaths();
         checkUninitVar.check();
+        checkUninitVar.deadPointer();
     }
 
     /** Check for uninitialized variables */
@@ -66,15 +65,27 @@ public:
     static bool isMemberVariableAssignment(const Token *tok, const std::string &membervar);
     bool isMemberVariableUsage(const Token *tok, bool isPointer, bool alloc, const std::string &membervar) const;
 
-    /**
-     * @brief Uninitialized variables: analyse functions to see how they work with uninitialized variables
-     * @param tokens [in] the token list
-     * @param func [out] names of functions that don't handle uninitialized variables well. the function names are added to the set. No clearing is made.
-     */
-    void analyse(const Token * tokens, std::set<std::string> &func) const;
+    /** ValueFlow-based checking for dead pointer usage */
+    void deadPointer();
+    void deadPointerError(const Token *pointer, const Token *alias);
 
-    /** Save analysis results */
-    void saveAnalysisData(const std::set<std::string> &data) const;
+    /* data for multifile checking */
+    class MyFileInfo : public Check::FileInfo {
+    public:
+        /* functions that must have initialized data */
+        std::set<std::string>  uvarFunctions;
+
+        /* functions calls with uninitialized data */
+        std::set<std::string>  functionCalls;
+    };
+
+    /** @brief Parse current TU and extract file info */
+    Check::FileInfo *getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const;
+
+    /** @brief Analyse all file infos for all TU */
+    void analyseWholeProgram(const std::list<Check::FileInfo*> &fileInfo, ErrorLogger &errorLogger);
+
+    void analyseFunctions(const Tokenizer *tokenizer, std::set<std::string> &f) const;
 
     /** @brief new type of check: check execution paths */
     void executionPaths();
@@ -96,6 +107,7 @@ private:
         c.uninitdataError(0, "varname");
         c.uninitvarError(0, "varname");
         c.uninitStructMemberError(0, "a.b");
+        c.deadPointerError(0,0);
     }
 
     static std::string myName() {
@@ -104,7 +116,9 @@ private:
 
     std::string classInfo() const {
         return "Uninitialized variables\n"
-               "* using uninitialized variables and data\n";
+               "- using uninitialized local variables\n"
+               "- using allocated data before it has been initialized\n"
+               "- using dead pointer\n";
     }
 };
 /// @}

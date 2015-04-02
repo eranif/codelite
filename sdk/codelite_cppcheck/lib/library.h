@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 #include "config.h"
 #include "path.h"
 #include "mathlib.h"
+#include "token.h"
 
 #include <map>
 #include <set>
 #include <string>
 #include <list>
-#include <algorithm>
 
 class TokenList;
 namespace tinyxml2 {
@@ -46,16 +46,40 @@ class CPPCHECKLIB Library {
 public:
     Library();
 
-    bool load(const char exename [], const char path []);
-    bool load(const tinyxml2::XMLDocument &doc);
+    enum ErrorCode { OK, FILE_NOT_FOUND, BAD_XML, BAD_ELEMENT, MISSING_ATTRIBUTE, BAD_ATTRIBUTE, BAD_ATTRIBUTE_VALUE, UNSUPPORTED_FORMAT, DUPLICATE_PLATFORM_TYPE, PLATFORM_TYPE_REDEFINED };
 
-    /** get allocation id for function (by name) */
-    int alloc(const std::string &name) const {
+    class Error {
+    public:
+        Error() : errorcode(OK) , reason("") {}
+        explicit Error(ErrorCode e) : errorcode(e) , reason("") {}
+        Error(ErrorCode e, const std::string &r) : errorcode(e), reason(r) {}
+        ErrorCode     errorcode;
+        std::string   reason;
+    };
+
+    Error load(const char exename [], const char path []);
+    Error load(const tinyxml2::XMLDocument &doc);
+
+    /** this is primarily meant for unit tests. it only returns true/false */
+    bool loadxmldata(const char xmldata[], std::size_t len);
+
+    /** get allocation id for function by name */
+    int alloc(const char name[]) const {
         return getid(_alloc, name);
     }
 
-    /** get deallocation id for function (by name) */
-    int dealloc(const std::string &name) const {
+    /** get allocation id for function */
+    int alloc(const Token *tok) const {
+        return tok->function() ? 0 : getid(_alloc, tok->str());
+    }
+
+    /** get deallocation id for function */
+    int dealloc(const Token *tok) const {
+        return tok->function() ? 0 : getid(_dealloc, tok->str());
+    }
+
+    /** get deallocation id for function by name */
+    int dealloc(const char name[]) const {
         return getid(_dealloc, name);
     }
 
@@ -83,8 +107,23 @@ public:
         return ((id > 0) && ((id & 1) == 1));
     }
 
+    bool formatstr_function(const std::string& funcname) const {
+        return _formatstr.find(funcname) != _formatstr.end();
+    }
+
+    bool formatstr_scan(const std::string& funcname) const {
+        return _formatstr.at(funcname).first;
+    }
+
+    bool formatstr_secure(const std::string& funcname) const {
+        return _formatstr.at(funcname).second;
+    }
+
     std::set<std::string> use;
     std::set<std::string> leakignore;
+    std::set<std::string> functionconst;
+    std::set<std::string> functionpure;
+    std::set<std::string> useretval;
 
     bool isnoreturn(const std::string &name) const {
         std::map<std::string, bool>::const_iterator it = _noreturn.find(name);
@@ -96,10 +135,16 @@ public:
         return (it != _noreturn.end() && !it->second);
     }
 
+    bool isScopeNoReturn(const Token *end, std::string *unknownFunc) const;
+
     class ArgumentChecks {
     public:
-        ArgumentChecks() {
-            notbool = notnull = notuninit = formatstr = strz = false;
+        ArgumentChecks() :
+            notbool(false),
+            notnull(false),
+            notuninit(false),
+            formatstr(false),
+            strz(false) {
         }
 
         bool         notbool;
@@ -108,6 +153,16 @@ public:
         bool         formatstr;
         bool         strz;
         std::string  valid;
+
+        class MinSize {
+        public:
+            enum Type {NONE,STRLEN,ARGVALUE,SIZEOF,MUL};
+            MinSize(Type t, int a) : type(t), arg(a), arg2(0) {}
+            Type type;
+            int arg;
+            int arg2;
+        };
+        std::list<MinSize> minsizes;
     };
 
     // function name, argument nr => argument data
@@ -140,9 +195,27 @@ public:
 
     bool isargvalid(const std::string &functionName, int argnr, const MathLib::bigint argvalue) const;
 
-    std::string validarg(const std::string &functionName, int argnr) const {
+    const std::string& validarg(const std::string &functionName, int argnr) const {
         const ArgumentChecks *arg = getarg(functionName, argnr);
-        return arg ? arg->valid : std::string("");
+        return arg ? arg->valid : emptyString;
+    }
+
+    bool hasminsize(const std::string &functionName) const {
+        std::map<std::string, std::map<int, ArgumentChecks> >::const_iterator it1;
+        it1 = argumentChecks.find(functionName);
+        if (it1 == argumentChecks.end())
+            return false;
+        std::map<int,ArgumentChecks>::const_iterator it2;
+        for (it2 = it1->second.begin(); it2 != it1->second.end(); ++it2) {
+            if (!it2->second.minsizes.empty())
+                return true;
+        }
+        return false;
+    }
+
+    const std::list<ArgumentChecks::MinSize> *argminsizes(const std::string &functionName, int argnr) const {
+        const ArgumentChecks *arg = getarg(functionName, argnr);
+        return arg ? &arg->minsizes : nullptr;
     }
 
     bool markupFile(const std::string &path) const {
@@ -183,26 +256,24 @@ public:
         return offset;
     }
 
-    std::string blockstart(const std::string &file) const {
-        std::string start;
+    const std::string& blockstart(const std::string &file) const {
         const std::map<std::string, CodeBlock>::const_iterator map_it
             = _executableblocks.find(Path::getFilenameExtensionInLowerCase(file));
 
         if (map_it != _executableblocks.end()) {
-            start = map_it->second.start();
+            return map_it->second.start();
         }
-        return start;
+        return emptyString;
     }
 
-    std::string blockend(const std::string &file) const {
-        std::string end;
+    const std::string& blockend(const std::string &file) const {
         const std::map<std::string, CodeBlock>::const_iterator map_it
             = _executableblocks.find(Path::getFilenameExtensionInLowerCase(file));
 
         if (map_it != _executableblocks.end()) {
-            end = map_it->second.end();
+            return map_it->second.end();
         }
-        return end;
+        return emptyString;
     }
 
     bool iskeyword(const std::string &file, const std::string &keyword) const {
@@ -231,27 +302,86 @@ public:
         return (it != _importers.end() && it->second.count(importer) > 0);
     }
 
-    bool isreflection(const std::string& file, const std::string &token) const {
-        const std::map<std::string,std::map<std::string,int> >::const_iterator it
-            = _reflection.find(Path::getFilenameExtensionInLowerCase(file));
-        return (it != _reflection.end() && it->second.count(token));
+    bool isreflection(const std::string &token) const {
+        const std::map<std::string,int>::const_iterator it
+            = _reflection.find(token);
+        return it != _reflection.end();
     }
 
-    int reflectionArgument(const std::string& file, const std::string &token) const {
+    int reflectionArgument(const std::string &token) const {
         int argIndex = -1;
-        const std::map<std::string,std::map<std::string,int> >::const_iterator it
-            = _reflection.find(Path::getFilenameExtensionInLowerCase(file));
+        const std::map<std::string,int>::const_iterator it
+            = _reflection.find(token);
         if (it != _reflection.end()) {
-            const std::map<std::string,int>::const_iterator it2 =
-                it->second.find(token);
-            if (it2 != it->second.end()) {
-                argIndex = it2->second;
-            }
+            argIndex = it->second;
         }
         return argIndex;
     }
 
     std::set<std::string> returnuninitdata;
+    std::vector<std::string> defines; // to provide some library defines
+
+    struct PodType {
+        unsigned int   size;
+        char           sign;
+    };
+    const struct PodType *podtype(const std::string &name) const {
+        const std::map<std::string, struct PodType>::const_iterator it = podtypes.find(name);
+        return (it != podtypes.end()) ? &(it->second) : nullptr;
+    }
+
+    struct PlatformType {
+        PlatformType()
+            : _signed(false)
+            , _unsigned(false)
+            , _long(false)
+            , _pointer(false)
+            , _ptr_ptr(false)
+            , _const_ptr(false) {
+        }
+        bool operator == (const PlatformType & type) const {
+            return (_type == type._type &&
+                    _signed == type._signed &&
+                    _unsigned == type._unsigned &&
+                    _long == type._long &&
+                    _pointer == type._pointer &&
+                    _ptr_ptr == type._ptr_ptr &&
+                    _const_ptr == type._const_ptr);
+        }
+        bool operator != (const PlatformType & type) const {
+            return !(*this == type);
+        }
+        std::string _type;
+        bool _signed;
+        bool _unsigned;
+        bool _long;
+        bool _pointer;
+        bool _ptr_ptr;
+        bool _const_ptr;
+    };
+
+    struct Platform {
+        const PlatformType *platform_type(const std::string &name) const {
+            const std::map<std::string, struct PlatformType>::const_iterator it = _platform_types.find(name);
+            return (it != _platform_types.end()) ? &(it->second) : nullptr;
+        }
+        std::map<std::string, PlatformType> _platform_types;
+    };
+
+    const PlatformType *platform_type(const std::string &name, const std::string & platform) const {
+        const std::map<std::string, Platform>::const_iterator it = platforms.find(platform);
+
+        if (it != platforms.end()) {
+            const PlatformType * const type = it->second.platform_type(name);
+
+            if (type)
+                return type;
+        }
+
+        const std::map<std::string, PlatformType>::const_iterator it2 = platform_types.find(name);
+
+        return (it2 != platform_types.end()) ? &(it2->second) : nullptr;
+    }
 
 private:
     class ExportedFunctions {
@@ -289,10 +419,10 @@ private:
         void addBlock(const std::string& blockName) {
             _blocks.insert(blockName);
         }
-        std::string start() const {
+        const std::string& start() const {
             return _start;
         }
-        std::string end() const {
+        const std::string& end() const {
             return _end;
         }
         int offset() const {
@@ -309,6 +439,7 @@ private:
         std::set<std::string> _blocks;
     };
     int allocid;
+    std::set<std::string> _files;
     std::map<std::string, int> _alloc; // allocation functions
     std::map<std::string, int> _dealloc; // deallocation functions
     std::map<std::string, bool> _noreturn; // is function noreturn?
@@ -320,19 +451,13 @@ private:
     std::map<std::string, CodeBlock> _executableblocks; // keywords for blocks of executable code
     std::map<std::string, ExportedFunctions> _exporters; // keywords that export variables/functions to libraries (meta-code/macros)
     std::map<std::string, std::set<std::string> > _importers; // keywords that import variables/functions
-    std::map<std::string,std::map<std::string,int> > _reflection; // invocation of reflection
+    std::map<std::string,int> _reflection; // invocation of reflection
+    std::map<std::string, std::pair<bool, bool> > _formatstr; // Parameters for format string checking
+    std::map<std::string, struct PodType> podtypes; // pod types
+    std::map<std::string, PlatformType> platform_types; // platform independent typedefs
+    std::map<std::string, Platform> platforms; // platform dependent typedefs
 
-
-    const ArgumentChecks * getarg(const std::string &functionName, int argnr) const {
-        std::map<std::string, std::map<int, ArgumentChecks> >::const_iterator it1;
-        it1 = argumentChecks.find(functionName);
-        if (it1 != argumentChecks.end()) {
-            const std::map<int,ArgumentChecks>::const_iterator it2 = it1->second.find(argnr);
-            if (it2 != it1->second.end())
-                return &it2->second;
-        }
-        return NULL;
-    }
+    const ArgumentChecks * getarg(const std::string &functionName, int argnr) const;
 
     static int getid(const std::map<std::string,int> &data, const std::string &name) {
         const std::map<std::string,int>::const_iterator it = data.find(name);

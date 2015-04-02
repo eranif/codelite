@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,12 @@
 #define checkunusedvarH
 //---------------------------------------------------------------------------
 
-#include <map>
-
 #include "config.h"
 #include "check.h"
-#include "settings.h"
+
+#include <map>
 
 class Type;
-class Token;
 class Scope;
 class Variables;
 
@@ -75,6 +73,7 @@ public:
 
 private:
     bool isRecordTypeWithoutSideEffects(const Type* type);
+    bool isEmptyType(const Type* type);
 
     // Error messages..
     void unusedStructMemberError(const Token *tok, const std::string &structname, const std::string &varname);
@@ -102,14 +101,17 @@ private:
         return "UnusedVar checks\n"
 
                // style
-               "* unused variable\n"
-               "* allocated but unused variable\n"
-               "* unred variable\n"
-               "* unassigned variable\n"
-               "* unused struct member\n";
+               "- unused variable\n"
+               "- allocated but unused variable\n"
+               "- unred variable\n"
+               "- unassigned variable\n"
+               "- unused struct member\n";
     }
 
     std::map<const Type *,bool> isRecordTypeWithoutSideEffectsMap;
+
+    std::map<const Type *,bool> isEmptyTypeMap;
+
 };
 /// @}
 //---------------------------------------------------------------------------

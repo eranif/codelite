@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,13 @@
 #include "config.h"
 #include "settings.h"
 #include "errorlogger.h"
-#include "checkunusedfunctions.h"
+#include "check.h"
 
 #include <string>
 #include <list>
 #include <istream>
+
+class Tokenizer;
 
 /// @addtogroup Core
 /// @{
@@ -81,12 +83,6 @@ public:
     unsigned int check(const std::string &path, const std::string &content);
 
     /**
-     * @brief Check function usage.
-     * @note Call this after all files has been checked
-     */
-    void checkFunctionUsage();
-
-    /**
      * @brief Get reference to current settings.
      * @return a reference to current settings
      */
@@ -127,10 +123,14 @@ public:
     void analyseFile(std::istream &f, const std::string &filename);
 
     void tooManyConfigsError(const std::string &file, const std::size_t numberOfConfigurations);
+    void purgedConfigurationMessage(const std::string &file, const std::string& configuration);
 
     void dontSimplify() {
         _simplify = false;
     }
+
+    /** analyse whole program, run this after all TUs has been scanned. */
+    void analyseWholeProgram();
 
 private:
 
@@ -140,13 +140,13 @@ private:
     /**
      * @brief Process one file.
      * @param filename file name
-     * @param fileContent If this is non-empty then the file will not be loaded
+     * @param fileStream stream the file content can be read from
      * @return amount of errors found
      */
-    unsigned int processFile(const std::string& filename, const std::string& fileContent);
+    unsigned int processFile(const std::string& filename, std::istream& fileStream);
 
     /** @brief Check file */
-    void checkFile(const std::string &code, const char FileName[]);
+    bool checkFile(const std::string &code, const char FileName[], std::set<unsigned long long>& checksums);
 
     /**
      * @brief Execute rules, if any
@@ -194,7 +194,6 @@ private:
      */
     virtual void reportInfo(const ErrorLogger::ErrorMessage &msg);
 
-    CheckUnusedFunctions _checkUnusedFunctions;
     ErrorLogger &_errorLogger;
 
     /** @brief Current preprocessor configuration */
@@ -209,6 +208,9 @@ private:
 
     /** Simplify code? true by default */
     bool _simplify;
+
+    /** File info used for whole program analysis */
+    std::list<Check::FileInfo*> fileInfo;
 };
 
 /// @}

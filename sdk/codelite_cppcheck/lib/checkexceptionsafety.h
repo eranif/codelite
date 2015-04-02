@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,6 @@
 
 #include "config.h"
 #include "check.h"
-#include "settings.h"
-
-class Token;
 
 /// @addtogroup Checks
 /// @{
@@ -61,6 +58,8 @@ public:
         checkExceptionSafety.deallocThrow();
         checkExceptionSafety.checkRethrowCopy();
         checkExceptionSafety.checkCatchExceptionByValue();
+        checkExceptionSafety.nothrowThrows();
+        checkExceptionSafety.unhandledExceptionSpecification();
     }
 
     /** Don't throw exceptions in destructors */
@@ -75,10 +74,20 @@ public:
     /** @brief %Check for exceptions that are caught by value instead of by reference */
     void checkCatchExceptionByValue();
 
+    /** @brief %Check for functions that throw that shouldn't */
+    void nothrowThrows();
+
+    /** @brief %Check for unhandled exception specification */
+    void unhandledExceptionSpecification();
+
 private:
     /** Don't throw exceptions in destructors */
-    void destructorsError(const Token * const tok) {
-        reportError(tok, Severity::error, "exceptThrowInDestructor", "Exception thrown in destructor.");
+    void destructorsError(const Token * const tok, const std::string &className) {
+        reportError(tok, Severity::warning, "exceptThrowInDestructor",
+                    "Class " + className + " is not safe, destructor throws exception\n"
+                    "The class " + className + " is not safe because its destructor "
+                    "throws an exception. If " + className + " is used and an exception "
+                    "is thrown that is caught in an outer scope the program will terminate.");
     }
 
     void deallocThrowError(const Token * const tok, const std::string &varname) {
@@ -100,13 +109,50 @@ private:
                     "as a (const) reference which is usually recommended in C++.");
     }
 
+    /** Don't throw exceptions in noexcept functions */
+    void noexceptThrowError(const Token * const tok) {
+        reportError(tok, Severity::error, "exceptThrowInNoexecptFunction", "Exception thrown in noexcept function.");
+    }
+
+    /** Don't throw exceptions in throw() functions */
+    void nothrowThrowError(const Token * const tok) {
+        reportError(tok, Severity::error, "exceptThrowInNoThrowFunction", "Exception thrown in throw() function.");
+    }
+
+    /** Don't throw exceptions in __attribute__((nothrow))  functions */
+    void nothrowAttributeThrowError(const Token * const tok) {
+        reportError(tok, Severity::error, "exceptThrowInAttributeNoThrowFunction", "Exception thrown in __attribute__((nothrow)) function.");
+    }
+
+    /** Don't throw exceptions in __declspec(nothrow)  functions */
+    void nothrowDeclspecThrowError(const Token * const tok) {
+        reportError(tok, Severity::error, "exceptThrowInDeclspecNoThrowFunction", "Exception thrown in __declspec(nothrow) function.");
+    }
+
+    /** Missing exception specification */
+    void unhandledExceptionSpecificationError(const Token * const tok1, const Token * const tok2, const std::string & funcname) {
+        std::string str1(tok1 ? tok1->str() : "foo");
+        std::list<const Token*> locationList;
+        locationList.push_back(tok1);
+        locationList.push_back(tok2);
+        reportError(locationList, Severity::style, "unhandledExceptionSpecification",
+                    "Unhandled exception specification when calling function " + str1 + "().\n"
+                    "Unhandled exception specification when calling function " + str1 + "(). "
+                    "Either use a try/catch around the function call, or add a exception specification for " + funcname + "() also.", true);
+    }
+
     /** Generate all possible errors (for --errorlist) */
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
         CheckExceptionSafety c(0, settings, errorLogger);
-        c.destructorsError(0);
+        c.destructorsError(0, "Class");
         c.deallocThrowError(0, "p");
         c.rethrowCopyError(0, "varname");
         c.catchExceptionByValueError(0);
+        c.noexceptThrowError(0);
+        c.nothrowThrowError(0);
+        c.nothrowAttributeThrowError(0);
+        c.nothrowDeclspecThrowError(0);
+        c.unhandledExceptionSpecificationError(0, 0, "funcname");
     }
 
     /** Short description of class (for --doc) */
@@ -117,10 +163,15 @@ private:
     /** wiki formatted description of the class (for --doc) */
     std::string classInfo() const {
         return "Checking exception safety\n"
-               "* Throwing exceptions in destructors\n"
-               "* Throwing exception during invalid state\n"
-               "* Throwing a copy of a caught exception instead of rethrowing the original exception\n"
-               "* Exception caught by value instead of by reference\n";
+               "- Throwing exceptions in destructors\n"
+               "- Throwing exception during invalid state\n"
+               "- Throwing a copy of a caught exception instead of rethrowing the original exception\n"
+               "- Exception caught by value instead of by reference\n"
+               "- Throwing exception in noexcept function\n"
+               "- Throwing exception in nothrow() function\n"
+               "- Throwing exception in __attribute__((nothrow)) function\n"
+               "- Throwing exception in __declspec(nothrow) function\n"
+               "- Unhandled exception specification when calling function foo()\n";
     }
 };
 /// @}

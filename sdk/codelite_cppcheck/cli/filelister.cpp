@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +149,7 @@ bool FileLister::isDirectory(const std::string &path)
 
 bool FileLister::fileExists(const std::string &path)
 {
-    return (MyFileExists(path) == TRUE);
+    return (MyFileExists(path) != FALSE);
 }
 
 
@@ -158,6 +158,10 @@ bool FileLister::fileExists(const std::string &path)
 ///////////////////////////////////////////////////////////////////////////////
 ////// This code is POSIX-style systems ///////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+#if defined(__CYGWIN__)
+#undef __STRICT_ANSI__
+#endif
 
 #include <glob.h>
 #include <unistd.h>

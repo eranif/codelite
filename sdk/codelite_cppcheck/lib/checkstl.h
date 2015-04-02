@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #include "config.h"
 #include "check.h"
 
-class Token;
 
 /// @addtogroup Checks
 /// @{
@@ -66,6 +65,7 @@ public:
         checkStl.size();
         checkStl.redundantCondition();
         checkStl.missingComparison();
+        checkStl.readingEmptyStlContainer();
     }
 
 
@@ -146,6 +146,9 @@ public:
      */
     void dereferenceErasedError(const Token* erased, const Token* deref, const std::string &itername);
 
+    /** @brief Reading from empty stl container */
+    void readingEmptyStlContainer();
+
 private:
 
     /**
@@ -184,6 +187,8 @@ private:
 
     void dereferenceInvalidIteratorError(const Token* deref, const std::string &itername);
 
+    void readingEmptyStlContainerError(const Token *tok);
+
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
         CheckStl c(0, settings, errorLogger);
         c.invalidIteratorError(0, "iterator");
@@ -211,6 +216,7 @@ private:
         c.uselessCallsEmptyError(0);
         c.uselessCallsRemoveError(0, "remove");
         c.dereferenceInvalidIteratorError(0, "i");
+        c.readingEmptyStlContainerError(0);
     }
 
     static std::string myName() {
@@ -219,18 +225,19 @@ private:
 
     std::string classInfo() const {
         return "Check for invalid usage of STL:\n"
-               "* out of bounds errors\n"
-               "* misuse of iterators when iterating through a container\n"
-               "* mismatching containers in calls\n"
-               "* dereferencing an erased iterator\n"
-               "* for vectors: using iterator/pointer after push_back has been used\n"
-               "* optimisation: use empty() instead of size() to guarantee fast code\n"
-               "* suspicious condition when using find\n"
-               "* redundant condition\n"
-               "* common mistakes when using string::c_str()\n"
-               "* using auto pointer (auto_ptr)\n"
-               "* useless calls of string and STL functions\n"
-               "* dereferencing an invalid iterator\n";
+               "- out of bounds errors\n"
+               "- misuse of iterators when iterating through a container\n"
+               "- mismatching containers in calls\n"
+               "- dereferencing an erased iterator\n"
+               "- for vectors: using iterator/pointer after push_back has been used\n"
+               "- optimisation: use empty() instead of size() to guarantee fast code\n"
+               "- suspicious condition when using find\n"
+               "- redundant condition\n"
+               "- common mistakes when using string::c_str()\n"
+               "- using auto pointer (auto_ptr)\n"
+               "- useless calls of string and STL functions\n"
+               "- dereferencing an invalid iterator\n"
+               "- reading from empty STL container\n";
     }
 };
 /// @}

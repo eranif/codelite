@@ -137,6 +137,20 @@
     <File Name="lib/tokenlist.cpp"/>
     <File Name="lib/tokenlist.h"/>
     <File Name="lib/version.h"/>
+    <File Name="lib/check.cpp"/>
+    <File Name="lib/checkcondition.cpp"/>
+    <File Name="lib/checkcondition.h"/>
+    <File Name="lib/checkobsolescentfunctions.cpp"/>
+    <File Name="lib/checkobsolescentfunctions.h"/>
+    <File Name="lib/checkstring.cpp"/>
+    <File Name="lib/checkstring.h"/>
+    <File Name="lib/checktype.cpp"/>
+    <File Name="lib/checktype.h"/>
+    <File Name="lib/checkvaarg.cpp"/>
+    <File Name="lib/checkvaarg.h"/>
+    <File Name="lib/cxx11emu.h"/>
+    <File Name="lib/valueflow.cpp"/>
+    <File Name="lib/valueflow.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

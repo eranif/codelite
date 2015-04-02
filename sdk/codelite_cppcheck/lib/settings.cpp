@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,11 @@
 
 Settings::Settings()
     : _terminate(false),
-      debug(false), debugwarnings(false), debugFalsePositive(false),
+      debug(false),
+      debugwarnings(false),
+      debugFalsePositive(false),
+      dump(false),
+      exceptionHandling(false),
       inconclusive(false), experimental(false),
       _errorsOnly(false),
       _inlineSuppressions(false),
@@ -34,6 +38,7 @@ Settings::Settings()
       _relativePaths(false),
       _xml(false), _xml_version(1),
       _jobs(1),
+      _loadAverage(0),
       _exitCode(0),
       _showtime(SHOWTIME_NONE),
       _maxConfigs(12),
@@ -83,7 +88,7 @@ std::string Settings::addEnabled(const std::string &str)
         id.insert("information");
         id.insert("missingInclude");
         id.insert("unusedFunction");
-#ifndef NDEBUG
+#ifdef CHECK_INTERNAL
         id.insert("internal");
 #endif
     }
@@ -109,11 +114,6 @@ std::string Settings::addEnabled(const std::string &str)
     }
 
     return std::string("");
-}
-
-bool Settings::isEnabled(const std::string &str) const
-{
-    return bool(_enabled.find(str) != _enabled.end());
 }
 
 

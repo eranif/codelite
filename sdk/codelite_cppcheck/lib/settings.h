@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,12 @@ public:
     /** @brief Is --debug-fp given? */
     bool debugFalsePositive;
 
+    /** @brief Is --dump given? */
+    bool dump;
+
+    /** @brief Is --exception-handling given */
+    bool exceptionHandling;
+
     /** @brief Inconclusive checks */
     bool inconclusive;
 
@@ -112,6 +118,9 @@ public:
         time. Default is 1. (-j N) */
     unsigned int _jobs;
 
+    /** @brief Load average value */
+    unsigned int _loadAverage;
+
     /** @brief If errors are found, this value is returned from main().
         Default value is 0. */
     int _exitCode;
@@ -143,7 +152,10 @@ public:
      * @param str id for the extra check, e.g. "style"
      * @return true if the check is enabled.
      */
-    bool isEnabled(const std::string &str) const;
+    template<typename T>
+    bool isEnabled(T&& str) const {
+        return bool(_enabled.find(str) != _enabled.end());
+    }
 
     /**
      * @brief Enable extra checks by id. See isEnabled()
@@ -152,6 +164,13 @@ public:
      * @return error message. empty upon success
      */
     std::string addEnabled(const std::string &str);
+
+    /**
+     * @brief Disables all severities, except from error.
+     */
+    void clearEnabled() {
+        _enabled.clear();
+    }
 
     enum Language {
         None, C, CPP
@@ -174,6 +193,10 @@ public:
 
     /** @brief forced includes given by the user */
     std::list<std::string> userIncludes;
+
+    /** @brief include paths excluded from checking the configuration */
+    std::set<std::string> configExcludePaths;
+
 
     /** @brief --report-progress */
     bool reportProgress;
@@ -251,6 +274,20 @@ public:
                platformType == Win32W ||
                platformType == Win64;
     }
+
+    /**
+     * @brief return true if a file is to be excluded from configuration checking
+     * @return true for the file to be excluded.
+     */
+    bool configurationExcluded(const std::string &file) const {
+        for (std::set<std::string>::const_iterator i=configExcludePaths.begin(); i!=configExcludePaths.end(); ++i) {
+            if (file.length()>=i->length() && file.compare(0,i->length(),*i)==0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 };
 
 /// @}

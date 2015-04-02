@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 #include <list>
 #include <string>
 
-class Token;
 class Scope;
 class Function;
 class Variable;
@@ -91,7 +90,7 @@ public:
     }
 
     /** @brief What type of allocation are used.. the "Many" means that several types of allocation and deallocation are used */
-    enum AllocType { No, Malloc, New, NewArray, File, Fd, Pipe, Dir, OtherMem, OtherRes, Many };
+    enum AllocType { No, Malloc, New, NewArray, File, Fd, Pipe, OtherMem, OtherRes, Many };
 
     void memoryLeak(const Token *tok, const std::string &varname, AllocType alloctype);
 
@@ -204,6 +203,7 @@ public:
 
     /** @brief Unit testing : testing the white list */
     static bool test_white_list(const std::string &funcname);
+    static bool test_white_list_with_lib(const std::string &funcname, const Settings *settings);
 
     /** @brief Perform checking */
     void check();
@@ -296,9 +296,6 @@ public:
      */
     void checkScope(const Token *Tok1, const std::string &varname, unsigned int varid, bool classmember, unsigned int sz);
 
-    /** parse tokens to see what functions are "noreturn" */
-    void parse_noreturn();
-
 private:
     /** Report all possible errors (for the --errorlist) */
     void getErrorMessages(ErrorLogger *e, const Settings *settings) const {
@@ -330,12 +327,6 @@ private:
     std::string classInfo() const {
         return "Is there any allocated memory when a function goes out of scope\n";
     }
-
-    /** Function names for functions that are "noreturn" */
-    std::set<std::string> noreturn;
-
-    /** Function names for functions that are not "noreturn" */
-    std::set<std::string> notnoreturn;
 
     const SymbolDatabase *symbolDatabase;
 };

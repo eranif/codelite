@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,13 +40,26 @@ public:
         _settings = settings;
     }
 
+    /** @return the source file path. e.g. "file.cpp" */
+    const std::string& getSourceFilePath() const;
+
+    /** Is the code C. Used for bailouts */
+    bool isC() const {
+        return _isC;
+    }
+
+    /** Is the code CPP. Used for bailouts */
+    bool isCPP() const {
+        return _isCPP;
+    }
+
     /**
      * Delete all tokens in given token list
      * @param tok token list to delete
      */
     static void deleteTokens(Token *tok);
 
-    void addtoken(const char str[], const unsigned int lineno, const unsigned int fileno, bool split = false);
+    void addtoken(const std::string & str, const unsigned int lineno, const unsigned int fileno, bool split = false);
     void addtoken(const Token *tok, const unsigned int lineno, const unsigned int fileno);
 
     static void insertTokens(Token *dest, const Token *src, unsigned int n);
@@ -60,10 +73,13 @@ public:
      * @param code input stream for code
      * @param file0 source file name
      */
-    bool createTokens(std::istream &code, const std::string& file0 = "");
+    bool createTokens(std::istream &code, const std::string& file0 = emptyString);
 
     /** Deallocate list */
     void deallocateTokens();
+
+    /** append file name if seen the first time; return its index in any case */
+    unsigned int appendFileIfNew(const std::string &file);
 
     /** get first token of list */
     const Token *front() const {
@@ -104,6 +120,12 @@ public:
      */
     std::string fileLine(const Token *tok) const;
 
+    /**
+    * Calculates a 64-bit checksum of the token list used to compare
+    * multiple token lists with each other as quickly as possible.
+    */
+    unsigned long long calculateChecksum() const;
+
     void createAst();
 
 private:
@@ -124,6 +146,9 @@ private: /// private
 
     /** settings */
     const Settings* _settings;
+
+    /** File is known to be C/C++ code */
+    bool _isC, _isCPP;
 };
 
 /// @}

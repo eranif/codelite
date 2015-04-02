@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *
  * @mainpage Cppcheck
- * @version 1.63
+ * @version 1.68
  *
  * @section overview_sec Overview
  * Cppcheck is a simple tool for static analysis of C/C++ code.
@@ -31,6 +31,7 @@
  *  - SymbolDatabase = Information about all types/variables/functions/etc
  *    in the current translation unit
  *  - Library = Information about functions
+ *  - Value flow analysis => possible values for each token
  *
  * Use --debug on the command line to see debug output for the token list
  * and the syntax tree. If both --debug and --verbose is used, the symbol
@@ -85,7 +86,7 @@ void CheckOther::checkZeroDivision()
  *   - Macros are expanded
  * -# Tokenize the file (see Tokenizer)
  * -# Run the runChecks of all check classes.
- * -# Simplify the tokenlist (Tokenizer::simplifyTokenList)
+ * -# Simplify the tokenlist (Tokenizer::simplifyTokenList2)
  * -# Run the runSimplifiedChecks of all check classes
  *
  * When errors are found, they are reported back to the CppCheckExecutor through the ErrorLogger interface
@@ -93,6 +94,14 @@ void CheckOther::checkZeroDivision()
 
 
 #include "cppcheckexecutor.h"
+
+#include <cstdio>
+#include <cstdlib>
+
+#ifdef _WIN32
+#include <windows.h>
+static char exename[1024] = {0};
+#endif
 
 /**
  * Main function of cppcheck
@@ -103,8 +112,31 @@ void CheckOther::checkZeroDivision()
  */
 int main(int argc, char* argv[])
 {
+    // MS Visual C++ memory leak debug tracing
+#if defined(_MSC_VER) && defined(_DEBUG)
+    _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
     CppCheckExecutor exec;
-    return exec.check(argc, argv);
+#ifdef _WIN32
+    GetModuleFileNameA(NULL, exename, sizeof(exename)/sizeof(exename[0])-1);
+    argv[0] = exename;
+#endif
+
+#ifdef NDEBUG
+    try {
+#endif
+        return exec.check(argc, argv);
+#ifdef NDEBUG
+    } catch (const InternalError& e) {
+        printf("%s\n", e.errorMessage.c_str());
+    } catch (const std::exception& error) {
+        printf("%s\n", error.what());
+    } catch (...) {
+        printf("Unknown exception\n");
+    }
+    return EXIT_FAILURE;
+#endif
 }
 
 

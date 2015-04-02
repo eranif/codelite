@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ static bool isaddr(const Variable *var)
 /** Is given variable an integer variable */
 static bool isint(const Variable *var)
 {
-    return (var && Token::Match(var->nameToken()->previous(), "int|long|DWORD %var% !!["));
+    return (var && var->isIntegralType() && !var->isArrayOrPointer() && var->typeStartToken()->str() != "bool");
 }
 
 void Check64BitPortability::pointerassignment()
@@ -74,10 +74,7 @@ void Check64BitPortability::pointerassignment()
                         type = INT;
                     else if (type == PTR && Token::Match(tok2, "- %var%") && isaddr(tok2->next()->variable()))
                         type = PTRDIFF;
-                    else if (Token::Match(tok2, "(")) {
-                        type = NO;
-                        break;
-                    } else if (tok2->str() == "(") {
+                    else if (tok2->str() == "(") {
                         // TODO: handle parentheses
                         type = NO;
                         break;
@@ -99,18 +96,23 @@ void Check64BitPortability::pointerassignment()
     for (std::size_t i = 0; i < functions; ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
         for (const Token *tok = scope->classStart; tok && tok != scope->classEnd; tok = tok->next()) {
-            if (Token::Match(tok, "[;{}] %var% = %var% [;+]")) {
+            if (Token::Match(tok, "[;{}] %var% = %var%")) {
+                const Token* tok2 = tok->tokAt(3);
+                while (Token::Match(tok2->next(), ".|::"))
+                    tok2 = tok2->tokAt(2);
+                if (!Token::Match(tok2, "%var% ;|+"))
+                    continue;
 
                 const Variable *var1(tok->next()->variable());
-                const Variable *var2(tok->tokAt(3)->variable());
+                const Variable *var2(tok2->variable());
 
-                if (isaddr(var1) && isint(var2) && tok->strAt(4) != "+")
+                if (isaddr(var1) && isint(var2) && tok2->strAt(1) != "+")
                     assignmentIntegerToAddressError(tok->next());
 
-                else if (isint(var1) && isaddr(var2) && !tok->tokAt(3)->isPointerCompare()) {
+                else if (isint(var1) && isaddr(var2) && !tok2->isPointerCompare()) {
                     // assigning address => warning
                     // some trivial addition => warning
-                    if (Token::Match(tok->tokAt(4), "+ %any% !!;"))
+                    if (Token::Match(tok2->next(), "+ %any% !!;"))
                         continue;
 
                     assignmentAddressToIntegerError(tok->next());

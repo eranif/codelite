@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,11 @@
 
 #include "config.h"
 #include "check.h"
-#include "settings.h"
 #include "mathlib.h"
 #include <list>
 #include <vector>
 #include <string>
 
-class ErrorLogger;
-class Token;
-class Tokenizer;
 class Variable;
 
 /// @addtogroup Checks
@@ -62,16 +58,16 @@ public:
     void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
         CheckBufferOverrun checkBufferOverrun(tokenizer, settings, errorLogger);
         checkBufferOverrun.bufferOverrun();
-        checkBufferOverrun.negativeIndex();
+        checkBufferOverrun.bufferOverrun2();
         checkBufferOverrun.arrayIndexThenCheck();
-
-        /** ExecutionPath checking.. */
-        checkBufferOverrun.executionPaths();
         checkBufferOverrun.writeOutsideBufferSize();
     }
 
     /** @brief %Check for buffer overruns */
     void bufferOverrun();
+
+    /** @brief %Check for buffer overruns #2 (single pass, use ast and valueflow) */
+    void bufferOverrun2();
 
     /** @brief Using array index before bounds check */
     void arrayIndexThenCheck();
@@ -107,11 +103,11 @@ public:
     /** Check for buffer overruns due to allocating strlen(src) bytes instead of (strlen(src)+1) bytes before copying a string */
     void checkBufferAllocatedWithStrlen();
 
+    /** Check string argument buffer overruns */
+    void checkStringArgument();
+
     /** Check for buffer overruns due to copying command-line args to fixed-sized buffers without bounds checking */
     void checkInsecureCmdLineArgs();
-
-    /** Check for negative index */
-    void negativeIndex();
 
     /** Information about N-dimensional array */
     class CPPCHECKLIB ArrayInfo {
@@ -184,12 +180,6 @@ public:
     /** Check for buffer overruns */
     void checkScope(const Token *tok, const std::vector<std::string> &varname, const ArrayInfo &arrayInfo);
 
-    /** Check scope helper function - parse for body */
-    void checkScopeForBody(const Token *tok, const ArrayInfo &arrayInfo, bool &bailout);
-
-    /** Helper function used when parsing for-loops */
-    void parse_for_body(const Token *tok2, const ArrayInfo &arrayInfo, const std::string &strindex, bool condition_out_of_bounds, unsigned int counter_varid, const std::string &min_counter_value, const std::string &max_counter_value);
-
     /** Check readlink or readlinkat() buffer usage */
     void checkReadlinkBufferUsage(const Token *ftok, const Token *scope_begin, const unsigned int varid, const MathLib::bigint total_size);
 
@@ -200,7 +190,7 @@ public:
      * \param arrayInfo the array information
      * \param callstack call stack. This is used to prevent recursion and to provide better error messages. Pass a empty list from checkScope etc.
      */
-    void checkFunctionParameter(const Token &tok, const unsigned int par, const ArrayInfo &arrayInfo, std::list<const Token *> callstack);
+    void checkFunctionParameter(const Token &tok, const unsigned int par, const ArrayInfo &arrayInfo, const std::list<const Token *>& callstack);
 
     /**
      * Helper function that checks if the array is used and if so calls the checkFunctionCall
@@ -211,27 +201,53 @@ public:
     void checkFunctionCall(const Token *tok, const ArrayInfo &arrayInfo, std::list<const Token *> callstack);
 
     void arrayIndexOutOfBoundsError(const Token *tok, const ArrayInfo &arrayInfo, const std::vector<MathLib::bigint> &index);
-    void arrayIndexInForLoop(const Token *tok, const ArrayInfo &arrayInfo);
+    void arrayIndexOutOfBoundsError(const Token *tok, const ArrayInfo &arrayInfo, const std::vector<ValueFlow::Value> &index);
+
+    /* data for multifile checking */
+    class MyFileInfo : public Check::FileInfo {
+    public:
+        struct ArrayUsage {
+            MathLib::bigint   index;
+            std::string       fileName;
+            unsigned int      linenr;
+        };
+
+        /* key:arrayName */
+        std::map<std::string, struct ArrayUsage> arrayUsage;
+
+        /* key:arrayName, data:arraySize */
+        std::map<std::string, MathLib::bigint>  arraySize;
+    };
+
+    /** @brief Parse current TU and extract file info */
+    Check::FileInfo *getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const;
+
+    /** @brief Analyse all file infos for all TU */
+    void analyseWholeProgram(const std::list<Check::FileInfo*> &fileInfo, ErrorLogger &errorLogger);
 
 private:
 
     static bool isArrayOfStruct(const Token* tok, int &position);
     void arrayIndexOutOfBoundsError(const std::list<const Token *> &callstack, const ArrayInfo &arrayInfo, const std::vector<MathLib::bigint> &index);
-    void bufferOverrunError(const Token *tok, const std::string &varnames = "");
-    void bufferOverrunError(const std::list<const Token *> &callstack, const std::string &varnames = "");
+    void bufferOverrunError(const Token *tok, const std::string &varnames = emptyString);
+    void bufferOverrunError(const std::list<const Token *> &callstack, const std::string &varnames = emptyString);
     void strncatUsageError(const Token *tok);
+    void negativeMemoryAllocationSizeError(const Token *tok); // provide a negative value to memory allocation function
     void outOfBoundsError(const Token *tok, const std::string &what, const bool show_size_info, const MathLib::bigint &supplied_size, const MathLib::bigint &actual_size);
     void sizeArgumentAsCharError(const Token *tok);
     void terminateStrncpyError(const Token *tok, const std::string &varname);
     void bufferNotZeroTerminatedError(const Token *tok, const std::string &varname, const std::string &function);
     void negativeIndexError(const Token *tok, MathLib::bigint index);
+    void negativeIndexError(const Token *tok, const ValueFlow::Value &index);
     void cmdLineArgsError(const Token *tok);
-    void pointerOutOfBoundsError(const Token *tok, const std::string &object);  // UB when result of calculation is out of bounds
+    void pointerOutOfBoundsError(const Token *tok, const Token *index=nullptr, const MathLib::bigint indexvalue=0);
     void arrayIndexThenCheckError(const Token *tok, const std::string &indexName);
     void possibleBufferOverrunError(const Token *tok, const std::string &src, const std::string &dst, bool cat);
     void possibleReadlinkBufferOverrunError(const Token *tok, const std::string &funcname, const std::string &varname);
     void argumentSizeError(const Token *tok, const std::string &functionName, const std::string &varname);
     void writeOutsideBufferSizeError(const Token *tok, const std::size_t stringLength, const MathLib::bigint writeLength, const std::string& functionName);
+
+    void valueFlowCheckArrayIndex(const Token * const tok, const ArrayInfo &arrayInfo);
 
 public:
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
@@ -247,12 +263,14 @@ public:
         c.bufferNotZeroTerminatedError(0, "buffer", "strncpy");
         c.negativeIndexError(0, -1);
         c.cmdLineArgsError(0);
-        c.pointerOutOfBoundsError(0, "array");
+        c.pointerOutOfBoundsError(nullptr, nullptr, 0);
         c.arrayIndexThenCheckError(0, "index");
         c.possibleBufferOverrunError(0, "source", "destination", false);
         c.possibleReadlinkBufferOverrunError(0, "readlink", "buffer");
         c.argumentSizeError(0, "function", "array");
         c.writeOutsideBufferSizeError(0,2,3,"write");
+        c.negativeMemoryAllocationSizeError(0);
+        c.reportError(nullptr, Severity::warning, "arrayIndexOutOfBoundsCond", "Array 'x[10]' accessed at index 20, which is out of bounds. Otherwise condition 'y==20' is redundant.");
     }
 private:
 
@@ -261,7 +279,17 @@ private:
     }
 
     std::string classInfo() const {
-        return "out of bounds checking\n";
+        return "Out of bounds checking:\n"
+               "- Array index out of bounds detection by value flow analysis\n"
+               "- Dangerous usage of strncat()\n"
+               "- char constant passed as size to function like memset()\n"
+               "- strncpy() leaving string unterminated\n"
+               "- Accessing array with negative index\n"
+               "- Unsafe usage of main(argv, argc) arguments\n"
+               "- Accessing array with index variable before checking its value\n"
+               "- Check for large enough arrays being passed to functions\n"
+               "- Writing beyond bounds of a buffer\n"
+               "- Allocating memory with a negative size\n";
     }
 };
 /// @}

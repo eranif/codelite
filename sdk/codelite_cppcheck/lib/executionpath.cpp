@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,6 +317,8 @@ void ExecutionPath::checkScope(const Token *tok, std::list<ExecutionPath *> &che
                     if (tok->varId())
                         ExecutionPath::bailOutVar(checks, tok->varId());
                 }
+                if (!tok)
+                    break;
             }
         }
 
@@ -350,7 +352,12 @@ void ExecutionPath::checkScope(const Token *tok, std::list<ExecutionPath *> &che
                 return;
             }
 
-            tok = tok->next()->link();
+            const Token * const end = tok->next()->link();
+            while (tok && tok != end) {
+                if (Token::Match(tok, "[{,] & %var% [,}]"))
+                    ExecutionPath::bailOutVar(checks, tok->tokAt(2)->varId());
+                tok = tok->next();
+            }
             if (!tok) {
                 ExecutionPath::bailOut(checks);
                 return;
@@ -405,13 +412,12 @@ void ExecutionPath::checkScope(const Token *tok, std::list<ExecutionPath *> &che
 
                 // parse next "if"..
                 tok = tok->tokAt(2);
-                if (tok && tok->str() == "if")
-                    continue;
-
                 if (!tok) {
                     ExecutionPath::bailOut(newchecks);
                     return;
                 }
+                if (tok->str() == "if")
+                    continue;
 
                 // there is no "if"..
                 ExecutionPath::checkScope(tok->next(), checks);
@@ -443,15 +449,9 @@ void ExecutionPath::checkScope(const Token *tok, std::list<ExecutionPath *> &che
             }
         }
 
-
-        {
-            tok = check->parse(*tok, checks);
-            if (checks.empty())
-                return;
-        }
-
-        if (!tok)
-            break;
+        tok = check->parse(*tok, checks);
+        if (!tok || checks.empty())
+            return;
 
         // return/throw ends all execution paths
         if (tok->str() == "return" ||

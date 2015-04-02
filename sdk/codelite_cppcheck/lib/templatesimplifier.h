@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,6 +118,19 @@ public:
         std::list<Token *> &templateInstantiations);
 
     /**
+     * @brief TemplateParametersInDeclaration
+     * @param tok  template < typename T, typename S >
+     *                        ^ tok
+     * @param typeParametersInDeclaration  template < typename T, typename S >
+     *                                                         ^ [0]       ^ [1]
+     * @return  template < typename T, typename S >
+     *                                              ^ return
+     */
+    static const Token * TemplateParametersInDeclaration(
+        const Token * tok,
+        std::vector<const Token *> & typeParametersInDeclaration);
+
+    /**
      * Simplify templates : expand all instantiations for a template
      * @todo It seems that inner templates should be instantiated recursively
      * @param tokenlist token list
@@ -130,7 +143,7 @@ public:
      */
     static bool simplifyTemplateInstantiations(
         TokenList& tokenlist,
-        ErrorLogger& errorlogger,
+        ErrorLogger* errorlogger,
         const Settings *_settings,
         const Token *tok,
         std::list<Token *> &templateInstantiations,
@@ -145,7 +158,7 @@ public:
      */
     static void simplifyTemplates(
         TokenList& tokenlist,
-        ErrorLogger& errorlogger,
+        ErrorLogger* errorlogger,
         const Settings *_settings,
         bool &_codeWithTemplates);
 

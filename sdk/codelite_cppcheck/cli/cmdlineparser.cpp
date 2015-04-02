@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,12 @@
 
 #include "cmdlineparser.h"
 #include "cppcheck.h"
+#include "cppcheckexecutor.h"
 #include "filelister.h"
 #include "path.h"
 #include "settings.h"
 #include "timer.h"
+#include "check.h"
 
 #include <algorithm>
 #include <iostream>
@@ -65,7 +67,7 @@ static void AddFilesToList(const std::string& FileList, std::vector<std::string>
     }
 }
 
-static void AddInclPathsToList(const std::string& FileList, std::list<std::string>& PathNames)
+static void AddInclPathsToList(const std::string& FileList, std::list<std::string>* PathNames)
 {
     // to keep things initially simple, if the file can't be opened, just be
     // silent and move on
@@ -81,10 +83,17 @@ static void AddInclPathsToList(const std::string& FileList, std::list<std::strin
                 if (PathName[PathName.length()-1] != '/')
                     PathName += '/';
 
-                PathNames.push_back(PathName);
+                PathNames->push_back(PathName);
             }
         }
     }
+}
+
+static void AddPathsToSet(const std::string& FileName, std::set<std::string>* set)
+{
+    std::list<std::string> templist;
+    AddInclPathsToList(FileName, &templist);
+    set->insert(templist.begin(), templist.end());
 }
 
 CmdLineParser::CmdLineParser(Settings *settings)
@@ -124,6 +133,19 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
         // Print out code that triggers false positive
         else if (std::strcmp(argv[i], "--debug-fp") == 0)
             _settings->debugFalsePositive = true;
+
+        // dump cppcheck data
+        else if (std::strcmp(argv[i], "--dump") == 0)
+            _settings->dump = true;
+
+        // (Experimental) exception handling inside cppcheck client
+        else if (std::strcmp(argv[i], "--exception-handling") == 0)
+            _settings->exceptionHandling = true;
+        else if (std::strncmp(argv[i], "--exception-handling=", 21) == 0) {
+            _settings->exceptionHandling = true;
+            const std::string exceptionOutfilename=&(argv[i][21]);
+            CppCheckExecutor::setExceptionOutput(exceptionOutfilename);
+        }
 
         // Inconclusive checking (still in testing phase)
         else if (std::strcmp(argv[i], "--inconclusive") == 0)
@@ -266,12 +288,16 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
             _settings->_relativePaths = true;
             if (argv[i][argv[i][3]=='='?4:17] != 0) {
                 std::string paths = argv[i]+(argv[i][3]=='='?4:17);
-                std::string::size_type pos;
-                do {
-                    pos = paths.find(';');
-                    _settings->_basePaths.push_back(Path::fromNativeSeparators(paths.substr(0, pos)));
-                    paths.erase(0, pos+1);
-                } while (pos != std::string::npos);
+                for (;;) {
+                    std::string::size_type pos = paths.find(';');
+                    if (pos == std::string::npos) {
+                        _settings->_basePaths.push_back(Path::fromNativeSeparators(paths));
+                        break;
+                    } else {
+                        _settings->_basePaths.push_back(Path::fromNativeSeparators(paths.substr(0, pos)));
+                        paths.erase(0, pos + 1);
+                    }
+                }
             } else {
                 PrintMessage("cppcheck: No paths specified for the '" + std::string(argv[i]) + "' option.");
                 return false;
@@ -435,7 +461,14 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
             _settings->userIncludes.push_back(path);
         } else if (std::strncmp(argv[i], "--includes-file=", 16) == 0) {
             // open this file and read every input file (1 file name per line)
-            AddInclPathsToList(16 + argv[i], _settings->_includePaths);
+            AddInclPathsToList(16 + argv[i], &_settings->_includePaths);
+        } else if (std::strncmp(argv[i], "--config-exclude=",17) ==0) {
+            std::string path = argv[i] + 17;
+            path = Path::fromNativeSeparators(path);
+            _settings->configExcludePaths.insert(path);
+        } else if (std::strncmp(argv[i], "--config-excludes-file=", 23) == 0) {
+            // open this file and read every input file (1 file name per line)
+            AddPathsToSet(23 + argv[i], &_settings->configExcludePaths);
         }
 
         // file list specified
@@ -465,7 +498,7 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
 
             if (!path.empty()) {
                 path = Path::fromNativeSeparators(path);
-                path = Path::simplifyPath(path.c_str());
+                path = Path::simplifyPath(path);
                 path = Path::removeQuotationMarks(path);
 
                 if (FileLister::isDirectory(path)) {
@@ -479,8 +512,44 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
 
         // --library
         else if (std::strncmp(argv[i], "--library=", 10) == 0) {
-            if (!_settings->library.load(argv[0], argv[i]+10)) {
-                PrintMessage("cppcheck: Failed to load library configuration file '" + std::string(argv[i]+10) + "'");
+            Library::Error err = _settings->library.load(argv[0], argv[i]+10);
+            std::string errmsg;
+            switch (err.errorcode) {
+            case Library::OK:
+                break;
+            case Library::FILE_NOT_FOUND:
+                errmsg = "File not found";
+                break;
+            case Library::BAD_XML:
+                errmsg = "Bad XML";
+                break;
+            case Library::BAD_ELEMENT:
+                errmsg = "Unexpected element";
+                break;
+            case Library::MISSING_ATTRIBUTE:
+                errmsg = "Missing attribute";
+                break;
+            case Library::BAD_ATTRIBUTE:
+                errmsg = "Bad attribute";
+                break;
+            case Library::BAD_ATTRIBUTE_VALUE:
+                errmsg = "Bad attribute value";
+                break;
+            case Library::UNSUPPORTED_FORMAT:
+                errmsg = "File is of unsupported format version";
+                break;
+            case Library::DUPLICATE_PLATFORM_TYPE:
+                errmsg = "Duplicate platform type";
+                break;
+            case Library::PLATFORM_TYPE_REDEFINED:
+                errmsg = "Platform type redefined";
+                break;
+            }
+            if (!err.reason.empty())
+                errmsg += " '" + err.reason + "'";
+
+            if (!errmsg.empty()) {
+                PrintMessage("cppcheck: Failed to load library configuration file '" + std::string(argv[i]+10) + "'. " + errmsg);
                 return false;
             }
         }
@@ -558,6 +627,29 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
                 PrintMessage("cppcheck: argument for '-j' is allowed to be 10000 at max.");
                 return false;
             }
+        } else if (std::strncmp(argv[i], "-l", 2) == 0) {
+            std::string numberString;
+
+            // "-l 3"
+            if (std::strcmp(argv[i], "-l") == 0) {
+                ++i;
+                if (i >= argc || argv[i][0] == '-') {
+                    PrintMessage("cppcheck: argument to '-l' is missing.");
+                    return false;
+                }
+
+                numberString = argv[i];
+            }
+
+            // "-l3"
+            else
+                numberString = argv[i]+2;
+
+            std::istringstream iss(numberString);
+            if (!(iss >> _settings->_loadAverage)) {
+                PrintMessage("cppcheck: argument to '-l' is not a number.");
+                return false;
+            }
         }
 
         // print all possible error messages..
@@ -575,7 +667,7 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
                 const std::string& name((*it)->name());
                 const std::string info((*it)->classInfo());
                 if (!name.empty() && !info.empty())
-                    doc << "===" << name << "===\n"
+                    doc << "## " << name << " ##\n"
                         << info << "\n";
             }
 
@@ -598,7 +690,7 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
             else {
                 std::string message("cppcheck: error: unrecognized showtime mode: \"");
                 message += showtimeMode;
-                message +=  "\".";
+                message +=  "\". Supported modes: file, summary, top5.";
                 PrintMessage(message);
                 return false;
             }
@@ -729,8 +821,10 @@ bool CmdLineParser::ParseFromArgs(int argc, const char* const argv[])
         PrintMessage("cppcheck: inconclusive messages will not be shown, because the old xml format is not compatible. It's recommended to use the new xml format (use --xml-version=2).");
     }
 
-    if (argc <= 1)
+    if (argc <= 1) {
         _showHelp = true;
+        _exitAfterPrint = true;
+    }
 
     if (_showHelp) {
         PrintHelp();
@@ -766,6 +860,9 @@ void CmdLineParser::PrintHelp()
               "                         analysis is disabled by this flag.\n"
               "    --check-library      Show information messages when library files have\n"
               "                         incomplete info.\n"
+              "    --dump               Dump xml data for each translation unit. The dump\n"
+              "                         files have the extension .dump and contain ast,\n"
+              "                         tokenlist, symboldatabase, valueflow.\n"
               "    -D<ID>               Define preprocessor symbol. Unless --max-configs or\n"
               "                         --force is used, Cppcheck will only check the given\n"
               "                         configuration when -D is used.\n"
@@ -825,6 +922,13 @@ void CmdLineParser::PrintHelp()
               "                         First given path is searched for contained header\n"
               "                         files first. If paths are relative to source files,\n"
               "                         this is not needed.\n"
+              "    --config-exclude=<dir>\n"
+              "                         Path (prefix) to be excluded from configuration checking.\n"
+              "                         Preprocessor configurations defined in headers (but not sources)\n"
+              "                         matching the prefix will not be considered for evaluation\n"
+              "                         of configuration alternatives\n"
+              "    --config-excludes-file=<file>\n"
+              "                         A file that contains a list of config-excludes\n"
               "    --include=<file>\n"
               "                         Force inclusion of a file before the checked file. Can\n"
               "                         be used for example when checking the Linux kernel,\n"
@@ -844,6 +948,9 @@ void CmdLineParser::PrintHelp()
               "                         more comments, like: '// cppcheck-suppress warningId'\n"
               "                         on the lines before the warning to suppress.\n"
               "    -j <jobs>            Start [jobs] threads to do the checking simultaneously.\n"
+              "    -l <load>            Specifies that no new threads should be started if there\n"
+              "                         are other threads running and the load average is at least\n"
+              "                         load (ignored on non UNIX-like systems)\n"
               "    --language=<language>, -x <language>\n"
               "                         Forces cppcheck to check all files as the given\n"
               "                         language. Valid values are: c, c++\n"

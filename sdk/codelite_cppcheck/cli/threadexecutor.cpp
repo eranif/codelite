@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,12 @@
 #include "threadexecutor.h"
 #include "cppcheck.h"
 #include "cppcheckexecutor.h"
+#include <iostream>
+#ifdef __SVR4  // Solaris
+#include <sys/loadavg.h>
+#endif
 #ifdef THREADING_MODEL_FORK
 #include <algorithm>
-#include <iostream>
 #include <sys/select.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -138,6 +141,26 @@ int ThreadExecutor::handleRead(int rpipe, unsigned int &result)
     return 1;
 }
 
+bool ThreadExecutor::checkLoadAverage(size_t nchildren)
+{
+#if defined(__CYGWIN__) || defined(__QNX__)  // getloadavg() is unsupported on Cygwin, Qnx.
+    return true;
+#else
+    if (!nchildren || !_settings._loadAverage) {
+        return true;
+    }
+
+    double sample(0);
+    if (getloadavg(&sample, 1) != 1) {
+        // disable load average checking on getloadavg error
+        return true;
+    } else if (sample < _settings._loadAverage) {
+        return true;
+    }
+    return false;
+#endif
+}
+
 unsigned int ThreadExecutor::check()
 {
     _fileCount = 0;
@@ -155,7 +178,8 @@ unsigned int ThreadExecutor::check()
     std::map<std::string, std::size_t>::const_iterator i = _files.begin();
     for (;;) {
         // Start a new child
-        if (i != _files.end() && rpipes.size() < _settings._jobs) {
+        size_t nchildren = rpipes.size();
+        if (i != _files.end() && nchildren < _settings._jobs && checkLoadAverage(nchildren)) {
             int pipes[2];
             if (pipe(pipes) == -1) {
                 std::cerr << "pipe() failed: "<< std::strerror(errno) << std::endl;
@@ -211,8 +235,10 @@ unsigned int ThreadExecutor::check()
             FD_ZERO(&rfds);
             for (std::list<int>::const_iterator rp = rpipes.begin(); rp != rpipes.end(); ++rp)
                 FD_SET(*rp, &rfds);
-
-            int r = select(*std::max_element(rpipes.begin(), rpipes.end()) + 1, &rfds, NULL, NULL, NULL);
+            struct timeval tv; // for every second polling of load average condition
+            tv.tv_sec = 1;
+            tv.tv_usec = 0;
+            int r = select(*std::max_element(rpipes.begin(), rpipes.end()) + 1, &rfds, NULL, NULL, &tv);
 
             if (r > 0) {
                 std::list<int>::iterator rp = rpipes.begin();
@@ -434,8 +460,14 @@ unsigned int __stdcall ThreadExecutor::threadProc(void *args)
 
         LeaveCriticalSection(&threadExecutor->_fileSync);
     };
-
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning( disable : 4702 )
+#endif
     return result;
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 }
 
 void ThreadExecutor::reportOut(const std::string &outmsg)

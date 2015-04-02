@@ -32,7 +32,7 @@ xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%TARGET_DIR%\CodeLite\" /E /I 
 xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 IF EXIST wxgui.zip ( copy wxgui.zip "%TARGET_DIR%\CodeLite\" )
 IF EXIST PHP.zip ( copy PHP.zip "%TARGET_DIR%\CodeLite\" )
-IF EXIST ..\WebTools\javascript.zip ( copy ..\WebTools\javascript.zip "%TARGET_DIR%\CodeLite\" )
+IF EXIST ..\WebTools\javascript-win.zip ( copy ..\WebTools\javascript.zip "%TARGET_DIR%\CodeLite\" )
 
 if "%WXWIN%" == "" GOTO OTHERS
 xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes

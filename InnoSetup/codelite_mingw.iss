@@ -147,7 +147,7 @@ Source: "{#RUNTIME_MINGW32}\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignore
 Source: "{#CODELITE_ROOT}\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs 
 Source: "{#CODELITE_ROOT}\Runtime\wxgui.zip";  DestDir: "{app}"; Flags: ignoreversion
-Source: "{#CODELITE_ROOT}\WebTools\javascript.zip";  DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#CODELITE_ROOT}\WebTools\javascript-win.zip";  DestDir: "{app}"; Flags: ignoreversion;
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\codelite.exe"; WorkingDir: "{app}"

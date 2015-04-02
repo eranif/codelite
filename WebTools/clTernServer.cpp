@@ -55,7 +55,6 @@ bool clTernServer::Start()
 #endif
     nodeJS.AppendDir("webtools");
     nodeJS.AppendDir("js");
-    nodeJS.AppendDir("tern");
 
     wxString command;
     command << nodeJS.GetFullPath() << " "

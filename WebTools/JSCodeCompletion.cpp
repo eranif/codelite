@@ -18,6 +18,15 @@
 #include "globals.h"
 #include "imanager.h"
 
+#ifdef __WXMSW__
+#define ZIP_NAME "javascript-win.zip"
+#elif defined(__WXGTK__)
+#define ZIP_NAME "javascript.zip"
+#else
+#define ZIP_NAME "javascript-osx.zip"
+#endif
+
+
 JSCodeCompletion::JSCodeCompletion()
     : m_thread(NULL)
     , m_ternServer(this)
@@ -26,7 +35,7 @@ JSCodeCompletion::JSCodeCompletion()
     m_thread = new JSParserThread(this);
     m_thread->Start();
 
-    wxFileName jsResources(clStandardPaths::Get().GetDataDir(), "javascript.zip");
+    wxFileName jsResources(clStandardPaths::Get().GetDataDir(), ZIP_NAME);
     if(jsResources.Exists()) {
 
         clZipReader zipReader(jsResources);

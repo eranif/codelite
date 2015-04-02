@@ -5,13 +5,18 @@
 #include <wx/event.h>
 #include "smart_ptr.h"
 #include "JSParserThread.h"
+#include "clTernServer.h"
+#include "wxCodeCompletionBoxEntry.h"
 
 class JSCodeCompletion : public wxEvtHandler
 {
     JSParserThread* m_thread;
+    clTernServer m_ternServer;
+    int m_ccPos;
     
 public:
     typedef SmartPtr<JSCodeCompletion> Ptr_t;
+    void OnCodeCompleteReady(const wxCodeCompletionBoxEntry::Vec_t& entries, const wxString& filename);
     
 public:
     JSCodeCompletion();

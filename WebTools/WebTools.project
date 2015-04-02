@@ -244,5 +244,7 @@
     <File Name="JSParserThread.h"/>
     <File Name="clTernServer.h"/>
     <File Name="clTernServer.cpp"/>
+    <File Name="clTernWorkerThread.h"/>
+    <File Name="clTernWorkerThread.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

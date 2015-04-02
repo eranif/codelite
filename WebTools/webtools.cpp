@@ -47,7 +47,8 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &WebTools::OnAllEditorClosed, this);
+    m_jsCodeComplete.Reset(new JSCodeCompletion());
+    
 }
 
 WebTools::~WebTools() {}
@@ -72,10 +73,9 @@ void WebTools::UnPlug()
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &WebTools::OnAllEditorClosed, this);
     m_jsColourThread->Stop();
     wxDELETE(m_jsColourThread);
-    DoCleanupJSResource();
+    m_jsCodeComplete.Reset(NULL);
 }
 
 void WebTools::OnRefreshColours(clCommandEvent& event)
@@ -143,39 +143,10 @@ void WebTools::OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event)
 void WebTools::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
-    // When a workspace is closed, perform a cleanup
-    DoCleanupJSResource();
 }
 
 void WebTools::OnEditorChanged(wxCommandEvent& event)
 {
     // If we have no JS files opened, cleanup the resources
     event.Skip();
-    bool hasJSFile = false;
-    IEditor::List_t editors;
-    m_mgr->GetAllEditors(editors);
-    IEditor::List_t::const_iterator iter = editors.begin();
-    for(; iter != editors.end(); ++iter) {
-        if(IsJavaScriptFile((*iter)->GetFileName())) {
-            hasJSFile = true;
-            break;
-        }
-    }
-
-    if(!hasJSFile && m_jsCodeComplete) {
-        DoCleanupJSResource();
-    } else if(hasJSFile && !m_jsCodeComplete) {
-        DoAllocateJSResource();
-    }
 }
-
-void WebTools::DoCleanupJSResource() { m_jsCodeComplete.Reset(NULL); }
-
-void WebTools::OnAllEditorClosed(wxCommandEvent& event)
-{
-    event.Skip();
-    // Cleanup JS resources
-    DoCleanupJSResource();
-}
-
-void WebTools::DoAllocateJSResource() { m_jsCodeComplete.Reset(new JSCodeCompletion()); }

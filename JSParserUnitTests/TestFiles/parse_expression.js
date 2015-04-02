@@ -10,4 +10,4 @@ function MyClass() {
 }
 
 var v = new MyClass();
-v.items.
+v.

@@ -56,6 +56,24 @@ void clSocketBase::Initialize()
 #endif
 }
 
+int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) throw (clSocketException)
+{
+    content.Clear();
+    if ( SelectRead(timeout) == kTimeout ) {
+        return kTimeout;
+    }
+    
+    char buffer[4096];
+    memset(buffer, 0x0, sizeof(buffer));
+    int bytesRead = recv(m_socket, buffer, sizeof(buffer), 0);
+    if(bytesRead > 0) {
+        content = wxString(buffer, conv);
+        return kSuccess;
+    } else {
+        return kError;
+    }
+}
+
 int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout) throw (clSocketException)
 {
     if ( SelectRead(timeout) == kTimeout ) {
@@ -102,6 +120,14 @@ void clSocketBase::Send(const std::string& msg) throw (clSocketException)
         throw clSocketException("Invalid socket!");
     }
     ::send(m_socket, msg.c_str(), msg.length(), 0);
+}
+
+void clSocketBase::Send(const wxMemoryBuffer& msg) throw (clSocketException)
+{
+    if ( m_socket == INVALID_SOCKET ) {
+        throw clSocketException("Invalid socket!");
+    }
+    ::send(m_socket, (const char*)msg.GetData(), msg.GetDataLen(), 0);
 }
 
 std::string clSocketBase::error() const
@@ -256,3 +282,13 @@ int clSocketBase::SelectWrite(long seconds) throw (clSocketException)
         return kSuccess;
     }
 }
+
+void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) throw (clSocketException)
+{
+    if ( m_socket == INVALID_SOCKET ) {
+        throw clSocketException("Invalid socket!");
+    }
+    wxCharBuffer cb = msg.mb_str(conv).data();
+    ::send(m_socket, cb.data(), cb.length(), 0);
+}
+

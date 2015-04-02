@@ -17,7 +17,6 @@ class WebTools : public IPlugin
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
-    void OnAllEditorClosed(wxCommandEvent& event);
     void OnRefreshColours(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
@@ -27,8 +26,6 @@ protected:
 private:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);
-    void DoCleanupJSResource();
-    void DoAllocateJSResource();
     
 public:
     WebTools(IManager* manager);

@@ -3,7 +3,7 @@
 
 WebToolsConfig::WebToolsConfig()
     : clConfigItem("WebTools")
-    , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5)
+    , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5 | kJSLibraryJQuery)
 {
 }
 
@@ -23,7 +23,7 @@ WebToolsConfig& WebToolsConfig::Save()
     return *this;
 }
 
-void WebToolsConfig::FromJSON(const JSONElement& json) 
+void WebToolsConfig::FromJSON(const JSONElement& json)
 {
     m_jsFlags = json.namedObject("m_jsFlags").toSize_t(m_jsFlags);
 }

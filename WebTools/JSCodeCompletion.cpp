@@ -55,6 +55,21 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
 {
     if(!m_enabled) return;
 
+    // Check that NodeJS is installed
+#ifdef __WXGTK__
+    wxFileName nodeJS("/usr/bin", "nodejs");
+    if(!nodeJS.FileExists()) {
+        ::PromptForYesNoDialogWithCheckbox(_("It seems that NodeJS is not installed on your machine\n(Can't find file "
+                                             "'/usr/bin/nodejs')\nPlease install NodeJS and try again"),
+                                           "WebToolsNodeJS",
+                                           _("OK"),
+                                           _("No"),
+                                           _("Remember my answer and don't ask me again"),
+                                           wxYES | wxICON_WARNING | wxYES_DEFAULT);
+        return;
+    }
+#endif
+
     CHECK_PTR_RET(editor);
     wxStyledTextCtrl* ctrl = editor->GetSTC();
 
@@ -88,13 +103,13 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         root.toElement().append(query);
         query.addProperty("type", wxString("completions"));
         query.addProperty("file", tmpFileName.GetFullPath());
-        
-        // Use {line, col} object 
+
+        // Use {line, col} object
         JSONElement loc = JSONElement::createObject("end");
         query.append(loc);
         loc.addProperty("line", ctrl->GetCurrentLine());
         loc.addProperty("ch", ctrl->GetColumn(ctrl->GetCurrentPos()));
-        
+
         query.addProperty("expandWordForward", false);
         query.addProperty("docs", true);
         query.addProperty("urls", true);
@@ -102,20 +117,20 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         query.addProperty("types", true);
         m_ternServer.PostRequest(root.toElement().format(), editor->GetFileName(), tmpFileName, isFunctionTip);
         m_ccPos = ctrl->GetCurrentPos();
-        
+
     } else {
         JSONRoot root(cJSON_Object);
         JSONElement query = JSONElement::createObject("query");
         root.toElement().append(query);
         query.addProperty("type", wxString("type"));
         query.addProperty("file", tmpFileName.GetFullPath());
-        
-        // Use {line, col} object 
+
+        // Use {line, col} object
         JSONElement loc = JSONElement::createObject("end");
         query.append(loc);
         loc.addProperty("line", ctrl->LineFromPosition(currentPos));
         loc.addProperty("ch", ctrl->GetColumn(currentPos));
-        
+
         m_ternServer.PostRequest(root.toElement().format(), editor->GetFileName(), tmpFileName, isFunctionTip);
         m_ccPos = ctrl->GetCurrentPos();
     }

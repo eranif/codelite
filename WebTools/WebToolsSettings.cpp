@@ -14,7 +14,7 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_pgPropBrowser->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryBrowser));
         m_pgPropChai->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryChai));
         m_pgPropEcma5->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma5));
-        m_pgPropEcma5->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6));
+        m_pgPropEcma6->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6));
         m_pgPropJQuery->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryJQuery));
         m_pgPropUnderscore->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryUnderscore));
     }

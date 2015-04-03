@@ -88,7 +88,7 @@ bool clTernServer::Start()
 
     wxString command;
     command << nodeExe  << " "
-            << "bin" << wxFileName::GetPathSeparator() << "tern --port " << GetPort();
+            << "bin" << wxFileName::GetPathSeparator() << "tern --persist --port " << GetPort();
 
     if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {
         command << " --verbose";

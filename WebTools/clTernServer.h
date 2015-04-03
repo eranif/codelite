@@ -24,7 +24,8 @@ class clTernServer : public wxEvtHandler
     wxArrayString m_tempfiles;
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     clTernWorkerThread* m_workerThread;
-
+    bool m_fatalError;
+    
 protected:
     DECLARE_EVENT_TABLE()
     void OnTernTerminated(wxCommandEvent& event);

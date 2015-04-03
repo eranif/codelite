@@ -20,8 +20,10 @@ END_EVENT_TABLE()
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
     , m_port(16456)
+    , m_tern(NULL)
     , m_goingDown(false)
     , m_workerThread(NULL)
+    , m_fatalError(false)
 {
 }
 
@@ -51,15 +53,32 @@ void clTernServer::OnTernTerminated(wxCommandEvent& event)
 
 bool clTernServer::Start()
 {
-    wxFileName nodeJS(clStandardPaths::Get().GetUserDataDir(), "node");
+    if(m_fatalError) return false;
     WebToolsConfig conf;
     conf.Load();
+    wxString workingDirectory;
+    
+    wxFileName ternFolder(clStandardPaths::Get().GetUserDataDir(), "");
+    ternFolder.AppendDir("webtools");
+    ternFolder.AppendDir("js");
+    
+#ifdef __WXGTK__
+    wxFileName nodeJS("/usr/bin", "nodejs");
+    if(!nodeJS.FileExists()) {
+        m_fatalError = true;
+        return false;
+    }
+    
+#else
+    // OSX and Windows
+    wxFileName nodeJS(ternFolder.GetPath(), "node");
 #ifdef __WXMSW__
     nodeJS.SetExt("exe");
 #endif
     nodeJS.AppendDir("webtools");
     nodeJS.AppendDir("js");
-
+#endif
+   
     wxString command;
     command << nodeJS.GetFullPath() << " "
             << "bin" << wxFileName::GetPathSeparator() << "tern --port " << GetPort();
@@ -111,7 +130,7 @@ bool clTernServer::Start()
     }
 
     PrintMessage(wxString() << "Starting " << command << "\n");
-    m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, nodeJS.GetPath());
+    m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, ternFolder.GetPath());
     if(!m_tern) {
         PrintMessage("Faield to start Tern server!");
         return false;

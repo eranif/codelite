@@ -59,13 +59,15 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
 #ifdef __WXGTK__
     wxFileName nodeJS("/usr/bin", "nodejs");
     if(!nodeJS.FileExists()) {
-        ::PromptForYesNoDialogWithCheckbox(_("It seems that NodeJS is not installed on your machine\n(Can't find file "
-                                             "'/usr/bin/nodejs')\nPlease install NodeJS and try again"),
-                                           "WebToolsNodeJS",
-                                           _("OK"),
-                                           _("No"),
-                                           _("Remember my answer and don't ask me again"),
-                                           wxYES | wxICON_WARNING | wxYES_DEFAULT);
+        wxString msg;
+        msg << _("It seems that NodeJS is not installed on your machine\n(Can't find file "
+                  "'/usr/bin/nodejs')\nI have temporarily disabled Code Completion for JavaScript\nPlease install NodeJS and try again");
+        wxMessageBox(msg, "CodeLite", wxICON_WARNING|wxOK|wxCENTER);
+        
+        // Disable CC
+        WebToolsConfig conf;
+        conf.Load().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
+        conf.Save();
         return;
     }
 #endif

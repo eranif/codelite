@@ -12,6 +12,7 @@
 #include "WebToolsConfig.h"
 #include "entry.h"
 #include <wx/regex.h>
+#include <wx/log.h>
 
 BEGIN_EVENT_TABLE(clTernServer, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, clTernServer::OnTernTerminated)
@@ -28,7 +29,7 @@ clTernServer::clTernServer(JSCodeCompletion* cc)
 {
 }
 
-clTernServer::~clTernServer() {}
+clTernServer::~clTernServer() { DoCleanupFiles(); }
 
 void clTernServer::OnTernOutput(wxCommandEvent& event)
 {
@@ -41,17 +42,12 @@ void clTernServer::OnTernOutput(wxCommandEvent& event)
     PrintMessage(ped->GetData());
     wxDELETE(ped);
 }
- 
+
 void clTernServer::OnTernTerminated(wxCommandEvent& event)
 {
     ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
     wxDELETE(ped);
-    // Cleanup
-    for(size_t i = 0; i < m_tempfiles.size(); ++i) {
-        ::wxLogNull nolog;
-        ::wxRemoveFile(m_tempfiles.Item(i));
-    }
-    m_tempfiles.Clear();
+    DoCleanupFiles();
     if(m_goingDown) return;
     PrintMessage("Tern server terminated, will restart it\n");
     Start();
@@ -93,7 +89,7 @@ bool clTernServer::Start()
     ::WrapWithQuotes(nodeExe);
 
     wxString command;
-    command << nodeExe  << " "
+    command << nodeExe << " "
             << "bin" << wxFileName::GetPathSeparator() << "tern --persist ";
 
     if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {
@@ -162,9 +158,9 @@ bool clTernServer::PostRequest(const wxString& request,
                                const wxFileName& tmpFileName,
                                bool isFunctionCalltip)
 {
-    if(m_workerThread) return false; // another request is in progress
+    if(m_workerThread) return false;        // another request is in progress
     if(m_port == wxNOT_FOUND) return false; // don't know tern's port
-    
+
     m_workerThread = new clTernWorkerThread(this);
     m_workerThread->Start();
 
@@ -180,12 +176,15 @@ bool clTernServer::PostRequest(const wxString& request,
 
 void clTernServer::PrintMessage(const wxString& message)
 {
-    ::clGetManager()->AppendOutputTabText(kOutputTab_Output, wxString() << "[WebTools] " << message);
+    wxString msg;
+    msg << message;
+    msg.Trim().Trim(false);
+    wxLogMessage(msg);
 }
 
 void clTernServer::RecycleIfNeeded(bool force)
 {
-    if(m_tern && ((m_tempfiles.size() > 500) || force)) {
+    if(m_tern && ((m_tempfiles.size() > 50) || force)) {
         m_tern->Terminate();
     }
 }
@@ -301,7 +300,7 @@ void clTernServer::ProcessOutput(const wxString& output, wxCodeCompletionBoxEntr
             wxString type = item.namedObject("type").toString();
             wxString sig, ret;
             ProcessType(type, sig, ret, imgId);
-            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(name/* + sig*/, imgId);
+            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(name /* + sig*/, imgId);
             entry->SetComment(doc);
             entries.push_back(entry);
 
@@ -354,11 +353,23 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
     int imgID;
     wxString sig, retValue;
     ProcessType(type, sig, retValue, imgID);
-
+    if(sig.IsEmpty()) {
+        return NULL;
+    }
     t->SetSignature(sig);
     t->SetReturnValue(retValue);
     t->SetKind("function");
     t->SetFlags(TagEntry::Tag_No_Signature_Format);
     tags.push_back(t);
     return new clCallTip(tags);
+}
+
+void clTernServer::DoCleanupFiles()
+{
+    // Cleanup
+    for(size_t i = 0; i < m_tempfiles.size(); ++i) {
+        ::wxLogNull nolog;
+        ::wxRemoveFile(m_tempfiles.Item(i));
+    }
+    m_tempfiles.Clear();
 }

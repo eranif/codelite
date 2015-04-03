@@ -41,7 +41,8 @@ protected:
     // Worker thread callbacks
     void OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply);
     void OnError(const wxString& why);
-
+    void DoCleanupFiles();
+    
 public:
     void RecycleIfNeeded(bool force = false);
     clTernServer(JSCodeCompletion* cc);

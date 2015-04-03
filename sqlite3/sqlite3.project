@@ -33,7 +33,6 @@
     <File Name="sqlite3.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="Common"/>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -128,4 +127,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Common"/>
+  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

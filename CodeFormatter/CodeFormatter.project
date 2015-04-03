@@ -90,9 +90,6 @@
     <File Name="codeformatterdlgbase.cpp"/>
     <File Name="codeformatterdlgbase.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="PHPFormatter">
     <File Name="PHPFormatterBuffer.cpp"/>
     <File Name="PHPFormatterBuffer.h"/>
@@ -304,4 +301,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

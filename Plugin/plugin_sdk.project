@@ -470,10 +470,6 @@
     <File Name="wxFlatButtonBase.h"/>
     <File Name="wxFlatButtonBaseBitmaps.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Custom"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="Keyboard">
     <File Name="clKeyboardManager.cpp"/>
     <File Name="clKeyboardManager.h"/>
@@ -749,4 +745,9 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Custom"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

@@ -1,1 +1,0 @@
-{width: 3, height: 4, position: { x: 5, y: 10, dims: ["hi", "bi"] }, doc: "An object!" }

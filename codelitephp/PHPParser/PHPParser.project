@@ -59,7 +59,6 @@
     <File Name="test.php"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="src">
     <File Name="php_parser_constants.h"/>
     <File Name="php_helpers.h"/>
@@ -71,8 +70,6 @@
     <File Name="XDebugBreakpoint.h"/>
     <File Name="XDebugBreakpoint.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Unix"/>
-  <Dependencies Name="Release_Unix"/>
   <VirtualDirectory Name="CodeCompletion">
     <File Name="php_code_completion.cpp"/>
     <File Name="php_code_completion.h"/>
@@ -380,4 +377,9 @@ php_expr_lexer.cpp: php_expr.l
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug_Unix"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Release_Unix"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

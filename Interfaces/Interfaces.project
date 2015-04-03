@@ -36,8 +36,6 @@
     <File Name="plugin_version.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Common"/>
   <Dependencies Name="Common"/>
   <Dependencies Name="Debug"/>
   <Settings Type="Static Library">
@@ -179,4 +177,7 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Common"/>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

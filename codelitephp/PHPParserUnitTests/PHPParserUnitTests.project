@@ -86,13 +86,6 @@
     <File Name="Tests/test_partial_namespace_helper.php"/>
     <File Name="Tests/test_cc_with_keywords.php"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Unix">
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Release">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>
   </Dependencies>
@@ -352,8 +345,16 @@ PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug_Unix">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Release">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
+  <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Win_x64_Debug">
     <Project Name="libCodeLite"/>
     <Project Name="PHPParser"/>
   </Dependencies>
+  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

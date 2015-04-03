@@ -46,9 +46,6 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
       <File Name="NewToolBase_formbuilder_bitmaps.cpp"/>
@@ -275,4 +272,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

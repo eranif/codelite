@@ -293,9 +293,6 @@
     <File Name="SocketAPI/clSocketServer.cpp"/>
     <File Name="SocketAPI/clSocketServer.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="PhpScanner">
     <File Name="PhpLexer.cpp"/>
     <File Name="PhpLexer.l"/>
@@ -573,4 +570,8 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

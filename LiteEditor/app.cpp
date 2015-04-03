@@ -322,11 +322,6 @@ bool CodeLiteApp::OnInit()
     wxStandardPaths::Get().IgnoreAppSubDir("bin");
 #endif
 
-    // Show splash screen
-    GeneralInfo inf;
-    EditorConfigST::Get()->ReadObject(wxT("GeneralInfo"), &inf);
-    
-
     // Init resources and add the PNG handler
     wxSystemOptions::SetOption(_T("msw.remap"), 0);
     wxSystemOptions::SetOption("msw.notebook.themed-background", 1);
@@ -337,24 +332,6 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxXPMHandler);
     wxImage::AddHandler(new wxGIFHandler);
     InitXmlResource();
-    
-    // After all image handlers have been added, load the splash screen image and show it
-#if !defined(__WXMAC__) && defined(NDEBUG)
-    // we show splash only when using Release builds of codelite
-    if(inf.GetFlags() & CL_SHOW_SPLASH) {
-        wxBitmap bitmap;
-        wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
-        if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-            wxString mainTitle = CODELITE_VERSION_STR;
-            clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
-                                                                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
-                                                                -1,
-                                                                NULL,
-                                                                wxID_ANY);
-            wxYield();
-        }
-    }
-#endif
 
     wxLog::EnableLogging(false);
     wxString homeDir(wxEmptyString);
@@ -517,10 +494,7 @@ bool CodeLiteApp::OnInit()
 
     ManagerST::Get()->SetInstallDir(homeDir);
 #endif
-
-    // Update codelite revision and Version
-    EditorConfigST::Get()->Init(clGitRevision, wxT("2.0.2"));
-
+   
     // Make sure we have an instance if the keyboard manager allocated before we create the main frame class
     // (the keyboard manager needs to connect to the main frame events)
     clKeyboardManager::Get();
@@ -542,8 +516,6 @@ bool CodeLiteApp::OnInit()
     // Initialize the configuration file locater
     ConfFileLocator::Instance()->Initialize(ManagerST::Get()->GetInstallDir(), ManagerST::Get()->GetStartupDirectory());
 
-    Manager* mgr = ManagerST::Get();
-
     // set the CTAGS_REPLACEMENT environment variable
     wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStartupDirectory() + wxT("/ctags.replacements"));
 
@@ -564,13 +536,36 @@ bool CodeLiteApp::OnInit()
         wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     }
 #endif
-
-    EditorConfigST::Get()->SetInstallDir(mgr->GetInstallDir());
+ 
+    Manager* mgr = ManagerST::Get();
     EditorConfig* cfg = EditorConfigST::Get();
+    cfg->SetInstallDir(mgr->GetInstallDir());
+
+    // Update codelite revision and Version
+    cfg->Init(clGitRevision, wxT("2.0.2"));
     if(!cfg->Load()) {
         CL_ERROR(wxT("Failed to load configuration file: %s/config/codelite.xml"), wxGetCwd().c_str());
         return false;
     }
+
+#if !defined(__WXMAC__) && defined(NDEBUG)
+    // Now all image handlers have been added, show splash screen; but only when using Release builds of codelite
+    GeneralInfo inf;
+    cfg->ReadObject(wxT("GeneralInfo"), &inf);
+    if(inf.GetFlags() & CL_SHOW_SPLASH) {
+        wxBitmap bitmap;
+        wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
+        if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
+            wxString mainTitle = CODELITE_VERSION_STR;
+            clSplashScreen::g_splashScreen = new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
+                                                                wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
+                                                                -1,
+                                                                NULL,
+                                                                wxID_ANY);
+            wxYield();
+        }
+    }
+#endif
 
 #ifdef __WXGTK__
     bool redirect = clConfig::Get().Read(kConfigRedirectLogOutput, true);

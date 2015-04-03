@@ -57,28 +57,33 @@ bool clTernServer::Start()
     WebToolsConfig conf;
     conf.Load();
     wxString workingDirectory;
-    
+
     wxFileName ternFolder(clStandardPaths::Get().GetUserDataDir(), "");
     ternFolder.AppendDir("webtools");
     ternFolder.AppendDir("js");
-    
+
 #ifdef __WXGTK__
     wxFileName nodeJS("/usr/bin", "nodejs");
     if(!nodeJS.FileExists()) {
         m_fatalError = true;
         return false;
     }
-    
+
 #else
     // OSX and Windows
     wxFileName nodeJS(ternFolder.GetPath(), "node");
 #ifdef __WXMSW__
     nodeJS.SetExt("exe");
+#else
+    // OSX
+    nodeJS.SetExt("osx");
+
+    // set permissions to 755
+    nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHER_READ | wxPOSIX_OTHER_EXECUTE |
+                          wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
 #endif
-    nodeJS.AppendDir("webtools");
-    nodeJS.AppendDir("js");
 #endif
-   
+
     wxString command;
     command << nodeJS.GetFullPath() << " "
             << "bin" << wxFileName::GetPathSeparator() << "tern --port " << GetPort();
@@ -132,7 +137,7 @@ bool clTernServer::Start()
     PrintMessage(wxString() << "Starting " << command << "\n");
     m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, ternFolder.GetPath());
     if(!m_tern) {
-        PrintMessage("Faield to start Tern server!");
+        PrintMessage("Failed to start Tern server!");
         return false;
     }
     return true;
@@ -158,7 +163,7 @@ bool clTernServer::PostRequest(const wxString& request,
     req->jsonRequest = request;
     req->filename = filename.GetFullPath();
     req->isFunctionTip = isFunctionCalltip;
-    
+
     m_workerThread->Add(req);
     m_tempfiles.Add(tmpFileName.GetFullPath());
     return true;
@@ -171,7 +176,7 @@ void clTernServer::PrintMessage(const wxString& message)
 
 void clTernServer::RecycleIfNeeded(bool force)
 {
-    if((m_tempfiles.size() > 500) || force) {
+    if(m_tern && ((m_tempfiles.size() > 500) || force)) {
         m_tern->Terminate();
     }
 }
@@ -322,7 +327,7 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
 }
 
 clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
-{    
+{
     // Function calltip response:
     // ================================
     // {
@@ -340,7 +345,7 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
     int imgID;
     wxString sig, retValue;
     ProcessType(type, sig, retValue, imgID);
-    
+
     t->SetSignature(sig);
     t->SetReturnValue(retValue);
     t->SetKind("function");

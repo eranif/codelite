@@ -2,7 +2,7 @@
 
 set TARGET_DIR=%ProgramFiles%
 set COPY_WXC_RESOURCES=0
-IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
+::IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
 IF EXIST ..\wxcrafter\wxcrafter.accelerators (set COPY_WXC_RESOURCES=1)
 
 xcopy config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes

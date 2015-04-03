@@ -19,13 +19,13 @@ class clTernServer : public wxEvtHandler
     IProcess* m_tern;
     wxFileName m_nodePath;
     wxString m_ternBinFolder;
-    int m_port;
     bool m_goingDown;
     wxArrayString m_tempfiles;
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     clTernWorkerThread* m_workerThread;
     bool m_fatalError;
-    
+    long m_port;
+
 protected:
     DECLARE_EVENT_TABLE()
     void OnTernTerminated(wxCommandEvent& event);
@@ -34,7 +34,7 @@ protected:
 
     void ProcessOutput(const wxString& output, wxCodeCompletionBoxEntry::Vec_t& entries);
     clCallTipPtr ProcessCalltip(const wxString& output);
-    
+
     wxString PrepareDoc(const wxString& doc, const wxString& url);
     void ProcessType(const wxString& type, wxString& signature, wxString& retValue, int& imgID);
 
@@ -47,11 +47,9 @@ public:
     clTernServer(JSCodeCompletion* cc);
     virtual ~clTernServer();
 
+    long GetPort() const { return m_port; }
     bool Start();
     void Terminate();
-    void SetPort(int port) { this->m_port = port; }
-    int GetPort() const { return m_port; }
-
     bool PostRequest(const wxString& request,
                      const wxFileName& filename,
                      const wxFileName& tmpFileName,

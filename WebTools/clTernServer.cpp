@@ -11,6 +11,7 @@
 #include "JSCodeCompletion.h"
 #include "WebToolsConfig.h"
 #include "entry.h"
+#include <wx/regex.h>
 
 BEGIN_EVENT_TABLE(clTernServer, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, clTernServer::OnTernTerminated)
@@ -20,10 +21,10 @@ END_EVENT_TABLE()
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
     , m_tern(NULL)
-    , m_port(16456)
     , m_goingDown(false)
     , m_workerThread(NULL)
     , m_fatalError(false)
+    , m_port(wxNOT_FOUND)
 {
 }
 
@@ -32,10 +33,15 @@ clTernServer::~clTernServer() {}
 void clTernServer::OnTernOutput(wxCommandEvent& event)
 {
     ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
-    PrintMessage(wxString::Format("Tern: %s\n", ped->GetData()));
+    static wxRegEx rePort("Listening on port ([0-9]+)");
+    if(rePort.IsValid() && rePort.Matches(ped->GetData())) {
+        wxString strPort = rePort.GetMatch(ped->GetData(), 1);
+        strPort.ToCLong(&m_port);
+    }
+    PrintMessage(ped->GetData());
     wxDELETE(ped);
 }
-
+ 
 void clTernServer::OnTernTerminated(wxCommandEvent& event)
 {
     ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
@@ -88,7 +94,7 @@ bool clTernServer::Start()
 
     wxString command;
     command << nodeExe  << " "
-            << "bin" << wxFileName::GetPathSeparator() << "tern --persist --port " << GetPort();
+            << "bin" << wxFileName::GetPathSeparator() << "tern --persist ";
 
     if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {
         command << " --verbose";
@@ -157,7 +163,8 @@ bool clTernServer::PostRequest(const wxString& request,
                                bool isFunctionCalltip)
 {
     if(m_workerThread) return false; // another request is in progress
-
+    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    
     m_workerThread = new clTernWorkerThread(this);
     m_workerThread->Start();
 
@@ -294,7 +301,7 @@ void clTernServer::ProcessOutput(const wxString& output, wxCodeCompletionBoxEntr
             wxString type = item.namedObject("type").toString();
             wxString sig, ret;
             ProcessType(type, sig, ret, imgId);
-            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(name + sig, imgId);
+            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(name/* + sig*/, imgId);
             entry->SetComment(doc);
             entries.push_back(entry);
 

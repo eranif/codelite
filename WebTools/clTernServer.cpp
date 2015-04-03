@@ -79,7 +79,7 @@ bool clTernServer::Start()
     nodeJS.SetExt("osx");
 
     // set permissions to 755
-    nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHER_READ | wxPOSIX_OTHER_EXECUTE |
+    nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHERS_READ | wxPOSIX_OTHERS_EXECUTE |
                           wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
 #endif
 #endif

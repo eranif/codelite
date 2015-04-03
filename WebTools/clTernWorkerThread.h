@@ -12,6 +12,13 @@ public:
     struct Request : public ThreadRequest {
         wxString jsonRequest;
         wxString filename;
+        bool isFunctionTip;
+    };
+    
+    struct Reply {
+        wxString json;
+        wxString filename;
+        bool isFunctionTip;
     };
     
 public:

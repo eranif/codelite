@@ -9,6 +9,8 @@
 #include "wxCodeCompletionBoxEntry.h"
 #include "clTernWorkerThread.h"
 #include "JSCodeCompletion.h"
+#include "WebToolsConfig.h"
+#include "entry.h"
 
 BEGIN_EVENT_TABLE(clTernServer, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, clTernServer::OnTernTerminated)
@@ -50,6 +52,8 @@ void clTernServer::OnTernTerminated(wxCommandEvent& event)
 bool clTernServer::Start()
 {
     wxFileName nodeJS(clStandardPaths::Get().GetUserDataDir(), "node");
+    WebToolsConfig conf;
+    conf.Load();
 #ifdef __WXMSW__
     nodeJS.SetExt("exe");
 #endif
@@ -59,6 +63,52 @@ bool clTernServer::Start()
     wxString command;
     command << nodeJS.GetFullPath() << " "
             << "bin" << wxFileName::GetPathSeparator() << "tern --port " << GetPort();
+
+    if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {
+        command << " --verbose";
+    }
+
+    // Create a .tern-project file
+    // {
+    //   "libs": [ "ecma5", "browser"],
+    //   "plugins": {
+    //     "node": {},
+    //     "complete_strings": {}
+    //   }
+    // }
+    {
+        wxFileName ternConfig(nodeJS.GetPath(), ".tern-project");
+        JSONRoot root(cJSON_Object);
+        JSONElement libs = JSONElement::createArray("libs");
+        root.toElement().append(libs);
+
+        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryBrowser)) {
+            libs.arrayAppend("browser");
+        }
+        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryChai)) {
+            libs.arrayAppend("chai");
+        }
+        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma5)) {
+            libs.arrayAppend("ecma5");
+        }
+        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6)) {
+            libs.arrayAppend("ecma6");
+        }
+        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryJQuery)) {
+            libs.arrayAppend("jquery");
+        }
+        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryUnderscore)) {
+            libs.arrayAppend("underscore");
+        }
+        JSONElement plugins = JSONElement::createObject("plugins");
+        root.toElement().append(plugins);
+        JSONElement node = JSONElement::createObject("node");
+        plugins.append(node);
+        JSONElement complete_strings = JSONElement::createObject("complete_strings");
+        plugins.append(complete_strings);
+
+        root.save(ternConfig);
+    }
 
     PrintMessage(wxString() << "Starting " << command << "\n");
     m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, nodeJS.GetPath());
@@ -75,7 +125,10 @@ void clTernServer::Terminate()
     wxDELETE(m_tern);
 }
 
-bool clTernServer::PostRequest(const wxString& request, const wxFileName& filename, const wxFileName& tmpFileName)
+bool clTernServer::PostRequest(const wxString& request,
+                               const wxFileName& filename,
+                               const wxFileName& tmpFileName,
+                               bool isFunctionCalltip)
 {
     if(m_workerThread) return false; // another request is in progress
 
@@ -85,6 +138,7 @@ bool clTernServer::PostRequest(const wxString& request, const wxFileName& filena
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = request;
     req->filename = filename.GetFullPath();
+    req->isFunctionTip = isFunctionCalltip;
     
     m_workerThread->Add(req);
     m_tempfiles.Add(tmpFileName.GetFullPath());
@@ -96,9 +150,9 @@ void clTernServer::PrintMessage(const wxString& message)
     ::clGetManager()->AppendOutputTabText(kOutputTab_Output, wxString() << "[WebTools] " << message);
 }
 
-void clTernServer::RecycleIfNeeded()
+void clTernServer::RecycleIfNeeded(bool force)
 {
-    if(m_tempfiles.size() > 500) {
+    if((m_tempfiles.size() > 500) || force) {
         m_tern->Terminate();
     }
 }
@@ -177,7 +231,8 @@ void clTernServer::ProcessType(const wxString& type, wxString& signature, wxStri
 
 void clTernServer::ProcessOutput(const wxString& output, wxCodeCompletionBoxEntry::Vec_t& entries)
 {
-    // example output:
+    // code completion response:
+    // ================================
     // {
     // "start": 78,
     // "end": 78,
@@ -232,13 +287,45 @@ void clTernServer::OnError(const wxString& why)
     CL_ERROR("[WebTools] %s", why);
 }
 
-void clTernServer::OnTernWorkerThreadDone(const wxString& json, const wxString& filename)
+void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply)
 {
     m_workerThread->Stop();
     wxDELETE(m_workerThread);
     RecycleIfNeeded();
 
     m_entries.clear();
-    ProcessOutput(json, m_entries);
-    m_jsCCManager->OnCodeCompleteReady(m_entries, filename);
+    if(reply.isFunctionTip) {
+        m_jsCCManager->OnFunctionTipReady(ProcessCalltip(reply.json), reply.filename);
+    } else {
+        ProcessOutput(reply.json, m_entries);
+        m_jsCCManager->OnCodeCompleteReady(m_entries, reply.filename);
+    }
+}
+
+clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
+{    
+    // Function calltip response:
+    // ================================
+    // {
+    //   "type": "fn(f: fn(elt: ?, i: number), context?: ?)",
+    //   "name": "Array.prototype.forEach",
+    //   "exprName": "forEach",
+    //   "url": "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/forEach",
+    //   "doc": "Executes a provided function once per array element.",
+    //   "origin": "ecma5"
+    // }
+    TagEntryPtrVector_t tags;
+    TagEntryPtr t(new TagEntry());
+    JSONRoot root(output);
+    wxString type = root.toElement().namedObject("type").toString();
+    int imgID;
+    wxString sig, retValue;
+    ProcessType(type, sig, retValue, imgID);
+    
+    t->SetSignature(sig);
+    t->SetReturnValue(retValue);
+    t->SetKind("function");
+    t->SetFlags(TagEntry::Tag_No_Signature_Format);
+    tags.push_back(t);
+    return new clCallTip(tags);
 }

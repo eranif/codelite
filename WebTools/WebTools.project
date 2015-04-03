@@ -35,11 +35,39 @@
   <VirtualDirectory Name="src">
     <File Name="webtools.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="WebToolsConfig.h"/>
+    <File Name="WebToolsConfig.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="webtools.h"/>
   </VirtualDirectory>
   <Dependencies/>
+  <VirtualDirectory Name="JS">
+    <File Name="JavaScriptFunctionsLocator.cpp"/>
+    <File Name="JavaScriptFunctionsLocator.h"/>
+    <File Name="JavaScriptSyntaxColourThread.cpp"/>
+    <File Name="JavaScriptSyntaxColourThread.h"/>
+    <File Name="JSCodeCompletion.cpp"/>
+    <File Name="JSCodeCompletion.h"/>
+    <File Name="clTernServer.h"/>
+    <File Name="clTernServer.cpp"/>
+    <File Name="clTernWorkerThread.h"/>
+    <File Name="clTernWorkerThread.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="UI">
+    <File Name="WebToolsSettings.h"/>
+    <File Name="WebToolsSettings.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="WebToolsBase.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="WebToolsBase_webtools_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="WebToolsBase.h"/>
+      <File Name="WebToolsBase.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -233,18 +261,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="JS">
-    <File Name="JavaScriptFunctionsLocator.cpp"/>
-    <File Name="JavaScriptFunctionsLocator.h"/>
-    <File Name="JavaScriptSyntaxColourThread.cpp"/>
-    <File Name="JavaScriptSyntaxColourThread.h"/>
-    <File Name="JSCodeCompletion.cpp"/>
-    <File Name="JSCodeCompletion.h"/>
-    <File Name="JSParserThread.cpp"/>
-    <File Name="JSParserThread.h"/>
-    <File Name="clTernServer.h"/>
-    <File Name="clTernServer.cpp"/>
-    <File Name="clTernWorkerThread.h"/>
-    <File Name="clTernWorkerThread.cpp"/>
-  </VirtualDirectory>
 </CodeLite_Project>

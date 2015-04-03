@@ -4,6 +4,7 @@
 #include <wx/stc/stc.h>
 #include "event_notifier.h"
 #include "codelite_events.h"
+#include "WebToolsSettings.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -47,6 +48,8 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
+    
+    Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion());
     
 }
@@ -60,7 +63,14 @@ clToolBar* WebTools::CreateToolBar(wxWindow* parent)
     return tb;
 }
 
-void WebTools::CreatePluginMenu(wxMenu* pluginsMenu) {}
+void WebTools::CreatePluginMenu(wxMenu* pluginsMenu) 
+{
+    wxMenu* menu = new wxMenu;
+    menu->Append(XRCID("webtools_settings"), _("Settings..."));
+    pluginsMenu->Append(wxID_ANY, _("WebTools"), menu);
+    menu->SetNextHandler(this);
+    this->SetPreviousHandler(menu);
+}
 
 void WebTools::UnPlug()
 {
@@ -73,6 +83,7 @@ void WebTools::UnPlug()
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
+    Unbind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsColourThread->Stop();
     wxDELETE(m_jsColourThread);
     m_jsCodeComplete.Reset(NULL);
@@ -149,4 +160,14 @@ void WebTools::OnEditorChanged(wxCommandEvent& event)
 {
     // If we have no JS files opened, cleanup the resources
     event.Skip();
+}
+
+void WebTools::OnSettings(wxCommandEvent& event)
+{
+    WebToolsSettings settings(m_mgr->GetTheApp()->GetTopWindow());
+    if(settings.ShowModal() == wxID_OK) {
+        if(m_jsCodeComplete) {
+            m_jsCodeComplete->Reload();
+        }
+    }
 }

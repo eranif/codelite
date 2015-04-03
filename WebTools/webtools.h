@@ -22,6 +22,7 @@ protected:
     void OnCodeComplete(clCodeCompletionEvent& event);
     void OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event);
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
+    void OnSettings(wxCommandEvent& event);
     
 private:
     bool IsJavaScriptFile(const wxString& filename);

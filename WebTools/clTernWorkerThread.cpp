@@ -1,6 +1,7 @@
 #include "clTernWorkerThread.h"
 #include "SocketAPI/clSocketClient.h"
 #include "clTernServer.h"
+#include <wx/buffer.h>
 
 clTernWorkerThread::clTernWorkerThread(clTernServer* ternServer)
     : m_ternSerer(ternServer)
@@ -40,22 +41,29 @@ void clTernWorkerThread::ProcessRequest(ThreadRequest* request)
                << "\r\n" << r->jsonRequest;
         // PrintMessage("Sending: :" + buffer);
         client->Send(buffer);
-        wxString output;
-        client->Read(output);
+        wxMemoryBuffer output;
+        client->Read(output, 5);
         
         // Stip the HTTP headers and send only the JSON reply back to the main thread
-        int where = output.Find("\r\n\r\n");
+        wxString str = wxString::From8BitData((const char*)output.GetData(), output.GetDataLen());
+        int where = str.Find("\r\n\r\n");
         if(where == wxNOT_FOUND) {
             m_ternSerer->CallAfter(&clTernServer::OnError, "Invalid output");
             return;
         }
-
-        wxString json = output.Mid(where + 4);
+        
+        
+        wxString json = str.Mid(where + 4);
     
         // Skip the ID
         json = json.AfterFirst('{');
         json.Prepend("{");
-        m_ternSerer->CallAfter(&clTernServer::OnTernWorkerThreadDone, json, r->filename);
+        clTernWorkerThread::Reply reply;
+        reply.json.swap(json);
+        reply.filename.swap(r->filename);
+        reply.isFunctionTip = r->isFunctionTip;
+        
+        m_ternSerer->CallAfter(&clTernServer::OnTernWorkerThreadDone, reply);
         
     } catch(clSocketException& e) {
         m_ternSerer->CallAfter(&clTernServer::OnError, e.what().c_str());

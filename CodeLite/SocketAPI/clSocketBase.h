@@ -115,9 +115,15 @@ public:
      * @brief read string content from remote server
      * @param content [output]
      * @param timeout seconds to wait
-     * @return
      */
     int Read(wxString& content, const wxMBConv& conv = wxConvUTF8, long timeout = -1) throw(clSocketException);
+    
+    /**
+     * @brief read a buffer from the socket
+     * @param content [output]
+     * @param timeout seconds to wait
+     */
+    int Read(wxMemoryBuffer& content, long timeout = -1) throw(clSocketException);
 
     /**
      * @brief
@@ -125,7 +131,14 @@ public:
      * @return
      */
     int SelectRead(long seconds = -1) throw(clSocketException);
-
+    
+    /**
+     * @brief select for read. Same as above, but use milli seconds instead
+     * @param milliSeconds number of _milliseconds_ to wait
+     * @return 
+     */
+    int SelectReadMS(long milliSeconds = -1) throw(clSocketException);
+    
     /**
      * @brief select for write
      * @return

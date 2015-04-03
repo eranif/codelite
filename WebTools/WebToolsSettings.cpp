@@ -1,11 +1,13 @@
 #include "WebToolsSettings.h"
 #include "windowattrmanager.h"
 #include "WebToolsConfig.h"
+#include "globals.h"
 
 WebToolsSettings::WebToolsSettings(wxWindow* parent)
     : WebToolsSettingsBase(parent)
     , m_modified(false)
 {
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
     {
         WebToolsConfig config;
         config.Load();

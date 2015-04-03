@@ -92,8 +92,6 @@
     <File Name="lib/tokenize.h"/>
     <File Name="lib/check64bit.cpp"/>
     <File Name="lib/check64bit.h"/>
-    <File Name="lib/checkassignif.cpp"/>
-    <File Name="lib/checkassignif.h"/>
     <File Name="lib/checkboost.cpp"/>
     <File Name="lib/checkboost.h"/>
     <File Name="lib/checkinternal.cpp"/>
@@ -102,8 +100,6 @@
     <File Name="lib/checknonreentrantfunctions.h"/>
     <File Name="lib/checknullpointer.cpp"/>
     <File Name="lib/checknullpointer.h"/>
-    <File Name="lib/checkobsoletefunctions.cpp"/>
-    <File Name="lib/checkobsoletefunctions.h"/>
     <File Name="lib/checkpostfixoperator.cpp"/>
     <File Name="lib/checkpostfixoperator.h"/>
     <File Name="lib/checkuninitvar.cpp"/>
@@ -198,7 +194,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -241,7 +237,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -249,7 +245,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-std=c++11" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="externals/tinyxml"/>
         <Preprocessor Value="CFGDIR=\&quot;config/cppcheck\&quot;"/>
@@ -283,7 +279,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>

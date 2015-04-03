@@ -4,7 +4,6 @@
   <Project Name="codelite_launcher" Path="../codelite_launcher/codelite_launcher.project" Active="No"/>
   <Project Name="makedir" Path="../TestDir/makedir.project" Active="No"/>
   <Project Name="le_exec" Path="../le_exec/le_exec.project" Active="No"/>
-  <Project Name="codelite_cppcheck" Path="../sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
   <Project Name="codelite_indexer" Path="../sdk/codelite_indexer/codelite_indexer.project" Active="No"/>
   <Project Name="wx-config" Path="../sdk/wxconfig/wx-config.project" Active="No"/>
   <Project Name="codelitegcc" Path="../codelitegcc/codelitegcc.project" Active="No"/>
@@ -14,11 +13,11 @@
     <![CDATA[]]>
   </Environment>
   <Project Name="codelite_echo" Path="../codelite_echo/codelite_echo.project" Active="No"/>
+  <Project Name="codelite_cppcheck" Path="../sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="autorev" ConfigName="Debug"/>
       <Project Name="build_all" ConfigName="Debug"/>
-      <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Win"/>
       <Project Name="codelite_launcher" ConfigName="Debug"/>
       <Project Name="le_exec" ConfigName="Debug"/>
@@ -29,10 +28,10 @@
       <Project Name="codelite_make" ConfigName="Debug"/>
       <Project Name="codelite_terminal" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="codelite_cppcheck" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Project Name="build_all" ConfigName="Release"/>
-      <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_indexer" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_launcher" ConfigName="Win_x64_Release"/>
@@ -42,10 +41,10 @@
       <Project Name="le_exec" ConfigName="Win_x64_Release"/>
       <Project Name="makedir" ConfigName="Win_x64_Release"/>
       <Project Name="wx-config" ConfigName="Win_x64_Release"/>
+      <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
       <Project Name="build_all" ConfigName="Release"/>
-      <Project Name="codelite_cppcheck" ConfigName="Release"/>
       <Project Name="codelite_echo" ConfigName="Release"/>
       <Project Name="codelite_indexer" ConfigName="Release_Win"/>
       <Project Name="codelite_launcher" ConfigName="Release"/>
@@ -55,6 +54,7 @@
       <Project Name="le_exec" ConfigName="Release"/>
       <Project Name="makedir" ConfigName="ReleaseUnicode"/>
       <Project Name="wx-config" ConfigName="Release"/>
+      <Project Name="codelite_cppcheck" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

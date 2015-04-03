@@ -83,9 +83,11 @@ bool clTernServer::Start()
                           wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
 #endif
 #endif
+    wxString nodeExe = nodeJS.GetFullPath();
+    ::WrapWithQuotes(nodeExe);
 
     wxString command;
-    command << nodeJS.GetFullPath() << " "
+    command << nodeExe  << " "
             << "bin" << wxFileName::GetPathSeparator() << "tern --port " << GetPort();
 
     if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {

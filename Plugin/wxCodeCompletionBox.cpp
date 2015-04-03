@@ -291,8 +291,12 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
             // Format the comment on demand if the origin was a tag entry
             docComment = m_entries.at(m_index)->m_tag->FormatComment();
         }
-
-        if(!docComment.IsEmpty() && docComment != m_displayedTip) {
+        
+        if(docComment.IsEmpty()) {
+            // No tip to display
+            DoDestroyTipWindow();
+            
+        } else if(!docComment.IsEmpty() && docComment != m_displayedTip) {
             // destroy old tip window
             DoDestroyTipWindow();
 

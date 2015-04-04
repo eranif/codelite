@@ -133,7 +133,9 @@ void CommandProcessorBase::OnTBUnRedo(wxAuiToolBarEvent& event)
 {
     wxPoint pt = event.GetItemRect().GetBottomLeft();
     pt.y++;
-    PopulateUnRedoMenu(wxTheApp->GetTopWindow(), pt, event.GetId() == wxID_UNDO);
+    wxWindow* win = wxDynamicCast(event.GetEventObject(), wxWindow); // We must use the toolbar as 'win', in case it's not in its default location
+    wxCHECK_RET(win, "No toolbar?");
+    PopulateUnRedoMenu(win, pt, event.GetId() == wxID_UNDO);
 }
 
 void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool undoing)

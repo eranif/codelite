@@ -5971,6 +5971,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     SetFrameTitle(GetMainBook()->GetActiveEditor());
+    ShowOrHideCaptions();
 }
 
 void clMainFrame::OnDetachEditor(wxCommandEvent& e) { GetMainBook()->DetachActiveEditor(); }

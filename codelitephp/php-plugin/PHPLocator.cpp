@@ -32,14 +32,33 @@ bool PHPLocator::DoLocateBinary()
 
 // Windows
 #ifdef __WXMSW__
-    // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
-    wxRegKey regZendServer(wxRegKey::HKLM, "SOFTWARE\\Zend Technologies\\ZendServer");
-    wxString zendServerInstallPath;
-    if(regZendServer.QueryValue("InstallLocation", zendServerInstallPath) && wxDirExists(zendServerInstallPath)) {
-        m_phpExe = wxFileName(zendServerInstallPath, "php.exe");
-        m_phpExe.AppendDir("ZendServer");
-        m_phpExe.AppendDir("bin");
-        return m_phpExe.Exists();
+    { 
+        // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
+        wxRegKey regZendServer(wxRegKey::HKLM, "SOFTWARE\\Zend Technologies\\ZendServer");
+        if(regZendServer.Exists()) {
+            wxString zendServerInstallPath;
+            if(regZendServer.QueryValue("InstallLocation", zendServerInstallPath) &&
+               wxDirExists(zendServerInstallPath)) {
+                m_phpExe = wxFileName(zendServerInstallPath, "php.exe");
+                m_phpExe.AppendDir("ZendServer");
+                m_phpExe.AppendDir("bin");
+                return m_phpExe.Exists();
+            }
+        }
+    }
+    { 
+        // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
+        wxRegKey regZendServer(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Zend Technologies\\ZendServer");
+        if(regZendServer.Exists()) {
+            wxString zendServerInstallPath;
+            if(regZendServer.QueryValue("InstallLocation", zendServerInstallPath) &&
+               wxDirExists(zendServerInstallPath)) {
+                m_phpExe = wxFileName(zendServerInstallPath, "php.exe");
+                m_phpExe.AppendDir("ZendServer");
+                m_phpExe.AppendDir("bin");
+                return m_phpExe.Exists();
+            }
+        }
     }
 #endif
     return false;

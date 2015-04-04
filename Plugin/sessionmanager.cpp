@@ -29,6 +29,7 @@
 
 #include <memory>
 #include "wx_xml_compatibility.h"
+#include "cl_standard_paths.h"
 
 // Session entry
 SessionEntry::SessionEntry() {}
@@ -108,12 +109,19 @@ bool SessionManager::Load(const wxString& fileName)
 
 wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxString& suffix /*=wxT("")*/) const
 {
-    wxFileName sessionFileName(name);
-    if(suffix != "tabgroup") {
-        sessionFileName.AppendDir(".codelite");
+    if(defaultSessionName == name) {
+        wxFileName sessionFileName = wxFileName(clStandardPaths::Get().GetUserDataDir(), "Default.session");
+        sessionFileName.AppendDir("config");
+        return sessionFileName;
+
+    } else {
+        wxFileName sessionFileName(name);
+        if(suffix != "tabgroup") {
+            sessionFileName.AppendDir(".codelite");
+        }
+        sessionFileName.SetExt(suffix.IsEmpty() ? wxString("session") : suffix);
+        return sessionFileName;
     }
-    sessionFileName.SetExt(suffix.IsEmpty() ? wxString("session") : suffix);
-    return sessionFileName;
 }
 
 bool SessionManager::GetSession(const wxString& workspaceFile,
@@ -125,11 +133,9 @@ bool SessionManager::GetSession(const wxString& workspaceFile,
         return false;
     }
 
-    if(defaultSessionName == workspaceFile) return false;
-
+    wxFileName sessionFileName = GetSessionFileName(workspaceFile, suffix);
     wxXmlDocument doc;
-
-    const wxFileName& sessionFileName = GetSessionFileName(workspaceFile, suffix);
+    
     if(sessionFileName.FileExists()) {
         if(!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk()) return false;
     } else {

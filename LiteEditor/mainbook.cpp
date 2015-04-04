@@ -297,6 +297,9 @@ void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { Crea
 
 void MainBook::RestoreSession(SessionEntry& session)
 {
+    if(session.GetTabInfoArr().empty()) return; // nothing to restore
+    
+    CloseAll(false);
     size_t sel = session.GetSelectedTab();
     const std::vector<TabInfo>& vTabInfoArr = session.GetTabInfoArr();
     for(size_t i = 0; i < vTabInfoArr.size(); i++) {
@@ -311,7 +314,7 @@ void MainBook::RestoreSession(SessionEntry& session)
             continue;
         }
 
-        editor->ScrollToLine(ti.GetFirstVisibleLine());
+        editor->SetFirstVisibleLine(ti.GetFirstVisibleLine());
         editor->SetEnsureCaretIsVisible(editor->PositionFromLine(ti.GetCurrentLine()));
         editor->LoadMarkersFromArray(ti.GetBookmarks());
         editor->LoadCollapsedFoldsFromArray(ti.GetCollapsedFolds());

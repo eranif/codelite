@@ -174,11 +174,13 @@ void OutlineTab::OnFilesTagged(wxCommandEvent& e)
     e.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor) {
+        
+        wxWindow* oldFocusedWindow = wxWindow::FindFocus();
         m_tree->BuildTree(editor->GetFileName());
-
-        if(editor->GetSTC()) {
-            // make sure we dont steal the focus from the editor...
-            editor->GetSTC()->SetFocus();
+        wxWindow* focusedWindow = wxWindow::FindFocus();
+        if(oldFocusedWindow != focusedWindow && oldFocusedWindow) {
+            // restore the focus back the old window
+            oldFocusedWindow->SetFocus();
         }
 
     } else {

@@ -55,8 +55,8 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
 {
     if(!m_enabled) return;
 
-    // Check that NodeJS is installed
 #ifdef __WXGTK__
+    // Check that NodeJS is installed
     wxFileName nodeJS("/usr/bin", "nodejs");
     if(!nodeJS.FileExists()) {
         wxString msg;
@@ -71,20 +71,12 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         return;
     }
 #endif
-
+    
+    // Sanity
     CHECK_PTR_RET(editor);
-    wxStyledTextCtrl* ctrl = editor->GetSTC();
-
-    // work until the current buffer
-    wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
-    CHECK_COND_RET(!buffer.IsEmpty());
-
-    wxFileName tmpFileName = wxFileName::CreateTempFileName("tern");
-    if(!FileUtils::WriteFileContent(tmpFileName, ctrl->GetText())) return;
-
-    // Request coompletion entries
-
+    
     // Check the completion type
+    wxStyledTextCtrl* ctrl = editor->GetSTC();
     int currentPos = ctrl->PositionBefore(ctrl->GetCurrentPos());
     bool isFunctionTip = false;
     while(currentPos > 0) {
@@ -99,42 +91,12 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         break;
     }
 
+    m_ccPos = ctrl->GetCurrentPos();
     if(!isFunctionTip) {
-        JSONRoot root(cJSON_Object);
-        JSONElement query = JSONElement::createObject("query");
-        root.toElement().append(query);
-        query.addProperty("type", wxString("completions"));
-        query.addProperty("file", tmpFileName.GetFullPath());
-
-        // Use {line, col} object
-        JSONElement loc = JSONElement::createObject("end");
-        query.append(loc);
-        loc.addProperty("line", ctrl->GetCurrentLine());
-        loc.addProperty("ch", ctrl->GetColumn(ctrl->GetCurrentPos()));
-
-        query.addProperty("expandWordForward", false);
-        query.addProperty("docs", true);
-        query.addProperty("urls", true);
-        query.addProperty("includeKeywords", true);
-        query.addProperty("types", true);
-        m_ternServer.PostRequest(root.toElement().format(), editor->GetFileName(), tmpFileName, isFunctionTip);
-        m_ccPos = ctrl->GetCurrentPos();
-
+        m_ternServer.PostCCRequest(editor);
+        
     } else {
-        JSONRoot root(cJSON_Object);
-        JSONElement query = JSONElement::createObject("query");
-        root.toElement().append(query);
-        query.addProperty("type", wxString("type"));
-        query.addProperty("file", tmpFileName.GetFullPath());
-
-        // Use {line, col} object
-        JSONElement loc = JSONElement::createObject("end");
-        query.append(loc);
-        loc.addProperty("line", ctrl->LineFromPosition(currentPos));
-        loc.addProperty("ch", ctrl->GetColumn(currentPos));
-
-        m_ternServer.PostRequest(root.toElement().format(), editor->GetFileName(), tmpFileName, isFunctionTip);
-        m_ccPos = ctrl->GetCurrentPos();
+        m_ternServer.PostFunctionTipRequest(editor, currentPos);
     }
 }
 

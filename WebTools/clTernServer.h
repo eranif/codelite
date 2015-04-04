@@ -7,7 +7,10 @@
 #include "wxCodeCompletionBoxEntry.h"
 #include "clTernWorkerThread.h"
 #include "cl_calltip.h"
+#include "json_node.h"
 
+class IEditor;
+class wxStyledTextCtrl;
 class JSCodeCompletion;
 class IProcess;
 class clTernWorkerThread;
@@ -42,6 +45,7 @@ protected:
     void OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply);
     void OnError(const wxString& why);
     void DoCleanupFiles();
+    JSONElement CreateLocation(wxStyledTextCtrl* ctrl, int pos = wxNOT_FOUND);
     
 public:
     void RecycleIfNeeded(bool force = false);
@@ -51,10 +55,15 @@ public:
     long GetPort() const { return m_port; }
     bool Start();
     void Terminate();
-    bool PostRequest(const wxString& request,
-                     const wxFileName& filename,
-                     const wxFileName& tmpFileName,
-                     bool isFunctionCalltip);
+    /**
+     * @brief post a CC request at the current editor position
+     */
+    bool PostCCRequest(IEditor *editor);
+    /**
+     * @brief post a function calltip at a given position. pos is the first position
+     * before the open brace
+     */
+    bool PostFunctionTipRequest(IEditor* editor, int pos);
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
 };
 

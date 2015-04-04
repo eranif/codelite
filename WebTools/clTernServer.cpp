@@ -13,6 +13,9 @@
 #include "entry.h"
 #include <wx/regex.h>
 #include <wx/log.h>
+#include "fileutils.h"
+#include "ieditor.h"
+#include <wx/stc/stc.h>
 
 BEGIN_EVENT_TABLE(clTernServer, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, clTernServer::OnTernTerminated)
@@ -153,22 +156,40 @@ void clTernServer::Terminate()
     wxDELETE(m_tern);
 }
 
-bool clTernServer::PostRequest(const wxString& request,
-                               const wxFileName& filename,
-                               const wxFileName& tmpFileName,
-                               bool isFunctionCalltip)
+bool clTernServer::PostCCRequest(IEditor* editor)
 {
+    // Sanity
     if(m_workerThread) return false;        // another request is in progress
     if(m_port == wxNOT_FOUND) return false; // don't know tern's port
 
+    wxStyledTextCtrl* ctrl = editor->GetSTC();
+    
+    // Write the modified buffer into a file
+    wxFileName tmpFileName = wxFileName::CreateTempFileName("tern");
+    if(!FileUtils::WriteFileContent(tmpFileName, ctrl->GetText())) return false;
+    
+    
+    // Prepare the request
+    JSONRoot root(cJSON_Object);
+    JSONElement query = JSONElement::createObject("query");
+    root.toElement().append(query);
+    query.addProperty("type", wxString("completions"));
+    query.addProperty("file", tmpFileName.GetFullPath());
+    query.append(CreateLocation(ctrl));
+    query.addProperty("expandWordForward", false);
+    query.addProperty("docs", true);
+    query.addProperty("urls", true);
+    query.addProperty("includeKeywords", true);
+    query.addProperty("types", true);
+    
+    clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
+    req->jsonRequest = root.toElement().format();
+    req->filename = editor->GetFileName().GetFullPath();
+    req->isFunctionTip = false;
+    
+    // Create the worker thread and start the request
     m_workerThread = new clTernWorkerThread(this);
     m_workerThread->Start();
-
-    clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
-    req->jsonRequest = request;
-    req->filename = filename.GetFullPath();
-    req->isFunctionTip = isFunctionCalltip;
-
     m_workerThread->Add(req);
     m_tempfiles.Add(tmpFileName.GetFullPath());
     return true;
@@ -372,4 +393,48 @@ void clTernServer::DoCleanupFiles()
         ::wxRemoveFile(m_tempfiles.Item(i));
     }
     m_tempfiles.Clear();
+}
+
+JSONElement clTernServer::CreateLocation(wxStyledTextCtrl* ctrl, int pos)
+{
+    if(pos == wxNOT_FOUND) {
+        pos = ctrl->GetCurrentPos();
+    }
+    JSONElement loc = JSONElement::createObject("end");
+    loc.addProperty("line", ctrl->LineFromPosition(pos));
+    loc.addProperty("ch", ctrl->GetColumn(pos));
+    return loc;
+}
+
+bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
+{
+    // Sanity
+    if(m_workerThread) return false;        // another request is in progress
+    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+
+    wxStyledTextCtrl* ctrl = editor->GetSTC();
+    
+    // Write the modified buffer into a file
+    wxFileName tmpFileName = wxFileName::CreateTempFileName("tern");
+    if(!FileUtils::WriteFileContent(tmpFileName, ctrl->GetText())) return false;
+    
+    // Prepare the request
+    JSONRoot root(cJSON_Object);
+    JSONElement query = JSONElement::createObject("query");
+    root.toElement().append(query);
+    query.addProperty("type", wxString("type"));
+    query.addProperty("file", tmpFileName.GetFullPath());
+    query.append(CreateLocation(ctrl, pos));
+
+    clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
+    req->jsonRequest = root.toElement().format();
+    req->filename = editor->GetFileName().GetFullPath();
+    req->isFunctionTip = true;
+    
+    // Create the worker thread and start the request
+    m_workerThread = new clTernWorkerThread(this);
+    m_workerThread->Start();
+    m_workerThread->Add(req);
+    m_tempfiles.Add(tmpFileName.GetFullPath());
+    return true;
 }

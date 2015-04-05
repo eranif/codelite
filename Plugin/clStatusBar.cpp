@@ -47,21 +47,21 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
-    wxCustomStatusBarField::Ptr_t messages(new wxCustomStatusBarFieldText(this, 150));
-    AddField(messages);
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 200));
+    AddField(lineCol);
 
     wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(
         this, wxXmlResource::Get()->LoadBitmap("build-animation-sprite"), wxHORIZONTAL, wxSize(80, 7)));
     AddField(buildAnimation);
 
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 80));
-    AddField(lineCol);
+    wxCustomStatusBarField::Ptr_t whitespace(new wxCustomStatusBarFieldText(this, 80));
+    AddField(whitespace);
 
     wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, 100));
     AddField(language);
 
-    wxCustomStatusBarField::Ptr_t build(new wxCustomStatusBarBitmapField(this, 30));
-    AddField(build);
+    wxCustomStatusBarField::Ptr_t buildStatus(new wxCustomStatusBarBitmapField(this, 30));
+    AddField(buildStatus);
 
     m_bmpBuildError = wxXmlResource::Get()->LoadBitmap("build-error");
     m_bmpBuildWarnings = wxXmlResource::Get()->LoadBitmap("build-warning");

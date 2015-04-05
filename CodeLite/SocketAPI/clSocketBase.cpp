@@ -53,22 +53,49 @@ void clSocketBase::Initialize()
 #endif
 }
 
-int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) throw(clSocketException)
+// Read API
+int clSocketBase::Read(wxMemoryBuffer& content, long timeout) throw(clSocketException)
 {
     content.Clear();
-    if(SelectRead(timeout) == kTimeout) {
-        return kTimeout;
-    }
 
     char buffer[4096];
-    memset(buffer, 0x0, sizeof(buffer));
-    int bytesRead = recv(m_socket, buffer, sizeof(buffer), 0);
-    if(bytesRead > 0) {
-        content = wxString(buffer, conv, bytesRead);
-        return kSuccess;
-    } else {
-        return kError;
+    timeout = (timeout * 1000); // convert to MS
+    while(true && timeout) {
+        int rc = SelectReadMS(10);
+        timeout -= 10;
+        if(rc == kSuccess) {
+            memset(buffer, 0x0, sizeof(buffer));
+            int bytesRead = recv(m_socket, buffer, sizeof(buffer), 0);
+            if(bytesRead < 0) {
+                // Error
+                throw clSocketException("Read failed: " + error());
+
+            } else if(bytesRead == 0) {
+                // connection closed
+                return kError;
+
+            } else {
+                content.AppendData(buffer, bytesRead);
+                continue;
+            }
+        } else {
+            if(content.IsEmpty())
+                continue; // keep waiting until time ends
+            else
+                return kSuccess; // we already read our content
+        }
     }
+    return kTimeout;
+}
+
+int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) throw(clSocketException)
+{
+    wxMemoryBuffer mb;
+    int rc = Read(mb, timeout);
+    if(rc == kSuccess) {
+        content = wxString((const char*)mb.GetData(), conv, mb.GetDataLen());
+    }
+    return rc;
 }
 
 int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout) throw(clSocketException)
@@ -111,12 +138,26 @@ int clSocketBase::SelectRead(long seconds) throw(clSocketException)
     }
 }
 
+// Send API
+void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) throw(clSocketException)
+{
+    if(m_socket == INVALID_SOCKET) {
+        throw clSocketException("Invalid socket!");
+    }
+    wxCharBuffer cb = msg.mb_str(conv).data();
+    wxMemoryBuffer mb;
+    mb.AppendData(cb.data(), cb.length());
+    Send(mb);
+}
+
 void clSocketBase::Send(const std::string& msg) throw(clSocketException)
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
     }
-    ::send(m_socket, msg.c_str(), msg.length(), 0);
+    wxMemoryBuffer mb;
+    mb.AppendData(msg.c_str(), msg.length());
+    Send(mb);
 }
 
 void clSocketBase::Send(const wxMemoryBuffer& msg) throw(clSocketException)
@@ -124,7 +165,15 @@ void clSocketBase::Send(const wxMemoryBuffer& msg) throw(clSocketException)
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
     }
-    ::send(m_socket, (const char*)msg.GetData(), msg.GetDataLen(), 0);
+    char* pdata = (char*)msg.GetData();
+    int bytesLeft = msg.GetDataLen();
+    while(bytesLeft) {
+        if(SelectWriteMS(1000) == kTimeout) continue;
+        int bytesSent = ::send(m_socket, (const char*)pdata, bytesLeft, 0);
+        if(bytesSent <= 0) throw clSocketException("Send error: " + error());
+        pdata += bytesSent;
+        bytesLeft -= bytesSent;
+    }
 }
 
 std::string clSocketBase::error() const
@@ -249,6 +298,39 @@ void clSocketBase::MakeSocketBlocking(bool blocking)
 #endif
 }
 
+int clSocketBase::SelectWriteMS(long milliSeconds) throw(clSocketException)
+{
+    if(milliSeconds == -1) {
+        return kSuccess;
+    }
+
+    if(m_socket == INVALID_SOCKET) {
+        throw clSocketException("Invalid socket!");
+    }
+
+    struct timeval tv;
+    tv.tv_sec = milliSeconds / 1000;
+    tv.tv_usec = (milliSeconds % 1000) * 1000;
+
+    fd_set write_set;
+    FD_ZERO(&write_set);
+    FD_SET(m_socket, &write_set);
+    errno = 0;
+    int rc = select(m_socket + 1, NULL, &write_set, NULL, &tv);
+    if(rc == 0) {
+        // timeout
+        return kTimeout;
+
+    } else if(rc < 0) {
+        // an error occured
+        throw clSocketException("SelectWriteMS failed: " + error());
+
+    } else {
+        // we got something to read
+        return kSuccess;
+    }
+}
+
 int clSocketBase::SelectWrite(long seconds) throw(clSocketException)
 {
     if(seconds == -1) {
@@ -278,15 +360,6 @@ int clSocketBase::SelectWrite(long seconds) throw(clSocketException)
         // we got something to read
         return kSuccess;
     }
-}
-
-void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) throw(clSocketException)
-{
-    if(m_socket == INVALID_SOCKET) {
-        throw clSocketException("Invalid socket!");
-    }
-    wxCharBuffer cb = msg.mb_str(conv).data();
-    ::send(m_socket, cb.data(), cb.length(), 0);
 }
 
 int clSocketBase::SelectReadMS(long milliSeconds) throw(clSocketException)
@@ -319,34 +392,4 @@ int clSocketBase::SelectReadMS(long milliSeconds) throw(clSocketException)
         // we got something to read
         return kSuccess;
     }
-}
-
-int clSocketBase::Read(wxMemoryBuffer& content, long timeout) throw(clSocketException)
-{
-    content.Clear();
-    if(SelectRead(timeout) == kTimeout) {
-        return kTimeout;
-    }
-
-    char buffer[4096];
-    while(true) {
-        int rc = SelectReadMS(1);
-        if(rc == kSuccess) {
-            memset(buffer, 0x0, sizeof(buffer));
-            int bytesRead = recv(m_socket, buffer, sizeof(buffer), 0);
-            if(bytesRead < 0) {
-                throw clSocketException("Read failed: " + error());
-            } else if(bytesRead == 0) {
-                // we already got something, return success
-                return (content.IsEmpty() ? kTimeout : kSuccess);
-            } else {
-                content.AppendData(buffer, bytesRead);
-                continue;
-            }
-        } else {
-            if(rc < 0) return kError;
-            else return (content.IsEmpty() ? kTimeout : kSuccess);
-        }
-    }
-    return kSuccess;
 }

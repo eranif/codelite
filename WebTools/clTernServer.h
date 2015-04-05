@@ -23,11 +23,11 @@ class clTernServer : public wxEvtHandler
     wxFileName m_nodePath;
     wxString m_ternBinFolder;
     bool m_goingDown;
-    wxArrayString m_tempfiles;
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     clTernWorkerThread* m_workerThread;
     bool m_fatalError;
     long m_port;
+    size_t m_recycleCount;
 
 protected:
     DECLARE_EVENT_TABLE()
@@ -44,8 +44,8 @@ protected:
     // Worker thread callbacks
     void OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply);
     void OnError(const wxString& why);
-    void DoCleanupFiles();
     JSONElement CreateLocation(wxStyledTextCtrl* ctrl, int pos = wxNOT_FOUND);
+    JSONElement CreateFilesArray(wxStyledTextCtrl* ctrl);
     
 public:
     void RecycleIfNeeded(bool force = false);

@@ -290,6 +290,20 @@ JSONElement JSONElement::createObject(const wxString& name)
     return obj;
 }
 
+char* JSONElement::FormatRawString(bool formatted) const
+{
+    if(!_json) {
+        return NULL;
+    }
+    
+    if(formatted) {
+        return cJSON_Print(_json);
+        
+    } else {
+        return cJSON_PrintUnformatted(_json);
+    }
+}
+
 wxString JSONElement::format() const
 {
     if(!_json) {

@@ -2,6 +2,7 @@
 #include "SocketAPI/clSocketClient.h"
 #include "clTernServer.h"
 #include <wx/buffer.h>
+#include <sstream>
 
 clTernWorkerThread::clTernWorkerThread(clTernServer* ternServer)
     : m_ternSerer(ternServer)
@@ -9,15 +10,32 @@ clTernWorkerThread::clTernWorkerThread(clTernServer* ternServer)
     m_port = m_ternSerer->GetPort();
 }
 
-clTernWorkerThread::~clTernWorkerThread()
-{
-}
+clTernWorkerThread::~clTernWorkerThread() {}
+
+struct MallocDeleter {
+    char* m_ptr;
+    MallocDeleter(char* p)
+        : m_ptr(p)
+    {
+    }
+
+    ~MallocDeleter()
+    {
+        if(m_ptr) {
+            free(m_ptr);
+            m_ptr = NULL;
+        }
+    }
+};
 
 void clTernWorkerThread::ProcessRequest(ThreadRequest* request)
 {
     clTernWorkerThread::Request* r = dynamic_cast<clTernWorkerThread::Request*>(request);
     clSocketClient* client = new clSocketClient();
     clSocketBase::Ptr_t p(client);
+    
+    // Make sure that the jsonReuqest is destroyed
+    MallocDeleter deleter(r->jsonRequest);
     
     bool wouldBlock;
     try {
@@ -32,18 +50,24 @@ void clTernWorkerThread::ProcessRequest(ThreadRequest* request)
         // Content-Type: application/x-www-form-urlencoded
         // Content-Length: 32
 
-        wxString buffer;
-        buffer << "POST / HTTP/1.1\r\n"
-               << "From: Eran Ifrah\r\n"
-               << "User-Agent: CodeLite IDE\r\n"
-               << "Content-Type: application/x-www-form-urlencoded\r\n"
-               << "Content-Length: " << r->jsonRequest.length() << "\r\n"
-               << "\r\n" << r->jsonRequest;
-        // PrintMessage("Sending: :" + buffer);
+        wxMemoryBuffer buffer;
+        std::stringstream ss;
+        ss << "POST / HTTP/1.1\r\n";
+        ss << "From: Eran Ifrah\r\n";
+        ss << "User-Agent: CodeLite IDE\r\n";
+        ss << "Content-Type: application/x-www-form-urlencoded\r\n";
+        ss << "Content-Length: ";
+        ss << strlen(r->jsonRequest) << "\r\n";
+        ss << "\r\n";
+        ss << r->jsonRequest;
+
+        std::string strBuffer = ss.str();
+        buffer.AppendData(strBuffer.c_str(), strBuffer.length());
+
         client->Send(buffer);
         wxMemoryBuffer output;
         client->Read(output, 5);
-        
+
         // Stip the HTTP headers and send only the JSON reply back to the main thread
         wxString str = wxString::From8BitData((const char*)output.GetData(), output.GetDataLen());
         int where = str.Find("\r\n\r\n");
@@ -51,10 +75,9 @@ void clTernWorkerThread::ProcessRequest(ThreadRequest* request)
             m_ternSerer->CallAfter(&clTernServer::OnError, "Invalid output");
             return;
         }
-        
-        
+
         wxString json = str.Mid(where + 4);
-    
+
         // Skip the ID
         json = json.AfterFirst('{');
         json.Prepend("{");
@@ -62,9 +85,9 @@ void clTernWorkerThread::ProcessRequest(ThreadRequest* request)
         reply.json.swap(json);
         reply.filename.swap(r->filename);
         reply.isFunctionTip = r->isFunctionTip;
-        
+
         m_ternSerer->CallAfter(&clTernServer::OnTernWorkerThreadDone, reply);
-        
+
     } catch(clSocketException& e) {
         m_ternSerer->CallAfter(&clTernServer::OnError, e.what().c_str());
     }

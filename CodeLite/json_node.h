@@ -84,6 +84,11 @@ public:
     bool isBool() const;
     bool isString() const;
     wxString format() const;
+    /**
+     * @brief format the JSON into a raw c string
+     * The caller should free the pointer (using free())
+     */
+    char* FormatRawString(bool formatted = true) const;
     int arraySize() const;
     int toInt(int defaultVal = -1) const;
     size_t toSize_t(size_t defaultVal = 0) const;

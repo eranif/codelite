@@ -10,7 +10,7 @@ class clTernWorkerThread : public WorkerThread
     int m_port;
 public:
     struct Request : public ThreadRequest {
-        wxString jsonRequest;
+        char* jsonRequest;
         wxString filename;
         bool isFunctionTip;
     };

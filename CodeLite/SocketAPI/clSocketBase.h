@@ -144,6 +144,12 @@ public:
      * @return
      */
     int SelectWrite(long seconds = -1) throw(clSocketException);
+    
+    /**
+     * @brief select for write (milli seconds version)
+     * @return
+     */
+    int SelectWriteMS(long milliSeconds = -1) throw(clSocketException);
 
     /**
      * @brief read a full message that was sent with 'SendMessage'

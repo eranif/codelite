@@ -46,7 +46,9 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
                                     wxDefaultSize,
                                     wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_COLUMN_LINES |
                                         wxTR_ROW_LINES | wxTR_TWIST_BUTTONS | wxTR_MULTIPLE);
-
+    m_treeList->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+    m_treeList->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    
     m_treeList->AddColumn(_("Name"), 150);
     m_treeList->AddColumn(_("Value"), 300);
     m_treeList->AddColumn(_("Summary"), 300);

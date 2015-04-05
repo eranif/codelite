@@ -291,9 +291,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-
-    ctrl->SetUseTabs(EditorConfigST::Get()->GetOptions()->GetIndentUsesTabs());
-    ctrl->SetIndent(EditorConfigST::Get()->GetOptions()->GetIndentWidth());
+    
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    ctrl->SetUseTabs(options->GetIndentUsesTabs());
+    ctrl->SetIndent(options->GetIndentWidth());
     bool tooltip(false);
 
     const StyleProperty::Map_t& styles = GetLexerProperties();
@@ -306,8 +307,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #ifdef __WXOSX__
     ctrl->SetUseAntiAliasing(true);
 #endif
-    ctrl->MarkerEnableHighlight(true);
-    
+
     // Find the default style
     wxFont defaultFont;
     bool foundDefaultStyle = false;

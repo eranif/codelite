@@ -359,7 +359,8 @@ void LEditor::SetProperties()
 
     CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
-
+    MarkerEnableHighlight(options->IsHighlightFoldWhenActive());
+    
     m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
     m_autoAddMatchedCurlyBrace = options->GetAutoAddMatchedCurlyBraces();
     m_autoAddNormalBraces = options->GetAutoAddMatchedNormalBraces();

@@ -32,6 +32,7 @@
 #include "drawingutils.h"
 #include <algorithm>
 #include "editor_config.h"
+#include "bookmark_manager.h"
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -305,7 +306,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #ifdef __WXOSX__
     ctrl->SetUseAntiAliasing(true);
 #endif
-
+    ctrl->MarkerEnableHighlight(true);
+    
     // Find the default style
     wxFont defaultFont;
     bool foundDefaultStyle = false;

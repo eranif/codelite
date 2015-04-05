@@ -127,6 +127,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
                 Opt_WrapBrackets |
                 Opt_WrapQuotes |
                 Opt_AutoCompleteDoubleQuotes |
+                Opt_FoldHighlightActiveBlock |
                 Opt_WrapCmdWithDoubleQuotes)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);

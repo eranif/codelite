@@ -63,6 +63,7 @@ public:
         Opt_WrapQuotes = 0x00800000,
         Opt_WrapBrackets = 0x01000000,
         Opt_WrapCmdWithDoubleQuotes = 0x02000000,
+        Opt_FoldHighlightActiveBlock = 0x04000000,
     };
 
 protected:
@@ -356,7 +357,9 @@ public:
 
     bool GetAutoAddMatchedNormalBraces() const { return HasOption(Opt_AutoCompleteNormalBraces); }
     bool GetAutoCompleteDoubleQuotes() const { return HasOption(Opt_AutoCompleteDoubleQuotes); }
-    void SetAutoCompleteDoubleQuotes(bool b) { return EnableOption(Opt_AutoCompleteDoubleQuotes, b); }
+    void SetAutoCompleteDoubleQuotes(bool b) { EnableOption(Opt_AutoCompleteDoubleQuotes, b); }
+    void SetHighlightFoldWhenActive(bool b) { EnableOption(Opt_FoldHighlightActiveBlock, b); }
+    bool IsHighlightFoldWhenActive() const { return HasOption(Opt_FoldHighlightActiveBlock); }
     void SetFoldBgColour(const wxColour& foldBgColour) { this->m_foldBgColour = foldBgColour; }
     const wxColour& GetFoldBgColour() const { return m_foldBgColour; }
     void SetAutoAdjustHScrollBarWidth(const bool& autoAdjustHScrollBarWidth)
@@ -398,7 +401,7 @@ public:
 
     void MSWWrapCmdWithDoubleQuotes(bool b) { EnableOption(Opt_WrapCmdWithDoubleQuotes, b); }
     bool MSWIsWrapCmdWithDoubleQuotes() const { return HasOption(Opt_WrapCmdWithDoubleQuotes); }
-    
+
     /**
      * Return an XML representation of this object
      * \return XML node

@@ -49,6 +49,12 @@
 
 // Declaration
 #include "CMakeHelpTab.h"
+#include "globals.h"
+#include "imanager.h"
+#include <wx/stc/stc.h>
+#include "ColoursAndFontsManager.h"
+#include <wx/filename.h>
+#include "fileutils.h"
 
 // wxWidgets
 #include <wx/msgdlg.h>
@@ -83,8 +89,8 @@ CMakeHelpTab::CMakeHelpTab(wxWindow* parent, CMakePlugin* plugin)
 {
     wxASSERT(plugin);
     wxASSERT(m_gaugeLoad->GetRange() == 100); // Must be 100
-    
-    m_themeHelper.reset( new ThemeHandlerHelper(this) );
+
+    m_themeHelper.reset(new ThemeHandlerHelper(this));
     Bind(wxEVT_CLOSE_WINDOW, &CMakeHelpTab::OnClose, this);
     Bind(EVT_THREAD_START, &CMakeHelpTab::OnThreadStart, this);
     Bind(EVT_THREAD_UPDATE, &CMakeHelpTab::OnThreadUpdate, this);
@@ -96,24 +102,18 @@ CMakeHelpTab::CMakeHelpTab(wxWindow* parent, CMakePlugin* plugin)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnChangeTopic(wxCommandEvent& event)
-{
-    ShowTopic(event.GetInt());
-}
+void CMakeHelpTab::OnChangeTopic(wxCommandEvent& event) { ShowTopic(event.GetInt()); }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnInsert(wxCommandEvent& event)
+void CMakeHelpTab::OnInsert(wxCommandEvent& event)
 {
     IManager* manager = m_plugin->GetManager();
     wxASSERT(manager);
     IEditor* editor = manager->GetActiveEditor();
 
     // No active editor
-    if (!editor)
-        return;
+    if(!editor) return;
 
     // Insert value
     editor->InsertText(editor->GetCurrentPosition(), m_listBoxList->GetString(event.GetInt()));
@@ -121,8 +121,7 @@ CMakeHelpTab::OnInsert(wxCommandEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnSearch(wxCommandEvent& event)
+void CMakeHelpTab::OnSearch(wxCommandEvent& event)
 {
     // List subset
     ListFiltered(event.GetString());
@@ -130,8 +129,7 @@ CMakeHelpTab::OnSearch(wxCommandEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnSearchCancel(wxCommandEvent& event)
+void CMakeHelpTab::OnSearchCancel(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
@@ -141,8 +139,7 @@ CMakeHelpTab::OnSearchCancel(wxCommandEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnSelect(wxCommandEvent& event)
+void CMakeHelpTab::OnSelect(wxCommandEvent& event)
 {
     wxASSERT(!GetThread() || !GetThread()->IsRunning());
     wxASSERT(m_data);
@@ -154,22 +151,20 @@ CMakeHelpTab::OnSelect(wxCommandEvent& event)
     std::map<wxString, wxString>::const_iterator it = m_data->find(name);
 
     // Data found
-    if (it != m_data->end()) {
-        // Show required data
-        m_htmlWinText->SetPage(it->second);
+    if(it != m_data->end()) {
+        CreateHelpPage(it->second, name);
     }
 }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnReload(wxCommandEvent& event)
+void CMakeHelpTab::OnReload(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
     wxASSERT(m_plugin->GetCMake());
-    if (!m_plugin->GetCMake()->IsOk()) {
-        wxMessageBox(_("CMake application path is invalid!"), wxMessageBoxCaptionStr,  wxOK | wxCENTER | wxICON_ERROR);
+    if(!m_plugin->GetCMake()->IsOk()) {
+        wxMessageBox(_("CMake application path is invalid!"), wxMessageBoxCaptionStr, wxOK | wxCENTER | wxICON_ERROR);
         return;
     }
 
@@ -178,85 +173,45 @@ CMakeHelpTab::OnReload(wxCommandEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::ListAll()
+void CMakeHelpTab::ListAll()
 {
     // Remove old data
     m_listBoxList->Clear();
-    m_htmlWinText->SetPage("");
 
-    if (!m_data)
-        return;
+    if(!m_data) return;
 
     // Foreach data and store names into list
-    for (std::map<wxString, wxString>::const_iterator it = m_data->begin(),
-         ite = m_data->end(); it != ite; ++it) {
+    for(std::map<wxString, wxString>::const_iterator it = m_data->begin(), ite = m_data->end(); it != ite; ++it) {
         m_listBoxList->Append(it->first);
     }
 }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::ListFiltered(const wxString& search)
+void CMakeHelpTab::ListFiltered(const wxString& search)
 {
     const wxString searchMatches = "*" + search + "*";
 
     // Remove old data
     m_listBoxList->Clear();
-    m_htmlWinText->SetPage("");
 
-    if (!m_data)
-        return;
+    if(!m_data) return;
 
     // Foreach data and store names into list
-    for (std::map<wxString, wxString>::const_iterator it = m_data->begin(),
-         ite = m_data->end(); it != ite; ++it) {
+    for(std::map<wxString, wxString>::const_iterator it = m_data->begin(), ite = m_data->end(); it != ite; ++it) {
         // Store only that starts with given string
-        if (it->first.Matches(searchMatches))
-            m_listBoxList->Append(it->first);
+        if(it->first.Matches(searchMatches)) m_listBoxList->Append(it->first);
     }
 }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnRightClick(wxMouseEvent& event)
-{
-    wxMenu menu;
-    menu.Append(wxID_ANY, "Switch view", "Changes view between horizontal and vertical splitting");
-    menu.Bind(wxEVT_COMMAND_MENU_SELECTED, &CMakeHelpTab::OnSplitterSwitch, this);
-    PopupMenu(&menu);
-}
-
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnSplitterSwitch(wxCommandEvent& event)
-{
-    switch (m_splitter->GetSplitMode()) {
-    default:
-        break;
-
-    case wxSPLIT_HORIZONTAL:
-        m_splitter->Unsplit();
-        m_splitter->SplitVertically(m_splitterPageList, m_splitterPageText);
-        break;
-
-    case wxSPLIT_VERTICAL:
-        m_splitter->Unsplit();
-        m_splitter->SplitHorizontally(m_splitterPageList, m_splitterPageText);
-        break;
-    }
-}
-
-/* ************************************************************************ */
-
-void
-CMakeHelpTab::OnThreadStart(wxThreadEvent& event)
+void CMakeHelpTab::OnThreadStart(wxThreadEvent& event)
 {
     // Show gauge
-    if (!m_gaugeLoad->IsShown()) {
+    if(!m_gaugeLoad->IsShown()) {
         m_gaugeLoad->Show();
         Layout();
     }
@@ -264,8 +219,7 @@ CMakeHelpTab::OnThreadStart(wxThreadEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnThreadUpdate(wxThreadEvent& event)
+void CMakeHelpTab::OnThreadUpdate(wxThreadEvent& event)
 {
     // Notify about update
     m_gaugeLoad->SetValue(event.GetInt());
@@ -274,8 +228,7 @@ CMakeHelpTab::OnThreadUpdate(wxThreadEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnThreadDone(wxThreadEvent& event)
+void CMakeHelpTab::OnThreadDone(wxThreadEvent& event)
 {
     // Hide gauge
     m_gaugeLoad->Hide();
@@ -287,20 +240,17 @@ CMakeHelpTab::OnThreadDone(wxThreadEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnClose(wxCloseEvent& event)
+void CMakeHelpTab::OnClose(wxCloseEvent& event)
 {
     // Wait for thread
-    if (GetThread() && GetThread()->IsRunning())
-        GetThread()->Wait();
+    if(GetThread() && GetThread()->IsRunning()) GetThread()->Wait();
 
     Destroy();
 }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::OnUpdateUi(wxUpdateUIEvent& event)
+void CMakeHelpTab::OnUpdateUi(wxUpdateUIEvent& event)
 {
     // Disable UI when background thread is running
     event.Enable(!GetThread() || !GetThread()->IsRunning());
@@ -308,15 +258,14 @@ CMakeHelpTab::OnUpdateUi(wxUpdateUIEvent& event)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::ShowTopic(int topic)
+void CMakeHelpTab::ShowTopic(int topic)
 {
     wxASSERT(!GetThread() || !GetThread()->IsRunning());
 
     const CMake* cmake = m_plugin->GetCMake();
     wxASSERT(cmake);
 
-    switch (topic) {
+    switch(topic) {
     default:
         m_data = NULL;
         break;
@@ -347,12 +296,10 @@ CMakeHelpTab::ShowTopic(int topic)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::PublishData()
+void CMakeHelpTab::PublishData()
 {
     // The background thread must not working now
-    if (GetThread() && GetThread()->IsRunning())
-        return;
+    if(GetThread() && GetThread()->IsRunning()) return;
 
     // Set CMake version
     m_staticTextVersionValue->SetLabel(m_plugin->GetCMake()->GetVersion());
@@ -363,8 +310,7 @@ CMakeHelpTab::PublishData()
 
 /* ************************************************************************ */
 
-wxThread::ExitCode
-CMakeHelpTab::Entry()
+wxThread::ExitCode CMakeHelpTab::Entry()
 {
     CMake* cmake = m_plugin->GetCMake();
     wxASSERT(cmake);
@@ -377,24 +323,23 @@ CMakeHelpTab::Entry()
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::LoadData(bool force)
+void CMakeHelpTab::LoadData(bool force)
 {
     // Thread is busy
-    if (GetThread() && GetThread()->IsRunning()) {
+    if(GetThread() && GetThread()->IsRunning()) {
         return;
     }
 
     // Invalid cmake executable
     wxASSERT(m_plugin->GetCMake());
-    if (!m_plugin->GetCMake()->IsOk()) {
+    if(!m_plugin->GetCMake()->IsOk()) {
         return;
     }
 
     m_force = force;
 
     // Create a new joinable thread
-    if (CreateThread(wxTHREAD_JOINABLE) != wxTHREAD_NO_ERROR) {
+    if(CreateThread(wxTHREAD_JOINABLE) != wxTHREAD_NO_ERROR) {
         CL_ERROR("Could not create the worker thread!");
         return;
     }
@@ -403,7 +348,7 @@ CMakeHelpTab::LoadData(bool force)
     wxASSERT(GetThread());
 
     // Run the thread
-    if (GetThread()->Run() != wxTHREAD_NO_ERROR) {
+    if(GetThread()->Run() != wxTHREAD_NO_ERROR) {
         CL_ERROR("Could not run the worker thread!");
         return;
     }
@@ -411,24 +356,15 @@ CMakeHelpTab::LoadData(bool force)
 
 /* ************************************************************************ */
 
-bool
-CMakeHelpTab::RequestStop() const
-{
-    return GetThread() && GetThread()->TestDestroy();
-}
+bool CMakeHelpTab::RequestStop() const { return GetThread() && GetThread()->TestDestroy(); }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::Start()
-{
-    AddPendingEvent(wxThreadEvent(EVT_THREAD_START));
-}
+void CMakeHelpTab::Start() { AddPendingEvent(wxThreadEvent(EVT_THREAD_START)); }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::Update(int value)
+void CMakeHelpTab::Update(int value)
 {
     m_progress = value;
 
@@ -440,33 +376,52 @@ CMakeHelpTab::Update(int value)
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::Inc(int value)
+void CMakeHelpTab::Inc(int value)
 {
     // There is nothing to add
-    if (!value)
-        return;
+    if(!value) return;
 
     Update(m_progress + value);
 }
 
 /* ************************************************************************ */
 
-void
-CMakeHelpTab::Done()
-{
-    AddPendingEvent(wxThreadEvent(EVT_THREAD_DONE));
-}
+void CMakeHelpTab::Done() { AddPendingEvent(wxThreadEvent(EVT_THREAD_DONE)); }
 
 void CMakeHelpTab::Stop()
 {
-    if ( GetThread() && GetThread()->IsAlive() )  {
+    if(GetThread() && GetThread()->IsAlive()) {
         GetThread()->Delete(NULL, wxTHREAD_WAIT_BLOCK);
-        
-    } else if ( GetThread() ) {
+
+    } else if(GetThread()) {
         GetThread()->Wait(wxTHREAD_WAIT_BLOCK);
     }
 }
 
+void CMakeHelpTab::CreateHelpPage(const wxString& content, const wxString& subject)
+{
+    wxString text = content;
+    text.Replace("<br />", "\n");
+    text.Replace("&lt;" , "<");
+    text.Replace("&gt;" , ">");
+    IManager* manager = ::clGetManager();
+    
+    // Write the content of the help into a temporary file
+    wxFileName fnTemp = wxFileName::CreateTempFileName("cmake");
+    wxFileName fnCMakeHelpFile = fnTemp;
+    fnCMakeHelpFile.SetFullName("CMake Help.cmake");
+    
+    if(!FileUtils::WriteFileContent(fnCMakeHelpFile, text)) return;
+    
+    if(manager->OpenFile(fnCMakeHelpFile.GetFullPath())) {
+        IEditor* activeEditor = manager->GetActiveEditor();
+        if(activeEditor && activeEditor->GetFileName().GetFullPath() == fnCMakeHelpFile.GetFullPath()) {
+            activeEditor->GetSTC()->SetEditable(true);
+            activeEditor->ReloadFile();
+            activeEditor->GetSTC()->SetFirstVisibleLine(0);
+            activeEditor->GetSTC()->SetEditable(false);
+        }
+    }
+}
 
 /* ************************************************************************ */

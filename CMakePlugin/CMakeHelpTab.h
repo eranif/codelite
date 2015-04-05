@@ -92,7 +92,11 @@ public:
 
 // Protected Events
 protected:
-
+    
+    /**
+     * @brief create help page with a given content
+     */
+    void CreateHelpPage(const wxString& content, const wxString& subject);
 
     /**
      * @brief On topic change.
@@ -140,22 +144,6 @@ protected:
      * @param event
      */
     virtual void OnReload(wxCommandEvent& event);
-
-
-    /**
-     * @brief On right mouse button click event.
-     *
-     * @param event
-     */
-    virtual void OnRightClick(wxMouseEvent& event);
-
-
-    /**
-     * @brief On splitter orientation switch.
-     *
-     * @param event
-     */
-    void OnSplitterSwitch(wxCommandEvent& event);
 
 
     /**

@@ -20,11 +20,9 @@
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/splitter.h>
+#include <wx/gauge.h>
 #include <wx/srchctrl.h>
 #include <wx/listbox.h>
-#include <wx/html/htmlwin.h>
-#include <wx/gauge.h>
 #include <wx/checkbox.h>
 #include <wx/combobox.h>
 #include <wx/textctrl.h>
@@ -47,6 +45,10 @@ protected:
 protected:
 
 public:
+    wxStaticText* GetStaticTextProgram() { return m_staticTextProgram; }
+    wxFilePickerCtrl* GetFilePickerProgram() { return m_filePickerProgram; }
+    wxStaticText* GetStaticTextDefaultGenerator() { return m_staticTextDefaultGenerator; }
+    wxChoice* GetChoiceDefaultGenerator() { return m_choiceDefaultGenerator; }
     CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CMakePlugin Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CMakeSettingsDialogBase();
 };
@@ -60,26 +62,29 @@ protected:
     wxStaticText* m_staticText222;
     wxChoice* m_choiceTopics;
     wxButton* m_buttonReload;
-    wxSplitterWindow* m_splitter;
-    wxPanel* m_splitterPageList;
+    wxGauge* m_gaugeLoad;
     wxSearchCtrl* m_searchCtrlFilter;
     wxListBox* m_listBoxList;
-    wxPanel* m_splitterPageText;
-    wxHtmlWindow* m_htmlWinText;
-    wxGauge* m_gaugeLoad;
 
 protected:
     virtual void OnUpdateUi(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnChangeTopic(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReload(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRightClick(wxMouseEvent& event) { event.Skip(); }
     virtual void OnSearch(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSearchCancel(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSelect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInsert(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    CMakeHelpTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,400), long style = wxTAB_TRAVERSAL);
+    wxStaticText* GetStaticTextVersion() { return m_staticTextVersion; }
+    wxStaticText* GetStaticTextVersionValue() { return m_staticTextVersionValue; }
+    wxStaticText* GetStaticText222() { return m_staticText222; }
+    wxChoice* GetChoiceTopics() { return m_choiceTopics; }
+    wxButton* GetButtonReload() { return m_buttonReload; }
+    wxGauge* GetGaugeLoad() { return m_gaugeLoad; }
+    wxSearchCtrl* GetSearchCtrlFilter() { return m_searchCtrlFilter; }
+    wxListBox* GetListBoxList() { return m_listBoxList; }
+    CMakeHelpTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~CMakeHelpTabBase();
 };
 
@@ -106,6 +111,19 @@ protected:
     virtual void OnCheck2(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckBoxEnable() { return m_checkBoxEnable; }
+    wxStaticText* GetStaticTextParent() { return m_staticTextParent; }
+    wxChoice* GetChoiceParent() { return m_choiceParent; }
+    wxStaticText* GetStaticTextSourceDir() { return m_staticTextSourceDir; }
+    wxDirPickerCtrl* GetDirPickerSourceDir() { return m_dirPickerSourceDir; }
+    wxStaticText* GetStaticTextBuildDir() { return m_staticTextBuildDir; }
+    wxDirPickerCtrl* GetDirPickerBuildDir() { return m_dirPickerBuildDir; }
+    wxStaticText* GetStaticTextGenerator() { return m_staticTextGenerator; }
+    wxChoice* GetChoiceGenerator() { return m_choiceGenerator; }
+    wxStaticText* GetStaticTextBuildType() { return m_staticTextBuildType; }
+    wxComboBox* GetComboBoxBuildType() { return m_comboBoxBuildType; }
+    wxStaticText* GetStaticTextArguments() { return m_staticTextArguments; }
+    wxTextCtrl* GetTextCtrlArguments() { return m_textCtrlArguments; }
     CMakeProjectSettingsPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxTAB_TRAVERSAL);
     virtual ~CMakeProjectSettingsPanelBase();
 };

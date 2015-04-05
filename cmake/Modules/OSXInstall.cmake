@@ -216,7 +216,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         ## Copy pre-built binaries
         file(COPY ${CL_SRC_ROOT}/Runtime/debugserver 
              DESTINATION 
-             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/debugserver)
+             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
         
         ## Copy and fix libclang.dylib / liblldb
         file(COPY ${CL_SRC_ROOT}/sdk/clang/lib/libclang.dylib 

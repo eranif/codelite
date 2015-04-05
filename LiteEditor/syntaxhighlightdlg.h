@@ -85,7 +85,7 @@ protected:
     void SaveChanges();
     void Clear();
     void CreateLexerPage();
-    StyleProperty::List_t::iterator GetSelectedStyle();
+    StyleProperty::Map_t::iterator GetSelectedStyle();
     void EditKeyWords(int set);
 
 public:

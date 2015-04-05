@@ -716,18 +716,18 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
         StyleProperty& fold = lexer->GetProperty(FOLD_MARGIN_ATTR_ID);       // fold margin
         StyleProperty& whitespace = lexer->GetProperty(WHITE_SPACE_ATTR_ID); // whitespace
         if(lexer->IsDark()) {
-            fold.SetFgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
-            fold.SetBgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
-
-            whitespace.SetFgColour(
-                wxColour(defaultProp.GetBgColour()).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX));
+            wxColour newCol = wxColour(defaultProp.GetBgColour()).ChangeLightness(110);
+            
+            fold.SetFgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
+            fold.SetBgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
+            whitespace.SetFgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
 
         } else {
-            fold.SetFgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
-            fold.SetBgColour(wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
-
-            whitespace.SetFgColour(
-                wxColour(defaultProp.GetBgColour()).ChangeLightness(97).GetAsString(wxC2S_HTML_SYNTAX));
+            wxColour newCol = wxColour(defaultProp.GetBgColour()).ChangeLightness(95);
+            
+            fold.SetFgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
+            fold.SetBgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
+            whitespace.SetFgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
         }
     }
 

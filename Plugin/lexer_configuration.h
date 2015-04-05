@@ -40,7 +40,7 @@
 
 class WXDLLIMPEXP_SDK LexerConf
 {
-    StyleProperty::List_t m_properties;
+    StyleProperty::Map_t m_properties;
     int m_lexerId;
     wxString m_name;
     wxString m_extension;
@@ -140,13 +140,13 @@ public:
      * Return a list of the lexer properties
      * \return
      */
-    const StyleProperty::List_t& GetLexerProperties() const { return m_properties; }
+    const StyleProperty::Map_t& GetLexerProperties() const { return m_properties; }
 
     /**
      * Return a list of the lexer properties
      * \return
      */
-    StyleProperty::List_t& GetLexerProperties() { return m_properties; }
+    StyleProperty::Map_t& GetLexerProperties() { return m_properties; }
 
     /**
      * @brief return property. Check for IsNull() to make sure we got a valid property
@@ -170,7 +170,7 @@ public:
      * Set the lexer properties
      * \param &properties
      */
-    void SetProperties(StyleProperty::List_t& properties) { m_properties = properties; }
+    void SetProperties(StyleProperty::Map_t& properties) { m_properties.swap(properties); }
     /**
      * Set file spec for the lexer
      * \param &spec

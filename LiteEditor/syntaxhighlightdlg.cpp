@@ -215,25 +215,25 @@ void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
     wxObject* obj = event.GetEventObject();
     if(obj == m_colourPicker) {
         wxColour colour = event.GetColour();
-        std::list<StyleProperty>::iterator iter = GetSelectedStyle();
-        iter->SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+        StyleProperty::Map_t::iterator iter = GetSelectedStyle();
+        iter->second.SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 
     } else if(obj == m_bgColourPicker) {
 
         wxColour colour = event.GetColour();
-        std::list<StyleProperty>::iterator iter = GetSelectedStyle();
+        StyleProperty::Map_t::iterator iter = GetSelectedStyle();
 
-        iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+        iter->second.SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 
     } else if(obj == m_globalBgColourPicker) {
 
         wxColour colour = event.GetColour();
-        StyleProperty::List_t& properties = m_lexer->GetLexerProperties();
-        StyleProperty::List_t::iterator iter = properties.begin();
+        StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
+        StyleProperty::Map_t::iterator iter = properties.begin();
         for(; iter != properties.end(); ++iter) {
             // Dont change the text selection using the global font picker
-            if(iter->GetName() == wxT("Text Selection")) continue;
-            iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+            if(iter->second.GetName() == wxT("Text Selection")) continue;
+            iter->second.SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
         }
 
         // update the style background colour as well
@@ -283,10 +283,10 @@ void SyntaxHighlightDlg::OnEolFilled(wxCommandEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
     m_isModified = true;
-    StyleProperty::List_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::List_t::iterator iter = GetSelectedStyle();
+    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Map_t::iterator iter = GetSelectedStyle();
     if(iter != properties.end()) {
-        iter->SetEolFilled(event.IsChecked());
+        iter->second.SetEolFilled(event.IsChecked());
     }
 }
 
@@ -295,28 +295,28 @@ void SyntaxHighlightDlg::OnFontChanged(wxFontPickerEvent& event)
     CHECK_PTR_RET(m_lexer);
     m_isModified = true;
 
-    StyleProperty::List_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
     // update f
     wxObject* obj = event.GetEventObject();
     if(obj == m_fontPicker) {
         wxFont f = event.GetFont();
-        std::list<StyleProperty>::iterator iter = GetSelectedStyle();
+        StyleProperty::Map_t::iterator iter = GetSelectedStyle();
 
-        iter->SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
-        iter->SetFaceName(f.GetFaceName());
-        iter->SetFontSize(f.GetPointSize());
-        iter->SetUnderlined(f.GetUnderlined());
-        iter->SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
+        iter->second.SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
+        iter->second.SetFaceName(f.GetFaceName());
+        iter->second.SetFontSize(f.GetPointSize());
+        iter->second.SetUnderlined(f.GetUnderlined());
+        iter->second.SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
 
     } else if(obj == m_globalFontPicker) {
         wxFont f = event.GetFont();
-        StyleProperty::List_t::iterator iter = properties.begin();
-        for(; iter != properties.end(); iter++) {
-            iter->SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
-            iter->SetFaceName(f.GetFaceName());
-            iter->SetFontSize(f.GetPointSize());
-            iter->SetUnderlined(f.GetUnderlined());
-            iter->SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
+        StyleProperty::Map_t::iterator iter = properties.begin();
+        for(; iter != properties.end(); ++iter) {
+            iter->second.SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
+            iter->second.SetFaceName(f.GetFaceName());
+            iter->second.SetFontSize(f.GetPointSize());
+            iter->second.SetUnderlined(f.GetUnderlined());
+            iter->second.SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
         }
         // update the style f picker as well
         m_fontPicker->SetSelectedFont(f);
@@ -329,12 +329,12 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
 
     // update colour picker & font pickers
     wxString selectionString = event.GetString();
-    StyleProperty::List_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::List_t::iterator iter = properties.begin();
-    for(; iter != properties.end(); iter++) {
-        if(iter->GetName() == selectionString) {
+    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Map_t::iterator iter = properties.begin();
+    for(; iter != properties.end(); ++iter) {
+        if(iter->second.GetName() == selectionString) {
             // update font & color
-            StyleProperty p = (*iter);
+            StyleProperty p = iter->second;
             wxString colour = p.GetFgColour();
             wxString bgColour = p.GetBgColour();
             wxFont font = wxNullFont;
@@ -386,11 +386,11 @@ void SyntaxHighlightDlg::OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
 
-    StyleProperty::List_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::List_t::iterator iter = GetSelectedStyle();
+    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Map_t::iterator iter = GetSelectedStyle();
     if(iter == properties.end())
         event.Enable(false);
-    else if(iter->GetName() == "Preprocessor")
+    else if(iter->second.GetName() == "Preprocessor")
         event.Enable(true);
     else
         event.Enable(false);
@@ -408,19 +408,21 @@ void SyntaxHighlightDlg::CreateLexerPage()
 {
     CHECK_PTR_RET(m_lexer);
 
-    const StyleProperty::List_t& m_propertyList = m_lexer->GetLexerProperties();
-    std::list<StyleProperty>::const_iterator it = m_propertyList.begin();
+    const StyleProperty::Map_t& m_propertyList = m_lexer->GetLexerProperties();
+    StyleProperty::Map_t::const_iterator it = m_propertyList.begin();
     StyleProperty selTextProperties;
 
     for(; it != m_propertyList.end(); it++) {
-        if(it->GetId() != SEL_TEXT_ATTR_ID) {
-            m_properties->Append((*it).GetName());
+        if(it->second.GetId() != SEL_TEXT_ATTR_ID) {
+            m_properties->Append(it->second.GetName());
         } else {
-            selTextProperties = *it;
+            selTextProperties = it->second;
         }
     }
 
-    if(m_properties->GetCount()) m_properties->SetSelection(0);
+    if(m_properties->GetCount()) {
+        m_properties->SetSelection(0);
+    }
 
     wxString initialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString();
     wxString bgInitialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
@@ -430,7 +432,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
 
     if(m_propertyList.empty() == false) {
         StyleProperty p;
-        p = (*m_propertyList.begin());
+        p = m_propertyList.begin()->second;
         initialColor = p.GetFgColour();
         bgInitialColor = p.GetBgColour();
 
@@ -477,10 +479,10 @@ void SyntaxHighlightDlg::CreateLexerPage()
     }
 }
 
-StyleProperty::List_t::iterator SyntaxHighlightDlg::GetSelectedStyle()
+StyleProperty::Map_t::iterator SyntaxHighlightDlg::GetSelectedStyle()
 {
     wxString selectedProperty = m_properties->GetStringSelection();
-    StyleProperty::List_t& lexerProperties = m_lexer->GetLexerProperties();
+    StyleProperty::Map_t& lexerProperties = m_lexer->GetLexerProperties();
     return std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName(selectedProperty));
 }
 

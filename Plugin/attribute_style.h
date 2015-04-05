@@ -27,6 +27,7 @@
 
 #include "wx/string.h"
 #include <list>
+#include <map>
 #include <wx/colour.h>
 
 // Set default font size per-OS
@@ -63,7 +64,7 @@ class StyleProperty
     int m_alpha;
 
 public:
-    typedef std::list<StyleProperty> List_t;
+    typedef std::map<long, StyleProperty> Map_t;
     struct FindByName
     {
         wxString m_name;
@@ -71,7 +72,7 @@ public:
             : m_name(name)
         {
         }
-        bool operator()(const StyleProperty& other) const { return m_name == other.GetName(); }
+        bool operator()(const std::pair<long, StyleProperty>& other) const { return m_name == other.second.GetName(); }
     };
 
     struct FindByID
@@ -81,7 +82,7 @@ public:
             : m_id(id)
         {
         }
-        bool operator()(const StyleProperty& other) const { return m_id == other.GetId(); }
+        bool operator()(const std::pair<long, StyleProperty>& other) const { return m_id == other.first; }
     };
 
 public:

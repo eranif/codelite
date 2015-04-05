@@ -150,7 +150,7 @@ void LexerConf::FromXml(wxXmlNode* element)
                     if(isCxxLexer && propId == wxSTC_C_STRING) {
                         stringProp = property;
                     }
-                    m_properties.push_back(property);
+                    m_properties.insert(std::make_pair(propId, property));
                 }
                 prop = prop->GetNext();
             }
@@ -160,7 +160,7 @@ void LexerConf::FromXml(wxXmlNode* element)
             if(isCxxLexer && !hasRawString && !stringProp.IsNull()) {
                 stringProp.SetId(wxSTC_C_STRINGRAW);
                 stringProp.SetName("Raw String");
-                m_properties.push_back(stringProp);
+                m_properties.insert(std::make_pair(wxSTC_C_STRINGRAW, stringProp));
             }
         }
     }
@@ -211,9 +211,9 @@ wxXmlNode* LexerConf::ToXml() const
 
     // set the properties
     wxXmlNode* properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Properties"));
-    std::list<StyleProperty>::const_iterator iter = m_properties.begin();
-    for(; iter != m_properties.end(); iter++) {
-        StyleProperty p = (*iter);
+    std::map<long, StyleProperty>::const_iterator iter = m_properties.begin();
+    for(; iter != m_properties.end(); ++iter) {
+        StyleProperty p = iter->second;
         wxXmlNode* property = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Property"));
 
         strId.Clear();
@@ -243,27 +243,25 @@ wxXmlNode* LexerConf::ToXml() const
 
 wxFont LexerConf::GetFontForSyle(int styleId) const
 {
-    StyleProperty::List_t::const_iterator iter = m_properties.begin();
-    for(; iter != m_properties.end(); ++iter) {
-        if(iter->GetId() == styleId) {
-
-            int fontSize(iter->GetFontSize());
-            wxString face = iter->GetFaceName();
-            if(face.IsEmpty()) {
-                // defaults
-                fontSize = DEFAULT_FONT_SIZE;
-                face = DEFAULT_FACE_NAME;
-            }
-
-            wxFontInfo fontInfo = wxFontInfo(fontSize)
-                                      .Family(wxFONTFAMILY_TELETYPE)
-                                      .Italic(iter->GetItalic())
-                                      .Bold(iter->IsBold())
-                                      .Underlined(iter->GetUnderlined())
-                                      .FaceName(face);
-            wxFont font(fontInfo);
-            return font;
+    StyleProperty::Map_t::const_iterator iter = m_properties.find(styleId);
+    if(iter != m_properties.end()) {
+        const StyleProperty& prop = iter->second;
+        int fontSize(prop.GetFontSize());
+        wxString face = prop.GetFaceName();
+        if(face.IsEmpty()) {
+            // defaults
+            fontSize = DEFAULT_FONT_SIZE;
+            face = DEFAULT_FACE_NAME;
         }
+
+        wxFontInfo fontInfo = wxFontInfo(fontSize)
+                                  .Family(wxFONTFAMILY_TELETYPE)
+                                  .Italic(prop.GetItalic())
+                                  .Bold(prop.IsBold())
+                                  .Underlined(prop.GetUnderlined())
+                                  .FaceName(face);
+        wxFont font(fontInfo);
+        return font;
     }
     return wxNullFont;
 }
@@ -292,13 +290,12 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-    
+
     ctrl->SetUseTabs(EditorConfigST::Get()->GetOptions()->GetIndentUsesTabs());
     ctrl->SetIndent(EditorConfigST::Get()->GetOptions()->GetIndentWidth());
     bool tooltip(false);
 
-    std::list<StyleProperty> styles;
-    styles = GetLexerProperties();
+    const StyleProperty::Map_t& styles = GetLexerProperties();
     ctrl->SetProperty(wxT("styling.within.preprocessor"), this->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
 
     // turn off PP tracking/updating by default
@@ -313,16 +310,17 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     wxFont defaultFont;
     bool foundDefaultStyle = false;
     StyleProperty defaultStyle;
-    std::list<StyleProperty>::iterator iter = styles.begin();
-    for(; iter != styles.end(); iter++) {
-        if(iter->GetId() == 0) {
-            defaultStyle = *iter;
-            wxString fontFace = iter->GetFaceName().IsEmpty() ? DEFAULT_FACE_NAME : iter->GetFaceName();
-            defaultFont = wxFont(iter->GetFontSize(),
+    StyleProperty::Map_t::const_iterator iter = styles.begin();
+    for(; iter != styles.end(); ++iter) {
+        const StyleProperty& prop = iter->second;
+        if(prop.GetId() == 0) {
+            defaultStyle = prop;
+            wxString fontFace = prop.GetFaceName().IsEmpty() ? DEFAULT_FACE_NAME : prop.GetFaceName();
+            defaultFont = wxFont(prop.GetFontSize(),
                                  wxFONTFAMILY_TELETYPE,
-                                 iter->GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-                                 iter->IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
-                                 iter->GetUnderlined(),
+                                 prop.GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+                                 prop.IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
+                                 prop.GetUnderlined(),
                                  fontFace);
             foundDefaultStyle = true;
             break;
@@ -346,7 +344,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     iter = styles.begin();
     for(; iter != styles.end(); ++iter) {
 
-        StyleProperty sp = (*iter);
+        StyleProperty sp = iter->second;
         int size = sp.GetFontSize();
         wxString face = sp.GetFaceName();
         bool bold = sp.IsBold();
@@ -412,7 +410,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             if(sp.GetId() == 0) { // default
                 ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
                 ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT, size);
-                ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT, (*iter).GetFgColour());
+                ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT, iter->second.GetFgColour());
 
                 // Set the inactive state colours
                 // Inactive state is greater by 64 from its counterpart
@@ -420,20 +418,11 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT + 64, inactiveColor);
                 ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT + 64, font);
                 ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT + 64, size);
-                ctrl->StyleSetBackground(wxSTC_STYLE_DEFAULT + 64, (*iter).GetBgColour());
+                ctrl->StyleSetBackground(wxSTC_STYLE_DEFAULT + 64, iter->second.GetBgColour());
 
-                ctrl->StyleSetBackground(wxSTC_STYLE_DEFAULT, (*iter).GetBgColour());
+                ctrl->StyleSetBackground(wxSTC_STYLE_DEFAULT, iter->second.GetBgColour());
                 ctrl->StyleSetSize(wxSTC_STYLE_LINENUMBER, size);
-                ctrl->SetFoldMarginColour(true, (*iter).GetBgColour());
-                ctrl->SetFoldMarginHiColour(true, (*iter).GetBgColour());
 
-                // test the background colour of the editor, if it is considered "dark"
-                // set the indicator to be hollow rectanlgle
-                StyleProperty sp = (*iter);
-                // if(DrawingUtils::IsDark(sp.GetBgColour())) {
-                //    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
-                //    ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
-                // }
             } else if(sp.GetId() == wxSTC_STYLE_CALLTIP) {
                 tooltip = true;
                 if(sp.GetFaceName().IsEmpty()) {
@@ -444,9 +433,9 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
             ctrl->StyleSetFont(sp.GetId(), font);
             ctrl->StyleSetSize(sp.GetId(), fontSize);
-            ctrl->StyleSetEOLFilled(sp.GetId(), iter->GetEolFilled());
+            ctrl->StyleSetEOLFilled(sp.GetId(), iter->second.GetEolFilled());
 
-            if(iter->GetId() == LINE_NUMBERS_ATTR_ID) {
+            if(iter->second.GetId() == LINE_NUMBERS_ATTR_ID) {
                 // Set the line number colours only if requested
                 // otherwise, use default colours provided by scintilla
                 if(sp.GetBgColour().IsEmpty() == false) ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
@@ -517,29 +506,27 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
 const StyleProperty& LexerConf::GetProperty(int propertyId) const
 {
-    StyleProperty::List_t::const_iterator iter =
-        std::find_if(m_properties.begin(), m_properties.end(), StyleProperty::FindByID(propertyId));
+    StyleProperty::Map_t::const_iterator iter = m_properties.find(propertyId);
     if(iter == m_properties.end()) {
         static StyleProperty NullProperty;
         NullProperty.SetId(STYLE_PROPERTY_NULL_ID);
         return NullProperty;
     }
-    return *iter;
+    return iter->second;
 }
 
 StyleProperty& LexerConf::GetProperty(int propertyId)
 {
-    StyleProperty::List_t::iterator iter =
-        std::find_if(m_properties.begin(), m_properties.end(), StyleProperty::FindByID(propertyId));
+    StyleProperty::Map_t::iterator iter = m_properties.find(propertyId);
     if(iter == m_properties.end()) {
         static StyleProperty NullProperty;
         NullProperty.SetId(STYLE_PROPERTY_NULL_ID);
         return NullProperty;
     }
-    return *iter;
+    return iter->second;
 }
 
-bool LexerConf::IsDark() const 
+bool LexerConf::IsDark() const
 {
     const StyleProperty& prop = GetProperty(0);
     if(prop.IsNull()) {

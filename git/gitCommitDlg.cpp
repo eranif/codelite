@@ -57,10 +57,6 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent)
     WindowAttrManager::Load(this, wxT("GitCommitDlg"), NULL);
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->Apply(m_stcCommitMessage);
-    
-    m_listBox->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-    m_listBox->SetBackgroundColour(lex->GetProperty(0).GetBgColour());
-    m_listBox->SetForegroundColour(lex->GetProperty(0).GetFgColour());
 }
 
 /*******************************************************************************/

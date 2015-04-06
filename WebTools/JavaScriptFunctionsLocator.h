@@ -14,17 +14,17 @@ class JavaScriptFunctionsLocator
     wxStringSet_t m_keywords;
     eState m_state;
     JSScanner_t m_scanner;
-    
+
 protected:
     void OnToken(JSLexerToken& token);
 
 public:
-    JavaScriptFunctionsLocator(const wxFileName& filename);
+    JavaScriptFunctionsLocator(const wxFileName& filename, const wxString& content = "");
     virtual ~JavaScriptFunctionsLocator();
 
     wxString GetFunctionsString() const;
     wxString GetPropertiesString() const;
-    
+
     void Parse();
 };
 

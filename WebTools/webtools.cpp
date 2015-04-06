@@ -31,6 +31,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERS
 
 WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
+    , m_lastColourUpdate(0)
 {
     m_longName = wxT("Support for JavScript, HTML and other web development tools");
     m_shortName = wxT("WebTools");
@@ -52,6 +53,10 @@ WebTools::WebTools(IManager* manager)
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion());
     
+    // Connect the timer
+    m_timer = new wxTimer(this);
+    m_timer->Start(3000);
+    Bind(wxEVT_TIMER, &WebTools::OnTimer, this, m_timer->GetId());
 }
 
 WebTools::~WebTools() {}
@@ -83,7 +88,12 @@ void WebTools::UnPlug()
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-    Unbind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
+    
+    // Disconnect the timer events
+    Unbind(wxEVT_TIMER, &WebTools::OnTimer, this, m_timer->GetId());
+    m_timer->Stop();
+    wxDELETE(m_timer);
+    
     m_jsColourThread->Stop();
     wxDELETE(m_jsColourThread);
     m_jsCodeComplete.Reset(NULL);
@@ -104,6 +114,7 @@ void WebTools::ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply
         wxStyledTextCtrl* ctrl = editor->GetSTC();
         ctrl->SetKeyWords(1, reply.properties);
         ctrl->SetKeyWords(3, reply.functions);
+        m_lastColourUpdate = time(NULL);
     }
 }
 
@@ -170,4 +181,22 @@ void WebTools::OnSettings(wxCommandEvent& event)
             m_jsCodeComplete->Reload();
         }
     }
+}
+
+void WebTools::OnTimer(wxTimerEvent& event)
+{
+    event.Skip();
+    
+    time_t curtime = time(NULL);
+    if((curtime - m_lastColourUpdate) < 5) return;
+    IEditor* editor = m_mgr->GetActiveEditor();
+    
+    // Sanity
+    CHECK_PTR_RET(editor);
+    CHECK_PTR_RET(editor->IsModified());
+    if(!IsJavaScriptFile(editor->GetFileName())) return;
+        
+    // This file is a modified JS file
+    m_lastColourUpdate = time(NULL);
+    m_jsColourThread->QueueBuffer(editor->GetFileName().GetFullPath(), editor->GetTextRange(0, editor->GetLength()));
 }

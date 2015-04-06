@@ -5,6 +5,7 @@
 #include "JavaScriptSyntaxColourThread.h"
 #include "cl_command_event.h"
 #include "JSCodeCompletion.h"
+#include <wx/timer.h>
 
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
@@ -13,6 +14,8 @@ class WebTools : public IPlugin
 
     JavaScriptSyntaxColourThread* m_jsColourThread;
     JSCodeCompletion::Ptr_t m_jsCodeComplete;
+    time_t m_lastColourUpdate;
+    wxTimer* m_timer;
     
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
@@ -23,11 +26,12 @@ protected:
     void OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event);
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
     void OnSettings(wxCommandEvent& event);
-    
+    void OnTimer(wxTimerEvent& event);
+
 private:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);
-    
+
 public:
     WebTools(IManager* manager);
     ~WebTools();

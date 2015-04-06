@@ -5,7 +5,7 @@
 #include "JSLexerTokens.h"
 #include "fileutils.h"
 
-JavaScriptFunctionsLocator::JavaScriptFunctionsLocator(const wxFileName& filename)
+JavaScriptFunctionsLocator::JavaScriptFunctionsLocator(const wxFileName& filename, const wxString& content)
     : m_state(kNormal)
 {
     const wxString jsKeywords = "abstract	arguments	boolean	break	byte "
@@ -26,8 +26,8 @@ JavaScriptFunctionsLocator::JavaScriptFunctionsLocator(const wxFileName& filenam
         m_keywords.insert(keywords.Item(i));
     }
 
-    wxString fileContent;
-    if(FileUtils::ReadFileContent(filename, fileContent)) {
+    wxString fileContent = content;
+    if(!fileContent.IsEmpty() || FileUtils::ReadFileContent(filename, fileContent)) {
         m_scanner = ::jsLexerNew(fileContent);
     }
 }

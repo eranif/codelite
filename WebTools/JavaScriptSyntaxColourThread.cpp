@@ -16,7 +16,7 @@ void JavaScriptSyntaxColourThread::ProcessRequest(ThreadRequest* request)
     JavaScriptSyntaxColourThread::Request* req = dynamic_cast<JavaScriptSyntaxColourThread::Request*>(request);
     CHECK_PTR_RET(req);
 
-    JavaScriptFunctionsLocator collector(req->filename);
+    JavaScriptFunctionsLocator collector(req->filename, req->content);
     collector.Parse();
     
     JavaScriptSyntaxColourThread::Reply reply;
@@ -31,5 +31,13 @@ void JavaScriptSyntaxColourThread::QueueFile(const wxString& filename)
 {
     JavaScriptSyntaxColourThread::Request* req = new JavaScriptSyntaxColourThread::Request();
     req->filename = filename;
+    Add(req);
+}
+
+void JavaScriptSyntaxColourThread::QueueBuffer(const wxString& filename, const wxString& content)
+{
+    JavaScriptSyntaxColourThread::Request* req = new JavaScriptSyntaxColourThread::Request();
+    req->filename = filename;
+    req->content = content;
     Add(req);
 }

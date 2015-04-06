@@ -12,6 +12,7 @@ private:
 public:
     struct Request : public ThreadRequest {
         wxString filename;
+        wxString content;
         Request() {}
     };
 
@@ -28,6 +29,7 @@ public:
 public:
     virtual void ProcessRequest(ThreadRequest* request);
     void QueueFile(const wxString& filename);
+    void QueueBuffer(const wxString& filename, const wxString& content);
 };
 
 #endif // JAVASCRIPTSYNTAXCOLOURTHREAD_H

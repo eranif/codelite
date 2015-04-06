@@ -33,13 +33,6 @@ protected:
     virtual void OnFoldingMarginUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxCheckBox* GetDisplayMargin() { return m_displayMargin; }
-    wxChoice* GetFoldStyle() { return m_foldStyle; }
-    wxCheckBox* GetUnderlineFolded() { return m_underlineFolded; }
-    wxCheckBox* GetFoldElse() { return m_foldElse; }
-    wxCheckBox* GetFoldPreprocessors() { return m_foldPreprocessors; }
-    wxCheckBox* GetFoldCompact() { return m_foldCompact; }
-    wxCheckBox* GetCheckBoxHighlightFolding() { return m_checkBoxHighlightFolding; }
     EditorSettingsFoldingBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsFoldingBase();
 };

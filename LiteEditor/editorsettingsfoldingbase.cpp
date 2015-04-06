@@ -86,6 +86,7 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase(wxWindow* parent, wxWindowI
     m_foldElse->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
     m_foldPreprocessors->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
     m_foldCompact->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
+    m_checkBoxHighlightFolding->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
     
 }
 
@@ -96,5 +97,6 @@ EditorSettingsFoldingBase::~EditorSettingsFoldingBase()
     m_foldElse->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
     m_foldPreprocessors->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
     m_foldCompact->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
+    m_checkBoxHighlightFolding->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
     
 }

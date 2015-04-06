@@ -69,7 +69,10 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+extern "C" EXPORT int GetPluginInterfaceVersion()
+{
+    return PLUGIN_INTERFACE_VERSION;
+}
 
 Cscope::Cscope(IManager* manager)
     : IPlugin(manager)
@@ -95,17 +98,18 @@ Cscope::Cscope(IManager* manager)
         "cscope_find_symbol", "Alt-0", "Plugins::CScope::Find selected text");
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "cscope_find_global_definition", "Alt-1", "Plugins::CScope::Find this global definition");
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_calling_this_function",
-                                                   "Alt-2",
-                                                   "Plugins::CScope::Find functions called by this function");
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_called_by_this_function",
-                                                   "Alt-3",
-                                                   "Plugins::CScope::Find functions calling this function");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "cscope_functions_calling_this_function", "Alt-2", "Plugins::CScope::Find functions called by this function");
+    clKeyboardManager::Get()->AddGlobalAccelerator(
+        "cscope_functions_called_by_this_function", "Alt-3", "Plugins::CScope::Find functions calling this function");
     clKeyboardManager::Get()->AddGlobalAccelerator(
         "cscope_create_db", "Alt-4", "Plugins::CScope::Create CScope database");
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Cscope::OnEditorContentMenu, this);
 }
 
-Cscope::~Cscope() {}
+Cscope::~Cscope()
+{
+}
 
 clToolBar* Cscope::CreateToolBar(wxWindow* parent)
 {
@@ -291,14 +295,6 @@ void Cscope::CreatePluginMenu(wxMenu* pluginsMenu)
     pluginsMenu->Append(wxID_ANY, CSCOPE_NAME, menu);
 }
 
-void Cscope::HookPopupMenu(wxMenu* menu, MenuType type)
-{
-    // at first, we hook cscope into the editor's context menu
-    if(type == MenuTypeEditor) {
-        menu->Append(XRCID("CSCOPE_EDITOR_POPUP"), CSCOPE_NAME, CreateEditorPopMenu());
-    }
-}
-
 void Cscope::UnPlug()
 {
     m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"),
@@ -371,7 +367,7 @@ void Cscope::UnPlug()
             break;
         }
     }
-
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Cscope::OnEditorContentMenu, this);
     CScopeThreadST::Get()->Stop();
     CScopeThreadST::Free();
 }
@@ -726,7 +722,7 @@ void Cscope::OnDoSettings(wxCommandEvent& e)
     CScopeConfData settings;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
     wxString filepath = settings.GetCscopeExe();
-    
+
     CScopeSettingsDlg dlg(EventNotifier::Get()->TopFrame());
     if(dlg.ShowModal() == wxID_OK) {
         settings.SetCscopeExe(dlg.GetPath());
@@ -777,7 +773,8 @@ void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& WXUNUSED(e))
 {
     wxString word = GetSearchPattern();
-    if(word.IsEmpty()) return;
+    if(word.IsEmpty())
+        return;
 
     DoFindSymbol(word);
 }
@@ -824,4 +821,14 @@ void Cscope::DoFindSymbol(const wxString& word)
     command << GetCscopeExeName() << rebuildOption << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
     endMsg << wxT("cscope results for: find C symbol '") << word << wxT("'");
     DoCscopeCommand(command, word, endMsg);
+}
+
+void Cscope::OnEditorContentMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    if(FileExtManager::IsCxxFile(editor->GetFileName())) {
+        event.GetMenu()->Append(wxID_ANY, _("CScope"), CreateEditorPopMenu());
+    }
 }

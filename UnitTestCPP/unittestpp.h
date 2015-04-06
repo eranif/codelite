@@ -52,7 +52,6 @@ public:
     //--------------------------------------------
     virtual clToolBar* CreateToolBar(wxWindow* parent);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
-    virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
     bool IsUnitTestProject(ProjectPtr p);
     /**
@@ -60,12 +59,12 @@ public:
      * @return
      */
     std::vector<ProjectPtr> GetUnitTestProjects();
-    
+
     /**
      * @brief execute a project for unit tests
      */
     void DoRunProject(ProjectPtr project);
-    
+
 protected:
     DECLARE_EVENT_TABLE()
     void OnNewSimpleTest(wxCommandEvent& e);
@@ -76,6 +75,7 @@ protected:
     void OnRunUnitTestsUI(wxUpdateUIEvent& e);
     void OnProcessTerminated(wxCommandEvent& e);
     void OnProcessRead(wxCommandEvent& e);
+    void OnEditorContextMenu(clContextMenuEvent& e);
     void DoCreateSimpleTest(const wxString& name, const wxString& projectName, const wxString& filename);
     void DoCreateFixtureTest(const wxString& name,
                              const wxString& fixture,

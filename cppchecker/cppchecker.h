@@ -119,7 +119,12 @@ protected:
      * @param e event
      */
     void OnSettingsItemProject(wxCommandEvent& e);
-
+    
+    /**
+     * @brief editor context menu is about to be shown.
+     * Append our content if the active editor is a Cxx file
+     */
+    void OnEditorContextMenu(clContextMenuEvent &event);
 public:
     CppCheckPlugin(IManager* manager);
     ~CppCheckPlugin();
@@ -137,11 +142,6 @@ public:
      * and clear the queue
      */
     void StopAnalysis();
-    /**
-     * @brief stop the analysis of the current file
-     * this method does not clear the queue
-     */
-    void SkipCurrentFile();
     /**
      * @brief return true if analysis currently running
      */

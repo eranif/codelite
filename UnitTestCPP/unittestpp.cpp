@@ -187,17 +187,12 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
                       wxCommandEventHandler(UnitTestPP::OnMarkProjectAsUT),
                       NULL,
                       (wxEvtHandler*)this);
-}
-
-void UnitTestPP::HookPopupMenu(wxMenu* menu, MenuType type)
-{
-    if(type == MenuTypeEditor) {
-        menu->Append(XRCID("UNITTESTPP_EDITOR_POPUP"), _("UnitTest++"), CreateEditorPopMenu());
-    }
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &UnitTestPP::OnEditorContextMenu, this);
 }
 
 void UnitTestPP::UnPlug()
 {
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &UnitTestPP::OnEditorContextMenu, this);
     wxDELETE(m_proc);
     m_output.Clear();
 }
@@ -603,4 +598,15 @@ void UnitTestPP::DoRunProject(ProjectPtr project)
     // m_proc will be deleted upon termination
     m_output.Clear();
     m_proc = ::CreateAsyncProcess(this, cmd);
+}
+
+void UnitTestPP::OnEditorContextMenu(clContextMenuEvent& e)
+{
+    e.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    if(FileExtManager::IsCxxFile(editor->GetFileName())) {
+        e.GetMenu()->Append(wxID_ANY, "UnitTest++", CreateEditorPopMenu());
+    }
 }

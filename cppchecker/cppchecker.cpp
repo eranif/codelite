@@ -51,6 +51,7 @@
 #include <wx/tokenzr.h>
 #include "globals.h"
 #include "file_logger.h"
+#include "macros.h"
 
 static CppCheckPlugin* thePlugin = NULL;
 
@@ -73,7 +74,10 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+extern "C" EXPORT int GetPluginInterfaceVersion()
+{
+    return PLUGIN_INTERFACE_VERSION;
+}
 
 BEGIN_EVENT_TABLE(CppCheckPlugin, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, CppCheckPlugin::OnCppCheckReadData)
@@ -139,6 +143,7 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CppCheckPlugin::OnWorkspaceClosed), NULL, this);
 
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &CppCheckPlugin::OnEditorContextMenu, this);
     m_view = new CppCheckReportPage(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
     //	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
@@ -146,6 +151,48 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
 }
 
 CppCheckPlugin::~CppCheckPlugin()
+{
+}
+
+clToolBar* CppCheckPlugin::CreateToolBar(wxWindow* parent)
+{
+    // Create the toolbar to be used by the plugin
+    clToolBar* tb(NULL);
+    return tb;
+}
+
+void CppCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
+{
+    wxMenu* menu = new wxMenu();
+    wxMenuItem* item =
+        new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+    pluginsMenu->Append(wxID_ANY, wxT("CppCheck"), menu);
+}
+
+void CppCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
+{
+    if(type == MenuTypeFileExplorer) {
+        if(!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
+            m_explorerSepItem = menu->PrependSeparator();
+            menu->Prepend(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateFileExplorerPopMenu());
+        }
+
+    } else if(type == MenuTypeFileView_Workspace) {
+        if(!menu->FindItem(XRCID("CPPCHECK_WORKSPACE_POPUP"))) {
+            m_workspaceSepItem = menu->PrependSeparator();
+            menu->Prepend(XRCID("CPPCHECK_WORKSPACE_POPUP"), _("CppCheck"), CreateWorkspacePopMenu());
+        }
+
+    } else if(type == MenuTypeFileView_Project) {
+        if(!menu->FindItem(XRCID("CPPCHECK_PROJECT_POPUP"))) {
+            m_projectSepItem = menu->PrependSeparator();
+            menu->Prepend(XRCID("CPPCHECK_PROJECT_POPUP"), _("CppCheck"), CreateProjectPopMenu());
+        }
+    }
+}
+
+void CppCheckPlugin::UnPlug()
 {
     m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_settings_item"),
                                    wxEVT_COMMAND_MENU_SELECTED,
@@ -178,55 +225,10 @@ CppCheckPlugin::~CppCheckPlugin()
                                    NULL,
                                    (wxEvtHandler*)this);
 
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &CppCheckPlugin::OnEditorContextMenu, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CppCheckPlugin::OnWorkspaceClosed), NULL, this);
-}
 
-clToolBar* CppCheckPlugin::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
-
-void CppCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
-{
-    wxMenu* menu = new wxMenu();
-    wxMenuItem* item =
-        new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
-    menu->Append(item);
-    pluginsMenu->Append(wxID_ANY, wxT("CppCheck"), menu);
-}
-
-void CppCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
-{
-    if(type == MenuTypeEditor) {
-        // The editor context menu situation is identical to FileExplore, so piggyback
-        if(!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
-            menu->Append(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateEditorPopMenu());
-        }
-    } else if(type == MenuTypeFileExplorer) {
-        if(!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
-            m_explorerSepItem = menu->PrependSeparator();
-            menu->Prepend(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateFileExplorerPopMenu());
-        }
-
-    } else if(type == MenuTypeFileView_Workspace) {
-        if(!menu->FindItem(XRCID("CPPCHECK_WORKSPACE_POPUP"))) {
-            m_workspaceSepItem = menu->PrependSeparator();
-            menu->Prepend(XRCID("CPPCHECK_WORKSPACE_POPUP"), _("CppCheck"), CreateWorkspacePopMenu());
-        }
-
-    } else if(type == MenuTypeFileView_Project) {
-        if(!menu->FindItem(XRCID("CPPCHECK_PROJECT_POPUP"))) {
-            m_projectSepItem = menu->PrependSeparator();
-            menu->Prepend(XRCID("CPPCHECK_PROJECT_POPUP"), _("CppCheck"), CreateProjectPopMenu());
-        }
-    }
-}
-
-void CppCheckPlugin::UnPlug()
-{
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
         if(m_view == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
@@ -434,14 +436,18 @@ void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
     ProcessEventData* ped = (ProcessEventData*)e.GetClientData();
     delete ped;
 
-    if(m_cppcheckProcess) delete m_cppcheckProcess;
+    if(m_cppcheckProcess)
+        delete m_cppcheckProcess;
     m_cppcheckProcess = NULL;
 
     m_view->PrintStatusMessage();
     m_view->GotoFirstError();
 }
 
-void CppCheckPlugin::OnSettingsItem(wxCommandEvent& WXUNUSED(e)) { DoSettingsItem(); }
+void CppCheckPlugin::OnSettingsItem(wxCommandEvent& WXUNUSED(e))
+{
+    DoSettingsItem();
+}
 
 void CppCheckPlugin::OnSettingsItemProject(wxCommandEvent& WXUNUSED(e))
 {
@@ -611,7 +617,8 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
     ::WrapWithQuotes(path);
 
     wxString fileList = DoGenerateFileList();
-    if(fileList.IsEmpty()) return wxT("");
+    if(fileList.IsEmpty())
+        return wxT("");
 
     // build the command
     cmd << path << " ";
@@ -674,3 +681,13 @@ void CppCheckPlugin::OnCppCheckReadData(wxCommandEvent& e)
     delete ped;
 }
 
+void CppCheckPlugin::OnEditorContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    if(FileExtManager::IsCxxFile(editor->GetFileName())) {
+        event.GetMenu()->Append(wxID_ANY, _("CppCheck"), CreateEditorPopMenu());
+    }
+}

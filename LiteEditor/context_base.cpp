@@ -180,6 +180,8 @@ int ContextBase::DoGetCalltipParamterIndex()
             }
             pos = ctrl.PositionAfter(pos);
         }
+    } else {
+        return wxNOT_FOUND;
     }
     return index;
 }

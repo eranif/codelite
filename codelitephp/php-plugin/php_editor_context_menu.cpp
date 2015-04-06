@@ -16,6 +16,8 @@
 #include "PHPSourceFile.h"
 #include "PHPEntityClass.h"
 #include "PHPSettersGettersDialog.h"
+#include "clEditorStateLocker.h"
+#include <wx/regex.h>
 
 PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
 
@@ -674,26 +676,49 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
         PHPEntityBase::Ptr_t entry =
             PHPCodeCompletion::Instance()->GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
         if(entry) {
-            clSTCLineKeeper lk(editor); // keep the current file line
-            editor->GetSTC()->BeginUndoAction();
+            wxStyledTextCtrl* ctrl = editor->GetSTC();
+            ctrl->BeginUndoAction();
             wxString comment = entry->FormatPhpDoc();
-            comment = editor->FormatTextKeepIndent(comment, editor->GetCurrentPosition());
-
-            int curline = editor->GetCurrentLine();
-            // insert the comment above the current line
-            int pos = editor->PosFromLine(curline);
-            editor->InsertText(pos, comment);
-
-            // Format the source code after generation
-            clSourceFormatEvent evt(wxEVT_FORMAT_STRING);
-            evt.SetInputString(editor->GetSTC()->GetText());
-
-            // Send also the filename, this will help the formatter to determine which fomratter engine to use
-            evt.SetFileName(editor->GetFileName().GetFullName());
-
-            EventNotifier::Get()->ProcessEvent(evt);
-            if(!evt.GetFormattedString().IsEmpty()) {
-                editor->GetSTC()->SetText(evt.GetFormattedString());
+            
+            // Create the whitespace buffer
+            int lineStartPos = ctrl->PositionFromLine(ctrl->GetCurrentLine());
+            int lineEndPos = lineStartPos + ctrl->LineLength(ctrl->GetCurrentLine());
+            
+            // Collect all whitespace from the begining of the line until the first non whitespace
+            // character we find
+            wxString whitespace;
+            for(int i=lineStartPos; lineStartPos < lineEndPos; ++i) {
+                if(ctrl->GetCharAt(i) == ' ' || ctrl->GetCharAt(i) == '\t') {
+                    whitespace << (wxChar)ctrl->GetCharAt(i);
+                } else {
+                    break;
+                }
+            }
+            
+            // Prepare the comment block
+            wxArrayString lines = ::wxStringTokenize(comment, "\n", wxTOKEN_STRTOK);
+            for(size_t i=0; i<lines.size(); ++i) {
+                lines.Item(i).Prepend(whitespace);
+            }
+            
+            // Glue the lines back together
+            wxString doxyBlock = ::wxJoin(lines, '\n');
+            doxyBlock << "\n";
+            
+            // Insert the text
+            ctrl->InsertText(lineStartPos, doxyBlock);
+            
+            // Try to place the caret after the @brief
+            wxRegEx reBrief("[@\\]brief[ \t]*");
+            if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
+                wxString match = reBrief.GetMatch(doxyBlock);
+                // Get the index
+                int where = doxyBlock.Find(match);
+                if(where != wxNOT_FOUND) {
+                    where += match.length();
+                    int caretPos = lineStartPos + where;
+                    editor->SetCaretAt(caretPos);
+                }
             }
             editor->GetSTC()->EndUndoAction();
         }

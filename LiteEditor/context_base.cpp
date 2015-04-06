@@ -37,6 +37,7 @@
 #include "commentconfigdata.h"
 #include "editor_config.h"
 #include <wx/tokenzr.h>
+#include <wx/regex.h>
 
 // static wxColor GetInactiveColor(const wxColor& col)
 //{
@@ -254,6 +255,8 @@ void ContextBase::AutoAddComment()
                 clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
                 event.SetEditor(&rCtrl);
                 if(EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
+                    rCtrl.BeginUndoAction();
+                    
                     // To make the doxy block fit in, we need to prepend each line
                     // with the exact whitespace of the line that starts with "/**"
                     int lineStartPos = rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos));
@@ -271,6 +274,20 @@ void ContextBase::AutoAddComment()
 
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);
+                    
+                    // Try to place the caret after the @brief
+                    wxRegEx reBrief("[@\\]brief[ \t]*");
+                    if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
+                        wxString match = reBrief.GetMatch(doxyBlock);
+                        // Get the index
+                        int where = doxyBlock.Find(match);
+                        if(where != wxNOT_FOUND) {
+                            where += match.length();
+                            int caretPos = startPos + where;
+                            rCtrl.SetCaretAt(caretPos);
+                        }
+                    }
+                    rCtrl.EndUndoAction();
                     return;
                 }
             }

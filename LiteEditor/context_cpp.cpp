@@ -77,6 +77,7 @@
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "wxCodeCompletionBoxManager.h"
+#include <wx/regex.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -1143,12 +1144,26 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         // Join the lines back
         wxString doxyBlock = ::wxJoin(lines, '\n');
         doxyBlock << "\n";
-
+    
         // remove any selection
         editor.ClearSelections();
         editor.InsertText(insertPos, doxyBlock);
-        newPos += doxyBlock.length();
-        editor.SetCaretAt(newPos);
+        
+        // Try to place the caret after the @brief
+        wxRegEx reBrief("[@\\]brief[ \t]*");
+        if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
+            wxString match = reBrief.GetMatch(doxyBlock);
+            // Get the index
+            int where = doxyBlock.Find(match);
+            if(where != wxNOT_FOUND) {
+                where += match.length();
+                int caretPos = insertPos + where;
+                editor.SetCaretAt(caretPos);
+            }
+        } else {
+            newPos += doxyBlock.length();
+            editor.SetCaretAt(newPos);
+        }
         return;
     }
 }
@@ -2167,7 +2182,21 @@ void ContextCpp::AutoAddComment()
                     wxString doxyBlock = ::wxJoin(lines, '\n');
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);
-                    rCtrl.SetCaretAt(startPos);
+                    
+                    // Try to place the caret after the @brief
+                    wxRegEx reBrief("[@\\]brief[ \t]*");
+                    if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
+                        wxString match = reBrief.GetMatch(doxyBlock);
+                        // Get the index
+                        int where = doxyBlock.Find(match);
+                        if(where != wxNOT_FOUND) {
+                            where += match.length();
+                            int caretPos = startPos + where;
+                            rCtrl.SetCaretAt(caretPos);
+                        }
+                    } else {
+                        rCtrl.SetCaretAt(startPos);
+                    }
                     return;
                 }
             }

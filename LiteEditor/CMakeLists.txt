@@ -140,8 +140,13 @@ if(NOT APPLE)
     install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk 
             DESTINATION ${CL_PREFIX}/share/codelite/config 
             RENAME codelite.xml.default)
+
+    ## Create application launcher, copy application icon to standard location
     if ( UNIX AND NOT APPLE )
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CL_PREFIX}/share/applications)
+        install(FILES ${CL_SRC_ROOT}/Runtime/images/cubes.png 
+                DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32/apps
+                RENAME codeleite.png)
     endif (  UNIX AND NOT APPLE )
 
     install(

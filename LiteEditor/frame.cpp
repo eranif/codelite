@@ -5009,7 +5009,7 @@ bool clMainFrame::SaveLayoutAndSession()
             GetMainBook()->SaveSession(session);
             ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
             SessionManager::Get().Save(sessionName, session);
-            SessionManager::Get().SetLastWorkspaceName(sessionName);
+            SessionManager::Get().SetLastSession(sessionName);
         } else {
             // Create a default session
             wxString sessionName("Default");
@@ -5018,6 +5018,7 @@ bool clMainFrame::SaveLayoutAndSession()
             GetMainBook()->SaveSession(session);
             ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
             SessionManager::Get().Save(sessionName, session);
+            SessionManager::Get().SetLastSession(sessionName);
         }
     }
 

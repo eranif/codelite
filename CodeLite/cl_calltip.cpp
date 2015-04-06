@@ -169,9 +169,14 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
             wxString tmpsig = raw_sig;
             tmpsig.Trim().Trim(false); // remove any whitespaces from right
 
-            int j = 0;
-            for(; j < (int)tmpsig.Len(); j++) {
-                if(tmpsig.GetChar(j) == wxT(',')) {
+            size_t j = 0;
+            size_t depth = -1; // we start collecting after we find the open paren
+            for(; j < tmpsig.length(); ++j) {
+                if(tmpsig.at(j) == '(') {
+                    ++depth;
+                } else if(tmpsig.at(j) == ')') {
+                    --depth;
+                } else if(tmpsig.GetChar(j) == wxT(',') && (depth == 0)) {
                     std::pair<int, int> p;
                     p.first = startOffset;
                     p.second = (j - startOffset);
@@ -180,7 +185,7 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
                 }
             }
 
-            if(startOffset != j) {
+            if(startOffset != (int)j) {
                 std::pair<int, int> p;
                 p.first = startOffset;
                 p.second = (j - startOffset -

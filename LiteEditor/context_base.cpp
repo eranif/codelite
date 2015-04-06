@@ -156,11 +156,9 @@ int ContextBase::DoGetCalltipParamterIndex()
 
         // loop over the text from pos -> current position and count the number of commas found
         int depth(0);
-        bool exit_loop(false);
-
-        while(pos < ctrl.GetCurrentPos() && !exit_loop) {
+        while(pos < ctrl.GetCurrentPos()) {
             wxChar ch = ctrl.SafeGetChar(pos);
-            wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
+            //wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
 
             if(IsCommentOrString(pos)) {
                 pos = ctrl.PositionAfter(pos);
@@ -171,32 +169,10 @@ int ContextBase::DoGetCalltipParamterIndex()
             case wxT(','):
                 if(depth == 0) index++;
                 break;
-            case wxT('{'):
-            case wxT('}'):
-            case wxT(';'):
-                // error?
-                exit_loop = true;
-                break;
-            case wxT('<'):
-                if(ch_before == '<') {
-                    // operator <<
-                    // dont count this as depth ++
-                    break;
-                }
-            // fall thru
             case wxT('('):
-            case wxT('['):
                 depth++;
                 break;
-
-            case wxT('>'):
-                if(ch_before == wxT('-')) {
-                    // operator noting to do
-                    break;
-                }
-            // fall through
             case wxT(')'):
-            case wxT(']'):
                 depth--;
                 break;
             default:

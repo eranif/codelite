@@ -788,7 +788,7 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
     if(SessionManager::Get().GetSession(workspaceFile.GetFullPath(), session)) {
         clMainFrame::Get()->GetMainBook()->RestoreSession(session);
         // Set this session as the 'Last' session
-        SessionManager::Get().SetLastWorkspaceName(workspaceFile.GetFullPath());
+        SessionManager::Get().SetLastSession(workspaceFile.GetFullPath());
     }
 }
 

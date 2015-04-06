@@ -1532,7 +1532,7 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
     wxRect clientRect = GetClientRect();
 
     // Always cancel the previous tooltip...
-    DoCancelCalltip();
+    DoCancelCodeCompletionBox();
 
     for(int n = 0; n < FOLD_MARGIN_ID; ++n) {
         margin += GetMarginWidth(n);
@@ -3967,7 +3967,6 @@ void LEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip)
 void LEditor::DoCancelCalltip()
 {
     CallTipCancel();
-    GetFunctionTip()->Deactivate();
     DoCancelCodeCompletionBox();
 }
 

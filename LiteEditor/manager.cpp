@@ -356,7 +356,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
     {
         SessionEntry session;
         if(SessionManager::Get().GetSession(path, session)) {
-            SessionManager::Get().SetLastWorkspaceName(path);
+            SessionManager::Get().SetLastSession(path);
             clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(true); // Undo any workspace/editor link while loading
             clMainFrame::Get()->GetMainBook()->RestoreSession(session);
             clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(false);
@@ -419,7 +419,7 @@ void Manager::CloseWorkspace()
 
     // since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
     // default
-    SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
+    SessionManager::Get().SetLastSession(wxT("Default"));
 
     WorkspaceST::Get()->CloseWorkspace();
 

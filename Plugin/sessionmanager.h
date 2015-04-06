@@ -117,7 +117,7 @@ public:
                     SessionEntry& session,
                     const wxString& suffix = wxT(""),
                     const wxChar* Tag = sessionTag);
-    void SetLastWorkspaceName(const wxString& name);
+    void SetLastSession(const wxString& name);
     wxString GetLastSession();
 
 private:

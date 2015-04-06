@@ -178,7 +178,7 @@ bool SessionManager::Save(const wxString& name,
     return doc.Save(sessionFileName.GetFullPath());
 }
 
-void SessionManager::SetLastWorkspaceName(const wxString& name)
+void SessionManager::SetLastSession(const wxString& name)
 {
     if(!m_doc.GetRoot()) {
         return;
@@ -186,7 +186,7 @@ void SessionManager::SetLastWorkspaceName(const wxString& name)
     // first delete the old entry
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {
-        if(node->GetName() == wxT("LastActiveWorkspace")) {
+        if(node->GetName() == wxT("LastSession")) {
             m_doc.GetRoot()->RemoveChild(node);
             delete node;
             break;
@@ -195,7 +195,7 @@ void SessionManager::SetLastWorkspaceName(const wxString& name)
     }
 
     // set new one
-    wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LastActiveWorkspace"));
+    wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LastSession"));
     m_doc.GetRoot()->AddChild(child);
     XmlUtils::SetNodeContent(child, name);
 
@@ -208,12 +208,12 @@ wxString SessionManager::GetLastSession()
     if(!m_doc.GetRoot()) {
         return defaultSessionName;
     }
-    // try to locate the 'LastActiveWorkspace' entry
+    // try to locate the 'LastSession' entry
     // if it does not exist or it exist with value empty return 'Default'
     // otherwise, return its content
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {
-        if(node->GetName() == wxT("LastActiveWorkspace")) {
+        if(node->GetName() == wxT("LastSession")) {
             if(node->GetNodeContent().IsEmpty()) {
                 return defaultSessionName;
             } else {

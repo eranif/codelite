@@ -89,7 +89,9 @@ void GitEntry::FromJSON(const JSONElement& json)
     if(!diff.IsEmpty()) {
         m_colourDiffFile = diff;
     }
-
+    
+    m_recentCommits = json.namedObject("m_recentCommits").toArrayString();
+    
     // read the git commands
     JSONElement arrCommands = json.namedObject("Commands");
     for(int i = 0; i < arrCommands.arraySize(); ++i) {
@@ -118,7 +120,8 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_gitConsoleSashPos", m_gitConsoleSashPos);
     json.addProperty("m_gitCommitDlgHSashPos", m_gitCommitDlgHSashPos);
     json.addProperty("m_gitCommitDlgVSashPos", m_gitCommitDlgVSashPos);
-
+    json.addProperty("m_recentCommits", m_recentCommits);
+    
     // Add the git commands array
     JSONElement arrCommands = JSONElement::createArray("Commands");
     json.append(arrCommands);
@@ -292,11 +295,27 @@ void GitEntry::Save()
     conf.WriteItem(this);
 }
 
+void GitEntry::AddRecentCommit(const wxString& commitMessage)
+{
+    wxString msg = commitMessage;
+    msg.Trim().Trim(false);
+    if(msg.IsEmpty()) return;
+    
+    if(m_recentCommits.Index(msg) == wxNOT_FOUND) {
+        m_recentCommits.Insert(msg, 0);
+    }
+    
+    if(m_recentCommits.size() > 20) {
+        m_recentCommits.RemoveAt(m_recentCommits.size() -1); // Remove the last commit
+    }
+}
+
 void GitCommandsEntries::FromJSON(const JSONElement& json)
 {
     m_commands.clear();
     m_commandName = json.namedObject("m_commandName").toString();
     m_lastUsed = json.namedObject("m_lastUsed").toInt();
+
     JSONElement arrCommandChoices = json.namedObject("m_commands");
     for(int i = 0; i < arrCommandChoices.arraySize(); ++i) {
         GitLabelCommand item;

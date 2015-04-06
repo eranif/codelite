@@ -30,9 +30,11 @@
 #include "gitentry.h"
 #include "lexer_configuration.h"
 #include "editor_config.h"
+#include "ColoursAndFontsManager.h"
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent)
     : GitCommitDlgBase(parent)
+    , m_toggleChecks(false)
 {
     // read the configuration
     clConfig conf("git.conf");
@@ -41,10 +43,24 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent)
 
     m_splitterInner->SetSashPosition(data.GetGitCommitDlgHSashPos());
     m_splitterMain->SetSashPosition(data.GetGitCommitDlgVSashPos());
-
+    
+    LexerConf::Ptr_t diffLexer = ColoursAndFontsManager::Get().GetLexer("diff");
+    if(diffLexer) {
+        diffLexer->Apply(m_stcDiff);
+    }
+    
+    m_choiceRecentCommits->Append(data.GetRecentCommit());
+    if(!data.GetRecentCommit().IsEmpty()) {
+        m_choiceRecentCommits->SetSelection(0);
+    }
+    
     WindowAttrManager::Load(this, wxT("GitCommitDlg"), NULL);
-    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
+    LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->Apply(m_stcCommitMessage);
+    
+    m_listBox->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+    m_listBox->SetBackgroundColour(lex->GetProperty(0).GetBgColour());
+    m_listBox->SetForegroundColour(lex->GetProperty(0).GetFgColour());
 }
 
 /*******************************************************************************/
@@ -54,7 +70,9 @@ GitCommitDlg::~GitCommitDlg()
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-
+    
+    wxString message = m_stcCommitMessage->GetText();
+    data.AddRecentCommit(message);
     data.SetGitCommitDlgHSashPos(m_splitterInner->GetSashPosition());
     data.SetGitCommitDlgVSashPos(m_splitterMain->GetSashPosition());
     conf.WriteItem(&data);
@@ -90,9 +108,9 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
 
     if(m_diffMap.size() != 0) {
         std::map<wxString, wxString>::iterator it = m_diffMap.begin();
-        m_editor->SetText((*it).second);
+        m_stcDiff->SetText((*it).second);
         m_listBox->Select(0);
-        m_editor->SetReadOnly(true);
+        m_stcDiff->SetReadOnly(true);
     }
 }
 
@@ -117,9 +135,9 @@ void GitCommitDlg::OnChangeFile(wxCommandEvent& e)
 {
     int sel = m_listBox->GetSelection();
     wxString file = m_listBox->GetString(sel);
-    m_editor->SetReadOnly(false);
-    m_editor->SetText(m_diffMap[file]);
-    m_editor->SetReadOnly(true);
+    m_stcDiff->SetReadOnly(false);
+    m_stcDiff->SetText(m_diffMap[file]);
+    m_stcDiff->SetReadOnly(true);
 }
 
 void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
@@ -132,3 +150,15 @@ void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
 }
 
 /*******************************************************************************/
+void GitCommitDlg::OnToggleCheckAll(wxCommandEvent& event)
+{
+    for(size_t i=0; i<m_listBox->GetCount(); ++i) {
+        m_listBox->Check(i, m_toggleChecks);
+    }
+    m_toggleChecks = !m_toggleChecks;
+}
+
+void GitCommitDlg::OnRecentCommitSelected(wxCommandEvent& event)
+{
+    m_stcCommitMessage->SetText(m_choiceRecentCommits->GetStringSelection());
+}

@@ -37,7 +37,6 @@
 #include "gitui.h"
 #include "macros.h"
 
-class GitCommitEditor;
 class IProcess;
 class GitPlugin;
 class GitCommitListDlg : public GitCommitListDlgBase

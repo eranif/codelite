@@ -22,20 +22,22 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
+#include <wx/toolbar.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #include <wx/splitter.h>
 #include <wx/checklst.h>
-#include "gitCommitEditor.h"
 #include <wx/stc/stc.h>
 #include <wx/srchctrl.h>
 #include <wx/dataview.h>
 #include <wx/listbox.h>
+#include "gitCommitEditor.h"
 #include <wx/bitmap.h>
-#include <map>
 #include <wx/icon.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
 #include "dataviewfilesmodel.h"
 #include <wx/gauge.h>
 
@@ -96,16 +98,20 @@ public:
 
 class GitCommitDlgBase : public wxDialog
 {
+public:
+    enum {
+        ID_TOGGLE_CHECKALL = 6001,
+    };
 protected:
+    wxAuiToolBar* m_auibar;
+    wxChoice* m_choiceRecentCommits;
     wxSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
     wxSplitterWindow* m_splitterInner;
     wxPanel* m_panel1;
-    wxStaticText* m_staticText6;
     wxCheckListBox* m_listBox;
     wxPanel* m_panel2;
-    wxStaticText* m_staticText7;
-    GitCommitEditor* m_editor;
+    wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_panel4;
     wxStaticText* m_staticText8;
     wxStyledTextCtrl* m_stcCommitMessage;
@@ -115,15 +121,17 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
+    virtual void OnToggleCheckAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRecentCommitSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText6() { return m_staticText6; }
+    wxChoice* GetChoiceRecentCommits() { return m_choiceRecentCommits; }
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxCheckListBox* GetListBox() { return m_listBox; }
     wxPanel* GetPanel1() { return m_panel1; }
-    wxStaticText* GetStaticText7() { return m_staticText7; }
-    GitCommitEditor* GetEditor() { return m_editor; }
+    wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetPanel2() { return m_panel2; }
     wxSplitterWindow* GetSplitterInner() { return m_splitterInner; }
     wxPanel* GetPanel3() { return m_panel3; }
@@ -132,7 +140,7 @@ public:
     wxCheckBox* GetCheckBoxAmend() { return m_checkBoxAmend; }
     wxPanel* GetPanel4() { return m_panel4; }
     wxSplitterWindow* GetSplitterMain() { return m_splitterMain; }
-    GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitCommitDlgBase();
 };
 

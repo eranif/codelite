@@ -30,6 +30,18 @@
 #include "codelite_exports.h"
 #include <wx/dcgraph.h>
 
+struct WXDLLIMPEXP_SDK clColourPalette 
+{
+    // basic colours
+    wxColour textColour;
+    wxColour bgColour;
+    wxColour penColour;
+    
+    // Selected item colours
+    wxColour selecteTextColour;
+    wxColour selectionBgColour;
+};
+
 class WXDLLIMPEXP_SDK DrawingUtils
 {
 public:
@@ -53,6 +65,11 @@ public:
     static wxColour GetGradient();
     
     static wxFont GetDefaultFixedFont();
+    
+    /**
+     * @brief return basic colour palette based on the current editor
+     */
+    static clColourPalette GetColourPalette();
     
     /// -------------------------------------------------------------
     /// New theme related API

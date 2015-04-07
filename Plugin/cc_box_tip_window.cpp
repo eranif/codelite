@@ -239,17 +239,16 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
     m_links.clear();
     wxBufferedPaintDC dc(this);
-
-    wxColour penColour("rgb(77, 77, 77)");
-    wxColour brushColour("rgb(64, 64, 64)");
-    wxColour textColour("rgb(200, 200, 200)");
+    
+    clColourPalette colors = DrawingUtils::GetColourPalette();
+    
+    wxColour penColour = colors.penColour;
+    wxColour brushColour = colors.bgColour;
+    wxColour textColour = colors.textColour;
     wxColour linkColour("rgb(204, 153, 255)");
     
     if(m_useLightColours) {
         // Use different colours to match the editor theme
-        penColour = wxColour("rgb(207, 207, 207)");
-        brushColour = wxColour("rgb(230, 230, 230)");
-        textColour = wxColour("rgb(83, 83, 83)");
         linkColour = wxColour("rgb(51, 153, 255)");
     }
     

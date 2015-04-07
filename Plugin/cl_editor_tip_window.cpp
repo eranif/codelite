@@ -16,8 +16,8 @@
 //                                                  F i l e
 //
 //    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
+//    it under the terms OF the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 OF the License, or
 //    (at your option) any later version.
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -37,6 +37,7 @@
 #include "event_notifier.h"
 #include "plugin.h"
 #include "ColoursAndFontsManager.h"
+#include "drawingutils.h"
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
 EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -73,14 +74,13 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     if(m_args.IsEmpty()) return;
 
     // Define the colours used by this tooltip window
-    wxColour bgColour, penColour, textColour, higlighTextBg, higlighTextFg, higlighTextPen;
-    bgColour = wxColour("#feffcd"); // basic colour
-    penColour = bgColour.ChangeLightness(80);
-    textColour = wxColour("#000023");
-    higlighTextBg = wxColour("rgb(204, 153, 0)");
-    higlighTextPen = higlighTextBg;
-    higlighTextFg = *wxWHITE;
-
+    clColourPalette colours = DrawingUtils::GetColourPalette();
+    wxColour bgColour, penColour, textColour, highlightBgColour, highlightFgColour;
+    bgColour = colours.bgColour;
+    penColour = colours.penColour;
+    textColour = colours.textColour;
+    highlightBgColour = colours.selectionBgColour;
+    highlightFgColour = colours.selecteTextColour;
     wxRect rr = GetClientRect();
 
     // draw the background using the parent background colour
@@ -95,34 +95,60 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
     wxCoord x = TIP_SPACER;
     wxCoord y = 0;
-    gdc.SetTextForeground(textColour);
+
+    if(!m_header.IsEmpty()) {
+        wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        //guiFont.SetStyle(wxFONTSTYLE_ITALIC);
+        gdc.SetFont(guiFont);
+        wxSize headerSize = gdc.GetTextExtent(m_header);
+        wxPoint headerPt;
+        headerPt.x = rr.GetWidth() - headerSize.x - TIP_SPACER;
+        headerPt.y = 0;
+        gdc.SetTextForeground(textColour);
+        gdc.DrawText(m_header, headerPt);
+        y += helperTextSize.y;
+        gdc.DrawLine(0, y, rr.GetWidth(), y);
+    }
+
+    gdc.SetFont(m_font);
     for(size_t i = 0; i < m_args.size(); ++i) {
         wxString line = m_args.Item(i);
         if((int)i == m_highlighIndex) {
-            wxFont f = m_font;
-            f.SetWeight(wxFONTWEIGHT_BOLD);
-            gdc.SetFont(f);
+            // wxFont f = m_font;
+            // f.SetWeight(wxFONTWEIGHT_BOLD);
+            gdc.SetBrush(highlightBgColour);
+            gdc.SetPen(highlightBgColour);
+            gdc.SetTextForeground(highlightFgColour);
+            wxRect selectionRect(0, y, rr.GetWidth(), helperTextSize.y);
+            selectionRect.Deflate(1);
+            gdc.DrawRectangle(selectionRect);
+            gdc.DrawText(line, x, y);
+
         } else {
-            gdc.SetFont(m_font);
+            gdc.SetTextForeground(textColour);
+            gdc.DrawText(line, x, y);
         }
-        gdc.DrawText(line, x, y);
         y += helperTextSize.y;
     }
 
-    if(!m_coutLine.IsEmpty()) {
-        // Draw the extra line ("1 of N")
-        m_coutLine.Clear();
-        m_coutLine << (GetTip()->GetCurr() + 1) << " of " << GetTip()->Count();
+    if(!m_footer.IsEmpty()) {
+        gdc.SetPen(penColour);
+        gdc.DrawLine(0, y, rr.GetWidth(), y);
+        
+        // Draw the extra line ("1 OF N")
+        m_footer.Clear();
+        m_footer << (GetTip()->GetCurr() + 1) << " OF " << GetTip()->Count();
 
         wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        guiFont.SetStyle(wxFONTSTYLE_ITALIC);
         gdc.SetFont(guiFont);
-        wxSize extraLineSize = gdc.GetTextExtent(m_coutLine);
+        wxSize extraLineSize = gdc.GetTextExtent(m_footer);
 
         wxPoint extraLinePt;
         extraLinePt.x = rr.GetWidth() - extraLineSize.x - TIP_SPACER;
         extraLinePt.y = rr.GetHeight() - extraLineSize.y;
         gdc.SetTextForeground(textColour);
-        gdc.DrawText(m_coutLine, extraLinePt);
+        gdc.DrawText(m_footer, extraLinePt);
     }
 }
 
@@ -252,20 +278,23 @@ wxSize clEditorTipWindow::DoGetTipSize()
     } else {
         dc = (wxDC*)&gdc;
     }
-    
+
     wxFont f = m_font;
     f.SetWeight(wxFONTWEIGHT_BOLD);
-    
+
     dc->SetFont(f);
     wxSize helperTextSize = dc->GetTextExtent("Tp");
 
     int lineHeight = helperTextSize.y;
     int minLineWidth = wxNOT_FOUND;
-    if(GetTip() && (GetTip()->Count() > 1)) {
+    if(!m_footer.IsEmpty()) {
         // Multiple signatures
-        minLineWidth = dc->GetTextExtent("100 of 100").x;
+        minLineWidth = dc->GetTextExtent(m_footer).x;
     }
-
+    if(!m_header.IsEmpty()) {
+        wxSize headerSize = dc->GetTextExtent(m_header);
+        minLineWidth = headerSize.x > minLineWidth ? headerSize.x : minLineWidth;
+    }
     wxString tipContent = wxJoin(m_args, '\n');
     tipContent.Trim().Trim(false);
 
@@ -281,7 +310,10 @@ wxSize clEditorTipWindow::DoGetTipSize()
         sz.x = minLineWidth;
     }
 
-    if(minLineWidth != wxNOT_FOUND) {
+    if(!m_footer.IsEmpty()) {
+        sz.y += lineHeight;
+    }
+    if(!m_header.IsEmpty()) {
         sz.y += lineHeight;
     }
     return sz;
@@ -346,15 +378,24 @@ void clEditorTipWindow::DoMakeMultipleLineTip()
 {
     // Find the open brace first
     m_args.Clear();
-    m_coutLine.Clear();
+    m_footer.Clear();
+    m_header.Clear();
 
     wxString sig = m_tipText.AfterFirst('(');
+    wxString returnValue = m_tipText.BeforeFirst('(');
+    returnValue.Trim().Trim(false);
+    if(returnValue.EndsWith(":")) {
+        returnValue.RemoveLast();
+        returnValue.Trim().Trim(false);
+        m_header << "RETURNS:  " << returnValue;
+    }
+
     sig = sig.BeforeLast(')');
     sig.Trim().Trim(false);
     if(sig.IsEmpty()) {
         m_args.Add("()");
         if(GetTip() && (GetTip()->Count() > 1)) {
-            m_coutLine << GetTip()->GetCurr() << " of " << GetTip()->Count();
+            m_footer << GetTip()->GetCurr() << " OF " << GetTip()->Count();
         }
         return;
     }
@@ -390,6 +431,6 @@ void clEditorTipWindow::DoMakeMultipleLineTip()
     }
 
     if(GetTip() && (GetTip()->Count() > 1)) {
-        m_coutLine << GetTip()->GetCurr() << " of " << GetTip()->Count();
+        m_footer << GetTip()->GetCurr() << " OF " << GetTip()->Count();
     }
 }

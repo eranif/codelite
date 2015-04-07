@@ -74,13 +74,15 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
 
     // Default colorus (dark theme)
+    clColourPalette palette = DrawingUtils::GetColourPalette();
+    
     m_lightBorder = wxColour("rgb(77, 77, 77)");
     m_darkBorder = wxColour("rgb(54, 54, 54)");
-    m_penColour = wxColour("rgb(54, 54, 54)");
-    m_bgColour = wxColour("rgb(64, 64, 64)");
-    m_textColour = wxColour("rgb(200, 200, 200)");
-    m_selectedTextColour = *wxWHITE;
-    m_selection = wxColour("rgb(87, 87, 87)");
+    m_penColour = palette.penColour;
+    m_bgColour = palette.bgColour;
+    m_textColour = palette.textColour;
+    m_selectedTextColour = palette.selecteTextColour;
+    m_selection = palette.selectionBgColour;
     m_scrollBgColour = wxColour("rgb(50, 50, 50)");
 
     IManager* manager = ::clGetManager();
@@ -91,13 +93,8 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
             if(!DrawingUtils::IsDark(bgColour)) {
                 m_useLightColours = true;
                 // Need bright colours
-                m_bgColour = wxColour("rgb(230, 230, 230)");
                 m_lightBorder = *wxWHITE;
                 m_darkBorder = wxColour("rgb(207, 207, 207)");
-                m_textColour = wxColour("rgb(83, 83, 83)");
-                m_selectedTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-                m_selection = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-                m_penColour = wxColour("rgb(207, 207, 207)");
                 m_scrollBgColour = wxColour("rgb(198, 198, 198)");
             }
         }

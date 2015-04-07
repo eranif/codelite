@@ -31,6 +31,9 @@
 #include <wx/graphics.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
+#include "globals.h"
+#include "ieditor.h"
+#include <wx/stc/stc.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -79,12 +82,12 @@ static void RGB_2_HSL(float r, float g, float b, float* h, float* s, float* l)
 
     float var_Min = cl_min(var_R, var_G, var_B); // Min. value of RGB
     float var_Max = cl_max(var_R, var_G, var_B); // Max. value of RGB
-    float del_Max = var_Max - var_Min; // Delta RGB value
+    float del_Max = var_Max - var_Min;           // Delta RGB value
 
     *l = (var_Max + var_Min) / 2.0;
 
     if(del_Max == 0) { // This is a gray, no chroma...
-        *h = 0; // HSL results from 0 to 1
+        *h = 0;        // HSL results from 0 to 1
         *s = 0;
     } else { // Chromatic data...
         if(*l < 0.5)
@@ -120,7 +123,7 @@ static float Hue_2_RGB(float v1, float v2, float vH) // Function Hue_2_RGB
 
 static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 {
-    if(s == 0) { // HSL from 0 to 1
+    if(s == 0) {        // HSL from 0 to 1
         *r = l * 255.0; // RGB results from 0 to 255
         *g = l * 255.0;
         *b = l * 255.0;
@@ -677,4 +680,25 @@ wxColour DrawingUtils::GetCaptionColour()
 wxFont DrawingUtils::GetDefaultFixedFont()
 {
     return wxFont(wxFontInfo(DEFAULT_FONT_SIZE).Family(wxFONTFAMILY_TELETYPE).FaceName(DEFAULT_FACE_NAME));
+}
+
+clColourPalette DrawingUtils::GetColourPalette() 
+{
+    // basic dark colours
+    clColourPalette palette;
+    palette.bgColour = wxColour("rgb(64, 64, 64)");
+    palette.penColour = wxColour("rgb(100, 100, 100)");
+    palette.selecteTextColour = *wxWHITE;
+    palette.selectionBgColour = wxColour("rgb(87, 87, 87)");
+    palette.textColour = wxColour("rgb(200, 200, 200)");
+    
+    IEditor* editor = ::clGetManager()->GetActiveEditor();
+    if(editor && !IsDark(editor->GetSTC()->StyleGetBackground(0))) {
+        palette.bgColour = wxColour("rgb(230, 230, 230)");
+        palette.penColour = wxColour("rgb(207, 207, 207)");
+        palette.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+        palette.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+        palette.textColour = wxColour("rgb(0, 0, 0)");
+    }
+    return palette;
 }

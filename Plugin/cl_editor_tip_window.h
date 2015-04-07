@@ -52,7 +52,8 @@ protected:
     wxString m_selectedSignature;
     wxFont m_font;
     wxArrayString m_args;
-    wxString m_coutLine; // the line that says  "1 of 2"
+    wxString m_footer; // the line that says  "1 of 2"
+    wxString m_header; // The return value line
     
 protected:
     wxSize DoGetTipSize();

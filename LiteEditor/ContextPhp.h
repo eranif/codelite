@@ -36,6 +36,7 @@ public:
     virtual ~ContextPhp();
 
 public:
+    bool IsStringTriggerCodeComplete(const wxString& str) const;
     virtual int GetActiveKeywordSet() const;
     virtual int  DoGetCalltipParamterIndex();
     virtual wxMenu* GetMenu();

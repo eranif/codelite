@@ -874,8 +874,8 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     strTyped << charTyped;
     strTyped2 << firstChar << charTyped;
 
-    if((GetContext()->GetCompletionTriggerStrings().count(strTyped) ||
-        GetContext()->GetCompletionTriggerStrings().count(strTyped2)) &&
+    if((GetContext()->IsStringTriggerCodeComplete(strTyped) ||
+        GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&
        !GetContext()->IsCommentOrString(GetCurrentPos())) {
         // this char should trigger a code completion
         CodeComplete();
@@ -2700,7 +2700,8 @@ void LEditor::ReloadFile()
     SetReloadingFile(true);
 
     DoCancelCalltip();
-
+    GetFunctionTip()->Deactivate();
+    
     if(m_fileName.GetFullPath().IsEmpty() == true || !m_fileName.FileExists()) {
         SetEOLMode(GetEOLByOS());
         SetReloadingFile(false);

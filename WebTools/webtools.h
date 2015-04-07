@@ -6,6 +6,7 @@
 #include "cl_command_event.h"
 #include "JSCodeCompletion.h"
 #include <wx/timer.h>
+#include "ieditor.h"
 
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
@@ -31,6 +32,7 @@ protected:
 private:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);
+    bool IsJavaScriptFile(IEditor* editor);
 
 public:
     WebTools(IManager* manager);

@@ -136,7 +136,7 @@ void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor->GetFileName())) {
+    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor)) {
         event.Skip(false);
         m_jsCodeComplete->CodeComplete(editor);
     }
@@ -156,7 +156,7 @@ void WebTools::OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event)
 {
     event.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor->GetFileName())) {
+    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor)) {
         event.Skip(false);
         m_jsCodeComplete->CodeComplete(editor);
     }
@@ -199,4 +199,20 @@ void WebTools::OnTimer(wxTimerEvent& event)
     // This file is a modified JS file
     m_lastColourUpdate = time(NULL);
     m_jsColourThread->QueueBuffer(editor->GetFileName().GetFullPath(), editor->GetTextRange(0, editor->GetLength()));
+}
+
+bool WebTools::IsJavaScriptFile(IEditor* editor)
+{
+    CHECK_PTR_RET_FALSE(editor);
+    if(FileExtManager::IsJavascriptFile(editor->GetFileName())) return true;
+    
+    // We should also support Code Completion when inside a PHP/HTML file, but within a script area
+    if(FileExtManager::IsPHPFile(editor->GetFileName())) {
+        wxStyledTextCtrl* ctrl = editor->GetSTC();
+        int styleAtCurPos = ctrl->GetStyleAt(ctrl->GetCurrentPos());
+        if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
+            return true;
+        }
+    }
+    return false;
 }

@@ -76,16 +76,18 @@ public:
     
     
     /**
+     * @brief return true if str is a string that should trigger a code completion
+     */
+    virtual bool IsStringTriggerCodeComplete(const wxString& str) const;
+    
+    /**
      * @brief when the context is requested to display a code completion for keywords
      * this functions determines which keyword set to display ( there are up to 5, indexed from: 0-4)
      */
     virtual int GetActiveKeywordSet() const {
         return 0;
     }
-    
-    const wxStringSet_t& GetCompletionTriggerStrings() const {
-        return m_completionTriggerStrings;
-    }
+
     /**
      * Return the context parent control
      */

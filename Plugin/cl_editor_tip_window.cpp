@@ -98,7 +98,6 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
     if(!m_header.IsEmpty()) {
         wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        //guiFont.SetStyle(wxFONTSTYLE_ITALIC);
         gdc.SetFont(guiFont);
         wxSize headerSize = gdc.GetTextExtent(m_header);
         wxPoint headerPt;
@@ -140,7 +139,6 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
         m_footer << (GetTip()->GetCurr() + 1) << " OF " << GetTip()->Count();
 
         wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        guiFont.SetStyle(wxFONTSTYLE_ITALIC);
         gdc.SetFont(guiFont);
         wxSize extraLineSize = gdc.GetTextExtent(m_footer);
 

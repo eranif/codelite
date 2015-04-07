@@ -9,25 +9,23 @@
 PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")
     , m_errorReporting(wxT("E_ALL & ~E_NOTICE"))
-    , m_xdebugPort(9000) 
+    , m_xdebugPort(9000)
     , m_flags(kRunLintOnFileSave)
     , m_xdebugIdeKey("codeliteide")
     , m_xdebugHost("127.0.0.1")
-    , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css")
+    , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text")
     , m_workspaceType(0)
     , m_settersGettersFlags(kSG_None)
 {
 }
 
-PHPConfigurationData::~PHPConfigurationData()
-{
-}
+PHPConfigurationData::~PHPConfigurationData() {}
 
-void PHPConfigurationData::FromJSON(const JSONElement &json)
+void PHPConfigurationData::FromJSON(const JSONElement& json)
 {
     m_includePaths = json.namedObject("m_includePaths").toArrayString();
     m_findInFilesMask = json.namedObject("m_findInFilesMask").toString(m_findInFilesMask);
-    
+
     m_phpExe = json.namedObject("m_phpExe").toString("php");
     m_errorReporting = json.namedObject("m_errorReporting").toString(m_errorReporting);
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(m_xdebugPort);
@@ -37,8 +35,8 @@ void PHPConfigurationData::FromJSON(const JSONElement &json)
     m_xdebugIdeKey = json.namedObject("m_xdebugIdeKey").toString(m_xdebugIdeKey);
     m_workspaceType = json.namedObject("m_workspaceType").toInt(m_workspaceType);
     m_xdebugIdeKey.Trim().Trim(false);
-    
-    // xdebug IDE can not be an empty string, or else debugging in command line 
+
+    // xdebug IDE can not be an empty string, or else debugging in command line
     // will not work
     if(m_xdebugIdeKey.IsEmpty()) {
         m_xdebugIdeKey = "codeliteide";
@@ -66,7 +64,7 @@ JSONElement PHPConfigurationData::ToJSON() const
 wxString PHPConfigurationData::GetIncludePathsAsString() const
 {
     wxString str;
-    for(size_t i=0; i<m_includePaths.GetCount(); i++) {
+    for(size_t i = 0; i < m_includePaths.GetCount(); i++) {
         str << m_includePaths.Item(i) << wxT("\n");
     }
     if(str.IsEmpty() == false) {
@@ -78,7 +76,7 @@ wxString PHPConfigurationData::GetIncludePathsAsString() const
 wxString PHPConfigurationData::GetCCIncludePathsAsString() const
 {
     wxString str;
-    for(size_t i=0; i<m_ccIncludePath.GetCount(); i++) {
+    for(size_t i = 0; i < m_ccIncludePath.GetCount(); i++) {
         str << m_ccIncludePath.Item(i) << wxT("\n");
     }
     if(str.IsEmpty() == false) {
@@ -90,12 +88,12 @@ wxString PHPConfigurationData::GetCCIncludePathsAsString() const
 PHPConfigurationData& PHPConfigurationData::Load()
 {
     clConfig conf("php.conf");
-    conf.ReadItem( this );
+    conf.ReadItem(this);
     return *this;
 }
 
 void PHPConfigurationData::Save()
 {
     clConfig conf("php.conf");
-    conf.WriteItem( this );
+    conf.WriteItem(this);
 }

@@ -228,7 +228,7 @@ FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectStr
 bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
 {
     wxString lcMask = mask.Lower();
-    wxArrayString masks = ::wxStringTokenize(lcMask, ";", wxTOKEN_STRTOK);
+    wxArrayString masks = ::wxStringTokenize(lcMask, ";,", wxTOKEN_STRTOK);
     if(masks.Index("*") != wxNOT_FOUND) {
         // If one of the masks is plain "*" - we match everything
         return true;

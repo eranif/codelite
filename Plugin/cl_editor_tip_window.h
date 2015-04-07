@@ -32,6 +32,7 @@
 #include "cl_calltip.h"
 #include "codelite_exports.h"
 #include "cl_command_event.h"
+#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK clEditorTipWindow : public wxPanel
 {
@@ -50,12 +51,18 @@ protected:
     wxColour m_parentBgColour;
     wxString m_selectedSignature;
     wxFont m_font;
-
+    wxArrayString m_args;
+    wxString m_coutLine; // the line that says  "1 of 2"
+    
 protected:
     wxSize DoGetTipSize();
     int DoGetTextLen(wxDC& dc, const wxString& txt);
     void DoAdjustPosition();
     void DoLayoutTip();
+    /**
+     * @brief make the tooltip span over multiple lines
+     */
+    void DoMakeMultipleLineTip();
 
 public:
     clEditorTipWindow(wxWindow* parent);

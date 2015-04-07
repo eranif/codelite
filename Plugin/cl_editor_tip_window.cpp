@@ -70,7 +70,8 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
     wxGCDC gdc;
     if(!DrawingUtils::GetGCDC(dc, gdc)) return;
-    
+    if(m_args.IsEmpty()) return;
+
     // Define the colours used by this tooltip window
     wxColour bgColour, penColour, textColour, higlighTextBg, higlighTextFg, higlighTextPen;
     bgColour = wxColour("#feffcd"); // basic colour
@@ -79,7 +80,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     higlighTextBg = wxColour("rgb(204, 153, 0)");
     higlighTextPen = higlighTextBg;
     higlighTextFg = *wxWHITE;
-    
+
     wxRect rr = GetClientRect();
 
     // draw the background using the parent background colour
@@ -89,50 +90,39 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     gdc.SetFont(m_font);
 
     // Highlight the text
-    clCallTipPtr tip = GetTip();
-    int secondLineY = (rr.GetHeight() / 2) + 1;
-    int firstLineY = TIP_SPACER;
-
-    // Draw the Tip text
     gdc.SetTextForeground(textColour);
-    gdc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
+    wxSize helperTextSize = gdc.GetTextExtent("Tp");
 
-    if(tip) {
-        bool twoLinesTip = (tip->Count() > 1);
-        wxString txt;
-        if(twoLinesTip) {
-            txt << tip->GetCurr() + 1 << wxT(" of ") << tip->Count();
-            int txtLen = DoGetTextLen(gdc, txt);
-
-            int summaryLineXText(rr.GetWidth());
-            summaryLineXText -= (txtLen + TIP_SPACER);
-
-            // Draw the summary line
-            gdc.SetTextForeground(textColour);
-            gdc.DrawText(txt, summaryLineXText, secondLineY + TIP_SPACER / 2);
+    wxCoord x = TIP_SPACER;
+    wxCoord y = 0;
+    gdc.SetTextForeground(textColour);
+    for(size_t i = 0; i < m_args.size(); ++i) {
+        wxString line = m_args.Item(i);
+        if((int)i == m_highlighIndex) {
+            wxFont f = m_font;
+            f.SetWeight(wxFONTWEIGHT_BOLD);
+            gdc.SetFont(f);
+        } else {
+            gdc.SetFont(m_font);
         }
+        gdc.DrawText(line, x, y);
+        y += helperTextSize.y;
+    }
 
-        int start(-1), len(-1);
-        tip->GetHighlightPos(m_highlighIndex, start, len);
-        if(len != -1 && start != -1) {
-            wxString txtBefore = m_tipText.Mid(0, start);
-            wxString txtInclude = m_tipText.Mid(start, len);
+    if(!m_coutLine.IsEmpty()) {
+        // Draw the extra line ("1 of N")
+        m_coutLine.Clear();
+        m_coutLine << (GetTip()->GetCurr() + 1) << " of " << GetTip()->Count();
 
-            int x = DoGetTextLen(gdc, txtBefore);
-            int w = DoGetTextLen(gdc, txtInclude);
+        wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        gdc.SetFont(guiFont);
+        wxSize extraLineSize = gdc.GetTextExtent(m_coutLine);
 
-            // darken the background colour and use it as the highlight colour
-            gdc.SetBrush(higlighTextBg);
-            gdc.SetPen(higlighTextPen);
-            gdc.SetTextForeground(higlighTextFg);
-
-            // if this is a 2 liner tip, the highlight rect is 1/2 the tip window height,
-            // otherwise its the same as the height
-            int highlightRectHeight = twoLinesTip ? (rr.GetHeight() / 2) : rr.GetHeight();
-            int highlightRectY = twoLinesTip ? firstLineY - (TIP_SPACER / 2) : 0;
-            gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, highlightRectY, w + 2, highlightRectHeight, 0);
-            gdc.DrawText(txtInclude, wxPoint(x + TIP_SPACER, firstLineY));
-        }
+        wxPoint extraLinePt;
+        extraLinePt.x = rr.GetWidth() - extraLineSize.x - TIP_SPACER;
+        extraLinePt.y = rr.GetHeight() - extraLineSize.y;
+        gdc.SetTextForeground(textColour);
+        gdc.DrawText(m_coutLine, extraLinePt);
     }
 }
 
@@ -190,6 +180,7 @@ void clEditorTipWindow::Highlight(int argIdxToHilight)
     clCallTipPtr tip = GetTip();
     if(tip) {
         m_tipText = tip->Current();
+        DoMakeMultipleLineTip();
         m_highlighIndex = argIdxToHilight;
         DoLayoutTip();
     } else {
@@ -202,6 +193,7 @@ void clEditorTipWindow::SelectNext(int argIdxToHilight)
     clCallTipPtr tip = GetTip();
     if(tip) {
         m_tipText = tip->Next();
+        DoMakeMultipleLineTip();
         m_highlighIndex = argIdxToHilight;
         DoLayoutTip();
     }
@@ -212,6 +204,7 @@ void clEditorTipWindow::SelectPrev(int argIdxToHilight)
     clCallTipPtr tip = GetTip();
     if(tip) {
         m_tipText = tip->Prev();
+        DoMakeMultipleLineTip();
         m_highlighIndex = argIdxToHilight;
         DoLayoutTip();
     }
@@ -259,24 +252,37 @@ wxSize clEditorTipWindow::DoGetTipSize()
     } else {
         dc = (wxDC*)&gdc;
     }
+    
+    wxFont f = m_font;
+    f.SetWeight(wxFONTWEIGHT_BOLD);
+    
+    dc->SetFont(f);
+    wxSize helperTextSize = dc->GetTextExtent("Tp");
+
+    int lineHeight = helperTextSize.y;
+    int minLineWidth = wxNOT_FOUND;
+    if(GetTip() && (GetTip()->Count() > 1)) {
+        // Multiple signatures
+        minLineWidth = dc->GetTextExtent("100 of 100").x;
+    }
+
+    wxString tipContent = wxJoin(m_args, '\n');
+    tipContent.Trim().Trim(false);
 
     wxSize sz;
     wxSize sz2;
-    dc->SetFont(m_font);
-    sz = dc->GetTextExtent(m_tipText);
-    if(GetTip() && GetTip()->Count() > 1) {
-        // for multiple tips, use second line as well
-        sz2 = dc->GetTextExtent(wxT("100 of 100"));
-        sz.y *= 2;
-    } else {
-        sz2 = wxSize(1, 1);
-    }
+    sz = dc->GetMultiLineTextExtent(tipContent);
 
-    sz.y += (2 * TIP_SPACER);
+    // add spacers
+    sz.y = (m_args.size() * lineHeight);
     sz.x += (2 * TIP_SPACER);
 
-    if(sz.x < sz2.x) {
-        sz.x = sz2.x;
+    if(sz.x < minLineWidth) {
+        sz.x = minLineWidth;
+    }
+
+    if(minLineWidth != wxNOT_FOUND) {
+        sz.y += lineHeight;
     }
     return sz;
 }
@@ -293,8 +299,6 @@ void clEditorTipWindow::DoAdjustPosition()
     wxPoint pt = m_point;
     wxSize sz = DoGetTipSize();
     wxRect parentSize = GetParent()->GetClientRect();
-
-    // by default place the tip below the caret
 
     if(pt.y + m_lineHeight + sz.y > parentSize.height) {
         pt.y -= sz.y;
@@ -336,4 +340,56 @@ void clEditorTipWindow::OnEditoConfigChanged(clCommandEvent& e)
     // the lexers were modified by the user, reload the font
     m_font = EditorConfigST::Get()->GetLexer("C++")->GetFontForSyle(wxSTC_STYLE_CALLTIP);
     Refresh();
+}
+
+void clEditorTipWindow::DoMakeMultipleLineTip()
+{
+    // Find the open brace first
+    m_args.Clear();
+    m_coutLine.Clear();
+
+    wxString sig = m_tipText.AfterFirst('(');
+    sig = sig.BeforeLast(')');
+    sig.Trim().Trim(false);
+    if(sig.IsEmpty()) {
+        m_args.Add("()");
+        if(GetTip() && (GetTip()->Count() > 1)) {
+            m_coutLine << GetTip()->GetCurr() << " of " << GetTip()->Count();
+        }
+        return;
+    }
+
+    int depth = 0;
+    wxString currentArg;
+    for(size_t i = 0; i < sig.length(); ++i) {
+        wxChar ch = sig.at(i);
+        if(ch == '<' || ch == '[' || ch == '{' || ch == '(') {
+            ++depth;
+            currentArg << ch;
+        } else if(ch == '>' || ch == ']' || ch == '}' || ch == ')') {
+            --depth;
+            currentArg << ch;
+            if(depth < 0) {
+                // a parsing error
+                m_tipText.Clear();
+                m_args.Clear();
+                return;
+            }
+        } else if(ch == ',' && (depth == 0)) {
+            currentArg.Trim().Trim(false);
+            m_args.Add(currentArg);
+            currentArg.Clear();
+        } else {
+            currentArg << ch;
+        }
+    }
+
+    if(!currentArg.IsEmpty()) {
+        currentArg.Trim().Trim(false);
+        m_args.Add(currentArg);
+    }
+
+    if(GetTip() && (GetTip()->Count() > 1)) {
+        m_coutLine << GetTip()->GetCurr() << " of " << GetTip()->Count();
+    }
 }

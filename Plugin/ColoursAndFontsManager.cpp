@@ -730,7 +730,7 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
             whitespace.SetFgColour(newCol.GetAsString(wxC2S_HTML_SYNTAX));
         }
     }
-
+    
     //=====================================================================
     // Third upgrade stage: adjust whitespace colour and fold margin
     //=====================================================================
@@ -740,6 +740,32 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
             lexer->SetFileSpec("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++");
         }
     }
+    
+    // Upgrade CSS colours
+    if((force || m_lexersVersion < 4) && lexer->GetName().Lower() == "css") {
+        // adjust line numbers
+        bool isDark = lexer->IsDark();
+        StyleProperty& var = lexer->GetProperty(wxSTC_CSS_VARIABLE);
+        StyleProperty& identifier = lexer->GetProperty(wxSTC_CSS_IDENTIFIER);
+        StyleProperty& identifier2 = lexer->GetProperty(wxSTC_CSS_IDENTIFIER2);
+        StyleProperty& identifier3 = lexer->GetProperty(wxSTC_CSS_IDENTIFIER3);
+        StyleProperty& oper = lexer->GetProperty(wxSTC_CSS_OPERATOR);
+        if(!var.IsNull()) {
+            if(!identifier.IsNull()) {
+                identifier.SetFgColour(var.GetFgColour());
+            }
+            if(!identifier2.IsNull()) {
+                identifier2.SetFgColour(var.GetFgColour());
+            }
+            if(!identifier3.IsNull()) {
+                identifier3.SetFgColour(var.GetFgColour());
+            }
+            if(!oper.IsNull()) {
+                oper.SetFgColour(isDark ? "WHITE" : "BLACK");
+            }
+        }
+    }
+    
 }
 
 void ColoursAndFontsManager::SetTheme(const wxString& themeName)

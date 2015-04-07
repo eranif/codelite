@@ -19,6 +19,9 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_pgPropEcma6->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6));
         m_pgPropJQuery->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryJQuery));
         m_pgPropUnderscore->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSLibraryUnderscore));
+        m_pgPropAngular->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginAngular));
+        m_pgPropNode->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginNode));
+        m_pgPropStrings->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginStrings));
     }
     
     CenterOnParent();
@@ -51,6 +54,9 @@ void WebToolsSettings::OnOK(wxCommandEvent& event)
         config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6, m_pgPropEcma6->GetValue().GetBool());
         config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryJQuery, m_pgPropJQuery->GetValue().GetBool());
         config.EnableJavaScriptFlag(WebToolsConfig::kJSLibraryUnderscore, m_pgPropUnderscore->GetValue().GetBool());
+        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginAngular, m_pgPropAngular->GetValue().GetBool());
+        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginNode, m_pgPropNode->GetValue().GetBool());
+        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginStrings, m_pgPropStrings->GetValue().GetBool());
         config.Save();
     }
 }

@@ -100,46 +100,9 @@ bool clTernServer::Start()
     }
 
     // Create a .tern-project file
-    // {
-    //   "libs": [ "ecma5", "browser"],
-    //   "plugins": {
-    //     "node": {},
-    //     "complete_strings": {}
-    //   }
-    // }
-    {
-        wxFileName ternConfig(nodeJS.GetPath(), ".tern-project");
-        JSONRoot root(cJSON_Object);
-        JSONElement libs = JSONElement::createArray("libs");
-        root.toElement().append(libs);
-
-        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryBrowser)) {
-            libs.arrayAppend("browser");
-        }
-        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryChai)) {
-            libs.arrayAppend("chai");
-        }
-        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma5)) {
-            libs.arrayAppend("ecma5");
-        }
-        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryEcma6)) {
-            libs.arrayAppend("ecma6");
-        }
-        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryJQuery)) {
-            libs.arrayAppend("jquery");
-        }
-        if(conf.HasJavaScriptFlag(WebToolsConfig::kJSLibraryUnderscore)) {
-            libs.arrayAppend("underscore");
-        }
-        JSONElement plugins = JSONElement::createObject("plugins");
-        root.toElement().append(plugins);
-        JSONElement node = JSONElement::createObject("node");
-        plugins.append(node);
-        JSONElement complete_strings = JSONElement::createObject("complete_strings");
-        plugins.append(complete_strings);
-
-        root.save(ternConfig);
-    }
+    wxFileName ternConfig(nodeJS.GetPath(), ".tern-project");
+    wxString content = conf.GetTernProjectFile();
+    FileUtils::WriteFileContent(ternConfig, content);
 
     PrintMessage(wxString() << "Starting " << command << "\n");
     m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, ternFolder.GetPath());

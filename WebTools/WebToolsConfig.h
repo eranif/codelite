@@ -20,6 +20,9 @@ public:
         kJSLibraryEcma6 = (1 << 5),
         kJSLibraryChai = (1 << 6),
         kJSLibraryUnderscore = (1 << 7),
+        kJSPluginNode = (1 << 8),
+        kJSPluginStrings = (1 << 9),
+        kJSPluginAngular = (1 << 10),
     };
 
 public:
@@ -35,6 +38,11 @@ public:
         }
     }
     bool HasJavaScriptFlag(eJSFlags flag) const { return m_jsFlags & flag; }
+    
+    /**
+     * @brief create tern project file content based on the settings
+     */
+    wxString GetTernProjectFile() const;
     WebToolsConfig& Load();
     WebToolsConfig& Save();
 };

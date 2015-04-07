@@ -40,7 +40,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxSize(300,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
     boxSizer22->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
     
@@ -73,6 +73,18 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     
     m_pgPropChai = m_pgMgr->AppendIn( m_pgProp32,  new wxBoolProperty( _("Chai"), wxPG_LABEL, 1) );
     m_pgPropChai->SetHelpString(_("Enable code completion for the chain assertion library"));
+    
+    m_pgProp46 = m_pgMgr->Append(  new wxPropertyCategory( _("Plugins") ) );
+    m_pgProp46->SetHelpString(wxT(""));
+    
+    m_pgPropAngular = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Angular"), wxPG_LABEL, 1) );
+    m_pgPropAngular->SetHelpString(_("Adds the angular object to the top-level environment, and tries to wire up some of the bizarre dependency management scheme from this library, so that dependency injections get the right types"));
+    
+    m_pgPropStrings = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Strings"), wxPG_LABEL, 1) );
+    m_pgPropStrings->SetHelpString(_("When enabled, this plugin will gather (short) strings in your code, and completing when inside a string will try to complete to previously seen strings"));
+    
+    m_pgPropNode = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Node.js"), wxPG_LABEL, 1) );
+    m_pgPropNode->SetHelpString(_("Provides variables that are part of the node environment, such as process and require, and hooks up require to try and find the dependencies that are being loaded, and assign them the correct types. It also includes types for the built-in modules that node.js provides (\"fs\", \"http\", etc)"));
     
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     

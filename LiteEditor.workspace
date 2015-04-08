@@ -53,49 +53,49 @@
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
-      <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
-      <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
-      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
-      <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
-      <Project Name="WordCompletion" ConfigName="Win_x86_Release"/>
-      <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
-      <Project Name="Tweaks" ConfigName="Win_x86_Release"/>
-      <Project Name="Subversion2" ConfigName="Win_x86_Release"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="SpellCheck" ConfigName="Win_x86_Release"/>
-      <Project Name="snipwiz" ConfigName="Win_x86_Release"/>
-      <Project Name="SFTP" ConfigName="Win_x86_Release"/>
-      <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
-      <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="PHPParserUnitTests" ConfigName="Release"/>
-      <Project Name="PHPParser" ConfigName="Release"/>
-      <Project Name="PCH" ConfigName="Release"/>
-      <Project Name="Outline" ConfigName="Win_x86_Release"/>
-      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
-      <Project Name="MacBundler" ConfigName="Win_x86_Release"/>
-      <Project Name="LLDBDebugger" ConfigName="Win_x86_Release"/>
-      <Project Name="CodeLiteIDE" ConfigName="Win_x86_Release"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="hunspell" ConfigName="Release"/>
-      <Project Name="Gizmos" ConfigName="Win_x86_Release"/>
-      <Project Name="git" ConfigName="Win_x86_Release"/>
-      <Project Name="ExternalTools" ConfigName="Win_x86_Release"/>
-      <Project Name="DebuggerGDB" ConfigName="Win_x86_Release"/>
-      <Project Name="databaselayer_sqlite" ConfigName="Win_x86_Release"/>
-      <Project Name="DatabaseExplorer" ConfigName="Win_x86_Release"/>
-      <Project Name="Cscope" ConfigName="Win_x86_Release"/>
-      <Project Name="CppChecker" ConfigName="Win_x86_Release"/>
-      <Project Name="Copyright" ConfigName="Win_x86_Release"/>
-      <Project Name="ContinuousBuild" ConfigName="Win_x86_Release"/>
-      <Project Name="CodeLiteDiff" ConfigName="Win_x86_Release"/>
-      <Project Name="libCodeLite" ConfigName="Win_x86_Release"/>
-      <Project Name="CodeFormatter" ConfigName="Win_x86_Release"/>
-      <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
-      <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
-      <Project Name="WebTools" ConfigName="DebugUnicode"/>
+      <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
+      <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="CodeFormatter" ConfigName="Win_x86_Release"/>
+      <Project Name="CodeLiteDiff" ConfigName="Win_x86_Release"/>
+      <Project Name="CodeLiteIDE" ConfigName="Win_x86_Release"/>
+      <Project Name="ContinuousBuild" ConfigName="Win_x86_Release"/>
+      <Project Name="Copyright" ConfigName="Win_x86_Release"/>
+      <Project Name="CppChecker" ConfigName="Win_x86_Release"/>
+      <Project Name="Cscope" ConfigName="Win_x86_Release"/>
+      <Project Name="DatabaseExplorer" ConfigName="Win_x86_Release"/>
+      <Project Name="databaselayer_sqlite" ConfigName="Win_x86_Release"/>
+      <Project Name="DebuggerGDB" ConfigName="Win_x86_Release"/>
+      <Project Name="ExternalTools" ConfigName="Win_x86_Release"/>
+      <Project Name="git" ConfigName="Win_x86_Release"/>
+      <Project Name="Gizmos" ConfigName="Win_x86_Release"/>
+      <Project Name="hunspell" ConfigName="Release"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="libCodeLite" ConfigName="Win_x86_Release"/>
+      <Project Name="LLDBDebugger" ConfigName="Win_x86_Release"/>
+      <Project Name="MacBundler" ConfigName="Win_x86_Release"/>
+      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
+      <Project Name="Outline" ConfigName="Win_x86_Release"/>
+      <Project Name="PCH" ConfigName="Release"/>
+      <Project Name="PHPParser" ConfigName="Release"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Release"/>
+      <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
+      <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="SFTP" ConfigName="Win_x86_Release"/>
+      <Project Name="snipwiz" ConfigName="Win_x86_Release"/>
+      <Project Name="SpellCheck" ConfigName="Win_x86_Release"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="Subversion2" ConfigName="Win_x86_Release"/>
+      <Project Name="Tweaks" ConfigName="Win_x86_Release"/>
+      <Project Name="UnitTestPP" ConfigName="Win_x86_Release"/>
+      <Project Name="WebTools" ConfigName="Win_x86_Release"/>
+      <Project Name="WordCompletion" ConfigName="Win_x86_Release"/>
+      <Project Name="wxFormBuilder" ConfigName="Win_x86_Release"/>
+      <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
+      <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
+      <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -273,7 +273,7 @@
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>

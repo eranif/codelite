@@ -27,12 +27,9 @@ PrivilegesRequired=none
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
 #define WXWIN "C:\src\wxWidgets"
-#define RUNTIME_MINGW "C:\MinGW-4.8.1"
-#define RUNTIME_MINGW32 "C:\MinGW-4.8.1"
+#define RUNTIME_MINGW "C:\TDM-GCC-32"
+#define RUNTIME_MINGW32 "C:\TDM-GCC-32"
 #define BINUTILS_DIR "C:\bin"
-
-;; Define the path to the MinGW that we offer to the users
-#define USER_MINGW "C:\MinGW-4.8.1"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"

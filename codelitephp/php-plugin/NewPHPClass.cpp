@@ -116,14 +116,28 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
     }
 
     classString << "{" << EOL;
-
+    
+    if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
+        classString << indent << indent << "/** @var " << GetNamespace() << "\\" << GetName() << "*/" << EOL;
+        classString << indent << indent << "protected static $instance = null;" << EOL;
+    }
+    
     if(IsClass() && (GetFlags() & GEN_CTOR)) {
-        classString << indent << "public function __construct() {" << EOL;
+        if(GetFlags() & GEN_SINGLETON) {
+            classString << indent << "protected function __construct() {" << EOL;
+        } else {
+            classString << indent << "public function __construct() {" << EOL;
+        }
         classString << indent << indent << EOL;
         classString << indent << "}" << EOL << EOL;
     }
-
+    
     if(IsClass() && (GetFlags() & GEN_DTOR)) {
+        if(GetFlags() & GEN_SINGLETON) {
+            classString << indent << "protected function __destruct() {" << EOL;
+        } else {
+            classString << indent << "public function __destruct() {" << EOL;
+        }
         classString << indent << "public function __destruct() {" << EOL;
         classString << indent << indent << EOL;
         classString << indent << "}" << EOL << EOL;
@@ -141,14 +155,12 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
         // Remove duplicate backslahes
         while(returnType.Replace("\\\\", "\\")) {
         }
-
         classString << indent << "/** @return " << returnType << " **/" << EOL;
-        classString << indent << "static public function instance() {" << EOL;
-        classString << indent << indent << "static $s_instance = null;" << EOL;
-        classString << indent << indent << "if ( $s_instance === null ) {" << EOL;
-        classString << indent << indent << indent << "$s_instance = new " << GetName() << "();" << EOL;
+        classString << indent << "static public function getInstance() {" << EOL;
+        classString << indent << indent << "if (is_null(self::$instance)) {" << EOL;
+        classString << indent << indent << indent << "self::$instance = new " << GetName() << "();" << EOL;
         classString << indent << indent << "}" << EOL;
-        classString << indent << indent << "return $s_instance;" << EOL;
+        classString << indent << indent << "return self::$instance;" << EOL;
         classString << indent << "}" << EOL << EOL;
     }
     classString << "}" << EOL;

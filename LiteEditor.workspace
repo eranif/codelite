@@ -53,7 +53,7 @@
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
@@ -273,7 +273,7 @@
       <Project Name="WordCompletion" ConfigName="DebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>

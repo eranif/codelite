@@ -43,6 +43,7 @@
 #include <wx/settings.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
+#include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/button.h>
@@ -97,6 +98,8 @@ class TemplateClassBaseDlg : public wxDialog
 		wxTextCtrl* m_textCtrlHeader;
 		wxPanel* m_panel4;
 		wxTextCtrl* m_textCtrlImpl;
+		
+		wxCheckBox* m_checkboxVirtualToReal;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClassNameEntered( wxCommandEvent& event ){ event.Skip(); }

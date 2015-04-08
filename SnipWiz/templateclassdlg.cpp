@@ -111,6 +111,10 @@ void TemplateClassDlg::OnBrowseVD( wxCommandEvent& event )
 		m_textCtrlVD->SetValue( dlg.GetVirtualDirectoryPath() );
 		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
 		m_staticProjectTreeFolder->Refresh();
+		
+		if(!m_textCtrlFilePath->GetValue().IsEmpty()){
+			wxMessageBox(dlg.GetVirtualDirectoryPath());
+		}
 	}
 }
 
@@ -135,9 +139,20 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	wxArrayString files;
 	wxString newClassName = m_textCtrlClassName->GetValue();
 	wxString baseClass = m_comboxCurrentTemplate->GetValue();
+	bool genV2R = m_checkboxVirtualToReal->GetValue();
 
 	if (!wxEndsWithPathSeparator(m_projectPath))
 		m_projectPath += wxFILE_SEP_PATH;
+	
+	if (genV2R)
+	{
+		const wxString separator = ":";
+		wxString vPath = m_textCtrlVD->GetValue();
+		int colon = vPath.First(separator) + 1;
+		wxString extPath = vPath.SubString(colon, vPath.Length());
+		extPath.Replace(separator, wxFILE_SEP_PATH);
+		m_projectPath += extPath + wxFILE_SEP_PATH;
+	}
 
 	wxString buffer = GetStringDb()->GetString( baseClass, swHeader );
 	buffer.Replace( swPhClass, newClassName );

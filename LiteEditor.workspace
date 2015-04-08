@@ -53,7 +53,7 @@
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
@@ -141,7 +141,7 @@
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="WebTools" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>

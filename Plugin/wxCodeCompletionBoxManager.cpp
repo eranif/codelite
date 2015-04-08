@@ -139,15 +139,27 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
 
             CL_DEBUG("Inserting selection: %s", textToInsert);
             CL_DEBUG("Signature is: %s", funcSig);
-
-            textToInsert << "()";
+            
+            // Check if already have an open paren, don't add another
+            bool addParens(false);
+            if(ctrl->GetCharAt(end) != '(') {
+                textToInsert << "()";
+                addParens = true;
+            }
             ctrl->ReplaceSelection(textToInsert);
             if(!funcSig.IsEmpty()) {
+                
                 // Place the caret between the parenthesis
-                int caretPos = start + textToInsert.Len() - 1;
+                int caretPos(wxNOT_FOUND);
+                if(addParens) {
+                    caretPos = start + textToInsert.length() - 1;
+                } else {
+                    // Move the caret one char to the right
+                    caretPos = start + textToInsert.length() + 1;
+                }
                 ctrl->SetCurrentPos(caretPos);
                 ctrl->SetSelection(caretPos, caretPos);
-
+                
                 // trigger a code complete for function calltip.
                 // We do this by simply mimicing the user action of going to the menubar:
                 // Edit->Display Function Calltip

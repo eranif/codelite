@@ -121,7 +121,7 @@ class TemplateClassBaseDlg : public wxDialog
 		virtual void OnInsertClassKeywordUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnHeaderFileContentChnaged( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnImplFileContentChnaged( wxCommandEvent& event ){ event.Skip(); }
-		
+		virtual void OnPathUpdate( wxCommandEvent& event ){ event.Skip(); }
 	
 	public:
 		

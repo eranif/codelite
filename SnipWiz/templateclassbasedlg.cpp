@@ -275,6 +275,7 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_buttonInsertClassMacro->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertClassKeywordUI ), NULL, this );
 	m_textCtrlHeader->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnHeaderFileContentChnaged ), NULL, this );
 	m_textCtrlImpl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnImplFileContentChnaged ), NULL, this );
+	m_checkboxVirtualToReal->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnPathUpdate ), NULL, this );
 }
 
 TemplateClassBaseDlg::~TemplateClassBaseDlg()
@@ -299,5 +300,5 @@ TemplateClassBaseDlg::~TemplateClassBaseDlg()
 	m_buttonInsertClassMacro->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertClassKeywordUI ), NULL, this );
 	m_textCtrlHeader->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnHeaderFileContentChnaged ), NULL, this );
 	m_textCtrlImpl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnImplFileContentChnaged ), NULL, this );
-	
+	m_checkboxVirtualToReal->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnPathUpdate ), NULL, this );
 }

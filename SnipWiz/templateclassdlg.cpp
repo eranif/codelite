@@ -46,6 +46,7 @@ TemplateClassDlg::TemplateClassDlg( wxWindow* parent, SnipWiz *plugin, IManager 
 		, m_plugin(plugin)
 		, m_pManager(manager)
 {
+	m_checkboxVirtualToReal->SetValue(true);
 	Initialize();
 }
 
@@ -79,14 +80,13 @@ void TemplateClassDlg::Initialize()
 	TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo( TreeFileView );
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
 		m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath( m_pManager->GetTree( TreeFileView ), item.m_item, false );
-		m_projectPath =  item.m_fileName.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	}
 	m_textCtrlVD->SetValue( m_virtualFolder );
 	if(m_virtualFolder.IsEmpty() == false){
 		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
 	}
-	m_textCtrlFilePath->SetValue( m_projectPath );
 	m_textCtrlClassName->SetFocus();
+	UpdatePath();
 }
 
 void TemplateClassDlg::OnClassNameEntered( wxCommandEvent& event )
@@ -111,16 +111,15 @@ void TemplateClassDlg::OnBrowseVD( wxCommandEvent& event )
 		m_textCtrlVD->SetValue( dlg.GetVirtualDirectoryPath() );
 		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
 		m_staticProjectTreeFolder->Refresh();
-		
-		if(!m_textCtrlFilePath->GetValue().IsEmpty()){
-			wxMessageBox(dlg.GetVirtualDirectoryPath());
-		}
 	}
+	UpdatePath();
 }
 
 void TemplateClassDlg::OnBrowseFilePath( wxCommandEvent& event )
 {
 	wxUnusedVar( event );
+	m_checkboxVirtualToReal->SetValue(false);
+	
 	wxString dir = wxT("");
 	if ( wxFileName::DirExists( m_projectPath ) ) {
 		dir = m_projectPath;
@@ -139,21 +138,12 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	wxArrayString files;
 	wxString newClassName = m_textCtrlClassName->GetValue();
 	wxString baseClass = m_comboxCurrentTemplate->GetValue();
-	bool genV2R = m_checkboxVirtualToReal->GetValue();
-
+	
+	UpdatePath();
+	
 	if (!wxEndsWithPathSeparator(m_projectPath))
 		m_projectPath += wxFILE_SEP_PATH;
 	
-	if (genV2R)
-	{
-		const wxString separator = ":";
-		wxString vPath = m_textCtrlVD->GetValue();
-		int colon = vPath.First(separator) + 1;
-		wxString extPath = vPath.SubString(colon, vPath.Length());
-		extPath.Replace(separator, wxFILE_SEP_PATH);
-		m_projectPath += extPath + wxFILE_SEP_PATH;
-	}
-
 	wxString buffer = GetStringDb()->GetString( baseClass, swHeader );
 	buffer.Replace( swPhClass, newClassName );
 	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
@@ -390,4 +380,28 @@ bool TemplateClassDlg::SaveBufferToFile( const wxString filename, const wxString
 	file.Write( tft );
 	file.Close();
 	return true;
+}
+
+void TemplateClassDlg::UpdatePath()
+{
+	TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo( TreeFileView );
+	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
+		m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath( m_pManager->GetTree( TreeFileView ), item.m_item, false );
+		m_projectPath =  item.m_fileName.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
+	}
+	
+	if (m_checkboxVirtualToReal->GetValue()){
+		const wxString separator = ":";
+		wxString vPath = m_textCtrlVD->GetValue();
+		int colon = vPath.First(separator) + 1;
+		wxString extPath = vPath.SubString(colon, vPath.Length());
+		extPath.Replace(separator, wxFILE_SEP_PATH);
+		m_projectPath += extPath + wxFILE_SEP_PATH;
+	}
+	m_textCtrlFilePath->SetValue( m_projectPath );
+}
+
+void TemplateClassDlg::OnPathUpdate(wxCommandEvent& e)
+{
+	UpdatePath();
 }

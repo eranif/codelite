@@ -146,7 +146,9 @@ if(NOT APPLE)
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CL_PREFIX}/share/applications)
         install(FILES ${CL_SRC_ROOT}/Runtime/images/cubes.png 
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32/apps
-                RENAME codeleite.png)
+                RENAME codelite.png)
+        # Clear the icon cache if exists
+        install(CODE "execute_process(COMMAND rm -f ${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )
 
     install(

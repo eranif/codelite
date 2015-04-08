@@ -100,7 +100,7 @@ bool clTernServer::Start()
     }
 
     // Create a .tern-project file
-    wxFileName ternConfig(nodeJS.GetPath(), ".tern-project");
+    wxFileName ternConfig(ternFolder.GetPath(), ".tern-project");
     wxString content = conf.GetTernProjectFile();
     FileUtils::WriteFileContent(ternConfig, content);
 

@@ -1,9 +1,1 @@
-using namespace std;
-vector<wxString> v;
-
-void foo() throw(Exception)
-{
-    {
-        wxString b;
-    }
-    int a;
+std::for_each(a, b, [&](const wxString& name, const wxString& lastName) {

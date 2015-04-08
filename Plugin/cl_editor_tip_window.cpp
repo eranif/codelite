@@ -44,13 +44,13 @@ EVT_PAINT(clEditorTipWindow::OnPaint)
 EVT_ERASE_BACKGROUND(clEditorTipWindow::OnEraseBg)
 END_EVENT_TABLE()
 
-#define TIP_SPACER 4
+#define TIP_SPACER 10
 
 clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
     : wxPanel(parent)
     , m_highlighIndex(0)
 {
-    m_font = ColoursAndFontsManager::Get().GetLexer("c++")->GetFontForSyle(0); // default font
+    m_font = DrawingUtils::GetDefaultFixedFont();
     Hide();
     EventNotifier::Get()->Connect(
         wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
@@ -62,7 +62,10 @@ clEditorTipWindow::~clEditorTipWindow()
         wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
 }
 
-void clEditorTipWindow::OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
+void clEditorTipWindow::OnEraseBg(wxEraseEvent& e)
+{
+    wxUnusedVar(e);
+}
 
 void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 {
@@ -70,8 +73,10 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxBufferedPaintDC dc(this);
 
     wxGCDC gdc;
-    if(!DrawingUtils::GetGCDC(dc, gdc)) return;
-    if(m_args.IsEmpty()) return;
+    if(!DrawingUtils::GetGCDC(dc, gdc))
+        return;
+    if(m_args.IsEmpty())
+        return;
 
     // Define the colours used by this tooltip window
     clColourPalette colours = DrawingUtils::GetColourPalette();
@@ -97,7 +102,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxCoord y = 0;
 
     if(!m_header.IsEmpty()) {
-        wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        wxFont guiFont = m_font;
         gdc.SetFont(guiFont);
         wxSize headerSize = gdc.GetTextExtent(m_header);
         wxPoint headerPt;
@@ -133,12 +138,12 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     if(!m_footer.IsEmpty()) {
         gdc.SetPen(penColour);
         gdc.DrawLine(0, y, rr.GetWidth(), y);
-        
+
         // Draw the extra line ("1 OF N")
         m_footer.Clear();
         m_footer << (GetTip()->GetCurr() + 1) << " OF " << GetTip()->Count();
 
-        wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        wxFont guiFont = m_font;
         gdc.SetFont(guiFont);
         wxSize extraLineSize = gdc.GetTextExtent(m_footer);
 
@@ -167,12 +172,16 @@ void clEditorTipWindow::AddCallTip(clCallTipPtr tip)
 
 clCallTipPtr clEditorTipWindow::GetTip()
 {
-    if(m_tips.empty()) return NULL;
+    if(m_tips.empty())
+        return NULL;
 
     return m_tips.at(m_tips.size() - 1).tip;
 }
 
-bool clEditorTipWindow::IsEmpty() { return m_tips.empty(); }
+bool clEditorTipWindow::IsEmpty()
+{
+    return m_tips.empty();
+}
 
 void clEditorTipWindow::Remove()
 {
@@ -184,7 +193,8 @@ void clEditorTipWindow::Remove()
         }
     }
 
-    if(m_tips.empty()) Deactivate();
+    if(m_tips.empty())
+        Deactivate();
 }
 
 void clEditorTipWindow::Clear()
@@ -197,7 +207,10 @@ void clEditorTipWindow::Clear()
     m_lineHeight = 0;
 }
 
-bool clEditorTipWindow::IsActive() { return IsShown(); }
+bool clEditorTipWindow::IsActive()
+{
+    return IsShown();
+}
 
 void clEditorTipWindow::Highlight(int argIdxToHilight)
 {
@@ -245,7 +258,8 @@ wxString clEditorTipWindow::GetText()
 
 void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgColour)
 {
-    if(m_tips.empty()) return;
+    if(m_tips.empty())
+        return;
 
     m_point = pt;
     m_lineHeight = lineHeight;
@@ -260,7 +274,8 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
 void clEditorTipWindow::Deactivate()
 {
     Clear();
-    if(IsShown()) Hide();
+    if(IsShown())
+        Hide();
 }
 
 wxSize clEditorTipWindow::DoGetTipSize()
@@ -293,6 +308,8 @@ wxSize clEditorTipWindow::DoGetTipSize()
         wxSize headerSize = dc->GetTextExtent(m_header);
         minLineWidth = headerSize.x > minLineWidth ? headerSize.x : minLineWidth;
     }
+
+    minLineWidth += (2 * TIP_SPACER);
     wxString tipContent = wxJoin(m_args, '\n');
     tipContent.Trim().Trim(false);
 
@@ -341,7 +358,8 @@ void clEditorTipWindow::DoAdjustPosition()
         // our tip can not fit into the screen, shift it left
         pt.x -= ((pt.x + sz.x) - parentSize.width);
 
-        if(pt.x < 0) pt.x = 0;
+        if(pt.x < 0)
+            pt.x = 0;
     }
     Move(pt);
 }

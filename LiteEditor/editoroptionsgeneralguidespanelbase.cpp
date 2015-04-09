@@ -43,8 +43,8 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropHighlightMatchedBrace = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Highlight matched braces"), wxPG_LABEL, 1) );
     m_pgPropHighlightMatchedBrace->SetHelpString(_("Highlight matched braces"));
     
-    m_pgPropHideEditMargin = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Hide / Display the change marker margin (red/green marks when line is modified)"), wxPG_LABEL, 1) );
-    m_pgPropHideEditMargin->SetHelpString(_("Hide / Display the change marker margin (red/green marks when line is modified)"));
+    m_pgPropHideEditMargin = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Hide the edit margin"), wxPG_LABEL, 1) );
+    m_pgPropHideEditMargin->SetHelpString(_("Hide the edit margin ( the red/green marks when a line is modified)"));
     
     m_pgPropShowIndentGuidelines = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Show indentation gudelines"), wxPG_LABEL, 1) );
     m_pgPropShowIndentGuidelines->SetHelpString(_("Show indentation guidelines (vertical lines)"));
@@ -78,8 +78,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropEnableCaretLine = m_pgMgrGeneral->AppendIn( m_pgPropCaretLine,  new wxBoolProperty( _("Highlight caret line"), wxPG_LABEL, 0) );
     m_pgPropEnableCaretLine->SetHelpString(_("Highlight caret line with a background colour"));
     
-    m_pgPropCaretLineColour = m_pgMgrGeneral->AppendIn( m_pgPropCaretLine,  new wxSystemColourProperty( _("Caret line background colour")) );
-    m_pgPropCaretLineColour->SetValueToUnspecified();
+    m_pgPropCaretLineColour = m_pgMgrGeneral->AppendIn( m_pgPropCaretLine,  new wxSystemColourProperty( _("Caret line background colour"), wxPG_LABEL, wxColour(wxT("rgb(171,222,230)"))) );
     m_pgPropCaretLineColour->SetHelpString(_("Caret line background colour"));
     
     m_pgPropCaretLineAlpha = m_pgMgrGeneral->AppendIn( m_pgPropCaretLine,  new wxIntProperty( _("Caret line colour alpha"), wxPG_LABEL, 30) );

@@ -41,7 +41,6 @@ protected:
 protected:
 
 public:
-    wxPropertyGridManager* GetPgMgrGeneral() { return m_pgMgrGeneral; }
     EditorOptionsGeneralGuidesPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,500), long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralGuidesPanelBase();
 };
@@ -63,7 +62,6 @@ protected:
     virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
-    wxPropertyGridManager* GetPgMgrEdit() { return m_pgMgrEdit; }
     EditorOptionsGeneralEditBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralEditBase();
 };

@@ -404,11 +404,11 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "Hide / Display the change marker margin (red/green marks when line is modified)"
+             "m_value": "Hide the edit margin"
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",
-             "m_value": "Hide / Display the change marker margin (red/green marks when line is modified)"
+             "m_value": "Hide the edit margin ( the red/green marks when a line is modified)"
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",

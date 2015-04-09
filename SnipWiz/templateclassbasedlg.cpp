@@ -210,6 +210,14 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_buttonInsertClassMacro->SetDefault(); 
 	bSizer5->Add( m_buttonInsertClassMacro, 0, wxALIGN_CENTER_VERTICAL|wxALL, 1 );
 	
+	m_buttonInsertNsMacro = new wxButton( ID_PANEL1, wxID_ANY, _("%NAMESPACELIST%"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonInsertNsMacro->SetDefault(); 
+	bSizer5->Add( m_buttonInsertNsMacro, 0, wxALIGN_CENTER_VERTICAL|wxALL, 1 );
+	
+	m_buttonInsertNsEndMacro = new wxButton( ID_PANEL1, wxID_ANY, _("%NAMESPACELISTEND%"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonInsertNsEndMacro->SetDefault(); 
+	bSizer5->Add( m_buttonInsertNsEndMacro, 0, wxALIGN_CENTER_VERTICAL|wxALL, 1 );
+	
 	bSizer4->Add( bSizer5, 0, wxEXPAND|wxALL, 1 );
 	
 	m_notebookFiles = new wxNotebook( ID_PANEL1, wxID_ANY, wxDefaultPosition, wxSize( 500,-1 ), wxBK_DEFAULT|wxBK_TOP );
@@ -273,6 +281,10 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_buttonClear->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnButtonClearUI ), NULL, this );
 	m_buttonInsertClassMacro->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnInsertClassKeyword ), NULL, this );
 	m_buttonInsertClassMacro->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertClassKeywordUI ), NULL, this );
+	m_buttonInsertNsMacro->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnInsertNsKeyword ), NULL, this );
+	m_buttonInsertNsMacro->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertNsKeywordUI ), NULL, this );
+	m_buttonInsertNsEndMacro->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnInsertNsEndKeyword ), NULL, this );
+	m_buttonInsertNsEndMacro->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertNsEndKeywordUI ), NULL, this );
 	m_textCtrlHeader->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnHeaderFileContentChnaged ), NULL, this );
 	m_textCtrlImpl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnImplFileContentChnaged ), NULL, this );
 	m_checkboxVirtualToReal->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnPathUpdate ), NULL, this );
@@ -298,6 +310,10 @@ TemplateClassBaseDlg::~TemplateClassBaseDlg()
 	m_buttonClear->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnButtonClearUI ), NULL, this );
 	m_buttonInsertClassMacro->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnInsertClassKeyword ), NULL, this );
 	m_buttonInsertClassMacro->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertClassKeywordUI ), NULL, this );
+	m_buttonInsertNsMacro->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnInsertNsKeyword ), NULL, this );
+	m_buttonInsertNsMacro->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertNsKeywordUI ), NULL, this );
+	m_buttonInsertNsEndMacro->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnInsertNsEndKeyword ), NULL, this );
+	m_buttonInsertNsEndMacro->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TemplateClassBaseDlg::OnInsertNsEndKeywordUI ), NULL, this );
 	m_textCtrlHeader->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnHeaderFileContentChnaged ), NULL, this );
 	m_textCtrlImpl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TemplateClassBaseDlg::OnImplFileContentChnaged ), NULL, this );
 	m_checkboxVirtualToReal->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TemplateClassBaseDlg::OnPathUpdate ), NULL, this );

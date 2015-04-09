@@ -93,6 +93,8 @@ class TemplateClassBaseDlg : public wxDialog
 		wxButton* m_buttonRemoveTemplate;
 		wxButton* m_buttonClear;
 		wxButton* m_buttonInsertClassMacro;
+		wxButton* m_buttonInsertNsMacro;
+		wxButton* m_buttonInsertNsEndMacro;
 		wxNotebook* m_notebookFiles;
 		wxPanel* m_panel3;
 		wxTextCtrl* m_textCtrlHeader;
@@ -119,6 +121,10 @@ class TemplateClassBaseDlg : public wxDialog
 		virtual void OnButtonClearUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnInsertClassKeyword( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnInsertClassKeywordUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsKeyword( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsKeywordUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsEndKeyword( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsEndKeywordUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnHeaderFileContentChnaged( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnImplFileContentChnaged( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnPathUpdate( wxCommandEvent& event ){ event.Skip(); }

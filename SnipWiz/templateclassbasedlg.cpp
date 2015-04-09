@@ -87,14 +87,12 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	//AY Add Virt 2 real checkbox
 	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_checkboxVirtualToReal = new wxCheckBox( ID_PANEL, wxID_ANY, wxT("Translate Virtual folder paths to real"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkboxVirtualToReal, 0, wxALL, 5 );
 	
 	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
-	//AY End
 	
 	m_static3 = new wxStaticText( ID_PANEL, wxID_ANY, _(".h filename:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_static3->Wrap( -1 );

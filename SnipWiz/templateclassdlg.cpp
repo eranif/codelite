@@ -96,7 +96,6 @@ void TemplateClassDlg::OnClassNameEntered( wxCommandEvent& event )
 {
 	wxUnusedVar( event );
 	wxString buffer = m_textCtrlClassName->GetValue();
-	
 	if ( buffer.IsEmpty() ) {
 		m_textCtrlHeaderFile->SetValue(wxT(""));
 		m_textCtrlCppFile->SetValue(wxT(""));
@@ -141,7 +140,6 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	wxArrayString files;
-	
 	if(m_textCtrlClassName->GetValue().IsEmpty())
 		return;
 	
@@ -161,8 +159,8 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	wxString newClassName = ns.Last();
 	wxString baseClass = m_comboxCurrentTemplate->GetValue();
 	
-	UpdatePath();
-	
+	UpdatePath()
+
 	if (!wxEndsWithPathSeparator(m_projectPath))
 		m_projectPath += wxFILE_SEP_PATH;
 		
@@ -184,9 +182,8 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	buffer.Replace( swNsList, namespacesList );
 	buffer.Replace( swPhClass, newClassName );
 	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
-	buffer.Replace( swNsEndList, namespacesEndList );
+
 	files.Add( m_projectPath + m_textCtrlCppFile->GetValue() );
-	
 	SaveBufferToFile( files.Item(1), buffer );
 
 	if ( !m_textCtrlVD->GetValue().IsEmpty() ) {

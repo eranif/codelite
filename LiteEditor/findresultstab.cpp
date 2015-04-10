@@ -783,6 +783,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                     // remove the previous marker and add the new one
                     sci->MarkerDeleteAll(7);
                     sci->MarkerAdd(markerLine, 7);
+                    sci->EnsureVisible(markerLine);
                     sci->GotoLine(markerLine);
                 }
             }

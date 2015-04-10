@@ -43,7 +43,8 @@ SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
     clConfig::Get().ReadItem(&m_settings);
     m_checkStartWithUppercase->SetValue( m_settings.GetFlags() & SettersGetterData::FunctionStartWithUpperCase );
     m_checkBoxForamtFileWhenDone->SetValue( m_settings.GetFlags() & SettersGetterData::FormatFileWhenDone );
-    WindowAttrManager::Load(this, "SettersGettersDlg", NULL);
+    SetName("SettersGettersDlg");
+    WindowAttrManager::Load(this);
 }
 
 bool SettersGettersDlg::Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno)
@@ -505,7 +506,7 @@ SettersGettersDlg::~SettersGettersDlg()
     m_settings.SetFlags( flags );
     clConfig::Get().WriteItem(&m_settings);
     
-    WindowAttrManager::Save(this, "SettersGettersDlg", NULL);
+    
 }
 
 wxString SettersGettersDlg::GetGenCode()

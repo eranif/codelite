@@ -35,7 +35,8 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, const ResourceVector_t& items
 
     DoInitialize();
     DoPopulateListCtrl(m_resources);
-    WindowAttrManager::Load(this, "PHPOpenResourceDlg", NULL);
+    SetName("OpenResourceDlg");
+    WindowAttrManager::Load(this);
 }
 
 OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
@@ -61,8 +62,9 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     DoInitialize();
     m_timer = new wxTimer(this, TIMER_ID);
     m_timer->Start(500, true);
-    WindowAttrManager::Load(this, "PHPOpenResourceDlg", NULL);
-    
+    SetName("OpenResourceDlg");
+    WindowAttrManager::Load(this);
+
     if(m_mgr->GetActiveEditor()) {
         wxString sel = m_mgr->GetActiveEditor()->GetSelection();
         m_textCtrlFilter->ChangeValue(sel);
@@ -81,8 +83,9 @@ void OpenResourceDlg::DoInitialize()
     DEFINE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/macro"));
     VARIABLE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
     NAMESPACE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/namespace"));
-    
-    WindowAttrManager::Load(this, wxT("OpenResourceDlg"), NULL);
+
+    SetName("OpenResourceDlg");
+    WindowAttrManager::Load(this);
     SetSelectedItem(NULL);
 }
 
@@ -96,7 +99,6 @@ OpenResourceDlg::~OpenResourceDlg()
         wxDELETE(data);
     }
     m_dvListCtrl->DeleteAllItems();
-    WindowAttrManager::Save(this, wxT("OpenResourceDlg"), NULL);
 }
 
 void OpenResourceDlg::OnFilterEnter(wxCommandEvent& event)
@@ -160,10 +162,10 @@ void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
 void OpenResourceDlg::DoGetResources(const wxString& filter)
 {
     m_resources.clear();
-    
+
     PHPEntityBase::List_t matches;
     m_table.LoadAllByFilter(matches, filter);
-    
+
     // Convert the PHP matches into resources
     PHPEntityBase::List_t::iterator iter = matches.begin();
     m_resources.reserve(matches.size());
@@ -281,10 +283,12 @@ bool OpenResourceDlg::IsMatchesFilter(const wxString& filter, const wxString& ke
 {
     wxString lcKey = key.Lower();
     wxArrayString filters = ::wxStringTokenize(filter, " ", wxTOKEN_STRTOK);
-    for(size_t i=0; i<filters.GetCount(); ++i) {
+    for(size_t i = 0; i < filters.GetCount(); ++i) {
         wxString lcFilter = filters.Item(i).Lower();
-        if(lcKey.Contains(lcFilter)) continue;
-        else return false;
+        if(lcKey.Contains(lcFilter))
+            continue;
+        else
+            return false;
     }
     return true;
 }

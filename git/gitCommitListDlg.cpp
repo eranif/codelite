@@ -69,7 +69,8 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     if(m_gitPath.IsEmpty()) {
         m_gitPath = "git";
     }
-    WindowAttrManager::Load(this, wxT("GitCommitListDlg"), NULL);
+    SetName("GitCommitListDlg");
+    WindowAttrManager::Load(this);
 
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH,
                                     wxEVT_COMMAND_MENU_SELECTED,
@@ -86,7 +87,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
 /*******************************************************************************/
 GitCommitListDlg::~GitCommitListDlg()
 {
-    WindowAttrManager::Save(this, wxT("GitCommitListDlg"), NULL);
+
     // m_git->CallAfter( &GitPlugin::GitCommitListDlgClosed );
 }
 

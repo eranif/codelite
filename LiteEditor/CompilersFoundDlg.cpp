@@ -104,10 +104,11 @@ CompilersFoundDlg::CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::C
     for(; iter != categories.end(); ++iter) {
         m_dataview->Expand(iter->second);
     }
-    WindowAttrManager::Load(this, "CompilersFoundDlg");
+    SetName("CompilersFoundDlg");
+    WindowAttrManager::Load(this);
 }
 
-CompilersFoundDlg::~CompilersFoundDlg() { WindowAttrManager::Save(this, "CompilersFoundDlg"); }
+CompilersFoundDlg::~CompilersFoundDlg() {  }
 
 void CompilersFoundDlg::OnItemActivated(wxDataViewEvent& event)
 {

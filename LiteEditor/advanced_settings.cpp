@@ -90,10 +90,11 @@ AdvancedDlg::AdvancedDlg(wxWindow* parent,
     LoadCompilers();
 
     // center the dialog
-    Centre();
+    CentreOnParent();
     this->Layout();
-
-    WindowAttrManager::Load(this, wxT("BuildSettingsDlg"), NULL);
+    
+    SetName("AdvancedDlg");
+    WindowAttrManager::Load(this);
 }
 
 void AdvancedDlg::LoadCompilers() { m_compilersPage->LoadCompilers(); }
@@ -101,7 +102,7 @@ void AdvancedDlg::LoadCompilers() { m_compilersPage->LoadCompilers(); }
 AdvancedDlg::~AdvancedDlg()
 {
     wxDELETE(m_rightclickMenu);
-    WindowAttrManager::Save(this, wxT("BuildSettingsDlg"), NULL);
+    
 }
 
 void AdvancedDlg::OnButtonNewClicked()

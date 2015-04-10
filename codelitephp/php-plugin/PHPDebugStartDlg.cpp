@@ -35,7 +35,8 @@ PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject,
         fileToRun = settings.GetIndexFile();
     }
     GetTextCtrlScriptToDebug()->ChangeValue(fileToRun);
-    WindowAttrManager::Load(this, "PHPDebugStartDlg");
+    SetName("PHPDebugStartDlg");
+    WindowAttrManager::Load(this);
 }
 
 PHPDebugStartDlg::~PHPDebugStartDlg()
@@ -48,7 +49,7 @@ PHPDebugStartDlg::~PHPDebugStartDlg()
     settings.SetRunAs(m_choice->GetSelection() == 0 ? PHPProjectSettingsData::kRunAsWebsite :
                                                       PHPProjectSettingsData::kRunAsCLI);
     m_project->Save();
-    WindowAttrManager::Save(this, "PHPDebugStartDlg");
+    
 }
 
 void PHPDebugStartDlg::OnDebugMethodChanged(wxCommandEvent& event)

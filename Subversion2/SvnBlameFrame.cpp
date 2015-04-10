@@ -34,18 +34,16 @@ SvnBlameFrame::SvnBlameFrame(wxWindow* parent, const wxFileName& filename, const
 {
     // Now that the base class is done with its initialization
     // do our custom initialization to the blame editor
-   
-    m_stc->SetText( content );
+
+    m_stc->SetText(content);
     m_stc->SetReadOnly(true);
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(filename.GetFullName());
-    if ( lexer ) {
-        lexer->Apply( m_stc, true );
+    if(lexer) {
+        lexer->Apply(m_stc, true);
     }
     m_stc->Initialize();
-    WindowAttrManager::Load(this, "SvnBlameFrame");
+    SetName("SvnBlameFrame");
+    WindowAttrManager::Load(this);
 }
 
-SvnBlameFrame::~SvnBlameFrame()
-{
-    WindowAttrManager::Save(this, "SvnBlameFrame");
-}
+SvnBlameFrame::~SvnBlameFrame() {}

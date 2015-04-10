@@ -6,7 +6,8 @@ SFTPSettingsDialog::SFTPSettingsDialog(wxWindow* parent)
     : SFTPSettingsDialogBase(parent)
 {
     CenterOnParent();
-    WindowAttrManager::Load(this, "SFTPSettingsDialog");
+    SetName("SFTPSettingsDialog");
+    WindowAttrManager::Load(this);
     SFTPSettings s;
     s.Load();
     m_sshClientPath->SetPath(s.GetSshClient());
@@ -14,5 +15,5 @@ SFTPSettingsDialog::SFTPSettingsDialog(wxWindow* parent)
 
 SFTPSettingsDialog::~SFTPSettingsDialog()
 {
-    WindowAttrManager::Save(this, "SFTPSettingsDialog");
+    
 }

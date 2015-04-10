@@ -836,10 +836,11 @@ void CompilerMainPage::OnCompilerSelected(wxCommandEvent& event) { LoadCompiler(
 CompilerPatternDlg::CompilerPatternDlg(wxWindow* parent, const wxString& title)
     : CompilerPatternDlgBase(parent, wxID_ANY, title)
 {
-    WindowAttrManager::Load(this, wxT("CompilerPatternDlg"), NULL);
+    SetName("CompilerPatternDlg");
+    WindowAttrManager::Load(this);
 }
 
-CompilerPatternDlg::~CompilerPatternDlg() { WindowAttrManager::Save(this, wxT("CompilerPatternDlg"), NULL); }
+CompilerPatternDlg::~CompilerPatternDlg() {  }
 
 void CompilerPatternDlg::SetPattern(const wxString& pattern,
                                     const wxString& lineIdx,

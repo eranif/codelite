@@ -116,9 +116,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     DoSetFileMask();
 
     GetSizer()->Fit(this);
-
-    WindowAttrManager::Load(this, "FindInFilesDialog", NULL);
     CentreOnParent();
+    
+    SetName("FindInFilesDialog");
+    WindowAttrManager::Load(this);
 }
 
 FindInFilesDialog::~FindInFilesDialog()
@@ -149,7 +150,7 @@ FindInFilesDialog::~FindInFilesDialog()
     event.SetString(m_data.GetSelectedMask());
     EventNotifier::Get()->AddPendingEvent(event);
 
-    WindowAttrManager::Save(this, "FindInFilesDialog", NULL);
+    
 }
 
 void FindInFilesDialog::SetRootDir(const wxString& rootDir) { m_dirPicker->SetPath(rootDir); }

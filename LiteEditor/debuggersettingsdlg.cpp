@@ -259,10 +259,11 @@ DebuggerSettingsDlg::DebuggerSettingsDlg(wxWindow* parent)
     Initialize();
     ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
 
-    WindowAttrManager::Load(this, wxT("DbgSettingsDlg"), NULL);
     GetSizer()->Fit(this);
-
     CenterOnParent();
+    
+    SetName("DebuggerSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
 void DebuggerSettingsDlg::Initialize()
@@ -354,4 +355,4 @@ void DebuggerSettingsDlg::OnButtonCancel(wxCommandEvent& e)
     EndModal(wxID_CANCEL);
 }
 
-DebuggerSettingsDlg::~DebuggerSettingsDlg() { WindowAttrManager::Save(this, wxT("DbgSettingsDlg"), NULL); }
+DebuggerSettingsDlg::~DebuggerSettingsDlg() {  }

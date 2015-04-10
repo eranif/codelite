@@ -9,10 +9,11 @@ NewPHPClass::NewPHPClass(wxWindow* parent, const wxString& classPath)
     , m_userModifiedFileName(false)
     , m_outputPath(classPath)
 {
-    WindowAttrManager::Load(this, "NewPHPClass");
+    SetName("NewPHPClass");
+    WindowAttrManager::Load(this);
 }
 
-NewPHPClass::~NewPHPClass() { WindowAttrManager::Save(this, "NewPHPClass"); }
+NewPHPClass::~NewPHPClass() {  }
 
 void NewPHPClass::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlClassName->GetValue().IsEmpty()); }
 

@@ -25,17 +25,15 @@
 #include "dbgcommanddlg.h"
 #include "windowattrmanager.h"
 
-DbgCommandDlg::DbgCommandDlg( wxWindow* parent )
-		: DbgCommandBaseDlg( parent )
+DbgCommandDlg::DbgCommandDlg(wxWindow* parent)
+    : DbgCommandBaseDlg(parent)
 {
-	Centre();
-	GetSizer()->Fit(this);
-	m_textCtrlName->SetFocus();
+    Centre();
+    GetSizer()->Fit(this);
+    m_textCtrlName->SetFocus();
 
-	WindowAttrManager::Load(this, wxT("dbgcommanddlg"), NULL);
+    SetName("DbgCommandDlg");
+    WindowAttrManager::Load(this);
 }
 
-DbgCommandDlg::~DbgCommandDlg()
-{
-	WindowAttrManager::Save(this, wxT("dbgcommanddlg"), NULL);
-}
+DbgCommandDlg::~DbgCommandDlg() {}

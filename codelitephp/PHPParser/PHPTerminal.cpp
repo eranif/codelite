@@ -11,11 +11,8 @@ PHPTerminal::PHPTerminal(wxWindow* parent)
         lexer->Apply(GetTerminalUI()->GetTerminalOutputWindow());
     }
     SetSize(300, 300);
-    WindowAttrManager::Load(this, "PHPTerminal");
+    SetName("PHPTerminal");
+    WindowAttrManager::Load(this);
 }
 
-PHPTerminal::~PHPTerminal()
-{
-    WindowAttrManager::Save(this, "PHPTerminal");
-}
-
+PHPTerminal::~PHPTerminal() {}

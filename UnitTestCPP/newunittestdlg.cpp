@@ -29,26 +29,24 @@
 #include "unittestpp.h"
 #include "project.h"
 
-NewUnitTestDlg::NewUnitTestDlg( wxWindow* parent, UnitTestPP *plugin, IConfigTool *config )
-		: NewUnitTestBaseDlg(parent)
-		, m_plugin          (plugin)
-		, m_config          (config)
+NewUnitTestDlg::NewUnitTestDlg(wxWindow* parent, UnitTestPP* plugin, IConfigTool* config)
+    : NewUnitTestBaseDlg(parent)
+    , m_plugin(plugin)
+    , m_config(config)
 {
-	m_textCtrlTestName->SetFocus();
+    m_textCtrlTestName->SetFocus();
 
-	// populate the unit tests project list
-	std::vector<ProjectPtr> projects = m_plugin->GetUnitTestProjects();
-	for(size_t i=0; i<projects.size(); i++){
-		m_choiceProjects->Append(projects.at(i)->GetName());
-	}
+    // populate the unit tests project list
+    std::vector<ProjectPtr> projects = m_plugin->GetUnitTestProjects();
+    for(size_t i = 0; i < projects.size(); i++) {
+        m_choiceProjects->Append(projects.at(i)->GetName());
+    }
 
-	if(m_choiceProjects->IsEmpty() == false){
-		m_choiceProjects->SetSelection(0);
-	}
-	WindowAttrManager::Load(this, wxT("NewUnitTestDlgAttr"), m_config);
+    if(m_choiceProjects->IsEmpty() == false) {
+        m_choiceProjects->SetSelection(0);
+    }
+    SetName("NewUnitTestDlg");
+    WindowAttrManager::Load(this);
 }
 
-NewUnitTestDlg::~NewUnitTestDlg()
-{
-	WindowAttrManager::Save(this, wxT("NewUnitTestDlgAttr"), m_config);
-}
+NewUnitTestDlg::~NewUnitTestDlg() {}

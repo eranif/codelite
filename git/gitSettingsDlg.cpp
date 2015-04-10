@@ -48,11 +48,12 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
     m_textCtrlGlobalName->ChangeValue(props.global_username);
     m_textCtrlLocalEmail->ChangeValue(props.local_email);
     m_textCtrlLocalName->ChangeValue(props.local_username);
-
-    WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
+    
+    SetName("GitSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
-GitSettingsDlg::~GitSettingsDlg() { WindowAttrManager::Save(this, wxT("GitSettingsDlg"), NULL); }
+GitSettingsDlg::~GitSettingsDlg() {  }
 
 void GitSettingsDlg::OnOK(wxCommandEvent& event)
 {

@@ -45,6 +45,9 @@
 #include "manager.h"
 #include "windowattrmanager.h"
 #include "EditorOptionsGeneralEdit.h"
+#include <wx/persist.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 
 OptionsDlg2::OptionsDlg2(wxWindow* parent)
     : OptionsBaseDlg2(parent)
@@ -52,15 +55,14 @@ OptionsDlg2::OptionsDlg2(wxWindow* parent)
     , restartRquired(false)
 {
     Initialize();
-    WindowAttrManager::Load(this, wxT("OptionsDlgAttr"), NULL);
+    CenterOnParent();
+    SetName("OptionsDlg2");
+    WindowAttrManager::Load(this);
     MSWSetNativeTheme(m_treeBook->GetTreeCtrl());
     GetSizer()->Layout();
 }
 
-OptionsDlg2::~OptionsDlg2()
-{
-    if(!this->restartRquired) WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
-}
+OptionsDlg2::~OptionsDlg2() {}
 
 void OptionsDlg2::OnButtonOK(wxCommandEvent&)
 {
@@ -101,7 +103,6 @@ void OptionsDlg2::DoSave()
     PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 
     if(this->restartRquired) {
-        WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
     }
 }
 
@@ -126,6 +127,6 @@ void OptionsDlg2::Initialize()
     // the Terminal page should NOT be added under Windows
     AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
-    
-    SetMinSize(wxSize(300,200));
+
+    SetMinSize(wxSize(300, 200));
 }

@@ -29,109 +29,104 @@
 #include <wx/filedlg.h>
 #include <wx/dir.h>
 
-LoadTabGroupDlg::LoadTabGroupDlg(wxWindow* parent, const wxString& path, const wxArrayString& previousgroups) : LoadTabGroupBaseDlg(parent)
+LoadTabGroupDlg::LoadTabGroupDlg(wxWindow* parent, const wxString& path, const wxArrayString& previousgroups)
+    : LoadTabGroupBaseDlg(parent)
 {
-	for (size_t n=0; n < previousgroups.GetCount(); ++n) {
-		InsertListItem(previousgroups.Item(n));
-	}
+    for(size_t n = 0; n < previousgroups.GetCount(); ++n) {
+        InsertListItem(previousgroups.Item(n));
+    }
 
-	// Add any groups in the passed dir (which is probably the workspace dir)
-	wxArrayString pwdfiles;
-	wxDir::GetAllFiles ( path, &pwdfiles, wxT("*.tabgroup"), wxDIR_FILES );
-	for (size_t n=0; n < pwdfiles.GetCount(); ++n) {
-		InsertListItem(pwdfiles.Item(n));
-	}
-	WindowAttrManager::Load(this, wxT("LoadTabGroupDlg"), NULL);
+    // Add any groups in the passed dir (which is probably the workspace dir)
+    wxArrayString pwdfiles;
+    wxDir::GetAllFiles(path, &pwdfiles, wxT("*.tabgroup"), wxDIR_FILES);
+    for(size_t n = 0; n < pwdfiles.GetCount(); ++n) {
+        InsertListItem(pwdfiles.Item(n));
+    }
+    SetName("LoadTabGroupDlg");
+    WindowAttrManager::Load(this);
 }
 
-LoadTabGroupDlg::~LoadTabGroupDlg()
-{
-	WindowAttrManager::Save(this, wxT("LoadTabGroupDlg"), NULL);
-}
+LoadTabGroupDlg::~LoadTabGroupDlg() {}
 
 void LoadTabGroupDlg::InsertListItem(const wxString& item)
 {
-	if (item.IsEmpty() == false) {
-		int AlreadyThere = m_listBox->FindString(item, true);
+    if(item.IsEmpty() == false) {
+        int AlreadyThere = m_listBox->FindString(item, true);
 
-		if (AlreadyThere != wxNOT_FOUND) {
-			m_listBox->SetSelection(AlreadyThere);
-		} else {
-			m_listBox->Insert(item, 0);
-			m_listBox->SetSelection(0);
-		}
-	}
+        if(AlreadyThere != wxNOT_FOUND) {
+            m_listBox->SetSelection(AlreadyThere);
+        } else {
+            m_listBox->Insert(item, 0);
+            m_listBox->SetSelection(0);
+        }
+    }
 }
 
-void LoadTabGroupDlg::OnBrowse( wxCommandEvent& WXUNUSED(event) )
+void LoadTabGroupDlg::OnBrowse(wxCommandEvent& WXUNUSED(event))
 {
-	wxString group = wxFileSelector(_("Select a tab group:"), wxT(""), wxT(""), tabgroupTag,
-						wxString(_("Tab groups")) + wxT(" (*.tabgroup)|*.tabgroup"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
-	if (!group.IsEmpty()) {
-		// Need to insert/select the new item, otherwise it won't be used
-		InsertListItem(group);
-		EndModal(wxID_OK);
-	}
+    wxString group = wxFileSelector(_("Select a tab group:"),
+                                    wxT(""),
+                                    wxT(""),
+                                    tabgroupTag,
+                                    wxString(_("Tab groups")) + wxT(" (*.tabgroup)|*.tabgroup"),
+                                    wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+                                    this);
+    if(!group.IsEmpty()) {
+        // Need to insert/select the new item, otherwise it won't be used
+        InsertListItem(group);
+        EndModal(wxID_OK);
+    }
 }
 
-void LoadTabGroupDlg::OnItemActivated( wxCommandEvent& WXUNUSED(event) )
+void LoadTabGroupDlg::OnItemActivated(wxCommandEvent& WXUNUSED(event))
 {
-	int idx = m_listBox->GetSelection();
-	EndModal( (idx == wxNOT_FOUND) ? wxID_CANCEL : wxID_OK );
+    int idx = m_listBox->GetSelection();
+    EndModal((idx == wxNOT_FOUND) ? wxID_CANCEL : wxID_OK);
 }
 
 //---------------------------------------------
 
 SaveTabGroupDlg::SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previousgroups)
-		: SaveTabGroupBaseDlg(parent)
+    : SaveTabGroupBaseDlg(parent)
 {
-	WindowAttrManager::Load(this, wxT("SaveTabGroupDlg"), NULL);
+    SetName("SaveTabGroupDlg");
+    WindowAttrManager::Load(this);
 }
 
-SaveTabGroupDlg::~SaveTabGroupDlg()
-{
-	WindowAttrManager::Save(this, wxT("SaveTabGroupDlg"), NULL);
-}
+SaveTabGroupDlg::~SaveTabGroupDlg() {}
 
 bool SaveTabGroupDlg::GetChoices(wxArrayInt& intArr) const
 {
-	bool SomeChecked = false;
-	for ( unsigned int n=0; n < m_ListTabs->GetCount(); ++n ) {
-		bool item = m_ListTabs->IsChecked(n);
-		intArr.Add(item);
-		if (item) {
-			SomeChecked = true;
-		}
-	}
+    bool SomeChecked = false;
+    for(unsigned int n = 0; n < m_ListTabs->GetCount(); ++n) {
+        bool item = m_ListTabs->IsChecked(n);
+        intArr.Add(item);
+        if(item) {
+            SomeChecked = true;
+        }
+    }
 
-	return SomeChecked;
+    return SomeChecked;
 }
 
 void SaveTabGroupDlg::OnCheckAll(wxCommandEvent& WXUNUSED(event))
 {
-	if (m_ListTabs == NULL) return;
+    if(m_ListTabs == NULL) return;
 
-	for ( unsigned int n=0; n < m_ListTabs->GetCount(); ++n ) {
-		m_ListTabs->Check(n, true);
-	}
+    for(unsigned int n = 0; n < m_ListTabs->GetCount(); ++n) {
+        m_ListTabs->Check(n, true);
+    }
 }
 
-void SaveTabGroupDlg::OnCheckAllUpdateUI(wxUpdateUIEvent& event)
-{
-	event.Enable( m_ListTabs && m_ListTabs->GetCount() );
-}
+void SaveTabGroupDlg::OnCheckAllUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_ListTabs && m_ListTabs->GetCount()); }
 
 void SaveTabGroupDlg::OnClearAll(wxCommandEvent& WXUNUSED(event))
 {
-	if (m_ListTabs == NULL) return;
+    if(m_ListTabs == NULL) return;
 
-	for ( unsigned int n=0; n < m_ListTabs->GetCount(); ++n ) {
-		m_ListTabs->Check(n, false);
-	}
+    for(unsigned int n = 0; n < m_ListTabs->GetCount(); ++n) {
+        m_ListTabs->Check(n, false);
+    }
 }
 
-void SaveTabGroupDlg::OnClearAllUpdateUI( wxUpdateUIEvent& event )
-{
-	event.Enable( m_ListTabs && m_ListTabs->GetCount() );
-}
-
+void SaveTabGroupDlg::OnClearAllUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_ListTabs && m_ListTabs->GetCount()); }

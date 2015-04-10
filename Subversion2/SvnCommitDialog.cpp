@@ -76,8 +76,9 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     for(size_t i=0; i<previews.GetCount(); i++) {
         m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
     }
-
-    WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
+    
+    SetName("SvnCommitDialog");
+    WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if ( sashPos != wxNOT_FOUND ) {
         m_splitterH->SetSashPosition(sashPos);
@@ -119,7 +120,8 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
         DoShowDiff(0);
     }
     
-    WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
+    SetName("SvnCommitDialog");
+    WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if ( sashPos != wxNOT_FOUND ) {
         m_splitterH->SetSashPosition(sashPos);
@@ -155,7 +157,7 @@ SvnCommitDialog::~SvnCommitDialog()
     ssd.SetCommitDlgSashPos(sashPos);
     ssd.SetCommitDlgHSashPos(sashPosH);
     m_plugin->SetSettings( ssd );
-    WindowAttrManager::Save(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
+    
 }
 
 wxString SvnCommitDialog::GetMesasge()

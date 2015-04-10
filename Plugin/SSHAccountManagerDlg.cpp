@@ -43,7 +43,8 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     for(; iter != accounts.end(); ++iter) {
         DoAddAccount(*iter);
     }
-    WindowAttrManager::Load(this, "SSHAccountManagerDlg", NULL);
+    SetName("SSHAccountManagerDlg");
+    WindowAttrManager::Load(this);
 }
 
 SSHAccountManagerDlg::~SSHAccountManagerDlg()
@@ -55,7 +56,7 @@ SSHAccountManagerDlg::~SSHAccountManagerDlg()
         m_dvListCtrlAccounts->SetItemData(item, (wxUIntPtr)NULL);
     }
     m_dvListCtrlAccounts->DeleteAllItems();
-    WindowAttrManager::Save(this, "SSHAccountManagerDlg", NULL);
+    
 }
 
 void SSHAccountManagerDlg::OnAddAccount(wxCommandEvent& event)

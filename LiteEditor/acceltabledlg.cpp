@@ -83,12 +83,13 @@ AccelTableDlg::AccelTableDlg(wxWindow* parent)
     PopulateTable();
 
     // center the dialog
-    Centre();
+    CentreOnParent();
 
     m_textCtrlFilter->SetFocus();
     m_dataview->SetIndent(16);
-
-    WindowAttrManager::Load(this, "AccelTableDlg", NULL);
+    
+    SetName("AccelTableDlg");
+    WindowAttrManager::Load(this);
 }
 
 void AccelTableDlg::PopulateTable(const wxString& filter)
@@ -210,7 +211,7 @@ void AccelTableDlg::OnText(wxCommandEvent& event)
     PopulateTable(m_textCtrlFilter->GetValue());
 }
 
-AccelTableDlg::~AccelTableDlg() { WindowAttrManager::Save(this, "AccelTableDlg", NULL); }
+AccelTableDlg::~AccelTableDlg() {  }
 void AccelTableDlg::OnDVItemActivated(wxDataViewEvent& event)
 {
     wxUnusedVar(event);

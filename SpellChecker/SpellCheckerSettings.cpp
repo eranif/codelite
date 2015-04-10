@@ -39,107 +39,96 @@
 #include <windowattrmanager.h>
 
 // ------------------------------------------------------------
-SpellCheckerSettings::SpellCheckerSettings( wxWindow* parent ) : SpellCheckerSettings_base( parent )
+SpellCheckerSettings::SpellCheckerSettings(wxWindow* parent)
+    : SpellCheckerSettings_base(parent)
 {
     m_pHunspell = NULL;
     m_dictionaryPath.Empty();
 
-    m_pStrings->SetValidator( wxGenericValidator( &m_scanStrings ) );
-    m_pCppComments->SetValidator( wxGenericValidator( &m_scanCPP ) );
-    m_pC_Comments->SetValidator( wxGenericValidator( &m_scanC ) );
-    m_pDox1->SetValidator( wxGenericValidator( &m_scanD1 ) );
-    m_pDox2->SetValidator( wxGenericValidator( &m_scanD2 ) );
-    m_pCurrentLanguage->SetValidator( wxGenericValidator( &m_dictionaryFileName ) );
-    m_pDirPicker->GetTextCtrl()->SetEditable( false );
-    m_pDirPicker->GetTextCtrl()->SetBackgroundColour( wxColour( 255, 255, 230 ) );
-    WindowAttrManager::Load(this, "SpellCheckerSettings");
+    m_pStrings->SetValidator(wxGenericValidator(&m_scanStrings));
+    m_pCppComments->SetValidator(wxGenericValidator(&m_scanCPP));
+    m_pC_Comments->SetValidator(wxGenericValidator(&m_scanC));
+    m_pDox1->SetValidator(wxGenericValidator(&m_scanD1));
+    m_pDox2->SetValidator(wxGenericValidator(&m_scanD2));
+    m_pCurrentLanguage->SetValidator(wxGenericValidator(&m_dictionaryFileName));
+    m_pDirPicker->GetTextCtrl()->SetEditable(false);
+    m_pDirPicker->GetTextCtrl()->SetBackgroundColour(wxColour(255, 255, 230));
+    SetName("SpellCheckerSettings");
+    WindowAttrManager::Load(this);
 }
 
 // ------------------------------------------------------------
-void SpellCheckerSettings::OnInitDialog( wxInitDialogEvent& event )
+void SpellCheckerSettings::OnInitDialog(wxInitDialogEvent& event)
 {
     event.Skip();
 
-    if( m_pHunspell ) {
-        m_pDirPicker->SetPath( m_dictionaryPath );
+    if(m_pHunspell) {
+        m_pDirPicker->SetPath(m_dictionaryPath);
 
-        if( !m_dictionaryPath.IsEmpty() )
-            FillLanguageList();
+        if(!m_dictionaryPath.IsEmpty()) FillLanguageList();
     }
 }
 // ------------------------------------------------------------
-void SpellCheckerSettings::OnLanguageSelected( wxCommandEvent& event )
+void SpellCheckerSettings::OnLanguageSelected(wxCommandEvent& event)
 {
-    if( m_pHunspell ) {
-        wxString key = m_pLanguageList->GetString( event.GetInt() );
-        m_pCurrentLanguage->SetValue( m_pHunspell->GetLanguageShort( key ) );
+    if(m_pHunspell) {
+        wxString key = m_pLanguageList->GetString(event.GetInt());
+        m_pCurrentLanguage->SetValue(m_pHunspell->GetLanguageShort(key));
     }
 }
 // ------------------------------------------------------------
-void SpellCheckerSettings::OnUpdateOk( wxUpdateUIEvent& event )
+void SpellCheckerSettings::OnUpdateOk(wxUpdateUIEvent& event)
 {
     int checked = 0;
 
-    if( m_pStrings->IsChecked() )
-        checked++;
+    if(m_pStrings->IsChecked()) checked++;
 
-    if( m_pCppComments->IsChecked() )
-        checked++;
+    if(m_pCppComments->IsChecked()) checked++;
 
-    if( m_pC_Comments->IsChecked() )
-        checked++;
+    if(m_pC_Comments->IsChecked()) checked++;
 
-    if( m_pDox1->IsChecked() )
-        checked++;
+    if(m_pDox1->IsChecked()) checked++;
 
-    if( m_pDox2->IsChecked() )
-        checked++;
+    if(m_pDox2->IsChecked()) checked++;
 
-    if( checked && !m_pCurrentLanguage->GetValue().IsEmpty() )
-        event.Enable( true );
+    if(checked && !m_pCurrentLanguage->GetValue().IsEmpty())
+        event.Enable(true);
     else
-        event.Enable( false );
+        event.Enable(false);
 }
 // ------------------------------------------------------------
-void SpellCheckerSettings::OnOk( wxCommandEvent& event )
+void SpellCheckerSettings::OnOk(wxCommandEvent& event)
 {
     event.Skip();
     m_dictionaryPath = m_pDirPicker->GetPath();
 
-    if( !wxEndsWithPathSeparator( m_dictionaryPath ) )
-        m_dictionaryPath += wxFILE_SEP_PATH; ;
+    if(!wxEndsWithPathSeparator(m_dictionaryPath)) m_dictionaryPath += wxFILE_SEP_PATH;
+    ;
 }
 // ------------------------------------------------------------
-void SpellCheckerSettings::OnDirChanged( wxFileDirPickerEvent& event )
+void SpellCheckerSettings::OnDirChanged(wxFileDirPickerEvent& event)
 {
     m_dictionaryPath = m_pDirPicker->GetPath();
 
-    if( !wxEndsWithPathSeparator( m_dictionaryPath ) )
-        m_dictionaryPath += wxFILE_SEP_PATH;
+    if(!wxEndsWithPathSeparator(m_dictionaryPath)) m_dictionaryPath += wxFILE_SEP_PATH;
     m_pLanguageList->Clear();
-    m_pCurrentLanguage->SetValue( wxT( "" ) );
+    m_pCurrentLanguage->SetValue(wxT(""));
     FillLanguageList();
 }
 // ------------------------------------------------------------
 void SpellCheckerSettings::FillLanguageList()
 {
-    if( !m_dictionaryPath.IsEmpty() ) {
+    if(!m_dictionaryPath.IsEmpty()) {
         wxArrayString lang;
-        m_pHunspell->GetAvailableLanguageKeyNames( m_dictionaryPath, lang );
+        m_pHunspell->GetAvailableLanguageKeyNames(m_dictionaryPath, lang);
         m_pLanguageList->Clear();
-        m_pLanguageList->Append( lang );
+        m_pLanguageList->Append(lang);
     }
 }
 // ------------------------------------------------------------
-void SpellCheckerSettings::OnClearIgnoreList( wxCommandEvent& event )
-{
-    m_pHunspell->ClearIgnoreList();
-}
+void SpellCheckerSettings::OnClearIgnoreList(wxCommandEvent& event) { m_pHunspell->ClearIgnoreList(); }
 
-SpellCheckerSettings::~SpellCheckerSettings()
-{
-    WindowAttrManager::Save(this, "SpellCheckerSettings");
-}
+SpellCheckerSettings::~SpellCheckerSettings() {}
 
 void SpellCheckerSettings::SetDictionaryPath(const wxString& dictionaryPath)
 {

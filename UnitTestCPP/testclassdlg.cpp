@@ -49,10 +49,11 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
     if(m_choiceProjects->IsEmpty() == false) {
         m_choiceProjects->SetSelection(0);
     }
-    WindowAttrManager::Load(this, wxT("TestClassDlgAttr"), m_manager->GetConfigTool());
+    SetName("TestClassDlg");
+    WindowAttrManager::Load(this);
 }
 
-TestClassDlg::~TestClassDlg() { WindowAttrManager::Save(this, wxT("TestClassDlgAttr"), m_manager->GetConfigTool()); }
+TestClassDlg::~TestClassDlg() {  }
 
 void TestClassDlg::OnRefreshFunctions(wxCommandEvent& event)
 {

@@ -41,12 +41,13 @@ znSettingsDlg::znSettingsDlg(wxWindow* parent)
         m_colourPickerHighlightColour->SetColour( wxColour( data.GetHighlightColour() ));
     }
     m_spinCtrlZoomFactor->SetValue(data.GetZoomFactor());
-    WindowAttrManager::Load(this, "znSettingsDlg", NULL);
+    SetName("znSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
 znSettingsDlg::~znSettingsDlg()
 {
-    WindowAttrManager::Save(this, "znSettingsDlg", NULL);
+    
 }
 
 void znSettingsDlg::OnOK(wxCommandEvent& event)

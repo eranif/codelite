@@ -6,11 +6,12 @@ NewThemeDialog::NewThemeDialog(wxWindow* parent, LexerConf::Ptr_t lexer)
     : NewThemeDialogBase(parent)
 {
     Center();
-    WindowAttrManager::Load(this, "NewThemeDialog");
+    SetName("NewThemeDialog");
+    WindowAttrManager::Load(this);
     DoInitialize(lexer);
 }
 
-NewThemeDialog::~NewThemeDialog() { WindowAttrManager::Save(this, "NewThemeDialog"); }
+NewThemeDialog::~NewThemeDialog() {  }
 
 void NewThemeDialog::OnOkUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlName->IsEmpty()); }
 

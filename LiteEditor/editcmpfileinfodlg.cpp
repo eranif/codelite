@@ -29,70 +29,56 @@
 #include "manager.h"
 #include "pluginmanager.h"
 
-EditCmpFileInfo::EditCmpFileInfo( wxWindow* parent)
-		: EditCmpFileInfoBase( parent )
+EditCmpFileInfo::EditCmpFileInfo(wxWindow* parent)
+    : EditCmpFileInfoBase(parent)
 {
-	WindowAttrManager::Load(this, wxT("EditCmpFileInfo"), NULL);
+    SetName("EditCmpFileInfo");
+    WindowAttrManager::Load(this);
 }
 
-void EditCmpFileInfo::OnFileTypeText( wxCommandEvent& event )
+void EditCmpFileInfo::OnFileTypeText(wxCommandEvent& event) { event.Skip(); }
+
+void EditCmpFileInfo::OnCompilationLine(wxCommandEvent& event) { event.Skip(); }
+
+void EditCmpFileInfo::OnButtonOk(wxCommandEvent& event)
 {
-	event.Skip();
+    wxUnusedVar(event);
+    EndModal(wxID_OK);
 }
 
-void EditCmpFileInfo::OnCompilationLine( wxCommandEvent& event )
+void EditCmpFileInfo::OnButtonOkUI(wxUpdateUIEvent& event)
 {
-	event.Skip();
+    event.Enable(!m_textCtrl2->IsEmpty() && !m_textCtrlFileType->IsEmpty());
 }
 
-void EditCmpFileInfo::OnButtonOk( wxCommandEvent& event )
+void EditCmpFileInfo::OnButtonCancel(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-	EndModal(wxID_OK);
+    wxUnusedVar(event);
+    EndModal(wxID_CANCEL);
 }
 
-void EditCmpFileInfo::OnButtonOkUI( wxUpdateUIEvent& event )
-{
-	event.Enable(!m_textCtrl2->IsEmpty() && !m_textCtrlFileType->IsEmpty());
-}
+void EditCmpFileInfo::SetCompilationLine(const wxString& s) { m_textCtrl2->SetValue(s); }
 
-void EditCmpFileInfo::OnButtonCancel( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
-	EndModal(wxID_CANCEL);
-}
-
-void EditCmpFileInfo::SetCompilationLine(const wxString& s)
-{
-	m_textCtrl2->SetValue(s);
-}
-
-void EditCmpFileInfo::SetExtension(const wxString& s)
-{
-	m_textCtrlFileType->SetValue(s);
-}
+void EditCmpFileInfo::SetExtension(const wxString& s) { m_textCtrlFileType->SetValue(s); }
 
 void EditCmpFileInfo::SetKind(const wxString& s)
 {
-	int where = m_choiceFileTypeIs->FindString(s);
-	if (where != wxNOT_FOUND) {
-		m_choiceFileTypeIs->Select(where);
-	}
+    int where = m_choiceFileTypeIs->FindString(s);
+    if(where != wxNOT_FOUND) {
+        m_choiceFileTypeIs->Select(where);
+    }
 }
 
 void EditCmpFileInfo::OnButtonHelp(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
+    wxUnusedVar(event);
 
-	wxString projectName = ManagerST::Get()->GetActiveProjectName();
-	ProjectPtr project = ManagerST::Get()->GetProject(projectName);
-	IEditor* editor = PluginManager::Get()->GetActiveEditor();
+    wxString projectName = ManagerST::Get()->GetActiveProjectName();
+    ProjectPtr project = ManagerST::Get()->GetProject(projectName);
+    IEditor* editor = PluginManager::Get()->GetActiveEditor();
 
-	MacrosDlg dlg(this, MacrosDlg::MacrosCompiler, project, editor);
-	dlg.ShowModal();
+    MacrosDlg dlg(this, MacrosDlg::MacrosCompiler, project, editor);
+    dlg.ShowModal();
 }
 
-EditCmpFileInfo::~EditCmpFileInfo()
-{
-	WindowAttrManager::Save(this, wxT("EditCmpFileInfo"), NULL);
-}
+EditCmpFileInfo::~EditCmpFileInfo() {}

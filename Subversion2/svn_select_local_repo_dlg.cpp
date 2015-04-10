@@ -35,12 +35,13 @@ SvnSelectLocalRepoDlg::SvnSelectLocalRepoDlg( wxWindow* parent, Subversion2 *plu
 	m_listBoxPaths->Clear();
 	m_listBoxPaths->Append(m_svn->GetSettings().GetRepos());
 	m_dirPicker1->SetPath(curpath);
-	WindowAttrManager::Load(this, wxT("SvnSelectLocalRepoDlg"), NULL);
+    SetName("SvnSelectLocalRepoDlg");
+	WindowAttrManager::Load(this);
 }
 
 SvnSelectLocalRepoDlg::~SvnSelectLocalRepoDlg()
 {
-	WindowAttrManager::Save(this, wxT("SvnSelectLocalRepoDlg"), NULL);
+	
 }
 
 void SvnSelectLocalRepoDlg::OnPathSelected( wxCommandEvent& event )

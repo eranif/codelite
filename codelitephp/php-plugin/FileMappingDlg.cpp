@@ -4,15 +4,13 @@
 FileMappingDlg::FileMappingDlg(wxWindow* parent)
     : FileMappingDlgBase(parent)
 {
-    WindowAttrManager::Load(this, "FileMappingDlg");
+    SetName("FileMappingDlg");
+    WindowAttrManager::Load(this);
 }
 
-FileMappingDlg::~FileMappingDlg()
-{
-    WindowAttrManager::Save(this, "FileMappingDlg");
-}
+FileMappingDlg::~FileMappingDlg() {}
 
 void FileMappingDlg::OnOkUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_dirPickerSource->GetPath().IsEmpty() && !m_textCtrlRemote->IsEmpty() );
+    event.Enable(!m_dirPickerSource->GetPath().IsEmpty() && !m_textCtrlRemote->IsEmpty());
 }

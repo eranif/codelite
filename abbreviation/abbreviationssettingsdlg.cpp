@@ -42,7 +42,8 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *
     , m_currSelection(wxNOT_FOUND)
     , m_config("abbreviations.conf")
 {
-    WindowAttrManager::Load(this, wxT("AbbreviationsSettingsDlg"), m_mgr->GetConfigTool());
+    SetName("AbbreviationsSettingsDlg");
+    WindowAttrManager::Load(this);
     if ( !m_config.ReadItem(&m_data) ) {
         // merge the data from the old configuration
         AbbreviationEntry data;
@@ -57,7 +58,7 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *
 
 AbbreviationsSettingsDlg::~AbbreviationsSettingsDlg()
 {
-    WindowAttrManager::Save(this, wxT("AbbreviationsSettingsDlg"), m_mgr->GetConfigTool());
+    
 }
 
 void AbbreviationsSettingsDlg::OnItemSelected( wxCommandEvent& event )

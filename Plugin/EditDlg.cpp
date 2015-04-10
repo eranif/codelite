@@ -28,25 +28,22 @@
 #include "editor_config.h"
 #include "windowattrmanager.h"
 
-EditDlg::EditDlg(wxWindow* parent, const wxString &text)
+EditDlg::EditDlg(wxWindow* parent, const wxString& text)
     : EditDlgBase(parent)
 {
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
-    lex->Apply( m_stc10 );
-    m_stc10->SetText( text );
-    WindowAttrManager::Load(this, "EditDlg");
+    lex->Apply(m_stc10);
+    m_stc10->SetText(text);
+    SetName("EditDlg");
+    WindowAttrManager::Load(this);
 }
 
-EditDlg::~EditDlg()
-{
-    WindowAttrManager::Save(this, "EditDlg");
-}
+EditDlg::~EditDlg() {}
 
-
-wxString clGetStringFromUser(const wxString &initialValue, wxWindow* parent)
+wxString clGetStringFromUser(const wxString& initialValue, wxWindow* parent)
 {
     EditDlg dlg(parent, initialValue);
-    if ( dlg.ShowModal() == wxID_OK ) {
+    if(dlg.ShowModal() == wxID_OK) {
         return dlg.GetText();
     }
     return wxEmptyString;

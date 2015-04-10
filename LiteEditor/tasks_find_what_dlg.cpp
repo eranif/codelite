@@ -33,127 +33,127 @@
 class TaskData : public wxClientData
 {
 public:
-	wxString m_regex;
+    wxString m_regex;
 
 public:
-	TaskData(const wxString &regex) : m_regex(regex) {}
-	virtual ~TaskData() {}
+    TaskData(const wxString& regex)
+        : m_regex(regex)
+    {
+    }
+    virtual ~TaskData() {}
 };
 
-TasksFindWhatDlg::TasksFindWhatDlg( wxWindow* parent )
-		: TasksFindWhatDlgBase( parent )
+TasksFindWhatDlg::TasksFindWhatDlg(wxWindow* parent)
+    : TasksFindWhatDlgBase(parent)
 {
-	m_list->InsertColumn(0, _("Enabled"));
-	m_list->InsertColumn(1, _("Task"));
-	m_list->SetColumnWidth(1, 200);
+    m_list->InsertColumn(0, _("Enabled"));
+    m_list->InsertColumn(1, _("Task"));
+    m_list->SetColumnWidth(1, 200);
 
-	// Load all info from disk
-	TasksPanelData data;
-	EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &data);
+    // Load all info from disk
+    TasksPanelData data;
+    EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &data);
 
-	std::map<wxString, wxString>::const_iterator iter = data.GetTasks().begin();
-	for (; iter != data.GetTasks().end(); iter++) {
-		DoAddLine(iter->first, iter->second, data.GetEnabledItems().Index(iter->first) != wxNOT_FOUND);
-	}
-	WindowAttrManager::Load(this, wxT("TasksFindWhatDlg"), NULL);
+    std::map<wxString, wxString>::const_iterator iter = data.GetTasks().begin();
+    for(; iter != data.GetTasks().end(); iter++) {
+        DoAddLine(iter->first, iter->second, data.GetEnabledItems().Index(iter->first) != wxNOT_FOUND);
+    }
+    SetName("TasksFindWhatDlg");
+    WindowAttrManager::Load(this);
 }
 
-TasksFindWhatDlg::~TasksFindWhatDlg()
+TasksFindWhatDlg::~TasksFindWhatDlg() {}
+
+void TasksFindWhatDlg::OnNewTask(wxCommandEvent& event)
 {
-	WindowAttrManager::Save(this, wxT("TasksFindWhatDlg"), NULL);
+    NewTaskDialog dlg(this);
+    WindowAttrManager::Load(this);
+
+    dlg.SetLabel(_("New Task"));
+    if(dlg.ShowModal() == wxID_OK) {
+        wxRegEx re(dlg.m_regex->GetValue());
+        if(re.IsValid() == false) {
+            wxMessageBox(wxString::Format(_("'%s' is not a valid regular expression"), dlg.m_regex->GetValue().c_str()),
+                         _("CodeLite"),
+                         wxICON_WARNING | wxOK);
+            return;
+        }
+        DoAddLine(dlg.m_name->GetValue(), dlg.m_regex->GetValue(), true);
+    }
 }
 
-void TasksFindWhatDlg::OnNewTask( wxCommandEvent& event )
+void TasksFindWhatDlg::OnDeleteTask(wxCommandEvent& event)
 {
-	NewTaskDialog dlg(this);
-	WindowAttrManager::Load(&dlg, wxT("NewTaskDialog"), NULL);
+    int selection = m_list->GetSelection();
+    if(selection == wxNOT_FOUND) return;
 
-	dlg.SetLabel(_("New Task"));
-	if (dlg.ShowModal() == wxID_OK) {
-		wxRegEx re(dlg.m_regex->GetValue());
-		if (re.IsValid() == false) {
-			wxMessageBox(wxString::Format(_("'%s' is not a valid regular expression"), dlg.m_regex->GetValue().c_str()), _("CodeLite"), wxICON_WARNING|wxOK);
-			return;
-		}
-		DoAddLine(dlg.m_name->GetValue(), dlg.m_regex->GetValue(), true);
-	}
-	WindowAttrManager::Save(&dlg, wxT("NewTaskDialog"), NULL);
+    int answer =
+        wxMessageBox(_("Are you sure you want to delete this entry?"), _("Confirm"), wxICON_QUESTION | wxYES_NO);
+    if(answer == wxYES) {
+        m_list->DeleteItem(selection);
+    }
 }
 
-void TasksFindWhatDlg::OnDeleteTask( wxCommandEvent& event )
+void TasksFindWhatDlg::OnDeleteTaskUI(wxUpdateUIEvent& event)
 {
-	int selection = m_list->GetSelection();
-	if (selection == wxNOT_FOUND)
-		return;
-
-	int answer = wxMessageBox(_("Are you sure you want to delete this entry?"), _("Confirm"), wxICON_QUESTION|wxYES_NO);
-	if (answer == wxYES) {
-		m_list->DeleteItem(selection);
-	}
-}
-
-void TasksFindWhatDlg::OnDeleteTaskUI( wxUpdateUIEvent& event )
-{
-	event.Enable(m_list->GetItemCount() && m_list->GetSelection() != wxNOT_FOUND);
+    event.Enable(m_list->GetItemCount() && m_list->GetSelection() != wxNOT_FOUND);
 }
 
 void TasksFindWhatDlg::OnEditTask(wxCommandEvent& event)
 {
-	int selection = m_list->GetSelection();
-	if (selection != wxNOT_FOUND) {
+    int selection = m_list->GetSelection();
+    if(selection != wxNOT_FOUND) {
 
-		NewTaskDialog dlg(this);
-		WindowAttrManager::Load(&dlg, wxT("NewTaskDialog"), NULL);
+        NewTaskDialog dlg(this);
+        WindowAttrManager::Load(this);
 
-		dlg.SetLabel(_("Edit Task"));
-		dlg.m_name->SetValue( m_list->GetText(selection, 1) );
+        dlg.SetLabel(_("Edit Task"));
+        dlg.m_name->SetValue(m_list->GetText(selection, 1));
 
-		TaskData *data = (TaskData*) m_list->GetItemData(selection);
-		dlg.m_regex->SetValue(data->m_regex);
-		if (dlg.ShowModal() == wxID_OK) {
-			m_list->SetTextColumn(selection, 1, dlg.m_name->GetValue());
-			m_list->SetItemClientData(selection, new TaskData(dlg.m_regex->GetValue()));
-		}
-		WindowAttrManager::Save(&dlg, wxT("NewTaskDialog"), NULL);
-	}
+        TaskData* data = (TaskData*)m_list->GetItemData(selection);
+        dlg.m_regex->SetValue(data->m_regex);
+        if(dlg.ShowModal() == wxID_OK) {
+            m_list->SetTextColumn(selection, 1, dlg.m_name->GetValue());
+            m_list->SetItemClientData(selection, new TaskData(dlg.m_regex->GetValue()));
+        }
+    }
 }
 
 void TasksFindWhatDlg::OnEditTaskUI(wxUpdateUIEvent& event)
 {
-	event.Enable(m_list->GetItemCount() && m_list->GetSelection() != wxNOT_FOUND);
+    event.Enable(m_list->GetItemCount() && m_list->GetSelection() != wxNOT_FOUND);
 }
 
 void TasksFindWhatDlg::DoAddLine(const wxString& name, const wxString& regex, bool enabled)
 {
-	long item = m_list->AppendRow();
-	m_list->SetCheckboxRow(item, enabled);
-	m_list->SetTextColumn(item, 1, name);
-	m_list->SetItemClientData(item, new TaskData(regex));
+    long item = m_list->AppendRow();
+    m_list->SetCheckboxRow(item, enabled);
+    m_list->SetTextColumn(item, 1, name);
+    m_list->SetItemClientData(item, new TaskData(regex));
 }
 
 void TasksFindWhatDlg::DoSaveList()
 {
-	// Save all items
-	TasksPanelData data;
-	std::map<wxString, wxString> items;
-	wxArrayString                enabledItems;
+    // Save all items
+    TasksPanelData data;
+    std::map<wxString, wxString> items;
+    wxArrayString enabledItems;
 
-	for (int i=0; i<m_list->GetItemCount(); i++) {
-		wxString name  = m_list->GetText(i, 1);
-		TaskData *clientData = (TaskData*) m_list->GetItemData(i);
-		items[name] = clientData->m_regex;
+    for(int i = 0; i < m_list->GetItemCount(); i++) {
+        wxString name = m_list->GetText(i, 1);
+        TaskData* clientData = (TaskData*)m_list->GetItemData(i);
+        items[name] = clientData->m_regex;
 
-		if (m_list->IsChecked(i))
-			enabledItems.Add(name);
-	}
+        if(m_list->IsChecked(i)) enabledItems.Add(name);
+    }
 
-	data.SetEnabledItems(enabledItems);
-	data.SetTasks(items);
-	EditorConfigST::Get()->WriteObject(wxT("TasksPanelData"), &data);
+    data.SetEnabledItems(enabledItems);
+    data.SetTasks(items);
+    EditorConfigST::Get()->WriteObject(wxT("TasksPanelData"), &data);
 }
 
 void TasksFindWhatDlg::OnButtonOk(wxCommandEvent& event)
 {
-	DoSaveList();
-	event.Skip();
+    DoSaveList();
+    event.Skip();
 }

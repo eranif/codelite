@@ -34,11 +34,12 @@ NewWorkspaceDlg::NewWorkspaceDlg(wxWindow* parent)
 {
     m_textCtrlWorkspacePath->SetValue(wxGetCwd());
     m_textCtrlWorkspaceName->SetFocus();
-    Centre();
-    WindowAttrManager::Load(this, wxT("NewWorkspaceDlg"), NULL);
+    CentreOnParent();
+    SetName("NewWorkspaceDlg");
+    WindowAttrManager::Load(this);
 }
 
-NewWorkspaceDlg::~NewWorkspaceDlg() { WindowAttrManager::Save(this, wxT("NewWorkspaceDlg"), NULL); }
+NewWorkspaceDlg::~NewWorkspaceDlg() {  }
 
 void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
 {

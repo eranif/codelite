@@ -46,7 +46,7 @@ BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
 END_EVENT_TABLE()
 
-OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString & initialSelection)
+OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString& initialSelection)
     : OpenResourceDialogBase(parent)
     , m_manager(manager)
     , m_needRefresh(false)
@@ -85,7 +85,8 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
 
-    WindowAttrManager::Load(this, wxT("OpenResourceDialog"), m_manager->GetConfigTool());
+    SetName("OpenResourceDialog");
+    WindowAttrManager::Load(this);
 
     // load all files from the workspace
     if(m_manager->IsWorkspaceOpen()) {
@@ -126,7 +127,6 @@ OpenResourceDialog::~OpenResourceDialog()
 {
     m_timer->Stop();
     delete m_timer;
-    WindowAttrManager::Save(this, wxT("OpenResourceDialog"), m_manager->GetConfigTool());
 }
 
 void OpenResourceDialog::OnText(wxCommandEvent& event)

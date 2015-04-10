@@ -40,12 +40,13 @@ TweaksSettingsDlg::TweaksSettingsDlg(wxWindow* parent)
     m_checkBoxEnableTweaks->SetValue( m_settings.IsEnableTweaks() );
 
     DoPopulateList();
-    WindowAttrManager::Load(this, "TweaksSettingsDlg", NULL);
+    SetName("TweaksSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
 TweaksSettingsDlg::~TweaksSettingsDlg()
 {
-    WindowAttrManager::Save(this, "TweaksSettingsDlg", NULL);
+    
     m_colourProperties.clear();
 }
 

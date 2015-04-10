@@ -59,7 +59,8 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
         m_checkBoxSaveAllFilesBefore->SetValue(data->m_saveAllFiles);
         m_choiceId->Enable(false);
     }
-    WindowAttrManager::Load(this, "NewToolDlg");
+    SetName("NewToolDlg");
+    WindowAttrManager::Load(this);
 }
 
 void NewToolDlg::OnButtonBrowsePath(wxCommandEvent& event)
@@ -131,7 +132,4 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
     }
 }
 
-NewToolDlg::~NewToolDlg()
-{
-    WindowAttrManager::Save(this, "NewToolDlg");
-}
+NewToolDlg::~NewToolDlg() {}

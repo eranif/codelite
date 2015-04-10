@@ -39,12 +39,13 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
 {
     GetSizer()->Fit(this);
     Initialize();
-    WindowAttrManager::Load(this, wxT("QuickDebugDlgAttr"), NULL);
+    SetName("QuickDebugDlg");
+    WindowAttrManager::Load(this);
 }
 
 QuickDebugDlg::~QuickDebugDlg()
 {
-    WindowAttrManager::Save(this, wxT("QuickDebugDlgAttr"), NULL);
+    
 }
 
 void QuickDebugDlg::Initialize()
@@ -113,14 +114,14 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     info.SetArguments(m_textCtrlArgs->GetValue());
     EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
 
-    WindowAttrManager::Save(this, wxT("QuickDebugDlgAttr"), NULL);
+    
     EndModal(wxID_OK);
 }
 
 void QuickDebugDlg::OnButtonCancel(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    WindowAttrManager::Save(this, wxT("QuickDebugDlgAttr"), NULL);
+    
     EndModal(wxID_CANCEL);
 }
 

@@ -82,12 +82,13 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
         m_dataviewModel->AppendItem( wxDataViewItem(0), cols, new wxStringClientData(body) );
     }
     m_filePicker->SetPath( targetFile );
-    WindowAttrManager::Load(this, "AddFunctionsImpDlg", NULL);
+    SetName("AddFunctionsImpDlg");
+    WindowAttrManager::Load(this);
 }
 
 AddFunctionsImpDlg::~AddFunctionsImpDlg()
 {
-    WindowAttrManager::Save(this, "AddFunctionsImpDlg", NULL);
+    
 }
 
 wxString AddFunctionsImpDlg::GetFileName() const

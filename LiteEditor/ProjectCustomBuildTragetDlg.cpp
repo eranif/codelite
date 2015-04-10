@@ -37,12 +37,13 @@ ProjectCustomBuildTragetDlg::ProjectCustomBuildTragetDlg(wxWindow* parent, const
 {
     m_textCtrlCommand->ChangeValue( targetCommand );
     m_textCtrlTargetName->ChangeValue( targetName );
-    WindowAttrManager::Load(this, "ProjectCustomBuildTragetDlg", NULL);
+    SetName("ProjectCustomBuildTragetDlg");
+    WindowAttrManager::Load(this);
 }
 
 ProjectCustomBuildTragetDlg::~ProjectCustomBuildTragetDlg()
 {
-    WindowAttrManager::Save(this, "ProjectCustomBuildTragetDlg", NULL);
+    
 }
 void ProjectCustomBuildTragetDlg::OnEditTargetNameUI(wxUpdateUIEvent& event)
 {

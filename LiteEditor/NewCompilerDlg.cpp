@@ -39,12 +39,13 @@ NewCompilerDlg::NewCompilerDlg(wxWindow* parent)
     }
 
     m_choiceCompilers->SetStringSelection("<None>");
-    WindowAttrManager::Load(this, "NewCompilerDlg");
+    SetName("NewCompilerDlg");
+    WindowAttrManager::Load(this);
 }
 
 NewCompilerDlg::~NewCompilerDlg()
 {
-    WindowAttrManager::Save(this, "NewCompilerDlg");
+    
 }
 
 void NewCompilerDlg::OnOkUI(wxUpdateUIEvent& event)

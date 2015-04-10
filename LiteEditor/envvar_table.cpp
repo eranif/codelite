@@ -50,7 +50,8 @@ EnvVarsTableDlg::EnvVarsTableDlg(wxWindow* parent)
         lexer->Apply(sci);
     }
     
-    WindowAttrManager::Load(this, wxT("EnvVarsTableDlg"), NULL);
+    SetName("EnvVarsTableDlg");
+    WindowAttrManager::Load(this);
     std::map<wxString, wxString>::iterator iter = envSets.begin();
     for(; iter != envSets.end(); iter++) {
         wxString name = iter->first;
@@ -75,7 +76,7 @@ EnvVarsTableDlg::EnvVarsTableDlg(wxWindow* parent)
 
 EnvVarsTableDlg::~EnvVarsTableDlg()
 {
-    WindowAttrManager::Save(this, wxT("EnvVarsTableDlg"), NULL);
+    
 }
 
 void EnvVarsTableDlg::OnLeftUp(wxMouseEvent& event)

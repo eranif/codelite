@@ -31,10 +31,10 @@
 #include "workspace.h"
 #include <wx/dirdlg.h>
 
-NewQtProjDlg::NewQtProjDlg( wxWindow* parent, QmakeConf *conf, IManager *mgr )
-    : NewQtProjBaseDlg( parent )
+NewQtProjDlg::NewQtProjDlg(wxWindow* parent, QmakeConf* conf, IManager* mgr)
+    : NewQtProjBaseDlg(parent)
     , m_conf(conf)
-    , m_mgr (mgr)
+    , m_mgr(mgr)
 {
     const wxString ProjKinds[] = { wxT("Console"), wxT("GUI"), wxT("Static Library"), wxT("Dynamic Library") };
     wxArrayString choices(4, ProjKinds);
@@ -43,61 +43,44 @@ NewQtProjDlg::NewQtProjDlg( wxWindow* parent, QmakeConf *conf, IManager *mgr )
     m_choiceProjKind->SetSelection(1);
 
     m_choiceQmake->Append(m_conf->GetAllConfigurations());
-    if (m_choiceQmake->IsEmpty() == false) {
+    if(m_choiceQmake->IsEmpty() == false) {
         m_choiceQmake->SetSelection(0);
     }
 
-    if( m_mgr->IsWorkspaceOpen() ) {
-        m_dirPicker4->SetPath( m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath() );
+    if(m_mgr->IsWorkspaceOpen()) {
+        m_dirPicker4->SetPath(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath());
     }
-    WindowAttrManager::Load(this, wxT("NewQtProjDlg"), m_mgr->GetConfigTool());
+    SetName("NewQtProjDlg");
+    WindowAttrManager::Load(this);
 }
 
-NewQtProjDlg::~NewQtProjDlg()
-{
-    WindowAttrManager::Save(this, wxT("NewQtProjDlg"), m_mgr->GetConfigTool());
-}
+NewQtProjDlg::~NewQtProjDlg() {}
 
-void NewQtProjDlg::OnNewQmakeSettings( wxCommandEvent& event )
+void NewQtProjDlg::OnNewQmakeSettings(wxCommandEvent& event)
 {
     QMakeSettingsDlg dlg(this, m_mgr, m_conf);
-    if (dlg.ShowModal() == wxID_OK) {
+    if(dlg.ShowModal() == wxID_OK) {
         m_choiceQmake->Clear();
         m_choiceQmake->Append(m_conf->GetAllConfigurations());
-        if (m_choiceQmake->IsEmpty() == false) {
+        if(m_choiceQmake->IsEmpty() == false) {
             m_choiceQmake->SetSelection(0);
         }
     }
 }
 
-bool NewQtProjDlg::GetCreateDirectory() const
-{
-    return m_checkBoxUseSepDirectory->IsChecked();
-}
+bool NewQtProjDlg::GetCreateDirectory() const { return m_checkBoxUseSepDirectory->IsChecked(); }
 
-wxString NewQtProjDlg::GetProjectKind() const
-{
-    return m_choiceProjKind->GetStringSelection();
-}
+wxString NewQtProjDlg::GetProjectKind() const { return m_choiceProjKind->GetStringSelection(); }
 
-wxString NewQtProjDlg::GetProjectName() const
-{
-    return m_textCtrlProjName->GetValue();
-}
+wxString NewQtProjDlg::GetProjectName() const { return m_textCtrlProjName->GetValue(); }
 
-wxString NewQtProjDlg::GetProjectPath() const
-{
-    return m_dirPicker4->GetPath();
-}
+wxString NewQtProjDlg::GetProjectPath() const { return m_dirPicker4->GetPath(); }
 
-wxString NewQtProjDlg::GetQmake() const
-{
-    return m_choiceQmake->GetStringSelection();
-}
+wxString NewQtProjDlg::GetQmake() const { return m_choiceQmake->GetStringSelection(); }
 
 void NewQtProjDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxString projectName = m_textCtrlProjName->GetValue().Trim();
-    wxFileName projectPath ( m_dirPicker4->GetPath(), "" );
-    event.Enable( !projectName.IsEmpty() && projectPath.Exists() );
+    wxFileName projectPath(m_dirPicker4->GetPath(), "");
+    event.Enable(!projectName.IsEmpty() && projectPath.Exists());
 }

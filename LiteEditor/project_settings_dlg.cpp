@@ -90,8 +90,9 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent,
     GetSizer()->Fit(this);
 
     wxSize sz = GetSize();
-    Centre();
-    WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
+    CentreOnParent();
+    SetName("ProjectSettingsDlg");
+    WindowAttrManager::Load(this);
 
     // Make sure that all the controls are visible
     wxSize newSize = GetSize();
@@ -165,7 +166,6 @@ ProjectSettingsDlg::~ProjectSettingsDlg()
 
     PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
     EditorConfigST::Get()->SetString(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
-    WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
 }
 
 void ProjectSettingsDlg::OnButtonOK(wxCommandEvent& event)
@@ -239,7 +239,7 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
             GlobalSettingsPanel* globalPage = dynamic_cast<GlobalSettingsPanel*>(page);
             if(globalPage) {
                 // update the project name
-                //globalPage->SetProjectName(m_projectName);
+                // globalPage->SetProjectName(m_projectName);
             }
             p->Load(buildConf);
         }
@@ -279,10 +279,7 @@ void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
 #endif
 }
 
-void ProjectSettingsDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(GetIsDirty());
-}
+void ProjectSettingsDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(GetIsDirty()); }
 
 void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 {
@@ -531,10 +528,7 @@ void GlobalSettingsPanel::OnCustomEditorClicked(wxCommandEvent& event)
     }
 }
 
-void GlobalSettingsPanel::OnValueChanged(wxPropertyGridEvent& event)
-{
-    m_dlg->SetIsDirty(true);
-}
+void GlobalSettingsPanel::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->SetIsDirty(true); }
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

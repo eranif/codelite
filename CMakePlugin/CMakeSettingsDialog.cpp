@@ -69,7 +69,8 @@ CMakeSettingsDialog::CMakeSettingsDialog(wxWindow* parent, CMakePlugin* plugin)
     m_choiceDefaultGenerator->Append(m_plugin->GetSupportedGenerators());
 
     // Load window layout
-    WindowAttrManager::Load(this, "CMakeSettingsDialog", NULL);
+    SetName("CMakeSettingsDialog");
+    WindowAttrManager::Load(this);
 }
 
 /* ************************************************************************ */
@@ -77,7 +78,7 @@ CMakeSettingsDialog::CMakeSettingsDialog(wxWindow* parent, CMakePlugin* plugin)
 CMakeSettingsDialog::~CMakeSettingsDialog()
 {
     // Save window layout
-    WindowAttrManager::Save(this, "CMakeSettingsDialog", NULL);
+    
 }
 
 /* ************************************************************************ */

@@ -23,12 +23,13 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_pgPropNode->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginNode));
         m_pgPropStrings->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginStrings));
     }
-    
+
     CenterOnParent();
-    WindowAttrManager::Load(this, "WebToolsSettings");
+    SetName("WebToolsSettings");
+    WindowAttrManager::Load(this);
 }
 
-WebToolsSettings::~WebToolsSettings() { WindowAttrManager::Save(this, "WebToolsSettings"); }
+WebToolsSettings::~WebToolsSettings() {}
 
 void WebToolsSettings::OnJSValueChanged(wxPropertyGridEvent& event)
 {

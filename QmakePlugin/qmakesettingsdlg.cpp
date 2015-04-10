@@ -41,7 +41,8 @@ QMakeSettingsDlg::QMakeSettingsDlg( wxWindow* parent, IManager *manager, QmakeCo
     , m_rightClickTabIdx(wxNOT_FOUND)
 {
     Initialize();
-    WindowAttrManager::Load(this, wxT("QMakeSettingsDlg"), m_manager->GetConfigTool());
+    SetName("QMakeSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
 void QMakeSettingsDlg::Initialize()
@@ -90,7 +91,7 @@ void QMakeSettingsDlg::OnOK(wxCommandEvent& event)
 
 QMakeSettingsDlg::~QMakeSettingsDlg()
 {
-    WindowAttrManager::Save(this, wxT("QMakeSettingsDlg"), m_manager->GetConfigTool());
+    
 }
 
 

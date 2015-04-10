@@ -37,12 +37,13 @@ GitFileDiffDlg::GitFileDiffDlg(wxWindow* parent)
 {
     m_editor->InitStyles();
     SetIcon(wxICON(icon_git));
-    WindowAttrManager::Load(this, wxT("GitFileDiffDlg"), NULL);
+    SetName("GitFileDiffDlg");
+    WindowAttrManager::Load(this);
 }
 
 /*******************************************************************************/
 
-GitFileDiffDlg::~GitFileDiffDlg() { WindowAttrManager::Save(this, wxT("GitFileDiffDlg"), NULL); }
+GitFileDiffDlg::~GitFileDiffDlg() {}
 
 /*******************************************************************************/
 void GitFileDiffDlg::SetDiff(const wxString& diff)

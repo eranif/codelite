@@ -47,12 +47,13 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
         message << _("Create a new compiler named '") << *iter << "' by cloning an existing compiler";
         prop->SetHelpString( message );
     }
-    WindowAttrManager::Load(this, "CompilersModifiedDlg");
+    SetName("CompilersModifiedDlg");
+    WindowAttrManager::Load(this);
 }
 
 CompilersModifiedDlg::~CompilersModifiedDlg()
 {
-    WindowAttrManager::Save(this, "CompilersModifiedDlg");
+    
 }
 
 void CompilersModifiedDlg::OnOKUI(wxUpdateUIEvent& event)

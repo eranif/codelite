@@ -34,8 +34,8 @@
 #include <wx/tokenzr.h>
 #include "globals.h"
 
-WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *localWorkspace)
-    : WorkspaceSettingsBase( parent )
+WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* localWorkspace)
+    : WorkspaceSettingsBase(parent)
     , m_localWorkspace(localWorkspace)
 {
     m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
@@ -50,7 +50,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
     std::map<wxString, wxString>::iterator iter = envSets.begin();
     int useActiveSetIndex = m_choiceEnvSets->Append(wxGetTranslation(USE_GLOBAL_SETTINGS));
 
-    for (; iter != envSets.end(); iter++) {
+    for(; iter != envSets.end(); iter++) {
         m_choiceEnvSets->Append(iter->first);
     }
 
@@ -63,7 +63,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
     }
 
     int where = m_choiceEnvSets->FindString(tmpSet);
-    if (where == wxNOT_FOUND) {
+    if(where == wxNOT_FOUND) {
         activeEnvSet = activePage;
         m_choiceEnvSets->SetSelection(useActiveSetIndex);
 
@@ -81,18 +81,17 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *lo
     envvars.Trim().Trim(false);
 
     m_textCtrlWspEnvVars->SetValue(envvars);
-    WindowAttrManager::Load(this, wxT("WorkspaceSettingsDlg"), NULL);
+    SetName("WorkspaceSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
-WorkspaceSettingsDlg::~WorkspaceSettingsDlg()
-{
-    WindowAttrManager::Save(this, wxT("WorkspaceSettingsDlg"), NULL);
-}
+WorkspaceSettingsDlg::~WorkspaceSettingsDlg() {}
 
-//void WorkspaceSettingsDlg::OnAddIncludePath( wxCommandEvent& event )
+// void WorkspaceSettingsDlg::OnAddIncludePath( wxCommandEvent& event )
 //{
 //	wxUnusedVar(event);
-//	wxString new_path = wxDirSelector(_("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+//	wxString new_path = wxDirSelector(_("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition,
+//this);
 //	if (new_path.IsEmpty() == false) {
 //		wxString curpaths = m_textCtrlIncludePaths->GetValue();
 //		curpaths.Trim().Trim(false);
@@ -104,10 +103,11 @@ WorkspaceSettingsDlg::~WorkspaceSettingsDlg()
 //	}
 //}
 //
-//void WorkspaceSettingsDlg::OnAddExcludePath( wxCommandEvent& event )
+// void WorkspaceSettingsDlg::OnAddExcludePath( wxCommandEvent& event )
 //{
 //	wxUnusedVar(event);
-//	wxString new_path = wxDirSelector(_("Add Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+//	wxString new_path = wxDirSelector(_("Add Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition,
+//this);
 //	if (new_path.IsEmpty() == false) {
 //		wxString curpaths = m_textCtrlExcludePaths->GetValue();
 //		curpaths.Trim().Trim(false);
@@ -119,15 +119,9 @@ WorkspaceSettingsDlg::~WorkspaceSettingsDlg()
 //	}
 //}
 //
-wxArrayString WorkspaceSettingsDlg::GetExcludePaths() const
-{
-    return wxArrayString();
-}
+wxArrayString WorkspaceSettingsDlg::GetExcludePaths() const { return wxArrayString(); }
 
-wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const
-{
-    return m_ccPage->GetIncludePaths();
-}
+wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const { return m_ccPage->GetIncludePaths(); }
 
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)
 {

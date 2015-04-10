@@ -109,9 +109,10 @@ NewKeyShortcutDlg::NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid)
     m_checkBoxShift->SetValue(ks.modifiers & kShift);
 
     m_textCtrl1->SetFocus();
-    Centre();
+    CentreOnParent();
     
-    WindowAttrManager::Load(this, "NewKeyShortcutDlg");
+    SetName("NewKeyShortcutDlg");
+    WindowAttrManager::Load(this);
 }
 
 void NewKeyShortcutDlg::OnKeyDown(wxKeyEvent& event)
@@ -225,4 +226,4 @@ void NewKeyShortcutDlg::OnClearUI(wxUpdateUIEvent& event)
                  !m_textCtrl1->IsEmpty());
 }
 
-NewKeyShortcutDlg::~NewKeyShortcutDlg() { WindowAttrManager::Save(this, "NewKeyShortcutDlg");}
+NewKeyShortcutDlg::~NewKeyShortcutDlg() {}

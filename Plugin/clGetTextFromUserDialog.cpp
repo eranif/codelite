@@ -17,10 +17,8 @@ clGetTextFromUserDialog::clGetTextFromUserDialog(wxWindow* parent,
         m_textCtrl->SelectAll();
     }
     CenterOnParent();
-    WindowAttrManager::Load(this, "clGetTextFromUserDialog");
+    SetName("clGetTextFromUserDialog");
+    WindowAttrManager::Load(this);
 }
 
-clGetTextFromUserDialog::~clGetTextFromUserDialog()
-{
-    WindowAttrManager::Save(this, "clGetTextFromUserDialog");
-}
+clGetTextFromUserDialog::~clGetTextFromUserDialog() {}

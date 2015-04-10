@@ -52,7 +52,8 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrColouring->GetGrid());
     Centre();
     GetSizer()->Fit(this);
-    WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
+    SetName("TagsOptionsDlg");
+    WindowAttrManager::Load(this);
 
     // Set default values
 
@@ -125,7 +126,7 @@ TagsOptionsDlg::TagsOptionsDlg(wxWindow* parent, const TagsOptionsData& data)
 
 TagsOptionsDlg::~TagsOptionsDlg()
 {
-    WindowAttrManager::Save(this, wxT("TagsOptionsDlgAttr"), NULL);
+    
 }
 
 void TagsOptionsDlg::OnButtonOK(wxCommandEvent& event)

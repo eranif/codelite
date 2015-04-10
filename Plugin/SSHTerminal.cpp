@@ -57,7 +57,8 @@ SSHTerminal::SSHTerminal(wxWindow* parent, clSSH::Ptr_t ssh)
         lexer->Apply(m_stcOutput);
     }
     m_stcOutput->SetEditable(false);
-    WindowAttrManager::Load(this, "SSHTerminal");
+    SetName("SSHTerminal");
+    WindowAttrManager::Load(this);
     m_ssh->ExecuteShellCommand(this, "\n");
 }
 
@@ -66,7 +67,7 @@ SSHTerminal::~SSHTerminal()
     clCommandEvent event(wxEVT_SSH_TERMINAL_CLOSING);
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
-    WindowAttrManager::Save(this, "SSHTerminal");
+    
 }
 
 void SSHTerminal::OnSshOutput(clCommandEvent& event)

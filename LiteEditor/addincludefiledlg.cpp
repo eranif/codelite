@@ -64,8 +64,9 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     SetAndMarkLine();
     m_textCtrlPreview->EmptyUndoBuffer();
     m_textCtrlPreview->SetFocus();
-    WindowAttrManager::Load(this, "AddIncludeFileDlg", NULL);
-    Centre();
+    CentreOnParent();
+    SetName("AddIncludeFileDlg");
+    WindowAttrManager::Load(this);
 
     // Only call OnModified when text was deleted or added
     Bind(wxEVT_IDLE, &AddIncludeFileDlg::OnIdle, this);
@@ -78,7 +79,7 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
 }
 
-AddIncludeFileDlg::~AddIncludeFileDlg() { WindowAttrManager::Save(this, "AddIncludeFileDlg", NULL); }
+AddIncludeFileDlg::~AddIncludeFileDlg() {  }
 
 void AddIncludeFileDlg::UpdateLineToAdd()
 {

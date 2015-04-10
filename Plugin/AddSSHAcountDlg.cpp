@@ -33,7 +33,8 @@
 AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent)
     : AddSSHAcountDlgBase(parent)
 {
-    WindowAttrManager::Load(this, "AddSSHAcountDlg", NULL);
+    SetName("AddSSHAcountDlg");
+    WindowAttrManager::Load(this);
 }
 
 AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account)
@@ -45,10 +46,11 @@ AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account
     m_textCtrlUsername->ChangeValue(account.GetUsername());
     m_textCtrlName->ChangeValue(account.GetAccountName());
     m_textCtrlHomeFolder->ChangeValue(account.GetDefaultFolder());
-    WindowAttrManager::Load(this, "AddSSHAcountDlg", NULL);
+    SetName("AddSSHAcountDlg");
+    WindowAttrManager::Load(this);
 }
 
-AddSSHAcountDlg::~AddSSHAcountDlg() { WindowAttrManager::Save(this, "AddSSHAcountDlg", NULL); }
+AddSSHAcountDlg::~AddSSHAcountDlg() {}
 
 void AddSSHAcountDlg::OnOKUI(wxUpdateUIEvent& event)
 {

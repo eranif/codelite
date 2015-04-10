@@ -29,8 +29,12 @@
 #include "imanager.h"
 #include "windowattrmanager.h"
 
-SvnSyncDialog::SvnSyncDialog( wxWindow* parent, Subversion2 *plugin, const wxString& rootDir, bool excludeBin, const wxString& excludeExtensions )
-    : SvnSyncDialogBaseClass( parent )
+SvnSyncDialog::SvnSyncDialog(wxWindow* parent,
+                             Subversion2* plugin,
+                             const wxString& rootDir,
+                             bool excludeBin,
+                             const wxString& excludeExtensions)
+    : SvnSyncDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_rootDir(rootDir)
     , m_excludeExtensions(excludeExtensions)
@@ -43,13 +47,11 @@ SvnSyncDialog::SvnSyncDialog( wxWindow* parent, Subversion2 *plugin, const wxStr
 
     UpdateUrl(m_rootDir);
 
-    WindowAttrManager::Load(this, wxT("SvnSyncDialog"), m_plugin->GetManager()->GetConfigTool());
+    SetName("SvnSyncDialog");
+    WindowAttrManager::Load(this);
 }
 
-SvnSyncDialog::~SvnSyncDialog()
-{
-    WindowAttrManager::Save(this, wxT("SvnSyncDialog"), m_plugin->GetManager()->GetConfigTool());
-}
+SvnSyncDialog::~SvnSyncDialog() {}
 
 void SvnSyncDialog::UpdateUrl(const wxString& rootDir)
 {
@@ -57,7 +59,7 @@ void SvnSyncDialog::UpdateUrl(const wxString& rootDir)
     m_plugin->DoGetSvnInfoSync(svnInfo, rootDir);
 
     wxString textLine(_("Root URL:  "));
-    if (svnInfo.m_sourceUrl.IsEmpty()) {
+    if(svnInfo.m_sourceUrl.IsEmpty()) {
         textLine += _("<not applicable>");
     } else {
         textLine += svnInfo.m_sourceUrl;
@@ -65,7 +67,7 @@ void SvnSyncDialog::UpdateUrl(const wxString& rootDir)
     m_staticTextSvnInfo->SetLabel(textLine);
 }
 
-void SvnSyncDialog::OnButtonOK( wxCommandEvent& event )
+void SvnSyncDialog::OnButtonOK(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_rootDir = m_dirPickerRootDir->GetPath();
@@ -74,7 +76,4 @@ void SvnSyncDialog::OnButtonOK( wxCommandEvent& event )
     EndModal(wxID_OK);
 }
 
-void SvnSyncDialog::OnOkUI(wxUpdateUIEvent& event)
-{
-    event.Enable( m_dirPickerRootDir->GetPath().IsEmpty() == false );
-}
+void SvnSyncDialog::OnOkUI(wxUpdateUIEvent& event) { event.Enable(m_dirPickerRootDir->GetPath().IsEmpty() == false); }

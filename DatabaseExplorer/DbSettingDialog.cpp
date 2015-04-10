@@ -42,7 +42,8 @@
 #include <wx/dblayer/include/DatabaseErrorCodes.h>
 #include <wx/dblayer/include/DatabaseLayerException.h>
 
-DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent):_DBSettingsDialog( pWindowParent )
+DbSettingDialog::DbSettingDialog(DbViewerPanel* parent, wxWindow* pWindowParent)
+    : _DBSettingsDialog(pWindowParent)
 {
 
     m_pParent = parent;
@@ -57,41 +58,37 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel *parent, wxWindow* pWindowParent)
 #ifndef DBL_USE_POSTGRES
     m_PostgrePanel->Enable(false);
 #endif
-    WindowAttrManager::Load(this, wxT("DbSettingDialog"), NULL);
+    SetName("DbSettingDialog");
+    WindowAttrManager::Load(this);
 }
 
-DbSettingDialog::~DbSettingDialog()
-{
-    WindowAttrManager::Save(this, wxT("DbSettingDialog"), NULL);
+DbSettingDialog::~DbSettingDialog() {}
 
-}
-
-void DbSettingDialog::OnCancelClick(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void DbSettingDialog::OnCancelClick(wxCommandEvent& event) { event.Skip(); }
 
 void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 {
 #ifdef DBL_USE_MYSQL
     try {
-        //MysqlDatabaseLayer *DbLayer = new MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
-        IDbAdapter* adapt = new MySqlDbAdapter(m_txServer->GetValue(),m_txUserName->GetValue(),m_txPassword->GetValue());
+        // MysqlDatabaseLayer *DbLayer = new
+        // MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
+        IDbAdapter* adapt =
+            new MySqlDbAdapter(m_txServer->GetValue(), m_txUserName->GetValue(), m_txPassword->GetValue());
 
         wxString serverName = m_txServer->GetValue();
         m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
 
         m_pParent->SetServer(serverName);
-    } catch (DatabaseLayerException& e) {
+    } catch(DatabaseLayerException& e) {
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-        wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+        wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
-    } catch( ... ) {
-        wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+    } catch(...) {
+        wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
     }
 #else
-    wxMessageBox( _("MySQL connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
+    wxMessageBox(_("MySQL connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING);
 #endif
 }
 
@@ -100,26 +97,25 @@ void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 #ifdef DBL_USE_SQLITE
     try {
 
-        //SqliteDatabaseLayer *DbLayer = new SqliteDatabaseLayer(m_filePickerSqlite->GetPath());
+        // SqliteDatabaseLayer *DbLayer = new SqliteDatabaseLayer(m_filePickerSqlite->GetPath());
         IDbAdapter* pAdapt = new SQLiteDbAdapter(m_filePickerSqlite->GetPath());
 
-
-        //m_pParent->SetDbLayer(DbLayer);
+        // m_pParent->SetDbLayer(DbLayer);
         wxString serverName = m_filePickerSqlite->GetPath();
         m_pParent->AddDbConnection(new DbConnection(pAdapt, serverName));
 
         m_pParent->SetServer(serverName);
 
-    } catch (DatabaseLayerException& e) {
+    } catch(DatabaseLayerException& e) {
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-        wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+        wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
-    } catch( ... ) {
-        wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+    } catch(...) {
+        wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
     }
 #else
-    wxMessageBox( _("SQLite connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
+    wxMessageBox(_("SQLite connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING);
 #endif
 }
 
@@ -131,10 +127,7 @@ void DbSettingDialog::OnHistoryClick(wxCommandEvent& event)
 #endif
 }
 
-void DbSettingDialog::OnHistoryDClick(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void DbSettingDialog::OnHistoryDClick(wxCommandEvent& event) { event.Skip(); }
 
 void DbSettingDialog::LoadHistory()
 {
@@ -142,14 +135,14 @@ void DbSettingDialog::LoadHistory()
     wxArrayString files = DoLoadSqliteHistory();
 
     m_listCtrlRecentFiles->DeleteAllItems();
-    for(size_t i=0; i<files.Count(); i++) {
+    for(size_t i = 0; i < files.Count(); i++) {
         int idx = AppendListCtrlRow(m_listCtrlRecentFiles);
         SetColumnText(m_listCtrlRecentFiles, idx, 0, files.Item(i));
     }
 #ifdef DBL_USE_MYSQL
     DbConnectionInfoVec mySqlConns = DoLoadMySQLHistory();
     m_listBox2->Clear();
-    for(size_t i=0; i<mySqlConns.size(); i++) {
+    for(size_t i = 0; i < mySqlConns.size(); i++) {
         m_listBox2->Append(mySqlConns.at(i).GetConnectionName());
     }
 #endif
@@ -157,7 +150,7 @@ void DbSettingDialog::LoadHistory()
 #ifdef DBL_USE_POSTGRES
     DbConnectionInfoVec pgSqlConns = DoLoadPgSQLHistory();
     m_listBoxPg->Clear();
-    for(size_t i=0; i<pgSqlConns.size(); i++) {
+    for(size_t i = 0; i < pgSqlConns.size(); i++) {
         m_listBoxPg->Append(pgSqlConns.at(i).GetConnectionName());
     }
 #endif
@@ -167,28 +160,32 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
 {
 #ifdef DBL_USE_POSTGRES
     try {
-        //MysqlDatabaseLayer *DbLayer = new MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
+        // MysqlDatabaseLayer *DbLayer = new
+        // MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
         long portNumber = 0;
         m_txPgPort->GetValue().ToLong(&portNumber);
-        IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(),portNumber,m_txPgDatabase->GetValue(),m_txPgUserName->GetValue(),m_txPgPassword->GetValue());
+        IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(),
+                                                    portNumber,
+                                                    m_txPgDatabase->GetValue(),
+                                                    m_txPgUserName->GetValue(),
+                                                    m_txPgPassword->GetValue());
 
         wxString serverName = m_txPgServer->GetValue();
         m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
 
         m_pParent->SetServer(serverName);
-    } catch (DatabaseLayerException& e) {
+    } catch(DatabaseLayerException& e) {
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-        wxMessageDialog dlg(this,errorMessage,_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+        wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
-    } catch( ... ) {
-        wxMessageDialog dlg(this,_("Unknown error."),_("DB Error"),wxOK | wxCENTER | wxICON_ERROR);
+    } catch(...) {
+        wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
     }
 #else
-    wxMessageBox( _("PostgreSQL connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING );
+    wxMessageBox(_("PostgreSQL connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING);
 #endif
 }
-
 
 void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event)
 {
@@ -198,10 +195,7 @@ void DbSettingDialog::OnPgHistoryClick(wxCommandEvent& event)
 #endif
 }
 
-void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event) { event.Skip(); }
 
 void DbSettingDialog::OnItemActivated(wxListEvent& event)
 {
@@ -210,7 +204,7 @@ void DbSettingDialog::OnItemActivated(wxListEvent& event)
     long selecteditem = -1;
     selecteditem = m_listCtrlRecentFiles->GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-    m_filePickerSqlite->SetPath( GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0) );
+    m_filePickerSqlite->SetPath(GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0));
     OnSqliteOkClick(dummy);
     Close();
 }
@@ -223,7 +217,6 @@ void DbSettingDialog::OnItemKeyDown(wxListEvent& event)
 
     } else {
         event.Skip();
-
     }
 }
 
@@ -271,14 +264,13 @@ void DbSettingDialog::DoSaveSqliteHistory()
     // Save the recent opened files
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem( &settings );
-    
+    config.ReadItem(&settings);
+
     wxArrayString files = settings.GetRecentFiles();
 
     wxString filename = m_filePickerSqlite->GetPath();
     filename.Trim().Trim(false);
-    if(filename.IsEmpty())
-        return;
+    if(filename.IsEmpty()) return;
 
     files.Insert(filename, 0);
     settings.SetRecentFiles(files);
@@ -289,7 +281,7 @@ wxArrayString DbSettingDialog::DoLoadSqliteHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem( &settings );
+    config.ReadItem(&settings);
     return settings.GetRecentFiles();
 }
 
@@ -297,7 +289,7 @@ DbConnectionInfoVec DbSettingDialog::DoLoadMySQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem( &settings );
+    config.ReadItem(&settings);
     return settings.GetMySQLConnections();
 }
 
@@ -305,7 +297,7 @@ DbConnectionInfoVec DbSettingDialog::DoLoadPgSQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem( &settings );
+    config.ReadItem(&settings);
     return settings.GetPgSQLConnections();
 }
 
@@ -313,19 +305,18 @@ void DbSettingDialog::DoSaveMySQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem( &settings );
+    config.ReadItem(&settings);
     DbConnectionInfoVec mysql = settings.GetMySQLConnections();
 
     DbConnectionInfo conn;
-    conn.SetConnectionType (DbConnectionInfo::DbConnTypeMySQL);
+    conn.SetConnectionType(DbConnectionInfo::DbConnTypeMySQL);
     conn.SetDefaultDatabase(wxT(""));
-    conn.SetConnectionName (m_txName->GetValue());
-    conn.SetPassword       (m_txPassword->GetValue());
-    conn.SetServer         (m_txServer->GetValue());
-    conn.SetUsername       (m_txUserName->GetValue());
+    conn.SetConnectionName(m_txName->GetValue());
+    conn.SetPassword(m_txPassword->GetValue());
+    conn.SetServer(m_txServer->GetValue());
+    conn.SetUsername(m_txUserName->GetValue());
 
-    if(!conn.IsValid())
-        return;
+    if(!conn.IsValid()) return;
 
     // remove any connection with this name
     DbConnectionInfoVec::iterator iter = mysql.begin();
@@ -345,22 +336,21 @@ void DbSettingDialog::DoSavePgSQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem( &settings );
+    config.ReadItem(&settings);
     DbConnectionInfoVec pgconns = settings.GetPgSQLConnections();
 
     long port = 0;
     DbConnectionInfo conn;
-    conn.SetConnectionType (DbConnectionInfo::DbConnTypePgSQL);
-    conn.SetConnectionName (m_txPgName->GetValue());
+    conn.SetConnectionType(DbConnectionInfo::DbConnTypePgSQL);
+    conn.SetConnectionName(m_txPgName->GetValue());
     conn.SetDefaultDatabase(m_txPgDatabase->GetValue());
-    conn.SetPassword       (m_txPgPassword->GetValue());
-    conn.SetServer         (m_txPgServer->GetValue());
+    conn.SetPassword(m_txPgPassword->GetValue());
+    conn.SetServer(m_txPgServer->GetValue());
     m_txPgPort->GetValue().ToLong(&port);
     conn.SetPort(port);
-    conn.SetUsername       (m_txPgUserName->GetValue());
+    conn.SetUsername(m_txPgUserName->GetValue());
 
-    if(!conn.IsValid())
-        return;
+    if(!conn.IsValid()) return;
 
     // remove any connection with this name
     DbConnectionInfoVec::iterator iter = pgconns.begin();
@@ -378,7 +368,7 @@ void DbSettingDialog::DoSavePgSQLHistory()
 
 void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, const wxString& name)
 {
-    for(size_t i=0; i<conns.size(); i++) {
+    for(size_t i = 0; i < conns.size(); i++) {
         if(conns.at(i).GetConnectionName() == name) {
             // we found the selected connection
             if(conns.at(i).GetConnectionType() == DbConnectionInfo::DbConnTypeMySQL) {
@@ -392,11 +382,10 @@ void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, c
                 // populate the PgSQL fields
                 m_txPgName->SetValue(conns.at(i).GetConnectionName());
                 m_txPgServer->SetValue(conns.at(i).GetServer());
-                m_txPgPort->SetValue(wxString::Format(wxT("%i"),conns.at(i).GetPort()));
+                m_txPgPort->SetValue(wxString::Format(wxT("%i"), conns.at(i).GetPort()));
                 m_txPgUserName->SetValue(conns.at(i).GetUsername());
                 m_txPgPassword->SetValue(conns.at(i).GetPassword());
                 m_txPgDatabase->SetValue(conns.at(i).GetDefaultDatabase());
-
             }
             return;
         }

@@ -27,32 +27,30 @@
 #include "windowattrmanager.h"
 #include "imanager.h"
 
-NewIneritanceDlg::NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxString &parentName, const wxString &access )
-    : NewIneritanceBaseDlg( parent, wxID_ANY, _("New Inheritance"))
+NewIneritanceDlg::NewIneritanceDlg(wxWindow* parent, IManager* mgr, const wxString& parentName, const wxString& access)
+    : NewIneritanceBaseDlg(parent, wxID_ANY, _("New Inheritance"))
     , m_mgr(mgr)
 {
     // Do this the hard way, rather than letting wxFB localise these particular strings :p
-    const wxString AccessChoices[] = { wxT("public"), wxT("private"), wxT("protected")};
+    const wxString AccessChoices[] = { wxT("public"), wxT("private"), wxT("protected") };
     wxArrayString choices(3, AccessChoices);
     m_choiceAccess->Clear();
     m_choiceAccess->Append(choices);
-    //by default select 0
+    // by default select 0
     m_choiceAccess->Select(0);
     if(access.IsEmpty() == false) {
         m_choiceAccess->SetStringSelection(access);
     }
     m_textCtrlInhertiance->SetValue(parentName);
-    Centre();
+    CentreOnParent();
 
-    WindowAttrManager::Load(this, wxT("NewIneritanceDlg"), m_mgr->GetConfigTool());
+    SetName("NewIneritanceDlg");
+    WindowAttrManager::Load(this);
 }
 
-NewIneritanceDlg::~NewIneritanceDlg()
-{
-    WindowAttrManager::Save(this, wxT("NewIneritanceDlg"), m_mgr->GetConfigTool());
-}
+NewIneritanceDlg::~NewIneritanceDlg() {}
 
-void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
+void NewIneritanceDlg::OnButtonMore(wxCommandEvent& event)
 {
     m_textCtrlInhertiance->SetFocus();
     OpenResourceDialog dlg(this, m_mgr, "");
@@ -63,7 +61,7 @@ void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
 
     if(dlg.ShowModal() == wxID_OK) {
         wxString parentName;
-        if( dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>")) {
+        if(dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>")) {
             parentName << dlg.GetSelection().m_scope << wxT("::");
         }
         parentName << dlg.GetSelection().m_name;

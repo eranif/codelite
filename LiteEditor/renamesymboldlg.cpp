@@ -64,8 +64,9 @@ RenameSymbol::RenameSymbol( wxWindow* parent, const CppToken::List_t& candidates
 
     m_textCtrlNewName->SetValue(oldname);
     m_textCtrlNewName->SetFocus();
-
-    WindowAttrManager::Load(this, "RenameSymbol", NULL);
+    
+    SetName("RenameSymbol");
+    WindowAttrManager::Load(this);
 }
 
 void RenameSymbol::AddMatch(const CppToken& token, bool check)
@@ -132,7 +133,7 @@ void RenameSymbol::OnSelection(wxDataViewEvent& event)
 
 RenameSymbol::~RenameSymbol()
 {
-    WindowAttrManager::Save(this, "RenameSymbol", NULL);
+    
 }
 
 void RenameSymbol::OnCheckAll(wxCommandEvent& event)

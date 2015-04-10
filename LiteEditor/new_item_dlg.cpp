@@ -103,7 +103,8 @@ NewItemDlg::NewItemDlg( wxWindow* parent, wxString cwd)
 
     // Attach events
     ConnectEvents();
-    WindowAttrManager::Load(this, wxT("NewItemDlg"), NULL);
+    SetName("NewItemDlg");
+    WindowAttrManager::Load(this);
 }
 
 void NewItemDlg::ConnectEvents()
@@ -213,5 +214,5 @@ void NewItemDlg::OnCharHook(wxKeyEvent &event)
 
 NewItemDlg::~NewItemDlg()
 {
-    WindowAttrManager::Save(this, wxT("NewItemDlg"), NULL);
+    
 }

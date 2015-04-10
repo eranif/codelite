@@ -2,26 +2,25 @@
 #include <windowattrmanager.h>
 #include "php_strings.h"
 
-NewPHPWorkspaceDlg::NewPHPWorkspaceDlg( wxWindow* parent )
-    : NewPHPWorkspaceBaseDlg( parent )
+NewPHPWorkspaceDlg::NewPHPWorkspaceDlg(wxWindow* parent)
+    : NewPHPWorkspaceBaseDlg(parent)
 {
-    WindowAttrManager::Load(this, wxT("NewPHPWorkspaceDlg"), NULL);
+    CenterOnParent();
+    SetName("NewPHPWorkspaceDlg");
+    WindowAttrManager::Load(this);
 }
 
-NewPHPWorkspaceDlg::~NewPHPWorkspaceDlg()
-{
-    WindowAttrManager::Save(this, wxT("NewPHPWorkspaceDlg"), NULL);
-}
+NewPHPWorkspaceDlg::~NewPHPWorkspaceDlg() {}
 
 wxString NewPHPWorkspaceDlg::GetWorkspacePath() const
 {
-    if ( m_textCtrlPath->IsEmpty() || m_textCtrlName->IsEmpty() ) {
+    if(m_textCtrlPath->IsEmpty() || m_textCtrlName->IsEmpty()) {
         return "";
     }
-    
+
     wxFileName filepath(m_textCtrlPath->GetValue(), m_textCtrlName->GetValue());
-    if ( m_checkBoxCreateInSeparateDir->IsChecked() ) {
-        filepath.AppendDir( filepath.GetName() );
+    if(m_checkBoxCreateInSeparateDir->IsChecked()) {
+        filepath.AppendDir(filepath.GetName());
     }
     filepath.SetExt(PHPStrings::PHP_WORKSPACE_EXT);
     return filepath.GetFullPath();
@@ -30,31 +29,31 @@ wxString NewPHPWorkspaceDlg::GetWorkspacePath() const
 void NewPHPWorkspaceDlg::OnNameUpdated(wxCommandEvent& event)
 {
     event.Skip();
-    m_textCtrlPreview->ChangeValue( GetWorkspacePath() );
+    m_textCtrlPreview->ChangeValue(GetWorkspacePath());
 }
 
 void NewPHPWorkspaceDlg::OnOK(wxCommandEvent& event)
 {
-    wxFileName fn ( GetWorkspacePath() );
+    wxFileName fn(GetWorkspacePath());
     wxLogNull noLog;
-    wxMkdir( fn.GetPath() );
+    wxMkdir(fn.GetPath());
     EndModal(wxID_OK);
 }
 void NewPHPWorkspaceDlg::OnCheckMakeSeparateDir(wxCommandEvent& event)
 {
-    m_textCtrlPreview->ChangeValue( GetWorkspacePath() );
+    m_textCtrlPreview->ChangeValue(GetWorkspacePath());
 }
 
 void NewPHPWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_textCtrlPath->IsEmpty() && !m_textCtrlName->GetValue().IsEmpty() );
+    event.Enable(!m_textCtrlPath->IsEmpty() && !m_textCtrlName->GetValue().IsEmpty());
 }
 
 void NewPHPWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector(_("select a folder"));
-    if ( !path.IsEmpty() ) {
-        m_textCtrlPath->ChangeValue( path );
-        m_textCtrlPreview->ChangeValue( GetWorkspacePath() );
+    if(!path.IsEmpty()) {
+        m_textCtrlPath->ChangeValue(path);
+        m_textCtrlPreview->ChangeValue(GetWorkspacePath());
     }
 }

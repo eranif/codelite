@@ -47,11 +47,12 @@ SymbolsDialog::SymbolsDialog(wxWindow* parent)
 
     m_results->Connect(
         wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(SymbolsDialog::OnItemDeselected), NULL, this);
-    Centre();
-    WindowAttrManager::Load(this, wxT("SymbolsDialog"), NULL);
+    CentreOnParent();
+    SetName("SymbolsDialog");
+    WindowAttrManager::Load(this);
 }
 
-SymbolsDialog::~SymbolsDialog() { WindowAttrManager::Save(this, wxT("SymbolsDialog"), NULL); }
+SymbolsDialog::~SymbolsDialog() {  }
 
 void SymbolsDialog::AddSymbol(const TagEntryPtr& tag, bool sel)
 {

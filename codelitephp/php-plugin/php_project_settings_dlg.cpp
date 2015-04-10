@@ -28,7 +28,7 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
     wxString fileExts = PHPWorkspace::Get()->GetProject(m_projectName)->GetImportFileSpec();
     fileExts.Replace(";", ",");
     m_pgPropFileTypes->SetValueFromString(fileExts);
-    
+
     wxString excludeFolders = PHPWorkspace::Get()->GetProject(m_projectName)->GetExcludeFolders();
     excludeFolders.Replace(";", ",");
     m_pgPropExcludeFolders->SetValueFromString(excludeFolders);
@@ -51,7 +51,8 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
 
     SetDirty(false);
     GetSizer()->Fit(this);
-    WindowAttrManager::Load(this, wxT("PHPProjectSettingsDlg"), NULL);
+    SetName("PHPProjectSettingsDlg");
+    WindowAttrManager::Load(this);
 
     m_dvListCtrlFileMapping->Bind(
         wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);
@@ -63,7 +64,7 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
 
 PHPProjectSettingsDlg::~PHPProjectSettingsDlg()
 {
-    WindowAttrManager::Save(this, wxT("PHPProjectSettingsDlg"), NULL);
+
     m_dvListCtrlFileMapping->Unbind(
         wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);
     m_dvListCtrlFileMapping->Unbind(
@@ -108,7 +109,7 @@ void PHPProjectSettingsDlg::OnAddIncludePath(wxCommandEvent& event)
         if(curIncPaths.Index(path) == wxNOT_FOUND) {
             curIncPaths.Add(path);
         }
-        
+
         // User SetValue to trigger an event
         m_textCtrlPHPIncludePath->SetValue(wxJoin(curIncPaths, '\n'));
     }

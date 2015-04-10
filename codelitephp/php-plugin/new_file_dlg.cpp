@@ -6,12 +6,13 @@ NewFileDlg::NewFileDlg( wxWindow* parent, const wxString &path )
 {
     m_textCtrlName->SetFocus();
     m_dirPickerPath->SetPath(path);
-    WindowAttrManager::Load(this, wxT("NewFileDlg"), NULL);
+    SetName("NewFileDlg");
+    WindowAttrManager::Load(this);
 }
 
 NewFileDlg::~NewFileDlg()
 {
-    WindowAttrManager::Save(this, wxT("NewFileDlg"), NULL);
+    
 }
 
 wxFileName NewFileDlg::GetPath() const

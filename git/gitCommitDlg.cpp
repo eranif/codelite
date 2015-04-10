@@ -54,7 +54,8 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent)
         m_choiceRecentCommits->SetSelection(0);
     }
     
-    WindowAttrManager::Load(this, wxT("GitCommitDlg"), NULL);
+    SetName("GitCommitDlg");
+    WindowAttrManager::Load(this);
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->Apply(m_stcCommitMessage);
 }
@@ -73,7 +74,7 @@ GitCommitDlg::~GitCommitDlg()
     data.SetGitCommitDlgVSashPos(m_splitterMain->GetSashPosition());
     conf.WriteItem(&data);
 
-    WindowAttrManager::Save(this, wxT("GitCommitDlg"), NULL);
+    
 }
 
 /*******************************************************************************/

@@ -10,11 +10,11 @@ WordCompletionSettingsDlg::WordCompletionSettingsDlg(wxWindow* parent)
     size_t completeTypes = settings.Load().GetCompleteTypes();
     m_pgPropTypes->SetValueFromInt(completeTypes);
     m_pgPropComparisonMethod->SetChoiceSelection(settings.GetComparisonMethod());
-    
-    WindowAttrManager::Load(this, "WordCompletionSettingsDlg");
+    SetName("WordCompletionSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
-WordCompletionSettingsDlg::~WordCompletionSettingsDlg() { WindowAttrManager::Save(this, "WordCompletionSettingsDlg"); }
+WordCompletionSettingsDlg::~WordCompletionSettingsDlg() {  }
 
 void WordCompletionSettingsDlg::OnValueChanged(wxPropertyGridEvent& event)
 {

@@ -21,10 +21,11 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     strPort << data.GetXdebugPort();
     m_textCtrlXDebugPort->ChangeValue(strPort);
     m_textCtrlHost->ChangeValue(data.GetXdebugHost());
-    WindowAttrManager::Load(this, wxT("PHPSettingsDlg"), NULL);
+    SetName("PHPSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
-PHPSettingsDlg::~PHPSettingsDlg() { WindowAttrManager::Save(this, wxT("PHPSettingsDlg"), NULL); }
+PHPSettingsDlg::~PHPSettingsDlg() {  }
 
 void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)
 {

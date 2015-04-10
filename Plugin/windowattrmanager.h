@@ -29,6 +29,7 @@
 #include <wx/window.h>
 #include "iconfigtool.h"
 #include "codelite_exports.h"
+#include <wx/toplevel.h>
 
 /**
  * @class WindowAttrManager
@@ -39,20 +40,16 @@
  */
 class WXDLLIMPEXP_SDK WindowAttrManager
 {
+protected:
+    static void DoLoad(wxWindow* win, const wxString& parentName, int depth);
+
 public:
-    /**
-     * @brief write windows' size and position to the disk
-     * @param win window to work on
-     * @param name the windows' name
-     * @param conf configuration tool to use. If set to NULL the default EditorConfigST will be used
-     */
-    static void Save(wxWindow *win, const wxString &name, IConfigTool *conf = NULL);
     /**
      * @brief load windows' size and position from the disk
      * @param win window to work on
      * @param name the windows' name
      * @param conf conf configuration tool to use. If set to NULL the default EditorConfigST will be used
      */
-    static void Load(wxWindow *win, const wxString &name, IConfigTool *conf = NULL);
+    static void Load(wxTopLevelWindow* win);
 };
 #endif // __windowattrmanager__

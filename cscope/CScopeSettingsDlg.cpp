@@ -8,13 +8,10 @@ CScopeSettingsDlg::CScopeSettingsDlg(wxWindow* parent)
 {
     CScopeConfData settings;
     EditorConfigST::Get()->ReadObject("CscopeSettings", &settings);
-    
+
     m_filePickerCScopeExe->SetPath(settings.GetCscopeExe());
-    WindowAttrManager::Load(this, "CScopeSettingsDlg");
+    SetName("CScopeSettingsDlg");
+    WindowAttrManager::Load(this);
 }
 
-CScopeSettingsDlg::~CScopeSettingsDlg()
-{
-    WindowAttrManager::Save(this, "CScopeSettingsDlg");
-}
-
+CScopeSettingsDlg::~CScopeSettingsDlg() {}

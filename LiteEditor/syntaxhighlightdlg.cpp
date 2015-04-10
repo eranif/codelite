@@ -92,7 +92,8 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
     
     m_isModified = false;
-    WindowAttrManager::Load(this, wxT("SyntaxHighlightDlgAttr"), NULL);
+    SetName("SyntaxHighlightDlg");
+    WindowAttrManager::Load(this);
 }
 
 void SyntaxHighlightDlg::OnButtonOK(wxCommandEvent& event)
@@ -204,7 +205,7 @@ void SyntaxHighlightDlg::SaveChanges()
 
 SyntaxHighlightDlg::~SyntaxHighlightDlg()
 {
-    WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL);
+    
 }
 
 void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)

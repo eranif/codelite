@@ -27,7 +27,9 @@ PHPSettersGettersDialog::PHPSettersGettersDialog(wxWindow* parent, IEditor* edit
     m_checkBoxPrefixGetter->SetValue(!(flags & kSG_NoPrefix));
     m_checkBoxReurnThis->SetValue(flags & kSG_ReturnThis);
 
-    WindowAttrManager::Load(this, "PHPSettersGettersDialog");
+    CenterOnParent();
+    SetName("PHPSettersGettersDialog");
+    WindowAttrManager::Load(this);
     PHPEntityBase::List_t members;
     PHPCodeCompletion::Instance()->GetMembers(editor, members, m_scope);
     DoPopulate(members);
@@ -35,7 +37,7 @@ PHPSettersGettersDialog::PHPSettersGettersDialog(wxWindow* parent, IEditor* edit
 
 PHPSettersGettersDialog::~PHPSettersGettersDialog()
 {
-    WindowAttrManager::Save(this, "PHPSettersGettersDialog");
+
     PHPConfigurationData conf;
     conf.Load().SetSettersGettersFlags(GetFlags()).Save();
     Clear();

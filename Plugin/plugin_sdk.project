@@ -218,6 +218,8 @@
     <File Name="includepathlocator.h"/>
     <File Name="cl_registry.h"/>
     <File Name="cl_registry.cpp"/>
+    <File Name="clPersistenceManager.h"/>
+    <File Name="clPersistenceManager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>

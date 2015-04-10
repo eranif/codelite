@@ -27,6 +27,7 @@
 
 #include "frame.h"
 #include <set>
+#include "clPersistenceManager.h"
 
 class wxSplashScreen;
 class wxSingleInstanceChecker;
@@ -44,7 +45,8 @@ protected:
     wxLocale m_locale;
     wxArrayString m_allowedPlugins;
     PluginPolicy m_pluginLoadPolicy;
-
+    clPersistenceManager m_persistencManager;
+    
 private: // Methods
     bool CopySettings(const wxString& destDir, wxString& installPath);
     bool IsSingleInstance(const wxCmdLineParser& parser, const wxString& curdir);

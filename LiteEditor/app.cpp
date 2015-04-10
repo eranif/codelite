@@ -54,6 +54,7 @@
 #include "clInitializeDialog.h"
 #include "event_notifier.h"
 #include "clsplashscreen.h"
+#include <wx/persist.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -284,6 +285,9 @@ CodeLiteApp::~CodeLiteApp(void)
 
 bool CodeLiteApp::OnInit()
 {
+    // Use our persistence manager (which uses wxFileConfig instead of the registry...)
+    wxPersistenceManager::Set(m_persistencManager);
+    
 #if defined(__WXGTK__) || defined(__WXMAC__)
 
     // block signal pipe

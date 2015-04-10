@@ -88,6 +88,8 @@
     <File Name="clFileSystemEvent.h"/>
     <File Name="clFileSystemEvent.cpp"/>
     <File Name="CMakeLists.txt"/>
+    <File Name="clIniFile.h"/>
+    <File Name="clIniFile.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

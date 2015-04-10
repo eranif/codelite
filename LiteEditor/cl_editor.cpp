@@ -1836,6 +1836,9 @@ void LEditor::BraceMatch(long pos)
     long endPos = wxStyledTextCtrl::BraceMatch(pos);
     if(endPos != wxSTC_INVALID_POSITION) {
         wxStyledTextCtrl::BraceHighlight(pos, endPos);
+#ifdef __WXMSW__
+        Refresh();
+#endif
         if(GetIndentationGuides() != 0 && GetIndent() > 0) {
             // Highlight indent guide if exist
             indentCol =

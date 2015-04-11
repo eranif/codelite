@@ -416,10 +416,10 @@ void CMakeHelpTab::CreateHelpPage(const wxString& content, const wxString& subje
     if(manager->OpenFile(fnCMakeHelpFile.GetFullPath())) {
         IEditor* activeEditor = manager->GetActiveEditor();
         if(activeEditor && activeEditor->GetFileName().GetFullPath() == fnCMakeHelpFile.GetFullPath()) {
-            activeEditor->GetSTC()->SetEditable(true);
+            activeEditor->GetCtrl()->SetEditable(true);
             activeEditor->ReloadFile();
-            activeEditor->GetSTC()->SetFirstVisibleLine(0);
-            activeEditor->GetSTC()->SetEditable(false);
+            activeEditor->GetCtrl()->SetFirstVisibleLine(0);
+            activeEditor->GetCtrl()->SetEditable(false);
         }
     }
 }

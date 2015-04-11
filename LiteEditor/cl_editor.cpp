@@ -175,6 +175,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_positionToEnsureVisible(wxNOT_FOUND)
     , m_findBookmarksActive(false)
     , m_mgr(PluginManager::Get())
+    , m_hasCCAnnotation(false)
 {
     DoUpdateOptions();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
@@ -360,7 +361,7 @@ void LEditor::SetProperties()
     CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     MarkerEnableHighlight(options->IsHighlightFoldWhenActive());
-    
+
     m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
     m_autoAddMatchedCurlyBrace = options->GetAutoAddMatchedCurlyBraces();
     m_autoAddNormalBraces = options->GetAutoAddMatchedNormalBraces();
@@ -700,7 +701,6 @@ void LEditor::OnSavePoint(wxStyledTextEvent& event)
 
 void LEditor::OnCharAdded(wxStyledTextEvent& event)
 {
-    // Allways cancel the tip
     OptionsConfigPtr options = GetOptions();
     if(m_prevSelectionInfo.IsOk()) {
         if(event.GetKey() == '"' && options->IsWrapSelectionWithQuotes()) {
@@ -874,8 +874,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     strTyped << charTyped;
     strTyped2 << firstChar << charTyped;
 
-    if((GetContext()->IsStringTriggerCodeComplete(strTyped) ||
-        GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&
+    if((GetContext()->IsStringTriggerCodeComplete(strTyped) || GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&
        !GetContext()->IsCommentOrString(GetCurrentPos())) {
         // this char should trigger a code completion
         CodeComplete();
@@ -1035,11 +1034,7 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     // update line number
     wxString message;
 
-    message << wxT("Ln ") 
-            << curLine + 1 
-            << wxT(", Col ") 
-            << GetColumn(pos)
-            << ", Pos " << pos;
+    message << wxT("Ln ") << curLine + 1 << wxT(", Col ") << GetColumn(pos) << ", Pos " << pos;
 
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
@@ -2381,7 +2376,7 @@ void LEditor::StoreCollapsedFoldsToArray(clEditorStateLocker::VecInt_t& folds) c
 
 void LEditor::LoadCollapsedFoldsFromArray(const clEditorStateLocker::VecInt_t& folds)
 {
-    clEditorStateLocker::ApplyFolds(GetSTC(), folds);
+    clEditorStateLocker::ApplyFolds(GetCtrl(), folds);
 }
 
 //----------------------------------------------
@@ -2421,12 +2416,12 @@ bool LEditor::LineIsMarked(enum marker_mask_type mask)
 
 void LEditor::StoreMarkersToArray(wxArrayString& bookmarks)
 {
-    clEditorStateLocker::SerializeBookmarks(GetSTC(), bookmarks);
+    clEditorStateLocker::SerializeBookmarks(GetCtrl(), bookmarks);
 }
 
 void LEditor::LoadMarkersFromArray(const wxArrayString& bookmarks)
 {
-    clEditorStateLocker::ApplyBookmarks(GetSTC(), bookmarks);
+    clEditorStateLocker::ApplyBookmarks(GetCtrl(), bookmarks);
 }
 
 void LEditor::DelAllMarkers(int which_type)
@@ -2704,7 +2699,7 @@ void LEditor::ReloadFile()
 
     DoCancelCalltip();
     GetFunctionTip()->Deactivate();
-    
+
     if(m_fileName.GetFullPath().IsEmpty() == true || !m_fileName.FileExists()) {
         SetEOLMode(GetEOLByOS());
         SetReloadingFile(false);
@@ -2712,7 +2707,7 @@ void LEditor::ReloadFile()
     }
 
     // State locker (on dtor it restores: bookmarks, current line, breakpoints and folds)
-    clEditorStateLocker stateLocker(GetSTC());
+    clEditorStateLocker stateLocker(GetCtrl());
 
     int lineNumber = GetCurrentLine();
     m_mgr->GetStatusBar()->SetMessage(_("Loading file..."));
@@ -4044,6 +4039,12 @@ void LEditor::OnChange(wxStyledTextEvent& event)
     bool isDelete = event.GetModificationType() & wxSTC_MOD_DELETETEXT;
     bool isUndo = event.GetModificationType() & wxSTC_PERFORMED_UNDO;
     bool isRedo = event.GetModificationType() & wxSTC_PERFORMED_REDO;
+    
+    // Remove any code completion annotations if we have some...
+    if(m_hasCCAnnotation) {
+        CallAfter(&LEditor::AnnotationClearAll);
+        m_hasCCAnnotation = false;
+    }
 
     // Notify about this editor being changed
     clCommandEvent eventMod(wxEVT_EDITOR_MODIFIED);
@@ -4824,7 +4825,7 @@ void LEditor::OnEditorConfigChanged(wxCommandEvent& event)
 
 void LEditor::ConvertIndentToSpaces()
 {
-    clSTCLineKeeper lk(GetSTC());
+    clSTCLineKeeper lk(GetCtrl());
     bool useTabs = GetUseTabs();
     SetUseTabs(false);
     int lineCount = GetLineCount();
@@ -4845,7 +4846,7 @@ void LEditor::ConvertIndentToSpaces()
 
 void LEditor::ConvertIndentToTabs()
 {
-    clSTCLineKeeper lk(GetSTC());
+    clSTCLineKeeper lk(GetCtrl());
     bool useTabs = GetUseTabs();
     SetUseTabs(true);
     int lineCount = GetLineCount();
@@ -4871,6 +4872,14 @@ void LEditor::DoCancelCodeCompletionBox()
         m_calltip->Destroy();
         m_calltip = NULL;
     }
+}
+
+void LEditor::SetCodeCompletionAnnotation(const wxString& text, int lineno)
+{
+    AnnotationClearAll();
+    m_hasCCAnnotation = true;
+    AnnotationSetText(lineno, text);
+    AnnotationSetStyle(lineno, ANNOTATION_STYLE_CC_ERROR);
 }
 
 // ----------------------------------

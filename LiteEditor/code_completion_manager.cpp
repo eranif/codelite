@@ -52,9 +52,9 @@ struct EditorDimmerDisabler {
     {
         if(m_editor) {
             m_editor->SetPreProcessorsWords("");
-            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
-            m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-            m_editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
+            m_editor->GetCtrl()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
+            m_editor->GetCtrl()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+            m_editor->GetCtrl()->Colourise(0, wxSTC_INVALID_POSITION);
         }
     }
 
@@ -424,10 +424,10 @@ void CodeCompletionManager::OnParseThreadCollectedMacros(const wxArrayString& de
         // its the same file that triggered the request, update its pre processor colouring
         // turn off the macro colouring (until new set is arrived)
         editor->SetPreProcessorsWords(macrosAsString);
-        editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
-        editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
-        editor->GetSTC()->SetKeyWords(4, macrosAsString);
-        editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
+        editor->GetCtrl()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("1"));
+        editor->GetCtrl()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
+        editor->GetCtrl()->SetKeyWords(4, macrosAsString);
+        editor->GetCtrl()->Colourise(0, wxSTC_INVALID_POSITION);
         CL_DEBUG("Updating editor colours...done");
     }
 }

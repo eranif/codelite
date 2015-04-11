@@ -43,6 +43,12 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/stc/stc.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class NavBarControlBaseClass : public wxPanel
 {
@@ -358,24 +364,29 @@ public:
 protected:
     wxAuiToolBar* m_auibar;
     wxCheckBox* m_checkBoxEnableClang;
+    wxCheckBox* m_checkBoxShowErrors;
     wxChoice* m_choiceCache;
     wxStyledTextCtrl* m_stc;
 
 protected:
     virtual void OnEnableClang(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearTextUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearCache(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearCacheUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEnableClangUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnShowAnnotations(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnShowAnnotationsUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPolicy(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPolicyUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClearCache(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearCacheUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClearText(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearTextUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckBoxEnableClang() { return m_checkBoxEnableClang; }
+    wxCheckBox* GetCheckBoxShowErrors() { return m_checkBoxShowErrors; }
     wxChoice* GetChoiceCache() { return m_choiceCache; }
     wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
-    ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~ClangOutputTabBase();
 };
 

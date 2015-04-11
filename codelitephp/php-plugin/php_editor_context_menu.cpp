@@ -201,7 +201,7 @@ bool PHPEditorContextMenu::IsIncludeOrRequireStatement(wxString& includeWhat)
     IEditor* editor = m_manager->GetActiveEditor();
     if(!editor) return false;
 
-    wxString line = editor->GetSTC()->GetLine(editor->GetCurrentLine());
+    wxString line = editor->GetCtrl()->GetLine(editor->GetCurrentLine());
     if(reInclude.IsValid() && reInclude.Matches(line)) {
         includeWhat = reInclude.GetMatch(line, 2);
         return true;
@@ -260,7 +260,7 @@ void PHPEditorContextMenu::DoGotoDefinition()
 {
     CHECK_PTR_RET(m_manager->GetActiveEditor());
     PHPCodeCompletion::Instance()->GotoDefinition(m_manager->GetActiveEditor(),
-                                                  m_manager->GetActiveEditor()->GetSTC()->GetCurrentPos());
+                                                  m_manager->GetActiveEditor()->GetCtrl()->GetCurrentPos());
 }
 
 int PHPEditorContextMenu::GetTokenPosInScope(wxStyledTextCtrl* sci,
@@ -333,7 +333,7 @@ void PHPEditorContextMenu::DoContextMenu(IEditor* editor, wxCommandEvent& e)
     // Menu can be allocated on the stack otherwise we need to delete it later
     wxMenu menu;
     DoBuildMenu(&menu, editor);
-    editor->GetSTC()->PopupMenu(&menu);
+    editor->GetCtrl()->PopupMenu(&menu);
 }
 
 void PHPEditorContextMenu::OnContextMenu(wxCommandEvent& e)
@@ -664,7 +664,7 @@ wxStyledTextCtrl* PHPEditorContextMenu::DoGetActiveScintila()
 {
     IEditor* editor = m_manager->GetActiveEditor();
     if(editor) {
-        return editor->GetSTC();
+        return editor->GetCtrl();
     }
     return NULL;
 }
@@ -676,7 +676,7 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
         PHPEntityBase::Ptr_t entry =
             PHPCodeCompletion::Instance()->GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
         if(entry) {
-            wxStyledTextCtrl* ctrl = editor->GetSTC();
+            wxStyledTextCtrl* ctrl = editor->GetCtrl();
             ctrl->BeginUndoAction();
             wxString comment = entry->FormatPhpDoc();
             
@@ -720,7 +720,7 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
                     editor->SetCaretAt(caretPos);
                 }
             }
-            editor->GetSTC()->EndUndoAction();
+            editor->GetCtrl()->EndUndoAction();
         }
     }
 }
@@ -763,7 +763,7 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
                     editor->GetTextRange(0, editor->GetLength()), className);
 
                 if(!textToAdd.IsEmpty() && line != wxNOT_FOUND) {
-                    editor->GetSTC()->InsertText(editor->PosFromLine(line), textToAdd);
+                    editor->GetCtrl()->InsertText(editor->PosFromLine(line), textToAdd);
                 }
             }
         }

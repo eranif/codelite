@@ -3,7 +3,7 @@
 
 clSTCLineKeeper::clSTCLineKeeper(IEditor* editor)
 {
-    m_locker = new clEditorStateLocker(editor->GetSTC());
+    m_locker = new clEditorStateLocker(editor->GetCtrl());
 }
 
 clSTCLineKeeper::clSTCLineKeeper(wxStyledTextCtrl* stc)

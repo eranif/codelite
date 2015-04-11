@@ -314,7 +314,7 @@ void clAuiMainNotebookTabArt::DoSetColours()
     if(editor) {
         // Change lightness ranges between 0-200
         // 0 would be completely black, 200 completely white an ialpha of 100 returns the same colour.
-        m_activeTabBgColour = editor->GetSTC()->StyleGetBackground(0);
+        m_activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
         if(DrawingUtils::IsDark(m_activeTabBgColour)) {
 
             // Adjust the button colours

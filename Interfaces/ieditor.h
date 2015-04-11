@@ -375,7 +375,7 @@ public:
     /**
      * @brief return a pointer to the underlying scintilla control
      */
-    virtual wxStyledTextCtrl* GetSTC() = 0;
+    virtual wxStyledTextCtrl* GetCtrl() = 0;
 
     /**
      * @brief set the focus to the current editor
@@ -399,6 +399,14 @@ public:
      * @brief set a warning marker in the editor with a given text
      */
     virtual void SetErrorMarker(int lineno, const wxString& annotationText) = 0;
+
+    /**
+     * @brief set a code completion annotation at the given line. code completion
+     * annotations are automatically cleared on the next char added
+     * @param text
+     * @param lineno
+     */
+    virtual void SetCodeCompletionAnnotation(const wxString& text, int lineno) = 0;
     /**
      * @brief delete all compiler markers (warnings/errors)
      */

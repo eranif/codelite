@@ -410,10 +410,10 @@ void SpellCheck::OnContextMenu(wxCommandEvent& e)
     }
 
     wxPoint pt = wxGetMousePosition();
-    pt = editor->GetSTC()->ScreenToClient(pt);
-    int pos = editor->GetSTC()->PositionFromPoint(pt);
+    pt = editor->GetCtrl()->ScreenToClient(pt);
+    int pos = editor->GetCtrl()->PositionFromPoint(pt);
 
-    if(editor->GetSTC()->IndicatorValueAt(3, pos) == 1) {
+    if(editor->GetCtrl()->IndicatorValueAt(3, pos) == 1) {
         wxMenu popUp;
         m_timer.Stop();
 
@@ -434,7 +434,7 @@ void SpellCheck::OnContextMenu(wxCommandEvent& e)
         popUp.Append(SPC_BASEID - 1, _("Ignore"), "");
         popUp.Append(SPC_BASEID - 2, _("Add"), "");
 
-        int index = editor->GetSTC()->GetPopupMenuSelectionFromUser(popUp);
+        int index = editor->GetCtrl()->GetPopupMenuSelectionFromUser(popUp);
 
         if(index != wxID_NONE) {
             if(index >= SPC_BASEID) {

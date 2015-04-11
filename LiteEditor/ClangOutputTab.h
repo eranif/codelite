@@ -6,6 +6,9 @@
 class ClangOutputTab : public ClangOutputTabBase
 {
 protected:
+    virtual void OnShowAnnotations(wxCommandEvent& event);
+    virtual void OnShowAnnotationsUI(wxUpdateUIEvent& event);
+    virtual void OnEnableClangUI(wxUpdateUIEvent& event);
     virtual void OnEnableClang(wxCommandEvent& event);
     virtual void OnClearCache(wxCommandEvent& event);
     virtual void OnClearCacheUI(wxUpdateUIEvent& event);
@@ -13,16 +16,17 @@ protected:
     virtual void OnClearTextUI(wxUpdateUIEvent& event);
     virtual void OnPolicy(wxCommandEvent& event);
     virtual void OnPolicyUI(wxUpdateUIEvent& event);
-    
+
     // Event handlers
     void OnBuildStarted(clBuildEvent& event);
     void OnClangOutput(clCommandEvent& event);
-    void OnInitDone(wxCommandEvent &event);
-    
+    void OnInitDone(wxCommandEvent& event);
+    void OnFileSaved(clCommandEvent& event);
+
 private:
     void DoClear();
-    void DoAppendText(const wxString &text);
-    
+    void DoAppendText(const wxString& text);
+
 public:
     ClangOutputTab(wxWindow* parent);
     virtual ~ClangOutputTab();

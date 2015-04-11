@@ -312,8 +312,8 @@ void MemCheckOutputView::JumpToLocation(const wxDataViewItem& item)
     if(m_mgr->OpenFile(fileName, wxEmptyString, line)) {
         IEditor* editor = m_mgr->GetActiveEditor();
         if(editor) {
-            int posStart = editor->GetSTC()->PositionFromLine(line);
-            int lineLen = editor->GetSTC()->LineLength(line);
+            int posStart = editor->GetCtrl()->PositionFromLine(line);
+            int lineLen = editor->GetCtrl()->LineLength(line);
             editor->SelectText(posStart, lineLen - 1);
         }
     }
@@ -725,9 +725,9 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
     if(m_mgr->OpenFile(m_choiceSuppFile->GetStringSelection())) {
         IEditor* editor = m_mgr->GetActiveEditor();
         if(editor) {
-            editor->GetSTC()->DocumentEnd();
-            editor->GetSTC()->Home();
-            int posStart = editor->GetSTC()->GetCurrentPos();
+            editor->GetCtrl()->DocumentEnd();
+            editor->GetCtrl()->Home();
+            int posStart = editor->GetCtrl()->GetCurrentPos();
             editor->AppendText(wxString::Format("\n# Added %s", wxDateTime::Now().Format("%F %T")));
 
             switch(mode) {
@@ -779,8 +779,8 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
             }
 
             editor->AppendText(wxT("\n"));
-            editor->GetSTC()->DocumentEnd();
-            int textLen = editor->GetSTC()->GetCurrentPos() - posStart;
+            editor->GetCtrl()->DocumentEnd();
+            int textLen = editor->GetCtrl()->GetCurrentPos() - posStart;
             editor->SelectText(posStart, textLen);
             wxCommandEvent saveEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("save_file"));
             m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->ProcessEvent(saveEvent);

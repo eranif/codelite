@@ -126,7 +126,7 @@ bool clTernServer::PostCCRequest(IEditor* editor)
     if(m_port == wxNOT_FOUND) return false; // don't know tern's port
     ++m_recycleCount;
 
-    wxStyledTextCtrl* ctrl = editor->GetSTC();
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
 
     // Prepare the request
     JSONRoot root(cJSON_Object);
@@ -369,7 +369,7 @@ bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
     if(m_port == wxNOT_FOUND) return false; // don't know tern's port
     ++m_recycleCount;
     
-    wxStyledTextCtrl* ctrl = editor->GetSTC();
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
 
     // Write the modified buffer into a file
     // wxFileName tmpFileName = wxFileName::CreateTempFileName("tern");

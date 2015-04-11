@@ -94,7 +94,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
 {
     IEditor* editor = ::clGetManager()->GetActiveEditor();
     if(editor) {
-        wxColour bgColour = editor->GetSTC()->StyleGetBackground(0);
+        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
         if(!DrawingUtils::IsDark(bgColour)) {
             m_useLightColours = true;
         }
@@ -219,7 +219,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     if(focusEdior) {
         // Check that the tip Y coord is inside the editor
         // this is to prevent some zombie tips appearing floating in no-man-land
-        wxRect editorRect = focusEdior->GetSTC()->GetScreenRect();
+        wxRect editorRect = focusEdior->GetCtrl()->GetScreenRect();
         if(editorRect.GetTopLeft().y > pt.y) {
             return;
         }

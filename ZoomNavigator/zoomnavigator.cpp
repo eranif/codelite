@@ -191,7 +191,7 @@ void ZoomNavigator::DoUpdate()
     }
     CHECK_CONDITION(curEditor);
     
-    wxStyledTextCtrl* stc = curEditor->GetSTC();
+    wxStyledTextCtrl* stc = curEditor->GetCtrl();
     CHECK_CONDITION( stc );
     
     if ( curEditor->GetFileName().GetFullPath() != m_curfile ) {
@@ -263,7 +263,7 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
         return;
     }
     int first = m_text->LineFromPosition( pos );
-    int nLinesOnScreen = curEditor->GetSTC()->LinesOnScreen();
+    int nLinesOnScreen = curEditor->GetCtrl()->LinesOnScreen();
     first -= (nLinesOnScreen/2);
     if ( first < 0 ) first = 0;
     
@@ -271,12 +271,12 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
     int last  = nLinesOnScreen + first;
 
     PatchUpHighlights( first, last );
-    curEditor->GetSTC()->SetFirstVisibleLine( first );
+    curEditor->GetCtrl()->SetFirstVisibleLine( first );
     curEditor->SetCaretAt( curEditor->PosFromLine( first + (nLinesOnScreen / 2) ) ) ;
 
     // reset the from/last members to avoid unwanted movements in the 'OnTimer' function
-    m_markerFirstLine = curEditor->GetSTC()->GetFirstVisibleLine();
-    m_markerLastLine  = m_markerFirstLine + curEditor->GetSTC()->LinesOnScreen();
+    m_markerFirstLine = curEditor->GetCtrl()->GetFirstVisibleLine();
+    m_markerLastLine  = m_markerFirstLine + curEditor->GetCtrl()->LinesOnScreen();
 }
 
 void ZoomNavigator::DoCleanup()

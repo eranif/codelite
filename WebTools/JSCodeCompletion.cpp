@@ -76,7 +76,7 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     CHECK_PTR_RET(editor);
     
     // Check the completion type
-    wxStyledTextCtrl* ctrl = editor->GetSTC();
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
     int currentPos = ctrl->PositionBefore(ctrl->GetCurrentPos());
     bool isFunctionTip = false;
     while(currentPos > 0) {
@@ -110,7 +110,7 @@ void JSCodeCompletion::OnCodeCompleteReady(const wxCodeCompletionBoxEntry::Vec_t
     if(editor->GetCurrentPosition() != m_ccPos) return;
     if(entries.empty()) return;
 
-    wxStyledTextCtrl* ctrl = editor->GetSTC();
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, 0, this);
 }
 

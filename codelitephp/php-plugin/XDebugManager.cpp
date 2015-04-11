@@ -424,7 +424,7 @@ void XDebugManager::ClearDebuggerMarker()
     m_plugin->GetManager()->GetAllEditors(editors);
     IEditor::List_t::iterator iter = editors.begin();
     for(; iter != editors.end(); ++iter) {
-        (*iter)->GetSTC()->MarkerDeleteAll(smt_indicator);
+        (*iter)->GetCtrl()->MarkerDeleteAll(smt_indicator);
     }
 }
 
@@ -463,8 +463,8 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
     }
 
     if(editor) {
-        m_plugin->GetManager()->SelectPage(editor->GetSTC());
-        CallAfter(&XDebugManager::SetDebuggerMarker, editor->GetSTC(), e.GetLineNumber());
+        m_plugin->GetManager()->SelectPage(editor->GetCtrl());
+        CallAfter(&XDebugManager::SetDebuggerMarker, editor->GetCtrl(), e.GetLineNumber());
     }
 
     // Update the callstack/locals views
@@ -640,7 +640,7 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
     }
     IEditor* editor = m_plugin->GetManager()->FindEditor(filename);
     if(editor) {
-        editor->GetSTC()->MarkerDelete(line - 1, smt_breakpoint);
+        editor->GetCtrl()->MarkerDelete(line - 1, smt_breakpoint);
     }
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
 }
@@ -669,13 +669,13 @@ void XDebugManager::OnBreakpointsViewUpdated(XDebugEvent& e)
 void XDebugManager::DoRefreshBreakpointsMarkersForEditor(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    editor->GetSTC()->MarkerDeleteAll(smt_breakpoint);
+    editor->GetCtrl()->MarkerDeleteAll(smt_breakpoint);
 
     XDebugBreakpoint::List_t bps;
     m_breakpointsMgr.GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps);
     XDebugBreakpoint::List_t::const_iterator iter = bps.begin();
     for(; iter != bps.end(); ++iter) {
-        editor->GetSTC()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
+        editor->GetCtrl()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
     }
 }
 

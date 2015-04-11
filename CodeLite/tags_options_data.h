@@ -78,9 +78,10 @@ enum CodeCompletionColourOpts {
 };
 
 enum CodeCompletionClangOptions {
-    CC_CLANG_ENABLED = 0x00000001,
-    CC_CLANG_FIRST = 0x00000002,
-    CC_CTAGS_ENABLED = 0x00000004
+    CC_CLANG_ENABLED = (1 << 0),
+    CC_CLANG_FIRST = (1 << 1),
+    CC_CTAGS_ENABLED = (1 << 2),
+    CC_CLANG_INLINE_ERRORS = (1 << 3),
 };
 
 class WXDLLIMPEXP_CL TagsOptionsData : public clConfigItem

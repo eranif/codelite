@@ -120,7 +120,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
     IManager* manager = ::clGetManager();
     IEditor* editor = manager->GetActiveEditor();
     if(editor) {
-        wxStyledTextCtrl* ctrl = editor->GetSTC();
+        wxStyledTextCtrl* ctrl = editor->GetCtrl();
         // Default behviour: remove the partial text from teh editor and replace it
         // with the selection
         int start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
@@ -265,7 +265,7 @@ void wxCodeCompletionBoxManager::InsertSelectionTemplateFunction(const wxString&
     IManager* manager = ::clGetManager();
     IEditor* editor = manager->GetActiveEditor();
     if(editor) {
-        wxStyledTextCtrl* ctrl = editor->GetSTC();
+        wxStyledTextCtrl* ctrl = editor->GetCtrl();
         // Default behviour: remove the partial text from teh editor and replace it
         // with the selection
         int start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);

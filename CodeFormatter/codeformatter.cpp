@@ -270,21 +270,21 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
         phpOptions.indentSize = m_mgr->GetEditorSettings()->GetTabWidth();
         phpOptions.eol = m_mgr->GetEditorSettings()->GetEOLAsString();
         // Create the formatter buffer
-        PHPFormatterBuffer buffer(editor->GetSTC()->GetText(), phpOptions);
+        PHPFormatterBuffer buffer(editor->GetCtrl()->GetText(), phpOptions);
 
         // Format the source
         buffer.format();
 
         // Restore line
         clSTCLineKeeper lk(editor);
-        editor->GetSTC()->BeginUndoAction();
+        editor->GetCtrl()->BeginUndoAction();
         // Replace the text with the new formatted buffer
         editor->SetEditorText(buffer.GetBuffer());
 
         // Restore caret position
         editor->SetCaretAt(curpos);
         
-        editor->GetSTC()->EndUndoAction();
+        editor->GetCtrl()->EndUndoAction();
         
     } else {
         // We allow ClangFormat to work only when the source file is known to be
@@ -308,16 +308,16 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
             // Make sure we format the editor string and _not_ the file (there might be some newly added lines
             // that could be missing ...)
             if(!ClangFormatBuffer(
-                   editor->GetSTC()->GetText(), editor->GetFileName(), formattedOutput, curpos, from, length)) {
+                   editor->GetCtrl()->GetText(), editor->GetFileName(), formattedOutput, curpos, from, length)) {
                 ::wxMessageBox(_("Source code formatting error!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
                 return;
             }
 
-            clEditorStateLocker lk(editor->GetSTC());
-            editor->GetSTC()->BeginUndoAction();
+            clEditorStateLocker lk(editor->GetCtrl());
+            editor->GetCtrl()->BeginUndoAction();
             editor->SetEditorText(formattedOutput);
             editor->SetCaretAt(curpos);
-            editor->GetSTC()->EndUndoAction();
+            editor->GetCtrl()->EndUndoAction();
 
         } else {
             // AStyle
@@ -365,7 +365,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                 if(!formatSelectionOnly) output << eol;
 
                 if(formatSelectionOnly) {
-                    clEditorStateLocker lk(editor->GetSTC());
+                    clEditorStateLocker lk(editor->GetCtrl());
                     // format the text (add the indentation)
                     output = editor->FormatTextKeepIndent(output,
                                                           editor->GetSelectionStart(),
@@ -373,7 +373,7 @@ void CodeFormatter::DoFormatFile(IEditor* editor)
                     editor->ReplaceSelection(output);
 
                 } else {
-                    clEditorStateLocker lk(editor->GetSTC());
+                    clEditorStateLocker lk(editor->GetCtrl());
                     editor->SetEditorText(output);
                 }
             }

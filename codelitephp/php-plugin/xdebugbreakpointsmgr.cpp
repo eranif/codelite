@@ -124,11 +124,11 @@ void XDebugBreakpointsMgr::OnEditorChanged(wxCommandEvent& e)
         if(GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {
             XDebugBreakpoint::List_t::iterator iter = bps.begin();
             for(; iter != bps.end(); ++iter) {
-                int markerMask = editor->GetSTC()->MarkerGet(iter->GetLine() - 1);
+                int markerMask = editor->GetCtrl()->MarkerGet(iter->GetLine() - 1);
                 if(!(markerMask & mmt_breakpoint)) {
                     // No marker on this line yet
                     // add one
-                    editor->GetSTC()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
+                    editor->GetCtrl()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
                 }
             }
         }

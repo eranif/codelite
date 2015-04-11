@@ -174,7 +174,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
         ccEntries.push_back(ccEntry);
     }
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        m_manager->GetActiveEditor()->GetSTC(), ccEntries, wxCodeCompletionBox::kRefreshOnKeyType);
+        m_manager->GetActiveEditor()->GetCtrl(), ccEntries, wxCodeCompletionBox::kRefreshOnKeyType);
 }
 
 void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }
@@ -472,7 +472,7 @@ void PHPCodeCompletion::OnRetagWorkspace(wxCommandEvent& event)
 PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* editor, int pos, bool forFunctionCalltip)
 {
     if(!PHPWorkspace::Get()->IsOpen()) return PHPEntityBase::Ptr_t(NULL);
-    pos = editor->GetSTC()->WordEndPosition(pos, true);
+    pos = editor->GetCtrl()->WordEndPosition(pos, true);
 
     // Get the expression under the caret
     wxString unsavedBuffer = editor->GetTextRange(0, pos);
@@ -491,7 +491,7 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* edit
         // body but _not_ within a function body (i.e. it can only be
         // a definition of some kind)
         // try to construct an expression that will work
-        int wordStart = editor->GetSTC()->WordStartPosition(pos, true);
+        int wordStart = editor->GetCtrl()->WordStartPosition(pos, true);
         wxString theWord = editor->GetTextRange(wordStart, pos);
         wxString theWordNoDollar = theWord;
         if(theWord.StartsWith("$")) {
@@ -605,7 +605,7 @@ void PHPCodeCompletion::GotoDefinition(IEditor* editor, int pos)
 {
 
     CHECK_PTR_RET(editor);
-    wxStyledTextCtrl* sci = editor->GetSTC();
+    wxStyledTextCtrl* sci = editor->GetCtrl();
     CHECK_PTR_RET(sci);
 
     PHPLocation::Ptr_t definitionLocation = FindDefinition(editor, pos);
@@ -616,7 +616,7 @@ void PHPCodeCompletion::GotoDefinition(IEditor* editor, int pos)
         // Select the word in the editor (its a new one)
         IEditor* activeEditor = m_manager->GetActiveEditor();
         if(activeEditor) {
-            int selectFromPos = activeEditor->GetSTC()->PositionFromLine(definitionLocation->linenumber);
+            int selectFromPos = activeEditor->GetCtrl()->PositionFromLine(definitionLocation->linenumber);
             CallAfter(&PHPCodeCompletion::DoSelectInEditor, definitionLocation->what, selectFromPos);
         }
     }
@@ -626,7 +626,7 @@ void PHPCodeCompletion::DoSelectInEditor(const wxString& what, int from)
 {
     IEditor* activeEditor = m_manager->GetActiveEditor();
     if(activeEditor) {
-        activeEditor->GetSTC()->ClearSelections();
+        activeEditor->GetCtrl()->ClearSelections();
         activeEditor->FindAndSelect(what, what, from, NULL);
     }
 }

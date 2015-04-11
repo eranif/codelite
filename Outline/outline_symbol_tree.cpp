@@ -227,12 +227,12 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
     
     if( editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr()) == false ) {
         // Could not select, clear the selection
-        editor->GetSTC()->SetSelectionStart(wxNOT_FOUND);
-        editor->GetSTC()->SetSelectionEnd(wxNOT_FOUND);
+        editor->GetCtrl()->SetSelectionStart(wxNOT_FOUND);
+        editor->GetCtrl()->SetSelectionEnd(wxNOT_FOUND);
     }
 
-    m_manager->GetActiveEditor()->GetSTC()->SetSTCFocus(true);
-    m_manager->GetActiveEditor()->GetSTC()->SetFocus();
+    m_manager->GetActiveEditor()->GetCtrl()->SetSTCFocus(true);
+    m_manager->GetActiveEditor()->GetCtrl()->SetFocus();
 }
 
 void svSymbolTree::BuildTree(const wxFileName& fn)

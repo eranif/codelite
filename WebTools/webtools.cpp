@@ -111,7 +111,7 @@ void WebTools::ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply
 {
     IEditor* editor = m_mgr->FindEditor(reply.filename);
     if(editor) {
-        wxStyledTextCtrl* ctrl = editor->GetSTC();
+        wxStyledTextCtrl* ctrl = editor->GetCtrl();
         ctrl->SetKeyWords(1, reply.properties);
         ctrl->SetKeyWords(3, reply.functions);
         m_lastColourUpdate = time(NULL);
@@ -208,7 +208,7 @@ bool WebTools::IsJavaScriptFile(IEditor* editor)
     
     // We should also support Code Completion when inside a PHP/HTML file, but within a script area
     if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        wxStyledTextCtrl* ctrl = editor->GetSTC();
+        wxStyledTextCtrl* ctrl = editor->GetCtrl();
         int styleAtCurPos = ctrl->GetStyleAt(ctrl->GetCurrentPos());
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return true;

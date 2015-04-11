@@ -578,6 +578,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         // Notify about this error
         clCommandEvent event(wxEVT_CLANG_CODE_COMPLETE_MESSAGE);
         event.SetString(reply->errorMessage);
+        event.SetInt(1); // indicates that this is an error message
         EventNotifier::Get()->AddPendingEvent(event);
         return;
     }
@@ -709,7 +710,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         m_activeEditor->ShowCalltip(new clCallTip(tips));
 
     } else {
-        wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_activeEditor->GetSTC(), tags, wxCodeCompletionBox::kNone);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_activeEditor->GetCtrl(), tags, wxCodeCompletionBox::kNone);
     }
 }
 

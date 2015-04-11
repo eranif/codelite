@@ -97,13 +97,13 @@ private:
 #define GET_EDITOR_SCI_BOOL()                       \
     IEditor* editor = m_manager->GetActiveEditor(); \
     if(!editor) return false;                       \
-    wxStyledTextCtrl* sci = editor->GetSTC();       \
+    wxStyledTextCtrl* sci = editor->GetCtrl();       \
     if(!sci) return false;
 
 #define GET_EDITOR_SCI_VOID()                       \
     IEditor* editor = m_manager->GetActiveEditor(); \
     if(!editor) return;                             \
-    wxStyledTextCtrl* sci = editor->GetSTC();       \
+    wxStyledTextCtrl* sci = editor->GetCtrl();       \
     if(!sci) return;
 
 #endif // PHPEDITORCONTEXTMENU_H

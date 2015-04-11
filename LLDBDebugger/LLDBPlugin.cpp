@@ -253,7 +253,7 @@ void LLDBPlugin::ClearDebuggerMarker()
     m_mgr->GetAllEditors(editors);
     IEditor::List_t::iterator iter = editors.begin();
     for(; iter != editors.end(); ++iter) {
-        (*iter)->GetSTC()->MarkerDeleteAll(smt_indicator);
+        (*iter)->GetCtrl()->MarkerDeleteAll(smt_indicator);
     }
 }
 
@@ -534,7 +534,7 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
         if(editor) {
             // select it first
             if(editor != m_mgr->GetActiveEditor()) {
-                m_mgr->SelectPage(editor->GetSTC());
+                m_mgr->SelectPage(editor->GetCtrl());
 
             } else {
                 // just make sure that the page has the focus
@@ -543,7 +543,7 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
 
             // clear the markers
             ClearDebuggerMarker();
-            SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() - 1);
+            SetDebuggerMarker(editor->GetCtrl(), event.GetLinenumber() - 1);
 
         } else {
             ClearDebuggerMarker();
@@ -770,7 +770,7 @@ void LLDBPlugin::OnToggleBreakpoint(clDebugEvent& event)
 
     if(editor) {
         // get the marker type set on the line
-        int markerType = editor->GetSTC()->MarkerGet(bp->GetLineNumber() - 1);
+        int markerType = editor->GetCtrl()->MarkerGet(bp->GetLineNumber() - 1);
         for(size_t type = smt_FIRST_BP_TYPE; type <= smt_LAST_BP_TYPE; ++type) {
             int markerMask = (1 << type);
             if(markerType & markerMask) {

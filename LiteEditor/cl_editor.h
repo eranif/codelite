@@ -171,7 +171,7 @@ private:
         {
             return ctrl->PositionFromLine(ctrl->GetFirstVisibleLine()) == m_firstOffset && m_hasMarkers;
         }
-        
+
         // setters/getters
         void SetFirstOffset(int firstOffset) { this->m_firstOffset = firstOffset; }
         void SetHasMarkers(bool hasMarkers) { this->m_hasMarkers = hasMarkers; }
@@ -225,18 +225,19 @@ protected:
     wxString m_preProcessorsWords;
     SelectionInfo m_prevSelectionInfo;
     MarkWordInfo m_highlightedWordInfo;
-    wxTimer *m_timerHighlightMarkers;
+    wxTimer* m_timerHighlightMarkers;
     IManager* m_mgr;
     OptionsConfigPtr m_options;
-    
+    bool m_hasCCAnnotation;
+
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
     static bool m_ccInitialized;
     typedef std::vector<LEditor*> Vec_t;
-    
+
     IManager* GetManager() { return m_mgr; }
-    
+
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 
@@ -265,13 +266,13 @@ public:
     // Save content of the editor to a given file (Save As...)
     // this function prompts the user for selecting file name
     bool SaveFileAs();
-    
+
     /**
      * @brief split the current selection into multiple carets.
      * i.e. place a caret at the end of each line in the selection
      */
     void SplitSelection();
-    
+
     void SetDisableSmartIndent(bool disableSmartIndent) { this->m_disableSmartIndent = disableSmartIndent; }
 
     bool GetDisableSmartIndent() const { return m_disableSmartIndent; }
@@ -300,7 +301,7 @@ public:
     const wxString& GetProject() const { return m_project; }
     // Set the project name
     void SetProject(const wxString& proj) { m_project = proj; }
-    
+
     /**
      * @brief attempt to code complete the expression up until the caret position
      * @param refreshingList when set to true, it means that the 'CodeComplete' was invoked
@@ -390,22 +391,22 @@ public:
      * marker (warning or error)
      */
     bool HasCompilerMarkers();
-    
+
     /**
      * @brief center the line in the editor
      */
     void CenterLine(int line, int col = wxNOT_FOUND);
-    
+
     /**
      * @brief convert the editor indentation to spaces
      */
     void ConvertIndentToSpaces();
-    
+
     /**
      * @brief convert the editor indentation to tabs
      */
     void ConvertIndentToTabs();
-    
+
     // Is there currently a marker at the current line?
     bool LineIsMarked(enum marker_mask_type mask);
     // Toggle marker at the current line
@@ -629,7 +630,7 @@ public:
     virtual void SetWarningMarker(int lineno, const wxString& annotationText);
     virtual void SetErrorMarker(int lineno, const wxString& annotationText);
     virtual void DelAllCompilerMarkers();
-    
+
     void DoShowCalltip(int pos, const wxString& title, const wxString& tip);
     void DoCancelCalltip();
     void DoCancelCodeCompletionBox();
@@ -686,7 +687,15 @@ public:
      * Implemetation for IEditor interace
      *--------------------------------------------------
      */
-    virtual wxStyledTextCtrl* GetSTC() { return static_cast<wxStyledTextCtrl*>(this); }
+    virtual wxStyledTextCtrl* GetCtrl() { return static_cast<wxStyledTextCtrl*>(this); }
+
+    /**
+     * @brief set a code completion annotation at the given line. code completion
+     * annotations are automatically cleared on the next char added
+     * @param text
+     * @param lineno
+     */
+    virtual void SetCodeCompletionAnnotation(const wxString& text, int lineno);
 
     virtual wxString GetEditorText() { return GetText(); }
     virtual void SetEditorText(const wxString& text);
@@ -842,7 +851,7 @@ private:
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     void DoUpdateOptions();
-    
+
     void FillBPtoMarkerArray();
     BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);
     void SetProperties();
@@ -903,7 +912,7 @@ private:
     void OnFileFormatDone(wxCommandEvent& e);
     void OnFileFormatStarting(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
-    void OnEditorConfigChanged(wxCommandEvent &event);
+    void OnEditorConfigChanged(wxCommandEvent& event);
 };
 
 #endif // LITEEDITOR_EDITOR_H

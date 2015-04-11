@@ -97,7 +97,7 @@ void WordCompletionDictionary::DoCacheActiveEditor(bool overwrite)
     m_files.insert(std::make_pair(activeEditor->GetFileName().GetFullPath(), wxStringSet_t()));
     
     // Queue this file
-    wxStyledTextCtrl* stc = activeEditor->GetSTC();
+    wxStyledTextCtrl* stc = activeEditor->GetCtrl();
     
     // Invoke the thread to parse and suggets words for this file
     WordCompletionThreadRequest* req = new WordCompletionThreadRequest;

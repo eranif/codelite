@@ -92,7 +92,7 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
     // update the language
     wxString language;
     if(editor) {
-        int lexerId = editor->GetSTC()->GetLexer();
+        int lexerId = editor->GetCtrl()->GetLexer();
         switch(lexerId) {
         case wxSTC_LEX_CPP: {
             // C++ is used for 3 languages:
@@ -167,7 +167,7 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
         language.MakeUpper();
 
         // Set the "TABS/SPACES" field
-        SetWhitespaceInfo(editor->GetSTC()->GetUseTabs() ? "tabs" : "spaces");
+        SetWhitespaceInfo(editor->GetCtrl()->GetUseTabs() ? "tabs" : "spaces");
     }
     SetLanguage(language);
 }
@@ -183,7 +183,7 @@ void clStatusBar::DoUpdateColour()
     IEditor* editor = m_mgr->GetActiveEditor();
     wxCustomStatusBarArt::Ptr_t art(NULL);
     if(editor) {
-        wxColour bgColour = editor->GetSTC()->StyleGetBackground(0);
+        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
         if(DrawingUtils::IsDark(bgColour)) {
             // Using dark theme background
             art.reset(new wxCustomStatusBarArt("Dark"));
@@ -312,7 +312,7 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
             // field
             wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_WHITESPACE_INFO_IDX);
             CHECK_PTR_RET(field);
-            wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetSTC();
+            wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetCtrl();
             wxMenu menu;
             wxMenuItem* idConvertToTabs = menu.Append(wxID_ANY, "Convert Indentations to Tabs");
             wxMenuItem* idConvertToSpaces = menu.Append(wxID_ANY, "Convert Indentations to Spaces");

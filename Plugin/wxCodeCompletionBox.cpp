@@ -89,7 +89,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     if(manager) {
         IEditor* editor = manager->GetActiveEditor();
         if(editor) {
-            wxColour bgColour = editor->GetSTC()->StyleGetBackground(0);
+            wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
             if(!DrawingUtils::IsDark(bgColour)) {
                 m_useLightColours = true;
                 // Need bright colours

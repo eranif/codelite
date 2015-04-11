@@ -91,7 +91,7 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     settings.Load();
 
     // Filter (what the user has typed so far)
-    wxStyledTextCtrl* stc = activeEditor->GetSTC();
+    wxStyledTextCtrl* stc = activeEditor->GetCtrl();
     int curPos = stc->GetCurrentPos();
     int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
     if(curPos <= start) return;
@@ -119,7 +119,7 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
         entries.push_back(wxCodeCompletionBoxEntry::New(*iter, 0));
     }
 
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(activeEditor->GetSTC(),
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(activeEditor->GetCtrl(),
                                                         entries,
                                                         bitmaps,
                                                         event.GetId() == XRCID("text_word_complete") ?

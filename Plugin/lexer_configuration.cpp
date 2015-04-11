@@ -291,7 +291,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-    
+
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     ctrl->SetUseTabs(options->GetIndentUsesTabs());
     ctrl->SetIndent(options->GetIndentWidth());
@@ -489,14 +489,21 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
     // Annotations markers
     // Warning style
+    wxColour textColour = IsDark() ? *wxWHITE : *wxBLACK;
     ctrl->StyleSetBackground(ANNOTATION_STYLE_WARNING, defaultStyle.GetBgColour());
-    ctrl->StyleSetForeground(ANNOTATION_STYLE_WARNING, defaultStyle.GetFgColour());
+    ctrl->StyleSetForeground(ANNOTATION_STYLE_WARNING, textColour);
     ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_WARNING, (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
 
     // Error style
     ctrl->StyleSetBackground(ANNOTATION_STYLE_ERROR, defaultStyle.GetBgColour());
-    ctrl->StyleSetForeground(ANNOTATION_STYLE_ERROR, defaultStyle.GetFgColour());
+    ctrl->StyleSetForeground(ANNOTATION_STYLE_ERROR, textColour);
     ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
+
+    // Code completion errors
+    ctrl->StyleSetBackground(ANNOTATION_STYLE_CC_ERROR, defaultStyle.GetBgColour());
+    ctrl->StyleSetForeground(ANNOTATION_STYLE_CC_ERROR, textColour);
+    ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_CC_ERROR,
+                                 (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
 
     // annotation style 'boxed'
     ctrl->AnnotationSetVisible(wxSTC_ANNOTATION_BOXED);

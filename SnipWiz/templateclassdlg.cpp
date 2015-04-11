@@ -26,6 +26,7 @@
 #include <wx/textbuf.h>
 #include <wx/dirdlg.h>
 #include <wx/textfile.h>
+#include <wx/tokenzr.h>
 #include "VirtualDirectorySelectorDlg.h"
 #include <wx/filefn.h>
 #include "editor_config.h"
@@ -40,12 +41,15 @@
 static const wxString swHeader = wxT( "header" );
 static const wxString swSource = wxT( "source" );
 static const wxString swPhClass = wxT( "%CLASS%" );
+static const wxString swNsList = wxT( "%NAMESPACELIST%" );
+static const wxString swNsEndList = wxT( "%NAMESPACELISTEND%" );
 
 TemplateClassDlg::TemplateClassDlg( wxWindow* parent, SnipWiz *plugin, IManager *manager )
 		: TemplateClassBaseDlg( parent )
 		, m_plugin(plugin)
 		, m_pManager(manager)
 {
+	m_checkboxVirtualToReal->SetValue(true);
 	Initialize();
 }
 
@@ -79,14 +83,13 @@ void TemplateClassDlg::Initialize()
 	TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo( TreeFileView );
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
 		m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath( m_pManager->GetTree( TreeFileView ), item.m_item, false );
-		m_projectPath =  item.m_fileName.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	}
 	m_textCtrlVD->SetValue( m_virtualFolder );
 	if(m_virtualFolder.IsEmpty() == false){
 		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
 	}
-	m_textCtrlFilePath->SetValue( m_projectPath );
 	m_textCtrlClassName->SetFocus();
+	UpdatePath();
 }
 
 void TemplateClassDlg::OnClassNameEntered( wxCommandEvent& event )
@@ -98,6 +101,7 @@ void TemplateClassDlg::OnClassNameEntered( wxCommandEvent& event )
 		m_textCtrlCppFile->SetValue(wxT(""));
 		return;
 	} else {
+		buffer = GetNsList().Last();
 		m_textCtrlHeaderFile->SetValue( buffer.Lower() + wxT( ".h" ) );
 		m_textCtrlCppFile->SetValue( buffer.Lower() + wxT( ".cpp" ) );
 	}
@@ -112,11 +116,14 @@ void TemplateClassDlg::OnBrowseVD( wxCommandEvent& event )
 		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
 		m_staticProjectTreeFolder->Refresh();
 	}
+	UpdatePath();
 }
 
 void TemplateClassDlg::OnBrowseFilePath( wxCommandEvent& event )
 {
 	wxUnusedVar( event );
+	m_checkboxVirtualToReal->SetValue(false);
+	
 	wxString dir = wxT("");
 	if ( wxFileName::DirExists( m_projectPath ) ) {
 		dir = m_projectPath;
@@ -133,21 +140,46 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	wxArrayString files;
-	wxString newClassName = m_textCtrlClassName->GetValue();
+	if(m_textCtrlClassName->GetValue().IsEmpty())
+		return;
+	
+	wxString namespacesList = "";
+	wxString namespacesEndList = "";
+	wxString namespacesEndListComment = " // ";
+	wxArrayString ns = GetNsList();
+	for(int n = 0; n < ns.Count() - 1; n++){
+		namespacesList += wxString::Format("namespace %s{ ", ns[n]);
+		namespacesEndList += "}";
+		namespacesEndListComment += ns[n];
+		if(n < ns.Count() - 2)
+			namespacesEndListComment += "::";
+	}
+	namespacesEndList += namespacesEndListComment;
+	
+	wxString newClassName = ns.Last();
 	wxString baseClass = m_comboxCurrentTemplate->GetValue();
+	
+	UpdatePath()
 
 	if (!wxEndsWithPathSeparator(m_projectPath))
 		m_projectPath += wxFILE_SEP_PATH;
-
+		
+	if (!wxFileName::DirExists( m_projectPath ) ) {
+		wxFileName::Mkdir(m_projectPath);
+	}
+	
 	wxString buffer = GetStringDb()->GetString( baseClass, swHeader );
+	buffer.Replace( swNsList, namespacesList );
 	buffer.Replace( swPhClass, newClassName );
 	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
+	buffer.Replace( swNsEndList, namespacesEndList );
 
 	files.Add( m_projectPath + m_textCtrlHeaderFile->GetValue() );
 	SaveBufferToFile( files.Item(0), buffer );
 
 	buffer = wxString::Format( wxT( "#include \"%s\"%s%s" ), m_textCtrlHeaderFile->GetValue().c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str() );
 	buffer += GetStringDb()->GetString( baseClass, swSource );
+	buffer.Replace( swNsList, namespacesList );
 	buffer.Replace( swPhClass, newClassName );
 	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
 
@@ -375,4 +407,85 @@ bool TemplateClassDlg::SaveBufferToFile( const wxString filename, const wxString
 	file.Write( tft );
 	file.Close();
 	return true;
+}
+
+void TemplateClassDlg::UpdatePath()
+{
+	TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo( TreeFileView );
+	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
+		m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath( m_pManager->GetTree( TreeFileView ), item.m_item, false );
+		m_projectPath =  item.m_fileName.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
+	}
+	
+	if (m_checkboxVirtualToReal->GetValue()){
+		const wxString separator = ":";
+		wxString vPath = m_textCtrlVD->GetValue();
+		int colon = vPath.First(separator) + 1;
+		wxString extPath = vPath.SubString(colon, vPath.Length());
+		extPath.Replace(separator, wxFILE_SEP_PATH);
+		m_projectPath += extPath + wxFILE_SEP_PATH;
+	}
+	m_textCtrlFilePath->SetValue( m_projectPath );
+}
+
+void TemplateClassDlg::OnPathUpdate(wxCommandEvent& e)
+{
+	UpdatePath();
+}
+
+void TemplateClassDlg::OnInsertNsEndKeyword(wxCommandEvent& event)
+{
+	wxUnusedVar( event );
+	long from, to;
+
+	if ( m_notebookFiles->GetSelection() == 0 ) {
+		m_textCtrlHeader->GetSelection( &from, &to );
+		m_textCtrlHeader->Replace( from, to, swNsEndList );
+		m_textCtrlHeader->SetFocus();
+	} else {
+		m_textCtrlImpl->GetSelection( &from, &to );
+		m_textCtrlImpl->Replace( from, to, swNsEndList );
+		m_textCtrlImpl->SetFocus();
+	}
+}
+
+void TemplateClassDlg::OnInsertNsEndKeywordUI(wxUpdateUIEvent& event)
+{
+	event.Enable(true);
+}
+
+void TemplateClassDlg::OnInsertNsKeyword(wxCommandEvent& event)
+{
+	wxUnusedVar( event );
+	long from, to;
+
+	if ( m_notebookFiles->GetSelection() == 0 ) {
+		m_textCtrlHeader->GetSelection( &from, &to );
+		m_textCtrlHeader->Replace( from, to, swNsList );
+		m_textCtrlHeader->SetFocus();
+	} else {
+		m_textCtrlImpl->GetSelection( &from, &to );
+		m_textCtrlImpl->Replace( from, to, swNsList );
+		m_textCtrlImpl->SetFocus();
+	}
+}
+
+void TemplateClassDlg::OnInsertNsKeywordUI(wxUpdateUIEvent& event)
+{
+	event.Enable(true);
+}
+
+wxArrayString TemplateClassDlg::GetNsList()
+{
+	wxArrayString ns;
+	ns.Clear();
+	
+	if(m_textCtrlClassName->GetValue().IsEmpty())
+		return ns;
+	
+	wxStringTokenizer strTok(m_textCtrlClassName->GetValue(), "::", wxTOKEN_STRTOK);
+	while(strTok.HasMoreTokens()){
+		ns.Add(strTok.GetNextToken());
+	}
+	return ns;
 }

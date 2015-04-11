@@ -43,6 +43,7 @@
 #include <wx/settings.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
+#include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/button.h>
@@ -92,11 +93,15 @@ class TemplateClassBaseDlg : public wxDialog
 		wxButton* m_buttonRemoveTemplate;
 		wxButton* m_buttonClear;
 		wxButton* m_buttonInsertClassMacro;
+		wxButton* m_buttonInsertNsMacro;
+		wxButton* m_buttonInsertNsEndMacro;
 		wxNotebook* m_notebookFiles;
 		wxPanel* m_panel3;
 		wxTextCtrl* m_textCtrlHeader;
 		wxPanel* m_panel4;
 		wxTextCtrl* m_textCtrlImpl;
+		
+		wxCheckBox* m_checkboxVirtualToReal;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClassNameEntered( wxCommandEvent& event ){ event.Skip(); }
@@ -116,9 +121,13 @@ class TemplateClassBaseDlg : public wxDialog
 		virtual void OnButtonClearUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnInsertClassKeyword( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnInsertClassKeywordUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsKeyword( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsKeywordUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsEndKeyword( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnInsertNsEndKeywordUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnHeaderFileContentChnaged( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnImplFileContentChnaged( wxCommandEvent& event ){ event.Skip(); }
-		
+		virtual void OnPathUpdate( wxCommandEvent& event ){ event.Skip(); }
 	
 	public:
 		

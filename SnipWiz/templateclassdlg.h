@@ -64,15 +64,23 @@ protected:
 	void OnButtonRemoveUI( wxUpdateUIEvent& event );
 	void OnInsertClassKeyword( wxCommandEvent& event );
 	void OnInsertClassKeywordUI( wxUpdateUIEvent& event );
+	void OnInsertNsKeyword( wxCommandEvent& event );
+	void OnInsertNsKeywordUI( wxUpdateUIEvent& event );
+	void OnInsertNsEndKeyword( wxCommandEvent& event );
+	void OnInsertNsEndKeywordUI( wxUpdateUIEvent& event );
 	void OnHeaderFileContentChnaged( wxCommandEvent& event );
 	void OnImplFileContentChnaged( wxCommandEvent& event );
 	void OnButtonClear(wxCommandEvent &e);
 	void OnButtonClearUI(wxUpdateUIEvent &e);
+	void OnPathUpdate(wxCommandEvent &e);
 	
 	swStringDb* GetStringDb() ;
 	void RefreshTemplateList();
 	void Initialize();
 
+	void UpdatePath();
+	wxArrayString GetNsList();
+	
 public:
 	/** Constructor */
 	TemplateClassDlg( wxWindow* parent, SnipWiz *plugin, IManager *manager );
@@ -103,6 +111,7 @@ public:
 	}
 	void SetVirtualFolder(const wxString& virtualFolder) {
 		this->m_virtualFolder = virtualFolder;
+		UpdatePath();
 	}
 	const int& GetCurEol() const {
 		return m_curEol;

@@ -45,7 +45,7 @@ protected:
     wxLocale m_locale;
     wxArrayString m_allowedPlugins;
     PluginPolicy m_pluginLoadPolicy;
-    clPersistenceManager m_persistencManager;
+    clPersistenceManager* m_persistencManager;
     
 private: // Methods
     bool CopySettings(const wxString& destDir, wxString& installPath);

@@ -265,6 +265,7 @@ CodeLiteApp::CodeLiteApp(void)
 #ifdef __WXMSW__
     , m_handler(NULL)
 #endif
+    , m_persistencManager(NULL)
 {
 }
 
@@ -280,14 +281,11 @@ CodeLiteApp::~CodeLiteApp(void)
     if(m_singleInstance) {
         delete m_singleInstance;
     }
-    //    wxAppBase::ExitMainLoop();
+    wxDELETE(m_persistencManager);
 }
 
 bool CodeLiteApp::OnInit()
 {
-    // Use our persistence manager (which uses wxFileConfig instead of the registry...)
-    wxPersistenceManager::Set(m_persistencManager);
-    
 #if defined(__WXGTK__) || defined(__WXMAC__)
 
     // block signal pipe
@@ -498,7 +496,11 @@ bool CodeLiteApp::OnInit()
 
     ManagerST::Get()->SetInstallDir(homeDir);
 #endif
-   
+
+    // Use our persistence manager (which uses wxFileConfig instead of the registry...)
+    m_persistencManager = new clPersistenceManager();
+    wxPersistenceManager::Set(*m_persistencManager);
+
     // Make sure we have an instance if the keyboard manager allocated before we create the main frame class
     // (the keyboard manager needs to connect to the main frame events)
     clKeyboardManager::Get();

@@ -51,7 +51,7 @@ DebuggerAsciiViewerBase::DebuggerAsciiViewerBase( wxWindow* parent, wxWindowID i
 	m_textCtrlExpression = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
 	m_textCtrlExpression->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 	
-	bSizer2->Add( m_textCtrlExpression, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer2->Add( m_textCtrlExpression, 1, wxALL|wxEXPAND, 5 );
 	
 	m_buttonClear = new wxButton( this, wxID_ANY, _("&Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonClear->SetDefault(); 

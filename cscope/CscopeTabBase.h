@@ -24,6 +24,12 @@
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/filepicker.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class CscopeTabBase : public wxPanel
 {
@@ -50,6 +56,15 @@ protected:
     virtual void OnClearResultsUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxDataViewCtrl* GetDataview() { return m_dataview; }
+    wxStaticText* GetStatusMessage() { return m_statusMessage; }
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    wxChoice* GetChoiceSearchScope() { return m_choiceSearchScope; }
+    wxCheckBox* GetCheckBoxUpdateDb() { return m_checkBoxUpdateDb; }
+    wxCheckBox* GetCheckBoxRevertedIndex() { return m_checkBoxRevertedIndex; }
+    wxButton* GetButtonUpdateDbNow() { return m_buttonUpdateDbNow; }
+    wxButton* GetButtonClear() { return m_buttonClear; }
+    wxGauge* GetGauge() { return m_gauge; }
     CscopeTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~CscopeTabBase();
 };
@@ -67,6 +82,8 @@ protected:
 protected:
 
 public:
+    wxStaticText* GetStaticText20() { return m_staticText20; }
+    wxFilePickerCtrl* GetFilePickerCScopeExe() { return m_filePickerCScopeExe; }
     CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CScope Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CScopeSettingsDlgBase();
 };

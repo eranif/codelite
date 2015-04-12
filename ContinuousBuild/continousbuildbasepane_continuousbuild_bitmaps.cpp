@@ -42,6 +42,6 @@ void wxC47E7InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/continousbuildbasepane_continuousbuild_bitmaps.cpp$C__src_codelite_ContinuousBuild_continousbuildbasepane_continuousbuild_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/continousbuildbasepane_continuousbuild_bitmaps.cpp$C__src_codelite_ContinuousBuild_continousbuildbasepane_continuousbuild_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/continousbuildbasepane_continuousbuild_bitmaps.cpp$_home_david_devel_git_CL_ContinuousBuild_continousbuildbasepane_continuousbuild_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/continousbuildbasepane_continuousbuild_bitmaps.cpp$_home_david_devel_git_CL_ContinuousBuild_continousbuildbasepane_continuousbuild_bitmaps.xrc"));
 }

@@ -195,6 +195,7 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     m_auibar223->Realize();
     
     m_notebookOutputView = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_notebookOutputView->SetName(wxT("m_notebookOutputView"));
     wxImageList* m_notebookOutputView_il = new wxImageList(16, 16);
     m_notebookOutputView->AssignImageList(m_notebookOutputView_il);
     
@@ -289,11 +290,11 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     m_choiceSuppFile = new wxChoice(m_splitterPageFilter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceSuppFileArr, 0);
     m_choiceSuppFile->SetToolTip(_("Choose suppression file to use."));
     
-    boxSizer655->Add(m_choiceSuppFile, 1, wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 0);
+    boxSizer655->Add(m_choiceSuppFile, 1, wxLEFT|wxRIGHT|wxEXPAND, 0);
     
     m_buttonSuppOpen = new wxButton(m_splitterPageFilter, XRCID("memcheck_supp_open"), _("Open"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer655->Add(m_buttonSuppOpen, 0, wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer655->Add(m_buttonSuppOpen, 0, 0, 5);
     
     wxBoxSizer* boxSizer485 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -361,17 +362,18 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     
     m_buttonSuppressAll = new wxButton(m_splitterPageList, XRCID("memcheck_suppress_all"), _("Suppress all"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer680->Add(m_buttonSuppressAll, 0, wxBOTTOM|wxEXPAND|wxALIGN_RIGHT, 5);
+    boxSizer680->Add(m_buttonSuppressAll, 0, wxBOTTOM|wxEXPAND, 5);
     
     m_buttonSuppressSelected = new wxButton(m_splitterPageList, XRCID("memcheck_suppress_selected"), _("Suppress selected"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer680->Add(m_buttonSuppressSelected, 0, wxBOTTOM|wxEXPAND|wxALIGN_RIGHT, 5);
+    boxSizer680->Add(m_buttonSuppressSelected, 0, wxBOTTOM, 5);
     
+    SetName(wxT("MemCheckOutputViewBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(ID_TOOL_STOP_PROCESS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnStop), NULL, this);
     this->Connect(ID_TOOL_STOP_PROCESS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnStopUI), NULL, this);
@@ -491,6 +493,7 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     this->SetSizer(boxSizer249);
     
     m_treebook251 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook251->SetName(wxT("m_treebook251"));
     wxImageList* m_treebook251_il = new wxImageList(16, 16);
     m_treebook251->AssignImageList(m_treebook251_il);
     
@@ -578,7 +581,7 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     flexGridSizer269->Add(m_staticText271, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_filePickerValgrindBinary = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerValgrindBinary = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     m_filePickerValgrindBinary->SetToolTip(_("Select valgrind executable"));
     
     flexGridSizer269->Add(m_filePickerValgrindBinary, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
@@ -636,7 +639,7 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     staticBoxSizer432->Add(m_checkBoxOutputInPrivateFolder, 0, wxALL, 5);
     
-    m_filePickerValgrindOutputFile = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+    m_filePickerValgrindOutputFile = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
     m_filePickerValgrindOutputFile->SetToolTip(_("It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
     
     staticBoxSizer432->Add(m_filePickerValgrindOutputFile, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
@@ -675,16 +678,24 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     m_stdBtnSizer511->AddButton(m_button515);
     m_stdBtnSizer511->Realize();
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    wxPersistenceManager::Get().RegisterAndRestore(m_treebook251);
+    #endif
     m_treebook251->ExpandNode( 0, true );
     m_treebook251->ExpandNode( 1, true );
     m_treebook251->ExpandNode( 2, true );
     m_treebook251->ExpandNode( 3, true );
     
+    SetName(wxT("MemCheckSettingsDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    wxPersistenceManager::Get().RegisterAndRestore(this);
+#endif
     // Connect events
     m_bmpButton341->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MemCheckSettingsDialogBase::ValgrindResetOptions), NULL, this);
     m_filePickerValgrindOutputFile->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(MemCheckSettingsDialogBase::OnValgrindOutputFileChanged), NULL, this);

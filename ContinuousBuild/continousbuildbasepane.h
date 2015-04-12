@@ -17,6 +17,12 @@
 #include <wx/button.h>
 #include <wx/listbox.h>
 #include <wx/stattext.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class ContinousBuildBasePane : public wxPanel
 {

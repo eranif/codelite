@@ -42,6 +42,12 @@
 #include <wx/filepicker.h>
 #include <wx/statbox.h>
 #include <wx/listbox.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class MemCheckIcons16 : public wxImageList
 {

@@ -53,7 +53,7 @@ ContinousBuildBasePane::ContinousBuildBasePane(wxWindow* parent, wxWindowID id, 
     wxArrayString m_listBoxQueueArr;
     m_listBoxQueue = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listBoxQueueArr, 0);
     
-    bSizer6->Add(m_listBoxQueue, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer6->Add(m_listBoxQueue, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     
@@ -70,13 +70,14 @@ ContinousBuildBasePane::ContinousBuildBasePane(wxWindow* parent, wxWindowID id, 
     m_listBoxFailedFiles = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listBoxFailedFilesArr, 0);
     m_listBoxFailedFiles->Hide();
     
-    bSizer9->Add(m_listBoxFailedFiles, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer9->Add(m_listBoxFailedFiles, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("ContinousBuildBasePane"));
     SetSizeHints(389,188);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_checkBox1->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ContinousBuildBasePane::OnEnableCB), NULL, this);
     m_buttonCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ContinousBuildBasePane::OnStopAll), NULL, this);

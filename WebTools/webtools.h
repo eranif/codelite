@@ -17,7 +17,7 @@ class WebTools : public IPlugin
     JSCodeCompletion::Ptr_t m_jsCodeComplete;
     time_t m_lastColourUpdate;
     wxTimer* m_timer;
-    
+
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
@@ -33,6 +33,8 @@ private:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);
     bool IsJavaScriptFile(IEditor* editor);
+    bool InsideJSComment(IEditor* editor);
+    bool InsideJSString(IEditor* editor);
 
 public:
     WebTools(IManager* manager);

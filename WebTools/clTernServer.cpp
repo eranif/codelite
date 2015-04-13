@@ -282,6 +282,11 @@ void clTernServer::ProcessOutput(const wxString& output, wxCodeCompletionBoxEntr
             wxString type = item.namedObject("type").toString();
             wxString sig, ret;
             ProcessType(type, sig, ret, imgId);
+            
+            // Remove double quotes
+            name.StartsWith("\"", &name);
+            name.EndsWith("\"", &name);
+            
             wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(name /* + sig*/, imgId);
             entry->SetComment(doc);
             entries.push_back(entry);

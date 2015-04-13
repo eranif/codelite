@@ -286,6 +286,7 @@ CodeLiteApp::~CodeLiteApp(void)
 
 bool CodeLiteApp::OnInit()
 {
+    SetAppName(wxT("codelite"));
 #if defined(__WXGTK__) || defined(__WXMAC__)
 
     // block signal pipe
@@ -419,7 +420,6 @@ bool CodeLiteApp::OnInit()
 
 #if defined(__WXGTK__)
     if(homeDir.IsEmpty()) {
-        SetAppName(wxT("codelite"));
         homeDir = clStandardPaths::Get()
                       .GetUserDataDir(); // By default, ~/Library/Application Support/codelite or ~/.codelite
         if(!wxFileName::Exists(homeDir)) {
@@ -450,7 +450,6 @@ bool CodeLiteApp::OnInit()
     }
 
 #elif defined(__WXMAC__)
-    SetAppName(wxT("codelite"));
     homeDir = clStandardPaths::Get().GetUserDataDir();
     if(!wxFileName::Exists(homeDir)) {
         wxLogNull noLog;

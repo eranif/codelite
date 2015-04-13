@@ -55,6 +55,8 @@
 #include "event_notifier.h"
 #include "clsplashscreen.h"
 #include <wx/persist.h>
+#include "singleinstancethreadjob.h"
+#include "SocketAPI/clSocketClient.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -265,9 +267,7 @@ CodeLiteApp::CodeLiteApp(void)
 #ifdef __WXMSW__
     , m_handler(NULL)
 #endif
-    , m_persistencManager(NULL)
-{
-}
+    , m_persistencManager(NULL) {}
 
 CodeLiteApp::~CodeLiteApp(void)
 {
@@ -542,7 +542,7 @@ bool CodeLiteApp::OnInit()
         wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     }
 #endif
- 
+
     Manager* mgr = ManagerST::Get();
     EditorConfig* cfg = EditorConfigST::Get();
     cfg->SetInstallDir(mgr->GetInstallDir());
@@ -778,30 +778,30 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser, const wxString
         m_singleInstance = new wxSingleInstanceChecker(name);
         if(m_singleInstance->IsAnotherRunning()) {
             // prepare commands file for the running instance
-            wxString files;
+            wxArrayString files;
             for(size_t i = 0; i < parser.GetParamCount(); i++) {
                 wxString argument = parser.GetParam(i);
 
                 // convert to full path and open it
                 wxFileName fn(argument);
                 fn.MakeAbsolute(curdir);
-                files << fn.GetFullPath() << wxT("\n");
+                files.Add(fn.GetFullPath());
             }
-
-            if(files.IsEmpty() == false) {
-                Mkdir(ManagerST::Get()->GetStartupDirectory() + wxT("/ipc"));
-
-                wxString file_name, tmp_file;
-                tmp_file << ManagerST::Get()->GetStartupDirectory() << wxT("/ipc/command.msg.tmp");
-
-                file_name << ManagerST::Get()->GetStartupDirectory() << wxT("/ipc/command.msg");
-
-                // write the content to a temporary file, once completed,
-                // rename the file to the actual file name
-                WriteFileUTF8(tmp_file, files);
-                wxRenameFile(tmp_file, file_name);
+            
+            try {
+                // Send the request
+                clSocketClient client;
+                bool dummy;
+                client.ConnectRemote("127.0.0.1", SINGLE_INSTANCE_PORT, dummy);
+                
+                JSONRoot json(cJSON_Object);
+                json.toElement().addProperty("args", files);
+                client.WriteMessage(json.toElement().format());
+                return false;
+                
+            } catch (clSocketException& e) {
+                CL_ERROR("Failed to send single instance request: %s", e.what());
             }
-            return false;
         }
     }
     return true;

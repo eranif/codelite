@@ -52,6 +52,7 @@
 #include "clStatusBar.h"
 
 // forward decls
+class clSingleInstanceThread;
 class wxCustomStatusBar;
 class TagEntry;
 class WorkspacePane;
@@ -113,6 +114,8 @@ class clMainFrame : public wxFrame
     // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
     wxStringSet_t m_coreToolbars;
     clStatusBar* m_statusBar;
+    clSingleInstanceThread* m_singleInstanceThread;
+    
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);
@@ -250,8 +253,8 @@ public:
 
     const GeneralInfo& GetFrameGeneralInfo() const { return m_frameGeneralInfo; }
 
-    void OnSingleInstanceOpenFiles(wxCommandEvent& e);
-    void OnSingleInstanceRaise(wxCommandEvent& e);
+    void OnSingleInstanceOpenFiles(clCommandEvent& e);
+    void OnSingleInstanceRaise(clCommandEvent& e);
 
     /**
      * @brief rebuild the give project

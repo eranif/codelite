@@ -1,99 +1,74 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : singleinstancethreadjob.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : singleinstancethreadjob.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/tokenzr.h>
 #include "globals.h"
 #include "singleinstancethreadjob.h"
-#include "dirsaver.h"
 #include <wx/filename.h>
-#include <wx/dir.h>
+#include "file_logger.h"
+#include "json_node.h"
+#include "event_notifier.h"
 
-const wxEventType wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES = wxNewEventType();
-const wxEventType wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP = wxNewEventType();
+wxDEFINE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, clCommandEvent);
 
-SingleInstanceThreadJob::SingleInstanceThreadJob(wxEvtHandler *parent, const wxString &path)
-		: Job(parent)
-		, m_path(path)
+clSingleInstanceThread::clSingleInstanceThread()
+    : wxThread(wxTHREAD_JOINABLE)
 {
 }
 
-SingleInstanceThreadJob::~SingleInstanceThreadJob()
+clSingleInstanceThread::~clSingleInstanceThread() { Stop(); }
+
+void* clSingleInstanceThread::Entry()
 {
-}
+    try {
+        m_serverSocket.CreateServer("127.0.0.1", SINGLE_INSTANCE_PORT);
+        CL_DEBUG("clSingleInstanceThread: created socket server on port: %d", SINGLE_INSTANCE_PORT);
+        
+        while(!TestDestroy()) {
+            // wait for a new connection
+            clSocketBase::Ptr_t client = m_serverSocket.WaitForNewConnection(1);
+            if(!client) continue;
 
-void SingleInstanceThreadJob::Process(wxThread* thread)
-{
-	if ( wxFileName::DirExists(m_path) == false ) {
-		return;
-	}
+            wxString message;
+            if(client->ReadMessage(message, 3) == clSocketBase::kTimeout) continue;
+            CL_DEBUG("clSingleInstanceThread: received new message: %s", message);
+            
+            JSONRoot root(message);
+            wxArrayString args = root.toElement().namedObject("args").toArrayString();
 
-	Mkdir(m_path + wxT("/ipc"));
-	wxString cmd_file(m_path + wxT("/ipc/command.msg"));
-	wxString cmd_file_inuse(m_path + wxT("/ipc/command.msg_inuse"));
-
-	// loop until the thread is requested to exit
-	while ( thread->TestDestroy() == false ) {
-
-		// client will place a file named: message.msg
-
-		if ( wxFileName::FileExists(cmd_file) ) {
-			// a command file was found, rename it to a temporary name
-			if ( wxRenameFile(cmd_file, cmd_file_inuse) ) {
-
-				wxString content;
-				ReadFileWithConversion(cmd_file_inuse, content);
-				if ( content.IsEmpty() == false ) {
-					ProcessFile(content);
-				} else {
-					// file was found but it is empty
-					// just make this app active
-					wxCommandEvent e(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP);
-					wxPostEvent(m_parent, e);
-				}
-
-				// remove it
-				wxRemoveFile(cmd_file_inuse);
-			}
-		}
-		wxThread::Sleep(100);
-	}
-}
-
-void SingleInstanceThreadJob::ProcessFile(const wxString& fileContent)
-{
-	// each line in the file content contains a file name to be opened, pass it to the main thread
-	wxCommandEvent e(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES);
-
-	wxArrayString *arr = new wxArrayString();
-	wxArrayString a = wxStringTokenize(fileContent, wxT("\n"));
-
-	for (size_t i=0; i<a.GetCount(); i++) {
-		// since we are sending an event between threads, use c_str() to avoid ref-counting
-		arr->Add(a.Item(i).c_str());
-	}
-
-	e.SetClientData(arr);
-	wxPostEvent(m_parent, e);
+            if(args.IsEmpty()) {
+                // just raise codelite
+                clCommandEvent event(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP);
+                EventNotifier::Get()->AddPendingEvent(event);
+            } else {
+                clCommandEvent event(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES);
+                event.SetStrings(args);
+                EventNotifier::Get()->AddPendingEvent(event);
+            }
+        }
+    } catch(clSocketException& e) {
+        CL_ERROR("Failed to create single instance socket: %s", e.what());
+    }
 }

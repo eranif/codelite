@@ -634,8 +634,6 @@ EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE_INTER, clMainFrame::OnDatabaseUpgrad
 EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU, clMainFrame::OnRefreshPerspectiveMenu)
 EVT_MENU(XRCID("update_num_builders_count"), clMainFrame::OnUpdateNumberOfBuildProcesses)
 EVT_MENU(XRCID("goto_codelite_download_url"), clMainFrame::OnGotoCodeLiteDownloadPage)
-EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, clMainFrame::OnSingleInstanceOpenFiles)
-EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, clMainFrame::OnSingleInstanceRaise)
 
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, clMainFrame::OnNewVersionAvailable)
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, clMainFrame::OnNewVersionAvailable)
@@ -659,6 +657,7 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     , m_highlightWord(false)
     , m_workspaceRetagIsRequired(false)
     , m_bookmarksDropDownMenu(NULL)
+    , m_singleInstanceThread(NULL)
 {
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -689,8 +688,9 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     // start the job queue
     JobQueueSingleton::Instance()->Start(6);
 
-    // the single instance job is a presisstent job, so the pool will contain only 4 available threads
-    JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStartupDirectory()));
+    // Create the single instance thread
+    m_singleInstanceThread = new clSingleInstanceThread();
+    m_singleInstanceThread->Start();
 
     // start the editor creator thread
     m_timer = new wxTimer(this, FrameTimerId);
@@ -751,6 +751,9 @@ clMainFrame::clMainFrame(wxWindow* pParent,
                                this);
     EventNotifier::Get()->Bind(
         wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
+    EventNotifier::Get()->Bind(
+        wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
     Connect(wxID_UNDO,
             wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN,
             wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo),
@@ -775,6 +778,8 @@ clMainFrame::clMainFrame(wxWindow* pParent,
 
 clMainFrame::~clMainFrame(void)
 {
+    wxDELETE(m_singleInstanceThread);
+
 #ifndef __WXMSW__
     m_zombieReaper.Stop();
 #endif
@@ -841,6 +846,10 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
                                  wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt),
                                  this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
+
     EventNotifier::Get()->Unbind(
         wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
 
@@ -4229,34 +4238,27 @@ void clMainFrame::OnShowNavBarUI(wxUpdateUIEvent& e)
     e.Check(GetMainBook()->IsNavBarShown());
 }
 
-void clMainFrame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
+void clMainFrame::OnSingleInstanceOpenFiles(clCommandEvent& e)
 {
-    wxArrayString* arr = reinterpret_cast<wxArrayString*>(e.GetClientData());
-    if(arr) {
-        for(size_t i = 0; i < arr->GetCount(); i++) {
-            wxFileName fn(arr->Item(i));
+    const wxArrayString& files = e.GetStrings();
+    for(size_t i = 0; i < files.GetCount(); ++i) {
+        wxFileName fn(files.Item(i));
 
-            // if file is workspace, load it
-            if(fn.GetExt() == wxT("workspace")) {
-                if(ManagerST::Get()->IsWorkspaceOpen()) {
-                    if(wxMessageBox(_("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"),
-                                    _("CodeLite"),
-                                    wxICON_QUESTION | wxYES_NO,
-                                    this) == wxNO) {
-                        continue;
-                    }
-                }
-                ManagerST::Get()->OpenWorkspace(arr->Item(i));
-            } else {
-                clMainFrame::Get()->GetMainBook()->OpenFile(arr->Item(i), wxEmptyString);
-            }
+        // if file is workspace, load it
+        if(fn.GetExt() == wxT("workspace")) {
+            wxCommandEvent workspaceEvent;
+            workspaceEvent.SetString(files.Item(i));
+            OnSwitchWorkspace(workspaceEvent);
+
+        } else {
+            GetMainBook()->OpenFile(files.Item(i), wxEmptyString);
         }
-        delete arr;
     }
-    Raise();
+
+    CallAfter(&clMainFrame::Raise);
 }
 
-void clMainFrame::OnSingleInstanceRaise(wxCommandEvent& e)
+void clMainFrame::OnSingleInstanceRaise(clCommandEvent& e)
 {
     wxUnusedVar(e);
     Raise();
@@ -5529,13 +5531,13 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
         rootDirs.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
         files.Add(editor->GetFileName().GetFullPath());
         mask << editor->GetFileName().GetFullName(); // this will ensure that this file is scanned
-        
+
     } else {
         rootDirs.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
         ManagerST::Get()->GetWorkspaceFiles(files);
         wxStringSet_t masks;
         // Build a mask that matches the workspace content
-        std::for_each(files.begin(), files.end(), [&](const wxString& filename){
+        std::for_each(files.begin(), files.end(), [&](const wxString& filename) {
             wxFileName fn(filename);
             wxString curfileMask = fn.GetExt();
             if(fn.GetExt().IsEmpty()) {
@@ -5543,7 +5545,7 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
             } else {
                 curfileMask = "*." + fn.GetExt();
             }
-           
+
             if(masks.count(curfileMask) == 0) {
                 masks.insert(curfileMask);
                 mask << curfileMask << ";";

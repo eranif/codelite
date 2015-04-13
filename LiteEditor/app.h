@@ -49,7 +49,7 @@ protected:
     
 private: // Methods
     bool CopySettings(const wxString& destDir, wxString& installPath);
-    bool IsSingleInstance(const wxCmdLineParser& parser, const wxString& curdir);
+    bool IsSingleInstance(const wxCmdLineParser& parser);
     void DoCopyGdbPrinters();
     void MSWReadRegistry();
     wxString DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion);

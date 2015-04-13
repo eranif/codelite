@@ -345,7 +345,12 @@ bool CodeLiteApp::OnInit()
     if(parser.Parse() != 0) {
         return false;
     }
-
+    
+    // check for single instance
+    if(!IsSingleInstance(parser)) {
+        return false;
+    }
+    
     if(parser.Found(wxT("h"))) {
         // print usage
         parser.Usage();
@@ -584,11 +589,7 @@ bool CodeLiteApp::OnInit()
         wxUnusedVar(new_stdout);
     }
 #endif
-    // check for single instance
-    if(!IsSingleInstance(parser, ManagerST::Get()->GetOriginalCwd())) {
-        return false;
-    }
-
+    
     //---------------------------------------------------------
     // Set environment variable for CodeLiteDir (make it first
     // on the list so it can be used by other variables)
@@ -769,7 +770,7 @@ void CodeLiteApp::OnFatalException()
 #endif
 }
 
-bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser, const wxString& curdir)
+bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
 {
     // check for single instance
     if(clConfig::Get().Read(kConfigSingleInstance, false)) {
@@ -784,7 +785,7 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser, const wxString
 
                 // convert to full path and open it
                 wxFileName fn(argument);
-                fn.MakeAbsolute(curdir);
+                fn.MakeAbsolute();
                 files.Add(fn.GetFullPath());
             }
             

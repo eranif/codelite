@@ -29,6 +29,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     this->SetSizer(bSizerMain);
     
     m_treebook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook->SetName(wxT("m_treebook"));
     wxImageList* m_treebook_il = new wxImageList(16, 16);
     m_treebook->AssignImageList(m_treebook_il);
     
@@ -441,12 +442,16 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrPhpArr.Add(_("Break before 'foreach'"));
     m_pgMgrPhpArr.Add(_("'else' doesn't break"));
     m_pgMgrPhpArr.Add(_("Break after 'heredoc' statement"));
+    m_pgMgrPhpArr.Add(_("Break PHP Arrays vertically"));
+    m_pgMgrPhpArr.Add(_("Break after string concatentation operator (\".\")"));
     m_pgMgrPhpIntArr.Add(kPFF_BreakBeforeClass);
     m_pgMgrPhpIntArr.Add(kPFF_BreakBeforeFunction);
     m_pgMgrPhpIntArr.Add(kPFF_BreakBeforeWhile);
     m_pgMgrPhpIntArr.Add(kPFF_BreakBeforeForeach);
     m_pgMgrPhpIntArr.Add(kPFF_ElseOnSameLineAsClosingCurlyBrace);
     m_pgMgrPhpIntArr.Add(kPFF_BreakAfterHeredoc);
+    m_pgMgrPhpIntArr.Add(kPFF_VerticalArrays);
+    m_pgMgrPhpIntArr.Add(kPFF_BreakAfterStringConcatentation);
     m_pgPropPhpFormatterOptions = m_pgMgrPhp->AppendIn( m_pgPropPhpFormatter,  new wxFlagsProperty( _("PHPFormatter Options"), wxPG_LABEL, m_pgMgrPhpArr, m_pgMgrPhpIntArr, 0) );
     m_pgPropPhpFormatterOptions->SetHelpString(wxT(""));
     
@@ -516,17 +521,25 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer30->AddButton(m_buttonHelp);
     m_stdBtnSizer30->Realize();
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    wxPersistenceManager::Get().RegisterAndRestore(m_treebook);
+    #endif
     m_treebook->ExpandNode( 0, true );
     m_treebook->ExpandNode( 1, true );
     m_treebook->ExpandNode( 2, true );
     m_treebook->ExpandNode( 3, true );
     m_treebook->ExpandNode( 4, true );
     
+    SetName(wxT("CodeFormatterBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    wxPersistenceManager::Get().RegisterAndRestore(this);
+#endif
     // Connect events
     m_checkBoxFormatOnSave->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnFormatOnSave), NULL, this);
     m_choiceCxxEngine->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicecxxengineChoiceSelected), NULL, this);

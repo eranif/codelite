@@ -39,12 +39,17 @@ enum ePHPFormatterFlags {
     kPFF_ElseOnSameLineAsClosingCurlyBrace = (1 << 6),
     kPFF_BreakAfterHeredoc = (1 << 7),
     kPFF_BreakBeforeClass = (1 << 8),
+    kPFF_VerticalArrays = (1 << 9),
+    kPFF_BreakAfterStringConcatentation = (1 << 10),
     kPFF_Defaults = kPFF_BreakBeforeFunction | kPFF_BreakBeforeWhile | kPFF_BreakBeforeIf | kPFF_BreakBeforeForeach |
                     kPFF_ElseOnSameLineAsClosingCurlyBrace |
+                    kPFF_VerticalArrays |
+                    kPFF_BreakAfterStringConcatentation |
                     kPFF_BreakBeforeClass,
 };
 
-struct PHPFormatterOptions {
+struct PHPFormatterOptions
+{
     wxString eol;      // default: \n
     size_t indentSize; // default: 4
     size_t flags;
@@ -79,7 +84,7 @@ protected:
     std::stack<phpLexerToken::Vet_t> m_stack;
     phpLexerToken::Vet_t* m_sequence;
     phpLexerToken::Vet_t m_tokensBuffer;
-    
+
     // For statement
     int m_forDepth;
     bool m_insideForStatement;
@@ -92,7 +97,10 @@ protected:
 
     // Is the last seen function has a comment associated with it?
     int m_lastCommentLine;
-
+    
+    // Paren depth "("
+    int m_parenDepth;
+    
 protected:
     /**
      * @brief indent using tabs?
@@ -147,6 +155,19 @@ protected:
      */
     bool PeekToken(phpLexerToken& token);
 
+    /**
+     * @brief process an array. We can assume that the token at this point is
+     * "(" and the token previously found was "array"
+     */
+    void ProcessArray(int openParen, int closingChar);
+    
+    /**
+     * @brief reverse find ch in the buffer and return a whitepace representing 
+     * the distance from the line start position and ch index
+     * If 'ch' is not found, return the current line indentation string
+     */
+    wxString GetIndentationToLast(wxChar ch);
+    
 public:
     PHPFormatterBuffer(const wxString& buffer, const PHPFormatterOptions& options);
     virtual ~PHPFormatterBuffer();

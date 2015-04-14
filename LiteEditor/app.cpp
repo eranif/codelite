@@ -652,6 +652,9 @@ bool CodeLiteApp::OnInit()
             // as otherwise, in a RTL locale, menus, dialogs etc will be displayed RTL, in English...
             // However I couldn't find a way to do this
         }
+    } else {
+        // For proper encoding handling by system libraries it's needed to inialize locale even if UI translation is turned off
+        m_locale.Init(wxLANGUAGE_ENGLISH, wxLOCALE_DONT_LOAD_DEFAULT);
     }
 
 // Append the binary's dir to $PATH. This makes codelite-cc available even for a --prefix= installation

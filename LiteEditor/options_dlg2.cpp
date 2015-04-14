@@ -101,9 +101,6 @@ void OptionsDlg2::DoSave()
 
     // Notify plugins about settings changed
     PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
-
-    if(this->restartRquired) {
-    }
 }
 
 void OptionsDlg2::Initialize()

@@ -39,7 +39,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer22->Add(bSizer2, 0, wxEXPAND, 5);
+    boxSizer22->Add(bSizer2, 0, wxALL|wxEXPAND, 5);
     
     wxArrayString m_radioBoxHintArr;
     m_radioBoxHintArr.Add(_("Transparent hint"));
@@ -58,16 +58,20 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     bSizer2->Add(m_radioBoxTabControlStyle, 1, wxALL|wxEXPAND, 5);
     
+    wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer22->Add(boxSizer25, 0, wxALL, 5);
+    
     m_checkBoxHideCaptions = new wxCheckBox(m_panel12, wxID_ANY, _("Hide Docking Windows captions"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxHideCaptions->SetValue(false);
     
-    boxSizer22->Add(m_checkBoxHideCaptions, 0, wxALL, 5);
+    boxSizer25->Add(m_checkBoxHideCaptions, 0, wxALL, 5);
     
     m_checkBoxEnsureCaptionsVisible = new wxCheckBox(m_panel12, wxID_ANY, _("Ensure captions are visible on mouse hover"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxEnsureCaptionsVisible->SetValue(false);
     m_checkBoxEnsureCaptionsVisible->SetToolTip(_("When the option 'Hide Docking Windows captions' is enabled, ensure captions are visible on mouse hover. This is useful so the user can still move around the docking  windows"));
     
-    boxSizer22->Add(m_checkBoxEnsureCaptionsVisible, 0, wxALL, 5);
+    boxSizer25->Add(m_checkBoxEnsureCaptionsVisible, 0, wxALL, 5);
     
     m_panel14 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel14, _("Find / Find In Files"), false);

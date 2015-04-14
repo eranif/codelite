@@ -53,7 +53,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxShowDebugOnRun->SetValue(options->GetShowDebugOnRun());
     m_radioBoxHint->SetSelection(options->GetDockingStyle());
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
-
+    m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
+    
     int tabStyle(0); // Glossy
     m_startingFlags = OptionsConfig::TabGlossy;
     if(options->GetOptions() & OptionsConfig::TabCurved) {
@@ -96,7 +97,8 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetShowDebugOnRun(m_checkBoxShowDebugOnRun->IsChecked());
     options->SetDockingStyle(m_radioBoxHint->GetSelection());
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());
-
+    options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
+    
     // Keep the quickreplacebar in sync
     clMainFrame::Get()->GetMainBook()->ShowQuickReplaceBar(m_checkBoxShowReplaceBar->IsChecked());
 

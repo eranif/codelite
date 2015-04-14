@@ -64,6 +64,7 @@ public:
         Opt_WrapBrackets = 0x01000000,
         Opt_WrapCmdWithDoubleQuotes = 0x02000000,
         Opt_FoldHighlightActiveBlock = 0x04000000,
+        Opt_EnsureCaptionsVisible = 0x08000000,
     };
 
 protected:
@@ -392,7 +393,8 @@ public:
     const wxColour& GetDebuggerMarkerLine() const { return m_debuggerMarkerLine; }
 
     void SetShowDockingWindowCaption(bool show) { EnableOption(Opt_HideDockingWindowCaption, !show); }
-
+    void SetEnsureCaptionsVisible(bool b) { EnableOption(Opt_EnsureCaptionsVisible, b); }
+    bool IsEnsureCaptionsVisible() const { return HasOption(Opt_EnsureCaptionsVisible); }
     bool IsShowDockingWindowCaption() const { return !HasOption(Opt_HideDockingWindowCaption); }
     bool IsWrapSelectionWithQuotes() const { return HasOption(Opt_WrapQuotes); }
     bool IsWrapSelectionBrackets() const { return HasOption(Opt_WrapBrackets); }

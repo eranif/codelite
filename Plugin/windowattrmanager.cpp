@@ -35,6 +35,11 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
     if(win->GetName().IsEmpty()) {
         return;
     }
+    
+    // Is this object already registered?
+    if(wxPersistenceManager::Get().Find(win)) return;
+    
+    // Register and restore the object and recurse into its children
     wxPersistenceManager::Get().RegisterAndRestore(win);
     DoLoad(win, win->GetName(), 0);
 }

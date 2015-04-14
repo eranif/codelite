@@ -90,7 +90,6 @@
   <Dependencies/>
   <VirtualDirectory Name="meta">
     <File Name="CMakeLists.txt"/>
-    <File Name="TODO.TXT"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="memcheckui.wxcp"/>

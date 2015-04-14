@@ -46,6 +46,8 @@
 #include "workspace_pane.h"
 #include "cl_config.h"
 #include "cl_aui_dock_art.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -61,10 +63,10 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
     , m_mgr(mgr)
 {
     CreateGUIControls();
-    Connect();
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
 }
 
-WorkspacePane::~WorkspacePane() {}
+WorkspacePane::~WorkspacePane() { EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this); }
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
 
@@ -155,8 +157,6 @@ void WorkspacePane::CreateGUIControls()
     UpdateTabs();
     m_mgr->Update();
 }
-
-void WorkspacePane::Connect() {}
 
 void WorkspacePane::ClearProgress()
 {
@@ -342,11 +342,16 @@ bool WorkspacePane::IsTabVisible(int flag)
     if(!win || title.IsEmpty()) return false;
 
     // if the control exists in the notebook, return true
-    for(size_t i = 0; i < m_book->GetPageCount(); i++) {
+    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
         if(m_book->GetPageText(i) == title) {
             return true;
         }
     }
-
     return win && win->IsShown();
+}
+
+void WorkspacePane::OnInitDone(wxCommandEvent& event)
+{
+    event.Skip();
+    m_captionEnabler.Initialize(this, "Workspace View", &clMainFrame::Get()->GetDockingManager());
 }

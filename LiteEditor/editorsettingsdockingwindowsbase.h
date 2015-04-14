@@ -13,13 +13,31 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
-#include <wx/checkbox.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
 #include <wx/radiobox.h>
+#include <wx/checkbox.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
+    wxNotebook* m_notebook10;
+    wxPanel* m_panel12;
+    wxRadioBox* m_radioBoxHint;
+    wxRadioBox* m_radioBoxTabControlStyle;
+    wxCheckBox* m_checkBoxHideCaptions;
+    wxCheckBox* m_checkBoxEnsureCaptionsVisible;
+    wxPanel* m_panel14;
+    wxCheckBox* m_checkBoxFindBarAtBottom;
+    wxCheckBox* m_checkBoxShowReplaceBar;
+    wxCheckBox* m_checkBoxDontFoldSearchResults;
+    wxPanel* m_panel16;
     wxCheckBox* m_checkBoxHideOutputPaneOnClick;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfBuild;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfSearch;
@@ -35,18 +53,22 @@ protected:
     wxCheckBox* m_checkBoxHideOutputPaneNotIfGit;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfDebug;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfMemCheck;
-    wxCheckBox* m_checkBoxDontFoldSearchResults;
-    wxCheckBox* m_checkBoxFindBarAtBottom;
-    wxCheckBox* m_checkBoxShowReplaceBar;
     wxCheckBox* m_checkBoxShowDebugOnRun;
-    wxRadioBox* m_radioBoxHint;
-    wxRadioBox* m_radioBoxTabControlStyle;
-    wxCheckBox* m_checkBoxHideCaptions;
 
 protected:
+    virtual void OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
+    wxRadioBox* GetRadioBoxTabControlStyle() { return m_radioBoxTabControlStyle; }
+    wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
+    wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
+    wxPanel* GetPanel12() { return m_panel12; }
+    wxCheckBox* GetCheckBoxFindBarAtBottom() { return m_checkBoxFindBarAtBottom; }
+    wxCheckBox* GetCheckBoxShowReplaceBar() { return m_checkBoxShowReplaceBar; }
+    wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }
+    wxPanel* GetPanel14() { return m_panel14; }
     wxCheckBox* GetCheckBoxHideOutputPaneOnClick() { return m_checkBoxHideOutputPaneOnClick; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfBuild() { return m_checkBoxHideOutputPaneNotIfBuild; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfSearch() { return m_checkBoxHideOutputPaneNotIfSearch; }
@@ -62,13 +84,9 @@ public:
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfGit() { return m_checkBoxHideOutputPaneNotIfGit; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfDebug() { return m_checkBoxHideOutputPaneNotIfDebug; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfMemCheck() { return m_checkBoxHideOutputPaneNotIfMemCheck; }
-    wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }
-    wxCheckBox* GetCheckBoxFindBarAtBottom() { return m_checkBoxFindBarAtBottom; }
-    wxCheckBox* GetCheckBoxShowReplaceBar() { return m_checkBoxShowReplaceBar; }
     wxCheckBox* GetCheckBoxShowDebugOnRun() { return m_checkBoxShowDebugOnRun; }
-    wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
-    wxRadioBox* GetRadioBoxTabControlStyle() { return m_radioBoxTabControlStyle; }
-    wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
+    wxPanel* GetPanel16() { return m_panel16; }
+    wxNotebook* GetNotebook10() { return m_notebook10; }
     EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsDockingWindowsBase();
 };

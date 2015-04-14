@@ -313,6 +313,8 @@
       <File Name="cl_aui_notebook_art.h"/>
       <File Name="clAuiMainNotebookTabArt.h"/>
       <File Name="clAuiMainNotebookTabArt.cpp"/>
+      <File Name="clAuiCaptionEnabler.h"/>
+      <File Name="clAuiCaptionEnabler.cpp"/>
     </VirtualDirectory>
     <File Name="cl_aui_tool_stickness.h"/>
     <File Name="cl_aui_tool_stickness.cpp"/>

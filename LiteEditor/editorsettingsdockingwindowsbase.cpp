@@ -26,146 +26,26 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Output Pane:")), wxVERTICAL);
+    m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook10->SetName(wxT("m_notebook10"));
     
-    mainSizer->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_notebook10, 1, wxEXPAND, 5);
     
-    m_checkBoxHideOutputPaneOnClick = new wxCheckBox(this, wxID_ANY, _("When user clicks inside an editor, hide the output pane -- unless it's one of:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneOnClick->SetValue(true);
-    m_checkBoxHideOutputPaneOnClick->SetToolTip(_("When e.g. you compile your project, or use 'Find in Files', the Output Pane opens to show the results. If this box is ticked, it will automatically close as soon as you click in the editor."));
+    m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook10->AddPage(m_panel12, _("Docking"), true);
     
-    sbSizer1->Add(m_checkBoxHideOutputPaneOnClick, 0, wxALL|wxEXPAND, 5);
-    
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 4, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    
-    sbSizer1->Add(fgSizer1, 0, wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_LEFT, 20);
-    
-    m_checkBoxHideOutputPaneNotIfBuild = new wxCheckBox(this, wxID_ANY, _("Build"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfBuild->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfBuild->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing e.g. you may not want it to close while you correct one of many build errors."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfBuild, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfSearch = new wxCheckBox(this, wxID_ANY, _("Search"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfSearch->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfSearch->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfSearch, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfReplace = new wxCheckBox(this, wxID_ANY, _("Replace"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfReplace->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfReplace->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfReplace, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfReferences = new wxCheckBox(this, wxID_ANY, _("References"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfReferences->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfReferences->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfReferences, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfOutput = new wxCheckBox(this, wxID_ANY, _("Output"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfOutput->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfOutput->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfOutput, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfTrace = new wxCheckBox(this, wxID_ANY, _("Trace"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfTrace->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfTrace->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfTrace, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfTasks = new wxCheckBox(this, wxID_ANY, _("Tasks"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfTasks->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfTasks->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfTasks, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfBuildQ = new wxCheckBox(this, wxID_ANY, _("BuildQ"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfBuildQ->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfBuildQ->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfBuildQ, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfCppCheck = new wxCheckBox(this, wxID_ANY, _("CppCheck"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfCppCheck->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfCppCheck->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfCppCheck, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfSvn = new wxCheckBox(this, wxID_ANY, _("Subversion"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfSvn->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfSvn->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfSvn, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfCscope = new wxCheckBox(this, wxID_ANY, _("CScope"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfCscope->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfCscope->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfCscope, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfGit = new wxCheckBox(this, wxID_ANY, _("Git"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfGit->SetValue(false);
-    m_checkBoxHideOutputPaneNotIfGit->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfGit, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfDebug = new wxCheckBox(this, wxID_ANY, _("Debug"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfDebug->SetValue(true);
-    m_checkBoxHideOutputPaneNotIfDebug->SetToolTip(_("Don't automatically close the Debugger Pane on an editor click if this tab is showing. You probably don't want it to close whenever you set a breakpoint, for example."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfDebug, 0, wxALL, 5);
-    
-    m_checkBoxHideOutputPaneNotIfMemCheck = new wxCheckBox(this, wxID_ANY, _("MemCheck"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxHideOutputPaneNotIfMemCheck->SetValue(true);
-    m_checkBoxHideOutputPaneNotIfMemCheck->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
-    
-    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfMemCheck, 0, wxALL, 5);
-    
-    m_checkBoxDontFoldSearchResults = new wxCheckBox(this, wxID_ANY, _("Don't automatically fold Search results"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxDontFoldSearchResults->SetValue(false);
-    m_checkBoxDontFoldSearchResults->SetToolTip(_("By default, all but the first results of 'Search' are automatically folded; you have to click on each subsequent file to see its contained matches. Tick this box to prevent this.\nYou can still fold and unfold results with the button in the output pane toolbar."));
-    
-    sbSizer1->Add(m_checkBoxDontFoldSearchResults, 0, wxALL, 5);
-    
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Find Bar:")), wxVERTICAL);
-    
-    mainSizer->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxFindBarAtBottom = new wxCheckBox(this, wxID_ANY, _("Place the Find bar at the bottom"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxFindBarAtBottom->SetValue(true);
-    
-    sbSizer2->Add(m_checkBoxFindBarAtBottom, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxShowReplaceBar = new wxCheckBox(this, wxID_ANY, _("Also show the 'Replace' section of the Find bar"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxShowReplaceBar->SetValue(false);
-    m_checkBoxShowReplaceBar->SetToolTip(_("When ticked, extra 'replace' fields will be added. You can also Show/Hide these using a keyboard shortcut."));
-    
-    sbSizer2->Add(m_checkBoxShowReplaceBar, 0, wxALL|wxEXPAND, 5);
-    
-    wxStaticBoxSizer* sbSizer11 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Debug Pane:")), wxVERTICAL);
-    
-    mainSizer->Add(sbSizer11, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxShowDebugOnRun = new wxCheckBox(this, wxID_ANY, _("Show 'Debug' tab on starting the debugger"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxShowDebugOnRun->SetValue(true);
-    m_checkBoxShowDebugOnRun->SetToolTip(_("When starting the debugger, if the Debug tab is not visible, checking this will make it visible"));
-    
-    sbSizer11->Add(m_checkBoxShowDebugOnRun, 0, wxALL, 5);
+    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    m_panel12->SetSizer(boxSizer22);
     
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(bSizer2, 0, wxEXPAND, 5);
+    boxSizer22->Add(bSizer2, 0, wxEXPAND, 5);
     
     wxArrayString m_radioBoxHintArr;
     m_radioBoxHintArr.Add(_("Transparent hint"));
     m_radioBoxHintArr.Add(_("Rectangle hint"));
     m_radioBoxHintArr.Add(_("Venetian blinds hints"));
-    m_radioBoxHint = new wxRadioBox(this, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxHintArr, 1, wxRA_SPECIFY_COLS);
+    m_radioBoxHint = new wxRadioBox(m_panel12, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxHintArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxHint->SetSelection(0);
     
     bSizer2->Add(m_radioBoxHint, 1, wxALL|wxEXPAND, 5);
@@ -173,22 +53,165 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     wxArrayString m_radioBoxTabControlStyleArr;
     m_radioBoxTabControlStyleArr.Add(_("Glossy"));
     m_radioBoxTabControlStyleArr.Add(_("Curved"));
-    m_radioBoxTabControlStyle = new wxRadioBox(this, wxID_ANY, _("Tab Control Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxTabControlStyleArr, 1, wxRA_SPECIFY_COLS);
+    m_radioBoxTabControlStyle = new wxRadioBox(m_panel12, wxID_ANY, _("Tab Control Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxTabControlStyleArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxTabControlStyle->SetSelection(0);
     
     bSizer2->Add(m_radioBoxTabControlStyle, 1, wxALL|wxEXPAND, 5);
     
-    m_checkBoxHideCaptions = new wxCheckBox(this, wxID_ANY, _("Hide Docking Windows captions"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxHideCaptions = new wxCheckBox(m_panel12, wxID_ANY, _("Hide Docking Windows captions"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxHideCaptions->SetValue(false);
     
-    mainSizer->Add(m_checkBoxHideCaptions, 0, wxALL, 5);
+    boxSizer22->Add(m_checkBoxHideCaptions, 0, wxALL, 5);
     
+    m_checkBoxEnsureCaptionsVisible = new wxCheckBox(m_panel12, wxID_ANY, _("Ensure captions are visible on mouse hover"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnsureCaptionsVisible->SetValue(false);
+    m_checkBoxEnsureCaptionsVisible->SetToolTip(_("When the option 'Hide Docking Windows captions' is enabled, ensure captions are visible on mouse hover. This is useful so the user can still move around the docking  windows"));
+    
+    boxSizer22->Add(m_checkBoxEnsureCaptionsVisible, 0, wxALL, 5);
+    
+    m_panel14 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook10->AddPage(m_panel14, _("Find / Find In Files"), false);
+    
+    wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
+    m_panel14->SetSizer(boxSizer20);
+    
+    m_checkBoxFindBarAtBottom = new wxCheckBox(m_panel14, wxID_ANY, _("Place the Find bar at the bottom"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxFindBarAtBottom->SetValue(true);
+    
+    boxSizer20->Add(m_checkBoxFindBarAtBottom, 0, wxALL|wxEXPAND, 5);
+    
+    m_checkBoxShowReplaceBar = new wxCheckBox(m_panel14, wxID_ANY, _("Also show the 'Replace' section of the Find bar"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxShowReplaceBar->SetValue(false);
+    m_checkBoxShowReplaceBar->SetToolTip(_("When ticked, extra 'replace' fields will be added. You can also Show/Hide these using a keyboard shortcut."));
+    
+    boxSizer20->Add(m_checkBoxShowReplaceBar, 0, wxALL|wxEXPAND, 5);
+    
+    m_checkBoxDontFoldSearchResults = new wxCheckBox(m_panel14, wxID_ANY, _("Don't automatically fold Search results"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxDontFoldSearchResults->SetValue(false);
+    m_checkBoxDontFoldSearchResults->SetToolTip(_("By default, all but the first results of 'Search' are automatically folded; you have to click on each subsequent file to see its contained matches. Tick this box to prevent this.\nYou can still fold and unfold results with the button in the output pane toolbar."));
+    
+    boxSizer20->Add(m_checkBoxDontFoldSearchResults, 0, wxALL, 5);
+    
+    m_panel16 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook10->AddPage(m_panel16, _("Debug / Output panes"), false);
+    
+    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxVERTICAL);
+    m_panel16->SetSizer(boxSizer21);
+    
+    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer21->Add(boxSizer19, 0, wxALL|wxEXPAND, 5);
+    
+    m_checkBoxHideOutputPaneOnClick = new wxCheckBox(m_panel16, wxID_ANY, _("When user clicks inside an editor, hide the output pane -- unless it's one of:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneOnClick->SetValue(true);
+    m_checkBoxHideOutputPaneOnClick->SetToolTip(_("When e.g. you compile your project, or use 'Find in Files', the Output Pane opens to show the results. If this box is ticked, it will automatically close as soon as you click in the editor."));
+    
+    boxSizer19->Add(m_checkBoxHideOutputPaneOnClick, 0, wxALL|wxEXPAND, 5);
+    
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 4, 0, 0);
+    fgSizer1->SetFlexibleDirection( wxBOTH );
+    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    
+    boxSizer19->Add(fgSizer1, 0, wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_LEFT, 20);
+    
+    m_checkBoxHideOutputPaneNotIfBuild = new wxCheckBox(m_panel16, wxID_ANY, _("Build"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfBuild->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfBuild->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing e.g. you may not want it to close while you correct one of many build errors."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfBuild, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfSearch = new wxCheckBox(m_panel16, wxID_ANY, _("Search"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfSearch->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfSearch->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfSearch, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfReplace = new wxCheckBox(m_panel16, wxID_ANY, _("Replace"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfReplace->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfReplace->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfReplace, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfReferences = new wxCheckBox(m_panel16, wxID_ANY, _("References"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfReferences->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfReferences->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfReferences, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfOutput = new wxCheckBox(m_panel16, wxID_ANY, _("Output"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfOutput->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfOutput->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfOutput, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfTrace = new wxCheckBox(m_panel16, wxID_ANY, _("Trace"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfTrace->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfTrace->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfTrace, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfTasks = new wxCheckBox(m_panel16, wxID_ANY, _("Tasks"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfTasks->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfTasks->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfTasks, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfBuildQ = new wxCheckBox(m_panel16, wxID_ANY, _("BuildQ"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfBuildQ->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfBuildQ->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfBuildQ, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfCppCheck = new wxCheckBox(m_panel16, wxID_ANY, _("CppCheck"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfCppCheck->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfCppCheck->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfCppCheck, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfSvn = new wxCheckBox(m_panel16, wxID_ANY, _("Subversion"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfSvn->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfSvn->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfSvn, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfCscope = new wxCheckBox(m_panel16, wxID_ANY, _("CScope"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfCscope->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfCscope->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfCscope, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfGit = new wxCheckBox(m_panel16, wxID_ANY, _("Git"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfGit->SetValue(false);
+    m_checkBoxHideOutputPaneNotIfGit->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfGit, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfDebug = new wxCheckBox(m_panel16, wxID_ANY, _("Debug"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfDebug->SetValue(true);
+    m_checkBoxHideOutputPaneNotIfDebug->SetToolTip(_("Don't automatically close the Debugger Pane on an editor click if this tab is showing. You probably don't want it to close whenever you set a breakpoint, for example."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfDebug, 0, wxALL, 5);
+    
+    m_checkBoxHideOutputPaneNotIfMemCheck = new wxCheckBox(m_panel16, wxID_ANY, _("MemCheck"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxHideOutputPaneNotIfMemCheck->SetValue(true);
+    m_checkBoxHideOutputPaneNotIfMemCheck->SetToolTip(_("Don't automatically close the Output Pane on an editor click if this tab is showing."));
+    
+    fgSizer1->Add(m_checkBoxHideOutputPaneNotIfMemCheck, 0, wxALL, 5);
+    
+    m_checkBoxShowDebugOnRun = new wxCheckBox(m_panel16, wxID_ANY, _("Show 'Debug' tab on starting the debugger"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxShowDebugOnRun->SetValue(true);
+    m_checkBoxShowDebugOnRun->SetToolTip(_("When starting the debugger, if the Debug tab is not visible, checking this will make it visible"));
+    
+    boxSizer21->Add(m_checkBoxShowDebugOnRun, 0, wxALL, 5);
+    
+    SetName(wxT("EditorSettingsDockingWindowsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
+    m_checkBoxEnsureCaptionsVisible->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnEnsureCaptionsVisibleUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfBuild->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfSearch->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfReplace->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
@@ -208,6 +231,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
 EditorSettingsDockingWindowsBase::~EditorSettingsDockingWindowsBase()
 {
+    m_checkBoxEnsureCaptionsVisible->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnEnsureCaptionsVisibleUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfBuild->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfSearch->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);
     m_checkBoxHideOutputPaneNotIfReplace->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnHideOutputPaneNotIfDebugUI), NULL, this);

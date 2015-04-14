@@ -28,6 +28,8 @@
 #include <wx/filename.h>
 #include "notebook_ex.h"
 #include <wx/panel.h>
+#include <wx/timer.h>
+#include "clAuiCaptionEnabler.h"
 
 // Forward Declarations
 class FileViewTree;
@@ -46,16 +48,20 @@ private:
     wxStaticText* m_staticText;
     Notebook* m_book;
     TabgroupsPane* m_TabgroupsPane;
+
 #ifndef __WXOSX__
     OpenWindowsPanel* m_openWindowsPane;
 #endif
+
     FileExplorer* m_explorer;
     WorkspaceTab* m_workspaceTab;
+    clAuiCaptionEnabler m_captionEnabler;
 
+protected:
     void CreateGUIControls();
-    void Connect();
     void DoShowTab(bool show, const wxString& title);
     wxWindow* DoGetControlByName(const wxString& title);
+    void OnInitDone(wxCommandEvent& event);
 
 public:
     WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);

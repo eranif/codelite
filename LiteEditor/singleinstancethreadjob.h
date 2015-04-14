@@ -37,7 +37,7 @@ wxDECLARE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, clCommandEvent);
 #ifdef __WXMSW__
 #ifdef NDEBUG
 #define SINGLE_INSTANCE_PORT 13617
-else
+#else
 #define SINGLE_INSTANCE_PORT 16617
 #endif
 #else 

@@ -2828,37 +2828,38 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
 {
     wxString selectText = GetSelectedText();
     wxPoint pt = event.GetPosition();
-    wxPoint clientPt = ScreenToClient(pt);
+    if (pt != wxDefaultPosition) { // Analyze position only for mouse-originated events
+        wxPoint clientPt = ScreenToClient(pt);
 
-    // If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
-    int margin = 0;
-    for(int n = 0; n < FOLD_MARGIN_ID; ++n) { // Assume a click anywhere to the left of the fold margin is for markers
-        margin += GetMarginWidth(n);
-    }
-    if(clientPt.x < margin) {
-        GotoPos(PositionFromPoint(clientPt));
-        DoBreakptContextMenu(clientPt);
-        return;
-    }
+        // If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
+        int margin = 0;
+        for(int n = 0; n < FOLD_MARGIN_ID; ++n) { // Assume a click anywhere to the left of the fold margin is for markers
+            margin += GetMarginWidth(n);
+        }
+        if(clientPt.x < margin) {
+            GotoPos(PositionFromPoint(clientPt));
+            DoBreakptContextMenu(clientPt);
+            return;
+        }
 
-    int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
-    if(closePos != wxNOT_FOUND) {
-        if(!selectText.IsEmpty()) {
-            // If the selection text is placed under the cursor,
-            // keep it selected, else, unselect the text
-            // and place the caret to be under cursor
-            int selStart = GetSelectionStart();
-            int selEnd = GetSelectionEnd();
-            if(closePos < selStart || closePos > selEnd) {
-                // cursor is not over the selected text, unselect and re-position caret
+        int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
+        if(closePos != wxNOT_FOUND) {
+            if(!selectText.IsEmpty()) {
+                // If the selection text is placed under the cursor,
+                // keep it selected, else, unselect the text
+                // and place the caret to be under cursor
+                int selStart = GetSelectionStart();
+                int selEnd = GetSelectionEnd();
+                if(closePos < selStart || closePos > selEnd) {
+                    // cursor is not over the selected text, unselect and re-position caret
+                    SetCaretAt(closePos);
+                }
+            } else {
+                // no selection, just place the caret
                 SetCaretAt(closePos);
             }
-        } else {
-            // no selection, just place the caret
-            SetCaretAt(closePos);
         }
     }
-
     // Let the plugins handle this event first
     wxCommandEvent contextMenuEvent(wxEVT_CMD_EDITOR_CONTEXT_MENU, GetId());
     contextMenuEvent.SetEventObject(this);

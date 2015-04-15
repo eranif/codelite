@@ -1,2 +1,1 @@
 * Add code completion for XML / HTML
-* wxPersistence manager: fix assertion when an object is double registered in generated code by wxCrafter

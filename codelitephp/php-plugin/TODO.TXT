@@ -8,12 +8,6 @@ Code Completion / Code Generation
 - SFTP: add a per file destination folder to allow overriding the global settings
 - Better parsing for functions' return value
 
-Misc:
-=====
-- PHP indenter: 
-    Keep array initialization 
-    Break string concatenation
-
 Usability:
 ==========
 - Open resource dialog: by default, list there a list of recently opened files

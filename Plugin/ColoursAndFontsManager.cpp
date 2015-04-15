@@ -288,7 +288,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "html" && lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec("*.vbs;*.vbe;*.wsf;*.wsc;*.asp;*.aspx");
     }
-
+    
+    // Hack4: all the HTML support to PHP which have much more colour themes
+    if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".qml")) {
+        lexer->SetFileSpec("*.js;*.javascript;*.qml");
+    }
+    
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }

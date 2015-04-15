@@ -65,6 +65,11 @@ public:
      */
     bool PostFunctionTipRequest(IEditor* editor, int pos);
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
+    
+    /**
+     * @brief locate nodejs executable on this machine
+     */
+    static bool LocateNodeJS(wxFileName& nodeJS);
 };
 
 #endif // CLTERNSERVER_H

@@ -59,6 +59,7 @@ void FileExtManager::Init()
         m_map[wxT("l")] = TypeLex;
         m_map[wxT("ui")] = TypeQtForm;
         m_map[wxT("qrc")] = TypeQtResource;
+        m_map[wxT("qml")] = TypeJS;
 
         m_map[wxT("project")] = TypeProject;
         m_map[wxT("workspace")] = TypeWorkspace;

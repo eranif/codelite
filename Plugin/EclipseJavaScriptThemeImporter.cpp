@@ -37,7 +37,7 @@ EclipseJavaScriptThemeImporter::EclipseJavaScriptThemeImporter()
     // Used for wxSTC_C_GLOBALCLASS ("classes")
     SetKeywords3("Math Array Date document window");
 
-    SetFileExtensions("*.js;*.javascript");
+    SetFileExtensions("*.js;*.javascript;*.qml");
 }
 
 EclipseJavaScriptThemeImporter::~EclipseJavaScriptThemeImporter() {}

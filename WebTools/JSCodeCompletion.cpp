@@ -56,14 +56,15 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     if(!m_enabled) return;
 
 #ifdef __WXGTK__
-    // Check that NodeJS is installed
-    wxFileName nodeJS("/usr/bin", "nodejs");
-    if(!nodeJS.FileExists()) {
+    wxFileName nodeJS;
+    if(!clTernServer::LocateNodeJS(nodeJS)) {
         wxString msg;
         msg << _("It seems that NodeJS is not installed on your machine\n(Can't find file "
-                  "'/usr/bin/nodejs')\nI have temporarily disabled Code Completion for JavaScript\nPlease install NodeJS and try again");
-        wxMessageBox(msg, "CodeLite", wxICON_WARNING|wxOK|wxCENTER);
-        
+                 "'/usr/bin/nodejs' or '/usr/bin/node')\nI have temporarily disabled Code Completion for "
+                 "JavaScript\nPlease install "
+                 "NodeJS and try again");
+        wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+
         // Disable CC
         WebToolsConfig conf;
         conf.Load().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
@@ -71,10 +72,10 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         return;
     }
 #endif
-    
+
     // Sanity
     CHECK_PTR_RET(editor);
-    
+
     // Check the completion type
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     int currentPos = ctrl->PositionBefore(ctrl->GetCurrentPos());
@@ -94,7 +95,7 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
     m_ccPos = ctrl->GetCurrentPos();
     if(!isFunctionTip) {
         m_ternServer.PostCCRequest(editor);
-        
+
     } else {
         m_ternServer.PostFunctionTipRequest(editor, currentPos);
     }

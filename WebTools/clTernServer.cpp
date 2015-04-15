@@ -61,33 +61,23 @@ bool clTernServer::Start()
     if(m_fatalError) return false;
     WebToolsConfig conf;
     conf.Load();
-    wxString workingDirectory;
 
     wxFileName ternFolder(clStandardPaths::Get().GetUserDataDir(), "");
     ternFolder.AppendDir("webtools");
     ternFolder.AppendDir("js");
-
-#ifdef __WXGTK__
-    wxFileName nodeJS("/usr/bin", "nodejs");
-    if(!nodeJS.FileExists()) {
+    
+    wxFileName nodeJS;
+    if(!LocateNodeJS(nodeJS)) {
         m_fatalError = true;
         return false;
     }
-
-#else
-    // OSX and Windows
-    wxFileName nodeJS(ternFolder.GetPath(), "node");
-#ifdef __WXMSW__
-    nodeJS.SetExt("exe");
-#else
-    // OSX
-    nodeJS.SetExt("osx");
-
+    
+#ifdef __WXMAC__
     // set permissions to 755
     nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHERS_READ | wxPOSIX_OTHERS_EXECUTE |
                           wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
 #endif
-#endif
+
     wxString nodeExe = nodeJS.GetFullPath();
     ::WrapWithQuotes(nodeExe);
 
@@ -416,4 +406,34 @@ JSONElement clTernServer::CreateFilesArray(wxStyledTextCtrl* ctrl)
     file.addProperty("name", wxString("[doc]"));
     file.addProperty("text", fileContent);
     return files;
+}
+
+bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
+{
+#ifdef __WXGTK__
+    // Check that NodeJS is installed
+    wxFileName fn("/usr/bin", "nodejs");
+    if(!fn.FileExists()) {
+        fn.SetFullName("node"); // On OpenSUSE, nodejs is called 'node'
+        if(!fn.FileExists()) {
+            return false;
+        }
+    }
+    nodeJS = fn;
+    return true;
+#elif defined(__WXMSW__)
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "");
+    fn.AppendDir("webtools");
+    fn.AppendDir("js");
+    fn.SetFullName("node.exe");
+    nodeJS = fn;
+    return true;
+#else // OSX
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "");
+    fn.AppendDir("webtools");
+    fn.AppendDir("js");
+    fn.SetFullName("node.osx");
+    nodeJS = fn;
+    return true;
+#endif
 }

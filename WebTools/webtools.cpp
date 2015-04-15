@@ -225,7 +225,6 @@ bool WebTools::InsideJSComment(IEditor* editor)
                styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORD || styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORDERROR ||
                styleAtCurPos == wxSTC_C_PREPROCESSORCOMMENT;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        wxStyledTextCtrl* ctrl = editor->GetCtrl();
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_COMMENT || styleAtCurPos == wxSTC_HJ_COMMENTLINE ||
                    styleAtCurPos == wxSTC_HJ_COMMENTDOC;
@@ -244,7 +243,6 @@ bool WebTools::InsideJSString(IEditor* editor)
                styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
                styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        wxStyledTextCtrl* ctrl = editor->GetCtrl();
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_DOUBLESTRING || styleAtCurPos == wxSTC_HJ_SINGLESTRING ||
                    styleAtCurPos == wxSTC_HJ_STRINGEOL;

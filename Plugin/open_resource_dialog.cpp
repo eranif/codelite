@@ -126,7 +126,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 OpenResourceDialog::~OpenResourceDialog()
 {
     m_timer->Stop();
-    delete m_timer;
+    wxDELETE(m_timer);
 }
 
 void OpenResourceDialog::OnText(wxCommandEvent& event)
@@ -277,7 +277,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
         std::multimap<wxString, wxString>::iterator iter = m_files.begin();
         for(; iter != m_files.end(); iter++) {
 
-            if(!MatchesFilter(iter->first)) continue;
+            if(!MatchesFilter(iter->second)) continue;
 
             wxFileName fn(iter->second);
             FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());

@@ -74,6 +74,8 @@ public:
         TypeWorkspaceDatabase,
         TypeAsm,
         TypeJava,
+        TypeQMake,
+        TypeCMake,
         TypeOther = wxNOT_FOUND
     };
 

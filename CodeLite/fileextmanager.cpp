@@ -119,7 +119,10 @@ void FileExtManager::Init()
         m_map[wxT("sql")] = TypeSQL;
         m_map[wxT("phpwsp")] = TypeWorkspacePHP;
         m_map[wxT("phptags")] = TypeWorkspacePHPTags;
-
+        
+        m_map["pro"] = TypeQMake;
+        m_map["pri"] = TypeQMake;
+        m_map["cmake"] = TypeCMake;
         m_map["s"] = TypeAsm;
         
         // Initialize regexes:
@@ -163,6 +166,8 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
             return TypeMakefile;
         }
         return defaultType;
+    } else if((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
+        return TypeCMake;
     }
     
     FileExtManager::FileType type = iter->second;

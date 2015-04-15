@@ -291,7 +291,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     
     // Hack4: all the HTML support to PHP which have much more colour themes
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".qml")) {
-        lexer->SetFileSpec("*.js;*.javascript;*.qml");
+        lexer->SetFileSpec("*.js;*.javascript;*.qml;*.json");
     }
     
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {

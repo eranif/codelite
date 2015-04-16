@@ -58,11 +58,11 @@ public:
     JSONElement(const wxString& name, const wxVariant& val, int type);
 
     virtual ~JSONElement() {}
-    
+
     // Walkers
     JSONElement firstChild();
     JSONElement nextChild();
-    
+
     // Setters
     ////////////////////////////////////////////////
     void setName(const wxString& _name) { this->_name = _name; }
@@ -118,7 +118,8 @@ public:
 
     JSONElement& addProperty(const wxString& name, const wxString& value);
     JSONElement& addProperty(const wxString& name, const wxChar* value);
-    JSONElement& addProperty(const wxString& name, int value);
+    JSONElement& addProperty(const wxString& name, int value) { addProperty(name, (long)value); }
+    JSONElement& addProperty(const wxString& name, long value);
     JSONElement& addProperty(const wxString& name, size_t value);
     JSONElement& addProperty(const wxString& name, bool value);
     JSONElement& addProperty(const wxString& name, const wxSize& sz);
@@ -127,6 +128,7 @@ public:
     JSONElement& addProperty(const wxString& name, const wxArrayString& arr);
     JSONElement& addProperty(const wxString& name, const JSONElement::wxStringMap_t& stringMap);
     JSONElement& addProperty(const wxString& name, const JSONElement& element);
+    JSONElement& addProperty(const wxString& name, const char* value, const wxMBConv& conv = wxConvUTF8);
 
     /**
      * @brief delete property by name

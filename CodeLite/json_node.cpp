@@ -389,7 +389,7 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxChar* value)
     return *this;
 }
 
-JSONElement& JSONElement::addProperty(const wxString& name, int value)
+JSONElement& JSONElement::addProperty(const wxString& name, long value)
 {
     append(JSONElement(name, value, cJSON_Number));
     return *this;
@@ -575,4 +575,9 @@ JSONElement JSONElement::nextChild()
     JSONElement element(_walker->next);
     _walker = _walker->next;
     return element;
+}
+
+JSONElement& JSONElement::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
+{
+    addProperty(name, wxString(value, conv));
 }

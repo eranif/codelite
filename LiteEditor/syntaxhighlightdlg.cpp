@@ -176,8 +176,8 @@ void SyntaxHighlightDlg::SaveChanges()
     if(!selProp.IsNull()) {
         selProp.SetFgColour(m_colourPickerSelTextFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
     }
-    ColoursAndFontsManager::Get().Save(m_lexer);
-    // Update the active theme for the lexer
+    
+    // Update the active theme for the lexer (this will also call Save() internall)
     ColoursAndFontsManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
     
     if(m_globalThemeChanged) {

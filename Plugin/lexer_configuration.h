@@ -34,6 +34,7 @@
 #include <wx/stc/stc.h>
 #include <wx/sharedptr.h>
 #include <smart_ptr.h>
+#include "json_node.h"
 
 #define ANNOTATION_STYLE_WARNING 210
 #define ANNOTATION_STYLE_ERROR 211
@@ -77,7 +78,18 @@ public:
 
     // Parse lexer object from xml node
     void FromXml(wxXmlNode* node);
-
+    
+    /**
+     * @brief convert the lexer settings into a JSON object
+     */
+    JSONElement ToJSON() const;
+    
+    /**
+     * @brief construt this object from a JSON object
+     * @param json
+     */
+    void FromJSON(const JSONElement& json);
+    
 public:
     LexerConf();
     virtual ~LexerConf();
@@ -131,7 +143,7 @@ public:
      */
     const wxString& GetKeyWords(int set) const { return m_keyWords[set]; }
 
-    void SetKeyWords(const wxString& keywords, int set) { m_keyWords[set] = keywords; }
+    void SetKeyWords(const wxString& keywords, int set);
 
     /**
      * File patterns that this lexer should apply to

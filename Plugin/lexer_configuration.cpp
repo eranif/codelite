@@ -559,3 +559,63 @@ void LexerConf::SetLineNumbersFgColour(const wxColour& colour)
         style.SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
     }
 }
+
+JSONElement LexerConf::ToJSON() const
+{
+    JSONElement json = JSONElement::createObject(GetName());
+    json.addProperty("Name", GetName());
+    json.addProperty("Theme", GetThemeName());
+    json.addProperty("IsActive", IsActive());
+    json.addProperty("UseCustomTextSelFgColour", IsUseCustomTextSelectionFgColour());
+    json.addProperty("StylingWithinPreProcessor", GetStyleWithinPreProcessor());
+    json.addProperty("Id", GetLexerId());
+    json.addProperty("KeyWords0", GetKeyWords(0));
+    json.addProperty("KeyWords1", GetKeyWords(1));
+    json.addProperty("KeyWords2", GetKeyWords(2));
+    json.addProperty("KeyWords3", GetKeyWords(3));
+    json.addProperty("KeyWords4", GetKeyWords(4));
+    json.addProperty("Extensions", GetFileSpec());
+
+    JSONElement properties = JSONElement::createArray("Properties");
+    json.append(properties);
+
+    StyleProperty::Map_t::const_iterator iter = m_properties.begin();
+    for(; iter != m_properties.end(); ++iter) {
+        properties.arrayAppend(iter->second.ToJSON());
+    }
+    return json;
+}
+
+void LexerConf::FromJSON(const JSONElement& json)
+{
+    m_name = json.namedObject("Name").toString();
+    m_lexerId = json.namedObject("Id").toInt();
+    m_themeName = json.namedObject("Theme").toString();
+    m_isActive = json.namedObject("IsActive").toBool();
+    m_useCustomTextSelectionFgColour = json.namedObject("UseCustomTextSelFgColour").toBool();
+    m_styleWithinPreProcessor = json.namedObject("StylingWithinPreProcessor").toBool();
+    SetKeyWords(json.namedObject("KeyWords0").toString(), 0);
+    SetKeyWords(json.namedObject("KeyWords1").toString(), 1);
+    SetKeyWords(json.namedObject("KeyWords2").toString(), 2);
+    SetKeyWords(json.namedObject("KeyWords3").toString(), 3);
+    SetKeyWords(json.namedObject("KeyWords4").toString(), 4);
+    SetFileSpec(json.namedObject("Extensions").toString());
+    
+    m_properties.clear();
+    JSONElement properties = json.namedObject("Properties");
+    for(int i = 0; i < properties.arraySize(); ++i) {
+        // Construct a style property
+        StyleProperty p;
+        p.FromJSON(properties.arrayItem(i));
+        m_properties.insert(std::make_pair(p.GetId(), p));
+    }
+}
+
+void LexerConf::SetKeyWords(const wxString& keywords, int set) 
+{ 
+    wxString content = keywords;
+    content.Replace("\r", "");
+    content.Replace("\n", " ");
+    content.Replace("\\", " ");
+    m_keyWords[set] = content; 
+}

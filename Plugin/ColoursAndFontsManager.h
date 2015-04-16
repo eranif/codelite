@@ -43,12 +43,13 @@ private:
     ColoursAndFontsManager();
     virtual ~ColoursAndFontsManager();
 
-    void LoadNewXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers = false);
-    void LoadOldXmls(const wxString& path);
+    void LoadOldXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers = false);
     LexerConf::Ptr_t DoAddLexer(wxXmlNode* node);
+    LexerConf::Ptr_t DoAddLexer(JSONElement json);
     void Clear();
     wxFileName GetConfigFile() const;
-
+    void LoadJSON(const wxFileName& path);
+    
 public:
     static ColoursAndFontsManager& Get();
     
@@ -99,12 +100,7 @@ public:
     /**
      * @brief save the lexers into their proper file name
      */
-    void Save(bool userLexers = false);
-
-    /**
-     * @brief save a single lexer
-     */
-    void Save(LexerConf::Ptr_t lexer);
+    void Save();
 
     /**
      * @brief set the active theme for a lexer by name
@@ -147,8 +143,7 @@ public:
      * @brief callback called by the helper thread indicating that it finished caching
      * the XML files
      */
-    void OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& defaultLexers,
-                            const std::vector<wxXmlDocument*>& userLexers);
+    void OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& userLexers);
 
     /**
      * @brief set a unified theme for all lexers. If the requested theme is not available for a given lexer,

@@ -90,6 +90,6 @@ void wxCFAD6InitBitmapResources()
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/clBoostrapWizardBase_plugin_bitmaps.cpp$.._LiteEditor_res_100_x_400_white.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/clBoostrapWizardBase_plugin_bitmaps.cpp$C__src_codelite_Plugin_clBoostrapWizardBase_plugin_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/clBoostrapWizardBase_plugin_bitmaps.cpp$C__src_codelite_Plugin_clBoostrapWizardBase_plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/clBoostrapWizardBase_plugin_bitmaps.cpp$_home_david_devel_git_CL_Plugin_clBoostrapWizardBase_plugin_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/clBoostrapWizardBase_plugin_bitmaps.cpp$_home_david_devel_git_CL_Plugin_clBoostrapWizardBase_plugin_bitmaps.xrc"));
 }

@@ -109,7 +109,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     m_cmdLnkBtnScanForCompilers = new wxCommandLinkButton(m_wizardPageCompilers, wxID_ANY, _("Scan"), _("Click to scan your compuer for installed compilers"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer52->Add(m_cmdLnkBtnScanForCompilers, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer52->Add(m_cmdLnkBtnScanForCompilers, 0, wxALL|wxEXPAND, 5);
     
     m_cmdLnkBtnDownloadCompiler = new wxCommandLinkButton(m_wizardPageCompilers, wxID_ANY, _("Install"), _("Click to download a MinGW compiler"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -231,11 +231,17 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer30->Add(0, 0, 1, wxALL, 5);
     
+    SetName(wxT("clBoostrapWizardBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(clBoostrapWizardBase::OnFinish), NULL, this);
     m_cmdLnkBtn107->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clBoostrapWizardBase::OnCancelWizard), NULL, this);

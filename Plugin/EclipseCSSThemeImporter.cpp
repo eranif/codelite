@@ -68,10 +68,10 @@ EclipseCSSThemeImporter::EclipseCSSThemeImporter()
 
 EclipseCSSThemeImporter::~EclipseCSSThemeImporter() {}
 
-bool EclipseCSSThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t EclipseCSSThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
-    wxXmlNode* properties = InitializeImport(eclipseXmlFile, "css", wxSTC_LEX_CSS);
-    CHECK_PTR_RET_FALSE(properties);
+    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "css", wxSTC_LEX_CSS);
+    CHECK_PTR_RET_NULL(lexer);
 
     // Set error colour
     wxColour defaultBg(m_background.colour);
@@ -84,29 +84,30 @@ bool EclipseCSSThemeImporter::Import(const wxFileName& eclipseXmlFile)
 
     /// Lexical states for SCLEX_CSS
     // Covnert to codelite's XML properties
-    AddProperty(properties, "0", "Default", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "1", "Tag", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "2", "Class", m_klass.colour, m_background.colour);
-    AddProperty(properties, "3", "Pseudo Class", m_klass.colour, m_background.colour);
-    AddProperty(properties, "4", "Unknown Pseudo Class", m_klass.colour, m_background.colour);
-    AddProperty(properties, "5", "Operator", operatorColour, m_background.colour);
-    AddProperty(properties, "6", "Indentifier", m_variable.colour, m_background.colour);
-    AddProperty(properties, "7", "Unknow Indentifier", m_variable.colour, m_background.colour);
-    AddProperty(properties, "8", "Value", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "9", "Comment", m_multiLineComment.colour, m_background.colour);
-    AddProperty(properties, "10", "ID", m_variable.colour, m_background.colour);
-    AddProperty(properties, "11", "Important", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "12", "Directive", m_klass.colour, m_background.colour);
-    AddProperty(properties, "13", "String", m_string.colour, m_background.colour);
-    AddProperty(properties, "14", "Double String", m_string.colour, m_background.colour);
-    AddProperty(properties, "15", "Indentifier 2", m_variable.colour, m_background.colour);
-    AddProperty(properties, "16", "Attribute", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "17", "Indentifier 3", m_variable.colour, m_background.colour);
-    AddProperty(properties, "18", "Pseudo Element", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "19", "Extended Indentifier", m_variable.colour, m_background.colour);
-    AddProperty(properties, "20", "Extended Pseudo Class", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "21", "Extended Pseudo Element", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "22", "Media", m_klass.colour, m_background.colour);
-    AddProperty(properties, "23", "Variable", m_variable.colour, m_background.colour);
-    return FinalizeImport(properties);
+    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "1", "Tag", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "2", "Class", m_klass.colour, m_background.colour);
+    AddProperty(lexer, "3", "Pseudo Class", m_klass.colour, m_background.colour);
+    AddProperty(lexer, "4", "Unknown Pseudo Class", m_klass.colour, m_background.colour);
+    AddProperty(lexer, "5", "Operator", operatorColour, m_background.colour);
+    AddProperty(lexer, "6", "Indentifier", m_variable.colour, m_background.colour);
+    AddProperty(lexer, "7", "Unknow Indentifier", m_variable.colour, m_background.colour);
+    AddProperty(lexer, "8", "Value", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "9", "Comment", m_multiLineComment.colour, m_background.colour);
+    AddProperty(lexer, "10", "ID", m_variable.colour, m_background.colour);
+    AddProperty(lexer, "11", "Important", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "12", "Directive", m_klass.colour, m_background.colour);
+    AddProperty(lexer, "13", "String", m_string.colour, m_background.colour);
+    AddProperty(lexer, "14", "Double String", m_string.colour, m_background.colour);
+    AddProperty(lexer, "15", "Indentifier 2", m_variable.colour, m_background.colour);
+    AddProperty(lexer, "16", "Attribute", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "17", "Indentifier 3", m_variable.colour, m_background.colour);
+    AddProperty(lexer, "18", "Pseudo Element", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "19", "Extended Indentifier", m_variable.colour, m_background.colour);
+    AddProperty(lexer, "20", "Extended Pseudo Class", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "21", "Extended Pseudo Element", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "22", "Media", m_klass.colour, m_background.colour);
+    AddProperty(lexer, "23", "Variable", m_variable.colour, m_background.colour);
+    FinalizeImport(lexer);
+    return lexer;
 }

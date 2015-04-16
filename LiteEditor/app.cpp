@@ -264,10 +264,12 @@ CodeLiteApp::CodeLiteApp(void)
     : m_pMainFrame(NULL)
     , m_singleInstance(NULL)
     , m_pluginLoadPolicy(PP_All)
+    , m_persistencManager(NULL)
 #ifdef __WXMSW__
     , m_handler(NULL)
 #endif
-    , m_persistencManager(NULL) {}
+{
+}
 
 CodeLiteApp::~CodeLiteApp(void)
 {
@@ -286,7 +288,12 @@ CodeLiteApp::~CodeLiteApp(void)
 
 bool CodeLiteApp::OnInit()
 {
+#if (defined(__WXMSW__) || defined(__WXGTK__)) && !defined(NDEBUG)
+    SetAppName(wxT("codelite-dbg"));
+#else
     SetAppName(wxT("codelite"));
+#endif
+
 #if defined(__WXGTK__) || defined(__WXMAC__)
 
     // block signal pipe
@@ -346,12 +353,12 @@ bool CodeLiteApp::OnInit()
     if(parser.Parse() != 0) {
         return false;
     }
-    
+
     // check for single instance
     if(!IsSingleInstance(parser)) {
         return false;
     }
-    
+
     if(parser.Found(wxT("h"))) {
         // print usage
         parser.Usage();
@@ -588,7 +595,7 @@ bool CodeLiteApp::OnInit()
         wxUnusedVar(new_stdout);
     }
 #endif
-    
+
     //---------------------------------------------------------
     // Set environment variable for CodeLiteDir (make it first
     // on the list so it can be used by other variables)
@@ -653,7 +660,8 @@ bool CodeLiteApp::OnInit()
             // However I couldn't find a way to do this
         }
     } else {
-        // For proper encoding handling by system libraries it's needed to inialize locale even if UI translation is turned off
+        // For proper encoding handling by system libraries it's needed to inialize locale even if UI translation is
+        // turned off
         m_locale.Init(wxLANGUAGE_ENGLISH, wxLOCALE_DONT_LOAD_DEFAULT);
     }
 
@@ -790,19 +798,19 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
                 fn.MakeAbsolute();
                 files.Add(fn.GetFullPath());
             }
-            
+
             try {
                 // Send the request
                 clSocketClient client;
                 bool dummy;
                 client.ConnectRemote("127.0.0.1", SINGLE_INSTANCE_PORT, dummy);
-                
+
                 JSONRoot json(cJSON_Object);
                 json.toElement().addProperty("args", files);
                 client.WriteMessage(json.toElement().format());
                 return false;
-                
-            } catch (clSocketException& e) {
+
+            } catch(clSocketException& e) {
                 CL_ERROR("Failed to send single instance request: %s", e.what());
             }
         }

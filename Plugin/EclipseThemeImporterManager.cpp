@@ -8,6 +8,7 @@
 #include "EclipseCSSThemeImporter.h"
 #include "EclipseXMLThemeImporter.h"
 #include "EclipseJavaScriptThemeImporter.h"
+#include "ColoursAndFontsManager.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -28,7 +29,7 @@ bool EclipseThemeImporterManager::Import(const wxString& eclipseXml)
 {
     EclipseThemeImporterBase::List_t::iterator iter = m_importers.begin();
     for(; iter != m_importers.end(); ++iter) {
-        (*iter)->Import(eclipseXml);
+        ColoursAndFontsManager::Get().AddLexer((*iter)->Import(eclipseXml));
     }
     return true;
 }
@@ -41,9 +42,10 @@ bool EclipseThemeImporterManager::ImportCxxToAll()
         EclipseThemeImporterBase::List_t::iterator iter = m_importers.begin();
         for(; iter != m_importers.end(); ++iter) {
             if((*iter)->GetLangName() != "c++") {
-                (*iter)->Import(eclipseXml);
+                ColoursAndFontsManager::Get().AddLexer((*iter)->Import(eclipseXml));
             }
         }
     }
+    ColoursAndFontsManager::Get().Save();
     return true;
 }

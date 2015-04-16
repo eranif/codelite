@@ -71,4 +71,5 @@ void* clSingleInstanceThread::Entry()
     } catch(clSocketException& e) {
         CL_ERROR("Failed to create single instance socket: %s", e.what());
     }
+    return NULL;
 }

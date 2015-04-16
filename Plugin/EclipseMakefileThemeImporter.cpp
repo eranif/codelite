@@ -9,18 +9,19 @@ EclipseMakefileThemeImporter::EclipseMakefileThemeImporter()
 
 EclipseMakefileThemeImporter::~EclipseMakefileThemeImporter() {}
 
-bool EclipseMakefileThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t EclipseMakefileThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
-    wxXmlNode* properties = InitializeImport(eclipseXmlFile, "makefile", 11);
-    CHECK_PTR_RET_FALSE(properties);
+    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "makefile", 11);
+    CHECK_PTR_RET_NULL(lexer);
     
-    AddProperty(properties, "0", "Default", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "1", "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(properties, "2", "Preprocessor", m_keyword.colour, m_background.colour);
-    AddProperty(properties, "3", "Identifier", m_variable.colour, m_background.colour);
-    AddProperty(properties, "4", "Operator", m_oper.colour, m_background.colour);
-    AddProperty(properties, "5", "Target", m_klass.colour, m_background.colour);
-    AddProperty(properties, "9", "ID End Of Line", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "1", "Comment", m_singleLineComment.colour, m_background.colour);
+    AddProperty(lexer, "2", "Preprocessor", m_keyword.colour, m_background.colour);
+    AddProperty(lexer, "3", "Identifier", m_variable.colour, m_background.colour);
+    AddProperty(lexer, "4", "Operator", m_oper.colour, m_background.colour);
+    AddProperty(lexer, "5", "Target", m_klass.colour, m_background.colour);
+    AddProperty(lexer, "9", "ID End Of Line", m_foreground.colour, m_background.colour);
     
-    return FinalizeImport(properties);
+    FinalizeImport(lexer);
+    return lexer;
 }

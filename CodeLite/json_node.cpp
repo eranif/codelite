@@ -579,5 +579,5 @@ JSONElement JSONElement::nextChild()
 
 JSONElement& JSONElement::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
-    addProperty(name, wxString(value, conv));
+    return addProperty(name, wxString(value, conv));
 }

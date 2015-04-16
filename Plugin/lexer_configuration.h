@@ -56,8 +56,7 @@ public:
     typedef SmartPtr<LexerConf> Ptr_t;
 
 public:
-    struct FindByNameAndTheme
-    {
+    struct FindByNameAndTheme {
         wxString m_name;
         wxString m_theme;
         FindByNameAndTheme(const wxString& name, const wxString& theme)
@@ -78,18 +77,18 @@ public:
 
     // Parse lexer object from xml node
     void FromXml(wxXmlNode* node);
-    
+
     /**
      * @brief convert the lexer settings into a JSON object
      */
     JSONElement ToJSON() const;
-    
+
     /**
      * @brief construt this object from a JSON object
      * @param json
      */
     void FromJSON(const JSONElement& json);
-    
+
 public:
     LexerConf();
     virtual ~LexerConf();
@@ -103,7 +102,7 @@ public:
     void SetThemeName(const wxString& themeName) { this->m_themeName = themeName; }
     bool IsActive() const { return m_isActive; }
     const wxString& GetThemeName() const { return m_themeName; }
-    
+
     /**
      * @brief return true if the colours represented by this lexer are a "dark" theme
      */
@@ -137,6 +136,8 @@ public:
      * Return the lexer description as described in the XML file
      */
     const wxString& GetName() const { return m_name; }
+
+    void SetName(const wxString& name) { m_name = name; }
     /**
      * Return the lexer keywords
      * \return
@@ -168,17 +169,17 @@ public:
      */
     StyleProperty& GetProperty(int propertyId);
     const StyleProperty& GetProperty(int propertyId) const;
-    
+
     /**
      * @brief set the line numbers colour
      */
     void SetLineNumbersFgColour(const wxColour& colour);
-    
+
     /**
      * @brief set the default fg colour
      */
     void SetDefaultFgColour(const wxColour& colour);
-    
+
     /**
      * Set the lexer properties
      * \param &properties

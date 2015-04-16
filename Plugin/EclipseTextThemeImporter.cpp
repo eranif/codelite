@@ -6,13 +6,13 @@ EclipseTextThemeImporter::EclipseTextThemeImporter() { SetFileExtensions(""); }
 
 EclipseTextThemeImporter::~EclipseTextThemeImporter() {}
 
-bool EclipseTextThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t EclipseTextThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
-    wxXmlNode* properties = InitializeImport(eclipseXmlFile, "text", 1);
-    CHECK_PTR_RET_FALSE(properties);
+    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "text", 1);
+    CHECK_PTR_RET_NULL(lexer);
     
-    // Covnert to codelite's XML properties
-    AddProperty(properties, "0", "Default", m_foreground.colour, m_background.colour);
-    AddCommonProperties(properties);
-    return FinalizeImport(properties);
+    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
+    AddCommonProperties(lexer);
+    FinalizeImport(lexer);
+    return lexer;
 }

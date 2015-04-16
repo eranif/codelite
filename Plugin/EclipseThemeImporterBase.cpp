@@ -31,20 +31,16 @@ bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImp
     return false;
 }
 
-wxXmlNode*
+LexerConf::Ptr_t
 EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const wxString& langName, int langId)
 {
     m_langName = langName;
     if(!m_doc.Load(eclipseXml.GetFullPath())) return NULL;
 
-    wxXmlNode* lexer = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Lexer");
-    m_codeliteDoc.SetRoot(lexer);
+    LexerConf::Ptr_t lexer(new LexerConf());
 
     // Add the lexer basic properties (laguage, file extensions, keywords, name)
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
-
-    wxXmlNode* properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Properties");
-    m_codeliteDoc.GetRoot()->AddChild(properties);
 
     // Read the basic properties
     if(!GetProperty("background", m_background)) return NULL;
@@ -72,24 +68,13 @@ EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const w
         m_javadocKeyword = m_multiLineComment;
     }
 
-    return properties;
+    return lexer;
 }
 
-bool EclipseThemeImporterBase::FinalizeImport(wxXmlNode* propertiesNode)
+void EclipseThemeImporterBase::FinalizeImport(LexerConf::Ptr_t lexer)
 {
-    AddCommonProperties(propertiesNode);
-    wxString codeliteXmlFile =
-        wxFileName(clStandardPaths::Get().GetUserLexersDir(), GetOutputFile(m_langName)).GetFullPath();
-    
-    // Update the lexer colours
-    LexerConf::Ptr_t lexer(new LexerConf);
-    lexer->FromXml(m_codeliteDoc.GetRoot());
+    AddCommonProperties(lexer);
     ColoursAndFontsManager::Get().UpdateLexerColours(lexer, true);
-    wxXmlNode* xmlnode = lexer->ToXml();
-    m_codeliteDoc.SetRoot(xmlnode);
-    
-    // Save the lexer to xml
-    return ::SaveXmlToFile(&m_codeliteDoc, codeliteXmlFile);
 }
 
 bool EclipseThemeImporterBase::IsDarkTheme() const
@@ -128,7 +113,7 @@ wxString EclipseThemeImporterBase::GetOutputFile(const wxString& language) const
     return xmlFileName;
 }
 
-void EclipseThemeImporterBase::AddProperty(wxXmlNode* properties,
+void EclipseThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer,
                                            const wxString& id,
                                            const wxString& name,
                                            const wxString& colour,
@@ -140,63 +125,32 @@ void EclipseThemeImporterBase::AddProperty(wxXmlNode* properties,
     wxASSERT(!colour.IsEmpty());
     wxASSERT(!bgColour.IsEmpty());
 
-    wxXmlNode* property = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Property");
-    properties->AddChild(property);
+    long ID;
+    id.ToCLong(&ID);
 
-    property->AddAttribute("Id", id);
-    property->AddAttribute("Name", name);
-    property->AddAttribute("Bold", bold ? "yes" : "no");
-    property->AddAttribute("Italic", italic ? "yes" : "no");
-    property->AddAttribute("Face", "");
-    property->AddAttribute("Colour", colour);
-    property->AddAttribute("BgColour", bgColour);
-    property->AddAttribute("Underline", "no");
-    property->AddAttribute("EolFilled", isEOLFilled ? "yes" : "no");
-    property->AddAttribute("Alpha", "50");
-    property->AddAttribute("Size", "11");
+    StyleProperty sp(ID, colour, bgColour, 11, name, "", bold, italic, false, isEOLFilled, 50);
+    lexer->GetLexerProperties().insert(std::make_pair(sp.GetId(), sp));
 }
 
-void EclipseThemeImporterBase::AddBaseProperties(wxXmlNode* node, const wxString& lang, const wxString& id)
+void EclipseThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id)
 {
-    node->AddAttribute("Name", lang);
-    node->AddAttribute("Theme", GetName());
-    node->AddAttribute("IsActive", "No");
-    node->AddAttribute("UseCustomTextSelFgColour", "Yes");
-    node->AddAttribute("StylingWithinPreProcessor", "yes");
-    node->AddAttribute("Id", id); // C++ lexer id is 3
-
-    // Set keywords
-    {
-        wxXmlNode* keywords = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "KeyWords0");
-        node->AddChild(keywords);
-        XmlUtils::SetNodeContent(keywords, GetKeywords0());
-    }
-    {
-        wxXmlNode* keywords = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "KeyWords1");
-        node->AddChild(keywords);
-        XmlUtils::SetNodeContent(keywords, GetKeywords1());
-    }
-    {
-        wxXmlNode* keywords = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "KeyWords2");
-        node->AddChild(keywords);
-        XmlUtils::SetNodeContent(keywords, GetKeywords2());
-    }
-    {
-        wxXmlNode* keywords = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "KeyWords3");
-        node->AddChild(keywords);
-        XmlUtils::SetNodeContent(keywords, GetKeywords3());
-    }
-    {
-        wxXmlNode* keywords = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "KeyWords4");
-        node->AddChild(keywords);
-        XmlUtils::SetNodeContent(keywords, GetKeywords4());
-    }
-    wxXmlNode* extensions = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Extensions");
-    node->AddChild(extensions);
-    XmlUtils::SetNodeContent(extensions, GetFileExtensions());
+    lexer->SetName(lang);
+    lexer->SetThemeName(GetName());
+    lexer->SetIsActive(false);
+    lexer->SetUseCustomTextSelectionFgColour(true);
+    lexer->SetStyleWithinPreProcessor(true);
+    long ID;
+    id.ToCLong(&ID);
+    lexer->SetLexerId(ID);
+    lexer->SetKeyWords(GetKeywords0(), 0);
+    lexer->SetKeyWords(GetKeywords1(), 1);
+    lexer->SetKeyWords(GetKeywords2(), 2);
+    lexer->SetKeyWords(GetKeywords3(), 3);
+    lexer->SetKeyWords(GetKeywords4(), 4);
+    lexer->SetFileSpec(GetFileExtensions());
 }
 
-void EclipseThemeImporterBase::AddCommonProperties(wxXmlNode* propertiesNode)
+void EclipseThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
 {
     // Set the brace match based on the background colour
     Property background, foreground, selectionBackground, selectionForeground, lineNumber;
@@ -212,27 +166,22 @@ void EclipseThemeImporterBase::AddCommonProperties(wxXmlNode* propertiesNode)
         // dark theme
         // Whitespace should be a bit lighether
         whitespaceColour = wxColour(background.colour).ChangeLightness(150).GetAsString(wxC2S_HTML_SYNTAX);
-        AddProperty(propertiesNode, "34", "Brace match", "yellow", background.colour, true);
-        AddProperty(propertiesNode, "35", "Brace bad match", "red", background.colour, true);
-        AddProperty(propertiesNode, "37", "Indent Guide", whitespaceColour, background.colour);
+        AddProperty(lexer, "34", "Brace match", "yellow", background.colour, true);
+        AddProperty(lexer, "35", "Brace bad match", "red", background.colour, true);
+        AddProperty(lexer, "37", "Indent Guide", whitespaceColour, background.colour);
 
     } else {
         // light theme
         whitespaceColour = wxColour(background.colour).ChangeLightness(50).GetAsString(wxC2S_HTML_SYNTAX);
-        AddProperty(propertiesNode, "34", "Brace match", "black", "cyan", true);
-        AddProperty(propertiesNode, "35", "Brace bad match", "black", "red", true);
-        AddProperty(propertiesNode, "37", "Indent Guide", whitespaceColour, background.colour);
+        AddProperty(lexer, "34", "Brace match", "black", "cyan", true);
+        AddProperty(lexer, "35", "Brace bad match", "black", "red", true);
+        AddProperty(lexer, "37", "Indent Guide", whitespaceColour, background.colour);
     }
-    AddProperty(propertiesNode, "-1", "Fold Margin", background.colour, background.colour);
-    AddProperty(propertiesNode, "-2", "Text Selection", selectionForeground.colour, selectionBackground.colour);
-    AddProperty(propertiesNode, "-3", "Caret Colour", IsDarkTheme() ? "white" : "black", background.colour);
-    AddProperty(propertiesNode, "-4", "Whitespace", whitespaceColour, background.colour);
-    AddProperty(propertiesNode, "38", "Calltip", foreground.colour, background.colour);
-    AddProperty(propertiesNode,
-                "33",
-                "Line Numbers",
-                lineNumber.colour,
-                background.colour,
-                lineNumber.isBold,
-                lineNumber.isItalic);
+    AddProperty(lexer, "-1", "Fold Margin", background.colour, background.colour);
+    AddProperty(lexer, "-2", "Text Selection", selectionForeground.colour, selectionBackground.colour);
+    AddProperty(lexer, "-3", "Caret Colour", IsDarkTheme() ? "white" : "black", background.colour);
+    AddProperty(lexer, "-4", "Whitespace", whitespaceColour, background.colour);
+    AddProperty(lexer, "38", "Calltip", foreground.colour, background.colour);
+    AddProperty(
+        lexer, "33", "Line Numbers", lineNumber.colour, background.colour, lineNumber.isBold, lineNumber.isItalic);
 }

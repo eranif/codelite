@@ -425,8 +425,8 @@ void SyntaxHighlightDlg::CreateLexerPage()
         m_properties->SetSelection(0);
     }
 
-    wxString initialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString();
-    wxString bgInitialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
+    wxString initialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(wxC2S_HTML_SYNTAX);
+    wxString bgInitialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
     wxFont initialFont = wxNullFont;
     // bool     initialEolFilled (false);
     bool initialStyleWithinPreProcessor(true);

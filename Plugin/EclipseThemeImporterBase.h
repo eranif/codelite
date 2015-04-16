@@ -8,6 +8,8 @@
 #include <list>
 #include "smart_ptr.h"
 #include "macros.h"
+#include "lexer_configuration.h"
+#include "json_node.h"
 
 class WXDLLIMPEXP_SDK EclipseThemeImporterBase
 {
@@ -22,8 +24,7 @@ public:
 
 protected:
     wxXmlDocument m_doc;
-    wxXmlDocument m_codeliteDoc;
-
+    
     wxString m_keywords0;
     wxString m_keywords1;
     wxString m_keywords2;
@@ -48,7 +49,7 @@ protected:
     wxString m_langName;
 
 protected:
-    void AddProperty(wxXmlNode* properties,
+    void AddProperty(LexerConf::Ptr_t lexer,
                      const wxString& id,
                      const wxString& name,
                      const wxString& colour,
@@ -57,7 +58,7 @@ protected:
                      bool italic = false,
                      bool isEOLFilled = false);
 
-    void AddProperty(wxXmlNode* properties,
+    void AddProperty(LexerConf::Ptr_t lexer,
                      int id,
                      const wxString& name,
                      const wxString& colour,
@@ -66,12 +67,12 @@ protected:
                      bool italic = false,
                      bool isEOLFilled = false)
     {
-        AddProperty(properties, wxString::Format("%d", id), name, colour, bgColour, bold, italic, isEOLFilled);
+        AddProperty(lexer, wxString::Format("%d", id), name, colour, bgColour, bold, italic, isEOLFilled);
     }
 
-    void AddBaseProperties(wxXmlNode* node, const wxString& lang, const wxString& id);
+    void AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id);
 
-    void AddCommonProperties(wxXmlNode* propertiesNode);
+    void AddCommonProperties(LexerConf::Ptr_t lexer);
 
 public:
     const wxString& GetLangName() const { return m_langName; }
@@ -94,17 +95,14 @@ public:
     virtual ~EclipseThemeImporterBase();
     /**
      * @brief load eclispe theme (in xml format)
-     * @param eclipseXml
      */
-    wxXmlNode* InitializeImport(const wxFileName& eclipseXml, const wxString& langName, int langId);
+    LexerConf::Ptr_t InitializeImport(const wxFileName& eclipseXml, const wxString& langName, int langId);
 
     /**
      * @brief Finalize the import by adding the common lexer part (such as the fold margin, text selection etc)
      * and saving it the file system
-     * @param propertiesNode the properties node returned by calling InitializeBase();
-     * @return
      */
-    bool FinalizeImport(wxXmlNode* propertiesNode);
+    void FinalizeImport(LexerConf::Ptr_t lexer);
 
     /**
      * @brief get attributes of a given property
@@ -140,7 +138,7 @@ public:
      * @param eclipseXmlFile
      * @param codeliteXml [output] the output file name
      */
-    virtual bool Import(const wxFileName& eclipseXmlFile) = 0;
+    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile) = 0;
 };
 
 #endif // ECLIPSETHEMEIMPORTERBASE_H

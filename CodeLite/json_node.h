@@ -118,7 +118,7 @@ public:
 
     JSONElement& addProperty(const wxString& name, const wxString& value);
     JSONElement& addProperty(const wxString& name, const wxChar* value);
-    JSONElement& addProperty(const wxString& name, int value) { addProperty(name, (long)value); }
+    JSONElement& addProperty(const wxString& name, int value) { return addProperty(name, (long)value); }
     JSONElement& addProperty(const wxString& name, long value);
     JSONElement& addProperty(const wxString& name, size_t value);
     JSONElement& addProperty(const wxString& name, bool value);

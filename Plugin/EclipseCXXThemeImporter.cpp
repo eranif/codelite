@@ -41,77 +41,70 @@ EclipseCXXThemeImporter::EclipseCXXThemeImporter()
 
 EclipseCXXThemeImporter::~EclipseCXXThemeImporter() {}
 
-bool EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFile)
 {
-    wxXmlNode* properties = InitializeImport(eclipseXmlFile, "c++", 3);
-    CHECK_PTR_RET_FALSE(properties);
+    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "c++", 3);
+    CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
-    AddProperty(properties, "0", "Default", m_foreground.colour, m_background.colour);
-    AddProperty(properties,
+    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
+    AddProperty(lexer,
                 "1",
                 "Common C style comment",
                 m_multiLineComment.colour,
                 m_background.colour,
                 m_multiLineComment.isBold,
                 m_multiLineComment.isItalic);
-    AddProperty(properties,
+    AddProperty(lexer,
                 "2",
                 "Common C++ style comment",
                 m_singleLineComment.colour,
                 m_background.colour,
                 m_singleLineComment.isBold,
                 m_singleLineComment.isItalic);
-    AddProperty(properties,
+    AddProperty(lexer,
                 "3",
                 "Doxygen C style comment",
                 m_javadoc.colour,
                 m_background.colour,
                 m_javadoc.isBold,
                 m_javadoc.isItalic);
-    AddProperty(properties, "4", "Number", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
-    AddProperty(
-        properties, "5", "C++ keyword", m_keyword.colour, m_background.colour, m_keyword.isBold, m_keyword.isItalic);
-    AddProperty(properties, "6", "String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
-    AddProperty(properties, "7", "Character", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
-    AddProperty(properties, "8", "Uuid", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
-    AddProperty(properties, "9", "Preprocessor", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "10", "Operator", m_foreground.colour, m_background.colour);
-    AddProperty(properties, "11", "Identifier", m_foreground.colour, m_background.colour);
-    AddProperty(
-        properties, "12", "Open String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
-    AddProperty(properties,
+    AddProperty(lexer, "4", "Number", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
+    AddProperty(lexer, "5", "C++ keyword", m_keyword.colour, m_background.colour, m_keyword.isBold, m_keyword.isItalic);
+    AddProperty(lexer, "6", "String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
+    AddProperty(lexer, "7", "Character", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
+    AddProperty(lexer, "8", "Uuid", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
+    AddProperty(lexer, "9", "Preprocessor", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "10", "Operator", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "11", "Identifier", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "12", "Open String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
+    AddProperty(lexer,
                 "15",
                 "Doxygen C++ style comment",
                 m_javadoc.colour,
                 m_background.colour,
                 m_javadoc.isBold,
                 m_javadoc.isItalic);
-    AddProperty(properties,
+    AddProperty(lexer,
                 "17",
                 "Doxygen keyword",
                 m_javadocKeyword.colour,
                 m_background.colour,
                 m_javadocKeyword.isBold,
                 m_javadocKeyword.isItalic);
-    AddProperty(properties,
+    AddProperty(lexer,
                 "18",
                 "Doxygen keyword error",
                 m_javadocKeyword.colour,
                 m_background.colour,
                 m_javadocKeyword.isBold,
                 m_javadocKeyword.isItalic);
+    AddProperty(lexer, "16", "Workspace tags", m_klass.colour, m_background.colour, m_klass.isBold, m_klass.isItalic);
     AddProperty(
-        properties, "16", "Workspace tags", m_klass.colour, m_background.colour, m_klass.isBold, m_klass.isItalic);
-    AddProperty(properties,
-                "19",
-                "Local variables",
-                m_variable.colour,
-                m_background.colour,
-                m_variable.isBold,
-                m_variable.isItalic);
+        lexer, "19", "Local variables", m_variable.colour, m_background.colour, m_variable.isBold, m_variable.isItalic);
 
-    return FinalizeImport(properties);
+    FinalizeImport(lexer);
+    return lexer;
 }
 
 /**

@@ -10,7 +10,7 @@ public:
     EclipseCMakeThemeImporter();
     virtual ~EclipseCMakeThemeImporter();
     
-    virtual bool Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
 };
 
 #endif // ECLIPSECMAKETHEMEIMPORTER_H

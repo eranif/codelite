@@ -27,7 +27,7 @@ public:
      * @param eclipseXmlFile
      * @param codeliteXml [output] the output file name
      */
-    virtual bool Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
 };
 
 #endif // ECLIPSECXXTHEMEIMPORTER_H

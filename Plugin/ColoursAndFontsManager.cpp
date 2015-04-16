@@ -144,6 +144,8 @@ struct ColoursAndFontsManagerLoaderHelper
                     wxDELETE(doc);
                 }
             }
+            xmlFile.Close();
+            wxRemoveFile(files.Item(i));
         }
         CL_DEBUG("Loading users lexers...done");
         m_manager->OnLexerFilesLoaded(userLexers);
@@ -156,11 +158,6 @@ void ColoursAndFontsManager::Load()
     m_lexersMap.clear();
     m_initialized = true;
     m_globalTheme = "Default";
-
-    if(IsUpgradeNeeded()) {
-        clCommandEvent event(wxEVT_UPGRADE_LEXERS_START);
-        EventNotifier::Get()->AddPendingEvent(event);
-    }
 
     // Load the global settings
     if(GetConfigFile().FileExists()) {
@@ -318,10 +315,11 @@ void ColoursAndFontsManager::Save()
 {
     ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
     JSONRoot root(cJSON_Array);
+    JSONElement element = root.toElement();
     for(; iter != m_lexersMap.end(); ++iter) {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
-            root.toElement().arrayAppend(lexers.at(i)->ToJSON());
+            element.arrayAppend(lexers.at(i)->ToJSON());
         }
     }
 
@@ -737,4 +735,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     vec.push_back(lexer);
     m_allLexers.push_back(lexer);
     return lexer;
+}
+
+void ColoursAndFontsManager::AddLexer(LexerConf::Ptr_t lexer)
+{
+    CHECK_PTR_RET(lexer);
+    DoAddLexer(lexer->ToJSON());
 }

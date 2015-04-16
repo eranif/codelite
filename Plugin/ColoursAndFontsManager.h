@@ -151,6 +151,11 @@ public:
      * @param themeName
      */
     void SetTheme(const wxString& themeName);
+    
+    /**
+     * @brief add new lexer (replace an existing one if exists)
+     */
+    void AddLexer(LexerConf::Ptr_t lexer);
 };
 
 #endif // LEXERCONFMANAGER_H

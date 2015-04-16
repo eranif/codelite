@@ -9,7 +9,7 @@ xcopy config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excl
 xcopy config\build_settings.xml.default.win "%TARGET_DIR%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
 xcopy debuggers\*.dll "%TARGET_DIR%\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy images\* "%TARGET_DIR%\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes
-xcopy lexers\*.xml "%TARGET_DIR%\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes
+xcopy lexers\*.json "%TARGET_DIR%\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy plugins\*.dll "%TARGET_DIR%\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\SpellChecker\dics\* "%TARGET_DIR%\CodeLite\dics\" /E /I /H /Y /EXCLUDE:excludes
 xcopy lib*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes

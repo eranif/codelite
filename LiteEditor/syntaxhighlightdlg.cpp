@@ -177,7 +177,7 @@ void SyntaxHighlightDlg::SaveChanges()
         selProp.SetFgColour(m_colourPickerSelTextFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
     }
     
-    // Update the active theme for the lexer (this will also call Save() internall)
+    // Update the active theme for the lexer
     ColoursAndFontsManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
     
     if(m_globalThemeChanged) {
@@ -190,6 +190,9 @@ void SyntaxHighlightDlg::SaveChanges()
         m_lexer =  ColoursAndFontsManager::Get().GetLexer(m_lexer->GetName());
         CallAfter(&SyntaxHighlightDlg::LoadLexer, m_lexer->GetThemeName());
     }
+    
+    // Now save the changes to the file system
+    ColoursAndFontsManager::Get().Save();
     
     wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     wxString oldBg = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
@@ -448,12 +451,15 @@ void SyntaxHighlightDlg::CreateLexerPage()
                              face);
     }
     initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();
-
+    const StyleProperty& defaultStyle = m_lexer->GetProperty(0);
+    if(!defaultStyle.IsNull()) {
+        m_colourPicker->SetColour(defaultStyle.GetFgColour());
+        m_bgColourPicker->SetColour(defaultStyle.GetBgColour());
+        m_globalBgColourPicker->SetColour(defaultStyle.GetBgColour());
+    }
+    
     m_fontPicker->SetSelectedFont(initialFont);
-    m_colourPicker->SetColour(wxColour(initialColor));
-    m_bgColourPicker->SetColour(wxColour(bgInitialColor));
     m_globalFontPicker->SetSelectedFont(initialFont);
-    m_globalBgColourPicker->SetColour(wxColour(bgInitialColor));
     m_fileSpec->ChangeValue(m_lexer->GetFileSpec());
     m_styleWithinPreProcessor->SetValue(initialStyleWithinPreProcessor);
 

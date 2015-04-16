@@ -684,16 +684,8 @@ bool CodeLiteApp::OnInit()
     // If running under Cygwin terminal, adjust the environment variables
     AdjustPathForMSYSIfNeeded();
 
-    // determine if the 'upgrade' frame needs to be started instead of the
-    // standard main frame
-    if(ColoursAndFontsManager::Get().IsUpgradeNeeded()) {
-        clInitializeDialog initDialog(NULL);
-        SetTopWindow(&initDialog);
-        initDialog.ShowModal();
-    } else {
-        // Make sure that the colours and fonts manager is instantiated
-        ColoursAndFontsManager::Get().Load();
-    }
+    // Make sure that the colours and fonts manager is instantiated
+    ColoursAndFontsManager::Get().Load();
 
     // Create the main application window
     clMainFrame::Initialize(parser.GetParamCount() == 0);

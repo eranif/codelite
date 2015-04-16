@@ -30,6 +30,7 @@
 #include <map>
 #include <wx/colour.h>
 #include "json_node.h"
+#include "codelite_exports.h"
 
 // Set default font size per-OS
 #if defined(__WXGTK__)
@@ -48,7 +49,7 @@
 #define LINE_NUMBERS_ATTR_ID 33
 #define STYLE_PROPERTY_NULL_ID -999
 
-class StyleProperty
+class WXDLLIMPEXP_SDK StyleProperty
 {
     int m_id;
     wxString m_fgColour;
@@ -70,8 +71,7 @@ public:
 
 public:
     typedef std::map<long, StyleProperty> Map_t;
-    struct FindByName
-    {
+    struct FindByName {
         wxString m_name;
         FindByName(const wxString& name)
             : m_name(name)
@@ -80,8 +80,7 @@ public:
         bool operator()(const std::pair<long, StyleProperty>& other) const { return m_name == other.second.GetName(); }
     };
 
-    struct FindByID
-    {
+    struct FindByID {
         int m_id;
         FindByID(int id)
             : m_id(id)
@@ -113,47 +112,11 @@ public:
                   bool italic,
                   bool underline,
                   bool eolFilled,
-                  int alpha)
-        : m_id(id)
-        , m_fgColour(fgColour)
-        , m_bgColour(bgColour)
-        , m_fontSize(fontSize)
-        , m_name(name)
-        , m_faceName(face)
-        , m_flags(0)
-        , m_alpha(alpha)
-    {
-        EnableFlag(kBold, bold);
-        EnableFlag(kBold, italic);
-        EnableFlag(kBold, underline);
-        EnableFlag(kBold, eolFilled);
-    }
-
-    StyleProperty()
-        : m_id(0)
-        , m_fgColour(_T("BLACK"))
-        , m_bgColour(_T("WHITE"))
-        , m_fontSize(10)
-        , m_name(wxEmptyString)
-        , m_faceName(_T("Courier"))
-        , m_flags(0)
-        , m_alpha(0){};
-
+                  int alpha);
+    StyleProperty();
     StyleProperty(const StyleProperty& rhs) { *this = rhs; };
-
-    StyleProperty& operator=(const StyleProperty& rhs)
-    {
-        m_fgColour = rhs.m_fgColour;
-        m_bgColour = rhs.m_bgColour;
-        m_faceName = rhs.m_faceName;
-        m_fontSize = rhs.m_fontSize;
-        m_name = rhs.m_name;
-        m_id = rhs.m_id;
-        m_alpha = rhs.m_alpha;
-        m_flags = rhs.m_flags;
-        return *this;
-    }
-    virtual ~StyleProperty() {}
+    StyleProperty& operator=(const StyleProperty& rhs);
+    ~StyleProperty() {}
 
     //----------------------------
     // Serialization
@@ -162,34 +125,12 @@ public:
     /**
      * @brief unserialize an object from JSON
      */
-    void FromJSON(JSONElement json)
-    {
-        m_id = json.namedObject("Id").toInt(0);
-        m_name = json.namedObject("Name").toString("DEFAULT");
-        m_flags = json.namedObject("Flags").toSize_t(0);
-        m_alpha = json.namedObject("Alpha").toInt(50);
-        m_faceName = json.namedObject("Face").toString("Courier");
-        m_fgColour = json.namedObject("Colour").toString("BLACK");
-        m_bgColour = json.namedObject("BgColour").toString("WHITE");
-        m_fontSize = json.namedObject("Size").toInt(10);
-    }
+    void FromJSON(JSONElement json);
 
     /**
      * @brief serialize this style property into a JSON object
      */
-    JSONElement ToJSON() const
-    {
-        JSONElement json = JSONElement::createObject();
-        json.addProperty("Id", GetId());
-        json.addProperty("Name", GetName());
-        json.addProperty("Flags", m_flags);
-        json.addProperty("Alpha", GetAlpha());
-        json.addProperty("Face", GetFaceName());
-        json.addProperty("Colour", GetFgColour());
-        json.addProperty("BgColour", GetBgColour());
-        json.addProperty("Size", GetFontSize());
-        return json;
-    }
+    JSONElement ToJSON() const;
 
     // Accessors
 
@@ -198,9 +139,8 @@ public:
     void SetAlpha(int alpha) { this->m_alpha = alpha; }
     int GetAlpha() const { return m_alpha; }
 
-    wxString GetFgColour() const { return m_fgColour; }
-
-    wxString GetBgColour() const { return m_bgColour; }
+    const wxString& GetFgColour() const { return m_fgColour; }
+    const wxString& GetBgColour() const { return m_bgColour; }
 
     void SetEolFilled(bool eolFilled) { EnableFlag(kEolFilled, eolFilled); }
     bool GetEolFilled() const { return HasFlag(kEolFilled); }

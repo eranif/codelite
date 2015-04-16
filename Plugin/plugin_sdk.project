@@ -220,6 +220,7 @@
     <File Name="cl_registry.cpp"/>
     <File Name="clPersistenceManager.h"/>
     <File Name="clPersistenceManager.cpp"/>
+    <File Name="attribute_style.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>

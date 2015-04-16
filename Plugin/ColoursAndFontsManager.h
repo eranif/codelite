@@ -65,8 +65,6 @@ public:
     const wxColour& GetGlobalBgColour() const { return m_globalBgColour; }
     const wxColour& GetGlobalFgColour() const { return m_globalFgColour; }
 
-    bool IsUpgradeNeeded() const { return m_lexersVersion != LEXERS_VERSION; }
-
     /**
      * @brief create new theme for a lexer by copying an existing theme 'sourceTheme'
      * @param lexerName the lexer name

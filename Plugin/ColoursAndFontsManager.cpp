@@ -108,8 +108,7 @@ ColoursAndFontsManager& ColoursAndFontsManager::Get()
  * @class ColoursAndFontsManagerLoaderHelper
  * @brief
  */
-struct ColoursAndFontsManagerLoaderHelper
-{
+struct ColoursAndFontsManagerLoaderHelper {
     ColoursAndFontsManager* m_manager;
     ColoursAndFontsManagerLoaderHelper(ColoursAndFontsManager* manager)
         : m_manager(manager)
@@ -437,7 +436,6 @@ void ColoursAndFontsManager::SetActiveTheme(const wxString& lexerName, const wxS
             lexer->SetIsActive(lexer->GetThemeName() == themeName);
         }
     }
-    Save();
 }
 
 wxFileName ColoursAndFontsManager::GetConfigFile() const
@@ -511,7 +509,11 @@ bool ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml)
 
 void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& userLexers)
 {
-// Always load first the installation lexers
+    // User lexers
+    wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
+    fnUserLexers.AppendDir("lexers");
+
+// Default installation lexers
 #ifdef USE_POSIX_LAYOUT
     wxFileName defaultLexersFileName(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR), "");
 #else
@@ -519,19 +521,24 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
 #endif
     defaultLexersFileName.AppendDir("lexers");
     defaultLexersFileName.SetFullName("lexers.json");
-    
+
     m_allLexers.clear();
     m_lexersMap.clear();
-    // Load default settings
-    LoadJSON(defaultLexersFileName.GetPath());
 
-    // Use old XML files
-    LoadOldXmls(userLexers);
+    if(!fnUserLexers.FileExists()) {
+        // Load default settings
+        LoadJSON(defaultLexersFileName);
 
-    // Load user JSON lexers
-    wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
-    fnUserLexers.AppendDir("lexers");
-    LoadJSON(fnUserLexers);
+        // Use old XML files
+        LoadOldXmls(userLexers);
+
+        // Call save to create an initial user settings
+        Save();
+
+    } else {
+        // Load the user settings
+        LoadJSON(fnUserLexers);
+    }
 }
 
 void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool force)
@@ -654,19 +661,21 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
         }
     }
     SetGlobalTheme(themeName);
-    Save();
 }
 
 void ColoursAndFontsManager::LoadJSON(const wxFileName& path)
 {
     if(!path.FileExists()) return;
-    
+
     JSONRoot root(path);
     JSONElement arr = root.toElement();
-    for(int i = 0; i < arr.arraySize(); ++i) {
+    int arrSize = arr.arraySize();
+    CL_DEBUG("Loading JSON file: %s", path.GetFullPath());
+    for(int i = 0; i < arrSize; ++i) {
         JSONElement json = arr.arrayItem(i);
         DoAddLexer(json);
     }
+    CL_DEBUG("Loading JSON file...done");
 }
 
 LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)

@@ -2057,6 +2057,7 @@ bool clMainFrame::StartSetupWizard()
 
             // Update the theme
             ColoursAndFontsManager::Get().SetTheme(data.selectedTheme);
+            ColoursAndFontsManager::Get().Save();
         }
 
         if(wiz.IsRestartRequired()) {

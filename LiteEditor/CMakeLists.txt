@@ -160,7 +160,12 @@ if(NOT APPLE)
     ) 
 
     install(
-        DIRECTORY ${CL_SRC_ROOT}/Runtime/images ${CL_SRC_ROOT}/Runtime/gdb_printers ${CL_SRC_ROOT}/Runtime/src/ ${CL_SRC_ROOT}/Runtime/lexers ${CL_SRC_ROOT}/Runtime/templates ${CL_SRC_ROOT}/Runtime/rc
+        DIRECTORY ${CL_SRC_ROOT}/Runtime/images 
+                  ${CL_SRC_ROOT}/Runtime/gdb_printers 
+                  ${CL_SRC_ROOT}/Runtime/src/ 
+                  ${CL_SRC_ROOT}/Runtime/lexers 
+                  ${CL_SRC_ROOT}/Runtime/templates 
+                  ${CL_SRC_ROOT}/Runtime/rc
         DESTINATION ${CL_PREFIX}/share/codelite
         USE_SOURCE_PERMISSIONS
         PATTERN ".svn" EXCLUDE

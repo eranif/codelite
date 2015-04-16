@@ -293,7 +293,7 @@ CMakeSettingsManager::LoadProject(const wxString& name)
     // Foreach array
     for (int i = 0; i < json.arraySize(); ++i) {
         // Get item
-        const JSONElement& item = json.arrayItem(i);
+        JSONElement item = json.arrayItem(i);
 
         // Name
         const wxString name = item.namedObject("name").toString();

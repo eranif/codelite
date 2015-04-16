@@ -78,7 +78,7 @@ Source: "{#CODELITE_ROOT}\Runtime\templates\projects\dynamic-library\dynamic-lib
 Source: "{#CODELITE_ROOT}\Runtime\templates\projects\dynamic-library-wx-enabled\dynamic-library-wx-enabled.project.windows"; DestName: dynamic-library-wx-enabled.project; DestDir: "{app}\templates\projects\dynamic-library-wx-enabled"; Flags: ignoreversion 
 
 ; XML settings
-Source: "{#CODELITE_ROOT}\Runtime\lexers\*.xml"; DestDir: "{app}\lexers\"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\lexers\*.json"; DestDir: "{app}\lexers\"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\debuggers\DebuggerGDB.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion 
 
 ; Copy the plugins (by name)

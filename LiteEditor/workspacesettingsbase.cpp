@@ -27,6 +27,7 @@ WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, co
     this->SetSizer(mainSizer);
     
     m_notebook1 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_notebook1->SetName(wxT("m_notebook1"));
     
     mainSizer->Add(m_notebook1, 1, wxALL|wxEXPAND, 5);
     
@@ -86,11 +87,24 @@ WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, co
     
     buttonSizer->Add(m_buttonCancel, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook1)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
+    }
+    #endif
+    
+    SetName(wxT("WorkspaceSettingsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_choiceEnvSets->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceSettingsBase::OnEnvSelected), NULL, this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WorkspaceSettingsBase::OnButtonOK), NULL, this);
@@ -135,7 +149,7 @@ CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, 
     m_textCtrlSearchPaths = new wxTextCtrl(m_panel8, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
     m_textCtrlSearchPaths->SetToolTip(_("Add here search paths used by clang / ctags for locating include files"));
     
-    bSizer24->Add(m_textCtrlSearchPaths, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer24->Add(m_textCtrlSearchPaths, 1, wxALL|wxEXPAND, 5);
     
     m_panel6 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_splitter1->SplitHorizontally(m_panel8, m_panel6, 0);
@@ -159,18 +173,19 @@ CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, 
     m_checkBoxCpp11 = new wxCheckBox(m_panel6, wxID_ANY, _("Enable C++11 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxCpp11->SetValue(false);
     
-    boxSizer3->Add(m_checkBoxCpp11, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer3->Add(m_checkBoxCpp11, 0, wxALL, 5);
     
     m_checkBoxCpp14 = new wxCheckBox(m_panel6, wxID_ANY, _("Enable C++14 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxCpp14->SetValue(false);
     
     boxSizer3->Add(m_checkBoxCpp14, 0, wxALL, 5);
     
+    SetName(wxT("CodeCompletionBasePage"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrlSearchPaths->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
     m_textCtrlMacros->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);

@@ -62,10 +62,10 @@ SymbolsDialogBase::SymbolsDialogBase( wxWindow* parent, wxWindowID id, const wxS
 	
 	m_okButton = new wxButton( this, wxID_ANY, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_okButton->SetDefault(); 
-	btnSizer->Add( m_okButton, 0, wxALIGN_RIGHT|wxALL, 5 );
+	btnSizer->Add( m_okButton, 0, wxALL, 5 );
 	
 	m_cancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	btnSizer->Add( m_cancel, 0, wxALIGN_RIGHT|wxALL, 5 );
+	btnSizer->Add( m_cancel, 0, wxALL, 5 );
 	
 	mainSizer->Add( btnSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	

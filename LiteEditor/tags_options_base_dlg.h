@@ -31,6 +31,12 @@
 #include <wx/hyperlink.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 #include "tags_options_data.h"
 
 class TagsOptionsBaseDlg : public wxDialog

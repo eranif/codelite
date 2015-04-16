@@ -21,6 +21,12 @@
 #include <wx/clrpicker.h>
 #include <wx/statline.h>
 #include <wx/spinctrl.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class EditorSettingsBookmarksBasePanel : public wxPanel
 {
@@ -47,6 +53,23 @@ protected:
     virtual void OnBookmarkChanged(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetDisplaySelection() { return m_displaySelection; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxChoice* GetBookMarkShape() { return m_bookMarkShape; }
+    wxStaticText* GetStaticText10() { return m_staticText10; }
+    wxChoice* GetChoiceBMType() { return m_choiceBMType; }
+    wxStaticText* GetStaticText41() { return m_staticText41; }
+    wxTextCtrl* GetBookmarkLabel() { return m_BookmarkLabel; }
+    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxColourPickerCtrl* GetBackgroundColor() { return m_backgroundColor; }
+    wxStaticText* GetStaticText5() { return m_staticText5; }
+    wxColourPickerCtrl* GetForegroundColor() { return m_foregroundColor; }
+    wxStaticLine* GetStaticLine18() { return m_staticLine18; }
+    wxStaticText* GetStaticText66() { return m_staticText66; }
+    wxColourPickerCtrl* GetHighlightColor() { return m_highlightColor; }
+    wxStaticText* GetStaticText54() { return m_staticText54; }
+    wxSpinCtrl* GetSpinCtrlHighlightAlpha() { return m_spinCtrlHighlightAlpha; }
+    wxCheckBox* GetClearHighlitWords() { return m_clearHighlitWords; }
     EditorSettingsBookmarksBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsBookmarksBasePanel();
 };

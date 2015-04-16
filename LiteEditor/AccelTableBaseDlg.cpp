@@ -54,7 +54,7 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
     m_dataview->AppendTextColumn(_("Keyboard Shortcut"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer4->Add(bSizer3, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer4->Add(bSizer3, 0, 0, 5);
     
     m_buttonEdit = new wxButton(this, wxID_ANY, _("&Edit..."), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -76,11 +76,17 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
     m_stdBtnSizer6->AddButton(m_button10);
     m_stdBtnSizer6->Realize();
     
+    SetName(wxT("AccelTableBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AccelTableBaseDlg::OnText), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(AccelTableBaseDlg::OnDVItemActivated), NULL, this);

@@ -28,6 +28,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     this->SetSizer(mainSizer);
     
     m_treebook2 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook2->SetName(wxT("m_treebook2"));
     
     mainSizer->Add(m_treebook2, 1, wxALL|wxEXPAND, 5);
     
@@ -222,6 +223,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_panelCtagsSearchPaths->SetSizer(bSizer7);
     
     m_notebook36 = new wxNotebook(m_panelCtagsSearchPaths, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook36->SetName(wxT("m_notebook36"));
     
     bSizer7->Add(m_notebook36, 1, wxALL|wxEXPAND, 5);
     
@@ -356,6 +358,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     bSizer15->Add(m_buttonParse, 0, wxALL, 5);
     
     m_notebook2 = new wxNotebook(m_panelCtagsAdvanced, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_notebook2->SetName(wxT("m_notebook2"));
     
     bSizer6->Add(m_notebook2, 1, wxALL|wxEXPAND, 5);
     
@@ -435,6 +438,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     bSizer18->Add(m_checkBoxEnableClangCC, 0, wxALL, 5);
     
     m_notebookClang = new wxNotebook(m_panelClang, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_notebookClang->SetName(wxT("m_notebookClang"));
     
     bSizer18->Add(m_notebookClang, 1, wxALL|wxEXPAND, 5);
     
@@ -480,11 +484,11 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlClangSearchPaths->SetFont(m_textCtrlClangSearchPathsFont);
     m_textCtrlClangSearchPaths->SetToolTip(_("Add here search paths used by clang for locating include files"));
     
-    bSizer24->Add(m_textCtrlClangSearchPaths, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer24->Add(m_textCtrlClangSearchPaths, 1, wxEXPAND, 5);
     
     m_buttonSuggest = new wxButton(m_panel8, wxID_ANY, _("Suggest search paths..."), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer24->Add(m_buttonSuggest, 0, wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer24->Add(m_buttonSuggest, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_panel4 = new wxPanel(m_notebookClang, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebookClang->AddPage(m_panel4, _("Advanced"), false);
@@ -533,19 +537,49 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook2)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_treebook2);
+    }
+    #endif
     m_treebook2->ExpandNode( 0, true );
     m_treebook2->ExpandNode( 1, true );
     m_treebook2->ExpandNode( 2, true );
     m_treebook2->ExpandNode( 3, true );
     m_treebook2->ExpandNode( 4, true );
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook36)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook36);
+    }
+    #endif
     m_treebook2->ExpandNode( 5, true );
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook2)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook2);
+    }
+    #endif
     m_treebook2->ExpandNode( 6, true );
     
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebookClang)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebookClang);
+    }
+    #endif
+    
+    SetName(wxT("TagsOptionsBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_pgMgrColouring->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TagsOptionsBaseDlg::OnColouringPropertyValueChanged), NULL, this);
     m_staticTextMinWordLen->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI), NULL, this);

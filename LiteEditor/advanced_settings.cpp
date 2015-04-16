@@ -70,7 +70,7 @@ AdvancedDlg::AdvancedDlg(wxWindow* parent,
     wxBoxSizer* bSizer4;
     bSizer4 = new wxBoxSizer(wxHORIZONTAL);
 
-    bSizer5->Add(bSizer4, 0, wxALIGN_RIGHT | wxEXPAND, 5);
+    bSizer5->Add(bSizer4, 0, wxEXPAND, 5);
 
     m_compilersPage = new CompilerMainPage(m_compilersMainPanel);
     bSizer5->Add(m_compilersPage, 1, wxALL | wxEXPAND, 5);

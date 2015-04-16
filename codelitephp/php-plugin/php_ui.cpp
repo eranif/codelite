@@ -37,11 +37,17 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
     m_treeCtrlLayout = new PHPFileLayoutTree(this);
     bSizer1->Add(m_treeCtrlLayout, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("QuickOutlineDlgBase"));
     SetSizeHints(400,400);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_textCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickOutlineDlgBase::OnKeyDown), NULL, this);
     m_textCtrl->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(QuickOutlineDlgBase::OnTextEntered), NULL, this);
@@ -97,11 +103,17 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     m_stdBtnSizer469->AddButton(m_buttonCancel);
     m_stdBtnSizer469->Realize();
     
+    SetName(wxT("NewWorkspaceSelectionDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(NewWorkspaceSelectionDlgBase::OnClose), NULL, this);
     this->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewWorkspaceSelectionDlgBase::OnKeyDown), NULL, this);
@@ -198,11 +210,17 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     
     bSizer4->Add(m_button7, 0, wxALL, 5);
     
+    SetName(wxT("NewPHPWorkspaceBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated), NULL, this);
     m_button49->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL, this);
@@ -276,11 +294,17 @@ NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     bSizer7->Add(m_button6, 0, wxALL, 5);
     
+    SetName(wxT("NewFileDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
 }
 
 NewFileDlgBase::~NewFileDlgBase()
@@ -320,11 +344,17 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
     m_dvListCtrl->AppendTextColumn(_("Kind"), wxDATAVIEW_CELL_INERT, 80, wxALIGN_LEFT);
     m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 250, wxALIGN_LEFT);
     
+    SetName(wxT("OpenResourceDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_textCtrlFilter->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenResourceDlgBase::OnKeyDown), NULL, this);
     m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDlgBase::OnFilterText), NULL, this);
@@ -356,6 +386,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     this->SetSizer(bSizer12);
     
     m_treebook9 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook9->SetName(wxT("m_treebook9"));
     
     bSizer12->Add(m_treebook9, 1, wxALL|wxEXPAND, 5);
     
@@ -396,11 +427,11 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     wxBoxSizer* bSizer18 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer13->Add(bSizer18, 0, wxEXPAND|wxALIGN_RIGHT, 5);
+    bSizer13->Add(bSizer18, 0, wxEXPAND, 5);
     
     m_staticText14 = new wxStaticText(m_panel11, wxID_ANY, _("Add include path:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer18->Add(m_staticText14, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer18->Add(m_staticText14, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonBrowseIncludePath = new wxButton(m_panel11, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonBrowseIncludePath->SetToolTip(_("Add include path for PHP"));
@@ -438,7 +469,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_staticText13 = new wxStaticText(m_panel15, wxID_ANY, _("Add include path for code completion:"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_staticText13->SetToolTip(_("Paths added here will only be used for code completion and NOT during runtime.\nIf you want to add search paths for runtime (CLI mode only), Use the 'PHP CLI' tab"));
     
-    bSizer23->Add(m_staticText13, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer23->Add(m_staticText13, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_button15 = new wxButton(m_panel15, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button15->SetDefault();
@@ -488,7 +519,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlXDebugPort->SetHint(wxT(""));
     #endif
     
-    fgSizer5->Add(m_textCtrlXDebugPort, 0, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer5->Add(m_textCtrlXDebugPort, 0, wxALL|wxEXPAND, 5);
     
     m_staticText152 = new wxStaticText(m_panel13, wxID_ANY, _("IDE Key:"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_staticText152->SetToolTip(_("This field defines the session name between CodeLite and XDebug"));
@@ -528,16 +559,28 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     bSizer16->Add(m_button10, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook9)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_treebook9);
+    }
+    #endif
     m_treebook9->ExpandNode( 0, true );
     m_treebook9->ExpandNode( 1, true );
     m_treebook9->ExpandNode( 2, true );
     m_treebook9->ExpandNode( 3, true );
     
+    SetName(wxT("PHPSettingsBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_buttonBrowseIncludePath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnBrowseForIncludePath), NULL, this);
     m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnAddCCPath), NULL, this);
@@ -569,6 +612,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     this->SetSizer(bSizer19);
     
     m_treebook41 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook41->SetName(wxT("m_treebook41"));
     
     bSizer19->Add(m_treebook41, 1, wxALL|wxEXPAND, 5);
     
@@ -586,6 +630,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     bSizer21->Add(m_staticText457, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_choicebook1 = new wxChoicebook(m_panel43, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_choicebook1->SetName(wxT("m_choicebook1"));
     
     bSizer21->Add(m_choicebook1, 1, wxALL|wxEXPAND, 5);
     
@@ -833,17 +878,35 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     
     bSizer20->Add(m_button14, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook41)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_treebook41);
+    }
+    #endif
     m_treebook41->ExpandNode( 0, true );
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_choicebook1)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_choicebook1);
+    }
+    #endif
     m_treebook41->ExpandNode( 1, true );
     m_treebook41->ExpandNode( 2, true );
     m_treebook41->ExpandNode( 3, true );
     m_treebook41->ExpandNode( 4, true );
     
+    SetName(wxT("PHPProjectSettingsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_choicebook1->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, wxChoicebookEventHandler(PHPProjectSettingsBase::OnPageChanged), NULL, this);
     m_filePickerPHPExe->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPExecChanged), NULL, this);
@@ -944,11 +1007,17 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer111->AddButton(m_buttonCancel);
     m_stdBtnSizer111->Realize();
     
+    SetName(wxT("FileMappingDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileMappingDlgBase::OnOkUI), NULL, this);
     
@@ -999,11 +1068,12 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 2);
     
+    SetName(wxT("PHPWorkspaceViewBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(ID_PHP_PROJECT_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettings), NULL, this);
     this->Connect(ID_PHP_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPWorkspaceViewBase::OnActiveProjectSettingsUI), NULL, this);
@@ -1071,6 +1141,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     this->SetSizer(boxSizer129);
     
     m_auiBook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxAUI_NB_TAB_MOVE|wxAUI_NB_TAB_SPLIT);
+    m_auiBook->SetName(wxT("m_auiBook"));
     
     boxSizer129->Add(m_auiBook, 1, wxALL|wxEXPAND, 2);
     
@@ -1138,11 +1209,12 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_auibar218->Realize();
     m_auiBook->SetMinSize(wxSize(300,300));
     
+    SetName(wxT("PHPDebugPaneBase"));
     SetSizeHints(300,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
@@ -1190,11 +1262,12 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_dataview->AppendTextColumn(_("Classname"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Value"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
+    SetName(wxT("LocalsViewBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED, wxDataViewEventHandler(LocalsViewBase::OnLocalCollapsed), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanded), NULL, this);
@@ -1303,6 +1376,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     this->SetSizer(boxSizer255);
     
     m_notebook257 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook257->SetName(wxT("m_notebook257"));
     wxImageList* m_notebook257_il = new wxImageList(16, 16);
     m_notebook257->AssignImageList(m_notebook257_il);
     
@@ -1454,11 +1528,12 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     
     boxSizer2472->Add(m_buttonSendXdebug, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2);
     
+    SetName(wxT("EvalPaneBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnEnter), NULL, this);
     m_buttonSend->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSend), NULL, this);
@@ -1513,6 +1588,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer359->Add(m_choice, 0, wxALL|wxEXPAND, 5);
     
     m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_simpleBook->SetName(wxT("m_simpleBook"));
     m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
     
     boxSizer359->Add(m_simpleBook, 1, wxALL|wxEXPAND, 5);
@@ -1587,11 +1663,24 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer361->AddButton(m_button365);
     m_stdBtnSizer361->Realize();
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_simpleBook)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_simpleBook);
+    }
+    #endif
+    
+    SetName(wxT("PHPDebugStartDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_choice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
     m_textCtrlScriptToDebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
@@ -1803,11 +1892,17 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     boxSizer645->Add(m_textCtrlCCPaths, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("NewPHPProjectWizardBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewPHPProjectWizardBase::OnFinish), NULL, this);
     this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL, this);
@@ -1976,11 +2071,17 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     
     boxSizer6019->Add(m_textCtrlPHPIni, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("PHPXDebugSetupWizardBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnPageChanging), NULL, this);
     this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnFinished), NULL, this);
@@ -2049,11 +2150,17 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     m_stdBtnSizer659->AddButton(m_buttonCancel);
     m_stdBtnSizer659->Realize();
     
+    SetName(wxT("PHPSettersGettersDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
 }
 
 PHPSettersGettersDialogBase::~PHPSettersGettersDialogBase()

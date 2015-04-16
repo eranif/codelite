@@ -25,6 +25,12 @@
 #include <wx/listbox.h>
 #include <wx/statline.h>
 #include <wx/textctrl.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class CppCheckSettingsDialogBase : public wxDialog
 {

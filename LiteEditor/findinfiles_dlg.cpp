@@ -102,7 +102,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     #endif
     m_btnRemovelPath->SetToolTip(_("Remove the selected search path"));
     
-    boxSizer1->Add(m_btnRemovelPath, 0, wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer1->Add(m_btnRemovelPath, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_btnClearPaths = new wxButton(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
@@ -111,7 +111,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     #endif
     m_btnClearPaths->SetToolTip(_("Clear the search path list"));
     
-    boxSizer1->Add(m_btnClearPaths, 0, wxTOP|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer1->Add(m_btnClearPaths, 0, wxTOP|wxEXPAND, 5);
     
     m_staticText3 = new wxStaticText(m_panelMainPanel, wxID_ANY, _("File Mask:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -143,6 +143,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer41->Add(m_staticText7, 0, wxALL|wxALIGN_RIGHT, 5);
     
     m_notebook1 = new wxNotebook(m_panelMainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_notebook1->SetName(wxT("m_notebook1"));
     
     fgSizer41->Add(m_notebook1, 0, wxALL|wxEXPAND, 5);
     
@@ -224,7 +225,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer50->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer50->Add(bSizer2, 0, wxALL, 5);
     
     m_find = new wxButton(m_panelMainPanel, wxID_FIND, _("&Find"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_find->SetDefault();
@@ -247,11 +248,24 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     bSizer2->Add(m_cancel, 0, wxALL|wxEXPAND, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook1)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
+    }
+    #endif
+    
+    SetName(wxT("FindInFilesDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_btnAddPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnAddPath), NULL, this);
     m_btnRemovelPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnRemovePath), NULL, this);

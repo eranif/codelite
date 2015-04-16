@@ -108,6 +108,10 @@
      "m_sizerFlags": [],
      "m_properties": [{
        "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
        "m_label": "Name:",
        "m_value": "bSizer2"
       }, {
@@ -203,8 +207,12 @@
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_HORIZONTAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
          "type": "string",
          "m_label": "Name:",
          "m_value": "fgSizer1"
@@ -789,7 +797,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": ["wxCLRP_DEFAULT_STYLE"],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_RIGHT"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -935,7 +943,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": ["wxCLRP_DEFAULT_STYLE"],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_RIGHT"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -1074,8 +1082,12 @@
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": [],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_HORIZONTAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
          "type": "string",
          "m_label": "Name:",
          "m_value": "flexGridSizer4"
@@ -1191,7 +1203,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": ["wxCLRP_DEFAULT_STYLE"],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_RIGHT"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -1337,7 +1349,7 @@
          "gbSpan": "1,1",
          "gbPosition": "0,0",
          "m_styles": ["wxSP_ARROW_KEYS"],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_RIGHT"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",

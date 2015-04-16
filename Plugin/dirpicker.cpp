@@ -61,7 +61,7 @@ void DirPicker::CreateControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(mainSizer);
 
-	size_t flags = wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_CENTER | wxEXPAND;
+	size_t flags = wxRIGHT | wxTOP | wxBOTTOM | wxEXPAND;
 
 	if (m_style & wxDP_USE_TEXTCTRL) {
 		m_path = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
@@ -72,7 +72,7 @@ void DirPicker::CreateControls()
 	}
 
 	m_button = new wxButton(this, wxID_ANY, m_buttonCaption, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-	mainSizer->Add(m_button, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 5);
+	mainSizer->Add(m_button, 0, wxEXPAND | wxALL, 5);
 
 	Layout();
 }

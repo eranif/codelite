@@ -18,6 +18,12 @@
 #include <wx/dataview.h>
 #include "keyboardaccelemodel.h"
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class AccelTableBaseDlg : public wxDialog
 {
@@ -41,6 +47,10 @@ protected:
     virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxSearchCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
+    wxDataViewCtrl* GetDataview() { return m_dataview; }
+    wxButton* GetButtonEdit() { return m_buttonEdit; }
+    wxButton* GetButtonDefault() { return m_buttonDefault; }
     AccelTableBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Keyboard Shortcuts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AccelTableBaseDlg();
 };

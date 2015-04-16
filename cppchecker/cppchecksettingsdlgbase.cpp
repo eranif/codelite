@@ -27,6 +27,7 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     this->SetSizer(bSizer1);
     
     m_notebook1 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_notebook1->SetName(wxT("m_notebook1"));
     
     bSizer1->Add(m_notebook1, 1, wxALL|wxEXPAND, 5);
     
@@ -331,17 +332,30 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     m_BtmOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_BtmOK->SetDefault();
     
-    bSizer2->Add(m_BtmOK, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer2->Add(m_BtmOK, 0, wxALL, 5);
     
     m_BtnCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer2->Add(m_BtnCancel, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook1)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
+    }
+    #endif
+    
+    SetName(wxT("CppCheckSettingsDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_buttonAllChecks->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckSettingsDialogBase::OnChecksTickAll), NULL, this);
     m_buttonAllChecks->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckSettingsDialogBase::OnChecksTickAllUI), NULL, this);
@@ -469,11 +483,17 @@ CppCheckAddSuppressionDialogBase::CppCheckAddSuppressionDialogBase(wxWindow* par
     
     bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
     
+    SetName(wxT("CppCheckAddSuppressionDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckAddSuppressionDialogBase::OnOKButtonUpdateUI), NULL, this);
     

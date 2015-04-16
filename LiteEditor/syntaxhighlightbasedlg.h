@@ -32,6 +32,12 @@
 #include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class SyntaxHighlightBaseDlg : public wxDialog
 {

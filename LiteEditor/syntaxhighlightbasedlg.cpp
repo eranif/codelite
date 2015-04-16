@@ -73,6 +73,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_auibar->Realize();
     
     m_notebook76 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook76->SetName(wxT("m_notebook76"));
     
     bSizer1->Add(m_notebook76, 1, wxALL|wxEXPAND, 5);
     
@@ -95,6 +96,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_panel25->SetSizer(bSizer3);
     
     m_notebook2 = new wxNotebook(m_panel25, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook2->SetName(wxT("m_notebook2"));
     
     bSizer3->Add(m_notebook2, 1, wxEXPAND, 5);
     
@@ -340,7 +342,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     
     m_stdBtnSizer10 = new wxStdDialogButtonSizer();
     
-    boxSizer19->Add(m_stdBtnSizer10, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer19->Add(m_stdBtnSizer10, 0, wxALL, 5);
     
     m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOk->SetDefault();
@@ -353,11 +355,30 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer10->AddButton(m_buttonApply);
     m_stdBtnSizer10->Realize();
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook76)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook76);
+    }
+    #endif
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook2)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook2);
+    }
+    #endif
+    
+    SetName(wxT("SyntaxHighlightBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnNewTheme), NULL, this);
     this->Connect(wxID_SAVE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SyntaxHighlightBaseDlg::OnToolExportAll), NULL, this);
@@ -534,11 +555,17 @@ NewThemeDialogBase::NewThemeDialogBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer117->AddButton(m_buttonCancel);
     m_stdBtnSizer117->Realize();
     
+    SetName(wxT("NewThemeDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_choiceLanguage->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewThemeDialogBase::OnLexerSelected), NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewThemeDialogBase::OnOkUI), NULL, this);

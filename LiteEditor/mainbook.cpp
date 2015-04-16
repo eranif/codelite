@@ -298,7 +298,7 @@ void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { Crea
 void MainBook::RestoreSession(SessionEntry& session)
 {
     if(session.GetTabInfoArr().empty()) return; // nothing to restore
-    
+
     CloseAll(false);
     size_t sel = session.GetSelectedTab();
     const std::vector<TabInfo>& vTabInfoArr = session.GetTabInfoArr();
@@ -767,13 +767,13 @@ void MainBook::ReloadExternallyModified(bool prompt)
     if(m_isWorkspaceReloading) return;
     static int depth = wxNOT_FOUND;
     ++depth;
-    
+
     // Protect against recursion
     if(depth == 2) {
         depth = wxNOT_FOUND;
         return;
     }
-    
+
     LEditor::Vec_t editors;
     GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
@@ -849,17 +849,17 @@ void MainBook::ReloadExternallyModified(bool prompt)
     std::sort(editorsAgain.begin(), editorsAgain.end());
     std::set_intersection(
         editorsAgain.begin(), editorsAgain.end(), editors.begin(), editors.end(), std::back_inserter(realEditorsList));
-    
+
     // Update the "files" list
     if(editors.size() != realEditorsList.size()) {
-        // something went wrong here... 
+        // something went wrong here...
         CallAfter(&MainBook::ReloadExternallyModified, prompt);
         return;
     }
-    
+
     // reset the recursive protector
     depth = wxNOT_FOUND;
-    
+
     std::vector<wxFileName> filesToRetag;
     for(size_t i = 0; i < files.size(); i++) {
         if(files[i].second) {
@@ -1137,18 +1137,22 @@ void MainBook::ShowMessage(const wxString& message,
 
 void MainBook::OnPageChanged(NotebookEvent& e)
 {
+    e.Skip();
     int newSel = e.GetSelection();
     if(newSel != wxNOT_FOUND && m_reloadingDoRaise) {
         wxWindow* win = m_book->GetPage((size_t)newSel);
         if(win) {
             SelectPage(win);
-            // LEditor *editor = dynamic_cast<LEditor*>(win);
-            // if(editor) {
-            //	ManagerST::Get()->UpdatePreprocessorFile(editor);
-            //}
         }
     }
-    e.Skip();
+
+    // Cancel any tooltip
+    LEditor::Vec_t editors;
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+    for(size_t i = 0; i < editors.size(); ++i) {
+        // Cancel any calltip when switching from the editor
+        editors.at(i)->DoCancelCalltip();
+    }
 }
 
 wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }

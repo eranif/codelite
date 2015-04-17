@@ -52,26 +52,24 @@ static bool StringTolBool(const wxString& s)
 }
 
 LexerConf::LexerConf()
-    : m_styleWithinPreProcessor(true)
-    , m_isActive(false)
-    , m_useCustomTextSelectionFgColour(false)
+    : m_flags(kStyleInPP)
 {
 }
 
 void LexerConf::FromXml(wxXmlNode* element)
 {
     if(element) {
+        m_flags = 0;
         m_name = element->GetPropVal(wxT("Name"), wxEmptyString);
         m_name.MakeLower();
 
         m_lexerId = XmlUtils::ReadLong(element, wxT("Id"), 0);
         m_themeName = XmlUtils::ReadString(element, "Theme", "Default");
-        m_isActive = XmlUtils::ReadBool(element, "IsActive", false);
-        m_useCustomTextSelectionFgColour =
-            XmlUtils::ReadBool(element, "UseCustomTextSelFgColour", m_useCustomTextSelectionFgColour);
-
-        m_styleWithinPreProcessor =
-            element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;
+        EnableFlag(kIsActive, XmlUtils::ReadBool(element, "IsActive", false));
+        EnableFlag(kUseCustomTextSelectionFgColour,
+                   XmlUtils::ReadBool(element, "UseCustomTextSelFgColour", false));
+        EnableFlag(kStyleInPP,
+                   element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false);
 
         // load key words
         wxXmlNode* node = NULL;
@@ -178,8 +176,7 @@ wxXmlNode* LexerConf::ToXml() const
     node->AddProperty("Theme", GetThemeName());
     node->AddProperty("IsActive", IsActive() ? "Yes" : "No");
     node->AddAttribute("UseCustomTextSelFgColour", IsUseCustomTextSelectionFgColour() ? "Yes" : "No");
-
-    node->AddProperty(wxT("StylingWithinPreProcessor"), BoolToString(m_styleWithinPreProcessor));
+    node->AddProperty(wxT("StylingWithinPreProcessor"), BoolToString(GetStyleWithinPreProcessor()));
     wxString strId;
     strId << GetLexerId();
     node->AddProperty(wxT("Id"), strId);
@@ -565,9 +562,7 @@ JSONElement LexerConf::ToJSON() const
     JSONElement json = JSONElement::createObject(GetName());
     json.addProperty("Name", GetName());
     json.addProperty("Theme", GetThemeName());
-    json.addProperty("IsActive", IsActive());
-    json.addProperty("UseCustomTextSelFgColour", IsUseCustomTextSelectionFgColour());
-    json.addProperty("StylingWithinPreProcessor", GetStyleWithinPreProcessor());
+    json.addProperty("Flags", m_flags);
     json.addProperty("Id", GetLexerId());
     json.addProperty("KeyWords0", GetKeyWords(0));
     json.addProperty("KeyWords1", GetKeyWords(1));
@@ -591,19 +586,24 @@ void LexerConf::FromJSON(const JSONElement& json)
     m_name = json.namedObject("Name").toString();
     m_lexerId = json.namedObject("Id").toInt();
     m_themeName = json.namedObject("Theme").toString();
-    m_isActive = json.namedObject("IsActive").toBool();
-    m_useCustomTextSelectionFgColour = json.namedObject("UseCustomTextSelFgColour").toBool();
-    m_styleWithinPreProcessor = json.namedObject("StylingWithinPreProcessor").toBool();
+    if(json.hasNamedObject("Flags")) {
+        m_flags = json.namedObject("Flags").toSize_t();
+    } else {
+        SetIsActive(json.namedObject("IsActive").toBool());
+        SetUseCustomTextSelectionFgColour(json.namedObject("UseCustomTextSelFgColour").toBool());
+        SetStyleWithinPreProcessor(json.namedObject("StylingWithinPreProcessor").toBool());
+    }
     SetKeyWords(json.namedObject("KeyWords0").toString(), 0);
     SetKeyWords(json.namedObject("KeyWords1").toString(), 1);
     SetKeyWords(json.namedObject("KeyWords2").toString(), 2);
     SetKeyWords(json.namedObject("KeyWords3").toString(), 3);
     SetKeyWords(json.namedObject("KeyWords4").toString(), 4);
     SetFileSpec(json.namedObject("Extensions").toString());
-    
+
     m_properties.clear();
     JSONElement properties = json.namedObject("Properties");
-    for(int i = 0; i < properties.arraySize(); ++i) {
+    int arrSize = properties.arraySize();
+    for(int i = 0; i < arrSize; ++i) {
         // Construct a style property
         StyleProperty p;
         p.FromJSON(properties.arrayItem(i));
@@ -611,11 +611,11 @@ void LexerConf::FromJSON(const JSONElement& json)
     }
 }
 
-void LexerConf::SetKeyWords(const wxString& keywords, int set) 
-{ 
+void LexerConf::SetKeyWords(const wxString& keywords, int set)
+{
     wxString content = keywords;
     content.Replace("\r", "");
     content.Replace("\n", " ");
     content.Replace("\\", " ");
-    m_keyWords[set] = content; 
+    m_keyWords[set] = content;
 }

@@ -47,13 +47,30 @@ class WXDLLIMPEXP_SDK LexerConf
     wxString m_name;
     wxString m_extension;
     wxString m_keyWords[10];
-    bool m_styleWithinPreProcessor;
     wxString m_themeName;
-    bool m_isActive;
-    bool m_useCustomTextSelectionFgColour;
+    size_t m_flags;
 
 public:
     typedef SmartPtr<LexerConf> Ptr_t;
+
+protected:
+    enum eLexerConfFlags {
+        kNone = 0,
+        kStyleInPP = (1 << 0),
+        kIsActive = (1 << 1),
+        kUseCustomTextSelectionFgColour = (1 << 2),
+    };
+
+    inline void EnableFlag(eLexerConfFlags flag, bool b)
+    {
+        if(b) {
+            m_flags |= flag;
+        } else {
+            m_flags &= ~flag;
+        }
+    }
+
+    inline bool HasFlag(eLexerConfFlags flag) const { return m_flags & flag; }
 
 public:
     struct FindByNameAndTheme {
@@ -93,14 +110,14 @@ public:
     LexerConf();
     virtual ~LexerConf();
 
-    void SetUseCustomTextSelectionFgColour(bool useCustomTextSelectionFgColour)
-    {
-        this->m_useCustomTextSelectionFgColour = useCustomTextSelectionFgColour;
-    }
-    bool IsUseCustomTextSelectionFgColour() const { return m_useCustomTextSelectionFgColour; }
-    void SetIsActive(bool isActive) { this->m_isActive = isActive; }
+    void SetUseCustomTextSelectionFgColour(bool b) { EnableFlag(kUseCustomTextSelectionFgColour, b); }
+    bool IsUseCustomTextSelectionFgColour() const { return HasFlag(kUseCustomTextSelectionFgColour); }
+    void SetStyleWithinPreProcessor(bool b) { EnableFlag(kStyleInPP, b); }
+    bool GetStyleWithinPreProcessor() const { return HasFlag(kStyleInPP); }
+    void SetIsActive(bool b) { EnableFlag(kIsActive, b); }
+    bool IsActive() const { return HasFlag(kIsActive); }
+
     void SetThemeName(const wxString& themeName) { this->m_themeName = themeName; }
-    bool IsActive() const { return m_isActive; }
     const wxString& GetThemeName() const { return m_themeName; }
 
     /**
@@ -118,13 +135,6 @@ public:
      * \return
      */
     int GetLexerId() const { return m_lexerId; }
-
-    void SetStyleWithinPreProcessor(bool styleWithinPreProcessor)
-    {
-        this->m_styleWithinPreProcessor = styleWithinPreProcessor;
-    }
-
-    bool GetStyleWithinPreProcessor() const { return m_styleWithinPreProcessor; }
 
     /**
      * Set the lexer ID

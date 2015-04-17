@@ -9426,7 +9426,7 @@
     "Name": "Whitespace",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#3C3D38",
     "BgColour": "#272822",
     "Size": 12
@@ -9435,7 +9435,7 @@
     "Name": "Caret Colour",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "white",
     "BgColour": "#272822",
     "Size": 12
@@ -9444,7 +9444,7 @@
     "Name": "Text Selection",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#404040",
     "BgColour": "#CC9900",
     "Size": 12
@@ -9453,7 +9453,7 @@
     "Name": "Fold Margin",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#3C3D38",
     "BgColour": "#3C3D38",
     "Size": 12
@@ -9462,7 +9462,7 @@
     "Name": "Default",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#52534E",
     "BgColour": "#272822",
     "Size": 12
@@ -9471,7 +9471,7 @@
     "Name": "Common C style comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -9480,7 +9480,7 @@
     "Name": "Common C++ style comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -9489,7 +9489,7 @@
     "Name": "Doxygen C style comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -9498,7 +9498,7 @@
     "Name": "Number",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#AE81FF",
     "BgColour": "#272822",
     "Size": 12
@@ -9507,7 +9507,7 @@
     "Name": "C++ keyword",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#F92772",
     "BgColour": "#272822",
     "Size": 12
@@ -9516,7 +9516,7 @@
     "Name": "String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -9525,7 +9525,7 @@
     "Name": "Character",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -9534,7 +9534,7 @@
     "Name": "Uuid",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#AE81FF",
     "BgColour": "#272822",
     "Size": 12
@@ -9543,7 +9543,7 @@
     "Name": "Preprocessor",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -9552,7 +9552,7 @@
     "Name": "Operator",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -9561,7 +9561,7 @@
     "Name": "Identifier",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -9570,7 +9570,7 @@
     "Name": "Open String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -9579,7 +9579,7 @@
     "Name": "Doxygen C++ style comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -9588,7 +9588,7 @@
     "Name": "Workspace tags",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#A7E22E",
     "BgColour": "#272822",
     "Size": 12
@@ -9597,7 +9597,7 @@
     "Name": "Doxygen keyword",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#D9E577",
     "BgColour": "#272822",
     "Size": 12
@@ -9606,7 +9606,7 @@
     "Name": "Doxygen keyword error",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#D9E577",
     "BgColour": "#272822",
     "Size": 12
@@ -9615,7 +9615,7 @@
     "Name": "Local variables",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#66D9EE",
     "BgColour": "#272822",
     "Size": 12
@@ -9624,7 +9624,7 @@
     "Name": "Raw String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -9633,7 +9633,7 @@
     "Name": "Line Numbers",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#52534E",
     "BgColour": "#272822",
     "Size": 12
@@ -9642,7 +9642,7 @@
     "Name": "Brace match",
     "Flags": 2,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "yellow",
     "BgColour": "#272822",
     "Size": 12
@@ -9651,7 +9651,7 @@
     "Name": "Brace bad match",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "red",
     "BgColour": "#272822",
     "Size": 12
@@ -9660,7 +9660,7 @@
     "Name": "Indent Guide",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#939390",
     "BgColour": "#272822",
     "Size": 12
@@ -9669,7 +9669,7 @@
     "Name": "Calltip",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -77829,7 +77829,7 @@
     "Name": "Whitespace",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#3C3D38",
     "BgColour": "#272822",
     "Size": 12
@@ -77838,7 +77838,7 @@
     "Name": "Caret Colour",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "white",
     "BgColour": "#272822",
     "Size": 12
@@ -77847,7 +77847,7 @@
     "Name": "Text Selection",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#404040",
     "BgColour": "#CC9900",
     "Size": 12
@@ -77856,7 +77856,7 @@
     "Name": "Fold Margin",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#3C3D38",
     "BgColour": "#3C3D38",
     "Size": 12
@@ -77865,7 +77865,7 @@
     "Name": "Default",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#52534E",
     "BgColour": "#272822",
     "Size": 12
@@ -77874,7 +77874,7 @@
     "Name": "Block comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -77883,7 +77883,7 @@
     "Name": "Single line comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -77892,7 +77892,7 @@
     "Name": "Doxygen block comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -77901,7 +77901,7 @@
     "Name": "Number",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#AE81FF",
     "BgColour": "#272822",
     "Size": 12
@@ -77910,7 +77910,7 @@
     "Name": "JavaScript keyword",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#F92772",
     "BgColour": "#272822",
     "Size": 12
@@ -77919,7 +77919,7 @@
     "Name": "String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -77928,7 +77928,7 @@
     "Name": "Character",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -77937,7 +77937,7 @@
     "Name": "Operator",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -77946,7 +77946,7 @@
     "Name": "Identifier",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -77955,7 +77955,7 @@
     "Name": "Open String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -77964,7 +77964,7 @@
     "Name": "Doxygen single line comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -77973,7 +77973,7 @@
     "Name": "JavaScript functions",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#66D9EE",
     "BgColour": "#272822",
     "Size": 12
@@ -77982,7 +77982,7 @@
     "Name": "Doxygen keyword",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#D9E577",
     "BgColour": "#272822",
     "Size": 12
@@ -77991,7 +77991,7 @@
     "Name": "Doxygen keyword error",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#D9E577",
     "BgColour": "#272822",
     "Size": 12
@@ -78000,7 +78000,7 @@
     "Name": "JavaScript global classes",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#A7E22E",
     "BgColour": "#272822",
     "Size": 12
@@ -78009,7 +78009,7 @@
     "Name": "Raw String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -78018,7 +78018,7 @@
     "Name": "Line Numbers",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#52534E",
     "BgColour": "#272822",
     "Size": 12
@@ -78027,7 +78027,7 @@
     "Name": "Brace match",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "yellow",
     "BgColour": "#272822",
     "Size": 12
@@ -78036,7 +78036,7 @@
     "Name": "Brace bad match",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "red",
     "BgColour": "#272822",
     "Size": 12
@@ -78045,7 +78045,7 @@
     "Name": "Indent Guide",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#939390",
     "BgColour": "#272822",
     "Size": 12
@@ -78054,7 +78054,7 @@
     "Name": "Calltip",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110666,7 +110666,7 @@
     "Name": "Whitespace",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#3C3D38",
     "BgColour": "#272822",
     "Size": 12
@@ -110675,7 +110675,7 @@
     "Name": "Caret Colour",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "white",
     "BgColour": "#272822",
     "Size": 12
@@ -110684,7 +110684,7 @@
     "Name": "Text Selection",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#404040",
     "BgColour": "#CC9900",
     "Size": 12
@@ -110693,7 +110693,7 @@
     "Name": "Fold Margin",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#3C3D38",
     "BgColour": "#3C3D38",
     "Size": 12
@@ -110702,7 +110702,7 @@
     "Name": "HTML Default",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110711,7 +110711,7 @@
     "Name": "HTML Tag",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#66D9EE",
     "BgColour": "#272822",
     "Size": 12
@@ -110720,7 +110720,7 @@
     "Name": "Unknown HTML Tag",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#66D9EE",
     "BgColour": "#272822",
     "Size": 12
@@ -110729,7 +110729,7 @@
     "Name": "HTML Attribute",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#A7E22E",
     "BgColour": "#272822",
     "Size": 12
@@ -110738,7 +110738,7 @@
     "Name": "Unknown HTML Attribute",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#A7E22E",
     "BgColour": "#272822",
     "Size": 12
@@ -110747,7 +110747,7 @@
     "Name": "HTML Number",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#AE81FF",
     "BgColour": "#272822",
     "Size": 12
@@ -110756,7 +110756,7 @@
     "Name": "HTML Double String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -110765,7 +110765,7 @@
     "Name": "HTML Single String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -110774,7 +110774,7 @@
     "Name": "HTML Other",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110783,7 +110783,7 @@
     "Name": "HTML Comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -110792,7 +110792,7 @@
     "Name": "HTML Entity",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110801,7 +110801,7 @@
     "Name": "Line Numbers",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#52534E",
     "BgColour": "#272822",
     "Size": 12
@@ -110810,7 +110810,7 @@
     "Name": "Brace match",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "yellow",
     "BgColour": "#272822",
     "Size": 12
@@ -110819,7 +110819,7 @@
     "Name": "Brace bad match",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "red",
     "BgColour": "#272822",
     "Size": 12
@@ -110828,7 +110828,7 @@
     "Name": "Indent Guide",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#939390",
     "BgColour": "#272822",
     "Size": 12
@@ -110837,7 +110837,7 @@
     "Name": "Calltip",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110846,7 +110846,7 @@
     "Name": "JS Start",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110855,7 +110855,7 @@
     "Name": "JS Default",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110864,7 +110864,7 @@
     "Name": "JS Comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -110873,7 +110873,7 @@
     "Name": "JS MultiLine Comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -110882,7 +110882,7 @@
     "Name": "JS Doc Comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -110891,7 +110891,7 @@
     "Name": "JS Number",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#AE81FF",
     "BgColour": "#272822",
     "Size": 12
@@ -110900,7 +110900,7 @@
     "Name": "JS Word",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110909,7 +110909,7 @@
     "Name": "JS Keyword",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#F92772",
     "BgColour": "#272822",
     "Size": 12
@@ -110918,7 +110918,7 @@
     "Name": "JS Double String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -110927,7 +110927,7 @@
     "Name": "JS Single String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -110936,7 +110936,7 @@
     "Name": "JS Symbols",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110945,7 +110945,7 @@
     "Name": "JS String EOL",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -110954,7 +110954,7 @@
     "Name": "JS Regex",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#A7E22E",
     "BgColour": "#272822",
     "Size": 12
@@ -110963,7 +110963,7 @@
     "Name": "PHP Complex Variable",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#66D9EE",
     "BgColour": "#272822",
     "Size": 12
@@ -110972,7 +110972,7 @@
     "Name": "PHP Default",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#FFFFFF",
     "BgColour": "#272822",
     "Size": 12
@@ -110981,7 +110981,7 @@
     "Name": "PHP Heredoc String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -110990,7 +110990,7 @@
     "Name": "PHP String",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#E6DA74",
     "BgColour": "#272822",
     "Size": 12
@@ -110999,7 +110999,7 @@
     "Name": "PHP Word",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#F92772",
     "BgColour": "#272822",
     "Size": 12
@@ -111008,7 +111008,7 @@
     "Name": "PHP Number",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#AE81FF",
     "BgColour": "#272822",
     "Size": 12
@@ -111017,7 +111017,7 @@
     "Name": "PHP Variable",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#66D9EE",
     "BgColour": "#272822",
     "Size": 12
@@ -111026,7 +111026,7 @@
     "Name": "PHP Multiline Comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -111035,7 +111035,7 @@
     "Name": "PHP Comment",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#74715E",
     "BgColour": "#272822",
     "Size": 12
@@ -111044,7 +111044,7 @@
     "Name": "PHP Heredoc Variable",
     "Flags": 0,
     "Alpha": 50,
-    "Face": "WenQuanYi Micro Hei Mono",
+    "Face": "",
     "Colour": "#66D9EE",
     "BgColour": "#272822",
     "Size": 12

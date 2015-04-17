@@ -47,7 +47,7 @@ JSONRoot::JSONRoot(const wxFileName& filename)
     : _json(NULL)
 {
     wxString content;
-    wxFFile fp(filename.GetFullPath(), wxT("r+b"));
+    wxFFile fp(filename.GetFullPath(), wxT("rb"));
     if(fp.IsOpened()) {
         if(fp.ReadAll(&content, wxConvUTF8)) {
             _json = cJSON_Parse(content.mb_str(wxConvUTF8).data());

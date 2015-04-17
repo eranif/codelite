@@ -37,10 +37,12 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
     }
     
     // Is this object already registered?
-    if(wxPersistenceManager::Get().Find(win)) return;
-    
-    // Register and restore the object and recurse into its children
-    wxPersistenceManager::Get().RegisterAndRestore(win);
+    if(wxPersistenceManager::Get().Find(win)) {
+        wxPersistenceManager::Get().Restore(win);
+    } else {
+        // Register and restore the object and recurse into its children
+        wxPersistenceManager::Get().RegisterAndRestore(win);
+    }    
     DoLoad(win, win->GetName(), 0);
 }
 
@@ -64,7 +66,12 @@ void WindowAttrManager::DoLoad(wxWindow* win, const wxString& parentName, int de
                 } else {
                     controlName = bookbase->GetName();
                 }
-                wxPersistenceManager::Get().RegisterAndRestore(bookbase);
+                if(wxPersistenceManager::Get().Find(bookbase)) {
+                    wxPersistenceManager::Get().Restore(bookbase);
+                } else {
+                    // Register and restore the object and recurse into its children
+                    wxPersistenceManager::Get().RegisterAndRestore(bookbase);
+                }
             }
 
             // Recurse into this window children

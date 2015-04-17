@@ -499,10 +499,7 @@ bool ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml)
     bool res = false;
     if(!eclipseXml.IsEmpty()) {
         EclipseThemeImporterManager importer;
-        res = importer.Import(eclipseXml);
-        if(res) {
-            Reload();
-        }
+        return importer.Import(eclipseXml);
     }
     return res;
 }

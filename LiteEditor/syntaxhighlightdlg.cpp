@@ -611,7 +611,7 @@ void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
     if(path.IsEmpty()) return;
 
     clZipWriter zw(path);
-    zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), "lexer_*.xml");
+    zw.AddDirectory(clStandardPaths::Get().GetUserLexersDir(), "*.json");
     zw.Close();
 
     ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
@@ -653,6 +653,11 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
         ::wxFileSelector(_("Select eclipse XML theme file"), "", "", "", "Eclipse Theme Files (*.xml)|*.xml");
     
     if(ColoursAndFontsManager::Get().ImportEclipseTheme(eclipseThemeXml)) {
+        // Mark the dialg is modified and force a save
+        wxBusyCursor bc;
+        m_isModified = true;
+        SaveChanges();
+        
         ::wxMessageBox(_("File imported successfully!"));
         // Dismiss the dialog
         EndModal(wxID_OK);

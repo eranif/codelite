@@ -49,6 +49,7 @@ wxString WebToolsConfig::GetTernProjectFile() const
     if(m_jsFlags & kJSLibraryEcma6) libs.arrayAppend("ecma6");
     if(m_jsFlags & kJSLibraryJQuery) libs.arrayAppend("jquery");
     if(m_jsFlags & kJSLibraryUnderscore) libs.arrayAppend("underscore");
+    if(m_jsFlags & kJSPluginQML) libs.arrayAppend("qml");
     
     JSONElement plugins = JSONElement::createObject("plugins");
     root.toElement().append(plugins);
@@ -66,11 +67,6 @@ wxString WebToolsConfig::GetTernProjectFile() const
     if(m_jsFlags & kJSPluginAngular) {
         JSONElement angular = JSONElement::createObject("angular");
         plugins.append(angular);
-    }
-    
-    if(m_jsFlags & kJSPluginQML) {
-        JSONElement qml = JSONElement::createObject("qml");
-        plugins.append(qml);
     }
     
     return root.toElement().format();

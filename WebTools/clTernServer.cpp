@@ -106,7 +106,14 @@ bool clTernServer::Start()
 void clTernServer::Terminate()
 {
     m_goingDown = true;
+    m_tern->Terminate();
     wxDELETE(m_tern);
+    
+    // Stop the worker thread
+    if(m_workerThread) {
+        m_workerThread->Stop();
+    }
+    wxDELETE(m_workerThread);
 }
 
 bool clTernServer::PostCCRequest(IEditor* editor)

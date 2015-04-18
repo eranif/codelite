@@ -3721,7 +3721,7 @@
  }, {
   "Name": "batch",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 12,
   "KeyWords0": "break call cd chcp chdir choice cls color com con copy country ctty date defined del dir do echo else erase errorlevel exist exit for goto if in loadfix loadhigh lpt md mkdir move not nul off path pause prompt rd rem ren rename rmdir set shift start time type ver verify vol",
   "KeyWords1": "",
@@ -6286,7 +6286,7 @@
  }, {
   "Name": "c++",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 3,
   "KeyWords0": "alignas alignof and and_eq asm auto bitand bitor bool break case catch char char16_t char32_t class compl const const_cast constexpr continue decltype default delete do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected public register reinterpret_cast return short signed sizeof static static_assert static_cast struct switch template this thread_local throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq",
   "KeyWords1": "abstract boolean break byte case catch char class const continue debugger default delete do double else enum export extends final finally float for function goto if implements import in instanceof int interface long native new package private protected public return short static super switch synchronized this throw throws transient try typeof var void volatile while with",
@@ -10084,7 +10084,7 @@
  }, {
   "Name": "cmake",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 80,
   "KeyWords0": "add_custom_command add_custom_target add_definitions add_dependencies add_executable add_library add_subdirectory add_test aux_source_directory build_command build_name cmake_minimum_required configure_file create_test_sourcelist else elseif enable_language enable_testing endforeach endfunction endif endmacro endwhile exec_program execute_process export_library_dependencies file find_file find_library find_package find_path find_program fltk_wrap_ui foreach function get_cmake_property get_directory_property get_filename_component get_source_file_property get_target_property get_test_property if include include_directories include_external_msproject include_regular_expression install install_files install_programs install_targets link_directories link_libraries list load_cache load_command macro make_directory mark_as_advanced math message option output_required_files project qt_wrap_cpp qt_wrap_ui remove remove_definitions separate_arguments set set_directory_properties set_source_files_properties set_target_properties set_tests_properties site_name source_group string subdir_depends subdirs target_link_libraries try_compile try_run unset use_mangled_mesa utility_source variable_requires vtk_make_instantiator vtk_wrap_java vtk_wrap_python vtk_wrap_tcl while write_file",
   "KeyWords1": "",
@@ -13504,7 +13504,7 @@
  }, {
   "Name": "cobra",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 2,
   "KeyWords0": "abstract adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend extern fake false finally float for from get has if ignore implements implies import in inherits inlined inout int interface internal invariant is listen lock mixin must namespace new nil nonvirtual not number objc of old or out override partial pass passthrough post print private pro protected public raise ref require return same set shared sig stop struct success test this throw to to? trace true try uint use using var vari virtual where while yield",
   "KeyWords1": "",
@@ -16924,7 +16924,7 @@
  }, {
   "Name": "cobraalt",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 2,
   "KeyWords0": "adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend false finally float for from get has if ignore implements implies import in inherits inlined int interface invariant is listen lock mixin must namespace new nil not number objc of old or pass passthrough post print pro raise ref require return same set sig stop struct success test this throw to trace true try uint use using var where while yield",
   "KeyWords1": "abstract fake inout internal nonvirtual out override partial private protected public shared vari virtual",
@@ -20425,7 +20425,7 @@
  }, {
   "Name": "css",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 38,
   "KeyWords0": "aqua auto background background-attachment background-color background-image background-position background-repeat baseline black blink block blue bold bolder border border-bottom border-bottom-width border-color border-left border-left-width border-right border-right-width border-style border-top border-top-width border-width both bottom capitalize center circle clear color dashed decimal disc display dotted double fixed float font font-family font-size font-style font-variant font-weight fuchsia gray green groove height inline inset inside italic justify large larger left letter-spacing lighter lime line-height line-through list-item list-style list-style-image list-style-position list-style-type lower-alpha lower-roman lowercase margin margin-bottom margin-left margin-right margin-top maroon medium medium middle navy no-repeat no-wrap none normal oblique olive outset outside overline padding padding-bottom padding-left padding-right padding-top pre purple red repeat repeat-x repeat-y ridge right scroll silver small small-caps smaller solid square sub super tealwhite text-align text-bottom text-decoration text-indent text-top text-transform thick thin top transparent underline upper-alpha upper-roman uppercase vertical-align white-space width word-spacing x-large x-small xx-large xx-small yellow",
   "KeyWords1": "active checked default disabled empty enabled first first-child first-of-type focus hover indeterminate invalid lang last-child last-of-type left link not nth-child nth-last-child nth-last-of-type nth-of-type only-child only-of-type optional required right root target valid visited",
@@ -24907,7 +24907,7 @@
  }, {
   "Name": "diff",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 16,
   "KeyWords0": "",
   "KeyWords1": "",
@@ -27310,7 +27310,7 @@
  }, {
   "Name": "fortran",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 36,
   "KeyWords0": "access action advance allocatable allocate apostrophe assign assignment associate asynchronous backspace bind blank blockdata call case character class close common complex contains continue cycle data deallocate decimal default delim dimension direct do double doubleprecision dowhile else elseif elsewhere encoding end endassociate endblockdata enddo endfile endforall endfunction endif endinterface endmodule endprogram endselect endsubroutine endtype endwhere entry eor equivalence err errmsg exist exit external file flush fmt forall form format formatted function go goto id if implicit in include inout inquire integer intent interface intrinsic iolength iomsg iostat kind len logical module name named namelist nextrec nml none nullify number only open opened operator optional out pad parameter pass pause pending pointer pos position precision print private program protected public quote read readwrite real rec recl recursive result return rewind save select selectcase selecttype sequential sign size stat status stop stream subroutine target then to type unformatted unit use value volatile wait where while write",
   "KeyWords1": "abs achar acos acosd adjustl adjustr aimag aimax0 aimin0 aint ajmax0 ajmin0 akmax0 akmin0 all allocated alog alog10 amax0 amax1 amin0 amin1 amod anint any asin asind associated atan atan2 atan2d atand bit_size bitest bitl bitlr bitrl bjtest bktest break btest cabs ccos cdabs cdcos cdexp cdlog cdsin cdsqrt ceiling cexp char clog cmplx conjg cos cosd cosh count cpu_time cshift csin csqrt dabs dacos dacosd dasin dasind datan datan2 datan2d datand date date_and_time dble dcmplx dconjg dcos dcosd dcosh dcotan ddim dexp dfloat dfloti dflotj dflotk digits dim dimag dint dlog dlog10 dmax1 dmin1 dmod dnint dot_product dprod dreal dsign dsin dsind dsinh dsqrt dtan dtand dtanh eoshift epsilon errsns exp exponent float floati floatj floatk floor fraction free huge iabs iachar iand ibclr ibits ibset ichar idate idim idint idnint ieor ifix iiabs iiand iibclr iibits iibset iidim iidint iidnnt iieor iifix iint iior iiqint iiqnnt iishft iishftc iisign ilen imax0 imax1 imin0 imin1 imod index inint inot int int1 int2 int4 int8 ior iqint iqnint ishft ishftc isign isnan izext jiand jibclr jibits jibset jidim jidint jidnnt jieor jifix jint jior jiqint jiqnnt jishft jishftc jisign jmax0 jmax1 jmin0 jmin1 jmod jnint jnot jzext kiabs kiand kibclr kibits kibset kidim kidint kidnnt kieor kifix kind kint kior kishft kishftc kisign kmax0 kmax1 kmin0 kmin1 kmod knint knot kzext lbound leadz len len_trim lenlge lge lgt lle llt log log10 logical lshift malloc matmul max max0 max1 maxexponent maxloc maxval merge min min0 min1 minexponent minloc minval mod modulo mvbits nearest nint not number_of_processors nworkers pack popcnt poppar precision present product radix random random_number random_seed range real repeat reshape rrspacing rshift scale scan secnds selected_int_kind selected_real_kind set_exponent shape sign sin sind sinh size sizeof sngl snglq spacing spread sqrt sum system_clock tan tand tanh tiny transfer transpose trim ubound unpack verify",
@@ -30586,7 +30586,7 @@
  }, {
   "Name": "innosetup",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 76,
   "KeyWords0": "_istool code components custommessages dirs files icons ini installdelete langoptions languages messages registry run setup tasks types uninstalldelete uninstallrun",
   "KeyWords1": "allowcancelduringinstall allownoicons allowrootdirectory allowuncpath alwaysrestart alwaysshowcomponentslist alwaysshowdironreadypage alwaysshowgrouponreadypage alwaysusepersonalgroup appcomments appcontact appcopyright appenddefaultdirname appenddefaultgroupname appid appmodifypath appmutex appname apppublisher apppublisherurl appreadmefile appsupporturl appupdatesurl appvername appversion architecturesallowed architecturesinstallin64bitmode backcolor backcolor2 backcolordirection backsolid changesassociations changesenvironment compression copyrightfontname copyrightfontsize createappdir createuninstallregkey defaultdirname defaultgroupname defaultuserinfoname defaultuserinfoorg defaultuserinfoserial dialogfontname dialogfontsize direxistswarning disabledirpage disablefinishedpage disableprogramgrouppage disablereadymemo disablereadypage disablestartupprompt diskclustersize diskslicesize diskspanning enablesdirdoesntexistwarning encryption extradiskspacerequired flatcomponentslist infoafterfile infobeforefile internalcompresslevel languagecodepage languagedetectionmethod languageid languagename licensefile mergeduplicatefiles minversion onlybelowversion outputbasefilename outputdir outputmanifestfile password privilegesrequired reservebytes restartifneededbyrun setupiconfile showcomponentsizes showlanguagedialog showtaskstreelines slicesperdisk solidcompression sourcedir timestamprounding timestampsinutc titlefontname titlefontsize touchdate touchtime uninstallable uninstalldisplayicon uninstalldisplayname uninstallfilesdir uninstalllogmode uninstallrestartcomputer updateuninstalllogappname usepreviousappdir usepreviousgroup useprevioussetuptype useprevioustasks useprevioususerinfo userinfopage usesetupldr versioninfocompany versioninfocopyright versioninfodescription versioninfotextversion versioninfoversion welcomefontname welcomefontsize windowresizable windowshowcaption windowstartmaximized windowvisible wizardimagebackcolor wizardimagefile wizardimagestretch wizardsmallimagefile",
@@ -33781,7 +33781,7 @@
  }, {
   "Name": "java",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 3,
   "KeyWords0": "abstract assert boolean break byte case catch char class const continue default do double else extends final finally float for future generic goto if implements import inner instanceof int interface long native new null outer package private protected public rest return short static super switch synchronized this throw throws transient try var void volatile while",
   "KeyWords1": "",
@@ -37588,7 +37588,7 @@
  }, {
   "Name": "javascript",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 3,
   "KeyWords0": "NaN StringtoString abstract arguments boolean break byte case catch char class* const continue debugger default delete do double else enum* eval export* extends* false final finally float for function goto if implements import* in instanceof int interface let long native new null package private protected prototype public return short static super* switch synchronized this throw throws transient true try typeof undefined var void volatile while with yield",
   "KeyWords1": "Math NaN NumberObject URL activeElement addEventListener adoptNode anchors applets baseURI body close cookie createAttribute createComment createDocumentFragment createElement createTextNode doctype documentElement documentMode documentURI domConfig domain embeds forms getElementById getElementsByClassName getElementsByName getElementsByTagName hasFocus head images implementation importNode inputEncoding lastModified links name normalize normalizeDocument open querySelectorquerySelectorAll readyState referrer removeEventListener renameNode scripts strictErrorChecking title valueOf write writeln",
@@ -41161,7 +41161,7 @@
  }, {
   "Name": "lua",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 15,
   "KeyWords0": "and do else elseif end false for function if in local nil not or repeat return then true until while",
   "KeyWords1": "",
@@ -44887,7 +44887,7 @@
  }, {
   "Name": "makefile",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 11,
   "KeyWords0": "",
   "KeyWords1": "",
@@ -47470,7 +47470,7 @@
  }, {
   "Name": "php",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 4,
   "KeyWords0": "",
   "KeyWords1": "",
@@ -53203,7 +53203,7 @@
  }, {
   "Name": "properties",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 9,
   "KeyWords0": "",
   "KeyWords1": "",
@@ -55489,7 +55489,7 @@
  }, {
   "Name": "python",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 2,
   "KeyWords0": "None and assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while yield",
   "KeyWords1": "",
@@ -58900,7 +58900,7 @@
  }, {
   "Name": "script",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 62,
   "KeyWords0": "awk bzip cat cd chmod cp do done echo else fi find for grep gunzip gzip if in ls mkdir mv print printf pwd rm rmdir switch tar then touch while xargs zip",
   "KeyWords1": "",
@@ -62230,7 +62230,7 @@
  }, {
   "Name": "sql",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 7,
   "KeyWords0": "absolute action add admin after aggregate alias all allocate alter and any are array as asc assertion at authorization before begin binary bit blob boolean both breadth by call cascade cascaded case cast catalog char character check class clob close collate collation column commit completion connect connection constraint constraints constructor continue corresponding create cross cube current current_date current_path current_role current_time current_timestamp current_user cursor cycle data date day deallocate dec decimal declare default deferrable deferred delete depth deref desc describe descriptor destroy destructor deterministic diagnostics dictionary disconnect distinct domain double drop dynamic each else end end-exec equals escape every except exception exec execute exists external false fetch first float for foreign found free from full function general get global go goto grant group grouping having host hour identity if ignore immediate in index indicator initialize initially inner inout input insert int integer intersect interval into is isolation iterate join key language large last lateral leading left less level like limit local localtime localtimestamp locator map match minute modifies modify module month names national natural nchar nclob new next no none not null numeric object of off old on only open operation option or order ordinality out outer output pad parameter parameters partial path postfix precision prefix preorder prepare preserve primary prior privileges procedure public read reads real recursive ref references referencing relative replace restrict result return returns revoke right role rollback rollup routine row rows savepoint schema scope scroll search second section select sequence session session_user set sets size smallint some| space specific specifictype sql sqlexception sqlstate sqlwarning start state statement static structure system_user table temporary terminate than then time timestamp timezone_hour timezone_minute to trailing transaction translation treat trigger true under union unique unknown unnest update usage user using value values varchar variable varying view when whenever where with without work write year zone",
   "KeyWords1": "",
@@ -66028,7 +66028,7 @@
  }, {
   "Name": "text",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 1,
   "KeyWords0": "",
   "KeyWords1": "",
@@ -67684,7 +67684,7 @@
  }, {
   "Name": "xml",
   "Theme": "Default",
-  "Flags": 5,
+  "Flags": 7,
   "Id": 5,
   "KeyWords0": "",
   "KeyWords1": "",

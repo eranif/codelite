@@ -371,7 +371,15 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
             }
         }
     }
-
+    
+    // If we got here, it means that we could not find an active lexer that matches
+    // the file mask. However, if we did find a "firstLexer" it means
+    // that we do have a lexer that matches the file extension, its just that it is not
+    // set as active
+    if(firstLexer) {
+        return firstLexer;
+    }
+    
     // Try this:
     // Use the FileExtManager to get the file type by examinig its content
     LexerConf::Ptr_t lexerByContent; // Null by default
@@ -479,14 +487,12 @@ ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& the
 
 void ColoursAndFontsManager::RestoreDefaults()
 {
-    wxArrayString files;
-    wxDir::GetAllFiles(clStandardPaths::Get().GetUserLexersDir(), &files, "lexer_*.xml");
-
     // First we delete the user settings
     {
         wxLogNull noLog;
-        for(size_t i = 0; i < files.GetCount(); ++i) {
-            ::wxRemoveFile(files.Item(i));
+        wxFileName fnLexersJSON(clStandardPaths::Get().GetUserLexersDir(), "lexers.json");
+        if(fnLexersJSON.Exists()) {
+            ::wxRemoveFile(fnLexersJSON.GetFullPath());
         }
     }
 

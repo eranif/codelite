@@ -38,11 +38,11 @@ protected:
     wxPGProperty* m_pgPropUnderscore;
     wxPGProperty* m_pgPropBrowser;
     wxPGProperty* m_pgPropChai;
+    wxPGProperty* m_pgPropQML;
     wxPGProperty* m_pgProp46;
     wxPGProperty* m_pgPropAngular;
     wxPGProperty* m_pgPropStrings;
     wxPGProperty* m_pgPropNode;
-    wxPGProperty* m_pgPropQML;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_buttonCancel;
     wxButton* m_buttonOK;

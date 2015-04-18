@@ -75,6 +75,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropChai = m_pgMgr->AppendIn( m_pgProp32,  new wxBoolProperty( _("Chai"), wxPG_LABEL, 1) );
     m_pgPropChai->SetHelpString(_("Enable code completion for the chain assertion library"));
     
+    m_pgPropQML = m_pgMgr->AppendIn( m_pgProp32,  new wxBoolProperty( _("QML"), wxPG_LABEL, 1) );
+    m_pgPropQML->SetHelpString(_("Support for Qt's QML extension for JavaScript"));
+    
     m_pgProp46 = m_pgMgr->Append(  new wxPropertyCategory( _("Plugins") ) );
     m_pgProp46->SetHelpString(wxT(""));
     
@@ -86,9 +89,6 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     
     m_pgPropNode = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Node.js"), wxPG_LABEL, 1) );
     m_pgPropNode->SetHelpString(_("Provides variables that are part of the node environment, such as process and require, and hooks up require to try and find the dependencies that are being loaded, and assign them the correct types. It also includes types for the built-in modules that node.js provides (\"fs\", \"http\", etc)"));
-    
-    m_pgPropQML = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("QML"), wxPG_LABEL, 1) );
-    m_pgPropQML->SetHelpString(_("Support for Qt's QML extension for JavaScript"));
     
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     

@@ -67,8 +67,8 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     if(editor) {
         lexerName = editor->GetContext()->GetName().Lower();
     }
-    
-    for(size_t i=0; i<lexers.GetCount(); ++i) {
+
+    for(size_t i = 0; i < lexers.GetCount(); ++i) {
         if(lexers.Item(i) == "c++") {
             m_listBox->Append(CXX_AND_JAVASCRIPT);
         } else {
@@ -90,7 +90,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_colourPickerOutputPanesBgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalBgColour());
     m_choiceGlobalTheme->Append(ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++"));
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
-    
+
     m_isModified = false;
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
@@ -100,7 +100,7 @@ void SyntaxHighlightDlg::OnButtonOK(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     SaveChanges();
-    
+
     clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
     // and close the dialog
     EndModal(wxID_OK);
@@ -146,11 +146,11 @@ void SyntaxHighlightDlg::LoadLexer(const wxString& themeName)
     Clear();
     wxString lexer = m_listBox->GetStringSelection();
     if(lexer.IsEmpty()) return;
-    
+
     if(lexer == CXX_AND_JAVASCRIPT) {
         lexer = "c++";
     }
-    
+
     m_lexer = ColoursAndFontsManager::Get().GetLexer(lexer, themeName);
     CreateLexerPage();
     m_isModified = false;
@@ -176,24 +176,24 @@ void SyntaxHighlightDlg::SaveChanges()
     if(!selProp.IsNull()) {
         selProp.SetFgColour(m_colourPickerSelTextFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
     }
-    
+
     // Update the active theme for the lexer
     ColoursAndFontsManager::Get().SetActiveTheme(m_lexer->GetName(), m_choiceLexerThemes->GetStringSelection());
-    
+
     if(m_globalThemeChanged) {
         wxBusyInfo bi(_("Applying changes..."));
         wxBusyCursor bc;
         ColoursAndFontsManager::Get().SetGlobalTheme(m_choiceGlobalTheme->GetStringSelection());
         ColoursAndFontsManager::Get().SetTheme(m_choiceGlobalTheme->GetStringSelection());
         m_globalThemeChanged = false;
-        
-        m_lexer =  ColoursAndFontsManager::Get().GetLexer(m_lexer->GetName());
+
+        m_lexer = ColoursAndFontsManager::Get().GetLexer(m_lexer->GetName());
         CallAfter(&SyntaxHighlightDlg::LoadLexer, m_lexer->GetThemeName());
     }
-    
+
     // Now save the changes to the file system
     ColoursAndFontsManager::Get().Save();
-    
+
     wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     wxString oldBg = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
 
@@ -202,14 +202,11 @@ void SyntaxHighlightDlg::SaveChanges()
 
     wxString newBg = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
     EditorConfigST::Get()->SetCurrentOutputviewBgColour(newBg);
-    
+
     m_isModified = false;
 }
 
-SyntaxHighlightDlg::~SyntaxHighlightDlg()
-{
-    
-}
+SyntaxHighlightDlg::~SyntaxHighlightDlg() {}
 
 void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
 {
@@ -457,7 +454,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
         m_bgColourPicker->SetColour(defaultStyle.GetBgColour());
         m_globalBgColourPicker->SetColour(defaultStyle.GetBgColour());
     }
-    
+
     m_fontPicker->SetSelectedFont(initialFont);
     m_globalFontPicker->SetSelectedFont(initialFont);
     m_fileSpec->ChangeValue(m_lexer->GetFileSpec());
@@ -499,7 +496,7 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
     if(lexerName == CXX_AND_JAVASCRIPT) {
         lexerName = "c++";
     }
-    
+
     if(m_isModified) {
         SaveChanges();
     }
@@ -508,10 +505,7 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
     LoadLexer("");
 }
 
-void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_isModified);
-}
+void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isModified); }
 
 void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event)
 {
@@ -596,10 +590,7 @@ void SyntaxHighlightDlg::OnImport(wxCommandEvent& event)
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
 }
 
-void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event)
-{
-    OnExport(event);
-}
+void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event) { OnExport(event); }
 
 void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
 {
@@ -617,10 +608,7 @@ void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
     ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
 }
 
-void SyntaxHighlightDlg::OnToolExportAll(wxAuiToolBarEvent& event)
-{
-    OnExportAll(event);
-}
+void SyntaxHighlightDlg::OnToolExportAll(wxAuiToolBarEvent& event) { OnExportAll(event); }
 void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 {
     // Ask for confirmation
@@ -641,23 +629,24 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
 {
-#if 0
-    EclipseThemeImporterManager importer;
-    importer.ImportCxxToAll();
-    ColoursAndFontsManager::Get().Reload();
-    EndModal(wxID_OK);
-    wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
-#else
-    wxString eclipseThemeXml =
-        ::wxFileSelector(_("Select eclipse XML theme file"), "", "", "", "Eclipse Theme Files (*.xml)|*.xml");
-    
-    if(ColoursAndFontsManager::Get().ImportEclipseTheme(eclipseThemeXml)) {
+    wxFileDialog selector(this,
+                          _("Select eclipse XML theme file"),
+                          "",
+                          "",
+                          "Eclipse Theme Files (*.xml)|*.xml",
+                          wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+    if(selector.ShowModal() == wxID_OK) {
+        wxArrayString files;
+        selector.GetPaths(files);
+        if(files.IsEmpty()) return;
+        for(size_t i = 0; i < files.size(); ++i) {
+            ColoursAndFontsManager::Get().ImportEclipseTheme(files.Item(i));
+        }
         // Mark the dialg is modified and force a save
         wxBusyCursor bc;
         m_isModified = true;
         SaveChanges();
-        
+
         ::wxMessageBox(_("File imported successfully!"));
         // Dismiss the dialog
         EndModal(wxID_OK);
@@ -665,7 +654,6 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
         wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
     }
-#endif
 }
 
 void SyntaxHighlightDlg::OnLoadEclipseThemeWebsite(wxCommandEvent& event)

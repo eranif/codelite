@@ -67,7 +67,8 @@ EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const w
     if(!GetProperty("javadocKeyword", m_javadocKeyword)) {
         m_javadocKeyword = m_multiLineComment;
     }
-
+    
+    m_oper = m_foreground;
     return lexer;
 }
 

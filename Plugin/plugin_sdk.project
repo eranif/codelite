@@ -105,6 +105,14 @@
       <File Name="EclipseXMLThemeImporter.cpp"/>
       <File Name="EclipseJavaScriptThemeImporter.h"/>
       <File Name="EclipseJavaScriptThemeImporter.cpp"/>
+      <File Name="EclipseINIThemeImporter.h"/>
+      <File Name="EclipseINIThemeImporter.cpp"/>
+      <File Name="EclipseASMThemeImporter.h"/>
+      <File Name="EclipseASMThemeImporter.cpp"/>
+      <File Name="EclipseBatchThemeImporter.h"/>
+      <File Name="EclipseBatchThemeImporter.cpp"/>
+      <File Name="EclipseCobraThemeImporter.h"/>
+      <File Name="EclipseCobraThemeImporter.cpp"/>
     </VirtualDirectory>
     <File Name="clNotebookTheme.h"/>
     <File Name="clNotebookTheme.cpp"/>

@@ -9,6 +9,10 @@
 #include "EclipseXMLThemeImporter.h"
 #include "EclipseJavaScriptThemeImporter.h"
 #include "ColoursAndFontsManager.h"
+#include "EclipseINIThemeImporter.h"
+#include "EclipseASMThemeImporter.h"
+#include "EclipseBatchThemeImporter.h"
+#include "EclipseCobraThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -21,6 +25,10 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseCSSThemeImporter());
     m_importers.push_back(new EclipseXMLThemeImporter());
     m_importers.push_back(new EclipseJavaScriptThemeImporter());
+    m_importers.push_back(new EclipseINIThemeImporter());
+    m_importers.push_back(new EclipseASMThemeImporter());
+    m_importers.push_back(new EclipseBatchThemeImporter());
+    m_importers.push_back(new EclipseCobraThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

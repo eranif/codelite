@@ -12,7 +12,15 @@
 #include "EclipseINIThemeImporter.h"
 #include "EclipseASMThemeImporter.h"
 #include "EclipseBatchThemeImporter.h"
+#include "EclipsePythonThemeImporter.h"
 #include "EclipseCobraThemeImporter.h"
+#include "EclipseCobraAltThemeImporter.h"
+#include "EclipseFortranThemeImporter.h"
+#include "EclipseInnoSetupThemeImporter.h"
+#include "EclipseJavaThemeImporter.h"
+#include "EclipseLuaThemeImporter.h"
+#include "EclipseScriptThemeImporter.h"
+#include "EclipseSQLThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -28,7 +36,15 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseINIThemeImporter());
     m_importers.push_back(new EclipseASMThemeImporter());
     m_importers.push_back(new EclipseBatchThemeImporter());
+    m_importers.push_back(new EclipsePythonThemeImporter());
     m_importers.push_back(new EclipseCobraThemeImporter());
+    m_importers.push_back(new EclipseCobraAltThemeImporter());
+    m_importers.push_back(new EclipseFortranThemeImporter());
+    m_importers.push_back(new EclipseInnoSetupThemeImporter());
+    m_importers.push_back(new EclipseJavaThemeImporter());
+    m_importers.push_back(new EclipseLuaThemeImporter());
+    m_importers.push_back(new EclipseScriptThemeImporter());
+    m_importers.push_back(new EclipseSQLThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

@@ -111,8 +111,24 @@
       <File Name="EclipseASMThemeImporter.cpp"/>
       <File Name="EclipseBatchThemeImporter.h"/>
       <File Name="EclipseBatchThemeImporter.cpp"/>
+      <File Name="EclipsePythonThemeImporter.cpp"/>
+      <File Name="EclipsePythonThemeImporter.h"/>
       <File Name="EclipseCobraThemeImporter.h"/>
       <File Name="EclipseCobraThemeImporter.cpp"/>
+      <File Name="EclipseCobraAltThemeImporter.h"/>
+      <File Name="EclipseCobraAltThemeImporter.cpp"/>
+      <File Name="EclipseFortranThemeImporter.h"/>
+      <File Name="EclipseFortranThemeImporter.cpp"/>
+      <File Name="EclipseInnoSetupThemeImporter.h"/>
+      <File Name="EclipseInnoSetupThemeImporter.cpp"/>
+      <File Name="EclipseJavaThemeImporter.h"/>
+      <File Name="EclipseJavaThemeImporter.cpp"/>
+      <File Name="EclipseLuaThemeImporter.h"/>
+      <File Name="EclipseLuaThemeImporter.cpp"/>
+      <File Name="EclipseScriptThemeImporter.h"/>
+      <File Name="EclipseScriptThemeImporter.cpp"/>
+      <File Name="EclipseSQLThemeImporter.h"/>
+      <File Name="EclipseSQLThemeImporter.cpp"/>
     </VirtualDirectory>
     <File Name="clNotebookTheme.h"/>
     <File Name="clNotebookTheme.cpp"/>

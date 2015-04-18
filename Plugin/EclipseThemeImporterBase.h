@@ -24,7 +24,7 @@ public:
 
 protected:
     wxXmlDocument m_doc;
-    
+
     wxString m_keywords0;
     wxString m_keywords1;
     wxString m_keywords2;
@@ -73,17 +73,20 @@ protected:
     void AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id);
 
     void AddCommonProperties(LexerConf::Ptr_t lexer);
+    void DoSetKeywords(wxString& wordset, const wxString& words);
 
 public:
     const wxString& GetLangName() const { return m_langName; }
+    void SetLangName(const wxString& langName) { this->m_langName = langName; }
+    
     // Setters/Getters
     void SetFileExtensions(const wxString& fileExtensions) { this->m_fileExtensions = fileExtensions; }
     const wxString& GetFileExtensions() const { return m_fileExtensions; }
-    void SetKeywords0(const wxString& keywords0) { this->m_keywords0 = keywords0; }
-    void SetKeywords1(const wxString& keywords1) { this->m_keywords1 = keywords1; }
-    void SetKeywords2(const wxString& keywords2) { this->m_keywords2 = keywords2; }
-    void SetKeywords3(const wxString& keywords3) { this->m_keywords3 = keywords3; }
-    void SetKeywords4(const wxString& keywords4) { this->m_keywords4 = keywords4; }
+    void SetKeywords0(const wxString& keywords0) { DoSetKeywords(this->m_keywords0, keywords0); }
+    void SetKeywords1(const wxString& keywords1) { DoSetKeywords(this->m_keywords1, keywords1); }
+    void SetKeywords2(const wxString& keywords2) { DoSetKeywords(this->m_keywords2, keywords2); }
+    void SetKeywords3(const wxString& keywords3) { DoSetKeywords(this->m_keywords3, keywords3); }
+    void SetKeywords4(const wxString& keywords4) { DoSetKeywords(this->m_keywords4, keywords4); }
     const wxString& GetKeywords0() const { return m_keywords0; }
     const wxString& GetKeywords1() const { return m_keywords1; }
     const wxString& GetKeywords2() const { return m_keywords2; }

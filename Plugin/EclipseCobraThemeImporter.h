@@ -1,15 +1,15 @@
 #ifndef ECLIPSECOBRATHEMEIMPORTER_H
 #define ECLIPSECOBRATHEMEIMPORTER_H
 
-#include "EclipseThemeImporterBase.h"
+#include "EclipsePythonThemeImporter.h" // Base class: EclipsePythonThemeImporter
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipseCobraThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK EclipseCobraThemeImporter : public EclipsePythonThemeImporter
 {
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
     EclipseCobraThemeImporter();
-    ~EclipseCobraThemeImporter();
+    virtual ~EclipseCobraThemeImporter();
+
 };
 
 #endif // ECLIPSECOBRATHEMEIMPORTER_H

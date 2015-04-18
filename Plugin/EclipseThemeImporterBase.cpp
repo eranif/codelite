@@ -6,6 +6,8 @@
 #include "globals.h"
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
+#include <wx/arrstr.h>
+#include <wx/tokenzr.h>
 
 EclipseThemeImporterBase::EclipseThemeImporterBase() {}
 
@@ -185,4 +187,13 @@ void EclipseThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
     AddProperty(lexer, "38", "Calltip", foreground.colour, background.colour);
     AddProperty(
         lexer, "33", "Line Numbers", lineNumber.colour, background.colour, lineNumber.isBold, lineNumber.isItalic);
+}
+
+void EclipseThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)
+{
+    wordset.clear();
+    wxArrayString arr = ::wxStringTokenize(words, " \t\n", wxTOKEN_STRTOK);
+    arr.Sort();
+    
+    wordset = ::wxJoin(arr, ' ');
 }

@@ -42,6 +42,7 @@ protected:
     wxPGProperty* m_pgPropAngular;
     wxPGProperty* m_pgPropStrings;
     wxPGProperty* m_pgPropNode;
+    wxPGProperty* m_pgPropQML;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_buttonCancel;
     wxButton* m_buttonOK;
@@ -52,9 +53,6 @@ protected:
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
-    wxPanel* GetPanel12() { return m_panel12; }
-    wxNotebook* GetNotebook10() { return m_notebook10; }
     WebToolsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("WebTools Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~WebToolsSettingsBase();
 };

@@ -27,6 +27,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     this->SetSizer(boxSizer2);
     
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook10->SetName(wxT("m_notebook10"));
     
     boxSizer2->Add(m_notebook10, 1, wxALL|wxEXPAND, 5);
     
@@ -86,6 +87,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropNode = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Node.js"), wxPG_LABEL, 1) );
     m_pgPropNode->SetHelpString(_("Provides variables that are part of the node environment, such as process and require, and hooks up require to try and find the dependencies that are being loaded, and assign them the correct types. It also includes types for the built-in modules that node.js provides (\"fs\", \"http\", etc)"));
     
+    m_pgPropQML = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("QML"), wxPG_LABEL, 1) );
+    m_pgPropQML->SetHelpString(_("Support for Qt's QML extension for JavaScript"));
+    
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
     boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -98,11 +102,12 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer4->AddButton(m_buttonOK);
     m_stdBtnSizer4->Realize();
     
+    SetName(wxT("WebToolsSettingsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);

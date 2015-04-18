@@ -22,6 +22,7 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_pgPropAngular->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginAngular));
         m_pgPropNode->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginNode));
         m_pgPropStrings->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginStrings));
+        m_pgPropQML->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginQML));
     }
 
     CenterOnParent();
@@ -58,6 +59,7 @@ void WebToolsSettings::OnOK(wxCommandEvent& event)
         config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginAngular, m_pgPropAngular->GetValue().GetBool());
         config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginNode, m_pgPropNode->GetValue().GetBool());
         config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginStrings, m_pgPropStrings->GetValue().GetBool());
+        config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginQML, m_pgPropQML->GetValue().GetBool());
         config.Save();
     }
 }

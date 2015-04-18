@@ -68,5 +68,10 @@ wxString WebToolsConfig::GetTernProjectFile() const
         plugins.append(angular);
     }
     
+    if(m_jsFlags & kJSPluginQML) {
+        JSONElement qml = JSONElement::createObject("qml");
+        plugins.append(qml);
+    }
+    
     return root.toElement().format();
 }

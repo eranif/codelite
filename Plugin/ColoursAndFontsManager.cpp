@@ -222,7 +222,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-
+    
+    // Add wxcp file extension to the C++ lexers
+    if(lexer->GetName() == "c++" && !lexer->GetFileSpec().Contains(".wxcp")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
+    }
+    
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 

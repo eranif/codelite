@@ -404,12 +404,15 @@ void CMakeHelpTab::CreateHelpPage(const wxString& content, const wxString& subje
     text.Replace("<br />", "\n");
     text.Replace("&lt;" , "<");
     text.Replace("&gt;" , ">");
+    text.Replace("\r", "");
+    text.Replace("\n\n", "\n");
+    
     IManager* manager = ::clGetManager();
     
     // Write the content of the help into a temporary file
     wxFileName fnTemp = wxFileName::CreateTempFileName("cmake");
     wxFileName fnCMakeHelpFile = fnTemp;
-    fnCMakeHelpFile.SetFullName("CMake Help.cmake");
+    fnCMakeHelpFile.SetFullName("CMakeHelp.cmake");
     
     if(!FileUtils::WriteFileContent(fnCMakeHelpFile, text)) return;
     

@@ -248,14 +248,14 @@ protected:
     wxChoice* m_workspaceConfig;
 
 protected:
-    virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCollapseAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCollapseAllUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGoHome(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGoHomeUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnProjectSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnChoiceActiveProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnConfigurationManagerChoice(wxCommandEvent& event) { event.Skip(); }

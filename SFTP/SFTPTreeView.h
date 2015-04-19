@@ -108,7 +108,8 @@ protected:
     MyClientData* GetItemData(const wxTreeListItem& item);
     MyClientDataVect_t GetSelectionsItemData();
     bool DoOpenFile(const wxTreeListItem& item);
-
+    void DoDeleteColumn(int colIdx);
+    
 protected:
     virtual void OnItemActivated(wxTreeListEvent& event);
     virtual void OnItemExpanding(wxTreeListEvent& event);

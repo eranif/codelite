@@ -14,7 +14,7 @@ LexerConf::Ptr_t EclipseBatchThemeImporter::Import(const wxFileName& eclipseXmlF
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "batch", wxSTC_LEX_BATCH);
     AddProperty(lexer, wxSTC_BAT_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_BAT_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_BAT_WORD, "Word", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_BAT_WORD, "Word", m_keyword.colour, m_background.colour);
     AddProperty(lexer, wxSTC_BAT_LABEL, "Label", m_klass.colour, m_background.colour);
     AddProperty(lexer, wxSTC_BAT_HIDE, "Hide (@)", m_keyword.colour, m_background.colour);
     AddProperty(lexer, wxSTC_BAT_COMMAND, "Command", m_keyword.colour, m_background.colour);

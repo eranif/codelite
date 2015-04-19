@@ -44,6 +44,7 @@
 #include <wx/busyinfo.h>
 #include "globals.h"
 #include "fileutils.h"
+#include "cl_config.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -52,6 +53,8 @@ static const int ID_OPEN = ::wxNewId();
 static const int ID_NEW_FILE = ::wxNewId();
 static const int ID_REFRESH_FOLDER = ::wxNewId();
 static const int ID_EXECUTE_COMMAND = ::wxNewId();
+static const int ID_SHOW_SIZE_COL = ::wxNewId();
+static const int ID_SHOW_TYPE_COL = ::wxNewId();
 
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
@@ -92,22 +95,42 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
                             wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
                             NULL,
                             this);
+    m_treeListCtrl->Bind(wxEVT_MENU, &SFTPTreeView::OnShowTypeCol, this, ID_SHOW_TYPE_COL);
+    m_treeListCtrl->Bind(wxEVT_MENU, &SFTPTreeView::OnShowSizeCol, this, ID_SHOW_SIZE_COL);
+
     wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCopy, this, wxID_COPY);
     wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCut, this, wxID_CUT);
     wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnPaste, this, wxID_PASTE);
     wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnSelectAll, this, wxID_SELECTALL);
     wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnUndo, this, wxID_UNDO);
     wxTheApp->GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnRedo, this, wxID_REDO);
+
+    bool sizeColVisible = clConfig::Get().Read("SFTP/TreeView/ShowSizeCol", true);
+    bool typeColVisible = clConfig::Get().Read("SFTP/TreeView/ShowTypeCol", true);
+    
+    if(!sizeColVisible) {
+        m_treeListCtrl->DeleteColumn(GetSizeColumnIndex());
+    }
+    
+    if(!typeColVisible) {
+        m_treeListCtrl->DeleteColumn(GetTypeColumnIndex());
+    }
 }
 
 SFTPTreeView::~SFTPTreeView()
 {
+    // Store the columns size
+    clConfig::Get().Write("SFTP/TreeView/ShowSizeCol", IsSizeColumnShown());
+    clConfig::Get().Write("SFTP/TreeView/ShowTypeCol", IsTypeColumnShown());
+
     wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCopy, this, wxID_COPY);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnCut, this, wxID_CUT);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnPaste, this, wxID_PASTE);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnSelectAll, this, wxID_SELECTALL);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnUndo, this, wxID_UNDO);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &SFTPTreeView::OnRedo, this, wxID_REDO);
+    m_treeListCtrl->Unbind(wxEVT_MENU, &SFTPTreeView::OnShowTypeCol, this, ID_SHOW_TYPE_COL);
+    m_treeListCtrl->Unbind(wxEVT_MENU, &SFTPTreeView::OnShowSizeCol, this, ID_SHOW_SIZE_COL);
     m_treeListCtrl->Disconnect(
         ID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
     m_treeListCtrl->Disconnect(
@@ -276,8 +299,13 @@ bool SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
         childClientData->SetIsFolder(attr->IsFolder());
 
         wxTreeListItem child = m_treeListCtrl->AppendItem(item, attr->GetName(), imgIdx, imgIdx, childClientData);
-        m_treeListCtrl->SetItemText(child, 1, attr->GetTypeAsString());
-        m_treeListCtrl->SetItemText(child, 2, wxString() << attr->GetSize());
+        if(IsTypeColumnShown()) {
+            m_treeListCtrl->SetItemText(child, GetTypeColumnIndex(), attr->GetTypeAsString());
+        }
+
+        if(IsSizeColumnShown()) {
+            m_treeListCtrl->SetItemText(child, GetSizeColumnIndex(), wxString() << attr->GetSize());
+        }
 
         // if its type folder, add a fake child item
         if(attr->IsFolder()) {
@@ -317,31 +345,37 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
     CHECK_ITEM_RET(event.GetItem());
 
     MyClientData* cd = GetItemData(event.GetItem());
-    CHECK_PTR_RET(cd);
-
-    // Just incase, make sure the item is selected
-    m_treeListCtrl->Select(event.GetItem());
-
     wxMenu menu;
+    if(cd) {
 
-    if(!cd->IsFolder()) {
-        menu.Append(ID_OPEN, _("Open"));
-        menu.AppendSeparator();
+        // Just incase, make sure the item is selected
+        m_treeListCtrl->Select(event.GetItem());
+        if(!cd->IsFolder()) {
+            menu.Append(ID_OPEN, _("Open"));
+            menu.AppendSeparator();
 
-    } else {
-        menu.Append(ID_NEW, _("Create new directory..."));
-        menu.Append(ID_NEW_FILE, _("Create new file..."));
-        menu.AppendSeparator();
-        menu.Append(ID_REFRESH_FOLDER, _("Refresh"));
-        menu.AppendSeparator();
-    }
-    menu.Append(ID_DELETE, _("Delete"));
+        } else {
+            menu.Append(ID_NEW, _("Create new directory..."));
+            menu.Append(ID_NEW_FILE, _("Create new file..."));
+            menu.AppendSeparator();
+            menu.Append(ID_REFRESH_FOLDER, _("Refresh"));
+            menu.AppendSeparator();
+        }
+        menu.Append(ID_DELETE, _("Delete"));
 
 #ifdef __WXMAC__
-    menu.Enable(ID_DELETE, false);
+        menu.Enable(ID_DELETE, false);
 #endif
 
-    menu.Append(ID_RENAME, _("Rename"));
+        menu.Append(ID_RENAME, _("Rename"));
+        menu.AppendSeparator();
+    }
+
+    // Append headers column menu items
+    menu.Append(ID_SHOW_TYPE_COL, _("Show 'Type' column"), "", wxITEM_CHECK);
+    menu.Append(ID_SHOW_SIZE_COL, _("Show 'Size' column"), "", wxITEM_CHECK);
+    menu.Check(ID_SHOW_TYPE_COL, IsTypeColumnShown());
+    menu.Check(ID_SHOW_SIZE_COL, IsSizeColumnShown());
     m_treeListCtrl->PopupMenu(&menu);
 }
 
@@ -494,8 +528,12 @@ wxTreeListItem SFTPTreeView::DoAddFile(const wxTreeListItem& parent, const wxStr
             wxNOT_FOUND,
             newFile);
 
-        m_treeListCtrl->SetItemText(child, 1, attr->GetTypeAsString());
-        m_treeListCtrl->SetItemText(child, 2, wxString() << attr->GetSize());
+        if(IsTypeColumnShown()) {
+            m_treeListCtrl->SetItemText(child, GetTypeColumnIndex(), attr->GetTypeAsString());
+        }
+        if(IsSizeColumnShown()) {
+            m_treeListCtrl->SetItemText(child, GetSizeColumnIndex(), wxString() << attr->GetSize());
+        }
         m_treeListCtrl->SetSortColumn(0);
         return child;
 
@@ -517,8 +555,13 @@ wxTreeListItem SFTPTreeView::DoAddFolder(const wxTreeListItem& parent, const wxS
 
         wxTreeListItem child = m_treeListCtrl->AppendItem(
             parent, newCd->GetFullName(), m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, newCd);
-        m_treeListCtrl->SetItemText(child, 1, attr->GetTypeAsString());
-        m_treeListCtrl->SetItemText(child, 2, wxString() << attr->GetSize());
+
+        if(IsTypeColumnShown()) {
+            m_treeListCtrl->SetItemText(child, GetTypeColumnIndex(), attr->GetTypeAsString());
+        }
+        if(IsSizeColumnShown()) {
+            m_treeListCtrl->SetItemText(child, GetSizeColumnIndex(), wxString() << attr->GetSize());
+        }
         m_treeListCtrl->AppendItem(child, "<dummy>");
         m_treeListCtrl->SetSortColumn(0);
         return child;
@@ -794,7 +837,7 @@ void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
     // Open terminal to the selected account
     SFTPSettings settings;
     settings.Load();
-    
+
     wxString accountName = m_choiceAccount->GetStringSelection();
     if(accountName.IsEmpty()) {
         return;
@@ -805,10 +848,10 @@ void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
         ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR | wxOK);
         return;
     }
-    
+
     wxString connectString;
     connectString << account.GetUsername() << "@" << account.GetHost();
-    
+
     const wxString& sshClient = settings.GetSshClient();
     FileUtils::OpenSSHTerminal(sshClient, connectString, account.GetPassword(), account.GetPort());
 }
@@ -832,3 +875,55 @@ bool SFTPTreeView::DoOpenFile(const wxTreeListItem& item)
     m_plugin->AddRemoteFile(remoteFile);
     return true;
 }
+
+void SFTPTreeView::OnShowSizeCol(wxCommandEvent& event)
+{
+    if(event.IsChecked()) {
+        // Append the column
+        m_treeListCtrl->AppendColumn(_("Size"), 75);
+    } else {
+        if(IsSizeColumnShown()) {
+            m_treeListCtrl->DeleteColumn(GetSizeColumnIndex());
+        }
+    }
+}
+
+void SFTPTreeView::OnShowTypeCol(wxCommandEvent& event)
+{
+    if(event.IsChecked()) {
+        // Append the column
+        m_treeListCtrl->AppendColumn(_("Type"), 75);
+    } else {
+        if(IsTypeColumnShown()) {
+            m_treeListCtrl->DeleteColumn(GetTypeColumnIndex());
+        }
+    }
+}
+
+int SFTPTreeView::GetSizeColumnIndex() const
+{
+    wxDataViewCtrl* ctrl = m_treeListCtrl->GetDataView();
+    for(size_t i = 0; i < ctrl->GetColumnCount(); ++i) {
+        wxDataViewColumn* col = ctrl->GetColumn(i);
+        if(col->GetTitle() == _("Size")) {
+            return (int)i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+int SFTPTreeView::GetTypeColumnIndex() const
+{
+    wxDataViewCtrl* ctrl = m_treeListCtrl->GetDataView();
+    for(size_t i = 0; i < ctrl->GetColumnCount(); ++i) {
+        wxDataViewColumn* col = ctrl->GetColumn(i);
+        if(col->GetTitle() == _("Type")) {
+            return (int)i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+int SFTPTreeView::IsSizeColumnShown() const { return (GetSizeColumnIndex() != wxNOT_FOUND);}
+
+int SFTPTreeView::IsTypeColumnShown() const { return (GetTypeColumnIndex() != wxNOT_FOUND);}

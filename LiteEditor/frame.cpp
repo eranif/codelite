@@ -1210,33 +1210,6 @@ void clMainFrame::DoShowToolbars(bool show)
     }
 }
 
-void clMainFrame::CreateViewAsSubMenu()
-{
-    // get the 'View As' menu
-
-    wxMenu* menu = NULL;
-    wxMenuItem* menuitem = GetMenuBar()->FindItem(XRCID("display_eol"), &menu);
-    if(menuitem && menu) {
-        wxMenu* submenu = new wxMenu();
-
-        // create a view as sub menu and attach it
-        wxMenuItem* item(NULL);
-
-        int minId = viewAsMenuItemID;
-
-        // load all lexers
-        // load generic lexers
-        wxArrayString lexerNames = ColoursAndFontsManager::Get().GetAllLexersNames();
-        for(size_t i = 0; i < lexerNames.GetCount(); ++i) {
-            item = new wxMenuItem(submenu, minId, lexerNames.Item(i), wxEmptyString, wxITEM_CHECK);
-            m_viewAsMap[minId] = lexerNames.Item(i);
-            minId++;
-            submenu->Append(item);
-        }
-        menu->Append(viewAsSubMenuID, _("View As"), submenu);
-    }
-}
-
 void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 {
     event.Skip();
@@ -1285,14 +1258,6 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
         event.Skip();
     }
     // Don't skip if there's no active editor/toolbar, otherwise a stale menu will show
-}
-
-wxString clMainFrame::GetViewAsLanguageById(int id) const
-{
-    if(m_viewAsMap.find(id) == m_viewAsMap.end()) {
-        return wxEmptyString;
-    }
-    return m_viewAsMap.find(id)->second;
 }
 
 void clMainFrame::CreateToolbars24()
@@ -2081,9 +2046,6 @@ void clMainFrame::Bootstrap()
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
         if(StartSetupWizard()) return;
     }
-
-    // Build the "View As" menu
-    CreateViewAsSubMenu();
 
     // Load the session manager
     wxString sessConfFile;

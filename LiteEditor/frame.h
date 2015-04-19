@@ -189,13 +189,6 @@ public:
     bool GetHighlightWord() { return m_highlightWord; }
 
     /**
-     * @brief Return language name by menu item id
-     * @param id
-     * @return
-     */
-    wxString GetViewAsLanguageById(int id) const;
-
-    /**
      * @brief
      * @param editor
      */
@@ -329,7 +322,6 @@ private:
     void ToggleToolBars(bool all);
 
     void ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event);
-    void CreateViewAsSubMenu();
     void CreateRecentlyOpenedFilesMenu();
     void CreateWelcomePage();
     bool ReloadExternallyModifiedProjectFiles();

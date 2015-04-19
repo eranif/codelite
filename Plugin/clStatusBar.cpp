@@ -10,6 +10,9 @@
 #include "fileextmanager.h"
 #include <wx/xrc/xmlres.h>
 #include "editor_config.h"
+#include "ColoursAndFontsManager.h"
+#include <algorithm>
+#include "globals.h"
 
 #define STATUSBAR_LINE_COL_IDX 0
 #define STATUSBAR_ANIMATION_COL_IDX 1
@@ -86,86 +89,16 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
 {
     event.Skip();
     DoUpdateColour();
-
+    
     // Update the file name
     IEditor* editor = m_mgr->GetActiveEditor();
     // update the language
-    wxString language;
+    wxString language = "TEXT";
     if(editor) {
-        int lexerId = editor->GetCtrl()->GetLexer();
-        switch(lexerId) {
-        case wxSTC_LEX_CPP: {
-            // C++ is used for 3 languages:
-            // C++, JS and Jave
-            if(FileExtManager::IsCxxFile(editor->GetFileName()))
-                language = "C++";
-            else if(FileExtManager::IsJavaFile(editor->GetFileName()))
-                language = "Java";
-            else if(FileExtManager::IsJavascriptFile(editor->GetFileName()))
-                language = "Javascript";
-            else
-                language = "C++";
-            break;
+        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
+        if(lexer) {
+            language = lexer->GetName().Upper();
         }
-        case wxSTC_LEX_NULL:
-            language = "text";
-            break;
-        case wxSTC_LEX_ASM:
-            language = "asm";
-            break;
-        case wxSTC_LEX_BATCH:
-            language = "BATCH";
-            break;
-        case wxSTC_LEX_PROPERTIES:
-            language = "INI";
-            break;
-        case wxSTC_LEX_XML:
-            language = "XML";
-            break;
-        case wxSTC_LEX_HTML: {
-            // wxSTC_LEX_HTML is used for 2 languages: HTML and PHP
-            if(FileExtManager::IsPHPFile(editor->GetFileName()))
-                language = "PHP";
-            else
-                language = "hypertext";
-            break;
-        }
-        case wxSTC_LEX_CSS:
-            language = "css";
-            break;
-        case wxSTC_LEX_CMAKE:
-            language = "cmake";
-            break;
-        case wxSTC_LEX_PERL:
-            language = "perl";
-            break;
-        case wxSTC_LEX_PYTHON:
-            language = "python";
-            break;
-        case wxSTC_LEX_LUA:
-            language = "lua";
-            break;
-        case wxSTC_LEX_INNOSETUP:
-            language = "innosetup";
-            break;
-        case wxSTC_LEX_MAKEFILE:
-            language = "makefile";
-            break;
-        case wxSTC_LEX_BASH:
-            language = "bash";
-            break;
-        case wxSTC_LEX_FORTRAN:
-            language = "fortran";
-            break;
-        case wxSTC_LEX_SQL:
-            language = "sql";
-            break;
-        default:
-            language = "";
-            break;
-        }
-        language.MakeUpper();
-
         // Set the "TABS/SPACES" field
         SetWhitespaceInfo(editor->GetCtrl()->GetUseTabs() ? "tabs" : "spaces");
     }
@@ -305,6 +238,63 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
         // Open the output view only if the bitmap is valid
         if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) {
             m_mgr->ToggleOutputPane("Build");
+        }
+    } else if(event.GetInt() == STATUSBAR_LANG_COL_IDX) {
+        if(m_mgr->GetActiveEditor()) {
+            wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LANG_COL_IDX);
+            CHECK_PTR_RET(field);
+            
+            IEditor *editor = m_mgr->GetActiveEditor();
+            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
+            if(lexer) {
+                wxMenu menu;
+                wxMenu* themesMenu = new wxMenu();
+                wxMenu* langMenu = new wxMenu();
+                
+                // Create the themes menu
+                std::map<int, wxString> themesMap;
+                std::map<int, wxString> langsMap;
+                wxArrayString themesArr = ColoursAndFontsManager::Get().GetAvailableThemesForLexer(lexer->GetName());
+                for(size_t i=0; i<themesArr.size(); ++i) {
+                    wxMenuItem* itemTheme = themesMenu->Append(wxID_ANY, themesArr.Item(i), "", wxITEM_CHECK);
+                    itemTheme->Check(themesArr.Item(i) == lexer->GetThemeName());
+                    themesMap.insert(std::make_pair(itemTheme->GetId(), themesArr.Item(i)));
+                }
+                
+                // Create the language menu
+                wxArrayString langs = ColoursAndFontsManager::Get().GetAllLexersNames();
+                for(size_t i=0; i<langs.size(); ++i) {
+                    wxMenuItem* itemLang = langMenu->Append(wxID_ANY, langs.Item(i), "", wxITEM_CHECK);
+                    itemLang->Check(langs.Item(i) == lexer->GetName());
+                    langsMap.insert(std::make_pair(itemLang->GetId(), langs.Item(i)));
+                }
+                menu.Append(wxID_ANY, _("Language"), langMenu);
+                menu.Append(wxID_ANY, _("Colour Themes"), themesMenu);
+                int selectedId = GetPopupMenuSelectionFromUser(menu);
+                if(themesMap.count(selectedId)) {
+                    // change the colour theme
+                    wxBusyCursor bc;
+                    ColoursAndFontsManager::Get().SetActiveTheme(lexer->GetName(), themesMap.find(selectedId)->second);
+                    ColoursAndFontsManager::Get().Save();
+                    
+                    // Update the colours
+                    IEditor::List_t editors;
+                    clGetManager()->GetAllEditors(editors);
+                    std::for_each(editors.begin(), editors.end(), [&](IEditor* e){
+                        e->SetSyntaxHighlight(lexer->GetName());
+                    });
+                    
+                    // We need to force an update to ensure that the colours also affects
+                    // the tab drawing area
+                    clGetManager()->GetDockingManager()->Update();
+                    
+                } else if(langsMap.count(selectedId)) {
+                    // change the syntax highlight for the file
+                    wxBusyCursor bc;
+                    editor->SetSyntaxHighlight(langsMap.find(selectedId)->second);
+                    SetLanguage(langsMap.find(selectedId)->second.Upper());
+                }
+            }
         }
     } else if(event.GetInt() == STATUSBAR_WHITESPACE_INFO_IDX) {
         if(m_mgr->GetActiveEditor()) {

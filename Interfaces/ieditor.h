@@ -430,7 +430,12 @@ public:
         }
         m_data.insert(std::make_pair(key, data));
     }
-
+    
+    /**
+     * @brief force a syntax highlight of 'langname' to the editor
+     */
+    virtual void SetSyntaxHighlight(const wxString& langname) = 0;
+    
     /**
      * @brief return the client data associated with this editor and identified by key
      * @param key
@@ -444,7 +449,7 @@ public:
         }
         return NULL;
     }
-
+    
     /**
      * @brief delete the client data associated with this editor and identified by 'key'
      * this method also delete the memory allocated by the data

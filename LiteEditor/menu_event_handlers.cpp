@@ -337,39 +337,6 @@ void GotoDefinitionHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEven
     }
 }
 
-//-------------------------------------------------
-// View As
-//-------------------------------------------------
-
-void ViewAsHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
-{
-    LEditor *editor = dynamic_cast<LEditor*>(owner);
-    if ( !editor ) {
-        return;
-    }
-
-    wxString lexName = clMainFrame::Get()->GetViewAsLanguageById(event.GetInt());
-    if (lexName.IsEmpty() == false) {
-        editor->SetSyntaxHighlight(lexName);
-    }
-}
-
-void ViewAsHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
-{
-    LEditor *editor = dynamic_cast<LEditor*>(owner);
-    if ( !editor ) {
-        return;
-    }
-
-    event.Enable(true);
-    wxString lexName = clMainFrame::Get()->GetViewAsLanguageById(event.GetInt());
-    
-    wxString contextName = editor->GetContext()->GetName();
-    contextName.MakeLower();
-    
-    event.Check(contextName == lexName);
-}
-
 //----------------------------------------------------
 // Word wrap handler
 //----------------------------------------------------

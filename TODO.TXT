@@ -1,3 +1,6 @@
 * Add code completion for XML / HTML
-* Colours and Fonts: replace old XML format into a single JSON file
-* Provide more colours for INI and SH formats
+* Allow setting global font to all lexers
+* Implement all un-implemented removes the markers from the editors
+* Git: add an option to open the commit in GitHub
+* Git: add a toolbar to clear the commit history
+* Editor: when zooming an editor using the mouse, offer the user to keep the font

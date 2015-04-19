@@ -26,78 +26,70 @@
 #include "menu_event_handlers.h"
 #include "macros.h"
 
-
 MenuManager::MenuManager(void)
 {
-	PushHandler(new EditHandler(wxID_COPY));
-	PushHandler(new EditHandler(wxID_CUT));
-	PushHandler(new EditHandler(wxID_PASTE));
-	PushHandler(new EditHandler(wxID_UNDO));
-	PushHandler(new EditHandler(wxID_REDO));
-	PushHandler(new EditHandler(XRCID("label_current_state")));
-	PushHandler(new EditHandler(wxID_SELECTALL));
-	PushHandler(new EditHandler(wxID_DUPLICATE));
-	PushHandler(new EditHandler(wxID_DELETE));
-	PushHandler(new EditHandler(XRCID("delete_line")));
-	PushHandler(new EditHandler(XRCID("delete_line_end")));
-	PushHandler(new EditHandler(XRCID("delete_line_start")));
-	PushHandler(new EditHandler(XRCID("transpose_lines")));
-	PushHandler(new EditHandler(XRCID("trim_trailing")));
-	PushHandler(new EditHandler(XRCID("to_upper")));
-	PushHandler(new EditHandler(XRCID("to_lower")));
-	PushHandler(new EditHandler(XRCID("swap_files")));
-	PushHandler(new EditHandler(XRCID("move_line_down")));
-	PushHandler(new EditHandler(XRCID("move_line_up")));
-	PushHandler(new EditHandler(XRCID("center_line_roll")));
-	PushHandler(new EditHandler(XRCID("convert_indent_to_tabs")));
-	PushHandler(new EditHandler(XRCID("convert_indent_to_spaces")));
-	PushHandler(new BraceMatchHandler(XRCID("select_to_brace")));
-	PushHandler(new BraceMatchHandler(XRCID("match_brace")));
-	PushHandler(new FindReplaceHandler(wxID_FIND));
-	PushHandler(new FindReplaceHandler(wxID_REPLACE));
-	PushHandler(new GotoHandler(XRCID("goto_linenumber")));
-	PushHandler(new BookmarkHandler(XRCID("toggle_bookmark")));
-	PushHandler(new BookmarkHandler(XRCID("next_bookmark")));
-	PushHandler(new BookmarkHandler(XRCID("previous_bookmark")));
-	PushHandler(new BookmarkHandler(XRCID("removeall_current_bookmarks")));
-	PushHandler(new BookmarkHandler(XRCID("removeall_bookmarks")));
-	PushHandler(new GotoDefinitionHandler(XRCID("goto_definition")));
-	PushHandler(new GotoDefinitionHandler(XRCID("goto_previous_definition")));
-	PushHandler(new ViewAsHandler(viewAsMenuItemID));
-	PushHandler(new WordWrapHandler(XRCID("word_wrap")));
-	PushHandler(new FoldHandler(XRCID("toggle_fold")));
-	PushHandler(new FoldHandler(XRCID("fold_topmost_in_selection")));
-	PushHandler(new FoldHandler(XRCID("fold_all_in_selection")));
-	PushHandler(new FoldHandler(XRCID("fold_all")));
-	PushHandler(new DebuggerMenuHandler(XRCID("add_breakpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("insert_breakpoint"))); // This actually does 'toggle'
-	PushHandler(new DebuggerMenuHandler(XRCID("disable_all_breakpoints")));
-	PushHandler(new DebuggerMenuHandler(XRCID("enable_all_breakpoints")));
-	PushHandler(new DebuggerMenuHandler(XRCID("delete_all_breakpoints")));
-	PushHandler(new DebuggerMenuHandler(XRCID("insert_temp_breakpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("insert_disabled_breakpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("insert_cond_breakpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("insert_watchpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("toggle_breakpoint_enabled_status")));
-	PushHandler(new DebuggerMenuHandler(XRCID("ignore_breakpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("edit_breakpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("delete_breakpoint")));
-	PushHandler(new DebuggerMenuHandler(XRCID("show_breakpoint_dlg")));
+    PushHandler(new EditHandler(wxID_COPY));
+    PushHandler(new EditHandler(wxID_CUT));
+    PushHandler(new EditHandler(wxID_PASTE));
+    PushHandler(new EditHandler(wxID_UNDO));
+    PushHandler(new EditHandler(wxID_REDO));
+    PushHandler(new EditHandler(XRCID("label_current_state")));
+    PushHandler(new EditHandler(wxID_SELECTALL));
+    PushHandler(new EditHandler(wxID_DUPLICATE));
+    PushHandler(new EditHandler(wxID_DELETE));
+    PushHandler(new EditHandler(XRCID("delete_line")));
+    PushHandler(new EditHandler(XRCID("delete_line_end")));
+    PushHandler(new EditHandler(XRCID("delete_line_start")));
+    PushHandler(new EditHandler(XRCID("transpose_lines")));
+    PushHandler(new EditHandler(XRCID("trim_trailing")));
+    PushHandler(new EditHandler(XRCID("to_upper")));
+    PushHandler(new EditHandler(XRCID("to_lower")));
+    PushHandler(new EditHandler(XRCID("swap_files")));
+    PushHandler(new EditHandler(XRCID("move_line_down")));
+    PushHandler(new EditHandler(XRCID("move_line_up")));
+    PushHandler(new EditHandler(XRCID("center_line_roll")));
+    PushHandler(new EditHandler(XRCID("convert_indent_to_tabs")));
+    PushHandler(new EditHandler(XRCID("convert_indent_to_spaces")));
+    PushHandler(new BraceMatchHandler(XRCID("select_to_brace")));
+    PushHandler(new BraceMatchHandler(XRCID("match_brace")));
+    PushHandler(new FindReplaceHandler(wxID_FIND));
+    PushHandler(new FindReplaceHandler(wxID_REPLACE));
+    PushHandler(new GotoHandler(XRCID("goto_linenumber")));
+    PushHandler(new BookmarkHandler(XRCID("toggle_bookmark")));
+    PushHandler(new BookmarkHandler(XRCID("next_bookmark")));
+    PushHandler(new BookmarkHandler(XRCID("previous_bookmark")));
+    PushHandler(new BookmarkHandler(XRCID("removeall_current_bookmarks")));
+    PushHandler(new BookmarkHandler(XRCID("removeall_bookmarks")));
+    PushHandler(new GotoDefinitionHandler(XRCID("goto_definition")));
+    PushHandler(new GotoDefinitionHandler(XRCID("goto_previous_definition")));
+    PushHandler(new WordWrapHandler(XRCID("word_wrap")));
+    PushHandler(new FoldHandler(XRCID("toggle_fold")));
+    PushHandler(new FoldHandler(XRCID("fold_topmost_in_selection")));
+    PushHandler(new FoldHandler(XRCID("fold_all_in_selection")));
+    PushHandler(new FoldHandler(XRCID("fold_all")));
+    PushHandler(new DebuggerMenuHandler(XRCID("add_breakpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("insert_breakpoint"))); // This actually does 'toggle'
+    PushHandler(new DebuggerMenuHandler(XRCID("disable_all_breakpoints")));
+    PushHandler(new DebuggerMenuHandler(XRCID("enable_all_breakpoints")));
+    PushHandler(new DebuggerMenuHandler(XRCID("delete_all_breakpoints")));
+    PushHandler(new DebuggerMenuHandler(XRCID("insert_temp_breakpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("insert_disabled_breakpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("insert_cond_breakpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("insert_watchpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("toggle_breakpoint_enabled_status")));
+    PushHandler(new DebuggerMenuHandler(XRCID("ignore_breakpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("edit_breakpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("delete_breakpoint")));
+    PushHandler(new DebuggerMenuHandler(XRCID("show_breakpoint_dlg")));
 }
 
-MenuManager::~MenuManager(void)
-{
-}
+MenuManager::~MenuManager(void) {}
 
-void MenuManager::PushHandler(MenuEventHandlerPtr handler)
-{
-	m_handlers[handler->GetEventId()] = handler;
-}
+void MenuManager::PushHandler(MenuEventHandlerPtr handler) { m_handlers[handler->GetEventId()] = handler; }
 
 MenuEventHandlerPtr MenuManager::GetHandler(int id)
 {
-	HandlesrHash::iterator iter = m_handlers.find(id);
-	if ( iter != m_handlers.end() )
-		return iter->second;
-	return NULL;
+    HandlesrHash::iterator iter = m_handlers.find(id);
+    if(iter != m_handlers.end()) return iter->second;
+    return NULL;
 }

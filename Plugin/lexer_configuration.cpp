@@ -36,13 +36,13 @@
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 11
+#define DEFAULT_FONT_SIZE 12
 #elif defined(__WXMAC__)
 #define DEFAULT_FACE_NAME "monaco"
 #define DEFAULT_FONT_SIZE 14
 #else // GTK, FreeBSD etc
 #define DEFAULT_FACE_NAME "monospace"
-#define DEFAULT_FONT_SIZE 11
+#define DEFAULT_FONT_SIZE 12
 #endif
 
 static bool StringTolBool(const wxString& s)

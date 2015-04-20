@@ -89,7 +89,7 @@ void clStatusBar::OnPageChanged(wxCommandEvent& event)
 {
     event.Skip();
     DoUpdateColour();
-    
+
     // Update the file name
     IEditor* editor = m_mgr->GetActiveEditor();
     // update the language
@@ -243,27 +243,27 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
         if(m_mgr->GetActiveEditor()) {
             wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_LANG_COL_IDX);
             CHECK_PTR_RET(field);
-            
-            IEditor *editor = m_mgr->GetActiveEditor();
+
+            IEditor* editor = m_mgr->GetActiveEditor();
             LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
             if(lexer) {
                 wxMenu menu;
                 wxMenu* themesMenu = new wxMenu();
                 wxMenu* langMenu = new wxMenu();
-                
+
                 // Create the themes menu
                 std::map<int, wxString> themesMap;
                 std::map<int, wxString> langsMap;
                 wxArrayString themesArr = ColoursAndFontsManager::Get().GetAvailableThemesForLexer(lexer->GetName());
-                for(size_t i=0; i<themesArr.size(); ++i) {
+                for(size_t i = 0; i < themesArr.size(); ++i) {
                     wxMenuItem* itemTheme = themesMenu->Append(wxID_ANY, themesArr.Item(i), "", wxITEM_CHECK);
                     itemTheme->Check(themesArr.Item(i) == lexer->GetThemeName());
                     themesMap.insert(std::make_pair(itemTheme->GetId(), themesArr.Item(i)));
                 }
-                
+
                 // Create the language menu
                 wxArrayString langs = ColoursAndFontsManager::Get().GetAllLexersNames();
-                for(size_t i=0; i<langs.size(); ++i) {
+                for(size_t i = 0; i < langs.size(); ++i) {
                     wxMenuItem* itemLang = langMenu->Append(wxID_ANY, langs.Item(i), "", wxITEM_CHECK);
                     itemLang->Check(langs.Item(i) == lexer->GetName());
                     langsMap.insert(std::make_pair(itemLang->GetId(), langs.Item(i)));
@@ -276,18 +276,24 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
                     wxBusyCursor bc;
                     ColoursAndFontsManager::Get().SetActiveTheme(lexer->GetName(), themesMap.find(selectedId)->second);
                     ColoursAndFontsManager::Get().Save();
-                    
+
                     // Update the colours
                     IEditor::List_t editors;
                     clGetManager()->GetAllEditors(editors);
-                    std::for_each(editors.begin(), editors.end(), [&](IEditor* e){
-                        e->SetSyntaxHighlight(lexer->GetName());
+                    std::for_each(editors.begin(), editors.end(), [&](IEditor* e) {
+                        // get the lexer associated with this editor 
+                        // and re-apply the syntax highlight
+                        LexerConf::Ptr_t editorLexer =
+                            ColoursAndFontsManager::Get().GetLexerForFile(e->GetFileName().GetFullPath());
+                        if(editorLexer) {
+                            e->SetSyntaxHighlight(editorLexer->GetName());
+                        }
                     });
-                    
+
                     // We need to force an update to ensure that the colours also affects
                     // the tab drawing area
                     clGetManager()->GetDockingManager()->Update();
-                    
+
                 } else if(langsMap.count(selectedId)) {
                     // change the syntax highlight for the file
                     wxBusyCursor bc;
@@ -331,20 +337,19 @@ void clStatusBar::OnFieldClicked(clCommandEvent& event)
                 wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
             } else if(selectedId == idUseSpaces->GetId()) {
                 stc->SetUseTabs(false);
-                
+
                 // Update the configuration
                 OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
                 options->SetIndentUsesTabs(false);
                 EditorConfigST::Get()->SetOptions(options);
-                
+
             } else if(selectedId == idUseTabs->GetId()) {
                 stc->SetUseTabs(true);
-                
+
                 // Update the configuration
                 OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
                 options->SetIndentUsesTabs(true);
                 EditorConfigST::Get()->SetOptions(options);
-                
             }
             SetWhitespaceInfo(stc->GetUseTabs() ? "tabs" : "spaces");
         }

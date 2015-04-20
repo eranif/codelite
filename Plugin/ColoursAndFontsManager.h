@@ -9,6 +9,7 @@
 #include <wx/filename.h>
 #include <wx/event.h>
 #include "cl_command_event.h"
+#include <wx/font.h>
 
 // Upgrade macros
 #define LEXERS_VERSION_STRING "LexersVersion"
@@ -38,6 +39,7 @@ protected:
     wxString m_globalTheme;
     LexerConf::Ptr_t m_defaultLexer;
     int m_lexersVersion;
+    wxFont m_globalFont;
 
 private:
     ColoursAndFontsManager();
@@ -49,12 +51,12 @@ private:
     void Clear();
     wxFileName GetConfigFile() const;
     void LoadJSON(const wxFileName& path);
-    
+
 public:
     static ColoursAndFontsManager& Get();
-    
+
     /**
-     * @brief save the global settings 
+     * @brief save the global settings
      */
     void SaveGlobalSettings();
     /**
@@ -78,6 +80,10 @@ public:
         this->m_globalBgColour = globalBgColour;
         SaveGlobalSettings();
     }
+
+    void SetGlobalFont(const wxFont& font);
+    const wxFont& GetGlobalFont() const;
+
     void SetGlobalFgColour(const wxColour& globalFgColour)
     {
         this->m_globalFgColour = globalFgColour;
@@ -149,7 +155,7 @@ public:
      * @param themeName
      */
     void SetTheme(const wxString& themeName);
-    
+
     /**
      * @brief add new lexer (replace an existing one if exists)
      */

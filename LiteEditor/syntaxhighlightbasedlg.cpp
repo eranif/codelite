@@ -308,6 +308,15 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     
     boxSizer82->Add(fgSizer4, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText159 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Global font:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer4->Add(m_staticText159, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_fontPickerGlobal = new wxFontPickerCtrl(m_panelGlobalColours, wxID_ANY, wxNullFont, wxDefaultPosition, wxSize(-1,-1), wxFNTP_DEFAULT_STYLE);
+    m_fontPickerGlobal->SetToolTip(_("Set a global font for all the  supported languages"));
+    
+    fgSizer4->Add(m_fontPickerGlobal, 0, wxALL|wxEXPAND, 5);
+    
     m_staticText155 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Global theme:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     fgSizer4->Add(m_staticText155, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
@@ -410,6 +419,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_staticText84->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged), NULL, this);
+    m_fontPickerGlobal->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
     m_colourPickerOutputPanesFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_colourPickerOutputPanesBgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
@@ -453,6 +463,7 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_staticText84->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
     m_colourPickerSelTextFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged), NULL, this);
+    m_fontPickerGlobal->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
     m_colourPickerOutputPanesFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);
     m_colourPickerOutputPanesBgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnOutputViewColourChanged), NULL, this);

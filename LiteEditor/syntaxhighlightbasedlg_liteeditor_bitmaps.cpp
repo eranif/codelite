@@ -179,6 +179,6 @@ void wxCrafterqEa5vvInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_document-revert.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$res_eclipse.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$res_fonts-and-colours.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$_home_david_devel_git_CL_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"), xml_res_file_3, xml_res_size_3, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$_home_david_devel_git_CL_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"), xml_res_file_3, xml_res_size_3, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/syntaxhighlightbasedlg_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_syntaxhighlightbasedlg_liteeditor_bitmaps.xrc"));
 }

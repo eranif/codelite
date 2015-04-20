@@ -667,3 +667,9 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
     m_globalThemeChanged = true;
     m_isModified = true;
 }
+
+void SyntaxHighlightDlg::OnGlobalFontSelected(wxFontPickerEvent& event)
+{
+    m_isModified = true;
+    ColoursAndFontsManager::Get().SetGlobalFont(event.GetFont());
+}

@@ -1,6 +1,6 @@
 * Add code completion for XML / HTML
-* Allow setting global font to all lexers
 * Implement all un-implemented removes the markers from the editors
 * Git: add an option to open the commit in GitHub
 * Git: add a toolbar to clear the commit history
 * Editor: when zooming an editor using the mouse, offer the user to keep the font
+* Fix: code completion does not work when inside a function defined in a struct...

@@ -222,12 +222,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-    
+
     // Add wxcp file extension to the JavaScript lexer
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
     }
-    
+
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 
@@ -376,7 +376,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
             }
         }
     }
-    
+
     // If we got here, it means that we could not find an active lexer that matches
     // the file mask. However, if we did find a "firstLexer" it means
     // that we do have a lexer that matches the file extension, its just that it is not
@@ -384,7 +384,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     if(firstLexer) {
         return firstLexer;
     }
-    
+
     // Try this:
     // Use the FileExtManager to get the file type by examinig its content
     LexerConf::Ptr_t lexerByContent; // Null by default
@@ -723,12 +723,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
     }
-    
+
     // Add wxcp file extension to the JavaScript lexer
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
     }
-    
+
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 
@@ -762,3 +762,24 @@ void ColoursAndFontsManager::AddLexer(LexerConf::Ptr_t lexer)
     CHECK_PTR_RET(lexer);
     DoAddLexer(lexer->ToJSON());
 }
+
+void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
+{
+    this->m_globalFont = font;
+    
+    // Loop for every lexer and update the font per style
+    std::for_each(m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) {
+        StyleProperty::Map_t& props = lexer->GetLexerProperties();
+        StyleProperty::Map_t::iterator iter = props.begin();
+        for(; iter != props.end(); ++iter) {
+            StyleProperty& sp = iter->second;
+            sp.SetFaceName(font.GetFaceName());
+            sp.SetFontSize(font.GetPointSize());
+            sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
+            sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
+            sp.SetUnderlined(font.GetUnderlined());
+        }
+    });
+}
+
+const wxFont& ColoursAndFontsManager::GetGlobalFont() const { return this->m_globalFont; }

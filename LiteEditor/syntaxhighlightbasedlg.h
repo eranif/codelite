@@ -95,6 +95,8 @@ protected:
     wxStaticText* m_staticText84;
     wxColourPickerCtrl* m_colourPickerSelTextFgColour;
     wxPanel* m_panelGlobalColours;
+    wxStaticText* m_staticText159;
+    wxFontPickerCtrl* m_fontPickerGlobal;
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
     wxStaticText* m_staticText91;
@@ -133,6 +135,7 @@ protected:
     virtual void OnUseCustomFgTextColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTextSelFgUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOutputViewColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
@@ -181,6 +184,8 @@ public:
     wxNotebook* GetNotebook2() { return m_notebook2; }
     wxPanel* GetPanel25() { return m_panel25; }
     wxPanel* GetPanelSyntaxHighlight() { return m_panelSyntaxHighlight; }
+    wxStaticText* GetStaticText159() { return m_staticText159; }
+    wxFontPickerCtrl* GetFontPickerGlobal() { return m_fontPickerGlobal; }
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
     wxStaticText* GetStaticText91() { return m_staticText91; }

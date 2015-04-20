@@ -78,6 +78,7 @@
 #include "codelite_events.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/regex.h>
+#include "clEditorStateLocker.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -1297,6 +1298,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     }
 
     if(dlg.ShowModal() == wxID_OK) {
+        clEditorStateLocker locker(editor.GetCtrl());
         wxString code = dlg.GetGenCode();
         if(code.IsEmpty() == false) {
             editor.InsertTextWithIndentation(code, lineno);
@@ -1306,7 +1308,6 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
         if(dlg.GetFormatText()) {
             DoFormatEditor(&GetCtrl());
         }
-        editor.GotoLine(editor.GetLineCount() > oldLine ? oldLine : editor.GetLineCount());
     }
 }
 
@@ -1602,19 +1603,25 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
                 // Place the implementation in its new home
                 LEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile);
                 if(implEditor) {
-
-                    wxString sourceContent = implEditor->GetText();
+                    
+                    // Ensure that the file state is remained
                     int insertedLine = wxNOT_FOUND;
-                    TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
-                    implEditor->SetText(sourceContent);
-                    DoFormatEditor(implEditor);
+                    {
+                        clEditorStateLocker locker(implEditor->GetCtrl());
+                        
+                        wxString sourceContent = implEditor->GetText();
+                        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
+                        implEditor->SetText(sourceContent);
+                        DoFormatEditor(implEditor);
 
-                    implEditor->GotoLine(insertedLine != wxNOT_FOUND ? insertedLine : implEditor->GetLineCount());
-
-                    // Remove the current body and replace it with ';'
-                    rCtrl.SetTargetEnd(blockEndPos);
-                    rCtrl.SetTargetStart(blockStartPos);
-                    rCtrl.ReplaceTarget(wxT(";"));
+                        // Remove the current body and replace it with ';'
+                        rCtrl.SetTargetEnd(blockEndPos);
+                        rCtrl.SetTargetStart(blockStartPos);
+                        rCtrl.ReplaceTarget(wxT(";"));
+                    }
+                    if(insertedLine != wxNOT_FOUND) {
+                        implEditor->CenterLine(insertedLine);
+                    }
                 }
             }
             dlg->Destroy();
@@ -1844,8 +1851,15 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
         // Inser the new functions at the proper location
         wxString sourceContent = editor->GetText();
         TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
-        editor->SetText(sourceContent);
-        editor->GotoLine(insertedLine != wxNOT_FOUND ? insertedLine : editor->GetLineCount());
+        
+        {
+            clEditorStateLocker locker(editor->GetCtrl());
+            editor->SetText(sourceContent);
+        }
+        
+        if(insertedLine != wxNOT_FOUND) {
+            editor->CenterLine(insertedLine);
+        }
     }
 }
 
@@ -1945,8 +1959,15 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
             // Inser the new functions at the proper location
             wxString sourceContent = editor->GetText();
             TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
-            editor->SetText(sourceContent);
-            editor->GotoLine(insertedLine != wxNOT_FOUND ? insertedLine : editor->GetLineCount());
+            
+            {
+                clEditorStateLocker locker(editor->GetCtrl());
+                editor->SetText(sourceContent);
+            }
+        
+            if(insertedLine != wxNOT_FOUND) {
+                editor->CenterLine(insertedLine);
+            }
         }
     }
 }

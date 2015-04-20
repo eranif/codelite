@@ -2992,6 +2992,10 @@ void LEditor::OnFocusLost(wxFocusEvent& event)
 {
     m_isFocused = false;
     event.Skip();
+    if(HasCapture()) {
+        CL_DEBUG("Releasing the mouse...");
+        ReleaseMouse();
+    }
 }
 
 void LEditor::OnRightDown(wxMouseEvent& event)

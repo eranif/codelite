@@ -5957,9 +5957,22 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
     // Hide the _native_ toolbar
     if(GetToolBar()) {
-        GetToolBar()->Show(event.IsChecked());
-        GetToolBar()->Realize();
-
+        if(event.IsChecked()) {
+            
+            // show the toolbar, we first delete the old one
+            GetToolBar()->Hide();
+            delete GetToolBar();
+            
+            // Recreate the toolbar
+            if(EditorConfigST::Get()->GetOptions()->GetIconsSize() == 24) {
+                CreateNativeToolbar24();
+            } else {
+                CreateNativeToolbar16();
+            }
+        } else {
+            GetToolBar()->Hide();
+            GetToolBar()->Realize();
+        }
     } else {
         wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
         for(size_t i = 0; i < panes.GetCount(); ++i) {

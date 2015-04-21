@@ -4887,6 +4887,75 @@ void LEditor::SetCodeCompletionAnnotation(const wxString& text, int lineno)
     AnnotationSetStyle(lineno, ANNOTATION_STYLE_CC_ERROR);
 }
 
+int LEditor::GetFirstSingleLineCommentPos(int from, int commentStyle)
+{
+    int lineNu = LineFromPos(from);
+    int lastPos = from + LineLength(lineNu);
+    for(int i = from; from < lastPos; ++i) {
+        if(GetStyleAt(i) == commentStyle) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+void LEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle)
+{
+    int start = GetSelectionStart();
+    int end = GetSelectionEnd();
+    if(LineFromPosition(PositionBefore(end)) != LineFromPosition(end)) {
+        end = std::max(start, PositionBefore(end));
+    }
+
+    bool doingComment = GetStyleAt(start) != commentStyle;
+
+    int line_start = LineFromPosition(start);
+    int line_end = LineFromPosition(end);
+
+    BeginUndoAction();
+    for(; line_start <= line_end; line_start++) {
+        start = PositionFromLine(line_start);
+        if(doingComment) {
+            InsertText(start, commentSymbol);
+
+        } else {
+            int firstCommentPos = GetFirstSingleLineCommentPos(start, commentStyle);
+            if(firstCommentPos != wxNOT_FOUND) {
+                if(GetStyleAt(firstCommentPos) == commentStyle) {
+                    SetAnchor(firstCommentPos);
+                    SetCurrentPos(PositionAfter(PositionAfter(firstCommentPos)));
+                    DeleteBackNotLine();
+                }
+            }
+        }
+    }
+    EndUndoAction();
+
+    SetCaretAt(PositionFromLine(line_end + 1));
+    ChooseCaretX();
+}
+
+void LEditor::CommentBlockSelection(const wxString& commentBlockStart, const wxString& commentBlockEnd)
+{
+    int start = GetSelectionStart();
+    int end = GetSelectionEnd();
+    if(LineFromPosition(PositionBefore(end)) != LineFromPosition(end)) {
+        end = PositionBefore(end);
+    }
+    if(start == end) return;
+
+    SetCurrentPos(end);
+
+    BeginUndoAction();
+    InsertText(end, commentBlockEnd);
+    InsertText(start, commentBlockStart);
+    EndUndoAction();
+
+    CharRight();
+    CharRight();
+    ChooseCaretX();
+}
+
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------

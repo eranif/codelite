@@ -310,7 +310,19 @@ public:
      * i.e. the event wxEVT_CC_CODE_COMPLETE is fired only when refreshingList == false
      */
     void CodeComplete(bool refreshingList = false);
-
+    
+    /**
+     * @brief toggle line comment
+     * @param commentSymbol the comment symbol to insert (e.g. "//")
+     * @param commentStyle the wxSTC line comment style
+     */
+    virtual void ToggleLineComment(const wxString& commentSymbol, int commentStyle);
+    
+    /**
+     * @brief block comment the selection
+     */
+    virtual void CommentBlockSelection(const wxString& commentBlockStart, const wxString& commentBlockEnd);
+    
     // User clicked Ctrl+.
     void GotoDefinition();
 
@@ -851,7 +863,8 @@ private:
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     void DoUpdateOptions();
-
+    int GetFirstSingleLineCommentPos(int from, int commentStyle);
+    
     void FillBPtoMarkerArray();
     BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);
     void SetProperties();

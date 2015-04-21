@@ -76,7 +76,19 @@ public:
         }
         m_data.clear();
     }
-
+    
+    /**
+     * @brief toggle line comment
+     * @param commentSymbol the comment symbol to insert (e.g. "//")
+     * @param commentStyle the wxSTC line comment style (e.g. wxSTC_C_COMMENTLINE)
+     */
+    virtual void ToggleLineComment(const wxString& commentSymbol, int commentStyle) = 0;
+    
+    /**
+     * @brief block comment the selection
+     */
+    virtual void CommentBlockSelection(const wxString& commentBlockStart, const wxString& commentBlockEnd) = 0;
+    
     /**
      * @brief return true if the editor is modified
      */

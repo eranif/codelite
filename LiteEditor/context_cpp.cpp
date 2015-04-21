@@ -1172,76 +1172,13 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
 void ContextCpp::OnCommentSelection(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
-    LEditor& editor = GetCtrl();
-    int start = editor.GetSelectionStart();
-    int end = editor.GetSelectionEnd();
-    if(editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
-        end = editor.PositionBefore(end);
-    }
-    if(start == end) return;
-
-    editor.SetCurrentPos(end);
-
-    editor.BeginUndoAction();
-    editor.InsertText(end, wxT("*/"));
-    editor.InsertText(start, wxT("/*"));
-    editor.EndUndoAction();
-
-    editor.CharRight();
-    editor.CharRight();
-    editor.ChooseCaretX();
-}
-
-int ContextCpp::GetFirstCxxCommentPos(LEditor& editor, int from)
-{
-    int lineNu = editor.LineFromPos(from);
-    int lastPos = from + editor.LineLength(lineNu);
-    for(int i = from; from < lastPos; ++i) {
-        if(editor.GetStyleAt(i) == wxSTC_C_COMMENTLINE) {
-            return i;
-        }
-    }
-    return wxNOT_FOUND;
+    GetCtrl().CommentBlockSelection("/*", "*/");
 }
 
 void ContextCpp::OnCommentLine(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LEditor& editor = GetCtrl();
-
-    int start = editor.GetSelectionStart();
-    int end = editor.GetSelectionEnd();
-    if(editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
-        end = std::max(start, editor.PositionBefore(end));
-    }
-
-    bool doingComment = editor.GetStyleAt(start) != wxSTC_C_COMMENTLINE;
-
-    int line_start = editor.LineFromPosition(start);
-    int line_end = editor.LineFromPosition(end);
-
-    editor.BeginUndoAction();
-    for(; line_start <= line_end; line_start++) {
-        start = editor.PositionFromLine(line_start);
-        if(doingComment) {
-            editor.InsertText(start, wxT("//"));
-
-        } else {
-            int firstCommentPos = GetFirstCxxCommentPos(editor, start);
-            if(firstCommentPos != wxNOT_FOUND) {
-                if(editor.GetStyleAt(firstCommentPos) == wxSTC_C_COMMENTLINE) {
-                    editor.SetAnchor(firstCommentPos);
-                    editor.SetCurrentPos(editor.PositionAfter(editor.PositionAfter(firstCommentPos)));
-                    editor.DeleteBackNotLine();
-                }
-            }
-        }
-    }
-    editor.EndUndoAction();
-
-    editor.SetCaretAt(editor.PositionFromLine(line_end + 1));
-    editor.ChooseCaretX();
+    GetCtrl().ToggleLineComment("//", wxSTC_C_COMMENTLINE);
 }
 
 void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)

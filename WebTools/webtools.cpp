@@ -57,6 +57,8 @@ WebTools::WebTools(IManager* manager)
     m_timer = new wxTimer(this);
     m_timer->Start(3000);
     Bind(wxEVT_TIMER, &WebTools::OnTimer, this, m_timer->GetId());
+    wxTheApp->Bind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));
+    wxTheApp->Bind(wxEVT_MENU, &WebTools::OnCommentSelection, this, XRCID("comment_selection"));
 }
 
 WebTools::~WebTools() {}
@@ -88,7 +90,10 @@ void WebTools::UnPlug()
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-
+    
+    wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));
+    wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentSelection, this, XRCID("comment_selection"));
+    
     // Disconnect the timer events
     Unbind(wxEVT_TIMER, &WebTools::OnTimer, this, m_timer->GetId());
     m_timer->Stop();
@@ -249,4 +254,28 @@ bool WebTools::InsideJSString(IEditor* editor)
         }
     }
     return false;
+}
+
+void WebTools::OnCommentLine(wxCommandEvent& e)
+{
+    e.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    if(IsJavaScriptFile(editor)) {
+        e.Skip(false);
+        editor->ToggleLineComment("//", wxSTC_C_COMMENTLINE);
+    }
+}
+
+void WebTools::OnCommentSelection(wxCommandEvent& e)
+{
+    e.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    if(IsJavaScriptFile(editor)) {
+        e.Skip(false);
+        editor->CommentBlockSelection("/*", "*/");
+    }
 }

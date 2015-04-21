@@ -28,7 +28,8 @@ protected:
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
     void OnSettings(wxCommandEvent& event);
     void OnTimer(wxTimerEvent& event);
-
+    void OnCommentLine(wxCommandEvent &e);
+    void OnCommentSelection(wxCommandEvent &e);
 private:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);

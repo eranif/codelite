@@ -47,13 +47,13 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     
     boxSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrlAccounts = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(200,-1), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
+    m_dvListCtrlAccounts = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
     
     boxSizer10->Add(m_dvListCtrlAccounts, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrlAccounts->AppendTextColumn(_("Account"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlAccounts->AppendTextColumn(_("Host"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlAccounts->AppendTextColumn(_("User"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlAccounts->AppendTextColumn(_("Account"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_dvListCtrlAccounts->AppendTextColumn(_("Host"), wxDATAVIEW_CELL_INERT, 75, wxALIGN_LEFT);
+    m_dvListCtrlAccounts->AppendTextColumn(_("User"), wxDATAVIEW_CELL_INERT, 75, wxALIGN_LEFT);
     wxBoxSizer* boxSizer15 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer10->Add(boxSizer15, 0, wxEXPAND, 5);
@@ -86,11 +86,17 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     
     boxSizer4->Add(m_button8, 0, wxALL, 5);
     
+    SetName(wxT("SSHAccountManagerDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_dvListCtrlAccounts->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SSHAccountManagerDlgBase::OnItemActivated), NULL, this);
     m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnAddAccount), NULL, this);
@@ -140,6 +146,11 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer23);
+    
+    m_infobar = new wxInfoBar(this, wxID_ANY);
+    m_infobar->SetSize(wxSize(-1,-1));
+    
+    boxSizer23->Add(m_infobar, 0, wxEXPAND, 5);
     
     wxFlexGridSizer* flexGridSizer31 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer31->SetFlexibleDirection( wxBOTH );
@@ -245,12 +256,19 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer29->Add(m_button25, 0, wxALL, 5);
     
+    SetName(wxT("AddSSHAcountDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
+    m_textCtrlHomeFolder->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AddSSHAcountDlgBase::OnHomeFolderUpdated), NULL, this);
     m_button51->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddSSHAcountDlgBase::OnTestConnection), NULL, this);
     m_button51->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnTestConnectionUI), NULL, this);
     m_button27->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnOKUI), NULL, this);
@@ -259,6 +277,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
 
 AddSSHAcountDlgBase::~AddSSHAcountDlgBase()
 {
+    m_textCtrlHomeFolder->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AddSSHAcountDlgBase::OnHomeFolderUpdated), NULL, this);
     m_button51->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddSSHAcountDlgBase::OnTestConnection), NULL, this);
     m_button51->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnTestConnectionUI), NULL, this);
     m_button27->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnOKUI), NULL, this);
@@ -354,11 +373,17 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer57->Add(m_button61, 0, wxALL, 5);
     
+    SetName(wxT("SFTPBrowserBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     m_textCtrlRemoteFolder->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextEnter), NULL, this);
     m_buttonRefresh->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnRefresh), NULL, this);
@@ -493,11 +518,17 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
     
     boxSizer116->Add(m_textCtrl1, 0, wxALL|wxEXPAND, 2);
     
+    SetName(wxT("SSHTerminalBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SSHTerminalBase::OnClear), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHTerminalBase::OnClearUI), NULL, this);

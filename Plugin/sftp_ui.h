@@ -16,6 +16,7 @@
 #include <wx/sizer.h>
 #include <wx/dataview.h>
 #include <wx/button.h>
+#include <wx/infobar.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/gbsizer.h>
@@ -30,6 +31,12 @@
 #include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK SSHAccountManagerDlgBase : public wxDialog
@@ -65,6 +72,7 @@ public:
 class WXDLLIMPEXP_SDK AddSSHAcountDlgBase : public wxDialog
 {
 protected:
+    wxInfoBar* m_infobar;
     wxStaticText* m_staticText98;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticHostIp;
@@ -82,11 +90,13 @@ protected:
     wxButton* m_button25;
 
 protected:
+    virtual void OnHomeFolderUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTestConnection(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTestConnectionUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxInfoBar* GetInfobar() { return m_infobar; }
     wxStaticText* GetStaticText98() { return m_staticText98; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticHostIp() { return m_staticHostIp; }

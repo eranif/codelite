@@ -42,6 +42,7 @@ public:
     void GetAccountInfo(SSHAccountInfo& info);
 
 protected:
+    virtual void OnHomeFolderUpdated(wxCommandEvent& event);
     virtual void OnTestConnectionUI(wxUpdateUIEvent& event);
     virtual void OnTestConnection(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);

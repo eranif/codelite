@@ -54,7 +54,11 @@ AddSSHAcountDlg::~AddSSHAcountDlg() {}
 
 void AddSSHAcountDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
+    wxString homeFolder = m_textCtrlHomeFolder->GetValue();
+    bool homeFolderValid = (homeFolder.IsEmpty() || (homeFolder.StartsWith("/")));
+
+    event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty() &&
+                 homeFolderValid);
 }
 
 void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
@@ -96,5 +100,13 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
 void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
+}
+void AddSSHAcountDlg::OnHomeFolderUpdated(wxCommandEvent& event)
+{
+    wxString homeFolder = m_textCtrlHomeFolder->GetValue();
+    if(!homeFolder.StartsWith("/")) {
+        m_infobar->ShowMessage(_("Default folder must be set to full path (i.e. it should start with a '/')"),
+                               wxICON_WARNING);
+    }
 }
 #endif

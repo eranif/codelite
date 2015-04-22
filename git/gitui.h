@@ -40,6 +40,12 @@
 #include <wx/icon.h>
 #include "dataviewfilesmodel.h"
 #include <wx/gauge.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class GitSettingsDlgBase : public wxDialog
 {
@@ -123,6 +129,8 @@ protected:
 protected:
     virtual void OnToggleCheckAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRecentCommitSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearGitCommitHistory(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearGitCommitHistoryUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 

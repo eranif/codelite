@@ -31,6 +31,7 @@
 #include "lexer_configuration.h"
 #include "editor_config.h"
 #include "ColoursAndFontsManager.h"
+#include "globals.h"
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent)
     : GitCommitDlgBase(parent)
@@ -134,6 +135,7 @@ void GitCommitDlg::OnChangeFile(wxCommandEvent& e)
     wxString file = m_listBox->GetString(sel);
     m_stcDiff->SetReadOnly(false);
     m_stcDiff->SetText(m_diffMap[file]);
+    ::clRecalculateSTCHScrollBar(m_stcDiff);
     m_stcDiff->SetReadOnly(true);
 }
 
@@ -158,4 +160,20 @@ void GitCommitDlg::OnToggleCheckAll(wxCommandEvent& event)
 void GitCommitDlg::OnRecentCommitSelected(wxCommandEvent& event)
 {
     m_stcCommitMessage->SetText(m_choiceRecentCommits->GetStringSelection());
+}
+void GitCommitDlg::OnClearGitCommitHistory(wxCommandEvent& event)
+{
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    
+    data.GetRecentCommit().Clear();
+    conf.WriteItem(&data);
+    
+    m_choiceRecentCommits->Clear();
+}
+
+void GitCommitDlg::OnClearGitCommitHistoryUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_choiceRecentCommits->IsEmpty());
 }

@@ -3,7 +3,6 @@
 * Git: add a toolbar to clear the commit history
 * Editor: when zooming an editor using the mouse, offer the user to keep the font
 * Fix: C++ code completion does not work when inside a function defined in a struct...
-* Fix: wxC persistent code should handle case where we do "Find" the object (just call "Restore()")
 * Add version number to the weekly build
 * CxxCheck does not work (bug opened)
 * Find In Files: when a PHP workspace is opened, make Ctrl-Shift-F start from that folder location

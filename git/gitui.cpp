@@ -37,6 +37,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     this->SetSizer(mainSizer);
     
     m_treebook230 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook230->SetName(wxT("m_treebook230"));
     
     mainSizer->Add(m_treebook230, 1, wxALL|wxEXPAND, 5);
     
@@ -166,15 +167,31 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer284->AddButton(m_buttonCancel);
     m_stdBtnSizer284->Realize();
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook230)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_treebook230);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treebook230);
+    }
+    #endif
     m_treebook230->ExpandNode( 0, true );
     m_treebook230->ExpandNode( 1, true );
     m_treebook230->ExpandNode( 2, true );
     
+    SetName(wxT("GitSettingsDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_staticText254->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
     m_textCtrlLocalName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
@@ -217,20 +234,21 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_HORZ_TEXT);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
     bSizer4->Add(m_auibar, 0, wxALL|wxEXPAND, 5);
     
-    m_auibar->AddTool(ID_TOGGLE_CHECKALL, _("Toggle Check All"), wxXmlResource::Get()->LoadBitmap(wxT("select-all")), wxNullBitmap, wxITEM_NORMAL, _("Toggle Check All"), _("Toggle Check All"), NULL);
+    m_auibar->AddTool(ID_TOGGLE_CHECKALL, _("Toggle Files"), wxXmlResource::Get()->LoadBitmap(wxT("select-all")), wxNullBitmap, wxITEM_NORMAL, _("Toggle Check All"), _("Toggle Check All"), NULL);
     
     m_auibar->AddStretchSpacer(1);
     
-    m_auibar->AddLabel(wxID_ANY, _("Recent Commits:"), -1);
-    
     wxArrayString m_choiceRecentCommitsArr;
     m_choiceRecentCommits = new wxChoice(m_auibar, wxID_ANY, wxDefaultPosition, wxSize(300,-1), m_choiceRecentCommitsArr, 0);
+    m_choiceRecentCommits->SetToolTip(_("Recent commits"));
     m_auibar->AddControl(m_choiceRecentCommits);
+    
+    m_auibar->AddTool(wxID_CLEAR, _("Clear History"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Clear History"), _("Clear History"), NULL);
     m_auibar->Realize();
     
     m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
@@ -372,14 +390,24 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stdBtnSizer278->AddButton(m_buttonCancel);
     m_stdBtnSizer278->Realize();
     
+    SetName(wxT("GitCommitDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     m_choiceRecentCommits->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnRecentCommitSelected), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
     m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
@@ -389,6 +417,8 @@ GitCommitDlgBase::~GitCommitDlgBase()
 {
     this->Disconnect(ID_TOGGLE_CHECKALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnToggleCheckAll), NULL, this);
     m_choiceRecentCommits->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnRecentCommitSelected), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnClearGitCommitHistory), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitCommitDlgBase::OnClearGitCommitHistoryUI), NULL, this);
     m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
@@ -585,11 +615,19 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer290->AddButton(m_button292);
     m_stdBtnSizer290->Realize();
     
+    SetName(wxT("GitCommitListDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(GitCommitListDlgBase::OnClose), NULL, this);
     m_searchCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(GitCommitListDlgBase::OnSearchCommitList), NULL, this);
@@ -678,11 +716,19 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_sdbSizer1->AddButton(m_button145);
     m_sdbSizer1->Realize();
     
+    SetName(wxT("GitDiffDlgBase"));
     SetSizeHints(879,600);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_fileListBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnChangeFile), NULL, this);
     
@@ -759,11 +805,19 @@ gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer294->AddButton(m_buttonCancel);
     m_stdBtnSizer294->Realize();
     
+    SetName(wxT("gitCloneDlgBaseClass"));
     SetSizeHints(500,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_buttonOk->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnOKUI), NULL, this);
     
@@ -848,11 +902,19 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer306->AddButton(m_button310);
     m_stdBtnSizer306->Realize();
     
+    SetName(wxT("GitFileDiffDlgBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_button308->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnCloseDialog), NULL, this);
     m_button310->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
@@ -1171,11 +1233,19 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer300->AddButton(m_buttonOK);
     m_stdBtnSizer300->Realize();
     
+    SetName(wxT("GitApplyPatchDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 GitApplyPatchDlgBase::~GitApplyPatchDlgBase()
@@ -1304,11 +1374,12 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     boxSizer92->Add(m_stcLog, 1, wxALL|wxEXPAND, 2);
     
+    SetName(wxT("GitConsoleBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(XRCID("git_clear_log"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
     this->Connect(XRCID("git_clear_log"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);

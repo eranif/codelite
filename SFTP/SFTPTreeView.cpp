@@ -371,7 +371,7 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
         menu.AppendSeparator();
     }
 
-#if 0
+#if 1
     // Append headers column menu items
     menu.Append(ID_SHOW_TYPE_COL, _("Show 'Type' column"), "", wxITEM_CHECK);
     menu.Append(ID_SHOW_SIZE_COL, _("Show 'Size' column"), "", wxITEM_CHECK);

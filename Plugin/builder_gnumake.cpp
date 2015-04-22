@@ -908,6 +908,14 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToB
         // Remove the entire build folder
         text << wxT("\t") << wxT("$(RM) -r ") << imd << "\n";
         
+        // Remove the pre-compiled header
+        wxString pchFile = bldConf->GetPrecompiledHeader();
+        pchFile.Trim().Trim(false);
+
+        if(pchFile.IsEmpty() == false) {
+            text << wxT("\t") << wxT("$(RM) ") << pchFile << wxT(".gch") << wxT("\n");
+        }
+        
     } else if(OS_WINDOWS) {
         text << wxT("\t") << wxT("$(RM) ") << imd << "*$(ObjectSuffix)" << wxT("\n");
         text << wxT("\t") << wxT("$(RM) ") << imd << "*$(DependSuffix)" << wxT("\n");

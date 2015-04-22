@@ -406,7 +406,7 @@ void CMakeHelpTab::CreateHelpPage(const wxString& content, const wxString& subje
     text.Replace("&gt;" , ">");
     text.Replace("\r", "");
     text.Replace("\n\n", "\n");
-    
+    text.Replace("::\n", "\n\n");
     IManager* manager = ::clGetManager();
     
     // Write the content of the help into a temporary file

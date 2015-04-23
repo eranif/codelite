@@ -510,8 +510,14 @@ void CppCheckPlugin::DoProcess(ProjectPtr proj)
 {
     wxString command = DoGetCommand(proj);
     m_view->AppendLine(wxString::Format(_("Starting cppcheck: %s\n"), command.c_str()));
-
+    
+#ifdef __WXMSW__
+    // Under Windows, we set the working directory to the binary folder
+    // so the configurtion files can be found
+    m_cppcheckProcess = CreateAsyncProcess(this, command, IProcessCreateDefault, clStandardPaths::Get().GetBinFolder());
+#else
     m_cppcheckProcess = CreateAsyncProcess(this, command);
+#endif
     if(!m_cppcheckProcess) {
         wxMessageBox(_("Failed to launch codelite_cppcheck process!"), _("Warning"), wxOK | wxCENTER | wxICON_WARNING);
         return;

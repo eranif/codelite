@@ -106,7 +106,9 @@ bool clTernServer::Start()
 void clTernServer::Terminate()
 {
     m_goingDown = true;
-    m_tern->Terminate();
+    if (m_tern) {
+        m_tern->Terminate();
+	}
     wxDELETE(m_tern);
     
     // Stop the worker thread

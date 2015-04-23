@@ -6,15 +6,15 @@
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
-		"name":	"Release",
-		"enabled":	false,
-		"buildDirectory":	"build",
-		"sourceDirectory":	"$(ProjectPath)",
-		"generator":	"",
-		"buildType":	"",
-		"arguments":	[],
-		"parentProject":	""
-	}]]]>
+  "name": "Release",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }]]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
@@ -62,7 +62,7 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Release" CompilerType="g++-64-single-job" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0" C_Options="-g;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>

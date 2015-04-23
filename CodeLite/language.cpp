@@ -854,6 +854,8 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
         // examine the local scope
 
         CL_DEBUG(wxT("Parsing for local variables..."));
+        CL_DEBUG1("Current scrope:\n%s\n", GetVisibleScope());
+        
         const wxCharBuffer buf = _C(GetVisibleScope());
         const wxCharBuffer buf2 = _C(GetLastFunctionSignature() + wxT(";"));
         get_variables(buf.data(), li, ignoreTokens, false);
@@ -862,6 +864,8 @@ bool Language::ProcessToken(TokenContainer* tokeContainer)
 
         // Search for a full match in the returned list
         for(VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
+            // Print the locals found
+            CL_DEBUG1("%s", iter->m_name.c_str());
             Variable var = (*iter);
             wxString var_name = _U(var.m_name.c_str());
             if(var_name == token->GetName()) {

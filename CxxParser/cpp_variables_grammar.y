@@ -515,7 +515,7 @@ variable_decl       :   const_or_volatile_spec basic_type_name
                             curr_var.m_isConst = ($1.find("const") != std::string::npos);
                             s_tmpString.clear();
                         }
-                        | const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER  '{' {s_tmpString = var_consumBracketsContent('{');}
+                        /*| const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER  '{' {s_tmpString = var_consumBracketsContent('{');} ';'
                         {
                             $$ = $1 + " " + $2 + " " + $3 + " " + $4 + $5 + $6 + s_tmpString;
                             $3.erase($3.find_last_not_of(":")+1);
@@ -524,7 +524,7 @@ variable_decl       :   const_or_volatile_spec basic_type_name
                             curr_var.m_completeType = $3 + $4;
                             curr_var.m_isConst = ($1.find("const") != std::string::npos);
                             s_tmpString.clear();
-                        }
+                        }*/
                         | const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER
                         {
                             $$ = $1 + " " + $2 + " " + $3 + " " + $4;
@@ -537,7 +537,6 @@ variable_decl       :   const_or_volatile_spec basic_type_name
                             s_tmpString.clear();
                         }
                         ;
-
 %%
 void yyerror(char *s) {}
 

@@ -514,6 +514,8 @@ void CppCheckPlugin::DoProcess(ProjectPtr proj)
 #ifdef __WXMSW__
     // Under Windows, we set the working directory to the binary folder
     // so the configurtion files can be found
+    CL_DEBUG("CppCheck: Working directory: %s", clStandardPaths::Get().GetBinFolder());
+    CL_DEBUG("CppCheck: Command: %s", command);
     m_cppcheckProcess = CreateAsyncProcess(this, command, IProcessCreateDefault, clStandardPaths::Get().GetBinFolder());
 #else
     m_cppcheckProcess = CreateAsyncProcess(this, command);

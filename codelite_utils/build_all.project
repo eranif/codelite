@@ -132,5 +132,6 @@
     <Project Name="codelite_make"/>
     <Project Name="codelite_terminal"/>
     <Project Name="codelite_echo"/>
+    <Project Name="codelite_cppcheck"/>
   </Dependencies>
 </CodeLite_Project>

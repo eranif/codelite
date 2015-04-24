@@ -25,18 +25,16 @@
 
 aaaaa ICON "res/cubes.ico"
 #include "wx/msw/wx.rc"
-#ifndef __MINGW32__
 #if WIN64
 1 24 "wx/msw/amd64.manifest"
 #else
 1 24 "wx/msw/wx.manifest"
 #endif
-#endif
 ///////////////////////////////////////////////////////////////////////////////
 // Version information
 VS_VERSION_INFO    VERSIONINFO
-FILEVERSION      7,0,0,0
-PRODUCTVERSION   7,0,0,1
+FILEVERSION      8,0,0,0
+PRODUCTVERSION   8,0,0,1
 FILEFLAGSMASK    0x3fL // VS_FFI_FILEFLAGSMASK
 FILEFLAGS        0x0L  // final version
 FILEOS           VOS_NT_WINDOWS32
@@ -50,14 +48,14 @@ FILESUBTYPE      VFT2_UNKNOWN { // not used
 			VALUE "CompanyName",      "The CodeLite Team"
 			VALUE "Developer",        "Eran Ifrah"
 			VALUE "FileDescription",  "CodeLite, an Open Source, free, cross platform IDE for C/C++/PHP"
-			VALUE "FileVersion",      "7.0.0"
+			VALUE "FileVersion",      "8.0.0"
 			VALUE "InternalName",     "CodeLite"
 			VALUE "LegalCopyright",   "Copyright (C) 2007-2015 CodeLite Team"
 			VALUE "LegalTrademarks",  "All rights reserved."
 			VALUE "OriginalFilename", "codelite.exe"
 			VALUE "PrivateBuild",     ""
 			VALUE "ProductName",      "CodeLite"
-			VALUE "ProductVersion",   "7.0.0"
+			VALUE "ProductVersion",   "8.0.0"
 			VALUE "SpecialBuild",     ""
 			VALUE "Support",          "http://forums.codelite.org"
 			VALUE "Users",            "Unlimited."

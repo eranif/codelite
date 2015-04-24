@@ -1166,7 +1166,7 @@ bool LEditor::SaveFile()
         if(!SaveToFile(m_fileName)) return false;
 
         // if we managed to save the file, remove the 'read only' attribute
-        clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, false);
+        clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
 
         // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
         m_deltas->OnFileSaved();
@@ -1218,7 +1218,7 @@ bool LEditor::SaveFileAs()
         // update syntax highlight
         SetSyntaxHighlight();
 
-        clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
+        clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
         return true;
     }
     return false;
@@ -2737,7 +2737,7 @@ void LEditor::ReloadFile()
     SetEnsureCaretIsVisible(PositionFromLine(lineNumber));
 
     // mark read only files
-    clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
+    clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
     SetReloadingFile(false);
 
     // Notify that a file has been loaded into the editor

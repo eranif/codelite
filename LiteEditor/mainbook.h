@@ -198,7 +198,7 @@ public:
     void ShowWhitespace(int ws);
     void UpdateColours();
     void UpdateBreakpoints();
-    void MarkEditorReadOnly(LEditor* editor, bool ro);
+    void MarkEditorReadOnly(LEditor* editor);
 
     void SetUseBuffereLimit(bool useBuffereLimit) { this->m_useBuffereLimit = useBuffereLimit; }
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }

@@ -575,6 +575,8 @@ EVT_MENU(XRCID("copy_file_name_only"), clMainFrame::OnCopyFileName)
 EVT_MENU(XRCID("open_shell_from_filepath"), clMainFrame::OnOpenShellFromFilePath)
 EVT_MENU(XRCID("open_file_explorer"), clMainFrame::OnOpenFileExplorerFromFilePath)
 EVT_MENU(XRCID("ID_DETACH_EDITOR"), clMainFrame::OnDetachEditor)
+EVT_MENU(XRCID("mark_readonly"), clMainFrame::OnMarkEditorReadonly)
+EVT_UPDATE_UI(XRCID("mark_readonly"), clMainFrame::OnMarkEditorReadonlyUI)
 EVT_UPDATE_UI(XRCID("copy_file_name"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("copy_file_path"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), clMainFrame::OnFileExistUpdateUI)
@@ -5959,11 +5961,11 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
     // Hide the _native_ toolbar
     if(GetToolBar()) {
         if(event.IsChecked()) {
-            
+
             // show the toolbar, we first delete the old one
             GetToolBar()->Hide();
             delete GetToolBar();
-            
+
             // Recreate the toolbar
             if(EditorConfigST::Get()->GetOptions()->GetIconsSize() == 24) {
                 CreateNativeToolbar24();
@@ -6093,4 +6095,22 @@ void clMainFrame::OnCloseTabsToTheRight(wxCommandEvent& e)
     if(win) {
         GetMainBook()->CallAfter(&MainBook::CloseTabsToTheRight, win);
     }
+}
+
+void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e) 
+{ 
+    wxUnusedVar(e);
+    LEditor* editor = GetMainBook()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    editor->SetReadOnly(e.IsChecked());
+    GetMainBook()->MarkEditorReadOnly(editor);
+}
+
+void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)
+{
+    LEditor* editor = GetMainBook()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    e.Check(!editor->IsEditable());
 }

@@ -580,8 +580,8 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
         }
         editor->SetSyntaxHighlight();
 
-        // mark the editor as read only if needed
-        MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
+        // mark the editor as read only if neede
+        MarkEditorReadOnly(editor);
 
         // SHow the notebook
         if(hidden) GetSizer()->Show(m_book);
@@ -1073,15 +1073,27 @@ void MainBook::UpdateBreakpoints()
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointMarkers();
 }
 
-void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
+void MainBook::MarkEditorReadOnly(LEditor* editor)
 {
     if(!editor) {
+        return;
+    }
+
+    bool readOnly = (!editor->IsEditable()) || ::IsFileReadOnly(editor->GetFileName());
+    if(readOnly && editor->GetModify()) {
+        // an attempt to mark a modified file as read-only
+        // ask the user to save his changes before
+        ::wxMessageBox(_("Please save your changes before marking the file as read only"),
+                       "CodeLite",
+                       wxOK | wxCENTER | wxICON_WARNING,
+                       this);
         return;
     }
 #if !CL_USE_NATIVEBOOK
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         if(editor == m_book->GetPage(i)) {
-            m_book->SetPageBitmap(i, ro ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap);
+            m_book->SetPageBitmap(i, readOnly ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap);
+            m_book->Refresh();
             break;
         }
     }
@@ -1357,10 +1369,10 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
     // Get list of tabs to close
     std::vector<wxWindow*> windows;
     m_book->GetEditorsInOrder(windows);
-    
+
     // start from right to left
     if(windows.empty()) return;
-    
+
     std::vector<wxWindow*> tabsToClose;
     for(int i = (int)(windows.size() - 1); i >= 0; --i) {
         if(windows.at(i) == win) {
@@ -1368,13 +1380,13 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
         }
         tabsToClose.push_back(windows.at(i));
     }
-    
+
     if(tabsToClose.empty()) return;
-    
-    for(size_t i=0; i<tabsToClose.size(); ++i) {
+
+    for(size_t i = 0; i < tabsToClose.size(); ++i) {
         ClosePage(tabsToClose.at(i));
     }
-    
+
 #ifdef __WXMAC__
     m_book->GetSizer()->Layout();
 #endif

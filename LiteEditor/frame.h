@@ -441,6 +441,8 @@ protected:
     void OnOpenShellFromFilePath(wxCommandEvent& e);
     void OnOpenFileExplorerFromFilePath(wxCommandEvent& e);
     void OnDetachEditor(wxCommandEvent& e);
+    void OnMarkEditorReadonly(wxCommandEvent& e);
+    void OnMarkEditorReadonlyUI(wxUpdateUIEvent& e);
     void OnDetachEditorUI(wxUpdateUIEvent& e);
     void OnQuickDebug(wxCommandEvent& e);
     void OnQuickDebugUI(wxUpdateUIEvent& e);

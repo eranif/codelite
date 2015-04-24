@@ -48,7 +48,7 @@ whitespace_visiable_after_indent|View::Show Whitespace|Visible After First Inden
 full_screen|View|Full Screen...|Alt-M
 view_welcome_page|View|Show Welcome Page|
 view_welcome_page_at_startup|View|Load Welcome Page at Startup|
-output_pane|View|Output Pane|F1
+output_pane|View|Output Pane|Ctrl-`
 workspace_pane|View|Workspace Pane|Ctrl-Alt-W
 debugger_pane|View|Debugger Pane|Ctrl-Alt-D
 show_nav_toolbar|View|Navigation Bar|Ctrl-Alt-N

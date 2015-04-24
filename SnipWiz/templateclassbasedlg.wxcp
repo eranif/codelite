@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 6,
+  "m_objCounter": 8,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC61A6InitBitmapResources",
   "m_bitmapsFile": "templateclassbasedlg_snipwiz_bitmaps.cpp",
@@ -132,6 +132,10 @@
      "m_sizerFlags": [],
      "m_properties": [{
        "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
        "m_label": "Name:",
        "m_value": "bSizer1"
       }, {
@@ -151,7 +155,7 @@
        "border": 5,
        "gbSpan": ",",
        "gbPosition": ",",
-       "m_styles": ["wxBK_DEFAULT"],
+       "m_styles": ["wxNB_NOPAGETHEME", "wxBK_DEFAULT"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -303,6 +307,10 @@
            "m_sizerFlags": [],
            "m_properties": [{
              "type": "string",
+             "m_label": "Minimum Size:",
+             "m_value": "-1,-1"
+            }, {
+             "type": "string",
              "m_label": "Name:",
              "m_value": "bSizer2"
             }, {
@@ -326,8 +334,12 @@
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "string",
+               "m_label": "Minimum Size:",
+               "m_value": "-1,-1"
+              }, {
+               "type": "string",
                "m_label": "Name:",
-               "m_value": "sbSizer01"
+               "m_value": "staticBoxSizer8"
               }, {
                "type": "string",
                "m_label": "Style:",
@@ -345,13 +357,17 @@
              "m_events": [],
              "m_children": [{
                "m_type": 4403,
-               "proportion": 0,
+               "proportion": 1,
                "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
                "m_styles": [],
                "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                "m_properties": [{
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
                  "type": "string",
                  "m_label": "Name:",
                  "m_value": "fgSizer1"
@@ -462,12 +478,12 @@
                  "m_children": []
                 }, {
                  "m_type": 4406,
-                 "proportion": 0,
+                 "proportion": 1,
                  "border": 5,
                  "gbSpan": ",",
                  "gbPosition": ",",
                  "m_styles": [],
-                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT", "wxALIGN_CENTER_VERTICAL"],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                  "m_properties": [{
                    "type": "winid",
                    "m_label": "ID:",
@@ -475,7 +491,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "200,-1"
+                   "m_value": "-1,-1"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
@@ -636,7 +652,7 @@
                  "gbSpan": ",",
                  "gbPosition": ",",
                  "m_styles": ["wxCB_SORT", "wxCB_READONLY"],
-                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT", "wxALIGN_CENTER_VERTICAL"],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                  "m_properties": [{
                    "type": "winid",
                    "m_label": "ID:",
@@ -644,7 +660,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "200,-1"
+                   "m_value": "-1,-1"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
@@ -724,6 +740,10 @@
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "string",
+               "m_label": "Minimum Size:",
+               "m_value": "-1,-1"
+              }, {
+               "type": "string",
                "m_label": "Name:",
                "m_value": "sbSizer02"
               }, {
@@ -750,6 +770,10 @@
                "m_styles": [],
                "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                "m_properties": [{
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
                  "type": "string",
                  "m_label": "Name:",
                  "m_value": "fgSizer2"
@@ -865,7 +889,7 @@
                  "gbSpan": ",",
                  "gbPosition": ",",
                  "m_styles": [],
-                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT", "wxALIGN_CENTER_VERTICAL"],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                  "m_properties": [{
                    "type": "winid",
                    "m_label": "ID:",
@@ -873,7 +897,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "200,-1"
+                   "m_value": "-1,-1"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
@@ -1046,7 +1070,7 @@
                  "gbSpan": ",",
                  "gbPosition": ",",
                  "m_styles": [],
-                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT", "wxALIGN_CENTER_VERTICAL"],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
                  "m_properties": [{
                    "type": "winid",
                    "m_label": "ID:",
@@ -1054,7 +1078,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Size:",
-                   "m_value": "200,-1"
+                   "m_value": "-1,-1"
                   }, {
                    "type": "string",
                    "m_label": "Minimum Size:",
@@ -1690,6 +1714,10 @@
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
              "m_properties": [{
                "type": "string",
+               "m_label": "Minimum Size:",
+               "m_value": "-1,-1"
+              }, {
+               "type": "string",
                "m_label": "Name:",
                "m_value": "bSizer3"
               }, {
@@ -1995,6 +2023,10 @@
            "m_sizerFlags": [],
            "m_properties": [{
              "type": "string",
+             "m_label": "Minimum Size:",
+             "m_value": "-1,-1"
+            }, {
+             "type": "string",
              "m_label": "Name:",
              "m_value": "bSizer4"
             }, {
@@ -2017,6 +2049,10 @@
              "m_styles": [],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
+               "type": "string",
+               "m_label": "Minimum Size:",
+               "m_value": "-1,-1"
+              }, {
                "type": "string",
                "m_label": "Name:",
                "m_value": "bSizer5"
@@ -2865,6 +2901,10 @@
                  "m_sizerFlags": [],
                  "m_properties": [{
                    "type": "string",
+                   "m_label": "Minimum Size:",
+                   "m_value": "-1,-1"
+                  }, {
+                   "type": "string",
                    "m_label": "Name:",
                    "m_value": "bSizer6"
                   }, {
@@ -3097,6 +3137,10 @@
                  "m_styles": [],
                  "m_sizerFlags": [],
                  "m_properties": [{
+                   "type": "string",
+                   "m_label": "Minimum Size:",
+                   "m_value": "-1,-1"
+                  }, {
                    "type": "string",
                    "m_label": "Name:",
                    "m_value": "bSizer61"

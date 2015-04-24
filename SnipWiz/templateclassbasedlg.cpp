@@ -26,7 +26,7 @@ TemplateClassBaseDlg::TemplateClassBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    ID_NOTEBOOK1 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    ID_NOTEBOOK1 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxNB_NOPAGETHEME|wxBK_DEFAULT);
     ID_NOTEBOOK1->SetName(wxT("ID_NOTEBOOK1"));
     
     bSizer1->Add(ID_NOTEBOOK1, 1, wxALL|wxEXPAND, 5);
@@ -37,39 +37,39 @@ TemplateClassBaseDlg::TemplateClassBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     ID_PANEL->SetSizer(bSizer2);
     
-    wxStaticBoxSizer* sbSizer01 = new wxStaticBoxSizer( new wxStaticBox(ID_PANEL, wxID_ANY, _("Class")), wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer8 = new wxStaticBoxSizer( new wxStaticBox(ID_PANEL, wxID_ANY, _("Class")), wxVERTICAL);
     
-    bSizer2->Add(sbSizer01, 0, wxALL|wxEXPAND, 5);
+    bSizer2->Add(staticBoxSizer8, 0, wxALL|wxEXPAND, 5);
     
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
     
-    sbSizer01->Add(fgSizer1, 0, wxALL|wxEXPAND, 5);
+    staticBoxSizer8->Add(fgSizer1, 1, wxALL|wxEXPAND, 5);
     
     m_static1 = new wxStaticText(ID_PANEL, wxID_ANY, _("Class name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_static1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlClassName = new wxTextCtrl(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1), 0);
+    m_textCtrlClassName = new wxTextCtrl(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     m_textCtrlClassName->SetToolTip(_("Name of new class"));
     m_textCtrlClassName->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlClassName->SetHint(wxT(""));
     #endif
     
-    fgSizer1->Add(m_textCtrlClassName, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer1->Add(m_textCtrlClassName, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_static2 = new wxStaticText(ID_PANEL, wxID_ANY, _("Template:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_static2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_comboxCurrentTemplateArr;
-    m_comboxCurrentTemplate = new wxComboBox(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1), m_comboxCurrentTemplateArr, wxCB_SORT|wxCB_READONLY);
+    m_comboxCurrentTemplate = new wxComboBox(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_comboxCurrentTemplateArr, wxCB_SORT|wxCB_READONLY);
     m_comboxCurrentTemplate->SetToolTip(_("Template for new class"));
     
-    fgSizer1->Add(m_comboxCurrentTemplate, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer1->Add(m_comboxCurrentTemplate, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     wxStaticBoxSizer* sbSizer02 = new wxStaticBoxSizer( new wxStaticBox(ID_PANEL, wxID_ANY, _("Files")), wxVERTICAL);
     
@@ -86,13 +86,13 @@ TemplateClassBaseDlg::TemplateClassBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     fgSizer2->Add(m_static3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlHeaderFile = new wxTextCtrl(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1), 0);
+    m_textCtrlHeaderFile = new wxTextCtrl(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     m_textCtrlHeaderFile->SetToolTip(_("Name of header file"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlHeaderFile->SetHint(wxT(""));
     #endif
     
-    fgSizer2->Add(m_textCtrlHeaderFile, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_textCtrlHeaderFile, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     fgSizer2->Add(5, 5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -100,13 +100,13 @@ TemplateClassBaseDlg::TemplateClassBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     fgSizer2->Add(m_static4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlCppFile = new wxTextCtrl(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1), 0);
+    m_textCtrlCppFile = new wxTextCtrl(ID_PANEL, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     m_textCtrlCppFile->SetToolTip(_("Name of source file"));
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlCppFile->SetHint(wxT(""));
     #endif
     
-    fgSizer2->Add(m_textCtrlCppFile, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_textCtrlCppFile, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     fgSizer2->Add(5, 5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -299,11 +299,19 @@ TemplateClassBaseDlg::TemplateClassBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     
     #if wxVERSION_NUMBER >= 2900
-    wxPersistenceManager::Get().RegisterAndRestore(ID_NOTEBOOK1);
+    if(!wxPersistenceManager::Get().Find(ID_NOTEBOOK1)){
+        wxPersistenceManager::Get().RegisterAndRestore(ID_NOTEBOOK1);
+    } else {
+        wxPersistenceManager::Get().Restore(ID_NOTEBOOK1);
+    }
     #endif
     
     #if wxVERSION_NUMBER >= 2900
-    wxPersistenceManager::Get().RegisterAndRestore(m_notebookFiles);
+    if(!wxPersistenceManager::Get().Find(m_notebookFiles)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebookFiles);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebookFiles);
+    }
     #endif
     
     SetName(wxT("TemplateClassBaseDlg"));
@@ -313,7 +321,11 @@ TemplateClassBaseDlg::TemplateClassBaseDlg(wxWindow* parent, wxWindowID id, cons
     }
     CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
-    wxPersistenceManager::Get().RegisterAndRestore(this);
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
 #endif
     // Connect events
     m_textCtrlClassName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(TemplateClassBaseDlg::OnClassNameEntered), NULL, this);

@@ -126,7 +126,7 @@ SaveTabGroupBaseDlg::SaveTabGroupBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_ListTabs = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_ListTabsChoices, 0 );
 	m_ListTabs->SetMinSize( wxSize( 400,-1 ) );
 
-	bSizer3->Add( m_ListTabs, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer3->Add( m_ListTabs, 1, wxALL|wxEXPAND, 5 );
 
 	wxBoxSizer* bSizer13;
 	bSizer13 = new wxBoxSizer( wxVERTICAL );
@@ -156,9 +156,9 @@ SaveTabGroupBaseDlg::SaveTabGroupBaseDlg( wxWindow* parent, wxWindowID id, const
 	bSizer10->Add( m_staticText4, 0, wxALIGN_LEFT|wxALL, 5 );
 
 	m_textName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer10->Add( m_textName, 0, wxALIGN_CENTER|wxEXPAND|wxALL, 5 );
+	bSizer10->Add( m_textName, 0, wxEXPAND|wxALL, 5 );
 
-	bSizer1->Add( bSizer10, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALL, 5 );
+	bSizer1->Add( bSizer10, 0, wxEXPAND|wxALL, 5 );
 
 	m_staticline11 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline11, 0, wxEXPAND|wxALL, 5 );

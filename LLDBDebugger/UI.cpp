@@ -35,11 +35,12 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
     m_dvListCtrlBacktrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dvListCtrlBacktrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
+    SetName(wxT("LLDBCallStackBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_dvListCtrlBacktrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBCallStackBase::OnItemActivated), NULL, this);
     m_dvListCtrlBacktrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LLDBCallStackBase::OnContextMenu), NULL, this);
@@ -67,6 +68,7 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     this->SetSizer(boxSizer10);
     
     m_notebook205 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook205->SetName(wxT("m_notebook205"));
     wxImageList* m_notebook205_il = new wxImageList(16, 16);
     m_notebook205->AssignImageList(m_notebook205_il);
     
@@ -159,11 +161,12 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
     m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     
+    SetName(wxT("LLDBOutputViewBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrlConsoleSend->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(LLDBOutputViewBase::OnSendCommandToLLDB), NULL, this);
     this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBOutputViewBase::OnNewBreakpoint), NULL, this);
@@ -256,11 +259,19 @@ LLDBNewBreakpointDlgBase::LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID 
     m_stdBtnSizer34->AddButton(m_button38);
     m_stdBtnSizer34->Realize();
     
+    SetName(wxT("LLDBNewBreakpointDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_checkBoxFileLine->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(LLDBNewBreakpointDlgBase::OnCheckFileAndLine), NULL, this);
     m_textCtrlFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFileLineEnabledUI), NULL, this);
@@ -303,12 +314,13 @@ LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wx
     m_auibar199->AddTool(wxID_DELETE, _("Delete Watch"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete Watch"), _("Delete Watch"), NULL);
     m_auibar199->Realize();
     
+    SetName(wxT("LLDBLocalsViewBase"));
     SetMinSize( wxSize(200,200) );
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnNewWatch), NULL, this);
     this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnDelete), NULL, this);
@@ -338,6 +350,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     this->SetSizer(boxSizer77);
     
     m_notebook87 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook87->SetName(wxT("m_notebook87"));
     
     boxSizer77->Add(m_notebook87, 1, wxALL|wxEXPAND, 5);
     
@@ -365,7 +378,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_pgProp138->SetHelpString(wxT(""));
     
     m_pgPropArraySize = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxIntProperty( _("Max number of array elements"), wxPG_LABEL, 50) );
-    m_pgPropArraySize->SetHelpString(_("The maximum number of eleements to display in arrays"));
+    m_pgPropArraySize->SetHelpString(_("The maximum number of elements to display in arrays"));
     
     m_pgPropCallStackSize = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxIntProperty( _("Backtrace frames"), wxPG_LABEL, 100) );
     m_pgPropCallStackSize->SetHelpString(_("Maximum number of frames to show in the callstack window"));
@@ -482,11 +495,28 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_stdBtnSizer79->AddButton(m_button175);
     m_stdBtnSizer79->Realize();
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook87)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook87);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook87);
+    }
+    #endif
+    
+    SetName(wxT("LLDBSettingDialogBase"));
     SetSizeHints(500,400);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_pgMgrDisplayProperties->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
     m_pgMgrAdvanced->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnAdvancedValueChanged), NULL, this);
@@ -529,11 +559,12 @@ LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const 
     m_dvListCtrlThreads->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     
+    SetName(wxT("LLDBThreadsViewBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_dvListCtrlThreads->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBThreadsViewBase::OnItemActivated), NULL, this);
     
@@ -578,11 +609,12 @@ LLDBTooltipBase::LLDBTooltipBase(wxWindow* parent,long style)
     m_timerCheckMousePos = new wxTimer;
     m_timerCheckMousePos->Start(25, false);
     
+    SetName(wxT("LLDBTooltipBase"));
     SetSizeHints(300,200);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LLDBTooltipBase::OnItemExpanding), NULL, this);
     m_panelStatus->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(LLDBTooltipBase::OnStatusBarLeftDown), NULL, this);
@@ -670,11 +702,19 @@ FolderMappingBaseDlg::FolderMappingBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer181->AddButton(m_button185);
     m_stdBtnSizer181->Realize();
     
+    SetName(wxT("FolderMappingBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_button183->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FolderMappingBaseDlg::OnOKUI), NULL, this);
     

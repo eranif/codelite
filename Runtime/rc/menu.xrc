@@ -732,6 +732,9 @@
         <object class="wxMenuItem" name="close_other_tabs">
             <label>Close Other Tabs</label>
         </object>
+        <object class="wxMenuItem" name="close_tabs_to_the_right">
+            <label>Close Tabs To The Right</label>
+        </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="refresh_file">
             <label>Reload</label>

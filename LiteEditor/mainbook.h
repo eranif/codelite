@@ -181,9 +181,8 @@ public:
 
     // These 3 functions are meant to be used with CallAfter
     void ClosePageVoid(wxWindow* win);
-
     void CloseAllButThisVoid(wxWindow* win);
-
+    void CloseTabsToTheRight(wxWindow* win);
     void CloseAllVoid(bool cancellable);
 
     wxString GetPageTitle(wxWindow* win) const;

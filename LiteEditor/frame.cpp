@@ -568,6 +568,7 @@ EVT_MENU(XRCID("detach_debugger_tab"), clMainFrame::OnDetachDebuggerViewTab)
 // Editor tab context menu
 //-------------------------------------------------------
 EVT_MENU(XRCID("close_other_tabs"), clMainFrame::OnCloseAllButThis)
+EVT_MENU(XRCID("close_tabs_to_the_right"), clMainFrame::OnCloseTabsToTheRight)
 EVT_MENU(XRCID("copy_file_name"), clMainFrame::OnCopyFilePath)
 EVT_MENU(XRCID("copy_file_path"), clMainFrame::OnCopyFilePathOnly)
 EVT_MENU(XRCID("copy_file_name_only"), clMainFrame::OnCopyFileName)
@@ -6082,5 +6083,14 @@ void clMainFrame::OnRunSetupWizard(wxCommandEvent& e)
     wxUnusedVar(e);
     if(!StartSetupWizard()) {
         GetMainBook()->ApplySettingsChanges();
+    }
+}
+
+void clMainFrame::OnCloseTabsToTheRight(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    wxWindow* win = GetMainBook()->GetCurrentPage();
+    if(win) {
+        GetMainBook()->CallAfter(&MainBook::CloseTabsToTheRight, win);
     }
 }

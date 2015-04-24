@@ -491,6 +491,7 @@ protected:
     void OnCompileFile(wxCommandEvent& e);
     void OnCompileFileUI(wxUpdateUIEvent& e);
     void OnCloseAllButThis(wxCommandEvent& e);
+    void OnCloseTabsToTheRight(wxCommandEvent& e);
     void OnWorkspaceMenuUI(wxUpdateUIEvent& e);
     void OnUpdateBuildRefactorIndexBar(wxCommandEvent& e);
     void OnUpdateNumberOfBuildProcesses(wxCommandEvent& e);

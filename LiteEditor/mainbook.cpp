@@ -1347,3 +1347,35 @@ void MainBook::ShowTabBar(bool b)
     m_book->SetTabCtrlHeight(b ? 30 : 0);
     m_book->Refresh();
 }
+
+void MainBook::CloseTabsToTheRight(wxWindow* win)
+{
+    wxString text;
+
+    clWindowUpdateLocker locker(this);
+
+    // Get list of tabs to close
+    std::vector<wxWindow*> windows;
+    m_book->GetEditorsInOrder(windows);
+    
+    // start from right to left
+    if(windows.empty()) return;
+    
+    std::vector<wxWindow*> tabsToClose;
+    for(int i = (int)(windows.size() - 1); i >= 0; --i) {
+        if(windows.at(i) == win) {
+            break;
+        }
+        tabsToClose.push_back(windows.at(i));
+    }
+    
+    if(tabsToClose.empty()) return;
+    
+    for(size_t i=0; i<tabsToClose.size(); ++i) {
+        ClosePage(tabsToClose.at(i));
+    }
+    
+#ifdef __WXMAC__
+    m_book->GetSizer()->Layout();
+#endif
+}

@@ -1093,7 +1093,6 @@ void MainBook::MarkEditorReadOnly(LEditor* editor)
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         if(editor == m_book->GetPage(i)) {
             m_book->SetPageBitmap(i, readOnly ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap);
-            m_book->Refresh();
             break;
         }
     }

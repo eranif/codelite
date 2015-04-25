@@ -242,7 +242,7 @@ void AdvancedDlg::OnApply(wxCommandEvent& event)
     }
 }
 
-void AdvancedDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_compilersPage->IsDirty()); }
+void AdvancedDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_compilersPage->IsDirty() || m_buildSettings->IsModified()); }
 
 void AdvancedDlg::OnAddExistingCompiler()
 {

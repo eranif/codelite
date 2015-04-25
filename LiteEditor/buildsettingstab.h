@@ -30,13 +30,20 @@
 /** Implementing BuildTabSettingsBase */
 class BuildTabSetting : public BuildTabSettingsBase
 {
+    bool m_isModified;
+
 public:
     BuildTabSetting(wxWindow* parent);
+
+    void SetIsModified(bool isModified) { this->m_isModified = isModified; }
+    bool IsModified() const { return m_isModified; }
     
     void SelectFont();
     void Save();
     void OnUpdateUI(wxUpdateUIEvent& event);
+
 protected:
+    virtual void OnAppearanceChanged(wxPropertyGridEvent& event);
     virtual void OnCustomButtonClicked(wxCommandEvent& event);
 };
 

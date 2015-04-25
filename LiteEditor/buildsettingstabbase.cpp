@@ -95,11 +95,13 @@ BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, cons
     CentreOnParent(wxBOTH);
     // Connect events
     m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked), NULL, this);
+    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL, this);
     
 }
 
 BuildTabSettingsBase::~BuildTabSettingsBase()
 {
     m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL, this);
     
 }

@@ -42,6 +42,7 @@ protected:
 
 protected:
     virtual void OnCustomButtonClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppearanceChanged(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }

@@ -36,6 +36,7 @@
 
 BuildTabSetting::BuildTabSetting(wxWindow* parent)
     : BuildTabSettingsBase(parent)
+    , m_isModified(false)
 {
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
     BuildTabSettingsData options;
@@ -89,6 +90,7 @@ void BuildTabSetting::Save()
 
     options.SetErrorWarningStyle(flag);
     EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
+    m_isModified = false;
 }
 
 void BuildTabSetting::OnUpdateUI(wxUpdateUIEvent& event) {}
@@ -111,4 +113,9 @@ void BuildTabSetting::SelectFont()
         wxFont font = fntdata.GetChosenFont();
         m_pgPropFont->SetValue(clFontHelper::ToString(font));
     }
+}
+void BuildTabSetting::OnAppearanceChanged(wxPropertyGridEvent& event)
+{
+    event.Skip();
+    m_isModified = true;
 }

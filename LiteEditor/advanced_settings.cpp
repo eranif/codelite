@@ -175,22 +175,6 @@ void AdvancedDlg::OnContextMenu(wxContextMenuEvent& e)
     //    }
 }
 
-void AdvancedDlg::OnRestoreDefaults(wxCommandEvent&)
-{
-    if(wxMessageBox(_("Are you sure you want to revert to the default settings?"),
-                    wxT("CodeLite"),
-                    wxYES_NO | wxCANCEL | wxCENTRE | wxICON_WARNING,
-                    this) == wxYES) {
-        // restore the default settings of the build configuration
-        BuildSettingsConfigST::Get()->RestoreDefaults();
-
-        // Dismiss this dialog and reload it
-        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("advance_settings"));
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-        EndModal(wxID_OK);
-    }
-}
-
 #define ID_MENU_AUTO_DETECT_COMPILERS 1001
 #define ID_MENU_ADD_COMPILER_BY_PATH 1002
 #define ID_MENU_CLONE_COMPILER 1003

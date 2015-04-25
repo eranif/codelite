@@ -85,7 +85,6 @@ protected:
     void OnButtonNewClicked();
     void OnAddExistingCompiler();
     void OnButtonOKClicked(wxCommandEvent &);
-    void OnRestoreDefaults(wxCommandEvent &);
     void OnContextMenu(wxContextMenuEvent &e);
 
     void LoadCompilers();

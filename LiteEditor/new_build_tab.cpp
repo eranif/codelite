@@ -1036,6 +1036,12 @@ wxFont NewBuildTab::DoGetFont() const
     if(font.IsOk() == false) {
         font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     }
+    
+    // if the user selected a font in the settings, use it instead
+    wxFont userFont = m_buildTabSettings.GetBuildFont();
+    if(userFont.IsOk()) {
+        font = userFont;
+    }
     return font;
 }
 

@@ -90,6 +90,8 @@
     <File Name="CMakeLists.txt"/>
     <File Name="clIniFile.h"/>
     <File Name="clIniFile.cpp"/>
+    <File Name="clFontHelper.h"/>
+    <File Name="clFontHelper.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

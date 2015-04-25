@@ -64,6 +64,7 @@ void BuildTabSettingsData::Serialize(Archive& arch)
     arch.Write(wxT("m_showBuildPane"), m_showBuildPane);
     arch.Write(wxT("m_errorWarningStyle"), m_errorWarningStyle);
     arch.Write(wxT("m_buildpaneScrollTo"), m_buildpaneScrollTo);
+    arch.Write("m_buildFont", m_buildFont);
 }
 
 void BuildTabSettingsData::DeSerialize(Archive& arch)
@@ -81,4 +82,5 @@ void BuildTabSettingsData::DeSerialize(Archive& arch)
     arch.Read(wxT("m_showBuildPane"), m_showBuildPane);
     arch.Read(wxT("m_errorWarningStyle"), m_errorWarningStyle);
     arch.Read(wxT("m_buildpaneScrollTo"), m_buildpaneScrollTo);
+    arch.Read("m_buildFont", m_buildFont);
 }

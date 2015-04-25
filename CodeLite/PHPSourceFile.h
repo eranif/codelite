@@ -90,7 +90,12 @@ protected:
      * @brief 'function' keyword found
      */
     void OnFunction();
-
+    
+    /**
+     * @brief found catch keyword
+     */
+    void OnCatch();
+    
     /**
      * @brief found a global variable
      */

@@ -23,6 +23,10 @@
 #include <wx/busyinfo.h>
 #include "fileutils.h"
 
+// Upgrade macros
+#define LEXERS_VERSION_STRING "LexersVersion"
+#define LEXERS_VERSION 5
+
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_PROGRESS, clCommandEvent);
@@ -547,6 +551,8 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
         // Load the user settings
         LoadJSON(fnUserLexers);
     }
+    // Update lexers versions
+    clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
 }
 
 void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool force)
@@ -640,6 +646,13 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
                 oper.SetFgColour(isDark ? "WHITE" : "BLACK");
             }
         }
+    }
+    
+    if(force || m_lexersVersion < 5) {
+        // Indentation guides (style #37)
+        StyleProperty& indentGuides = lexer->GetProperty(37);
+        indentGuides.SetFgColour(defaultProp.GetBgColour());
+        indentGuides.SetBgColour(defaultProp.GetBgColour());
     }
 }
 

@@ -1240,8 +1240,6 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
         if(code.IsEmpty() == false) {
             editor.InsertTextWithIndentation(code, lineno);
         }
-
-        int oldLine = editor.LineFromPos(editor.GetCurrentPos());
         if(dlg.GetFormatText()) {
             DoFormatEditor(&GetCtrl());
         }

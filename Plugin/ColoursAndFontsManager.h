@@ -11,12 +11,6 @@
 #include "cl_command_event.h"
 #include <wx/font.h>
 
-// Upgrade macros
-#define LEXERS_VERSION_STRING "LexersVersion"
-#define LEXERS_VERSION 4
-
-// Define the upgrade steps
-
 // When the version is 0, it means that we need to upgrade the colours for the line numbers
 // and for the default state
 #define LEXERS_UPGRADE_LINENUM_DEFAULT_COLOURS 0

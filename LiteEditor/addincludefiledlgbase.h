@@ -24,6 +24,12 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class AddIncludeFileDlgBase : public wxDialog
 {
@@ -51,6 +57,16 @@ protected:
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText14() { return m_staticText14; }
+    wxAuiToolBar* GetAuibar6() { return m_auibar6; }
+    wxStyledTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
+    wxStaticText* GetStaticText21() { return m_staticText21; }
+    wxStaticText* GetStaticTextPreview() { return m_staticTextPreview; }
+    wxStaticText* GetStaticText5() { return m_staticText5; }
+    wxTextCtrl* GetTextCtrlFullPath() { return m_textCtrlFullPath; }
+    wxPanel* GetMainPanel() { return m_mainPanel; }
+    wxButton* GetButtonOK() { return m_buttonOK; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
     AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add a missing header file"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddIncludeFileDlgBase();
 };

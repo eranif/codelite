@@ -27,21 +27,18 @@ class AdvancedDlgBase : public wxDialog
 {
 protected:
     wxAuiNotebook* m_notebook;
-    wxButton* m_buttonRestoreDefaults;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_buttonCancel;
     wxButton* m_buttonOK;
     wxButton* m_buttonApply;
 
 protected:
-    virtual void OnRestoreDefaults(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOKClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
     virtual void OnApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxAuiNotebook* GetNotebook() { return m_notebook; }
-    wxButton* GetButtonRestoreDefaults() { return m_buttonRestoreDefaults; }
     AdvancedDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AdvancedDlgBase();
 };

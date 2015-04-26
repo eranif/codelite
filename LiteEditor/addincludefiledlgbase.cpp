@@ -53,7 +53,7 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     m_auibar6 = new wxAuiToolBar(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar6->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer15->Add(m_auibar6, 0, wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer15->Add(m_auibar6, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
     m_auibar6->AddTool(ID_LINEUP, _("Move Up"), wxXmlResource::Get()->LoadBitmap(wxT("arrow-up")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line up"), _("Move the #include statement one line up"), NULL);
     
@@ -167,12 +167,18 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     
     bSizer8->Add(m_buttonCancel, 0, wxALL, 5);
     
+    SetName(wxT("AddIncludeFileDlgBase"));
     SetMinSize( wxSize(250,-1) );
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    }
+#endif
     // Connect events
     this->Connect(ID_LINEUP, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonUp), NULL, this);
     this->Connect(ID_LINEDOWN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonDown), NULL, this);

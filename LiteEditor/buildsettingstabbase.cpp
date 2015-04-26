@@ -26,112 +26,82 @@ BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(3, 3, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer1->AddGrowableCol(1);
-    fgSizer1->AddGrowableCol(2);
+    wxArrayString m_pgMgrArr;
+    wxUnusedVar(m_pgMgrArr);
+    wxArrayInt m_pgMgrIntArr;
+    wxUnusedVar(m_pgMgrIntArr);
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    bSizer1->Add(fgSizer1, 0, wxALL|wxEXPAND, 5);
+    bSizer1->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText3 = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    CAT_COLOURS_AND_FONTS = m_pgMgr->Append(  new wxPropertyCategory( _("Colours and Fonts") ) );
+    CAT_COLOURS_AND_FONTS->SetHelpString(wxT(""));
     
-    fgSizer1->Add(m_staticText3, 0, wxALL, 5);
+    m_pgPropFont = m_pgMgr->AppendIn( CAT_COLOURS_AND_FONTS,  new wxStringProperty( _("Font"), wxPG_LABEL, wxT("")) );
+    m_pgPropFont->SetHelpString(_("Select the font to use in the build output tab"));
+    m_pgPropFont->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Foreground colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText5Font(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Sans"));
-    m_staticText5->SetFont(m_staticText5Font);
+    m_pgPropErrorColour = m_pgMgr->AppendIn( CAT_COLOURS_AND_FONTS,  new wxSystemColourProperty( _("Error colour"), wxPG_LABEL, wxColour(wxT("rgb(255,0,0)"))) );
+    m_pgPropErrorColour->SetHelpString(_("Use this colour to highlight build error messages"));
     
-    fgSizer1->Add(m_staticText5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    m_pgPropWarningColour = m_pgMgr->AppendIn( CAT_COLOURS_AND_FONTS,  new wxSystemColourProperty( _("Warnings colour"), wxPG_LABEL, wxColour(wxT("rgb(128,128,0)"))) );
+    m_pgPropWarningColour->SetHelpString(_("Use this colour to highlight build warning messages"));
     
-    m_staticText6 = new wxStaticText(this, wxID_ANY, _("Font weight:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText6Font(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Sans"));
-    m_staticText6->SetFont(m_staticText6Font);
+    CAT_GENERAL = m_pgMgr->Append(  new wxPropertyCategory( _("General") ) );
+    CAT_GENERAL->SetHelpString(wxT(""));
     
-    fgSizer1->Add(m_staticText6, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    m_pgPropJumpWarnings = m_pgMgr->AppendIn( CAT_GENERAL,  new wxBoolProperty( _("Skip warnings"), wxPG_LABEL, 1) );
+    m_pgPropJumpWarnings->SetHelpString(_("When using the menu to jump to errors, skip warnings"));
     
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Compiler errors colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropAutoHideBuildPane = m_pgMgr->AppendIn( CAT_GENERAL,  new wxBoolProperty( _("Auto hide build pane"), wxPG_LABEL, 1) );
+    m_pgPropAutoHideBuildPane->SetHelpString(_("Automatically hide the build pane when there are neither errors nor warnings"));
     
-    fgSizer1->Add(m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("When build starts"));
+    m_pgMgrArr.Add(_("When build ends"));
+    m_pgMgrArr.Add(_("Don't automatically show"));
+    m_pgMgrIntArr.Add(0);
+    m_pgMgrIntArr.Add(1);
+    m_pgMgrIntArr.Add(2);
+    m_pgPropAutoShowBuildPane = m_pgMgr->AppendIn( CAT_GENERAL,  new wxEnumProperty( _("Auto show build pane"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropAutoShowBuildPane->SetHelpString(_("Select when to show the build pane"));
     
-    m_colourPickerErrorFg = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("The first error"));
+    m_pgMgrArr.Add(_("The first warning or error"));
+    m_pgMgrArr.Add(_("The end"));
+    m_pgMgrIntArr.Add(0);
+    m_pgMgrIntArr.Add(1);
+    m_pgMgrIntArr.Add(2);
+    m_pgPropAutoScroll = m_pgMgr->AppendIn( CAT_GENERAL,  new wxEnumProperty( _("When build ends scroll to..."), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 1) );
+    m_pgPropAutoScroll->SetHelpString(_("After build finishes, if showing the build pane scroll to..."));
     
-    fgSizer1->Add(m_colourPickerErrorFg, 0, wxALL|wxEXPAND, 5);
+    CAT_MARKERS = m_pgMgr->Append(  new wxPropertyCategory( _("Build error indicators") ) );
+    CAT_MARKERS->SetHelpString(wxT(""));
     
-    m_checkBoxBoldErrFont = new wxCheckBox(this, wxID_ANY, _("Bold"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxBoldErrFont->SetValue(true);
+    m_pgPropUseMarkers = m_pgMgr->AppendIn( CAT_MARKERS,  new wxBoolProperty( _("Use markers"), wxPG_LABEL, 1) );
+    m_pgPropUseMarkers->SetHelpString(_("Mark the line that contains the build error with a red marker on the left margin"));
     
-    fgSizer1->Add(m_checkBoxBoldErrFont, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropUseAnnotations = m_pgMgr->AppendIn( CAT_MARKERS,  new wxBoolProperty( _("Use annotations"), wxPG_LABEL, 1) );
+    m_pgPropUseAnnotations->SetHelpString(_("If checked, any errors or warnings will be displayed in the editor alongside the failing code."));
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Compiler warnings colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText2Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText2->SetFont(m_staticText2Font);
-    
-    fgSizer1->Add(m_staticText2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_colourPickerWarningsFg = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
-    
-    fgSizer1->Add(m_colourPickerWarningsFg, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxBoldWarnFont = new wxCheckBox(this, wxID_ANY, _("Bold"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxBoldWarnFont->SetValue(false);
-    
-    fgSizer1->Add(m_checkBoxBoldWarnFont, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("General:")), wxVERTICAL);
-    
-    bSizer1->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxSkipWarnings = new wxCheckBox(this, wxID_ANY, _("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxSkipWarnings->SetValue(false);
-    
-    sbSizer2->Add(m_checkBoxSkipWarnings, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxAutoHide = new wxCheckBox(this, wxID_ANY, _("Automatically hide the build pane when there are neither errors nor warnings"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxAutoHide->SetValue(false);
-    
-    sbSizer2->Add(m_checkBoxAutoHide, 0, wxALL|wxEXPAND, 5);
-    
-    wxArrayString m_radioBuildPaneScrollDestinationArr;
-    m_radioBuildPaneScrollDestinationArr.Add(wxT("The first error"));
-    m_radioBuildPaneScrollDestinationArr.Add(wxT("The first warning or error"));
-    m_radioBuildPaneScrollDestinationArr.Add(wxT("The end"));
-    m_radioBuildPaneScrollDestination = new wxRadioBox(this, wxID_ANY, _("After build finishes, if showing the build pane scroll to:"), wxDefaultPosition, wxSize(-1, -1), m_radioBuildPaneScrollDestinationArr, 1, wxRA_SPECIFY_ROWS);
-    m_radioBuildPaneScrollDestination->SetSelection(0);
-    
-    sbSizer2->Add(m_radioBuildPaneScrollDestination, 0, wxALL|wxEXPAND, 5);
-    
-    wxArrayString m_radioBoxShowBuildTabArr;
-    m_radioBoxShowBuildTabArr.Add(wxT("When build starts"));
-    m_radioBoxShowBuildTabArr.Add(wxT("When build ends"));
-    m_radioBoxShowBuildTabArr.Add(wxT("Don't automatically show"));
-    m_radioBoxShowBuildTab = new wxRadioBox(this, wxID_ANY, _("Show build pane:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxShowBuildTabArr, 1, wxRA_SPECIFY_COLS);
-    m_radioBoxShowBuildTab->SetSelection(0);
-    
-    bSizer1->Add(m_radioBoxShowBuildTab, 0, wxALL|wxEXPAND, 5);
-    
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Errors / warnings markers:")), wxVERTICAL);
-    
-    bSizer1->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxDisplayMarkers = new wxCheckBox(this, wxID_ANY, _("Compiler errors / warnings marked with bookmarks"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxDisplayMarkers->SetValue(false);
-    
-    sbSizer1->Add(m_checkBoxDisplayMarkers, 0, wxALL, 5);
-    
-    m_checkBoxDisplayAnnotations = new wxCheckBox(this, wxID_ANY, _("Compiler errors / warnings displayed inline"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxDisplayAnnotations->SetValue(false);
-    m_checkBoxDisplayAnnotations->SetToolTip(_("If checked, any errors or warnings will be displayed in the editor alongside the failing code."));
-    
-    sbSizer1->Add(m_checkBoxDisplayAnnotations, 0, wxALL, 5);
-    
+    SetName(wxT("BuildTabSettingsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+    // Connect events
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked), NULL, this);
+    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL, this);
+    
 }
 
 BuildTabSettingsBase::~BuildTabSettingsBase()
 {
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL, this);
+    
 }

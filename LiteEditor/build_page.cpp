@@ -63,15 +63,15 @@ BuildPage::BuildPage(wxWindow* parent, int id, wxPoint pos, wxSize size, int sty
     m_fixOnStartup = new wxCheckBox(this, wxID_ANY, _("Fix build tool path on startup"));
     mainSizer->Add(m_fixOnStartup, 0, wxEXPAND | wxALL, 5);
 
-    m_generateAsteriskCleanTarget =
-        new wxCheckBox(this, wxID_ANY, _("Use asterisk (*) for the clean target (e.g. rm -f *.o)"));
-    mainSizer->Add(m_generateAsteriskCleanTarget, 0, wxEXPAND | wxALL, 5);
+    // m_generateAsteriskCleanTarget =
+    //    new wxCheckBox(this, wxID_ANY, _("Use asterisk (*) for the clean target (e.g. rm -f *.o)"));
+    // mainSizer->Add(m_generateAsteriskCleanTarget, 0, wxEXPAND | wxALL, 5);
 
     long fix = EditorConfigST::Get()->GetInteger(wxT("FixBuildToolOnStartup"), 1);
     m_fixOnStartup->SetValue(fix ? true : false);
 
-    long asterisk = EditorConfigST::Get()->GetInteger(wxT("CleanTragetWithAsterisk"), 0);
-    m_generateAsteriskCleanTarget->SetValue(asterisk ? true : false);
+    // long asterisk = EditorConfigST::Get()->GetInteger(wxT("CleanTragetWithAsterisk"), 0);
+    // m_generateAsteriskCleanTarget->SetValue(asterisk ? true : false);
 
     this->SetSizer(mainSizer);
     this->Layout();
@@ -99,8 +99,8 @@ wxPanel* BuildPage::CreateBuildSystemPage(const wxString& name)
 void BuildPage::Save()
 {
     EditorConfigST::Get()->SetInteger(wxT("FixBuildToolOnStartup"), m_fixOnStartup->IsChecked() ? 1 : 0);
-    EditorConfigST::Get()->SetInteger(wxT("CleanTragetWithAsterisk"),
-                                      m_generateAsteriskCleanTarget->IsChecked() ? 1 : 0);
+    // EditorConfigST::Get()->SetInteger(wxT("CleanTragetWithAsterisk"),
+    //                                  m_generateAsteriskCleanTarget->IsChecked() ? 1 : 0);
 
     // Save current page displayed as 'selected' builder
     int sel = (int)m_bookBuildSystems->GetSelection();

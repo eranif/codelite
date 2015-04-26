@@ -35,6 +35,7 @@
 #include <map>
 #include "cJSON.h"
 #include <wx/colour.h>
+#include <wx/font.h>
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -96,6 +97,8 @@ public:
     wxSize toSize() const;
     wxPoint toPoint() const;
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
+    wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
+    
     JSONElement::wxStringMap_t toStringMap() const;
 
     // Writers
@@ -129,6 +132,7 @@ public:
     JSONElement& addProperty(const wxString& name, const JSONElement::wxStringMap_t& stringMap);
     JSONElement& addProperty(const wxString& name, const JSONElement& element);
     JSONElement& addProperty(const wxString& name, const char* value, const wxMBConv& conv = wxConvUTF8);
+    JSONElement& addProperty(const wxString& name, const wxFont& font);
 
     /**
      * @brief delete property by name

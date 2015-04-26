@@ -171,7 +171,7 @@ void EclipseThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
         whitespaceColour = wxColour(background.colour).ChangeLightness(150).GetAsString(wxC2S_HTML_SYNTAX);
         AddProperty(lexer, "34", "Brace match", "yellow", background.colour, true);
         AddProperty(lexer, "35", "Brace bad match", "red", background.colour, true);
-        AddProperty(lexer, "37", "Indent Guide", whitespaceColour, background.colour);
+        AddProperty(lexer, "37", "Indent Guide", background.colour, background.colour);
 
     } else {
         // light theme

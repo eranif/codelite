@@ -212,26 +212,33 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         Part& part = *iter;
         if(!currentToken) {
             // first token
-            currentToken = lookpTable.FindScope(part.m_text);
+            // Check locks first
+            if(part.m_text.StartsWith("$") && m_sourceFile->CurrentScope()) {
+                // a variable
+                currentToken = m_sourceFile->CurrentScope()->FindChild(part.m_text);
+            }
             if(!currentToken) {
-                // If we are inside a namespace, try prepending the namespace
-                // to the first token
-                if(m_sourceFile->Namespace() && m_sourceFile->Namespace()->GetFullName() != "\\") {
-                    // Not the global namespace
-                    wxString fullns =
-                        PHPEntityNamespace::BuildNamespace(m_sourceFile->Namespace()->GetFullName(), part.m_text);
-                    // Check if it exists
-                    PHPEntityBase::Ptr_t pGuess = lookpTable.FindScope(fullns);
-                    if(pGuess) {
-                        currentToken = pGuess;
-                        part.m_text = fullns;
+                currentToken = lookpTable.FindScope(part.m_text);
+                if(!currentToken) {
+                    // If we are inside a namespace, try prepending the namespace
+                    // to the first token
+                    if(m_sourceFile->Namespace() && m_sourceFile->Namespace()->GetFullName() != "\\") {
+                        // Not the global namespace
+                        wxString fullns =
+                            PHPEntityNamespace::BuildNamespace(m_sourceFile->Namespace()->GetFullName(), part.m_text);
+                        // Check if it exists
+                        PHPEntityBase::Ptr_t pGuess = lookpTable.FindScope(fullns);
+                        if(pGuess) {
+                            currentToken = pGuess;
+                            part.m_text = fullns;
+                        } else {
+                            // Maybe its a global function..
+                            currentToken = lookpTable.FindFunction(part.m_text);
+                        }
                     } else {
                         // Maybe its a global function..
                         currentToken = lookpTable.FindFunction(part.m_text);
                     }
-                } else {
-                    // Maybe its a global function..
-                    currentToken = lookpTable.FindFunction(part.m_text);
                 }
             }
 

@@ -27,46 +27,95 @@
 #include "buildtabsettingsdata.h"
 #include "editor_config.h"
 #include "new_build_tab.h"
+#include <wx/any.h>
+#include "macros.h"
+#include <wx/fontdlg.h>
+#include "clFontHelper.h"
+#include "event_notifier.h"
+#include "globals.h"
 
 BuildTabSetting::BuildTabSetting(wxWindow* parent)
     : BuildTabSettingsBase(parent)
+    , m_isModified(false)
 {
+    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
     BuildTabSettingsData options;
     EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
-    m_checkBoxSkipWarnings->SetValue(options.GetSkipWarnings());
-    m_colourPickerErrorFg->SetColour(options.GetErrorColour());
-    m_colourPickerWarningsFg->SetColour(options.GetWarnColour());
-    m_checkBoxBoldErrFont->SetValue(options.GetBoldErrFont());
-    m_checkBoxBoldWarnFont->SetValue(options.GetBoldWarnFont());
-    m_radioBoxShowBuildTab->Select(options.GetShowBuildPane());
-    m_checkBoxAutoHide->SetValue(options.GetAutoHide());
-    m_radioBuildPaneScrollDestination->SetSelection(options.GetBuildPaneScrollDestination());
-    m_checkBoxDisplayMarkers->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks);
-    m_checkBoxDisplayAnnotations->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate);
+    m_pgPropJumpWarnings->SetValue(options.GetSkipWarnings());
+    
+    wxVariant errorColour, warningColour;
+    errorColour << wxColour(options.GetErrorColour());
+    warningColour << wxColour(options.GetWarnColour());
+
+    m_pgPropErrorColour->SetValue(errorColour);
+    m_pgPropWarningColour->SetValue(warningColour);
+
+    const wxFont& font = options.GetBuildFont();
+    m_pgPropFont->SetValue(clFontHelper::ToString(font));
+    
+    m_pgPropAutoShowBuildPane->SetValueFromInt(options.GetShowBuildPane());
+    m_pgPropAutoHideBuildPane->SetValue((bool)options.GetAutoHide());
+    m_pgPropAutoScroll->SetValueFromInt(options.GetBuildPaneScrollDestination());
+    m_pgPropUseMarkers->SetValue((bool)(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks));
+    m_pgPropUseAnnotations->SetValue((bool)(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate));
 }
 
 void BuildTabSetting::Save()
 {
     BuildTabSettingsData options;
-    options.SetErrorColour(m_colourPickerErrorFg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-    options.SetWarnColour(m_colourPickerWarningsFg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-    options.SetSkipWarnings(m_checkBoxSkipWarnings->IsChecked());
-    options.SetBoldErrFont(m_checkBoxBoldErrFont->IsChecked());
-    options.SetBoldWarnFont(m_checkBoxBoldWarnFont->IsChecked());
-    options.SetShowBuildPane(m_radioBoxShowBuildTab->GetSelection());
-    options.SetAutoHide(m_checkBoxAutoHide->IsChecked());
-    options.SetBuildPaneScrollDestination(m_radioBuildPaneScrollDestination->GetSelection());
 
+    wxColour defaultErrorColour(*wxRED);
+    wxColour defaultWarningColour("rgb(128, 128, 0)");
+
+    wxColourPropertyValue errorColour, warningColour;
+    errorColour << m_pgPropErrorColour->GetValue();
+    warningColour << m_pgPropWarningColour->GetValue();
+
+    options.SetErrorColour(errorColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
+    options.SetWarnColour(warningColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
+    options.SetBuildFont(clFontHelper::FromString(m_pgPropFont->GetValue().GetString()));
+    options.SetSkipWarnings(m_pgPropJumpWarnings->GetValue().GetBool());
+    options.SetShowBuildPane(m_pgPropAutoShowBuildPane->GetValue().GetInteger());
+    options.SetAutoHide(m_pgPropAutoHideBuildPane->GetValue().GetBool());
+    options.SetBuildPaneScrollDestination(m_pgPropAutoScroll->GetValue().GetInteger());
+    
     int flag(BuildTabSettingsData::EWS_NoMarkers);
-    if(m_checkBoxDisplayMarkers->IsChecked()) {
+    if(m_pgPropUseMarkers->GetValue().GetBool()) {
         flag |= BuildTabSettingsData::EWS_Bookmarks;
     }
-    if(m_checkBoxDisplayAnnotations->IsChecked()) {
+    
+    if(m_pgPropUseAnnotations->GetValue().GetBool()) {
         flag |= BuildTabSettingsData::EWS_Annotate;
     }
 
     options.SetErrorWarningStyle(flag);
     EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
+    m_isModified = false;
 }
 
 void BuildTabSetting::OnUpdateUI(wxUpdateUIEvent& event) {}
+
+void BuildTabSetting::OnCustomButtonClicked(wxCommandEvent& event)
+{
+    wxPGProperty* prop = m_pgMgr->GetSelectedProperty();
+    CHECK_PTR_RET(prop);
+
+    if(prop == m_pgPropFont) {
+        CallAfter(&BuildTabSetting::SelectFont);
+    }
+}
+
+void BuildTabSetting::SelectFont()
+{
+    wxFontDialog dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        const wxFontData& fntdata = dlg.GetFontData();
+        wxFont font = fntdata.GetChosenFont();
+        m_pgPropFont->SetValue(clFontHelper::ToString(font));
+    }
+}
+void BuildTabSetting::OnAppearanceChanged(wxPropertyGridEvent& event)
+{
+    event.Skip();
+    m_isModified = true;
+}

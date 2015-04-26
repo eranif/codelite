@@ -79,7 +79,10 @@ void PHPSourceFile::Parse(int exitDepth)
                 OnVariable(token);
             }
             break;
-
+        case kPHP_T_CATCH:
+            // found 'catch (...)'
+            OnCatch();
+            break;
         case kPHP_T_PUBLIC:
         case kPHP_T_PRIVATE:
         case kPHP_T_PROTECTED: {
@@ -521,6 +524,9 @@ void PHPSourceFile::ParseFunctionBody()
         case ';':
             m_lookBackTokens.clear();
             break;
+        case kPHP_T_CATCH:
+            OnCatch();
+            break;
         case kPHP_T_VARIABLE: {
             var.Reset(new PHPEntityVariable());
             var->SetFullName(token.text);
@@ -797,7 +803,7 @@ bool PHPSourceFile::ReadExpression(wxString& expression)
         case kPHP_T_REQUIRE_ONCE:
             expression.clear();
             return false;
-        
+
         case kPHP_T_STRING_CAST:
         case kPHP_T_CONSTANT_ENCAPSED_STRING:
         case kPHP_T_C_COMMENT:
@@ -1006,7 +1012,7 @@ void PHPSourceFile::OnUseTrait()
 {
     PHPEntityBase::Ptr_t clas = CurrentScope();
     if(!clas) return;
-    
+
     // Collect the identifiers followed the 'use' statement
     wxArrayString identifiers;
     wxString tempname;
@@ -1018,14 +1024,13 @@ void PHPSourceFile::OnUseTrait()
                 identifiers.Add(MakeIdentifierAbsolute(tempname));
             }
             tempname.clear();
-        }
-        break;
+        } break;
         case ';': {
             if(!tempname.IsEmpty()) {
                 identifiers.Add(MakeIdentifierAbsolute(tempname));
             }
             tempname.clear();
-            
+
             // add the traits as list of 'extends'
             clas->Cast<PHPEntityClass>()->SetTraits(identifiers);
             return;
@@ -1033,6 +1038,43 @@ void PHPSourceFile::OnUseTrait()
         default:
             tempname << token.text;
             break;
+        }
+    }
+}
+
+void PHPSourceFile::OnCatch()
+{
+    // Read until we find the kPHP_T_VARIABLE
+    bool cont(true);
+    phpLexerToken token;
+    wxString typehint;
+    wxString varname;
+    while(cont && NextToken(token)) {
+        switch(token.type) {
+        case kPHP_T_VARIABLE:
+            cont = false;
+            varname = token.text;
+            break;
+        case kPHP_T_C_COMMENT:
+        case kPHP_T_CXX_COMMENT:
+            break;
+        default:
+            typehint << token.text;
+            break;
+        }
+    }
+    
+    if(!varname.IsEmpty()) {
+        // we found the variable
+        PHPEntityBase::Ptr_t var(new PHPEntityVariable());
+        var->SetFullName(varname);
+        var->SetFilename(m_filename.GetFullPath());
+        var->SetLine(token.lineNumber);
+        var->Cast<PHPEntityVariable>()->SetTypeHint(MakeIdentifierAbsolute(typehint));
+        
+        // add the variable to the current scope
+        if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
+            CurrentScope()->AddChild(var);
         }
     }
 }

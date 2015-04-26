@@ -13,49 +13,39 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/clrpicker.h>
-#include <wx/checkbox.h>
-#include <wx/statbox.h>
-#include <wx/radiobox.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class BuildTabSettingsBase : public wxPanel
 {
 protected:
-    wxStaticText* m_staticText3;
-    wxStaticText* m_staticText5;
-    wxStaticText* m_staticText6;
-    wxStaticText* m_staticText1;
-    wxColourPickerCtrl* m_colourPickerErrorFg;
-    wxCheckBox* m_checkBoxBoldErrFont;
-    wxStaticText* m_staticText2;
-    wxColourPickerCtrl* m_colourPickerWarningsFg;
-    wxCheckBox* m_checkBoxBoldWarnFont;
-    wxCheckBox* m_checkBoxSkipWarnings;
-    wxCheckBox* m_checkBoxAutoHide;
-    wxRadioBox* m_radioBuildPaneScrollDestination;
-    wxRadioBox* m_radioBoxShowBuildTab;
-    wxCheckBox* m_checkBoxDisplayMarkers;
-    wxCheckBox* m_checkBoxDisplayAnnotations;
+    wxPropertyGridManager* m_pgMgr;
+    wxPGProperty* CAT_COLOURS_AND_FONTS;
+    wxPGProperty* m_pgPropFont;
+    wxPGProperty* m_pgPropErrorColour;
+    wxPGProperty* m_pgPropWarningColour;
+    wxPGProperty* CAT_GENERAL;
+    wxPGProperty* m_pgPropJumpWarnings;
+    wxPGProperty* m_pgPropAutoHideBuildPane;
+    wxPGProperty* m_pgPropAutoShowBuildPane;
+    wxPGProperty* m_pgPropAutoScroll;
+    wxPGProperty* CAT_MARKERS;
+    wxPGProperty* m_pgPropUseMarkers;
+    wxPGProperty* m_pgPropUseAnnotations;
 
 protected:
+    virtual void OnCustomButtonClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAppearanceChanged(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxStaticText* GetStaticText5() { return m_staticText5; }
-    wxStaticText* GetStaticText6() { return m_staticText6; }
-    wxStaticText* GetStaticText1() { return m_staticText1; }
-    wxColourPickerCtrl* GetColourPickerErrorFg() { return m_colourPickerErrorFg; }
-    wxCheckBox* GetCheckBoxBoldErrFont() { return m_checkBoxBoldErrFont; }
-    wxStaticText* GetStaticText2() { return m_staticText2; }
-    wxColourPickerCtrl* GetColourPickerWarningsFg() { return m_colourPickerWarningsFg; }
-    wxCheckBox* GetCheckBoxBoldWarnFont() { return m_checkBoxBoldWarnFont; }
-    wxCheckBox* GetCheckBoxSkipWarnings() { return m_checkBoxSkipWarnings; }
-    wxCheckBox* GetCheckBoxAutoHide() { return m_checkBoxAutoHide; }
-    wxRadioBox* GetRadioBuildPaneScrollDestination() { return m_radioBuildPaneScrollDestination; }
-    wxRadioBox* GetRadioBoxShowBuildTab() { return m_radioBoxShowBuildTab; }
-    wxCheckBox* GetCheckBoxDisplayMarkers() { return m_checkBoxDisplayMarkers; }
-    wxCheckBox* GetCheckBoxDisplayAnnotations() { return m_checkBoxDisplayAnnotations; }
+    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     BuildTabSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~BuildTabSettingsBase();
 };

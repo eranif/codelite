@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <wx/filename.h>
 #include <wx/ffile.h>
+#include "clFontHelper.h"
 
 JSONRoot::JSONRoot(const wxString& text)
     : _json(NULL)
@@ -580,4 +581,17 @@ JSONElement JSONElement::nextChild()
 JSONElement& JSONElement::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));
+}
+
+JSONElement& JSONElement::addProperty(const wxString& name, const wxFont& font)
+{
+    return addProperty(name, clFontHelper::ToString(font));
+}
+
+wxFont JSONElement::toFont(const wxFont& defaultFont) const
+{
+    wxString str = toString();
+    if(str.IsEmpty()) return defaultFont;
+    wxFont f = clFontHelper::FromString(str);
+    return f;
 }

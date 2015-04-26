@@ -26,25 +26,14 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(250,250), wxAUI_NB_TOP|wxBK_DEFAULT);
+    m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(250,250), wxAUI_NB_TOP|wxBK_DEFAULT|wxBORDER_NONE);
     m_notebook->SetName(wxT("m_notebook"));
     
     mainSizer->Add(m_notebook, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer13 = new wxBoxSizer(wxHORIZONTAL);
-    
-    mainSizer->Add(boxSizer13, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonRestoreDefaults = new wxButton(this, wxID_ANY, _("Restore Defaults..."), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_buttonRestoreDefaults->SetToolTip(_("Revert all the changes and restore all the build settings to the factory defaults"));
-    
-    boxSizer13->Add(m_buttonRestoreDefaults, 0, wxALL|wxALIGN_LEFT, 5);
-    
-    boxSizer13->Add(0, 0, 1, wxALL, 5);
-    
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
     
-    boxSizer13->Add(m_stdBtnSizer2, 0, wxALL, 5);
+    mainSizer->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer2->AddButton(m_buttonCancel);
@@ -61,6 +50,8 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook);
     }
     #endif
     
@@ -73,10 +64,11 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
-    m_buttonRestoreDefaults->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnRestoreDefaults), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL, this);
     m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL, this);
     m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AdvancedDlgBase::OnApplyUI), NULL, this);
@@ -85,7 +77,6 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
 AdvancedDlgBase::~AdvancedDlgBase()
 {
-    m_buttonRestoreDefaults->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnRestoreDefaults), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL, this);
     m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL, this);
     m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AdvancedDlgBase::OnApplyUI), NULL, this);

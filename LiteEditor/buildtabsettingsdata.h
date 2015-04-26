@@ -26,6 +26,7 @@
 #define __buildtabsettingsdata__
 
 #include "serialized_object.h"
+#include <wx/font.h>
 
 class BuildTabSettingsData : public SerializedObject
 {
@@ -42,6 +43,7 @@ class BuildTabSettingsData : public SerializedObject
     bool m_errorsFirstLine;
     int m_errorWarningStyle;
     int m_buildpaneScrollTo;
+    wxFont m_buildFont;
 
 private:
     BuildTabSettingsData(const BuildTabSettingsData& rhs);
@@ -58,6 +60,9 @@ public:
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
 
+    void SetBuildFont(const wxFont& buildFont) { this->m_buildFont = buildFont; }
+    const wxFont& GetBuildFont() const { return m_buildFont; }
+    
     // Setters
     void SetBoldErrFont(const bool& boldErrFont) { this->m_boldErrFont = boldErrFont; }
     void SetBoldWarnFont(const bool& boldWarnFont) { this->m_boldWarnFont = boldWarnFont; }

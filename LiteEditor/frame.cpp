@@ -3560,7 +3560,7 @@ void clMainFrame::CreateWelcomePage()
 void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    const wxString ALL(wxT("MS Visual Studio Solution File (*.sln)|*.sln|") wxT("All Files (*)|*"));
+    const wxString ALL(wxT("MS Visual Studio Solution File (*.sln;*.dsw)|*.sln;*.dsw|") wxT("All Files (*)|*"));
     wxFileDialog dlg(this,
                      _("Open MS Solution File"),
                      wxEmptyString,

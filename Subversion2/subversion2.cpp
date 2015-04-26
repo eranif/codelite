@@ -984,7 +984,8 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString& workingDire
 #endif
 
     wxArrayString xmlArr;
-
+    ::WrapInShell(svnInfoCommand);
+    
     wxLog::EnableLogging(false);
     IProcess::Ptr_t proc(::CreateSyncProcess(svnInfoCommand, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
     if(proc) {

@@ -10,12 +10,6 @@ enum class GenericCfgType {
 	EXECUTABLE
 };
 
-enum class GenericFileType {
-	SOURCE,
-	HEADER,
-	OTHER
-};
-
 struct GenericProjectCfg {
 	wxString name;
 	wxString outputFilename;
@@ -30,7 +24,6 @@ struct GenericProjectCfg {
 struct GenericProjectFile {
 	wxString name;
 	wxString vpath;
-	GenericFileType type;
 };
 
 struct GenericProject {

@@ -20,6 +20,8 @@ public:
 	
 private:
 	void GenerateFromVC6(GenericWorkspace& genericWorkspace);
+	void GenerateFromVC7(GenericWorkspace& genericWorkspace);
+	void GenerateFromVC11(GenericWorkspace& genericWorkspace);
 	
 	wxFileName wsInfo;
 	long version;

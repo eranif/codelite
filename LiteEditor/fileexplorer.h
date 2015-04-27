@@ -51,6 +51,7 @@ private:
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnBookmark(wxAuiToolBarEvent& event);
     void OnGotoFolder(wxCommandEvent& event);
+    void OnFindInFiles(wxCommandEvent& event);
     
 public:
     FileExplorer(wxWindow *parent, const wxString &caption);

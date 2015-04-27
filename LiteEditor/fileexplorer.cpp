@@ -40,6 +40,8 @@
 #include "FileExplorerTabToolBar.h"
 #include "cl_config.h"
 #include "OpenFolderDlg.h"
+#include "globals.h"
+#include <wx/arrstr.h>
 
 FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
@@ -74,6 +76,7 @@ FileExplorer::~FileExplorer()
            this,
            FileExplorerTabToolBar::ID_TOOL_EXPLORER_BOOKMARKS);
     Unbind(wxEVT_MENU, &FileExplorer::OnGotoFolder, this, FileExplorerTabToolBar::ID_TOOL_GOTO_FOLDER);
+    Unbind(wxEVT_MENU, &FileExplorer::OnFindInFiles, this, FileExplorerTabToolBar::ID_TOOL_FIND_IN_FILES);
 }
 
 void FileExplorer::CreateGUIControls()
@@ -81,10 +84,9 @@ void FileExplorer::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-    FileExplorerTabToolBar* tb = new FileExplorerTabToolBar(this);
-    mainSizer->Add(tb, 0, wxEXPAND);
-
     m_fileTree = new FileExplorerTab(this);
+    FileExplorerTabToolBar* tb = new FileExplorerTabToolBar(this, m_fileTree);
+    mainSizer->Add(tb, 0, wxEXPAND);
     mainSizer->Add(m_fileTree, 1, wxEXPAND | wxALL, 1);
     tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
 
@@ -96,6 +98,7 @@ void FileExplorer::CreateGUIControls()
          this,
          FileExplorerTabToolBar::ID_TOOL_EXPLORER_BOOKMARKS);
     Bind(wxEVT_MENU, &FileExplorer::OnGotoFolder, this, FileExplorerTabToolBar::ID_TOOL_GOTO_FOLDER);
+    Bind(wxEVT_MENU, &FileExplorer::OnFindInFiles, this, FileExplorerTabToolBar::ID_TOOL_FIND_IN_FILES);
     mainSizer->Layout();
 
     wxTheApp->Connect(XRCID("show_in_explorer"),
@@ -242,4 +245,21 @@ void FileExplorer::OnGotoFolder(wxCommandEvent& event)
             m_fileTree->GetGenericDirCtrl()->SelectPath(path);
         }
     }
+}
+
+void FileExplorer::OnFindInFiles(wxCommandEvent& event)
+{
+    wxArrayString folders, files;
+    m_fileTree->GetSelections(folders, files);
+    if(folders.IsEmpty() && files.IsEmpty()) return;
+    
+    // Prepare a folder list from both arrays
+    for(size_t i=0; i<files.size(); ++i) {
+        wxFileName fn(files.Item(i));
+        if(folders.Index(fn.GetPath()) == wxNOT_FOUND) {
+            folders.Add(fn.GetPath());
+        }
+    }
+    
+    ::clGetManager()->OpenFindInFileForPaths(folders);
 }

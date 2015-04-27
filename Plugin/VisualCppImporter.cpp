@@ -13,11 +13,9 @@
 #define EXECUTABLE_EXT wxT("")
 #endif
 
-VisualCppImporter::VisualCppImporter() {
-}
+VisualCppImporter::VisualCppImporter() {}
 
-VisualCppImporter::~VisualCppImporter() {
-}
+VisualCppImporter::~VisualCppImporter() {}
 
 bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler) {
 	wsInfo.Assign(filename);

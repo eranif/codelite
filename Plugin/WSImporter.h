@@ -15,6 +15,7 @@ public:
 
 	void Load(const wxString& filename, const wxString& defaultCompiler);
 	bool Import(wxString& errMsg);
+	
 protected:
 	void AddImporter(std::shared_ptr<GenericImporter> importer);
 	

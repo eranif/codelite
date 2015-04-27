@@ -18,6 +18,10 @@ struct GenericProjectCfg {
 	wxString preprocessor;
 	wxString libraries;
 	wxString libPath;
+	wxString cCompilerOptions;
+	wxString cppCompilerOptions;
+	wxString linkerOptions;
+	wxString preCompiledHeader;
 	GenericCfgType type;
 };
 

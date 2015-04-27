@@ -24,11 +24,14 @@ bool WSImporter::Import(wxString& errMsg) {
 			if (importer->isSupportedWorkspace()) {
 				GenericWorkspace gworskspace = importer->PerformImport();
 				wxString errMsgLocal;
-				if (!WorkspaceST::Get()->CreateWorkspace(gworskspace.name, gworskspace.path, errMsgLocal)) {
+				if (!WorkspaceST::Get()->CreateWorkspace(gworskspace.name, gworskspace.path, errMsgLocal))
 					return false;
-				}
 				
-				for (GenericProject project : gworskspace.projects) {
+				Workspace* clWorkspace = NULL;
+				WorkspaceConfiguration::ConfigMappingList cmlDebug;
+				WorkspaceConfiguration::ConfigMappingList cmlRelease;
+				
+				for (GenericProject& project : gworskspace.projects) {
 					GenericCfgType cfgType = project.cfgType;
 					
 					wxString projectType;
@@ -46,9 +49,8 @@ bool WSImporter::Import(wxString& errMsg) {
 							break;
 					}
 					
-					if (!WorkspaceST::Get()->CreateProject(project.name, project.path, projectType, true, errMsg)) {
+					if (!WorkspaceST::Get()->CreateProject(project.name, project.path, projectType, true, errMsg))
 						return false;
-					}
 					
 					ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project.name, errMsg);
 					ProjectSettingsPtr le_settings(new ProjectSettings(NULL));
@@ -56,9 +58,10 @@ bool WSImporter::Import(wxString& errMsg) {
 					le_settings->RemoveConfiguration(wxT("Debug"));
 					le_settings->SetProjectType(projectType);
 					
-					BuildMatrixPtr matrix = proj->GetWorkspace()->GetBuildMatrix();
-					
-					for (GenericProjectCfg cfg : project.cfgs) {
+					if (clWorkspace == NULL)
+						clWorkspace = proj->GetWorkspace();
+										
+					for (GenericProjectCfg& cfg : project.cfgs) {
 						BuildConfigPtr le_conf(new BuildConfig(NULL));
 						le_conf->SetName(cfg.name);
 						
@@ -79,18 +82,30 @@ bool WSImporter::Import(wxString& errMsg) {
 							
 						if (!cfg.outputFilename.IsEmpty())
 							le_conf->SetOutputFileName(cfg.outputFilename);
+							
+						if (!cfg.cCompilerOptions.IsEmpty())
+							le_conf->SetCCompileOptions(cfg.cCompilerOptions);
+							
+						if (!cfg.cppCompilerOptions.IsEmpty())
+							le_conf->SetCompileOptions(cfg.cppCompilerOptions);
+							
+						if (!cfg.linkerOptions.IsEmpty())
+							le_conf->SetLinkOptions(cfg.linkerOptions);
+							
+						if (!cfg.preCompiledHeader.IsEmpty())
+							le_conf->SetPrecompiledHeader(cfg.preCompiledHeader);
 						
 						le_conf->SetCompilerType(defaultCompiler);
 						
-						WorkspaceConfiguration::ConfigMappingList cml;
-						ConfigMappingEntry cme(project.name, cfg.name);
-						cml.push_back(cme);
+						if (cfg.name.Lower().Contains(wxT("debug"))) {
+							ConfigMappingEntry cme(project.name, cfg.name);
+							cmlDebug.push_back(cme);
+						}
 						
-						WorkspaceConfigurationPtr wsconf = new WorkspaceConfiguration(NULL);
-						wsconf->SetName(cfg.name);
-						wsconf->SetConfigMappingList(cml);
-
-						matrix->SetConfiguration(wsconf);
+						if (cfg.name.Lower().Contains(wxT("release"))) {
+							ConfigMappingEntry cme(project.name, cfg.name);
+							cmlRelease.push_back(cme);
+						}
 						
 						wxString buildConfigType;
 						
@@ -111,12 +126,6 @@ bool WSImporter::Import(wxString& errMsg) {
 						le_settings->SetBuildConfiguration(le_conf);
 					}
 					
-					// Delete default configuration
-					matrix->RemoveConfiguration("Debug");
-					matrix->RemoveConfiguration("Release");
-					
-					proj->GetWorkspace()->SetBuildMatrix(matrix);
-					
 					proj->SetSettings(le_settings);
 					
 					proj->BeginTranscation();
@@ -125,12 +134,28 @@ bool WSImporter::Import(wxString& errMsg) {
 					proj->DeleteVirtualDir("include");
 					proj->DeleteVirtualDir("src");
 					
-					for (GenericProjectFile file : project.files) {
+					for (GenericProjectFile& file : project.files) {
 						proj->CreateVirtualDir(file.vpath);
 						proj->AddFile(file.name, file.vpath);
 					}
 					
 					proj->CommitTranscation();
+				}
+				
+				if (clWorkspace) {
+					BuildMatrixPtr clMatrix = clWorkspace->GetBuildMatrix();
+					
+					WorkspaceConfigurationPtr wsconf = clMatrix->GetConfigurationByName(wxT("Debug"));
+					if (wsconf) {
+						wsconf->SetConfigMappingList(cmlDebug);
+					}
+					
+					wsconf = clMatrix->GetConfigurationByName(wxT("Release"));
+					if (wsconf) {
+						wsconf->SetConfigMappingList(cmlRelease);
+					}
+					
+					clWorkspace->SetBuildMatrix(clMatrix);
 				}
 				
 				return true;

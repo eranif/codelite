@@ -1,9 +1,11 @@
 #include "WSImporter.h"
 #include "VisualCppImporter.h"
+#include "DevCppImporter.h"
 #include "workspace.h"
 
 WSImporter::WSImporter() {
 	AddImporter(std::make_shared<VisualCppImporter>());
+	AddImporter(std::make_shared<DevCppImporter>());
 }
 
 WSImporter::~WSImporter() {

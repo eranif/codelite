@@ -203,6 +203,8 @@
     <File Name="GenericImporter.h"/>
     <File Name="VisualCppImporter.h"/>
     <File Name="VisualCppImporter.cpp"/>
+    <File Name="DevCppImporter.h"/>
+    <File Name="DevCppImporter.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="debuggermanager.cpp"/>

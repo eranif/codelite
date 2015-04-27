@@ -16,12 +16,12 @@ public:
 
 	virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
 	virtual bool isSupportedWorkspace();
-	virtual GenericWorkspace PerformImport();
+	virtual GenericWorkspacePtr PerformImport();
 	
 private:
-	void GenerateFromVC6(GenericWorkspace& genericWorkspace);
-	void GenerateFromVC7(GenericWorkspace& genericWorkspace);
-	void GenerateFromVC11(GenericWorkspace& genericWorkspace);
+	void GenerateFromVC6(GenericWorkspacePtr genericWorkspace);
+	void GenerateFromVC7(GenericWorkspacePtr genericWorkspace);
+	void GenerateFromVC11(GenericWorkspacePtr genericWorkspace);
 	
 	wxFileName wsInfo;
 	long version;

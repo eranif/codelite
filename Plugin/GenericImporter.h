@@ -3,6 +3,7 @@
 
 #include <wx/string.h>
 #include <vector>
+#include <memory>
 
 enum class GenericCfgType {
 	DYNAMIC_LIBRARY,
@@ -25,32 +26,39 @@ struct GenericProjectCfg {
 	GenericCfgType type;
 };
 
+typedef std::shared_ptr<GenericProjectCfg> GenericProjectCfgPtr;
+
 struct GenericProjectFile {
 	wxString name;
 	wxString vpath;
 };
 
+typedef std::shared_ptr<GenericProjectFile> GenericProjectFilePtr;
+
 struct GenericProject {
 	wxString name;
 	wxString path;
 	GenericCfgType cfgType;
-	std::vector<GenericProjectCfg> cfgs;
-	std::vector<GenericProjectFile> files;
+	std::vector<GenericProjectCfgPtr> cfgs;
+	std::vector<GenericProjectFilePtr> files;
 };
+
+typedef std::shared_ptr<GenericProject> GenericProjectPtr;
 
 struct GenericWorkspace {
 	wxString name;
 	wxString path;
-	std::vector<GenericProject> projects;
+	std::vector<GenericProjectPtr> projects;
 };
 
+typedef std::shared_ptr<GenericWorkspace> GenericWorkspacePtr;
 
 class GenericImporter
 {
 public:
 	virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler) = 0;
 	virtual bool isSupportedWorkspace() = 0;
-	virtual GenericWorkspace PerformImport() = 0;
+	virtual GenericWorkspacePtr PerformImport() = 0;
 };
 
 #endif // GENERICIMPORTER_H

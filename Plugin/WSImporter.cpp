@@ -22,17 +22,17 @@ bool WSImporter::Import(wxString& errMsg) {
 	for(std::shared_ptr<GenericImporter> importer : importers) {
 		if (importer->OpenWordspace(filename, defaultCompiler)) {
 			if (importer->isSupportedWorkspace()) {
-				GenericWorkspace gworskspace = importer->PerformImport();
+				GenericWorkspacePtr gworskspace = importer->PerformImport();
 				wxString errMsgLocal;
-				if (!WorkspaceST::Get()->CreateWorkspace(gworskspace.name, gworskspace.path, errMsgLocal))
+				if (!WorkspaceST::Get()->CreateWorkspace(gworskspace->name, gworskspace->path, errMsgLocal))
 					return false;
 				
 				Workspace* clWorkspace = NULL;
 				WorkspaceConfiguration::ConfigMappingList cmlDebug;
 				WorkspaceConfiguration::ConfigMappingList cmlRelease;
 				
-				for (GenericProject& project : gworskspace.projects) {
-					GenericCfgType cfgType = project.cfgType;
+				for (GenericProjectPtr project : gworskspace->projects) {
+					GenericCfgType cfgType = project->cfgType;
 					
 					wxString projectType;
 					wxString errMsg;
@@ -49,10 +49,10 @@ bool WSImporter::Import(wxString& errMsg) {
 							break;
 					}
 					
-					if (!WorkspaceST::Get()->CreateProject(project.name, project.path, projectType, true, errMsg))
+					if (!WorkspaceST::Get()->CreateProject(project->name, project->path, projectType, true, errMsg))
 						return false;
 					
-					ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project.name, errMsg);
+					ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project->name, errMsg);
 					ProjectSettingsPtr le_settings(new ProjectSettings(NULL));
 					
 					le_settings->RemoveConfiguration(wxT("Debug"));
@@ -61,55 +61,55 @@ bool WSImporter::Import(wxString& errMsg) {
 					if (clWorkspace == NULL)
 						clWorkspace = proj->GetWorkspace();
 										
-					for (GenericProjectCfg& cfg : project.cfgs) {
+					for (GenericProjectCfgPtr cfg : project->cfgs) {
 						BuildConfigPtr le_conf(new BuildConfig(NULL));
-						le_conf->SetName(cfg.name);
+						le_conf->SetName(cfg->name);
 						
-						if (!cfg.includePath.IsEmpty())
-							le_conf->SetIncludePath(cfg.includePath);
+						if (!cfg->includePath.IsEmpty())
+							le_conf->SetIncludePath(cfg->includePath);
 						
-						if (!cfg.libraries.IsEmpty())
-							le_conf->SetLibraries(cfg.libraries);
+						if (!cfg->libraries.IsEmpty())
+							le_conf->SetLibraries(cfg->libraries);
 							
-						if (!cfg.libPath.IsEmpty())
-							le_conf->SetLibPath(cfg.libPath);
+						if (!cfg->libPath.IsEmpty())
+							le_conf->SetLibPath(cfg->libPath);
 						
-						if (!cfg.preprocessor.IsEmpty()) 
-							le_conf->SetPreprocessor(cfg.preprocessor);
+						if (!cfg->preprocessor.IsEmpty()) 
+							le_conf->SetPreprocessor(cfg->preprocessor);
 						
-						if (!cfg.intermediateDirectory.IsEmpty())
-							le_conf->SetIntermediateDirectory(cfg.intermediateDirectory);
+						if (!cfg->intermediateDirectory.IsEmpty())
+							le_conf->SetIntermediateDirectory(cfg->intermediateDirectory);
 							
-						if (!cfg.outputFilename.IsEmpty())
-							le_conf->SetOutputFileName(cfg.outputFilename);
+						if (!cfg->outputFilename.IsEmpty())
+							le_conf->SetOutputFileName(cfg->outputFilename);
 							
-						if (!cfg.cCompilerOptions.IsEmpty())
-							le_conf->SetCCompileOptions(cfg.cCompilerOptions);
+						if (!cfg->cCompilerOptions.IsEmpty())
+							le_conf->SetCCompileOptions(cfg->cCompilerOptions);
 							
-						if (!cfg.cppCompilerOptions.IsEmpty())
-							le_conf->SetCompileOptions(cfg.cppCompilerOptions);
+						if (!cfg->cppCompilerOptions.IsEmpty())
+							le_conf->SetCompileOptions(cfg->cppCompilerOptions);
 							
-						if (!cfg.linkerOptions.IsEmpty())
-							le_conf->SetLinkOptions(cfg.linkerOptions);
+						if (!cfg->linkerOptions.IsEmpty())
+							le_conf->SetLinkOptions(cfg->linkerOptions);
 							
-						if (!cfg.preCompiledHeader.IsEmpty())
-							le_conf->SetPrecompiledHeader(cfg.preCompiledHeader);
+						if (!cfg->preCompiledHeader.IsEmpty())
+							le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
 						
 						le_conf->SetCompilerType(defaultCompiler);
 						
-						if (cfg.name.Lower().Contains(wxT("debug"))) {
-							ConfigMappingEntry cme(project.name, cfg.name);
+						if (cfg->name.Lower().Contains(wxT("debug"))) {
+							ConfigMappingEntry cme(project->name, cfg->name);
 							cmlDebug.push_back(cme);
 						}
 						
-						if (cfg.name.Lower().Contains(wxT("release"))) {
-							ConfigMappingEntry cme(project.name, cfg.name);
+						if (cfg->name.Lower().Contains(wxT("release"))) {
+							ConfigMappingEntry cme(project->name, cfg->name);
 							cmlRelease.push_back(cme);
 						}
 						
 						wxString buildConfigType;
 						
-						switch (cfg.type) {
+						switch (cfg->type) {
 							case GenericCfgType::DYNAMIC_LIBRARY:
 								buildConfigType = Project::DYNAMIC_LIBRARY;
 								break;
@@ -134,9 +134,9 @@ bool WSImporter::Import(wxString& errMsg) {
 					proj->DeleteVirtualDir("include");
 					proj->DeleteVirtualDir("src");
 					
-					for (GenericProjectFile& file : project.files) {
-						proj->CreateVirtualDir(file.vpath);
-						proj->AddFile(file.name, file.vpath);
+					for (GenericProjectFilePtr file : project->files) {
+						proj->CreateVirtualDir(file->vpath);
+						proj->AddFile(file->name, file->vpath);
 					}
 					
 					proj->CommitTranscation();

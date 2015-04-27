@@ -1,6 +1,7 @@
 #include "VisualCppImporter.h"
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
+#include <map>
 
 #ifdef __WXMSW__
 #define STATIC_LIBRARY_EXT wxT(".lib")
@@ -301,6 +302,11 @@ void VisualCppImporter::GenerateFromVC7(GenericWorkspace& genericWorkspace) {
 											wxString preprocessorDefinitions = toolChild->GetAttribute(wxT("PreprocessorDefinitions"));
 											preprocessorDefinitions.Replace(wxT(","), wxT(";"));
 											genericProjectCfg.preprocessor = preprocessorDefinitions;
+											
+											wxString additionalIncludeDirectories = toolChild->GetAttribute(wxT("AdditionalIncludeDirectories"));
+											additionalIncludeDirectories.Replace(wxT(","), wxT(";"));
+											additionalIncludeDirectories.Replace(wxT("\\"), wxT("/"));
+											genericProjectCfg.includePath = additionalIncludeDirectories;
 										}
 										
 										if (toolChild->GetAttribute(wxT("Name")) == wxT("VCLinkerTool")) {
@@ -310,6 +316,11 @@ void VisualCppImporter::GenerateFromVC7(GenericWorkspace& genericWorkspace) {
 												additionalDependencies.Replace(wxT(".lib"), wxT(""));
 									
 											genericProjectCfg.libraries = additionalDependencies;
+											
+											wxString additionalLibraryDirectories = toolChild->GetAttribute(wxT("AdditionalLibraryDirectories"));
+											additionalLibraryDirectories.Replace(wxT(","), wxT(";"));
+											additionalLibraryDirectories.Replace(wxT("\\"), wxT("/"));
+											genericProjectCfg.libPath = additionalLibraryDirectories;
 										}
 									}
 									
@@ -385,6 +396,7 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspace& genericWorkspace) {
 			projectFile.Replace(wxT("\""), wxT(""));
 			
 			wxFileName projectInfo(wsInfo.GetPath() + wxFileName::GetPathSeparator() + projectFile);
+			wxFileName filterInfo(projectInfo.GetFullPath() + wxT(".filters"));
 			
 			GenericProject genericProject;
 			genericProject.name = projectName;
@@ -395,7 +407,27 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspace& genericWorkspace) {
 				wxXmlNode* root = projectDoc.GetRoot();
 				wxXmlNode* projectChild = root->GetChildren();
 				
+				std::map<wxString, wxString> configurationTypeMap;
+				
 				while(projectChild) {
+					if (projectChild->GetName() == wxT("PropertyGroup")) {
+						wxXmlNode* propertyGroupChild = projectChild->GetChildren();
+						
+						while(propertyGroupChild) {
+							wxString projectCfgName = projectChild->GetAttribute("Condition");
+							projectCfgName.Replace(wxT("'$(Configuration)|$(Platform)'=='"), wxT(""));
+							projectCfgName.Replace(wxT("'"), wxT(""));
+							projectCfgName.Replace(wxT("|"), wxT("_"));
+							
+							if (propertyGroupChild->GetName() == wxT("ConfigurationType")) {
+								wxString configurationType = propertyGroupChild->GetNodeContent();
+								configurationTypeMap[projectCfgName] = configurationType;
+							}
+							
+							propertyGroupChild = propertyGroupChild->GetNext();
+						}
+					}
+					
 					if (projectChild->GetName() == wxT("ItemDefinitionGroup")) {
 						wxString projectCfgName = projectChild->GetAttribute("Condition");
 						projectCfgName.Replace(wxT("'$(Configuration)|$(Platform)'=='"), wxT(""));
@@ -404,6 +436,32 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspace& genericWorkspace) {
 						
 						GenericProjectCfg genericProjectCfg;
 						genericProjectCfg.name = projectCfgName;
+						
+						genericProjectCfg.intermediateDirectory = wxT("./") + projectCfgName;
+								
+						wxString outputFilename;
+						
+						wxString configurationType = configurationTypeMap[projectCfgName];
+								
+						if (configurationType == wxT("StaticLibrary")) {
+							genericProjectCfg.type = GenericCfgType::STATIC_LIBRARY;
+							outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
+							outputFilename += STATIC_LIBRARY_EXT;
+							if (IsGccCompile) 
+								outputFilename.Replace(wxT("lib"), wxT("a"));
+						}
+						else if (configurationType == wxT("DynamicLibrary")) {
+							genericProjectCfg.type = GenericCfgType::DYNAMIC_LIBRARY;
+							outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
+							outputFilename += DYNAMIC_LIBRARY_EXT;
+						}
+						else {
+							genericProjectCfg.type = GenericCfgType::EXECUTABLE;
+							outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
+							outputFilename += EXECUTABLE_EXT;
+						}
+						
+						genericProjectCfg.outputFilename = outputFilename;
 						
 						wxXmlNode* itemDefinitionGroupChild = projectChild->GetChildren();
 						
@@ -455,12 +513,39 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspace& genericWorkspace) {
 						genericProject.cfgs.push_back(genericProjectCfg);
 					}
 					
+					if (!filterInfo.Exists()) {
+						if (projectChild->GetName() == wxT("ItemGroup")) {
+							wxXmlNode* itemChild = projectChild->GetChildren();
+				
+							while(itemChild) {
+								if (itemChild->GetName() == wxT("ClInclude") ||
+									itemChild->GetName() == wxT("ClCompile") || 
+									itemChild->GetName() == wxT("None") ||
+									itemChild->GetName() == wxT("Text") ||
+									itemChild->GetName() == wxT("ResourceCompile")) {
+									
+									wxString virtualPath = "";
+									wxString filename = itemChild->GetAttribute("Include");
+									filename.Replace(wxT("\\"), wxT("/"));
+									
+									GenericProjectFile genericProjectFile;
+									genericProjectFile.name = filename;
+									genericProjectFile.vpath = virtualPath;
+
+									genericProject.files.push_back(genericProjectFile);
+								}
+								
+								itemChild = itemChild->GetNext();
+							}
+						}
+					}
+					
 					projectChild = projectChild->GetNext();
 				}
 			}
 			
 			wxXmlDocument filterDoc;
-			if (filterDoc.Load(projectInfo.GetFullPath() + wxT(".filters"))) {
+			if (filterDoc.Load(filterInfo.GetFullPath())) {
 				wxXmlNode* root = filterDoc.GetRoot();
 				wxXmlNode* itemGroupChild = root->GetChildren();
 				

@@ -716,6 +716,8 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -890,6 +892,8 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -1044,8 +1048,6 @@ FileExplorerTabToolBarBase::FileExplorerTabToolBarBase(wxWindow *parent, wxWindo
     }
     SetToolBitmapSize(wxSize(16,16));
     
-    this->AddTool(XRCID("link_editor"), _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
-    
     this->AddTool(XRCID("collapse_all"), _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
     
     this->AddTool(XRCID("go_home"), _("Go Home"), wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxNullBitmap, wxITEM_NORMAL, _("Go Home"), _("Go Home"), NULL);
@@ -1057,13 +1059,24 @@ FileExplorerTabToolBarBase::FileExplorerTabToolBarBase(wxWindow *parent, wxWindo
     }
     
     this->AddTool(ID_TOOL_GOTO_FOLDER, _("GoTo"), wxXmlResource::Get()->LoadBitmap(wxT("goto")), wxNullBitmap, wxITEM_NORMAL, _("Goto Folder"), _("Goto Folder"), NULL);
+    
+    this->AddTool(ID_TOOL_FIND_IN_FILES, _("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find-in-files")), wxNullBitmap, wxITEM_NORMAL, _("Find In Files"), _("Find In Files"), NULL);
+    
+    this->AddStretchSpacer(1);
+    
+    this->AddTool(XRCID("link_editor"), _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
     this->Realize();
     
     SetName(wxT("FileExplorerTabToolBarBase"));
+    // Connect events
+    this->Connect(ID_TOOL_FIND_IN_FILES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorerTabToolBarBase::OnFindInFilesUI), NULL, this);
+    
 }
 
 FileExplorerTabToolBarBase::~FileExplorerTabToolBarBase()
 {
+    this->Disconnect(ID_TOOL_FIND_IN_FILES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorerTabToolBarBase::OnFindInFilesUI), NULL, this);
+    
 }
 
 OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
@@ -1120,6 +1133,8 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
 }

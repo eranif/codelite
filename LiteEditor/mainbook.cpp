@@ -1363,7 +1363,7 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
 {
     wxString text;
 
-    clWindowUpdateLocker locker(this);
+    //clWindowUpdateLocker locker(this);
 
     // Get list of tabs to close
     std::vector<wxWindow*> windows;

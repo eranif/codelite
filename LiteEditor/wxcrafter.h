@@ -396,11 +396,13 @@ class FileExplorerTabToolBarBase : public wxAuiToolBar
 public:
     enum {
         ID_TOOL_EXPLORER_BOOKMARKS = 8001,
-        ID_TOOL_GOTO_FOLDER = 8002,
+        ID_TOOL_FIND_IN_FILES = 8002,
+        ID_TOOL_GOTO_FOLDER = 8003,
     };
 protected:
 
 protected:
+    virtual void OnFindInFilesUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     FileExplorerTabToolBarBase(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &position = wxDefaultPosition, const wxSize &size = wxSize(-1,-1), long style = wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);

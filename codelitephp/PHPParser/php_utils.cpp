@@ -11,6 +11,7 @@
 #include "php_project.h"
 #include "php_workspace.h"
 #include "json_node.h"
+#include "file_logger.h"
 
 bool IsPHPCommentOrString(int styleAtPos)
 {
@@ -180,6 +181,27 @@ wxString Base64Encode(const wxString& str)
     return encodedString;
 }
 
+static void DecodeFileName(wxString& filename)
+{
+    filename.Replace("%20", " ");
+    filename.Replace("%21", "!");
+    filename.Replace("%23", "#");
+    filename.Replace("%24", "$");
+    filename.Replace("%26", "&");
+    filename.Replace("%27", "'");
+    filename.Replace("%28", "(");
+    filename.Replace("%29", ")");
+    filename.Replace("%2A", "*");
+    filename.Replace("%2B", "+");
+    filename.Replace("%2C", ",");
+    filename.Replace("%3B", ";");
+    filename.Replace("%3D", "=");
+    filename.Replace("%3F", "?");
+    filename.Replace("%40", "@");
+    filename.Replace("%5B", "[");
+    filename.Replace("%5D", "]");
+}
+
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
 {
     // Check that a workspace is opened
@@ -196,13 +218,20 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
     
     // Remote the "file://" from the file path
     filename.StartsWith(FILE_SCHEME, &filename);
+    CL_DEBUG("filename => %s", filename);
+    
     // On Windows, the file is returned like (after removing the file://)
     // /C:/Http/htdocs/file.php - remote the leading "/"
     wxRegEx reMSWPrefix("/[a-zA-Z]{1}:/");
     if(reMSWPrefix.IsValid() && reMSWPrefix.Matches(filename)) {
         // Windows file
+        CL_DEBUG("filename => %s", filename);
         filename.Remove(0, 1);
     }
+    
+    // Remove URI encoding ("%20"=>" " etc)
+    DecodeFileName(filename);
+    CL_DEBUG("filename => %s", filename);
     
     // First check if the remote file exists locally
     if(wxFileName(filename).Exists()) {

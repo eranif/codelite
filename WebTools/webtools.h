@@ -7,6 +7,7 @@
 #include "JSCodeCompletion.h"
 #include <wx/timer.h>
 #include "ieditor.h"
+#include "XMLCodeCompletion.h"
 
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
@@ -15,6 +16,8 @@ class WebTools : public IPlugin
 
     JavaScriptSyntaxColourThread* m_jsColourThread;
     JSCodeCompletion::Ptr_t m_jsCodeComplete;
+    XMLCodeCompletion::Ptr_t m_xmlCodeComplete;
+    
     time_t m_lastColourUpdate;
     wxTimer* m_timer;
 

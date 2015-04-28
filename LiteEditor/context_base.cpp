@@ -310,5 +310,9 @@ void ContextBase::AutoAddComment()
 bool ContextBase::IsStringTriggerCodeComplete(const wxString& str) const
 {
     // default behavior is to check if 'str' exists in the m_completionTriggerStrings container
-    return (m_completionTriggerStrings.count(str) > 0);
+    if(GetCtrl().GetLexer() == wxSTC_LEX_XML) {
+        return str == "<" || str == "</";
+    } else {
+        return (m_completionTriggerStrings.count(str) > 0);
+    }
 }

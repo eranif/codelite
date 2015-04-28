@@ -291,4 +291,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="XML">
+    <File Name="XMLCodeCompletion.h"/>
+    <File Name="XMLCodeCompletion.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

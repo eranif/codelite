@@ -33,7 +33,7 @@ WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
     , m_lastColourUpdate(0)
 {
-    m_longName = wxT("Support for JavScript, HTML and other web development tools");
+    m_longName = wxT("Support for JavScript, XML, HTML and other web development tools");
     m_shortName = wxT("WebTools");
 
     // Create the syntax highligher worker thread
@@ -52,7 +52,8 @@ WebTools::WebTools(IManager* manager)
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion());
-
+    m_xmlCodeComplete.Reset(new XMLCodeCompletion());
+    
     // Connect the timer
     m_timer = new wxTimer(this);
     m_timer->Start(3000);
@@ -144,6 +145,10 @@ void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
     if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
         event.Skip(false);
         m_jsCodeComplete->CodeComplete(editor);
+    } else if(editor && m_xmlCodeComplete && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
+        // an XML file
+        event.Skip(false);
+        m_xmlCodeComplete->CodeComplete(editor);
     }
 }
 

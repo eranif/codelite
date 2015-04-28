@@ -25,6 +25,7 @@ bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& def
 	wxString extension = wsInfo.GetExt().Lower();
 	
 	bool isValidExt = extension == wxT("dev");
+	
 	bool result = wsInfo.FileExists() && wsInfo.IsFileReadable() && isValidExt;
 	
 	return result;

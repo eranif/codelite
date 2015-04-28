@@ -1,11 +1,13 @@
 #include "WSImporter.h"
 #include "VisualCppImporter.h"
 #include "DevCppImporter.h"
+#include "BorlandCppBuilderImporter.h"
 #include "workspace.h"
 
 WSImporter::WSImporter() {
 	AddImporter(std::make_shared<VisualCppImporter>());
 	AddImporter(std::make_shared<DevCppImporter>());
+	AddImporter(std::make_shared<BorlandCppBuilderImporter>());
 }
 
 WSImporter::~WSImporter() {

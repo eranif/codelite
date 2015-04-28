@@ -1,16 +1,6 @@
 #include "DevCppImporter.h"
 #include <wx/tokenzr.h>
 
-#ifdef __WXMSW__
-#define STATIC_LIBRARY_EXT wxT(".lib")
-#define DYNAMIC_LIBRARY_EXT wxT(".dll")
-#define EXECUTABLE_EXT wxT(".exe")
-#else
-#define STATIC_LIBRARY_EXT wxT(".a")
-#define DYNAMIC_LIBRARY_EXT wxT(".so")
-#define EXECUTABLE_EXT wxT("")
-#endif
-
 DevCppImporter::DevCppImporter() {}
 
 DevCppImporter::~DevCppImporter() {}

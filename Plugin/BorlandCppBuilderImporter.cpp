@@ -2,16 +2,6 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
-#ifdef __WXMSW__
-#define STATIC_LIBRARY_EXT wxT(".lib")
-#define DYNAMIC_LIBRARY_EXT wxT(".dll")
-#define EXECUTABLE_EXT wxT(".exe")
-#else
-#define STATIC_LIBRARY_EXT wxT(".a")
-#define DYNAMIC_LIBRARY_EXT wxT(".so")
-#define EXECUTABLE_EXT wxT("")
-#endif
-
 BorlandCppBuilderImporter::BorlandCppBuilderImporter() {}
 
 BorlandCppBuilderImporter::~BorlandCppBuilderImporter() {}

@@ -10,18 +10,18 @@
 class WXDLLIMPEXP_SDK WSImporter
 {
 public:
-	WSImporter();
-	~WSImporter();
+    WSImporter();
+    ~WSImporter();
 
-	void Load(const wxString& filename, const wxString& defaultCompiler);
-	bool Import(wxString& errMsg);
-	
+    void Load(const wxString& filename, const wxString& defaultCompiler);
+    bool Import(wxString& errMsg);
+
 protected:
-	void AddImporter(std::shared_ptr<GenericImporter> importer);
-	
+    void AddImporter(std::shared_ptr<GenericImporter> importer);
+
 private:
-	wxString filename, defaultCompiler;
-	std::vector<std::shared_ptr<GenericImporter>> importers;
+    wxString filename, defaultCompiler;
+    std::vector<std::shared_ptr<GenericImporter> > importers;
 };
 
 #endif // WSIMPORTER_H

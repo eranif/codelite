@@ -29,350 +29,350 @@
 #include "workspace.h"
 #include "xmlutils.h"
 
-#define NEXT_LINE(line)\
-	line.Empty();\
-	if(!ReadLine(line)){\
-		return false;\
-	}
+#define NEXT_LINE(line)   \
+    line.Empty();         \
+    if(!ReadLine(line)) { \
+        return false;     \
+    }
 
-VcImporter::VcImporter(const wxString &fileName, const wxString &defaultCompiler)
-		: m_fileName(fileName)
-		, m_is      (NULL)
-		, m_tis     (NULL)
-		, m_compiler(defaultCompiler)
-		, m_compilerLowercase(defaultCompiler)
+VcImporter::VcImporter(const wxString& fileName, const wxString& defaultCompiler)
+    : m_fileName(fileName)
+    , m_is(NULL)
+    , m_tis(NULL)
+    , m_compiler(defaultCompiler)
+    , m_compilerLowercase(defaultCompiler)
 {
-	m_compilerLowercase.MakeLower();
+    m_compilerLowercase.MakeLower();
 
-	wxFileName fn(m_fileName);
-	m_isOk = fn.FileExists();
-	if (m_isOk) {
-		m_is = new wxFileInputStream(fn.GetFullPath());
-		m_tis = new wxTextInputStream(*m_is);
-	}
+    wxFileName fn(m_fileName);
+    m_isOk = fn.FileExists();
+    if(m_isOk) {
+        m_is = new wxFileInputStream(fn.GetFullPath());
+        m_tis = new wxTextInputStream(*m_is);
+    }
 }
 
 VcImporter::~VcImporter()
 {
-	if (m_is) {
-		delete m_is;
-	}
-	if (m_tis) {
-		delete m_tis;
-	}
+    if(m_is) {
+        delete m_is;
+    }
+    if(m_tis) {
+        delete m_tis;
+    }
 }
 
-bool VcImporter::ReadLine(wxString &line)
+bool VcImporter::ReadLine(wxString& line)
 {
-	line = wxEmptyString;
-	if (m_isOk) {
-		while (!m_is->Eof()) {
-			line = m_tis->ReadLine();
-			TrimString(line);
-			if (line.Length() == 1 || line.Length() == 2 || line.IsEmpty() || line.StartsWith(wxT("#"))) {
-				//get next line
-				continue;
-			} else {
-				return true;
-			}
-		}
-	}
-	return false;
+    line = wxEmptyString;
+    if(m_isOk) {
+        while(!m_is->Eof()) {
+            line = m_tis->ReadLine();
+            TrimString(line);
+            if(line.Length() == 1 || line.Length() == 2 || line.IsEmpty() || line.StartsWith(wxT("#"))) {
+                // get next line
+                continue;
+            } else {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-bool VcImporter::Import(wxString &errMsg)
+bool VcImporter::Import(wxString& errMsg)
 {
-	wxString line;
-	while (true) {
-		if (!ReadLine(line))
-			break;
-		if (line.StartsWith(wxT("Project"))) {
-			if (!OnProject(line, errMsg)) {
-				return false;
-			}
-		}
-	}
+    wxString line;
+    while(true) {
+        if(!ReadLine(line)) break;
+        if(line.StartsWith(wxT("Project"))) {
+            if(!OnProject(line, errMsg)) {
+                return false;
+            }
+        }
+    }
 
-	//create LE files
-	CreateWorkspace();
-	CreateProjects();
-	return true;
+    // create LE files
+    CreateWorkspace();
+    CreateProjects();
+    return true;
 }
 
-bool VcImporter::OnProject(const wxString &firstLine, wxString &errMsg)
+bool VcImporter::OnProject(const wxString& firstLine, wxString& errMsg)
 {
-	//first line contains the project name, project file path, and project id
-	wxStringTokenizer tkz(firstLine, wxT("="));
-	if (tkz.CountTokens() != 2) {
-		errMsg = wxT("Invalid 'Project' section found. expected <expr> = <expr>");
-		return false;
-	}
+    // first line contains the project name, project file path, and project id
+    wxStringTokenizer tkz(firstLine, wxT("="));
+    if(tkz.CountTokens() != 2) {
+        errMsg = wxT("Invalid 'Project' section found. expected <expr> = <expr>");
+        return false;
+    }
 
-	tkz.NextToken();
-	wxString token = tkz.NextToken();
-	TrimString(token);
-	wxStringTokenizer tk2(token, wxT(","));
-	if (tk2.CountTokens() != 3) {
-		errMsg = wxT("Invalid 'Project' section found. expected <project name>, <project file path>, <project id>");
-		return false;
-	}
+    tkz.NextToken();
+    wxString token = tkz.NextToken();
+    TrimString(token);
+    wxStringTokenizer tk2(token, wxT(","));
+    if(tk2.CountTokens() != 3) {
+        errMsg = wxT("Invalid 'Project' section found. expected <project name>, <project file path>, <project id>");
+        return false;
+    }
 
-	VcProjectData pd;
+    VcProjectData pd;
 
-	pd.name = tk2.NextToken();
-	RemoveGershaim(pd.name);
+    pd.name = tk2.NextToken();
+    RemoveGershaim(pd.name);
 
-	pd.filepath = tk2.NextToken();
-	RemoveGershaim(pd.filepath);
+    pd.filepath = tk2.NextToken();
+    RemoveGershaim(pd.filepath);
 
-	// Make sure that the project path has a forward slash style
-	pd.filepath.Replace(wxT("\\"), wxT("/"));
+    // Make sure that the project path has a forward slash style
+    pd.filepath.Replace(wxT("\\"), wxT("/"));
 
-	pd.id = tk2.NextToken();
-	RemoveGershaim(pd.id);
-    
+    pd.id = tk2.NextToken();
+    RemoveGershaim(pd.id);
+
     std::pair<wxString, VcProjectData> p;
     p.first = pd.id;
     p.second = pd;
-	m_projects.insert( p );
-	//Skip all lines until EndProject section is found
-	wxString line;
-	while (true) {
-		NEXT_LINE(line);
-		if (line == wxT("EndProject")) {
-			return true;
-		}
-	}
-	return false;
+    m_projects.insert(p);
+    // Skip all lines until EndProject section is found
+    wxString line;
+    while(true) {
+        NEXT_LINE(line);
+        if(line == wxT("EndProject")) {
+            return true;
+        }
+    }
+    return false;
 }
 
-void VcImporter::RemoveGershaim(wxString &str)
+void VcImporter::RemoveGershaim(wxString& str)
 {
-	TrimString(str);
-	str = str.AfterFirst(wxT('"'));
-	str = str.BeforeLast(wxT('"'));
+    TrimString(str);
+    str = str.AfterFirst(wxT('"'));
+    str = str.BeforeLast(wxT('"'));
 }
 
 void VcImporter::CreateWorkspace()
 {
-	//create a workspace file from the data we collected
-	wxFileName fn(m_fileName);
-	wxString errMsg;
-	WorkspaceST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath(), errMsg);
+    // create a workspace file from the data we collected
+    wxFileName fn(m_fileName);
+    wxString errMsg;
+    WorkspaceST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath(), errMsg);
 }
 
 //
-//ConfigurationType = 1 // exe
-//ConfigurationType = 2 // dll
-//ConfigurationType = 4 // static lib
+// ConfigurationType = 1 // exe
+// ConfigurationType = 2 // dll
+// ConfigurationType = 4 // static lib
 //
 void VcImporter::CreateProjects()
 {
-	std::map<wxString, VcProjectData>::iterator iter = m_projects.begin();
-	for (; iter != m_projects.end(); iter++) {
-		//load xml file
-		VcProjectData pd = iter->second;
-		ConvertProject(pd);
-	}
+    std::map<wxString, VcProjectData>::iterator iter = m_projects.begin();
+    for(; iter != m_projects.end(); iter++) {
+        // load xml file
+        VcProjectData pd = iter->second;
+        ConvertProject(pd);
+    }
 }
 
-bool VcImporter::ConvertProject(VcProjectData &data)
+bool VcImporter::ConvertProject(VcProjectData& data)
 {
-	wxXmlDocument doc(data.filepath);
-	if (!doc.IsOk()) {
-		return false;
-	}
+    wxXmlDocument doc(data.filepath);
+    if(!doc.IsOk()) {
+        return false;
+    }
 
-	//to create a project skeleton, we need the project type
-	//since VS allows each configuration to be of different
-	//type, while LE allows single type for all configurations
-	//we use the first configuration type that we find
-	wxXmlNode *configs = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Configurations"));
-	if (!configs) {
-		return false;
-	}
+    // to create a project skeleton, we need the project type
+    // since VS allows each configuration to be of different
+    // type, while LE allows single type for all configurations
+    // we use the first configuration type that we find
+    wxXmlNode* configs = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Configurations"));
+    if(!configs) {
+        return false;
+    }
 
-	//find the first configuration node
-	wxXmlNode * config = XmlUtils::FindFirstByTagName(configs, wxT("Configuration"));
-	if (!config)	return false;
-	//read the configuration type, default is set to Executeable
-	long type = XmlUtils::ReadLong(config, wxT("ConfigurationType"), 1);
-	wxString projectType;
-	wxString errMsg;
-	switch (type) {
-	case 2: //dll
-		projectType = Project::DYNAMIC_LIBRARY;
-		break;
-	case 4:	//static library
-		projectType = Project::STATIC_LIBRARY;
-		break;
-	case 1:	//exe
-	default:
-		projectType = Project::EXECUTABLE;
-		break;
-	}
-	//now we can create the project
-	wxFileName fn(data.filepath);
-	fn.MakeAbsolute();
-	if (!WorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, true, errMsg)) {
-		return false;
-	}
+    // find the first configuration node
+    wxXmlNode* config = XmlUtils::FindFirstByTagName(configs, wxT("Configuration"));
+    if(!config) return false;
+    // read the configuration type, default is set to Executeable
+    long type = XmlUtils::ReadLong(config, wxT("ConfigurationType"), 1);
+    wxString projectType;
+    wxString errMsg;
+    switch(type) {
+    case 2: // dll
+        projectType = Project::DYNAMIC_LIBRARY;
+        break;
+    case 4: // static library
+        projectType = Project::STATIC_LIBRARY;
+        break;
+    case 1: // exe
+    default:
+        projectType = Project::EXECUTABLE;
+        break;
+    }
+    // now we can create the project
+    wxFileName fn(data.filepath);
+    fn.MakeAbsolute();
+    if(!WorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, true, errMsg)) {
+        return false;
+    }
 
-	//get the new project instance
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(data.name, errMsg);
-	ProjectSettingsPtr le_settings(new ProjectSettings(NULL));
-	//remove the default 'Debug' configuration
-	le_settings->RemoveConfiguration(wxT("Debug"));
-	le_settings->SetProjectType(projectType);
+    // get the new project instance
+    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(data.name, errMsg);
+    ProjectSettingsPtr le_settings(new ProjectSettings(NULL));
+    // remove the default 'Debug' configuration
+    le_settings->RemoveConfiguration(wxT("Debug"));
+    le_settings->SetProjectType(projectType);
 
-	while (config) {
-		if (config->GetName() == wxT("Configuration")) {
-			AddConfiguration(le_settings, config);
-		}
-		config = config->GetNext();
-	}
-	proj->SetSettings(le_settings);
-	//add all virtual folders
-	wxXmlNode *files = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Files"));
-	if (files) {
-		proj->BeginTranscation();
-		CreateFiles(files, wxEmptyString, proj);
-		proj->CommitTranscation();
-	}
-	return true;
+    while(config) {
+        if(config->GetName() == wxT("Configuration")) {
+            AddConfiguration(le_settings, config);
+        }
+        config = config->GetNext();
+    }
+    proj->SetSettings(le_settings);
+    // add all virtual folders
+    wxXmlNode* files = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Files"));
+    if(files) {
+        proj->BeginTranscation();
+        CreateFiles(files, wxEmptyString, proj);
+        proj->CommitTranscation();
+    }
+    return true;
 }
 
-void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config)
+void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode* config)
 {
-	//configuration name
-	wxString name = XmlUtils::ReadString(config, wxT("Name"));
-	name = name.BeforeFirst(wxT('|'));
-	name.Replace(wxT(" "), wxT("_"));
+    // configuration name
+    wxString name = XmlUtils::ReadString(config, wxT("Name"));
+    name = name.BeforeFirst(wxT('|'));
+    name.Replace(wxT(" "), wxT("_"));
 
-	BuildConfigPtr le_conf(new BuildConfig(NULL));
-	le_conf->SetName(name);
-	le_conf->SetIntermediateDirectory(XmlUtils::ReadString(config, wxT("IntermediateDirectory")));
-	//get the compiler settings
-	wxXmlNode *cmpNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCCLCompilerTool"));
-	//get the include directories
-	le_conf->SetIncludePath(SplitString(XmlUtils::ReadString(cmpNode, wxT("AdditionalIncludeDirectories"))));
-	le_conf->SetPreprocessor(XmlUtils::ReadString(cmpNode, wxT("PreprocessorDefinitions")));
+    BuildConfigPtr le_conf(new BuildConfig(NULL));
+    le_conf->SetName(name);
+    le_conf->SetIntermediateDirectory(XmlUtils::ReadString(config, wxT("IntermediateDirectory")));
+    // get the compiler settings
+    wxXmlNode* cmpNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCCLCompilerTool"));
+    // get the include directories
+    le_conf->SetIncludePath(SplitString(XmlUtils::ReadString(cmpNode, wxT("AdditionalIncludeDirectories"))));
+    le_conf->SetPreprocessor(XmlUtils::ReadString(cmpNode, wxT("PreprocessorDefinitions")));
 
-	// Select the best compiler for the import process (we select g++ by default)
-	le_conf->SetCompilerType(m_compiler);
+    // Select the best compiler for the import process (we select g++ by default)
+    le_conf->SetCompilerType(m_compiler);
 
-	// Get the configuration type
-	long type = XmlUtils::ReadLong(config, wxT("ConfigurationType"), 1);
-	wxString projectType;
-	wxString errMsg;
-	switch (type) {
-	case 2: //dll
-		projectType = Project::DYNAMIC_LIBRARY;
-		break;
-	case 4:	//static library
-		projectType = Project::STATIC_LIBRARY;
-		break;
-	case 1:	//exe
-	default:
-		projectType = Project::EXECUTABLE;
-		break;
-	}
+    // Get the configuration type
+    long type = XmlUtils::ReadLong(config, wxT("ConfigurationType"), 1);
+    wxString projectType;
+    wxString errMsg;
+    switch(type) {
+    case 2: // dll
+        projectType = Project::DYNAMIC_LIBRARY;
+        break;
+    case 4: // static library
+        projectType = Project::STATIC_LIBRARY;
+        break;
+    case 1: // exe
+    default:
+        projectType = Project::EXECUTABLE;
+        break;
+    }
 
-	le_conf->SetProjectType(projectType);
+    le_conf->SetProjectType(projectType);
 
-	//if project type is DLL or Executable, copy linker settings as well
-	if (settings->GetProjectType(le_conf->GetName()) == Project::EXECUTABLE || settings->GetProjectType(le_conf->GetName()) == Project::DYNAMIC_LIBRARY) {
-		wxXmlNode *linkNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLinkerTool"));
-		if (linkNode) {
-			wxString outputFileName (XmlUtils::ReadString(linkNode, wxT("OutputFile")) );
+    // if project type is DLL or Executable, copy linker settings as well
+    if(settings->GetProjectType(le_conf->GetName()) == Project::EXECUTABLE ||
+       settings->GetProjectType(le_conf->GetName()) == Project::DYNAMIC_LIBRARY) {
+        wxXmlNode* linkNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLinkerTool"));
+        if(linkNode) {
+            wxString outputFileName(XmlUtils::ReadString(linkNode, wxT("OutputFile")));
 #ifndef __WXMSW__
-			outputFileName.Replace(wxT(".dll"), wxT(".so"));
-			outputFileName.Replace(wxT(".exe"), wxT(""));
+            outputFileName.Replace(wxT(".dll"), wxT(".so"));
+            outputFileName.Replace(wxT(".exe"), wxT(""));
 #endif
 
-			le_conf->SetOutputFileName(outputFileName);
+            le_conf->SetOutputFileName(outputFileName);
 
-			// read in the additional libraries & libpath
-			wxString libs = XmlUtils::ReadString(linkNode, wxT("AdditionalDependencies"));
+            // read in the additional libraries & libpath
+            wxString libs = XmlUtils::ReadString(linkNode, wxT("AdditionalDependencies"));
 
-			// libs is a space delimited string
-			wxStringTokenizer tk(libs, wxT(" "));
-			libs.Empty();
-			while (tk.HasMoreTokens()) {
-				libs << tk.NextToken() << wxT(";");
-			}
-			le_conf->SetLibraries(libs);
-			le_conf->SetLibPath(XmlUtils::ReadString(linkNode, wxT("AdditionalLibraryDirectories")));
-		}
-	} else {
-		// static library
-		wxXmlNode *libNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLibrarianTool"));
-		if (libNode) {
+            // libs is a space delimited string
+            wxStringTokenizer tk(libs, wxT(" "));
+            libs.Empty();
+            while(tk.HasMoreTokens()) {
+                libs << tk.NextToken() << wxT(";");
+            }
+            le_conf->SetLibraries(libs);
+            le_conf->SetLibPath(XmlUtils::ReadString(linkNode, wxT("AdditionalLibraryDirectories")));
+        }
+    } else {
+        // static library
+        wxXmlNode* libNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLibrarianTool"));
+        if(libNode) {
 
-			wxString outputFileName (XmlUtils::ReadString(libNode, wxT("OutputFile")) );
-			outputFileName.Replace(wxT("\\"), wxT("/"));
+            wxString outputFileName(XmlUtils::ReadString(libNode, wxT("OutputFile")));
+            outputFileName.Replace(wxT("\\"), wxT("/"));
 
-			wxString outputFileNameOnly = outputFileName.AfterLast(wxT('/'));
-			wxString outputFilePath     = outputFileName.BeforeLast(wxT('/'));
+            wxString outputFileNameOnly = outputFileName.AfterLast(wxT('/'));
+            wxString outputFilePath = outputFileName.BeforeLast(wxT('/'));
 
-			if(m_compilerLowercase.Contains(wxT("gnu"))) {
-				if(outputFileNameOnly.StartsWith(wxT("lib")) == false) {
-					outputFileNameOnly.Prepend(wxT("lib"));
-				}
-				outputFileName.Clear();
-				outputFileName << outputFilePath << wxT("/") << outputFileNameOnly;
-				outputFileName.Replace(wxT(".lib"), wxT(".a"));
-			}
-			le_conf->SetOutputFileName(outputFileName);
-		}
-	}
+            if(m_compilerLowercase.Contains(wxT("gnu"))) {
+                if(outputFileNameOnly.StartsWith(wxT("lib")) == false) {
+                    outputFileNameOnly.Prepend(wxT("lib"));
+                }
+                outputFileName.Clear();
+                outputFileName << outputFilePath << wxT("/") << outputFileNameOnly;
+                outputFileName.Replace(wxT(".lib"), wxT(".a"));
+            }
+            le_conf->SetOutputFileName(outputFileName);
+        }
+    }
 
-	//add the configuration
-	settings->SetBuildConfiguration(le_conf);
+    // add the configuration
+    settings->SetBuildConfiguration(le_conf);
 }
 
-void VcImporter::CreateFiles(wxXmlNode *parent, wxString vdPath, ProjectPtr proj)
+void VcImporter::CreateFiles(wxXmlNode* parent, wxString vdPath, ProjectPtr proj)
 {
-	if ( !parent ) {
-		return;
-	}
+    if(!parent) {
+        return;
+    }
 
-	wxXmlNode *child = parent->GetChildren();
-	while (child) {
-		if (child->GetName() == wxT("Filter")) {
-			// add new virtual directory
-			wxString name = XmlUtils::ReadString(child, wxT("Name"));
-			wxString tmpPath = vdPath;
-			if (tmpPath.IsEmpty() == false) {
-				tmpPath << wxT(":");
-			}
-			tmpPath << name;
-			proj->CreateVirtualDir(tmpPath);
-			CreateFiles(child, tmpPath, proj);
+    wxXmlNode* child = parent->GetChildren();
+    while(child) {
+        if(child->GetName() == wxT("Filter")) {
+            // add new virtual directory
+            wxString name = XmlUtils::ReadString(child, wxT("Name"));
+            wxString tmpPath = vdPath;
+            if(tmpPath.IsEmpty() == false) {
+                tmpPath << wxT(":");
+            }
+            tmpPath << name;
+            proj->CreateVirtualDir(tmpPath);
+            CreateFiles(child, tmpPath, proj);
 
-		} else if (child->GetName() == wxT("File")) {
-			//found a file
-			wxString fileName = XmlUtils::ReadString(child, wxT("RelativePath"));
-			wxString path = vdPath;
-			if (path.IsEmpty()) {
-				path = wxT("src");
-			}
+        } else if(child->GetName() == wxT("File")) {
+            // found a file
+            wxString fileName = XmlUtils::ReadString(child, wxT("RelativePath"));
+            wxString path = vdPath;
+            if(path.IsEmpty()) {
+                path = wxT("src");
+            }
 
-			fileName.Replace(wxT("\\"), wxT("/"));
-			proj->AddFile(fileName, path);
-		}
-		child = child->GetNext();
-	}
+            fileName.Replace(wxT("\\"), wxT("/"));
+            proj->AddFile(fileName, path);
+        }
+        child = child->GetNext();
+    }
 }
 
-wxArrayString VcImporter::SplitString(const wxString &s)
+wxArrayString VcImporter::SplitString(const wxString& s)
 {
-	wxArrayString arr;
-	wxString s1(s);
-	s1.Replace(wxT(","), wxT(";"));
-	wxStringTokenizer tk1(s1, wxT(";"));
-	while (tk1.HasMoreTokens()) {
-		arr.Add(tk1.NextToken());
-	}
-	return arr;
+    wxArrayString arr;
+    wxString s1(s);
+    s1.Replace(wxT(","), wxT(";"));
+    wxStringTokenizer tk1(s1, wxT(";"));
+    while(tk1.HasMoreTokens()) {
+        arr.Add(tk1.NextToken());
+    }
+    return arr;
 }

@@ -15,50 +15,46 @@
 #define EXECUTABLE_EXT wxT("")
 #endif
 
-enum class GenericCfgType {
-	DYNAMIC_LIBRARY,
-	STATIC_LIBRARY,
-	EXECUTABLE
-};
+enum class GenericCfgType { DYNAMIC_LIBRARY, STATIC_LIBRARY, EXECUTABLE };
 
 struct GenericProjectCfg {
-	wxString name;
-	wxString outputFilename;
-	wxString intermediateDirectory;
-	wxString includePath;
-	wxString preprocessor;
-	wxString libraries;
-	wxString libPath;
-	wxString cCompilerOptions;
-	wxString cppCompilerOptions;
-	wxString linkerOptions;
-	wxString preCompiledHeader;
-	GenericCfgType type;
+    wxString name;
+    wxString outputFilename;
+    wxString intermediateDirectory;
+    wxString includePath;
+    wxString preprocessor;
+    wxString libraries;
+    wxString libPath;
+    wxString cCompilerOptions;
+    wxString cppCompilerOptions;
+    wxString linkerOptions;
+    wxString preCompiledHeader;
+    GenericCfgType type;
 };
 
 typedef std::shared_ptr<GenericProjectCfg> GenericProjectCfgPtr;
 
 struct GenericProjectFile {
-	wxString name;
-	wxString vpath;
+    wxString name;
+    wxString vpath;
 };
 
 typedef std::shared_ptr<GenericProjectFile> GenericProjectFilePtr;
 
 struct GenericProject {
-	wxString name;
-	wxString path;
-	GenericCfgType cfgType;
-	std::vector<GenericProjectCfgPtr> cfgs;
-	std::vector<GenericProjectFilePtr> files;
+    wxString name;
+    wxString path;
+    GenericCfgType cfgType;
+    std::vector<GenericProjectCfgPtr> cfgs;
+    std::vector<GenericProjectFilePtr> files;
 };
 
 typedef std::shared_ptr<GenericProject> GenericProjectPtr;
 
 struct GenericWorkspace {
-	wxString name;
-	wxString path;
-	std::vector<GenericProjectPtr> projects;
+    wxString name;
+    wxString path;
+    std::vector<GenericProjectPtr> projects;
 };
 
 typedef std::shared_ptr<GenericWorkspace> GenericWorkspacePtr;
@@ -66,9 +62,9 @@ typedef std::shared_ptr<GenericWorkspace> GenericWorkspacePtr;
 class GenericImporter
 {
 public:
-	virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler) = 0;
-	virtual bool isSupportedWorkspace() = 0;
-	virtual GenericWorkspacePtr PerformImport() = 0;
+    virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler) = 0;
+    virtual bool isSupportedWorkspace() = 0;
+    virtual GenericWorkspacePtr PerformImport() = 0;
 };
 
 #endif // GENERICIMPORTER_H

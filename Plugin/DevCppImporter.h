@@ -13,16 +13,16 @@ class DevCppImporter : public GenericImporter
 public:
     DevCppImporter();
     ~DevCppImporter();
-	
-	virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
-	virtual bool isSupportedWorkspace();
+
+    virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
+    virtual bool isSupportedWorkspace();
     virtual GenericWorkspacePtr PerformImport();
-	
+
 private:
-	wxFileName wsInfo;
-	bool IsGccCompile;
-	std::shared_ptr<wxFileInputStream> fis;
-	std::shared_ptr<wxTextInputStream> tis;
+    wxFileName wsInfo;
+    bool IsGccCompile;
+    std::shared_ptr<wxFileInputStream> fis;
+    std::shared_ptr<wxTextInputStream> tis;
 };
 
 #endif // DEVCPPIMPORTER_H

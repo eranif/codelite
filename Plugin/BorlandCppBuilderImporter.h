@@ -11,14 +11,14 @@ class BorlandCppBuilderImporter : public GenericImporter
 public:
     BorlandCppBuilderImporter();
     ~BorlandCppBuilderImporter();
-	
-	virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
-	virtual bool isSupportedWorkspace();
+
+    virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
+    virtual bool isSupportedWorkspace();
     virtual GenericWorkspacePtr PerformImport();
-	
+
 private:
-	wxFileName wsInfo;
-	bool IsGccCompile;
+    wxFileName wsInfo;
+    bool IsGccCompile;
 };
 
 #endif // BORLANDCPPBUILDERIMPORTER_H

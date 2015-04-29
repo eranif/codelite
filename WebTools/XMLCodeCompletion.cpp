@@ -3,6 +3,7 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/app.h>
+#include "XMLBuffer.h"
 
 XMLCodeCompletion::XMLCodeCompletion()
 {
@@ -21,6 +22,20 @@ void XMLCodeCompletion::CodeComplete(IEditor* editor)
     if(ch == '/') {
         // CC was triggered by "</"
         // Read backward until we find the matching open tag
+        XMLBuffer buffer(ctrl->GetTextRange(0, ctrl->GetCurrentPos()));
+        buffer.Parse();
+        if(buffer.InCData() || buffer.InComment()) {
+            // dont offer code completion when inside CDATA or COMMENT blocks
+            return;
+        }
+        
+        wxString currentScope = buffer.GetCurrentScope();
+        if(currentScope.IsEmpty()) return;
+        
+        wxString textToInsert;
+        textToInsert << currentScope << ">";
+        ctrl->InsertText(ctrl->GetCurrentPos(), textToInsert);
+        editor->SetCaretAt(ctrl->GetCurrentPos() + textToInsert.length());
         
     } else if(ch == '<') {
         

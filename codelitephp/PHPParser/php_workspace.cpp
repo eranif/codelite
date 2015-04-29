@@ -219,7 +219,12 @@ void PHPWorkspace::SetProjectActive(const wxString& project)
         if(iter->first == project) {
             activeProject = iter->second;
         }
-        iter->second->SetIsActive(iter->first == project);
+        bool newState = (iter->first == project);
+        if(iter->second->IsActive() != newState) {
+            iter->second->SetIsActive(newState);
+            // Save the change to the file system
+            iter->second->Save();
+        }
     }
 
     // notify about this change
@@ -317,6 +322,7 @@ void PHPWorkspace::FromJSON(const JSONElement& e)
 {
     m_projects.clear();
     if(e.hasNamedObject("projects")) {
+        PHPProject::Ptr_t firstProject;
         JSONElement projects = e.namedObject("projects");
         int count = projects.arraySize();
         for(int i = 0; i < count; ++i) {
@@ -326,9 +332,18 @@ void PHPWorkspace::FromJSON(const JSONElement& e)
             fnProject.MakeAbsolute(m_workspaceFile.GetPath());
             p->Load(fnProject);
             m_projects.insert(std::make_pair(p->GetName(), p));
+            if(!firstProject) {
+                firstProject = p;
+            }
         }
 
         PHPProject::Ptr_t activeProject = GetActiveProject();
+        if(!activeProject && firstProject) {
+            // No active project found, mark the first project as active
+            activeProject = firstProject;
+            SetProjectActive(firstProject->GetName());
+        }
+        
         if(activeProject) {
             // Notify about active project been set
             clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);

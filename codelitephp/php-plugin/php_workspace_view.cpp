@@ -33,6 +33,7 @@
 #include <wx/filedlg.h>
 #include "clFileOrFolderDropTarget.h"
 #include "php_configuration_data.h"
+#include <wx/msgdlg.h>
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -140,10 +141,10 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
             ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
             return;
         }
-        
+
         // We just created and opened a new workspace, add it to the "Recently used"
         m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
-        
+
     } else {
         workspaceFileName = PHPWorkspace::Get()->GetFilename();
     }
@@ -733,6 +734,13 @@ wxBitmap PHPWorkspaceView::DoGetBitmapForExt(const wxString& ext) const
 
 void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
 {
+    if(!PHPWorkspace::Get()->GetActiveProject()) {
+        ::wxMessageBox(_("No active project is set !?\nPlease set an active project and try again"),
+                       "CodeLite",
+                       wxICON_ERROR | wxOK | wxCENTER,
+                       FRAME);
+        return;
+    }
     PHPProjectSettingsDlg settingsDlg(FRAME, PHPWorkspace::Get()->GetActiveProjectName());
     if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
         // Re-sync the project with the file system

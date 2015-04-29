@@ -46,6 +46,8 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -78,7 +80,7 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     
     m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxWANTS_CHARS|wxTAB_TRAVERSAL);
     
-    bSizer2->Add(m_panel1, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer2->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
@@ -89,7 +91,7 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     m_radioBox = new wxRadioBox(m_panel1, wxID_ANY, _("Select the workspace type:"), wxDefaultPosition, wxSize(-1,-1), m_radioBoxArr, 1, wxRA_SPECIFY_COLS);
     m_radioBox->SetSelection(0);
     
-    bSizer11->Add(m_radioBox, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer11->Add(m_radioBox, 0, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer469 = new wxStdDialogButtonSizer();
     
@@ -112,6 +114,8 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -219,6 +223,8 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -303,6 +309,8 @@ NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
 }
@@ -353,6 +361,8 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -563,6 +573,8 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_treebook9)){
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook9);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treebook9);
     }
     #endif
     m_treebook9->ExpandNode( 0, true );
@@ -579,6 +591,8 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -882,6 +896,8 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_treebook41)){
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook41);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treebook41);
     }
     #endif
     m_treebook41->ExpandNode( 0, true );
@@ -889,6 +905,8 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_choicebook1)){
         wxPersistenceManager::Get().RegisterAndRestore(m_choicebook1);
+    } else {
+        wxPersistenceManager::Get().Restore(m_choicebook1);
     }
     #endif
     m_treebook41->ExpandNode( 1, true );
@@ -905,6 +923,8 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -1016,6 +1036,8 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -1667,6 +1689,8 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_simpleBook)){
         wxPersistenceManager::Get().RegisterAndRestore(m_simpleBook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_simpleBook);
     }
     #endif
     
@@ -1679,6 +1703,8 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -1901,6 +1927,8 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -2080,6 +2108,8 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -2159,6 +2189,8 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
 }

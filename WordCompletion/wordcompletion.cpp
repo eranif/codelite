@@ -94,27 +94,30 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     wxStyledTextCtrl* stc = activeEditor->GetCtrl();
     int curPos = stc->GetCurrentPos();
     int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
-    if(curPos <= start) return;
+    if(curPos < start) return;
 
     wxString filter = stc->GetTextRange(start, curPos);
     wxString lcFilter = filter.Lower();
 
     wxStringSet_t words = m_dictionary->GetWords();
     wxStringSet_t filterdSet;
-    for(wxStringSet_t::iterator iter = words.begin(); iter != words.end(); ++iter) {
-        wxString word = *iter;
-        wxString lcWord = word.Lower();
-        if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
-            if(lcWord.StartsWith(lcFilter) && filter != word) {
-                filterdSet.insert(word);
-            }
-        } else {
-            if(lcWord.Contains(lcFilter) && filter != word) {
-                filterdSet.insert(word);
+    if(lcFilter.IsEmpty()) {
+        filterdSet.swap(words);
+    } else {
+        for(wxStringSet_t::iterator iter = words.begin(); iter != words.end(); ++iter) {
+            wxString word = *iter;
+            wxString lcWord = word.Lower();
+            if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
+                if(lcWord.StartsWith(lcFilter) && filter != word) {
+                    filterdSet.insert(word);
+                }
+            } else {
+                if(lcWord.Contains(lcFilter) && filter != word) {
+                    filterdSet.insert(word);
+                }
             }
         }
     }
-
     for(wxStringSet_t::iterator iter = filterdSet.begin(); iter != filterdSet.end(); ++iter) {
         entries.push_back(wxCodeCompletionBoxEntry::New(*iter, 0));
     }

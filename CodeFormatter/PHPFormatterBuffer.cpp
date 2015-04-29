@@ -178,7 +178,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             } else {
                 m_buffer << token.text << " ";
             }
-            
+
         } else if(token.type == kPHP_T_OBJECT_OPERATOR || token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
             // -> operator or ::
             RemoveLastSpace();
@@ -222,6 +222,7 @@ void PHPFormatterBuffer::AppendEOL(eDepthCommand depth)
     switch(depth) {
     case kDepthDec:
         --m_depth;
+        if(m_depth < 0) m_depth = 0;
         break;
     case kDepthIncTemporarily:
     case kDepthInc:
@@ -233,6 +234,7 @@ void PHPFormatterBuffer::AppendEOL(eDepthCommand depth)
     m_buffer << GetIndent();
     if(kDepthIncTemporarily == depth) {
         --m_depth;
+        if(m_depth < 0) m_depth = 0;
     }
 }
 

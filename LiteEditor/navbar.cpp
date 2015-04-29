@@ -30,6 +30,7 @@
 #include "frame.h"
 #include "navbar.h"
 #include "event_notifier.h"
+#include "globals.h"
 
 NavBar::NavBar(wxWindow* parent)
     : NavBarControlBaseClass(parent)
@@ -159,10 +160,8 @@ void NavBar::DoPopulateTags(const wxFileName& fn)
 void NavBar::OnEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
-    if(!editor) {
-        return;
-    }
+    IEditor* editor = ::clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
 
     const wxFileName& fn = editor->GetFileName();
     DoPopulateTags(fn);

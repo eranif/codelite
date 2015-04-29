@@ -1128,7 +1128,8 @@ bool MainBook::DoSelectPage(wxWindow* win)
         //                                                  wxT("C++"));
         //     }
         // }
-        SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
+        wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
+        EventNotifier::Get()->AddPendingEvent(event);
     }
 
     return true;

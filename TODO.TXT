@@ -4,3 +4,4 @@
 * Editor: when zooming an editor using the mouse, offer the user to keep the font
 * Add version number to the weekly build
 * Find In Files: when a PHP workspace is opened, make Ctrl-Shift-F start from that folder location
+* Word Completion: must work without saving the file

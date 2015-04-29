@@ -70,7 +70,7 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
     if (!wxPersistenceManager::Get().Find(this)) {
         sizeSet = wxPersistentRegisterAndRestore(this, "CLDebuggerTip");
     }
-
+    wxUnusedVar(sizeSet);
     if (GetSize().x < 100 || GetSize().y < 100 ) {
         SetSize( wxRect(GetPosition(), wxSize(100, 100) ) );
     }

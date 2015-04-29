@@ -10,6 +10,7 @@
 #include <wx/stc/stc.h>
 #include <bookmark_manager.h>
 #include "xdebugevent.h"
+#include "globals.h"
 
 XDebugBreakpointsMgr::XDebugBreakpointsMgr()
 {
@@ -118,7 +119,7 @@ void XDebugBreakpointsMgr::OnEditorChanged(wxCommandEvent& e)
     e.Skip();
 
     // Apply breakpoints for this editor
-    IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
+    IEditor* editor = ::clGetManager()->GetActiveEditor();
     if(editor) {
         XDebugBreakpoint::List_t bps;
         if(GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {

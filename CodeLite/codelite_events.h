@@ -113,7 +113,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_RETAGGED, wxCommandEvent);
 //                               Item(1) = newName
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_RENAMED, wxCommandEvent);
 
-// clientData is active editor (IEditor*)
+// The active editor was changed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEvent);
 
 // clientData is closing editor (IEditor*)

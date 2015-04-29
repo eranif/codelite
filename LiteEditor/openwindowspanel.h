@@ -69,6 +69,7 @@ protected:
 
     // Handlers for workspace events
     void OnActiveEditorChanged(wxCommandEvent& e);
+    void OnActivePageChanged(wxCommandEvent& e);
     void OnAllEditorsClosed(wxCommandEvent& e);
 
     void OnCloseSelectedFiles(wxCommandEvent& e);

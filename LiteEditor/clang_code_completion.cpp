@@ -54,31 +54,46 @@
 #include "manager.h"
 #include <memory>
 
-#define CHECK_CLANG_ENABLED_RET() if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED)) return;
+#define CHECK_CLANG_ENABLED_RET() \
+    if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED)) return;
 
 ClangCodeCompletion* ClangCodeCompletion::ms_instance = 0;
 
 ClangCodeCompletion::ClangCodeCompletion()
     : m_allEditorsAreClosing(false)
 {
-    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,  wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),        NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,             clCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING,         clBuildEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED,            clBuildEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,       wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed),   NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_FILE_SAVED, clCommandEventHandler(ClangCodeCompletion::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_BUILD_STARTING, clBuildEventHandler(ClangCodeCompletion::OnBuildStarting), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_BUILD_ENDED, clBuildEventHandler(ClangCodeCompletion::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed), NULL, this);
 }
 
 ClangCodeCompletion::~ClangCodeCompletion()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,  wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),        NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,             clCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING,         clBuildEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED,            clBuildEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,       wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed),   NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_FILE_SAVED, clCommandEventHandler(ClangCodeCompletion::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_BUILD_STARTING, clBuildEventHandler(ClangCodeCompletion::OnBuildStarting), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_BUILD_ENDED, clBuildEventHandler(ClangCodeCompletion::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed), NULL, this);
 }
 
 ClangCodeCompletion* ClangCodeCompletion::Instance()
@@ -97,15 +112,11 @@ void ClangCodeCompletion::Release()
     ms_instance = 0;
 }
 
-void ClangCodeCompletion::ClearCache()
-{
-    m_clang.ClearCache();
-}
+void ClangCodeCompletion::ClearCache() { m_clang.ClearCache(); }
 
 void ClangCodeCompletion::CodeComplete(IEditor* editor)
 {
-    if(m_clang.IsBusy())
-        return;
+    if(m_clang.IsBusy()) return;
 
     m_clang.SetContext(CTX_CodeCompletion);
     m_clang.CodeCompletion(editor);
@@ -125,8 +136,7 @@ void ClangCodeCompletion::CancelCodeComplete()
 
 void ClangCodeCompletion::Calltip(IEditor* editor)
 {
-    if(m_clang.IsBusy())
-        return;
+    if(m_clang.IsBusy()) return;
 
     m_clang.SetContext(CTX_Calltip);
     m_clang.CodeCompletion(editor);
@@ -143,14 +153,11 @@ void ClangCodeCompletion::OnFileLoaded(wxCommandEvent& e)
             CL_DEBUG(wxT("ClangCodeCompletion::OnFileLoaded() ENDED"));
             return;
         }
-        if(e.GetClientData()) {
-            IEditor *editor = (IEditor*)e.GetClientData();
+        if(::clGetManager()->GetActiveEditor()) {
+            IEditor* editor = ::clGetManager()->GetActiveEditor();
             // sanity
-            if(editor->GetProjectName().IsEmpty() || editor->GetFileName().GetFullName().IsEmpty())
-                return;
-
-            if(!TagsManagerST::Get()->IsValidCtagsFile(editor->GetFileName()))
-                return;
+            if(editor->GetProjectName().IsEmpty() || editor->GetFileName().GetFullName().IsEmpty()) return;
+            if(!TagsManagerST::Get()->IsValidCtagsFile(editor->GetFileName())) return;
 
             m_clang.SetContext(CTX_CachePCH);
             m_clang.CodeCompletion(editor);
@@ -171,15 +178,11 @@ void ClangCodeCompletion::OnAllEditorsClosing(wxCommandEvent& e)
     m_allEditorsAreClosing = true;
 }
 
-bool ClangCodeCompletion::IsCacheEmpty()
-{
-    return m_clang.IsCacheEmpty();
-}
+bool ClangCodeCompletion::IsCacheEmpty() { return m_clang.IsCacheEmpty(); }
 
 void ClangCodeCompletion::WordComplete(IEditor* editor)
 {
-    if(m_clang.IsBusy())
-        return;
+    if(m_clang.IsBusy()) return;
     m_clang.SetContext(CTX_WordCompletion);
     m_clang.CodeCompletion(editor);
 }
@@ -189,17 +192,16 @@ void ClangCodeCompletion::OnFileSaved(clCommandEvent& e)
     e.Skip();
     CHECK_CLANG_ENABLED_RET();
 
-    if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & ::CC_DISABLE_AUTO_PARSING) {
+    if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & ::CC_DISABLE_AUTO_PARSING) {
         CL_DEBUG(wxT("ClangCodeCompletion::OnFileSaved: Auto-parsing of saved files is disabled"));
         return;
     }
 
     // Incase a file has been saved, we need to reparse its translation unit
-    wxFileName fn( e.GetString() );
-    if(!TagsManagerST::Get()->IsValidCtagsFile(fn))
-        return;
+    wxFileName fn(e.GetString());
+    if(!TagsManagerST::Get()->IsValidCtagsFile(fn)) return;
 
-    m_clang.ReparseFile( fn.GetFullPath() );
+    m_clang.ReparseFile(fn.GetFullPath());
 }
 
 void ClangCodeCompletion::OnBuildEnded(clBuildEvent& e)
@@ -230,30 +232,29 @@ void ClangCodeCompletion::OnBuildStarting(clBuildEvent& e)
     ::wxSetEnv(wxT("CL_COMPILATION_DB"), cdb.GetFileName().GetFullPath());
 
     // If this is NOT a custom project, set the CXX and CC environment
-    wxString  project = e.GetProjectName();
-    wxString  config  = e.GetConfigurationName();
-    
+    wxString project = e.GetProjectName();
+    wxString config = e.GetConfigurationName();
+
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, config);
-    if( bldConf && !bldConf->IsCustomBuild()) {
+    if(bldConf && !bldConf->IsCustomBuild()) {
         wxString cxx = bldConf->GetCompiler()->GetTool(wxT("CXX"));
-        wxString cc  = bldConf->GetCompiler()->GetTool(wxT("CC"));
-        
+        wxString cc = bldConf->GetCompiler()->GetTool(wxT("CC"));
+
         // CMake does not handle backslahses pretty well...
         cxx.Replace("\\", "/");
         cc.Replace("\\", "/");
-        
+
         cxx.Prepend(wxT("codelite-cc "));
         cc.Prepend(wxT("codelite-cc "));
-        
+
         ::wxSetEnv("CXX", cxx);
-        ::wxSetEnv("CC" ,  cc);
+        ::wxSetEnv("CC", cc);
     }
 }
 
 void ClangCodeCompletion::GotoDeclaration(IEditor* editor)
 {
-    if(m_clang.IsBusy())
-        return;
+    if(m_clang.IsBusy()) return;
 
     m_clang.SetContext(CTX_GotoDecl);
     m_clang.CodeCompletion(editor);
@@ -261,8 +262,7 @@ void ClangCodeCompletion::GotoDeclaration(IEditor* editor)
 
 void ClangCodeCompletion::GotoImplementation(IEditor* editor)
 {
-    if(m_clang.IsBusy())
-        return;
+    if(m_clang.IsBusy()) return;
 
     m_clang.SetContext(CTX_GotoImpl);
     m_clang.CodeCompletion(editor);

@@ -99,7 +99,7 @@ OpenWindowsPanel::~OpenWindowsPanel()
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PAGE_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+        wxEVT_CMD_PAGE_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActivePageChanged), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_MODIFIED, &OpenWindowsPanel::OnEditorModified, this);
@@ -112,6 +112,15 @@ OpenWindowsPanel::~OpenWindowsPanel()
 #define CHECK_WORKSPACE_CLOSING() \
     if(m_workspaceClosing) return
 
+void OpenWindowsPanel::OnActivePageChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    CHECK_WORKSPACE_CLOSING();
+
+    PopulateView();
+    DoSelectItem((wxWindow*)e.GetClientData());
+}
+
 void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
@@ -120,8 +129,6 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
     PopulateView();
     if(m_mgr->GetActiveEditor()) {
         DoSelectItem(m_mgr->GetActiveEditor());
-    } else {
-        DoSelectItem((wxWindow*)e.GetClientData());
     }
 }
 
@@ -492,3 +499,4 @@ void OpenWindowsPanel::OnWorkspaceClosing(wxCommandEvent& event)
     Clear();
     m_workspaceClosing = true;
 }
+

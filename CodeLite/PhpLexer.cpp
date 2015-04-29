@@ -1,5 +1,5 @@
 
-#line 3 "/home/eran/devl/codelite/CodeLite/PhpLexer.cpp"
+#line 3 "PhpLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -1062,10 +1062,6 @@ char *phpget_text (yyscan_t yyscanner );
 int phpget_lineno (yyscan_t yyscanner );
 
 void phpset_lineno (int line_number ,yyscan_t yyscanner );
-
-int phpget_column  (yyscan_t yyscanner );
-
-void phpset_column (int column_no ,yyscan_t yyscanner );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -3267,6 +3263,13 @@ void phpfree (void * ptr , yyscan_t yyscanner)
 //=============-------------------------------
 // API methods implementation
 //=============-------------------------------
+
+phpLexerUserData* phpLexerGetUserData(void* scanner)
+{
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner;
+    phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
+    return userData;
+}
 
 bool phpLexerIsPHPCode(void* scanner)
 {

@@ -15,7 +15,8 @@ enum eLexerOptions {
     kPhpLexerOpt_ReturnAllNonPhp = 0x00000004,
 };
 
-struct WXDLLIMPEXP_CL phpLexerToken {
+struct WXDLLIMPEXP_CL phpLexerToken
+{
     int type;
     std::string text;
     int lineNumber;
@@ -44,7 +45,8 @@ struct WXDLLIMPEXP_CL phpLexerToken {
 /**
  * @class phpLexerUserData
  */
-struct WXDLLIMPEXP_CL phpLexerUserData {
+struct WXDLLIMPEXP_CL phpLexerUserData
+{
 private:
     size_t m_flags;
     std::string m_comment;
@@ -85,7 +87,14 @@ public:
     bool IsCollectingComments() const { return m_flags & kPhpLexerOpt_ReturnComments; }
     bool IsCollectingWhitespace() const { return m_flags & kPhpLexerOpt_ReturnWhitespace; }
     bool IsCollectingAllNonPhp() const { return m_flags & kPhpLexerOpt_ReturnAllNonPhp; }
-
+    void SetCollectingWhitespace(bool b)
+    {
+        if(b) {
+            m_flags |= kPhpLexerOpt_ReturnWhitespace;
+        } else {
+            m_flags &= ~kPhpLexerOpt_ReturnWhitespace;
+        }
+    }
     void SetInsidePhp(bool insidePhp) { this->m_insidePhp = insidePhp; }
     bool IsInsidePhp() const { return m_insidePhp; }
 
@@ -124,6 +133,11 @@ typedef void* PHPScanner_t;
 WXDLLIMPEXP_CL PHPScanner_t phpLexerNew(const wxFileName& filename, size_t options = kPhpLexerOpt_None);
 
 /**
+ * @brief return the user data associated with this scanner
+ */
+WXDLLIMPEXP_CL phpLexerUserData* phpLexerGetUserData(PHPScanner_t scanner);
+
+/**
  * @brief create a new Lexer for a given file content
  */
 WXDLLIMPEXP_CL PHPScanner_t phpLexerNew(const wxString& content, size_t options = kPhpLexerOpt_None);
@@ -152,7 +166,8 @@ WXDLLIMPEXP_CL void phpLexerUnget(PHPScanner_t scanner);
  * @class PHPScannerLocker
  * @brief a wrapper around the C API for PHPScanner
  */
-struct WXDLLIMPEXP_CL PHPScannerLocker {
+struct WXDLLIMPEXP_CL PHPScannerLocker
+{
     PHPScanner_t scanner;
     PHPScannerLocker(const wxString& content, size_t options = kPhpLexerOpt_None)
     {
@@ -176,6 +191,5 @@ struct WXDLLIMPEXP_CL PHPScannerLocker {
         }
     }
 };
-
 
 #endif

@@ -423,6 +423,13 @@ horizontal_white [ ]|{h_tab}
 // API methods implementation
 //=============-------------------------------
 
+phpLexerUserData* phpLexerGetUserData(void* scanner)
+{
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner;
+    phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
+    return userData;
+}
+
 bool phpLexerIsPHPCode(void* scanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;

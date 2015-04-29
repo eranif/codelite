@@ -198,6 +198,15 @@
   <VirtualDirectory Name="importer">
     <File Name="vcimporter.h"/>
     <File Name="vcimporter.cpp"/>
+    <File Name="WSImporter.cpp"/>
+    <File Name="WSImporter.h"/>
+    <File Name="GenericImporter.h"/>
+    <File Name="VisualCppImporter.h"/>
+    <File Name="VisualCppImporter.cpp"/>
+    <File Name="DevCppImporter.h"/>
+    <File Name="DevCppImporter.cpp"/>
+    <File Name="BorlandCppBuilderImporter.h"/>
+    <File Name="BorlandCppBuilderImporter.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="debuggermanager.cpp"/>

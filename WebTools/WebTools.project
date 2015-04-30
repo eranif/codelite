@@ -294,5 +294,7 @@
   <VirtualDirectory Name="XML">
     <File Name="XMLCodeCompletion.h"/>
     <File Name="XMLCodeCompletion.cpp"/>
+    <File Name="XMLBuffer.h"/>
+    <File Name="XMLBuffer.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

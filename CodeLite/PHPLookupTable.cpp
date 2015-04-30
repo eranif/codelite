@@ -120,7 +120,10 @@ PHPLookupTable::PHPLookupTable()
 {
 }
 
-PHPLookupTable::~PHPLookupTable() {}
+PHPLookupTable::~PHPLookupTable() 
+{
+    Close();
+}
 
 PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const wxString& exactName, size_t flags)
 {
@@ -606,17 +609,10 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
             EventNotifier::Get()->AddPendingEvent(event);
         }
 
-        m_db.Begin();
-        
-        // If the parsing mode is 'Full' - clear the database first
-        if(updateMode == kUpdateMode_Full) {
-            CL_DEBUG("PHP: Clearing symbols database before parsing...");
-            ClearAll(false);
-            CL_DEBUG("PHP: Clearing symbols database before parsing...done");
-        }
-        
         wxStopWatch sw;
         sw.Start();
+        
+        m_db.Begin();
         for(size_t i = 0; i < files.GetCount(); ++i) {
             {
                 clParseEvent event(wxPHP_PARSE_PROGRESS);

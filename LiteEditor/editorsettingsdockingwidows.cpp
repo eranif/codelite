@@ -103,7 +103,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     clMainFrame::Get()->GetMainBook()->ShowQuickReplaceBar(m_checkBoxShowReplaceBar->IsChecked());
 
     size_t flags(options->GetOptions());
-    m_endFlags = 0;
+
     // set the tab control options:
     ////////////////////////////////////
 

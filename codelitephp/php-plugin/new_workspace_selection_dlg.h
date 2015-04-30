@@ -12,6 +12,8 @@ public:
     };
 
 protected:
+    virtual void OnClose(wxCloseEvent& event);
+    virtual void OnKeyDown(wxKeyEvent& event);
 
 public:
     NewWorkspaceSelectionDlg(wxWindow* parent);

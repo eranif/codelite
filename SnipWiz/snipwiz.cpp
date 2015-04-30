@@ -34,7 +34,7 @@
 // Licence:		GNU General Public Licence
 /////////////////////////////////////////////////////////////////////////////
 #include "wx/wxprec.h"
-
+#include "event_notifier.h"
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -56,42 +56,39 @@
 #define FRLSNIPWIZ_VERSION 1000
 #define FRLSNIPWIZ_HEADER _T("Code snippet wizard file")
 
-#define CARET                 wxT("@")
-#define USER_ESC_CARET        wxT("\\@")
-#define SELECTION             wxT("$")
-#define USER_ESC_SELECTION    wxT("\\$")
-#define REAL_CARET_STR        wxT("%CARET%")
-#define REAL_SELECTION_STR    wxT("%SELECTION%")
-#define TMP_ESC_CARET_STR     wxT("%ESC_CARET%")
+#define CARET wxT("@")
+#define USER_ESC_CARET wxT("\\@")
+#define SELECTION wxT("$")
+#define USER_ESC_SELECTION wxT("\\$")
+#define REAL_CARET_STR wxT("%CARET%")
+#define REAL_SELECTION_STR wxT("%SELECTION%")
+#define TMP_ESC_CARET_STR wxT("%ESC_CARET%")
 #define TMP_ESC_SELECTION_STR wxT("%ESC_SELECTION%")
 
 ////------------------------------------------------------------
 static SnipWiz* thePlugin = NULL;
 
-//Define the plugin entry point
-extern "C" EXPORT IPlugin *CreatePlugin( IManager *manager )
+// Define the plugin entry point
+extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
 {
-	if ( thePlugin == 0 ) {
-		thePlugin = new SnipWiz( manager );
-	}
-	return thePlugin;
+    if(thePlugin == 0) {
+        thePlugin = new SnipWiz(manager);
+    }
+    return thePlugin;
 }
 //------------------------------------------------------------
 
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
-	PluginInfo info;
-	info.SetAuthor( wxT( "Frank Lichtner" ) );
-	info.SetName( plugName );
-	info.SetDescription( _( "A small tool to add expandable code snippets and template classes" ) );
-	info.SetVersion( wxT( "v1.0" ) );
-	return info;
+    PluginInfo info;
+    info.SetAuthor(wxT("Frank Lichtner"));
+    info.SetName(plugName);
+    info.SetDescription(_("A small tool to add expandable code snippets and template classes"));
+    info.SetVersion(wxT("v1.0"));
+    return info;
 }
 //------------------------------------------------------------
-extern "C" EXPORT int GetPluginInterfaceVersion()
-{
-	return PLUGIN_INTERFACE_VERSION;
-}
+extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 //------------------------------------------------------------
 // When creating new file, we default the EOL mode to
@@ -99,391 +96,401 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 static int GetEOLByOS()
 {
 #if defined(__WXMAC__)
-	return 1/*wxSCI_EOL_CR*/;
+    return 1 /*wxSCI_EOL_CR*/;
 #elif defined(__WXGTK__)
-	return 2/*wxSCI_EOL_LF*/;
+    return 2 /*wxSCI_EOL_LF*/;
 #else
-	return 0/*wxSCI_EOL_CRLF*/;
+    return 0 /*wxSCI_EOL_CRLF*/;
 #endif
 }
 
 //------------------------------------------------------------
-SnipWiz::SnipWiz( IManager *manager )
-		: IPlugin( manager )
+SnipWiz::SnipWiz(IManager* manager)
+    : IPlugin(manager)
 {
-	m_topWin = NULL;
-	m_longName = wxT( "Snippet wizard" );
-	m_shortName = plugName;
-	m_topWin = m_mgr->GetTheApp();
+    m_topWin = NULL;
+    m_longName = wxT("Snippet wizard");
+    m_shortName = plugName;
+    m_topWin = m_mgr->GetTheApp();
 
-	// get plugin path
-	m_pluginPath = m_mgr->GetStartupDirectory();
-	m_pluginPath += wxFILE_SEP_PATH;
-	m_pluginPath += wxT( "templates" );
-	m_pluginPath += wxFILE_SEP_PATH;
-	if ( ! wxFileName::DirExists(m_pluginPath) ) {
-		wxFileName::Mkdir(m_pluginPath);
-	}
+    // get plugin path
+    m_pluginPath = m_mgr->GetStartupDirectory();
+    m_pluginPath += wxFILE_SEP_PATH;
+    m_pluginPath += wxT("templates");
+    m_pluginPath += wxFILE_SEP_PATH;
+    if(!wxFileName::DirExists(m_pluginPath)) {
+        wxFileName::Mkdir(m_pluginPath);
+    }
 
-	m_StringDb.SetCompress( true );
+    m_StringDb.SetCompress(true);
 
-	m_StringDb.Load( m_pluginPath + defaultTmplFile );
+    m_StringDb.Load(m_pluginPath + defaultTmplFile);
 
-	m_StringDb.GetAllSnippetKeys( m_snippets );
-	if ( !m_snippets.GetCount() ) {
-		IntSnippets();
-		m_StringDb.GetAllSnippetKeys( m_snippets );
-	}
-	m_snippets.Sort();
-	m_modified = false;
-	m_clipboard.Empty();
+    m_StringDb.GetAllSnippetKeys(m_snippets);
+    if(!m_snippets.GetCount()) {
+        IntSnippets();
+        m_StringDb.GetAllSnippetKeys(m_snippets);
+    }
+    m_snippets.Sort();
+    m_modified = false;
+    m_clipboard.Empty();
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &SnipWiz::OnEditorContextMenu, this);
 }
+
 //------------------------------------------------------------
 SnipWiz::~SnipWiz()
 {
-	if ( m_modified )
-		m_StringDb.Save( m_pluginPath + defaultTmplFile );
+    if(m_modified) m_StringDb.Save(m_pluginPath + defaultTmplFile);
 }
 //------------------------------------------------------------
 
-clToolBar *SnipWiz::CreateToolBar( wxWindow *parent )
-{
-	return NULL;
-}
+clToolBar* SnipWiz::CreateToolBar(wxWindow* parent) { return NULL; }
 //------------------------------------------------------------
 
-void SnipWiz::CreatePluginMenu( wxMenu *pluginsMenu )
+void SnipWiz::CreatePluginMenu(wxMenu* pluginsMenu)
 {
-	wxMenu *menu = new wxMenu();
-	wxMenuItem *item( NULL );
+    wxMenu* menu = new wxMenu();
+    wxMenuItem* item(NULL);
 
-	item = new wxMenuItem( menu, IDM_SETTINGS, _( "Settings..." ), _( "Settings..." ), wxITEM_NORMAL );
-	menu->Append( item );
-	item = new wxMenuItem( menu, IDM_CLASS_WIZ, _( "Template class..." ), _( "Template class..." ), wxITEM_NORMAL );
-	menu->Append( item );
+    item = new wxMenuItem(menu, IDM_SETTINGS, _("Settings..."), _("Settings..."), wxITEM_NORMAL);
+    menu->Append(item);
+    item = new wxMenuItem(menu, IDM_CLASS_WIZ, _("Template class..."), _("Template class..."), wxITEM_NORMAL);
+    menu->Append(item);
 
-	pluginsMenu->Append( wxID_ANY, plugName, menu );
+    pluginsMenu->Append(wxID_ANY, plugName, menu);
 
+    m_topWin->Connect(
+        IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnSettings), NULL, this);
+    m_topWin->Connect(
+        IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnClassWizard), NULL, this);
 
-	m_topWin->Connect( IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnSettings ), NULL, this );
-	m_topWin->Connect( IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnClassWizard ), NULL, this );
-
-	m_topWin->Connect( IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuExpandSwitch ), NULL, this );
-	m_topWin->Connect( IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuPaste ), NULL, this );
-	AttachDynMenus();
+    m_topWin->Connect(
+        IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuExpandSwitch), NULL, this);
+    m_topWin->Connect(IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuPaste), NULL, this);
+    AttachDynMenus();
 }
+
 //------------------------------------------------------------
-void SnipWiz::HookPopupMenu( wxMenu *menu, MenuType type )
+void SnipWiz::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-	if ( type == MenuTypeEditor ) {
-		if ( !menu->FindItem( IDM_BASE ) ) {
-			wxMenu *newMenu = CreateSubMenu();
-			menu->Append( IDM_BASE, plugName, newMenu );
-		}
-	} else 	if (type == MenuTypeFileView_Folder) {
-		//Create the popup menu for the virtual folders
-		wxMenuItem *item(NULL);
+    if(type == MenuTypeFileView_Folder) {
+        // Create the popup menu for the virtual folders
+        wxMenuItem* item(NULL);
 
-		item = new wxMenuItem(menu, wxID_SEPARATOR);
-		menu->Prepend(item);
-		m_vdDynItems.push_back(item);
+        item = new wxMenuItem(menu, wxID_SEPARATOR);
+        menu->Prepend(item);
+        m_vdDynItems.push_back(item);
 
-		item = new wxMenuItem(menu, IDM_CLASS_WIZ, _("New Class from Template..."), wxEmptyString, wxITEM_NORMAL);
-		menu->Prepend(item);
-		m_vdDynItems.push_back(item);
-	}
+        item = new wxMenuItem(menu, IDM_CLASS_WIZ, _("New Class from Template..."), wxEmptyString, wxITEM_NORMAL);
+        menu->Prepend(item);
+        m_vdDynItems.push_back(item);
+    }
 }
 
 //------------------------------------------------------------
 
 void SnipWiz::UnPlug()
 {
-	m_topWin->Disconnect( IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnSettings ), NULL, this );
-	m_topWin->Disconnect( IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnClassWizard ), NULL, this );
+    m_topWin->Disconnect(
+        IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnSettings), NULL, this);
+    m_topWin->Disconnect(
+        IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnClassWizard), NULL, this);
 
-	m_topWin->Disconnect( IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuExpandSwitch ), NULL, this );
-	m_topWin->Disconnect( IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuPaste ), NULL, this );
-
-	DetachDynMenus();
+    m_topWin->Disconnect(
+        IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuExpandSwitch), NULL, this);
+    m_topWin->Disconnect(
+        IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuPaste), NULL, this);
+    
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &SnipWiz::OnEditorContextMenu, this);
+    DetachDynMenus();
 }
 
 //------------------------------------------------------------
-void SnipWiz::OnMenuExpandSwitch( wxCommandEvent& e )
+void SnipWiz::OnMenuExpandSwitch(wxCommandEvent& e)
 {
-	IEditor *editor = GetEditor();
-	if ( !editor )
-		return;
+    IEditor* editor = GetEditor();
+    if(!editor) return;
 
-	bool isSelection = false;
-	wxString var = editor->GetSelection();
-	if ( !var.IsEmpty() )
-		isSelection = true;
-	var = ::wxGetTextFromUser( _( "Enter identifier name" ), _( "switch(...)" ), var );
-	if ( var.IsEmpty() )
-		return;
-	long count = ::wxGetNumberFromUser( _( "Enter number of cases" ), _( "Cases:" ), _( "switch(...)" ), 1, 1, 20 );
-	if ( count < 1 )
-		return;
+    bool isSelection = false;
+    wxString var = editor->GetSelection();
+    if(!var.IsEmpty()) isSelection = true;
+    var = ::wxGetTextFromUser(_("Enter identifier name"), _("switch(...)"), var);
+    if(var.IsEmpty()) return;
+    long count = ::wxGetNumberFromUser(_("Enter number of cases"), _("Cases:"), _("switch(...)"), 1, 1, 20);
+    if(count < 1) return;
 
-	int curEol = editor->GetEOL();
-	int curPos = editor->GetCurrentPosition();
-	wxString tabs = GetTabs( editor, curPos );
+    int curEol = editor->GetEOL();
+    int curPos = editor->GetCurrentPosition();
+    wxString tabs = GetTabs(editor, curPos);
 
-	wxString output = wxString::Format( wxT( "switch( %s )%s%s{%s" ), var.c_str(), eol[curEol].c_str(), tabs.c_str(), eol[curEol].c_str() );
-	for ( long i = 0;i < count;i++ )
-		output += wxString::Format( wxT( "%scase :%s%sbreak;%s" ), tabs.c_str(), eol[curEol].c_str(), tabs.c_str(), eol[curEol].c_str() );
+    wxString output = wxString::Format(
+        wxT("switch( %s )%s%s{%s"), var.c_str(), eol[curEol].c_str(), tabs.c_str(), eol[curEol].c_str());
+    for(long i = 0; i < count; i++)
+        output += wxString::Format(
+            wxT("%scase :%s%sbreak;%s"), tabs.c_str(), eol[curEol].c_str(), tabs.c_str(), eol[curEol].c_str());
 
-	output += tabs.c_str();
-	output += wxT( "}" );
-	if ( isSelection )
-		editor->ReplaceSelection( output );
-	else
-		editor->InsertText( curPos, output );
+    output += tabs.c_str();
+    output += wxT("}");
+    if(isSelection)
+        editor->ReplaceSelection(output);
+    else
+        editor->InsertText(curPos, output);
 }
 
 //------------------------------------------------------------
-void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
+void SnipWiz::OnMenuSnippets(wxCommandEvent& e)
 {
-	IEditor *editor = GetEditor();
-	if ( !editor )
-		return;
+    IEditor* editor = GetEditor();
+    if(!editor) return;
 
-	bool crtl = ::wxGetKeyState( WXK_CONTROL );
-	bool sourceIsMenu( false );
+    bool crtl = ::wxGetKeyState(WXK_CONTROL);
+    bool sourceIsMenu(false);
 
-	wxMenu *m = dynamic_cast<wxMenu*>( e.GetEventObject() );
-	if (m) {
-		sourceIsMenu = true;
-	}
+    wxMenu* m = dynamic_cast<wxMenu*>(e.GetEventObject());
+    if(m) {
+        sourceIsMenu = true;
+    }
 
-	if ( e.GetId() >= IDM_ADDSTART && e.GetId() < ( IDM_ADDSTART + (int)m_snippets.GetCount() ) ) {
-		wxString key = m_snippets.Item( e.GetId() - IDM_ADDSTART );
-		wxString srText    = m_StringDb.GetSnippetString( key );
-		wxString selection = editor->GetSelection();
+    if(e.GetId() >= IDM_ADDSTART && e.GetId() < (IDM_ADDSTART + (int)m_snippets.GetCount())) {
+        wxString key = m_snippets.Item(e.GetId() - IDM_ADDSTART);
+        wxString srText = m_StringDb.GetSnippetString(key);
+        wxString selection = editor->GetSelection();
 
-		// replace template eols with current
-		int curEol = editor->GetEOL();
-		if (srText.Find(eol[2])  != wxNOT_FOUND )
-			srText.Replace( eol[2], eol[curEol].c_str() );
+        // replace template eols with current
+        int curEol = editor->GetEOL();
+        if(srText.Find(eol[2]) != wxNOT_FOUND) srText.Replace(eol[2], eol[curEol].c_str());
 
-		// Replace any escaped carets/selection strings
-		srText.Replace(USER_ESC_CARET,        TMP_ESC_CARET_STR    );
-		srText.Replace(USER_ESC_SELECTION,    TMP_ESC_SELECTION_STR);
-		srText.Replace(CARET,                 REAL_CARET_STR       );
-		srText.Replace(SELECTION,             REAL_SELECTION_STR   );
+        // Replace any escaped carets/selection strings
+        srText.Replace(USER_ESC_CARET, TMP_ESC_CARET_STR);
+        srText.Replace(USER_ESC_SELECTION, TMP_ESC_SELECTION_STR);
+        srText.Replace(CARET, REAL_CARET_STR);
+        srText.Replace(SELECTION, REAL_SELECTION_STR);
 
-		// selection ?
-		if ( srText.Find( REAL_SELECTION_STR ) != wxNOT_FOUND )
-			srText.Replace( REAL_SELECTION_STR, selection.c_str() );
+        // selection ?
+        if(srText.Find(REAL_SELECTION_STR) != wxNOT_FOUND) srText.Replace(REAL_SELECTION_STR, selection.c_str());
 
-		// restore the escaped selection, this time without the escaping backslash
-		srText.Replace(TMP_ESC_SELECTION_STR, SELECTION);
+        // restore the escaped selection, this time without the escaping backslash
+        srText.Replace(TMP_ESC_SELECTION_STR, SELECTION);
 
-		// restore the escaped caret, this time without the escaping backslash
-		srText.Replace(TMP_ESC_CARET_STR, CARET);
+        // restore the escaped caret, this time without the escaping backslash
+        srText.Replace(TMP_ESC_CARET_STR, CARET);
 
-		// if the user pressed control while clicking
-		if ( crtl && sourceIsMenu ) {
-			m_clipboard = srText;
-			// remove caret mark if there
-			srText.Replace( REAL_CARET_STR, wxT( "" ) );
+        // if the user pressed control while clicking
+        if(crtl && sourceIsMenu) {
+            m_clipboard = srText;
+            // remove caret mark if there
+            srText.Replace(REAL_CARET_STR, wxT(""));
 
-			// copy text to clipboard
-			if ( wxTheClipboard->Open() ) {
-				wxTheClipboard->SetData( new wxTextDataObject( srText ) );
-				wxTheClipboard->Close();
-			}
-		} else {
-			// otherwise insert text
+            // copy text to clipboard
+            if(wxTheClipboard->Open()) {
+                wxTheClipboard->SetData(new wxTextDataObject(srText));
+                wxTheClipboard->Close();
+            }
+        } else {
+            // otherwise insert text
 
-			// format the text for insertion
-			wxString output = FormatOutput( editor, srText );
+            // format the text for insertion
+            wxString output = FormatOutput(editor, srText);
 
-			int curPos = editor->GetCurrentPosition();
-			if ( selection.Len() != 0 ) {
-				curPos = editor->GetSelectionStart();
-			}
+            int curPos = editor->GetCurrentPosition();
+            if(selection.Len() != 0) {
+                curPos = editor->GetSelectionStart();
+            }
 
-			// get caret position
-			long cursorPos = output.Find( REAL_CARET_STR );
-			if ( cursorPos != wxNOT_FOUND )
-				output.Remove( cursorPos, wxStrlen(REAL_CARET_STR) );
-			editor->ReplaceSelection( output );
-			// set caret
-			if ( cursorPos != wxNOT_FOUND )
-				editor->SetCaretAt( curPos + cursorPos );
-			else
-				editor->SetCaretAt( curPos + output.Len() );
-		}
-	}
+            // get caret position
+            long cursorPos = output.Find(REAL_CARET_STR);
+            if(cursorPos != wxNOT_FOUND) output.Remove(cursorPos, wxStrlen(REAL_CARET_STR));
+            editor->ReplaceSelection(output);
+            // set caret
+            if(cursorPos != wxNOT_FOUND)
+                editor->SetCaretAt(curPos + cursorPos);
+            else
+                editor->SetCaretAt(curPos + output.Len());
+        }
+    }
 }
 //------------------------------------------------------------
-void SnipWiz::OnMenuPaste( wxCommandEvent& e )
+void SnipWiz::OnMenuPaste(wxCommandEvent& e)
 {
-	wxUnusedVar( e );
-	IEditor *editor = GetEditor();
-	if ( !editor )
-		return;
+    wxUnusedVar(e);
+    IEditor* editor = GetEditor();
+    if(!editor) return;
 
-	if ( m_clipboard.IsEmpty() )
-		return;
-	// otherwise insert text
-	wxString output = FormatOutput( editor, m_clipboard );
-	wxString selection = editor->GetSelection();
-	int curPos = editor->GetCurrentPosition() - selection.Len();
-	// get caret position
-	long cursorPos = output.Find( REAL_CARET_STR );
-	if ( cursorPos != wxNOT_FOUND )
-		output.Remove( cursorPos, wxStrlen(REAL_CARET_STR) );
-	editor->ReplaceSelection( output );
-	// set caret
-	if ( cursorPos != wxNOT_FOUND )
-		editor->SetCaretAt( curPos + cursorPos );
-	else
-		editor->SetCaretAt( curPos + output.Len() );
+    if(m_clipboard.IsEmpty()) return;
+    // otherwise insert text
+    wxString output = FormatOutput(editor, m_clipboard);
+    wxString selection = editor->GetSelection();
+    int curPos = editor->GetCurrentPosition() - selection.Len();
+    // get caret position
+    long cursorPos = output.Find(REAL_CARET_STR);
+    if(cursorPos != wxNOT_FOUND) output.Remove(cursorPos, wxStrlen(REAL_CARET_STR));
+    editor->ReplaceSelection(output);
+    // set caret
+    if(cursorPos != wxNOT_FOUND)
+        editor->SetCaretAt(curPos + cursorPos);
+    else
+        editor->SetCaretAt(curPos + output.Len());
 }
 //------------------------------------------------------------
-wxString SnipWiz::FormatOutput( IEditor* pEditor, const wxString& text )
+wxString SnipWiz::FormatOutput(IEditor* pEditor, const wxString& text)
 {
-	wxString output = text;
-	int curPos = pEditor->GetCurrentPosition();
-	int curEol = pEditor->GetEOL();
-	wxString tabs = GetTabs( pEditor, curPos );
-	output.Replace( eol[curEol], eol[curEol] + tabs );
-	return output;
+    wxString output = text;
+    int curPos = pEditor->GetCurrentPosition();
+    int curEol = pEditor->GetEOL();
+    wxString tabs = GetTabs(pEditor, curPos);
+    output.Replace(eol[curEol], eol[curEol] + tabs);
+    return output;
 }
 
 //------------------------------------------------------------
 wxMenu* SnipWiz::CreateSubMenu()
 {
-	wxMenu *parentMenu = new wxMenu();
+    wxMenu* parentMenu = new wxMenu();
 
-	wxMenuItem *item( NULL );
-	if ( !m_clipboard.IsEmpty() ) {
-		item = new wxMenuItem( parentMenu, IDM_PASTE, _( "Paste buffer" ), _( "Paste buffer" ), wxITEM_NORMAL );
-		parentMenu->Append( item );
-		parentMenu->AppendSeparator();
-	}
-	item = new wxMenuItem( parentMenu, IDM_EXP_SWITCH, _( "switch{...}" ), _( "switch{...}" ), wxITEM_NORMAL );
-	parentMenu->Append( item );
-	parentMenu->AppendSeparator();
+    wxMenuItem* item(NULL);
+    if(!m_clipboard.IsEmpty()) {
+        item = new wxMenuItem(parentMenu, IDM_PASTE, _("Paste buffer"), _("Paste buffer"), wxITEM_NORMAL);
+        parentMenu->Append(item);
+        parentMenu->AppendSeparator();
+    }
+    item = new wxMenuItem(parentMenu, IDM_EXP_SWITCH, _("switch{...}"), _("switch{...}"), wxITEM_NORMAL);
+    parentMenu->Append(item);
+    parentMenu->AppendSeparator();
 
-	for ( wxUint32 i = 0;i < m_snippets.GetCount();i++ ) {
-		item = new wxMenuItem( parentMenu, IDM_ADDSTART + i, m_snippets.Item( i ), m_snippets.Item( i ), wxITEM_NORMAL );
-		parentMenu->Append( item );
-	}
+    for(wxUint32 i = 0; i < m_snippets.GetCount(); i++) {
+        item = new wxMenuItem(parentMenu, IDM_ADDSTART + i, m_snippets.Item(i), m_snippets.Item(i), wxITEM_NORMAL);
+        parentMenu->Append(item);
+    }
 
-	return parentMenu;
+    return parentMenu;
 }
 //------------------------------------------------------------
 // opens settings
-void SnipWiz::OnSettings( wxCommandEvent& e )
+void SnipWiz::OnSettings(wxCommandEvent& e)
 {
-	EditSnippetsDlg dlg( m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr );
-	dlg.ShowModal();
+    EditSnippetsDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
+    dlg.ShowModal();
 
-	if ( dlg.GetModified() ) {
-		m_snippets.Clear();
-		m_StringDb.GetAllSnippetKeys( m_snippets );
-		m_snippets.Sort();
-		DetachDynMenus();
-		AttachDynMenus();
-		m_modified = true;
-	}
+    if(dlg.GetModified()) {
+        m_snippets.Clear();
+        m_StringDb.GetAllSnippetKeys(m_snippets);
+        m_snippets.Sort();
+        DetachDynMenus();
+        AttachDynMenus();
+        m_modified = true;
+    }
 }
 
 //------------------------------------------------------------
 // generate some default entries
 void SnipWiz::IntSnippets()
 {
-	m_StringDb.SetSnippetString( wxT( "//-" ), wxT( "//------------------------------------------------------------@" ) );
-	m_StringDb.SetSnippetString( wxT( "wxT(\"" ), wxT( "wxT(\"@\")" ) );
-	m_StringDb.SetSnippetString( wxT( "wxT($" ), wxT( "wxT( $ )" ) );
-	m_StringDb.SetSnippetString( wxT( "if($" ) , wxT( "if ( $ )\n{\n\t@\n}" ) );
-	m_StringDb.SetSnippetString( wxT( "whi($" ) , wxT( "while ( $ )\n{\n\t@\n}" ) );
-	m_StringDb.SetSnippetString( wxT( "($)" ), wxT( "( $ )@" ) );
-	m_StringDb.SetSnippetString( wxT( "{$}" ) , wxT( "{ $ }@" ) );
-	m_StringDb.SetSnippetString( wxT( "[$]" ), wxT( "[ $ ]@" ) );
-	m_StringDb.SetSnippetString( wxT( "wxU($" ), wxT( "wxUnusedVar( $ );@" ) );
-	m_StringDb.SetSnippetString( wxT( "for($" ), wxT( "for( $ = 0; $  < @; $++ )" ) );
-	m_StringDb.SetSnippetString( wxT( "for(Ii" ), wxT( "for( int i = 0; i  < $; i++ )@" ) );
-	m_StringDb.SetSnippetString( wxT( "for(Ui" ), wxT( "for( unsigned int i = 0; i  < $; i++ )@" ) );
+    m_StringDb.SetSnippetString(wxT("//-"), wxT("//------------------------------------------------------------@"));
+    m_StringDb.SetSnippetString(wxT("wxT(\""), wxT("wxT(\"@\")"));
+    m_StringDb.SetSnippetString(wxT("wxT($"), wxT("wxT( $ )"));
+    m_StringDb.SetSnippetString(wxT("if($"), wxT("if ( $ )\n{\n\t@\n}"));
+    m_StringDb.SetSnippetString(wxT("whi($"), wxT("while ( $ )\n{\n\t@\n}"));
+    m_StringDb.SetSnippetString(wxT("($)"), wxT("( $ )@"));
+    m_StringDb.SetSnippetString(wxT("{$}"), wxT("{ $ }@"));
+    m_StringDb.SetSnippetString(wxT("[$]"), wxT("[ $ ]@"));
+    m_StringDb.SetSnippetString(wxT("wxU($"), wxT("wxUnusedVar( $ );@"));
+    m_StringDb.SetSnippetString(wxT("for($"), wxT("for( $ = 0; $  < @; $++ )"));
+    m_StringDb.SetSnippetString(wxT("for(Ii"), wxT("for( int i = 0; i  < $; i++ )@"));
+    m_StringDb.SetSnippetString(wxT("for(Ui"), wxT("for( unsigned int i = 0; i  < $; i++ )@"));
 }
 
 //------------------------------------------------------------
 // detach dynamic menus
 void SnipWiz::DetachDynMenus()
 {
-	m_topWin->Disconnect( IDM_ADDSTART, IDM_ADDSTART + m_snippets.GetCount() - 1, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuSnippets ), NULL, this );
+    m_topWin->Disconnect(IDM_ADDSTART,
+                         IDM_ADDSTART + m_snippets.GetCount() - 1,
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(SnipWiz::OnMenuSnippets),
+                         NULL,
+                         this);
 }
 //------------------------------------------------------------
 // attach dynamic menus
 void SnipWiz::AttachDynMenus()
 {
-	m_topWin->Connect( IDM_ADDSTART, IDM_ADDSTART + m_snippets.GetCount() - 1, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuSnippets ), NULL, this );
+    m_topWin->Connect(IDM_ADDSTART,
+                      IDM_ADDSTART + m_snippets.GetCount() - 1,
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(SnipWiz::OnMenuSnippets),
+                      NULL,
+                      this);
 }
 //------------------------------------------------------------
 // find current indentation
-long SnipWiz::GetCurrentIndentation( IEditor *pEditor, long pos )
+long SnipWiz::GetCurrentIndentation(IEditor* pEditor, long pos)
 {
-	wxString buffer = pEditor->GetEditorText().Left( pos );
-	long tabCount = 0;
-	wxChar ch = ( pEditor->GetEOL() == 1 ) ? wxT( '\r' ) : wxT( '\n' );
-	buffer = buffer.AfterLast( ch );
-	for ( long i = 0;i < (long)buffer.Len();i++ )
-		if ( buffer.GetChar( i ) == wxT( '\t' ) )
-			tabCount++;
+    wxString buffer = pEditor->GetEditorText().Left(pos);
+    long tabCount = 0;
+    wxChar ch = (pEditor->GetEOL() == 1) ? wxT('\r') : wxT('\n');
+    buffer = buffer.AfterLast(ch);
+    for(long i = 0; i < (long)buffer.Len(); i++)
+        if(buffer.GetChar(i) == wxT('\t')) tabCount++;
 
-	return tabCount;
+    return tabCount;
 }
 //------------------------------------------------------------
 // generates a string with tabs for current indentation
-wxString SnipWiz::GetTabs( IEditor* pEditor, long pos )
+wxString SnipWiz::GetTabs(IEditor* pEditor, long pos)
 {
-	long indent = GetCurrentIndentation( pEditor, pos );
-	wxString tabs = wxT( "" );
-	for ( long i = 0;i < indent;i++ )
-		tabs += wxT( "\t" );
-	return tabs;
+    long indent = GetCurrentIndentation(pEditor, pos);
+    wxString tabs = wxT("");
+    for(long i = 0; i < indent; i++) tabs += wxT("\t");
+    return tabs;
 }
 //------------------------------------------------------------
 // returns pointer to editor
 IEditor* SnipWiz::GetEditor()
 {
-	IEditor *editor = m_mgr->GetActiveEditor();
-	if ( !editor ) {
-		::wxMessageBox( noEditor, codeLite, wxICON_WARNING | wxOK );
-		return NULL;
-	}
-	return editor;
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if(!editor) {
+        ::wxMessageBox(noEditor, codeLite, wxICON_WARNING | wxOK);
+        return NULL;
+    }
+    return editor;
 }
 //------------------------------------------------------------
-void SnipWiz::OnClassWizard( wxCommandEvent& e )
+void SnipWiz::OnClassWizard(wxCommandEvent& e)
 {
-	TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
+    TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
 
-	wxString errMsg, projectPath, projectName;
-	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
+    wxString errMsg, projectPath, projectName;
+    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
 
-	projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
-	if ( m_mgr->GetWorkspace() ) {
-		if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
-			projectPath =  item.m_fileName.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
-		} else {
-			ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName( projectName, errMsg );
-			if ( proj )
-				projectPath =  proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
-		}
-	}
+    projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+    if(m_mgr->GetWorkspace()) {
+        if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+            projectPath = item.m_fileName.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
+        } else {
+            ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
+            if(proj) projectPath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
+        }
+    }
 
-	dlg.SetCurEol(GetEOLByOS());
-	dlg.SetPluginPath(m_pluginPath );
-	dlg.SetProjectPath( projectPath );
-	dlg.ShowModal();
+    dlg.SetCurEol(GetEOLByOS());
+    dlg.SetPluginPath(m_pluginPath);
+    dlg.SetProjectPath(projectPath);
+    dlg.ShowModal();
 
-	if ( dlg.GetModified() ) {
-		m_modified = true;
-	}
+    if(dlg.GetModified()) {
+        m_modified = true;
+    }
+}
 
+void SnipWiz::OnEditorContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    if(FileExtManager::IsCxxFile(editor->GetFileName())) {
+        wxMenu* newMenu = CreateSubMenu();
+        event.GetMenu()->Append(wxID_ANY, _("Snippets"), newMenu);
+    }
 }
 //------------------------------------------------------------

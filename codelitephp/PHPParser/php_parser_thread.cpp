@@ -56,12 +56,6 @@ void PHPParserThread::ParseFiles(PHPParserThreadRequest* request)
     PHPLookupTable lookuptable;
     lookuptable.Open(fnWorkspaceFile.GetPath());
 
-#if 0
-    if(isFull) {
-        lookuptable.ResetDatabase();
-    }
-#endif
-
     for(size_t i = 0; i < request->frameworksPaths.GetCount(); ++i) {
         wxArrayString frameworkFiles;
         wxDir::GetAllFiles(request->frameworksPaths.Item(i), &frameworkFiles, "*.php", wxDIR_DIRS | wxDIR_FILES);

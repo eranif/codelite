@@ -18,3 +18,9 @@ NewWorkspaceSelectionDlg::~NewWorkspaceSelectionDlg()
     conf.Load().SetWorkspaceType(m_radioBox->GetSelection()).Save();
     
 }
+void NewWorkspaceSelectionDlg::OnClose(wxCloseEvent& event)
+{
+}
+void NewWorkspaceSelectionDlg::OnKeyDown(wxKeyEvent& event)
+{
+}

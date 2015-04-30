@@ -344,6 +344,16 @@
       <File Name="clJSONObjectParser.y"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
+  <VirtualDirectory Name="XML">
+    <File Name="XMLLexer.l"/>
+    <File Name="XMLLexerAPI.h"/>
+    <File Name="XMLLexerTokens.h"/>
+    <File Name="XmlLexer.cpp"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -444,13 +454,15 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp JSLexer.cpp
+        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp JSLexer.cpp XmlLexer.cpp
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 JSLexer.cpp: JSLexer.l
-	flex -Pjs_ --batch --outfile=JSLexer.cpp JSLexer.l</CustomPreBuild>
+	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
+XmlLexer.cpp: XMLLexer.l
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -502,13 +514,16 @@ JSLexer.cpp: JSLexer.l
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp JSLexer.cpp
+        <CustomPreBuild>CxxLexer.cpp PhpLexer.cpp JSLexer.cpp XmlLexer.cpp
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 JSLexer.cpp: JSLexer.l
-	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l</CustomPreBuild>
+	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
+XmlLexer.cpp: XMLLexer.l
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -563,8 +578,7 @@ JSLexer.cpp: JSLexer.l
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
-	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
-</CustomPreBuild>
+	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -574,8 +588,4 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

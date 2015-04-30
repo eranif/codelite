@@ -31,7 +31,7 @@ else ()
     endif()
 
     if ( APPLE) 
-        set(LIBHUNSPELL ${CL_SRC_ROOT}/sdk/hunspell/lib/osx/libhunspell-1.3.dylib)
+        set(LIBHUNSPELL ${CL_SRC_ROOT}/sdk/hunspell/lib/osx/libhunspell-1.3.0.dylib)
         set(HUNSPELL_H ${CL_SRC_ROOT}/sdk/hunspell/include/)
     endif()
     

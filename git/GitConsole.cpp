@@ -653,23 +653,20 @@ void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
 
 void GitConsole::HideProgress()
 {
-    if(m_panelProgress->IsShown()) {
+    if(m_gauge->IsShown()) {
         m_gauge->SetValue(0);
-        m_staticTextGauge->SetLabel("");
-        m_panelProgress->Hide();
-        m_splitterPageTreeView->GetSizer()->Layout();
+        m_gauge->Hide();
+        GetSizer()->Layout();
     }
 }
 
 void GitConsole::ShowProgress(const wxString& message, bool pulse)
 {
-    if(!m_panelProgress->IsShown()) {
-        m_panelProgress->Show();
-        m_splitterPageTreeView->GetSizer()->Layout();
+    if(!m_gauge->IsShown()) {
+        m_gauge->Show();
+        GetSizer()->Layout();
     }
 
-    wxString trimmedMessage = message;
-    m_staticTextGauge->SetLabel(trimmedMessage.Trim().Trim(false));
     if(pulse) {
         m_gauge->Pulse();
         m_gauge->Update();
@@ -684,10 +681,10 @@ void GitConsole::UpdateProgress(unsigned long current, const wxString& message)
 {
     wxString trimmedMessage = message;
     m_gauge->SetValue(current);
-    m_staticTextGauge->SetLabel(trimmedMessage.Trim().Trim(false));
+    //m_staticTextGauge->SetLabel(trimmedMessage.Trim().Trim(false));
 }
 
-bool GitConsole::IsProgressShown() const { return m_panelProgress->IsShown(); }
+bool GitConsole::IsProgressShown() const { return m_gauge->IsShown(); }
 
 void GitConsole::PulseProgress() { m_gauge->Pulse(); }
 

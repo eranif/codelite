@@ -487,8 +487,29 @@ void PHPWorkspace::GetWorkspaceFiles(wxArrayString& workspaceFiles, wxProgressDi
 void PHPWorkspace::ParseWorkspace(bool full)
 {
     // Request for parsing
-    PHPParserThreadRequest* req = new PHPParserThreadRequest(full ? PHPParserThreadRequest::kParseWorkspaceFilesFull :
-                                                                    PHPParserThreadRequest::kParseWorkspaceFilesQuick);
+    if(full) {
+        // a full parsing is needed, stop the paser thread
+        // close the database, delete it and recreate it
+        // then, restart the parser thread
+        PHPParserThread::Release(); // Stop and wait the thread terminates
+        
+        // Close the CC manager
+        PHPCodeCompletion::Instance()->Close();
+        
+        // Delete the file
+        wxFileName fnDatabaseFile(m_workspaceFile.GetPath(), "phpsymbols.db");
+        fnDatabaseFile.AppendDir(".codelite");
+        
+        wxLogNull noLog;
+        bool bRemoved = ::wxRemoveFile(fnDatabaseFile.GetFullPath());
+        wxUnusedVar(bRemoved);
+        
+        // Start the managers again
+        PHPParserThread::Instance()->Start();
+        PHPCodeCompletion::Instance()->Open(m_workspaceFile);
+    }
+    
+    PHPParserThreadRequest* req = new PHPParserThreadRequest(PHPParserThreadRequest::kParseWorkspaceFilesQuick);
     req->workspaceFile = GetFilename().GetFullPath();
     GetWorkspaceFiles(req->files);
 

@@ -368,7 +368,7 @@ void SpellCheck::OnContinousCheck(wxCommandEvent& e)
                 m_pEngine->CheckCppSpelling(text);
             }
         } break;
-        case 1: { // wxSCI_LEX_NULL
+        default: { // wxSCI_LEX_NULL
             m_pEngine->CheckSpelling(text);
         } break;
         }
@@ -393,7 +393,7 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
                 m_pEngine->CheckCppSpelling(editor->GetEditorText());
             }
         } break;
-        case 1: { // wxSCI_LEX_NULL
+        default: { // wxSCI_LEX_NULL
             m_pEngine->CheckSpelling(editor->GetEditorText());
         } break;
         }

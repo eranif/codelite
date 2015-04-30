@@ -642,7 +642,7 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     m_filePickerValgrindOutputFile = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
     m_filePickerValgrindOutputFile->SetToolTip(_("It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
     
-    staticBoxSizer432->Add(m_filePickerValgrindOutputFile, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    staticBoxSizer432->Add(m_filePickerValgrindOutputFile, 0, wxALL|wxEXPAND, 5);
     
     m_panel671 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook251->InsertSubPage(1, m_panel671, _("Supression"), false, wxNOT_FOUND);
@@ -680,7 +680,11 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     
     #if wxVERSION_NUMBER >= 2900
-    wxPersistenceManager::Get().RegisterAndRestore(m_treebook251);
+    if(!wxPersistenceManager::Get().Find(m_treebook251)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_treebook251);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treebook251);
+    }
     #endif
     m_treebook251->ExpandNode( 0, true );
     m_treebook251->ExpandNode( 1, true );
@@ -694,7 +698,11 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     }
     CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
-    wxPersistenceManager::Get().RegisterAndRestore(this);
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
 #endif
     // Connect events
     m_bmpButton341->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MemCheckSettingsDialogBase::ValgrindResetOptions), NULL, this);

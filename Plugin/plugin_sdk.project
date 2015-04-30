@@ -207,6 +207,8 @@
     <File Name="DevCppImporter.cpp"/>
     <File Name="BorlandCppBuilderImporter.h"/>
     <File Name="BorlandCppBuilderImporter.cpp"/>
+    <File Name="CodeBlocksImporter.h"/>
+    <File Name="CodeBlocksImporter.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="debuggermanager.cpp"/>

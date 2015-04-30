@@ -13,7 +13,7 @@ bool BorlandCppBuilderImporter::OpenWordspace(const wxString& filename, const wx
     wxString compilerName = defaultCompiler.Lower();
 
     IsGccCompile = compilerName.Contains(wxT("gnu")) || compilerName.Contains(wxT("gcc")) ||
-                   compilerName.Contains(wxT("g++")) | compilerName.Contains(wxT("mingw"));
+                   compilerName.Contains(wxT("g++")) || compilerName.Contains(wxT("mingw"));
 
     wxString extension = wsInfo.GetExt().Lower();
 

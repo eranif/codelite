@@ -14,7 +14,7 @@ bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& 
     wxString compilerName = defaultCompiler.Lower();
 
     IsGccCompile = compilerName.Contains(wxT("gnu")) || compilerName.Contains(wxT("gcc")) ||
-                   compilerName.Contains(wxT("g++")) | compilerName.Contains(wxT("mingw"));
+                   compilerName.Contains(wxT("g++")) || compilerName.Contains(wxT("mingw"));
 
     wxString extension = wsInfo.GetExt().Lower();
 
@@ -189,7 +189,6 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                         virtualPath = line.Mid(index + 11).Trim().Trim(false);
                         virtualPath.Replace(wxT("\""), wxT(""));
                         virtualPath.Replace(wxT(" "), wxT("_"));
-                        virtualPath.Replace(wxT("\\"), wxT(":"));
                     }
 
                     index = line.Find(wxT("SOURCE="));
@@ -329,7 +328,6 @@ void VisualCppImporter::GenerateFromVC7(GenericWorkspacePtr genericWorkspace)
                         while(filterChild) {
                             if(filterChild->GetName() == wxT("Filter")) {
                                 wxString virtualPath = filterChild->GetAttribute(wxT("Name"));
-                                virtualPath.Replace(wxT("\\"), wxT(":"));
 
                                 wxXmlNode* fileChild = filterChild->GetChildren();
 
@@ -547,7 +545,6 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspacePtr genericWorkspace)
                                     wxString content = filterChild->GetNodeContent();
                                     if(!content.IsEmpty()) {
                                         content.Replace(wxT(" "), wxT("_"));
-                                        content.Replace(wxT("\\"), wxT(":"));
                                         virtualPath = content;
                                     }
                                 }

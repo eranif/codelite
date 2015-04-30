@@ -134,7 +134,9 @@ SnipWiz::SnipWiz(IManager* manager)
     m_snippets.Sort();
     m_modified = false;
     m_clipboard.Empty();
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &SnipWiz::OnEditorContextMenu, this);
 }
+
 //------------------------------------------------------------
 SnipWiz::~SnipWiz()
 {
@@ -165,7 +167,6 @@ void SnipWiz::CreatePluginMenu(wxMenu* pluginsMenu)
     m_topWin->Connect(
         IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuExpandSwitch), NULL, this);
     m_topWin->Connect(IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuPaste), NULL, this);
-    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &SnipWiz::OnEditorContextMenu, this);
     AttachDynMenus();
 }
 

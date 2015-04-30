@@ -1265,6 +1265,12 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
+    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,7), wxGA_SMOOTH|wxGA_HORIZONTAL);
+    m_gauge->Hide();
+    m_gauge->SetValue(10);
+    
+    boxSizer36->Add(m_gauge, 0, wxEXPAND, 2);
+    
     m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
@@ -1301,23 +1307,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     boxSizer94->Add(m_dvFiles, 1, wxALL|wxEXPAND, 2);
     
     m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
-    m_panelProgress = new wxPanel(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_panelProgress->Hide();
-    
-    boxSizer94->Add(m_panelProgress, 0, wxEXPAND, 5);
-    
-    wxBoxSizer* boxSizer272 = new wxBoxSizer(wxVERTICAL);
-    m_panelProgress->SetSizer(boxSizer272);
-    
-    m_staticTextGauge = new wxStaticText(m_panelProgress, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer272->Add(m_staticTextGauge, 0, wxALL, 2);
-    
-    m_gauge = new wxGauge(m_panelProgress, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,-1), wxGA_SMOOTH|wxGA_HORIZONTAL);
-    m_gauge->SetValue(10);
-    
-    boxSizer272->Add(m_gauge, 0, wxALL|wxEXPAND, 2);
-    
     m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 250);
     

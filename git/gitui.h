@@ -38,8 +38,8 @@
 #include "gitCommitEditor.h"
 #include <wx/bitmap.h>
 #include <wx/icon.h>
-#include "dataviewfilesmodel.h"
 #include <wx/gauge.h>
+#include "dataviewfilesmodel.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -325,15 +325,13 @@ public:
 class GitConsoleBase : public wxPanel
 {
 protected:
+    wxGauge* m_gauge;
     wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageTreeView;
     wxDataViewCtrl* m_dvFiles;
     wxObjectDataPtr<DataViewFilesModel> m_dvFilesModel;
 
-    wxPanel* m_panelProgress;
-    wxStaticText* m_staticTextGauge;
-    wxGauge* m_gauge;
     wxPanel* m_splitterPage96;
     wxStyledTextCtrl* m_stcLog;
 
@@ -350,11 +348,9 @@ protected:
     virtual void OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
+    wxGauge* GetGauge() { return m_gauge; }
     wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxDataViewCtrl* GetDvFiles() { return m_dvFiles; }
-    wxStaticText* GetStaticTextGauge() { return m_staticTextGauge; }
-    wxGauge* GetGauge() { return m_gauge; }
-    wxPanel* GetPanelProgress() { return m_panelProgress; }
     wxPanel* GetSplitterPageTreeView() { return m_splitterPageTreeView; }
     wxStyledTextCtrl* GetStcLog() { return m_stcLog; }
     wxPanel* GetSplitterPage96() { return m_splitterPage96; }

@@ -152,8 +152,7 @@ macro(CL_INSTALL_DEBUGGER _target_)
     if(APPLE)
         install(TARGETS ${_target_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers)
         # now that the plugin is installed, run install_name_tool
-        CL_INSTALL_NAME_TOOL("libwx_" 
-                             ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers/${_target_}.dylib)
+        CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/debuggers/${_target_}.dylib)
     else()
         install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR}/debuggers)
     endif()

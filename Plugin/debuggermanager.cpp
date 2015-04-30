@@ -34,26 +34,26 @@
 #include "codelite_events.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
+#include "file_logger.h"
+#include "cl_standard_paths.h"
 
 //---------------------------------------------------------
-static DebuggerMgr *ms_instance = NULL;
+static DebuggerMgr* ms_instance = NULL;
 
-const wxEventType wxEVT_DEBUGGER_UPDATE_VIEWS       = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_QUERY_LOCALS       = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN      = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED   = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJECT_CREATED  = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT  = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_UPDATE_VIEWS = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_QUERY_LOCALS = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_VAROBJECT_CREATED = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT = ::wxNewEventType();
 const wxEventType wxEVT_DEBUGGER_DISASSEBLE_CURLINE = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE     = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE = ::wxNewEventType();
 const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS     = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_FRAMES        = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED     = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_LIST_FRAMES = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED = ::wxNewEventType();
 
-DebuggerMgr::DebuggerMgr()
-{
-}
+DebuggerMgr::DebuggerMgr() {}
 
 DebuggerMgr::~DebuggerMgr()
 {
@@ -64,7 +64,6 @@ DebuggerMgr::~DebuggerMgr()
     }
     m_dl.clear();
     m_debuggers.clear();
-
 }
 
 DebuggerMgr& DebuggerMgr::Get()
@@ -85,7 +84,7 @@ bool DebuggerMgr::LoadDebuggers()
 {
     wxString ext;
 
-#if defined (__WXMSW__)
+#if defined(__WXMSW__)
     ext = wxT("dll");
 
 #elif defined(__WXMAC__)
@@ -96,38 +95,45 @@ bool DebuggerMgr::LoadDebuggers()
 
 #endif
 
-    wxString fileSpec(wxT("*.")+ext);
+    wxString fileSpec(wxT("*.") + ext);
 
-    //get list of dlls
+    // get list of dlls
     wxArrayString files;
 #ifdef __WXGTK__
     wxString debuggersPath(PLUGINS_DIR, wxConvUTF8);
     debuggersPath += wxT("/debuggers");
-#else
+#elif defined(__WXMSW__)
     wxString debuggersPath(m_baseDir + wxT("/debuggers"));
+#else
+    // OSX
+    wxFileName debuggersFolder(clStandardPaths::Get().GetDataDir(), "");
+    debuggersFolder.AppendDir("debuggers");
+    wxString debuggersPath(debuggersFolder.GetPath());
 #endif
-
+    
+    CL_DEBUG("Loading debuggers from: %s", debuggersPath);
     wxDir::GetAllFiles(debuggersPath, &files, fileSpec, wxDIR_FILES);
 
-    for(size_t i=0; i<files.GetCount(); i++) {
-        clDynamicLibrary *dl = new clDynamicLibrary();
+    for(size_t i = 0; i < files.GetCount(); i++) {
+        clDynamicLibrary* dl = new clDynamicLibrary();
         wxString fileName(files.Item(i));
+        CL_DEBUG("Attempting to load debugger: %s", fileName);
 #if defined(__WXMSW__) && !defined(NDEBUG)
-            // Under MSW loading a release plugin while in debug mode will cause a crash
-            if ( !fileName.EndsWith("-dbg.dll") ) {
-                continue;
-            }
+        // Under MSW loading a release plugin while in debug mode will cause a crash
+        if(!fileName.EndsWith("-dbg.dll")) {
+            continue;
+        }
 #elif defined(__WXMSW__)
 
-            // filter debug plugins
-            if ( fileName.EndsWith("-dbg.dll") ) {
-                continue;
-            }
+        // filter debug plugins
+        if(fileName.EndsWith("-dbg.dll")) {
+            continue;
+        }
 #endif
         if(!dl->Load(fileName)) {
-            wxLogMessage(wxT("Failed to load debugger's dll: ") + fileName);
-            if (!dl->GetError().IsEmpty()) {
-                wxLogMessage(dl->GetError());
+            CL_WARNING("Failed to load debugger: %s", fileName);
+            if(!dl->GetError().IsEmpty()) {
+                CL_WARNING("%s", dl->GetError());
             }
             delete dl;
             continue;
@@ -137,21 +143,21 @@ bool DebuggerMgr::LoadDebuggers()
         GET_DBG_INFO_FUNC pfn = (GET_DBG_INFO_FUNC)dl->GetSymbol(wxT("GetDebuggerInfo"), &success);
         if(!success) {
             wxLogMessage(wxT("Failed to find GetDebuggerInfo() in dll: ") + fileName);
-            if (!dl->GetError().IsEmpty()) {
+            if(!dl->GetError().IsEmpty()) {
                 wxLogMessage(dl->GetError());
             }
-            //dl->Unload();
+            // dl->Unload();
             delete dl;
             continue;
         }
 
         DebuggerInfo info = pfn();
-        //Call the init method to create an instance of the debugger
+        // Call the init method to create an instance of the debugger
         success = false;
         GET_DBG_CREATE_FUNC pfnInitDbg = (GET_DBG_CREATE_FUNC)dl->GetSymbol(info.initFuncName, &success);
         if(!success) {
             wxLogMessage(wxT("Failed to find init function in dll: ") + fileName);
-            if (!dl->GetError().IsEmpty()) {
+            if(!dl->GetError().IsEmpty()) {
                 wxLogMessage(dl->GetError());
             }
             dl->Detach();
@@ -160,22 +166,22 @@ bool DebuggerMgr::LoadDebuggers()
         }
 
         wxLogMessage(wxT("Loaded debugger: ") + info.name + wxT(", Version: ") + info.version);
-        IDebugger *dbg = pfnInitDbg();
+        IDebugger* dbg = pfnInitDbg();
 
-        //set the environment
+        // set the environment
         dbg->SetEnvironment(m_env);
 
         m_debuggers[info.name] = dbg;
 
-        //keep the dynamic load library
+        // keep the dynamic load library
         m_dl.push_back(dl);
     }
-    
+
     // Load all debuggers in the form of plugin (i.e. they dont implement the IDebugger interface)
     // and append them to a special list
     clDebugEvent queryPlugins(wxEVT_DBG_IS_PLUGIN_DEBUGGER);
-    EventNotifier::Get()->ProcessEvent( queryPlugins );
-    m_pluginsDebuggers.swap( queryPlugins.GetStrings() );
+    EventNotifier::Get()->ProcessEvent(queryPlugins);
+    m_pluginsDebuggers.swap(queryPlugins.GetStrings());
     return true;
 }
 
@@ -186,7 +192,7 @@ wxArrayString DebuggerMgr::GetAvailableDebuggers()
     for(; iter != m_debuggers.end(); iter++) {
         dbgs.Add(iter->first);
     }
-    
+
     // append all the plugins that were registered themself as debugger
     dbgs.insert(dbgs.end(), m_pluginsDebuggers.begin(), m_pluginsDebuggers.end());
     return dbgs;
@@ -195,10 +201,10 @@ wxArrayString DebuggerMgr::GetAvailableDebuggers()
 IDebugger* DebuggerMgr::GetActiveDebugger()
 {
     if(m_activeDebuggerName.IsEmpty()) {
-        //no active debugger is set, use the first one
+        // no active debugger is set, use the first one
         std::map<wxString, IDebugger*>::iterator iter = m_debuggers.begin();
         if(iter != m_debuggers.end()) {
-            SetActiveDebugger( iter->first );
+            SetActiveDebugger(iter->first);
             return iter->second;
         }
         return NULL;
@@ -211,18 +217,14 @@ IDebugger* DebuggerMgr::GetActiveDebugger()
     return NULL;
 }
 
-void DebuggerMgr::SetActiveDebugger(const wxString &name)
-{
-    m_activeDebuggerName = name;
-}
+void DebuggerMgr::SetActiveDebugger(const wxString& name) { m_activeDebuggerName = name; }
 
-
-void DebuggerMgr::SetDebuggerInformation(const wxString &name, const DebuggerInformation &info)
+void DebuggerMgr::SetDebuggerInformation(const wxString& name, const DebuggerInformation& info)
 {
     DebuggerConfigTool::Get()->WriteObject(name, (SerializedObject*)&info);
 }
 
-bool DebuggerMgr::GetDebuggerInformation(const wxString &name, DebuggerInformation &info)
+bool DebuggerMgr::GetDebuggerInformation(const wxString& name, DebuggerInformation& info)
 {
     return DebuggerConfigTool::Get()->ReadObject(name, &info);
 }

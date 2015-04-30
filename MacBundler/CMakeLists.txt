@@ -50,4 +50,4 @@ target_link_libraries(${PLUGIN_NAME}
                       libcodelite 
                       plugin)
 
-install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
+CL_INSTALL_PLUGIN(${PLUGIN_NAME})

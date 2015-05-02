@@ -121,6 +121,8 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
 												compilerChild = compilerChild->GetNext();
 											}
 											
+											if(includePath.Contains(wxT("#"))) includePath.Replace(wxT("#"), wxT(""));
+											
 											genericProjectCfg->cCompilerOptions = compilerOptions;
 											genericProjectCfg->cppCompilerOptions = compilerOptions;
 											genericProjectCfg->includePath = includePath;
@@ -145,6 +147,8 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
 												
 												linkerChild = linkerChild->GetNext();
 											}
+											
+											if(libPath.Contains(wxT("#"))) libPath.Replace(wxT("#"), wxT(""));
 											
 											genericProjectCfg->linkerOptions = linkerOptions;
 											genericProjectCfg->libPath = libPath;

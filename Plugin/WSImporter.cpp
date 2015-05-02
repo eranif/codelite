@@ -93,16 +93,22 @@ bool WSImporter::Import(wxString& errMsg) {
 						else le_conf->SetCommand(wxT("./$(ProjectName)"));
 
                         le_conf->SetCompilerType(defaultCompiler);
+						
+						wxString cfgName = cfg->name.Lower();
 
-                        if(cfg->name.Lower().Contains(wxT("debug"))) {
+                        if(cfgName.Contains(wxT("debug"))) {
                             ConfigMappingEntry cme(project->name, cfg->name);
                             cmlDebug.push_back(cme);
                         }
-
-                        if(cfg->name.Lower().Contains(wxT("release"))) {
+						else if(cfgName.Contains(wxT("release"))) {
                             ConfigMappingEntry cme(project->name, cfg->name);
                             cmlRelease.push_back(cme);
                         }
+						else {
+							ConfigMappingEntry cme(project->name, cfg->name);
+							cmlDebug.push_back(cme);
+                            cmlRelease.push_back(cme);
+						}
 
                         wxString buildConfigType;
 

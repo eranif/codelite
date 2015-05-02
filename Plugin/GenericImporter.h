@@ -29,6 +29,7 @@ struct GenericProjectCfg {
     wxString cppCompilerOptions;
     wxString linkerOptions;
     wxString preCompiledHeader;
+	wxString command;
     GenericCfgType type;
 };
 

@@ -82,6 +82,7 @@ bool WSImporter::Import(wxString& errMsg)
                             le_conf->SetIntermediateDirectory(cfg->intermediateDirectory);
 
                         if(!cfg->outputFilename.IsEmpty()) le_conf->SetOutputFileName(cfg->outputFilename);
+						else le_conf->SetOutputFileName(wxT("$(IntermediateDirectory)/$(ProjectName)"));
 
                         if(!cfg->cCompilerOptions.IsEmpty()) le_conf->SetCCompileOptions(cfg->cCompilerOptions);
 
@@ -90,6 +91,9 @@ bool WSImporter::Import(wxString& errMsg)
                         if(!cfg->linkerOptions.IsEmpty()) le_conf->SetLinkOptions(cfg->linkerOptions);
 
                         if(!cfg->preCompiledHeader.IsEmpty()) le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
+						
+						if(!cfg->command.IsEmpty()) le_conf->SetCommand(cfg->command);
+						else le_conf->SetCommand(wxT("./$(ProjectName)"));
 
                         le_conf->SetCompilerType(defaultCompiler);
 

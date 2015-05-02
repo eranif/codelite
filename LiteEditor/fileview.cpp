@@ -160,8 +160,7 @@ void FileViewTree::OnBuildInProgress(wxUpdateUIEvent& event) { event.Enable(!Man
 FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     Create(parent, id, pos, size, style);
-    MSWSetNativeTheme(this);
-    //    SetBackgroundColour("rgb(230, 230, 230)");
+    //MSWSetNativeTheme(this);
 
     // Initialise images map
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();

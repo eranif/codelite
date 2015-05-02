@@ -12,7 +12,7 @@ bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& def
     wxString compilerName = defaultCompiler.Lower();
 
     IsGccCompile = compilerName.Contains(wxT("gnu")) || compilerName.Contains(wxT("gcc")) ||
-                   compilerName.Contains(wxT("g++")) | compilerName.Contains(wxT("mingw"));
+                   compilerName.Contains(wxT("g++")) || compilerName.Contains(wxT("mingw"));
 
     wxString extension = wsInfo.GetExt().Lower();
 
@@ -74,12 +74,12 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     wxString projectType = tagValue;
 
                     wxString outputFilename;
-                    if(projectType == wxT("1")) {
+                    if(projectType == wxT("2")) {
                         genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
                         outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
                         outputFilename += STATIC_LIBRARY_EXT;
                         if(IsGccCompile) outputFilename.Replace(wxT("lib"), wxT("a"));
-                    } else if(projectType == wxT("2")) {
+                    } else if(projectType == wxT("3")) {
                         genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
                         outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
                         outputFilename += DYNAMIC_LIBRARY_EXT;

@@ -2,6 +2,7 @@
 #include "VisualCppImporter.h"
 #include "DevCppImporter.h"
 #include "BorlandCppBuilderImporter.h"
+#include "CodeBlocksImporter.h"
 #include "workspace.h"
 
 WSImporter::WSImporter()
@@ -9,6 +10,7 @@ WSImporter::WSImporter()
     AddImporter(std::make_shared<VisualCppImporter>());
     AddImporter(std::make_shared<DevCppImporter>());
     AddImporter(std::make_shared<BorlandCppBuilderImporter>());
+	AddImporter(std::make_shared<CodeBlocksImporter>());
 }
 
 WSImporter::~WSImporter() {}
@@ -80,6 +82,7 @@ bool WSImporter::Import(wxString& errMsg)
                             le_conf->SetIntermediateDirectory(cfg->intermediateDirectory);
 
                         if(!cfg->outputFilename.IsEmpty()) le_conf->SetOutputFileName(cfg->outputFilename);
+						else le_conf->SetOutputFileName(wxT("$(IntermediateDirectory)/$(ProjectName)"));
 
                         if(!cfg->cCompilerOptions.IsEmpty()) le_conf->SetCCompileOptions(cfg->cCompilerOptions);
 
@@ -88,6 +91,9 @@ bool WSImporter::Import(wxString& errMsg)
                         if(!cfg->linkerOptions.IsEmpty()) le_conf->SetLinkOptions(cfg->linkerOptions);
 
                         if(!cfg->preCompiledHeader.IsEmpty()) le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
+						
+						if(!cfg->command.IsEmpty()) le_conf->SetCommand(cfg->command);
+						else le_conf->SetCommand(wxT("./$(ProjectName)"));
 
                         le_conf->SetCompilerType(defaultCompiler);
 
@@ -129,8 +135,38 @@ bool WSImporter::Import(wxString& errMsg)
                     proj->DeleteVirtualDir("src");
 
                     for(GenericProjectFilePtr file : project->files) {
-                        proj->CreateVirtualDir(file->vpath);
-                        proj->AddFile(file->name, file->vpath);
+						wxString vpath;
+						
+						if (file->vpath.IsEmpty()) {
+							wxFileName fileInfo(file->name);
+							wxString ext = fileInfo.GetExt().Lower();
+							
+							if(ext == wxT("h") || ext == wxT("hpp") || ext == wxT("hxx")) {
+								vpath = wxT("include");
+							}
+							else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx")) {
+								vpath = wxT("src");
+							}
+							else if(ext == wxT("s") || ext == wxT("asm")) {
+								vpath = wxT("src");
+							}
+							else {
+								vpath = wxT("resource");
+							}
+						}
+						else {
+							vpath = file->vpath;
+							
+							if(file->vpath.Contains(wxT("\\"))) {
+								vpath.Replace(wxT("\\"), wxT(":"));
+							}
+							else if(file->vpath.Contains(wxT("/"))) {
+								vpath.Replace(wxT("/"), wxT(":"));
+							}
+						}
+						
+						proj->CreateVirtualDir(vpath);
+                        proj->AddFile(file->name, vpath);
                     }
 
                     proj->CommitTranscation();

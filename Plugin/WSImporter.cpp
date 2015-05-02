@@ -3,6 +3,7 @@
 #include "DevCppImporter.h"
 #include "BorlandCppBuilderImporter.h"
 #include "CodeBlocksImporter.h"
+#include "EnvVarImporterDlg.h"
 #include "workspace.h"
 
 WSImporter::WSImporter() {
@@ -27,6 +28,7 @@ bool WSImporter::Import(wxString& errMsg) {
             if(importer->isSupportedWorkspace()) {
                 GenericWorkspacePtr gworskspace = importer->PerformImport();
                 wxString errMsgLocal;
+				bool showDlg = true;
 				
                 if(!WorkspaceST::Get()->CreateWorkspace(gworskspace->name, gworskspace->path, errMsgLocal))
                     return false;
@@ -64,7 +66,15 @@ bool WSImporter::Import(wxString& errMsg) {
                     if(clWorkspace == NULL) clWorkspace = proj->GetWorkspace();
 
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
-                        BuildConfigPtr le_conf(new BuildConfig(NULL));
+						BuildConfigPtr le_conf(new BuildConfig(NULL));
+						
+						if(showDlg && ContainsEnvVar({cfg->includePath, cfg->libPath, cfg->libraries, cfg->preprocessor})) {
+							std::set<wxString> listEnvVar = GetListEnvVarName({cfg->includePath, cfg->libPath, cfg->libraries, cfg->preprocessor});
+
+							EnvVarImporterDlg envVarImporterDlg(NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
+							envVarImporterDlg.ShowModal();
+						}
+                        
                         le_conf->SetName(cfg->name);
 
                         if(!cfg->includePath.IsEmpty()) le_conf->SetIncludePath(cfg->includePath);
@@ -197,4 +207,45 @@ bool WSImporter::Import(wxString& errMsg) {
     }
 
     return false;
+}
+
+bool WSImporter::ContainsEnvVar(std::initializer_list<wxString> elems) {
+	for(wxString elem : elems) {
+		if(elem.Contains("$(") && elem.Contains(")"))
+			return true;
+	}
+	
+	return false;
+}
+
+
+std::set<wxString> WSImporter::GetListEnvVarName(std::initializer_list<wxString> elems) {
+	bool app = false;
+	wxString word = wxT(""), data = wxT("");
+	std::set<wxString> list;
+	
+	for(wxString elem : elems) {
+		if(!elem.IsEmpty()) {
+			data += elem;
+		}
+	}
+	
+	const int length = data.length();
+	
+	for(int pos = 0; pos < length; pos++) {
+		if(data.GetChar(pos) == wxT('$') && data.GetChar(pos + 1) == wxT('(')) {
+			app = true;
+			pos++;
+		}
+		else if(data.GetChar(pos) == wxT(')')) {
+			list.insert(word);
+			word = wxT("");
+			app = false;
+		}
+		else if(app) {
+			word += data.GetChar(pos);
+		}
+	}
+	
+	return list;
 }

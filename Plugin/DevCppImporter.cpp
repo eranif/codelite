@@ -128,7 +128,6 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("Linker")) {
                     wxString projectLinker = tagValue;
-                    projectLinker.Replace(wxT(" "), wxT(";"));
 
                     genericProjectCfgDebug->linkerOptions = projectLinker;
                     genericProjectCfgRelease->linkerOptions = projectLinker;

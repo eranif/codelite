@@ -209,6 +209,8 @@
     <File Name="BorlandCppBuilderImporter.cpp"/>
     <File Name="CodeBlocksImporter.h"/>
     <File Name="CodeBlocksImporter.cpp"/>
+    <File Name="EnvVarImporterDlg.h"/>
+    <File Name="EnvVarImporterDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="debuggermanager.cpp"/>
@@ -411,6 +413,7 @@
       <File Name="wxcrafter_plugin_bitmaps.cpp"/>
       <File Name="wxCodeCompletionBox_bitmaps.cpp"/>
       <File Name="clBoostrapWizardBase_plugin_bitmaps.cpp"/>
+      <File Name="WSImporterDlgs_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -425,11 +428,14 @@
       <File Name="wxCodeCompletionBoxBase.cpp"/>
       <File Name="clBoostrapWizardBase.h"/>
       <File Name="clBoostrapWizardBase.cpp"/>
+      <File Name="WSImporterDlgs.h"/>
+      <File Name="WSImporterDlgs.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>
     <File Name="wxcrafter.wxcp"/>
     <File Name="clBoostrapWizardBase.wxcp"/>
+    <File Name="WSImporterDlgs.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
     <File Name="AddSSHAcountDlg.cpp"/>

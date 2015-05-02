@@ -24,7 +24,14 @@ bool CodeBlocksImporter::OpenWordspace(const wxString& filename, const wxString&
 }
 
 bool CodeBlocksImporter::isSupportedWorkspace() {
-	return true;
+	wxXmlDocument codeBlocksProject;
+    if(codeBlocksProject.Load(wsInfo.GetFullPath())) {
+        wxXmlNode* root = codeBlocksProject.GetRoot();
+		wxString nodeName = root->GetName();
+        if(root && (nodeName == wxT("CodeBlocks_workspace_file") || nodeName == wxT("CodeBlocks_project_file")))
+			return true;
+	}
+	return false;
 }
 
 GenericWorkspacePtr CodeBlocksImporter::PerformImport() {
@@ -99,36 +106,41 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
 										}
 										
 										if(targetChild->GetName() == wxT("Compiler")) {
-											wxString compilerOptions = wxT("");
-											wxString includePath = wxT("");
+											wxString compilerOptions = wxT(""), includePath = wxT("");
+											
 											wxXmlNode* compilerChild = targetChild->GetChildren();
 											while(compilerChild) {
 												if(compilerChild->GetName() == wxT("Add") && compilerChild->HasAttribute(wxT("option"))) {
-													compilerOptions = compilerChild->GetAttribute(wxT("option")) + wxT(";");
+													compilerOptions += compilerChild->GetAttribute(wxT("option")) + wxT(" ");
 												}
 												
 												if(compilerChild->GetName() == wxT("Add") && compilerChild->HasAttribute(wxT("directory"))) {
-													includePath = compilerChild->GetAttribute(wxT("directory")) + wxT(";");
+													includePath += compilerChild->GetAttribute(wxT("directory")) + wxT(";");
 												}
 												
 												compilerChild = compilerChild->GetNext();
 											}
 											
+											genericProjectCfg->cCompilerOptions = compilerOptions;
 											genericProjectCfg->cppCompilerOptions = compilerOptions;
 											genericProjectCfg->includePath = includePath;
 										}
 										
 										if(targetChild->GetName() == wxT("Linker")) {
-											wxString linkerOptions = wxT("");
-											wxString libPath = wxT("");
+											wxString linkerOptions = wxT(""), libPath = wxT(""), libraries = wxT("");
+											
 											wxXmlNode* linkerChild = targetChild->GetChildren();
 											while(linkerChild) {
 												if(linkerChild->GetName() == wxT("Add") && linkerChild->HasAttribute(wxT("option"))) {
-													linkerOptions = linkerChild->GetAttribute(wxT("option")) + wxT(";");
+													linkerOptions += linkerChild->GetAttribute(wxT("option")) + wxT(" ");
 												}
 												
 												if(linkerChild->GetName() == wxT("Add") && linkerChild->HasAttribute(wxT("directory"))) {
-													libPath = linkerChild->GetAttribute(wxT("directory")) + wxT(";");
+													libPath += linkerChild->GetAttribute(wxT("directory")) + wxT(";");
+												}
+												
+												if(linkerChild->GetName() == wxT("Add") && linkerChild->HasAttribute(wxT("library"))) {
+													libraries += linkerChild->GetAttribute(wxT("library")) + wxT(";");
 												}
 												
 												linkerChild = linkerChild->GetNext();
@@ -136,6 +148,7 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
 											
 											genericProjectCfg->linkerOptions = linkerOptions;
 											genericProjectCfg->libPath = libPath;
+											genericProjectCfg->libraries = libraries;
 										}
 										
 										targetChild = targetChild->GetNext();

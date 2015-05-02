@@ -101,7 +101,8 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
                     while(linkerChild) {
                         if(linkerChild->GetName() == wxT("ALLLIB")) {
                             wxString projectLibraries = linkerChild->GetAttribute(wxT("value"));
-
+							projectLibraries.Replace(wxT(" "), wxT(";"));
+							
                             genericProjectCfgDebug->libraries = projectLibraries;
                             genericProjectCfgRelease->libraries = projectLibraries;
                         }

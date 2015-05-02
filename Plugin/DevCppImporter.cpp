@@ -112,15 +112,15 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("Compiler")) {
                     wxString projectCompiler = tagValue;
-                    projectCompiler.Replace(wxT(" "), wxT(";"));
 
                     genericProjectCfgDebug->cCompilerOptions = projectCompiler;
                     genericProjectCfgRelease->cCompilerOptions = projectCompiler;
+					genericProjectCfgDebug->cppCompilerOptions = projectCompiler;
+                    genericProjectCfgRelease->cppCompilerOptions = projectCompiler;
                 }
 
                 if(tagName == wxT("CppCompiler")) {
                     wxString projectCppCompiler = tagValue;
-                    projectCppCompiler.Replace(wxT(" "), wxT(";"));
 
                     genericProjectCfgDebug->cppCompilerOptions = projectCppCompiler;
                     genericProjectCfgRelease->cppCompilerOptions = projectCppCompiler;

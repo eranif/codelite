@@ -5,8 +5,7 @@
 #include "CodeBlocksImporter.h"
 #include "workspace.h"
 
-WSImporter::WSImporter()
-{
+WSImporter::WSImporter() {
     AddImporter(std::make_shared<VisualCppImporter>());
     AddImporter(std::make_shared<DevCppImporter>());
     AddImporter(std::make_shared<BorlandCppBuilderImporter>());
@@ -17,19 +16,18 @@ WSImporter::~WSImporter() {}
 
 void WSImporter::AddImporter(std::shared_ptr<GenericImporter> importer) { importers.push_back(importer); }
 
-void WSImporter::Load(const wxString& filename, const wxString& defaultCompiler)
-{
+void WSImporter::Load(const wxString& filename, const wxString& defaultCompiler) {
     this->filename = filename;
     this->defaultCompiler = defaultCompiler;
 }
 
-bool WSImporter::Import(wxString& errMsg)
-{
+bool WSImporter::Import(wxString& errMsg) {
     for(std::shared_ptr<GenericImporter> importer : importers) {
         if(importer->OpenWordspace(filename, defaultCompiler)) {
             if(importer->isSupportedWorkspace()) {
                 GenericWorkspacePtr gworskspace = importer->PerformImport();
                 wxString errMsgLocal;
+				
                 if(!WorkspaceST::Get()->CreateWorkspace(gworskspace->name, gworskspace->path, errMsgLocal))
                     return false;
 
@@ -39,20 +37,19 @@ bool WSImporter::Import(wxString& errMsg)
 
                 for(GenericProjectPtr project : gworskspace->projects) {
                     GenericCfgType cfgType = project->cfgType;
-
-                    wxString projectType;
-                    wxString errMsg;
+                    wxString projectType, errMsg;
+					
                     switch(cfgType) {
-                    case GenericCfgType::DYNAMIC_LIBRARY:
-                        projectType = Project::DYNAMIC_LIBRARY;
-                        break;
-                    case GenericCfgType::STATIC_LIBRARY:
-                        projectType = Project::STATIC_LIBRARY;
-                        break;
-                    case GenericCfgType::EXECUTABLE:
-                    default:
-                        projectType = Project::EXECUTABLE;
-                        break;
+						case GenericCfgType::DYNAMIC_LIBRARY:
+							projectType = Project::DYNAMIC_LIBRARY;
+							break;
+						case GenericCfgType::STATIC_LIBRARY:
+							projectType = Project::STATIC_LIBRARY;
+							break;
+						case GenericCfgType::EXECUTABLE:
+						default:
+							projectType = Project::EXECUTABLE;
+							break;
                     }
 
                     if(!WorkspaceST::Get()->CreateProject(project->name, project->path, projectType, true, errMsg))
@@ -74,7 +71,7 @@ bool WSImporter::Import(wxString& errMsg)
 
                         if(!cfg->libraries.IsEmpty()) le_conf->SetLibraries(cfg->libraries);
 
-                        if(!cfg->libPath.IsEmpty()) le_conf->SetLibPath(cfg->libPath);
+                        if (!cfg->libPath.IsEmpty()) le_conf->SetLibPath(cfg->libPath);
 
                         if(!cfg->preprocessor.IsEmpty()) le_conf->SetPreprocessor(cfg->preprocessor);
 
@@ -110,16 +107,16 @@ bool WSImporter::Import(wxString& errMsg)
                         wxString buildConfigType;
 
                         switch(cfg->type) {
-                        case GenericCfgType::DYNAMIC_LIBRARY:
-                            buildConfigType = Project::DYNAMIC_LIBRARY;
-                            break;
-                        case GenericCfgType::STATIC_LIBRARY:
-                            buildConfigType = Project::STATIC_LIBRARY;
-                            break;
-                        case GenericCfgType::EXECUTABLE:
-                        default:
-                            buildConfigType = Project::EXECUTABLE;
-                            break;
+							case GenericCfgType::DYNAMIC_LIBRARY:
+								buildConfigType = Project::DYNAMIC_LIBRARY;
+								break;
+							case GenericCfgType::STATIC_LIBRARY:
+								buildConfigType = Project::STATIC_LIBRARY;
+								break;
+							case GenericCfgType::EXECUTABLE:
+							default:
+								buildConfigType = Project::EXECUTABLE;
+								break;
                         }
 
                         le_conf->SetProjectType(buildConfigType);
@@ -137,14 +134,14 @@ bool WSImporter::Import(wxString& errMsg)
                     for(GenericProjectFilePtr file : project->files) {
 						wxString vpath;
 						
-						if (file->vpath.IsEmpty()) {
+						if(file->vpath.IsEmpty()) {
 							wxFileName fileInfo(file->name);
 							wxString ext = fileInfo.GetExt().Lower();
 							
-							if(ext == wxT("h") || ext == wxT("hpp") || ext == wxT("hxx")) {
+							if(ext == wxT("h") || ext == wxT("hpp") || ext == wxT("hxx") || ext == wxT("hh") || ext == wxT("inl") || ext == wxT("inc")) {
 								vpath = wxT("include");
 							}
-							else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx")) {
+							else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx") || ext == wxT("cc")) {
 								vpath = wxT("src");
 							}
 							else if(ext == wxT("s") || ext == wxT("asm")) {

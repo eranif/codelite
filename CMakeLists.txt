@@ -122,18 +122,19 @@ endif (UNIX OR MINGW)
 set( CL_INSTALL_LIBDIR "lib" )
 if ( PREFIX )
   set ( CL_PREFIX ${PREFIX} )
-else()
+#else() 
+#This would have made recent cmake versions do multiarch correctly. But the debian packager isn't doing that, so we shouldn't either
     # If the caller hasn't set his own destination, install to a multi-arch lib dir if applicable
-    if (CMAKE_VERSION VERSION_GREATER 2.8.7 AND ( UNIX AND NOT APPLE ))
-        if (CMAKE_VERSION VERSION_GREATER 3.0.0)
+#    if (CMAKE_VERSION VERSION_GREATER 2.8.7 AND ( UNIX AND NOT APPLE ))
+#        if (CMAKE_VERSION VERSION_GREATER 3.0.0)
             # Prior to this, afaict the GNUInstallDirs module worked whatever the prefix
             # Since, it looks at CMAKE_INSTALL_PREFIX which is /usr/local by default, and refuses to run the multiarch-setting code unless it's /usr/
             # So, partly to comply with the default documented above, & partly for packaging, explicitly set it to /usr
-            set (CMAKE_INSTALL_PREFIX "/usr")
-        endif()
-        include (GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
-        set( CL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
-    endif()
+#            set (CMAKE_INSTALL_PREFIX "/usr")
+#        endif()
+#        include (GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
+#        set( CL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
+#    endif()
 endif(PREFIX)
 
 ## Try to link-to or build lldb?

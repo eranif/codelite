@@ -445,7 +445,7 @@
 
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="import_from_msvs">
-                <label>&amp;Import MS Visual Studio solution file...</label>
+                <label>&amp;Import other IDEs solution/workspace files...</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 

@@ -115,7 +115,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                     genericProjectCfgDebug->cCompilerOptions = projectCompiler;
                     genericProjectCfgRelease->cCompilerOptions = projectCompiler;
-					genericProjectCfgDebug->cppCompilerOptions = projectCompiler;
+                    genericProjectCfgDebug->cppCompilerOptions = projectCompiler;
                     genericProjectCfgRelease->cppCompilerOptions = projectCompiler;
                 }
 

@@ -147,7 +147,7 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                             index = line.Find(wxT("ADD CPP"));
                             if(index != wxNOT_FOUND) {
                                 wxString preprocessor = wxT(""), includePath = wxT(""), preCompiledHeader = wxT("");
-							
+
                                 for(size_t pos = 0; pos < line.Length(); pos++) {
                                     if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('D')) {
                                         int count = 0;
@@ -163,8 +163,7 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                                         }
 
                                         preprocessor += word + wxT(";");
-                                    }
-									else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('I')) {
+                                    } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('I')) {
                                         int count = 0;
                                         wxString word = wxT("");
                                         while(count < 2) {
@@ -178,8 +177,8 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                                         }
 
                                         includePath += word + wxT(";");
-                                    }
-									else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('Y') && line.GetChar(pos + 2) == wxT('u')) {
+                                    } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('Y') &&
+                                              line.GetChar(pos + 2) == wxT('u')) {
                                         int count = 0;
                                         wxString word = wxT("");
                                         while(count < 2) {
@@ -197,42 +196,41 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                                 }
 
                                 genericProjectCfg->preprocessor = preprocessor;
-								genericProjectCfg->includePath = includePath;
-								genericProjectCfg->preCompiledHeader = preCompiledHeader;
+                                genericProjectCfg->includePath = includePath;
+                                genericProjectCfg->preCompiledHeader = preCompiledHeader;
                             }
 
                             index = line.Find(wxT("ADD LINK32"));
                             if(index != wxNOT_FOUND) {
                                 int begin = index + 10;
                                 int end = line.Find(wxT("/")) - 1;
-								line = line.SubString(begin, end).Trim().Trim(false);
-								
-								wxString libraries = wxT("");
-								wxString libPath = wxT("");
-								wxStringTokenizer libs(line, wxT(" "));
-								
-								while(libs.HasMoreTokens()) {
-									wxString lib = libs.GetNextToken();
-									index = static_cast<int>(lib.find_last_of(wxT("\\")));
-									if(index != wxNOT_FOUND) {
-										wxString include = lib.SubString(0, index);
-										lib = lib.Mid(index + 1);
-										libPath += include + wxT(";");
-										libraries += lib + wxT(";");
-									}
-									else {
-										libraries += lib + wxT(";");
-									}
-								}
-								
+                                line = line.SubString(begin, end).Trim().Trim(false);
+
+                                wxString libraries = wxT("");
+                                wxString libPath = wxT("");
+                                wxStringTokenizer libs(line, wxT(" "));
+
+                                while(libs.HasMoreTokens()) {
+                                    wxString lib = libs.GetNextToken();
+                                    index = static_cast<int>(lib.find_last_of(wxT("\\")));
+                                    if(index != wxNOT_FOUND) {
+                                        wxString include = lib.SubString(0, index);
+                                        lib = lib.Mid(index + 1);
+                                        libPath += include + wxT(";");
+                                        libraries += lib + wxT(";");
+                                    } else {
+                                        libraries += lib + wxT(";");
+                                    }
+                                }
+
                                 if(IsGccCompile) libraries.Replace(wxT(".lib"), wxT(""));
 
                                 genericProjectCfg->libraries = libraries;
-								genericProjectCfg->libPath = libPath;
+                                genericProjectCfg->libPath = libPath;
                                 break;
                             }
-							
-							index = line.Find(wxT("!ENDIF"));
+
+                            index = line.Find(wxT("!ENDIF"));
                             if(index != wxNOT_FOUND) break;
                         }
 
@@ -345,11 +343,12 @@ void VisualCppImporter::GenerateFromVC7(GenericWorkspacePtr genericWorkspace)
                                             additionalIncludeDirectories.Replace(wxT(","), wxT(";"));
                                             additionalIncludeDirectories.Replace(wxT("\\"), wxT("/"));
                                             genericProjectCfg->includePath = additionalIncludeDirectories;
-											
-											if (toolChild->GetAttribute(wxT("UsePrecompiledHeader")) == wxT("3")) {
-												wxString precompiledHeaderThrough = toolChild->GetAttribute(wxT("PrecompiledHeaderThrough"));
-												genericProjectCfg->preCompiledHeader = precompiledHeaderThrough;
-											}
+
+                                            if(toolChild->GetAttribute(wxT("UsePrecompiledHeader")) == wxT("3")) {
+                                                wxString precompiledHeaderThrough =
+                                                    toolChild->GetAttribute(wxT("PrecompiledHeaderThrough"));
+                                                genericProjectCfg->preCompiledHeader = precompiledHeaderThrough;
+                                            }
                                         }
 
                                         if(toolChild->GetAttribute(wxT("Name")) == wxT("VCLinkerTool")) {

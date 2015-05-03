@@ -2,9 +2,13 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
-BorlandCppBuilderImporter::BorlandCppBuilderImporter() {}
+BorlandCppBuilderImporter::BorlandCppBuilderImporter()
+{
+}
 
-BorlandCppBuilderImporter::~BorlandCppBuilderImporter() {}
+BorlandCppBuilderImporter::~BorlandCppBuilderImporter()
+{
+}
 
 bool BorlandCppBuilderImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -35,7 +39,8 @@ bool BorlandCppBuilderImporter::isSupportedWorkspace()
                 wxXmlNode* macrosChild = projectChild->GetChildren();
                 if(macrosChild && macrosChild->GetName() == wxT("VERSION")) {
                     wxString value = macrosChild->GetAttribute("value");
-                    if(value == wxT("BCB.06.00")) return true;
+                    if(value == wxT("BCB.06.00"))
+                        return true;
                 }
             }
         }

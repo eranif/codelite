@@ -8,17 +8,22 @@
 class EnvVarImporterDlg : public EnvVarImporterDlgBase
 {
 public:
-    EnvVarImporterDlg(wxWindow* parent, const wxString& projectName, const wxString& cfgName, std::set<wxString> listEnvVar, BuildConfigPtr le_conf, bool* showDlg);
+    EnvVarImporterDlg(wxWindow* parent,
+                      const wxString& projectName,
+                      const wxString& cfgName,
+                      std::set<wxString> listEnvVar,
+                      BuildConfigPtr le_conf,
+                      bool* showDlg);
     virtual ~EnvVarImporterDlg();
-	
+
 protected:
-	virtual void OnImport(wxCommandEvent& event);
+    virtual void OnImport(wxCommandEvent& event);
     virtual void OnContinue(wxCommandEvent& event);
-	virtual void OnSkip(wxCommandEvent& event);
-	
+    virtual void OnSkip(wxCommandEvent& event);
+
 private:
-	BuildConfigPtr le_conf;
-	bool* showDlg;
+    BuildConfigPtr le_conf;
+    bool* showDlg;
 };
 
 #endif // ENVVARIMPORTERDLG_H

@@ -3,9 +3,13 @@
 #include <wx/xml/xml.h>
 #include <map>
 
-VisualCppImporter::VisualCppImporter() {}
+VisualCppImporter::VisualCppImporter()
+{
+}
 
-VisualCppImporter::~VisualCppImporter() {}
+VisualCppImporter::~VisualCppImporter()
+{
+}
 
 bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -41,7 +45,10 @@ bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& 
     return result;
 }
 
-bool VisualCppImporter::isSupportedWorkspace() { return version >= 6 && version <= 12; }
+bool VisualCppImporter::isSupportedWorkspace()
+{
+    return version >= 6 && version <= 12;
+}
 
 GenericWorkspacePtr VisualCppImporter::PerformImport()
 {
@@ -108,7 +115,8 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                             genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
                             outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
                             outputFilename += STATIC_LIBRARY_EXT;
-                            if(IsGccCompile) outputFilename.Replace(wxT("lib"), wxT("a"));
+                            if(IsGccCompile)
+                                outputFilename.Replace(wxT("lib"), wxT("a"));
                         } else if(projectType == wxT("0x0102")) {
                             genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
                             outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
@@ -223,7 +231,8 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                                     }
                                 }
 
-                                if(IsGccCompile) libraries.Replace(wxT(".lib"), wxT(""));
+                                if(IsGccCompile)
+                                    libraries.Replace(wxT(".lib"), wxT(""));
 
                                 genericProjectCfg->libraries = libraries;
                                 genericProjectCfg->libPath = libPath;
@@ -231,7 +240,8 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                             }
 
                             index = line.Find(wxT("!ENDIF"));
-                            if(index != wxNOT_FOUND) break;
+                            if(index != wxNOT_FOUND)
+                                break;
                         }
 
                         genericProject->cfgs.push_back(genericProjectCfg);
@@ -315,7 +325,8 @@ void VisualCppImporter::GenerateFromVC7(GenericWorkspacePtr genericWorkspace)
                                     genericProjectCfg->type = GenericCfgType::STATIC_LIBRARY;
                                     outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
                                     outputFilename += STATIC_LIBRARY_EXT;
-                                    if(IsGccCompile) outputFilename.Replace(wxT("lib"), wxT("a"));
+                                    if(IsGccCompile)
+                                        outputFilename.Replace(wxT("lib"), wxT("a"));
                                 } else if(configurationType == wxT("2")) {
                                     genericProjectCfg->type = GenericCfgType::DYNAMIC_LIBRARY;
                                     outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
@@ -355,7 +366,8 @@ void VisualCppImporter::GenerateFromVC7(GenericWorkspacePtr genericWorkspace)
                                             wxString additionalDependencies =
                                                 toolChild->GetAttribute(wxT("AdditionalDependencies"));
                                             additionalDependencies.Replace(wxT(" "), wxT(";"));
-                                            if(IsGccCompile) additionalDependencies.Replace(wxT(".lib"), wxT(""));
+                                            if(IsGccCompile)
+                                                additionalDependencies.Replace(wxT(".lib"), wxT(""));
 
                                             genericProjectCfg->libraries = additionalDependencies;
 
@@ -488,7 +500,8 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspacePtr genericWorkspace)
                             genericProjectCfg->type = GenericCfgType::STATIC_LIBRARY;
                             outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
                             outputFilename += STATIC_LIBRARY_EXT;
-                            if(IsGccCompile) outputFilename.Replace(wxT("lib"), wxT("a"));
+                            if(IsGccCompile)
+                                outputFilename.Replace(wxT("lib"), wxT("a"));
                         } else if(configurationType == wxT("DynamicLibrary")) {
                             genericProjectCfg->type = GenericCfgType::DYNAMIC_LIBRARY;
                             outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
@@ -533,7 +546,8 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspacePtr genericWorkspace)
                                     if(linkChild->GetName() == wxT("AdditionalDependencies")) {
                                         wxString additionalDependencies = linkChild->GetNodeContent();
                                         additionalDependencies.Replace(wxT("%(AdditionalDependencies)"), wxT(""));
-                                        if(IsGccCompile) additionalDependencies.Replace(wxT(".lib"), wxT(""));
+                                        if(IsGccCompile)
+                                            additionalDependencies.Replace(wxT(".lib"), wxT(""));
 
                                         genericProjectCfg->libraries = additionalDependencies;
                                     }

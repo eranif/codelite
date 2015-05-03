@@ -14,9 +14,14 @@ WSImporter::WSImporter()
     AddImporter(std::make_shared<CodeBlocksImporter>());
 }
 
-WSImporter::~WSImporter() {}
+WSImporter::~WSImporter()
+{
+}
 
-void WSImporter::AddImporter(std::shared_ptr<GenericImporter> importer) { importers.push_back(importer); }
+void WSImporter::AddImporter(std::shared_ptr<GenericImporter> importer)
+{
+    importers.push_back(importer);
+}
 
 void WSImporter::Load(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -66,7 +71,8 @@ bool WSImporter::Import(wxString& errMsg)
                     le_settings->RemoveConfiguration(wxT("Debug"));
                     le_settings->SetProjectType(projectType);
 
-                    if(clWorkspace == NULL) clWorkspace = proj->GetWorkspace();
+                    if(clWorkspace == NULL)
+                        clWorkspace = proj->GetWorkspace();
 
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
                         BuildConfigPtr le_conf(new BuildConfig(NULL));
@@ -83,13 +89,17 @@ bool WSImporter::Import(wxString& errMsg)
 
                         le_conf->SetName(cfg->name);
 
-                        if(!cfg->includePath.IsEmpty()) le_conf->SetIncludePath(cfg->includePath);
+                        if(!cfg->includePath.IsEmpty())
+                            le_conf->SetIncludePath(cfg->includePath);
 
-                        if(!cfg->libraries.IsEmpty()) le_conf->SetLibraries(cfg->libraries);
+                        if(!cfg->libraries.IsEmpty())
+                            le_conf->SetLibraries(cfg->libraries);
 
-                        if(!cfg->libPath.IsEmpty()) le_conf->SetLibPath(cfg->libPath);
+                        if(!cfg->libPath.IsEmpty())
+                            le_conf->SetLibPath(cfg->libPath);
 
-                        if(!cfg->preprocessor.IsEmpty()) le_conf->SetPreprocessor(cfg->preprocessor);
+                        if(!cfg->preprocessor.IsEmpty())
+                            le_conf->SetPreprocessor(cfg->preprocessor);
 
                         if(!cfg->intermediateDirectory.IsEmpty())
                             le_conf->SetIntermediateDirectory(cfg->intermediateDirectory);
@@ -99,13 +109,17 @@ bool WSImporter::Import(wxString& errMsg)
                         else
                             le_conf->SetOutputFileName(wxT("$(IntermediateDirectory)/$(ProjectName)"));
 
-                        if(!cfg->cCompilerOptions.IsEmpty()) le_conf->SetCCompileOptions(cfg->cCompilerOptions);
+                        if(!cfg->cCompilerOptions.IsEmpty())
+                            le_conf->SetCCompileOptions(cfg->cCompilerOptions);
 
-                        if(!cfg->cppCompilerOptions.IsEmpty()) le_conf->SetCompileOptions(cfg->cppCompilerOptions);
+                        if(!cfg->cppCompilerOptions.IsEmpty())
+                            le_conf->SetCompileOptions(cfg->cppCompilerOptions);
 
-                        if(!cfg->linkerOptions.IsEmpty()) le_conf->SetLinkOptions(cfg->linkerOptions);
+                        if(!cfg->linkerOptions.IsEmpty())
+                            le_conf->SetLinkOptions(cfg->linkerOptions);
 
-                        if(!cfg->preCompiledHeader.IsEmpty()) le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
+                        if(!cfg->preCompiledHeader.IsEmpty())
+                            le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
 
                         if(!cfg->command.IsEmpty())
                             le_conf->SetCommand(cfg->command);
@@ -216,7 +230,8 @@ bool WSImporter::Import(wxString& errMsg)
 bool WSImporter::ContainsEnvVar(std::initializer_list<wxString> elems)
 {
     for(wxString elem : elems) {
-        if(elem.Contains("$(") && elem.Contains(")")) return true;
+        if(elem.Contains("$(") && elem.Contains(")"))
+            return true;
     }
 
     return false;

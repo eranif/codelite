@@ -7,21 +7,21 @@
 
 class CodeBlocksImporter : public GenericImporter
 {
-public:    
+public:
     CodeBlocksImporter();
     ~CodeBlocksImporter();
-	
-	virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
-	virtual bool isSupportedWorkspace();
+
+    virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
+    virtual bool isSupportedWorkspace();
     virtual GenericWorkspacePtr PerformImport();
-	
+
 private:
     void GenerateFromProject(GenericWorkspacePtr genericWorkspace, const wxString& fullpath);
     void GenerateFromWorkspace(GenericWorkspacePtr genericWorkspace);
-	
+
     wxFileName wsInfo;
     bool IsGccCompile;
-	wxString extension;
+    wxString extension;
 };
 
 #endif // CODEBLOCKSIMPORTER_H

@@ -1,9 +1,13 @@
 #include "DevCppImporter.h"
 #include <wx/tokenzr.h>
 
-DevCppImporter::DevCppImporter() {}
+DevCppImporter::DevCppImporter()
+{
+}
 
-DevCppImporter::~DevCppImporter() {}
+DevCppImporter::~DevCppImporter()
+{
+}
 
 bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -23,7 +27,10 @@ bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& def
     return result;
 }
 
-bool DevCppImporter::isSupportedWorkspace() { return true; }
+bool DevCppImporter::isSupportedWorkspace()
+{
+    return true;
+}
 
 GenericWorkspacePtr DevCppImporter::PerformImport()
 {
@@ -78,7 +85,8 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                         genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
                         outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
                         outputFilename += STATIC_LIBRARY_EXT;
-                        if(IsGccCompile) outputFilename.Replace(wxT("lib"), wxT("a"));
+                        if(IsGccCompile)
+                            outputFilename.Replace(wxT("lib"), wxT("a"));
                     } else if(projectType == wxT("3")) {
                         genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
                         outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");

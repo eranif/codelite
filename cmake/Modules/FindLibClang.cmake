@@ -9,6 +9,9 @@ if (UNIX)
                      /usr/lib/llvm-3.5/lib
                      /usr/lib/llvm-3.4/lib
                      /usr/lib/llvm-3.3/lib
+                     # For fedora
+                     /usr/lib32/llvm
+                     /usr/lib64/llvm
                      ${CMAKE_INSTALL_LIBDIR})
 
         find_path(LIBCLANG_INCLUDE_T NAMES clang-c/Index.h
@@ -23,6 +26,8 @@ if (UNIX)
                   /usr/include/llvm-3.3  
                   /usr/include/llvm
                   /usr/local/include
+                  # For fedora
+                  /usr/include
                   )
 
         if ( LIBCLANG_T STREQUAL "LIBCLANG_T-NOTFOUND" OR LIBCLANG_INCLUDE_T STREQUAL "LIBCLANG_INCLUDE_T-NOTFOUND" )

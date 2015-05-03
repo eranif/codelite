@@ -10,6 +10,9 @@ if (UNIX)
                      /usr/lib/llvm-3.5/lib
                      /usr/lib/llvm-3.4/lib
                      /usr/lib/llvm-3.3/lib
+                     # For fedora
+                     /usr/lib32/llvm
+                     /usr/lib64/llvm
                      ${CMAKE_INSTALL_LIBDIR})
 
         find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
@@ -24,6 +27,8 @@ if (UNIX)
                   /usr/include/llvm-3.3 
                   /usr/include/llvm
                   /usr/local/include
+                  # For fedora
+                  /usr/include
                   )
 
         if ( LIBLLDB_T STREQUAL "LIBLLDB_T-NOTFOUND" OR LIBLLDB_INCLUDE_T STREQUAL "LIBLLDB_INCLUDE_T-NOTFOUND" )

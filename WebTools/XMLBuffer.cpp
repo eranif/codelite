@@ -116,6 +116,7 @@ bool XMLBuffer::IsEmptyHtmlTag(const wxString& tag)
         m_emptyTags.insert("input");
         m_emptyTags.insert("isindex");
         m_emptyTags.insert("basefont");
+        m_emptyTags.insert("!doctype");
     }
     return m_emptyTags.count(tag.Lower());
 }

@@ -45,7 +45,7 @@ protected:
      * an example is the <a>: "<a href=""></a>"
      */
     bool HasSpecialInsertPattern(const wxString& tag) const;
-    void SuggestClosingTag(IEditor* editor);
+    void SuggestClosingTag(IEditor* editor, bool html);
     void OnCodeCompleted(clCodeCompletionEvent& event);
 
 public:

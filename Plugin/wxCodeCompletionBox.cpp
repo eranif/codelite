@@ -75,7 +75,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     // Default colorus (dark theme)
     clColourPalette palette = DrawingUtils::GetColourPalette();
-    
+
     m_lightBorder = wxColour("rgb(77, 77, 77)");
     m_darkBorder = wxColour("rgb(54, 54, 54)");
     m_penColour = palette.penColour;
@@ -288,11 +288,11 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
             // Format the comment on demand if the origin was a tag entry
             docComment = m_entries.at(m_index)->m_tag->FormatComment();
         }
-        
+
         if(docComment.IsEmpty()) {
             // No tip to display
             DoDestroyTipWindow();
-            
+
         } else if(!docComment.IsEmpty() && docComment != m_displayedTip) {
             // destroy old tip window
             DoDestroyTipWindow();
@@ -321,7 +321,8 @@ void wxCodeCompletionBox::StcCharAdded(wxStyledTextEvent& event)
     if(((keychar >= 65) && (keychar <= 90)) ||  // A-Z
        ((keychar >= 97) && (keychar <= 122)) || // a-z
        ((keychar >= 48) && (keychar <= 57)) ||  // 0-9
-       (keychar == 95))                         // Underscore
+       (keychar == 95) ||                       // _
+       (keychar == 33))                         // !
     {
         DoUpdateList();
     } else {

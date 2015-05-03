@@ -29,12 +29,12 @@ XMLCodeCompletion::~XMLCodeCompletion()
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &XMLCodeCompletion::OnCodeCompleted, this);
 }
 
-void XMLCodeCompletion::SuggestClosingTag(IEditor* editor)
+void XMLCodeCompletion::SuggestClosingTag(IEditor* editor, bool html)
 {
     // CC was triggered by "</"
     // Read backward until we find the matching open tag
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    XMLBuffer buffer(ctrl->GetTextRange(0, ctrl->GetCurrentPos()));
+    XMLBuffer buffer(ctrl->GetTextRange(0, ctrl->GetCurrentPos()), html);
     buffer.Parse();
     if(buffer.InCData() || buffer.InComment()) {
         // dont offer code completion when inside CDATA or COMMENT blocks
@@ -64,7 +64,7 @@ void XMLCodeCompletion::XmlCodeComplete(IEditor* editor)
 
     wxChar ch = ctrl->GetCharAt(ctrl->PositionBefore(ctrl->GetCurrentPos()));
     if(ch == '/') {
-        SuggestClosingTag(editor);
+        SuggestClosingTag(editor, false);
 
     } else if(ch == '<') {
 
@@ -84,7 +84,7 @@ void XMLCodeCompletion::HtmlCodeComplete(IEditor* editor)
 
     wxChar ch = ctrl->GetCharAt(ctrl->PositionBefore(ctrl->GetCurrentPos()));
     if(ch == '/') {
-        SuggestClosingTag(editor);
+        SuggestClosingTag(editor, true);
 
     } else if(ch == '<') {
         wxCodeCompletionBox::BmpVec_t bitmaps;
@@ -104,10 +104,14 @@ void XMLCodeCompletion::HtmlCodeComplete(IEditor* editor)
 void XMLCodeCompletion::PrepareHtmlCompletions()
 {
     // Special complete patterns, the PIPE specifies the caret location
-    m_completePattern.insert(std::make_pair("a", "a href=\"|\"></a>"));
-    m_completePattern.insert(std::make_pair("img", "img src=\"|\">"));
+    m_completePattern.insert(std::make_pair("a", "<a href=\"|\"></a>"));
+    m_completePattern.insert(std::make_pair("img", "<img src=\"|\" />"));
+    m_completePattern.insert(std::make_pair("?php", "<?php | ?>"));
+    m_completePattern.insert(std::make_pair("!--", "<!-- | -->"));
 
     // Create list of HTML tags
+    m_htmlCompletions.push_back(HtmlCompletion("?php", "Opens a PHP block within the HTML document"));
+    m_htmlCompletions.push_back(HtmlCompletion("!--", "Insert comment block"));
     m_htmlCompletions.push_back(HtmlCompletion("!doctype", "Defines the document type"));
     m_htmlCompletions.push_back(HtmlCompletion("a", "Defines a hyperlink"));
     m_htmlCompletions.push_back(HtmlCompletion("abbr", "Defines an abbreviation or an acronym"));
@@ -278,7 +282,9 @@ void XMLCodeCompletion::OnCodeCompleted(clCodeCompletionEvent& event)
             // an empty html tag, just complete it
             wxString textToInsert = selection;
             textToInsert << ">";
-
+            
+            // FIXME: dont use WordStartPos / WordEndPos, instead, search for the first "<" 
+            // from this line backward and use that as the first insert position
             int selStart = editor->WordStartPos(editor->GetCurrentPosition(), true);
             int selEnd = editor->WordEndPos(editor->GetCurrentPosition(), true);
             if((selEnd - selStart) >= 0) {
@@ -306,7 +312,7 @@ wxString XMLCodeCompletion::GetCompletePattern(const wxString& tag) const
     if(m_completePattern.find(tag.Lower()) == m_completePattern.end()) {
         // The default:
         // <tag>|</tag>
-        return wxString() << tag << ">|</" << tag << ">";
+        return wxString() << "<" << tag << ">|</" << tag << ">";
     } else {
         return m_completePattern.find(tag.Lower())->second;
     }

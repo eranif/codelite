@@ -46,11 +46,11 @@ BitmapLoader::BitmapLoader()
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
         zipname = wxT("codelite-icons-fresh-farm.zip");
 
-    else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic)
-        zipname = wxT("codelite-icons.zip");
+    else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
+        zipname = wxT("codelite-icons-dark.zip");
 
     else
-        zipname = wxT("codelite-icons-dark.zip");
+        zipname = wxT("codelite-icons.zip");
 
 // Under linux, take into account the --prefix
 #ifdef __WXGTK__

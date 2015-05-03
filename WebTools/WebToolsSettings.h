@@ -9,6 +9,7 @@ public:
     WebToolsSettings(wxWindow* parent);
     virtual ~WebToolsSettings();
 protected:
+    virtual void OnModified(wxCommandEvent& event);
     virtual void OnOK(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
     virtual void OnJSValueChanged(wxPropertyGridEvent& event);

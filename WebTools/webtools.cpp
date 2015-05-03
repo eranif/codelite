@@ -148,7 +148,11 @@ void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
     } else if(editor && m_xmlCodeComplete && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
         // an XML file
         event.Skip(false);
-        m_xmlCodeComplete->CodeComplete(editor);
+        m_xmlCodeComplete->XmlCodeComplete(editor);
+    } else if(editor && m_xmlCodeComplete && IsHTMLFile(editor)) {
+        // Html code completion
+        event.Skip(false);
+        m_xmlCodeComplete->HtmlCodeComplete(editor);
     }
 }
 
@@ -186,6 +190,9 @@ void WebTools::OnSettings(wxCommandEvent& event)
     if(settings.ShowModal() == wxID_OK) {
         if(m_jsCodeComplete) {
             m_jsCodeComplete->Reload();
+        }
+        if(m_xmlCodeComplete) {
+            m_xmlCodeComplete->Reload();
         }
     }
 }
@@ -283,4 +290,20 @@ void WebTools::OnCommentSelection(wxCommandEvent& e)
         e.Skip(false);
         editor->CommentBlockSelection("/*", "*/");
     }
+}
+
+bool WebTools::IsHTMLFile(IEditor* editor)
+{
+    CHECK_PTR_RET_FALSE(editor);
+    if(FileExtManager::GetType(editor->GetFileName().GetFullName()) == FileExtManager::TypeHtml) return true;
+
+    // We should also support Code Completion when inside a mixed PHP and HTML file
+    if(FileExtManager::IsPHPFile(editor->GetFileName())) {
+        wxStyledTextCtrl* ctrl = editor->GetCtrl();
+        int styleAtCurPos = ctrl->GetStyleAt(ctrl->GetCurrentPos());
+        if(styleAtCurPos >= wxSTC_H_DEFAULT && styleAtCurPos <= wxSTC_H_ENTITY) {
+            return true;
+        }
+    }
+    return false;
 }

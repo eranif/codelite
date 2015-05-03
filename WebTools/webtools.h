@@ -37,6 +37,7 @@ private:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);
     bool IsJavaScriptFile(IEditor* editor);
+    bool IsHTMLFile(IEditor* editor);
     bool InsideJSComment(IEditor* editor);
     bool InsideJSString(IEditor* editor);
 

@@ -342,7 +342,12 @@ bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
     if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX)) {
         // When in JS section, trigger CC if str is a dot
         return str == ".";
+        
+    } else if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_ENTITY)){
+        return str == "</" || str == "<";
+
     } else {
         return (m_completionTriggerStrings.count(str) > 0);
+        
     }
 }

@@ -17,19 +17,29 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
+#include <wx/checkbox.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class WebToolsSettingsBase : public wxDialog
 {
 protected:
     wxNotebook* m_notebook10;
+    wxPanel* m_panel56;
+    wxCheckBox* m_checkBoxEnableJsCC;
+    wxCheckBox* m_checkBoxEnableXmlCC;
+    wxCheckBox* m_checkBoxEnableHtmlCC;
     wxPanel* m_panel12;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgProp26;
-    wxPGProperty* m_pgPropEnableJSCC;
     wxPGProperty* m_pgPropLogging;
     wxPGProperty* m_pgProp32;
     wxPGProperty* m_pgPropEcma5;
@@ -48,11 +58,19 @@ protected:
     wxButton* m_buttonOK;
 
 protected:
+    virtual void OnModified(wxCommandEvent& event) { event.Skip(); }
     virtual void OnJSValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckBoxEnableJsCC() { return m_checkBoxEnableJsCC; }
+    wxCheckBox* GetCheckBoxEnableXmlCC() { return m_checkBoxEnableXmlCC; }
+    wxCheckBox* GetCheckBoxEnableHtmlCC() { return m_checkBoxEnableHtmlCC; }
+    wxPanel* GetPanel56() { return m_panel56; }
+    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
+    wxPanel* GetPanel12() { return m_panel12; }
+    wxNotebook* GetNotebook10() { return m_notebook10; }
     WebToolsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("WebTools Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~WebToolsSettingsBase();
 };

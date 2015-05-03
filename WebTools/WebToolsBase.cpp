@@ -31,6 +31,30 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer2->Add(m_notebook10, 1, wxALL|wxEXPAND, 5);
     
+    m_panel56 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook10->AddPage(m_panel56, _("Code Completion"), false);
+    
+    wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
+    m_panel56->SetSizer(boxSizer58);
+    
+    m_checkBoxEnableJsCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable JavaScript code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnableJsCC->SetValue(true);
+    m_checkBoxEnableJsCC->SetToolTip(_("Enable JavaScript code completion"));
+    
+    boxSizer58->Add(m_checkBoxEnableJsCC, 0, wxALL, 5);
+    
+    m_checkBoxEnableXmlCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable XML code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnableXmlCC->SetValue(true);
+    m_checkBoxEnableXmlCC->SetToolTip(_("Enable XML code completion"));
+    
+    boxSizer58->Add(m_checkBoxEnableXmlCC, 0, wxALL, 5);
+    
+    m_checkBoxEnableHtmlCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable HTML code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnableHtmlCC->SetValue(true);
+    m_checkBoxEnableHtmlCC->SetToolTip(_("Enable HTML code completion"));
+    
+    boxSizer58->Add(m_checkBoxEnableHtmlCC, 0, wxALL, 5);
+    
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("JavaScript"), false);
     
@@ -47,9 +71,6 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     
     m_pgProp26 = m_pgMgr->Append(  new wxPropertyCategory( _("General") ) );
     m_pgProp26->SetHelpString(wxT(""));
-    
-    m_pgPropEnableJSCC = m_pgMgr->AppendIn( m_pgProp26,  new wxBoolProperty( _("Enable Code Completion"), wxPG_LABEL, 1) );
-    m_pgPropEnableJSCC->SetHelpString(_("Enable JavaScript code completion"));
     
     m_pgPropLogging = m_pgMgr->AppendIn( m_pgProp26,  new wxBoolProperty( _("Verbose Logging"), wxPG_LABEL, 1) );
     m_pgPropLogging->SetHelpString(_("The JavaScript code completion uses the \"tern\" engine.\nCheck this option to start tern in verbose mode"));
@@ -102,13 +123,32 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer4->AddButton(m_buttonOK);
     m_stdBtnSizer4->Realize();
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook10)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook10);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook10);
+    }
+    #endif
+    
     SetName(wxT("WebToolsSettingsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
+    m_checkBoxEnableJsCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
+    m_checkBoxEnableXmlCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
+    m_checkBoxEnableHtmlCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
@@ -117,6 +157,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
 
 WebToolsSettingsBase::~WebToolsSettingsBase()
 {
+    m_checkBoxEnableJsCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
+    m_checkBoxEnableXmlCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
+    m_checkBoxEnableHtmlCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);

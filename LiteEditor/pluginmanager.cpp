@@ -299,7 +299,13 @@ void PluginManager::Load()
     }
 }
 
-IEditor* PluginManager::GetActiveEditor() { return (IEditor*)clMainFrame::Get()->GetMainBook()->GetActiveEditor(true); }
+IEditor* PluginManager::GetActiveEditor()
+{
+    if(clMainFrame::Get() && clMainFrame::Get()->GetMainBook()) {
+        return (IEditor*)clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
+    }
+    return NULL;
+}
 
 IConfigTool* PluginManager::GetConfigTool() { return EditorConfigST::Get(); }
 
@@ -506,7 +512,7 @@ BuildManager* PluginManager::GetBuildManager() { return BuildManagerST::Get(); }
 BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager() { return BuildSettingsConfigST::Get(); }
 
 bool PluginManager::ClosePage(const wxString& title) { return clMainFrame::Get()->GetMainBook()->ClosePage(title); }
-bool PluginManager::ClosePage(const wxFileName& filename) 
+bool PluginManager::ClosePage(const wxFileName& filename)
 {
     MainBook* book = clMainFrame::Get()->GetMainBook();
     LEditor* editor = book->FindEditor(filename.GetFullPath());
@@ -515,7 +521,8 @@ bool PluginManager::ClosePage(const wxFileName& filename)
 
 wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
-bool PluginManager::AddPage(wxWindow* win, const wxString& text,const wxString& tooltip, const wxBitmap& bmp, bool selected)
+bool
+PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected)
 {
     return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp, selected);
 }
@@ -773,7 +780,7 @@ void PluginManager::StoreWorkspaceSession(const wxFileName& workspaceFile)
     }
 }
 
-void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile) 
+void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
 {
     SessionEntry session;
     if(SessionManager::Get().GetSession(workspaceFile.GetFullPath(), session)) {
@@ -799,10 +806,7 @@ void PluginManager::OpenFindInFileForPaths(const wxArrayString& paths)
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
 }
 
-void PluginManager::ShowOutputPane(const wxString& selectedWindow)
-{
-    ManagerST::Get()->ShowOutputPane(selectedWindow);
-}
+void PluginManager::ShowOutputPane(const wxString& selectedWindow) { ManagerST::Get()->ShowOutputPane(selectedWindow); }
 
 size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
 {
@@ -810,10 +814,7 @@ size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
     return tabs.size();
 }
 
-clStatusBar* PluginManager::GetStatusBar()
-{
-    return static_cast<clStatusBar*>(clMainFrame::Get()->GetStatusBar());
-}
+clStatusBar* PluginManager::GetStatusBar() { return static_cast<clStatusBar*>(clMainFrame::Get()->GetStatusBar()); }
 
 void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
 {

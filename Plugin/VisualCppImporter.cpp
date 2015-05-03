@@ -603,7 +603,6 @@ void VisualCppImporter::GenerateFromVC11(GenericWorkspacePtr genericWorkspace)
                                 if(filterChild->GetName() == wxT("Filter")) {
                                     wxString content = filterChild->GetNodeContent();
                                     if(!content.IsEmpty()) {
-                                        content.Replace(wxT(" "), wxT("_"));
                                         virtualPath = content;
                                     }
                                 }

@@ -1467,7 +1467,7 @@
           }, {
            "type": "string",
            "m_label": "Note",
-           "m_value": "Click to scan your compuer for installed compilers"
+           "m_value": "Click to scan your computer for installed compilers"
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",

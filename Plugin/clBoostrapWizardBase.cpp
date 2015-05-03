@@ -107,7 +107,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer52->Add(m_banner69, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtnScanForCompilers = new wxCommandLinkButton(m_wizardPageCompilers, wxID_ANY, _("Scan"), _("Click to scan your compuer for installed compilers"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtnScanForCompilers = new wxCommandLinkButton(m_wizardPageCompilers, wxID_ANY, _("Scan"), _("Click to scan your computer for installed compilers"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer52->Add(m_cmdLnkBtnScanForCompilers, 0, wxALL|wxEXPAND, 5);
     

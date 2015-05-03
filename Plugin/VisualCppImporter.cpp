@@ -52,7 +52,10 @@ bool VisualCppImporter::isSupportedWorkspace()
 
 GenericWorkspacePtr VisualCppImporter::PerformImport()
 {
-    GenericWorkspacePtr genericWorkspace = std::make_shared<GenericWorkspace>();
+    GenericWorkspacePtr genericWorkspace = std::make_shared<GenericWorkspace>();    
+    genericWorkspace->name = wsInfo.GetName();
+    genericWorkspace->path = wsInfo.GetPath();
+    
     switch(version) {
     case 6:
         GenerateFromVC6(genericWorkspace);
@@ -74,9 +77,6 @@ GenericWorkspacePtr VisualCppImporter::PerformImport()
 
 void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
 {
-    genericWorkspace->name = wsInfo.GetName();
-    genericWorkspace->path = wsInfo.GetPath();
-
     while(!fis->Eof()) {
         wxString line = tis->ReadLine();
         int index = line.Find(wxT("Project:"));
@@ -155,15 +155,16 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                             index = line.Find(wxT("ADD CPP"));
                             if(index != wxNOT_FOUND) {
                                 wxString preprocessor = wxT(""), includePath = wxT(""), preCompiledHeader = wxT("");
-
-                                for(size_t pos = 0; pos < line.Length(); pos++) {
+                                size_t pos = 0;
+                                
+                                while(pos < line.Length()) {
                                     if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('D')) {
                                         int count = 0;
                                         wxString word = wxT("");
                                         while(count < 2) {
-                                            if(line.GetChar(pos) == wxT('\"')) {
+                                            if(line.GetChar(pos) == wxT(' ')) {
                                                 count++;
-                                            } else if(count == 1) {
+                                            } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
                                                 word.Append(line.GetChar(pos));
                                             }
 
@@ -175,9 +176,9 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                                         int count = 0;
                                         wxString word = wxT("");
                                         while(count < 2) {
-                                            if(line.GetChar(pos) == wxT('\"')) {
+                                            if(line.GetChar(pos) == wxT(' ')) {
                                                 count++;
-                                            } else if(count == 1) {
+                                            } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
                                                 word.Append(line.GetChar(pos));
                                             }
 
@@ -200,6 +201,9 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
                                         }
 
                                         preCompiledHeader = word;
+                                    }
+                                    else {
+                                        pos++;
                                     }
                                 }
 
@@ -274,9 +278,6 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
 
 void VisualCppImporter::GenerateFromVC7(GenericWorkspacePtr genericWorkspace)
 {
-    genericWorkspace->name = wsInfo.GetName();
-    genericWorkspace->path = wsInfo.GetPath();
-
     while(!fis->Eof()) {
         wxString line = tis->ReadLine();
 
@@ -433,9 +434,6 @@ void VisualCppImporter::GenerateFromVC7(GenericWorkspacePtr genericWorkspace)
 
 void VisualCppImporter::GenerateFromVC11(GenericWorkspacePtr genericWorkspace)
 {
-    genericWorkspace->name = wsInfo.GetName();
-    genericWorkspace->path = wsInfo.GetPath();
-
     while(!fis->Eof()) {
         wxString line = tis->ReadLine();
 

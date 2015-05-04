@@ -2,14 +2,6 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
-BorlandCppBuilderImporter::BorlandCppBuilderImporter()
-{
-}
-
-BorlandCppBuilderImporter::~BorlandCppBuilderImporter()
-{
-}
-
 bool BorlandCppBuilderImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
@@ -121,6 +113,7 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
                     while(fileListChild) {
                         if(fileListChild->GetName() == wxT("FILE")) {
                             wxString projectFilename = fileListChild->GetAttribute(wxT("FILENAME"));
+                            projectFilename.Replace(wxT("\\"), wxT("/"));
 
                             GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
                             genericProjectFile->name = projectFilename;

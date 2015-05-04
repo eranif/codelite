@@ -2,14 +2,6 @@
 #include <wx/xml/xml.h>
 #include <wx/filefn.h>
 
-CodeBlocksImporter::CodeBlocksImporter()
-{
-}
-
-CodeBlocksImporter::~CodeBlocksImporter()
-{
-}
-
 bool CodeBlocksImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
@@ -228,6 +220,8 @@ void CodeBlocksImporter::GenerateFromWorkspace(GenericWorkspacePtr genericWorksp
                         if(workspaceChild->GetName() == wxT("Project") &&
                            workspaceChild->HasAttribute(wxT("filename"))) {
                             wxString projectFilename = workspaceChild->GetAttribute(wxT("filename"));
+                            projectFilename.Replace(wxT("\\"), wxT("/"));
+                            
                             GenerateFromProject(genericWorkspace,
                                                 wsInfo.GetPath() + wxFileName::GetPathSeparator() + projectFilename);
                         }

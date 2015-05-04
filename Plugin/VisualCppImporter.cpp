@@ -183,7 +183,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                         wxString intermediateDirectory = line.Mid(index + 21).Trim().Trim(false);
                         intermediateDirectory.Replace(wxT("\""), wxT(""));
                         intermediateDirectory.Replace(wxT(" "), wxT("_"));
-                        intermediateDirectory.Replace(wxT("\\"), wxT("/"));
+                        intermediateDirectory.Replace(wxT(".\\"), wxT(""));
                         genericProjectCfg->intermediateDirectory = wxT("./") + intermediateDirectory;
                     }
 
@@ -424,9 +424,20 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
 
                         GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
                         genericProjectCfg->name = projectCfgName;
-
-                        intermediateDirectory.Replace(wxT(" "), wxT("_"));
-                        intermediateDirectory.Replace(wxT("\\"), wxT("/"));
+                        
+                        wxStringTokenizer projectCfgNamePart(projectCfgName, wxT("_"));
+                        wxString configurationName = projectCfgNamePart.NextToken();
+                        
+                        if(!intermediateDirectory.IsEmpty()) {
+                            intermediateDirectory.Replace(wxT("$(ConfigurationName)"), configurationName);
+                            intermediateDirectory.Replace(wxT(" "), wxT("_"));
+                            intermediateDirectory.Replace(wxT("\\"), wxT("/"));
+                            genericProjectCfg->intermediateDirectory = intermediateDirectory;
+                        }
+                        else {
+                            genericProjectCfg->intermediateDirectory = wxT("./") + configurationName;
+                        }
+                        
                         genericProjectCfg->intermediateDirectory = intermediateDirectory;
 
                         wxString outputFilename;
@@ -473,19 +484,35 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
                                 }
 
                                 if(toolChild->GetAttribute(wxT("Name")) == wxT("VCLinkerTool")) {
-                                    wxString additionalDependencies =
-                                        toolChild->GetAttribute(wxT("AdditionalDependencies"));
-                                    additionalDependencies.Replace(wxT(" "), wxT(";"));
-                                    if(IsGccCompile)
-                                        additionalDependencies.Replace(wxT(".lib"), wxT(""));
+                                    if(toolChild->HasAttribute(wxT("AdditionalDependencies"))) {
+                                        wxString additionalDependencies =
+                                            toolChild->GetAttribute(wxT("AdditionalDependencies"));
+                                        additionalDependencies.Replace(wxT(" "), wxT(";"));
+                                        if(IsGccCompile)
+                                            additionalDependencies.Replace(wxT(".lib"), wxT(""));
 
-                                    genericProjectCfg->libraries = additionalDependencies;
-
-                                    wxString additionalLibraryDirectories =
-                                        toolChild->GetAttribute(wxT("AdditionalLibraryDirectories"));
-                                    additionalLibraryDirectories.Replace(wxT(","), wxT(";"));
-                                    additionalLibraryDirectories.Replace(wxT("\\"), wxT("/"));
-                                    genericProjectCfg->libPath = additionalLibraryDirectories;
+                                        genericProjectCfg->libraries = additionalDependencies;
+                                    }
+                                    
+                                    if(toolChild->HasAttribute(wxT("AdditionalLibraryDirectories"))) {
+                                        wxString additionalLibraryDirectories =
+                                            toolChild->GetAttribute(wxT("AdditionalLibraryDirectories"));
+                                        additionalLibraryDirectories.Replace(wxT(","), wxT(";"));
+                                        additionalLibraryDirectories.Replace(wxT("\\"), wxT("/"));
+                                        genericProjectCfg->libPath = additionalLibraryDirectories;
+                                    }
+                                    
+                                    if(toolChild->HasAttribute(wxT("OutputFile"))) {
+                                        wxString outputFile =
+                                            toolChild->GetAttribute(wxT("OutputFile"));
+                                        outputFile.Replace(wxT("\\"), wxT("/"));
+                                        outputFile.Replace(wxT(" "), wxT("_"));
+                                        
+                                        genericProjectCfg->outputFilename = outputFile;
+                                        
+                                        wxFileName outputFilenameInfo(outputFile);
+                                        genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
+                                    }
                                 }
                             }
 
@@ -563,6 +590,8 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
         std::map<wxString, wxString> configurationTypeMap;
 
         while(projectChild) {
+            wxString intermediateDirectory = wxT("");
+            
             if(projectChild->GetName() == wxT("PropertyGroup")) {
                 wxXmlNode* propertyGroupChild = projectChild->GetChildren();
 
@@ -576,7 +605,11 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                         wxString configurationType = propertyGroupChild->GetNodeContent();
                         configurationTypeMap[projectCfgName] = configurationType;
                     }
-
+                    
+                    if(propertyGroupChild->GetName() == wxT("IntDir")) {
+                        intermediateDirectory = propertyGroupChild->GetNodeContent();
+                    }
+                    
                     propertyGroupChild = propertyGroupChild->GetNext();
                 }
             }
@@ -589,7 +622,17 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                 GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
                 genericProjectCfg->name = projectCfgName;
-                genericProjectCfg->intermediateDirectory = wxT("./") + projectCfgName;
+                
+                wxStringTokenizer projectCfgNamePart(projectCfgName, wxT("_"));
+                wxString configurationName = projectCfgNamePart.NextToken();
+                
+                if(!intermediateDirectory.IsEmpty()) {
+                    intermediateDirectory.Replace(wxT("$(Configuration)"), configurationName);
+                    genericProjectCfg->intermediateDirectory = intermediateDirectory;
+                }
+                else {
+                    genericProjectCfg->intermediateDirectory = wxT("./") + configurationName;
+                }
 
                 wxString outputFilename;
 
@@ -648,6 +691,16 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                                     additionalDependencies.Replace(wxT(".lib"), wxT(""));
 
                                 genericProjectCfg->libraries = additionalDependencies;
+                            }
+                            
+                            if(linkChild->GetName() == wxT("OutputFile")) {
+                                wxString outputFile = linkChild->GetNodeContent();
+                                outputFile.Replace(wxT("$(OutDir)"), wxT("$(IntermediateDirectory)/"));
+                                
+                                genericProjectCfg->outputFilename = outputFile;
+                                
+                                wxFileName outputFilenameInfo(outputFile);
+                                genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
                             }
 
                             linkChild = linkChild->GetNext();

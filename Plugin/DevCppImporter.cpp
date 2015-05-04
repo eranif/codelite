@@ -1,14 +1,6 @@
 #include "DevCppImporter.h"
 #include <wx/tokenzr.h>
 
-DevCppImporter::DevCppImporter()
-{
-}
-
-DevCppImporter::~DevCppImporter()
-{
-}
-
 bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
@@ -155,6 +147,8 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("FileName")) {
                     wxString fileName = tagValue;
+                    fileName.Replace(wxT("\\"), wxT("/"));
+                    
                     genericProjectFile->name = fileName;
                 }
 

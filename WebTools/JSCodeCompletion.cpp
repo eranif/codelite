@@ -112,7 +112,7 @@ void JSCodeCompletion::OnCodeCompleteReady(const wxCodeCompletionBoxEntry::Vec_t
     if(entries.empty()) return;
 
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, 0, this);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, 0, wxNOT_FOUND, this);
 }
 
 void JSCodeCompletion::OnFunctionTipReady(clCallTipPtr calltip, const wxString& filename)

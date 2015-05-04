@@ -34,12 +34,15 @@ bool IsPHPSection(int styleAtPos)
 
 bool IsPHPFile(IEditor* editor)
 {
-    if(!editor)
+    if(!editor) {
         return false;
-    return ::IsPHPFile(editor->GetFileName().GetFullPath());
+    }
+    int style = editor->GetStyleAtPos(editor->GetCurrentPosition());
+    return (style >= wxSTC_HPHP_DEFAULT && style <= wxSTC_HPHP_OPERATOR) &&
+           ::IsPHPFileByExt(editor->GetFileName().GetFullPath());
 }
 
-bool IsPHPFile(const wxString& filename)
+bool IsPHPFileByExt(const wxString& filename)
 {
     wxFileName fileName = filename;
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer(wxT("php"));
@@ -205,21 +208,19 @@ static void DecodeFileName(wxString& filename)
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
 {
     // Check that a workspace is opened
-    if(!PHPWorkspace::Get()->IsOpen())
-        return remoteFile;
+    if(!PHPWorkspace::Get()->IsOpen()) return remoteFile;
 
     // Sanity
     PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    if(!pProject)
-        return remoteFile;
+    if(!pProject) return remoteFile;
 
     // Map filename file attribute returned by xdebug to local filename
     wxString filename = remoteFile;
-    
+
     // Remote the "file://" from the file path
     filename.StartsWith(FILE_SCHEME, &filename);
     CL_DEBUG("filename => %s", filename);
-    
+
     // On Windows, the file is returned like (after removing the file://)
     // /C:/Http/htdocs/file.php - remote the leading "/"
     wxRegEx reMSWPrefix("/[a-zA-Z]{1}:/");
@@ -228,16 +229,16 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
         CL_DEBUG("filename => %s", filename);
         filename.Remove(0, 1);
     }
-    
+
     // Remove URI encoding ("%20"=>" " etc)
     DecodeFileName(filename);
     CL_DEBUG("filename => %s", filename);
-    
+
     // First check if the remote file exists locally
     if(wxFileName(filename).Exists()) {
         return wxFileName(filename).GetFullPath();
     }
-    
+
     // Use the active project file mapping
     const PHPProjectSettingsData& settings = pProject->GetSettings();
     const JSONElement::wxStringMap_t& mapping = settings.GetFileMapping();
@@ -250,7 +251,7 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
             return wxFileName(filename).GetFullPath();
         }
     }
-    
+
     // No matching was found
     return remoteFile;
 }

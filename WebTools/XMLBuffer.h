@@ -12,9 +12,11 @@ public:
     struct Scope {
         wxString tag;
         int line;
-
+        bool isEmptyTag;
+        
         Scope()
             : line(wxNOT_FOUND)
+            , isEmptyTag(false)
         {
         }
         bool IsOk() const { return line != wxNOT_FOUND && !tag.IsEmpty(); }
@@ -38,6 +40,7 @@ protected:
 
 protected:
     void OnOpenTag();
+    void OnCloseTag();
     void OnTagClosePrefix();
     bool ConsumeUntil(int until);
 

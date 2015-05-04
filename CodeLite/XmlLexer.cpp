@@ -368,8 +368,8 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 21
-#define YY_END_OF_BUFFER 22
+#define YY_NUM_RULES 20
+#define YY_END_OF_BUFFER 21
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -379,14 +379,14 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[82] =
     {   0,
-        0,    0,    0,    0,   22,   20,   19,   21,   20,   13,
-       20,   20,   20,   20,    7,   20,   20,    0,   18,    0,
-       13,    0,    0,    0,    0,    0,   17,    0,    0,    1,
+        0,    0,    0,    0,   21,   19,   18,   20,   19,   12,
+       19,   19,   19,   19,   19,   19,   19,    0,   17,    0,
+       12,    0,    0,    0,    0,    0,   16,    0,    0,    1,
         0,    2,    3,    6,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,   15,    0,    0,    0,   16,    0,
-        0,    0,    0,    9,    8,    0,    0,    0,   14,    0,
-        0,    0,    0,   10,    0,    0,    0,    0,    0,    0,
-       11,   12,    0,    0,    0,    0,    0,    0,    4,    5,
+        0,    0,    0,    0,   14,    0,    0,    0,   15,    0,
+        0,    0,    0,    8,    7,    0,    0,    0,   13,    0,
+        0,    0,    0,    9,    0,    0,    0,    0,    0,    0,
+       10,   11,    0,    0,    0,    0,    0,    0,    4,    5,
         0
     } ;
 
@@ -514,10 +514,10 @@ static yyconst flex_int16_t yy_chk[220] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static yyconst flex_int32_t yy_rule_can_match_eol[22] =
+static yyconst flex_int32_t yy_rule_can_match_eol[21] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0,     };
+    0,     };
 
 /* The intent behind this definition is that it'll catch
  * any uses of REJECT which flex missed.
@@ -921,52 +921,52 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 #line 78 "XMLLexer.l"
-{return kXML_T_OPEN_TAG;}
+{return kXML_T_ENTITY_LT;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 79 "XMLLexer.l"
-{return kXML_T_ENTITY_LT;}
+{return kXML_T_ENTITY_GT;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 80 "XMLLexer.l"
-{return kXML_T_ENTITY_GT;}
+{return kXML_T_ENTITY_AMP;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 81 "XMLLexer.l"
-{return kXML_T_ENTITY_AMP;}
+{return kXML_T_ENTITY_APOS;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 82 "XMLLexer.l"
-{return kXML_T_ENTITY_APOS;}
+{return kXML_T_ENTITY_QUOATATION_MARK;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 83 "XMLLexer.l"
-{return kXML_T_ENTITY_QUOATATION_MARK;}
+{return kXML_T_IDENTIFIER;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 84 "XMLLexer.l"
-{return kXML_T_IDENTIFIER;}
+{ return kXML_T_COMMENT_START;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 85 "XMLLexer.l"
-{ return kXML_T_COMMENT_START;}
+{ return kXML_T_COMMENT_END;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 86 "XMLLexer.l"
-{ return kXML_T_COMMENT_END;}
+{ return kXML_T_CDATA_END; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 87 "XMLLexer.l"
-{ return kXML_T_CDATA_END; }
+{ return kXML_T_STRING;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
@@ -976,24 +976,19 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 89 "XMLLexer.l"
-{ return kXML_T_STRING;}
+{}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 90 "XMLLexer.l"
-{}
+{ return yytext[0];}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 91 "XMLLexer.l"
-{ return yytext[0];}
-	YY_BREAK
-case 21:
-YY_RULE_SETUP
-#line 93 "XMLLexer.l"
+#line 92 "XMLLexer.l"
 ECHO;
 	YY_BREAK
-#line 997 "XmlLexer.cpp"
+#line 992 "XmlLexer.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2158,7 +2153,7 @@ void xmlfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 93 "XMLLexer.l"
+#line 92 "XMLLexer.l"
 
 
 

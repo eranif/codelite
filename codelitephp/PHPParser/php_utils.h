@@ -12,7 +12,7 @@ bool IsPHPFile(IEditor* editor);
 /**
  * @brief return true if this is a PHP file
  */
-bool IsPHPFile(const wxString& fileName);
+bool IsPHPFileByExt(const wxString& fileName);
 
 bool IsPHPSection(int styleAtPos );
 bool IsPHPCommentOrString(int styleAtPos);

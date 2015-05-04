@@ -2826,12 +2826,13 @@ void LEditor::OnContextMenu(wxContextMenuEvent& event)
 {
     wxString selectText = GetSelectedText();
     wxPoint pt = event.GetPosition();
-    if (pt != wxDefaultPosition) { // Analyze position only for mouse-originated events
+    if(pt != wxDefaultPosition) { // Analyze position only for mouse-originated events
         wxPoint clientPt = ScreenToClient(pt);
 
         // If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
         int margin = 0;
-        for(int n = 0; n < FOLD_MARGIN_ID; ++n) { // Assume a click anywhere to the left of the fold margin is for markers
+        for(int n = 0; n < FOLD_MARGIN_ID;
+            ++n) { // Assume a click anywhere to the left of the fold margin is for markers
             margin += GetMarginWidth(n);
         }
         if(clientPt.x < margin) {
@@ -3520,7 +3521,8 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
     }
 
     // When using this method, use an automated refresh completion box
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(this, tags, wxCodeCompletionBox::kRefreshOnKeyType);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        this, tags, wxCodeCompletionBox::kRefreshOnKeyType, wxNOT_FOUND);
 }
 
 int LEditor::GetCurrLineHeight()
@@ -4044,7 +4046,7 @@ void LEditor::OnChange(wxStyledTextEvent& event)
     bool isDelete = event.GetModificationType() & wxSTC_MOD_DELETETEXT;
     bool isUndo = event.GetModificationType() & wxSTC_PERFORMED_UNDO;
     bool isRedo = event.GetModificationType() & wxSTC_PERFORMED_REDO;
-    
+
     // Remove any code completion annotations if we have some...
     if(m_hasCCAnnotation) {
         CallAfter(&LEditor::AnnotationClearAll);

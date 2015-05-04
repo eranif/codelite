@@ -56,6 +56,7 @@ public:
     void ShowCompletionBox(wxStyledTextCtrl* ctrl,
                            const wxCodeCompletionBoxEntry::Vec_t& entries,
                            size_t flags,
+                           int startPos,
                            wxEvtHandler* eventObject = NULL);
     /**
      * @brief show the completion box
@@ -71,6 +72,7 @@ public:
                            const wxCodeCompletionBoxEntry::Vec_t& entries,
                            const wxCodeCompletionBox::BmpVec_t& bitmaps,
                            size_t flags,
+                           int startPos,
                            wxEvtHandler* eventObject = NULL);
 
     /**
@@ -85,6 +87,7 @@ public:
     void ShowCompletionBox(wxStyledTextCtrl* ctrl,
                            const TagEntryPtrVector_t& tags,
                            size_t flags,
+                           int startPos,
                            wxEvtHandler* eventObject = NULL);
 
     /**

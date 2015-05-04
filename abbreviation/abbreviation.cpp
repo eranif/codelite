@@ -179,7 +179,7 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
                 ccEntries.push_back(wxCodeCompletionBoxEntry::New(iter->first, 0));
             }
             wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-                editor->GetCtrl(), ccEntries, bitmaps, wxCodeCompletionBox::kNone, this);
+                editor->GetCtrl(), ccEntries, bitmaps, wxCodeCompletionBox::kNone, wxNOT_FOUND, this);
         }
     }
 }

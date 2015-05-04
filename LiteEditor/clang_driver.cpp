@@ -378,9 +378,10 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         wxString projSearchPaths = buildConf->GetCcSearchPaths();
         wxArrayString projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
         for(size_t i = 0; i < projectIncludePaths.GetCount(); i++) {
-            wxFileName fn(MacroManager::Instance()->Expand(projectIncludePaths.Item(i),
-                                                           PluginManager::Get(),
-                                                           ManagerST::Get()->GetActiveProjectName()),
+            wxFileName fn(MacroManager::Instance()
+                              ->Expand(projectIncludePaths.Item(i),
+                                       PluginManager::Get(),
+                                       ManagerST::Get()->GetActiveProjectName()),
                           wxT(""));
             fn.MakeAbsolute(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
             cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
@@ -710,7 +711,8 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         m_activeEditor->ShowCalltip(new clCallTip(tips));
 
     } else {
-        wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_activeEditor->GetCtrl(), tags, wxCodeCompletionBox::kNone);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+            m_activeEditor->GetCtrl(), tags, wxCodeCompletionBox::kNone, wxNOT_FOUND);
     }
 }
 

@@ -47,7 +47,9 @@ protected:
     bool HasSpecialInsertPattern(const wxString& tag) const;
     void SuggestClosingTag(IEditor* editor, bool html);
     void OnCodeCompleted(clCodeCompletionEvent& event);
-
+    
+    int GetWordStartPos(IEditor* editor);
+    
 public:
     XMLCodeCompletion();
     virtual ~XMLCodeCompletion();

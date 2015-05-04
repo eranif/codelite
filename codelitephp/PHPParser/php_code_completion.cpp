@@ -25,11 +25,11 @@
 #include "ColoursAndFontsManager.h"
 #include "PHPEntityKeyword.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "globals.h"
 
 ///////////////////////////////////////////////////////////////////
 
-struct PHPCCUserData : public wxClientData
-{
+struct PHPCCUserData : public wxClientData {
     PHPEntityBase::Ptr_t entry;
     PHPCCUserData(PHPEntityBase::Ptr_t e)
         : entry(e)
@@ -38,16 +38,14 @@ struct PHPCCUserData : public wxClientData
 };
 
 /// Ascending sorting function
-struct _SDescendingSort
-{
+struct _SDescendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rStart->GetName().Cmp(rEnd->GetName()) > 0;
     }
 };
 
-struct _SAscendingSort
-{
+struct _SAscendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rEnd->GetName().Cmp(rStart->GetName()) > 0;
@@ -174,7 +172,7 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
         ccEntries.push_back(ccEntry);
     }
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        m_manager->GetActiveEditor()->GetCtrl(), ccEntries, wxCodeCompletionBox::kRefreshOnKeyType);
+        m_manager->GetActiveEditor()->GetCtrl(), ccEntries, wxCodeCompletionBox::kRefreshOnKeyType, wxNOT_FOUND);
 }
 
 void PHPCodeCompletion::OnCodeCompletionBoxDismissed(clCodeCompletionEvent& e) { e.Skip(); }
@@ -310,10 +308,10 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
         if(editor) {
             // we handle only .php files
             if(IsPHPFile(editor)) {
-                
+
                 // this is our to complete
                 e.Skip(false);
-                
+
                 // get the position
                 PHPEntityBase::Ptr_t resolved = DoGetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition(), true);
                 if(resolved) {
@@ -326,7 +324,6 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
                 }
             }
         }
-
     }
 }
 
@@ -443,9 +440,12 @@ bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e)
 void PHPCodeCompletion::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
+    IEditor *editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
     // check if the saved file is a PHP file
     // In case it is, then re-parse the file and store the results
-    if(::IsPHPFile(event.GetFileName())) {
+    if(::IsPHPFile(editor)) {
         PHPParserThreadRequest* req = new PHPParserThreadRequest(PHPParserThreadRequest::kParseSingleFile);
         req->file = event.GetFileName();
         req->workspaceFile = PHPWorkspace::Get()->GetFilename().GetFullPath();

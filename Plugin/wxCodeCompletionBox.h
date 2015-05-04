@@ -42,7 +42,7 @@ protected:
     wxFont m_ccFont;
     int m_startPos;
     bool m_useLightColours;
-    
+
     /// When firing the various "clCodeCompletionEvent"s, set the event object
     /// to this member. This help distinguish the real trigger of the code completion
     /// box
@@ -84,7 +84,7 @@ protected:
     void OnLeftDClick(wxMouseEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
-    
+
 public:
     virtual ~wxCodeCompletionBox();
     /**
@@ -112,10 +112,13 @@ public:
      * @brief convert TagEntryPtr into Code Completion entry
      */
     static wxCodeCompletionBoxEntry::Ptr_t TagToEntry(TagEntryPtr tag);
-    
+
     /// accessors
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }
+
+    void SetStartPos(int startPos) { this->m_startPos = startPos; }
+    int GetStartPos() const { return m_startPos; }
 
 protected:
     int GetSingleLineHeight() const;
@@ -133,7 +136,7 @@ protected:
     static int GetImageId(TagEntryPtr entry);
     void DoDisplayTipWindow();
     void DoDestroyTipWindow();
-    
+
     void DoUpdateList();
     void DoScrollDown();
     void DoScrollUp();

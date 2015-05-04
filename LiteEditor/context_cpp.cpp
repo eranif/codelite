@@ -118,8 +118,7 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort
-{
+struct SFileSort {
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -246,8 +245,7 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
     if(tips.size() > 0) {
 
         tooltip << tips[0];
-        for(size_t i = 1; i < tips.size(); i++)
-            tooltip << wxT("\n") << tips[i];
+        for(size_t i = 1; i < tips.size(); i++) tooltip << wxT("\n") << tips[i];
 
         // cancel any old calltip and display the new one
         rCtrl.DoCancelCalltip();
@@ -789,7 +787,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
             }
         }
         wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-            &GetCtrl(), entries, bitmaps, wxCodeCompletionBox::kNone, this);
+            &GetCtrl(), entries, bitmaps, wxCodeCompletionBox::kNone, wxNOT_FOUND, this);
     }
 }
 
@@ -1145,11 +1143,11 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         // Join the lines back
         wxString doxyBlock = ::wxJoin(lines, '\n');
         doxyBlock << "\n";
-    
+
         // remove any selection
         editor.ClearSelections();
         editor.InsertText(insertPos, doxyBlock);
-        
+
         // Try to place the caret after the @brief
         wxRegEx reBrief("[@\\]brief[ \t]*");
         if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
@@ -1538,14 +1536,15 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
                 // Place the implementation in its new home
                 LEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile);
                 if(implEditor) {
-                    
+
                     // Ensure that the file state is remained
                     int insertedLine = wxNOT_FOUND;
                     {
                         clEditorStateLocker locker(implEditor->GetCtrl());
-                        
+
                         wxString sourceContent = implEditor->GetText();
-                        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
+                        TagsManagerST::Get()->InsertFunctionImpl(
+                            scopeName, body, targetFile, sourceContent, insertedLine);
                         implEditor->SetText(sourceContent);
                         DoFormatEditor(implEditor);
 
@@ -1786,12 +1785,12 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
         // Inser the new functions at the proper location
         wxString sourceContent = editor->GetText();
         TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
-        
+
         {
             clEditorStateLocker locker(editor->GetCtrl());
             editor->SetText(sourceContent);
         }
-        
+
         if(insertedLine != wxNOT_FOUND) {
             editor->CenterLine(insertedLine);
         }
@@ -1894,12 +1893,12 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
             // Inser the new functions at the proper location
             wxString sourceContent = editor->GetText();
             TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
-            
+
             {
                 clEditorStateLocker locker(editor->GetCtrl());
                 editor->SetText(sourceContent);
             }
-        
+
             if(insertedLine != wxNOT_FOUND) {
                 editor->CenterLine(insertedLine);
             }
@@ -2138,7 +2137,7 @@ void ContextCpp::AutoAddComment()
                     wxString doxyBlock = ::wxJoin(lines, '\n');
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);
-                    
+
                     // Try to place the caret after the @brief
                     wxRegEx reBrief("[@\\]brief[ \t]*");
                     if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
@@ -3165,13 +3164,13 @@ wxMenu* ContextCpp::GetMenu()
     return menu;
 }
 
-void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event) 
+void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event)
 {
     if(event.GetEventObject() == this) {
         const wxString& selection = event.GetWord();
         wxString origWordChars = GetCtrl().GetWordChars();
-        // for proper string selection, we want to replace all the #include statement 
-        // including any / and . 
+        // for proper string selection, we want to replace all the #include statement
+        // including any / and .
         // to do that, we temporary replace the word-chars of the wxSTC control to include
         // these chars, perform the selection and then restore the word chars
         wxString newWordChars = origWordChars;
@@ -3183,10 +3182,10 @@ void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event)
         GetCtrl().ReplaceSelection(selection);
         GetCtrl().SetCaretAt(startPos + selection.Len());
         GetCtrl().CallAfter(&wxStyledTextCtrl::SetFocus);
-        
+
         // Restore the original word chars
         GetCtrl().SetWordChars(origWordChars);
-        
+
     } else {
         // not ours
         event.Skip();

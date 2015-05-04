@@ -93,10 +93,7 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
     , m_notify(true)
 {
     Initialize();
-#ifdef __WXGTK__
-    SetTabCtrlHeight(TAB_CTRL_HEIGHT);
-#endif
-
+    
     // Set our docking art provider for this notebook
     m_mgr.SetArtProvider(new clAuiDockArt(NULL));
     m_leftDownPos = wxPoint();
@@ -143,6 +140,9 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
     if(flags & OptionsConfig::TabCurved) {
         artProvider = new wxAuiSimpleTabArt;
     } else {
+#ifdef __WXGTK__
+        SetTabCtrlHeight(TAB_CTRL_HEIGHT);
+#endif
         artProvider = new clAuiGlossyTabArt();
     }
     SetArtProvider(artProvider);

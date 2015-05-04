@@ -17,7 +17,21 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
     CHECK_PTR_RET(req);
 
     wxStringSet_t suggestsions;
-    void* scanner = ::wordsLexerNew(req->buffer);
+    ParseBuffer(req->buffer, suggestsions);
+    
+    // Parse and send back the reply
+    WordCompletionThreadReply reply;
+    reply.filename = req->filename;
+    reply.filter = req->filter;
+    reply.insertSingleMatch = req->insertSingleMatch;
+    reply.suggest.swap(suggestsions);
+    m_dict->CallAfter(&WordCompletionDictionary::OnSuggestThread, reply);
+}
+
+void WordCompletionThread::ParseBuffer(const wxString& buffer, wxStringSet_t& suggest)
+{
+    wxStringSet_t suggestsions;
+    void* scanner = ::wordsLexerNew(buffer);
     CHECK_PTR_RET(scanner);
 
     WordToken token;
@@ -25,27 +39,21 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
     WordCompletionSettings settings;
     size_t flags = settings.Load().GetCompleteTypes();
 
-    // Parse and send back the reply
-    WordCompletionThreadReply reply;
-    reply.filename = req->filename;
-    reply.filter = req->filter;
-    reply.insertSingleMatch = req->insertSingleMatch;
-    
     while(::wordsLexerNext(scanner, token)) {
         switch(token.type) {
         case kWORD_T_NUMBER:
             if(flags & WordCompletionSettings::kCompleteNumbers) {
-                reply.suggest.insert(token.word);
+                suggest.insert(token.word);
             }
             break;
         case kWORD_T_WORD:
             if(flags & WordCompletionSettings::kCompleteWords) {
-                reply.suggest.insert(token.word);
+                suggest.insert(token.word);
             }
             break;
         case kWORD_T_STRING:
             if(flags & WordCompletionSettings::kCompleteStrings) {
-                reply.suggest.insert(token.word);
+                suggest.insert(token.word);
             }
             break;
         default:
@@ -53,5 +61,4 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
         }
     }
     ::wordsLexerDestroy(&scanner);
-    m_dict->CallAfter(&WordCompletionDictionary::OnSuggestThread, reply);
 }

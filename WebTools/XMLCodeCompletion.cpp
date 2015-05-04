@@ -67,8 +67,7 @@ void XMLCodeCompletion::XmlCodeComplete(IEditor* editor)
     if(ch == '/') {
         SuggestClosingTag(editor, false);
 
-    } else if(ch == '<') {
-
+    } else {
         // CC was triggered by "<"
         // In this case, we simply trigger the word completion
         wxCommandEvent event(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
@@ -87,7 +86,7 @@ void XMLCodeCompletion::HtmlCodeComplete(IEditor* editor)
     if(ch == '/') {
         SuggestClosingTag(editor, true);
 
-    } else if(ch == '<') {
+    } else {
         wxCodeCompletionBox::BmpVec_t bitmaps;
         bitmaps.push_back(wxXmlResource::Get()->LoadBitmap("code-tags"));
 
@@ -100,7 +99,7 @@ void XMLCodeCompletion::HtmlCodeComplete(IEditor* editor)
         m_completeReason = kHtmlOpenSequence;
         wxCodeCompletionBoxManager::Get().ShowCompletionBox(
             editor->GetCtrl(), entries, bitmaps, 0, GetWordStartPos(editor), this);
-    }
+    } 
 }
 
 void XMLCodeCompletion::PrepareHtmlCompletions()

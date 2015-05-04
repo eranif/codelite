@@ -692,13 +692,16 @@ clColourPalette DrawingUtils::GetColourPalette()
     palette.selectionBgColour = wxColour("rgb(87, 87, 87)");
     palette.textColour = wxColour("rgb(200, 200, 200)");
     
-    IEditor* editor = ::clGetManager()->GetActiveEditor();
-    if(editor && !IsDark(editor->GetCtrl()->StyleGetBackground(0))) {
-        palette.bgColour = wxColour("rgb(230, 230, 230)");
-        palette.penColour = wxColour("rgb(207, 207, 207)");
-        palette.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-        palette.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-        palette.textColour = wxColour("rgb(0, 0, 0)");
+    if(::clGetManager()) {
+        IEditor* editor = ::clGetManager()->GetActiveEditor();
+        if(editor && !IsDark(editor->GetCtrl()->StyleGetBackground(0))) {
+            palette.bgColour = wxColour("rgb(230, 230, 230)");
+            palette.penColour = wxColour("rgb(207, 207, 207)");
+            palette.selecteTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+            palette.selectionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+            palette.textColour = wxColour("rgb(0, 0, 0)");
+        }
+        
     }
     return palette;
 }

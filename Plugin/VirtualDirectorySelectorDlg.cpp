@@ -133,8 +133,8 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
         m_images = new wxImageList(16, 16);
         BitmapLoader bmpLoader;
         m_images->Add(bmpLoader.LoadBitmap(wxT("workspace/16/workspace"))); // 0
-        m_images->Add(bmpLoader.LoadBitmap(wxT("workspace/16/virtual_folder"))); // 1
-        m_images->Add(bmpLoader.LoadBitmap(wxT("workspace/16/project"))); // 2
+        m_images->Add(bmpLoader.LoadBitmap(wxT("mime/16/folder")));         // 1
+        m_images->Add(bmpLoader.LoadBitmap(wxT("workspace/16/project")));   // 2
         m_treeCtrl->AssignImageList(m_images);
     }
 

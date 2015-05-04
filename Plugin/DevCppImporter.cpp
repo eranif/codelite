@@ -1,4 +1,6 @@
 #include "DevCppImporter.h"
+#include <wx/wfstream.h>
+#include <wx/txtstrm.h>
 #include <wx/tokenzr.h>
 
 bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
@@ -30,19 +32,19 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
     genericWorkspace->name = wsInfo.GetName();
     genericWorkspace->path = wsInfo.GetPath();
 
-    fis = std::make_shared<wxFileInputStream>(wsInfo.GetFullPath());
-    tis = std::make_shared<wxTextInputStream>(*fis);
+    wxFileInputStream fis(wsInfo.GetFullPath());
+    wxTextInputStream tis(fis);
 
     GenericProjectPtr genericProject;
     GenericProjectCfgPtr genericProjectCfgDebug;
     GenericProjectCfgPtr genericProjectCfgRelease;
 
-    while(!fis->Eof()) {
-        wxString line = tis->ReadLine();
+    while(!fis.Eof()) {
+        wxString line = tis.ReadLine();
 
         if(line.Contains(wxT("[Project]"))) {
             while(!line.IsEmpty()) {
-                line = tis->ReadLine();
+                line = tis.ReadLine();
                 wxStringTokenizer part(line, wxT("="));
                 wxString tagName = part.GetNextToken().Trim().Trim(false);
                 wxString tagValue = part.GetNextToken().Trim().Trim(false);
@@ -139,7 +141,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
             GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
 
             while(!line.IsEmpty()) {
-                line = tis->ReadLine();
+                line = tis.ReadLine();
 
                 wxStringTokenizer part(line, wxT("="));
                 wxString tagName = part.GetNextToken().Trim().Trim(false);

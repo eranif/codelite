@@ -64,7 +64,10 @@ protected:
 protected:
     virtual void DoSetColours();
     virtual void DoInitializeColoursFromTheme();
-
+    
+    void SetDarkColours();
+    void SetLightColours();
+    
 public:
     clAuiMainNotebookTabArt(IManager* manager);
     virtual ~clAuiMainNotebookTabArt();

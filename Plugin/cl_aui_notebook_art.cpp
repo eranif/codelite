@@ -38,22 +38,14 @@ clAuiGlossyTabArt::~clAuiGlossyTabArt() {}
 
 void clAuiGlossyTabArt::DoSetColours()
 {
-    // Set the colours
-    // based on the selected book theme
-    DoInitializeColoursFromTheme();
-    m_activeTabTextColour = *wxBLACK;
-    m_tabTextColour = m_activeTabTextColour.ChangeLightness(120);
-#ifdef __WXOSX__
-    // use a bit darker colour on OSX
-    m_tabBgColour = m_tabBgColour.ChangeLightness(90);
-    m_innerPenColour = m_tabBgColour.ChangeLightness(110);
-    m_penColour = m_innerPenColour.ChangeLightness(90);
-#else
-    m_tabBgColour = m_tabBgColour.ChangeLightness(120);
-    m_penColour = m_innerPenColour.ChangeLightness(90);
-#endif
+    // adjust some colours
+    wxColour panelColour = DrawingUtils::GetPanelBgColour();
+    if(DrawingUtils::IsDark(panelColour)) {
+        SetDarkColours();
+    } else {
+        SetLightColours();
+    }
     
-            
     // And finally let the plugins override the colours
     clColourEvent tabColourEvent(wxEVT_COLOUR_TAB);
     if(EventNotifier::Get()->ProcessEvent(tabColourEvent)) {

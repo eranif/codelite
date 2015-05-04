@@ -159,6 +159,9 @@ bool WSImporter::Import(wxString& errMsg)
 
                         le_conf->SetProjectType(buildConfigType);
                         le_settings->SetBuildConfiguration(le_conf);
+                        
+                        if(!project->deps.IsEmpty())
+                            proj->SetDependencies(project->deps, cfg->name);
                     }
 
                     proj->SetSettings(le_settings);

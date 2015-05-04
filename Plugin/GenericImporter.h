@@ -2,7 +2,9 @@
 #define GENERICIMPORTER_H
 
 #include <wx/string.h>
+#include <wx/arrstr.h>
 #include <vector>
+#include <map>
 #include <memory>
 
 #ifdef __WXMSW__
@@ -45,6 +47,7 @@ typedef std::shared_ptr<GenericProjectFile> GenericProjectFilePtr;
 struct GenericProject {
     wxString name;
     wxString path;
+    wxArrayString deps;
     GenericCfgType cfgType;
     std::vector<GenericProjectCfgPtr> cfgs;
     std::vector<GenericProjectFilePtr> files;
@@ -59,6 +62,9 @@ struct GenericWorkspace {
 };
 
 typedef std::shared_ptr<GenericWorkspace> GenericWorkspacePtr;
+
+typedef std::map<wxString, wxString> GenericProjectDataType;
+typedef std::vector<GenericProjectDataType> GenericProjectDataListType;
 
 class GenericImporter
 {

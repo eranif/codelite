@@ -25,6 +25,7 @@
 #include "ColoursAndFontsManager.h"
 #include "PHPEntityKeyword.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "globals.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -439,9 +440,12 @@ bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e)
 void PHPCodeCompletion::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
+    IEditor *editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
     // check if the saved file is a PHP file
     // In case it is, then re-parse the file and store the results
-    if(::IsPHPFile(event.GetFileName())) {
+    if(::IsPHPFile(editor)) {
         PHPParserThreadRequest* req = new PHPParserThreadRequest(PHPParserThreadRequest::kParseSingleFile);
         req->file = event.GetFileName();
         req->workspaceFile = PHPWorkspace::Get()->GetFilename().GetFullPath();

@@ -612,9 +612,12 @@ void PhpPlugin::OnFileSaved(clCommandEvent& e)
     }
 
     // Run php lint
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
     PHPConfigurationData conf;
     conf.Load();
-    if(::IsPHPFile(e.GetFileName()) && conf.IsRunLint()) {
+    if(::IsPHPFile(editor) && conf.IsRunLint()) {
         if(m_mgr->GetActiveEditor()) {
             m_mgr->GetActiveEditor()->DelAllCompilerMarkers();
         }

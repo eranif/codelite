@@ -245,13 +245,16 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_index = 0;
     m_stc = ctrl;
     m_allEntries = entries;
+    
+    // Keep the start position
+    if(m_startPos == wxNOT_FOUND) {
+        m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    }
+    
     // Filter all duplicate entries from the list (based on simple string match)
     RemoveDuplicateEntries();
     // Filter results based on user input
     FilterResults();
-
-    // Keep the start position
-    m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
 
     // If we got a single match - insert it
     if((m_entries.size() == 1) && (m_flags & kInsertSingleMatch)) {
@@ -414,7 +417,7 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
 
 bool wxCodeCompletionBox::FilterResults()
 {
-    int start = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    int start = m_startPos;
     int end = m_stc->GetCurrentPos();
 
     wxString word = m_stc->GetTextRange(start, end); // the current word
@@ -694,7 +697,7 @@ void wxCodeCompletionBox::DoShowCompletionBox()
     wxSize screenSize = ::wxGetDisplaySize();
 
     // determine the box x position
-    int wordStart = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    int wordStart = m_startPos;
     wxPoint pt = m_stc->PointFromPosition(wordStart);
     pt = m_stc->ClientToScreen(pt);
     pt.y += lineHeight;

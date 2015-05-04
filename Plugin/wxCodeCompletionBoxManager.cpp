@@ -57,6 +57,7 @@ wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const TagEntryPtrVector_t& tags,
                                                    size_t flags,
+                                                   int startPos,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
@@ -65,6 +66,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetFlags(flags);
+    m_box->SetStartPos(startPos);
     m_stc = ctrl;
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxTags, tags);
 }
@@ -72,6 +74,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
                                                    size_t flags,
+                                                   int startPos,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
@@ -80,6 +83,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetFlags(flags);
+    m_box->SetStartPos(startPos);
     m_stc = ctrl;
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, entries);
 }
@@ -100,6 +104,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
                                                    const wxCodeCompletionBox::BmpVec_t& bitmaps,
                                                    size_t flags,
+                                                   int startPos,
                                                    wxEvtHandler* eventObject)
 {
     DestroyCurrent();
@@ -109,6 +114,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);
     m_box->SetFlags(flags);
+    m_box->SetStartPos(startPos);
     m_stc = ctrl;
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, entries);
 }

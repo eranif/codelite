@@ -2,11 +2,10 @@
 #define XMLLexerTokens_H
 
 enum {
-    kXML_T_OPEN_TAG = 400,   // <
-    kXML_T_XML_OPEN_TAG,     // <?
-    kXML_T_XML_CLOSE_TAG,    // ?>
-    kXML_T_CLOSE_TAG_PREFIX, // </
-    kXML_T_CLOSE_TAG_SUFFIX, // />
+    kXML_T_XML_OPEN_TAG = 400, // <?
+    kXML_T_XML_CLOSE_TAG,      // ?>
+    kXML_T_CLOSE_TAG_PREFIX,   // </
+    kXML_T_CLOSE_TAG_SUFFIX,   // />
     kXML_T_IDENTIFIER,
     kXML_T_STRING,
     kXML_T_COMMENT_START,

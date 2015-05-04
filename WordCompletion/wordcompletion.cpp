@@ -127,7 +127,8 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
                                                         bitmaps,
                                                         event.GetId() == XRCID("text_word_complete") ?
                                                             wxCodeCompletionBox::kInsertSingleMatch :
-                                                            wxCodeCompletionBox::kNone);
+                                                            wxCodeCompletionBox::kNone,
+                                                        wxNOT_FOUND);
 }
 
 void WordCompletionPlugin::OnSettings(wxCommandEvent& event)

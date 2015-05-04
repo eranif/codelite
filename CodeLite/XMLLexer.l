@@ -75,7 +75,6 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>"<!DOCTYPE" {return kXML_T_HTML_DOCTYPE;}
 <INITIAL>"<![CDATA[" { return kXML_T_CDATA_START; }
 <INITIAL>"?>" {return kXML_T_XML_CLOSE_TAG;}
-<INITIAL>"<" {return kXML_T_OPEN_TAG;}
 <INITIAL>"&lt;" {return kXML_T_ENTITY_LT;}
 <INITIAL>"&gt;" {return kXML_T_ENTITY_GT;}
 <INITIAL>"&amp;" {return kXML_T_ENTITY_AMP;}

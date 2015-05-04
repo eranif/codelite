@@ -39,9 +39,14 @@ void XMLBuffer::Parse()
                 m_state = kNormal;
             }
             break;
-        case kXML_T_OPEN_TAG:
+        case '<':
             // "<" was found
             OnOpenTag();
+            break;
+        case '>':
+            // ">" was found. If in HTML mode and the current scope is an open tag
+            // pop it
+            OnCloseTag();
             break;
         case kXML_T_CLOSE_TAG_PREFIX:
             // "</" was found
@@ -63,13 +68,10 @@ void XMLBuffer::OnOpenTag()
     if(!::xmlLexerNext(m_scanner, token)) return;
     if(token.type == kXML_T_IDENTIFIER) {
         // in html mode and found an empty tag?
-        if(m_htmlMode && IsEmptyHtmlTag(token.text)) {
-            return;
-        }
-
-        Scope scope;
+        XMLBuffer::Scope scope;
         scope.line = token.lineNumber;
         scope.tag = token.text;
+        scope.isEmptyTag = (m_htmlMode && IsEmptyHtmlTag(token.text));
         m_elements.push_back(scope);
     }
 }
@@ -118,5 +120,19 @@ bool XMLBuffer::IsEmptyHtmlTag(const wxString& tag)
         m_emptyTags.insert("basefont");
         m_emptyTags.insert("!doctype");
     }
-    return m_emptyTags.count(tag.Lower());
+    wxString tagName = tag.Lower();
+    if(tagName.StartsWith("<")) {
+        tagName.Remove(0, 1);
+    }
+    return m_emptyTags.count(tagName);
+}
+
+void XMLBuffer::OnCloseTag()
+{
+    if(!m_elements.empty()) {
+        XMLBuffer::Scope& curscope = m_elements.back();
+        if(curscope.isEmptyTag) {
+            m_elements.pop_back();
+        }
+    }
 }

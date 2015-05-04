@@ -1,6 +1,4 @@
-* Add code completion for HTML
 * Change icons (debugger breakpoints, bookmarks and debugger green cursor)
 * Git: add an option to open the commit in GitHub
 * Editor: when zooming an editor using the mouse, offer the user to keep the font
-* Word Completion: must work without saving the file
 * PHP formatting: handle switch / case

@@ -100,6 +100,15 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     wxString lcFilter = filter.Lower();
 
     wxStringSet_t words = m_dictionary->GetWords();
+    // Parse the current bufer (if modified), to include non saved words
+    if(activeEditor->IsModified()) {
+        wxStringSet_t unsavedBufferWords;
+        WordCompletionThread::ParseBuffer(stc->GetText(), unsavedBufferWords);
+        
+        // Merge the results
+        words.insert(unsavedBufferWords.begin(), unsavedBufferWords.end());
+    }
+    
     wxStringSet_t filterdSet;
     if(lcFilter.IsEmpty()) {
         filterdSet.swap(words);

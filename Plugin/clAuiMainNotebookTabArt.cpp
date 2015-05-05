@@ -394,7 +394,7 @@ void clAuiMainNotebookTabArt::SetLightColours()
     // The active pen colour is a bit more lighter than the active tab bg colour
     m_activeTabPenColour = wxColour("rgb(170, 170, 170)");
     m_tabBgColour = wxColour("rgb(230, 230, 230)");
-#ifdef __WXGTK__
+#if defined(__WXMSW__) || defined(__WXGTK__)
     m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #else
     m_bgColour = wxColour("rgb(240, 240, 240)");

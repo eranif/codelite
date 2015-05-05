@@ -28,13 +28,11 @@ PHPEditorContextMenu::PHPEditorContextMenu()
     m_comment_line_2 = wxT("#");
     m_start_comment = wxT("/*");
     m_close_comment = wxT("*/");
-    
 }
 
 PHPEditorContextMenu::~PHPEditorContextMenu()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEventHandler(PHPEditorContextMenu::OnContextMenu), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &PHPEditorContextMenu::OnContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
 
     wxTheApp->Disconnect(wxID_OPEN_PHP_FILE,
@@ -53,24 +51,13 @@ PHPEditorContextMenu::~PHPEditorContextMenu()
                          wxCommandEventHandler(PHPEditorContextMenu::OnGenerateSettersGetters),
                          NULL,
                          this);
-
-#if 0
-    //wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_CUT);
-    //wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_COPY);
-    //wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_PASTE);
-    //wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_SELECTALL);
-    //wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_DELETE);
-    //wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_UNDO);
-    //wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &PHPEditorContextMenu::OnPopupClicked, this, wxID_REDO);
-#endif
     wxTheApp->Unbind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Unbind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentSelection, this, XRCID("comment_selection"));
 }
 
 void PHPEditorContextMenu::ConnectEvents()
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEventHandler(PHPEditorContextMenu::OnContextMenu), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &PHPEditorContextMenu::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
     // The below Connect catches *all* the menu events there is no need to
     // call it per menu entry
@@ -128,17 +115,7 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
     // If we are placed over an include/include_once/require/require_once statement,
     // add an option in the menu to open it
     wxString includeWhat;
-
-    menu->Append(wxID_COPY, _("&Copy"), _("Copy"));
-    menu->Append(wxID_PASTE, _("&Paste"), _("Paste"));
-    menu->Append(wxID_UNDO, _("&Undo"), _("Undo"));
-    menu->Append(wxID_REDO, _("&Redo"), _("Redo"));
-    menu->AppendSeparator();
-    menu->Append(wxID_CUT, _("&Cut"), _("Cut"));
-    menu->Append(wxID_DELETE, _("&Delete"), _("Delete"));
-    menu->AppendSeparator();
-    menu->Append(wxID_SELECTALL, _("&Select All"), _("Select All"));
-
+    
     // if this is not a PHP section than the above menu items are all we can offer
     int styleAtPos = editor->GetStyleAtPos(editor->GetSelectionStart());
     if(!IsPHPSection(styleAtPos)) return;
@@ -336,15 +313,15 @@ void PHPEditorContextMenu::DoContextMenu(IEditor* editor, wxCommandEvent& e)
     editor->GetCtrl()->PopupMenu(&menu);
 }
 
-void PHPEditorContextMenu::OnContextMenu(wxCommandEvent& e)
+void PHPEditorContextMenu::OnContextMenu(clContextMenuEvent& e)
 {
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEventObject());
-    if(editor && IsPHPFile(editor)) {
-        // get the position
-        DoContextMenu(editor, e);
-        return;
-    }
     e.Skip();
+    IEditor* editor = m_manager->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    if(editor && IsPHPFile(editor)) {
+        DoBuildMenu(e.GetMenu(), editor);
+    }
 }
 
 void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
@@ -679,35 +656,35 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             wxStyledTextCtrl* ctrl = editor->GetCtrl();
             ctrl->BeginUndoAction();
             wxString comment = entry->FormatPhpDoc();
-            
+
             // Create the whitespace buffer
             int lineStartPos = ctrl->PositionFromLine(ctrl->GetCurrentLine());
             int lineEndPos = lineStartPos + ctrl->LineLength(ctrl->GetCurrentLine());
-            
+
             // Collect all whitespace from the begining of the line until the first non whitespace
             // character we find
             wxString whitespace;
-            for(int i=lineStartPos; lineStartPos < lineEndPos; ++i) {
+            for(int i = lineStartPos; lineStartPos < lineEndPos; ++i) {
                 if(ctrl->GetCharAt(i) == ' ' || ctrl->GetCharAt(i) == '\t') {
                     whitespace << (wxChar)ctrl->GetCharAt(i);
                 } else {
                     break;
                 }
             }
-            
+
             // Prepare the comment block
             wxArrayString lines = ::wxStringTokenize(comment, "\n", wxTOKEN_STRTOK);
-            for(size_t i=0; i<lines.size(); ++i) {
+            for(size_t i = 0; i < lines.size(); ++i) {
                 lines.Item(i).Prepend(whitespace);
             }
-            
+
             // Glue the lines back together
             wxString doxyBlock = ::wxJoin(lines, '\n');
             doxyBlock << "\n";
-            
+
             // Insert the text
             ctrl->InsertText(lineStartPos, doxyBlock);
-            
+
             // Try to place the caret after the @brief
             wxRegEx reBrief("[@\\]brief[ \t]*");
             if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {

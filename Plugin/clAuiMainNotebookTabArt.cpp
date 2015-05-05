@@ -132,7 +132,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
 
     wxRect rr(in_rect.GetTopLeft(), sz);
     rr.y += TAB_Y_OFFSET;
-    rr.width -= 1;
+    rr.width += 1;
 
 #ifndef __WXMAC__
     if(page.active) {
@@ -394,7 +394,11 @@ void clAuiMainNotebookTabArt::SetLightColours()
     // The active pen colour is a bit more lighter than the active tab bg colour
     m_activeTabPenColour = wxColour("rgb(170, 170, 170)");
     m_tabBgColour = wxColour("rgb(230, 230, 230)");
+#ifdef __WXGTK__
+    m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+#else
     m_bgColour = wxColour("rgb(240, 240, 240)");
+#endif
     m_penColour = wxColour("rgb(190, 190, 190)");
     m_innerPenColour = *wxWHITE;
 }

@@ -57,19 +57,12 @@ HelpPluginMessageBaseDlg::HelpPluginMessageBaseDlg(wxWindow* parent, wxWindowID 
     m_stdBtnSizer4->Realize();
     
     SetName(wxT("HelpPluginMessageBaseDlg"));
-    SetMinSize( wxSize(400,-1) );
-    SetSizeHints(400,-1);
+    SetMinSize( wxSize(500,-1) );
+    SetSizeHints(500,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
 }
 
 HelpPluginMessageBaseDlg::~HelpPluginMessageBaseDlg()

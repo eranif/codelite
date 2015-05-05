@@ -6,7 +6,7 @@ HelpPluginMessageDlg::HelpPluginMessageDlg(wxWindow* parent)
 {
 #ifdef __WXOSX__
     m_staticText->SetLabel(_("The Help plugin uses 'Dash' for displaying the offline documentation\nPlease click the link below to "
-                             "download and install Zeal"));
+                             "download and install Dash"));
     m_hyperLink->SetLabel(_("Go to Dash website"));
     m_hyperLink->SetURL("https://kapeli.com/dash");
 #else

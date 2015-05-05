@@ -86,6 +86,14 @@ bool WSImporter::Import(wxString& errMsg)
                                 NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
                             envVarImporterDlg.ShowModal();
                         }
+                        
+                        wxString envVars = le_conf->GetEnvvars() + wxT("\n");
+                        
+                        for(GenericEnvVarsValueType value : cfg->envVars) {
+                            envVars += value.first + wxT("=") + value.second;
+                        }
+                        
+                        le_conf->SetEnvvars(envVars);
 
                         le_conf->SetName(cfg->name);
 

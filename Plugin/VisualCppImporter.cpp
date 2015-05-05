@@ -417,20 +417,24 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
 
                 while(confChild) {
                     if(confChild->GetName() == wxT("Configuration")) {
-                        wxString projectCfgName = confChild->GetAttribute(wxT("Name"));
+                        wxString name = confChild->GetAttribute(wxT("Name"));
+                        wxString projectCfgName = name;
                         projectCfgName.Replace(wxT("|"), wxT("_"));
+                        
+                        wxStringTokenizer projectCfgNamePart(name, wxT("|"));
+                        wxString configurationName = projectCfgNamePart.NextToken();
+                        configurationName.Replace(wxT(" "), wxT("_"));
+                        wxString platformName = projectCfgNamePart.NextToken();
+                        
                         wxString configurationType = confChild->GetAttribute(wxT("ConfigurationType"));
                         wxString intermediateDirectory = confChild->GetAttribute(wxT("IntermediateDirectory"));
 
                         GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
                         genericProjectCfg->name = projectCfgName;
                         
-                        wxStringTokenizer projectCfgNamePart(projectCfgName, wxT("_"));
-                        wxString configurationName = projectCfgNamePart.NextToken();
+                        genericProjectCfg->envVars[wxT("ConfigurationName")] = configurationName;
                         
                         if(!intermediateDirectory.IsEmpty()) {
-                            intermediateDirectory.Replace(wxT("$(ConfigurationName)"), configurationName);
-                            intermediateDirectory.Replace(wxT(" "), wxT("_"));
                             intermediateDirectory.Replace(wxT("\\"), wxT("/"));
                             genericProjectCfg->intermediateDirectory = intermediateDirectory;
                         }
@@ -596,9 +600,11 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                 wxXmlNode* propertyGroupChild = projectChild->GetChildren();
 
                 while(propertyGroupChild) {
-                    wxString projectCfgName = projectChild->GetAttribute("Condition");
-                    projectCfgName.Replace(wxT("'$(Configuration)|$(Platform)'=='"), wxT(""));
-                    projectCfgName.Replace(wxT("'"), wxT(""));
+                    wxString condition = projectChild->GetAttribute("Condition");
+                    condition.Replace(wxT("'$(Configuration)|$(Platform)'=='"), wxT(""));
+                    condition.Replace(wxT("'"), wxT("")); 
+                    
+                    wxString projectCfgName = condition;
                     projectCfgName.Replace(wxT("|"), wxT("_"));
 
                     if(propertyGroupChild->GetName() == wxT("ConfigurationType")) {
@@ -615,19 +621,24 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
             }
 
             if(projectChild->GetName() == wxT("ItemDefinitionGroup")) {
-                wxString projectCfgName = projectChild->GetAttribute("Condition");
-                projectCfgName.Replace(wxT("'$(Configuration)|$(Platform)'=='"), wxT(""));
-                projectCfgName.Replace(wxT("'"), wxT(""));
+                wxString condition = projectChild->GetAttribute("Condition");
+                condition.Replace(wxT("'$(Configuration)|$(Platform)'=='"), wxT(""));
+                condition.Replace(wxT("'"), wxT(""));
+                
+                wxString projectCfgName = condition;
                 projectCfgName.Replace(wxT("|"), wxT("_"));
+                
+                wxStringTokenizer projectCfgNamePart(condition, wxT("|"));
+                wxString configurationName = projectCfgNamePart.NextToken();
+                configurationName.Replace(wxT(" "), wxT("_"));
+                wxString platformName = projectCfgNamePart.NextToken();
 
                 GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
                 genericProjectCfg->name = projectCfgName;
                 
-                wxStringTokenizer projectCfgNamePart(projectCfgName, wxT("_"));
-                wxString configurationName = projectCfgNamePart.NextToken();
+                genericProjectCfg->envVars[wxT("Configuration")] = configurationName;
                 
                 if(!intermediateDirectory.IsEmpty()) {
-                    intermediateDirectory.Replace(wxT("$(Configuration)"), configurationName);
                     genericProjectCfg->intermediateDirectory = intermediateDirectory;
                 }
                 else {

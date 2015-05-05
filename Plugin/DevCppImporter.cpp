@@ -100,6 +100,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("Includes")) {
                     wxString projectIncludes = tagValue;
+                    projectIncludes.Replace(wxT("\""), wxT(""));
 
                     genericProjectCfgDebug->includePath = projectIncludes;
                     genericProjectCfgRelease->includePath = projectIncludes;
@@ -107,6 +108,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("Libs")) {
                     wxString projectLibs = tagValue;
+                    projectLibs.Replace(wxT("\""), wxT(""));
 
                     genericProjectCfgDebug->libPath = projectLibs;
                     genericProjectCfgRelease->libPath = projectLibs;

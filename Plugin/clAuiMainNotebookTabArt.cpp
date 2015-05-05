@@ -395,6 +395,6 @@ void clAuiMainNotebookTabArt::SetLightColours()
     m_activeTabPenColour = wxColour("rgb(170, 170, 170)");
     m_tabBgColour = wxColour("rgb(230, 230, 230)");
     m_bgColour = wxColour("rgb(240, 240, 240)");
-    m_penColour = wxColour("rgb(160, 160, 160)");
+    m_penColour = wxColour("rgb(190, 190, 190)");
     m_innerPenColour = *wxWHITE;
 }

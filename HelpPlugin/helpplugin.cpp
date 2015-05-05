@@ -84,7 +84,7 @@ void HelpPlugin::OnHelp(wxCommandEvent& event)
 {
     wxString query = DoBuildQueryString();
     if(query.IsEmpty()) return;
-    if(!::wxLaunchDefaultApplication(query)) {
+    if(!::wxLaunchDefaultBrowser(query)) {
         HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
         dlg.ShowModal();
     }
@@ -112,7 +112,7 @@ wxString HelpPlugin::DoBuildQueryString()
     case FileExtManager::TypeHeader:
     case FileExtManager::TypeSourceC:
     case FileExtManager::TypeSourceCpp:
-        language << "cpp,net,boost,qt,cvcpp,cocos2dx,c,manpages";
+        language << "c++,net,boost,qt,cvcpp,cocos2dx,c,manpages";
         break;
     case FileExtManager::TypeHtml:
     case FileExtManager::TypeCSS:

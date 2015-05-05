@@ -124,6 +124,9 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
     , m_options(TabClassic | Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift |
+#ifdef __WXOSX__
+                Opt_HideDockingWindowCaption |
+#endif
                 Opt_WrapBrackets |
                 Opt_WrapQuotes |
                 Opt_AutoCompleteDoubleQuotes |

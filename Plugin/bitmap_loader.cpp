@@ -42,15 +42,23 @@ BitmapLoader::BitmapLoader()
 {
     wxString zipname;
     wxFileName fn;
-
-    if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
+    
+    // Set the defaul icon set
+#ifdef __WXOSX__
+    zipname = "codelite-icons-dark.zip";
+#else
+    zipname = "codelite-icons.zip";
+#endif
+    
+    if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm) {
         zipname = wxT("codelite-icons-fresh-farm.zip");
-
-    else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
+        
+    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark) {
         zipname = wxT("codelite-icons-dark.zip");
-
-    else
+        
+    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic){
         zipname = wxT("codelite-icons.zip");
+    }
 
 // Under linux, take into account the --prefix
 #ifdef __WXGTK__
@@ -77,7 +85,8 @@ BitmapLoader::BitmapLoader()
 const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name)
 {
     std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(name);
-    if(iter != m_toolbarsBitmaps.end()) return iter->second;
+    if(iter != m_toolbarsBitmaps.end())
+        return iter->second;
 
     return wxNullBitmap;
 }
@@ -102,10 +111,12 @@ void BitmapLoader::doLoadManifest()
                 entry.Trim().Trim(false);
 
                 // empty?
-                if(entry.empty()) continue;
+                if(entry.empty())
+                    continue;
 
                 // comment?
-                if(entry.StartsWith(wxT(";"))) continue;
+                if(entry.StartsWith(wxT(";")))
+                    continue;
 
                 wxString key = entry.BeforeFirst(wxT('='));
                 wxString val = entry.AfterFirst(wxT('='));
@@ -162,7 +173,8 @@ int BitmapLoader::GetMimeImageId(FileExtManager::FileType type) const
 {
     FileExtManager::Init();
     std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end()) return wxNOT_FOUND;
+    if(iter == m_fileIndexMap.end())
+        return wxNOT_FOUND;
     return iter->second;
 }
 
@@ -172,7 +184,8 @@ int BitmapLoader::GetMimeImageId(const wxString& filename) const
 
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end()) return wxNOT_FOUND;
+    if(iter == m_fileIndexMap.end())
+        return wxNOT_FOUND;
 
     return iter->second;
 }

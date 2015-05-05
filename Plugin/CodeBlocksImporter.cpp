@@ -2,10 +2,6 @@
 #include <wx/xml/xml.h>
 #include <wx/filefn.h>
 
-CodeBlocksImporter::CodeBlocksImporter() {}
-
-CodeBlocksImporter::~CodeBlocksImporter() {}
-
 bool CodeBlocksImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
@@ -94,7 +90,8 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                                 genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
                                                 outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
                                                 outputFilename += STATIC_LIBRARY_EXT;
-                                                if(IsGccCompile) outputFilename.Replace(wxT("lib"), wxT("a"));
+                                                if(IsGccCompile)
+                                                    outputFilename.Replace(wxT("lib"), wxT("a"));
                                             } else if(projectType == wxT("3")) {
                                                 genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
                                                 outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
@@ -129,7 +126,8 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                                 compilerChild = compilerChild->GetNext();
                                             }
 
-                                            if(includePath.Contains(wxT("#"))) includePath.Replace(wxT("#"), wxT(""));
+                                            if(includePath.Contains(wxT("#")))
+                                                includePath.Replace(wxT("#"), wxT(""));
 
                                             genericProjectCfg->cCompilerOptions = compilerOptions;
                                             genericProjectCfg->cppCompilerOptions = compilerOptions;
@@ -160,7 +158,8 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                                 linkerChild = linkerChild->GetNext();
                                             }
 
-                                            if(libPath.Contains(wxT("#"))) libPath.Replace(wxT("#"), wxT(""));
+                                            if(libPath.Contains(wxT("#")))
+                                                libPath.Replace(wxT("#"), wxT(""));
 
                                             genericProjectCfg->linkerOptions = linkerOptions;
                                             genericProjectCfg->libPath = libPath;
@@ -221,6 +220,8 @@ void CodeBlocksImporter::GenerateFromWorkspace(GenericWorkspacePtr genericWorksp
                         if(workspaceChild->GetName() == wxT("Project") &&
                            workspaceChild->HasAttribute(wxT("filename"))) {
                             wxString projectFilename = workspaceChild->GetAttribute(wxT("filename"));
+                            projectFilename.Replace(wxT("\\"), wxT("/"));
+                            
                             GenerateFromProject(genericWorkspace,
                                                 wsInfo.GetPath() + wxFileName::GetPathSeparator() + projectFilename);
                         }

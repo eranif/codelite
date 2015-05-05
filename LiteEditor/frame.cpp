@@ -3560,12 +3560,13 @@ void clMainFrame::CreateWelcomePage()
 void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    const wxString ALL(wxT("All Solution File (*.sln;*.dsw;*.dev;*.bpr;*.cbp;*.workspace)|*.sln;*.dsw;*.dev;*.bpr;*.cbp;*.workspace|")
-						wxT("MS Visual Studio Solution File (*.sln;*.dsw)|*.sln;*.dsw|") 
-						wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
-						wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
-						wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
-					
+    const wxString ALL(wxT("All Solution File (*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace)|")
+                        wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
+                        wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
+                        wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
+                        wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
+                        wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
+
     wxFileDialog dlg(this,
                      _("Open MS Solution File"),
                      wxEmptyString,

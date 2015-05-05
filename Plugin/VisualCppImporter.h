@@ -2,32 +2,27 @@
 #define VISUALCPPIMPORTER_H
 
 #include <wx/filename.h>
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
 #include <wx/string.h>
-#include <memory>
 #include "GenericImporter.h"
 
 class VisualCppImporter : public GenericImporter
 {
 public:
-    VisualCppImporter();
-    ~VisualCppImporter();
-
     virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
     virtual bool isSupportedWorkspace();
     virtual GenericWorkspacePtr PerformImport();
 
 private:
     void GenerateFromVC6(GenericWorkspacePtr genericWorkspace);
-    void GenerateFromVC7(GenericWorkspacePtr genericWorkspace);
-    void GenerateFromVC11(GenericWorkspacePtr genericWorkspace);
+    void GenerateFromProjectVC6(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
+    void GenerateFromVC7_11(GenericWorkspacePtr genericWorkspace);
+    void GenerateFromProjectVC7(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
+    void GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
 
     wxFileName wsInfo;
+    wxString extension;
     long version;
     bool IsGccCompile;
-    std::shared_ptr<wxFileInputStream> fis;
-    std::shared_ptr<wxTextInputStream> tis;
 };
 
 #endif // VISUALCPPIMPORTER_H

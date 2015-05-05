@@ -631,8 +631,8 @@ void Manager::ImportMSVSSolution(const wxString& path, const wxString& defaultCo
 
     wxString errMsg;
     //VcImporter importer(path, defaultCompiler);
-	WSImporter importer;
-	importer.Load(path, defaultCompiler);
+    WSImporter importer;
+    importer.Load(path, defaultCompiler);
     if(importer.Import(errMsg)) {
         wxString wspfile;
         wspfile << fn.GetPath() << wxT("/") << fn.GetName() << wxT(".workspace");

@@ -1368,8 +1368,17 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
 
     // Get list of tabs to close
     std::vector<wxWindow*> windows;
-    m_book->GetEditorsInOrder(windows);
-
+    bool currentWinFound(false);
+    for(size_t i=0; i<m_book->GetPageCount(); ++i) {
+        if(currentWinFound) {
+            windows.push_back(m_book->GetPage(i));
+        } else {
+            if(m_book->GetPage(i) == win) {
+                currentWinFound = true;
+            }
+        }
+    }
+    
     // start from right to left
     if(windows.empty()) return;
 

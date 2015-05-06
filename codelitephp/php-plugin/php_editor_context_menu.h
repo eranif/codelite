@@ -40,7 +40,7 @@ protected:
 
 protected:
     // Event handlers
-    void OnContextMenu(wxCommandEvent& e);
+    void OnContextMenu(clContextMenuEvent& e);
     void OnMarginContextMenu(clContextMenuEvent& e);
     void OnContextOpenDocument(wxCommandEvent& event);
     void OnPopupClicked(wxCommandEvent& event);

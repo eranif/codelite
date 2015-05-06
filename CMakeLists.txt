@@ -516,7 +516,7 @@ if (WITH_LLDB)
 endif()
 add_subdirectory(codelitephp)
 add_subdirectory(WordCompletion)
-
+add_subdirectory(HelpPlugin)
 ## Executables
 add_subdirectory(LiteEditor)
 add_subdirectory(codelitegcc)

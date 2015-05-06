@@ -77,41 +77,29 @@ bool WSImporter::Import(wxString& errMsg)
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
                         BuildConfigPtr le_conf(new BuildConfig(NULL));
 
-                        if(showDlg &&
-                           ContainsEnvVar({ cfg->includePath, cfg->libPath, cfg->libraries, cfg->preprocessor })) {
-                            std::set<wxString> listEnvVar = GetListEnvVarName(
-                                { cfg->includePath, cfg->libPath, cfg->libraries, cfg->preprocessor });
-                                
-                            for(GenericEnvVarsValueType envVar : cfg->envVars) {
-                                listEnvVar.erase(envVar.first);
-                            }
-
-                            EnvVarImporterDlg envVarImporterDlg(
-                                NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
-                            envVarImporterDlg.ShowModal();
-                        }
-                        
-                        wxString envVars = le_conf->GetEnvvars() + wxT("\n");
-                        
-                        for(GenericEnvVarsValueType envVar : cfg->envVars) {
-                            envVars += envVar.first + wxT("=") + envVar.second;
-                        }
-                        
-                        le_conf->SetEnvvars(envVars);
+                        std::vector<wxString> envVarElems;
 
                         le_conf->SetName(cfg->name);
 
-                        if(!cfg->includePath.IsEmpty())
+                        if(!cfg->includePath.IsEmpty()) {
+                            envVarElems.push_back(cfg->includePath);
                             le_conf->SetIncludePath(cfg->includePath);
+                        }
 
-                        if(!cfg->libraries.IsEmpty())
+                        if(!cfg->libraries.IsEmpty()) {
+                            envVarElems.push_back(cfg->libraries);
                             le_conf->SetLibraries(cfg->libraries);
+                        }
 
-                        if(!cfg->libPath.IsEmpty())
+                        if(!cfg->libPath.IsEmpty()) {
+                            envVarElems.push_back(cfg->libPath);
                             le_conf->SetLibPath(cfg->libPath);
+                        }
 
-                        if(!cfg->preprocessor.IsEmpty())
+                        if(!cfg->preprocessor.IsEmpty()) {
+                            envVarElems.push_back(cfg->preprocessor);
                             le_conf->SetPreprocessor(cfg->preprocessor);
+                        }
 
                         if(!cfg->intermediateDirectory.IsEmpty())
                             le_conf->SetIntermediateDirectory(cfg->intermediateDirectory);
@@ -170,8 +158,31 @@ bool WSImporter::Import(wxString& errMsg)
                         }
 
                         le_conf->SetProjectType(buildConfigType);
-                        le_settings->SetBuildConfiguration(le_conf);
+
+                        if(showDlg) {
+                            if(envVarElems.size() > 0 && ContainsEnvVar(envVarElems)) {
+                                std::set<wxString> listEnvVar = GetListEnvVarName(envVarElems);
+
+                                for(GenericEnvVarsValueType envVar : cfg->envVars) {
+                                    listEnvVar.erase(envVar.first);
+                                }
+
+                                EnvVarImporterDlg envVarImporterDlg(
+                                    NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
+                                envVarImporterDlg.ShowModal();
+                            }
+                        }
                         
+                        wxString envVars = !le_conf->GetEnvvars().IsEmpty() ? le_conf->GetEnvvars() + wxT("\n") : wxT("");
+
+                        for(GenericEnvVarsValueType envVar : cfg->envVars) {
+                            envVars += envVar.first + wxT("=") + envVar.second + wxT("\n");
+                        }
+
+                        le_conf->SetEnvvars(envVars);
+
+                        le_settings->SetBuildConfiguration(le_conf);
+
                         if(!project->deps.IsEmpty())
                             proj->SetDependencies(project->deps, cfg->name);
                     }
@@ -242,7 +253,7 @@ bool WSImporter::Import(wxString& errMsg)
     return false;
 }
 
-bool WSImporter::ContainsEnvVar(std::initializer_list<wxString> elems)
+bool WSImporter::ContainsEnvVar(std::vector<wxString> elems)
 {
     for(wxString elem : elems) {
         if(elem.Contains("$(") && elem.Contains(")"))
@@ -252,7 +263,7 @@ bool WSImporter::ContainsEnvVar(std::initializer_list<wxString> elems)
     return false;
 }
 
-std::set<wxString> WSImporter::GetListEnvVarName(std::initializer_list<wxString> elems)
+std::set<wxString> WSImporter::GetListEnvVarName(std::vector<wxString> elems)
 {
     bool app = false;
     wxString word = wxT(""), data = wxT("");

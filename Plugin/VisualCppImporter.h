@@ -18,6 +18,7 @@ private:
     void GenerateFromVC7_11(GenericWorkspacePtr genericWorkspace);
     void GenerateFromProjectVC7(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
     void GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
+    wxString ExtractProjectCfgName(const wxString& parentCondition, const wxString& elemCondition);
 
     wxFileName wsInfo;
     wxString extension;

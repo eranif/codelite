@@ -195,18 +195,21 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
     if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
         return;
     }
+    
+    const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
+    if(options.GetFlags() & CC_WORD_ASSIST) {
+        // Try to call code completion 
+        clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
+        ccEvt.SetEditor(&GetCtrl());
+        ccEvt.SetWord(word);
 
-    // Try to call code completion 
-    clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
-    ccEvt.SetEditor(&GetCtrl());
-    ccEvt.SetWord(word);
-
-    if(!EventNotifier::Get()->ProcessEvent(ccEvt)) {
-        // This is ugly, since CodeLite should not be calling
-        // the plugins... we take comfort in the fact that it
-        // merely fires an event and not calling it directly
-        wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
-        wxTheApp->ProcessEvent(wordCompleteEvent);
+        if(!EventNotifier::Get()->ProcessEvent(ccEvt)) {
+            // This is ugly, since CodeLite should not be calling
+            // the plugins... we take comfort in the fact that it
+            // merely fires an event and not calling it directly
+            wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
+            wxTheApp->ProcessEvent(wordCompleteEvent);
+        }
     }
 }
 

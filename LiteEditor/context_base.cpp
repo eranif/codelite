@@ -159,7 +159,7 @@ int ContextBase::DoGetCalltipParamterIndex()
         int depth(0);
         while(pos < ctrl.GetCurrentPos()) {
             wxChar ch = ctrl.SafeGetChar(pos);
-            //wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
+            // wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
 
             if(IsCommentOrString(pos)) {
                 pos = ctrl.PositionAfter(pos);
@@ -189,25 +189,24 @@ int ContextBase::DoGetCalltipParamterIndex()
 
 void ContextBase::OnUserTypedXChars(const wxString& word)
 {
-    // user typed more than 3 chars, display completion box with C++ keywords
+    // user typed more than X chars
+    // trigger code complete event (as if the user typed ctrl-space)
+    // if no one handles this event, fire a word completion event
     if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
         return;
     }
 
-    TagEntryPtrVector_t tags;
-    if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
-        clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD);
-        ccEvt.SetEditor(&GetCtrl());
-        ccEvt.SetWord(word);
+    // Try to call code completion 
+    clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
+    ccEvt.SetEditor(&GetCtrl());
+    ccEvt.SetWord(word);
 
-        if(EventNotifier::Get()->ProcessEvent(ccEvt)) {
-            tags = ccEvt.GetTags();
-        }
-
-        if(!tags.empty()) {
-            GetCtrl().ShowCompletionBox(tags,  // list of tags
-                                        word); // do not automatically insert word if there is only single choice
-        }
+    if(!EventNotifier::Get()->ProcessEvent(ccEvt)) {
+        // This is ugly, since CodeLite should not be calling
+        // the plugins... we take comfort in the fact that it
+        // merely fires an event and not calling it directly
+        wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
+        wxTheApp->ProcessEvent(wordCompleteEvent);
     }
 }
 
@@ -256,7 +255,7 @@ void ContextBase::AutoAddComment()
                 event.SetEditor(&rCtrl);
                 if(EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
                     rCtrl.BeginUndoAction();
-                    
+
                     // To make the doxy block fit in, we need to prepend each line
                     // with the exact whitespace of the line that starts with "/**"
                     int lineStartPos = rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos));
@@ -274,7 +273,7 @@ void ContextBase::AutoAddComment()
 
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);
-                    
+
                     // Try to place the caret after the @brief
                     wxRegEx reBrief("[@\\]brief[ \t]*");
                     if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {

@@ -32,6 +32,7 @@
 #include "file_logger.h"
 #include "procutils.h"
 #include <wx/tokenzr.h>
+#include <map>
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -248,4 +249,62 @@ bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
 bool FileUtils::WildMatch(const wxString& mask, const wxString& filename)
 {
     return WildMatch(mask, wxFileName(filename));
+}
+
+wxString FileUtils::DecodeURI(const wxString& uri)
+{
+    wxString name = uri;
+    name.Replace("%20", " ");
+    name.Replace("%21", "!");
+    name.Replace("%23", "#");
+    name.Replace("%24", "$");
+    name.Replace("%26", "&");
+    name.Replace("%27", "'");
+    name.Replace("%28", "(");
+    name.Replace("%29", ")");
+    name.Replace("%2A", "*");
+    name.Replace("%2B", "+");
+    name.Replace("%2C", ",");
+    name.Replace("%3B", ";");
+    name.Replace("%3D", "=");
+    name.Replace("%3F", "?");
+    name.Replace("%40", "@");
+    name.Replace("%5B", "[");
+    name.Replace("%5D", "]");
+    return name;
+}
+
+wxString FileUtils::EncodeURI(const wxString& uri)
+{
+    static std::map<int, wxString> sEncodeMap;
+    if(sEncodeMap.empty()) {
+        sEncodeMap['!'] = "%21";
+        sEncodeMap['#'] = "%23";
+        sEncodeMap['$'] = "%24";
+        sEncodeMap['&'] = "%26";
+        sEncodeMap['\''] = "%27";
+        sEncodeMap['('] = "%28";
+        sEncodeMap[')'] = "%29";
+        sEncodeMap['*'] = "%2A";
+        sEncodeMap['+'] = "%2B";
+        sEncodeMap[','] = "%2C";
+        sEncodeMap[';'] = "%3B";
+        sEncodeMap['='] = "%3D";
+        sEncodeMap['?'] = "%3F";
+        sEncodeMap['@'] = "%40";
+        sEncodeMap['['] = "%5B";
+        sEncodeMap[']'] = "%5D";
+        sEncodeMap[' '] = "%20";
+    }
+
+    wxString encoded;
+    for(size_t i = 0; i < uri.length(); ++i) {
+        std::map<int, wxString>::iterator iter = sEncodeMap.find(uri.at(i));
+        if(iter != sEncodeMap.end()) {
+            encoded << iter->second;
+        } else {
+            encoded << uri.at(i);
+        }
+    }
+    return encoded;
 }

@@ -79,5 +79,15 @@ public:
      * @brief file masking search
      */
     static bool WildMatch(const wxString& mask, const wxFileName& filename);
+    
+    /**
+     * @brief decode URI using percent encoding
+     */
+    static wxString DecodeURI(const wxString& uri);
+    
+    /**
+     * @brief encode URI using percent encoding
+     */
+    static wxString EncodeURI(const wxString& uri);
 };
 #endif // FILEUTILS_H

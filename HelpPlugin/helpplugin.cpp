@@ -9,6 +9,7 @@
 #include "clKeyboardManager.h"
 #include <wx/msgdlg.h>
 #include "HelpPluginMessageDlg.h"
+#include "fileutils.h"
 
 static HelpPlugin* thePlugin = NULL;
 
@@ -84,10 +85,21 @@ void HelpPlugin::OnHelp(wxCommandEvent& event)
 {
     wxString query = DoBuildQueryString();
     if(query.IsEmpty()) return;
+#ifdef __WXGTK__
+    wxFileName fnZeal("/usr/bin", "zeal");
+    if(!fnZeal.Exists()) {
+        HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
+        dlg.ShowModal();
+    }
+    wxString command;
+    command << fnZeal.GetFullPath() << " " << "\"" << query << "\"";
+    ::wxExecute(command);
+#else
     if(!::wxLaunchDefaultBrowser(query)) {
         HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
         dlg.ShowModal();
     }
+#endif
 }
 
 wxString HelpPlugin::DoBuildQueryString()
@@ -112,7 +124,7 @@ wxString HelpPlugin::DoBuildQueryString()
     case FileExtManager::TypeHeader:
     case FileExtManager::TypeSourceC:
     case FileExtManager::TypeSourceCpp:
-        language << "c++,net,boost,qt,cvcpp,cocos2dx,c,manpages";
+        language << "c++,net,boost,qt 4,qt 5,cvcpp,cocos2dx,c,manpages";
         break;
     case FileExtManager::TypeHtml:
     case FileExtManager::TypeCSS:
@@ -135,12 +147,10 @@ wxString HelpPlugin::DoBuildQueryString()
     if(!language.IsEmpty()) {
         // Build context aware search string
         q << "dash-plugin://keys=" << language << "&query=" << selection;
-        wxURI uri(q);
-        q = uri.BuildURI();
+        q = FileUtils::EncodeURI(q);
     } else {
         q << "dash-plugin://query=" << selection;
-        wxURI uri(q);
-        q = uri.BuildURI();
+        q = FileUtils::EncodeURI(q);
     }
     return q;
 }

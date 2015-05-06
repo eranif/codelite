@@ -12,6 +12,7 @@
 #include "php_workspace.h"
 #include "json_node.h"
 #include "file_logger.h"
+#include "fileutils.h"
 
 bool IsPHPCommentOrString(int styleAtPos)
 {
@@ -125,42 +126,9 @@ wxString URIToFileName(const wxString& uriFileName)
     return wxFileName(filename).GetFullPath();
 }
 
-static std::map<int, wxString> sEncodeMap;
-
 static wxString URIEncode(const wxString& inputStr)
 {
-    if(sEncodeMap.empty()) {
-        sEncodeMap['!'] = "%21";
-        sEncodeMap['#'] = "%23";
-        sEncodeMap['$'] = "%24";
-        sEncodeMap['&'] = "%26";
-        sEncodeMap['\''] = "%27";
-        sEncodeMap['('] = "%28";
-        sEncodeMap[')'] = "%29";
-        sEncodeMap['*'] = "%2A";
-        sEncodeMap['+'] = "%2B";
-        sEncodeMap[','] = "%2C";
-        sEncodeMap[';'] = "%3B";
-        sEncodeMap['='] = "%3D";
-        sEncodeMap['?'] = "%3F";
-        sEncodeMap['@'] = "%40";
-        sEncodeMap['['] = "%5B";
-        sEncodeMap[']'] = "%5D";
-        sEncodeMap[' '] = "%20";
-        // sEncodeMap['/'] = "%2F";
-        // sEncodeMap[':'] = "%3A";
-    }
-
-    wxString encoded;
-    for(size_t i = 0; i < inputStr.length(); ++i) {
-        std::map<int, wxString>::iterator iter = sEncodeMap.find(inputStr.at(i));
-        if(iter != sEncodeMap.end()) {
-            encoded << iter->second;
-        } else {
-            encoded << inputStr.at(i);
-        }
-    }
-    return encoded;
+    return FileUtils::EncodeURI(inputStr);
 }
 
 wxString FileNameToURI(const wxString& filename)
@@ -186,23 +154,7 @@ wxString Base64Encode(const wxString& str)
 
 static void DecodeFileName(wxString& filename)
 {
-    filename.Replace("%20", " ");
-    filename.Replace("%21", "!");
-    filename.Replace("%23", "#");
-    filename.Replace("%24", "$");
-    filename.Replace("%26", "&");
-    filename.Replace("%27", "'");
-    filename.Replace("%28", "(");
-    filename.Replace("%29", ")");
-    filename.Replace("%2A", "*");
-    filename.Replace("%2B", "+");
-    filename.Replace("%2C", ",");
-    filename.Replace("%3B", ";");
-    filename.Replace("%3D", "=");
-    filename.Replace("%3F", "?");
-    filename.Replace("%40", "@");
-    filename.Replace("%5B", "[");
-    filename.Replace("%5D", "]");
+    filename = FileUtils::DecodeURI(filename);
 }
 
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile)

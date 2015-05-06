@@ -21,25 +21,6 @@ add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 
-if(WITH_FLEX)
-    message("-- Adding flex rule for ${CMAKE_SOURCE_DIR}/WordCompletion/Words.l")
-    find_package(FLEX REQUIRED)
-    
-    set(WordsFlexOutput ${CMAKE_SOURCE_DIR}/WordCompletion/WordsScanner.cpp)
-    set(WordsFlexInput ${CMAKE_SOURCE_DIR}/WordCompletion/Words.l)
-    
-    if(FLEX_FOUND)
-        add_custom_command(
-            OUTPUT ${WordsFlexOutput}
-            COMMAND ${FLEX_EXECUTABLE} -Pwords --noline --batch --outfile=${WordsFlexOutput} ${WordsFlexInput}
-            DEPENDS ${WordsFlexInput}
-            COMMENT "Generating ${WordsFlexOutput}")
-    endif()
-else()
-    message("-- Flex support is disabled")
-endif()
-
-
 if ( USE_PCH )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)

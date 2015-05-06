@@ -37,17 +37,6 @@ WordCompletionSettingsBaseDlg::WordCompletionSettingsBaseDlg(wxWindow* parent, w
     
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
-    m_pgMgrArr.Add(_("Words"));
-    m_pgMgrArr.Add(_("Strings"));
-    m_pgMgrArr.Add(_("Numbers"));
-    m_pgMgrIntArr.Add(WordCompletionSettings::kCompleteWords);
-    m_pgMgrIntArr.Add(WordCompletionSettings::kCompleteStrings);
-    m_pgMgrIntArr.Add(WordCompletionSettings::kCompleteNumbers);
-    m_pgPropTypes = m_pgMgr->Append(  new wxFlagsProperty( _("Tokens Type"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
-    m_pgPropTypes->SetHelpString(_("CodeLite will suggest word completion for the selected tokens types"));
-    
-    m_pgMgrArr.Clear();
-    m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Starts With"));
     m_pgMgrArr.Add(_("Contains"));
     m_pgPropComparisonMethod = m_pgMgr->Append(  new wxEnumProperty( _("Comparison Method"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
@@ -65,11 +54,19 @@ WordCompletionSettingsBaseDlg::WordCompletionSettingsBaseDlg(wxWindow* parent, w
     m_stdBtnSizer4->AddButton(m_button8);
     m_stdBtnSizer4->Realize();
     
+    SetName(wxT("WordCompletionSettingsBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WordCompletionSettingsBaseDlg::OnValueChanged), NULL, this);
     

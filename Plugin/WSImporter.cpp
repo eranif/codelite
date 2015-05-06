@@ -81,6 +81,10 @@ bool WSImporter::Import(wxString& errMsg)
                            ContainsEnvVar({ cfg->includePath, cfg->libPath, cfg->libraries, cfg->preprocessor })) {
                             std::set<wxString> listEnvVar = GetListEnvVarName(
                                 { cfg->includePath, cfg->libPath, cfg->libraries, cfg->preprocessor });
+                                
+                            for(GenericEnvVarsValueType envVar : cfg->envVars) {
+                                listEnvVar.erase(envVar.first);
+                            }
 
                             EnvVarImporterDlg envVarImporterDlg(
                                 NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
@@ -89,8 +93,8 @@ bool WSImporter::Import(wxString& errMsg)
                         
                         wxString envVars = le_conf->GetEnvvars() + wxT("\n");
                         
-                        for(GenericEnvVarsValueType value : cfg->envVars) {
-                            envVars += value.first + wxT("=") + value.second;
+                        for(GenericEnvVarsValueType envVar : cfg->envVars) {
+                            envVars += envVar.first + wxT("=") + envVar.second;
                         }
                         
                         le_conf->SetEnvvars(envVars);

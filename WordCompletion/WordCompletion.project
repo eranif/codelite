@@ -23,9 +23,6 @@
     <File Name="wordcompletion.h"/>
     <File Name="WordCompletionThread.h"/>
     <File Name="WordCompletionThread.cpp"/>
-    <File Name="Words.l"/>
-    <File Name="WordsTokens.h"/>
-    <File Name="WordsScanner.cpp"/>
     <File Name="WordCompletionRequestReply.h"/>
     <File Name="WordCompletionSettings.h"/>
     <File Name="WordCompletionSettings.cpp"/>

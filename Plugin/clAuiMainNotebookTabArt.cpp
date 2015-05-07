@@ -50,8 +50,8 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #define BMP_Y_SPACER 0
 #elif defined(__WXMSW__)
 #define TAB_HEIGHT_SPACER 10
-#define TAB_Y_OFFSET 3
-#define TEXT_Y_SPACER 0
+#define TAB_Y_OFFSET 0
+#define TEXT_Y_SPACER -2
 #define BMP_Y_SPACER 0
 #else // GTK/FreeBSD
 #define TAB_Y_OFFSET 0
@@ -65,13 +65,12 @@ clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
     , m_tabRadius(0.0)
 {
 #ifdef __WXMSW__
-    m_tabRadius = 0.0;
+    m_tabRadius = 1.0;
 #elif defined(__WXGTK__)
     m_tabRadius = 0.0;
 #else
     m_tabRadius = 0.0;
 #endif
-    m_tabRadius = 0.0;
     // Default buttons
     m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
     m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
@@ -379,7 +378,7 @@ void clAuiMainNotebookTabArt::SetDarkColours()
     m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
     m_activeTabBgColour = wxColour("rgb(85, 85, 85)").ChangeLightness(110);
     
-#ifndef __WXGTK__
+#if 0
     m_activeTabPenColour = m_activeTabBgColour;
 #else
     m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(30);

@@ -134,7 +134,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
     rr.y += TAB_Y_OFFSET;
     rr.width += 1;
 
-#ifndef __WXMAC__
+#if 0
     if(page.active) {
         rr.y -= 2;
         rr.height += 2;
@@ -370,7 +370,7 @@ void clAuiMainNotebookTabArt::SetDarkColours()
     m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
     m_activeTabBgColour = wxColour("rgb(85, 85, 85)");
     // The active pen colour is a bit more lighter than the active tab bg colour
-    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(125);
+    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(110);
     m_tabBgColour = wxColour("rgb(70, 70, 70)");
     m_bgColour = colours.bgColour.ChangeLightness(70);
     m_penColour = m_bgColour.ChangeLightness(80);

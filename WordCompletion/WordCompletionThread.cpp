@@ -29,6 +29,12 @@ void WordCompletionThread::ProcessRequest(ThreadRequest* request)
 
 void WordCompletionThread::ParseBuffer(const wxString& buffer, wxStringSet_t& suggest)
 {
+    wxArrayString filteredWords;
     wxArrayString words = ::wxStringTokenize(buffer, "\r\n \t->./\\'\"[]()<>*&^%#!@+=:,;{}", wxTOKEN_STRTOK);
-    suggest.insert(words.begin(), words.end());
+    for(size_t i=0; i<words.size(); ++i) {
+        if(!wxIsdigit(words.Item(i).at(0))) {
+            filteredWords.Add(words.Item(i));
+        }
+    }
+    suggest.insert(filteredWords.begin(), filteredWords.end());
 }

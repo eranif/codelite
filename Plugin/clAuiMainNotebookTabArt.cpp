@@ -54,9 +54,9 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #define TEXT_Y_SPACER 0
 #define BMP_Y_SPACER 0
 #else // GTK/FreeBSD
-#define TAB_Y_OFFSET 4
-#define TEXT_Y_SPACER 2
-#define BMP_Y_SPACER 2
+#define TAB_Y_OFFSET 0
+#define TEXT_Y_SPACER 0
+#define BMP_Y_SPACER 0
 #endif
 
 static int x_button_height = 16;
@@ -378,12 +378,13 @@ void clAuiMainNotebookTabArt::SetDarkColours()
     m_activeTabTextColour = *wxWHITE;
     m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
     m_activeTabBgColour = wxColour("rgb(85, 85, 85)").ChangeLightness(110);
-    // The active pen colour is a bit more lighter than the active tab bg colour
-#if 1
-    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(100);
+    
+#ifndef __WXGTK__
+    m_activeTabPenColour = m_activeTabBgColour;
 #else
-    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(40);
+    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(30);
 #endif
+
     m_tabBgColour = wxColour("rgb(60, 60, 60)");
     m_bgColour = colours.bgColour.ChangeLightness(70);
     m_penColour = m_bgColour.ChangeLightness(80);

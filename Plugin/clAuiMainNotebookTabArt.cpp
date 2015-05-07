@@ -71,7 +71,7 @@ clAuiMainNotebookTabArt::clAuiMainNotebookTabArt(IManager* manager)
 #else
     m_tabRadius = 0.0;
 #endif
-    m_tabRadius = 1.0;
+    m_tabRadius = 0.0;
     // Default buttons
     m_bmpClose = wxXmlResource::Get()->LoadBitmap("tab_x_close");
     m_bmpCloseHover = wxXmlResource::Get()->LoadBitmap("tab_x_close_hover");
@@ -379,7 +379,7 @@ void clAuiMainNotebookTabArt::SetDarkColours()
     m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
     m_activeTabBgColour = wxColour("rgb(85, 85, 85)").ChangeLightness(110);
     // The active pen colour is a bit more lighter than the active tab bg colour
-#ifdef __WXGTK__
+#if 1
     m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(100);
 #else
     m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(40);

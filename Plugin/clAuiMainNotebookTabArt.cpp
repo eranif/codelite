@@ -377,10 +377,14 @@ void clAuiMainNotebookTabArt::SetDarkColours()
     // adjust some colours
     m_activeTabTextColour = *wxWHITE;
     m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
-    m_activeTabBgColour = wxColour("rgb(85, 85, 85)");//.ChangeLightness(110);
+    m_activeTabBgColour = wxColour("rgb(85, 85, 85)").ChangeLightness(110);
     // The active pen colour is a bit more lighter than the active tab bg colour
+#ifdef __WXGTK__
+    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(100);
+#else
     m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(40);
-    m_tabBgColour = wxColour("rgb(70, 70, 70)");
+#endif
+    m_tabBgColour = wxColour("rgb(60, 60, 60)");
     m_bgColour = colours.bgColour.ChangeLightness(70);
     m_penColour = m_bgColour.ChangeLightness(80);
     m_innerPenColour = m_penColour.ChangeLightness(120);

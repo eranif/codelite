@@ -161,7 +161,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
         path.AddRoundedRectangle(rr.x, rr.y, rr.width - 1, rr.height, m_tabRadius);
         gdc.GetGraphicsContext()->FillPath(path);
         gdc.GetGraphicsContext()->StrokePath(path);
-
+        
     } else {
         wxGraphicsPath outerPath = gdc.GetGraphicsContext()->CreatePath();
         gdc.SetPen(penColour);
@@ -200,6 +200,15 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& dc,
         p2 = in_rect.GetBottomRight();
         gdc.SetPen(m_activeTabBgColour);
         gdc.DrawLine(p1, p2);
+        
+        gdc.DrawPoint(p1);
+        gdc.DrawPoint(p1);
+        p1.x += 1;
+        gdc.DrawPoint(p1);
+        gdc.DrawPoint(p1);
+        p1.x -= 1;
+        gdc.DrawPoint(p1);
+        gdc.DrawPoint(p1);
     }
 
     wxString caption = page.caption;
@@ -368,9 +377,9 @@ void clAuiMainNotebookTabArt::SetDarkColours()
     // adjust some colours
     m_activeTabTextColour = *wxWHITE;
     m_tabTextColour = m_activeTabTextColour.ChangeLightness(70);
-    m_activeTabBgColour = wxColour("rgb(85, 85, 85)");
+    m_activeTabBgColour = wxColour("rgb(85, 85, 85)");//.ChangeLightness(110);
     // The active pen colour is a bit more lighter than the active tab bg colour
-    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(110);
+    m_activeTabPenColour = m_activeTabBgColour.ChangeLightness(40);
     m_tabBgColour = wxColour("rgb(70, 70, 70)");
     m_bgColour = colours.bgColour.ChangeLightness(70);
     m_penColour = m_bgColour.ChangeLightness(80);

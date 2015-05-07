@@ -23,7 +23,6 @@ private:
     wxFileName wsInfo;
     wxString extension;
     long version;
-    bool IsGccCompile;
 };
 
 #endif // VISUALCPPIMPORTER_H

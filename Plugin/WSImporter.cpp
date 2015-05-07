@@ -31,6 +31,9 @@ void WSImporter::Load(const wxString& filename, const wxString& defaultCompiler)
 
 bool WSImporter::Import(wxString& errMsg)
 {
+    bool isGccCompile = defaultCompiler.Contains(wxT("gnu")) || defaultCompiler.Contains(wxT("gcc")) ||
+                        defaultCompiler.Contains(wxT("g++")) || defaultCompiler.Contains(wxT("mingw"));
+
     for(std::shared_ptr<GenericImporter> importer : importers) {
         if(importer->OpenWordspace(filename, defaultCompiler)) {
             if(importer->isSupportedWorkspace()) {
@@ -77,6 +80,25 @@ bool WSImporter::Import(wxString& errMsg)
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
                         BuildConfigPtr le_conf(new BuildConfig(NULL));
 
+                        wxString outputFileName = wxT("");
+
+                        switch(cfgType) {
+                        case GenericCfgType::DYNAMIC_LIBRARY:
+                            outputFileName = wxT("$(IntermediateDirectory)/$(ProjectName)");
+                            outputFileName += DYNAMIC_LIBRARY_EXT;
+                            break;
+                        case GenericCfgType::STATIC_LIBRARY:
+                            outputFileName = wxT("$(IntermediateDirectory)/$(ProjectName)");
+                            outputFileName += STATIC_LIBRARY_EXT;
+                            if(isGccCompile)
+                                outputFileName.Replace(wxT("lib"), wxT("a"));
+                            break;
+                        case GenericCfgType::EXECUTABLE:
+                            outputFileName = wxT("$(IntermediateDirectory)/$(ProjectName)");
+                            outputFileName += EXECUTABLE_EXT;
+                            break;
+                        }
+
                         std::vector<wxString> envVarElems;
 
                         le_conf->SetName(cfg->name);
@@ -88,6 +110,8 @@ bool WSImporter::Import(wxString& errMsg)
 
                         if(!cfg->libraries.IsEmpty()) {
                             envVarElems.push_back(cfg->libraries);
+                            if(isGccCompile && outputFileName.Contains(wxT("lib")))
+                                outputFileName.Replace(wxT("lib"), wxT("a"));
                             le_conf->SetLibraries(cfg->libraries);
                         }
 
@@ -107,7 +131,7 @@ bool WSImporter::Import(wxString& errMsg)
                         if(!cfg->outputFilename.IsEmpty())
                             le_conf->SetOutputFileName(cfg->outputFilename);
                         else
-                            le_conf->SetOutputFileName(wxT("$(IntermediateDirectory)/$(ProjectName)"));
+                            le_conf->SetOutputFileName(outputFileName);
 
                         if(!cfg->cCompilerOptions.IsEmpty())
                             le_conf->SetCCompileOptions(cfg->cCompilerOptions);
@@ -121,10 +145,27 @@ bool WSImporter::Import(wxString& errMsg)
                         if(!cfg->preCompiledHeader.IsEmpty())
                             le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
 
+                        wxString outputFileNameCommand, outputFileNameWorkingDirectory;
+                        if(!cfg->outputFilename.IsEmpty()) {
+                            wxFileName outputFileNameInfo(cfg->outputFilename);
+                            outputFileNameCommand = wxT("./") + outputFileNameInfo.GetFullName();
+                            outputFileNameWorkingDirectory = outputFileNameInfo.GetPath();
+                            outputFileNameWorkingDirectory.Replace(wxT("\\"), wxT("/"));
+                        }
+
                         if(!cfg->command.IsEmpty())
                             le_conf->SetCommand(cfg->command);
+                        else if(!outputFileNameCommand.IsEmpty())
+                            le_conf->SetCommand(outputFileNameCommand);
                         else
                             le_conf->SetCommand(wxT("./$(ProjectName)"));
+
+                        if(!cfg->workingDirectory.IsEmpty())
+                            le_conf->SetWorkingDirectory(cfg->workingDirectory);
+                        else if(!outputFileNameWorkingDirectory.IsEmpty())
+                            le_conf->SetWorkingDirectory(outputFileNameWorkingDirectory);
+                        else
+                            le_conf->SetWorkingDirectory(wxT("./$(IntermediateDirectory)"));
 
                         le_conf->SetCompilerType(defaultCompiler);
 
@@ -172,8 +213,9 @@ bool WSImporter::Import(wxString& errMsg)
                                 envVarImporterDlg.ShowModal();
                             }
                         }
-                        
-                        wxString envVars = !le_conf->GetEnvvars().IsEmpty() ? le_conf->GetEnvvars() + wxT("\n") : wxT("");
+
+                        wxString envVars =
+                            !le_conf->GetEnvvars().IsEmpty() ? le_conf->GetEnvvars() + wxT("\n") : wxT("");
 
                         for(GenericEnvVarsValueType envVar : cfg->envVars) {
                             envVars += envVar.first + wxT("=") + envVar.second + wxT("\n");
@@ -207,7 +249,7 @@ bool WSImporter::Import(wxString& errMsg)
                                 vpath = wxT("include");
                             } else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx") || ext == wxT("cc")) {
                                 vpath = wxT("src");
-                            } else if(ext == wxT("s") || ext == wxT("asm")) {
+                            } else if(ext == wxT("s") || ext == wxT("S") || ext == wxT("asm")) {
                                 vpath = wxT("src");
                             } else {
                                 vpath = wxT("resource");

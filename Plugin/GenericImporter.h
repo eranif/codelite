@@ -37,6 +37,7 @@ struct GenericProjectCfg {
     wxString linkerOptions;
     wxString preCompiledHeader;
     wxString command;
+    wxString workingDirectory;
     GenericEnvVarsType envVars;
     GenericCfgType type;
 };

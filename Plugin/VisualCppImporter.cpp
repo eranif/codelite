@@ -8,11 +8,6 @@ bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& 
 {
     wsInfo.Assign(filename);
 
-    wxString compilerName = defaultCompiler.Lower();
-
-    IsGccCompile = compilerName.Contains(wxT("gnu")) || compilerName.Contains(wxT("gcc")) ||
-                   compilerName.Contains(wxT("g++")) || compilerName.Contains(wxT("mingw"));
-
     extension = wsInfo.GetExt().Lower();
 
     bool isValidExt = extension == wxT("dsw") || extension == wxT("sln");
@@ -137,7 +132,6 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
         wxTextInputStream projectTIS(projectFIS);
 
         wxString virtualPath = wxT("");
-        wxString outputFilename = wxT("");
 
         while(!projectFIS.Eof()) {
             wxString line = projectTIS.ReadLine();
@@ -148,18 +142,10 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                 wxString projectType = line.Mid(index + 1).Trim().Trim(false);
                 if(projectType == wxT("0x0104")) {
                     genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
-                    outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                    outputFilename += STATIC_LIBRARY_EXT;
-                    if(IsGccCompile)
-                        outputFilename.Replace(wxT("lib"), wxT("a"));
                 } else if(projectType == wxT("0x0102")) {
                     genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
-                    outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                    outputFilename += DYNAMIC_LIBRARY_EXT;
                 } else {
                     genericProject->cfgType = GenericCfgType::EXECUTABLE;
-                    outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                    outputFilename += EXECUTABLE_EXT;
                 }
             }
 
@@ -173,7 +159,6 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                 GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
                 genericProjectCfg->name = projectCfgName;
                 genericProjectCfg->type = genericProject->cfgType;
-                genericProjectCfg->outputFilename = outputFilename;
 
                 while(!projectFIS.Eof()) {
                     line = projectTIS.ReadLine();
@@ -268,9 +253,6 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                                 libraries += lib + wxT(";");
                             }
                         }
-
-                        if(IsGccCompile)
-                            libraries.Replace(wxT(".lib"), wxT(""));
 
                         genericProjectCfg->libraries = libraries;
                         genericProjectCfg->libPath = libPath;
@@ -445,6 +427,8 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
                         genericProjectCfg->envVars[wxT("OutDir")] = outputDirectory + wxT("/");
                         genericProjectCfg->envVars[wxT("IntDir")] = intermediateDirectory + wxT("/");
                         genericProjectCfg->envVars[wxT("SolutionDir")] = solutionDir;
+                        genericProjectCfg->envVars[wxT("ProjectName")] = genericProject->name;
+                        genericProjectCfg->envVars[wxT("ProjectDir")] = genericProject->path;
 
                         if(!intermediateDirectory.IsEmpty()) {
                             genericProjectCfg->intermediateDirectory = intermediateDirectory;
@@ -454,25 +438,13 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
 
                         genericProjectCfg->intermediateDirectory = intermediateDirectory;
 
-                        wxString outputFilename;
-
                         if(configurationType == wxT("4")) {
                             genericProjectCfg->type = GenericCfgType::STATIC_LIBRARY;
-                            outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                            outputFilename += STATIC_LIBRARY_EXT;
-                            if(IsGccCompile)
-                                outputFilename.Replace(wxT("lib"), wxT("a"));
                         } else if(configurationType == wxT("2")) {
                             genericProjectCfg->type = GenericCfgType::DYNAMIC_LIBRARY;
-                            outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                            outputFilename += DYNAMIC_LIBRARY_EXT;
                         } else {
                             genericProjectCfg->type = GenericCfgType::EXECUTABLE;
-                            outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                            outputFilename += EXECUTABLE_EXT;
                         }
-
-                        genericProjectCfg->outputFilename = outputFilename;
 
                         wxXmlNode* toolChild = confChild->GetChildren();
 
@@ -502,8 +474,6 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
                                         wxString additionalDependencies =
                                             toolChild->GetAttribute(wxT("AdditionalDependencies"));
                                         additionalDependencies.Replace(wxT(" "), wxT(";"));
-                                        if(IsGccCompile)
-                                            additionalDependencies.Replace(wxT(".lib"), wxT(""));
 
                                         genericProjectCfg->libraries = additionalDependencies;
                                     }
@@ -619,7 +589,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     wxString intermediateDirectory = wxT("./") + configurationName;
                     wxString solutionDir = genericWorkspace->path + wxT("/");
                     solutionDir.Replace(wxT("\\"), wxT("/"));
-                    
+
                     GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
                     genericProjectCfg->name = projectCfgName;
 
@@ -629,6 +599,8 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     genericProjectCfg->envVars[wxT("IntDir")] = intermediateDirectory + wxT("/");
                     genericProjectCfg->envVars[wxT("OutDir")] = intermediateDirectory + wxT("/");
                     genericProjectCfg->envVars[wxT("SolutionDir")] = solutionDir;
+                    genericProjectCfg->envVars[wxT("ProjectName")] = genericProject->name;
+                    genericProjectCfg->envVars[wxT("ProjectDir")] = genericProject->path;
 
                     GenericProjectCfgMap[projectCfgKey] = genericProjectCfg;
 
@@ -655,21 +627,11 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                         if(genericProjectCfg) {
                             if(configurationType == wxT("StaticLibrary")) {
                                 genericProjectCfg->type = GenericCfgType::STATIC_LIBRARY;
-                                outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                                outputFilename += STATIC_LIBRARY_EXT;
-                                if(IsGccCompile)
-                                    outputFilename.Replace(wxT("lib"), wxT("a"));
                             } else if(configurationType == wxT("DynamicLibrary")) {
                                 genericProjectCfg->type = GenericCfgType::DYNAMIC_LIBRARY;
-                                outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                                outputFilename += DYNAMIC_LIBRARY_EXT;
                             } else {
                                 genericProjectCfg->type = GenericCfgType::EXECUTABLE;
-                                outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                                outputFilename += EXECUTABLE_EXT;
                             }
-
-                            genericProjectCfg->outputFilename = outputFilename;
 
                             if(genericProject->cfgType != genericProjectCfg->type)
                                 genericProject->cfgType = genericProjectCfg->type;
@@ -759,8 +721,6 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                                 wxString additionalDependencies = linkChild->GetNodeContent();
                                 additionalDependencies.Replace(wxT("%(AdditionalDependencies)"), wxT(""));
-                                if(IsGccCompile)
-                                    additionalDependencies.Replace(wxT(".lib"), wxT(""));
 
                                 GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {

@@ -3568,7 +3568,7 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
                         wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
 
     wxFileDialog dlg(this,
-                     _("Open IDEs Solution/Workspace File"),
+                     _("Open IDE Solution/Workspace File"),
                      wxEmptyString,
                      wxEmptyString,
                      ALL,

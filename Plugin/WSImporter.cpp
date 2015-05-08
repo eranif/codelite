@@ -31,8 +31,9 @@ void WSImporter::Load(const wxString& filename, const wxString& defaultCompiler)
 
 bool WSImporter::Import(wxString& errMsg)
 {
-    bool isGccCompile = defaultCompiler.Contains(wxT("gnu")) || defaultCompiler.Contains(wxT("gcc")) ||
-                        defaultCompiler.Contains(wxT("g++")) || defaultCompiler.Contains(wxT("mingw"));
+    wxString compileName = defaultCompiler.Lower();
+    bool isGccCompile = compileName.Contains(wxT("gnu")) || compileName.Contains(wxT("gcc")) ||
+                        compileName.Contains(wxT("g++")) || compileName.Contains(wxT("mingw"));
 
     for(std::shared_ptr<GenericImporter> importer : importers) {
         if(importer->OpenWordspace(filename, defaultCompiler)) {
@@ -90,8 +91,9 @@ bool WSImporter::Import(wxString& errMsg)
                         case GenericCfgType::STATIC_LIBRARY:
                             outputFileName = wxT("$(IntermediateDirectory)/$(ProjectName)");
                             outputFileName += STATIC_LIBRARY_EXT;
-                            if(isGccCompile)
-                                outputFileName.Replace(wxT("lib"), wxT("a"));
+                            if(isGccCompile && outputFileName.Contains(wxT(".lib"))) {
+                                outputFileName.Replace(wxT(".lib"), wxT(".a"));
+                            }
                             break;
                         case GenericCfgType::EXECUTABLE:
                             outputFileName = wxT("$(IntermediateDirectory)/$(ProjectName)");
@@ -110,8 +112,9 @@ bool WSImporter::Import(wxString& errMsg)
 
                         if(!cfg->libraries.IsEmpty()) {
                             envVarElems.push_back(cfg->libraries);
-                            if(isGccCompile && outputFileName.Contains(wxT("lib")))
-                                outputFileName.Replace(wxT("lib"), wxT("a"));
+                            if(isGccCompile && cfg->libraries.Contains(wxT(".lib"))) {
+                                cfg->libraries.Replace(wxT(".lib"), wxT(".a"));
+                            }
                             le_conf->SetLibraries(cfg->libraries);
                         }
 
@@ -128,9 +131,12 @@ bool WSImporter::Import(wxString& errMsg)
                         if(!cfg->intermediateDirectory.IsEmpty())
                             le_conf->SetIntermediateDirectory(cfg->intermediateDirectory);
 
-                        if(!cfg->outputFilename.IsEmpty())
+                        if(!cfg->outputFilename.IsEmpty()) {
+                            if(isGccCompile && cfg->outputFilename.Contains(wxT(".lib"))) {
+                                cfg->outputFilename.Replace(wxT(".lib"), wxT(".a"));
+                            }
                             le_conf->SetOutputFileName(cfg->outputFilename);
-                        else
+                        } else
                             le_conf->SetOutputFileName(outputFileName);
 
                         if(!cfg->cCompilerOptions.IsEmpty())
@@ -185,7 +191,7 @@ bool WSImporter::Import(wxString& errMsg)
 
                         wxString buildConfigType;
 
-                        switch(cfg->type) {
+                        switch(cfgType) {
                         case GenericCfgType::DYNAMIC_LIBRARY:
                             buildConfigType = Project::DYNAMIC_LIBRARY;
                             break;
@@ -208,9 +214,11 @@ bool WSImporter::Import(wxString& errMsg)
                                     listEnvVar.erase(envVar.first);
                                 }
 
-                                EnvVarImporterDlg envVarImporterDlg(
-                                    NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
-                                envVarImporterDlg.ShowModal();
+                                if(listEnvVar.size() > 0) {
+                                    EnvVarImporterDlg envVarImporterDlg(
+                                        NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
+                                    envVarImporterDlg.ShowModal();
+                                }
                             }
                         }
 

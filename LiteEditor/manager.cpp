@@ -627,7 +627,7 @@ void Manager::ImportMSVSSolution(const wxString& path, const wxString& defaultCo
 
     // Show some messages to the user
     wxBusyCursor busyCursor;
-    wxBusyInfo info(_("Importing IDEs solution/workspace..."), clMainFrame::Get());
+    wxBusyInfo info(_("Importing IDE solution/workspace..."), clMainFrame::Get());
 
     wxString errMsg;
     //VcImporter importer(path, defaultCompiler);

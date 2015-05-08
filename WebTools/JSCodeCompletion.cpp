@@ -44,16 +44,16 @@ JSCodeCompletion::JSCodeCompletion()
 
         m_ternServer.Start();
     }
-
-    WebToolsConfig conf;
-    m_enabled = conf.Load().HasJavaScriptFlag(WebToolsConfig::kJSEnableCC);
 }
 
 JSCodeCompletion::~JSCodeCompletion() { m_ternServer.Terminate(); }
 
 void JSCodeCompletion::CodeComplete(IEditor* editor)
 {
-    if(!m_enabled) return;
+    if(!IsEnabled()) {
+        TriggerWordCompletion();
+        return;
+    }
 
 #ifdef __WXGTK__
     wxFileName nodeJS;
@@ -109,7 +109,10 @@ void JSCodeCompletion::OnCodeCompleteReady(const wxCodeCompletionBoxEntry::Vec_t
     CHECK_PTR_RET(editor);
     if(editor->GetFileName().GetFullPath() != filename) return;
     if(editor->GetCurrentPosition() != m_ccPos) return;
-    if(entries.empty()) return;
+    if(entries.empty()) {
+        TriggerWordCompletion();
+        return;
+    }
 
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, 0, wxNOT_FOUND, this);
@@ -127,10 +130,17 @@ void JSCodeCompletion::OnFunctionTipReady(clCallTipPtr calltip, const wxString& 
     editor->ShowCalltip(calltip);
 }
 
-void JSCodeCompletion::Reload()
+void JSCodeCompletion::Reload() { m_ternServer.RecycleIfNeeded(true); }
+
+bool JSCodeCompletion::IsEnabled() const
 {
     WebToolsConfig conf;
-    m_enabled = conf.Load().HasJavaScriptFlag(WebToolsConfig::kJSEnableCC);
+    return conf.Load().HasJavaScriptFlag(WebToolsConfig::kJSEnableCC);
+}
 
-    m_ternServer.RecycleIfNeeded(true);
+void JSCodeCompletion::TriggerWordCompletion()
+{
+    // trigger word completion
+    wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
+    wxTheApp->ProcessEvent(wordCompleteEvent);
 }

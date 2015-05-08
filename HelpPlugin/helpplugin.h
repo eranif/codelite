@@ -9,6 +9,7 @@ class HelpPlugin : public IPlugin
 protected:
     void OnEditorContextMenu(clContextMenuEvent& event);
     void OnHelp(wxCommandEvent& event);
+    void OnHelpSettings(wxCommandEvent& event);
     
     wxString DoBuildQueryString();
     

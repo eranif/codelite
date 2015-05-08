@@ -83,7 +83,7 @@ void wxC69AFInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/UI_wordcompletion_bitmaps.cpp$.._codelite-icons_cc_16_word.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_wordcompletion_bitmaps.cpp$_home_eran_devl_codelite_WordCompletion_UI_wordcompletion_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_wordcompletion_bitmaps.cpp$_home_eran_devl_codelite_WordCompletion_UI_wordcompletion_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_wordcompletion_bitmaps.cpp$.._codelite-icons_cc_16_word.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_wordcompletion_bitmaps.cpp$C__src_codelite_WordCompletion_UI_wordcompletion_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_wordcompletion_bitmaps.cpp$C__src_codelite_WordCompletion_UI_wordcompletion_bitmaps.xrc"));
 }

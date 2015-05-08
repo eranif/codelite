@@ -142,9 +142,14 @@ void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
+    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor)) {
         event.Skip(false);
-        m_jsCodeComplete->CodeComplete(editor);
+        if(InsideJSComment(editor) || InsideJSString(editor)) {
+            // User the word completion plugin instead
+            m_jsCodeComplete->TriggerWordCompletion();
+        } else {
+            m_jsCodeComplete->CodeComplete(editor);
+        }
     } else if(editor && m_xmlCodeComplete && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
         // an XML file
         event.Skip(false);

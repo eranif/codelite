@@ -31,9 +31,12 @@ WordCompletionSettingsBaseDlg::WordCompletionSettingsBaseDlg(wxWindow* parent, w
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
     boxSizer2->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
+    
+    m_pgPropEnabled = m_pgMgr->Append(  new wxBoolProperty( _("Enabled"), wxPG_LABEL, 1) );
+    m_pgPropEnabled->SetHelpString(_("Enable Word Completion plugin?"));
     
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
@@ -55,6 +58,7 @@ WordCompletionSettingsBaseDlg::WordCompletionSettingsBaseDlg(wxWindow* parent, w
     m_stdBtnSizer4->Realize();
     
     SetName(wxT("WordCompletionSettingsBaseDlg"));
+    SetMinSize( wxSize(300,300) );
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -69,12 +73,16 @@ WordCompletionSettingsBaseDlg::WordCompletionSettingsBaseDlg(wxWindow* parent, w
 #endif
     // Connect events
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WordCompletionSettingsBaseDlg::OnValueChanged), NULL, this);
+    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WordCompletionSettingsBaseDlg::OnOk), NULL, this);
+    m_button6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WordCompletionSettingsBaseDlg::OnOkUI), NULL, this);
     
 }
 
 WordCompletionSettingsBaseDlg::~WordCompletionSettingsBaseDlg()
 {
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WordCompletionSettingsBaseDlg::OnValueChanged), NULL, this);
+    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WordCompletionSettingsBaseDlg::OnOk), NULL, this);
+    m_button6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WordCompletionSettingsBaseDlg::OnOkUI), NULL, this);
     
 }
 

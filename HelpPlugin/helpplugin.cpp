@@ -80,13 +80,25 @@ void HelpPlugin::OnEditorContextMenu(clContextMenuEvent& event)
 
     if(!editor->GetCtrl()->HasSelection()) return;
     wxString selection = editor->GetCtrl()->GetSelectedText();
-
+    wxString modSelection = selection.BeforeFirst('\n');
+    modSelection.Trim().Trim(false);
+    if(modSelection.IsEmpty()) return;
+    
+    // Ensure we only use 15 chars of the selected text, otherwise the menu label
+    // will overflow
+    if(modSelection.length() > 15) {
+        modSelection = modSelection.Mid(0, 15);
+    }
+    if(selection.Contains("\n")) {
+        modSelection << "...";
+    }
+    
     // Get the context menu
     wxMenu* menu = event.GetMenu();
     wxBitmap helpBitmap = wxXmlResource::Get()->LoadBitmap("svn_info");
     menu->AppendSeparator();
     wxString label;
-    label << _("Search the docs for '") << selection << "'";
+    label << _("Search the docs for '") << modSelection << "'";
     menu->Append(XRCID("ID_ZEAL_HELP"), label)->SetBitmap(helpBitmap);
     menu->AppendSeparator();
 }

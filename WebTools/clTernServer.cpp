@@ -51,7 +51,10 @@ void clTernServer::OnTernTerminated(wxCommandEvent& event)
 {
     ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
     wxDELETE(ped);
-    if(m_goingDown) return;
+    if(m_goingDown || !m_jsCCManager->IsEnabled()) {
+        wxDELETE(m_tern);
+        return;
+    }
     PrintMessage("Tern server terminated, will restart it\n");
     Start();
 }
@@ -59,19 +62,21 @@ void clTernServer::OnTernTerminated(wxCommandEvent& event)
 bool clTernServer::Start()
 {
     if(m_fatalError) return false;
+    if(!m_jsCCManager->IsEnabled()) return true;
+
     WebToolsConfig conf;
     conf.Load();
 
     wxFileName ternFolder(clStandardPaths::Get().GetUserDataDir(), "");
     ternFolder.AppendDir("webtools");
     ternFolder.AppendDir("js");
-    
+
     wxFileName nodeJS;
     if(!LocateNodeJS(nodeJS)) {
         m_fatalError = true;
         return false;
     }
-    
+
 #ifdef __WXMAC__
     // set permissions to 755
     nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHERS_READ | wxPOSIX_OTHERS_EXECUTE |
@@ -106,11 +111,11 @@ bool clTernServer::Start()
 void clTernServer::Terminate()
 {
     m_goingDown = true;
-    if (m_tern) {
+    if(m_tern) {
         m_tern->Terminate();
-	}
+    }
     wxDELETE(m_tern);
-    
+
     // Stop the worker thread
     if(m_workerThread) {
         m_workerThread->Stop();
@@ -159,7 +164,7 @@ void clTernServer::PrintMessage(const wxString& message)
     wxString msg;
     msg << message;
     msg.Trim().Trim(false);
-    wxLogMessage(msg);
+    CL_DEBUGS(msg);
 }
 
 void clTernServer::RecycleIfNeeded(bool force)
@@ -167,6 +172,10 @@ void clTernServer::RecycleIfNeeded(bool force)
     if(m_tern && ((m_recycleCount >= 100) || force)) {
         m_recycleCount = 0;
         m_tern->Terminate();
+
+    } else if(!m_tern) {
+        // Tern was never started, start it now
+        Start();
     }
 }
 
@@ -281,11 +290,11 @@ void clTernServer::ProcessOutput(const wxString& output, wxCodeCompletionBoxEntr
             wxString type = item.namedObject("type").toString();
             wxString sig, ret;
             ProcessType(type, sig, ret, imgId);
-            
+
             // Remove double quotes
             name.StartsWith("\"", &name);
             name.EndsWith("\"", &name);
-            
+
             wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(name /* + sig*/, imgId);
             entry->SetComment(doc);
             entries.push_back(entry);
@@ -358,8 +367,8 @@ JSONElement clTernServer::CreateLocation(wxStyledTextCtrl* ctrl, int pos)
     int lineNo = ctrl->LineFromPosition(pos);
     JSONElement loc = JSONElement::createObject("end");
     loc.addProperty("line", lineNo);
-    
-    // Pass the column 
+
+    // Pass the column
     int lineStartPos = ctrl->PositionFromLine(lineNo);
     pos = pos - lineStartPos;
     loc.addProperty("ch", pos);
@@ -372,7 +381,7 @@ bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
     if(m_workerThread) return false;        // another request is in progress
     if(m_port == wxNOT_FOUND) return false; // don't know tern's port
     ++m_recycleCount;
-    
+
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
 
     // Write the modified buffer into a file

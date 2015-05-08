@@ -12,21 +12,30 @@ class JSCodeCompletion : public wxEvtHandler
 {
     clTernServer m_ternServer;
     int m_ccPos;
-    bool m_enabled;
+
 public:
     typedef SmartPtr<JSCodeCompletion> Ptr_t;
     void OnCodeCompleteReady(const wxCodeCompletionBoxEntry::Vec_t& entries, const wxString& filename);
     void OnFunctionTipReady(clCallTipPtr calltip, const wxString& filename);
+    /**
+     * @brief start code completion based on the word completion plugin
+     */
+    void TriggerWordCompletion();
     
 public:
     JSCodeCompletion();
     virtual ~JSCodeCompletion();
     
     /**
+     * @brief Is Java Script code completion enabled?
+     */
+    bool IsEnabled() const;
+    
+    /**
      * @brief code complete the current expression
      */
-    void CodeComplete(IEditor *editor);
-    
+    void CodeComplete(IEditor* editor);
+
     /**
      * @brief restart the tern server
      */

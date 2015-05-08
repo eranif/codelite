@@ -13,6 +13,7 @@ public:
 
 private:
     int m_comparisonMethod;
+    bool m_enabled;
 
 public:
     WordCompletionSettings();
@@ -24,6 +25,9 @@ public:
 
     void SetComparisonMethod(int comparisonMethod) { this->m_comparisonMethod = comparisonMethod; }
     int GetComparisonMethod() const { return m_comparisonMethod; }
+
+    void SetEnabled(bool enabled) { this->m_enabled = enabled; }
+    bool IsEnabled() const { return m_enabled; }
     
     WordCompletionSettings& Load();
     WordCompletionSettings& Save();

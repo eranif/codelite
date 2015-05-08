@@ -34,6 +34,7 @@ class WordCompletionSettingsBaseDlg : public wxDialog
 {
 protected:
     wxPropertyGridManager* m_pgMgr;
+    wxPGProperty* m_pgPropEnabled;
     wxPGProperty* m_pgPropComparisonMethod;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_button6;
@@ -41,6 +42,8 @@ protected:
 
 protected:
     virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }

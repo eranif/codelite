@@ -81,15 +81,19 @@ void WordCompletionPlugin::OnWordComplete(wxCommandEvent& event)
     IEditor* activeEditor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(activeEditor);
 
+    WordCompletionSettings settings;
+    settings.Load();
+    
+    // Enabled?
+    if(!settings.IsEnabled()) return;
+    
     // Build the suggetsion list
     wxString suggestString;
     wxCodeCompletionBoxEntry::Vec_t entries;
     wxCodeCompletionBox::BmpVec_t bitmaps;
     bitmaps.push_back(m_images.Bitmap("m_bmpWord"));
 
-    WordCompletionSettings settings;
-    settings.Load();
-
+    
     // Filter (what the user has typed so far)
     wxStyledTextCtrl* stc = activeEditor->GetCtrl();
     int curPos = stc->GetCurrentPos();

@@ -39,6 +39,10 @@
     <File Name="helpplugin.cpp"/>
     <File Name="HelpPluginMessageDlg.h"/>
     <File Name="HelpPluginMessageDlg.cpp"/>
+    <File Name="HelpPluginSettingsDlg.h"/>
+    <File Name="HelpPluginSettingsDlg.cpp"/>
+    <File Name="HelpPluginSettings.h"/>
+    <File Name="HelpPluginSettings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="helpplugin.h"/>

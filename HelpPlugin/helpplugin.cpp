@@ -10,6 +10,8 @@
 #include <wx/msgdlg.h>
 #include "HelpPluginMessageDlg.h"
 #include "fileutils.h"
+#include "HelpPluginSettings.h"
+#include "HelpPluginSettingsDlg.h"
 
 static HelpPlugin* thePlugin = NULL;
 
@@ -40,8 +42,8 @@ HelpPlugin::HelpPlugin(IManager* manager)
     m_longName = _("Provide help based on selected words");
     m_shortName = _("HelpPlugin");
     wxTheApp->Bind(wxEVT_MENU, &HelpPlugin::OnHelp, this, XRCID("ID_ZEAL_HELP"));
+    Bind(wxEVT_MENU, &HelpPlugin::OnHelpSettings, this, XRCID("ID_ZEAL_SETTINGS"));
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &HelpPlugin::OnEditorContextMenu, this);
-
     clKeyboardManager::Get()->AddGlobalAccelerator("ID_ZEAL_HELP", "F1", "Help::Search the docs for selected text");
 }
 
@@ -54,11 +56,19 @@ clToolBar* HelpPlugin::CreateToolBar(wxWindow* parent)
     return tb;
 }
 
-void HelpPlugin::CreatePluginMenu(wxMenu* pluginsMenu) {}
+void HelpPlugin::CreatePluginMenu(wxMenu* pluginsMenu) 
+{
+    wxMenu* menu = new wxMenu;
+    menu->Append(XRCID("ID_ZEAL_SETTINGS"), _("Settings..."));
+    pluginsMenu->Append(wxID_ANY, _("Help Plugin"), menu);
+    menu->SetNextHandler(this);
+    this->SetPreviousHandler(menu);
+}
 
 void HelpPlugin::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &HelpPlugin::OnHelp, this, XRCID("ID_ZEAL_HELP"));
+    Unbind(wxEVT_MENU, &HelpPlugin::OnHelpSettings, this, XRCID("ID_ZEAL_SETTINGS"));
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &HelpPlugin::OnEditorContextMenu, this);
 }
 
@@ -92,7 +102,8 @@ void HelpPlugin::OnHelp(wxCommandEvent& event)
         dlg.ShowModal();
     }
     wxString command;
-    command << fnZeal.GetFullPath() << " " << "\"" << query << "\"";
+    command << fnZeal.GetFullPath() << " "
+            << "\"" << query << "\"";
     ::wxExecute(command);
 #else
     if(!::wxLaunchDefaultBrowser(query)) {
@@ -106,40 +117,43 @@ wxString HelpPlugin::DoBuildQueryString()
 {
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET_EMPTY_STRING(editor);
-    
+
     // if no selection is available, just launch the help with an empty query
     // so Zeal will come to front
     if(!editor->GetCtrl()->HasSelection()) return "dash-plugin://";
 
     wxString selection = editor->GetCtrl()->GetSelectedText();
-    
+
+    HelpPluginSettings settings;
+    settings.Load();
+
     // Auto detect the language
     wxString language;
     wxString label;
     FileExtManager::FileType type = FileExtManager::GetType(editor->GetFileName().GetFullName());
     switch(type) {
     case FileExtManager::TypeCMake:
-        language << "cmake";
+        language << settings.GetCmakeDocset();
         break;
     case FileExtManager::TypeHeader:
     case FileExtManager::TypeSourceC:
     case FileExtManager::TypeSourceCpp:
-        language << "c++,net,boost,qt 4,qt 5,cvcpp,cocos2dx,c,manpages";
+        language << settings.GetCxxDocset();
         break;
     case FileExtManager::TypeHtml:
+        language << settings.GetHtmlDocset();
+        break;
     case FileExtManager::TypeCSS:
+        language << settings.GetCssDocset();
+        break;
     case FileExtManager::TypeJS:
-        language
-            << "html,svg,css,bootstrap,less,foundation,awesome,statamic,javascript,jquery,jqueryui,jquerym,angularjs,"
-               "backbone,marionette,meteor,moo,prototype,ember,lodash,underscore,sencha,extjs,knockout,zepto,"
-               "cordova,phonegap,yui";
+        language << settings.GetJsDocset();
         break;
     case FileExtManager::TypePhp:
-        language << "php,wordpress,drupal,zend,laravel,yii,joomla,ee,codeigniter,cakephp,phpunit,symfony,typo3,twig,"
-                    "smarty,phpp,html,statamic,mysql,sqlite,mongodb,psql,redis,zend framework 1,zend framework 2";
+        language << settings.GetPhpDocset();
         break;
     case FileExtManager::TypeJava:
-        language << "java,javafx,grails,groovy,playjava,spring,cvj,processing";
+        language << settings.GetJavaDocset();
         break;
     }
 
@@ -153,4 +167,11 @@ wxString HelpPlugin::DoBuildQueryString()
         q = FileUtils::EncodeURI(q);
     }
     return q;
+}
+
+void HelpPlugin::OnHelpSettings(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    HelpPluginSettingsDlg dlg(EventNotifier::Get()->TopFrame());
+    dlg.ShowModal();
 }

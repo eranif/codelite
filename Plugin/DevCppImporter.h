@@ -14,7 +14,6 @@ public:
 
 private:
     wxFileName wsInfo;
-    bool IsGccCompile;
 };
 
 #endif // DEVCPPIMPORTER_H

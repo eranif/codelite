@@ -13,11 +13,10 @@ public:
     virtual GenericWorkspacePtr PerformImport();
 
 private:
-    void GenerateFromProject(GenericWorkspacePtr genericWorkspace, const wxString& fullpath);
     void GenerateFromWorkspace(GenericWorkspacePtr genericWorkspace);
+    void GenerateFromProject(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
 
     wxFileName wsInfo;
-    bool IsGccCompile;
     wxString extension;
 };
 

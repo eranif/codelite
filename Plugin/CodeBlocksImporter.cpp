@@ -1,15 +1,11 @@
 #include "CodeBlocksImporter.h"
 #include <wx/xml/xml.h>
 #include <wx/filefn.h>
+#include <wx/tokenzr.h>
 
 bool CodeBlocksImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
-
-    wxString compilerName = defaultCompiler.Lower();
-
-    IsGccCompile = compilerName.Contains(wxT("gnu")) || compilerName.Contains(wxT("gcc")) ||
-                   compilerName.Contains(wxT("g++")) || compilerName.Contains(wxT("mingw"));
 
     extension = wsInfo.GetExt().Lower();
 
@@ -39,7 +35,9 @@ GenericWorkspacePtr CodeBlocksImporter::PerformImport()
     genericWorkspace->path = wsInfo.GetPath();
 
     if(extension == wxT("cbp")) {
-        GenerateFromProject(genericWorkspace, wsInfo.GetFullPath());
+        GenericProjectDataType genericProjectData;
+        genericProjectData[wxT("projectFullPath")] = wsInfo.GetFullPath();
+        GenerateFromProject(genericWorkspace, genericProjectData);
     } else if(extension == wxT("workspace")) {
         GenerateFromWorkspace(genericWorkspace);
     }
@@ -47,19 +45,114 @@ GenericWorkspacePtr CodeBlocksImporter::PerformImport()
     return genericWorkspace;
 }
 
-void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspace, const wxString& fullpath)
+void CodeBlocksImporter::GenerateFromWorkspace(GenericWorkspacePtr genericWorkspace)
+{
+    GenericProjectDataListType genericProjectDataList;
+    wxCopyFile(wsInfo.GetFullPath(), wsInfo.GetFullPath() + wxT(".backup"));
+    wxXmlDocument codeBlocksProject;
+    if(codeBlocksProject.Load(wsInfo.GetFullPath())) {
+        wxXmlNode* root = codeBlocksProject.GetRoot();
+        if(root) {
+            wxXmlNode* rootChild = root->GetChildren();
+
+            while(rootChild) {
+                if(rootChild->GetName() == wxT("Workspace")) {
+                    wxXmlNode* workspaceChild = rootChild->GetChildren();
+
+                    while(workspaceChild) {
+                        if(workspaceChild->GetName() == wxT("Project") &&
+                           workspaceChild->HasAttribute(wxT("filename"))) {
+                            wxString filename = workspaceChild->GetAttribute(wxT("filename"));
+                            filename.Replace(wxT("\\"), wxT("/"));
+                            wxFileName filenameInfo(filename);
+
+                            GenericProjectDataType genericProjectData;
+                            genericProjectData[wxT("projectFullPath")] =
+                                wsInfo.GetPath() + wxFileName::GetPathSeparator() + filename;
+
+                            wxString deps = wxT("");
+                            wxXmlNode* projectChild = workspaceChild->GetChildren();
+                            while(projectChild) {
+                                if(projectChild->GetName() == wxT("Depends") &&
+                                   projectChild->HasAttribute(wxT("filename"))) {
+                                    wxString filename = projectChild->GetAttribute(wxT("filename"));
+                                    wxString projectFullPath =
+                                        wsInfo.GetPath() + wxFileName::GetPathSeparator() + filename;
+
+                                    wxXmlDocument depsProject;
+                                    if(depsProject.Load(projectFullPath)) {
+                                        wxXmlNode* rootDeps = depsProject.GetRoot();
+                                        if(rootDeps) {
+                                            wxXmlNode* rootDepsChild = rootDeps->GetChildren();
+
+                                            while(rootDepsChild) {
+                                                if(rootDepsChild->GetName() == wxT("Project")) {
+                                                    wxXmlNode* projectDepsChild = rootDepsChild->GetChildren();
+
+                                                    while(projectDepsChild) {
+                                                        if(projectDepsChild->GetName() == wxT("Option") &&
+                                                           projectDepsChild->HasAttribute(wxT("title"))) {
+                                                            wxString title =
+                                                                projectDepsChild->GetAttribute(wxT("title"));
+                                                            deps += title + wxT(";");
+                                                        }
+
+                                                        projectDepsChild = projectDepsChild->GetNext();
+                                                    }
+                                                }
+
+                                                rootDepsChild = rootDepsChild->GetNext();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                projectChild = projectChild->GetNext();
+                            }
+
+                            genericProjectData[wxT("projectDeps")] = deps;
+
+                            genericProjectDataList.push_back(genericProjectData);
+                        }
+
+                        workspaceChild = workspaceChild->GetNext();
+                    }
+                }
+
+                rootChild = rootChild->GetNext();
+            }
+        }
+    }
+
+    for(GenericProjectDataType& genericProjectData : genericProjectDataList) {
+        GenerateFromProject(genericWorkspace, genericProjectData);
+    }
+}
+
+void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspace,
+                                             GenericProjectDataType& genericProjectData)
 {
     wxXmlDocument codeBlocksProject;
-    if(codeBlocksProject.Load(fullpath)) {
+    if(codeBlocksProject.Load(genericProjectData[wxT("projectFullPath")])) {
         wxXmlNode* root = codeBlocksProject.GetRoot();
         if(root) {
             wxXmlNode* rootChild = root->GetChildren();
 
             while(rootChild) {
                 if(rootChild->GetName() == wxT("Project")) {
-                    wxFileName projectInfo(fullpath);
+                    wxString globalCompilerOptions = wxT(""), globalIncludePath = wxT(""),
+                             globalLinkerOptions = wxT(""), globalLibPath = wxT(""), globalLibraries = wxT("");
+
+                    wxFileName projectInfo(genericProjectData[wxT("projectFullPath")]);
                     GenericProjectPtr genericProject = std::make_shared<GenericProject>();
                     genericProject->path = projectInfo.GetPath();
+
+                    wxStringTokenizer deps(genericProjectData[wxT("projectDeps")], wxT(";"));
+
+                    while(deps.HasMoreTokens()) {
+                        wxString projectNameDep = deps.GetNextToken().Trim().Trim(false);
+                        genericProject->deps.Add(projectNameDep);
+                    }
 
                     genericWorkspace->projects.push_back(genericProject);
 
@@ -82,27 +175,29 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                     wxXmlNode* targetChild = buildChild->GetChildren();
                                     while(targetChild) {
                                         if(targetChild->GetName() == wxT("Option") &&
+                                           targetChild->HasAttribute(wxT("output"))) {
+                                            wxString output = targetChild->GetAttribute(wxT("output"));
+                                            genericProjectCfg->outputFilename = output;
+                                        }
+
+                                        if(targetChild->GetName() == wxT("Option") &&
+                                           targetChild->HasAttribute(wxT("working_dir"))) {
+                                            wxString working_dir = targetChild->GetAttribute(wxT("working_dir"));
+                                            genericProjectCfg->workingDirectory = working_dir;
+                                        }
+
+                                        if(targetChild->GetName() == wxT("Option") &&
                                            targetChild->HasAttribute(wxT("type"))) {
                                             wxString projectType = targetChild->GetAttribute(wxT("type"));
 
-                                            wxString outputFilename;
                                             if(projectType == wxT("2")) {
                                                 genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
-                                                outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                                                outputFilename += STATIC_LIBRARY_EXT;
-                                                if(IsGccCompile)
-                                                    outputFilename.Replace(wxT("lib"), wxT("a"));
                                             } else if(projectType == wxT("3")) {
                                                 genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
-                                                outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                                                outputFilename += DYNAMIC_LIBRARY_EXT;
                                             } else {
                                                 genericProject->cfgType = GenericCfgType::EXECUTABLE;
-                                                outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                                                outputFilename += EXECUTABLE_EXT;
                                             }
 
-                                            genericProjectCfg->outputFilename = outputFilename;
                                             genericProjectCfg->type = genericProject->cfgType;
                                         }
 
@@ -174,6 +269,49 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                             }
                         }
 
+                        if(projectChild->GetName() == wxT("Compiler")) {
+                            wxXmlNode* compilerChild = projectChild->GetChildren();
+                            while(compilerChild) {
+                                if(compilerChild->GetName() == wxT("Add") &&
+                                   compilerChild->HasAttribute(wxT("option"))) {
+                                    globalCompilerOptions += compilerChild->GetAttribute(wxT("option")) + wxT(" ");
+                                }
+
+                                if(compilerChild->GetName() == wxT("Add") &&
+                                   compilerChild->HasAttribute(wxT("directory"))) {
+                                    globalIncludePath += compilerChild->GetAttribute(wxT("directory")) + wxT(";");
+                                }
+
+                                compilerChild = compilerChild->GetNext();
+                            }
+
+                            if(globalIncludePath.Contains(wxT("#")))
+                                globalIncludePath.Replace(wxT("#"), wxT(""));
+                        }
+
+                        if(projectChild->GetName() == wxT("Linker")) {
+                            wxXmlNode* linkerChild = projectChild->GetChildren();
+                            while(linkerChild) {
+                                if(linkerChild->GetName() == wxT("Add") && linkerChild->HasAttribute(wxT("option"))) {
+                                    globalLinkerOptions += linkerChild->GetAttribute(wxT("option")) + wxT(" ");
+                                }
+
+                                if(linkerChild->GetName() == wxT("Add") &&
+                                   linkerChild->HasAttribute(wxT("directory"))) {
+                                    globalLibPath += linkerChild->GetAttribute(wxT("directory")) + wxT(";");
+                                }
+
+                                if(linkerChild->GetName() == wxT("Add") && linkerChild->HasAttribute(wxT("library"))) {
+                                    globalLibraries += linkerChild->GetAttribute(wxT("library")) + wxT(";");
+                                }
+
+                                linkerChild = linkerChild->GetNext();
+                            }
+
+                            if(globalLibPath.Contains(wxT("#")))
+                                globalLibPath.Replace(wxT("#"), wxT(""));
+                        }
+
                         if(projectChild->GetName() == wxT("Unit") && projectChild->HasAttribute(wxT("filename"))) {
                             wxString vpath = wxT("");
                             wxXmlNode* unitChild = projectChild->GetChildren();
@@ -195,38 +333,14 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
 
                         projectChild = projectChild->GetNext();
                     }
-                }
-
-                rootChild = rootChild->GetNext();
-            }
-        }
-    }
-}
-
-void CodeBlocksImporter::GenerateFromWorkspace(GenericWorkspacePtr genericWorkspace)
-{
-    wxCopyFile(wsInfo.GetFullPath(), wsInfo.GetFullPath() + wxT(".backup"));
-    wxXmlDocument codeBlocksProject;
-    if(codeBlocksProject.Load(wsInfo.GetFullPath())) {
-        wxXmlNode* root = codeBlocksProject.GetRoot();
-        if(root) {
-            wxXmlNode* rootChild = root->GetChildren();
-
-            while(rootChild) {
-                if(rootChild->GetName() == wxT("Workspace")) {
-                    wxXmlNode* workspaceChild = rootChild->GetChildren();
-
-                    while(workspaceChild) {
-                        if(workspaceChild->GetName() == wxT("Project") &&
-                           workspaceChild->HasAttribute(wxT("filename"))) {
-                            wxString projectFilename = workspaceChild->GetAttribute(wxT("filename"));
-                            projectFilename.Replace(wxT("\\"), wxT("/"));
-                            
-                            GenerateFromProject(genericWorkspace,
-                                                wsInfo.GetPath() + wxFileName::GetPathSeparator() + projectFilename);
-                        }
-
-                        workspaceChild = workspaceChild->GetNext();
+                    
+                    for(GenericProjectCfgPtr genericProjectCfg : genericProject->cfgs) {
+                        genericProjectCfg->cCompilerOptions += globalCompilerOptions;
+                        genericProjectCfg->cppCompilerOptions += globalCompilerOptions;
+                        genericProjectCfg->includePath += globalIncludePath;
+                        genericProjectCfg->linkerOptions += globalLinkerOptions;
+                        genericProjectCfg->libPath += globalLibPath;
+                        genericProjectCfg->libraries += globalLibraries;
                     }
                 }
 

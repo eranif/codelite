@@ -21,8 +21,8 @@ protected:
     void AddImporter(std::shared_ptr<GenericImporter> importer);
 
 private:
-    bool ContainsEnvVar(std::initializer_list<wxString> elems);
-    std::set<wxString> GetListEnvVarName(std::initializer_list<wxString> elems);
+    bool ContainsEnvVar(std::vector<wxString> elems);
+    std::set<wxString> GetListEnvVarName(std::vector<wxString> elems);
 
     wxString filename, defaultCompiler;
     std::vector<std::shared_ptr<GenericImporter> > importers;

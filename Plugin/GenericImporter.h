@@ -17,6 +17,11 @@
 #define EXECUTABLE_EXT wxT("")
 #endif
 
+typedef std::map<wxString, wxString> GenericProjectDataType;
+typedef std::vector<GenericProjectDataType> GenericProjectDataListType;
+typedef std::map<wxString, wxString> GenericEnvVarsType;
+typedef std::pair<wxString, wxString> GenericEnvVarsValueType;
+
 enum class GenericCfgType { DYNAMIC_LIBRARY, STATIC_LIBRARY, EXECUTABLE };
 
 struct GenericProjectCfg {
@@ -32,6 +37,8 @@ struct GenericProjectCfg {
     wxString linkerOptions;
     wxString preCompiledHeader;
     wxString command;
+    wxString workingDirectory;
+    GenericEnvVarsType envVars;
     GenericCfgType type;
 };
 
@@ -62,9 +69,6 @@ struct GenericWorkspace {
 };
 
 typedef std::shared_ptr<GenericWorkspace> GenericWorkspacePtr;
-
-typedef std::map<wxString, wxString> GenericProjectDataType;
-typedef std::vector<GenericProjectDataType> GenericProjectDataListType;
 
 class GenericImporter
 {

@@ -6,12 +6,7 @@
 bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
-
-    wxString compilerName = defaultCompiler.Lower();
-
-    IsGccCompile = compilerName.Contains(wxT("gnu")) || compilerName.Contains(wxT("gcc")) ||
-                   compilerName.Contains(wxT("g++")) || compilerName.Contains(wxT("mingw"));
-
+    
     wxString extension = wsInfo.GetExt().Lower();
 
     bool isValidExt = extension == wxT("dev");
@@ -74,32 +69,22 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                 if(tagName == wxT("Type")) {
                     wxString projectType = tagValue;
 
-                    wxString outputFilename;
                     if(projectType == wxT("2")) {
                         genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
-                        outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                        outputFilename += STATIC_LIBRARY_EXT;
-                        if(IsGccCompile)
-                            outputFilename.Replace(wxT("lib"), wxT("a"));
                     } else if(projectType == wxT("3")) {
                         genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
-                        outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                        outputFilename += DYNAMIC_LIBRARY_EXT;
                     } else {
                         genericProject->cfgType = GenericCfgType::EXECUTABLE;
-                        outputFilename = wxT("$(IntermediateDirectory)/$(ProjectName)");
-                        outputFilename += EXECUTABLE_EXT;
                     }
 
                     genericProjectCfgDebug->type = genericProject->cfgType;
                     genericProjectCfgRelease->type = genericProject->cfgType;
-
-                    genericProjectCfgDebug->outputFilename = outputFilename;
-                    genericProjectCfgRelease->outputFilename = outputFilename;
                 }
 
                 if(tagName == wxT("Includes")) {
                     wxString projectIncludes = tagValue;
+                    projectIncludes.Replace(wxT("\""), wxT(""));
+                    projectIncludes.Replace(wxT("_@@_"), wxT(" "));
 
                     genericProjectCfgDebug->includePath = projectIncludes;
                     genericProjectCfgRelease->includePath = projectIncludes;
@@ -107,6 +92,8 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("Libs")) {
                     wxString projectLibs = tagValue;
+                    projectLibs.Replace(wxT("\""), wxT(""));
+                    projectLibs.Replace(wxT("_@@_"), wxT(" "));
 
                     genericProjectCfgDebug->libPath = projectLibs;
                     genericProjectCfgRelease->libPath = projectLibs;
@@ -114,6 +101,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("Compiler")) {
                     wxString projectCompiler = tagValue;
+                    projectCompiler.Replace(wxT("_@@_"), wxT(" "));
 
                     genericProjectCfgDebug->cCompilerOptions = projectCompiler;
                     genericProjectCfgRelease->cCompilerOptions = projectCompiler;
@@ -123,6 +111,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("CppCompiler")) {
                     wxString projectCppCompiler = tagValue;
+                    projectCppCompiler.Replace(wxT("_@@_"), wxT(" "));
 
                     genericProjectCfgDebug->cppCompilerOptions = projectCppCompiler;
                     genericProjectCfgRelease->cppCompilerOptions = projectCppCompiler;
@@ -130,6 +119,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
 
                 if(tagName == wxT("Linker")) {
                     wxString projectLinker = tagValue;
+                    projectLinker.Replace(wxT("_@@_"), wxT(" "));
 
                     genericProjectCfgDebug->linkerOptions = projectLinker;
                     genericProjectCfgRelease->linkerOptions = projectLinker;

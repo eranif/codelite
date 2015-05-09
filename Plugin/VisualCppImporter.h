@@ -18,11 +18,12 @@ private:
     void GenerateFromVC7_11(GenericWorkspacePtr genericWorkspace);
     void GenerateFromProjectVC7(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
     void GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
+    wxString ExtractProjectCfgName(const wxString& parentCondition, const wxString& elemCondition);
+    wxString ReplaceDefaultEnvVars(const wxString& str);
 
     wxFileName wsInfo;
     wxString extension;
     long version;
-    bool IsGccCompile;
 };
 
 #endif // VISUALCPPIMPORTER_H

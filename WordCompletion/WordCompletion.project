@@ -2,7 +2,7 @@
 <CodeLite_Project Name="WordCompletion">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
+      <![CDATA[00030001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -16,6 +16,15 @@
   "parentProject": ""
  }, {
   "name": "Win_x64_Release",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }, {
+  "name": "Win_x86_Release",
   "enabled": false,
   "buildDirectory": "build",
   "sourceDirectory": "$(ProjectPath)",
@@ -336,9 +345,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>WordsScanner.cpp
-WordsScanner.cpp: Words.l
-	flex -Pwords --noline --batch --outfile=WordsScanner.cpp Words.l</CustomPreBuild>
+        <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>

@@ -26,38 +26,66 @@ void XMLBuffer::Parse()
     XMLLexerToken token;
     m_state = kNormal;
     while(::xmlLexerNext(m_scanner, token)) {
-        switch(token.type) {
-        case kXML_T_CDATA_START:
-            m_state = kCdata;
-            if(ConsumeUntil(kXML_T_CDATA_END)) {
-                m_state = kNormal;
+        switch(m_state) {
+        case kNormal: {
+            switch(token.type) {
+            case kXML_T_XML_OPEN_TAG:
+                m_state = kNonXmlSection;
+                break;
+            case kXML_T_CDATA_START:
+                m_state = kCdata;
+                break;
+            case kXML_T_COMMENT_START:
+                m_state = kComment;
+                break;
+            case '<':
+                // "<" was found
+                OnOpenTag();
+                break;
+            case '>':
+                // ">" was found. If in HTML mode and the current scope is an open tag
+                // pop it
+                OnCloseTag();
+                break;
+            case kXML_T_CLOSE_TAG_PREFIX:
+                // "</" was found
+                OnTagClosePrefix();
+                break;
+            case kXML_T_CLOSE_TAG_SUFFIX:
+                // "/>" closing tag was found
+                if(!m_elements.empty()) m_elements.pop_back();
+                break;
+            default:
+                break;
             }
-            break;
-        case kXML_T_COMMENT_START:
-            m_state = kComment;
-            if(ConsumeUntil(kXML_T_COMMENT_END)) {
+        } break;
+        case kCdata: {
+            switch(token.type) {
+            case kXML_T_CDATA_END:
                 m_state = kNormal;
+                break;
+            default:
+                break;
             }
-            break;
-        case '<':
-            // "<" was found
-            OnOpenTag();
-            break;
-        case '>':
-            // ">" was found. If in HTML mode and the current scope is an open tag
-            // pop it
-            OnCloseTag();
-            break;
-        case kXML_T_CLOSE_TAG_PREFIX:
-            // "</" was found
-            OnTagClosePrefix();
-            break;
-        case kXML_T_CLOSE_TAG_SUFFIX:
-            // "/>" closing tag was found
-            if(!m_elements.empty()) m_elements.pop_back();
-            break;
-        default:
-            break;
+        } break;
+        case kComment: {
+            switch(token.type) {
+            case kXML_T_COMMENT_END:
+                m_state = kNormal;
+                break;
+            default:
+                break;
+            }
+        } break;
+        case kNonXmlSection: {
+            switch(token.type) {
+            case kXML_T_XML_CLOSE_TAG:
+                m_state = kNormal;
+                break;
+            default:
+                break;
+            }
+        } break;
         }
     }
 }

@@ -23,7 +23,8 @@ public:
     };
 
     enum eState {
-        kNormal = 0,
+        kNonXmlSection = -1,
+        kNormal,
         kCdata,
         kComment,
     };

@@ -66,29 +66,42 @@ c_return [\015]
 horizontal_white [ ]|{h_tab}
 
 %x CDATA
+%x COMMENT
+%x NOXML
 
 %% 
 <<EOF>> {yyterminate();}
+<INITIAL>{horizontal_white} {}
 <INITIAL>"/>" {return kXML_T_CLOSE_TAG_SUFFIX;}
 <INITIAL>"</" {return kXML_T_CLOSE_TAG_PREFIX;}
-<INITIAL>"<?" {return kXML_T_XML_OPEN_TAG;}
+<INITIAL>"<?" { BEGIN NOXML; return kXML_T_XML_OPEN_TAG;}
 <INITIAL>"<!DOCTYPE" {return kXML_T_HTML_DOCTYPE;}
-<INITIAL>"<![CDATA[" { return kXML_T_CDATA_START; }
-<INITIAL>"?>" {return kXML_T_XML_CLOSE_TAG;}
+<INITIAL>"<![CDATA[" { BEGIN CDATA; return kXML_T_CDATA_START; }
 <INITIAL>"&lt;" {return kXML_T_ENTITY_LT;}
 <INITIAL>"&gt;" {return kXML_T_ENTITY_GT;}
 <INITIAL>"&amp;" {return kXML_T_ENTITY_AMP;}
 <INITIAL>"&apos;" {return kXML_T_ENTITY_APOS;}
 <INITIAL>"&quot;" {return kXML_T_ENTITY_QUOATATION_MARK;}
+<INITIAL>"<!--" { BEGIN COMMENT; return kXML_T_COMMENT_START;}
 <INITIAL>{identifier} {return kXML_T_IDENTIFIER;}
-<INITIAL>"<!--" { return kXML_T_COMMENT_START;}
-<INITIAL>"-->" { return kXML_T_COMMENT_END;}
-<INITIAL>"]]>" { return kXML_T_CDATA_END; }
 <INITIAL>[']{c_char}*['] { return kXML_T_STRING;}
 <INITIAL>["]{s_char}*["] { return kXML_T_STRING;}
-<INITIAL>{horizontal_white} {}
 <INITIAL>. { return yytext[0];}
-
+<CDATA>"]]>" { 
+    BEGIN INITIAL;
+    return kXML_T_CDATA_END; 
+}
+<CDATA>. { return yytext[0];}
+<COMMENT>"-->" { 
+    BEGIN INITIAL;
+    return kXML_T_COMMENT_END;
+}
+<COMMENT>. { return yytext[0];}
+<NOXML>"?>" { 
+    BEGIN INITIAL;
+    return kXML_T_XML_CLOSE_TAG;
+}
+<NOXML>. { return yytext[0];}
 %%
 
 //=============-------------------------------

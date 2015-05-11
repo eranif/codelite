@@ -824,3 +824,8 @@ void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
         ManagerST::Get()->ShowOutputPane(selectedWindow);
     }
 }
+
+clWorkspaceView* PluginManager::GetWorkspaceView()
+{
+    return clMainFrame::Get()->GetWorkspaceTab()->GetView();
+}

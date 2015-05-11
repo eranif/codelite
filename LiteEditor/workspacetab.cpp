@@ -41,6 +41,7 @@
 #include "event_notifier.h"
 #include "plugin.h"
 #include <algorithm>
+#include "clWorkspaceView.h"
 
 #define OPEN_CONFIG_MGR_STR _("<Open Configuration Manager...>")
 
@@ -49,13 +50,14 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
     , m_caption(caption)
     , m_isLinkedToEditor(true)
     , m_dlg(NULL)
+    , m_view(NULL)
 {
     long link = EditorConfigST::Get()->GetInteger(wxT("LinkWorkspaceViewToEditor"), 1);
     m_isLinkedToEditor = link ? true : false;
 
     CreateGUIControls();
     ConnectEvents();
-    m_themeHelper = NULL;//new ThemeHandlerHelper(this);
+    m_themeHelper = NULL; // new ThemeHandlerHelper(this);
     int sashPos = clConfig::Get().Read(kConfigWorkspaceTabSashPosition, wxNOT_FOUND);
     if(sashPos != wxNOT_FOUND) {
         m_splitter->SetSashPosition(sashPos);
@@ -104,14 +106,12 @@ WorkspaceTab::~WorkspaceTab()
 
 void WorkspaceTab::CreateGUIControls()
 {
-    wxSizer* sz = GetSizer();
 #ifdef __WXMAC__
     m_workspaceConfig->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
     m_choiceActiveProject->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
-    // Construct the tree
-    m_fileView = new FileViewTree(this, wxID_ANY);
-    sz->Add(m_fileView, 1, wxEXPAND | wxALL, 2);
+    //// Construct the tree
+    m_view = new clWorkspaceView(m_simpleBook);
 }
 
 void WorkspaceTab::FreezeThaw(bool freeze /*=true*/)
@@ -202,10 +202,7 @@ void WorkspaceTab::OnCollapseAll(wxCommandEvent& e)
     }
 }
 
-void WorkspaceTab::OnCollapseAllUI(wxUpdateUIEvent& e)
-{
-    e.Enable(ManagerST::Get()->IsWorkspaceOpen());
-}
+void WorkspaceTab::OnCollapseAllUI(wxUpdateUIEvent& e) { e.Enable(ManagerST::Get()->IsWorkspaceOpen()); }
 
 void WorkspaceTab::OnGoHome(wxCommandEvent& e)
 {
@@ -224,10 +221,7 @@ void WorkspaceTab::OnGoHome(wxCommandEvent& e)
     ManagerST::Get()->ShowWorkspacePane(m_caption);
 }
 
-void WorkspaceTab::OnGoHomeUI(wxUpdateUIEvent& e)
-{
-    e.Enable(!ManagerST::Get()->GetActiveProjectName().IsEmpty());
-}
+void WorkspaceTab::OnGoHomeUI(wxUpdateUIEvent& e) { e.Enable(!ManagerST::Get()->GetActiveProjectName().IsEmpty()); }
 
 void WorkspaceTab::OnProjectSettings(wxCommandEvent& e)
 {
@@ -241,10 +235,7 @@ void WorkspaceTab::OnProjectSettingsUI(wxUpdateUIEvent& e)
     e.Enable(!ManagerST::Get()->GetActiveProjectName().IsEmpty());
 }
 
-static int wxStringCmpFunc(const wxString& item1, const wxString& item2)
-{
-    return item1.CmpNoCase(item2);
-}
+static int wxStringCmpFunc(const wxString& item1, const wxString& item2) { return item1.CmpNoCase(item2); }
 
 void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 {
@@ -296,10 +287,7 @@ void WorkspaceTab::OnWorkspaceLoaded(wxCommandEvent& e)
     }
 }
 
-void WorkspaceTab::OnEditorClosing(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void WorkspaceTab::OnEditorClosing(wxCommandEvent& e) { e.Skip(); }
 
 void WorkspaceTab::OnWorkspaceClosed(wxCommandEvent& e)
 {
@@ -332,8 +320,7 @@ void WorkspaceTab::OnProjectRemoved(clCommandEvent& e)
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
-struct wxStringSorter
-{
+struct wxStringSorter {
     bool operator()(WorkspaceConfigurationPtr one, WorkspaceConfigurationPtr two) const
     {
         return one->GetName().Lower().CmpNoCase(two->GetName().Lower()) < 0;
@@ -349,9 +336,9 @@ void WorkspaceTab::DoWorkspaceConfig()
     m_workspaceConfig->Freeze();
     m_workspaceConfig->Enable(true);
     m_workspaceConfig->Clear();
-    
+
     confs.sort(wxStringSorter());
-    
+
     for(std::list<WorkspaceConfigurationPtr>::iterator iter = confs.begin(); iter != confs.end(); iter++) {
         m_workspaceConfig->Append((*iter)->GetName());
     }
@@ -381,7 +368,7 @@ void WorkspaceTab::OnConfigurationManagerChoice(wxCommandEvent& e)
         ProcessEvent(e);
         return;
     }
-    
+
     CallAfter(&WorkspaceTab::DoConfigChanged);
 }
 
@@ -431,10 +418,7 @@ void WorkspaceTab::OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event)
     event.Enable(ManagerST::Get()->IsWorkspaceOpen());
 }
 
-void WorkspaceTab::OnWorkspaceOpenUI(wxUpdateUIEvent& event)
-{
-    event.Enable(ManagerST::Get()->IsWorkspaceOpen());
-}
+void WorkspaceTab::OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Enable(ManagerST::Get()->IsWorkspaceOpen()); }
 
 void WorkspaceTab::OpenProjectSettings(const wxString& project)
 {
@@ -486,10 +470,7 @@ void WorkspaceTab::OpenProjectSettings(const wxString& project)
     }
 }
 
-void WorkspaceTab::ProjectSettingsDlgClosed()
-{
-    m_dlg = NULL;
-}
+void WorkspaceTab::ProjectSettingsDlgClosed() { m_dlg = NULL; }
 
 void WorkspaceTab::OnActiveProjectChanged(clProjectSettingsEvent& e)
 {

@@ -72,8 +72,6 @@
 #include "compiler.h"
 #include "ICompilerLocator.h"
 
-IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
-
 static const wxString gsCustomTargetsMenu(wxT("Custom Build Targets"));
 
 BEGIN_EVENT_TABLE(FileViewTree, wxTreeCtrl)

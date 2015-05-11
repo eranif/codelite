@@ -35,6 +35,9 @@
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include <wx/dirctrl.h>
+#include <wx/simplebook.h>
+#include <wx/treectrl.h>
+#include "fileview.h"
 #include <wx/frame.h>
 #include <wx/wizard.h>
 #include <vector>
@@ -240,12 +243,15 @@ public:
         ID_TOOL_LINK_EDITOR = 8004,
     };
 protected:
+    wxSimplebook* m_simpleBook;
+    wxPanel* m_panelCxx;
     wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage308;
     wxChoice* m_choiceActiveProject;
     wxPanel* m_splitterPage312;
     wxChoice* m_workspaceConfig;
+    FileViewTree* m_fileView;
 
 protected:
     virtual void OnCollapseAll(wxCommandEvent& event) { event.Skip(); }
@@ -268,6 +274,9 @@ public:
     wxChoice* GetWorkspaceConfig() { return m_workspaceConfig; }
     wxPanel* GetSplitterPage312() { return m_splitterPage312; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
+    FileViewTree* GetFileView() { return m_fileView; }
+    wxPanel* GetPanelCxx() { return m_panelCxx; }
+    wxSimplebook* GetSimpleBook() { return m_simpleBook; }
     WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~WorkspaceTabBase();
 };

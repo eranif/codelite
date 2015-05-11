@@ -30,24 +30,23 @@
 #include "wxcrafter.h"
 #include "cl_command_event.h"
 
+class clWorkspaceView;
 class ProjectSettingsDlg;
-class FileViewTree;
-
 class WorkspaceTab : public WorkspaceTabBase
 {
     friend class ProjectSettingsDlg;
 
-    FileViewTree* m_fileView;
     wxString m_caption;
     bool m_isLinkedToEditor;
     ThemeHandlerHelper* m_themeHelper;
     ProjectSettingsDlg* m_dlg;
+    clWorkspaceView* m_view;
 
 protected:
     void ProjectSettingsDlgClosed();
     void DoGoHome();
     void DoConfigChanged();
-    
+
 protected:
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
     virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event);
@@ -87,14 +86,14 @@ public:
 
     void OpenProjectSettings(const wxString& project = "");
 
-    FileViewTree* GetFileView()
-    {
-        return m_fileView;
-    }
-    const wxString& GetCaption() const
-    {
-        return m_caption;
-    }
+    FileViewTree* GetFileView() { return m_fileView; }
+    const wxString& GetCaption() const { return m_caption; }
     void FreezeThaw(bool freeze = true);
+    
+    /**
+     * @brief return the workspace view class
+     * @return 
+     */
+    clWorkspaceView* GetView() { return m_view; }
 };
 #endif // __workspacetab__

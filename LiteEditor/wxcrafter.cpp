@@ -578,10 +578,22 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_simpleBook->SetName(wxT("m_simpleBook"));
+    m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
+    
+    mainSizer->Add(m_simpleBook, 1, wxEXPAND, 5);
+    
+    m_panelCxx = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_simpleBook->AddPage(m_panelCxx, _("C++"), true);
+    
+    wxBoxSizer* boxSizer505 = new wxBoxSizer(wxVERTICAL);
+    m_panelCxx->SetSizer(boxSizer505);
+    
+    m_auibar = new wxAuiToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    mainSizer->Add(m_auibar, 0, wxEXPAND, 5);
+    boxSizer505->Add(m_auibar, 0, wxEXPAND, 5);
     
     m_auibar->AddTool(ID_TOOL_COLLAPSE_ALL, _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
     
@@ -596,16 +608,12 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
     m_auibar->Realize();
     
-    wxBoxSizer* boxSizer302 = new wxBoxSizer(wxHORIZONTAL);
-    
-    mainSizer->Add(boxSizer302, 0, wxEXPAND, 5);
-    
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter = new wxSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter->SetToolTip(_("Resize the configuration bar"));
     m_splitter->SetSashGravity(0);
     m_splitter->SetMinimumPaneSize(10);
     
-    boxSizer302->Add(m_splitter, 1, 0, 5);
+    boxSizer505->Add(m_splitter, 0, 0, 5);
     
     m_splitterPage308 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -629,6 +637,10 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_workspaceConfig->SetToolTip(_("Select the workspace build configuration"));
     
     boxSizer316->Add(m_workspaceConfig, 0, wxALL|wxEXPAND, 2);
+    
+    m_fileView = new FileViewTree(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxTR_HAS_BUTTONS|wxBORDER_STATIC);
+    
+    boxSizer505->Add(m_fileView, 1, wxALL|wxEXPAND, 2);
     
     SetName(wxT("WorkspaceTabBase"));
     SetSizeHints(-1,-1);

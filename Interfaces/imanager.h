@@ -40,6 +40,7 @@
 #include "debugger.h"
 #include "clStatusBar.h"
 
+class clWorkspaceView;
 class TagsManager;
 class Workspace;
 class EnvironmentConfig;
@@ -213,11 +214,16 @@ public:
      */
     virtual TagsManager* GetTagsManager() = 0;
     /**
-     * @brief return a pointer to the workspace manager
-     * @sa Workspace
+     * @brief return a pointer to the ** C++ ** workspace manager
      */
     virtual Workspace* GetWorkspace() = 0;
-
+    
+    /**
+     * @brief return the workspace view tab
+     * @return 
+     */
+    virtual clWorkspaceView* GetWorkspaceView() = 0;
+    
     /**
      * @brief add files to a virtual folder in the project
      * @param item a tree item which represents the tree item of the virtual folder

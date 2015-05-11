@@ -5,7 +5,7 @@
 
 clWorkspaceView::clWorkspaceView(wxSimplebook* book)
     : m_simpleBook(book)
-    , m_defaultPage("C++")
+    , m_defaultPage("Default")
 {
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceView::OnWorkspaceClosed, this);
 }

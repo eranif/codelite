@@ -42,6 +42,7 @@
 #include "plugin.h"
 #include <algorithm>
 #include "clWorkspaceView.h"
+#include "DefaultWorkspacePage.h"
 
 #define OPEN_CONFIG_MGR_STR _("<Open Configuration Manager...>")
 
@@ -112,6 +113,9 @@ void WorkspaceTab::CreateGUIControls()
 #endif
     //// Construct the tree
     m_view = new clWorkspaceView(m_simpleBook);
+    m_view->AddPage(new DefaultWorkspacePage(m_simpleBook), "Default");
+    m_view->SelectPage("Default");
+    m_view->SetDefaultPage("Default");
 }
 
 void WorkspaceTab::FreezeThaw(bool freeze /*=true*/)

@@ -89,21 +89,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetSimpleBook(), m_mgr);
     m_mgr->GetWorkspaceView()->AddPage(m_workspaceView, "PHP");
     
-    //Notebook* book = m_mgr->GetWorkspacePaneNotebook();
-    //if(IsWorkspaceViewDetached()) {
-    //    // Make the window child of the main panel (which is the grand parent of the notebook)
-    //    DockablePane* cp = new DockablePane(
-    //        book->GetParent()->GetParent(), book, PHPStrings::PHP_WORKSPACE_VIEW_TITLE, wxNullBitmap, wxSize(200, 200));
-    //    m_workspaceView = new PHPWorkspaceView(cp, m_mgr);
-    //    cp->SetChildNoReparent(m_workspaceView);
-    //
-    //} else {
-    //    m_workspaceView = new PHPWorkspaceView(book, m_mgr);
-    //    book->InsertPage(0, m_workspaceView, PHPStrings::PHP_WORKSPACE_VIEW_TITLE, true);
-    //}
-
     PHPCodeCompletion::Instance()->SetManager(m_mgr);
-
     PHPEditorContextMenu::Instance()->ConnectEvents();
     PHPParserThread::Instance()->Start();
 

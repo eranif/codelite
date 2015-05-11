@@ -94,7 +94,10 @@ void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
 {
     wxBusyCursor bc;
     m_compilers.clear();
+    
+#ifndef __WXGTK__
     wxWindowUpdateLocker locker(m_wizardPageCompilers);
+#endif
 
     CompilersDetectorManager detector;
     if(detector.Locate()) {

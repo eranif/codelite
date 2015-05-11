@@ -39,6 +39,7 @@
 #include "NewPHPProjectWizard.h"
 #include "PHPXDebugSetupWizard.h"
 #include "globals.h"
+#include "clWorkspaceView.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -85,18 +86,21 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     // Add our UI
     // create tab (possibly detached)
-    Notebook* book = m_mgr->GetWorkspacePaneNotebook();
-    if(IsWorkspaceViewDetached()) {
-        // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(
-            book->GetParent()->GetParent(), book, PHPStrings::PHP_WORKSPACE_VIEW_TITLE, wxNullBitmap, wxSize(200, 200));
-        m_workspaceView = new PHPWorkspaceView(cp, m_mgr);
-        cp->SetChildNoReparent(m_workspaceView);
-
-    } else {
-        m_workspaceView = new PHPWorkspaceView(book, m_mgr);
-        book->InsertPage(0, m_workspaceView, PHPStrings::PHP_WORKSPACE_VIEW_TITLE, true);
-    }
+    m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetSimpleBook(), m_mgr);
+    m_mgr->GetWorkspaceView()->AddPage(m_workspaceView, "PHP");
+    
+    //Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    //if(IsWorkspaceViewDetached()) {
+    //    // Make the window child of the main panel (which is the grand parent of the notebook)
+    //    DockablePane* cp = new DockablePane(
+    //        book->GetParent()->GetParent(), book, PHPStrings::PHP_WORKSPACE_VIEW_TITLE, wxNullBitmap, wxSize(200, 200));
+    //    m_workspaceView = new PHPWorkspaceView(cp, m_mgr);
+    //    cp->SetChildNoReparent(m_workspaceView);
+    //
+    //} else {
+    //    m_workspaceView = new PHPWorkspaceView(book, m_mgr);
+    //    book->InsertPage(0, m_workspaceView, PHPStrings::PHP_WORKSPACE_VIEW_TITLE, true);
+    //}
 
     PHPCodeCompletion::Instance()->SetManager(m_mgr);
 
@@ -278,10 +282,7 @@ void PhpPlugin::UnPlug()
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
 
     // Remove the PHP tab
-    size_t index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_workspaceView);
-    if(index != Notebook::npos) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
-    }
+    m_mgr->GetWorkspaceView()->RemovePage("PHP");
 
     // Close any open workspace
     if(PHPWorkspace::Get()->IsOpen()) {
@@ -362,12 +363,6 @@ void PhpPlugin::OnCloseWorkspace(clCommandEvent& e)
         eventCloseWsp.SetEventObject(FRAME);
         FRAME->GetEventHandler()->ProcessEvent(eventCloseWsp);
 
-        // Show the 'Workspace' tab by sending the main frame a "Hide workspace tab" event
-        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_workspace_tab"));
-        event.SetEventObject(FRAME);
-        event.SetInt(1);
-        FRAME->GetEventHandler()->AddPendingEvent(event);
-
         /// The 'wxID_CLOSE_ALL' is done async (i.e. it will take place in the next event loop)
         /// So we mark ourself that we should display the welcome page next time we capture
         /// the 'All Editors Closed' event
@@ -424,17 +419,8 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
     m_mgr->EnableClangCodeCompletion(false);
     m_workspaceView->LoadWorkspace();
 
-    // Hide the 'Workspace' tab by sending the main frame a "Hide workspace tab" event
-    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_workspace_tab"));
-    event.SetEventObject(FRAME);
-    event.SetInt(0);
-    FRAME->GetEventHandler()->AddPendingEvent(event);
-
     // Select the 'PHP' tab
-    size_t index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_workspaceView);
-    if(index != Notebook::npos) {
-        m_mgr->GetWorkspacePaneNotebook()->SetSelection(index);
-    }
+    m_mgr->GetWorkspaceView()->SelectPage("PHP");
 
     // and finally, request codelite to keep this workspace in the recently opened workspace list
     m_mgr->AddWorkspaceToRecentlyUsedList(filename);

@@ -1,12 +1,19 @@
 #include "clWorkspaceView.h"
 #include "macros.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 clWorkspaceView::clWorkspaceView(wxSimplebook* book)
     : m_simpleBook(book)
+    , m_defaultPage("C++")
 {
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceView::OnWorkspaceClosed, this);
 }
 
-clWorkspaceView::~clWorkspaceView() {}
+clWorkspaceView::~clWorkspaceView()
+{
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceView::OnWorkspaceClosed, this);
+}
 
 size_t clWorkspaceView::GetPageIndex(const wxString& name) const
 {
@@ -40,4 +47,10 @@ void clWorkspaceView::RemovePage(const wxString& name)
 {
     size_t index = GetPageIndex(name);
     CHECK_COND_RET(index != wxString::npos);
+}
+
+void clWorkspaceView::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    SelectPage(GetDefaultPage());
 }

@@ -610,10 +610,10 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_splitter = new wxSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter->SetToolTip(_("Resize the configuration bar"));
-    m_splitter->SetSashGravity(0);
-    m_splitter->SetMinimumPaneSize(10);
+    m_splitter->SetSashGravity(0.5);
+    m_splitter->SetMinimumPaneSize(100);
     
-    boxSizer505->Add(m_splitter, 0, 0, 5);
+    boxSizer505->Add(m_splitter, 0, wxEXPAND, 5);
     
     m_splitterPage308 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -627,7 +627,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer314->Add(m_choiceActiveProject, 0, wxALL|wxEXPAND, 2);
     
     m_splitterPage312 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPage308, m_splitterPage312, 100);
+    m_splitter->SplitVertically(m_splitterPage308, m_splitterPage312, 0);
     
     wxBoxSizer* boxSizer316 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage312->SetSizer(boxSizer316);

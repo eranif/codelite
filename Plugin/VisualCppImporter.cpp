@@ -557,6 +557,16 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
                             fileChild = fileChild->GetNext();
                         }
                     }
+                    
+                    if(filterChild->GetName() == wxT("File")) {
+                        wxString filename = filterChild->GetAttribute(wxT("RelativePath"));
+                        filename.Replace(wxT("\\"), wxT("/"));
+
+                        GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
+                        genericProjectFile->name = filename;
+
+                        genericProject->files.push_back(genericProjectFile);
+                    }
 
                     filterChild = filterChild->GetNext();
                 }

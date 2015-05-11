@@ -8882,7 +8882,7 @@
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",
-         "colour": "<Default>"
+         "colour": "(64,64,64)"
         }, {
          "type": "font",
          "m_label": "Font:",
@@ -8914,7 +8914,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Label:",
-         "m_value": ".. OR DROP A FOLDER HERE"
+         "m_value": "DROP A FOLDER HERE"
         }, {
          "type": "string",
          "m_label": "Wrap:",

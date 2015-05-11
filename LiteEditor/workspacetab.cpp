@@ -43,6 +43,7 @@
 #include <algorithm>
 #include "clWorkspaceView.h"
 #include "DefaultWorkspacePage.h"
+#include "clFileOrFolderDropTarget.h"
 
 #define OPEN_CONFIG_MGR_STR _("<Open Configuration Manager...>")
 
@@ -63,6 +64,8 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
     if(sashPos != wxNOT_FOUND) {
         m_splitter->SetSashPosition(sashPos);
     }
+    SetDropTarget(new clFileOrFolderDropTarget(this));
+    Bind(wxEVT_DND_FOLDER_DROPPED, &WorkspaceTab::OnFolderDropped, this);
 }
 
 WorkspaceTab::~WorkspaceTab()
@@ -513,4 +516,10 @@ void WorkspaceTab::DoConfigChanged()
     if(editor) editor->SetActive();
 
     ManagerST::Get()->UpdateParserPaths(true);
+}
+
+void WorkspaceTab::OnFolderDropped(clCommandEvent& event)
+{
+    // pass it on to the tree view
+    m_fileView->GetEventHandler()->ProcessEvent(event);
 }

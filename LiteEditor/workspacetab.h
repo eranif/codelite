@@ -54,6 +54,8 @@ protected:
     virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event);
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
 
+    void OnFolderDropped(clCommandEvent& event);
+
     void CreateGUIControls();
     void ConnectEvents();
     void DoWorkspaceConfig();
@@ -89,10 +91,10 @@ public:
     FileViewTree* GetFileView() { return m_fileView; }
     const wxString& GetCaption() const { return m_caption; }
     void FreezeThaw(bool freeze = true);
-    
+
     /**
      * @brief return the workspace view class
-     * @return 
+     * @return
      */
     clWorkspaceView* GetView() { return m_view; }
 };

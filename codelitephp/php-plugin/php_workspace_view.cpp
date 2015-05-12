@@ -34,6 +34,7 @@
 #include "clFileOrFolderDropTarget.h"
 #include "php_configuration_data.h"
 #include <wx/msgdlg.h>
+#include "clWorkspaceView.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -86,7 +87,7 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Connect(wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
-
+    EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
@@ -111,6 +112,7 @@ PHPWorkspaceView::~PHPWorkspaceView()
         wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
+    EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
 }
@@ -144,6 +146,9 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
 
         // We just created and opened a new workspace, add it to the "Recently used"
         m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
+        
+        // Ensure that the view is visible
+        m_mgr->GetWorkspaceView()->SelectPage("PHP");
 
     } else {
         workspaceFileName = PHPWorkspace::Get()->GetFilename();
@@ -1378,4 +1383,10 @@ void PHPWorkspaceView::DoSetProjectActive(const wxString& projectName)
         }
         child = m_treeCtrlView->GetNextChild(m_treeCtrlView->GetRootItem(), cookie);
     }
+}
+
+void PHPWorkspaceView::OnWorkspaceLoaded(PHPEvent& event)
+{
+    event.Skip();
+    m_mgr->GetWorkspaceView()->SelectPage("PHP"); // Ensure that the PHP view is selected
 }

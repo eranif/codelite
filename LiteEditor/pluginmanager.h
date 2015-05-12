@@ -44,6 +44,7 @@ class JobQueue;
 class BuildSettingsConfig;
 class BuildManager;
 class BitmapLoader;
+class clWorkspaceView;
 
 class PluginManager : public IManager
 {
@@ -155,6 +156,7 @@ public:
     virtual void ShowOutputPane(const wxString &selectedWindow = "");
     virtual void ToggleOutputPane(const wxString &selectedWindow = "");
     virtual clStatusBar* GetStatusBar();
+    virtual clWorkspaceView* GetWorkspaceView();
     
     //------------------------------------
     // End of IManager interface

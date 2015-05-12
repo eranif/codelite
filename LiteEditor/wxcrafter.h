@@ -27,14 +27,17 @@
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/bannerwindow.h>
-#include <wx/commandlinkbutton.h>
 #include <wx/filepicker.h>
 #include <wx/dataview.h>
 #include "addfunctionsmodel.h"
 #include <wx/button.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
+#include <wx/commandlinkbutton.h>
 #include <wx/dirctrl.h>
+#include <wx/simplebook.h>
+#include <wx/treectrl.h>
+#include "fileview.h"
 #include <wx/frame.h>
 #include <wx/wizard.h>
 #include <vector>
@@ -116,30 +119,6 @@ public:
         return m_bitmaps.find(name)->second;
     }
     virtual ~NewProjImgList();
-};
-
-
-class wxcDownloadDlgBaseClass : public wxDialog
-{
-protected:
-    wxPanel* m_panel81;
-    wxBannerWindow* m_banner76;
-    wxPanel* m_panel75;
-    wxCommandLinkButton* m_cmdLnkBtnDownload;
-    wxCommandLinkButton* m_cmdLnkBtnContinue;
-
-protected:
-    virtual void OnDownloadWxCrafterPlugin(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnIgnoreTheError(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxBannerWindow* GetBanner76() { return m_banner76; }
-    wxCommandLinkButton* GetCmdLnkBtnDownload() { return m_cmdLnkBtnDownload; }
-    wxCommandLinkButton* GetCmdLnkBtnContinue() { return m_cmdLnkBtnContinue; }
-    wxPanel* GetPanel75() { return m_panel75; }
-    wxPanel* GetPanel81() { return m_panel81; }
-    wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plugin is missing"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
-    virtual ~wxcDownloadDlgBaseClass();
 };
 
 
@@ -240,14 +219,21 @@ public:
         ID_TOOL_LINK_EDITOR = 8004,
     };
 protected:
-    wxAuiToolBar* m_auibar;
+    wxSimplebook* m_simpleBook;
+    wxPanel* m_panelCxx;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage308;
     wxChoice* m_choiceActiveProject;
     wxPanel* m_splitterPage312;
     wxChoice* m_workspaceConfig;
+    wxAuiToolBar* m_auibar;
+    FileViewTree* m_fileView;
 
 protected:
+    virtual void OnChoiceActiveProject(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnConfigurationManagerChoice(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCollapseAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCollapseAllUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGoHome(wxCommandEvent& event) { event.Skip(); }
@@ -256,18 +242,17 @@ protected:
     virtual void OnProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnChoiceActiveProject(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnConfigurationManagerChoice(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxChoice* GetChoiceActiveProject() { return m_choiceActiveProject; }
     wxPanel* GetSplitterPage308() { return m_splitterPage308; }
     wxChoice* GetWorkspaceConfig() { return m_workspaceConfig; }
     wxPanel* GetSplitterPage312() { return m_splitterPage312; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    FileViewTree* GetFileView() { return m_fileView; }
+    wxPanel* GetPanelCxx() { return m_panelCxx; }
+    wxSimplebook* GetSimpleBook() { return m_simpleBook; }
     WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~WorkspaceTabBase();
 };
@@ -426,6 +411,22 @@ public:
     wxTextCtrl* GetTextCtrlFolder() { return m_textCtrlFolder; }
     OpenFolderDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Folder"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~OpenFolderDlgBase();
+};
+
+
+class DefaultWorkspacePageBase : public wxPanel
+{
+protected:
+    wxStaticText* m_staticText523;
+    wxStaticBitmap* m_staticBitmap521;
+
+protected:
+
+public:
+    wxStaticText* GetStaticText523() { return m_staticText523; }
+    wxStaticBitmap* GetStaticBitmap521() { return m_staticBitmap521; }
+    DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL|wxBORDER_NONE);
+    virtual ~DefaultWorkspacePageBase();
 };
 
 #endif

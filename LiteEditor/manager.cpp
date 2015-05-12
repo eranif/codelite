@@ -98,6 +98,7 @@
 #include "code_completion_manager.h"
 #include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
+#include "clWorkspaceView.h"
 #include "clKeyboardManager.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "localworkspace.h"
@@ -388,8 +389,9 @@ void Manager::DoSetupWorkspace(const wxString& path)
         wxFileName dbfn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
         JobQueueSingleton::Instance()->PushJob(new DbContentCacher(this, dbfn.GetFullPath().c_str()));
     }
-
-    // CallAfter( &Manager::GenerateCompileCommands );
+    
+    // Ensure that the "C++" view is selected
+    clGetManager()->GetWorkspaceView()->SelectPage("C++");
 }
 
 void Manager::CloseWorkspace()

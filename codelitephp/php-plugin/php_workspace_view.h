@@ -29,11 +29,12 @@ protected:
     virtual void OnCollapse(wxCommandEvent& event);
     virtual void DoCollapseItem(wxTreeItemId& item);
     void OnFolderDropped(clCommandEvent& event);
-    
+
     virtual void OnCollapseUI(wxUpdateUIEvent& event);
     virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnMenu(wxTreeEvent& event);
+    void OnWorkspaceLoaded(PHPEvent& event);
 #if USE_SFTP
     virtual void OnSetupRemoteUpload(wxAuiToolBarEvent& event);
 #endif

@@ -333,46 +333,87 @@
         <object class="wxMenu" name="search_menu">
             <label>&amp;Search</label>
             <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="find_in_files">
-                <label>&amp;Find In Files...</label>
+            
+            <!-- Find In Files -->
+            
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Find In Files</label>
+                <object class="wxMenuItem" name="find_in_files">
+                    <label>&amp;Find In Files...</label>
+                </object>
+                <object class="wxMenuItem" name="next_fif_match">
+                <label>Go to Next 'Find In File' Match</label>
+                </object>
+                <object class="wxMenuItem" name="previous_fif_match">
+                    <label>Go to Previous 'Find In File' Match</label>
+                </object>
             </object>
-            <object class="wxMenuItem" name="wxID_FIND">
-                <label>Fi&amp;nd...</label>
+            
+            <!-- Find and Replace -->
+            
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Find and Replace</label>
+                <object class="wxMenuItem" name="wxID_FIND">
+                    <label>Fi&amp;nd...</label>
+                </object>
+                <object class="wxMenuItem" name="wxID_REPLACE">
+                    <label>&amp;Replace...</label>
+                </object>
+                <object class="wxMenuItem" name="find_next">
+                    <label>Find &amp;Next</label>
+                </object>
+                <object class="wxMenuItem" name="find_previous">
+                    <label>Find &amp;Previous</label>
+                </object>
+                <object class="wxMenuItem" name="find_next_at_caret">
+                    <label>Find Word At Caret</label>
+                </object>
+                <object class="wxMenuItem" name="find_previous_at_caret">
+                    <label>Find Word At Caret Backward</label>
+                </object>
             </object>
-            <object class="wxMenuItem" name="wxID_REPLACE">
-                <label>&amp;Replace...</label>
+            
+            <!-- GOTO -->
+            
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Go To</label>
+                 <object class="wxMenuItem" name="wxID_BACKWARD">
+                <label>Go To Pre&amp;vious Location</label>
+                </object>
+                <object class="wxMenuItem" name="wxID_FORWARD">
+                    <label>Go To For&amp;ward Location</label>
+                </object>
+                <object class="wxMenuItem" name="goto_linenumber">
+                    <label>&amp;Go To Line...</label>
+                </object>
             </object>
-            <object class="wxMenuItem" name="select_next">
-                <label>Select Next Occurrence</label>
+            
+            <!-- bookmarks -->
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Bookmarks</label>
+                <object class="wxMenuItem" name="toggle_bookmark">
+                    <label>Toggle &amp;Bookmark</label>
+                </object>
+                <object class="wxMenuItem" name="next_bookmark">
+                    <label>&amp;Next Bookmark</label>
+                </object>
+                <object class="wxMenuItem" name="previous_bookmark">
+                    <label>Previo&amp;us Bookmark</label>
+                </object>
+                <object class="wxMenuItem" name="removeall_current_bookmarks">
+                    <label>Remove All &amp;Currently-Active Bookmarks</label>
+                </object>
+                <object class="wxMenuItem" name="removeall_bookmarks">
+                    <label>Remove &amp;All Bookmarks</label>
+                </object>
             </object>
-            <object class="wxMenuItem" name="select_previous">
-                <label>Select Previous Occurrence</label>
-            </object>
-            <object class="wxMenuItem" name="find_next">
-                <label>Find &amp;Next</label>
-            </object>
-            <object class="wxMenuItem" name="find_previous">
-                <label>Find &amp;Previous</label>
-            </object>
-            <object class="wxMenuItem" name="find_next_at_caret">
-                <label>Find Word At Caret</label>
-            </object>
-            <object class="wxMenuItem" name="find_previous_at_caret">
-                <label>Find Word At Caret Backward</label>
-            </object>
+
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="grep_current_file">
                 <label>Grep Selection in the Current File</label>
             </object>
             <object class="wxMenuItem" name="grep_current_workspace">
                 <label>Grep Selection in the Workspace</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="next_fif_match">
-                <label>Go to Next 'Find In File' Match</label>
-            </object>
-            <object class="wxMenuItem" name="previous_fif_match">
-                <label>Go to Previous 'Find In File' Match</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="find_resource">
@@ -385,35 +426,7 @@
             <object class="wxMenuItem" name="goto_definition">
                 <label>Find &amp;Symbol</label>
             </object>
-            <object class="wxMenuItem" name="wxID_BACKWARD">
-                <label>Go To Pre&amp;vious Location</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_FORWARD">
-                <label>Go To For&amp;ward Location</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-
-            <object class="wxMenuItem" name="goto_linenumber">
-                <label>&amp;Goto Line...</label>
-            </object>
-
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-
-            <object class="wxMenuItem" name="toggle_bookmark">
-                <label>Toggle &amp;Bookmark</label>
-            </object>
-            <object class="wxMenuItem" name="next_bookmark">
-                <label>&amp;Next Bookmark</label>
-            </object>
-            <object class="wxMenuItem" name="previous_bookmark">
-                <label>Previo&amp;us Bookmark</label>
-            </object>
-            <object class="wxMenuItem" name="removeall_current_bookmarks">
-                <label>Remove All &amp;Currently-Active Bookmarks</label>
-            </object>
-            <object class="wxMenuItem" name="removeall_bookmarks">
-                <label>Remove &amp;All Bookmarks</label>
-            </object>
+            
             <!-- An ID range for bookmark types. 15 is overkill, but future-proof... -->
             <ids-range name="BookmarkTypes" size="15" />
         </object>

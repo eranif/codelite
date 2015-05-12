@@ -56,7 +56,7 @@ clToolBar* HelpPlugin::CreateToolBar(wxWindow* parent)
     return tb;
 }
 
-void HelpPlugin::CreatePluginMenu(wxMenu* pluginsMenu) 
+void HelpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu;
     menu->Append(XRCID("ID_ZEAL_SETTINGS"), _("Settings..."));
@@ -83,7 +83,7 @@ void HelpPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     wxString modSelection = selection.BeforeFirst('\n');
     modSelection.Trim().Trim(false);
     if(modSelection.IsEmpty()) return;
-    
+
     // Ensure we only use 15 chars of the selected text, otherwise the menu label
     // will overflow
     if(modSelection.length() > 15) {
@@ -92,7 +92,7 @@ void HelpPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     if(selection.Contains("\n")) {
         modSelection << "...";
     }
-    
+
     // Get the context menu
     wxMenu* menu = event.GetMenu();
     wxBitmap helpBitmap = wxXmlResource::Get()->LoadBitmap("svn_info");
@@ -105,24 +105,8 @@ void HelpPlugin::OnEditorContextMenu(clContextMenuEvent& event)
 
 void HelpPlugin::OnHelp(wxCommandEvent& event)
 {
-    wxString query = DoBuildQueryString();
-    if(query.IsEmpty()) return;
-#ifdef __WXGTK__
-    wxFileName fnZeal("/usr/bin", "zeal");
-    if(!fnZeal.Exists()) {
-        HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
-        dlg.ShowModal();
-    }
-    wxString command;
-    command << fnZeal.GetFullPath() << " "
-            << "\"" << query << "\"";
-    ::wxExecute(command);
-#else
-    if(!::wxLaunchDefaultBrowser(query)) {
-        HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
-        dlg.ShowModal();
-    }
-#endif
+    wxUnusedVar(event);
+    CallAfter(&HelpPlugin::DoHelp);
 }
 
 wxString HelpPlugin::DoBuildQueryString()
@@ -186,4 +170,26 @@ void HelpPlugin::OnHelpSettings(wxCommandEvent& event)
     wxUnusedVar(event);
     HelpPluginSettingsDlg dlg(EventNotifier::Get()->TopFrame());
     dlg.ShowModal();
+}
+
+void HelpPlugin::DoHelp()
+{
+    wxString query = DoBuildQueryString();
+    if(query.IsEmpty()) return;
+#ifdef __WXGTK__
+    wxFileName fnZeal("/usr/bin", "zeal");
+    if(!fnZeal.Exists()) {
+        HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
+        dlg.ShowModal();
+    }
+    wxString command;
+    command << fnZeal.GetFullPath() << " "
+            << "\"" << query << "\"";
+    ::wxExecute(command);
+#else
+    if(!::wxLaunchDefaultBrowser(query)) {
+        HelpPluginMessageDlg dlg(EventNotifier::Get()->TopFrame());
+        dlg.ShowModal();
+    }
+#endif
 }

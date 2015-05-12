@@ -928,7 +928,6 @@ static void printProgramIdentification (void)
 {
 	printf ("%s %s, Copyright (C) 1996-2004 %s\n",
 			PROGRAM_NAME, PROGRAM_VERSION, AUTHOR_NAME);
-	printf ("  Compiled: %s, %s\n", __DATE__, __TIME__);
 	printf ("  Addresses: <%s>, %s\n", AUTHOR_EMAIL, PROGRAM_URL);
 	printFeatureList ();
 }

@@ -80,13 +80,13 @@
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
 #undef EVT_STC_CALLTIP_CLICK
-#define EVT_STC_CALLTIP_CLICK(id, fn)                                                              \
-    DECLARE_EVENT_TABLE_ENTRY(                                                                     \
-        wxEVT_STC_CALLTIP_CLICK,                                                                   \
-        id,                                                                                        \
-        wxID_ANY,                                                                                  \
-        (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
-        (wxObject*)NULL),
+#define EVT_STC_CALLTIP_CLICK(id, fn)                                            \
+    DECLARE_EVENT_TABLE_ENTRY(wxEVT_STC_CALLTIP_CLICK,                           \
+                              id,                                                \
+                              wxID_ANY,                                          \
+                              (wxObjectEventFunction)(wxEventFunction)           \
+                              wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
+                              (wxObject*)NULL),
 #endif
 
 #define NUMBER_MARGIN_ID 0
@@ -3055,6 +3055,9 @@ void LEditor::OnLeftDown(wxMouseEvent& event)
         SetCaretAt(PositionFromPointClose(event.GetX(), event.GetY()));
     }
     SetActive();
+    
+    // Clear any messages from the status bar
+    clGetManager()->GetStatusBar()->SetMessage("");
     event.Skip();
 }
 
@@ -3183,9 +3186,8 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()
-            ->GetBreakpointsMgr()
-            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
+           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -4969,36 +4971,74 @@ void LEditor::QuickAddNext()
         SetSelection(start, end);
         SetMainSelection(0);
     }
-    
+
     wxString findWhat = GetTextRange(start, end);
-    int where = this->FindText(end, GetLength(), findWhat);
+    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
     if(where != wxNOT_FOUND) {
         AddSelection(where, where + findWhat.length());
-        
-        // Center this line
-        int line = LineFromPos(where);
-        int linesOnScreen = LinesOnScreen();
-        if((line < GetFirstVisibleLine()) || (line > (GetFirstVisibleLine() + LinesOnScreen()))) {
-            // To place our line in the middle, the first visible line should be
-            // the: line - (linesOnScreen / 2)
-            int firstVisibleLine = line - (linesOnScreen / 2);
-            if(firstVisibleLine < 0) {
-                firstVisibleLine = 0;
-            }
-            EnsureVisible(firstVisibleLine);
-            SetFirstVisibleLine(firstVisibleLine);
-        }
+        CenterLineIfNeeded(LineFromPos(where));
     }
+    
+    wxString message;
+    message << _("Found and selected ") << GetSelections() << _(" matches");
+    clGetManager()->GetStatusBar()->SetMessage(message);
 }
 
 void LEditor::QuickFindAll()
 {
+    if(GetSelections() != 1) return;
+
+    int start = GetSelectionStart();
+    int end = GetSelectionEnd();
+    wxString findWhat = GetTextRange(start, end);
+    ClearSelections();
+
+    int matches(0);
+    int firstMatch(wxNOT_FOUND);
+    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+    while(where != wxNOT_FOUND) {
+        if(matches == 0) {
+            firstMatch = where;
+            SetSelection(where, where + findWhat.length());
+            SetMainSelection(0);
+            CenterLineIfNeeded(LineFromPos(where));
+
+        } else {
+            AddSelection(where, where + findWhat.length());
+        }
+        ++matches;
+        where = this->FindText(
+            where + findWhat.length(), GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+    }
+    wxString message;
+    message << _("Found and selected ") << GetSelections() << _(" matches");
+    clGetManager()->GetStatusBar()->SetMessage(message);
+    if(firstMatch != wxNOT_FOUND) {
+        SetMainSelection(0);
+    }
+}
+
+void LEditor::CenterLineIfNeeded(int line, bool force)
+{
+    // Center this line
+    int linesOnScreen = LinesOnScreen();
+    if(force || ((line < GetFirstVisibleLine()) || (line > (GetFirstVisibleLine() + LinesOnScreen())))) {
+        // To place our line in the middle, the first visible line should be
+        // the: line - (linesOnScreen / 2)
+        int firstVisibleLine = line - (linesOnScreen / 2);
+        if(firstVisibleLine < 0) {
+            firstVisibleLine = 0;
+        }
+        EnsureVisible(firstVisibleLine);
+        SetFirstVisibleLine(firstVisibleLine);
+    }
 }
 
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------
-struct SelectorSorter {
+struct SelectorSorter
+{
     bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 

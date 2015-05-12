@@ -408,7 +408,12 @@ public:
      * @brief center the line in the editor
      */
     void CenterLine(int line, int col = wxNOT_FOUND);
-
+    
+    /**
+     * @brief Center line if needed (i.e. only if the line is not visible)
+     */
+    void CenterLineIfNeeded(int line, bool force = false);
+    
     /**
      * @brief convert the editor indentation to spaces
      */

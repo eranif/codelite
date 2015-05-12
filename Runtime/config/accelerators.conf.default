@@ -60,6 +60,7 @@ toggle_panes|View|Toggle All Panes|Ctrl-M
 find_in_files|Search::Find In Files|Find In Files...|Ctrl-Shift-F
 wxID_FIND|Search::Find and Replace|Find...|Ctrl-F
 ID_QUICK_ADD_NEXT|Search::Find and Replace|Quick Add Next|Ctrl-K
+ID_QUICK_FIND_ALL|Search::Find and Replace|Quick Find All|Ctrl-Shift-K
 wxID_REPLACE|Search::Find and Replace|Replace...|Ctrl-H
 find_next|Search::Find and Replace|Find Next|F3
 find_next_at_caret|Search::Find and Replace|Find Word At Caret|

@@ -57,8 +57,6 @@ target_link_libraries(${PLUGIN_NAME}
                       ${wxWidgets_LIBRARIES}
                       libcodelite
                       plugin
-                      wxsqlite3 
-                      sqlite3lib
                       )
 
 # Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation

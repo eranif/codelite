@@ -26,8 +26,6 @@ target_link_libraries(  codelite-lldb
                         LLDBProtocol
                         libcodelite
                         plugin
-                        wxsqlite3 
-                        sqlite3lib
                     )
 
 CL_INSTALL_EXECUTABLE(codelite-lldb)

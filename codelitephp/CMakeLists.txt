@@ -94,8 +94,6 @@ target_link_libraries(${PLUGIN_NAME}
                       PHPParser
                       libcodelite
                       plugin
-                      wxsqlite3 
-                      sqlite3lib
                       )
 # Installation destination
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
@@ -106,8 +104,6 @@ target_link_libraries(PHPUnitTests
                      -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" 
                      -L"${CL_LIBPATH}" 
                      PHPParser 
-                     wxsqlite3 
-                     sqlite3lib 
                      libcodelite 
                      plugin 
                      ${ADDITIONAL_LIBRARIES} 

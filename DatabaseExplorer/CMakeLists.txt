@@ -100,8 +100,6 @@ target_link_libraries(${PLUGIN_NAME}
                       ${GTK_LIBS}
                       libcodelite
                       plugin
-                      wxsqlite3 
-                      sqlite3lib
                       wxshapeframework
                       databaselayersqlite
                       )

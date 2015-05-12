@@ -144,8 +144,9 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
             return;
         }
 
-        // We just created and opened a new workspace, add it to the "Recently used"
-        m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
+        // // We just created and opened a new workspace, add it to the "Recently used"
+        // m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
+        LoadWorkspace();
         
         // Ensure that the view is visible
         m_mgr->GetWorkspaceView()->SelectPage("PHP");

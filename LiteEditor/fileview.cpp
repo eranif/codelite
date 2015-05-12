@@ -2485,7 +2485,6 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
     ProjectPtr pProj = WorkspaceST::Get()->GetProject(projectName);
     CHECK_PTR_RET(pProj);
 
-    wxBusyCursor bc;
     wxArrayString all_files;
     wxDir::GetAllFiles(folder, &all_files, wxEmptyString, wxDIR_DIRS | wxDIR_FILES);
 
@@ -2503,4 +2502,11 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
     // And trigger a full reparse of the workspace
     wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("full_retag_workspace"));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
+}
+
+void FileViewTree::FolderDropped(const wxArrayString& folders)
+{
+    clCommandEvent dummy;
+    dummy.SetStrings(folders);
+    OnFolderDropped(dummy);
 }

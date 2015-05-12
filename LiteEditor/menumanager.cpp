@@ -54,6 +54,8 @@ MenuManager::MenuManager(void)
     PushHandler(new BraceMatchHandler(XRCID("match_brace")));
     PushHandler(new FindReplaceHandler(wxID_FIND));
     PushHandler(new FindReplaceHandler(wxID_REPLACE));
+    PushHandler(new FindReplaceHandler(XRCID("ID_QUICK_ADD_NEXT")));
+    PushHandler(new FindReplaceHandler(XRCID("ID_QUICK_FIND_ALL")));
     PushHandler(new GotoHandler(XRCID("goto_linenumber")));
     PushHandler(new BookmarkHandler(XRCID("toggle_bookmark")));
     PushHandler(new BookmarkHandler(XRCID("next_bookmark")));

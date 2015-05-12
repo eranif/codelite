@@ -4958,6 +4958,43 @@ void LEditor::CommentBlockSelection(const wxString& commentBlockStart, const wxS
     ChooseCaretX();
 }
 
+void LEditor::QuickAddNext()
+{
+    if(!HasSelection()) return;
+    int count = GetSelections();
+    int start = GetSelectionNStart(count - 1);
+    int end = GetSelectionNEnd(count - 1);
+    if(GetSelections() == 1) {
+        ClearSelections();
+        SetSelection(start, end);
+        SetMainSelection(0);
+    }
+    
+    wxString findWhat = GetTextRange(start, end);
+    int where = this->FindText(end, GetLength(), findWhat);
+    if(where != wxNOT_FOUND) {
+        AddSelection(where, where + findWhat.length());
+        
+        // Center this line
+        int line = LineFromPos(where);
+        int linesOnScreen = LinesOnScreen();
+        if((line < GetFirstVisibleLine()) || (line > (GetFirstVisibleLine() + LinesOnScreen()))) {
+            // To place our line in the middle, the first visible line should be
+            // the: line - (linesOnScreen / 2)
+            int firstVisibleLine = line - (linesOnScreen / 2);
+            if(firstVisibleLine < 0) {
+                firstVisibleLine = 0;
+            }
+            EnsureVisible(firstVisibleLine);
+            SetFirstVisibleLine(firstVisibleLine);
+        }
+    }
+}
+
+void LEditor::QuickFindAll()
+{
+}
+
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------

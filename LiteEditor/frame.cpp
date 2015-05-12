@@ -350,6 +350,10 @@ EVT_MENU(XRCID("next_fif_match"), clMainFrame::OnNextFiFMatch)
 EVT_MENU(XRCID("previous_fif_match"), clMainFrame::OnPreviousFiFMatch)
 EVT_MENU(XRCID("grep_current_file"), clMainFrame::OnGrepWord)
 EVT_MENU(XRCID("grep_current_workspace"), clMainFrame::OnGrepWord)
+EVT_MENU(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::DispatchCommandEvent)
+EVT_MENU(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::DispatchCommandEvent)
+EVT_UPDATE_UI(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::OnFileExistUpdateUI)
 
 EVT_AUITOOLBAR_TOOL_DROPDOWN(XRCID("toggle_bookmark"), clMainFrame::OnShowBookmarkMenu)
 
@@ -2160,15 +2164,8 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
 
     // Do the default and pass this event to the Editor
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(!editor && event.GetId() != wxID_FIND) {
+    if(!editor && (event.GetId() != wxID_FIND)) {
         return;
-    }
-
-    if(event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
-        // keep the old id as int and override the value set in the event object
-        // to trick the event system
-        event.SetInt(event.GetId());
-        event.SetId(viewAsMenuItemID);
     }
     editor->OnMenuCommand(event);
 }
@@ -2200,13 +2197,7 @@ void clMainFrame::DispatchUpdateUIEvent(wxUpdateUIEvent& event)
 void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-
-    LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(!editor) {
-        event.Enable(false);
-    } else {
-        event.Enable(true);
-    }
+    event.Enable(GetMainBook()->GetActiveEditor(true) != NULL);
 }
 
 void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))

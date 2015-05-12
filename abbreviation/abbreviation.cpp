@@ -229,7 +229,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 {
     // get the active editor
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(!editor || !abbreviation.IsEmpty()) return false;
+    if(!editor || abbreviation.IsEmpty()) return false;
 
     // search for abbreviation that matches str
     // prepate list of abbreviations

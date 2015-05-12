@@ -737,6 +737,7 @@ clMainFrame::clMainFrame(wxWindow* pParent,
                                   this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                   wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu),
                                   NULL,
@@ -830,6 +831,7 @@ clMainFrame::~clMainFrame(void)
                                      this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                      wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu),
                                      NULL,
@@ -3552,11 +3554,11 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     const wxString ALL(wxT("All Solution File (*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace)|")
-                        wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
-                        wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
-                        wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
-                        wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
-                        wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
+                           wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
+                               wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
+                                   wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
+                                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
+                                           wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
 
     wxFileDialog dlg(this,
                      _("Open IDE Solution/Workspace File"),
@@ -5969,6 +5971,16 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
             } else {
                 CreateNativeToolbar16();
             }
+
+            // Update the build drop down menu
+            if(WorkspaceST::Get()->IsOpen()) {
+                wxMenu* buildDropDownMenu = new wxMenu;
+                DoCreateBuildDropDownMenu(buildDropDownMenu);
+                if(GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project"))) {
+                    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
+                }
+            }
+
         } else {
             GetToolBar()->Hide();
             GetToolBar()->Realize();
@@ -6094,12 +6106,12 @@ void clMainFrame::OnCloseTabsToTheRight(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e) 
-{ 
+void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e)
+{
     wxUnusedVar(e);
     LEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     editor->SetReadOnly(e.IsChecked());
     GetMainBook()->MarkEditorReadOnly(editor);
 }
@@ -6108,6 +6120,15 @@ void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)
 {
     LEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     e.Check(!editor->IsEditable());
+}
+
+void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)
+{
+    e.Skip();
+    
+    // Ensure that the workspace view is visible
+    DoEnableWorkspaceViewFlag(true, View_Show_Workspace_Tab);
+    GetWorkspacePane()->UpdateTabs();
 }

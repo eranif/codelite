@@ -556,6 +556,7 @@ protected:
     void OnActivateEditor(wxCommandEvent& e);
     void OnActiveEditorChanged(wxCommandEvent& e);
     void OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e);
+    void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnRefactoringCacheStatus(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnChangeActiveBookmarkType(wxCommandEvent& e);

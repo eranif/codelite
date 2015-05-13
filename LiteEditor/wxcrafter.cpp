@@ -1107,7 +1107,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     boxSizer515->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
     m_staticText523 = new wxStaticText(this, wxID_ANY, _("DRAG AND DROP\nA FOLDER HERE"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
-    m_staticText523->SetForegroundColour(wxColour(wxT("rgb(64,64,64)")));
+    m_staticText523->SetForegroundColour(wxColour(wxT("rgb(144,144,144)")));
     wxFont m_staticText523Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText523Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText523->SetFont(m_staticText523Font);
@@ -1121,7 +1121,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     
     boxSizer515->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
-    SetBackgroundColour(wxColour(wxT("rgb(208,208,208)")));
+    SetBackgroundColour(wxColour(wxT("rgb(224,224,224)")));
     SetName(wxT("DefaultWorkspacePageBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {

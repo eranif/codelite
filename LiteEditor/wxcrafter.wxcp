@@ -8741,7 +8741,7 @@
     }, {
      "type": "colour",
      "m_label": "Bg Colour:",
-     "colour": "(208,208,208)"
+     "colour": "(224,224,224)"
     }, {
      "type": "colour",
      "m_label": "Fg Colour:",
@@ -8882,7 +8882,7 @@
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",
-         "colour": "(64,64,64)"
+         "colour": "(144,144,144)"
         }, {
          "type": "font",
          "m_label": "Font:",

@@ -70,7 +70,18 @@ protected:
      * @brief read the type
      */
     wxString ReadType();
-
+    
+    /**
+     * @brief read the value that comes after the 'extends' keyword
+     */
+    wxString ReadExtends();
+    
+    /**
+     * @brief read the tokens after the implements keyword
+     */
+    void ReadImplements(wxArrayString& impls);
+    
+    
     /**
      * @brief parse 'use' statements (outer scope, for aliasing)
      */

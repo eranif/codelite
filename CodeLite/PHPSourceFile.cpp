@@ -661,16 +661,37 @@ wxString PHPSourceFile::MakeIdentifierAbsolute(const wxString& type)
     }
 
     if(typeWithNS.IsEmpty()) return "";
+
+    // A fully qualified type? don't touch it
+    if(typeWithNS.StartsWith("\\")) {
+        return typeWithNS;
+    }
+
+    // Handle 'use' cases:
+    // use Zend\Form; // create an alias entry: Form => Zend\Form
+    // class A extends Form\Form {}
+    // The extends should be expanded to Zend\Form\Form
+    if(typeWithNS.Contains("\\")) {
+        wxString scopePart = typeWithNS.BeforeLast('\\');
+        wxString className = typeWithNS.AfterLast('\\');
+        if(m_aliases.find(scopePart) != m_aliases.end()) {
+            typeWithNS.clear();
+            typeWithNS << m_aliases.find(scopePart)->second << "\\" << className;
+            // Remove duplicate NS separators
+            typeWithNS.Replace("\\\\", "\\");
+            if(!typeWithNS.StartsWith("\\")) {
+                typeWithNS << "\\";
+            }
+            return typeWithNS;
+        }
+    }
+
     // If the symbol contains namespace separator
     // Convert it full path and return (prepend namespace separator)
     if(typeWithNS.Contains("\\")) {
         if(!typeWithNS.StartsWith("\\")) {
             typeWithNS.Prepend("\\");
         }
-        return typeWithNS;
-    }
-
-    if(typeWithNS.StartsWith("\\")) {
         return typeWithNS;
     }
 
@@ -718,14 +739,16 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
         switch(token.type) {
         case kPHP_T_EXTENDS: {
             // inheritance
-            if(!ReadUntilFound(kPHP_T_IDENTIFIER, token)) return;
-            pClass->SetExtends(MakeIdentifierAbsolute(token.text));
+            wxString extends = ReadExtends();
+            if(extends.IsEmpty()) return;
+            // No need to call 'MakeIdentifierAbsolute' it was called internally by
+            // ReadType()
+            pClass->SetExtends(extends);
         } break;
         case kPHP_T_IMPLEMENTS: {
             wxArrayString implements;
-            if(!ReadCommaSeparatedIdentifiers('{', implements)) return;
+            ReadImplements(implements);
             pClass->SetImplements(implements);
-
         } break;
         case '{': {
             // entering the class body
@@ -1063,7 +1086,7 @@ void PHPSourceFile::OnCatch()
             break;
         }
     }
-    
+
     if(!varname.IsEmpty()) {
         // we found the variable
         PHPEntityBase::Ptr_t var(new PHPEntityVariable());
@@ -1071,10 +1094,61 @@ void PHPSourceFile::OnCatch()
         var->SetFilename(m_filename.GetFullPath());
         var->SetLine(token.lineNumber);
         var->Cast<PHPEntityVariable>()->SetTypeHint(MakeIdentifierAbsolute(typehint));
-        
+
         // add the variable to the current scope
         if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
             CurrentScope()->AddChild(var);
+        }
+    }
+}
+
+wxString PHPSourceFile::ReadExtends()
+{
+    wxString type;
+    phpLexerToken token;
+    while(NextToken(token)) {
+        if(token.type == kPHP_T_IDENTIFIER || token.type == kPHP_T_NS_SEPARATOR) {
+            type << token.text;
+        } else {
+            UngetToken(token);
+            break;
+        }
+    }
+    type = MakeIdentifierAbsolute(type);
+    return type;
+}
+
+void PHPSourceFile::ReadImplements(wxArrayString& impls)
+{
+    wxString type;
+    phpLexerToken token;
+    while(NextToken(token)) {
+        switch(token.type) {
+        case kPHP_T_IDENTIFIER:
+        case kPHP_T_NS_SEPARATOR:
+            type << token.text;
+            break;
+        case ',':
+            // More to come
+            if(!type.IsEmpty()) {
+                wxString fullyQualifiedType = MakeIdentifierAbsolute(type);
+                if(impls.Index(fullyQualifiedType) == wxNOT_FOUND) {
+                    impls.Add(fullyQualifiedType);
+                }
+                type.clear();
+            }
+            break;
+        default:
+            // unexpected token
+            if(!type.IsEmpty()) {
+                wxString fullyQualifiedType = MakeIdentifierAbsolute(type);
+                if(impls.Index(fullyQualifiedType) == wxNOT_FOUND) {
+                    impls.Add(fullyQualifiedType);
+                }
+                type.clear();
+            }
+            UngetToken(token);
+            return;
         }
     }
 }

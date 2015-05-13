@@ -41,6 +41,8 @@ struct FileViewItem {
 
 class FileViewTree : public wxTreeCtrl
 {
+    DECLARE_DYNAMIC_CLASS()
+    
     std::map<void*, bool> m_itemsToSort;
     wxArrayTreeItemIds m_draggedItems;
 

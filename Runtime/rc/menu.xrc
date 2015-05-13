@@ -334,21 +334,6 @@
             <label>&amp;Search</label>
             <style>wxMENU_TEAROFF</style>
             
-            <!-- Find In Files -->
-            
-            <object class="wxMenu" name="wxID_ANY">
-                <label>Find In Files</label>
-                <object class="wxMenuItem" name="find_in_files">
-                    <label>&amp;Find In Files...</label>
-                </object>
-                <object class="wxMenuItem" name="next_fif_match">
-                <label>Go to Next 'Find In File' Match</label>
-                </object>
-                <object class="wxMenuItem" name="previous_fif_match">
-                    <label>Go to Previous 'Find In File' Match</label>
-                </object>
-            </object>
-            
             <!-- Find and Replace -->
             
             <object class="wxMenu" name="wxID_ANY">
@@ -371,10 +356,31 @@
                 <object class="wxMenuItem" name="find_previous_at_caret">
                     <label>Find Word At Caret Backward</label>
                 </object>
+                <object class="wxMenuItem" name="wxID_SEPARATOR" />
+                <object class="wxMenuItem" name="ID_QUICK_ADD_NEXT" >
+                    <label>Quick Add Next</label>
+                </object>
+                <object class="wxMenuItem" name="ID_QUICK_FIND_ALL" >
+                    <label>Quick Find All</label>
+                </object>
             </object>
             
-            <!-- GOTO -->
+            <!-- Find In Files -->
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Find In Files</label>
+                <object class="wxMenuItem" name="find_in_files">
+                    <label>&amp;Find In Files...</label>
+                </object>
+                <object class="wxMenuItem" name="next_fif_match">
+                <label>Go to Next 'Find In File' Match</label>
+                </object>
+                <object class="wxMenuItem" name="previous_fif_match">
+                    <label>Go to Previous 'Find In File' Match</label>
+                </object>
+            </object>
             
+            
+            <!-- GOTO -->
             <object class="wxMenu" name="wxID_ANY">
                 <label>Go To</label>
                  <object class="wxMenuItem" name="wxID_BACKWARD">

@@ -408,7 +408,12 @@ public:
      * @brief center the line in the editor
      */
     void CenterLine(int line, int col = wxNOT_FOUND);
-
+    
+    /**
+     * @brief Center line if needed (i.e. only if the line is not visible)
+     */
+    void CenterLineIfNeeded(int line, bool force = false);
+    
     /**
      * @brief convert the editor indentation to spaces
      */
@@ -508,7 +513,17 @@ public:
     wxChar NextChar(const int& pos, int& foundPos);
 
     int FindString(const wxString& str, int flags, const bool down, long pos);
-
+    
+    /**
+     * @brief find the current selection and select without removing the current selection
+     */
+    void QuickAddNext();
+    
+    /**
+     * @brief find all occurances of the selected text and select
+     */
+    void QuickFindAll();
+    
     bool FindAndSelect();
     bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);

@@ -8853,7 +8853,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": [],
+       "m_styles": ["wxALIGN_CENTRE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
        "m_properties": [{
          "type": "winid",
@@ -8914,7 +8914,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Label:",
-         "m_value": "DROP A FOLDER HERE"
+         "m_value": "DRAG AND DROP\\nA FOLDER HERE"
         }, {
          "type": "string",
          "m_label": "Wrap:",
@@ -8965,7 +8965,7 @@
         }, {
          "type": "bool",
          "m_label": "Hidden",
-         "m_value": false
+         "m_value": true
         }, {
          "type": "bool",
          "m_label": "Disabled",

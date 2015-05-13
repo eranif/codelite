@@ -61,7 +61,7 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
 
     DoInitialize();
     m_timer = new wxTimer(this, TIMER_ID);
-    m_timer->Start(500, true);
+    m_timer->Start(50, true);
     SetName("OpenResourceDlg");
     WindowAttrManager::Load(this);
 
@@ -121,7 +121,7 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
 
         m_dvListCtrl->DeleteAllItems();
         if(m_lastFilter.IsEmpty()) {
-            m_timer->Start(500, true);
+            m_timer->Start(50, true);
             return;
         }
 
@@ -136,7 +136,7 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
         allVec.insert(allVec.end(), m_resources.begin(), m_resources.end());
         DoPopulateListCtrl(allVec);
     }
-    m_timer->Start(500, true);
+    m_timer->Start(50, true);
 }
 
 void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)

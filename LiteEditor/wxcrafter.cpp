@@ -1106,7 +1106,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     
     boxSizer515->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText523 = new wxStaticText(this, wxID_ANY, _("DROP A FOLDER HERE"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText523 = new wxStaticText(this, wxID_ANY, _("DRAG AND DROP\nA FOLDER HERE"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
     m_staticText523->SetForegroundColour(wxColour(wxT("rgb(64,64,64)")));
     wxFont m_staticText523Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText523Font.SetWeight(wxFONTWEIGHT_BOLD);
@@ -1115,6 +1115,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
     boxSizer515->Add(m_staticText523, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_staticBitmap521 = new wxStaticBitmap(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("target-200")), wxDefaultPosition, wxSize(-1,-1), 0 );
+    m_staticBitmap521->Hide();
     
     boxSizer515->Add(m_staticBitmap521, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

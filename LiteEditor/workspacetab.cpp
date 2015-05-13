@@ -327,7 +327,8 @@ void WorkspaceTab::OnProjectRemoved(clCommandEvent& e)
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
-struct wxStringSorter {
+struct wxStringSorter
+{
     bool operator()(WorkspaceConfigurationPtr one, WorkspaceConfigurationPtr two) const
     {
         return one->GetName().Lower().CmpNoCase(two->GetName().Lower()) < 0;
@@ -521,5 +522,5 @@ void WorkspaceTab::DoConfigChanged()
 void WorkspaceTab::OnFolderDropped(clCommandEvent& event)
 {
     // pass it on to the tree view
-    m_fileView->GetEventHandler()->ProcessEvent(event);
+    m_fileView->CallAfter(&FileViewTree::FolderDropped, event.GetStrings());
 }

@@ -350,6 +350,10 @@ EVT_MENU(XRCID("next_fif_match"), clMainFrame::OnNextFiFMatch)
 EVT_MENU(XRCID("previous_fif_match"), clMainFrame::OnPreviousFiFMatch)
 EVT_MENU(XRCID("grep_current_file"), clMainFrame::OnGrepWord)
 EVT_MENU(XRCID("grep_current_workspace"), clMainFrame::OnGrepWord)
+EVT_MENU(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::DispatchCommandEvent)
+EVT_MENU(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::DispatchCommandEvent)
+EVT_UPDATE_UI(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::OnFileExistUpdateUI)
 
 EVT_AUITOOLBAR_TOOL_DROPDOWN(XRCID("toggle_bookmark"), clMainFrame::OnShowBookmarkMenu)
 
@@ -733,6 +737,7 @@ clMainFrame::clMainFrame(wxWindow* pParent,
                                   this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                   wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu),
                                   NULL,
@@ -826,6 +831,7 @@ clMainFrame::~clMainFrame(void)
                                      this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                      wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu),
                                      NULL,
@@ -2160,15 +2166,8 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
 
     // Do the default and pass this event to the Editor
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(!editor && event.GetId() != wxID_FIND) {
+    if(!editor && (event.GetId() != wxID_FIND)) {
         return;
-    }
-
-    if(event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
-        // keep the old id as int and override the value set in the event object
-        // to trick the event system
-        event.SetInt(event.GetId());
-        event.SetId(viewAsMenuItemID);
     }
     editor->OnMenuCommand(event);
 }
@@ -2200,13 +2199,7 @@ void clMainFrame::DispatchUpdateUIEvent(wxUpdateUIEvent& event)
 void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-
-    LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if(!editor) {
-        event.Enable(false);
-    } else {
-        event.Enable(true);
-    }
+    event.Enable(GetMainBook()->GetActiveEditor(true) != NULL);
 }
 
 void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -3561,11 +3554,11 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     const wxString ALL(wxT("All Solution File (*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace)|")
-                        wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
-                        wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
-                        wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
-                        wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
-                        wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
+                           wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
+                               wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
+                                   wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
+                                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
+                                           wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
 
     wxFileDialog dlg(this,
                      _("Open IDE Solution/Workspace File"),
@@ -5978,6 +5971,16 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
             } else {
                 CreateNativeToolbar16();
             }
+
+            // Update the build drop down menu
+            if(WorkspaceST::Get()->IsOpen()) {
+                wxMenu* buildDropDownMenu = new wxMenu;
+                DoCreateBuildDropDownMenu(buildDropDownMenu);
+                if(GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project"))) {
+                    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
+                }
+            }
+
         } else {
             GetToolBar()->Hide();
             GetToolBar()->Realize();
@@ -6103,12 +6106,12 @@ void clMainFrame::OnCloseTabsToTheRight(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e) 
-{ 
+void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e)
+{
     wxUnusedVar(e);
     LEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     editor->SetReadOnly(e.IsChecked());
     GetMainBook()->MarkEditorReadOnly(editor);
 }
@@ -6117,6 +6120,15 @@ void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)
 {
     LEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     e.Check(!editor->IsEditable());
+}
+
+void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)
+{
+    e.Skip();
+    
+    // Ensure that the workspace view is visible
+    DoEnableWorkspaceViewFlag(true, View_Show_Workspace_Tab);
+    GetWorkspacePane()->UpdateTabs();
 }

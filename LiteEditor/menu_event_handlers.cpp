@@ -213,6 +213,11 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
         } else if ( event.GetId() == wxID_REPLACE ) {
             editor->DoFindAndReplace(true);
 
+        } else if(event.GetId() == XRCID("ID_QUICK_ADD_NEXT")) {
+            editor->QuickAddNext();
+            
+        } else if(event.GetId() == XRCID("ID_QUICK_FIND_ALL")) {
+            editor->QuickFindAll();
         }
 
     } else if ( event.GetId() == wxID_FIND ) {

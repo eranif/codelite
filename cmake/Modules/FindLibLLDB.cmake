@@ -11,7 +11,7 @@ if (UNIX)
                      /usr/lib/llvm-3.4/lib
                      /usr/lib/llvm-3.3/lib
                      # For fedora
-                     /usr/lib32/llvm
+                     /usr/lib/llvm
                      /usr/lib64/llvm
                      ${CMAKE_INSTALL_LIBDIR})
 

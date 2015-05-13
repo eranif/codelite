@@ -90,11 +90,19 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     m_sdbSizer2->AddButton(m_button127);
     m_sdbSizer2->Realize();
     
+    SetName(wxT("_ImageExportDialog"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(_ImageExportDialog::OnInit), NULL, this);
     m_button29->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ImageExportDialog::OnBowseClick), NULL, this);
@@ -123,11 +131,12 @@ _ThumbPane::_ThumbPane(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
+    SetName(wxT("_ThumbPane"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
 }
 
 _ThumbPane::~_ThumbPane()
@@ -151,7 +160,7 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     fgSizer3->AddGrowableRow(1);
     this->SetSizer(fgSizer3);
     
-    m_auibar167 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar167 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar167->SetToolBitmapSize(wxSize(16,16));
     
     fgSizer3->Add(m_auibar167, 0, wxEXPAND, 5);
@@ -228,7 +237,7 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     m_scintillaSQL->SetKeyWords(3, wxT(""));
     m_scintillaSQL->SetKeyWords(4, wxT(""));
     
-    bSizer25->Add(m_scintillaSQL, 1, wxALL|wxEXPAND, 5);
+    bSizer25->Add(m_scintillaSQL, 1, wxALL|wxEXPAND, 2);
     
     m_panel14 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_splitter1->SplitHorizontally(m_panel13, m_panel14, 163);
@@ -245,17 +254,18 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     #endif
     m_gridTable->EnableEditing(true);
     
-    bSizer24->Add(m_gridTable, 1, wxALL|wxEXPAND, 5);
+    bSizer24->Add(m_gridTable, 1, wxALL|wxEXPAND, 2);
     
     m_labelStatus = new wxStaticText(m_panel14, wxID_ANY, _("Result:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     
+    SetName(wxT("_SqlCommandPanel"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
     this->Connect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
@@ -332,11 +342,19 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer9->Add(m_button24, 0, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("_AdapterSelectDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_btnMySql->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnMysqlClick), NULL, this);
     m_btnSqlite->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_AdapterSelectDlg::OnSqliteClick), NULL, this);
@@ -374,11 +392,12 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     bSizer28->Add(m_treeDatabases, 1, wxEXPAND, 5);
     
+    SetName(wxT("_DbViewerPanel"));
     SetSizeHints(200,100);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_treeDatabases->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(_DbViewerPanel::OnDnDStart), NULL, this);
     m_treeDatabases->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(_DbViewerPanel::OnItemActivate), NULL, this);
@@ -410,11 +429,12 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     this->SetSizer(bSizer4);
     
     m_notebook2 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+    m_notebook2->SetName(wxT("m_notebook2"));
     
     bSizer4->Add(m_notebook2, 1, wxALL|wxEXPAND, 5);
     
     m_Sqlite = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    m_notebook2->AddPage(m_Sqlite, _("Sqlite"), false);
+    m_notebook2->AddPage(m_Sqlite, _("Sqlite"), true);
     
     wxBoxSizer* bSizer27 = new wxBoxSizer(wxVERTICAL);
     m_Sqlite->SetSizer(bSizer27);
@@ -431,9 +451,10 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer41->Add(m_staticText11, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_filePickerSqlite = new wxFilePickerCtrl(m_Sqlite, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("All Files (*)|*|Database file (*.sqlite;*.tags;*.db)|*.sqlite;*.tags;*.db"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+    m_filePickerSqlite = new wxFilePickerCtrl(m_Sqlite, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All Files (*)|*|Database file (*.sqlite;*.tags;*.db)|*.sqlite;*.tags;*.db"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+    m_filePickerSqlite->SetFocus();
     
-    fgSizer41->Add(m_filePickerSqlite, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer41->Add(m_filePickerSqlite, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_listCtrlRecentFiles = new wxListCtrl(m_Sqlite, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
     
@@ -442,19 +463,15 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     m_MySqlPanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_MySqlPanel, _("MySql"), false);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 1, 0, 0);
-    fgSizer3->SetFlexibleDirection( wxBOTH );
-    fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer3->AddGrowableCol(0);
-    fgSizer3->AddGrowableRow(1);
-    m_MySqlPanel->SetSizer(fgSizer3);
+    wxBoxSizer* boxSizer182 = new wxBoxSizer(wxVERTICAL);
+    m_MySqlPanel->SetSizer(boxSizer182);
     
     wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
     
-    fgSizer3->Add(fgSizer4, 1, wxEXPAND, 5);
+    boxSizer182->Add(fgSizer4, 1, wxEXPAND, 5);
     
     m_staticText10 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Connection name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -506,14 +523,10 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer4->Add(m_txPassword, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
-    
-    fgSizer3->Add(bSizer8, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
-    
     wxArrayString m_listBox2Arr;
     m_listBox2 = new wxListBox(m_MySqlPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,100), m_listBox2Arr, 0);
     
-    bSizer8->Add(m_listBox2, 1, wxTOP|wxEXPAND, 5);
+    boxSizer182->Add(m_listBox2, 1, wxALL|wxEXPAND, 5);
     
     m_PostgrePanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_PostgrePanel, _("PostgreSQL"), false);
@@ -613,11 +626,28 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer28->Add(m_button35, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook2)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook2);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook2);
+    }
+    #endif
+    
+    SetName(wxT("_DBSettingsDialog"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_listCtrlRecentFiles->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(_DBSettingsDialog::OnItemActivated), NULL, this);
     m_listCtrlRecentFiles->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(_DBSettingsDialog::OnItemSelected), NULL, this);
@@ -680,11 +710,12 @@ _ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     wxBoxSizer* m_wxsfSizer = new wxBoxSizer(wxVERTICAL);
     m_wxsfPanel->SetSizer(m_wxsfSizer);
     
+    SetName(wxT("_ErdPanel"));
     SetSizeHints(640,480);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(_ErdPanel::OnMouseWheel), NULL, this);
     
@@ -743,28 +774,28 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     fgSizer12->Add(gbSizer1, 1, wxEXPAND, 5);
     
     wxArrayString m_radioRelationArr;
-    m_radioRelationArr.Add(wxT("N :1"));
-    m_radioRelationArr.Add(wxT("N : M"));
+    m_radioRelationArr.Add(_("N :1"));
+    m_radioRelationArr.Add(_("N : M"));
     m_radioRelation = new wxRadioBox(this, wxID_ANY, _("Relation"), wxDefaultPosition, wxSize(-1, -1), m_radioRelationArr, 1, wxRA_SPECIFY_ROWS);
     m_radioRelation->SetSelection(0);
     
     gbSizer1->Add(m_radioRelation, wxGBPosition(0,0), wxGBSpan(1,2), wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
     wxArrayString m_radioOnDeleteArr;
-    m_radioOnDeleteArr.Add(wxT("restrict"));
-    m_radioOnDeleteArr.Add(wxT("cascade"));
-    m_radioOnDeleteArr.Add(wxT("set null"));
-    m_radioOnDeleteArr.Add(wxT("no action"));
+    m_radioOnDeleteArr.Add(_("restrict"));
+    m_radioOnDeleteArr.Add(_("cascade"));
+    m_radioOnDeleteArr.Add(_("set null"));
+    m_radioOnDeleteArr.Add(_("no action"));
     m_radioOnDelete = new wxRadioBox(this, wxID_ANY, _("OnDelete"), wxDefaultPosition, wxSize(-1, -1), m_radioOnDeleteArr, 1, wxRA_SPECIFY_COLS);
     m_radioOnDelete->SetSelection(0);
     
     gbSizer1->Add(m_radioOnDelete, wxGBPosition(1,0), wxGBSpan(1,1), wxALL, 5);
     
     wxArrayString m_radioOnUpdateArr;
-    m_radioOnUpdateArr.Add(wxT("restrict"));
-    m_radioOnUpdateArr.Add(wxT("cascade"));
-    m_radioOnUpdateArr.Add(wxT("set null"));
-    m_radioOnUpdateArr.Add(wxT("no action"));
+    m_radioOnUpdateArr.Add(_("restrict"));
+    m_radioOnUpdateArr.Add(_("cascade"));
+    m_radioOnUpdateArr.Add(_("set null"));
+    m_radioOnUpdateArr.Add(_("no action"));
     m_radioOnUpdate = new wxRadioBox(this, wxID_ANY, _("OnUpdate"), wxDefaultPosition, wxSize(-1, -1), m_radioOnUpdateArr, 1, wxRA_SPECIFY_COLS);
     m_radioOnUpdate->SetSelection(0);
     
@@ -811,11 +842,19 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer12->Add(m_btnOK, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("_CreateForeignKey"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_btnCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CreateForeignKey::OnCancelClick), NULL, this);
     m_btnOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CreateForeignKey::OnOKClick), NULL, this);
@@ -865,12 +904,20 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
     
     bSizer13->Add(m_button18, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT, 5);
     
+    SetName(wxT("_LogDialog"));
     SetMinSize( wxSize(640,460) );
     SetSizeHints(640,460);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_button18->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_LogDialog::OnCloseClick), NULL, this);
     m_button18->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_LogDialog::OnCloseUI), NULL, this);
@@ -971,12 +1018,20 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
     
     fgSizer14->Add(m_btnOK, 0, wxALL|wxALIGN_RIGHT, 5);
     
+    SetName(wxT("_ViewSettings"));
     SetMinSize( wxSize(650,450) );
     SetSizeHints(650,450);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_btnOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ViewSettings::OnOKClick), NULL, this);
     
@@ -1033,7 +1088,7 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     
     fgSizer19->Add(m_staticText28, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1, -1), wxDIRP_DEFAULT_STYLE);
+    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1, -1), wxDIRP_DEFAULT_STYLE);
     
     fgSizer19->Add(m_dirPicker, 0, wxALL|wxEXPAND, 5);
     
@@ -1095,11 +1150,19 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     
     bSizer20->Add(m_button25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
+    SetName(wxT("_ClassGenerateDialog"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_btnBrowseVirtualDir->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ClassGenerateDialog::OnBtnBrowseClick), NULL, this);
     m_button26->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_ClassGenerateDialog::OnCancelClick), NULL, this);
@@ -1179,12 +1242,20 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer10->Add(m_button14, 0, wxALL|wxALIGN_RIGHT, 5);
     
+    SetName(wxT("_CodePreviewDialog"));
     SetMinSize( wxSize(500,470) );
     SetSizeHints(500,470);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_button14->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_CodePreviewDialog::OnOKClick), NULL, this);
     
@@ -1342,20 +1413,20 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     flexGridSizer147->Add(m_choiceRefCol, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_radioOnUpdateArr;
-    m_radioOnUpdateArr.Add(wxT("restrict"));
-    m_radioOnUpdateArr.Add(wxT("cascade"));
-    m_radioOnUpdateArr.Add(wxT("set null"));
-    m_radioOnUpdateArr.Add(wxT("no action"));
+    m_radioOnUpdateArr.Add(_("restrict"));
+    m_radioOnUpdateArr.Add(_("cascade"));
+    m_radioOnUpdateArr.Add(_("set null"));
+    m_radioOnUpdateArr.Add(_("no action"));
     m_radioOnUpdate = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On update"), wxDefaultPosition, wxSize(-1,-1), m_radioOnUpdateArr, 1, wxRA_SPECIFY_ROWS);
     m_radioOnUpdate->SetSelection(0);
     
     boxSizer163->Add(m_radioOnUpdate, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
     wxArrayString m_radioOnDeleteArr;
-    m_radioOnDeleteArr.Add(wxT("restrict"));
-    m_radioOnDeleteArr.Add(wxT("cascade"));
-    m_radioOnDeleteArr.Add(wxT("set null"));
-    m_radioOnDeleteArr.Add(wxT("no action"));
+    m_radioOnDeleteArr.Add(_("restrict"));
+    m_radioOnDeleteArr.Add(_("cascade"));
+    m_radioOnDeleteArr.Add(_("set null"));
+    m_radioOnDeleteArr.Add(_("no action"));
     m_radioOnDelete = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On delete"), wxDefaultPosition, wxSize(-1,-1), m_radioOnDeleteArr, 1, wxRA_SPECIFY_ROWS);
     m_radioOnDelete->SetSelection(0);
     
@@ -1377,12 +1448,20 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     
     boxSizer49->Add(m_button53, 0, wxALL, 5);
     
+    SetName(wxT("_TableSettings"));
     SetMinSize( wxSize(600,-1) );
     SetSizeHints(600,700);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(_TableSettings::OnInit), NULL, this);
     this->Connect(XRCID("IDT_DBE_TS_ADD_COLUMN"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_TableSettings::OnAddColumnClick), NULL, this);

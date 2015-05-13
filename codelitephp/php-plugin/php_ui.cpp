@@ -78,7 +78,7 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer2);
     
-    m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxWANTS_CHARS|wxTAB_TRAVERSAL);
+    m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(300,100), wxWANTS_CHARS|wxTAB_TRAVERSAL);
     
     bSizer2->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
@@ -641,7 +641,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_staticText457Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText457->SetFont(m_staticText457Font);
     
-    bSizer21->Add(m_staticText457, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer21->Add(m_staticText457, 0, wxALL|wxALIGN_LEFT, 5);
     
     m_choicebook1 = new wxChoicebook(m_panel43, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
     m_choicebook1->SetName(wxT("m_choicebook1"));
@@ -1086,7 +1086,7 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer5->Add(m_gaugeParseProgress, 0, wxALL|wxEXPAND, 2);
     
-    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES);
+    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxBORDER_STATIC);
     
     bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, 2);
     

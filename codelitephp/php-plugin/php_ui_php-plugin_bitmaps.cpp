@@ -496,6 +496,6 @@ void wxCF01InitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$.._resources_refresh.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$.._resources_php-project-settings.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$.._resources_xdebug-16.png"), xml_res_file_12, xml_res_size_12, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$_home_david_devel_git_CL_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"), xml_res_file_13, xml_res_size_13, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/php_ui_php-plugin_bitmaps.cpp$_home_david_devel_git_CL_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$C__src_codelite_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"), xml_res_file_13, xml_res_size_13, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/php_ui_php-plugin_bitmaps.cpp$C__src_codelite_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"));
 }

@@ -133,7 +133,7 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     m_staticText8Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText8->SetFont(m_staticText8Font);
     
-    bSizer8->Add(m_staticText8, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer8->Add(m_staticText8, 0, wxALL, 5);
     
     m_checkBoxInline = new wxCheckBox(this, wxID_ANY, _("Inline class"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxInline->SetValue(false);
@@ -164,7 +164,7 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     m_staticText7 = new wxStaticText(m_collPane2->GetPane(), wxID_ANY, _("Inherits:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    boxSizer6->Add(m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer6->Add(m_staticText7, 0, wxALL, 5);
     
     wxBoxSizer* bSizer15 = new wxBoxSizer(wxHORIZONTAL);
     

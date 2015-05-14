@@ -27,6 +27,12 @@
 #include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class AbbreviationsSettingsBase : public wxDialog
 {
@@ -65,6 +71,14 @@ protected:
     virtual void OnHelp(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxBannerWindow* GetBanner4() { return m_banner4; }
+    wxAuiToolBar* GetAuibar9() { return m_auibar9; }
+    wxListBox* GetListBoxAbbreviations() { return m_listBoxAbbreviations; }
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStyledTextCtrl* GetStc() { return m_stc; }
+    wxCheckBox* GetCheckBoxImmediateInsert() { return m_checkBoxImmediateInsert; }
+    wxStaticLine* GetStaticline1() { return m_staticline1; }
     AbbreviationsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Abbreviations Settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AbbreviationsSettingsBase();
 };

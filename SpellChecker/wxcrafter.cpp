@@ -32,9 +32,9 @@ SpellCheckerSettings_base::SpellCheckerSettings_base(wxWindow* parent, wxWindowI
     
     m_staticText2 = new wxStaticText(this, wxID_ANY, _("Dictionary path:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer51->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer51->Add(m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_pDirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1, -1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_pDirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1, -1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_pDirPicker->SetToolTip(_("Select the location of the installed dictionaries"));
     
     bSizer51->Add(m_pDirPicker, 1, wxALL, 2);
@@ -120,11 +120,19 @@ SpellCheckerSettings_base::SpellCheckerSettings_base(wxWindow* parent, wxWindowI
     m_stdBtnSizer12->AddButton(m_buttonCancel);
     m_stdBtnSizer12->Realize();
     
+    SetName(wxT("SpellCheckerSettings_base"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(SpellCheckerSettings_base::OnInitDialog), NULL, this);
     m_pDirPicker->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(SpellCheckerSettings_base::OnDirChanged), NULL, this);
@@ -223,11 +231,19 @@ CorrectSpellingDlg_base::CorrectSpellingDlg_base(wxWindow* parent, wxWindowID id
     
     bSizer12->Add(m_button3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
+    SetName(wxT("CorrectSpellingDlg_base"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(CorrectSpellingDlg_base::OnInitDialog), NULL, this);
     m_pSuggestions->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CorrectSpellingDlg_base::OnSuggestionSelected), NULL, this);

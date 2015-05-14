@@ -87,7 +87,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     // Add our UI
     // create tab (possibly detached)
     m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetSimpleBook(), m_mgr);
-    m_mgr->GetWorkspaceView()->AddPage(m_workspaceView, "PHP");
+    m_mgr->GetWorkspaceView()->AddPage(m_workspaceView, PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
     
     PHPCodeCompletion::Instance()->SetManager(m_mgr);
     PHPEditorContextMenu::Instance()->ConnectEvents();
@@ -268,7 +268,7 @@ void PhpPlugin::UnPlug()
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
 
     // Remove the PHP tab
-    m_mgr->GetWorkspaceView()->RemovePage("PHP");
+    m_mgr->GetWorkspaceView()->RemovePage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
 
     // Close any open workspace
     if(PHPWorkspace::Get()->IsOpen()) {
@@ -406,7 +406,7 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
     m_workspaceView->LoadWorkspace();
 
     // Select the 'PHP' tab
-    m_mgr->GetWorkspaceView()->SelectPage("PHP");
+    m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
 
     // and finally, request codelite to keep this workspace in the recently opened workspace list
     m_mgr->AddWorkspaceToRecentlyUsedList(filename);

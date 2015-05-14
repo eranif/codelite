@@ -37,7 +37,7 @@ void DefaultWorkspacePage::DoDropFolders(const wxArrayString& folders)
         if(book->GetPageText(i) == "Default") continue;
 
         wxString title;
-        title << book->GetPageText(i) << " Workspace";
+        title << book->GetPageText(i);
         pages.insert(std::make_pair(title, book->GetPage(i)));
         options.Add(title);
         if(selection == wxNOT_FOUND) {
@@ -46,7 +46,7 @@ void DefaultWorkspacePage::DoDropFolders(const wxArrayString& folders)
     }
 
     wxString userSelection =
-        ::wxGetSingleChoice("", _("Open folder as..."), options, selection, EventNotifier::Get()->TopFrame());
+        ::wxGetSingleChoice(_("Choose a View"), _("Open folder"), options, selection, EventNotifier::Get()->TopFrame());
 
     if(pages.count(userSelection) == 0) return; // user cancelled
     wxWindow* page = pages.find(userSelection)->second;

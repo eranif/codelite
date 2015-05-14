@@ -23,7 +23,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
+    boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
@@ -34,7 +34,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_splitterPage39 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
+    boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage39->SetSizer(boxSizer42);
     
     wxArrayString m_scopeArr;
@@ -45,7 +45,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     m_splitterPage41 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage39, m_splitterPage41, 200);
     
-    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
+    boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage41->SetSizer(boxSizer43);
     
     wxArrayString m_funcArr;
@@ -82,7 +82,7 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer47 = new wxBoxSizer(wxVERTICAL);
+    boxSizer47 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer47);
     
     m_auibar48 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_VERTICAL);
@@ -285,7 +285,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer117 = new wxBoxSizer(wxVERTICAL);
+    boxSizer117 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer117);
     
     m_banner125 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
@@ -301,7 +301,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer117->Add(m_filePicker, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer117->Add(boxSizer129, 1, wxEXPAND, 5);
     
@@ -315,7 +315,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 50, wxALIGN_CENTER);
     m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
+    boxSizer131 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer129->Add(boxSizer131, 0, wxEXPAND, 5);
     
@@ -327,7 +327,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer131->Add(m_button135, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer117->Add(boxSizer119, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -371,7 +371,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer149 = new wxBoxSizer(wxVERTICAL);
+    boxSizer149 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer149);
     
     m_scrollWin247 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(600,600), wxHSCROLL|wxVSCROLL);
@@ -379,21 +379,21 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer149->Add(m_scrollWin247, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
+    boxSizer249 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin247->SetSizer(boxSizer249);
     
     m_panel191 = new wxPanel(m_scrollWin247, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     boxSizer249->Add(m_panel191, 1, wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
+    boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);
     
     m_staticBitmap161 = new wxStaticBitmap(m_panel191, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("codelite-logo-no-bg")), wxDefaultPosition, wxSize(-1,-1), 0 );
     
     boxSizer195->Add(m_staticBitmap161, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_TOP, 5);
     
-    wxGridSizer* gridSizer235 = new wxGridSizer(3, 2, 0, 0);
+    gridSizer235 = new wxGridSizer(3, 2, 0, 0);
     
     boxSizer195->Add(gridSizer235, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -472,7 +472,7 @@ FileExplorerBase::FileExplorerBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer262 = new wxBoxSizer(wxVERTICAL);
+    boxSizer262 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer262);
     
     m_genericDirCtrl = new wxGenericDirCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxDIRCTRL_MULTIPLE|wxDIRCTRL_SHOW_FILTERS);
@@ -511,7 +511,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -521,12 +521,12 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     mainSizer->Add(m_simpleBook, 1, wxEXPAND, 5);
     
     m_panelCxx = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_simpleBook->AddPage(m_panelCxx, _("C++"), true);
+    m_simpleBook->AddPage(m_panelCxx, _("C++ Workspace"), true);
     
-    wxBoxSizer* boxSizer505 = new wxBoxSizer(wxVERTICAL);
+    boxSizer505 = new wxBoxSizer(wxVERTICAL);
     m_panelCxx->SetSizer(boxSizer505);
     
-    wxBoxSizer* boxSizer511 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer511 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer505->Add(boxSizer511, 0, wxEXPAND, 5);
     
@@ -539,7 +539,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_splitterPage308 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* boxSizer314 = new wxBoxSizer(wxVERTICAL);
+    boxSizer314 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage308->SetSizer(boxSizer314);
     
     wxArrayString m_choiceActiveProjectArr;
@@ -551,7 +551,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_splitterPage312 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage308, m_splitterPage312, 0);
     
-    wxBoxSizer* boxSizer316 = new wxBoxSizer(wxVERTICAL);
+    boxSizer316 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage312->SetSizer(boxSizer316);
     
     wxArrayString m_workspaceConfigArr;
@@ -627,14 +627,14 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600,600), wxTAB_TRAVERSAL);
     
     mainSizer->Add(m_mainPanel, 1, wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer324 = new wxBoxSizer(wxVERTICAL);
+    boxSizer324 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer324);
     
     m_toolbar = this->CreateToolBar(wxTB_NOALIGN|wxTB_FLAT, wxID_ANY);
@@ -698,7 +698,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPageTemplate = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageTemplate);
     
-    wxBoxSizer* boxSizer383 = new wxBoxSizer(wxVERTICAL);
+    boxSizer383 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageTemplate->SetSizer(boxSizer383);
     
     m_banner386 = new wxBannerWindow(m_wizardPageTemplate, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -722,7 +722,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPageDetails = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageDetails);
     
-    wxBoxSizer* boxSizer396 = new wxBoxSizer(wxVERTICAL);
+    boxSizer396 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageDetails->SetSizer(boxSizer396);
     
     m_banner398 = new wxBannerWindow(m_wizardPageDetails, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -733,7 +733,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer396->Add(m_banner398, 0, wxALL|wxEXPAND, 2);
     
-    wxFlexGridSizer* flexGridSizer15 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer15 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer15->SetFlexibleDirection( wxBOTH );
     flexGridSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer15->AddGrowableCol(1);
@@ -757,7 +757,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     flexGridSizer15->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* boxSizer30 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer30 = new wxBoxSizer(wxHORIZONTAL);
     
     flexGridSizer15->Add(boxSizer30, 0, wxEXPAND, 5);
     
@@ -795,7 +795,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
     
-    wxBoxSizer* boxSizer388 = new wxBoxSizer(wxVERTICAL);
+    boxSizer388 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageToolchain->SetSizer(boxSizer388);
     
     m_banner390 = new wxBannerWindow(m_wizardPageToolchain, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -806,7 +806,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer388->Add(m_banner390, 0, wxALL|wxEXPAND, 2);
     
-    wxFlexGridSizer* flexGridSizer412 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer412 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer412->SetFlexibleDirection( wxBOTH );
     flexGridSizer412->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer412->AddGrowableCol(1);
@@ -881,7 +881,7 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer424 = new wxBoxSizer(wxVERTICAL);
+    boxSizer424 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer424);
     
     m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
@@ -1037,10 +1037,10 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer471 = new wxBoxSizer(wxVERTICAL);
+    boxSizer471 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer471);
     
-    wxFlexGridSizer* flexGridSizer483 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer483 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer483->SetFlexibleDirection( wxBOTH );
     flexGridSizer483->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer483->AddGrowableCol(1);
@@ -1101,7 +1101,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer515 = new wxBoxSizer(wxVERTICAL);
+    boxSizer515 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer515);
     
     boxSizer515->Add(0, 0, 1, wxALL|wxEXPAND, 5);

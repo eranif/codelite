@@ -322,7 +322,7 @@ TreeItemInfo PluginManager::GetSelectedTreeItemInfo(TreeType type)
     TreeItemInfo info;
     switch(type) {
     case TreeFileExplorer:
-        return clMainFrame::Get()->GetFileExplorer()->GetFileTree()->GetSelectedItemInfo();
+        return clMainFrame::Get()->GetFileExplorer()->GetItemInfo();
     case TreeFileView:
         return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->GetSelectedItemInfo();
     default:
@@ -334,7 +334,7 @@ wxTreeCtrl* PluginManager::GetTree(TreeType type)
 {
     switch(type) {
     case TreeFileExplorer:
-        return clMainFrame::Get()->GetFileExplorer()->GetFileTree()->Tree()->GetTreeCtrl();
+        return clMainFrame::Get()->GetFileExplorer()->GetTree();
     case TreeFileView:
         return clMainFrame::Get()->GetWorkspaceTab()->GetFileView();
     default:

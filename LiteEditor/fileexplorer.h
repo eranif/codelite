@@ -26,43 +26,30 @@
 #define FILEEXPLORER_H
 
 #include "wx/panel.h"
-#include "wx/choice.h"
 #include "theme_handler_helper.h"
-#include <wx/aui/auibar.h>
+#include <imanager.h>
+#include "clTreeCtrlPanel.h"
 
+class wxTreeCtrl;
+class clTreeCtrlPanel;
 class FileExplorerTab;
 
 class FileExplorer : public wxPanel
 {
 private:
-    FileExplorerTab *m_fileTree;
-    wxString m_caption;
-    bool m_isLinkedToEditor;
-    ThemeHandlerHelper *m_themeHelper;
+    clTreeCtrlPanel* m_view;
 
+    // FileExplorerTab *m_fileTree;
+    wxString m_caption;
+    ThemeHandlerHelper* m_themeHelper;
     void CreateGUIControls();
 
-    void OnLinkEditor(wxCommandEvent &e);
-    void OnCollapseAll(wxCommandEvent &e);
-    void OnGoHome(wxCommandEvent &e);
-    void OnShowFile(wxCommandEvent &e);
-    void OnShowFileUI(wxUpdateUIEvent &e);
-    void OnWorkspaceLoaded(wxCommandEvent &e);
-    void OnActiveEditorChanged(wxCommandEvent &e);
-    void OnBookmark(wxAuiToolBarEvent& event);
-    void OnGotoFolder(wxCommandEvent& event);
-    void OnFindInFiles(wxCommandEvent& event);
-    
 public:
-    FileExplorer(wxWindow *parent, const wxString &caption);
+    FileExplorer(wxWindow* parent, const wxString& caption);
     virtual ~FileExplorer();
-
-    const wxString &GetCaption() const {
-        return m_caption;
-    }
-    FileExplorerTab *GetFileTree() {
-        return m_fileTree;
-    }
+    const wxString& GetCaption() const { return m_caption; }
+    TreeItemInfo GetItemInfo() { return m_view->GetSelectedItemInfo(); }
+    wxTreeCtrl* GetTree() { return m_view->GetTreeCtrl(); }
 };
 
-#endif //FILEEXPLORER_H
+#endif // FILEEXPLORER_H

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef WXCRAFTER_BASE_CLASSES_H
-#define WXCRAFTER_BASE_CLASSES_H
+#ifndef CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
+#define CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -26,12 +26,22 @@
 #include <wx/filepicker.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/treectrl.h>
+#include "clFileViwerTreeCtrl.h"
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK EditDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer2;
     wxStyledTextCtrl* m_stc10;
+    wxBoxSizer* boxSizer4;
     wxButton* m_button6;
     wxButton* m_button8;
 
@@ -60,6 +70,7 @@ public:
         ID_VIEW_VRTICAL = 1008,
     };
 protected:
+    wxBoxSizer* boxSizer13;
     wxRibbonBar* m_ribbonBar;
     wxRibbonPage* m_ribbonPage43;
     wxRibbonPanel* m_ribbonPanel47;
@@ -70,10 +81,12 @@ protected:
     wxRibbonButtonBar* m_ribbonButtonBar123;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
+    wxBoxSizer* boxSizer111;
     wxFilePickerCtrl* m_filePickerLeft;
     wxStyledTextCtrl* m_stcLeft;
     wxStaticText* m_staticTextLeft;
     wxPanel* m_splitterPageRight;
+    wxBoxSizer* boxSizer113;
     wxFilePickerCtrl* m_filePickerRight;
     wxStyledTextCtrl* m_stcRight;
     wxStaticText* m_staticTextRight;
@@ -125,6 +138,7 @@ public:
 class WXDLLIMPEXP_SDK clGetTextFromUserBaseDialog : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer135;
     wxStaticText* m_staticTextCaption;
     wxTextCtrl* m_textCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer137;
@@ -138,6 +152,24 @@ public:
     wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
     clGetTextFromUserBaseDialog(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~clGetTextFromUserBaseDialog();
+};
+
+
+class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
+{
+protected:
+    wxBoxSizer* boxSizer151;
+    clFileViewerTreeCtrl* m_treeCtrl;
+
+protected:
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxTreeEvent& event) { event.Skip(); }
+
+public:
+    clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~clTreeCtrlPanelBase();
 };
 
 #endif

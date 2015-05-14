@@ -3778,7 +3778,7 @@
           }, {
            "type": "string",
            "m_label": "Label:",
-           "m_value": "C++"
+           "m_value": "C++ Workspace"
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",

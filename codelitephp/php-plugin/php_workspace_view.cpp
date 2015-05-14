@@ -35,6 +35,7 @@
 #include "php_configuration_data.h"
 #include <wx/msgdlg.h>
 #include "clWorkspaceView.h"
+#include "php_strings.h"
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -149,7 +150,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
         LoadWorkspace();
         
         // Ensure that the view is visible
-        m_mgr->GetWorkspaceView()->SelectPage("PHP");
+        m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
 
     } else {
         workspaceFileName = PHPWorkspace::Get()->GetFilename();
@@ -1389,5 +1390,5 @@ void PHPWorkspaceView::DoSetProjectActive(const wxString& projectName)
 void PHPWorkspaceView::OnWorkspaceLoaded(PHPEvent& event)
 {
     event.Skip();
-    m_mgr->GetWorkspaceView()->SelectPage("PHP"); // Ensure that the PHP view is selected
+    m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL); // Ensure that the PHP view is selected
 }

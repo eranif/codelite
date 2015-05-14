@@ -300,6 +300,12 @@
         <File Name="wxCodeCompletionBoxManager.h"/>
         <File Name="wxCodeCompletionBoxManager.cpp"/>
       </VirtualDirectory>
+      <VirtualDirectory Name="FileViewers">
+        <File Name="clTreeCtrlPanel.cpp"/>
+        <File Name="clTreeCtrlPanel.h"/>
+        <File Name="clFileViwerTreeCtrl.h"/>
+        <File Name="clFileViwerTreeCtrl.cpp"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

@@ -43,11 +43,6 @@ if(UNIX AND NOT APPLE)
         add_definitions(-fPIC)
     endif()
 
-
-
-    # Add RPATH
-    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-
     FILE(GLOB SRCS "*.cpp")
 
     # Define the output

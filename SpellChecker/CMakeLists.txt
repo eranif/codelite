@@ -67,9 +67,6 @@ else ()
         add_definitions(-Winvalid-pch)
     endif ( USE_PCH )
 
-    # Add RPATH
-    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-
     FILE(GLOB SRCS "*.cpp")
 
     # Define the output

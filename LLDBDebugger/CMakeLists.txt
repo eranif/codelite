@@ -71,11 +71,6 @@ if (WITH_LLDB MATCHES 1)
         add_definitions(-DWXUSINGDLL_CL)
         add_definitions(-DWXUSINGDLL_SDK)
 
-        # Add RPATH
-        if (UNIX)
-        set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-        endif (UNIX)
-
         ## By default, use the sources under the current folder
         FILE(GLOB PLUGIN_SRCS "*.cpp")
 

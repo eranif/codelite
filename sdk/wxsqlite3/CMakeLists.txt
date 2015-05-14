@@ -22,11 +22,6 @@ if ( USE_PCH )
 endif ( USE_PCH )
 include_directories(./include ../../sqlite3)
 
-# Add RPATH
-if (UNIX)
-    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-endif (UNIX)
-
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
     set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )

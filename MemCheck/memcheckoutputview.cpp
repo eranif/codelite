@@ -25,7 +25,11 @@ MemCheckOutputView::MemCheckOutputView(wxWindow* parent, MemCheckPlugin* plugin,
     , m_mgr(mgr)
     , pageValidator(&m_currentPage)
 {
-    m_dataViewCtrlErrors->SetExpanderColumn(m_dataViewCtrlErrors->GetColumn(GetColumnByName(wxT("Label"))));
+    int col = GetColumnByName(_("Label"));
+    if (col == wxNOT_FOUND) {
+        return;
+    }
+    m_dataViewCtrlErrors->SetExpanderColumn(m_dataViewCtrlErrors->GetColumn(col));
     m_listCtrlErrors->SetData(&m_filterResults);
 
     m_searchMenu = new wxMenu();
@@ -389,9 +393,14 @@ void MemCheckOutputView::SetCurrentItem(const wxDataViewItem& item)
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::SetCurrentItem()"));
 
     wxVariant variantBitmap;
+    int col = GetColumnByName(_("Current"));
+    if (col == wxNOT_FOUND) {
+        return;
+    }
+
     if(m_currentItem.IsOk()) {
         variantBitmap << wxXmlResource::Get()->LoadBitmap(wxT("memcheck_transparent"));
-        m_dataViewCtrlErrorsModel->ChangeValue(variantBitmap, m_currentItem, GetColumnByName(wxT("Current")));
+        m_dataViewCtrlErrorsModel->ChangeValue(variantBitmap, m_currentItem, col);
     }
 
     m_dataViewCtrlErrors->SetCurrentItem(item);
@@ -399,7 +408,7 @@ void MemCheckOutputView::SetCurrentItem(const wxDataViewItem& item)
     m_currentItem = item;
 
     variantBitmap << wxXmlResource::Get()->LoadBitmap(wxT("memcheck_current"));
-    m_dataViewCtrlErrorsModel->ChangeValue(variantBitmap, item, GetColumnByName(wxT("Current")));
+    m_dataViewCtrlErrorsModel->ChangeValue(variantBitmap, item, col);
 }
 
 wxDataViewItem MemCheckOutputView::GetAdjacentItem(const wxDataViewItem& item, bool forward = true)
@@ -473,8 +482,12 @@ void MemCheckOutputView::OnJumpToPrev(wxCommandEvent& event)
 }
 
 void MemCheckOutputView::MarkTree(const wxDataViewItem& item, bool checked)
-{
-    m_dataViewCtrlErrorsModel->ChangeValue(wxVariant(checked), item, GetColumnByName(wxT("Suppress")));
+{    
+    int col = GetColumnByName(_("Suppress"));
+    if (col == wxNOT_FOUND) {
+        return;
+    }
+    m_dataViewCtrlErrorsModel->ChangeValue(wxVariant(checked), item, col);
 
     if(m_dataViewCtrlErrorsModel->IsContainer(item)) {
         wxDataViewItemArray subItems;
@@ -491,14 +504,17 @@ void MemCheckOutputView::MarkTree(const wxDataViewItem& item, bool checked)
 void MemCheckOutputView::OnValueChanged(wxDataViewEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnValueChanged()"));
-
-    if(m_onValueChangedLocked || event.GetColumn() != (int)GetColumnByName(wxT("Suppress")))
+    int col = GetColumnByName(_("Suppress"));
+    if (col == wxNOT_FOUND) {
+        return;
+    }
+    if(m_onValueChangedLocked || event.GetColumn() != col)
         return;
 
     m_onValueChangedLocked = true;
 
     wxVariant variant;
-    m_dataViewCtrlErrorsModel->GetValue(variant, event.GetItem(), GetColumnByName(wxT("Suppress")));
+    m_dataViewCtrlErrorsModel->GetValue(variant, event.GetItem(), col);
 
     MarkTree(GetTopParent(event.GetItem()), variant.GetBool());
     variant.GetBool() ? ++m_markedErrorsCount : --m_markedErrorsCount;
@@ -655,8 +671,10 @@ void MemCheckOutputView::OnMarkedErrorsToClip(wxCommandEvent& event)
     wxVariant variant;
     wxDataViewItemArray items;
     m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
-    int supColumn = GetColumnByName(wxT("Suppress"));
-
+    int supColumn = GetColumnByName(_("Suppress"));
+    if (supColumn == wxNOT_FOUND) {
+        return;
+    }
     MemCheckErrorReferrer* errorRef;
     for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
         m_dataViewCtrlErrorsModel->GetValue(variant, *it, supColumn);
@@ -745,7 +763,10 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
                 wxVariant variant;
                 wxDataViewItemArray items;
                 m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
-                int supColumn = GetColumnByName(wxT("Suppress"));
+                int supColumn = GetColumnByName(_("Suppress"));
+                if (supColumn == wxNOT_FOUND) {
+                    return;
+                }
 
                 MemCheckErrorReferrer* errorRef;
                 for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {

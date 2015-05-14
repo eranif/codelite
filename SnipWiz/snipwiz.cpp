@@ -109,7 +109,7 @@ SnipWiz::SnipWiz(IManager* manager)
     : IPlugin(manager)
 {
     m_topWin = NULL;
-    m_longName = wxT("Snippet wizard");
+    m_longName = _("Snippet wizard");
     m_shortName = plugName;
     m_topWin = m_mgr->GetTheApp();
 

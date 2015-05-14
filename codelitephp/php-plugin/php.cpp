@@ -57,7 +57,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("The CodeLite Team"));
     info.SetName(wxT("PHP"));
-    info.SetDescription(wxT("Enable PHP support for codelite IDE"));
+    info.SetDescription(_("Enable PHP support for codelite IDE"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -75,7 +75,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 {
     m_lint.Reset(new PHPLint(this));
 
-    m_longName = wxT("PHP Plugin for the codelite IDE");
+    m_longName = _("PHP Plugin for the codelite IDE");
     m_shortName = wxT("PHP");
 
     // Instantiate the bitmaps, we do this so they will be populated in wxXmlResource

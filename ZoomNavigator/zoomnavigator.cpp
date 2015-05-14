@@ -61,7 +61,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("Brandon Captain"));
     info.SetName(wxT("ZoomNavigator"));
-    info.SetDescription(wxT("A dockable pane that shows a zoomed-out view of your code."));
+    info.SetDescription(_("A dockable pane that shows a zoomed-out view of your code."));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -84,7 +84,7 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     , m_startupCompleted(false)
 {
     m_config = new clConfig("zoom-navigator.conf");
-    m_longName = wxT("Zoom Navigator");
+    m_longName = _("Zoom Navigator");
     m_shortName = wxT("ZoomNavigator");
     m_topWindow = m_mgr->GetTheApp();
     

@@ -51,7 +51,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("eran"));
     info.SetName(wxT("Tweaks"));
-    info.SetDescription(wxT("Tweak codelite"));
+    info.SetDescription(_("Tweak codelite"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -66,7 +66,7 @@ Tweaks::Tweaks(IManager *manager)
 {
     wxPGInitResourceModule(); // Or we crash...
     
-    m_longName = wxT("Tweak codelite");
+    m_longName = _("Tweak codelite");
     m_shortName = wxT("Tweaks");
     
     m_mgr->GetTheApp()->Connect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);

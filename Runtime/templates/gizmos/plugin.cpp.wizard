@@ -17,7 +17,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("$(UserName)"));
     info.SetName(wxT("$(PluginShortName)"));
-    info.SetDescription(wxT("$(PluginLongName)"));
+    info.SetDescription(_("$(PluginLongName)"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -30,7 +30,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 $(PluginName)::$(PluginName)(IManager *manager)
     : IPlugin(manager)
 {
-    m_longName = wxT("$(PluginLongName)");
+    m_longName = _("$(PluginLongName)");
     m_shortName = wxT("$(PluginShortName)");
 }
 

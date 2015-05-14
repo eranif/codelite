@@ -41,7 +41,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("pavel.iqx"));
     info.SetName(wxT("MemCheck"));
-    info.SetDescription(wxT("MemCheck plugin detects memory leaks. Uses Valgrind (memcheck tool) as backend."));
+    info.SetDescription(_("MemCheck plugin detects memory leaks. Uses Valgrind (memcheck tool) as backend."));
     info.SetVersion(wxT("0.4"));
     return info;
 }
@@ -59,7 +59,7 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
     , m_process(NULL)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin constructor"));
-    m_longName = wxT("Detects memory management problems. Uses Valgrind - memcheck skin.");
+    m_longName = _("Detects memory management problems. Uses Valgrind - memcheck skin.");
     m_shortName = wxT("MemCheck");
 
     // menu File and OutputView controls

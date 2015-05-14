@@ -26,7 +26,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Word Completion"));
-    info.SetDescription(wxT("Suggest completion based on words typed in the editor"));
+    info.SetDescription(_("Suggest completion based on words typed in the editor"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -36,7 +36,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERS
 WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
     : IPlugin(manager)
 {
-    m_longName = wxT("Suggest completion based on words typed in the editor");
+    m_longName = _("Suggest completion based on words typed in the editor");
     m_shortName = wxT("Word Completion");
 
     wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnWordComplete, this, XRCID("text_word_complete"));

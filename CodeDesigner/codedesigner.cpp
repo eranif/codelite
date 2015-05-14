@@ -46,7 +46,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	PluginInfo info;
 	info.SetAuthor(wxT("Michal Bližňák"));
 	info.SetName(wxT("CodeDesigner"));
-	info.SetDescription(wxT("CodeDesigner RAD integration with CodeLite"));
+	info.SetDescription(_("CodeDesigner RAD integration with CodeLite"));
 	info.SetVersion(wxT("v1.0"));
 	return info;
 }
@@ -60,7 +60,7 @@ CodeDesigner::CodeDesigner(IManager *manager)
 	: IPlugin(manager)
 	, m_addFileMenu(true)
 {
-	m_longName = wxT("CodeDesigner RAD integration with CodeLite");
+	m_longName = _("CodeDesigner RAD integration with CodeLite");
 	m_shortName = wxT("CodeDesigner");
 	
 	m_Server = NULL;

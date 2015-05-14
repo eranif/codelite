@@ -79,7 +79,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("eran"));
     info.SetName(wxT("LLDBDebuggerPlugin"));
-    info.SetDescription(wxT("LLDB Debugger for CodeLite"));
+    info.SetDescription(_("LLDB Debugger for CodeLite"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -97,7 +97,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
     , m_raisOnBpHit(false)
     , m_tooltip(NULL)
 {
-    m_longName = wxT("LLDB Debugger for CodeLite");
+    m_longName = _("LLDB Debugger for CodeLite");
     m_shortName = wxT("LLDBDebuggerPlugin");
 
     m_connector.Bind(wxEVT_LLDB_STARTED, &LLDBPlugin::OnLLDBStarted, this);

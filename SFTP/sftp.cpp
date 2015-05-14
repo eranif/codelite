@@ -78,7 +78,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("SFTP"));
-    info.SetDescription(wxT("SFTP plugin for codelite IDE"));
+    info.SetDescription(_("SFTP plugin for codelite IDE"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -88,7 +88,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERS
 SFTP::SFTP(IManager* manager)
     : IPlugin(manager)
 {
-    m_longName = wxT("SFTP plugin for codelite IDE");
+    m_longName = _("SFTP plugin for codelite IDE");
     m_shortName = wxT("SFTP");
 
     wxTheApp->Connect(

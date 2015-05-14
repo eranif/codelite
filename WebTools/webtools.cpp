@@ -22,7 +22,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     PluginInfo info;
     info.SetAuthor(wxT("eran"));
     info.SetName(wxT("WebTools"));
-    info.SetDescription(wxT("Support for JavScript, HTML and other web development tools"));
+    info.SetDescription(_("Support for JavScript, HTML and other web development tools"));
     info.SetVersion(wxT("v1.0"));
     return info;
 }
@@ -33,7 +33,7 @@ WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
     , m_lastColourUpdate(0)
 {
-    m_longName = wxT("Support for JavScript, XML, HTML and other web development tools");
+    m_longName = _("Support for JavScript, XML, HTML and other web development tools");
     m_shortName = wxT("WebTools");
 
     // Create the syntax highligher worker thread

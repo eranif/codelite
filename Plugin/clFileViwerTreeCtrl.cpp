@@ -24,3 +24,14 @@ int clFileViewerTreeCtrl::OnCompareItems(const clTreeCtrlData* a, const clTreeCt
         return 1;
     return a->GetName().CmpNoCase(b->GetName());
 }
+
+int clFileViewerTreeCtrl::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
+{
+    if(!item1.IsOk() || !item2.IsOk())
+        return wxTreeCtrl::OnCompareItems(item1, item2);
+
+    clTreeCtrlData *a = static_cast<clTreeCtrlData*>(GetItemData(item1));
+    clTreeCtrlData *b = static_cast<clTreeCtrlData*>(GetItemData(item2));
+    
+    return OnCompareItems(a, b);
+}

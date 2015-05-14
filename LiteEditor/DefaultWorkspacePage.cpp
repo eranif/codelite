@@ -6,6 +6,7 @@
 #include "clWorkspaceView.h"
 #include <wx/simplebook.h>
 #include "event_notifier.h"
+#include <algorithm>
 
 DefaultWorkspacePage::DefaultWorkspacePage(wxWindow* parent)
     : DefaultWorkspacePageBase(parent)
@@ -29,24 +30,14 @@ void DefaultWorkspacePage::OnFolderDropped(clCommandEvent& event)
 
 void DefaultWorkspacePage::DoDropFolders(const wxArrayString& folders)
 {
-    std::map<wxString, wxWindow*> pages;
-    wxSimplebook* book = clGetManager()->GetWorkspaceView()->GetSimpleBook();
     wxArrayString options;
-    int selection = wxNOT_FOUND;
-    for(size_t i = 0; i < book->GetPageCount(); ++i) {
-        if(book->GetPageText(i) == "Default") continue;
-
-        wxString title;
-        title << book->GetPageText(i);
-        pages.insert(std::make_pair(title, book->GetPage(i)));
-        options.Add(title);
-        if(selection == wxNOT_FOUND) {
-            selection = options.size() - 1;
-        }
-    }
-
+    std::map<wxString, wxWindow*> pages = clGetManager()->GetWorkspaceView()->GetAllPages();
+    std::for_each(pages.begin(), pages.end(), [&](const std::pair<wxString, wxWindow*>& p){
+        options.Add(p.first);
+    });
+    
     wxString userSelection =
-        ::wxGetSingleChoice(_("Choose a View"), _("Open folder"), options, selection, EventNotifier::Get()->TopFrame());
+        ::wxGetSingleChoice(_("Choose a View"), _("Open folder"), options, 0, EventNotifier::Get()->TopFrame());
 
     if(pages.count(userSelection) == 0) return; // user cancelled
     wxWindow* page = pages.find(userSelection)->second;

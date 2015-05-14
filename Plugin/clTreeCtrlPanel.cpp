@@ -86,7 +86,11 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent)
     }
     
     // Sort the parent
-    GetTreeCtrl()->SortChildren(parent);
+    if(GetTreeCtrl()->ItemHasChildren(parent)) {
+        GetTreeCtrl()->SortChildren(parent);
+        GetTreeCtrl()->Expand(parent);
+        GetTreeCtrl()->SetFocusedItem(parent);
+    }
 }
 
 clTreeCtrlData* clTreeCtrlPanel::GetItemData(const wxTreeItemId& item)

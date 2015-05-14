@@ -29,6 +29,7 @@
 #include "theme_handler_helper.h"
 #include <imanager.h>
 #include "clTreeCtrlPanel.h"
+#include "cl_command_event.h"
 
 class wxTreeCtrl;
 class clTreeCtrlPanel;
@@ -43,6 +44,9 @@ private:
     wxString m_caption;
     ThemeHandlerHelper* m_themeHelper;
     void CreateGUIControls();
+
+protected:
+    void OnFolderDropped(clCommandEvent& event);
 
 public:
     FileExplorer(wxWindow* parent, const wxString& caption);

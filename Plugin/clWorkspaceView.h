@@ -4,11 +4,14 @@
 #include "codelite_exports.h"
 #include <wx/string.h>
 #include <wx/simplebook.h>
+#include <map>
+#include <vector>
 
 class WXDLLIMPEXP_SDK clWorkspaceView : public wxEvtHandler
 {
     wxSimplebook* m_simpleBook;
     wxString m_defaultPage;
+    std::map<wxString, wxWindow*> m_windows;
     
 protected:
     /**
@@ -45,7 +48,7 @@ public:
      * @brief add custom page to the inner notebook
      * @note adding a page does not select it
      */
-    void AddPage(wxWindow* page, const wxString& name);
+    void AddPage(wxWindow* page, const wxString& name, bool addToBook = true);
 
     /**
      * @brief return page with given name
@@ -67,7 +70,12 @@ public:
     /**
      * @brief return the underlying book control mananged by the view
      */
-    wxSimplebook* GetSimpleBook() { return m_simpleBook; }
+    wxSimplebook* GetBook() { return m_simpleBook; }
+    
+    /**
+     * @brief return all pages 
+     */
+    std::map<wxString, wxWindow*> GetAllPages() const;
 };
 
 #endif // CLWORKSPACEVIEW_H

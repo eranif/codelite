@@ -86,7 +86,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
     // Add our UI
     // create tab (possibly detached)
-    m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetSimpleBook(), m_mgr);
+    m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetBook(), m_mgr);
     m_mgr->GetWorkspaceView()->AddPage(m_workspaceView, PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
     
     PHPCodeCompletion::Instance()->SetManager(m_mgr);

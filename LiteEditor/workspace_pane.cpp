@@ -48,6 +48,7 @@
 #include "cl_aui_dock_art.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
+#include "clWorkspaceView.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -126,7 +127,10 @@ void WorkspacePane::CreateGUIControls()
         m_explorer = new FileExplorer(m_book, name);
         m_book->AddPage(m_explorer, name, false);
     }
-
+    
+    // Add the "File Explorer" view to the list of files managed by the workspace-view
+    m_workspaceTab->GetView()->AddPage(m_explorer, _("File Explorer"), false);
+    
 // Add the Open Windows Panel (Tabs)
 #ifndef __WXOSX__
     name = _("Tabs");

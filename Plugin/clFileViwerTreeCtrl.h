@@ -70,7 +70,7 @@ public:
 
 class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxTreeCtrl
 {
-    DECLARE_DYNAMIC_CLASS();
+    wxDECLARE_DYNAMIC_CLASS(clFileViewerTreeCtrl);
 
 public:
     clFileViewerTreeCtrl();
@@ -82,6 +82,7 @@ public:
     virtual ~clFileViewerTreeCtrl();
 
     virtual int OnCompareItems(const clTreeCtrlData* a, const clTreeCtrlData* b);
+    virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
 };
 
 #endif // CLFILEVIWERTREECTRL_H

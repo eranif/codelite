@@ -19,28 +19,33 @@ public:
      * @brief add top level folder
      */
     void AddFolder(const wxString& path);
-    
+
     /**
      * @brief return an info about the selected items in the tree
-     * @return 
+     * @return
      */
     TreeItemInfo GetSelectedItemInfo();
-    
+
     /**
      * @brief return 2 arrays of the selected items
-     * @param folders [output] 
+     * @param folders [output]
      * @param files [output]
      */
     void GetSelections(wxArrayString& folders, wxArrayString& files);
+
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnItemExpanding(wxTreeEvent& event);
 
+    void OnCloseFolder(wxCommandEvent& event);
+
     void OnFolderDropped(clCommandEvent& event);
 
     // Helpers
     void DoExpandItem(const wxTreeItemId& parent);
+    bool IsTopLevelFolder(const wxTreeItemId& item);
+    
     clTreeCtrlData* GetItemData(const wxTreeItemId& item);
     wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
     wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);

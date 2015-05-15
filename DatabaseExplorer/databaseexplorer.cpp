@@ -44,7 +44,7 @@
 #include "PostgreSqlDbAdapter.h"
 #endif
 
-#define DBE_VERSION _("0.5.2 Beta")
+#define DBE_VERSION "0.5.2 Beta"
 
 static DatabaseExplorer* thePlugin = NULL;
 
@@ -111,7 +111,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
 
     if(IsDbViewDetached()) {
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, wxT("DbExplorer"), wxNullBitmap, wxSize(200, 200));
+            new DockablePane(book->GetParent()->GetParent(), book, _("DbExplorer"), wxNullBitmap, wxSize(200, 200));
         m_dbViewerPanel = new DbViewerPanel(cp, editorBook, m_mgr);
         cp->SetChildNoReparent(m_dbViewerPanel);
 
@@ -120,7 +120,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
         m_dbViewerPanel = new DbViewerPanel(book, editorBook, m_mgr);
         // size_t index = GetSettings().GetSvnTabIndex();
         // if(index == Notebook::npos)
-        book->AddPage(m_dbViewerPanel, wxT("DbExplorer"), false);
+        book->AddPage(m_dbViewerPanel, _("DbExplorer"), false);
         // else
         //	book->InsertPage(index, m_dbViewerPanel, svnCONSOLE_TEXT, false);
     }
@@ -225,7 +225,7 @@ bool DatabaseExplorer::IsDbViewDetached()
     m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
     wxArrayString detachedPanes = dpi.GetPanes();
 
-    return detachedPanes.Index(wxT("DbExplorer")) != wxNOT_FOUND;
+    return detachedPanes.Index(_("DbExplorer")) != wxNOT_FOUND;
 }
 
 void DatabaseExplorer::OnAbout(wxCommandEvent& e)

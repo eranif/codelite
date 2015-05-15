@@ -102,7 +102,7 @@ const wxString CMakePlugin::CMAKELISTS_FILE = "CMakeLists.txt";
 
 /* ************************************************************************ */
 
-static const wxString HELP_TAB_NAME = "CMake Help";
+static const wxString HELP_TAB_NAME = _("CMake Help");
 
 /* ************************************************************************ */
 /* FUNCTIONS                                                                */

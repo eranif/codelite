@@ -74,7 +74,7 @@ BEGIN_EVENT_TABLE(ContinuousBuild, IPlugin)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ContinuousBuild::OnBuildProcessEnded)
 END_EVENT_TABLE()
 
-static const wxString CONT_BUILD = wxT("BuildQ");
+static const wxString CONT_BUILD = _("BuildQ");
 
 ContinuousBuild::ContinuousBuild(IManager *manager)
     : IPlugin(manager)

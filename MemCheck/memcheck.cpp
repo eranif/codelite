@@ -139,7 +139,7 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
     // CL_DEBUG1(PLUGIN_PREFIX("adding 'Output View' notebook pane"));
     m_outputView = new MemCheckOutputView(m_mgr->GetOutputPaneNotebook(), this, m_mgr);
     m_mgr->GetOutputPaneNotebook()->AddPage(
-        m_outputView, wxT("MemCheck"), false, wxXmlResource::Get()->LoadBitmap(wxT("check")));
+        m_outputView, _("MemCheck"), false, wxXmlResource::Get()->LoadBitmap(wxT("check")));
 
     m_settings = new MemCheckSettings();
     GetSettings()->LoadFromConfig();

@@ -92,13 +92,13 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
     Notebook *book = m_mgr->GetWorkspacePaneNotebook();
     if( IsPaneDetached() ) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, wxT("Outline"), wxNullBitmap, wxSize(200, 200));
+        DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), wxNullBitmap, wxSize(200, 200));
         m_view = new OutlineTab(cp, m_mgr);
         cp->SetChildNoReparent(m_view);
 
     } else {
         m_view = new OutlineTab(book, m_mgr);
-        book->AddPage(m_view, wxT("Outline"), false);
+        book->AddPage(m_view, _("Outline"), false);
     }
 }
 
@@ -134,7 +134,7 @@ bool SymbolViewPlugin::IsPaneDetached()
     DetachedPanesInfo dpi;
     m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
     wxArrayString detachedPanes = dpi.GetPanes();
-    return detachedPanes.Index(wxT("Outline")) != wxNOT_FOUND;
+    return detachedPanes.Index(_("Outline")) != wxNOT_FOUND;
 }
 
 int SymbolViewPlugin::DoFindTabIndex()

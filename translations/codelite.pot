@@ -7,11 +7,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: codelite\n"
-"Report-Msgid-Bugs-To: huan5765@gmail.com\n"
+"Report-Msgid-Bugs-To: david@codelite.co.uk\n"
 "POT-Creation-Date: 2015-04-21 21:00+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Apply changes"
 msgstr ""
 
-#: MacBundler/macbundler.cpp:148 SpellChecker/wxcrafter.cpp:222
+#: MacBundler/macbundler.cpp:148 SpellChecker/wxcrafter.cpp:230
 #: CLgtk3-install/share/codelite/templates/projects/executable-wxcrafter-dialog/wxcrafter.cpp:37
 #: Plugin/VirtualDirectorySelectorBase.cpp:82
 #: Subversion2/subversion2_ui.cpp:182 Subversion2/subversion2_ui.cpp:249
@@ -69,8 +69,8 @@ msgstr ""
 #: codelitephp/php-plugin/php_ui.cpp:299 wxformbuilder/wxfbitembasedlg.cpp:95
 #: wxformbuilder/formbuildsettingsbasedlg.cpp:88
 #: CodeDesigner/codedesignersettingsbasedlg.cpp:63
-#: CodeDesigner/codedesigneritembasedlg.cpp:109 DatabaseExplorer/GUI.cpp:806
-#: DatabaseExplorer/GUI.cpp:1090 DatabaseExplorer/GUI.cpp:1372
+#: CodeDesigner/codedesigneritembasedlg.cpp:109 DatabaseExplorer/GUI.cpp:837
+#: DatabaseExplorer/GUI.cpp:1145 DatabaseExplorer/GUI.cpp:1443
 #: UnitTestCPP/testclassbasedlg.cpp:132
 msgid "Cancel"
 msgstr ""
@@ -313,9 +313,9 @@ msgstr ""
 #: CallGraph/uisettings.h:99 codelite_terminal/wxcrafter.cpp:65
 #: Tweaks/tweaks.cpp:107 SFTP/sftp.cpp:159 abbreviation/abbreviation.cpp:97
 #: CMakePlugin/CMakePlugin.cpp:358 QmakePlugin/qmakeplugin.cpp:164
-#: codelitephp/php-plugin/php.cpp:551 wxformbuilder/wxformbuilder.cpp:120
-#: WebTools/webtools.cpp:77 CodeDesigner/codedesigner.cpp:133 menu.xrc:1053
-#: Copyright/copyright.cpp:113
+#: menu.xrc:1053 codelitephp/php-plugin/php.cpp:523
+#: wxformbuilder/wxformbuilder.cpp:120 WebTools/webtools.cpp:77
+#: CodeDesigner/codedesigner.cpp:133 Copyright/copyright.cpp:113
 msgid "Settings..."
 msgstr ""
 
@@ -329,6 +329,10 @@ msgstr ""
 
 #: SnipWiz/snipwiz.cpp:86
 msgid "A small tool to add expandable code snippets and template classes"
+msgstr ""
+
+#: SnipWiz/snipwiz.cpp:112
+msgid "Snippet wizard"
 msgstr ""
 
 #: SnipWiz/snipwiz.cpp:157
@@ -398,9 +402,9 @@ msgstr ""
 #: LiteEditor/reconcileproject.cpp:192 LiteEditor/reconcileproject.cpp:836
 #: LiteEditor/context_cpp.cpp:1219 LiteEditor/context_cpp.cpp:1651
 #: LiteEditor/context_cpp.cpp:1749 LiteEditor/context_cpp.cpp:1859
-#: LiteEditor/manager.cpp:1155 LiteEditor/manager.cpp:1967
-#: LiteEditor/manager.cpp:2030 LiteEditor/manager.cpp:2539
-#: LiteEditor/manager.cpp:2571 LiteEditor/manager.cpp:2603
+#: LiteEditor/manager.cpp:1157 LiteEditor/manager.cpp:1969
+#: LiteEditor/manager.cpp:2032 LiteEditor/manager.cpp:2541
+#: LiteEditor/manager.cpp:2573 LiteEditor/manager.cpp:2605
 #: LiteEditor/acceltabledlg.cpp:185 LiteEditor/depend_dlg_page.cpp:42
 #: LiteEditor/depend_dlg_page.cpp:177 LiteEditor/cl_editor.cpp:1266
 #: LiteEditor/cl_editor.cpp:1274 LiteEditor/cl_editor.cpp:1322
@@ -408,7 +412,7 @@ msgstr ""
 #: LiteEditor/cl_editor.cpp:1371 LiteEditor/cl_editor.cpp:1970
 #: LiteEditor/cl_editor.cpp:2005 LiteEditor/tasks_find_what_dlg.cpp:77
 #: LiteEditor/FileExplorerTab.cpp:364
-#: LiteEditor/debugger_predefined_types_page.cpp:88 LiteEditor/frame.cpp:2541
+#: LiteEditor/debugger_predefined_types_page.cpp:88 LiteEditor/frame.cpp:2535
 #: LiteEditor/movefuncimpldlg.cpp:81 LiteEditor/findresultstab.cpp:331
 #: LiteEditor/edit_workspace_conf_dlg.cpp:125
 #: LiteEditor/renamesymboldlg.cpp:91
@@ -420,7 +424,7 @@ msgstr ""
 #: Gizmos/newwxprojectdlg.cpp:88 QmakePlugin/qmakesettingsdlg.cpp:119
 #: QmakePlugin/qmakeplugin.cpp:448 QmakePlugin/qmakeplugin.cpp:506
 #: QmakePlugin/qmakeplugin.cpp:518
-#: codelitephp/php-plugin/php_workspace_view.cpp:386
+#: codelitephp/php-plugin/php_workspace_view.cpp:393
 #: wxformbuilder/wxformbuilder.cpp:246 wxformbuilder/wxformbuilder.cpp:261
 #: wxformbuilder/wxformbuilder.cpp:269 wxformbuilder/wxformbuilder.cpp:281
 #: wxformbuilder/wxformbuilder.cpp:326 wxformbuilder/wxfbitemdlg.cpp:51
@@ -444,7 +448,7 @@ msgid "CodeLite"
 msgstr ""
 
 #: SnipWiz/templateclassbasedlg.cpp:35 wxformbuilder/wxfbitembasedlg.cpp:91
-#: DatabaseExplorer/GUI.cpp:1094
+#: DatabaseExplorer/GUI.cpp:1149
 msgid "Generate"
 msgstr ""
 
@@ -462,7 +466,7 @@ msgstr ""
 msgid "Name of new class"
 msgstr ""
 
-#: SnipWiz/templateclassbasedlg.cpp:64 DatabaseExplorer/GUI.cpp:1062
+#: SnipWiz/templateclassbasedlg.cpp:64 DatabaseExplorer/GUI.cpp:1117
 msgid "Template:"
 msgstr ""
 
@@ -509,7 +513,7 @@ msgstr ""
 #: wxformbuilder/wxfbitembasedlg.cpp:80
 #: wxformbuilder/formbuildsettingsbasedlg.cpp:60
 #: CodeDesigner/codedesignersettingsbasedlg.cpp:35
-#: CodeDesigner/codedesigneritembasedlg.cpp:90 DatabaseExplorer/GUI.cpp:1058
+#: CodeDesigner/codedesigneritembasedlg.cpp:90 DatabaseExplorer/GUI.cpp:1113
 #: Copyright/copyrights_options_base_dlg.cpp:60
 #: UnitTestCPP/testclassbasedlg.cpp:57
 msgid "..."
@@ -550,7 +554,7 @@ msgid "Class:"
 msgstr ""
 
 #: SnipWiz/templateclassbasedlg.cpp:186 SnipWiz/editsnippetsbasedlg.cpp:98
-#: SpellChecker/spellcheck.cpp:435 SpellChecker/wxcrafter.cpp:214
+#: SpellChecker/spellcheck.cpp:435 SpellChecker/wxcrafter.cpp:222
 #: Subversion2/subversion2.cpp:329 LiteEditor/compiler_pages.cpp:372
 #: LiteEditor/compiler_pages.cpp:407 LiteEditor/reconcileprojectbase.cpp:308
 #: LiteEditor/reconcileprojectbase.cpp:340
@@ -564,19 +568,19 @@ msgid "Add"
 msgstr ""
 
 #: SnipWiz/templateclassbasedlg.cpp:191 SnipWiz/editsnippetsbasedlg.cpp:101
-#: SpellChecker/wxcrafter.cpp:205
+#: SpellChecker/wxcrafter.cpp:213
 msgid "Change"
 msgstr ""
 
 #: SnipWiz/templateclassbasedlg.cpp:195 SnipWiz/editsnippetsbasedlg.cpp:104
 #: LiteEditor/reconcileprojectbase.cpp:312
 #: LiteEditor/reconcileprojectbase.cpp:344
-#: LiteEditor/reconcileprojectbase.cpp:375
+#: LiteEditor/reconcileprojectbase.cpp:375 menu.xrc:1134
 #: cppchecker/cppchecksettingsdlgbase.cpp:137
 #: cppchecker/cppchecksettingsdlgbase.cpp:175
 #: cppchecker/cppchecksettingsdlgbase.cpp:226
 #: cppchecker/cppchecksettingsdlgbase.cpp:281
-#: cppchecker/cppchecksettingsdlgbase.cpp:314 menu.xrc:1134
+#: cppchecker/cppchecksettingsdlgbase.cpp:314
 msgid "Remove"
 msgstr ""
 
@@ -684,13 +688,21 @@ msgid "About"
 msgstr ""
 
 #: SnipWiz/editsnippetsbasedlg.cpp:134 LiteEditor/quickfindbar.cpp:92
-#: LiteEditor/batchbuildbasedlg.cpp:97 LiteEditor/wxcrafter.cpp:697
-#: LiteEditor/findinfiles_dlg.cpp:246 LiteEditor/frame.cpp:1305
-#: LiteEditor/frame.cpp:1521 LiteEditor/frame.cpp:1658
-#: LiteEditor/frame.cpp:1807 LiteEditor/edit_configuration.cpp:100
-#: DatabaseExplorer/DbViewerPanel.cpp:483 DatabaseExplorer/GUI.cpp:864
+#: LiteEditor/batchbuildbasedlg.cpp:97 LiteEditor/wxcrafter.cpp:645
+#: LiteEditor/findinfiles_dlg.cpp:246 LiteEditor/frame.cpp:1312
+#: LiteEditor/frame.cpp:1528 LiteEditor/frame.cpp:1665
+#: LiteEditor/frame.cpp:1814 LiteEditor/edit_configuration.cpp:100
 #: menu.xrc:707 menu.xrc:718 menu.xrc:727
+#: DatabaseExplorer/DbViewerPanel.cpp:483 DatabaseExplorer/GUI.cpp:903
 msgid "Close"
+msgstr ""
+
+#: SpellChecker/spellcheck.cpp:77
+msgid "CodeLite spell checker"
+msgstr ""
+
+#: SpellChecker/spellcheck.cpp:115
+msgid "CodeLite spell-checker"
 msgstr ""
 
 #: SpellChecker/spellcheck.cpp:154 SpellChecker/spellcheck.cpp:165
@@ -722,7 +734,7 @@ msgstr ""
 msgid "No suggestions"
 msgstr ""
 
-#: SpellChecker/spellcheck.cpp:434 SpellChecker/wxcrafter.cpp:210
+#: SpellChecker/spellcheck.cpp:434 SpellChecker/wxcrafter.cpp:218
 #: Subversion2/subversion2.cpp:366 codelitephp/PHPParser/php_workspace.cpp:467
 msgid "Ignore"
 msgstr ""
@@ -731,16 +743,26 @@ msgstr ""
 msgid "Spell Checker"
 msgstr ""
 
-#: SpellChecker/wxcrafter.h:58
+#: SpellChecker/wxcrafter.h:76
 msgid "SpellChecker Settings"
 msgstr ""
 
-#: SpellChecker/wxcrafter.h:86
+#: SpellChecker/wxcrafter.h:113
 msgid "Misspelling found!"
 msgstr ""
 
 #: SpellChecker/wxcrafter.cpp:33
 msgid "Dictionary path:"
+msgstr ""
+
+#: SpellChecker/wxcrafter.cpp:37 git/gitui.cpp:789
+#: Subversion2/subversion2_ui.cpp:1089 LiteEditor/reconcileprojectbase.cpp:264
+#: LiteEditor/ps_debugger_page.cpp:159 LLDBDebugger/UI.cpp:676
+#: CMakePlugin/CMakePluginUi.cpp:238 CMakePlugin/CMakePluginUi.cpp:247
+#: codelitephp/php-plugin/php_ui.cpp:284 codelitephp/php-plugin/php_ui.cpp:698
+#: codelitephp/php-plugin/php_ui.cpp:1001
+#: codelitephp/php-plugin/php_ui.cpp:1799 DatabaseExplorer/GUI.cpp:1091
+msgid "Select a folder"
 msgstr ""
 
 #: SpellChecker/wxcrafter.cpp:38
@@ -787,15 +809,15 @@ msgstr ""
 msgid "Clear the ignore list"
 msgstr ""
 
-#: SpellChecker/wxcrafter.cpp:166
+#: SpellChecker/wxcrafter.cpp:174
 msgid "Misspelling:"
 msgstr ""
 
-#: SpellChecker/wxcrafter.cpp:185
+#: SpellChecker/wxcrafter.cpp:193
 msgid "Suggestions:"
 msgstr ""
 
-#: SpellChecker/wxcrafter.cpp:218 LiteEditor/tags_options_base_dlg.cpp:269
+#: SpellChecker/wxcrafter.cpp:226 LiteEditor/tags_options_base_dlg.cpp:269
 msgid "Suggest"
 msgstr ""
 
@@ -853,9 +875,9 @@ msgstr ""
 #: Runtime/templates/projects/executable-wxcrafter-dialog/wxcrafter.cpp:33
 #: CL-install/share/codelite/templates/projects/executable-wxcrafter-dialog/wxcrafter.cpp:33
 #: codelitephp/php-plugin/XDebugManager.cpp:741
-#: CodeDesigner/codedesigneritembasedlg.cpp:105 DatabaseExplorer/GUI.cpp:810
-#: DatabaseExplorer/GUI.cpp:970 DatabaseExplorer/GUI.cpp:1178
-#: DatabaseExplorer/GUI.cpp:1376
+#: CodeDesigner/codedesigneritembasedlg.cpp:105 DatabaseExplorer/GUI.cpp:841
+#: DatabaseExplorer/GUI.cpp:1017 DatabaseExplorer/GUI.cpp:1241
+#: DatabaseExplorer/GUI.cpp:1447
 msgid "OK"
 msgstr ""
 
@@ -934,7 +956,7 @@ msgstr ""
 #: CL-installRel/share/codelite/templates/projects/executable-wxcrafter-frame/wxcrafter.cpp:40
 #: Runtime/templates/projects/executable-wxcrafter-frame/wxcrafter.cpp:40
 #: CL-install/share/codelite/templates/projects/executable-wxcrafter-frame/wxcrafter.cpp:40
-#: codelitephp/php-plugin/php.cpp:555
+#: codelitephp/php-plugin/php.cpp:527
 msgid "Help"
 msgstr ""
 
@@ -978,7 +1000,7 @@ msgid ""
 "Would you like to remove it from the dependency list?"
 msgstr ""
 
-#: Plugin/nameanddescbasedlg.cpp:50 LiteEditor/wxcrafter.cpp:795
+#: Plugin/nameanddescbasedlg.cpp:50 LiteEditor/wxcrafter.cpp:743
 #: QmakePlugin/NewQtProj.cpp:60
 msgid "Project name:"
 msgstr ""
@@ -1000,7 +1022,7 @@ msgstr ""
 #: Subversion2/subversion2_ui.cpp:610 Subversion2/subversion2_ui.cpp:767
 #: Subversion2/subversion2_ui.cpp:841 Subversion2/subversion2_ui.cpp:989
 #: Subversion2/wxcrafter.cpp:292 codelite_terminal/wxcrafter.cpp:272
-#: Tweaks/wxcrafter.cpp:141
+#: Tweaks/wxcrafter.cpp:117
 #: sdk/wxflatnotebook/src/wxFlatNotebook/fnb_customize_dlg.cpp:39
 #: LiteEditor/configuration_manager_base_dlg.cpp:101
 #: LiteEditor/dbgcommandbasedlg.cpp:79
@@ -1009,7 +1031,7 @@ msgstr ""
 #: LiteEditor/new_configuration_dlg.cpp:103 LiteEditor/setters_getters.cpp:106
 #: LiteEditor/newquickwatch.cpp:131 LiteEditor/env_var_dlg_base.cpp:105
 #: LiteEditor/breakpointdlgbase.cpp:297 LiteEditor/symbols_dialog_base.cpp:63
-#: LiteEditor/add_option_dialog.cpp:67 LiteEditor/wxcrafter.cpp:398
+#: LiteEditor/add_option_dialog.cpp:67 LiteEditor/wxcrafter.cpp:334
 #: LiteEditor/wxcAboutDlg.cpp:111 LiteEditor/debuggersettingsbasedlg.cpp:62
 #: LiteEditor/debuggersettingsbasedlg.cpp:244
 #: LiteEditor/free_text_dialog.cpp:65 LiteEditor/addincludefiledlgbase.cpp:161
@@ -1026,7 +1048,7 @@ msgstr ""
 #: codelitephp/php-plugin/php_ui.cpp:563 codelitephp/php-plugin/php_ui.cpp:882
 #: wxformbuilder/formbuildsettingsbasedlg.cpp:84
 #: CodeDesigner/codedesignersettingsbasedlg.cpp:59
-#: DatabaseExplorer/GUI.cpp:611 cppchecker/cppchecksettingsdlgbase.cpp:332
+#: DatabaseExplorer/GUI.cpp:624 cppchecker/cppchecksettingsdlgbase.cpp:332
 #: cppchecker/cppchecksettingsdlgbase.cpp:477
 #: UnitTestCPP/testclassbasedlg.cpp:128 UnitTestCPP/newunittestbasedlg.cpp:94
 msgid "&OK"
@@ -1039,14 +1061,14 @@ msgstr ""
 #: ZoomNavigator/zoom_navigator.cpp:95 Subversion2/subversion2_ui.cpp:471
 #: Subversion2/subversion2_ui.cpp:772 Subversion2/subversion2_ui.cpp:846
 #: Subversion2/subversion2_ui.cpp:994 Subversion2/wxcrafter.cpp:297
-#: Tweaks/wxcrafter.cpp:137
+#: Tweaks/wxcrafter.cpp:113
 #: sdk/wxflatnotebook/src/wxFlatNotebook/fnb_customize_dlg.cpp:42
 #: LiteEditor/dbgcommandbasedlg.cpp:83
 #: LiteEditor/implementparentvirtualfunctionsbase.cpp:129
 #: LiteEditor/plugindlgbase.cpp:89 LiteEditor/newquickwatch.cpp:136
 #: LiteEditor/symbols_dialog_base.cpp:67 LiteEditor/tabgroupbasedlgs.cpp:82
 #: LiteEditor/tabgroupbasedlgs.cpp:173 LiteEditor/add_option_dialog.cpp:70
-#: LiteEditor/wxcrafter.cpp:403 LiteEditor/debuggersettingsbasedlg.cpp:67
+#: LiteEditor/wxcrafter.cpp:339 LiteEditor/debuggersettingsbasedlg.cpp:67
 #: LiteEditor/debuggersettingsbasedlg.cpp:249
 #: LiteEditor/free_text_dialog.cpp:68 LiteEditor/attachdbgprocbasedlg.cpp:85
 #: LiteEditor/addincludefiledlgbase.cpp:166
@@ -1062,7 +1084,7 @@ msgstr ""
 #: Gizmos/newwxprojectbasedlg.cpp:201 QmakePlugin/qmakesettingsbasedlg.cpp:78
 #: QmakePlugin/NewQtProj.cpp:118 codelitephp/php-plugin/new_class.cpp:163
 #: codelitephp/php-plugin/php_ui.cpp:213 codelitephp/php-plugin/php_ui.cpp:568
-#: codelitephp/php-plugin/php_ui.cpp:887 DatabaseExplorer/GUI.cpp:607
+#: codelitephp/php-plugin/php_ui.cpp:887 DatabaseExplorer/GUI.cpp:620
 #: cppchecker/cppchecksettingsdlgbase.cpp:337
 #: cppchecker/cppchecksettingsdlgbase.cpp:482
 #: Copyright/copyrights_proj_sel_base_dlg.cpp:80
@@ -1098,6 +1120,14 @@ msgstr ""
 #: LiteEditor/tasksfindwhatdlgbase.cpp:72
 #: LiteEditor/workspacesettingsbase.cpp:81
 msgid "&Ok"
+msgstr ""
+
+#: Plugin/clWorkspaceView.cpp:9 Plugin/clWorkspaceView.cpp:80
+#: LiteEditor/env_var_dlg_base.cpp:76 LiteEditor/workspacetab.cpp:120
+#: LiteEditor/workspacetab.cpp:121 LiteEditor/workspacetab.cpp:122
+#: LiteEditor/editoroptionsgeneralguidespanelbase.cpp:68
+#: LiteEditor/editorsettingslocal.cpp:100 Gizmos/newwxprojectdlg.cpp:41
+msgid "Default"
 msgstr ""
 
 #: Plugin/filepicker.h:68
@@ -1158,7 +1188,7 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-#: Plugin/WSImporterDlgs.cpp:76 LiteEditor/wxcrafter.cpp:319
+#: Plugin/WSImporterDlgs.cpp:76
 msgid "Continue"
 msgstr ""
 
@@ -1403,45 +1433,45 @@ msgstr ""
 msgid " seconds"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:111
+#: Plugin/wxcrafter_plugin.cpp:119
 msgid "Text Files Comparison"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:114
+#: Plugin/wxcrafter_plugin.cpp:122
 msgid "Comparison"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:118 Plugin/DiffSideBySidePanel.cpp:365
+#: Plugin/wxcrafter_plugin.cpp:126 Plugin/DiffSideBySidePanel.cpp:365
 #: CallGraph/uicallgraph.cpp:69 git/GitConsole.cpp:137
 #: SFTP/SFTPTreeView.cpp:361 LiteEditor/debuggersettingsbasedlg.cpp:712
 #: menu.xrc:1186
 msgid "Refresh"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:118 Subversion2/subversion_view.cpp:276
+#: Plugin/wxcrafter_plugin.cpp:126 Subversion2/subversion_view.cpp:276
 #: DatabaseExplorer/DbViewerPanel.cpp:89
 msgid "Refresh View"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:120 LiteEditor/frame.cpp:1460
-#: LiteEditor/frame.cpp:1621 LiteEditor/frame.cpp:1757
-#: LiteEditor/frame.cpp:1962
+#: Plugin/wxcrafter_plugin.cpp:128 LiteEditor/frame.cpp:1467
+#: LiteEditor/frame.cpp:1628 LiteEditor/frame.cpp:1764
+#: LiteEditor/frame.cpp:1969
 msgid "Next"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:120
+#: Plugin/wxcrafter_plugin.cpp:128
 msgid "Next Diff"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:122
+#: Plugin/wxcrafter_plugin.cpp:130
 msgid "Previous"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:122
+#: Plugin/wxcrafter_plugin.cpp:130
 msgid "Previous Diff"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:125
+#: Plugin/wxcrafter_plugin.cpp:133
 #: LiteEditor/editoroptionsgeneralguidespanelbase.cpp:129
 #: LiteEditor/CompilerMainPage.cpp:626 LiteEditor/options_dlg2.cpp:110
 #: LiteEditor/add_option_dialog.h:57 LiteEditor/tasksfindwhatdlgbase.cpp:56
@@ -1449,89 +1479,89 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:129 Plugin/wxcrafter_plugin.cpp:131
+#: Plugin/wxcrafter_plugin.cpp:137 Plugin/wxcrafter_plugin.cpp:139
 msgid " Copy"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:129
+#: Plugin/wxcrafter_plugin.cpp:137
 msgid "Copy current diff sequence from the left side to the right side"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:131
+#: Plugin/wxcrafter_plugin.cpp:139
 msgid "Copy current diff sequence from the right side to the left side"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:133
+#: Plugin/wxcrafter_plugin.cpp:141
 msgid "All Left"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:133
+#: Plugin/wxcrafter_plugin.cpp:141
 msgid "Copy the content of the left file to the right file"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:135
+#: Plugin/wxcrafter_plugin.cpp:143
 msgid "All Right"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:135
+#: Plugin/wxcrafter_plugin.cpp:143
 msgid "Copy file from right to left"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:137 codelite_terminal/wxcrafter.cpp:67
-#: LiteEditor/wxcrafter.cpp:695 LiteEditor/frame.cpp:1298
-#: LiteEditor/frame.cpp:1514 LiteEditor/frame.cpp:1651
-#: LiteEditor/frame.cpp:1800 DatabaseExplorer/ErdPanel.cpp:165 menu.xrc:721
-#: menu.xrc:748
+#: Plugin/wxcrafter_plugin.cpp:145 codelite_terminal/wxcrafter.cpp:67
+#: LiteEditor/wxcrafter.cpp:643 LiteEditor/frame.cpp:1305
+#: LiteEditor/frame.cpp:1521 LiteEditor/frame.cpp:1658
+#: LiteEditor/frame.cpp:1807 menu.xrc:721 menu.xrc:748
+#: DatabaseExplorer/ErdPanel.cpp:165
 msgid "Save"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:137
+#: Plugin/wxcrafter_plugin.cpp:145
 msgid "Save changes and refresh the diff view"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:140 codelitephp/php-plugin/php_ui.cpp:791
+#: Plugin/wxcrafter_plugin.cpp:148 codelitephp/php-plugin/php_ui.cpp:791
 #: DatabaseExplorer/ErdPanel.cpp:182
 msgid "View"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:144
+#: Plugin/wxcrafter_plugin.cpp:152
 msgid "Vertical"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:144
+#: Plugin/wxcrafter_plugin.cpp:152
 msgid "Vertical panes"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:146
+#: Plugin/wxcrafter_plugin.cpp:154
 msgid "Horizontal"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:146
+#: Plugin/wxcrafter_plugin.cpp:154
 msgid "Horizontal panes"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:148
+#: Plugin/wxcrafter_plugin.cpp:156
 msgid "Single"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:148
+#: Plugin/wxcrafter_plugin.cpp:156
 msgid "Single view"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:162 Plugin/wxcrafter_plugin.cpp:218
+#: Plugin/wxcrafter_plugin.cpp:170 Plugin/wxcrafter_plugin.cpp:226
 #: git/gitui.cpp:61 git/gitui.cpp:69 git/gitui.cpp:1206
 #: Subversion2/subversion2_ui.cpp:1029 SFTP/UI.cpp:351
 #: MemCheck/memcheckui.cpp:584 MemCheck/memcheckui.cpp:642
-#: cscope/CscopeTabBase.cpp:154 LiteEditor/wxcrafter.cpp:363
+#: cscope/CscopeTabBase.cpp:154 LiteEditor/wxcrafter.cpp:299
 #: LiteEditor/CompilerMainPage.cpp:212 LiteEditor/BuildTabTopPanel.cpp:75
 #: CMakePlugin/CMakePluginUi.cpp:40 codelitephp/php-plugin/php_ui.cpp:420
 #: codelitephp/php-plugin/php_ui.cpp:669 codelitephp/php-plugin/php_ui.cpp:680
 #: codelitephp/php-plugin/php_ui.cpp:689
-#: codelitephp/php-plugin/php_ui.cpp:1865
+#: codelitephp/php-plugin/php_ui.cpp:1865 DatabaseExplorer/GUI.cpp:454
 msgid "Select a file"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.cpp:350
+#: Plugin/wxcrafter_plugin.cpp:359
 msgid "Caption"
 msgstr ""
 
@@ -1661,7 +1691,7 @@ msgstr ""
 msgid "Click to scan your computer for installed compilers"
 msgstr ""
 
-#: Plugin/clBoostrapWizardBase.cpp:114 LiteEditor/wxcrafter.cpp:313
+#: Plugin/clBoostrapWizardBase.cpp:114
 msgid "Install"
 msgstr ""
 
@@ -1740,7 +1770,7 @@ msgstr ""
 msgid "Save Project As Template"
 msgstr ""
 
-#: Plugin/wxcrafter_plugin.h:44
+#: Plugin/wxcrafter_plugin.h:54
 msgid "Edit Text"
 msgstr ""
 
@@ -2037,7 +2067,7 @@ msgstr ""
 msgid "Virtual Directory Selector"
 msgstr ""
 
-#: Plugin/clBootstrapWizard.cpp:298
+#: Plugin/clBootstrapWizard.cpp:301
 msgid ""
 "You can always run this setup wizard from the menu:\n"
 "Help -> Run the Setup Wizard"
@@ -2045,14 +2075,14 @@ msgstr ""
 
 #: Plugin/editor_config.cpp:417 Plugin/editor_config.cpp:455
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:121
-#: LiteEditor/frame.cpp:1420 LiteEditor/frame.cpp:1922
+#: LiteEditor/frame.cpp:1427 LiteEditor/frame.cpp:1929
 #: LiteEditor/output_pane.cpp:47 menu.xrc:980 menu.xrc:999
 msgid "Build"
 msgstr ""
 
 #: Plugin/editor_config.cpp:420 Plugin/editor_config.cpp:457
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:127
-#: LiteEditor/frame.cpp:1374 LiteEditor/frame.cpp:1878
+#: LiteEditor/frame.cpp:1381 LiteEditor/frame.cpp:1885
 #: LiteEditor/output_pane.cpp:46 menu.xrc:801
 msgid "Search"
 msgstr ""
@@ -2060,8 +2090,8 @@ msgstr ""
 #: Plugin/editor_config.cpp:422 Plugin/editor_config.cpp:459
 #: LiteEditor/quickfindbar.cpp:181
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:133
-#: LiteEditor/frame.cpp:1349 LiteEditor/frame.cpp:1547
-#: LiteEditor/frame.cpp:1684 LiteEditor/frame.cpp:1853
+#: LiteEditor/frame.cpp:1356 LiteEditor/frame.cpp:1554
+#: LiteEditor/frame.cpp:1691 LiteEditor/frame.cpp:1860
 #: LiteEditor/output_pane.cpp:50 LiteEditor/project_settings_base_dlg.cpp:292
 msgid "Replace"
 msgstr ""
@@ -2080,8 +2110,8 @@ msgstr ""
 
 #: Plugin/editor_config.cpp:428 Plugin/editor_config.cpp:465
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:193
-#: LiteEditor/frame.cpp:1475 LiteEditor/frame.cpp:1977
-#: LiteEditor/frame.cpp:3647 LiteEditor/output_pane.cpp:49
+#: LiteEditor/frame.cpp:1482 LiteEditor/frame.cpp:1984
+#: LiteEditor/frame.cpp:3641 LiteEditor/output_pane.cpp:49
 #: LiteEditor/debugcoredumpbase.cpp:109
 #: LiteEditor/configuration_manager_dlg.cpp:123
 #: codelitephp/php-plugin/php_ui.cpp:813
@@ -2102,14 +2132,15 @@ msgstr ""
 
 #: Plugin/editor_config.cpp:434 Plugin/editor_config.cpp:471
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:163
+#: ContinuousBuild/continuousbuild.cpp:77
 msgid "BuildQ"
 msgstr ""
 
 #: Plugin/editor_config.cpp:436 Plugin/editor_config.cpp:473
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:169
-#: cppchecker/cppchecker.cpp:178 cppchecker/cppchecker.cpp:184
-#: cppchecker/cppchecker.cpp:190 cppchecker/cppchecker.cpp:699
-#: cppchecker/cppchecksettingsdlg.cpp:193
+#: cppchecker/cppchecker.cpp:150 cppchecker/cppchecker.cpp:178
+#: cppchecker/cppchecker.cpp:184 cppchecker/cppchecker.cpp:190
+#: cppchecker/cppchecker.cpp:699 cppchecker/cppchecksettingsdlg.cpp:193
 #: cppchecker/cppchecksettingsdlg.cpp:215
 msgid "CppCheck"
 msgstr ""
@@ -2119,16 +2150,17 @@ msgstr ""
 msgid "Subversion"
 msgstr ""
 
-#: Plugin/editor_config.cpp:440 cscope/cscope.cpp:832
+#: Plugin/editor_config.cpp:440 cscope/cscope.cpp:51 cscope/cscope.cpp:832
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:181
 msgid "CScope"
 msgstr ""
 
-#: Plugin/editor_config.cpp:442 Plugin/editor_config.cpp:479
+#: Plugin/editor_config.cpp:442 Plugin/editor_config.cpp:479 git/git.cpp:182
 msgid "git"
 msgstr ""
 
 #: Plugin/editor_config.cpp:444 Plugin/editor_config.cpp:481
+#: MemCheck/memcheck.cpp:142
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:199
 msgid "MemCheck"
 msgstr ""
@@ -2202,20 +2234,20 @@ msgid "Colour Themes"
 msgstr ""
 
 #: Plugin/globals.h:452 LiteEditor/threadlistpanel.cpp:76
-#: codelitephp/php-plugin/php_workspace_view.cpp:663
-#: codelitephp/php-plugin/php_workspace_view.cpp:682
+#: codelitephp/php-plugin/php_workspace_view.cpp:670
+#: codelitephp/php-plugin/php_workspace_view.cpp:689
 msgid "Yes"
 msgstr ""
 
 #: Plugin/globals.h:453 LiteEditor/threadlistpanel.cpp:76
-#: codelitephp/php-plugin/php_workspace_view.cpp:664
-#: codelitephp/php-plugin/php_workspace_view.cpp:683
+#: codelitephp/php-plugin/php_workspace_view.cpp:671
+#: codelitephp/php-plugin/php_workspace_view.cpp:690
 msgid "No"
 msgstr ""
 
 #: Plugin/globals.h:454 LiteEditor/context_cpp.cpp:952
-#: codelitephp/php-plugin/php_workspace_view.cpp:665
-#: codelitephp/php-plugin/php_workspace_view.cpp:684
+#: codelitephp/php-plugin/php_workspace_view.cpp:672
+#: codelitephp/php-plugin/php_workspace_view.cpp:691
 msgid "Remember my answer and don't ask me again"
 msgstr ""
 
@@ -2267,6 +2299,14 @@ msgstr ""
 msgid "<Use Defaults>"
 msgstr ""
 
+#: Plugin/clTreeCtrlPanel.cpp:19
+msgid "Folders"
+msgstr ""
+
+#: Plugin/clTreeCtrlPanel.cpp:43
+msgid "File Viewer"
+msgstr ""
+
 #: Plugin/CompilersDetectorManager.cpp:116
 msgid ""
 "Could not locate any MinGW compiler installed on your machine, would you "
@@ -2277,7 +2317,7 @@ msgstr ""
 msgid "Select a compiler to download"
 msgstr ""
 
-#: Plugin/CompilersDetectorManager.cpp:141 LiteEditor/frame.cpp:3588
+#: Plugin/CompilersDetectorManager.cpp:141 LiteEditor/frame.cpp:3582
 msgid "Choose compiler"
 msgstr ""
 
@@ -2450,7 +2490,7 @@ msgid "The remote host ip address or its known name"
 msgstr ""
 
 #: Plugin/sftp_ui.cpp:188 LiteEditor/project_settings_base_dlg.cpp:520
-#: codelitephp/php-plugin/php_ui.cpp:521 DatabaseExplorer/GUI.cpp:554
+#: codelitephp/php-plugin/php_ui.cpp:521 DatabaseExplorer/GUI.cpp:567
 msgid "Port:"
 msgstr ""
 
@@ -2467,7 +2507,7 @@ msgid "Login user name"
 msgstr ""
 
 #: Plugin/sftp_ui.cpp:212 Subversion2/subversion2_ui.cpp:229
-#: DatabaseExplorer/GUI.cpp:497 DatabaseExplorer/GUI.cpp:576
+#: DatabaseExplorer/GUI.cpp:514 DatabaseExplorer/GUI.cpp:589
 msgid "Password:"
 msgstr ""
 
@@ -2514,12 +2554,12 @@ msgstr ""
 #: LiteEditor/breakpointslistctrl.h:42
 #: LiteEditor/debugger_predefined_types_page.cpp:36
 #: LLDBDebugger/LLDBLocalsView.cpp:55 codelitephp/php-plugin/php_ui.cpp:1283
-#: DatabaseExplorer/TableSettings.cpp:70 DatabaseExplorer/GUI.cpp:1268
+#: DatabaseExplorer/TableSettings.cpp:70 DatabaseExplorer/GUI.cpp:1339
 msgid "Type"
 msgstr ""
 
 #: Plugin/sftp_ui.cpp:350 SFTP/SFTPTreeView.cpp:895 SFTP/SFTPTreeView.cpp:920
-#: SFTP/UI.cpp:186 DatabaseExplorer/GUI.cpp:1269
+#: SFTP/UI.cpp:186 DatabaseExplorer/GUI.cpp:1340
 msgid "Size"
 msgstr ""
 
@@ -2540,8 +2580,8 @@ msgid ""
 "\"Open\" _and_ \"Dialog\""
 msgstr ""
 
-#: Plugin/clBoostrapWizardBase.h:98 LiteEditor/frame.cpp:3551
-#: LiteEditor/frame.cpp:3877 LiteEditor/frame.cpp:4590
+#: Plugin/clBoostrapWizardBase.h:98 LiteEditor/frame.cpp:3545
+#: LiteEditor/frame.cpp:3871 LiteEditor/frame.cpp:4584
 msgid "Welcome!"
 msgstr ""
 
@@ -2779,7 +2819,7 @@ msgstr ""
 #: LiteEditor/new_item_base_dlg.cpp:63 LiteEditor/new_virtual_folder.cpp:60
 #: Gizmos/newwxprojectbasedlg.cpp:74 codelitephp/php-plugin/new_class.cpp:56
 #: codelitephp/php-plugin/php_ui.cpp:156 codelitephp/php-plugin/php_ui.cpp:269
-#: DatabaseExplorer/GUI.cpp:531
+#: DatabaseExplorer/GUI.cpp:544
 msgid "Name:"
 msgstr ""
 
@@ -2793,7 +2833,7 @@ msgstr ""
 
 #: ExternalTools/newtoolbase.cpp:72 ExternalTools/newtoolbase.cpp:87
 #: ExternalTools/newtoolbase.cpp:126 ExternalTools/newtoolbase.cpp:141
-#: LiteEditor/wxcrafter.cpp:824 Gizmos/newclassbasedlg.cpp:71
+#: LiteEditor/wxcrafter.cpp:772 Gizmos/newclassbasedlg.cpp:71
 #: Gizmos/newclassbasedlg.cpp:105 Gizmos/newclassbasedlg.cpp:123
 msgid "Browse..."
 msgstr ""
@@ -2909,8 +2949,13 @@ msgstr ""
 msgid "ZoomNavigator Settings"
 msgstr ""
 
+#: ZoomNavigator/zoomnavigator.cpp:48 ZoomNavigator/zoomnavigator.cpp:87
 #: ZoomNavigator/zoomnavigator.cpp:133
 msgid "Zoom Navigator"
+msgstr ""
+
+#: ZoomNavigator/zoomnavigator.cpp:64
+msgid "A dockable pane that shows a zoomed-out view of your code."
 msgstr ""
 
 #: ZoomNavigator/zoomnavigator.cpp:166
@@ -3084,16 +3129,6 @@ msgstr ""
 msgid "Target Directory:"
 msgstr ""
 
-#: git/gitui.cpp:789 Subversion2/subversion2_ui.cpp:1089
-#: LiteEditor/reconcileprojectbase.cpp:264 LiteEditor/ps_debugger_page.cpp:159
-#: LLDBDebugger/UI.cpp:676 CMakePlugin/CMakePluginUi.cpp:238
-#: CMakePlugin/CMakePluginUi.cpp:247 codelitephp/php-plugin/php_ui.cpp:284
-#: codelitephp/php-plugin/php_ui.cpp:698
-#: codelitephp/php-plugin/php_ui.cpp:1001
-#: codelitephp/php-plugin/php_ui.cpp:1799
-msgid "Select a folder"
-msgstr ""
-
 #: git/gitui.cpp:790
 msgid "Clone the sources into this target directory"
 msgstr ""
@@ -3121,7 +3156,7 @@ msgid ""
 "See the git manual for more options"
 msgstr ""
 
-#: git/gitui.cpp:1279 SFTP/SFTPStatusPage.cpp:86 LiteEditor/wxcrafter.cpp:964
+#: git/gitui.cpp:1279 SFTP/SFTPStatusPage.cpp:86 LiteEditor/wxcrafter.cpp:912
 msgid "Clear Log"
 msgstr ""
 
@@ -3184,6 +3219,14 @@ msgstr ""
 
 #: git/gitui.h:320
 msgid "Git Apply Patch"
+msgstr ""
+
+#: git/git.cpp:89
+msgid "Simple GIT plugin"
+msgstr ""
+
+#: git/git.cpp:134
+msgid "GIT plugin"
 msgstr ""
 
 #: git/git.cpp:202 git/git.cpp:2366 git/GitConsole.cpp:214
@@ -3514,7 +3557,7 @@ msgid "Diffs"
 msgstr ""
 
 #: git/GitConsole.cpp:223 LiteEditor/editorsettingsmiscbasepanel.cpp:284
-#: DatabaseExplorer/GUI.cpp:851
+#: DatabaseExplorer/GUI.cpp:890
 msgid "Log"
 msgstr ""
 
@@ -3547,10 +3590,14 @@ msgstr ""
 msgid "Untracked"
 msgstr ""
 
-#: git/GitConsole.cpp:454 LiteEditor/frame.cpp:1292 LiteEditor/frame.cpp:1508
-#: LiteEditor/frame.cpp:1645 LiteEditor/frame.cpp:1794
-#: LiteEditor/frame.cpp:2483
+#: git/GitConsole.cpp:454 LiteEditor/frame.cpp:1299 LiteEditor/frame.cpp:1515
+#: LiteEditor/frame.cpp:1652 LiteEditor/frame.cpp:1801
+#: LiteEditor/frame.cpp:2477
 msgid "Open File"
+msgstr ""
+
+#: CodeLiteDiff/codelitediff.cpp:47 CodeLiteDiff/codelitediff.cpp:60
+msgid "CodeLite Diff Plugin"
 msgstr ""
 
 #: CodeLiteDiff/codelitediff.cpp:108
@@ -3586,11 +3633,11 @@ msgstr ""
 
 #: Subversion2/svn_checkout_dialog.cpp:84 LiteEditor/fileview.cpp:977
 #: LiteEditor/fileview.cpp:1015 LiteEditor/fileview.cpp:1210
-#: LiteEditor/syntaxhighlightdlg.cpp:617 LiteEditor/manager.cpp:2848
-#: LiteEditor/manager.cpp:2899 LiteEditor/manager.cpp:2938
+#: LiteEditor/syntaxhighlightdlg.cpp:617 LiteEditor/manager.cpp:2850
+#: LiteEditor/manager.cpp:2901 LiteEditor/manager.cpp:2940
 #: LiteEditor/tasks_find_what_dlg.cpp:91 LiteEditor/mainbook.cpp:250
-#: LiteEditor/advanced_settings.cpp:160 LiteEditor/frame.cpp:2358
-#: LiteEditor/frame.cpp:2975 LiteEditor/edit_configuration.cpp:183
+#: LiteEditor/advanced_settings.cpp:160 LiteEditor/frame.cpp:2352
+#: LiteEditor/frame.cpp:2969 LiteEditor/edit_configuration.cpp:183
 msgid "Confirm"
 msgstr ""
 
@@ -3877,10 +3924,10 @@ msgstr ""
 #: LiteEditor/compiler_pages.cpp:449 LiteEditor/compiler_pages.cpp:480
 #: LiteEditor/compiler_pages.cpp:525 LiteEditor/tasksfindwhatdlgbase.cpp:59
 #: LiteEditor/project_settings_base_dlg.cpp:850 Gizmos/newclassbasedlg.cpp:186
-#: QmakePlugin/qmakesettingsdlg.cpp:106 codelitephp/php-plugin/php_ui.cpp:1228
-#: codelitephp/php-plugin/php_workspace_view.cpp:187
-#: codelitephp/php-plugin/php_workspace_view.cpp:267 menu.xrc:879 menu.xrc:922
-#: menu.xrc:1157 menu.xrc:1190
+#: QmakePlugin/qmakesettingsdlg.cpp:106 menu.xrc:879 menu.xrc:922
+#: menu.xrc:1157 menu.xrc:1190 codelitephp/php-plugin/php_ui.cpp:1228
+#: codelitephp/php-plugin/php_workspace_view.cpp:194
+#: codelitephp/php-plugin/php_workspace_view.cpp:274
 msgid "Delete"
 msgstr ""
 
@@ -3888,8 +3935,8 @@ msgstr ""
 #: SFTP/SFTPTreeView.cpp:486 LiteEditor/edit_configuration.cpp:143
 #: LiteEditor/edit_configuration.cpp:165
 #: LiteEditor/edit_workspace_conf_dlg.cpp:137
-#: codelitephp/php-plugin/php_workspace_view.cpp:185
-#: codelitephp/php-plugin/php_workspace_view.cpp:216
+#: codelitephp/php-plugin/php_workspace_view.cpp:192
+#: codelitephp/php-plugin/php_workspace_view.cpp:223
 msgid "Rename"
 msgstr ""
 
@@ -4024,7 +4071,7 @@ msgid "Choose directory"
 msgstr ""
 
 #: Subversion2/subversion_view.cpp:253 Subversion2/subversion_view.cpp:255
-#: LiteEditor/wxcrafter.cpp:596 LiteEditor/wxcrafter.cpp:1067
+#: LiteEditor/wxcrafter.cpp:574 LiteEditor/wxcrafter.cpp:1015
 msgid "Link Editor"
 msgstr ""
 
@@ -4183,6 +4230,10 @@ msgstr ""
 msgid "Unversioned Files"
 msgstr ""
 
+#: Subversion2/subversion_strings.h:36
+msgid "Svn"
+msgstr ""
+
 #: Subversion2/subversion_strings.h:37
 msgid ""
 "\n"
@@ -4228,6 +4279,10 @@ msgstr ""
 
 #: Outline/outline.cpp:86
 msgid "Outline Plugin"
+msgstr ""
+
+#: Outline/outline.cpp:95 Outline/outline.cpp:101 Outline/outline.cpp:137
+msgid "Outline"
 msgstr ""
 
 #: Outline/wxcrafter.cpp:30
@@ -4489,11 +4544,15 @@ msgstr ""
 msgid "Failed to start debugger: permission denied"
 msgstr ""
 
+#: Tweaks/tweaks.cpp:54 Tweaks/tweaks.cpp:69
+msgid "Tweak codelite"
+msgstr ""
+
 #: Tweaks/tweaks.cpp:108
 msgid "Tweaks Plugin"
 msgstr ""
 
-#: Tweaks/wxcrafter.h:82
+#: Tweaks/wxcrafter.h:74
 msgid "Tweaks Setting"
 msgstr ""
 
@@ -4505,59 +4564,59 @@ msgstr ""
 msgid "Remember my answer"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:54
+#: Tweaks/wxcrafter.cpp:29
 msgid "Enable Tweaks"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:64
+#: Tweaks/wxcrafter.cpp:40
 msgid "Editor Tabs"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:71
+#: Tweaks/wxcrafter.cpp:47
 msgid "Configure Editor Tab Colours"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:71
+#: Tweaks/wxcrafter.cpp:47
 msgid "Customize your editor tab colours globally or per project"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:85
+#: Tweaks/wxcrafter.cpp:61
 msgid "Global Tab Colours"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:88
+#: Tweaks/wxcrafter.cpp:64
 msgid "Tab Label Background Colour"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:92
+#: Tweaks/wxcrafter.cpp:68
 msgid "Tab Label Text Colour"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:96
+#: Tweaks/wxcrafter.cpp:72
 msgid "Tab Colours Per Project"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:103
+#: Tweaks/wxcrafter.cpp:79
 msgid "&Reset colours"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:104
+#: Tweaks/wxcrafter.cpp:80
 msgid "Reset colours"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:109
+#: Tweaks/wxcrafter.cpp:85
 msgid "Images"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:116
+#: Tweaks/wxcrafter.cpp:92
 msgid "Configure Project Images"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:116
+#: Tweaks/wxcrafter.cpp:92
 msgid "Set a different image for a every project in the workspace"
 msgstr ""
 
-#: Tweaks/wxcrafter.cpp:130
+#: Tweaks/wxcrafter.cpp:106
 msgid "Projects"
 msgstr ""
 
@@ -4570,9 +4629,9 @@ msgid "SFTP / SSH Settings"
 msgstr ""
 
 #: SFTP/SFTPTreeView.cpp:354 MemCheck/memcheckui.cpp:295
-#: LiteEditor/frame.cpp:1292 LiteEditor/frame.cpp:1508
-#: LiteEditor/frame.cpp:1645 LiteEditor/frame.cpp:1794
-#: codelitephp/php-plugin/php_workspace_view.cpp:184
+#: LiteEditor/frame.cpp:1299 LiteEditor/frame.cpp:1515
+#: LiteEditor/frame.cpp:1652 LiteEditor/frame.cpp:1801
+#: codelitephp/php-plugin/php_workspace_view.cpp:191
 #: DatabaseExplorer/ErdPanel.cpp:164
 msgid "Open"
 msgstr ""
@@ -4609,10 +4668,10 @@ msgstr ""
 msgid "Enter the new file name:"
 msgstr ""
 
-#: SFTP/SFTPTreeView.cpp:463 LiteEditor/frame.cpp:1290
-#: LiteEditor/frame.cpp:1506 LiteEditor/frame.cpp:1643
-#: LiteEditor/frame.cpp:1792 codelitephp/php-plugin/php_ui.h:154
-#: codelitephp/php-plugin/php_workspace_view.cpp:505
+#: SFTP/SFTPTreeView.cpp:463 LiteEditor/frame.cpp:1297
+#: LiteEditor/frame.cpp:1513 LiteEditor/frame.cpp:1650
+#: LiteEditor/frame.cpp:1799 codelitephp/php-plugin/php_ui.h:154
+#: codelitephp/php-plugin/php_workspace_view.cpp:512
 msgid "New File"
 msgstr ""
 
@@ -4632,7 +4691,8 @@ msgstr ""
 msgid "Connected. Click to disconnect"
 msgstr ""
 
-#: SFTP/SFTPTreeView.cpp:704 SFTP/sftp.cpp:161
+#: SFTP/SFTPTreeView.cpp:704 SFTP/sftp.cpp:123 SFTP/sftp.cpp:126
+#: SFTP/sftp.cpp:161 SFTP/sftp.cpp:326 SFTP/sftp.cpp:386
 msgid "SFTP"
 msgstr ""
 
@@ -4675,8 +4735,8 @@ msgid "Fetching directory list..."
 msgstr ""
 
 #: SFTP/SFTPTreeView.cpp:758 CodeFormatter/codeformatter.cpp:251
-#: cscope/cscopedbbuilderthread.cpp:62 LiteEditor/manager.cpp:3499
-#: LiteEditor/frame.cpp:5368 cppchecker/cppcheckreportpage.cpp:201
+#: cscope/cscopedbbuilderthread.cpp:62 LiteEditor/manager.cpp:3501
+#: LiteEditor/frame.cpp:5362 cppchecker/cppcheckreportpage.cpp:201
 msgid "Done"
 msgstr ""
 
@@ -4696,7 +4756,7 @@ msgstr ""
 msgid "Open account manager..."
 msgstr ""
 
-#: SFTP/UI.cpp:147 LiteEditor/cl_editor.cpp:3092
+#: SFTP/UI.cpp:147 LiteEditor/cl_editor.cpp:3095
 msgid "Add Bookmark"
 msgstr ""
 
@@ -4714,6 +4774,10 @@ msgstr ""
 
 #: SFTP/UI.cpp:173
 msgid "Type a path and hit ENTER"
+msgstr ""
+
+#: SFTP/sftp.cpp:81 SFTP/sftp.cpp:91
+msgid "SFTP plugin for codelite IDE"
 msgstr ""
 
 #: SFTP/sftp.cpp:154 SFTP/sftp.cpp:155
@@ -4854,8 +4918,18 @@ msgstr ""
 msgid "Show available macros"
 msgstr ""
 
-#: abbreviation/abbreviationssettingsbase.h:68
+#: abbreviation/abbreviationssettingsbase.h:82
 msgid "Abbreviations Settings..."
+msgstr ""
+
+#: MemCheck/memcheck.cpp:44
+msgid ""
+"MemCheck plugin detects memory leaks. Uses Valgrind (memcheck tool) as "
+"backend."
+msgstr ""
+
+#: MemCheck/memcheck.cpp:62
+msgid "Detects memory management problems. Uses Valgrind - memcheck skin."
 msgstr ""
 
 #: MemCheck/memcheck.cpp:171 MemCheck/memcheck.cpp:173
@@ -4888,6 +4962,21 @@ msgid ""
 "-- MemCheck process completed\n"
 msgstr ""
 
+#: MemCheck/memcheckoutputview.cpp:28 MemCheck/memcheckui.cpp:222
+#: MemCheck/memcheckui.cpp:358
+msgid "Label"
+msgstr ""
+
+#: MemCheck/memcheckoutputview.cpp:396 MemCheck/memcheckui.cpp:220
+msgid "Current"
+msgstr ""
+
+#: MemCheck/memcheckoutputview.cpp:486 MemCheck/memcheckoutputview.cpp:507
+#: MemCheck/memcheckoutputview.cpp:674 MemCheck/memcheckoutputview.cpp:766
+#: MemCheck/memcheckui.cpp:221 cppchecker/cppchecksettingsdlgbase.cpp:148
+msgid "Suppress"
+msgstr ""
+
 #: MemCheck/memcheckui.cpp:174
 msgid "Run check"
 msgstr ""
@@ -4916,27 +5005,14 @@ msgstr ""
 msgid "Errors"
 msgstr ""
 
-#: MemCheck/memcheckui.cpp:220
-msgid "Current"
-msgstr ""
-
-#: MemCheck/memcheckui.cpp:221 cppchecker/cppchecksettingsdlgbase.cpp:148
-msgid "Suppress"
-msgstr ""
-
-#: MemCheck/memcheckui.cpp:222 MemCheck/memcheckui.cpp:358
-msgid "Label"
-msgstr ""
-
 #: MemCheck/memcheckui.cpp:224 cscope/CscopeTabBase.cpp:46
 #: LiteEditor/threadlistpanel.cpp:54
 #: LiteEditor/editoroptionsgeneralrightmarginpanelbase.cpp:49
 #: LiteEditor/symbols_dialog.cpp:45 LiteEditor/breakpointslistctrl.h:45
 #: LiteEditor/listctrlpanelbase.cpp:61 LLDBDebugger/UI.cpp:36
-#: LLDBDebugger/UI.cpp:161 LLDBDebugger/UI.cpp:560
+#: LLDBDebugger/UI.cpp:161 LLDBDebugger/UI.cpp:560 menu.xrc:110
 #: codelitephp/php-plugin/php_ui.cpp:1192
-#: codelitephp/php-plugin/php_ui.cpp:1218 menu.xrc:110
-#: UnitTestCPP/unittestspage.cpp:39
+#: codelitephp/php-plugin/php_ui.cpp:1218 UnitTestCPP/unittestspage.cpp:39
 msgid "Line"
 msgstr ""
 
@@ -6491,7 +6567,7 @@ msgstr ""
 msgid "Choose a directory"
 msgstr ""
 
-#: LiteEditor/newworkspacebasedlg.h:54 LiteEditor/wxcrafter.cpp:464
+#: LiteEditor/newworkspacebasedlg.h:54 LiteEditor/wxcrafter.cpp:400
 msgid "New Workspace"
 msgstr ""
 
@@ -6584,7 +6660,7 @@ msgid ""
 msgstr ""
 
 #: LiteEditor/implementparentvirtualfunctionsbase.cpp:87
-#: LiteEditor/setters_getters.cpp:78 LiteEditor/wxcrafter.cpp:380
+#: LiteEditor/setters_getters.cpp:78 LiteEditor/wxcrafter.cpp:316
 #: LiteEditor/rename_symbool_dlg.cpp:82
 #: LiteEditor/importfilesdialog_new.cpp:52 CMakePlugin/CMakePluginUi.cpp:104
 #: codelitephp/php-plugin/php_ui.cpp:2145
@@ -6616,12 +6692,12 @@ msgid "Generate doxygen comment?"
 msgstr ""
 
 #: LiteEditor/implementparentvirtualfunctionsbase.cpp:103
-#: LiteEditor/wxcrafter.cpp:386
+#: LiteEditor/wxcrafter.cpp:322
 msgid "Check all"
 msgstr ""
 
 #: LiteEditor/implementparentvirtualfunctionsbase.cpp:107
-#: LiteEditor/wxcrafter.cpp:390
+#: LiteEditor/wxcrafter.cpp:326
 msgid "Uncheck all"
 msgstr ""
 
@@ -6735,7 +6811,7 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: LiteEditor/threadlistpanel.cpp:52 LiteEditor/wxcrafter.cpp:381
+#: LiteEditor/threadlistpanel.cpp:52 LiteEditor/wxcrafter.cpp:317
 #: LiteEditor/breakpointslistctrl.h:46 LiteEditor/listctrlpanelbase.cpp:59
 #: LLDBDebugger/UI.cpp:34 LLDBDebugger/UI.cpp:162 LLDBDebugger/UI.cpp:558
 msgid "Function"
@@ -6754,23 +6830,19 @@ msgstr ""
 msgid "Symbols file loaded into OS file system cache (%ld seconds)"
 msgstr ""
 
-#: LiteEditor/wxcrafter.h:141
-msgid "Plugin is missing"
-msgstr ""
-
-#: LiteEditor/wxcrafter.h:172
+#: LiteEditor/wxcrafter.h:159
 msgid "Add function implementation"
 msgstr ""
 
-#: LiteEditor/wxcrafter.h:291
+#: LiteEditor/wxcrafter.h:296
 msgid "EditorFrame"
 msgstr ""
 
-#: LiteEditor/wxcrafter.h:351
+#: LiteEditor/wxcrafter.h:362
 msgid "New Project Wizard"
 msgstr ""
 
-#: LiteEditor/wxcrafter.h:427
+#: LiteEditor/wxcrafter.h:441
 msgid "Open Folder"
 msgstr ""
 
@@ -6795,7 +6867,7 @@ msgid "Remember my answer and apply it all files"
 msgstr ""
 
 #: LiteEditor/fileview.cpp:984 LiteEditor/fileview.cpp:1023
-#: LiteEditor/frame.cpp:2557
+#: LiteEditor/frame.cpp:2551
 msgid "Are you sure?"
 msgstr ""
 
@@ -6814,11 +6886,11 @@ msgid ""
 msgstr ""
 
 #: LiteEditor/fileview.cpp:1035 LiteEditor/fileview.cpp:1039
-#: LiteEditor/manager.cpp:286 LiteEditor/manager.cpp:303
-#: LiteEditor/manager.cpp:496 LiteEditor/manager.cpp:590
-#: LiteEditor/manager.cpp:658 LiteEditor/manager.cpp:992
-#: LiteEditor/manager.cpp:1019 LiteEditor/manager.cpp:1171
-#: LiteEditor/manager.cpp:1322 LiteEditor/newworkspacedlg.cpp:107
+#: LiteEditor/manager.cpp:287 LiteEditor/manager.cpp:304
+#: LiteEditor/manager.cpp:498 LiteEditor/manager.cpp:592
+#: LiteEditor/manager.cpp:660 LiteEditor/manager.cpp:994
+#: LiteEditor/manager.cpp:1021 LiteEditor/manager.cpp:1173
+#: LiteEditor/manager.cpp:1324 LiteEditor/newworkspacedlg.cpp:107
 #: LiteEditor/cl_editor.cpp:1209 LiteEditor/advanced_settings.cpp:143
 #: Gizmos/newwxprojectdlg.cpp:103 DatabaseExplorer/DbViewerPanel.cpp:540
 msgid "Error"
@@ -6861,7 +6933,7 @@ msgid "Adding file: "
 msgstr ""
 
 #: LiteEditor/fileview.cpp:1907
-#: codelitephp/php-plugin/php_workspace_view.cpp:617
+#: codelitephp/php-plugin/php_workspace_view.cpp:624
 msgid "New file name:"
 msgstr ""
 
@@ -7426,36 +7498,41 @@ msgid ""
 "$(ProjectName), $(WorkspaceName)"
 msgstr ""
 
-#: LiteEditor/workspace_pane.cpp:85 LiteEditor/workspace_pane.cpp:109
-#: LiteEditor/workspace_pane.cpp:188 LiteEditor/workspace_pane.cpp:305
-#: LiteEditor/workspace_pane.cpp:323 LiteEditor/workspace_pane.cpp:324
+#: LiteEditor/workspace_pane.cpp:86 LiteEditor/workspace_pane.cpp:110
+#: LiteEditor/workspace_pane.cpp:192 LiteEditor/workspace_pane.cpp:309
+#: LiteEditor/workspace_pane.cpp:327 LiteEditor/workspace_pane.cpp:328
 #: menu.xrc:267
 msgid "Workspace"
 msgstr ""
 
-#: LiteEditor/workspace_pane.cpp:90 LiteEditor/workspace_pane.cpp:166
+#: LiteEditor/workspace_pane.cpp:91 LiteEditor/workspace_pane.cpp:170
 msgid "Parsing workspace..."
 msgstr ""
 
-#: LiteEditor/workspace_pane.cpp:120 LiteEditor/workspace_pane.cpp:189
-#: LiteEditor/workspace_pane.cpp:303 LiteEditor/workspace_pane.cpp:327
-#: LiteEditor/workspace_pane.cpp:328 menu.xrc:271
+#: LiteEditor/workspace_pane.cpp:121 LiteEditor/workspace_pane.cpp:193
+#: LiteEditor/workspace_pane.cpp:307 LiteEditor/workspace_pane.cpp:331
+#: LiteEditor/workspace_pane.cpp:332 LiteEditor/fileexplorer.cpp:81
+#: menu.xrc:271
 msgid "Explorer"
 msgstr ""
 
-#: LiteEditor/workspace_pane.cpp:132 LiteEditor/workspace_pane.cpp:190
-#: LiteEditor/workspace_pane.cpp:308 LiteEditor/workspace_pane.cpp:332
-#: LiteEditor/workspace_pane.cpp:333 menu.xrc:275
+#: LiteEditor/workspace_pane.cpp:132
+msgid "File Explorer"
+msgstr ""
+
+#: LiteEditor/workspace_pane.cpp:136 LiteEditor/workspace_pane.cpp:194
+#: LiteEditor/workspace_pane.cpp:312 LiteEditor/workspace_pane.cpp:336
+#: LiteEditor/workspace_pane.cpp:337 menu.xrc:275
 msgid "Tabs"
 msgstr ""
 
-#: LiteEditor/workspace_pane.cpp:144 LiteEditor/workspace_pane.cpp:191
-#: LiteEditor/workspace_pane.cpp:311 LiteEditor/workspace_pane.cpp:337
-#: LiteEditor/workspace_pane.cpp:338 menu.xrc:279
+#: LiteEditor/workspace_pane.cpp:148 LiteEditor/workspace_pane.cpp:195
+#: LiteEditor/workspace_pane.cpp:315 LiteEditor/workspace_pane.cpp:341
+#: LiteEditor/workspace_pane.cpp:342 menu.xrc:279
 msgid "Tabgroups"
 msgstr ""
 
-#: LiteEditor/workspace_pane.cpp:179
+#: LiteEditor/workspace_pane.cpp:183
 #, c-format
 msgid "Parsing workspace: %d%% completed"
 msgstr ""
@@ -7605,7 +7682,7 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: LiteEditor/new_quick_watch_dlg.cpp:339 LiteEditor/cl_editor.cpp:3388
+#: LiteEditor/new_quick_watch_dlg.cpp:339 LiteEditor/cl_editor.cpp:3390
 msgid "Add Watch"
 msgstr ""
 
@@ -7627,12 +7704,6 @@ msgstr ""
 
 #: LiteEditor/env_var_dlg_base.cpp:53
 msgid "Available environment sets:"
-msgstr ""
-
-#: LiteEditor/env_var_dlg_base.cpp:76
-#: LiteEditor/editoroptionsgeneralguidespanelbase.cpp:68
-#: LiteEditor/editorsettingslocal.cpp:100 Gizmos/newwxprojectdlg.cpp:41
-msgid "Default"
 msgstr ""
 
 #: LiteEditor/env_var_dlg_base.cpp:84
@@ -7685,7 +7756,7 @@ msgid ""
 "of the comment:"
 msgstr ""
 
-#: LiteEditor/commentpagebase.cpp:99 DatabaseExplorer/GUI.cpp:1010
+#: LiteEditor/commentpagebase.cpp:99 DatabaseExplorer/GUI.cpp:1065
 msgid "Class prefix:"
 msgstr ""
 
@@ -7713,7 +7784,7 @@ msgstr ""
 msgid "Generate Setters/Getters for class '"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.h:69 LiteEditor/wxcrafter.cpp:590
+#: LiteEditor/project_settings_base_dlg.h:69 LiteEditor/wxcrafter.cpp:572
 #: codelitephp/php-plugin/php_ui.h:343
 msgid "Project Settings"
 msgstr ""
@@ -7944,22 +8015,22 @@ msgid ""
 "When the count reaches zero, the breakpoint becomes active again."
 msgstr ""
 
-#: LiteEditor/workspacetab.cpp:45
+#: LiteEditor/workspacetab.cpp:49
 msgid "<Open Configuration Manager...>"
 msgstr ""
 
-#: LiteEditor/workspacetab.cpp:448
+#: LiteEditor/workspacetab.cpp:441
 msgid " Project Settings"
 msgstr ""
 
-#: LiteEditor/findinfiles_dlg.h:113 LiteEditor/wxcrafter.cpp:1063
-#: LiteEditor/frame.cpp:1351 LiteEditor/frame.cpp:1353
-#: LiteEditor/frame.cpp:1549 LiteEditor/frame.cpp:1551
-#: LiteEditor/frame.cpp:1686 LiteEditor/frame.cpp:1688
-#: LiteEditor/frame.cpp:1855 LiteEditor/frame.cpp:1857
-#: codelitephp/php-plugin/php_workspace_view.cpp:221
-#: codelitephp/php-plugin/php_workspace_view.cpp:236
-#: codelitephp/php-plugin/php_workspace_view.cpp:272
+#: LiteEditor/findinfiles_dlg.h:113 LiteEditor/wxcrafter.cpp:1011
+#: LiteEditor/frame.cpp:1358 LiteEditor/frame.cpp:1360
+#: LiteEditor/frame.cpp:1556 LiteEditor/frame.cpp:1558
+#: LiteEditor/frame.cpp:1693 LiteEditor/frame.cpp:1695
+#: LiteEditor/frame.cpp:1862 LiteEditor/frame.cpp:1864
+#: codelitephp/php-plugin/php_workspace_view.cpp:228
+#: codelitephp/php-plugin/php_workspace_view.cpp:243
+#: codelitephp/php-plugin/php_workspace_view.cpp:279
 msgid "Find In Files"
 msgstr ""
 
@@ -8039,9 +8110,9 @@ msgstr ""
 msgid "Type to start a search..."
 msgstr ""
 
-#: LiteEditor/quickfindbar.cpp:145 LiteEditor/wxcrafter.cpp:701
-#: LiteEditor/frame.cpp:1347 LiteEditor/frame.cpp:1545
-#: LiteEditor/frame.cpp:1682 LiteEditor/frame.cpp:1851
+#: LiteEditor/quickfindbar.cpp:145 LiteEditor/wxcrafter.cpp:649
+#: LiteEditor/frame.cpp:1354 LiteEditor/frame.cpp:1552
+#: LiteEditor/frame.cpp:1689 LiteEditor/frame.cpp:1858
 msgid "Find"
 msgstr ""
 
@@ -8516,11 +8587,10 @@ msgstr ""
 msgid "Save Build Log..."
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:103 LiteEditor/frame.cpp:1308
-#: LiteEditor/frame.cpp:1524 LiteEditor/frame.cpp:1661
-#: LiteEditor/frame.cpp:1810 DatabaseExplorer/ErdPanel.cpp:173
-#: DatabaseExplorer/FrameCanvas.cpp:173 menu.xrc:862 menu.xrc:916
-#: menu.xrc:1146
+#: LiteEditor/wxcrafter.cpp:103 LiteEditor/frame.cpp:1315
+#: LiteEditor/frame.cpp:1531 LiteEditor/frame.cpp:1668
+#: LiteEditor/frame.cpp:1817 menu.xrc:862 menu.xrc:916 menu.xrc:1146
+#: DatabaseExplorer/ErdPanel.cpp:173 DatabaseExplorer/FrameCanvas.cpp:173
 msgid "Copy"
 msgstr ""
 
@@ -8528,10 +8598,10 @@ msgstr ""
 msgid "Copy Build Output to Clipboard"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:105 LiteEditor/frame.cpp:1309
-#: LiteEditor/frame.cpp:1525 LiteEditor/frame.cpp:1662
-#: LiteEditor/frame.cpp:1811 DatabaseExplorer/ErdPanel.cpp:175
-#: DatabaseExplorer/FrameCanvas.cpp:175 menu.xrc:865 menu.xrc:919
+#: LiteEditor/wxcrafter.cpp:105 LiteEditor/frame.cpp:1316
+#: LiteEditor/frame.cpp:1532 LiteEditor/frame.cpp:1669
+#: LiteEditor/frame.cpp:1818 menu.xrc:865 menu.xrc:919
+#: DatabaseExplorer/ErdPanel.cpp:175 DatabaseExplorer/FrameCanvas.cpp:175
 msgid "Paste"
 msgstr ""
 
@@ -8539,269 +8609,262 @@ msgstr ""
 msgid "Paste Build Output into an Empty Editor"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:300
-msgid "Plugin is not installed"
-msgstr ""
-
-#: LiteEditor/wxcrafter.cpp:300
-msgid ""
-"It seems that the wxCrafter plugin is not installed\n"
-"What would you like to do?"
-msgstr ""
-
-#: LiteEditor/wxcrafter.cpp:313
-msgid "Download wxCrafter plugin from codelite's website"
-msgstr ""
-
-#: LiteEditor/wxcrafter.cpp:319
-msgid "Ignore the missing plugin and create the project anyway"
-msgstr ""
-
-#: LiteEditor/wxcrafter.cpp:357
+#: LiteEditor/wxcrafter.cpp:293
 msgid "Implement functions"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:357
+#: LiteEditor/wxcrafter.cpp:293
 msgid "Select the functions you want to implement"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:364
+#: LiteEditor/wxcrafter.cpp:300
 msgid "The functions will be placed into this file"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:464 LiteEditor/wxcrafter.cpp:465
+#: LiteEditor/wxcrafter.cpp:400 LiteEditor/wxcrafter.cpp:401
 msgid "Create a new workspace"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:469 LiteEditor/frame.cpp:2394
+#: LiteEditor/wxcrafter.cpp:405 LiteEditor/frame.cpp:2388
 msgid "Open Workspace"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:469
+#: LiteEditor/wxcrafter.cpp:405
 msgid "Open an existing workspace"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:470
+#: LiteEditor/wxcrafter.cpp:406
 msgid ""
 "Click to create a new project.\n"
 "If NO workspace is open, it will auto create a workspace before creating the "
 "project"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:474
+#: LiteEditor/wxcrafter.cpp:410
 msgid "Recent workspaces"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:474
+#: LiteEditor/wxcrafter.cpp:410
 msgid "Open a recently used workspace"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:475
+#: LiteEditor/wxcrafter.cpp:411
 msgid "Open a workspace from a list of recently opened workspaces"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:479
+#: LiteEditor/wxcrafter.cpp:415
 msgid "Recent files"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:479
+#: LiteEditor/wxcrafter.cpp:415
 msgid "Open a recently used file"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:480
+#: LiteEditor/wxcrafter.cpp:416
 msgid "Open a file from the revcently opened files"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:484
+#: LiteEditor/wxcrafter.cpp:420
 msgid "Forums"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:484
+#: LiteEditor/wxcrafter.cpp:420
 msgid "Visit codelite's forums"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:485
+#: LiteEditor/wxcrafter.cpp:421
 msgid "Click to open a web browser in CodeLite's forums"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:489
+#: LiteEditor/wxcrafter.cpp:425
 msgid "Wiki"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:489
+#: LiteEditor/wxcrafter.cpp:425
 msgid "Search codelite's wiki pages"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:490
+#: LiteEditor/wxcrafter.cpp:426
 msgid "Click to open a web browser in CodeLite's wiki main documentation page"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:586 LiteEditor/wxcrafter.cpp:1051
+#: LiteEditor/wxcrafter.cpp:524 LiteEditor/manager.cpp:394
+#: codelitephp/php-plugin/php_ui.cpp:89
+msgid "C++ Workspace"
+msgstr ""
+
+#: LiteEditor/wxcrafter.cpp:534
+msgid "Resize the configuration bar"
+msgstr ""
+
+#: LiteEditor/wxcrafter.cpp:547
+msgid "Select the active project"
+msgstr ""
+
+#: LiteEditor/wxcrafter.cpp:559
+msgid "Select the workspace build configuration"
+msgstr ""
+
+#: LiteEditor/wxcrafter.cpp:568 LiteEditor/wxcrafter.cpp:999
 #: codelitephp/php-plugin/php_ui.cpp:1080
 msgid "Collapse All"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:588
+#: LiteEditor/wxcrafter.cpp:570
 msgid "Goto Active Project"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:590
+#: LiteEditor/wxcrafter.cpp:572
 msgid ""
 "Open selected project settings. If there is no project selected, open the "
 "parent project of the seleced item in the tree"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:604
-msgid "Resize the configuration bar"
-msgstr ""
-
-#: LiteEditor/wxcrafter.cpp:617
-msgid "Select the active project"
-msgstr ""
-
-#: LiteEditor/wxcrafter.cpp:629
-msgid "Select the workspace build configuration"
-msgstr ""
-
-#: LiteEditor/wxcrafter.cpp:699 LiteEditor/frame.cpp:1296
-#: LiteEditor/frame.cpp:1512 LiteEditor/frame.cpp:1649
-#: LiteEditor/frame.cpp:1798
+#: LiteEditor/wxcrafter.cpp:647 LiteEditor/frame.cpp:1303
+#: LiteEditor/frame.cpp:1519 LiteEditor/frame.cpp:1656
+#: LiteEditor/frame.cpp:1805
 msgid "Reload File"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:703 LiteEditor/frame.cpp:1311
-#: LiteEditor/frame.cpp:1528 LiteEditor/frame.cpp:1665
-#: LiteEditor/frame.cpp:1813 DatabaseExplorer/ErdPanel.cpp:177 menu.xrc:869
-#: menu.xrc:906
+#: LiteEditor/wxcrafter.cpp:651 LiteEditor/frame.cpp:1318
+#: LiteEditor/frame.cpp:1535 LiteEditor/frame.cpp:1672
+#: LiteEditor/frame.cpp:1820 menu.xrc:869 menu.xrc:906
+#: DatabaseExplorer/ErdPanel.cpp:177
 msgid "Undo"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:705 LiteEditor/frame.cpp:1313
-#: LiteEditor/frame.cpp:1530 LiteEditor/frame.cpp:1667
-#: LiteEditor/frame.cpp:1815 DatabaseExplorer/ErdPanel.cpp:178 menu.xrc:872
-#: menu.xrc:909
+#: LiteEditor/wxcrafter.cpp:653 LiteEditor/frame.cpp:1320
+#: LiteEditor/frame.cpp:1537 LiteEditor/frame.cpp:1674
+#: LiteEditor/frame.cpp:1822 menu.xrc:872 menu.xrc:909
+#: DatabaseExplorer/ErdPanel.cpp:178
 msgid "Redo"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:707 LiteEditor/frame.cpp:1319
-#: LiteEditor/frame.cpp:1321 LiteEditor/frame.cpp:1535
-#: LiteEditor/frame.cpp:1537 LiteEditor/frame.cpp:1672
-#: LiteEditor/frame.cpp:1674 LiteEditor/frame.cpp:1821
-#: LiteEditor/frame.cpp:1823 menu.xrc:888
+#: LiteEditor/wxcrafter.cpp:655 LiteEditor/frame.cpp:1326
+#: LiteEditor/frame.cpp:1328 LiteEditor/frame.cpp:1542
+#: LiteEditor/frame.cpp:1544 LiteEditor/frame.cpp:1679
+#: LiteEditor/frame.cpp:1681 LiteEditor/frame.cpp:1828
+#: LiteEditor/frame.cpp:1830 menu.xrc:888
 msgid "Toggle Bookmark"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:758 LiteEditor/wxcrafter.cpp:782
-#: LiteEditor/wxcrafter.cpp:855
+#: LiteEditor/wxcrafter.cpp:706 LiteEditor/wxcrafter.cpp:730
+#: LiteEditor/wxcrafter.cpp:803
 msgid "New Project"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:758
+#: LiteEditor/wxcrafter.cpp:706
 msgid "Select the project template from the list below"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:773
+#: LiteEditor/wxcrafter.cpp:721
 msgid "Template"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:782
+#: LiteEditor/wxcrafter.cpp:730
 msgid "Set the project path and name"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:800
+#: LiteEditor/wxcrafter.cpp:748
 msgid ""
 "Set the project name. A project name can contains A-Z, 0-9 and _ characters "
 "only"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:808 Gizmos/gizmos_base.cpp:111
+#: LiteEditor/wxcrafter.cpp:756 Gizmos/gizmos_base.cpp:111
 #: QmakePlugin/NewQtProj.cpp:68 codelitephp/php-plugin/php_ui.cpp:1795
 msgid "Project path:"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:817
+#: LiteEditor/wxcrafter.cpp:765
 msgid "Select the location of the project. The location must exist."
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:825
+#: LiteEditor/wxcrafter.cpp:773
 msgid "Browse for folder"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:831 Gizmos/newwxprojectbasedlg.cpp:117
+#: LiteEditor/wxcrafter.cpp:779 Gizmos/newwxprojectbasedlg.cpp:117
 #: QmakePlugin/NewQtProj.cpp:107
 msgid "Create the project under a separate directory"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:833
+#: LiteEditor/wxcrafter.cpp:781
 msgid ""
 "When checked, codelite will place the project under a separate directory. "
 "The full path of the project file is displayed below"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:855
+#: LiteEditor/wxcrafter.cpp:803
 msgid "Select the project toolchain"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:868
+#: LiteEditor/wxcrafter.cpp:816
 msgid "Compiler:"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:877
+#: LiteEditor/wxcrafter.cpp:825
 msgid "Debugger:"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:944
+#: LiteEditor/wxcrafter.cpp:892
 msgid "Enable Clang"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:946
+#: LiteEditor/wxcrafter.cpp:894
 msgid "Enable Clang code completion"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:949
+#: LiteEditor/wxcrafter.cpp:897
 msgid "Inline Errors"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:951
+#: LiteEditor/wxcrafter.cpp:899
 msgid ""
 "Display Clang errors as text annotations inside the editor (i.e. as an "
 "inline messages)"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:956
+#: LiteEditor/wxcrafter.cpp:904
 msgid "Cache policy:"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:962
+#: LiteEditor/wxcrafter.cpp:910
 msgid "Clear Clang Cache"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:1053
+#: LiteEditor/wxcrafter.cpp:1001
 msgid "Go Home"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:1055
+#: LiteEditor/wxcrafter.cpp:1003
 msgid "Bookmark"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:1055
+#: LiteEditor/wxcrafter.cpp:1003
 msgid "Bookmark Selected Folder"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:1061
+#: LiteEditor/wxcrafter.cpp:1009
 msgid "GoTo"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:1061
+#: LiteEditor/wxcrafter.cpp:1009
 msgid "Goto Folder"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:1102
+#: LiteEditor/wxcrafter.cpp:1050
 msgid "Goto Folder:"
 msgstr ""
 
-#: LiteEditor/wxcrafter.cpp:1109
+#: LiteEditor/wxcrafter.cpp:1057
 msgid "Type the folder path"
+msgstr ""
+
+#: LiteEditor/wxcrafter.cpp:1109
+msgid ""
+"DRAG AND DROP\n"
+"A FOLDER HERE"
 msgstr ""
 
 #: LiteEditor/symbols_dialog.cpp:42
@@ -9355,7 +9418,7 @@ msgstr ""
 msgid "Implement Parent Virtual Functions"
 msgstr ""
 
-#: LiteEditor/breakpointdlg.cpp:93 LiteEditor/cl_editor.cpp:3221
+#: LiteEditor/breakpointdlg.cpp:93 LiteEditor/cl_editor.cpp:3223
 msgid "Breakpoint successfully deleted"
 msgstr ""
 
@@ -9435,8 +9498,8 @@ msgstr ""
 msgid "Seems like you have all the getters/setters you need..."
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1231 LiteEditor/frame.cpp:4658
-#: LiteEditor/frame.cpp:4748
+#: LiteEditor/context_cpp.cpp:1231 LiteEditor/frame.cpp:4652
+#: LiteEditor/frame.cpp:4742
 msgid "codelite"
 msgstr ""
 
@@ -9920,11 +9983,11 @@ msgstr ""
 msgid "Rename perspective"
 msgstr ""
 
-#: LiteEditor/manager.cpp:630
+#: LiteEditor/manager.cpp:632
 msgid "Importing IDE solution/workspace..."
 msgstr ""
 
-#: LiteEditor/manager.cpp:1110
+#: LiteEditor/manager.cpp:1112
 #, c-format
 msgid ""
 "There is already a file in this folder with a name:\n"
@@ -9932,134 +9995,134 @@ msgid ""
 "that matches using case-insensitive comparison"
 msgstr ""
 
-#: LiteEditor/manager.cpp:1114
+#: LiteEditor/manager.cpp:1116
 msgid ""
 "\n"
 "This won't be a problem on Linux, but it may be on other, case-insensitive "
 "platforms"
 msgstr ""
 
-#: LiteEditor/manager.cpp:1115
+#: LiteEditor/manager.cpp:1117
 msgid ""
 "\n"
 "\n"
 "Add the file anyway?"
 msgstr ""
 
-#: LiteEditor/manager.cpp:1117
+#: LiteEditor/manager.cpp:1119
 msgid "Possible name-clash"
 msgstr ""
 
-#: LiteEditor/manager.cpp:1153
+#: LiteEditor/manager.cpp:1155
 #, c-format
 msgid "%u file(s) not added, probably due to a name-clash"
 msgstr ""
 
-#: LiteEditor/manager.cpp:1965
+#: LiteEditor/manager.cpp:1967
 msgid ""
 "Failed to locate the configured default terminal application required by "
 "CodeLite, please install it or check your configuration!"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2028
+#: LiteEditor/manager.cpp:2030
 msgid "Failed to launch debugger '"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2028
+#: LiteEditor/manager.cpp:2030
 msgid "': debugger not loaded\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2029
+#: LiteEditor/manager.cpp:2031
 msgid ""
 "Make sure that you have an open workspace and that the active project is of "
 "type 'Executable'"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2078
+#: LiteEditor/manager.cpp:2080
 msgid "Could not find project configuration!\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2079
+#: LiteEditor/manager.cpp:2081
 msgid "Make sure that everything is set properly in your project settings"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2144 LiteEditor/frame.cpp:4655
+#: LiteEditor/manager.cpp:2146 LiteEditor/frame.cpp:4649
 msgid "Debugging: "
 msgstr ""
 
-#: LiteEditor/manager.cpp:2146
+#: LiteEditor/manager.cpp:2148
 msgid "Could not launch terminal for debugger"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2186 LiteEditor/manager.cpp:2197
+#: LiteEditor/manager.cpp:2188 LiteEditor/manager.cpp:2199
 msgid "Failed to initialize debugger: "
 msgstr ""
 
-#: LiteEditor/manager.cpp:2226
+#: LiteEditor/manager.cpp:2228
 msgid "Debug session started successfully!\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2325
+#: LiteEditor/manager.cpp:2327
 msgid "Debug session ended\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2534 LiteEditor/manager.cpp:2537
+#: LiteEditor/manager.cpp:2536 LiteEditor/manager.cpp:2539
 msgid "Program Received signal "
 msgstr ""
 
-#: LiteEditor/manager.cpp:2538
+#: LiteEditor/manager.cpp:2540
 msgid "Stack trace is available in the 'Call Stack' tab\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2570
+#: LiteEditor/manager.cpp:2572
 msgid ""
 "Assertion failed!\n"
 "Stack trace is available in the 'Call Stack' tab\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2602
+#: LiteEditor/manager.cpp:2604
 #, c-format
 msgid ""
 "Debugger exited with the following error string:\n"
 "%s"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2623
+#: LiteEditor/manager.cpp:2625
 msgid "Continuing...\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2847 LiteEditor/manager.cpp:2898
-#: LiteEditor/manager.cpp:2937
+#: LiteEditor/manager.cpp:2849 LiteEditor/manager.cpp:2900
+#: LiteEditor/manager.cpp:2939
 msgid "This would terminate the current debug session, continue?"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2862
+#: LiteEditor/manager.cpp:2864
 msgid "Preprocess File"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2862
+#: LiteEditor/manager.cpp:2864
 msgid "Compile Single File"
 msgstr ""
 
-#: LiteEditor/manager.cpp:3450
+#: LiteEditor/manager.cpp:3452
 msgid "Retagging..."
 msgstr ""
 
-#: LiteEditor/manager.cpp:3621
+#: LiteEditor/manager.cpp:3623
 msgid "Generating compile_commands.json file..."
 msgstr ""
 
-#: LiteEditor/manager.cpp:3669
+#: LiteEditor/manager.cpp:3671
 msgid ""
 "Build cancelled. The following compilers referred by the workspace could not "
 "be found:\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:3670
+#: LiteEditor/manager.cpp:3672
 msgid "Please fix your project settings by selecting a valid compiler"
 msgstr ""
 
-#: LiteEditor/manager.cpp:3688
+#: LiteEditor/manager.cpp:3690
 msgid ""
 "Compilers updated successfully!\n"
 "You can now build your workspace"
@@ -10806,112 +10869,120 @@ msgstr ""
 msgid "Loading file..."
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3092
+#: LiteEditor/cl_editor.cpp:3095
 msgid "Remove Bookmark"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3093 LiteEditor/frame.cpp:5744
+#: LiteEditor/cl_editor.cpp:3096 LiteEditor/frame.cpp:5738
 msgid "Remove All Bookmarks"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3098
+#: LiteEditor/cl_editor.cpp:3101
 msgid "Add Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3099
+#: LiteEditor/cl_editor.cpp:3102
 msgid "Add a Temporary Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3100
+#: LiteEditor/cl_editor.cpp:3103
 msgid "Add a Disabled Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3101
+#: LiteEditor/cl_editor.cpp:3104
 msgid "Add a Conditional Breakpoint.."
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3116
+#: LiteEditor/cl_editor.cpp:3119
 msgid "Remove Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3117
+#: LiteEditor/cl_editor.cpp:3120
 msgid "Ignore Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3122
+#: LiteEditor/cl_editor.cpp:3125
 msgid "Disable Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3122
+#: LiteEditor/cl_editor.cpp:3125
 msgid "Enable Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3123
+#: LiteEditor/cl_editor.cpp:3126
 msgid "Edit Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3129
+#: LiteEditor/cl_editor.cpp:3132
 msgid "Run to here"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3154
+#: LiteEditor/cl_editor.cpp:3157
 msgid "Enter the condition statement"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3154
+#: LiteEditor/cl_editor.cpp:3157
 msgid "Create Conditional Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3189
+#: LiteEditor/cl_editor.cpp:3191
 msgid "Failed to insert breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3194 LiteEditor/breakpointsmgr.cpp:121
+#: LiteEditor/cl_editor.cpp:3196 LiteEditor/breakpointsmgr.cpp:121
 msgid "Breakpoint successfully added"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3196
+#: LiteEditor/cl_editor.cpp:3198
 msgid "Temporary "
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3198
+#: LiteEditor/cl_editor.cpp:3200
 msgid "Disabled "
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3200
+#: LiteEditor/cl_editor.cpp:3202
 msgid "Conditional "
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3226
+#: LiteEditor/cl_editor.cpp:3228
 msgid "No breakpoint found on this line"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3229
+#: LiteEditor/cl_editor.cpp:3231
 msgid "Breakpoint deletion failed"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3232
+#: LiteEditor/cl_editor.cpp:3234
 msgid "Breakpoint not deleted"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3385
+#: LiteEditor/cl_editor.cpp:3387
 msgid "More Watches"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3396
+#: LiteEditor/cl_editor.cpp:3398
 msgid "Run to cursor"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3402
+#: LiteEditor/cl_editor.cpp:3404
 msgid "Jump to cursor"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:4325
+#: LiteEditor/cl_editor.cpp:4327
 msgid "Watch"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:4325
+#: LiteEditor/cl_editor.cpp:4327
 msgid "as"
+msgstr ""
+
+#: LiteEditor/cl_editor.cpp:4983 LiteEditor/cl_editor.cpp:5014
+msgid "Found and selected "
+msgstr ""
+
+#: LiteEditor/cl_editor.cpp:4983 LiteEditor/cl_editor.cpp:5014
+msgid " matches"
 msgstr ""
 
 #: LiteEditor/edit_workspace_conf_dlg.h:65
@@ -10996,14 +11067,14 @@ msgstr ""
 msgid "Please save your changes before marking the file as read only"
 msgstr ""
 
-#: LiteEditor/debuggerpane.cpp:48 codelitephp/php-plugin/php_ui.cpp:1171
-#: menu.xrc:613
+#: LiteEditor/debuggerpane.cpp:48 menu.xrc:613
+#: codelitephp/php-plugin/php_ui.cpp:1171
 msgid "Call Stack"
 msgstr ""
 
 #: LiteEditor/debuggerpane.cpp:49 LiteEditor/debuggerpane.cpp:104
-#: LLDBDebugger/UI.cpp:134 codelitephp/php-plugin/php_ui.cpp:1194
-#: codelitephp/php-plugin/php.cpp:679 menu.xrc:621
+#: LLDBDebugger/UI.cpp:134 menu.xrc:621 codelitephp/php-plugin/php_ui.cpp:1194
+#: codelitephp/php-plugin/php.cpp:651
 msgid "Breakpoints"
 msgstr ""
 
@@ -11398,23 +11469,23 @@ msgstr ""
 msgid "Manage Plugins:"
 msgstr ""
 
-#: LiteEditor/menu_event_handlers.cpp:242
+#: LiteEditor/menu_event_handlers.cpp:247
 #, c-format
 msgid "Go to line number (1 - %d):"
 msgstr ""
 
-#: LiteEditor/menu_event_handlers.cpp:245
-#: LiteEditor/menu_event_handlers.cpp:254
-#: LiteEditor/menu_event_handlers.cpp:261
+#: LiteEditor/menu_event_handlers.cpp:250
+#: LiteEditor/menu_event_handlers.cpp:259
+#: LiteEditor/menu_event_handlers.cpp:266
 msgid "Go To Line"
 msgstr ""
 
-#: LiteEditor/menu_event_handlers.cpp:253
+#: LiteEditor/menu_event_handlers.cpp:258
 #, c-format
 msgid "'%s' is not a valid line number"
 msgstr ""
 
-#: LiteEditor/menu_event_handlers.cpp:260
+#: LiteEditor/menu_event_handlers.cpp:265
 #, c-format
 msgid "Please insert a line number in the range of (1 - %ld)"
 msgstr ""
@@ -11722,9 +11793,9 @@ msgid ""
 "file .codelite/codelite-stdout-stderr.log"
 msgstr ""
 
-#: LiteEditor/tasksfindwhatdlgbase.cpp:53 LiteEditor/frame.cpp:1290
-#: LiteEditor/frame.cpp:1506 LiteEditor/frame.cpp:1643
-#: LiteEditor/frame.cpp:1792
+#: LiteEditor/tasksfindwhatdlgbase.cpp:53 LiteEditor/frame.cpp:1297
+#: LiteEditor/frame.cpp:1513 LiteEditor/frame.cpp:1650
+#: LiteEditor/frame.cpp:1799
 msgid "New"
 msgstr ""
 
@@ -11744,320 +11815,324 @@ msgstr ""
 msgid "A Debugger type with that name already exists"
 msgstr ""
 
-#: LiteEditor/frame.cpp:777
+#: LiteEditor/frame.cpp:782
 msgid "Edit::Split selection into multiple carets"
 msgstr ""
 
-#: LiteEditor/frame.cpp:779
+#: LiteEditor/frame.cpp:784
 msgid "Search::Toggle the Quick-Replace Bar"
 msgstr ""
 
-#: LiteEditor/frame.cpp:887
+#: LiteEditor/frame.cpp:893
 msgid "CodeLite "
 msgstr ""
 
-#: LiteEditor/frame.cpp:1035
+#: LiteEditor/frame.cpp:1041
 msgid "Output View"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1036 menu.xrc:264
+#: LiteEditor/frame.cpp:1042 menu.xrc:264
 msgid "Workspace View"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1294 LiteEditor/frame.cpp:1510
-#: LiteEditor/frame.cpp:1647 LiteEditor/frame.cpp:1796
+#: LiteEditor/frame.cpp:1043
+msgid "wxCrafter"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1301 LiteEditor/frame.cpp:1517
+#: LiteEditor/frame.cpp:1654 LiteEditor/frame.cpp:1803
 #: CMakePlugin/CMakePluginUi.cpp:127 menu.xrc:745
 msgid "Reload"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1300 LiteEditor/frame.cpp:1302
-#: LiteEditor/frame.cpp:1516 LiteEditor/frame.cpp:1518
-#: LiteEditor/frame.cpp:1653 LiteEditor/frame.cpp:1655
-#: LiteEditor/frame.cpp:1802 LiteEditor/frame.cpp:1804
+#: LiteEditor/frame.cpp:1307 LiteEditor/frame.cpp:1309
+#: LiteEditor/frame.cpp:1523 LiteEditor/frame.cpp:1525
+#: LiteEditor/frame.cpp:1660 LiteEditor/frame.cpp:1662
+#: LiteEditor/frame.cpp:1809 LiteEditor/frame.cpp:1811
 msgid "Save All"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1305 LiteEditor/frame.cpp:1521
-#: LiteEditor/frame.cpp:1658 LiteEditor/frame.cpp:1807
+#: LiteEditor/frame.cpp:1312 LiteEditor/frame.cpp:1528
+#: LiteEditor/frame.cpp:1665 LiteEditor/frame.cpp:1814
 msgid "Close File"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1307 LiteEditor/frame.cpp:1523
-#: LiteEditor/frame.cpp:1660 LiteEditor/frame.cpp:1809
-#: DatabaseExplorer/ErdPanel.cpp:174 DatabaseExplorer/FrameCanvas.cpp:174
-#: menu.xrc:876 menu.xrc:913
+#: LiteEditor/frame.cpp:1314 LiteEditor/frame.cpp:1530
+#: LiteEditor/frame.cpp:1667 LiteEditor/frame.cpp:1816 menu.xrc:876
+#: menu.xrc:913 DatabaseExplorer/ErdPanel.cpp:174
+#: DatabaseExplorer/FrameCanvas.cpp:174
 msgid "Cut"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1315 LiteEditor/frame.cpp:1531
-#: LiteEditor/frame.cpp:1668 LiteEditor/frame.cpp:1817
+#: LiteEditor/frame.cpp:1322 LiteEditor/frame.cpp:1538
+#: LiteEditor/frame.cpp:1675 LiteEditor/frame.cpp:1824
 msgid "Backward"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1316 LiteEditor/frame.cpp:1532
-#: LiteEditor/frame.cpp:1669 LiteEditor/frame.cpp:1818
+#: LiteEditor/frame.cpp:1323 LiteEditor/frame.cpp:1539
+#: LiteEditor/frame.cpp:1676 LiteEditor/frame.cpp:1825
 msgid "Forward"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1331 LiteEditor/frame.cpp:1833
+#: LiteEditor/frame.cpp:1338 LiteEditor/frame.cpp:1840
 msgid "Standard"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1356 LiteEditor/frame.cpp:1358
-#: LiteEditor/frame.cpp:1554 LiteEditor/frame.cpp:1556
-#: LiteEditor/frame.cpp:1691 LiteEditor/frame.cpp:1693
-#: LiteEditor/frame.cpp:1860 LiteEditor/frame.cpp:1862
+#: LiteEditor/frame.cpp:1363 LiteEditor/frame.cpp:1365
+#: LiteEditor/frame.cpp:1561 LiteEditor/frame.cpp:1563
+#: LiteEditor/frame.cpp:1698 LiteEditor/frame.cpp:1700
+#: LiteEditor/frame.cpp:1867 LiteEditor/frame.cpp:1869
 msgid "Find Resource In Workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1361 LiteEditor/frame.cpp:1559
-#: LiteEditor/frame.cpp:1696 LiteEditor/frame.cpp:1865
+#: LiteEditor/frame.cpp:1368 LiteEditor/frame.cpp:1566
+#: LiteEditor/frame.cpp:1703 LiteEditor/frame.cpp:1872
 msgid "Highlight Word"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1363 LiteEditor/frame.cpp:1561
-#: LiteEditor/frame.cpp:1698 LiteEditor/frame.cpp:1867
+#: LiteEditor/frame.cpp:1370 LiteEditor/frame.cpp:1568
+#: LiteEditor/frame.cpp:1705 LiteEditor/frame.cpp:1874
 msgid "Highlight Matching Words"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1392 LiteEditor/frame.cpp:1572
-#: LiteEditor/frame.cpp:1709 LiteEditor/frame.cpp:1895
+#: LiteEditor/frame.cpp:1399 LiteEditor/frame.cpp:1579
+#: LiteEditor/frame.cpp:1716 LiteEditor/frame.cpp:1902
 msgid "Build Active Project"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1398 LiteEditor/frame.cpp:1578
-#: LiteEditor/frame.cpp:1714 LiteEditor/frame.cpp:1900
+#: LiteEditor/frame.cpp:1405 LiteEditor/frame.cpp:1585
+#: LiteEditor/frame.cpp:1721 LiteEditor/frame.cpp:1907
 msgid "Stop Current Build"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1402 LiteEditor/frame.cpp:1582
-#: LiteEditor/frame.cpp:1718 LiteEditor/frame.cpp:1904
+#: LiteEditor/frame.cpp:1409 LiteEditor/frame.cpp:1589
+#: LiteEditor/frame.cpp:1725 LiteEditor/frame.cpp:1911
 msgid "Clean Active Project"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1407 LiteEditor/frame.cpp:1587
-#: LiteEditor/frame.cpp:1723 LiteEditor/frame.cpp:1909
+#: LiteEditor/frame.cpp:1414 LiteEditor/frame.cpp:1594
+#: LiteEditor/frame.cpp:1730 LiteEditor/frame.cpp:1916
 msgid "Run Active Project"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1411 LiteEditor/frame.cpp:1591
-#: LiteEditor/frame.cpp:1727 LiteEditor/frame.cpp:1913
+#: LiteEditor/frame.cpp:1418 LiteEditor/frame.cpp:1598
+#: LiteEditor/frame.cpp:1734 LiteEditor/frame.cpp:1920
 msgid "Stop Running Program"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1437 LiteEditor/frame.cpp:1439
-#: LiteEditor/frame.cpp:1598 LiteEditor/frame.cpp:1600
-#: LiteEditor/frame.cpp:1734 LiteEditor/frame.cpp:1736
+#: LiteEditor/frame.cpp:1444 LiteEditor/frame.cpp:1446
+#: LiteEditor/frame.cpp:1605 LiteEditor/frame.cpp:1607
+#: LiteEditor/frame.cpp:1741 LiteEditor/frame.cpp:1743
 msgid "Start or Continue debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1441 LiteEditor/frame.cpp:1443
-#: LiteEditor/frame.cpp:1602 LiteEditor/frame.cpp:1604
-#: LiteEditor/frame.cpp:1738 LiteEditor/frame.cpp:1740
-#: LiteEditor/frame.cpp:1943 LiteEditor/frame.cpp:1945
+#: LiteEditor/frame.cpp:1448 LiteEditor/frame.cpp:1450
+#: LiteEditor/frame.cpp:1609 LiteEditor/frame.cpp:1611
+#: LiteEditor/frame.cpp:1745 LiteEditor/frame.cpp:1747
+#: LiteEditor/frame.cpp:1950 LiteEditor/frame.cpp:1952
 msgid "Stop debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1445 LiteEditor/frame.cpp:1447
-#: LiteEditor/frame.cpp:1606 LiteEditor/frame.cpp:1608
-#: LiteEditor/frame.cpp:1742 LiteEditor/frame.cpp:1744
-#: LiteEditor/frame.cpp:1947 LiteEditor/frame.cpp:1949
+#: LiteEditor/frame.cpp:1452 LiteEditor/frame.cpp:1454
+#: LiteEditor/frame.cpp:1613 LiteEditor/frame.cpp:1615
+#: LiteEditor/frame.cpp:1749 LiteEditor/frame.cpp:1751
+#: LiteEditor/frame.cpp:1954 LiteEditor/frame.cpp:1956
 msgid "Pause debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1449 LiteEditor/frame.cpp:1451
-#: LiteEditor/frame.cpp:1610 LiteEditor/frame.cpp:1612
-#: LiteEditor/frame.cpp:1746 LiteEditor/frame.cpp:1748
-#: LiteEditor/frame.cpp:1951 LiteEditor/frame.cpp:1953
+#: LiteEditor/frame.cpp:1456 LiteEditor/frame.cpp:1458
+#: LiteEditor/frame.cpp:1617 LiteEditor/frame.cpp:1619
+#: LiteEditor/frame.cpp:1753 LiteEditor/frame.cpp:1755
+#: LiteEditor/frame.cpp:1958 LiteEditor/frame.cpp:1960
 msgid "Restart debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1454 LiteEditor/frame.cpp:1456
-#: LiteEditor/frame.cpp:1615 LiteEditor/frame.cpp:1617
-#: LiteEditor/frame.cpp:1751 LiteEditor/frame.cpp:1753
-#: LiteEditor/frame.cpp:1956 LiteEditor/frame.cpp:1958
+#: LiteEditor/frame.cpp:1461 LiteEditor/frame.cpp:1463
+#: LiteEditor/frame.cpp:1622 LiteEditor/frame.cpp:1624
+#: LiteEditor/frame.cpp:1758 LiteEditor/frame.cpp:1760
+#: LiteEditor/frame.cpp:1963 LiteEditor/frame.cpp:1965
 msgid "Show Current Line"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1459 LiteEditor/frame.cpp:1620
-#: LiteEditor/frame.cpp:1756 LiteEditor/frame.cpp:1961
-msgid "Step Into"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1459 LiteEditor/frame.cpp:1620
-#: LiteEditor/frame.cpp:1756 LiteEditor/frame.cpp:1961
-msgid "Step In"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1462 LiteEditor/frame.cpp:1464
-#: LiteEditor/frame.cpp:1623 LiteEditor/frame.cpp:1625
-#: LiteEditor/frame.cpp:1759 LiteEditor/frame.cpp:1761
-#: LiteEditor/frame.cpp:1964 LiteEditor/frame.cpp:1966 menu.xrc:566
-msgid "Next Instruction"
 msgstr ""
 
 #: LiteEditor/frame.cpp:1466 LiteEditor/frame.cpp:1627
 #: LiteEditor/frame.cpp:1763 LiteEditor/frame.cpp:1968
+msgid "Step Into"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1466 LiteEditor/frame.cpp:1627
+#: LiteEditor/frame.cpp:1763 LiteEditor/frame.cpp:1968
+msgid "Step In"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1469 LiteEditor/frame.cpp:1471
+#: LiteEditor/frame.cpp:1630 LiteEditor/frame.cpp:1632
+#: LiteEditor/frame.cpp:1766 LiteEditor/frame.cpp:1768
+#: LiteEditor/frame.cpp:1971 LiteEditor/frame.cpp:1973 menu.xrc:566
+msgid "Next Instruction"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1473 LiteEditor/frame.cpp:1634
+#: LiteEditor/frame.cpp:1770 LiteEditor/frame.cpp:1975
 msgid "Step Out"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1491 LiteEditor/frame.cpp:1992
+#: LiteEditor/frame.cpp:1498 LiteEditor/frame.cpp:1999
 msgid "Main Toolbar"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1939 LiteEditor/frame.cpp:1941
+#: LiteEditor/frame.cpp:1946 LiteEditor/frame.cpp:1948
 msgid "Start / Continue debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2007
+#: LiteEditor/frame.cpp:2014
 msgid "Applying your choices and restarting CodeLite"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2009
+#: LiteEditor/frame.cpp:2016
 msgid "Applying your choices, this may take a few seconds"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2355
+#: LiteEditor/frame.cpp:2349
 msgid "The file"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2356
+#: LiteEditor/frame.cpp:2350
 msgid "has been altered."
 msgstr ""
 
-#: LiteEditor/frame.cpp:2357
+#: LiteEditor/frame.cpp:2351
 msgid "Are you sure you want to lose all changes?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2541
+#: LiteEditor/frame.cpp:2535
 msgid "Please enter a name for the tab group"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2556
+#: LiteEditor/frame.cpp:2550
 msgid "There is already a file with this name. Do you want to overwrite it?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2580
+#: LiteEditor/frame.cpp:2574
 msgid "Tab group saved"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2664
-#: codelitephp/php-plugin/php_workspace_view.cpp:1351
+#: LiteEditor/frame.cpp:2658
+#: codelitephp/php-plugin/php_workspace_view.cpp:1358
 msgid "Open Project"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2975
+#: LiteEditor/frame.cpp:2969
 msgid "Build ended with errors. Continue?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2995
+#: LiteEditor/frame.cpp:2989
 msgid "Build starting..."
 msgstr ""
 
-#: LiteEditor/frame.cpp:3030
+#: LiteEditor/frame.cpp:3024
 msgid "Failed to find Custom Build Target for event ID"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3162
+#: LiteEditor/frame.cpp:3156
 msgid ""
 "Would you like to build the active project\n"
 "before executing it?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3164
+#: LiteEditor/frame.cpp:3158
 msgid "Build and Execute"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3165
+#: LiteEditor/frame.cpp:3159
 msgid "Execute"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3235
+#: LiteEditor/frame.cpp:3229
 msgid ""
 "Your workspace symbols file does not match the current version of CodeLite. "
 "CodeLite will perform a full retag of the workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3337
+#: LiteEditor/frame.cpp:3331
 msgid "No workspaces found."
 msgstr ""
 
-#: LiteEditor/frame.cpp:3374
+#: LiteEditor/frame.cpp:3368
 msgid "No files found."
 msgstr ""
 
-#: LiteEditor/frame.cpp:3571
+#: LiteEditor/frame.cpp:3565
 msgid "Open IDE Solution/Workspace File"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3588
+#: LiteEditor/frame.cpp:3582
 msgid "Select the compiler to use:"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3636
+#: LiteEditor/frame.cpp:3630
 msgid "Attempting to debug workspace with no active project? Ignoring."
 msgstr ""
 
-#: LiteEditor/frame.cpp:3644
+#: LiteEditor/frame.cpp:3638
 msgid "Would you like to build the project before debugging it?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3646
+#: LiteEditor/frame.cpp:3640
 msgid "Build and Debug"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4247
+#: LiteEditor/frame.cpp:4241
 msgid "Download Now!"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4253
+#: LiteEditor/frame.cpp:4247
 msgid "A new version of codelite is available"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4264
+#: LiteEditor/frame.cpp:4258
 msgid "CodeLite is up-to-date"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4658 LiteEditor/frame.cpp:4748
+#: LiteEditor/frame.cpp:4652 LiteEditor/frame.cpp:4742
 msgid "Could not start TTY console for debugger!"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4948
+#: LiteEditor/frame.cpp:4942
 msgid ""
 "Workspace or project settings have been modified outside of CodeLite\n"
 "Would you like to reload the workspace?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4951 codelitephp/php-plugin/php_workspace_view.cpp:208
+#: LiteEditor/frame.cpp:4945 codelitephp/php-plugin/php_workspace_view.cpp:215
 msgid "Reload workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4952 LiteEditor/frame.cpp:5285
+#: LiteEditor/frame.cpp:4946 LiteEditor/frame.cpp:5279
 msgid "Not now"
 msgstr ""
 
-#: LiteEditor/frame.cpp:5237
+#: LiteEditor/frame.cpp:5231
 msgid "Tags cache cleared"
 msgstr ""
 
-#: LiteEditor/frame.cpp:5274
+#: LiteEditor/frame.cpp:5268
 msgid "Some of the changes made requires restart of CodeLite"
 msgstr ""
 
-#: LiteEditor/frame.cpp:5278
+#: LiteEditor/frame.cpp:5272
 msgid "Restart Now!"
 msgstr ""
 
-#: LiteEditor/frame.cpp:5288
+#: LiteEditor/frame.cpp:5282
 msgid "Some of the changes made require a restart of CodeLite. Restart now?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:5379
+#: LiteEditor/frame.cpp:5373
 #, c-format
 msgid "INFO: Retag workspace completed in %ld seconds (%lu files were scanned)"
 msgstr ""
 
-#: LiteEditor/frame.cpp:5391
+#: LiteEditor/frame.cpp:5385
 msgid "INFO: Retag workspace completed in 0 seconds (No files were retagged)"
 msgstr ""
 
@@ -13046,6 +13121,14 @@ msgstr ""
 msgid "New Configuration Name:"
 msgstr ""
 
+#: LiteEditor/DefaultWorkspacePage.cpp:40
+msgid "Choose a View"
+msgstr ""
+
+#: LiteEditor/DefaultWorkspacePage.cpp:40
+msgid "Open folder"
+msgstr ""
+
 #: LiteEditor/tags_options_dlg.cpp:253
 msgid "Add ctags Parser Exclude Path:"
 msgstr ""
@@ -13452,6 +13535,10 @@ msgstr ""
 msgid "Copy value to clipboard"
 msgstr ""
 
+#: LLDBDebugger/LLDBPlugin.cpp:82 LLDBDebugger/LLDBPlugin.cpp:100
+msgid "LLDB Debugger for CodeLite"
+msgstr ""
+
 #: LLDBDebugger/LLDBPlugin.cpp:231
 msgid "LLDB Settings..."
 msgstr ""
@@ -13849,6 +13936,10 @@ msgid ""
 "A permissions problem, perhaps?"
 msgstr ""
 
+#: CMakePlugin/CMakePlugin.cpp:105
+msgid "CMake Help"
+msgstr ""
+
 #: CMakePlugin/CMakePlugin.cpp:140
 msgid "CMake integration for CodeLite"
 msgstr ""
@@ -14122,6 +14213,986 @@ msgstr ""
 msgid "Other settings:"
 msgstr ""
 
+#: menu.xrc:9
+msgid "&New Empty File"
+msgstr ""
+
+#: menu.xrc:12
+msgid "New &Workspace"
+msgstr ""
+
+#: menu.xrc:15 menu.xrc:453
+msgid "New &Project"
+msgstr ""
+
+#: menu.xrc:19 menu.xrc:1222
+msgid "&Open"
+msgstr ""
+
+#: menu.xrc:21
+msgid "&Open File..."
+msgstr ""
+
+#: menu.xrc:24
+msgid "Open &Workspace..."
+msgstr ""
+
+#: menu.xrc:28
+msgid "&Reload File"
+msgstr ""
+
+#: menu.xrc:31
+msgid "Load a group of tabs"
+msgstr ""
+
+#: menu.xrc:35
+msgid "&Save File"
+msgstr ""
+
+#: menu.xrc:38
+msgid "Save As..."
+msgstr ""
+
+#: menu.xrc:44
+msgid "Save tabs as group"
+msgstr ""
+
+#: menu.xrc:57 menu.xrc:1081
+msgid "Close Workspace"
+msgstr ""
+
+#: menu.xrc:63
+msgid "Recent &Files"
+msgstr ""
+
+#: menu.xrc:68
+msgid "Recent &Workspaces"
+msgstr ""
+
+#: menu.xrc:84
+msgid "&Undo"
+msgstr ""
+
+#: menu.xrc:87
+msgid "&Redo"
+msgstr ""
+
+#: menu.xrc:90
+msgid "Set la&bel for current state"
+msgstr ""
+
+#: menu.xrc:94
+msgid "&Cut"
+msgstr ""
+
+#: menu.xrc:97
+msgid "Co&py"
+msgstr ""
+
+#: menu.xrc:100
+msgid "Past&e"
+msgstr ""
+
+#: menu.xrc:103
+msgid "Select &All"
+msgstr ""
+
+#: menu.xrc:106
+msgid "Split selection into lines"
+msgstr ""
+
+#: menu.xrc:112
+msgid "&Delete Line"
+msgstr ""
+
+#: menu.xrc:115
+msgid "D&uplicate Selection / Line"
+msgstr ""
+
+#: menu.xrc:118
+msgid "Delete to Line &End"
+msgstr ""
+
+#: menu.xrc:121
+msgid "Delete to Line &Start"
+msgstr ""
+
+#: menu.xrc:124
+msgid "&Transpose Lines"
+msgstr ""
+
+#: menu.xrc:127
+msgid "Move Line Up"
+msgstr ""
+
+#: menu.xrc:130
+msgid "Move Line Down"
+msgstr ""
+
+#: menu.xrc:133
+msgid "Center Line in Editor"
+msgstr ""
+
+#: menu.xrc:137
+msgid "Comment"
+msgstr ""
+
+#: menu.xrc:139
+msgid "Comment Selection"
+msgstr ""
+
+#: menu.xrc:142
+msgid "Comment Line"
+msgstr ""
+
+#: menu.xrc:145
+msgid "Insert Comment Block"
+msgstr ""
+
+#: menu.xrc:149
+msgid "Text Conversion"
+msgstr ""
+
+#: menu.xrc:151
+msgid "Make Upper&case"
+msgstr ""
+
+#: menu.xrc:154
+msgid "Make &Lowercase"
+msgstr ""
+
+#: menu.xrc:158
+msgid "Convert to Windows Format"
+msgstr ""
+
+#: menu.xrc:161
+msgid "Convert to Unix Format"
+msgstr ""
+
+#: menu.xrc:165
+msgid "Convert Indentation to Tabs"
+msgstr ""
+
+#: menu.xrc:168
+msgid "Convert Indentation to Spaces"
+msgstr ""
+
+#: menu.xrc:173
+msgid "Trim T&railing Spaces"
+msgstr ""
+
+#: menu.xrc:177
+msgid "Match &Brace"
+msgstr ""
+
+#: menu.xrc:180
+msgid "S&elect to Brace"
+msgstr ""
+
+#: menu.xrc:184
+msgid "Complete &Word"
+msgstr ""
+
+#: menu.xrc:187
+msgid "Display &Function Calltip"
+msgstr ""
+
+#: menu.xrc:192
+msgid "&View"
+msgstr ""
+
+#: menu.xrc:195
+msgid "Word W&rap"
+msgstr ""
+
+#: menu.xrc:199
+msgid "Toggle Current &Fold"
+msgstr ""
+
+#: menu.xrc:202
+msgid "Toggle &All Folds"
+msgstr ""
+
+#: menu.xrc:205
+msgid "Toggle All To&pmost Folds in Selection"
+msgstr ""
+
+#: menu.xrc:208
+msgid "Toggle &Every Fold in Selection"
+msgstr ""
+
+#: menu.xrc:211
+msgid "&Display EOL"
+msgstr ""
+
+#: menu.xrc:215
+msgid "Show Whitespace"
+msgstr ""
+
+#: menu.xrc:221
+msgid "Show Always"
+msgstr ""
+
+#: menu.xrc:225
+msgid "Visible After First Indent"
+msgstr ""
+
+#: menu.xrc:229
+msgid "Indentation Only"
+msgstr ""
+
+#: menu.xrc:235
+msgid "Full Screen..."
+msgstr ""
+
+#: menu.xrc:239
+msgid "Show &Welcome Page"
+msgstr ""
+
+#: menu.xrc:242
+msgid "Load Welcome Page at &Startup"
+msgstr ""
+
+#: menu.xrc:247
+msgid "&Output Pane"
+msgstr ""
+
+#: menu.xrc:251
+msgid "Wor&kspace Pane"
+msgstr ""
+
+#: menu.xrc:255
+msgid "&Navigation Bar"
+msgstr ""
+
+#: menu.xrc:259
+msgid "&Debugger Pane"
+msgstr ""
+
+#: menu.xrc:284
+msgid "Tool&bars"
+msgstr ""
+
+#: menu.xrc:287
+msgid "Standard ToolBar"
+msgstr ""
+
+#: menu.xrc:291
+msgid "Search ToolBar"
+msgstr ""
+
+#: menu.xrc:295
+msgid "Build ToolBar"
+msgstr ""
+
+#: menu.xrc:299
+msgid "Debug ToolBar"
+msgstr ""
+
+#: menu.xrc:304
+msgid "Show/hide main toolbars"
+msgstr ""
+
+#: menu.xrc:308
+msgid "Show/hide all plugin toolbars"
+msgstr ""
+
+#: menu.xrc:316
+msgid "&Toggle All Panes"
+msgstr ""
+
+#: menu.xrc:320
+msgid "Show Status Bar"
+msgstr ""
+
+#: menu.xrc:324
+msgid "Show ToolBar"
+msgstr ""
+
+#: menu.xrc:328
+msgid "Show TabBar"
+msgstr ""
+
+#: menu.xrc:337
+msgid "&Find In Files..."
+msgstr ""
+
+#: menu.xrc:340
+msgid "Fi&nd..."
+msgstr ""
+
+#: menu.xrc:343
+msgid "&Replace..."
+msgstr ""
+
+#: menu.xrc:346
+msgid "Select Next Occurrence"
+msgstr ""
+
+#: menu.xrc:349
+msgid "Select Previous Occurrence"
+msgstr ""
+
+#: menu.xrc:352
+msgid "Find &Next"
+msgstr ""
+
+#: menu.xrc:355
+msgid "Find &Previous"
+msgstr ""
+
+#: menu.xrc:358
+msgid "Find Word At Caret"
+msgstr ""
+
+#: menu.xrc:361
+msgid "Find Word At Caret Backward"
+msgstr ""
+
+#: menu.xrc:365
+msgid "Grep Selection in the Current File"
+msgstr ""
+
+#: menu.xrc:368
+msgid "Grep Selection in the Workspace"
+msgstr ""
+
+#: menu.xrc:372
+msgid "Go to Next 'Find In File' Match"
+msgstr ""
+
+#: menu.xrc:375
+msgid "Go to Previous 'Find In File' Match"
+msgstr ""
+
+#: menu.xrc:379
+msgid "Find &Resource..."
+msgstr ""
+
+#: menu.xrc:383
+msgid "&Quick Outline..."
+msgstr ""
+
+#: menu.xrc:386
+msgid "Find &Symbol"
+msgstr ""
+
+#: menu.xrc:389
+msgid "Go To Pre&vious Location"
+msgstr ""
+
+#: menu.xrc:392
+msgid "Go To For&ward Location"
+msgstr ""
+
+#: menu.xrc:397
+msgid "&Goto Line..."
+msgstr ""
+
+#: menu.xrc:403
+msgid "Toggle &Bookmark"
+msgstr ""
+
+#: menu.xrc:406
+msgid "&Next Bookmark"
+msgstr ""
+
+#: menu.xrc:409
+msgid "Previo&us Bookmark"
+msgstr ""
+
+#: menu.xrc:412
+msgid "Remove All &Currently-Active Bookmarks"
+msgstr ""
+
+#: menu.xrc:415
+msgid "Remove &All Bookmarks"
+msgstr ""
+
+#: menu.xrc:423
+msgid "&Workspace"
+msgstr ""
+
+#: menu.xrc:426
+msgid "&New Workspace..."
+msgstr ""
+
+#: menu.xrc:429
+msgid "&Open Workspace..."
+msgstr ""
+
+#: menu.xrc:432
+msgid "&Close Workspace"
+msgstr ""
+
+#: menu.xrc:435
+msgid "&Reload Workspace"
+msgstr ""
+
+#: menu.xrc:440 menu.xrc:467 menu.xrc:1092
+msgid "Workspace Settings..."
+msgstr ""
+
+#: menu.xrc:443 menu.xrc:470 menu.xrc:1088
+msgid "Workspace Editor Preferences..."
+msgstr ""
+
+#: menu.xrc:448
+msgid "&Import other IDEs solution/workspace files..."
+msgstr ""
+
+#: menu.xrc:456
+msgid "&Add an existing project"
+msgstr ""
+
+#: menu.xrc:459
+msgid "&Reconcile the current project"
+msgstr ""
+
+#: menu.xrc:460
+msgid "Check project for missing and stale files"
+msgstr ""
+
+#: menu.xrc:464
+msgid "&Open Active Project Settings..."
+msgstr ""
+
+#: menu.xrc:474
+msgid "Retag Workspace ( Full )"
+msgstr ""
+
+#: menu.xrc:475
+msgid "Retag the workspace by dropping the old tags tables, and recreate them"
+msgstr ""
+
+#: menu.xrc:478
+msgid "Retag Workspace ( Quick )"
+msgstr ""
+
+#: menu.xrc:486
+msgid "Configuration &Manager..."
+msgstr ""
+
+#: menu.xrc:491
+msgid "&Run"
+msgstr ""
+
+#: menu.xrc:494 cppchecker/cppcheckreportbasepage.cpp:84
+msgid "&Stop"
+msgstr ""
+
+#: menu.xrc:499
+msgid "&Build Project"
+msgstr ""
+
+#: menu.xrc:502
+msgid "&Compile Current File"
+msgstr ""
+
+#: menu.xrc:505
+msgid "Cl&ean Project"
+msgstr ""
+
+#: menu.xrc:508
+msgid "Sto&p Build"
+msgstr ""
+
+#: menu.xrc:512
+msgid "Reb&uild Project"
+msgstr ""
+
+#: menu.xrc:515
+msgid "Build and Run Pro&ject"
+msgstr ""
+
+#: menu.xrc:519 menu.xrc:1060
+msgid "Build Workspace"
+msgstr ""
+
+#: menu.xrc:522 menu.xrc:1063
+msgid "Clean Workspace"
+msgstr ""
+
+#: menu.xrc:525 menu.xrc:1066
+msgid "Rebuild Workspace"
+msgstr ""
+
+#: menu.xrc:529
+msgid "Batch Build..."
+msgstr ""
+
+#: menu.xrc:533
+msgid "Ne&xt Build Error"
+msgstr ""
+
+#: menu.xrc:538
+msgid "&Debugger"
+msgstr ""
+
+#: menu.xrc:541
+msgid "&Start/Continue Debugger"
+msgstr ""
+
+#: menu.xrc:544
+msgid "&Restart Debugger"
+msgstr ""
+
+#: menu.xrc:547
+msgid "&Attach to process..."
+msgstr ""
+
+#: menu.xrc:550
+msgid "Debug a core d&ump..."
+msgstr ""
+
+#: menu.xrc:553
+msgid "&Pause debugger"
+msgstr ""
+
+#: menu.xrc:556
+msgid "S&top debugger"
+msgstr ""
+
+#: menu.xrc:560
+msgid "Step &Into"
+msgstr ""
+
+#: menu.xrc:563
+msgid "Ne&xt"
+msgstr ""
+
+#: menu.xrc:569
+msgid "Step &Out"
+msgstr ""
+
+#: menu.xrc:573
+msgid "Show &Cursor"
+msgstr ""
+
+#: menu.xrc:577
+msgid "Toggle &Breakpoint"
+msgstr ""
+
+#: menu.xrc:580
+msgid "Disab&le All Breakpoints"
+msgstr ""
+
+#: menu.xrc:583
+msgid "E&nable All Breakpoints"
+msgstr ""
+
+#: menu.xrc:586
+msgid "&Delete All Breakpoints"
+msgstr ""
+
+#: menu.xrc:590
+msgid "&Quick Debug..."
+msgstr ""
+
+#: menu.xrc:594
+msgid "GDB Windows"
+msgstr ""
+
+#: menu.xrc:625
+msgid "ASCII Viewer"
+msgstr ""
+
+#: menu.xrc:629
+msgid "Disassembly"
+msgstr ""
+
+#: menu.xrc:636
+msgid "&Plugins"
+msgstr ""
+
+#: menu.xrc:639
+msgid "&Manage Plugins..."
+msgstr ""
+
+#: menu.xrc:645
+msgid "Pe&rspective"
+msgstr ""
+
+#: menu.xrc:649
+msgid "Save Current Layout As..."
+msgstr ""
+
+#: menu.xrc:652
+msgid "Manage Perspectives..."
+msgstr ""
+
+#: menu.xrc:656
+msgid "Restore Default Layout"
+msgstr ""
+
+#: menu.xrc:660
+msgid "Settin&gs"
+msgstr ""
+
+#: menu.xrc:663
+msgid "Global &Editor Preferences..."
+msgstr ""
+
+#: menu.xrc:666
+msgid "Colours and &Fonts..."
+msgstr ""
+
+#: menu.xrc:669
+msgid "Keyboard &shortcuts..."
+msgstr ""
+
+#: menu.xrc:672
+msgid "En&vironment Variables..."
+msgstr ""
+
+#: menu.xrc:675
+msgid "&Build Settings..."
+msgstr ""
+
+#: menu.xrc:678
+msgid "&GDB Settings..."
+msgstr ""
+
+#: menu.xrc:681
+msgid "&Code Completion..."
+msgstr ""
+
+#: menu.xrc:689
+msgid "&Help"
+msgstr ""
+
+#: menu.xrc:692
+msgid "&About..."
+msgstr ""
+
+#: menu.xrc:696
+msgid "&Run the Setup Wizard..."
+msgstr ""
+
+#: menu.xrc:700
+msgid "&Check for updates..."
+msgstr ""
+
+#: menu.xrc:713 menu.xrc:733
+msgid "Close Other Tabs"
+msgstr ""
+
+#: menu.xrc:736
+msgid "Close Tabs To The Right"
+msgstr ""
+
+#: menu.xrc:740
+msgid "Make Read Only"
+msgstr ""
+
+#: menu.xrc:752
+msgid "Show In"
+msgstr ""
+
+#: menu.xrc:754
+msgid "Show In Workspace"
+msgstr ""
+
+#: menu.xrc:757
+msgid "Show In Explorer"
+msgstr ""
+
+#: menu.xrc:761
+msgid "Copy File Name"
+msgstr ""
+
+#: menu.xrc:763
+msgid "Copy File Name to Clipboard"
+msgstr ""
+
+#: menu.xrc:766
+msgid "Copy Full Path to Clipboard"
+msgstr ""
+
+#: menu.xrc:769
+msgid "Copy Path to Clipboard"
+msgstr ""
+
+#: menu.xrc:774
+msgid "Detach Editor"
+msgstr ""
+
+#: menu.xrc:778
+msgid "Open Shell at File Path"
+msgstr ""
+
+#: menu.xrc:781
+msgid "Open File Explorer at File Path"
+msgstr ""
+
+#: menu.xrc:787
+msgid "Swap Header/Implementation file\tF12"
+msgstr ""
+
+#: menu.xrc:798
+msgid "Search for selected text in workspace"
+msgstr ""
+
+#: menu.xrc:804
+msgid "Goto Beginning of Current Function"
+msgstr ""
+
+#: menu.xrc:807
+msgid "Goto Beginning of Next Function"
+msgstr ""
+
+#: menu.xrc:816
+msgid "Code Generation / Refactoring"
+msgstr ""
+
+#: menu.xrc:819
+msgid "Insert Doxygen Comment\tCtrl-Shift-D"
+msgstr ""
+
+#: menu.xrc:822
+msgid "Generate Setters/Getters..."
+msgstr ""
+
+#: menu.xrc:826
+msgid "Comment Selection\tCtrl-Shift-/"
+msgstr ""
+
+#: menu.xrc:829
+msgid "Toggle Line Comment\tCtrl-/"
+msgstr ""
+
+#: menu.xrc:833
+msgid "Move Function Implementation to..."
+msgstr ""
+
+#: menu.xrc:836
+msgid "Add Function Implementation..."
+msgstr ""
+
+#: menu.xrc:839
+msgid "Implement all Un-implemented Functions..."
+msgstr ""
+
+#: menu.xrc:842
+msgid "Synchronize Signatures..."
+msgstr ""
+
+#: menu.xrc:847
+msgid "Implement inherited virtual Functions..."
+msgstr ""
+
+#: menu.xrc:850
+msgid "Implement inherited pure virtual Functions..."
+msgstr ""
+
+#: menu.xrc:854
+msgid "Rename Symbol...\tCtrl-Shift-H"
+msgstr ""
+
+#: menu.xrc:857
+msgid "Rename Local Variable...\tCtrl-Shift-L"
+msgstr ""
+
+#: menu.xrc:883 menu.xrc:926
+msgid "Select All"
+msgstr ""
+
+#: menu.xrc:892
+msgid "Toggle Breakpoint"
+msgstr ""
+
+#: menu.xrc:900
+msgid "Re-Tag File"
+msgstr ""
+
+#: menu.xrc:935
+msgid "Create new workspace..."
+msgstr ""
+
+#: menu.xrc:938
+msgid "Switch to workspace..."
+msgstr ""
+
+#: menu.xrc:944 menu.xrc:971
+msgid "Project"
+msgstr ""
+
+#: menu.xrc:947
+msgid "Add a New File..."
+msgstr ""
+
+#: menu.xrc:950
+msgid "Add an Existing File..."
+msgstr ""
+
+#: menu.xrc:957
+msgid "Sort Item"
+msgstr ""
+
+#: menu.xrc:961
+msgid "Remove Virtual Folder"
+msgstr ""
+
+#: menu.xrc:965
+msgid "Rename ..."
+msgstr ""
+
+#: menu.xrc:975
+msgid "Build Order..."
+msgstr ""
+
+#: menu.xrc:984 menu.xrc:1006
+msgid "Rebuild"
+msgstr ""
+
+#: menu.xrc:987 menu.xrc:1002
+msgid "Clean"
+msgstr ""
+
+#: menu.xrc:992
+msgid "Stop Build"
+msgstr ""
+
+#: menu.xrc:996
+msgid "Project Only"
+msgstr ""
+
+#: menu.xrc:1011
+msgid "Import Files From Directory"
+msgstr ""
+
+#: menu.xrc:1017
+msgid "Set As Active"
+msgstr ""
+
+#: menu.xrc:1023
+msgid "Export Makefile"
+msgstr ""
+
+#: menu.xrc:1037
+msgid "Remove Project"
+msgstr ""
+
+#: menu.xrc:1040
+msgid "Rename Project"
+msgstr ""
+
+#: menu.xrc:1045
+msgid "Save As Template..."
+msgstr ""
+
+#: menu.xrc:1049
+msgid "Project Editor Preferences..."
+msgstr ""
+
+#: menu.xrc:1070
+msgid "Create New Project"
+msgstr ""
+
+#: menu.xrc:1073
+msgid "Add an Existing Project"
+msgstr ""
+
+#: menu.xrc:1077
+msgid "Retag Workspace"
+msgstr ""
+
+#: menu.xrc:1084 codelitephp/PHPParser/php_workspace.cpp:467
+msgid "Reload Workspace"
+msgstr ""
+
+#: menu.xrc:1099 menu.xrc:1106
+msgid "Detach"
+msgstr ""
+
+#: menu.xrc:1112
+msgid "Open in CodeLite"
+msgstr ""
+
+#: menu.xrc:1115 menu.xrc:1229
+msgid "Open With &Default Application"
+msgstr ""
+
+#: menu.xrc:1118
+msgid "Compile"
+msgstr ""
+
+#: menu.xrc:1121
+msgid "Preprocess"
+msgstr ""
+
+#: menu.xrc:1125
+msgid "Exclude from Build"
+msgstr ""
+
+#: menu.xrc:1149
+msgid "Copy Value Only"
+msgstr ""
+
+#: menu.xrc:1160
+msgid "Delete All"
+msgstr ""
+
+#: menu.xrc:1164
+msgid "Display Format"
+msgstr ""
+
+#: menu.xrc:1166
+msgid "Natural"
+msgstr ""
+
+#: menu.xrc:1169
+msgid "Hexadecimal"
+msgstr ""
+
+#: menu.xrc:1172
+msgid "Binary"
+msgstr ""
+
+#: menu.xrc:1175
+msgid "Octal"
+msgstr ""
+
+#: menu.xrc:1178
+msgid "Decimal"
+msgstr ""
+
+#: menu.xrc:1194
+msgid "Search..."
+msgstr ""
+
+#: menu.xrc:1199
+msgid "Tags"
+msgstr ""
+
+#: menu.xrc:1201
+msgid "Global Parser Paths"
+msgstr ""
+
+#: menu.xrc:1203 menu.xrc:1212
+msgid "Add to include paths"
+msgstr ""
+
+#: menu.xrc:1206 menu.xrc:1215
+msgid "Add to exclude paths"
+msgstr ""
+
+#: menu.xrc:1210
+msgid "Workspace Parser Paths"
+msgstr ""
+
+#: menu.xrc:1225
+msgid "Open in &editor"
+msgstr ""
+
+#: menu.xrc:1233
+msgid "Open Shell here"
+msgstr ""
+
+#: menu.xrc:1236
+msgid "Open File Explorer here"
+msgstr ""
+
 #: codelite_make/cl_make_generator_app.cpp:175
 msgid "A makefile generator based on codelite's workspace"
 msgstr ""
@@ -14256,11 +15327,7 @@ msgstr ""
 msgid "*** Error evaluating expression: "
 msgstr ""
 
-#: codelitephp/php-plugin/php_ui.cpp:89
-msgid "C++ Workspace"
-msgstr ""
-
-#: codelitephp/php-plugin/php_ui.cpp:90
+#: codelitephp/php-plugin/php_ui.cpp:90 codelitephp/PHPParser/php_strings.h:14
 msgid "PHP Workspace"
 msgstr ""
 
@@ -14743,19 +15810,27 @@ msgstr ""
 msgid "Open '%s'"
 msgstr ""
 
-#: codelitephp/php-plugin/php.cpp:413
+#: codelitephp/php-plugin/php.cpp:60
+msgid "Enable PHP support for codelite IDE"
+msgstr ""
+
+#: codelitephp/php-plugin/php.cpp:78
+msgid "PHP Plugin for the codelite IDE"
+msgstr ""
+
+#: codelitephp/php-plugin/php.cpp:394
 msgid "Failed to open workspace: corrupted workspace file"
 msgstr ""
 
-#: codelitephp/php-plugin/php.cpp:553
+#: codelitephp/php-plugin/php.cpp:525
 msgid "Run XDebug Setup Wizard..."
 msgstr ""
 
-#: codelitephp/php-plugin/php.cpp:557
+#: codelitephp/php-plugin/php.cpp:529
 msgid "P&HP"
 msgstr ""
 
-#: codelitephp/php-plugin/php.cpp:737
+#: codelitephp/php-plugin/php.cpp:709
 msgid "Can't create PHP project. Close your current workspace first"
 msgstr ""
 
@@ -14767,126 +15842,126 @@ msgstr ""
 msgid "Check your project settings->Debug to define folder mapping"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:122
+#: codelitephp/php-plugin/php_workspace_view.cpp:125
 msgid "Can only import one folder at a time"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:139
+#: codelitephp/php-plugin/php_workspace_view.cpp:142
 msgid "Failed to create workspace '"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:140
+#: codelitephp/php-plugin/php_workspace_view.cpp:143
 msgid "File exists"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:189
-#: codelitephp/php-plugin/php_workspace_view.cpp:218
-#: codelitephp/php-plugin/php_workspace_view.cpp:240
-#: codelitephp/php-plugin/php_workspace_view.cpp:269
+#: codelitephp/php-plugin/php_workspace_view.cpp:196
+#: codelitephp/php-plugin/php_workspace_view.cpp:225
+#: codelitephp/php-plugin/php_workspace_view.cpp:247
+#: codelitephp/php-plugin/php_workspace_view.cpp:276
 msgid "Open in File Explorer"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:190
-#: codelitephp/php-plugin/php_workspace_view.cpp:219
-#: codelitephp/php-plugin/php_workspace_view.cpp:241
-#: codelitephp/php-plugin/php_workspace_view.cpp:270
+#: codelitephp/php-plugin/php_workspace_view.cpp:197
+#: codelitephp/php-plugin/php_workspace_view.cpp:226
+#: codelitephp/php-plugin/php_workspace_view.cpp:248
+#: codelitephp/php-plugin/php_workspace_view.cpp:277
 msgid "Open Shell Here"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:192
+#: codelitephp/php-plugin/php_workspace_view.cpp:199
 msgid "Open with Default Application"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:209
+#: codelitephp/php-plugin/php_workspace_view.cpp:216
 msgid "Close workspace"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:211
+#: codelitephp/php-plugin/php_workspace_view.cpp:218
 msgid "Create a new project..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:212
+#: codelitephp/php-plugin/php_workspace_view.cpp:219
 msgid "Add an existing project..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:214
+#: codelitephp/php-plugin/php_workspace_view.cpp:221
 msgid "Parse workspace"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:228
+#: codelitephp/php-plugin/php_workspace_view.cpp:235
 msgid "Set as active project"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:230
+#: codelitephp/php-plugin/php_workspace_view.cpp:237
 msgid "Remove project"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:232
-#: codelitephp/php-plugin/php_workspace_view.cpp:262
+#: codelitephp/php-plugin/php_workspace_view.cpp:239
+#: codelitephp/php-plugin/php_workspace_view.cpp:269
 msgid "New Class..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:233
-#: codelitephp/php-plugin/php_workspace_view.cpp:264
+#: codelitephp/php-plugin/php_workspace_view.cpp:240
+#: codelitephp/php-plugin/php_workspace_view.cpp:271
 msgid "New Folder..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:234
-#: codelitephp/php-plugin/php_workspace_view.cpp:265
+#: codelitephp/php-plugin/php_workspace_view.cpp:241
+#: codelitephp/php-plugin/php_workspace_view.cpp:272
 msgid "New File..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:245
+#: codelitephp/php-plugin/php_workspace_view.cpp:252
 msgid "Sync project with file system..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:249
+#: codelitephp/php-plugin/php_workspace_view.cpp:256
 msgid "Run project..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:251
+#: codelitephp/php-plugin/php_workspace_view.cpp:258
 msgid "Project settings..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:308
+#: codelitephp/php-plugin/php_workspace_view.cpp:315
 msgid "Loading Workspace View..."
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:384
+#: codelitephp/php-plugin/php_workspace_view.cpp:391
 msgid "Are you sure you want to remove project '"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:404
+#: codelitephp/php-plugin/php_workspace_view.cpp:411
 msgid "New Folder Name:"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:404
+#: codelitephp/php-plugin/php_workspace_view.cpp:411
 msgid "New Folder"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:505
+#: codelitephp/php-plugin/php_workspace_view.cpp:512
 msgid "Set the file name:"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:544
+#: codelitephp/php-plugin/php_workspace_view.cpp:551
 msgid "Are you sure you want to delete folder '"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:544
+#: codelitephp/php-plugin/php_workspace_view.cpp:551
 msgid "' and its content?"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:617
+#: codelitephp/php-plugin/php_workspace_view.cpp:624
 msgid "Rename file"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:660
+#: codelitephp/php-plugin/php_workspace_view.cpp:667
 msgid ""
 "This operation will delete the selected items.\n"
 "Continue?"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:678
+#: codelitephp/php-plugin/php_workspace_view.cpp:685
 #, c-format
 msgid ""
 "'%s' is a folder.\n"
@@ -14894,26 +15969,26 @@ msgid ""
 "Continue?"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:738
+#: codelitephp/php-plugin/php_workspace_view.cpp:745
 msgid ""
 "No active project is set !?\n"
 "Please set an active project and try again"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:919
+#: codelitephp/php-plugin/php_workspace_view.cpp:926
 msgid "New workspace name:"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:919
+#: codelitephp/php-plugin/php_workspace_view.cpp:926
 msgid "Rename workspace"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:938
-#: codelitephp/php-plugin/php_workspace_view.cpp:943
+#: codelitephp/php-plugin/php_workspace_view.cpp:945
+#: codelitephp/php-plugin/php_workspace_view.cpp:950
 msgid "Enable automatic upload"
 msgstr ""
 
-#: codelitephp/php-plugin/php_workspace_view.cpp:979
+#: codelitephp/php-plugin/php_workspace_view.cpp:986
 msgid "Select the remote folder corrseponding to the current workspace file"
 msgstr ""
 
@@ -14945,10 +16020,6 @@ msgstr ""
 #: codelitephp/PHPParser/php_workspace.cpp:464
 msgid ""
 "Workspace file modified externally. Would you like to reload the workspace?"
-msgstr ""
-
-#: codelitephp/PHPParser/php_workspace.cpp:467 menu.xrc:1084
-msgid "Reload Workspace"
 msgstr ""
 
 #: codelitephp/PHPParser/php_workspace.cpp:558
@@ -15190,6 +16261,14 @@ msgid ""
 "the built-in modules that node.js provides (\"fs\", \"http\", etc)"
 msgstr ""
 
+#: WebTools/webtools.cpp:25
+msgid "Support for JavScript, HTML and other web development tools"
+msgstr ""
+
+#: WebTools/webtools.cpp:36
+msgid "Support for JavScript, XML, HTML and other web development tools"
+msgstr ""
+
 #: WebTools/webtools.cpp:78
 msgid "WebTools"
 msgstr ""
@@ -15223,6 +16302,10 @@ msgid ""
 "user typed"
 msgstr ""
 
+#: WordCompletion/wordcompletion.cpp:29 WordCompletion/wordcompletion.cpp:39
+msgid "Suggest completion based on words typed in the editor"
+msgstr ""
+
 #: WordCompletion/wordcompletion.cpp:64
 msgid "Show Word Completion"
 msgstr ""
@@ -15241,6 +16324,10 @@ msgstr ""
 
 #: CodeDesigner/codedesigneritembasedlg.h:66
 msgid "New CodeDesigner project"
+msgstr ""
+
+#: CodeDesigner/codedesigner.cpp:49 CodeDesigner/codedesigner.cpp:63
+msgid "CodeDesigner RAD integration with CodeLite"
 msgstr ""
 
 #: CodeDesigner/codedesigner.cpp:136
@@ -15745,40 +16832,40 @@ msgstr ""
 msgid "Fail!"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:73 DatabaseExplorer/imageexportdialog.cpp:49
+#: DatabaseExplorer/GUI.h:79 DatabaseExplorer/imageexportdialog.cpp:49
 #: DatabaseExplorer/imageexportdialog.cpp:59
 msgid "Export image"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:146
+#: DatabaseExplorer/GUI.h:152
 msgid "Select dbAdapter"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:251
+#: DatabaseExplorer/GUI.h:257
 msgid "Connection settings"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:309
+#: DatabaseExplorer/GUI.h:315
 msgid "Create foreign key"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:327
+#: DatabaseExplorer/GUI.h:333
 msgid "Database log"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:348
+#: DatabaseExplorer/GUI.h:354
 msgid "View settings"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:393
+#: DatabaseExplorer/GUI.h:399
 msgid "Class generator dialog"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:410
+#: DatabaseExplorer/GUI.h:416
 msgid "SQL Preview"
 msgstr ""
 
-#: DatabaseExplorer/GUI.h:489
+#: DatabaseExplorer/GUI.h:495
 msgid "Table settings"
 msgstr ""
 
@@ -15786,13 +16873,15 @@ msgstr ""
 msgid " --------------- Log starts at: "
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:47
-msgid "0.5.2 Beta"
-msgstr ""
-
 #: DatabaseExplorer/databaseexplorer.cpp:94
 #: DatabaseExplorer/databaseexplorer.cpp:139
 msgid "DatabaseExplorer for CodeLite"
+msgstr ""
+
+#: DatabaseExplorer/databaseexplorer.cpp:114
+#: DatabaseExplorer/databaseexplorer.cpp:123
+#: DatabaseExplorer/databaseexplorer.cpp:228
+msgid "DbExplorer"
 msgstr ""
 
 #: DatabaseExplorer/databaseexplorer.cpp:202
@@ -16003,223 +17092,251 @@ msgstr ""
 msgid "Export canvas background"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:159
+#: DatabaseExplorer/GUI.cpp:168
 msgid "Load..."
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:161
+#: DatabaseExplorer/GUI.cpp:170
 msgid "Save..."
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:163
+#: DatabaseExplorer/GUI.cpp:172
 msgid "Execute SQL"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:167
+#: DatabaseExplorer/GUI.cpp:176
 msgid "Insert template"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:173
+#: DatabaseExplorer/GUI.cpp:182
 msgid "SQL History"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:250
+#: DatabaseExplorer/GUI.cpp:259
 msgid "Result:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:321 DatabaseExplorer/GUI.cpp:443
+#: DatabaseExplorer/GUI.cpp:331 DatabaseExplorer/GUI.cpp:464
 msgid "MySql"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:325
+#: DatabaseExplorer/GUI.cpp:335
 msgid "SQLite"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:331 DatabaseExplorer/GUI.cpp:519
+#: DatabaseExplorer/GUI.cpp:341 DatabaseExplorer/GUI.cpp:532
 msgid "PostgreSQL"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:417
+#: DatabaseExplorer/GUI.cpp:437
 msgid "Sqlite"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:430
+#: DatabaseExplorer/GUI.cpp:450
 msgid "Database file:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:459
+#: DatabaseExplorer/GUI.cpp:476
 msgid "Connection name:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:464
+#: DatabaseExplorer/GUI.cpp:481
 msgid "Name for this connection"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:472 DatabaseExplorer/GUI.cpp:543
+#: DatabaseExplorer/GUI.cpp:489 DatabaseExplorer/GUI.cpp:556
 msgid "Server:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:473 DatabaseExplorer/GUI.cpp:478
+#: DatabaseExplorer/GUI.cpp:490 DatabaseExplorer/GUI.cpp:495
 msgid "Host name / IP of the server hosting the MySQL server"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:485 DatabaseExplorer/GUI.cpp:565
+#: DatabaseExplorer/GUI.cpp:502 DatabaseExplorer/GUI.cpp:578
 msgid "User name:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:490
+#: DatabaseExplorer/GUI.cpp:507
 msgid "Database user name"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:502
+#: DatabaseExplorer/GUI.cpp:519
 msgid "Database password"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:587
+#: DatabaseExplorer/GUI.cpp:600
 msgid "Default database:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:721
+#: DatabaseExplorer/GUI.cpp:752
 msgid "Referencing table:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:732 DatabaseExplorer/GUI.cpp:789
+#: DatabaseExplorer/GUI.cpp:763 DatabaseExplorer/GUI.cpp:820
 msgid "Column:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:748
-msgid "Relation"
-msgstr ""
-
-#: DatabaseExplorer/GUI.cpp:758
-msgid "OnDelete"
-msgstr ""
-
-#: DatabaseExplorer/GUI.cpp:768
-msgid "OnUpdate"
+#: DatabaseExplorer/GUI.cpp:777
+msgid "N :1"
 msgstr ""
 
 #: DatabaseExplorer/GUI.cpp:778
+msgid "N : M"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:779
+msgid "Relation"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:785 DatabaseExplorer/GUI.cpp:795
+#: DatabaseExplorer/GUI.cpp:1416 DatabaseExplorer/GUI.cpp:1426
+msgid "restrict"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:786 DatabaseExplorer/GUI.cpp:796
+#: DatabaseExplorer/GUI.cpp:1417 DatabaseExplorer/GUI.cpp:1427
+msgid "cascade"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:787 DatabaseExplorer/GUI.cpp:797
+#: DatabaseExplorer/GUI.cpp:1418 DatabaseExplorer/GUI.cpp:1428
+msgid "set null"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:788 DatabaseExplorer/GUI.cpp:798
+#: DatabaseExplorer/GUI.cpp:1419 DatabaseExplorer/GUI.cpp:1429
+msgid "no action"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:789
+msgid "OnDelete"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:799
+msgid "OnUpdate"
+msgstr ""
+
+#: DatabaseExplorer/GUI.cpp:809
 msgid "Referenced table:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:912
+#: DatabaseExplorer/GUI.cpp:959
 msgid "View name:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1021
+#: DatabaseExplorer/GUI.cpp:1076
 msgid "Class postfix:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1032
+#: DatabaseExplorer/GUI.cpp:1087
 msgid "Folder:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1040
+#: DatabaseExplorer/GUI.cpp:1095
 msgid "Virtual folder:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1076
+#: DatabaseExplorer/GUI.cpp:1131
 msgid "Log:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1221
+#: DatabaseExplorer/GUI.cpp:1292
 msgid "Table name:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1243
+#: DatabaseExplorer/GUI.cpp:1314
 msgid "Columns:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1252
+#: DatabaseExplorer/GUI.cpp:1323
 msgid "Add column"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1252
+#: DatabaseExplorer/GUI.cpp:1323
 msgid "Add new column"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1254
+#: DatabaseExplorer/GUI.cpp:1325
 msgid "Remove column"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1254
+#: DatabaseExplorer/GUI.cpp:1325
 msgid "Remove selected column"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1258
+#: DatabaseExplorer/GUI.cpp:1329
 msgid "Move column up"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1258
+#: DatabaseExplorer/GUI.cpp:1329
 msgid "Move selected column up"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1260
+#: DatabaseExplorer/GUI.cpp:1331
 msgid "Move column down"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1260
+#: DatabaseExplorer/GUI.cpp:1331
 msgid "Move selected column down"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1267
+#: DatabaseExplorer/GUI.cpp:1338
 msgid "Column name"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1270
+#: DatabaseExplorer/GUI.cpp:1341
 msgid "Not null"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1271
+#: DatabaseExplorer/GUI.cpp:1342
 msgid "Autoincrement"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1272
+#: DatabaseExplorer/GUI.cpp:1343
 msgid "Primary key"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1279
+#: DatabaseExplorer/GUI.cpp:1350
 msgid "Foreign keys:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1288
+#: DatabaseExplorer/GUI.cpp:1359
 msgid "Add foreign key"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1288
+#: DatabaseExplorer/GUI.cpp:1359
 msgid "Add new foreign key"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1290
+#: DatabaseExplorer/GUI.cpp:1361
 msgid "Remove foreign key"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1290
+#: DatabaseExplorer/GUI.cpp:1361
 msgid "Remove selected foreign key"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1305
+#: DatabaseExplorer/GUI.cpp:1376
 msgid "Key name"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1317
+#: DatabaseExplorer/GUI.cpp:1388
 msgid "Local column:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1326
+#: DatabaseExplorer/GUI.cpp:1397
 msgid "Ref. table:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1335
+#: DatabaseExplorer/GUI.cpp:1406
 msgid "Ref. column:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1349
+#: DatabaseExplorer/GUI.cpp:1420
 msgid "On update"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1359
+#: DatabaseExplorer/GUI.cpp:1430
 msgid "On delete"
 msgstr ""
 
@@ -16337,10 +17454,6 @@ msgstr ""
 
 #: cppchecker/cppcheckreportbasepage.cpp:80
 msgid "Clear the CppCheck report view"
-msgstr ""
-
-#: cppchecker/cppcheckreportbasepage.cpp:84 menu.xrc:494
-msgid "&Stop"
 msgstr ""
 
 #: cppchecker/cppcheckreportbasepage.cpp:86
@@ -16664,978 +17777,6 @@ msgstr ""
 
 #: cppchecker/cppchecksettingsdlg.cpp:246
 msgid "Select the path containing include files"
-msgstr ""
-
-#: menu.xrc:9
-msgid "&New Empty File"
-msgstr ""
-
-#: menu.xrc:12
-msgid "New &Workspace"
-msgstr ""
-
-#: menu.xrc:15 menu.xrc:453
-msgid "New &Project"
-msgstr ""
-
-#: menu.xrc:19 menu.xrc:1222
-msgid "&Open"
-msgstr ""
-
-#: menu.xrc:21
-msgid "&Open File..."
-msgstr ""
-
-#: menu.xrc:24
-msgid "Open &Workspace..."
-msgstr ""
-
-#: menu.xrc:28
-msgid "&Reload File"
-msgstr ""
-
-#: menu.xrc:31
-msgid "Load a group of tabs"
-msgstr ""
-
-#: menu.xrc:35
-msgid "&Save File"
-msgstr ""
-
-#: menu.xrc:38
-msgid "Save As..."
-msgstr ""
-
-#: menu.xrc:44
-msgid "Save tabs as group"
-msgstr ""
-
-#: menu.xrc:57 menu.xrc:1081
-msgid "Close Workspace"
-msgstr ""
-
-#: menu.xrc:63
-msgid "Recent &Files"
-msgstr ""
-
-#: menu.xrc:68
-msgid "Recent &Workspaces"
-msgstr ""
-
-#: menu.xrc:84
-msgid "&Undo"
-msgstr ""
-
-#: menu.xrc:87
-msgid "&Redo"
-msgstr ""
-
-#: menu.xrc:90
-msgid "Set la&bel for current state"
-msgstr ""
-
-#: menu.xrc:94
-msgid "&Cut"
-msgstr ""
-
-#: menu.xrc:97
-msgid "Co&py"
-msgstr ""
-
-#: menu.xrc:100
-msgid "Past&e"
-msgstr ""
-
-#: menu.xrc:103
-msgid "Select &All"
-msgstr ""
-
-#: menu.xrc:106
-msgid "Split selection into lines"
-msgstr ""
-
-#: menu.xrc:112
-msgid "&Delete Line"
-msgstr ""
-
-#: menu.xrc:115
-msgid "D&uplicate Selection / Line"
-msgstr ""
-
-#: menu.xrc:118
-msgid "Delete to Line &End"
-msgstr ""
-
-#: menu.xrc:121
-msgid "Delete to Line &Start"
-msgstr ""
-
-#: menu.xrc:124
-msgid "&Transpose Lines"
-msgstr ""
-
-#: menu.xrc:127
-msgid "Move Line Up"
-msgstr ""
-
-#: menu.xrc:130
-msgid "Move Line Down"
-msgstr ""
-
-#: menu.xrc:133
-msgid "Center Line in Editor"
-msgstr ""
-
-#: menu.xrc:137
-msgid "Comment"
-msgstr ""
-
-#: menu.xrc:139
-msgid "Comment Selection"
-msgstr ""
-
-#: menu.xrc:142
-msgid "Comment Line"
-msgstr ""
-
-#: menu.xrc:145
-msgid "Insert Comment Block"
-msgstr ""
-
-#: menu.xrc:149
-msgid "Text Conversion"
-msgstr ""
-
-#: menu.xrc:151
-msgid "Make Upper&case"
-msgstr ""
-
-#: menu.xrc:154
-msgid "Make &Lowercase"
-msgstr ""
-
-#: menu.xrc:158
-msgid "Convert to Windows Format"
-msgstr ""
-
-#: menu.xrc:161
-msgid "Convert to Unix Format"
-msgstr ""
-
-#: menu.xrc:165
-msgid "Convert Indentation to Tabs"
-msgstr ""
-
-#: menu.xrc:168
-msgid "Convert Indentation to Spaces"
-msgstr ""
-
-#: menu.xrc:173
-msgid "Trim T&railing Spaces"
-msgstr ""
-
-#: menu.xrc:177
-msgid "Match &Brace"
-msgstr ""
-
-#: menu.xrc:180
-msgid "S&elect to Brace"
-msgstr ""
-
-#: menu.xrc:184
-msgid "Complete &Word"
-msgstr ""
-
-#: menu.xrc:187
-msgid "Display &Function Calltip"
-msgstr ""
-
-#: menu.xrc:192
-msgid "&View"
-msgstr ""
-
-#: menu.xrc:195
-msgid "Word W&rap"
-msgstr ""
-
-#: menu.xrc:199
-msgid "Toggle Current &Fold"
-msgstr ""
-
-#: menu.xrc:202
-msgid "Toggle &All Folds"
-msgstr ""
-
-#: menu.xrc:205
-msgid "Toggle All To&pmost Folds in Selection"
-msgstr ""
-
-#: menu.xrc:208
-msgid "Toggle &Every Fold in Selection"
-msgstr ""
-
-#: menu.xrc:211
-msgid "&Display EOL"
-msgstr ""
-
-#: menu.xrc:215
-msgid "Show Whitespace"
-msgstr ""
-
-#: menu.xrc:221
-msgid "Show Always"
-msgstr ""
-
-#: menu.xrc:225
-msgid "Visible After First Indent"
-msgstr ""
-
-#: menu.xrc:229
-msgid "Indentation Only"
-msgstr ""
-
-#: menu.xrc:235
-msgid "Full Screen..."
-msgstr ""
-
-#: menu.xrc:239
-msgid "Show &Welcome Page"
-msgstr ""
-
-#: menu.xrc:242
-msgid "Load Welcome Page at &Startup"
-msgstr ""
-
-#: menu.xrc:247
-msgid "&Output Pane"
-msgstr ""
-
-#: menu.xrc:251
-msgid "Wor&kspace Pane"
-msgstr ""
-
-#: menu.xrc:255
-msgid "&Navigation Bar"
-msgstr ""
-
-#: menu.xrc:259
-msgid "&Debugger Pane"
-msgstr ""
-
-#: menu.xrc:284
-msgid "Tool&bars"
-msgstr ""
-
-#: menu.xrc:287
-msgid "Standard ToolBar"
-msgstr ""
-
-#: menu.xrc:291
-msgid "Search ToolBar"
-msgstr ""
-
-#: menu.xrc:295
-msgid "Build ToolBar"
-msgstr ""
-
-#: menu.xrc:299
-msgid "Debug ToolBar"
-msgstr ""
-
-#: menu.xrc:304
-msgid "Show/hide main toolbars"
-msgstr ""
-
-#: menu.xrc:308
-msgid "Show/hide all plugin toolbars"
-msgstr ""
-
-#: menu.xrc:316
-msgid "&Toggle All Panes"
-msgstr ""
-
-#: menu.xrc:320
-msgid "Show Status Bar"
-msgstr ""
-
-#: menu.xrc:324
-msgid "Show ToolBar"
-msgstr ""
-
-#: menu.xrc:328
-msgid "Show TabBar"
-msgstr ""
-
-#: menu.xrc:337
-msgid "&Find In Files..."
-msgstr ""
-
-#: menu.xrc:340
-msgid "Fi&nd..."
-msgstr ""
-
-#: menu.xrc:343
-msgid "&Replace..."
-msgstr ""
-
-#: menu.xrc:346
-msgid "Select Next Occurrence"
-msgstr ""
-
-#: menu.xrc:349
-msgid "Select Previous Occurrence"
-msgstr ""
-
-#: menu.xrc:352
-msgid "Find &Next"
-msgstr ""
-
-#: menu.xrc:355
-msgid "Find &Previous"
-msgstr ""
-
-#: menu.xrc:358
-msgid "Find Word At Caret"
-msgstr ""
-
-#: menu.xrc:361
-msgid "Find Word At Caret Backward"
-msgstr ""
-
-#: menu.xrc:365
-msgid "Grep Selection in the Current File"
-msgstr ""
-
-#: menu.xrc:368
-msgid "Grep Selection in the Workspace"
-msgstr ""
-
-#: menu.xrc:372
-msgid "Go to Next 'Find In File' Match"
-msgstr ""
-
-#: menu.xrc:375
-msgid "Go to Previous 'Find In File' Match"
-msgstr ""
-
-#: menu.xrc:379
-msgid "Find &Resource..."
-msgstr ""
-
-#: menu.xrc:383
-msgid "&Quick Outline..."
-msgstr ""
-
-#: menu.xrc:386
-msgid "Find &Symbol"
-msgstr ""
-
-#: menu.xrc:389
-msgid "Go To Pre&vious Location"
-msgstr ""
-
-#: menu.xrc:392
-msgid "Go To For&ward Location"
-msgstr ""
-
-#: menu.xrc:397
-msgid "&Goto Line..."
-msgstr ""
-
-#: menu.xrc:403
-msgid "Toggle &Bookmark"
-msgstr ""
-
-#: menu.xrc:406
-msgid "&Next Bookmark"
-msgstr ""
-
-#: menu.xrc:409
-msgid "Previo&us Bookmark"
-msgstr ""
-
-#: menu.xrc:412
-msgid "Remove All &Currently-Active Bookmarks"
-msgstr ""
-
-#: menu.xrc:415
-msgid "Remove &All Bookmarks"
-msgstr ""
-
-#: menu.xrc:423
-msgid "&Workspace"
-msgstr ""
-
-#: menu.xrc:426
-msgid "&New Workspace..."
-msgstr ""
-
-#: menu.xrc:429
-msgid "&Open Workspace..."
-msgstr ""
-
-#: menu.xrc:432
-msgid "&Close Workspace"
-msgstr ""
-
-#: menu.xrc:435
-msgid "&Reload Workspace"
-msgstr ""
-
-#: menu.xrc:440 menu.xrc:467 menu.xrc:1092
-msgid "Workspace Settings..."
-msgstr ""
-
-#: menu.xrc:443 menu.xrc:470 menu.xrc:1088
-msgid "Workspace Editor Preferences..."
-msgstr ""
-
-#: menu.xrc:448
-msgid "&Import other IDEs solution/workspace files..."
-msgstr ""
-
-#: menu.xrc:456
-msgid "&Add an existing project"
-msgstr ""
-
-#: menu.xrc:459
-msgid "&Reconcile the current project"
-msgstr ""
-
-#: menu.xrc:460
-msgid "Check project for missing and stale files"
-msgstr ""
-
-#: menu.xrc:464
-msgid "&Open Active Project Settings..."
-msgstr ""
-
-#: menu.xrc:474
-msgid "Retag Workspace ( Full )"
-msgstr ""
-
-#: menu.xrc:475
-msgid "Retag the workspace by dropping the old tags tables, and recreate them"
-msgstr ""
-
-#: menu.xrc:478
-msgid "Retag Workspace ( Quick )"
-msgstr ""
-
-#: menu.xrc:486
-msgid "Configuration &Manager..."
-msgstr ""
-
-#: menu.xrc:491
-msgid "&Run"
-msgstr ""
-
-#: menu.xrc:499
-msgid "&Build Project"
-msgstr ""
-
-#: menu.xrc:502
-msgid "&Compile Current File"
-msgstr ""
-
-#: menu.xrc:505
-msgid "Cl&ean Project"
-msgstr ""
-
-#: menu.xrc:508
-msgid "Sto&p Build"
-msgstr ""
-
-#: menu.xrc:512
-msgid "Reb&uild Project"
-msgstr ""
-
-#: menu.xrc:515
-msgid "Build and Run Pro&ject"
-msgstr ""
-
-#: menu.xrc:519 menu.xrc:1060
-msgid "Build Workspace"
-msgstr ""
-
-#: menu.xrc:522 menu.xrc:1063
-msgid "Clean Workspace"
-msgstr ""
-
-#: menu.xrc:525 menu.xrc:1066
-msgid "Rebuild Workspace"
-msgstr ""
-
-#: menu.xrc:529
-msgid "Batch Build..."
-msgstr ""
-
-#: menu.xrc:533
-msgid "Ne&xt Build Error"
-msgstr ""
-
-#: menu.xrc:538
-msgid "&Debugger"
-msgstr ""
-
-#: menu.xrc:541
-msgid "&Start/Continue Debugger"
-msgstr ""
-
-#: menu.xrc:544
-msgid "&Restart Debugger"
-msgstr ""
-
-#: menu.xrc:547
-msgid "&Attach to process..."
-msgstr ""
-
-#: menu.xrc:550
-msgid "Debug a core d&ump..."
-msgstr ""
-
-#: menu.xrc:553
-msgid "&Pause debugger"
-msgstr ""
-
-#: menu.xrc:556
-msgid "S&top debugger"
-msgstr ""
-
-#: menu.xrc:560
-msgid "Step &Into"
-msgstr ""
-
-#: menu.xrc:563
-msgid "Ne&xt"
-msgstr ""
-
-#: menu.xrc:569
-msgid "Step &Out"
-msgstr ""
-
-#: menu.xrc:573
-msgid "Show &Cursor"
-msgstr ""
-
-#: menu.xrc:577
-msgid "Toggle &Breakpoint"
-msgstr ""
-
-#: menu.xrc:580
-msgid "Disab&le All Breakpoints"
-msgstr ""
-
-#: menu.xrc:583
-msgid "E&nable All Breakpoints"
-msgstr ""
-
-#: menu.xrc:586
-msgid "&Delete All Breakpoints"
-msgstr ""
-
-#: menu.xrc:590
-msgid "&Quick Debug..."
-msgstr ""
-
-#: menu.xrc:594
-msgid "GDB Windows"
-msgstr ""
-
-#: menu.xrc:625
-msgid "ASCII Viewer"
-msgstr ""
-
-#: menu.xrc:629
-msgid "Disassembly"
-msgstr ""
-
-#: menu.xrc:636
-msgid "&Plugins"
-msgstr ""
-
-#: menu.xrc:639
-msgid "&Manage Plugins..."
-msgstr ""
-
-#: menu.xrc:645
-msgid "Pe&rspective"
-msgstr ""
-
-#: menu.xrc:649
-msgid "Save Current Layout As..."
-msgstr ""
-
-#: menu.xrc:652
-msgid "Manage Perspectives..."
-msgstr ""
-
-#: menu.xrc:656
-msgid "Restore Default Layout"
-msgstr ""
-
-#: menu.xrc:660
-msgid "Settin&gs"
-msgstr ""
-
-#: menu.xrc:663
-msgid "Global &Editor Preferences..."
-msgstr ""
-
-#: menu.xrc:666
-msgid "Colours and &Fonts..."
-msgstr ""
-
-#: menu.xrc:669
-msgid "Keyboard &shortcuts..."
-msgstr ""
-
-#: menu.xrc:672
-msgid "En&vironment Variables..."
-msgstr ""
-
-#: menu.xrc:675
-msgid "&Build Settings..."
-msgstr ""
-
-#: menu.xrc:678
-msgid "&GDB Settings..."
-msgstr ""
-
-#: menu.xrc:681
-msgid "&Code Completion..."
-msgstr ""
-
-#: menu.xrc:689
-msgid "&Help"
-msgstr ""
-
-#: menu.xrc:692
-msgid "&About..."
-msgstr ""
-
-#: menu.xrc:696
-msgid "&Run the Setup Wizard..."
-msgstr ""
-
-#: menu.xrc:700
-msgid "&Check for updates..."
-msgstr ""
-
-#: menu.xrc:713 menu.xrc:733
-msgid "Close Other Tabs"
-msgstr ""
-
-#: menu.xrc:736
-msgid "Close Tabs To The Right"
-msgstr ""
-
-#: menu.xrc:740
-msgid "Make Read Only"
-msgstr ""
-
-#: menu.xrc:752
-msgid "Show In"
-msgstr ""
-
-#: menu.xrc:754
-msgid "Show In Workspace"
-msgstr ""
-
-#: menu.xrc:757
-msgid "Show In Explorer"
-msgstr ""
-
-#: menu.xrc:761
-msgid "Copy File Name"
-msgstr ""
-
-#: menu.xrc:763
-msgid "Copy File Name to Clipboard"
-msgstr ""
-
-#: menu.xrc:766
-msgid "Copy Full Path to Clipboard"
-msgstr ""
-
-#: menu.xrc:769
-msgid "Copy Path to Clipboard"
-msgstr ""
-
-#: menu.xrc:774
-msgid "Detach Editor"
-msgstr ""
-
-#: menu.xrc:778
-msgid "Open Shell at File Path"
-msgstr ""
-
-#: menu.xrc:781
-msgid "Open File Explorer at File Path"
-msgstr ""
-
-#: menu.xrc:787
-msgid "Swap Header/Implementation file\tF12"
-msgstr ""
-
-#: menu.xrc:798
-msgid "Search for selected text in workspace"
-msgstr ""
-
-#: menu.xrc:804
-msgid "Goto Beginning of Current Function"
-msgstr ""
-
-#: menu.xrc:807
-msgid "Goto Beginning of Next Function"
-msgstr ""
-
-#: menu.xrc:816
-msgid "Code Generation / Refactoring"
-msgstr ""
-
-#: menu.xrc:819
-msgid "Insert Doxygen Comment\tCtrl-Shift-D"
-msgstr ""
-
-#: menu.xrc:822
-msgid "Generate Setters/Getters..."
-msgstr ""
-
-#: menu.xrc:826
-msgid "Comment Selection\tCtrl-Shift-/"
-msgstr ""
-
-#: menu.xrc:829
-msgid "Toggle Line Comment\tCtrl-/"
-msgstr ""
-
-#: menu.xrc:833
-msgid "Move Function Implementation to..."
-msgstr ""
-
-#: menu.xrc:836
-msgid "Add Function Implementation..."
-msgstr ""
-
-#: menu.xrc:839
-msgid "Implement all Un-implemented Functions..."
-msgstr ""
-
-#: menu.xrc:842
-msgid "Synchronize Signatures..."
-msgstr ""
-
-#: menu.xrc:847
-msgid "Implement inherited virtual Functions..."
-msgstr ""
-
-#: menu.xrc:850
-msgid "Implement inherited pure virtual Functions..."
-msgstr ""
-
-#: menu.xrc:854
-msgid "Rename Symbol...\tCtrl-Shift-H"
-msgstr ""
-
-#: menu.xrc:857
-msgid "Rename Local Variable...\tCtrl-Shift-L"
-msgstr ""
-
-#: menu.xrc:883 menu.xrc:926
-msgid "Select All"
-msgstr ""
-
-#: menu.xrc:892
-msgid "Toggle Breakpoint"
-msgstr ""
-
-#: menu.xrc:900
-msgid "Re-Tag File"
-msgstr ""
-
-#: menu.xrc:935
-msgid "Create new workspace..."
-msgstr ""
-
-#: menu.xrc:938
-msgid "Switch to workspace..."
-msgstr ""
-
-#: menu.xrc:944 menu.xrc:971
-msgid "Project"
-msgstr ""
-
-#: menu.xrc:947
-msgid "Add a New File..."
-msgstr ""
-
-#: menu.xrc:950
-msgid "Add an Existing File..."
-msgstr ""
-
-#: menu.xrc:957
-msgid "Sort Item"
-msgstr ""
-
-#: menu.xrc:961
-msgid "Remove Virtual Folder"
-msgstr ""
-
-#: menu.xrc:965
-msgid "Rename ..."
-msgstr ""
-
-#: menu.xrc:975
-msgid "Build Order..."
-msgstr ""
-
-#: menu.xrc:984 menu.xrc:1006
-msgid "Rebuild"
-msgstr ""
-
-#: menu.xrc:987 menu.xrc:1002
-msgid "Clean"
-msgstr ""
-
-#: menu.xrc:992
-msgid "Stop Build"
-msgstr ""
-
-#: menu.xrc:996
-msgid "Project Only"
-msgstr ""
-
-#: menu.xrc:1011
-msgid "Import Files From Directory"
-msgstr ""
-
-#: menu.xrc:1017
-msgid "Set As Active"
-msgstr ""
-
-#: menu.xrc:1023
-msgid "Export Makefile"
-msgstr ""
-
-#: menu.xrc:1037
-msgid "Remove Project"
-msgstr ""
-
-#: menu.xrc:1040
-msgid "Rename Project"
-msgstr ""
-
-#: menu.xrc:1045
-msgid "Save As Template..."
-msgstr ""
-
-#: menu.xrc:1049
-msgid "Project Editor Preferences..."
-msgstr ""
-
-#: menu.xrc:1070
-msgid "Create New Project"
-msgstr ""
-
-#: menu.xrc:1073
-msgid "Add an Existing Project"
-msgstr ""
-
-#: menu.xrc:1077
-msgid "Retag Workspace"
-msgstr ""
-
-#: menu.xrc:1099 menu.xrc:1106
-msgid "Detach"
-msgstr ""
-
-#: menu.xrc:1112
-msgid "Open in CodeLite"
-msgstr ""
-
-#: menu.xrc:1115 menu.xrc:1229
-msgid "Open With &Default Application"
-msgstr ""
-
-#: menu.xrc:1118
-msgid "Compile"
-msgstr ""
-
-#: menu.xrc:1121
-msgid "Preprocess"
-msgstr ""
-
-#: menu.xrc:1125
-msgid "Exclude from Build"
-msgstr ""
-
-#: menu.xrc:1149
-msgid "Copy Value Only"
-msgstr ""
-
-#: menu.xrc:1160
-msgid "Delete All"
-msgstr ""
-
-#: menu.xrc:1164
-msgid "Display Format"
-msgstr ""
-
-#: menu.xrc:1166
-msgid "Natural"
-msgstr ""
-
-#: menu.xrc:1169
-msgid "Hexadecimal"
-msgstr ""
-
-#: menu.xrc:1172
-msgid "Binary"
-msgstr ""
-
-#: menu.xrc:1175
-msgid "Octal"
-msgstr ""
-
-#: menu.xrc:1178
-msgid "Decimal"
-msgstr ""
-
-#: menu.xrc:1194
-msgid "Search..."
-msgstr ""
-
-#: menu.xrc:1199
-msgid "Tags"
-msgstr ""
-
-#: menu.xrc:1201
-msgid "Global Parser Paths"
-msgstr ""
-
-#: menu.xrc:1203 menu.xrc:1212
-msgid "Add to include paths"
-msgstr ""
-
-#: menu.xrc:1206 menu.xrc:1215
-msgid "Add to exclude paths"
-msgstr ""
-
-#: menu.xrc:1210
-msgid "Workspace Parser Paths"
-msgstr ""
-
-#: menu.xrc:1225
-msgid "Open in &editor"
-msgstr ""
-
-#: menu.xrc:1233
-msgid "Open Shell here"
-msgstr ""
-
-#: menu.xrc:1236
-msgid "Open File Explorer here"
 msgstr ""
 
 #: Copyright/copyrights_proj_sel_base_dlg.h:74

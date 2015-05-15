@@ -48,7 +48,7 @@
 
 static Cscope* thePlugin = NULL;
 
-static const wxString CSCOPE_NAME = wxT("CScope");
+static const wxString CSCOPE_NAME = _("CScope");
 
 // Define the plugin entry point
 extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)

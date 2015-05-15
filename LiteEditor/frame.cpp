@@ -1040,6 +1040,7 @@ void clMainFrame::CreateGUIControls(void)
     // However I'm creating unused strings here, so that the translations remain in the catalogue
     const wxString unusedOV(_("Output View"));
     const wxString unusedWV(_("Workspace View"));
+    const wxString unusedCR(_("wxCrafter")); // One that would otherwise be untranslated; OT here, but it's a convenient place to put it
 
     // Add the explorer pane
     m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);

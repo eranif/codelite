@@ -179,7 +179,7 @@ GitPlugin::GitPlugin(IManager* manager)
 
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_console, wxT("git"), false, m_images.Bitmap("git"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_console, _("git"), false, m_images.Bitmap("git"));
 
     m_progressTimer.SetOwner(this);
 }

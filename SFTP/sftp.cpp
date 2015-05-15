@@ -120,10 +120,10 @@ SFTP::SFTP(IManager* manager)
 
     SFTPImages images;
     m_outputPane = new SFTPStatusPage(m_mgr->GetOutputPaneNotebook(), this);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, "SFTP", false, images.Bitmap("sftp_tab"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, _("SFTP"), false, images.Bitmap("sftp_tab"));
 
     m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook(), this);
-    m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, "SFTP", false);
+    m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, _("SFTP"), false);
 
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);
@@ -323,7 +323,7 @@ void SFTP::OnFileSaved(clCommandEvent& e)
             wxString msg;
             msg << _("Failed to synchronize file '") << local_file << "'\n" << _("with remote server\n")
                 << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
-            ::wxMessageBox(msg, "SFTP", wxOK | wxICON_ERROR);
+            ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
 
             // Disable the workspace mirroring for this workspace
             m_workspaceSettings.Clear();
@@ -383,7 +383,7 @@ void SFTP::OnSaveFile(clCommandEvent& e)
         wxString msg;
         msg << _("Failed to synchronize file '") << localFile << "'\n" << _("with remote server\n")
             << _("Could not locate account: ") << accName;
-        ::wxMessageBox(msg, "SFTP", wxOK | wxICON_ERROR);
+        ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
     }
 }
 

@@ -45,7 +45,7 @@
 static ZoomNavigator* thePlugin = NULL;
 #define CHECK_CONDITION( cond ) if ( !cond ) return;
 
-const char* ZOOM_PANE_TITLE = "Zoom Navigator";
+const char* ZOOM_PANE_TITLE = _("Zoom Navigator");
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)

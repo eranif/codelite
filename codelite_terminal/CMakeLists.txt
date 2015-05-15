@@ -11,11 +11,6 @@ else ( UNIX AND NOT APPLE )
     find_package(wxWidgets REQUIRED)
 endif ( UNIX OR MINGW AND NOT APPLE )
 
-# Add RPATH
-if ( UNIX )
-set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-endif ( UNIX )
-
 # we need wxWidgets flags to be set only for the c++ files, so we do it like this
 # by setting the CMAKE_CXX_FLAGS
 if ( NOT MINGW )

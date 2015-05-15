@@ -21,11 +21,6 @@ add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 
-# Add RPATH
-if (UNIX)
-set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-endif (UNIX)
-
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
     set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )

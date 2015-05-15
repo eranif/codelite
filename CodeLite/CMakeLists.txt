@@ -91,16 +91,11 @@ endif()
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 
 # Add RPATH
-if (NOT MINGW)
-if ( WXC_APP )
+if (NOT MINGW AND WXC_APP)
     string( REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR}) 
-    set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}:${PLUGINS_DIR}")
-    message( "-- libcodelite.so is using RPATH set to ${WXC_LIBS_DIR}:${PLUGINS_DIR}")
-else ( WXC_APP )
-    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-    message( "-- libcodelite.so is using RPATH set to ${PLUGINS_DIR}")
-endif ( WXC_APP )
-endif (NOT MINGW)
+    set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
+    message( "-- libcodelite.so is using RPATH set to ${WXC_LIBS_DIR}")
+endif ()
 FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp")
 
 # Define the output

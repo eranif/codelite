@@ -50,9 +50,6 @@ function( CL_PLUGIN PLUGIN_NAME )
         add_definitions(-include "${CL_PCH_FILE}")
         add_definitions(-Winvalid-pch)
     endif ( USE_PCH )
-
-    # Add RPATH
-    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
     
     ## By default, use the sources under the current folder
     FILE(GLOB_RECURSE PLUGIN_SRCS "${CMAKE_CURRENT_LIST_DIR}/*.cpp" "${CMAKE_CURRENT_LIST_DIR}/*.c")

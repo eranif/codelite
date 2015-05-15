@@ -23,11 +23,6 @@ if(WIN32)
     add_definitions(-DWXMAKINGDLL_DATABASELAYER)
 endif(WIN32)
 
-# Add RPATH
-if (UNIX)
-    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-endif (UNIX)
-
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
     set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )

@@ -45,11 +45,6 @@ add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 
-if (UNIX)
-# Add RPATH
-set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-endif()
-
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     ## Debug build of codelite
     set( CL_LIB_DIR lib)

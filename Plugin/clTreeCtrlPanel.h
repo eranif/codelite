@@ -37,15 +37,31 @@ protected:
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnItemExpanding(wxTreeEvent& event);
-
+    /**
+     * @brief ensure that item is selected (single selection)
+     */
+    void SelectItem(const wxTreeItemId& item);
+    /**
+     * @brief return list of selected files and folders. In addition return the 
+     * tree ctrl items. You can always assume that the folders and the folderItems are of the same 
+     * size. Same for the file arrays
+     */
+    void GetSelections(wxArrayString& folders,
+                       wxArrayTreeItemIds& folderItems,
+                       wxArrayString& files,
+                       wxArrayTreeItemIds& fileItems);
+                       
     void OnCloseFolder(wxCommandEvent& event);
+    void OnNewFolder(wxCommandEvent& event);
+    void OnNewFile(wxCommandEvent& event);
+    void OnDeleteFolder(wxCommandEvent& event);
 
     void OnFolderDropped(clCommandEvent& event);
 
     // Helpers
     void DoExpandItem(const wxTreeItemId& parent);
     bool IsTopLevelFolder(const wxTreeItemId& item);
-    
+
     clTreeCtrlData* GetItemData(const wxTreeItemId& item);
     wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
     wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);

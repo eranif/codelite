@@ -42,6 +42,6 @@ if ( UNIX )
 endif ( UNIX )
 
 target_link_libraries(codelite-make ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" 
-                        wxsqlite3 sqlite3lib libcodelite plugin ${UTIL_LIB} )
+                        libcodelite plugin ${UTIL_LIB} )
 
 CL_INSTALL_EXECUTABLE(codelite-make)

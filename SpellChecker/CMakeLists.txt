@@ -83,8 +83,6 @@ else ()
                           ${LIBHUNSPELL}
                           libcodelite
                           plugin
-                          wxsqlite3 
-                          sqlite3lib
                           )
 
     # Installation destination

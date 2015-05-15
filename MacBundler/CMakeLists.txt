@@ -45,8 +45,6 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} 
                       ${LINKER_OPTIONS} 
                       ${wxWidgets_LIBRARIES} 
-                      wxsqlite3 
-                      sqlite3lib 
                       libcodelite 
                       plugin)
 

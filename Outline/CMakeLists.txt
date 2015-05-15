@@ -55,8 +55,6 @@ target_link_libraries(${PLUGIN_NAME}
                       ${wxWidgets_LIBRARIES}
                       libcodelite
                       plugin
-                      wxsqlite3 
-                      sqlite3lib
                       )
 # Installation destination
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})

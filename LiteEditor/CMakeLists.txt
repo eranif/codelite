@@ -5,13 +5,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelite)
 
-if ( UNIX AND NOT APPLE )
-    execute_process(COMMAND sed s@%%PREFIX%%@${CL_PREFIX}@g Runtime/codelite.desktop.template 
-                    WORKING_DIRECTORY "${CL_SRC_ROOT}" 
-                    OUTPUT_FILE Runtime/codelite.desktop)
-    message("-- Generating desktop file...")
-endif (  UNIX AND NOT APPLE )
-
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 

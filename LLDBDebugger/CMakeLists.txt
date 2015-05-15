@@ -78,15 +78,13 @@ if (WITH_LLDB MATCHES 1)
         add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRCS})
 
         target_link_libraries(LLDBDebugger LLDBProtocol)
-if (APPLE)
-        link_directories(${LLDB_LIB_PATH})
-        target_link_libraries(${PLUGIN_NAME} ${LIBLLDB})
-endif()
+
         # Codelite plugins doesn't use the "lib" prefix.
         set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
         target_link_libraries(${PLUGIN_NAME}
                               ${LINKER_OPTIONS}
                               ${wxWidgets_LIBRARIES}
+                              ${LIBLLDB}
                               libcodelite
                               plugin
                               )

@@ -280,7 +280,7 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     if(!FileUtils::WriteFileContent(file, "")) return;
     wxTreeItemId newFile = DoAddFile(item, file.GetFullPath());
     GetTreeCtrl()->SortChildren(item);
-    CallAfter(clTreeCtrlPanel::SelectItem, newFile);
+    CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
 }
 
 void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event) 
@@ -303,7 +303,7 @@ void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event)
     // Add it to the tree view
     wxTreeItemId newFile = DoAddFolder(item, file.GetPath());
     GetTreeCtrl()->SortChildren(item);
-    CallAfter(clTreeCtrlPanel::SelectItem, newFile);
+    CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
 }
 
 void clTreeCtrlPanel::GetSelections(wxArrayString& folders,

@@ -26,8 +26,8 @@ clTernServer::clTernServer(JSCodeCompletion* cc)
     , m_port(wxNOT_FOUND)
     , m_recycleCount(0)
 {
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, clTernServer::OnTernOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, clTernServer::OnTernTerminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clTernServer::OnTernOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clTernServer::OnTernTerminated, this);
 }
 
 clTernServer::~clTernServer() {}

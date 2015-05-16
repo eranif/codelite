@@ -58,8 +58,8 @@
       <File Name="GitCommandPull.cpp"/>
       <File Name="GitDriver.cpp"/>
       <File Name="GitDriver.h"/>
-      <File Name="GitPush.h"/>
-      <File Name="GitPush.cpp"/>
+      <File Name="GitCommandPush.h"/>
+      <File Name="GitCommandPush.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="icons">

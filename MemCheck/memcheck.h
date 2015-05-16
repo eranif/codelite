@@ -23,7 +23,7 @@ class MemCheckPlugin : public IPlugin
 {
 public:
     MemCheckPlugin(IManager* manager);
-    ~MemCheckPlugin();
+    virtual ~MemCheckPlugin();
 
     //--------------------------------------------
     // Abstract methods
@@ -110,8 +110,8 @@ protected:
      */
     void CheckProject(const wxString& projectName);
 
-    void OnProcessOutput(wxCommandEvent& event);
-    void OnProcessTerminated(wxCommandEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
 
     /**
      * @brief Analyse can be made independent of CodeLite and log can be load from file.

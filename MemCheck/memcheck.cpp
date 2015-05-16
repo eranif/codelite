@@ -48,16 +48,14 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 
 extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-BEGIN_EVENT_TABLE(MemCheckPlugin, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, MemCheckPlugin::OnProcessOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, MemCheckPlugin::OnProcessTerminated)
-END_EVENT_TABLE()
-
 MemCheckPlugin::MemCheckPlugin(IManager* manager)
     : IPlugin(manager)
     , m_memcheckProcessor(NULL)
     , m_process(NULL)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &MemCheckPlugin::OnProcessTerminated, this);
+    
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin constructor"));
     m_longName = _("Detects memory management problems. Uses Valgrind - memcheck skin.");
     m_shortName = wxT("MemCheck");
@@ -334,7 +332,8 @@ void MemCheckPlugin::UnHookPopupMenu(wxMenu* menu, MenuType type)
 
 void MemCheckPlugin::UnPlug()
 {
-    // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::UnPlug()"));
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &MemCheckPlugin::OnProcessTerminated, this);
 
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"),
                                    wxEVT_COMMAND_MENU_SELECTED,
@@ -552,17 +551,13 @@ void MemCheckPlugin::StopProcess()
     }
 }
 
-void MemCheckPlugin::OnProcessOutput(wxCommandEvent& event)
+void MemCheckPlugin::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    m_mgr->AppendOutputTabText(kOutputTab_Output, ped->GetData());
-    wxDELETE(ped);
+    m_mgr->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
 }
 
-void MemCheckPlugin::OnProcessTerminated(wxCommandEvent& event)
+void MemCheckPlugin::OnProcessTerminated(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    wxDELETE(ped);
     wxDELETE(m_process);
 
     m_mgr->AppendOutputTabText(kOutputTab_Output, _("\n-- MemCheck process completed\n"));

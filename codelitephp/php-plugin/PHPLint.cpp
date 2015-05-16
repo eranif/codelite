@@ -6,15 +6,12 @@
 #include "php.h"
 #include "asyncprocess.h"
 
-BEGIN_EVENT_TABLE(PHPLint, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, PHPLint::OnProcessTerminated)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, PHPLint::OnProcessOutput)
-END_EVENT_TABLE()
-
 PHPLint::PHPLint(PhpPlugin* plugin)
     : m_plugin(plugin)
     , m_process(NULL)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &PHPLint::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &PHPLint::OnProcessTerminated, this);
 }
 
 PHPLint::~PHPLint() {}
@@ -34,22 +31,18 @@ void PHPLint::DoProcessQueue()
     }
 }
 
-void PHPLint::OnProcessTerminated(wxCommandEvent& event)
+void PHPLint::OnProcessTerminated(clProcessEvent& event)
 {
     CL_DEBUG("PHPLint: process terminated. output: %s", m_output);
-    ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
-    wxDELETE(ped);
     wxDELETE(m_process);
     m_plugin->CallAfter(&PhpPlugin::PhpLintDone, m_output, m_currentFileBeingProcessed);
     // Check the queue for more files
     DoProcessQueue();
 }
 
-void PHPLint::OnProcessOutput(wxCommandEvent& event)
+void PHPLint::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
-    m_output << ped->GetData();
-    wxDELETE(ped);
+    m_output << event.GetOutput();
 }
 
 void PHPLint::DoCheckFile(const wxFileName& filename)

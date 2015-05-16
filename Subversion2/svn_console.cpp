@@ -42,11 +42,6 @@
 #include <wx/settings.h>
 
 //-------------------------------------------------------------
-BEGIN_EVENT_TABLE(SvnConsole, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, SvnConsole::OnReadProcessOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnConsole::OnProcessEnd)
-END_EVENT_TABLE()
-
 SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
     : m_sci(stc)
     , m_process(NULL)
@@ -60,6 +55,8 @@ SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
 
     EventNotifier::Get()->Connect(
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(SvnConsole::OnThemeChanged), NULL, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnConsole::OnReadProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnConsole::OnProcessEnd, this);
 }
 
 SvnConsole::~SvnConsole()
@@ -68,46 +65,33 @@ SvnConsole::~SvnConsole()
         wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(SvnConsole::OnThemeChanged), NULL, this);
 }
 
-void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
+void SvnConsole::OnReadProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    if(ped) {
-        m_output.Append(ped->GetData().c_str());
-    }
-
-    wxString s(ped->GetData());
-    s.MakeLower();
-
-    if(m_currCmd.printProcessOutput) AppendText(ped->GetData());
+    m_output.Append(event.GetOutput());
+    
+    wxString s = event.GetOutput().Lower();
+    if(m_currCmd.printProcessOutput) AppendText(event.GetOutput());
 
     static wxRegEx reUsername("username[ \t]*:", wxRE_DEFAULT | wxRE_ICASE);
     wxArrayString lines = wxStringTokenize(s, wxT("\n"), wxTOKEN_STRTOK);
     if(!lines.IsEmpty() && lines.Last().StartsWith(wxT("password for '"))) {
         m_output.Clear();
-        wxString pass = wxGetPasswordFromUser(ped->GetData(), wxT("Subversion"));
+        wxString pass = wxGetPasswordFromUser(event.GetOutput(), wxT("Subversion"));
         if(!pass.IsEmpty() && m_process) {
             m_process->WriteToConsole(pass);
         }
     } else if(!lines.IsEmpty() && reUsername.IsValid() && reUsername.Matches(lines.Last())) {
         // Prompt the user for "Username:"
-        wxString username = ::wxGetTextFromUser(ped->GetData(), "Subversion");
+        wxString username = ::wxGetTextFromUser(event.GetOutput(), "Subversion");
         if(!username.IsEmpty() && m_process) {
             m_process->Write(username + "\n");
         }
     }
-    delete ped;
 }
 
-void SvnConsole::OnProcessEnd(wxCommandEvent& event)
+void SvnConsole::OnProcessEnd(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    delete ped;
-
-    if(m_process) {
-        delete m_process;
-        m_process = NULL;
-    }
-
+    wxDELETE(m_process);
     if(m_currCmd.handler) {
         // command ended successfully, invoke the "success" callback
         m_currCmd.handler->Process(m_output);

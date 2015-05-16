@@ -33,29 +33,26 @@
 #include "imanager.h"
 #include "file_logger.h"
 
-BEGIN_EVENT_TABLE(SvnCommand, wxEvtHandler)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommand::OnProcessOutput)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnCommand::OnProcessTerminated)
-END_EVENT_TABLE()
-
 SvnCommand::SvnCommand(Subversion2* plugin)
     : m_process(NULL)
     , m_handler(NULL)
-    , m_plugin (plugin)
+    , m_plugin(plugin)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnCommand::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnCommand::OnProcessTerminated, this);
 }
 
-SvnCommand::~SvnCommand()
-{
-    ClearAll();
-}
+SvnCommand::~SvnCommand() { ClearAll(); }
 
-bool SvnCommand::Execute(const wxString &command, const wxString &workingDirectory, SvnCommandHandler *handler, Subversion2 *plugin)
+bool SvnCommand::Execute(const wxString& command,
+                         const wxString& workingDirectory,
+                         SvnCommandHandler* handler,
+                         Subversion2* plugin)
 {
     // Dont run 2 commands at the same time
     if(m_process) {
         if(handler) {
-            //handler->GetPlugin()->GetShell()->AppendText(svnANOTHER_PROCESS_RUNNING);
+            // handler->GetPlugin()->GetShell()->AppendText(svnANOTHER_PROCESS_RUNNING);
             delete handler;
         }
         return false;
@@ -64,45 +61,35 @@ bool SvnCommand::Execute(const wxString &command, const wxString &workingDirecto
     ClearAll();
 
     // Wrap the command in the OS Shell
-    wxString cmdShell (command);
+    wxString cmdShell(command);
     WrapInShell(cmdShell);
-
 
     // Apply the environment variables before executing the command
     wxStringMap_t om;
-    om.insert( std::make_pair("LC_ALL", "C"));
+    om.insert(std::make_pair("LC_ALL", "C"));
 
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
     EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
-    
+
     m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
-    if ( !m_process ) {
+    if(!m_process) {
         return false;
     }
     m_workingDirectory = workingDirectory.c_str();
-    m_command          = command.c_str();
-    m_handler          = handler;
+    m_command = command.c_str();
+    m_handler = handler;
     return true;
 }
 
-void SvnCommand::OnProcessOutput(wxCommandEvent& event)
+void SvnCommand::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData *ped = (ProcessEventData*)event.GetClientData();
-    if( ped ) {
-        m_output.Append(ped->GetData().c_str());
-        delete ped;
-    }
+    m_output.Append(event.GetOutput());
     CL_DEBUG("Subversion:\n%s", m_output);
 }
 
-void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
+void SvnCommand::OnProcessTerminated(clProcessEvent& event)
 {
-    ProcessEventData *ped = (ProcessEventData*)event.GetClientData();
-    if( ped ) {
-        delete ped;
-    }
-
-    if (m_handler) {
+    if(m_handler) {
         CL_DEBUG("Subversion output:\n%s", m_output);
         if(m_handler->TestLoginRequired(m_output)) {
             // re-issue the last command but this time with login dialog
@@ -110,7 +97,8 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
             m_handler->ProcessLoginRequired(m_workingDirectory);
 
         } else if(m_handler->TestVerificationFailed(m_output)) {
-            m_handler->GetPlugin()->GetConsole()->AppendText(_("Server certificate verification failed. Retrying...\n"));
+            m_handler->GetPlugin()->GetConsole()->AppendText(
+                _("Server certificate verification failed. Retrying...\n"));
             m_handler->ProcessVerificationRequired();
 
         } else {
@@ -122,7 +110,7 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
         m_handler = NULL;
     }
 
-    if (m_process) {
+    if(m_process) {
         delete m_process;
         m_process = NULL;
     }

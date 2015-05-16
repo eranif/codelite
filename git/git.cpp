@@ -107,8 +107,6 @@ wxString GetAnyDefaultCommand(const wxString& gitCommand)
 
 BEGIN_EVENT_TABLE(GitPlugin, wxEvtHandler)
 EVT_TIMER(wxID_ANY, GitPlugin::OnProgressTimer)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, GitPlugin::OnProcessOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, GitPlugin::OnProcessTerminated)
 END_EVENT_TABLE()
 
 GitPlugin::GitPlugin(IManager* manager)
@@ -135,6 +133,9 @@ GitPlugin::GitPlugin(IManager* manager)
     m_shortName = wxT("Git");
     m_eventHandler = m_mgr->GetTheApp();
 
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
+
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
@@ -150,9 +151,9 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
-    
+
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
-    
+
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
@@ -522,7 +523,7 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
-    
+
     /*Context Menu*/
     m_eventHandler->Disconnect(XRCID("git_add_file"),
                                wxEVT_COMMAND_MENU_SELECTED,
@@ -548,7 +549,8 @@ void GitPlugin::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &GitPlugin::OnFolderPush, this, XRCID("git_push_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStash, this, XRCID("git_stash_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
-
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
 }
 
 /*******************************************************************************/
@@ -561,12 +563,12 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
 {
     wxString dir = repoPath;
-    
+
     // Sanity
     if(dir.IsEmpty() && !promptUser) {
         return;
     }
-    
+
     if(dir.IsEmpty() && promptUser) {
         // use the current repository as the starting path
         // if current repository is empty, use the current workspace path
@@ -580,7 +582,7 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
             return; // The user probably pressed Cancel
         }
     }
-    
+
     if(!dir.IsEmpty()) {
         // we were given a path, scan the folder and its parent
         // searching for .git folder, when we find one - its our git root
@@ -597,12 +599,12 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
             }
             fnDir.RemoveLastDir();
         }
-        
+
         if(!fnDir.GetDirCount()) {
             // scanned the entire folders, no match...
             return;
         }
-        
+
         m_repositoryDirectory = dir;
         GIT_MESSAGE("Git repo path is now set to '%s'", m_repositoryDirectory);
         AddDefaultActions();
@@ -1013,7 +1015,7 @@ void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
     DoCleanup();
     InitDefaults();
     RefreshFileListView();
-    
+
     // Try to set the repo to the workspace path
     DoSetRepoPath(GetWorkspaceFileName().GetPath(), false);
 }
@@ -1520,17 +1522,11 @@ void GitPlugin::UpdateFileTree()
     m_mgr->ReloadWorkspace();
 }
 /*******************************************************************************/
-void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
+void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 {
     HideProgress();
-
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    m_console->AddRawText(ped->GetData());
-    m_commandOutput.append(ped->GetData());
-
-    wxDELETE(ped);
     if(m_gitActionQueue.empty()) return;
-    
+
     gitAction ga = m_gitActionQueue.front();
     if(ga.action != gitDiffFile) {
         // Dont manipulate the output if its a diff...
@@ -1605,7 +1601,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
                 // Write the pull log to the console
                 m_console->AddText(wxString() << "\n===============\nPull Log\n===============\n" << log << "\n");
-                
+
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
                     if(wxMessageBox(_("Merged after pull. Rebase?"), _("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
                         wxString selection;
@@ -1634,7 +1630,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                                  m_topWindow);
                 }
                 if(m_commandOutput.Contains(wxT("Updating"))) m_bActionRequiresTreUpdate = true;
-                
+
                 if(m_bActionRequiresTreUpdate) {
                     // Post event about file system updated
                     clFileSystemEvent fsEvent(wxEVT_FILE_SYSTEM_UPDATED);
@@ -1642,7 +1638,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
                     EventNotifier::Get()->AddPendingEvent(fsEvent);
                 }
             }
-            
+
         } else if(ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote) {
             // update the tree
             gitAction ga(gitListAll, wxT(""));
@@ -1672,86 +1668,81 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent& event)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnProcessOutput(wxCommandEvent& event)
+void GitPlugin::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    if(ped) {
-        wxString output = ped->GetData();
-        wxDELETE(ped);
+    wxString output = event.GetOutput();
+    gitAction ga;
+    if(!m_gitActionQueue.empty()) {
+        ga = m_gitActionQueue.front();
+    }
 
-        gitAction ga;
-        if(!m_gitActionQueue.empty()) {
-            ga = m_gitActionQueue.front();
-        }
+    if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) m_console->AddRawText(output);
+    m_commandOutput.Append(output);
 
-        if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) m_console->AddRawText(output);
-        m_commandOutput.Append(output);
+    // Handle password required
+    wxString tmpOutput = output;
+    tmpOutput.Trim().Trim(false);
+    tmpOutput.MakeLower();
 
-        // Handle password required
-        wxString tmpOutput = output;
-        tmpOutput.Trim().Trim(false);
-        tmpOutput.MakeLower();
+    if(ga.action != gitDiffRepoCommit && ga.action != gitDiffFile && ga.action != gitCommitList &&
+       ga.action != gitDiffRepoShow)
 
-        if(ga.action != gitDiffRepoCommit && ga.action != gitDiffFile && ga.action != gitCommitList &&
-           ga.action != gitDiffRepoShow)
-
-        {
-            if(tmpOutput.Contains("username for")) {
-                // username is required
-                wxString username = ::wxGetTextFromUser(output);
-                if(username.IsEmpty()) {
-                    m_process->Terminate();
-                } else {
-                    m_process->WriteToConsole(username);
-                }
-                
-            } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
+    {
+        if(tmpOutput.Contains("username for")) {
+            // username is required
+            wxString username = ::wxGetTextFromUser(output);
+            if(username.IsEmpty()) {
                 m_process->Terminate();
-                ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
+            } else {
+                m_process->WriteToConsole(username);
+            }
 
-            } else if(tmpOutput.Contains("*** please tell me who you are")) {
+        } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
+            m_process->Terminate();
+            ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
+
+        } else if(tmpOutput.Contains("*** please tell me who you are")) {
+            m_process->Terminate();
+            ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
+
+        } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for")) {
+
+            // Password is required
+            wxString pass = ::wxGetPasswordFromUser(output);
+            if(pass.IsEmpty()) {
+
+                // No point on continuing
                 m_process->Terminate();
-                ::wxMessageBox(output, "git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
 
-            } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for")) {
+            } else {
 
-                // Password is required
-                wxString pass = ::wxGetPasswordFromUser(output);
-                if(pass.IsEmpty()) {
+                // write the password
+                m_process->WriteToConsole(pass);
+            }
+        } else if((tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) ||
+                  tmpOutput.Contains("key fingerprint")) {
+            if(::wxMessageBox(tmpOutput,
+                              _("Are you sure you want to continue connecting"),
+                              wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
+                m_process->WriteToConsole("yes");
 
-                    // No point on continuing
-                    m_process->Terminate();
-
-                } else {
-
-                    // write the password
-                    m_process->WriteToConsole(pass);
-                }
-            } else if((tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) ||
-                      tmpOutput.Contains("key fingerprint")) {
-                if(::wxMessageBox(tmpOutput,
-                                  _("Are you sure you want to continue connecting"),
-                                  wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
-                    m_process->WriteToConsole("yes");
-
-                } else {
-                    m_process->Terminate();
-                }
+            } else {
+                m_process->Terminate();
             }
         }
+    }
 
-        if(m_console->IsProgressShown()) {
-            wxString message = output.Left(output.Find(':'));
-            int percent = output.Find('%', true);
-            if(percent != wxNOT_FOUND) {
+    if(m_console->IsProgressShown()) {
+        wxString message = output.Left(output.Find(':'));
+        int percent = output.Find('%', true);
+        if(percent != wxNOT_FOUND) {
 
-                wxString number = output.Mid(percent - 3, 3);
-                number.Trim(false);
-                unsigned long current;
-                if(number.ToULong(&current)) {
-                    message.Prepend(m_progressMessage + " Status: ");
-                    m_console->UpdateProgress(current, message);
-                }
+            wxString number = output.Mid(percent - 3, 3);
+            number.Trim(false);
+            unsigned long current;
+            if(number.ToULong(&current)) {
+                message.Prepend(m_progressMessage + " Status: ");
+                m_console->UpdateProgress(current, message);
             }
         }
     }
@@ -2359,48 +2350,48 @@ void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
 void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
 {
     event.Skip();
-//    wxMenu* menu = new wxMenu();
-//    wxMenu* parentMenu = event.GetMenu();
-//    m_selectedFolder = event.GetPath();
-//
-//    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
-//    item->SetBitmap(m_images.Bitmap("gitPull"));
-//    menu->Append(item);
-//
-//    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
-//    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
-//    menu->Append(item);
-//
-//    item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
-//    item->SetBitmap(m_images.Bitmap("gitPush"));
-//    menu->Append(item);
-//    
-//    menu->AppendSeparator();
-//    
-//    item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
-//    item->SetBitmap(m_images.Bitmap("gitStash"));
-//    menu->Append(item);
-//    
-//    item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
-//    item->SetBitmap(m_images.Bitmap("gitStashPop"));
-//    menu->Append(item);
-//
-//#ifdef __WXMSW__
-//    menu->AppendSeparator();
-//    item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
-//    item->SetBitmap(m_images.Bitmap("msysgit"));
-//    menu->Append(item);
-//#endif
-//
-//    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
-//    item->SetBitmap(m_images.Bitmap("git"));
-//    parentMenu->AppendSeparator();
-//    parentMenu->Append(item);
+    //    wxMenu* menu = new wxMenu();
+    //    wxMenu* parentMenu = event.GetMenu();
+    //    m_selectedFolder = event.GetPath();
+    //
+    //    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
+    //    item->SetBitmap(m_images.Bitmap("gitPull"));
+    //    menu->Append(item);
+    //
+    //    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
+    //    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
+    //    menu->Append(item);
+    //
+    //    item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
+    //    item->SetBitmap(m_images.Bitmap("gitPush"));
+    //    menu->Append(item);
+    //
+    //    menu->AppendSeparator();
+    //
+    //    item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
+    //    item->SetBitmap(m_images.Bitmap("gitStash"));
+    //    menu->Append(item);
+    //
+    //    item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
+    //    item->SetBitmap(m_images.Bitmap("gitStashPop"));
+    //    menu->Append(item);
+    //
+    //#ifdef __WXMSW__
+    //    menu->AppendSeparator();
+    //    item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
+    //    item->SetBitmap(m_images.Bitmap("msysgit"));
+    //    menu->Append(item);
+    //#endif
+    //
+    //    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
+    //    item->SetBitmap(m_images.Bitmap("git"));
+    //    parentMenu->AppendSeparator();
+    //    parentMenu->Append(item);
 }
 
 void GitPlugin::OnFolderPullRebase(wxCommandEvent& event)
 {
-    // Just perform a 'pull --rebase' 
+    // Just perform a 'pull --rebase'
     // if an error occurs, let the user handle it first
     GitCmd::Vec_t commands;
     commands.push_back(GitCmd("pull --rebase", IProcessCreateConsole));
@@ -2487,8 +2478,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 commitArgs << " --no-edit ";
             }
             wxArrayString selectedFiles = dlg.GetSelectedFiles();
-            for(unsigned i = 0; i < selectedFiles.GetCount(); ++i)
-                commitArgs << selectedFiles.Item(i) << wxT(" ");
+            for(unsigned i = 0; i < selectedFiles.GetCount(); ++i) commitArgs << selectedFiles.Item(i) << wxT(" ");
 
         } else {
             wxMessageBox(_("No commit message given, aborting."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);

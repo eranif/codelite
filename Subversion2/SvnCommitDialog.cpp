@@ -38,24 +38,25 @@
 class CommitMessageStringData : public wxClientData
 {
     wxString m_data;
+
 public:
-    CommitMessageStringData(const wxString &data) : m_data(data.c_str()) {}
+    CommitMessageStringData(const wxString& data)
+        : m_data(data.c_str())
+    {
+    }
     virtual ~CommitMessageStringData() {}
 
-    const wxString &GetData() const {
-        return m_data;
-    }
+    const wxString& GetData() const { return m_data; }
 };
 
-BEGIN_EVENT_TABLE(SvnCommitDialog, SvnCommitDialogBaseClass)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnCommitDialog::OnProcessTerminatd)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommitDialog::OnProcessOutput)
-END_EVENT_TABLE()
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_process(NULL)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnCommitDialog::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnCommitDialog::OnProcessTerminatd, this);
+
     m_stcDiff->SetReadOnly(true);
     m_checkListFiles->Clear();
 
@@ -73,25 +74,28 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     wxArrayString lastMessages, previews;
     m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
 
-    for(size_t i=0; i<previews.GetCount(); i++) {
+    for(size_t i = 0; i < previews.GetCount(); i++) {
         m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
     }
-    
+
     SetName("SvnCommitDialog");
     WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if ( sashPos != wxNOT_FOUND ) {
+    if(sashPos != wxNOT_FOUND) {
         m_splitterH->SetSashPosition(sashPos);
     }
-    
-    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
-    if ( textLexer ) {
-        textLexer->Apply( m_stcMessage );
-    }
 
+    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
+    if(textLexer) {
+        textLexer->Apply(m_stcMessage);
+    }
 }
 
-SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, const wxString &url, Subversion2 *plugin, const wxString &repoPath)
+SvnCommitDialog::SvnCommitDialog(wxWindow* parent,
+                                 const wxArrayString& paths,
+                                 const wxString& url,
+                                 Subversion2* plugin,
+                                 const wxString& repoPath)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_url(url)
@@ -103,7 +107,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
     title << wxT(" - ") << url;
     SetTitle(title);
 
-    for (size_t i=0; i<paths.GetCount(); i++) {
+    for(size_t i = 0; i < paths.GetCount(); i++) {
         int index = m_checkListFiles->Append(paths.Item(i));
         m_checkListFiles->Check((unsigned int)index);
     }
@@ -111,42 +115,42 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
     wxArrayString lastMessages, previews;
     m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
 
-    for(size_t i=0; i<previews.GetCount(); i++) {
+    for(size_t i = 0; i < previews.GetCount(); i++) {
         m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
     }
-    
-    if ( !paths.IsEmpty() ) {
+
+    if(!paths.IsEmpty()) {
         m_checkListFiles->Select(0);
         DoShowDiff(0);
     }
-    
+
     SetName("SvnCommitDialog");
     WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if ( sashPos != wxNOT_FOUND ) {
+    if(sashPos != wxNOT_FOUND) {
         m_splitterH->SetSashPosition(sashPos);
     }
-    
+
     int sashHPos = m_plugin->GetSettings().GetCommitDlgHSashPos();
-    if ( sashHPos != wxNOT_FOUND ) {
+    if(sashHPos != wxNOT_FOUND) {
         m_splitterV->SetSashPosition(sashHPos);
     }
-    
+
     LexerConf::Ptr_t diffLexer = EditorConfigST::Get()->GetLexer("Diff");
-    if ( diffLexer ) {
+    if(diffLexer) {
         m_stcDiff->SetLexer(wxSTC_LEX_DIFF);
-        diffLexer->Apply( m_stcDiff );
+        diffLexer->Apply(m_stcDiff);
     }
-    
+
     LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
-    if ( textLexer ) {
-        textLexer->Apply( m_stcMessage );
+    if(textLexer) {
+        textLexer->Apply(m_stcMessage);
     }
 }
 
 SvnCommitDialog::~SvnCommitDialog()
 {
-    wxDELETE( m_process );
+    wxDELETE(m_process);
 
     wxString message = m_stcMessage->GetText();
     m_plugin->GetCommitMessagesCache().AddMessage(message);
@@ -156,8 +160,7 @@ SvnCommitDialog::~SvnCommitDialog()
     SvnSettingsData ssd = m_plugin->GetSettings();
     ssd.SetCommitDlgSashPos(sashPos);
     ssd.SetCommitDlgHSashPos(sashPosH);
-    m_plugin->SetSettings( ssd );
-    
+    m_plugin->SetSettings(ssd);
 }
 
 wxString SvnCommitDialog::GetMesasge()
@@ -170,52 +173,49 @@ wxString SvnCommitDialog::GetMesasge()
     if(m_textCtrlBugID->IsShown()) {
         wxString bugTrackerMsg = props.ReadProperty(SubversionLocalProperties::BUG_TRACKER_MESSAGE);
         wxString bugTrackerUrl = props.ReadProperty(SubversionLocalProperties::BUG_TRACKER_URL);
-        wxString bugId         = m_textCtrlBugID->GetValue();
+        wxString bugId = m_textCtrlBugID->GetValue();
 
         bugId.Trim().Trim(false);
         if(bugId.IsEmpty() == false) {
             // Loop over the bug IDs and append message for each bug
             wxArrayString bugs = wxStringTokenize(bugId, wxT(","), wxTOKEN_STRTOK);
-            for(size_t i=0; i<bugs.size(); i++) {
+            for(size_t i = 0; i < bugs.size(); i++) {
 
                 bugs[i].Trim().Trim(false);
-                if(bugs[i].IsEmpty())
-                    continue;
+                if(bugs[i].IsEmpty()) continue;
 
                 wxString tmpMsg = bugTrackerMsg;
                 wxString tmpUrl = bugTrackerUrl;
 
-                tmpUrl.Replace(wxT("$(BUGID)"),  bugs[i]);
+                tmpUrl.Replace(wxT("$(BUGID)"), bugs[i]);
                 tmpMsg.Replace(wxT("$(BUG_URL)"), tmpUrl);
-                tmpMsg.Replace(wxT("$(BUGID)"),   bugs[i]);
+                tmpMsg.Replace(wxT("$(BUGID)"), bugs[i]);
                 msg << tmpMsg << wxT("\n");
             }
         }
     }
 
-
     // Append any FR URLs to the commit message
     if(m_textCtrlFrID->IsShown()) {
         wxString frTrackerMsg = props.ReadProperty(SubversionLocalProperties::FR_TRACKER_MESSAGE);
         wxString frTrackerUrl = props.ReadProperty(SubversionLocalProperties::FR_TRACKER_URL);
-        wxString frId         = m_textCtrlFrID->GetValue();
+        wxString frId = m_textCtrlFrID->GetValue();
 
         frId.Trim().Trim(false);
         if(frId.IsEmpty() == false) {
             // Loop over the bug IDs and append message for each bug
             wxArrayString frs = wxStringTokenize(frId, wxT(","), wxTOKEN_STRTOK);
-            for(size_t i=0; i<frs.size(); i++) {
+            for(size_t i = 0; i < frs.size(); i++) {
 
                 frs[i].Trim().Trim(false);
-                if(frs[i].IsEmpty())
-                    continue;
+                if(frs[i].IsEmpty()) continue;
 
                 wxString tmpMsg = frTrackerMsg;
                 wxString tmpUrl = frTrackerUrl;
 
-                tmpUrl.Replace(wxT("$(FRID)"),  frs[i]);
+                tmpUrl.Replace(wxT("$(FRID)"), frs[i]);
                 tmpMsg.Replace(wxT("$(FR_URL)"), tmpUrl);
-                tmpMsg.Replace(wxT("$(FRID)"),   frs[i]);
+                tmpMsg.Replace(wxT("$(FRID)"), frs[i]);
                 msg << tmpMsg << wxT("\n");
             }
         }
@@ -231,10 +231,10 @@ wxString SvnCommitDialog::NormalizeMessage(const wxString& message)
     // first remove the comment section of the text
     wxArrayString lines = wxStringTokenize(message, wxT("\r\n"), wxTOKEN_STRTOK);
 
-    for (size_t i=0; i<lines.GetCount(); i++) {
+    for(size_t i = 0; i < lines.GetCount(); i++) {
         wxString line = lines.Item(i);
         line = line.Trim().Trim(false);
-        if ( !line.StartsWith(wxT("#")) ) {
+        if(!line.StartsWith(wxT("#"))) {
             normalizedStr << line << wxT("\n");
         }
     }
@@ -249,9 +249,9 @@ wxString SvnCommitDialog::NormalizeMessage(const wxString& message)
 wxArrayString SvnCommitDialog::GetPaths()
 {
     wxArrayString paths;
-    for (size_t i=0; i<m_checkListFiles->GetCount(); i++) {
-        if (m_checkListFiles->IsChecked(i)) {
-            paths.Add( m_checkListFiles->GetString(i) );
+    for(size_t i = 0; i < m_checkListFiles->GetCount(); i++) {
+        if(m_checkListFiles->IsChecked(i)) {
+            paths.Add(m_checkListFiles->GetString(i));
         }
     }
     return paths;
@@ -260,62 +260,47 @@ wxArrayString SvnCommitDialog::GetPaths()
 void SvnCommitDialog::OnChoiceMessage(wxCommandEvent& e)
 {
     int idx = e.GetSelection();
-    if(idx == wxNOT_FOUND)
-        return;
+    if(idx == wxNOT_FOUND) return;
 
     CommitMessageStringData* data = (CommitMessageStringData*)m_choiceMessages->GetClientObject(idx);
     if(data) {
-        m_stcMessage->SetText( data->GetData() );
+        m_stcMessage->SetText(data->GetData());
     }
 }
 
-void SvnCommitDialog::OnFileSelected(wxCommandEvent& event)
-{
-    DoShowDiff( event.GetSelection() );
-}
+void SvnCommitDialog::OnFileSelected(wxCommandEvent& event) { DoShowDiff(event.GetSelection()); }
 
-void SvnCommitDialog::OnProcessOutput(wxCommandEvent& e)
-{
-    ProcessEventData* ped = (ProcessEventData*) e.GetClientData();
-    m_output << ped->GetData();
-    delete ped;
-}
+void SvnCommitDialog::OnProcessOutput(clProcessEvent& e) { m_output << e.GetOutput(); }
 
-void SvnCommitDialog::OnProcessTerminatd(wxCommandEvent& e)
+void SvnCommitDialog::OnProcessTerminatd(clProcessEvent& e)
 {
-    ProcessEventData* ped = (ProcessEventData*) e.GetClientData();
-    m_output << ped->GetData();
-    delete ped;
-    
     m_cache.insert(std::make_pair(m_currentFile, m_output));
-    
     m_stcDiff->SetReadOnly(false);
-    m_stcDiff->SetText( m_output );
+    m_stcDiff->SetText(m_output);
     m_stcDiff->SetReadOnly(true);
 
     m_checkListFiles->Enable(true);
     m_currentFile.Clear();
-    wxDELETE( m_process );
+    wxDELETE(m_process);
 }
 
 void SvnCommitDialog::DoShowDiff(int selection)
 {
-    if ( m_repoPath.IsEmpty() )
-        return;
+    if(m_repoPath.IsEmpty()) return;
 
     wxString filename = m_checkListFiles->GetString(selection);
 
-    if ( filename.Contains(" ") ) {
+    if(filename.Contains(" ")) {
         filename.Prepend("\"").Append("\"");
     }
-    
-    if ( m_cache.count(filename) ) {
+
+    if(m_cache.count(filename)) {
         m_stcDiff->SetReadOnly(false);
         m_stcDiff->SetText(m_cache[filename]);
         m_stcDiff->SetReadOnly(true);
         return;
     }
-    
+
     m_checkListFiles->Enable(false); // disable user interaction with this control until the diff process will terminate
     wxString cmd;
     cmd << "svn diff " << filename;

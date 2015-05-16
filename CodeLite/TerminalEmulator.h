@@ -16,10 +16,8 @@ class WXDLLIMPEXP_CL TerminalEmulator : public wxEvtHandler
     IProcess* m_process;
 
 protected:
-    DECLARE_EVENT_TABLE()
-
-    void OnProcessTerminated(wxCommandEvent& event);
-    void OnProcessOutput(wxCommandEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
 
 public:
     TerminalEmulator();

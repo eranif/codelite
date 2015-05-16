@@ -45,6 +45,7 @@
 #include <set>
 #include "istorage.h"
 #include "codelite_exports.h"
+#include "cl_command_event.h"
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -875,9 +876,7 @@ protected:
     /**
      * Handler ctags process termination
      */
-    void OnIndexerTerminated(wxCommandEvent& event);
-
-    DECLARE_EVENT_TABLE()
+    void OnIndexerTerminated(clProcessEvent& event);
 
 private:
     /**

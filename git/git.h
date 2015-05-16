@@ -202,8 +202,8 @@ private:
     // Event handlers
     void OnInitDone(wxCommandEvent& e);
     void OnProgressTimer(wxTimerEvent& Event);
-    void OnProcessTerminated(wxCommandEvent& event);
-    void OnProcessOutput(wxCommandEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
     void OnFileMenu(clContextMenuEvent& event);
     void OnFolderMenu(clContextMenuEvent& event);
 

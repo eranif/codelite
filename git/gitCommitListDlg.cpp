@@ -42,16 +42,14 @@
 static int ID_COPY_COMMIT_HASH = wxNewId();
 static int ID_REVERT_COMMIT = wxNewId();
 
-BEGIN_EVENT_TABLE(GitCommitListDlg, wxDialog)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, GitCommitListDlg::OnProcessOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, GitCommitListDlg::OnProcessTerminated)
-END_EVENT_TABLE()
-
 GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git)
     : GitCommitListDlgBase(parent)
     , m_git(git)
     , m_workingDir(workingDir)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitCommitListDlg::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitCommitListDlg::OnProcessTerminated, this);
+    
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
     if(lex) {
         lex->Apply(m_stcDiff, true);
@@ -111,10 +109,9 @@ void GitCommitListDlg::OnChangeFile(wxCommandEvent& e)
 }
 
 /*******************************************************************************/
-void GitCommitListDlg::OnProcessTerminated(wxCommandEvent& event)
+void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    wxDELETE(ped);
+    wxUnusedVar(event);
     wxDELETE(m_process);
 
     m_stcCommitMessage->ClearAll();
@@ -161,14 +158,11 @@ void GitCommitListDlg::OnProcessTerminated(wxCommandEvent& event)
     m_commandOutput.Clear();
 }
 /*******************************************************************************/
-void GitCommitListDlg::OnProcessOutput(wxCommandEvent& event)
+void GitCommitListDlg::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    if(ped) {
-        m_commandOutput.Append(ped->GetData());
-        delete ped;
-    }
+    m_commandOutput.Append(event.GetOutput());
 }
+
 void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
 {
     wxVariant v;

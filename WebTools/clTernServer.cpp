@@ -17,11 +17,6 @@
 #include "ieditor.h"
 #include <wx/stc/stc.h>
 
-BEGIN_EVENT_TABLE(clTernServer, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, clTernServer::OnTernTerminated)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, clTernServer::OnTernOutput)
-END_EVENT_TABLE()
-
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
     , m_tern(NULL)
@@ -31,26 +26,24 @@ clTernServer::clTernServer(JSCodeCompletion* cc)
     , m_port(wxNOT_FOUND)
     , m_recycleCount(0)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, clTernServer::OnTernOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, clTernServer::OnTernTerminated, this);
 }
 
 clTernServer::~clTernServer() {}
 
-void clTernServer::OnTernOutput(wxCommandEvent& event)
+void clTernServer::OnTernOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
     static wxRegEx rePort("Listening on port ([0-9]+)");
-    if(rePort.IsValid() && rePort.Matches(ped->GetData())) {
-        wxString strPort = rePort.GetMatch(ped->GetData(), 1);
+    if(rePort.IsValid() && rePort.Matches(event.GetOutput())) {
+        wxString strPort = rePort.GetMatch(event.GetOutput(), 1);
         strPort.ToCLong(&m_port);
     }
-    PrintMessage(ped->GetData());
-    wxDELETE(ped);
+    PrintMessage(event.GetOutput());
 }
 
-void clTernServer::OnTernTerminated(wxCommandEvent& event)
+void clTernServer::OnTernTerminated(clProcessEvent& event)
 {
-    ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
-    wxDELETE(ped);
     if(m_goingDown || !m_jsCCManager->IsEnabled()) {
         wxDELETE(m_tern);
         return;

@@ -77,9 +77,8 @@ public:
      */
     void Terminate();
 
-    DECLARE_EVENT_TABLE()
-    void OnProcessOutput(wxCommandEvent& event);
-    void OnProcessTerminated(wxCommandEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
 };
 
 #endif // CLCOMMANDPROCESSOR_H

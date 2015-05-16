@@ -96,13 +96,13 @@ protected:
      * @brief handles the cppcheck process termination
      * @param e
      */
-    void OnCppCheckTerminated(wxCommandEvent& e);
+    void OnCppCheckTerminated(clProcessEvent& e);
 
     /**
      * @brief there is data to read from the process
      * @param e
      */
-    void OnCppCheckReadData(wxCommandEvent& e);
+    void OnCppCheckReadData(clProcessEvent& e);
 
     /**
      * @brief handle the workspace closed event and clear the view
@@ -152,8 +152,6 @@ public:
      * @return value between 0-100
      */
     size_t GetProgress();
-
-    DECLARE_EVENT_TABLE()
 };
 
 #endif // CppChecker

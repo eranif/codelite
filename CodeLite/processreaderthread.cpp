@@ -25,8 +25,8 @@
 #include "processreaderthread.h"
 #include "asyncprocess.h"
 
-const wxEventType wxEVT_PROC_DATA_READ   = 10950;
-const wxEventType wxEVT_PROC_TERMINATED  = 10951;
+wxDEFINE_EVENT(wxEVT_ASYNC_PROCESS_OUTPUT, clProcessEvent);
+wxDEFINE_EVENT(wxEVT_ASYNC_PROCESS_TERMINATED, clProcessEvent);
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
 #include <sys/wait.h>
@@ -34,69 +34,54 @@ const wxEventType wxEVT_PROC_TERMINATED  = 10951;
 
 ProcessReaderThread::ProcessReaderThread()
     : wxThread(wxTHREAD_JOINABLE)
-    , m_notifiedWindow( NULL )
-    , m_process       ( NULL )
+    , m_notifiedWindow(NULL)
+    , m_process(NULL)
 {
 }
 
-ProcessReaderThread::~ProcessReaderThread()
-{
-    m_notifiedWindow = NULL;
-}
+ProcessReaderThread::~ProcessReaderThread() { m_notifiedWindow = NULL; }
 
 void* ProcessReaderThread::Entry()
 {
-    while ( true ) {
+    while(true) {
         // Did we get a request to terminate?
-        if (TestDestroy()) {
+        if(TestDestroy()) {
             break;
         }
 
-        if ( m_process ) {
+        if(m_process) {
             wxString buff;
-            if(m_process->Read( buff )) {
-                if( buff.IsEmpty() == false ) {
-                    
+            if(m_process->Read(buff)) {
+                if(buff.IsEmpty() == false) {
+
                     // If we got a callback object, use it
-                    if ( m_process && m_process->GetCallback() ) {
-                        m_process->GetCallback()->CallAfter( &IProcessCallback::OnProcessOutput, buff );
-                        
+                    if(m_process && m_process->GetCallback()) {
+                        m_process->GetCallback()->CallAfter(&IProcessCallback::OnProcessOutput, buff);
+
                     } else {
                         // fallback to the event system
                         // we got some data, send event to parent
-                        wxCommandEvent e(wxEVT_PROC_DATA_READ);
-                        ProcessEventData *ed = new ProcessEventData();
-                        ed->SetData(buff);
-                        ed->SetProcess( m_process );
-
-                        e.SetClientData( ed );
-                        if ( m_notifiedWindow ) {
-                            m_notifiedWindow->AddPendingEvent( e );
-                            
-                        } else {
-                            wxDELETE(ed);
+                        clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
+                        e.SetOutput(buff);
+                        e.SetProcess(m_process);
+                        if(m_notifiedWindow) {
+                            m_notifiedWindow->AddPendingEvent(e);
                         }
-                        
                     }
                 }
             } else {
-                
+
                 // Process terminated, exit
                 // If we got a callback object, use it
-                if ( m_process && m_process->GetCallback() ) {
-                    m_process->GetCallback()->CallAfter( &IProcessCallback::OnProcessTerminated );
-                    
+                if(m_process && m_process->GetCallback()) {
+                    m_process->GetCallback()->CallAfter(&IProcessCallback::OnProcessTerminated);
+
                 } else {
                     // fallback to the event system
-                    wxCommandEvent e(wxEVT_PROC_TERMINATED);
-                    ProcessEventData *ed = new ProcessEventData();
-                    ed->SetProcess( m_process );
-                    e.SetClientData( ed );
-
-                    if ( m_notifiedWindow ) {
-                        m_notifiedWindow->AddPendingEvent( e );
-                    } else {
-                        wxDELETE(ed);
+                    clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
+                    e.SetProcess(m_process);
+                    if(m_notifiedWindow) {
+                        m_notifiedWindow->AddPendingEvent(e);
                     }
                 }
                 break;
@@ -119,15 +104,13 @@ void ProcessReaderThread::Stop()
 #else
     // Notify the thread to exit and
     // wait for it
-    if ( IsAlive() ) {
+    if(IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
-
     }
 #endif
-
 }
 
 void ProcessReaderThread::Start(int priority)

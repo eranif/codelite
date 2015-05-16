@@ -64,9 +64,6 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 }
 
 extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
-BEGIN_EVENT_TABLE(wxFormBuilder, IPlugin)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, wxFormBuilder::OnWxFBTerminated)
-END_EVENT_TABLE()
 
 wxFormBuilder::wxFormBuilder(IManager* manager)
     : IPlugin(manager)
@@ -74,6 +71,7 @@ wxFormBuilder::wxFormBuilder(IManager* manager)
     , m_openWithWxFbItem(NULL)
     , m_openWithWxFbSepItem(NULL)
 {
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxFormBuilder::OnWxFBTerminated, this);
     m_longName = _("wxFormBuilder integration with CodeLite");
     m_shortName = wxT("wxFormBuilder");
     m_topWin = m_mgr->GetTheApp();
@@ -391,7 +389,7 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
     if(fullpath.GetExt().MakeLower() != wxT("fbp")) {
         return;
     }
-    
+
 #ifdef __WXGTK__
     e.Skip(false);
     // Under Linux, use xdg-open
@@ -413,12 +411,10 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
 #endif
 }
 
-void wxFormBuilder::OnWxFBTerminated(wxCommandEvent& e)
+void wxFormBuilder::OnWxFBTerminated(clProcessEvent& e)
 {
-    ProcessEventData* ped = (ProcessEventData*)e.GetClientData();
-    if(ped) {
-        if(ped->GetProcess()) delete ped->GetProcess();
-        delete ped;
+    if(e.GetProcess()) {
+        delete e.GetProcess();
     }
 }
 

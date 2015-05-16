@@ -36,6 +36,7 @@
 #include <map>
 #include "gitui.h"
 #include "macros.h"
+#include "cl_command_event.h"
 
 class IProcess;
 class GitPlugin;
@@ -61,11 +62,10 @@ public:
 
 private:
     void OnChangeFile(wxCommandEvent& e);
-    DECLARE_EVENT_TABLE()
 
     // Event handlers
-    void OnProcessTerminated(wxCommandEvent& event);
-    void OnProcessOutput(wxCommandEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
 
 protected:
     virtual void OnOK(wxCommandEvent& event);

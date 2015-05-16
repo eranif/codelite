@@ -10,14 +10,11 @@
 wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
 
-BEGIN_EVENT_TABLE(TerminalEmulator, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, TerminalEmulator::OnProcessOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, TerminalEmulator::OnProcessTerminated)
-END_EVENT_TABLE()
-
 TerminalEmulator::TerminalEmulator()
     : m_process(NULL)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &TerminalEmulator::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &TerminalEmulator::OnProcessTerminated, this);
 }
 
 TerminalEmulator::~TerminalEmulator() {}
@@ -97,7 +94,7 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
     return command;
 }
 
-void TerminalEmulator::OnProcessTerminated(wxCommandEvent& event)
+void TerminalEmulator::OnProcessTerminated(clProcessEvent& event)
 {
     // Process terminated
     wxDELETE(m_process);
@@ -116,12 +113,10 @@ void TerminalEmulator::Terminate()
 
 bool TerminalEmulator::IsRunning() const { return m_process != NULL; }
 
-void TerminalEmulator::OnProcessOutput(wxCommandEvent& event)
+void TerminalEmulator::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = reinterpret_cast<ProcessEventData*>(event.GetClientData());
     clCommandEvent evtOutput(wxEVT_TERMINAL_COMMAND_OUTPUT);
-    evtOutput.SetString(ped->GetData());
-    wxDELETE(ped);
+    evtOutput.SetString(event.GetOutput());
     AddPendingEvent(evtOutput);
 }
 

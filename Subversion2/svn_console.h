@@ -30,12 +30,12 @@
 #include <deque>
 #include <wx/stc/stc.h>
 #include <wx/event.h>
+#include "cl_command_event.h"
 
 class IProcess;
 class Subversion2;
 
-struct SvnConsoleCommand
-{
+struct SvnConsoleCommand {
     SvnCommandHandler* handler;
     wxString cmd;
     wxString workingDirectory;
@@ -72,9 +72,8 @@ class SvnConsole : public wxEvtHandler
     int m_inferiorEnd;
 
 protected:
-    DECLARE_EVENT_TABLE()
-    virtual void OnReadProcessOutput(wxCommandEvent& event);
-    virtual void OnProcessEnd(wxCommandEvent& event);
+    virtual void OnReadProcessOutput(clProcessEvent& event);
+    virtual void OnProcessEnd(clProcessEvent& event);
     virtual void OnCharAdded(wxStyledTextEvent& event);
     virtual void OnUpdateUI(wxStyledTextEvent& event);
     virtual void OnKeyDown(wxKeyEvent& event);

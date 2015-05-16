@@ -49,7 +49,7 @@
 
 #ifdef _WIN32
 #define STDCALL __stdcall
-#define EXPORT  __declspec(dllexport)
+#define EXPORT __declspec(dllexport)
 #else
 #define STDCALL
 #define EXPORT
@@ -70,7 +70,7 @@ enum MenuType {
 };
 
 //------------------------------------------------------------------
-//each plugin must implement this interface
+// each plugin must implement this interface
 //------------------------------------------------------------------
 /**
  * @class IPlugin
@@ -86,29 +86,28 @@ class IPlugin : public wxEvtHandler
 protected:
     wxString m_shortName;
     wxString m_longName;
-    IManager *m_mgr;
+    IManager* m_mgr;
 
 public:
-    IPlugin(IManager *manager) : m_mgr(manager) {}
+    IPlugin(IManager* manager)
+        : m_mgr(manager)
+    {
+    }
     virtual ~IPlugin() {}
 
     //-----------------------------------------------
-    //The interface
+    // The interface
     //-----------------------------------------------
     /**
      * @brief return the plugin's short name
      * @return
      */
-    virtual const wxString &GetShortName() const {
-        return m_shortName;
-    }
+    virtual const wxString& GetShortName() const { return m_shortName; }
     /**
      * @brief return the plugin's long and more descriptive name
      * @return
      */
-    virtual const wxString &GetLongName() const {
-        return m_longName;
-    }
+    virtual const wxString& GetLongName() const { return m_longName; }
 
     /**
      * When LiteEditor loads all the plugins, this function is called. If toolbar
@@ -117,13 +116,13 @@ public:
      * \param parent toolbar parent, usually this is the main frame
      * \return toolbar or NULL
      */
-    virtual clToolBar *CreateToolBar(wxWindow *parent) = 0;
+    virtual clToolBar* CreateToolBar(wxWindow* parent) = 0;
 
     /**
      * Every plugin can place a sub menu in the 'Plugins' Menu at the menu bar
      * \param pluginsMenu
      */
-    virtual void CreatePluginMenu(wxMenu *pluginsMenu) = 0;
+    virtual void CreatePluginMenu(wxMenu* pluginsMenu) = 0;
 
     /**
      * \brief Call the plugin "shutdown" function
@@ -137,7 +136,8 @@ public:
      * \param type menu type
      * \sa  MenuType
      */
-    virtual void HookPopupMenu(wxMenu *menu, MenuType type) {
+    virtual void HookPopupMenu(wxMenu* menu, MenuType type)
+    {
         wxUnusedVar(type);
         wxUnusedVar(menu);
     };
@@ -147,36 +147,38 @@ public:
      * @param name file name (name+extension)
      * @return Bitmap of wxNullBitmap if no match was found
      */
-    virtual wxBitmap LoadBitmapFile(const wxString &name, wxBitmapType type = wxBITMAP_TYPE_PNG) {
+    virtual wxBitmap LoadBitmapFile(const wxString& name, wxBitmapType type = wxBITMAP_TYPE_PNG)
+    {
         wxBitmap bmp;
 #ifdef __WXGTK__
         wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
-#   ifdef USE_POSIX_LAYOUT
-        wxString pluginsDir(wxStandardPaths::Get().GetDataDir() + wxT( PLUGINS_DIR ));
-#   else
-        wxString pluginsDir(m_mgr->GetInstallDirectory() + wxT( "/plugins" ));
-#   endif
+#ifdef USE_POSIX_LAYOUT
+        wxString pluginsDir(wxStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
+#else
+        wxString pluginsDir(m_mgr->GetInstallDirectory() + wxT("/plugins"));
+#endif
 #endif
         wxString basePath(pluginsDir + wxT("/resources/"));
 
         bmp.LoadFile(basePath + name, type);
-        if (bmp.IsOk()) {
+        if(bmp.IsOk()) {
             return bmp;
         }
         return wxNullBitmap;
     }
-
 
     /**
      * @brief allow the plugins to hook a tab in the project settings
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    virtual void HookProjectSettingsTab(wxBookCtrlBase *notebook, const wxString &projectName, const wxString &configName) {
-        wxUnusedVar( notebook );
-        wxUnusedVar( projectName );
-        wxUnusedVar( configName );
+    virtual void
+    HookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName)
+    {
+        wxUnusedVar(notebook);
+        wxUnusedVar(projectName);
+        wxUnusedVar(configName);
     }
 
     /**
@@ -184,20 +186,22 @@ public:
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    virtual void UnHookProjectSettingsTab(wxBookCtrlBase *notebook, const wxString &projectName, const wxString &configName) {
-        wxUnusedVar( notebook );
-        wxUnusedVar( projectName );
-        wxUnusedVar( configName );
+    virtual void
+    UnHookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName)
+    {
+        wxUnusedVar(notebook);
+        wxUnusedVar(projectName);
+        wxUnusedVar(configName);
     }
 };
 
-#define CHECK_CL_SHUTDOWN(){\
-        if(m_mgr->IsShutdownInProgress())\
-            return;\
+#define CHECK_CL_SHUTDOWN()                       \
+    {                                             \
+        if(m_mgr->IsShutdownInProgress()) return; \
     }
 
-//Every dll must contain at least this function
-typedef IPlugin*    (*GET_PLUGIN_CREATE_FUNC)            (IManager*);
-typedef PluginInfo  (*GET_PLUGIN_INFO_FUNC)              ();
-typedef int         (*GET_PLUGIN_INTERFACE_VERSION_FUNC) ();
-#endif //PLUGIN_H
+// Every dll must contain at least this function
+typedef IPlugin* (*GET_PLUGIN_CREATE_FUNC)(IManager*);
+typedef PluginInfo (*GET_PLUGIN_INFO_FUNC)();
+typedef int (*GET_PLUGIN_INTERFACE_VERSION_FUNC)();
+#endif // PLUGIN_H

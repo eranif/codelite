@@ -6,9 +6,10 @@
 class GitCommandStash : public GitCommand
 {
 public:
+    virtual void ProcessOutput(const wxString& text);
+    virtual void ProcessTerminated();
     GitCommandStash();
     virtual ~GitCommandStash();
-
 };
 
 #endif // GITCOMMANDSTASH_H

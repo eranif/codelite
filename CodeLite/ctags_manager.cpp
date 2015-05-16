@@ -137,12 +137,6 @@ TagsManager* TagsManagerST::Get()
 // CTAGS Manager
 //------------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, TagsManager::OnIndexerTerminated)
-END_EVENT_TABLE()
-
-// ToDo: use GetScopesByScopeName method - DRY
-
 TagsManager::TagsManager()
     : wxEvtHandler()
     , m_codeliteIndexerPath(wxT("codelite_indexer"))
@@ -152,7 +146,8 @@ TagsManager::TagsManager()
     , m_evtHandler(NULL)
     , m_encoding(wxFONTENCODING_DEFAULT)
 {
-
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &TagsManager::OnIndexerTerminated, this);
+    
     m_db = new TagsStorageSQLite();
     m_db->SetSingleSearchLimit(MAX_SEARCH_LIMIT);
 
@@ -330,12 +325,10 @@ void TagsManager::RestartCodeLiteIndexer()
 
 void TagsManager::SetCodeLiteIndexerPath(const wxString& path) { m_codeliteIndexerPath = path; }
 
-void TagsManager::OnIndexerTerminated(wxCommandEvent& event)
+void TagsManager::OnIndexerTerminated(clProcessEvent& event)
 {
-    if(m_codeliteIndexerProcess) {
-        delete m_codeliteIndexerProcess;
-        m_codeliteIndexerProcess = NULL;
-    }
+    wxUnusedVar(event);
+    wxDELETE(m_codeliteIndexerProcess);
     StartCodeLiteIndexer();
 }
 

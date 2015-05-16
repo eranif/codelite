@@ -8,6 +8,7 @@
 #include "clTernWorkerThread.h"
 #include "cl_calltip.h"
 #include "json_node.h"
+#include "cl_command_event.h"
 
 class IEditor;
 class wxStyledTextCtrl;
@@ -30,9 +31,8 @@ class clTernServer : public wxEvtHandler
     size_t m_recycleCount;
 
 protected:
-    DECLARE_EVENT_TABLE()
-    void OnTernTerminated(wxCommandEvent& event);
-    void OnTernOutput(wxCommandEvent& event);
+    void OnTernTerminated(clProcessEvent& event);
+    void OnTernOutput(clProcessEvent& event);
     void PrintMessage(const wxString& message);
 
     void ProcessOutput(const wxString& output, wxCodeCompletionBoxEntry::Vec_t& entries);
@@ -46,7 +46,7 @@ protected:
     void OnError(const wxString& why);
     JSONElement CreateLocation(wxStyledTextCtrl* ctrl, int pos = wxNOT_FOUND);
     JSONElement CreateFilesArray(wxStyledTextCtrl* ctrl);
-    
+
 public:
     void RecycleIfNeeded(bool force = false);
     clTernServer(JSCodeCompletion* cc);
@@ -58,14 +58,14 @@ public:
     /**
      * @brief post a CC request at the current editor position
      */
-    bool PostCCRequest(IEditor *editor);
+    bool PostCCRequest(IEditor* editor);
     /**
      * @brief post a function calltip at a given position. pos is the first position
      * before the open brace
      */
     bool PostFunctionTipRequest(IEditor* editor, int pos);
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
-    
+
     /**
      * @brief locate nodejs executable on this machine
      */

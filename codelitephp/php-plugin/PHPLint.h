@@ -6,6 +6,7 @@
 #include <list>
 #include <wx/filename.h>
 #include "smart_ptr.h"
+#include "cl_command_event.h"
 
 class PhpPlugin;
 class IProcess;
@@ -33,9 +34,8 @@ public:
      */
     void CheckCode(const wxFileName& filename);
     
-    DECLARE_EVENT_TABLE()
-    void OnProcessTerminated(wxCommandEvent &event);
-    void OnProcessOutput(wxCommandEvent &event);
+    void OnProcessTerminated(clProcessEvent &event);
+    void OnProcessOutput(clProcessEvent &event);
 };
 
 #endif // PHPLINT_H

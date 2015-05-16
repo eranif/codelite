@@ -38,7 +38,7 @@ class QMakePlugin : public IPlugin
     std::map<wxString, QMakeTab*> m_pages;
     QmakeConf* m_conf;
     IProcess* m_qmakeProcess;
-    
+
 protected:
     QMakeTab* DoGetQmakeTab(const wxString& config);
     void DoUnHookAllTabs(wxBookCtrlBase* book);
@@ -57,7 +57,7 @@ public:
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
     virtual void
-        UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
+    UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
     virtual void UnPlug();
 
     // event handlers
@@ -70,10 +70,8 @@ public:
     void OnNewQmakeBasedProject(wxCommandEvent& event);
     void OnOpenFile(clCommandEvent& event);
     void OnExportMakefile(wxCommandEvent& event);
-    void OnQmakeOutput(wxCommandEvent& event);
-    void OnQmakeTerminated(wxCommandEvent &event);
-    
-    DECLARE_EVENT_TABLE()
+    void OnQmakeOutput(clProcessEvent& event);
+    void OnQmakeTerminated(clProcessEvent& event);
 };
 
 #endif // QMakePlugin

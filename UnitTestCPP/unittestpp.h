@@ -66,15 +66,14 @@ public:
     void DoRunProject(ProjectPtr project);
 
 protected:
-    DECLARE_EVENT_TABLE()
     void OnNewSimpleTest(wxCommandEvent& e);
     void OnNewClassTest(wxCommandEvent& e);
     void OnRunUnitTests(wxCommandEvent& e);
     void OnRunProject(clExecuteEvent& e);
     void OnMarkProjectAsUT(wxCommandEvent& e);
     void OnRunUnitTestsUI(wxUpdateUIEvent& e);
-    void OnProcessTerminated(wxCommandEvent& e);
-    void OnProcessRead(wxCommandEvent& e);
+    void OnProcessTerminated(clProcessEvent& e);
+    void OnProcessRead(clProcessEvent& e);
     void OnEditorContextMenu(clContextMenuEvent& e);
     void DoCreateSimpleTest(const wxString& name, const wxString& projectName, const wxString& filename);
     void DoCreateFixtureTest(const wxString& name,

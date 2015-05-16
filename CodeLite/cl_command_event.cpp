@@ -342,3 +342,26 @@ clParseEvent& clParseEvent::operator=(const clParseEvent& src)
     m_totalFiles = src.m_totalFiles;
     return *this;
 }
+
+//-------------------------------------------------------------------
+// clProcessEvent
+//-------------------------------------------------------------------
+
+clProcessEvent::clProcessEvent(const clProcessEvent& event) { *this = event; }
+
+clProcessEvent::clProcessEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+    , m_process(NULL)
+{
+}
+
+clProcessEvent::~clProcessEvent() {}
+
+clProcessEvent& clProcessEvent::operator=(const clProcessEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_process = src.m_process;
+    m_output = src.m_output;
+    return *this;
+}
+

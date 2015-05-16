@@ -38,15 +38,12 @@ const wxEventType wxEVT_SHELL_COMMAND_STARTED = XRCID("wxEVT_SHELL_COMMAND_START
 const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED = XRCID("wxEVT_SHELL_COMMAND_PROCESS_ENDED");
 const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN = XRCID("wxEVT_SHELL_COMMAND_STARTED_NOCLEAN");
 
-BEGIN_EVENT_TABLE(ShellCommand, wxEvtHandler)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ShellCommand::OnProcessOutput)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ShellCommand::OnProcessTerminated)
-END_EVENT_TABLE()
-
 ShellCommand::ShellCommand(const QueueCommand &buildInfo)
     : m_proc(NULL)
     , m_info(buildInfo)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &ShellCommand::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &ShellCommand::OnProcessTerminated, this);
 }
 
 void ShellCommand::AppendLine(const wxString &line)
@@ -93,10 +90,7 @@ void ShellCommand::DoPrintOutput(const wxString &out)
 
 void ShellCommand::CleanUp()
 {
-    if (m_proc) {
-        delete m_proc;
-        m_proc = NULL;
-    }
+    wxDELETE(m_proc);
     SendEndMsg();
 }
 
@@ -129,19 +123,13 @@ void ShellCommand::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool is
     }
 }
 
-void ShellCommand::OnProcessOutput(wxCommandEvent& e)
+void ShellCommand::OnProcessOutput(clProcessEvent& e)
 {
-    ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
-    if(ped) {
-        DoPrintOutput(ped->GetData());
-        delete ped;
-    }
-    e.Skip();
+    DoPrintOutput(e.GetOutput());
 }
 
-void ShellCommand::OnProcessTerminated(wxCommandEvent& e)
+void ShellCommand::OnProcessTerminated(clProcessEvent& e)
 {
-    ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
-    delete ped;
+    wxUnusedVar(e);
     CleanUp();
 }

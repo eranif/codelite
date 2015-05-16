@@ -82,9 +82,8 @@ protected:
     bool m_goingDown;
     LLDBPivot m_pivot;
 
-    wxDECLARE_EVENT_TABLE();
-    void OnProcessOutput(wxCommandEvent& event);
-    void OnProcessTerminated(wxCommandEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
 
 protected:
     bool IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const;

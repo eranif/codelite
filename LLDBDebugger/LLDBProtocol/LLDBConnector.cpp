@@ -45,11 +45,7 @@
 #include <unistd.h>
 #endif
 
-wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, LLDBConnector::OnProcessOutput)
-    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, LLDBConnector::OnProcessTerminated) wxEND_EVENT_TABLE()
-
-    LLDBConnector::LLDBConnector()
+LLDBConnector::LLDBConnector()
     : m_thread(NULL)
     , m_process(NULL)
     , m_isRunning(false)
@@ -58,6 +54,9 @@ wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
 {
     Bind(wxEVT_LLDB_EXITED, &LLDBConnector::OnLLDBExited, this);
     Bind(wxEVT_LLDB_STARTED, &LLDBConnector::OnLLDBStarted, this);
+
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &LLDBConnector::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &LLDBConnector::OnProcessTerminated, this);
 }
 
 LLDBConnector::~LLDBConnector()
@@ -65,6 +64,8 @@ LLDBConnector::~LLDBConnector()
     StopDebugServer();
     Unbind(wxEVT_LLDB_EXITED, &LLDBConnector::OnLLDBExited, this);
     Unbind(wxEVT_LLDB_STARTED, &LLDBConnector::OnLLDBStarted, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LLDBConnector::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LLDBConnector::OnProcessTerminated, this);
     Cleanup();
 }
 
@@ -434,24 +435,18 @@ void LLDBConnector::UpdateAppliedBreakpoints(const LLDBBreakpoint::Vec_t& breakp
 
 const LLDBBreakpoint::Vec_t& LLDBConnector::GetAllBreakpoints() const { return m_breakpoints; }
 
-void LLDBConnector::OnProcessOutput(wxCommandEvent& event)
+void LLDBConnector::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    wxString output = ped->GetData();
-    wxDELETE(ped);
-
+    wxString output = event.GetOutput();
+    
     wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         CL_DEBUG("%s", lines.Item(i).Trim());
     }
 }
 
-void LLDBConnector::OnProcessTerminated(wxCommandEvent& event)
+void LLDBConnector::OnProcessTerminated(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    if(ped) {
-        wxDELETE(ped);
-    }
     wxDELETE(m_process);
     Cleanup();
 }

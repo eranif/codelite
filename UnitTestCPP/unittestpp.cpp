@@ -78,11 +78,6 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 
 extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-BEGIN_EVENT_TABLE(UnitTestPP, IPlugin)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, UnitTestPP::OnProcessTerminated)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, UnitTestPP::OnProcessRead)
-END_EVENT_TABLE()
-
 UnitTestPP::UnitTestPP(IManager* manager)
     : IPlugin(manager)
     , m_proc(NULL)
@@ -111,6 +106,9 @@ UnitTestPP::UnitTestPP(IManager* manager)
     m_longName = _("A Unit test plugin based on the UnitTest++ framework");
     m_shortName = wxT("UnitTestPP");
     m_topWindow = m_mgr->GetTheApp();
+
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &UnitTestPP::OnProcessRead, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &UnitTestPP::OnProcessTerminated, this);
 }
 
 UnitTestPP::~UnitTestPP() {}
@@ -192,6 +190,9 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void UnitTestPP::UnPlug()
 {
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &UnitTestPP::OnProcessRead, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &UnitTestPP::OnProcessTerminated, this);
+
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &UnitTestPP::OnEditorContextMenu, this);
     wxDELETE(m_proc);
     m_output.Clear();
@@ -507,18 +508,13 @@ void UnitTestPP::OnMarkProjectAsUT(wxCommandEvent& e)
     p->Save();
 }
 
-void UnitTestPP::OnProcessRead(wxCommandEvent& e)
+void UnitTestPP::OnProcessRead(clProcessEvent& e)
 {
-    ProcessEventData* ped = (ProcessEventData*)e.GetClientData();
-    m_output << ped->GetData();
-    delete ped;
+    m_output << e.GetOutput();
 }
 
-void UnitTestPP::OnProcessTerminated(wxCommandEvent& e)
+void UnitTestPP::OnProcessTerminated(clProcessEvent& e)
 {
-    ProcessEventData* ped = (ProcessEventData*)e.GetClientData();
-    delete ped;
-
     wxDELETE(m_proc);
 
     wxArrayString arr = wxStringTokenize(m_output, wxT("\r\n"));
@@ -605,7 +601,7 @@ void UnitTestPP::OnEditorContextMenu(clContextMenuEvent& e)
     e.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     if(FileExtManager::IsCxxFile(editor->GetFileName())) {
         e.GetMenu()->Append(wxID_ANY, "UnitTest++", CreateEditorPopMenu());
     }

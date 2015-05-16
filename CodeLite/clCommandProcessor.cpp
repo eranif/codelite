@@ -5,11 +5,6 @@
 wxDEFINE_EVENT(wxEVT_COMMAND_PROCESSOR_ENDED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_COMMAND_PROCESSOR_OUTPUT, clCommandEvent);
 
-BEGIN_EVENT_TABLE(clCommandProcessor, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, clCommandProcessor::OnProcessOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, clCommandProcessor::OnProcessTerminated)
-END_EVENT_TABLE()
-
 clCommandProcessor::clCommandProcessor(const wxString& command, const wxString& wd, size_t processFlags)
     : m_next(NULL)
     , m_prev(NULL)
@@ -20,6 +15,9 @@ clCommandProcessor::clCommandProcessor(const wxString& command, const wxString& 
     , m_postExecCallback(NULL)
     , m_obj(NULL)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clCommandProcessor::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clCommandProcessor::OnProcessTerminated, this);
+    
 }
 
 clCommandProcessor::~clCommandProcessor() { wxDELETE(m_process); }
@@ -44,24 +42,20 @@ void clCommandProcessor::ExecuteCommand()
     m_process->SetHardKill(true);
 }
 
-void clCommandProcessor::OnProcessOutput(wxCommandEvent& event)
+void clCommandProcessor::OnProcessOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
     clCommandEvent eventStart(wxEVT_COMMAND_PROCESSOR_OUTPUT);
-    m_output << ped->GetData();
-    eventStart.SetString(ped->GetData());
+    m_output << event.GetOutput();
+    eventStart.SetString(event.GetOutput());
     GetFirst()->ProcessEvent(eventStart);
-    if(eventStart.GetString() != ped->GetData()) {
+    if(eventStart.GetString() != event.GetOutput()) {
         // user provided some input, write it to the running process
-        m_process->WriteToConsole(event.GetString());
+        m_process->WriteToConsole(eventStart.GetString());
     }
-    wxDELETE(ped);
 }
 
-void clCommandProcessor::OnProcessTerminated(wxCommandEvent& event)
+void clCommandProcessor::OnProcessTerminated(clProcessEvent& event)
 {
-    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    wxDELETE(ped);
     if(m_obj && m_postExecCallback) {
         // Call the user callback, if the user returns false
         // stop the processor

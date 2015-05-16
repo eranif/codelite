@@ -74,11 +74,6 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 
 extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-BEGIN_EVENT_TABLE(QMakePlugin, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ, QMakePlugin::OnQmakeOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, QMakePlugin::OnQmakeTerminated)
-END_EVENT_TABLE()
-
 QMakePlugin::QMakePlugin(IManager* manager)
     : IPlugin(manager)
     , m_qmakeProcess(NULL)
@@ -88,7 +83,8 @@ QMakePlugin::QMakePlugin(IManager* manager)
 
     m_conf = new QmakeConf(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() +
                            wxT("config/qmake.ini"));
-
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &QMakePlugin::OnQmakeOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &QMakePlugin::OnQmakeTerminated, this);
     // Connect items
     EventNotifier::Get()->Connect(
         wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
@@ -226,8 +222,7 @@ void QMakePlugin::UnPlug()
 
 void QMakePlugin::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
-    if(!book)
-        return;
+    if(!book) return;
 
     DoUnHookAllTabs(book);
 
@@ -241,7 +236,7 @@ void QMakePlugin::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& p
 }
 
 void
-    QMakePlugin::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
+QMakePlugin::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
     wxUnusedVar(configName);
     DoUnHookAllTabs(book);
@@ -531,7 +526,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
 void QMakePlugin::OnOpenFile(clCommandEvent& event)
 {
     event.Skip();
-    
+
     // launch it with the default application
     wxFileName fullpath(event.GetFileName());
     if(fullpath.GetExt().MakeLower() != wxT("ui")) {
@@ -553,8 +548,7 @@ void QMakePlugin::OnOpenFile(clCommandEvent& event)
 
 void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
 {
-    if(m_qmakeProcess)
-        return;
+    if(m_qmakeProcess) return;
 
     QmakePluginData::BuildConfPluginData bcpd;
 
@@ -613,17 +607,13 @@ void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
     event.Skip();
 }
 
-void QMakePlugin::OnQmakeOutput(wxCommandEvent& event)
+void QMakePlugin::OnQmakeOutput(clProcessEvent& event)
 {
-    ProcessEventData* ped = static_cast<ProcessEventData*>(event.GetClientData());
-    m_mgr->AppendOutputTabText(kOutputTab_Build, ped->GetData());
-    wxDELETE(ped);
+    m_mgr->AppendOutputTabText(kOutputTab_Build, event.GetOutput());
 }
 
-void QMakePlugin::OnQmakeTerminated(wxCommandEvent& event)
+void QMakePlugin::OnQmakeTerminated(clProcessEvent& event)
 {
-    ProcessEventData* ped = static_cast<ProcessEventData*>(event.GetClientData());
-    wxDELETE(ped);
     wxDELETE(m_qmakeProcess);
     m_mgr->AppendOutputTabText(kOutputTab_Build, "-- done\n");
 }

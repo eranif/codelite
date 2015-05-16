@@ -2139,7 +2139,7 @@ void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeTo
     }
 }
 
-void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files)
+void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBase)
 {
     for(size_t i = 0; i < files.GetCount(); ++i) {
 
@@ -2359,51 +2359,51 @@ void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
 void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    wxMenu* menu = new wxMenu();
-    wxMenu* parentMenu = event.GetMenu();
-    m_selectedFolder = event.GetPath();
-
-    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
-    item->SetBitmap(m_images.Bitmap("gitPull"));
-    menu->Append(item);
-
-    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
-    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
-    menu->Append(item);
-
-    item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
-    item->SetBitmap(m_images.Bitmap("gitPush"));
-    menu->Append(item);
-    
-    menu->AppendSeparator();
-    
-    item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
-    item->SetBitmap(m_images.Bitmap("gitStash"));
-    menu->Append(item);
-    
-    item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
-    item->SetBitmap(m_images.Bitmap("gitStashPop"));
-    menu->Append(item);
-
-#ifdef __WXMSW__
-    menu->AppendSeparator();
-    item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
-    item->SetBitmap(m_images.Bitmap("msysgit"));
-    menu->Append(item);
-#endif
-
-    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
-    item->SetBitmap(m_images.Bitmap("git"));
-    parentMenu->AppendSeparator();
-    parentMenu->Append(item);
+//    wxMenu* menu = new wxMenu();
+//    wxMenu* parentMenu = event.GetMenu();
+//    m_selectedFolder = event.GetPath();
+//
+//    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
+//    item->SetBitmap(m_images.Bitmap("gitPull"));
+//    menu->Append(item);
+//
+//    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
+//    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
+//    menu->Append(item);
+//
+//    item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
+//    item->SetBitmap(m_images.Bitmap("gitPush"));
+//    menu->Append(item);
+//    
+//    menu->AppendSeparator();
+//    
+//    item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
+//    item->SetBitmap(m_images.Bitmap("gitStash"));
+//    menu->Append(item);
+//    
+//    item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
+//    item->SetBitmap(m_images.Bitmap("gitStashPop"));
+//    menu->Append(item);
+//
+//#ifdef __WXMSW__
+//    menu->AppendSeparator();
+//    item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
+//    item->SetBitmap(m_images.Bitmap("msysgit"));
+//    menu->Append(item);
+//#endif
+//
+//    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
+//    item->SetBitmap(m_images.Bitmap("git"));
+//    parentMenu->AppendSeparator();
+//    parentMenu->Append(item);
 }
 
 void GitPlugin::OnFolderPullRebase(wxCommandEvent& event)
 {
     // Just perform a 'pull --rebase' 
     // if an error occurs, let the user handle it first
-    GitCommand::Vec_t commands;
-    commands.push_back(GitCommand("pull --rebase", IProcessCreateConsole));
+    GitCmd::Vec_t commands;
+    commands.push_back(GitCmd("pull --rebase", IProcessCreateConsole));
     DoExecuteCommands(commands, m_selectedFolder);
     m_selectedFolder.Clear();
 }
@@ -2432,7 +2432,7 @@ void GitPlugin::OnCommandOutput(clCommandEvent& event)
     }
 }
 
-void GitPlugin::DoExecuteCommands(const GitCommand::Vec_t& commands, const wxString& workingDir)
+void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString& workingDir)
 {
     if(commands.empty()) return;
 
@@ -2498,7 +2498,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 
 void GitPlugin::OnFolderCommit(wxCommandEvent& event)
 {
-    GitCommand::Vec_t commands;
+    GitCmd::Vec_t commands;
     // 1. Get diff output
     wxString diff;
     DoExecuteCommandSync("diff --no-color HEAD", m_selectedFolder, diff);
@@ -2506,8 +2506,8 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
         wxString commitArgs;
         DoShowCommitDialog(diff, commitArgs);
         if(!commitArgs.IsEmpty()) {
-            GitCommand::Vec_t commands;
-            commands.push_back(GitCommand("commit " + commitArgs, IProcessCreateDefault));
+            GitCmd::Vec_t commands;
+            commands.push_back(GitCmd("commit " + commitArgs, IProcessCreateDefault));
             DoExecuteCommands(commands, m_selectedFolder);
         }
     }
@@ -2531,22 +2531,22 @@ void GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
 
 void GitPlugin::OnFolderPush(wxCommandEvent& event)
 {
-    GitCommand::Vec_t commands;
-    commands.push_back(GitCommand("push", IProcessCreateConsole));
+    GitCmd::Vec_t commands;
+    commands.push_back(GitCmd("push", IProcessCreateConsole));
     DoExecuteCommands(commands, m_selectedFolder);
 }
 
 void GitPlugin::OnFolderStash(wxCommandEvent& event)
 {
-    GitCommand::Vec_t commands;
-    commands.push_back(GitCommand("stash", IProcessCreateDefault));
+    GitCmd::Vec_t commands;
+    commands.push_back(GitCmd("stash", IProcessCreateDefault));
     DoExecuteCommands(commands, m_selectedFolder);
 }
 
 void GitPlugin::OnFolderStashPop(wxCommandEvent& event)
 {
-    GitCommand::Vec_t commands;
-    commands.push_back(GitCommand("stash pop", IProcessCreateDefault));
+    GitCmd::Vec_t commands;
+    commands.push_back(GitCmd("stash pop", IProcessCreateDefault));
     DoExecuteCommands(commands, m_selectedFolder);
 }
 

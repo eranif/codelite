@@ -55,6 +55,9 @@ protected:
     void OnNewFolder(wxCommandEvent& event);
     void OnNewFile(wxCommandEvent& event);
     void OnDeleteFolder(wxCommandEvent& event);
+    void OnOpenFile(wxCommandEvent& event);
+    void OnRenameFile(wxCommandEvent& event);
+    void OnDeleteFile(wxCommandEvent& event);
 
     void OnFolderDropped(clCommandEvent& event);
 

@@ -76,20 +76,20 @@ public:
 class GitConsole;
 class GitCommitListDlg;
 
-struct GitCommand {
+struct GitCmd {
     wxString baseCommand;
     size_t processFlags;
 
-    GitCommand(const wxString& cmd, size_t console)
+    GitCmd(const wxString& cmd, size_t console)
         : baseCommand(cmd)
         , processFlags(console)
     {
     }
-    GitCommand()
+    GitCmd()
         : processFlags(IProcessCreateDefault)
     {
     }
-    typedef std::vector<GitCommand> Vec_t;
+    typedef std::vector<GitCmd> Vec_t;
 };
 
 class GitPlugin : public IPlugin
@@ -165,7 +165,7 @@ class GitPlugin : public IPlugin
 private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
-    void DoExecuteCommands(const GitCommand::Vec_t& commands, const wxString& workingDir);
+    void DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString& workingDir);
     void DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput);
 
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
@@ -193,7 +193,7 @@ private:
     void DoAddFiles(const wxArrayString& files);
     void DoResetFiles(const wxArrayString& files);
     void DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo);
-    void DoShowDiffsForFiles(const wxArrayString& files);
+    void DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBase = false);
     void DoSetRepoPath(const wxString& repoPath = "", bool promptUser = true);
     void DoRecoverFromGitCommandError();
 

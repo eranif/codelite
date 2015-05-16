@@ -49,18 +49,6 @@
     <File Name="GitLocator.h"/>
     <File Name="GitLocator.cpp"/>
     <File Name="CMakeLists.txt"/>
-    <VirtualDirectory Name="GitCommands">
-      <File Name="GitCommand.h"/>
-      <File Name="GitCommand.cpp"/>
-      <File Name="GitCommandStash.h"/>
-      <File Name="GitCommandStash.cpp"/>
-      <File Name="GitCommandPull.h"/>
-      <File Name="GitCommandPull.cpp"/>
-      <File Name="GitDriver.cpp"/>
-      <File Name="GitDriver.h"/>
-      <File Name="GitCommandPush.h"/>
-      <File Name="GitCommandPush.cpp"/>
-    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="icons">
     <File Name="icons/icon_git.xpm"/>

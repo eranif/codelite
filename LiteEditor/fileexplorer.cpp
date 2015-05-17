@@ -84,6 +84,11 @@ void FileExplorer::OnFolderDropped(clCommandEvent& event)
     }
 }
 
+void FileExplorer::OpenFolder(const wxString& path)
+{
+    m_view->AddFolder(path);
+}
+
 // void FileExplorer::OnCollapseAll(wxCommandEvent& e)
 //{
 //    wxUnusedVar(e);

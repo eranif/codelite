@@ -188,6 +188,18 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
 
 wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxString& path)
 {
+    // if we already have this folder opened, dont re-add it
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = GetTreeCtrl()->GetFirstChild(GetTreeCtrl()->GetRootItem(), cookie);
+    while(child.IsOk()) {
+        clTreeCtrlData* clientData = GetItemData(child);
+        if(path == clientData->GetPath()) {
+            return child;
+        }
+        child = GetTreeCtrl()->GetNextChild(GetTreeCtrl()->GetRootItem(), cookie);
+    }
+    
+    // Add the folder
     clTreeCtrlData* cd = new clTreeCtrlData(clTreeCtrlData::kFolder);
     cd->SetPath(path);
 

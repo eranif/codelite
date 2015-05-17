@@ -200,6 +200,7 @@ EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
 //---------------------------------------------------
 EVT_MENU(XRCID("new_file"), clMainFrame::OnFileNew)
 EVT_MENU(XRCID("open_file"), clMainFrame::OnFileOpen)
+EVT_MENU(XRCID("open_folder"), clMainFrame::OnFileOpenFolder)
 EVT_MENU(XRCID("refresh_file"), clMainFrame::OnFileReload)
 EVT_MENU(XRCID("load_tab_group"), clMainFrame::OnFileLoadTabGroup)
 EVT_MENU(XRCID("save_file"), clMainFrame::OnSave)
@@ -1040,7 +1041,8 @@ void clMainFrame::CreateGUIControls(void)
     // However I'm creating unused strings here, so that the translations remain in the catalogue
     const wxString unusedOV(_("Output View"));
     const wxString unusedWV(_("Workspace View"));
-    const wxString unusedCR(_("wxCrafter")); // One that would otherwise be untranslated; OT here, but it's a convenient place to put it
+    const wxString unusedCR(
+        _("wxCrafter")); // One that would otherwise be untranslated; OT here, but it's a convenient place to put it
 
     // Add the explorer pane
     m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
@@ -6128,8 +6130,16 @@ void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)
 void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
-    
+
     // Ensure that the workspace view is visible
     DoEnableWorkspaceViewFlag(true, View_Show_Workspace_Tab);
     GetWorkspacePane()->UpdateTabs();
+}
+
+void clMainFrame::OnFileOpenFolder(wxCommandEvent& event)
+{
+    wxString path = ::wxDirSelector(_("Select Folder"));
+    if(path.IsEmpty()) return;
+    GetWorkspacePane()->GetFileExplorer()->OpenFolder(path);
+    GetWorkspacePane()->SelectTab(GetWorkspacePane()->GetFileExplorer()->GetCaption());
 }

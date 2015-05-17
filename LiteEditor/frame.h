@@ -363,6 +363,7 @@ protected:
     void OnRunSetupWizard(wxCommandEvent& e);
     void OnFileNew(wxCommandEvent& event);
     void OnFileOpen(wxCommandEvent& event);
+    void OnFileOpenFolder(wxCommandEvent& event);
     void OnFileClose(wxCommandEvent& event);
     void OnFileCloseUI(wxUpdateUIEvent& event);
     void OnFileSaveAll(wxCommandEvent& event);

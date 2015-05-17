@@ -80,6 +80,11 @@ public:
     WorkspaceTab* GetWorkspaceTab() { return m_workspaceTab; }
     FileExplorer* GetFileExplorer() { return m_explorer; }
     TabgroupsPane* GetTabgroupsTab() { return m_TabgroupsPane; }
+    /**
+     * @brief set an active tab by its title
+     * @param tabTitle the tab to select
+     */
+    void SelectTab(const wxString& tabTitle);
 };
 
 #endif // WORKSPACE_PANE_H

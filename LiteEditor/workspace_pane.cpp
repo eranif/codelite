@@ -127,10 +127,10 @@ void WorkspacePane::CreateGUIControls()
         m_explorer = new FileExplorer(m_book, name);
         m_book->AddPage(m_explorer, name, false);
     }
-    
+
     // Add the "File Explorer" view to the list of files managed by the workspace-view
     m_workspaceTab->GetView()->AddPage(m_explorer, _("File Explorer"), false);
-    
+
 // Add the Open Windows Panel (Tabs)
 #ifndef __WXOSX__
     name = _("Tabs");
@@ -358,4 +358,14 @@ void WorkspacePane::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
     m_captionEnabler.Initialize(this, "Workspace View", &clMainFrame::Get()->GetDockingManager());
+}
+
+void WorkspacePane::SelectTab(const wxString& tabTitle)
+{
+    for(size_t i = 0; i < m_book->GetPageCount(); i++) {
+        if(m_book->GetPageText(i) == tabTitle) {
+            // requested to add a page which already exists
+            m_book->SetSelection(i);
+        }
+    }
 }

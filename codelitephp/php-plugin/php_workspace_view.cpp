@@ -126,6 +126,18 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
         return;
     }
 
+    // If a workspace is already exist at the selected path - load it
+    wxArrayString workspaceFiles;
+    wxString workspaceFile;
+    wxDir::GetAllFiles(folders.Item(0), &workspaceFiles, "*.workspace", wxDIR_FILES);
+    // Check the workspace type
+    for(size_t i = 0; i < workspaceFiles.size(); ++i) {
+        if(FileExtManager::GetType(workspaceFiles.Item(i)) == FileExtManager::TypeWorkspacePHP) {
+            workspaceFile = workspaceFiles.Item(i);
+            break;
+        }
+    }
+
     wxFileName workspaceFileName;
     wxFileName projectFileName(folders.Item(0), "");
     projectFileName.SetName(projectFileName.GetDirs().Last());
@@ -136,11 +148,14 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
         workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
         workspaceFileName.SetExt("workspace");
 
+        if(!workspaceFile.IsEmpty()) {
+            workspaceFileName = wxFileName(workspaceFile);
+        }
+
         // Create an empty workspace
         if(!PHPWorkspace::Get()->Open(workspaceFileName.GetFullPath(), true)) {
             wxString message;
-            message << _("Failed to create workspace '") << workspaceFileName.GetFullPath() << "'\n"
-                    << _("File exists");
+            message << _("Failed to open workspace '") << workspaceFileName.GetFullPath() << "'\n" << _("File exists");
             ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
             return;
         }
@@ -148,11 +163,24 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
         // // We just created and opened a new workspace, add it to the "Recently used"
         // m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
         LoadWorkspace();
-        
+
         // Ensure that the view is visible
         m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
 
+        // If we loaded an already existing workspace, we are done here
+        if(!workspaceFile.IsEmpty()) return;
+
     } else {
+        if(!workspaceFile.IsEmpty()) {
+            // its the same workspace - do nothing
+            if(PHPWorkspace::Get()->GetFilename().GetFullPath() == workspaceFile) return;
+            // Different workspaces, prompt the user to close its workspace before continuing
+            ::wxMessageBox(
+                _("The folder already contains a workspace file\nPlease close the current workspace before continuing"),
+                "CodeLite",
+                wxOK | wxICON_WARNING | wxCENTER);
+            return;
+        }
         workspaceFileName = PHPWorkspace::Get()->GetFilename();
     }
 

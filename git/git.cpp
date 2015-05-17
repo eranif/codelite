@@ -689,11 +689,13 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
         }
         ::WrapWithQuotes(filename);
         cmd << filename;
-        
+
         // We need to run this command per file
         wxString commandOutput;
         DoExecuteCommandSync(cmd, workingDir, commandOutput);
-        DoShowDiffViewer(commandOutput, files.Item(i));
+        if(!commandOutput.IsEmpty()) {
+            DoShowDiffViewer(commandOutput, files.Item(i));
+        }
     }
 }
 
@@ -2469,6 +2471,9 @@ void GitPlugin::OnCommandOutput(clCommandEvent& event)
         if(!pass.IsEmpty()) {
             event.SetString(pass);
         }
+    } else if(processOutput.Contains("fatal:")) {
+        // prompt the user for the error
+        ::wxMessageBox(processOutput, "Git", wxICON_WARNING | wxCENTER | wxOK);
     }
 }
 
@@ -2540,7 +2545,7 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
     GitCmd::Vec_t commands;
     // 1. Get diff output
     wxString diff;
-    DoExecuteCommandSync("diff --no-color HEAD", m_selectedFolder, diff);
+    bool res = DoExecuteCommandSync("diff --no-color HEAD", m_selectedFolder, diff);
     if(!diff.IsEmpty()) {
         wxString commitArgs;
         DoShowCommitDialog(diff, commitArgs);
@@ -2549,12 +2554,12 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
             commands.push_back(GitCmd("commit " + commitArgs, IProcessCreateDefault));
             DoExecuteCommands(commands, m_selectedFolder);
         }
-    } else {
+    } else if(res) {
         ::wxMessageBox(_("All files are up-to-date!"), "CodeLite");
     }
 }
 
-void GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput)
+bool GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput)
 {
     commandOutput.Clear();
     wxString git = m_pathGITExecutable;
@@ -2568,7 +2573,18 @@ void GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
     IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync, workingDir));
     if(gitProc) {
         gitProc->WaitForTerminate(commandOutput);
+    } else {
+        return false;
     }
+    
+    const wxString lcOutput = commandOutput.Lower();
+    if(lcOutput.Contains("fatal:") || lcOutput.Contains("not a git repository")) {
+        // prompt the user for the error
+        ::wxMessageBox(commandOutput, "Git", wxICON_WARNING | wxCENTER | wxOK);
+        commandOutput.clear();
+        return false;
+    }
+    return true;
 }
 
 void GitPlugin::OnFolderPush(wxCommandEvent& event)

@@ -166,7 +166,7 @@ private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
     void DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString& workingDir);
-    void DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput);
+    bool DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput);
 
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
     void InitDefaults();

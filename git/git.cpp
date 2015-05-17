@@ -2549,6 +2549,8 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
             commands.push_back(GitCmd("commit " + commitArgs, IProcessCreateDefault));
             DoExecuteCommands(commands, m_selectedFolder);
         }
+    } else {
+        ::wxMessageBox(_("All files are up-to-date!"), "CodeLite");
     }
 }
 

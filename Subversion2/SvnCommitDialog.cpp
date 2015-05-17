@@ -102,6 +102,9 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent,
     , m_repoPath(repoPath)
     , m_process(NULL)
 {
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnCommitDialog::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnCommitDialog::OnProcessTerminatd, this);
+
     m_stcDiff->SetReadOnly(true);
     wxString title = GetTitle();
     title << wxT(" - ") << url;

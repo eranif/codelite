@@ -63,7 +63,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
     CHECK_COND_RET(!tags.empty());
-    
+
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetFlags(flags);
     m_box->SetStartPos(startPos);
@@ -80,7 +80,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
     CHECK_COND_RET(!entries.empty());
-    
+
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetFlags(flags);
     m_box->SetStartPos(startPos);
@@ -110,7 +110,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
     CHECK_COND_RET(!entries.empty());
-    
+
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);
     m_box->SetFlags(flags);
@@ -131,11 +131,14 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
         int start = wxNOT_FOUND, end = wxNOT_FOUND;
         std::vector<std::pair<int, int> > ranges;
         if(ctrl->GetSelections() > 1) {
-            for(int i=0; i<ctrl->GetSelections(); ++i) {
+            for(int i = 0; i < ctrl->GetSelections(); ++i) {
                 int nStart = ctrl->WordStartPosition(ctrl->GetSelectionNCaret(i), true);
                 int nEnd = ctrl->GetSelectionNCaret(i);
                 ranges.push_back(std::make_pair(nStart, nEnd));
             }
+            std::sort(ranges.begin(), ranges.end(), [&](const std::pair<int, int>& e1, const std::pair<int, int>& e2) {
+                return e1.first < e2.first;
+            });
         } else {
             // Default behviour: remove the partial text from teh editor and replace it
             // with the selection
@@ -146,7 +149,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
                 addParens = true;
             }
         }
-        
+
         wxString entryText = selection;
         if(entryText.Find("(") != wxNOT_FOUND) {
             // a function like
@@ -159,21 +162,21 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
 
             CL_DEBUG("Inserting selection: %s", textToInsert);
             CL_DEBUG("Signature is: %s", funcSig);
-            
+
             // Check if already have an open paren, don't add another
             if(addParens) {
                 textToInsert << "()";
             }
-            
+
             if(!ranges.empty()) {
                 // Multiple carets
                 int offset = 0;
-                for(size_t i=0; i<ranges.size(); ++i) {
+                for(size_t i = 0; i < ranges.size(); ++i) {
                     int from = ranges.at(i).first;
                     int to = ranges.at(i).second;
                     from += offset;
                     to += offset;
-                    // Once we enter that text into the editor, it will change the original 
+                    // Once we enter that text into the editor, it will change the original
                     // offsets (in most cases the entered text is larger than that typed text)
                     offset += textToInsert.length() - (to - from);
                     ctrl->Replace(from, to, textToInsert);
@@ -183,7 +186,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
             } else {
                 ctrl->ReplaceSelection(textToInsert);
                 if(!funcSig.IsEmpty()) {
-                    
+
                     // Place the caret between the parenthesis
                     int caretPos(wxNOT_FOUND);
                     if(addParens) {
@@ -194,25 +197,24 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
                     }
                     ctrl->SetCurrentPos(caretPos);
                     ctrl->SetSelection(caretPos, caretPos);
-                    
+
                     // trigger a code complete for function calltip.
                     // We do this by simply mimicing the user action of going to the menubar:
                     // Edit->Display Function Calltip
                     wxCommandEvent event(wxEVT_MENU, XRCID("function_call_tip"));
                     wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
                 }
-                
             }
         } else {
             if(!ranges.empty()) {
                 // Multiple carets
                 int offset = 0;
-                for(size_t i=0; i<ranges.size(); ++i) {
+                for(size_t i = 0; i < ranges.size(); ++i) {
                     int from = ranges.at(i).first;
                     int to = ranges.at(i).second;
                     from += offset;
                     to += offset;
-                    // Once we enter that text into the editor, it will change the original 
+                    // Once we enter that text into the editor, it will change the original
                     // offsets (in most cases the entered text is larger than that typed text)
                     offset += entryText.length() - (to - from);
                     ctrl->Replace(from, to, entryText);

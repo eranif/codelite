@@ -640,10 +640,26 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
 
     wxArrayString files;
     files.swap(m_filesSelected);
+    if(files.IsEmpty()) return;
 
-    if(!files.IsEmpty()) {
-        DoAddFiles(files);
+    wxString workingDir;
+    workingDir = wxFileName(files.Item(0)).GetPath();
+
+    // Pepare the command:
+    // git add --no-pager
+    wxString cmd = "add";
+    for(size_t i = 0; i < files.size(); ++i) {
+        wxFileName fn(files.Item(i));
+        fn.MakeRelativeTo(workingDir);
+        wxString filename = fn.GetFullPath(wxPATH_UNIX);
+        ::WrapWithQuotes(filename);
+        cmd << " " << filename;
     }
+
+    wxString commandOutput;
+    DoExecuteCommandSync(cmd, workingDir, commandOutput);
+    GetConsole()->AddRawText(commandOutput);
+    RefreshFileListView();
 }
 
 /*******************************************************************************/
@@ -654,32 +670,65 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    // fetch the list of files
     wxArrayString files;
     files.swap(m_filesSelected);
-    DoShowDiffsForFiles(files);
+    if(files.IsEmpty()) return;
+
+    wxString workingDir;
+    workingDir = wxFileName(files.Item(0)).GetPath();
+
+    for(size_t i = 0; i < files.size(); ++i) {
+        // Pepare the command:
+        // git add --no-pager
+        wxString cmd = "show HEAD:";
+        wxFileName fn(files.Item(i));
+        fn.MakeRelativeTo(workingDir);
+        wxString filename = fn.GetFullPath(wxPATH_UNIX);
+        if(!filename.StartsWith(".")) {
+            filename.Prepend("./");
+        }
+        ::WrapWithQuotes(filename);
+        cmd << filename;
+        
+        // We need to run this command per file
+        wxString commandOutput;
+        DoExecuteCommandSync(cmd, workingDir, commandOutput);
+        DoShowDiffViewer(commandOutput, files.Item(i));
+    }
 }
 
 /*******************************************************************************/
 void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    // fetch the list of files
-    wxArrayString files;
-    DoGetFileViewSelectedFiles(files, true);
 
-    // prepare a space delimited list
-    wxString filelist;
-    for(size_t i = 0; i < files.GetCount(); ++i) {
-        filelist << files.Item(i) << " ";
+    wxArrayString files;
+    files.swap(m_filesSelected);
+    if(files.IsEmpty()) return;
+
+    wxString workingDir;
+    workingDir = wxFileName(files.Item(0)).GetPath();
+
+    // Pepare the command:
+    // git add --no-pager
+    wxString cmd = "checkout";
+    for(size_t i = 0; i < files.size(); ++i) {
+        wxFileName fn(files.Item(i));
+        fn.MakeRelativeTo(workingDir);
+        wxString filename = fn.GetFullPath(wxPATH_UNIX);
+        ::WrapWithQuotes(filename);
+        cmd << " " << filename;
     }
 
-    gitAction ga(gitResetFile, filelist);
-    m_gitActionQueue.push_back(ga);
+    wxString commandOutput;
+    DoExecuteCommandSync(cmd, workingDir, commandOutput);
+    GetConsole()->AddRawText(commandOutput);
 
-    ProcessGitActionQueue();
+    // Reload externally modified files
+    EventNotifier::Get()->PostReloadExternallyModifiedEvent();
     RefreshFileListView();
 }
+
 /*******************************************************************************/
 void GitPlugin::OnSwitchLocalBranch(wxCommandEvent& e)
 {
@@ -2350,43 +2399,43 @@ void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
 void GitPlugin::OnFolderMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    //    wxMenu* menu = new wxMenu();
-    //    wxMenu* parentMenu = event.GetMenu();
-    //    m_selectedFolder = event.GetPath();
-    //
-    //    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
-    //    item->SetBitmap(m_images.Bitmap("gitPull"));
-    //    menu->Append(item);
-    //
-    //    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
-    //    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
-    //    menu->Append(item);
-    //
-    //    item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
-    //    item->SetBitmap(m_images.Bitmap("gitPush"));
-    //    menu->Append(item);
-    //
-    //    menu->AppendSeparator();
-    //
-    //    item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
-    //    item->SetBitmap(m_images.Bitmap("gitStash"));
-    //    menu->Append(item);
-    //
-    //    item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
-    //    item->SetBitmap(m_images.Bitmap("gitStashPop"));
-    //    menu->Append(item);
-    //
-    //#ifdef __WXMSW__
-    //    menu->AppendSeparator();
-    //    item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
-    //    item->SetBitmap(m_images.Bitmap("msysgit"));
-    //    menu->Append(item);
-    //#endif
-    //
-    //    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
-    //    item->SetBitmap(m_images.Bitmap("git"));
-    //    parentMenu->AppendSeparator();
-    //    parentMenu->Append(item);
+    wxMenu* menu = new wxMenu();
+    wxMenu* parentMenu = event.GetMenu();
+    m_selectedFolder = event.GetPath();
+
+    wxMenuItem* item = new wxMenuItem(menu, XRCID("git_pull_rebase_folder"), _("Pull remote changes"));
+    item->SetBitmap(m_images.Bitmap("gitPull"));
+    menu->Append(item);
+
+    item = new wxMenuItem(menu, XRCID("git_commit_folder"), _("Commit"));
+    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
+    menu->Append(item);
+
+    item = new wxMenuItem(menu, XRCID("git_push_folder"), _("Push"));
+    item->SetBitmap(m_images.Bitmap("gitPush"));
+    menu->Append(item);
+
+    menu->AppendSeparator();
+
+    item = new wxMenuItem(menu, XRCID("git_stash_folder"), _("Stash"));
+    item->SetBitmap(m_images.Bitmap("gitStash"));
+    menu->Append(item);
+
+    item = new wxMenuItem(menu, XRCID("git_stash_pop_folder"), _("Stash pop"));
+    item->SetBitmap(m_images.Bitmap("gitStashPop"));
+    menu->Append(item);
+
+#ifdef __WXMSW__
+    menu->AppendSeparator();
+    item = new wxMenuItem(menu, XRCID("git_bash_folder"), _("Open git bash"));
+    item->SetBitmap(m_images.Bitmap("msysgit"));
+    menu->Append(item);
+#endif
+
+    item = new wxMenuItem(parentMenu, wxID_ANY, _("Git"), "", wxITEM_NORMAL, menu);
+    item->SetBitmap(m_images.Bitmap("git"));
+    parentMenu->AppendSeparator();
+    parentMenu->Append(item);
 }
 
 void GitPlugin::OnFolderPullRebase(wxCommandEvent& event)
@@ -2513,6 +2562,7 @@ void GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
     git << " --no-pager ";
     git << command;
 
+    GetConsole()->AddRawText("[" + workingDir + "] " + git + "\n");
     IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync, workingDir));
     if(gitProc) {
         gitProc->WaitForTerminate(commandOutput);

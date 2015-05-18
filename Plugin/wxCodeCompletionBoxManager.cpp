@@ -1,4 +1,6 @@
 #include "wxCodeCompletionBoxManager.h"
+
+#include <algorithm>
 #include <wx/app.h>
 #include "globals.h"
 #include "ieditor.h"

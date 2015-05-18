@@ -284,18 +284,14 @@ wxMenu* Subversion2::CreateProjectPopMenu()
 
 void Subversion2::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileExplorer) {
-        if(!menu->FindItem(XRCID("SUBVERSION_EXPLORER_POPUP"))) {
-            m_explorerSepItem = menu->PrependSeparator();
-            menu->Prepend(XRCID("SUBVERSION_EXPLORER_POPUP"), wxT("Subversion"), CreateFileExplorerPopMenu());
-        }
-    } else if(type == MenuTypeFileView_Project) {
+    if(type == MenuTypeFileView_Project) {
         if(!menu->FindItem(XRCID("SUBVERSION_PROJECT_POPUP"))) {
             m_projectSepItem = menu->PrependSeparator();
             menu->Prepend(XRCID("SUBVERSION_PROJECT_POPUP"), wxT("Subversion"), CreateProjectPopMenu());
         }
     }
 }
+
 wxMenu* Subversion2::CreateFileExplorerPopMenu()
 {
     // Create the popup menu for the file explorer

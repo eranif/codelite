@@ -1641,5 +1641,7 @@ void Subversion2::OnFolderContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
     m_selectedFolder = event.GetPath();
-    event.GetMenu()->Append(wxID_ANY, "Svn", CreateFileExplorerPopMenu())->SetBitmap(m_svnBitmap);
+    wxMenuItem* item = new wxMenuItem(event.GetMenu(), wxID_ANY, "Svn", "", wxITEM_NORMAL, CreateFileExplorerPopMenu());
+    item->SetBitmap(m_svnBitmap);
+    event.GetMenu()->Append(item);
 }

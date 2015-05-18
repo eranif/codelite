@@ -75,11 +75,11 @@ protected:
     ///////////////////////////////////////////////////////////
     void OnCommit(wxCommandEvent& event);
     void OnUpdate(wxCommandEvent& event);
-    void OnAdd(wxCommandEvent& event);
+    void OnFolderAdd(wxCommandEvent& event);
     void OnDeleteFolder(wxCommandEvent& event);
-    void OnRevert(wxCommandEvent& event);
+    void OnRevertFolder(wxCommandEvent& event);
     void OnRevertToRevision(wxCommandEvent& event);
-    void OnDiff(wxCommandEvent& event);
+    void OnFolderDiff(wxCommandEvent& event);
     void OnPatch(wxCommandEvent& event);
     void OnLog(wxCommandEvent& event);
     void OnBlame(wxCommandEvent& event);
@@ -89,7 +89,7 @@ protected:
     void OnSwitchURL(wxCommandEvent& event);
     void OnLockFile(wxCommandEvent& event);
     void OnUnLockFile(wxCommandEvent& event);
-    void OnRename(wxCommandEvent& event);
+    void OnRenameFolder(wxCommandEvent& event);
     void OnSync(wxCommandEvent& event);
 
     ///////////////////////////////////////////////////////////

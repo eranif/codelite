@@ -38,6 +38,7 @@
 #include "ieditor.h"
 #include "event_notifier.h"
 #include "SvnBlameFrame.h"
+#include "globals.h"
 
 void SvnCommitHandler::Process(const wxString& output)
 {
@@ -153,11 +154,11 @@ void SvnLogHandler::Process(const wxString& output)
         // remove non interesting lines
         changeLog = Compact(changeLog);
     }
-
-    ChangeLogPage *page = new ChangeLogPage(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), GetPlugin());
-    page->SetUrl(m_url);
-    page->AppendText( changeLog );
-    GetPlugin()->GetManager()->AddPage( page, _("Change Log"), _("Change Log"), wxNullBitmap, true );
+    
+    IEditor* editor = clGetManager()->NewEditor();
+    editor->GetCtrl()->SetText(changeLog);
+    editor->GetCtrl()->SetFirstVisibleLine(0);
+    editor->SetCaretAt(0);
 }
 
 wxString SvnLogHandler::Compact(const wxString& message)

@@ -68,7 +68,7 @@ SvnConsole::~SvnConsole()
 void SvnConsole::OnReadProcessOutput(clProcessEvent& event)
 {
     m_output.Append(event.GetOutput());
-    
+
     wxString s = event.GetOutput().Lower();
     if(m_currCmd.printProcessOutput) AppendText(event.GetOutput());
 
@@ -167,10 +167,7 @@ bool SvnConsole::IsRunning() { return m_process != NULL; }
 
 bool SvnConsole::IsEmpty() { return m_sci->GetText().IsEmpty(); }
 
-void SvnConsole::EnsureVisible()
-{
-    m_plugin->EnsureVisible();
-}
+void SvnConsole::EnsureVisible() { m_plugin->EnsureVisible(); }
 
 void SvnConsole::DoProcessNextCommand()
 {
@@ -195,7 +192,7 @@ void SvnConsole::DoProcessNextCommand()
     EnsureVisible();
 
     // Print the command?
-    AppendText(m_currCmd.cmd + wxT("\n"));
+    AppendText("[" + m_currCmd.workingDirectory + "] " + m_currCmd.cmd + wxT("\n"));
 
     // Wrap the command in the OS Shell
     wxString cmdShell(m_currCmd.cmd);

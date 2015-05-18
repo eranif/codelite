@@ -176,7 +176,7 @@ Subversion2::Subversion2(IManager* manager)
         XRCID("svn_explorer_add"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd), NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_delete"),
                                        wxEVT_COMMAND_MENU_SELECTED,
-                                       wxCommandEventHandler(Subversion2::OnDelete),
+                                       wxCommandEventHandler(Subversion2::OnDeleteFolder),
                                        NULL,
                                        this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_rename"),
@@ -248,6 +248,7 @@ Subversion2::Subversion2(IManager* manager)
         wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(Subversion2::OnWorkspaceConfigChanged), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(Subversion2::OnFileRemoved), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &Subversion2::OnFolderContextMenu, this);
 }
 
 Subversion2::~Subversion2() {}
@@ -304,7 +305,7 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 
     item = new wxMenuItem(menu,
                           XRCID("svn_explorer_set_as_view"),
-                          _("Display this path in the Subversion View"),
+                          _("Watch this folder"),
                           wxEmptyString,
                           wxITEM_NORMAL);
     menu->Append(item);
@@ -316,20 +317,24 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
     item = new wxMenuItem(menu, XRCID("svn_explorer_commit"), _("Commit"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
+    item = new wxMenuItem(menu, XRCID("svn_explorer_delete"), _("Delete"), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+    
+    menu->AppendSeparator();
+    item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), _("Revert changes"), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+
     menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("svn_explorer_lock"), _("Lock file"), wxEmptyString, wxITEM_NORMAL);
+    /*item = new wxMenuItem(menu, XRCID("svn_explorer_lock"), _("Lock file"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("svn_explorer_unlock"), _("UnLock file"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
-    menu->AppendSeparator();
+    menu->AppendSeparator();*/
 
     item = new wxMenuItem(menu, XRCID("svn_explorer_add"), _("Add"), wxEmptyString, wxITEM_NORMAL);
-    menu->Append(item);
-
-    item = new wxMenuItem(menu, XRCID("svn_explorer_delete"), _("Delete"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("svn_explorer_rename"), _("Rename"), wxEmptyString, wxITEM_NORMAL);
@@ -337,8 +342,6 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 
     menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), _("Revert changes"), wxEmptyString, wxITEM_NORMAL);
-    menu->Append(item);
 
     item = new wxMenuItem(
         menu, XRCID("svn_explorer_revert_to_revision"), _("Revert to revision"), wxEmptyString, wxITEM_NORMAL);
@@ -349,27 +352,27 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
     menu->Append(item);
     item = new wxMenuItem(menu, XRCID("svn_explorer_patch"), _("Apply Patch"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
-    menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("svn_explorer_blame"), _("Blame ..."), wxEmptyString, wxITEM_NORMAL);
-    menu->Append(item);
+/*    item = new wxMenuItem(menu, XRCID("svn_explorer_blame"), _("Blame ..."), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);*/
 
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("svn_explorer_log"), _("Change Log..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
-    menu->AppendSeparator();
+/*    menu->AppendSeparator();
     wxMenu* subMenu;
     subMenu = new wxMenu;
     subMenu->Append(XRCID("svn_explorer_ignore_file"), _("Ignore this file"));
     subMenu->Append(XRCID("svn_explorer_ignore_file_pattern"), _("Ignore this file pattern"));
-    menu->Append(wxID_ANY, _("Ignore"), subMenu);
+    menu->Append(wxID_ANY, _("Ignore"), subMenu);*/
 
     return menu;
 }
 
 void Subversion2::UnPlug()
 {
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &Subversion2::OnFolderContextMenu, this);
     GetManager()->GetTheApp()->Disconnect(XRCID("subversion2_settings"),
                                           wxEVT_COMMAND_MENU_SELECTED,
                                           wxCommandEventHandler(Subversion2::OnSettings),
@@ -389,7 +392,7 @@ void Subversion2::UnPlug()
         XRCID("svn_explorer_add"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnAdd), NULL, this);
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_delete"),
                                           wxEVT_COMMAND_MENU_SELECTED,
-                                          wxCommandEventHandler(Subversion2::OnDelete),
+                                          wxCommandEventHandler(Subversion2::OnDeleteFolder),
                                           NULL,
                                           this);
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_rename"),
@@ -474,6 +477,8 @@ void Subversion2::EnsureVisible()
 
 void Subversion2::DoInitialize()
 {
+    m_svnBitmap = GetManager()->GetStdIcons()->LoadBitmap(wxT("subversion/16/svn"));
+    
     // create tab (possibly detached)
     Notebook* book = m_mgr->GetOutputPaneNotebook();
     if(IsSubversionViewDetached()) {
@@ -484,10 +489,7 @@ void Subversion2::DoInitialize()
         cp->SetChildNoReparent(m_subversionView);
     } else {
         m_subversionView = new SubversionView(book, this);
-        book->AddPage(m_subversionView,
-                      svnCONSOLE_TEXT,
-                      false,
-                      GetManager()->GetStdIcons()->LoadBitmap(wxT("subversion/16/svn")));
+        book->AddPage(m_subversionView, svnCONSOLE_TEXT, false, m_svnBitmap);
     }
 
     DoSetSSH();
@@ -564,22 +566,31 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 
 void Subversion2::OnCommit(wxCommandEvent& event)
 {
-    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
-    DoCommit(item.m_paths, "", event);
+    // Coming from file explorer
+    wxArrayString paths;
+    paths.Add(".");
+    DoCommit(paths, m_selectedFolder, event);
 }
 
-void Subversion2::OnDelete(wxCommandEvent& event)
+void Subversion2::OnDeleteFolder(wxCommandEvent& event)
 {
+    // Coming from file explorer
     wxString command;
     wxString loginString;
-    if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
+    if(LoginIfNeeded(event, m_selectedFolder, loginString) == false) {
         return;
     }
+    
+    // svn delete --force <folder-name>
+    wxFileName workingDirectory(m_selectedFolder, "");
+    wxString folderName = workingDirectory.GetDirs().Last();
+    ::WrapWithQuotes(folderName);
+
+    workingDirectory.RemoveLastDir();
+
     bool nonInteractive = GetNonInteractiveMode(event);
-    command << GetSvnExeName(nonInteractive) << loginString << wxT(" delete --force ")
-            << DoGetFileExplorerFilesAsString();
-    GetConsole()->Execute(
-        command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
+    command << GetSvnExeName(nonInteractive) << loginString << wxT(" delete --force ") << folderName;
+    GetConsole()->Execute(command, workingDirectory.GetPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
 }
 
 void Subversion2::OnRevert(wxCommandEvent& event)
@@ -594,19 +605,20 @@ void Subversion2::OnRevert(wxCommandEvent& event)
 
 void Subversion2::OnUpdate(wxCommandEvent& event)
 {
+    // Coming from explorer view
     wxString command;
     wxString loginString;
-    if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
+    if(LoginIfNeeded(event, m_selectedFolder, loginString) == false) {
         return;
     }
+    // svn update .
     bool nonInteractive = GetNonInteractiveMode(event);
     command << GetSvnExeName(nonInteractive) << loginString << wxT(" update ");
     AddCommandLineOption(command, kOpt_ForceInteractive);
-    command << DoGetFileExplorerFilesAsString();
+    command << ".";
 
     // Execute the command, but with console visible
-    GetConsole()->Execute(
-        command, DoGetFileExplorerItemPath(), new SvnUpdateHandler(this, event.GetId(), this), true, true);
+    GetConsole()->Execute(command, m_selectedFolder, new SvnUpdateHandler(this, event.GetId(), this), true, true);
 }
 
 void Subversion2::OnDiff(wxCommandEvent& event)
@@ -914,7 +926,7 @@ bool Subversion2::IsSubversionViewDetached()
 void Subversion2::OnSelectAsView(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GetSvnView()->BuildTree(DoGetFileExplorerItemPath());
+    GetSvnView()->BuildTree(m_selectedFolder);
 }
 
 void Subversion2::OnBlame(wxCommandEvent& event) { Blame(event, DoGetFileExplorerFiles()); }
@@ -985,7 +997,7 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString& workingDire
 
     wxArrayString xmlArr;
     ::WrapInShell(svnInfoCommand);
-    
+
     wxLog::EnableLogging(false);
     IProcess::Ptr_t proc(::CreateSyncProcess(svnInfoCommand, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
     if(proc) {
@@ -1225,8 +1237,9 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
         wxArrayString actualFiles = dlg.GetPaths();
         if(actualFiles.IsEmpty()) return;
 
-        for(size_t i = 0; i < actualFiles.GetCount(); i++) {
-            command << wxT("\"") << actualFiles.Item(i) << wxT("\" ");
+        for(size_t i = 0; i < actualFiles.GetCount(); ++i) {
+            ::WrapWithQuotes(actualFiles.Item(i));
+            command << actualFiles.Item(i) << " ";
         }
 
         command << wxT(" -m \"");
@@ -1626,4 +1639,11 @@ void Subversion2::AddCommandLineOption(wxString& command, Subversion2::eCommandL
         }
         break;
     }
+}
+
+void Subversion2::OnFolderContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    m_selectedFolder = event.GetPath();
+    event.GetMenu()->Append(wxID_ANY, "Svn", CreateFileExplorerPopMenu())->SetBitmap(m_svnBitmap);
 }

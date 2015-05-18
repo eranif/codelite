@@ -53,7 +53,9 @@ private:
     CommitMessagesCache m_commitMessagesCache;
     bool m_skipRemoveFilesDlg;
     int m_clientVersion;
-
+    wxString m_selectedFolder; // In the explorer view
+    wxBitmap m_svnBitmap;
+    
 protected:
     void OnSettings(wxCommandEvent& event);
 
@@ -66,7 +68,7 @@ public:
      * @brief ensure that the Subversion Page is view
      */
     void EnsureVisible();
-    
+
 protected:
     ///////////////////////////////////////////////////////////
     // File Explorer event handlers
@@ -74,7 +76,7 @@ protected:
     void OnCommit(wxCommandEvent& event);
     void OnUpdate(wxCommandEvent& event);
     void OnAdd(wxCommandEvent& event);
-    void OnDelete(wxCommandEvent& event);
+    void OnDeleteFolder(wxCommandEvent& event);
     void OnRevert(wxCommandEvent& event);
     void OnRevertToRevision(wxCommandEvent& event);
     void OnDiff(wxCommandEvent& event);
@@ -96,6 +98,7 @@ protected:
     void OnGetCompileLine(clBuildEvent& event);
     void OnWorkspaceConfigChanged(wxCommandEvent& event);
     void OnFileRemoved(clCommandEvent& event);
+    void OnFolderContextMenu(clContextMenuEvent& event);
 
     wxMenu* CreateFileExplorerPopMenu();
     bool IsSubversionViewDetached();
@@ -109,7 +112,7 @@ public:
     void
     DoRename(const wxString& workingDirectory, const wxString& oldname, const wxString& newname, wxCommandEvent& event);
     void DoCommit(const wxArrayString& files, const wxString& workingDirectory, wxCommandEvent& event);
-    
+
 public:
     Subversion2(IManager* manager);
     ~Subversion2();
@@ -152,9 +155,9 @@ public:
                            bool excludeBin,
                            const wxString& excludeExtensions,
                            const wxString& output);
-    
-    void AddCommandLineOption(wxString &command, Subversion2::eCommandLineOption opt);
-    
+
+    void AddCommandLineOption(wxString& command, Subversion2::eCommandLineOption opt);
+
 protected:
     void DoInitialize();
     void DoSetSSH();

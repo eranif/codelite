@@ -44,8 +44,9 @@ public:
 public:
     PHPProject()
         : m_isActive(false)
-        , m_importFileSpec("*.php;*.html;*.phtml;*.inc;*.css;*.js;.htaccess")
-        , m_excludeFolders(".git;.svn;.codelite")
+        , m_importFileSpec(
+              "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess")
+        , m_excludeFolders(".git;.svn;.codelite;.clang")
     {
     }
     ~PHPProject() {}

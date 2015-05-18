@@ -395,7 +395,7 @@ void PHPWorkspace::Save()
     if(!IsOpen()) {
         return;
     }
-    // seriaize the workspace and store it to disk
+    // serialize the workspace and store it to disk
     JSONRoot root(cJSON_Object);
     JSONElement ele = root.toElement();
     ToJSON(ele);

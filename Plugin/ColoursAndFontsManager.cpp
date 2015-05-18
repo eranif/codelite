@@ -231,7 +231,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
     }
-
+    
+    // Add *.scss file extension to the css lexer
+    if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".scss")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.scss");
+    }
+    
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 

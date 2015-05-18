@@ -37,7 +37,7 @@ LexerConf::Ptr_t EclipsePHPThemeImporter::Import(const wxFileName& eclipseXmlFil
     AddProperty(lexer, wxSTC_H_COMMENT, "HTML Comment", m_multiLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_H_ENTITY, "HTML Entity", m_foreground.colour, m_background.colour);
 
-    // Embedded Javascript
+    // Embedded JavaScript
     AddProperty(lexer, wxSTC_HJ_START, "JS Start", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_HJ_DEFAULT, "JS Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_HJ_COMMENT, "JS Comment", m_singleLineComment.colour, m_background.colour);

@@ -2471,7 +2471,7 @@ void GitPlugin::OnCommandOutput(clCommandEvent& event)
         if(!pass.IsEmpty()) {
             event.SetString(pass);
         }
-    } else if(processOutput.Contains("fatal:")) {
+    } else if(processOutput.Contains("fatal:") || processOutput.Contains("not a git repository")) {
         // prompt the user for the error
         ::wxMessageBox(processOutput, "Git", wxICON_WARNING | wxCENTER | wxOK);
     }

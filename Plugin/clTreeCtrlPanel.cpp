@@ -138,7 +138,7 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent)
     // Get the top level folders
     wxDir dir(folderPath);
     if(!dir.IsOpened()) return;
-
+    wxBusyCursor bc;
     wxString filename;
     bool cont = dir.GetFirst(&filename, wxEmptyString);
     while(cont) {

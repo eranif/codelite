@@ -26,12 +26,6 @@
 #include <wx/button.h>
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
-#if wxVERSION_NUMBER >= 2900
-#include <wx/persist.h>
-#include <wx/persist/toplevel.h>
-#include <wx/persist/bookctrl.h>
-#include <wx/persist/treebook.h>
-#endif
 
 class WorkspaceSettingsBase : public wxDialog
 {
@@ -53,17 +47,6 @@ protected:
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxStaticText* GetStaticText4() { return m_staticText4; }
-    wxChoice* GetChoiceEnvSets() { return m_choiceEnvSets; }
-    wxStaticLine* GetStaticline2() { return m_staticline2; }
-    wxStaticText* GetStaticText6() { return m_staticText6; }
-    wxTextCtrl* GetTextCtrlWspEnvVars() { return m_textCtrlWspEnvVars; }
-    wxPanel* GetPanelEnv() { return m_panelEnv; }
-    wxNotebook* GetNotebook1() { return m_notebook1; }
-    wxStaticLine* GetStaticline1() { return m_staticline1; }
-    wxButton* GetButtonOk() { return m_buttonOk; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
     WorkspaceSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~WorkspaceSettingsBase();
 };
@@ -81,20 +64,12 @@ protected:
     wxTextCtrl* m_textCtrlMacros;
     wxCheckBox* m_checkBoxCpp11;
     wxCheckBox* m_checkBoxCpp14;
+    wxCheckBox* m_checkBoxSTWF;
 
 protected:
     virtual void OnCCContentModified(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText5() { return m_staticText5; }
-    wxTextCtrl* GetTextCtrlSearchPaths() { return m_textCtrlSearchPaths; }
-    wxPanel* GetPanel8() { return m_panel8; }
-    wxStaticText* GetStaticText12() { return m_staticText12; }
-    wxTextCtrl* GetTextCtrlMacros() { return m_textCtrlMacros; }
-    wxCheckBox* GetCheckBoxCpp11() { return m_checkBoxCpp11; }
-    wxCheckBox* GetCheckBoxCpp14() { return m_checkBoxCpp14; }
-    wxPanel* GetPanel6() { return m_panel6; }
-    wxSplitterWindow* GetSplitter1() { return m_splitter1; }
     CodeCompletionBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~CodeCompletionBasePage();
 };

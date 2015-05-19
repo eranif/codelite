@@ -159,9 +159,15 @@ bool Workspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
             }
         }
         else if(child->GetName() == wxT("WorkspaceParserPaths")) {
-            
-            SyncToLocalWorkspaceSTParserPaths();
-
+            wxString swtlw = wxEmptyString;
+            if( (swtlw = m_doc.GetRoot()->GetAttribute(wxT("SWTLW"))) == wxEmptyString) {
+               LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() & !LocalWorkspace::EnableSTWF);
+            } else {
+                if(swtlw == wxT("Yes")) {
+                    LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() | LocalWorkspace::EnableSTWF);
+                    SyncToLocalWorkspaceSTParserPaths();
+                }
+            }
         }
         child = child->GetNext();
     }
@@ -266,7 +272,14 @@ bool Workspace::CreateWorkspace(const wxString& name, const wxString& path, wxSt
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddProperty(wxT("Name"), name);
     m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
-
+	
+	m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
+	if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSTWF ) {
+		m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
+	} else {
+		m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "No");		
+	}
+	
     SaveXmlFile();
     // create an empty build matrix
     DoUpdateBuildMatrix();
@@ -678,8 +691,19 @@ bool Workspace::RemoveVirtualDirectory(const wxString& vdFullPath, wxString& err
 
 bool Workspace::SaveXmlFile()
 {
-    SyncToLocalWorkspaceSTParserPaths();
-    
+    // We first remove the Save Workspace To Local Workspace (SWTLW) attribute
+    // and then check the current state in the Code Completion tab. Then
+    // we read new path values from the LW and set the appropiate attribute value.
+    if(m_doc.GetRoot()->GetAttribute(wxT("SWTLW")) != wxEmptyString) {
+        m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
+    }
+    if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSTWF ) {
+        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
+        SyncFromLocalWorkspaceSTParserPaths();
+    } else {
+        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "No");
+    }
+
     bool ok = m_doc.Save(m_fileName.GetFullPath());
     SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
     EventNotifier::Get()->PostFileSavedEvent(m_fileName.GetFullPath());

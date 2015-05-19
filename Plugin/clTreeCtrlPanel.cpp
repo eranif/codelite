@@ -91,7 +91,12 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     }
 }
 
-void clTreeCtrlPanel::OnItemActivated(wxTreeEvent& event) {}
+void clTreeCtrlPanel::OnItemActivated(wxTreeEvent& event) 
+{
+    event.Skip();
+    wxCommandEvent dummy;
+    OnOpenFile(dummy);
+}
 
 void clTreeCtrlPanel::OnItemExpanding(wxTreeEvent& event)
 {
@@ -189,14 +194,12 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
 wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxString& path)
 {
     // if we already have this folder opened, dont re-add it
-    wxTreeItemIdValue cookie;
-    wxTreeItemId child = GetTreeCtrl()->GetFirstChild(GetTreeCtrl()->GetRootItem(), cookie);
-    while(child.IsOk()) {
-        clTreeCtrlData* clientData = GetItemData(child);
-        if(path == clientData->GetPath()) {
-            return child;
-        }
-        child = GetTreeCtrl()->GetNextChild(GetTreeCtrl()->GetRootItem(), cookie);
+    wxArrayString topFolders;
+    wxArrayTreeItemIds topFoldersItems;
+    GetTopLevelFolders(topFolders, topFoldersItems);
+    int where = topFolders.Index(path);
+    if(where != wxNOT_FOUND) {
+        return topFoldersItems.Item(where);
     }
     
     // Add the folder
@@ -374,4 +377,35 @@ void clTreeCtrlPanel::OnOpenFile(wxCommandEvent& event)
 
 void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event)
 {
+}
+
+bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
+{
+    wxArrayString topFolders;
+    wxArrayTreeItemIds topFoldersItems;
+    GetTopLevelFolders(topFolders, topFoldersItems);
+    
+    int where = wxNOT_FOUND;
+    wxString fullpath = filename.GetFullPath();
+    for(size_t i=0; i<topFolders.size(); ++i) {
+        if(fullpath.StartsWith(topFolders.Item(i))) {
+            where = i;
+            break;
+        }
+    }
+    
+    // Could not find a folder that matches the filename
+    if(where == wxNOT_FOUND) return false;
+}
+
+void clTreeCtrlPanel::GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items)
+{
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = GetTreeCtrl()->GetFirstChild(GetTreeCtrl()->GetRootItem(), cookie);
+    while(child.IsOk()) {
+        clTreeCtrlData* clientData = GetItemData(child);
+        paths.Add(clientData->GetPath());
+        items.Add(child);
+        child = GetTreeCtrl()->GetNextChild(GetTreeCtrl()->GetRootItem(), cookie);
+    }
 }

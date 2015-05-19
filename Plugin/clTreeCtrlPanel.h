@@ -32,11 +32,19 @@ public:
      * @param files [output]
      */
     void GetSelections(wxArrayString& folders, wxArrayString& files);
+    
+    /**
+     * @brief select a given filename in the tree. Expand the tree if needed
+     */
+    bool ExpandToFile(const wxFileName& filename);
 
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnItemExpanding(wxTreeEvent& event);
+    
+    void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items);
+    
     /**
      * @brief ensure that item is selected (single selection)
      */

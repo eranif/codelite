@@ -158,6 +158,11 @@ bool Workspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
                 removedChildren.push_back(child);
             }
         }
+        else if(child->GetName() == wxT("WorkspaceParserPaths")) {
+            
+            SyncToLocalWorkspaceSTParserPaths();
+
+        }
         child = child->GetNext();
     }
 
@@ -673,12 +678,74 @@ bool Workspace::RemoveVirtualDirectory(const wxString& vdFullPath, wxString& err
 
 bool Workspace::SaveXmlFile()
 {
+    SyncToLocalWorkspaceSTParserPaths();
+    
     bool ok = m_doc.Save(m_fileName.GetFullPath());
     SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
     EventNotifier::Get()->PostFileSavedEvent(m_fileName.GetFullPath());
 
     DoUpdateBuildMatrix();
     return ok;
+}
+
+void Workspace::SyncToLocalWorkspaceSTParserPaths()
+{
+    wxArrayString inclduePaths;
+    wxArrayString excludePaths;
+    wxXmlNode* workspaceInclPaths = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserPaths"));
+    if(workspaceInclPaths) {
+        wxXmlNode* child = workspaceInclPaths->GetChildren();
+        while(child) {
+            if(child->GetName() == wxT("Exclude")) {
+                wxString path = child->GetPropVal(wxT("Path"), wxT(""));
+                path.Trim().Trim(false);
+                if(path.IsEmpty() == false) {
+                    excludePaths.Add(path);
+                }
+            }
+
+            else if(child->GetName() == wxT("Include")) {
+                wxString path = child->GetPropVal(wxT("Path"), wxT(""));
+                path.Trim().Trim(false);
+                if(path.IsEmpty() == false) {
+                    inclduePaths.Add(path);
+                }
+            }
+
+            child = child->GetNext();
+        }
+        LocalWorkspaceST::Get()->SetParserPaths(inclduePaths, excludePaths);
+    } 
+}
+
+void Workspace::SyncFromLocalWorkspaceSTParserPaths()
+{
+    //
+    // Here we just get the parser paths from the LocalWorkspaceST and write it into the worspace project file.
+    //
+    wxXmlNode* workspaceInclPaths = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserPaths"));
+    if(workspaceInclPaths) {
+        m_doc.GetRoot()->RemoveChild(workspaceInclPaths);
+        delete workspaceInclPaths;
+    }
+
+    //
+    // Get workspace parse paths from local workspace file.
+    //
+    wxArrayString inclduePaths;
+    wxArrayString excludePaths;
+    LocalWorkspaceST::Get()->GetParserPaths(inclduePaths, excludePaths);
+
+    workspaceInclPaths = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("WorkspaceParserPaths"));
+    for(size_t i = 0; i < inclduePaths.GetCount(); i++) {
+        wxXmlNode* child = new wxXmlNode(workspaceInclPaths, wxXML_ELEMENT_NODE, wxT("Include"));
+        child->AddProperty(wxT("Path"), inclduePaths.Item(i));
+    }
+
+    for(size_t i = 0; i < excludePaths.GetCount(); i++) {
+        wxXmlNode* child = new wxXmlNode(workspaceInclPaths, wxXML_ELEMENT_NODE, wxT("Exclude"));
+        child->AddProperty(wxT("Path"), excludePaths.Item(i));
+    }
 }
 
 void Workspace::Save()

@@ -12,6 +12,9 @@
 #include <wx/richmsgdlg.h>
 #include "event_notifier.h"
 #include "fileutils.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include <wx/wupdlock.h>
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
@@ -23,9 +26,15 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     Bind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
     GetTreeCtrl()->AddRoot(_("Folders"), wxNOT_FOUND, wxNOT_FOUND, new clTreeCtrlData(clTreeCtrlData::kRoot));
     GetTreeCtrl()->AssignImageList(m_bmpLoader.MakeStandardMimeImageList());
+
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
 }
 
-clTreeCtrlPanel::~clTreeCtrlPanel() { Unbind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this); }
+clTreeCtrlPanel::~clTreeCtrlPanel()
+{
+    Unbind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
+}
 
 void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
 {
@@ -45,12 +54,12 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Append(XRCID("tree_ctrl_new_file"), _("New File..."));
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_delete_folder"), _("Delete"));
-        
-        // Now that we added the basic menu, let the plugin 
+
+        // Now that we added the basic menu, let the plugin
         // adjust it
         wxArrayString files, folders;
         GetSelections(folders, files);
-        
+
         clContextMenuEvent dirMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
         dirMenuEvent.SetMenu(&menu);
         dirMenuEvent.SetPath(cd->GetPath());
@@ -72,17 +81,17 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Append(XRCID("tree_ctrl_rename_file"), _("Rename"));
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_delete_file"), _("Delete"));
-        
-        // Now that we added the basic menu, let the plugin 
+
+        // Now that we added the basic menu, let the plugin
         // adjust it
         wxArrayString files, folders;
         GetSelections(folders, files);
-        
+
         clContextMenuEvent fileMenuEvent(wxEVT_CONTEXT_MENU_FILE);
         fileMenuEvent.SetMenu(&menu);
         fileMenuEvent.SetStrings(files);
         EventNotifier::Get()->ProcessEvent(fileMenuEvent);
-        
+
         // Connect events
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFile, this, XRCID("tree_ctrl_open_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
@@ -91,7 +100,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     }
 }
 
-void clTreeCtrlPanel::OnItemActivated(wxTreeEvent& event) 
+void clTreeCtrlPanel::OnItemActivated(wxTreeEvent& event)
 {
     event.Skip();
     wxCommandEvent dummy;
@@ -188,7 +197,13 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
     if(imgIdx == wxNOT_FOUND) {
         imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeText);
     }
-    return GetTreeCtrl()->AppendItem(parent, filename.GetFullName(), imgIdx, imgIdx, cd);
+    wxTreeItemId fileItem = GetTreeCtrl()->AppendItem(parent, filename.GetFullName(), imgIdx, imgIdx, cd);
+    // Add this entry to the index
+    clTreeCtrlData* parentData = GetItemData(parent);
+    if(parentData->GetIndex()) {
+        parentData->GetIndex()->Add(filename.GetFullName(), fileItem);
+    }
+    return fileItem;
 }
 
 wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxString& path)
@@ -201,7 +216,7 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     if(where != wxNOT_FOUND) {
         return topFoldersItems.Item(where);
     }
-    
+
     // Add the folder
     clTreeCtrlData* cd = new clTreeCtrlData(clTreeCtrlData::kFolder);
     cd->SetPath(path);
@@ -216,6 +231,12 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     }
     int imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder);
     wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgIdx, cd);
+
+    // Add this entry to the index
+    clTreeCtrlData* parentData = GetItemData(parent);
+    if(parentData->GetIndex()) {
+        parentData->GetIndex()->Add(displayName, itemFolder);
+    }
 
     // Append the dummy item
     GetTreeCtrl()->AppendItem(itemFolder, "Dummy", -1, -1, new clTreeCtrlData(clTreeCtrlData::kDummy));
@@ -273,6 +294,9 @@ void clTreeCtrlPanel::OnDeleteFolder(wxCommandEvent& event)
     dialog.SetYesNoLabels(_("Delete Folder"), _("Don't Delete"));
     if(dialog.ShowModal() == wxID_YES) {
         if(wxFileName::Rmdir(cd->GetPath(), wxPATH_RMDIR_RECURSIVE)) {
+            // Remove this item from its parent cache
+            UpdateItemDeleted(item);
+            // Remove the item from the UI
             GetTreeCtrl()->Delete(item);
         }
     }
@@ -284,13 +308,13 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     clTreeCtrlData* cd = GetItemData(item);
     CHECK_PTR_RET(cd);
     CHECK_COND_RET(cd->IsFolder());
-    
+
     wxString filename =
         ::clGetTextFromUser(_("New File"), _("Set the file name:"), "Untitled.txt", wxStrlen("Untitled"));
     if(filename.IsEmpty()) return; // user cancelled
-    
+
     wxFileName file(cd->GetPath(), filename);
-    
+
     // Write the file content
     if(!FileUtils::WriteFileContent(file, "")) return;
     wxTreeItemId newFile = DoAddFile(item, file.GetFullPath());
@@ -298,23 +322,22 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
 }
 
-void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event) 
+void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event)
 {
     wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
     clTreeCtrlData* cd = GetItemData(item);
     CHECK_PTR_RET(cd);
     CHECK_COND_RET(cd->IsFolder());
-    
-    wxString foldername =
-        ::clGetTextFromUser(_("New Folder"), _("Set the folder name:"), "New Folder");
+
+    wxString foldername = ::clGetTextFromUser(_("New Folder"), _("Set the folder name:"), "New Folder");
     if(foldername.IsEmpty()) return; // user cancelled
-    
+
     wxFileName file(cd->GetPath(), "");
     file.AppendDir(foldername);
-    
+
     // Create the folder
     wxFileName::Mkdir(file.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    
+
     // Add it to the tree view
     wxTreeItemId newFile = DoAddFolder(item, file.GetPath());
     GetTreeCtrl()->SortChildren(item);
@@ -353,49 +376,103 @@ void clTreeCtrlPanel::SelectItem(const wxTreeItemId& item)
     CHECK_ITEM_RET(item);
     wxArrayTreeItemIds items;
     if(GetTreeCtrl()->GetSelections(items)) {
-        for(size_t i=0; i<items.size(); ++i) {
+        for(size_t i = 0; i < items.size(); ++i) {
             GetTreeCtrl()->SelectItem(items.Item(i), false);
         }
     }
-    
+
     GetTreeCtrl()->SelectItem(item);
+    GetTreeCtrl()->EnsureVisible(item);
 }
 
 void clTreeCtrlPanel::OnDeleteFile(wxCommandEvent& event)
 {
+    wxArrayString folders, files;
+    wxArrayTreeItemIds folderItems, fileItems;
+    GetSelections(folders, folderItems, files, fileItems);
+    if(files.empty()) return;
+    
+    wxString message;
+    message << _("Are you sure you want to delete the selected files?");
+
+    wxRichMessageDialog dialog(EventNotifier::Get()->TopFrame(),
+                               message,
+                               _("Confirm"),
+                               wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING);
+    dialog.SetYesNoLabels(_("Delete Files"), _("No"));
+    
+    wxWindowUpdateLocker locker(GetTreeCtrl());
+    wxArrayTreeItemIds deletedItems;
+    if(dialog.ShowModal() == wxID_YES) {
+        wxLogNull nl;
+        for(size_t i=0; i<files.size(); ++i) {
+            if(::wxRemoveFile(files.Item(i))) {
+                deletedItems.Add(fileItems.Item(i));
+            }
+        }
+    }
+    
+    // Update the UI
+    for(size_t i=0; i<deletedItems.size(); ++i) {
+        // Before we delete the item from the tree, update the parent cache
+        UpdateItemDeleted(deletedItems.Item(i));
+        // And now remove the item from the tree
+        GetTreeCtrl()->Delete(deletedItems.Item(i));
+    }
 }
 
 void clTreeCtrlPanel::OnOpenFile(wxCommandEvent& event)
 {
     wxArrayString folders, files;
     GetSelections(folders, files);
-    
-    for(size_t i=0; i<files.size(); ++i) {
+
+    for(size_t i = 0; i < files.size(); ++i) {
         clGetManager()->OpenFile(files.Item(i));
     }
 }
 
-void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event)
-{
-}
+void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event) {}
 
 bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
 {
     wxArrayString topFolders;
     wxArrayTreeItemIds topFoldersItems;
     GetTopLevelFolders(topFolders, topFoldersItems);
-    
+
     int where = wxNOT_FOUND;
     wxString fullpath = filename.GetFullPath();
-    for(size_t i=0; i<topFolders.size(); ++i) {
+    for(size_t i = 0; i < topFolders.size(); ++i) {
         if(fullpath.StartsWith(topFolders.Item(i))) {
             where = i;
             break;
         }
     }
-    
+
     // Could not find a folder that matches the filename
     if(where == wxNOT_FOUND) return false;
+    wxString topFolder = topFolders.Item(where);
+    wxTreeItemId closestItem = topFoldersItems.Item(where);
+    fullpath.Remove(0, topFolder.length());
+    wxFileName left(fullpath);
+
+    wxArrayString parts = left.GetDirs();
+    parts.Add(filename.GetFullName());
+    clTreeCtrlData* d = GetItemData(closestItem);
+    while(!parts.IsEmpty()) {
+        if(!d->GetIndex()) return false; // ??
+        wxTreeItemId child = d->GetIndex()->Find(parts.Item(0));
+        if(!child.IsOk()) break;
+        closestItem = child;
+        d = GetItemData(closestItem);
+        parts.RemoveAt(0);
+    }
+
+    if(parts.IsEmpty()) {
+        // we found our file!
+        SelectItem(closestItem);
+        return true;
+    }
+    return false;
 }
 
 void clTreeCtrlPanel::GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items)
@@ -407,5 +484,27 @@ void clTreeCtrlPanel::GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemId
         paths.Add(clientData->GetPath());
         items.Add(child);
         child = GetTreeCtrl()->GetNextChild(GetTreeCtrl()->GetRootItem(), cookie);
+    }
+}
+
+void clTreeCtrlPanel::OnActiveEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    if(clGetManager()->GetActiveEditor()) {
+        ExpandToFile(clGetManager()->GetActiveEditor()->GetFileName());
+    }
+}
+
+void clTreeCtrlPanel::UpdateItemDeleted(const wxTreeItemId& item)
+{
+    wxTreeItemId parent = GetTreeCtrl()->GetItemParent(item);
+    CHECK_ITEM_RET(parent);
+    
+    clTreeCtrlData* parentData = GetItemData(parent);
+    wxString text = GetTreeCtrl()->GetItemText(item);
+    
+    // Update the parent cache
+    if(parentData->GetIndex()) {
+        parentData->GetIndex()->Delete(text);
     }
 }

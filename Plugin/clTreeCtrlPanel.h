@@ -32,7 +32,7 @@ public:
      * @param files [output]
      */
     void GetSelections(wxArrayString& folders, wxArrayString& files);
-    
+
     /**
      * @brief select a given filename in the tree. Expand the tree if needed
      */
@@ -42,23 +42,25 @@ protected:
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnItemExpanding(wxTreeEvent& event);
+    void OnActiveEditorChanged(wxCommandEvent& event);
     
+    void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items);
-    
+
     /**
      * @brief ensure that item is selected (single selection)
      */
     void SelectItem(const wxTreeItemId& item);
     /**
-     * @brief return list of selected files and folders. In addition return the 
-     * tree ctrl items. You can always assume that the folders and the folderItems are of the same 
+     * @brief return list of selected files and folders. In addition return the
+     * tree ctrl items. You can always assume that the folders and the folderItems are of the same
      * size. Same for the file arrays
      */
     void GetSelections(wxArrayString& folders,
                        wxArrayTreeItemIds& folderItems,
                        wxArrayString& files,
                        wxArrayTreeItemIds& fileItems);
-                       
+
     void OnCloseFolder(wxCommandEvent& event);
     void OnNewFolder(wxCommandEvent& event);
     void OnNewFile(wxCommandEvent& event);

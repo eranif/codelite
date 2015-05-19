@@ -414,7 +414,7 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
     boxSizer151 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer151);
     
-    m_treeCtrl = new clFileViewerTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxBORDER_STATIC);
+    m_treeCtrl = new clFileViewerTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxBORDER_STATIC);
     
     boxSizer151->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 0);
     

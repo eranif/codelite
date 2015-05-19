@@ -68,7 +68,7 @@ void FileExplorer::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
     m_view = new clTreeCtrlPanel(this);
-    mainSizer->Add(m_view, 1, wxEXPAND | wxALL, 2);
+    mainSizer->Add(m_view, 1, wxEXPAND | wxALL, 0);
     Layout();
 }
 

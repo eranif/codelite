@@ -11,7 +11,7 @@ namespace PHPStrings {
 
 const wxString PHP_WORKSPACE_EXT        = wxT("workspace");
 const wxString PHP_WORKSPACE_VIEW_TITLE = wxT("PHP");
-const wxString PHP_WORKSPACE_VIEW_LABEL = _("PHP Workspace");
+const wxString PHP_WORKSPACE_VIEW_LABEL = _("PHP");
 
 };
 

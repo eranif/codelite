@@ -7,6 +7,7 @@
 #include <wx/simplebook.h>
 #include "event_notifier.h"
 #include <algorithm>
+#include "SelectDropTargetDlg.h"
 
 DefaultWorkspacePage::DefaultWorkspacePage(wxWindow* parent)
     : DefaultWorkspacePageBase(parent)
@@ -30,20 +31,6 @@ void DefaultWorkspacePage::OnFolderDropped(clCommandEvent& event)
 
 void DefaultWorkspacePage::DoDropFolders(const wxArrayString& folders)
 {
-    wxArrayString options;
-    std::map<wxString, wxWindow*> pages = clGetManager()->GetWorkspaceView()->GetAllPages();
-    std::for_each(pages.begin(), pages.end(), [&](const std::pair<wxString, wxWindow*>& p){
-        options.Add(p.first);
-    });
-    
-    wxString userSelection =
-        ::wxGetSingleChoice(_("Choose a View"), _("Open folder"), options, 0, EventNotifier::Get()->TopFrame());
-
-    if(pages.count(userSelection) == 0) return; // user cancelled
-    wxWindow* page = pages.find(userSelection)->second;
-
-    // Propogate the event to the correct handler
-    clCommandEvent event(wxEVT_DND_FOLDER_DROPPED);
-    event.SetStrings(folders);
-    page->GetEventHandler()->AddPendingEvent(event);
+    SelectDropTargetDlg dropTargetDlg(EventNotifier::Get()->TopFrame(), folders);
+    dropTargetDlg.ShowModal();
 }

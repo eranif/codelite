@@ -3668,7 +3668,7 @@
      "m_children": [{
        "m_type": 4422,
        "proportion": 1,
-       "border": 2,
+       "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_MULTIPLE", "wxTR_HIDE_ROOT", "wxBORDER_STATIC"],

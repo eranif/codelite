@@ -270,8 +270,9 @@ class WXDLLIMPEXP_SDK LocalWorkspace
 {
 public:
     enum CC_FLAGS {
-        EnableCpp11 = 0x00000001,
-        EnableCpp14 = 0x00000002,
+        EnableCpp11	= 0x00000001,
+        EnableCpp14	= 0x00000002,
+        EnableSWTLW	= 0x00000004    // Save Parse folders to Workspace file.
     };
     
 private:

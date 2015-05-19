@@ -379,6 +379,9 @@ private:
     void RemoveProjectFromBuildMatrix(ProjectPtr prj);
 
     bool SaveXmlFile();
+    
+    void SyncToLocalWorkspaceSTParserPaths();
+    void SyncFromLocalWorkspaceSTParserPaths();
 };
 
 class WXDLLIMPEXP_SDK WorkspaceST

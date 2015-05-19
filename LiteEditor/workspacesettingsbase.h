@@ -64,7 +64,7 @@ protected:
     wxTextCtrl* m_textCtrlMacros;
     wxCheckBox* m_checkBoxCpp11;
     wxCheckBox* m_checkBoxCpp14;
-    wxCheckBox* m_checkBoxSTWF;
+    wxCheckBox* m_checkBoxSWTLW;
 
 protected:
     virtual void OnCCContentModified(wxCommandEvent& event) { event.Skip(); }

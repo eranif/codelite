@@ -2023,7 +2023,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_checkBoxSTWF"
+                 "m_value": "m_checkBoxSWTLW"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",

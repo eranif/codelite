@@ -161,10 +161,10 @@ bool Workspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
         else if(child->GetName() == wxT("WorkspaceParserPaths")) {
             wxString swtlw = wxEmptyString;
             if( (swtlw = m_doc.GetRoot()->GetAttribute(wxT("SWTLW"))) == wxEmptyString) {
-               LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() & !LocalWorkspace::EnableSTWF);
+               LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() & !LocalWorkspace::EnableSWTLW);
             } else {
                 if(swtlw == wxT("Yes")) {
-                    LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() | LocalWorkspace::EnableSTWF);
+                    LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() | LocalWorkspace::EnableSWTLW);
                     SyncToLocalWorkspaceSTParserPaths();
                 }
             }
@@ -274,7 +274,7 @@ bool Workspace::CreateWorkspace(const wxString& name, const wxString& path, wxSt
     m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
 	
 	m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
-	if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSTWF ) {
+	if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW ) {
 		m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
 	} else {
 		m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "No");		
@@ -697,7 +697,7 @@ bool Workspace::SaveXmlFile()
     if(m_doc.GetRoot()->GetAttribute(wxT("SWTLW")) != wxEmptyString) {
         m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
     }
-    if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSTWF ) {
+    if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW ) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
         SyncFromLocalWorkspaceSTParserPaths();
     } else {

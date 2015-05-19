@@ -168,11 +168,11 @@ CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, 
     
     boxSizer3->Add(m_checkBoxCpp14, 0, wxALL, 5);
     
-    m_checkBoxSTWF = new wxCheckBox(m_panel6, wxID_ANY, _("Sync to Workspace File"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxSTWF->SetValue(false);
-    m_checkBoxSTWF->SetToolTip(_("When enabled search paths folders for Code Completion will be synced between the Workspace file and the local search paths database."));
+    m_checkBoxSWTLW = new wxCheckBox(m_panel6, wxID_ANY, _("Sync to Workspace File"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxSWTLW->SetValue(false);
+    m_checkBoxSWTLW->SetToolTip(_("When enabled search paths folders for Code Completion will be synced between the Workspace file and the local search paths database."));
     
-    boxSizer3->Add(m_checkBoxSTWF, 0, wxALL, 5);
+    boxSizer3->Add(m_checkBoxSWTLW, 0, wxALL, 5);
     
     SetName(wxT("CodeCompletionBasePage"));
     SetSizeHints(500,300);

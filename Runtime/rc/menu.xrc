@@ -798,10 +798,10 @@
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_shell_from_filepath">
-            <label>Open Shell at File Path</label>
+            <label>Open Shell</label>
         </object>
         <object class="wxMenuItem" name="open_file_explorer">
-            <label>Open File Explorer at File Path</label>
+            <label>Open Containing Folder</label>
         </object>
     </object>
 

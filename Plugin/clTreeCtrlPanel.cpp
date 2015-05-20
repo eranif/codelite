@@ -50,10 +50,15 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
             menu.AppendSeparator();
         }
 
-        menu.Append(XRCID("tree_ctrl_new_folder"), _("New Folder..."));
-        menu.Append(XRCID("tree_ctrl_new_file"), _("New File..."));
+        menu.Append(XRCID("tree_ctrl_new_folder"), _("New Folder"));
+        menu.Append(XRCID("tree_ctrl_new_file"), _("New File"));
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_delete_folder"), _("Delete"));
+        menu.AppendSeparator();
+        menu.Append(XRCID("tree_ctrl_find_in_files_folder"), _("Find in Files"));
+        menu.AppendSeparator();
+        menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
+        menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
 
         // Now that we added the basic menu, let the plugin
         // adjust it
@@ -70,6 +75,9 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFolder, this, XRCID("tree_ctrl_new_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFile, this, XRCID("tree_ctrl_new_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteFolder, this, XRCID("tree_ctrl_delete_folder"));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnFindInFilesFolder, this, XRCID("tree_ctrl_find_in_files_folder"));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
         PopupMenu(&menu);
 
     } else if(cd && cd->IsFile()) {
@@ -560,5 +568,34 @@ void clTreeCtrlPanel::DoRenameItem(const wxTreeItemId& item, const wxString& old
     if(parentData->GetIndex()) {
         parentData->GetIndex()->Delete(oldname);
         parentData->GetIndex()->Add(newname, item);
+    }
+}
+
+void clTreeCtrlPanel::OnFindInFilesFolder(wxCommandEvent& event)
+{
+    wxArrayString folders, files;
+    GetSelections(folders, files);
+    
+    if(folders.IsEmpty()) return;
+    clGetManager()->OpenFindInFileForPaths(folders);
+}
+
+void clTreeCtrlPanel::OnOpenContainingFolder(wxCommandEvent& event)
+{
+    wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
+    clTreeCtrlData* cd = GetItemData(item);
+
+    if(cd && cd->IsFolder()) {
+        FileUtils::OpenFileExplorer(cd->GetPath());
+    }
+}
+
+void clTreeCtrlPanel::OnOpenShellFolder(wxCommandEvent& event)
+{
+    wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
+    clTreeCtrlData* cd = GetItemData(item);
+
+    if(cd && cd->IsFolder()) {
+        FileUtils::OpenTerminal(cd->GetPath());
     }
 }

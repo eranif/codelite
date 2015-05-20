@@ -68,6 +68,10 @@ protected:
     void OnOpenFile(wxCommandEvent& event);
     void OnRenameFile(wxCommandEvent& event);
     void OnDeleteFile(wxCommandEvent& event);
+    
+    void OnFindInFilesFolder(wxCommandEvent& event);
+    void OnOpenContainingFolder(wxCommandEvent& event);
+    void OnOpenShellFolder(wxCommandEvent& event);
 
     void OnFolderDropped(clCommandEvent& event);
 

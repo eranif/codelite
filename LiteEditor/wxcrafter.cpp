@@ -1147,6 +1147,31 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
     boxSizer527 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer527);
     
+    m_banner = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_banner->SetBitmap(wxNullBitmap);
+    m_banner->SetText(_("Select View"), _("Choose the view to use for this folder from the list below"));
+    m_banner->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+    
+    boxSizer527->Add(m_banner, 0, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(400,200), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer527->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrl->AppendTextColumn(_("View"), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
+    m_stdBtnSizer543 = new wxStdDialogButtonSizer();
+    
+    boxSizer527->Add(m_stdBtnSizer543, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button545 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer543->AddButton(m_button545);
+    
+    m_button547 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button547->SetDefault();
+    m_stdBtnSizer543->AddButton(m_button547);
+    m_stdBtnSizer543->Realize();
+    
     SetName(wxT("SelectDropTargetBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -1160,8 +1185,17 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
+    // Connect events
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SelectDropTargetBaseDlg::OnSelectionActivated), NULL, this);
+    m_button547->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SelectDropTargetBaseDlg::OnOKUI), NULL, this);
+    m_button547->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectDropTargetBaseDlg::OnOK), NULL, this);
+    
 }
 
 SelectDropTargetBaseDlg::~SelectDropTargetBaseDlg()
 {
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SelectDropTargetBaseDlg::OnSelectionActivated), NULL, this);
+    m_button547->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SelectDropTargetBaseDlg::OnOKUI), NULL, this);
+    m_button547->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectDropTargetBaseDlg::OnOK), NULL, this);
+    
 }

@@ -8,40 +8,47 @@
 SelectDropTargetDlg::SelectDropTargetDlg(wxWindow* parent, const wxArrayString& folders)
     : SelectDropTargetBaseDlg(parent)
     , m_folders(folders)
+    , m_selectedView(NULL)
 {
     Initialize();
 }
 
 SelectDropTargetDlg::~SelectDropTargetDlg() {}
 
-void SelectDropTargetDlg::OnButtonSelected(wxCommandEvent& event) 
+void SelectDropTargetDlg::Initialize()
 {
-    // Propogate the event to the correct handler
-    wxCommandLinkButton* btn = dynamic_cast<wxCommandLinkButton*>(event.GetEventObject());
-    if(btn) {
-        wxWindow* page = reinterpret_cast<wxWindow*>(btn->GetClientData());
+    m_views = clGetManager()->GetWorkspaceView()->GetAllPages();
+    std::for_each(m_views.begin(), m_views.end(), [&](const std::pair<wxString, wxWindow*>& p) {
+        wxVector<wxVariant> cols;
+        cols.push_back(p.first);
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)p.second);
+    });
+}
+
+void SelectDropTargetDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->HasSelection()); }
+
+void SelectDropTargetDlg::OnOK(wxCommandEvent& event)
+{
+    event.Skip();
+    ActivateSelection();
+    EndModal(wxID_OK);
+}
+
+void SelectDropTargetDlg::OnSelectionActivated(wxDataViewEvent& event)
+{
+    ActivateSelection();
+    EndModal(wxID_OK);
+}
+
+void SelectDropTargetDlg::ActivateSelection()
+{
+    wxDataViewItem item = m_dvListCtrl->GetSelection();
+    if(item.IsOk()) {
+        wxWindow* page = reinterpret_cast<wxWindow*>(m_dvListCtrl->GetItemData(item));
         if(page) {
             clCommandEvent event(wxEVT_DND_FOLDER_DROPPED);
             event.SetStrings(m_folders);
             page->GetEventHandler()->AddPendingEvent(event);
         }
     }
-    EndModal(wxID_OK);
-}
-
-void SelectDropTargetDlg::Initialize()
-{
-    m_views = clGetManager()->GetWorkspaceView()->GetAllPages();
-    std::for_each(m_views.begin(), m_views.end(), [&](const std::pair<wxString, wxWindow*>& p) {
-        wxString label, desc;
-        label << p.first;
-        desc << _("Open the folder in the '") << label << _("' view");
-
-        wxCommandLinkButton* btn = new wxCommandLinkButton(this, wxID_ANY, label, desc);
-        GetSizer()->Add(btn, 0, wxALL | wxEXPAND, 5);
-        btn->Bind(wxEVT_BUTTON, &SelectDropTargetDlg::OnButtonSelected, this);
-        btn->SetClientData(p.second); // Associate the window with the button
-    });
-    GetSizer()->Layout();
-    GetSizer()->Fit(this);
 }

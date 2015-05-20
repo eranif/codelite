@@ -72,7 +72,9 @@ protected:
     void OnFolderDropped(clCommandEvent& event);
 
     // Helpers
-    void DoExpandItem(const wxTreeItemId& parent);
+    void DoExpandItem(const wxTreeItemId& parent, bool expand);
+    void DoRenameItem(const wxTreeItemId& item, const wxString& oldname, const wxString& newname);
+    
     bool IsTopLevelFolder(const wxTreeItemId& item);
 
     clTreeCtrlData* GetItemData(const wxTreeItemId& item);

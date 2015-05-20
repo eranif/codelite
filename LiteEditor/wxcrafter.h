@@ -464,11 +464,21 @@ class SelectDropTargetBaseDlg : public wxDialog
 {
 protected:
     wxBoxSizer* boxSizer527;
+    wxBannerWindow* m_banner;
+    wxDataViewListCtrl* m_dvListCtrl;
+    wxStdDialogButtonSizer* m_stdBtnSizer543;
+    wxButton* m_button545;
+    wxButton* m_button547;
 
 protected:
+    virtual void OnSelectionActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Choose Drop Target"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
+    wxBannerWindow* GetBanner() { return m_banner; }
+    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select View"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
     virtual ~SelectDropTargetBaseDlg();
 };
 

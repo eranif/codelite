@@ -112,7 +112,7 @@ void clTreeCtrlPanel::OnItemExpanding(wxTreeEvent& event)
     event.Skip();
     wxTreeItemId item = event.GetItem();
     CHECK_ITEM_RET(item);
-    DoExpandItem(item);
+    DoExpandItem(item, true);
 }
 
 void clTreeCtrlPanel::OnFolderDropped(clCommandEvent& event)
@@ -124,7 +124,7 @@ void clTreeCtrlPanel::OnFolderDropped(clCommandEvent& event)
     ::clGetManager()->GetWorkspaceView()->SelectPage(_("File Viewer"));
 }
 
-void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent)
+void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
 {
     clTreeCtrlData* cd = GetItemData(parent);
     CHECK_PTR_RET(cd);
@@ -169,7 +169,9 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent)
     // Sort the parent
     if(GetTreeCtrl()->ItemHasChildren(parent)) {
         GetTreeCtrl()->SortChildren(parent);
-        GetTreeCtrl()->Expand(parent);
+        if(expand) {
+            GetTreeCtrl()->Expand(parent);
+        }
         SelectItem(parent);
     }
 }
@@ -184,7 +186,7 @@ clTreeCtrlData* clTreeCtrlPanel::GetItemData(const wxTreeItemId& item)
 void clTreeCtrlPanel::AddFolder(const wxString& path)
 {
     wxTreeItemId itemFolder = DoAddFolder(GetTreeCtrl()->GetRootItem(), path);
-    DoExpandItem(itemFolder);
+    DoExpandItem(itemFolder, false);
 }
 
 wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxString& path)
@@ -391,7 +393,7 @@ void clTreeCtrlPanel::OnDeleteFile(wxCommandEvent& event)
     wxArrayTreeItemIds folderItems, fileItems;
     GetSelections(folders, folderItems, files, fileItems);
     if(files.empty()) return;
-    
+
     wxString message;
     message << _("Are you sure you want to delete the selected files?");
 
@@ -400,20 +402,20 @@ void clTreeCtrlPanel::OnDeleteFile(wxCommandEvent& event)
                                _("Confirm"),
                                wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING);
     dialog.SetYesNoLabels(_("Delete Files"), _("No"));
-    
+
     wxWindowUpdateLocker locker(GetTreeCtrl());
     wxArrayTreeItemIds deletedItems;
     if(dialog.ShowModal() == wxID_YES) {
         wxLogNull nl;
-        for(size_t i=0; i<files.size(); ++i) {
+        for(size_t i = 0; i < files.size(); ++i) {
             if(::wxRemoveFile(files.Item(i))) {
                 deletedItems.Add(fileItems.Item(i));
             }
         }
     }
-    
+
     // Update the UI
-    for(size_t i=0; i<deletedItems.size(); ++i) {
+    for(size_t i = 0; i < deletedItems.size(); ++i) {
         // Before we delete the item from the tree, update the parent cache
         UpdateItemDeleted(deletedItems.Item(i));
         // And now remove the item from the tree
@@ -431,7 +433,33 @@ void clTreeCtrlPanel::OnOpenFile(wxCommandEvent& event)
     }
 }
 
-void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event) {}
+void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event)
+{
+    wxArrayString files, folders;
+    wxArrayTreeItemIds fileItems, folderItems;
+    GetSelections(folders, folderItems, files, fileItems);
+
+    if(files.empty()) return;
+
+    // Prompt and rename each file
+    for(size_t i = 0; i < files.size(); ++i) {
+        wxFileName oldname(files.Item(i));
+
+        wxString newname =
+            ::clGetTextFromUser(_("Rename File"), _("New Name:"), oldname.GetFullName(), wxStrlen(oldname.GetName()));
+        if(!newname.IsEmpty() && (newname != oldname.GetFullName())) {
+            clTreeCtrlData* d = GetItemData(fileItems.Item(i));
+            if(d) {
+                wxFileName oldpath = d->GetPath();
+                wxFileName newpath = oldpath;
+                newpath.SetFullName(newname);
+                if(::wxRenameFile(oldpath.GetFullPath(), newpath.GetFullPath(), false)) {
+                    DoRenameItem(fileItems.Item(i), oldname.GetFullName(), newname);
+                }
+            }
+        }
+    }
+}
 
 bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
 {
@@ -499,12 +527,38 @@ void clTreeCtrlPanel::UpdateItemDeleted(const wxTreeItemId& item)
 {
     wxTreeItemId parent = GetTreeCtrl()->GetItemParent(item);
     CHECK_ITEM_RET(parent);
-    
+
     clTreeCtrlData* parentData = GetItemData(parent);
     wxString text = GetTreeCtrl()->GetItemText(item);
-    
+
     // Update the parent cache
     if(parentData->GetIndex()) {
         parentData->GetIndex()->Delete(text);
+    }
+}
+
+void clTreeCtrlPanel::DoRenameItem(const wxTreeItemId& item, const wxString& oldname, const wxString& newname)
+{
+    // Update the UI + client data
+    clTreeCtrlData* d = GetItemData(item);
+    if(d->IsFile()) {
+        wxFileName fn(d->GetPath());
+        fn.SetFullName(newname);
+        d->SetPath(fn.GetFullPath());
+    } else if(d->IsFolder()) {
+        // FIXME:
+    }
+
+    GetTreeCtrl()->SetItemText(item, newname);
+
+    // Update the parent's cache
+    wxTreeItemId parent = GetTreeCtrl()->GetItemParent(item);
+    CHECK_ITEM_RET(parent);
+    clTreeCtrlData* parentData = GetItemData(parent);
+
+    // Update the parent cache
+    if(parentData->GetIndex()) {
+        parentData->GetIndex()->Delete(oldname);
+        parentData->GetIndex()->Add(newname, item);
     }
 }

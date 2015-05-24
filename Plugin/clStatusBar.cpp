@@ -13,6 +13,7 @@
 #include "ColoursAndFontsManager.h"
 #include <algorithm>
 #include "globals.h"
+#include <wx/menu.h>
 
 #define STATUSBAR_LINE_COL_IDX 0
 #define STATUSBAR_ANIMATION_COL_IDX 1

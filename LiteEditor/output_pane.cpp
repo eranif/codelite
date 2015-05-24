@@ -40,7 +40,7 @@
 #include "wxcl_log_text_ctrl.h"
 
 #if HAS_LIBCLANG
-#   include "ClangOutputTab.h"
+#include "ClangOutputTab.h"
 #endif
 
 const wxString OutputPane::FIND_IN_FILES_WIN = _("Search");
@@ -80,7 +80,7 @@ void OutputPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_WINDOWLIST_BUTTON);
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, kNotebook_Default);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
@@ -127,8 +127,7 @@ void OutputPane::CreateGUIControls()
 #if HAS_LIBCLANG
     NewProjImgList images;
     m_clangOutputTab = new ClangOutputTab(m_book);
-    m_book->AddPage(
-        m_clangOutputTab, wxGetTranslation(CLANG_TAB), false, images.Bitmap("clang16"));
+    m_book->AddPage(m_clangOutputTab, wxGetTranslation(CLANG_TAB), false, images.Bitmap("clang16"));
 #endif
     wxTextCtrl* text = new wxTextCtrl(m_book,
                                       wxID_ANY,
@@ -159,13 +158,12 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
     if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 
         // Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
-        size_t cursel(m_book->GetSelection());
-        if(cursel != Notebook::npos && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
+        int cursel(m_book->GetSelection());
+        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
             return;
         }
 
-        if(m_buildInProgress)
-            return;
+        if(m_buildInProgress) return;
 
         wxAuiPaneInfo& info = PluginManager::Get()->GetDockingManager()->GetPane(wxT("Output View"));
         DockablePaneMenuManager::HackHidePane(true, info, PluginManager::Get()->GetDockingManager());

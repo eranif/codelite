@@ -109,10 +109,10 @@ void ZoomNavigator::UnPlug()
     m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     // Remove the tab if it's actually docked in the workspace pane
-    size_t index(Notebook::npos);
+    int index(wxNOT_FOUND);
     index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(zoompane);
-    if (index != Notebook::npos) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
+    if (index != wxNOT_FOUND) {
+        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
     }
     zoompane->Destroy();
 }

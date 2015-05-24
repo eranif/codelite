@@ -116,8 +116,8 @@ public:
     virtual void OnToolCloseUI(wxUpdateUIEvent& event);
     virtual void OnShowThumbnail(wxCommandEvent &e);
 
-    void OnPageClosing(NotebookEvent& event);
-    void OnPageChanged(NotebookEvent& event);
+    void OnPageClosing(wxBookCtrlEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& event);
 
     void OnPopupClick(wxCommandEvent &evt);
     void RefreshDbView();

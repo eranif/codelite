@@ -130,7 +130,7 @@
 #include "globals.h"
 #include "workspacetab.h"
 #include "fileexplorer.h"
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include "options_dlg2.h"
 #include <wx/msgdlg.h>
 #include "tabgroupdlg.h"
@@ -1186,8 +1186,8 @@ void clMainFrame::CreateGUIControls(void)
          XRCID("BookmarkTypes[start]"),
          XRCID("BookmarkTypes[end]"));
 
-    GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")));
-    GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_rmenu")));
+    GetWorkspacePane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")));
+    GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_rmenu")));
 
     m_mgr.Update();
     SetAutoLayout(true);
@@ -4272,28 +4272,12 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
     wxBitmap bmp = GetWorkspacePane()->GetNotebook()->GetPageBitmap(
         sel); // We might have a bitmap on the tab, make sure we restore it
 
-#if !CL_USE_NATIVEBOOK
     DockablePane* pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
     page->Reparent(pane);
 
     // remove the page from the notebook
-    GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
+    GetWorkspacePane()->GetNotebook()->RemovePage(sel);
     pane->SetChildNoReparent(page);
-
-#else
-
-    DockablePane* pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));
-    GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
-#if wxVERSION_NUMBER < 2903
-    // HACK: since Reparent will remove the widget from the parent, we need to place it back... (This was fixed in
-    // wxGTK-2.9.3)
-    gtk_container_add(GTK_CONTAINER(GetWorkspacePane()->GetNotebook()->m_widget), page->m_widget);
-#endif
-    page->Reparent(pane);
-    pane->SetChildNoReparent(page);
-
-#endif
-
     wxUnusedVar(e);
 }
 
@@ -4521,24 +4505,12 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
     wxString text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
     wxBitmap bmp = GetDebuggerPane()->GetNotebook()->GetPageBitmap(sel);
 
-#if !CL_USE_NATIVEBOOK
     DockablePane* pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
     page->Reparent(pane);
 
     // remove the page from the notebook
-    GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
+    GetDebuggerPane()->GetNotebook()->RemovePage(sel);
     pane->SetChildNoReparent(page);
-
-#else
-
-    DockablePane* pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), text, bmp, wxSize(200, 200));
-    GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
-    // HACK: since Reparent will remove the widget from the parent, we need to place it back...
-    gtk_container_add(GTK_CONTAINER(GetDebuggerPane()->GetNotebook()->m_widget), page->m_widget);
-    page->Reparent(pane);
-    pane->SetChildNoReparent(page);
-
-#endif
     wxUnusedVar(e);
 }
 

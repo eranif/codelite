@@ -26,7 +26,7 @@
 #define DEBUGGERPANE_H
 
 #include "wx/panel.h"
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include <wx/imaglist.h>
 #include "cl_config.h"
 
@@ -162,6 +162,6 @@ public:
     }
     void SelectTab(const wxString &tabName);
     void Clear();
-    void OnPageChanged(NotebookEvent &event);
+    void OnPageChanged(wxBookCtrlEvent &event);
 };
 #endif //DEBUGGERPANE_H

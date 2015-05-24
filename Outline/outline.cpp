@@ -119,8 +119,8 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void SymbolViewPlugin::UnPlug()
 {
-    size_t where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);
-    if ( where != Notebook::npos ) {
+    int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);
+    if ( where != wxNOT_FOUND ) {
         // this window might be floating
         m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
     }
@@ -139,23 +139,5 @@ bool SymbolViewPlugin::IsPaneDetached()
 
 int SymbolViewPlugin::DoFindTabIndex()
 {
-    std::vector<wxWindow*> windows;
-    Notebook *book = m_mgr->GetWorkspacePaneNotebook();
-    
-#if !CL_USE_NATIVEBOOK
-
-    book->GetEditorsInOrder(windows);
-    
-#else
-    
-    for(size_t i=0; i<book->GetPageCount(); i++) {
-        windows.push_back( book->GetPage(i) );
-    }
-    
-#endif
-    for(size_t i=0; i<windows.size(); i++) {
-        if(windows.at(i) == m_view )
-            return i;
-    }
-    return wxNOT_FOUND;
+    return m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);
 }

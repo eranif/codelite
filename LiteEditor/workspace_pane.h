@@ -26,7 +26,7 @@
 #define WORKSPACE_PANE_H
 
 #include <wx/filename.h>
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include <wx/panel.h>
 #include <wx/timer.h>
 #include "clAuiCaptionEnabler.h"

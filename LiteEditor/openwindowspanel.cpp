@@ -35,6 +35,7 @@
 #include <wx/filename.h>
 #include <algorithm>
 #include <wx/stc/stc.h>
+#include "imanager.h"
 
 BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
 EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)

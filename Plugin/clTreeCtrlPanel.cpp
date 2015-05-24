@@ -15,6 +15,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include <wx/wupdlock.h>
+#include <wx/log.h>
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)

@@ -339,14 +339,13 @@
       <File Name="detachedpanesinfo.h"/>
       <File Name="fileclose.png"/>
       <File Name="fileclose-pressed.png"/>
-      <File Name="notebook_ex.cpp"/>
-      <File Name="notebook_ex.h"/>
       <File Name="notebook_ex_nav_dlg.cpp"/>
       <File Name="notebook_ex_nav_dlg.h"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
-      <File Name="gtk_notebook_ex.cpp"/>
-      <File Name="gtk_notebook_ex.h"/>
+      <File Name="Notebook.cpp"/>
+      <File Name="Notebook.h"/>
+      <File Name="notebook_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxAUI">
       <File Name="cl_aui_dock_art.h"/>

@@ -28,9 +28,10 @@
 #include "openwindowspanelbase.h"
 #include "theme_handler_helper.h"
 #include "bitmap_loader.h"
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include <map>
 #include "cl_command_event.h"
+#include "imanager.h"
 
 class IEditor;
 class OpenWindowsPanel : public OpenWindowsPanelBase

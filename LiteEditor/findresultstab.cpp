@@ -94,24 +94,17 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     if(useBook) {
 
         // load the book style from the settings file
-        long bookStyle = wxVB_TOP | wxVB_MOUSE_MIDDLE_CLOSE_TAB;
+        long style = kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
+                     kNotebook_MouseMiddleClickFireEvent |      // instead of closing the tab, fire an event
+                     kNotebook_ShowFileListButton |             // show drop down list of all open tabs
+                     kNotebook_CloseButtonOnActiveTabFireEvent; // When closing the 'x' button, fire an event
 
-#if !CL_USE_NATIVEBOOK
-        bookStyle |= wxAUI_NB_WINDOWLIST_BUTTON;
-#endif
+        m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+        m_book->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("find_in_files_right_click_menu")));
 
-        m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
-
-        m_book->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("find_in_files_right_click_menu")));
-
-        m_book->Connect(
-            wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(FindResultsTab::OnPageChanged), NULL, this);
-        m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED, NotebookEventHandler(FindResultsTab::OnPageClosed), NULL, this);
-
-        m_book->Connect(
-            wxEVT_COMMAND_BOOK_PAGE_X_CLICKED, NotebookEventHandler(FindResultsTab::OnClosePage), NULL, this);
-        m_book->Connect(
-            wxEVT_COMMAND_BOOK_PAGE_MIDDLE_CLICKED, NotebookEventHandler(FindResultsTab::OnClosePage), NULL, this);
+        m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &FindResultsTab::OnPageChanged, this);
+        m_book->Bind(wxEVT_BOOK_PAGE_CLOSED, &FindResultsTab::OnPageClosed, this);
+        m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &FindResultsTab::OnClosePage, this);
 
         // get rid of base class scintilla component
         wxSizer* sz = m_hSizer;
@@ -293,7 +286,7 @@ void FindResultsTab::Clear()
     OutputTabWindow::Clear();
 }
 
-void FindResultsTab::OnPageChanged(NotebookEvent& e)
+void FindResultsTab::OnPageChanged(wxBookCtrlEvent& e)
 {
     // this function can't be called unless m_book != NULL
     m_sci = dynamic_cast<wxStyledTextCtrl*>(m_book->GetCurrentPage());
@@ -302,13 +295,13 @@ void FindResultsTab::OnPageChanged(NotebookEvent& e)
     }
 }
 
-void FindResultsTab::OnPageClosed(NotebookEvent& e)
+void FindResultsTab::OnPageClosed(wxBookCtrlEvent& e)
 {
     // this function can't be called unless m_book != NULL
-    size_t sel = e.GetSelection();
-    if(sel != Notebook::npos) {
+    int sel = e.GetSelection();
+    if(sel != wxNOT_FOUND) {
         ListMatchInfos::iterator itMatchInfo = m_matchInfo.begin();
-        for(size_t i = 0; i < e.GetSelection(); ++i) {
+        for(int i = 0; i < e.GetSelection(); ++i) {
             ++itMatchInfo;
         }
         m_matchInfo.erase(itMatchInfo);
@@ -358,17 +351,17 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
             // Make sure we can add more tabs, if not delete the last used tab and then add
             // a new tab
 
-            long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
-            if((long)m_book->GetPageCount() >= MaxBuffers) {
-                // We have reached the limit of the number of open buffers
-                // Close the last used buffer
-                const wxArrayPtrVoid& arr = m_book->GetHistory();
-                if(arr.GetCount()) {
-                    wxWindow* tab = static_cast<wxWindow*>(arr.Item(arr.GetCount() - 1));
-                    m_book->DeletePage(m_book->GetPageIndex(tab));
-                }
-            }
-
+//            long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
+//            if((long)m_book->GetPageCount() >= MaxBuffers) {
+//                // We have reached the limit of the number of open buffers
+//                // Close the last used buffer
+//                const wxArrayPtrVoid& arr = m_book->GetHistory();
+//                if(arr.GetCount()) {
+//                    wxWindow* tab = static_cast<wxWindow*>(arr.Item(arr.GetCount() - 1));
+//                    m_book->DeletePage(m_book->GetPageIndex(tab));
+//                }
+//            }
+//
             m_book->AddPage(sci, label, true);
 #ifdef __WXMAC__
             m_book->GetSizer()->Layout();
@@ -386,8 +379,8 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
         }
     } else if(m_book) {
         // using current tab, update the tab title and the search data
-        size_t where = m_book->GetPageIndex(m_sci);
-        if(where != Notebook::npos) {
+        int where = m_book->GetPageIndex(m_sci);
+        if(where != wxNOT_FOUND) {
             m_book->SetPageText(where, label);
             // delete the old search data
             wxWindow* tab = m_book->GetPage(where);
@@ -423,8 +416,8 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
     SearchResultList* res = (SearchResultList*)e.GetClientData();
     if(!res) return;
 
-    size_t m = m_book ? m_book->GetPageIndex(m_recv) : 0;
-    if(m == Notebook::npos) {
+    int m = m_book ? m_book->GetPageIndex(m_recv) : 0;
+    if(m == wxNOT_FOUND) {
         delete res;
         return;
     }
@@ -480,7 +473,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     if(!summary) return;
 
     // did the page closed before the search ended?
-    if(m_book && m_book->GetPageIndex(m_recv) != Notebook::npos) {
+    if(m_book && m_book->GetPageIndex(m_recv) != wxNOT_FOUND) {
 
         AppendText(summary->GetMessage() + wxT("\n"));
         m_recv = NULL;
@@ -546,7 +539,7 @@ void FindResultsTab::OnSearchCancel(wxCommandEvent& e)
     if(!str) return;
 
     // did the page closed before the search ended?
-    if(m_book && m_book->GetPageIndex(m_recv) != Notebook::npos) {
+    if(m_book && m_book->GetPageIndex(m_recv) != wxNOT_FOUND) {
         AppendText(*str + wxT("\n"));
     }
 
@@ -570,8 +563,8 @@ void FindResultsTab::OnRepeatOutput(wxCommandEvent& e)
     wxUnusedVar(e);
 
     if(m_book) {
-        size_t sel = m_book->GetSelection();
-        if(sel != Notebook::npos) {
+        int sel = m_book->GetSelection();
+        if(sel != wxNOT_FOUND) {
             // get the search data used to generate the output on the selected tab
             wxWindow* tab = m_book->GetPage(sel);
             if(tab) {
@@ -598,7 +591,7 @@ void FindResultsTab::OnMouseDClick(wxStyledTextEvent& e)
         m_sci->ToggleFold(line);
 
     } else {
-        size_t n = m_book ? m_book->GetSelection() : 0;
+        int n = m_book ? m_book->GetSelection() : 0;
         const MatchInfo& matchInfo = GetMatchInfo(n);
         MatchInfo::const_iterator m = matchInfo.find(line);
         if(m != matchInfo.end()) {
@@ -614,8 +607,8 @@ long FindResultsTab::GetBookStyle() { return 0; }
 SearchData* FindResultsTab::GetSearchData(wxStyledTextCtrl* sci)
 {
     if(m_book) {
-        size_t i = m_book->GetPageIndex(sci);
-        if(i != Notebook::npos) {
+        int i = m_book->GetPageIndex(sci);
+        if(i != wxNOT_FOUND) {
             wxWindow* tab = m_book->GetPage(i);
             if(tab) {
                 SearchData* data = (SearchData*)tab->GetClientData();
@@ -636,7 +629,7 @@ void FindResultsTab::OnCloseAllTabs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(m_book) {
-        m_book->DeleteAllPages(true);
+        m_book->DeleteAllPages();
     }
 }
 
@@ -644,9 +637,9 @@ void FindResultsTab::OnCloseOtherTab(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(m_book) {
-        size_t idx = m_book->GetSelection();
-        if(idx != Notebook::npos) {
-            for(size_t i = 0; i < idx; i++) {
+        int idx = m_book->GetSelection();
+        if(idx != wxNOT_FOUND) {
+            for(int i = 0; i < idx; i++) {
                 m_book->DeletePage((size_t)0);
             }
 
@@ -662,8 +655,8 @@ void FindResultsTab::OnCloseTab(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(m_book) {
-        size_t idx = m_book->GetSelection();
-        if(idx != Notebook::npos) {
+        int idx = m_book->GetSelection();
+        if(idx != wxNOT_FOUND) {
             m_book->DeletePage(idx);
         }
     }
@@ -696,7 +689,7 @@ void FindResultsTab::NextMatch()
                 return;
             }
         }
-        
+
         // if we are here, it means we are the end of the search results list, add a status message
         clMainFrame::Get()->GetStatusBar()->SetMessage(_("Reached the end of the 'Find In Files' results"));
     }
@@ -799,13 +792,13 @@ void FindResultsTab::OnStopSearch(wxCommandEvent& e)
 
 void FindResultsTab::OnStopSearchUI(wxUpdateUIEvent& e) { e.Enable(m_searchInProgress); }
 
-void FindResultsTab::OnClosePage(NotebookEvent& e)
+void FindResultsTab::OnClosePage(wxBookCtrlEvent& e)
 {
     int where = e.GetSelection();
     if(where == wxNOT_FOUND) {
         return;
     }
-    m_book->DeletePage((size_t)where, true);
+    m_book->DeletePage((size_t)where);
 }
 
 void FindResultsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)

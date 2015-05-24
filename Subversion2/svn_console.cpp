@@ -36,7 +36,7 @@
 #include "processreaderthread.h"
 #include "subversion2.h"
 #include "lexer_configuration.h"
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include "event_notifier.h"
 #include <wx/regex.h>
 #include <wx/settings.h>

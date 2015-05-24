@@ -41,7 +41,7 @@
 #include "tags_options_dlg.h"
 #include <wx/html/htmlwin.h>
 #include "debuggerpane.h"
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include "mainbook.h"
 #include <set>
 #include "theme_handler.h"

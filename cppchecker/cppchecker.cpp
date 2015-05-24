@@ -35,7 +35,7 @@
 #include "cppchecksettingsdlg.h"
 #include <wx/process.h>
 #include <wx/dir.h>
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include "workspace.h"
 #include "project.h"
 #include "fileextmanager.h"

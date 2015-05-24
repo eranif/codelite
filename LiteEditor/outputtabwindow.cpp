@@ -388,9 +388,9 @@ void OutputTabWindow::OnEdit(wxCommandEvent& e)
 
 void OutputTabWindow::OnToggleHoldOpen(wxCommandEvent& e)
 {
-    size_t sel;
+    int sel = wxNOT_FOUND;
     Notebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-    if(book && (sel = book->GetSelection()) != Notebook::npos) {
+    if(book && (sel = book->GetSelection()) != wxNOT_FOUND) {
         EditorConfigST::Get()->SetPaneStickiness(book->GetPageText(sel), e.IsChecked());
     }
 }

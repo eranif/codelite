@@ -27,7 +27,7 @@
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include <wx/sizer.h>
 #include "dockablepane.h"
 
@@ -40,74 +40,71 @@ EVT_PAINT(DockablePane::OnPaint)
 END_EVENT_TABLE()
 
 DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& title, const wxBitmap& bmp, wxSize size)
-: wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
-, m_child(NULL)
-, m_book(book)
-, m_text(title)
-, m_bmp(bmp)
-, m_notifiedDestroyed(false)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
+    , m_child(NULL)
+    , m_book(book)
+    , m_text(title)
+    , m_bmp(bmp)
+    , m_notifiedDestroyed(false)
 {
-	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
-	SetSizer(sz);
+    wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
+    SetSizer(sz);
 
-    Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( DockablePane::ClosePane ));
-
+    Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePane::ClosePane));
 
     wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
-	event.SetClientData(this);
-	parent->GetEventHandler()->AddPendingEvent(event);
+    event.SetClientData(this);
+    parent->GetEventHandler()->AddPendingEvent(event);
 }
 
-DockablePane::~DockablePane()
-{
-}
+DockablePane::~DockablePane() {}
 
 void DockablePane::ClosePane(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
+    wxUnusedVar(e);
 
-	if(!m_notifiedDestroyed) {
-		m_notifiedDestroyed = true;
+    if(!m_notifiedDestroyed) {
+        m_notifiedDestroyed = true;
 
-		if (m_book) {
-			// first detach the child from this pane
-			wxSizer *sz = GetSizer();
-			sz->Detach(m_child);
+        if(m_book) {
+            // first detach the child from this pane
+            wxSizer* sz = GetSizer();
+            sz->Detach(m_child);
 
-			// now we can add it to the noteook (it will be automatically be reparented to the notebook)
-			m_book->AddPage(m_child, m_text, false, m_bmp);
-		}
+            // now we can add it to the noteook (it will be automatically be reparented to the notebook)
+            m_book->AddPage(m_child, m_text, false, m_bmp);
+        }
 
-		wxCommandEvent event(wxEVT_CMD_DELETE_DOCKPANE);
-		event.SetClientData(this);
-		GetParent()->GetEventHandler()->AddPendingEvent(event);
-	}
+        wxCommandEvent event(wxEVT_CMD_DELETE_DOCKPANE);
+        event.SetClientData(this);
+        GetParent()->GetEventHandler()->AddPendingEvent(event);
+    }
 }
 
 void DockablePane::OnPaint(wxPaintEvent& e)
 {
-	wxBufferedPaintDC dc(this);
+    wxBufferedPaintDC dc(this);
 
-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+    dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+    dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
 
-	dc.DrawRectangle(GetClientSize());
+    dc.DrawRectangle(GetClientSize());
 }
 
-void DockablePane::SetChild(wxWindow *child)
+void DockablePane::SetChild(wxWindow* child)
 {
-	m_child = child;
-	m_child->Reparent(this);
+    m_child = child;
+    m_child->Reparent(this);
 
-	wxSizer *sz = GetSizer();
-	sz->Add(m_child, 1, wxEXPAND|wxALL, 2);
-	sz->Layout();
+    wxSizer* sz = GetSizer();
+    sz->Add(m_child, 1, wxEXPAND | wxALL, 2);
+    sz->Layout();
 }
 
 void DockablePane::SetChildNoReparent(wxWindow* child)
 {
-	m_child = child;
-	wxSizer *sz = GetSizer();
-	sz->Add(m_child, 1, wxEXPAND|wxALL, 2);
-	sz->Layout();
+    m_child = child;
+    wxSizer* sz = GetSizer();
+    sz->Add(m_child, 1, wxEXPAND | wxALL, 2);
+    sz->Layout();
 }

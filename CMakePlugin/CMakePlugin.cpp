@@ -444,8 +444,8 @@ void CMakePlugin::UnPlug()
     Notebook* notebook = m_mgr->GetWorkspacePaneNotebook();
     wxASSERT(notebook);
 
-    size_t pos = notebook->GetPageIndex("CMake Help");
-    if(pos != Notebook::npos) {
+    int pos = notebook->GetPageIndex("CMake Help");
+    if(pos != wxNOT_FOUND) {
         CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>(notebook->GetPage(pos));
         if(helpTab) {
             helpTab->Stop();

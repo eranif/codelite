@@ -18,6 +18,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "CxxTemplateFunction.h"
+#include <wx/app.h>
 
 #define LINES_PER_PAGE 8
 #define Y_SPACER 2

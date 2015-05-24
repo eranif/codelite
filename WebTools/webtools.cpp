@@ -5,6 +5,7 @@
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "WebToolsSettings.h"
+#include <wx/menu.h>
 
 static WebTools* thePlugin = NULL;
 

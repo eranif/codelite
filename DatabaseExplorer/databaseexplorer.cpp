@@ -212,9 +212,9 @@ void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void DatabaseExplorer::UnPlug()
 {
-    size_t index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_dbViewerPanel);
-    if(index != Notebook::npos) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
+    int index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_dbViewerPanel);
+    if(index != wxNOT_FOUND) {
+        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
     }
     wxDELETE(m_dbViewerPanel);
 }

@@ -34,7 +34,7 @@
 #include "manager.h"
 #include "frame.h"
 #include "cl_editor.h"
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include "cpp_symbol_tree.h"
 #include "windowstack.h"
 #include "macros.h"
@@ -49,6 +49,7 @@
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "clWorkspaceView.h"
+#include <algorithm>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -77,8 +78,7 @@ void WorkspacePane::CreateGUIControls()
     SetSizer(mainSizer);
 
     // add notebook for tabs
-    long bookStyle = wxVB_LEFT | wxAUI_NB_WINDOWLIST_BUTTON | wxBORDER_NONE;
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, kNotebook_Default);
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
@@ -255,7 +255,12 @@ void WorkspacePane::ApplySavedTabOrder() const
 
 void WorkspacePane::SaveWorkspaceViewTabOrder() const
 {
-    wxArrayString panes = m_book->GetPagesTextInOrder();
+    wxArrayString panes;
+    clTabInfo::Vec_t tabs;
+    m_book->GetAllTabs(tabs);
+    std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t){
+        panes.Add(t->GetLabel());
+    });
     clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
 }
 

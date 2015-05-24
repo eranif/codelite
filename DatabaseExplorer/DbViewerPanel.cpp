@@ -66,50 +66,48 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
     BitmapLoader* bmpLoader = pManager->GetStdIcons();
 
     m_auibar->AddTool(XRCID("IDT_DBE_CONNECT"),
-                        _("Open connection"),
-                        bmpLoader->LoadBitmap(wxT("db-explorer/16/connect")),
-                        wxNullBitmap,
-                        wxITEM_NORMAL,
-                        _("Open new connection"),
-                        _("Open new connection"),
-                        NULL);
+                      _("Open connection"),
+                      bmpLoader->LoadBitmap(wxT("db-explorer/16/connect")),
+                      wxNullBitmap,
+                      wxITEM_NORMAL,
+                      _("Open new connection"),
+                      _("Open new connection"),
+                      NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_CLOSE_CONNECTION"),
-                        _("tool"),
-                        bmpLoader->LoadBitmap(wxT("db-explorer/16/disconnect")),
-                        wxNullBitmap,
-                        wxITEM_NORMAL,
-                        _("Close selected connection"),
-                        _("Close selected connection"),
-                        NULL);
+                      _("tool"),
+                      bmpLoader->LoadBitmap(wxT("db-explorer/16/disconnect")),
+                      wxNullBitmap,
+                      wxITEM_NORMAL,
+                      _("Close selected connection"),
+                      _("Close selected connection"),
+                      NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_REFRESH"),
-                        _("tool"),
-                        bmpLoader->LoadBitmap(wxT("db-explorer/16/database_refresh")),
-                        wxNullBitmap,
-                        wxITEM_NORMAL,
-                        _("Refresh View"),
-                        wxEmptyString,
-                        NULL);
+                      _("tool"),
+                      bmpLoader->LoadBitmap(wxT("db-explorer/16/database_refresh")),
+                      wxNullBitmap,
+                      wxITEM_NORMAL,
+                      _("Refresh View"),
+                      wxEmptyString,
+                      NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_ERD"),
-                        _("ERD"),
-                        bmpLoader->LoadBitmap(wxT("db-explorer/16/table")),
-                        wxNullBitmap,
-                        wxITEM_NORMAL,
-                        _("Open ERD View"),
-                        wxEmptyString,
-                        NULL);
+                      _("ERD"),
+                      bmpLoader->LoadBitmap(wxT("db-explorer/16/table")),
+                      wxNullBitmap,
+                      wxITEM_NORMAL,
+                      _("Open ERD View"),
+                      wxEmptyString,
+                      NULL);
     m_auibar->AddTool(XRCID("IDT_DBE_PREVIEW"),
-                        _("Show ERD Thumbnail"),
-                        bmpLoader->LoadBitmap(wxT("db-explorer/16/thumbnail")),
-                        _("Show ERD Thumbnail"),
-                        wxITEM_CHECK);
+                      _("Show ERD Thumbnail"),
+                      bmpLoader->LoadBitmap(wxT("db-explorer/16/thumbnail")),
+                      _("Show ERD Thumbnail"),
+                      wxITEM_CHECK);
     m_auibar->Realize();
 
     Layout();
 
-    m_mgr->GetEditorPaneNotebook()->Connect(
-        wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(DbViewerPanel::OnPageChanged), NULL, this);
-    m_mgr->GetEditorPaneNotebook()->Connect(
-        wxEVT_COMMAND_BOOK_PAGE_CLOSING, NotebookEventHandler(DbViewerPanel::OnPageClosing), NULL, this);
+    m_mgr->GetEditorPaneNotebook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &DbViewerPanel::OnPageChanged, this);
+    m_mgr->GetEditorPaneNotebook()->Bind(wxEVT_BOOK_PAGE_CLOSING, &DbViewerPanel::OnPageClosing, this);
 
     this->Connect(
         XRCID("IDT_DBE_CONNECT"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DbViewerPanel::OnConnectClick));
@@ -132,10 +130,8 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
 DbViewerPanel::~DbViewerPanel()
 {
     wxDELETE(m_themeHelper);
-    m_mgr->GetEditorPaneNotebook()->Disconnect(
-        wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(DbViewerPanel::OnPageChanged), NULL, this);
-    m_mgr->GetEditorPaneNotebook()->Disconnect(
-        wxEVT_COMMAND_BOOK_PAGE_CLOSING, NotebookEventHandler(DbViewerPanel::OnPageClosing), NULL, this);
+    m_mgr->GetEditorPaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &DbViewerPanel::OnPageChanged, this);
+    m_mgr->GetEditorPaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CLOSING, &DbViewerPanel::OnPageClosing, this);
 
     this->Disconnect(
         XRCID("IDT_DBE_CONNECT"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(DbViewerPanel::OnConnectClick));
@@ -869,7 +865,7 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
     return false;
 }
 
-void DbViewerPanel::OnPageChanged(NotebookEvent& event)
+void DbViewerPanel::OnPageChanged(wxBookCtrlEvent& event)
 {
     if(!m_SuppressUpdate) {
         ErdPanel* pPanel = wxDynamicCast(m_mgr->GetPage(event.GetSelection()), ErdPanel);
@@ -883,7 +879,7 @@ void DbViewerPanel::OnPageChanged(NotebookEvent& event)
     event.Skip();
 }
 
-void DbViewerPanel::OnPageClosing(NotebookEvent& event)
+void DbViewerPanel::OnPageClosing(wxBookCtrlEvent& event)
 {
     m_SuppressUpdate = true;
     m_pThumbnail->SetCanvas(NULL);

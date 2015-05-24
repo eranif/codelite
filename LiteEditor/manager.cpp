@@ -389,7 +389,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
         wxFileName dbfn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
         JobQueueSingleton::Instance()->PushJob(new DbContentCacher(this, dbfn.GetFullPath().c_str()));
     }
-    
+
     // Ensure that the "C++" view is selected
     clGetManager()->GetWorkspaceView()->SelectPage(_("C++ Workspace"));
 }
@@ -632,7 +632,7 @@ void Manager::ImportMSVSSolution(const wxString& path, const wxString& defaultCo
     wxBusyInfo info(_("Importing IDE solution/workspace..."), clMainFrame::Get());
 
     wxString errMsg;
-    //VcImporter importer(path, defaultCompiler);
+    // VcImporter importer(path, defaultCompiler);
     WSImporter importer;
     importer.Load(path, defaultCompiler);
     if(importer.Import(errMsg)) {
@@ -1611,15 +1611,15 @@ bool Manager::ShowOutputPane(wxString focusWin, bool commit)
 
     // set the selection to focus win
     OutputPane* pane = clMainFrame::Get()->GetOutputPane();
-    size_t index(Notebook::npos);
-    for(size_t i = 0; i < pane->GetNotebook()->GetPageCount(); i++) {
+    int index(wxNOT_FOUND);
+    for(size_t i = 0; i < pane->GetNotebook()->GetPageCount(); ++i) {
         if(pane->GetNotebook()->GetPageText(i) == focusWin) {
             index = i;
             break;
         }
     }
 
-    if(index != Notebook::npos && index != (size_t)pane->GetNotebook()->GetSelection()) {
+    if(index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection()) {
         wxWindow* focus = wxWindow::FindFocus();
         LEditor* editor = dynamic_cast<LEditor*>(focus);
         pane->GetNotebook()->SetSelection((size_t)index);
@@ -1823,21 +1823,7 @@ void Manager::UpdateDebuggerPane()
     EventNotifier::Get()->AddPendingEvent(evtDbgRefreshViews);
 
     DebuggerPane* pane = clMainFrame::Get()->GetDebuggerPane();
-
-#if CL_USE_NATIVEBOOK
     DoUpdateDebuggerTabControl(pane->GetNotebook()->GetCurrentPage());
-#else
-
-    std::set<wxAuiTabCtrl*> tabControls = pane->GetNotebook()->GetAllTabControls();
-    std::set<wxAuiTabCtrl*>::iterator iter = tabControls.begin();
-
-    for(; iter != tabControls.end(); iter++) {
-        int activePageId = (*iter)->GetActivePage();
-        if(activePageId != wxNOT_FOUND) {
-            DoUpdateDebuggerTabControl((*iter)->GetPage((size_t)activePageId).window);
-        }
-    }
-#endif
 }
 
 void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)

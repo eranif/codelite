@@ -30,12 +30,11 @@
 #include "iconfigtool.h"
 #include "wx/treectrl.h"
 #include "project.h"
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include "optionsconfig.h"
 #include "queuecommand.h"
 #include <wx/aui/framemanager.h>
 #include "bitmap_loader.h"
-#include "notebook_ex.h"
 #include <vector>
 #include "debugger.h"
 #include "clStatusBar.h"
@@ -73,6 +72,21 @@ public:
 enum TreeType { TreeFileView = 0, TreeFileExplorer };
 
 enum eOutputPaneTab { kOutputTab_Build, kOutputTab_Output };
+
+// A struct representing a tab in the notebook control
+struct clTab {
+    typedef std::vector<clTab> Vec_t;
+    wxString text;
+    wxWindow* window;
+    wxBitmap bitmap;
+    bool isFile;
+    wxFileName filename;
+    clTab()
+        : window(NULL)
+        , isFile(false)
+    {
+    }
+};
 
 //------------------------------------------------------------------
 // Defines the interface of the manager

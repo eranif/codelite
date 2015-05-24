@@ -431,10 +431,10 @@ void Subversion2::UnPlug()
     m_subversionView->DisconnectEvents();
 
     // Remove the tab if it's actually docked in the workspace pane
-    size_t index(Notebook::npos);
+    int index(wxNOT_FOUND);
     index = m_mgr->GetOutputPaneNotebook()->GetPageIndex(m_subversionView);
-    if(index != Notebook::npos) {
-        m_mgr->GetOutputPaneNotebook()->RemovePage(index, false);
+    if(index != wxNOT_FOUND) {
+        m_mgr->GetOutputPaneNotebook()->RemovePage(index);
     }
 
     m_subversionView->Destroy();

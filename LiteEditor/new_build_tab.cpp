@@ -43,7 +43,7 @@
 #include "editor_config.h"
 #include "bitmap_loader.h"
 #include <wx/dcmemory.h>
-#include "notebook_ex.h"
+#include "Notebook.h"
 #include "output_pane.h"
 #include "macros.h"
 #include <wx/fdrepdlg.h>
@@ -437,8 +437,10 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
     OutputPane* opane = clMainFrame::Get()->GetOutputPane();
 
     wxWindow* win(NULL);
-    size_t sel = opane->GetNotebook()->GetSelection();
-    if(sel != Notebook::npos) win = opane->GetNotebook()->GetPage(sel);
+    int sel = opane->GetNotebook()->GetSelection();
+    if(sel != wxNOT_FOUND) {
+        win = opane->GetNotebook()->GetPage(sel);
+    }
 
     if(m_showMe == BuildTabSettingsData::ShowOnStart) {
         ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN, true);

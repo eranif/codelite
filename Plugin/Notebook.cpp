@@ -570,7 +570,7 @@ int clTabCtrl::SetSelection(size_t tabIdx)
         event.SetEventObject(GetParent());
         event.SetSelection(GetSelection());
         event.SetOldSelection(oldSelection);
-        GetParent()->GetEventHandler()->AddPendingEvent(event);
+        GetParent()->GetEventHandler()->ProcessEvent(event);
     }
     return oldSelection;
 }
@@ -646,7 +646,7 @@ bool clTabCtrl::InsertPage(size_t index, clTabInfo::Ptr_t tab)
         event.SetEventObject(GetParent());
         event.SetSelection(GetSelection());
         event.SetOldSelection(oldSelection);
-        GetParent()->GetEventHandler()->AddPendingEvent(event);
+        GetParent()->GetEventHandler()->ProcessEvent(event);
         
     }
     Refresh();
@@ -702,7 +702,7 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
                         wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSE_BUTTON);
                         event.SetEventObject(GetParent());
                         event.SetSelection(realPos);
-                        GetParent()->GetEventHandler()->ProcessEvent(event);
+                        GetParent()->GetEventHandler()->AddPendingEvent(event);
                     } else {
                         CallAfter(&clTabCtrl::DoDeletePage, realPos);
                     }
@@ -889,7 +889,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
             wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
             event.SetEventObject(GetParent());
             event.SetSelection(GetSelection());
-            GetParent()->GetEventHandler()->AddPendingEvent(event);
+            GetParent()->GetEventHandler()->ProcessEvent(event);
         }
     } else {
         Refresh();

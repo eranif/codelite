@@ -163,7 +163,9 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     int m_closeButtonClickedIndex;
     wxMenu* m_contextMenu;
     wxRect m_chevronRect;
-
+    
+    void DoChangeSelection(size_t index);
+    
 protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);

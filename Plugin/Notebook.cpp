@@ -544,35 +544,8 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
 
 int clTabCtrl::SetSelection(size_t tabIdx)
 {
-    int oldSelection = GetSelection();
-    /// Do nothing if the tab is already selected
-    if(oldSelection == (int)tabIdx) {
-        ChangeSelection(tabIdx);
-        return oldSelection;
-    }
-
-    {
-        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGING);
-        event.SetEventObject(GetParent());
-        event.SetSelection(oldSelection);
-        event.SetOldSelection(wxNOT_FOUND);
-        GetParent()->GetEventHandler()->ProcessEvent(event);
-
-        if(!event.IsAllowed()) {
-            return oldSelection; // Vetoed by the user
-        }
-    }
-    ChangeSelection(tabIdx);
-
-    // Fire an event
-    {
-        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
-        event.SetEventObject(GetParent());
-        event.SetSelection(GetSelection());
-        event.SetOldSelection(oldSelection);
-        GetParent()->GetEventHandler()->ProcessEvent(event);
-    }
-    return oldSelection;
+    CallAfter(&clTabCtrl::DoChangeSelection, tabIdx);
+    return wxNOT_FOUND;
 }
 
 int clTabCtrl::GetSelection() const
@@ -1009,4 +982,36 @@ int clTabCtrl::DoGetPageIndex(const wxString& label) const
         if(m_tabs.at(i)->GetLabel() == label) return i;
     }
     return wxNOT_FOUND;
+}
+
+void clTabCtrl::DoChangeSelection(size_t index)
+{
+    int oldSelection = GetSelection();
+    /// Do nothing if the tab is already selected
+    if(oldSelection == (int)index) {
+        ChangeSelection(index);
+        return;
+    }
+
+    {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGING);
+        event.SetEventObject(GetParent());
+        event.SetSelection(oldSelection);
+        event.SetOldSelection(wxNOT_FOUND);
+        GetParent()->GetEventHandler()->ProcessEvent(event);
+
+        if(!event.IsAllowed()) {
+            return; // Vetoed by the user
+        }
+    }
+    ChangeSelection(index);
+
+    // Fire an event
+    {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
+        event.SetEventObject(GetParent());
+        event.SetSelection(GetSelection());
+        event.SetOldSelection(oldSelection);
+        GetParent()->GetEventHandler()->ProcessEvent(event);
+    }
 }

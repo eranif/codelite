@@ -248,8 +248,9 @@ void WorkspacePane::ApplySavedTabOrder() const
     // I've left the code in case anyone ever has time/inclination to fix it
     if((index >= 0) && (index < (int)m_book->GetPageCount())) {
         m_book->SetSelection(index);
+    } else if(m_book->GetPageCount()){
+        m_book->SetSelection(0);
     }
-
     m_mgr->Update();
 }
 

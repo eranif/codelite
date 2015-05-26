@@ -8,6 +8,7 @@
 #include <wx/dcmemory.h>
 #include <wx/sharedptr.h>
 #include <wx/bookctrl.h>
+#include "windowstack.h"
 
 #ifdef WXDLLIMPEXP_SDK
 #undef WXDLLIMPEXP_SDK
@@ -206,7 +207,7 @@ protected:
      */
     void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit);
 
-    wxSimplebook* GetBook();
+    WindowStack* GetStack();
 
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
     void DoShowTabList();
@@ -267,7 +268,7 @@ public:
  */
 class WXDLLIMPEXP_SDK Notebook : public wxPanel
 {
-    wxSimplebook* m_book;
+    WindowStack* m_windows;
     clTabCtrl* m_tabCtrl;
     friend class clTabCtrl;
 
@@ -398,7 +399,7 @@ public:
     /**
      * @brief Returns the number of pages in the control
      */
-    size_t GetPageCount() const { return m_book->GetPageCount(); }
+    size_t GetPageCount() const { return m_tabCtrl->GetTabs().size(); }
 
     /**
      * @brief Returns the window at the given page position.

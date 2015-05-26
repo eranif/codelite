@@ -40,8 +40,8 @@ Notebook::Notebook(wxWindow* parent,
 
     m_tabCtrl = new clTabCtrl(this, style);
     sizer->Add(m_tabCtrl, 0, wxEXPAND);
-    m_book = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
-    sizer->Add(m_book, 1, wxEXPAND);
+    m_windows = new WindowStack(this);
+    sizer->Add(m_windows, 1, wxEXPAND);
     Layout();
 }
 
@@ -56,12 +56,7 @@ void Notebook::AddPage(wxWindow* page, const wxString& label, bool selected, con
 
 void Notebook::DoChangeSelection(wxWindow* page)
 {
-    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        if(m_book->GetPage(i) == page) {
-            m_book->ChangeSelection(i);
-            break;
-        }
-    }
+    m_windows->Select(page);
 }
 
 bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
@@ -599,7 +594,7 @@ clTabInfo::Ptr_t clTabCtrl::GetActiveTabInfo()
 
 void clTabCtrl::AddPage(clTabInfo::Ptr_t tab) { InsertPage(m_tabs.size(), tab); }
 
-wxSimplebook* clTabCtrl::GetBook() { return reinterpret_cast<Notebook*>(GetParent())->m_book; }
+WindowStack* clTabCtrl::GetStack() { return reinterpret_cast<Notebook*>(GetParent())->m_windows; }
 
 bool clTabCtrl::InsertPage(size_t index, clTabInfo::Ptr_t tab)
 {
@@ -609,8 +604,7 @@ bool clTabCtrl::InsertPage(size_t index, clTabInfo::Ptr_t tab)
     bool sendPageChangedEvent = (oldSelection == wxNOT_FOUND) || tab->IsActive();
 
     int tabIndex = index;
-    tab->GetWindow()->Reparent(GetBook());
-    GetBook()->InsertPage(index, tab->GetWindow(), tab->GetLabel(), tab->IsActive());
+    GetStack()->Add(tab->GetWindow(), tab->IsActive());
     if(sendPageChangedEvent) {
         ChangeSelection(tabIndex);
         
@@ -834,11 +828,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
 
     // Now remove the page from the notebook. We will delete the page
     // ourself, so there is no need to call DeletePage
-    int where = GetBook()->FindPage(tab->GetWindow());
-    if(where != wxNOT_FOUND) {
-        GetBook()->RemovePage(where);
-    }
-
+    GetStack()->Remove(tab->GetWindow());
     if(deletePage) {
         // Destory the page
         tab->GetWindow()->Destroy();
@@ -880,10 +870,9 @@ int clTabCtrl::DoGetPageIndex(wxWindow* win) const
 
 bool clTabCtrl::DeleteAllPages()
 {
-    if(GetBook()->DeleteAllPages()) {
-        m_tabs.clear();
-        m_visibleTabs.clear();
-    }
+    GetStack()->Clear();
+    m_tabs.clear();
+    m_visibleTabs.clear();
     Refresh();
     return true;
 }

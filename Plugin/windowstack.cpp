@@ -82,6 +82,7 @@ bool WindowStack::Remove(wxWindow* win)
     if(win == m_selection) {
         SelectNone();
     }
+    return true;
 }
 
 bool WindowStack::Delete(wxWindow* win)
@@ -103,6 +104,7 @@ bool WindowStack::Add(wxWindow* win, bool select)
     } else {
         win->Hide();
     }
+    return true;
 }
 
 bool WindowStack::Contains(wxWindow* win)

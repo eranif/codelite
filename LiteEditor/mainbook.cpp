@@ -124,6 +124,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
 }
 
 MainBook::~MainBook()
@@ -135,6 +136,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
     m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
     // m_book->Unbind(wxEVT_BOOK_PAGE_MIDDLE_CLICKED, &MainBook::OnClosePage), NULL, this);
 
     EventNotifier::Get()->Disconnect(
@@ -1414,4 +1416,10 @@ void MainBook::OnNavigating(wxBookCtrlEvent& e)
     if(dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
         m_book->SetSelection(dlg.GetSelection());
     }
+}
+
+void MainBook::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    DoUpdateNotebookTheme();
 }

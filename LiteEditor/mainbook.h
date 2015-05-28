@@ -53,7 +53,7 @@ private:
     bool m_isWorkspaceReloading;
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
-    
+
 public:
     enum {
         kGetAll_Default = 0x00000000,         // booked editors only
@@ -67,7 +67,7 @@ private:
     void CreateGuiControls();
     void ConnectEvents();
     void DoUpdateNotebookTheme();
-    
+
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnPageClosing(wxBookCtrlEvent& e);
     void OnPageClosed(wxBookCtrlEvent& e);
@@ -82,7 +82,7 @@ private:
     void OnDebugEnded(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
-
+    void OnThemeChanged(wxCommandEvent& e);
     bool AskUserToSave(LEditor* editor);
     bool DoSelectPage(wxWindow* win);
     void DoPositionFindBar(int where);
@@ -112,7 +112,7 @@ public:
                      const ButtonDetails& btn2 = ButtonDetails(),
                      const ButtonDetails& btn3 = ButtonDetails(),
                      const CheckboxDetails& cb = CheckboxDetails());
-    
+
     void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);
     void UpdateNavBar(LEditor* editor);

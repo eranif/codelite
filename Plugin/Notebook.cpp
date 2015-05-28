@@ -788,7 +788,7 @@ void clTabInfo::Colours::InitDarkColours()
     inactiveTabPenColour = wxColour("#100f0f");
     inactiveTabInnerPenColour = wxColour("#535252");
 
-    tabAreaColour = wxColour("#131111");
+    tabAreaColour = wxColour("#131111").ChangeLightness(105);
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
     chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
@@ -993,11 +993,9 @@ void clTabCtrl::DoShowTabList()
     int pageMenuID = firstTabPageID;
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         clTabInfo::Ptr_t tab = m_tabs.at(i);
-        wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, tab->GetLabel(), "", wxITEM_NORMAL);
+        wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, tab->GetLabel(), "", wxITEM_CHECK);
         menu.Append(item);
-        if(tab->GetBitmap().IsOk()) {
-            item->SetBitmap(tab->GetBitmap());
-        }
+        item->Check(tab->IsActive());
         pageMenuID++;
     }
 

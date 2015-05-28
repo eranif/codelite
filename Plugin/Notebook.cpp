@@ -554,9 +554,6 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
     int oldSelection = GetSelection();
     if(!IsIndexValid(tabIdx)) return oldSelection;
 
-    // Keep this page
-    m_history->Push(GetPage(tabIdx));
-
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         clTabInfo::Ptr_t tab = m_tabs.at(i);
         tab->SetActive((i == tabIdx), GetStyle());
@@ -567,7 +564,6 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
         static_cast<Notebook*>(GetParent())->DoChangeSelection(activeTab->GetWindow());
     }
     Refresh();
-
     return oldSelection;
 }
 
@@ -636,7 +632,7 @@ bool clTabCtrl::InsertPage(size_t index, clTabInfo::Ptr_t tab)
     if(index > m_tabs.size()) return false;
     m_tabs.insert(m_tabs.begin() + index, tab);
     bool sendPageChangedEvent = (oldSelection == wxNOT_FOUND) || tab->IsActive();
-
+    
     int tabIndex = index;
     GetStack()->Add(tab->GetWindow(), tab->IsActive());
     if(sendPageChangedEvent) {
@@ -649,8 +645,9 @@ bool clTabCtrl::InsertPage(size_t index, clTabInfo::Ptr_t tab)
         event.SetOldSelection(oldSelection);
         GetParent()->GetEventHandler()->ProcessEvent(event);
     }
-    m_history->Push(tab->GetWindow());
+    
     tab->GetWindow()->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
+    m_history->Push(tab->GetWindow());
     Refresh();
     return true;
 }
@@ -674,6 +671,7 @@ void clTabCtrl::SetPageBitmap(size_t index, const wxBitmap& bmp)
     clTabInfo::Ptr_t tab = GetTabInfo(index);
     if(tab) {
         tab->SetBitmap(bmp, GetStyle());
+        m_visibleTabs.clear();
         Refresh();
     }
 }
@@ -823,13 +821,13 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         }
     }
 
-    // Remove this page from the history
-    m_history->Pop(GetPage(page));
 
     // Remove the tab from the "all-tabs" list
     clTabInfo::Ptr_t tab = m_tabs.at(page);
     m_tabs.erase(m_tabs.begin() + page);
 
+    // Remove this page from the history
+    m_history->Pop(tab->GetWindow());
     tab->GetWindow()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 
     // Remove the tabs from the visible tabs list
@@ -1037,7 +1035,10 @@ void clTabCtrl::DoChangeSelection(size_t index)
         }
     }
     ChangeSelection(index);
-
+    
+    // Keep this page
+    m_history->Push(GetPage(index));
+    
     // Fire an event
     {
         wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
@@ -1061,9 +1062,11 @@ void clTabHistory::Clear() { m_history.clear(); }
 void clTabHistory::Pop(wxWindow* page)
 {
     if(!page) return;
-    // Remove any occurance of this page from the history
-    std::list<wxWindow*>::iterator iter = std::remove(m_history.begin(), m_history.end(), page);
-    m_history.resize(std::distance(m_history.begin(), iter));
+    
+    int where = m_history.Index(page);
+    if(where != wxNOT_FOUND) {
+        m_history.Remove((void*)page);
+    }
 }
 
 wxWindow* clTabHistory::PrevPage()
@@ -1072,16 +1075,12 @@ wxWindow* clTabHistory::PrevPage()
         return NULL;
     }
     // return the top of the heap
-    return m_history.back();
+    return static_cast<wxWindow*>(m_history.Item(0));
 }
 
 void clTabHistory::Push(wxWindow* page)
 {
     if(page == NULL) return;
-
-    // Remove any occurance of this page from the history
     Pop(page);
-
-    // Re-insert it at the top
-    m_history.push_back(page);
+    m_history.Insert((void*)page, 0);
 }

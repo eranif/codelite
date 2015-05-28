@@ -452,9 +452,17 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
     boxSizer157 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer157);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE|wxWANTS_CHARS|wxBORDER_NONE);
+    m_panel161 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxWANTS_CHARS|wxTAB_TRAVERSAL);
     
-    boxSizer157->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 0);
+    boxSizer157->Add(m_panel161, 1, wxEXPAND, 5);
+    
+    boxSizer163 = new wxBoxSizer(wxVERTICAL);
+    m_panel161->SetSizer(boxSizer163);
+    
+    m_dvListCtrl = new wxDataViewListCtrl(m_panel161, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE|wxWANTS_CHARS|wxTAB_TRAVERSAL|wxBORDER_NONE);
+    m_dvListCtrl->SetFocus();
+    
+    boxSizer163->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 0);
     
     m_dvListCtrl->AppendIconTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
@@ -472,6 +480,8 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
     }
 #endif
     // Connect events
+    this->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyDown), NULL, this);
+    this->Connect(wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyUp), NULL, this);
     m_dvListCtrl->Connect(wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyUp), NULL, this);
     m_dvListCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyDown), NULL, this);
     
@@ -479,6 +489,8 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
 
 NotebookNavigationDlgBase::~NotebookNavigationDlgBase()
 {
+    this->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyDown), NULL, this);
+    this->Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyUp), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyUp), NULL, this);
     m_dvListCtrl->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyDown), NULL, this);
     

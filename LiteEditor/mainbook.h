@@ -73,6 +73,7 @@ private:
     void OnPageClosed(wxBookCtrlEvent& e);
     void OnPageChanged(wxBookCtrlEvent& e);
     void OnClosePage(wxBookCtrlEvent& e);
+    void OnNavigating(wxBookCtrlEvent& e);
     void OnPageChanging(wxBookCtrlEvent& e);
     void OnProjectFileAdded(clCommandEvent& e);
     void OnProjectFileRemoved(clCommandEvent& e);

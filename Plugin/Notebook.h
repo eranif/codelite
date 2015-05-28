@@ -10,6 +10,7 @@
 #include <wx/sharedptr.h>
 #include <wx/bookctrl.h>
 #include "windowstack.h"
+#include <wx/dynarray.h>
 
 #ifdef WXDLLIMPEXP_SDK
 #undef WXDLLIMPEXP_SDK
@@ -152,7 +153,7 @@ class wxMenu;
 
 class WXDLLIMPEXP_SDK clTabHistory
 {
-    std::list<wxWindow*> m_history;
+    wxArrayPtrVoid m_history;
     wxWindow* m_page; /// The page to add to the hisotry
 
 public:
@@ -174,7 +175,7 @@ public:
      * @brief return the tabbing history
      * @return
      */
-    const std::list<wxWindow*>& GetHistory() const { return m_history; }
+    const wxArrayPtrVoid& GetHistory() const { return m_history; }
 };
 
 /**

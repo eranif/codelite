@@ -3,6 +3,8 @@
 #include "Notebook.h"
 #include <algorithm>
 #include "globals.h"
+#include <wx/app.h>
+#include <wx/dynarray.h>
 
 struct TabData {
     wxString label;
@@ -15,10 +17,10 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     , m_book(book)
 {
     clTabHistory::Ptr_t history = m_book->GetHistory();
-    const std::list<wxWindow*>& windows = history->GetHistory();
+    const wxArrayPtrVoid& windows = history->GetHistory();
     // Populate the list
-    std::for_each(windows.begin(), windows.end(), [&](wxWindow* page) {
-        int index = m_book->FindPage(page);
+    for(size_t i = 0; i < windows.GetCount(); ++i) {
+        int index = m_book->FindPage((wxWindow*)windows.Item(i));
         if(index != wxNOT_FOUND) {
             wxString label = m_book->GetPageText(index);
             wxBitmap bmp = m_book->GetPageBitmap(index);
@@ -31,10 +33,28 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
             d->index = index;
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr)d);
         }
-    });
+    }
+
+    if(m_dvListCtrl->GetItemCount() > 1) {
+        m_dvListCtrl->Select(m_dvListCtrl->RowToItem(1));
+    } else {
+        m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
+    }
+    m_dvListCtrl->SetFocus();
+    wxTheApp->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
+    wxTheApp->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 }
 
-NotebookNavigationDlg::~NotebookNavigationDlg() {}
+NotebookNavigationDlg::~NotebookNavigationDlg()
+{
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        TabData* d = (TabData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+        wxDELETE(d);
+    }
+    m_dvListCtrl->DeleteAllItems();
+    wxTheApp->Unbind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
+    wxTheApp->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
+}
 
 void NotebookNavigationDlg::CloseDialog()
 {
@@ -46,9 +66,43 @@ void NotebookNavigationDlg::CloseDialog()
     EndModal(wxID_OK);
 }
 
-void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event) 
+void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 {
-    // Change the selection
+    if(event.GetKeyCode() == WXK_TAB && event.ControlDown() && event.ShiftDown()) {
+        // Navigate Up
+        wxDataViewItem item = m_dvListCtrl->GetSelection();
+        if(item.IsOk()) {
+            int row = m_dvListCtrl->ItemToRow(item);
+            if(row > 0) {
+                --row;
+                item = m_dvListCtrl->RowToItem(row);
+                m_dvListCtrl->Select(item);
+            } else {
+                // Select the last item
+                row = m_dvListCtrl->GetItemCount() - 1;
+                item = m_dvListCtrl->RowToItem(row);
+                m_dvListCtrl->Select(item);
+            }
+        }
+    } else if(event.GetKeyCode() == WXK_TAB && event.ControlDown()) {
+        // Navigate Down
+        wxDataViewItem item = m_dvListCtrl->GetSelection();
+        if(item.IsOk()) {
+            int row = m_dvListCtrl->ItemToRow(item);
+            if(row < (m_dvListCtrl->GetItemCount() - 1)) {
+                ++row;
+                item = m_dvListCtrl->RowToItem(row);
+                m_dvListCtrl->Select(item);
+            } else {
+                // Select the last item
+                item = m_dvListCtrl->RowToItem(0);
+                m_dvListCtrl->Select(item);
+            }
+        }
+
+    } else {
+        event.Skip();
+    }
 }
 
 void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)

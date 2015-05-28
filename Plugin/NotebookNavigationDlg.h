@@ -7,7 +7,6 @@ class Notebook;
 class WXDLLIMPEXP_SDK NotebookNavigationDlg : public NotebookNavigationDlgBase
 {
     Notebook* m_book;
-
 public:
     NotebookNavigationDlg(wxWindow* parent, Notebook* book);
     virtual ~NotebookNavigationDlg();

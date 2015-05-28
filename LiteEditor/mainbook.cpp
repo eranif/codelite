@@ -44,6 +44,7 @@
 #include "pluginmanager.h"
 #include <algorithm>
 #include "clFileOrFolderDropTarget.h"
+#include "NotebookNavigationDlg.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -84,6 +85,7 @@ void MainBook::CreateGuiControls()
                  kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
                  kNotebook_MouseMiddleClickFireEvent |      // instead of closing the tab, fire an event
                  kNotebook_ShowFileListButton |             // show drop down list of all open tabs
+                 kNotebook_EnableNavigationEvent |          // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
                  kNotebook_CloseButtonOnActiveTabFireEvent; // When closing the 'x' button, fire an event
 
     // load the notebook style from the configuration settings
@@ -105,6 +107,8 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &MainBook::OnPageChanged, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
+    m_book->Bind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
+    
     // m_book->Bind(wxEVT_BOOK_PAGE_MIDDLE_CLICKED, &MainBook::OnClosePage), NULL, this);
     // m_book->Bind(wxEVT_BOOK_BG_DCLICK, &MainBook::OnMouseDClick), NULL, this);
 
@@ -130,6 +134,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &MainBook::OnPageChanged, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
+    m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     // m_book->Unbind(wxEVT_BOOK_PAGE_MIDDLE_CLICKED, &MainBook::OnClosePage), NULL, this);
 
     EventNotifier::Get()->Disconnect(
@@ -1400,4 +1405,11 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
 #ifdef __WXMAC__
     m_book->GetSizer()->Layout();
 #endif
+}
+
+void MainBook::OnNavigating(wxBookCtrlEvent& e)
+{
+    if(m_book->GetPageCount() == 0) return;
+    NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), m_book);
+    dlg.ShowModal();
 }

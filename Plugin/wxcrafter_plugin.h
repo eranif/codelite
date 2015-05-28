@@ -178,14 +178,17 @@ class NotebookNavigationDlgBase : public wxDialog
 {
 protected:
     wxBoxSizer* boxSizer157;
+    wxPanel* m_panel161;
+    wxBoxSizer* boxSizer163;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
-    virtual void OnKeyUp(wxKeyEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnKeyUp(wxKeyEvent& event) { event.Skip(); }
 
 public:
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxPanel* GetPanel161() { return m_panel161; }
     NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Tab"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxRESIZE_BORDER);
     virtual ~NotebookNavigationDlgBase();
 };

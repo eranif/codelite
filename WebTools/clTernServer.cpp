@@ -44,8 +44,8 @@ void clTernServer::OnTernOutput(clProcessEvent& event)
 
 void clTernServer::OnTernTerminated(clProcessEvent& event)
 {
+    wxDELETE(m_tern);
     if(m_goingDown || !m_jsCCManager->IsEnabled()) {
-        wxDELETE(m_tern);
         return;
     }
     PrintMessage("Tern server terminated, will restart it\n");

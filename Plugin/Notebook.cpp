@@ -569,7 +569,11 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
 
 int clTabCtrl::SetSelection(size_t tabIdx)
 {
+#ifdef __WXMSW__
+    DoChangeSelection(tabIdx);
+#else
     CallAfter(&clTabCtrl::DoChangeSelection, tabIdx);
+#endif
     return wxNOT_FOUND;
 }
 
@@ -670,8 +674,22 @@ void clTabCtrl::SetPageBitmap(size_t index, const wxBitmap& bmp)
 {
     clTabInfo::Ptr_t tab = GetTabInfo(index);
     if(tab) {
+        
+        int oldWidth = tab->GetWidth();
         tab->SetBitmap(bmp, GetStyle());
-        m_visibleTabs.clear();
+        int newWidth = tab->GetWidth();
+        int diff = (newWidth - oldWidth);
+        
+        // Update the coordinates starting from the current tab
+        clTabInfo::Vec_t tabsToUpdate;
+        bool foundActiveTab = false;
+        for(size_t i=0; i<m_tabs.size(); ++i) {
+            if(!foundActiveTab && (m_tabs.at(i)->GetWindow() == tab->GetWindow())) {
+                foundActiveTab = true;
+            } else if(foundActiveTab) {
+                m_tabs.at(i)->GetRect().SetX(m_tabs.at(i)->GetRect().GetX() + diff);
+            }
+        }
         Refresh();
     }
 }

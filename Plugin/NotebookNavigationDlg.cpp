@@ -15,6 +15,7 @@ struct TabData {
 NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     : NotebookNavigationDlgBase(parent)
     , m_book(book)
+    , m_selection(wxNOT_FOUND)
 {
     clTabHistory::Ptr_t history = m_book->GetHistory();
     const wxArrayPtrVoid& windows = history->GetHistory();
@@ -61,7 +62,7 @@ void NotebookNavigationDlg::CloseDialog()
     wxDataViewItem selection = m_dvListCtrl->GetSelection();
     if(selection.IsOk()) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(selection);
-        m_book->SetSelection(d->index);
+        m_selection = d->index;
     }
     EndModal(wxID_OK);
 }

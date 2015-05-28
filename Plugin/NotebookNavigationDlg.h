@@ -7,10 +7,14 @@ class Notebook;
 class WXDLLIMPEXP_SDK NotebookNavigationDlg : public NotebookNavigationDlgBase
 {
     Notebook* m_book;
+    int m_selection;
+
 public:
     NotebookNavigationDlg(wxWindow* parent, Notebook* book);
     virtual ~NotebookNavigationDlg();
     void CloseDialog();
+
+    int GetSelection() const { return m_selection; }
 
 protected:
     virtual void OnKeyDown(wxKeyEvent& event);

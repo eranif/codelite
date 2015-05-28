@@ -1411,5 +1411,7 @@ void MainBook::OnNavigating(wxBookCtrlEvent& e)
 {
     if(m_book->GetPageCount() == 0) return;
     NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), m_book);
-    dlg.ShowModal();
+    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
+        m_book->SetSelection(dlg.GetSelection());
+    }
 }

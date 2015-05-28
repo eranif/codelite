@@ -28,6 +28,8 @@
 #include "wx/textfile.h"
 #include "workspace.h"
 #include "windowattrmanager.h"
+#include "wx/msgdlg.h"
+#include "wx/wx.h"
 
 static MacBundler* thePlugin = NULL;
 

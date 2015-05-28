@@ -28,6 +28,7 @@
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
 #include "clFileViwerTreeCtrl.h"
+#include <wx/dataview.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -170,6 +171,23 @@ public:
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelBase();
+};
+
+
+class NotebookNavigationDlgBase : public wxDialog
+{
+protected:
+    wxBoxSizer* boxSizer157;
+    wxDataViewListCtrl* m_dvListCtrl;
+
+protected:
+    virtual void OnKeyUp(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+
+public:
+    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Tab"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxRESIZE_BORDER);
+    virtual ~NotebookNavigationDlgBase();
 };
 
 #endif

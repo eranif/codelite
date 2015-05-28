@@ -438,3 +438,48 @@ clTreeCtrlPanelBase::~clTreeCtrlPanelBase()
     m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(clTreeCtrlPanelBase::OnContextMenu), NULL, this);
     
 }
+
+NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9D6CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    boxSizer157 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer157);
+    
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE|wxWANTS_CHARS|wxBORDER_NONE);
+    
+    boxSizer157->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 0);
+    
+    m_dvListCtrl->AppendIconTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    
+    SetName(wxT("NotebookNavigationDlgBase"));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_dvListCtrl->Connect(wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyUp), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyDown), NULL, this);
+    
+}
+
+NotebookNavigationDlgBase::~NotebookNavigationDlgBase()
+{
+    m_dvListCtrl->Disconnect(wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyUp), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NotebookNavigationDlgBase::OnKeyDown), NULL, this);
+    
+}

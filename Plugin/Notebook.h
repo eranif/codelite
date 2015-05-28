@@ -45,7 +45,8 @@ enum NotebookStyle {
     /// Clicking the X button on the active button fires an event
     /// instead of closing the tab (i.e. let the container a complete control)
     kNotebook_CloseButtonOnActiveTabFireEvent = (1 << 7),
-
+    /// Fire navigation event for Ctrl-TAB et al
+    kNotebook_EnableNavigationEvent = (1 << 8),
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
 };
@@ -200,6 +201,7 @@ protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnSize(wxSizeEvent& event);
+    void OnWindowKeyDown(wxKeyEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnMouseMotion(wxMouseEvent& event);
@@ -462,10 +464,10 @@ public:
      * @return true if tool tip was updated, false if it failed, e.g. because the page index is invalid.
      */
     bool SetPageToolTip(size_t page, const wxString& tooltip) { return m_tabCtrl->SetPageToolTip(page, tooltip); }
-    
+
     /**
      * @brief return the tabbing history
-     * @return 
+     * @return
      */
     clTabHistory::Ptr_t GetHistory() const { return m_tabCtrl->GetHistory(); }
 };
@@ -475,5 +477,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEve
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 
 #endif // NOTEBOOK_H

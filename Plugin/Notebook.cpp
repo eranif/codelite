@@ -15,6 +15,7 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 
 extern void Notebook_Init_Bitmaps();
 
@@ -24,7 +25,7 @@ Notebook::Notebook(wxWindow* parent,
                    const wxSize& size,
                    long style,
                    const wxString& name)
-    : wxPanel(parent, id, pos, size, style, name)
+    : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
 {
     static bool once = false;
     if(!once) {
@@ -301,7 +302,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 }
 
 clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
-    : wxPanel(notebook)
+    : wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL)
     , m_height(clTabInfo::TAB_HEIGHT)
     , m_style(style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
@@ -317,6 +318,8 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Bind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
+    Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
+    notebook->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     if(m_style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
     } else {
@@ -337,6 +340,30 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Unbind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
     Unbind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
+    Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
+    GetParent()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
+}
+
+void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
+{
+    if(GetStyle() & kNotebook_EnableNavigationEvent) {
+        if(event.ControlDown()) {
+            switch(event.GetKeyCode()) {
+            case WXK_TAB:
+            case WXK_PAGEDOWN:
+            case WXK_PAGEUP: {
+                // Fire the navigation event
+                wxBookCtrlEvent e(wxEVT_BOOK_NAVIGATING);
+                e.SetEventObject(GetParent());
+                GetParent()->GetEventHandler()->AddPendingEvent(e);
+                return;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    event.Skip();
 }
 
 void clTabCtrl::OnSize(wxSizeEvent& event)
@@ -526,10 +553,10 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
     wxWindowUpdateLocker locker(GetParent());
     int oldSelection = GetSelection();
     if(!IsIndexValid(tabIdx)) return oldSelection;
-    
+
     // Keep this page
     m_history->Push(GetPage(tabIdx));
-    
+
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         clTabInfo::Ptr_t tab = m_tabs.at(i);
         tab->SetActive((i == tabIdx), GetStyle());
@@ -540,7 +567,7 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
         static_cast<Notebook*>(GetParent())->DoChangeSelection(activeTab->GetWindow());
     }
     Refresh();
-    
+
     return oldSelection;
 }
 
@@ -623,6 +650,7 @@ bool clTabCtrl::InsertPage(size_t index, clTabInfo::Ptr_t tab)
         GetParent()->GetEventHandler()->ProcessEvent(event);
     }
     m_history->Push(tab->GetWindow());
+    tab->GetWindow()->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Refresh();
     return true;
 }
@@ -794,13 +822,15 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
             return false;
         }
     }
-    
+
     // Remove this page from the history
     m_history->Pop(GetPage(page));
-    
+
     // Remove the tab from the "all-tabs" list
     clTabInfo::Ptr_t tab = m_tabs.at(page);
     m_tabs.erase(m_tabs.begin() + page);
+
+    tab->GetWindow()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 
     // Remove the tabs from the visible tabs list
     clTabInfo::Vec_t::iterator iter = std::find_if(m_visibleTabs.begin(), m_visibleTabs.end(), [&](clTabInfo::Ptr_t t) {
@@ -849,7 +879,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         if(!nextSelection && !m_tabs.empty()) {
             nextSelection = m_tabs.at(0)->GetWindow();
         }
-        
+
         int nextSel = DoGetPageIndex(nextSelection);
         if(nextSel != wxNOT_FOUND) {
             ChangeSelection(nextSel);
@@ -985,6 +1015,9 @@ int clTabCtrl::DoGetPageIndex(const wxString& label) const
 
 void clTabCtrl::DoChangeSelection(size_t index)
 {
+    // sanity
+    if(index >= m_tabs.size()) return;
+    
     int oldSelection = GetSelection();
     /// Do nothing if the tab is already selected
     if(oldSelection == (int)index) {

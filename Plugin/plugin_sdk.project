@@ -346,6 +346,8 @@
       <File Name="Notebook.cpp"/>
       <File Name="Notebook.h"/>
       <File Name="notebook_bitmaps.cpp"/>
+      <File Name="NotebookNavigationDlg.h"/>
+      <File Name="NotebookNavigationDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxAUI">
       <File Name="cl_aui_dock_art.h"/>

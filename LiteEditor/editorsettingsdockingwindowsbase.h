@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
-#define EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -16,6 +16,7 @@
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/radiobox.h>
+#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -27,18 +28,29 @@
 class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxNotebook* m_notebook10;
     wxPanel* m_panel12;
+    wxBoxSizer* boxSizer22;
+    wxBoxSizer* bSizer2;
     wxRadioBox* m_radioBoxHint;
-    wxRadioBox* m_radioBoxTabControlStyle;
+    wxBoxSizer* boxSizer32;
+    wxStaticBoxSizer* staticBoxSizer27;
+    wxCheckBox* m_checkBoxShowXButton;
+    wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
+    wxBoxSizer* boxSizer25;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxPanel* m_panel14;
+    wxBoxSizer* boxSizer20;
     wxCheckBox* m_checkBoxFindBarAtBottom;
     wxCheckBox* m_checkBoxShowReplaceBar;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
     wxPanel* m_panel16;
+    wxBoxSizer* boxSizer21;
+    wxBoxSizer* boxSizer19;
     wxCheckBox* m_checkBoxHideOutputPaneOnClick;
+    wxFlexGridSizer* fgSizer1;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfBuild;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfSearch;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfReplace;
@@ -61,7 +73,8 @@ protected:
 
 public:
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
-    wxRadioBox* GetRadioBoxTabControlStyle() { return m_radioBoxTabControlStyle; }
+    wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
+    wxCheckBox* GetCheckBoxEditorTabsFollowsTheme() { return m_checkBoxEditorTabsFollowsTheme; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxPanel* GetPanel12() { return m_panel12; }

@@ -23,7 +23,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -34,10 +34,10 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("Docking"), true);
     
-    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    boxSizer22 = new wxBoxSizer(wxVERTICAL);
     m_panel12->SetSizer(boxSizer22);
     
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer22->Add(bSizer2, 0, wxALL|wxEXPAND, 5);
     
@@ -48,19 +48,31 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_radioBoxHint = new wxRadioBox(m_panel12, wxID_ANY, _("Docking Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxHintArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxHint->SetSelection(0);
     
-    bSizer2->Add(m_radioBoxHint, 1, wxALL|wxEXPAND, 5);
+    bSizer2->Add(m_radioBoxHint, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
-    wxArrayString m_radioBoxTabControlStyleArr;
-    m_radioBoxTabControlStyleArr.Add(_("Glossy"));
-    m_radioBoxTabControlStyleArr.Add(_("Curved"));
-    m_radioBoxTabControlStyle = new wxRadioBox(m_panel12, wxID_ANY, _("Tab Control Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxTabControlStyleArr, 1, wxRA_SPECIFY_COLS);
-    m_radioBoxTabControlStyle->SetSelection(0);
+    boxSizer32 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer2->Add(m_radioBoxTabControlStyle, 1, wxALL|wxEXPAND, 5);
+    boxSizer22->Add(boxSizer32, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
+    staticBoxSizer27 = new wxStaticBoxSizer( new wxStaticBox(m_panel12, wxID_ANY, _("Tabs")), wxVERTICAL);
     
-    boxSizer22->Add(boxSizer25, 0, wxALL, 5);
+    boxSizer32->Add(staticBoxSizer27, 0, wxALL|wxEXPAND, 5);
+    
+    m_checkBoxShowXButton = new wxCheckBox(m_panel12, wxID_ANY, _("Show close button on active tab"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxShowXButton->SetValue(true);
+    m_checkBoxShowXButton->SetToolTip(_("Show close button on active tab"));
+    
+    staticBoxSizer27->Add(m_checkBoxShowXButton, 0, wxALL, 5);
+    
+    m_checkBoxEditorTabsFollowsTheme = new wxCheckBox(m_panel12, wxID_ANY, _("The editor tabs matches to the editor colour theme"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEditorTabsFollowsTheme->SetValue(true);
+    m_checkBoxEditorTabsFollowsTheme->SetToolTip(_("The editor tabs matches to the editor colour theme"));
+    
+    staticBoxSizer27->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, 5);
+    
+    boxSizer25 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer22->Add(boxSizer25, 0, wxALL, 10);
     
     m_checkBoxHideCaptions = new wxCheckBox(m_panel12, wxID_ANY, _("Hide Docking Windows captions"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxHideCaptions->SetValue(false);
@@ -76,7 +88,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_panel14 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel14, _("Find / Find In Files"), false);
     
-    wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
+    boxSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(boxSizer20);
     
     m_checkBoxFindBarAtBottom = new wxCheckBox(m_panel14, wxID_ANY, _("Place the Find bar at the bottom"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -99,10 +111,10 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_panel16 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel16, _("Debug / Output panes"), false);
     
-    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxVERTICAL);
+    boxSizer21 = new wxBoxSizer(wxVERTICAL);
     m_panel16->SetSizer(boxSizer21);
     
-    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
+    boxSizer19 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer21->Add(boxSizer19, 0, wxALL|wxEXPAND, 5);
     
@@ -112,7 +124,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer19->Add(m_checkBoxHideOutputPaneOnClick, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 4, 0, 0);
+    fgSizer1 = new wxFlexGridSizer(0, 4, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     

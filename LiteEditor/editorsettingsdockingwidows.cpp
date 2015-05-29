@@ -54,19 +54,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_radioBoxHint->SetSelection(options->GetDockingStyle());
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
-    
-    int tabStyle(0); // Glossy
-    m_startingFlags = OptionsConfig::TabGlossy;
-    if(options->GetOptions() & OptionsConfig::TabCurved) {
-        tabStyle = 1;
-        m_startingFlags = OptionsConfig::TabCurved;
-    }
-
-    m_endFlags = m_startingFlags;
-    m_radioBoxTabControlStyle->SetSelection(tabStyle);
-#if CL_USE_NATIVEBOOK
-    m_radioBoxTabControlStyle->Enable(false);
-#endif
+    m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
+    m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
     m_checkBoxHideOutputPaneNotIfDebug->Connect(
         wxEVT_UPDATE_UI,
         wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI),
@@ -98,30 +87,11 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetDockingStyle(m_radioBoxHint->GetSelection());
     options->SetShowDockingWindowCaption(!m_checkBoxHideCaptions->IsChecked());
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
+    options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
+    options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
     
     // Keep the quickreplacebar in sync
     clMainFrame::Get()->GetMainBook()->ShowQuickReplaceBar(m_checkBoxShowReplaceBar->IsChecked());
-
-    size_t flags(options->GetOptions());
-
-    // set the tab control options:
-    ////////////////////////////////////
-
-    // Clear the current tab control style
-    flags &= ~OptionsConfig::TabAll;
-
-    switch(m_radioBoxTabControlStyle->GetSelection()) {
-    case 0: // glossy
-        flags |= OptionsConfig::TabGlossy;
-        m_endFlags |= OptionsConfig::TabGlossy;
-        break;
-    case 1: // curved
-    default:
-        flags |= OptionsConfig::TabCurved;
-        m_endFlags |= OptionsConfig::TabCurved;
-        break;
-    }
-    options->SetOptions(flags);
 }
 
 void EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)
@@ -129,7 +99,7 @@ void EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent&
     event.Enable(m_checkBoxHideOutputPaneOnClick->IsChecked());
 }
 
-bool EditorSettingsDockingWindows::IsRestartRequired() { return m_startingFlags != m_endFlags; }
+bool EditorSettingsDockingWindows::IsRestartRequired() { return false; }
 void EditorSettingsDockingWindows::OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event)
 {
 #ifdef __WXMSW__

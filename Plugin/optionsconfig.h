@@ -52,8 +52,8 @@ public:
         Opt_NavKey_Control = 0x00001000,
         Opt_IconSet_Classic_Dark = 0x00002000,
         Opt_Mark_Debugger_Line = 0x00004000,
-        Opt_Unused1 = 0x00008000,
-        Opt_Unused2 = 0x00010000,
+        Opt_TabNoXButton = 0x00008000,
+        Opt_TabColourPersistent = 0x00010000,
         Opt_Unused3 = 0x00020000,
         Opt_Use_CodeLite_Terminal = 0x00040000,
         Opt_Unused4 = 0x00080000,
@@ -159,7 +159,11 @@ public:
     //-------------------------------------
     // Setters/Getters
     //-------------------------------------
-
+    void SetTabColourMatchesTheme(bool b) { EnableOption(Opt_TabColourPersistent, !b); }
+    bool IsTabColourMatchesTheme() const { return !HasOption(Opt_TabColourPersistent); }
+    void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
+    bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
+    
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }
     void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) { this->m_trimOnlyModifiedLines = trimOnlyModifiedLines; }

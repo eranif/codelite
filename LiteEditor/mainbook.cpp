@@ -80,13 +80,15 @@ void MainBook::CreateGuiControls()
 
     m_navBar = new NavBar(this);
     sz->Add(m_navBar, 0, wxEXPAND);
-    long style = kNotebook_CloseButtonOnActiveTab |         // Draw X button on the active tab
-                 kNotebook_AllowDnD |                       // Allow tabs to move
-                 kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
-                 kNotebook_MouseMiddleClickFireEvent |      // instead of closing the tab, fire an event
-                 kNotebook_ShowFileListButton |             // show drop down list of all open tabs
-                 kNotebook_EnableNavigationEvent |          // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
-                 kNotebook_CloseButtonOnActiveTabFireEvent; // When closing the 'x' button, fire an event
+    long style = kNotebook_AllowDnD |                  // Allow tabs to move
+                 kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
+                 kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
+                 kNotebook_ShowFileListButton |        // show drop down list of all open tabs
+                 kNotebook_EnableNavigationEvent;      // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
+
+    if(EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
+        style |= (kNotebook_CloseButtonOnActiveTabFireEvent | kNotebook_CloseButtonOnActiveTab);
+    }
 
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -108,7 +110,7 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
     m_book->Bind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
-    
+
     // m_book->Bind(wxEVT_BOOK_PAGE_MIDDLE_CLICKED, &MainBook::OnClosePage), NULL, this);
     // m_book->Bind(wxEVT_BOOK_BG_DCLICK, &MainBook::OnMouseDClick), NULL, this);
 
@@ -1156,16 +1158,23 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
 
 void MainBook::DoUpdateNotebookTheme()
 {
-    // Update theme
-    IEditor* editor = GetActiveEditor();
-    if(editor) {
-        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-        if(DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_DarkTabs)) {
-            size_t style = m_book->GetStyle();
-            style &= ~kNotebook_LightTabs;
-            style |= kNotebook_DarkTabs;
-            m_book->SetStyle(style);
-        } else if(!DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_LightTabs)) {
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourMatchesTheme()) {
+        // Update theme
+        IEditor* editor = GetActiveEditor();
+        if(editor) {
+            wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
+            if(DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_DarkTabs)) {
+                size_t style = m_book->GetStyle();
+                style &= ~kNotebook_LightTabs;
+                style |= kNotebook_DarkTabs;
+                m_book->SetStyle(style);
+            } else if(!DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_LightTabs)) {
+                size_t style = m_book->GetStyle();
+                style &= ~kNotebook_DarkTabs;
+                style |= kNotebook_LightTabs;
+                m_book->SetStyle(style);
+            }
+        } else {
             size_t style = m_book->GetStyle();
             style &= ~kNotebook_DarkTabs;
             style |= kNotebook_LightTabs;
@@ -1173,9 +1182,9 @@ void MainBook::DoUpdateNotebookTheme()
         }
     } else {
         size_t style = m_book->GetStyle();
-            style &= ~kNotebook_DarkTabs;
-            style |= kNotebook_LightTabs;
-            m_book->SetStyle(style);
+        style &= ~kNotebook_DarkTabs;
+        style |= kNotebook_LightTabs;
+        m_book->SetStyle(style);
     }
 }
 

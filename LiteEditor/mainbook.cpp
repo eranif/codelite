@@ -1158,34 +1158,34 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
 
 void MainBook::DoUpdateNotebookTheme()
 {
+    size_t style = m_book->GetStyle();
     if(EditorConfigST::Get()->GetOptions()->IsTabColourMatchesTheme()) {
         // Update theme
         IEditor* editor = GetActiveEditor();
         if(editor) {
             wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
             if(DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_DarkTabs)) {
-                size_t style = m_book->GetStyle();
                 style &= ~kNotebook_LightTabs;
                 style |= kNotebook_DarkTabs;
-                m_book->SetStyle(style);
             } else if(!DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_LightTabs)) {
-                size_t style = m_book->GetStyle();
                 style &= ~kNotebook_DarkTabs;
                 style |= kNotebook_LightTabs;
-                m_book->SetStyle(style);
             }
         } else {
-            size_t style = m_book->GetStyle();
             style &= ~kNotebook_DarkTabs;
             style |= kNotebook_LightTabs;
-            m_book->SetStyle(style);
         }
     } else {
-        size_t style = m_book->GetStyle();
         style &= ~kNotebook_DarkTabs;
         style |= kNotebook_LightTabs;
-        m_book->SetStyle(style);
     }
+
+    if(!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
+        style &= ~(kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
+    } else {
+        style |= (kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
+    }
+    m_book->SetStyle(style);
 }
 
 wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="codelite_utils" Database="./codelite_utils.tags">
+<CodeLite_Workspace Name="codelite_utils" Database="./codelite_utils.tags" SWTLW="No">
   <Project Name="build_all" Path="build_all.project" Active="Yes"/>
   <Project Name="codelite_launcher" Path="../codelite_launcher/codelite_launcher.project" Active="No"/>
   <Project Name="makedir" Path="../TestDir/makedir.project" Active="No"/>

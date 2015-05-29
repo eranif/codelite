@@ -800,7 +800,7 @@ void clTabInfo::Colours::InitDarkColours()
     inactiveTabPenColour = wxColour("#100f0f");
     inactiveTabInnerPenColour = wxColour("#535252");
 
-    tabAreaColour = wxColour("#131111").ChangeLightness(120);
+    tabAreaColour = wxColour("#131111").ChangeLightness(110);
     // 12x12 bitmap
     closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
     chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");

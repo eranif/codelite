@@ -11,6 +11,7 @@
 #include <wx/bookctrl.h>
 #include "windowstack.h"
 #include <wx/dynarray.h>
+#include <wx/dnd.h>
 
 #ifdef WXDLLIMPEXP_SDK
 #undef WXDLLIMPEXP_SDK
@@ -150,6 +151,18 @@ public:
 
 class Notebook;
 class wxMenu;
+class clTabCtrl;
+
+// DnD support of tabs
+class WXDLLIMPEXP_SDK clTabCtrlDropTarget : public wxTextDropTarget
+{
+    clTabCtrl* m_tabCtrl;
+
+public:
+    clTabCtrlDropTarget(clTabCtrl* tabCtrl);
+    virtual ~clTabCtrlDropTarget();
+    virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data);
+};
 
 class WXDLLIMPEXP_SDK clTabHistory
 {
@@ -188,6 +201,8 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     int m_height;
     clTabInfo::Vec_t m_tabs;
     friend class Notebook;
+    friend class clTabCtrlDropTarget;
+    
     size_t m_style;
     clTabInfo::Colours m_colours;
     clTabInfo::Vec_t m_visibleTabs;
@@ -231,13 +246,6 @@ protected:
     clTabInfo::Ptr_t GetTabInfo(wxWindow* page);
     clTabInfo::Ptr_t GetActiveTabInfo();
 
-    /**
-     * @brief test if pt is on one of the visible tabs return its index
-     * @param pt mouse click position
-     * @param realPosition [output] the index position in the m_tabs array
-     * @param tabHit [output] the index position in the m_visibleTabs array
-     */
-    void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit);
 
     WindowStack* GetStack();
 
@@ -248,6 +256,20 @@ public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
 
+    /**
+     * @brief test if pt is on one of the visible tabs return its index
+     * @param pt mouse click position
+     * @param realPosition [output] the index position in the m_tabs array
+     * @param tabHit [output] the index position in the m_visibleTabs array
+     */
+    void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit);
+    
+    /**
+     * @brief Move the active tab to a new position
+     * @param newIndex the new position. 0-based index in the m_tabs array 
+     */
+    bool MoveActiveToIndex(int newIndex);
+    
     /**
      * @brief return true if index is in the tabs vector range
      */

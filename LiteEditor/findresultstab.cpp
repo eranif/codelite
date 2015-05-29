@@ -94,7 +94,8 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     if(useBook) {
 
         // load the book style from the settings file
-        long style = kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
+        long style = kNotebook_AllowDnD |
+                     kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
                      kNotebook_MouseMiddleClickFireEvent |      // instead of closing the tab, fire an event
                      kNotebook_ShowFileListButton |             // show drop down list of all open tabs
                      kNotebook_CloseButtonOnActiveTabFireEvent; // When closing the 'x' button, fire an event
@@ -351,17 +352,17 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
             // Make sure we can add more tabs, if not delete the last used tab and then add
             // a new tab
 
-//            long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
-//            if((long)m_book->GetPageCount() >= MaxBuffers) {
-//                // We have reached the limit of the number of open buffers
-//                // Close the last used buffer
-//                const wxArrayPtrVoid& arr = m_book->GetHistory();
-//                if(arr.GetCount()) {
-//                    wxWindow* tab = static_cast<wxWindow*>(arr.Item(arr.GetCount() - 1));
-//                    m_book->DeletePage(m_book->GetPageIndex(tab));
-//                }
-//            }
-//
+            //            long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
+            //            if((long)m_book->GetPageCount() >= MaxBuffers) {
+            //                // We have reached the limit of the number of open buffers
+            //                // Close the last used buffer
+            //                const wxArrayPtrVoid& arr = m_book->GetHistory();
+            //                if(arr.GetCount()) {
+            //                    wxWindow* tab = static_cast<wxWindow*>(arr.Item(arr.GetCount() - 1));
+            //                    m_book->DeletePage(m_book->GetPageIndex(tab));
+            //                }
+            //            }
+            //
             m_book->AddPage(sci, label, true);
 #ifdef __WXMAC__
             m_book->GetSizer()->Layout();

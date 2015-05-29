@@ -78,7 +78,7 @@ void WorkspacePane::CreateGUIControls()
     SetSizer(mainSizer);
 
     // add notebook for tabs
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, kNotebook_Default);
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, kNotebook_Default | kNotebook_AllowDnD);
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
@@ -248,7 +248,7 @@ void WorkspacePane::ApplySavedTabOrder() const
     // I've left the code in case anyone ever has time/inclination to fix it
     if((index >= 0) && (index < (int)m_book->GetPageCount())) {
         m_book->SetSelection(index);
-    } else if(m_book->GetPageCount()){
+    } else if(m_book->GetPageCount()) {
         m_book->SetSelection(0);
     }
     m_mgr->Update();
@@ -259,9 +259,7 @@ void WorkspacePane::SaveWorkspaceViewTabOrder() const
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
-    std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t){
-        panes.Add(t->GetLabel());
-    });
+    std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
     clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
 }
 

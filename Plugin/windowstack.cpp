@@ -80,7 +80,9 @@ bool WindowStack::Remove(wxWindow* win)
     m_windows.erase(win);
 
     if(win == m_selection) {
-        SelectNone();
+        m_mainSizer->Detach(m_selection);
+        m_mainSizer->Layout();
+        m_selection = NULL;
     }
     return true;
 }

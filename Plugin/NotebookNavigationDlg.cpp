@@ -5,11 +5,22 @@
 #include "globals.h"
 #include <wx/app.h>
 #include <wx/dynarray.h>
+#include <map>
+#include <imanager.h>
+#include "bitmap_loader.h"
 
 struct TabData {
     wxString label;
     wxBitmap bmp;
+    wxFileName filename;
     int index;
+    bool isFile;
+
+    TabData()
+        : index(wxNOT_FOUND)
+        , isFile(false)
+    {
+    }
 };
 
 NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
@@ -17,7 +28,17 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     , m_book(book)
     , m_selection(wxNOT_FOUND)
 {
+    clTab::Vec_t allTabs;
     clTabHistory::Ptr_t history = m_book->GetHistory();
+    clGetManager()->GetAllTabs(allTabs);
+
+    BitmapLoader::BitmapMap_t bmps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
+
+    std::map<void*, clTab> tabsInfoMap;
+    for(size_t i = 0; i < allTabs.size(); ++i) {
+        tabsInfoMap.insert(std::make_pair((void*)allTabs.at(i).window, allTabs.at(i)));
+    }
+
     const wxArrayPtrVoid& windows = history->GetHistory();
     // Populate the list
     for(size_t i = 0; i < windows.GetCount(); ++i) {
@@ -27,11 +48,41 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
             wxBitmap bmp = m_book->GetPageBitmap(index);
 
             wxVector<wxVariant> cols;
-            cols.push_back(::MakeIconText(label, bmp));
             TabData* d = new TabData;
             d->bmp = bmp;
             d->label = label;
             d->index = index;
+
+            // add extra info
+            std::map<void*, clTab>::iterator iter = tabsInfoMap.find(windows.Item(i));
+            if(iter != tabsInfoMap.end()) {
+                d->isFile = iter->second.isFile;
+                d->filename = iter->second.filename;
+            }
+
+            // Prepare the display item
+            wxString text;
+            if(d->isFile && d->filename.GetDirCount()) {
+                wxFileName fn(d->filename.GetFullName());
+                fn.AppendDir(d->filename.GetDirs().Last());
+                text << fn.GetFullPath();
+            } else {
+                text << d->label;
+            }
+
+            // If the tab has a bitmap - use it
+            // otherwise, try to assign one
+            if(!d->bmp.IsOk()) {
+                if(d->isFile) {
+                    FileExtManager::FileType type =
+                        FileExtManager::GetType(d->filename.GetFullName(), FileExtManager::TypeText);
+                    if(bmps.count(type)) {
+                        d->bmp = bmps.find(type)->second;
+                    }
+                }
+            }
+
+            cols.push_back(::MakeIconText(text, d->bmp));
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr)d);
         }
     }

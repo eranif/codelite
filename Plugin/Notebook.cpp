@@ -400,7 +400,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         rect.SetWidth(rect.GetWidth() - 16);
         m_chevronRect = wxRect(rect.GetTopRight(), wxSize(16, rect.GetHeight()));
     }
-    
+
     if(m_tabs.empty()) {
         // Draw the default bg colour
         dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
@@ -408,7 +408,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         dc.DrawRectangle(GetClientRect());
         return;
     }
-    
+
     // Draw background
     dc.SetPen(m_colours.tabAreaColour);
     dc.SetBrush(m_colours.tabAreaColour);
@@ -890,7 +890,15 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     // Choose a new selection, but only if we are deleting the active tab
     nextSelection = NULL;
     if(deletingSelection) {
-        nextSelection = m_history->PrevPage();
+        while(!m_history->GetHistory().IsEmpty() && !nextSelection) {
+            nextSelection = m_history->PrevPage();
+            if(!GetTabInfo(nextSelection)) {
+                // The history contains a tab that no longer exists
+                m_history->Pop(nextSelection);
+                nextSelection = NULL;
+            }
+        }
+        // It is OK to end up with a null next selection, we will handle it later
     }
 
     // Now remove the page from the notebook. We will delete the page
@@ -1135,7 +1143,7 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex)
 
     if(movingTabRight) {
         ++iter;
-        // inser the new tab _after_ 
+        // inser the new tab _after_
         if(iter != m_tabs.end()) {
             m_tabs.insert(iter, tab);
         } else {

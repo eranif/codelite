@@ -17,7 +17,9 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 
 extern void Notebook_Init_Bitmaps();
 
@@ -292,6 +294,8 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
+    Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
+    
     notebook->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     if(m_style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
@@ -350,6 +354,7 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
     Unbind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
+    Unbind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
     GetParent()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 }
 
@@ -392,7 +397,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     m_chevronRect = wxRect();
     wxRect rect(GetClientRect());
-    rect.Deflate(0);
 
     if(GetStyle() & kNotebook_ShowFileListButton) {
         // Reduce the length of the tabs bitmap by 16 pixels (we will draw there the drop down
@@ -443,14 +447,11 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             m_visibleTabs.at(activeTabInex)->Draw(gcdc, m_colours, m_style);
         }
 
-        memDC.SelectObject(wxNullBitmap);
-        dc.DrawBitmap(bmpTabs, 0, 0);
-
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
             // Draw 3 lines at the bottom
-            dc.SetPen(m_colours.activeTabPenColour);
-            dc.SetBrush(m_colours.activeTabBgColour);
+            gcdc.SetPen(m_colours.activeTabPenColour);
+            gcdc.SetBrush(m_colours.activeTabBgColour);
             wxPoint topLeft = clientRect.GetBottomLeft();
             wxSize rectSize(clientRect.width, clTabInfo::BOTTOM_AREA_HEIGHT);
             topLeft.y -= rectSize.GetHeight() - 1;
@@ -459,7 +460,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             // so the left and right lines will be drawn out of screen
             bottomRect.x -= 1;
             bottomRect.width += 2;
-            dc.DrawRectangle(bottomRect);
+            gcdc.DrawRectangle(bottomRect);
 
             // Draw a line under the active tab
             // that will erase the line drawn by the above rect
@@ -469,14 +470,14 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             from.y -= clTabInfo::BOTTOM_AREA_HEIGHT - 1;
             from.x += 2;
             to.y -= clTabInfo::BOTTOM_AREA_HEIGHT - 1;
-            to.x -= 1;
+            to.x -= 2;
 
-            dc.SetPen(m_colours.activeTabBgColour);
-            dc.DrawLine(from, to);
+            gcdc.SetPen(m_colours.activeTabBgColour);
+            gcdc.DrawLine(from, to);
 #ifdef __WXOSX__
-            dc.DrawLine(from, to);
-            dc.DrawLine(from, to);
-            dc.DrawLine(from, to);
+            gcdc.DrawLine(from, to);
+            gcdc.DrawLine(from, to);
+            gcdc.DrawLine(from, to);
 #endif
         }
 
@@ -486,8 +487,12 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
                 m_chevronRect.GetTopLeft().x + ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetWidth()) / 2);
             wxCoord chevronY =
                 m_chevronRect.GetTopLeft().y + ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetHeight()) / 2);
-            dc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
+            gcdc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
         }
+        
+        memDC.SelectObject(wxNullBitmap);
+        dc.DrawBitmap(bmpTabs, 0, 0);
+        
     } else {
         m_visibleTabs.clear();
     }
@@ -1184,6 +1189,25 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex)
     // And finally: Refresh
     Refresh();
     return true;
+}
+
+void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
+{
+    event.Skip();
+    int realPos, tabHit;
+    TestPoint(event.GetPosition(), realPos, tabHit);
+    if(tabHit == wxNOT_FOUND) {
+        // Fire background d-clicked event
+        wxBookCtrlEvent e(wxEVT_BOOK_TABAREA_DCLICKED);
+        e.SetEventObject(GetParent());
+        GetParent()->GetEventHandler()->AddPendingEvent(e);
+    } else {
+        // a tab was hit
+        wxBookCtrlEvent e(wxEVT_BOOK_TAB_DCLICKED);
+        e.SetEventObject(GetParent());
+        e.SetSelection(realPos);
+        GetParent()->GetEventHandler()->AddPendingEvent(e);
+    }
 }
 
 // ----------------------------------------------------------------------

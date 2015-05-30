@@ -46,16 +46,6 @@
 #include "clFileOrFolderDropTarget.h"
 #include "NotebookNavigationDlg.h"
 
-#if CL_USE_NATIVEBOOK
-#ifdef __WXGTK20__
-// We need this ugly hack to workaround a gtk2-wxGTK name-clash
-// See http://trac.wxwidgets.org/ticket/10883
-#define GSocket GlibGSocket
-#include <gtk/gtk.h>
-#undef GSocket
-#endif
-#endif
-
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
     , m_navBar(NULL)
@@ -110,9 +100,7 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
     m_book->Bind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
-
-    // m_book->Bind(wxEVT_BOOK_PAGE_MIDDLE_CLICKED, &MainBook::OnClosePage), NULL, this);
-    // m_book->Bind(wxEVT_BOOK_BG_DCLICK, &MainBook::OnMouseDClick), NULL, this);
+    m_book->Bind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
 
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MainBook::OnWorkspaceLoaded), NULL, this);
@@ -139,8 +127,9 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
     m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
+    m_book->Unbind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
+    
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
-    // m_book->Unbind(wxEVT_BOOK_PAGE_MIDDLE_CLICKED, &MainBook::OnClosePage), NULL, this);
 
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MainBook::OnWorkspaceLoaded), NULL, this);

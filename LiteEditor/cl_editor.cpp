@@ -4991,6 +4991,8 @@ void LEditor::QuickFindAll()
     int start = GetSelectionStart();
     int end = GetSelectionEnd();
     wxString findWhat = GetTextRange(start, end);
+    if(findWhat.IsEmpty()) return;
+    
     ClearSelections();
 
     int matches(0);

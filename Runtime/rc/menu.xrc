@@ -328,10 +328,6 @@
                 <label>Show ToolBar</label>
                 <checkable>1</checkable>
             </object>
-            <object class="wxMenuItem" name="show_tab_bar">
-                <label>Show TabBar</label>
-                <checkable>1</checkable>
-            </object>
         </object>
 
         <object class="wxMenu" name="search_menu">

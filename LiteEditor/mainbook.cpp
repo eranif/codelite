@@ -101,6 +101,7 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
     m_book->Bind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Bind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
+    m_book->Bind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
 
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MainBook::OnWorkspaceLoaded), NULL, this);
@@ -128,6 +129,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
     m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Unbind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
+    m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
 
@@ -1428,4 +1430,10 @@ void MainBook::OnEditorSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     DoUpdateNotebookTheme();
+}
+
+void MainBook::OnTabDClicked(wxBookCtrlEvent& e)
+{
+    e.Skip();
+    ManagerST::Get()->TogglePanes();
 }

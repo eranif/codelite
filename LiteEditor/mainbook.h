@@ -69,6 +69,7 @@ private:
     void DoUpdateNotebookTheme();
 
     void OnMouseDClick(wxBookCtrlEvent& e);
+    void OnTabDClicked(wxBookCtrlEvent& e);
     void OnPageClosing(wxBookCtrlEvent& e);
     void OnPageClosed(wxBookCtrlEvent& e);
     void OnPageChanged(wxBookCtrlEvent& e);

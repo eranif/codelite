@@ -165,3 +165,8 @@ void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
         event.Skip();
     }
 }
+void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
+{
+    event.Skip();
+    CloseDialog();
+}

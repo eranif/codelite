@@ -41,7 +41,10 @@ EditorFrame::EditorFrame(wxWindow* parent, LEditor* editor)
 {
     m_editor->Reparent( m_mainPanel );
     m_mainPanel->GetSizer()->Add(m_editor, 1, wxEXPAND|wxALL, 2);
-    
+    // Notebook::RemovePage hides the detached tab
+    if(!m_editor->IsShown()) {
+        m_editor->Show();
+    }
     // Load the menubar from XRC and set this frame's menubar to it.
     wxMenuBar *mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
     

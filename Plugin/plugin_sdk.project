@@ -339,8 +339,6 @@
       <File Name="detachedpanesinfo.h"/>
       <File Name="fileclose.png"/>
       <File Name="fileclose-pressed.png"/>
-      <File Name="notebook_ex_nav_dlg.cpp"/>
-      <File Name="notebook_ex_nav_dlg.h"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
       <File Name="Notebook.cpp"/>

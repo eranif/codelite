@@ -17,6 +17,7 @@ public:
     int GetSelection() const { return m_selection; }
 
 protected:
+    virtual void OnItemActivated(wxDataViewEvent& event);
     virtual void OnKeyDown(wxKeyEvent& event);
     virtual void OnKeyUp(wxKeyEvent& event);
 };

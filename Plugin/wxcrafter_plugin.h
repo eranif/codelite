@@ -185,6 +185,7 @@ protected:
 protected:
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnKeyUp(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }

@@ -4003,10 +4003,10 @@
          "m_children": [{
            "m_type": 4469,
            "proportion": 1,
-           "border": 0,
+           "border": 2,
            "gbSpan": "1,1",
            "gbPosition": "0,0",
-           "m_styles": ["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE", "wxWANTS_CHARS", "wxTAB_TRAVERSAL", "wxBORDER_NONE"],
+           "m_styles": ["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE", "wxWANTS_CHARS", "wxTAB_TRAVERSAL", "wxBORDER_STATIC"],
            "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
            "m_properties": [{
              "type": "winid",
@@ -4078,6 +4078,13 @@
              "m_eventHandler": "wxKeyEventHandler",
              "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)",
              "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+             "m_eventClass": "wxDataViewEvent",
+             "m_eventHandler": "wxDataViewEventHandler",
+             "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
+             "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
              "m_noBody": false
             }],
            "m_children": [{

@@ -2348,10 +2348,13 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
         if(editor->GetModify()) {
             // Ask user if he really wants to lose all changes
             wxString msg;
-            msg << _("The file") << wxT(" '") << editor->GetFileName().GetFullName() << wxT(" '")
-                << _("has been altered.") << wxT("\n");
-            msg << _("Are you sure you want to lose all changes?");
-            if(wxMessageBox(msg, _("Confirm"), wxYES_NO, ::wxGetTopLevelParent(editor)) != wxYES) {
+            msg << editor->GetFileName().GetFullName() << _(" has been modified, reload file anyways?");
+            wxRichMessageDialog dlg(::wxGetTopLevelParent(editor),
+                                    msg,
+                                    _("Reload File"),
+                                    wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxICON_WARNING);
+            dlg.SetYesNoCancelLabels(_("Discard changes and Reload"), _("No"), _("Cancel"));
+            if(dlg.ShowModal() != wxID_YES) {
                 return;
             }
         }

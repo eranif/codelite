@@ -72,15 +72,31 @@ void ContextPhp::ApplySettings()
 void ContextPhp::AutoIndent(const wxChar& nChar)
 {
     LEditor& rCtrl = GetCtrl();
-
+    int curpos = rCtrl.GetCurrentPos();
+    
     if(rCtrl.GetDisableSmartIndent()) {
         return;
     }
     if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
+        int prevpos(wxNOT_FOUND);
+        int foundPos(wxNOT_FOUND);
+
+        wxString word;
+        wxChar ch = rCtrl.PreviousChar(curpos, prevpos);
+        wxUnusedVar(ch);
+        word = rCtrl.PreviousWord(curpos, foundPos);
+
+        // user hit ENTER after 'else'?
+        if(word == wxT("else")) {
+            int prevLine = rCtrl.LineFromPosition(prevpos);
+            rCtrl.SetLineIndentation(rCtrl.GetCurrentLine(), rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+            rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(rCtrl.GetCurrentLine()));
+            rCtrl.ChooseCaretX(); // set new column as "current" column
+        }
         return;
     }
 
-    int curpos = rCtrl.GetCurrentPos();
+    
     if(IsCommentOrString(curpos) && nChar == wxT('\n')) {
         AutoAddComment();
         return;
@@ -342,12 +358,11 @@ bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
     if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX)) {
         // When in JS section, trigger CC if str is a dot
         return str == ".";
-        
-    } else if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_ENTITY)){
+
+    } else if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_ENTITY)) {
         return str == "</" || str == "<";
 
     } else {
         return (m_completionTriggerStrings.count(str) > 0);
-        
     }
 }

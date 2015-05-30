@@ -105,6 +105,9 @@ void DockablePane::SetChildNoReparent(wxWindow* child)
 {
     m_child = child;
     wxSizer* sz = GetSizer();
+    if(!m_child->IsShown()) {
+        m_child->Show();
+    }
     sz->Add(m_child, 1, wxEXPAND | wxALL, 2);
     sz->Layout();
 }

@@ -295,7 +295,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
-    
+
     notebook->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     if(m_style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
@@ -402,7 +402,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         // Reduce the length of the tabs bitmap by 16 pixels (we will draw there the drop down
         // button)
         rect.SetWidth(rect.GetWidth() - 16);
-        m_chevronRect = wxRect(rect.GetTopRight(), wxSize(16, rect.GetHeight()));
+        m_chevronRect = wxRect(rect.GetTopRight(), wxSize(20, rect.GetHeight()));
+        m_chevronRect.SetHeight(m_chevronRect.GetHeight() - clTabInfo::BOTTOM_AREA_HEIGHT);
+        rect.SetWidth(rect.GetWidth() + 16);
     }
 
     if(m_tabs.empty()) {
@@ -481,18 +483,21 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 #endif
         }
 
+        memDC.SelectObject(wxNullBitmap);
+        dc.DrawBitmap(bmpTabs, 0, 0);
+
         if(GetStyle() & kNotebook_ShowFileListButton) {
             // Draw the chevron
             wxCoord chevronX =
                 m_chevronRect.GetTopLeft().x + ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetWidth()) / 2);
             wxCoord chevronY =
                 m_chevronRect.GetTopLeft().y + ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetHeight()) / 2);
-            gcdc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
+            dc.SetPen(m_colours.tabAreaColour);
+            dc.SetBrush(m_colours.tabAreaColour);
+            dc.DrawRectangle(m_chevronRect);
+            dc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
         }
-        
-        memDC.SelectObject(wxNullBitmap);
-        dc.DrawBitmap(bmpTabs, 0, 0);
-        
+
     } else {
         m_visibleTabs.clear();
     }

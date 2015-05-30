@@ -90,6 +90,7 @@ private:
     void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clCommandEvent& e);
     void OnWorkspaceReloadEnded(clCommandEvent& e);
+    void OnEditorSettingsChanged(wxCommandEvent& e);
 
 public:
     MainBook(wxWindow* parent);

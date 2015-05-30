@@ -127,6 +127,7 @@ void MainBook::ConnectEvents()
 
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
 }
 
 MainBook::~MainBook()
@@ -153,6 +154,7 @@ MainBook::~MainBook()
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
 }
 
 void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
@@ -1428,6 +1430,12 @@ void MainBook::OnNavigating(wxBookCtrlEvent& e)
 }
 
 void MainBook::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    DoUpdateNotebookTheme();
+}
+
+void MainBook::OnEditorSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     DoUpdateNotebookTheme();

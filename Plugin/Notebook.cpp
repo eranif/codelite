@@ -162,12 +162,12 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
     }
 }
 
-int clTabInfo::Y_SPACER = 3;
-int clTabInfo::X_SPACER = 3;
-int clTabInfo::BOTTOM_AREA_HEIGHT = 4;
+int clTabInfo::Y_SPACER = 5;
+int clTabInfo::X_SPACER = 5;
+int clTabInfo::BOTTOM_AREA_HEIGHT = 5;
 int clTabInfo::MAJOR_CURVE_WIDTH = 15;
 int clTabInfo::SMALL_CURVE_WIDTH = 3;
-int clTabInfo::TAB_HEIGHT = 35;
+int clTabInfo::TAB_HEIGHT = 30;
 
 static int OVERLAP_WIDTH = 20;
 

@@ -1126,15 +1126,15 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex)
 
     bool movingTabRight = (newIndex > activeTabInex);
 
-    clTabInfo::Ptr_t tab = GetActiveTabInfo();
+    clTabInfo::Ptr_t movingTab = GetActiveTabInfo();
     clTabInfo::Ptr_t insertBeforeTab = m_tabs.at(newIndex);
 
-    if(!tab) return false;
+    if(!movingTab) return false;
 
     // Step 1:
     // Remove the tab from both the active and from the visible tabs array
     clTabInfo::Vec_t::iterator iter = std::find_if(m_visibleTabs.begin(), m_visibleTabs.end(), [&](clTabInfo::Ptr_t t) {
-        if(t->GetWindow() == tab->GetWindow()) {
+        if(t->GetWindow() == movingTab->GetWindow()) {
             return true;
         }
         return false;
@@ -1143,7 +1143,7 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex)
         m_visibleTabs.erase(iter);
     }
     iter = std::find_if(m_tabs.begin(), m_tabs.end(), [&](clTabInfo::Ptr_t t) {
-        if(t->GetWindow() == tab->GetWindow()) {
+        if(t->GetWindow() == movingTab->GetWindow()) {
             return true;
         }
         return false;
@@ -1165,9 +1165,9 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex)
         ++iter;
         // inser the new tab _after_
         if(iter != m_tabs.end()) {
-            m_tabs.insert(iter, tab);
+            m_tabs.insert(iter, movingTab);
         } else {
-            m_tabs.push_back(tab);
+            m_tabs.push_back(movingTab);
         }
 
         iter = std::find_if(m_visibleTabs.begin(), m_visibleTabs.end(), [&](clTabInfo::Ptr_t t) {
@@ -1178,13 +1178,13 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex)
         });
         ++iter;
         if(iter != m_visibleTabs.end()) {
-            m_visibleTabs.insert(iter, tab);
+            m_visibleTabs.insert(iter, movingTab);
         } else {
-            m_visibleTabs.push_back(tab);
+            m_visibleTabs.push_back(movingTab);
         }
     } else {
         if(iter != m_tabs.end()) {
-            m_tabs.insert(iter, tab);
+            m_tabs.insert(iter, movingTab);
         }
 
         iter = std::find_if(m_visibleTabs.begin(), m_visibleTabs.end(), [&](clTabInfo::Ptr_t t) {
@@ -1194,7 +1194,7 @@ bool clTabCtrl::MoveActiveToIndex(int newIndex)
             return false;
         });
         if(iter != m_visibleTabs.end()) {
-            m_visibleTabs.insert(iter, tab);
+            m_visibleTabs.insert(iter, movingTab);
         }
     }
     // Step 3:
@@ -1286,9 +1286,10 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
     // Test the drop tab index
     int realPos, tabHit;
     m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit);
+    
     // if the tab being dragged and the one we drop it on are the same
     // return false
-    if(nTabIndex == tabHit) return false;
+    if(nTabIndex == realPos) return false;
     m_tabCtrl->MoveActiveToIndex(realPos);
-    return false;
+    return true;
 }

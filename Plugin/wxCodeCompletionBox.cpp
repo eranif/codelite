@@ -515,7 +515,7 @@ void wxCodeCompletionBox::OnLeftDClick(wxMouseEvent& event)
             if(m_entries.at(i)->m_itemRect.Contains(event.GetPosition())) {
                 m_index = i;
                 InsertSelection();
-                DoDestroy();
+                CallAfter(&wxCodeCompletionBox::DoDestroy);
                 return;
             }
         }

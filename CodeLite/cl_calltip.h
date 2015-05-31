@@ -109,7 +109,13 @@ public:
      * @return return the current tip
      */
     wxString Current();
-
+    
+    /**
+     * @brief select the first tip that has at least argcount
+     * @return true if we managed to find this tip, false otherwise
+     */
+    bool SelectTipToMatchArgCount(size_t argcount);
+    
     /**
      * Return number of tips stored in this object
      * \return number of tips

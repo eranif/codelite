@@ -216,10 +216,31 @@ void clEditorTipWindow::Highlight(int argIdxToHilight)
 {
     clCallTipPtr tip = GetTip();
     if(tip) {
-        m_tipText = tip->Current();
-        DoMakeMultipleLineTip();
-        m_highlighIndex = argIdxToHilight;
-        DoLayoutTip();
+        if(argIdxToHilight == wxNOT_FOUND) {
+            Remove();
+        } else {
+            m_tipText = tip->Current();
+            DoMakeMultipleLineTip();
+            if((int)m_args.size() <= argIdxToHilight) {
+                // The current tip does not match the requested arg to highlight
+                // try to find a better tip
+                if(!tip->SelectTipToMatchArgCount(argIdxToHilight)) {
+                    Deactivate();
+                    return;
+                }
+                
+                // Update the tip text
+                tip = GetTip();
+                if(!tip) {
+                    Deactivate();
+                    return;
+                }
+                m_tipText = tip->Current();
+                DoMakeMultipleLineTip();
+            }
+            m_highlighIndex = argIdxToHilight;
+            DoLayoutTip();
+        }
     } else {
         Deactivate();
     }

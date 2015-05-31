@@ -266,3 +266,14 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
         tips.push_back(ti);
     }
 }
+
+bool clCallTip::SelectTipToMatchArgCount(size_t argcount)
+{
+    for(size_t i=0; i<m_tips.size(); ++i) {
+        if(m_tips.at(i).paramLen.size() > argcount) {
+            m_curr = i;
+            return true;
+        }
+    }
+    return false;
+}

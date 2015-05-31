@@ -3,10 +3,12 @@
   <dict>
     <key>CFBundleDevelopmentRegion</key>
     <string>English</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
     <key>CFBundleExecutable</key>
     <string>codelite</string>
     <key>CFBundleInfoDictionaryVersion</key>
-    <string>8.0</string>
+    <string>8.1</string>
     <key>CFBundleName</key>
     <string>CodeLite</string>
     <key>CFBundleIconFile</key>
@@ -14,9 +16,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleVersion</key>
-    <string>CodeLite IDE version 8.0</string>
+    <string>CodeLite IDE version 8.1</string>
     <key>CFBundleShortVersionString</key>
-    <string>CodeLite IDE version 8.0</string>
+    <string>CodeLite IDE version 8.1</string>
     <key>CSResourcesFileMapped</key>
     <true/>
     <key>CFBundleDocumentTypes</key>

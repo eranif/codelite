@@ -38,6 +38,7 @@
 #include "shelltab.h"
 #include "taskpanel.h"
 #include "wxcl_log_text_ctrl.h"
+#include <algorithm>
 
 #if HAS_LIBCLANG
 #include "ClangOutputTab.h"
@@ -180,4 +181,67 @@ void OutputPane::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
     m_buildInProgress = false;
+}
+
+void OutputPane::SaveTabOrder()
+{
+    wxArrayString panes;
+    clTabInfo::Vec_t tabs;
+    m_book->GetAllTabs(tabs);
+    std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
+    clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
+}
+
+typedef struct {
+    wxString text;
+    wxWindow* win;
+    wxBitmap bmp;
+} tagTabInfo;
+
+void OutputPane::ApplySavedTabOrder() const
+{
+
+    wxArrayString tabs;
+    int index = -1;
+    if(!clConfig::Get().GetOutputTabOrder(tabs, index)) return;
+
+    std::vector<tagTabInfo> vTempstore;
+    for(size_t t = 0; t < tabs.GetCount(); ++t) {
+        wxString title = tabs.Item(t);
+        if(title.empty()) {
+            continue;
+        }
+        for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
+            if(title == m_book->GetPageText(n)) {
+                tagTabInfo Tab;
+                Tab.text = title;
+                Tab.win = m_book->GetPage(n);
+                Tab.bmp = m_book->GetPageBitmap(n);
+
+                vTempstore.push_back(Tab);
+                m_book->RemovePage(n);
+                break;
+            }
+        }
+        // If we reach here without finding title, presumably that tab is no longer available and will just be ignored
+    }
+
+    // All the matched tabs are now stored in the vector. Any left in m_book are presumably new additions
+    // Now prepend the ordered tabs, so that any additions will effectively be appended
+    for(size_t n = 0; n < vTempstore.size(); ++n) {
+        m_book->InsertPage(n, vTempstore.at(n).win, vTempstore.at(n).text, false, vTempstore.at(n).bmp);
+    }
+
+    // wxPrintf("After load");for (size_t n=0; n < m_book->GetPageCount(); ++n)  CL_DEBUG1(wxString::Format("Tab %i:
+    // %zs",(int)n,m_book->GetPageText(n)));
+
+    // Restore any saved last selection
+    // NB: this doesn't actually work atm: the selection is set correctly, but presumably something else changes is
+    // later
+    // I've left the code in case anyone ever has time/inclination to fix it
+    if((index >= 0) && (index < (int)m_book->GetPageCount())) {
+        m_book->SetSelection(index);
+    } else if(m_book->GetPageCount()) {
+        m_book->SetSelection(0);
+    }
 }

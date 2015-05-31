@@ -77,6 +77,29 @@ clConfig& clConfig::Get()
     return config;
 }
 
+bool clConfig::GetOutputTabOrder(wxArrayString& tabs, int& selected)
+{
+    if ( m_root->toElement().hasNamedObject("outputTabOrder") ) {
+        JSONElement element = m_root->toElement().namedObject("outputTabOrder");
+        tabs = element.namedObject("tabs").toArrayString();
+        selected = element.namedObject("selected").toInt();
+        return true;
+    }
+    return false;
+}
+
+void clConfig::SetOutputTabOrder(const wxArrayString& tabs, int selected)
+{
+    DoDeleteProperty("outputTabOrder");
+    
+    // first time
+    JSONElement e = JSONElement::createObject("outputTabOrder");
+    e.addProperty("tabs", tabs);
+    e.addProperty("selected", selected);
+    m_root->toElement().append( e );
+    m_root->save(m_filename);
+}
+
 bool clConfig::GetWorkspaceTabOrder(wxArrayString& tabs, int& selected)
 {
     if ( m_root->toElement().hasNamedObject("workspaceTabOrder") ) {

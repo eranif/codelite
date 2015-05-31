@@ -111,7 +111,12 @@ public:
     //------------------------------
     void SetWorkspaceTabOrder(const wxArrayString& tabs, int selected);
     bool GetWorkspaceTabOrder(wxArrayString& tabs, int& selected);
-
+    
+    // Output tab order
+    //------------------------------
+    void SetOutputTabOrder(const wxArrayString& tabs, int selected);
+    bool GetOutputTabOrder(wxArrayString& tabs, int& selected);
+    
     // General objects
     // -----------------------------
     bool ReadItem(clConfigItem* item, const wxString& differentName = wxEmptyString);

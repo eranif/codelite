@@ -3915,8 +3915,10 @@ void clMainFrame::CompleteInitialization()
     Layout();
     SelectBestEnvSet();
 
-    // Now everything is loaded, set the saved tab-order in the workspace pane
+    // Now everything is loaded, set the saved tab-order in the workspace and the output pane
     GetWorkspacePane()->ApplySavedTabOrder();
+    GetOutputPane()->ApplySavedTabOrder();
+    
     ManagerST::Get()->GetPerspectiveManager().ConnectEvents(&m_mgr);
 
     wxCommandEvent evt(wxEVT_CL_THEME_CHANGED);
@@ -4990,7 +4992,8 @@ bool clMainFrame::SaveLayoutAndSession()
     EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
     EditorConfigST::Get()->SetInteger(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();
-
+    GetOutputPane()->SaveTabOrder();
+    
     // keep list of all detached panes
     wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
     DetachedPanesInfo dpi(panes);

@@ -109,7 +109,12 @@ public:
      * \param caption the caption
      */
     OutputPane(wxWindow* parent, const wxString& caption);
-
+    
+    /**
+     * @brief save the tab order
+     */
+    void SaveTabOrder();
+    
     /**
      * Destructor
      */
@@ -117,7 +122,12 @@ public:
 
     Notebook* GetNotebook() { return m_book; }
     const wxString& GetCaption() const { return m_caption; }
-
+    
+    /**
+     * @brief restore the tab order from the configuration file
+     */
+    void ApplySavedTabOrder() const;
+    
     FindResultsTab* GetFindResultsTab() { return m_findResultsTab; }
     ReplaceInFilesPanel* GetReplaceResultsTab() { return m_replaceResultsTab; }
     NewBuildTab* GetBuildTab() { return m_buildWin; }

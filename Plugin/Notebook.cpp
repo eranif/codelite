@@ -44,9 +44,16 @@ Notebook::Notebook(wxWindow* parent,
     SetSizer(sizer);
 
     m_tabCtrl = new clTabCtrl(this, style);
-    sizer->Add(m_tabCtrl, 0, wxEXPAND);
     m_windows = new WindowStack(this);
-    sizer->Add(m_windows, 1, wxEXPAND);
+
+    if(GetStyle() & kNotebook_BottomTabs) {
+        sizer->Add(m_windows, 1, wxEXPAND);
+        sizer->Add(m_tabCtrl, 0, wxEXPAND);
+
+    } else {
+        sizer->Add(m_tabCtrl, 0, wxEXPAND);
+        sizer->Add(m_windows, 1, wxEXPAND);
+    }
     Layout();
 }
 
@@ -71,6 +78,17 @@ bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, b
 void Notebook::SetStyle(size_t style)
 {
     m_tabCtrl->SetStyle(style);
+    GetSizer()->Detach(m_windows);
+    GetSizer()->Detach(m_tabCtrl);
+    if(style & kNotebook_BottomTabs) {
+        GetSizer()->Add(m_windows, 1, wxEXPAND);
+        GetSizer()->Add(m_tabCtrl, 0, wxEXPAND);
+
+    } else {
+        GetSizer()->Add(m_tabCtrl, 0, wxEXPAND);
+        GetSizer()->Add(m_windows, 1, wxEXPAND);
+    }
+    GetSizer()->Layout();
     Refresh();
 }
 
@@ -94,54 +112,105 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
     const int TOP_SMALL_HEIGHT = 2;
     wxColour bgColour(IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    {
-        wxPoint points[6];
-        points[0] = m_rect.GetBottomLeft();
 
-        points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-        points[1].y = m_rect.GetLeftTop().y + TOP_SMALL_HEIGHT;
+    if(style & kNotebook_BottomTabs) {
+        // Bottom tabs
+        {
+            wxPoint points[6];
+            points[0] = m_rect.GetTopLeft();
 
-        points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-        points[2].y = points[1].y - TOP_SMALL_HEIGHT;
+            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
+            points[1].y = m_rect.GetBottomLeft().y - TOP_SMALL_HEIGHT;
 
-        points[3].x = points[0].x + (m_rect.GetWidth() - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-        points[3].y = points[2].y;
+            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
+            points[2].y = points[1].y + TOP_SMALL_HEIGHT;
 
-        points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-        points[4].y = points[3].y + TOP_SMALL_HEIGHT;
+            points[3].x = points[0].x + (m_rect.GetWidth() - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
+            points[3].y = points[2].y;
 
-        points[5] = m_rect.GetBottomRight();
+            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
+            points[4].y = points[1].y;
 
-        dc.SetPen(penColour);
-        dc.SetBrush(bgColour);
-        dc.DrawPolygon(6, points);
+            points[5] = m_rect.GetTopRight();
+
+            dc.SetPen(penColour);
+            dc.SetBrush(bgColour);
+            dc.DrawPolygon(6, points);
+        }
+        {
+            wxPoint points[6];
+            points[0] = m_rect.GetTopLeft();
+            points[0].x += 1;
+
+            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
+            points[1].y = m_rect.GetBottomLeft().y - TOP_SMALL_HEIGHT - 1;
+
+            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
+            points[2].y = points[1].y + TOP_SMALL_HEIGHT;
+
+            points[3].x = points[0].x + (m_rect.GetWidth() - 2 - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
+            points[3].y = points[2].y;
+
+            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
+            points[4].y = points[1].y;
+
+            points[5] = m_rect.GetTopRight();
+            points[5].x -= 2;
+
+            dc.SetPen(IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
+            dc.SetBrush(bgColour);
+            dc.DrawPolygon(6, points);
+        }
+    } else {
+        // Default tabs (placed at the top)
+        {
+            wxPoint points[6];
+            points[0] = m_rect.GetBottomLeft();
+
+            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
+            points[1].y = m_rect.GetLeftTop().y + TOP_SMALL_HEIGHT;
+
+            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
+            points[2].y = points[1].y - TOP_SMALL_HEIGHT;
+
+            points[3].x = points[0].x + (m_rect.GetWidth() - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
+            points[3].y = points[2].y;
+
+            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
+            points[4].y = points[3].y + TOP_SMALL_HEIGHT;
+
+            points[5] = m_rect.GetBottomRight();
+
+            dc.SetPen(penColour);
+            dc.SetBrush(bgColour);
+            dc.DrawPolygon(6, points);
+        }
+
+        {
+            wxPoint points[6];
+            points[0] = m_rect.GetBottomLeft();
+            points[0].x += 1;
+
+            points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
+            points[1].y = m_rect.GetLeftTop().y + TOP_SMALL_HEIGHT + 1;
+
+            points[2].x = points[1].x + SMALL_CURVE_WIDTH;
+            points[2].y = points[1].y - TOP_SMALL_HEIGHT;
+
+            points[3].x = points[0].x + (m_rect.GetWidth() - 2 - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
+            points[3].y = points[2].y;
+
+            points[4].x = points[3].x + SMALL_CURVE_WIDTH;
+            points[4].y = points[3].y + TOP_SMALL_HEIGHT;
+
+            points[5] = m_rect.GetBottomRight();
+            points[5].x -= 2;
+
+            dc.SetPen(IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
+            dc.SetBrush(bgColour);
+            dc.DrawPolygon(6, points);
+        }
     }
-
-    {
-        wxPoint points[6];
-        points[0] = m_rect.GetBottomLeft();
-        points[0].x += 1;
-
-        points[1].x = points[0].x + MAJOR_CURVE_WIDTH;
-        points[1].y = m_rect.GetLeftTop().y + TOP_SMALL_HEIGHT + 1;
-
-        points[2].x = points[1].x + SMALL_CURVE_WIDTH;
-        points[2].y = points[1].y - TOP_SMALL_HEIGHT;
-
-        points[3].x = points[0].x + (m_rect.GetWidth() - 2 - (MAJOR_CURVE_WIDTH + SMALL_CURVE_WIDTH));
-        points[3].y = points[2].y;
-
-        points[4].x = points[3].x + SMALL_CURVE_WIDTH;
-        points[4].y = points[3].y + TOP_SMALL_HEIGHT;
-
-        points[5] = m_rect.GetBottomRight();
-        points[5].x -= 2;
-
-        dc.SetPen(IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
-        dc.SetBrush(bgColour);
-        dc.DrawPolygon(6, points);
-    }
-
     // Draw bitmap
     if(m_bitmap.IsOk()) {
         dc.DrawBitmap(m_bitmap, m_bmpX + m_rect.GetX(), m_bmpY);
@@ -403,6 +472,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         // button)
         rect.SetWidth(rect.GetWidth() - 16);
         m_chevronRect = wxRect(rect.GetTopRight(), wxSize(20, rect.GetHeight()));
+        if(GetStyle() & kNotebook_BottomTabs) {
+            m_chevronRect.y += clTabInfo::BOTTOM_AREA_HEIGHT;
+        }
         m_chevronRect.SetHeight(m_chevronRect.GetHeight() - clTabInfo::BOTTOM_AREA_HEIGHT);
         rect.SetWidth(rect.GetWidth() + 16);
     }
@@ -451,36 +523,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-            // Draw 3 lines at the bottom
-            gcdc.SetPen(m_colours.activeTabPenColour);
-            gcdc.SetBrush(m_colours.activeTabBgColour);
-            wxPoint topLeft = clientRect.GetBottomLeft();
-            wxSize rectSize(clientRect.width, clTabInfo::BOTTOM_AREA_HEIGHT);
-            topLeft.y -= rectSize.GetHeight() - 1;
-            wxRect bottomRect(topLeft, rectSize);
-            // We intentionally move the rect out of the client rect
-            // so the left and right lines will be drawn out of screen
-            bottomRect.x -= 1;
-            bottomRect.width += 2;
-            gcdc.DrawRectangle(bottomRect);
-
-            // Draw a line under the active tab
-            // that will erase the line drawn by the above rect
-            wxPoint from, to;
-            from = activeTab->GetRect().GetBottomLeft();
-            to = activeTab->GetRect().GetBottomRight();
-            from.y -= clTabInfo::BOTTOM_AREA_HEIGHT - 1;
-            from.x += 2;
-            to.y -= clTabInfo::BOTTOM_AREA_HEIGHT - 1;
-            to.x -= 2;
-
-            gcdc.SetPen(m_colours.activeTabBgColour);
-            gcdc.DrawLine(from, to);
-#ifdef __WXOSX__
-            gcdc.DrawLine(from, to);
-            gcdc.DrawLine(from, to);
-            gcdc.DrawLine(from, to);
-#endif
+            DoDrawBottomBox(activeTab, clientRect, gcdc);
         }
 
         memDC.SelectObject(wxNullBitmap);
@@ -544,17 +587,17 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     int tabHit, realPos;
     TestPoint(event.GetPosition(), realPos, tabHit);
     if(tabHit == wxNOT_FOUND) return;
-    
+
     // Did we hit the active tab?
     bool clickWasOnActiveTab = (GetSelection() == realPos);
-    
-    // If the click was not on the active tab, set the clicked 
+
+    // If the click was not on the active tab, set the clicked
     // tab as the new selection and leave this function
     if(!clickWasOnActiveTab) {
         SetSelection(realPos);
         return;
     }
-    
+
     // If we clicked on the active and we have a close button - handle it here
     if((GetStyle() & kNotebook_CloseButtonOnActiveTab) && clickWasOnActiveTab) {
         // we clicked on the selected index
@@ -1225,6 +1268,74 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
+void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc)
+{
+    if(GetStyle() & kNotebook_BottomTabs) {
+        // Draw 3 lines at the top
+        dc.SetPen(m_colours.activeTabPenColour);
+        dc.SetBrush(m_colours.activeTabBgColour);
+        wxPoint topLeft = clientRect.GetTopLeft();
+        wxSize rectSize(clientRect.width, clTabInfo::BOTTOM_AREA_HEIGHT);
+        topLeft.y = 0;
+        wxRect bottomRect(topLeft, rectSize);
+        // We intentionally move the rect out of the client rect
+        // so the left and right lines will be drawn out of screen
+        bottomRect.x -= 1;
+        bottomRect.width += 2;
+        dc.DrawRectangle(bottomRect);
+
+        // Draw a line under the active tab
+        // that will erase the line drawn by the above rect
+        wxPoint from, to;
+        from = activeTab->GetRect().GetTopLeft();
+        to = activeTab->GetRect().GetTopRight();
+        from.y += clTabInfo::BOTTOM_AREA_HEIGHT - 1;
+        from.x += 2;
+        to.y += clTabInfo::BOTTOM_AREA_HEIGHT - 1;
+        to.x -= 2;
+
+        dc.SetPen(m_colours.activeTabBgColour);
+        dc.DrawLine(from, to);
+#ifdef __WXOSX__
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+#endif
+
+    } else {
+        // Draw 3 lines at the bottom
+        dc.SetPen(m_colours.activeTabPenColour);
+        dc.SetBrush(m_colours.activeTabBgColour);
+        wxPoint topLeft = clientRect.GetBottomLeft();
+        wxSize rectSize(clientRect.width, clTabInfo::BOTTOM_AREA_HEIGHT);
+        topLeft.y -= rectSize.GetHeight() - 1;
+        wxRect bottomRect(topLeft, rectSize);
+        // We intentionally move the rect out of the client rect
+        // so the left and right lines will be drawn out of screen
+        bottomRect.x -= 1;
+        bottomRect.width += 2;
+        dc.DrawRectangle(bottomRect);
+
+        // Draw a line under the active tab
+        // that will erase the line drawn by the above rect
+        wxPoint from, to;
+        from = activeTab->GetRect().GetBottomLeft();
+        to = activeTab->GetRect().GetBottomRight();
+        from.y -= clTabInfo::BOTTOM_AREA_HEIGHT - 1;
+        from.x += 2;
+        to.y -= clTabInfo::BOTTOM_AREA_HEIGHT - 1;
+        to.x -= 2;
+
+        dc.SetPen(m_colours.activeTabBgColour);
+        dc.DrawLine(from, to);
+#ifdef __WXOSX__
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+        dc.DrawLine(from, to);
+#endif
+    }
+}
+
 // ----------------------------------------------------------------------
 // clTabHistory
 // ----------------------------------------------------------------------
@@ -1286,7 +1397,7 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
     // Test the drop tab index
     int realPos, tabHit;
     m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit);
-    
+
     // if the tab being dragged and the one we drop it on are the same
     // return false
     if(nTabIndex == realPos) return false;

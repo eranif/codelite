@@ -81,7 +81,11 @@ void OutputPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, kNotebook_Default | kNotebook_AllowDnD);
+    m_book = new Notebook(this,
+                          wxID_ANY,
+                          wxDefaultPosition,
+                          wxDefaultSize,
+                          kNotebook_Default | kNotebook_AllowDnD | kNotebook_BottomTabs);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 

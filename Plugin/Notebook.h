@@ -49,6 +49,8 @@ enum NotebookStyle {
     kNotebook_CloseButtonOnActiveTabFireEvent = (1 << 7),
     /// Fire navigation event for Ctrl-TAB et al
     kNotebook_EnableNavigationEvent = (1 << 8),
+    /// Place tabs at the bottom
+    kNotebook_BottomTabs = (1 << 9),
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
 };
@@ -226,7 +228,7 @@ protected:
     void OnContextMenu(wxContextMenuEvent& event);
     int DoGetPageIndex(wxWindow* win) const;
     int DoGetPageIndex(const wxString& label) const;
-
+    void DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc);
     bool ShiftRight(clTabInfo::Vec_t& tabs);
     bool IsActiveTabInList(const clTabInfo::Vec_t& tabs) const;
     bool IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const;

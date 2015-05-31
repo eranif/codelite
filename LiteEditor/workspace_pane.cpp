@@ -78,7 +78,11 @@ void WorkspacePane::CreateGUIControls()
     SetSizer(mainSizer);
 
     // add notebook for tabs
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, kNotebook_Default | kNotebook_AllowDnD);
+    m_book = new Notebook(this,
+                          wxID_ANY,
+                          wxDefaultPosition,
+                          wxDefaultSize,
+                          kNotebook_Default | kNotebook_AllowDnD | kNotebook_BottomTabs);
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;

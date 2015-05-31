@@ -85,7 +85,7 @@ void DebuggerPane::CreateGUIControls()
     SetSizer(mainSizer);
 
     long style = kNotebook_AllowDnD | // Allow tabs to move
-                 kNotebook_ShowFileListButton;
+                 kNotebook_ShowFileListButton | kNotebook_BottomTabs;
 
     GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);

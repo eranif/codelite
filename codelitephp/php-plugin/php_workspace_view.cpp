@@ -629,6 +629,9 @@ void PHPWorkspaceView::DoOpenFile(const wxTreeItemId& item)
     ItemData* data = DoGetItemData(item);
     if(data && data->IsFile()) {
         m_mgr->OpenFile(data->GetFile());
+        if(m_mgr->GetActiveEditor() && m_mgr->GetActiveEditor()->GetFileName().GetFullPath() == data->GetFile()) {
+            m_mgr->GetActiveEditor()->GetCtrl()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        }
     }
 }
 

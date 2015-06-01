@@ -11,6 +11,10 @@
 #include <algorithm>
 #include <wx/dnd.h>
 #include <wx/regex.h>
+#include "cl_command_event.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
+#include "drawingutils.h"
 
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
@@ -497,12 +501,33 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         dc.DrawRectangle(GetClientRect());
         return;
     }
+    
+    // Draw the tab area background colours
+    clTabInfo::Ptr_t active_tab = GetActiveTabInfo();
+    if(active_tab) {
+        // the background colour is set according to the active tab colour
+        clColourEvent colourEvent(wxEVT_COLOUR_TAB);
+        colourEvent.SetPage(active_tab->GetWindow());
+        if(EventNotifier::Get()->ProcessEvent(colourEvent)) {
+            clTabInfo::Colours colours;
+            colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
+            // Draw background
+            dc.SetPen(colours.tabAreaColour);
+            dc.SetBrush(colours.tabAreaColour);
+            dc.DrawRectangle(GetClientRect());
 
-    // Draw background
-    dc.SetPen(m_colours.tabAreaColour);
-    dc.SetBrush(m_colours.tabAreaColour);
-    dc.DrawRectangle(GetClientRect());
-
+        } else {
+            // Draw background
+            dc.SetPen(m_colours.tabAreaColour);
+            dc.SetBrush(m_colours.tabAreaColour);
+            dc.DrawRectangle(GetClientRect());
+        }
+    } else {
+        // Draw background
+        dc.SetPen(m_colours.tabAreaColour);
+        dc.SetBrush(m_colours.tabAreaColour);
+        dc.DrawRectangle(GetClientRect());
+    }
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs.at(i)->CalculateOffsets(GetStyle());
     }
@@ -524,7 +549,17 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             if(tab->IsActive()) {
                 activeTabInex = i;
             }
-            tab->Draw(gcdc, m_colours, m_style);
+            
+            // send event per tab to get their colours
+            clColourEvent colourEvent(wxEVT_COLOUR_TAB);
+            colourEvent.SetPage(tab->GetWindow());
+            if(EventNotifier::Get()->ProcessEvent(colourEvent)) {
+                clTabInfo::Colours colours;
+                colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
+                tab->Draw(gcdc, colours, m_style);
+            } else {
+                tab->Draw(gcdc, m_colours, m_style);
+            }
         }
 
         // Redraw the active tab
@@ -815,8 +850,8 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::OnMouseMotion(wxMouseEvent& event) 
-{ 
+void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
+{
     event.Skip();
     int realPos, tabHit;
     wxString curtip = GetToolTipText();
@@ -889,6 +924,41 @@ wxWindow* clTabCtrl::GetPage(size_t index) const
 bool clTabCtrl::IsIndexValid(size_t index) const { return (index < m_tabs.size()); }
 
 clTabInfo::Colours::Colours() { InitDarkColours(); }
+
+void clTabInfo::Colours::InitFromColours(const wxColour& baseColour, const wxColour& textColour)
+{
+    if(DrawingUtils::IsDark(baseColour)) {
+        activeTabTextColour = "WHITE";
+        activeTabBgColour = baseColour;
+        activeTabPenColour = baseColour.ChangeLightness(80);
+        activeTabInnerPenColour = baseColour.ChangeLightness(120);
+
+        inactiveTabTextColour = "WHITE";
+        inactiveTabBgColour = baseColour.ChangeLightness(110);
+        inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
+        inactiveTabInnerPenColour = inactiveTabBgColour.ChangeLightness(120);
+
+        tabAreaColour = baseColour.ChangeLightness(130);
+        // 12x12 bitmap
+        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
+        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
+    } else {
+        activeTabTextColour = "BLACK";
+        activeTabBgColour = baseColour;
+        activeTabPenColour = baseColour.ChangeLightness(80);
+        activeTabInnerPenColour = "WHITE";
+
+        inactiveTabTextColour = "BLACK";
+        inactiveTabBgColour = baseColour.ChangeLightness(90);
+        inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
+        inactiveTabInnerPenColour = "WHITE";
+
+        tabAreaColour = baseColour.ChangeLightness(130);
+        // 12x12 bitmap
+        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
+        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
+    }
+}
 
 void clTabInfo::Colours::InitDarkColours()
 {

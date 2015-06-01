@@ -35,12 +35,16 @@ static Tweaks* thePlugin = NULL;
 
 static int ID_TWEAKS_SETTINGS = ::wxNewId();
 
-#define TWEAKS_ENABLED_EVENT_HANDLER() if ( !m_settings.IsEnableTweaks() || !WorkspaceST::Get()->IsOpen() ) { e.Skip(); return; }
+#define TWEAKS_ENABLED_EVENT_HANDLER()                                  \
+    if(!m_settings.IsEnableTweaks() || !WorkspaceST::Get()->IsOpen()) { \
+        e.Skip();                                                       \
+        return;                                                         \
+    }
 
-//Define the plugin entry point
-extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
+// Define the plugin entry point
+extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
+    if(thePlugin == 0) {
         thePlugin = new Tweaks(manager);
     }
     return thePlugin;
@@ -56,65 +60,70 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-Tweaks::Tweaks(IManager *manager)
+Tweaks::Tweaks(IManager* manager)
     : IPlugin(manager)
 {
     wxPGInitResourceModule(); // Or we crash...
-    
+
     m_longName = _("Tweak codelite");
     m_shortName = wxT("Tweaks");
-    
-    m_mgr->GetTheApp()->Connect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
+
+    m_mgr->GetTheApp()->Connect(
+        ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_GET_TAB_BORDER_COLOUR, clColourEventHandler(Tweaks::OnTabBorderColour), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_GET_TAB_BORDER_COLOUR, clColourEventHandler(Tweaks::OnTabBorderColour), NULL, this);
 }
 
 void Tweaks::UnPlug()
 {
-    m_mgr->GetTheApp()->Disconnect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
+    m_mgr->GetTheApp()->Disconnect(
+        ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_TAB_BORDER_COLOUR, clColourEventHandler(Tweaks::OnTabBorderColour), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_GET_TAB_BORDER_COLOUR, clColourEventHandler(Tweaks::OnTabBorderColour), NULL, this);
 }
 
-Tweaks::~Tweaks()
-{
-}
+Tweaks::~Tweaks() {}
 
-clToolBar *Tweaks::CreateToolBar(wxWindow *parent)
+clToolBar* Tweaks::CreateToolBar(wxWindow* parent)
 {
     // Create the toolbar to be used by the plugin
-    clToolBar *tb(NULL);
+    clToolBar* tb(NULL);
     return tb;
 }
 
-void Tweaks::CreatePluginMenu(wxMenu *pluginsMenu)
+void Tweaks::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxUnusedVar(pluginsMenu);
-    wxMenu *menu = new wxMenu;
+    wxMenu* menu = new wxMenu;
     menu->Append(ID_TWEAKS_SETTINGS, _("Settings..."));
     pluginsMenu->AppendSubMenu(menu, _("Tweaks Plugin"));
 }
 
-void Tweaks::HookPopupMenu(wxMenu *menu, MenuType type)
+void Tweaks::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     wxUnusedVar(menu);
     wxUnusedVar(type);
 }
 
-void Tweaks::UnHookPopupMenu(wxMenu *menu, MenuType type)
+void Tweaks::UnHookPopupMenu(wxMenu* menu, MenuType type)
 {
     wxUnusedVar(menu);
     wxUnusedVar(type);
@@ -123,11 +132,11 @@ void Tweaks::UnHookPopupMenu(wxMenu *menu, MenuType type)
 void Tweaks::OnSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    TweaksSettingsDlg dlg( m_mgr->GetTheApp()->GetTopWindow() );
-    if ( dlg.ShowModal() == wxID_OK ) {
+    TweaksSettingsDlg dlg(m_mgr->GetTheApp()->GetTopWindow());
+    if(dlg.ShowModal() == wxID_OK) {
         dlg.GetSettings().Save();
     }
-    
+
     m_settings.Load(); // Refresh our cached settings
     // Refresh the drawings
     m_mgr->GetTheApp()->GetTopWindow()->Refresh();
@@ -135,51 +144,41 @@ void Tweaks::OnSettings(wxCommandEvent& e)
 
 void Tweaks::OnColourTab(clColourEvent& e)
 {
-#ifdef __WXGTK__
-#if CL_USE_NATIVEBOOK
-    // Not supported with native notebooks
-    e.Skip();
-    return;
-#endif
-#endif
-
     TWEAKS_ENABLED_EVENT_HANDLER();
-    
-    IEditor* editor = FindEditorByPage( e.GetPage() );
-    if ( !editor ) {
-        
-        if ( m_settings.GetGlobalFgColour().IsOk() && m_settings.GetGlobalBgColour().IsOk() ) {
+
+    IEditor* editor = FindEditorByPage(e.GetPage());
+    if(!editor) {
+        if(m_settings.GetGlobalFgColour().IsOk() && m_settings.GetGlobalBgColour().IsOk()) {
             // Non editor tab
-            e.SetBgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : */m_settings.GetGlobalBgColour() );
-            e.SetFgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : */m_settings.GetGlobalFgColour() );
-            
+            e.SetBgColour(m_settings.GetGlobalBgColour());
+            e.SetFgColour(m_settings.GetGlobalFgColour());
+
         } else {
             e.Skip();
         }
-    
+
     } else {
-        
-        const ProjectTweaks& tw = m_settings.GetProjectTweaks( editor->GetProjectName() );
-        if ( tw.IsOk() ) {
-            e.SetBgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : */tw.GetTabBgColour() );
-            e.SetFgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : */tw.GetTabFgColour() );
-            
-        } else if ( m_settings.GetGlobalBgColour().IsOk() && m_settings.GetGlobalFgColour().IsOk() ) {
-            e.SetBgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : */m_settings.GetGlobalBgColour() );
-            e.SetFgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : */m_settings.GetGlobalFgColour() );
-            
+
+        const ProjectTweaks& tw = m_settings.GetProjectTweaks(editor->GetProjectName());
+        if(tw.IsOk()) {
+            e.SetBgColour(tw.GetTabBgColour());
+            e.SetFgColour(tw.GetTabFgColour());
+
+        } else if(m_settings.GetGlobalBgColour().IsOk() && m_settings.GetGlobalFgColour().IsOk()) {
+            e.SetBgColour(m_settings.GetGlobalBgColour());
+            e.SetFgColour(m_settings.GetGlobalFgColour());
+
         } else {
             e.Skip();
         }
-    
     }
 }
 
 IEditor* Tweaks::FindEditorByPage(wxWindow* page)
 {
-    for(size_t i=0; i<m_mgr->GetPageCount(); ++i) {
-        if ( m_mgr->GetPage(i) == page ) {
-            return dynamic_cast<IEditor*>( m_mgr->GetPage(i) );
+    for(size_t i = 0; i < m_mgr->GetPageCount(); ++i) {
+        if(m_mgr->GetPage(i) == page) {
+            return dynamic_cast<IEditor*>(m_mgr->GetPage(i));
         }
     }
     return NULL;
@@ -205,53 +204,53 @@ void Tweaks::OnFileViewBuildTree(clCommandEvent& e)
 {
     TWEAKS_ENABLED_EVENT_HANDLER();
     m_project2Icon.clear();
-    if ( m_settings.GetProjects().empty() ) {
+    if(m_settings.GetProjects().empty()) {
         e.Skip();
         return;
     }
-    
+
     // See if we got a new image for a project
-    wxImageList *images = new wxImageList(16, 16);
-    wxImageList *old_images = m_mgr->GetTree(TreeFileView)->GetImageList();
-    
+    wxImageList* images = new wxImageList(16, 16);
+    wxImageList* old_images = m_mgr->GetTree(TreeFileView)->GetImageList();
+
     // Copy the old images to the new one
-    for(int i=0; i<old_images->GetImageCount(); ++i) {
-        images->Add( old_images->GetIcon(i) );
+    for(int i = 0; i < old_images->GetImageCount(); ++i) {
+        images->Add(old_images->GetIcon(i));
     }
-    
+
     ProjectTweaks::Map_t::const_iterator iter = m_settings.GetProjects().begin();
-    for(; iter != m_settings.GetProjects().end(); ++iter ) {
+    for(; iter != m_settings.GetProjects().end(); ++iter) {
         wxString bmpfile = iter->second.GetBitmapFilename();
         bmpfile.Trim().Trim(false);
-        if ( bmpfile.IsEmpty() ) {
+        if(bmpfile.IsEmpty()) {
             continue;
         }
         wxBitmap bmp(bmpfile, wxBITMAP_TYPE_ANY);
-        if ( bmp.IsOk() ) {
+        if(bmp.IsOk()) {
             wxIcon icn;
-            icn.CopyFromBitmap( bmp );
-            int index = images->Add( icn );
-            m_project2Icon.insert( std::make_pair(iter->first, index) );
+            icn.CopyFromBitmap(bmp);
+            int index = images->Add(icn);
+            m_project2Icon.insert(std::make_pair(iter->first, index));
         }
     }
-    
-    if ( m_project2Icon.empty() ) {
+
+    if(m_project2Icon.empty()) {
         e.Skip();
         wxDELETE(images);
-        
+
     } else {
         // send back the new image list
-        e.SetClientData( images );
+        e.SetClientData(images);
     }
 }
 
 void Tweaks::OnCustomizeProject(clColourEvent& e)
 {
     TWEAKS_ENABLED_EVENT_HANDLER();
-    if ( m_project2Icon.count(e.GetString()) ) {
+    if(m_project2Icon.count(e.GetString())) {
         // We got a new icon for this project!
-        e.SetInt( m_project2Icon.find(e.GetString())->second );
-        
+        e.SetInt(m_project2Icon.find(e.GetString())->second);
+
     } else {
         e.Skip();
     }
@@ -267,10 +266,10 @@ void Tweaks::OnTabBorderColour(clColourEvent& e)
 #endif
 #endif
     TWEAKS_ENABLED_EVENT_HANDLER();
-    
-    if ( m_settings.GetGlobalBgColour().IsOk() ) {
+
+    if(m_settings.GetGlobalBgColour().IsOk()) {
         // return the tab colour
-        e.SetBorderColour( DrawingUtils::DarkColour(m_settings.GetGlobalBgColour(), 1.5) );
+        e.SetBorderColour(DrawingUtils::DarkColour(m_settings.GetGlobalBgColour(), 1.5));
     } else {
         e.Skip();
     }

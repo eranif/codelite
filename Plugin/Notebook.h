@@ -78,7 +78,9 @@ class WXDLLIMPEXP_SDK clTabInfo
     int m_height;
 
 public:
-    struct WXDLLIMPEXP_SDK Colours {
+    class WXDLLIMPEXP_SDK Colours
+    {
+    public:
         // Active tab colours
         wxColour inactiveTabBgColour;
         wxColour inactiveTabPenColour;
@@ -99,10 +101,23 @@ public:
 
         /// Chevron down arrow used as the button for showing tab list
         wxBitmap chevronDown;
-        Colours();
 
-        void InitDarkColours();
-        void InitLightColours();
+        Colours();
+        virtual ~Colours() {}
+
+        /**
+         * @brief initialize the colours from base colour and text colour
+         */
+        void InitFromColours(const wxColour& baseColour, const wxColour& textColour);
+
+        /**
+         * @brief initialize the dark colours
+         */
+        virtual void InitDarkColours();
+        /**
+         * @brief initialize the light colours
+         */
+        virtual void InitLightColours();
     };
 
 public:
@@ -204,7 +219,7 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     clTabInfo::Vec_t m_tabs;
     friend class Notebook;
     friend class clTabCtrlDropTarget;
-    
+
     size_t m_style;
     clTabInfo::Colours m_colours;
     clTabInfo::Vec_t m_visibleTabs;
@@ -249,7 +264,6 @@ protected:
     clTabInfo::Ptr_t GetTabInfo(wxWindow* page);
     clTabInfo::Ptr_t GetActiveTabInfo();
 
-
     WindowStack* GetStack();
 
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
@@ -259,6 +273,9 @@ public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
 
+    void SetColours(const clTabInfo::Colours& colours) { this->m_colours = colours; }
+    const clTabInfo::Colours& GetColours() const { return m_colours; }
+
     /**
      * @brief test if pt is on one of the visible tabs return its index
      * @param pt mouse click position
@@ -266,13 +283,13 @@ public:
      * @param tabHit [output] the index position in the m_visibleTabs array
      */
     void TestPoint(const wxPoint& pt, int& realPosition, int& tabHit);
-    
+
     /**
      * @brief Move the active tab to a new position
-     * @param newIndex the new position. 0-based index in the m_tabs array 
+     * @param newIndex the new position. 0-based index in the m_tabs array
      */
     bool MoveActiveToIndex(int newIndex);
-    
+
     /**
      * @brief return true if index is in the tabs vector range
      */
@@ -354,12 +371,12 @@ public:
      * @brief return the book style
      */
     size_t GetStyle() const { return m_tabCtrl->GetStyle(); }
-    
+
     /**
      * @brief enable a specific style in the notebook
      */
     void EnableStyle(NotebookStyle style, bool enable);
-    
+
     /**
      * destructor
      */

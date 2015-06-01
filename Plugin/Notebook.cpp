@@ -253,7 +253,7 @@ int clTabInfo::X_SPACER = 5;
 int clTabInfo::BOTTOM_AREA_HEIGHT = 5;
 int clTabInfo::MAJOR_CURVE_WIDTH = 15;
 int clTabInfo::SMALL_CURVE_WIDTH = 3;
-int clTabInfo::TAB_HEIGHT = 30;
+int clTabInfo::TAB_HEIGHT = 35;
 
 static int OVERLAP_WIDTH = 20;
 
@@ -501,33 +501,27 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         dc.DrawRectangle(GetClientRect());
         return;
     }
-    
+
     // Draw the tab area background colours
     clTabInfo::Ptr_t active_tab = GetActiveTabInfo();
-    if(active_tab) {
+    wxColour tabAreaBgCol = m_colours.tabAreaColour;
+    clTabInfo::Colours activeTabColours = m_colours;
+
+    if(active_tab && (GetStyle() & kNotebook_EnableColourCustomization)) {
         // the background colour is set according to the active tab colour
         clColourEvent colourEvent(wxEVT_COLOUR_TAB);
         colourEvent.SetPage(active_tab->GetWindow());
         if(EventNotifier::Get()->ProcessEvent(colourEvent)) {
-            clTabInfo::Colours colours;
-            colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
-            // Draw background
-            dc.SetPen(colours.tabAreaColour);
-            dc.SetBrush(colours.tabAreaColour);
-            dc.DrawRectangle(GetClientRect());
-
-        } else {
-            // Draw background
-            dc.SetPen(m_colours.tabAreaColour);
-            dc.SetBrush(m_colours.tabAreaColour);
-            dc.DrawRectangle(GetClientRect());
+            tabAreaBgCol = colourEvent.GetBgColour();
+            activeTabColours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
         }
-    } else {
-        // Draw background
-        dc.SetPen(m_colours.tabAreaColour);
-        dc.SetBrush(m_colours.tabAreaColour);
-        dc.DrawRectangle(GetClientRect());
     }
+
+    // Draw background
+    dc.SetPen(tabAreaBgCol);
+    dc.SetBrush(tabAreaBgCol);
+    dc.DrawRectangle(GetClientRect());
+
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs.at(i)->CalculateOffsets(GetStyle());
     }
@@ -537,8 +531,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         wxMemoryDC memDC(bmpTabs);
         wxGCDC gcdc(memDC);
 
-        gcdc.SetPen(m_colours.tabAreaColour);
-        gcdc.SetBrush(m_colours.tabAreaColour);
+        gcdc.SetPen(tabAreaBgCol);
+        gcdc.SetBrush(tabAreaBgCol);
         gcdc.DrawRectangle(rect.GetSize());
 
         UpdateVisibleTabs();
@@ -549,11 +543,11 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             if(tab->IsActive()) {
                 activeTabInex = i;
             }
-            
+
             // send event per tab to get their colours
             clColourEvent colourEvent(wxEVT_COLOUR_TAB);
             colourEvent.SetPage(tab->GetWindow());
-            if(EventNotifier::Get()->ProcessEvent(colourEvent)) {
+            if((GetStyle() & kNotebook_EnableColourCustomization) && EventNotifier::Get()->ProcessEvent(colourEvent)) {
                 clTabInfo::Colours colours;
                 colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
                 tab->Draw(gcdc, colours, m_style);
@@ -564,12 +558,12 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         // Redraw the active tab
         if(activeTabInex != wxNOT_FOUND) {
-            m_visibleTabs.at(activeTabInex)->Draw(gcdc, m_colours, m_style);
+            m_visibleTabs.at(activeTabInex)->Draw(gcdc, activeTabColours, m_style);
         }
 
         if(activeTabInex != wxNOT_FOUND) {
             clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-            DoDrawBottomBox(activeTab, clientRect, gcdc);
+            DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
         }
 
         memDC.SelectObject(wxNullBitmap);
@@ -581,8 +575,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
                 m_chevronRect.GetTopLeft().x + ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetWidth()) / 2);
             wxCoord chevronY =
                 m_chevronRect.GetTopLeft().y + ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetHeight()) / 2);
-            dc.SetPen(m_colours.tabAreaColour);
-            dc.SetBrush(m_colours.tabAreaColour);
+            dc.SetPen(activeTabColours.tabAreaColour);
+            dc.SetBrush(activeTabColours.tabAreaColour);
             dc.DrawRectangle(m_chevronRect);
             dc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
         }
@@ -951,12 +945,12 @@ void clTabInfo::Colours::InitFromColours(const wxColour& baseColour, const wxCol
         inactiveTabTextColour = "BLACK";
         inactiveTabBgColour = baseColour.ChangeLightness(90);
         inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
-        inactiveTabInnerPenColour = "WHITE";
+        inactiveTabInnerPenColour = baseColour;
 
         tabAreaColour = baseColour.ChangeLightness(130);
         // 12x12 bitmap
-        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-dark-x");
-        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-grey");
+        closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
+        chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
     }
 }
 
@@ -1365,12 +1359,15 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc)
+void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
+                                const wxRect& clientRect,
+                                wxDC& dc,
+                                const clTabInfo::Colours& colours)
 {
     if(GetStyle() & kNotebook_BottomTabs) {
         // Draw 3 lines at the top
-        dc.SetPen(m_colours.activeTabPenColour);
-        dc.SetBrush(m_colours.activeTabBgColour);
+        dc.SetPen(colours.activeTabPenColour);
+        dc.SetBrush(colours.activeTabBgColour);
         wxPoint topLeft = clientRect.GetTopLeft();
         wxSize rectSize(clientRect.width, clTabInfo::BOTTOM_AREA_HEIGHT);
         topLeft.y = 0;
@@ -1391,7 +1388,7 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& client
         to.y += clTabInfo::BOTTOM_AREA_HEIGHT - 1;
         to.x -= 2;
 
-        dc.SetPen(m_colours.activeTabBgColour);
+        dc.SetPen(colours.activeTabBgColour);
         dc.DrawLine(from, to);
 #ifdef __WXOSX__
         dc.DrawLine(from, to);
@@ -1401,8 +1398,8 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& client
 
     } else {
         // Draw 3 lines at the bottom
-        dc.SetPen(m_colours.activeTabPenColour);
-        dc.SetBrush(m_colours.activeTabBgColour);
+        dc.SetPen(colours.activeTabPenColour);
+        dc.SetBrush(colours.activeTabBgColour);
         wxPoint topLeft = clientRect.GetBottomLeft();
         wxSize rectSize(clientRect.width, clTabInfo::BOTTOM_AREA_HEIGHT);
         topLeft.y -= rectSize.GetHeight() - 1;
@@ -1423,7 +1420,7 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& client
         to.y -= clTabInfo::BOTTOM_AREA_HEIGHT - 1;
         to.x -= 2;
 
-        dc.SetPen(m_colours.activeTabBgColour);
+        dc.SetPen(colours.activeTabBgColour);
         dc.DrawLine(from, to);
 #ifdef __WXOSX__
         dc.DrawLine(from, to);

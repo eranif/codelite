@@ -55,7 +55,7 @@ public:
         Opt_TabColourPersistent = 0x00010000,
         Opt_Unused3 = 0x00020000,
         Opt_Use_CodeLite_Terminal = 0x00040000,
-        Opt_NonEditorTabsTop = 0x00080000,
+        Opt_NonEditorTabsBottom = 0x00080000,
         Opt_Unused5 = 0x00100000,
         Opt_AllowCaretAfterEndOfLine = 0x00200000,
         Opt_HideDockingWindowCaption = 0x00400000,
@@ -162,8 +162,8 @@ public:
     bool IsTabColourMatchesTheme() const { return !HasOption(Opt_TabColourPersistent); }
     void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
-    void SetNonEditorTabsAtTop(bool b) { EnableOption(Opt_NonEditorTabsTop, b); }
-    bool IsNonEditorTabsAtTop() const { return HasOption(Opt_NonEditorTabsTop); }
+    void SetNonEditorTabsAtTop(bool b) { EnableOption(Opt_NonEditorTabsBottom, !b); }
+    bool IsNonEditorTabsAtTop() const { return !HasOption(Opt_NonEditorTabsBottom); }
     
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }

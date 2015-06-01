@@ -815,7 +815,23 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::OnMouseMotion(wxMouseEvent& event) { event.Skip(); }
+void clTabCtrl::OnMouseMotion(wxMouseEvent& event) 
+{ 
+    event.Skip();
+    int realPos, tabHit;
+    wxString curtip = GetToolTipText();
+    TestPoint(event.GetPosition(), realPos, tabHit);
+    if(tabHit == wxNOT_FOUND || realPos == wxNOT_FOUND) {
+        if(!curtip.IsEmpty()) {
+            SetToolTip("");
+        }
+    } else {
+        wxString pagetip = m_tabs.at(realPos)->GetTooltip();
+        if(pagetip != curtip) {
+            SetToolTip(pagetip);
+        }
+    }
+}
 
 void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit)
 {

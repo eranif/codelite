@@ -38,6 +38,7 @@ protected:
     wxStaticBoxSizer* staticBoxSizer27;
     wxCheckBox* m_checkBoxShowXButton;
     wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
+    wxCheckBox* m_checkBoxPanesTabsAtBottom;
     wxBoxSizer* boxSizer25;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
@@ -75,6 +76,7 @@ public:
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
     wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
     wxCheckBox* GetCheckBoxEditorTabsFollowsTheme() { return m_checkBoxEditorTabsFollowsTheme; }
+    wxCheckBox* GetCheckBoxPanesTabsAtBottom() { return m_checkBoxPanesTabsAtBottom; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
     wxPanel* GetPanel12() { return m_panel12; }

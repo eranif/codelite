@@ -66,9 +66,14 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
 {
     CreateGUIControls();
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);
 }
 
-WorkspacePane::~WorkspacePane() { EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this); }
+WorkspacePane::~WorkspacePane()
+{
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);
+}
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
 
@@ -78,11 +83,12 @@ void WorkspacePane::CreateGUIControls()
     SetSizer(mainSizer);
 
     // add notebook for tabs
-    m_book = new Notebook(this,
-                          wxID_ANY,
-                          wxDefaultPosition,
-                          wxDefaultSize,
-                          kNotebook_Default | kNotebook_AllowDnD | kNotebook_BottomTabs);
+    long style = (kNotebook_Default | kNotebook_AllowDnD);
+    if(!EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop()) {
+        style |= kNotebook_BottomTabs;
+    }
+
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
@@ -376,4 +382,10 @@ void WorkspacePane::SelectTab(const wxString& tabTitle)
             m_book->SetSelection(i);
         }
     }
+}
+
+void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    m_book->EnableStyle(kNotebook_BottomTabs, !EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop());
 }

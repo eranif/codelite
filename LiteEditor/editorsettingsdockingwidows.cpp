@@ -56,6 +56,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
+    m_checkBoxPanesTabsAtBottom->SetValue(!options->IsNonEditorTabsAtTop());
     m_checkBoxHideOutputPaneNotIfDebug->Connect(
         wxEVT_UPDATE_UI,
         wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI),
@@ -89,6 +90,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetEnsureCaptionsVisible(m_checkBoxEnsureCaptionsVisible->IsChecked());
     options->SetTabColourMatchesTheme(m_checkBoxEditorTabsFollowsTheme->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
+    options->SetNonEditorTabsAtTop(!m_checkBoxPanesTabsAtBottom->IsChecked());
     
     // Keep the quickreplacebar in sync
     clMainFrame::Get()->GetMainBook()->ShowQuickReplaceBar(m_checkBoxShowReplaceBar->IsChecked());

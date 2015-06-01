@@ -71,7 +71,7 @@ public:
     static const wxString TRACE_TAB;
     static const wxString SHOW_USAGE;
     static const wxString CLANG_TAB;
-    
+
 private:
     wxString m_caption;
     wxLog* m_logTargetOld;
@@ -89,18 +89,19 @@ private:
     ShellTab* m_outputWind;
     TaskPanel* m_taskPanel;
     FindUsageTab* m_showUsageTab;
-    
+
 #if HAS_LIBCLANG
     ClangOutputTab* m_clangOutputTab;
 #endif
 
     bool m_buildInProgress;
-    
+
 protected:
     void CreateGUIControls();
     void OnEditorFocus(wxCommandEvent& e);
     void OnBuildStarted(clBuildEvent& e);
     void OnBuildEnded(clBuildEvent& e);
+    void OnSettingsChanged(wxCommandEvent& event);
 
 public:
     /**
@@ -109,12 +110,12 @@ public:
      * \param caption the caption
      */
     OutputPane(wxWindow* parent, const wxString& caption);
-    
+
     /**
      * @brief save the tab order
      */
     void SaveTabOrder();
-    
+
     /**
      * Destructor
      */
@@ -122,12 +123,12 @@ public:
 
     Notebook* GetNotebook() { return m_book; }
     const wxString& GetCaption() const { return m_caption; }
-    
+
     /**
      * @brief restore the tab order from the configuration file
      */
     void ApplySavedTabOrder() const;
-    
+
     FindResultsTab* GetFindResultsTab() { return m_findResultsTab; }
     ReplaceInFilesPanel* GetReplaceResultsTab() { return m_replaceResultsTab; }
     NewBuildTab* GetBuildTab() { return m_buildWin; }

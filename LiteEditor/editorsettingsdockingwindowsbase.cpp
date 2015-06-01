@@ -70,6 +70,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     staticBoxSizer27->Add(m_checkBoxEditorTabsFollowsTheme, 0, wxALL, 5);
     
+    m_checkBoxPanesTabsAtBottom = new wxCheckBox(m_panel12, wxID_ANY, _("Non editor tabs are placed at the bottom"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxPanesTabsAtBottom->SetValue(true);
+    m_checkBoxPanesTabsAtBottom->SetToolTip(_("Non editor tabs are placed at the bottom"));
+    
+    staticBoxSizer27->Add(m_checkBoxPanesTabsAtBottom, 0, wxALL, 5);
+    
     boxSizer25 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer22->Add(boxSizer25, 0, wxALL, 10);

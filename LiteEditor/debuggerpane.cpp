@@ -42,6 +42,8 @@
 #include "debugger.h"
 #include "DebuggerDisassemblyTab.h"
 #include "plugin_general_wxcp.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 const wxString DebuggerPane::LOCALS = _("Locals");
 const wxString DebuggerPane::WATCHES = _("Watches");
@@ -61,10 +63,14 @@ DebuggerPane::DebuggerPane(wxWindow* parent, const wxString& caption, wxAuiManag
     , m_initDone(false)
     , m_mgr(mgr)
 {
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &DebuggerPane::OnSettingsChanged, this);
     CreateGUIControls();
 }
 
-DebuggerPane::~DebuggerPane() {}
+DebuggerPane::~DebuggerPane()
+{
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &DebuggerPane::OnSettingsChanged, this);
+}
 
 void DebuggerPane::OnPageChanged(wxBookCtrlEvent& event)
 {
@@ -84,9 +90,10 @@ void DebuggerPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-    long style = kNotebook_AllowDnD | // Allow tabs to move
-                 kNotebook_ShowFileListButton | kNotebook_BottomTabs;
-
+    long style = (kNotebook_Default | kNotebook_AllowDnD);
+    if(!EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop()) {
+        style |= kNotebook_BottomTabs;
+    }
     GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
@@ -241,6 +248,12 @@ void DebuggerPane::Clear()
     GetFrameListView()->Clear();
     GetThreadsView()->Clear();
     GetMemoryView()->Clear();
+}
+
+void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    m_book->EnableStyle(kNotebook_BottomTabs, !EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop());
 }
 
 //----------------------------------------------------------------

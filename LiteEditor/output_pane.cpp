@@ -64,6 +64,7 @@ OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(OutputPane::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &OutputPane::OnSettingsChanged, this);
     SetSize(-1, 250);
 }
 
@@ -74,6 +75,7 @@ OutputPane::~OutputPane()
         wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(OutputPane::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &OutputPane::OnSettingsChanged, this);
 }
 
 void OutputPane::CreateGUIControls()
@@ -81,11 +83,11 @@ void OutputPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-    m_book = new Notebook(this,
-                          wxID_ANY,
-                          wxDefaultPosition,
-                          wxDefaultSize,
-                          kNotebook_Default | kNotebook_AllowDnD | kNotebook_BottomTabs);
+    long style = (kNotebook_Default | kNotebook_AllowDnD);
+    if(!EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop()) {
+        style |= kNotebook_BottomTabs;
+    }
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
@@ -248,4 +250,10 @@ void OutputPane::ApplySavedTabOrder() const
     } else if(m_book->GetPageCount()) {
         m_book->SetSelection(0);
     }
+}
+
+void OutputPane::OnSettingsChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    m_book->EnableStyle(kNotebook_BottomTabs, !EditorConfigST::Get()->GetOptions()->IsNonEditorTabsAtTop());
 }

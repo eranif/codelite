@@ -94,8 +94,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     if(useBook) {
 
         // load the book style from the settings file
-        long style = kNotebook_AllowDnD |
-                     kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
+        long style = kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
                      kNotebook_MouseMiddleClickFireEvent |      // instead of closing the tab, fire an event
                      kNotebook_ShowFileListButton |             // show drop down list of all open tabs
                      kNotebook_CloseButtonOnActiveTabFireEvent; // When closing the 'x' button, fire an event
@@ -631,6 +630,7 @@ void FindResultsTab::OnCloseAllTabs(wxCommandEvent& e)
     wxUnusedVar(e);
     if(m_book) {
         m_book->DeleteAllPages();
+        m_sci = NULL;
     }
 }
 

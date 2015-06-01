@@ -354,7 +354,12 @@ public:
      * @brief return the book style
      */
     size_t GetStyle() const { return m_tabCtrl->GetStyle(); }
-
+    
+    /**
+     * @brief enable a specific style in the notebook
+     */
+    void EnableStyle(NotebookStyle style, bool enable);
+    
     /**
      * destructor
      */

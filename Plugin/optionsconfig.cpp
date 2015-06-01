@@ -123,7 +123,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_preferredLocale(wxT("en_US"))
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
-    , m_options(TabClassic | Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift |
+    , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift |
                 Opt_HideDockingWindowCaption |
                 Opt_WrapBrackets |
                 Opt_WrapQuotes |

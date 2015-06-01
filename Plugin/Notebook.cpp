@@ -104,6 +104,17 @@ bool Notebook::RemovePage(size_t page, bool notify) { return m_tabCtrl->RemovePa
 bool Notebook::DeletePage(size_t page) { return m_tabCtrl->RemovePage(page, true, true); }
 bool Notebook::DeleteAllPages() { return m_tabCtrl->DeleteAllPages(); }
 
+void Notebook::EnableStyle(NotebookStyle style, bool enable)
+{
+    size_t flags = GetStyle();
+    if(enable) {
+        flags |= style;
+    } else {
+        flags &= ~style;
+    }
+    SetStyle(flags);
+}
+
 //----------------------------------------------------------
 // Tab label
 //----------------------------------------------------------

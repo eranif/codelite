@@ -62,6 +62,7 @@ protected:
     void DoShowTab(bool show, const wxString& title);
     wxWindow* DoGetControlByName(const wxString& title);
     void OnInitDone(wxCommandEvent& event);
+    void OnSettingsChanged(wxCommandEvent& event);
 
 public:
     WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);

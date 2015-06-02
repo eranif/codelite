@@ -43,6 +43,7 @@ protected:
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnItemExpanding(wxTreeEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
+    void OnInitDone(wxCommandEvent& event);
     
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items);
@@ -72,6 +73,7 @@ protected:
     void OnFindInFilesFolder(wxCommandEvent& event);
     void OnOpenContainingFolder(wxCommandEvent& event);
     void OnOpenShellFolder(wxCommandEvent& event);
+    void OnPinFolder(wxCommandEvent& event);
 
     void OnFolderDropped(clCommandEvent& event);
 

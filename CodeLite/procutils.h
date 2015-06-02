@@ -37,6 +37,7 @@
 #include <SetupAPI.h>
 #include <Psapi.h>
 #include <tlhelp32.h>
+#include <wx/msw/winundef.h>
 #endif
 
 struct ProcessEntry {

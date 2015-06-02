@@ -3972,7 +3972,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
         LEditor* editor = GetMainBook()->GetActiveEditor();
         if(editor) {
             // we are loosing the focus
-            editor->CallTipCancel();
+            editor->DoCancelCalltip();
         }
 #endif
     }

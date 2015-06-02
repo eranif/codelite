@@ -11,10 +11,17 @@
 #include <algorithm>
 #include <wx/dnd.h>
 #include <wx/regex.h>
+
+#if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
+#define CL_BUILD 1
+#endif
+
+#if CL_BUILD
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
+#endif
 
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
@@ -234,12 +241,13 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
     // Draw the text
     dc.SetTextForeground(IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#if 0
 #ifdef __WXOSX__
     font.SetPointSize(10);
 #else
     font.SetPointSize(9);
 #endif
-
+#endif
     dc.SetFont(font);
     dc.DrawText(m_label, m_textX + m_rect.GetX(), m_textY);
 
@@ -288,11 +296,14 @@ void clTabInfo::CalculateOffsets(size_t style)
     m_bmpCloseY = wxNOT_FOUND;
 
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#if 0
 #ifdef __WXOSX__
     font.SetPointSize(10);
 #else
     font.SetPointSize(9);
 #endif
+#endif
+
     memDC.SetFont(font);
     wxSize sz = memDC.GetTextExtent(m_label);
     m_height = TAB_HEIGHT;
@@ -419,6 +430,9 @@ bool clTabCtrl::IsActiveTabInList(const clTabInfo::Vec_t& tabs) const
 bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 {
     wxRect clientRect(GetClientRect());
+    if(GetStyle() & kNotebook_ShowFileListButton) {
+        clientRect.SetWidth(clientRect.GetWidth() - 30);
+    }
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
         if(t->IsActive() && clientRect.Intersects(t->GetRect())) return true;
@@ -507,6 +521,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     wxColour tabAreaBgCol = m_colours.tabAreaColour;
     clTabInfo::Colours activeTabColours = m_colours;
 
+#if CL_BUILD
     if(active_tab && (GetStyle() & kNotebook_EnableColourCustomization)) {
         // the background colour is set according to the active tab colour
         clColourEvent colourEvent(wxEVT_COLOUR_TAB);
@@ -516,6 +531,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             activeTabColours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
         }
     }
+#endif
 
     // Draw background
     dc.SetPen(tabAreaBgCol);
@@ -544,6 +560,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
                 activeTabInex = i;
             }
 
+#if CL_BUILD
             // send event per tab to get their colours
             clColourEvent colourEvent(wxEVT_COLOUR_TAB);
             colourEvent.SetPage(tab->GetWindow());
@@ -554,6 +571,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             } else {
                 tab->Draw(gcdc, m_colours, m_style);
             }
+#else
+            tab->Draw(gcdc, m_colours, m_style);
+#endif
         }
 
         // Redraw the active tab
@@ -921,6 +941,7 @@ clTabInfo::Colours::Colours() { InitDarkColours(); }
 
 void clTabInfo::Colours::InitFromColours(const wxColour& baseColour, const wxColour& textColour)
 {
+#if CL_BUILD
     if(DrawingUtils::IsDark(baseColour)) {
         activeTabTextColour = "WHITE";
         activeTabBgColour = baseColour;
@@ -952,6 +973,10 @@ void clTabInfo::Colours::InitFromColours(const wxColour& baseColour, const wxCol
         closeButton = wxXmlResource::Get()->LoadBitmap("notebook-light-x");
         chevronDown = wxXmlResource::Get()->LoadBitmap("chevron-down-black");
     }
+#else
+    wxUnusedVar(baseColour);
+    wxUnusedVar(textColour);
+#endif
 }
 
 void clTabInfo::Colours::InitDarkColours()

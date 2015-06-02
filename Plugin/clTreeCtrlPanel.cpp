@@ -288,9 +288,8 @@ void clTreeCtrlPanel::OnCloseFolder(wxCommandEvent& event)
     wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
     CHECK_ITEM_RET(item);
     if(!IsTopLevelFolder(item)) return;
-    GetTreeCtrl()->Delete(item);
     
-    // If this folder is a pinned one, remove it
+        // If this folder is a pinned one, remove it
     wxArrayString pinnedFolders;
     pinnedFolders = clConfig::Get().Read("ExplorerFolders", pinnedFolders);
     clTreeCtrlData* d = GetItemData(item);
@@ -299,6 +298,9 @@ void clTreeCtrlPanel::OnCloseFolder(wxCommandEvent& event)
         pinnedFolders.RemoveAt(where);
     }
     clConfig::Get().Write("ExplorerFolders", pinnedFolders);
+
+    // Now, delete the item
+    GetTreeCtrl()->Delete(item);
 }
 
 bool clTreeCtrlPanel::IsTopLevelFolder(const wxTreeItemId& item)

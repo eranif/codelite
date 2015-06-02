@@ -292,7 +292,7 @@ void clTreeCtrlPanel::OnCloseFolder(wxCommandEvent& event)
     
     // If this folder is a pinned one, remove it
     wxArrayString pinnedFolders;
-    clConfig::Get().Read("ExplorerFolders", pinnedFolders);
+    pinnedFolders = clConfig::Get().Read("ExplorerFolders", pinnedFolders);
     clTreeCtrlData* d = GetItemData(item);
     int where = pinnedFolders.Index(d->GetPath());
     if(where != wxNOT_FOUND) {
@@ -627,7 +627,7 @@ void clTreeCtrlPanel::OnPinFolder(wxCommandEvent& event)
     if(!IsTopLevelFolder(item)) return;
     
     wxArrayString pinnedFolders;
-    clConfig::Get().Read("ExplorerFolders", pinnedFolders);
+    pinnedFolders = clConfig::Get().Read("ExplorerFolders", pinnedFolders);
     clTreeCtrlData* d = GetItemData(item);
     int where = pinnedFolders.Index(d->GetPath());
     if(where == wxNOT_FOUND) {

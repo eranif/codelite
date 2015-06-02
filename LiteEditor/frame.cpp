@@ -2353,7 +2353,6 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
                                     msg,
                                     _("Reload File"),
                                     wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxICON_WARNING);
-            dlg.SetYesNoCancelLabels(_("Discard changes and Reload"), _("No"), _("Cancel"));
             if(dlg.ShowModal() != wxID_YES) {
                 return;
             }

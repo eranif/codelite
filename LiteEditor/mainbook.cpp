@@ -1151,6 +1151,7 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
 
 void MainBook::DoUpdateNotebookTheme()
 {
+    size_t initialStyle = m_book->GetStyle();
     size_t style = m_book->GetStyle();
     if(EditorConfigST::Get()->GetOptions()->IsTabColourMatchesTheme()) {
         // Update theme
@@ -1178,7 +1179,9 @@ void MainBook::DoUpdateNotebookTheme()
     } else {
         style |= (kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
     }
-    m_book->SetStyle(style);
+    if(initialStyle != style) {
+        m_book->SetStyle(style);
+    }
 }
 
 wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }

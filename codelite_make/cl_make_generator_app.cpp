@@ -83,28 +83,28 @@ bool clMakeGeneratorApp::OnInit()
 
     Info(wxString() << "-- Generating makefile for workspace file " << fnWorkspace.GetFullPath());
     wxString errmsg;
-    if(!WorkspaceST::Get()->OpenWorkspace(fnWorkspace.GetFullPath(), errmsg)) {
+    if(!clCxxWorkspaceST::Get()->OpenWorkspace(fnWorkspace.GetFullPath(), errmsg)) {
         Error(wxString() << "Error while loading workspace: " << fnWorkspace.GetFullPath() << ". " << errmsg);
         return false;
     }
 
     if(m_project.IsEmpty()) {
-        m_project = WorkspaceST::Get()->GetActiveProjectName();
+        m_project = clCxxWorkspaceST::Get()->GetActiveProjectName();
     }
 
     // Set the active project to the configuration set the by the user
-    WorkspaceST::Get()->GetBuildMatrix()->SetSelectedConfigurationName(m_configuration);
+    clCxxWorkspaceST::Get()->GetBuildMatrix()->SetSelectedConfigurationName(m_configuration);
 
     // Which makefile should we create?
     BuilderGnuMake builder;
-    ProjectPtr project = WorkspaceST::Get()->FindProjectByName(m_project, errmsg);
+    ProjectPtr project = clCxxWorkspaceST::Get()->FindProjectByName(m_project, errmsg);
     if(!project) {
         Error(wxString() << "Could not find project " << m_project << ". " << errmsg);
         return false;
     }
 
     // Load the build configuration
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_configuration);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(m_project, m_configuration);
     if(!bldConf) {
         Error(wxString() << "Could not find configuration " << m_configuration << " for project " << m_project);
         return false;

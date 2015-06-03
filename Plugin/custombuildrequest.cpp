@@ -66,7 +66,7 @@ void CustomBuildRequest::Process(IManager* manager)
     wxString errMsg;
     wxStringMap_t om;
 
-    Workspace* w(manager->GetWorkspace());
+    clCxxWorkspace* w(manager->GetWorkspace());
     EnvironmentConfig* env(manager->GetEnv());
 
     ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
@@ -159,7 +159,7 @@ void CustomBuildRequest::Process(IManager* manager)
     } else {
 
         // expand macros from the working directory
-        wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), bldConf->GetName(), filename);
+        wd = ExpandAllVariables(wd, clCxxWorkspaceST::Get(), proj->GetName(), bldConf->GetName(), filename);
     }
 
     {

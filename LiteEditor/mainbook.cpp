@@ -762,7 +762,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
     LEditor::Vec_t editors;
     GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
-    time_t workspaceModifiedTimeBefore = WorkspaceST::Get()->GetFileLastModifiedTime();
+    time_t workspaceModifiedTimeBefore = clCxxWorkspaceST::Get()->GetFileLastModifiedTime();
 
     // filter list of editors for any whose files have been modified
     std::vector<std::pair<wxFileName, bool> > files;
@@ -816,7 +816,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
         }
     }
 
-    time_t workspaceModifiedTimeAfter = WorkspaceST::Get()->GetFileLastModifiedTime();
+    time_t workspaceModifiedTimeAfter = clCxxWorkspaceST::Get()->GetFileLastModifiedTime();
     if(workspaceModifiedTimeBefore != workspaceModifiedTimeAfter) {
         // a workspace reload occured between the "Reload Modified Files" and
         // the "Reload WOrkspace" dialog, cancel this it's not needed anymore

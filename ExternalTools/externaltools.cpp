@@ -333,8 +333,8 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
     if(ti.GetCaptureOutput() == false) {
         DirSaver ds;
         wxString projectName;
-        if(WorkspaceST::Get()->IsOpen()) {
-            projectName = WorkspaceST::Get()->GetActiveProjectName();
+        if(clCxxWorkspaceST::Get()->IsOpen()) {
+            projectName = clCxxWorkspaceST::Get()->GetActiveProjectName();
         }
         
         EnvSetter envGuard(m_mgr->GetEnv(), NULL, projectName);
@@ -353,8 +353,8 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 
         DirSaver ds;
         wxString projectName;
-        if(WorkspaceST::Get()->IsOpen()) {
-            projectName = WorkspaceST::Get()->GetActiveProjectName();
+        if(clCxxWorkspaceST::Get()->IsOpen()) {
+            projectName = clCxxWorkspaceST::Get()->GetActiveProjectName();
         }
         
         EnvSetter envGuard(m_mgr->GetEnv(), NULL, projectName);

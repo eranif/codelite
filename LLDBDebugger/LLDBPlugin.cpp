@@ -305,7 +305,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
     {
         // Get the executable to debug
         wxString errMsg;
-        ProjectPtr pProject = WorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
+        ProjectPtr pProject = clCxxWorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
         if(!pProject) {
             ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(),
                            "LLDB Debugger",
@@ -320,7 +320,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
         LLDBSettings settings;
         settings.Load();
 
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(pProject->GetName(), wxEmptyString);
+        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(pProject->GetName(), wxEmptyString);
         if(!bldConf) {
             ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"),
                            "LLDB Debugger",

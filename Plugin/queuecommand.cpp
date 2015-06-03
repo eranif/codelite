@@ -44,9 +44,9 @@ QueueCommand::QueueCommand(int kind)
     , m_checkBuildSuccess(false)
 {
     // Fill with default values
-    if ( WorkspaceST::Get()->IsOpen() ) {
-        m_project = WorkspaceST::Get()->GetActiveProjectName();
-        BuildConfigPtr buildPtr = WorkspaceST::Get()->GetProjBuildConf(m_project, "");
+    if ( clCxxWorkspaceST::Get()->IsOpen() ) {
+        m_project = clCxxWorkspaceST::Get()->GetActiveProjectName();
+        BuildConfigPtr buildPtr = clCxxWorkspaceST::Get()->GetProjBuildConf(m_project, "");
         wxASSERT_MSG( buildPtr, "No active project" );
         
         // If a 'Build' or 'Clean' kinds where requested 

@@ -339,7 +339,7 @@ struct wxStringSorter
 void WorkspaceTab::DoWorkspaceConfig()
 {
     // Update the workspace configuration
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
     std::list<WorkspaceConfigurationPtr> confs = matrix->GetConfigurations();
 
     m_workspaceConfig->Freeze();
@@ -416,7 +416,7 @@ void WorkspaceTab::DoUpdateChoiceWithProjects()
 
     wxWindowUpdateLocker locker(m_choiceActiveProject);
     m_choiceActiveProject->Clear();
-    if(WorkspaceST::Get()->IsOpen()) {
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
         m_choiceActiveProject->Append(projects);
         m_choiceActiveProject->SetStringSelection(ManagerST::Get()->GetActiveProjectName());
     }

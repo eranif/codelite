@@ -79,7 +79,7 @@ public:
      *
      * @param workspace Exported workspace.
      */
-    static bool Generate(Workspace* workspace);
+    static bool Generate(clCxxWorkspace* workspace);
 
 
     /**

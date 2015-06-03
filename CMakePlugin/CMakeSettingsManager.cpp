@@ -168,7 +168,7 @@ CMakeSettingsManager::IsProjectEnabled(const wxString& project, const wxString& 
 void
 CMakeSettingsManager::SaveProjects()
 {
-    Workspace* workspace = m_plugin->GetManager()->GetWorkspace();
+    clCxxWorkspace* workspace = m_plugin->GetManager()->GetWorkspace();
     wxASSERT(workspace);
 
     wxArrayString projects;
@@ -185,7 +185,7 @@ CMakeSettingsManager::SaveProjects()
 void
 CMakeSettingsManager::SaveProject(const wxString& name)
 {
-    Workspace* workspace = m_plugin->GetManager()->GetWorkspace();
+    clCxxWorkspace* workspace = m_plugin->GetManager()->GetWorkspace();
     wxASSERT(workspace);
 
     wxString err;
@@ -241,7 +241,7 @@ CMakeSettingsManager::SaveProject(const wxString& name)
 void
 CMakeSettingsManager::LoadProjects()
 {
-    Workspace* workspace = m_plugin->GetManager()->GetWorkspace();
+    clCxxWorkspace* workspace = m_plugin->GetManager()->GetWorkspace();
     wxASSERT(workspace);
 
     wxArrayString projects;
@@ -258,7 +258,7 @@ CMakeSettingsManager::LoadProjects()
 void
 CMakeSettingsManager::LoadProject(const wxString& name)
 {
-    Workspace* workspace = m_plugin->GetManager()->GetWorkspace();
+    clCxxWorkspace* workspace = m_plugin->GetManager()->GetWorkspace();
     wxASSERT(workspace);
 
     wxString err;

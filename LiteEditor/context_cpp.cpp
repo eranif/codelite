@@ -1062,9 +1062,9 @@ void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc)
     funcPattern.Replace(wxT("$(Name)"), dc.name);
 
     classPattern = ExpandAllVariables(
-        classPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
+        classPattern, clCxxWorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
     funcPattern = ExpandAllVariables(
-        funcPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
+        funcPattern, clCxxWorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
 
     dc.comment.Replace(wxT("$(ClassPattern)"), classPattern);
     dc.comment.Replace(wxT("$(FunctionPattern)"), funcPattern);
@@ -2231,7 +2231,7 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
 
     // Get list of projects to work on
     wxArrayString projectsCandidateList, projects;
-    WorkspaceST::Get()->GetProjectList(projectsCandidateList);
+    clCxxWorkspaceST::Get()->GetProjectList(projectsCandidateList);
     if(projectsCandidateList.IsEmpty()) return;
 
     if(projectsCandidateList.GetCount() > 1) {

@@ -193,7 +193,7 @@ WXDLLIMPEXP_SDK wxString ExpandVariables(const wxString& expression, ProjectPtr 
  * \return an expanded string. If a macro is unknown it is replaced by empty string
  */
 WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression,
-                                            Workspace* workspace,
+                                            clCxxWorkspace* workspace,
                                             const wxString& projectName,
                                             const wxString& selConf,
                                             const wxString& fileName);

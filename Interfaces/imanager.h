@@ -41,7 +41,7 @@
 
 class clWorkspaceView;
 class TagsManager;
-class Workspace;
+class clCxxWorkspace;
 class EnvironmentConfig;
 class JobQueue;
 class wxApp;
@@ -230,7 +230,7 @@ public:
     /**
      * @brief return a pointer to the ** C++ ** workspace manager
      */
-    virtual Workspace* GetWorkspace() = 0;
+    virtual clCxxWorkspace* GetWorkspace() = 0;
     
     /**
      * @brief return the workspace view tab

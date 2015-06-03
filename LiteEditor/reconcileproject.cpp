@@ -330,7 +330,7 @@ wxArrayString ReconcileProjectDlg::AddMissingFiles(const wxArrayString& files, c
     if(VD.empty()) {
         // If we were called from the root panel (so the user is trying to add unallocated files, or all files at once)
         // we need to know which VD to use
-        VirtualDirectorySelectorDlg selector(this, WorkspaceST::Get(), "", m_projname);
+        VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), "", m_projname);
         selector.SetText("Please choose the Virtual Directory to which to add the files");
         if(selector.ShowModal() == wxID_OK) {
             VD = selector.GetVirtualDirectoryPath();
@@ -398,7 +398,7 @@ void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
 {
     wxString suggestedPath, suggestedName;
     bool guessed = GuessNewVirtualDirName(suggestedPath, suggestedName);
-    VirtualDirectorySelectorDlg selector(this, WorkspaceST::Get(), suggestedPath, m_projname);
+    VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), suggestedPath, m_projname);
     if(guessed) {
         selector.SetSuggestedName(suggestedName);
     }
@@ -897,7 +897,7 @@ void ReconcileByRegexDlg::OnTextEnter(wxCommandEvent& event)
 
 void ReconcileByRegexDlg::OnVDBrowse(wxCommandEvent& WXUNUSED(event))
 {
-    VirtualDirectorySelectorDlg selector(this, WorkspaceST::Get(), m_textCtrlVirtualFolder->GetValue(), m_projname);
+    VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), m_textCtrlVirtualFolder->GetValue(), m_projname);
     if(selector.ShowModal() == wxID_OK) {
         m_textCtrlVirtualFolder->ChangeValue(selector.GetVirtualDirectoryPath());
     }

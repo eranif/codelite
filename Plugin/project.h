@@ -129,7 +129,7 @@ typedef SmartPtr<ProjectTree> ProjectTreePtr;
 typedef TreeNode<wxString, ProjectItem> ProjectTreeNode;
 
 class Project;
-class Workspace;
+class clCxxWorkspace;
 
 typedef SmartPtr<Project> ProjectPtr;
 typedef std::set<wxFileName> FileNameSet_t;
@@ -164,7 +164,7 @@ public:
 
     typedef std::map<wxString, wxXmlNode*> NodeMap_t;
 
-    friend class Workspace;
+    friend class clCxxWorkspace;
 
 private:
     wxXmlDocument m_doc;
@@ -174,7 +174,7 @@ private:
     bool m_isModified;
     NodeMap_t m_vdCache;
     time_t m_modifyTime;
-    Workspace* m_workspace;
+    clCxxWorkspace* m_workspace;
     ProjectSettingsPtr m_settings;
     wxString m_iconPath; /// Not serializable
 
@@ -230,7 +230,7 @@ public:
      * @brief return the workspace associated with the project
      * If no workspace is associated, then the global workspace is returned
      */
-    Workspace* GetWorkspace();
+    clCxxWorkspace* GetWorkspace();
 
     /**
      * @brief a project was renamed - update our dependeices if needed
@@ -252,7 +252,7 @@ public:
     /**
      * @brief the const version of the above
      */
-    const Workspace* GetWorkspace() const;
+    const clCxxWorkspace* GetWorkspace() const;
     const wxFileName& GetFileName() const { return m_fileName; }
 
     const wxString& GetProjectPath() const { return m_projectPath; }
@@ -665,7 +665,7 @@ private:
     /**
      * @brief associate this project with a workspace
      */
-    void AssociateToWorkspace(Workspace* workspace);
+    void AssociateToWorkspace(clCxxWorkspace* workspace);
 
     wxString DoFormatVirtualFolderName(const wxXmlNode* node) const;
 

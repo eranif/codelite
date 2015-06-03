@@ -200,7 +200,7 @@ clInternalEventHandler clEventHandlerHelper;
 // --------------------------------------------------------
 
 static wxString DoExpandAllVariables(const wxString& expression,
-                                     Workspace* workspace,
+                                     clCxxWorkspace* workspace,
                                      const wxString& projectName,
                                      const wxString& confToBuild,
                                      const wxString& fileName);
@@ -463,12 +463,12 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
     if(editor) {
         fileName = editor->GetFileName().GetFullPath();
     }
-    return ExpandAllVariables(expression, WorkspaceST::Get(), project_name, wxEmptyString, fileName);
+    return ExpandAllVariables(expression, clCxxWorkspaceST::Get(), project_name, wxEmptyString, fileName);
 }
 
 // This functions accepts expression and expand all variables in it
 wxString ExpandAllVariables(const wxString& expression,
-                            Workspace* workspace,
+                            clCxxWorkspace* workspace,
                             const wxString& projectName,
                             const wxString& selConf,
                             const wxString& fileName)
@@ -521,7 +521,7 @@ wxString ExpandAllVariables(const wxString& expression,
 }
 
 wxString DoExpandAllVariables(const wxString& expression,
-                              Workspace* workspace,
+                              clCxxWorkspace* workspace,
                               const wxString& projectName,
                               const wxString& confToBuild,
                               const wxString& fileName)

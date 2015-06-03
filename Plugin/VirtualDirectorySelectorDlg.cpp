@@ -40,7 +40,7 @@
 #include <wx/msgdlg.h>
 
 VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent,
-                                                         Workspace* wsp,
+                                                         clCxxWorkspace* wsp,
                                                          const wxString& initialPath,
                                                          const wxString& projectname)
     : VirtualDirectorySelectorDlgBaseClass(parent)
@@ -334,7 +334,7 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
 
     curpath << ":" << newname;
     wxString errmsg;
-    if(!WorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
+    if(!clCxxWorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
         wxMessageBox(
             _("Error occured while creating virtual folder:\n") + errmsg, "codelite", wxOK | wxICON_WARNING | wxCENTER);
         return;

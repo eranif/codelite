@@ -67,7 +67,7 @@ void CompileRequest::Process(IManager* manager)
 
     BuildSettingsConfig* bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
     BuildManager* bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
-    Workspace* w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+    clCxxWorkspace* w(manager ? manager->GetWorkspace() : clCxxWorkspaceST::Get());
     EnvironmentConfig* env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
 
     ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);

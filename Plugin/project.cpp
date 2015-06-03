@@ -1709,22 +1709,22 @@ BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName)
     return buildConf;
 }
 
-void Project::AssociateToWorkspace(Workspace* workspace) { m_workspace = workspace; }
+void Project::AssociateToWorkspace(clCxxWorkspace* workspace) { m_workspace = workspace; }
 
-Workspace* Project::GetWorkspace()
+clCxxWorkspace* Project::GetWorkspace()
 {
     if(!m_workspace) {
-        return WorkspaceST::Get();
+        return clCxxWorkspaceST::Get();
 
     } else {
         return m_workspace;
     }
 }
 
-const Workspace* Project::GetWorkspace() const
+const clCxxWorkspace* Project::GetWorkspace() const
 {
     if(!m_workspace) {
-        return WorkspaceST::Get();
+        return clCxxWorkspaceST::Get();
 
     } else {
         return m_workspace;

@@ -533,7 +533,7 @@ bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
 
     if(editor->GetProjectName().IsEmpty())
         return false;
-    if(!WorkspaceST::Get()->IsOpen())
+    if(!clCxxWorkspaceST::Get()->IsOpen())
         return false;
 
     // Support only C/C++ files
@@ -542,7 +542,7 @@ bool CodeCompletionManager::GetDefinitionsAndSearchPaths(LEditor* editor,
 
     // Get the file's project and get the build configuration settings
     // for it
-    ProjectPtr proj = WorkspaceST::Get()->GetProject(editor->GetProjectName());
+    ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(editor->GetProjectName());
     CHECK_PTR_RET_FALSE(proj);
 
     BuildConfigPtr buildConf = proj->GetBuildConfiguration();

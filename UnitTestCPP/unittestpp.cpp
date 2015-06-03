@@ -562,10 +562,10 @@ void UnitTestPP::OnRunProject(clExecuteEvent& e)
 {
     e.Skip();
     // Sanity
-    if(!WorkspaceST::Get()->IsOpen()) return;
+    if(!clCxxWorkspaceST::Get()->IsOpen()) return;
     if(e.GetTargetName().IsEmpty()) return;
 
-    ProjectPtr pProj = WorkspaceST::Get()->GetProject(e.GetTargetName());
+    ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(e.GetTargetName());
     CHECK_PTR_RET(pProj);
 
     if(pProj->GetProjectInternalType() != "UnitTest++") {

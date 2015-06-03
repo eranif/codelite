@@ -46,9 +46,9 @@
  *
  */
 class CompileCommandsCreateor;
-class WXDLLIMPEXP_SDK Workspace
+class WXDLLIMPEXP_SDK clCxxWorkspace
 {
-    friend class WorkspaceST;
+    friend class clCxxWorkspaceST;
     friend class CompileCommandsCreateor;
 
 public:
@@ -57,7 +57,7 @@ public:
 protected:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
-    Workspace::ProjectMap_t m_projects;
+    clCxxWorkspace::ProjectMap_t m_projects;
     wxString m_startupDir;
     time_t m_modifyTime;
     bool m_saveOnExit;
@@ -65,10 +65,10 @@ protected:
 
 private:
     /// Constructor
-    Workspace();
+    clCxxWorkspace();
 
     /// Destructor
-    virtual ~Workspace();
+    virtual ~clCxxWorkspace();
 
     void DoUpdateBuildMatrix();
 
@@ -384,10 +384,10 @@ private:
     void SyncFromLocalWorkspaceSTParserPaths();
 };
 
-class WXDLLIMPEXP_SDK WorkspaceST
+class WXDLLIMPEXP_SDK clCxxWorkspaceST
 {
 public:
-    static Workspace* Get();
+    static clCxxWorkspace* Get();
     static void Free();
 };
 

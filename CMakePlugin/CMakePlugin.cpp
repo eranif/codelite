@@ -243,7 +243,7 @@ CMakePlugin::~CMakePlugin()
 
 wxFileName CMakePlugin::GetWorkspaceDirectory() const
 {
-    const Workspace* workspace = m_mgr->GetWorkspace();
+    const clCxxWorkspace* workspace = m_mgr->GetWorkspace();
     wxASSERT(workspace);
 
     return wxFileName::DirName(workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME));
@@ -253,7 +253,7 @@ wxFileName CMakePlugin::GetWorkspaceDirectory() const
 
 wxFileName CMakePlugin::GetProjectDirectory(const wxString& projectName) const
 {
-    const Workspace* workspace = m_mgr->GetWorkspace();
+    const clCxxWorkspace* workspace = m_mgr->GetWorkspace();
     wxASSERT(workspace);
 
     wxString errMsg;
@@ -278,7 +278,7 @@ wxString CMakePlugin::GetSelectedProjectConfig() const
 
 BuildConfigPtr CMakePlugin::GetSelectedBuildConfig() const
 {
-    const Workspace* workspace = m_mgr->GetWorkspace();
+    const clCxxWorkspace* workspace = m_mgr->GetWorkspace();
     wxASSERT(workspace);
 
     const ProjectPtr projectPtr = GetSelectedProject();

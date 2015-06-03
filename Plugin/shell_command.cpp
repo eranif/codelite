@@ -102,7 +102,7 @@ void ShellCommand::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool is
             //first set the path to the project working directory
             ::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
-            BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+            BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
             if (buildConf) {
                 wxString wd = buildConf->GetCustomBuildWorkingDir();
                 if (wd.IsEmpty()) {
@@ -110,7 +110,7 @@ void ShellCommand::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool is
                     wd = proj->GetFileName().GetPath();
                 } else {
                     // expand macros from path
-                    wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
+                    wd = ExpandAllVariables(wd, clCxxWorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
                 }
                 ::wxSetWorkingDirectory(wd);
             }

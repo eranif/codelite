@@ -90,14 +90,14 @@ EnvMap EvnVarList::GetVariables(const wxString& setName, bool includeWorkspaceEn
 
     wxString      currentValueStr = DoGetSetVariablesStr(setName, actualSetName);
 
-    if(includeWorkspaceEnvs && !WorkspaceST::Get()->GetName().IsEmpty()) {
+    if(includeWorkspaceEnvs && !clCxxWorkspaceST::Get()->GetName().IsEmpty()) {
         currentValueStr.Trim().Trim(false);
         currentValueStr << wxT("\n");
-        currentValueStr << WorkspaceST::Get()->GetEnvironmentVariabels();
+        currentValueStr << clCxxWorkspaceST::Get()->GetEnvironmentVariabels();
 
         if(projectName.IsEmpty() == false) {
             currentValueStr.Trim().Trim(false);
-            BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxT(""));
+            BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxT(""));
             if(buildConf) {
                 currentValueStr << wxT("\n");
                 currentValueStr << buildConf->GetEnvvars();

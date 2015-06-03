@@ -803,8 +803,8 @@ void CompilerMainPage::LoadCompilers()
     m_listBoxCompilers->Clear();
 
     wxString cmpType;
-    if(WorkspaceST::Get()->IsOpen() && WorkspaceST::Get()->GetActiveProject()) {
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetActiveProject()->GetBuildConfiguration();
+    if(clCxxWorkspaceST::Get()->IsOpen() && clCxxWorkspaceST::Get()->GetActiveProject()) {
+        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetActiveProject()->GetBuildConfiguration();
         if(bldConf) {
             cmpType = bldConf->GetCompilerType();
         }

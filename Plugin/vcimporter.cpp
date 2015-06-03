@@ -157,7 +157,7 @@ void VcImporter::CreateWorkspace()
     // create a workspace file from the data we collected
     wxFileName fn(m_fileName);
     wxString errMsg;
-    WorkspaceST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath(), errMsg);
+    clCxxWorkspaceST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath(), errMsg);
 }
 
 //
@@ -213,12 +213,12 @@ bool VcImporter::ConvertProject(VcProjectData& data)
     // now we can create the project
     wxFileName fn(data.filepath);
     fn.MakeAbsolute();
-    if(!WorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, true, errMsg)) {
+    if(!clCxxWorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, true, errMsg)) {
         return false;
     }
 
     // get the new project instance
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(data.name, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(data.name, errMsg);
     ProjectSettingsPtr le_settings(new ProjectSettings(NULL));
     // remove the default 'Debug' configuration
     le_settings->RemoveConfiguration(wxT("Debug"));

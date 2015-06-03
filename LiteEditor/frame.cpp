@@ -992,7 +992,7 @@ void clMainFrame::CreateGUIControls(void)
 
     // initialize debugger configuration tool
     DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("5.4"));
-    WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStartupDirectory());
+    clCxxWorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStartupDirectory());
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 #ifdef __WXMSW__
@@ -2306,7 +2306,7 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
     EditorConfigST::Get()->SetRecentItems(previousgroups, wxT("RecentTabgroups")); // In case any were deleted
 
     wxString path =
-        ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetPath() : wxGetHomeDir();
+        ManagerST::Get()->IsWorkspaceOpen() ? clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() : wxGetHomeDir();
     LoadTabGroupDlg dlg(this, path, previousgroups);
 
     // Disable the 'Replace' checkbox if there aren't any editors to replace
@@ -2926,7 +2926,7 @@ void clMainFrame::OnAddEnvironmentVariable(wxCommandEvent& event)
     if(ManagerST::Get()->IsWorkspaceOpen()) {
         // mark all the projects as dirty
         wxArrayString projects;
-        WorkspaceST::Get()->GetProjectList(projects);
+        clCxxWorkspaceST::Get()->GetProjectList(projects);
         for(size_t i = 0; i < projects.size(); i++) {
             ProjectPtr proj = ManagerST::Get()->GetProject(projects.Item(i));
             if(proj) {
@@ -2987,7 +2987,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
     if(enable) {
 
         // Make sure that the working folder is set to the correct path
-        wxString workspacePath = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+        wxString workspacePath = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
         ::wxSetWorkingDirectory(workspacePath);
         wxLogMessage("Setting working directory to: %s", workspacePath);
         GetStatusBar()->SetMessage(_("Build starting..."));
@@ -2996,7 +2996,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         projectName = ManagerST::Get()->GetActiveProjectName();
 
         // get the selected configuration to be built
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
         if(bldConf) {
             conf = bldConf->GetName();
         }
@@ -3020,7 +3020,7 @@ void clMainFrame::OnBuildCustomTarget(wxCommandEvent& event)
 
         // get the selected configuration to be built
         BuildConfigPtr bldConf =
-            WorkspaceST::Get()->GetProjBuildConf(CustomTargetsMgr::Get().GetProjectName(), wxEmptyString);
+            clCxxWorkspaceST::Get()->GetProjBuildConf(CustomTargetsMgr::Get().GetProjectName(), wxEmptyString);
         if(bldConf) {
             CustomTargetsMgr::Pair_t target = CustomTargetsMgr::Get().GetTarget(event.GetId());
             if(target.second.IsEmpty()) {
@@ -3049,7 +3049,7 @@ void clMainFrame::OnBuildAndRunProject(wxCommandEvent& event)
         wxString projectName = ManagerST::Get()->GetActiveProjectName();
         wxString conf;
         // get the selected configuration to be built
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
         if(bldConf) {
             conf = bldConf->GetName();
         }
@@ -3144,13 +3144,13 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
 {
     // Test to see if any plugin wants to execute it
     clExecuteEvent evtExecute(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT);
-    if(WorkspaceST::Get()->IsOpen()) {
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
         // set the project name
-        evtExecute.SetTargetName(WorkspaceST::Get()->GetActiveProject()->GetName());
+        evtExecute.SetTargetName(clCxxWorkspaceST::Get()->GetActiveProject()->GetName());
     }
     if(EventNotifier::Get()->ProcessEvent(evtExecute)) return;
 
-    if(!WorkspaceST::Get()->IsOpen()) {
+    if(!clCxxWorkspaceST::Get()->IsOpen()) {
         return;
     }
 
@@ -3595,7 +3595,7 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
     bool isBuiltinDebuggerRunning =
         DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning();
 
-    if(!WorkspaceST::Get()->IsOpen()) {
+    if(!clCxxWorkspaceST::Get()->IsOpen()) {
         // We hae no workspace opened and yet we got here.
         // this can mean one of two:
         // 1. A non C++ workspace is opened - so we initiate the debugger start command
@@ -3613,7 +3613,7 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
     if(!isBuiltinDebuggerRunning) {
         // Let the plugin know that we are about to start debugging
         clDebugEvent dbgEvent(wxEVT_DBG_UI_CONTINUE);
-        ProjectPtr activeProject = WorkspaceST::Get()->GetActiveProject();
+        ProjectPtr activeProject = clCxxWorkspaceST::Get()->GetActiveProject();
         if(activeProject) {
             BuildConfigPtr buildConfig = activeProject->GetBuildConfiguration();
             if(buildConfig) {
@@ -3630,7 +3630,7 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
 
     } else if(mgr->IsWorkspaceOpen()) {
 
-        if(WorkspaceST::Get()->GetActiveProjectName().IsEmpty()) {
+        if(clCxxWorkspaceST::Get()->GetActiveProjectName().IsEmpty()) {
             wxLogMessage(_("Attempting to debug workspace with no active project? Ignoring."));
             return;
         }
@@ -3797,9 +3797,9 @@ void clMainFrame::OnIdle(wxIdleEvent& e)
     e.Skip();
 
     // make sure that we are always set to the working directory of the workspace
-    if(WorkspaceST::Get()->IsOpen()) {
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
         // Check that current working directory is set to the workspace folder
-        wxString path = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+        wxString path = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
         wxString curdir = ::wxGetCwd();
         if(path != curdir) {
             // Check that it really *is* different, not just a symlink issue: see bug #942
@@ -4389,7 +4389,7 @@ void clMainFrame::RebuildProject(const wxString& projectName)
     if(enable) {
         wxString conf;
         // get the selected configuration to be built
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
         if(bldConf) {
             conf = bldConf->GetName();
         }
@@ -4456,7 +4456,7 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     wxString username = ::wxGetUserId();
     username.Prepend("[ ").Append(" ]");
 
-    wxString workspace = WorkspaceST::Get()->GetName();
+    wxString workspace = clCxxWorkspaceST::Get()->GetName();
     if(!workspace.IsEmpty()) {
         workspace.Prepend("[ ").Append(" ]");
     }
@@ -4884,7 +4884,7 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
         return false;
     }
 
-    Workspace* workspace = WorkspaceST::Get();
+    clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
     bool workspace_modified = false, project_modified = false;
 
     // check if the workspace needs reloading and ask the user for confirmation
@@ -4949,7 +4949,7 @@ bool clMainFrame::SaveLayoutAndSession()
     if(!EventNotifier::Get()->ProcessEvent(eventSaveSession)) {
         // Do the default session store
         if(ManagerST::Get()->IsWorkspaceOpen()) {
-            wxString sessionName = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
+            wxString sessionName = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
             SessionEntry session;
             session.SetWorkspaceName(sessionName);
             GetMainBook()->SaveSession(session);
@@ -5103,7 +5103,7 @@ void clMainFrame::OnCheckForUpdate(wxCommandEvent& e)
 void clMainFrame::OnShowActiveProjectSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!WorkspaceST::Get()->IsOpen()) {
+    if(!clCxxWorkspaceST::Get()->IsOpen()) {
         return;
     }
     GetWorkspaceTab()->OpenProjectSettings();
@@ -5113,7 +5113,7 @@ void clMainFrame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
     wxArrayString projectList;
-    WorkspaceST::Get()->GetProjectList(projectList);
+    clCxxWorkspaceST::Get()->GetProjectList(projectList);
     e.Enable(ManagerST::Get()->IsWorkspaceOpen() && (projectList.IsEmpty() == false));
 }
 
@@ -5153,10 +5153,10 @@ void clMainFrame::SelectBestEnvSet()
 
     // First, if the project has an environment which is not '<Use Defaults>' use it
     if(ManagerST::Get()->IsWorkspaceOpen()) {
-        wxString activeProj = WorkspaceST::Get()->GetActiveProjectName();
+        wxString activeProj = clCxxWorkspaceST::Get()->GetActiveProjectName();
         ProjectPtr p = ManagerST::Get()->GetProject(activeProj);
         if(p) {
-            BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(activeProj, wxEmptyString);
+            BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(activeProj, wxEmptyString);
             if(buildConf) {
                 if(buildConf->GetEnvVarSet() != USE_WORKSPACE_ENV_VAR_SET &&
                    buildConf->GetEnvVarSet() != wxT("<Use Workspace Settings>") /* backward support */) {
@@ -5769,11 +5769,11 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
     menu->Append(XRCID("clean_active_project_only"), wxT("Project Only - Clean"));
 
     // build the menu and show it
-    BuildConfigPtr bldcfg = WorkspaceST::Get()->GetProjBuildConf(WorkspaceST::Get()->GetActiveProjectName(), "");
+    BuildConfigPtr bldcfg = clCxxWorkspaceST::Get()->GetProjBuildConf(clCxxWorkspaceST::Get()->GetActiveProjectName(), "");
     if(bldcfg && bldcfg->IsCustomBuild()) {
 
         // Update teh custom targets
-        CustomTargetsMgr::Get().SetTargets(WorkspaceST::Get()->GetActiveProjectName(), bldcfg->GetCustomTargets());
+        CustomTargetsMgr::Get().SetTargets(clCxxWorkspaceST::Get()->GetActiveProjectName(), bldcfg->GetCustomTargets());
 
         if(!CustomTargetsMgr::Get().GetTargets().empty()) {
             menu->AppendSeparator();
@@ -5898,9 +5898,9 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
     if(e.GetInt() == 0) {
         // start
         wxLogMessage(
-            wxString() << "Initializing refactoring database for workspace: " << WorkspaceST::Get()->GetName());
+            wxString() << "Initializing refactoring database for workspace: " << clCxxWorkspaceST::Get()->GetName());
     } else {
-        wxLogMessage(wxString() << "Initializing refactoring database for workspace: " << WorkspaceST::Get()->GetName()
+        wxLogMessage(wxString() << "Initializing refactoring database for workspace: " << clCxxWorkspaceST::Get()->GetName()
                                 << "... done");
     }
 }
@@ -5953,7 +5953,7 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
             }
 
             // Update the build drop down menu
-            if(WorkspaceST::Get()->IsOpen()) {
+            if(clCxxWorkspaceST::Get()->IsOpen()) {
                 wxMenu* buildDropDownMenu = new wxMenu;
                 DoCreateBuildDropDownMenu(buildDropDownMenu);
                 if(GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project"))) {

@@ -42,7 +42,7 @@ void CompileCommandsCreateor::Process(wxThread* thread)
 {
     wxString errMsg;
     wxUnusedVar(thread);
-    Workspace workspace;
+    clCxxWorkspace workspace;
     workspace.OpenReadOnly(m_filename.GetFullPath(), errMsg);
     
     JSONRoot json(cJSON_Array);

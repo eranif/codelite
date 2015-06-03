@@ -52,7 +52,7 @@ TweaksSettingsDlg::~TweaksSettingsDlg()
 
 void TweaksSettingsDlg::OnWorkspaceOpenUI(wxUpdateUIEvent& event)
 {
-    event.Enable( WorkspaceST::Get()->IsOpen() );
+    event.Enable( clCxxWorkspaceST::Get()->IsOpen() );
 }
 
 void TweaksSettingsDlg::DoPopulateList()
@@ -60,7 +60,7 @@ void TweaksSettingsDlg::DoPopulateList()
     m_colourProperties.clear();
     // Get list of projects
     wxArrayString projects;
-    WorkspaceST::Get()->GetProjectList( projects );
+    clCxxWorkspaceST::Get()->GetProjectList( projects );
 
     // ----------------------------------------------------------------------
     // Add tab colours properties
@@ -112,12 +112,12 @@ void TweaksSettingsDlg::OnEnableTweaks(wxCommandEvent& event)
 
 void TweaksSettingsDlg::OnEnableTweaksUI(wxUpdateUIEvent& event)
 {
-    event.Enable( m_checkBoxEnableTweaks->IsChecked() && WorkspaceST::Get()->IsOpen() );
+    event.Enable( m_checkBoxEnableTweaks->IsChecked() && clCxxWorkspaceST::Get()->IsOpen() );
 }
 
 void TweaksSettingsDlg::OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event)
 {
-    event.Enable( WorkspaceST::Get()->IsOpen() );
+    event.Enable( clCxxWorkspaceST::Get()->IsOpen() );
 }
 
 void TweaksSettingsDlg::OnColourChanged(wxPropertyGridEvent& event)
@@ -193,5 +193,5 @@ void TweaksSettingsDlg::OnEnableColoursTableUI(wxUpdateUIEvent& event)
 #endif
 #endif
 
-    event.Enable( m_checkBoxEnableTweaks->IsChecked() && WorkspaceST::Get()->IsOpen() );
+    event.Enable( m_checkBoxEnableTweaks->IsChecked() && clCxxWorkspaceST::Get()->IsOpen() );
 }

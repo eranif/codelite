@@ -235,7 +235,7 @@ void ClangCodeCompletion::OnBuildStarting(clBuildEvent& e)
     wxString project = e.GetProjectName();
     wxString config = e.GetConfigurationName();
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, config);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, config);
     if(bldConf && !bldConf->IsCustomBuild()) {
         wxString cxx = bldConf->GetCompiler()->GetTool(wxT("CXX"));
         wxString cc = bldConf->GetCompiler()->GetTool(wxT("CC"));

@@ -402,7 +402,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     if (!wxFileExists(GetGprofPath()) || !wxFileExists(GetDotPath()))
         return MessageBox(_T("Failed to locate required tools (gprof, dot). Please check the plugin settings."), wxICON_ERROR);
 
-    Workspace   *ws = m_mgr->GetWorkspace();
+    clCxxWorkspace   *ws = m_mgr->GetWorkspace();
     if (!ws)		return MessageBox(_("Unable to get opened workspace."), wxICON_ERROR);
 
     wxFileName  ws_cfn = ws->GetWorkspaceFileName();

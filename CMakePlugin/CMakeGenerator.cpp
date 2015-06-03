@@ -120,7 +120,7 @@ static void WriteContent(const wxFileName& filename, const wxString& content)
 /* ************************************************************************ */
 
 bool
-CMakeGenerator::Generate(Workspace* workspace)
+CMakeGenerator::Generate(clCxxWorkspace* workspace)
 {
     if ( !workspace )
         return false;
@@ -237,7 +237,7 @@ CMakeGenerator::Generate(ProjectPtr project, bool topProject)
     if ( topProject ) {
         wxArrayString depsProjects = project->GetDependencies( buildConf->GetName() );
         for(size_t i=0; i<depsProjects.GetCount(); ++i) {
-            ProjectPtr pProj = WorkspaceST::Get()->GetProject( depsProjects.Item(i) );
+            ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject( depsProjects.Item(i) );
             if ( pProj ) {
                 if ( Generate( pProj, false ) ) {
                     wxString depProjFilePath = pProj->GetFileName().GetFullPath();

@@ -176,7 +176,7 @@ void BatchBuildDlg::GetBuildInfoList(std::list<QueueCommand>& buildInfoList)
             config.Trim().Trim(false);
 
             // get the selected configuration to be built
-            BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, config);
+            BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, config);
             if (bldConf) {
 
                 QueueCommand buildInfo(project, config, true, m_cmd);
@@ -203,7 +203,7 @@ void BatchBuildDlg::GetBuildInfoList(std::list<QueueCommand>& buildInfoList)
 void BatchBuildDlg::DoInitialize()
 {
     // load the previously saved batch build file
-    wxFileName fn(WorkspaceST::Get()->GetWorkspaceFileName());
+    wxFileName fn(clCxxWorkspaceST::Get()->GetWorkspaceFileName());
     fn.SetExt(wxT("batch_build"));
 
     wxString content;
@@ -219,7 +219,7 @@ void BatchBuildDlg::DoInitialize()
     // loop over all projects, for each project collect all available
     // build configurations and add them to the check list control
     wxArrayString projects;
-    WorkspaceST::Get()->GetProjectList(projects);
+    clCxxWorkspaceST::Get()->GetProjectList(projects);
     for (size_t i=0; i<projects.GetCount(); i++) {
         ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
         if (p) {
@@ -263,7 +263,7 @@ void BatchBuildDlg::DoInitialize()
 
 void BatchBuildDlg::DoSaveBatchBuildOrder()
 {
-    wxFileName fn(WorkspaceST::Get()->GetWorkspaceFileName());
+    wxFileName fn(clCxxWorkspaceST::Get()->GetWorkspaceFileName());
     fn.SetExt(wxT("batch_build"));
 
     wxString content;

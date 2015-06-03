@@ -96,7 +96,7 @@ bool BuilderGnuMake::Export(const wxString& project,
     if(project.IsEmpty()) {
         return false;
     }
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
         errMsg << _("Cant open project '") << project << wxT("'");
         return false;
@@ -106,7 +106,7 @@ bool BuilderGnuMake::Export(const wxString& project,
     wxString bld_conf_name(confToBuild);
 
     if(confToBuild.IsEmpty()) {
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
         if(!bldConf) {
             errMsg << _("Cant find build configuration for project '") << project << wxT("'");
             return false;
@@ -114,7 +114,7 @@ bool BuilderGnuMake::Export(const wxString& project,
         bld_conf_name = bldConf->GetName();
     }
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, bld_conf_name);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, bld_conf_name);
     if(!bldConf) {
         errMsg << _("Cant find build configuration for project '") << project << wxT("'");
         return false;
@@ -131,14 +131,14 @@ bool BuilderGnuMake::Export(const wxString& project,
     wxArrayString updatedDepsArr;
     for(size_t i = 0; i < depsArr.GetCount(); ++i) {
         wxString errmsg;
-        ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errmsg);
+        ProjectPtr dependProj = clCxxWorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errmsg);
         if(!dependProj) {
             continue;
         }
 
-        wxString projectSelConf = WorkspaceST::Get()->GetBuildMatrix()->GetProjectSelectedConf(
-            WorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName(), dependProj->GetName());
-        BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
+        wxString projectSelConf = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetProjectSelectedConf(
+            clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName(), dependProj->GetName());
+        BuildConfigPtr dependProjbldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
         if(dependProjbldConf && dependProjbldConf->IsProjectEnabled()) {
             updatedDepsArr.Add(depsArr.Item(i));
         }
@@ -152,7 +152,7 @@ bool BuilderGnuMake::Export(const wxString& project,
         // this function assumes that the working directory is located at the workspace path
         // make sure that all dependencies exists
         for(size_t i = 0; i < depsArr.GetCount(); i++) {
-            ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
+            ProjectPtr dependProj = clCxxWorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
             // Missing dependencies project?
             // this can happen if a project was removed from the workspace, but
             // is still on the depdendencie list of this project
@@ -194,7 +194,7 @@ bool BuilderGnuMake::Export(const wxString& project,
     fn << "Makefile";
     wxString text;
 
-    wxFileName wspfile(WorkspaceST::Get()->GetWorkspaceFileName());
+    wxFileName wspfile(clCxxWorkspaceST::Get()->GetWorkspaceFileName());
 
     text << wxT(".PHONY: clean All\n\n");
     text << wxT("All:\n");
@@ -207,20 +207,20 @@ bool BuilderGnuMake::Export(const wxString& project,
     buildTool.Replace(wxT("\\"), wxT("/"));
 
     // generate the makefile for the selected workspace configuration
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
     wxArrayString depsProjs;
     if(!isProjectOnly) {
         for(size_t i = 0; i < depsArr.GetCount(); ++i) {
             bool isCustom(false);
-            ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
+            ProjectPtr dependProj = clCxxWorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
             if(!dependProj) {
                 continue;
             }
 
             wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, dependProj->GetName());
             BuildConfigPtr dependProjbldConf =
-                WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
+                clCxxWorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
             if(dependProjbldConf && dependProjbldConf->IsCustomBuild()) {
                 isCustom = true;
             }
@@ -266,9 +266,9 @@ bool BuilderGnuMake::Export(const wxString& project,
                 wxString customWdCmd;
 
                 customWd = ExpandAllVariables(
-                    customWd, WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+                    customWd, clCxxWorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
                 build_cmd = ExpandAllVariables(
-                    build_cmd, WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+                    build_cmd, clCxxWorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
 
                 build_cmd.Trim().Trim(false);
 
@@ -349,7 +349,7 @@ bool BuilderGnuMake::Export(const wxString& project,
             bool isCustom(false);
             wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, depsArr.Item(i));
 
-            ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
+            ProjectPtr dependProj = clCxxWorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
             // Missing dependencies project? just skip it
             if(!dependProj) {
                 continue;
@@ -365,7 +365,7 @@ bool BuilderGnuMake::Export(const wxString& project,
             // if the dependencie project is project of type 'Custom Build' - do the custom build instead
             // of the geenrated makefile
             BuildConfigPtr dependProjbldConf =
-                WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
+                clCxxWorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
             if(dependProjbldConf && dependProjbldConf->IsCustomBuild()) {
                 isCustom = true;
             }
@@ -397,9 +397,9 @@ bool BuilderGnuMake::Export(const wxString& project,
                 wxString clean_cmd = dependProjbldConf->GetCustomCleanCmd();
 
                 customWd = ExpandAllVariables(
-                    customWd, WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+                    customWd, clCxxWorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
                 clean_cmd = ExpandAllVariables(
-                    clean_cmd, WorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
+                    clean_cmd, clCxxWorkspaceST::Get(), dependProj->GetName(), dependProjbldConf->GetName(), wxEmptyString);
 
                 wxString customWdCmd;
 
@@ -465,7 +465,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj,
     wxString pname(proj->GetName());
     wxString tmpConfigName(confToBuild.c_str());
     if(confToBuild.IsEmpty()) {
-        BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+        BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
         tmpConfigName = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), proj->GetName());
     }
 
@@ -486,7 +486,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj,
     }
 
     // get the selected build configuration for this project
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     if(!bldConf) {
         return;
     }
@@ -608,7 +608,7 @@ void BuilderGnuMake::CreateSrcList(ProjectPtr proj, const wxString& confToBuild,
 
     text << wxT("Srcs=");
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
     wxString relPath;
 
@@ -659,7 +659,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString& confToBui
         }
     }
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
 
     // get the compiler settings
@@ -737,7 +737,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBu
 {
     // get the project specific build configuration for the workspace active
     // configuration
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
     // get the compiler settings
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
@@ -888,7 +888,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToB
 {
     // get the project specific build configuration for the workspace active
     // configuration
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
     // get the compiler settings
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
@@ -984,7 +984,7 @@ void BuilderGnuMake::CreateLinkTargets(const wxString& type,
     wxString depsRules;
 
     wxString errMsg;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projName, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projName, errMsg);
 
     for(size_t i = 0; i < depsProj.GetCount(); i++) {
         wxFileName fn(depsProj.Item(i));
@@ -1195,7 +1195,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     wxString projectName = proj->GetName();
     text << wxT("ProjectName            :=") << projectName << wxT("\n");
     text << wxT("ConfigurationName      :=") << name << wxT("\n");
-    text << wxT("WorkspacePath          := \"") << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxT("\"\n");
+    text << wxT("WorkspacePath          := \"") << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxT("\"\n");
     text << wxT("ProjectPath            := \"") << proj->GetFileName().GetPath() << wxT("\"\n");
     text << wxT("IntermediateDirectory  :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
     text << wxT("OutDir                 := $(IntermediateDirectory)\n");
@@ -1204,7 +1204,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << wxT("CurrentFileFullPath    :=\n"); // TODO:: Need implementation
     text << wxT("User                   :=") << wxGetUserName() << wxT("\n");
     text << wxT("Date                   :=") << wxDateTime::Now().FormatDate() << wxT("\n");
-    text << wxT("CodeLitePath           :=\"") << WorkspaceST::Get()->GetStartupDir() << wxT("\"\n");
+    text << wxT("CodeLitePath           :=\"") << clCxxWorkspaceST::Get()->GetStartupDir() << wxT("\"\n");
     text << wxT("LinkerName             :=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
     text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
     text << wxT("ObjectSuffix           :=") << cmp->GetObjectSuffix() << wxT("\n");
@@ -1417,7 +1417,7 @@ wxString BuilderGnuMake::ParseLibs(const wxString& libs)
 wxString BuilderGnuMake::GetBuildCommand(const wxString& project, const wxString& confToBuild)
 {
     wxString errMsg, cmd;
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
     if(!bldConf) {
         return wxEmptyString;
     }
@@ -1437,7 +1437,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString& project, const wxString
 wxString BuilderGnuMake::GetCleanCommand(const wxString& project, const wxString& confToBuild)
 {
     wxString errMsg, cmd;
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
     if(!bldConf) {
         return wxEmptyString;
     }
@@ -1451,7 +1451,7 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString& project, const wxString
     // fix: replace all Windows like slashes to POSIX
     buildTool.Replace(wxT("\\"), wxT("/"));
 
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
     wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
     cmd << buildTool << wxT(" Makefile clean");
     return cmd;
@@ -1460,7 +1460,7 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString& project, const wxString
 wxString BuilderGnuMake::GetPOBuildCommand(const wxString& project, const wxString& confToBuild)
 {
     wxString errMsg, cmd;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
         return wxEmptyString;
     }
@@ -1474,7 +1474,7 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString& project, const wxStri
 wxString BuilderGnuMake::GetPOCleanCommand(const wxString& project, const wxString& confToBuild)
 {
     wxString errMsg, cmd;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
         return wxEmptyString;
     }
@@ -1489,7 +1489,7 @@ wxString
 BuilderGnuMake::GetSingleFileCmd(const wxString& project, const wxString& confToBuild, const wxString& fileName)
 {
     wxString errMsg, cmd;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
         return wxEmptyString;
     }
@@ -1502,7 +1502,7 @@ BuilderGnuMake::GetSingleFileCmd(const wxString& project, const wxString& confTo
     wxString cmpType;
     wxFileName fn(fileName);
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
     if(!bldConf) {
         return wxEmptyString;
     }
@@ -1516,7 +1516,7 @@ BuilderGnuMake::GetSingleFileCmd(const wxString& project, const wxString& confTo
     target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetFullName()
            << cmp->GetObjectSuffix();
 
-    target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
+    target = ExpandAllVariables(target, clCxxWorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
     cmd = GetProjectMakeCommand(proj, confToBuild, target, false, false);
 
     return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
@@ -1527,13 +1527,13 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString& project,
                                               const wxString& fileName,
                                               wxString& errMsg)
 {
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
         return wxEmptyString;
     }
 
     wxString cmd;
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
     if(!bldConf) {
         return wxEmptyString;
     }
@@ -1541,7 +1541,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString& project,
     // generate the makefile
     Export(project, confToBuild, true, false, errMsg);
 
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
     wxString buildTool = GetBuildToolCommand(project, confToBuild, true);
     wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
 
@@ -1560,7 +1560,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString& project,
     target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetFullName()
            << cmp->GetPreprocessSuffix();
 
-    target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
+    target = ExpandAllVariables(target, clCxxWorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
     cmd = GetProjectMakeCommand(proj, confToBuild, target, false, false);
     return EnvironmentConfig::Instance()->ExpandVariables(cmd, true);
 }
@@ -1633,7 +1633,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile,
                                                ProjectPtr proj,
                                                const wxString& confToBuild)
 {
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
 
     // iterate over the dependencies projects and generate makefile
     wxString makeCommand;
@@ -1682,7 +1682,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj,
                                                bool addCleanTarget,
                                                bool cleanOnly)
 {
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
 
     // iterate over the dependencies projects and generate makefile
     wxString makeCommand;
@@ -1750,7 +1750,7 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
 wxString BuilderGnuMake::GetPORebuildCommand(const wxString& project, const wxString& confToBuild)
 {
     wxString errMsg, cmd;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project, errMsg);
     if(!proj) {
         return wxEmptyString;
     }
@@ -1768,7 +1768,7 @@ wxString BuilderGnuMake::GetBuildToolCommand(const wxString& project,
     wxString jobsCmd;
     wxString buildTool;
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
     if(!bldConf)
         return wxEmptyString;
 
@@ -1844,7 +1844,7 @@ wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxS
 
 wxString BuilderGnuMake::DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath)
 {
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
 
     workspaceSelConf = NormalizeConfigName(workspaceSelConf);
@@ -1852,10 +1852,10 @@ wxString BuilderGnuMake::DoGetMarkerFileDir(const wxString& projname, const wxSt
 
     wxString path;
     if(projname.IsEmpty()) {
-        path << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << "/" << wxT(".build-") << workspaceSelConf;
+        path << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << "/" << wxT(".build-") << workspaceSelConf;
 
     } else {
-        path << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << "/" << wxT(".build-") << workspaceSelConf << "/"
+        path << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << "/" << wxT(".build-") << workspaceSelConf << "/"
              << projname;
     }
 

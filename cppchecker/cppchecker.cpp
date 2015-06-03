@@ -314,7 +314,7 @@ void CppCheckPlugin::OnCheckFileEditorItem(wxCommandEvent& e)
     if(editor) {
         wxString projectName = editor->GetProjectName();
         if(!projectName.IsEmpty()) {
-            proj = WorkspaceST::Get()->GetProject(projectName);
+            proj = clCxxWorkspaceST::Get()->GetProject(projectName);
         }
         m_filelist.Add(editor->GetFileName().GetFullPath());
     }
@@ -646,7 +646,7 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
 wxString CppCheckPlugin::DoGenerateFileList()
 {
     // create temporary file and save the file there
-    wxFileName fnFileList(WorkspaceST::Get()->GetPrivateFolder(), "cppcheck.list");
+    wxFileName fnFileList(clCxxWorkspaceST::Get()->GetPrivateFolder(), "cppcheck.list");
 
     // create temporary file and save the file there
     wxFFile file(fnFileList.GetFullPath(), wxT("w+b"));

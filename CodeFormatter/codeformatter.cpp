@@ -678,7 +678,7 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& e)
         return;
     }
 
-    ProjectPtr pProj = WorkspaceST::Get()->GetProject(selectedItem.m_text);
+    ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(selectedItem.m_text);
     CHECK_PTR_RET(pProj);
 
     Project::FileInfoVector_t allFiles;

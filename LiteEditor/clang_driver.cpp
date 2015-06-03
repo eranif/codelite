@@ -267,7 +267,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
 
     // Build the TU file name
     wxFileName fnSourceFile(sourceFile);
-    pchfile << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator() << wxT(".clang");
+    pchfile << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator() << wxT(".clang");
 
     {
         wxLogNull nl;
@@ -344,7 +344,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     LocalWorkspaceST::Get()->GetParserPaths(workspaceIncls, dummy);
     for(size_t i = 0; i < workspaceIncls.GetCount(); i++) {
         wxFileName fn(workspaceIncls.Item(i).Trim().Trim(false), wxT(""));
-        fn.MakeAbsolute(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+        fn.MakeAbsolute(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath());
         cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
         cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
     }
@@ -383,7 +383,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
                                        PluginManager::Get(),
                                        ManagerST::Get()->GetActiveProjectName()),
                           wxT(""));
-            fn.MakeAbsolute(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+            fn.MakeAbsolute(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath());
             cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
             cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
         }
@@ -797,7 +797,7 @@ void ClangDriver::OnWorkspaceLoaded(wxCommandEvent& event)
 
     wxLogNull nolog;
     wxString cachePath;
-    cachePath << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator()
+    cachePath << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator()
               << wxT(".clang");
     wxMkdir(cachePath);
     ClangTUCache::DeleteDirectoryContent(cachePath);

@@ -104,7 +104,7 @@ void AddIncludeFileDlg::UpdateLineToAdd()
 
     wxString errMsg;
     wxString projectName = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetProject();
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
     if(proj) {
         wxArrayString incls = proj->GetIncludePaths();
         std::sort(incls.begin(), incls.end(), SAscendingSort());

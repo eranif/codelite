@@ -233,7 +233,7 @@ void AdvancedDlg::OnApply(wxCommandEvent& event)
 
     // mark all the projects as dirty
     wxArrayString projects;
-    WorkspaceST::Get()->GetProjectList(projects);
+    clCxxWorkspaceST::Get()->GetProjectList(projects);
     for(size_t i = 0; i < projects.size(); i++) {
         ProjectPtr proj = ManagerST::Get()->GetProject(projects.Item(i));
         if(proj) {

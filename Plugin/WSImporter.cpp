@@ -42,10 +42,10 @@ bool WSImporter::Import(wxString& errMsg)
                 wxString errMsgLocal;
                 bool showDlg = true;
 
-                if(!WorkspaceST::Get()->CreateWorkspace(gworskspace->name, gworskspace->path, errMsgLocal))
+                if(!clCxxWorkspaceST::Get()->CreateWorkspace(gworskspace->name, gworskspace->path, errMsgLocal))
                     return false;
 
-                Workspace* clWorkspace = NULL;
+                clCxxWorkspace* clWorkspace = NULL;
                 WorkspaceConfiguration::ConfigMappingList cmlDebug;
                 WorkspaceConfiguration::ConfigMappingList cmlRelease;
 
@@ -66,10 +66,10 @@ bool WSImporter::Import(wxString& errMsg)
                         break;
                     }
 
-                    if(!WorkspaceST::Get()->CreateProject(project->name, project->path, projectType, true, errMsg))
+                    if(!clCxxWorkspaceST::Get()->CreateProject(project->name, project->path, projectType, true, errMsg))
                         return false;
 
-                    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project->name, errMsg);
+                    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project->name, errMsg);
                     ProjectSettingsPtr le_settings(new ProjectSettings(NULL));
 
                     le_settings->RemoveConfiguration(wxT("Debug"));

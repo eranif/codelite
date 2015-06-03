@@ -24,8 +24,8 @@ ValgrindMemcheckProcessor::ValgrindMemcheckProcessor(MemCheckSettings * const se
 wxArrayString ValgrindMemcheckProcessor::GetSuppressionFiles()
 {
     wxArrayString suppFiles = m_settings->GetValgrindSettings().GetSuppFiles();
-    if (WorkspaceST::Get()->IsOpen() && m_settings->GetValgrindSettings().GetSuppFileInPrivateFolder()) {
-        wxTextFile defaultSupp(wxFileName(WorkspaceST::Get()->GetPrivateFolder(),
+    if (clCxxWorkspaceST::Get()->IsOpen() && m_settings->GetValgrindSettings().GetSuppFileInPrivateFolder()) {
+        wxTextFile defaultSupp(wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(),
                                           "valgrind.memcheck.supp").GetFullPath());
         if (!defaultSupp.Exists())
             defaultSupp.Create();
@@ -42,8 +42,8 @@ wxString ValgrindMemcheckProcessor::GetExecutionCommand(const wxString & origina
     if (m_settings->GetValgrindSettings().GetOutputInPrivateFolder() && m_outputLogFileName.IsEmpty())
         CL_ERROR(PLUGIN_PREFIX("Valgrind output file is not set properly. Using default - file in private folder"));
     if (m_settings->GetValgrindSettings().GetOutputInPrivateFolder() || m_outputLogFileName.IsEmpty()) {
-        if (WorkspaceST::Get()->IsOpen())
-            m_outputLogFileName = wxFileName(WorkspaceST::Get()->GetPrivateFolder(),
+        if (clCxxWorkspaceST::Get()->IsOpen())
+            m_outputLogFileName = wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(),
                                              "valgrind.memcheck.log.xml").GetFullPath();
         else
             m_outputLogFileName = wxFileName(wxStandardPaths::Get().GetTempDir(),

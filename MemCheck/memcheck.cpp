@@ -456,7 +456,7 @@ void MemCheckPlugin::SwitchToMyPage()
 void MemCheckPlugin::OnCheckAtiveProject(wxCommandEvent& event)
 {
     CHECK_CL_SHUTDOWN()
-    Workspace* workspace = m_mgr->GetWorkspace();
+    clCxxWorkspace* workspace = m_mgr->GetWorkspace();
     if(workspace) {
         CheckProject(workspace->GetActiveProjectName());
     }

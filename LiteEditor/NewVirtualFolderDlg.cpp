@@ -36,7 +36,7 @@ NewVirtualFolderDlg::NewVirtualFolderDlg(wxWindow* parent, const wxString& curre
     wxString vd_path = currentVD.AfterFirst(':');
     vd_path.Replace(":", wxFILE_SEP_PATH);
     wxString errmsg;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project_name, errmsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project_name, errmsg);
     wxString projectPath = proj->GetFileName().GetPath();
     m_basePath = wxFileName(projectPath + wxFILE_SEP_PATH + vd_path, "").GetPath();
     

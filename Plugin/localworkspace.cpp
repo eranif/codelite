@@ -316,7 +316,7 @@ bool LocalWorkspace::SaveXmlFile()
 bool LocalWorkspace::SanityCheck()
 {
     wxLogNull noLog;
-    wxString WorkspaceFullPath = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
+    wxString WorkspaceFullPath = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath();
     if(WorkspaceFullPath.IsEmpty()) {
         return false;
     }
@@ -535,8 +535,8 @@ void LocalWorkspace::SetCustomData(const wxString& name, const wxString& value)
 
 wxFileName LocalWorkspace::DoGetFilePath() const
 {
-    wxFileName localWorkspaceFile(WorkspaceST::Get()->GetPrivateFolder(),
-                                  WorkspaceST::Get()->GetWorkspaceFileName().GetFullName() + "." + ::clGetUserName());
+    wxFileName localWorkspaceFile(clCxxWorkspaceST::Get()->GetPrivateFolder(),
+                                  clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullName() + "." + ::clGetUserName());
     return localWorkspaceFile;
 }
 

@@ -225,7 +225,7 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
         m_choiceCompiler->SetSelection(0);
     }
 
-    m_textCtrlProjectPath->SetValue(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+    m_textCtrlProjectPath->SetValue(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 
     // Get list of debuggers
     wxArrayString knownDebuggers = DebuggerMgr::Get().GetAvailableDebuggers();

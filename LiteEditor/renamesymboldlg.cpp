@@ -71,7 +71,7 @@ RenameSymbol::RenameSymbol( wxWindow* parent, const CppToken::List_t& candidates
 
 void RenameSymbol::AddMatch(const CppToken& token, bool check)
 {
-    wxString relativeTo = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+    wxString relativeTo = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
     wxFileName fn( token.getFilename() );
     fn.MakeRelativeTo( relativeTo );
 

@@ -308,7 +308,7 @@ void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
 
     // Make sure we know which configuration to load for the new project
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(e.GetString(), "");
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(e.GetString(), "");
     CHECK_PTR_RET(bldConf);
 
     if(m_isDirty) {

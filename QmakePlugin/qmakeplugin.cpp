@@ -411,7 +411,7 @@ wxString QMakePlugin::DoGetBuildCommand(const wxString& project, const wxString&
         return wxEmptyString;
     }
 
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, config);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, config);
 
     wxString cmd;
 

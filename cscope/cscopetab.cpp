@@ -147,7 +147,7 @@ void CscopeTab::DoItemActivated(const wxDataViewItem& item )
 {
     CscopeTabClientData *data = dynamic_cast<CscopeTabClientData*>(m_dataviewModel->GetClientObject(item));
     if (data) {
-        wxString wsp_path = WorkspaceST::Get()->GetPrivateFolder();
+        wxString wsp_path = clCxxWorkspaceST::Get()->GetPrivateFolder();
         //a single entry was activated, open the file
         //convert the file path to absolut path. We do it here, to improve performance
         wxFileName fn(data->GetEntry().GetFile());

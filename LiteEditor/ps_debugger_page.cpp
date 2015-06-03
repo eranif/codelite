@@ -107,7 +107,7 @@ void PSDebuggerPage::OnBrowseForDebuggerPath(wxCommandEvent& event)
 
     if ( !debugger_path.IsEmpty() ) {
         wxString errMsg;
-        ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_dlg->GetProjectName(), errMsg);
+        ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(m_dlg->GetProjectName(), errMsg);
         if ( proj ) {
             wxFileName fnDebuggerPath( debugger_path );
             wxString project_path = proj->GetFileName().GetPath();

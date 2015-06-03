@@ -96,7 +96,7 @@ void DebugCoreDumpDlg::Initialize()
         // - Else we use the project's output name
         wxString activename, conf;
         ManagerST::Get()->GetActiveProjectAndConf(activename, conf);
-        BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(activename, conf);
+        BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(activename, conf);
         if(buildConf) {
             // expand all macros with their values
             wxString programToDebug = buildConf->GetCommand();

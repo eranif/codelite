@@ -366,7 +366,7 @@ bool PluginManager::IsWorkspaceOpen() const { return ManagerST::Get()->IsWorkspa
 
 TagsManager* PluginManager::GetTagsManager() { return TagsManagerST::Get(); }
 
-Workspace* PluginManager::GetWorkspace() { return WorkspaceST::Get(); }
+clCxxWorkspace* PluginManager::GetWorkspace() { return clCxxWorkspaceST::Get(); }
 
 bool PluginManager::AddFilesToVirtualFolder(wxTreeItemId& item, wxArrayString& paths)
 {

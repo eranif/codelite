@@ -29,12 +29,12 @@
 #include "VirtualDirectorySelectorBase.h"
 #include "codelite_exports.h"
 
-class Workspace;
+class clCxxWorkspace;
 
 /** Implementing VirtualDirectorySelectorBase */
 class WXDLLIMPEXP_SDK VirtualDirectorySelectorDlg : public VirtualDirectorySelectorDlgBaseClass
 {
-    Workspace *  m_workspace;
+    clCxxWorkspace *  m_workspace;
     wxString     m_projectName;
     wxString     m_initialPath;
     wxString     m_suggestedName;
@@ -58,7 +58,7 @@ protected:
 
 public:
     /** Constructor */
-    VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath = wxEmptyString, const wxString& projectname = wxEmptyString );
+    VirtualDirectorySelectorDlg( wxWindow* parent, clCxxWorkspace *wsp, const wxString &initialPath = wxEmptyString, const wxString& projectname = wxEmptyString );
     ~VirtualDirectorySelectorDlg();
     wxString GetVirtualDirectoryPath() const {
         return m_staticTextPreview->GetLabel();

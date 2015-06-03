@@ -142,7 +142,7 @@ void DependenciesPage::OnCheckListItemToggled(wxCommandEvent &event)
 void DependenciesPage::Init()
 {
     wxString errMsg;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_projectName, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(m_projectName, errMsg);
     if (proj) {
 
         // populate the choice control with the list of available configurations for this project
@@ -162,7 +162,7 @@ void DependenciesPage::Init()
         }
 
         // select the active configuration
-        BuildConfigPtr selBuildConf = WorkspaceST::Get()->GetProjBuildConf(m_projectName, wxEmptyString);
+        BuildConfigPtr selBuildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(m_projectName, wxEmptyString);
         if (selBuildConf) {
             int where = m_choiceProjectConfig->FindString(selBuildConf->GetName());
             if (where != wxNOT_FOUND) {
@@ -182,7 +182,7 @@ void DependenciesPage::Init()
 void DependenciesPage::DoPopulateControl(const wxString& configuration)
 {
     wxString errMsg;
-    ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_projectName, errMsg);
+    ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(m_projectName, errMsg);
     if(!proj) {
         return;
     }

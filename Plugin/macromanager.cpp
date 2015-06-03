@@ -47,7 +47,7 @@ wxString MacroManager::Expand(const wxString& expression,
                               const wxString& confToBuild)
 {
     wxString expandedString(expression);
-    Workspace* workspace = WorkspaceST::Get();
+    clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
 
     DollarEscaper de(expandedString);
 

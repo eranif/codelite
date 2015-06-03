@@ -88,7 +88,7 @@ public:
     virtual void AddProject(const wxString& path);
     virtual bool IsWorkspaceOpen() const;
     virtual TagsManager* GetTagsManager();
-    virtual Workspace* GetWorkspace();
+    virtual clCxxWorkspace* GetWorkspace();
     virtual bool AddFilesToVirtualFolder(wxTreeItemId& item, wxArrayString& paths);
     virtual bool AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayString& paths);
     virtual bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths);

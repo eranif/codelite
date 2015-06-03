@@ -456,7 +456,7 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
     BuildEventDetails* bed = dynamic_cast<BuildEventDetails*>(e.GetClientObject());
     if(bed) {
         BuildConfigPtr buildConfig =
-            WorkspaceST::Get()->GetProjBuildConf(bed->GetProjectName(), bed->GetConfiguration());
+            clCxxWorkspaceST::Get()->GetProjBuildConf(bed->GetProjectName(), bed->GetConfiguration());
         if(buildConfig) {
             m_cmp = buildConfig->GetCompiler();
         }

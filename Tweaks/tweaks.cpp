@@ -35,10 +35,10 @@ static Tweaks* thePlugin = NULL;
 
 static int ID_TWEAKS_SETTINGS = ::wxNewId();
 
-#define TWEAKS_ENABLED_EVENT_HANDLER()                                  \
-    if(!m_settings.IsEnableTweaks() || !WorkspaceST::Get()->IsOpen()) { \
-        e.Skip();                                                       \
-        return;                                                         \
+#define TWEAKS_ENABLED_EVENT_HANDLER()                                       \
+    if(!m_settings.IsEnableTweaks() || !clCxxWorkspaceST::Get()->IsOpen()) { \
+        e.Skip();                                                            \
+        return;                                                              \
     }
 
 // Define the plugin entry point

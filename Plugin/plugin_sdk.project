@@ -141,6 +141,8 @@
       <File Name="clSTCLineKeeper.h"/>
     </VirtualDirectory>
     <File Name="CMakeLists.txt"/>
+    <File Name="clWorkspaceManager.h"/>
+    <File Name="clWorkspaceManager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

@@ -34,6 +34,7 @@
     <File Name="ieditor.h"/>
     <File Name="imanager.h"/>
     <File Name="plugin_version.h"/>
+    <File Name="IWorkspace.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="Common"/>

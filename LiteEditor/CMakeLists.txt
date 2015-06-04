@@ -136,7 +136,7 @@ if(NOT APPLE)
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32/apps
                 RENAME codelite.png)
         # Clear the icon cache if exists
-        install(CODE "execute_process(COMMAND rm -f ${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
+        install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )
 
     install(

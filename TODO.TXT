@@ -1,5 +1,6 @@
-* Change icons (debugger breakpoints, bookmarks and debugger green cursor)
 * Git: add an option to open the commit in GitHub
 * Editor: when zooming an editor using the mouse, offer the user to keep the font
 * PHP formatting: handle switch / case
-* Provide minimal settings for the Help plugin
+* When DnD folder to the workspace tab, don't offer to open in the explorer
+* Update clWorkspaceView to use the new clWorkspaceManager class
+* When DnD a folder to the workspace view if a C++ solution already exists, open it instead of creating a new one

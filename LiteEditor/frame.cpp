@@ -62,6 +62,7 @@
 #include "fileutils.h"
 #include "wxCustomStatusBar.h"
 #include "clBootstrapWizard.h"
+#include "clWorkspaceManager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -393,6 +394,9 @@ EVT_MENU(XRCID("local_workspace_prefs"), clMainFrame::OnWorkspaceEditorPreferenc
 EVT_MENU(XRCID("local_workspace_settings"), clMainFrame::OnWorkspaceSettings)
 EVT_MENU(XRCID("new_workspace"), clMainFrame::OnProjectNewWorkspace)
 EVT_MENU(XRCID("file_new_workspace"), clMainFrame::OnProjectNewWorkspace)
+EVT_UPDATE_UI(XRCID("file_new_workspace"), clMainFrame::OnNewWorkspaceUI)
+EVT_UPDATE_UI(XRCID("new_workspace"), clMainFrame::OnNewWorkspaceUI)
+EVT_UPDATE_UI(XRCID("import_from_msvs"), clMainFrame::OnNewWorkspaceUI)
 EVT_MENU(XRCID("switch_to_workspace"), clMainFrame::OnSwitchWorkspace)
 EVT_MENU(XRCID("file_switch_to_workspace"), clMainFrame::OnSwitchWorkspace)
 EVT_UPDATE_UI(XRCID("switch_to_workspace"), clMainFrame::OnSwitchWorkspaceUI)
@@ -978,6 +982,9 @@ void clMainFrame::CreateGUIControls(void)
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
     EnableFullScreenView();
 #endif
+    // Instantiate the workspace manager
+    // By calling its "Get" method
+    clWorkspaceManager::Get();
 
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(this);
@@ -2305,8 +2312,8 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
     }
     EditorConfigST::Get()->SetRecentItems(previousgroups, wxT("RecentTabgroups")); // In case any were deleted
 
-    wxString path =
-        ManagerST::Get()->IsWorkspaceOpen() ? clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() : wxGetHomeDir();
+    wxString path = ManagerST::Get()->IsWorkspaceOpen() ? clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() :
+                                                          wxGetHomeDir();
     LoadTabGroupDlg dlg(this, path, previousgroups);
 
     // Disable the 'Replace' checkbox if there aren't any editors to replace
@@ -2594,12 +2601,15 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent& event)
 void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
+    event.Enable(clWorkspaceManager::Get().GetWorkspace());
+#if 0
     clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
     e.SetEventObject(this);
     e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
 
     event.Enable(ManagerST::Get()->IsWorkspaceOpen() || e.IsAnswer());
+#endif
 }
 
 // Project->New Workspace
@@ -3075,8 +3085,12 @@ void clMainFrame::OnRebuildProject(wxCommandEvent& event)
 void clMainFrame::OnBuildProjectUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
-    event.Enable(enable);
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        event.Enable(false);
+    } else {
+        bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
+        event.Enable(enable);
+    }
 }
 
 void clMainFrame::OnStopExecutedProgramUI(wxUpdateUIEvent& event)
@@ -3095,9 +3109,13 @@ void clMainFrame::OnStopExecutedProgramUI(wxUpdateUIEvent& event)
 void clMainFrame::OnStopBuildUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    Manager* mgr = ManagerST::Get();
-    bool enable = mgr->IsBuildInProgress();
-    event.Enable(enable);
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        event.Enable(false);
+    } else {
+        Manager* mgr = ManagerST::Get();
+        bool enable = mgr->IsBuildInProgress();
+        event.Enable(enable);
+    }
 }
 
 void clMainFrame::OnStopBuild(wxCommandEvent& event)
@@ -3136,6 +3154,10 @@ void clMainFrame::OnCleanProject(wxCommandEvent& event)
 void clMainFrame::OnCleanProjectUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        event.Enable(false);
+        return;
+    }
     bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
     event.Enable(enable);
 }
@@ -3177,6 +3199,11 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
 void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
+    if(!clWorkspaceManager::Get().GetWorkspace()) {
+        event.Enable(false);
+        return;
+    }
+
     wxCommandEvent e(wxEVT_CMD_IS_PROGRAM_RUNNING, GetId());
     e.SetEventObject(this);
     e.SetInt(0);
@@ -3917,7 +3944,7 @@ void clMainFrame::CompleteInitialization()
     // Now everything is loaded, set the saved tab-order in the workspace and the output pane
     GetWorkspacePane()->ApplySavedTabOrder();
     GetOutputPane()->ApplySavedTabOrder();
-    
+
     ManagerST::Get()->GetPerspectiveManager().ConnectEvents(&m_mgr);
 
     wxCommandEvent evt(wxEVT_CL_THEME_CHANGED);
@@ -3995,6 +4022,9 @@ void clMainFrame::OnCompileFileUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
     e.Enable(false);
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        return;
+    }
     Manager* mgr = ManagerST::Get();
     if(mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
         LEditor* editor = GetMainBook()->GetActiveEditor();
@@ -4419,8 +4449,12 @@ void clMainFrame::RebuildProject(const wxString& projectName)
 void clMainFrame::OnBatchBuildUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    bool enable = !ManagerST::Get()->IsBuildInProgress() && ManagerST::Get()->IsWorkspaceOpen();
-    e.Enable(enable);
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        e.Enable(false);
+    } else {
+        bool enable = !ManagerST::Get()->IsBuildInProgress() && ManagerST::Get()->IsWorkspaceOpen();
+        e.Enable(enable);
+    }
 }
 
 void clMainFrame::OnBatchBuild(wxCommandEvent& e)
@@ -4499,7 +4533,11 @@ void clMainFrame::OnBuildWorkspace(wxCommandEvent& e)
 void clMainFrame::OnBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        e.Enable(false);
+    } else {
+        e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+    }
 }
 
 void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
@@ -4527,7 +4565,11 @@ void clMainFrame::OnCleanWorkspace(wxCommandEvent& e)
 void clMainFrame::OnCleanWorkspaceUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        e.Enable(false);
+    } else {
+        e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+    }
 }
 
 void clMainFrame::OnReBuildWorkspace(wxCommandEvent& e)
@@ -4539,7 +4581,11 @@ void clMainFrame::OnReBuildWorkspace(wxCommandEvent& e)
 void clMainFrame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+    if(!clWorkspaceManager::Get().GetWorkspace() || !clWorkspaceManager::Get().GetWorkspace()->IsBuildSupported()) {
+        e.Enable(false);
+    } else {
+        e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+    }
 }
 
 void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
@@ -4992,7 +5038,7 @@ bool clMainFrame::SaveLayoutAndSession()
     EditorConfigST::Get()->SetInteger(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();
     GetOutputPane()->SaveTabOrder();
-    
+
     // keep list of all detached panes
     wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
     DetachedPanesInfo dpi(panes);
@@ -5510,7 +5556,13 @@ void clMainFrame::OnGrepWordUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
     LEditor* editor = GetMainBook()->GetActiveEditor();
-    e.Enable(editor && !editor->GetSelectedText().IsEmpty());
+    if(e.GetId() == XRCID("grep_current_workspace")) {
+        // grep in workspace
+        e.Enable(clWorkspaceManager::Get().IsWorkspaceOpened() && editor && !editor->GetSelectedText().IsEmpty());
+    } else {
+        // grep in file
+        e.Enable(editor && !editor->GetSelectedText().IsEmpty());
+    }
 }
 
 void clMainFrame::OnPchCacheEnded(wxCommandEvent& e) { e.Skip(); }
@@ -5769,7 +5821,8 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
     menu->Append(XRCID("clean_active_project_only"), wxT("Project Only - Clean"));
 
     // build the menu and show it
-    BuildConfigPtr bldcfg = clCxxWorkspaceST::Get()->GetProjBuildConf(clCxxWorkspaceST::Get()->GetActiveProjectName(), "");
+    BuildConfigPtr bldcfg =
+        clCxxWorkspaceST::Get()->GetProjBuildConf(clCxxWorkspaceST::Get()->GetActiveProjectName(), "");
     if(bldcfg && bldcfg->IsCustomBuild()) {
 
         // Update teh custom targets
@@ -5900,8 +5953,8 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
         wxLogMessage(
             wxString() << "Initializing refactoring database for workspace: " << clCxxWorkspaceST::Get()->GetName());
     } else {
-        wxLogMessage(wxString() << "Initializing refactoring database for workspace: " << clCxxWorkspaceST::Get()->GetName()
-                                << "... done");
+        wxLogMessage(wxString() << "Initializing refactoring database for workspace: "
+                                << clCxxWorkspaceST::Get()->GetName() << "... done");
     }
 }
 
@@ -6032,13 +6085,7 @@ void clMainFrame::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
 void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
-    e.SetEventObject(this);
-    e.SetAnswer(false);
-    EventNotifier::Get()->ProcessEvent(e);
-    bool isCxxWorkspaceOpened = ManagerST::Get()->IsWorkspaceOpen();
-    bool isOtherWorkspaceOpened = e.IsAnswer();
-    event.Enable(!isCxxWorkspaceOpened && !isOtherWorkspaceOpened);
+    event.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
 }
 
 void clMainFrame::OnSplitSelection(wxCommandEvent& event)
@@ -6119,4 +6166,9 @@ void clMainFrame::OnFileOpenFolder(wxCommandEvent& event)
     if(path.IsEmpty()) return;
     GetWorkspacePane()->GetFileExplorer()->OpenFolder(path);
     GetWorkspacePane()->SelectTab(GetWorkspacePane()->GetFileExplorer()->GetCaption());
+}
+
+void clMainFrame::OnNewWorkspaceUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
 }

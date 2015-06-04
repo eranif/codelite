@@ -26,6 +26,7 @@ PHPWorkspace* PHPWorkspace::ms_instance = 0;
 PHPWorkspace::PHPWorkspace()
     : m_manager(NULL)
 {
+    SetWorkspaceType(_("PHP Workspace"));
 }
 
 PHPWorkspace::~PHPWorkspace() { m_workspaceFile.Clear(); }
@@ -343,7 +344,7 @@ void PHPWorkspace::FromJSON(const JSONElement& e)
             activeProject = firstProject;
             SetProjectActive(firstProject->GetName());
         }
-        
+
         if(activeProject) {
             // Notify about active project been set
             clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
@@ -492,23 +493,23 @@ void PHPWorkspace::ParseWorkspace(bool full)
         // close the database, delete it and recreate it
         // then, restart the parser thread
         PHPParserThread::Release(); // Stop and wait the thread terminates
-        
+
         // Close the CC manager
         PHPCodeCompletion::Instance()->Close();
-        
+
         // Delete the file
         wxFileName fnDatabaseFile(m_workspaceFile.GetPath(), "phpsymbols.db");
         fnDatabaseFile.AppendDir(".codelite");
-        
+
         wxLogNull noLog;
         bool bRemoved = ::wxRemoveFile(fnDatabaseFile.GetFullPath());
         wxUnusedVar(bRemoved);
-        
+
         // Start the managers again
         PHPParserThread::Instance()->Start();
         PHPCodeCompletion::Instance()->Open(m_workspaceFile);
     }
-    
+
     PHPParserThreadRequest* req = new PHPParserThreadRequest(PHPParserThreadRequest::kParseWorkspaceFilesQuick);
     req->workspaceFile = GetFilename().GetFullPath();
     GetWorkspaceFiles(req->files);
@@ -612,3 +613,6 @@ bool PHPWorkspace::CanCreateProjectAtPath(const wxFileName& projectFileName, boo
     }
     return true;
 }
+
+bool PHPWorkspace::IsBuildSupported() const { return false; }
+bool PHPWorkspace::IsProjectSupported() const { return true; }

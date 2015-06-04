@@ -4,13 +4,14 @@
 #include <wx/string.h>
 #include <wx/filename.h>
 #include <list>
+#include <wx/event.h>
 
 /**
  * @class IWorkspace
  * @brief an interface representing the workspace concept of CodeLite
  * Each plugin that wants to implement a workspace must implement this interface
  */
-class IWorkspace
+class IWorkspace : public wxEvtHandler
 {
 protected:
     wxString m_workspaceType;

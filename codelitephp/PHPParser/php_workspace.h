@@ -15,6 +15,7 @@
 #include <wx/event.h>
 #include "XDebugBreakpoint.h"
 #include "imanager.h"
+#include "IWorkspace.h"
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
@@ -30,7 +31,7 @@
 // ------------------------------------------------------------------
 
 class wxProgressDialog;
-class PHPWorkspace : public wxEvtHandler
+class PHPWorkspace : public IWorkspace
 {
     static PHPWorkspace* ms_instance;
 
@@ -41,13 +42,16 @@ protected:
     IManager* m_manager;
 
 public:
+    virtual bool IsBuildSupported() const;
+    virtual bool IsProjectSupported() const;
+    
     static PHPWorkspace* Get();
     static void Release();
     void SetPluginManager(IManager* manager) { this->m_manager = manager; }
     JSONElement ToJSON(JSONElement& e) const;
     void FromJSON(const JSONElement& e);
 
-private:
+public:
     PHPWorkspace();
     virtual ~PHPWorkspace();
 
@@ -59,7 +63,7 @@ public:
     PHPProject::Ptr_t GetProject(const wxString& project) const;
     PHPProject::Ptr_t GetActiveProject() const;
     wxString GetPrivateFolder() const;
-    
+
     /**
      * @brief check if we can create a project with the given file name
      * This function checks that the project's path is not already included
@@ -67,17 +71,17 @@ public:
      * not include any of the other project path
      */
     bool CanCreateProjectAtPath(const wxFileName& projectFileName, bool prompt) const;
-    
+
     /**
      * @brief sync the workspace with the file system
      */
     void SyncWithFileSystem();
-    
+
     /**
      * @brief return the project that owns filename
      */
     PHPProject::Ptr_t GetProjectForFile(const wxFileName& filename) const;
-    
+
     /**
      * @brief restore the session for this workspace
      */
@@ -145,13 +149,13 @@ public:
     /////////////////////////////////////
     void CreateProject(const PHPProject::CreateData& createData);
     void DeleteProject(const wxString& project);
-    
+
     /**
      * @brief add an existing project file to the workspace
      * @param projectFile
      */
     bool AddProject(const wxFileName& projectFile, wxString& errmsg);
-    
+
     void SetProjectActive(const wxString& project);
     /**
      * @brief delete a file from a project/folder

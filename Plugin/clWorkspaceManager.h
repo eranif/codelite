@@ -14,12 +14,18 @@ protected:
     clWorkspaceManager();
     virtual ~clWorkspaceManager();
 
+    void OnWorkspaceClosed(wxCommandEvent& e);
+
 public:
     static clWorkspaceManager& Get();
 
     void SetWorkspace(IWorkspace* workspace) { this->m_workspace = workspace; }
     IWorkspace* GetWorkspace() { return m_workspace; }
 
+    /**
+     * @brief do we have a workspace opened?
+     */
+    bool IsWorkspaceOpened() const { return m_workspace != NULL; }
     /**
      * @brief register new workspace type
      * @param workspace

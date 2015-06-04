@@ -98,6 +98,7 @@
 #include "code_completion_manager.h"
 #include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
+#include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "clKeyboardManager.h"
 #include "wxCodeCompletionBoxManager.h"
@@ -214,6 +215,9 @@ Manager::Manager(void)
         wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(Manager::OnGetFindInFilesMask), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
+        
+    // Add new workspace type
+    clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 }
 
 Manager::~Manager(void)
@@ -347,7 +351,10 @@ void Manager::DoSetupWorkspace(const wxString& path)
     wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
     evtWorkspaceLoaded.SetString(path);
     EventNotifier::Get()->ProcessEvent(evtWorkspaceLoaded);
-
+    
+    // set the C++ workspace as the active one
+    clWorkspaceManager::Get().SetWorkspace(clCxxWorkspaceST::Get());
+    
     // Update the refactoring cache
     wxFileList_t allfiles;
     GetWorkspaceFiles(allfiles, true);

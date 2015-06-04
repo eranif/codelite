@@ -404,6 +404,7 @@ protected:
     void OnReloadWorkspaceUI(wxUpdateUIEvent& event);
     void OnSwitchWorkspace(wxCommandEvent& event);
     void OnSwitchWorkspaceUI(wxUpdateUIEvent& event);
+    void OnNewWorkspaceUI(wxUpdateUIEvent& event);
     void OnCloseWorkspace(wxCommandEvent& event);
     void OnProjectAddProject(wxCommandEvent& event);
     void OnReconcileProject(wxCommandEvent& event);

@@ -34,7 +34,7 @@
 #include "json_node.h"
 #include <wx/event.h>
 #include <cl_command_event.h>
-//#include "ctags_manager.h"
+#include "IWorkspace.h"
 #include "configuration_mapping.h"
 #include "optionsconfig.h"
 #include "localworkspace.h"
@@ -46,12 +46,14 @@
  *
  */
 class CompileCommandsCreateor;
-class WXDLLIMPEXP_SDK clCxxWorkspace
+class WXDLLIMPEXP_SDK clCxxWorkspace : public IWorkspace
 {
     friend class clCxxWorkspaceST;
     friend class CompileCommandsCreateor;
 
 public:
+    virtual bool IsBuildSupported() const;
+    virtual bool IsProjectSupported() const;
     typedef std::map<wxString, ProjectPtr> ProjectMap_t;
 
 protected:
@@ -63,13 +65,14 @@ protected:
     bool m_saveOnExit;
     BuildMatrixPtr m_buildMatrix;
 
-private:
+public:
     /// Constructor
     clCxxWorkspace();
 
     /// Destructor
     virtual ~clCxxWorkspace();
-
+    
+private:
     void DoUpdateBuildMatrix();
 
 public:
@@ -379,7 +382,7 @@ private:
     void RemoveProjectFromBuildMatrix(ProjectPtr prj);
 
     bool SaveXmlFile();
-    
+
     void SyncToLocalWorkspaceSTParserPaths();
     void SyncFromLocalWorkspaceSTParserPaths();
 };

@@ -40,6 +40,7 @@
 #include "PHPXDebugSetupWizard.h"
 #include "globals.h"
 #include "clWorkspaceView.h"
+#include "clWorkspaceManager.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -74,7 +75,10 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_showWelcomePage(false)
 {
     m_lint.Reset(new PHPLint(this));
-
+    
+    // Add new workspace type
+    clWorkspaceManager::Get().RegisterWorkspace(new PHPWorkspace());
+    
     m_longName = _("PHP Plugin for the codelite IDE");
     m_shortName = wxT("PHP");
 
@@ -397,7 +401,10 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
                      FRAME);
         return;
     }
-
+    
+    // set this workspace as the active one
+    clWorkspaceManager::Get().SetWorkspace(PHPWorkspace::Get());
+    
     // Keep the old clang state before we disable it
     const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
     m_clangOldFlag = (options.GetClangOptions() & CC_CLANG_ENABLED);

@@ -47,6 +47,7 @@
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
 {
+    SetWorkspaceType(_("C++ Workspace"));
 }
 
 clCxxWorkspace::~clCxxWorkspace()
@@ -157,14 +158,15 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
                                            projectPath.c_str());
                 removedChildren.push_back(child);
             }
-        }
-        else if(child->GetName() == wxT("WorkspaceParserPaths")) {
+        } else if(child->GetName() == wxT("WorkspaceParserPaths")) {
             wxString swtlw = wxEmptyString;
-            if( (swtlw = m_doc.GetRoot()->GetAttribute(wxT("SWTLW"))) == wxEmptyString) {
-               LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() & !LocalWorkspace::EnableSWTLW);
+            if((swtlw = m_doc.GetRoot()->GetAttribute(wxT("SWTLW"))) == wxEmptyString) {
+                LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() &
+                                                        !LocalWorkspace::EnableSWTLW);
             } else {
                 if(swtlw == wxT("Yes")) {
-                    LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() | LocalWorkspace::EnableSWTLW);
+                    LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() |
+                                                            LocalWorkspace::EnableSWTLW);
                     SyncToLocalWorkspaceSTParserPaths();
                 }
             }
@@ -186,7 +188,7 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
 
     // Update the build matrix
     DoUpdateBuildMatrix();
-    
+
     // Notify about active project changed
     ProjectPtr activeProject = GetActiveProject();
     if(activeProject) {
@@ -272,14 +274,14 @@ bool clCxxWorkspace::CreateWorkspace(const wxString& name, const wxString& path,
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddProperty(wxT("Name"), name);
     m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
-	
-	m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
-	if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW ) {
-		m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
-	} else {
-		m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "No");		
-	}
-	
+
+    m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
+    if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
+        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
+    } else {
+        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "No");
+    }
+
     SaveXmlFile();
     // create an empty build matrix
     DoUpdateBuildMatrix();
@@ -394,10 +396,10 @@ void clCxxWorkspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
 }
 
 bool clCxxWorkspace::CreateProject(const wxString& name,
-                              const wxString& path,
-                              const wxString& type,
-                              bool addToBuildMatrix,
-                              wxString& errMsg)
+                                   const wxString& path,
+                                   const wxString& type,
+                                   bool addToBuildMatrix,
+                                   wxString& errMsg)
 {
     if(!m_doc.IsOk()) {
         errMsg = wxT("No workspace open");
@@ -697,7 +699,7 @@ bool clCxxWorkspace::SaveXmlFile()
     if(m_doc.GetRoot()->GetAttribute(wxT("SWTLW")) != wxEmptyString) {
         m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
     }
-    if ( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW ) {
+    if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
         SyncFromLocalWorkspaceSTParserPaths();
     } else {
@@ -739,7 +741,7 @@ void clCxxWorkspace::SyncToLocalWorkspaceSTParserPaths()
             child = child->GetNext();
         }
         LocalWorkspaceST::Get()->SetParserPaths(inclduePaths, excludePaths);
-    } 
+    }
 }
 
 void clCxxWorkspace::SyncFromLocalWorkspaceSTParserPaths()
@@ -992,10 +994,10 @@ wxString clCxxWorkspace::GetPrivateFolder() const
     if(workspacePath.Exists()) {
         // append the .codelite folder
         workspacePath.AppendDir(".codelite");
-        
+
         // ensure the path exists
         workspacePath.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        
+
         return workspacePath.GetPath();
     }
     return "";
@@ -1083,7 +1085,7 @@ void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newn
             child = child->GetNext();
         }
     }
-    
+
     // Update the list of projects in the workspace
     wxXmlNode* projectNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Project");
     while(projectNode) {
@@ -1097,20 +1099,23 @@ void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newn
     for(; iter != m_projects.end(); ++iter) {
         iter->second->ProjectRenamed(oldname, newname);
     }
-    
+
     clCxxWorkspace::ProjectMap_t tmpProjects;
     iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {
         tmpProjects.insert(std::make_pair(iter->first, iter->second));
     }
     m_projects.swap(tmpProjects);
-    
+
     // Save everything
     Save();
-    
+
     // Notify about this change
     clCommandEvent event(wxEVT_PROJ_RENAMED);
     event.SetOldName(oldname);
     event.SetString(newname);
     EventNotifier::Get()->AddPendingEvent(event);
 }
+
+bool clCxxWorkspace::IsBuildSupported() const { return true; }
+bool clCxxWorkspace::IsProjectSupported() const { return true; }

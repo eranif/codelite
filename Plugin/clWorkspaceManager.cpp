@@ -1,14 +1,18 @@
 #include "clWorkspaceManager.h"
 #include <algorithm>
+#include "codelite_events.h"
+#include "event_notifier.h"
 
 clWorkspaceManager::clWorkspaceManager()
     : m_workspace(NULL)
 {
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this);
 }
 
 clWorkspaceManager::~clWorkspaceManager()
 {
     std::for_each(m_workspaces.begin(), m_workspaces.end(), [&](IWorkspace* workspace) { wxDELETE(workspace); });
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this);
 }
 
 clWorkspaceManager& clWorkspaceManager::Get()
@@ -18,3 +22,9 @@ clWorkspaceManager& clWorkspaceManager::Get()
 }
 
 void clWorkspaceManager::RegisterWorkspace(IWorkspace* workspace) { m_workspaces.push_back(workspace); }
+
+void clWorkspaceManager::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    SetWorkspace(NULL);
+}

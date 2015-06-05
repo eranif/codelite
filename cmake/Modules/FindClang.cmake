@@ -45,6 +45,7 @@ FIND_AND_ADD_CLANG_LIB(clangStaticAnalyzerCheckers)
 FIND_AND_ADD_CLANG_LIB(clangStaticAnalyzerCore)
 FIND_AND_ADD_CLANG_LIB(clangStaticAnalyzerFrontend)
 FIND_AND_ADD_CLANG_LIB(clangTooling)
+FIND_AND_ADD_CLANG_LIB(clangToolingCore)
 
 find_path(CLANG_INCLUDE_DIRS clang/Basic/Version.h HINTS ${LLVM_INCLUDE_DIRS})
 

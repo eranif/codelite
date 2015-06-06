@@ -70,6 +70,7 @@ void FileExplorer::CreateGUIControls()
     m_view = new clTreeCtrlPanel(this);
     // For the file explorer we use the standard configuration tool
     m_view->SetConfig(&clConfig::Get());
+    m_view->SetViewName(_("File Explorer"));
     mainSizer->Add(m_view, 1, wxEXPAND | wxALL, 0);
     Layout();
 }

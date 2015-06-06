@@ -116,6 +116,11 @@ void WorkspaceTab::CreateGUIControls()
     m_choiceActiveProject->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
     //// Construct the tree
+    int index = m_simpleBook->FindPage(m_panelCxx);
+    if(index != wxNOT_FOUND) {
+        // set the C++ workspace view name to fit its workspace type
+        m_simpleBook->SetPageText(index, clCxxWorkspaceST::Get()->GetWorkspaceType());
+    }
     m_view = new clWorkspaceView(m_simpleBook);
     m_view->AddPage(new DefaultWorkspacePage(m_simpleBook), _("Default"));
     m_view->SelectPage(_("Default"));
@@ -328,8 +333,7 @@ void WorkspaceTab::OnProjectRemoved(clCommandEvent& e)
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
-struct wxStringSorter
-{
+struct wxStringSorter {
     bool operator()(WorkspaceConfigurationPtr one, WorkspaceConfigurationPtr two) const
     {
         return one->GetName().Lower().CmpNoCase(two->GetName().Lower()) < 0;

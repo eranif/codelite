@@ -302,5 +302,7 @@
     <File Name="NoteJSWorkspace.cpp"/>
     <File Name="NodeJSWorkspaceView.h"/>
     <File Name="NodeJSWorkspaceView.cpp"/>
+    <File Name="NodeJSWorkspaceConfiguration.h"/>
+    <File Name="NodeJSWorkspaceConfiguration.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

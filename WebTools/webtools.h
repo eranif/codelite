@@ -18,13 +18,15 @@ class WebTools : public IPlugin
     JavaScriptSyntaxColourThread* m_jsColourThread;
     JSCodeCompletion::Ptr_t m_jsCodeComplete;
     XMLCodeCompletion::Ptr_t m_xmlCodeComplete;
-    
+
     time_t m_lastColourUpdate;
     wxTimer* m_timer;
-    
+
     /// Node.js
-    NodeJSWorkspaceView* m_nodeJSWorkspaceView;
-    
+    bool m_clangOldFlag;
+
+protected:
+
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
@@ -35,8 +37,10 @@ protected:
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
     void OnSettings(wxCommandEvent& event);
     void OnTimer(wxTimerEvent& event);
-    void OnCommentLine(wxCommandEvent &e);
-    void OnCommentSelection(wxCommandEvent &e);
+    void OnCommentLine(wxCommandEvent& e);
+    void OnCommentSelection(wxCommandEvent& e);
+    
+
 private:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);

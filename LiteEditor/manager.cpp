@@ -398,7 +398,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
     }
 
     // Ensure that the "C++" view is selected
-    clGetManager()->GetWorkspaceView()->SelectPage(_("C++ Workspace"));
+    clGetManager()->GetWorkspaceView()->SelectPage(clCxxWorkspaceST::Get()->GetWorkspaceType());
 }
 
 void Manager::CloseWorkspace()

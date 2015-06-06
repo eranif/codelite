@@ -12,18 +12,28 @@ class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {
     BitmapLoader m_bmpLoader;
     clConfig* m_config;
+    wxString m_viewName;
 
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
 
+    void SetViewName(const wxString& viewName) { this->m_viewName = viewName; }
+    const wxString& GetViewName() const { return m_viewName; }
+    
     clConfig* GetConfig() { return m_config; }
+    
+    /**
+     * @brief clear the view (i.e. close all top level folders)
+     */
+    void Clear();
+    
     /**
      * @brief return the configuration tool used for storing information about
      * this tree. Override it to provide a custom configuration tool
      */
     void SetConfig(clConfig* config) { this->m_config = config; }
-    
+
     /**
      * @brief add top level folder
      */
@@ -95,5 +105,6 @@ protected:
     clTreeCtrlData* GetItemData(const wxTreeItemId& item);
     wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
     wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
+    void DoCloseFolder(const wxTreeItemId& item);
 };
 #endif // CLTREECTRLPANEL_H

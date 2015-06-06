@@ -11,6 +11,9 @@
 #include "clWorkspaceManager.h"
 #include "globals.h"
 #include "clWorkspaceView.h"
+#include <wx/dirdlg.h>
+#include "tags_options_data.h"
+#include "ctags_manager.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -38,15 +41,15 @@ extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERS
 WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
     , m_lastColourUpdate(0)
+    , m_clangOldFlag(false)
 {
     m_longName = _("Support for JavScript, XML, HTML and other web development tools");
     m_shortName = wxT("WebTools");
 
     // Register our new workspace type
-    clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace());
-    m_nodeJSWorkspaceView = new NodeJSWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook());
-    clGetManager()->GetWorkspaceView()->AddPage(m_nodeJSWorkspaceView, NodeJSWorkspace::Get()->GetWorkspaceType());
-    
+    NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call
+    clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
+
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
     m_jsColourThread->Create();
@@ -60,7 +63,7 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-
+    
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion());
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
@@ -102,7 +105,7 @@ void WebTools::UnPlug()
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-
+    
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentSelection, this, XRCID("comment_selection"));
 

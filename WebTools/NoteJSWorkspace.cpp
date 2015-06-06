@@ -84,6 +84,7 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
     NodeJSWorkspaceConfiguration conf;
     conf.Load(m_filename);
     m_folders = conf.GetFolders();
+    DoOpen(m_filename);
     return true;
 }
 

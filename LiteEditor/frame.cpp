@@ -2616,16 +2616,30 @@ void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent& event)
 void clMainFrame::OnProjectNewWorkspace(wxCommandEvent& event)
 {
     // let the plugins handle this event first
-    wxCommandEvent e(wxEVT_CMD_CREATE_NEW_WORKSPACE, GetId());
-    e.SetEventObject(this);
-    if(EventNotifier::Get()->ProcessEvent(e)) return;
+    wxArrayString options = clWorkspaceManager::Get().GetAllWorkspaces();
+    wxString selection;
+    if(options.size() == 1) {
+        // only C++ is available
+        selection = clCxxWorkspaceST::Get()->GetWorkspaceType();
+    } else {
+        selection = ::wxGetSingleChoice(_("Select the workspace type:"), _("New workspace"), options, 0, this);
+    }
 
-    wxUnusedVar(event);
-    NewWorkspaceDlg dlg(this);
-    if(dlg.ShowModal() == wxID_OK) {
-        wxString fullname = dlg.GetFilePath();
-        wxFileName fn(fullname);
-        ManagerST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath());
+    if(selection.IsEmpty()) return;
+    if(selection == clCxxWorkspaceST::Get()->GetWorkspaceType()) {
+        wxUnusedVar(event);
+        NewWorkspaceDlg dlg(this);
+        if(dlg.ShowModal() == wxID_OK) {
+            wxString fullname = dlg.GetFilePath();
+            wxFileName fn(fullname);
+            ManagerST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath());
+        }
+    } else {
+        // a pluing workspace, pass it to the plugins
+        wxCommandEvent e(wxEVT_CMD_CREATE_NEW_WORKSPACE, GetId());
+        e.SetEventObject(this);
+        e.SetString(selection);
+        EventNotifier::Get()->AddPendingEvent(e);
     }
 }
 

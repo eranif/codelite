@@ -28,3 +28,12 @@ void clWorkspaceManager::OnWorkspaceClosed(wxCommandEvent& e)
     e.Skip();
     SetWorkspace(NULL);
 }
+
+wxArrayString clWorkspaceManager::GetAllWorkspaces() const
+{
+    wxArrayString all;
+    std::for_each(m_workspaces.begin(), m_workspaces.end(), [&](IWorkspace* workspace) {
+        all.Add(workspace->GetWorkspaceType());
+    });
+    return all;
+}

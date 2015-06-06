@@ -6,6 +6,11 @@
 #include "codelite_events.h"
 #include "WebToolsSettings.h"
 #include <wx/menu.h>
+#include "NoteJSWorkspace.h"
+#include "NodeJSWorkspaceView.h"
+#include "clWorkspaceManager.h"
+#include "globals.h"
+#include "clWorkspaceView.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -37,6 +42,11 @@ WebTools::WebTools(IManager* manager)
     m_longName = _("Support for JavScript, XML, HTML and other web development tools");
     m_shortName = wxT("WebTools");
 
+    // Register our new workspace type
+    clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace());
+    m_nodeJSWorkspaceView = new NodeJSWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook());
+    clGetManager()->GetWorkspaceView()->AddPage(m_nodeJSWorkspaceView, NodeJSWorkspace::Get()->GetWorkspaceType());
+    
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
     m_jsColourThread->Create();
@@ -54,7 +64,7 @@ WebTools::WebTools(IManager* manager)
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion());
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
-    
+
     // Connect the timer
     m_timer = new wxTimer(this);
     m_timer->Start(3000);
@@ -92,10 +102,10 @@ void WebTools::UnPlug()
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-    
+
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentSelection, this, XRCID("comment_selection"));
-    
+
     // Disconnect the timer events
     Unbind(wxEVT_TIMER, &WebTools::OnTimer, this, m_timer->GetId());
     m_timer->Stop();
@@ -279,7 +289,7 @@ void WebTools::OnCommentLine(wxCommandEvent& e)
     e.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     if(IsJavaScriptFile(editor)) {
         e.Skip(false);
         editor->ToggleLineComment("//", wxSTC_C_COMMENTLINE);
@@ -291,7 +301,7 @@ void WebTools::OnCommentSelection(wxCommandEvent& e)
     e.Skip();
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     if(IsJavaScriptFile(editor)) {
         e.Skip(false);
         editor->CommentBlockSelection("/*", "*/");

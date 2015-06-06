@@ -129,11 +129,14 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
                 --row;
                 item = m_dvListCtrl->RowToItem(row);
                 m_dvListCtrl->Select(item);
+                m_dvListCtrl->EnsureVisible(item);
+                
             } else {
                 // Select the last item
                 row = m_dvListCtrl->GetItemCount() - 1;
                 item = m_dvListCtrl->RowToItem(row);
                 m_dvListCtrl->Select(item);
+                m_dvListCtrl->EnsureVisible(item);
             }
         }
     } else if(event.GetKeyCode() == WXK_TAB && event.ControlDown()) {
@@ -145,10 +148,12 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
                 ++row;
                 item = m_dvListCtrl->RowToItem(row);
                 m_dvListCtrl->Select(item);
+                m_dvListCtrl->EnsureVisible(item);
             } else {
                 // Select the last item
                 item = m_dvListCtrl->RowToItem(0);
                 m_dvListCtrl->Select(item);
+                m_dvListCtrl->EnsureVisible(item);
             }
         }
 

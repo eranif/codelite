@@ -297,4 +297,10 @@
     <File Name="XMLBuffer.h"/>
     <File Name="XMLBuffer.cpp"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="NodeJS">
+    <File Name="NoteJSWorkspace.h"/>
+    <File Name="NoteJSWorkspace.cpp"/>
+    <File Name="NodeJSWorkspaceView.h"/>
+    <File Name="NodeJSWorkspaceView.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

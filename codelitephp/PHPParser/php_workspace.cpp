@@ -16,6 +16,7 @@
 #include "php_parser_thread.h"
 #include <wx/progdlg.h>
 #include "cl_command_event.h"
+#include "php_strings.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -26,7 +27,7 @@ PHPWorkspace* PHPWorkspace::ms_instance = 0;
 PHPWorkspace::PHPWorkspace()
     : m_manager(NULL)
 {
-    SetWorkspaceType(_("PHP Workspace"));
+    SetWorkspaceType(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
 }
 
 PHPWorkspace::~PHPWorkspace() { m_workspaceFile.Clear(); }

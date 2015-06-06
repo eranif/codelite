@@ -9,6 +9,7 @@
 #include "ieditor.h"
 #include "XMLCodeCompletion.h"
 
+class NodeJSWorkspaceView;
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
 {
@@ -20,7 +21,10 @@ class WebTools : public IPlugin
     
     time_t m_lastColourUpdate;
     wxTimer* m_timer;
-
+    
+    /// Node.js
+    NodeJSWorkspaceView* m_nodeJSWorkspaceView;
+    
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);

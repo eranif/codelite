@@ -21,7 +21,12 @@ public:
 
     void SetWorkspace(IWorkspace* workspace) { this->m_workspace = workspace; }
     IWorkspace* GetWorkspace() { return m_workspace; }
-
+    
+    /**
+     * @brief return list of all supported workspaces
+     */
+    wxArrayString GetAllWorkspaces() const;
+    
     /**
      * @brief do we have a workspace opened?
      */

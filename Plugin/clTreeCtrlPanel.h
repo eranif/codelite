@@ -6,15 +6,24 @@
 #include "cl_command_event.h"
 #include "clFileViwerTreeCtrl.h"
 #include <imanager.h>
+#include "cl_config.h"
 
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {
     BitmapLoader m_bmpLoader;
+    clConfig* m_config;
 
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
 
+    clConfig* GetConfig() { return m_config; }
+    /**
+     * @brief return the configuration tool used for storing information about
+     * this tree. Override it to provide a custom configuration tool
+     */
+    void SetConfig(clConfig* config) { this->m_config = config; }
+    
     /**
      * @brief add top level folder
      */
@@ -44,7 +53,7 @@ protected:
     virtual void OnItemExpanding(wxTreeEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
-    
+
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items);
 
@@ -69,7 +78,7 @@ protected:
     void OnOpenFile(wxCommandEvent& event);
     void OnRenameFile(wxCommandEvent& event);
     void OnDeleteFile(wxCommandEvent& event);
-    
+
     void OnFindInFilesFolder(wxCommandEvent& event);
     void OnOpenContainingFolder(wxCommandEvent& event);
     void OnOpenShellFolder(wxCommandEvent& event);
@@ -80,7 +89,7 @@ protected:
     // Helpers
     void DoExpandItem(const wxTreeItemId& parent, bool expand);
     void DoRenameItem(const wxTreeItemId& item, const wxString& oldname, const wxString& newname);
-    
+
     bool IsTopLevelFolder(const wxTreeItemId& item);
 
     clTreeCtrlData* GetItemData(const wxTreeItemId& item);

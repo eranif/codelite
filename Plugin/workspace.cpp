@@ -47,7 +47,7 @@
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
 {
-    SetWorkspaceType(_("C++ Workspace"));
+    SetWorkspaceType(_("C++"));
 }
 
 clCxxWorkspace::~clCxxWorkspace()

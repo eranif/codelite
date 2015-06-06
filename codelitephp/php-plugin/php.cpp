@@ -75,10 +75,10 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_showWelcomePage(false)
 {
     m_lint.Reset(new PHPLint(this));
-    
+
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new PHPWorkspace());
-    
+
     m_longName = _("PHP Plugin for the codelite IDE");
     m_shortName = wxT("PHP");
 
@@ -92,7 +92,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     // create tab (possibly detached)
     m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetBook(), m_mgr);
     m_mgr->GetWorkspaceView()->AddPage(m_workspaceView, PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
-    
+
     PHPCodeCompletion::Instance()->SetManager(m_mgr);
     PHPEditorContextMenu::Instance()->ConnectEvents();
     PHPParserThread::Instance()->Start();
@@ -168,7 +168,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 
             // Make sure we add this path to the general PHP settings
             targetDir.AppendDir("cc"); // the CC files are located under an internal folder named "cc" (lowercase)
-            
+
             if(config.Load().GetCcIncludePath().Index(targetDir.GetPath()) == wxNOT_FOUND) {
                 config.Load().GetCcIncludePath().Add(targetDir.GetPath());
                 config.Save();
@@ -266,7 +266,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_GOING_DOWN, clCommandEventHandler(PhpPlugin::OnGoingDown), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &PhpPlugin::OnFileSysetmUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &PhpPlugin::OnSaveSession, this);
-    
+
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
     SafelyDetachAndDestroyPane(m_xdebugEvalPane, "XDebugEval");
@@ -307,20 +307,14 @@ void PhpPlugin::OnShowQuickOutline(clCodeCompletionEvent& e)
 
 void PhpPlugin::OnNewWorkspace(wxCommandEvent& e)
 {
-    NewWorkspaceSelectionDlg dlg(FRAME);
-    if(dlg.ShowModal() == wxID_OK) {
-        if(dlg.GetIsPHPWorkspace()) {
-
-            // Create a PHP workspace
-            NewPHPWorkspaceDlg newWspDlg(m_mgr->GetTheApp()->GetTopWindow());
-            if(newWspDlg.ShowModal() == wxID_OK) {
-                PHPWorkspace::Get()->Create(newWspDlg.GetWorkspacePath());
-                DoOpenWorkspace(newWspDlg.GetWorkspacePath());
-            }
-
-        } else {
-            // Call skip so the normal new workspace dialog will popup
-            e.Skip();
+    e.Skip();
+    if(e.GetString() == PHPWorkspace::Get()->GetWorkspaceType()) {
+        e.Skip(false);
+        // Create a PHP workspace
+        NewPHPWorkspaceDlg newWspDlg(m_mgr->GetTheApp()->GetTopWindow());
+        if(newWspDlg.ShowModal() == wxID_OK) {
+            PHPWorkspace::Get()->Create(newWspDlg.GetWorkspacePath());
+            DoOpenWorkspace(newWspDlg.GetWorkspacePath());
         }
     }
 }
@@ -401,10 +395,10 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
                      FRAME);
         return;
     }
-    
+
     // set this workspace as the active one
     clWorkspaceManager::Get().SetWorkspace(PHPWorkspace::Get());
-    
+
     // Keep the old clang state before we disable it
     const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
     m_clangOldFlag = (options.GetClangOptions() & CC_CLANG_ENABLED);
@@ -593,7 +587,7 @@ void PhpPlugin::OnFileSaved(clCommandEvent& e)
     // Run php lint
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     PHPConfigurationData conf;
     conf.Load();
     if(::IsPHPFile(editor) && conf.IsRunLint()) {
@@ -757,7 +751,6 @@ void PhpPlugin::RunXDebugDiagnostics()
 {
     PHPXDebugSetupWizard wiz(EventNotifier::Get()->TopFrame());
     if(wiz.RunWizard(wiz.GetFirstPage())) {
-        
     }
 #if 0
     XDebugTester xdebugTester;
@@ -832,10 +825,7 @@ void PhpPlugin::FinalizeStartup()
     }
 }
 
-void PhpPlugin::OnGoingDown(clCommandEvent& event)
-{
-    event.Skip();
-}
+void PhpPlugin::OnGoingDown(clCommandEvent& event) { event.Skip(); }
 
 void PhpPlugin::PhpLintDone(const wxString& lintOutput, const wxString& filename)
 {

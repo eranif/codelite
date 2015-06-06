@@ -20,6 +20,7 @@
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
+    , m_config(NULL)
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
     // Allow DnD
@@ -63,12 +64,12 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
         menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
-        
+
         if(IsTopLevelFolder(item)) {
             menu.AppendSeparator();
             menu.Append(XRCID("tree_ctrl_pin_folder"), _("Pin Folder..."));
         }
-        
+
         // Now that we added the basic menu, let the plugin
         // adjust it
         wxArrayString files, folders;
@@ -288,17 +289,18 @@ void clTreeCtrlPanel::OnCloseFolder(wxCommandEvent& event)
     wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
     CHECK_ITEM_RET(item);
     if(!IsTopLevelFolder(item)) return;
-    
-        // If this folder is a pinned one, remove it
-    wxArrayString pinnedFolders;
-    pinnedFolders = clConfig::Get().Read("ExplorerFolders", pinnedFolders);
-    clTreeCtrlData* d = GetItemData(item);
-    int where = pinnedFolders.Index(d->GetPath());
-    if(where != wxNOT_FOUND) {
-        pinnedFolders.RemoveAt(where);
-    }
-    clConfig::Get().Write("ExplorerFolders", pinnedFolders);
 
+    if(GetConfig()) {
+        // If this folder is a pinned one, remove it
+        wxArrayString pinnedFolders;
+        pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
+        clTreeCtrlData* d = GetItemData(item);
+        int where = pinnedFolders.Index(d->GetPath());
+        if(where != wxNOT_FOUND) {
+            pinnedFolders.RemoveAt(where);
+        }
+        GetConfig()->Write("ExplorerFolders", pinnedFolders);
+    }
     // Now, delete the item
     GetTreeCtrl()->Delete(item);
 }
@@ -597,7 +599,7 @@ void clTreeCtrlPanel::OnFindInFilesFolder(wxCommandEvent& event)
 {
     wxArrayString folders, files;
     GetSelections(folders, files);
-    
+
     if(folders.IsEmpty()) return;
     clGetManager()->OpenFindInFileForPaths(folders);
 }
@@ -628,24 +630,28 @@ void clTreeCtrlPanel::OnPinFolder(wxCommandEvent& event)
     CHECK_ITEM_RET(item);
     if(!IsTopLevelFolder(item)) return;
     
-    wxArrayString pinnedFolders;
-    pinnedFolders = clConfig::Get().Read("ExplorerFolders", pinnedFolders);
-    clTreeCtrlData* d = GetItemData(item);
-    int where = pinnedFolders.Index(d->GetPath());
-    if(where == wxNOT_FOUND) {
-        pinnedFolders.Add(d->GetPath());
+    if(GetConfig()) {
+        wxArrayString pinnedFolders;
+        pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
+        clTreeCtrlData* d = GetItemData(item);
+        int where = pinnedFolders.Index(d->GetPath());
+        if(where == wxNOT_FOUND) {
+            pinnedFolders.Add(d->GetPath());
+        }
+        GetConfig()->Write("ExplorerFolders", pinnedFolders);
     }
-    clConfig::Get().Write("ExplorerFolders", pinnedFolders);
 }
 
 void clTreeCtrlPanel::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
-    wxArrayString pinnedFolders;
-    pinnedFolders = clConfig::Get().Read("ExplorerFolders", pinnedFolders);
     
-    for(size_t i=0; i<pinnedFolders.size(); ++i) {
-        AddFolder(pinnedFolders.Item(i));
+    if(GetConfig()) {
+        wxArrayString pinnedFolders;
+        pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
+        for(size_t i = 0; i < pinnedFolders.size(); ++i) {
+            AddFolder(pinnedFolders.Item(i));
+        }
     }
 }
 

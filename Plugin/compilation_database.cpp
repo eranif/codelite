@@ -36,11 +36,11 @@
 #include <wx/dir.h>
 #include <algorithm>
 #include "file_logger.h"
+#include "dirtraverser.h"
 
 const wxString DB_VERSION = "2.0";
 
-struct wxFileNameSorter
-{
+struct wxFileNameSorter {
     bool operator()(const wxFileName& one, const wxFileName& two) const
     {
         return one.GetModificationTime().GetTicks() > two.GetModificationTime().GetTicks();
@@ -58,10 +58,7 @@ CompilationDatabase::CompilationDatabase(const wxString& filename)
 {
 }
 
-CompilationDatabase::~CompilationDatabase()
-{
-    Close();
-}
+CompilationDatabase::~CompilationDatabase() { Close(); }
 
 void CompilationDatabase::Open()
 {
@@ -186,7 +183,7 @@ void CompilationDatabase::CreateDatabase()
 
     try {
         if(GetDbVersion() != DB_VERSION) DropTables();
-        
+
         // Create the schema
         m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, FILE_PATH TEXT, CWD TEXT, "
                             "COMPILE_FLAGS TEXT)");
@@ -277,41 +274,19 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
     wxFileName fn(databaseFile);
 
     // Usually it will be under the top folder
+    FileNameVector_t files;
+    if(fn.GetDirCount() == 0) return files;
+
     fn.RemoveLastDir();
 
-    // Since we can have multiple "compile_commands.json" files, we take the most updated file
-    // Prepare a list of files to check
-    FileNameVector_t files;
-    std::queue<wxString> dirs;
+    DirTraverser traverser("compile_commands.json");
+    wxDir dir(fn.GetPath());
+    dir.Traverse(traverser);
+    const wxArrayString& someFiles = traverser.GetFiles();
 
-    // we start with the current path
-    dirs.push(fn.GetPath());
-
-    while(!dirs.empty()) {
-        wxString curdir = dirs.front();
-        dirs.pop();
-
-        wxFileName fn(curdir, "compile_commands.json");
-        if(fn.Exists() /*&& // file exists
-           (fn.GetModificationTime().GetTicks() >
-            databaseFile.GetModificationTime().GetTicks())*/) // and its newer than the database file
-        {
-            CL_DEBUGS("CompilationDatabase: found file: " + fn.GetFullPath());
-            files.push_back(fn);
-        }
-
-        // Check to see if there are more directories to recurse
-        wxDir dir;
-        if(dir.Open(curdir)) {
-            wxString dirname;
-            bool cont = dir.GetFirst(&dirname, "", wxDIR_DIRS);
-            while(cont) {
-                wxString new_dir;
-                new_dir << curdir << wxFileName::GetPathSeparator() << dirname;
-                dirs.push(new_dir);
-                dirname.Clear();
-                cont = dir.GetNext(&dirname);
-            }
+    for(size_t i = 0; i < someFiles.size(); ++i) {
+        if(wxFileName(someFiles.Item(i)).GetFullName() == "compile_commands.json") {
+            files.push_back(someFiles.Item(i));
         }
     }
     return files;

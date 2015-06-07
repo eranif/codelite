@@ -68,7 +68,6 @@ clConfig::clConfig(const wxString& filename)
 
 clConfig::~clConfig()
 {
-    m_root->save(m_filename);
     wxDELETE(m_root);
 }
 

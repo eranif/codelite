@@ -106,7 +106,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS, clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), NULL, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_CREATE_NEW_WORKSPACE, wxCommandEventHandler(PhpPlugin::OnNewWorkspace), NULL, this);
+        wxEVT_CMD_CREATE_NEW_WORKSPACE, clCommandEventHandler(PhpPlugin::OnNewWorkspace), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_NEW_PROJECT_WIZARD_SHOWING, clNewProjectEventHandler(PhpPlugin::OnNewProject), NULL, this);
     EventNotifier::Get()->Connect(
@@ -229,7 +229,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_SHOW_QUICK_OUTLINE, clCodeCompletionEventHandler(PhpPlugin::OnShowQuickOutline), NULL, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_CREATE_NEW_WORKSPACE, wxCommandEventHandler(PhpPlugin::OnNewWorkspace), NULL, this);
+        wxEVT_CMD_CREATE_NEW_WORKSPACE, clCommandEventHandler(PhpPlugin::OnNewWorkspace), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_NEW_PROJECT_WIZARD_SHOWING, clNewProjectEventHandler(PhpPlugin::OnNewProject), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -305,7 +305,7 @@ void PhpPlugin::OnShowQuickOutline(clCodeCompletionEvent& e)
     }
 }
 
-void PhpPlugin::OnNewWorkspace(wxCommandEvent& e)
+void PhpPlugin::OnNewWorkspace(clCommandEvent& e)
 {
     e.Skip();
     if(e.GetString() == PHPWorkspace::Get()->GetWorkspaceType()) {

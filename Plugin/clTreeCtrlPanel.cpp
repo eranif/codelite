@@ -57,8 +57,10 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
 
         menu.Append(XRCID("tree_ctrl_new_folder"), _("New Folder"));
         menu.Append(XRCID("tree_ctrl_new_file"), _("New File"));
-        menu.AppendSeparator();
-        menu.Append(XRCID("tree_ctrl_delete_folder"), _("Delete"));
+        if(!IsTopLevelFolder(item)) {
+            menu.AppendSeparator();
+            menu.Append(XRCID("tree_ctrl_delete_folder"), _("Delete"));
+        }
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_find_in_files_folder"), _("Find in Files"));
         menu.AppendSeparator();
@@ -76,6 +78,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         GetSelections(folders, files);
 
         clContextMenuEvent dirMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
+        dirMenuEvent.SetEventObject(this);
         dirMenuEvent.SetMenu(&menu);
         dirMenuEvent.SetPath(cd->GetPath());
         EventNotifier::Get()->ProcessEvent(dirMenuEvent);
@@ -107,6 +110,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         GetSelections(folders, files);
 
         clContextMenuEvent fileMenuEvent(wxEVT_CONTEXT_MENU_FILE);
+        fileMenuEvent.SetEventObject(this);
         fileMenuEvent.SetMenu(&menu);
         fileMenuEvent.SetStrings(files);
         EventNotifier::Get()->ProcessEvent(fileMenuEvent);

@@ -2636,7 +2636,7 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent& event)
         }
     } else {
         // a pluing workspace, pass it to the plugins
-        wxCommandEvent e(wxEVT_CMD_CREATE_NEW_WORKSPACE, GetId());
+        clCommandEvent e(wxEVT_CMD_CREATE_NEW_WORKSPACE);
         e.SetEventObject(this);
         e.SetString(selection);
         EventNotifier::Get()->AddPendingEvent(e);

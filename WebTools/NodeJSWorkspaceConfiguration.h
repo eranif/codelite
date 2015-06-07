@@ -7,6 +7,7 @@
 class NodeJSWorkspaceConfiguration : public clConfigItem
 {
     wxArrayString m_folders;
+    bool m_isOk;
 
 public:
     virtual void FromJSON(const JSONElement& json);
@@ -14,7 +15,7 @@ public:
 
     NodeJSWorkspaceConfiguration();
     virtual ~NodeJSWorkspaceConfiguration();
-    
+
     NodeJSWorkspaceConfiguration& Load(const wxFileName& filename);
     NodeJSWorkspaceConfiguration& Save(const wxFileName& filename);
     NodeJSWorkspaceConfiguration& SetFolders(const wxArrayString& folders)
@@ -22,8 +23,9 @@ public:
         this->m_folders = folders;
         return *this;
     }
-    
+
     const wxArrayString& GetFolders() const { return m_folders; }
+    bool IsOk() const { return m_isOk; }
 };
 
 #endif // NODEJSWORKSPACECONFIGURATION_H

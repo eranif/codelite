@@ -58,11 +58,6 @@ public:
     bool ExpandToFile(const wxFileName& filename);
 
 protected:
-    virtual void OnContextMenu(wxTreeEvent& event);
-    virtual void OnItemActivated(wxTreeEvent& event);
-    virtual void OnItemExpanding(wxTreeEvent& event);
-    void OnActiveEditorChanged(wxCommandEvent& event);
-    void OnInitDone(wxCommandEvent& event);
 
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items);
@@ -80,21 +75,26 @@ protected:
                        wxArrayTreeItemIds& folderItems,
                        wxArrayString& files,
                        wxArrayTreeItemIds& fileItems);
-
-    void OnCloseFolder(wxCommandEvent& event);
-    void OnNewFolder(wxCommandEvent& event);
-    void OnNewFile(wxCommandEvent& event);
-    void OnDeleteFolder(wxCommandEvent& event);
-    void OnOpenFile(wxCommandEvent& event);
-    void OnRenameFile(wxCommandEvent& event);
-    void OnDeleteFile(wxCommandEvent& event);
-
-    void OnFindInFilesFolder(wxCommandEvent& event);
-    void OnOpenContainingFolder(wxCommandEvent& event);
-    void OnOpenShellFolder(wxCommandEvent& event);
-    void OnPinFolder(wxCommandEvent& event);
-
-    void OnFolderDropped(clCommandEvent& event);
+    
+    // Make the event handler functions virtual
+    // so any subclass could override them
+    virtual void OnActiveEditorChanged(wxCommandEvent& event);
+    virtual void OnInitDone(wxCommandEvent& event);
+    virtual void OnContextMenu(wxTreeEvent& event);
+    virtual void OnItemActivated(wxTreeEvent& event);
+    virtual void OnItemExpanding(wxTreeEvent& event);
+    virtual void OnCloseFolder(wxCommandEvent& event);
+    virtual void OnNewFolder(wxCommandEvent& event);
+    virtual void OnNewFile(wxCommandEvent& event);
+    virtual void OnDeleteFolder(wxCommandEvent& event);
+    virtual void OnOpenFile(wxCommandEvent& event);
+    virtual void OnRenameFile(wxCommandEvent& event);
+    virtual void OnDeleteFile(wxCommandEvent& event);
+    virtual void OnFindInFilesFolder(wxCommandEvent& event);
+    virtual void OnOpenContainingFolder(wxCommandEvent& event);
+    virtual void OnOpenShellFolder(wxCommandEvent& event);
+    virtual void OnPinFolder(wxCommandEvent& event);
+    virtual void OnFolderDropped(clCommandEvent& event);
 
     // Helpers
     void DoExpandItem(const wxTreeItemId& parent, bool expand);

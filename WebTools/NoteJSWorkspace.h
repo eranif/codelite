@@ -14,14 +14,16 @@ protected:
     NodeJSWorkspaceView* m_view;
     bool m_clangOldFlag;
     bool m_dummy;
-    
+
     static NodeJSWorkspace* ms_workspace;
 
 protected:
     void DoClear();
-    void DoOpen(const wxFileName& filename);
+    bool DoOpen(const wxFileName& filename);
 
+    //--------------------------------------------------
     // Event handlers
+    //--------------------------------------------------
     /**
      * @brief CodeLite requests to close the workspace
      */
@@ -29,10 +31,15 @@ protected:
     /**
      * @brief create new workspace (originated from the menu bar)
      */
-    void OnNewWorkspace(wxCommandEvent& e);
+    void OnNewWorkspace(clCommandEvent& e);
+    
+    /**
+     * @brief open a workspace
+     */
+    void OnOpenWorkspace(clCommandEvent& event);
     
     NodeJSWorkspace(); // default ctor is private
-    
+
 public:
     NodeJSWorkspace(bool dummy);
     virtual ~NodeJSWorkspace();
@@ -77,6 +84,7 @@ public:
 
     void SetFolders(const wxArrayString& folders) { this->m_folders = folders; }
     const wxArrayString& GetFolders() const { return m_folders; }
+    wxArrayString& GetFolders() { return m_folders; }
 };
 
 #endif // NOTEJSWORKSPACE_H

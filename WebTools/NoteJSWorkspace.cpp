@@ -30,6 +30,7 @@ NodeJSWorkspace::NodeJSWorkspace()
 
     EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &NodeJSWorkspace::OnCloseWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &NodeJSWorkspace::OnNewWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
 }
 
 NodeJSWorkspace::~NodeJSWorkspace()
@@ -37,6 +38,7 @@ NodeJSWorkspace::~NodeJSWorkspace()
     if(!m_dummy) {
         EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &NodeJSWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &NodeJSWorkspace::OnNewWorkspace, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
     }
 }
 
@@ -81,11 +83,7 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 {
     if(IsOpen()) return false;
     m_filename = filename;
-    NodeJSWorkspaceConfiguration conf;
-    conf.Load(m_filename);
-    m_folders = conf.GetFolders();
-    DoOpen(m_filename);
-    return true;
+    return DoOpen(m_filename);
 }
 
 void NodeJSWorkspace::Close()
@@ -132,7 +130,7 @@ void NodeJSWorkspace::OnCloseWorkspace(clCommandEvent& e)
     }
 }
 
-void NodeJSWorkspace::OnNewWorkspace(wxCommandEvent& e)
+void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
 {
     e.Skip();
     if(e.GetString() == GetWorkspaceType()) {
@@ -159,9 +157,16 @@ void NodeJSWorkspace::OnNewWorkspace(wxCommandEvent& e)
     }
 }
 
-void NodeJSWorkspace::DoOpen(const wxFileName& filename)
+bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
 {
-    Open(filename);
+    NodeJSWorkspaceConfiguration conf;
+    conf.Load(m_filename);
+    if(!conf.IsOk()) {
+        DoClear();
+        return false;
+    }
+
+    m_folders = conf.GetFolders();
 
     const wxArrayString& folders = GetFolders();
     for(size_t i = 0; i < folders.size(); ++i) {
@@ -182,4 +187,27 @@ void NodeJSWorkspace::DoOpen(const wxFileName& filename)
     wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
     event.SetString(filename.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(event);
+    return true;
+}
+
+void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
+{
+    event.Skip();
+    wxFileName workspaceFile(event.GetFileName());
+
+    // Test that this is our workspace
+    NodeJSWorkspaceConfiguration conf;
+    conf.Load(workspaceFile);
+    if(!conf.IsOk()) {
+        return;
+    }
+    // This is a NodeJS workspace, stop event processing by calling
+    // event.Skip(false)
+    event.Skip(false);
+
+    // Check if this is a PHP workspace
+    if(IsOpen()) {
+        Close();
+    }
+    Open(workspaceFile);
 }

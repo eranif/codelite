@@ -2429,7 +2429,23 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
     if(!clCxxWorkspaceST::Get()->IsOpen()) {
 
         wxFileName fnWorkspace(folder, "");
-
+        
+        // If a workspace is already exist at the selected path - load it
+        wxArrayString workspaceFiles;
+        wxString workspaceFile;
+        wxDir::GetAllFiles(folder, &workspaceFiles, "*.workspace", wxDIR_FILES);
+        // Check the workspace type
+        for(size_t i = 0; i < workspaceFiles.size(); ++i) {
+            if(FileExtManager::GetType(workspaceFiles.Item(i)) == FileExtManager::TypeWorkspace) {
+                // Found a workspace in the folder, just open it
+                wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("switch_to_workspace"));
+                evtOpenworkspace.SetString(workspaceFiles.Item(i));
+                evtOpenworkspace.SetEventObject(clMainFrame::Get());
+                clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
+                return;
+            }
+        }
+    
         workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
         workspaceFileName.SetExt("workspace");
 

@@ -44,6 +44,7 @@
 #include "event_notifier.h"
 #include "workspace.h"
 #include "processreaderthread.h"
+#include <wx/msgdlg.h>
 
 static ExternalToolsPlugin* thePlugin = NULL;
 

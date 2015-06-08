@@ -55,7 +55,6 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
         m_textCtrlIcon16->SetValue(data->m_icon16);
         m_textCtrlIcon24->SetValue(data->m_icon24);
         m_textCtrlName->SetValue(data->m_name);
-        m_checkBoxCaptureProcessOutput->SetValue(data->m_captureOutput);
         m_checkBoxSaveAllFilesBefore->SetValue(data->m_saveAllFiles);
         m_choiceId->Enable(false);
     }
@@ -133,3 +132,6 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
 }
 
 NewToolDlg::~NewToolDlg() {}
+void NewToolDlg::OnIdSelected(wxCommandEvent& event)
+{
+}

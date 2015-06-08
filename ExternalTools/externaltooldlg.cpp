@@ -67,7 +67,7 @@ void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)
                       dlg.GetArguments(),
                       dlg.GetIcon16(),
                       dlg.GetIcon24(),
-                      dlg.GetCaptureProcessOutput(),
+                      true,
                       dlg.GetSaveAllFiles());
     }
 }
@@ -156,7 +156,7 @@ void ExternalToolDlg::DoEditEntry(long item)
                       dlg.GetArguments(),
                       dlg.GetIcon16(),
                       dlg.GetIcon24(),
-                      dlg.GetCaptureProcessOutput(),
+                      true,
                       dlg.GetSaveAllFiles());
     }
 }

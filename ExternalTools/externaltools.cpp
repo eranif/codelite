@@ -43,6 +43,7 @@
 #include "clKeyboardManager.h"
 #include "event_notifier.h"
 #include "workspace.h"
+#include "processreaderthread.h"
 
 static ExternalToolsPlugin* thePlugin = NULL;
 
@@ -74,7 +75,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERS
 ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     : IPlugin(manager)
     , topWin(NULL)
-    , m_pipedProcess(NULL)
+    , m_process(NULL)
     , m_parentMenu(NULL)
 {
     m_longName = _("A plugin that allows user to launch external tools from within CodeLite");
@@ -118,6 +119,9 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
             wxString::Format("Ctrl-Shift-%d", i),
             wxString::Format("Plugins::External Tools::External Tool %d", i));
     }
+
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &ExternalToolsPlugin::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &ExternalToolsPlugin::OnProcessEnd, this);
 }
 
 ExternalToolsPlugin::~ExternalToolsPlugin()
@@ -316,67 +320,31 @@ void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)
 
 void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 {
+    if(m_process) {
+        ::wxMessageBox(_("Another tool is currently running"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+        return;
+    }
+    
     wxString command, working_dir;
+    command << ti.GetPath();
+    ::WrapWithQuotes(command);
 
-    command << wxT("\"") << ti.GetPath() << wxT("\" ") << ti.GetArguments();
+    command << " " << ti.GetArguments();
     working_dir = ti.GetWd();
 
-    if(m_mgr->IsWorkspaceOpen()) {
-        command = MacroManager::Instance()->Expand(command, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
-        working_dir =
-            MacroManager::Instance()->Expand(working_dir, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
+    command = MacroManager::Instance()->Expand(
+        command, m_mgr, (m_mgr->GetWorkspace() ? m_mgr->GetWorkspace()->GetActiveProjectName() : ""));
+    working_dir = MacroManager::Instance()->Expand(
+        working_dir, m_mgr, (m_mgr->GetWorkspace() ? m_mgr->GetWorkspace()->GetActiveProjectName() : ""));
+
+    wxString projectName;
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        projectName = clCxxWorkspaceST::Get()->GetActiveProjectName();
     }
 
-    // check to see if we require to save all files before continuing
-    if(ti.GetSaveAllFiles() && !m_mgr->SaveAll()) return;
-
-    if(ti.GetCaptureOutput() == false) {
-        DirSaver ds;
-        wxString projectName;
-        if(clCxxWorkspaceST::Get()->IsOpen()) {
-            projectName = clCxxWorkspaceST::Get()->GetActiveProjectName();
-        }
-        
-        EnvSetter envGuard(m_mgr->GetEnv(), NULL, projectName);
-        wxSetWorkingDirectory(working_dir);
-        
-        wxExecute(command);
-
-    } else {
-        // create a piped process
-        if(m_pipedProcess && m_pipedProcess->IsBusy()) {
-            // a process is already running
-            return;
-        }
-
-        m_pipedProcess = new AsyncExeCmd(m_mgr->GetOutputWindow());
-
-        DirSaver ds;
-        wxString projectName;
-        if(clCxxWorkspaceST::Get()->IsOpen()) {
-            projectName = clCxxWorkspaceST::Get()->GetActiveProjectName();
-        }
-        
-        EnvSetter envGuard(m_mgr->GetEnv(), NULL, projectName);
-        wxSetWorkingDirectory(working_dir);
-
-        // hide console if any,
-        // redirect output
-        m_pipedProcess->Execute(command, true, true);
-        if(m_pipedProcess->GetProcess()) {
-            m_pipedProcess->GetProcess()->Connect(
-                wxEVT_END_PROCESS, wxProcessEventHandler(ExternalToolsPlugin::OnProcessEnd), NULL, this);
-        }
-    }
-}
-
-void ExternalToolsPlugin::OnProcessEnd(wxProcessEvent& event)
-{
-    m_pipedProcess->ProcessEnd(event);
-    m_pipedProcess->GetProcess()->Disconnect(
-        wxEVT_END_PROCESS, wxProcessEventHandler(ExternalToolsPlugin::OnProcessEnd), NULL, this);
-    delete m_pipedProcess;
-    m_pipedProcess = NULL;
+    EnvSetter envGuard(m_mgr->GetEnv(), NULL, projectName);
+    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, working_dir);
+    m_mgr->AppendOutputTabText(kOutputTab_Output, command + "\n");
 }
 
 void ExternalToolsPlugin::DoRecreateToolbar()
@@ -417,14 +385,14 @@ void ExternalToolsPlugin::DoRecreateToolbar()
     }
 }
 
-bool ExternalToolsPlugin::IsRedirectedToolRunning() { return (m_pipedProcess && m_pipedProcess->IsBusy()); }
+bool ExternalToolsPlugin::IsRedirectedToolRunning() { return (m_process != NULL); }
 
 void ExternalToolsPlugin::OnLaunchExternalToolUI(wxUpdateUIEvent& e) { e.Enable(!IsRedirectedToolRunning()); }
 
 void ExternalToolsPlugin::OnStopExternalTool(wxCommandEvent& e)
 {
-    if(m_pipedProcess) {
-        m_pipedProcess->Stop();
+    if(m_process) {
+        m_process->Terminate();
     }
 }
 
@@ -520,4 +488,19 @@ void ExternalToolsPlugin::DoAppendToolsToNativeToolbar(wxToolBar* toolbar)
         }
     }
     toolbar->Realize();
+}
+
+void ExternalToolsPlugin::OnProcessEnd(clProcessEvent& event)
+{
+    m_mgr->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
+    m_mgr->AppendOutputTabText(kOutputTab_Output, "\n");
+    wxDELETE(m_process);
+
+    // Notify codelite to test for any modified bufferes
+    EventNotifier::Get()->PostReloadExternallyModifiedEvent();
+}
+
+void ExternalToolsPlugin::OnProcessOutput(clProcessEvent& event)
+{
+    m_mgr->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
 }

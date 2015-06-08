@@ -107,6 +107,7 @@ wxString MacroManager::Expand(const wxString& expression,
             fpath.Replace(wxT("\\"), wxT("/"));
             expandedString.Replace(wxT("$(CurrentFilePath)"), fpath);
             expandedString.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
+            expandedString.Replace(wxT("$(CurrentFileFullName)"), fn.GetFullName());
 
             wxString ffullpath(fn.GetFullPath());
             ffullpath.Replace(wxT("\\"), wxT("/"));

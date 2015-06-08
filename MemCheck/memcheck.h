@@ -125,8 +125,6 @@ protected:
      */
     void OnSettings(wxCommandEvent& event);
     void OnMemCheckUI(wxUpdateUIEvent& event);
-
-    DECLARE_EVENT_TABLE();
 };
 
 #endif // memcheck

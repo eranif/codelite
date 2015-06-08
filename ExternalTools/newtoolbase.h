@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef NEWTOOLBASE_BASE_CLASSES_H
-#define NEWTOOLBASE_BASE_CLASSES_H
+#ifndef CODELITE_FORMBUILDER_NEWTOOLBASE_BASE_CLASSES_H
+#define CODELITE_FORMBUILDER_NEWTOOLBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -21,10 +21,18 @@
 #include <wx/button.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class NewToolBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer1;
+    wxFlexGridSizer* fgSizer1;
     wxStaticText* m_staticText5;
     wxChoice* m_choiceId;
     wxStaticText* m_staticText6;
@@ -37,14 +45,16 @@ protected:
     wxButton* m_buttonBrowseWd;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlArguments;
+    wxStaticBoxSizer* sbSizer1;
+    wxFlexGridSizer* fgSizer2;
     wxStaticText* m_staticText8;
     wxTextCtrl* m_textCtrlIcon24;
     wxButton* m_buttonBrowseIcon24;
     wxStaticText* m_staticText7;
     wxTextCtrl* m_textCtrlIcon16;
     wxButton* m_buttonBrowseIcon16;
+    wxStaticBoxSizer* sbSizer2;
     wxCheckBox* m_checkBoxSaveAllFilesBefore;
-    wxCheckBox* m_checkBoxCaptureProcessOutput;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_button4;
     wxButton* m_button6;
@@ -61,6 +71,25 @@ protected:
     virtual void OnButtonHelp(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText5() { return m_staticText5; }
+    wxChoice* GetChoiceId() { return m_choiceId; }
+    wxStaticText* GetStaticText6() { return m_staticText6; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxTextCtrl* GetTextCtrlPath() { return m_textCtrlPath; }
+    wxButton* GetButtonBrowsePath() { return m_buttonBrowsePath; }
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    wxTextCtrl* GetTextCtrlWd() { return m_textCtrlWd; }
+    wxButton* GetButtonBrowseWd() { return m_buttonBrowseWd; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxTextCtrl* GetTextCtrlArguments() { return m_textCtrlArguments; }
+    wxStaticText* GetStaticText8() { return m_staticText8; }
+    wxTextCtrl* GetTextCtrlIcon24() { return m_textCtrlIcon24; }
+    wxButton* GetButtonBrowseIcon24() { return m_buttonBrowseIcon24; }
+    wxStaticText* GetStaticText7() { return m_staticText7; }
+    wxTextCtrl* GetTextCtrlIcon16() { return m_textCtrlIcon16; }
+    wxButton* GetButtonBrowseIcon16() { return m_buttonBrowseIcon16; }
+    wxCheckBox* GetCheckBoxSaveAllFilesBefore() { return m_checkBoxSaveAllFilesBefore; }
     NewToolBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("External Tool"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewToolBase();
 };

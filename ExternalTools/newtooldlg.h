@@ -41,6 +41,7 @@ class NewToolDlg : public NewToolBase
     IManager* m_mgr;
 
 protected:
+    virtual void OnIdSelected(wxCommandEvent& event);
     // Handlers for NewToolBase events.
     void OnButtonBrowsePath(wxCommandEvent& event);
     void OnButtonBrowseWD(wxCommandEvent& event);
@@ -62,7 +63,6 @@ public:
     wxString GetToolName() const { return m_textCtrlName->GetValue(); }
     wxString GetIcon16() const { return m_textCtrlIcon16->GetValue(); }
     wxString GetIcon24() const { return m_textCtrlIcon24->GetValue(); }
-    bool GetCaptureProcessOutput() const { return m_checkBoxCaptureProcessOutput->IsChecked(); }
     bool GetSaveAllFiles() const { return m_checkBoxSaveAllFilesBefore->IsChecked(); }
 };
 

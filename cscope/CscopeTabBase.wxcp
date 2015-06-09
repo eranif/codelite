@@ -1387,7 +1387,7 @@
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxFLP_DEFAULT_STYLE"],
+         "m_styles": ["wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
@@ -1432,7 +1432,7 @@
           }, {
            "type": "bool",
            "m_label": "Focused",
-           "m_value": false
+           "m_value": true
           }, {
            "type": "string",
            "m_label": "Class Name:",

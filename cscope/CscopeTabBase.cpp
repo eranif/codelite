@@ -23,14 +23,14 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(bSizer3, 1, wxALL|wxEXPAND, 2);
     
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
+    boxSizer4 = new wxBoxSizer(wxVERTICAL);
     
     bSizer3->Add(boxSizer4, 1, wxEXPAND, 2);
     
@@ -49,7 +49,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     boxSizer4->Add(m_statusMessage, 0, wxTOP|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer31 = new wxBoxSizer(wxVERTICAL);
+    bSizer31 = new wxBoxSizer(wxVERTICAL);
     
     bSizer3->Add(bSizer31, 0, wxEXPAND, 2);
     
@@ -137,10 +137,10 @@ CScopeSettingsDlgBase::CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
     
-    wxFlexGridSizer* flexGridSizer18 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer18 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer18->SetFlexibleDirection( wxBOTH );
     flexGridSizer18->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer18->AddGrowableCol(1);
@@ -151,8 +151,9 @@ CScopeSettingsDlgBase::CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer18->Add(m_staticText20, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_filePickerCScopeExe = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE);
+    m_filePickerCScopeExe = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerCScopeExe->SetToolTip(_("Set the path to cscope executable"));
+    m_filePickerCScopeExe->SetFocus();
     
     flexGridSizer18->Add(m_filePickerCScopeExe, 0, wxALL|wxEXPAND, 5);
     
@@ -175,7 +176,11 @@ CScopeSettingsDlgBase::CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     }
     CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
-    wxPersistenceManager::Get().RegisterAndRestore(this);
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
 #endif
 }
 

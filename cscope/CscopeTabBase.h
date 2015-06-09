@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CSCOPETABBASE_BASE_CLASSES_H
-#define CSCOPETABBASE_BASE_CLASSES_H
+#ifndef CODELITE_CSCOPE_CSCOPETABBASE_BASE_CLASSES_H
+#define CODELITE_CSCOPE_CSCOPETABBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -34,10 +34,14 @@
 class CscopeTabBase : public wxPanel
 {
 protected:
+    wxBoxSizer* mainSizer;
+    wxBoxSizer* bSizer3;
+    wxBoxSizer* boxSizer4;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<CScoptViewResultsModel> m_dataviewModel;
 
     wxStaticText* m_statusMessage;
+    wxBoxSizer* bSizer31;
     wxStaticText* m_staticText2;
     wxChoice* m_choiceSearchScope;
     wxCheckBox* m_checkBoxUpdateDb;
@@ -73,6 +77,8 @@ public:
 class CScopeSettingsDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer10;
+    wxFlexGridSizer* flexGridSizer18;
     wxStaticText* m_staticText20;
     wxFilePickerCtrl* m_filePickerCScopeExe;
     wxStdDialogButtonSizer* m_stdBtnSizer12;

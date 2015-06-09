@@ -589,6 +589,10 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj,
 
 void BuilderGnuMake::CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString& targetName, wxString& text)
 {
+    text << "\n";
+    text << "MakeIntermediateDirs:\n";
+    text << "\t" << GetMakeDirCmd(bldConf) << "\n\n";
+    
     text << wxT("\n");
     text << targetName << wxT(":\n");
     text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
@@ -978,7 +982,7 @@ void BuilderGnuMake::CreateLinkTargets(const wxString& type,
     // this is to workaround bug in the generated makefiles
     // which causes the makefile to report 'nothing to be done'
     // even when a dependency was modified
-    text << wxT(".PHONY: all clean PreBuild PrePreBuild PostBuild\n");
+    text << wxT(".PHONY: all clean PreBuild PrePreBuild PostBuild MakeIntermediateDirs\n");
 
     wxString extraDeps;
     wxString depsRules;
@@ -1701,7 +1705,9 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj,
         wxString precmpheader = bldConf->GetPrecompiledHeader();
         precmpheader.Trim().Trim(false);
         preprebuild.Trim().Trim(false);
-
+        
+        makeCommand << basicMakeCommand << " MakeIntermediateDirs && ";
+        
         if(preprebuild.IsEmpty() == false) {
             makeCommand << basicMakeCommand << wxT(" PrePreBuild && ");
         }

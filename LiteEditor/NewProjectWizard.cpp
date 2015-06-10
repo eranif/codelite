@@ -443,6 +443,34 @@ void NewProjectWizard::OnPageChanging(wxWizardEvent& event)
                 event.Veto();
                 return;
             }
+        } else if(event.GetPage() == m_wizardPageToolchain) {
+            wxFileName fn(m_stxtFullFileName->GetLabel());
+
+            // make sure that there is no conflict in files between the template project and the selected path
+            if(m_projectData.m_srcProject) {
+                ProjectPtr p = m_projectData.m_srcProject;
+                wxString base_dir(fn.GetPath());
+                std::vector<wxFileName> files;
+                p->GetFiles(files);
+
+                for(size_t i = 0; i < files.size(); ++i) {
+                    wxFileName f = files.at(i);
+                    wxString new_file = base_dir + wxT("/") + f.GetFullName();
+
+                    if(wxFileName::FileExists(new_file)) {
+                        // this file already - notify the user
+                        wxString msg;
+                        msg << _("The File '") << f.GetFullName() << _("' already exists at the target directory '")
+                            << base_dir << wxT("'\n");
+                        msg << _("Please select a different project path\n");
+                        msg << _("The file '") << f.GetFullName() << _("' is part of the template project [")
+                            << p->GetName() << wxT("]");
+                        wxMessageBox(msg, _("CodeLite"), wxOK | wxICON_HAND);
+                        event.Veto();
+                        return;
+                    }
+                }
+            }
         }
 
         // Try to offer a sensible toolchain/debugger combination as default

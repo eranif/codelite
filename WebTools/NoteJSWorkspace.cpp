@@ -33,6 +33,7 @@ NodeJSWorkspace::NodeJSWorkspace()
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &NodeJSWorkspace::OnNewWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &NodeJSWorkspace::OnAllEditorsClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &NodeJSWorkspace::OnSaveSession, this);
 }
 
 NodeJSWorkspace::~NodeJSWorkspace()
@@ -42,6 +43,7 @@ NodeJSWorkspace::~NodeJSWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &NodeJSWorkspace::OnNewWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &NodeJSWorkspace::OnAllEditorsClosed, this);
+        EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &NodeJSWorkspace::OnSaveSession, this);
     }
 }
 
@@ -92,6 +94,10 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 void NodeJSWorkspace::Close()
 {
     if(!IsOpen()) return;
+    
+    // Store the session
+    clGetManager()->StoreWorkspaceSession(m_filename);
+    
     Save();
     DoClear();
 
@@ -191,6 +197,12 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
     event.SetString(filename.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(event);
+    
+    // and finally, request codelite to keep this workspace in the recently opened workspace list
+    clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
+    
+    // Load the workspace session (if any)
+    CallAfter(&NodeJSWorkspace::RestoreSession);
     return true;
 }
 
@@ -226,5 +238,22 @@ void NodeJSWorkspace::OnAllEditorsClosed(wxCommandEvent& event)
         wxCommandEvent eventShowWelcomePage(wxEVT_MENU, XRCID("view_welcome_page"));
         eventShowWelcomePage.SetEventObject(frame);
         frame->GetEventHandler()->AddPendingEvent(eventShowWelcomePage);
+    }
+}
+
+void NodeJSWorkspace::RestoreSession()
+{
+    if(IsOpen()) {
+        clGetManager()->LoadWorkspaceSession(m_filename);
+    }
+}
+
+void NodeJSWorkspace::OnSaveSession(clCommandEvent& event)
+{
+    event.Skip();
+    if(IsOpen()) {
+        // Call event.Skip(false) so no other session are kept beside ours
+        event.Skip(false);
+        clGetManager()->StoreWorkspaceSession(m_filename);
     }
 }

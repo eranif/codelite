@@ -15,7 +15,7 @@ protected:
     bool m_clangOldFlag;
     bool m_dummy;
     bool m_showWelcomePage;
-    
+
     static NodeJSWorkspace* ms_workspace;
 
 protected:
@@ -38,12 +38,22 @@ protected:
      * @brief open a workspace
      */
     void OnOpenWorkspace(clCommandEvent& event);
-    
+
     /**
      * @brief all editors have been closed
      */
     void OnAllEditorsClosed(wxCommandEvent& event);
-    
+
+    /**
+     * @brief handle save session command from CodeLite
+     */
+    void OnSaveSession(clCommandEvent& event);
+
+    /**
+     * @brief restore the workspace session
+     */
+    void RestoreSession();
+
     NodeJSWorkspace(); // default ctor is private
 
 public:

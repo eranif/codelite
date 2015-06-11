@@ -23,6 +23,7 @@ NodeJSWorkspace::NodeJSWorkspace(bool dummy)
 
 NodeJSWorkspace::NodeJSWorkspace()
     : m_clangOldFlag(false)
+    , m_showWelcomePage(false)
 {
     SetWorkspaceType("Node.js");
     m_view = new NodeJSWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
@@ -31,6 +32,7 @@ NodeJSWorkspace::NodeJSWorkspace()
     EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &NodeJSWorkspace::OnCloseWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &NodeJSWorkspace::OnNewWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &NodeJSWorkspace::OnAllEditorsClosed, this);
 }
 
 NodeJSWorkspace::~NodeJSWorkspace()
@@ -39,6 +41,7 @@ NodeJSWorkspace::~NodeJSWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &NodeJSWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &NodeJSWorkspace::OnNewWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
+        EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &NodeJSWorkspace::OnAllEditorsClosed, this);
     }
 }
 
@@ -106,6 +109,7 @@ void NodeJSWorkspace::Close()
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
     eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
     EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
+    m_showWelcomePage = true;
 }
 
 void NodeJSWorkspace::DoClear()
@@ -210,4 +214,17 @@ void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
         Close();
     }
     Open(workspaceFile);
+}
+
+void NodeJSWorkspace::OnAllEditorsClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    if(m_showWelcomePage) {
+        m_showWelcomePage = false;
+        // Show the 'Welcome Page'
+        wxFrame* frame = EventNotifier::Get()->TopFrame();
+        wxCommandEvent eventShowWelcomePage(wxEVT_MENU, XRCID("view_welcome_page"));
+        eventShowWelcomePage.SetEventObject(frame);
+        frame->GetEventHandler()->AddPendingEvent(eventShowWelcomePage);
+    }
 }

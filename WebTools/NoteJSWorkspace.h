@@ -14,7 +14,8 @@ protected:
     NodeJSWorkspaceView* m_view;
     bool m_clangOldFlag;
     bool m_dummy;
-
+    bool m_showWelcomePage;
+    
     static NodeJSWorkspace* ms_workspace;
 
 protected:
@@ -32,11 +33,16 @@ protected:
      * @brief create new workspace (originated from the menu bar)
      */
     void OnNewWorkspace(clCommandEvent& e);
-    
+
     /**
      * @brief open a workspace
      */
     void OnOpenWorkspace(clCommandEvent& event);
+    
+    /**
+     * @brief all editors have been closed
+     */
+    void OnAllEditorsClosed(wxCommandEvent& event);
     
     NodeJSWorkspace(); // default ctor is private
 

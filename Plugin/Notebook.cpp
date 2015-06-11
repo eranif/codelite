@@ -543,9 +543,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
-        wxBitmap bmpTabs(rect.GetSize());
-        wxMemoryDC memDC(bmpTabs);
-        wxGCDC gcdc(memDC);
+        //wxBitmap bmpTabs(rect.GetSize());
+        //wxMemoryDC memDC(bmpTabs);
+        wxGCDC gcdc(dc);
 
         gcdc.SetPen(tabAreaBgCol);
         gcdc.SetBrush(tabAreaBgCol);
@@ -586,8 +586,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
         }
 
-        memDC.SelectObject(wxNullBitmap);
-        dc.DrawBitmap(bmpTabs, 0, 0);
+        //memDC.SelectObject(wxNullBitmap);
+        //dc.DrawBitmap(bmpTabs, 0, 0);
 
         if(GetStyle() & kNotebook_ShowFileListButton) {
             // Draw the chevron

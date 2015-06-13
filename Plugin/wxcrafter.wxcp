@@ -4423,7 +4423,7 @@
             }, {
              "type": "multi-string",
              "m_label": "Label:",
-             "m_value": "DRANG AND DROP\\nA FOLDER HERE"
+             "m_value": "DRAG AND DROP\\nA FOLDER HERE"
             }, {
              "type": "string",
              "m_label": "Wrap:",

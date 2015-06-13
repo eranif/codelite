@@ -521,7 +521,7 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
     
     boxSizer171->Add(0, 0, 1, wxALL, 5);
     
-    m_staticText177 = new wxStaticText(m_panel169, wxID_ANY, _("DRANG AND DROP\nA FOLDER HERE"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
+    m_staticText177 = new wxStaticText(m_panel169, wxID_ANY, _("DRAG AND DROP\nA FOLDER HERE"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
     m_staticText177->SetForegroundColour(wxColour(wxT("rgb(128,128,128)")));
     wxFont m_staticText177Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText177Font.SetWeight(wxFONTWEIGHT_BOLD);

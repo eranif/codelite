@@ -497,3 +497,48 @@ NotebookNavigationDlgBase::~NotebookNavigationDlgBase()
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NotebookNavigationDlgBase::OnItemActivated), NULL, this);
     
 }
+
+clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9D6CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    boxSizer167 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer167);
+    
+    m_panel169 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_STATIC);
+    m_panel169->SetBackgroundColour(wxColour(wxT("rgb(224,224,224)")));
+    
+    boxSizer167->Add(m_panel169, 1, wxALL|wxEXPAND, 0);
+    
+    boxSizer171 = new wxBoxSizer(wxVERTICAL);
+    m_panel169->SetSizer(boxSizer171);
+    
+    boxSizer171->Add(0, 0, 1, wxALL, 5);
+    
+    m_staticText177 = new wxStaticText(m_panel169, wxID_ANY, _("DRANG AND DROP\nA FOLDER HERE"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
+    m_staticText177->SetForegroundColour(wxColour(wxT("rgb(128,128,128)")));
+    wxFont m_staticText177Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText177Font.SetWeight(wxFONTWEIGHT_BOLD);
+    m_staticText177->SetFont(m_staticText177Font);
+    
+    boxSizer171->Add(m_staticText177, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    boxSizer171->Add(0, 0, 1, wxALL, 5);
+    
+    SetName(wxT("clTreeCtrlPanelDefaultPageBase"));
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+}
+
+clTreeCtrlPanelDefaultPageBase::~clTreeCtrlPanelDefaultPageBase()
+{
+}

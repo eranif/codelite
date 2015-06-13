@@ -308,6 +308,8 @@
         <File Name="clFileViwerTreeCtrl.h"/>
         <File Name="clFileViwerTreeCtrl.cpp"/>
       </VirtualDirectory>
+      <File Name="clTreeCtrlPanelDefaultPage.h"/>
+      <File Name="clTreeCtrlPanelDefaultPage.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="nameanddescdlg.h"/>

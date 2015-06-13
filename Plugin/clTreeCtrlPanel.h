@@ -8,11 +8,16 @@
 #include <imanager.h>
 #include "cl_config.h"
 
+class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {
     BitmapLoader m_bmpLoader;
     clConfig* m_config;
     wxString m_viewName;
+    clTreeCtrlPanelDefaultPage* m_defaultView;
+
+protected:
+    void ToggleView();
 
 public:
     clTreeCtrlPanel(wxWindow* parent);
@@ -20,14 +25,14 @@ public:
 
     void SetViewName(const wxString& viewName) { this->m_viewName = viewName; }
     const wxString& GetViewName() const { return m_viewName; }
-    
+
     clConfig* GetConfig() { return m_config; }
-    
+
     /**
      * @brief clear the view (i.e. close all top level folders)
      */
     void Clear();
-    
+
     /**
      * @brief return the configuration tool used for storing information about
      * this tree. Override it to provide a custom configuration tool
@@ -58,7 +63,6 @@ public:
     bool ExpandToFile(const wxFileName& filename);
 
 protected:
-
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items);
 
@@ -75,7 +79,7 @@ protected:
                        wxArrayTreeItemIds& folderItems,
                        wxArrayString& files,
                        wxArrayTreeItemIds& fileItems);
-    
+
     // Make the event handler functions virtual
     // so any subclass could override them
     virtual void OnActiveEditorChanged(wxCommandEvent& event);

@@ -17,6 +17,7 @@
 #include <wx/wupdlock.h>
 #include <wx/log.h>
 #include "cl_config.h"
+#include "clTreeCtrlPanelDefaultPage.h"
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
@@ -32,6 +33,10 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
+    
+    m_defaultView = new clTreeCtrlPanelDefaultPage(this);
+    GetSizer()->Add(m_defaultView, 1, wxEXPAND);
+    GetTreeCtrl()->Hide();
 }
 
 clTreeCtrlPanel::~clTreeCtrlPanel()
@@ -204,6 +209,7 @@ void clTreeCtrlPanel::AddFolder(const wxString& path)
 {
     wxTreeItemId itemFolder = DoAddFolder(GetTreeCtrl()->GetRootItem(), path);
     DoExpandItem(itemFolder, false);
+    ToggleView();
 }
 
 wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxString& path)
@@ -661,4 +667,22 @@ void clTreeCtrlPanel::DoCloseFolder(const wxTreeItemId& item)
     }
     // Now, delete the item
     GetTreeCtrl()->Delete(item);
+    
+    ToggleView();
+}
+
+void clTreeCtrlPanel::ToggleView()
+{
+    wxArrayString paths;
+    wxArrayTreeItemIds items;
+    GetTopLevelFolders(paths, items);
+    
+    if(paths.IsEmpty()) {
+        GetTreeCtrl()->Hide();
+        m_defaultView->Show();
+    } else {
+        GetTreeCtrl()->Show();
+        m_defaultView->Hide();
+    }
+    GetSizer()->Layout();
 }

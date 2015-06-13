@@ -194,4 +194,22 @@ public:
     virtual ~NotebookNavigationDlgBase();
 };
 
+
+class clTreeCtrlPanelDefaultPageBase : public wxPanel
+{
+protected:
+    wxBoxSizer* boxSizer167;
+    wxPanel* m_panel169;
+    wxBoxSizer* boxSizer171;
+    wxStaticText* m_staticText177;
+
+protected:
+
+public:
+    wxStaticText* GetStaticText177() { return m_staticText177; }
+    wxPanel* GetPanel169() { return m_panel169; }
+    clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~clTreeCtrlPanelDefaultPageBase();
+};
+
 #endif

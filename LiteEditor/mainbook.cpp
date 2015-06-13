@@ -238,7 +238,7 @@ void MainBook::OnWorkspaceClosed(wxCommandEvent& e)
 
 bool MainBook::AskUserToSave(LEditor* editor)
 {
-    if(!editor || !editor->GetModify() || editor->GetFileName().FileExists() == false) return true;
+    if(!editor || !editor->GetModify()) return true;
 
     // unsaved changes
     wxString msg;

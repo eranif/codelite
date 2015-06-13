@@ -67,11 +67,6 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
         menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
 
-        if(IsTopLevelFolder(item)) {
-            menu.AppendSeparator();
-            menu.Append(XRCID("tree_ctrl_pin_folder"), _("Pin Folder..."));
-        }
-
         // Now that we added the basic menu, let the plugin
         // adjust it
         wxArrayString files, folders;
@@ -91,7 +86,6 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnFindInFilesFolder, this, XRCID("tree_ctrl_find_in_files_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnPinFolder, this, XRCID("tree_ctrl_pin_folder"));
         PopupMenu(&menu);
 
     } else if(cd && cd->IsFile()) {
@@ -233,7 +227,7 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
 
 wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxString& path)
 {
-    // if we already have this folder opened, dont re-add it
+    // If we already have this folder opened, dont re-add it
     wxArrayString topFolders;
     wxArrayTreeItemIds topFoldersItems;
     GetTopLevelFolders(topFolders, topFoldersItems);
@@ -265,6 +259,17 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
 
     // Append the dummy item
     GetTreeCtrl()->AppendItem(itemFolder, "Dummy", -1, -1, new clTreeCtrlData(clTreeCtrlData::kDummy));
+    
+    // Pin this folder
+    if(GetConfig() && IsTopLevelFolder(itemFolder)) {
+        wxArrayString pinnedFolders;
+        pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
+        int where = pinnedFolders.Index(cd->GetPath());
+        if(where == wxNOT_FOUND) {
+            pinnedFolders.Add(cd->GetPath());
+        }
+        GetConfig()->Write("ExplorerFolders", pinnedFolders);
+    }
     return itemFolder;
 }
 
@@ -612,24 +617,6 @@ void clTreeCtrlPanel::OnOpenShellFolder(wxCommandEvent& event)
 
     if(cd && cd->IsFolder()) {
         FileUtils::OpenTerminal(cd->GetPath());
-    }
-}
-
-void clTreeCtrlPanel::OnPinFolder(wxCommandEvent& event)
-{
-    wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
-    CHECK_ITEM_RET(item);
-    if(!IsTopLevelFolder(item)) return;
-
-    if(GetConfig()) {
-        wxArrayString pinnedFolders;
-        pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
-        clTreeCtrlData* d = GetItemData(item);
-        int where = pinnedFolders.Index(d->GetPath());
-        if(where == wxNOT_FOUND) {
-            pinnedFolders.Add(d->GetPath());
-        }
-        GetConfig()->Write("ExplorerFolders", pinnedFolders);
     }
 }
 

@@ -93,7 +93,6 @@ protected:
     virtual void OnFindInFilesFolder(wxCommandEvent& event);
     virtual void OnOpenContainingFolder(wxCommandEvent& event);
     virtual void OnOpenShellFolder(wxCommandEvent& event);
-    virtual void OnPinFolder(wxCommandEvent& event);
     virtual void OnFolderDropped(clCommandEvent& event);
 
     // Helpers

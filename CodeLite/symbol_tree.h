@@ -176,7 +176,9 @@ public:
      * \param name disply name of the item to be selected (can be partial name)
      */
     void SelectItemByName(const wxString &name);
+    
 protected:
+    bool Matches(const wxTreeItemId& item, const wxString& patter);
 
     void GetItemChildrenRecursive(wxTreeItemId& parent, std::map<void*, bool> &deletedMap);
 

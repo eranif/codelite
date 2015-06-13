@@ -308,3 +308,17 @@ wxString FileUtils::EncodeURI(const wxString& uri)
     }
     return encoded;
 }
+
+bool FileUtils::FuzzyMatch(const wxString& needle, const wxString& haystack)
+{
+    wxArrayString parts = ::wxStringTokenize(needle, " \t", wxTOKEN_STRTOK);
+    for(size_t i = 0; i < parts.size(); ++i) {
+        wxString pattern = parts.Item(i);
+        pattern = pattern.Lower();
+        wxString lchaystack = haystack.Lower();
+        if(!lchaystack.Contains(pattern)) {
+            return false;
+        }
+    }
+    return true;
+}

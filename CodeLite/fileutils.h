@@ -81,6 +81,13 @@ public:
     static bool WildMatch(const wxString& mask, const wxFileName& filename);
     
     /**
+     * @brief return true if needle exists in the haystack. Supports fuzzy search
+     * @param needle the pattern to search
+     * @param haystack the string to search on
+     */
+    static bool FuzzyMatch(const wxString& needle, const wxString& haystack);
+    
+    /**
      * @brief decode URI using percent encoding
      */
     static wxString DecodeURI(const wxString& uri);

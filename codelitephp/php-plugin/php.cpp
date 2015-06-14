@@ -872,7 +872,7 @@ void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
     event.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
         PHPWorkspace::Get()->SyncWithFileSystem();
-        m_workspaceView->ReloadWorkspace(true);
+        m_workspaceView->LoadWorkspace();
     }
 }
 

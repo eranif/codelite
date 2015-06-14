@@ -33,7 +33,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
-    
+
     m_defaultView = new clTreeCtrlPanelDefaultPage(this);
     GetSizer()->Add(m_defaultView, 1, wxEXPAND);
     GetTreeCtrl()->Hide();
@@ -265,7 +265,7 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
 
     // Append the dummy item
     GetTreeCtrl()->AppendItem(itemFolder, "Dummy", -1, -1, new clTreeCtrlData(clTreeCtrlData::kDummy));
-    
+
     // Pin this folder
     if(GetConfig() && IsTopLevelFolder(itemFolder)) {
         wxArrayString pinnedFolders;
@@ -301,10 +301,14 @@ TreeItemInfo clTreeCtrlPanel::GetSelectedItemInfo()
 
 void clTreeCtrlPanel::OnCloseFolder(wxCommandEvent& event)
 {
-    wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
-    CHECK_ITEM_RET(item);
-    if(!IsTopLevelFolder(item)) return;
-    DoCloseFolder(item);
+    wxArrayString paths, files;
+    wxArrayTreeItemIds items, fileItems;
+    GetSelections(paths, items, files, fileItems);
+    
+    if(items.IsEmpty()) return;
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        DoCloseFolder(items.Item(i));
+    }
 }
 
 bool clTreeCtrlPanel::IsTopLevelFolder(const wxTreeItemId& item)
@@ -667,7 +671,7 @@ void clTreeCtrlPanel::DoCloseFolder(const wxTreeItemId& item)
     }
     // Now, delete the item
     GetTreeCtrl()->Delete(item);
-    
+
     ToggleView();
 }
 
@@ -676,7 +680,7 @@ void clTreeCtrlPanel::ToggleView()
     wxArrayString paths;
     wxArrayTreeItemIds items;
     GetTopLevelFolders(paths, items);
-    
+
     if(paths.IsEmpty()) {
         GetTreeCtrl()->Hide();
         m_defaultView->Show();

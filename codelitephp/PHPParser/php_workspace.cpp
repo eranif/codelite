@@ -18,6 +18,7 @@
 #include "cl_command_event.h"
 #include "php_strings.h"
 #include "php_configuration_data.h"
+#include "clWorkspaceManager.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -154,9 +155,14 @@ bool PHPWorkspace::Open(const wxString& filename, bool createIfMissing)
 
     // Perform a quick re-parse of the workspace
     ParseWorkspace(false);
+    
+    // set this workspace as the active one
+    clWorkspaceManager::Get().SetWorkspace(this);
+    
+    // and finally, request codelite to keep this workspace in the recently opened workspace list
+    clGetManager()->AddWorkspaceToRecentlyUsedList(GetFilename());
 
     CallAfter(&PHPWorkspace::RestoreWorkspaceSession);
-
     // Change the workspace extension
     return true;
 }

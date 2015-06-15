@@ -392,9 +392,6 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
         return;
     }
 
-    // set this workspace as the active one
-    clWorkspaceManager::Get().SetWorkspace(PHPWorkspace::Get());
-
     // Keep the old clang state before we disable it
     const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
     m_clangOldFlag = (options.GetClangOptions() & CC_CLANG_ENABLED);
@@ -404,9 +401,6 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing)
 
     // Select the 'PHP' tab
     m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
-
-    // and finally, request codelite to keep this workspace in the recently opened workspace list
-    m_mgr->AddWorkspaceToRecentlyUsedList(filename);
 }
 
 void PhpPlugin::OnOpenResource(wxCommandEvent& e)

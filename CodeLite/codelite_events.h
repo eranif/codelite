@@ -381,16 +381,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_OPEN_RESOURCE, wxCommandEvent
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_EDITOR_CONTEXT_MENU, wxCommandEvent);
 
 // Event type: clCommandEvent
-// The Find In Files dialog requests an additional file mask
-// the format should be:
-// *.a;*.b
-// and should be placed at:
-// event.GetStrings().Add("*.a;*.b");
-// In order to set the mask that will be used (there can be multiple entries), use
-// event.SetString("*.mask");
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEvent);
-
-// Event type: clCommandEvent
 // Sent by the Find IN Files dialog when the dialog is dismissed
 // The information passed in the event contains the selected 'file mask'
 // used for the search. Use event.GetString() to get it

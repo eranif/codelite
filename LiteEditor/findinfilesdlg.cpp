@@ -35,6 +35,7 @@
 #include "replaceinfilespanel.h"
 #include "windowattrmanager.h"
 #include <algorithm>
+#include "clWorkspaceManager.h"
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     : FindInFilesDialogBase(parent, wxID_ANY)
@@ -51,14 +52,23 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     }
 
     // add the default search paths
-    if(choices.Index(wxGetTranslation(SEARCH_IN_WORKSPACE)) == wxNOT_FOUND)
-        choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
+    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        if(choices.Index(wxGetTranslation(SEARCH_IN_WORKSPACE)) == wxNOT_FOUND)
+            choices.Add(wxGetTranslation(SEARCH_IN_WORKSPACE));
 
-    if(choices.Index(wxGetTranslation(SEARCH_IN_PROJECT)) == wxNOT_FOUND)
-        choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
+        if(clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported()) {
+            if(choices.Index(wxGetTranslation(SEARCH_IN_PROJECT)) == wxNOT_FOUND)
+                choices.Add(wxGetTranslation(SEARCH_IN_PROJECT));
 
-    if(choices.Index(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) == wxNOT_FOUND)
-        choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+            if(choices.Index(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)) == wxNOT_FOUND)
+                choices.Add(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+        }
+    } else {
+        // No workspace is opened, remove the Workspace/Project related entries
+        choices.Remove(wxGetTranslation(SEARCH_IN_WORKSPACE));
+        choices.Remove(wxGetTranslation(SEARCH_IN_PROJECT));
+        choices.Remove(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+    }
 
     if(choices.Index(wxGetTranslation(SEARCH_IN_CURRENT_FILE)) == wxNOT_FOUND)
         choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
@@ -117,7 +127,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
 
     GetSizer()->Fit(this);
     CentreOnParent();
-    
+
     SetName("FindInFilesDialog");
     WindowAttrManager::Load(this);
 }
@@ -149,22 +159,15 @@ FindInFilesDialog::~FindInFilesDialog()
     event.SetEventObject(this);
     event.SetString(m_data.GetSelectedMask());
     EventNotifier::Get()->AddPendingEvent(event);
-
-    
 }
 
 void FindInFilesDialog::SetRootDir(const wxString& rootDir) { m_dirPicker->SetPath(rootDir); }
 
 void FindInFilesDialog::DoSetFileMask()
 {
-    // First send an event to the plugins asking for an additional file mask
-    clCommandEvent getFileMaskEvent(wxEVT_CMD_GET_FIND_IN_FILES_MASK, GetId());
-    getFileMaskEvent.SetEventObject(this);
-    EventNotifier::Get()->ProcessEvent(getFileMaskEvent);
-
     // Get the output
     wxArrayString fileTypes = m_data.GetFileMask();
-    wxArrayString pluginsMask = getFileMaskEvent.GetStrings();
+    wxArrayString pluginsMask = clWorkspaceManager::Get().GetUnifiedFilesMask();
 
     // sort and merge arrays
     fileTypes.Sort();
@@ -182,10 +185,10 @@ void FindInFilesDialog::DoSetFileMask()
     if(!mergedArr.IsEmpty()) {
         m_fileTypes->Append(mergedArr);
 
-        // Let the plugins override the default selected mask
         wxString selectedMask = m_data.GetSelectedMask();
-        if(!getFileMaskEvent.GetString().IsEmpty()) {
-            selectedMask = getFileMaskEvent.GetString();
+        if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            // Let the active workspace set the find-in-files mask
+            selectedMask = clWorkspaceManager::Get().GetWorkspace()->GetFilesMask();
         }
 
         int where = m_fileTypes->FindString(selectedMask);

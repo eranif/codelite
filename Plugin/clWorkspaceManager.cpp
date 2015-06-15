@@ -37,3 +37,12 @@ wxArrayString clWorkspaceManager::GetAllWorkspaces() const
     });
     return all;
 }
+
+wxArrayString clWorkspaceManager::GetUnifiedFilesMask() const
+{
+    wxArrayString all;
+    std::for_each(m_workspaces.begin(), m_workspaces.end(), [&](IWorkspace* workspace) {
+        all.Add(workspace->GetFilesMask());
+    });
+    return all;
+}

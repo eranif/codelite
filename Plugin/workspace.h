@@ -50,12 +50,17 @@ class WXDLLIMPEXP_SDK clCxxWorkspace : public IWorkspace
 {
     friend class clCxxWorkspaceST;
     friend class CompileCommandsCreateor;
-
+    
+    
 public:
+    // IWorkspace API
+    virtual wxString GetFilesMask() const;
     virtual bool IsBuildSupported() const;
     virtual bool IsProjectSupported() const;
-    typedef std::map<wxString, ProjectPtr> ProjectMap_t;
 
+public:
+    typedef std::map<wxString, ProjectPtr> ProjectMap_t;
+    
 protected:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
@@ -71,7 +76,7 @@ public:
 
     /// Destructor
     virtual ~clCxxWorkspace();
-    
+
 private:
     void DoUpdateBuildMatrix();
 

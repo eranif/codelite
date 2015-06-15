@@ -57,6 +57,7 @@ protected:
     NodeJSWorkspace(); // default ctor is private
 
 public:
+    virtual wxString GetFilesMask() const;
     NodeJSWorkspace(bool dummy);
     virtual ~NodeJSWorkspace();
 

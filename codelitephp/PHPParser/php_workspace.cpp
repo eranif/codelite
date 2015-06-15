@@ -17,6 +17,7 @@
 #include <wx/progdlg.h>
 #include "cl_command_event.h"
 #include "php_strings.h"
+#include "php_configuration_data.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -617,3 +618,10 @@ bool PHPWorkspace::CanCreateProjectAtPath(const wxFileName& projectFileName, boo
 
 bool PHPWorkspace::IsBuildSupported() const { return false; }
 bool PHPWorkspace::IsProjectSupported() const { return true; }
+
+wxString PHPWorkspace::GetFilesMask() const
+{
+    // set the default find in files mask
+    PHPConfigurationData conf;
+    return conf.Load().GetFindInFilesMask();
+}

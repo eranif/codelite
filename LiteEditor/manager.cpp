@@ -212,8 +212,6 @@ Manager::Manager(void)
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(Manager::OnGetFindInFilesMask), NULL, this);
-    EventNotifier::Get()->Connect(
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
         
     // Add new workspace type
@@ -230,8 +228,6 @@ Manager::~Manager(void)
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(Manager::OnGetFindInFilesMask), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
     // stop background processes
@@ -3719,19 +3715,6 @@ void Manager::OnProjectRenamed(clCommandEvent& event)
     event.Skip();
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         ReloadWorkspace();
-    }
-}
-
-void Manager::OnGetFindInFilesMask(clCommandEvent& event)
-{
-    event.Skip();
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
-        wxString findInFilesMask;
-        LocalWorkspaceST::Get()->GetSearchInFilesMask(findInFilesMask,
-                                                      "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.xml");
-        if(!findInFilesMask.IsEmpty()) {
-            event.SetString(findInFilesMask);
-        }
     }
 }
 

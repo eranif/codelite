@@ -43,6 +43,7 @@
 #include "cl_command_event.h"
 #include <wx/thread.h>
 #include "codelite_events.h"
+#include "localworkspace.h"
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
@@ -1119,3 +1120,13 @@ void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newn
 
 bool clCxxWorkspace::IsBuildSupported() const { return true; }
 bool clCxxWorkspace::IsProjectSupported() const { return true; }
+
+wxString clCxxWorkspace::GetFilesMask() const
+{
+    wxString findInFilesMask = "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.ini;*.xml";
+    if(IsOpen()) {
+        LocalWorkspaceST::Get()->GetSearchInFilesMask(findInFilesMask,
+                                                      findInFilesMask);
+    }
+    return findInFilesMask;
+}

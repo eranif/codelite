@@ -130,8 +130,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_CMD_GET_ACTIVE_PROJECT_FILES, wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(PhpPlugin::OnGetFiFMask), NULL, this);
-    EventNotifier::Get()->Connect(
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
@@ -254,8 +252,6 @@ void PhpPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_GET_ACTIVE_PROJECT_FILES, wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_GET_FIND_IN_FILES_MASK, clCommandEventHandler(PhpPlugin::OnGetFiFMask), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -503,17 +499,6 @@ void PhpPlugin::OnNewProject(clNewProjectEvent& e)
         if(wiz.RunWizard(wiz.GetFirstPage())) {
             m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, wiz.GetCreateData());
         }
-    }
-}
-
-void PhpPlugin::OnGetFiFMask(clCommandEvent& e)
-{
-    // always skip this event so other plugins could modify it as well
-    e.Skip();
-    if(PHPWorkspace::Get()->IsOpen()) {
-        // set the default find in files mask
-        PHPConfigurationData conf;
-        e.SetString(conf.Load().GetFindInFilesMask());
     }
 }
 

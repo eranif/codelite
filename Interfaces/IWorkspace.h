@@ -44,6 +44,11 @@ public:
      * @brief is this workspace support the project concept?
      */
     virtual bool IsProjectSupported() const = 0;
+    
+    /**
+     * @brief return the file masking for this workspace
+     */
+    virtual wxString GetFilesMask() const = 0;
 };
 
 #endif // IWORKSPACE_H

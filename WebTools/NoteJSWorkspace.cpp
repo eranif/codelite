@@ -94,10 +94,10 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 void NodeJSWorkspace::Close()
 {
     if(!IsOpen()) return;
-    
+
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
-    
+
     Save();
     DoClear();
 
@@ -197,10 +197,10 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
     event.SetString(filename.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(event);
-    
+
     // and finally, request codelite to keep this workspace in the recently opened workspace list
     clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
-    
+
     // Load the workspace session (if any)
     CallAfter(&NodeJSWorkspace::RestoreSession);
     return true;
@@ -256,4 +256,9 @@ void NodeJSWorkspace::OnSaveSession(clCommandEvent& event)
         event.Skip(false);
         clGetManager()->StoreWorkspaceSession(m_filename);
     }
+}
+
+wxString NodeJSWorkspace::GetFilesMask() const
+{
+    return "*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;*.javascript";
 }

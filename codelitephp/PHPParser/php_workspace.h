@@ -42,9 +42,10 @@ protected:
     IManager* m_manager;
 
 public:
+    virtual wxString GetFilesMask() const;
     virtual bool IsBuildSupported() const;
     virtual bool IsProjectSupported() const;
-    
+
     static PHPWorkspace* Get();
     static void Release();
     void SetPluginManager(IManager* manager) { this->m_manager = manager; }

@@ -65,9 +65,18 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
         }
     } else {
         // No workspace is opened, remove the Workspace/Project related entries
-        choices.Remove(wxGetTranslation(SEARCH_IN_WORKSPACE));
-        choices.Remove(wxGetTranslation(SEARCH_IN_PROJECT));
-        choices.Remove(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+        int where = choices.Index(wxGetTranslation(SEARCH_IN_WORKSPACE));
+        if(where != wxNOT_FOUND) {
+            choices.RemoveAt(where);
+        }
+        where = choices.Index(wxGetTranslation(SEARCH_IN_PROJECT));
+        if(where != wxNOT_FOUND) {
+            choices.RemoveAt(where);
+        }
+        where = choices.Index(wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+        if(where != wxNOT_FOUND) {
+            choices.RemoveAt(where);
+        }
     }
 
     if(choices.Index(wxGetTranslation(SEARCH_IN_CURRENT_FILE)) == wxNOT_FOUND)

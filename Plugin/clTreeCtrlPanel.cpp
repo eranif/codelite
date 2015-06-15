@@ -527,7 +527,17 @@ bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
     while(!parts.IsEmpty()) {
         if(!d->GetIndex()) return false; // ??
         wxTreeItemId child = d->GetIndex()->Find(parts.Item(0));
-        if(!child.IsOk()) break;
+        if(!child.IsOk()) {
+            // Probably the this folder was not expanded just yet...
+            if(d->IsFolder()) {
+                DoExpandItem(closestItem, true);
+                // Try again
+                child = d->GetIndex()->Find(parts.Item(0));
+                if(!child.IsOk()) {
+                    return false;
+                }
+            }
+        }
         closestItem = child;
         d = GetItemData(closestItem);
         parts.RemoveAt(0);

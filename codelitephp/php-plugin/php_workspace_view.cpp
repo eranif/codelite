@@ -152,6 +152,13 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
             workspaceFileName = wxFileName(workspaceFile);
         }
 
+        if(!workspaceFileName.IsDirWritable()) {
+            wxString message;
+            message << _("Failed to create workspace '") << workspaceFileName.GetFullPath() << "'\n"
+                    << _("Permission denied.");
+            ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+            return;
+        }
         // Create an empty workspace
         if(!PHPWorkspace::Get()->Open(workspaceFileName.GetFullPath(), true)) {
             wxString message;

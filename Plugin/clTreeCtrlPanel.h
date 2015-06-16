@@ -98,6 +98,7 @@ protected:
     virtual void OnOpenContainingFolder(wxCommandEvent& event);
     virtual void OnOpenShellFolder(wxCommandEvent& event);
     virtual void OnFolderDropped(clCommandEvent& event);
+    virtual void OnRefresh(wxCommandEvent& event);
 
     // Helpers
     void DoExpandItem(const wxTreeItemId& parent, bool expand);

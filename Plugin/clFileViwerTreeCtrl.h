@@ -68,7 +68,7 @@ public:
     {
         this->m_path = path;
         if(IsFolder()) {
-            wxFileName fn(m_path);
+            wxFileName fn(m_path, "");
             if(fn.GetDirCount()) {
                 m_name = fn.GetDirs().Last();
             } else {

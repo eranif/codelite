@@ -272,6 +272,7 @@ class WXDLLIMPEXP_SDK SearchSummary : public wxObject
     int m_fileScanned;
     int m_matchesFound;
     int m_elapsed;
+    wxArrayString m_failedFiles;
 
 public:
     SearchSummary()
@@ -292,8 +293,12 @@ public:
         m_fileScanned = rhs.m_fileScanned;
         m_matchesFound = rhs.m_matchesFound;
         m_elapsed = rhs.m_elapsed;
+        m_failedFiles = rhs.m_failedFiles;
         return *this;
     }
+
+    const wxArrayString& GetFailedFiles() const { return m_failedFiles; }
+    wxArrayString& GetFailedFiles() { return m_failedFiles; }
 
     int GetNumFileScanned() const { return m_fileScanned; }
     int GetNumMatchesFound() const { return m_matchesFound; }
@@ -311,6 +316,13 @@ public:
         int msecs = m_elapsed % 1000;
 
         msg << _(", elapsed time: ") << secs << wxT(":") << msecs << _(" seconds") << wxT(" ======");
+        if(!m_failedFiles.IsEmpty()) {
+            msg << "\n";
+            msg << "====== " << _("Failed to open the following files for scan:") << "\n";
+            for(size_t i = 0; i < m_failedFiles.size(); ++i) {
+                msg << m_failedFiles.Item(i) << "\n";
+            }
+        }
         return msg;
     }
 };

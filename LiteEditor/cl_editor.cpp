@@ -1525,7 +1525,12 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
     int margin = 0;
     wxPoint pt(ScreenToClient(wxGetMousePosition()));
     wxRect clientRect = GetClientRect();
-
+    
+    // If the mouse is no longer over the editor, cancel the tooltip
+    if(!clientRect.Contains(pt)) {
+        return;
+    }
+    
     // Always cancel the previous tooltip...
     DoCancelCodeCompletionBox();
 

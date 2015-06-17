@@ -199,9 +199,12 @@ void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
 {
     CScopeConfData data;
+    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
+    // update the settings
     data.SetScanScope(m_stringManager.GetStringSelection());
     data.SetRebuildDbOption(m_checkBoxUpdateDb->IsChecked());
     data.SetBuildRevertedIndexOption(m_checkBoxRevertedIndex->IsChecked());
+    // store the object
     m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &data);
 }
 

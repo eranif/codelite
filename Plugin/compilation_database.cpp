@@ -36,7 +36,6 @@
 #include <wx/dir.h>
 #include <algorithm>
 #include "file_logger.h"
-#include "dirtraverser.h"
 
 const wxString DB_VERSION = "2.0";
 
@@ -274,19 +273,44 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
     wxFileName fn(databaseFile);
 
     // Usually it will be under the top folder
-    FileNameVector_t files;
-    if(fn.GetDirCount() == 0) return files;
-
     fn.RemoveLastDir();
 
-    DirTraverser traverser("compile_commands.json");
-    wxDir dir(fn.GetPath());
-    dir.Traverse(traverser);
-    const wxArrayString& someFiles = traverser.GetFiles();
+    // Since we can have multiple "compile_commands.json" files, we take the most updated file
+    // Prepare a list of files to check
+    FileNameVector_t files;
+    std::queue<std::pair<wxString, int> > dirs;
 
-    for(size_t i = 0; i < someFiles.size(); ++i) {
-        if(wxFileName(someFiles.Item(i)).GetFullName() == "compile_commands.json") {
-            files.push_back(someFiles.Item(i));
+    // we start with the current path
+    dirs.push(std::make_pair(fn.GetPath(), 0));
+
+    const int MAX_DEPTH = 2; // If no files were found, scan 2 levels only
+
+    while(!dirs.empty()) {
+        std::pair<wxString, int> curdir = dirs.front();
+        dirs.pop();
+        if(files.empty() && (curdir.second > MAX_DEPTH)) {
+            CL_DEBUG("Could not find compile_commands.json files while reaching depth 2, aborting");
+            break;
+        }
+
+        wxFileName fn(curdir.first, "compile_commands.json");
+        if(fn.Exists()) {
+            CL_DEBUGS("CompilationDatabase: found file: " + fn.GetFullPath());
+            files.push_back(fn);
+        }
+
+        // Check to see if there are more directories to recurse
+        wxDir dir;
+        if(dir.Open(curdir.first)) {
+            wxString dirname;
+            bool cont = dir.GetFirst(&dirname, "", wxDIR_DIRS);
+            while(cont) {
+                wxString new_dir;
+                new_dir << curdir.first << wxFileName::GetPathSeparator() << dirname;
+                dirs.push(std::make_pair(new_dir, curdir.second + 1));
+                dirname.Clear();
+                cont = dir.GetNext(&dirname);
+            }
         }
     }
     return files;

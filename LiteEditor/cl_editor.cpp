@@ -80,13 +80,13 @@
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
 #undef EVT_STC_CALLTIP_CLICK
-#define EVT_STC_CALLTIP_CLICK(id, fn)                                            \
-    DECLARE_EVENT_TABLE_ENTRY(wxEVT_STC_CALLTIP_CLICK,                           \
-                              id,                                                \
-                              wxID_ANY,                                          \
-                              (wxObjectEventFunction)(wxEventFunction)           \
-                              wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
-                              (wxObject*)NULL),
+#define EVT_STC_CALLTIP_CLICK(id, fn)                                                              \
+    DECLARE_EVENT_TABLE_ENTRY(                                                                     \
+        wxEVT_STC_CALLTIP_CLICK,                                                                   \
+        id,                                                                                        \
+        wxID_ANY,                                                                                  \
+        (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxStyledTextEventFunction, &fn), \
+        (wxObject*)NULL),
 #endif
 
 #define NUMBER_MARGIN_ID 0
@@ -2954,16 +2954,26 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
     }
 
     // let the context process it as well
-    if(GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE) {
-        GetFunctionTip()->Deactivate();
-        escapeUsed = true;
-    }
+    if(event.GetKeyCode() == WXK_ESCAPE) {
+        
+        if(GetFunctionTip()->IsActive()) {
+            GetFunctionTip()->Deactivate();
+            escapeUsed = true;
+        }
 
-    // If we've not already used ESC, there's a reasonable chance that the user wants to close the QuickFind bar
-    if(event.GetKeyCode() == WXK_ESCAPE && !escapeUsed) {
-        clMainFrame::Get()->GetMainBook()->ShowQuickBar(
-            false); // There's no easy way to tell if it's actually showing, so just do a Close
+        // If we've not already used ESC, there's a reasonable chance that the user wants to close the QuickFind bar
+        if(!escapeUsed) {
+            clMainFrame::Get()->GetMainBook()->ShowQuickBar(
+                false); // There's no easy way to tell if it's actually showing, so just do a Close
+            
+            // In addition, if we have multiple selections, de-select them
+            if(GetSelections()) {
+                clEditorStateLocker editor(this);
+                ClearSelections();
+            }
+        }
     }
+    
     m_context->OnKeyDown(event);
 }
 
@@ -3055,7 +3065,7 @@ void LEditor::OnLeftDown(wxMouseEvent& event)
         SetCaretAt(PositionFromPointClose(event.GetX(), event.GetY()));
     }
     SetActive();
-    
+
     // Clear any messages from the status bar
     clGetManager()->GetStatusBar()->SetMessage("");
     event.Skip();
@@ -3186,8 +3196,9 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
-           GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()
+            ->GetBreakpointsMgr()
+            ->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -4978,7 +4989,7 @@ void LEditor::QuickAddNext()
         AddSelection(where, where + findWhat.length());
         CenterLineIfNeeded(LineFromPos(where));
     }
-    
+
     wxString message;
     message << _("Found and selected ") << GetSelections() << _(" matches");
     clGetManager()->GetStatusBar()->SetMessage(message);
@@ -4992,7 +5003,7 @@ void LEditor::QuickFindAll()
     int end = GetSelectionEnd();
     wxString findWhat = GetTextRange(start, end);
     if(findWhat.IsEmpty()) return;
-    
+
     ClearSelections();
 
     int matches(0);
@@ -5039,8 +5050,7 @@ void LEditor::CenterLineIfNeeded(int line, bool force)
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------
-struct SelectorSorter
-{
+struct SelectorSorter {
     bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 

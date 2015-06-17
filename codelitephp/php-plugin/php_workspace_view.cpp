@@ -1371,6 +1371,10 @@ void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
     wxWindowUpdateLocker locker(m_treeCtrlView);
     wxTreeItemId root = m_treeCtrlView->GetRootItem();
     DoCollapseItem(root);
+    if(m_treeCtrlView->ItemHasChildren(root)) {
+        m_treeCtrlView->Expand(root);
+        m_treeCtrlView->Collapse(root);
+    }
 }
 
 void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }

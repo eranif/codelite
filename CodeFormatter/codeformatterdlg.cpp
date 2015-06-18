@@ -105,7 +105,7 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
 
 void CodeFormatterDlg::InitDialog()
 {
-    LexerConf::Ptr_t text = ColoursAndFontsManager::Get().GetLexerForFile("a.txt");
+    LexerConf::Ptr_t text = ColoursAndFontsManager::Get().GetLexer("text");
     if(text) {
         text->Apply(m_stc);
         text->Apply(m_stcFixerPreview);

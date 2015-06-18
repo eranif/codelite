@@ -129,7 +129,8 @@ bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, 
 
 bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv)
 {
-    wxFFile file(fn.GetFullPath().GetData(), wxT("rb"));
+    wxString filename = fn.GetFullPath();
+    wxFFile file(filename, wxT("rb"));
     if(file.IsOpened() == false) {
         // Nothing to be done
         return false;

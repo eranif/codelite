@@ -40,6 +40,10 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
     IManager* m_mgr;
 
 protected:
+    virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event);
+    virtual void OnPHPCSFixerOptionsUpdated(wxStyledTextEvent& event);
+    virtual void OnPharFileSelected(wxFileDirPickerEvent& event);
+    virtual void OnPhpFileSelected(wxFileDirPickerEvent& event);
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event);
     virtual void OnFormatOnSave(wxCommandEvent& event);
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event);

@@ -1911,7 +1911,9 @@ void ContextCpp::DoFormatEditor(LEditor* editor)
     clSourceFormatEvent formatEvent(wxEVT_FORMAT_STRING);
     formatEvent.SetInputString(editor->GetText());
     EventNotifier::Get()->ProcessEvent(formatEvent);
-    editor->SetText(formatEvent.GetFormattedString());
+    if(!formatEvent.GetFormattedString().IsEmpty()) {
+        editor->SetText(formatEvent.GetFormattedString());
+    }
 }
 
 void ContextCpp::OnFileSaved()

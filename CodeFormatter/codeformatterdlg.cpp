@@ -33,6 +33,7 @@
 #include <wx/menu.h>
 #include "clSTCLineKeeper.h"
 #include "fileextmanager.h"
+#include "ColoursAndFontsManager.h"
 
 static const wxString PHPSample = "<?php\n"
                                   "namespace MySpace;\n"
@@ -73,7 +74,7 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrAstyle->GetGrid());
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrClang->GetGrid());
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrPhp->GetGrid());
-    
+
     // center the dialog
     Centre();
 
@@ -82,12 +83,12 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     GetSizer()->Fit(this);
     InitDialog();
     UpdatePreview();
-    
-    // Clear the modified status 
+
+    // Clear the modified status
     m_pgMgrPhp->GetGrid()->ClearModifiedStatus();
     m_pgMgrAstyle->GetGrid()->ClearModifiedStatus();
     m_pgMgrClang->GetGrid()->ClearModifiedStatus();
-    
+
     // set the selection based on the editor
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {
@@ -97,15 +98,21 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent,
     } else {
         m_treebook->SetSelection(0);
     }
-    
+
     SetName("CodeFormatterDlg");
     WindowAttrManager::Load(this);
 }
 
 void CodeFormatterDlg::InitDialog()
 {
-    long formatOptions = m_options.GetOptions() & AS_ALL_FORMAT_OPTIONS;
-    long indentOptions = m_options.GetOptions() & AS_ALL_INDENT_OPTIONS;
+    LexerConf::Ptr_t text = ColoursAndFontsManager::Get().GetLexerForFile("a.txt");
+    if(text) {
+        text->Apply(m_stc);
+        text->Apply(m_stcFixerPreview);
+    }
+    
+    long formatOptions = (m_options.GetOptions() & AS_ALL_FORMAT_OPTIONS);
+    long indentOptions = (m_options.GetOptions() & AS_ALL_INDENT_OPTIONS);
     m_pgPropIndentation->SetValue(indentOptions);
     m_pgPropFormatting->SetValue(formatOptions);
 
@@ -148,6 +155,7 @@ void CodeFormatterDlg::InitDialog()
 
     // Select the proper engine
     m_choiceCxxEngine->SetSelection((int)m_options.GetEngine());
+    m_choicePhpFormatter->SetSelection((int)m_options.GetPhpEngine());
 
     //------------------------------------------------------------------
     // Clang options
@@ -175,6 +183,10 @@ void CodeFormatterDlg::InitDialog()
     // PHP flags
     m_pgPropPhpFormatterOptions->SetValue((int)m_options.GetPHPFormatterOptions());
 
+    m_filePickerPHPCsFixerPhar->SetPath(m_options.GetPHPCSFixerPhar());
+    m_filePickerPhpExec->SetPath(m_options.GetPhpExecutable());
+    m_stc->SetText(m_options.GetPHPCSFixerPharOptions());
+
     // General Options
     m_checkBoxFormatOnSave->SetValue(m_options.HasFlag(kCF_AutoFormatOnFileSave));
 
@@ -190,16 +202,19 @@ void CodeFormatterDlg::OnOK(wxCommandEvent& e)
 
 #define ID_ASTYLE_HELP 1309
 #define ID_CLANG_FORMAST_HELP 1310
+#define ID_PHP_FORMAST_HELP 1311
 
 void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     static wxString astyleHelpUrl(wxT("http://astyle.sourceforge.net/astyle.html"));
     static wxString clangFormatHelpUrl(wxT("http://clang.llvm.org/docs/ClangFormatStyleOptions.html"));
+    static wxString phpFormatHelpUrl(wxT("https://github.com/FriendsOfPHP/PHP-CS-Fixer"));
 
     wxMenu menu;
     menu.Append(ID_ASTYLE_HELP, _("AStyle help page"));
     menu.Append(ID_CLANG_FORMAST_HELP, _("clang-format help page"));
+    menu.Append(ID_PHP_FORMAST_HELP, _("PHP-CS-Fixer help page"));
 
     wxRect size = m_buttonHelp->GetSize();
     wxPoint menuPos(0, size.GetHeight());
@@ -210,6 +225,9 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 
     } else if(res == ID_CLANG_FORMAST_HELP) {
         ::wxLaunchDefaultBrowser(clangFormatHelpUrl);
+
+    } else if(res == ID_PHP_FORMAST_HELP) {
+        ::wxLaunchDefaultBrowser(phpFormatHelpUrl);
     }
 }
 
@@ -244,12 +262,16 @@ void CodeFormatterDlg::UpdatePreview()
         m_stcPhpPreview->SetText(output);
         m_stcPhpPreview->SetEditable(false);
     }
+    
+    {
+        // Update the preview command
+        m_stcFixerPreview->SetEditable(true);
+        m_stcFixerPreview->SetText(m_options.GetPhpFixerCommand());
+        m_stcFixerPreview->SetEditable(false);
+    }
 }
 
-CodeFormatterDlg::~CodeFormatterDlg()
-{
-    
-}
+CodeFormatterDlg::~CodeFormatterDlg() {}
 
 void CodeFormatterDlg::OnApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isDirty); }
 
@@ -341,4 +363,31 @@ void CodeFormatterDlg::OnFormatOnSave(wxCommandEvent& event)
 {
     m_isDirty = true;
     m_options.SetFlag(kCF_AutoFormatOnFileSave, event.IsChecked());
+}
+void CodeFormatterDlg::OnPHPCSFixerOptionsUpdated(wxStyledTextEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetPHPCSFixerPharOptions(m_stc->GetText());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
+    event.Skip();
+}
+void CodeFormatterDlg::OnPharFileSelected(wxFileDirPickerEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetPath());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
+    event.Skip();
+}
+void CodeFormatterDlg::OnPhpFileSelected(wxFileDirPickerEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetPhpExecutable(m_filePickerPhpExec->GetPath());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
+    event.Skip();
+}
+void CodeFormatterDlg::OnChoicephpformatterChoiceSelected(wxCommandEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetPhpEngine((PHPFormatterEngine)event.GetSelection());
+    CallAfter(&CodeFormatterDlg::UpdatePreview);
 }

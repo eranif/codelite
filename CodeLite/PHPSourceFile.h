@@ -166,8 +166,14 @@ protected:
 public:
     PHPSourceFile(const wxFileName& filename);
     PHPSourceFile(const wxString& content);
+    
     virtual ~PHPSourceFile();
-
+    
+    /**
+     * @brief check if we are inside a PHP block at the end of the given buffer
+     */
+    static bool IsInPHPSection(const wxString& buffer);
+    
     /**
      * @brief return list of aliases (their short name) that appears on this file
      */

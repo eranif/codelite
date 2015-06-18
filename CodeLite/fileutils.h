@@ -28,9 +28,30 @@
 #include "wx/filename.h"
 #include "codelite_exports.h"
 #include <wx/filename.h>
+#include <wx/log.h>
 
 class WXDLLIMPEXP_CL FileUtils
 {
+public:
+    class Deleter
+    {
+        wxFileName m_filename;
+
+    public:
+        Deleter(const wxFileName& filename)
+            : m_filename(filename)
+        {
+        }
+
+        ~Deleter()
+        {
+            if(m_filename.Exists()) {
+                wxLogNull noLog;
+                ::wxRemoveFile(m_filename.GetFullPath());
+            }
+        }
+    };
+
 public:
     static bool ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv = wxConvUTF8);
 
@@ -70,7 +91,7 @@ public:
      * @param [output] tty the TTY of the launched terminal
      */
     static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid);
-    
+
     /**
      * @brief file masking search
      */
@@ -79,19 +100,19 @@ public:
      * @brief file masking search
      */
     static bool WildMatch(const wxString& mask, const wxFileName& filename);
-    
+
     /**
      * @brief return true if needle exists in the haystack. Supports fuzzy search
      * @param needle the pattern to search
      * @param haystack the string to search on
      */
     static bool FuzzyMatch(const wxString& needle, const wxString& haystack);
-    
+
     /**
      * @brief decode URI using percent encoding
      */
     static wxString DecodeURI(const wxString& uri);
-    
+
     /**
      * @brief encode URI using percent encoding
      */

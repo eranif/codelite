@@ -26,10 +26,12 @@
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
 #include "PHPFormatterBuffer.h"
+#include "globals.h"
 
 FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kFormatEngineClangFormat)
+    , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
                            kSpaceBeforeAssignmentOperators |
                            kAlignEscapedNewlinesLeft)
@@ -55,12 +57,20 @@ void FormatOptions::DeSerialize(Archive& arch)
     int engine = kFormatEngineClangFormat;
     arch.Read("m_engine", engine);
     m_engine = static_cast<FormatterEngine>(engine);
+
+    engine = kPhpFormatEngineBuiltin;
+    arch.Read("m_phpEngine", engine);
+    m_phpEngine = static_cast<PHPFormatterEngine>(engine);
+
     arch.Read("m_clangFormatOptions", m_clangFormatOptions);
     arch.Read("m_clangFormatExe", m_clangFormatExe);
     arch.Read("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Read("m_clangColumnLimit", m_clangColumnLimit);
     arch.Read("m_phpFormatOptions", m_phpFormatOptions);
     arch.Read("m_generalFlags", m_generalFlags);
+    arch.Read("m_phpExecutable", m_phpExecutable);
+    arch.Read("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
+    arch.Read("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
 }
 
 void FormatOptions::Serialize(Archive& arch)
@@ -68,12 +78,16 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write(wxT("m_options"), m_astyleOptions);
     arch.Write(wxT("m_customFlags"), m_customFlags);
     arch.Write("m_engine", static_cast<int>(m_engine));
+    arch.Write("m_phpEngine", static_cast<int>(m_phpEngine));
     arch.Write("m_clangFormatOptions", m_clangFormatOptions);
     arch.Write("m_clangFormatExe", m_clangFormatExe);
     arch.Write("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);
     arch.Write("m_clangColumnLimit", m_clangColumnLimit);
     arch.Write("m_phpFormatOptions", m_phpFormatOptions);
     arch.Write("m_generalFlags", m_generalFlags);
+    arch.Write("m_phpExecutable", m_phpExecutable);
+    arch.Write("m_PHPCSFixerPhar", m_PHPCSFixerPhar);
+    arch.Write("m_PHPCSFixerPharOptions", m_PHPCSFixerPharOptions);
 }
 
 wxString FormatOptions::AstyleOptionsAsString() const
@@ -274,4 +288,19 @@ wxString FormatOptions::ClangGlobalSettings() const
     options << ", IndentWidth: " << indentWidth;
     options << ", UseTab: " << (useTabs ? "ForIndentation" : "Never");
     return options;
+}
+
+wxString FormatOptions::GetPhpFixerCommand() const
+{
+    wxString command, phar, php, options;
+    php << GetPhpExecutable();
+    ::WrapWithQuotes(php);
+    
+    phar << GetPHPCSFixerPhar();
+    ::WrapWithQuotes(phar);
+    
+    options << GetPHPCSFixerPharOptions();
+    options.Trim().Trim(false);
+    command << php << " " << phar << " fix " << options;
+    return command;
 }

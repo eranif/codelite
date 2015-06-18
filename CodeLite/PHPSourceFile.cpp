@@ -52,6 +52,23 @@ PHPSourceFile::~PHPSourceFile()
     }
 }
 
+bool PHPSourceFile::IsInPHPSection(const wxString& buffer)
+{
+    PHPScanner_t scanner = ::phpLexerNew(buffer);
+    if(!scanner) return false;
+    phpLexerToken tok;
+    bool inPhp = false;
+    while(::phpLexerNext(scanner, tok)) {
+        if(::phpLexerIsPHPCode(scanner)) {
+            inPhp = true;
+        } else {
+            inPhp = false;
+        }
+    }
+    ::phpLexerDestroy(&scanner);
+    return inPhp;
+}
+
 void PHPSourceFile::Parse(int exitDepth)
 {
     int retDepth = exitDepth;

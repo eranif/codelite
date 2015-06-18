@@ -13,6 +13,7 @@
 #include "json_node.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "PHPSourceFile.h"
 
 bool IsPHPCommentOrString(int styleAtPos)
 {
@@ -38,9 +39,9 @@ bool IsPHPFile(IEditor* editor)
     if(!editor) {
         return false;
     }
-    int style = editor->GetStyleAtPos(editor->GetCurrentPosition());
-    return (style >= wxSTC_HPHP_DEFAULT && style <= wxSTC_HPHP_OPERATOR) &&
-           ::IsPHPFileByExt(editor->GetFileName().GetFullPath());
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
+    return ::IsPHPFileByExt(editor->GetFileName().GetFullPath()) && PHPSourceFile::IsInPHPSection(buffer);
 }
 
 bool IsPHPFileByExt(const wxString& filename)
@@ -126,10 +127,7 @@ wxString URIToFileName(const wxString& uriFileName)
     return wxFileName(filename).GetFullPath();
 }
 
-static wxString URIEncode(const wxString& inputStr)
-{
-    return FileUtils::EncodeURI(inputStr);
-}
+static wxString URIEncode(const wxString& inputStr) { return FileUtils::EncodeURI(inputStr); }
 
 wxString FileNameToURI(const wxString& filename)
 {
@@ -152,10 +150,7 @@ wxString Base64Encode(const wxString& str)
     return encodedString;
 }
 
-static void DecodeFileName(wxString& filename)
-{
-    filename = FileUtils::DecodeURI(filename);
-}
+static void DecodeFileName(wxString& filename) { filename = FileUtils::DecodeURI(filename); }
 
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
 {

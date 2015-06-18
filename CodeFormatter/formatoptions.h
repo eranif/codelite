@@ -82,6 +82,11 @@ enum FormatterEngine {
     kFormatEngineClangFormat,
 };
 
+enum PHPFormatterEngine {
+    kPhpFormatEngineBuiltin,
+    kPhpFormatEnginePhpCsFixer,
+};
+
 enum ClangFormatStyle {
     kClangFormatLLVM = (1 << 0),
     kClangFormatGoogle = (1 << 1),
@@ -129,10 +134,14 @@ class FormatOptions : public SerializedObject
     size_t m_clangBreakBeforeBrace;
     wxString m_customFlags;
     FormatterEngine m_engine;
+    PHPFormatterEngine m_phpEngine;
     wxString m_clangFormatExe;
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
     size_t m_phpFormatOptions;
     size_t m_generalFlags;
+    wxString m_phpExecutable;
+    wxString m_PHPCSFixerPhar;
+    wxString m_PHPCSFixerPharOptions;
 
 private:
     wxString ClangFlagToBool(ClangFormatStyle flag) const;
@@ -176,6 +185,18 @@ public:
     size_t SetPHPFormatterOptions(size_t options) { m_phpFormatOptions = options; }
     bool HasFlag(eCF_GeneralOptions flag) const { return m_generalFlags & flag; }
     void SetFlag(eCF_GeneralOptions flag, bool b) { b ? m_generalFlags |= flag : m_generalFlags &= ~flag; }
+    void SetPHPCSFixerPhar(const wxString& PHPCSFixerPhar) { this->m_PHPCSFixerPhar = PHPCSFixerPhar; }
+    void SetPHPCSFixerPharOptions(const wxString& PHPCSFixerPharOptions)
+    {
+        this->m_PHPCSFixerPharOptions = PHPCSFixerPharOptions;
+    }
+    void SetPhpEngine(const PHPFormatterEngine& phpEngine) { this->m_phpEngine = phpEngine; }
+    void SetPhpExecutable(const wxString& phpExecutable) { this->m_phpExecutable = phpExecutable; }
+    const wxString& GetPHPCSFixerPhar() const { return m_PHPCSFixerPhar; }
+    const wxString& GetPHPCSFixerPharOptions() const { return m_PHPCSFixerPharOptions; }
+    const PHPFormatterEngine& GetPhpEngine() const { return m_phpEngine; }
+    const wxString& GetPhpExecutable() const { return m_phpExecutable; }
+    wxString GetPhpFixerCommand() const;
 };
 
 #endif // FORMATOPTIONS_H

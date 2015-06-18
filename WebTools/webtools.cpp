@@ -14,6 +14,8 @@
 #include <wx/dirdlg.h>
 #include "tags_options_data.h"
 #include "ctags_manager.h"
+#include "PhpLexerAPI.h"
+#include "PHPSourceFile.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -318,11 +320,11 @@ bool WebTools::IsHTMLFile(IEditor* editor)
 
     // We should also support Code Completion when inside a mixed PHP and HTML file
     if(FileExtManager::IsPHPFile(editor->GetFileName())) {
+        
+        // Check to see if we are inside a PHP section or not
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
-        int styleAtCurPos = ctrl->GetStyleAt(ctrl->GetCurrentPos());
-        if(styleAtCurPos >= wxSTC_H_DEFAULT && styleAtCurPos <= wxSTC_H_ENTITY) {
-            return true;
-        }
+        wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
+        return !PHPSourceFile::IsInPHPSection(buffer);
     }
     return false;
 }

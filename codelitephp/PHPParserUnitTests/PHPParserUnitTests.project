@@ -52,7 +52,6 @@
     <File Name="tester.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Tests">
-    <File Name="Tests/Mage.php"/>
     <File Name="Tests/test_this_operator.php"/>
     <File Name="Tests/test_class_extends.php"/>
     <File Name="Tests/test_use_alias_operator.php"/>

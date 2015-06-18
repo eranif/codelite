@@ -4989,7 +4989,7 @@ void LEditor::QuickAddNext()
     }
 
     wxString findWhat = GetTextRange(start, end);
-    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
     if(where != wxNOT_FOUND) {
         AddSelection(where, where + findWhat.length());
         CenterLineIfNeeded(LineFromPos(where));
@@ -5013,7 +5013,7 @@ void LEditor::QuickFindAll()
 
     int matches(0);
     int firstMatch(wxNOT_FOUND);
-    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
     while(where != wxNOT_FOUND) {
         if(matches == 0) {
             firstMatch = where;

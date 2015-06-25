@@ -1012,7 +1012,11 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     }
 
     if(m_info.catchThrow) {
+#ifdef __WXMSW__
+        WriteCommand("-break-insert -f __cxa_throw", NULL);
+#else
         ExecuteCmd(wxT("catch throw"));
+#endif
     }
 
 #ifdef __WXMSW__

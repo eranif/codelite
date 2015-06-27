@@ -56,7 +56,8 @@ protected:
     void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false);
     void DoPlaceMenuBar(wxMenuBar* menuBar);
     void DoEnsureXDebugPanesVisible(const wxString& selectWindow = "");
-
+    void DoSyncFileWithRemote(const wxFileName& localFile);
+    
 public:
     //--------------------------------------------
     // Abstract methods
@@ -106,6 +107,8 @@ public:
     void OnDebugEnded(XDebugEvent& e);
     void OnFileSysetmUpdated(clFileSystemEvent& event);
     void OnSaveSession(clCommandEvent& event);
+    void OnReplaceInFiles(clFileSystemEvent &e);
+    
 };
 
 #endif // PHP

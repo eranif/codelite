@@ -41,6 +41,7 @@
 #include "globals.h"
 #include "clWorkspaceView.h"
 #include "clWorkspaceManager.h"
+#include "clSFTPEvent.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -549,16 +550,15 @@ void PhpPlugin::OnFileSaved(clCommandEvent& e)
 
             fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
             fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
+            
             wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
             wxString localFile = e.GetString();
-
-            JSONRoot root(cJSON_Object);
-            root.toElement().addProperty("account", settings.GetAccount());
-            root.toElement().addProperty("local_file", localFile);
-            root.toElement().addProperty("remote_file", remoteFile);
-
-            clCommandEvent eventSave(XRCID("wxEVT_SFTP_SAVE_FILE"));
-            eventSave.SetString(root.toElement().format());
+            
+            // Fire this event, if the sftp plugin is ON, it will handle it
+            clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
+            eventSave.SetAccount(settings.GetAccount());
+            eventSave.SetLocalFile(localFile);
+            eventSave.SetRemoteFile(remoteFile);
             EventNotifier::Get()->AddPendingEvent(eventSave);
         }
     }

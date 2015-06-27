@@ -679,6 +679,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_INITIALIZING, clCommandEve
 // after git pull, svn update etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SYSTEM_UPDATED, clFileSystemEvent);
 
+// Event: clFileSystemEvent
+// List of files were modified by the replace-in-files operation (this event will only include
+// the files that were modified on the file system directly and have no open editor)
+// Use clFileSystemEvent::GetStrings to get list of modified files
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, clFileSystemEvent);
+
 // Event: clCommandEvent
 // Sent when CodeLite requires to store the current workspace session
 // Call event.Skip(false) to instruct codelite to skip the default session-save

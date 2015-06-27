@@ -32,6 +32,8 @@
 #include "cl_editor.h"
 #include "manager.h"
 #include "replaceinfilespanel.h"
+#include "clFileSystemEvent.h"
+#include "event_notifier.h"
 
 BEGIN_EVENT_TABLE(ReplaceInFilesPanel, FindResultsTab)
 EVT_BUTTON(XRCID("unmark_all"), ReplaceInFilesPanel::OnUnmarkAll)
@@ -170,6 +172,12 @@ void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci,
             wxLogMessage(wxT("Replace: Failed to write file ") + begin->second.GetFileName());
             ok = false;
         }
+        
+        if(sci && ok) {
+            // Keep the modified file name
+            m_filesModified.Add(begin->second.GetFileName());
+        }
+        
         delete sci;
     }
     for(; begin != end; begin++) {
@@ -204,6 +212,7 @@ wxStyledTextCtrl* ReplaceInFilesPanel::DoGetEditor(const wxString& fileName)
 
 void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 {
+    m_filesModified.clear();
     // FIX bug#2770561
     int lineNumber(0);
     LEditor* activeEditor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
@@ -361,11 +370,12 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         filesToSave.push_back(std::make_pair(wxFileName(*i), true));
     }
     if(!filesToSave.empty() &&
-       clMainFrame::Get()->GetMainBook()->UserSelectFiles(
-           filesToSave,
-           _("Save Modified Files"),
-           _("Some files are modified.\nChoose the files you would like to save."),
-           true)) {
+       clMainFrame::Get()
+           ->GetMainBook()
+           ->UserSelectFiles(filesToSave,
+                             _("Save Modified Files"),
+                             _("Some files are modified.\nChoose the files you would like to save."),
+                             true)) {
         for(size_t i = 0; i < filesToSave.size(); i++) {
             if(filesToSave[i].second) {
                 LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filesToSave[i].first.GetFullPath());
@@ -383,6 +393,14 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
         // restore the line
         activeEditor->GotoLine(lineNumber);
+    }
+    
+    if(!m_filesModified.IsEmpty()) {
+        // Some files were modified directly on the file system, notify about it to the plugins
+        clFileSystemEvent event(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES);
+        event.SetStrings(m_filesModified);
+        EventNotifier::Get()->AddPendingEvent(event);
+        m_filesModified.clear();
     }
 }
 

@@ -23,7 +23,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -34,7 +34,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_panel56 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel56, _("Code Completion"), false);
     
-    wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
+    boxSizer58 = new wxBoxSizer(wxVERTICAL);
     m_panel56->SetSizer(boxSizer58);
     
     m_checkBoxEnableJsCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable JavaScript code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -58,7 +58,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("JavaScript"), false);
     
-    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    boxSizer22 = new wxBoxSizer(wxVERTICAL);
     m_panel12->SetSizer(boxSizer22);
     
     wxArrayString m_pgMgrArr;
@@ -163,5 +163,79 @@ WebToolsSettingsBase::~WebToolsSettingsBase()
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
+    
+}
+
+NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCD9C6InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    boxSizer68 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer68);
+    
+    flexGridSizer76 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer76->SetFlexibleDirection( wxBOTH );
+    flexGridSizer76->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer76->AddGrowableCol(1);
+    
+    boxSizer68->Add(flexGridSizer76, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText78 = new wxStaticText(this, wxID_ANY, _("Node.js executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer76->Add(m_staticText78, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_filePickerNodeJS = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerNodeJS->SetToolTip(_("Select Node.js executable"));
+    m_filePickerNodeJS->SetFocus();
+    
+    flexGridSizer76->Add(m_filePickerNodeJS, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText82 = new wxStaticText(this, wxID_ANY, _("Script to debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer76->Add(m_staticText82, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    
+    flexGridSizer76->Add(m_filePickerScript, 0, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer70 = new wxStdDialogButtonSizer();
+    
+    boxSizer68->Add(m_stdBtnSizer70, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer70->AddButton(m_buttonOK);
+    
+    m_button74 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer70->AddButton(m_button74);
+    m_stdBtnSizer70->Realize();
+    
+    SetName(wxT("NodeJSDebuggerDlgBase"));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSDebuggerDlgBase::OnOKUI), NULL, this);
+    
+}
+
+NodeJSDebuggerDlgBase::~NodeJSDebuggerDlgBase()
+{
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSDebuggerDlgBase::OnOKUI), NULL, this);
     
 }

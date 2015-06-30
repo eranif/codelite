@@ -4,6 +4,7 @@
 #include "IWorkspace.h"
 #include <wx/filename.h>
 #include "cl_command_event.h"
+#include "NodeJSDebugger.h"
 
 class NodeJSWorkspaceView;
 class NodeJSWorkspace : public IWorkspace
@@ -15,7 +16,8 @@ protected:
     bool m_clangOldFlag;
     bool m_dummy;
     bool m_showWelcomePage;
-
+    NodeJSDebugger m_debugger;
+    
     static NodeJSWorkspace* ms_workspace;
 
 protected:

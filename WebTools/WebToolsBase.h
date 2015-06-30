@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef WEBTOOLSBASE_BASE_CLASSES_H
-#define WEBTOOLSBASE_BASE_CLASSES_H
+#ifndef CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
+#define CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -22,6 +22,8 @@
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/button.h>
+#include <wx/stattext.h>
+#include <wx/filepicker.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -32,12 +34,15 @@
 class WebToolsSettingsBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer2;
     wxNotebook* m_notebook10;
     wxPanel* m_panel56;
+    wxBoxSizer* boxSizer58;
     wxCheckBox* m_checkBoxEnableJsCC;
     wxCheckBox* m_checkBoxEnableXmlCC;
     wxCheckBox* m_checkBoxEnableHtmlCC;
     wxPanel* m_panel12;
+    wxBoxSizer* boxSizer22;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgProp26;
     wxPGProperty* m_pgPropLogging;
@@ -73,6 +78,32 @@ public:
     wxNotebook* GetNotebook10() { return m_notebook10; }
     WebToolsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("WebTools Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~WebToolsSettingsBase();
+};
+
+
+class NodeJSDebuggerDlgBase : public wxDialog
+{
+protected:
+    wxBoxSizer* boxSizer68;
+    wxFlexGridSizer* flexGridSizer76;
+    wxStaticText* m_staticText78;
+    wxFilePickerCtrl* m_filePickerNodeJS;
+    wxStaticText* m_staticText82;
+    wxFilePickerCtrl* m_filePickerScript;
+    wxStdDialogButtonSizer* m_stdBtnSizer70;
+    wxButton* m_buttonOK;
+    wxButton* m_button74;
+
+protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText78() { return m_staticText78; }
+    wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
+    wxStaticText* GetStaticText82() { return m_staticText82; }
+    wxFilePickerCtrl* GetFilePickerScript() { return m_filePickerScript; }
+    NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Node.js Debugger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~NodeJSDebuggerDlgBase();
 };
 
 #endif

@@ -304,5 +304,13 @@
     <File Name="NodeJSWorkspaceView.cpp"/>
     <File Name="NodeJSWorkspaceConfiguration.h"/>
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
+    <VirtualDirectory Name="Debugger">
+      <File Name="NodeJSDebugger.h"/>
+      <File Name="NodeJSDebugger.cpp"/>
+      <File Name="NodeJSSocket.h"/>
+      <File Name="NodeJSSocket.cpp"/>
+      <File Name="NodeJSDebuggerDlg.h"/>
+      <File Name="NodeJSDebuggerDlg.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
 </CodeLite_Project>

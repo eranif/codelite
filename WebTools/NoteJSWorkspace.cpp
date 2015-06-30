@@ -106,7 +106,7 @@ void NodeJSWorkspace::Close()
 
     // Clear the UI
     GetView()->Clear();
-
+        
     // Notify workspace closed event
     wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
@@ -203,6 +203,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
 
     // Load the workspace session (if any)
     CallAfter(&NodeJSWorkspace::RestoreSession);
+    
     return true;
 }
 

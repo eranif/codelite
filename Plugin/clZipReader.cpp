@@ -32,8 +32,10 @@ void clZipReader::Extract(const wxString& filename, const wxString& directory)
             // ensure that the path to the file exists
             outfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
             wxFFileOutputStream out(outfile.GetFullPath());
-            m_zip->Read(out);
-            out.Close();
+            if(out.IsOk()) {
+                m_zip->Read(out);
+                out.Close();
+            }
         }
         wxDELETE(entry);
         entry = m_zip->GetNextEntry();

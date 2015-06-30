@@ -59,6 +59,7 @@ protected:
     void Clear();
 
     virtual void OnPageClosed(wxBookCtrlEvent& e);
+    virtual void OnPageClosing(wxBookCtrlEvent& e);
     virtual void OnPageChanged(wxBookCtrlEvent& e);
     virtual void OnClosePage(wxBookCtrlEvent& e);
     virtual void OnFindInFiles(wxCommandEvent& e);

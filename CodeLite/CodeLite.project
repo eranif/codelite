@@ -288,6 +288,8 @@
     <File Name="cl_ssh.h"/>
     <File Name="cl_sftp_attribute.h"/>
     <File Name="cl_sftp_attribute.cpp"/>
+    <File Name="clSFTPEvent.h"/>
+    <File Name="clSFTPEvent.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SocketAPI">
     <File Name="SocketAPI/clSocketBase.cpp"/>

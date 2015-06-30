@@ -96,6 +96,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
         // load the book style from the settings file
         long style = kNotebook_MouseMiddleClickClosesTab |      // Handle mouse middle button when clicked on a tab
                      kNotebook_MouseMiddleClickFireEvent |      // instead of closing the tab, fire an event
+                     kNotebook_CloseButtonOnActiveTab |         // Show close button on the active tab
                      kNotebook_ShowFileListButton |             // show drop down list of all open tabs
                      kNotebook_CloseButtonOnActiveTabFireEvent; // When closing the 'x' button, fire an event
 
@@ -104,6 +105,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 
         m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &FindResultsTab::OnPageChanged, this);
         m_book->Bind(wxEVT_BOOK_PAGE_CLOSED, &FindResultsTab::OnPageClosed, this);
+        m_book->Bind(wxEVT_BOOK_PAGE_CLOSING, &FindResultsTab::OnPageClosing, this);
         m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &FindResultsTab::OnClosePage, this);
 
         // get rid of base class scintilla component
@@ -418,7 +420,7 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 
     int m = m_book ? m_book->GetPageIndex(m_recv) : 0;
     if(m == wxNOT_FOUND) {
-        delete res;
+        wxDELETE(res);
         return;
     }
 
@@ -463,7 +465,7 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
         AppendText(linenum + text + wxT("\n"));
         m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno) + iter->GetColumn() + delta, iter->GetLen());
     }
-    delete res;
+    wxDELETE(res);
 }
 
 void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
@@ -899,6 +901,18 @@ void FindResultsTab::OnThemeChanged(wxCommandEvent& e)
                 SetStyles(stc);
             }
         }
+    }
+}
+
+void FindResultsTab::OnPageClosing(wxBookCtrlEvent& e)
+{
+    e.Skip();
+    if(m_searchInProgress) {
+        ::wxMessageBox(_("Can not close the search tab while a search is in progress"),
+                       "CodeLite",
+                       wxICON_WARNING | wxOK | wxCENTER);
+        e.Veto();
+        return;
     }
 }
 

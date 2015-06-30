@@ -60,10 +60,6 @@ const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 //      remote_file : "/path/to/remote/file",
 //  }
 
-// Event type: clCommandEvent
-// Request SFTP to save a file remotely (see above for more details)
-const wxEventType wxEVT_SFTP_SAVE_FILE = XRCID("wxEVT_SFTP_SAVE_FILE");
-
 // Define the plugin entry point
 extern "C" EXPORT IPlugin* CreatePlugin(IManager* manager)
 {
@@ -113,10 +109,11 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(SFTP::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SFTP::OnEditorClosed), NULL, this);
 
     // API support
-    EventNotifier::Get()->Connect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
 
     SFTPImages images;
     m_outputPane = new SFTPStatusPage(m_mgr->GetOutputPaneNotebook(), this);
@@ -235,7 +232,8 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(SFTP::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SFTP::OnEditorClosed), NULL, this);
 
-    EventNotifier::Get()->Disconnect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
 }
 
 void SFTP::OnAccountManager(wxCommandEvent& e)
@@ -285,51 +283,7 @@ void SFTP::OnFileSaved(clCommandEvent& e)
     // --------------------------------------
     wxString local_file = e.GetString();
     local_file.Trim().Trim(false);
-
-    if(local_file.IsEmpty()) return;
-
-    // Check to see if this file is part of a remote files managed by our plugin
-    if(m_remoteFiles.count(local_file)) {
-        // ----------------------------------------------------------------------------------------------
-        // this file was opened by the SFTP explorer
-        // ----------------------------------------------------------------------------------------------
-        DoSaveRemoteFile(m_remoteFiles.find(local_file)->second);
-
-    } else {
-        // ----------------------------------------------------------------------------------------------
-        // Not a remote file, see if have a sychronization setup between this workspace and a remote one
-        // ----------------------------------------------------------------------------------------------
-
-        // check if we got a workspace file opened
-        if(!m_workspaceFile.IsOk()) return;
-
-        // check if mirroring is setup for this workspace
-        if(!m_workspaceSettings.IsOk()) return;
-
-        wxFileName file(local_file);
-        file.MakeRelativeTo(m_workspaceFile.GetPath());
-        file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
-        wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
-
-        SFTPSettings settings;
-        settings.Load();
-
-        SSHAccountInfo account;
-        if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
-            SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, local_file));
-
-        } else {
-
-            wxString msg;
-            msg << _("Failed to synchronize file '") << local_file << "'\n" << _("with remote server\n")
-                << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
-            ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
-
-            // Disable the workspace mirroring for this workspace
-            m_workspaceSettings.Clear();
-            SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
-        }
-    }
+    DoFileSaved(local_file);
 }
 
 void SFTP::OnFileWriteOK(const wxString& message) { wxLogMessage(message); }
@@ -347,33 +301,14 @@ void SFTP::OnDisableWorkspaceMirroringUI(wxUpdateUIEvent& e)
     e.Enable(m_workspaceFile.IsOk() && m_workspaceSettings.IsOk());
 }
 
-void SFTP::OnSaveFile(clCommandEvent& e)
+void SFTP::OnSaveFile(clSFTPEvent& e)
 {
-    //  {
-    //      account : "account-name-to-use",
-    //      local_file : "/path/to/local/file",
-    //      remote_file : "/path/to/remote/file",
-    //  }
-
-    wxString requestString = e.GetString();
-    // ignore files which are located under our special tmporary folder
-    wxFileName fnFileName(requestString);
-    if(fnFileName.GetPath().Contains(RemoteFileInfo::GetTempFolder())) return;
-
-    JSONRoot root(requestString);
-    JSONElement element = root.toElement();
-    if(!element.hasNamedObject("account") || !element.hasNamedObject("local_file") ||
-       !element.hasNamedObject("remote_file")) {
-        wxLogMessage(wxString() << "SFTP: Invalid save request");
-        return;
-    }
-
     SFTPSettings settings;
     settings.Load();
 
-    wxString accName = element.namedObject("account").toString();
-    wxString localFile = element.namedObject("local_file").toString();
-    wxString remoteFile = element.namedObject("remote_file").toString();
+    wxString accName = e.GetAccount();
+    wxString localFile = e.GetLocalFile();
+    wxString remoteFile = e.GetRemoteFile();
 
     SSHAccountInfo account;
     if(settings.GetAccount(accName, account)) {
@@ -445,5 +380,62 @@ void SFTP::OnSettings(wxCommandEvent& e)
         settings.Load();
         settings.SetSshClient(dlg.GetSshClientPath()->GetPath());
         settings.Save();
+    }
+}
+
+void SFTP::DoFileSaved(const wxString& filename)
+{
+    if(filename.IsEmpty()) return;
+
+    // Check to see if this file is part of a remote files managed by our plugin
+    if(m_remoteFiles.count(filename)) {
+        // ----------------------------------------------------------------------------------------------
+        // this file was opened by the SFTP explorer
+        // ----------------------------------------------------------------------------------------------
+        DoSaveRemoteFile(m_remoteFiles.find(filename)->second);
+
+    } else {
+        // ----------------------------------------------------------------------------------------------
+        // Not a remote file, see if have a sychronization setup between this workspace and a remote one
+        // ----------------------------------------------------------------------------------------------
+
+        // check if we got a workspace file opened
+        if(!m_workspaceFile.IsOk()) return;
+
+        // check if mirroring is setup for this workspace
+        if(!m_workspaceSettings.IsOk()) return;
+
+        wxFileName file(filename);
+        file.MakeRelativeTo(m_workspaceFile.GetPath());
+        file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
+        wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
+
+        SFTPSettings settings;
+        settings.Load();
+
+        SSHAccountInfo account;
+        if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
+            SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, filename));
+
+        } else {
+
+            wxString msg;
+            msg << _("Failed to synchronize file '") << filename << "'\n" << _("with remote server\n")
+                << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
+            ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
+
+            // Disable the workspace mirroring for this workspace
+            m_workspaceSettings.Clear();
+            SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+        }
+    }
+}
+
+void SFTP::OnReplaceInFiles(clFileSystemEvent& e)
+{
+    e.Skip();
+    const wxArrayString& files = e.GetStrings();
+    for(size_t i = 0; i < files.size(); ++i) {
+        DoFileSaved(files.Item(i));
     }
 }

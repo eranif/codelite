@@ -41,6 +41,7 @@
 #include "globals.h"
 #include "clWorkspaceView.h"
 #include "clWorkspaceManager.h"
+#include "clSFTPEvent.h"
 
 static PhpPlugin* thePlugin = NULL;
 
@@ -133,6 +134,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL, this);
@@ -253,6 +255,7 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_GET_ACTIVE_PROJECT_FILES, wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(PhpPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpPlugin::OnReplaceInFiles, this);
     EventNotifier::Get()->Disconnect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL, this);
@@ -539,28 +542,7 @@ void PhpPlugin::OnFileSaved(clCommandEvent& e)
     e.Skip();
 
     if(PHPWorkspace::Get()->IsOpen()) {
-        // Check to see if we got a remote-upload setup
-        SSHWorkspaceSettings settings;
-        settings.Load();
-
-        if(settings.IsRemoteUploadSet() && settings.IsRemoteUploadEnabled()) {
-            // Post an event to the SFTP plugin and ask it to save our file
-            wxFileName fnLocalFile(e.GetString());
-
-            fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
-            fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
-            wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
-            wxString localFile = e.GetString();
-
-            JSONRoot root(cJSON_Object);
-            root.toElement().addProperty("account", settings.GetAccount());
-            root.toElement().addProperty("local_file", localFile);
-            root.toElement().addProperty("remote_file", remoteFile);
-
-            clCommandEvent eventSave(XRCID("wxEVT_SFTP_SAVE_FILE"));
-            eventSave.SetString(root.toElement().format());
-            EventNotifier::Get()->AddPendingEvent(eventSave);
-        }
+        DoSyncFileWithRemote(e.GetString());
     }
 
     // Run php lint
@@ -862,5 +844,40 @@ void PhpPlugin::OnSaveSession(clCommandEvent& event)
         m_mgr->StoreWorkspaceSession(PHPWorkspace::Get()->GetFilename());
     } else {
         event.Skip();
+    }
+}
+
+void PhpPlugin::DoSyncFileWithRemote(const wxFileName& localFile)
+{
+    // Check to see if we got a remote-upload setup
+    SSHWorkspaceSettings settings;
+    settings.Load();
+
+    if(settings.IsRemoteUploadSet() && settings.IsRemoteUploadEnabled()) {
+        // Post an event to the SFTP plugin and ask it to save our file
+        wxFileName fnLocalFile = localFile;
+
+        fnLocalFile.MakeRelativeTo(PHPWorkspace::Get()->GetFilename().GetPath());
+        fnLocalFile.MakeAbsolute(wxFileName(settings.GetRemoteFolder(), "", wxPATH_UNIX).GetPath());
+
+        wxString remoteFile = fnLocalFile.GetFullPath(wxPATH_UNIX);
+
+        // Fire this event, if the sftp plugin is ON, it will handle it
+        clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
+        eventSave.SetAccount(settings.GetAccount());
+        eventSave.SetLocalFile(localFile.GetFullPath());
+        eventSave.SetRemoteFile(remoteFile);
+        EventNotifier::Get()->AddPendingEvent(eventSave);
+    }
+}
+
+void PhpPlugin::OnReplaceInFiles(clFileSystemEvent& e)
+{
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        const wxArrayString& files = e.GetStrings();
+        for(size_t i = 0; i < files.size(); ++i) {
+            DoSyncFileWithRemote(files.Item(i));
+        }
     }
 }

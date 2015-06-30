@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: CodeLite-zh_CN\n"
 "Report-Msgid-Bugs-To: david@codelite.co.uk\n"
 "POT-Creation-Date: 2015-04-21 21:00+0800\n"
-"PO-Revision-Date: 2015-06-18 21:50+0800\n"
+"PO-Revision-Date: 2015-06-30 19:59+0800\n"
 "Last-Translator: CharlW <huan5765@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
 "Language: zh_CN\n"
@@ -1523,19 +1523,19 @@ msgstr "从右边复制当前diff序列到左边"
 
 #: Plugin/wxcrafter_plugin.cpp:141
 msgid "All Left"
-msgstr "全部靠左"
+msgstr "全部向左"
 
 #: Plugin/wxcrafter_plugin.cpp:141
 msgid "Copy the content of the left file to the right file"
-msgstr "从左边文件复制内容到右边文件"
+msgstr "从左边文件复制内容到右边"
 
 #: Plugin/wxcrafter_plugin.cpp:143
 msgid "All Right"
-msgstr "全部靠右"
+msgstr "全部向右"
 
 #: Plugin/wxcrafter_plugin.cpp:143
 msgid "Copy file from right to left"
-msgstr "从右边复制文件到左边"
+msgstr "从右边文件复制内容到左边"
 
 #: Plugin/wxcrafter_plugin.cpp:145 codelite_terminal/wxcrafter.cpp:67
 #: LiteEditor/wxcrafter.cpp:643 LiteEditor/frame.cpp:1305
@@ -1552,7 +1552,7 @@ msgstr "保存变更并刷新 diff 视图 "
 #: Plugin/wxcrafter_plugin.cpp:148 codelitephp/php-plugin/php_ui.cpp:791
 #: DatabaseExplorer/ErdPanel.cpp:182
 msgid "View"
-msgstr "视图(&V)"
+msgstr "视图"
 
 #: Plugin/wxcrafter_plugin.cpp:152
 msgid "Vertical"
@@ -1648,7 +1648,7 @@ msgstr "此向导将帮助您设置 CodeLite 以适合您的编码风格。单�
 
 #: Plugin/clBoostrapWizardBase.cpp:46
 msgid "Not this time!"
-msgstr "现在不需要！"
+msgstr "现在不需要了！"
 
 #: Plugin/clBoostrapWizardBase.cpp:46
 msgid ""
@@ -1863,7 +1863,7 @@ msgstr "书签类型"
 
 #: Plugin/clean_request.cpp:81
 msgid "Sorry, there is no 'Clean' command available\n"
-msgstr "对不起，没有”清理“命令可用\n"
+msgstr "对不起，“清理”命令不可用\n"
 
 #: Plugin/clean_request.cpp:106
 msgid "Sorry, couldn't find the Build configuration\n"
@@ -2537,7 +2537,7 @@ msgstr "端口："
 
 #: Plugin/sftp_ui.cpp:193
 msgid "The SSH port. If you don't know it, leave it as 22 (SSH default port)"
-msgstr "这个SSH 端口。如果您不知道端口，请填写22(SSH 默认端口)"
+msgstr "SSH 端口号，如果您不知道端口号，请填写 22 (SSH 默认端口)"
 
 #: Plugin/sftp_ui.cpp:200 Subversion2/subversion2_ui.cpp:217
 msgid "Username:"
@@ -3527,15 +3527,15 @@ msgstr "拉取后合并，并重新定义版本库状态？"
 
 #: git/git.cpp:1610 git/git.cpp:1614 git/git.cpp:1618 git/GitConsole.cpp:218
 msgid "Rebase"
-msgstr "Rebase"
+msgstr "重新定义版本库状态"
 
 #: git/git.cpp:1614
 msgid "Rebase with what branch?"
-msgstr "复位到什么分支？"
+msgstr "重新定义哪一个分支的版本库状态？"
 
 #: git/git.cpp:1618
 msgid "Rebase with "
-msgstr "Rebase 为"
+msgstr "重新定义版本库状态为"
 
 #: git/git.cpp:1632
 msgid "Conflict found during merge"
@@ -3555,7 +3555,7 @@ msgstr "工作副本"
 
 #: git/git.cpp:2259 git/git.cpp:2260
 msgid "Git Diff: "
-msgstr "Git Diff: "
+msgstr "Git Diff："
 
 #: git/git.cpp:2274
 msgid "Save all changes and rebase?"
@@ -3576,7 +3576,7 @@ msgstr "Git"
 
 #: git/git.cpp:2355 git/git.cpp:2563
 msgid "Don't know how to start MSYSGit..."
-msgstr "不知道如何开始启动 MSYSGit..."
+msgstr "不知道如何开始启动 MSYSGit ..."
 
 #: git/git.cpp:2374 git/GitConsole.cpp:217
 msgid "Push"
@@ -3676,7 +3676,7 @@ msgstr "CodeLite 比较插件"
 
 #: CodeLiteDiff/codelitediff.cpp:108
 msgid "New Diff.."
-msgstr "新的 Diff.."
+msgstr "新的 Diff ..."
 
 #: CodeLiteDiff/codelitediff.cpp:108
 msgid "Start new diff"
@@ -3778,7 +3778,7 @@ msgid ""
 "When checked, CodeLite will use the default \"C\" locale instead of the "
 "current locale. This will ensure that svn command line output is parsed "
 "properly."
-msgstr "当勾选时，CodeLite 将使用默认“C“语言环境，而非当前语言环境"
+msgstr "当勾选时，CodeLite 将使用默认“C”语言环境，而非当前语言环境"
 
 #: Subversion2/subversion2_ui.cpp:349
 msgid "External Diff"
@@ -3814,10 +3814,10 @@ msgid ""
 "\n"
 "If you don't need SSH channel, leave this field empty"
 msgstr ""
-"SSH 客户端字段应包含命令来让\n"
-"SVN 命令行客户端用来建立一个加密管道.\n"
+"SSH 客户端字段应当包含\n"
+"SVN 命令行客户端用来建立一个加密管道的命令。\n"
 "\n"
-"例子，在 Windows 上，它应该类似：\n"
+"例如，在 Windows 上，它应该类似：\n"
 "/path/to/plink.exe-l <user name=\"\">-pw <svn password=\"\">\n"
 "\n"
 "如果你不需要 SSH 通道，请将此字段留空</svn></user>"
@@ -3852,7 +3852,7 @@ msgstr "版次："
 
 #: Subversion2/subversion2_ui.cpp:578 LiteEditor/pluginmgrdlg.cpp:152
 msgid "Author:"
-msgstr "作者:"
+msgstr "作者："
 
 #: Subversion2/subversion2_ui.cpp:592
 msgid "Date:"
@@ -3917,11 +3917,11 @@ msgid ""
 "An example: \"Fixed: BUG#$(BUGID), See $(BUG_URL) for more details\""
 msgstr ""
 "在这里输入添加到提交日志的信息。您可以使用 $(BUG_URL) 和 $(BUGID) 宏。\n"
-"例如：“实现了BUG#$(BUGID)，参考 $(BUG_URL) 获得更多细节“"
+"例如：“实现了BUG#$(BUGID)，参考 $(BUG_URL) 获得更多细节”"
 
 #: Subversion2/subversion2_ui.cpp:955
 msgid "Feature URL Pattern:"
-msgstr "特性 URL模式："
+msgstr "特性 URL 模式："
 
 #: Subversion2/subversion2_ui.cpp:960
 msgid ""
@@ -4045,7 +4045,7 @@ msgstr "创建 Diff"
 
 #: Subversion2/subversion2.cpp:354
 msgid "Blame ..."
-msgstr "归咎于 ..."
+msgstr "归咎于..."
 
 #: Subversion2/subversion2.cpp:358 Subversion2/subversion_view.cpp:664
 msgid "Change Log..."
@@ -4086,7 +4086,7 @@ msgstr "新名称："
 
 #: Subversion2/subversion2.cpp:1179 Subversion2/subversion_view.cpp:1347
 msgid "Svn rename..."
-msgstr "Svn 重命名..."
+msgstr "SVN 重命名..."
 
 #: Subversion2/subversion2.cpp:1372
 msgid " - application/octet-stream"
@@ -4117,7 +4117,7 @@ msgstr "高亮此修订版本"
 
 #: Subversion2/subversion2_ui.h:91
 msgid "Create Svn Tag"
-msgstr "创建 Svn 标签"
+msgstr "创建 SVN 标签"
 
 #: Subversion2/subversion2_ui.h:115
 msgid "Login"
@@ -4129,23 +4129,23 @@ msgstr "Subversion 首选项"
 
 #: Subversion2/subversion2_ui.h:225 Subversion2/subversion_view.cpp:287
 msgid "Svn Info"
-msgstr "Svn 信息"
+msgstr "SVN 信息"
 
 #: Subversion2/subversion2_ui.h:255 Subversion2/subversion_view.cpp:273
 msgid "Svn Checkout"
-msgstr "svn 检出"
+msgstr "SVN 检出"
 
 #: Subversion2/subversion2_ui.h:281
 msgid "Svn Log"
-msgstr "Svn 日志"
+msgstr "SVN 日志"
 
 #: Subversion2/subversion2_ui.h:307
 msgid "Svn Diff..."
-msgstr "Svn 比较"
+msgstr "SVN 比较"
 
 #: Subversion2/subversion2_ui.h:358
 msgid "Svn Properties..."
-msgstr "Svn 属性..."
+msgstr "SVN 属性..."
 
 #: Subversion2/subversion2_ui.h:377
 msgid "Select patch file:"
@@ -4174,7 +4174,7 @@ msgstr "选择一个目录来查看..."
 
 #: Subversion2/subversion_view.cpp:266 Subversion2/subversion_view.cpp:268
 msgid "Stop current svn process"
-msgstr "停止当前svn进程"
+msgstr "停止当前 SVN 进程"
 
 #: Subversion2/subversion_view.cpp:270
 msgid "Svn Cleanup"
@@ -4182,7 +4182,7 @@ msgstr "SVN 清除"
 
 #: Subversion2/subversion_view.cpp:279 Subversion2/subversion_view.cpp:281
 msgid "Clear Svn Output Tab"
-msgstr "清除 Svn 输出标签"
+msgstr "清除 SVN 输出标签"
 
 #: Subversion2/subversion_view.cpp:284 Subversion2/subversion_view.cpp:286
 msgid "Svn Settings..."
@@ -4233,7 +4233,7 @@ msgstr "属性..."
 
 #: Subversion2/subversion_view.cpp:1479 Subversion2/subversion_view.cpp:1480
 msgid "Svn Diff: "
-msgstr "Svn 比较："
+msgstr "SVN 比较："
 
 #: Subversion2/wxcrafter.cpp:36
 msgid "Feature Request ID:"
@@ -4401,7 +4401,7 @@ msgstr "缓存文件："
 
 #: CodeLite/refactorengine.cpp:392
 msgid "Stage 2/2: Parsing matches..."
-msgstr "阶段2/2：分析匹配..."
+msgstr "阶段 2/2：分析匹配..."
 
 #: CodeLite/refactorengine.cpp:399
 msgid "Parsing expression "
@@ -4892,7 +4892,7 @@ msgstr "禁用(&D)"
 
 #: SFTP/sftp.cpp:181
 msgid "Workspace Mirroring"
-msgstr "工作区镜像"
+msgstr "正在镜像工作区"
 
 #: SFTP/sftp.cpp:256
 msgid "Select the remote workspace"
@@ -5844,7 +5844,7 @@ msgstr "源代码格式化选项"
 
 #: cscope/cscopedbbuilderthread.cpp:51
 msgid "Executing cscope..."
-msgstr "执行 cscope..."
+msgstr "执行 cscope ..."
 
 #: cscope/cscopedbbuilderthread.cpp:59
 msgid "Parsing results..."
@@ -9521,7 +9521,7 @@ msgstr "程序生成器"
 
 #: LiteEditor/options_dlg2.cpp:120
 msgid "Folding"
-msgstr "正在折叠"
+msgstr "折叠"
 
 #: LiteEditor/options_dlg2.cpp:121
 msgid "Bookmarks"
@@ -9940,7 +9940,7 @@ msgstr "显示函数调用提示"
 
 #: LiteEditor/tags_options_base_dlg.cpp:80
 msgid "Display function argument list after typing an open brace '('"
-msgstr "在输入左括号”(“后显示函数参数列表"
+msgstr "在输入左括号“(”后显示函数参数列表"
 
 #: LiteEditor/tags_options_base_dlg.cpp:86
 msgid "Display completion box for language keywords"
@@ -9978,7 +9978,7 @@ msgstr "文件保存后不触发文件分析"
 
 #: LiteEditor/tags_options_base_dlg.cpp:121
 msgid "Scan all included files to locate 'using namespace' statements"
-msgstr "在全部包含的文件中查找”using namespace“声明"
+msgstr "在全部包含的文件中查找“using namespace”声明"
 
 #: LiteEditor/tags_options_base_dlg.cpp:123
 msgid "Allways search for 'using namespace' statements in all included files"
@@ -11720,7 +11720,7 @@ msgstr "切换大小写敏感"
 
 #: LiteEditor/findinfiles_dlg.cpp:168
 msgid "Match &whole word"
-msgstr "匹配整字(&w)"
+msgstr "匹配整字(&W)"
 
 #: LiteEditor/findinfiles_dlg.cpp:170
 msgid "Toggle whole word search"
@@ -11728,11 +11728,11 @@ msgstr "切换整字搜索"
 
 #: LiteEditor/findinfiles_dlg.cpp:174
 msgid "Regular &expression"
-msgstr "正则表达式(&e)"
+msgstr "正则表达式(&E)"
 
 #: LiteEditor/findinfiles_dlg.cpp:176
 msgid "The 'Find What' field is a regular expression"
-msgstr "”查找内容“字段是一个正则表达式"
+msgstr "“查找内容”字段是一个正则表达式"
 
 #: LiteEditor/findinfiles_dlg.cpp:180
 msgid "&Save modified files before searching"
@@ -11786,7 +11786,7 @@ msgstr "搜索匹配并将它们作为“替换”窗口的候选进行可能的
 
 #: LiteEditor/findinfiles_dlg.cpp:241
 msgid "Sto&p"
-msgstr "停止(&p)"
+msgstr "停止(&P)"
 
 #: LiteEditor/findinfiles_dlg.cpp:242
 msgid "Stop the current search"
@@ -11828,7 +11828,7 @@ msgstr "什么"
 
 #: LiteEditor/breakpointslistctrl.h:50
 msgid "Ignored"
-msgstr "忽略"
+msgstr "已忽略"
 
 #: LiteEditor/breakpointslistctrl.h:51
 msgid "Extras"
@@ -11889,7 +11889,7 @@ msgstr "临时 \n"
 
 #: LiteEditor/breakpointsmgr.cpp:181
 msgid " (disabled)\n"
-msgstr " (禁用)\n"
+msgstr " (已禁用)\n"
 
 #: LiteEditor/breakpointsmgr.cpp:186
 #, c-format
@@ -11995,7 +11995,7 @@ msgstr ""
 
 #: LiteEditor/editorsettingsmiscbasepanel.cpp:82
 msgid "Enable Windows(R) theme for Vista / Windows 7"
-msgstr "为Vista / Windows 7 启用 Windows(R) 主题"
+msgstr "为 Vista / Windows 7 启用 Windows(R) 主题"
 
 #: LiteEditor/editorsettingsmiscbasepanel.cpp:87
 msgid "Other:"

@@ -181,7 +181,7 @@ void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
-        DoOpen(workspaceFile);
+        Open(workspaceFile);
     }
 }
 
@@ -221,7 +221,9 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
 
     // Load the workspace session (if any)
     CallAfter(&NodeJSWorkspace::RestoreSession);
-
+    
+    // Create new debugger for this workspace
+    m_debugger.Reset(new NodeJSDebugger());
     return true;
 }
 

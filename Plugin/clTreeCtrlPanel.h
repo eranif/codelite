@@ -15,14 +15,21 @@ class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
     clConfig* m_config;
     wxString m_viewName;
     clTreeCtrlPanelDefaultPage* m_defaultView;
-
+    wxString m_newfileTemplate;
+    size_t m_newfileTemplateHighlightLen;
+    
 protected:
     void ToggleView();
 
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
-
+    
+    /**
+     * @brief set the new file template (default is "Untitled.txt")
+     */
+    void SetNewFileTemplate(const wxString& newfile, size_t charsToHighlight);
+    
     void SetViewName(const wxString& viewName) { this->m_viewName = viewName; }
     const wxString& GetViewName() const { return m_viewName; }
 

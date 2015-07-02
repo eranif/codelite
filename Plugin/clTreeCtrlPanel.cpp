@@ -22,6 +22,8 @@
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
     , m_config(NULL)
+    , m_newfileTemplate("Untitled.txt")
+    , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
     // Allow DnD
@@ -354,7 +356,7 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     CHECK_COND_RET(cd->IsFolder());
 
     wxString filename =
-        ::clGetTextFromUser(_("New File"), _("Set the file name:"), "Untitled.txt", wxStrlen("Untitled"));
+        ::clGetTextFromUser(_("New File"), _("Set the file name:"), m_newfileTemplate, m_newfileTemplateHighlightLen);
     if(filename.IsEmpty()) return; // user cancelled
 
     wxFileName file(cd->GetPath(), filename);

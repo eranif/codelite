@@ -26,6 +26,8 @@ NodeJSWorkspace::NodeJSWorkspace()
     , m_showWelcomePage(false)
 {
     SetWorkspaceType("Node.js");
+    m_debugger.Reset(new NodeJSDebugger());
+    
     m_view = new NodeJSWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
     clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
 
@@ -44,6 +46,7 @@ NodeJSWorkspace::~NodeJSWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &NodeJSWorkspace::OnAllEditorsClosed, this);
         EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &NodeJSWorkspace::OnSaveSession, this);
+        m_debugger.Reset(NULL);
     }
 }
 
@@ -94,7 +97,8 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 void NodeJSWorkspace::Close()
 {
     if(!IsOpen()) return;
-
+    m_debugger.Reset(NULL);
+    
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
 

@@ -239,3 +239,124 @@ NodeJSDebuggerDlgBase::~NodeJSDebuggerDlgBase()
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSDebuggerDlgBase::OnOKUI), NULL, this);
     
 }
+
+NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCD9C6InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    boxSizer88 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer88);
+    
+    m_splitter104 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter104->SetSashGravity(0.5);
+    m_splitter104->SetMinimumPaneSize(10);
+    
+    boxSizer88->Add(m_splitter104, 1, wxALL|wxEXPAND, 0);
+    
+    m_splitterPage112 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    boxSizer120 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage112->SetSizer(boxSizer120);
+    
+    m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    m_dataviewLocalsModel = new m_dataview126Model;
+    m_dataviewLocalsModel->SetColCount( 3 );
+    m_dataviewLocals->AssociateModel(m_dataviewLocalsModel.get() );
+    
+    boxSizer120->Add(m_dataviewLocals, 1, wxALL|wxEXPAND, 2);
+    
+    m_dataviewLocals->AppendTextColumn(_("Name"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_dataviewLocals->AppendTextColumn(_("Type"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
+    m_dataviewLocals->AppendTextColumn(_("Value"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_splitterPage108 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter104->SplitVertically(m_splitterPage112, m_splitterPage108, 0);
+    
+    boxSizer118 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage108->SetSizer(boxSizer118);
+    
+    m_notebook = new Notebook(m_splitterPage108, wxID_ANY, wxDefaultPosition, wxSize(-1,250), kNotebook_Default | kNotebook_AllowDnD);
+    m_notebook->SetName(wxT("m_notebook"));
+    
+    boxSizer118->Add(m_notebook, 1, wxALL|wxEXPAND, 2);
+    
+    m_panelCallstack = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelCallstack, _("Call Stack"), true);
+    
+    boxSizer96 = new wxBoxSizer(wxVERTICAL);
+    m_panelCallstack->SetSizer(boxSizer96);
+    
+    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_panelCallstack, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer96->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, 2);
+    
+    m_dvListCtrlCallstack->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 20, wxALIGN_LEFT);
+    m_dvListCtrlCallstack->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dvListCtrlCallstack->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlCallstack->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
+    m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelConsoleLog, _("Console"), false);
+    
+    boxSizer98 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsoleLog->SetSizer(boxSizer98);
+    
+    m_consoleLog = new wxStyledTextCtrl(m_panelConsoleLog, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_consoleLog->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_consoleLog->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_consoleLog->SetMarginSensitive(4, true);
+    m_consoleLog->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_consoleLog->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_consoleLog->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_consoleLog->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_consoleLog->SetMarginWidth(2, 0);
+    m_consoleLog->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_consoleLog->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_consoleLog->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_consoleLog->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_consoleLog->SetMarginMask(3, 0);
+    m_consoleLog->SetMarginWidth(3,0);
+    // Select the lexer
+    m_consoleLog->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_consoleLog->StyleClearAll();
+    m_consoleLog->SetWrapMode(0);
+    m_consoleLog->SetIndentationGuides(0);
+    m_consoleLog->SetKeyWords(0, wxT(""));
+    m_consoleLog->SetKeyWords(1, wxT(""));
+    m_consoleLog->SetKeyWords(2, wxT(""));
+    m_consoleLog->SetKeyWords(3, wxT(""));
+    m_consoleLog->SetKeyWords(4, wxT(""));
+    
+    boxSizer98->Add(m_consoleLog, 1, wxALL|wxEXPAND, 2);
+    
+    SetName(wxT("NodeJSDebuggerPaneBase"));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+    // Connect events
+    m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    
+}
+
+NodeJSDebuggerPaneBase::~NodeJSDebuggerPaneBase()
+{
+    m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    
+}

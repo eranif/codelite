@@ -24,6 +24,11 @@
 #include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
+#include <wx/splitter.h>
+#include <wx/dataview.h>
+#include "m_dataview126model.h"
+#include "Notebook.h"
+#include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -104,6 +109,44 @@ public:
     wxFilePickerCtrl* GetFilePickerScript() { return m_filePickerScript; }
     NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Node.js Debugger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NodeJSDebuggerDlgBase();
+};
+
+
+class NodeJSDebuggerPaneBase : public wxPanel
+{
+protected:
+    wxBoxSizer* boxSizer88;
+    wxSplitterWindow* m_splitter104;
+    wxPanel* m_splitterPage112;
+    wxBoxSizer* boxSizer120;
+    wxDataViewCtrl* m_dataviewLocals;
+    wxObjectDataPtr<m_dataview126Model> m_dataviewLocalsModel;
+
+    wxPanel* m_splitterPage108;
+    wxBoxSizer* boxSizer118;
+    Notebook* m_notebook;
+    wxPanel* m_panelCallstack;
+    wxBoxSizer* boxSizer96;
+    wxDataViewListCtrl* m_dvListCtrlCallstack;
+    wxPanel* m_panelConsoleLog;
+    wxBoxSizer* boxSizer98;
+    wxStyledTextCtrl* m_consoleLog;
+
+protected:
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+
+public:
+    wxDataViewCtrl* GetDataviewLocals() { return m_dataviewLocals; }
+    wxPanel* GetSplitterPage112() { return m_splitterPage112; }
+    wxDataViewListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
+    wxPanel* GetPanelCallstack() { return m_panelCallstack; }
+    wxStyledTextCtrl* GetConsoleLog() { return m_consoleLog; }
+    wxPanel* GetPanelConsoleLog() { return m_panelConsoleLog; }
+    Notebook* GetNotebook() { return m_notebook; }
+    wxPanel* GetSplitterPage108() { return m_splitterPage108; }
+    wxSplitterWindow* GetSplitter104() { return m_splitter104; }
+    NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    virtual ~NodeJSDebuggerPaneBase();
 };
 
 #endif

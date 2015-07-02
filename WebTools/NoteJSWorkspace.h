@@ -16,8 +16,8 @@ protected:
     bool m_clangOldFlag;
     bool m_dummy;
     bool m_showWelcomePage;
-    NodeJSDebugger m_debugger;
-    
+    NodeJSDebugger::Ptr_t m_debugger;
+
     static NodeJSWorkspace* ms_workspace;
 
 protected:
@@ -71,7 +71,7 @@ public:
     virtual bool IsProjectSupported() const;
 
     NodeJSWorkspaceView* GetView() { return m_view; }
-
+    NodeJSDebugger::Ptr_t GetDebugger() { return m_debugger; }
     /**
      * @brief is this workspace opened?
      */

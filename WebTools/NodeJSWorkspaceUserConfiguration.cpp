@@ -4,6 +4,8 @@
 
 NodeJSWorkspaceUser::NodeJSWorkspaceUser(const wxString& workspacePath)
     : m_workspacePath(workspacePath)
+    , m_debuggerPort(5858)
+    , m_debuggerHost("127.0.0.1")
 {
 }
 
@@ -25,8 +27,12 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Load()
     wxFileName fn = GetFileName();
     JSONRoot root(fn);
     JSONElement element = root.toElement();
-    m_breakpoints.clear();
+    
+    m_debuggerPort = element.namedObject("m_debuggerPort").toInt(m_debuggerPort);
+    m_debuggerHost = element.namedObject("m_debuggerHost").toString(m_debuggerHost);
+    m_scriptToExecute = element.namedObject("m_scriptToExecute").toString(m_scriptToExecute);
 
+    m_breakpoints.clear();
     JSONElement bpArr = element.namedObject("m_breakpoints");
     int bpcount = bpArr.arraySize();
     for(int i = 0; i < bpcount; ++i) {
@@ -42,6 +48,9 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Save()
     // Serialize the breakpoints
     JSONRoot root(cJSON_Object);
     JSONElement json = root.toElement();
+    json.addProperty("m_debuggerPort", m_debuggerPort);
+    json.addProperty("m_debuggerHost", m_debuggerHost);
+    json.addProperty("m_scriptToExecute", m_scriptToExecute);
     JSONElement bpArr = JSONElement::createArray("m_breakpoints");
     json.append(bpArr);
 

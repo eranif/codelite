@@ -5,7 +5,13 @@
 class NodeJSDebuggerDlg : public NodeJSDebuggerDlgBase
 {
 public:
-    NodeJSDebuggerDlg(wxWindow* parent);
+    enum eDialogType {
+        kDebug,
+        kExecute,
+    };
+    eDialogType m_type;
+public:
+    NodeJSDebuggerDlg(wxWindow* parent, eDialogType type);
     virtual ~NodeJSDebuggerDlg();
     wxString GetCommand();
     

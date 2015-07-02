@@ -8,6 +8,9 @@ class NodeJSWorkspaceUser
 {
     NodeJSBreakpoint::List_t m_breakpoints;
     wxString m_workspacePath;
+    wxString m_scriptToExecute;
+    int m_debuggerPort;
+    wxString m_debuggerHost;
 
 protected:
     wxFileName GetFileName() const;
@@ -24,6 +27,30 @@ public:
         return *this;
     }
     const NodeJSBreakpoint::List_t& GetBreakpoints() const { return m_breakpoints; }
+    NodeJSWorkspaceUser& SetDebuggerHost(const wxString& debuggerHost)
+    {
+        this->m_debuggerHost = debuggerHost;
+        return *this;
+    }
+    NodeJSWorkspaceUser& SetDebuggerPort(int debuggerPort)
+    {
+        this->m_debuggerPort = debuggerPort;
+        return *this;
+    }
+    NodeJSWorkspaceUser& SetScriptToExecute(const wxString& scriptToExecute)
+    {
+        this->m_scriptToExecute = scriptToExecute;
+        return *this;
+    }
+    NodeJSWorkspaceUser& SetWorkspacePath(const wxString& workspacePath)
+    {
+        this->m_workspacePath = workspacePath;
+        return *this;
+    }
+    const wxString& GetDebuggerHost() const { return m_debuggerHost; }
+    int GetDebuggerPort() const { return m_debuggerPort; }
+    const wxString& GetScriptToExecute() const { return m_scriptToExecute; }
+    const wxString& GetWorkspacePath() const { return m_workspacePath; }
 };
 
 #endif // NODEJSWORKSPACEUSERCONFIGURATION_H

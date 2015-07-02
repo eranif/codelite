@@ -153,6 +153,8 @@ void NodeJSDebuggerPane::ClearCallstack()
     }
     m_dvListCtrlCallstack->DeleteAllItems();
     m_dataviewLocalsModel->Clear();
+    m_dataviewLocals->Enable(true);
+    m_dvListCtrlCallstack->Enable(true);
 }
 
 void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, int refId)

@@ -17,6 +17,7 @@
 #include "NodeJSCallstackHandler.h"
 #include "NodeJSEvents.h"
 #include "bookmark_manager.h"
+#include "NodeJSWorkspaceUserConfiguration.h"
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return
@@ -130,15 +131,13 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
         return;
     };
 
-    NodeJSDebuggerDlg dlg(NULL);
+    NodeJSDebuggerDlg dlg(NULL, NodeJSDebuggerDlg::kDebug);
     if(dlg.ShowModal() != wxID_OK) {
         return;
     }
 
     wxString command = dlg.GetCommand();
 
-    // FIXME: extend the NodeJS dialog to allow using different port
-    // Launch NodeJS
     m_node = ::CreateAsyncProcess(this, command, IProcessCreateConsole);
     if(!m_node) {
         ::wxMessageBox(_("Failed to start NodeJS application"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
@@ -147,7 +146,10 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
 
     // already connected?
     m_socket.Reset(new NodeJSSocket(this));
-    if(!m_socket->Connect("127.0.0.1", 5858) && (m_socket->LastErrorCode() != wxSOCKET_WOULDBLOCK)) {
+    NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
+    userConf.Load();
+    if(!m_socket->Connect("127.0.0.1", userConf.GetDebuggerPort()) &&
+       (m_socket->LastErrorCode() != wxSOCKET_WOULDBLOCK)) {
         ::wxMessageBox(wxString::Format(_("Failed to connect to NodeJS debugger\n%s"), m_socket->LastError()),
                        "CodeLite",
                        wxOK | wxICON_ERROR | wxCENTER);

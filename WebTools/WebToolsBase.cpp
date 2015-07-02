@@ -201,8 +201,20 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     flexGridSizer76->Add(m_staticText82, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerScript->SetToolTip(_("Select the script to execute"));
     
     flexGridSizer76->Add(m_filePickerScript, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticTextDebuggerPort = new wxStaticText(this, wxID_ANY, _("Debugger port:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer76->Add(m_staticTextDebuggerPort, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlPort = new wxTextCtrl(this, wxID_ANY, wxT("5858"), wxDefaultPosition, wxSize(-1,-1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlPort->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer76->Add(m_textCtrlPort, 0, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer70 = new wxStdDialogButtonSizer();
     

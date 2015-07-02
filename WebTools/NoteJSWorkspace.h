@@ -50,7 +50,12 @@ protected:
      * @brief handle save session command from CodeLite
      */
     void OnSaveSession(clCommandEvent& event);
-
+    
+    /**
+     * @brief execute the current script
+     */
+    void OnExecute(clExecuteEvent& event);
+    
     /**
      * @brief restore the workspace session
      */

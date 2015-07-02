@@ -24,6 +24,7 @@
 #include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
+#include <wx/textctrl.h>
 #include <wx/splitter.h>
 #include <wx/dataview.h>
 #include "m_dataview126model.h"
@@ -95,6 +96,8 @@ protected:
     wxFilePickerCtrl* m_filePickerNodeJS;
     wxStaticText* m_staticText82;
     wxFilePickerCtrl* m_filePickerScript;
+    wxStaticText* m_staticTextDebuggerPort;
+    wxTextCtrl* m_textCtrlPort;
     wxStdDialogButtonSizer* m_stdBtnSizer70;
     wxButton* m_buttonOK;
     wxButton* m_button74;
@@ -107,6 +110,8 @@ public:
     wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
     wxStaticText* GetStaticText82() { return m_staticText82; }
     wxFilePickerCtrl* GetFilePickerScript() { return m_filePickerScript; }
+    wxStaticText* GetStaticTextDebuggerPort() { return m_staticTextDebuggerPort; }
+    wxTextCtrl* GetTextCtrlPort() { return m_textCtrlPort; }
     NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Node.js Debugger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NodeJSDebuggerDlgBase();
 };

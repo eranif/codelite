@@ -729,3 +729,9 @@ void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
     GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
     ToggleView();
 }
+
+void clTreeCtrlPanel::SetNewFileTemplate(const wxString& newfile, size_t charsToHighlight)
+{
+    m_newfileTemplate = newfile;
+    m_newfileTemplateHighlightLen = charsToHighlight;
+}

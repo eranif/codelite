@@ -6,6 +6,7 @@
 #include "cl_command_event.h"
 #include "NodeJSDebugger.h"
 
+class IProcess;
 class NodeJSWorkspaceView;
 class NodeJSWorkspace : public IWorkspace
 {
@@ -17,7 +18,7 @@ protected:
     bool m_dummy;
     bool m_showWelcomePage;
     NodeJSDebugger::Ptr_t m_debugger;
-
+    IProcess* m_process;
     static NodeJSWorkspace* ms_workspace;
 
 protected:
@@ -50,12 +51,17 @@ protected:
      * @brief handle save session command from CodeLite
      */
     void OnSaveSession(clCommandEvent& event);
-    
+
     /**
      * @brief execute the current script
      */
     void OnExecute(clExecuteEvent& event);
-    
+
+    void OnStopExecute(clExecuteEvent& event);
+    void OnIsExecuteInProgress(clExecuteEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
+
     /**
      * @brief restore the workspace session
      */

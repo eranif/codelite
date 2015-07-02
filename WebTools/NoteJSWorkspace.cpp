@@ -12,6 +12,9 @@
 #include "ctags_manager.h"
 #include "clWorkspaceManager.h"
 #include <wx/msgdlg.h>
+#include "NodeJSDebuggerDlg.h"
+#include "asyncprocess.h"
+#include "processreaderthread.h"
 
 NodeJSWorkspace* NodeJSWorkspace::ms_workspace = NULL;
 
@@ -24,10 +27,11 @@ NodeJSWorkspace::NodeJSWorkspace(bool dummy)
 NodeJSWorkspace::NodeJSWorkspace()
     : m_clangOldFlag(false)
     , m_showWelcomePage(false)
+    , m_process(NULL)
 {
     SetWorkspaceType("Node.js");
     m_debugger.Reset(new NodeJSDebugger());
-    
+
     m_view = new NodeJSWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
     clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
 
@@ -37,6 +41,10 @@ NodeJSWorkspace::NodeJSWorkspace()
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &NodeJSWorkspace::OnAllEditorsClosed, this);
     EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &NodeJSWorkspace::OnSaveSession, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &NodeJSWorkspace::OnExecute, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &NodeJSWorkspace::OnStopExecute, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &NodeJSWorkspace::OnIsExecuteInProgress, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSWorkspace::OnProcessTerminated, this);
 }
 
 NodeJSWorkspace::~NodeJSWorkspace()
@@ -48,7 +56,11 @@ NodeJSWorkspace::~NodeJSWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &NodeJSWorkspace::OnAllEditorsClosed, this);
         EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &NodeJSWorkspace::OnSaveSession, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &NodeJSWorkspace::OnExecute, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &NodeJSWorkspace::OnStopExecute, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &NodeJSWorkspace::OnIsExecuteInProgress, this);
         m_debugger.Reset(NULL);
+        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
+        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSWorkspace::OnProcessTerminated, this);
     }
 }
 
@@ -100,7 +112,7 @@ void NodeJSWorkspace::Close()
 {
     if(!IsOpen()) return;
     m_debugger.Reset(NULL);
-    
+
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
 
@@ -112,7 +124,7 @@ void NodeJSWorkspace::Close()
 
     // Clear the UI
     GetView()->Clear();
-        
+
     // Notify workspace closed event
     wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
@@ -209,7 +221,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
 
     // Load the workspace session (if any)
     CallAfter(&NodeJSWorkspace::RestoreSession);
-    
+
     return true;
 }
 
@@ -274,6 +286,45 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
 {
     event.Skip();
     if(IsOpen()) {
+        if(m_process) {
+            ::wxMessageBox(_("Another instance is already running. Please stop it before executing another one"),
+                           "CodeLite",
+                           wxICON_WARNING | wxCENTER | wxOK);
+            return;
+        }
         event.Skip(false);
+        NodeJSDebuggerDlg dlg(NULL, NodeJSDebuggerDlg::kExecute);
+        if(dlg.ShowModal() != wxID_OK) {
+            return;
+        }
+        wxString cmd = dlg.GetCommand();
+        m_process = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault | IProcessCreateConsole);
+    }
+}
+
+void NodeJSWorkspace::OnProcessOutput(clProcessEvent& event)
+{
+    clGetManager()->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
+}
+
+void NodeJSWorkspace::OnProcessTerminated(clProcessEvent& event) { wxDELETE(m_process); }
+
+void NodeJSWorkspace::OnIsExecuteInProgress(clExecuteEvent& event)
+{
+    event.Skip();
+    if(IsOpen()) {
+        event.Skip(false);
+        event.SetAnswer((m_process != NULL));
+    }
+}
+
+void NodeJSWorkspace::OnStopExecute(clExecuteEvent& event)
+{
+    event.Skip();
+    if(IsOpen()) {
+        event.Skip(false);
+        if(m_process) {
+            m_process->Terminate();
+        }
     }
 }

@@ -158,12 +158,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjec
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEvent);
 
 // A user requested to stop the previously executed program
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_STOP_EXECUTED_PROGRAM, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_STOP_EXECUTED_PROGRAM, clExecuteEvent);
 
 // codelite sends this event to query plugins incase there is a program running
-// use evet.SetInt(1) to indicate that the plugin has launched an executable
+// use evet.SetAnswer(true) to indicate that the plugin has launched an executable
 // it is mainly used for displaying the 'Stop' button in the toolbar as active/disabled
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_IS_PROGRAM_RUNNING, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_IS_PROGRAM_RUNNING, clExecuteEvent);
 
 // ----------------------------------------------------------------------
 // Build Events

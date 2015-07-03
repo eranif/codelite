@@ -3,6 +3,7 @@
 
 #include "NodeJSDebuggerBreakpoint.h"
 #include <wx/filename.h>
+#include <wx/arrstr.h>
 
 class NodeJSWorkspaceUser
 {
@@ -11,6 +12,7 @@ class NodeJSWorkspaceUser
     wxString m_scriptToExecute;
     int m_debuggerPort;
     wxString m_debuggerHost;
+    wxArrayString m_commandLineArgs;
 
 protected:
     wxFileName GetFileName() const;
@@ -47,6 +49,12 @@ public:
         this->m_workspacePath = workspacePath;
         return *this;
     }
+    NodeJSWorkspaceUser& SetCommandLineArgs(const wxArrayString& commandLineArgs)
+    {
+        this->m_commandLineArgs = commandLineArgs;
+        return *this;
+    }
+    const wxArrayString& GetCommandLineArgs() const { return m_commandLineArgs; }
     const wxString& GetDebuggerHost() const { return m_debuggerHost; }
     int GetDebuggerPort() const { return m_debuggerPort; }
     const wxString& GetScriptToExecute() const { return m_scriptToExecute; }

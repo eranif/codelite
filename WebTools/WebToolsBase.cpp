@@ -175,6 +175,22 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
         wxCD9C6InitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("nodejs"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("nodejs-32"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
     
     boxSizer68 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer68);
@@ -196,9 +212,9 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer76->Add(m_filePickerNodeJS, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText82 = new wxStaticText(this, wxID_ANY, _("Script to debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextScript = new wxStaticText(this, wxID_ANY, _("Script to debug:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer76->Add(m_staticText82, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer76->Add(m_staticTextScript, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     m_filePickerScript->SetToolTip(_("Select the script to execute"));
@@ -215,6 +231,49 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     #endif
     
     flexGridSizer76->Add(m_textCtrlPort, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText132 = new wxStaticText(this, wxID_ANY, _("Command line arguments:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer68->Add(m_staticText132, 0, wxALL, 5);
+    
+    m_stcCommandLineArguments = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcCommandLineArguments->SetToolTip(_("Pass command line arguments to Node.js\nPlace each argument on its own line"));
+    // Configure the fold margin
+    m_stcCommandLineArguments->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcCommandLineArguments->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcCommandLineArguments->SetMarginSensitive(4, true);
+    m_stcCommandLineArguments->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcCommandLineArguments->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcCommandLineArguments->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcCommandLineArguments->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcCommandLineArguments->SetMarginWidth(2, 0);
+    m_stcCommandLineArguments->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcCommandLineArguments->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcCommandLineArguments->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcCommandLineArguments->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcCommandLineArguments->SetMarginMask(3, 0);
+    m_stcCommandLineArguments->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcCommandLineArguments->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcCommandLineArguments->StyleClearAll();
+    m_stcCommandLineArguments->SetWrapMode(0);
+    m_stcCommandLineArguments->SetIndentationGuides(0);
+    m_stcCommandLineArguments->SetKeyWords(0, wxT(""));
+    m_stcCommandLineArguments->SetKeyWords(1, wxT(""));
+    m_stcCommandLineArguments->SetKeyWords(2, wxT(""));
+    m_stcCommandLineArguments->SetKeyWords(3, wxT(""));
+    m_stcCommandLineArguments->SetKeyWords(4, wxT(""));
+    
+    boxSizer68->Add(m_stcCommandLineArguments, 1, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer70 = new wxStdDialogButtonSizer();
     

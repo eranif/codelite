@@ -6,6 +6,7 @@
 #include "imanager.h"
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include "NoteJSWorkspace.h"
+#include "ColoursAndFontsManager.h"
 
 NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     : NodeJSDebuggerDlgBase(parent)
@@ -13,12 +14,15 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
 {
     if(m_type == kDebug) {
         SetLabel(_("Debug script"));
+        m_staticTextScript->SetLabel(_("Script to debug:"));
     } else {
         SetLabel(_("Execute script"));
-        m_staticTextDebuggerPort->Hide();
-        m_textCtrlPort->Hide();
+        m_staticTextScript->SetLabel(_("Script to execute:"));
+        m_staticTextDebuggerPort->Disable();
+        m_textCtrlPort->Disable();
     }
-
+    
+    m_stcCommandLineArguments->SetEOLMode(wxSTC_EOL_LF);
     wxFileName fnNodejs;
     wxString nodejs = clConfig::Get().Read("webtools/nodejs/debugger/executable", wxString());
     if(nodejs.IsEmpty()) {
@@ -39,6 +43,11 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     m_filePickerNodeJS->SetPath(nodejs);
     m_filePickerScript->SetPath(script);
     m_textCtrlPort->ChangeValue(wxString() << userConf.GetDebuggerPort());
+    m_stcCommandLineArguments->SetText(::wxJoin(userConf.GetCommandLineArgs(), '\n'));
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("javascript");
+    if(lexer) {
+        lexer->Apply(m_stcCommandLineArguments);
+    }
 }
 
 NodeJSDebuggerDlg::~NodeJSDebuggerDlg()
@@ -47,10 +56,12 @@ NodeJSDebuggerDlg::~NodeJSDebuggerDlg()
     NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
     userConf.Load();
     userConf.SetScriptToExecute(m_filePickerScript->GetPath());
-    
+
     long nPort;
     m_textCtrlPort->GetValue().ToCLong(&nPort);
     userConf.SetDebuggerPort(nPort);
+    wxArrayString commandLineArgs = ::wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);
+    userConf.SetCommandLineArgs(commandLineArgs);
     userConf.Save();
 }
 
@@ -75,10 +86,18 @@ wxString NodeJSDebuggerDlg::GetCommand()
             port = 5858;
         }
         command << nodejs << " --debug-brk=" << port << " " << script;
-        ::WrapInShell(command);
     } else {
         command << nodejs << " " << script;
-        ::WrapInShell(command);
     }
+
+    wxArrayString args = ::wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);
+    if(!args.IsEmpty()) {
+        command << " ";
+    }
+    for(size_t i = 0; i < args.size(); ++i) {
+        command << args.Item(i) << " ";
+    }
+
+    ::WrapInShell(command);
     return command;
 }

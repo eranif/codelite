@@ -25,11 +25,11 @@
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/textctrl.h>
+#include <wx/stc/stc.h>
 #include <wx/splitter.h>
 #include <wx/dataview.h>
 #include "m_dataview126model.h"
 #include "Notebook.h"
-#include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -94,10 +94,12 @@ protected:
     wxFlexGridSizer* flexGridSizer76;
     wxStaticText* m_staticText78;
     wxFilePickerCtrl* m_filePickerNodeJS;
-    wxStaticText* m_staticText82;
+    wxStaticText* m_staticTextScript;
     wxFilePickerCtrl* m_filePickerScript;
     wxStaticText* m_staticTextDebuggerPort;
     wxTextCtrl* m_textCtrlPort;
+    wxStaticText* m_staticText132;
+    wxStyledTextCtrl* m_stcCommandLineArguments;
     wxStdDialogButtonSizer* m_stdBtnSizer70;
     wxButton* m_buttonOK;
     wxButton* m_button74;
@@ -108,10 +110,12 @@ protected:
 public:
     wxStaticText* GetStaticText78() { return m_staticText78; }
     wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
-    wxStaticText* GetStaticText82() { return m_staticText82; }
+    wxStaticText* GetStaticTextScript() { return m_staticTextScript; }
     wxFilePickerCtrl* GetFilePickerScript() { return m_filePickerScript; }
     wxStaticText* GetStaticTextDebuggerPort() { return m_staticTextDebuggerPort; }
     wxTextCtrl* GetTextCtrlPort() { return m_textCtrlPort; }
+    wxStaticText* GetStaticText132() { return m_staticText132; }
+    wxStyledTextCtrl* GetStcCommandLineArguments() { return m_stcCommandLineArguments; }
     NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Node.js Debugger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NodeJSDebuggerDlgBase();
 };

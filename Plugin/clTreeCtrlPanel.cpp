@@ -365,6 +365,8 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     if(!FileUtils::WriteFileContent(file, "")) return;
     wxTreeItemId newFile = DoAddFile(item, file.GetFullPath());
     GetTreeCtrl()->SortChildren(item);
+    // Open the file in the editor
+    clGetManager()->OpenFile(file.GetFullPath());
     CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
 }
 

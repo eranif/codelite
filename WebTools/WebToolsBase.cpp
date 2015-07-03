@@ -23,7 +23,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -34,7 +34,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_panel56 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel56, _("Code Completion"), false);
     
-    boxSizer58 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
     m_panel56->SetSizer(boxSizer58);
     
     m_checkBoxEnableJsCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable JavaScript code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -58,7 +58,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("JavaScript"), false);
     
-    boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
     m_panel12->SetSizer(boxSizer22);
     
     wxArrayString m_pgMgrArr;
@@ -123,28 +123,12 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer4->AddButton(m_buttonOK);
     m_stdBtnSizer4->Realize();
     
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook10)){
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook10);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook10);
-    }
-    #endif
-    
     SetName(wxT("WebToolsSettingsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_checkBoxEnableJsCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_checkBoxEnableXmlCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
@@ -192,10 +176,10 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     SetIcons( app_icons );
 
     
-    boxSizer68 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer68 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer68);
     
-    flexGridSizer76 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer76 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer76->SetFlexibleDirection( wxBOTH );
     flexGridSizer76->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer76->AddGrowableCol(1);
@@ -206,7 +190,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer76->Add(m_staticText78, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_filePickerNodeJS = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerNodeJS = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     m_filePickerNodeJS->SetToolTip(_("Select Node.js executable"));
     m_filePickerNodeJS->SetFocus();
     
@@ -216,7 +200,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer76->Add(m_staticTextScript, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerScript = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     m_filePickerScript->SetToolTip(_("Select the script to execute"));
     
     flexGridSizer76->Add(m_filePickerScript, 0, wxALL|wxEXPAND, 5);
@@ -293,13 +277,6 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSDebuggerDlgBase::OnOKUI), NULL, this);
     
@@ -321,7 +298,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    boxSizer88 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer88);
     
     m_splitter104 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
@@ -332,7 +309,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     
     m_splitterPage112 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer120 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer120 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage112->SetSizer(boxSizer120);
     
     m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
@@ -349,7 +326,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_splitterPage108 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter104->SplitVertically(m_splitterPage112, m_splitterPage108, 0);
     
-    boxSizer118 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer118 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage108->SetSizer(boxSizer118);
     
     m_notebook = new Notebook(m_splitterPage108, wxID_ANY, wxDefaultPosition, wxSize(-1,250), kNotebook_Default | kNotebook_AllowDnD);
@@ -360,7 +337,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_panelCallstack = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelCallstack, _("Call Stack"), true);
     
-    boxSizer96 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer96 = new wxBoxSizer(wxVERTICAL);
     m_panelCallstack->SetSizer(boxSizer96);
     
     m_dvListCtrlCallstack = new wxDataViewListCtrl(m_panelCallstack, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
@@ -374,7 +351,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelConsoleLog, _("Console"), false);
     
-    boxSizer98 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer98 = new wxBoxSizer(wxVERTICAL);
     m_panelConsoleLog->SetSizer(boxSizer98);
     
     m_consoleLog = new wxStyledTextCtrl(m_panelConsoleLog, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -429,5 +406,92 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
 NodeJSDebuggerPaneBase::~NodeJSDebuggerPaneBase()
 {
     m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    
+}
+
+NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCD9C6InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer140 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer140);
+    
+    wxFlexGridSizer* flexGridSizer148 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer148->SetFlexibleDirection( wxBOTH );
+    flexGridSizer148->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer148->AddGrowableCol(1);
+    
+    boxSizer140->Add(flexGridSizer148, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText150 = new wxStaticText(this, wxID_ANY, _("Workspace path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer148->Add(m_staticText150, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_dirPickerFolder = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerFolder->SetFocus();
+    
+    flexGridSizer148->Add(m_dirPickerFolder, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText160 = new wxStaticText(this, wxID_ANY, _("Workspace name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer148->Add(m_staticText160, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrllName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrllName->SetHint(wxT(""));
+    #endif
+    
+    flexGridSizer148->Add(m_textCtrllName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    flexGridSizer148->Add(0, 0, 1, wxALL, 5);
+    
+    m_checkBoxNewFolder = new wxCheckBox(this, wxID_ANY, _("Create in a new folder"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxNewFolder->SetValue(true);
+    
+    flexGridSizer148->Add(m_checkBoxNewFolder, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticTextPreview = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE|wxBORDER_STATIC);
+    m_staticTextPreview->SetForegroundColour(wxColour(wxT("rgb(21,144,18)")));
+    
+    boxSizer140->Add(m_staticTextPreview, 0, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer142 = new wxStdDialogButtonSizer();
+    
+    boxSizer140->Add(m_stdBtnSizer142, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button144 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button144->SetDefault();
+    m_stdBtnSizer142->AddButton(m_button144);
+    
+    m_button146 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer142->AddButton(m_button146);
+    m_stdBtnSizer142->Realize();
+    
+    SetName(wxT("NodeJSNewWorkspaceDlgBase"));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+    // Connect events
+    m_dirPickerFolder->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NodeJSNewWorkspaceDlgBase::OnFolderSelected), NULL, this);
+    m_textCtrllName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnTextUpdate), NULL, this);
+    m_checkBoxNewFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnCheckNewFolder), NULL, this);
+    m_button144->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSNewWorkspaceDlgBase::OnOKUI), NULL, this);
+    
+}
+
+NodeJSNewWorkspaceDlgBase::~NodeJSNewWorkspaceDlgBase()
+{
+    m_dirPickerFolder->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NodeJSNewWorkspaceDlgBase::OnFolderSelected), NULL, this);
+    m_textCtrllName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnTextUpdate), NULL, this);
+    m_checkBoxNewFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnCheckNewFolder), NULL, this);
+    m_button144->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSNewWorkspaceDlgBase::OnOKUI), NULL, this);
     
 }

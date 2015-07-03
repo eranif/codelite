@@ -161,6 +161,7 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE=}"));
     m_tokens.Add(wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{"));
     m_tokens.Add(wxT("wxDECLARE_EXPORTED_EVENT(%0,%1,%2)=int %1;"));
+    m_tokens.Add(wxT("wxDECLARE_EVENT(%0,%1)=int %0;"));
     m_tokens.Add(wxT("BOOST_FOREACH(%0, %1)=%0;"));
     m_tokens.Add(wxT("DECLARE_EVENT_TYPE(%0,%1)=int %0;"));
     m_tokens.Add(wxT("_GLIBCXX_END_NESTED_NAMESPACE=}"));

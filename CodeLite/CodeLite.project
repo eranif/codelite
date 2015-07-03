@@ -298,6 +298,8 @@
     <File Name="SocketAPI/clSocketClient.h"/>
     <File Name="SocketAPI/clSocketServer.cpp"/>
     <File Name="SocketAPI/clSocketServer.h"/>
+    <File Name="SocketAPI/clSocketClientAsync.h"/>
+    <File Name="SocketAPI/clSocketClientAsync.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="PhpScanner">
     <File Name="PhpLexer.cpp"/>

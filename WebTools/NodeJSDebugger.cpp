@@ -148,17 +148,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
     m_socket.Reset(new NodeJSSocket(this));
     NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
     userConf.Load();
-    if(!m_socket->Connect("127.0.0.1", userConf.GetDebuggerPort()) &&
-       (m_socket->LastErrorCode() != wxSOCKET_WOULDBLOCK)) {
-        ::wxMessageBox(wxString::Format(_("Failed to connect to NodeJS debugger\n%s"), m_socket->LastError()),
-                       "CodeLite",
-                       wxOK | wxICON_ERROR | wxCENTER);
-        m_socket.Reset(NULL);
-    }
-
-    clDebugEvent eventStart(wxEVT_NODEJS_DEBUGGER_STARTED);
-    eventStart.SetDebuggerName("Node.js");
-    EventNotifier::Get()->AddPendingEvent(eventStart);
+    m_socket->Connect("127.0.0.1", userConf.GetDebuggerPort());
 }
 
 void NodeJSDebugger::OnDebugStepIn(clDebugEvent& event)
@@ -258,7 +248,12 @@ void NodeJSDebugger::OnVoid(clDebugEvent& event)
 
 bool NodeJSDebugger::IsConnected() { return m_socket && m_socket->IsConnected(); }
 
-void NodeJSDebugger::ConnectionEstablished() {}
+void NodeJSDebugger::ConnectionEstablished()
+{
+    clDebugEvent eventStart(wxEVT_NODEJS_DEBUGGER_STARTED);
+    eventStart.SetDebuggerName("Node.js");
+    EventNotifier::Get()->AddPendingEvent(eventStart);
+}
 
 void NodeJSDebugger::ConnectionLost()
 {
@@ -442,4 +437,19 @@ void NodeJSDebugger::OnSelectFrame(clDebugEvent& event)
 {
     event.Skip();
     SelectFrame(event.GetInt());
+}
+
+void NodeJSDebugger::ExceptionThrown()
+{
+    // Switch to the 'Console' view
+    clDebugEvent event(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN);
+    EventNotifier::Get()->AddPendingEvent(event);
+}
+
+void NodeJSDebugger::ConnectError()
+{
+    ::wxMessageBox(wxString::Format(_("Failed to connect to Node.js debugger:\n'%s'"), m_socket->GetErrorString()),
+                   "CodeLite",
+                   wxOK | wxICON_ERROR | wxCENTER);
+    m_socket.Reset(NULL);
 }

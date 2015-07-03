@@ -41,6 +41,7 @@ protected:
     void OnLostControl(clDebugEvent& event);
     void OnConsoleLog(clDebugEvent& event);
     void OnSessionStarted(clDebugEvent& event);
+    void OnExceptionThrown(clDebugEvent& event);
 
 public:
     NodeJSDebuggerPane(wxWindow* parent);

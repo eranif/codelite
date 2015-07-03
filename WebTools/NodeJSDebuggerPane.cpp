@@ -5,6 +5,7 @@
 #include <map>
 #include "ColoursAndFontsManager.h"
 #include <wx/wupdlock.h>
+#include <wx/msgdlg.h>
 
 NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     : NodeJSDebuggerPaneBase(parent)
@@ -13,6 +14,7 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
@@ -27,6 +29,7 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
     ClearCallstack();
 }
 
@@ -35,7 +38,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
     event.Skip();
     wxWindowUpdateLocker locker(m_dataviewLocals);
     ClearCallstack();
-    
+
     JSONRoot root(event.GetString());
     JSONElement frames = root.toElement().namedObject("body").namedObject("frames");
     JSONElement refs = root.toElement().namedObject("refs");
@@ -181,7 +184,7 @@ void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, 
     }
 }
 
-void NodeJSDebuggerPane::BuildArguments(const JSONElement& json) 
+void NodeJSDebuggerPane::BuildArguments(const JSONElement& json)
 {
     wxVector<wxVariant> cols;
     cols.push_back("Arguments");
@@ -195,7 +198,7 @@ void NodeJSDebuggerPane::BuildArguments(const JSONElement& json)
         JSONElement local = arr.arrayItem(i);
         AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
     }
-    
+
     if(m_dataviewLocalsModel->HasChildren(locals)) {
         m_dataviewLocals->Expand(locals);
     }
@@ -215,8 +218,18 @@ void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
         JSONElement local = arr.arrayItem(i);
         AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
     }
-    
+
     if(m_dataviewLocalsModel->HasChildren(locals)) {
         m_dataviewLocals->Expand(locals);
+    }
+}
+
+void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
+{
+    event.Skip();
+    ::wxMessageBox(_("An exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+    int where = m_notebook->FindPage(m_panelConsoleLog);
+    if(where != wxNOT_FOUND) {
+        m_notebook->SetSelection(where);
     }
 }

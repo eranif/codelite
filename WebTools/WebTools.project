@@ -334,5 +334,7 @@
     <File Name="NodeJSWorkspaceUserConfiguration.cpp"/>
     <File Name="NodeJSEvents.h"/>
     <File Name="NodeJSEvents.cpp"/>
+    <File Name="NodeJSNewWorkspaceDlg.h"/>
+    <File Name="NodeJSNewWorkspaceDlg.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

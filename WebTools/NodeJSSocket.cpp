@@ -5,66 +5,71 @@
 #include <wx/regex.h>
 
 NodeJSSocket::NodeJSSocket(NodeJSDebugger* debugger)
-    : m_socket(NULL)
+    : m_socket(this)
+    , m_connected(false)
     , m_sequence(0)
     , m_debugger(debugger)
     , m_firstTimeConnected(true)
 {
-    m_socket = new wxSocketClient(wxSOCKET_NOWAIT_READ);
-    m_socket->SetEventHandler(*this);
-    m_socket->SetNotify(wxSOCKET_CONNECTION_FLAG | wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
-    m_socket->Notify(true);
-    Bind(wxEVT_SOCKET, &NodeJSSocket::OnSocketEvent, this);
+    Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &NodeJSSocket::OnSocketConnected, this);
+    Bind(wxEVT_ASYNC_SOCKET_ERROR, &NodeJSSocket::OnSocketError, this);
+    Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &NodeJSSocket::OnSocketConnectionLost, this);
+    Bind(wxEVT_ASYNC_SOCKET_INPUT, &NodeJSSocket::OnSocketInput, this);
+    Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &NodeJSSocket::OnSocketConnectError, this);
 }
 
 NodeJSSocket::~NodeJSSocket() { Destroy(); }
 
-void NodeJSSocket::OnSocketEvent(wxSocketEvent& event)
+void NodeJSSocket::OnSocketConnected(clCommandEvent& event)
 {
-    switch(event.GetSocketEvent()) {
-    case wxSOCKET_INPUT: {
-        // Read all the content from the socket
-        ReadSocketContent();
-        ProcessInputBuffer();
-        break;
-    }
-    case wxSOCKET_LOST:
-        Destroy();
-        m_debugger->CallAfter(&NodeJSDebugger::ConnectionLost);
-        break;
+    CL_DEBUG("CodeLite >>>> Connection established with Node.js");
+    // socket is now connected
+    m_debugger->CallAfter(&NodeJSDebugger::ConnectionEstablished);
+    m_connected = true;
+}
 
-    case wxSOCKET_CONNECTION:
-        // socket is now connected
-        m_debugger->CallAfter(&NodeJSDebugger::ConnectionEstablished);
-        break;
+void NodeJSSocket::OnSocketError(clCommandEvent& event)
+{
+    m_errorString = event.GetString();
+    CL_DEBUG("Socket error: %s", m_errorString);
+    Destroy();
+}
 
-    default:
-        break;
-    }
+void NodeJSSocket::OnSocketConnectionLost(clCommandEvent& event)
+{
+    CL_DEBUG("CodeLite >>>> Lost connection to Node.js");
+    Destroy();
+    m_debugger->CallAfter(&NodeJSDebugger::ConnectionLost);
+}
+
+void NodeJSSocket::OnSocketInput(clCommandEvent& event)
+{
+    CL_DEBUG("CodeLite >>>> Got something on the socket...");
+    m_inBuffer << event.GetString();
+    CL_DEBUG("Node.js  <<<< %s", m_inBuffer);
+    ProcessInputBuffer();
+}
+
+void NodeJSSocket::OnSocketConnectError(clCommandEvent& event)
+{
+    CL_DEBUG("CodeLite >>>> connect error");
+    m_errorString = event.GetString();
+    m_debugger->CallAfter(&NodeJSDebugger::ConnectError);
+    Destroy();
 }
 
 void NodeJSSocket::Destroy()
 {
-    Unbind(wxEVT_SOCKET, &NodeJSSocket::OnSocketEvent, this);
-    if(m_socket) {
-        m_socket->Shutdown();
-        wxDELETE(m_socket);
-    }
-    m_firstTimeConnected = true;
-}
+    Unbind(wxEVT_ASYNC_SOCKET_CONNECTED, &NodeJSSocket::OnSocketConnected, this);
+    Unbind(wxEVT_ASYNC_SOCKET_ERROR, &NodeJSSocket::OnSocketError, this);
+    Unbind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &NodeJSSocket::OnSocketConnectionLost, this);
+    Unbind(wxEVT_ASYNC_SOCKET_INPUT, &NodeJSSocket::OnSocketInput, this);
+    Unbind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &NodeJSSocket::OnSocketInput, this);
 
-void NodeJSSocket::ReadSocketContent()
-{
-    char buff[1024];
-    while(true) {
-        memset(buff, 0, sizeof(buff));
-        m_socket->Read(buff, (sizeof(buff) - 1));
-        if(m_socket->LastReadCount() == 0) { // EOF
-            break;
-        }
-        m_inBuffer << (const char*)buff;
-    }
-    CL_DEBUG("Node.js  <<<< %s", m_inBuffer);
+    m_socket.Disconnect();
+    m_firstTimeConnected = true;
+    m_connected = false;
+    CL_DEBUG("CodeLite >>>> Cleaning up socket with Node.js");
 }
 
 void NodeJSSocket::WriteReply(const wxString& reply)
@@ -73,9 +78,7 @@ void NodeJSSocket::WriteReply(const wxString& reply)
     wxString content;
     content << "Content-Length:" << reply.length() << "\r\n\r\n";
     content << reply;
-
-    wxCharBuffer cb = content.mb_str(wxConvUTF8).data();
-    m_socket->Write(cb.data(), cb.length());
+    m_socket.Send(content);
 }
 
 void NodeJSSocket::ProcessInputBuffer()
@@ -108,9 +111,14 @@ void NodeJSSocket::ProcessInputBuffer()
             } else {
 
                 // Notify the debugger that we got control
-                if((json.namedObject("type").toString() == "event") &&
-                   (json.namedObject("event").toString() == "break")) {
-                    m_debugger->GotControl(true);
+                if((json.namedObject("type").toString() == "event")) {
+                    if(json.namedObject("event").toString() == "break") {
+                        // breakpoint hit, notify we got control + request for backtrace
+                        m_debugger->GotControl(true);
+                    } else if(json.namedObject("event").toString() == "exception") {
+                        // the vm execution stopped due to an exception
+                        m_debugger->ExceptionThrown();
+                    }
                 } else {
                     m_debugger->SetCanInteract(false);
                 }
@@ -121,54 +129,7 @@ void NodeJSSocket::ProcessInputBuffer()
     }
 }
 
-bool NodeJSSocket::Connect(const wxString& ip, int port)
-{
-    wxIPV4address addr4;
-    addr4.Hostname(ip);
-    addr4.Service(port);
-
-    // Connect async
-    return m_socket->Connect(addr4, false) && (m_socket->LastError() != wxSOCKET_WOULDBLOCK);
-}
-
-wxString NodeJSSocket::LastError() const
-{
-    if(m_socket) {
-        switch(m_socket->LastError()) {
-        case wxSOCKET_NOERROR:
-            return "No error";
-        case wxSOCKET_INVOP:
-            return "Invalid operation";
-        case wxSOCKET_IOERR:
-            return "Input/Output error";
-        case wxSOCKET_INVADDR:
-            return "Invalid address passed to wxSocket";
-        case wxSOCKET_INVSOCK:
-            return "Invalid socket (uninitialized)";
-        case wxSOCKET_NOHOST:
-            return "No corresponding host";
-        case wxSOCKET_INVPORT:
-            return "Invalid port";
-        case wxSOCKET_WOULDBLOCK:
-            return "The socket is non-blocking and the operation would block";
-        case wxSOCKET_TIMEDOUT:
-            return "The timeout for this operation expired";
-        case wxSOCKET_MEMERR:
-            return "Memory exhausted";
-        case wxSOCKET_OPTERR:
-            return "Operation error";
-        default:
-            break;
-        }
-    }
-    return "";
-}
-
-wxSocketError NodeJSSocket::LastErrorCode() const
-{
-    if(m_socket) return m_socket->LastError();
-    return wxSOCKET_NOERROR;
-}
+void NodeJSSocket::Connect(const wxString& ip, int port) { m_socket.Connect(ip, port); }
 
 void NodeJSSocket::WriteRequest(JSONElement& request, NodeJSHandlerBase::Ptr_t handler)
 {
@@ -182,8 +143,7 @@ void NodeJSSocket::WriteRequest(JSONElement& request, NodeJSHandlerBase::Ptr_t h
     content << str;
 
     CL_DEBUG("CodeLite >>>> %s", content);
-    wxCharBuffer cb = content.mb_str(wxConvUTF8).data();
-    m_socket->Write(cb.data(), cb.length());
+    m_socket.Send(content);
 
     // Keep the handler
     if(handler) {
@@ -200,10 +160,18 @@ wxString NodeJSSocket::GetResponse()
         re.GetMatch(m_inBuffer, 1).ToCLong(&len);
 
         // Remove the "Content-Length: NN\r\n\r\n"
-        m_inBuffer = m_inBuffer.Mid(wholeLine.length() + 4);
-        wxString response = m_inBuffer.Mid(0, len);
-        m_inBuffer = m_inBuffer.Mid(len);
-        return response;
+        size_t headerLen = wholeLine.length() + 4;
+        
+        // Did we read enough from the socket to process?
+        if(m_inBuffer.length() >= (len + headerLen)) {
+            m_inBuffer = m_inBuffer.Mid(wholeLine.length() + 4);
+            wxString response = m_inBuffer.Mid(0, len);
+            m_inBuffer = m_inBuffer.Mid(len);
+            return response;
+
+        } else {
+            return "";
+        }
     }
     return "";
 }

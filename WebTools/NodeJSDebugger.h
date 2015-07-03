@@ -107,12 +107,22 @@ public:
      * @brief nodejs debugger socket disconnected
      */
     void ConnectionLost();
+    
+    /**
+     * @brief could not connect to NodeJS
+     */
+    void ConnectError();
 
     /**
      * @brief this function is called by the various handlers whenever the CodeLite
      * gets the control from NodeJS
      */
     void GotControl(bool requestBacktrace);
+    
+    /**
+     * @brief the execution in the VM has stopped due to an exception
+     */
+    void ExceptionThrown();
 };
 
 #endif // NODEJSDEBUGGER_H

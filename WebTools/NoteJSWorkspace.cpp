@@ -15,6 +15,7 @@
 #include "NodeJSDebuggerDlg.h"
 #include "asyncprocess.h"
 #include "processreaderthread.h"
+#include "NodeJSNewWorkspaceDlg.h"
 
 NodeJSWorkspace* NodeJSWorkspace::ms_workspace = NULL;
 
@@ -164,17 +165,19 @@ void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
     if(e.GetString() == GetWorkspaceType()) {
         e.Skip(false);
         // Create a new NodeJS workspace
-        wxString path = ::wxDirSelector(_("Select a folder"), "", wxDD_DIR_MUST_EXIST | wxDD_NEW_DIR_BUTTON);
-        if(path.IsEmpty()) return;
-
-        wxFileName workspaceFile(path, "");
+        NodeJSNewWorkspaceDlg dlg(NULL);
+        if(dlg.ShowModal() != wxID_OK) return;
+        
+        wxFileName workspaceFile = dlg.GetWorkspaceFilename();
         if(!workspaceFile.GetDirCount()) {
             ::wxMessageBox(
                 _("Can not create workspace in the root folder"), _("New Workspace"), wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
-        workspaceFile.SetName(workspaceFile.GetDirs().Last());
-        workspaceFile.SetExt("workspace");
+        
+        // Ensure that the path the workspace exists
+        workspaceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        
         if(!Create(workspaceFile)) {
             ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"),
                            _("New Workspace"),

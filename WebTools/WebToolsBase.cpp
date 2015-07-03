@@ -200,7 +200,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     flexGridSizer76->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer76->AddGrowableCol(1);
     
-    boxSizer68->Add(flexGridSizer76, 1, wxALL|wxEXPAND, 5);
+    boxSizer68->Add(flexGridSizer76, 0, wxALL|wxEXPAND, 5);
     
     m_staticText78 = new wxStaticText(this, wxID_ANY, _("Node.js executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
     

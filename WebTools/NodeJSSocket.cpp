@@ -33,13 +33,14 @@ void NodeJSSocket::OnSocketError(clCommandEvent& event)
     m_errorString = event.GetString();
     CL_DEBUG("Socket error: %s", m_errorString);
     Destroy();
+    m_debugger->CallAfter(&NodeJSDebugger::ConnectionLost, m_errorString);
 }
 
 void NodeJSSocket::OnSocketConnectionLost(clCommandEvent& event)
 {
     CL_DEBUG("CodeLite >>>> Lost connection to Node.js");
     Destroy();
-    m_debugger->CallAfter(&NodeJSDebugger::ConnectionLost);
+    m_debugger->CallAfter(&NodeJSDebugger::ConnectionLost, m_errorString);
 }
 
 void NodeJSSocket::OnSocketInput(clCommandEvent& event)
@@ -54,7 +55,7 @@ void NodeJSSocket::OnSocketConnectError(clCommandEvent& event)
 {
     CL_DEBUG("CodeLite >>>> connect error");
     m_errorString = event.GetString();
-    m_debugger->CallAfter(&NodeJSDebugger::ConnectError);
+    m_debugger->CallAfter(&NodeJSDebugger::ConnectError, m_errorString);
     Destroy();
 }
 
@@ -129,7 +130,7 @@ void NodeJSSocket::ProcessInputBuffer()
     }
 }
 
-void NodeJSSocket::Connect(const wxString& ip, int port) { m_socket.Connect(ip, port); }
+void NodeJSSocket::Connect(const wxString& ip, int port) { m_socket.Connect(ip, port, ""); }
 
 void NodeJSSocket::WriteRequest(JSONElement& request, NodeJSHandlerBase::Ptr_t handler)
 {
@@ -161,7 +162,7 @@ wxString NodeJSSocket::GetResponse()
 
         // Remove the "Content-Length: NN\r\n\r\n"
         size_t headerLen = wholeLine.length() + 4;
-        
+
         // Did we read enough from the socket to process?
         if(m_inBuffer.length() >= (len + headerLen)) {
             m_inBuffer = m_inBuffer.Mid(wholeLine.length() + 4);

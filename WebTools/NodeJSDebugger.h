@@ -84,12 +84,12 @@ public:
      * @brief request for callstack
      */
     void Callstack();
-    
+
     /**
      * @brief select new frame (usually by d-clicking a frame entry in the callstack view)
      */
     void SelectFrame(int frameId);
-    
+
     //--------------------------------------------------
     // API END
     //--------------------------------------------------
@@ -106,19 +106,19 @@ public:
     /**
      * @brief nodejs debugger socket disconnected
      */
-    void ConnectionLost();
-    
+    void ConnectionLost(const wxString& errmsg);
+
     /**
      * @brief could not connect to NodeJS
      */
-    void ConnectError();
+    void ConnectError(const wxString& errmsg);
 
     /**
      * @brief this function is called by the various handlers whenever the CodeLite
      * gets the control from NodeJS
      */
     void GotControl(bool requestBacktrace);
-    
+
     /**
      * @brief the execution in the VM has stopped due to an exception
      */

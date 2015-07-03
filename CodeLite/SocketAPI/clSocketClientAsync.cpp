@@ -15,10 +15,10 @@ clSocketClientAsync::clSocketClientAsync(wxEvtHandler* owner)
 
 clSocketClientAsync::~clSocketClientAsync() { Disconnect(); }
 
-void clSocketClientAsync::Connect(const wxString& host, int port)
+void clSocketClientAsync::Connect(const wxString& host, int port, const wxString& keepAliveMessage)
 {
     Disconnect();
-    m_thread = new clSocketClientAsyncHelperThread(m_owner, host, port);
+    m_thread = new clSocketClientAsyncHelperThread(m_owner, host, port, keepAliveMessage);
     m_thread->Start();
 }
 
@@ -43,10 +43,14 @@ void clSocketClientAsync::Send(const wxString& buffer)
 //-----------------------------------------------------------------------------------------------
 // The helper thread
 //-----------------------------------------------------------------------------------------------
-clSocketClientAsyncHelperThread::clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& host, int port)
+clSocketClientAsyncHelperThread::clSocketClientAsyncHelperThread(wxEvtHandler* sink,
+                                                                 const wxString& host,
+                                                                 int port,
+                                                                 const wxString& keepAliveMessage)
     : wxThread(wxTHREAD_JOINABLE)
     , m_sink(sink)
     , m_host(host)
+    , m_keepAliveMessage(keepAliveMessage)
     , m_port(port)
 {
 }
@@ -87,8 +91,15 @@ void* clSocketClientAsyncHelperThread::Entry()
     m_sink->AddPendingEvent(event);
 
     try {
+        int counter = 0;
         while(!TestDestroy()) {
             // Wait for request from the user
+            ++counter;
+            if(!m_keepAliveMessage.IsEmpty() && (counter % 10) == 0) {
+                // Fire the keep alive message
+                // if we lost the socket, it will raise an exception
+                socket->Send(m_keepAliveMessage);
+            }
 
             MyRequest req;
             if(m_queue.ReceiveTimeout(1, req) == wxMSGQUEUE_NO_ERROR) {

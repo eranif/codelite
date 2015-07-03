@@ -22,8 +22,7 @@ public:
         kDisconnect,
     };
 
-    struct MyRequest
-    {
+    struct MyRequest {
         eCommand m_command;
         wxString m_buffer;
     };
@@ -31,6 +30,7 @@ public:
 protected:
     wxEvtHandler* m_sink;
     wxString m_host;
+    wxString m_keepAliveMessage;
     int m_port;
     wxMessageQueue<MyRequest> m_queue;
 
@@ -60,7 +60,10 @@ public:
         }
     }
 
-    clSocketClientAsyncHelperThread(wxEvtHandler* sink, const wxString& host, int port);
+    clSocketClientAsyncHelperThread(wxEvtHandler* sink,
+                                    const wxString& host,
+                                    int port,
+                                    const wxString& keepAliveMessage = "");
     virtual ~clSocketClientAsyncHelperThread();
 };
 
@@ -73,7 +76,7 @@ public:
     clSocketClientAsync(wxEvtHandler* owner);
     ~clSocketClientAsync();
 
-    void Connect(const wxString& host, int port);
+    void Connect(const wxString& host, int port, const wxString& keepAliveMessage = "");
     void Send(const wxString& buffer);
     void Disconnect();
 };

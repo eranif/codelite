@@ -255,8 +255,9 @@ void NodeJSDebugger::ConnectionEstablished()
     EventNotifier::Get()->AddPendingEvent(eventStart);
 }
 
-void NodeJSDebugger::ConnectionLost()
+void NodeJSDebugger::ConnectionLost(const wxString& errmsg)
 {
+    wxUnusedVar(errmsg);
     if(m_node) {
         m_node->Terminate();
     }
@@ -446,9 +447,9 @@ void NodeJSDebugger::ExceptionThrown()
     EventNotifier::Get()->AddPendingEvent(event);
 }
 
-void NodeJSDebugger::ConnectError()
+void NodeJSDebugger::ConnectError(const wxString& errmsg)
 {
-    ::wxMessageBox(wxString::Format(_("Failed to connect to Node.js debugger:\n'%s'"), m_socket->GetErrorString()),
+    ::wxMessageBox(wxString::Format(_("Failed to connect to Node.js debugger:\n'%s'"), errmsg),
                    "CodeLite",
                    wxOK | wxICON_ERROR | wxCENTER);
     m_socket.Reset(NULL);

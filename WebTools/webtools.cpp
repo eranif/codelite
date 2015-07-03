@@ -384,8 +384,8 @@ void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
     if(pi.IsOk() && !pi.IsShown()) {
         pi.Show();
-        if(update) {
-            m_mgr->GetDockingManager()->Update();
-        }
+    }
+    if(update) {
+        m_mgr->GetDockingManager()->Update();
     }
 }

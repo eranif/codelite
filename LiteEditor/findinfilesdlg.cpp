@@ -191,6 +191,17 @@ void FindInFilesDialog::DoSetFileMask()
 
     // Create a single mask array
     m_fileTypes->Clear();
+    
+    // Remove empty entries
+    wxArrayString tempMaskArr;
+    std::for_each(mergedArr.begin(), mergedArr.end(), [&](wxString& item) {
+        item.Trim().Trim(false);
+        if(!item.IsEmpty()) {
+            tempMaskArr.Add(item);
+        }
+    });
+    mergedArr.swap(tempMaskArr);
+    
     if(!mergedArr.IsEmpty()) {
         m_fileTypes->Append(mergedArr);
 
@@ -199,13 +210,15 @@ void FindInFilesDialog::DoSetFileMask()
             // Let the active workspace set the find-in-files mask
             selectedMask = clWorkspaceManager::Get().GetWorkspace()->GetFilesMask();
         }
-
-        int where = m_fileTypes->FindString(selectedMask);
-        if(where == wxNOT_FOUND) {
-            // Add it
-            where = m_fileTypes->Append(selectedMask);
+        
+        if(!selectedMask.IsEmpty()) {
+            int where = m_fileTypes->FindString(selectedMask);
+            if(where == wxNOT_FOUND) {
+                // Add it
+                where = m_fileTypes->Append(selectedMask);
+            }
+            m_fileTypes->SetSelection(where);
         }
-        m_fileTypes->SetSelection(where);
     }
 }
 

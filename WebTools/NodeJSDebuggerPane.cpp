@@ -93,7 +93,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
         int line = frame.namedObject("line").toInt() + 1;
 
         wxVector<wxVariant> cols;
-        cols.push_back(index);
+        cols.push_back(wxString() << index);
         wxString file, func;
         if(m_handles.count(funcRef)) {
             func = m_handles.find(funcRef)->second.value;
@@ -103,7 +103,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
         }
         cols.push_back(func);
         cols.push_back(file);
-        cols.push_back(line);
+        cols.push_back(wxString() << line);
 
         FrameData* cd = new FrameData();
         cd->file = file;

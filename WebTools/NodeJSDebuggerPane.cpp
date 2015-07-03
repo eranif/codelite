@@ -21,6 +21,14 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
         lexer->Apply(m_consoleLog);
     }
     m_dataviewLocals->SetIndent(16);
+    m_dataviewLocals->GetColumn(0)->SetWidth(150);
+    m_dataviewLocals->GetColumn(1)->SetWidth(100);
+    m_dataviewLocals->GetColumn(2)->SetWidth(500);
+
+    m_dvListCtrlCallstack->GetColumn(0)->SetWidth(30);
+    m_dvListCtrlCallstack->GetColumn(1)->SetWidth(200);
+    m_dvListCtrlCallstack->GetColumn(2)->SetWidth(300);
+    m_dvListCtrlCallstack->GetColumn(3)->SetWidth(100);
 }
 
 NodeJSDebuggerPane::~NodeJSDebuggerPane()

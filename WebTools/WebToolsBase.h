@@ -29,7 +29,6 @@
 #include <wx/splitter.h>
 #include <wx/dataview.h>
 #include "m_dataview126model.h"
-#include "Notebook.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -134,12 +133,12 @@ protected:
 
     wxPanel* m_splitterPage108;
     wxBoxSizer* boxSizer118;
-    Notebook* m_notebook;
-    wxPanel* m_panelCallstack;
-    wxBoxSizer* boxSizer96;
+    wxSplitterWindow* m_splitter168;
+    wxPanel* m_splitterPage172;
+    wxBoxSizer* boxSizer178;
     wxDataViewListCtrl* m_dvListCtrlCallstack;
-    wxPanel* m_panelConsoleLog;
-    wxBoxSizer* boxSizer98;
+    wxPanel* m_splitterPage176;
+    wxBoxSizer* boxSizer180;
     wxStyledTextCtrl* m_consoleLog;
 
 protected:
@@ -149,13 +148,13 @@ public:
     wxDataViewCtrl* GetDataviewLocals() { return m_dataviewLocals; }
     wxPanel* GetSplitterPage112() { return m_splitterPage112; }
     wxDataViewListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
-    wxPanel* GetPanelCallstack() { return m_panelCallstack; }
+    wxPanel* GetSplitterPage172() { return m_splitterPage172; }
     wxStyledTextCtrl* GetConsoleLog() { return m_consoleLog; }
-    wxPanel* GetPanelConsoleLog() { return m_panelConsoleLog; }
-    Notebook* GetNotebook() { return m_notebook; }
+    wxPanel* GetSplitterPage176() { return m_splitterPage176; }
+    wxSplitterWindow* GetSplitter168() { return m_splitter168; }
     wxPanel* GetSplitterPage108() { return m_splitterPage108; }
     wxSplitterWindow* GetSplitter104() { return m_splitter104; }
-    NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,250), long style = wxTAB_TRAVERSAL);
     virtual ~NodeJSDebuggerPaneBase();
 };
 

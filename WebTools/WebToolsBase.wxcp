@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 166,
+  "m_objCounter": 180,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCD9C6InitBitmapResources",
   "m_bitmapsFile": "WebToolsBase_webtools_bitmaps.cpp",
@@ -2872,7 +2872,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "500,250"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -3436,13 +3436,13 @@
             }],
            "m_events": [],
            "m_children": [{
-             "m_type": 4442,
+             "m_type": 4447,
              "proportion": 1,
-             "border": 2,
+             "border": 5,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxBK_DEFAULT"],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+             "m_styles": ["wxSP_LIVE_UPDATE"],
+             "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "winid",
                "m_label": "ID:",
@@ -3450,7 +3450,7 @@
               }, {
                "type": "string",
                "m_label": "Size:",
-               "m_value": "-1,250"
+               "m_value": "-1,-1"
               }, {
                "type": "string",
                "m_label": "Minimum Size:",
@@ -3458,7 +3458,7 @@
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_notebook"
+               "m_value": "m_splitter168"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
@@ -3490,19 +3490,36 @@
               }, {
                "type": "string",
                "m_label": "Class Name:",
-               "m_value": "Notebook"
+               "m_value": ""
               }, {
                "type": "string",
                "m_label": "Include File:",
-               "m_value": "Notebook.h"
+               "m_value": ""
               }, {
                "type": "string",
                "m_label": "Style:",
-               "m_value": "kNotebook_Default | kNotebook_AllowDnD"
+               "m_value": ""
+              }, {
+               "type": "choice",
+               "m_label": "Split Mode:",
+               "m_selection": 0,
+               "m_options": ["wxSPLIT_VERTICAL", "wxSPLIT_HORIZONTAL"]
+              }, {
+               "type": "string",
+               "m_label": "Sash Gravity:",
+               "m_value": "0.5"
+              }, {
+               "type": "string",
+               "m_label": "Minimum Pane Size:",
+               "m_value": "10"
+              }, {
+               "type": "string",
+               "m_label": "Sash Position:",
+               "m_value": "0"
               }],
              "m_events": [],
              "m_children": [{
-               "m_type": 4441,
+               "m_type": 4448,
                "proportion": 0,
                "border": 5,
                "gbSpan": "1,1",
@@ -3524,7 +3541,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_panelCallstack"
+                 "m_value": "m_splitterPage172"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
@@ -3565,22 +3582,6 @@
                  "type": "string",
                  "m_label": "Style:",
                  "m_value": ""
-                }, {
-                 "type": "string",
-                 "m_label": "Label:",
-                 "m_value": "Call Stack"
-                }, {
-                 "type": "bitmapPicker",
-                 "m_label": "Bitmap File:",
-                 "m_path": ""
-                }, {
-                 "type": "bool",
-                 "m_label": "Selected",
-                 "m_value": true
-                }, {
-                 "type": "bool",
-                 "m_label": "Null Page",
-                 "m_value": false
                 }],
                "m_events": [],
                "m_children": [{
@@ -3598,7 +3599,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Name:",
-                   "m_value": "boxSizer96"
+                   "m_value": "boxSizer178"
                   }, {
                    "type": "string",
                    "m_label": "Style:",
@@ -3839,7 +3840,7 @@
                   }]
                 }]
               }, {
-               "m_type": 4441,
+               "m_type": 4448,
                "proportion": 0,
                "border": 5,
                "gbSpan": "1,1",
@@ -3861,7 +3862,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_panelConsoleLog"
+                 "m_value": "m_splitterPage176"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
@@ -3902,22 +3903,6 @@
                  "type": "string",
                  "m_label": "Style:",
                  "m_value": ""
-                }, {
-                 "type": "string",
-                 "m_label": "Label:",
-                 "m_value": "Console"
-                }, {
-                 "type": "bitmapPicker",
-                 "m_label": "Bitmap File:",
-                 "m_path": ""
-                }, {
-                 "type": "bool",
-                 "m_label": "Selected",
-                 "m_value": false
-                }, {
-                 "type": "bool",
-                 "m_label": "Null Page",
-                 "m_value": false
                 }],
                "m_events": [],
                "m_children": [{
@@ -3935,7 +3920,7 @@
                   }, {
                    "type": "string",
                    "m_label": "Name:",
-                   "m_value": "boxSizer98"
+                   "m_value": "boxSizer180"
                   }, {
                    "type": "string",
                    "m_label": "Style:",

@@ -243,8 +243,4 @@ void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
 {
     event.Skip();
     ::wxMessageBox(_("An exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
-    int where = m_notebook->FindPage(m_panelConsoleLog);
-    if(where != wxNOT_FOUND) {
-        m_notebook->SetSelection(where);
-    }
 }

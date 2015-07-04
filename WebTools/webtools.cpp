@@ -348,6 +348,7 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
         m_nodejsDebuggerPane = new NodeJSDebuggerPane(EventNotifier::Get()->TopFrame());
         clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane,
                                                      wxAuiPaneInfo()
+                                                         .Layer(5)
                                                          .Name("nodejs_debugger")
                                                          .Caption("Node.js Debugger")
                                                          .CloseButton(false)

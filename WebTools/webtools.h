@@ -9,6 +9,7 @@
 #include "ieditor.h"
 #include "XMLCodeCompletion.h"
 
+class NodeJSDebuggerPane;
 class NodeJSWorkspaceView;
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
@@ -24,9 +25,10 @@ class WebTools : public IPlugin
 
     /// Node.js
     bool m_clangOldFlag;
-
+    NodeJSDebuggerPane* m_nodejsDebuggerPane;
+    wxString m_savePerspective;
+    
 protected:
-
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
@@ -39,7 +41,8 @@ protected:
     void OnTimer(wxTimerEvent& event);
     void OnCommentLine(wxCommandEvent& e);
     void OnCommentSelection(wxCommandEvent& e);
-    
+    void OnNodeJSDebuggerStarted(clDebugEvent& event);
+    void OnNodeJSDebuggerStopped(clDebugEvent& event);
 
 private:
     bool IsJavaScriptFile(const wxString& filename);
@@ -48,7 +51,7 @@ private:
     bool IsHTMLFile(IEditor* editor);
     bool InsideJSComment(IEditor* editor);
     bool InsideJSString(IEditor* editor);
-
+    void EnsureAuiPaneIsVisible(const wxString& paneName, bool update);
 public:
     WebTools(IManager* manager);
     ~WebTools();

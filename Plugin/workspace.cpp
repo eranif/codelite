@@ -1125,8 +1125,12 @@ wxString clCxxWorkspace::GetFilesMask() const
 {
     wxString findInFilesMask = "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.ini;*.xml";
     if(IsOpen()) {
-        LocalWorkspaceST::Get()->GetSearchInFilesMask(findInFilesMask,
+        wxString fifMask;
+        LocalWorkspaceST::Get()->GetSearchInFilesMask(fifMask,
                                                       findInFilesMask);
+        if(fifMask.IsEmpty()) {
+            fifMask = findInFilesMask;
+        }
     }
     return findInFilesMask;
 }

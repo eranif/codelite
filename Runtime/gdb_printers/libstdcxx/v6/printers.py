@@ -1,6 +1,6 @@
-# Pretty-printers for libstc++.
+# Pretty-printers for libstdc++.
 
-# Copyright (C) 2008-2013 Free Software Foundation, Inc.
+# Copyright (C) 2008-2014 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,50 @@
 import gdb
 import itertools
 import re
+import sys
+
+### Python 2 + Python 3 compatibility code
+
+# Resources about compatibility:
+#
+#  * <http://pythonhosted.org/six/>: Documentation of the "six" module
+
+# FIXME: The handling of e.g. std::basic_string (at least on char)
+# probably needs updating to work with Python 3's new string rules.
+#
+# In particular, Python 3 has a separate type (called byte) for
+# bytestrings, and a special b"" syntax for the byte literals; the old
+# str() type has been redefined to always store Unicode text.
+#
+# We probably can't do much about this until this GDB PR is addressed:
+# <https://sourceware.org/bugzilla/show_bug.cgi?id=17138>
+
+if sys.version_info[0] > 2:
+    ### Python 3 stuff
+    Iterator = object
+    # Python 3 folds these into the normal functions.
+    imap = map
+    izip = zip
+    # Also, int subsumes long
+    long = int
+else:
+    ### Python 2 stuff
+    class Iterator:
+        """Compatibility mixin for iterators
+
+        Instead of writing next() methods for iterators, write
+        __next__() methods and use this mixin to make them work in
+        Python 2 as well as Python 3.
+
+        Idea stolen from the "six" documentation:
+        <http://pythonhosted.org/six/#six.Iterator>
+        """
+
+        def next(self):
+            return self.__next__()
+
+    # In Python 2, we still need these from itertools
+    from itertools import imap, izip
 
 # Try to use the new-style pretty-printing if available.
 _use_gdb_pp = True
@@ -87,7 +131,7 @@ class UniquePointerPrinter:
 class StdListPrinter:
     "Print a std::list"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, nodetype, head):
             self.nodetype = nodetype
             self.base = head['_M_next']
@@ -97,7 +141,7 @@ class StdListPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.base == self.head:
                 raise StopIteration
             elt = self.base.cast(self.nodetype).dereference()
@@ -105,10 +149,6 @@ class StdListPrinter:
             count = self.count
             self.count = self.count + 1
             return ('[%d]' % count, elt['_M_data'])
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__(self, typename, val):
         self.typename = typename
@@ -139,7 +179,7 @@ class StdListIteratorPrinter:
 class StdSlistPrinter:
     "Print a __gnu_cxx::slist"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, nodetype, head):
             self.nodetype = nodetype
             self.base = head['_M_head']['_M_next']
@@ -148,7 +188,7 @@ class StdSlistPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.base == 0:
                 raise StopIteration
             elt = self.base.cast(self.nodetype).dereference()
@@ -156,10 +196,6 @@ class StdSlistPrinter:
             count = self.count
             self.count = self.count + 1
             return ('[%d]' % count, elt['_M_data'])
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__(self, typename, val):
         self.val = val
@@ -188,7 +224,7 @@ class StdSlistIteratorPrinter:
 class StdVectorPrinter:
     "Print a std::vector"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__ (self, start, finish, bitvec):
             self.bitvec = bitvec
             if bitvec:
@@ -206,7 +242,7 @@ class StdVectorPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             count = self.count
             self.count = self.count + 1
             if self.bitvec:
@@ -228,10 +264,6 @@ class StdVectorPrinter:
                 elt = self.item.dereference()
                 self.item = self.item + 1
                 return ('[%d]' % count, elt)
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__(self, typename, val):
         self.typename = typename
@@ -277,7 +309,7 @@ class StdVectorIteratorPrinter:
 class StdTuplePrinter:
     "Print a std::tuple"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__ (self, head):
             self.head = head
 
@@ -294,7 +326,7 @@ class StdTuplePrinter:
         def __iter__ (self):
             return self
 
-        def next(self):
+        def __next__ (self):
             nodes = self.head.type.fields ()
             # Check for further recursions in the inheritance tree.
             if len (nodes) == 0:
@@ -321,10 +353,6 @@ class StdTuplePrinter:
                 return ('[%d]' % self.count, impl)
             else:
                 return ('[%d]' % self.count, impl['_M_head_impl'])
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__ (self, typename, val):
         self.typename = typename
@@ -357,7 +385,7 @@ class StdStackOrQueuePrinter:
             return self.visualizer.display_hint ()
         return None
 
-class RbtreeIterator:
+class RbtreeIterator(Iterator):
     def __init__(self, rbtree):
         self.size = rbtree['_M_t']['_M_impl']['_M_node_count']
         self.node = rbtree['_M_t']['_M_impl']['_M_header']['_M_left']
@@ -369,7 +397,7 @@ class RbtreeIterator:
     def __len__(self):
         return int (self.size)
 
-    def next(self):
+    def __next__(self):
         if self.count == self.size:
             raise StopIteration
         result = self.node
@@ -391,9 +419,21 @@ class RbtreeIterator:
             self.node = node
         return result
 
-      # Python3 version
-    def __next__(self):
-        return self.next()
+def get_value_from_Rb_tree_node(node):
+    """Returns the value held in an _Rb_tree_node<_Val>"""
+    try:
+        member = node.type.fields()[1].name
+        if member == '_M_value_field':
+            # C++03 implementation, node contains the value as a member
+            return node['_M_value_field']
+        elif member == '_M_storage':
+            # C++11 implementation, node stores value in __aligned_buffer
+            p = node['_M_storage']['_M_storage'].address
+            p = p.cast(node.type.template_argument(0).pointer())
+            return p.dereference()
+    except:
+        pass
+    raise ValueError("Unsupported implementation for %s" % str(node.type))
 
 # This is a pretty printer for std::_Rb_tree_iterator (which is
 # std::map::iterator), and has nothing to do with the RbtreeIterator
@@ -407,7 +447,8 @@ class StdRbtreeIteratorPrinter:
     def to_string (self):
         typename = str(self.val.type.strip_typedefs()) + '::_Link_type'
         nodetype = gdb.lookup_type(typename).strip_typedefs()
-        return self.val.cast(nodetype).dereference()['_M_value_field']
+        node = self.val.cast(nodetype).dereference()
+        return get_value_from_Rb_tree_node(node)
 
 class StdDebugIteratorPrinter:
     "Print a debug enabled version of an iterator"
@@ -425,7 +466,7 @@ class StdMapPrinter:
     "Print a std::map or std::multimap"
 
     # Turn an RbtreeIterator into a pretty-print iterator.
-    class _iter:
+    class _iter(Iterator):
         def __init__(self, rbiter, type):
             self.rbiter = rbiter
             self.count = 0
@@ -434,10 +475,11 @@ class StdMapPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.count % 2 == 0:
                 n = next(self.rbiter)
-                n = n.cast(self.type).dereference()['_M_value_field']
+                n = n.cast(self.type).dereference()
+                n = get_value_from_Rb_tree_node(n)
                 self.pair = n
                 item = n['first']
             else:
@@ -445,10 +487,6 @@ class StdMapPrinter:
             result = ('[%d]' % self.count, item)
             self.count = self.count + 1
             return result
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__ (self, typename, val):
         self.typename = typename
@@ -471,7 +509,7 @@ class StdSetPrinter:
     "Print a std::set or std::multiset"
 
     # Turn an RbtreeIterator into a pretty-print iterator.
-    class _iter:
+    class _iter(Iterator):
         def __init__(self, rbiter, type):
             self.rbiter = rbiter
             self.count = 0
@@ -480,18 +518,15 @@ class StdSetPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             item = next(self.rbiter)
-            item = item.cast(self.type).dereference()['_M_value_field']
+            item = item.cast(self.type).dereference()
+            item = get_value_from_Rb_tree_node(item)
             # FIXME: this is weird ... what to do?
             # Maybe a 'set' display hint?
             result = ('[%d]' % self.count, item)
             self.count = self.count + 1
             return result
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__ (self, typename, val):
         self.typename = typename
@@ -550,7 +585,7 @@ class StdBitsetPrinter:
 class StdDequePrinter:
     "Print a std::deque"
 
-    class _iter:
+    class _iter(Iterator):
         def __init__(self, node, start, end, last, buffer_size):
             self.node = node
             self.p = start
@@ -562,7 +597,7 @@ class StdDequePrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.p == self.last:
                 raise StopIteration
 
@@ -579,10 +614,6 @@ class StdDequePrinter:
                 self.end = self.p + self.buffer_size
 
             return result
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__(self, typename, val):
         self.typename = typename
@@ -604,7 +635,7 @@ class StdDequePrinter:
 
         size = self.buffer_size * delta_n + delta_s + delta_e
 
-        return '%s with %d elements' % (self.typename, int (size))
+        return '%s with %d elements' % (self.typename, long (size))
 
     def children(self):
         start = self.val['_M_impl']['_M_start']
@@ -651,25 +682,53 @@ class StdStringPrinter:
     def display_hint (self):
         return 'string'
 
-class Tr1HashtableIterator:
+class Tr1HashtableIterator(Iterator):
     def __init__ (self, hash):
-        self.node = hash['_M_bbegin']['_M_node']['_M_nxt']
-        self.node_type = find_type(hash.type, '__node_type').pointer()
+        self.buckets = hash['_M_buckets']
+        self.bucket = 0
+        self.bucket_count = hash['_M_bucket_count']
+        self.node_type = find_type(hash.type, '_Node').pointer()
+        self.node = 0
+        while self.bucket != self.bucket_count:
+            self.node = self.buckets[self.bucket]
+            if self.node:
+                break
+            self.bucket = self.bucket + 1        
 
     def __iter__ (self):
         return self
 
-    def next(self):
+    def __next__ (self):
         if self.node == 0:
             raise StopIteration
         node = self.node.cast(self.node_type)
         result = node.dereference()['_M_v']
-        self.node = node.dereference()['_M_nxt']
+        self.node = node.dereference()['_M_next'];
+        if self.node == 0:
+            self.bucket = self.bucket + 1
+            while self.bucket != self.bucket_count:
+                self.node = self.buckets[self.bucket]
+                if self.node:
+                    break
+                self.bucket = self.bucket + 1
         return result
 
-      # Python3 version
+class StdHashtableIterator(Iterator):
+    def __init__(self, hash):
+        self.node = hash['_M_before_begin']['_M_nxt']
+        self.node_type = find_type(hash.type, '__node_type').pointer()
+
+    def __iter__(self):
+        return self
+
     def __next__(self):
-        return self.next()
+        if self.node == 0:
+            raise StopIteration
+        elt = self.node.cast(self.node_type).dereference()
+        self.node = elt['_M_nxt']
+        valptr = elt['_M_storage'].address
+        valptr = valptr.cast(elt.type.template_argument(0).pointer())
+        return valptr.dereference()
 
 class Tr1UnorderedSetPrinter:
     "Print a tr1::unordered_set"
@@ -691,8 +750,10 @@ class Tr1UnorderedSetPrinter:
         return '[%d]' % i
 
     def children (self):
-        counter = map (self.format_count, itertools.count())
-        return zip (counter, Tr1HashtableIterator (self.hashtable()))
+        counter = imap (self.format_count, itertools.count())
+        if self.typename.startswith('std::tr1'):
+            return izip (counter, Tr1HashtableIterator (self.hashtable()))
+        return izip (counter, StdHashtableIterator (self.hashtable()))
 
 class Tr1UnorderedMapPrinter:
     "Print a tr1::unordered_map"
@@ -724,11 +785,16 @@ class Tr1UnorderedMapPrinter:
         return '[%d]' % i
 
     def children (self):
-        counter = map (self.format_count, itertools.count())
+        counter = imap (self.format_count, itertools.count())
         # Map over the hash table and flatten the result.
-        data = self.flatten (map (self.format_one, Tr1HashtableIterator (self.hashtable())))
+        if self.typename.startswith('std::tr1'):
+            data = self.flatten (imap (self.format_one, Tr1HashtableIterator (self.hashtable())))
+            # Zip the two iterators together.
+            return izip (counter, data)
+        data = self.flatten (imap (self.format_one, StdHashtableIterator (self.hashtable())))
         # Zip the two iterators together.
-        return zip (counter, data)
+        return izip (counter, data)
+        
 
     def display_hint (self):
         return 'map'
@@ -736,7 +802,7 @@ class Tr1UnorderedMapPrinter:
 class StdForwardListPrinter:
     "Print a std::forward_list"
 
-    class _iterator:
+    class _iterator(Iterator):
         def __init__(self, nodetype, head):
             self.nodetype = nodetype
             self.base = head['_M_next']
@@ -745,7 +811,7 @@ class StdForwardListPrinter:
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):
             if self.base == 0:
                 raise StopIteration
             elt = self.base.cast(self.nodetype).dereference()
@@ -755,10 +821,6 @@ class StdForwardListPrinter:
             valptr = elt['_M_storage'].address
             valptr = valptr.cast(elt.type.template_argument(0).pointer())
             return ('[%d]' % count, valptr.dereference())
-
-         # Python3 version
-        def __next__(self):
-            return self.next()
 
     def __init__(self, typename, val):
         self.val = val
@@ -787,6 +849,11 @@ class RxPrinter(object):
     def invoke(self, value):
         if not self.enabled:
             return None
+
+        if value.type.code == gdb.TYPE_CODE_REF:
+            if hasattr(gdb.Value,"referenced_value"):
+                value = value.referenced_value()
+
         return self.function(self.name, value)
 
 # A pretty-printer that conforms to the "PrettyPrinter" protocol from
@@ -842,6 +909,11 @@ class Printer(object):
             return None
 
         basename = match.group(1)
+
+        if val.type.code == gdb.TYPE_CODE_REF:
+            if hasattr(gdb.Value,"referenced_value"):
+                val = val.referenced_value()
+
         if basename in self.lookup:
             return self.lookup[basename].invoke(val)
 

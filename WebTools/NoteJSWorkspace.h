@@ -4,7 +4,9 @@
 #include "IWorkspace.h"
 #include <wx/filename.h>
 #include "cl_command_event.h"
+#include "NodeJSDebugger.h"
 
+class IProcess;
 class NodeJSWorkspaceView;
 class NodeJSWorkspace : public IWorkspace
 {
@@ -15,7 +17,8 @@ protected:
     bool m_clangOldFlag;
     bool m_dummy;
     bool m_showWelcomePage;
-
+    NodeJSDebugger::Ptr_t m_debugger;
+    IProcess* m_process;
     static NodeJSWorkspace* ms_workspace;
 
 protected:
@@ -50,6 +53,16 @@ protected:
     void OnSaveSession(clCommandEvent& event);
 
     /**
+     * @brief execute the current script
+     */
+    void OnExecute(clExecuteEvent& event);
+
+    void OnStopExecute(clExecuteEvent& event);
+    void OnIsExecuteInProgress(clExecuteEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
+
+    /**
      * @brief restore the workspace session
      */
     void RestoreSession();
@@ -69,7 +82,7 @@ public:
     virtual bool IsProjectSupported() const;
 
     NodeJSWorkspaceView* GetView() { return m_view; }
-
+    NodeJSDebugger::Ptr_t GetDebugger() { return m_debugger; }
     /**
      * @brief is this workspace opened?
      */

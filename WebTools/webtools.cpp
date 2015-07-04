@@ -16,6 +16,10 @@
 #include "ctags_manager.h"
 #include "PhpLexerAPI.h"
 #include "PHPSourceFile.h"
+#include "NodeJSDebuggerPane.h"
+#include "WebToolsConfig.h"
+#include "fileutils.h"
+#include "NodeJSEvents.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -44,6 +48,7 @@ WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
     , m_lastColourUpdate(0)
     , m_clangOldFlag(false)
+    , m_nodejsDebuggerPane(NULL)
 {
     m_longName = _("Support for JavScript, XML, HTML and other web development tools");
     m_shortName = wxT("WebTools");
@@ -65,6 +70,8 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion());
@@ -107,6 +114,8 @@ void WebTools::UnPlug()
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
 
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentSelection, this, XRCID("comment_selection"));
@@ -320,11 +329,63 @@ bool WebTools::IsHTMLFile(IEditor* editor)
 
     // We should also support Code Completion when inside a mixed PHP and HTML file
     if(FileExtManager::IsPHPFile(editor->GetFileName())) {
-        
+
         // Check to see if we are inside a PHP section or not
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
         wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
         return !PHPSourceFile::IsInPHPSection(buffer);
     }
     return false;
+}
+
+void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
+{
+    event.Skip();
+    m_savePerspective = clGetManager()->GetDockingManager()->SavePerspective();
+
+    // Show the debugger pane
+    if(!m_nodejsDebuggerPane) {
+        m_nodejsDebuggerPane = new NodeJSDebuggerPane(EventNotifier::Get()->TopFrame());
+        clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane,
+                                                     wxAuiPaneInfo()
+                                                         .Name("nodejs_debugger")
+                                                         .Caption("Node.js Debugger")
+                                                         .CloseButton(false)
+                                                         .MaximizeButton()
+                                                         .Bottom()
+                                                         .Position(0));
+    }
+
+    wxString layout;
+    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
+    fnNodeJSLayout.AppendDir("config");
+    if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) {
+        m_mgr->GetDockingManager()->LoadPerspective(layout);
+    }
+    EnsureAuiPaneIsVisible("nodejs_debugger", true);
+}
+
+void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
+{
+    event.Skip();
+
+    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
+    fnNodeJSLayout.AppendDir("config");
+    FileUtils::WriteFileContent(fnNodeJSLayout, m_mgr->GetDockingManager()->SavePerspective());
+
+    if(!m_savePerspective.IsEmpty()) {
+        m_mgr->GetDockingManager()->LoadPerspective(m_savePerspective);
+        m_savePerspective.clear();
+    }
+}
+
+void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
+{
+    wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
+    if(pi.IsOk() && !pi.IsShown()) {
+        pi.Show();
+    }
+    if(update) {
+        m_mgr->GetDockingManager()->Update();
+    }
 }

@@ -1234,9 +1234,12 @@ bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat
 
 bool DbgGdb::UpdateVariableObject(const wxString& name, int userReason)
 {
-    wxString cmd;
-    cmd << wxT("-var-update \"") << name << wxT("\" ");
-    return WriteCommand(cmd, new DbgVarObjUpdate(m_observer, this, name, userReason));
+    // FIXME: this seems to cause a mess in gdb output, disable it for now
+    
+    //wxString cmd;
+    //cmd << wxT("-var-update \"") << name << wxT("\" ");
+    //return WriteCommand(cmd, new DbgVarObjUpdate(m_observer, this, name, userReason));
+    return true;
 }
 
 void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)

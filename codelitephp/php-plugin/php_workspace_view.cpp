@@ -79,10 +79,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     m_bitmaps = bmpLoader->MakeStandardMimeMap();
     EventNotifier::Get()->Connect(
         wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_STOP_EXECUTED_PROGRAM, wxCommandEventHandler(PHPWorkspaceView::OnStopExecutedProgram), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_IS_PROGRAM_RUNNING, wxCommandEventHandler(PHPWorkspaceView::OnIsProgramRunning), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &PHPWorkspaceView::OnStopExecutedProgram, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &PHPWorkspaceView::OnIsProgramRunning, this);
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(PHPWorkspaceView::OnEditorChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
@@ -103,10 +101,8 @@ PHPWorkspaceView::~PHPWorkspaceView()
 {
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_STOP_EXECUTED_PROGRAM, wxCommandEventHandler(PHPWorkspaceView::OnStopExecutedProgram), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_IS_PROGRAM_RUNNING, wxCommandEventHandler(PHPWorkspaceView::OnIsProgramRunning), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &PHPWorkspaceView::OnStopExecutedProgram, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &PHPWorkspaceView::OnIsProgramRunning, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(PHPWorkspaceView::OnEditorChanged), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -839,10 +835,10 @@ void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)
     }
 }
 
-void PHPWorkspaceView::OnIsProgramRunning(wxCommandEvent& e)
+void PHPWorkspaceView::OnIsProgramRunning(clExecuteEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
-        e.SetInt(PHPWorkspace::Get()->IsProjectRunning() ? 1 : 0);
+        e.SetAnswer(PHPWorkspace::Get()->IsProjectRunning());
 
     } else {
         // Must call skip !
@@ -850,7 +846,7 @@ void PHPWorkspaceView::OnIsProgramRunning(wxCommandEvent& e)
     }
 }
 
-void PHPWorkspaceView::OnStopExecutedProgram(wxCommandEvent& e)
+void PHPWorkspaceView::OnStopExecutedProgram(clExecuteEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen() && PHPWorkspace::Get()->IsProjectRunning()) {
         PHPWorkspace::Get()->StopExecutedProgram();

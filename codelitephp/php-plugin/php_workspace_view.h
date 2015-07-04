@@ -105,8 +105,8 @@ protected:
     void OnSyncProjectWithFileSystem(wxCommandEvent& e);
     void OnOpenWithDefaultApp(wxCommandEvent& e);
     void OnRunActiveProject(clExecuteEvent& e);
-    void OnStopExecutedProgram(wxCommandEvent& e);
-    void OnIsProgramRunning(wxCommandEvent& e);
+    void OnStopExecutedProgram(clExecuteEvent& e);
+    void OnIsProgramRunning(clExecuteEvent& e);
     void OnEditorChanged(wxCommandEvent& e);
     void OnFileRenamed(PHPEvent& e);
     void OnWorkspaceRenamed(PHPEvent& e);

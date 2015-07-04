@@ -78,6 +78,8 @@
     <VirtualDirectory Name="base">
       <File Name="WebToolsBase.h"/>
       <File Name="WebToolsBase.cpp"/>
+      <File Name="m_dataview126model.cpp"/>
+      <File Name="m_dataview126model.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="CMake_Linux"/>
@@ -304,5 +306,35 @@
     <File Name="NodeJSWorkspaceView.cpp"/>
     <File Name="NodeJSWorkspaceConfiguration.h"/>
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
+    <VirtualDirectory Name="Debugger">
+      <File Name="NodeJSDebugger.h"/>
+      <File Name="NodeJSDebugger.cpp"/>
+      <File Name="NodeJSSocket.h"/>
+      <File Name="NodeJSSocket.cpp"/>
+      <File Name="NodeJSDebuggerDlg.h"/>
+      <File Name="NodeJSDebuggerDlg.cpp"/>
+      <File Name="NodeJSDebuggerBreakpoint.h"/>
+      <File Name="NodeJSDebuggerBreakpoint.cpp"/>
+      <File Name="NodeJSDebuggerBreakpointManager.h"/>
+      <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
+      <VirtualDirectory Name="Handlers">
+        <File Name="NodeJSSetBreakpointHandler.h"/>
+        <File Name="NodeJSSetBreakpointHandler.cpp"/>
+        <File Name="NodeJSHandlerBase.h"/>
+        <File Name="NodeJSHandlerBase.cpp"/>
+        <File Name="NodeJSContinueHandler.h"/>
+        <File Name="NodeJSContinueHandler.cpp"/>
+        <File Name="NodeJSCallstackHandler.h"/>
+        <File Name="NodeJSCallstackHandler.cpp"/>
+      </VirtualDirectory>
+      <File Name="NodeJSDebuggerPane.h"/>
+      <File Name="NodeJSDebuggerPane.cpp"/>
+    </VirtualDirectory>
+    <File Name="NodeJSWorkspaceUserConfiguration.h"/>
+    <File Name="NodeJSWorkspaceUserConfiguration.cpp"/>
+    <File Name="NodeJSEvents.h"/>
+    <File Name="NodeJSEvents.cpp"/>
+    <File Name="NodeJSNewWorkspaceDlg.h"/>
+    <File Name="NodeJSNewWorkspaceDlg.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

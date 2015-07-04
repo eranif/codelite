@@ -3110,14 +3110,14 @@ void clMainFrame::OnBuildProjectUI(wxUpdateUIEvent& event)
 void clMainFrame::OnStopExecutedProgramUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    wxCommandEvent e(wxEVT_CMD_IS_PROGRAM_RUNNING, GetId());
+    clExecuteEvent e(wxEVT_CMD_IS_PROGRAM_RUNNING, GetId());
     e.SetEventObject(this);
-    e.SetInt(0);
+    e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
 
     Manager* mgr = ManagerST::Get();
     bool enable = mgr->IsProgramRunning();
-    event.Enable(enable || e.GetInt());
+    event.Enable(enable || e.IsAnswer());
 }
 
 void clMainFrame::OnStopBuildUI(wxUpdateUIEvent& event)
@@ -3143,7 +3143,7 @@ void clMainFrame::OnStopBuild(wxCommandEvent& event)
 
 void clMainFrame::OnStopExecutedProgram(wxCommandEvent& event)
 {
-    wxCommandEvent evtExecute(wxEVT_CMD_STOP_EXECUTED_PROGRAM);
+    clExecuteEvent evtExecute(wxEVT_CMD_STOP_EXECUTED_PROGRAM);
     if(EventNotifier::Get()->ProcessEvent(evtExecute)) return;
 
     wxUnusedVar(event);
@@ -3218,14 +3218,14 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
         return;
     }
 
-    wxCommandEvent e(wxEVT_CMD_IS_PROGRAM_RUNNING, GetId());
+    clExecuteEvent e(wxEVT_CMD_IS_PROGRAM_RUNNING, GetId());
     e.SetEventObject(this);
-    e.SetInt(0);
+    e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
 
     bool normalCondition = ManagerST::Get()->GetActiveProjectName().IsEmpty() == false &&
                            !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->IsProgramRunning();
-    event.Enable(normalCondition || !e.GetInt());
+    event.Enable(normalCondition || !e.IsAnswer());
 }
 
 void clMainFrame::OnTimer(wxTimerEvent& event)

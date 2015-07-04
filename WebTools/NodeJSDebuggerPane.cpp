@@ -168,8 +168,13 @@ void NodeJSDebuggerPane::ClearCallstack()
     m_dvListCtrlCallstack->Enable(true);
 }
 
-void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, int refId)
+void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, int refId, int depth)
 {
+    if(depth >= 20) {
+        // don't go into infinite recurse
+        return;
+    }
+
     wxVector<wxVariant> cols;
     cols.push_back(name);
 
@@ -182,7 +187,7 @@ void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, 
 
         if(!h.properties.empty()) {
             std::for_each(h.properties.begin(), h.properties.end(), [&](const std::pair<int, wxString>& p) {
-                AddLocal(child, p.second, p.first);
+                AddLocal(child, p.second, p.first, depth + 1);
             });
         }
     } else {
@@ -204,7 +209,8 @@ void NodeJSDebuggerPane::BuildArguments(const JSONElement& json)
     int count = arr.arraySize();
     for(int i = 0; i < count; ++i) {
         JSONElement local = arr.arrayItem(i);
-        AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
+        AddLocal(
+            locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt(), 0);
     }
 
     if(m_dataviewLocalsModel->HasChildren(locals)) {
@@ -224,7 +230,8 @@ void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
     int count = arr.arraySize();
     for(int i = 0; i < count; ++i) {
         JSONElement local = arr.arrayItem(i);
-        AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
+        AddLocal(
+            locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt(), 0);
     }
 
     if(m_dataviewLocalsModel->HasChildren(locals)) {

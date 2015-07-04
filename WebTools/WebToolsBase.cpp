@@ -23,7 +23,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -34,7 +34,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_panel56 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel56, _("Code Completion"), false);
     
-    wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
+    boxSizer58 = new wxBoxSizer(wxVERTICAL);
     m_panel56->SetSizer(boxSizer58);
     
     m_checkBoxEnableJsCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable JavaScript code completion"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -58,7 +58,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("JavaScript"), false);
     
-    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    boxSizer22 = new wxBoxSizer(wxVERTICAL);
     m_panel12->SetSizer(boxSizer22);
     
     wxArrayString m_pgMgrArr;
@@ -110,6 +110,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     
     m_pgPropNode = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Node.js"), wxPG_LABEL, 1) );
     m_pgPropNode->SetHelpString(_("Provides variables that are part of the node environment, such as process and require, and hooks up require to try and find the dependencies that are being loaded, and assign them the correct types. It also includes types for the built-in modules that node.js provides (\"fs\", \"http\", etc)"));
+    
+    m_pgPropRequireJS = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("RequireJS"), wxPG_LABEL, 1) );
+    m_pgPropRequireJS->SetHelpString(_("This plugin (\"requirejs\") teaches the server to understand RequireJS-style dependency management. It defines the global functions define and requirejs, and will do its best to resolve dependencies and give them their proper types"));
     
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
@@ -192,10 +195,10 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     SetIcons( app_icons );
 
     
-    wxBoxSizer* boxSizer68 = new wxBoxSizer(wxVERTICAL);
+    boxSizer68 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer68);
     
-    wxFlexGridSizer* flexGridSizer76 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer76 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer76->SetFlexibleDirection( wxBOTH );
     flexGridSizer76->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer76->AddGrowableCol(1);
@@ -321,7 +324,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
+    boxSizer88 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer88);
     
     m_splitter104 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
@@ -332,7 +335,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     
     m_splitterPage112 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* boxSizer120 = new wxBoxSizer(wxVERTICAL);
+    boxSizer120 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage112->SetSizer(boxSizer120);
     
     m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
@@ -349,7 +352,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_splitterPage108 = new wxPanel(m_splitter104, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter104->SplitVertically(m_splitterPage112, m_splitterPage108, 0);
     
-    wxBoxSizer* boxSizer118 = new wxBoxSizer(wxVERTICAL);
+    boxSizer118 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage108->SetSizer(boxSizer118);
     
     m_notebook = new Notebook(m_splitterPage108, wxID_ANY, wxDefaultPosition, wxSize(-1,250), kNotebook_Default | kNotebook_AllowDnD);
@@ -360,7 +363,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_panelCallstack = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelCallstack, _("Call Stack"), true);
     
-    wxBoxSizer* boxSizer96 = new wxBoxSizer(wxVERTICAL);
+    boxSizer96 = new wxBoxSizer(wxVERTICAL);
     m_panelCallstack->SetSizer(boxSizer96);
     
     m_dvListCtrlCallstack = new wxDataViewListCtrl(m_panelCallstack, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
@@ -374,7 +377,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelConsoleLog, _("Console"), false);
     
-    wxBoxSizer* boxSizer98 = new wxBoxSizer(wxVERTICAL);
+    boxSizer98 = new wxBoxSizer(wxVERTICAL);
     m_panelConsoleLog->SetSizer(boxSizer98);
     
     m_consoleLog = new wxStyledTextCtrl(m_panelConsoleLog, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -442,10 +445,10 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer140 = new wxBoxSizer(wxVERTICAL);
+    boxSizer140 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer140);
     
-    wxFlexGridSizer* flexGridSizer148 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer148 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer148->SetFlexibleDirection( wxBOTH );
     flexGridSizer148->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer148->AddGrowableCol(1);

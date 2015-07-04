@@ -33,7 +33,7 @@ protected:
     void ClearCallstack();
     void BuildLocals(const JSONElement& json);
     void BuildArguments(const JSONElement& json);
-    void AddLocal(wxDataViewItem& parent, const wxString& name, int refId);
+    void AddLocal(wxDataViewItem& parent, const wxString& name, int refId, int depth);
 
 protected:
     void OnItemActivated(wxDataViewEvent& event);

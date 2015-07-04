@@ -1,7 +1,6 @@
 MUST:
 =====
 * New workspace, enlarge the selection dialog to show all available worksapce type
-* Setter / Getter generator should offer to generate setters that returns "*this"
 
 NICE
 ====

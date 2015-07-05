@@ -34,6 +34,7 @@ protected:
     void BuildLocals(const JSONElement& json);
     void BuildArguments(const JSONElement& json);
     void AddLocal(wxDataViewItem& parent, const wxString& name, int refId, int depth);
+    void ParseHandles(const JSONElement& refs);
 
 protected:
     void OnItemActivated(wxDataViewEvent& event);
@@ -43,6 +44,7 @@ protected:
     void OnSessionStarted(clDebugEvent& event);
     void OnExceptionThrown(clDebugEvent& event);
     void OnUpdateDebuggerView(clDebugEvent& event);
+    void OnFrameSelected(clDebugEvent& event);
 
 public:
     NodeJSDebuggerPane(wxWindow* parent);

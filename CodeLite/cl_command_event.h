@@ -49,6 +49,7 @@ protected:
     wxString m_oldName;
     bool m_answer;
     bool m_allowed;
+    int m_lineNumber;
 
 public:
     clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -57,26 +58,56 @@ public:
     virtual ~clCommandEvent();
 
     // Veto management
-    void SetAllowed(bool allowed) { this->m_allowed = allowed; }
-    bool IsAllowed() const { return m_allowed; }
     void Veto() { this->m_allowed = false; }
     void Allow() { this->m_allowed = true; }
 
     // Hides wxCommandEvent::Set{Get}ClientObject
     void SetClientObject(wxClientData* clientObject);
 
-    void SetOldName(const wxString& oldName) { this->m_oldName = oldName; }
-    const wxString& GetOldName() const { return m_oldName; }
     wxClientData* GetClientObject() const;
-
     virtual wxEvent* Clone() const;
 
-    void SetAnswer(bool answer) { this->m_answer = answer; }
+    clCommandEvent& SetLineNumber(int lineNumber)
+    {
+        this->m_lineNumber = lineNumber;
+        return *this;
+    }
+    int GetLineNumber() const { return m_lineNumber; }
+    clCommandEvent& SetAllowed(bool allowed)
+    {
+        this->m_allowed = allowed;
+        return *this;
+    }
+    clCommandEvent& SetAnswer(bool answer)
+    {
+        this->m_answer = answer;
+        return *this;
+    }
+    clCommandEvent& SetFileName(const wxString& fileName)
+    {
+        this->m_fileName = fileName;
+        return *this;
+    }
+    clCommandEvent& SetOldName(const wxString& oldName)
+    {
+        this->m_oldName = oldName;
+        return *this;
+    }
+    clCommandEvent& SetPtr(const wxSharedPtr<wxClientData>& ptr)
+    {
+        this->m_ptr = ptr;
+        return *this;
+    }
+    clCommandEvent& SetStrings(const wxArrayString& strings)
+    {
+        this->m_strings = strings;
+        return *this;
+    }
+    bool IsAllowed() const { return m_allowed; }
     bool IsAnswer() const { return m_answer; }
-
-    void SetFileName(const wxString& fileName) { this->m_fileName = fileName; }
     const wxString& GetFileName() const { return m_fileName; }
-    void SetStrings(const wxArrayString& strings) { this->m_strings = strings; }
+    const wxString& GetOldName() const { return m_oldName; }
+    const wxSharedPtr<wxClientData>& GetPtr() const { return m_ptr; }
     const wxArrayString& GetStrings() const { return m_strings; }
     wxArrayString& GetStrings() { return m_strings; }
 };
@@ -332,7 +363,7 @@ public:
     clProcessEvent& operator=(const clProcessEvent& src);
     virtual ~clProcessEvent();
     virtual wxEvent* Clone() const { return new clProcessEvent(*this); }
-    
+
     void SetOutput(const wxString& output) { this->m_output = output; }
     void SetProcess(IProcess* process) { this->m_process = process; }
     const wxString& GetOutput() const { return m_output; }

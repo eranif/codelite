@@ -7,6 +7,7 @@
 #include "json_node.h"
 #include <map>
 #include "SocketAPI/clSocketClientAsync.h"
+#include "macros.h"
 
 class NodeJSDebugger;
 class NodeJSSocket : public wxEvtHandler
@@ -19,7 +20,8 @@ class NodeJSSocket : public wxEvtHandler
     std::map<size_t, NodeJSHandlerBase::Ptr_t> m_handlers;
     bool m_firstTimeConnected;
     wxString m_errorString;
-
+    wxStringSet_t m_noBacktraceCommands;
+    
 public:
     typedef SmartPtr<NodeJSSocket> Ptr_t;
 

@@ -99,6 +99,7 @@ class SettersGettersDlg : public SettersGettersBaseDlg
     SettersGetterData m_settings;
 
 protected:
+    virtual void OnSettersReturnReference(wxCommandEvent& event);
     virtual void OnFilter(wxCommandEvent& event);
     virtual void OnValueChanged(wxDataViewEvent& event);
     void OnCheckStartWithUpperCase(wxCommandEvent& event);

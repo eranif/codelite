@@ -55,6 +55,7 @@ protected:
     virtual void OnCheckAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUncheckAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckStartWithUpperCase(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSettersReturnReference(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxBannerWindow* GetBanner6() { return m_banner6; }

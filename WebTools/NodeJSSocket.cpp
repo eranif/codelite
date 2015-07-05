@@ -16,6 +16,13 @@ NodeJSSocket::NodeJSSocket(NodeJSDebugger* debugger)
     Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &NodeJSSocket::OnSocketConnectionLost, this);
     Bind(wxEVT_ASYNC_SOCKET_INPUT, &NodeJSSocket::OnSocketInput, this);
     Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &NodeJSSocket::OnSocketConnectError, this);
+    
+    // set of commands that we don't ask for backtrace
+    // from Node.js after their execution
+    m_noBacktraceCommands.insert("backtrace");
+    m_noBacktraceCommands.insert("setbreakpoint");
+    m_noBacktraceCommands.insert("frame");
+    m_noBacktraceCommands.insert("source");
 }
 
 NodeJSSocket::~NodeJSSocket() { Destroy(); }
@@ -86,7 +93,11 @@ void NodeJSSocket::ProcessInputBuffer()
 {
     if(m_firstTimeConnected) {
         m_firstTimeConnected = false;
+        // Apply breakpoints
         m_debugger->SetBreakpoints();
+        // When an uncaught exception is thrown, break
+        m_debugger->BreakOnException();
+        // Continue
         m_debugger->Continue();
         m_inBuffer.Clear();
 
@@ -105,7 +116,8 @@ void NodeJSSocket::ProcessInputBuffer()
                     m_handlers.erase(iter);
                 }
                 if(json.hasNamedObject("running") && !json.namedObject("running").toBool()) {
-                    m_debugger->GotControl((json.namedObject("command").toString() != "backtrace"));
+                    wxString responseCommand = json.namedObject("command").toString();
+                    m_debugger->GotControl((m_noBacktraceCommands.count(responseCommand) == 0));
                 } else {
                     m_debugger->SetCanInteract(false);
                 }

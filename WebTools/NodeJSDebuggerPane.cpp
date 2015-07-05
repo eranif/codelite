@@ -18,6 +18,7 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
     EventNotifier::Get()->Bind(
         wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
 
@@ -43,24 +44,14 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
     EventNotifier::Get()->Unbind(
         wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
 
     ClearCallstack();
 }
-
-void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
+void NodeJSDebuggerPane::ParseHandles(const JSONElement& refs)
 {
-    event.Skip();
-    wxWindowUpdateLocker locker(m_dataviewLocals);
-    ClearCallstack();
-
-    JSONRoot root(event.GetString());
-    JSONElement frames = root.toElement().namedObject("body").namedObject("frames");
-    JSONElement refs = root.toElement().namedObject("refs");
-    // Load the handlers into a map
-    m_handles.clear();
-
     int refsCount = refs.arraySize();
     for(int i = 0; i < refsCount; ++i) {
         JSONElement ref = refs.arrayItem(i);
@@ -90,9 +81,23 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
         }
         m_handles.insert(std::make_pair(handleId, h));
     }
+}
+
+void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
+{
+    event.Skip();
+    wxWindowUpdateLocker locker(m_dataviewLocals);
+    ClearCallstack();
+
+    JSONRoot root(event.GetString());
+    JSONElement frames = root.toElement().namedObject("body").namedObject("frames");
+    JSONElement refs = root.toElement().namedObject("refs");
+
+    // Load the handlers into a map
+    m_handles.clear();
+    ParseHandles(refs);
 
     int count = frames.arraySize();
-
     for(int i = 0; i < count; ++i) {
         JSONElement frame = frames.arrayItem(i);
         int index = frame.namedObject("index").toInt();
@@ -123,7 +128,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
         if(i == 0) {
             // Notify the debugger to use frame #0 for the indicator
             clDebugEvent event(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
-            event.SetInt(line);
+            event.SetLineNumber(line);
             event.SetFileName(file);
             EventNotifier::Get()->AddPendingEvent(event);
             BuildLocals(frame);
@@ -160,9 +165,9 @@ void NodeJSDebuggerPane::OnSessionStarted(clDebugEvent& event)
 void NodeJSDebuggerPane::OnItemActivated(wxDataViewEvent& event)
 {
     FrameData* cd = (FrameData*)m_dvListCtrlCallstack->GetItemData(event.GetItem());
-    clDebugEvent eventSelected(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME);
-    eventSelected.SetInt(cd->index);
-    EventNotifier::Get()->AddPendingEvent(eventSelected);
+    NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
+    if(!debugger) return;
+    debugger->SelectFrame(cd->index);
 }
 
 void NodeJSDebuggerPane::ClearCallstack()
@@ -251,7 +256,10 @@ void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
 void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
 {
     event.Skip();
-    ::wxMessageBox(_("An exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+    ::wxMessageBox(_("An uncaught exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+    NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
+    if(!debugger) return;
+    debugger->Callstack();
 }
 
 void NodeJSDebuggerPane::OnUpdateDebuggerView(clDebugEvent& event)
@@ -268,4 +276,47 @@ void NodeJSDebuggerPane::OnUpdateDebuggerView(clDebugEvent& event)
         cols.push_back(bp.GetFilename());
         m_dvListCtrlBreakpoints->AppendItem(cols);
     });
+}
+
+void NodeJSDebuggerPane::OnFrameSelected(clDebugEvent& event)
+{
+    event.Skip();
+    wxWindowUpdateLocker locker(m_dataviewLocals);
+    m_dataviewLocalsModel->Clear();
+    m_dataviewLocals->Enable(true);
+    
+    JSONRoot root(event.GetString());
+    JSONElement json = root.toElement();
+    JSONElement frame = json.namedObject("body");
+    JSONElement refs = json.namedObject("refs");
+
+    // Load the handlers into a map
+    m_handles.clear();
+    ParseHandles(refs);
+
+    int index = frame.namedObject("index").toInt();
+    int funcRef = frame.namedObject("func").namedObject("ref").toInt();
+    int fileRef = frame.namedObject("script").namedObject("ref").toInt();
+    int line = frame.namedObject("line").toInt() + 1;
+
+    wxVector<wxVariant> cols;
+    cols.push_back(wxString() << index);
+    wxString file, func;
+    if(m_handles.count(funcRef)) {
+        func = m_handles.find(funcRef)->second.value;
+    }
+    if(m_handles.count(funcRef)) {
+        file = m_handles.find(fileRef)->second.value;
+    }
+    cols.push_back(func);
+    cols.push_back(file);
+    cols.push_back(wxString() << line);
+
+    // Notify the debugger to use frame #0 for the indicator
+    clDebugEvent eventHighlight(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
+    eventHighlight.SetLineNumber(line);
+    eventHighlight.SetFileName(file);
+    EventNotifier::Get()->AddPendingEvent(eventHighlight);
+    BuildLocals(frame);
+    BuildArguments(frame);
 }

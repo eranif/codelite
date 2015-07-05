@@ -544,3 +544,8 @@ JSONElement SettersGetterData::ToJSON() const
     return element;
 }
 void SettersGettersDlg::OnFilter(wxCommandEvent& event) { UpdateTree(); }
+void SettersGettersDlg::OnSettersReturnReference(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    UpdateTree();
+}

@@ -124,6 +124,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     m_buttonCheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckAll), NULL, this);
     m_buttonUncheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnUncheckAll), NULL, this);
     m_checkStartWithUppercase->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckStartWithUpperCase), NULL, this);
+    m_checkBoxReturnSelf->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnSettersReturnReference), NULL, this);
     
 }
 
@@ -134,5 +135,6 @@ SettersGettersBaseDlg::~SettersGettersBaseDlg()
     m_buttonCheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckAll), NULL, this);
     m_buttonUncheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnUncheckAll), NULL, this);
     m_checkStartWithUppercase->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckStartWithUpperCase), NULL, this);
+    m_checkBoxReturnSelf->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnSettersReturnReference), NULL, this);
     
 }

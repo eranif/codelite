@@ -14,6 +14,7 @@ class NodeJSDebugger : public wxEvtHandler
     IProcess* m_node;
     NodeJSBptManager m_bptManager;
     bool m_canInteract;
+    wxStringSet_t m_tempFiles;
 
 public:
     typedef SmartPtr<NodeJSDebugger> Ptr_t;
@@ -35,19 +36,23 @@ protected:
     // CodeLite events
     void OnWorkspaceOpened(wxCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnEditorChanged(wxCommandEvent& event);
 
     // Process event
     void OnNodeTerminated(clProcessEvent& event);
     void OnNodeOutput(clProcessEvent& event);
     void OnHighlightLine(clDebugEvent& event);
-    void OnSelectFrame(clDebugEvent& event);
 
 protected:
     bool IsConnected();
+    void DoHighlightLine(const wxString& filename, int lineNo);
+    void DoDeleteTempFiles(const wxStringSet_t& files);
 
 public:
     NodeJSDebugger();
     virtual ~NodeJSDebugger();
+
+    void AddTempFile(const wxString& filename) { m_tempFiles.insert(filename); }
 
     void SetDebuggerMarker(IEditor* editor, int lineno);
     void ClearDebuggerMarker();
@@ -81,6 +86,11 @@ public:
     void Continue();
 
     /**
+     * @brief break on exception
+     */
+    void BreakOnException(bool b = true);
+
+    /**
      * @brief request for callstack
      */
     void Callstack();
@@ -89,6 +99,11 @@ public:
      * @brief select new frame (usually by d-clicking a frame entry in the callstack view)
      */
     void SelectFrame(int frameId);
+
+    /**
+     * @brief load the content of a given file name
+     */
+    void GetCurrentFrameSource(const wxString& filename, int line);
 
     //--------------------------------------------------
     // API END

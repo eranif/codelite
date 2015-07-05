@@ -29,6 +29,7 @@
 #include <wx/splitter.h>
 #include <wx/dataview.h>
 #include "m_dataview126model.h"
+#include "Notebook.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -139,7 +140,13 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlCallstack;
     wxPanel* m_splitterPage176;
     wxBoxSizer* boxSizer180;
+    Notebook* m_notebook;
+    wxPanel* m_panelConsoleLog;
+    wxBoxSizer* boxSizer188;
     wxStyledTextCtrl* m_consoleLog;
+    wxPanel* m_panelBreakpoints;
+    wxBoxSizer* boxSizer190;
+    wxDataViewListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
@@ -150,6 +157,10 @@ public:
     wxDataViewListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
     wxPanel* GetSplitterPage172() { return m_splitterPage172; }
     wxStyledTextCtrl* GetConsoleLog() { return m_consoleLog; }
+    wxPanel* GetPanelConsoleLog() { return m_panelConsoleLog; }
+    wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
+    wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
+    Notebook* GetNotebook() { return m_notebook; }
     wxPanel* GetSplitterPage176() { return m_splitterPage176; }
     wxSplitterWindow* GetSplitter168() { return m_splitter168; }
     wxPanel* GetSplitterPage108() { return m_splitterPage108; }

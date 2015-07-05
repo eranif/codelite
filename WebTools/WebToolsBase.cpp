@@ -328,7 +328,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     this->SetSizer(boxSizer88);
     
     m_splitter104 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
-    m_splitter104->SetSashGravity(0.5);
+    m_splitter104->SetSashGravity(0.33);
     m_splitter104->SetMinimumPaneSize(10);
     
     boxSizer88->Add(m_splitter104, 1, wxALL|wxEXPAND, 0);
@@ -366,7 +366,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     boxSizer178 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage172->SetSizer(boxSizer178);
     
-    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_splitterPage172, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_splitterPage172, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer178->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, 2);
     
@@ -380,7 +380,18 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     boxSizer180 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage176->SetSizer(boxSizer180);
     
-    m_consoleLog = new wxStyledTextCtrl(m_splitterPage176, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_notebook = new Notebook(m_splitterPage176, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
+    
+    boxSizer180->Add(m_notebook, 1, wxEXPAND, 5);
+    
+    m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelConsoleLog, _("Console"), true);
+    
+    boxSizer188 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsoleLog->SetSizer(boxSizer188);
+    
+    m_consoleLog = new wxStyledTextCtrl(m_panelConsoleLog, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     // Configure the fold margin
     m_consoleLog->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_consoleLog->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -416,7 +427,21 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_consoleLog->SetKeyWords(3, wxT(""));
     m_consoleLog->SetKeyWords(4, wxT(""));
     
-    boxSizer180->Add(m_consoleLog, 1, wxALL|wxEXPAND, 2);
+    boxSizer188->Add(m_consoleLog, 1, wxALL|wxEXPAND, 2);
+    
+    m_panelBreakpoints = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
+    
+    boxSizer190 = new wxBoxSizer(wxVERTICAL);
+    m_panelBreakpoints->SetSizer(boxSizer190);
+    
+    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(m_panelBreakpoints, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer190->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, 2);
+    
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 50, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 250, wxALIGN_LEFT);
     
     SetName(wxT("NodeJSDebuggerPaneBase"));
     SetSizeHints(500,250);

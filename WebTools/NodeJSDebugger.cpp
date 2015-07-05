@@ -227,6 +227,8 @@ void NodeJSDebugger::OnToggleBreakpoint(clDebugEvent& event)
 
             // Update the UI
             m_bptManager.SetBreakpoints(editor);
+            clDebugEvent event(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+            EventNotifier::Get()->AddPendingEvent(event);
         }
     }
 }

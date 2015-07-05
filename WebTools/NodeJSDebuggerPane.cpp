@@ -6,6 +6,9 @@
 #include "ColoursAndFontsManager.h"
 #include <wx/wupdlock.h>
 #include <wx/msgdlg.h>
+#include "globals.h"
+#include "NodeJSDebugger.h"
+#include "NoteJSWorkspace.h"
 
 NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     : NodeJSDebuggerPaneBase(parent)
@@ -15,6 +18,8 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
@@ -38,6 +43,9 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
+
     ClearCallstack();
 }
 
@@ -135,6 +143,7 @@ void NodeJSDebuggerPane::OnConsoleLog(clDebugEvent& event)
 {
     event.Skip();
     m_consoleLog->AppendText(event.GetString());
+    ::clRecalculateSTCHScrollBar(m_consoleLog);
     m_consoleLog->ScrollToEnd();
 }
 
@@ -243,4 +252,20 @@ void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
 {
     event.Skip();
     ::wxMessageBox(_("An exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+}
+
+void NodeJSDebuggerPane::OnUpdateDebuggerView(clDebugEvent& event)
+{
+    event.Skip();
+    NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
+    if(!debugger) return;
+    m_dvListCtrlBreakpoints->DeleteAllItems();
+    const NodeJSBreakpoint::List_t& breakpoints = debugger->GetBreakpointsMgr()->GetBreakpoints();
+    std::for_each(breakpoints.begin(), breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
+        wxVector<wxVariant> cols;
+        cols.push_back(bp.GetNodeBpID());
+        cols.push_back(bp.GetLine());
+        cols.push_back(bp.GetFilename());
+        m_dvListCtrlBreakpoints->AppendItem(cols);
+    });
 }

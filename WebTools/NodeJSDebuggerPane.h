@@ -19,14 +19,14 @@ class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
         {
         }
     };
-    
+
     struct Handle {
         wxString name;
         wxString value;
         wxString type;
         std::map<int, wxString> properties;
     };
-    
+
     std::map<int, Handle> m_handles;
 
 protected:
@@ -42,6 +42,7 @@ protected:
     void OnConsoleLog(clDebugEvent& event);
     void OnSessionStarted(clDebugEvent& event);
     void OnExceptionThrown(clDebugEvent& event);
+    void OnUpdateDebuggerView(clDebugEvent& event);
 
 public:
     NodeJSDebuggerPane(wxWindow* parent);

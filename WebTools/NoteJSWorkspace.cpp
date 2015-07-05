@@ -112,8 +112,7 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 void NodeJSWorkspace::Close()
 {
     if(!IsOpen()) return;
-    m_debugger.Reset(NULL);
-
+    
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
 
@@ -129,7 +128,9 @@ void NodeJSWorkspace::Close()
     // Notify workspace closed event
     wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
-
+    
+    m_debugger.Reset(NULL);
+    
     // notify codelite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
     eventClose.SetEventObject(EventNotifier::Get()->TopFrame());

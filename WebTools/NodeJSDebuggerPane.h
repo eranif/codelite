@@ -30,6 +30,7 @@ class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
     std::map<int, Handle> m_handles;
 
 protected:
+    virtual void OnBreakpointSelected(wxDataViewEvent& event);
     void ClearCallstack();
     void BuildLocals(const JSONElement& json);
     void BuildArguments(const JSONElement& json);

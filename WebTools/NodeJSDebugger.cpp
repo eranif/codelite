@@ -79,6 +79,10 @@ NodeJSDebugger::~NodeJSDebugger()
     m_bptManager.Save();
     DoDeleteTempFiles(m_tempFiles);
     m_tempFiles.clear();
+    
+    // fire stop event (needed to reload the normal layout)
+    clDebugEvent event(wxEVT_NODEJS_DEBUGGER_STOPPED);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void NodeJSDebugger::OnCanInteract(clDebugEvent& event)
@@ -292,7 +296,10 @@ void NodeJSDebugger::OnNodeOutput(clProcessEvent& event)
 
 void NodeJSDebugger::OnNodeTerminated(clProcessEvent& event) { wxDELETE(m_node); }
 
-void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
+void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event) 
+{ 
+    event.Skip(); 
+}
 
 void NodeJSDebugger::OnWorkspaceOpened(wxCommandEvent& event) { event.Skip(); }
 

@@ -150,6 +150,7 @@ protected:
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnBreakpointSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     wxDataViewCtrl* GetDataviewLocals() { return m_dataviewLocals; }

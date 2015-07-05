@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "NodeJSDebugger.h"
 #include "NoteJSWorkspace.h"
+#include "imanager.h"
 
 NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     : NodeJSDebuggerPaneBase(parent)
@@ -319,4 +320,18 @@ void NodeJSDebuggerPane::OnFrameSelected(clDebugEvent& event)
     EventNotifier::Get()->AddPendingEvent(eventHighlight);
     BuildLocals(frame);
     BuildArguments(frame);
+}
+
+void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
+{
+    wxVariant v;
+    int line;
+    wxString file;
+    m_dvListCtrlBreakpoints->GetValue(v, m_dvListCtrlBreakpoints->ItemToRow(event.GetItem()), 1);
+    line = v.GetInteger();
+    
+    m_dvListCtrlBreakpoints->GetValue(v, m_dvListCtrlBreakpoints->ItemToRow(event.GetItem()), 2);
+    file = v.GetString();
+    
+    clGetManager()->OpenFile(file, "", line);
 }

@@ -320,17 +320,7 @@ void MainBook::RestoreSession(SessionEntry& session)
         editor->LoadMarkersFromArray(ti.GetBookmarks());
         editor->LoadCollapsedFoldsFromArray(ti.GetCollapsedFolds());
     }
-// We can't just use SelectPane() here.
-// Notebook::DoPageChangedEvent has posted events to us,
-// which have the effect of selecting back to page 0
-// So post ourselves an event, so that it arrives after that one
-
-// FIXME: ??
-#if 0
-    wxBookCtrlEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGED, GetId());
-    event.SetSelection(sel);
-    m_book->GetEventHandler()->AddPendingEvent(event);
-#endif
+    m_book->SetSelection(sel);
 }
 
 LEditor* MainBook::GetActiveEditor(bool includeDetachedEditors)

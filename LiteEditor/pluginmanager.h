@@ -120,15 +120,18 @@ public:
     virtual bool ClosePage(const wxString& title);
     virtual bool ClosePage(const wxFileName& filename);
     virtual wxWindow* FindPage(const wxString& text);
-    virtual bool
-    AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString, const wxBitmap& bmp = wxNullBitmap, bool selected = false);
+    virtual bool AddPage(wxWindow* win,
+                         const wxString& text,
+                         const wxString& tooltip = wxEmptyString,
+                         const wxBitmap& bmp = wxNullBitmap,
+                         bool selected = false);
     virtual bool SelectPage(wxWindow* win);
     virtual NavMgr* GetNavigationMgr();
     virtual IEditor* NewEditor();
     virtual bool IsShutdownInProgress() const;
     virtual BitmapLoader* GetStdIcons();
     virtual wxArrayString GetProjectCompileFlags(const wxString& projectName, bool isCppFile);
-    virtual void AddEditorPage(wxWindow* page, const wxString& name,const wxString& tooltip = wxEmptyString);
+    virtual void AddEditorPage(wxWindow* page, const wxString& name, const wxString& tooltip = wxEmptyString);
     virtual wxPanel* GetEditorPaneNotebook();
     virtual wxWindow* GetActivePage();
     virtual wxWindow* GetPage(size_t page);
@@ -151,12 +154,14 @@ public:
     virtual void AddWorkspaceToRecentlyUsedList(const wxFileName& filename);
     virtual void StoreWorkspaceSession(const wxFileName& workspaceFile);
     virtual void LoadWorkspaceSession(const wxFileName& workspaceFile);
-    virtual void OpenFindInFileForPath(const wxString &path);
-    virtual void OpenFindInFileForPaths(const wxArrayString &paths);
-    virtual void ShowOutputPane(const wxString &selectedWindow = "");
-    virtual void ToggleOutputPane(const wxString &selectedWindow = "");
+    virtual void OpenFindInFileForPath(const wxString& path);
+    virtual void OpenFindInFileForPaths(const wxArrayString& paths);
+    virtual void ShowOutputPane(const wxString& selectedWindow = "");
+    virtual void ToggleOutputPane(const wxString& selectedWindow = "");
     virtual clStatusBar* GetStatusBar();
     virtual clWorkspaceView* GetWorkspaceView();
+    virtual bool IsToolBarShown() const;
+    virtual void ShowToolBar(bool show = true);
     
     //------------------------------------
     // End of IManager interface

@@ -825,7 +825,20 @@ void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
     }
 }
 
-clWorkspaceView* PluginManager::GetWorkspaceView()
+clWorkspaceView* PluginManager::GetWorkspaceView() { return clMainFrame::Get()->GetWorkspaceTab()->GetView(); }
+
+void PluginManager::ShowToolBar(bool show)
 {
-    return clMainFrame::Get()->GetWorkspaceTab()->GetView();
+    wxCommandEvent event(wxEVT_MENU, XRCID("hide_tool_bar"));
+    event.SetInt(show ? 1 : 0);
+    event.SetEventObject(clMainFrame::Get());
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+}
+bool PluginManager::IsToolBarShown() const
+{
+    if(clMainFrame::Get()->GetToolBar()) {
+        // we have native toolbar
+        return clMainFrame::Get()->GetToolBar()->IsShown();
+    }
+    return false;
 }

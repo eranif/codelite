@@ -27,8 +27,8 @@ class WebTools : public IPlugin
     bool m_clangOldFlag;
     NodeJSDebuggerPane* m_nodejsDebuggerPane;
     wxString m_savePerspective;
+    bool m_hideToolBarOnDebugStop;
     
-protected:
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);

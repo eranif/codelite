@@ -454,8 +454,16 @@ void NodeJSDebugger::OnHighlightLine(clDebugEvent& event)
         CallAfter(&NodeJSDebugger::DoHighlightLine, file.GetFullPath(), line);
 
     } else {
-        // Ask the file from nodejs
-        GetCurrentFrameSource(file.GetFullPath(), line);
+        // Probably a node.js internal file
+        wxFileName fn(clStandardPaths::Get().GetUserDataDir(), file.GetFullPath());
+        fn.AppendDir("webtools");
+        fn.AppendDir("tmp");
+        if(fn.Exists()) {
+            CallAfter(&NodeJSDebugger::DoHighlightLine, fn.GetFullPath(), line);
+        } else {
+            // Ask the file from nodejs
+            GetCurrentFrameSource(file.GetFullPath(), line);
+        }
     }
 }
 

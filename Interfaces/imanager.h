@@ -111,14 +111,23 @@ public:
      * the selection
      */
     virtual void ShowOutputPane(const wxString& selectWindow = "") = 0;
-    
+
+    /**
+     * @brief show the toolbar. This only works when using the native toolbar
+     */
+    virtual void ShowToolBar(bool show = true) = 0;
+
+    /**
+     * @brief is the native toolbar visible?
+     */
+    virtual bool IsToolBarShown() const = 0;
     /**
      * @brief toggle the output pane
      * @param selectWindow tab within the 'Output Pane' to select, if empty don't change
      * the selection
      */
     virtual void ToggleOutputPane(const wxString& selectedWindow = "") = 0;
-    
+
     // return the current editor
     /**
      * @brief return the active editor
@@ -126,12 +135,12 @@ public:
      * editor open
      */
     virtual IEditor* GetActiveEditor() = 0;
-    
+
     /**
      * @brief return the main frame's status bar
      */
     virtual clStatusBar* GetStatusBar() = 0;
-    
+
     /**
      * @brief open file and make it the active editor
      * @param fileName the file to open - use absolute path
@@ -231,13 +240,13 @@ public:
      * @brief return a pointer to the ** C++ ** workspace manager
      */
     virtual clCxxWorkspace* GetWorkspace() = 0;
-    
+
     /**
      * @brief return the workspace view tab
-     * @return 
+     * @return
      */
     virtual clWorkspaceView* GetWorkspaceView() = 0;
-    
+
     /**
      * @brief add files to a virtual folder in the project
      * @param item a tree item which represents the tree item of the virtual folder

@@ -335,5 +335,10 @@ void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
     m_dvListCtrlBreakpoints->GetValue(v, m_dvListCtrlBreakpoints->ItemToRow(event.GetItem()), 2);
     file = v.GetString();
 
-    clGetManager()->OpenFile(file, "", line);
+    CallAfter(&NodeJSDebuggerPane::DoOpenFile, file, line);
+}
+
+void NodeJSDebuggerPane::DoOpenFile(const wxString& filename, int line)
+{
+    clGetManager()->OpenFile(filename, "", line - 1);
 }

@@ -299,7 +299,7 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
             return;
         }
         event.Skip(false);
-        NodeJSDebuggerDlg dlg(NULL, NodeJSDebuggerDlg::kExecute);
+        NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kExecute);
         if(dlg.ShowModal() != wxID_OK) {
             return;
         }

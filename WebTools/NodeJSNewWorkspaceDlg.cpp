@@ -3,6 +3,7 @@
 NodeJSNewWorkspaceDlg::NodeJSNewWorkspaceDlg(wxWindow* parent)
     : NodeJSNewWorkspaceDlgBase(parent)
 {
+    CenterOnParent();
 }
 
 NodeJSNewWorkspaceDlg::~NodeJSNewWorkspaceDlg() {}

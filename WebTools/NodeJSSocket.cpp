@@ -97,10 +97,9 @@ void NodeJSSocket::ProcessInputBuffer()
         m_debugger->SetBreakpoints();
         // When an uncaught exception is thrown, break
         m_debugger->BreakOnException();
-        // Continue
-        m_debugger->Continue();
         m_inBuffer.Clear();
-
+        // Let codelite know that we have control
+        m_debugger->GotControl(true);
     } else {
 
         wxString buffer = GetResponse();

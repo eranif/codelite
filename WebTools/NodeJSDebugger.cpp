@@ -142,7 +142,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
         return;
     };
 
-    NodeJSDebuggerDlg dlg(NULL, NodeJSDebuggerDlg::kDebug);
+    NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kDebug);
     if(dlg.ShowModal() != wxID_OK) {
         return;
     }

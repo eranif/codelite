@@ -329,10 +329,17 @@ void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
     wxVariant v;
     int line;
     wxString file;
-    m_dvListCtrlBreakpoints->GetValue(v, m_dvListCtrlBreakpoints->ItemToRow(event.GetItem()), 1);
+    // sanity
+    CHECK_ITEM_RET(event.GetItem());
+    wxDataViewItem item = event.GetItem();
+    int row = m_dvListCtrlBreakpoints->ItemToRow(event.GetItem());
+    // sanity
+    if(row >= m_dvListCtrlBreakpoints->GetItemCount()) return;
+    
+    m_dvListCtrlBreakpoints->GetValue(v, row, 1);
     line = v.GetInteger();
 
-    m_dvListCtrlBreakpoints->GetValue(v, m_dvListCtrlBreakpoints->ItemToRow(event.GetItem()), 2);
+    m_dvListCtrlBreakpoints->GetValue(v, row, 2);
     file = v.GetString();
 
     CallAfter(&NodeJSDebuggerPane::DoOpenFile, file, line);

@@ -441,6 +441,9 @@ void NodeJSDebugger::SetDebuggerMarker(IEditor* editor, int lineno)
     stc->SetCurrentPos(caretPos);
     stc->EnsureCaretVisible();
     editor->CenterLine(lineno);
+#ifdef __WXOSX__
+    stc->Refresh();
+#endif
 }
 
 void NodeJSDebugger::ClearDebuggerMarker()

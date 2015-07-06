@@ -274,8 +274,8 @@ void NodeJSDebuggerPane::OnUpdateDebuggerView(clDebugEvent& event)
     const NodeJSBreakpoint::List_t& breakpoints = debugger->GetBreakpointsMgr()->GetBreakpoints();
     std::for_each(breakpoints.begin(), breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
         wxVector<wxVariant> cols;
-        cols.push_back(bp.GetNodeBpID());
-        cols.push_back(bp.GetLine());
+        cols.push_back(wxString() << bp.GetNodeBpID());
+        cols.push_back(wxString() << bp.GetLine());
         cols.push_back(bp.GetFilename());
         m_dvListCtrlBreakpoints->AppendItem(cols);
     });
@@ -287,7 +287,7 @@ void NodeJSDebuggerPane::OnFrameSelected(clDebugEvent& event)
     wxWindowUpdateLocker locker(m_dataviewLocals);
     m_dataviewLocalsModel->Clear();
     m_dataviewLocals->Enable(true);
-    
+
     JSONRoot root(event.GetString());
     JSONElement json = root.toElement();
     JSONElement frame = json.namedObject("body");
@@ -331,9 +331,9 @@ void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
     wxString file;
     m_dvListCtrlBreakpoints->GetValue(v, m_dvListCtrlBreakpoints->ItemToRow(event.GetItem()), 1);
     line = v.GetInteger();
-    
+
     m_dvListCtrlBreakpoints->GetValue(v, m_dvListCtrlBreakpoints->ItemToRow(event.GetItem()), 2);
     file = v.GetString();
-    
+
     clGetManager()->OpenFile(file, "", line);
 }

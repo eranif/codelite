@@ -165,7 +165,9 @@ void NodeJSDebuggerPane::OnSessionStarted(clDebugEvent& event)
 
 void NodeJSDebuggerPane::OnItemActivated(wxDataViewEvent& event)
 {
+    CHECK_ITEM_RET(event.GetItem());
     FrameData* cd = (FrameData*)m_dvListCtrlCallstack->GetItemData(event.GetItem());
+    CHECK_PTR_RET(cd);
     NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
     if(!debugger) return;
     debugger->SelectFrame(cd->index);

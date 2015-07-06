@@ -338,13 +338,13 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     boxSizer120 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage112->SetSizer(boxSizer120);
     
-    m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
     
     m_dataviewLocalsModel = new m_dataview126Model;
     m_dataviewLocalsModel->SetColCount( 3 );
     m_dataviewLocals->AssociateModel(m_dataviewLocalsModel.get() );
     
-    boxSizer120->Add(m_dataviewLocals, 1, wxALL|wxEXPAND, 2);
+    boxSizer120->Add(m_dataviewLocals, 1, wxALL|wxEXPAND, 5);
     
     m_dataviewLocals->AppendTextColumn(_("Name"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dataviewLocals->AppendTextColumn(_("Type"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
@@ -366,9 +366,9 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     boxSizer178 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage172->SetSizer(boxSizer178);
     
-    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_splitterPage172, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_splitterPage172, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
     
-    boxSizer178->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, 2);
+    boxSizer178->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, 5);
     
     m_dvListCtrlCallstack->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     m_dvListCtrlCallstack->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
@@ -383,7 +383,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_notebook = new Notebook(m_splitterPage176, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
     
-    boxSizer180->Add(m_notebook, 1, wxEXPAND, 5);
+    boxSizer180->Add(m_notebook, 1, wxALL|wxEXPAND, 5);
     
     m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelConsoleLog, _("Console"), true);

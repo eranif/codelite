@@ -409,6 +409,7 @@ protected:
     void OnProjectAddProject(wxCommandEvent& event);
     void OnReconcileProject(wxCommandEvent& event);
     void OnWorkspaceOpen(wxUpdateUIEvent& event);
+    void OnNewProjectUI(wxUpdateUIEvent& event);
     void OnRetagWorkspaceUI(wxUpdateUIEvent& event);
     void OnAddEnvironmentVariable(wxCommandEvent& event);
     void OnAdvanceSettings(wxCommandEvent& event);

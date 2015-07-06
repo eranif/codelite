@@ -420,7 +420,7 @@ EVT_UPDATE_UI(XRCID("file_close_workspace"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("reload_workspace"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("add_project"), clMainFrame::OnWorkspaceMenuUI)
 EVT_UPDATE_UI(XRCID("file_new_project"), clMainFrame::OnWorkspaceOpen)
-EVT_UPDATE_UI(XRCID("new_project"), clMainFrame::OnWorkspaceOpen)
+EVT_UPDATE_UI(XRCID("new_project"), clMainFrame::OnNewProjectUI)
 EVT_UPDATE_UI(XRCID("reconcile_project"), clMainFrame::OnShowActiveProjectSettingsUI)
 EVT_UPDATE_UI(XRCID("retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
 EVT_UPDATE_UI(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
@@ -6185,4 +6185,10 @@ void clMainFrame::OnFileOpenFolder(wxCommandEvent& event)
 void clMainFrame::OnNewWorkspaceUI(wxUpdateUIEvent& event)
 {
     event.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
+}
+
+void clMainFrame::OnNewProjectUI(wxUpdateUIEvent& event)
+{
+    event.Enable(clWorkspaceManager::Get().IsWorkspaceOpened() &&
+                 clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported());
 }

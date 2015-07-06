@@ -23,7 +23,8 @@
 #include <wx/log.h>
 
 #define CHECK_RUNNING() \
-    if(!IsConnected()) return
+    if(!IsConnected())  \
+    return
 
 NodeJSDebugger::NodeJSDebugger()
     : m_node(NULL)
@@ -79,7 +80,7 @@ NodeJSDebugger::~NodeJSDebugger()
     m_bptManager.Save();
     DoDeleteTempFiles(m_tempFiles);
     m_tempFiles.clear();
-    
+
     // fire stop event (needed to reload the normal layout)
     clDebugEvent event(wxEVT_NODEJS_DEBUGGER_STOPPED);
     EventNotifier::Get()->AddPendingEvent(event);
@@ -259,7 +260,10 @@ void NodeJSDebugger::OnVoid(clDebugEvent& event)
     wxUnusedVar(event);
 }
 
-bool NodeJSDebugger::IsConnected() { return m_socket && m_socket->IsConnected(); }
+bool NodeJSDebugger::IsConnected()
+{
+    return m_socket && m_socket->IsConnected();
+}
 
 void NodeJSDebugger::ConnectionEstablished()
 {
@@ -294,20 +298,28 @@ void NodeJSDebugger::OnNodeOutput(clProcessEvent& event)
     EventNotifier::Get()->AddPendingEvent(eventLog);
 }
 
-void NodeJSDebugger::OnNodeTerminated(clProcessEvent& event) { wxDELETE(m_node); }
-
-void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event) 
-{ 
-    event.Skip(); 
+void NodeJSDebugger::OnNodeTerminated(clProcessEvent& event)
+{
+    wxDELETE(m_node);
 }
 
-void NodeJSDebugger::OnWorkspaceOpened(wxCommandEvent& event) { event.Skip(); }
+void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+}
+
+void NodeJSDebugger::OnWorkspaceOpened(wxCommandEvent& event)
+{
+    event.Skip();
+}
 
 void NodeJSDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     // Sanity
-    if(!IsConnected()) return;
-    if(!bp.IsApplied()) return;
+    if(!IsConnected())
+        return;
+    if(!bp.IsApplied())
+        return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -324,7 +336,8 @@ void NodeJSDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 void NodeJSDebugger::SetBreakpoint(const NodeJSBreakpoint& bp)
 {
     // Sanity
-    if(!IsConnected()) return;
+    if(!IsConnected())
+        return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -344,7 +357,8 @@ void NodeJSDebugger::SetBreakpoint(const NodeJSBreakpoint& bp)
 void NodeJSDebugger::Continue()
 {
     // Sanity
-    if(!IsConnected()) return;
+    if(!IsConnected())
+        return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -358,7 +372,8 @@ void NodeJSDebugger::Continue()
 void NodeJSDebugger::SetBreakpoints()
 {
     // Sanity
-    if(!IsConnected()) return;
+    if(!IsConnected())
+        return;
     const NodeJSBreakpoint::List_t& bps = m_bptManager.GetBreakpoints();
     std::for_each(bps.begin(), bps.end(), [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp); });
 }
@@ -375,7 +390,8 @@ void NodeJSDebugger::GotControl(bool requestBacktrace)
 void NodeJSDebugger::Callstack()
 {
     // Sanity
-    if(!IsConnected()) return;
+    if(!IsConnected())
+        return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -389,7 +405,8 @@ void NodeJSDebugger::Callstack()
 void NodeJSDebugger::SelectFrame(int frameId)
 {
     // Sanity
-    if(!IsConnected()) return;
+    if(!IsConnected())
+        return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -436,12 +453,10 @@ void NodeJSDebugger::ClearDebuggerMarker()
 
 void NodeJSDebugger::DoHighlightLine(const wxString& filename, int lineNo)
 {
-    bool res = clGetManager()->OpenFile(filename);
-    if(res) {
-        IEditor* activeEditor = clGetManager()->GetActiveEditor();
-        if(activeEditor && (activeEditor->GetFileName().GetFullPath() == filename)) {
-            SetDebuggerMarker(activeEditor, lineNo - 1);
-        }
+    clGetManager()->OpenFile(filename, "", lineNo - 1);
+    IEditor* activeEditor = clGetManager()->GetActiveEditor();
+    if(activeEditor) {
+        SetDebuggerMarker(activeEditor, lineNo - 1);
     }
 }
 
@@ -478,7 +493,8 @@ void NodeJSDebugger::ConnectError(const wxString& errmsg)
 void NodeJSDebugger::BreakOnException(bool b)
 {
     // Sanity
-    if(!IsConnected()) return;
+    if(!IsConnected())
+        return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -497,7 +513,8 @@ void NodeJSDebugger::BreakOnException(bool b)
 void NodeJSDebugger::GetCurrentFrameSource(const wxString& filename, int line)
 {
     // Sanity
-    if(!IsConnected()) return;
+    if(!IsConnected())
+        return;
 
     // Build the request
     JSONElement request = JSONElement::createObject();
@@ -521,7 +538,8 @@ void NodeJSDebugger::OnEditorChanged(wxCommandEvent& event)
         // If the temp file does not match one of the editors, assume it was closed and delete
         // the temporary file
         IEditor::List_t::iterator iter = std::find_if(editors.begin(), editors.end(), [&](IEditor* editor) {
-            if(editor->GetFileName().GetFullPath() == filename) return true;
+            if(editor->GetFileName().GetFullPath() == filename)
+                return true;
             return false;
         });
         if(iter == editors.end()) {

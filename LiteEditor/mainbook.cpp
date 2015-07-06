@@ -601,8 +601,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
         editor->SetLineVisible(editor->LineFromPosition(position));
 
     } else if(lineno != wxNOT_FOUND) {
-        editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno), preserveSelection);
-        editor->SetLineVisible(lineno);
+        editor->CenterLine(lineno);
     }
 
     if(m_reloadingDoRaise) {

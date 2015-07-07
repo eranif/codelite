@@ -43,6 +43,7 @@ enum {
     kFunc_Final = (1 << 4),
     kFunc_Static = (1 << 5),
     kFunc_Abstract = (1 << 6),
+    kFunc_ReturnReference = (1 << 7),
 };
 
 // Class flags

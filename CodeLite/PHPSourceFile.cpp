@@ -288,6 +288,14 @@ void PHPSourceFile::OnFunction()
         return;
     }
 
+    bool funcReturnRef = false;
+    if(token.type == '&') {
+        funcReturnRef = true;
+        if(!NextToken(token)) {
+            return;
+        }
+    }
+
     PHPEntityFunction* func(NULL);
     int funcDepth(0);
     if(token.type == kPHP_T_IDENTIFIER) {
@@ -305,6 +313,9 @@ void PHPSourceFile::OnFunction()
 
     if(!func) return;
     PHPEntityBase::Ptr_t funcPtr(func);
+    if(funcReturnRef) {
+        funcPtr->SetFlag(kFunc_ReturnReference);
+    }
 
     // add the function to the current scope
     CurrentScope()->AddChild(funcPtr);

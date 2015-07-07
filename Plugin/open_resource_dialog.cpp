@@ -337,12 +337,9 @@ wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name,
 {
     wxString prefix;
     clientData->m_impl = boldFont;
-    if(clientData->m_impl) {
-        prefix = "[ impl ] ";
-    }
-    
     wxVector<wxVariant> cols;
     cols.push_back(OpenResourceDialogModel::CreateIconTextVariant(prefix + name, bmp));
+    cols.push_back(clientData->m_impl ? wxString("X") : wxString());
     cols.push_back(fullname);
     return m_dataviewModel->AppendItem(wxDataViewItem(0), cols, clientData);
 }

@@ -310,7 +310,42 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
     }
 }
 
-void OpenResourceDialog::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
+{
+    event.Skip();
+    if(m_dataviewModel->IsEmpty()) return;
+
+    if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP ||
+       event.GetKeyCode() == WXK_NUMPAD_DOWN) {
+        event.Skip(false);
+        bool down = (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN);
+        wxDataViewItemArray children;
+        m_dataviewModel->GetChildren(wxDataViewItem(0), children);
+        wxDataViewItem selection = m_dataview->GetSelection();
+        if(!selection.IsOk()) {
+            // No selection, select the first
+            DoSelectItem(children.Item(0));
+        } else {
+            int curIndex = wxNOT_FOUND;
+            for(size_t i = 0; i < children.size(); ++i) {
+                if(children.Item(i) == selection) {
+                    curIndex = i;
+                    break;
+                }
+            }
+
+            if(curIndex != wxNOT_FOUND) {
+                down ? ++curIndex : --curIndex;
+                if((curIndex >= 0) && (curIndex < (int)children.size())) {
+                    DoSelectItem(children.Item(curIndex));
+                }
+            }
+        }
+        
+        // Set the focus back to the text control
+        m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
+    }
+}
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
 
@@ -318,7 +353,7 @@ void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_selecti
 
 bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
 
-void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item, bool makeFirst)
+void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 {
     CHECK_ITEM_RET(item);
     m_dataview->Select(item);

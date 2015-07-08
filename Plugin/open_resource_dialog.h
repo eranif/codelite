@@ -98,7 +98,7 @@ protected:
     void DoPopulateWorkspaceFile();
     bool MatchesFilter(const wxString& name);
     void DoPopulateTags();
-    void DoSelectItem(const wxDataViewItem& item, bool makeFirst = true);
+    void DoSelectItem(const wxDataViewItem& item);
     void Clear();
     wxDataViewItem DoAppendLine(const wxString& name,
                                 const wxString& fullname,

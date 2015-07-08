@@ -23,7 +23,7 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
@@ -44,9 +44,9 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     mainSizer->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
     m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Impl?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Impl?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 60, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Full Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     

@@ -29,10 +29,12 @@
 class OpenResourceDialogBase : public wxDialog
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxTextCtrl* m_textCtrlResourceName;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<OpenResourceDialogModel> m_dataviewModel;
 
+    wxFlexGridSizer* fgSizer1;
     wxCheckBox* m_checkBoxFiles;
     wxCheckBox* m_checkBoxShowSymbols;
     wxStdDialogButtonSizer* m_stdBtnSizer2;

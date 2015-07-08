@@ -27,10 +27,13 @@ void NodeJSWorkspaceView::OnContenxtMenu(clContextMenuEvent& event)
     event.Skip();
     if(event.GetEventObject() == this) {
         // Remove the 'Close folder' option
-        event.GetMenu()->Remove(XRCID("tree_ctrl_close_folder"));
-        wxMenuItem* sepItem = event.GetMenu()->FindItemByPosition(0);
-        if(sepItem) {
-            event.GetMenu()->Remove(sepItem);
+        wxMenuItem* item = event.GetMenu()->FindItem(XRCID("tree_ctrl_close_folder"));
+        if(item) {
+            event.GetMenu()->Remove(item);
+            wxMenuItem* sepItem = event.GetMenu()->FindItemByPosition(0);
+            if(sepItem) {
+                event.GetMenu()->Remove(sepItem);
+            }
         }
     }
 }

@@ -103,7 +103,6 @@ protected:
     void DoChangeRootPathUI(const wxString& path);
     void DoRootDirChanged(const wxString& path);
     wxString DoGetCurRepoPath() const;
-    void DoCreateFileExplorerImages();
 
 protected:
     // Menu management
@@ -117,6 +116,7 @@ protected:
 protected:
     // Handlers for SubversionPageBase events.
     void OnChangeRootDir(wxCommandEvent& event);
+    void OnCloseView(wxCommandEvent& event);
     void OnTreeMenu(wxTreeEvent& event);
     void OnItemActivated(wxTreeEvent& event);
 

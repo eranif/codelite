@@ -98,6 +98,8 @@ EVT_MENU(XRCID("svn_lock"), SubversionView::OnLock)
 EVT_MENU(XRCID("svn_unlock"), SubversionView::OnUnLock)
 EVT_MENU(XRCID("svn_rename"), SubversionView::OnRename)
 EVT_MENU(XRCID("svn_open_local_repo_browser"), SubversionView::OnChangeRootDir)
+EVT_MENU(XRCID("svn_close_view"), SubversionView::OnCloseView)
+
 END_EVENT_TABLE()
 
 static int FOLDER_IMG_ID = wxNOT_FOUND;
@@ -360,8 +362,13 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
         path.swap(customizedRepo);
     }
 
-    DoRootDirChanged(path);
-    BuildTree();
+    if(!m_plugin->IsPathUnderSvn(path)) {
+        OnCloseView(event);
+
+    } else {
+        DoRootDirChanged(path);
+        BuildTree();
+    }
 }
 
 void SubversionView::OnWorkspaceClosed(wxCommandEvent& event)
@@ -376,7 +383,7 @@ void SubversionView::OnWorkspaceClosed(wxCommandEvent& event)
     }
 
     m_workspaceFile.Clear();
-    DoChangeRootPathUI(_("<No repository path is selected>"));
+    DoChangeRootPathUI(wxEmptyString);
     m_plugin->GetConsole()->Clear();
 }
 
@@ -396,12 +403,7 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles,
     if(rootDir.IsEmpty()) rootDir = DoGetCurRepoPath();
 
     if(!fileExplorerOnly) {
-
-#ifdef __WXMSW__
         wxWindowUpdateLocker locker(m_treeCtrl);
-#else
-        clWindowUpdateLocker locker(m_treeCtrl);
-#endif
         ClearAll();
 
         // Add root node
@@ -423,42 +425,6 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles,
 
         DoLinkEditor();
     }
-
-#ifdef __WXMSW__
-    return;
-#endif
-
-    DoCreateFileExplorerImages();
-
-#if 0
-    if(m_fileExplorerLastBaseImgIdx != -1) {
-        // Unified all the arrays into a single map
-        SvnFileExplorerTraverser::Map_t mymap;
-
-        wxTreeCtrl*   fileExplorer = m_plugin->GetManager()->GetTree(TreeFileExplorer);
-        wxTreeItemId  feRootItem   = fileExplorer->GetItemByFullPath(rootDir);
-
-#ifdef __WXMSW__
-        wxWindowUpdateLocker locker(fileExplorer);
-#else
-        clWindowUpdateLocker locker(fileExplorer);
-#endif
-        DoAddArrayToMap(modifiedFiles,    mymap, SvnFileExplorerTraverser::Modified,    rootDir);
-        DoAddArrayToMap(newFiles,         mymap, SvnFileExplorerTraverser::New,         rootDir);
-        DoAddArrayToMap(deletedFiles,     mymap, SvnFileExplorerTraverser::Deleted,     rootDir);
-        DoAddArrayToMap(conflictedFiles,  mymap, SvnFileExplorerTraverser::Conflicted,  rootDir);
-        DoAddArrayToMap(lockedFiles,      mymap, SvnFileExplorerTraverser::Locked,      rootDir);
-        DoAddArrayToMap(unversionedFiles, mymap, SvnFileExplorerTraverser::Unversioned, rootDir);
-        DoAddArrayToMap(ignoreFiles,      mymap, SvnFileExplorerTraverser::Ignored,     rootDir);
-
-        if (feRootItem.IsOk()) {
-            CL_DEBUG(wxT("wxTreeTraverser started..."));
-            SvnFileExplorerTraverser traverser(fileExplorer, mymap, m_fileExplorerLastBaseImgIdx, DoGetCurRepoPath());
-            traverser.Traverse(feRootItem);
-            CL_DEBUG(wxT("wxTreeTraverser started...end"));
-        }
-    }
-#endif
 }
 
 void SubversionView::DoAddNode(const wxString& title,
@@ -611,8 +577,8 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 {
     menu->Append(XRCID("svn_open_file"), _("Open File..."));
     menu->AppendSeparator();
-    menu->Append(XRCID("svn_commit"), wxT("Commit"));
     menu->Append(XRCID("svn_update"), wxT("Update"));
+    menu->Append(XRCID("svn_commit"), wxT("Commit"));
     menu->AppendSeparator();
     menu->Append(XRCID("svn_revert"), wxT("Revert"));
 
@@ -642,8 +608,11 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 
 void SubversionView::CreateRootMenu(wxMenu* menu)
 {
-    menu->Append(XRCID("svn_commit"), wxT("Commit"));
+    menu->Append(XRCID("svn_close_view"), wxT("Close"));
+    menu->AppendSeparator();
+
     menu->Append(XRCID("svn_update"), wxT("Update"));
+    menu->Append(XRCID("svn_commit"), wxT("Commit"));
     menu->AppendSeparator();
 
     menu->Append(XRCID("svn_revert"), wxT("Revert"));
@@ -1273,7 +1242,7 @@ void SubversionView::OnUnLock(wxCommandEvent& event)
 
 void SubversionView::DoChangeRootPathUI(const wxString& path)
 {
-    if(path == _("<No repository path is selected>")) {
+    if(path == wxEmptyString) {
         ClearAll();
     }
     m_curpath = path;
@@ -1281,7 +1250,7 @@ void SubversionView::DoChangeRootPathUI(const wxString& path)
 
 void SubversionView::DoRootDirChanged(const wxString& path)
 {
-    if(path == _("<No repository path is selected>")) {
+    if(path == wxEmptyString) {
         DoChangeRootPathUI(path);
 
     } else {
@@ -1383,66 +1352,6 @@ wxTreeItemId SubversionView::DoFindFile(const wxTreeItemId& parent, const wxStri
     return wxTreeItemId();
 }
 
-void SubversionView::DoCreateFileExplorerImages()
-{
-// Create new bitmaps for the FileExplorer tree
-// The idea here is to add them in the order of the enum of the appearanced in the enum:
-//
-// enum {
-//     Modified,
-//     Locked,
-//     Unversioned,
-//     Conflicted,
-//     Deleted,
-//     New,
-//     Ok
-// };
-#if 0
-    if(m_fileExplorerLastBaseImgIdx == -1) {
-        wxTreeCtrl* fe = m_plugin->GetManager()->GetTree(TreeFileExplorer);
-        const std::vector<wxBitmap>& images  = fe->GetImages();
-        wxImageList *il = fe->GetImageList();
-
-        if(!images.empty() && il) {
-            int baseImagesCount = images.size();
-            m_fileExplorerLastBaseImgIdx = baseImagesCount;
-            int idx;
-            for(int i=0; i<baseImagesCount; i++) {
-                idx = il->Add(SvnOverlayTool::Get().OKIcon(images.at(i)));
-            }
-
-            for(int i=0; i<baseImagesCount; i++) {
-                idx = il->Add(SvnOverlayTool::Get().ModifiedIcon(images.at(i)));
-            }
-
-            for(int i=0; i<baseImagesCount; i++) {
-                idx = il->Add(SvnOverlayTool::Get().LockedIcon(images.at(i)));
-            }
-
-            for(int i=0; i<baseImagesCount; i++) {
-                idx = il->Add(SvnOverlayTool::Get().UnversionedIcon(images.at(i)));
-            }
-
-            for(int i=0; i<baseImagesCount; i++) {
-                idx = il->Add(SvnOverlayTool::Get().ConflictIcon(images.at(i)));
-            }
-
-            for(int i=0; i<baseImagesCount; i++) {
-                idx = il->Add(SvnOverlayTool::Get().DeletedIcon(images.at(i)));
-            }
-
-            for(int i=0; i<baseImagesCount; i++) {
-                idx = il->Add(SvnOverlayTool::Get().NewIcon(images.at(i)));
-            }
-            wxUnusedVar(idx);
-        }
-
-        //int newCount = il->GetImageCount();
-        //wxPrintf(wxT("%d\n"), newCount);
-    }
-#endif
-}
-
 void SubversionView::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
@@ -1487,4 +1396,12 @@ void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
 {
     event.Skip();
     ::clRecalculateSTCHScrollBar(m_sci);
+}
+
+void SubversionView::OnCloseView(wxCommandEvent& event)
+{
+    DoChangeRootPathUI("");
+
+    wxCommandEvent dummy;
+    OnClearOuptut(dummy);
 }

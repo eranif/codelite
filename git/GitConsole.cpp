@@ -519,7 +519,9 @@ void GitConsole::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     m_dvFilesModel->Clear();
+    OnClearGitLog(e);
 }
+
 void GitConsole::OnItemSelectedUI(wxUpdateUIEvent& event) { event.Enable(m_dvFiles->GetSelectedItemsCount()); }
 
 void GitConsole::OnFileActivated(wxDataViewEvent& event)

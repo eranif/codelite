@@ -80,7 +80,7 @@ private:
     void OnProjectFileRemoved(clCommandEvent& e);
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent& e);
-    void OnDebugEnded(wxCommandEvent& e);
+    void OnDebugEnded(clDebugEvent& e);
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
     void OnThemeChanged(wxCommandEvent& e);

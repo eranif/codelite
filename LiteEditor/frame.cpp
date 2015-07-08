@@ -779,6 +779,10 @@ clMainFrame::clMainFrame(wxWindow* pParent,
             this);
 
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
+
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
+
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -880,6 +884,9 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(
         wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     wxDELETE(m_timer);
+
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
 
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
@@ -3600,11 +3607,11 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     const wxString ALL(wxT("All Solution File (*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace)|")
-                           wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
-                               wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
-                                   wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
-                                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
-                                           wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
+                       wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
+                       wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
+                       wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
+                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
+                       wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
 
     wxFileDialog dlg(this,
                      _("Open IDE Solution/Workspace File"),
@@ -4677,9 +4684,11 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             startup_info.debugger = dbgr;
 
             // notify plugins that we're about to start debugging
-            if(SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
-                // plugin stopped debugging
-                return;
+            {
+                clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+                eventStarting.SetClientData(&startup_info);
+                if(EventNotifier::Get()->ProcessEvent(eventStarting)) return;
+            }
 
             wxString tty;
 #ifndef __WXMSW__
@@ -4706,7 +4715,11 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             dbgr->Start(si);
 
             // notify plugins that the debugger just started
-            SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
+            {
+                clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+                eventStarted.SetClientData(&startup_info);
+                EventNotifier::Get()->ProcessEvent(eventStarted);
+            }
 
             dbgr->Run(dlg.GetArguments(), wxEmptyString);
 
@@ -4766,11 +4779,15 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             startup_info.debugger = dbgr;
 
             // notify plugins that we're about to start debugging
-            if(SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info)) {
-                dlg->Destroy();
-                // plugin stopped debugging
-                return;
+            {
+                clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+                eventStarting.SetClientData(&startup_info);
+                if(EventNotifier::Get()->ProcessEvent(eventStarting)) {
+                    dlg->Destroy();
+                    return;
+                }
             }
+            
             wxString tty;
             wxString title;
             title << "Debugging core: " << dlg->GetCore();
@@ -4797,7 +4814,11 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             dbgr->Start(si);
 
             // notify plugins that the debugger just started
-            SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
+            {
+                clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+                eventStarted.SetClientData(&startup_info);
+                EventNotifier::Get()->ProcessEvent(eventStarted);
+            }
 
             // Coredump debugging doesn't use breakpoints, but probably we should do this here anyway...
             clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
@@ -6191,4 +6212,24 @@ void clMainFrame::OnNewProjectUI(wxUpdateUIEvent& event)
 {
     event.Enable(clWorkspaceManager::Get().IsWorkspaceOpened() &&
                  clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported());
+}
+
+void clMainFrame::OnDebugStarted(clDebugEvent& event)
+{
+    event.Skip();
+    m_toggleToolBar = false;
+    if(GetToolBar() && !GetToolBar()->IsShown()) {
+        // We have a native toolbar which is not visible, show it during debug session
+        clGetManager()->ShowToolBar();
+        m_toggleToolBar = true;
+    }
+}
+
+void clMainFrame::OnDebugEnded(clDebugEvent& event)
+{
+    event.Skip();
+    if(m_toggleToolBar && GetToolBar()) {
+        clGetManager()->ShowToolBar(false);
+    }
+    m_toggleToolBar = false;
 }

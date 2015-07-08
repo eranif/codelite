@@ -41,28 +41,28 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-ConsoleFrame::ConsoleFrame( wxWindow* parent, IManager* manager, wxWindowID id )
-    : wxPanel( parent, id, wxDefaultPosition, wxSize(300, 200))
+ConsoleFrame::ConsoleFrame(wxWindow* parent, IManager* manager, wxWindowID id)
+    : wxPanel(parent, id, wxDefaultPosition, wxSize(300, 200))
     , m_manager(manager)
 {
     wxBoxSizer* bSizer1;
-    bSizer1 = new wxBoxSizer( wxVERTICAL );
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
 
     SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
     m_terminal = new wxTerminal(this);
-    bSizer1->Add(m_terminal, 1, wxEXPAND|wxALL);
+    bSizer1->Add(m_terminal, 1, wxEXPAND | wxALL);
 
-    this->SetSizer( bSizer1 );
+    this->SetSizer(bSizer1);
     this->Layout();
 
     // Connect Events
-    EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &ConsoleFrame::OnDebuggerEnded, this);
 }
 
 ConsoleFrame::~ConsoleFrame()
 {
     // Disconnect Events
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &ConsoleFrame::OnDebuggerEnded, this);
 }
 
 wxString ConsoleFrame::StartTTY()
@@ -75,7 +75,7 @@ wxString ConsoleFrame::StartTTY()
 #endif
 }
 
-void ConsoleFrame::OnDebuggerEnded(wxCommandEvent& e)
+void ConsoleFrame::OnDebuggerEnded(clDebugEvent& e)
 {
 #ifndef __WXMSW__
     m_manager->GetDockingManager()->DetachPane(this);

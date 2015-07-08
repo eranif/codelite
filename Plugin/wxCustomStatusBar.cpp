@@ -81,7 +81,9 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
             wxBitmap bmp(m_rect.GetSize());
             wxMemoryDC memDc;
             memDc.SelectObject(bmp);
-            memDc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+            wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            font.SetPointSize(10);
+            memDc.SetFont(font);
             wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
 
             // Draw the field background

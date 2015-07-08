@@ -51,7 +51,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clStatusBar::OnWorkspaceClosed, this);
     Bind(wxEVT_STATUSBAR_CLICKED, &clStatusBar::OnFieldClicked, this);
 
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 200));
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, 250));
     AddField(lineCol);
 
     wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(

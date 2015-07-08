@@ -213,7 +213,7 @@ Manager::Manager(void)
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_FIND_IN_FILES_DISMISSED, clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
-        
+
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 }
@@ -347,10 +347,10 @@ void Manager::DoSetupWorkspace(const wxString& path)
     wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
     evtWorkspaceLoaded.SetString(path);
     EventNotifier::Get()->ProcessEvent(evtWorkspaceLoaded);
-    
+
     // set the C++ workspace as the active one
     clWorkspaceManager::Get().SetWorkspace(clCxxWorkspaceST::Get());
-    
+
     // Update the refactoring cache
     wxFileList_t allfiles;
     GetWorkspaceFiles(allfiles, true);
@@ -1902,7 +1902,6 @@ void Manager::SetMemory(const wxString& address, size_t count, const wxString& h
 }
 
 // Debugger API
-
 void Manager::DbgStart(long attachPid)
 {
     // set the working directory to the project directory
@@ -2144,9 +2143,13 @@ void Manager::DbgStart(long attachPid)
     }
 
     // notify plugins that we're about to start debugging
-    if(SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
-        // plugin stopped debugging
-        return;
+    {
+        clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+        eventStarting.SetClientData(&startup_info);
+        if(EventNotifier::Get()->ProcessEvent(eventStarting)) {
+            return;
+        }
+    }
 
     // read
     wxArrayString dbg_cmds;
@@ -2192,7 +2195,11 @@ void Manager::DbgStart(long attachPid)
     }
 
     // notify plugins that the debugger just started
-    SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
+    {
+        clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+        eventStarted.SetClientData(&startup_info);
+        EventNotifier::Get()->ProcessEvent(eventStarted);
+    }
 
     // Clear the debugger output window
     clMainFrame::Get()->GetDebuggerPane()->Clear();
@@ -2302,13 +2309,16 @@ void Manager::DbgStop()
 
     m_dbgCurrentFrameInfo.Clear();
     if(!dbgr->IsRunning()) {
-        // notify plugins that the debugger stopped
-        SendCmdEvent(wxEVT_DEBUG_ENDED);
+        clDebugEvent eventEnd(wxEVT_DEBUG_ENDED);
+        EventNotifier::Get()->ProcessEvent(eventEnd);
         return;
     }
 
     // notify plugins that the debugger is about to be stopped
-    SendCmdEvent(wxEVT_DEBUG_ENDING);
+    {
+        clDebugEvent eventEnding(wxEVT_DEBUG_ENDING);
+        EventNotifier::Get()->ProcessEvent(eventEnding);
+    }
 
     if(dbgr->IsRunning()) dbgr->Stop();
 
@@ -2316,18 +2326,8 @@ void Manager::DbgStop()
     DebugMessage(_("Debug session ended\n"));
 
     // notify plugins that the debugger stopped
-    SendCmdEvent(wxEVT_DEBUG_ENDED);
-
-    //#ifndef __WXMSW__
-    //    while ( true ) {
-    //        int pid = ::waitpid((pid_t)(-1), 0, WNOHANG);
-    //        if ( pid > 0 ) {
-    //            CL_DEBUG("Process %d exited", pid);
-    //            continue;
-    //        }
-    //        break;
-    //    }
-    //#endif
+    clDebugEvent eventEnd(wxEVT_DEBUG_ENDED);
+    EventNotifier::Get()->ProcessEvent(eventEnd);
 }
 
 void Manager::DbgMarkDebuggerLine(const wxString& fileName, int lineno)

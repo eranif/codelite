@@ -111,7 +111,7 @@ void MainBook::ConnectEvents()
         wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainBook::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(MainBook::OnDebugEnded), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
@@ -130,7 +130,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Unbind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
-    
+
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
 
     EventNotifier::Get()->Disconnect(
@@ -141,7 +141,7 @@ MainBook::~MainBook()
         wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainBook::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(MainBook::OnDebugEnded), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
@@ -1210,30 +1210,9 @@ void MainBook::DoPositionFindBar(int where)
     GetSizer()->Layout();
 }
 
-void MainBook::OnDebugEnded(wxCommandEvent& e)
-{
-    // ManagerST::Get()->GetDebuggerTip()->HideDialog();
-    e.Skip();
-}
+void MainBook::OnDebugEnded(clDebugEvent& e) { e.Skip(); }
 
-void MainBook::DoHandleFrameMenu(LEditor* editor)
-{
-    // Incase of no editor or an editor with context other than C++
-    // remove the context menu from the main frame
-    // if(!editor || editor->GetContext()->GetName() != wxT("C++")) {
-    //     int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-    //     if(idx != wxNOT_FOUND) {
-    //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, false);
-    //     }
-    //
-    // } else if(editor && editor->GetContext()->GetName() == wxT("C++")) {
-    //
-    //     int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-    //     if(idx != wxNOT_FOUND) {
-    //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);
-    //     }
-    // }
-}
+void MainBook::DoHandleFrameMenu(LEditor* editor) { wxUnusedVar(editor); }
 
 void MainBook::OnPageChanging(wxBookCtrlEvent& e)
 {

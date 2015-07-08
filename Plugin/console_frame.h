@@ -37,9 +37,9 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include "codelite_exports.h"
+#include "cl_command_event.h"
 
 ///////////////////////////////////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ConsoleFrame
@@ -49,13 +49,12 @@ class WXDLLIMPEXP_SDK ConsoleFrame : public wxPanel
 {
 private:
     IManager* m_manager;
-    wxTerminal *m_terminal;
+    wxTerminal* m_terminal;
 
 protected:
-
     // Virtual event handlers, overide them in your derived class
-    virtual void OnDebuggerEnded(wxCommandEvent &e);
-    
+    virtual void OnDebuggerEnded(clDebugEvent& e);
+
 public:
     ConsoleFrame(wxWindow* parent, IManager* manager, wxWindowID id = wxNOT_FOUND);
     ~ConsoleFrame();

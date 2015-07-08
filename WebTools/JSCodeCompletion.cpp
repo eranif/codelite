@@ -28,9 +28,10 @@
 #define ZIP_NAME "javascript-osx.zip"
 #endif
 
-JSCodeCompletion::JSCodeCompletion()
+JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
     : m_ternServer(this)
     , m_ccPos(wxNOT_FOUND)
+    , m_workingDirectory(workingDirectory)
 {
     wxFileName jsResources(clStandardPaths::Get().GetDataDir(), ZIP_NAME);
     if(jsResources.Exists()) {
@@ -43,7 +44,7 @@ JSCodeCompletion::JSCodeCompletion()
         targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         zipReader.Extract("*", targetDir.GetPath());
 
-        m_ternServer.Start();
+        m_ternServer.Start(m_workingDirectory);
     }
 }
 

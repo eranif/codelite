@@ -70,12 +70,13 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
-    m_jsCodeComplete.Reset(new JSCodeCompletion());
+    m_jsCodeComplete.Reset(new JSCodeCompletion(""));
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
 
     // Connect the timer
@@ -114,6 +115,7 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
@@ -365,7 +367,7 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
         m_mgr->GetDockingManager()->LoadPerspective(layout);
     }
     EnsureAuiPaneIsVisible("nodejs_debugger", true);
-    
+
     m_hideToolBarOnDebugStop = false;
     if(!m_mgr->AllowToolbar()) {
         // Using native toolbar
@@ -377,7 +379,7 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
 void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
 {
     event.Skip();
-    
+
     wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
     fnNodeJSLayout.AppendDir("config");
     FileUtils::WriteFileContent(fnNodeJSLayout, m_mgr->GetDockingManager()->SavePerspective());
@@ -386,7 +388,7 @@ void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
         m_mgr->GetDockingManager()->LoadPerspective(m_savePerspective);
         m_savePerspective.clear();
     }
-    
+
     if(m_hideToolBarOnDebugStop) {
         m_mgr->ShowToolBar(false);
     }
@@ -401,4 +403,10 @@ void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
     if(update) {
         m_mgr->GetDockingManager()->Update();
     }
+}
+
+void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
+{
+    event.Skip();
+    m_jsCodeComplete.Reset(new JSCodeCompletion(wxFileName(event.GetString()).GetPath()));
 }

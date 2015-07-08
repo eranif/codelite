@@ -110,6 +110,12 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         m_textCtrlResourceName->SelectAll();
     }
 
+#ifdef __WXOSX__
+    m_dataview->GetColumn(0)->SetWidth(200);
+    m_dataview->GetColumn(1)->SetWidth(60);
+    m_dataview->GetColumn(2)->SetWidth(500);
+#endif
+
     bool showFiles = clConfig::Get().Read("OpenResourceDialog/ShowFiles", true);
     bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);
     m_checkBoxFiles->SetValue(showFiles);
@@ -129,7 +135,7 @@ void OpenResourceDialog::OnText(wxCommandEvent& event)
 {
     event.Skip();
     m_timer->Stop();
-    m_timer->Start(100, true);
+    m_timer->Start(200, true);
 
     wxString filter = m_textCtrlResourceName->GetValue();
     filter.Trim().Trim(false);
@@ -190,6 +196,8 @@ void OpenResourceDialog::DoPopulateList()
     if(m_checkBoxShowSymbols->IsChecked()) {
         DoPopulateTags();
     }
+
+
 }
 
 void OpenResourceDialog::DoPopulateTags()

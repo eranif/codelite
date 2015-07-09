@@ -97,10 +97,9 @@ protected:
     virtual void OnCloseFolder(wxCommandEvent& event);
     virtual void OnNewFolder(wxCommandEvent& event);
     virtual void OnNewFile(wxCommandEvent& event);
-    virtual void OnDeleteFolder(wxCommandEvent& event);
     virtual void OnOpenFile(wxCommandEvent& event);
     virtual void OnRenameFile(wxCommandEvent& event);
-    virtual void OnDeleteFile(wxCommandEvent& event);
+    virtual void OnDeleteSelections(wxCommandEvent& event);
     virtual void OnFindInFilesFolder(wxCommandEvent& event);
     virtual void OnOpenContainingFolder(wxCommandEvent& event);
     virtual void OnOpenShellFolder(wxCommandEvent& event);

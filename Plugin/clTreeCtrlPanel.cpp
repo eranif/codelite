@@ -323,31 +323,6 @@ bool clTreeCtrlPanel::IsTopLevelFolder(const wxTreeItemId& item)
     return (cd && cd->IsFolder() && GetTreeCtrl()->GetItemParent(item) == GetTreeCtrl()->GetRootItem());
 }
 
-void clTreeCtrlPanel::OnDeleteFolder(wxCommandEvent& event)
-{
-    wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
-    clTreeCtrlData* cd = GetItemData(item);
-    CHECK_PTR_RET(cd);
-    CHECK_COND_RET(cd->IsFolder());
-
-    wxString message;
-    message << _("Are you sure you want to delete folder:\n'") << cd->GetPath() << _("'");
-
-    wxRichMessageDialog dialog(EventNotifier::Get()->TopFrame(),
-                               message,
-                               _("Confirm"),
-                               wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING);
-    dialog.SetYesNoLabels(_("Delete Folder"), _("Don't Delete"));
-    if(dialog.ShowModal() == wxID_YES) {
-        if(wxFileName::Rmdir(cd->GetPath(), wxPATH_RMDIR_RECURSIVE)) {
-            // Remove this item from its parent cache
-            UpdateItemDeleted(item);
-            // Remove the item from the UI
-            GetTreeCtrl()->Delete(item);
-        }
-    }
-}
-
 void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
 {
     wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();

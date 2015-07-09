@@ -223,9 +223,11 @@ void WebTools::OnSettings(wxCommandEvent& event)
     if(settings.ShowModal() == wxID_OK) {
         if(m_jsCodeComplete) {
             m_jsCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
         }
         if(m_xmlCodeComplete) {
             m_xmlCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
         }
     }
 }

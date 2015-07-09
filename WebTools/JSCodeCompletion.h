@@ -41,6 +41,8 @@ public:
      * @brief restart the tern server
      */
     void Reload();
+
+    void ClearFatalError() { m_ternServer.ClearFatalErrorFlag(); }
 };
 
 #endif // JSCODECOMPLETION_H

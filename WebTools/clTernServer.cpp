@@ -466,3 +466,8 @@ bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
     return true;
 #endif
 }
+
+void clTernServer::ClearFatalErrorFlag()
+{
+    m_fatalError = false;
+}

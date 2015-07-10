@@ -35,7 +35,7 @@ protected:
     void BuildLocals(const JSONElement& json);
     void BuildArguments(const JSONElement& json);
     void AddLocal(wxDataViewItem& parent, const wxString& name, int refId, int depth);
-    void ParseHandles(const JSONElement& refs);
+    void ParseRefsArray(const JSONElement& refs);
     void DoOpenFile(const wxString& filename, int line);
 
 protected:

@@ -165,7 +165,7 @@ public:
      * @brief return the word under the mouse pointer.
      * If a selection exists, return it instead
      */
-    virtual wxString GetWordAtMousePointer() = 0;
+    virtual void GetWordAtMousePointer(wxString& word, wxRect& wordRect) = 0;
 
     /**
      * @brief return the EOL mode of the editor.

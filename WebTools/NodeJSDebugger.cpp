@@ -21,6 +21,7 @@
 #include "bookmark_manager.h"
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include <wx/log.h>
+#include "NodeJSEvaluateExprHandler.h"
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return
@@ -249,6 +250,24 @@ void NodeJSDebugger::OnTooltip(clDebugEvent& event)
     event.Skip();
     CHECK_RUNNING();
     event.Skip(false);
+
+    CHECK_PTR_RET(clGetManager()->GetActiveEditor());
+
+    wxString selection;
+    wxRect rect;
+    clGetManager()->GetActiveEditor()->GetWordAtMousePointer(selection, rect);
+    CHECK_COND_RET(!selection.IsEmpty());
+
+    // Build the request
+    JSONElement request = JSONElement::createObject();
+    request.addProperty("type", "request");
+    request.addProperty("command", "evaluate");
+    JSONElement args = JSONElement::createObject("arguments");
+    request.append(args);
+    args.addProperty("expression", selection);
+
+    // Write the command
+    m_socket->WriteRequest(request, new NodeJSEvaluateExprHandler(selection));
 }
 
 void NodeJSDebugger::OnVoid(clDebugEvent& event)

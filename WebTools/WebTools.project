@@ -330,6 +330,8 @@
         <File Name="NodeJSSelectFrameHandler.cpp"/>
         <File Name="NodeJSGetScriptHandler.h"/>
         <File Name="NodeJSGetScriptHandler.cpp"/>
+        <File Name="NodeJSEvaluateExprHandler.h"/>
+        <File Name="NodeJSEvaluateExprHandler.cpp"/>
       </VirtualDirectory>
       <File Name="NodeJSDebuggerPane.h"/>
       <File Name="NodeJSDebuggerPane.cpp"/>

@@ -75,6 +75,7 @@
 #include "cc_box_tip_window.h"
 #include "clSTCLineKeeper.h"
 #include "clEditorStateLocker.h"
+#include <wx/dcmemory.h>
 //#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
@@ -176,6 +177,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_findBookmarksActive(false)
     , m_mgr(PluginManager::Get())
     , m_hasCCAnnotation(false)
+    , m_richTooltip(NULL)
 {
     DoUpdateOptions();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
@@ -235,6 +237,7 @@ LEditor::LEditor(wxWindow* parent)
 
 LEditor::~LEditor()
 {
+    wxDELETE(m_richTooltip);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
 
     EventNotifier::Get()->Disconnect(
@@ -1525,12 +1528,12 @@ void LEditor::OnDwellStart(wxStyledTextEvent& event)
     int margin = 0;
     wxPoint pt(ScreenToClient(wxGetMousePosition()));
     wxRect clientRect = GetClientRect();
-    
+
     // If the mouse is no longer over the editor, cancel the tooltip
     if(!clientRect.Contains(pt)) {
         return;
     }
-    
+
     // Always cancel the previous tooltip...
     DoCancelCodeCompletionBox();
 
@@ -2929,7 +2932,11 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
         // Debugger tooltip is shown when clicking 'Control/CMD'
         // while the mouse is over a word
         clDebugEvent event(wxEVT_DBG_EXPR_TOOLTIP);
-        event.SetString(this->GetWordAtMousePointer());
+
+        wxString wordAtMouse;
+        wxRect rect;
+        GetWordAtMousePointer(wordAtMouse, rect);
+        event.SetString(wordAtMouse);
         if(EventNotifier::Get()->ProcessEvent(event)) {
             return;
         }
@@ -2960,7 +2967,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
 
     // let the context process it as well
     if(event.GetKeyCode() == WXK_ESCAPE) {
-        
+
         if(GetFunctionTip()->IsActive()) {
             GetFunctionTip()->Deactivate();
             escapeUsed = true;
@@ -2970,7 +2977,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
         if(!escapeUsed) {
             clMainFrame::Get()->GetMainBook()->ShowQuickBar(
                 false); // There's no easy way to tell if it's actually showing, so just do a Close
-            
+
             // In addition, if we have multiple selections, de-select them
             if(GetSelections()) {
                 clEditorStateLocker editor(this);
@@ -2978,7 +2985,7 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
             }
         }
     }
-    
+
     m_context->OnKeyDown(event);
 }
 
@@ -3055,7 +3062,8 @@ void LEditor::OnMotion(wxMouseEvent& event)
 void LEditor::OnLeftDown(wxMouseEvent& event)
 {
     HighlightWord(false);
-
+    wxDELETE(m_richTooltip);
+    
     // hide completion box
     DoCancelCalltip();
     GetFunctionTip()->Deactivate();
@@ -3985,7 +3993,7 @@ void LEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip)
 
     // Place the tip on top of the mouse position, not under it
     pt.y -= m_calltip->GetSize().GetHeight();
-    m_calltip->PositionAt(pt, this);
+    m_calltip->CallAfter(&CCBoxTipWindow::PositionAt, pt, this);
 }
 
 void LEditor::DoCancelCalltip()
@@ -4646,25 +4654,48 @@ bool LEditor::IsDetached() const
     return (tlw && (clMainFrame::Get() != tlw));
 }
 
-wxString LEditor::GetWordAtMousePointer()
+void LEditor::GetWordAtMousePointer(wxString& word, wxRect& wordRect)
 {
+    word.clear();
+    wordRect = wxRect();
+
+    long start = wxNOT_FOUND;
+    long end = wxNOT_FOUND;
     if(GetSelectedText().IsEmpty()) {
         wxPoint mousePtInScreenCoord = ::wxGetMousePosition();
         wxPoint clientPt = ScreenToClient(mousePtInScreenCoord);
         int pos = PositionFromPoint(clientPt);
         if(pos != wxNOT_FOUND) {
-            long start = WordStartPosition(pos, true);
-            long end = WordEndPosition(pos, true);
-            return GetTextRange(start, end);
-        } else {
-            return "";
+            start = WordStartPosition(pos, true);
+            end = WordEndPosition(pos, true);
         }
     } else {
-        return GetSelectedText();
+        start = GetSelectionStart();
+        end = GetSelectionEnd();
     }
+
+    wxFont font = StyleGetFont(0);
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memdc(bmp);
+    memdc.SetFont(font);
+    wxSize sz = memdc.GetTextExtent(GetTextRange(start, end));
+    wxPoint ptStart = PointFromPosition(start);
+    wxRect rr(ptStart, sz);
+
+    word = GetTextRange(start, end);
+    wordRect = rr;
 }
 
-void LEditor::ShowRichTooltip(const wxString& tip, const wxString& title, int pos) { DoShowCalltip(pos, title, tip); }
+void LEditor::ShowRichTooltip(const wxString& tip, const wxString& title, int pos)
+{
+    if(m_richTooltip) return;
+    wxUnusedVar(pos);
+    wxString word;
+    wxRect rect;
+    GetWordAtMousePointer(word, rect);
+    m_richTooltip = new wxRichToolTip(title, tip);
+    m_richTooltip->ShowFor(this, &rect);
+}
 
 wxString LEditor::GetFirstSelection()
 {

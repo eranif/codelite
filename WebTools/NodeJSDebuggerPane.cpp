@@ -51,7 +51,7 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
 
     ClearCallstack();
 }
-void NodeJSDebuggerPane::ParseHandles(const JSONElement& refs)
+void NodeJSDebuggerPane::ParseRefsArray(const JSONElement& refs)
 {
     int refsCount = refs.arraySize();
     for(int i = 0; i < refsCount; ++i) {
@@ -96,7 +96,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
 
     // Load the handlers into a map
     m_handles.clear();
-    ParseHandles(refs);
+    ParseRefsArray(refs);
 
     int count = frames.arraySize();
     for(int i = 0; i < count; ++i) {
@@ -295,7 +295,7 @@ void NodeJSDebuggerPane::OnFrameSelected(clDebugEvent& event)
 
     // Load the handlers into a map
     m_handles.clear();
-    ParseHandles(refs);
+    ParseRefsArray(refs);
 
     int index = frame.namedObject("index").toInt();
     int funcRef = frame.namedObject("func").namedObject("ref").toInt();
@@ -332,7 +332,7 @@ void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
     // sanity
     CHECK_ITEM_RET(event.GetItem());
     wxDataViewItem item = event.GetItem();
-    int row = m_dvListCtrlBreakpoints->ItemToRow(event.GetItem());
+    int row = m_dvListCtrlBreakpoints->ItemToRow(item);
     // sanity
     if(row >= m_dvListCtrlBreakpoints->GetItemCount()) return;
     

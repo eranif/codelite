@@ -526,16 +526,28 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer505 = new wxBoxSizer(wxVERTICAL);
     m_panelCxx->SetSizer(boxSizer505);
     
-    boxSizer511 = new wxBoxSizer(wxHORIZONTAL);
+    m_auibar = new wxAuiToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer505->Add(boxSizer511, 0, wxEXPAND, 5);
+    boxSizer505->Add(m_auibar, 0, wxEXPAND, 5);
+    
+    m_auibar->AddTool(ID_TOOL_COLLAPSE_ALL, _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
+    
+    m_auibar->AddTool(ID_TOOL_GOTO_ACTIVE_PROJECT, _("Goto Active Project"), wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxNullBitmap, wxITEM_NORMAL, _("Goto Active Project"), _("Goto Active Project"), NULL);
+    
+    m_auibar->AddTool(ID_TOOL_ACTIVE_PROJECT_SETTINGS, _("Project Settings"), wxXmlResource::Get()->LoadBitmap(wxT("configure")), wxNullBitmap, wxITEM_NORMAL, _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), NULL);
+    
+    m_auibar->AddStretchSpacer(1);
+    
+    m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
+    m_auibar->Realize();
     
     m_splitter = new wxSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter->SetToolTip(_("Resize the configuration bar"));
-    m_splitter->SetSashGravity(0.5);
+    m_splitter->SetSashGravity(0);
     m_splitter->SetMinimumPaneSize(100);
     
-    boxSizer511->Add(m_splitter, 1, 0, 5);
+    boxSizer505->Add(m_splitter, 0, wxEXPAND, 2);
     
     m_splitterPage308 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -560,21 +572,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer316->Add(m_workspaceConfig, 0, wxALL|wxEXPAND, 2);
     
-    m_auibar = new wxAuiToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer511->Add(m_auibar, 0, wxEXPAND, 5);
-    
-    m_auibar->AddTool(ID_TOOL_COLLAPSE_ALL, _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
-    
-    m_auibar->AddTool(ID_TOOL_GOTO_ACTIVE_PROJECT, _("Goto Active Project"), wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxNullBitmap, wxITEM_NORMAL, _("Goto Active Project"), _("Goto Active Project"), NULL);
-    
-    m_auibar->AddTool(ID_TOOL_ACTIVE_PROJECT_SETTINGS, _("Project Settings"), wxXmlResource::Get()->LoadBitmap(wxT("configure")), wxNullBitmap, wxITEM_NORMAL, _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), _("Open selected project settings. If there is no project selected, open the parent project of the seleced item in the tree"), NULL);
-    
-    m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
-    m_auibar->Realize();
-    
-    m_fileView = new FileViewTree(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxTR_HAS_BUTTONS|wxBORDER_STATIC);
+    m_fileView = new FileViewTree(m_panelCxx, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxTR_HAS_BUTTONS|wxBORDER_NONE);
     
     boxSizer505->Add(m_fileView, 1, wxALL|wxEXPAND, 2);
     
@@ -585,10 +583,6 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     }
     CentreOnParent(wxBOTH);
     // Connect events
-    m_choiceActiveProject->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
-    m_choiceActiveProject->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
-    m_workspaceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
-    m_workspaceConfig->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     this->Connect(ID_TOOL_COLLAPSE_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnCollapseAll), NULL, this);
     this->Connect(ID_TOOL_COLLAPSE_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnCollapseAllUI), NULL, this);
     this->Connect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnGoHome), NULL, this);
@@ -597,15 +591,15 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     this->Connect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
     this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
     this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
+    m_choiceActiveProject->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
+    m_choiceActiveProject->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
+    m_workspaceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
+    m_workspaceConfig->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     
 }
 
 WorkspaceTabBase::~WorkspaceTabBase()
 {
-    m_choiceActiveProject->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
-    m_choiceActiveProject->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
-    m_workspaceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
-    m_workspaceConfig->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     this->Disconnect(ID_TOOL_COLLAPSE_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnCollapseAll), NULL, this);
     this->Disconnect(ID_TOOL_COLLAPSE_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnCollapseAllUI), NULL, this);
     this->Disconnect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnGoHome), NULL, this);
@@ -614,6 +608,10 @@ WorkspaceTabBase::~WorkspaceTabBase()
     this->Disconnect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
     this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
     this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
+    m_choiceActiveProject->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
+    m_choiceActiveProject->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
+    m_workspaceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
+    m_workspaceConfig->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     
 }
 

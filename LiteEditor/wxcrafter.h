@@ -236,7 +236,7 @@ protected:
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelCxx;
     wxBoxSizer* boxSizer505;
-    wxBoxSizer* boxSizer511;
+    wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage308;
     wxBoxSizer* boxSizer314;
@@ -244,14 +244,9 @@ protected:
     wxPanel* m_splitterPage312;
     wxBoxSizer* boxSizer316;
     wxChoice* m_workspaceConfig;
-    wxAuiToolBar* m_auibar;
     FileViewTree* m_fileView;
 
 protected:
-    virtual void OnChoiceActiveProject(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnConfigurationManagerChoice(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCollapseAll(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCollapseAllUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGoHome(wxCommandEvent& event) { event.Skip(); }
@@ -260,14 +255,18 @@ protected:
     virtual void OnProjectSettingsUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLinkEditor(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnChoiceActiveProject(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoiceActiveProjectUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnConfigurationManagerChoice(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxChoice* GetChoiceActiveProject() { return m_choiceActiveProject; }
     wxPanel* GetSplitterPage308() { return m_splitterPage308; }
     wxChoice* GetWorkspaceConfig() { return m_workspaceConfig; }
     wxPanel* GetSplitterPage312() { return m_splitterPage312; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
     FileViewTree* GetFileView() { return m_fileView; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }

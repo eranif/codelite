@@ -33,6 +33,7 @@
 #include "procutils.h"
 #include <wx/tokenzr.h>
 #include <map>
+#include <wx/msgdlg.h>
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -209,7 +210,18 @@ FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectStr
 {
 #ifdef __WXMSW__
     wxString command;
-    command << "cmd /C \"" << sshClient << " -P " << port << " " << connectString << " -pw " << password << "\"";
+    wxFileName putty(sshClient);
+    if(!putty.Exists()) {
+        wxMessageBox(_("Can't launch PuTTY. Don't know where it is ...."), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
+        return;
+    }
+    
+    wxString puttyClient = putty.GetFullPath();
+    if(puttyClient.Contains(" ")) {
+        puttyClient.Prepend("\"").Append("\"");
+    }
+
+    command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << " -pw " << password << "\"";
     ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE);
 
 #elif defined(__WXGTK__)

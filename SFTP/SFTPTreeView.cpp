@@ -45,6 +45,7 @@
 #include "globals.h"
 #include "fileutils.h"
 #include "cl_config.h"
+#include "SFTPSettingsDialog.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -107,11 +108,11 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 
     bool sizeColVisible = clConfig::Get().Read("SFTP/TreeView/ShowSizeCol", true);
     bool typeColVisible = clConfig::Get().Read("SFTP/TreeView/ShowTypeCol", true);
-    
+
     if(!sizeColVisible) {
         m_treeListCtrl->DeleteColumn(GetSizeColumnIndex());
     }
-    
+
     if(!typeColVisible) {
         m_treeListCtrl->DeleteColumn(GetTypeColumnIndex());
     }
@@ -374,15 +375,15 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
     if(cd) {
         menu.AppendSeparator();
     }
-    
+
     // Append headers column menu items
     menu.Append(ID_SHOW_TYPE_COL, _("Show 'Type' column"), "", wxITEM_CHECK);
     menu.Append(ID_SHOW_SIZE_COL, _("Show 'Size' column"), "", wxITEM_CHECK);
-    
+
     menu.Check(ID_SHOW_TYPE_COL, IsTypeColumnShown());
     menu.Check(ID_SHOW_SIZE_COL, IsSizeColumnShown());
-    
-    // Due to bug in wxWidgets, don't allow the user to remove columns once the 
+
+    // Due to bug in wxWidgets, don't allow the user to remove columns once the
     // tree is populated
     menu.Enable(ID_SHOW_TYPE_COL, !IsConnected());
     menu.Enable(ID_SHOW_SIZE_COL, !IsConnected());
@@ -844,28 +845,34 @@ void SFTPTreeView::OnCut(wxCommandEvent& event)
     }
 }
 
-void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
+void SFTPTreeView::OnOpenTerminal(wxAuiToolBarEvent& event)
 {
     // Open terminal to the selected account
-    SFTPSettings settings;
-    settings.Load();
+    if(event.IsDropDownClicked()) {
+        SFTPTreeViewBase::ShowAuiToolMenu(event);
 
-    wxString accountName = m_choiceAccount->GetStringSelection();
-    if(accountName.IsEmpty()) {
-        return;
+    } else {
+        SFTPSettings settings;
+        settings.Load();
+
+        wxString accountName = m_choiceAccount->GetStringSelection();
+        if(accountName.IsEmpty()) {
+            ::wxMessageBox(_("Please select an account to connect to"), "CodeLite", wxICON_ERROR | wxOK);
+            return;
+        }
+
+        SSHAccountInfo account;
+        if(!settings.GetAccount(accountName, account)) {
+            ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "CodeLite", wxICON_ERROR | wxOK);
+            return;
+        }
+
+        wxString connectString;
+        connectString << account.GetUsername() << "@" << account.GetHost();
+
+        const wxString& sshClient = settings.GetSshClient();
+        FileUtils::OpenSSHTerminal(sshClient, connectString, account.GetPassword(), account.GetPort());
     }
-
-    SSHAccountInfo account;
-    if(!settings.GetAccount(accountName, account)) {
-        ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR | wxOK);
-        return;
-    }
-
-    wxString connectString;
-    connectString << account.GetUsername() << "@" << account.GetHost();
-
-    const wxString& sshClient = settings.GetSshClient();
-    FileUtils::OpenSSHTerminal(sshClient, connectString, account.GetPassword(), account.GetPort());
 }
 
 void SFTPTreeView::OnOpenTerminalUI(wxUpdateUIEvent& event) { event.Enable(true); }
@@ -936,11 +943,15 @@ int SFTPTreeView::GetTypeColumnIndex() const
     return wxNOT_FOUND;
 }
 
-int SFTPTreeView::IsSizeColumnShown() const { return (GetSizeColumnIndex() != wxNOT_FOUND);}
+int SFTPTreeView::IsSizeColumnShown() const { return (GetSizeColumnIndex() != wxNOT_FOUND); }
 
-int SFTPTreeView::IsTypeColumnShown() const { return (GetTypeColumnIndex() != wxNOT_FOUND);}
+int SFTPTreeView::IsTypeColumnShown() const { return (GetTypeColumnIndex() != wxNOT_FOUND); }
 
-void SFTPTreeView::DoDeleteColumn(int colIdx)
+void SFTPTreeView::DoDeleteColumn(int colIdx) { m_treeListCtrl->DeleteColumn(colIdx); }
+
+void SFTPTreeView::OnSftpSettings(wxCommandEvent& event)
 {
-    m_treeListCtrl->DeleteColumn(colIdx);
+    // Show the SFTP settings dialog
+    SFTPSettingsDialog dlg(EventNotifier::Get()->TopFrame());
+    dlg.ShowModal();
 }

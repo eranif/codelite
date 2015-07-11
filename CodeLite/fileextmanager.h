@@ -70,6 +70,7 @@ public:
         TypeFolder,
         TypeProjectActive,
         TypeWorkspacePHP,
+        TypeWorkspaceNodeJS,
         TypeWorkspacePHPTags,
         TypeWorkspaceDatabase,
         TypeAsm,

@@ -206,7 +206,7 @@ void FindInFilesDialog::DoSetFileMask()
         m_fileTypes->Append(mergedArr);
 
         wxString selectedMask = m_data.GetSelectedMask();
-        if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        if(selectedMask.IsEmpty() && clWorkspaceManager::Get().IsWorkspaceOpened()) {
             // Let the active workspace set the find-in-files mask
             selectedMask = clWorkspaceManager::Get().GetWorkspace()->GetFilesMask();
         }

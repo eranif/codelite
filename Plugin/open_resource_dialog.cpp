@@ -196,8 +196,6 @@ void OpenResourceDialog::DoPopulateList()
     if(m_checkBoxShowSymbols->IsChecked()) {
         DoPopulateTags();
     }
-
-
 }
 
 void OpenResourceDialog::DoPopulateTags()
@@ -349,7 +347,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
                 }
             }
         }
-        
+
         // Set the focus back to the text control
         m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
     }
@@ -453,7 +451,9 @@ void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& ev
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)
 {
     event.Skip();
-    EndModal(wxID_OK);
+    if(m_selection.IsOk()) {
+        EndModal(wxID_OK);
+    }
 }
 
 void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event)

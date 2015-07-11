@@ -514,7 +514,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT|wxBORDER_NONE);
     m_simpleBook->SetName(wxT("m_simpleBook"));
     m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
     
@@ -897,14 +897,6 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
     m_checkBoxShowErrors->SetToolTip(_("Display Clang errors as text annotations inside the editor (i.e. as an inline messages)"));
     m_auibar->AddControl(m_checkBoxShowErrors);
     
-    m_auibar->AddStretchSpacer(1);
-    
-    m_auibar->AddLabel(wxID_ANY, _("Cache policy:"), -1);
-    
-    wxArrayString m_choiceCacheArr;
-    m_choiceCache = new wxChoice(m_auibar, wxID_ANY, wxDefaultPosition, wxSize(200,-1), m_choiceCacheArr, 0);
-    m_auibar->AddControl(m_choiceCache);
-    
     m_auibar->AddTool(ID_TOOL_CLEAR_ALL, _("Clear Clang Cache"), wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Clang Cache"), _("Clear Clang Cache"), NULL);
     
     m_auibar->AddTool(ID_TOOL_CLEAR_LOG, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
@@ -959,8 +951,6 @@ ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wx
     m_checkBoxEnableClang->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnEnableClangUI), NULL, this);
     m_checkBoxShowErrors->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnShowAnnotations), NULL, this);
     m_checkBoxShowErrors->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnShowAnnotationsUI), NULL, this);
-    m_choiceCache->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ClangOutputTabBase::OnPolicy), NULL, this);
-    m_choiceCache->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnPolicyUI), NULL, this);
     this->Connect(ID_TOOL_CLEAR_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearCache), NULL, this);
     this->Connect(ID_TOOL_CLEAR_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearCacheUI), NULL, this);
     this->Connect(ID_TOOL_CLEAR_LOG, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearText), NULL, this);
@@ -974,8 +964,6 @@ ClangOutputTabBase::~ClangOutputTabBase()
     m_checkBoxEnableClang->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnEnableClangUI), NULL, this);
     m_checkBoxShowErrors->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnShowAnnotations), NULL, this);
     m_checkBoxShowErrors->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnShowAnnotationsUI), NULL, this);
-    m_choiceCache->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ClangOutputTabBase::OnPolicy), NULL, this);
-    m_choiceCache->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnPolicyUI), NULL, this);
     this->Disconnect(ID_TOOL_CLEAR_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearCache), NULL, this);
     this->Disconnect(ID_TOOL_CLEAR_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearCacheUI), NULL, this);
     this->Disconnect(ID_TOOL_CLEAR_LOG, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearText), NULL, this);

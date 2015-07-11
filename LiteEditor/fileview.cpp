@@ -200,7 +200,7 @@ FileViewTree::~FileViewTree()
 void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     bool multi(true);
-    style |= (wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
+    style |= (wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES | wxBORDER_NONE);
     if(multi) style |= wxTR_MULTIPLE;
 
     wxTreeCtrl::Create(parent, id, pos, size, style);

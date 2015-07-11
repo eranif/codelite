@@ -23,11 +23,6 @@ ClangOutputTab::ClangOutputTab(wxWindow* parent)
     }
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ClangOutputTab::OnFileSaved, this);
     ::clRecalculateSTCHScrollBar(m_stc);
-    // defaults
-    m_choiceCache->Clear();
-    m_choiceCache->Append(TagsOptionsData::CLANG_CACHE_LAZY);
-    m_choiceCache->Append(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD);
-    m_choiceCache->Select(1);
 
     // Get the initial value of the clang code completion
     TagsOptionsData tod;
@@ -99,23 +94,10 @@ void ClangOutputTab::DoClear()
     }
 }
 
-void ClangOutputTab::OnPolicy(wxCommandEvent& event)
-{
-    // Cache policy changed
-    clMainFrame::Get()->GetTagsOptions().SetClangCachePolicy(m_choiceCache->GetStringSelection());
-    TagsManagerST::Get()->SetCtagsOptions(clMainFrame::Get()->GetTagsOptions());
-}
-
-void ClangOutputTab::OnPolicyUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxEnableClang->IsChecked()); }
-
 void ClangOutputTab::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
     TagsOptionsData& options = clMainFrame::Get()->GetTagsOptions();
-    int where = m_choiceCache->FindString(options.GetClangCachePolicy());
-    if(where != wxNOT_FOUND) {
-        m_choiceCache->Select(where);
-    }
     m_checkBoxEnableClang->SetValue(options.GetClangOptions() & CC_CLANG_ENABLED);
 }
 

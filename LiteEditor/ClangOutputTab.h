@@ -14,8 +14,6 @@ protected:
     virtual void OnClearCacheUI(wxUpdateUIEvent& event);
     virtual void OnClearText(wxCommandEvent& event);
     virtual void OnClearTextUI(wxUpdateUIEvent& event);
-    virtual void OnPolicy(wxCommandEvent& event);
-    virtual void OnPolicyUI(wxUpdateUIEvent& event);
 
     // Event handlers
     void OnBuildStarted(clBuildEvent& event);

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef GITUI_BASE_CLASSES_H
-#define GITUI_BASE_CLASSES_H
+#ifndef CODELITE_GIT_GITUI_BASE_CLASSES_H
+#define CODELITE_GIT_GITUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -50,13 +50,18 @@
 class GitSettingsDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxTreebook* m_treebook230;
     wxPanel* m_panel232;
+    wxBoxSizer* boxSizer240;
+    wxFlexGridSizer* fgSizer11;
     wxStaticText* m_staticText42;
     wxFilePickerCtrl* m_pathGIT;
     wxStaticText* m_staticText54;
     wxFilePickerCtrl* m_pathGITK;
     wxPanel* m_panel234;
+    wxBoxSizer* boxSizer242;
+    wxFlexGridSizer* flexGridSizer244;
     wxStaticText* m_staticText246;
     wxTextCtrl* m_textCtrlGlobalName;
     wxStaticText* m_staticText250;
@@ -66,6 +71,7 @@ protected:
     wxStaticText* m_staticText258;
     wxTextCtrl* m_textCtrlLocalEmail;
     wxPanel* m_panel236;
+    wxBoxSizer* boxSizer766;
     wxCheckBox* m_checkBoxTerminal;
     wxCheckBox* m_checkBoxLog;
     wxCheckBox* m_checkBoxTrackTree;
@@ -109,16 +115,21 @@ public:
         ID_TOGGLE_CHECKALL = 6001,
     };
 protected:
+    wxBoxSizer* bSizer4;
     wxAuiToolBar* m_auibar;
     wxChoice* m_choiceRecentCommits;
     wxSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
+    wxBoxSizer* bSizer12;
     wxSplitterWindow* m_splitterInner;
     wxPanel* m_panel1;
+    wxBoxSizer* bSizer11;
     wxCheckListBox* m_listBox;
     wxPanel* m_panel2;
+    wxBoxSizer* bSizer9;
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_panel4;
+    wxBoxSizer* bSizer13;
     wxStaticText* m_staticText8;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxCheckBox* m_checkBoxAmend;
@@ -156,21 +167,28 @@ public:
 class GitCommitListDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer17;
     wxSplitterWindow* m_splitter174;
     wxPanel* m_splitterPage178;
+    wxBoxSizer* boxSizer205;
     wxSearchCtrl* m_searchCtrlFilter;
     wxDataViewListCtrl* m_dvListCtrlCommitList;
     wxPanel* m_splitterPage182;
+    wxBoxSizer* boxSizer184;
     wxSplitterWindow* m_splitter186;
     wxPanel* m_splitterPage190;
+    wxBoxSizer* bSizer18;
     wxSplitterWindow* m_splitter196;
     wxPanel* m_splitterPage200;
+    wxBoxSizer* boxSizer208;
     wxStaticText* m_staticText210;
     wxListBox* m_fileListBox;
     wxPanel* m_splitterPage204;
+    wxBoxSizer* boxSizer215;
     wxStaticText* m_staticText217;
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_splitterPage194;
+    wxBoxSizer* boxSizer218;
     wxStaticText* m_staticText220;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxStdDialogButtonSizer* m_stdBtnSizer290;
@@ -210,11 +228,14 @@ public:
 class GitDiffDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer17;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageFiles;
+    wxBoxSizer* boxSizer62;
     wxStaticText* m_staticText68;
     wxListBox* m_fileListBox;
     wxPanel* m_splitterPageDiff;
+    wxBoxSizer* boxSizer64;
     wxStaticText* m_staticText66;
     GitCommitEditor* m_editor;
     wxStdDialogButtonSizer* m_sdbSizer1;
@@ -239,6 +260,8 @@ public:
 class gitCloneDlgBaseClass : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer17;
+    wxFlexGridSizer* flexGridSizer21;
     wxStaticText* m_staticText22;
     wxTextCtrl* m_textCtrlURL;
     wxStaticText* m_staticText24;
@@ -263,6 +286,7 @@ public:
 class GitFileDiffDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer124;
     GitCommitEditor* m_editor;
     wxStdDialogButtonSizer* m_stdBtnSizer306;
     wxButton* m_button308;
@@ -302,6 +326,8 @@ public:
 class GitApplyPatchDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer154;
+    wxFlexGridSizer* flexGridSizer162;
     wxStaticText* m_staticText164;
     wxFilePickerCtrl* m_filePickerPatchFile;
     wxStaticText* m_staticText168;
@@ -325,14 +351,17 @@ public:
 class GitConsoleBase : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer36;
     wxGauge* m_gauge;
     wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageTreeView;
+    wxBoxSizer* boxSizer94;
     wxDataViewCtrl* m_dvFiles;
     wxObjectDataPtr<DataViewFilesModel> m_dvFilesModel;
 
     wxPanel* m_splitterPage96;
+    wxBoxSizer* boxSizer92;
     wxStyledTextCtrl* m_stcLog;
 
 protected:

@@ -9469,7 +9469,7 @@
               }, {
                "type": "choice",
                "m_label": "EOL Mode",
-               "m_selection": 3,
+               "m_selection": 2,
                "m_options": ["CRLF", "CR", "LF", "Default"]
               }, {
                "type": "bool",
@@ -9483,7 +9483,7 @@
               }, {
                "type": "font",
                "m_label": "Font:",
-               "m_value": "wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
+               "m_value": ""
               }, {
                "type": "multi-string",
                "m_label": "Keywords Set 1",

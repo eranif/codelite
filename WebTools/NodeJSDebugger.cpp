@@ -44,6 +44,7 @@ NodeJSDebugger::NodeJSDebugger()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &NodeJSDebugger::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeJSDebugger::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeJSDebugger::OnHighlightLine, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION, &NodeJSDebugger::OnEvalExpression, this);
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
 
@@ -68,7 +69,7 @@ NodeJSDebugger::~NodeJSDebugger()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &NodeJSDebugger::OnWorkspaceOpened, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeJSDebugger::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeJSDebugger::OnHighlightLine, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION, &NodeJSDebugger::OnEvalExpression, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeTerminated, this);
@@ -567,4 +568,21 @@ void NodeJSDebugger::DoDeleteTempFiles(const wxStringSet_t& files)
         wxLogNull noLog;
         ::wxRemoveFile(filename);
     });
+}
+
+void NodeJSDebugger::OnEvalExpression(clDebugEvent& event)
+{
+    event.Skip();
+
+    // Build the request
+    JSONElement request = JSONElement::createObject();
+    request.addProperty("type", "request");
+    request.addProperty("command", "evaluate");
+    JSONElement args = JSONElement::createObject("arguments");
+    request.append(args);
+    args.addProperty("expression", event.GetString());
+
+    // Write the command
+    m_socket->WriteRequest(
+        request, new NodeJSEvaluateExprHandler(event.GetString(), NodeJSEvaluateExprHandler::kContextConsole));
 }

@@ -429,6 +429,14 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     
     boxSizer188->Add(m_consoleLog, 1, wxALL|wxEXPAND, 2);
     
+    m_textCtrlExpression = new wxTextCtrl(m_panelConsoleLog, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlExpression->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlExpression->SetHint(_("Evaluate expression"));
+    #endif
+    
+    boxSizer188->Add(m_textCtrlExpression, 0, wxALL|wxEXPAND, 2);
+    
     m_panelBreakpoints = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
     
@@ -452,6 +460,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     // Connect events
     m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
     m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(NodeJSDebuggerPaneBase::OnEvaluateExpression), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     
@@ -461,6 +470,7 @@ NodeJSDebuggerPaneBase::~NodeJSDebuggerPaneBase()
 {
     m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
     m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    m_textCtrlExpression->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(NodeJSDebuggerPaneBase::OnEvaluateExpression), NULL, this);
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     

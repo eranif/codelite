@@ -30,6 +30,7 @@ class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
     std::map<int, Handle> m_handles;
 
 protected:
+    virtual void OnEvaluateExpression(wxCommandEvent& event);
     virtual void OnBreakpointSelected(wxDataViewEvent& event);
     void ClearCallstack();
     void BuildLocals(const JSONElement& json);
@@ -41,6 +42,7 @@ protected:
 protected:
     void OnItemActivated(wxDataViewEvent& event);
     void OnUpdateCallstack(clDebugEvent& event);
+    void OnExpressionEvaluated(clDebugEvent& event);
     void OnLostControl(clDebugEvent& event);
     void OnConsoleLog(clDebugEvent& event);
     void OnSessionStarted(clDebugEvent& event);

@@ -6,9 +6,16 @@
 class NodeJSEvaluateExprHandler : public NodeJSHandlerBase
 {
     wxString m_expression;
-    
+    int m_context;
+
 public:
-    NodeJSEvaluateExprHandler(const wxString& expression);
+    enum {
+        kContextTooltip,
+        kContextConsole,
+    };
+
+public:
+    NodeJSEvaluateExprHandler(const wxString& expression, int context = kContextTooltip);
     virtual ~NodeJSEvaluateExprHandler();
 
 public:

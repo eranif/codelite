@@ -144,12 +144,14 @@ protected:
     wxPanel* m_panelConsoleLog;
     wxBoxSizer* boxSizer188;
     wxStyledTextCtrl* m_consoleLog;
+    wxTextCtrl* m_textCtrlExpression;
     wxPanel* m_panelBreakpoints;
     wxBoxSizer* boxSizer190;
     wxDataViewListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnEvaluateExpression(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBreakpointSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
@@ -158,6 +160,7 @@ public:
     wxDataViewListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
     wxPanel* GetSplitterPage172() { return m_splitterPage172; }
     wxStyledTextCtrl* GetConsoleLog() { return m_consoleLog; }
+    wxTextCtrl* GetTextCtrlExpression() { return m_textCtrlExpression; }
     wxPanel* GetPanelConsoleLog() { return m_panelConsoleLog; }
     wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }

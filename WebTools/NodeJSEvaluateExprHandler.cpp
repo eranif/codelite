@@ -4,10 +4,13 @@
 #include "json_node.h"
 #include "ieditor.h"
 #include <wx/stc/stc.h>
+#include "NodeJSEvents.h"
+#include "event_notifier.h"
+#include "cl_command_event.h"
 
-
-NodeJSEvaluateExprHandler::NodeJSEvaluateExprHandler(const wxString& expression)
+NodeJSEvaluateExprHandler::NodeJSEvaluateExprHandler(const wxString& expression, int context)
     : m_expression(expression)
+    , m_context(context)
 {
 }
 
@@ -21,11 +24,18 @@ void NodeJSEvaluateExprHandler::Process(NodeJSDebugger* debugger, const wxString
         wxString title = m_expression;
         wxString content = json.namedObject("body").namedObject("text").toString();
         wxString type = json.namedObject("body").namedObject("type").toString();
-        
+
         wxString expression = clGetManager()->GetActiveEditor()->GetWordAtCaret();
         if(type == "string") {
             content.Prepend("\"").Append("\"");
         }
-        clGetManager()->GetActiveEditor()->ShowRichTooltip(content, title);
+        if(m_context == kContextTooltip) {
+            clGetManager()->GetActiveEditor()->ShowRichTooltip(content, title);
+            
+        } else {
+            clDebugEvent event(wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED);
+            event.SetString(content);
+            EventNotifier::Get()->ProcessEvent(event);
+        }
     }
 }

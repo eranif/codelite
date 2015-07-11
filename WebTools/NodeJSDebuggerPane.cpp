@@ -14,6 +14,8 @@
 NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     : NodeJSDebuggerPaneBase(parent)
 {
+    EventNotifier::Get()->Bind(
+        wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
@@ -40,6 +42,8 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
 
 NodeJSDebuggerPane::~NodeJSDebuggerPane()
 {
+    EventNotifier::Get()->Unbind(
+        wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
@@ -335,7 +339,7 @@ void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
     int row = m_dvListCtrlBreakpoints->ItemToRow(item);
     // sanity
     if(row >= m_dvListCtrlBreakpoints->GetItemCount()) return;
-    
+
     m_dvListCtrlBreakpoints->GetValue(v, row, 1);
     line = v.GetInteger();
 
@@ -348,4 +352,32 @@ void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
 void NodeJSDebuggerPane::DoOpenFile(const wxString& filename, int line)
 {
     clGetManager()->OpenFile(filename, "", line - 1);
+}
+void NodeJSDebuggerPane::OnEvaluateExpression(wxCommandEvent& event)
+{
+    if(m_textCtrlExpression->IsEmpty()) return;
+
+    clDebugEvent evalEvent(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION);
+    evalEvent.SetString(m_textCtrlExpression->GetValue());
+    EventNotifier::Get()->AddPendingEvent(evalEvent);
+}
+
+void NodeJSDebuggerPane::OnExpressionEvaluated(clDebugEvent& event)
+{
+    event.Skip();
+    wxString message;
+    message << m_textCtrlExpression->GetValue() << " = " << event.GetString();
+    
+    wxString currentText = m_consoleLog->GetValue();
+    if(!currentText.EndsWith("\n")) {
+        message.Prepend("\n");
+    }
+    if(!message.EndsWith("\n")) {
+        message << "\n";
+    }
+    m_consoleLog->AppendText(message);
+    m_consoleLog->ScrollToEnd();
+    
+    // Restore the focus to the text control
+    m_textCtrlExpression->CallAfter(&wxTextCtrl::SetFocus);
 }

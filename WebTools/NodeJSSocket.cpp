@@ -23,6 +23,7 @@ NodeJSSocket::NodeJSSocket(NodeJSDebugger* debugger)
     m_noBacktraceCommands.insert("setbreakpoint");
     m_noBacktraceCommands.insert("frame");
     m_noBacktraceCommands.insert("source");
+    m_noBacktraceCommands.insert("evaluate");
 }
 
 NodeJSSocket::~NodeJSSocket() { Destroy(); }
@@ -114,6 +115,7 @@ void NodeJSSocket::ProcessInputBuffer()
                     handler->Process(m_debugger, buffer);
                     m_handlers.erase(iter);
                 }
+                
                 if(json.hasNamedObject("running") && !json.namedObject("running").toBool()) {
                     wxString responseCommand = json.namedObject("command").toString();
                     m_debugger->GotControl((m_noBacktraceCommands.count(responseCommand) == 0));

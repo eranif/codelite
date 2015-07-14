@@ -63,6 +63,7 @@
 #include "wxCustomStatusBar.h"
 #include "clBootstrapWizard.h"
 #include "clWorkspaceManager.h"
+#include "clSingleChoiceDialog.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2629,7 +2630,11 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent& event)
         // only C++ is available
         selection = clCxxWorkspaceST::Get()->GetWorkspaceType();
     } else {
-        selection = ::wxGetSingleChoice(_("Select the workspace type:"), _("New workspace"), options, 0, this);
+        clSingleChoiceDialog dlg(this, options, 0);
+        dlg.SetLabel(_("Select the workspace type:"));
+        if(dlg.ShowModal() == wxID_OK) {
+            selection = dlg.GetSelection();
+        }
     }
 
     if(selection.IsEmpty()) return;
@@ -3607,11 +3612,11 @@ void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     const wxString ALL(wxT("All Solution File (*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace)|")
-                       wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
-                       wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
-                       wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
-                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
-                       wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
+                           wxT("*.dsw;*.sln;*.dev;*.bpr;*.cbp;*.workspace|")
+                               wxT("MS Visual Studio Solution File (*.dsw;*.sln)|*.dsw;*.sln|")
+                                   wxT("Bloodshed Dev-C++ Solution File (*.dev)|*.dev|")
+                                       wxT("Borland C++ Builder Solution File (*.bpr)|*.bpr|")
+                                           wxT("Code::Blocks Solution File (*.cbp;*.workspace)|*.cbp;*.workspace"));
 
     wxFileDialog dlg(this,
                      _("Open IDE Solution/Workspace File"),
@@ -4787,7 +4792,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
                     return;
                 }
             }
-            
+
             wxString tty;
             wxString title;
             title << "Debugging core: " << dlg->GetCore();

@@ -333,6 +333,8 @@
       <File Name="VirtualDirectorySelectorBase.wxcp"/>
       <File Name="EditDlg.h"/>
       <File Name="EditDlg.cpp"/>
+      <File Name="clSingleChoiceDialog.h"/>
+      <File Name="clSingleChoiceDialog.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>

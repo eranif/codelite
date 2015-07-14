@@ -129,13 +129,13 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
             genericProject->deps.Add(projectNameDep);
         }
 
-        wxTextInputStream projectTIS(projectFIS);
+        std::map<wxString, GenericProjectCfgPtr> GenericProjectCfgMap;
 
-        wxString virtualPath = wxT("");
+        wxTextInputStream projectTIS(projectFIS);
 
         while(!projectFIS.Eof()) {
             wxString line = projectTIS.ReadLine();
-
+            
             int index = line.Find(wxT("TARGTYPE"));
             if(index != wxNOT_FOUND) {
                 index = line.find_last_of(wxT("\""));
@@ -148,141 +148,165 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     genericProject->cfgType = GenericCfgType::EXECUTABLE;
                 }
             }
+            
+            index = line.Find(wxT("!MESSAGE \""));
+            if(index != wxNOT_FOUND) {
+                int begin = index + 10;
+                int end = line.Find(wxT("\" (based on"));
+                
+                wxString projectCfgName = line.SubString(begin, end);
+                projectCfgName.Replace(genericProjectData[wxT("projectName")] + wxT(" - "), wxT(""));
+                projectCfgName.Replace(wxT("\""), wxT(""));
+                projectCfgName.Replace(wxT(" "), wxT("_"));
+                
+                GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
+                genericProjectCfg->name = projectCfgName;
+                genericProjectCfg->type = genericProject->cfgType;
+                
+                GenericProjectCfgMap[projectCfgName] = genericProjectCfg;
+            }
+            
+            index = line.Find(wxT("# Begin Project"));
+            if(index != wxNOT_FOUND)
+                break;
+        }
+        
+        wxString virtualPath = wxT("");
+        GenericProjectCfgPtr genericProjectCfg;
+        
+        while(!projectFIS.Eof()) {
+            wxString line = projectTIS.ReadLine();
 
-            index = line.Find(wxT("\"$(CFG)\" == "));
+            int index = line.Find(wxT("\"$(CFG)\" == "));
             if(index != wxNOT_FOUND) {
                 wxString projectCfgName = line.Mid(index + 12).Trim().Trim(false);
                 projectCfgName.Replace(genericProjectData[wxT("projectName")] + wxT(" - "), wxT(""));
                 projectCfgName.Replace(wxT("\""), wxT(""));
                 projectCfgName.Replace(wxT(" "), wxT("_"));
 
-                GenericProjectCfgPtr genericProjectCfg = std::make_shared<GenericProjectCfg>();
-                genericProjectCfg->name = projectCfgName;
-                genericProjectCfg->type = genericProject->cfgType;
-
-                while(!projectFIS.Eof()) {
-                    line = projectTIS.ReadLine();
-
-                    index = line.Find(wxT("PROP Intermediate_Dir"));
-                    if(index != wxNOT_FOUND) {
-                        wxString intermediateDirectory = line.Mid(index + 21).Trim().Trim(false);
-                        intermediateDirectory.Replace(wxT("\""), wxT(""));
-                        intermediateDirectory.Replace(wxT(" "), wxT("_"));
-                        intermediateDirectory.Replace(wxT(".\\"), wxT(""));
-                        genericProjectCfg->intermediateDirectory = wxT("./") + intermediateDirectory;
-                    }
-
-                    index = line.Find(wxT("ADD CPP"));
-                    if(index != wxNOT_FOUND) {
-                        wxString preprocessor = wxT(""), includePath = wxT(""), preCompiledHeader = wxT("");
-                        size_t pos = 0;
-
-                        while(pos < line.Length()) {
-                            if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('D')) {
-                                int count = 0;
-                                wxString word = wxT("");
-                                while(count < 2) {
-                                    if(line.GetChar(pos) == wxT(' ')) {
-                                        count++;
-                                    } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
-                                        word.Append(line.GetChar(pos));
-                                    }
-
-                                    pos++;
-                                }
-
-                                preprocessor += word + wxT(";");
-                            } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('I')) {
-                                int count = 0;
-                                wxString word = wxT("");
-                                while(count < 2) {
-                                    if(line.GetChar(pos) == wxT(' ')) {
-                                        count++;
-                                    } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
-                                        word.Append(line.GetChar(pos));
-                                    }
-
-                                    pos++;
-                                }
-
-                                includePath += word + wxT(";");
-                            } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('Y') &&
-                                      line.GetChar(pos + 2) == wxT('u')) {
-                                int count = 0;
-                                wxString word = wxT("");
-                                while(count < 2) {
-                                    if(line.GetChar(pos) == wxT('\"')) {
-                                        count++;
-                                    } else if(count == 1) {
-                                        word.Append(line.GetChar(pos));
-                                    }
-
-                                    pos++;
-                                }
-
-                                preCompiledHeader = word;
-                            } else {
-                                pos++;
-                            }
-                        }
-
-                        genericProjectCfg->preprocessor = preprocessor;
-                        genericProjectCfg->includePath = includePath;
-                        genericProjectCfg->preCompiledHeader = preCompiledHeader;
-                    }
-
-                    index = line.Find(wxT("ADD LINK32"));
-                    if(index != wxNOT_FOUND) {
-                        int begin = index + 10;
-                        int end = line.Find(wxT("/")) - 1;
-                        line = line.SubString(begin, end).Trim().Trim(false);
-
-                        wxString libraries = wxT("");
-                        wxString libPath = wxT("");
-                        wxStringTokenizer libs(line, wxT(" "));
-
-                        while(libs.HasMoreTokens()) {
-                            wxString lib = libs.GetNextToken();
-                            index = static_cast<int>(lib.find_last_of(wxT("\\")));
-                            if(index != wxNOT_FOUND) {
-                                wxString include = lib.SubString(0, index);
-                                lib = lib.Mid(index + 1);
-                                libPath += include + wxT(";");
-                                libraries += lib + wxT(";");
-                            } else {
-                                libraries += lib + wxT(";");
-                            }
-                        }
-
-                        genericProjectCfg->libraries = libraries;
-                        genericProjectCfg->libPath = libPath;
-                        break;
-                    }
-
-                    index = line.Find(wxT("!ENDIF"));
-                    if(index != wxNOT_FOUND)
-                        break;
+                genericProjectCfg = GenericProjectCfgMap[projectCfgName];
+            }
+            
+            if(genericProjectCfg) {
+                index = line.Find(wxT("PROP Intermediate_Dir"));
+                if(index != wxNOT_FOUND) {
+                    wxString intermediateDirectory = line.Mid(index + 21).Trim().Trim(false);
+                    intermediateDirectory.Replace(wxT("\""), wxT(""));
+                    intermediateDirectory.Replace(wxT(" "), wxT("_"));
+                    intermediateDirectory.Replace(wxT(".\\"), wxT(""));
+                    genericProjectCfg->intermediateDirectory = wxT("./") + intermediateDirectory;
                 }
 
-                genericProject->cfgs.push_back(genericProjectCfg);
+                index = line.Find(wxT("ADD CPP"));
+                if(index != wxNOT_FOUND) {
+                    wxString preprocessor = wxT(""), includePath = wxT(""), preCompiledHeader = wxT("");
+                    size_t pos = 0;
+
+                    while(pos < line.Length()) {
+                        if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('D')) {
+                            int count = 0;
+                            wxString word = wxT("");
+                            while(count < 2) {
+                                if(line.GetChar(pos) == wxT(' ')) {
+                                    count++;
+                                } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
+                                    word.Append(line.GetChar(pos));
+                                }
+
+                                pos++;
+                            }
+
+                            preprocessor += word + wxT(";");
+                        } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('I')) {
+                            int count = 0;
+                            wxString word = wxT("");
+                            while(count < 2) {
+                                if(line.GetChar(pos) == wxT(' ')) {
+                                    count++;
+                                } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
+                                    word.Append(line.GetChar(pos));
+                                }
+
+                                pos++;
+                            }
+
+                            includePath += word + wxT(";");
+                        } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('Y') &&
+                                  line.GetChar(pos + 2) == wxT('u')) {
+                            int count = 0;
+                            wxString word = wxT("");
+                            while(count < 2) {
+                                if(line.GetChar(pos) == wxT('\"')) {
+                                    count++;
+                                } else if(count == 1) {
+                                    word.Append(line.GetChar(pos));
+                                }
+
+                                pos++;
+                            }
+
+                            preCompiledHeader = word;
+                        } else {
+                            pos++;
+                        }
+                    }
+
+                    genericProjectCfg->preprocessor = preprocessor;
+                    genericProjectCfg->includePath = includePath;
+                    genericProjectCfg->preCompiledHeader = preCompiledHeader;
+                }
+
+                index = line.Find(wxT("ADD LINK32"));
+                if(index != wxNOT_FOUND) {
+                    int begin = index + 10;
+                    int end = line.Find(wxT("/")) - 1;
+                    line = line.SubString(begin, end).Trim().Trim(false);
+
+                    wxString libraries = wxT("");
+                    wxString libPath = wxT("");
+                    wxStringTokenizer libs(line, wxT(" "));
+
+                    while(libs.HasMoreTokens()) {
+                        wxString lib = libs.GetNextToken();
+                        index = static_cast<int>(lib.find_last_of(wxT("\\")));
+                        if(index != wxNOT_FOUND) {
+                            wxString include = lib.SubString(0, index);
+                            lib = lib.Mid(index + 1);
+                            libPath += include + wxT(";");
+                            libraries += lib + wxT(";");
+                        } else {
+                            libraries += lib + wxT(";");
+                        }
+                    }
+
+                    genericProjectCfg->libraries = libraries;
+                    genericProjectCfg->libPath = libPath;
+                    break;
+                }
+
+                index = line.Find(wxT("Begin Group"));
+                if(index != wxNOT_FOUND) {
+                    virtualPath = line.Mid(index + 11).Trim().Trim(false);
+                    virtualPath.Replace(wxT("\""), wxT(""));
+                }
+
+                index = line.Find(wxT("SOURCE="));
+                if(index != wxNOT_FOUND) {
+                    wxString filename = line.Mid(index + 7).Trim().Trim(false);
+                    filename.Replace(wxT("\\"), wxT("/"));
+
+                    GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
+                    genericProjectFile->name = filename;
+                    genericProjectFile->vpath = virtualPath;
+
+                    genericProject->files.push_back(genericProjectFile);
+                }
             }
-
-            index = line.Find(wxT("Begin Group"));
-            if(index != wxNOT_FOUND) {
-                virtualPath = line.Mid(index + 11).Trim().Trim(false);
-                virtualPath.Replace(wxT("\""), wxT(""));
-            }
-
-            index = line.Find(wxT("SOURCE="));
-            if(index != wxNOT_FOUND) {
-                wxString filename = line.Mid(index + 7).Trim().Trim(false);
-                filename.Replace(wxT("\\"), wxT("/"));
-
-                GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
-                genericProjectFile->name = filename;
-                genericProjectFile->vpath = virtualPath;
-
-                genericProject->files.push_back(genericProjectFile);
+        }
+        
+        for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : GenericProjectCfgMap) {
+            if(genericProjectCfg.second) {
+                genericProject->cfgs.push_back(genericProjectCfg.second);
             }
         }
 

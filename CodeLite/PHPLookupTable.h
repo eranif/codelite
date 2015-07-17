@@ -59,6 +59,7 @@ public:
     static void DoSplitFullname(const wxString& fullname, wxString& ns, wxString& shortName);
 
 private:
+    void EnsureIntegrity(const wxFileName& filename);
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 
     void CreateSchema();
@@ -125,7 +126,7 @@ private:
     /**
      * @brief check the database disk image to see if it corrupted
      */
-    bool CheckDiskImage();
+    bool CheckDiskImage(wxSQLite3Database& db);
     
 public:
     PHPLookupTable();

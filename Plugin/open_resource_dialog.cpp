@@ -110,11 +110,9 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         m_textCtrlResourceName->SelectAll();
     }
 
-#ifdef __WXOSX__
-    m_dataview->GetColumn(0)->SetWidth(200);
+    m_dataview->GetColumn(0)->SetWidth(400);
     m_dataview->GetColumn(1)->SetWidth(60);
     m_dataview->GetColumn(2)->SetWidth(500);
-#endif
 
     bool showFiles = clConfig::Get().Read("OpenResourceDialog/ShowFiles", true);
     bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);

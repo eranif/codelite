@@ -83,7 +83,7 @@ CppCheckReportBasePage::CppCheckReportBasePage(wxWindow* parent, wxWindowID id, 
     
     m_buttonStop = new wxButton(this, wxID_STOP, _("&Stop"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonStop->SetDefault();
-    m_buttonStop->SetToolTip(_("Stop the curreny analysis"));
+    m_buttonStop->SetToolTip(_("Stop the current analysis"));
     
     bSizer4->Add(m_buttonStop, 0, wxALL|wxEXPAND, 5);
     

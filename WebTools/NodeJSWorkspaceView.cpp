@@ -10,6 +10,7 @@
 #include "imanager.h"
 #include "NodeJSWorkspaceConfiguration.h"
 #include "ieditor.h"
+#include <wx/wupdlock.h>
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)

@@ -538,7 +538,10 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
 #endif
     defaultLexersFileName.AppendDir("lexers");
     defaultLexersFileName.SetFullName("lexers.json");
-
+    
+    wxString str_defaultLexersFileName = defaultLexersFileName.GetFullPath();
+    wxUnusedVar(str_defaultLexersFileName);
+    
     m_allLexers.clear();
     m_lexersMap.clear();
 

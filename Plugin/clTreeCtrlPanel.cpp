@@ -24,6 +24,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_config(NULL)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
+    , m_options(kShowHiddenFiles | kShowHiddenFolders)
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
     // Allow DnD
@@ -186,8 +187,16 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
         wxFileName fullpath(folderPath, filename);
         if(wxFileName::DirExists(fullpath.GetFullPath())) {
             // a folder
+            if(!(m_options & kShowHiddenFolders) && FileUtils::IsHidden(fullpath)) {
+                cont = dir.GetNext(&filename);
+                continue;
+            }
             DoAddFolder(parent, fullpath.GetFullPath());
         } else {
+            if(!(m_options & kShowHiddenFiles) && FileUtils::IsHidden(fullpath)) {
+                cont = dir.GetNext(&filename);
+                continue;
+            }
             DoAddFile(parent, fullpath.GetFullPath());
         }
         cont = dir.GetNext(&filename);
@@ -426,7 +435,7 @@ void clTreeCtrlPanel::OnDeleteSelections(wxCommandEvent& event)
 
     selectedItems.insert(folderItems.begin(), folderItems.end());
     selectedItems.insert(fileItems.begin(), fileItems.end());
-    
+
     // loop over the selections and remove all items that their parents
     // also exists in the selected items list
     for(size_t i = 0; i < folderItems.size(); ++i) {

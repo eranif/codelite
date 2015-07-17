@@ -450,9 +450,10 @@ void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& ev
 
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)
 {
-    event.Skip();
     if(m_selection.IsOk()) {
         EndModal(wxID_OK);
+    } else {
+        event.Skip();
     }
 }
 

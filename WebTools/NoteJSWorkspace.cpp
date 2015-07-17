@@ -199,7 +199,9 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     }
 
     m_folders = conf.GetFolders();
-
+    GetView()->Clear();
+    GetView()->ShowHiddenFiles(conf.IsShowHiddenFiles());
+    
     const wxArrayString& folders = GetFolders();
     for(size_t i = 0; i < folders.size(); ++i) {
         GetView()->AddFolder(folders.Item(i));

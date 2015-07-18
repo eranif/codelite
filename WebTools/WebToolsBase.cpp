@@ -569,3 +569,28 @@ NodeJSNewWorkspaceDlgBase::~NodeJSNewWorkspaceDlgBase()
     m_button144->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSNewWorkspaceDlgBase::OnOKUI), NULL, this);
     
 }
+
+WebToolsImages::WebToolsImages()
+    : wxImageList(16, 16, true)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCD9C6InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpNodeJS"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("m_bmpNodeJS"), bmp ) );
+    }
+    
+}
+
+WebToolsImages::~WebToolsImages()
+{
+}

@@ -20,6 +20,8 @@
 #include "WebToolsConfig.h"
 #include "fileutils.h"
 #include "NodeJSEvents.h"
+#include "WebToolsBase.h"
+#include "bitmap_loader.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -57,7 +59,10 @@ WebTools::WebTools(IManager* manager)
     // Register our new workspace type
     NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
-
+    
+    WebToolsImages images;
+    BitmapLoader::RegisterImage(FileExtManager::TypeWorkspaceNodeJS, images.Bitmap("m_bmpNodeJS"));
+    
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
     m_jsColourThread->Create();

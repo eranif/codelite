@@ -88,6 +88,8 @@ PhpPlugin::PhpPlugin(IManager* manager)
     PHPImages images;
     PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
+    
+    BitmapLoader::RegisterImage(FileExtManager::TypeWorkspacePHP, images.Bitmap("m_bmpPhpWorkspace"));
 
     // Add our UI
     // create tab (possibly detached)
@@ -97,7 +99,8 @@ PhpPlugin::PhpPlugin(IManager* manager)
     PHPCodeCompletion::Instance()->SetManager(m_mgr);
     PHPEditorContextMenu::Instance()->ConnectEvents();
     PHPParserThread::Instance()->Start();
-
+    
+    
     // Pass the manager class to the context menu manager
     PHPEditorContextMenu::Instance()->SetManager(m_mgr);
 

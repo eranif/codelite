@@ -31,9 +31,11 @@
 #include "editor_config.h"
 #include "optionsconfig.h"
 #include "cl_standard_paths.h"
+#include <algorithm>
 
 std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::map<wxString, wxString> BitmapLoader::m_manifest;
+BitmapLoader::BitmapMap_t BitmapLoader::m_userBitmaps;
 
 BitmapLoader::~BitmapLoader() {}
 
@@ -42,21 +44,21 @@ BitmapLoader::BitmapLoader()
 {
     wxString zipname;
     wxFileName fn;
-    
-    // Set the defaul icon set
+
+// Set the defaul icon set
 #ifdef __WXOSX__
     zipname = "codelite-icons-dark.zip";
 #else
     zipname = "codelite-icons.zip";
 #endif
-    
+
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm) {
         zipname = wxT("codelite-icons-fresh-farm.zip");
-        
+
     } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark) {
         zipname = wxT("codelite-icons-dark.zip");
-        
-    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic){
+
+    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic) {
         zipname = wxT("codelite-icons.zip");
     }
 
@@ -85,8 +87,7 @@ BitmapLoader::BitmapLoader()
 const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name)
 {
     std::map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(name);
-    if(iter != m_toolbarsBitmaps.end())
-        return iter->second;
+    if(iter != m_toolbarsBitmaps.end()) return iter->second;
 
     return wxNullBitmap;
 }
@@ -111,12 +112,10 @@ void BitmapLoader::doLoadManifest()
                 entry.Trim().Trim(false);
 
                 // empty?
-                if(entry.empty())
-                    continue;
+                if(entry.empty()) continue;
 
                 // comment?
-                if(entry.StartsWith(wxT(";")))
-                    continue;
+                if(entry.StartsWith(wxT(";"))) continue;
 
                 wxString key = entry.BeforeFirst(wxT('='));
                 wxString val = entry.AfterFirst(wxT('='));
@@ -169,24 +168,33 @@ void BitmapLoader::doLoadBitmaps()
     }
 }
 
-int BitmapLoader::GetMimeImageId(FileExtManager::FileType type) const
+int BitmapLoader::GetMimeImageId(FileExtManager::FileType type)
 {
     FileExtManager::Init();
+    if(m_fileIndexMap.empty()) {
+        // Allocate image list so we will populate the m_fileIndexMap
+        wxImageList* il = MakeStandardMimeImageList();
+        wxDELETE(il);
+    }
     std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end())
-        return wxNOT_FOUND;
+    if(iter == m_fileIndexMap.end()) return wxNOT_FOUND;
     return iter->second;
 }
 
-int BitmapLoader::GetMimeImageId(const wxString& filename) const
+int BitmapLoader::GetMimeImageId(const wxString& filename)
 {
     FileExtManager::Init();
-
+    if(m_fileIndexMap.empty()) {
+        // Allocate image list so we will populate the m_fileIndexMap
+        wxImageList* il = MakeStandardMimeImageList();
+        wxDELETE(il);
+    }
+    
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     std::map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end())
+    if(iter == m_fileIndexMap.end()) {
         return wxNOT_FOUND;
-
+    }
     return iter->second;
 }
 
@@ -194,6 +202,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
     wxImageList* imageList = new wxImageList(16, 16);
 
+    m_fileIndexMap.clear();
     AddImage(imageList->Add(GetIcon(LoadBitmap(wxT("mime/16/exe")))), FileExtManager::TypeExe);
     AddImage(imageList->Add(GetIcon(LoadBitmap(wxT("mime/16/html")))), FileExtManager::TypeHtml);
     AddImage(imageList->Add(GetIcon(LoadBitmap(wxT("mime/16/zip")))), FileExtManager::TypeArchive);
@@ -225,16 +234,20 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage(imageList->Add(GetIcon(LoadBitmap(wxT("mime/16/cmake")))), FileExtManager::TypeCMake);
     AddImage(imageList->Add(GetIcon(LoadBitmap(wxT("mime/16/qmake")))), FileExtManager::TypeQMake);
 
-    m_bMapPopulated = true;
+    std::for_each(
+        m_userBitmaps.begin(), m_userBitmaps.end(), [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
+            AddImage(imageList->Add(GetIcon(p.second)), p.first);
+        });
     return imageList;
 }
 
 void BitmapLoader::AddImage(int index, FileExtManager::FileType type)
 {
-    if(!m_bMapPopulated) {
-        m_fileIndexMap.insert(std::make_pair(type, index));
-    }
+    std::map<FileExtManager::FileType, int>::iterator iter = m_fileIndexMap.find(type);
+    if(iter != m_fileIndexMap.end()) m_fileIndexMap.erase(iter);
+    m_fileIndexMap.insert(std::make_pair(type, index));
 }
+
 BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
 {
     BitmapLoader::BitmapMap_t images;
@@ -269,7 +282,11 @@ BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
     images[FileExtManager::TypeAsm] = LoadBitmap(wxT("mime/16/asm"));
     images[FileExtManager::TypeCMake] = LoadBitmap(wxT("mime/16/cmake"));
     images[FileExtManager::TypeQMake] = LoadBitmap(wxT("mime/16/qmake"));
-    return images;
+
+    BitmapLoader::BitmapMap_t merged;
+    merged.insert(m_userBitmaps.begin(), m_userBitmaps.end());
+    merged.insert(images.begin(), images.end());
+    return merged;
 }
 
 wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
@@ -277,4 +294,13 @@ wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
     wxIcon icn;
     icn.CopyFromBitmap(bmp);
     return icn;
+}
+
+void BitmapLoader::RegisterImage(FileExtManager::FileType type, const wxBitmap& bmp)
+{
+    BitmapMap_t::iterator iter = m_userBitmaps.find(type);
+    if(iter != m_userBitmaps.end()) {
+        m_userBitmaps.erase(iter);
+    }
+    m_userBitmaps.insert(std::make_pair(type, bmp));
 }

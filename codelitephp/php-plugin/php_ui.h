@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef PHP_UI_BASE_CLASSES_H
-#define PHP_UI_BASE_CLASSES_H
+#ifndef CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#define CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -60,6 +60,7 @@
 class QuickOutlineDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer1;
     wxTextCtrl* m_textCtrl;
     PHPFileLayoutTree* m_treeCtrlLayout;
 
@@ -79,7 +80,9 @@ public:
 class NewWorkspaceSelectionDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer2;
     wxPanel* m_panel1;
+    wxBoxSizer* bSizer11;
     wxRadioBox* m_radioBox;
     wxStdDialogButtonSizer* m_stdBtnSizer469;
     wxButton* m_buttonOK;
@@ -100,6 +103,8 @@ public:
 class NewPHPWorkspaceBaseDlg : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer3;
+    wxFlexGridSizer* fgSizer1;
     wxStaticText* m_staticText2;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText3;
@@ -107,6 +112,7 @@ protected:
     wxButton* m_button49;
     wxCheckBox* m_checkBoxCreateInSeparateDir;
     wxTextCtrl* m_textCtrlPreview;
+    wxBoxSizer* bSizer4;
     wxButton* m_button6;
     wxButton* m_button7;
 
@@ -135,10 +141,13 @@ public:
 class NewFileDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer6;
+    wxFlexGridSizer* fgSizer2;
     wxStaticText* m_staticText4;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText5;
     wxDirPickerCtrl* m_dirPickerPath;
+    wxBoxSizer* bSizer7;
     wxButton* m_button5;
     wxButton* m_button6;
 
@@ -159,6 +168,7 @@ public:
 class OpenResourceDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer10;
     wxStaticText* m_staticText9;
     wxTextCtrl* m_textCtrlFilter;
     wxDataViewListCtrl* m_dvListCtrl;
@@ -181,20 +191,28 @@ public:
 class PHPSettingsBaseDlg : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer12;
     wxTreebook* m_treebook9;
     wxPanel* m_panel11;
+    wxBoxSizer* bSizer13;
+    wxFlexGridSizer* fgSizer4;
     wxStaticText* m_staticText9;
     wxFilePickerCtrl* m_filePickerPHPPath;
     wxStaticText* m_staticText11;
     wxTextCtrl* m_textCtrlErrorReporting;
+    wxBoxSizer* bSizer18;
     wxStaticText* m_staticText14;
     wxButton* m_buttonBrowseIncludePath;
     wxTextCtrl* m_textCtrlIncludePath;
     wxPanel* m_panel15;
+    wxBoxSizer* bSizer20;
+    wxBoxSizer* bSizer23;
     wxStaticText* m_staticText13;
     wxButton* m_button15;
     wxTextCtrl* m_textCtrCClIncludePath;
     wxPanel* m_panel13;
+    wxBoxSizer* bSizer14;
+    wxFlexGridSizer* fgSizer5;
     wxStaticText* m_staticTextHost;
     wxTextCtrl* m_textCtrlHost;
     wxStaticText* m_staticText10;
@@ -202,7 +220,9 @@ protected:
     wxStaticText* m_staticText152;
     wxTextCtrl* m_textCtrlIdeKey;
     wxPanel* m_panel407;
+    wxBoxSizer* boxSizer409;
     wxCheckBox* m_checkBoxRunLint;
+    wxBoxSizer* bSizer16;
     wxButton* m_button9;
     wxButton* m_button10;
 
@@ -245,11 +265,15 @@ public:
 class PHPProjectSettingsBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer19;
     wxTreebook* m_treebook41;
     wxPanel* m_panel43;
+    wxBoxSizer* bSizer21;
     wxStaticText* m_staticText457;
     wxChoicebook* m_choicebook1;
     wxPanel* m_panel5;
+    wxBoxSizer* bSizer25;
+    wxFlexGridSizer* fgSizer6;
     wxStaticText* m_staticText19;
     wxFilePickerCtrl* m_filePickerPHPExe;
     wxStaticText* m_staticText75;
@@ -262,24 +286,32 @@ protected:
     wxTextCtrl* m_textCtrlProgramArgs;
     wxCheckBox* m_checkBoxPauseWhenExecutionEnds;
     wxPanel* m_panel6;
+    wxFlexGridSizer* fgSizer8;
     wxStaticText* m_staticText16;
     wxTextCtrl* m_textCtrlWebSiteURL;
     wxCheckBox* m_checkBoxSystemBrowser;
     wxPanel* m_panel59;
+    wxBoxSizer* bSizer27;
+    wxBoxSizer* bSizer28;
     wxStaticText* m_staticText20;
     wxButton* m_button17;
     wxTextCtrl* m_textCtrlPHPIncludePath;
     wxPanel* m_panel447;
+    wxBoxSizer* boxSizer449;
     wxPropertyGridManager* m_pgMgrView;
     wxPGProperty* m_pgPropFileTypes;
     wxPGProperty* m_pgPropExcludeFolders;
     wxPanel* m_panel45;
+    wxBoxSizer* boxSizer51;
     wxStaticText* m_staticText105;
     wxDataViewListCtrl* m_dvListCtrlFileMapping;
     wxPanel* m_panel47;
+    wxBoxSizer* bSizerCCPage;
+    wxBoxSizer* bSizer23;
     wxStaticText* m_staticText13;
     wxButton* m_button15;
     wxTextCtrl* m_textCtrlCCIncludePath;
+    wxBoxSizer* bSizer20;
     wxButton* m_button12;
     wxButton* m_button13;
     wxButton* m_button14;
@@ -348,6 +380,8 @@ public:
 class FileMappingDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer109;
+    wxFlexGridSizer* flexGridSizer117;
     wxStaticText* m_staticText119;
     wxDirPickerCtrl* m_dirPickerSource;
     wxStaticText* m_staticText123;
@@ -378,6 +412,7 @@ public:
         ID_UPLOAD_CLOUD = 8003,
     };
 protected:
+    wxBoxSizer* bSizer5;
     wxAuiToolBar* m_auibar29;
     std::map<int, wxMenu*> m_dropdownMenus;
     wxGauge* m_gaugeParseProgress;
@@ -412,11 +447,16 @@ public:
         ID_DELETE_BREAKPOINTS = 8002,
     };
 protected:
+    wxBoxSizer* boxSizer129;
     wxAuiNotebook* m_auiBook;
     wxPanel* m_panel140;
+    wxBoxSizer* boxSizer144;
     wxDataViewListCtrl* m_dvListCtrlStackTrace;
     wxPanel* m_panel142;
+    wxBoxSizer* boxSizer156;
+    wxBoxSizer* boxSizer204;
     wxDataViewListCtrl* m_dvListCtrlBreakpoints;
+    wxBoxSizer* boxSizer206;
     wxAuiToolBar* m_auibar218;
 
 protected:
@@ -442,6 +482,7 @@ public:
 class LocalsViewBase : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer236;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<XDebugLocalsViewModel> m_dataviewModel;
 
@@ -481,13 +522,18 @@ public:
 class EvalPaneBase : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer255;
     wxNotebook* m_notebook257;
     wxPanel* m_panel259;
+    wxBoxSizer* boxSizer254;
     wxStyledTextCtrl* m_stcOutput;
+    wxBoxSizer* boxSizer247;
     wxTextCtrl* m_textCtrlExpression;
     wxButton* m_buttonSend;
     wxPanel* m_panel261;
+    wxBoxSizer* boxSizer263;
     wxStyledTextCtrl* m_stcOutputXDebug;
+    wxBoxSizer* boxSizer2472;
     wxTextCtrl* m_textCtrlExpressionXdebug;
     wxButton* m_buttonSendXdebug;
 
@@ -516,12 +562,17 @@ public:
 class PHPDebugStartDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer359;
     wxChoice* m_choice;
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelDebugURL;
+    wxBoxSizer* boxSizer387;
+    wxFlexGridSizer* flexGridSizer375;
     wxStaticText* m_staticText377;
     wxComboBox* m_comboBoxURL;
     wxPanel* m_panelCommandLine;
+    wxBoxSizer* boxSizer386;
+    wxFlexGridSizer* flexGridSizer381;
     wxStaticText* m_staticText383;
     wxTextCtrl* m_textCtrlScriptToDebug;
     wxCheckBox* m_checkBoxDebugActiveEditor;
@@ -556,10 +607,13 @@ protected:
     std::vector<wxWizardPageSimple*> m_pages;
 
     wxWizardPageSimple* m_wizardPageCreateMethod;
+    wxBoxSizer* boxSizer491;
     wxBannerWindow* m_banner495;
     wxRadioBox* m_radioBoxCreateMethod;
     wxWizardPageSimple* m_wizardPageProjectDetails;
+    wxBoxSizer* boxSizer493;
     wxBannerWindow* m_banner517;
+    wxFlexGridSizer* flexGridSizer519;
     wxStaticText* m_staticText521;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText525;
@@ -568,13 +622,18 @@ protected:
     wxStaticText* m_staticText535;
     wxTextCtrl* m_textCtrlPreview;
     wxWizardPageSimple* m_wizardPageFinalize;
+    wxBoxSizer* boxSizer549;
     wxBannerWindow* m_banner4951;
+    wxFlexGridSizer* flexGridSizer3152;
     wxStaticText* m_staticText3173;
     wxChoice* m_choiceProjectType;
     wxStaticText* m_staticText3215;
     wxFilePickerCtrl* m_filePickerPhpExe;
     wxWizardPageSimple* m_wizardPage634;
+    wxBoxSizer* boxSizer636;
     wxBannerWindow* m_banner49511;
+    wxBoxSizer* boxSizer645;
+    wxBoxSizer* boxSizer649;
     wxStaticText* m_staticText653;
     wxButton* m_button651;
     wxTextCtrl* m_textCtrlCCPaths;
@@ -623,18 +682,25 @@ protected:
     std::vector<wxWizardPageSimple*> m_pages;
 
     wxWizardPageSimple* m_wizardPagePort;
+    wxBoxSizer* boxSizer575;
     wxBannerWindow* m_bannerPort;
+    wxFlexGridSizer* flexGridSizer583;
     wxStaticText* m_staticText585;
     wxTextCtrl* m_textCtrlPort;
     wxWizardPageSimple* m_wizardPageHost;
+    wxBoxSizer* boxSizer577;
     wxBannerWindow* m_bannerHost;
+    wxFlexGridSizer* flexGridSizer5832;
     wxStaticText* m_staticText5853;
     wxTextCtrl* m_textCtrlIP;
     wxWizardPageSimple* m_wizardPageIDEKey;
+    wxBoxSizer* boxSizer601;
     wxBannerWindow* m_bannerSessionID;
+    wxFlexGridSizer* flexGridSizer58326;
     wxStaticText* m_staticText58537;
     wxTextCtrl* m_textCtrlKey;
     wxWizardPageSimple* m_wizardPagePHP;
+    wxBoxSizer* boxSizer6019;
     wxBannerWindow* m_bannerSessionID10;
     wxStaticText* m_staticText625;
     wxTextCtrl* m_textCtrlPHPIni;
@@ -669,7 +735,9 @@ public:
 class PHPSettersGettersDialogBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer657;
     wxDataViewListCtrl* m_dvListCtrlFunctions;
+    wxFlexGridSizer* flexGridSizer667;
     wxCheckBox* m_checkBoxLowercase;
     wxCheckBox* m_checkBoxPrefixGetter;
     wxCheckBox* m_checkBoxReurnThis;

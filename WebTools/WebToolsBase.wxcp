@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 194,
+  "m_objCounter": 196,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCD9C6InitBitmapResources",
   "m_bitmapsFile": "WebToolsBase_webtools_bitmaps.cpp",
@@ -5462,6 +5462,60 @@
          "m_children": []
         }]
       }]
+    }]
+  }, {
+   "m_type": 4481,
+   "proportion": 0,
+   "border": 5,
+   "gbSpan": "1,1",
+   "gbPosition": "0,0",
+   "m_styles": [],
+   "m_sizerFlags": [],
+   "m_properties": [{
+     "type": "string",
+     "m_label": "Name:",
+     "m_value": "WebToolsImages"
+    }, {
+     "type": "string",
+     "m_label": "File:",
+     "m_value": ""
+    }, {
+     "type": "virtualFolderPicker",
+     "m_label": "Virtual Folder:",
+     "m_path": "WebTools:UI"
+    }, {
+     "type": "string",
+     "m_label": "Class Decorator",
+     "m_value": ""
+    }, {
+     "type": "integer",
+     "m_label": "Bitmap Size:",
+     "m_value": 16
+    }, {
+     "type": "bool",
+     "m_label": "Bitmap Mask",
+     "m_value": true
+    }],
+   "m_events": [],
+   "m_children": [{
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "m_bmpNodeJS"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "nodejs.png"
+      }],
+     "m_events": [],
+     "m_children": []
     }]
   }]
 }

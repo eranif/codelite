@@ -45,6 +45,7 @@
 #include <algorithm>
 #include "clFileOrFolderDropTarget.h"
 #include "NotebookNavigationDlg.h"
+#include "clImageViewer.h"
 
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
@@ -526,11 +527,17 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
     }
 #endif
 
-    if(IsFileExists(fileName) == false) {
+    if(!IsFileExists(fileName)) {
         wxLogMessage(wxT("Failed to open: %s: No such file or directory"), fileName.GetFullPath().c_str());
         return NULL;
     }
-
+    
+    if(FileExtManager::GetType(fileName.GetFullName()) == FileExtManager::TypeBmp) {
+        // a bitmap file, open it using an image viewer
+        DoOpenImageViewer(fileName);
+        return NULL;
+    }
+    
     wxString projName = projectName;
     if(projName.IsEmpty()) {
         // try to match a project name to the file. otherwise, CC may not work
@@ -1407,4 +1414,12 @@ void MainBook::OnTabDClicked(wxBookCtrlEvent& e)
 {
     e.Skip();
     ManagerST::Get()->TogglePanes();
+}
+
+void MainBook::DoOpenImageViewer(const wxFileName& filename)
+{
+    clImageViewer *imageViewer = new clImageViewer(m_book, filename);
+    size_t pos = m_book->GetPageCount();
+    m_book->AddPage(imageViewer, filename.GetFullName(), true);
+    m_book->SetPageToolTip(pos, filename.GetFullPath());
 }

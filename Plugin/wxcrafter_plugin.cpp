@@ -596,3 +596,44 @@ clSingleChoiceDialogBase::~clSingleChoiceDialogBase()
     m_button185->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSingleChoiceDialogBase::OnOKUI), NULL, this);
     
 }
+
+clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9D6CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    boxSizer194 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer194);
+    
+    m_scrollWin196 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME|wxHSCROLL|wxVSCROLL);
+    m_scrollWin196->SetScrollRate(5, 5);
+    
+    boxSizer194->Add(m_scrollWin196, 1, wxEXPAND, 2);
+    
+    boxSizer198 = new wxBoxSizer(wxVERTICAL);
+    m_scrollWin196->SetSizer(boxSizer198);
+    
+    boxSizer198->Add(0, 0, 1, wxALL, 5);
+    
+    m_staticBitmap = new wxStaticBitmap(m_scrollWin196, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize(-1,-1), 0 );
+    
+    boxSizer198->Add(m_staticBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    boxSizer198->Add(0, 0, 1, wxALL, 5);
+    
+    SetName(wxT("clImageViewerBase"));
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+}
+
+clImageViewerBase::~clImageViewerBase()
+{
+}

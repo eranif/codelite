@@ -30,6 +30,8 @@
 #include "clFileViwerTreeCtrl.h"
 #include <wx/dataview.h>
 #include <wx/listbox.h>
+#include <wx/scrolwin.h>
+#include <wx/statbmp.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -230,6 +232,24 @@ public:
     wxListBox* GetListBox() { return m_listBox; }
     clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~clSingleChoiceDialogBase();
+};
+
+
+class WXDLLIMPEXP_SDK clImageViewerBase : public wxPanel
+{
+protected:
+    wxBoxSizer* boxSizer194;
+    wxScrolledWindow* m_scrollWin196;
+    wxBoxSizer* boxSizer198;
+    wxStaticBitmap* m_staticBitmap;
+
+protected:
+
+public:
+    wxStaticBitmap* GetStaticBitmap() { return m_staticBitmap; }
+    wxScrolledWindow* GetScrollWin196() { return m_scrollWin196; }
+    clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~clImageViewerBase();
 };
 
 #endif

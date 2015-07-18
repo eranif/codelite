@@ -307,6 +307,8 @@
         <File Name="clTreeCtrlPanel.h"/>
         <File Name="clFileViwerTreeCtrl.h"/>
         <File Name="clFileViwerTreeCtrl.cpp"/>
+        <File Name="clImageViewer.h"/>
+        <File Name="clImageViewer.cpp"/>
       </VirtualDirectory>
       <File Name="clTreeCtrlPanelDefaultPage.h"/>
       <File Name="clTreeCtrlPanelDefaultPage.cpp"/>

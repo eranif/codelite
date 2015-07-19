@@ -5137,8 +5137,8 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     }
     OpenResourceDialog dlg(this, PluginManager::Get(), initialText);
 
-    if(dlg.ShowModal() == wxID_OK) {
-        OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());
+    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection()) {
+        OpenResourceDialog::OpenSelection(*dlg.GetSelection(), PluginManager::Get());
     }
 }
 

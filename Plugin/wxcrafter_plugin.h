@@ -207,6 +207,7 @@ protected:
     wxStaticText* m_staticText177;
 
 protected:
+    virtual void OnDefaultPageContextMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText177() { return m_staticText177; }

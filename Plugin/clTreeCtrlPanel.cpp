@@ -18,6 +18,7 @@
 #include <wx/log.h>
 #include "cl_config.h"
 #include "clTreeCtrlPanelDefaultPage.h"
+#include <wx/app.h>
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
@@ -124,6 +125,12 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFile, this, XRCID("tree_ctrl_open_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_file"));
+        PopupMenu(&menu);
+    } else {
+        // context menu elsewhere
+        wxMenu menu;
+        menu.Append(XRCID("open_folder_default_page"), _("Open Folder..."));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFolder, this, XRCID("open_folder_default_page"));
         PopupMenu(&menu);
     }
 }
@@ -787,4 +794,10 @@ void clTreeCtrlPanel::SetNewFileTemplate(const wxString& newfile, size_t charsTo
 {
     m_newfileTemplate = newfile;
     m_newfileTemplateHighlightLen = charsToHighlight;
+}
+
+void clTreeCtrlPanel::OnOpenFolder(wxCommandEvent& event)
+{
+    wxCommandEvent eventOpenFolder(wxEVT_MENU, XRCID("open_folder"));
+    wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(eventOpenFolder);
 }

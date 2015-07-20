@@ -7,5 +7,9 @@ class clTreeCtrlPanelDefaultPage : public clTreeCtrlPanelDefaultPageBase
 public:
     clTreeCtrlPanelDefaultPage(wxWindow* parent);
     virtual ~clTreeCtrlPanelDefaultPage();
+
+protected:
+    virtual void OnDefaultPageContextMenu(wxContextMenuEvent& event);
+    void OnOpenFolder(wxCommandEvent& event);
 };
 #endif // CLTREECTRLPANELDEFAULTPAGE_H

@@ -537,10 +537,15 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
+    // Connect events
+    m_panel169->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(clTreeCtrlPanelDefaultPageBase::OnDefaultPageContextMenu), NULL, this);
+    
 }
 
 clTreeCtrlPanelDefaultPageBase::~clTreeCtrlPanelDefaultPageBase()
 {
+    m_panel169->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(clTreeCtrlPanelDefaultPageBase::OnDefaultPageContextMenu), NULL, this);
+    
 }
 
 clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)

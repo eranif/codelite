@@ -118,7 +118,7 @@ protected:
     virtual void OnOpenShellFolder(wxCommandEvent& event);
     virtual void OnFolderDropped(clCommandEvent& event);
     virtual void OnRefresh(wxCommandEvent& event);
-
+    void OnOpenFolder(wxCommandEvent& event);
     // Helpers
     void DoExpandItem(const wxTreeItemId& parent, bool expand);
     void DoRenameItem(const wxTreeItemId& item, const wxString& oldname, const wxString& newname);

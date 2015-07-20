@@ -4309,7 +4309,14 @@
          "m_label": "Style:",
          "m_value": ""
         }],
-       "m_events": [],
+       "m_events": [{
+         "m_eventName": "wxEVT_CONTEXT_MENU",
+         "m_eventClass": "wxContextMenuEvent",
+         "m_eventHandler": "wxContextMenuEventHandler",
+         "m_functionNameAndSignature": "OnDefaultPageContextMenu(wxContextMenuEvent& event)",
+         "m_description": "A right click (or other context menu command depending on platform) has been detected",
+         "m_noBody": false
+        }],
        "m_children": [{
          "m_type": 4401,
          "proportion": 1,

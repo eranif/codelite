@@ -1,6 +1,6 @@
 MUST:
 =====
-* Add image viewer (as basic as it gets)
+
 
 NICE
 ====

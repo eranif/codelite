@@ -1102,6 +1102,8 @@ void PHPSourceFile::OnCatch()
     wxString varname;
     while(cont && NextToken(token)) {
         switch(token.type) {
+        case '(':
+            break;
         case kPHP_T_VARIABLE:
             cont = false;
             varname = token.text;

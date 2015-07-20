@@ -1102,17 +1102,15 @@ void PHPSourceFile::OnCatch()
     wxString varname;
     while(cont && NextToken(token)) {
         switch(token.type) {
-        case '(':
-            break;
         case kPHP_T_VARIABLE:
             cont = false;
             varname = token.text;
             break;
-        case kPHP_T_C_COMMENT:
-        case kPHP_T_CXX_COMMENT:
+        case kPHP_T_IDENTIFIER:
+        case kPHP_T_NS_SEPARATOR:
+            typehint << token.text;
             break;
         default:
-            typehint << token.text;
             break;
         }
     }

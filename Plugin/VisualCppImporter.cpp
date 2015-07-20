@@ -174,8 +174,10 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
         wxString virtualPath = wxT("");
         GenericProjectCfgPtr genericProjectCfg;
         
+        wxString line;
+        
         while(!projectFIS.Eof()) {
-            wxString line = projectTIS.ReadLine();
+            line = projectTIS.ReadLine();
 
             int index = line.Find(wxT("\"$(CFG)\" == "));
             if(index != wxNOT_FOUND) {
@@ -281,7 +283,6 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
 
                     genericProjectCfg->libraries = libraries;
                     genericProjectCfg->libPath = libPath;
-                    break;
                 }
 
                 index = line.Find(wxT("Begin Group"));
@@ -293,6 +294,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                 index = line.Find(wxT("SOURCE="));
                 if(index != wxNOT_FOUND) {
                     wxString filename = line.Mid(index + 7).Trim().Trim(false);
+                    filename.Replace(wxT("\""), wxT(""));
                     filename.Replace(wxT("\\"), wxT("/"));
 
                     GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
@@ -300,6 +302,26 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     genericProjectFile->vpath = virtualPath;
 
                     genericProject->files.push_back(genericProjectFile);
+                }
+                
+                index = line.Find(wxT("# Begin Custom Build"));
+                if(index != wxNOT_FOUND) {
+                    while(!projectFIS.Eof()) {
+                        line = projectTIS.ReadLine();
+                        
+                        index = line.Find(wxT("\t"));
+                        if(index != wxNOT_FOUND) {
+                            wxString command = line;
+                            command.Replace(wxT("\t"), wxT(""));
+                            command = wxT("#") + command;
+                            
+                            genericProjectCfg->preBuildCommands.push_back(command);
+                        }
+                        
+                        index = line.Find(wxT("# End Custom Build"));
+                        if(index != wxNOT_FOUND)
+                            break;
+                    }
                 }
             }
         }

@@ -230,6 +230,28 @@ bool WSImporter::Import(wxString& errMsg)
                         }
 
                         le_conf->SetEnvvars(envVars);
+                        
+                        BuildCommandList preBuildCommandList;
+                        BuildCommandList postBuildCommandList;
+                        
+                        for (wxString preBuildCmd : cfg->preBuildCommands) {
+                            BuildCommand preBuildCommand;
+                            preBuildCommand.SetCommand(preBuildCmd);
+                            preBuildCommand.SetEnabled(true);
+                            
+                            preBuildCommandList.push_back(preBuildCommand);
+                        }
+                        
+                        for (wxString postBuildCmd : cfg->postBuildCommands) {
+                            BuildCommand postBuildCommand;
+                            postBuildCommand.SetCommand(postBuildCmd);
+                            postBuildCommand.SetEnabled(true);
+                        
+                            postBuildCommandList.push_back(postBuildCommand);
+                        }
+                        
+                        le_conf->SetPreBuildCommands(preBuildCommandList);
+                        le_conf->SetPostBuildCommands(postBuildCommandList);
 
                         le_settings->SetBuildConfiguration(le_conf);
 

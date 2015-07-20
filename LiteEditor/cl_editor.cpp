@@ -1002,7 +1002,9 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     int charCurrnt = SafeGetChar(pos);
 
     bool hasSelection = (GetSelectionStart() != GetSelectionEnd());
-    if(GetHighlightGuide() != wxNOT_FOUND) SetHighlightGuide(0);
+    if(GetHighlightGuide() != wxNOT_FOUND) {
+        SetHighlightGuide(0);
+    }
 
     if(m_hightlightMatchedBraces) {
         if(hasSelection) {
@@ -1034,13 +1036,14 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
             }
         }
     }
-
-    int curLine = LineFromPosition(pos);
+    
+    int mainSelectionPos = GetSelectionNCaret(GetMainSelection());
+    int curLine = LineFromPosition(mainSelectionPos);
 
     // update line number
     wxString message;
 
-    message << wxT("Ln ") << curLine + 1 << wxT(", Col ") << GetColumn(pos) << ", Pos " << pos;
+    message << wxT("Ln ") << curLine + 1 << wxT(", Col ") << GetColumn(mainSelectionPos) << ", Pos " << mainSelectionPos;
 
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);

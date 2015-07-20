@@ -18,7 +18,18 @@ bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& def
 
 bool DevCppImporter::isSupportedWorkspace()
 {
-    return true;
+    wxFileInputStream fis(wsInfo.GetFullPath());
+    wxTextInputStream tis(fis);
+
+    while(!fis.Eof()) {
+        wxString line = tis.ReadLine();
+
+        if(line.Contains(wxT("[Project]"))) {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 GenericWorkspacePtr DevCppImporter::PerformImport()

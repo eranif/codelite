@@ -313,7 +313,6 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                         if(index != wxNOT_FOUND) {
                             wxString command = line;
                             command.Replace(wxT("\t"), wxT(""));
-                            command = wxT("#") + command;
                             
                             genericProjectCfg->preBuildCommands.push_back(command);
                         }

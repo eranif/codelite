@@ -78,7 +78,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer41->Add(bSizer9, 0, wxEXPAND, 5);
     
     wxArrayString m_listPathsArr;
-    m_listPaths = new wxListBox(m_panelMainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listPathsArr, 0);
+    m_listPaths = new wxListBox(m_panelMainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listPathsArr, wxLB_SORT|wxLB_MULTIPLE);
     
     bSizer9->Add(m_listPaths, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     

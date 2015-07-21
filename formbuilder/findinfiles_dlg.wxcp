@@ -581,7 +581,7 @@
                  "border": 5,
                  "gbSpan": ",",
                  "gbPosition": ",",
-                 "m_styles": [],
+                 "m_styles": ["wxLB_SORT", "wxLB_MULTIPLE"],
                  "m_sizerFlags": ["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                  "m_properties": [{
                    "type": "winid",

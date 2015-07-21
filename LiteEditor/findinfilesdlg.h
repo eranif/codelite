@@ -47,7 +47,11 @@ protected:
     SearchData DoGetSearchData();
     void DoSaveOpenFiles();
     void DoSetFileMask();
-
+    
+    // Append new search path, ensure singularity
+    void DoAddSearchPath(const wxString& path);
+    void DoAddSearchPaths(const wxArrayString& paths);
+    
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnAddPath(wxCommandEvent& event);

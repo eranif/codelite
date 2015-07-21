@@ -50,8 +50,8 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     for(size_t i = 0; i < count; ++i) {
         choices.Add(m_data.GetSearchPaths().Item(i));
     }
-    m_listPaths->Append(choices);
-    
+    DoAddSearchPaths(choices);
+
     // Search for
     m_findString->Clear();
     m_findString->Append(m_data.GetFindStringArr());
@@ -62,12 +62,12 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE);
     m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
     m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
-    //m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE);
+    // m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE);
     m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
     m_checkBoxSeparateTab->SetValue(m_data.GetFlags() & wxFRD_SEPARATETAB_DISPLAY);
-    //m_checkBoxSkipMatchesFoundInComments->SetValue(m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
-    //m_checkBoxSkipMatchesFoundInStrings->SetValue(m_data.GetFlags() & wxFRD_SKIP_STRINGS);
-    //m_checkBoxHighlighStringComments->SetValue(m_data.GetFlags() & wxFRD_COLOUR_COMMENTS);
+    // m_checkBoxSkipMatchesFoundInComments->SetValue(m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
+    // m_checkBoxSkipMatchesFoundInStrings->SetValue(m_data.GetFlags() & wxFRD_SKIP_STRINGS);
+    // m_checkBoxHighlighStringComments->SetValue(m_data.GetFlags() & wxFRD_COLOUR_COMMENTS);
 
     // Set encoding
     wxArrayString astrEncodings;
@@ -292,15 +292,19 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     options.insert(std::make_pair(firstItem + 3, SEARCH_IN_CURRENT_FILE));
     options.insert(std::make_pair(firstItem + 4, SEARCH_IN_OPEN_FILES));
 
-    int selection = GetPopupMenuSelectionFromUser(menu, m_btnAddPath->GetRect().GetBottomLeft());
+    wxPoint pt = m_btnAddPath->GetRect().GetBottomLeft();
+    pt.x += 1;
+    pt.y += 1;
+
+    int selection = GetPopupMenuSelectionFromUser(menu, pt);
     if(selection == wxID_NONE) return;
     if(selection == (firstItem + 5)) {
         wxString folder = ::wxDirSelector();
         if(folder.IsEmpty()) return;
-        m_listPaths->Append(folder);
-        
+        DoAddSearchPath(folder);
+
     } else if(options.count(selection)) {
-        m_listPaths->Append(options.find(selection)->second);
+        DoAddSearchPath(options.find(selection)->second);
     }
 }
 
@@ -346,7 +350,7 @@ void FindInFilesDialog::OnFindWhatUI(wxUpdateUIEvent& event)
 
 void FindInFilesDialog::OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event)
 {
-    //event.Enable(m_checkBoxSkipMatchesFoundInComments->IsChecked() == false);
+    // event.Enable(m_checkBoxSkipMatchesFoundInComments->IsChecked() == false);
 }
 
 void FindInFilesDialog::OnFind(wxCommandEvent& event)
@@ -371,30 +375,51 @@ size_t FindInFilesDialog::GetSearchFlags()
     if(m_matchCase->IsChecked()) flags |= wxFRD_MATCHCASE;
     if(m_matchWholeWord->IsChecked()) flags |= wxFRD_MATCHWHOLEWORD;
     if(m_regualrExpression->IsChecked()) flags |= wxFRD_REGULAREXPRESSION;
-    //if(m_printScope->IsChecked()) flags |= wxFRD_DISPLAYSCOPE;
+    // if(m_printScope->IsChecked()) flags |= wxFRD_DISPLAYSCOPE;
     if(m_checkBoxSeparateTab->IsChecked()) flags |= wxFRD_SEPARATETAB_DISPLAY;
     if(m_checkBoxSaveFilesBeforeSearching->IsChecked()) flags |= wxFRD_SAVE_BEFORE_SEARCH;
-    //if(m_checkBoxSkipMatchesFoundInComments->IsChecked()) flags |= wxFRD_SKIP_COMMENTS;
-    //if(m_checkBoxSkipMatchesFoundInStrings->IsChecked()) flags |= wxFRD_SKIP_STRINGS;
-    //if(m_checkBoxHighlighStringComments->IsChecked()) flags |= wxFRD_COLOUR_COMMENTS;
+    // if(m_checkBoxSkipMatchesFoundInComments->IsChecked()) flags |= wxFRD_SKIP_COMMENTS;
+    // if(m_checkBoxSkipMatchesFoundInStrings->IsChecked()) flags |= wxFRD_SKIP_STRINGS;
+    // if(m_checkBoxHighlighStringComments->IsChecked()) flags |= wxFRD_COLOUR_COMMENTS;
     return flags;
 }
 
 void FindInFilesDialog::SetSearchPaths(const wxArrayString& paths)
 {
     m_listPaths->Clear();
-    m_listPaths->Append(paths);
+    DoAddSearchPaths(paths);
 }
 
 void FindInFilesDialog::OnClearSelectedPath(wxCommandEvent& event)
 {
-    int sel = m_listPaths->GetSelection();
-    if(sel != wxNOT_FOUND) {
-        m_listPaths->Delete(sel);
+    wxArrayInt selections;
+    m_listPaths->GetSelections(selections);
+    while(!selections.IsEmpty()) {
+        m_listPaths->Delete(selections.Item(0));
+
+        selections.Clear();
+        m_listPaths->GetSelections(selections);
     }
 }
 
 void FindInFilesDialog::OnClearSelectedPathUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_listPaths->GetSelection() != wxNOT_FOUND);
+    wxArrayInt selections;
+    m_listPaths->GetSelections(selections);
+    event.Enable(!selections.IsEmpty());
+}
+
+void FindInFilesDialog::DoAddSearchPath(const wxString& path)
+{
+    wxArrayString strings = m_listPaths->GetStrings();
+    if(strings.Index(path) == wxNOT_FOUND) {
+        m_listPaths->Append(path);
+    }
+}
+
+void FindInFilesDialog::DoAddSearchPaths(const wxArrayString& paths)
+{
+    for(size_t i = 0; i < paths.size(); ++i) {
+        DoAddSearchPath(paths.Item(i));
+    }
 }

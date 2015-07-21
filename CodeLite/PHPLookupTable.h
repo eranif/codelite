@@ -198,7 +198,13 @@ public:
      */
     PHPEntityBase::List_t
     FindChildren(wxLongLong parentId, size_t flags = kLookupFlags_None, const wxString& nameHint = "");
-
+    
+    /**
+     * @brief find list of symbols with a given name (regardless of the type / scope) 
+     * a "free style" search
+     */
+    PHPEntityBase::List_t FindSymbol(const wxString& name);
+    
     /**
      * @brief load the global functions and consts that matches nameHint
      * If nameHint is empty, return an empty list

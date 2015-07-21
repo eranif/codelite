@@ -148,7 +148,7 @@ public:
      * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
      * @return true if file opened
      */
-    virtual bool
+    virtual IEditor*
     OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
 
     /**
@@ -156,7 +156,7 @@ public:
      * @param rec browsing record
      * @return true on success false otherwise
      */
-    virtual bool OpenFile(const BrowseRecord& rec) = 0;
+    virtual IEditor* OpenFile(const BrowseRecord& rec) = 0;
 
     /**
      * @brief return a pointer to the configuration tool

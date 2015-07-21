@@ -81,9 +81,9 @@ public:
     virtual wxTreeCtrl* GetTree(TreeType type);
     virtual Notebook* GetOutputPaneNotebook();
     virtual Notebook* GetWorkspacePaneNotebook();
-    virtual bool
+    virtual IEditor*
     OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
-    virtual bool OpenFile(const BrowseRecord& rec);
+    virtual IEditor* OpenFile(const BrowseRecord& rec);
     virtual wxString GetStartupDirectory() const;
     virtual void AddProject(const wxString& path);
     virtual bool IsWorkspaceOpen() const;

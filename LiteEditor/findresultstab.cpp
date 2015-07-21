@@ -475,7 +475,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
                 }
             }
         }
-    } else if(m_recv == m_sci) {
+    } else if((m_recv == m_sci) && m_sci) {
         // Replace In Files...
         AppendText(summary->GetMessage() + wxT("\n"));
         if(m_tb->GetToolToggled(XRCID("scroll_on_output"))) {

@@ -35,6 +35,8 @@ class FindInFilesDialog : public FindInFilesDialogBase
     wxArrayString m_pluginFileMask;
 
 protected:
+    virtual void OnClearSelectedPathUI(wxUpdateUIEvent& event);
+    virtual void OnClearSelectedPath(wxCommandEvent& event);
     virtual void OnButtonClose(wxCommandEvent& event);
     virtual void OnFind(wxCommandEvent& event);
     virtual void OnReplace(wxCommandEvent& event);
@@ -49,10 +51,6 @@ protected:
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnAddPath(wxCommandEvent& event);
-    virtual void OnRemovePath(wxCommandEvent& event);
-    virtual void OnClearPaths(wxCommandEvent& event);
-    virtual void OnClearPathsUI(wxUpdateUIEvent& event);
-    virtual void OnRemovePathUI(wxUpdateUIEvent& event);
 
     virtual void OnFindWhatUI(wxUpdateUIEvent& event);
 
@@ -62,7 +60,6 @@ protected:
 public:
     FindInFilesDialog(wxWindow* parent, const wxString& dataName);
     virtual ~FindInFilesDialog();
-    void SetRootDir(const wxString& rootDir);
     void SetSearchPaths(const wxArrayString& paths);
     FindReplaceData& GetData() { return m_data; }
 

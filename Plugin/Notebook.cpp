@@ -16,6 +16,14 @@
 #define CL_BUILD 1
 #endif
 
+int clTabInfo::Y_SPACER = 4;
+int clTabInfo::X_SPACER = 5;
+int clTabInfo::BOTTOM_AREA_HEIGHT = 5;
+int clTabInfo::MAJOR_CURVE_WIDTH = 15;
+int clTabInfo::SMALL_CURVE_WIDTH = 4;
+// int clTabInfo::TAB_HEIGHT = 30;
+static int OVERLAP_WIDTH = 20;
+
 #if CL_BUILD
 #include "cl_command_event.h"
 #include "event_notifier.h"
@@ -34,12 +42,8 @@ wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 
 extern void Notebook_Init_Bitmaps();
 
-Notebook::Notebook(wxWindow* parent,
-                   wxWindowID id,
-                   const wxPoint& pos,
-                   const wxSize& size,
-                   long style,
-                   const wxString& name)
+Notebook::Notebook(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
 {
     static bool once = false;
@@ -241,13 +245,6 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
     // Draw the text
     dc.SetTextForeground(IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#if 0
-#ifdef __WXOSX__
-    font.SetPointSize(10);
-#else
-    font.SetPointSize(9);
-#endif
-#endif
     dc.SetFont(font);
     dc.DrawText(m_label, m_textX + m_rect.GetX(), m_textY);
 
@@ -255,15 +252,6 @@ void clTabInfo::Draw(wxDC& dc, const clTabInfo::Colours& colours, size_t style)
         dc.DrawBitmap(colours.closeButton, m_bmpCloseX + m_rect.GetX(), m_bmpCloseY);
     }
 }
-
-int clTabInfo::Y_SPACER = 5;
-int clTabInfo::X_SPACER = 5;
-int clTabInfo::BOTTOM_AREA_HEIGHT = 5;
-int clTabInfo::MAJOR_CURVE_WIDTH = 15;
-int clTabInfo::SMALL_CURVE_WIDTH = 3;
-int clTabInfo::TAB_HEIGHT = 35;
-
-static int OVERLAP_WIDTH = 20;
 
 clTabInfo::clTabInfo(size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp)
     : m_label(text)
@@ -296,17 +284,12 @@ void clTabInfo::CalculateOffsets(size_t style)
     m_bmpCloseY = wxNOT_FOUND;
 
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#if 0
-#ifdef __WXOSX__
-    font.SetPointSize(10);
-#else
-    font.SetPointSize(9);
-#endif
-#endif
-
     memDC.SetFont(font);
+
     wxSize sz = memDC.GetTextExtent(m_label);
-    m_height = TAB_HEIGHT;
+
+    wxSize fixedHeight = memDC.GetTextExtent("Tp");
+    m_height = fixedHeight.GetHeight() + (4 * Y_SPACER);
 
     m_width = 0;
     m_width += MAJOR_CURVE_WIDTH;
@@ -372,11 +355,18 @@ void clTabInfo::SetActive(bool active, size_t style)
 // -------------------------------------------------------------------------------
 clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     : wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL)
-    , m_height(clTabInfo::TAB_HEIGHT)
     , m_style(style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
     , m_contextMenu(NULL)
 {
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDC(bmp);
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    memDC.SetFont(font);
+
+    wxSize sz = memDC.GetTextExtent("Tp");
+    m_height = sz.GetHeight() + (4 * clTabInfo::Y_SPACER);
+
     SetDropTarget(new clTabCtrlDropTarget(this));
     SetSizeHints(wxSize(-1, m_height));
     SetSize(-1, m_height);
@@ -543,8 +533,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
-        //wxBitmap bmpTabs(rect.GetSize());
-        //wxMemoryDC memDC(bmpTabs);
+        // wxBitmap bmpTabs(rect.GetSize());
+        // wxMemoryDC memDC(bmpTabs);
         wxGCDC gcdc(dc);
 
         gcdc.SetPen(tabAreaBgCol);
@@ -586,8 +576,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
         }
 
-        //memDC.SelectObject(wxNullBitmap);
-        //dc.DrawBitmap(bmpTabs, 0, 0);
+        // memDC.SelectObject(wxNullBitmap);
+        // dc.DrawBitmap(bmpTabs, 0, 0);
 
         if(GetStyle() & kNotebook_ShowFileListButton) {
             // Draw the chevron

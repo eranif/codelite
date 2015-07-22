@@ -129,7 +129,7 @@ public:
     static int BOTTOM_AREA_HEIGHT;
     static int MAJOR_CURVE_WIDTH;
     static int SMALL_CURVE_WIDTH;
-    static int TAB_HEIGHT;
+    //static int TAB_HEIGHT;
 
 public:
     void CalculateOffsets(size_t style);

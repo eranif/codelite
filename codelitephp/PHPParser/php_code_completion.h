@@ -77,6 +77,8 @@ private:
     void OnFileSaved(clCommandEvent& event);
     void DoSelectInEditor(IEditor* editor, const wxString& what, int from);
 
+    void DoOpenEditorForEntry(PHPEntityBase::Ptr_t entry);
+    
 public:
     /**
      * @brief go to the definition of the word starting at pos

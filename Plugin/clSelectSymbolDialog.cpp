@@ -1,12 +1,20 @@
 #include "clSelectSymbolDialog.h"
 #include "globals.h"
+#include <algorithm>
 
 wxDEFINE_EVENT(wxEVT_SYMBOL_SELECTED, clCommandEvent);
 
-clSelectSymbolDialog::clSelectSymbolDialog(wxWindow* parent)
+clSelectSymbolDialog::clSelectSymbolDialog(wxWindow* parent, const clSelectSymbolDialogEntry::List_t& entries)
     : clSelectSymbolDialogBase(parent)
 {
     CenterOnParent();
+    std::for_each(entries.begin(), entries.end(), [&](const clSelectSymbolDialogEntry& entry) {
+        AddSymbol(entry.name, entry.bmp, entry.help, entry.clientData);
+    });
+    
+    if(m_dvListCtrl->GetItemCount()) {
+        m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
+    }
 }
 
 clSelectSymbolDialog::~clSelectSymbolDialog()

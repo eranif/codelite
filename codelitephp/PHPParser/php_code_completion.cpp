@@ -30,8 +30,7 @@
 
 ///////////////////////////////////////////////////////////////////
 
-struct PHPCCUserData : public wxClientData
-{
+struct PHPCCUserData : public wxClientData {
     PHPEntityBase::Ptr_t entry;
     PHPCCUserData(PHPEntityBase::Ptr_t e)
         : entry(e)
@@ -40,16 +39,14 @@ struct PHPCCUserData : public wxClientData
 };
 
 /// Ascending sorting function
-struct _SDescendingSort
-{
+struct _SDescendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rStart->GetName().Cmp(rEnd->GetName()) > 0;
     }
 };
 
-struct _SAscendingSort
-{
+struct _SAscendingSort {
     bool operator()(const TagEntryPtr& rStart, const TagEntryPtr& rEnd)
     {
         return rEnd->GetName().Cmp(rStart->GetName()) > 0;
@@ -331,8 +328,7 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
     }
 }
 
-struct PHPFindSymbol_ClientData : public wxClientData
-{
+struct PHPFindSymbol_ClientData : public wxClientData {
     PHPEntityBase::Ptr_t m_ptr;
 
     PHPFindSymbol_ClientData(PHPEntityBase::Ptr_t ptr) { m_ptr = ptr; }
@@ -353,14 +349,25 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
             if(symbols.size() == 1) {
                 PHPEntityBase::Ptr_t match = *symbols.begin();
                 DoOpenEditorForEntry(match);
-                
+
             } else {
-                clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame());
+                
+                // Convert the matches to clSelectSymbolDialogEntry::List_t
+                clSelectSymbolDialogEntry::List_t entries;
                 std::for_each(symbols.begin(), symbols.end(), [&](PHPEntityBase::Ptr_t entry) {
                     TagEntryPtr tag = DoPHPEntityToTagEntry(entry);
                     wxBitmap bmp = wxCodeCompletionBox::GetBitmap(tag);
-                    dlg.AddSymbol(entry->GetFullName(), bmp, tag->GetKind(), new PHPFindSymbol_ClientData(entry));
+
+                    clSelectSymbolDialogEntry m;
+                    m.bmp = bmp;
+                    m.name = entry->GetFullName();
+                    m.clientData = new PHPFindSymbol_ClientData(entry);
+                    m.help = tag->GetKind();
+                    entries.push_back(m);
                 });
+                
+                // Show selection dialog
+                clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);
                 if(dlg.ShowModal() != wxID_OK) return;
                 PHPFindSymbol_ClientData* cd = dynamic_cast<PHPFindSymbol_ClientData*>(dlg.GetSelection());
                 if(cd) {

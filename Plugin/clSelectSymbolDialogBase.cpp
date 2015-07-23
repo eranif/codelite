@@ -24,14 +24,14 @@ clSelectSymbolDialogBase::clSelectSymbolDialogBase(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    boxSizer10 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(350,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(350,200), wxDV_ROW_LINES|wxDV_SINGLE);
     m_dvListCtrl->SetFocus();
     
     boxSizer10->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);

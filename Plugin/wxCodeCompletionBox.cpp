@@ -741,7 +741,7 @@ wxBitmap wxCodeCompletionBox::GetBitmap(TagEntryPtr tag)
 {
     InitializeDefaultBitmaps();
     int imgId = GetImageId(tag);
-    if((imgId < 0) || (imgId >= m_defaultBitmaps.size())) return wxNullBitmap;
+    if((imgId < 0) || (imgId >= (int)m_defaultBitmaps.size())) return wxNullBitmap;
     return m_defaultBitmaps.at(imgId);
 }
 

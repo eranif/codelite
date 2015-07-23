@@ -235,7 +235,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     sci->MarkerSetForeground(7, lexer->IsDark() ? "YELLOW" : "BLACK");
 
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "YELLOW" : "DARK GREY");
-    sci->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
+    sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
     sci->IndicatorSetUnder(1, true);
 
     sci->SetMarginWidth(0, 0);

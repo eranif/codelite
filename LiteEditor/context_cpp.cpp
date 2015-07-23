@@ -876,8 +876,13 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
         e.clientData = new ContextCpp_ClientData(tag);
         
         wxString helpString;
-        helpString << tag->GetKind() << " : " << tag->GetSignature();
-        
+        if(!tag->GetKind().IsEmpty()) {
+            helpString = tag->GetKind().Mid(0, 1);
+            helpString.MakeUpper();
+        }
+        if(!tag->GetSignature().IsEmpty()) {
+            helpString << " : " << tag->GetSignature();
+        }
         e.help = helpString;
         entries.push_back(e);
     });

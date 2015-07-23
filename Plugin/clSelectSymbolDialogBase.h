@@ -27,8 +27,6 @@
 class WXDLLIMPEXP_SDK clSelectSymbolDialogBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer2;
-    wxBoxSizer* boxSizer10;
     wxDataViewListCtrl* m_dvListCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_buttonOK;

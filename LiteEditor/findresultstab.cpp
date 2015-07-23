@@ -231,10 +231,10 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     sci->SetHotspotActiveUnderline(false);
 
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, lexer->IsDark() ? "YELLOW" : "BLACK");
-    sci->MarkerSetForeground(7, lexer->IsDark() ? "YELLOW" : "BLACK");
+    sci->MarkerSetBackground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
+    sci->MarkerSetForeground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
 
-    sci->IndicatorSetForeground(1, lexer->IsDark() ? "YELLOW" : "DARK GREY");
+    sci->IndicatorSetForeground(1, lexer->IsDark() ? "YELLOW" : "#FF4500");
 #ifdef __WXGTK__
     // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
     sci->IndicatorSetStyle(1, wxSTC_INDIC_DOTBOX);

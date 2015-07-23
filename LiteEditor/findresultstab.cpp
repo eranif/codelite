@@ -235,7 +235,12 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     sci->MarkerSetForeground(7, lexer->IsDark() ? "YELLOW" : "BLACK");
 
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "YELLOW" : "DARK GREY");
+#ifdef __WXGTK__
+    // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
+    sci->IndicatorSetStyle(1, wxSTC_INDIC_DOTBOX);
+#else
     sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
+#endif
     sci->IndicatorSetUnder(1, true);
 
     sci->SetMarginWidth(0, 0);

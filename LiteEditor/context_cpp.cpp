@@ -872,17 +872,12 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
     std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
         clSelectSymbolDialogEntry e;
         e.bmp = wxCodeCompletionBox::GetBitmap(tag);
-        e.name = tag->GetPath();
+        e.name = tag->GetFullDisplayName();
         e.clientData = new ContextCpp_ClientData(tag);
         
         wxString helpString;
-        if(!tag->GetKind().IsEmpty()) {
-            helpString = tag->GetKind().Mid(0, 1);
-            helpString.MakeUpper();
-        }
-        if(!tag->GetSignature().IsEmpty()) {
-            helpString << " : " << tag->GetSignature();
-        }
+        wxFileName fn(tag->GetFile());
+        helpString << fn.GetFullName() << ":" << tag->GetLine();
         e.help = helpString;
         entries.push_back(e);
     });

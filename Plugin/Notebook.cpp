@@ -16,7 +16,12 @@
 #define CL_BUILD 1
 #endif
 
+#ifdef __WXMSW__
+int clTabInfo::Y_SPACER = 3;
+#else
 int clTabInfo::Y_SPACER = 4;
+#endif
+
 int clTabInfo::X_SPACER = 5;
 int clTabInfo::BOTTOM_AREA_HEIGHT = 5;
 int clTabInfo::MAJOR_CURVE_WIDTH = 15;

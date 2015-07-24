@@ -19,7 +19,7 @@
 #ifdef __WXMSW__
 int clTabInfo::Y_SPACER = 3;
 #else
-int clTabInfo::Y_SPACER = 4;
+int clTabInfo::Y_SPACER = 3;
 #endif
 
 int clTabInfo::X_SPACER = 5;
@@ -295,6 +295,13 @@ void clTabInfo::CalculateOffsets(size_t style)
 
     wxSize fixedHeight = memDC.GetTextExtent("Tp");
     m_height = fixedHeight.GetHeight() + (4 * Y_SPACER);
+    
+#ifdef __WXGTK__
+    // On GTK, limit the tab height
+    if(m_height >= 30) {
+        m_height = 30; 
+    }
+#endif
 
     m_width = 0;
     m_width += MAJOR_CURVE_WIDTH;
@@ -371,7 +378,12 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 
     wxSize sz = memDC.GetTextExtent("Tp");
     m_height = sz.GetHeight() + (4 * clTabInfo::Y_SPACER);
-
+#ifdef __WXGTK__
+    // On GTK, limit the tab height
+    if(m_height >= 30) {
+        m_height = 30; 
+    }
+#endif
     SetDropTarget(new clTabCtrlDropTarget(this));
     SetSizeHints(wxSize(-1, m_height));
     SetSize(-1, m_height);

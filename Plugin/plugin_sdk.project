@@ -347,8 +347,6 @@
       <File Name="dockablepane.h"/>
       <File Name="detachedpanesinfo.cpp"/>
       <File Name="detachedpanesinfo.h"/>
-      <File Name="fileclose.png"/>
-      <File Name="fileclose-pressed.png"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
       <File Name="Notebook.cpp"/>

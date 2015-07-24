@@ -456,8 +456,7 @@ void NodeJSDebugger::ClearDebuggerMarker()
 
 void NodeJSDebugger::DoHighlightLine(const wxString& filename, int lineNo)
 {
-    clGetManager()->OpenFile(filename, "", lineNo - 1);
-    IEditor* activeEditor = clGetManager()->GetActiveEditor();
+    IEditor* activeEditor = clGetManager()->OpenFile(filename, "", lineNo - 1);
     if(activeEditor) {
         SetDebuggerMarker(activeEditor, lineNo - 1);
     }

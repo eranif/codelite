@@ -1162,7 +1162,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer129 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer129);
     
-    m_auiBook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxAUI_NB_TAB_MOVE|wxAUI_NB_TAB_SPLIT);
+    m_auiBook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxAUI_NB_TAB_MOVE|wxAUI_NB_TAB_SPLIT);
     m_auiBook->SetName(wxT("m_auiBook"));
     
     boxSizer129->Add(m_auiBook, 1, wxALL|wxEXPAND, 2);
@@ -1173,16 +1173,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer144 = new wxBoxSizer(wxVERTICAL);
     m_panel140->SetSizer(boxSizer144);
     
-    m_dvListCtrlStackTrace = new wxDataViewListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_dvListCtrlStackTraceFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_dvListCtrlStackTraceFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_dvListCtrlStackTraceFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_dvListCtrlStackTraceFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_dvListCtrlStackTrace->SetFont(m_dvListCtrlStackTraceFont);
+    m_dvListCtrlStackTrace = new wxDataViewListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer144->Add(m_dvListCtrlStackTrace, 1, wxALL|wxEXPAND, 2);
     
@@ -1406,17 +1397,13 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     boxSizer255 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer255);
     
-    m_notebook257 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook257 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     m_notebook257->SetName(wxT("m_notebook257"));
-    wxImageList* m_notebook257_il = new wxImageList(16, 16);
-    m_notebook257->AssignImageList(m_notebook257_il);
     
     boxSizer255->Add(m_notebook257, 1, wxALL|wxEXPAND, 2);
     
     m_panel259 = new wxPanel(m_notebook257, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    int m_panel259ImgIndex;
-    m_panel259ImgIndex = m_notebook257_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("devil")));
-    m_notebook257->AddPage(m_panel259, _("Eval"), true, m_panel259ImgIndex);
+    m_notebook257->AddPage(m_panel259, _("Eval"), true);
     
     boxSizer254 = new wxBoxSizer(wxVERTICAL);
     m_panel259->SetSizer(boxSizer254);
@@ -1487,9 +1474,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     boxSizer247->Add(m_buttonSend, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2);
     
     m_panel261 = new wxPanel(m_notebook257, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    int m_panel261ImgIndex;
-    m_panel261ImgIndex = m_notebook257_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("console")));
-    m_notebook257->AddPage(m_panel261, _("XDebug Console"), false, m_panel261ImgIndex);
+    m_notebook257->AddPage(m_panel261, _("XDebug Console"), false);
     
     boxSizer263 = new wxBoxSizer(wxVERTICAL);
     m_panel261->SetSizer(boxSizer263);
@@ -2147,7 +2132,7 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     boxSizer657 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer657);
     
-    m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,200), wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer657->Add(m_dvListCtrlFunctions, 1, wxALL|wxEXPAND, 5);
     

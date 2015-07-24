@@ -23,7 +23,7 @@ int clTabInfo::Y_SPACER = 4;
 #endif
 
 int clTabInfo::X_SPACER = 5;
-int clTabInfo::BOTTOM_AREA_HEIGHT = 5;
+int clTabInfo::BOTTOM_AREA_HEIGHT = 3;
 int clTabInfo::MAJOR_CURVE_WIDTH = 15;
 int clTabInfo::SMALL_CURVE_WIDTH = 4;
 // int clTabInfo::TAB_HEIGHT = 30;

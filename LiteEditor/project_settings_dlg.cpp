@@ -126,14 +126,13 @@ void ProjectSettingsDlg::BuildTree()
     }
 
     PSGeneralPage* gp = new PSGeneralPage(m_treebook, m_projectName, m_choiceConfig->GetStringSelection(), this);
-    m_treebook->AddPage(0, _("Common Settings"));
-    m_treebook->AddSubPage(gp, _("General"), selectedPage == _("General"));
-    m_treebook->AddSubPage(
+    m_treebook->AddPage(gp, _("General"), selectedPage == _("General"));
+    m_treebook->AddPage(
         new PSCompilerPage(m_treebook, m_projectName, this, gp), _("Compiler"), selectedPage == _("Compiler"));
-    m_treebook->AddSubPage(new PSLinkerPage(m_treebook, this, gp), _("Linker"), selectedPage == _("Linker"));
-    m_treebook->AddSubPage(new PSEnvironmentPage(m_treebook, this), _("Environment"), selectedPage == _("Environment"));
-    m_treebook->AddSubPage(new PSDebuggerPage(m_treebook, this), _("Debugger"), selectedPage == _("Debugger"));
-    m_treebook->AddSubPage(new PSResourcesPage(m_treebook, this), _("Resources"), selectedPage == _("Resources"));
+    m_treebook->AddPage(new PSLinkerPage(m_treebook, this, gp), _("Linker"), selectedPage == _("Linker"));
+    m_treebook->AddPage(new PSEnvironmentPage(m_treebook, this), _("Environment"), selectedPage == _("Environment"));
+    m_treebook->AddPage(new PSDebuggerPage(m_treebook, this), _("Debugger"), selectedPage == _("Debugger"));
+    m_treebook->AddPage(new PSResourcesPage(m_treebook, this), _("Resources"), selectedPage == _("Resources"));
 
     m_treebook->AddPage(0, _("Pre / Post Build Commands"));
     m_treebook->AddSubPage(
@@ -396,13 +395,12 @@ void ProjectSettingsDlg::ShowHideDisabledMessage()
 void ProjectSettingsDlg::ShowCustomProjectMessage(bool show)
 {
     if(show) {
-        m_infobar->ShowMessage(
-            _("Settings on this page are disabled because this project is setup as \"Custom Build\" project"),
-            wxICON_INFORMATION);
+        m_infobar->ShowMessage(_("The settings on this page are ignored during build"), wxICON_INFORMATION);
     } else {
         m_infobar->Dismiss();
     }
 }
+
 void ProjectSettingsDlg::OnPageChanged(wxTreebookEvent& event)
 {
     event.Skip();

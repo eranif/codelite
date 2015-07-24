@@ -346,16 +346,13 @@ Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->Ge
 
 Notebook* PluginManager::GetWorkspacePaneNotebook() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
 
-bool PluginManager::OpenFile(const wxString& fileName, const wxString& projectName, int lineno)
+IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& projectName, int lineno)
 {
-    if(clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno)) {
-        LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-        if(editor) {
-            editor->SetActive();
-        }
-        return true;
+    IEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno);
+    if(editor) {
+        editor->SetActive();
     }
-    return false;
+    return editor;
 }
 
 wxString PluginManager::GetStartupDirectory() const { return ManagerST::Get()->GetStartupDirectory(); }
@@ -529,7 +526,7 @@ PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tool
 
 bool PluginManager::SelectPage(wxWindow* win) { return clMainFrame::Get()->GetMainBook()->SelectPage(win); }
 
-bool PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::Get()->GetMainBook()->OpenFile(rec); }
+IEditor* PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::Get()->GetMainBook()->OpenFile(rec); }
 
 NavMgr* PluginManager::GetNavigationMgr() { return NavMgr::Get(); }
 

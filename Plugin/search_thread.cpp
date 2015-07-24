@@ -126,38 +126,31 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
     std::set<wxString> scannedFiles;
 
     const wxArrayString& rootDirs = data->GetRootDirs();
-    for(size_t i = 0; i < rootDirs.Count(); ++i) {
-        wxArrayString someFiles;
-        const wxString& rootDir = rootDirs.Item(i);
-        // Check both translations and otherwise: the history may have contained either
-        if(rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE) ||
-           rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT) || rootDir == wxGetTranslation(SEARCH_IN_PROJECT) ||
-           rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE) || rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES) ||
-           rootDir == SEARCH_IN_WORKSPACE || rootDir == SEARCH_IN_CURR_FILE_PROJECT || rootDir == SEARCH_IN_PROJECT ||
-           rootDir == SEARCH_IN_CURRENT_FILE || rootDir == SEARCH_IN_OPEN_FILES) {
-            someFiles = data->GetFiles();
-            // filter files which does not match the criteria
-            FilterFiles(someFiles, data);
+    files = data->GetFiles();
 
-        } else if(wxFile::Exists(rootDir)) {
-            // search root is actually a file...
-            someFiles.push_back(rootDir);
+    // Remove files that do not match our search criteria
+    FilterFiles(files, data);
 
-        } else if(wxDir::Exists(rootDir)) {
-            // make sure it's really a dir (not a fifo, etc.)
-            DirTraverser traverser(data->GetExtensions());
-            wxDir dir(rootDir);
-            dir.Traverse(traverser);
-            someFiles = traverser.GetFiles();
-        }
+    // Populate "scannedFiles" with list of files to scan
+    scannedFiles.insert(files.begin(), files.end());
+
+    for(size_t i = 0; i < rootDirs.size(); ++i) {
+        // make sure it's really a dir (not a fifo, etc.)
+        DirTraverser traverser(data->GetExtensions());
+        wxDir dir(rootDirs.Item(i));
+        dir.Traverse(traverser);
+        wxArrayString& someFiles = traverser.GetFiles();
 
         for(size_t j = 0; j < someFiles.Count(); ++j) {
-            if(scannedFiles.find(someFiles.Item(j)) == scannedFiles.end()) {
+            if(scannedFiles.count(someFiles.Item(j)) == 0) {
                 files.Add(someFiles.Item(j));
                 scannedFiles.insert(someFiles.Item(j));
             }
         }
     }
+
+    files.clear();
+    std::for_each(scannedFiles.begin(), scannedFiles.end(), [&](const wxString& file) { files.Add(file); });
 }
 
 void SearchThread::DoSearchFiles(ThreadRequest* req)
@@ -165,9 +158,10 @@ void SearchThread::DoSearchFiles(ThreadRequest* req)
     SearchData* data = static_cast<SearchData*>(req);
 
     // Get all files
-    if(data->GetRootDirs().IsEmpty()) return;
-
-    if(data->GetFindString().IsEmpty()) return;
+    if(data->GetFindString().IsEmpty()) {
+        SendEvent(wxEVT_SEARCH_THREAD_SEARCHSTARTED, data->GetOwner());
+        return;
+    }
 
     StopSearch(false);
     wxArrayString fileList;
@@ -233,7 +227,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         m_summary.GetFailedFiles().Add(fileName);
         return;
     }
-    
+
     wxFileOffset size = thefile.Length();
     wxString fileData;
     fileData.Alloc(size);

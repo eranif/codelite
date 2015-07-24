@@ -335,3 +335,20 @@ bool FileUtils::FuzzyMatch(const wxString& needle, const wxString& haystack)
     }
     return true;
 }
+
+bool FileUtils::IsHidden(const wxFileName& filename)
+{
+#ifdef __WXMSW__
+    DWORD dwAttrs = GetFileAttributes(filename.GetFullPath().c_str());
+    if(dwAttrs == INVALID_FILE_ATTRIBUTES) return false;
+    return (dwAttrs & FILE_ATTRIBUTE_HIDDEN) || (filename.GetFullName().StartsWith("."));
+#else
+    // is it enough to test for file name?
+    return filename.GetFullName().StartsWith(".");
+#endif
+}
+
+bool FileUtils::IsHidden(const wxString& filename)
+{
+    return IsHidden(filename);
+}

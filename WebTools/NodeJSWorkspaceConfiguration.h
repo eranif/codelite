@@ -8,6 +8,7 @@ class NodeJSWorkspaceConfiguration : public clConfigItem
 {
     wxArrayString m_folders;
     bool m_isOk;
+    bool m_showHiddenFiles;
 
 public:
     virtual void FromJSON(const JSONElement& json);
@@ -24,6 +25,17 @@ public:
         return *this;
     }
 
+    NodeJSWorkspaceConfiguration& SetIsOk(bool isOk)
+    {
+        this->m_isOk = isOk;
+        return *this;
+    }
+    NodeJSWorkspaceConfiguration& SetShowHiddenFiles(bool showHiddenFiles)
+    {
+        this->m_showHiddenFiles = showHiddenFiles;
+        return *this;
+    }
+    bool IsShowHiddenFiles() const { return m_showHiddenFiles; }
     const wxArrayString& GetFolders() const { return m_folders; }
     bool IsOk() const { return m_isOk; }
 };

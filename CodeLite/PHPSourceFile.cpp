@@ -1106,11 +1106,11 @@ void PHPSourceFile::OnCatch()
             cont = false;
             varname = token.text;
             break;
-        case kPHP_T_C_COMMENT:
-        case kPHP_T_CXX_COMMENT:
+        case kPHP_T_IDENTIFIER:
+        case kPHP_T_NS_SEPARATOR:
+            typehint << token.text;
             break;
         default:
-            typehint << token.text;
             break;
         }
     }

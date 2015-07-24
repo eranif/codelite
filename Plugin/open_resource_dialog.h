@@ -82,7 +82,6 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
     IManager* m_manager;
     std::multimap<wxString, wxString> m_files;
     wxTimer* m_timer;
-    OpenResourceDialogItemData m_selection;
     bool m_needRefresh;
     std::map<wxString, wxBitmap> m_tagImgMap;
     wxArrayString m_filters;
@@ -123,7 +122,7 @@ public:
     OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString& initialSelection);
     virtual ~OpenResourceDialog();
 
-    const OpenResourceDialogItemData& GetSelection() const { return m_selection; }
+    OpenResourceDialogItemData* GetSelection() const;
 
     wxArrayString& GetFilters() { return m_filters; }
 

@@ -1,6 +1,8 @@
 MUST:
 =====
-* New workspace, enlarge the selection dialog to show all available worksapce type
+
+* Move the compilers links to a JSON file that can be downloaded from CodeLite's website
+
 
 NICE
 ====

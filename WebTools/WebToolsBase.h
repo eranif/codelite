@@ -30,6 +30,9 @@
 #include <wx/dataview.h>
 #include "m_dataview126model.h"
 #include "Notebook.h"
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -204,6 +207,26 @@ public:
     wxStaticText* GetStaticTextPreview() { return m_staticTextPreview; }
     NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NodeJSNewWorkspaceDlgBase();
+};
+
+
+class WebToolsImages : public wxImageList
+{
+protected:
+    // Maintain a map of all bitmaps representd by their name
+    std::map<wxString, wxBitmap> m_bitmaps;
+
+
+protected:
+
+public:
+    WebToolsImages();
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
+        return m_bitmaps.find(name)->second;
+    }
+    virtual ~WebToolsImages();
 };
 
 #endif

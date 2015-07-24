@@ -23,7 +23,7 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
@@ -75,14 +75,14 @@ NewWorkspaceSelectionDlgBase::NewWorkspaceSelectionDlgBase(wxWindow* parent, wxW
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
+    bSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer2);
     
     m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(300,100), wxWANTS_CHARS|wxTAB_TRAVERSAL);
     
     bSizer2->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
+    bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
     
     wxArrayString m_radioBoxArr;
@@ -143,10 +143,10 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
+    bSizer3 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer3);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
+    fgSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
@@ -201,7 +201,7 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     
     bSizer3->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer3->Add(bSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -256,10 +256,10 @@ NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
+    bSizer6 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer6);
     
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
@@ -287,7 +287,7 @@ NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     bSizer6->Add(0, 0, 1, wxEXPAND, 5);
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer7 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer6->Add(bSizer7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -329,7 +329,7 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
+    bSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer10);
     
     m_staticText9 = new wxStaticText(this, wxID_ANY, _("Type the resource name (file, variable, class, function, constant or define):"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -392,7 +392,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
+    bSizer12 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer12);
     
     m_treebook9 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -403,10 +403,10 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_panel11 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel11, _("General"), false, wxNOT_FOUND);
     
-    wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
+    bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel11->SetSizer(bSizer13);
     
-    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
@@ -435,7 +435,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer4->Add(m_textCtrlErrorReporting, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer18 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer18 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer13->Add(bSizer18, 0, wxEXPAND, 5);
     
@@ -467,10 +467,10 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_panel15 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel15, _("Code Completion"), false, wxNOT_FOUND);
     
-    wxBoxSizer* bSizer20 = new wxBoxSizer(wxVERTICAL);
+    bSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panel15->SetSizer(bSizer20);
     
-    wxBoxSizer* bSizer23 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer23 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer20->Add(bSizer23, 0, wxEXPAND, 5);
     
@@ -495,10 +495,10 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_panel13 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel13, _("XDebug"), false, wxNOT_FOUND);
     
-    wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
+    bSizer14 = new wxBoxSizer(wxVERTICAL);
     m_panel13->SetSizer(bSizer14);
     
-    wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer5->SetFlexibleDirection( wxBOTH );
     fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer5->AddGrowableCol(1);
@@ -547,7 +547,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_panel407 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel407, _("Syntax Check"), false, wxNOT_FOUND);
     
-    wxBoxSizer* boxSizer409 = new wxBoxSizer(wxVERTICAL);
+    boxSizer409 = new wxBoxSizer(wxVERTICAL);
     m_panel407->SetSizer(boxSizer409);
     
     m_checkBoxRunLint = new wxCheckBox(m_panel407, wxID_ANY, _("Perform syntax check when saving a file"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -556,7 +556,7 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer409->Add(m_checkBoxRunLint, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer16 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer16 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer12->Add(bSizer16, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -622,7 +622,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
+    bSizer19 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer19);
     
     m_treebook41 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -633,7 +633,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_panel43 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook41->AddPage(m_panel43, _("General"), false, wxNOT_FOUND);
     
-    wxBoxSizer* bSizer21 = new wxBoxSizer(wxVERTICAL);
+    bSizer21 = new wxBoxSizer(wxVERTICAL);
     m_panel43->SetSizer(bSizer21);
     
     m_staticText457 = new wxStaticText(m_panel43, wxID_ANY, _("Select the project execution mode:"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -651,10 +651,10 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_panel5 = new wxPanel(m_choicebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_choicebook1->AddPage(m_panel5, _("Run project as command line"), false);
     
-    wxBoxSizer* bSizer25 = new wxBoxSizer(wxVERTICAL);
+    bSizer25 = new wxBoxSizer(wxVERTICAL);
     m_panel5->SetSizer(bSizer25);
     
-    wxFlexGridSizer* fgSizer6 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer6 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer6->SetFlexibleDirection( wxBOTH );
     fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer6->AddGrowableCol(1);
@@ -728,7 +728,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_panel6 = new wxPanel(m_choicebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_choicebook1->AddPage(m_panel6, _("Run project as web site"), false);
     
-    wxFlexGridSizer* fgSizer8 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer8 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer8->SetFlexibleDirection( wxBOTH );
     fgSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer8->AddGrowableCol(1);
@@ -756,10 +756,10 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_panel59 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook41->InsertSubPage(0, m_panel59, _("Include path"), false, wxNOT_FOUND);
     
-    wxBoxSizer* bSizer27 = new wxBoxSizer(wxVERTICAL);
+    bSizer27 = new wxBoxSizer(wxVERTICAL);
     m_panel59->SetSizer(bSizer27);
     
-    wxBoxSizer* bSizer28 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer28 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer27->Add(bSizer28, 0, wxEXPAND, 5);
     
@@ -790,7 +790,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_panel447 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook41->InsertSubPage(0, m_panel447, _("View"), false, wxNOT_FOUND);
     
-    wxBoxSizer* boxSizer449 = new wxBoxSizer(wxVERTICAL);
+    boxSizer449 = new wxBoxSizer(wxVERTICAL);
     m_panel447->SetSizer(boxSizer449);
     
     wxArrayString m_pgMgrViewArr;
@@ -812,7 +812,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_panel45 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook41->AddPage(m_panel45, _("Debug"), false, wxNOT_FOUND);
     
-    wxBoxSizer* boxSizer51 = new wxBoxSizer(wxVERTICAL);
+    boxSizer51 = new wxBoxSizer(wxVERTICAL);
     m_panel45->SetSizer(boxSizer51);
     
     m_staticText105 = new wxStaticText(m_panel45, wxID_ANY, _("File mapping"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -840,10 +840,10 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     m_panel47->SetFont(m_panel47Font);
     m_treebook41->AddPage(m_panel47, _("Code Completion"), false, wxNOT_FOUND);
     
-    wxBoxSizer* bSizerCCPage = new wxBoxSizer(wxVERTICAL);
+    bSizerCCPage = new wxBoxSizer(wxVERTICAL);
     m_panel47->SetSizer(bSizerCCPage);
     
-    wxBoxSizer* bSizer23 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer23 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerCCPage->Add(bSizer23, 0, wxEXPAND, 5);
     
@@ -875,7 +875,7 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     
     bSizerCCPage->Add(m_textCtrlCCIncludePath, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer20 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer20 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer19->Add(bSizer20, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -984,10 +984,10 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer109 = new wxBoxSizer(wxVERTICAL);
+    boxSizer109 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer109);
     
-    wxFlexGridSizer* flexGridSizer117 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer117 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer117->SetFlexibleDirection( wxBOTH );
     flexGridSizer117->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer117->AddGrowableCol(1);
@@ -1061,7 +1061,7 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
+    bSizer5 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer5);
     
     m_auibar29 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
@@ -1159,7 +1159,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer129 = new wxBoxSizer(wxVERTICAL);
+    boxSizer129 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer129);
     
     m_auiBook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxAUI_NB_TAB_MOVE|wxAUI_NB_TAB_SPLIT);
@@ -1170,7 +1170,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_panel140 = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panel140, _("Call Stack"), false);
     
-    wxBoxSizer* boxSizer144 = new wxBoxSizer(wxVERTICAL);
+    boxSizer144 = new wxBoxSizer(wxVERTICAL);
     m_panel140->SetSizer(boxSizer144);
     
     m_dvListCtrlStackTrace = new wxDataViewListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
@@ -1193,10 +1193,10 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_panel142 = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panel142, _("Breakpoints"), false);
     
-    wxBoxSizer* boxSizer156 = new wxBoxSizer(wxVERTICAL);
+    boxSizer156 = new wxBoxSizer(wxVERTICAL);
     m_panel142->SetSizer(boxSizer156);
     
-    wxBoxSizer* boxSizer204 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer204 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer156->Add(boxSizer204, 1, wxEXPAND, 5);
     
@@ -1216,7 +1216,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer206 = new wxBoxSizer(wxVERTICAL);
+    boxSizer206 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer204->Add(boxSizer206, 0, 0, 5);
     
@@ -1268,7 +1268,7 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer236 = new wxBoxSizer(wxVERTICAL);
+    boxSizer236 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer236);
     
     m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,150), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
@@ -1378,6 +1378,15 @@ PHPImages::PHPImages()
         m_bitmaps.insert( std::make_pair(wxT("m_bmpSync"), bmp ) );
     }
     
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpWorkspace"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("m_bmpPhpWorkspace"), bmp ) );
+    }
+    
 }
 
 PHPImages::~PHPImages()
@@ -1394,7 +1403,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer255 = new wxBoxSizer(wxVERTICAL);
+    boxSizer255 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer255);
     
     m_notebook257 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -1409,7 +1418,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     m_panel259ImgIndex = m_notebook257_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("devil")));
     m_notebook257->AddPage(m_panel259, _("Eval"), true, m_panel259ImgIndex);
     
-    wxBoxSizer* boxSizer254 = new wxBoxSizer(wxVERTICAL);
+    boxSizer254 = new wxBoxSizer(wxVERTICAL);
     m_panel259->SetSizer(boxSizer254);
     
     m_stcOutput = new wxStyledTextCtrl(m_panel259, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1450,7 +1459,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     
     boxSizer254->Add(m_stcOutput, 1, wxALL|wxEXPAND, 2);
     
-    wxBoxSizer* boxSizer247 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer247 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer254->Add(boxSizer247, 0, wxEXPAND, 2);
     
@@ -1482,7 +1491,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     m_panel261ImgIndex = m_notebook257_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("console")));
     m_notebook257->AddPage(m_panel261, _("XDebug Console"), false, m_panel261ImgIndex);
     
-    wxBoxSizer* boxSizer263 = new wxBoxSizer(wxVERTICAL);
+    boxSizer263 = new wxBoxSizer(wxVERTICAL);
     m_panel261->SetSizer(boxSizer263);
     
     m_stcOutputXDebug = new wxStyledTextCtrl(m_panel261, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1523,7 +1532,7 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     
     boxSizer263->Add(m_stcOutputXDebug, 1, wxALL|wxEXPAND, 2);
     
-    wxBoxSizer* boxSizer2472 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer2472 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer263->Add(boxSizer2472, 0, wxEXPAND, 2);
     
@@ -1597,7 +1606,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     SetIcons( app_icons );
 
     
-    wxBoxSizer* boxSizer359 = new wxBoxSizer(wxVERTICAL);
+    boxSizer359 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer359);
     
     wxArrayString m_choiceArr;
@@ -1618,10 +1627,10 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     m_panelDebugURL = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_simpleBook->AddPage(m_panelDebugURL, _("Page"), false);
     
-    wxBoxSizer* boxSizer387 = new wxBoxSizer(wxVERTICAL);
+    boxSizer387 = new wxBoxSizer(wxVERTICAL);
     m_panelDebugURL->SetSizer(boxSizer387);
     
-    wxFlexGridSizer* flexGridSizer375 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer375 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer375->SetFlexibleDirection( wxBOTH );
     flexGridSizer375->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer375->AddGrowableCol(1);
@@ -1645,10 +1654,10 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     m_panelCommandLine = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_simpleBook->AddPage(m_panelCommandLine, _("Page"), false);
     
-    wxBoxSizer* boxSizer386 = new wxBoxSizer(wxVERTICAL);
+    boxSizer386 = new wxBoxSizer(wxVERTICAL);
     m_panelCommandLine->SetSizer(boxSizer386);
     
-    wxFlexGridSizer* flexGridSizer381 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer381 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer381->SetFlexibleDirection( wxBOTH );
     flexGridSizer381->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer381->AddGrowableCol(1);
@@ -1737,7 +1746,7 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     m_wizardPageCreateMethod = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageCreateMethod);
     
-    wxBoxSizer* boxSizer491 = new wxBoxSizer(wxVERTICAL);
+    boxSizer491 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageCreateMethod->SetSizer(boxSizer491);
     
     m_banner495 = new wxBannerWindow(m_wizardPageCreateMethod, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1760,7 +1769,7 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     m_wizardPageProjectDetails = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageProjectDetails);
     
-    wxBoxSizer* boxSizer493 = new wxBoxSizer(wxVERTICAL);
+    boxSizer493 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageProjectDetails->SetSizer(boxSizer493);
     
     m_banner517 = new wxBannerWindow(m_wizardPageProjectDetails, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1771,7 +1780,7 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     boxSizer493->Add(m_banner517, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer519 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer519 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer519->SetFlexibleDirection( wxBOTH );
     flexGridSizer519->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer519->AddGrowableCol(1);
@@ -1827,7 +1836,7 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     m_wizardPageFinalize = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageFinalize);
     
-    wxBoxSizer* boxSizer549 = new wxBoxSizer(wxVERTICAL);
+    boxSizer549 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageFinalize->SetSizer(boxSizer549);
     
     m_banner4951 = new wxBannerWindow(m_wizardPageFinalize, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1838,7 +1847,7 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     boxSizer549->Add(m_banner4951, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer3152 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer3152 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer3152->SetFlexibleDirection( wxBOTH );
     flexGridSizer3152->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer3152->AddGrowableCol(1);
@@ -1876,7 +1885,7 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
     
-    wxBoxSizer* boxSizer636 = new wxBoxSizer(wxVERTICAL);
+    boxSizer636 = new wxBoxSizer(wxVERTICAL);
     m_wizardPage634->SetSizer(boxSizer636);
     
     m_banner49511 = new wxBannerWindow(m_wizardPage634, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1887,11 +1896,11 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     
     boxSizer636->Add(m_banner49511, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer645 = new wxBoxSizer(wxVERTICAL);
+    boxSizer645 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer636->Add(boxSizer645, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer649 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer649 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer645->Add(boxSizer649, 0, wxEXPAND, 5);
     
@@ -1965,7 +1974,7 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     m_wizardPagePort = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPagePort);
     
-    wxBoxSizer* boxSizer575 = new wxBoxSizer(wxVERTICAL);
+    boxSizer575 = new wxBoxSizer(wxVERTICAL);
     m_wizardPagePort->SetSizer(boxSizer575);
     
     m_bannerPort = new wxBannerWindow(m_wizardPagePort, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1976,7 +1985,7 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     
     boxSizer575->Add(m_bannerPort, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer583 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer583 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer583->SetFlexibleDirection( wxBOTH );
     flexGridSizer583->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer583->AddGrowableCol(1);
@@ -1998,7 +2007,7 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     m_wizardPageHost = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageHost);
     
-    wxBoxSizer* boxSizer577 = new wxBoxSizer(wxVERTICAL);
+    boxSizer577 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageHost->SetSizer(boxSizer577);
     
     m_bannerHost = new wxBannerWindow(m_wizardPageHost, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -2009,7 +2018,7 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     
     boxSizer577->Add(m_bannerHost, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer5832 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer5832 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer5832->SetFlexibleDirection( wxBOTH );
     flexGridSizer5832->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer5832->AddGrowableCol(1);
@@ -2031,7 +2040,7 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     m_wizardPageIDEKey = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageIDEKey);
     
-    wxBoxSizer* boxSizer601 = new wxBoxSizer(wxVERTICAL);
+    boxSizer601 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageIDEKey->SetSizer(boxSizer601);
     
     m_bannerSessionID = new wxBannerWindow(m_wizardPageIDEKey, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -2042,7 +2051,7 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     
     boxSizer601->Add(m_bannerSessionID, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer58326 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer58326 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer58326->SetFlexibleDirection( wxBOTH );
     flexGridSizer58326->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer58326->AddGrowableCol(1);
@@ -2070,7 +2079,7 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
     
-    wxBoxSizer* boxSizer6019 = new wxBoxSizer(wxVERTICAL);
+    boxSizer6019 = new wxBoxSizer(wxVERTICAL);
     m_wizardPagePHP->SetSizer(boxSizer6019);
     
     m_bannerSessionID10 = new wxBannerWindow(m_wizardPagePHP, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -2135,7 +2144,7 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer657 = new wxBoxSizer(wxVERTICAL);
+    boxSizer657 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer657);
     
     m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
@@ -2144,7 +2153,7 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     
     m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, 40, wxALIGN_LEFT);
     m_dvListCtrlFunctions->AppendIconTextColumn(_("Variable"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    wxFlexGridSizer* flexGridSizer667 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer667 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer667->SetFlexibleDirection( wxBOTH );
     flexGridSizer667->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     

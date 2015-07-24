@@ -72,7 +72,7 @@ previous_fif_match|Search::Find In Files|Go to Previous 'Find In File' Match|Ctr
 find_previous|Search|Find Previous|Shift-F3
 find_resource|Search|Find Resource...|Ctrl-Shift-R
 find_symbol|Search|Quick Outline...|Ctrl-Shift-O
-goto_definition|Search|Find Symbol|
+goto_definition|Search|Find Symbol|Alt-G
 goto_previous_definition|Search::Go To|Go To Previous Location|Ctrl-P
 wxID_BACKWARD|Search::Go To|Navigate Backward|Ctrl-,
 wxID_FORWARD|Search::Go To|Navigate Forward|Ctrl-.

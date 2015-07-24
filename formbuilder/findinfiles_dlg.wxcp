@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": "../LiteEditor/",
-  "m_objCounter": 94,
+  "m_objCounter": 97,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCABC4InitBitmapResources",
   "m_bitmapsFile": "findinfiles_dlg_formbuilder_bitmaps.cpp",
@@ -9,13 +9,7 @@
   "m_outputFileName": "findinfiles_dlg",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
-  "m_templateClasses": [{
-    "m_includeFile": "#include \"dirpicker.h\"",
-    "m_allocationLine": "m_dirPicker = new DirPicker($parent, wxID_ANY, wxT(\"...\"), wxEmptyString, _(\"Select a folder:\"), wxDefaultPosition, wxDefaultSize, wxDP_USE_COMBOBOX);",
-    "m_className": "DirPicker",
-    "m_xrcPreviewClass": "wxTextCtrl",
-    "m_events": []
-   }]
+  "m_templateClasses": []
  },
  "windows": [{
    "m_type": 4421,
@@ -236,7 +230,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "boxSizer50"
+           "m_value": "boxSizer95"
           }, {
            "type": "string",
            "m_label": "Style:",
@@ -244,16 +238,16 @@
           }, {
            "type": "choice",
            "m_label": "Orientation:",
-           "m_selection": 1,
+           "m_selection": 0,
            "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
           }],
          "m_events": [],
          "m_children": [{
-           "m_type": 4403,
+           "m_type": 4401,
            "proportion": 1,
            "border": 5,
-           "gbSpan": ",",
-           "gbPosition": ",",
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
            "m_styles": [],
            "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
            "m_properties": [{
@@ -263,373 +257,72 @@
             }, {
              "type": "string",
              "m_label": "Name:",
-             "m_value": "fgSizer41"
+             "m_value": "boxSizer50"
             }, {
              "type": "string",
              "m_label": "Style:",
              "m_value": ""
             }, {
-             "type": "string",
-             "m_label": "# Columns:",
-             "m_value": "2"
-            }, {
-             "type": "string",
-             "m_label": "# Rows:",
-             "m_value": "0"
-            }, {
-             "type": "string",
-             "m_label": "Growable columns:",
-             "m_value": "1"
-            }, {
-             "type": "string",
-             "m_label": "Growable rows:",
-             "m_value": "2"
-            }, {
-             "type": "string",
-             "m_label": "Horizontal gap:",
-             "m_value": "0"
-            }, {
-             "type": "string",
-             "m_label": "Vertical gap:",
-             "m_value": "0"
+             "type": "choice",
+             "m_label": "Orientation:",
+             "m_selection": 1,
+             "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
             }],
            "m_events": [],
            "m_children": [{
-             "m_type": 4405,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_staticText1"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "Label:",
-               "m_value": "Find What :"
-              }, {
-               "type": "string",
-               "m_label": "Wrap:",
-               "m_value": "-1"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4410,
-             "proportion": 0,
+             "m_type": 4403,
+             "proportion": 1,
              "border": 5,
              "gbSpan": ",",
              "gbPosition": ",",
              "m_styles": [],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_findString"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": "String to search"
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": true
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "ComboBox Choices:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Text Hint",
-               "m_value": "Type a string to search..."
-              }, {
-               "type": "string",
-               "m_label": "Selection:",
-               "m_value": "-1"
-              }, {
-               "type": "string",
-               "m_label": "Value:",
-               "m_value": ""
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4405,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_staticText2"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "Label:",
-               "m_value": "Look in :"
-              }, {
-               "type": "string",
-               "m_label": "Wrap:",
-               "m_value": "-1"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4401,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
-             "m_properties": [{
                "type": "string",
                "m_label": "Minimum Size:",
                "m_value": "-1,-1"
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "bSizer10"
+               "m_value": "fgSizer41"
               }, {
                "type": "string",
                "m_label": "Style:",
                "m_value": ""
               }, {
-               "type": "choice",
-               "m_label": "Orientation:",
-               "m_selection": 1,
-               "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+               "type": "string",
+               "m_label": "# Columns:",
+               "m_value": "2"
+              }, {
+               "type": "string",
+               "m_label": "# Rows:",
+               "m_value": "0"
+              }, {
+               "type": "string",
+               "m_label": "Growable columns:",
+               "m_value": "1"
+              }, {
+               "type": "string",
+               "m_label": "Growable rows:",
+               "m_value": "1"
+              }, {
+               "type": "string",
+               "m_label": "Horizontal gap:",
+               "m_value": "0"
+              }, {
+               "type": "string",
+               "m_label": "Vertical gap:",
+               "m_value": "0"
               }],
              "m_events": [],
              "m_children": [{
-               "m_type": 4465,
-               "proportion": 1,
-               "border": 5,
-               "gbSpan": ",",
-               "gbPosition": ",",
-               "m_styles": [],
-               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-               "m_properties": [{
-                 "type": "winid",
-                 "m_label": "ID:",
-                 "m_winid": "wxID_ANY"
-                }, {
-                 "type": "string",
-                 "m_label": "Size:",
-                 "m_value": ""
-                }, {
-                 "type": "string",
-                 "m_label": "Minimum Size:",
-                 "m_value": ""
-                }, {
-                 "type": "string",
-                 "m_label": "Name:",
-                 "m_value": "m_dirPicker"
-                }, {
-                 "type": "multi-string",
-                 "m_label": "Tooltip:",
-                 "m_value": ""
-                }, {
-                 "type": "colour",
-                 "m_label": "Bg Colour:",
-                 "colour": "<Default>"
-                }, {
-                 "type": "colour",
-                 "m_label": "Fg Colour:",
-                 "colour": "<Default>"
-                }, {
-                 "type": "font",
-                 "m_label": "Font:",
-                 "m_value": ""
-                }, {
-                 "type": "bool",
-                 "m_label": "Hidden",
-                 "m_value": false
-                }, {
-                 "type": "bool",
-                 "m_label": "Disabled",
-                 "m_value": false
-                }, {
-                 "type": "bool",
-                 "m_label": "Focused",
-                 "m_value": false
-                }, {
-                 "type": "string",
-                 "m_label": "Class Name:",
-                 "m_value": ""
-                }, {
-                 "type": "string",
-                 "m_label": "Include File:",
-                 "m_value": ""
-                }, {
-                 "type": "string",
-                 "m_label": "Style:",
-                 "m_value": ""
-                }],
-               "m_events": [],
-               "m_children": [],
-               "m_templInfoName": "DirPicker"
-              }, {
-               "m_type": 4400,
+               "m_type": 4405,
                "proportion": 0,
                "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
-               "m_styles": ["wxBU_EXACTFIT"],
-               "m_sizerFlags": ["wxRIGHT", "wxALIGN_CENTER_VERTICAL"],
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
                "m_properties": [{
                  "type": "winid",
                  "m_label": "ID:",
@@ -645,7 +338,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_btnAddPath"
+                 "m_value": "m_staticText1"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
@@ -687,91 +380,24 @@
                  "m_label": "Style:",
                  "m_value": ""
                 }, {
-                 "type": "string",
+                 "type": "multi-string",
                  "m_label": "Label:",
-                 "m_value": "&Add"
-                }, {
-                 "type": "bool",
-                 "m_label": "Default Button",
-                 "m_value": false
-                }, {
-                 "type": "bitmapPicker",
-                 "m_label": "Bitmap File:",
-                 "m_path": ""
-                }, {
-                 "type": "choice",
-                 "m_label": "Direction",
-                 "m_selection": 0,
-                 "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+                 "m_value": "Find What :"
                 }, {
                  "type": "string",
-                 "m_label": "Margins:",
-                 "m_value": "2,2"
+                 "m_label": "Wrap:",
+                 "m_value": "-1"
                 }],
-               "m_events": [{
-                 "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                 "m_eventClass": "wxCommandEvent",
-                 "m_eventHandler": "wxCommandEventHandler",
-                 "m_functionNameAndSignature": "OnAddPath(wxCommandEvent& event)",
-                 "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-                 "m_noBody": false
-                }],
+               "m_events": [],
                "m_children": []
-              }]
-            }, {
-             "m_type": 4454,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxEXPAND"],
-             "m_properties": [{
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "Spacer93"
               }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": "0,0"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4401,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxEXPAND"],
-             "m_properties": [{
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": "-1,-1"
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "bSizer9"
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "choice",
-               "m_label": "Orientation:",
-               "m_selection": 1,
-               "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
-              }],
-             "m_events": [],
-             "m_children": [{
-               "m_type": 4412,
-               "proportion": 1,
+               "m_type": 4410,
+               "proportion": 0,
                "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
                "m_styles": [],
-               "m_sizerFlags": ["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                "m_properties": [{
                  "type": "winid",
                  "m_label": "ID:",
@@ -787,11 +413,730 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_listPaths"
+                 "m_value": "m_findString"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "String to search"
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": true
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "multi-string",
+                 "m_label": "ComboBox Choices:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Text Hint",
+                 "m_value": "Type a string to search..."
+                }, {
+                 "type": "string",
+                 "m_label": "Selection:",
+                 "m_value": "-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Value:",
+                 "m_value": ""
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4405,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_TOP"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_staticText2"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
                  "m_value": ""
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Label:",
+                 "m_value": "Look in :"
+                }, {
+                 "type": "string",
+                 "m_label": "Wrap:",
+                 "m_value": "-1"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4401,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxEXPAND"],
+               "m_properties": [{
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "bSizer9"
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "choice",
+                 "m_label": "Orientation:",
+                 "m_selection": 1,
+                 "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+                }],
+               "m_events": [],
+               "m_children": [{
+                 "m_type": 4412,
+                 "proportion": 1,
+                 "border": 5,
+                 "gbSpan": ",",
+                 "gbPosition": ",",
+                 "m_styles": ["wxLB_SORT", "wxLB_MULTIPLE"],
+                 "m_sizerFlags": ["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+                 "m_properties": [{
+                   "type": "winid",
+                   "m_label": "ID:",
+                   "m_winid": "wxID_ANY"
+                  }, {
+                   "type": "string",
+                   "m_label": "Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Minimum Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Name:",
+                   "m_value": "m_listPaths"
+                  }, {
+                   "type": "multi-string",
+                   "m_label": "Tooltip:",
+                   "m_value": ""
+                  }, {
+                   "type": "colour",
+                   "m_label": "Bg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "colour",
+                   "m_label": "Fg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "font",
+                   "m_label": "Font:",
+                   "m_value": ""
+                  }, {
+                   "type": "bool",
+                   "m_label": "Hidden",
+                   "m_value": false
+                  }, {
+                   "type": "bool",
+                   "m_label": "Disabled",
+                   "m_value": false
+                  }, {
+                   "type": "bool",
+                   "m_label": "Focused",
+                   "m_value": false
+                  }, {
+                   "type": "string",
+                   "m_label": "Class Name:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Include File:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Style:",
+                   "m_value": ""
+                  }, {
+                   "type": "multi-string",
+                   "m_label": "Choices:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Selection:",
+                   "m_value": "-1"
+                  }],
+                 "m_events": [],
+                 "m_children": []
+                }, {
+                 "m_type": 4401,
+                 "proportion": 0,
+                 "border": 5,
+                 "gbSpan": "1,1",
+                 "gbPosition": "0,0",
+                 "m_styles": [],
+                 "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND"],
+                 "m_properties": [{
+                   "type": "string",
+                   "m_label": "Minimum Size:",
+                   "m_value": "-1,-1"
+                  }, {
+                   "type": "string",
+                   "m_label": "Name:",
+                   "m_value": "boxSizer1"
+                  }, {
+                   "type": "string",
+                   "m_label": "Style:",
+                   "m_value": ""
+                  }, {
+                   "type": "choice",
+                   "m_label": "Orientation:",
+                   "m_selection": 0,
+                   "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+                  }],
+                 "m_events": [],
+                 "m_children": [{
+                   "m_type": 4400,
+                   "proportion": 0,
+                   "border": 5,
+                   "gbSpan": ",",
+                   "gbPosition": ",",
+                   "m_styles": ["wxBU_EXACTFIT"],
+                   "m_sizerFlags": ["wxTOP", "wxBOTTOM", "wxEXPAND"],
+                   "m_properties": [{
+                     "type": "winid",
+                     "m_label": "ID:",
+                     "m_winid": "wxID_ANY"
+                    }, {
+                     "type": "string",
+                     "m_label": "Size:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Minimum Size:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Name:",
+                     "m_value": "m_btnAddPath"
+                    }, {
+                     "type": "multi-string",
+                     "m_label": "Tooltip:",
+                     "m_value": "Add search path"
+                    }, {
+                     "type": "colour",
+                     "m_label": "Bg Colour:",
+                     "colour": "<Default>"
+                    }, {
+                     "type": "colour",
+                     "m_label": "Fg Colour:",
+                     "colour": "<Default>"
+                    }, {
+                     "type": "font",
+                     "m_label": "Font:",
+                     "m_value": ""
+                    }, {
+                     "type": "bool",
+                     "m_label": "Hidden",
+                     "m_value": false
+                    }, {
+                     "type": "bool",
+                     "m_label": "Disabled",
+                     "m_value": false
+                    }, {
+                     "type": "bool",
+                     "m_label": "Focused",
+                     "m_value": false
+                    }, {
+                     "type": "string",
+                     "m_label": "Class Name:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Include File:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Style:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Label:",
+                     "m_value": ""
+                    }, {
+                     "type": "bool",
+                     "m_label": "Default Button",
+                     "m_value": false
+                    }, {
+                     "type": "bitmapPicker",
+                     "m_label": "Bitmap File:",
+                     "m_path": "wxART_PLUS,wxART_TOOLBAR,16"
+                    }, {
+                     "type": "choice",
+                     "m_label": "Direction",
+                     "m_selection": 0,
+                     "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+                    }, {
+                     "type": "string",
+                     "m_label": "Margins:",
+                     "m_value": "2,2"
+                    }],
+                   "m_events": [{
+                     "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                     "m_eventClass": "wxCommandEvent",
+                     "m_eventHandler": "wxCommandEventHandler",
+                     "m_functionNameAndSignature": "OnAddPath(wxCommandEvent& event)",
+                     "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                     "m_noBody": false
+                    }],
+                   "m_children": []
+                  }, {
+                   "m_type": 4400,
+                   "proportion": 0,
+                   "border": 5,
+                   "gbSpan": ",",
+                   "gbPosition": ",",
+                   "m_styles": ["wxBU_EXACTFIT"],
+                   "m_sizerFlags": ["wxTOP", "wxEXPAND"],
+                   "m_properties": [{
+                     "type": "winid",
+                     "m_label": "ID:",
+                     "m_winid": "wxID_ANY"
+                    }, {
+                     "type": "string",
+                     "m_label": "Size:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Minimum Size:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Name:",
+                     "m_value": "m_btnClearSelectedPath"
+                    }, {
+                     "type": "multi-string",
+                     "m_label": "Tooltip:",
+                     "m_value": "Remove the selected path"
+                    }, {
+                     "type": "colour",
+                     "m_label": "Bg Colour:",
+                     "colour": "<Default>"
+                    }, {
+                     "type": "colour",
+                     "m_label": "Fg Colour:",
+                     "colour": "<Default>"
+                    }, {
+                     "type": "font",
+                     "m_label": "Font:",
+                     "m_value": ""
+                    }, {
+                     "type": "bool",
+                     "m_label": "Hidden",
+                     "m_value": false
+                    }, {
+                     "type": "bool",
+                     "m_label": "Disabled",
+                     "m_value": false
+                    }, {
+                     "type": "bool",
+                     "m_label": "Focused",
+                     "m_value": false
+                    }, {
+                     "type": "string",
+                     "m_label": "Class Name:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Include File:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Style:",
+                     "m_value": ""
+                    }, {
+                     "type": "string",
+                     "m_label": "Label:",
+                     "m_value": ""
+                    }, {
+                     "type": "bool",
+                     "m_label": "Default Button",
+                     "m_value": false
+                    }, {
+                     "type": "bitmapPicker",
+                     "m_label": "Bitmap File:",
+                     "m_path": "wxART_DELETE,wxART_TOOLBAR,16"
+                    }, {
+                     "type": "choice",
+                     "m_label": "Direction",
+                     "m_selection": 0,
+                     "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+                    }, {
+                     "type": "string",
+                     "m_label": "Margins:",
+                     "m_value": "2,2"
+                    }],
+                   "m_events": [{
+                     "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                     "m_eventClass": "wxCommandEvent",
+                     "m_eventHandler": "wxCommandEventHandler",
+                     "m_functionNameAndSignature": "OnClearSelectedPath(wxCommandEvent& event)",
+                     "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                     "m_noBody": false
+                    }, {
+                     "m_eventName": "wxEVT_UPDATE_UI",
+                     "m_eventClass": "wxUpdateUIEvent",
+                     "m_eventHandler": "wxUpdateUIEventHandler",
+                     "m_functionNameAndSignature": "OnClearSelectedPathUI(wxUpdateUIEvent& event)",
+                     "m_description": "Process a wxEVT_UPDATE_UI event",
+                     "m_noBody": false
+                    }],
+                   "m_children": []
+                  }]
+                }]
+              }, {
+               "m_type": 4405,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_staticText3"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": ""
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Label:",
+                 "m_value": "File Mask:"
+                }, {
+                 "type": "string",
+                 "m_label": "Wrap:",
+                 "m_value": "-1"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4410,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_fileTypes"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "Search these file types"
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "multi-string",
+                 "m_label": "ComboBox Choices:",
+                 "m_value": "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
+                }, {
+                 "type": "string",
+                 "m_label": "Text Hint",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Selection:",
+                 "m_value": "0"
+                }, {
+                 "type": "string",
+                 "m_label": "Value:",
+                 "m_value": "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4405,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_staticText5"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": ""
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Label:",
+                 "m_value": "Files Encoding:"
+                }, {
+                 "type": "string",
+                 "m_label": "Wrap:",
+                 "m_value": "-1"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4411,
+               "proportion": 1,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_choiceEncoding"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "Use this file encoding when scanning files for matches"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -835,18 +1180,93 @@
                 }, {
                  "type": "string",
                  "m_label": "Selection:",
-                 "m_value": "-1"
+                 "m_value": "0"
                 }],
                "m_events": [],
                "m_children": []
               }, {
-               "m_type": 4401,
+               "m_type": 4405,
                "proportion": 0,
                "border": 5,
                "gbSpan": "1,1",
                "gbPosition": "0,0",
                "m_styles": [],
-               "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND"],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_ANY"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": "-1,-1"
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_staticText97"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": ""
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Label:",
+                 "m_value": "Options:"
+                }, {
+                 "type": "string",
+                 "m_label": "Wrap:",
+                 "m_value": "-1"
+                }],
+               "m_events": [],
+               "m_children": []
+              }, {
+               "m_type": 4403,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxEXPAND"],
                "m_properties": [{
                  "type": "string",
                  "m_label": "Minimum Size:",
@@ -854,26 +1274,45 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "boxSizer1"
+                 "m_value": "fgSizer3"
                 }, {
                  "type": "string",
                  "m_label": "Style:",
                  "m_value": ""
                 }, {
-                 "type": "choice",
-                 "m_label": "Orientation:",
-                 "m_selection": 0,
-                 "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
+                 "type": "string",
+                 "m_label": "# Columns:",
+                 "m_value": "3"
+                }, {
+                 "type": "string",
+                 "m_label": "# Rows:",
+                 "m_value": "0"
+                }, {
+                 "type": "string",
+                 "m_label": "Growable columns:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Growable rows:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Horizontal gap:",
+                 "m_value": "0"
+                }, {
+                 "type": "string",
+                 "m_label": "Vertical gap:",
+                 "m_value": "0"
                 }],
                "m_events": [],
                "m_children": [{
-                 "m_type": 4400,
+                 "m_type": 4415,
                  "proportion": 0,
                  "border": 5,
                  "gbSpan": ",",
                  "gbPosition": ",",
-                 "m_styles": ["wxBU_EXACTFIT"],
-                 "m_sizerFlags": ["wxTOP", "wxBOTTOM", "wxEXPAND"],
+                 "m_styles": [],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                  "m_properties": [{
                    "type": "winid",
                    "m_label": "ID:",
@@ -889,11 +1328,11 @@
                   }, {
                    "type": "string",
                    "m_label": "Name:",
-                   "m_value": "m_btnRemovelPath"
+                   "m_value": "m_matchCase"
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": "Remove the selected search path"
+                   "m_value": "Toggle case sensitive search"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -933,49 +1372,22 @@
                   }, {
                    "type": "string",
                    "m_label": "Label:",
-                   "m_value": ""
+                   "m_value": "&Match case"
                   }, {
                    "type": "bool",
-                   "m_label": "Default Button",
+                   "m_label": "Value:",
                    "m_value": false
-                  }, {
-                   "type": "bitmapPicker",
-                   "m_label": "Bitmap File:",
-                   "m_path": "../icons/clear-all.png"
-                  }, {
-                   "type": "choice",
-                   "m_label": "Direction",
-                   "m_selection": 0,
-                   "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
-                  }, {
-                   "type": "string",
-                   "m_label": "Margins:",
-                   "m_value": "2,2"
                   }],
-                 "m_events": [{
-                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                   "m_eventClass": "wxCommandEvent",
-                   "m_eventHandler": "wxCommandEventHandler",
-                   "m_functionNameAndSignature": "OnRemovePath(wxCommandEvent& event)",
-                   "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-                   "m_noBody": false
-                  }, {
-                   "m_eventName": "wxEVT_UPDATE_UI",
-                   "m_eventClass": "wxUpdateUIEvent",
-                   "m_eventHandler": "wxUpdateUIEventHandler",
-                   "m_functionNameAndSignature": "OnRemovePathUI(wxUpdateUIEvent& event)",
-                   "m_description": "Process a wxEVT_UPDATE_UI event",
-                   "m_noBody": false
-                  }],
+                 "m_events": [],
                  "m_children": []
                 }, {
-                 "m_type": 4400,
+                 "m_type": 4415,
                  "proportion": 0,
                  "border": 5,
                  "gbSpan": ",",
                  "gbPosition": ",",
-                 "m_styles": ["wxBU_EXACTFIT"],
-                 "m_sizerFlags": ["wxTOP", "wxEXPAND"],
+                 "m_styles": [],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                  "m_properties": [{
                    "type": "winid",
                    "m_label": "ID:",
@@ -991,11 +1403,11 @@
                   }, {
                    "type": "string",
                    "m_label": "Name:",
-                   "m_value": "m_btnClearPaths"
+                   "m_value": "m_matchWholeWord"
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": "Clear the search path list"
+                   "m_value": "Toggle whole word search"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -1035,504 +1447,280 @@
                   }, {
                    "type": "string",
                    "m_label": "Label:",
+                   "m_value": "Match &whole word"
+                  }, {
+                   "type": "bool",
+                   "m_label": "Value:",
+                   "m_value": false
+                  }],
+                 "m_events": [],
+                 "m_children": []
+                }, {
+                 "m_type": 4415,
+                 "proportion": 0,
+                 "border": 5,
+                 "gbSpan": ",",
+                 "gbPosition": ",",
+                 "m_styles": [],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+                 "m_properties": [{
+                   "type": "winid",
+                   "m_label": "ID:",
+                   "m_winid": "wxID_ANY"
+                  }, {
+                   "type": "string",
+                   "m_label": "Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Minimum Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Name:",
+                   "m_value": "m_regualrExpression"
+                  }, {
+                   "type": "multi-string",
+                   "m_label": "Tooltip:",
+                   "m_value": "The 'Find What' field is a regular expression"
+                  }, {
+                   "type": "colour",
+                   "m_label": "Bg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "colour",
+                   "m_label": "Fg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "font",
+                   "m_label": "Font:",
                    "m_value": ""
                   }, {
                    "type": "bool",
-                   "m_label": "Default Button",
+                   "m_label": "Hidden",
                    "m_value": false
                   }, {
-                   "type": "bitmapPicker",
-                   "m_label": "Bitmap File:",
-                   "m_path": "../icons/delete-line.png"
+                   "type": "bool",
+                   "m_label": "Disabled",
+                   "m_value": false
                   }, {
-                   "type": "choice",
-                   "m_label": "Direction",
-                   "m_selection": 0,
-                   "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+                   "type": "bool",
+                   "m_label": "Focused",
+                   "m_value": false
                   }, {
                    "type": "string",
-                   "m_label": "Margins:",
-                   "m_value": "2,2"
-                  }],
-                 "m_events": [{
-                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                   "m_eventClass": "wxCommandEvent",
-                   "m_eventHandler": "wxCommandEventHandler",
-                   "m_functionNameAndSignature": "OnClearPaths(wxCommandEvent& event)",
-                   "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-                   "m_noBody": false
+                   "m_label": "Class Name:",
+                   "m_value": ""
                   }, {
-                   "m_eventName": "wxEVT_UPDATE_UI",
-                   "m_eventClass": "wxUpdateUIEvent",
-                   "m_eventHandler": "wxUpdateUIEventHandler",
-                   "m_functionNameAndSignature": "OnClearPathsUI(wxUpdateUIEvent& event)",
-                   "m_description": "Process a wxEVT_UPDATE_UI event",
-                   "m_noBody": false
+                   "type": "string",
+                   "m_label": "Include File:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Style:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Label:",
+                   "m_value": "Regular &expression"
+                  }, {
+                   "type": "bool",
+                   "m_label": "Value:",
+                   "m_value": false
                   }],
+                 "m_events": [],
+                 "m_children": []
+                }, {
+                 "m_type": 4415,
+                 "proportion": 0,
+                 "border": 5,
+                 "gbSpan": ",",
+                 "gbPosition": ",",
+                 "m_styles": [],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+                 "m_properties": [{
+                   "type": "winid",
+                   "m_label": "ID:",
+                   "m_winid": "wxID_ANY"
+                  }, {
+                   "type": "string",
+                   "m_label": "Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Minimum Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Name:",
+                   "m_value": "m_checkBoxSaveFilesBeforeSearching"
+                  }, {
+                   "type": "multi-string",
+                   "m_label": "Tooltip:",
+                   "m_value": "Save any modified files before search starts"
+                  }, {
+                   "type": "colour",
+                   "m_label": "Bg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "colour",
+                   "m_label": "Fg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "font",
+                   "m_label": "Font:",
+                   "m_value": ""
+                  }, {
+                   "type": "bool",
+                   "m_label": "Hidden",
+                   "m_value": false
+                  }, {
+                   "type": "bool",
+                   "m_label": "Disabled",
+                   "m_value": false
+                  }, {
+                   "type": "bool",
+                   "m_label": "Focused",
+                   "m_value": false
+                  }, {
+                   "type": "string",
+                   "m_label": "Class Name:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Include File:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Style:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Label:",
+                   "m_value": "&Save files before search"
+                  }, {
+                   "type": "bool",
+                   "m_label": "Value:",
+                   "m_value": false
+                  }],
+                 "m_events": [],
+                 "m_children": []
+                }, {
+                 "m_type": 4415,
+                 "proportion": 0,
+                 "border": 5,
+                 "gbSpan": ",",
+                 "gbPosition": ",",
+                 "m_styles": [],
+                 "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+                 "m_properties": [{
+                   "type": "winid",
+                   "m_label": "ID:",
+                   "m_winid": "wxID_ANY"
+                  }, {
+                   "type": "string",
+                   "m_label": "Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Minimum Size:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Name:",
+                   "m_value": "m_checkBoxSeparateTab"
+                  }, {
+                   "type": "multi-string",
+                   "m_label": "Tooltip:",
+                   "m_value": ""
+                  }, {
+                   "type": "colour",
+                   "m_label": "Bg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "colour",
+                   "m_label": "Fg Colour:",
+                   "colour": "<Default>"
+                  }, {
+                   "type": "font",
+                   "m_label": "Font:",
+                   "m_value": ""
+                  }, {
+                   "type": "bool",
+                   "m_label": "Hidden",
+                   "m_value": false
+                  }, {
+                   "type": "bool",
+                   "m_label": "Disabled",
+                   "m_value": false
+                  }, {
+                   "type": "bool",
+                   "m_label": "Focused",
+                   "m_value": false
+                  }, {
+                   "type": "string",
+                   "m_label": "Class Name:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Include File:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Style:",
+                   "m_value": ""
+                  }, {
+                   "type": "string",
+                   "m_label": "Label:",
+                   "m_value": "Use new tab per search"
+                  }, {
+                   "type": "bool",
+                   "m_label": "Value:",
+                   "m_value": true
+                  }],
+                 "m_events": [],
                  "m_children": []
                 }]
               }]
             }, {
-             "m_type": 4405,
+             "m_type": 4401,
              "proportion": 0,
              "border": 5,
              "gbSpan": ",",
              "gbPosition": ",",
              "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
+             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
              "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
                "type": "string",
                "m_label": "Minimum Size:",
-               "m_value": ""
+               "m_value": "-1,-1"
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_staticText3"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
+               "m_value": "bSizer2"
               }, {
                "type": "string",
                "m_label": "Style:",
                "m_value": ""
               }, {
-               "type": "multi-string",
-               "m_label": "Label:",
-               "m_value": "File Mask:"
-              }, {
-               "type": "string",
-               "m_label": "Wrap:",
-               "m_value": "-1"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4410,
-             "proportion": 1,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_fileTypes"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": "Search these file types"
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "ComboBox Choices:",
-               "m_value": "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
-              }, {
-               "type": "string",
-               "m_label": "Text Hint",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Selection:",
-               "m_value": "0"
-              }, {
-               "type": "string",
-               "m_label": "Value:",
-               "m_value": "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4405,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_staticText5"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "Label:",
-               "m_value": "Files Encoding:"
-              }, {
-               "type": "string",
-               "m_label": "Wrap:",
-               "m_value": "-1"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4411,
-             "proportion": 1,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_choiceEncoding"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": "Use this file encoding when scanning files for matches"
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "Choices:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Selection:",
-               "m_value": "0"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4405,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_staticText7"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "multi-string",
-               "m_label": "Label:",
-               "m_value": "Options:"
-              }, {
-               "type": "string",
-               "m_label": "Wrap:",
-               "m_value": "-1"
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
-             "m_type": 4442,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_notebook1"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
+               "type": "choice",
+               "m_label": "Orientation:",
+               "m_selection": 0,
+               "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
               }],
              "m_events": [],
              "m_children": [{
-               "m_type": 4441,
+               "m_type": 4400,
                "proportion": 0,
-               "border": 0,
+               "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
-               "m_styles": ["wxTAB_TRAVERSAL"],
-               "m_sizerFlags": [],
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                "m_properties": [{
                  "type": "winid",
                  "m_label": "ID:",
-                 "m_winid": "wxID_ANY"
+                 "m_winid": "wxID_FIND"
                 }, {
                  "type": "string",
                  "m_label": "Size:",
@@ -1544,11 +1732,11 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_panel1"
+                 "m_value": "m_find"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": ""
+                 "m_value": "Begin search"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -1588,484 +1776,53 @@
                 }, {
                  "type": "string",
                  "m_label": "Label:",
-                 "m_value": "General"
+                 "m_value": "&Find"
+                }, {
+                 "type": "bool",
+                 "m_label": "Default Button",
+                 "m_value": true
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
                  "m_path": ""
                 }, {
-                 "type": "bool",
-                 "m_label": "Selected",
-                 "m_value": false
+                 "type": "choice",
+                 "m_label": "Direction",
+                 "m_selection": 0,
+                 "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
                 }, {
-                 "type": "bool",
-                 "m_label": "Null Page",
-                 "m_value": false
+                 "type": "string",
+                 "m_label": "Margins:",
+                 "m_value": "2,2"
                 }],
-               "m_events": [],
-               "m_children": [{
-                 "m_type": 4401,
-                 "proportion": 0,
-                 "border": 0,
-                 "gbSpan": ",",
-                 "gbPosition": ",",
-                 "m_styles": [],
-                 "m_sizerFlags": [],
-                 "m_properties": [{
-                   "type": "string",
-                   "m_label": "Minimum Size:",
-                   "m_value": "-1,-1"
-                  }, {
-                   "type": "string",
-                   "m_label": "Name:",
-                   "m_value": "bSizer6"
-                  }, {
-                   "type": "string",
-                   "m_label": "Style:",
-                   "m_value": ""
-                  }, {
-                   "type": "choice",
-                   "m_label": "Orientation:",
-                   "m_selection": 0,
-                   "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
-                  }],
-                 "m_events": [],
-                 "m_children": [{
-                   "m_type": 4403,
-                   "proportion": 0,
-                   "border": 5,
-                   "gbSpan": ",",
-                   "gbPosition": ",",
-                   "m_styles": [],
-                   "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-                   "m_properties": [{
-                     "type": "string",
-                     "m_label": "Minimum Size:",
-                     "m_value": "-1,-1"
-                    }, {
-                     "type": "string",
-                     "m_label": "Name:",
-                     "m_value": "fgSizer3"
-                    }, {
-                     "type": "string",
-                     "m_label": "Style:",
-                     "m_value": ""
-                    }, {
-                     "type": "string",
-                     "m_label": "# Columns:",
-                     "m_value": "1"
-                    }, {
-                     "type": "string",
-                     "m_label": "# Rows:",
-                     "m_value": "0"
-                    }, {
-                     "type": "string",
-                     "m_label": "Growable columns:",
-                     "m_value": ""
-                    }, {
-                     "type": "string",
-                     "m_label": "Growable rows:",
-                     "m_value": ""
-                    }, {
-                     "type": "string",
-                     "m_label": "Horizontal gap:",
-                     "m_value": "0"
-                    }, {
-                     "type": "string",
-                     "m_label": "Vertical gap:",
-                     "m_value": "0"
-                    }],
-                   "m_events": [],
-                   "m_children": [{
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_matchCase"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": "Toggle case sensitive search"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "&Match case"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }, {
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_matchWholeWord"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": "Toggle whole word search"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "Match &whole word"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }, {
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_regualrExpression"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": "The 'Find What' field is a regular expression"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "Regular &expression"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }, {
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_checkBoxSaveFilesBeforeSearching"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": "Save any modified files before search starts"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "&Save modified files before searching"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }, {
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_checkBoxSeparateTab"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": ""
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "Display search results in separate tab"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": true
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }]
-                  }]
-                }]
+               "m_events": [{
+                 "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                 "m_eventClass": "wxCommandEvent",
+                 "m_eventHandler": "wxCommandEventHandler",
+                 "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)",
+                 "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                 "m_noBody": false
+                }, {
+                 "m_eventName": "wxEVT_UPDATE_UI",
+                 "m_eventClass": "wxUpdateUIEvent",
+                 "m_eventHandler": "wxUpdateUIEventHandler",
+                 "m_functionNameAndSignature": "OnFindWhatUI(wxUpdateUIEvent& event)",
+                 "m_description": "Process a wxEVT_UPDATE_UI event",
+                 "m_noBody": false
+                }],
+               "m_children": []
               }, {
-               "m_type": 4441,
+               "m_type": 4400,
                "proportion": 0,
-               "border": 0,
+               "border": 5,
                "gbSpan": ",",
                "gbPosition": ",",
-               "m_styles": ["wxTAB_TRAVERSAL"],
-               "m_sizerFlags": [],
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                "m_properties": [{
                  "type": "winid",
                  "m_label": "ID:",
-                 "m_winid": "wxID_ANY"
+                 "m_winid": "wxID_REPLACE"
                 }, {
                  "type": "string",
                  "m_label": "Size:",
@@ -2077,11 +1834,11 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "m_panel2"
+                 "m_value": "m_replaceAll"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": ""
+                 "m_value": "Search for matches and place them in the 'Replace' window as candidates for possible replace operation"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -2121,846 +1878,232 @@
                 }, {
                  "type": "string",
                  "m_label": "Label:",
-                 "m_value": "C++"
+                 "m_value": "&Replace"
+                }, {
+                 "type": "bool",
+                 "m_label": "Default Button",
+                 "m_value": false
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
                  "m_path": ""
                 }, {
+                 "type": "choice",
+                 "m_label": "Direction",
+                 "m_selection": 0,
+                 "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+                }, {
+                 "type": "string",
+                 "m_label": "Margins:",
+                 "m_value": "2,2"
+                }],
+               "m_events": [{
+                 "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                 "m_eventClass": "wxCommandEvent",
+                 "m_eventHandler": "wxCommandEventHandler",
+                 "m_functionNameAndSignature": "OnReplace(wxCommandEvent& event)",
+                 "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                 "m_noBody": false
+                }, {
+                 "m_eventName": "wxEVT_UPDATE_UI",
+                 "m_eventClass": "wxUpdateUIEvent",
+                 "m_eventHandler": "wxUpdateUIEventHandler",
+                 "m_functionNameAndSignature": "OnFindWhatUI(wxUpdateUIEvent& event)",
+                 "m_description": "Process a wxEVT_UPDATE_UI event",
+                 "m_noBody": false
+                }],
+               "m_children": []
+              }, {
+               "m_type": 4400,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_STOP"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_stop"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "Stop the current search"
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
                  "type": "bool",
-                 "m_label": "Selected",
+                 "m_label": "Hidden",
                  "m_value": false
                 }, {
                  "type": "bool",
-                 "m_label": "Null Page",
+                 "m_label": "Disabled",
                  "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Label:",
+                 "m_value": "Sto&p"
+                }, {
+                 "type": "bool",
+                 "m_label": "Default Button",
+                 "m_value": false
+                }, {
+                 "type": "bitmapPicker",
+                 "m_label": "Bitmap File:",
+                 "m_path": ""
+                }, {
+                 "type": "choice",
+                 "m_label": "Direction",
+                 "m_selection": 0,
+                 "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+                }, {
+                 "type": "string",
+                 "m_label": "Margins:",
+                 "m_value": "2,2"
                 }],
-               "m_events": [],
-               "m_children": [{
-                 "m_type": 4401,
-                 "proportion": 0,
-                 "border": 0,
-                 "gbSpan": ",",
-                 "gbPosition": ",",
-                 "m_styles": [],
-                 "m_sizerFlags": [],
-                 "m_properties": [{
-                   "type": "string",
-                   "m_label": "Minimum Size:",
-                   "m_value": "-1,-1"
-                  }, {
-                   "type": "string",
-                   "m_label": "Name:",
-                   "m_value": "bSizer7"
-                  }, {
-                   "type": "string",
-                   "m_label": "Style:",
-                   "m_value": ""
-                  }, {
-                   "type": "choice",
-                   "m_label": "Orientation:",
-                   "m_selection": 0,
-                   "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
-                  }],
-                 "m_events": [],
-                 "m_children": [{
-                   "m_type": 4403,
-                   "proportion": 0,
-                   "border": 5,
-                   "gbSpan": ",",
-                   "gbPosition": ",",
-                   "m_styles": [],
-                   "m_sizerFlags": ["wxEXPAND"],
-                   "m_properties": [{
-                     "type": "string",
-                     "m_label": "Minimum Size:",
-                     "m_value": "-1,-1"
-                    }, {
-                     "type": "string",
-                     "m_label": "Name:",
-                     "m_value": "fgSizer4"
-                    }, {
-                     "type": "string",
-                     "m_label": "Style:",
-                     "m_value": ""
-                    }, {
-                     "type": "string",
-                     "m_label": "# Columns:",
-                     "m_value": "1"
-                    }, {
-                     "type": "string",
-                     "m_label": "# Rows:",
-                     "m_value": "0"
-                    }, {
-                     "type": "string",
-                     "m_label": "Growable columns:",
-                     "m_value": ""
-                    }, {
-                     "type": "string",
-                     "m_label": "Growable rows:",
-                     "m_value": ""
-                    }, {
-                     "type": "string",
-                     "m_label": "Horizontal gap:",
-                     "m_value": "0"
-                    }, {
-                     "type": "string",
-                     "m_label": "Vertical gap:",
-                     "m_value": "0"
-                    }],
-                   "m_events": [],
-                   "m_children": [{
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_printScope"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": "Display the class + function name for the matches"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "Display the C++ scope of the match"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }, {
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_checkBoxSkipMatchesFoundInComments"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": ""
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "Hide matches found in comments"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }, {
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_checkBoxSkipMatchesFoundInStrings"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": ""
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "Hide matches found inside strings"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [],
-                     "m_children": []
-                    }, {
-                     "m_type": 4415,
-                     "proportion": 0,
-                     "border": 5,
-                     "gbSpan": ",",
-                     "gbPosition": ",",
-                     "m_styles": [],
-                     "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-                     "m_properties": [{
-                       "type": "winid",
-                       "m_label": "ID:",
-                       "m_winid": "wxID_ANY"
-                      }, {
-                       "type": "string",
-                       "m_label": "Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Minimum Size:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Name:",
-                       "m_value": "m_checkBoxHighlighStringComments"
-                      }, {
-                       "type": "multi-string",
-                       "m_label": "Tooltip:",
-                       "m_value": ""
-                      }, {
-                       "type": "colour",
-                       "m_label": "Bg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "colour",
-                       "m_label": "Fg Colour:",
-                       "colour": "<Default>"
-                      }, {
-                       "type": "font",
-                       "m_label": "Font:",
-                       "m_value": ""
-                      }, {
-                       "type": "bool",
-                       "m_label": "Hidden",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Disabled",
-                       "m_value": false
-                      }, {
-                       "type": "bool",
-                       "m_label": "Focused",
-                       "m_value": false
-                      }, {
-                       "type": "string",
-                       "m_label": "Class Name:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Include File:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Style:",
-                       "m_value": ""
-                      }, {
-                       "type": "string",
-                       "m_label": "Label:",
-                       "m_value": "Use different colour for matches found in comments"
-                      }, {
-                       "type": "bool",
-                       "m_label": "Value:",
-                       "m_value": false
-                      }],
-                     "m_events": [{
-                       "m_eventName": "wxEVT_UPDATE_UI",
-                       "m_eventClass": "wxUpdateUIEvent",
-                       "m_eventHandler": "wxUpdateUIEventHandler",
-                       "m_functionNameAndSignature": "OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event)",
-                       "m_description": "Process a wxEVT_UPDATE_UI event",
-                       "m_noBody": false
-                      }],
-                     "m_children": []
-                    }]
-                  }]
-                }]
+               "m_events": [{
+                 "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                 "m_eventClass": "wxCommandEvent",
+                 "m_eventHandler": "wxCommandEventHandler",
+                 "m_functionNameAndSignature": "OnStop(wxCommandEvent& event)",
+                 "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                 "m_noBody": false
+                }],
+               "m_children": []
+              }, {
+               "m_type": 4400,
+               "proportion": 0,
+               "border": 5,
+               "gbSpan": ",",
+               "gbPosition": ",",
+               "m_styles": [],
+               "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+               "m_properties": [{
+                 "type": "winid",
+                 "m_label": "ID:",
+                 "m_winid": "wxID_CANCEL"
+                }, {
+                 "type": "string",
+                 "m_label": "Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Minimum Size:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Name:",
+                 "m_value": "m_cancel"
+                }, {
+                 "type": "multi-string",
+                 "m_label": "Tooltip:",
+                 "m_value": "Close this dialog"
+                }, {
+                 "type": "colour",
+                 "m_label": "Bg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "colour",
+                 "m_label": "Fg Colour:",
+                 "colour": "<Default>"
+                }, {
+                 "type": "font",
+                 "m_label": "Font:",
+                 "m_value": ""
+                }, {
+                 "type": "bool",
+                 "m_label": "Hidden",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Disabled",
+                 "m_value": false
+                }, {
+                 "type": "bool",
+                 "m_label": "Focused",
+                 "m_value": false
+                }, {
+                 "type": "string",
+                 "m_label": "Class Name:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Include File:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Style:",
+                 "m_value": ""
+                }, {
+                 "type": "string",
+                 "m_label": "Label:",
+                 "m_value": "Close"
+                }, {
+                 "type": "bool",
+                 "m_label": "Default Button",
+                 "m_value": false
+                }, {
+                 "type": "bitmapPicker",
+                 "m_label": "Bitmap File:",
+                 "m_path": ""
+                }, {
+                 "type": "choice",
+                 "m_label": "Direction",
+                 "m_selection": 0,
+                 "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+                }, {
+                 "type": "string",
+                 "m_label": "Margins:",
+                 "m_value": "2,2"
+                }],
+               "m_events": [{
+                 "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                 "m_eventClass": "wxCommandEvent",
+                 "m_eventHandler": "wxCommandEventHandler",
+                 "m_functionNameAndSignature": "OnButtonClose(wxCommandEvent& event)",
+                 "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                 "m_noBody": false
+                }],
+               "m_children": []
               }]
-            }, {
-             "m_type": 4454,
-             "proportion": 0,
-             "border": 10,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "Spacer121"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": "0,0"
-              }],
-             "m_events": [],
-             "m_children": []
-            }]
-          }, {
-           "m_type": 4401,
-           "proportion": 0,
-           "border": 5,
-           "gbSpan": ",",
-           "gbPosition": ",",
-           "m_styles": [],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-           "m_properties": [{
-             "type": "string",
-             "m_label": "Minimum Size:",
-             "m_value": "-1,-1"
-            }, {
-             "type": "string",
-             "m_label": "Name:",
-             "m_value": "bSizer2"
-            }, {
-             "type": "string",
-             "m_label": "Style:",
-             "m_value": ""
-            }, {
-             "type": "choice",
-             "m_label": "Orientation:",
-             "m_selection": 0,
-             "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
-            }],
-           "m_events": [],
-           "m_children": [{
-             "m_type": 4400,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_FIND"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_find"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": "Begin search"
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Label:",
-               "m_value": "&Find"
-              }, {
-               "type": "bool",
-               "m_label": "Default Button",
-               "m_value": true
-              }, {
-               "type": "bitmapPicker",
-               "m_label": "Bitmap File:",
-               "m_path": ""
-              }, {
-               "type": "choice",
-               "m_label": "Direction",
-               "m_selection": 0,
-               "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
-              }, {
-               "type": "string",
-               "m_label": "Margins:",
-               "m_value": "2,2"
-              }],
-             "m_events": [{
-               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-               "m_eventClass": "wxCommandEvent",
-               "m_eventHandler": "wxCommandEventHandler",
-               "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)",
-               "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-               "m_noBody": false
-              }, {
-               "m_eventName": "wxEVT_UPDATE_UI",
-               "m_eventClass": "wxUpdateUIEvent",
-               "m_eventHandler": "wxUpdateUIEventHandler",
-               "m_functionNameAndSignature": "OnFindWhatUI(wxUpdateUIEvent& event)",
-               "m_description": "Process a wxEVT_UPDATE_UI event",
-               "m_noBody": false
-              }],
-             "m_children": []
-            }, {
-             "m_type": 4400,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_REPLACE"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_replaceAll"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": "Search for matches and place them in the 'Replace' window as candidates for possible replace operation"
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Label:",
-               "m_value": "&Replace"
-              }, {
-               "type": "bool",
-               "m_label": "Default Button",
-               "m_value": false
-              }, {
-               "type": "bitmapPicker",
-               "m_label": "Bitmap File:",
-               "m_path": ""
-              }, {
-               "type": "choice",
-               "m_label": "Direction",
-               "m_selection": 0,
-               "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
-              }, {
-               "type": "string",
-               "m_label": "Margins:",
-               "m_value": "2,2"
-              }],
-             "m_events": [{
-               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-               "m_eventClass": "wxCommandEvent",
-               "m_eventHandler": "wxCommandEventHandler",
-               "m_functionNameAndSignature": "OnReplace(wxCommandEvent& event)",
-               "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-               "m_noBody": false
-              }, {
-               "m_eventName": "wxEVT_UPDATE_UI",
-               "m_eventClass": "wxUpdateUIEvent",
-               "m_eventHandler": "wxUpdateUIEventHandler",
-               "m_functionNameAndSignature": "OnFindWhatUI(wxUpdateUIEvent& event)",
-               "m_description": "Process a wxEVT_UPDATE_UI event",
-               "m_noBody": false
-              }],
-             "m_children": []
-            }, {
-             "m_type": 4400,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_STOP"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_stop"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": "Stop the current search"
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Label:",
-               "m_value": "Sto&p"
-              }, {
-               "type": "bool",
-               "m_label": "Default Button",
-               "m_value": false
-              }, {
-               "type": "bitmapPicker",
-               "m_label": "Bitmap File:",
-               "m_path": ""
-              }, {
-               "type": "choice",
-               "m_label": "Direction",
-               "m_selection": 0,
-               "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
-              }, {
-               "type": "string",
-               "m_label": "Margins:",
-               "m_value": "2,2"
-              }],
-             "m_events": [{
-               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-               "m_eventClass": "wxCommandEvent",
-               "m_eventHandler": "wxCommandEventHandler",
-               "m_functionNameAndSignature": "OnStop(wxCommandEvent& event)",
-               "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-               "m_noBody": false
-              }],
-             "m_children": []
-            }, {
-             "m_type": 4400,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": ",",
-             "gbPosition": ",",
-             "m_styles": [],
-             "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_CANCEL"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Minimum Size:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_cancel"
-              }, {
-               "type": "multi-string",
-               "m_label": "Tooltip:",
-               "m_value": "Close this dialog"
-              }, {
-               "type": "colour",
-               "m_label": "Bg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "colour",
-               "m_label": "Fg Colour:",
-               "colour": "<Default>"
-              }, {
-               "type": "font",
-               "m_label": "Font:",
-               "m_value": ""
-              }, {
-               "type": "bool",
-               "m_label": "Hidden",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Disabled",
-               "m_value": false
-              }, {
-               "type": "bool",
-               "m_label": "Focused",
-               "m_value": false
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Label:",
-               "m_value": "Close"
-              }, {
-               "type": "bool",
-               "m_label": "Default Button",
-               "m_value": false
-              }, {
-               "type": "bitmapPicker",
-               "m_label": "Bitmap File:",
-               "m_path": ""
-              }, {
-               "type": "choice",
-               "m_label": "Direction",
-               "m_selection": 0,
-               "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
-              }, {
-               "type": "string",
-               "m_label": "Margins:",
-               "m_value": "2,2"
-              }],
-             "m_events": [{
-               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-               "m_eventClass": "wxCommandEvent",
-               "m_eventHandler": "wxCommandEventHandler",
-               "m_functionNameAndSignature": "OnButtonClose(wxCommandEvent& event)",
-               "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-               "m_noBody": false
-              }],
-             "m_children": []
             }]
           }]
         }]

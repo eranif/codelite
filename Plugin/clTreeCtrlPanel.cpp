@@ -18,12 +18,14 @@
 #include <wx/log.h>
 #include "cl_config.h"
 #include "clTreeCtrlPanelDefaultPage.h"
+#include <wx/app.h>
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
     , m_config(NULL)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
+    , m_options(kShowHiddenFiles | kShowHiddenFolders)
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
     // Allow DnD
@@ -124,6 +126,12 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_file"));
         PopupMenu(&menu);
+    } else {
+        // context menu elsewhere
+        wxMenu menu;
+        menu.Append(XRCID("open_folder_default_page"), _("Open Folder..."));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFolder, this, XRCID("open_folder_default_page"));
+        PopupMenu(&menu);
     }
 }
 
@@ -186,8 +194,16 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
         wxFileName fullpath(folderPath, filename);
         if(wxFileName::DirExists(fullpath.GetFullPath())) {
             // a folder
+            if(!(m_options & kShowHiddenFolders) && FileUtils::IsHidden(fullpath)) {
+                cont = dir.GetNext(&filename);
+                continue;
+            }
             DoAddFolder(parent, fullpath.GetFullPath());
         } else {
+            if(!(m_options & kShowHiddenFiles) && FileUtils::IsHidden(fullpath)) {
+                cont = dir.GetNext(&filename);
+                continue;
+            }
             DoAddFile(parent, fullpath.GetFullPath());
         }
         cont = dir.GetNext(&filename);
@@ -426,7 +442,7 @@ void clTreeCtrlPanel::OnDeleteSelections(wxCommandEvent& event)
 
     selectedItems.insert(folderItems.begin(), folderItems.end());
     selectedItems.insert(fileItems.begin(), fileItems.end());
-    
+
     // loop over the selections and remove all items that their parents
     // also exists in the selected items list
     for(size_t i = 0; i < folderItems.size(); ++i) {
@@ -778,4 +794,10 @@ void clTreeCtrlPanel::SetNewFileTemplate(const wxString& newfile, size_t charsTo
 {
     m_newfileTemplate = newfile;
     m_newfileTemplateHighlightLen = charsToHighlight;
+}
+
+void clTreeCtrlPanel::OnOpenFolder(wxCommandEvent& event)
+{
+    wxCommandEvent eventOpenFolder(wxEVT_MENU, XRCID("open_folder"));
+    wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(eventOpenFolder);
 }

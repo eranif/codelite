@@ -26,6 +26,7 @@
 #include "PHPEntityKeyword.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "globals.h"
+#include "clSelectSymbolDialog.h"
 
 ///////////////////////////////////////////////////////////////////
 
@@ -327,21 +328,53 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
     }
 }
 
+struct PHPFindSymbol_ClientData : public wxClientData {
+    PHPEntityBase::Ptr_t m_ptr;
+
+    PHPFindSymbol_ClientData(PHPEntityBase::Ptr_t ptr) { m_ptr = ptr; }
+    virtual ~PHPFindSymbol_ClientData() {}
+};
+
 void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
 {
+    e.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
         if(!CanCodeComplete(e)) return;
-
+        e.Skip(false);
         IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
-            PHPEntityBase::Ptr_t resolved = GetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition());
-            if(resolved) {
-                m_manager->OpenFile(resolved->GetFilename().GetFullPath(), "", resolved->GetLine());
+            wxString word = editor->GetWordAtCaret();
+            if(word.IsEmpty()) return;
+            PHPEntityBase::List_t symbols = m_lookupTable.FindSymbol(word);
+            if(symbols.size() == 1) {
+                PHPEntityBase::Ptr_t match = *symbols.begin();
+                DoOpenEditorForEntry(match);
+
+            } else {
+                
+                // Convert the matches to clSelectSymbolDialogEntry::List_t
+                clSelectSymbolDialogEntry::List_t entries;
+                std::for_each(symbols.begin(), symbols.end(), [&](PHPEntityBase::Ptr_t entry) {
+                    TagEntryPtr tag = DoPHPEntityToTagEntry(entry);
+                    wxBitmap bmp = wxCodeCompletionBox::GetBitmap(tag);
+
+                    clSelectSymbolDialogEntry m;
+                    m.bmp = bmp;
+                    m.name = entry->GetFullName();
+                    m.clientData = new PHPFindSymbol_ClientData(entry);
+                    m.help = tag->GetKind();
+                    entries.push_back(m);
+                });
+                
+                // Show selection dialog
+                clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);
+                if(dlg.ShowModal() != wxID_OK) return;
+                PHPFindSymbol_ClientData* cd = dynamic_cast<PHPFindSymbol_ClientData*>(dlg.GetSelection());
+                if(cd) {
+                    DoOpenEditorForEntry(cd->m_ptr);
+                }
             }
         }
-
-    } else {
-        e.Skip();
     }
 }
 
@@ -440,9 +473,9 @@ bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e)
 void PHPCodeCompletion::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
-    IEditor *editor = clGetManager()->GetActiveEditor();
+    IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     // check if the saved file is a PHP file
     // In case it is, then re-parse the file and store the results
     if(::IsPHPFile(editor)) {
@@ -612,22 +645,21 @@ void PHPCodeCompletion::GotoDefinition(IEditor* editor, int pos)
     CHECK_PTR_RET(definitionLocation);
 
     // Open the file (make sure we use the 'OpenFile' so we will get a browsing record)
-    if(m_manager->OpenFile(definitionLocation->filename, wxEmptyString, definitionLocation->linenumber)) {
-        // Select the word in the editor (its a new one)
-        IEditor* activeEditor = m_manager->GetActiveEditor();
-        if(activeEditor) {
-            int selectFromPos = activeEditor->GetCtrl()->PositionFromLine(definitionLocation->linenumber);
-            CallAfter(&PHPCodeCompletion::DoSelectInEditor, definitionLocation->what, selectFromPos);
-        }
+    IEditor* activeEditor =
+        m_manager->OpenFile(definitionLocation->filename, wxEmptyString, definitionLocation->linenumber);
+    if(activeEditor) {
+        int selectFromPos = activeEditor->GetCtrl()->PositionFromLine(definitionLocation->linenumber);
+        DoSelectInEditor(activeEditor, definitionLocation->what, selectFromPos);
     }
 }
 
-void PHPCodeCompletion::DoSelectInEditor(const wxString& what, int from)
+void PHPCodeCompletion::DoSelectInEditor(IEditor* editor, const wxString& what, int from)
 {
-    IEditor* activeEditor = m_manager->GetActiveEditor();
-    if(activeEditor) {
-        activeEditor->GetCtrl()->ClearSelections();
-        activeEditor->FindAndSelect(what, what, from, NULL);
+    if(editor) {
+        editor->GetCtrl()->ClearSelections();
+        if(!editor->FindAndSelect(what, what, from, NULL)) {
+            editor->SetCaretAt(from);
+        }
     }
 }
 
@@ -810,5 +842,16 @@ void PHPCodeCompletion::GetMembers(IEditor* editor, PHPEntityBase::List_t& membe
             // a member of a class
             members.push_back(child);
         }
+    }
+}
+
+void PHPCodeCompletion::DoOpenEditorForEntry(PHPEntityBase::Ptr_t entry)
+{
+    // Open the file (make sure we use the 'OpenFile' so we will get a browsing record)
+    IEditor* editor = m_manager->OpenFile(entry->GetFilename().GetFullPath(), wxEmptyString, entry->GetLine());
+    if(editor) {
+        // Select the word in the editor (its a new one)
+        int selectFromPos = editor->GetCtrl()->PositionFromLine(entry->GetLine());
+        DoSelectInEditor(editor, entry->GetShortName(), selectFromPos);
     }
 }

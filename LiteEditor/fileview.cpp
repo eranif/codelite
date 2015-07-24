@@ -1194,12 +1194,10 @@ void FileViewTree::OnLocalPrefs(wxCommandEvent& event)
 
 void FileViewTree::OnProjectProperties(wxCommandEvent& WXUNUSED(event))
 {
-    wxTreeItemId item = GetSingleSelection();
-    if(!item.IsOk()) {
-        return;
+    ProjectPtr p = GetSelectedProject();
+    if(p) {
+        clMainFrame::Get()->GetWorkspaceTab()->OpenProjectSettings(p->GetName());
     }
-    wxString projectName(GetItemText(item));
-    clMainFrame::Get()->GetWorkspaceTab()->OpenProjectSettings(projectName);
 }
 
 void FileViewTree::DoRemoveProject(const wxString& name)

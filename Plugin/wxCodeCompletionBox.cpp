@@ -25,6 +25,8 @@
 #define SCROLLBAR_WIDTH 12
 #define BOX_WIDTH (400 + SCROLLBAR_WIDTH)
 
+wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
+
 wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject, size_t flags)
     : wxCodeCompletionBoxBase(parent)
     , m_index(0)
@@ -47,7 +49,6 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     // Set the default bitmap list
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/class"));              // 0
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/struct"));             // 1
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/namespace"));          // 2
@@ -66,6 +67,8 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
+
+    InitializeDefaultBitmaps();
 
     // Increase the size by 2 pixel for each dimension
     rect.Inflate(2, 2);
@@ -246,12 +249,12 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_index = 0;
     m_stc = ctrl;
     m_allEntries = entries;
-    
+
     // Keep the start position
     if(m_startPos == wxNOT_FOUND) {
         m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
     }
-    
+
     // Filter all duplicate entries from the list (based on simple string match)
     RemoveDuplicateEntries();
     // Filter results based on user input
@@ -732,4 +735,37 @@ void wxCodeCompletionBox::RemoveDuplicateEntries()
         }
     }
     m_allEntries.swap(uniqueList);
+}
+
+wxBitmap wxCodeCompletionBox::GetBitmap(TagEntryPtr tag)
+{
+    InitializeDefaultBitmaps();
+    int imgId = GetImageId(tag);
+    if((imgId < 0) || (imgId >= (int)m_defaultBitmaps.size())) return wxNullBitmap;
+    return m_defaultBitmaps.at(imgId);
+}
+
+void wxCodeCompletionBox::InitializeDefaultBitmaps()
+{
+    if(m_defaultBitmaps.empty()) {
+        BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/class"));              // 0
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/struct"));             // 1
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/namespace"));          // 2
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_public"));      // 3
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/typedef"));            // 4
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_private"));     // 5
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_public"));      // 6
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_protected"));   // 7
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/function_private"));   // 8
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/function_public"));    // 9
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/function_protected")); // 10
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/typedef"));            // 11
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 12
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enumerator"));         // 13
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/cpp"));              // 14
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
+    }
 }

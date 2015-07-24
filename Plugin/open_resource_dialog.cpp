@@ -110,11 +110,9 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         m_textCtrlResourceName->SelectAll();
     }
 
-#ifdef __WXOSX__
-    m_dataview->GetColumn(0)->SetWidth(200);
+    m_dataview->GetColumn(0)->SetWidth(400);
     m_dataview->GetColumn(1)->SetWidth(60);
     m_dataview->GetColumn(2)->SetWidth(500);
-#endif
 
     bool showFiles = clConfig::Get().Read("OpenResourceDialog/ShowFiles", true);
     bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);
@@ -165,7 +163,6 @@ void OpenResourceDialog::OnEntryActivated(wxDataViewEvent& event)
     OpenResourceDialogItemData* data =
         dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(event.GetItem()));
     if(data) {
-        m_selection = *data;
         EndModal(wxID_OK);
     }
 }
@@ -355,7 +352,11 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
 
-void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_selection.IsOk()); }
+void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
+{
+    wxDataViewItem item = m_dataview->GetSelection();
+    event.Enable(item.IsOk());
+}
 
 bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
 
@@ -364,10 +365,6 @@ void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
     CHECK_ITEM_RET(item);
     m_dataview->Select(item);
     m_dataview->EnsureVisible(item);
-
-    // display the full name at the bottom static text control
-    OpenResourceDialogItemData* data = (OpenResourceDialogItemData*)m_dataviewModel->GetClientObject(item);
-    m_selection = *data;
 }
 
 wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name,
@@ -450,17 +447,21 @@ void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& ev
 
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)
 {
-    event.Skip();
-    if(m_selection.IsOk()) {
+    wxDataViewItem item = m_dataview->GetSelection();
+    
+    if(item.IsOk()) {
         EndModal(wxID_OK);
     }
 }
 
-void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event)
-{
-    CHECK_ITEM_RET(event.GetItem());
+void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
 
-    // display the full name at the bottom static text control
-    OpenResourceDialogItemData* data = (OpenResourceDialogItemData*)m_dataviewModel->GetClientObject(event.GetItem());
-    m_selection = *data;
+OpenResourceDialogItemData* OpenResourceDialog::GetSelection() const
+{
+    wxDataViewItem item = m_dataview->GetSelection();
+    if(!item.IsOk()) return NULL;
+
+    OpenResourceDialogItemData* data =
+        dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(item));
+    return data;
 }

@@ -129,15 +129,19 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(m_choiceEncoding, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText97 = new wxStaticText(m_panelMainPanel, wxID_ANY, _("Options:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText97 = new wxStaticText(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
     fgSizer41->Add(m_staticText97, 0, wxALL|wxALIGN_RIGHT, 5);
+    
+    staticBoxSizer98 = new wxStaticBoxSizer( new wxStaticBox(m_panelMainPanel, wxID_ANY, _("Search Options:")), wxVERTICAL);
+    
+    fgSizer41->Add(staticBoxSizer98, 0, wxALL|wxEXPAND, 5);
     
     fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    fgSizer41->Add(fgSizer3, 0, wxEXPAND, 5);
+    staticBoxSizer98->Add(fgSizer3, 0, wxEXPAND, 5);
     
     m_matchCase = new wxCheckBox(m_panelMainPanel, wxID_ANY, _("&Match case"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_matchCase->SetValue(false);

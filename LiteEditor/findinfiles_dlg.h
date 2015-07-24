@@ -21,6 +21,7 @@
 #include <wx/listbox.h>
 #include <wx/button.h>
 #include <wx/choice.h>
+#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -50,6 +51,7 @@ protected:
     wxStaticText* m_staticText5;
     wxChoice* m_choiceEncoding;
     wxStaticText* m_staticText97;
+    wxStaticBoxSizer* staticBoxSizer98;
     wxFlexGridSizer* fgSizer3;
     wxCheckBox* m_matchCase;
     wxCheckBox* m_matchWholeWord;

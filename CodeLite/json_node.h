@@ -79,7 +79,7 @@ public:
 
     bool toBool(bool defaultValue = false) const;
     wxString toString(const wxString& defaultValue = wxEmptyString) const;
-    wxArrayString toArrayString() const;
+    wxArrayString toArrayString(const wxArrayString& defaultValue = wxArrayString()) const;
     JSONElement arrayItem(int pos) const;
     bool isNull() const;
     bool isBool() const;
@@ -98,7 +98,7 @@ public:
     wxPoint toPoint() const;
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
     wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
-    
+
     JSONElement::wxStringMap_t toStringMap() const;
 
     // Writers

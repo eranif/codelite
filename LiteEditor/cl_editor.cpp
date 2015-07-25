@@ -76,6 +76,8 @@
 #include "clSTCLineKeeper.h"
 #include "clEditorStateLocker.h"
 #include <wx/dcmemory.h>
+#include <wx/dataobj.h>
+#include <wx/regex.h>
 //#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
@@ -153,6 +155,122 @@ bool LEditor::m_ccShowPrivateMembers = true;
 bool LEditor::m_ccShowItemsComments = true;
 bool LEditor::m_ccInitialized = false;
 
+class clEditorDropTarget : public wxDropTarget
+{
+    wxStyledTextCtrl* m_stc;
+
+public:
+    clEditorDropTarget(wxStyledTextCtrl* stc)
+        : m_stc(stc)
+    {
+        wxDataObjectComposite* dataobj = new wxDataObjectComposite();
+        dataobj->Add(new wxTextDataObject(), true);
+        dataobj->Add(new wxFileDataObject());
+        SetDataObject(dataobj);
+    }
+
+    /**
+     * @brief do the actual drop action
+     * we support both text and file names
+     */
+    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult defaultDragResult)
+    {
+        if(!GetData()) {
+            return wxDragError;
+        }
+        wxDataObjectComposite* dataobjComp = static_cast<wxDataObjectComposite*>(GetDataObject());
+        if(!dataobjComp) return wxDragError;
+
+        wxDataFormat format = dataobjComp->GetReceivedFormat();
+        wxDataObject* dataobj = dataobjComp->GetObject(format);
+        switch(format.GetType()) {
+        case wxDF_FILENAME: {
+            wxFileDataObject* fileNameObj = static_cast<wxFileDataObject*>(dataobj);
+            DoFilesDrop(fileNameObj->GetFilenames());
+        } break;
+        case wxDF_UNICODETEXT: {
+            wxTextDataObject* textObj = static_cast<wxTextDataObject*>(dataobj);
+            if(!DoTextDrop(textObj->GetText(), x, y, (defaultDragResult == wxDragMove))) {
+                return wxDragCancel;
+            }
+        } break;
+        default:
+            break;
+        }
+        return defaultDragResult;
+    }
+
+    /**
+     * @brief open list of files in the editor
+     */
+    bool DoTextDrop(const wxString& text, wxCoord x, wxCoord y, bool moving)
+    {
+        // insert the text
+        int pos = m_stc->PositionFromPoint(wxPoint(x, y));
+        if(pos == wxNOT_FOUND) return false;
+        
+        // Don't allow dropping tabs on the editor
+        static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}");
+        if(re.Matches(text)) return false;
+        
+        int selStart = m_stc->GetSelectionStart();
+        int selEnd = m_stc->GetSelectionEnd();
+
+        // No text dnd if the drop is on the selection
+        if((pos >= selStart) && (pos <= selEnd)) return false;
+        int length = (selEnd - selStart);
+        
+        m_stc->BeginUndoAction();
+        if(moving) {
+            // Clear the selection
+            
+            bool movingForward = (pos > selEnd);
+            m_stc->InsertText(pos, text);
+            if(movingForward) {
+                m_stc->Replace(selStart, selEnd, "");
+                pos -= length;
+            } else {
+                m_stc->Replace(selStart + length, selEnd + length, "");
+            }
+            m_stc->SetSelectionStart(pos);
+            m_stc->SetSelectionEnd(pos);
+            m_stc->SetCurrentPos(pos);
+        } else {
+            m_stc->SelectNone();
+            m_stc->SetSelectionStart(pos);
+            m_stc->SetSelectionEnd(pos);
+            m_stc->InsertText(pos, text);
+            m_stc->SetCurrentPos(pos);
+        }
+        m_stc->EndUndoAction();
+        m_stc->CallAfter(&wxStyledTextCtrl::SetSelection, pos, pos + length);
+        return true;
+    }
+
+    /**
+     * @brief open list of files in the editor
+     */
+    void DoFilesDrop(const wxArrayString& filenames)
+    {
+        // Split the list into 2: files and folders
+        wxArrayString files, folders;
+        for(size_t i = 0; i < filenames.size(); ++i) {
+            if(wxFileName::DirExists(filenames.Item(i))) {
+                folders.Add(filenames.Item(i));
+            } else {
+                files.Add(filenames.Item(i));
+            }
+        }
+
+        for(size_t i = 0; i < files.size(); ++i) {
+            clMainFrame::Get()->GetMainBook()->OpenFile(files.Item(i));
+        }
+    }
+
+    bool OnDrop(wxCoord x, wxCoord y) { return true; }
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) { return m_stc->DoDragOver(x, y, defResult); }
+};
+
 LEditor::LEditor(wxWindow* parent)
     : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
     , m_popupIsOn(false)
@@ -183,7 +301,7 @@ LEditor::LEditor(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &LEditor::OnEditorConfigChanged, this);
     m_commandsProcessor.SetParent(this);
 
-    // SetDropTarget(new clFileOrFolderDropTarget(clMainFrame::Get()->GetMainBook()));
+    SetDropTarget(new clEditorDropTarget(this));
 
     // User timer to check if we need to highlight markers
     m_timerHighlightMarkers = new wxTimer(this);
@@ -1036,14 +1154,15 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent& event)
             }
         }
     }
-    
+
     int mainSelectionPos = GetSelectionNCaret(GetMainSelection());
     int curLine = LineFromPosition(mainSelectionPos);
 
     // update line number
     wxString message;
 
-    message << wxT("Ln ") << curLine + 1 << wxT(", Col ") << GetColumn(mainSelectionPos) << ", Pos " << mainSelectionPos;
+    message << wxT("Ln ") << curLine + 1 << wxT(", Col ") << GetColumn(mainSelectionPos) << ", Pos "
+            << mainSelectionPos;
 
     // Always update the status bar with event, calling it directly causes performance degredation
     m_mgr->GetStatusBar()->SetLinePosColumn(message);
@@ -3069,7 +3188,7 @@ void LEditor::OnLeftDown(wxMouseEvent& event)
 {
     HighlightWord(false);
     wxDELETE(m_richTooltip);
-    
+
     // hide completion box
     DoCancelCalltip();
     GetFunctionTip()->Deactivate();

@@ -190,7 +190,13 @@ public:
         } break;
         case wxDF_UNICODETEXT: {
             wxTextDataObject* textObj = static_cast<wxTextDataObject*>(dataobj);
-            if(!DoTextDrop(textObj->GetText(), x, y, (defaultDragResult == wxDragMove))) {
+            wxString text = textObj->GetText();
+#ifdef __WXOSX__
+            // On OSX, textObj->GetText() returns some garbeled text
+            // so use the editor to get the text that we want to copy/move
+            text = m_stc->GetSelectedText();
+#endif
+            if(!DoTextDrop(text, x, y, (defaultDragResult == wxDragMove))) {
                 return wxDragCancel;
             }
         } break;
@@ -243,7 +249,9 @@ public:
             m_stc->SetCurrentPos(pos);
         }
         m_stc->EndUndoAction();
+#ifndef __WXOSX__
         m_stc->CallAfter(&wxStyledTextCtrl::SetSelection, pos, pos + length);
+#endif
         return true;
     }
 

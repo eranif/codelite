@@ -56,12 +56,10 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     clTreeCtrlData* cd = GetItemData(item);
 
     if(cd && cd->IsFolder()) {
-
         // Prepare a folder context menu
         wxMenu menu;
+
         if(IsTopLevelFolder(item)) {
-            menu.Append(XRCID("tree_ctrl_close_folder"), _("Close"));
-            menu.AppendSeparator();
             menu.Append(wxID_REFRESH, _("Refresh"));
             menu.AppendSeparator();
         }
@@ -77,6 +75,11 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
         menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
+
+        if(IsTopLevelFolder(item)) {
+            menu.AppendSeparator();
+            menu.Append(XRCID("tree_ctrl_close_folder"), _("Close"));
+        }
 
         // Now that we added the basic menu, let the plugin
         // adjust it
@@ -108,6 +111,8 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Append(XRCID("tree_ctrl_open_file"), _("Open"));
         menu.Append(XRCID("tree_ctrl_rename_file"), _("Rename"));
         menu.AppendSeparator();
+        menu.Append(XRCID("tree_ctrl_open_with_default_app"), _("Open with default application"));
+        menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_delete_file"), _("Delete"));
 
         // Now that we added the basic menu, let the plugin
@@ -125,6 +130,8 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFile, this, XRCID("tree_ctrl_open_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_file"));
+        menu.Bind(
+            wxEVT_MENU, &clTreeCtrlPanel::OnOpenWithDefaultApplication, this, XRCID("tree_ctrl_open_with_default_app"));
         PopupMenu(&menu);
     } else {
         // context menu elsewhere
@@ -800,4 +807,14 @@ void clTreeCtrlPanel::OnOpenFolder(wxCommandEvent& event)
 {
     wxCommandEvent eventOpenFolder(wxEVT_MENU, XRCID("open_folder"));
     wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(eventOpenFolder);
+}
+
+void clTreeCtrlPanel::OnOpenWithDefaultApplication(wxCommandEvent& event)
+{
+    wxArrayString folders, files;
+    GetSelections(folders, files);
+
+    for(size_t i = 0; i < files.size(); ++i) {
+        ::wxLaunchDefaultApplication(files.Item(i));
+    }
 }

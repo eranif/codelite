@@ -111,6 +111,7 @@ protected:
     virtual void OnNewFolder(wxCommandEvent& event);
     virtual void OnNewFile(wxCommandEvent& event);
     virtual void OnOpenFile(wxCommandEvent& event);
+    virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnRenameFile(wxCommandEvent& event);
     virtual void OnDeleteSelections(wxCommandEvent& event);
     virtual void OnFindInFilesFolder(wxCommandEvent& event);

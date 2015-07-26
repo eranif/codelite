@@ -40,10 +40,10 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     SetIcons( app_icons );
 
     
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer10 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
@@ -54,7 +54,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     m_dvListCtrlAccounts->AppendTextColumn(_("Account"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     m_dvListCtrlAccounts->AppendTextColumn(_("Host"), wxDATAVIEW_CELL_INERT, 75, wxALIGN_LEFT);
     m_dvListCtrlAccounts->AppendTextColumn(_("User"), wxDATAVIEW_CELL_INERT, 75, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer15 = new wxBoxSizer(wxVERTICAL);
+    boxSizer15 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer10->Add(boxSizer15, 0, wxEXPAND, 5);
     
@@ -73,7 +73,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     
     boxSizer15->Add(m_buttonEdit, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -95,6 +95,8 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -144,7 +146,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     SetIcons( app_icons );
 
     
-    wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
+    boxSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer23);
     
     m_infobar = new wxInfoBar(this, wxID_ANY);
@@ -152,7 +154,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer23->Add(m_infobar, 0, wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer31 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer31 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer31->SetFlexibleDirection( wxBOTH );
     flexGridSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer31->AddGrowableCol(1);
@@ -243,7 +245,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer23->Add(0, 0, 1, wxALL, 5);
     
-    wxBoxSizer* boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer23->Add(boxSizer29, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -265,6 +267,8 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -294,10 +298,10 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
+    boxSizer62 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer62);
     
-    wxGridBagSizer* gridBagSizer80 = new wxGridBagSizer(0, 0);
+    gridBagSizer80 = new wxGridBagSizer(0, 0);
     
     boxSizer62->Add(gridBagSizer80, 0, wxALL|wxEXPAND, 5);
     
@@ -348,7 +352,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Size"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
+    boxSizer94 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer62->Add(boxSizer94, 0, wxEXPAND|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 5);
     
@@ -360,7 +364,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer94->Add(m_textCtrlInlineSearch, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer62->Add(boxSizer57, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -382,6 +386,8 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -445,7 +451,7 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
     SetIcons( app_icons );
 
     
-    wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
+    boxSizer124 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer124);
     
     m_auibar135 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
@@ -460,7 +466,7 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
     
     boxSizer124->Add(m_panel126, 1, wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer116 = new wxBoxSizer(wxVERTICAL);
+    boxSizer116 = new wxBoxSizer(wxVERTICAL);
     m_panel126->SetSizer(boxSizer116);
     
     m_stcOutput = new wxStyledTextCtrl(m_panel126, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -527,6 +533,8 @@ SSHTerminalBase::SSHTerminalBase(wxWindow* parent, wxWindowID id, const wxString
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

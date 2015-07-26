@@ -26,7 +26,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPageWelcome = new clBoostrapWizardPageWelcome(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageWelcome);
     
-    wxBoxSizer* boxSizer79 = new wxBoxSizer(wxVERTICAL);
+    boxSizer79 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageWelcome->SetSizer(boxSizer79);
     
     m_banner81 = new wxBannerWindow(m_wizardPageWelcome, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -37,7 +37,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer79->Add(m_banner81, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer105 = new wxBoxSizer(wxVERTICAL);
+    boxSizer105 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer79->Add(boxSizer105, 1, wxALL|wxEXPAND, 5);
     
@@ -52,7 +52,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPagePlugins = new clBoostrapWizardPagePlugins(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPagePlugins);
     
-    wxBoxSizer* boxSizer89 = new wxBoxSizer(wxVERTICAL);
+    boxSizer89 = new wxBoxSizer(wxVERTICAL);
     m_wizardPagePlugins->SetSizer(boxSizer89);
     
     m_banner811 = new wxBannerWindow(m_wizardPagePlugins, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -63,7 +63,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer89->Add(m_banner811, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer93 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer93 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer89->Add(boxSizer93, 1, wxEXPAND, 5);
     
@@ -74,7 +74,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_dvListCtrlPlugins->AppendToggleColumn(_("X"), wxDATAVIEW_CELL_ACTIVATABLE, 30, wxALIGN_LEFT);
     m_dvListCtrlPlugins->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlPlugins->AppendTextColumn(_("Description"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxVERTICAL);
+    boxSizer97 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer93->Add(boxSizer97, 0, wxEXPAND, 5);
     
@@ -96,7 +96,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPageCompilers = new clBoostrapWizardPageCompilers(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageCompilers);
     
-    wxBoxSizer* boxSizer52 = new wxBoxSizer(wxVERTICAL);
+    boxSizer52 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageCompilers->SetSizer(boxSizer52);
     
     m_banner69 = new wxBannerWindow(m_wizardPageCompilers, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -125,7 +125,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_wizardPageColoursAndFonts = new clBoostrapWizardPageColours(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageColoursAndFonts);
     
-    wxBoxSizer* boxSizer12 = new wxBoxSizer(wxVERTICAL);
+    boxSizer12 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageColoursAndFonts->SetSizer(boxSizer12);
     
     m_banner71 = new wxBannerWindow(m_wizardPageColoursAndFonts, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -199,7 +199,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
     
-    wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
+    boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageWhitespace->SetSizer(boxSizer30);
     
     m_banner73 = new wxBannerWindow(m_wizardPageWhitespace, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -240,6 +240,8 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

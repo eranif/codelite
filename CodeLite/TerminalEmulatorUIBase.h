@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef TERMINALEMULATORUI_BASE_CLASSES_H
-#define TERMINALEMULATORUI_BASE_CLASSES_H
+#ifndef CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
+#define CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -17,6 +17,12 @@
 #include <wx/textctrl.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL TerminalEmulatorUIBase : public wxPanel

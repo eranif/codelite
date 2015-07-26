@@ -73,11 +73,12 @@ TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, 
     
     boxSizer2->Add(m_textCtrl, 0, wxALL|wxEXPAND, 2);
     
+    SetName(wxT("TerminalEmulatorUIBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TerminalEmulatorUIBase::OnSendCommand), NULL, this);
     
@@ -102,11 +103,19 @@ TerminalEmulatorFrameBase::TerminalEmulatorFrameBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
     
+    SetName(wxT("TerminalEmulatorFrameBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 TerminalEmulatorFrameBase::~TerminalEmulatorFrameBase()

@@ -204,11 +204,19 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     m_stdBtnSizer66->AddButton(m_buttonOK);
     m_stdBtnSizer66->Realize();
     
+    SetName(wxT("SvnCommitDialogBaseClass"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_checkListFiles->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnFileSelected), NULL, this);
     m_choiceMessages->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
@@ -261,7 +269,7 @@ SvnSyncDialogBaseClass::SvnSyncDialogBaseClass(wxWindow* parent, wxWindowID id, 
     
     flexGridSizer37->Add(m_staticText34, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
     
-    m_dirPickerRootDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE);
+    m_dirPickerRootDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE);
     
     flexGridSizer37->Add(m_dirPickerRootDir, 0, wxEXPAND|wxALL, 5);
     
@@ -298,11 +306,19 @@ SvnSyncDialogBaseClass::SvnSyncDialogBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer27->Add(m_button29, 0, wxALL, 5);
     
+    SetName(wxT("SvnSyncDialogBaseClass"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_button28->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnSyncDialogBaseClass::OnOkUI), NULL, this);
     m_button28->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnSyncDialogBaseClass::OnButtonOK), NULL, this);

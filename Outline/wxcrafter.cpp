@@ -35,6 +35,7 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
     boxSizer1->Add(m_textCtrlSearch, 0, wxALL|wxEXPAND, 2);
     
     m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxSize(150,300), wxBK_DEFAULT);
+    m_simpleBook->SetName(wxT("m_simpleBook"));
     m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
     
     boxSizer1->Add(m_simpleBook, 1, wxALL|wxEXPAND, 2);
@@ -65,11 +66,12 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
     
     boxSizer19->Add(m_panelEmpty, 1, wxEXPAND, 5);
     
+    SetName(wxT("OutlineTabBaseClass"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutlineTabBaseClass::OnSearchSymbol), NULL, this);
     m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutlineTabBaseClass::OnSearchEnter), NULL, this);

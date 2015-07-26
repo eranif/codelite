@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef EXTERNAL_TOOLS_BASE_CLASSES_H
-#define EXTERNAL_TOOLS_BASE_CLASSES_H
+#ifndef CODELITE_FORMBUILDER_EXTERNAL_TOOLS_BASE_CLASSES_H
+#define CODELITE_FORMBUILDER_EXTERNAL_TOOLS_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -16,6 +16,12 @@
 #include <wx/sizer.h>
 #include <wx/listctrl.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class ExternalToolBaseDlg : public wxDialog
 {
@@ -39,6 +45,12 @@ protected:
     virtual void OnButtonDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxListCtrl* GetListCtrlTools() { return m_listCtrlTools; }
+    wxButton* GetButtonNewTool() { return m_buttonNewTool; }
+    wxButton* GetButtonEdit() { return m_buttonEdit; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
+    wxButton* GetButtonOk() { return m_buttonOk; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
     ExternalToolBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("External Tools"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~ExternalToolBaseDlg();
 };

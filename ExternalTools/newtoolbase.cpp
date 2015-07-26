@@ -23,10 +23,10 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
         bBitmapLoaded = true;
     }
     
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    fgSizer1 = new wxFlexGridSizer(5, 3, 0, 0);
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(5, 3, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
@@ -107,11 +107,11 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
     
     fgSizer1->Add(0, 0, 1, wxEXPAND, 5);
     
-    sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Toolbar:")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Toolbar:")), wxVERTICAL);
     
     bSizer1->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
     
-    fgSizer2 = new wxFlexGridSizer(2, 3, 0, 0);
+    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(2, 3, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
@@ -148,7 +148,7 @@ NewToolBase::NewToolBase(wxWindow* parent, wxWindowID id, const wxString& title,
     
     fgSizer2->Add(m_buttonBrowseIcon16, 0, wxALIGN_CENTER_VERTICAL, 5);
     
-    sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("General:")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("General:")), wxVERTICAL);
     
     bSizer1->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
     

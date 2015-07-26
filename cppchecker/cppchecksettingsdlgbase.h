@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CPPCHECKSETTINGSDLG_BASE_CLASSES_H
-#define CPPCHECKSETTINGSDLG_BASE_CLASSES_H
+#ifndef CODELITE_CPPCHECKER_CPPCHECKSETTINGSDLG_BASE_CLASSES_H
+#define CODELITE_CPPCHECKER_CPPCHECKSETTINGSDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

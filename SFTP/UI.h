@@ -42,7 +42,6 @@
 class SFTPStatusPageBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer2;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
@@ -86,13 +85,11 @@ public:
         ID_SSH_OPEN_TERMINAL = 1005,
     };
 protected:
-    wxBoxSizer* boxSizer16;
     wxAuiToolBar* m_auibar;
     std::map<int, wxMenu*> m_dropdownMenus;
     wxMenu* m_menu96;
     wxMenuItem* m_menuItemCustomize;
     wxChoice* m_choiceAccount;
-    wxFlexGridSizer* flexGridSizer43;
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlQuickJump;
     wxTreeListCtrl* m_treeListCtrl;
@@ -130,10 +127,7 @@ public:
 class SFTPManageBookmarkDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer56;
-    wxBoxSizer* boxSizer64;
     wxListBox* m_listBoxBookmarks;
-    wxBoxSizer* boxSizer68;
     wxButton* m_button70;
     wxStdDialogButtonSizer* m_stdBtnSizer58;
     wxButton* m_buttonOk;
@@ -154,8 +148,6 @@ public:
 class SFTPSettingsDialogBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer83;
-    wxFlexGridSizer* flexGridSizer91;
     wxStaticText* m_staticSSHClient;
     wxFilePickerCtrl* m_sshClientPath;
     wxStdDialogButtonSizer* m_stdBtnSizer85;

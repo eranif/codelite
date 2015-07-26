@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef UI_BASE_CLASSES_H
-#define UI_BASE_CLASSES_H
+#ifndef CODELITE_LLDBDEBUGGER_UI_BASE_CLASSES_H
+#define CODELITE_LLDBDEBUGGER_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

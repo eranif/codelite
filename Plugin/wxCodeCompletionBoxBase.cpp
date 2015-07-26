@@ -24,25 +24,26 @@ wxCodeCompletionBoxBase::wxCodeCompletionBoxBase(wxWindow* parent,long style)
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
+    mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
     m_panelComposite = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     mainSizer->Add(m_panelComposite, 1, wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer = new wxBoxSizer(wxHORIZONTAL);
     m_panelComposite->SetSizer(boxSizer);
     
     m_canvas = new wxPanel(m_panelComposite, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     boxSizer->Add(m_canvas, 1, wxALL|wxEXPAND, 0);
     
+    SetName(wxT("wxCodeCompletionBoxBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_canvas->Connect(wxEVT_PAINT, wxPaintEventHandler(wxCodeCompletionBoxBase::OnPaint), NULL, this);
     m_canvas->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(wxCodeCompletionBoxBase::OnEraseBackground), NULL, this);

@@ -72,6 +72,10 @@
      "m_label": "Style:",
      "m_value": ""
     }, {
+     "type": "bool",
+     "m_label": "Enable Window Persistency:",
+     "m_value": true
+    }, {
      "type": "string",
      "m_label": "Title:",
      "m_value": "Import - Environment variable"
@@ -128,6 +132,10 @@
      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
      "m_properties": [{
        "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
        "m_label": "Name:",
        "m_value": "boxSizer4"
       }, {
@@ -150,6 +158,10 @@
        "m_styles": [],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
          "type": "string",
          "m_label": "Name:",
          "m_value": "boxSizer18"
@@ -513,6 +525,10 @@
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
          "m_label": "Name:",
          "m_value": "boxSizer22"
         }, {
@@ -698,6 +714,10 @@
        "m_styles": [],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
          "type": "string",
          "m_label": "Name:",
          "m_value": "boxSizer16"

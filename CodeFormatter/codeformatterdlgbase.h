@@ -41,11 +41,8 @@
 class CodeFormatterBaseDlg : public wxDialog
 {
 protected:
-    wxBoxSizer* bSizerMain;
     wxTreebook* m_treebook;
     wxPanel* m_panel133;
-    wxBoxSizer* boxSizer179;
-    wxFlexGridSizer* flexGridSizer158;
     wxCheckBox* m_checkBoxFormatOnSave;
     wxStaticText* m_staticText115;
     wxChoice* m_choiceCxxEngine;
@@ -53,29 +50,22 @@ protected:
     wxChoice* m_choicePhpFormatter;
     wxPanel* m_panelCxx;
     wxPanel* m_panelAstyle;
-    wxBoxSizer* boxSizer95;
     wxSplitterWindow* m_splitter145;
     wxPanel* m_splitterPage149;
-    wxBoxSizer* boxSizer155;
     wxPropertyGridManager* m_pgMgrAstyle;
     wxPGProperty* m_pgPropAstyleOptions;
     wxPGProperty* m_pgPropPreDefinedStyles;
     wxPGProperty* m_pgPropBrackets;
     wxPGProperty* m_pgPropIndentation;
     wxPGProperty* m_pgPropFormatting;
-    wxBoxSizer* bCustomSettingsSizer;
-    wxBoxSizer* boxSizer57;
     wxStaticText* m_staticText59;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlUserFlags;
     wxPanel* m_splitterPage153;
-    wxBoxSizer* boxSizer157;
     wxStyledTextCtrl* m_textCtrlPreview;
     wxPanel* m_panelClang;
-    wxBoxSizer* boxSizer97;
     wxSplitterWindow* m_splitter165;
     wxPanel* m_splitterPage169;
-    wxBoxSizer* boxSizer175;
     wxPropertyGridManager* m_pgMgrClang;
     wxPGProperty* m_pgPropClangFormat;
     wxPGProperty* m_pgPropClangFormatExePath;
@@ -84,23 +74,17 @@ protected:
     wxPGProperty* m_pgPropClangFormatStyle;
     wxPGProperty* m_pgPropClangFormattingOptions;
     wxPanel* m_splitterPage173;
-    wxBoxSizer* boxSizer177;
     wxStyledTextCtrl* m_textCtrlPreview_Clang;
     wxPanel* m_panelPHP;
     wxPanel* m_panelBuiltIn;
-    wxBoxSizer* boxSizer99;
     wxSplitterWindow* m_splitter119;
     wxPanel* m_splitterPage123;
-    wxBoxSizer* boxSizer129;
     wxPropertyGridManager* m_pgMgrPhp;
     wxPGProperty* m_pgPropPhpFormatter;
     wxPGProperty* m_pgPropPhpFormatterOptions;
     wxPanel* m_splitterPage127;
-    wxBoxSizer* boxSizer131;
     wxStyledTextCtrl* m_stcPhpPreview;
     wxPanel* m_panel185;
-    wxBoxSizer* boxSizer209;
-    wxFlexGridSizer* flexGridSizer190;
     wxStaticText* m_staticText192;
     wxFilePickerCtrl* m_filePickerPhpExec;
     wxStaticText* m_staticText202;
@@ -108,7 +92,6 @@ protected:
     wxStaticText* m_staticText217;
     wxStyledTextCtrl* m_stc;
     wxStyledTextCtrl* m_stcFixerPreview;
-    wxBoxSizer* bSizerButtons;
     wxStdDialogButtonSizer* m_stdBtnSizer30;
     wxButton* m_buttonOK;
     wxButton* m_buttonApply;

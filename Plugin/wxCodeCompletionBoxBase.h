@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef WXCODECOMPLETIONBOX_BASE_CLASSES_H
-#define WXCODECOMPLETIONBOX_BASE_CLASSES_H
+#ifndef CODELITE_PLUGIN_WXCODECOMPLETIONBOX_BASE_CLASSES_H
+#define CODELITE_PLUGIN_WXCODECOMPLETIONBOX_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -14,12 +14,20 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK wxCodeCompletionBoxBase : public wxPopupWindow
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxPanel* m_panelComposite;
+    wxBoxSizer* boxSizer;
     wxPanel* m_canvas;
 
 protected:

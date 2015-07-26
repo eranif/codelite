@@ -65,12 +65,20 @@ CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id
     m_stdBtnSizer->AddButton(m_buttonCancel);
     m_stdBtnSizer->Realize();
     
+    SetName(wxT("CMakeSettingsDialogBase"));
     SetMinSize( wxSize(400,150) );
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 CMakeSettingsDialogBase::~CMakeSettingsDialogBase()
@@ -154,11 +162,12 @@ CMakeHelpTabBase::CMakeHelpTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizerList->Add(m_listBoxList, 1, wxALL|wxEXPAND, 0);
     m_listBoxList->SetMinSize(wxSize(100,200));
     
+    SetName(wxT("CMakeHelpTabBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_staticTextVersion->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_staticTextVersionValue->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
@@ -286,12 +295,13 @@ CMakeProjectSettingsPanelBase::CMakeProjectSettingsPanelBase(wxWindow* parent, w
     
     boxSizer->Add(m_textCtrlArguments, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("CMakeProjectSettingsPanelBase"));
     SetMinSize( wxSize(400,300) );
     SetSizeHints(400,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_staticTextParent->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck), NULL, this);
     m_choiceParent->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck), NULL, this);

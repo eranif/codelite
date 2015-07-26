@@ -72,6 +72,10 @@
      "m_label": "Style:",
      "m_value": ""
     }, {
+     "type": "bool",
+     "m_label": "Enable Window Persistency:",
+     "m_value": true
+    }, {
      "type": "string",
      "m_label": "Title:",
      "m_value": "CMakePlugin Settings"
@@ -128,6 +132,10 @@
      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
      "m_properties": [{
        "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
        "m_label": "Name:",
        "m_value": "boxSizerMain"
       }, {
@@ -150,6 +158,10 @@
        "m_styles": [],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
          "type": "string",
          "m_label": "Name:",
          "m_value": "flexGridSizer"
@@ -710,6 +722,10 @@
      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
      "m_properties": [{
        "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
        "m_label": "Name:",
        "m_value": "boxSizerMain"
       }, {
@@ -732,6 +748,10 @@
        "m_styles": [],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
          "type": "string",
          "m_label": "Name:",
          "m_value": "flexGridSizer225"
@@ -1307,6 +1327,10 @@
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
          "m_label": "Name:",
          "m_value": "boxSizerList"
         }, {
@@ -1623,6 +1647,10 @@
      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
      "m_properties": [{
        "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
        "m_label": "Name:",
        "m_value": "boxSizer"
       }, {
@@ -1720,6 +1748,10 @@
        "m_styles": [],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
+         "type": "string",
+         "m_label": "Minimum Size:",
+         "m_value": "-1,-1"
+        }, {
          "type": "string",
          "m_label": "Name:",
          "m_value": "flexGridSizer"

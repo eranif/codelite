@@ -1254,6 +1254,6 @@ void wxCrafterpca4kKInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/memcheckui_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_reload.png"), xml_res_file_24, xml_res_size_24, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/memcheckui_bitmaps.cpp$icons_16_st-george_sm.png"), xml_res_file_25, xml_res_size_25, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/memcheckui_bitmaps.cpp$.._codelite-icons_subversion_16_stop.png"), xml_res_file_26, xml_res_size_26, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/memcheckui_bitmaps.cpp$_home_david_devel_git_CL_MemCheck_memcheckui_bitmaps.xrc"), xml_res_file_27, xml_res_size_27, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/memcheckui_bitmaps.cpp$_home_david_devel_git_CL_MemCheck_memcheckui_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/memcheckui_bitmaps.cpp$C__src_codelite_MemCheck_memcheckui_bitmaps.xrc"), xml_res_file_27, xml_res_size_27, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/memcheckui_bitmaps.cpp$C__src_codelite_MemCheck_memcheckui_bitmaps.xrc"));
 }

@@ -108,6 +108,10 @@
      "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
      "m_properties": [{
        "type": "string",
+       "m_label": "Minimum Size:",
+       "m_value": "-1,-1"
+      }, {
+       "type": "string",
        "m_label": "Name:",
        "m_value": "mainSizer"
       }, {
@@ -196,6 +200,10 @@
          "m_styles": [],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
+           "type": "string",
+           "m_label": "Minimum Size:",
+           "m_value": "-1,-1"
+          }, {
            "type": "string",
            "m_label": "Name:",
            "m_value": "boxSizer"

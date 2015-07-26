@@ -33,21 +33,21 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     SetIcons( app_icons );
 
     
-    boxSizer7 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer7 = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(boxSizer7);
     
     m_panelMainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     boxSizer7->Add(m_panelMainPanel, 1, wxEXPAND, 5);
     
-    boxSizer95 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer95 = new wxBoxSizer(wxVERTICAL);
     m_panelMainPanel->SetSizer(boxSizer95);
     
-    boxSizer50 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer50 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer95->Add(boxSizer50, 1, wxALL|wxEXPAND, 5);
     
-    fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -73,7 +73,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, 5);
     
-    bSizer9 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
     
     fgSizer41->Add(bSizer9, 0, wxEXPAND, 5);
     
@@ -82,7 +82,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     bSizer9->Add(m_listPaths, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    boxSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     
     bSizer9->Add(boxSizer1, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
@@ -133,11 +133,11 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(m_staticText97, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    staticBoxSizer98 = new wxStaticBoxSizer( new wxStaticBox(m_panelMainPanel, wxID_ANY, _("Search Options:")), wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer98 = new wxStaticBoxSizer( new wxStaticBox(m_panelMainPanel, wxID_ANY, _("Search Options:")), wxVERTICAL);
     
     fgSizer41->Add(staticBoxSizer98, 0, wxALL|wxEXPAND, 5);
     
-    fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -172,7 +172,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer3->Add(m_checkBoxSeparateTab, 0, wxALL, 5);
     
-    bSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer50->Add(bSizer2, 0, wxALL, 5);
     

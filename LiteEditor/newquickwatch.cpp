@@ -147,6 +147,8 @@ clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowI
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
 }

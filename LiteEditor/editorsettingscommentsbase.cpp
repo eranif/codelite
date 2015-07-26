@@ -98,11 +98,12 @@ EditorSettingsCommentsBase::EditorSettingsCommentsBase(wxWindow* parent, wxWindo
     
     bSizer3->Add(m_checkBoxAlt, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
+    SetName(wxT("EditorSettingsCommentsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
 }
 
 EditorSettingsCommentsBase::~EditorSettingsCommentsBase()

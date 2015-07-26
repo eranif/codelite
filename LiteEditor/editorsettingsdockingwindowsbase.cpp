@@ -23,7 +23,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
         bBitmapLoaded = true;
     }
     
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -34,10 +34,10 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("Docking"), true);
     
-    boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
     m_panel12->SetSizer(boxSizer22);
     
-    bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer22->Add(bSizer2, 0, wxALL|wxEXPAND, 5);
     
@@ -50,11 +50,11 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     bSizer2->Add(m_radioBoxHint, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
-    boxSizer32 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer32 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer22->Add(boxSizer32, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    staticBoxSizer27 = new wxStaticBoxSizer( new wxStaticBox(m_panel12, wxID_ANY, _("Tabs")), wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer27 = new wxStaticBoxSizer( new wxStaticBox(m_panel12, wxID_ANY, _("Tabs")), wxVERTICAL);
     
     boxSizer32->Add(staticBoxSizer27, 0, wxALL|wxEXPAND, 5);
     
@@ -76,7 +76,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     staticBoxSizer27->Add(m_checkBoxPanesTabsAtBottom, 0, wxALL, 5);
     
-    boxSizer25 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer22->Add(boxSizer25, 0, wxALL, 10);
     
@@ -94,7 +94,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_panel14 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel14, _("Find / Find In Files"), false);
     
-    boxSizer20 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(boxSizer20);
     
     m_checkBoxFindBarAtBottom = new wxCheckBox(m_panel14, wxID_ANY, _("Place the Find bar at the bottom"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -117,10 +117,10 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     m_panel16 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel16, _("Debug / Output panes"), false);
     
-    boxSizer21 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxVERTICAL);
     m_panel16->SetSizer(boxSizer21);
     
-    boxSizer19 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer21->Add(boxSizer19, 0, wxALL|wxEXPAND, 5);
     
@@ -130,7 +130,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     
     boxSizer19->Add(m_checkBoxHideOutputPaneOnClick, 0, wxALL|wxEXPAND, 5);
     
-    fgSizer1 = new wxFlexGridSizer(0, 4, 0, 0);
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 4, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     

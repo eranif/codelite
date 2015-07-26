@@ -30,18 +30,13 @@
 class SettersGettersBaseDlg : public wxDialog
 {
 protected:
-    wxBoxSizer* bSizer1;
-    wxBoxSizer* bSizer3;
     wxBannerWindow* m_banner6;
     wxSearchCtrl* m_searchCtrl;
-    wxBoxSizer* bSizer4;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<SettersGettersModel> m_dataviewModel;
 
-    wxBoxSizer* bSizer5;
     wxButton* m_buttonCheckAll;
     wxButton* m_buttonUncheckAll;
-    wxGridSizer* gridSizer12;
     wxCheckBox* m_checkStartWithUppercase;
     wxCheckBox* m_checkBoxForamtFileWhenDone;
     wxCheckBox* m_checkBoxReturnSelf;

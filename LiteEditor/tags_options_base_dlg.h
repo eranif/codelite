@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
-#define TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
+#ifndef CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
+#define CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

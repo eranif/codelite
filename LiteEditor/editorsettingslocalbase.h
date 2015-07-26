@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
-#define EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
+#ifndef CODELITE_FORMBUILDER_EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
+#define CODELITE_FORMBUILDER_EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

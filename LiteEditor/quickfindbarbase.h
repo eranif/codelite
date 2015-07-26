@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef QUICKFINDBARBASE_BASE_CLASSES_H
-#define QUICKFINDBARBASE_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_QUICKFINDBARBASE_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_QUICKFINDBARBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -19,6 +19,12 @@
 #include <wx/bitmap.h>
 #include <map>
 #include <wx/icon.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class QuickFindBarBase : public wxPanel
 {
@@ -47,6 +53,12 @@ protected:
     virtual void OnCheckWild(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
+    wxCheckBox* GetCheckBoxRegex() { return m_checkBoxRegex; }
+    wxCheckBox* GetCheckBoxWord() { return m_checkBoxWord; }
+    wxCheckBox* GetCheckBoxWildcard() { return m_checkBoxWildcard; }
+    wxCheckBox* GetCheckBoxMultipleSelections() { return m_checkBoxMultipleSelections; }
+    wxPanel* GetPanel71() { return m_panel71; }
     QuickFindBarOptionsMenuBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~QuickFindBarOptionsMenuBase();
 };

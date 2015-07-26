@@ -56,13 +56,10 @@
 class NavBarControlBaseClass : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer36;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage39;
-    wxBoxSizer* boxSizer42;
     wxChoice* m_scope;
     wxPanel* m_splitterPage41;
-    wxBoxSizer* boxSizer43;
     wxChoice* m_func;
 
 protected:
@@ -83,7 +80,6 @@ public:
 class BuildTabTopPanelBaseClass : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer47;
     wxAuiToolBar* m_auibar48;
 
 protected:
@@ -129,17 +125,13 @@ public:
 class AddFunctionsImplBaseDlg : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer117;
     wxBannerWindow* m_banner125;
     wxFilePickerCtrl* m_filePicker;
-    wxBoxSizer* boxSizer129;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<AddFunctionsModel> m_dataviewModel;
 
-    wxBoxSizer* boxSizer131;
     wxButton* m_button133;
     wxButton* m_button135;
-    wxBoxSizer* boxSizer119;
     wxButton* m_button121;
     wxButton* m_button123;
 
@@ -164,13 +156,9 @@ public:
 class WelcomePageBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer149;
     wxScrolledWindow* m_scrollWin247;
-    wxBoxSizer* boxSizer249;
     wxPanel* m_panel191;
-    wxBoxSizer* boxSizer195;
     wxStaticBitmap* m_staticBitmap161;
-    wxGridSizer* gridSizer235;
     wxCommandLinkButton* m_cmdLnkBtnNewWorkspace;
     wxCommandLinkButton* m_cmdLnkBtnNewProject;
     wxCommandLinkButton* m_cmdLnkBtnWorkspaces;
@@ -207,7 +195,6 @@ public:
 class FileExplorerBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer262;
     wxGenericDirCtrl* m_genericDirCtrl;
 
 protected:
@@ -232,17 +219,13 @@ public:
         ID_TOOL_LINK_EDITOR = 8004,
     };
 protected:
-    wxBoxSizer* mainSizer;
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelCxx;
-    wxBoxSizer* boxSizer505;
     wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage308;
-    wxBoxSizer* boxSizer314;
     wxChoice* m_choiceActiveProject;
     wxPanel* m_splitterPage312;
-    wxBoxSizer* boxSizer316;
     wxChoice* m_workspaceConfig;
     FileViewTree* m_fileView;
 
@@ -278,9 +261,7 @@ public:
 class EditorFrameBase : public wxFrame
 {
 protected:
-    wxBoxSizer* mainSizer;
     wxPanel* m_mainPanel;
-    wxBoxSizer* boxSizer324;
     wxToolBar* m_toolbar;
 
 protected:
@@ -303,27 +284,21 @@ protected:
     std::vector<wxWizardPageSimple*> m_pages;
 
     wxWizardPageSimple* m_wizardPageTemplate;
-    wxBoxSizer* boxSizer383;
     wxBannerWindow* m_banner386;
     wxDataViewCtrl* m_dataviewTemplates;
     wxObjectDataPtr<DVTemplatesModel> m_dataviewTemplatesModel;
 
     wxWizardPageSimple* m_wizardPageDetails;
-    wxBoxSizer* boxSizer396;
     wxBannerWindow* m_banner398;
-    wxFlexGridSizer* flexGridSizer15;
     wxStaticText* m_staticText16;
     wxTextCtrl* m_txtProjName;
     wxStaticText* m_staticText18;
-    wxBoxSizer* boxSizer30;
     wxTextCtrl* m_textCtrlProjectPath;
     wxButton* m_buttonBrowse;
     wxCheckBox* m_cbSeparateDir;
     wxStaticText* m_stxtFullFileName;
     wxWizardPageSimple* m_wizardPageToolchain;
-    wxBoxSizer* boxSizer388;
     wxBannerWindow* m_banner390;
-    wxFlexGridSizer* flexGridSizer412;
     wxStaticText* m_staticText414;
     wxChoice* m_choiceCompiler;
     wxStaticText* m_staticText418;
@@ -372,7 +347,6 @@ public:
         ID_TOOL_CLEAR_LOG = 8002,
     };
 protected:
-    wxBoxSizer* boxSizer424;
     wxAuiToolBar* m_auibar;
     wxCheckBox* m_checkBoxEnableClang;
     wxCheckBox* m_checkBoxShowErrors;
@@ -420,8 +394,6 @@ public:
 class OpenFolderDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer471;
-    wxFlexGridSizer* flexGridSizer483;
     wxStaticText* m_staticText479;
     wxTextCtrl* m_textCtrlFolder;
     wxStdDialogButtonSizer* m_stdBtnSizer473;
@@ -441,7 +413,6 @@ public:
 class DefaultWorkspacePageBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer515;
     wxStaticText* m_staticText523;
     wxStaticBitmap* m_staticBitmap521;
 
@@ -458,7 +429,6 @@ public:
 class SelectDropTargetBaseDlg : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer527;
     wxBannerWindow* m_banner;
     wxDataViewListCtrl* m_dvListCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer543;

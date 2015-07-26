@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef PLUGINDLGBASE_BASE_CLASSES_H
-#define PLUGINDLGBASE_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_PLUGINDLGBASE_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_PLUGINDLGBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -20,6 +20,12 @@
 #include <wx/checklst.h>
 #include <wx/html/htmlwin.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class PluginMgrDlgBase : public wxDialog
 {
@@ -56,7 +62,7 @@ public:
     wxButton* GetButton22() { return m_button22; }
     wxButton* GetButtonOk() { return m_buttonOk; }
     wxButton* GetButtonCancel() { return m_buttonCancel; }
-    PluginMgrDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Plugins:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PluginMgrDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Plugins"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PluginMgrDlgBase();
 };
 

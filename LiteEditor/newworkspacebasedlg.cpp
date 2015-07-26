@@ -94,11 +94,19 @@ NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stdBtnSizer2->AddButton(m_buttonCancel);
     m_stdBtnSizer2->Realize();
     
+    SetName(wxT("NewWorkspaceBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_textCtrlWorkspaceName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
     m_textCtrlWorkspacePath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);

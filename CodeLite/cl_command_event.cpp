@@ -87,6 +87,7 @@ clCodeCompletionEvent::clCodeCompletionEvent(const clCodeCompletionEvent& event)
     , m_insideCommentOrString(false)
 {
     *this = event;
+    m_position = wxNOT_FOUND;
     m_entry.reset(NULL);
 }
 
@@ -95,6 +96,7 @@ clCodeCompletionEvent::clCodeCompletionEvent(wxEventType commandType, int winid)
     , m_editor(NULL)
     , m_insideCommentOrString(false)
 {
+    m_position = wxNOT_FOUND;
     m_entry.reset(NULL);
 }
 

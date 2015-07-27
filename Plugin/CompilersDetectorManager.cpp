@@ -41,6 +41,9 @@
 #include <wx/choicdlg.h>
 #include "includepathlocator.h"
 #include "build_settings_config.h"
+#include "json_node.h"
+#include <wx/stream.h>
+#include <wx/url.h>
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
@@ -109,6 +112,7 @@ bool CompilersDetectorManager::FoundMinGWCompiler() const
     return false;
 }
 
+#define DLBUFSIZE 1024
 void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
 {
 #ifdef __WXMSW__
@@ -120,36 +124,64 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
         // No MinGW compiler detected!, offer the user to download one
         wxStringMap_t mingwCompilers;
         wxArrayString options;
-        mingwCompilers.insert(std::make_pair(
-            "MinGW 5.1.0 - 32 Bit",
-            "http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-5.1.0-3.exe/download"));
-        mingwCompilers.insert(std::make_pair(
-            "MinGW 5.1.0 - 64 Bit",
-            "http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm64-gcc-5.1.0-2.exe/download"));
-        wxStringMap_t::iterator iter = mingwCompilers.begin();
-        for(; iter != mingwCompilers.end(); ++iter) {
-            options.Add(iter->first);
-        }
 
-#ifdef _WIN64
-        int sel = 1;
-#else
-        int sel = 0;
-#endif
-        wxString selection =
-            ::wxGetSingleChoice(_("Select a compiler to download"), _("Choose compiler"), options, sel);
-        if(!selection.IsEmpty()) {
-            // Reset the compiler detection flag so next time codelite is restarted, it will
-            // rescan the machine
-            clConfig::Get().Write(kConfigBootstrapCompleted, false);
+        // Load the compilers list from the website
+        wxURL url("http://codelite.org/compilers.json");
 
-            // Open the browser to start downloading the compiler
-            ::wxLaunchDefaultBrowser(mingwCompilers.find(selection)->second);
-            ::wxMessageBox(_("After install is completed, click the 'Scan' button"),
-                           "CodeLite",
-                           wxOK | wxCENTER | wxICON_INFORMATION);
+        if(url.GetError() == wxURL_NOERR) {
+
+            wxInputStream* in_stream = url.GetInputStream();
+            if(!in_stream) {
+                return;
+            }
+            unsigned char buffer[DLBUFSIZE + 1];
+            wxString dataRead;
+            do {
+                in_stream->Read(buffer, DLBUFSIZE);
+                size_t bytes_read = in_stream->LastRead();
+                if(bytes_read > 0) {
+                    buffer[bytes_read] = 0;
+                    wxString buffRead((const char*)buffer, wxConvUTF8);
+                    dataRead.Append(buffRead);
+                }
+
+            } while(!in_stream->Eof());
+
+            JSONRoot root(dataRead);
+            JSONElement compilers = root.toElement().namedObject("Compilers");
+            JSONElement arr = compilers.namedObject("MinGW");
+            int count = arr.arraySize();
+            for(int i = 0; i < count; ++i) {
+                JSONElement compiler = arr.arrayItem(i);
+                mingwCompilers.insert(
+                    std::make_pair(compiler.namedObject("Name").toString(), compiler.namedObject("URL").toString()));
+                options.Add(compiler.namedObject("Name").toString());
+            }
+
+            if(options.IsEmpty()) {
+                ::wxMessageBox(_("Unable to fetch compilers list from the website\nhttp://codelite.org/compilers.json"),
+                               "CodeLite",
+                               wxOK | wxCENTER | wxICON_WARNING);
+                return;
+            }
+            int sel = 0;
+
+            wxString selection =
+                ::wxGetSingleChoice(_("Select a compiler to download"), _("Choose compiler"), options, sel);
+            if(!selection.IsEmpty()) {
+                // Reset the compiler detection flag so next time codelite is restarted, it will
+                // rescan the machine
+                clConfig::Get().Write(kConfigBootstrapCompleted, false);
+
+                // Open the browser to start downloading the compiler
+                ::wxLaunchDefaultBrowser(mingwCompilers.find(selection)->second);
+                ::wxMessageBox(_("After install is completed, click the 'Scan' button"),
+                               "CodeLite",
+                               wxOK | wxCENTER | wxICON_INFORMATION);
+            }
         }
     }
+
 #endif // __WXMSW__
 }
 

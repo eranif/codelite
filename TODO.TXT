@@ -1,9 +1,6 @@
 MUST:
 =====
 
-* Fixed assertion in debug
-* Move the compilers links to a JSON file that can be downloaded from CodeLite's website
-
 NICE
 ====
 

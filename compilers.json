@@ -1,0 +1,13 @@
+{
+    "Compilers" : {
+        "MinGW" : [
+            {
+                "Name" : "MinGW-TDM 5.1/32 bit",
+                "URL" : "http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-5.1.0-3.exe/download"
+            } , {
+                "Name" : "MinGW-TDM 5.1/64 bit",
+                "URL" : "http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm64-gcc-5.1.0-2.exe/download"
+            }
+        ]
+    }
+}

@@ -23,14 +23,14 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
         bBitmapLoaded = true;
     }
     
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    bSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(bSizer3, 1, wxALL|wxEXPAND, 2);
     
-    boxSizer4 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     
     bSizer3->Add(boxSizer4, 1, wxEXPAND, 2);
     
@@ -49,7 +49,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     boxSizer4->Add(m_statusMessage, 0, wxTOP|wxEXPAND, 5);
     
-    bSizer31 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer31 = new wxBoxSizer(wxVERTICAL);
     
     bSizer3->Add(bSizer31, 0, wxEXPAND, 2);
     
@@ -137,10 +137,10 @@ CScopeSettingsDlgBase::CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
     
-    flexGridSizer18 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer18 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer18->SetFlexibleDirection( wxBOTH );
     flexGridSizer18->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer18->AddGrowableCol(1);

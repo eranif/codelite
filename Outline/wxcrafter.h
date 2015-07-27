@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef WXCRAFTER_BASE_CLASSES_H
-#define WXCRAFTER_BASE_CLASSES_H
+#ifndef CODELITE_OUTLINE_WXCRAFTER_BASE_CLASSES_H
+#define CODELITE_OUTLINE_WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -18,6 +18,12 @@
 #include <wx/imaglist.h>
 #include <wx/treectrl.h>
 #include "PHPOutlineTree.h"
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class OutlineTabBaseClass : public wxPanel
 {

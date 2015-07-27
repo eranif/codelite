@@ -308,6 +308,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // Find the default style
     wxFont defaultFont;
     bool foundDefaultStyle = false;
+    int nDefaultFontSize = DEFAULT_FONT_SIZE;
+    
     StyleProperty defaultStyle;
     StyleProperty::Map_t::const_iterator iter = styles.begin();
     for(; iter != styles.end(); ++iter) {
@@ -315,7 +317,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         if(prop.GetId() == 0) {
             defaultStyle = prop;
             wxString fontFace = prop.GetFaceName().IsEmpty() ? DEFAULT_FACE_NAME : prop.GetFaceName();
-            defaultFont = wxFont(prop.GetFontSize(),
+            if(!prop.GetFaceName().IsEmpty()) {
+                nDefaultFontSize = prop.GetFontSize();
+            }
+            defaultFont = wxFont(nDefaultFontSize,
                                  wxFONTFAMILY_TELETYPE,
                                  prop.GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
                                  prop.IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
@@ -344,7 +349,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     for(; iter != styles.end(); ++iter) {
 
         StyleProperty sp = iter->second;
-        int size = sp.GetFontSize();
+        int size = nDefaultFontSize;
         wxString face = sp.GetFaceName();
         bool bold = sp.IsBold();
         bool italic = sp.GetItalic();
@@ -394,7 +399,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             int fontSize(size);
             if(face.IsEmpty()) {
                 // defaults
-                fontSize = DEFAULT_FONT_SIZE;
+                fontSize = nDefaultFontSize;
                 faceName = DEFAULT_FACE_NAME;
             }
 

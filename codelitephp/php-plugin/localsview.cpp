@@ -8,6 +8,7 @@
 LocalsView::LocalsView(wxWindow* parent)
     : LocalsViewBase(parent)
 {
+    Hide();
     LexerConf::Ptr_t lex =  EditorConfigST::Get()->GetLexer("php");
     if ( lex ) {
         m_dataview->SetFont( lex->GetFontForSyle(wxSTC_HPHP_DEFAULT) );

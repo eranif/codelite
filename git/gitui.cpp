@@ -1314,15 +1314,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_splitterPage96->SetSizer(boxSizer92);
     
     m_stcLog = new wxStyledTextCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_stcLogFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_stcLogFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_stcLogFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_stcLogFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_stcLog->SetFont(m_stcLogFont);
     // Configure the fold margin
     m_stcLog->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcLog->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -1350,11 +1341,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_stcLog->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stcLog->StyleClearAll();
-    for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
-        m_stcLog->StyleSetFont(i, m_stcLogFont);
-    }
     m_stcLog->SetWrapMode(0);
     m_stcLog->SetIndentationGuides(0);
+    m_stcLog->SetEOLMode(2);
     m_stcLog->SetKeyWords(0, wxT(""));
     m_stcLog->SetKeyWords(1, wxT(""));
     m_stcLog->SetKeyWords(2, wxT(""));

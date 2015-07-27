@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef UI_BASE_CLASSES_H
-#define UI_BASE_CLASSES_H
+#ifndef CODELITE_SFTP_UI_BASE_CLASSES_H
+#define CODELITE_SFTP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -81,11 +81,14 @@ public:
         ID_ADD_BOOKMARK = 1001,
         ID_OPEN_ACCOUNT_MANAGER = 1002,
         ID_SFTP_CONNECT = 1003,
-        ID_SSH_OPEN_TERMINAL = 1004,
+        ID_SFTP_CUSTOMIZE = 1004,
+        ID_SSH_OPEN_TERMINAL = 1005,
     };
 protected:
     wxAuiToolBar* m_auibar;
     std::map<int, wxMenu*> m_dropdownMenus;
+    wxMenu* m_menu96;
+    wxMenuItem* m_menuItemCustomize;
     wxChoice* m_choiceAccount;
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlQuickJump;
@@ -96,8 +99,9 @@ protected:
     virtual void OnConnection(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddBookmark(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnOpenTerminal(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOpenTerminalUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOpenTerminal(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnSftpSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoiceAccount(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoiceAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -151,6 +155,7 @@ protected:
     wxButton* m_button89;
 
 protected:
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticSSHClient() { return m_staticSSHClient; }

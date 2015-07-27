@@ -326,6 +326,12 @@
         <File Name="NodeJSContinueHandler.cpp"/>
         <File Name="NodeJSCallstackHandler.h"/>
         <File Name="NodeJSCallstackHandler.cpp"/>
+        <File Name="NodeJSSelectFrameHandler.h"/>
+        <File Name="NodeJSSelectFrameHandler.cpp"/>
+        <File Name="NodeJSGetScriptHandler.h"/>
+        <File Name="NodeJSGetScriptHandler.cpp"/>
+        <File Name="NodeJSEvaluateExprHandler.h"/>
+        <File Name="NodeJSEvaluateExprHandler.cpp"/>
       </VirtualDirectory>
       <File Name="NodeJSDebuggerPane.h"/>
       <File Name="NodeJSDebuggerPane.cpp"/>

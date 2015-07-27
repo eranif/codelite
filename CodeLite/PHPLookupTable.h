@@ -59,6 +59,7 @@ public:
     static void DoSplitFullname(const wxString& fullname, wxString& ns, wxString& shortName);
 
 private:
+    void EnsureIntegrity(const wxFileName& filename);
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 
     void CreateSchema();
@@ -125,7 +126,7 @@ private:
     /**
      * @brief check the database disk image to see if it corrupted
      */
-    bool CheckDiskImage();
+    bool CheckDiskImage(wxSQLite3Database& db);
     
 public:
     PHPLookupTable();
@@ -197,7 +198,13 @@ public:
      */
     PHPEntityBase::List_t
     FindChildren(wxLongLong parentId, size_t flags = kLookupFlags_None, const wxString& nameHint = "");
-
+    
+    /**
+     * @brief find list of symbols with a given name (regardless of the type / scope) 
+     * a "free style" search
+     */
+    PHPEntityBase::List_t FindSymbol(const wxString& name);
+    
     /**
      * @brief load the global functions and consts that matches nameHint
      * If nameHint is empty, return an empty list

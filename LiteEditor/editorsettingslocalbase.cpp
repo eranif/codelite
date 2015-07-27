@@ -294,6 +294,8 @@ LocalEditorSettingsbase::LocalEditorSettingsbase(wxWindow* parent, wxWindowID id
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_treebook1)){
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook1);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treebook1);
     }
     #endif
     m_treebook1->ExpandNode( 0, true );
@@ -309,6 +311,8 @@ LocalEditorSettingsbase::LocalEditorSettingsbase(wxWindow* parent, wxWindowID id
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

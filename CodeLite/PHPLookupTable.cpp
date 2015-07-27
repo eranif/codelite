@@ -120,10 +120,7 @@ PHPLookupTable::PHPLookupTable()
 {
 }
 
-PHPLookupTable::~PHPLookupTable() 
-{
-    Close();
-}
+PHPLookupTable::~PHPLookupTable() { Close(); }
 
 PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const wxString& exactName, size_t flags)
 {
@@ -162,29 +159,18 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname)
 void PHPLookupTable::Open(const wxFileName& dbfile)
 {
     try {
+
+        if(dbfile.Exists()) {
+            // Check for its integrity. If the database is corrupted,
+            // it will be deleted
+            EnsureIntegrity(dbfile);
+        }
+
         wxFileName::Mkdir(dbfile.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         m_db.Open(dbfile.GetFullPath());
         m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
         m_filename = dbfile;
         CreateSchema();
-
-#if 0
-        if(!CheckDiskImage()) {
-            // database is corrupted.
-            Close();
-            
-            // Remove the file
-            {
-                wxLogNull noLog;
-                ::wxRemoveFile(m_filename.GetFullPath());
-            }
-            
-            // Reopen the database
-            m_db.Open(dbfile.GetFullPath());
-            m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
-            CreateSchema();
-        }
-#endif
 
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::Open: %s", e.GetMessage());
@@ -206,7 +192,7 @@ void PHPLookupTable::CreateSchema()
     wxString schemaVersion;
     try {
         wxString sql;
-        sql = wxT("PRAGMA journal_mode= OFF;");
+        sql = wxT("PRAGMA journal_mode = ON;");
         m_db.ExecuteUpdate(sql);
 
         sql = wxT("PRAGMA synchronous = OFF;");
@@ -611,7 +597,7 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
 
         wxStopWatch sw;
         sw.Start();
-        
+
         m_db.Begin();
         for(size_t i = 0; i < files.GetCount(); ++i) {
             {
@@ -669,7 +655,7 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
         wxString message;
         message << _("PHP: parsed ") << files.GetCount() << " in " << elapsedMs << " milliseconds";
         CL_DEBUGS(message);
-        
+
         {
             clParseEvent event(wxPHP_PARSE_ENDED);
             event.SetTotalFiles(files.GetCount());
@@ -760,20 +746,25 @@ void PHPLookupTable::LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
     DoAddNameFilter(sql, trimmedNameHint, flags);
     DoAddLimit(sql);
 
-    wxSQLite3Statement st = m_db.PrepareStatement(sql);
-    wxSQLite3ResultSet res = st.ExecuteQuery();
+    try {
+        wxSQLite3Statement st = m_db.PrepareStatement(sql);
+        wxSQLite3ResultSet res = st.ExecuteQuery();
 
-    while(res.NextRow()) {
-        ePhpScopeType st = kPhpScopeTypeAny;
-        if(tableName == "SCOPE_TABLE") {
-            st = res.GetInt("SCOPE_TYPE", 1) == kPhpScopeTypeNamespace ? kPhpScopeTypeNamespace : kPhpScopeTypeClass;
-        }
+        while(res.NextRow()) {
+            ePhpScopeType st = kPhpScopeTypeAny;
+            if(tableName == "SCOPE_TABLE") {
+                st =
+                    res.GetInt("SCOPE_TYPE", 1) == kPhpScopeTypeNamespace ? kPhpScopeTypeNamespace : kPhpScopeTypeClass;
+            }
 
-        PHPEntityBase::Ptr_t match = NewEntity(tableName, st);
-        if(match) {
-            match->FromResultSet(res);
-            matches.push_back(match);
+            PHPEntityBase::Ptr_t match = NewEntity(tableName, st);
+            if(match) {
+                match->FromResultSet(res);
+                matches.push_back(match);
+            }
         }
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::LoadFromTableByNameHint: %s", e.GetMessage());
     }
 }
 
@@ -830,7 +821,7 @@ void PHPLookupTable::Close()
             m_db.Close();
         }
         m_filename.Clear();
-        
+
     } catch(wxSQLite3Exception& e) {
         CL_WARNING("PHPLookupTable::Close: %s", e.GetMessage());
     }
@@ -1131,31 +1122,108 @@ void PHPLookupTable::ResetDatabase()
         // Delete it from the file system
         wxLogNull noLog;
         if(!::wxRemoveFile(curfile.GetFullPath())) {
-            //CL_WARNING("PHPLookupTable::ResetDatabase: failed to remove file '%s'", curfile.GetFullPath());
+            // CL_WARNING("PHPLookupTable::ResetDatabase: failed to remove file '%s'", curfile.GetFullPath());
         }
     }
     Open(curfile);
 }
 
-bool PHPLookupTable::CheckDiskImage()
+bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db)
 {
-    wxArrayString tables;
-    tables.Add("METADATA_TABLE");
-    tables.Add("SCOPE_TABLE");
-    tables.Add("FUNCTION_TABLE");
-    tables.Add("VARIABLES_TABLE");
-    tables.Add("FILES_TABLE");
-    
     try {
-        for(size_t i=0; i<tables.GetCount(); ++i) {
-            wxString sql;
-            sql << "select count(*) from " << tables.Item(i) << " LIMIT 1";
-            m_db.ExecuteQuery(sql);
+        wxSQLite3ResultSet res = db.ExecuteQuery("PRAGMA quick_check");
+        if(res.NextRow()) {
+            wxString value = res.GetString("integrity_check");
+            return (value.Lower() == "ok");
+        } else {
+            return false;
         }
-    } catch(wxSQLite3Exception &exec) {
+    } catch(wxSQLite3Exception& exec) {
         // this can only happen if we have a corrupt disk image
         CL_WARNING("PHP: database image is corrupted %s", m_filename.GetFullPath());
         return false;
     }
     return true;
+}
+
+void PHPLookupTable::EnsureIntegrity(const wxFileName& filename)
+{
+    wxSQLite3Database db;
+    db.Open(filename.GetFullPath());
+    if(db.IsOpen()) {
+        if(!CheckDiskImage(db)) {
+            // disk image is malformed
+            db.Close();
+            wxLogNull noLog;
+            ::wxRemoveFile(filename.GetFullPath());
+        }
+    }
+}
+
+PHPEntityBase::List_t PHPLookupTable::FindSymbol(const wxString& name)
+{
+    // locate the scope
+    PHPEntityBase::List_t matches;
+    try {
+        {
+            //---------------------------------------------------------------------
+            // Load scopes (classes / namespaces)
+            //---------------------------------------------------------------------
+            wxString sql;
+            sql << "SELECT * from SCOPE_TABLE WHERE NAME='" << name << "'";
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                ePhpScopeType st = kPhpScopeTypeAny;
+                st =
+                    res.GetInt("SCOPE_TYPE", 1) == kPhpScopeTypeNamespace ? kPhpScopeTypeNamespace : kPhpScopeTypeClass;
+
+                PHPEntityBase::Ptr_t match = NewEntity("SCOPE_TABLE", st);
+                if(match) {
+                    match->FromResultSet(res);
+                    matches.push_back(match);
+                }
+            }
+        }
+
+        {
+            //---------------------------------------------------------------------
+            // Load functions
+            //---------------------------------------------------------------------
+            wxString sql;
+            sql << "SELECT * from FUNCTION_TABLE WHERE NAME='" << name << "'";
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match(new PHPEntityFunction());
+                match->FromResultSet(res);
+                matches.push_back(match);
+            }
+        }
+
+        {
+            //---------------------------------------------------------------------
+            // Load variables
+            //---------------------------------------------------------------------
+            wxString sql;
+            sql << "SELECT * from VARIABLES_TABLE WHERE NAME='" << name << "'";
+
+            wxSQLite3Statement st = m_db.PrepareStatement(sql);
+            wxSQLite3ResultSet res = st.ExecuteQuery();
+
+            while(res.NextRow()) {
+                PHPEntityBase::Ptr_t match = NewEntity("VARIABLES_TABLE", kPhpScopeTypeAny);
+                match->FromResultSet(res);
+                matches.push_back(match);
+            }
+        }
+
+    } catch(wxSQLite3Exception& e) {
+        CL_WARNING("PHPLookupTable::FindSymbol: %s", e.GetMessage());
+    }
+    return matches;
 }

@@ -34,25 +34,23 @@
 class SettersGetterData : public clConfigItem
 {
     size_t m_flags;
+
 public:
     enum {
-        FunctionStartWithUpperCase = 0x00000001,
-        FormatFileWhenDone         = 0x00000002,
+        FunctionStartWithUpperCase = (1 << 0),
+        FormatFileWhenDone = (1 << 1),
+        SettersReturnReferenceToSelf = (1 << 2),
     };
-    
+
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
-    
+
     SettersGetterData();
     virtual ~SettersGetterData();
 
-    void SetFlags(size_t flags) {
-        this->m_flags = flags;
-    }
-    size_t GetFlags() const {
-        return m_flags;
-    }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
+    size_t GetFlags() const { return m_flags; }
 };
 
 //----------------------------------------------------
@@ -62,54 +60,75 @@ public:
     enum { Kind_Getter = 0, Kind_Setter, Kind_Parent, Kind_Root };
 
     TagEntryPtr m_tag;
-    int         m_kind;
-    bool        m_checked;
-    
+    int m_kind;
+    bool m_checked;
+
 public:
-    SettersGettersTreeData(TagEntryPtr tag, int kind, bool checked) : m_tag(tag), m_kind(kind), m_checked(checked) {}
+    SettersGettersTreeData(TagEntryPtr tag, int kind, bool checked)
+        : m_tag(tag)
+        , m_kind(kind)
+        , m_checked(checked)
+    {
+    }
     virtual ~SettersGettersTreeData() {}
 };
 
 class SettersGettersDlg : public SettersGettersBaseDlg
 {
-    std::vector<TagEntryPtr>        m_members;
-    wxFileName                      m_file;
-    int                             m_lineno;
+    struct Candidate {
+        TagEntryPtr tag;
+        bool suggestGetter;
+        bool suggestSetter;
+        wxString setterName;
+        wxString getterName;
+
+        Candidate()
+            : suggestGetter(false)
+            , suggestSetter(false)
+        {
+        }
+    };
+
+    std::vector<Candidate> m_candidates;
+    std::vector<TagEntryPtr> m_members;
+    wxFileName m_file;
+    int m_lineno;
     std::map<wxString, TagEntryPtr> m_tagsMap;
-    wxString                        m_code;
-    bool                            m_checkForDuplicateEntries;
-    SettersGetterData               m_settings;
-    
+    wxString m_code;
+    bool m_checkForDuplicateEntries;
+    SettersGetterData m_settings;
+
 protected:
+    virtual void OnSettersReturnReference(wxCommandEvent& event);
+    virtual void OnFilter(wxCommandEvent& event);
     virtual void OnValueChanged(wxDataViewEvent& event);
-    void OnCheckStartWithUpperCase(wxCommandEvent &event);
-    void OnCheckAll(wxCommandEvent &e);
-    void OnUncheckAll(wxCommandEvent &e);
-    void OnUpdatePreview(wxCommandEvent &e);
-    void OnButtonOk(wxCommandEvent &e);
-    int  BuildTree ();
+    void OnCheckStartWithUpperCase(wxCommandEvent& event);
+    void OnCheckAll(wxCommandEvent& e);
+    void OnUncheckAll(wxCommandEvent& e);
+    void OnUpdatePreview(wxCommandEvent& e);
+    void OnButtonOk(wxCommandEvent& e);
+    int BuildTree();
     void UpdateTree();
 
     wxString GenerateFunctions();
-    wxString GenerateSetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName);
+    wxString GenerateSetter(TagEntryPtr tag, bool& alreadyExist, wxString& displayName);
     wxString GenerateSetter(TagEntryPtr tag);
-    wxString GenerateGetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName);
+    wxString GenerateGetter(TagEntryPtr tag, bool& alreadyExist, wxString& displayName);
     wxString GenerateGetter(TagEntryPtr tag);
 
-    void FormatName(wxString &name);
+    void FormatName(wxString& name);
     void UpdatePreview();
-    void GenerateGetters(wxString &code);
-    void GenerateSetters(wxString &code);
-    bool DoCheckExistance(const wxString &scope, const wxString &name, const wxString &method_signature);
+    void GenerateGetters(wxString& code);
+    void GenerateSetters(wxString& code);
+    bool DoCheckExistance(const wxString& scope, const wxString& name, const wxString& method_signature);
+
 public:
     /** Constructor */
     SettersGettersDlg(wxWindow* parent);
     virtual ~SettersGettersDlg();
-    wxString GetGenCode() ;
-    bool GetFormatText() const {
-        return m_checkBoxForamtFileWhenDone->IsChecked();
-    }
-    
-    bool Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno);
+    wxString GetGenCode();
+    bool GetFormatText() const { return m_checkBoxForamtFileWhenDone->IsChecked(); }
+
+    bool Init(const std::vector<TagEntryPtr>& tags, const wxFileName& file, int lineno);
 };
 #endif // __setters_getters_dlg__

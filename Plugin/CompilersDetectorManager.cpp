@@ -120,18 +120,17 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
         // No MinGW compiler detected!, offer the user to download one
         wxStringMap_t mingwCompilers;
         wxArrayString options;
-        mingwCompilers.insert(std::make_pair("MinGW 4.9.2 - 32 Bit",
-                                             "http://sourceforge.net/projects/"
-                                             "tdm-gcc/files/TDM-GCC%20Installer/"
-                                             "tdm-gcc-4.9.2.exe/download"));
-        mingwCompilers.insert(std::make_pair("MinGW 4.9.2 - 64 Bit",
-                                             "http://sourceforge.net/projects/"
-                                             "tdm-gcc/files/TDM-GCC%20Installer/"
-                                             "tdm64-gcc-4.9.2-3.exe/download"));
+        mingwCompilers.insert(std::make_pair(
+            "MinGW 5.1.0 - 32 Bit",
+            "http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-5.1.0-3.exe/download"));
+        mingwCompilers.insert(std::make_pair(
+            "MinGW 5.1.0 - 64 Bit",
+            "http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm64-gcc-5.1.0-2.exe/download"));
         wxStringMap_t::iterator iter = mingwCompilers.begin();
         for(; iter != mingwCompilers.end(); ++iter) {
             options.Add(iter->first);
         }
+
 #ifdef _WIN64
         int sel = 1;
 #else

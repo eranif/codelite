@@ -151,6 +151,15 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     }
     
     m_auibar->AddTool(ID_SSH_OPEN_TERMINAL, _("Open Terminal"), wxXmlResource::Get()->LoadBitmap(wxT("terminal")), wxNullBitmap, wxITEM_NORMAL, _("Open Terminal"), _("Open Terminal"), NULL);
+    wxAuiToolBarItem* m_toolbarItemTerminal = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
+    if (m_toolbarItemTerminal) {
+        m_toolbarItemTerminal->SetHasDropDown(true);
+        m_menu96 = new wxMenu;
+        m_menuItemCustomize = new wxMenuItem(m_menu96, ID_SFTP_CUSTOMIZE, _("SFTP Settings..."), _("SFTP Settings..."), wxITEM_NORMAL);
+        m_menu96->Append(m_menuItemCustomize);
+        
+        m_dropdownMenus.insert(std::make_pair( m_toolbarItemTerminal->GetId(), m_menu96) );
+    }
     m_auibar->Realize();
     
     wxArrayString m_choiceAccountArr;
@@ -196,8 +205,9 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     this->Connect(ID_SFTP_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnConnection), NULL, this);
     this->Connect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
     this->Connect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
-    this->Connect(ID_SSH_OPEN_TERMINAL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnOpenTerminal), NULL, this);
     this->Connect(ID_SSH_OPEN_TERMINAL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnOpenTerminalUI), NULL, this);
+    this->Connect(ID_SSH_OPEN_TERMINAL, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnOpenTerminal), NULL, this);
+    this->Connect(m_menuItemCustomize->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnSftpSettings), NULL, this);
     m_choiceAccount->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnChoiceAccount), NULL, this);
     m_choiceAccount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnChoiceAccountUI), NULL, this);
     m_staticText49->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
@@ -217,8 +227,9 @@ SFTPTreeViewBase::~SFTPTreeViewBase()
     this->Disconnect(ID_SFTP_CONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnConnection), NULL, this);
     this->Disconnect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
     this->Disconnect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
-    this->Disconnect(ID_SSH_OPEN_TERMINAL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnOpenTerminal), NULL, this);
     this->Disconnect(ID_SSH_OPEN_TERMINAL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnOpenTerminalUI), NULL, this);
+    this->Disconnect(ID_SSH_OPEN_TERMINAL, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnOpenTerminal), NULL, this);
+    this->Disconnect(m_menuItemCustomize->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnSftpSettings), NULL, this);
     m_choiceAccount->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnChoiceAccount), NULL, this);
     m_choiceAccount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnChoiceAccountUI), NULL, this);
     m_staticText49->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
@@ -309,6 +320,8 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -373,10 +386,17 @@ SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, 
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
+    // Connect events
+    m_button87->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPSettingsDialogBase::OnOK), NULL, this);
+    
 }
 
 SFTPSettingsDialogBase::~SFTPSettingsDialogBase()
 {
+    m_button87->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPSettingsDialogBase::OnOK), NULL, this);
+    
 }

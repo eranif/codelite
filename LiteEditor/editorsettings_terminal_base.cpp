@@ -75,11 +75,12 @@ EditorSettingsTerminalBase::EditorSettingsTerminalBase(wxWindow* parent, wxWindo
     
     fgSizer1->Add(m_staticText6, 0, wxALL, 5);
     
+    SetName(wxT("EditorSettingsTerminalBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_checkBoxMSWWrapDoubleQuotes->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnCheckboxmswwrapdoublequotesUpdateUi), NULL, this);
     m_staticText2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);

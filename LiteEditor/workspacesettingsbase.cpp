@@ -87,12 +87,28 @@ WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, co
     
     buttonSizer->Add(m_buttonCancel, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook1)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook1);
+    }
+    #endif
+    
     SetName(wxT("WorkspaceSettingsBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_choiceEnvSets->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceSettingsBase::OnEnvSelected), NULL, this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WorkspaceSettingsBase::OnButtonOK), NULL, this);

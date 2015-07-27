@@ -374,13 +374,7 @@ void SFTP::OnSettings(wxCommandEvent& e)
 {
     // Show the SFTP settings dialog
     SFTPSettingsDialog dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
-        // Save the data
-        SFTPSettings settings;
-        settings.Load();
-        settings.SetSshClient(dlg.GetSshClientPath()->GetPath());
-        settings.Save();
-    }
+    dlg.ShowModal();
 }
 
 void SFTP::DoFileSaved(const wxString& filename)

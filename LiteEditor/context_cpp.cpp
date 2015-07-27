@@ -79,6 +79,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/regex.h>
 #include "clEditorStateLocker.h"
+#include "clSelectSymbolDialog.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -118,7 +119,8 @@ static bool IsHeader(const wxString& ext)
         return;                                        \
     }
 
-struct SFileSort {
+struct SFileSort
+{
     bool operator()(const wxFileName& one, const wxFileName& two)
     {
         return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -795,6 +797,14 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<< CodeCompletion API - END
 //=============================================================================
 
+struct ContextCpp_ClientData : public wxClientData
+{
+    TagEntryPtr m_ptr;
+
+    ContextCpp_ClientData(TagEntryPtr ptr) { m_ptr = ptr; }
+    virtual ~ContextCpp_ClientData() {}
+};
+
 TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 {
     CHECK_JS_RETURN_NULL();
@@ -858,9 +868,26 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
         return tags[0];
 
     // popup a dialog offering the results to the user
-    SymbolsDialog dlg(&rCtrl);
-    dlg.AddSymbols(tags, 0);
-    return dlg.ShowModal() == wxID_OK ? dlg.GetTag() : TagEntryPtr(NULL);
+    clSelectSymbolDialogEntry::List_t entries;
+    std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
+        clSelectSymbolDialogEntry e;
+        e.bmp = wxCodeCompletionBox::GetBitmap(tag);
+        e.name = tag->GetFullDisplayName();
+        e.clientData = new ContextCpp_ClientData(tag);
+        
+        wxString helpString;
+        wxFileName fn(tag->GetFile());
+        helpString << fn.GetFullName() << ":" << tag->GetLine();
+        e.help = helpString;
+        entries.push_back(e);
+    });
+    
+    clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);
+    if(dlg.ShowModal() != wxID_OK) {
+        return NULL;
+    }
+    ContextCpp_ClientData* cd = dynamic_cast<ContextCpp_ClientData*>(dlg.GetSelection());
+    return cd->m_ptr;
 }
 
 void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
@@ -1061,10 +1088,16 @@ void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc)
     classPattern.Replace(wxT("$(Name)"), dc.name);
     funcPattern.Replace(wxT("$(Name)"), dc.name);
 
-    classPattern = ExpandAllVariables(
-        classPattern, clCxxWorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
-    funcPattern = ExpandAllVariables(
-        funcPattern, clCxxWorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
+    classPattern = ExpandAllVariables(classPattern,
+                                      clCxxWorkspaceST::Get(),
+                                      editor.GetProjectName(),
+                                      wxEmptyString,
+                                      editor.GetFileName().GetFullPath());
+    funcPattern = ExpandAllVariables(funcPattern,
+                                     clCxxWorkspaceST::Get(),
+                                     editor.GetProjectName(),
+                                     wxEmptyString,
+                                     editor.GetFileName().GetFullPath());
 
     dc.comment.Replace(wxT("$(ClassPattern)"), classPattern);
     dc.comment.Replace(wxT("$(FunctionPattern)"), funcPattern);

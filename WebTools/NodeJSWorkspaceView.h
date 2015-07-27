@@ -9,10 +9,14 @@ class NodeJSWorkspaceView : public clTreeCtrlPanel
 protected:
     void OnContenxtMenu(clContextMenuEvent& event);
     void OnFolderDropped(clCommandEvent& event);
+    void OnShowHiddenFiles(wxCommandEvent& event);
 
 public:
     NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName);
     virtual ~NodeJSWorkspaceView();
+
+    void RebuildTree();
+    void ShowHiddenFiles(bool show);
 };
 
 #endif // NODEJSWORKSPACEVIEW_H

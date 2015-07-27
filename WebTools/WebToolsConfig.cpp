@@ -64,6 +64,11 @@ wxString WebToolsConfig::GetTernProjectFile() const
         JSONElement node = JSONElement::createObject("node");
         plugins.append(node);
     }
+    
+    if(m_jsFlags & kJSPluginRequireJS) {
+        JSONElement node = JSONElement::createObject("requirejs");
+        plugins.append(node);
+    }
 
     if(m_jsFlags & kJSPluginStrings) {
         JSONElement complete_strings = JSONElement::createObject("complete_strings");

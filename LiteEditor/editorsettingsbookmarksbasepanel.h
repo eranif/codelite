@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOR_OPTIONS_BOOKMARKS_BASE_CLASSES_H
-#define EDITOR_OPTIONS_BOOKMARKS_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_EDITOR_OPTIONS_BOOKMARKS_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_EDITOR_OPTIONS_BOOKMARKS_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

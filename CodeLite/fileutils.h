@@ -117,5 +117,14 @@ public:
      * @brief encode URI using percent encoding
      */
     static wxString EncodeURI(const wxString& uri);
+    
+    /**
+     * @brief is the file or folder a hidden file?
+     */
+    static bool IsHidden(const wxFileName& path);
+    /**
+     * @brief is the file or folder a hidden file?
+     */
+    static bool IsHidden(const wxString& path);
 };
 #endif // FILEUTILS_H

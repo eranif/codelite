@@ -13,7 +13,14 @@ SFTPSettingsDialog::SFTPSettingsDialog(wxWindow* parent)
     m_sshClientPath->SetPath(s.GetSshClient());
 }
 
-SFTPSettingsDialog::~SFTPSettingsDialog()
+SFTPSettingsDialog::~SFTPSettingsDialog() {}
+
+void SFTPSettingsDialog::OnOK(wxCommandEvent& event)
 {
-    
+    // Save the data
+    SFTPSettings settings;
+    settings.Load();
+    settings.SetSshClient(GetSshClientPath()->GetPath());
+    settings.Save();
+    event.Skip();
 }

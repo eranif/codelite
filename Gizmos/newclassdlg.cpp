@@ -367,12 +367,12 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent &e)
     kinds.Add(wxT("namespace"));
 
     OpenResourceDialog dlg(this, m_mgr, "");
-    if(dlg.ShowModal() == wxID_OK) {
+    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection()) {
         wxString nameSpace;
-        if( dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>")) {
-            nameSpace << dlg.GetSelection().m_scope << wxT("::");
+        if( dlg.GetSelection()->m_scope.IsEmpty() == false && dlg.GetSelection()->m_scope != wxT("<global>")) {
+            nameSpace << dlg.GetSelection()->m_scope << wxT("::");
         }
-        nameSpace << dlg.GetSelection().m_name;
+        nameSpace << dlg.GetSelection()->m_name;
         m_textCtrlNamespace->ChangeValue(nameSpace);
     }
 }

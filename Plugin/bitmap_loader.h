@@ -38,50 +38,54 @@ class WXDLLIMPEXP_SDK BitmapLoader
 {
 public:
     typedef std::map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
-    
+
 protected:
-    wxFileName                              m_zipPath;
-    static std::map<wxString, wxBitmap>     m_toolbarsBitmaps;
-    static std::map<wxString, wxString>     m_manifest;
+    wxFileName m_zipPath;
+    static std::map<wxString, wxBitmap> m_toolbarsBitmaps;
+    static std::map<wxString, wxString> m_manifest;
     std::map<FileExtManager::FileType, int> m_fileIndexMap;
-    bool                                    m_bMapPopulated;
-    
-    
+    bool m_bMapPopulated;
+    static BitmapMap_t m_userBitmaps;
+
 protected:
     void AddImage(int index, FileExtManager::FileType type);
     wxIcon GetIcon(const wxBitmap& bmp) const;
-    
+
 public:
     BitmapLoader();
     ~BitmapLoader();
+    
+    /**
+     * @brief register a user defined image to a given file type
+     */
+    static void RegisterImage(FileExtManager::FileType type, const wxBitmap& bmp);
 
     /**
      * @brief prepare an image list allocated on the heap which is based on
      * the FileExtManager content. It is the CALLER responsibility for deleting the memory
      */
     wxImageList* MakeStandardMimeImageList();
-    BitmapMap_t  MakeStandardMimeMap();
-    
-    /**
-     * @brief return the image index in the image list prepared by MakeStandardMimeImageList()
-     * @return wxNOT_FOUND if no match is found, the index otherwise
-     */
-    int GetMimeImageId(const wxString &filename) const;
+    BitmapMap_t MakeStandardMimeMap();
 
     /**
      * @brief return the image index in the image list prepared by MakeStandardMimeImageList()
      * @return wxNOT_FOUND if no match is found, the index otherwise
      */
-    int GetMimeImageId(FileExtManager::FileType type) const;
+    int GetMimeImageId(const wxString& filename);
+
+    /**
+     * @brief return the image index in the image list prepared by MakeStandardMimeImageList()
+     * @return wxNOT_FOUND if no match is found, the index otherwise
+     */
+    int GetMimeImageId(FileExtManager::FileType type);
 
 protected:
-    void            doLoadManifest();
-    void            doLoadBitmaps();
-    wxBitmap        doLoadBitmap(const wxString &filepath);
+    void doLoadManifest();
+    void doLoadBitmaps();
+    wxBitmap doLoadBitmap(const wxString& filepath);
 
 public:
-    const wxBitmap& LoadBitmap(const wxString &name);
-
+    const wxBitmap& LoadBitmap(const wxString& name);
 };
 
 #endif // BITMAP_LOADER_H

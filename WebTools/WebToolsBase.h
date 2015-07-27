@@ -30,6 +30,9 @@
 #include <wx/dataview.h>
 #include "m_dataview126model.h"
 #include "Notebook.h"
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -61,6 +64,7 @@ protected:
     wxPGProperty* m_pgPropAngular;
     wxPGProperty* m_pgPropStrings;
     wxPGProperty* m_pgPropNode;
+    wxPGProperty* m_pgPropRequireJS;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_buttonCancel;
     wxButton* m_buttonOK;
@@ -125,26 +129,38 @@ protected:
     wxObjectDataPtr<m_dataview126Model> m_dataviewLocalsModel;
 
     wxPanel* m_splitterPage108;
-    Notebook* m_notebook;
-    wxPanel* m_panelCallstack;
+    wxSplitterWindow* m_splitter168;
+    wxPanel* m_splitterPage172;
     wxDataViewListCtrl* m_dvListCtrlCallstack;
+    wxPanel* m_splitterPage176;
+    Notebook* m_notebook;
     wxPanel* m_panelConsoleLog;
     wxStyledTextCtrl* m_consoleLog;
+    wxTextCtrl* m_textCtrlExpression;
+    wxPanel* m_panelBreakpoints;
+    wxDataViewListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnEvaluateExpression(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBreakpointSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     wxDataViewCtrl* GetDataviewLocals() { return m_dataviewLocals; }
     wxPanel* GetSplitterPage112() { return m_splitterPage112; }
     wxDataViewListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
-    wxPanel* GetPanelCallstack() { return m_panelCallstack; }
+    wxPanel* GetSplitterPage172() { return m_splitterPage172; }
     wxStyledTextCtrl* GetConsoleLog() { return m_consoleLog; }
+    wxTextCtrl* GetTextCtrlExpression() { return m_textCtrlExpression; }
     wxPanel* GetPanelConsoleLog() { return m_panelConsoleLog; }
+    wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
+    wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
     Notebook* GetNotebook() { return m_notebook; }
+    wxPanel* GetSplitterPage176() { return m_splitterPage176; }
+    wxSplitterWindow* GetSplitter168() { return m_splitter168; }
     wxPanel* GetSplitterPage108() { return m_splitterPage108; }
     wxSplitterWindow* GetSplitter104() { return m_splitter104; }
-    NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,250), long style = wxTAB_TRAVERSAL);
     virtual ~NodeJSDebuggerPaneBase();
 };
 
@@ -177,6 +193,26 @@ public:
     wxStaticText* GetStaticTextPreview() { return m_staticTextPreview; }
     NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NodeJSNewWorkspaceDlgBase();
+};
+
+
+class WebToolsImages : public wxImageList
+{
+protected:
+    // Maintain a map of all bitmaps representd by their name
+    std::map<wxString, wxBitmap> m_bitmaps;
+
+
+protected:
+
+public:
+    WebToolsImages();
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
+        return m_bitmaps.find(name)->second;
+    }
+    virtual ~WebToolsImages();
 };
 
 #endif

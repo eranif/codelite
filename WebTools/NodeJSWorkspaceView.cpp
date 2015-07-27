@@ -8,6 +8,9 @@
 #include "globals.h"
 #include "clWorkspaceView.h"
 #include "imanager.h"
+#include "NodeJSWorkspaceConfiguration.h"
+#include "ieditor.h"
+#include <wx/wupdlock.h>
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -26,11 +29,33 @@ void NodeJSWorkspaceView::OnContenxtMenu(clContextMenuEvent& event)
 {
     event.Skip();
     if(event.GetEventObject() == this) {
+        wxMenu* menu = event.GetMenu();
         // Remove the 'Close folder' option
-        event.GetMenu()->Remove(XRCID("tree_ctrl_close_folder"));
-        wxMenuItem* sepItem = event.GetMenu()->FindItemByPosition(0);
-        if(sepItem) {
-            event.GetMenu()->Remove(sepItem);
+        wxMenuItem* item = menu->FindItem(XRCID("tree_ctrl_close_folder"));
+        if(item) {
+            menu->Remove(item);
+            wxMenuItem* sepItem = menu->FindItemByPosition(0);
+            if(sepItem) {
+                menu->Remove(sepItem);
+            }
+        }
+
+        int pos = wxNOT_FOUND;
+        for(size_t i = 0; i < menu->GetMenuItemCount(); ++i) {
+            wxMenuItem* mi = menu->FindItemByPosition(i);
+            if(mi && mi->GetId() == wxID_REFRESH) {
+                pos = i;
+                break;
+            }
+        }
+
+        if(pos != wxNOT_FOUND) {
+            wxMenuItem* showHiddenItem =
+                menu->Insert(pos + 2, XRCID("nodejs_show_hidden_files"), _("Show hidden files"), "", wxITEM_CHECK);
+            NodeJSWorkspaceConfiguration conf;
+            showHiddenItem->Check(conf.Load(NodeJSWorkspace::Get()->GetFilename()).IsShowHiddenFiles());
+            menu->InsertSeparator(pos + 3);
+            menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnShowHiddenFiles, this, XRCID("nodejs_show_hidden_files"));
         }
     }
 }
@@ -52,7 +77,7 @@ void NodeJSWorkspaceView::OnFolderDropped(clCommandEvent& event)
         workspaceFile.SetExt("workspace");
         // Create will fail if a file with this name already exists
         NodeJSWorkspace::Get()->Create(workspaceFile);
-        // Load the workspace, again, it will fail if this is not a valid 
+        // Load the workspace, again, it will fail if this is not a valid
         // NodeJS workspace
         NodeJSWorkspace::Get()->Open(workspaceFile);
     }
@@ -69,4 +94,43 @@ void NodeJSWorkspaceView::OnFolderDropped(clCommandEvent& event)
         NodeJSWorkspace::Get()->Save();
     }
     ::clGetManager()->GetWorkspaceView()->SelectPage(GetViewName());
+}
+
+void NodeJSWorkspaceView::RebuildTree()
+{
+    wxWindowUpdateLocker locker(this);
+    wxArrayString paths;
+    wxArrayTreeItemIds items;
+    GetTopLevelFolders(paths, items);
+
+    Clear();
+
+    for(size_t i = 0; i < paths.size(); ++i) {
+        AddFolder(paths.Item(i));
+    }
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        ExpandToFile(editor->GetFileName());
+    }
+}
+
+void NodeJSWorkspaceView::ShowHiddenFiles(bool show)
+{
+    if(show) {
+        m_options |= kShowHiddenFiles;
+        m_options |= kShowHiddenFolders;
+    } else {
+        m_options &= ~kShowHiddenFiles;
+        m_options &= ~kShowHiddenFolders;
+    }
+}
+
+void NodeJSWorkspaceView::OnShowHiddenFiles(wxCommandEvent& event)
+{
+    NodeJSWorkspaceConfiguration conf;
+    const wxFileName& filename = NodeJSWorkspace::Get()->GetFilename();
+    conf.Load(filename).SetShowHiddenFiles(event.IsChecked()).Save(filename);
+    ShowHiddenFiles(event.IsChecked());
+    RebuildTree();
 }

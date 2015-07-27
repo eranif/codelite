@@ -1186,7 +1186,7 @@ wxArrayString Project::GetIncludePaths(bool clearCache)
     BuildConfigPtr buildConf = GetWorkspace()->GetProjBuildConf(this->GetName(), projectSelConf);
 
     // for non custom projects, take the settings from the build configuration
-    if(buildConf && !buildConf->IsCustomBuild()) {
+    if(buildConf) {
         // Apply the environment
         EnvSetter es(NULL, NULL, GetName());
 
@@ -1770,7 +1770,7 @@ wxArrayString Project::GetPreProcessors(bool clearCache)
     wxArrayString pps;
     BuildConfigPtr buildConf = GetBuildConfiguration();
     // for non custom projects, take the settings from the build configuration
-    if(buildConf && !buildConf->IsCustomBuild()) {
+    if(buildConf) {
 
         // Apply the environment
         EnvSetter es(NULL, NULL, GetName());

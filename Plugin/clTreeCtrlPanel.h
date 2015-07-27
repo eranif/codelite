@@ -11,25 +11,38 @@
 class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {
+protected:
     BitmapLoader m_bmpLoader;
     clConfig* m_config;
     wxString m_viewName;
     clTreeCtrlPanelDefaultPage* m_defaultView;
     wxString m_newfileTemplate;
     size_t m_newfileTemplateHighlightLen;
-    
+    size_t m_options;
+
+public:
+    enum {
+        kShowHiddenFiles = (1 << 0),
+        kShowHiddenFolders = (1 << 1),
+    };
+
 protected:
     void ToggleView();
 
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
-    
+
+    /**
+     * @brief set the tree options
+     */
+    void SetOptions(size_t options) { m_options = options; }
+
     /**
      * @brief set the new file template (default is "Untitled.txt")
      */
     void SetNewFileTemplate(const wxString& newfile, size_t charsToHighlight);
-    
+
     void SetViewName(const wxString& viewName) { this->m_viewName = viewName; }
     const wxString& GetViewName() const { return m_viewName; }
 
@@ -97,16 +110,16 @@ protected:
     virtual void OnCloseFolder(wxCommandEvent& event);
     virtual void OnNewFolder(wxCommandEvent& event);
     virtual void OnNewFile(wxCommandEvent& event);
-    virtual void OnDeleteFolder(wxCommandEvent& event);
     virtual void OnOpenFile(wxCommandEvent& event);
+    virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnRenameFile(wxCommandEvent& event);
-    virtual void OnDeleteFile(wxCommandEvent& event);
+    virtual void OnDeleteSelections(wxCommandEvent& event);
     virtual void OnFindInFilesFolder(wxCommandEvent& event);
     virtual void OnOpenContainingFolder(wxCommandEvent& event);
     virtual void OnOpenShellFolder(wxCommandEvent& event);
     virtual void OnFolderDropped(clCommandEvent& event);
     virtual void OnRefresh(wxCommandEvent& event);
-
+    void OnOpenFolder(wxCommandEvent& event);
     // Helpers
     void DoExpandItem(const wxTreeItemId& parent, bool expand);
     void DoRenameItem(const wxTreeItemId& item, const wxString& oldname, const wxString& newname);

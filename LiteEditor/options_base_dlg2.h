@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef OPTIONSDIALOGBASE2_BASE_CLASSES_H
-#define OPTIONSDIALOGBASE2_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_OPTIONSDIALOGBASE2_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_OPTIONSDIALOGBASE2_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

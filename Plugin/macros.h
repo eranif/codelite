@@ -93,11 +93,13 @@ const wxString BUILD_START_MSG             = _("----------Build Started--------\
 const wxString BUILD_END_MSG               = _("----------Build Ended----------\n");
 const wxString BUILD_PROJECT_PREFIX        = _("----------Building project:[ ");
 const wxString CLEAN_PROJECT_PREFIX        = _("----------Cleaning project:[ ");
-const wxString SEARCH_IN_WORKSPACE         = _("Entire Workspace");
-const wxString SEARCH_IN_PROJECT           = _("Active Project");
-const wxString SEARCH_IN_CURR_FILE_PROJECT = _("Current File's Project");
-const wxString SEARCH_IN_CURRENT_FILE      = _("Current File");
-const wxString SEARCH_IN_OPEN_FILES        = _("Open Files");
+
+// Find in files options
+const wxString SEARCH_IN_WORKSPACE         = "<Entire Workspace>";
+const wxString SEARCH_IN_PROJECT           = "<Active Project>";
+const wxString SEARCH_IN_CURR_FILE_PROJECT = "<Current File's Project>";
+const wxString SEARCH_IN_CURRENT_FILE      = "<Current File>";
+const wxString SEARCH_IN_OPEN_FILES        = "<Open Files>";
 
 const wxString USE_WORKSPACE_ENV_VAR_SET   = _("<Use Defaults>");
 const wxString USE_GLOBAL_SETTINGS         = _("<Use Defaults>");

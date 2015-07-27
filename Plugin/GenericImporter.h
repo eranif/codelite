@@ -38,6 +38,8 @@ struct GenericProjectCfg {
     wxString preCompiledHeader;
     wxString command;
     wxString workingDirectory;
+    std::vector<wxString> preBuildCommands;
+    std::vector<wxString> postBuildCommands;
     GenericEnvVarsType envVars;
     GenericCfgType type;
 };

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef QUICKDEBUG_BASE_CLASSES_H
-#define QUICKDEBUG_BASE_CLASSES_H
+#ifndef CODELITE_FORMBUILDER_QUICKDEBUG_BASE_CLASSES_H
+#define CODELITE_FORMBUILDER_QUICKDEBUG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -21,6 +21,12 @@
 #include <wx/textctrl.h>
 #include <wx/panel.h>
 #include <wx/choice.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class QuickDebugBase : public wxDialog
 {
@@ -50,6 +56,20 @@ protected:
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    wxComboBox* GetExeFilepath() { return m_ExeFilepath; }
+    wxButton* GetButtonBrowseExe() { return m_buttonBrowseExe; }
+    wxStaticText* GetStaticText5() { return m_staticText5; }
+    wxComboBox* GetWD() { return m_WD; }
+    wxButton* GetButtonBrowseWD() { return m_buttonBrowseWD; }
+    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
+    wxPanel* GetPanel1() { return m_panel1; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxChoice* GetChoiceDebuggers() { return m_choiceDebuggers; }
+    wxPanel* GetPanel2() { return m_panel2; }
+    wxStaticText* GetStaticText6() { return m_staticText6; }
+    wxTextCtrl* GetTextCtrlCmds() { return m_textCtrlCmds; }
     QuickDebugBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Quick Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~QuickDebugBase();
 };

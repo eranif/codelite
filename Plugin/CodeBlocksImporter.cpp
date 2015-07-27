@@ -177,12 +177,16 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                         if(targetChild->GetName() == wxT("Option") &&
                                            targetChild->HasAttribute(wxT("output"))) {
                                             wxString output = targetChild->GetAttribute(wxT("output"));
+                                            if(output.Contains(wxT("#")))
+                                                output.Replace(wxT("#"), wxT(""));
                                             genericProjectCfg->outputFilename = output;
                                         }
 
                                         if(targetChild->GetName() == wxT("Option") &&
                                            targetChild->HasAttribute(wxT("working_dir"))) {
                                             wxString working_dir = targetChild->GetAttribute(wxT("working_dir"));
+                                            if(working_dir.Contains(wxT("#")))
+                                                working_dir.Replace(wxT("#"), wxT(""));
                                             genericProjectCfg->workingDirectory = working_dir;
                                         }
 
@@ -256,9 +260,35 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                             if(libPath.Contains(wxT("#")))
                                                 libPath.Replace(wxT("#"), wxT(""));
 
+                                            if(libraries.Contains(wxT("#")))
+                                                libraries.Replace(wxT("#"), wxT(""));
+
                                             genericProjectCfg->linkerOptions = linkerOptions;
                                             genericProjectCfg->libPath = libPath;
                                             genericProjectCfg->libraries = libraries;
+                                        }
+
+                                        if(targetChild->GetName() == wxT("ExtraCommands")) {
+                                            wxXmlNode* extraCommandsChild = targetChild->GetChildren();
+                                            while(extraCommandsChild) {
+                                                if(extraCommandsChild->GetName() == wxT("Add") &&
+                                                   extraCommandsChild->HasAttribute(wxT("before"))) {
+                                                    wxString command = extraCommandsChild->GetAttribute(wxT("before"));
+                                                    if(command.Contains(wxT("#")))
+                                                        command.Replace(wxT("#"), wxT(""));
+                                                    genericProjectCfg->preBuildCommands.push_back(command);
+                                                }
+
+                                                if(extraCommandsChild->GetName() == wxT("Add") &&
+                                                   extraCommandsChild->HasAttribute(wxT("after"))) {
+                                                    wxString command = extraCommandsChild->GetAttribute(wxT("after"));
+                                                    if(command.Contains(wxT("#")))
+                                                        command.Replace(wxT("#"), wxT(""));
+                                                    genericProjectCfg->postBuildCommands.push_back(command);
+                                                }
+
+                                                extraCommandsChild = extraCommandsChild->GetNext();
+                                            }
                                         }
 
                                         targetChild = targetChild->GetNext();
@@ -333,7 +363,7 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
 
                         projectChild = projectChild->GetNext();
                     }
-                    
+
                     for(GenericProjectCfgPtr genericProjectCfg : genericProject->cfgs) {
                         genericProjectCfg->cCompilerOptions += globalCompilerOptions;
                         genericProjectCfg->cppCompilerOptions += globalCompilerOptions;

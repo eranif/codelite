@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef GITUI_BASE_CLASSES_H
-#define GITUI_BASE_CLASSES_H
+#ifndef CODELITE_GIT_GITUI_BASE_CLASSES_H
+#define CODELITE_GIT_GITUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

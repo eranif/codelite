@@ -307,6 +307,8 @@
         <File Name="clTreeCtrlPanel.h"/>
         <File Name="clFileViwerTreeCtrl.h"/>
         <File Name="clFileViwerTreeCtrl.cpp"/>
+        <File Name="clImageViewer.h"/>
+        <File Name="clImageViewer.cpp"/>
       </VirtualDirectory>
       <File Name="clTreeCtrlPanelDefaultPage.h"/>
       <File Name="clTreeCtrlPanelDefaultPage.cpp"/>
@@ -333,6 +335,10 @@
       <File Name="VirtualDirectorySelectorBase.wxcp"/>
       <File Name="EditDlg.h"/>
       <File Name="EditDlg.cpp"/>
+      <File Name="clSingleChoiceDialog.h"/>
+      <File Name="clSingleChoiceDialog.cpp"/>
+      <File Name="clSelectSymbolDialog.h"/>
+      <File Name="clSelectSymbolDialog.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>
@@ -341,8 +347,6 @@
       <File Name="dockablepane.h"/>
       <File Name="detachedpanesinfo.cpp"/>
       <File Name="detachedpanesinfo.h"/>
-      <File Name="fileclose.png"/>
-      <File Name="fileclose-pressed.png"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
       <File Name="Notebook.cpp"/>
@@ -425,6 +429,7 @@
       <File Name="wxCodeCompletionBox_bitmaps.cpp"/>
       <File Name="clBoostrapWizardBase_plugin_bitmaps.cpp"/>
       <File Name="WSImporterDlgs_plugin_bitmaps.cpp"/>
+      <File Name="clSelectSymbolDialogBase_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -441,12 +446,17 @@
       <File Name="clBoostrapWizardBase.cpp"/>
       <File Name="WSImporterDlgs.h"/>
       <File Name="WSImporterDlgs.cpp"/>
+      <File Name="openresourcedialogmodel.cpp"/>
+      <File Name="openresourcedialogmodel.h"/>
+      <File Name="clSelectSymbolDialogBase.h"/>
+      <File Name="clSelectSymbolDialogBase.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>
     <File Name="wxcrafter.wxcp"/>
     <File Name="clBoostrapWizardBase.wxcp"/>
     <File Name="WSImporterDlgs.wxcp"/>
+    <File Name="clSelectSymbolDialogBase.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
     <File Name="AddSSHAcountDlg.cpp"/>

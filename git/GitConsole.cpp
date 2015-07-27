@@ -41,6 +41,7 @@
 #include "macros.h"
 #include "globals.h"
 #include "clCommandProcessor.h"
+#include <wx/wupdlock.h>
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)                       \
@@ -177,15 +178,10 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     , m_git(git)
 {
     // set the font to fit the C++ lexer default font
-    LexerConf::Ptr_t lexCpp = EditorConfigST::Get()->GetLexer("c++");
+    LexerConf::Ptr_t lexCpp = EditorConfigST::Get()->GetLexer("text");
     if(lexCpp) {
-        wxFont font = lexCpp->GetFontForSyle(wxSTC_C_DEFAULT);
-        for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-            m_stcLog->StyleSetFont(i, font);
-        }
+        lexCpp->Apply(m_stcLog);
     }
-    m_stcLog->SetReadOnly(true);
-
     m_bitmapLoader = new BitmapLoader();
     GitImages m_images;
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
@@ -275,9 +271,7 @@ GitConsole::~GitConsole()
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
 {
-    m_stcLog->SetReadOnly(false);
     m_stcLog->ClearAll();
-    m_stcLog->SetReadOnly(true);
 }
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
@@ -300,28 +294,15 @@ void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_stcLo
 
 void GitConsole::AddText(const wxString& text)
 {
+    wxWindowUpdateLocker locker(m_stcLog);
     wxString tmp = text;
     tmp.Replace("\r\n", "\n");
-
-    m_stcLog->SetReadOnly(false);
-
-    int lineNumber = m_stcLog->GetLineCount(); // there is always at least 1 line in the document
-    --lineNumber;                              // wxSTC count lines from 0
-
-    wxArrayString lines = ::wxStringTokenize(tmp, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
-        wxString& curline = lines.Item(i);
-        if(curline.StartsWith("\r") && lineNumber) {
-            m_stcLog->LineDelete(); // Deletes the "\n" we append to each line
-            m_stcLog->LineDelete(); // The the last line we added
-        }
-        m_stcLog->AppendText(curline + "\n");
-
-        // update the lineNumber
-        lineNumber = m_stcLog->GetLineCount(); // there is always at least 1 line in the document
-        --lineNumber;                          // wxSTC count lines from 0
+    if(!tmp.EndsWith("\n")) {
+        tmp.Append("\n");
     }
-    m_stcLog->SetReadOnly(false);
+    wxString curtext = m_stcLog->GetText();
+    curtext << tmp;
+    m_stcLog->SetText(curtext);
     m_stcLog->ScrollToEnd();
 }
 
@@ -519,7 +500,9 @@ void GitConsole::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     m_dvFilesModel->Clear();
+    OnClearGitLog(e);
 }
+
 void GitConsole::OnItemSelectedUI(wxUpdateUIEvent& event) { event.Enable(m_dvFiles->GetSelectedItemsCount()); }
 
 void GitConsole::OnFileActivated(wxDataViewEvent& event)

@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 675,
+  "m_objCounter": 677,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCF01InitBitmapResources",
   "m_bitmapsFile": "php_ui_php-plugin_bitmaps.cpp",
@@ -10629,11 +10629,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "Notebook"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "Notebook.h"
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -10755,7 +10755,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
+             "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -10788,7 +10788,7 @@
               }, {
                "type": "font",
                "m_label": "Font:",
-               "m_value": "wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
+               "m_value": ""
               }, {
                "type": "bool",
                "m_label": "Hidden",
@@ -12025,6 +12025,25 @@
       }],
      "m_events": [],
      "m_children": []
+    }, {
+     "m_type": 4482,
+     "proportion": 0,
+     "border": 5,
+     "gbSpan": "1,1",
+     "gbPosition": "0,0",
+     "m_styles": [],
+     "m_sizerFlags": [],
+     "m_properties": [{
+       "type": "string",
+       "m_label": "Name:",
+       "m_value": "m_bmpPhpWorkspace"
+      }, {
+       "type": "filePicker",
+       "m_label": "Bitmap File:",
+       "m_path": "../resources/php-workspace.png"
+      }],
+     "m_events": [],
+     "m_children": []
     }]
   }, {
    "m_type": 4407,
@@ -12195,11 +12214,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "Notebook"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "Notebook.h"
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -12277,7 +12296,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../resources/devil.png"
+           "m_path": ""
           }, {
            "type": "bool",
            "m_label": "Selected",
@@ -12731,7 +12750,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../resources/console.png"
+           "m_path": ""
           }, {
            "type": "bool",
            "m_label": "Selected",
@@ -18436,7 +18455,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,-1"
+         "m_value": "-1,200"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",

@@ -115,6 +115,7 @@ class clMainFrame : public wxFrame
     wxStringSet_t m_coreToolbars;
     clStatusBar* m_statusBar;
     clSingleInstanceThread* m_singleInstanceThread;
+    bool m_toggleToolBar;
     
 protected:
     bool IsEditorEvent(wxEvent& event);
@@ -342,6 +343,9 @@ protected:
     //----------------------------------------------------
     // event handlers
     //----------------------------------------------------
+    void OnDebugStarted(clDebugEvent& event);
+    void OnDebugEnded(clDebugEvent& event);
+    
     void OnRestoreDefaultLayout(wxCommandEvent& e);
     void OnIdle(wxIdleEvent& e);
     void OnBuildEnded(clCommandEvent& event);
@@ -409,6 +413,7 @@ protected:
     void OnProjectAddProject(wxCommandEvent& event);
     void OnReconcileProject(wxCommandEvent& event);
     void OnWorkspaceOpen(wxUpdateUIEvent& event);
+    void OnNewProjectUI(wxUpdateUIEvent& event);
     void OnRetagWorkspaceUI(wxUpdateUIEvent& event);
     void OnAddEnvironmentVariable(wxCommandEvent& event);
     void OnAdvanceSettings(wxCommandEvent& event);

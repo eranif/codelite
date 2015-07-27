@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
-#define NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
+#ifndef CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
+#define CODELITE_PLUGIN_NEWKEYSHORTCUTBASEDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -19,21 +19,32 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK NewKeyShortcutBaseDlg : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer3;
     wxPanel* m_panel1;
+    wxBoxSizer* bSizer5;
+    wxFlexGridSizer* flexGridSizer8;
     wxStaticText* m_staticTextActionLabel;
     wxStaticText* m_staticTextAction;
     wxStaticText* m_staticText10;
     wxTextCtrl* m_textCtrl1;
     wxButton* m_buttonClear;
     wxStaticText* m_staticText12;
+    wxBoxSizer* bSizer6;
     wxCheckBox* m_checkBoxCtrl;
     wxCheckBox* m_checkBoxAlt;
     wxCheckBox* m_checkBoxShift;
+    wxBoxSizer* bSizer4;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 
@@ -43,6 +54,18 @@ protected:
     virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticTextActionLabel() { return m_staticTextActionLabel; }
+    wxStaticText* GetStaticTextAction() { return m_staticTextAction; }
+    wxStaticText* GetStaticText10() { return m_staticText10; }
+    wxTextCtrl* GetTextCtrl1() { return m_textCtrl1; }
+    wxButton* GetButtonClear() { return m_buttonClear; }
+    wxStaticText* GetStaticText12() { return m_staticText12; }
+    wxCheckBox* GetCheckBoxCtrl() { return m_checkBoxCtrl; }
+    wxCheckBox* GetCheckBoxAlt() { return m_checkBoxAlt; }
+    wxCheckBox* GetCheckBoxShift() { return m_checkBoxShift; }
+    wxPanel* GetPanel1() { return m_panel1; }
+    wxButton* GetButtonOk() { return m_buttonOk; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
     NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set New Key Accelerator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewKeyShortcutBaseDlg();
 };

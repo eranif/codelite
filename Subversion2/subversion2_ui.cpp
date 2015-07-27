@@ -85,11 +85,12 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer30->Add(m_sci, 1, wxALL|wxEXPAND, 2);
     
+    SetName(wxT("SubversionPageBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
     m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(SubversionPageBase::OnTreeMenu), NULL, this);
@@ -183,11 +184,19 @@ SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer8->Add(m_button5, 0, wxALL, 5);
     
+    SetName(wxT("SvnCopyDialogBase"));
     SetSizeHints(575,315);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 SvnCopyDialogBase::~SvnCopyDialogBase()
@@ -250,11 +259,19 @@ SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wx
     
     bSizer11->Add(m_button7, 0, wxALL, 5);
     
+    SetName(wxT("SvnLoginDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 SvnLoginDialogBase::~SvnLoginDialogBase()
@@ -275,6 +292,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     this->SetSizer(bSizer12);
     
     m_treebook1 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook1->SetName(wxT("m_treebook1"));
     wxImageList* m_treebook1_il = new wxImageList(16, 16);
     m_treebook1->AssignImageList(m_treebook1_il);
     
@@ -472,16 +490,32 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     
     bSizer13->Add(m_button9, 0, wxALL, 5);
     
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook1)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_treebook1);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treebook1);
+    }
+    #endif
     m_treebook1->ExpandNode( 0, true );
     m_treebook1->ExpandNode( 1, true );
     m_treebook1->ExpandNode( 2, true );
     m_treebook1->ExpandNode( 3, true );
     
+    SetName(wxT("SvnPreferencesDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnPreferencesDialogBase::OnBrowseSvnExe), NULL, this);
     m_staticText10->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnPreferencesDialogBase::OnUseExternalDiffUI), NULL, this);
@@ -612,11 +646,19 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer18->Add(m_button13, 0, wxALL, 5);
     
+    SetName(wxT("SvnInfoDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 SvnInfoDialogBase::~SvnInfoDialogBase()
@@ -691,11 +733,19 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase(wxWindow* parent, wxWindowID id, co
     
     bSizer20->Add(m_button15, 0, wxALL, 5);
     
+    SetName(wxT("SvnCheckoutDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_comboBoxRepoURL->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SvnCheckoutDialogBase::OnCheckoutDirectoryText), NULL, this);
     m_buttonBrowseDir->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnCheckoutDialogBase::OnBrowseDirectory), NULL, this);
@@ -773,11 +823,19 @@ SvnLogDialogBase::SvnLogDialogBase(wxWindow* parent, wxWindowID id, const wxStri
     
     bSizer22->Add(m_button18, 0, wxALL, 5);
     
+    SetName(wxT("SvnLogDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 SvnLogDialogBase::~SvnLogDialogBase()
@@ -847,11 +905,19 @@ DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     bSizer26->Add(m_button19, 0, wxALL, 5);
     
+    SetName(wxT("DiffDialogBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 DiffDialogBase::~DiffDialogBase()
@@ -884,11 +950,12 @@ ChangeLogPageBase::ChangeLogPageBase(wxWindow* parent, wxWindowID id, const wxPo
     
     bSizer27->Add(m_textCtrl, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("ChangeLogPageBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_textCtrl->Connect(wxEVT_COMMAND_TEXT_URL, wxCommandEventHandler(ChangeLogPageBase::OnURL), NULL, this);
     
@@ -995,11 +1062,19 @@ SvnPropsBaseDlg::SvnPropsBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     bSizer29->Add(m_button22, 0, wxALL, 5);
     
+    SetName(wxT("SvnPropsBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 SvnPropsBaseDlg::~SvnPropsBaseDlg()
@@ -1051,11 +1126,19 @@ PatchDlgBase::PatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_stdBtnSizer33->AddButton(m_button37);
     m_stdBtnSizer33->Realize();
     
+    SetName(wxT("PatchDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 PatchDlgBase::~PatchDlgBase()
@@ -1111,11 +1194,19 @@ SvnSelectLocalRepoBase::SvnSelectLocalRepoBase(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer39->AddButton(m_button43);
     m_stdBtnSizer39->Realize();
     
+    SetName(wxT("SvnSelectLocalRepoBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_listBoxPaths->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathSelected), NULL, this);
     m_listBoxPaths->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(SvnSelectLocalRepoBase::OnPathActivated), NULL, this);
@@ -1198,11 +1289,19 @@ SvnBlameFrameBase::SvnBlameFrameBase(wxWindow* parent, wxWindowID id, const wxSt
     
     boxSizer13->Add(m_stc, 1, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("SvnBlameFrameBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 SvnBlameFrameBase::~SvnBlameFrameBase()

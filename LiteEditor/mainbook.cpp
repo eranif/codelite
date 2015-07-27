@@ -45,6 +45,7 @@
 #include <algorithm>
 #include "clFileOrFolderDropTarget.h"
 #include "NotebookNavigationDlg.h"
+#include "clImageViewer.h"
 
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
@@ -111,7 +112,7 @@ void MainBook::ConnectEvents()
         wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainBook::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(MainBook::OnDebugEnded), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
@@ -130,7 +131,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_NAVIGATING, &MainBook::OnNavigating, this);
     m_book->Unbind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
-    
+
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
 
     EventNotifier::Get()->Disconnect(
@@ -141,7 +142,7 @@ MainBook::~MainBook()
         wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainBook::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(MainBook::OnDebugEnded), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
@@ -320,17 +321,7 @@ void MainBook::RestoreSession(SessionEntry& session)
         editor->LoadMarkersFromArray(ti.GetBookmarks());
         editor->LoadCollapsedFoldsFromArray(ti.GetCollapsedFolds());
     }
-// We can't just use SelectPane() here.
-// Notebook::DoPageChangedEvent has posted events to us,
-// which have the effect of selecting back to page 0
-// So post ourselves an event, so that it arrives after that one
-
-// FIXME: ??
-#if 0
-    wxBookCtrlEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGED, GetId());
-    event.SetSelection(sel);
-    m_book->GetEventHandler()->AddPendingEvent(event);
-#endif
+    m_book->SetSelection(sel);
 }
 
 LEditor* MainBook::GetActiveEditor(bool includeDetachedEditors)
@@ -536,11 +527,17 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
     }
 #endif
 
-    if(IsFileExists(fileName) == false) {
+    if(!IsFileExists(fileName)) {
         wxLogMessage(wxT("Failed to open: %s: No such file or directory"), fileName.GetFullPath().c_str());
         return NULL;
     }
-
+    
+    if(FileExtManager::GetType(fileName.GetFullName()) == FileExtManager::TypeBmp) {
+        // a bitmap file, open it using an image viewer
+        DoOpenImageViewer(fileName);
+        return NULL;
+    }
+    
     wxString projName = projectName;
     if(projName.IsEmpty()) {
         // try to match a project name to the file. otherwise, CC may not work
@@ -611,8 +608,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
         editor->SetLineVisible(editor->LineFromPosition(position));
 
     } else if(lineno != wxNOT_FOUND) {
-        editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno), preserveSelection);
-        editor->SetLineVisible(lineno);
+        editor->CenterLine(lineno);
     }
 
     if(m_reloadingDoRaise) {
@@ -1221,30 +1217,9 @@ void MainBook::DoPositionFindBar(int where)
     GetSizer()->Layout();
 }
 
-void MainBook::OnDebugEnded(wxCommandEvent& e)
-{
-    // ManagerST::Get()->GetDebuggerTip()->HideDialog();
-    e.Skip();
-}
+void MainBook::OnDebugEnded(clDebugEvent& e) { e.Skip(); }
 
-void MainBook::DoHandleFrameMenu(LEditor* editor)
-{
-    // Incase of no editor or an editor with context other than C++
-    // remove the context menu from the main frame
-    // if(!editor || editor->GetContext()->GetName() != wxT("C++")) {
-    //     int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-    //     if(idx != wxNOT_FOUND) {
-    //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, false);
-    //     }
-    //
-    // } else if(editor && editor->GetContext()->GetName() == wxT("C++")) {
-    //
-    //     int idx = clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-    //     if(idx != wxNOT_FOUND) {
-    //         clMainFrame::Get()->GetMenuBar()->EnableTop(idx, true);
-    //     }
-    // }
-}
+void MainBook::DoHandleFrameMenu(LEditor* editor) { wxUnusedVar(editor); }
 
 void MainBook::OnPageChanging(wxBookCtrlEvent& e)
 {
@@ -1439,4 +1414,12 @@ void MainBook::OnTabDClicked(wxBookCtrlEvent& e)
 {
     e.Skip();
     ManagerST::Get()->TogglePanes();
+}
+
+void MainBook::DoOpenImageViewer(const wxFileName& filename)
+{
+    clImageViewer *imageViewer = new clImageViewer(m_book, filename);
+    size_t pos = m_book->GetPageCount();
+    m_book->AddPage(imageViewer, filename.GetFullName(), true);
+    m_book->SetPageToolTip(pos, filename.GetFullPath());
 }

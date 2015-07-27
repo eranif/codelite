@@ -15,9 +15,13 @@
 #include <algorithm>
 #include "NodeJSContinueHandler.h"
 #include "NodeJSCallstackHandler.h"
+#include "NodeJSSelectFrameHandler.h"
+#include "NodeJSGetScriptHandler.h"
 #include "NodeJSEvents.h"
 #include "bookmark_manager.h"
 #include "NodeJSWorkspaceUserConfiguration.h"
+#include <wx/log.h>
+#include "NodeJSEvaluateExprHandler.h"
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return
@@ -40,7 +44,9 @@ NodeJSDebugger::NodeJSDebugger()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &NodeJSDebugger::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeJSDebugger::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeJSDebugger::OnHighlightLine, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebugger::OnSelectFrame, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION, &NodeJSDebugger::OnEvalExpression, this);
+
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
 
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
@@ -63,7 +69,8 @@ NodeJSDebugger::~NodeJSDebugger()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &NodeJSDebugger::OnWorkspaceOpened, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeJSDebugger::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeJSDebugger::OnHighlightLine, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebugger::OnSelectFrame, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION, &NodeJSDebugger::OnEvalExpression, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeOutput, this);
@@ -72,6 +79,12 @@ NodeJSDebugger::~NodeJSDebugger()
         wxDELETE(m_node);
     }
     m_bptManager.Save();
+    DoDeleteTempFiles(m_tempFiles);
+    m_tempFiles.clear();
+
+    // fire stop event (needed to reload the normal layout)
+    clDebugEvent event(wxEVT_NODEJS_DEBUGGER_STOPPED);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void NodeJSDebugger::OnCanInteract(clDebugEvent& event)
@@ -131,7 +144,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
         return;
     };
 
-    NodeJSDebuggerDlg dlg(NULL, NodeJSDebuggerDlg::kDebug);
+    NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kDebug);
     if(dlg.ShowModal() != wxID_OK) {
         return;
     }
@@ -227,6 +240,8 @@ void NodeJSDebugger::OnToggleBreakpoint(clDebugEvent& event)
 
             // Update the UI
             m_bptManager.SetBreakpoints(editor);
+            clDebugEvent event(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+            EventNotifier::Get()->AddPendingEvent(event);
         }
     }
 }
@@ -236,6 +251,24 @@ void NodeJSDebugger::OnTooltip(clDebugEvent& event)
     event.Skip();
     CHECK_RUNNING();
     event.Skip(false);
+
+    CHECK_PTR_RET(clGetManager()->GetActiveEditor());
+
+    wxString selection;
+    wxRect rect;
+    clGetManager()->GetActiveEditor()->GetWordAtMousePointer(selection, rect);
+    CHECK_COND_RET(!selection.IsEmpty());
+
+    // Build the request
+    JSONElement request = JSONElement::createObject();
+    request.addProperty("type", "request");
+    request.addProperty("command", "evaluate");
+    JSONElement args = JSONElement::createObject("arguments");
+    request.append(args);
+    args.addProperty("expression", selection);
+
+    // Write the command
+    m_socket->WriteRequest(request, new NodeJSEvaluateExprHandler(selection));
 }
 
 void NodeJSDebugger::OnVoid(clDebugEvent& event)
@@ -385,7 +418,7 @@ void NodeJSDebugger::SelectFrame(int frameId)
     args.addProperty("number", frameId);
 
     // Write the command
-    m_socket->WriteRequest(request, NULL);
+    m_socket->WriteRequest(request, new NodeJSSelectFrameHandler());
 }
 
 void NodeJSDebugger::SetCanInteract(bool canInteract)
@@ -408,6 +441,9 @@ void NodeJSDebugger::SetDebuggerMarker(IEditor* editor, int lineno)
     stc->SetCurrentPos(caretPos);
     stc->EnsureCaretVisible();
     editor->CenterLine(lineno);
+#ifdef __WXOSX__
+    stc->Refresh();
+#endif
 }
 
 void NodeJSDebugger::ClearDebuggerMarker()
@@ -418,26 +454,36 @@ void NodeJSDebugger::ClearDebuggerMarker()
         editors.begin(), editors.end(), [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_indicator); });
 }
 
-void NodeJSDebugger::OnHighlightLine(clDebugEvent& event)
+void NodeJSDebugger::DoHighlightLine(const wxString& filename, int lineNo)
 {
-    event.Skip();
-    int line = event.GetInt();
-    wxString file = event.GetFileName();
-
-    ClearDebuggerMarker();
-    bool res = clGetManager()->OpenFile(file);
-    if(res) {
-        IEditor* activeEditor = clGetManager()->GetActiveEditor();
-        if(activeEditor && (activeEditor->GetFileName().GetFullPath() == file)) {
-            SetDebuggerMarker(activeEditor, line - 1);
-        }
+    IEditor* activeEditor = clGetManager()->OpenFile(filename, "", lineNo - 1);
+    if(activeEditor) {
+        SetDebuggerMarker(activeEditor, lineNo - 1);
     }
 }
 
-void NodeJSDebugger::OnSelectFrame(clDebugEvent& event)
+void NodeJSDebugger::OnHighlightLine(clDebugEvent& event)
 {
     event.Skip();
-    SelectFrame(event.GetInt());
+    int line = event.GetLineNumber();
+    wxFileName file = event.GetFileName();
+
+    ClearDebuggerMarker();
+    if(file.Exists()) {
+        CallAfter(&NodeJSDebugger::DoHighlightLine, file.GetFullPath(), line);
+
+    } else {
+        // Probably a node.js internal file
+        wxFileName fn(clStandardPaths::Get().GetUserDataDir(), file.GetFullPath());
+        fn.AppendDir("webtools");
+        fn.AppendDir("tmp");
+        if(fn.Exists()) {
+            CallAfter(&NodeJSDebugger::DoHighlightLine, fn.GetFullPath(), line);
+        } else {
+            // Ask the file from nodejs
+            GetCurrentFrameSource(file.GetFullPath(), line);
+        }
+    }
 }
 
 void NodeJSDebugger::ExceptionThrown()
@@ -453,4 +499,89 @@ void NodeJSDebugger::ConnectError(const wxString& errmsg)
                    "CodeLite",
                    wxOK | wxICON_ERROR | wxCENTER);
     m_socket.Reset(NULL);
+}
+
+void NodeJSDebugger::BreakOnException(bool b)
+{
+    // Sanity
+    if(!IsConnected()) return;
+
+    // Build the request
+    JSONElement request = JSONElement::createObject();
+    request.addProperty("type", "request");
+    request.addProperty("command", "setexceptionbreak");
+
+    JSONElement args = JSONElement::createObject("arguments");
+    request.append(args);
+    args.addProperty("type", "uncaught");
+    args.addProperty("enabled", b);
+
+    // Write the command
+    m_socket->WriteRequest(request, NULL);
+}
+
+void NodeJSDebugger::GetCurrentFrameSource(const wxString& filename, int line)
+{
+    // Sanity
+    if(!IsConnected()) return;
+
+    // Build the request
+    JSONElement request = JSONElement::createObject();
+    request.addProperty("type", "request");
+    request.addProperty("command", "source");
+
+    // Write the command
+    m_socket->WriteRequest(request, new NodeJSGetScriptHandler(filename, line));
+}
+
+void NodeJSDebugger::OnEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+
+    wxStringSet_t tmpFiles = m_tempFiles;
+    wxStringSet_t closedTempEditors;
+    // Loop over the temp files list
+    std::for_each(tmpFiles.begin(), tmpFiles.end(), [&](const wxString& filename) {
+        // If the temp file does not match one of the editors, assume it was closed and delete
+        // the temporary file
+        IEditor::List_t::iterator iter = std::find_if(editors.begin(), editors.end(), [&](IEditor* editor) {
+            if(editor->GetFileName().GetFullPath() == filename) return true;
+            return false;
+        });
+        if(iter == editors.end()) {
+            closedTempEditors.insert(filename);
+            m_tempFiles.erase(filename);
+        }
+    });
+
+    if(!closedTempEditors.empty()) {
+        DoDeleteTempFiles(closedTempEditors);
+    }
+}
+
+void NodeJSDebugger::DoDeleteTempFiles(const wxStringSet_t& files)
+{
+    std::for_each(files.begin(), files.end(), [&](const wxString& filename) {
+        wxLogNull noLog;
+        ::wxRemoveFile(filename);
+    });
+}
+
+void NodeJSDebugger::OnEvalExpression(clDebugEvent& event)
+{
+    event.Skip();
+
+    // Build the request
+    JSONElement request = JSONElement::createObject();
+    request.addProperty("type", "request");
+    request.addProperty("command", "evaluate");
+    JSONElement args = JSONElement::createObject("arguments");
+    request.append(args);
+    args.addProperty("expression", event.GetString());
+
+    // Write the command
+    m_socket->WriteRequest(
+        request, new NodeJSEvaluateExprHandler(event.GetString(), NodeJSEvaluateExprHandler::kContextConsole));
 }

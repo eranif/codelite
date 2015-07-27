@@ -59,14 +59,14 @@ void NewIneritanceDlg::OnButtonMore(wxCommandEvent& event)
     dlg.GetFilters().Add(TagEntry::KIND_CLASS);
     dlg.GetFilters().Add(TagEntry::KIND_STRUCT);
 
-    if(dlg.ShowModal() == wxID_OK) {
+    if((dlg.ShowModal() == wxID_OK) && (dlg.GetSelection() != NULL)) {
         wxString parentName;
-        if(dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>")) {
-            parentName << dlg.GetSelection().m_scope << wxT("::");
+        if(dlg.GetSelection()->m_scope.IsEmpty() == false && dlg.GetSelection()->m_scope != wxT("<global>")) {
+            parentName << dlg.GetSelection()->m_scope << wxT("::");
         }
-        parentName << dlg.GetSelection().m_name;
+        parentName << dlg.GetSelection()->m_name;
         m_textCtrlInhertiance->SetValue(parentName);
 
-        m_fileName = dlg.GetSelection().m_file;
+        m_fileName = dlg.GetSelection()->m_file;
     }
 }

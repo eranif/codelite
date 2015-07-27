@@ -29,42 +29,39 @@
 #include "ps_general_page.h"
 #include "globals.h"
 
-PSLinkerPage::PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneralPage *gp )
-    : PSLinkPageBase( parent )
+PSLinkerPage::PSLinkerPage(wxWindow* parent, ProjectSettingsDlg* dlg, PSGeneralPage* gp)
+    : PSLinkPageBase(parent)
     , m_dlg(dlg)
     , m_gp(gp)
 {
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
 }
 
-void PSLinkerPage::OnLinkerNotNeededUI( wxUpdateUIEvent& event )
-{
-    event.Enable( !m_checkLinkerNeeded->IsChecked() && !m_dlg->IsCustomBuildEnabled() );
-}
+void PSLinkerPage::OnLinkerNotNeededUI(wxUpdateUIEvent& event) { event.Enable(!m_checkLinkerNeeded->IsChecked()); }
 
 void PSLinkerPage::Load(BuildConfigPtr buildConf)
 {
-    m_checkLinkerNeeded->SetValue( !buildConf->IsLinkerRequired() );
+    m_checkLinkerNeeded->SetValue(!buildConf->IsLinkerRequired());
     SelectChoiceWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings, buildConf->GetBuildLnkWithGlobalSettings());
-    m_pgPropLibraries->SetValue( buildConf->GetLibraries() );
-    m_pgPropLibraryPaths->SetValue( buildConf->GetLibPath() );
-    m_pgPropOptions->SetValue( buildConf->GetLinkOptions() );
+    m_pgPropLibraries->SetValue(buildConf->GetLibraries());
+    m_pgPropLibraryPaths->SetValue(buildConf->GetLibPath());
+    m_pgPropOptions->SetValue(buildConf->GetLinkOptions());
 }
 
 void PSLinkerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
     buildConf->SetLinkerRequired(!m_checkLinkerNeeded->IsChecked());
-    buildConf->SetLibPath( m_pgPropLibraryPaths->GetValueAsString() );
-    buildConf->SetLibraries( m_pgPropLibraries->GetValueAsString() );
-    buildConf->SetLinkOptions( m_pgPropOptions->GetValueAsString() );
+    buildConf->SetLibPath(m_pgPropLibraryPaths->GetValueAsString());
+    buildConf->SetLibraries(m_pgPropLibraries->GetValueAsString());
+    buildConf->SetLinkOptions(m_pgPropOptions->GetValueAsString());
     buildConf->SetBuildLnkWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings->GetValueAsString());
 }
 
 void PSLinkerPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
-    for( ; !iter.AtEnd(); ++iter ) {
-        if ( iter.GetProperty() && !iter.GetProperty()->IsCategory() ) {
+    for(; !iter.AtEnd(); ++iter) {
+        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
@@ -77,18 +74,18 @@ void PSLinkerPage::OnCustomEditorClicked(wxCommandEvent& event)
     CHECK_PTR_RET(prop);
     m_dlg->SetIsDirty(true);
 
-    if ( prop == m_pgPropLibraries || prop == m_pgPropLibraryPaths ) {
+    if(prop == m_pgPropLibraries || prop == m_pgPropLibraryPaths) {
         wxString value = prop->GetValueAsString();
-        if ( PopupAddOptionDlg(value) ) {
-            prop->SetValueFromString( value );
+        if(PopupAddOptionDlg(value)) {
+            prop->SetValueFromString(value);
         }
 
-    } else if ( prop == m_pgPropOptions ) {
+    } else if(prop == m_pgPropOptions) {
         wxString value = prop->GetValueAsString();
         wxString cmpName = m_gp->GetCompiler();
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-        if (PopupAddOptionCheckDlg(value, _("Linker options"), cmp->GetLinkerOptions())) {
-            prop->SetValueFromString( value );
+        if(PopupAddOptionCheckDlg(value, _("Linker options"), cmp->GetLinkerOptions())) {
+            prop->SetValueFromString(value);
         }
     }
 }
@@ -98,15 +95,9 @@ void PSLinkerPage::OnCheckLinkerNeeded(wxCommandEvent& event)
     m_dlg->SetIsDirty(true);
 }
 
-void PSLinkerPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event)
-{
-    event.Enable( !m_dlg->IsCustomBuildEnabled() );
-}
+void PSLinkerPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event) { event.Enable(!m_dlg->IsCustomBuildEnabled()); }
 
-void PSLinkerPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable( m_dlg->IsProjectEnabled() );
-}
+void PSLinkerPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }
 
 void PSLinkerPage::OnPropertyChanged(wxPropertyGridEvent& event)
 {

@@ -16,6 +16,7 @@
 PHPDebugPane::PHPDebugPane(wxWindow* parent)
     : PHPDebugPaneBase(parent)
 {
+    Hide();
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_STACK_TRACE, &PHPDebugPane::OnUpdateStackTrace, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &PHPDebugPane::OnXDebugSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTING, &PHPDebugPane::OnXDebugSessionStarting, this);
@@ -24,10 +25,6 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     m_console = new TerminalEmulatorUI(m_auiBook);
     
     m_auiBook->AddPage(m_console, _("Console"), true);
-#ifndef __WXGTK__
-    m_auiBook->SetArtProvider(new clAuiGlossyTabArt);
-#endif
-    
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
     if(phpLexer) {
         phpLexer->Apply(m_console->GetTerminalOutputWindow());

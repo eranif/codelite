@@ -28,6 +28,7 @@
 #include "fileutils.h"
 #include <wx/regex.h>
 #include <wx/xml/xml.h>
+#include "json_node.h"
 
 std::map<wxString, FileExtManager::FileType> FileExtManager::m_map;
 std::vector<FileExtManager::Matcher::Ptr_t> FileExtManager::m_matchers;
@@ -77,10 +78,10 @@ void FileExtManager::Init()
         m_map[wxT("js")] = TypeJS;
         m_map[wxT("javascript")] = TypeJS;
         m_map[wxT("py")] = TypePython;
-        
+
         // Java file
         m_map[wxT("java")] = TypeJava;
-        
+
         m_map[wxT("exe")] = TypeExe;
         m_map[wxT("html")] = TypeHtml;
         m_map[wxT("htm")] = TypeHtml;
@@ -120,12 +121,12 @@ void FileExtManager::Init()
         m_map[wxT("sql")] = TypeSQL;
         m_map[wxT("phpwsp")] = TypeWorkspacePHP;
         m_map[wxT("phptags")] = TypeWorkspacePHPTags;
-        
+
         m_map["pro"] = TypeQMake;
         m_map["pri"] = TypeQMake;
         m_map["cmake"] = TypeCMake;
         m_map["s"] = TypeAsm;
-        
+
         // Initialize regexes:
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/sh", TypeScript)));
@@ -135,13 +136,13 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?xml", TypeXml, false)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?php", TypePhp, false)));
-        
+
         // STL sources places "-*- C++ -*-" at the top of their headers
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("-*- C++ -*-", TypeSourceCpp, false)));
-        
-        // #ifndef WORD 
+
+        // #ifndef WORD
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#ifndef[ \t]+[a-zA-Z0-9_]+", TypeSourceCpp)));
-        
+
         // #include <
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp)));
     }
@@ -170,16 +171,23 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     } else if((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
         return TypeCMake;
     }
-    
+
     FileExtManager::FileType type = iter->second;
-    if(fn.Exists() && type == TypeWorkspace) {
-        // try to decide if this is a PHP workspace or a standard workspace
-        wxXmlDocument doc;
-        if(doc.Load(fn.GetFullPath())) {
-            // an XML type, assume standard workspace
-            return TypeWorkspace;
+    if(fn.Exists() && (type == TypeWorkspace)) {
+        wxString content;
+        if(FileUtils::ReadFileContent(fn, content)) {
+            if(content.Contains("<CodeLite_Workspace")) {
+                return TypeWorkspace;
+            } else {
+                JSONRoot root(content);
+                if(!root.isOk()) return TypeWorkspace;
+                if(root.toElement().hasNamedObject("NodeJS"))
+                    return TypeWorkspaceNodeJS;
+                else
+                    return TypeWorkspacePHP;
+            }
         } else {
-            return TypeWorkspacePHP;
+            return TypeWorkspace;
         }
     }
     return iter->second;
@@ -203,17 +211,17 @@ bool FileExtManager::IsPHPFile(const wxString& filename)
     return ft == TypePhp;
 }
 
-bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType) 
+bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
     wxString fileContent;
     if(!FileUtils::ReadFileContent(filename, fileContent)) return false;
-    
+
     // Use only the first 4K bytes from the input file (tested with default STL headers)
     if(fileContent.length() > 4096) {
         fileContent.Truncate(4096);
     }
-    
-    for(size_t i=0; i<m_matchers.size(); ++i) {
+
+    for(size_t i = 0; i < m_matchers.size(); ++i) {
         if(m_matchers.at(i)->Matches(fileContent)) {
             fileType = m_matchers.at(i)->m_fileType;
             return true;

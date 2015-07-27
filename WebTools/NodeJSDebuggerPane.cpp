@@ -6,15 +6,24 @@
 #include "ColoursAndFontsManager.h"
 #include <wx/wupdlock.h>
 #include <wx/msgdlg.h>
+#include "globals.h"
+#include "NodeJSDebugger.h"
+#include "NoteJSWorkspace.h"
+#include "imanager.h"
 
 NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
     : NodeJSDebuggerPaneBase(parent)
 {
+    EventNotifier::Get()->Bind(
+        wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
@@ -33,26 +42,21 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
 
 NodeJSDebuggerPane::~NodeJSDebuggerPane()
 {
+    EventNotifier::Get()->Unbind(
+        wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, &NodeJSDebuggerPane::OnExceptionThrown, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME, &NodeJSDebuggerPane::OnFrameSelected, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeJSDebuggerPane::OnUpdateDebuggerView, this);
+
     ClearCallstack();
 }
-
-void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
+void NodeJSDebuggerPane::ParseRefsArray(const JSONElement& refs)
 {
-    event.Skip();
-    wxWindowUpdateLocker locker(m_dataviewLocals);
-    ClearCallstack();
-
-    JSONRoot root(event.GetString());
-    JSONElement frames = root.toElement().namedObject("body").namedObject("frames");
-    JSONElement refs = root.toElement().namedObject("refs");
-    // Load the handlers into a map
-    m_handles.clear();
-
     int refsCount = refs.arraySize();
     for(int i = 0; i < refsCount; ++i) {
         JSONElement ref = refs.arrayItem(i);
@@ -82,9 +86,23 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
         }
         m_handles.insert(std::make_pair(handleId, h));
     }
+}
+
+void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
+{
+    event.Skip();
+    wxWindowUpdateLocker locker(m_dataviewLocals);
+    ClearCallstack();
+
+    JSONRoot root(event.GetString());
+    JSONElement frames = root.toElement().namedObject("body").namedObject("frames");
+    JSONElement refs = root.toElement().namedObject("refs");
+
+    // Load the handlers into a map
+    m_handles.clear();
+    ParseRefsArray(refs);
 
     int count = frames.arraySize();
-
     for(int i = 0; i < count; ++i) {
         JSONElement frame = frames.arrayItem(i);
         int index = frame.namedObject("index").toInt();
@@ -115,7 +133,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
         if(i == 0) {
             // Notify the debugger to use frame #0 for the indicator
             clDebugEvent event(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
-            event.SetInt(line);
+            event.SetLineNumber(line);
             event.SetFileName(file);
             EventNotifier::Get()->AddPendingEvent(event);
             BuildLocals(frame);
@@ -135,6 +153,7 @@ void NodeJSDebuggerPane::OnConsoleLog(clDebugEvent& event)
 {
     event.Skip();
     m_consoleLog->AppendText(event.GetString());
+    ::clRecalculateSTCHScrollBar(m_consoleLog);
     m_consoleLog->ScrollToEnd();
 }
 
@@ -150,10 +169,12 @@ void NodeJSDebuggerPane::OnSessionStarted(clDebugEvent& event)
 
 void NodeJSDebuggerPane::OnItemActivated(wxDataViewEvent& event)
 {
+    CHECK_ITEM_RET(event.GetItem());
     FrameData* cd = (FrameData*)m_dvListCtrlCallstack->GetItemData(event.GetItem());
-    clDebugEvent eventSelected(wxEVT_NODEJS_DEBUGGER_SELECT_FRAME);
-    eventSelected.SetInt(cd->index);
-    EventNotifier::Get()->AddPendingEvent(eventSelected);
+    CHECK_PTR_RET(cd);
+    NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
+    if(!debugger) return;
+    debugger->SelectFrame(cd->index);
 }
 
 void NodeJSDebuggerPane::ClearCallstack()
@@ -168,8 +189,13 @@ void NodeJSDebuggerPane::ClearCallstack()
     m_dvListCtrlCallstack->Enable(true);
 }
 
-void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, int refId)
+void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, int refId, int depth)
 {
+    if(depth >= 20) {
+        // don't go into infinite recurse
+        return;
+    }
+
     wxVector<wxVariant> cols;
     cols.push_back(name);
 
@@ -182,7 +208,7 @@ void NodeJSDebuggerPane::AddLocal(wxDataViewItem& parent, const wxString& name, 
 
         if(!h.properties.empty()) {
             std::for_each(h.properties.begin(), h.properties.end(), [&](const std::pair<int, wxString>& p) {
-                AddLocal(child, p.second, p.first);
+                AddLocal(child, p.second, p.first, depth + 1);
             });
         }
     } else {
@@ -204,7 +230,8 @@ void NodeJSDebuggerPane::BuildArguments(const JSONElement& json)
     int count = arr.arraySize();
     for(int i = 0; i < count; ++i) {
         JSONElement local = arr.arrayItem(i);
-        AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
+        AddLocal(
+            locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt(), 0);
     }
 
     if(m_dataviewLocalsModel->HasChildren(locals)) {
@@ -224,7 +251,8 @@ void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
     int count = arr.arraySize();
     for(int i = 0; i < count; ++i) {
         JSONElement local = arr.arrayItem(i);
-        AddLocal(locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt());
+        AddLocal(
+            locals, local.namedObject("name").toString(), local.namedObject("value").namedObject("ref").toInt(), 0);
     }
 
     if(m_dataviewLocalsModel->HasChildren(locals)) {
@@ -235,9 +263,121 @@ void NodeJSDebuggerPane::BuildLocals(const JSONElement& json)
 void NodeJSDebuggerPane::OnExceptionThrown(clDebugEvent& event)
 {
     event.Skip();
-    ::wxMessageBox(_("An exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
-    int where = m_notebook->FindPage(m_panelConsoleLog);
-    if(where != wxNOT_FOUND) {
-        m_notebook->SetSelection(where);
+    ::wxMessageBox(_("An uncaught exception thrown!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+    NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
+    if(!debugger) return;
+    debugger->Callstack();
+}
+
+void NodeJSDebuggerPane::OnUpdateDebuggerView(clDebugEvent& event)
+{
+    event.Skip();
+    NodeJSDebugger::Ptr_t debugger = NodeJSWorkspace::Get()->GetDebugger();
+    if(!debugger) return;
+    m_dvListCtrlBreakpoints->DeleteAllItems();
+    const NodeJSBreakpoint::List_t& breakpoints = debugger->GetBreakpointsMgr()->GetBreakpoints();
+    std::for_each(breakpoints.begin(), breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
+        wxVector<wxVariant> cols;
+        cols.push_back(wxString() << bp.GetNodeBpID());
+        cols.push_back(wxString() << bp.GetLine());
+        cols.push_back(bp.GetFilename());
+        m_dvListCtrlBreakpoints->AppendItem(cols);
+    });
+}
+
+void NodeJSDebuggerPane::OnFrameSelected(clDebugEvent& event)
+{
+    event.Skip();
+    wxWindowUpdateLocker locker(m_dataviewLocals);
+    m_dataviewLocalsModel->Clear();
+    m_dataviewLocals->Enable(true);
+
+    JSONRoot root(event.GetString());
+    JSONElement json = root.toElement();
+    JSONElement frame = json.namedObject("body");
+    JSONElement refs = json.namedObject("refs");
+
+    // Load the handlers into a map
+    m_handles.clear();
+    ParseRefsArray(refs);
+
+    int index = frame.namedObject("index").toInt();
+    int funcRef = frame.namedObject("func").namedObject("ref").toInt();
+    int fileRef = frame.namedObject("script").namedObject("ref").toInt();
+    int line = frame.namedObject("line").toInt() + 1;
+
+    wxVector<wxVariant> cols;
+    cols.push_back(wxString() << index);
+    wxString file, func;
+    if(m_handles.count(funcRef)) {
+        func = m_handles.find(funcRef)->second.value;
     }
+    if(m_handles.count(funcRef)) {
+        file = m_handles.find(fileRef)->second.value;
+    }
+    cols.push_back(func);
+    cols.push_back(file);
+    cols.push_back(wxString() << line);
+
+    // Notify the debugger to use frame #0 for the indicator
+    clDebugEvent eventHighlight(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
+    eventHighlight.SetLineNumber(line);
+    eventHighlight.SetFileName(file);
+    EventNotifier::Get()->AddPendingEvent(eventHighlight);
+    BuildLocals(frame);
+    BuildArguments(frame);
+}
+
+void NodeJSDebuggerPane::OnBreakpointSelected(wxDataViewEvent& event)
+{
+    wxVariant v;
+    int line;
+    wxString file;
+    // sanity
+    CHECK_ITEM_RET(event.GetItem());
+    wxDataViewItem item = event.GetItem();
+    int row = m_dvListCtrlBreakpoints->ItemToRow(item);
+    // sanity
+    if(row >= m_dvListCtrlBreakpoints->GetItemCount()) return;
+
+    m_dvListCtrlBreakpoints->GetValue(v, row, 1);
+    line = v.GetInteger();
+
+    m_dvListCtrlBreakpoints->GetValue(v, row, 2);
+    file = v.GetString();
+
+    CallAfter(&NodeJSDebuggerPane::DoOpenFile, file, line);
+}
+
+void NodeJSDebuggerPane::DoOpenFile(const wxString& filename, int line)
+{
+    clGetManager()->OpenFile(filename, "", line - 1);
+}
+void NodeJSDebuggerPane::OnEvaluateExpression(wxCommandEvent& event)
+{
+    if(m_textCtrlExpression->IsEmpty()) return;
+
+    clDebugEvent evalEvent(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION);
+    evalEvent.SetString(m_textCtrlExpression->GetValue());
+    EventNotifier::Get()->AddPendingEvent(evalEvent);
+}
+
+void NodeJSDebuggerPane::OnExpressionEvaluated(clDebugEvent& event)
+{
+    event.Skip();
+    wxString message;
+    message << m_textCtrlExpression->GetValue() << " = " << event.GetString();
+    
+    wxString currentText = m_consoleLog->GetValue();
+    if(!currentText.EndsWith("\n")) {
+        message.Prepend("\n");
+    }
+    if(!message.EndsWith("\n")) {
+        message << "\n";
+    }
+    m_consoleLog->AppendText(message);
+    m_consoleLog->ScrollToEnd();
+    
+    // Restore the focus to the text control
+    m_textCtrlExpression->CallAfter(&wxTextCtrl::SetFocus);
 }

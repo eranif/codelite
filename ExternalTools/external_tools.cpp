@@ -63,11 +63,19 @@ ExternalToolBaseDlg::ExternalToolBaseDlg(wxWindow* parent, wxWindowID id, const 
     
     bSizer7->Add(m_buttonCancel, 0, wxALL, 5);
     
+    SetName(wxT("ExternalToolBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_listCtrlTools->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(ExternalToolBaseDlg::OnItemActivated), NULL, this);
     m_listCtrlTools->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(ExternalToolBaseDlg::OnItemDeSelected), NULL, this);

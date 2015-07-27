@@ -94,11 +94,12 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropDebuggerLineColour->SetValueToUnspecified();
     m_pgPropDebuggerLineColour->SetHelpString(_("Debugger line background colour"));
     
+    SetName(wxT("EditorOptionsGeneralGuidesPanelBase"));
     SetSizeHints(500,500);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
 }
 
 EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
@@ -147,11 +148,12 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropWrapBrackets = m_pgMgrEdit->AppendIn( m_pgProp16,  new wxBoolProperty( _("Wrap with brackets"), wxPG_LABEL, 1) );
     m_pgPropWrapBrackets->SetHelpString(_("When typing '(' or '[' on a selection, instead of replacing the selection with the character, wrap it with brackets"));
     
+    SetName(wxT("EditorOptionsGeneralEditBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_pgMgrEdit->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EditorOptionsGeneralEditBase::OnValueChanged), NULL, this);
     

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef PHP_UI_BASE_CLASSES_H
-#define PHP_UI_BASE_CLASSES_H
+#ifndef CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
+#define CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -38,6 +38,7 @@
 #include <wx/treectrl.h>
 #include "my_tree_view.h"
 #include <wx/aui/auibook.h>
+#include "Notebook.h"
 #include "xdebuglocalsviewmodel.h"
 #include <wx/bitmap.h>
 #include <wx/icon.h>
@@ -412,7 +413,7 @@ public:
         ID_DELETE_BREAKPOINTS = 8002,
     };
 protected:
-    wxAuiNotebook* m_auiBook;
+    Notebook* m_auiBook;
     wxPanel* m_panel140;
     wxDataViewListCtrl* m_dvListCtrlStackTrace;
     wxPanel* m_panel142;
@@ -433,7 +434,7 @@ public:
     wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxAuiToolBar* GetAuibar218() { return m_auibar218; }
     wxPanel* GetPanel142() { return m_panel142; }
-    wxAuiNotebook* GetAuiBook() { return m_auiBook; }
+    Notebook* GetAuiBook() { return m_auiBook; }
     PHPDebugPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,300), long style = wxTAB_TRAVERSAL);
     virtual ~PHPDebugPaneBase();
 };
@@ -481,7 +482,7 @@ public:
 class EvalPaneBase : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook257;
+    Notebook* m_notebook257;
     wxPanel* m_panel259;
     wxStyledTextCtrl* m_stcOutput;
     wxTextCtrl* m_textCtrlExpression;
@@ -507,7 +508,7 @@ public:
     wxTextCtrl* GetTextCtrlExpressionXdebug() { return m_textCtrlExpressionXdebug; }
     wxButton* GetButtonSendXdebug() { return m_buttonSendXdebug; }
     wxPanel* GetPanel261() { return m_panel261; }
-    wxNotebook* GetNotebook257() { return m_notebook257; }
+    Notebook* GetNotebook257() { return m_notebook257; }
     EvalPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~EvalPaneBase();
 };

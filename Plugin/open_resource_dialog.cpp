@@ -52,35 +52,28 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     , m_needRefresh(false)
 {
     Hide();
-    // Create an image list
-    wxImageList* li = new wxImageList(16, 16, true);
     BitmapLoader* bmpLoader = m_manager->GetStdIcons();
 
-    m_tagImgMap[wxT("class")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));
-    m_tagImgMap[wxT("struct")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));
-    m_tagImgMap[wxT("namespace")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));
-    m_tagImgMap[wxT("typedef")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));
-    m_tagImgMap[wxT("member_private")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));
-    m_tagImgMap[wxT("member_public")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));
-    m_tagImgMap[wxT("member_protected")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));
-    m_tagImgMap[wxT("function_private")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));
-    m_tagImgMap[wxT("function_public")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));
-    m_tagImgMap[wxT("function_protected")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected")));
-    m_tagImgMap[wxT("enum")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));
-    m_tagImgMap[wxT("enumerator")] = li->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));
-    m_tagImgMap[wxT("cpp")] = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));
-    m_tagImgMap[wxT("h")] = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));
-    m_tagImgMap[wxT("text")] = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));
-    m_tagImgMap[wxT("c")] = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/c")));
-    m_tagImgMap[wxT("wxfb")] = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/wxfb")));
-    m_tagImgMap[wxT("wxcp")] = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/wxcp")));
-
-    m_listOptions->AssignImageList(li, wxIMAGE_LIST_SMALL);
+    m_tagImgMap[wxT("class")] = bmpLoader->LoadBitmap(wxT("cc/16/class"));
+    m_tagImgMap[wxT("struct")] = bmpLoader->LoadBitmap(wxT("cc/16/struct"));
+    m_tagImgMap[wxT("namespace")] = bmpLoader->LoadBitmap(wxT("cc/16/namespace"));
+    m_tagImgMap[wxT("typedef")] = bmpLoader->LoadBitmap(wxT("cc/16/typedef"));
+    m_tagImgMap[wxT("member_private")] = bmpLoader->LoadBitmap(wxT("cc/16/member_private"));
+    m_tagImgMap[wxT("member_public")] = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
+    m_tagImgMap[wxT("member_protected")] = bmpLoader->LoadBitmap(wxT("cc/16/member_protected"));
+    m_tagImgMap[wxT("function_private")] = bmpLoader->LoadBitmap(wxT("cc/16/function_private"));
+    m_tagImgMap[wxT("function_public")] = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
+    m_tagImgMap[wxT("function_protected")] = bmpLoader->LoadBitmap(wxT("cc/16/function_protected"));
+    m_tagImgMap[wxT("enum")] = bmpLoader->LoadBitmap(wxT("cc/16/enum"));
+    m_tagImgMap[wxT("enumerator")] = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
+    m_tagImgMap[wxT("cpp")] = bmpLoader->LoadBitmap(wxT("mime/16/cpp"));
+    m_tagImgMap[wxT("h")] = bmpLoader->LoadBitmap(wxT("mime/16/h"));
+    m_tagImgMap[wxT("text")] = bmpLoader->LoadBitmap(wxT("mime/16/text"));
+    m_tagImgMap[wxT("c")] = bmpLoader->LoadBitmap(wxT("mime/16/c"));
+    m_tagImgMap[wxT("wxfb")] = bmpLoader->LoadBitmap(wxT("mime/16/wxfb"));
+    m_tagImgMap[wxT("wxcp")] = bmpLoader->LoadBitmap(wxT("mime/16/wxcp"));
 
     m_timer = new wxTimer(this, XRCID("OR_TIMER"));
-    MSWSetNativeTheme(m_listOptions);
-    m_listOptions->InsertColumn(0, wxT("Name"));
-    m_listOptions->InsertColumn(1, wxT("Full path"));
 
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
@@ -110,23 +103,30 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         }
     }
 
-    m_listOptions->Connect(
-        wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(OpenResourceDialog::OnItemActivated), NULL, this);
-    m_listOptions->Connect(
-        wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(OpenResourceDialog::OnItemSelected), NULL, this);
-
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
     if(!initialSelection.IsEmpty()) {
         m_textCtrlResourceName->SetValue(initialSelection);
         m_textCtrlResourceName->SelectAll();
     }
+
+    m_dataview->GetColumn(0)->SetWidth(400);
+    m_dataview->GetColumn(1)->SetWidth(60);
+    m_dataview->GetColumn(2)->SetWidth(500);
+
+    bool showFiles = clConfig::Get().Read("OpenResourceDialog/ShowFiles", true);
+    bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);
+    m_checkBoxFiles->SetValue(showFiles);
+    m_checkBoxShowSymbols->SetValue(showSymbols);
 }
 
 OpenResourceDialog::~OpenResourceDialog()
 {
     m_timer->Stop();
     wxDELETE(m_timer);
+
+    clConfig::Get().Write("OpenResourceDialog/ShowFiles", m_checkBoxFiles->IsChecked());
+    clConfig::Get().Write("OpenResourceDialog/ShowSymbols", m_checkBoxShowSymbols->IsChecked());
 }
 
 void OpenResourceDialog::OnText(wxCommandEvent& event)
@@ -155,28 +155,15 @@ void OpenResourceDialog::OnUsePartialMatching(wxCommandEvent& event)
     m_textCtrlResourceName->SetFocus();
 }
 
-void OpenResourceDialog::OnEnter(wxCommandEvent& event)
+void OpenResourceDialog::OnEntryActivated(wxDataViewEvent& event)
 {
-    wxUnusedVar(event);
-    int sel = m_listOptions->GetFirstSelected();
-    if(sel != wxNOT_FOUND) {
-        OpenResourceDialogItemData* data = (OpenResourceDialogItemData*)m_listOptions->GetItemData(sel);
-        if(data) {
-            m_selection = *data;
-            EndModal(wxID_OK);
-        }
-    }
-}
+    CHECK_ITEM_RET(event.GetItem());
 
-void OpenResourceDialog::OnItemActivated(wxListEvent& event)
-{
-    int sel = event.m_itemIndex;
-    if(sel != wxNOT_FOUND) {
-        OpenResourceDialogItemData* data = (OpenResourceDialogItemData*)m_listOptions->GetItemData(sel);
-        if(data) {
-            m_selection = *data;
-            EndModal(wxID_OK);
-        }
+    m_dataviewModel->GetClientObject(event.GetItem());
+    OpenResourceDialogItemData* data =
+        dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(event.GetItem()));
+    if(data) {
+        EndModal(wxID_OK);
     }
 }
 
@@ -188,7 +175,7 @@ void OpenResourceDialog::DoPopulateList()
 
     Clear();
 
-    wxWindowUpdateLocker locker(m_listOptions);
+    wxWindowUpdateLocker locker(m_dataview);
 
     // First add the workspace files
 
@@ -199,15 +186,12 @@ void OpenResourceDialog::DoPopulateList()
         m_userFilters.Item(i).MakeLower();
     }
 
-    DoPopulateWorkspaceFile();
-    DoPopulateTags();
+    if(m_checkBoxFiles->IsChecked()) {
+        DoPopulateWorkspaceFile();
+    }
 
-    if(m_listOptions->GetItemCount()) {
-        m_listOptions->SetColumnWidth(0, wxLIST_AUTOSIZE);
-        m_listOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
-    } else {
-        m_listOptions->SetColumnWidth(0, wxLIST_AUTOSIZE_USEHEADER);
-        m_listOptions->SetColumnWidth(1, wxLIST_AUTOSIZE_USEHEADER);
+    if(m_checkBoxShowSymbols->IsChecked()) {
+        DoPopulateTags();
     }
 }
 
@@ -232,38 +216,32 @@ void OpenResourceDialog::DoPopulateTags()
         wxString name(tag->GetName());
 
         // keep the fullpath
-        int index(0);
+        wxDataViewItem item;
         wxString fullname;
         if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
             fullname = wxString::Format(
                 wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(), tag->GetSignature().c_str());
-            index =
-                DoAppendLine(tag->GetName(),
-                             fullname,
-                             (tag->GetKind() == wxT("function")),
-                             new OpenResourceDialogItemData(
-                                 tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
-                             DoGetTagImgId(tag));
+            item = DoAppendLine(tag->GetName(),
+                                fullname,
+                                (tag->GetKind() == wxT("function")),
+                                new OpenResourceDialogItemData(
+                                    tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
+                                DoGetTagImg(tag));
         } else {
 
             fullname = wxString::Format(wxT("%s::%s"), tag->GetScope().c_str(), tag->GetName().c_str());
-            index =
-                DoAppendLine(tag->GetName(),
-                             fullname,
-                             false,
-                             new OpenResourceDialogItemData(
-                                 tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
-                             DoGetTagImgId(tag));
+            item = DoAppendLine(tag->GetName(),
+                                fullname,
+                                false,
+                                new OpenResourceDialogItemData(
+                                    tag->GetFile(), tag->GetLine(), tag->GetPattern(), tag->GetName(), tag->GetScope()),
+                                DoGetTagImg(tag));
         }
 
         if((m_userFilters.GetCount() == 1) && (m_userFilters.Item(0).CmpNoCase(name) == 0) && !gotExactMatch) {
             gotExactMatch = true;
-            DoSelectItem(index);
+            DoSelectItem(item);
         }
-    }
-
-    if(!gotExactMatch && m_listOptions->GetItemCount()) {
-        DoSelectItem(0);
     }
 }
 
@@ -281,7 +259,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 
             wxFileName fn(iter->second);
             FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());
-            int imgId = m_tagImgMap[wxT("text")];
+            wxBitmap imgId = m_tagImgMap[wxT("text")];
             switch(type) {
             case FileExtManager::TypeSourceC:
                 imgId = m_tagImgMap[wxT("c")];
@@ -314,13 +292,7 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 void OpenResourceDialog::Clear()
 {
     // list control does not own the client data, we need to free it ourselves
-    for(int i = 0; i < m_listOptions->GetItemCount(); i++) {
-        OpenResourceDialogItemData* data = (OpenResourceDialogItemData*)m_listOptions->GetItemData(i);
-        if(data) {
-            delete data;
-        }
-    }
-    m_listOptions->DeleteAllItems();
+    m_dataviewModel->Clear();
     m_userFilters.Clear();
 }
 
@@ -333,7 +305,7 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
     activateEvent.SetFileName(file_path);
     if(EventNotifier::Get()->ProcessEvent(activateEvent)) return;
 
-    if(manager && manager->OpenFile(selection.m_file, wxEmptyString, selection.m_line)) {
+    if(manager && manager->OpenFile(selection.m_file, wxEmptyString, selection.m_line - 1)) {
         IEditor* editor = manager->GetActiveEditor();
         if(editor && !selection.m_name.IsEmpty() && !selection.m_pattern.IsEmpty()) {
             editor->FindAndSelectV(selection.m_pattern, selection.m_name);
@@ -343,95 +315,71 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
 
 void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_DOWN && m_listOptions->GetItemCount() > 0) {
-        // up key
-        int cursel = m_listOptions->GetFirstSelected();
-        if(cursel != wxNOT_FOUND) {
-            // there is a selection in the listbox
-            cursel++;
-            if(cursel >= (int)m_listOptions->GetItemCount()) {
-                // already at last item, cant scroll anymore
-                return;
-            }
-            DoSelectItem(cursel);
+    event.Skip();
+    if(m_dataviewModel->IsEmpty()) return;
 
+    if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP ||
+       event.GetKeyCode() == WXK_NUMPAD_DOWN) {
+        event.Skip(false);
+        bool down = (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN);
+        wxDataViewItemArray children;
+        m_dataviewModel->GetChildren(wxDataViewItem(0), children);
+        wxDataViewItem selection = m_dataview->GetSelection();
+        if(!selection.IsOk()) {
+            // No selection, select the first
+            DoSelectItem(children.Item(0));
         } else {
-            // no selection is made
-            DoSelectItem(0);
-        }
-        return;
-
-    } else if(event.GetKeyCode() == WXK_UP && m_listOptions->GetItemCount() > 0) {
-        // up key
-        int cursel = m_listOptions->GetFirstSelected();
-        if(cursel != wxNOT_FOUND) {
-            // there is a selection in the listbox
-            cursel--;
-            if(cursel < 0) {
-                // already at first item, cant scroll anymore
-                return;
+            int curIndex = wxNOT_FOUND;
+            for(size_t i = 0; i < children.size(); ++i) {
+                if(children.Item(i) == selection) {
+                    curIndex = i;
+                    break;
+                }
             }
-            DoSelectItem(cursel);
 
-        } else {
-            // no selection is made
-            DoSelectItem(0);
+            if(curIndex != wxNOT_FOUND) {
+                down ? ++curIndex : --curIndex;
+                if((curIndex >= 0) && (curIndex < (int)children.size())) {
+                    DoSelectItem(children.Item(curIndex));
+                }
+            }
         }
-        return;
 
-    } else
-        event.Skip();
+        // Set the focus back to the text control
+        m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
+    }
 }
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
 
-void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_selection.IsOk()); }
+void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
+{
+    wxDataViewItem item = m_dataview->GetSelection();
+    event.Enable(item.IsOk());
+}
 
 bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
 
-void OpenResourceDialog::DoSelectItem(int selection, bool makeFirst)
+void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 {
-    // Unselect current item first
-    int currentSelection = m_listOptions->GetFirstSelected();
-    if(currentSelection != wxNOT_FOUND) {
-        m_listOptions->Select(currentSelection, false);
-    }
-
-    m_listOptions->Select(selection);
-    if(makeFirst) m_listOptions->EnsureVisible(selection);
-
-    // display the full name at the bottom static text control
-    OpenResourceDialogItemData* data = (OpenResourceDialogItemData*)m_listOptions->GetItemData(selection);
-    m_selection = *data;
+    CHECK_ITEM_RET(item);
+    m_dataview->Select(item);
+    m_dataview->EnsureVisible(item);
 }
 
-void OpenResourceDialog::OnItemSelected(wxListEvent& event)
+wxDataViewItem OpenResourceDialog::DoAppendLine(const wxString& name,
+                                                const wxString& fullname,
+                                                bool boldFont,
+                                                OpenResourceDialogItemData* clientData,
+                                                const wxBitmap& bmp)
 {
-    event.Skip();
-    if(event.m_itemIndex != wxNOT_FOUND) {
-        // display the full name at the bottom static text control
-        OpenResourceDialogItemData* data = (OpenResourceDialogItemData*)m_listOptions->GetItemData(event.m_itemIndex);
-        m_selection = *data;
-    }
-}
-
-int OpenResourceDialog::DoAppendLine(const wxString& name,
-                                     const wxString& fullname,
-                                     bool boldFont,
-                                     OpenResourceDialogItemData* clientData,
-                                     int imgId)
-{
-    int index = AppendListCtrlRow(m_listOptions);
-    SetColumnText(m_listOptions, index, 0, name, imgId);
-    SetColumnText(m_listOptions, index, 1, fullname);
-
-    m_listOptions->SetItemPtrData(index, (wxUIntPtr)(clientData));
-
-    // Mark implementations with bold font
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    if(boldFont) font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_listOptions->SetItemFont(index, font);
-    return index;
+    wxString prefix;
+    clientData->m_impl = boldFont;
+    wxVector<wxVariant> cols;
+    cols.push_back(OpenResourceDialogModel::CreateIconTextVariant(prefix + name, bmp));
+    cols.push_back(clientData->m_impl ? wxString("X") : wxString());
+    cols.push_back(fullname);
+    return m_dataviewModel->AppendItem(wxDataViewItem(0), cols, clientData);
 }
 
 void OpenResourceDialog::OnTimer(wxTimerEvent& event)
@@ -441,45 +389,45 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
     m_needRefresh = false;
 }
 
-int OpenResourceDialog::DoGetTagImgId(TagEntryPtr tag)
+wxBitmap OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)
 {
     wxString kind = tag->GetKind();
     wxString access = tag->GetAccess();
-    int imgId = m_tagImgMap[wxT("text")];
-    if(kind == wxT("class")) imgId = m_tagImgMap[wxT("class")];
+    wxBitmap bmp = m_tagImgMap[wxT("text")];
+    if(kind == wxT("class")) bmp = m_tagImgMap[wxT("class")];
 
-    if(kind == wxT("struct")) imgId = m_tagImgMap[wxT("struct")];
+    if(kind == wxT("struct")) bmp = m_tagImgMap[wxT("struct")];
 
-    if(kind == wxT("namespace")) imgId = m_tagImgMap[wxT("namespace")];
+    if(kind == wxT("namespace")) bmp = m_tagImgMap[wxT("namespace")];
 
-    if(kind == wxT("variable")) imgId = m_tagImgMap[wxT("member_public")];
+    if(kind == wxT("variable")) bmp = m_tagImgMap[wxT("member_public")];
 
-    if(kind == wxT("typedef")) imgId = m_tagImgMap[wxT("typedef")];
+    if(kind == wxT("typedef")) bmp = m_tagImgMap[wxT("typedef")];
 
-    if(kind == wxT("member") && access.Contains(wxT("private"))) imgId = m_tagImgMap[wxT("member_private")];
+    if(kind == wxT("member") && access.Contains(wxT("private"))) bmp = m_tagImgMap[wxT("member_private")];
 
-    if(kind == wxT("member") && access.Contains(wxT("public"))) imgId = m_tagImgMap[wxT("member_public")];
+    if(kind == wxT("member") && access.Contains(wxT("public"))) bmp = m_tagImgMap[wxT("member_public")];
 
-    if(kind == wxT("member") && access.Contains(wxT("protected"))) imgId = m_tagImgMap[wxT("member_protected")];
+    if(kind == wxT("member") && access.Contains(wxT("protected"))) bmp = m_tagImgMap[wxT("member_protected")];
 
-    if(kind == wxT("member")) imgId = m_tagImgMap[wxT("member_public")];
+    if(kind == wxT("member")) bmp = m_tagImgMap[wxT("member_public")];
 
     if((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("private")))
-        imgId = m_tagImgMap[wxT("function_private")];
+        bmp = m_tagImgMap[wxT("function_private")];
 
     if((kind == wxT("function") || kind == wxT("prototype")) && (access.Contains(wxT("public")) || access.IsEmpty()))
-        imgId = m_tagImgMap[wxT("function_public")];
+        bmp = m_tagImgMap[wxT("function_public")];
 
     if((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("protected")))
-        imgId = m_tagImgMap[wxT("function_protected")];
+        bmp = m_tagImgMap[wxT("function_protected")];
 
-    if(kind == wxT("macro")) imgId = m_tagImgMap[wxT("typedef")];
+    if(kind == wxT("macro")) bmp = m_tagImgMap[wxT("typedef")];
 
-    if(kind == wxT("enum")) imgId = m_tagImgMap[wxT("enum")];
+    if(kind == wxT("enum")) bmp = m_tagImgMap[wxT("enum")];
 
-    if(kind == wxT("enumerator")) imgId = m_tagImgMap[wxT("enumerator")];
+    if(kind == wxT("enumerator")) bmp = m_tagImgMap[wxT("enumerator")];
 
-    return imgId;
+    return bmp;
 }
 
 bool OpenResourceDialog::MatchesFilter(const wxString& name)
@@ -493,4 +441,27 @@ bool OpenResourceDialog::MatchesFilter(const wxString& name)
         if(!tmpname.Contains(m_userFilters.Item(i))) return false;
     }
     return true;
+}
+void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
+void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
+
+void OpenResourceDialog::OnEnter(wxCommandEvent& event)
+{
+    wxDataViewItem item = m_dataview->GetSelection();
+    
+    if(item.IsOk()) {
+        EndModal(wxID_OK);
+    }
+}
+
+void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
+
+OpenResourceDialogItemData* OpenResourceDialog::GetSelection() const
+{
+    wxDataViewItem item = m_dataview->GetSelection();
+    if(!item.IsOk()) return NULL;
+
+    OpenResourceDialogItemData* data =
+        dynamic_cast<OpenResourceDialogItemData*>(m_dataviewModel->GetClientObject(item));
+    return data;
 }

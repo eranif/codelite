@@ -63,6 +63,7 @@
 #include "wxCustomStatusBar.h"
 #include "clBootstrapWizard.h"
 #include "clWorkspaceManager.h"
+#include "clSingleChoiceDialog.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -420,7 +421,7 @@ EVT_UPDATE_UI(XRCID("file_close_workspace"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("reload_workspace"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("add_project"), clMainFrame::OnWorkspaceMenuUI)
 EVT_UPDATE_UI(XRCID("file_new_project"), clMainFrame::OnWorkspaceOpen)
-EVT_UPDATE_UI(XRCID("new_project"), clMainFrame::OnWorkspaceOpen)
+EVT_UPDATE_UI(XRCID("new_project"), clMainFrame::OnNewProjectUI)
 EVT_UPDATE_UI(XRCID("reconcile_project"), clMainFrame::OnShowActiveProjectSettingsUI)
 EVT_UPDATE_UI(XRCID("retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
 EVT_UPDATE_UI(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
@@ -779,6 +780,10 @@ clMainFrame::clMainFrame(wxWindow* pParent,
             this);
 
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
+
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
+
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -880,6 +885,9 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(
         wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
     wxDELETE(m_timer);
+
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
 
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
@@ -2622,7 +2630,11 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent& event)
         // only C++ is available
         selection = clCxxWorkspaceST::Get()->GetWorkspaceType();
     } else {
-        selection = ::wxGetSingleChoice(_("Select the workspace type:"), _("New workspace"), options, 0, this);
+        clSingleChoiceDialog dlg(this, options, 0);
+        dlg.SetLabel(_("Select the workspace type:"));
+        if(dlg.ShowModal() == wxID_OK) {
+            selection = dlg.GetSelection();
+        }
     }
 
     if(selection.IsEmpty()) return;
@@ -4677,9 +4689,11 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             startup_info.debugger = dbgr;
 
             // notify plugins that we're about to start debugging
-            if(SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
-                // plugin stopped debugging
-                return;
+            {
+                clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+                eventStarting.SetClientData(&startup_info);
+                if(EventNotifier::Get()->ProcessEvent(eventStarting)) return;
+            }
 
             wxString tty;
 #ifndef __WXMSW__
@@ -4706,7 +4720,11 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             dbgr->Start(si);
 
             // notify plugins that the debugger just started
-            SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
+            {
+                clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+                eventStarted.SetClientData(&startup_info);
+                EventNotifier::Get()->ProcessEvent(eventStarted);
+            }
 
             dbgr->Run(dlg.GetArguments(), wxEmptyString);
 
@@ -4766,11 +4784,15 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             startup_info.debugger = dbgr;
 
             // notify plugins that we're about to start debugging
-            if(SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info)) {
-                dlg->Destroy();
-                // plugin stopped debugging
-                return;
+            {
+                clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+                eventStarting.SetClientData(&startup_info);
+                if(EventNotifier::Get()->ProcessEvent(eventStarting)) {
+                    dlg->Destroy();
+                    return;
+                }
             }
+
             wxString tty;
             wxString title;
             title << "Debugging core: " << dlg->GetCore();
@@ -4797,7 +4819,11 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             dbgr->Start(si);
 
             // notify plugins that the debugger just started
-            SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
+            {
+                clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+                eventStarted.SetClientData(&startup_info);
+                EventNotifier::Get()->ProcessEvent(eventStarted);
+            }
 
             // Coredump debugging doesn't use breakpoints, but probably we should do this here anyway...
             clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
@@ -5111,8 +5137,8 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     }
     OpenResourceDialog dlg(this, PluginManager::Get(), initialText);
 
-    if(dlg.ShowModal() == wxID_OK) {
-        OpenResourceDialog::OpenSelection(dlg.GetSelection(), PluginManager::Get());
+    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection()) {
+        OpenResourceDialog::OpenSelection(*dlg.GetSelection(), PluginManager::Get());
     }
 }
 
@@ -6185,4 +6211,30 @@ void clMainFrame::OnFileOpenFolder(wxCommandEvent& event)
 void clMainFrame::OnNewWorkspaceUI(wxUpdateUIEvent& event)
 {
     event.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
+}
+
+void clMainFrame::OnNewProjectUI(wxUpdateUIEvent& event)
+{
+    event.Enable(clWorkspaceManager::Get().IsWorkspaceOpened() &&
+                 clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported());
+}
+
+void clMainFrame::OnDebugStarted(clDebugEvent& event)
+{
+    event.Skip();
+    m_toggleToolBar = false;
+    if(GetToolBar() && !GetToolBar()->IsShown()) {
+        // We have a native toolbar which is not visible, show it during debug session
+        clGetManager()->ShowToolBar();
+        m_toggleToolBar = true;
+    }
+}
+
+void clMainFrame::OnDebugEnded(clDebugEvent& event)
+{
+    event.Skip();
+    if(m_toggleToolBar && GetToolBar()) {
+        clGetManager()->ShowToolBar(false);
+    }
+    m_toggleToolBar = false;
 }

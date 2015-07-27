@@ -90,11 +90,19 @@ PluginMgrDlgBase::PluginMgrDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     
     bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
     
+    SetName(wxT("PluginMgrDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_checkListPluginsList->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(PluginMgrDlgBase::OnItemSelected), NULL, this);
     m_button20->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PluginMgrDlgBase::OnCheckAll), NULL, this);

@@ -8,6 +8,7 @@
 EvalPane::EvalPane(wxWindow* parent)
     : EvalPaneBase(parent)
 {
+    Hide();
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_EVAL_EXPRESSION,  &EvalPane::OnExpressionEvaluate, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_UNKNOWN_RESPONSE, &EvalPane::OnDBGPCommandEvaluated, this);
     LexerConf::Ptr_t lex =  EditorConfigST::Get()->GetLexer("text");

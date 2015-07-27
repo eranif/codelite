@@ -36,6 +36,8 @@ void* XDebugComThread::Entry()
     clSocketBase::Ptr_t client;
     int retry(0);
     try {
+        CL_DEBUG("CodeLite >>> Creating server on %s:%d", m_host, m_port);
+        
         wxCharBuffer cb = m_host.mb_str(wxConvUTF8);
         m_server.CreateServer(cb.data(), m_port);
         

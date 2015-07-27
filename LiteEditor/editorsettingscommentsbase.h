@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOR_OPTIONS_COMMENTS_BASE_BASE_CLASSES_H
-#define EDITOR_OPTIONS_COMMENTS_BASE_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_EDITOR_OPTIONS_COMMENTS_BASE_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_EDITOR_OPTIONS_COMMENTS_BASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -16,6 +16,12 @@
 #include <wx/checkbox.h>
 #include <wx/stattext.h>
 #include <wx/statline.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class EditorSettingsCommentsBase : public wxPanel
 {

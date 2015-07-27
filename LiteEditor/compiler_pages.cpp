@@ -74,11 +74,19 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
     
     bSizer24->Add(m_buttonCancel, 0, wxALL, 5);
     
+    SetName(wxT("CompilerOptionDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
 CompilerOptionDlgBase::~CompilerOptionDlgBase()
@@ -167,11 +175,19 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer229->AddButton(m_button233);
     m_stdBtnSizer229->Realize();
     
+    SetName(wxT("CompilerPatternDlgBase"));
     SetSizeHints(500,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_button231->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
     
@@ -236,11 +252,19 @@ NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer75->AddButton(m_buttonOK);
     m_stdBtnSizer75->Realize();
     
+    SetName(wxT("NewCompilerDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewCompilerDlgBase::OnOkUI), NULL, this);
     
@@ -283,6 +307,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     boxSizer220->Add(m_listBoxCompilers, 0, wxALL|wxEXPAND, 5);
     
     m_auiBook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_NB_TOP|wxAUI_NB_WINDOWLIST_BUTTON|wxBK_DEFAULT);
+    m_auiBook->SetName(wxT("m_auiBook"));
     
     boxSizer220->Add(m_auiBook, 1, wxALL|wxEXPAND, 5);
     
@@ -663,11 +688,12 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     fgSizer3->Add(m_checkBoxReadObjectsFromFile, 0, wxALL, 5);
     m_auiBook->SetMinSize(wxSize(500,500));
     
+    SetName(wxT("CompilerMainPageBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_button222->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddCompilers), NULL, this);
     m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);

@@ -13,13 +13,13 @@
 #include "php_event.h"
 #include "PHPExpression.h"
 
-struct PHPLocation {
+struct PHPLocation
+{
     wxString what;     // Token name
     wxString filename; // file name (absolute path)
     int linenumber;    // line number within filename
     typedef SmartPtr<PHPLocation> Ptr_t;
 };
-
 
 class IManager;
 class ResourceItem;
@@ -56,7 +56,7 @@ protected:
     TagEntryPtr DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry);
     PHPEntityBase::Ptr_t DoGetPHPEntryUnderTheAtPos(IEditor* editor, int pos, bool forFunctionCalltip);
     PHPEntityBase::List_t PhpKeywords(const wxString& prefix) const;
-    
+
 private:
     PHPCodeCompletion();
     virtual ~PHPCodeCompletion();
@@ -72,10 +72,12 @@ private:
     void OnInsertDoxyBlock(clCodeCompletionEvent& e);
     void OnDismissTooltip(wxCommandEvent& e);
     void OnRetagWorkspace(wxCommandEvent& event);
-    
+
     // Workspace events
     void OnFileSaved(clCommandEvent& event);
-    void DoSelectInEditor(const wxString &what, int from);
+    void DoSelectInEditor(IEditor* editor, const wxString& what, int from);
+
+    void DoOpenEditorForEntry(PHPEntityBase::Ptr_t entry);
     
 public:
     /**
@@ -84,7 +86,7 @@ public:
      * @param pos
      */
     void GotoDefinition(IEditor* editor, int pos);
-    
+
     void SetManager(IManager* manager) { this->m_manager = manager; }
     /**
      * @brief return a PHPLocation::Ptr_t for the declaration of the
@@ -97,25 +99,25 @@ public:
      * @brief return the PHPEntity under the caret
      */
     PHPEntityBase::Ptr_t GetPHPEntryUnderTheAtPos(IEditor* editor, int pos);
-    
+
     /**
      * @brief open the symbols database for the given workspace file.
      * Close any opened database
      */
     void Open(const wxFileName& workspaceFile);
-    
+
     /**
      * @brief close the lookup database
      */
     void Close();
-    
+
     /**
      * @brief called by the PHP symbols cache job.
-     * This is to optimize the searching the database (loading the symbols into the 
+     * This is to optimize the searching the database (loading the symbols into the
      * memory forces a kernel caching)
      */
     void OnSymbolsCached();
-    
+
     /**
      * @brief same as the above function, but the caching went bad...
      */
@@ -124,15 +126,15 @@ public:
      * @brief expand 'require_once' line (or any require) by replacing __file__ etc with the proper
      * values and appending everything
      */
-    wxString ExpandRequire(const wxFileName& curfile, const wxString &require);
-    
+    wxString ExpandRequire(const wxFileName& curfile, const wxString& require);
+
     /**
      * @brief return the best location for inserting generated code inside a class name
      * @param filecontent
      * @return wxNOT_FOUND when could not determine the location
      */
-    int GetLocationForSettersGetters(const wxString& filecontent, const wxString &classname);
-    
+    int GetLocationForSettersGetters(const wxString& filecontent, const wxString& classname);
+
     /**
      * @brief list members of a class defined in an editor at the current position
      * This only returns member variables (i.e. no constants, nor static members)

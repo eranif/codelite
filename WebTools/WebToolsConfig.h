@@ -26,6 +26,7 @@ public:
         kJSPluginStrings = (1 << 9),
         kJSPluginAngular = (1 << 10),
         kJSPluginQML = (1 << 11),
+        kJSPluginRequireJS = (1 << 12),
 
     };
 

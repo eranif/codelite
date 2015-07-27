@@ -200,7 +200,7 @@ FileViewTree::~FileViewTree()
 void FileViewTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     bool multi(true);
-    style |= (wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
+    style |= (wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES | wxBORDER_NONE);
     if(multi) style |= wxTR_MULTIPLE;
 
     wxTreeCtrl::Create(parent, id, pos, size, style);
@@ -1194,12 +1194,10 @@ void FileViewTree::OnLocalPrefs(wxCommandEvent& event)
 
 void FileViewTree::OnProjectProperties(wxCommandEvent& WXUNUSED(event))
 {
-    wxTreeItemId item = GetSingleSelection();
-    if(!item.IsOk()) {
-        return;
+    ProjectPtr p = GetSelectedProject();
+    if(p) {
+        clMainFrame::Get()->GetWorkspaceTab()->OpenProjectSettings(p->GetName());
     }
-    wxString projectName(GetItemText(item));
-    clMainFrame::Get()->GetWorkspaceTab()->OpenProjectSettings(projectName);
 }
 
 void FileViewTree::DoRemoveProject(const wxString& name)

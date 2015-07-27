@@ -541,6 +541,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_treebook2)){
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook2);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treebook2);
     }
     #endif
     m_treebook2->ExpandNode( 0, true );
@@ -552,6 +554,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook36)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook36);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook36);
     }
     #endif
     m_treebook2->ExpandNode( 5, true );
@@ -559,6 +563,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook2)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook2);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook2);
     }
     #endif
     m_treebook2->ExpandNode( 6, true );
@@ -566,6 +572,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebookClang)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebookClang);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebookClang);
     }
     #endif
     
@@ -578,6 +586,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

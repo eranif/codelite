@@ -15,6 +15,7 @@ class wxStyledTextCtrl;
 class JSCodeCompletion;
 class IProcess;
 class clTernWorkerThread;
+
 class clTernServer : public wxEvtHandler
 {
     friend class clTernWorkerThread;
@@ -29,6 +30,7 @@ class clTernServer : public wxEvtHandler
     bool m_fatalError;
     long m_port;
     size_t m_recycleCount;
+    wxString m_workingDirectory;
 
 protected:
     void OnTernTerminated(clProcessEvent& event);
@@ -53,8 +55,10 @@ public:
     virtual ~clTernServer();
 
     long GetPort() const { return m_port; }
-    bool Start();
+    bool Start(const wxString& workingDirectory);
     void Terminate();
+    void ClearFatalErrorFlag();
+
     /**
      * @brief post a CC request at the current editor position
      */

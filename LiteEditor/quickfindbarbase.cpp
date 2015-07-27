@@ -26,11 +26,12 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
+    SetName(wxT("QuickFindBarBase"));
     SetSizeHints(400,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
 }
 
 QuickFindBarBase::~QuickFindBarBase()
@@ -87,11 +88,12 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent,long s
     
     gridSizer49->Add(m_checkBoxMultipleSelections, 0, wxALL|wxALIGN_LEFT, 3);
     
+    SetName(wxT("QuickFindBarOptionsMenuBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_checkBoxRegex->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarOptionsMenuBase::OnCheckBoxRegex), NULL, this);
     m_checkBoxWildcard->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarOptionsMenuBase::OnCheckWild), NULL, this);

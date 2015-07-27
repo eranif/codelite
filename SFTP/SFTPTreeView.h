@@ -59,7 +59,8 @@ public:
     bool IsConnected() const { return m_sftp && m_sftp->IsConnected(); }
 
 protected:
-    virtual void OnOpenTerminal(wxCommandEvent& event);
+    virtual void OnSftpSettings(wxCommandEvent& event);
+    virtual void OnOpenTerminal(wxAuiToolBarEvent& event);
     virtual void OnOpenTerminalUI(wxUpdateUIEvent& event);
     virtual void OnConnection(wxCommandEvent& event);
     virtual void OnSelectionChanged(wxTreeListEvent& event);

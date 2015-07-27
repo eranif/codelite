@@ -6,6 +6,7 @@
 #include "PHPEntityFunction.h"
 #include "PHPEntityVariable.h"
 #include "PHPSourceFile.h"
+#include "fileutils.h"
 
 #ifndef __WXMSW__
 #include <wx/imaglist.h>
@@ -149,10 +150,7 @@ wxTreeItemId PHPFileLayoutTree::RecurseSearch(const wxTreeItemId& item, const wx
     if(!item.IsOk()) return wxTreeItemId();
 
     if(item != GetRootItem()) {
-        wxString curtext = GetItemText(item);
-        curtext.MakeLower();
-
-        if(curtext.StartsWith(word)) {
+        if(FileUtils::FuzzyMatch(word, GetItemText(item))) {
             return item;
         }
     }

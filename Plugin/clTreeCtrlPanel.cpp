@@ -18,12 +18,14 @@
 #include <wx/log.h>
 #include "cl_config.h"
 #include "clTreeCtrlPanelDefaultPage.h"
+#include <wx/app.h>
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
     , m_config(NULL)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
+    , m_options(kShowHiddenFiles | kShowHiddenFolders)
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
     // Allow DnD
@@ -54,12 +56,10 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     clTreeCtrlData* cd = GetItemData(item);
 
     if(cd && cd->IsFolder()) {
-
         // Prepare a folder context menu
         wxMenu menu;
+
         if(IsTopLevelFolder(item)) {
-            menu.Append(XRCID("tree_ctrl_close_folder"), _("Close"));
-            menu.AppendSeparator();
             menu.Append(wxID_REFRESH, _("Refresh"));
             menu.AppendSeparator();
         }
@@ -76,6 +76,11 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
         menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
 
+        if(IsTopLevelFolder(item)) {
+            menu.AppendSeparator();
+            menu.Append(XRCID("tree_ctrl_close_folder"), _("Close"));
+        }
+
         // Now that we added the basic menu, let the plugin
         // adjust it
         wxArrayString files, folders;
@@ -91,7 +96,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnCloseFolder, this, XRCID("tree_ctrl_close_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFolder, this, XRCID("tree_ctrl_new_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFile, this, XRCID("tree_ctrl_new_file"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteFolder, this, XRCID("tree_ctrl_delete_folder"));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnFindInFilesFolder, this, XRCID("tree_ctrl_find_in_files_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
@@ -105,6 +110,8 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
 
         menu.Append(XRCID("tree_ctrl_open_file"), _("Open"));
         menu.Append(XRCID("tree_ctrl_rename_file"), _("Rename"));
+        menu.AppendSeparator();
+        menu.Append(XRCID("tree_ctrl_open_with_default_app"), _("Open with default application"));
         menu.AppendSeparator();
         menu.Append(XRCID("tree_ctrl_delete_file"), _("Delete"));
 
@@ -122,7 +129,15 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         // Connect events
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFile, this, XRCID("tree_ctrl_open_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteFile, this, XRCID("tree_ctrl_delete_file"));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_file"));
+        menu.Bind(
+            wxEVT_MENU, &clTreeCtrlPanel::OnOpenWithDefaultApplication, this, XRCID("tree_ctrl_open_with_default_app"));
+        PopupMenu(&menu);
+    } else {
+        // context menu elsewhere
+        wxMenu menu;
+        menu.Append(XRCID("open_folder_default_page"), _("Open Folder..."));
+        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFolder, this, XRCID("open_folder_default_page"));
         PopupMenu(&menu);
     }
 }
@@ -186,8 +201,16 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
         wxFileName fullpath(folderPath, filename);
         if(wxFileName::DirExists(fullpath.GetFullPath())) {
             // a folder
+            if(!(m_options & kShowHiddenFolders) && FileUtils::IsHidden(fullpath)) {
+                cont = dir.GetNext(&filename);
+                continue;
+            }
             DoAddFolder(parent, fullpath.GetFullPath());
         } else {
+            if(!(m_options & kShowHiddenFiles) && FileUtils::IsHidden(fullpath)) {
+                cont = dir.GetNext(&filename);
+                continue;
+            }
             DoAddFile(parent, fullpath.GetFullPath());
         }
         cont = dir.GetNext(&filename);
@@ -323,31 +346,6 @@ bool clTreeCtrlPanel::IsTopLevelFolder(const wxTreeItemId& item)
     return (cd && cd->IsFolder() && GetTreeCtrl()->GetItemParent(item) == GetTreeCtrl()->GetRootItem());
 }
 
-void clTreeCtrlPanel::OnDeleteFolder(wxCommandEvent& event)
-{
-    wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
-    clTreeCtrlData* cd = GetItemData(item);
-    CHECK_PTR_RET(cd);
-    CHECK_COND_RET(cd->IsFolder());
-
-    wxString message;
-    message << _("Are you sure you want to delete folder:\n'") << cd->GetPath() << _("'");
-
-    wxRichMessageDialog dialog(EventNotifier::Get()->TopFrame(),
-                               message,
-                               _("Confirm"),
-                               wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING);
-    dialog.SetYesNoLabels(_("Delete Folder"), _("Don't Delete"));
-    if(dialog.ShowModal() == wxID_YES) {
-        if(wxFileName::Rmdir(cd->GetPath(), wxPATH_RMDIR_RECURSIVE)) {
-            // Remove this item from its parent cache
-            UpdateItemDeleted(item);
-            // Remove the item from the UI
-            GetTreeCtrl()->Delete(item);
-        }
-    }
-}
-
 void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
 {
     wxTreeItemId item = GetTreeCtrl()->GetFocusedItem();
@@ -433,29 +431,96 @@ void clTreeCtrlPanel::SelectItem(const wxTreeItemId& item)
     GetTreeCtrl()->EnsureVisible(item);
 }
 
-void clTreeCtrlPanel::OnDeleteFile(wxCommandEvent& event)
+struct FileOrFolder {
+    wxTreeItemId item;
+    bool folder;
+    wxString path;
+};
+
+void clTreeCtrlPanel::OnDeleteSelections(wxCommandEvent& event)
 {
     wxArrayString folders, files;
     wxArrayTreeItemIds folderItems, fileItems;
     GetSelections(folders, folderItems, files, fileItems);
-    if(files.empty()) return;
+    if(files.empty() && folders.empty()) return;
 
+    std::set<wxTreeItemId> selectedItems;
+    std::vector<FileOrFolder> v;
+
+    selectedItems.insert(folderItems.begin(), folderItems.end());
+    selectedItems.insert(fileItems.begin(), fileItems.end());
+
+    // loop over the selections and remove all items that their parents
+    // also exists in the selected items list
+    for(size_t i = 0; i < folderItems.size(); ++i) {
+        wxTreeItemId item = folderItems.Item(i);
+        bool foundParent = false;
+        wxTreeItemId itemParent = GetTreeCtrl()->GetItemParent(item);
+        while(itemParent.IsOk()) {
+            if(selectedItems.count(itemParent)) {
+                // item's parent is in the list, don't delete it as it will get deleted
+                // by its parent
+                foundParent = true;
+                break;
+            }
+            itemParent = GetTreeCtrl()->GetItemParent(itemParent);
+        }
+
+        if(!foundParent) {
+            FileOrFolder fof;
+            fof.folder = true;
+            fof.item = item;
+            fof.path = folders.Item(i);
+            v.push_back(fof);
+        }
+    }
+
+    for(size_t i = 0; i < fileItems.size(); ++i) {
+        wxTreeItemId item = fileItems.Item(i);
+        bool foundParent = false;
+        wxTreeItemId itemParent = GetTreeCtrl()->GetItemParent(item);
+        while(itemParent.IsOk()) {
+            if(selectedItems.count(itemParent)) {
+                // item's parent is in the list, don't delete it as it will get deleted
+                // by its parent
+                foundParent = true;
+                break;
+            }
+            itemParent = GetTreeCtrl()->GetItemParent(itemParent);
+        }
+
+        if(!foundParent) {
+            FileOrFolder fof;
+            fof.folder = false;
+            fof.item = item;
+            fof.path = files.Item(i);
+            v.push_back(fof);
+        }
+    }
+
+    // At this point "v" contains a unique list of items to delete
+    // the items in "v" have no common parent
     wxString message;
-    message << _("Are you sure you want to delete the selected files?");
+    message << _("Are you sure you want to delete the selected items?");
 
     wxRichMessageDialog dialog(EventNotifier::Get()->TopFrame(),
                                message,
                                _("Confirm"),
                                wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING);
-    dialog.SetYesNoLabels(_("Delete Files"), _("No"));
 
     wxWindowUpdateLocker locker(GetTreeCtrl());
     wxArrayTreeItemIds deletedItems;
     if(dialog.ShowModal() == wxID_YES) {
         wxLogNull nl;
-        for(size_t i = 0; i < files.size(); ++i) {
-            if(::wxRemoveFile(files.Item(i))) {
-                deletedItems.Add(fileItems.Item(i));
+        for(size_t i = 0; i < v.size(); ++i) {
+            if(v.at(i).folder) {
+                if(wxFileName::Rmdir(v.at(i).path, wxPATH_RMDIR_RECURSIVE)) {
+                    deletedItems.Add(v.at(i).item);
+                }
+            } else {
+                if(::wxRemoveFile(v.at(i).path)) {
+                    deletedItems.Add(v.at(i).item);
+                }
             }
         }
     }
@@ -736,4 +801,20 @@ void clTreeCtrlPanel::SetNewFileTemplate(const wxString& newfile, size_t charsTo
 {
     m_newfileTemplate = newfile;
     m_newfileTemplateHighlightLen = charsToHighlight;
+}
+
+void clTreeCtrlPanel::OnOpenFolder(wxCommandEvent& event)
+{
+    wxCommandEvent eventOpenFolder(wxEVT_MENU, XRCID("open_folder"));
+    wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(eventOpenFolder);
+}
+
+void clTreeCtrlPanel::OnOpenWithDefaultApplication(wxCommandEvent& event)
+{
+    wxArrayString folders, files;
+    GetSelections(folders, files);
+
+    for(size_t i = 0; i < files.size(); ++i) {
+        ::wxLaunchDefaultApplication(files.Item(i));
+    }
 }

@@ -29,6 +29,9 @@
 #include <wx/treectrl.h>
 #include "clFileViwerTreeCtrl.h"
 #include <wx/dataview.h>
+#include <wx/listbox.h>
+#include <wx/scrolwin.h>
+#include <wx/statbmp.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -204,12 +207,50 @@ protected:
     wxStaticText* m_staticText177;
 
 protected:
+    virtual void OnDefaultPageContextMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText177() { return m_staticText177; }
     wxPanel* GetPanel169() { return m_panel169; }
     clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~clTreeCtrlPanelDefaultPageBase();
+};
+
+
+class clSingleChoiceDialogBase : public wxDialog
+{
+protected:
+    wxBoxSizer* boxSizer181;
+    wxListBox* m_listBox;
+    wxStdDialogButtonSizer* m_stdBtnSizer183;
+    wxButton* m_button185;
+    wxButton* m_button187;
+
+protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxListBox* GetListBox() { return m_listBox; }
+    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~clSingleChoiceDialogBase();
+};
+
+
+class WXDLLIMPEXP_SDK clImageViewerBase : public wxPanel
+{
+protected:
+    wxBoxSizer* boxSizer194;
+    wxScrolledWindow* m_scrollWin196;
+    wxBoxSizer* boxSizer198;
+    wxStaticBitmap* m_staticBitmap;
+
+protected:
+
+public:
+    wxStaticBitmap* GetStaticBitmap() { return m_staticBitmap; }
+    wxScrolledWindow* GetScrollWin196() { return m_scrollWin196; }
+    clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~clImageViewerBase();
 };
 
 #endif

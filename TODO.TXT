@@ -1,6 +1,12 @@
+MUST:
+=====
+
+* Fixed assertion in debug
+* Move the compilers links to a JSON file that can be downloaded from CodeLite's website
+
+NICE
+====
+
 * Git: add an option to open the commit in GitHub
 * Editor: when zooming an editor using the mouse, offer the user to keep the font
-* PHP formatting: handle switch / case
-* When DnD folder to the workspace tab, don't offer to open in the explorer
-* Update clWorkspaceView to use the new clWorkspaceManager class
-* When DnD a folder to the workspace view if a C++ solution already exists, open it instead of creating a new one
+

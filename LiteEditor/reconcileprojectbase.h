@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef RECONCILEPROJECT_BASE_CLASSES_H
-#define RECONCILEPROJECT_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_RECONCILEPROJECT_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_RECONCILEPROJECT_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

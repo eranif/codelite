@@ -48,6 +48,7 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     if(lexer) {
         lexer->Apply(m_stcCommandLineArguments);
     }
+    CenterOnParent();
 }
 
 NodeJSDebuggerDlg::~NodeJSDebuggerDlg()

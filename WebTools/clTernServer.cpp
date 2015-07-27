@@ -16,6 +16,7 @@
 #include "fileutils.h"
 #include "ieditor.h"
 #include <wx/stc/stc.h>
+#include <wx/msgdlg.h>
 
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
@@ -49,14 +50,15 @@ void clTernServer::OnTernTerminated(clProcessEvent& event)
         return;
     }
     PrintMessage("Tern server terminated, will restart it\n");
-    Start();
+    Start(m_workingDirectory);
 }
 
-bool clTernServer::Start()
+bool clTernServer::Start(const wxString& workingDirectory)
 {
     if(m_fatalError) return false;
     if(!m_jsCCManager->IsEnabled()) return true;
 
+    m_workingDirectory = workingDirectory;
     WebToolsConfig conf;
     conf.Load();
 
@@ -79,21 +81,37 @@ bool clTernServer::Start()
     wxString nodeExe = nodeJS.GetFullPath();
     ::WrapWithQuotes(nodeExe);
 
+    wxFileName ternScript = ternFolder;
+    ternScript.AppendDir("bin");
+    ternScript.SetFullName("tern");
+    wxString ternScriptString = ternScript.GetFullPath();
+    ::WrapWithQuotes(ternScriptString);
+
     wxString command;
-    command << nodeExe << " "
-            << "bin" << wxFileName::GetPathSeparator() << "tern --persist ";
+    command << nodeExe << " " << ternScriptString << " --persistent ";
 
     if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {
         command << " --verbose";
     }
 
     // Create a .tern-project file
-    wxFileName ternConfig(ternFolder.GetPath(), ".tern-project");
+    if(m_workingDirectory.IsEmpty()) {
+        m_workingDirectory = clStandardPaths::Get().GetUserDataDir();
+    }
+
+    wxFileName ternConfig(m_workingDirectory, ".tern-project");
     wxString content = conf.GetTernProjectFile();
-    FileUtils::WriteFileContent(ternConfig, content);
+    if(!FileUtils::WriteFileContent(ternConfig, content)) {
+        ::wxMessageBox(_("Could not write tern project file: ") + ternConfig.GetFullPath(),
+                       "CodeLite",
+                       wxICON_ERROR | wxOK | wxCENTER);
+        PrintMessage("Could not write tern project file: " + ternConfig.GetFullPath());
+        m_fatalError = true;
+        return false;
+    }
 
     PrintMessage(wxString() << "Starting " << command << "\n");
-    m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, ternFolder.GetPath());
+    m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, m_workingDirectory);
     if(!m_tern) {
         PrintMessage("Failed to start Tern server!");
         return false;
@@ -168,7 +186,7 @@ void clTernServer::RecycleIfNeeded(bool force)
 
     } else if(!m_tern) {
         // Tern was never started, start it now
-        Start();
+        Start(m_workingDirectory);
     }
 }
 
@@ -447,4 +465,9 @@ bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
     nodeJS = fn;
     return true;
 #endif
+}
+
+void clTernServer::ClearFatalErrorFlag()
+{
+    m_fatalError = false;
 }

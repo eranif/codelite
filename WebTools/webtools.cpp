@@ -20,6 +20,8 @@
 #include "WebToolsConfig.h"
 #include "fileutils.h"
 #include "NodeJSEvents.h"
+#include "WebToolsBase.h"
+#include "bitmap_loader.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -49,6 +51,7 @@ WebTools::WebTools(IManager* manager)
     , m_lastColourUpdate(0)
     , m_clangOldFlag(false)
     , m_nodejsDebuggerPane(NULL)
+    , m_hideToolBarOnDebugStop(false)
 {
     m_longName = _("Support for JavScript, XML, HTML and other web development tools");
     m_shortName = wxT("WebTools");
@@ -56,7 +59,10 @@ WebTools::WebTools(IManager* manager)
     // Register our new workspace type
     NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
-
+    
+    WebToolsImages images;
+    BitmapLoader::RegisterImage(FileExtManager::TypeWorkspaceNodeJS, images.Bitmap("m_bmpNodeJS"));
+    
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
     m_jsColourThread->Create();
@@ -69,12 +75,13 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
-    m_jsCodeComplete.Reset(new JSCodeCompletion());
+    m_jsCodeComplete.Reset(new JSCodeCompletion(""));
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
 
     // Connect the timer
@@ -113,6 +120,7 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
@@ -220,9 +228,11 @@ void WebTools::OnSettings(wxCommandEvent& event)
     if(settings.ShowModal() == wxID_OK) {
         if(m_jsCodeComplete) {
             m_jsCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
         }
         if(m_xmlCodeComplete) {
             m_xmlCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
         }
     }
 }
@@ -348,6 +358,7 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
         m_nodejsDebuggerPane = new NodeJSDebuggerPane(EventNotifier::Get()->TopFrame());
         clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane,
                                                      wxAuiPaneInfo()
+                                                         .Layer(5)
                                                          .Name("nodejs_debugger")
                                                          .Caption("Node.js Debugger")
                                                          .CloseButton(false)
@@ -363,6 +374,13 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
         m_mgr->GetDockingManager()->LoadPerspective(layout);
     }
     EnsureAuiPaneIsVisible("nodejs_debugger", true);
+
+    m_hideToolBarOnDebugStop = false;
+    if(!m_mgr->AllowToolbar()) {
+        // Using native toolbar
+        m_hideToolBarOnDebugStop = !m_mgr->IsToolBarShown();
+        m_mgr->ShowToolBar(true);
+    }
 }
 
 void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
@@ -377,6 +395,10 @@ void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
         m_mgr->GetDockingManager()->LoadPerspective(m_savePerspective);
         m_savePerspective.clear();
     }
+
+    if(m_hideToolBarOnDebugStop) {
+        m_mgr->ShowToolBar(false);
+    }
 }
 
 void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
@@ -388,4 +410,10 @@ void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
     if(update) {
         m_mgr->GetDockingManager()->Update();
     }
+}
+
+void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
+{
+    event.Skip();
+    m_jsCodeComplete.Reset(new JSCodeCompletion(wxFileName(event.GetString()).GetPath()));
 }

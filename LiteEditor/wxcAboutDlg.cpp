@@ -118,6 +118,8 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook1)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook1);
     }
     #endif
     
@@ -130,6 +132,8 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

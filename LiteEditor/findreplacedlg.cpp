@@ -32,6 +32,7 @@
 #include <wx/button.h>
 #include <wx/stattext.h>
 #include "macros.h"
+#include <algorithm>
 
 DEFINE_EVENT_TYPE(wxEVT_FRD_FIND_NEXT)
 DEFINE_EVENT_TYPE(wxEVT_FRD_CLOSE)
@@ -81,8 +82,7 @@ bool FindReplaceDialog::Create(wxWindow* parent,
                                long style)
 {
     m_kind = FIND_DLG;
-    if(!wxDialog::Create(parent, id, caption, pos, size, style))
-        return false;
+    if(!wxDialog::Create(parent, id, caption, pos, size, style)) return false;
 
     m_data = data;
     m_owner = NULL;
@@ -97,9 +97,7 @@ bool FindReplaceDialog::Create(wxWindow* parent,
     return true;
 }
 
-FindReplaceDialog::~FindReplaceDialog()
-{
-}
+FindReplaceDialog::~FindReplaceDialog() {}
 
 void FindReplaceDialog::CreateGUIControls()
 {
@@ -175,10 +173,7 @@ void FindReplaceDialog::CreateGUIControls()
     SetFindReplaceData(m_data, true);
 }
 
-void FindReplaceDialog::OnFindEvent(wxCommandEvent& event)
-{
-    SetFindReplaceData(GetData(), false);
-}
+void FindReplaceDialog::OnFindEvent(wxCommandEvent& event) { SetFindReplaceData(GetData(), false); }
 
 void FindReplaceDialog::SetFindReplaceData(FindReplaceData& data, bool focus)
 {
@@ -538,9 +533,14 @@ void FindReplaceData::FromJSON(const JSONElement& json)
 {
     m_findString = json.namedObject("m_findString").toArrayString();
     m_replaceString = json.namedObject("m_replaceString").toArrayString();
-    m_searchScope = json.namedObject("m_searchScope").toInt(m_searchScope);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
-    m_searchPaths = json.namedObject("m_searchPaths").toArrayString();
+    
+    if(json.hasNamedObject("m_lookIn")) {
+        m_searchPaths = json.namedObject("m_lookIn").toArrayString();
+    } else {
+        m_searchPaths.Add(SEARCH_IN_WORKSPACE);
+    }
+    
     m_encoding = json.namedObject("m_encoding").toString(m_encoding);
     m_fileMask = json.namedObject("m_fileMask").toArrayString();
     m_selectedMask = json.namedObject("m_selectedMask").toString(m_selectedMask);
@@ -553,7 +553,7 @@ void FindReplaceData::FromJSON(const JSONElement& json)
 
     if(m_fileMask.IsEmpty()) {
         m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc");
-        m_selectedMask = "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc";
+        m_selectedMask = m_fileMask.Item(0);
     }
 }
 
@@ -562,9 +562,8 @@ JSONElement FindReplaceData::ToJSON() const
     JSONElement element = JSONElement::createObject(GetName());
     element.addProperty("m_findString", m_findString);
     element.addProperty("m_replaceString", m_replaceString);
-    element.addProperty("m_searchScope", m_searchScope);
     element.addProperty("m_flags", m_flags);
-    element.addProperty("m_searchPaths", m_searchPaths);
+    element.addProperty("m_lookIn", m_searchPaths);
     element.addProperty("m_encoding", m_encoding);
     element.addProperty("m_fileMask", m_fileMask);
     element.addProperty("m_selectedMask", m_selectedMask);
@@ -597,7 +596,16 @@ FindReplaceData::FindReplaceData()
     : clConfigItem("FindReplaceData")
     , m_flags(wxFRD_SEPARATETAB_DISPLAY | wxFRD_MATCHCASE | wxFRD_MATCHWHOLEWORD)
     , m_selectedMask("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc") // Default file mask
-    , m_searchScope(1)
 {
+    m_searchPaths.Add(SEARCH_IN_WORKSPACE);
     m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc");
+}
+
+void FindReplaceData::SetSearchPaths(const wxArrayString& searchPaths)
+{
+    // filter duplicate items
+    wxStringSet_t paths;
+    paths.insert(searchPaths.begin(), searchPaths.end());
+    m_searchPaths.clear();
+    std::for_each(paths.begin(), paths.end(), [&](const wxString& path) { m_searchPaths.Add(path); });
 }

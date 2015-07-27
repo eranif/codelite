@@ -58,7 +58,8 @@ AboutDlg::AboutDlg( wxWindow* parent, const wxString &mainTitle )
             m_textCtrlLicense->SetEditable(false);
         }
     }
-    CentreOnScreen();
+    CentreOnParent();
+    GetSizer()->Fit(this);
 }
 
 AboutDlg::~AboutDlg()

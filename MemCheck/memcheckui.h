@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef MEMCHECKUI_BASE_CLASSES_H
-#define MEMCHECKUI_BASE_CLASSES_H
+#ifndef CODELITE_MEMCHECK_MEMCHECKUI_BASE_CLASSES_H
+#define CODELITE_MEMCHECK_MEMCHECKUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef GUI_BASE_CLASSES_H
-#define GUI_BASE_CLASSES_H
+#ifndef CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
+#define CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
-#define CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
+#ifndef CODELITE_CONTINUOUSBUILD_CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
+#define CODELITE_CONTINUOUSBUILD_CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

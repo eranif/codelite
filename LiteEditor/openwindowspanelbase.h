@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef OPENWINDOWSPANELBASE_BASE_CLASSES_H
-#define OPENWINDOWSPANELBASE_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_OPENWINDOWSPANELBASE_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_OPENWINDOWSPANELBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -19,6 +19,12 @@
 #include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/dataview.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class OpenWindowsPanelBase : public wxPanel
 {

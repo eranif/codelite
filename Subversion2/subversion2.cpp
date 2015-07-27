@@ -993,28 +993,16 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString& workingDire
 
 bool Subversion2::IsPathUnderSvn(const wxString& path)
 {
-    SvnInfo svnInfo;
-    DoGetSvnInfoSync(svnInfo, path);
-    if(svnInfo.m_url.IsEmpty()) return false;
-    return true;
-    /*
-    wxFileName fn(path);
-    wxString svnDirectory1(fn.GetPath());
-    wxString svnDirectory2(fn.GetPath());
-    svnDirectory1 << wxFileName::GetPathSeparator() << wxT(".svn");
-    svnDirectory2 << wxFileName::GetPathSeparator() << wxT("_svn");
-
-    if(wxDirExists(svnDirectory1.c_str()))
-        return true;
-
-    if(wxDirExists(svnDirectory2.c_str()))
-        return true;
-
-    if( m_subversionView->GetRootDir().IsEmpty() == false)
-        return true;
-
+    wxFileName fn(path, ".svn");
+    
+    // search until we find .svn folder
+    while(fn.GetDirCount()) {
+        if(wxFileName::DirExists(fn.GetFullPath())) {
+            return true;
+        }
+        fn.RemoveLastDir();
+    }
     return false;
-    */
 }
 
 void Subversion2::OnSwitchURL(wxCommandEvent& event)

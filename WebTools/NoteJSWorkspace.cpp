@@ -112,8 +112,7 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 void NodeJSWorkspace::Close()
 {
     if(!IsOpen()) return;
-    m_debugger.Reset(NULL);
-
+    
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
 
@@ -129,7 +128,9 @@ void NodeJSWorkspace::Close()
     // Notify workspace closed event
     wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
-
+    
+    m_debugger.Reset(NULL);
+    
     // notify codelite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
     eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
@@ -198,7 +199,9 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     }
 
     m_folders = conf.GetFolders();
-
+    GetView()->Clear();
+    GetView()->ShowHiddenFiles(conf.IsShowHiddenFiles());
+    
     const wxArrayString& folders = GetFolders();
     for(size_t i = 0; i < folders.size(); ++i) {
         GetView()->AddFolder(folders.Item(i));
@@ -298,7 +301,7 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
             return;
         }
         event.Skip(false);
-        NodeJSDebuggerDlg dlg(NULL, NodeJSDebuggerDlg::kExecute);
+        NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kExecute);
         if(dlg.ShowModal() != wxID_OK) {
             return;
         }

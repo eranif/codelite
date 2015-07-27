@@ -28,30 +28,20 @@
 class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
-    wxBoxSizer* mainSizer;
     wxNotebook* m_notebook10;
     wxPanel* m_panel12;
-    wxBoxSizer* boxSizer22;
-    wxBoxSizer* bSizer2;
     wxRadioBox* m_radioBoxHint;
-    wxBoxSizer* boxSizer32;
-    wxStaticBoxSizer* staticBoxSizer27;
     wxCheckBox* m_checkBoxShowXButton;
     wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
     wxCheckBox* m_checkBoxPanesTabsAtBottom;
-    wxBoxSizer* boxSizer25;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
     wxPanel* m_panel14;
-    wxBoxSizer* boxSizer20;
     wxCheckBox* m_checkBoxFindBarAtBottom;
     wxCheckBox* m_checkBoxShowReplaceBar;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
     wxPanel* m_panel16;
-    wxBoxSizer* boxSizer21;
-    wxBoxSizer* boxSizer19;
     wxCheckBox* m_checkBoxHideOutputPaneOnClick;
-    wxFlexGridSizer* fgSizer1;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfBuild;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfSearch;
     wxCheckBox* m_checkBoxHideOutputPaneNotIfReplace;

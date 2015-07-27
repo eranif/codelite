@@ -187,6 +187,8 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook214)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook214);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook214);
     }
     #endif
     
@@ -199,6 +201,8 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -397,6 +401,8 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -507,6 +513,8 @@ ReconcileByRegexDlgBaseClass::ReconcileByRegexDlgBaseClass(wxWindow* parent, wxW
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

@@ -111,6 +111,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropNode = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("Node.js"), wxPG_LABEL, 1) );
     m_pgPropNode->SetHelpString(_("Provides variables that are part of the node environment, such as process and require, and hooks up require to try and find the dependencies that are being loaded, and assign them the correct types. It also includes types for the built-in modules that node.js provides (\"fs\", \"http\", etc)"));
     
+    m_pgPropRequireJS = m_pgMgr->AppendIn( m_pgProp46,  new wxBoolProperty( _("RequireJS"), wxPG_LABEL, 1) );
+    m_pgPropRequireJS->SetHelpString(_("This plugin (\"requirejs\") teaches the server to understand RequireJS-style dependency management. It defines the global functions define and requirejs, and will do its best to resolve dependencies and give them their proper types"));
+    
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
     boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -325,7 +328,7 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     this->SetSizer(boxSizer88);
     
     m_splitter104 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
-    m_splitter104->SetSashGravity(0.5);
+    m_splitter104->SetSashGravity(0.33);
     m_splitter104->SetMinimumPaneSize(10);
     
     boxSizer88->Add(m_splitter104, 1, wxALL|wxEXPAND, 0);
@@ -335,13 +338,13 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer120 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage112->SetSizer(boxSizer120);
     
-    m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataviewLocals = new wxDataViewCtrl(m_splitterPage112, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
     
     m_dataviewLocalsModel = new m_dataview126Model;
     m_dataviewLocalsModel->SetColCount( 3 );
     m_dataviewLocals->AssociateModel(m_dataviewLocalsModel.get() );
     
-    boxSizer120->Add(m_dataviewLocals, 1, wxALL|wxEXPAND, 2);
+    boxSizer120->Add(m_dataviewLocals, 1, wxALL|wxEXPAND, 5);
     
     m_dataviewLocals->AppendTextColumn(_("Name"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dataviewLocals->AppendTextColumn(_("Type"), m_dataviewLocals->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
@@ -352,30 +355,41 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer118 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage108->SetSizer(boxSizer118);
     
-    m_notebook = new Notebook(m_splitterPage108, wxID_ANY, wxDefaultPosition, wxSize(-1,250), kNotebook_Default | kNotebook_AllowDnD);
-    m_notebook->SetName(wxT("m_notebook"));
+    m_splitter168 = new wxSplitterWindow(m_splitterPage108, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter168->SetSashGravity(0.5);
+    m_splitter168->SetMinimumPaneSize(10);
     
-    boxSizer118->Add(m_notebook, 1, wxALL|wxEXPAND, 2);
+    boxSizer118->Add(m_splitter168, 1, wxEXPAND, 5);
     
-    m_panelCallstack = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelCallstack, _("Call Stack"), true);
+    m_splitterPage172 = new wxPanel(m_splitter168, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* boxSizer96 = new wxBoxSizer(wxVERTICAL);
-    m_panelCallstack->SetSizer(boxSizer96);
+    wxBoxSizer* boxSizer178 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage172->SetSizer(boxSizer178);
     
-    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_panelCallstack, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlCallstack = new wxDataViewListCtrl(m_splitterPage172, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SIMPLE);
     
-    boxSizer96->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, 2);
+    boxSizer178->Add(m_dvListCtrlCallstack, 1, wxALL|wxEXPAND, 5);
     
     m_dvListCtrlCallstack->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     m_dvListCtrlCallstack->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dvListCtrlCallstack->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dvListCtrlCallstack->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 50, wxALIGN_LEFT);
-    m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelConsoleLog, _("Console"), false);
+    m_splitterPage176 = new wxPanel(m_splitter168, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter168->SplitVertically(m_splitterPage172, m_splitterPage176, 0);
     
-    wxBoxSizer* boxSizer98 = new wxBoxSizer(wxVERTICAL);
-    m_panelConsoleLog->SetSizer(boxSizer98);
+    wxBoxSizer* boxSizer180 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage176->SetSizer(boxSizer180);
+    
+    m_notebook = new Notebook(m_splitterPage176, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
+    
+    boxSizer180->Add(m_notebook, 1, wxALL|wxEXPAND, 5);
+    
+    m_panelConsoleLog = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelConsoleLog, _("Console"), true);
+    
+    wxBoxSizer* boxSizer188 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsoleLog->SetSizer(boxSizer188);
     
     m_consoleLog = new wxStyledTextCtrl(m_panelConsoleLog, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     // Configure the fold margin
@@ -413,22 +427,52 @@ NodeJSDebuggerPaneBase::NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id, 
     m_consoleLog->SetKeyWords(3, wxT(""));
     m_consoleLog->SetKeyWords(4, wxT(""));
     
-    boxSizer98->Add(m_consoleLog, 1, wxALL|wxEXPAND, 2);
+    boxSizer188->Add(m_consoleLog, 1, wxALL|wxEXPAND, 2);
+    
+    m_textCtrlExpression = new wxTextCtrl(m_panelConsoleLog, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlExpression->SetFocus();
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlExpression->SetHint(_("Evaluate expression"));
+    #endif
+    
+    boxSizer188->Add(m_textCtrlExpression, 0, wxALL|wxEXPAND, 2);
+    
+    m_panelBreakpoints = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
+    
+    wxBoxSizer* boxSizer190 = new wxBoxSizer(wxVERTICAL);
+    m_panelBreakpoints->SetSizer(boxSizer190);
+    
+    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(m_panelBreakpoints, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer190->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, 2);
+    
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 50, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 250, wxALIGN_LEFT);
     
     SetName(wxT("NodeJSDebuggerPaneBase"));
-    SetSizeHints(-1,-1);
+    SetSizeHints(500,250);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
     // Connect events
     m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(NodeJSDebuggerPaneBase::OnEvaluateExpression), NULL, this);
+    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
+    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     
 }
 
 NodeJSDebuggerPaneBase::~NodeJSDebuggerPaneBase()
 {
     m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnItemActivated), NULL, this);
+    m_textCtrlExpression->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(NodeJSDebuggerPaneBase::OnEvaluateExpression), NULL, this);
+    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
+    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NodeJSDebuggerPaneBase::OnBreakpointSelected), NULL, this);
     
 }
 
@@ -524,4 +568,29 @@ NodeJSNewWorkspaceDlgBase::~NodeJSNewWorkspaceDlgBase()
     m_checkBoxNewFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnCheckNewFolder), NULL, this);
     m_button144->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSNewWorkspaceDlgBase::OnOKUI), NULL, this);
     
+}
+
+WebToolsImages::WebToolsImages()
+    : wxImageList(16, 16, true)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCD9C6InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpNodeJS"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("m_bmpNodeJS"), bmp ) );
+    }
+    
+}
+
+WebToolsImages::~WebToolsImages()
+{
 }

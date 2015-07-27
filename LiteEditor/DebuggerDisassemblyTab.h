@@ -38,37 +38,39 @@ class RegistersViewModelClientData : public wxClientData
 {
     bool m_firstColModified;
     bool m_secondColModified;
-public:
-    RegistersViewModelClientData(bool firstModified, bool secondModified) : m_firstColModified(firstModified), m_secondColModified(secondModified) {}
 
-    void SetFirstColModified(bool firstColModified) {
-        this->m_firstColModified = firstColModified;
+public:
+    RegistersViewModelClientData(bool firstModified, bool secondModified)
+        : m_firstColModified(firstModified)
+        , m_secondColModified(secondModified)
+    {
     }
-    void SetSecondColModified(bool secondColModified) {
-        this->m_secondColModified = secondColModified;
-    }
-    bool IsFirstColModified() const {
-        return m_firstColModified;
-    }
-    bool IsSecondColModified() const {
-        return m_secondColModified;
-    }
+
+    void SetFirstColModified(bool firstColModified) { this->m_firstColModified = firstColModified; }
+    void SetSecondColModified(bool secondColModified) { this->m_secondColModified = secondColModified; }
+    bool IsFirstColModified() const { return m_firstColModified; }
+    bool IsSecondColModified() const { return m_secondColModified; }
 };
 
 class RegistersViewModel : public wxDataViewListStore
 {
     wxDataViewListCtrl* m_view;
+
 public:
-    RegistersViewModel(wxDataViewListCtrl* view) : m_view(view) {}
+    RegistersViewModel(wxDataViewListCtrl* view)
+        : m_view(view)
+    {
+    }
     virtual ~RegistersViewModel() {}
 
-    bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const {
-        RegistersViewModelClientData *cd = reinterpret_cast<RegistersViewModelClientData*>(m_view->GetItemData(item));
-        if ( col == 1 && cd && cd->IsFirstColModified() ) {
-            attr.SetColour( *wxRED );
+    bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const
+    {
+        RegistersViewModelClientData* cd = reinterpret_cast<RegistersViewModelClientData*>(m_view->GetItemData(item));
+        if(col == 1 && cd && cd->IsFirstColModified()) {
+            attr.SetColour(*wxRED);
             return true;
-        } else if ( col == 3 && cd && cd->IsSecondColModified() ) {
-            attr.SetColour( *wxRED );
+        } else if(col == 3 && cd && cd->IsSecondColModified()) {
+            attr.SetColour(*wxRED);
             return true;
         }
         return false;
@@ -88,30 +90,24 @@ class DebuggerDisassemblyTab : public DebuggerDisassemblyTabBase
 
 protected:
     virtual void OnMarginClicked(wxStyledTextEvent& event);
-    
+
     void DoClearRegistersView();
     void DoClearDisassembleView();
     void DoCentrLine(int line);
 
-    void OnOutput(clCommandEvent &e);
-    void OnCurLine(clCommandEvent &e);
-    void OnQueryFileLineDone(clCommandEvent &e);
-    void OnRefreshView(clCommandEvent &e);
-    void OnShowRegisters(clCommandEvent &e);
-    void OnDebuggerStopped(wxCommandEvent &e);
-    void OnAllBreakpointsDeleted(wxCommandEvent &e);
+    void OnOutput(clCommandEvent& e);
+    void OnCurLine(clCommandEvent& e);
+    void OnQueryFileLineDone(clCommandEvent& e);
+    void OnRefreshView(clCommandEvent& e);
+    void OnShowRegisters(clCommandEvent& e);
+    void OnDebuggerStopped(clDebugEvent& e);
+    void OnAllBreakpointsDeleted(wxCommandEvent& e);
 
 public:
-    DebuggerDisassemblyTab(wxWindow* parent, const wxString &label);
+    DebuggerDisassemblyTab(wxWindow* parent, const wxString& label);
     virtual ~DebuggerDisassemblyTab();
 
-
-
-    void SetTitle(const wxString& title) {
-        this->m_title = title;
-    }
-    const wxString& GetTitle() const {
-        return m_title;
-    }
+    void SetTitle(const wxString& title) { this->m_title = title; }
+    const wxString& GetTitle() const { return m_title; }
 };
 #endif // DEBUGGERDISASSEMBLYTAB_H

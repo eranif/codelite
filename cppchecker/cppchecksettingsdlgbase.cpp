@@ -342,6 +342,8 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook1)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook1);
     }
     #endif
     
@@ -354,6 +356,8 @@ CppCheckSettingsDialogBase::CppCheckSettingsDialogBase(wxWindow* parent, wxWindo
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events
@@ -492,6 +496,8 @@ CppCheckAddSuppressionDialogBase::CppCheckAddSuppressionDialogBase(wxWindow* par
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

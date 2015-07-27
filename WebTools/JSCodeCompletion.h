@@ -12,6 +12,7 @@ class JSCodeCompletion : public wxEvtHandler
 {
     clTernServer m_ternServer;
     int m_ccPos;
+    wxString m_workingDirectory;
 
 public:
     typedef SmartPtr<JSCodeCompletion> Ptr_t;
@@ -21,16 +22,16 @@ public:
      * @brief start code completion based on the word completion plugin
      */
     void TriggerWordCompletion();
-    
+
 public:
-    JSCodeCompletion();
+    JSCodeCompletion(const wxString& workingDirectory);
     virtual ~JSCodeCompletion();
-    
+
     /**
      * @brief Is Java Script code completion enabled?
      */
     bool IsEnabled() const;
-    
+
     /**
      * @brief code complete the current expression
      */
@@ -40,6 +41,8 @@ public:
      * @brief restart the tern server
      */
     void Reload();
+
+    void ClearFatalError() { m_ternServer.ClearFatalErrorFlag(); }
 };
 
 #endif // JSCODECOMPLETION_H

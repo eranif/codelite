@@ -165,7 +165,7 @@ public:
      * @brief return the word under the mouse pointer.
      * If a selection exists, return it instead
      */
-    virtual wxString GetWordAtMousePointer() = 0;
+    virtual void GetWordAtMousePointer(wxString& word, wxRect& wordRect) = 0;
 
     /**
      * @brief return the EOL mode of the editor.
@@ -321,7 +321,7 @@ public:
      * @brief Similar to the above but returns void, and is implemented asynchronously
      */
     virtual void
-    FindAndSelectV(const wxString& pattern, const wxString& what, int from_pos = 0, NavMgr* navmgr = NULL) = 0;
+    FindAndSelectV(const wxString& pattern, const wxString& what, int pos = 0, NavMgr* navmgr = NULL) = 0;
 
     /**
      * @brief set a lexer to the editor

@@ -42,6 +42,9 @@
 #include "event_notifier.h"
 #include "theme_handler.h"
 #include "cl_config.h"
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
+#include "attribute_style.h"
 
 // Custom styles
 #define LEX_FIF_DEFAULT 0
@@ -172,79 +175,72 @@ MatchInfo& FindResultsTab::GetMatchInfo(size_t idx)
 
 void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
 {
-    sci->ClearDocumentStyle();
-    sci->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        sci->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
-        sci->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
+
+    //#define LEX_FIF_DEFAULT 0
+    //#define LEX_FIF_FILE 1
+    //#define LEX_FIF_MATCH 2
+    //#define LEX_FIF_LINE_NUMBER 3
+    //#define LEX_FIF_HEADER 4
+    //#define LEX_FIF_SCOPE 5
+    //#define LEX_FIF_MATCH_COMMENT 6
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
+    if(!lexer) {
+        lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
 
-    sci->StyleSetForeground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneFgColour());
-    sci->StyleSetBackground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneBgColour());
-
-    wxColour headerColour = DrawingUtils::IsThemeDark() ? wxColour("GREY") : wxColour("BLACK");
-
-    sci->StyleSetForeground(LEX_FIF_HEADER, headerColour);
-    sci->StyleSetBackground(LEX_FIF_HEADER, DrawingUtils::GetOutputPaneBgColour());
-
-    sci->StyleSetForeground(LEX_FIF_LINE_NUMBER,
-                            DrawingUtils::IsThemeDark() ? wxColour("#FACE43") : wxColour("MAROON"));
-    sci->StyleSetBackground(LEX_FIF_LINE_NUMBER, DrawingUtils::GetOutputPaneBgColour());
-
-    sci->StyleSetForeground(LEX_FIF_MATCH, DrawingUtils::GetOutputPaneFgColour());
-    sci->StyleSetBackground(LEX_FIF_MATCH, DrawingUtils::GetOutputPaneBgColour());
-    sci->StyleSetEOLFilled(LEX_FIF_MATCH, true);
-
-    sci->StyleSetForeground(LEX_FIF_SCOPE, wxT("BROWN"));
-    sci->StyleSetBackground(LEX_FIF_SCOPE, DrawingUtils::GetOutputPaneBgColour());
-    sci->StyleSetEOLFilled(LEX_FIF_SCOPE, false);
-
-    wxColour fgColour(wxT("GREEN"));
-    wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
-
-    LexerConf::Ptr_t cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
-    if(cppLexer) {
-        font = cppLexer->GetFontForSyle(wxSTC_C_DEFAULT);
-        bold = font;
-        bold.SetWeight(wxFONTWEIGHT_BOLD);
+    const StyleProperty& defaultStyle = lexer->GetProperty(0);
+    wxFont defaultFont = lexer->GetFontForSyle(0);
+    
+    for(size_t i = 0; i < wxSTC_STYLE_MAX; ++i) {
+        sci->StyleSetForeground(i, defaultStyle.GetFgColour());
+        sci->StyleSetBackground(i, defaultStyle.GetBgColour());
+        sci->StyleSetFont(i, defaultFont);
     }
 
-    sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, fgColour);
-    sci->StyleSetBackground(LEX_FIF_MATCH_COMMENT, DrawingUtils::GetOutputPaneBgColour());
-    sci->StyleSetEOLFilled(LEX_FIF_MATCH_COMMENT, true);
+    StyleProperty::Map_t& props = lexer->GetLexerProperties();
+    sci->StyleSetForeground(LEX_FIF_HEADER, props[11].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_HEADER, props[11].GetBgColour());
+    
+    // 33 is the style for line numbers
+    sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, props[33].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_LINE_NUMBER, props[33].GetBgColour());
+    
+    // 11 is the style number for "identifier"
+    sci->StyleSetForeground(LEX_FIF_MATCH, props[11].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_MATCH, props[11].GetBgColour());
+    
+    // 16 is the stule for colouring classes
+    sci->StyleSetForeground(LEX_FIF_SCOPE, props[16].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_SCOPE, props[16].GetBgColour());
+    
+    sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, props[wxSTC_C_COMMENTLINE].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_MATCH_COMMENT, props[wxSTC_C_COMMENTLINE].GetBgColour());
 
-    sci->StyleSetForeground(LEX_FIF_FILE, headerColour);
-    sci->StyleSetBackground(LEX_FIF_FILE, DrawingUtils::GetOutputPaneBgColour());
+    sci->StyleSetForeground(LEX_FIF_FILE, props[wxSTC_C_WORD].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_FILE, props[wxSTC_C_WORD].GetBgColour());
     sci->StyleSetEOLFilled(LEX_FIF_FILE, true);
 
-    sci->StyleSetForeground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneFgColour());
-    sci->StyleSetBackground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneBgColour());
-    sci->StyleSetEOLFilled(LEX_FIF_DEFAULT, true);
-    sci->StyleSetEOLFilled(LEX_FIF_HEADER, true);
-
-    sci->StyleSetFont(LEX_FIF_FILE, font);
-    sci->StyleSetFont(LEX_FIF_DEFAULT, bold);
-    sci->StyleSetFont(LEX_FIF_HEADER, bold);
-    sci->StyleSetFont(LEX_FIF_MATCH, font);
-    sci->StyleSetFont(LEX_FIF_LINE_NUMBER, font);
-    sci->StyleSetFont(LEX_FIF_SCOPE, font);
-    sci->StyleSetFont(LEX_FIF_MATCH_COMMENT, font);
+    sci->StyleSetForeground(LEX_FIF_DEFAULT, props[11].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_DEFAULT, props[11].GetBgColour());
 
     sci->StyleSetHotSpot(LEX_FIF_MATCH, true);
     sci->StyleSetHotSpot(LEX_FIF_FILE, true);
     sci->StyleSetHotSpot(LEX_FIF_MATCH_COMMENT, true);
 
-    sci->SetHotspotActiveForeground(true, DrawingUtils::GetOutputPaneFgColour());
+    sci->SetHotspotActiveForeground(true, lexer->IsDark() ? "WHITE" : "BLACK");
     sci->SetHotspotActiveUnderline(false);
 
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, DrawingUtils::IsThemeDark() ? "YELLOW" : "BLACK");
-    sci->MarkerSetForeground(7, DrawingUtils::IsThemeDark() ? "YELLOW" : "BLACK");
+    sci->MarkerSetBackground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
+    sci->MarkerSetForeground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
 
-    sci->IndicatorSetForeground(1, DrawingUtils::IsThemeDark() ? *wxYELLOW : wxColour(wxT("#6495ED")));
-    sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
+    sci->IndicatorSetForeground(1, lexer->IsDark() ? "YELLOW" : "#FF4500");
+#ifdef __WXGTK__
+    // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
+    sci->IndicatorSetStyle(1, wxSTC_INDIC_DOTBOX);
+#else
+    sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
+#endif
     sci->IndicatorSetUnder(1, true);
 
     sci->SetMarginWidth(0, 0);
@@ -349,21 +345,6 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
             MySTC* sci = new MySTC(m_book);
             SetStyles(sci);
             sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindResultsTab::OnStyleNeeded), NULL, this);
-
-            // Make sure we can add more tabs, if not delete the last used tab and then add
-            // a new tab
-
-            //            long MaxBuffers = clConfig::Get().Read(kConfigMaxOpenedTabs, 15);
-            //            if((long)m_book->GetPageCount() >= MaxBuffers) {
-            //                // We have reached the limit of the number of open buffers
-            //                // Close the last used buffer
-            //                const wxArrayPtrVoid& arr = m_book->GetHistory();
-            //                if(arr.GetCount()) {
-            //                    wxWindow* tab = static_cast<wxWindow*>(arr.Item(arr.GetCount() - 1));
-            //                    m_book->DeletePage(m_book->GetPageIndex(tab));
-            //                }
-            //            }
-            //
             m_book->AddPage(sci, label, true);
 #ifdef __WXMAC__
             m_book->GetSizer()->Layout();
@@ -427,9 +408,11 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
     MatchInfo& matchInfo = GetMatchInfo(m);
     for(SearchResultList::iterator iter = res->begin(); iter != res->end(); iter++) {
         if(matchInfo.empty() || matchInfo.rbegin()->second.GetFileName() != iter->GetFileName()) {
+            if(!matchInfo.empty()) {
+                AppendText("\n");
+            }
             wxFileName fn(iter->GetFileName());
             fn.MakeRelativeTo();
-
             AppendText(fn.GetFullPath() + wxT("\n"));
         }
 
@@ -497,7 +480,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
                 }
             }
         }
-    } else if(m_recv == m_sci) {
+    } else if((m_recv == m_sci) && m_sci) {
         // Replace In Files...
         AppendText(summary->GetMessage() + wxT("\n"));
         if(m_tb->GetToolToggled(XRCID("scroll_on_output"))) {
@@ -859,7 +842,11 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
             ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos) + i, 1 | wxSTC_FOLDLEVELHEADERFLAG);
             ctrl->SetStyling(curline.Length(), LEX_FIF_HEADER); // first 6 chars are the line number
             bytes_left = 0;
-
+        } else if(curline == "\n") {
+            // empty line
+            ctrl->SetStyling(1, LEX_FIF_LINE_NUMBER); // first 6 chars are the line number
+            inMatchLine = true;
+            bytes_left = 0;
         } else {
             // File name
             ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos) + i, 2 | wxSTC_FOLDLEVELHEADERFLAG);

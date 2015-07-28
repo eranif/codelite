@@ -137,7 +137,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(staticBoxSizer98, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -166,11 +166,6 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_checkBoxSaveFilesBeforeSearching->SetToolTip(_("Save any modified files before search starts"));
     
     fgSizer3->Add(m_checkBoxSaveFilesBeforeSearching, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxSeparateTab = new wxCheckBox(m_panelMainPanel, wxID_ANY, _("Use new tab per search"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxSeparateTab->SetValue(true);
-    
-    fgSizer3->Add(m_checkBoxSeparateTab, 0, wxALL, 5);
     
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     

@@ -49,7 +49,6 @@ protected:
     wxCheckBox* m_matchWholeWord;
     wxCheckBox* m_regualrExpression;
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
-    wxCheckBox* m_checkBoxSeparateTab;
     wxButton* m_find;
     wxButton* m_replaceAll;
     wxButton* m_stop;
@@ -81,7 +80,6 @@ public:
     wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
     wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
     wxCheckBox* GetCheckBoxSaveFilesBeforeSearching() { return m_checkBoxSaveFilesBeforeSearching; }
-    wxCheckBox* GetCheckBoxSeparateTab() { return m_checkBoxSeparateTab; }
     wxButton* GetFind() { return m_find; }
     wxButton* GetReplaceAll() { return m_replaceAll; }
     wxButton* GetStop() { return m_stop; }

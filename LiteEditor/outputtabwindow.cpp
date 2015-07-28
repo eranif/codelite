@@ -241,7 +241,6 @@ void OutputTabWindow::Clear()
         m_sci->SetReadOnly(false);
         m_sci->ClearAll();
         m_sci->EmptyUndoBuffer();
-        m_sci->SetScrollWidth(1);
         m_sci->SetReadOnly(true);
     }
 }

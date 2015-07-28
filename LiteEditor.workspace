@@ -99,7 +99,7 @@
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>

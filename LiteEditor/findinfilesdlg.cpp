@@ -63,8 +63,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
     m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
     m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
-    m_checkBoxSeparateTab->SetValue(m_data.GetFlags() & wxFRD_SEPARATETAB_DISPLAY);
-
+    
     // Set encoding
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
@@ -262,7 +261,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
 
     data.SetFiles(files);       // list of files
     data.SetRootDirs(rootDirs); // folders
-    data.UseNewTab(m_checkBoxSeparateTab->IsChecked());
+    data.UseNewTab(false);
     data.SetExtensions(m_fileTypes->GetValue());
     return data;
 }
@@ -371,12 +370,7 @@ size_t FindInFilesDialog::GetSearchFlags()
     if(m_matchCase->IsChecked()) flags |= wxFRD_MATCHCASE;
     if(m_matchWholeWord->IsChecked()) flags |= wxFRD_MATCHWHOLEWORD;
     if(m_regualrExpression->IsChecked()) flags |= wxFRD_REGULAREXPRESSION;
-    // if(m_printScope->IsChecked()) flags |= wxFRD_DISPLAYSCOPE;
-    if(m_checkBoxSeparateTab->IsChecked()) flags |= wxFRD_SEPARATETAB_DISPLAY;
     if(m_checkBoxSaveFilesBeforeSearching->IsChecked()) flags |= wxFRD_SAVE_BEFORE_SEARCH;
-    // if(m_checkBoxSkipMatchesFoundInComments->IsChecked()) flags |= wxFRD_SKIP_COMMENTS;
-    // if(m_checkBoxSkipMatchesFoundInStrings->IsChecked()) flags |= wxFRD_SKIP_STRINGS;
-    // if(m_checkBoxHighlighStringComments->IsChecked()) flags |= wxFRD_COLOUR_COMMENTS;
     return flags;
 }
 

@@ -229,18 +229,24 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
 
     sci->SetHotspotActiveForeground(true, lexer->IsDark() ? "WHITE" : "BLACK");
     sci->SetHotspotActiveUnderline(false);
-
+    sci->MarkerDefine(7, wxSTC_MARK_ARROW);
+    
+#ifdef __WXGTK__
+    // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
+    sci->MarkerDefine(7, wxSTC_MARK_ARROW);
+    sci->MarkerSetBackground(7, lexer->IsDark() ? "CYAN" : "BLUE");
+    sci->MarkerSetForeground(7, lexer->IsDark() ? "CYAN" : "BLUE");
+    
+    sci->IndicatorSetForeground(1, lexer->IsDark() ? "CYAN" : "BLUE");
+    sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
+#else
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
     sci->MarkerSetBackground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
     sci->MarkerSetForeground(7, lexer->IsDark() ? "YELLOW" : "#FF4500");
 
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "YELLOW" : "#FF4500");
-#ifdef __WXGTK__
-    // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
-    sci->IndicatorSetStyle(1, wxSTC_INDIC_DOTBOX);
-#else
     sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
-#endif
+#endif    
     sci->IndicatorSetUnder(1, true);
 
     sci->SetMarginWidth(0, 0);
@@ -480,6 +486,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
                 }
             }
         }
+        
     } else if((m_recv == m_sci) && m_sci) {
         // Replace In Files...
         AppendText(summary->GetMessage() + wxT("\n"));

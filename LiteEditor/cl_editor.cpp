@@ -797,8 +797,10 @@ void LEditor::SetProperties()
         CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDRIGHT);
     }
 
+#ifdef __WXOSX__
     CmdKeyAssign(wxSTC_KEY_DOWN, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTEND);
     CmdKeyAssign(wxSTC_KEY_UP, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTSTART);
+#endif
 }
 
 void LEditor::OnSavePoint(wxStyledTextEvent& event)

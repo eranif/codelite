@@ -155,7 +155,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     sci->SetHotspotActiveUnderline(false);
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
 
-#ifdef __WXGTK__
+#if wxVERSION_NUMBER < 3100
     // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
     sci->MarkerSetBackground(7, lexer->IsDark() ? "CYAN" : "ORANGE");

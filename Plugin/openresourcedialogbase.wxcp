@@ -360,7 +360,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "200"
+           "m_value": "500"
           }, {
            "type": "choice",
            "m_label": "Column Type",

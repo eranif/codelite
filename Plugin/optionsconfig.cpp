@@ -115,7 +115,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_disableSmartIndent(false)
     , m_disableSemicolonShift(false)
     , m_caretLineAlpha(30)
-    , m_dontAutoFoldResults(false)
+    , m_dontAutoFoldResults(true)
     , m_showDebugOnRun(true)
     , m_caretUseCamelCase(true)
     , m_wordWrap(false)
@@ -124,7 +124,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift |
-                Opt_HideDockingWindowCaption |
                 Opt_WrapBrackets |
                 Opt_WrapQuotes |
                 Opt_AutoCompleteDoubleQuotes |

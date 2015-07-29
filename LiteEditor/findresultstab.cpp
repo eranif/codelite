@@ -158,10 +158,10 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
 #ifdef __WXGTK__
     // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, lexer->IsDark() ? "CYAN" : "BLUE");
-    sci->MarkerSetForeground(7, lexer->IsDark() ? "CYAN" : "BLUE");
+    sci->MarkerSetBackground(7, lexer->IsDark() ? "CYAN" : "ORANGE");
+    sci->MarkerSetForeground(7, lexer->IsDark() ? "CYAN" : "ORANGE");
 
-    sci->IndicatorSetForeground(1, lexer->IsDark() ? "CYAN" : "BLUE");
+    sci->IndicatorSetForeground(1, lexer->IsDark() ? "CYAN" : "ORANGE");
     sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
 #else
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);

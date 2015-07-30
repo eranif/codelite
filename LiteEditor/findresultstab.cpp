@@ -334,7 +334,7 @@ void FindResultsTab::OnClearAll(wxCommandEvent& e)
     Clear();
 }
 
-void FindResultsTab::OnClearAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
+void FindResultsTab::OnClearAllUI(wxUpdateUIEvent& e) { e.Enable(!m_searchInProgress && !m_sci->IsEmpty()); }
 
 void FindResultsTab::OnRepeatOutput(wxCommandEvent& e)
 {

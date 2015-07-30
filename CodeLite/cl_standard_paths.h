@@ -94,6 +94,12 @@ public:
      * @brief return the project templates dircectory
      */
     wxString GetProjectTemplatesDir() const;
+    
+    /**
+     * @brief return the user templates folder
+     * @return 
+     */
+    wxString GetUserProjectTemplatesDir() const;
 };
 
 #endif // CLSTANDARDPATHS_H

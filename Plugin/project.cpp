@@ -563,15 +563,15 @@ wxString Project::GetDescription() const
 void Project::CopyTo(const wxString& new_path, const wxString& new_name, const wxString& description)
 {
     // first save the xml document to the destination folder
-
-    wxString newFile = new_path + new_name + wxT(".project");
-    if(!m_doc.Save(newFile)) {
+    wxFileName newFile(new_path, new_name);
+    newFile.SetExt("project");
+    if(!m_doc.Save(newFile.GetFullPath())) {
         return;
     }
 
     // load the new xml and modify it
     wxXmlDocument doc;
-    if(!doc.Load(newFile)) {
+    if(!doc.Load(newFile.GetFullPath())) {
         return;
     }
 
@@ -668,7 +668,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
         }
     }
 
-    doc.Save(newFile);
+    doc.Save(newFile.GetFullPath());
 }
 
 void Project::SetFiles(ProjectPtr src)

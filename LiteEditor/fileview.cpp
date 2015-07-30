@@ -1250,14 +1250,17 @@ void FileViewTree::OnSaveAsTemplate(wxCommandEvent& WXUNUSED(event))
                 newName = newName.Trim().Trim(false);
                 desc = desc.Trim().Trim(false);
 
-                if(newName.IsEmpty() == false) {
-                    wxString tmplateDir =
-                        ManagerST::Get()->GetStartupDirectory() + wxT("/templates/projects/") + newName + wxT("/");
-                    Mkdir(tmplateDir);
+                if(!newName.IsEmpty()) {
+
+                    // Copy the user template to the user folder
+                    wxFileName userTemplates(clStandardPaths::Get().GetUserDataDir(), "");
+                    userTemplates.AppendDir("templates");
+                    userTemplates.AppendDir("projects");
+                    userTemplates.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
                     Project newProj(*proj);
                     newProj.SetProjectInternalType(type);
-                    newProj.CopyTo(tmplateDir, newName, desc);
+                    newProj.CopyTo(userTemplates.GetPath(), newName, desc);
                 }
             }
         }
@@ -2427,7 +2430,7 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
     if(!clCxxWorkspaceST::Get()->IsOpen()) {
 
         wxFileName fnWorkspace(folder, "");
-        
+
         // If a workspace is already exist at the selected path - load it
         wxArrayString workspaceFiles;
         wxString workspaceFile;
@@ -2443,7 +2446,7 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
                 return;
             }
         }
-    
+
         workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
         workspaceFileName.SetExt("workspace");
 
@@ -2486,7 +2489,7 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
             _("Can't import files to workspace without projects"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-    
+
     wxString projectName;
     if(projects.GetCount() > 1) {
         int selection = projects.Index(clCxxWorkspaceST::Get()->GetActiveProjectName());

@@ -58,18 +58,4 @@ NameAndDescDlg::NameAndDescDlg(wxWindow* parent, IManager* manager, const wxStri
     }
     m_choiceType->SetSelection(where);
     m_textCtrlName->SetValue(name);
-    m_textCtrlName->SetFocus();
-    Centre();
-}
-
-void NameAndDescDlg::OnButtonOK(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    EndModal(wxID_OK);
-}
-
-void NameAndDescDlg::OnButtonCancel(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    EndModal(wxID_CANCEL);
 }

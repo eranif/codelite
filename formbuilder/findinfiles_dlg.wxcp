@@ -752,7 +752,7 @@
                     }, {
                      "type": "bitmapPicker",
                      "m_label": "Bitmap File:",
-                     "m_path": "wxART_PLUS,wxART_TOOLBAR,16"
+                     "m_path": "../icons/fif-menu.png"
                     }, {
                      "type": "choice",
                      "m_label": "Direction",
@@ -847,7 +847,7 @@
                     }, {
                      "type": "bitmapPicker",
                      "m_label": "Bitmap File:",
-                     "m_path": "wxART_DELETE,wxART_TOOLBAR,16"
+                     "m_path": "../icons/fif-clear.png"
                     }, {
                      "type": "choice",
                      "m_label": "Direction",
@@ -856,7 +856,7 @@
                     }, {
                      "type": "string",
                      "m_label": "Margins:",
-                     "m_value": "2,2"
+                     "m_value": "5,5"
                     }],
                    "m_events": [{
                      "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",

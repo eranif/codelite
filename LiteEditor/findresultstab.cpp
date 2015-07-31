@@ -67,8 +67,6 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     : OutputTabWindow(parent, id, name)
     , m_searchInProgress(false)
 {
-    // keep existing scintilla
-    SetStyles(m_sci);
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindResultsTab::OnStyleNeeded), NULL, this);
 
     BitmapLoader& loader = *(PluginManager::Get()->GetStdIcons());
@@ -216,10 +214,8 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 {
     m_searchInProgress = true;
     Clear();
+    SetStyles(m_sci);
     SearchData* data = (SearchData*)e.GetClientData();
-
-    Clear();
-
     if(data) {
         m_searchData = *data;
 
@@ -230,6 +226,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
                 << (data->IsRegularExpression() ? _("true") : _("false")) << wxT(" ======\n");
         AppendText(message);
     }
+    wxDELETE(data);
 }
 
 void FindResultsTab::OnSearchMatch(wxCommandEvent& e)

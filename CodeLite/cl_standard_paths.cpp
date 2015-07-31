@@ -145,3 +145,7 @@ wxString clStandardPaths::GetUserProjectTemplatesDir() const
     fn.AppendDir("projects");
     return fn.GetPath();
 }
+
+wxString clStandardPaths::GetExecutablePath() const { return wxStandardPaths::Get().GetExecutablePath(); }
+
+wxString clStandardPaths::GetTempDir() const { return wxStandardPaths::Get().GetTempDir(); }

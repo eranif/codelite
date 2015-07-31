@@ -1735,7 +1735,7 @@ IProcess* LaunchTerminal(const wxString& title, bool forDebugger, IProcessCallba
 
 #else
     wxString command;
-    wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
+    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
 
 #if defined(__WXMAC__)
     command << "/usr/bin/open \"" << fnCodeliteTerminal.GetPath(true) << "codelite-terminal.app\" --args ";
@@ -1764,7 +1764,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     wxString title(cmd);
 
     OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
+    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
     fnCodeliteTerminal.SetFullName("codelite-terminal");
 
 // change directory to the working directory
@@ -1797,7 +1797,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
         // build the command
         wxString command;
         wxString ld_lib_path;
-        wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+        wxFileName exePath(clStandardPaths::Get().GetExecutablePath());
         wxFileName exeWrapper(exePath.GetPath(), wxT("codelite_exec"));
 
         if(wxGetEnv(wxT("LD_LIBRARY_PATH"), &ld_lib_path) && ld_lib_path.IsEmpty() == false) {

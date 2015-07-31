@@ -181,7 +181,7 @@ wxFileName EclipseCXXThemeImporter::ToEclipseXML(const wxFileName& codeliteXml, 
     }
     eclipseXML << "</colorTheme>\n";
     wxString xmlFile;
-    xmlFile << wxStandardPaths::Get().GetTempDir() << "/"
+    xmlFile << clStandardPaths::Get().GetTempDir() << "/"
             << "eclipse-theme-" << id << ".xml";
     FileUtils::WriteFileContent(xmlFile, eclipseXML);
     return wxFileName(xmlFile);

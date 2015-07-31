@@ -106,9 +106,9 @@ const wxString CLEAN_PROJECT_PREFIX = _("----------Cleaning project:[ ");
 #ifdef __WXGTK__
 #define TERMINAL_CMD                                               \
     wxString::Format(wxT("%s/codelite_xterm '$(TITLE)' '$(CMD)'"), \
-                     wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath().c_str())
+                     wxFileName(clStandardPaths::Get().GetExecutablePath()).GetPath().c_str())
 #elif defined(__WXMAC__)
-#define TERMINAL_CMD wxString::Format(wxT("%s/OpenTerm '$(CMD)'"), wxStandardPaths::Get().GetDataDir().c_str())
+#define TERMINAL_CMD wxString::Format(wxT("%s/OpenTerm '$(CMD)'"), clStandardPaths::Get().GetDataDir().c_str())
 #else
 const wxString TERMINAL_CMD = wxT("");
 #endif

@@ -68,10 +68,10 @@ BitmapLoader::BitmapLoader()
     fn = wxFileName(bitmapPath, zipname);
 #else
 #ifdef USE_POSIX_LAYOUT
-    wxString bitmapPath(wxStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
+    wxString bitmapPath(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
     fn = wxFileName(bitmapPath, zipname);
 #else
-    fn = wxFileName(wxStandardPaths::Get().GetDataDir(), zipname);
+    fn = wxFileName(clStandardPaths::Get().GetDataDir(), zipname);
 #endif
 #endif
 

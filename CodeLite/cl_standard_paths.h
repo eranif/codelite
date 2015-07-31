@@ -52,6 +52,11 @@ public:
     void SetUserDataDir(const wxString& path);
     
     /**
+     * @brief return the temp folder for this OS
+     */
+    wxString GetTempDir() const;
+    
+    /**
      * @brief return the path to the plugins folder
      */
     wxString GetPluginsDirectory() const;
@@ -79,6 +84,11 @@ public:
      * @note the .exe and "/" are platform dependant
      */
     wxString GetBinaryFullPath(const wxString &toolname) const;
+    
+    /**
+     * @brief get CodeLite executale path
+     */
+    wxString GetExecutablePath() const;
     
     /**
      * @brief return the user lexers directory

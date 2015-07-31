@@ -635,7 +635,7 @@ bool CodeFormatter::ClangFormatBuffer(const wxString& content,
                                       int length)
 {
     // Write the content into a temporary file
-    wxFileName fn(wxStandardPaths::Get().GetTempDir(), "code-formatter-tmp.cpp");
+    wxFileName fn(clStandardPaths::Get().GetTempDir(), "code-formatter-tmp.cpp");
     fn.SetExt(filename.GetExt());
 
     wxFFile fp(fn.GetFullPath(), "w+b");
@@ -671,7 +671,7 @@ bool CodeFormatter::ClangPreviewFormat(const wxString& content, wxString& format
     int startOffset, length, cursorPosition;
     startOffset = length = cursorPosition = wxNOT_FOUND;
 
-    wxFileName fn(wxStandardPaths::Get().GetTempDir(), "code-formatter-tmp.cpp");
+    wxFileName fn(clStandardPaths::Get().GetTempDir(), "code-formatter-tmp.cpp");
     wxFFile fp(fn.GetFullPath(), "w+b");
     if(fp.IsOpened()) {
         fp.Write(content, wxConvUTF8);

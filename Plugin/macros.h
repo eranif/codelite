@@ -25,6 +25,7 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+#include "cl_standard_paths.h"
 #include <wx/stdpaths.h>
 #include <wx/intl.h>
 #include <map>

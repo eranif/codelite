@@ -1,4 +1,6 @@
 #include "BorlandCppBuilderImporter.h"
+#include <wx/wfstream.h>
+#include <wx/txtstrm.h>
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
@@ -45,6 +47,7 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
     GenericProjectPtr genericProject = std::make_shared<GenericProject>();
     genericProject->name = wsInfo.GetName();
     genericProject->path = wsInfo.GetPath();
+    genericProject->createDefaultVirtualDir = true;
 
     GenericProjectCfgPtr genericProjectCfgDebug = std::make_shared<GenericProjectCfg>();
     GenericProjectCfgPtr genericProjectCfgRelease = std::make_shared<GenericProjectCfg>();
@@ -82,6 +85,44 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
 
                             genericProjectCfgDebug->libPath = projectLibs;
                             genericProjectCfgRelease->libPath = projectLibs;
+                        }
+
+                        if(macrosChild->GetName() == wxT("USERDEFINES")) {
+                            wxString projectUserDefines = macrosChild->GetAttribute(wxT("value"));
+
+                            genericProjectCfgDebug->preprocessor = projectUserDefines;
+                            genericProjectCfgRelease->preprocessor = projectUserDefines;
+                        }
+
+                        if(macrosChild->GetName() == wxT("MAINSOURCE")) {
+                            wxString projectMainSource = macrosChild->GetAttribute(wxT("value"));
+                            projectMainSource.Replace(wxT("\""), wxT(""));
+
+                            wxFileName fnMainSource(wsInfo.GetPath() + wxFileName::GetPathSeparator() +
+                                                    projectMainSource);
+
+                            if(fnMainSource.GetExt().Lower() == wxT("bpf")) {
+                                wxFileInputStream fis(fnMainSource.GetFullPath());
+                                wxTextInputStream tis(fis);
+
+                                while(!fis.Eof()) {
+                                    wxString line = tis.ReadLine();
+
+                                    int index = line.Find(wxT("USEUNIT(\""));
+                                    if(index != wxNOT_FOUND) {
+                                        int begin = index + 9;
+                                        int end = line.Find(wxT("\");")) - 1;
+
+                                        wxString projectFilename = line.SubString(begin, end).Trim().Trim(false);
+                                        projectFilename.Replace(wxT("\\"), wxT("/"));
+
+                                        GenericProjectFilePtr genericProjectFile =
+                                            std::make_shared<GenericProjectFile>();
+                                        genericProjectFile->name = projectFilename;
+                                        genericProject->files.push_back(genericProjectFile);
+                                    }
+                                }
+                            }
                         }
 
                         macrosChild = macrosChild->GetNext();

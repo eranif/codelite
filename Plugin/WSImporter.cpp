@@ -5,6 +5,7 @@
 #include "CodeBlocksImporter.h"
 #include "EnvVarImporterDlg.h"
 #include "workspace.h"
+#include <wx/tokenzr.h>
 
 WSImporter::WSImporter()
 {
@@ -230,26 +231,26 @@ bool WSImporter::Import(wxString& errMsg)
                         }
 
                         le_conf->SetEnvvars(envVars);
-                        
+
                         BuildCommandList preBuildCommandList;
                         BuildCommandList postBuildCommandList;
-                        
-                        for (wxString preBuildCmd : cfg->preBuildCommands) {
+
+                        for(wxString preBuildCmd : cfg->preBuildCommands) {
                             BuildCommand preBuildCommand;
                             preBuildCommand.SetCommand(preBuildCmd);
                             preBuildCommand.SetEnabled(true);
-                            
+
                             preBuildCommandList.push_back(preBuildCommand);
                         }
-                        
-                        for (wxString postBuildCmd : cfg->postBuildCommands) {
+
+                        for(wxString postBuildCmd : cfg->postBuildCommands) {
                             BuildCommand postBuildCommand;
                             postBuildCommand.SetCommand(postBuildCmd);
                             postBuildCommand.SetEnabled(true);
-                        
+
                             postBuildCommandList.push_back(postBuildCommand);
                         }
-                        
+
                         le_conf->SetPreBuildCommands(preBuildCommandList);
                         le_conf->SetPostBuildCommands(postBuildCommandList);
 
@@ -270,7 +271,7 @@ bool WSImporter::Import(wxString& errMsg)
                     for(GenericProjectFilePtr file : project->files) {
                         wxString vpath;
 
-                        if(file->vpath.IsEmpty()) {
+                        if(file->vpath.IsEmpty() && project->createDefaultVirtualDir) {
                             wxFileName fileInfo(file->name);
                             wxString ext = fileInfo.GetExt().Lower();
 
@@ -294,7 +295,15 @@ bool WSImporter::Import(wxString& errMsg)
                             }
                         }
 
-                        proj->CreateVirtualDir(vpath);
+                        wxString vDir = wxT("");
+                        wxStringTokenizer vDirList(vpath, wxT(":"));
+                        while(vDirList.HasMoreTokens()) {
+                            wxString vdName = vDirList.NextToken();
+                            vDir += vdName;
+                            proj->CreateVirtualDir(vDir);
+                            vDir += wxT(":");
+                        }
+
                         proj->AddFile(file->name, vpath);
                     }
 
@@ -354,9 +363,11 @@ std::set<wxString> WSImporter::GetListEnvVarName(std::vector<wxString> elems)
             app = true;
             pos++;
         } else if(data.GetChar(pos) == wxT(')')) {
-            list.insert(word);
-            word = wxT("");
-            app = false;
+            if(!word.IsEmpty()) {
+                list.insert(word);
+                word = wxT("");
+                app = false;
+            }
         } else if(app) {
             word += data.GetChar(pos);
         }

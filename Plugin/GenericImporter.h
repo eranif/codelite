@@ -60,6 +60,7 @@ struct GenericProject {
     GenericCfgType cfgType;
     std::vector<GenericProjectCfgPtr> cfgs;
     std::vector<GenericProjectFilePtr> files;
+    bool createDefaultVirtualDir = false;
 };
 
 typedef std::shared_ptr<GenericProject> GenericProjectPtr;

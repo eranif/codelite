@@ -273,12 +273,13 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     // Show a popup menu
     wxMenu menu;
     int firstItem = 8994;
+    menu.Append(firstItem + 5, "Add Folder...");
+    menu.AppendSeparator();
     menu.Append(firstItem + 0, SEARCH_IN_WORKSPACE);
     menu.Append(firstItem + 1, SEARCH_IN_PROJECT);
     menu.Append(firstItem + 2, SEARCH_IN_CURR_FILE_PROJECT);
     menu.Append(firstItem + 3, SEARCH_IN_CURRENT_FILE);
     menu.Append(firstItem + 4, SEARCH_IN_OPEN_FILES);
-    menu.Append(firstItem + 5, "Add Folder...");
 
     std::map<int, wxString> options;
     options.insert(std::make_pair(firstItem, SEARCH_IN_WORKSPACE));

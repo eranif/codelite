@@ -33,11 +33,17 @@
 class FindInFilesDialogBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer7;
     wxPanel* m_panelMainPanel;
+    wxBoxSizer* boxSizer95;
+    wxBoxSizer* boxSizer50;
+    wxFlexGridSizer* fgSizer41;
     wxStaticText* m_staticText1;
     wxComboBox* m_findString;
     wxStaticText* m_staticText2;
+    wxBoxSizer* bSizer9;
     wxListBox* m_listPaths;
+    wxBoxSizer* boxSizer1;
     wxButton* m_btnAddPath;
     wxButton* m_btnClearSelectedPath;
     wxStaticText* m_staticText3;
@@ -45,11 +51,13 @@ protected:
     wxStaticText* m_staticText5;
     wxChoice* m_choiceEncoding;
     wxStaticText* m_staticText97;
+    wxStaticBoxSizer* staticBoxSizer98;
+    wxFlexGridSizer* fgSizer3;
     wxCheckBox* m_matchCase;
     wxCheckBox* m_matchWholeWord;
     wxCheckBox* m_regualrExpression;
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
-    wxCheckBox* m_checkBoxSeparateTab;
+    wxBoxSizer* bSizer2;
     wxButton* m_find;
     wxButton* m_replaceAll;
     wxButton* m_stop;
@@ -81,7 +89,6 @@ public:
     wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
     wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
     wxCheckBox* GetCheckBoxSaveFilesBeforeSearching() { return m_checkBoxSaveFilesBeforeSearching; }
-    wxCheckBox* GetCheckBoxSeparateTab() { return m_checkBoxSeparateTab; }
     wxButton* GetFind() { return m_find; }
     wxButton* GetReplaceAll() { return m_replaceAll; }
     wxButton* GetStop() { return m_stop; }

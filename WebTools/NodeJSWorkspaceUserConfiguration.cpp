@@ -14,7 +14,7 @@ NodeJSWorkspaceUser::~NodeJSWorkspaceUser() {}
 wxFileName NodeJSWorkspaceUser::GetFileName() const
 {
     wxFileName workspaceFile(m_workspacePath);
-    wxFileName fn(workspaceFile.GetPath(), workspaceFile.GetFullName() + "." + clGetUserName());
+    wxFileName fn(workspaceFile.GetPath(), workspaceFile.GetFullName() + ".nodejs." + clGetUserName());
     fn.AppendDir(".codelite");
     if(!fn.FileExists()) {
         fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
@@ -27,7 +27,7 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Load()
     wxFileName fn = GetFileName();
     JSONRoot root(fn);
     JSONElement element = root.toElement();
-    
+
     m_debuggerPort = element.namedObject("m_debuggerPort").toInt(m_debuggerPort);
     m_debuggerHost = element.namedObject("m_debuggerHost").toString(m_debuggerHost);
     m_scriptToExecute = element.namedObject("m_scriptToExecute").toString(m_scriptToExecute);

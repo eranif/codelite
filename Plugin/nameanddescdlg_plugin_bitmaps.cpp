@@ -29,7 +29,7 @@ static unsigned char xml_res_file_0[] = {
 47,47,119,119,119,46,119,120,119,105,100,103,101,116,115,46,111,114,103,
 47,119,120,120,114,99,34,47,62,10};
 
-void wxCrafterMQKEsvInitBitmapResources()
+void wxC934BInitBitmapResources()
 {
 
     // Check for memory FS. If not present, load the handler:
@@ -42,6 +42,6 @@ void wxCrafterMQKEsvInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/advance_settings_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_advance_settings_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/advance_settings_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_advance_settings_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/nameanddescdlg_plugin_bitmaps.cpp$C__src_codelite_Plugin_nameanddescdlg_plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/nameanddescdlg_plugin_bitmaps.cpp$C__src_codelite_Plugin_nameanddescdlg_plugin_bitmaps.xrc"));
 }

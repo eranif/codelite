@@ -49,6 +49,7 @@
 
 // Declaration
 #include "CMake.h"
+#include "cl_standard_paths.h"
 
 // C++
 #include <utility>
@@ -101,7 +102,7 @@ static wxString CreateHtml(const wxArrayString& array)
 CMake::CMake(const wxFileName& path)
     : m_path(path)
     , m_version("?")
-    , m_dbFileName(wxStandardPaths::Get().GetUserDataDir(), "cmake.db")
+    , m_dbFileName(clStandardPaths::Get().GetUserDataDir(), "cmake.db")
 {
     // Prepare database
     PrepareDatabase();

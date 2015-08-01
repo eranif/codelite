@@ -797,8 +797,10 @@ void LEditor::SetProperties()
         CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDRIGHT);
     }
 
+#ifdef __WXOSX__
     CmdKeyAssign(wxSTC_KEY_DOWN, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTEND);
     CmdKeyAssign(wxSTC_KEY_UP, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTSTART);
+#endif
 }
 
 void LEditor::OnSavePoint(wxStyledTextEvent& event)
@@ -4446,6 +4448,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
                 if(res && (line >= 0) && !again) {
                     SetEnsureCaretIsVisible(pos);
                     SetLineVisible(LineFromPosition(pos));
+                    CenterLinePreserveSelection(LineFromPosition(pos));
                 }
             }
 
@@ -4986,6 +4989,20 @@ void LEditor::SplitSelection()
     }
 }
 
+
+void LEditor::CenterLinePreserveSelection(int line)
+{
+    int linesOnScreen = LinesOnScreen();
+    // To place our line in the middle, the first visible line should be
+    // the: line - (linesOnScreen / 2)
+    int firstVisibleLine = line - (linesOnScreen / 2);
+    if(firstVisibleLine < 0) {
+        firstVisibleLine = 0;
+    }
+    EnsureVisible(firstVisibleLine);
+    SetFirstVisibleLine(firstVisibleLine);
+}
+
 void LEditor::CenterLine(int line, int col)
 {
     int linesOnScreen = LinesOnScreen();
@@ -5215,6 +5232,7 @@ void LEditor::CenterLineIfNeeded(int line, bool force)
         SetFirstVisibleLine(firstVisibleLine);
     }
 }
+
 
 // ----------------------------------
 // SelectionInfo

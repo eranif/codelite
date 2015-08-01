@@ -49,10 +49,6 @@ CompilerMainPage::CompilerMainPage(wxWindow* parent)
     , m_selectedCmpOption(-1)
     , m_selectedLnkOption(-1)
 {
-#ifndef __WXGTK__
-    m_auiBook->SetArtProvider(new clAuiGlossyTabArt());
-#endif
-
     // =============-----------------------------
     // Patterns page initialization
     // =============-----------------------------

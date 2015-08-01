@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 21,
+  "m_objCounter": 23,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterMQKEsvInitBitmapResources",
   "m_bitmapsFile": "advance_settings_liteeditor_bitmaps.cpp",
@@ -74,7 +74,7 @@
     }, {
      "type": "bool",
      "m_label": "Enable Window Persistency:",
-     "m_value": true
+     "m_value": false
     }, {
      "type": "string",
      "m_label": "Title:",
@@ -150,12 +150,12 @@
       }],
      "m_events": [],
      "m_children": [{
-       "m_type": 4456,
+       "m_type": 4442,
        "proportion": 1,
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxAUI_NB_TOP", "wxBK_DEFAULT", "wxBORDER_NONE"],
+       "m_styles": ["wxBK_DEFAULT"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -164,7 +164,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "250,250"
+         "m_value": "500,300"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -204,11 +204,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "Notebook"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "Notebook.h"
         }, {
          "type": "string",
          "m_label": "Style:",

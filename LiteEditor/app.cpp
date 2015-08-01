@@ -329,7 +329,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
 #ifdef USE_POSIX_LAYOUT
-    wxStandardPaths::Get().IgnoreAppSubDir("bin");
+    clStandardPaths::Get().IgnoreAppSubDir("bin");
 #endif
 
     // Init resources and add the PNG handler
@@ -485,7 +485,7 @@ bool CodeLiteApp::OnInit()
 #else //__WXMSW__
     if(homeDir.IsEmpty()) { // did we got a basedir from user?
 #ifdef USE_POSIX_LAYOUT
-        homeDir = wxStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR);
+        homeDir = clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR);
 #else
         homeDir = ::wxGetCwd();
 #endif
@@ -640,7 +640,7 @@ bool CodeLiteApp::OnInit()
 
 #elif defined(__WXMSW__)
 #ifdef USE_POSIX_LAYOUT
-        wxLocale::AddCatalogLookupPathPrefix(wxStandardPaths::Get().GetDataDir() + wxT("/share/locale"));
+        wxLocale::AddCatalogLookupPathPrefix(clStandardPaths::Get().GetDataDir() + wxT("/share/locale"));
 #else
         wxLocale::AddCatalogLookupPathPrefix(ManagerST::Get()->GetInstallDir() + wxT("\\locale"));
 #endif
@@ -673,7 +673,7 @@ bool CodeLiteApp::OnInit()
 #endif
     wxString oldpath;
     wxGetEnv(wxT("PATH"), &oldpath);
-    wxFileName execfpath(wxStandardPaths::Get().GetExecutablePath());
+    wxFileName execfpath(clStandardPaths::Get().GetExecutablePath());
     wxSetEnv(wxT("PATH"), oldpath + pathsep + execfpath.GetPath());
     wxString newpath;
     wxGetEnv(wxT("PATH"), &newpath);
@@ -928,10 +928,10 @@ void CodeLiteApp::DoCopyGdbPrinters()
     printersInstallDir = wxFileName(wxString(INSTALL_DIR, wxConvUTF8), "gdb_printers");
 #else
 #ifdef USE_POSIX_LAYOUT
-    wxString commdir(wxStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
+    wxString commdir(clStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR));
     printersInstallDir = wxFileName(commdir, "gdb_printers");
 #else
-    printersInstallDir = wxFileName(wxStandardPaths::Get().GetDataDir(), "gdb_printers");
+    printersInstallDir = wxFileName(clStandardPaths::Get().GetDataDir(), "gdb_printers");
 #endif
 #endif
 

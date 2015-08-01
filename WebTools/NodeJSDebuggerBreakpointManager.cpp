@@ -68,7 +68,7 @@ void NodeJSBptManager::OnWorkspaceClosed(wxCommandEvent& event)
     event.Skip();
 
     // Save the breakpoints to the file system
-    if(m_workspaceFile.Exists()) {
+    if(m_workspaceFile.IsOk() && m_workspaceFile.Exists()) {
         NodeJSWorkspaceUser userWorkspace(m_workspaceFile.GetFullPath());
         userWorkspace.Load().SetBreakpoints(m_breakpoints).Save();
         m_workspaceFile.Clear();
@@ -78,8 +78,11 @@ void NodeJSBptManager::OnWorkspaceClosed(wxCommandEvent& event)
 void NodeJSBptManager::OnWorkspaceOpened(wxCommandEvent& event)
 {
     event.Skip();
-    m_workspaceFile = event.GetString();
-    if(m_workspaceFile.Exists()) {
+    m_workspaceFile.Clear();
+    
+    wxFileName fileName = event.GetString();
+    if(FileExtManager::GetType(fileName.GetFullPath()) == FileExtManager::TypeWorkspaceNodeJS) {
+        m_workspaceFile = fileName;
         NodeJSWorkspaceUser userConf(m_workspaceFile.GetFullPath());
         m_breakpoints = userConf.Load().GetBreakpoints();
     }

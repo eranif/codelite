@@ -37,10 +37,7 @@
 #include "findinfilesdlg.h"
 
 // Map between the line numbers and a search results
-typedef std::map<int, SearchResult> MatchInfo;
-
-// List containing the match info for all tabs (pre location)
-typedef std::list<MatchInfo> ListMatchInfos;
+typedef std::map<int, SearchResult> MatchInfo_t;
 
 class FindResultsTab : public OutputTabWindow
 {
@@ -48,20 +45,11 @@ class FindResultsTab : public OutputTabWindow
     bool m_searchInProgress;
 
 protected:
-    Notebook* m_book;         // for multiple Find Results pages
-    wxStyledTextCtrl* m_recv; // the page that is receiving results of a search
-
-    ListMatchInfos m_matchInfo;
-
-    MatchInfo& GetMatchInfo(size_t idx = 0);
+    MatchInfo_t m_matchInfo;
 
     void AppendText(const wxString& line);
     void Clear();
 
-    virtual void OnPageClosed(wxBookCtrlEvent& e);
-    virtual void OnPageClosing(wxBookCtrlEvent& e);
-    virtual void OnPageChanged(wxBookCtrlEvent& e);
-    virtual void OnClosePage(wxBookCtrlEvent& e);
     virtual void OnFindInFiles(wxCommandEvent& e);
     virtual void OnSearchStart(wxCommandEvent& e);
     virtual void OnSearchMatch(wxCommandEvent& e);
@@ -69,11 +57,6 @@ protected:
     virtual void OnSearchCancel(wxCommandEvent& e);
     virtual void OnClearAll(wxCommandEvent& e);
     virtual void OnRepeatOutput(wxCommandEvent& e);
-
-    virtual void OnCloseTab(wxCommandEvent& e);
-    virtual void OnCloseAllTabs(wxCommandEvent& e);
-    virtual void OnCloseOtherTab(wxCommandEvent& e);
-    virtual void OnTabMenuUI(wxUpdateUIEvent& e);
 
     virtual void OnClearAllUI(wxUpdateUIEvent& e);
     virtual void OnRepeatOutputUI(wxUpdateUIEvent& e);
@@ -83,20 +66,18 @@ protected:
     virtual void OnStopSearchUI(wxUpdateUIEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
     virtual void OnStyleNeeded(wxStyledTextEvent& e);
-    SearchData* GetSearchData(wxStyledTextCtrl* sci);
+    SearchData* GetSearchData();
     void DoOpenSearchResult(const SearchResult& result, wxStyledTextCtrl* sci, int markerLine);
     void OnThemeChanged(wxCommandEvent& e);
     DECLARE_EVENT_TABLE()
 
 public:
-    FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name, bool useBook = false);
+    FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name);
     ~FindResultsTab();
 
-    long GetBookStyle();
     static void SetStyles(wxStyledTextCtrl* sci);
     static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e);
-
-    size_t GetPageCount() const;
+    
     void NextMatch();
     void PrevMatch();
 };

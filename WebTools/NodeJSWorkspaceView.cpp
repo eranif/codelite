@@ -17,45 +17,45 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
 {
     SetNewFileTemplate("Untitled.js", wxStrlen("Untitled"));
     SetViewName(viewName);
-    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContenxtMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
 }
 
 NodeJSWorkspaceView::~NodeJSWorkspaceView()
 {
-    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContenxtMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
 }
 
-void NodeJSWorkspaceView::OnContenxtMenu(clContextMenuEvent& event)
+void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
     if(event.GetEventObject() == this) {
         wxMenu* menu = event.GetMenu();
-        // Remove the 'Close folder' option
-        wxMenuItem* item = menu->FindItem(XRCID("tree_ctrl_close_folder"));
-        if(item) {
-            menu->Remove(item);
-            wxMenuItem* sepItem = menu->FindItemByPosition(0);
-            if(sepItem) {
-                menu->Remove(sepItem);
-            }
-        }
 
+        // Locate the "Close" menu entry
         int pos = wxNOT_FOUND;
+        wxMenuItem* closeItem = NULL;
         for(size_t i = 0; i < menu->GetMenuItemCount(); ++i) {
             wxMenuItem* mi = menu->FindItemByPosition(i);
-            if(mi && mi->GetId() == wxID_REFRESH) {
+            if(mi && mi->GetId() == XRCID("tree_ctrl_close_folder")) {
                 pos = i;
+                closeItem = mi;
                 break;
             }
         }
 
-        if(pos != wxNOT_FOUND) {
+        if((pos != wxNOT_FOUND) && closeItem) {
             wxMenuItem* showHiddenItem =
-                menu->Insert(pos + 2, XRCID("nodejs_show_hidden_files"), _("Show hidden files"), "", wxITEM_CHECK);
+                menu->Insert(pos, XRCID("nodejs_show_hidden_files"), _("Show hidden files"), "", wxITEM_CHECK);
             NodeJSWorkspaceConfiguration conf;
             showHiddenItem->Check(conf.Load(NodeJSWorkspace::Get()->GetFilename()).IsShowHiddenFiles());
-            menu->InsertSeparator(pos + 3);
             menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnShowHiddenFiles, this, XRCID("nodejs_show_hidden_files"));
+            
+            menu->InsertSeparator(pos);
+            menu->Insert(pos, XRCID("nodejs_close_workspace"), _("Close Workspace"));
+            menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnCloseWorkspace, this, XRCID("nodejs_close_workspace"));
+            
+            // Remove the 'close' menu item
+            menu->Remove(closeItem);
         }
     }
 }
@@ -133,4 +133,13 @@ void NodeJSWorkspaceView::OnShowHiddenFiles(wxCommandEvent& event)
     conf.Load(filename).SetShowHiddenFiles(event.IsChecked()).Save(filename);
     ShowHiddenFiles(event.IsChecked());
     RebuildTree();
+}
+
+void NodeJSWorkspaceView::OnCloseWorkspace(wxCommandEvent& event)
+{
+    // Simulate the menu event "Close Workspace"
+    wxUnusedVar(event);
+    wxCommandEvent eventCloseWorkspace(wxEVT_MENU, XRCID("close_workspace"));
+    eventCloseWorkspace.SetEventObject(EventNotifier::Get()->TopFrame());
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(eventCloseWorkspace);
 }

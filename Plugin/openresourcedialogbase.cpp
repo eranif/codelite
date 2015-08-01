@@ -43,7 +43,7 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     
     mainSizer->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
-    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Impl?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 60, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Full Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
     fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);

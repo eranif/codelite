@@ -204,7 +204,7 @@ CMakePlugin::CMakePlugin(IManager* manager)
     m_shortName = "CMakePlugin";
 
     // Create CMake configuration file
-    m_configuration.reset(new CMakeConfiguration(wxStandardPaths::Get().GetUserDataDir() +
+    m_configuration.reset(new CMakeConfiguration(clStandardPaths::Get().GetUserDataDir() +
                                                  wxFileName::GetPathSeparator() + "config/cmake.ini"));
 
     // Create cmake application

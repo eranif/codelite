@@ -3954,7 +3954,7 @@ void clMainFrame::CompleteInitialization()
 
 // Load debuggers (*must* be after the plugins)
 #ifdef USE_POSIX_LAYOUT
-    wxString plugdir(wxStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
+    wxString plugdir(clStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
     DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), plugdir);
 #else
     DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());
@@ -5091,7 +5091,6 @@ bool clMainFrame::SaveLayoutAndSession()
 
     // save the notebooks styles
     EditorConfigST::Get()->SetInteger(wxT("MainBook"), GetMainBook()->GetBookStyle());
-    EditorConfigST::Get()->SetInteger(wxT("FindResults"), GetOutputPane()->GetFindResultsTab()->GetBookStyle());
     EditorConfigST::Get()->Save();
     return true;
 }
@@ -5111,13 +5110,11 @@ void clMainFrame::OnPreviousFiFMatch(wxCommandEvent& e)
 void clMainFrame::OnNextFiFMatchUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
 }
 
 void clMainFrame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
-    e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
 }
 
 void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)

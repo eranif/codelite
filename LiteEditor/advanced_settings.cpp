@@ -58,10 +58,6 @@ AdvancedDlg::AdvancedDlg(wxWindow* parent,
     : AdvancedDlgBase(parent)
     , m_rightclickMenu(NULL)
 {
-#ifndef __WXGTK__
-    m_notebook->SetArtProvider(new clAuiGlossyTabArt);
-#endif
-
     m_compilersMainPanel = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
     wxBoxSizer* bSizer5;

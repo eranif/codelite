@@ -76,9 +76,13 @@ Project::~Project()
 bool Project::Create(const wxString& name, const wxString& description, const wxString& path, const wxString& projType)
 {
     m_vdCache.clear();
-
-    m_fileName = path + wxFileName::GetPathSeparator() + name + wxT(".project");
+    
+    m_fileName = wxFileName(path, name);
+    m_fileName.SetExt("project");
     m_fileName.MakeAbsolute();
+    
+    // Ensure that the target folder exists
+    m_fileName.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_projectPath = m_fileName.GetPath();
 
     wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Project"));
@@ -563,15 +567,15 @@ wxString Project::GetDescription() const
 void Project::CopyTo(const wxString& new_path, const wxString& new_name, const wxString& description)
 {
     // first save the xml document to the destination folder
-
-    wxString newFile = new_path + new_name + wxT(".project");
-    if(!m_doc.Save(newFile)) {
+    wxFileName newFile(new_path, new_name);
+    newFile.SetExt("project");
+    if(!m_doc.Save(newFile.GetFullPath())) {
         return;
     }
 
     // load the new xml and modify it
     wxXmlDocument doc;
-    if(!doc.Load(newFile)) {
+    if(!doc.Load(newFile.GetFullPath())) {
         return;
     }
 
@@ -668,7 +672,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
         }
     }
 
-    doc.Save(newFile);
+    doc.Save(newFile.GetFullPath());
 }
 
 void Project::SetFiles(ProjectPtr src)

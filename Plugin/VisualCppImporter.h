@@ -21,8 +21,11 @@ private:
     void GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
     wxString ExtractProjectCfgName(const wxString& parentCondition, const wxString& elemCondition);
     wxString ReplaceDefaultEnvVars(const wxString& str);
-    void GetFilesVC7(wxXmlNode* filterChild, GenericProjectPtr genericProject, wxString preVirtualPath);
-
+    void GetFilesVC7(wxXmlNode* filterChild,
+                     GenericProjectPtr genericProject,
+                     std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap,
+                     wxString preVirtualPath);
+    GenericProjectFilePtr FindProjectFileByName(GenericProjectPtr genericProject, wxString filename);
     wxFileName wsInfo;
     wxString extension;
     long version;

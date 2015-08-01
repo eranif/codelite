@@ -861,39 +861,42 @@ wxString clGetUserName()
     return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
 }
 
-static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list)
+static void
+DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
 {
-
     // read all files under this directory
-    DirTraverser dt("*.project");
+    wxArrayString files;
+    if(wxFileName::DirExists(folder)) {
+        DirTraverser dt("*.project");
 
-    wxDir dir(folder);
-    dir.Traverse(dt);
+        wxDir dir(folder);
+        dir.Traverse(dt);
 
-    wxArrayString& files = dt.GetFiles();
+        files = dt.GetFiles();
+        if(files.GetCount() > 0) {
+            for(size_t i = 0; i < files.GetCount(); i++) {
+                ProjectPtr proj(new Project());
+                if(!proj->Load(files.Item(i))) {
+                    // corrupted xml file?
+                    wxLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
+                    continue;
+                }
+                list.push_back(proj);
 
-    if(files.GetCount() > 0) {
-        for(size_t i = 0; i < files.GetCount(); i++) {
-            ProjectPtr proj(new Project());
-            if(!proj->Load(files.Item(i))) {
-                // corrupted xml file?
-                wxLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
-                continue;
-            }
-            list.push_back(proj);
-
-            // load template icon
-            wxFileName fn(files.Item(i));
-            fn.SetFullName("icon.png");
-            if(fn.Exists()) {
-                wxBitmap bmp = wxBitmap(fn.GetFullPath(), wxBITMAP_TYPE_ANY);
-                if(bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
-                    proj->SetIconPath(fn.GetFullPath());
+                // load template icon
+                wxFileName fn(files.Item(i));
+                fn.SetFullName("icon.png");
+                if(fn.Exists()) {
+                    wxBitmap bmp = wxBitmap(fn.GetFullPath(), wxBITMAP_TYPE_ANY);
+                    if(bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
+                        proj->SetIconPath(fn.GetFullPath());
+                    }
                 }
             }
         }
+    }
 
-    } else {
+    if(loadDefaults && files.IsEmpty()) {
         // if we ended up here, it means the installation got screwed up since
         // there should be at least 8 project templates !
         // create 3 default empty projects
@@ -912,7 +915,7 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
 void GetProjectTemplateList(std::list<ProjectPtr>& list)
 {
     DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetProjectTemplatesDir(), list);
-    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list);
+    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list, false);
     list.sort(ProjListCompartor());
 }
 
@@ -987,6 +990,7 @@ bool IsCppKeyword(const wxString& word)
         words.insert(wxT("using"));
         words.insert(wxT("throw"));
         words.insert(wxT("catch"));
+        words.insert(wxT("nullptr"));
     }
 
     return words.count(word) != 0;

@@ -76,9 +76,13 @@ Project::~Project()
 bool Project::Create(const wxString& name, const wxString& description, const wxString& path, const wxString& projType)
 {
     m_vdCache.clear();
-
-    m_fileName = path + wxFileName::GetPathSeparator() + name + wxT(".project");
+    
+    m_fileName = wxFileName(path, name);
+    m_fileName.SetExt("project");
     m_fileName.MakeAbsolute();
+    
+    // Ensure that the target folder exists
+    m_fileName.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_projectPath = m_fileName.GetPath();
 
     wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Project"));

@@ -23,6 +23,7 @@ protected:
 private:
     bool ContainsEnvVar(std::vector<wxString> elems);
     std::set<wxString> GetListEnvVarName(std::vector<wxString> elems);
+    wxString GetVPath(const wxString& filename, const wxString& virtualPath, const bool& createDefaultVDir);
 
     wxString filename, defaultCompiler;
     std::vector<std::shared_ptr<GenericImporter> > importers;

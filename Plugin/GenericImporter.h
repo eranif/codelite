@@ -24,6 +24,13 @@ typedef std::pair<wxString, wxString> GenericEnvVarsValueType;
 
 enum class GenericCfgType { DYNAMIC_LIBRARY, STATIC_LIBRARY, EXECUTABLE };
 
+struct GenericProjectFile {
+    wxString name;
+    wxString vpath;
+};
+
+typedef std::shared_ptr<GenericProjectFile> GenericProjectFilePtr;
+
 struct GenericProjectCfg {
     wxString name;
     wxString outputFilename;
@@ -40,18 +47,12 @@ struct GenericProjectCfg {
     wxString workingDirectory;
     std::vector<wxString> preBuildCommands;
     std::vector<wxString> postBuildCommands;
+    std::vector<GenericProjectFilePtr> excludeFiles;
     GenericEnvVarsType envVars;
     GenericCfgType type;
 };
 
 typedef std::shared_ptr<GenericProjectCfg> GenericProjectCfgPtr;
-
-struct GenericProjectFile {
-    wxString name;
-    wxString vpath;
-};
-
-typedef std::shared_ptr<GenericProjectFile> GenericProjectFilePtr;
 
 struct GenericProject {
     wxString name;

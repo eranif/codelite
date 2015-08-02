@@ -269,31 +269,7 @@ bool WSImporter::Import(wxString& errMsg)
                     proj->DeleteVirtualDir("src");
 
                     for(GenericProjectFilePtr file : project->files) {
-                        wxString vpath;
-
-                        if(file->vpath.IsEmpty() && project->createDefaultVirtualDir) {
-                            wxFileName fileInfo(file->name);
-                            wxString ext = fileInfo.GetExt().Lower();
-
-                            if(ext == wxT("h") || ext == wxT("hpp") || ext == wxT("hxx") || ext == wxT("hh") ||
-                               ext == wxT("inl") || ext == wxT("inc")) {
-                                vpath = wxT("include");
-                            } else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx") || ext == wxT("cc")) {
-                                vpath = wxT("src");
-                            } else if(ext == wxT("s") || ext == wxT("S") || ext == wxT("asm")) {
-                                vpath = wxT("src");
-                            } else {
-                                vpath = wxT("resource");
-                            }
-                        } else {
-                            vpath = file->vpath;
-
-                            if(file->vpath.Contains(wxT("\\"))) {
-                                vpath.Replace(wxT("\\"), wxT(":"));
-                            } else if(file->vpath.Contains(wxT("/"))) {
-                                vpath.Replace(wxT("/"), wxT(":"));
-                            }
-                        }
+                        wxString vpath = GetVPath(file->name, file->vpath, project->createDefaultVirtualDir);
 
                         wxString vDir = wxT("");
                         wxStringTokenizer vDirList(vpath, wxT(":"));
@@ -308,6 +284,23 @@ bool WSImporter::Import(wxString& errMsg)
                     }
 
                     proj->CommitTranscation();
+
+                    for(GenericProjectCfgPtr cfg : project->cfgs) {
+                        for(GenericProjectFilePtr excludeFile : cfg->excludeFiles) {
+                            wxString vpath =
+                                GetVPath(excludeFile->name, excludeFile->vpath, project->createDefaultVirtualDir);
+
+                            wxFileName excludeFileNameInfo(project->path + wxFileName::GetPathSeparator() + excludeFile->name);
+                            wxString excludeFileName = excludeFileNameInfo.GetFullPath();
+                            wxArrayString configs = proj->GetExcludeConfigForFile(excludeFileName, vpath);
+
+                            int index = configs.Index(cfg->name);
+                            if(index == wxNOT_FOUND) {
+                                configs.Add(cfg->name);
+                                proj->SetExcludeConfigForFile(excludeFileName, vpath, configs);
+                            }
+                        }
+                    }
                 }
 
                 if(clWorkspace) {
@@ -374,4 +367,34 @@ std::set<wxString> WSImporter::GetListEnvVarName(std::vector<wxString> elems)
     }
 
     return list;
+}
+
+wxString WSImporter::GetVPath(const wxString& filename, const wxString& virtualPath, const bool& createDefaultVDir)
+{
+    wxString vpath;
+    if(virtualPath.IsEmpty() && createDefaultVDir) {
+        wxFileName fileInfo(filename);
+        wxString ext = fileInfo.GetExt().Lower();
+
+        if(ext == wxT("h") || ext == wxT("hpp") || ext == wxT("hxx") || ext == wxT("hh") || ext == wxT("inl") ||
+           ext == wxT("inc")) {
+            vpath = wxT("include");
+        } else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx") || ext == wxT("cc")) {
+            vpath = wxT("src");
+        } else if(ext == wxT("s") || ext == wxT("S") || ext == wxT("asm")) {
+            vpath = wxT("src");
+        } else {
+            vpath = wxT("resource");
+        }
+    } else {
+        vpath = virtualPath;
+
+        if(vpath.Contains(wxT("\\"))) {
+            vpath.Replace(wxT("\\"), wxT(":"));
+        } else if(vpath.Contains(wxT("/"))) {
+            vpath.Replace(wxT("/"), wxT(":"));
+        }
+    }
+
+    return vpath;
 }

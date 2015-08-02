@@ -366,7 +366,7 @@ void NodeJSDebuggerPane::OnExpressionEvaluated(clDebugEvent& event)
 {
     event.Skip();
     wxString message;
-    message << m_textCtrlExpression->GetValue() << " = " << event.GetString();
+    message << "eval(" << m_textCtrlExpression->GetValue() << "):\n" << event.GetString();
     
     wxString currentText = m_consoleLog->GetValue();
     if(!currentText.EndsWith("\n")) {

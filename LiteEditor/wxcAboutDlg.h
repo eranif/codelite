@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef ABOUTDLG_BASE_CLASSES_H
-#define ABOUTDLG_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_ABOUTDLG_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_ABOUTDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -34,13 +34,19 @@
 class AboutDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxNotebook* m_notebook1;
     wxPanel* m_panel1;
+    wxBoxSizer* bSizer3;
     wxStaticBitmap* m_bitmap;
     wxPanel* m_panel4;
+    wxBoxSizer* bSizer4;
     wxHtmlWindow* m_htmlWin3;
     wxPanel* m_panel3;
+    wxBoxSizer* bSizer5;
     wxTextCtrl* m_textCtrlLicense;
+    wxStaticBoxSizer* sbSizer1;
+    wxFlexGridSizer* fgSizer1;
     wxStaticText* m_staticTextHomePage;
     wxHyperlinkCtrl* m_hyperlink1;
     wxStaticText* m_staticText2;
@@ -49,6 +55,7 @@ protected:
     wxStaticText* m_staticTextInformation;
     wxStaticBitmap* m_bitmapPayPal;
     wxHyperlinkCtrl* m_hyperlink3;
+    wxBoxSizer* buttonSizer;
     wxButton* m_buttonOk;
 
 protected:

@@ -240,10 +240,10 @@ void wxC9A94InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-16.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-16-continous.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-24.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-24-continous.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$_home_david_devel_git_CL_SpellChecker_wxcrafter_bitmaps.xrc"), xml_res_file_4, xml_res_size_4, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_bitmaps.cpp$_home_david_devel_git_CL_SpellChecker_wxcrafter_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-16.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-16-continous.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-24.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$res_spellcheck-24-continous.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$C__src_codelite_SpellChecker_wxcrafter_bitmaps.xrc"), xml_res_file_4, xml_res_size_4, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_bitmaps.cpp$C__src_codelite_SpellChecker_wxcrafter_bitmaps.xrc"));
 }

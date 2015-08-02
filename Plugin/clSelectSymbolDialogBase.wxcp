@@ -191,7 +191,7 @@
           }, {
            "type": "string",
            "m_label": "Size:",
-           "m_value": "350,200"
+           "m_value": "500,200"
           }, {
            "type": "string",
            "m_label": "Minimum Size:",
@@ -264,7 +264,7 @@
             }, {
              "type": "string",
              "m_label": "Width:",
-             "m_value": "300"
+             "m_value": "500"
             }, {
              "type": "choice",
              "m_label": "Column Type",
@@ -302,7 +302,7 @@
             }, {
              "type": "string",
              "m_label": "Width:",
-             "m_value": "-2"
+             "m_value": "200"
             }, {
              "type": "choice",
              "m_label": "Column Type",

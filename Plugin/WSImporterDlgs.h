@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef WSIMPORTERDLGS_BASE_CLASSES_H
-#define WSIMPORTERDLGS_BASE_CLASSES_H
+#ifndef CODELITE_PLUGIN_WSIMPORTERDLGS_BASE_CLASSES_H
+#define CODELITE_PLUGIN_WSIMPORTERDLGS_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -17,16 +17,26 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class EnvVarImporterDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer4;
+    wxBoxSizer* boxSizer18;
     wxStaticText* m_staticText26;
     wxStaticText* m_projectName;
     wxStaticText* m_staticText20;
     wxStaticText* m_confName;
+    wxBoxSizer* boxSizer22;
     wxStaticText* m_staticText6;
     wxTextCtrl* m_envVars;
+    wxBoxSizer* boxSizer16;
     wxButton* m_btnImport;
     wxButton* m_btnContinue;
     wxButton* m_btnNotImport;
@@ -37,6 +47,15 @@ protected:
     virtual void OnSkip(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText26() { return m_staticText26; }
+    wxStaticText* GetProjectName() { return m_projectName; }
+    wxStaticText* GetStaticText20() { return m_staticText20; }
+    wxStaticText* GetConfName() { return m_confName; }
+    wxStaticText* GetStaticText6() { return m_staticText6; }
+    wxTextCtrl* GetEnvVars() { return m_envVars; }
+    wxButton* GetBtnImport() { return m_btnImport; }
+    wxButton* GetBtnContinue() { return m_btnContinue; }
+    wxButton* GetBtnNotImport() { return m_btnNotImport; }
     EnvVarImporterDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Import - Environment variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,360), long style = wxSTAY_ON_TOP|wxCAPTION);
     virtual ~EnvVarImporterDlgBase();
 };

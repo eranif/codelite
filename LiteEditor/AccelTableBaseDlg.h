@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef ACCELTABLEBASEDLG_BASE_CLASSES_H
-#define ACCELTABLEBASEDLG_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_ACCELTABLEBASEDLG_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_ACCELTABLEBASEDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

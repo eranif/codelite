@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef SFTP_UI_BASE_CLASSES_H
-#define SFTP_UI_BASE_CLASSES_H
+#ifndef CODELITE_PLUGIN_SFTP_UI_BASE_CLASSES_H
+#define CODELITE_PLUGIN_SFTP_UI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -42,10 +42,14 @@
 class WXDLLIMPEXP_SDK SSHAccountManagerDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer2;
+    wxBoxSizer* boxSizer10;
     wxDataViewListCtrl* m_dvListCtrlAccounts;
+    wxBoxSizer* boxSizer15;
     wxButton* m_buttonNew;
     wxButton* m_buttonDelete;
     wxButton* m_buttonEdit;
+    wxBoxSizer* boxSizer4;
     wxButton* m_button6;
     wxButton* m_button8;
 
@@ -72,7 +76,9 @@ public:
 class WXDLLIMPEXP_SDK AddSSHAcountDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer23;
     wxInfoBar* m_infobar;
+    wxFlexGridSizer* flexGridSizer31;
     wxStaticText* m_staticText98;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticHostIp;
@@ -86,6 +92,7 @@ protected:
     wxStaticText* m_staticText110;
     wxTextCtrl* m_textCtrlHomeFolder;
     wxButton* m_button51;
+    wxBoxSizer* boxSizer29;
     wxButton* m_button27;
     wxButton* m_button25;
 
@@ -125,6 +132,8 @@ public:
         ID_SSH_ACCOUNT_MANAGER = 1002,
     };
 protected:
+    wxBoxSizer* boxSizer62;
+    wxGridBagSizer* gridBagSizer80;
     wxStaticText* m_staticText66;
     wxTextCtrl* m_textCtrlRemoteFolder;
     wxButton* m_buttonRefresh;
@@ -134,7 +143,9 @@ protected:
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<SFTPTreeModel> m_dataviewModel;
 
+    wxBoxSizer* boxSizer94;
     wxTextCtrl* m_textCtrlInlineSearch;
+    wxBoxSizer* boxSizer57;
     wxButton* m_button59;
     wxButton* m_button61;
 
@@ -172,8 +183,10 @@ public:
 class WXDLLIMPEXP_SDK SSHTerminalBase : public wxFrame
 {
 protected:
+    wxBoxSizer* boxSizer124;
     wxAuiToolBar* m_auibar135;
     wxPanel* m_panel126;
+    wxBoxSizer* boxSizer116;
     wxStyledTextCtrl* m_stcOutput;
     wxTextCtrl* m_textCtrl1;
 

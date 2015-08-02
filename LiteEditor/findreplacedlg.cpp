@@ -534,7 +534,13 @@ void FindReplaceData::FromJSON(const JSONElement& json)
     m_findString = json.namedObject("m_findString").toArrayString();
     m_replaceString = json.namedObject("m_replaceString").toArrayString();
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
-    m_searchPaths = json.namedObject("m_searchPaths").toArrayString();
+    
+    if(json.hasNamedObject("m_lookIn")) {
+        m_searchPaths = json.namedObject("m_lookIn").toArrayString();
+    } else {
+        m_searchPaths.Add(SEARCH_IN_WORKSPACE);
+    }
+    
     m_encoding = json.namedObject("m_encoding").toString(m_encoding);
     m_fileMask = json.namedObject("m_fileMask").toArrayString();
     m_selectedMask = json.namedObject("m_selectedMask").toString(m_selectedMask);
@@ -547,7 +553,7 @@ void FindReplaceData::FromJSON(const JSONElement& json)
 
     if(m_fileMask.IsEmpty()) {
         m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc");
-        m_selectedMask = "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc";
+        m_selectedMask = m_fileMask.Item(0);
     }
 }
 
@@ -557,7 +563,7 @@ JSONElement FindReplaceData::ToJSON() const
     element.addProperty("m_findString", m_findString);
     element.addProperty("m_replaceString", m_replaceString);
     element.addProperty("m_flags", m_flags);
-    element.addProperty("m_searchPaths", m_searchPaths);
+    element.addProperty("m_lookIn", m_searchPaths);
     element.addProperty("m_encoding", m_encoding);
     element.addProperty("m_fileMask", m_fileMask);
     element.addProperty("m_selectedMask", m_selectedMask);
@@ -591,6 +597,7 @@ FindReplaceData::FindReplaceData()
     , m_flags(wxFRD_SEPARATETAB_DISPLAY | wxFRD_MATCHCASE | wxFRD_MATCHWHOLEWORD)
     , m_selectedMask("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc") // Default file mask
 {
+    m_searchPaths.Add(SEARCH_IN_WORKSPACE);
     m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc");
 }
 

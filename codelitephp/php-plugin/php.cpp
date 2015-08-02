@@ -88,7 +88,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     PHPImages images;
     PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
-    
+
     BitmapLoader::RegisterImage(FileExtManager::TypeWorkspacePHP, images.Bitmap("m_bmpPhpWorkspace"));
 
     // Add our UI
@@ -99,8 +99,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
     PHPCodeCompletion::Instance()->SetManager(m_mgr);
     PHPEditorContextMenu::Instance()->ConnectEvents();
     PHPParserThread::Instance()->Start();
-    
-    
+
     // Pass the manager class to the context menu manager
     PHPEditorContextMenu::Instance()->SetManager(m_mgr);
 
@@ -416,11 +415,15 @@ void PhpPlugin::OnOpenResource(wxCommandEvent& e)
         if(dlg.ShowModal() == wxID_OK) {
             ResourceItem* itemData = dlg.GetSelectedItem();
             if(itemData) {
-                if(m_mgr->OpenFile(itemData->filename.GetFullPath())) {
-                    IEditor* editor = m_mgr->GetActiveEditor();
-                    if(editor && itemData->line != wxNOT_FOUND) {
-                        editor->FindAndSelect(
-                            itemData->displayName, itemData->displayName, editor->PosFromLine(itemData->line), NULL);
+                IEditor* editor = m_mgr->OpenFile(itemData->filename.GetFullPath());
+                if(editor) {
+                    if(itemData->line != wxNOT_FOUND) {
+                        if(!editor->FindAndSelect(itemData->displayName,
+                                                  itemData->displayName,
+                                                  editor->PosFromLine(itemData->line),
+                                                  NULL)) {
+                            editor->CenterLine(itemData->line);
+                        }
                     }
                 }
             }

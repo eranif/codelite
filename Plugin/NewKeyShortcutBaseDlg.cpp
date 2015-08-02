@@ -24,17 +24,17 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
+    bSizer3 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer3);
     
     m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     bSizer3->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
+    bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer5);
     
-    wxFlexGridSizer* flexGridSizer8 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer8 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer8->SetFlexibleDirection( wxBOTH );
     flexGridSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer8->AddGrowableCol(1);
@@ -72,7 +72,7 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer8->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* bSizer6 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer6 = new wxBoxSizer(wxHORIZONTAL);
     
     flexGridSizer8->Add(bSizer6, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -91,7 +91,7 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer6->Add(m_checkBoxShift, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer3->Add(bSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -104,11 +104,19 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer4->Add(m_buttonCancel, 0, wxALL, 5);
     
+    SetName(wxT("NewKeyShortcutBaseDlg"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    CentreOnParent();
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_textCtrl1->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewKeyShortcutBaseDlg::OnKeyDown), NULL, this);
     m_buttonClear->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnClear), NULL, this);

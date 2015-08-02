@@ -149,8 +149,8 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite"; Working
 [INI]
 
 [Registry]
-Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
-Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\plugins"
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"; Flags: noerror
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\plugins"; Flags: noerror
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"

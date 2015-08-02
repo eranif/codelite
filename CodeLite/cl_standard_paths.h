@@ -52,6 +52,11 @@ public:
     void SetUserDataDir(const wxString& path);
     
     /**
+     * @brief return the temp folder for this OS
+     */
+    wxString GetTempDir() const;
+    
+    /**
      * @brief return the path to the plugins folder
      */
     wxString GetPluginsDirectory() const;
@@ -81,6 +86,11 @@ public:
     wxString GetBinaryFullPath(const wxString &toolname) const;
     
     /**
+     * @brief get CodeLite executale path
+     */
+    wxString GetExecutablePath() const;
+    
+    /**
      * @brief return the user lexers directory
      */
     wxString GetUserLexersDir() const;
@@ -94,6 +104,12 @@ public:
      * @brief return the project templates dircectory
      */
     wxString GetProjectTemplatesDir() const;
+    
+    /**
+     * @brief return the user templates folder
+     * @return 
+     */
+    wxString GetUserProjectTemplatesDir() const;
 };
 
 #endif // CLSTANDARDPATHS_H

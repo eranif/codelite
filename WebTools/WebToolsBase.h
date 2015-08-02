@@ -43,15 +43,12 @@
 class WebToolsSettingsBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer2;
     wxNotebook* m_notebook10;
     wxPanel* m_panel56;
-    wxBoxSizer* boxSizer58;
     wxCheckBox* m_checkBoxEnableJsCC;
     wxCheckBox* m_checkBoxEnableXmlCC;
     wxCheckBox* m_checkBoxEnableHtmlCC;
     wxPanel* m_panel12;
-    wxBoxSizer* boxSizer22;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgProp26;
     wxPGProperty* m_pgPropLogging;
@@ -94,8 +91,6 @@ public:
 class NodeJSDebuggerDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer68;
-    wxFlexGridSizer* flexGridSizer76;
     wxStaticText* m_staticText78;
     wxFilePickerCtrl* m_filePickerNodeJS;
     wxStaticText* m_staticTextScript;
@@ -128,28 +123,21 @@ public:
 class NodeJSDebuggerPaneBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer88;
     wxSplitterWindow* m_splitter104;
     wxPanel* m_splitterPage112;
-    wxBoxSizer* boxSizer120;
     wxDataViewCtrl* m_dataviewLocals;
     wxObjectDataPtr<m_dataview126Model> m_dataviewLocalsModel;
 
     wxPanel* m_splitterPage108;
-    wxBoxSizer* boxSizer118;
     wxSplitterWindow* m_splitter168;
     wxPanel* m_splitterPage172;
-    wxBoxSizer* boxSizer178;
     wxDataViewListCtrl* m_dvListCtrlCallstack;
     wxPanel* m_splitterPage176;
-    wxBoxSizer* boxSizer180;
     Notebook* m_notebook;
     wxPanel* m_panelConsoleLog;
-    wxBoxSizer* boxSizer188;
     wxStyledTextCtrl* m_consoleLog;
     wxTextCtrl* m_textCtrlExpression;
     wxPanel* m_panelBreakpoints;
-    wxBoxSizer* boxSizer190;
     wxDataViewListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
@@ -180,8 +168,6 @@ public:
 class NodeJSNewWorkspaceDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer140;
-    wxFlexGridSizer* flexGridSizer148;
     wxStaticText* m_staticText150;
     wxDirPickerCtrl* m_dirPickerFolder;
     wxStaticText* m_staticText160;

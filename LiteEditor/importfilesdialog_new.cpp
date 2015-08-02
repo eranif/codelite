@@ -34,7 +34,7 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     
     mainSizer->Add(m_banner1, 0, wxALL|wxEXPAND, 5);
     
-    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPicker->SetToolTip(_("Select the base folder for importing"));
     m_dirPicker->SetFocus();
     
@@ -80,11 +80,19 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     m_stdBtnSizer7->AddButton(m_buttonCancel);
     m_stdBtnSizer7->Realize();
     
+    SetName(wxT("ImportFilesDialogNewBase"));
     SetSizeHints(400,400);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_dirPicker->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(ImportFilesDialogNewBase::OnDirChanged), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(ImportFilesDialogNewBase::OnValueChanged), NULL, this);

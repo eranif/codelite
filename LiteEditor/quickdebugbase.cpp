@@ -130,11 +130,19 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_stdBtnSizer2->AddButton(m_buttonCancel1);
     m_stdBtnSizer2->Realize();
     
+    SetName(wxT("QuickDebugBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_buttonBrowseExe->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseExe), NULL, this);
     m_buttonBrowseWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseWD), NULL, this);

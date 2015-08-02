@@ -42,9 +42,9 @@ class PSGeneralPage;
 /** Implementing PSCompilerPageBase */
 class PSCompilerPage : public PSCompilerPageBase, public IProjectSettingsPage
 {
-    ProjectSettingsDlg *m_dlg;
-    wxString            m_projectName;
-    PSGeneralPage *     m_gp;
+    ProjectSettingsDlg* m_dlg;
+    wxString m_projectName;
+    PSGeneralPage* m_gp;
 
 protected:
     virtual void OnCompilerNeeded(wxCommandEvent& event);
@@ -52,10 +52,10 @@ protected:
     virtual void OnUpdateUI(wxUpdateUIEvent& event);
     virtual void OnPropertyChanged(wxPropertyGridEvent& event);
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
-    
+
 public:
     /** Constructor */
-    PSCompilerPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp );
+    PSCompilerPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg, PSGeneralPage* gp);
     //// end generated class members
 
     virtual void Load(BuildConfigPtr buildConf);

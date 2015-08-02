@@ -101,11 +101,12 @@ CppCheckReportBasePage::CppCheckReportBasePage(wxWindow* parent, wxWindowID id, 
     
     bSizer4->Add(m_buttonDown, 0, wxALL|wxEXPAND, 5);
     
+    SetName(wxT("CppCheckReportBasePage"));
     SetSizeHints(482,238);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_stc->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(CppCheckReportBasePage::OnStyleNeeded), NULL, this);
     m_stc->Connect(wxEVT_STC_DOUBLECLICK, wxStyledTextEventHandler(CppCheckReportBasePage::OnOpenFile), NULL, this);

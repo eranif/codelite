@@ -46,7 +46,7 @@ wxString ValgrindMemcheckProcessor::GetExecutionCommand(const wxString & origina
             m_outputLogFileName = wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(),
                                              "valgrind.memcheck.log.xml").GetFullPath();
         else
-            m_outputLogFileName = wxFileName(wxStandardPaths::Get().GetTempDir(),
+            m_outputLogFileName = wxFileName(clStandardPaths::Get().GetTempDir(),
                                              "valgrind.memcheck.log.xml").GetFullPath();
     }
 

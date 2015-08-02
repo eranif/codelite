@@ -18,7 +18,22 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
 {
     // Locate a comment for this entity
     entity->SetFilename(m_sourceFile.GetFilename());
-    std::map<int, phpLexerToken>::iterator iter = m_comments.find(entity->GetLine() - 1);
+    
+    // search for the comment placed at the top of the variable
+    // this is why we use here -1
+    int lineNum = (entity->GetLine() - 1);
+    
+    // for debugging purposes
+    wxString entityName = entity->GetShortName();
+    wxUnusedVar(entityName);
+    
+    std::map<int, phpLexerToken>::iterator iter = m_comments.find(lineNum);
+    if(iter == m_comments.end()) {
+        // try to locate a comment on the same line
+        ++lineNum;
+        iter = m_comments.find(lineNum);
+    }
+    
     if(iter != m_comments.end()) {
 
         // we got a match

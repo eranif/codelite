@@ -123,7 +123,7 @@ void SpellCheck::Init()
 
     if(m_pEngine) {
         LoadSettings();
-        wxString userDictPath = wxStandardPaths::Get().GetUserDataDir();
+        wxString userDictPath = clStandardPaths::Get().GetUserDataDir();
         userDictPath << wxFILE_SEP_PATH << wxT("spellcheck") << wxFILE_SEP_PATH;
 
         if(!wxFileName::DirExists(userDictPath)) wxFileName::Mkdir(userDictPath);

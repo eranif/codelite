@@ -23,7 +23,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_notebook1 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
@@ -34,7 +34,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_panel1 = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_panel1, _("About"), false);
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
+    bSizer3 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer3);
     
     m_bitmap = new wxStaticBitmap(m_panel1, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("splashscreen")), wxDefaultPosition, wxSize(-1, -1), 0 );
@@ -44,7 +44,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_panel4 = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_panel4, _("Credits"), false);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
+    bSizer4 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer4);
     
     m_htmlWin3 = new wxHtmlWindow(m_panel4, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxHW_SCROLLBAR_AUTO);
@@ -55,18 +55,18 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_panel3 = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_panel3, _("License"), false);
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
+    bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer5);
     
     m_textCtrlLicense = new wxTextCtrl(m_panel3, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE|wxTE_DONTWRAP);
     
     bSizer5->Add(m_textCtrlLicense, 1, wxALL|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
+    sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
     mainSizer->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -104,7 +104,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     
     fgSizer1->Add(m_hyperlink3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+    buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(buttonSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -118,6 +118,8 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_notebook1)){
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook1);
     }
     #endif
     
@@ -130,6 +132,8 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef ABBREVIATIONSSETTINGSBASE_BASE_CLASSES_H
-#define ABBREVIATIONSSETTINGSBASE_BASE_CLASSES_H
+#ifndef CODELITE_ABBREVIATION_ABBREVIATIONSSETTINGSBASE_BASE_CLASSES_H
+#define CODELITE_ABBREVIATION_ABBREVIATIONSSETTINGSBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

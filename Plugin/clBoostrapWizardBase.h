@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CLBOOSTRAPWIZARDBASE_BASE_CLASSES_H
-#define CLBOOSTRAPWIZARDBASE_BASE_CLASSES_H
+#ifndef CODELITE_PLUGIN_CLBOOSTRAPWIZARDBASE_BASE_CLASSES_H
+#define CODELITE_PLUGIN_CLBOOSTRAPWIZARDBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -37,24 +37,32 @@ protected:
     std::vector<wxWizardPageSimple*> m_pages;
 
     clBoostrapWizardPageWelcome* m_wizardPageWelcome;
+    wxBoxSizer* boxSizer79;
     wxBannerWindow* m_banner81;
+    wxBoxSizer* boxSizer105;
     wxCommandLinkButton* m_cmdLnkBtn107;
     clBoostrapWizardPagePlugins* m_wizardPagePlugins;
+    wxBoxSizer* boxSizer89;
     wxBannerWindow* m_banner811;
+    wxBoxSizer* boxSizer93;
     wxDataViewListCtrl* m_dvListCtrlPlugins;
+    wxBoxSizer* boxSizer97;
     wxButton* m_button99;
     wxButton* m_button101;
     wxButton* m_button103;
     clBoostrapWizardPageCompilers* m_wizardPageCompilers;
+    wxBoxSizer* boxSizer52;
     wxBannerWindow* m_banner69;
     wxCommandLinkButton* m_cmdLnkBtnScanForCompilers;
     wxCommandLinkButton* m_cmdLnkBtnDownloadCompiler;
     wxDataViewListCtrl* m_dvListCtrlCompilers;
     clBoostrapWizardPageColours* m_wizardPageColoursAndFonts;
+    wxBoxSizer* boxSizer12;
     wxBannerWindow* m_banner71;
     wxChoice* m_choiceTheme;
     wxStyledTextCtrl* m_stc24;
     clBoostrapWizardPageWhitespace* m_wizardPageWhitespace;
+    wxBoxSizer* boxSizer30;
     wxBannerWindow* m_banner73;
     wxRadioBox* m_radioBoxSpacesVsTabs;
     wxRadioBox* m_radioBoxWhitespaceVisibility;

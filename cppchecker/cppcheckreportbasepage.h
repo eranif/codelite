@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CPPCHECKREPORTBASEPAGE_BASE_CLASSES_H
-#define CPPCHECKREPORTBASEPAGE_BASE_CLASSES_H
+#ifndef CODELITE_CPPCHECKER_CPPCHECKREPORTBASEPAGE_BASE_CLASSES_H
+#define CODELITE_CPPCHECKER_CPPCHECKREPORTBASEPAGE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -16,6 +16,12 @@
 #include <wx/stc/stc.h>
 #include <wx/button.h>
 #include <wx/statline.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class CppCheckReportBasePage : public wxPanel
 {
@@ -40,6 +46,12 @@ protected:
     virtual void OnDownUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxStyledTextCtrl* GetStc() { return m_stc; }
+    wxButton* GetButtonClear() { return m_buttonClear; }
+    wxButton* GetButtonStop() { return m_buttonStop; }
+    wxStaticLine* GetStaticLine10() { return m_staticLine10; }
+    wxButton* GetButtonUp() { return m_buttonUp; }
+    wxButton* GetButtonDown() { return m_buttonDown; }
     CppCheckReportBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(482,238), long style = wxTAB_TRAVERSAL);
     virtual ~CppCheckReportBasePage();
 };

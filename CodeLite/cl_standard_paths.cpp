@@ -34,9 +34,7 @@ clStandardPaths::clStandardPaths()
 #endif
 }
 
-clStandardPaths::~clStandardPaths()
-{
-}
+clStandardPaths::~clStandardPaths() {}
 
 clStandardPaths& clStandardPaths::Get()
 {
@@ -47,7 +45,7 @@ clStandardPaths& clStandardPaths::Get()
 wxString clStandardPaths::GetUserDataDir() const
 {
     // If the user has provided an alternative datadir, use it
-    if (!m_path.empty()) {
+    if(!m_path.empty()) {
         return m_path;
     }
 
@@ -57,7 +55,7 @@ wxString clStandardPaths::GetUserDataDir() const
 
     // Debug mode
     wxFileName fn(wxStandardPaths::Get().GetUserDataDir());
-    fn.SetFullName( fn.GetFullName() + "-dbg" );
+    fn.SetFullName(fn.GetFullName() + "-dbg");
     return fn.GetFullPath();
 
 #else
@@ -70,44 +68,38 @@ wxString clStandardPaths::GetUserDataDir() const
 #endif
 }
 
-void clStandardPaths::SetUserDataDir(const wxString& path)
-{
-    m_path = path;
-}
+void clStandardPaths::SetUserDataDir(const wxString& path) { m_path = path; }
 
 wxString clStandardPaths::GetPluginsDirectory() const
 {
 #ifdef __WXGTK__
     wxString pluginsDir = PLUGINS_DIR;
 #else
-#   ifdef USE_POSIX_LAYOUT
+#ifdef USE_POSIX_LAYOUT
     wxFileName path(GetDataDir() + wxT(PLUGINS_DIR), "");
-#   else
+#else
     wxFileName path(GetDataDir(), "");
     path.AppendDir("plugins");
-#   endif
+#endif
     wxString pluginsDir = path.GetPath();
 #endif
     return pluginsDir;
 }
 
-wxString clStandardPaths::GetDataDir() const
-{
-    return wxStandardPaths::Get().GetDataDir();
-}
+wxString clStandardPaths::GetDataDir() const { return wxStandardPaths::Get().GetDataDir(); }
 
 wxString clStandardPaths::GetBinFolder() const
 {
-    wxFileName fnExe( wxStandardPaths::Get().GetExecutablePath() );
+    wxFileName fnExe(wxStandardPaths::Get().GetExecutablePath());
     return fnExe.GetPath();
 }
 
 wxString clStandardPaths::GetBinaryFullPath(const wxString& toolname) const
 {
-    wxFileName binary( GetBinFolder(), toolname );
-    binary.SetExt( wxEmptyString );
+    wxFileName binary(GetBinFolder(), toolname);
+    binary.SetExt(wxEmptyString);
 #ifdef __WXMSW__
-    binary.SetExt( "exe" );
+    binary.SetExt("exe");
 #endif
     return binary.GetFullPath();
 }
@@ -141,3 +133,19 @@ wxString clStandardPaths::GetUserLexersDir() const
     fn.AppendDir("lexers");
     return fn.GetPath();
 }
+
+wxString clStandardPaths::GetUserProjectTemplatesDir() const
+{
+#ifdef USE_POSIX_LAYOUT
+    wxFileName fn(GetUserDataDir() + wxT(INSTALL_DIR), "");
+#else
+    wxFileName fn(GetUserDataDir(), "");
+#endif
+    fn.AppendDir("templates");
+    fn.AppendDir("projects");
+    return fn.GetPath();
+}
+
+wxString clStandardPaths::GetExecutablePath() const { return wxStandardPaths::Get().GetExecutablePath(); }
+
+wxString clStandardPaths::GetTempDir() const { return wxStandardPaths::Get().GetTempDir(); }

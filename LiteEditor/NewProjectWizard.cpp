@@ -123,7 +123,8 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
     EditorConfigST::Get()->ReadObject(wxT("NewProjectDlgData"), &info);
 
     NewProjImgList images;
-    // Get list of project templates
+    
+    // Get list of project templates (bot the installed ones + user)
     GetProjectTemplateList(m_list);
 
     // Populate the dataview model

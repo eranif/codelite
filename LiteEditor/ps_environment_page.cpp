@@ -28,14 +28,13 @@
 #include "debuggersettings.h"
 #include "debuggerconfigtool.h"
 
-PSEnvironmentPage::PSEnvironmentPage( wxWindow* parent, ProjectSettingsDlg* dlg )
-    : PSEnvironmentBasePage( parent )
+PSEnvironmentPage::PSEnvironmentPage(wxWindow* parent, ProjectSettingsDlg* dlg)
+    : PSEnvironmentBasePage(parent)
     , m_dlg(dlg)
 {
-
 }
 
-void PSEnvironmentPage::OnCmdEvtVModified( wxCommandEvent& event )
+void PSEnvironmentPage::OnCmdEvtVModified(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_dlg->SetIsDirty(true);
@@ -51,10 +50,10 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
     std::map<wxString, wxString>::const_iterator iterI = envSets.begin();
     int useActiveSetIndex = m_choiceEnv->Append(wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET));
 
-    for (; iterI != envSets.end(); iterI++) {
+    for(; iterI != envSets.end(); iterI++) {
         m_choiceEnv->Append(iterI->first);
     }
-    int selEnv = m_choiceEnv->FindString( buildConf->GetEnvVarSet() );
+    int selEnv = m_choiceEnv->FindString(buildConf->GetEnvVarSet());
     m_choiceEnv->SetSelection(selEnv == wxNOT_FOUND ? useActiveSetIndex : selEnv);
 
     m_choiceDbgEnv->Clear();
@@ -68,7 +67,7 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
         m_choiceDbgEnv->Append(iterB->first);
     }
 
-    int selDbg = m_choiceDbgEnv->FindString( buildConf->GetDbgEnvSet() );
+    int selDbg = m_choiceDbgEnv->FindString(buildConf->GetDbgEnvSet());
     m_choiceDbgEnv->SetSelection(selEnv == wxNOT_FOUND ? useActiveSetIndex : selDbg);
     m_textCtrlEnvvars->SetValue(buildConf->GetEnvvars());
 }
@@ -76,14 +75,14 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
 void PSEnvironmentPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
     wxString env = m_choiceDbgEnv->GetStringSelection();
-    if (env == wxGetTranslation(USE_GLOBAL_SETTINGS)) {
+    if(env == wxGetTranslation(USE_GLOBAL_SETTINGS)) {
         // Save it untranslated
         env = USE_GLOBAL_SETTINGS;
     }
     buildConf->SetDbgEnvSet(env);
 
     env = m_choiceEnv->GetStringSelection();
-    if (env == wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET)) {
+    if(env == wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET)) {
         env = USE_WORKSPACE_ENV_VAR_SET;
     }
     buildConf->SetEnvVarSet(env);
@@ -96,7 +95,4 @@ void PSEnvironmentPage::Clear()
     m_choiceEnv->Clear();
 }
 
-void PSEnvironmentPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable( m_dlg->IsProjectEnabled() );
-}
+void PSEnvironmentPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }

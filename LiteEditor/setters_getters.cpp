@@ -23,10 +23,10 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    bSizer3 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     
     bSizer1->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
     
@@ -46,7 +46,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer3->Add(m_searchCtrl, 0, wxALL|wxEXPAND, 5);
     
-    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer3->Add(bSizer4, 1, wxEXPAND, 5);
     
@@ -60,7 +60,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     m_dataview->AppendToggleColumn(_("X"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 50, wxALIGN_LEFT);
     m_dataview->AppendIconTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
-    bSizer5 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     
     bSizer4->Add(bSizer5, 0, wxEXPAND, 5);
     
@@ -73,7 +73,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer5->Add(m_buttonUncheckAll, 0, wxALL|wxEXPAND, 5);
     
-    gridSizer12 = new wxGridSizer(0, 2, 0, 0);
+    wxGridSizer* gridSizer12 = new wxGridSizer(0, 2, 0, 0);
     
     bSizer3->Add(gridSizer12, 0, wxALL|wxEXPAND, 5);
     

@@ -40,11 +40,12 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
     
     m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
+    SetName(wxT("OpenWindowsPanelBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(XRCID("TabsSortTool"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(OpenWindowsPanelBase::OnSortItems), NULL, this);
     this->Connect(XRCID("TabsSortTool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenWindowsPanelBase::OnSortItemsUpdateUI), NULL, this);

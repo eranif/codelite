@@ -23,7 +23,7 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), wxDV_SINGLE);
@@ -132,7 +132,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    boxSizer16 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
     m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
@@ -167,7 +167,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer16->Add(m_choiceAccount, 0, wxALL|wxEXPAND, 2);
     
-    flexGridSizer43 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer43 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer43->SetFlexibleDirection( wxBOTH );
     flexGridSizer43->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer43->AddGrowableCol(1);
@@ -279,10 +279,10 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    boxSizer56 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer56 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer56);
     
-    boxSizer64 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer64 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer56->Add(boxSizer64, 1, wxALL|wxEXPAND, 5);
     
@@ -291,7 +291,7 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
     
     boxSizer64->Add(m_listBoxBookmarks, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer68 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer68 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer64->Add(boxSizer68, 0, wxEXPAND, 5);
     
@@ -347,10 +347,10 @@ SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    boxSizer83 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer83 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer83);
     
-    flexGridSizer91 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer91 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer91->SetFlexibleDirection( wxBOTH );
     flexGridSizer91->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer91->AddGrowableCol(1);

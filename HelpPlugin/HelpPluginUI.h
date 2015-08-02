@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef HELPPLUGINUI_BASE_CLASSES_H
-#define HELPPLUGINUI_BASE_CLASSES_H
+#ifndef CODELITE_HELPPLUGIN_HELPPLUGINUI_BASE_CLASSES_H
+#define CODELITE_HELPPLUGIN_HELPPLUGINUI_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOR_OPTIONS_FOLDING_BASE_CLASSES_H
-#define EDITOR_OPTIONS_FOLDING_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_EDITOR_OPTIONS_FOLDING_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_EDITOR_OPTIONS_FOLDING_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -17,6 +17,12 @@
 #include <wx/statbox.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class EditorSettingsFoldingBase : public wxPanel
 {
@@ -33,6 +39,13 @@ protected:
     virtual void OnFoldingMarginUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxCheckBox* GetDisplayMargin() { return m_displayMargin; }
+    wxChoice* GetFoldStyle() { return m_foldStyle; }
+    wxCheckBox* GetUnderlineFolded() { return m_underlineFolded; }
+    wxCheckBox* GetFoldElse() { return m_foldElse; }
+    wxCheckBox* GetFoldPreprocessors() { return m_foldPreprocessors; }
+    wxCheckBox* GetFoldCompact() { return m_foldCompact; }
+    wxCheckBox* GetCheckBoxHighlightFolding() { return m_checkBoxHighlightFolding; }
     EditorSettingsFoldingBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsFoldingBase();
 };

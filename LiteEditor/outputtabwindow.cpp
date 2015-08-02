@@ -176,7 +176,6 @@ void OutputTabWindow::CreateGUIControls()
 #else
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
 #endif
-    ::clRecalculateSTCHScrollBar(m_sci);
 
     // We dont really want to collect undo in the output tabs...
     m_sci->SetUndoCollection(false);
@@ -242,7 +241,6 @@ void OutputTabWindow::Clear()
         m_sci->SetReadOnly(false);
         m_sci->ClearAll();
         m_sci->EmptyUndoBuffer();
-        m_sci->SetScrollWidth(1);
         m_sci->SetReadOnly(true);
     }
 }
@@ -281,8 +279,6 @@ void OutputTabWindow::AppendText(const wxString& text)
 
         // enable readonly mode
         m_sci->SetReadOnly(true);
-
-        ::clRecalculateSTCHScrollBar(m_sci);
     }
 }
 

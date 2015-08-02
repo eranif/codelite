@@ -57,6 +57,8 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
     #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(m_treeBook)){
         wxPersistenceManager::Get().RegisterAndRestore(m_treeBook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treeBook);
     }
     #endif
     
@@ -69,6 +71,8 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

@@ -154,7 +154,7 @@ public:
         wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
 #ifdef USE_POSIX_LAYOUT
-        wxString pluginsDir(wxStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
+        wxString pluginsDir(clStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));
 #else
         wxString pluginsDir(m_mgr->GetInstallDirectory() + wxT("/plugins"));
 #endif

@@ -23,10 +23,10 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_notebook = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(250,250), wxAUI_NB_TOP|wxBK_DEFAULT|wxBORDER_NONE);
+    m_notebook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(500,300), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
     
     mainSizer->Add(m_notebook, 1, wxALL|wxEXPAND, 5);
@@ -46,28 +46,12 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
     m_stdBtnSizer2->AddButton(m_buttonApply);
     m_stdBtnSizer2->Realize();
     
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)){
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook);
-    }
-    #endif
-    
     SetName(wxT("AdvancedDlgBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     CentreOnParent();
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL, this);
     m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL, this);

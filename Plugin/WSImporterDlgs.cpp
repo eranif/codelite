@@ -23,10 +23,10 @@ EnvVarImporterDlgBase::EnvVarImporterDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
+    boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
     
-    wxBoxSizer* boxSizer18 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer18 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer4->Add(boxSizer18, 1, wxALL|wxEXPAND, 5);
     
@@ -52,7 +52,7 @@ EnvVarImporterDlgBase::EnvVarImporterDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer18->Add(0, 0, 1, wxALL, 5);
     
-    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
+    boxSizer22 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer4->Add(boxSizer22, 1, wxALL|wxEXPAND, 5);
     
@@ -65,7 +65,7 @@ EnvVarImporterDlgBase::EnvVarImporterDlgBase(wxWindow* parent, wxWindowID id, co
     boxSizer4->Add(m_envVars, 0, wxALL|wxEXPAND, 5);
     m_envVars->SetMinSize(wxSize(600,200));
     
-    wxBoxSizer* boxSizer16 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer16 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer4->Add(boxSizer16, 1, wxALL|wxEXPAND, 0);
     
@@ -81,11 +81,19 @@ EnvVarImporterDlgBase::EnvVarImporterDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer16->Add(m_btnNotImport, 0, wxALL, 5);
     
+    SetName(wxT("EnvVarImporterDlgBase"));
     SetSizeHints(600,360);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_btnImport->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarImporterDlgBase::OnImport), NULL, this);
     m_btnContinue->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EnvVarImporterDlgBase::OnContinue), NULL, this);

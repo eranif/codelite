@@ -21,6 +21,7 @@
 #include <wx/listbox.h>
 #include <wx/button.h>
 #include <wx/choice.h>
+#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -50,12 +51,12 @@ protected:
     wxStaticText* m_staticText5;
     wxChoice* m_choiceEncoding;
     wxStaticText* m_staticText97;
+    wxStaticBoxSizer* staticBoxSizer98;
     wxFlexGridSizer* fgSizer3;
     wxCheckBox* m_matchCase;
     wxCheckBox* m_matchWholeWord;
     wxCheckBox* m_regualrExpression;
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
-    wxCheckBox* m_checkBoxSeparateTab;
     wxBoxSizer* bSizer2;
     wxButton* m_find;
     wxButton* m_replaceAll;
@@ -88,7 +89,6 @@ public:
     wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
     wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
     wxCheckBox* GetCheckBoxSaveFilesBeforeSearching() { return m_checkBoxSaveFilesBeforeSearching; }
-    wxCheckBox* GetCheckBoxSeparateTab() { return m_checkBoxSeparateTab; }
     wxButton* GetFind() { return m_find; }
     wxButton* GetReplaceAll() { return m_replaceAll; }
     wxButton* GetStop() { return m_stop; }

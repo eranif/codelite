@@ -1486,7 +1486,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
     wd = bldConf->GetWorkingDirectory();
     wd = ExpandVariables(wd, GetProject(projectName), clMainFrame::Get()->GetMainBook()->GetActiveEditor());
 
-    wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
+    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
     fnCodeliteTerminal.SetFullName("codelite-terminal");
 
     wxString title;
@@ -1539,7 +1539,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
             wxString command;
             if(bldConf->GetPauseWhenExecEnds()) {
                 wxString ld_lib_path;
-                wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+                wxFileName exePath(clStandardPaths::Get().GetExecutablePath());
                 wxFileName exeWrapper(exePath.GetPath(), wxT("codelite_exec"));
 
                 if(wxGetEnv(wxT("LD_LIBRARY_PATH"), &ld_lib_path) && ld_lib_path.IsEmpty() == false) {
@@ -3234,7 +3234,7 @@ void Manager::DoRestartCodeLite()
     // the codelite_launcher application is located where the codelite executable is
     // to properly shoutdown codelite. We first need to close the codelite_indexer process
     restartCodeLiteCommand << wxT("\"") << m_codeliteLauncher.GetFullPath() << wxT("\" ") << wxT(" --name=\"")
-                           << wxStandardPaths::Get().GetExecutablePath() << wxT("\"");
+                           << clStandardPaths::Get().GetExecutablePath() << wxT("\"");
 
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
     clMainFrame::Get()->GetEventHandler()->ProcessEvent(event);
@@ -3243,7 +3243,7 @@ void Manager::DoRestartCodeLite()
 
 #elif defined(__WXGTK__)
     // The Shell is our friend
-    restartCodeLiteCommand << wxStandardPaths::Get().GetExecutablePath();
+    restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
 
     // Restore the original working dir and any paramters
     for(int i = 1; i < wxTheApp->argc; i++) {
@@ -3258,7 +3258,7 @@ void Manager::DoRestartCodeLite()
 #else // OSX
 
     // on OSX, we use the open command
-    wxFileName bundlePath(wxStandardPaths::Get().GetExecutablePath());
+    wxFileName bundlePath(clStandardPaths::Get().GetExecutablePath());
     bundlePath.RemoveLastDir();
     bundlePath.RemoveLastDir();
     wxString bundlePathStr = bundlePath.GetPath();

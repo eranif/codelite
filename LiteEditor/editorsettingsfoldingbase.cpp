@@ -75,11 +75,12 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase(wxWindow* parent, wxWindowI
     
     fgSizer1->Add(m_checkBoxHighlightFolding, 0, wxALL, 5);
     
+    SetName(wxT("EditorSettingsFoldingBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
     // Connect events
     m_foldStyle->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);
     m_underlineFolded->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsFoldingBase::OnFoldingMarginUI), NULL, this);

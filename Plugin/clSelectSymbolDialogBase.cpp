@@ -24,20 +24,20 @@ clSelectSymbolDialogBase::clSelectSymbolDialogBase(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    boxSizer10 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(350,200), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(500,200), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     m_dvListCtrl->SetFocus();
     
     boxSizer10->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Ext"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Ext"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
     boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);

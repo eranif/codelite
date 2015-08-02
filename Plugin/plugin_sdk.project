@@ -339,6 +339,7 @@
       <File Name="clSingleChoiceDialog.cpp"/>
       <File Name="clSelectSymbolDialog.h"/>
       <File Name="clSelectSymbolDialog.cpp"/>
+      <File Name="nameanddescdlg.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>
@@ -347,8 +348,6 @@
       <File Name="dockablepane.h"/>
       <File Name="detachedpanesinfo.cpp"/>
       <File Name="detachedpanesinfo.h"/>
-      <File Name="fileclose.png"/>
-      <File Name="fileclose-pressed.png"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
       <File Name="Notebook.cpp"/>
@@ -432,6 +431,7 @@
       <File Name="clBoostrapWizardBase_plugin_bitmaps.cpp"/>
       <File Name="WSImporterDlgs_plugin_bitmaps.cpp"/>
       <File Name="clSelectSymbolDialogBase_plugin_bitmaps.cpp"/>
+      <File Name="nameanddescdlg_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>

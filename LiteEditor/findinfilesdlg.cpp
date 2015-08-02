@@ -62,13 +62,8 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE);
     m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
     m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
-    // m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE);
     m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
-    m_checkBoxSeparateTab->SetValue(m_data.GetFlags() & wxFRD_SEPARATETAB_DISPLAY);
-    // m_checkBoxSkipMatchesFoundInComments->SetValue(m_data.GetFlags() & wxFRD_SKIP_COMMENTS);
-    // m_checkBoxSkipMatchesFoundInStrings->SetValue(m_data.GetFlags() & wxFRD_SKIP_STRINGS);
-    // m_checkBoxHighlighStringComments->SetValue(m_data.GetFlags() & wxFRD_COLOUR_COMMENTS);
-
+    
     // Set encoding
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
@@ -266,7 +261,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
 
     data.SetFiles(files);       // list of files
     data.SetRootDirs(rootDirs); // folders
-    data.UseNewTab(m_checkBoxSeparateTab->IsChecked());
+    data.UseNewTab(false);
     data.SetExtensions(m_fileTypes->GetValue());
     return data;
 }
@@ -278,12 +273,13 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     // Show a popup menu
     wxMenu menu;
     int firstItem = 8994;
+    menu.Append(firstItem + 5, "Add Folder...");
+    menu.AppendSeparator();
     menu.Append(firstItem + 0, SEARCH_IN_WORKSPACE);
     menu.Append(firstItem + 1, SEARCH_IN_PROJECT);
     menu.Append(firstItem + 2, SEARCH_IN_CURR_FILE_PROJECT);
     menu.Append(firstItem + 3, SEARCH_IN_CURRENT_FILE);
     menu.Append(firstItem + 4, SEARCH_IN_OPEN_FILES);
-    menu.Append(firstItem + 5, "Add Folder...");
 
     std::map<int, wxString> options;
     options.insert(std::make_pair(firstItem, SEARCH_IN_WORKSPACE));
@@ -375,12 +371,7 @@ size_t FindInFilesDialog::GetSearchFlags()
     if(m_matchCase->IsChecked()) flags |= wxFRD_MATCHCASE;
     if(m_matchWholeWord->IsChecked()) flags |= wxFRD_MATCHWHOLEWORD;
     if(m_regualrExpression->IsChecked()) flags |= wxFRD_REGULAREXPRESSION;
-    // if(m_printScope->IsChecked()) flags |= wxFRD_DISPLAYSCOPE;
-    if(m_checkBoxSeparateTab->IsChecked()) flags |= wxFRD_SEPARATETAB_DISPLAY;
     if(m_checkBoxSaveFilesBeforeSearching->IsChecked()) flags |= wxFRD_SAVE_BEFORE_SEARCH;
-    // if(m_checkBoxSkipMatchesFoundInComments->IsChecked()) flags |= wxFRD_SKIP_COMMENTS;
-    // if(m_checkBoxSkipMatchesFoundInStrings->IsChecked()) flags |= wxFRD_SKIP_STRINGS;
-    // if(m_checkBoxHighlighStringComments->IsChecked()) flags |= wxFRD_COLOUR_COMMENTS;
     return flags;
 }
 

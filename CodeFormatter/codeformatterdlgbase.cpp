@@ -25,7 +25,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    bSizerMain = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizerMain = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerMain);
     
     m_treebook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -36,10 +36,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_panel133 = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook->AddPage(m_panel133, _("General"), true, wxNOT_FOUND);
     
-    boxSizer179 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer179 = new wxBoxSizer(wxVERTICAL);
     m_panel133->SetSizer(boxSizer179);
     
-    flexGridSizer158 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer158 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer158->SetFlexibleDirection( wxBOTH );
     flexGridSizer158->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer158->AddGrowableCol(1);
@@ -85,7 +85,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_panelAstyle = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook->InsertSubPage(1, m_panelAstyle, _("AStyle"), false, wxNOT_FOUND);
     
-    boxSizer95 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer95 = new wxBoxSizer(wxVERTICAL);
     m_panelAstyle->SetSizer(boxSizer95);
     
     m_splitter145 = new wxSplitterWindow(m_panelAstyle, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
@@ -96,7 +96,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     m_splitterPage149 = new wxPanel(m_splitter145, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer155 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer155 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage149->SetSizer(boxSizer155);
     
     wxArrayString m_pgMgrAstyleArr;
@@ -182,11 +182,11 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropFormatting = m_pgMgrAstyle->AppendIn( m_pgPropAstyleOptions,  new wxFlagsProperty( _("Formatting"), wxPG_LABEL, m_pgMgrAstyleArr, m_pgMgrAstyleIntArr, 0) );
     m_pgPropFormatting->SetHelpString(_("Select one or more formatting option from the list below"));
     
-    bCustomSettingsSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bCustomSettingsSizer = new wxBoxSizer(wxVERTICAL);
     
     boxSizer155->Add(bCustomSettingsSizer, 0, wxALL|wxEXPAND, 2);
     
-    boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
     
     bCustomSettingsSizer->Add(boxSizer57, 0, wxEXPAND, 5);
     
@@ -210,7 +210,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_splitterPage153 = new wxPanel(m_splitter145, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter145->SplitVertically(m_splitterPage149, m_splitterPage153, 0);
     
-    boxSizer157 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer157 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage153->SetSizer(boxSizer157);
     
     m_textCtrlPreview = new wxStyledTextCtrl(m_splitterPage153, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -254,7 +254,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_panelClang = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook->InsertSubPage(1, m_panelClang, _("clang-format"), false, wxNOT_FOUND);
     
-    boxSizer97 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxVERTICAL);
     m_panelClang->SetSizer(boxSizer97);
     
     m_splitter165 = new wxSplitterWindow(m_panelClang, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
@@ -265,7 +265,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     m_splitterPage169 = new wxPanel(m_splitter165, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer175 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer175 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage169->SetSizer(boxSizer175);
     
     wxArrayString m_pgMgrClangArr;
@@ -364,7 +364,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_splitterPage173 = new wxPanel(m_splitter165, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter165->SplitVertically(m_splitterPage169, m_splitterPage173, 0);
     
-    boxSizer177 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer177 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage173->SetSizer(boxSizer177);
     
     m_textCtrlPreview_Clang = new wxStyledTextCtrl(m_splitterPage173, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -411,7 +411,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_panelBuiltIn = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook->InsertSubPage(4, m_panelBuiltIn, _("Builtin"), false, wxNOT_FOUND);
     
-    boxSizer99 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer99 = new wxBoxSizer(wxVERTICAL);
     m_panelBuiltIn->SetSizer(boxSizer99);
     
     m_splitter119 = new wxSplitterWindow(m_panelBuiltIn, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
@@ -422,7 +422,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     m_splitterPage123 = new wxPanel(m_splitter119, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer129 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer129 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage123->SetSizer(boxSizer129);
     
     wxArrayString m_pgMgrPhpArr;
@@ -460,7 +460,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_splitterPage127 = new wxPanel(m_splitter119, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter119->SplitVertically(m_splitterPage123, m_splitterPage127, 0);
     
-    boxSizer131 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage127->SetSizer(boxSizer131);
     
     m_stcPhpPreview = new wxStyledTextCtrl(m_splitterPage127, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -504,10 +504,10 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_panel185 = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook->InsertSubPage(4, m_panel185, _("PHP-CS-Fixer"), false, wxNOT_FOUND);
     
-    boxSizer209 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer209 = new wxBoxSizer(wxVERTICAL);
     m_panel185->SetSizer(boxSizer209);
     
-    flexGridSizer190 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer190 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer190->SetFlexibleDirection( wxBOTH );
     flexGridSizer190->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer190->AddGrowableCol(1);
@@ -615,7 +615,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     boxSizer209->Add(m_stcFixerPreview, 1, wxALL|wxEXPAND, 5);
     
-    bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerMain->Add(bSizerButtons, 0, wxALIGN_CENTER_HORIZONTAL, 5);
     

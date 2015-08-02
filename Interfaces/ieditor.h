@@ -383,7 +383,12 @@ public:
      * @brief center the editor around line and optionally a column
      */
     virtual void CenterLine(int line, int col = wxNOT_FOUND) = 0;
-
+    
+    /**
+     * @brief center the editor around line, keeping any selection
+     */
+    virtual void CenterLinePreserveSelection(int line) = 0;
+    
     /**
      * @brief return a pointer to the underlying scintilla control
      */

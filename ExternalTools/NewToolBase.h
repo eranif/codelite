@@ -31,8 +31,6 @@
 class NewToolBase : public wxDialog
 {
 protected:
-    wxBoxSizer* bSizer1;
-    wxFlexGridSizer* fgSizer1;
     wxStaticText* m_staticText5;
     wxChoice* m_choiceId;
     wxStaticText* m_staticText6;
@@ -45,15 +43,12 @@ protected:
     wxButton* m_buttonBrowseWd;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_textCtrlArguments;
-    wxStaticBoxSizer* sbSizer1;
-    wxFlexGridSizer* fgSizer2;
     wxStaticText* m_staticText8;
     wxTextCtrl* m_textCtrlIcon24;
     wxButton* m_buttonBrowseIcon24;
     wxStaticText* m_staticText7;
     wxTextCtrl* m_textCtrlIcon16;
     wxButton* m_buttonBrowseIcon16;
-    wxStaticBoxSizer* sbSizer2;
     wxCheckBox* m_checkBoxSaveAllFilesBefore;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_button4;

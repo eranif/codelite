@@ -85,6 +85,8 @@ AccelTableBaseDlg::AccelTableBaseDlg(wxWindow* parent, wxWindowID id, const wxSt
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
 #endif
     // Connect events

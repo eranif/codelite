@@ -22,7 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "pipedprocess.h"
+#include "cl_standard_paths.h"
+#include "pipedprocess.h" 
 #include <wx/stdpaths.h>
 #include <wx/txtstrm.h>
 #include <wx/sstream.h>
@@ -54,7 +55,7 @@ void PipedProcess::Terminate()
 {
 #ifdef __WXGTK__
 	wxString cmd;
-	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+	wxFileName exePath(clStandardPaths::Get().GetExecutablePath());
 	wxFileName script(exePath.GetPath(), wxT("codelite_kill_children"));
 	cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
 	wxExecute(cmd, wxEXEC_ASYNC);

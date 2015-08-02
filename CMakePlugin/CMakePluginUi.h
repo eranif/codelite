@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CMAKEPLUGIN_BASE_CLASSES_H
-#define CMAKEPLUGIN_BASE_CLASSES_H
+#ifndef CODELITE_CMAKEPLUGIN_CMAKEPLUGIN_BASE_CLASSES_H
+#define CODELITE_CMAKEPLUGIN_CMAKEPLUGIN_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -30,6 +30,12 @@
 #include <wx/bitmap.h>
 #include <map>
 #include <wx/icon.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class CMakeSettingsDialogBase : public wxDialog
 {

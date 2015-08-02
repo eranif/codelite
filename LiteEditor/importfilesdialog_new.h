@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef IMPORTFILESDIALOG_BASE_CLASSES_H
-#define IMPORTFILESDIALOG_BASE_CLASSES_H
+#ifndef CODELITE_LITEEDITOR_IMPORTFILESDIALOG_BASE_CLASSES_H
+#define CODELITE_LITEEDITOR_IMPORTFILESDIALOG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -22,6 +22,12 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#if wxVERSION_NUMBER >= 2900
+#include <wx/persist.h>
+#include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
+#include <wx/persist/treebook.h>
+#endif
 
 class ImportFilesDialogNewBase : public wxDialog
 {
@@ -44,6 +50,12 @@ protected:
     virtual void OnItemExpanding(wxDataViewEvent& event) { event.Skip(); }
 
 public:
+    wxBannerWindow* GetBanner1() { return m_banner1; }
+    wxDirPickerCtrl* GetDirPicker() { return m_dirPicker; }
+    wxDataViewCtrl* GetDataview() { return m_dataview; }
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxTextCtrl* GetTextCtrSpec() { return m_textCtrSpec; }
+    wxCheckBox* GetCheckBoxFilesWOExt() { return m_checkBoxFilesWOExt; }
     ImportFilesDialogNewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Import Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~ImportFilesDialogNewBase();
 };

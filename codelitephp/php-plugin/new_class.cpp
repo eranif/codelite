@@ -164,11 +164,19 @@ NewPHPClassBase::NewPHPClassBase(wxWindow* parent, wxWindowID id, const wxString
     
     boxSizer4->Add(m_buttonCancel, 0, wxALL, 5);
     
+    SetName(wxT("NewPHPClassBase"));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre(wxBOTH);
+    CentreOnParent(wxBOTH);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     m_textCtrlClassName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPClassBase::OnClassNameUpdate), NULL, this);
     m_textCtrlNamespace->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPClassBase::OnNamespaceTextUpdated), NULL, this);

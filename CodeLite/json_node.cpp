@@ -408,17 +408,17 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxArrayString&
 
 void JSONElement::arrayAppend(const wxString& value) { arrayAppend(JSONElement(wxT(""), value, cJSON_String)); }
 
-wxArrayString JSONElement::toArrayString() const
+wxArrayString JSONElement::toArrayString(const wxArrayString& defaultValue) const
 {
-    wxArrayString arr;
     if(!_json) {
-        return arr;
+        return defaultValue;
     }
 
     if(_json->type != cJSON_Array) {
-        return arr;
+        return defaultValue;
     }
 
+    wxArrayString arr;
     for(int i = 0; i < arraySize(); i++) {
         arr.Add(arrayItem(i).toString());
     }

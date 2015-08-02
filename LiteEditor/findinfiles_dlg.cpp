@@ -88,7 +88,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_btnAddPath = new wxButton(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
-    m_btnAddPath->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR, wxSize(16, 16)), wxLEFT);
+    m_btnAddPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("fif-menu")), wxLEFT);
     m_btnAddPath->SetBitmapMargins(2,2);
     #endif
     m_btnAddPath->SetToolTip(_("Add search path"));
@@ -97,8 +97,8 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_btnClearSelectedPath = new wxButton(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
-    m_btnClearSelectedPath->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxLEFT);
-    m_btnClearSelectedPath->SetBitmapMargins(2,2);
+    m_btnClearSelectedPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("fif-clear")), wxLEFT);
+    m_btnClearSelectedPath->SetBitmapMargins(5,5);
     #endif
     m_btnClearSelectedPath->SetToolTip(_("Remove the selected path"));
     
@@ -129,15 +129,19 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(m_choiceEncoding, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText97 = new wxStaticText(m_panelMainPanel, wxID_ANY, _("Options:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText97 = new wxStaticText(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
     fgSizer41->Add(m_staticText97, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
+    staticBoxSizer98 = new wxStaticBoxSizer( new wxStaticBox(m_panelMainPanel, wxID_ANY, _("Search Options:")), wxVERTICAL);
+    
+    fgSizer41->Add(staticBoxSizer98, 0, wxALL|wxEXPAND, 5);
+    
+    fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    fgSizer41->Add(fgSizer3, 0, wxEXPAND, 5);
+    staticBoxSizer98->Add(fgSizer3, 0, wxEXPAND, 5);
     
     m_matchCase = new wxCheckBox(m_panelMainPanel, wxID_ANY, _("&Match case"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_matchCase->SetValue(false);
@@ -162,11 +166,6 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_checkBoxSaveFilesBeforeSearching->SetToolTip(_("Save any modified files before search starts"));
     
     fgSizer3->Add(m_checkBoxSaveFilesBeforeSearching, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxSeparateTab = new wxCheckBox(m_panelMainPanel, wxID_ANY, _("Use new tab per search"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxSeparateTab->SetValue(true);
-    
-    fgSizer3->Add(m_checkBoxSeparateTab, 0, wxALL, 5);
     
     bSizer2 = new wxBoxSizer(wxVERTICAL);
     

@@ -415,5 +415,13 @@ void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
 void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
 {
     event.Skip();
-    m_jsCodeComplete.Reset(new JSCodeCompletion(wxFileName(event.GetString()).GetPath()));
+    wxFileName workspaceFile = event.GetString();
+    if(FileExtManager::GetType(workspaceFile.GetFullPath()) == FileExtManager::TypeWorkspaceNodeJS) {
+        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath()));
+    } else {
+        // For non NodeJS workspaces, create the .tern files under
+        // the .codelite folder
+        workspaceFile.AppendDir(".codelite");
+        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath()));
+    }
 }

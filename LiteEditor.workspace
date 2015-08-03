@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="LiteEditor" Database="./LiteEditor.tags" SWTLW="No">
+<CodeLite_Workspace Name="LiteEditor" Database="./LiteEditor.tags">
   <Ctags>
     <Option Name="Macros">WXUNUSED,wxT,WXMAKINGDLL,WXUSINGDLL,WXMAKINGDLL_FNB,WXUSINGDLL_FNB,WXDLLEXPORT,WXDLLIMPEXP_CORE,WXDLLIMPORT</Option>
     <Option Name="Language">C++</Option>

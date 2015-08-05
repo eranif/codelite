@@ -140,10 +140,10 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                 index = line.find_last_of(wxT("\""));
                 wxString projectType = line.Mid(index + 1).Trim().Trim(false);
 
-                if(projectType == wxT("0x0104")) {
-                    genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
-                } else if(projectType == wxT("0x0102")) {
+                if(projectType == wxT("0x0102")) {
                     genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
+                } else if(projectType == wxT("0x0104")) {
+                    genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
                 } else if(projectType == wxT("0x0106")) {
                     genericProject->cfgType = GenericCfgType::EXECUTABLE;
                 } else {
@@ -338,6 +338,14 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                 if(index != wxNOT_FOUND) {
                     while(!projectFIS.Eof()) {
                         line = projectTIS.ReadLine();
+
+                        index = line.Find(wxT("="));
+                        if(index != wxNOT_FOUND) {
+                            wxStringTokenizer keyValue(line, wxT("="));
+                            wxString key = keyValue.GetNextToken().Trim().Trim(false);
+                            wxString value = keyValue.GetNextToken().Trim().Trim(false);
+                            genericProjectCfg->envVars[key] = value;
+                        }
 
                         index = line.Find(wxT("\t"));
                         if(index != wxNOT_FOUND) {
@@ -1080,8 +1088,8 @@ void VisualCppImporter::AddFilesVC7(wxXmlNode* filterChild,
                     wxString excludedFromBuild = fileConfChild->GetAttribute(wxT("ExcludedFromBuild"));
                     wxString projectCfgName = name;
                     projectCfgName.Replace(wxT("|"), wxT("_"));
-                    
-                    if (excludedFromBuild == wxT("true")) {
+
+                    if(excludedFromBuild == wxT("true")) {
                         GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgName];
                         if(genericProjectCfg) {
                             genericProjectCfg->excludeFiles.push_back(genericProjectFile);

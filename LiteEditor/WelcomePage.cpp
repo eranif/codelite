@@ -154,15 +154,19 @@ WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayStri
 
 void WelcomePage::OnRecentFileUI(wxUpdateUIEvent& event)
 {
-    wxArrayString files;
-    clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(files);
+    static wxArrayString files;
+    if(files.IsEmpty()) {
+        clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(files);
+    }
     event.Enable(!files.IsEmpty());
 }
 
 void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
 {
-    wxArrayString files;
-    ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
+    static wxArrayString files;
+    if(files.IsEmpty()) {
+        ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
+    }
     event.Enable(!files.IsEmpty());
 }
 

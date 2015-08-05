@@ -26,7 +26,7 @@ PrivilegesRequired=none
 ;; 64 bit setup
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "D:\src\wxWidgets_x64"
+#define WXWIN "D:\src\wxWidgets"
 #define BINUTILS_DIR "D:\bin"
 
 

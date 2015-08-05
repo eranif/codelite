@@ -254,6 +254,13 @@ bool WSImporter::Import(wxString& errMsg)
                         le_conf->SetPreBuildCommands(preBuildCommandList);
                         le_conf->SetPostBuildCommands(postBuildCommandList);
 
+                        if(cfg->enableCustomBuild) {
+                            le_conf->EnableCustomBuild(cfg->enableCustomBuild);
+                            le_conf->SetCustomBuildCmd(cfg->customBuildCmd);
+                            le_conf->SetCustomCleanCmd(cfg->customCleanCmd);
+                            le_conf->SetCustomRebuildCmd(cfg->customRebuildCmd);
+                        }
+
                         le_settings->SetBuildConfiguration(le_conf);
 
                         if(!project->deps.IsEmpty())
@@ -290,7 +297,8 @@ bool WSImporter::Import(wxString& errMsg)
                             wxString vpath =
                                 GetVPath(excludeFile->name, excludeFile->vpath, project->createDefaultVirtualDir);
 
-                            wxFileName excludeFileNameInfo(project->path + wxFileName::GetPathSeparator() + excludeFile->name);
+                            wxFileName excludeFileNameInfo(project->path + wxFileName::GetPathSeparator() +
+                                                           excludeFile->name);
                             wxString excludeFileName = excludeFileNameInfo.GetFullPath();
                             wxArrayString configs = proj->GetExcludeConfigForFile(excludeFileName, vpath);
 

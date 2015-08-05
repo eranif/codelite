@@ -50,6 +50,10 @@ struct GenericProjectCfg {
     std::vector<GenericProjectFilePtr> excludeFiles;
     GenericEnvVarsType envVars;
     GenericCfgType type;
+    bool enableCustomBuild;
+    wxString customBuildCmd;
+    wxString customCleanCmd;
+    wxString customRebuildCmd;
 };
 
 typedef std::shared_ptr<GenericProjectCfg> GenericProjectCfgPtr;

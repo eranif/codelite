@@ -144,8 +144,6 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                     genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
                 } else if(projectType == wxT("0x0104")) {
                     genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
-                } else if(projectType == wxT("0x0106")) {
-                    genericProject->cfgType = GenericCfgType::EXECUTABLE;
                 } else {
                     genericProject->cfgType = GenericCfgType::EXECUTABLE;
                 }
@@ -276,6 +274,15 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                             genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
                         }
                     }
+                }
+                
+                index = line.Find(wxT("PROP Cmd_Line"));
+                if(index != wxNOT_FOUND) {
+                    wxString cmdLine = line.Mid(index + 13).Trim().Trim(false);
+                    cmdLine.Replace(wxT("\""), wxT(""));
+                    
+                    genericProjectCfg->enableCustomBuild = true;
+                    genericProjectCfg->customBuildCmd = cmdLine;
                 }
 
                 index = line.Find(wxT("Begin Group"));

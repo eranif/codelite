@@ -167,7 +167,6 @@
   <VirtualDirectory Name="Commons">
     <File Name="xmlutils.cpp"/>
     <File Name="sync_queue.cpp"/>
-    <File Name="macros.h"/>
     <File Name="xmlutils.h"/>
     <File Name="sync_queue.h"/>
     <File Name="globals.h"/>

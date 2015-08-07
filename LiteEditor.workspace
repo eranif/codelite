@@ -49,10 +49,10 @@
   <Project Name="PHPPlugin" Path="codelitephp/php-plugin/PHPPlugin.project" Active="No"/>
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
+  <Project Name="HelpPlugin" Path="HelpPlugin/HelpPlugin.project" Active="No"/>
   <Environment>
     <![CDATA[]]>
   </Environment>
-  <Project Name="HelpPlugin" Path="HelpPlugin/HelpPlugin.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>

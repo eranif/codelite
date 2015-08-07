@@ -2,6 +2,7 @@
 #include <wx/filename.h>
 #include <wx/log.h>
 #include "processreaderthread.h"
+#include "macros.h"
 
 #ifndef __WXMSW__
 #include <signal.h>
@@ -24,11 +25,6 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
                                       bool waitOnExit,
                                       const wxString& title)
 {
-    if(m_process) {
-        // another process is running
-        return false;
-    }
-
     wxString consoleCommand;
     wxString strTitle = title;
     if(strTitle.IsEmpty()) {
@@ -49,6 +45,9 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
     } else if(wxFileName::Exists("/usr/bin/konsole")) {
         consoleCommand << "/usr/bin/konsole -e " << PrepareCommand(command, strTitle, waitOnExit);
 
+    } else if(wxFileName::Exists("/usr/bin/lxterminal")) {
+        consoleCommand << "/usr/bin/lxterminal -T " << strTitle << " -e " << PrepareCommand(command, strTitle, waitOnExit);
+
     } else if(wxFileName::Exists("/usr/bin/uxterm")) {
         consoleCommand << "/usr/bin/uxterm -T " << strTitle << " -e " << PrepareCommand(command, strTitle, waitOnExit);
 
@@ -57,13 +56,17 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
     }
 
 #elif defined(__WXMAC__)
-
+    
+    wxString consoleCommand = TERMINAL_CMD;
+    consoleCommand.Replace("$(CMD)", command);
+    wxUnusedVar(strTitle);
+    wxUnusedVar(waitOnExit);
+    
 #endif
     if(consoleCommand.IsEmpty()) return false;
     wxLogMessage(consoleCommand);
-
-    m_process = ::CreateAsyncProcess(this, consoleCommand, IProcessCreateConsole, workingDirectory);
-    return m_process != NULL;
+    
+    return ::wxExecute(consoleCommand) != 0;
 }
 
 wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& title, bool waitOnExit)

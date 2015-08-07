@@ -640,6 +640,36 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
                                         }
                                     }
                                 }
+                                
+                                if(toolChild->GetAttribute(wxT("Name")) == wxT("VCNMakeTool")) {
+                                    if(toolChild->HasAttribute(wxT("BuildCommandLine"))) {
+                                        wxString buildCommandLine = toolChild->GetAttribute(wxT("BuildCommandLine"));
+                                        if(!buildCommandLine.IsEmpty()) {
+                                            if(!genericProjectCfg->enableCustomBuild)
+                                                genericProjectCfg->enableCustomBuild = true;
+                                            
+                                            genericProjectCfg->customBuildCmd = buildCommandLine;
+                                        }
+                                    }
+                                    
+                                    if(toolChild->HasAttribute(wxT("ReBuildCommandLine"))) {
+                                        wxString reBuildCommandLine = toolChild->GetAttribute(wxT("ReBuildCommandLine"));
+                                        if(!reBuildCommandLine.IsEmpty()) {
+                                            if(!genericProjectCfg->enableCustomBuild)
+                                                genericProjectCfg->enableCustomBuild = true;
+                                            genericProjectCfg->customRebuildCmd = reBuildCommandLine;
+                                        }
+                                    }
+                                    
+                                    if(toolChild->HasAttribute(wxT("CleanCommandLine"))) {
+                                        wxString cleanCommandLine = toolChild->GetAttribute(wxT("CleanCommandLine"));
+                                        if(!cleanCommandLine.IsEmpty()) {
+                                            if(!genericProjectCfg->enableCustomBuild)
+                                                genericProjectCfg->enableCustomBuild = true;
+                                            genericProjectCfg->customCleanCmd = cleanCommandLine;
+                                        }
+                                    }
+                                }
                             }
 
                             toolChild = toolChild->GetNext();
@@ -823,6 +853,54 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                         GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                         if(genericProjectCfg) {
                             genericProjectCfg->envVars[wxT("VS_OutDir")] = outDir;
+                        }
+                    }
+                    
+                    if(propertyGroupChild->GetName() == wxT("NMakeBuildCommandLine")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString nMakeBuildCommandLine = propertyGroupChild->GetNodeContent();
+                        nMakeBuildCommandLine = ReplaceDefaultEnvVars(nMakeBuildCommandLine);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg && !nMakeBuildCommandLine.IsEmpty()) {
+                            if(!genericProjectCfg->enableCustomBuild)
+                                genericProjectCfg->enableCustomBuild = true;
+                            
+                            genericProjectCfg->customBuildCmd = nMakeBuildCommandLine;
+                        }
+                    }
+                    
+                    if(propertyGroupChild->GetName() == wxT("NMakeReBuildCommandLine")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString nMakeReBuildCommandLine = propertyGroupChild->GetNodeContent();
+                        nMakeReBuildCommandLine = ReplaceDefaultEnvVars(nMakeReBuildCommandLine);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg && !nMakeReBuildCommandLine.IsEmpty()) {
+                            if(!genericProjectCfg->enableCustomBuild)
+                                genericProjectCfg->enableCustomBuild = true;
+                            
+                            genericProjectCfg->customRebuildCmd = nMakeReBuildCommandLine;
+                        }
+                    }
+                    
+                    if(propertyGroupChild->GetName() == wxT("NMakeCleanCommandLine")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString nMakeCleanCommandLine = propertyGroupChild->GetNodeContent();
+                        nMakeCleanCommandLine = ReplaceDefaultEnvVars(nMakeCleanCommandLine);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg && !nMakeCleanCommandLine.IsEmpty()) {
+                            if(!genericProjectCfg->enableCustomBuild)
+                                genericProjectCfg->enableCustomBuild = true;
+                            
+                            genericProjectCfg->customCleanCmd = nMakeCleanCommandLine;
                         }
                     }
 

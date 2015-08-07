@@ -112,10 +112,11 @@ class WXDLLIMPEXP_SDK EditorConfig : public IConfigTool
     wxString m_svnRevision;
     wxString m_version;
     wxString m_installDir;
-    
+
     std::map<wxString, long> m_cacheLongValues;
     std::map<wxString, wxString> m_cacheStringValues;
-    
+    std::map<wxString, wxArrayString> m_cacheRecentItems;
+
 private:
     bool DoSave() const;
     bool DoLoadDefaultSettings();
@@ -213,14 +214,14 @@ public:
      * \param files  [output] a place holder for the output
      * \param nodename  the type of item to get
      */
-    void GetRecentItems(wxArrayString& files, const wxString nodeName);
+    void GetRecentItems(wxArrayString& files, const wxString& nodeName);
 
     /**
      * Set an array of recently opened items e.g. workspaces
      * \param files  list of files to save
      * \param nodename  the type of item to set
      */
-    void SetRecentItems(const wxArrayString& files, const wxString nodeName);
+    void SetRecentItems(const wxArrayString& files, const wxString& nodeName);
 
     /**
      * \brief write an archived object to the xml configuration
@@ -268,7 +269,7 @@ public:
      * \param key key identifiying the string
      * \return wxEmptyString or the value
      */
-    wxString GetString(const wxString& key, const wxString &defaultValue = "");
+    wxString GetString(const wxString& key, const wxString& defaultValue = "");
 
     /**
      * \brief

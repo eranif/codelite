@@ -3,6 +3,7 @@
 
 #include <wx/filename.h>
 #include <wx/string.h>
+#include <wx/xml/xml.h>
 #include "GenericImporter.h"
 
 class VisualCppImporter : public GenericImporter
@@ -20,7 +21,14 @@ private:
     void GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
     wxString ExtractProjectCfgName(const wxString& parentCondition, const wxString& elemCondition);
     wxString ReplaceDefaultEnvVars(const wxString& str);
-
+    void AddFilesVC7(wxXmlNode* filterChild,
+                     GenericProjectPtr genericProject,
+                     std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap,
+                     wxString preVirtualPath);
+    void AddFilesVC11(wxXmlNode* itemGroupChild,
+                      GenericProjectPtr genericProject,
+                      std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap);
+    GenericProjectFilePtr FindProjectFileByName(GenericProjectPtr genericProject, wxString filename);
     wxFileName wsInfo;
     wxString extension;
     long version;

@@ -13,6 +13,7 @@ wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
 
 TerminalEmulator::TerminalEmulator()
     : m_process(NULL)
+    , m_pid(wxNOT_FOUND)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &TerminalEmulator::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &TerminalEmulator::OnProcessTerminated, this);
@@ -66,7 +67,8 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
     if(consoleCommand.IsEmpty()) return false;
     wxLogMessage(consoleCommand);
     
-    return ::wxExecute(consoleCommand) != 0;
+    m_pid = ::wxExecute(consoleCommand);
+    return (m_pid != 0);
 }
 
 wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& title, bool waitOnExit)
@@ -110,11 +112,17 @@ void TerminalEmulator::OnProcessTerminated(clProcessEvent& event)
 void TerminalEmulator::Terminate()
 {
     if(IsRunning()) {
-        m_process->Terminate();
+        if(m_process) {
+            m_process->Terminate();
+        }
+        if(m_pid != wxNOT_FOUND) {
+            wxKill(m_pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
+            m_pid = wxNOT_FOUND;
+        }
     }
 }
 
-bool TerminalEmulator::IsRunning() const { return m_process != NULL; }
+bool TerminalEmulator::IsRunning() const { return (m_process != NULL) || (m_pid != wxNOT_FOUND); }
 
 void TerminalEmulator::OnProcessOutput(clProcessEvent& event)
 {

@@ -189,3 +189,8 @@ wxString NodeJSSocket::GetResponse()
     }
     return "";
 }
+
+void NodeJSSocket::Shutdown()
+{
+    m_socket.Disconnect();
+}

@@ -27,8 +27,7 @@
     if(!IsConnected()) return
 
 NodeJSDebugger::NodeJSDebugger()
-    : m_node(NULL)
-    , m_canInteract(false)
+    : m_canInteract(false)
 {
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeJSDebugger::OnDebugStart, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeJSDebugger::OnDebugContinue, this);
@@ -48,8 +47,8 @@ NodeJSDebugger::NodeJSDebugger()
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
 
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeTerminated, this);
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
+    m_node.Bind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSDebugger::OnNodeTerminated, this);
+    m_node.Bind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
 }
 
 NodeJSDebugger::~NodeJSDebugger()
@@ -72,12 +71,10 @@ NodeJSDebugger::~NodeJSDebugger()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION, &NodeJSDebugger::OnEvalExpression, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
 
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeTerminated, this);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSDebugger::OnNodeOutput, this);
-    if(m_node) {
-        m_node->Terminate();
-        wxDELETE(m_node);
-    }
+    m_node.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSDebugger::OnNodeTerminated, this);
+    m_node.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
+    m_node.Terminate();
+
     m_bptManager.Save();
     DoDeleteTempFiles(m_tempFiles);
     m_tempFiles.clear();
@@ -151,8 +148,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
 
     wxString command = dlg.GetCommand();
 
-    m_node = ::CreateAsyncProcess(this, command, IProcessCreateConsole);
-    if(!m_node) {
+    if(!m_node.ExecuteConsole(command, "", false, command)) {
         ::wxMessageBox(_("Failed to start NodeJS application"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
         m_socket.Reset(NULL);
     }
@@ -208,9 +204,7 @@ void NodeJSDebugger::OnStopDebugger(clDebugEvent& event)
     CHECK_RUNNING();
 
     event.Skip(false);
-    if(m_node) {
-        m_node->Terminate();
-    }
+    m_node.Terminate();
 }
 
 void NodeJSDebugger::OnToggleBreakpoint(clDebugEvent& event)
@@ -291,9 +285,7 @@ void NodeJSDebugger::ConnectionEstablished()
 void NodeJSDebugger::ConnectionLost(const wxString& errmsg)
 {
     wxUnusedVar(errmsg);
-    if(m_node) {
-        m_node->Terminate();
-    }
+    m_node.Terminate();
     m_socket.Reset(NULL);
 
     clDebugEvent event(wxEVT_NODEJS_DEBUGGER_STOPPED);
@@ -304,17 +296,17 @@ void NodeJSDebugger::ConnectionLost(const wxString& errmsg)
     ClearDebuggerMarker();
 }
 
-void NodeJSDebugger::OnNodeOutput(clProcessEvent& event)
+void NodeJSDebugger::OnNodeOutput(clCommandEvent& event)
 {
     wxUnusedVar(event);
-    CL_DEBUG("Node debugger:\n%s", event.GetOutput());
+    CL_DEBUG("Node debugger:\n%s", event.GetString());
 
     clDebugEvent eventLog(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG);
-    eventLog.SetString(event.GetOutput());
+    eventLog.SetString(event.GetString());
     EventNotifier::Get()->AddPendingEvent(eventLog);
 }
 
-void NodeJSDebugger::OnNodeTerminated(clProcessEvent& event) { wxDELETE(m_node); }
+void NodeJSDebugger::OnNodeTerminated(clCommandEvent& event) { wxUnusedVar(event); }
 
 void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
 

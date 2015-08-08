@@ -30,25 +30,40 @@
 #include "procutils.h"
 //#include <curl/curl.h>
 
-extern const wxChar *clGitRevision;
+extern const wxChar* clGitRevision;
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
 const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 
 static const size_t DLBUFSIZE = 4096;
 
-static long version_string_to_number( const wxString &versionString )
+static long version_string_to_number(const wxString& versionString)
 {
-    wxString major = versionString.BeforeFirst('.');
-    wxString minor = versionString.AfterFirst('.');
-    long nMajor, nMinor, nVersionNumber;
+    wxString major = "0";
+    wxString minor = "0";
+    wxString patch = "0";
+    wxArrayString a = ::wxStringTokenize(versionString, ".");
+    if(a.size() >= 1) {
+        major = a.Item(0);
+    }
+
+    if(a.size() >= 2) {
+        minor = a.Item(1);
+    }
+
+    if(a.size() >= 3) {
+        patch = a.Item(2);
+    }
+
+    long nMajor, nMinor, nPatch, nVersionNumber;
     major.ToCLong(&nMajor);
     minor.ToCLong(&nMinor);
-    nVersionNumber = nMajor*1000 + nMinor*100; // 5.1=>5100
+    patch.ToCLong(&nPatch);
+    nVersionNumber = (nMajor * 1000) + (nMinor * 100) + (nPatch * 10); // 5.1=>5100, 5.1.1=>5110
     return nVersionNumber;
 }
 
-WebUpdateJob::WebUpdateJob(wxEvtHandler *parent, bool userRequest)
+WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest)
     : Job(parent)
     , m_userRequest(userRequest)
 {
@@ -65,47 +80,48 @@ void WebUpdateJob::Process(wxThread* thread)
     wxFileName fn(wxT("/tmp/codelite-packages-new.txt"));
     wxString command;
 #ifdef __WXMAC__
-    command << wxT("curl http://codelite.org/packages-new.txt  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+    command << wxT("curl http://codelite.org/packages-new.txt  --output ") << fn.GetFullPath()
+            << wxT(" > /dev/null 2>&1");
 #else
-    command << "wget http://codelite.org/packages-new.txt --output-file=/dev/null -O " << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+    command << "wget http://codelite.org/packages-new.txt --output-file=/dev/null -O " << fn.GetFullPath()
+            << wxT(" > /dev/null 2>&1");
 #endif
     {
         wxLogNull noLog;
-        ::wxRemoveFile( fn.GetFullPath() );
+        ::wxRemoveFile(fn.GetFullPath());
     }
 
     wxArrayString outputArr;
     ProcUtils::SafeExecuteCommand(command, outputArr);
 
-    if ( fn.FileExists() ) {
+    if(fn.FileExists()) {
 
         wxFFile fp(fn.GetFullPath(), wxT("rb"));
-        if ( fp.IsOpened() ) {
+        if(fp.IsOpened()) {
 
             m_dataRead.Clear();
             fp.ReadAll(&m_dataRead, wxConvUTF8);
 
             ParseFile();
-
         }
     }
 
 #else
     wxURL url(wxT("http://codelite.org/packages-new.txt"));
-    if (url.GetError() == wxURL_NOERR) {
+    if(url.GetError() == wxURL_NOERR) {
 
-        wxInputStream *in_stream = url.GetInputStream();
-        if (!in_stream) {
+        wxInputStream* in_stream = url.GetInputStream();
+        if(!in_stream) {
             return;
         }
         bool shutdownRequest(false);
 
-        unsigned char buffer[DLBUFSIZE+1];
+        unsigned char buffer[DLBUFSIZE + 1];
         do {
 
             in_stream->Read(buffer, DLBUFSIZE);
             size_t bytes_read = in_stream->LastRead();
-            if (bytes_read > 0) {
+            if(bytes_read > 0) {
 
                 buffer[bytes_read] = 0;
                 wxString buffRead((const char*)buffer, wxConvUTF8);
@@ -118,8 +134,7 @@ void WebUpdateJob::Process(wxThread* thread)
                 break;
             }
 
-        } while ( !in_stream->Eof() );
-
+        } while(!in_stream->Eof());
 
         if(shutdownRequest == false) {
             delete in_stream;
@@ -131,14 +146,14 @@ void WebUpdateJob::Process(wxThread* thread)
 
 size_t WebUpdateJob::WriteData(void* buffer, size_t size, size_t nmemb, void* obj)
 {
-    WebUpdateJob *job = reinterpret_cast<WebUpdateJob*>(obj);
-    if (job) {
-        char *data = new char[size*nmemb+1];
-        memcpy(data, buffer, size*nmemb);
-        data[size*nmemb] = 0;
+    WebUpdateJob* job = reinterpret_cast<WebUpdateJob*>(obj);
+    if(job) {
+        char* data = new char[size * nmemb + 1];
+        memcpy(data, buffer, size * nmemb);
+        data[size * nmemb] = 0;
 
         job->m_dataRead.Append(_U(data));
-        delete [] data;
+        delete[] data;
         return size * nmemb;
     }
     return static_cast<size_t>(-1);
@@ -153,25 +168,25 @@ void WebUpdateJob::ParseFile()
     packageName = wxT("MAC");
 #endif
 
-    // diffrentiate between the 64bit and the 32bit packages
+// diffrentiate between the 64bit and the 32bit packages
 #ifdef ON_64_BIT
     packageName << wxT("_64");
 #endif
 
     wxArrayString lines = wxStringTokenize(m_dataRead, wxT("\n"));
-    for (size_t i=0; i<lines.GetCount(); i++) {
+    for(size_t i = 0; i < lines.GetCount(); i++) {
         wxString line = lines.Item(i);
         line = line.Trim().Trim(false);
-        if (line.StartsWith(wxT("#"))) {
-            //comment line
+        if(line.StartsWith(wxT("#"))) {
+            // comment line
             continue;
         }
 
         // parse the line
         wxArrayString tokens = wxStringTokenize(line, wxT("|"));
-        if (tokens.GetCount() > 3) {
+        if(tokens.GetCount() > 3) {
             // find the entry with our package name
-            if (tokens.Item(0).Trim().Trim(false) == packageName) {
+            if(tokens.Item(0).Trim().Trim(false) == packageName) {
                 wxString url = tokens.Item(2).Trim().Trim(false);
                 wxString rev = tokens.Item(1).Trim().Trim(false);
                 wxString releaseNotesUrl = tokens.Item(3).Trim().Trim(false);
@@ -180,24 +195,25 @@ void WebUpdateJob::ParseFile()
                 wxString sCurRev(clGitRevision);
                 wxString sNewRev(rev);
                 long nCurrentVersion, nWebSiteVersion;
-                
-                nCurrentVersion = version_string_to_number( sCurRev );
-                nWebSiteVersion = version_string_to_number( sNewRev );
-                
-                if ( nWebSiteVersion > nCurrentVersion ) {
-                    
+
+                nCurrentVersion = version_string_to_number(sCurRev);
+                nWebSiteVersion = version_string_to_number(sNewRev);
+
+                if(nWebSiteVersion > nCurrentVersion) {
+
                     // notify the user that a new version is available
                     wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-                    e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, false, m_userRequest));
+                    e.SetClientData(new WebUpdateJobData(
+                        url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, false, m_userRequest));
                     wxPostEvent(m_parent, e);
-                    
+
                 } else {
-                    
+
                     // version is up to date, notify the main thread about it
                     wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
-                    e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, true, m_userRequest));
+                    e.SetClientData(new WebUpdateJobData(
+                        url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, true, m_userRequest));
                     wxPostEvent(m_parent, e);
-                    
                 }
                 break;
             }

@@ -92,6 +92,7 @@
     <File Name="clIniFile.cpp"/>
     <File Name="clFontHelper.h"/>
     <File Name="clFontHelper.cpp"/>
+    <File Name="macros.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

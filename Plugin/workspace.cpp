@@ -161,15 +161,11 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
             }
         } else if(child->GetName() == wxT("WorkspaceParserPaths")) {
             wxString swtlw = wxEmptyString;
-            if((swtlw = m_doc.GetRoot()->GetAttribute(wxT("SWTLW"))) == wxEmptyString) {
-                LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() &
-                                                        !LocalWorkspace::EnableSWTLW);
-            } else {
-                if(swtlw == wxT("Yes")) {
-                    LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() |
-                                                            LocalWorkspace::EnableSWTLW);
-                    SyncToLocalWorkspaceSTParserPaths();
-                }
+            swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
+            if(swtlw.CmpNoCase("yes") == 0) {
+                LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() |
+                                                        LocalWorkspace::EnableSWTLW);
+                SyncToLocalWorkspaceSTParserPaths();
             }
         }
         child = child->GetNext();
@@ -201,7 +197,10 @@ bool clCxxWorkspace::OpenWorkspace(const wxString& fileName, wxString& errMsg)
     return true;
 }
 
-BuildMatrixPtr clCxxWorkspace::GetBuildMatrix() const { return m_buildMatrix; }
+BuildMatrixPtr clCxxWorkspace::GetBuildMatrix() const
+{
+    return m_buildMatrix;
+}
 
 wxXmlNode* clCxxWorkspace::GetWorkspaceEditorOptions() const
 {
@@ -279,8 +278,6 @@ bool clCxxWorkspace::CreateWorkspace(const wxString& name, const wxString& path,
     m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
     if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
-    } else {
-        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "No");
     }
 
     SaveXmlFile();
@@ -639,7 +636,8 @@ wxString clCxxWorkspace::GetActiveProjectName() const
 
 void clCxxWorkspace::SetActiveProject(const wxString& name, bool active)
 {
-    if(!m_doc.IsOk()) return;
+    if(!m_doc.IsOk())
+        return;
 
     // update the xml file
     wxXmlNode* root = m_doc.GetRoot();
@@ -703,8 +701,6 @@ bool clCxxWorkspace::SaveXmlFile()
     if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
         SyncFromLocalWorkspaceSTParserPaths();
-    } else {
-        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "No");
     }
 
     bool ok = m_doc.Save(m_fileName.GetFullPath());
@@ -792,7 +788,8 @@ bool clCxxWorkspace::AddNewFile(const wxString& vdFullPath, const wxString& file
 
     // We should have at least 2 tokens:
     // project:virtual directory
-    if(tkz.CountTokens() < 2) return false;
+    if(tkz.CountTokens() < 2)
+        return false;
 
     wxString projName = tkz.GetNextToken();
     wxString fixedPath;
@@ -889,7 +886,10 @@ void clCxxWorkspace::ReloadWorkspace()
     }
 }
 
-time_t clCxxWorkspace::GetFileLastModifiedTime() const { return GetFileModificationTime(GetWorkspaceFileName()); }
+time_t clCxxWorkspace::GetFileLastModifiedTime() const
+{
+    return GetFileModificationTime(GetWorkspaceFileName());
+}
 
 // Singelton access
 static clCxxWorkspace* gs_Workspace = NULL;
@@ -903,13 +903,15 @@ void clCxxWorkspaceST::Free()
 
 clCxxWorkspace* clCxxWorkspaceST::Get()
 {
-    if(gs_Workspace == NULL) gs_Workspace = new clCxxWorkspace;
+    if(gs_Workspace == NULL)
+        gs_Workspace = new clCxxWorkspace;
     return gs_Workspace;
 }
 
 wxString clCxxWorkspace::GetEnvironmentVariabels()
 {
-    if(!m_doc.IsOk()) return wxEmptyString;
+    if(!m_doc.IsOk())
+        return wxEmptyString;
 
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
     if(node) {
@@ -922,7 +924,8 @@ wxString clCxxWorkspace::GetEnvironmentVariabels()
 
 void clCxxWorkspace::SetEnvironmentVariabels(const wxString& envvars)
 {
-    if(!m_doc.IsOk()) return;
+    if(!m_doc.IsOk())
+        return;
 
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Environment"));
     if(node) {
@@ -951,7 +954,10 @@ wxArrayString clCxxWorkspace::GetAllProjectPaths()
     return projects;
 }
 
-bool clCxxWorkspace::IsOpen() const { return m_doc.IsOk(); }
+bool clCxxWorkspace::IsOpen() const
+{
+    return m_doc.IsOk();
+}
 
 bool clCxxWorkspace::IsVirtualDirectoryExists(const wxString& vdFullPath)
 {
@@ -1018,7 +1024,8 @@ wxFileName clCxxWorkspace::GetTagsFileName() const
 void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) const
 {
     BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
-    if(!matrix) return;
+    if(!matrix)
+        return;
 
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
     clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
@@ -1032,7 +1039,10 @@ void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) co
     }
 }
 
-ProjectPtr clCxxWorkspace::GetActiveProject() const { return GetProject(GetActiveProjectName()); }
+ProjectPtr clCxxWorkspace::GetActiveProject() const
+{
+    return GetProject(GetActiveProjectName());
+}
 
 ProjectPtr clCxxWorkspace::GetProject(const wxString& name) const
 {
@@ -1118,16 +1128,21 @@ void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newn
     EventNotifier::Get()->AddPendingEvent(event);
 }
 
-bool clCxxWorkspace::IsBuildSupported() const { return true; }
-bool clCxxWorkspace::IsProjectSupported() const { return true; }
+bool clCxxWorkspace::IsBuildSupported() const
+{
+    return true;
+}
+bool clCxxWorkspace::IsProjectSupported() const
+{
+    return true;
+}
 
 wxString clCxxWorkspace::GetFilesMask() const
 {
     wxString findInFilesMask = "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.ini;*.xml";
     if(IsOpen()) {
         wxString fifMask;
-        LocalWorkspaceST::Get()->GetSearchInFilesMask(fifMask,
-                                                      findInFilesMask);
+        LocalWorkspaceST::Get()->GetSearchInFilesMask(fifMask, findInFilesMask);
         if(fifMask.IsEmpty()) {
             fifMask = findInFilesMask;
         }

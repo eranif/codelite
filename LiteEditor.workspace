@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="LiteEditor" Database="./LiteEditor.tags" SWTLW="No">
+<CodeLite_Workspace Name="LiteEditor" Database="./LiteEditor.tags">
   <Ctags>
     <Option Name="Macros">WXUNUSED,wxT,WXMAKINGDLL,WXUSINGDLL,WXMAKINGDLL_FNB,WXUSINGDLL_FNB,WXDLLEXPORT,WXDLLIMPEXP_CORE,WXDLLIMPORT</Option>
     <Option Name="Language">C++</Option>
@@ -50,6 +50,9 @@
   <Project Name="WordCompletion" Path="WordCompletion/WordCompletion.project" Active="No"/>
   <Project Name="WebTools" Path="WebTools/WebTools.project" Active="No"/>
   <Project Name="HelpPlugin" Path="HelpPlugin/HelpPlugin.project" Active="No"/>
+  <Environment>
+    <![CDATA[]]>
+  </Environment>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
@@ -367,7 +370,4 @@
       <Project Name="HelpPlugin" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
-  <Environment>
-    <![CDATA[]]>
-  </Environment>
 </CodeLite_Workspace>

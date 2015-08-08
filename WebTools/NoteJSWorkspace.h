@@ -5,8 +5,8 @@
 #include <wx/filename.h>
 #include "cl_command_event.h"
 #include "NodeJSDebugger.h"
+#include "TerminalEmulator.h"
 
-class IProcess;
 class NodeJSWorkspaceView;
 class NodeJSWorkspace : public IWorkspace
 {
@@ -18,7 +18,7 @@ protected:
     bool m_dummy;
     bool m_showWelcomePage;
     NodeJSDebugger::Ptr_t m_debugger;
-    IProcess* m_process;
+    TerminalEmulator m_terminal;
     static NodeJSWorkspace* ms_workspace;
 
 protected:
@@ -59,8 +59,8 @@ protected:
 
     void OnStopExecute(clExecuteEvent& event);
     void OnIsExecuteInProgress(clExecuteEvent& event);
-    void OnProcessOutput(clProcessEvent& event);
-    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clCommandEvent& event);
+    void OnProcessTerminated(clCommandEvent& event);
 
     /**
      * @brief restore the workspace session

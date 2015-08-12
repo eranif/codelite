@@ -82,8 +82,8 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
                   _("Stop current search"));
     m_tb->AddTool(XRCID("recent_searches"),
                   _("Show Recent Searches"),
-                  loader.LoadBitmap(wxT("toolbars/16/build/stop")),
-                  _("Stop current search"));
+                  loader.LoadBitmap(wxT("output-pane/16/history")),
+                  _("Show Recent Searches"))->SetHasDropDown(true);
 
     Connect(XRCID("stop_search"),
             wxEVT_COMMAND_MENU_SELECTED,
@@ -346,10 +346,7 @@ void FindResultsTab::OnRepeatOutput(wxCommandEvent& e)
     SearchThreadST::Get()->PerformSearch(*searchData);
 }
 
-void FindResultsTab::OnRepeatOutputUI(wxUpdateUIEvent& e)
-{
-    e.Enable(m_sci->GetLength() > 0);
-}
+void FindResultsTab::OnRepeatOutputUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
 
 void FindResultsTab::OnMouseDClick(wxStyledTextEvent& e)
 {

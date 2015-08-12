@@ -231,7 +231,11 @@ wxString EditorConfig::GetTagsDatabase() const
     }
 }
 
-int clSortStringsFunc(const wxString& first, const wxString& second) { return second.CmpNoCase(first); }
+int clSortStringsFunc(const wxString& first, const wxString& second) { 
+    wxFileName f1(first);
+    wxFileName f2(second);
+    return f2.GetFullName().CmpNoCase(f1.GetFullName()); 
+}
 
 void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName)
 {

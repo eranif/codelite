@@ -28,6 +28,7 @@
 #include <set>
 #include "CxxLexerAPI.h"
 #include "CxxScannerTokens.h"
+#include <algorithm>
 
 bool IsWordChar(const wxString& s, int strSize)
 {
@@ -137,21 +138,24 @@ wxString ReplaceWord(const wxString& str, const wxString& word, const wxString& 
     return output;
 }
 
-wxArrayString TokenizeWords(const wxString& str)
+void TokenizeWords(const wxString& str, std::list<wxString>& outputList)
 {
-    wxArrayString outputArr;
+    outputList.clear();
     Scanner_t scanner = ::LexerNew(str);
     if(scanner) {
         CxxLexerToken token;
         while(::LexerNext(scanner, token)) {
             if(token.type == T_IDENTIFIER || token.type == T_PP_IDENTIFIER) {
-                outputArr.Add(token.text);
+                outputList.push_back(token.text);
+                // put a limit or we might run into memory issues
+                if(outputList.size() >= 1000) {
+                    break;
+                }
             }
         }
         // Destroy the lexer
         ::LexerDestroy(&scanner);
     }
-    return outputArr;
 }
 
 static PPTable* ms_instance = NULL;
@@ -207,9 +211,14 @@ void PPToken::squeeze()
         bool modified(false);
 
         // get list of possible macros in the replacement
-        wxArrayString tmpWords = TokenizeWords(replacement);
+        std::list<wxString> tmpWords;
+        TokenizeWords(replacement, tmpWords);
         wxArrayString words;
-
+        if(tmpWords.empty()) break;
+        
+        // Make room for at least tmpWords.size() items
+        words.Alloc(tmpWords.size());
+        
         // make sure that a word is not been replaced more than once
         // this will avoid recursion
         // an example (taken from qglobal.h of the Qt library):
@@ -217,12 +226,12 @@ void PPToken::squeeze()
         // #define qDebug QT_NO_QDEBUG_MACRO
         // #define QT_NO_QDEBUG_MACRO if(1); else qDebug
         //
-        for(size_t i = 0; i < tmpWords.size(); i++) {
-            if(alreadyReplacedMacros.find(tmpWords.Item(i)) == alreadyReplacedMacros.end()) {
-                alreadyReplacedMacros.insert(tmpWords[i]);
-                words.Add(tmpWords[i]);
+        std::for_each(tmpWords.begin(), tmpWords.end(), [&](const wxString& word){
+            if(alreadyReplacedMacros.count(word) == 0) {
+                alreadyReplacedMacros.insert(word);
+                words.Add(word);
             }
-        }
+        });
 
         for(size_t i = 0; i < words.size(); i++) {
             PPToken tok = PPTable::Instance()->Token(words.Item(i));

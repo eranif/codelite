@@ -47,7 +47,8 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
         consoleCommand << "/usr/bin/konsole -e " << PrepareCommand(command, strTitle, waitOnExit);
 
     } else if(wxFileName::Exists("/usr/bin/lxterminal")) {
-        consoleCommand << "/usr/bin/lxterminal -T " << strTitle << " -e " << PrepareCommand(command, strTitle, waitOnExit);
+        consoleCommand << "/usr/bin/lxterminal -T " << strTitle << " -e "
+                       << PrepareCommand(command, strTitle, waitOnExit);
 
     } else if(wxFileName::Exists("/usr/bin/uxterm")) {
         consoleCommand << "/usr/bin/uxterm -T " << strTitle << " -e " << PrepareCommand(command, strTitle, waitOnExit);
@@ -57,17 +58,19 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
     }
 
 #elif defined(__WXMAC__)
-    
+
     wxString consoleCommand = TERMINAL_CMD;
     consoleCommand.Replace("$(CMD)", command);
     wxUnusedVar(strTitle);
     wxUnusedVar(waitOnExit);
-    
+
 #endif
     if(consoleCommand.IsEmpty()) return false;
     wxLogMessage(consoleCommand);
     
-    m_pid = ::wxExecute(consoleCommand);
+    // Create the process as group leader, this way we make sure that killing it
+    // will also kill all the children processes
+    m_pid = ::wxExecute(consoleCommand, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
     return (m_pid != 0);
 }
 

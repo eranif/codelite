@@ -130,21 +130,16 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
 
     // 33 is the style for line numbers
     sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, props[33].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_LINE_NUMBER, props[33].GetBgColour());
 
     // 11 is the style number for "identifier"
     sci->StyleSetForeground(LEX_FIF_MATCH, props[11].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_MATCH, props[11].GetBgColour());
 
     // 16 is the stule for colouring classes
     sci->StyleSetForeground(LEX_FIF_SCOPE, props[16].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_SCOPE, props[16].GetBgColour());
 
     sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, props[wxSTC_C_COMMENTLINE].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_MATCH_COMMENT, props[wxSTC_C_COMMENTLINE].GetBgColour());
 
     sci->StyleSetForeground(LEX_FIF_FILE, props[wxSTC_C_WORD].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_FILE, props[wxSTC_C_WORD].GetBgColour());
     sci->StyleSetEOLFilled(LEX_FIF_FILE, true);
 
     sci->StyleSetForeground(LEX_FIF_DEFAULT, props[11].GetFgColour());

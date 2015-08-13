@@ -1,5 +1,5 @@
 
-#line 3 "PhpLexer.cpp"
+#line 3 "/home/eran/devl/codelite/CodeLite/PhpLexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 

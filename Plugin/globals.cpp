@@ -825,13 +825,12 @@ void WrapInShell(wxString& cmd)
     if(!shell) shell = (wxChar*)wxT("CMD.EXE");
 
     command << shell << wxT(" /C ");
-    if(EditorConfigST::Get()->GetOptions()->MSWIsWrapCmdWithDoubleQuotes()) {
-        command << "\"" << cmd << "\"";
+    if(cmd.StartsWith("\"")) {
+        command << "\"" << cmd << "\"\"";
     } else {
         command << cmd;
     }
     cmd = command;
-
 #else
     command << wxT("/bin/sh -c '");
     // escape any single quoutes

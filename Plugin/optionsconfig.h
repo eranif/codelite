@@ -407,7 +407,7 @@ public:
     void SetWrapSelectionBrackets(bool b) { return EnableOption(Opt_WrapBrackets, b); }
 
     void MSWWrapCmdWithDoubleQuotes(bool b) { EnableOption(Opt_WrapCmdWithDoubleQuotes, b); }
-    bool MSWIsWrapCmdWithDoubleQuotes() const { return HasOption(Opt_WrapCmdWithDoubleQuotes); }
+    bool MSWIsWrapCmdWithDoubleQuotes() const { return true; }
 
     /**
      * Return an XML representation of this object

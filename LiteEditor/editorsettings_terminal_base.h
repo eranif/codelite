@@ -28,7 +28,6 @@ class EditorSettingsTerminalBase : public wxPanel
 {
 protected:
     wxCheckBox* m_checkBoxUseCodeLiteTerminal;
-    wxCheckBox* m_checkBoxMSWWrapDoubleQuotes;
     wxStaticText* m_staticText2;
     wxTextCtrl* m_textCtrlProgramConsoleCmd;
     wxStaticText* m_staticText3;
@@ -37,12 +36,10 @@ protected:
     wxStaticText* m_staticText6;
 
 protected:
-    virtual void OnCheckboxmswwrapdoublequotesUpdateUi(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckBoxUseCodeLiteTerminal() { return m_checkBoxUseCodeLiteTerminal; }
-    wxCheckBox* GetCheckBoxMSWWrapDoubleQuotes() { return m_checkBoxMSWWrapDoubleQuotes; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxTextCtrl* GetTextCtrlProgramConsoleCmd() { return m_textCtrlProgramConsoleCmd; }
     wxStaticText* GetStaticText3() { return m_staticText3; }

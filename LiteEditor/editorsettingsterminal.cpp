@@ -33,14 +33,12 @@ EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent)
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_textCtrlProgramConsoleCmd->SetValue(options->GetProgramConsoleCommand());
     m_checkBoxUseCodeLiteTerminal->SetValue(options->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal));
-    m_checkBoxMSWWrapDoubleQuotes->SetValue(options->MSWIsWrapCmdWithDoubleQuotes());
 }
 
 void EditorSettingsTerminal::Save(OptionsConfigPtr options)
 {
     options->SetProgramConsoleCommand(m_textCtrlProgramConsoleCmd->GetValue());
     options->EnableOption(OptionsConfig::Opt_Use_CodeLite_Terminal, m_checkBoxUseCodeLiteTerminal->IsChecked());
-    options->MSWWrapCmdWithDoubleQuotes(m_checkBoxMSWWrapDoubleQuotes->IsChecked());
 }
 
 void EditorSettingsTerminal::OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event)

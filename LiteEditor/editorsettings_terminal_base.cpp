@@ -31,12 +31,6 @@ EditorSettingsTerminalBase::EditorSettingsTerminalBase(wxWindow* parent, wxWindo
     
     bSizer1->Add(m_checkBoxUseCodeLiteTerminal, 0, wxALL, 5);
     
-    m_checkBoxMSWWrapDoubleQuotes = new wxCheckBox(this, wxID_ANY, _("Windows only: commands executed with CMD.EXE are wrapped with double quotes"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxMSWWrapDoubleQuotes->SetValue(true);
-    m_checkBoxMSWWrapDoubleQuotes->SetToolTip(_("Windows only: commands executed with CMD.EXE are wrapped with double quotes\nThis is often needed to allow executing commands with spaces in their path"));
-    
-    bSizer1->Add(m_checkBoxMSWWrapDoubleQuotes, 0, wxALL, 5);
-    
     m_staticText2 = new wxStaticText(this, wxID_ANY, _("Enter here the command to be used by CodeLite for launching consoles:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer1->Add(m_staticText2, 0, wxALL|wxEXPAND, 5);
@@ -82,7 +76,6 @@ EditorSettingsTerminalBase::EditorSettingsTerminalBase(wxWindow* parent, wxWindo
     }
     CentreOnParent(wxBOTH);
     // Connect events
-    m_checkBoxMSWWrapDoubleQuotes->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnCheckboxmswwrapdoublequotesUpdateUi), NULL, this);
     m_staticText2->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_textCtrlProgramConsoleCmd->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_staticText3->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
@@ -94,7 +87,6 @@ EditorSettingsTerminalBase::EditorSettingsTerminalBase(wxWindow* parent, wxWindo
 
 EditorSettingsTerminalBase::~EditorSettingsTerminalBase()
 {
-    m_checkBoxMSWWrapDoubleQuotes->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnCheckboxmswwrapdoublequotesUpdateUi), NULL, this);
     m_staticText2->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_textCtrlProgramConsoleCmd->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);
     m_staticText3->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsTerminalBase::OnUseCodeLiteTerminalUI), NULL, this);

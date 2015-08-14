@@ -323,6 +323,9 @@ PPToken::readInitList(const std::string& in, size_t from, std::string& initList,
 
 bool PPToken::readInitList(const wxString& in, int from, wxString& initList, wxArrayString& initListArr)
 {
+    // sanity
+    if(in.length() > 100) return false;
+    
     if((int)in.Length() < from) {
         return false;
     }

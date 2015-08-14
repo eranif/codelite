@@ -450,7 +450,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
     }
 
     // Process the macros
-    PPTable::Instance()->Squeeze();
+    //PPTable::Instance()->Squeeze();
     const std::map<wxString, PPToken>& table = PPTable::Instance()->GetTable();
 
     // Store the macros

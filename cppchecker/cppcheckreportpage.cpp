@@ -259,7 +259,7 @@ void CppCheckReportPage::DoInitStyle()
     LexerConf::Ptr_t config = EditorConfigST::Get()->GetLexer("text");
     if(config) {
         config->Apply(m_stc, true);
-        //m_stc->HideSelection(true);
+        m_stc->HideSelection(true);
 
     } else {
         // Initialize the output text style

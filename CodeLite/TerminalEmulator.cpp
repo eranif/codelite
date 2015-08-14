@@ -14,12 +14,20 @@ wxDEFINE_EVENT(wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
 TerminalEmulator::TerminalEmulator()
     : m_process(NULL)
     , m_pid(wxNOT_FOUND)
+    , m_timer(NULL)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &TerminalEmulator::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &TerminalEmulator::OnProcessTerminated, this);
+    m_timer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &TerminalEmulator::OnCheckProcessAlive, this, m_timer->GetId());
 }
 
-TerminalEmulator::~TerminalEmulator() {}
+TerminalEmulator::~TerminalEmulator()
+{
+    Unbind(wxEVT_TIMER, &TerminalEmulator::OnCheckProcessAlive, this, m_timer->GetId());
+    m_timer->Stop();
+    wxDELETE(m_timer);
+}
 
 bool TerminalEmulator::ExecuteConsole(const wxString& command,
                                       const wxString& workingDirectory,
@@ -33,7 +41,7 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
     } else {
         strTitle.Prepend("'").Append("'");
     }
-
+    m_timer->Stop();
 #ifdef __WXMSW__
     consoleCommand = PrepareCommand(command, strTitle, waitOnExit);
 
@@ -67,11 +75,15 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
 #endif
     if(consoleCommand.IsEmpty()) return false;
     wxLogMessage(consoleCommand);
-    
+
     // Create the process as group leader, this way we make sure that killing it
     // will also kill all the children processes
     m_pid = ::wxExecute(consoleCommand, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
-    return (m_pid != 0);
+    bool res = (m_pid != 0);
+    if(res) {
+        m_timer->Start(150);
+    }
+    return res;
 }
 
 wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& title, bool waitOnExit)
@@ -91,7 +103,7 @@ wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& t
 #elif defined(__WXMSW__)
     // Windows
     wxString escapedString = str;
-    command << "cmd /c call title " << title << " && " << escapedString;
+    command << "cmd /C call title \"Node.js\" && " << escapedString;
     if(waitOnExit) {
         command << " && echo \"\" && pause";
     }
@@ -106,7 +118,8 @@ void TerminalEmulator::OnProcessTerminated(clProcessEvent& event)
 {
     // Process terminated
     wxDELETE(m_process);
-
+    m_pid = wxNOT_FOUND;
+    m_timer->Stop();
     // Notify that the terminal has terminated
     clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);
     AddPendingEvent(terminateEvent);
@@ -121,6 +134,7 @@ void TerminalEmulator::Terminate()
         if(m_pid != wxNOT_FOUND) {
             wxKill(m_pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
             m_pid = wxNOT_FOUND;
+            m_timer->Stop();
         }
     }
 }
@@ -161,4 +175,32 @@ bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxSt
     wxLogMessage("TerminalEmulator::ExecuteNoConsole: %s", command);
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole, workingDirectory);
     return m_process != NULL;
+}
+
+void TerminalEmulator::OnCheckProcessAlive(wxTimerEvent& event)
+{
+    if(m_pid != wxNOT_FOUND) {
+        bool isAlive;
+#ifdef __WXMSW__
+        HANDLE hProcess = ::OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION,
+                                        FALSE, // not inheritable
+                                        (DWORD)m_pid);
+        if(hProcess != NULL) {
+            DWORD exitCode;
+            GetExitCodeProcess(hProcess, &exitCode);
+            CloseHandle(hProcess);
+            isAlive = (exitCode == STILL_ACTIVE);
+        } else {
+            isAlive = false;
+        }
+#else
+        isAlive = (::kill(m_pid, 0) == 0);
+#endif
+        if(!isAlive) {
+            clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);
+            AddPendingEvent(terminateEvent);
+            m_pid = wxNOT_FOUND;
+            m_timer->Stop();
+        }
+    }
 }

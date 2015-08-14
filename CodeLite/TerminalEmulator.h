@@ -7,6 +7,7 @@
 #include "cl_command_event.h"
 #include <wx/process.h>
 #include "asyncprocess.h"
+#include <wx/timer.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
@@ -15,10 +16,12 @@ class WXDLLIMPEXP_CL TerminalEmulator : public wxEvtHandler
 {
     IProcess* m_process;
     long m_pid;
+    wxTimer* m_timer;
 
 protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
+    void OnCheckProcessAlive(wxTimerEvent& event);
 
 public:
     TerminalEmulator();

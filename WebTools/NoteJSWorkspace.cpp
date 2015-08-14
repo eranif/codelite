@@ -62,7 +62,7 @@ NodeJSWorkspace::~NodeJSWorkspace()
         m_debugger.Reset(NULL);
         m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSWorkspace::OnProcessTerminated, this);
         m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
-        
+
         m_terminal.Terminate();
     }
 }
@@ -317,7 +317,11 @@ void NodeJSWorkspace::OnProcessOutput(clCommandEvent& event)
     clGetManager()->AppendOutputTabText(kOutputTab_Output, event.GetString());
 }
 
-void NodeJSWorkspace::OnProcessTerminated(clCommandEvent& event) { wxUnusedVar(event); }
+void NodeJSWorkspace::OnProcessTerminated(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    EventNotifier::Get()->TopFrame()->Raise();
+}
 
 void NodeJSWorkspace::OnIsExecuteInProgress(clExecuteEvent& event)
 {

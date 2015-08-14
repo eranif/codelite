@@ -306,7 +306,11 @@ void NodeJSDebugger::OnNodeOutput(clCommandEvent& event)
     EventNotifier::Get()->AddPendingEvent(eventLog);
 }
 
-void NodeJSDebugger::OnNodeTerminated(clCommandEvent& event) { wxUnusedVar(event); }
+void NodeJSDebugger::OnNodeTerminated(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    EventNotifier::Get()->TopFrame()->Raise();
+}
 
 void NodeJSDebugger::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
 

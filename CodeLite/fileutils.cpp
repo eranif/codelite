@@ -108,8 +108,15 @@ void FileUtils::OpenTerminal(const wxString& path)
     cmd = GTKGetTerminal("");
 
 #elif defined(__WXMAC__)
+    strPath = path;
+    if(strPath.Contains(" ")) {
+        strPath.Prepend("\\\"").Append("\\\"");
+    }
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath << "\"'";
+    CL_DEBUG(cmd);
+    ::system(cmd.mb_str(wxConvUTF8).data());
+    return;
 #endif
     if(cmd.IsEmpty()) return;
     ::wxExecute(cmd);

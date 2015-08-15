@@ -159,8 +159,10 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
     tty.Clear();
     wxString command;
     wxString tmpfile;
+    wxString escapedPath = path;
+    escapedPath.Replace(" ", "\\ ");
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
-    command << "osascript -e 'tell app \"Terminal\" to do script \"cd " << path << " && tty > " << tmpfile
+    command << "osascript -e 'tell app \"Terminal\" to do script \"cd " << escapedPath << " && tty > " << tmpfile
             << " && clear && sleep 12345\"'";
     CL_DEBUG("Executing: %s", command);
     long res = ::wxExecute(command);

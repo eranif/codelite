@@ -78,7 +78,7 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
 
 #elif defined(__WXMAC__)
 
-    wxString consoleCommand = TERMINAL_CMD;
+    consoleCommand = TERMINAL_CMD;
     consoleCommand.Replace("$(CMD)", command);
     wxUnusedVar(strTitle);
     wxUnusedVar(waitOnExit);

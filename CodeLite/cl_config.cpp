@@ -66,10 +66,7 @@ clConfig::clConfig(const wxString& filename)
     }
 }
 
-clConfig::~clConfig()
-{
-    wxDELETE(m_root);
-}
+clConfig::~clConfig() { wxDELETE(m_root); }
 
 clConfig& clConfig::Get()
 {
@@ -387,4 +384,60 @@ void clConfig::Write(const wxString& name, const wxArrayString& value)
 
     general.addProperty(name, value);
     Save();
+}
+
+void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filename)
+{
+    wxArrayString recentItems = DoGetRecentItems(propName);
+    
+    // Prepend the item
+    if(recentItems.Index(filename) != wxNOT_FOUND) {
+        recentItems.Remove(filename);
+    }
+    recentItems.Insert(filename, 0);
+    
+    // Remove old node if exists
+    JSONElement e = m_root->toElement();
+    if(e.hasNamedObject(propName)) {
+        e.removeProperty(propName);
+    }
+    
+    // append new property 
+    e.addProperty(propName, recentItems);
+
+    // update the cache
+    if(m_cacheRecentItems.count(propName)) {
+        m_cacheRecentItems.erase(propName);
+    }
+    m_cacheRecentItems.insert(std::make_pair(propName, recentItems));
+    m_root->save(m_filename);
+}
+
+void clConfig::DoClearRecentItems(const wxString& propName)
+{
+    JSONElement e = m_root->toElement();
+    if(e.hasNamedObject(propName)) {
+        e.removeProperty(propName);
+    }
+    m_root->save(m_filename);
+    // update the cache
+    if(m_cacheRecentItems.count(propName)) {
+        m_cacheRecentItems.erase(propName);
+    }
+}
+
+wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
+{
+    wxArrayString recentItems;
+    
+    // Try the cache first
+    if(m_cacheRecentItems.count(propName)) {
+        return m_cacheRecentItems.find(propName)->second;
+    }
+    
+    JSONElement e = m_root->toElement();
+    if(e.hasNamedObject(propName)) {
+        recentItems = e.namedObject(propName).toArrayString();
+    }
+    return recentItems;
 }

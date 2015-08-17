@@ -460,10 +460,8 @@ void Manager::AddToRecentlyOpenedWorkspaces(const wxString& fileName)
     m_recentWorkspaces.AddFileToHistory(fileName);
 
     // sync between the history object and the configuration file
-    wxArrayString files;
-    m_recentWorkspaces.GetFiles(files);
-    EditorConfigST::Get()->SetRecentItems(files, wxT("RecentWorkspaces"));
-
+    clConfig::Get().AddRecentWorkspace(fileName);
+    
     // The above call to AddFileToHistory() rewrote the Recent Workspaces menu
     // Unfortunately it rewrote it with path/to/foo.workspace, and we'd prefer
     // not to display the extension. So reload it again the way we like it :)
@@ -476,13 +474,12 @@ void Manager::ClearWorkspaceHistory()
     for(size_t i = 0; i < count; i++) {
         m_recentWorkspaces.RemoveFileFromHistory(0);
     }
-    wxArrayString files;
-    EditorConfigST::Get()->SetRecentItems(files, wxT("RecentWorkspaces"));
+    clConfig::Get().ClearRecentWorkspaces();
 }
 
 void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files)
 {
-    EditorConfigST::Get()->GetRecentItems(files, wxT("RecentWorkspaces"));
+    files = clConfig::Get().GetRecentWorkspaces();
 }
 
 //--------------------------- Workspace Projects Mgmt -----------------------------

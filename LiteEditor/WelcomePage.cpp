@@ -70,7 +70,6 @@ void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)
 {
     wxArrayString recentFiles;
     clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(recentFiles);
-    recentFiles.Sort();
 
     int id = DoGetPopupMenuSelection(m_cmdLnkBtnFilesMenu, recentFiles, _("Select file to open"));
     if(id != wxID_NONE) {
@@ -86,8 +85,8 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
     //  files.Sort();
 
     wxArrayString recentWorkspaces;
-    for(size_t i = files.GetCount(); i > 0; --i) {
-        wxFileName fn(files.Item(i - 1));
+    for(size_t i = 0; i < files.size(); ++i) {
+        wxFileName fn(files.Item(i));
         recentWorkspaces.Add(fn.GetName() + " @ " + fn.GetFullPath());
     }
 
@@ -115,7 +114,7 @@ WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayStri
     wxUnusedVar(menuTitle);
     wxMenu menu;
 
-    for(size_t i = 0; i < strings.GetCount(); i++) {
+    for(size_t i = 0; i < strings.GetCount(); ++i) {
 
         wxBitmap bmp = bmps[FileExtManager::TypeText];
         wxString filename = strings.Item(i);
@@ -166,10 +165,7 @@ void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
     event.Enable(!files.IsEmpty());
 }
 
-void WelcomePage::OnThemeChanged(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void WelcomePage::OnThemeChanged(wxCommandEvent& e) { e.Skip(); }
 
 void WelcomePage::OnNewWorkspace(wxCommandEvent& event)
 {

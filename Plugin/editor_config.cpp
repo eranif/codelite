@@ -245,7 +245,7 @@ void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName
 
     if(m_cacheRecentItems.count(nodeName)) {
         files = m_cacheRecentItems.find(nodeName)->second;
-        files.Sort(clSortStringsFunc);
+        //files.Sort(clSortStringsFunc);
         return;
     }
 
@@ -262,7 +262,7 @@ void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName
             child = child->GetNext();
         }
     }
-    files.Sort(clSortStringsFunc);
+    //files.Sort(clSortStringsFunc);
 }
 
 void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& nodeName)

@@ -269,13 +269,12 @@ void MainBook::ClearFileHistory()
     for(size_t i = 0; i < count; i++) {
         m_recentFiles.RemoveFileFromHistory(0);
     }
-    wxArrayString files;
-    EditorConfigST::Get()->SetRecentItems(files, wxT("RecentFiles"));
+    clConfig::Get().ClearRecentFiles();
 }
 
 void MainBook::GetRecentlyOpenedFiles(wxArrayString& files)
 {
-    EditorConfigST::Get()->GetRecentItems(files, wxT("RecentFiles"));
+    files = clConfig::Get().GetRecentFiles();
 }
 
 void MainBook::UpdateNavBar(LEditor* editor)
@@ -623,9 +622,7 @@ LEditor* MainBook::OpenFile(const wxString& file_name,
     // if it's already on the list, wxFileHistory will move it to the top
     // Also, sync between the history object and the configuration file
     m_recentFiles.AddFileToHistory(fileName.GetFullPath());
-    wxArrayString files;
-    m_recentFiles.GetFiles(files);
-    EditorConfigST::Get()->SetRecentItems(files, wxT("RecentFiles"));
+    clConfig::Get().AddRecentFile(fileName.GetFullPath());
 
     if(extra & OF_AddJump) {
         BrowseRecord jumpto = editor->CreateBrowseRecord();

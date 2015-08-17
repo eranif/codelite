@@ -569,6 +569,8 @@
     <File Name="ContextPhp.cpp"/>
     <File Name="ContextJavaScript.h"/>
     <File Name="ContextJavaScript.cpp"/>
+    <File Name="clPrintout.h"/>
+    <File Name="clPrintout.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

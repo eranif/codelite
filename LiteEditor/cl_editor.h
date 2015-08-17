@@ -46,6 +46,7 @@
 #include "bookmark_manager.h"
 #include "cl_unredo.h"
 #include "clEditorStateLocker.h"
+#include <wx/cmndata.h>
 
 #define DEBUGGER_INDICATOR 11
 #define MATCH_INDICATOR 10
@@ -231,11 +232,12 @@ protected:
     OptionsConfigPtr m_options;
     bool m_hasCCAnnotation;
     wxRichToolTip* m_richTooltip;
-    
+
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
     static bool m_ccInitialized;
+
     typedef std::vector<LEditor*> Vec_t;
 
     IManager* GetManager() { return m_mgr; }
@@ -268,6 +270,11 @@ public:
     // Save content of the editor to a given file (Save As...)
     // this function prompts the user for selecting file name
     bool SaveFileAs();
+
+    /**
+     * @brief print the editor content using the printing framework
+     */
+    void Print();
 
     /**
      * @brief split the current selection into multiple carets.
@@ -410,12 +417,12 @@ public:
      * @brief center the line in the editor
      */
     void CenterLine(int line, int col = wxNOT_FOUND);
-    
+
     /**
      * @brief center the editor at a given line, but preserve the selection
      */
     void CenterLinePreserveSelection(int line);
-    
+
     /**
      * @brief Center line if needed (i.e. only if the line is not visible)
      */

@@ -45,6 +45,7 @@
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
 #include "attribute_style.h"
+#include <algorithm>
 
 // Custom styles
 #define LEX_FIF_DEFAULT 0
@@ -76,6 +77,9 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
                       wxCommandEventHandler(FindResultsTab::OnFindInFiles),
                       NULL,
                       this);
+    m_tb->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &FindResultsTab::OnRecentSearches, this, XRCID("recent_searches"));
+    m_tb->Bind(wxEVT_UPDATE_UI, &FindResultsTab::OnRecentSearchesUI, this, XRCID("recent_searches"));
+
     m_tb->AddTool(XRCID("stop_search"),
                   _("Stop current search"),
                   loader.LoadBitmap(wxT("toolbars/16/build/stop")),
@@ -124,7 +128,12 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
         sci->StyleSetFont(i, defaultFont);
     }
 
+    // Show the whitespace
+    sci->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
     StyleProperty::Map_t& props = lexer->GetLexerProperties();
+    // Set the whitespace colours
+    sci->SetWhitespaceForeground(true, props[WHITE_SPACE_ATTR_ID].GetFgColour());
+
     sci->StyleSetForeground(LEX_FIF_HEADER, props[11].GetFgColour());
     sci->StyleSetBackground(LEX_FIF_HEADER, props[11].GetBgColour());
 
@@ -190,6 +199,8 @@ void FindResultsTab::AppendText(const wxString& line)
 void FindResultsTab::Clear()
 {
     m_matchInfo.clear();
+    m_indicators.clear();
+    m_searchTitle.clear();
     OutputTabWindow::Clear();
 }
 
@@ -218,6 +229,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
     SearchData* data = (SearchData*)e.GetClientData();
     if(data) {
         m_searchData = *data;
+        m_searchTitle = data->GetFindString();
 
         wxString message;
         message << _("====== Searching for: '") << data->GetFindString() << _("'; Match case: ")
@@ -248,10 +260,10 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
         int lineno = m_sci->GetLineCount() - 1;
         m_matchInfo.insert(std::make_pair(lineno, *iter));
         wxString text = iter->GetPattern();
-        int delta = -text.Length();
-        text.Trim(false);
-        delta += text.Length();
-        text.Trim();
+        // int delta = -text.Length();
+        // text.Trim(false);
+        // delta += text.Length();
+        // text.Trim();
 
         wxString linenum = wxString::Format(wxT(" %5u "), iter->GetLineNumber());
         SearchData* d = GetSearchData();
@@ -267,9 +279,11 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
             iter->SetScope(scopeName);
         }
 
-        delta += linenum.Length();
         AppendText(linenum + text + wxT("\n"));
-        m_sci->IndicatorFillRange(m_sci->PositionFromLine(lineno) + iter->GetColumn() + delta, iter->GetLen());
+        int indicatorStartPos = m_sci->PositionFromLine(lineno) + iter->GetColumn() + linenum.Length();
+        int indicatorLen = iter->GetLen();
+        m_indicators.push_back(indicatorStartPos);
+        m_sci->IndicatorFillRange(indicatorStartPos, indicatorLen);
     }
     wxDELETE(res);
 }
@@ -301,6 +315,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     }
 
     delete summary;
+    SaveSearchData();
 
     // We need to tell all editors that there's been a (new) search
     // This lets them clear any already-saved line-changes,
@@ -321,6 +336,7 @@ void FindResultsTab::OnSearchCancel(wxCommandEvent& e)
     wxString* str = (wxString*)e.GetClientData();
     if(!str) return;
     AppendText((*str) + wxT("\n"));
+    SaveSearchData();
     wxDELETE(str);
 }
 
@@ -573,6 +589,69 @@ void FindResultsTab::OnThemeChanged(wxCommandEvent& e)
     e.Skip();
     SetStyles(m_sci);
 }
+
+void FindResultsTab::OnRecentSearches(wxAuiToolBarEvent& e)
+{
+    // Show the menu
+    wxMenu menu;
+
+    const int firstID = 8000;
+    int counter = 0;
+    std::map<int, History> entries;
+    std::for_each(m_history.Begin(), m_history.End(), [&](const std::pair<wxString, History>& p) {
+        menu.Append(firstID + counter, p.first);
+        entries.insert(std::make_pair(firstID + counter, p.second));
+        ++counter;
+    });
+
+    menu.AppendSeparator();
+    menu.Append(wxID_CLEAR, _("Clear History"));
+    int sel = GetPopupMenuSelectionFromUser(menu, e.GetItemRect().GetTopRight());
+    if(sel == wxID_NONE) return;
+    if(sel == wxID_CLEAR) {
+        m_history.Clear();
+        
+    } else if(entries.count(sel)) {
+        const History& h = entries.find(sel)->second;
+        LoadSearch(h);
+    }
+}
+
+void FindResultsTab::SaveSearchData()
+{
+    History entry;
+    entry.text = m_sci->GetText();
+    entry.searchData = m_searchData;
+    entry.title = m_searchTitle;
+    entry.matchInfo = m_matchInfo;
+
+    // Save the indicators as well
+    entry.indicators = m_indicators;
+
+    // search for an entry with the same title
+    if(m_history.Contains(entry.title)) {
+        m_history.Remove(entry.title);
+    }
+    m_history.PushBack(entry.title, entry);
+}
+
+void FindResultsTab::LoadSearch(const History& h)
+{
+    m_searchData = h.searchData;
+    m_matchInfo = h.matchInfo;
+    m_searchTitle = h.title;
+    m_sci->SetEditable(true);
+    m_sci->ClearAll();
+    m_sci->SetText(h.text);
+
+    // restore the indicators
+    std::for_each(
+        h.indicators.begin(), h.indicators.end(), [&](int pos) { m_sci->IndicatorFillRange(pos, h.title.length()); });
+    m_sci->SetFirstVisibleLine(0);
+    m_sci->SetEditable(false);
+}
+
+void FindResultsTab::OnRecentSearchesUI(wxUpdateUIEvent& e) { e.Enable(!m_history.IsEmpty() && !m_searchInProgress); }
 
 /////////////////////////////////////////////////////////////////////////////////
 

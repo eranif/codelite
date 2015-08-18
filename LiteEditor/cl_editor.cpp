@@ -80,6 +80,8 @@
 #include <wx/regex.h>
 #include "clPrintout.h"
 #include <wx/printdlg.h>
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 //#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
@@ -5242,14 +5244,16 @@ void LEditor::Print()
     if(g_printData == NULL) {
         g_printData = new wxPrintData();
         g_pageSetupData = new wxPageSetupDialogData();
-        
-        (*g_pageSetupData) = * g_printData;
-        wxPageSetupDialog pageSetupDialog(this, g_pageSetupData);
-        pageSetupDialog.ShowModal();
-        (*g_printData) = pageSetupDialog.GetPageSetupData().GetPrintData();
-        (*g_pageSetupData) = pageSetupDialog.GetPageSetupData();
+        (*g_pageSetupData) = *g_printData;
+        PageSetup();
     }
-
+    
+    // Black on White print mode
+    SetPrintColourMode(wxSTC_PRINT_BLACKONWHITE);
+    
+    // No magnifications
+    SetPrintMagnification(0);
+    
     wxPrintDialogData printDialogData(*g_printData);
     wxPrinter printer(&printDialogData);
     clPrintout printout(this, GetFileName().GetFullPath());
@@ -5263,6 +5267,19 @@ void LEditor::Print()
     } else {
         (*g_printData) = printer.GetPrintDialogData().GetPrintData();
     }
+}
+
+void LEditor::PageSetup()
+{
+    if(g_printData == NULL) {
+        g_printData = new wxPrintData();
+        g_pageSetupData = new wxPageSetupDialogData();
+        (*g_pageSetupData) = *g_printData;
+    }
+    wxPageSetupDialog pageSetupDialog(this, g_pageSetupData);
+    pageSetupDialog.ShowModal();
+    (*g_printData) = pageSetupDialog.GetPageSetupData().GetPrintData();
+    (*g_pageSetupData) = pageSetupDialog.GetPageSetupData();
 }
 
 // ----------------------------------

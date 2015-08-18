@@ -8,6 +8,8 @@ extern wxPageSetupDialogData* g_pageSetupData;
 
 clPrintout::clPrintout(LEditor* edit, const wxChar* title)
     : wxPrintout(title)
+    , m_minPage(0)
+    , m_maxPage(0)
 {
     m_edit = edit;
     m_printed = 0;
@@ -76,16 +78,20 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
     m_printRect = wxRect(left, top, page.x - (left + right), page.y - (top + bottom));
 
     // count pages
-    while(HasPage(*maxPage)) {
+    while((m_printed < m_edit->GetLength())) {
         m_printed = m_edit->FormatRange(0, m_printed, m_edit->GetLength(), dc, dc, m_printRect, m_pageRect);
         *maxPage += 1;
     }
+    
     if(*maxPage > 0) *minPage = 1;
     *selPageFrom = *minPage;
     *selPageTo = *maxPage;
+
+    m_minPage = *minPage;
+    m_maxPage = *maxPage;
 }
 
-bool clPrintout::HasPage(int WXUNUSED(page)) { return (m_printed < m_edit->GetLength()); }
+bool clPrintout::HasPage(int page) { return (page >= m_minPage) && (page <= m_maxPage); }
 
 bool clPrintout::PrintScaling(wxDC* dc)
 {

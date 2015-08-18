@@ -386,6 +386,7 @@ protected:
     void OnViewToolbar(wxCommandEvent& event);
     void OnViewToolbarUI(wxUpdateUIEvent& event);
     void OnPrint(wxCommandEvent& event);
+    void OnPageSetup(wxCommandEvent& event);
 
     // View -> Workspace View -> ...
     void OnViewShowWorkspaceTab(wxCommandEvent& e);

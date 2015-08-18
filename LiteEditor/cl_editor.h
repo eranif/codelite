@@ -275,7 +275,12 @@ public:
      * @brief print the editor content using the printing framework
      */
     void Print();
-
+    
+    /**
+     * @brief setup the print page
+     */
+    void PageSetup();
+    
     /**
      * @brief split the current selection into multiple carets.
      * i.e. place a caret at the end of each line in the selection

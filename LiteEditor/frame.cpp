@@ -218,6 +218,7 @@ EVT_MENU(wxID_EXIT, clMainFrame::OnQuit)
 // print
 EVT_MENU(wxID_PRINT, clMainFrame::OnPrint)
 EVT_UPDATE_UI(wxID_PRINT, clMainFrame::OnFileExistUpdateUI)
+EVT_MENU(wxID_PAGE_SETUP, clMainFrame::OnPageSetup)
 
 EVT_UPDATE_UI(XRCID("refresh_file"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("save_file"), clMainFrame::OnFileSaveUI)
@@ -6237,5 +6238,12 @@ void clMainFrame::OnPrint(wxCommandEvent& event)
 {
     if(GetMainBook()->GetActiveEditor(true)) {
         GetMainBook()->GetActiveEditor(true)->Print();
+    }
+}
+
+void clMainFrame::OnPageSetup(wxCommandEvent& event)
+{
+    if(GetMainBook()->GetActiveEditor(true)) {
+        GetMainBook()->GetActiveEditor(true)->PageSetup();
     }
 }

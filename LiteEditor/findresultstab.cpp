@@ -600,7 +600,7 @@ void FindResultsTab::OnRecentSearches(wxAuiToolBarEvent& e)
     int counter = 0;
     std::map<int, History> entries;
     std::for_each(m_history.Begin(), m_history.End(), [&](const std::pair<wxString, History>& p) {
-        menu.Append(firstID + counter, p.first);
+        menu.Prepend(firstID + counter, p.first, "", wxITEM_CHECK)->Check(m_searchTitle == p.first);
         entries.insert(std::make_pair(firstID + counter, p.second));
         ++counter;
     });

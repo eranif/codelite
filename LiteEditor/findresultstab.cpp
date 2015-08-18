@@ -46,6 +46,7 @@
 #include "lexer_configuration.h"
 #include "attribute_style.h"
 #include <algorithm>
+#include "cl_aui_tool_stickness.h"
 
 // Custom styles
 #define LEX_FIF_DEFAULT 0
@@ -594,7 +595,7 @@ void FindResultsTab::OnRecentSearches(wxAuiToolBarEvent& e)
 {
     // Show the menu
     wxMenu menu;
-
+    clAuiToolStickness s(m_tb, e.GetId());
     const int firstID = 8000;
     int counter = 0;
     std::map<int, History> entries;

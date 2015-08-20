@@ -47,22 +47,32 @@ void CSSCodeCompletion::CssCodeComplete(IEditor* editor)
 
     // Perform HTML code completion
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    int currentLine = ctrl->GetCurrentLine();
+    int minPos = ctrl->PositionFromLine(currentLine);
 
-    int end = ctrl->WordEndPosition(ctrl->GetCurrentPos(), false);
-    int start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), false);
-    wxString lastWord = ctrl->GetTextRange(start, end);
-    lastWord.Trim().Trim(false);
-    if(lastWord.IsEmpty()) {
-        // try again, using "start" as the anchor
-        start = ctrl->WordStartPosition(start, false);
-        end = ctrl->WordEndPosition(start, false);
+    wxChar nonWhitespaceChar = 0;
+    int nonWhitespaceCharPos = wxNOT_FOUND;
+    int curpos = ctrl->GetCurrentPos();
+
+    while((curpos > minPos)) {
+        nonWhitespaceChar = ctrl->GetCharAt(curpos);
+        switch(nonWhitespaceChar) {
+        case '\n':
+        case '\r':
+        case '\t':
+        case ' ':
+            break;
+        default:
+            nonWhitespaceCharPos = curpos;
+            break;
+        }
+        if(nonWhitespaceCharPos != wxNOT_FOUND) break;
+        curpos = ctrl->PositionBefore(curpos);
     }
-    lastWord = ctrl->GetTextRange(start, end);
-    lastWord.Trim().Trim(false);
-    
-    if(lastWord == ":") {
+
+    if(nonWhitespaceCharPos != wxNOT_FOUND && nonWhitespaceChar == ':') {
         // Suggest values of the given properties
-        wxString word = GetPreviousWord(editor, ctrl->PositionBefore(start));
+        wxString word = GetPreviousWord(editor, nonWhitespaceCharPos);
         if(word.IsEmpty()) return;
         Entry::Vec_t::const_iterator iter =
             std::find_if(m_entries.begin(), m_entries.end(), [&](const Entry& e) { return (e.property == word); });

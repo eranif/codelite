@@ -53,16 +53,16 @@ WebTools::WebTools(IManager* manager)
     , m_nodejsDebuggerPane(NULL)
     , m_hideToolBarOnDebugStop(false)
 {
-    m_longName = _("Support for JavScript, XML, HTML and other web development tools");
+    m_longName = _("Support for JavScript, XML, HTML, CSS and other web development tools");
     m_shortName = wxT("WebTools");
 
     // Register our new workspace type
     NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
-    
+
     WebToolsImages images;
     BitmapLoader::RegisterImage(FileExtManager::TypeWorkspaceNodeJS, images.Bitmap("m_bmpNodeJS"));
-    
+
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
     m_jsColourThread->Create();
@@ -83,7 +83,8 @@ WebTools::WebTools(IManager* manager)
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     m_jsCodeComplete.Reset(new JSCodeCompletion(""));
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
-
+    m_cssCodeComplete.Reset(new CSSCodeCompletion());
+    
     // Connect the timer
     m_timer = new wxTimer(this);
     m_timer->Start(3000);
@@ -191,6 +192,10 @@ void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
         // Html code completion
         event.Skip(false);
         m_xmlCodeComplete->HtmlCodeComplete(editor);
+    } else if(editor && m_cssCodeComplete && IsCSSFile(editor)) {
+        // CSS code completion
+        event.Skip(false);
+        m_cssCodeComplete->CssCodeComplete(editor);
     }
 }
 
@@ -424,4 +429,9 @@ void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
         workspaceFile.AppendDir(".codelite");
         m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath()));
     }
+}
+
+bool WebTools::IsCSSFile(IEditor* editor)
+{
+    return (FileExtManager::GetType(editor->GetFileName().GetFullName()) == FileExtManager::TypeCSS);
 }

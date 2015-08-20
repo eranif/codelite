@@ -8,6 +8,7 @@
 #include <wx/timer.h>
 #include "ieditor.h"
 #include "XMLCodeCompletion.h"
+#include "CSSCodeCompletion.h"
 
 class NodeJSDebuggerPane;
 class NodeJSWorkspaceView;
@@ -19,6 +20,7 @@ class WebTools : public IPlugin
     JavaScriptSyntaxColourThread* m_jsColourThread;
     JSCodeCompletion::Ptr_t m_jsCodeComplete;
     XMLCodeCompletion::Ptr_t m_xmlCodeComplete;
+    CSSCodeCompletion::Ptr_t m_cssCodeComplete;
 
     time_t m_lastColourUpdate;
     wxTimer* m_timer;
@@ -28,7 +30,7 @@ class WebTools : public IPlugin
     NodeJSDebuggerPane* m_nodejsDebuggerPane;
     wxString m_savePerspective;
     bool m_hideToolBarOnDebugStop;
-    
+
 protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceLoaded(wxCommandEvent& event);
@@ -50,9 +52,11 @@ private:
     bool IsJavaScriptFile(const wxFileName& filename);
     bool IsJavaScriptFile(IEditor* editor);
     bool IsHTMLFile(IEditor* editor);
+    bool IsCSSFile(IEditor* editor);
     bool InsideJSComment(IEditor* editor);
     bool InsideJSString(IEditor* editor);
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update);
+
 public:
     WebTools(IManager* manager);
     ~WebTools();

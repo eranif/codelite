@@ -343,4 +343,9 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="CSS">
+    <File Name="CSSCodeCompletion.h"/>
+    <File Name="CSSCodeCompletion.cpp"/>
+    <File Name="css.json"/>
+  </VirtualDirectory>
 </CodeLite_Project>

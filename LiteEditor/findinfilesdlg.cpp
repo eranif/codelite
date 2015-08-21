@@ -63,7 +63,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName)
     m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
     m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
     m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
-    
+    m_checkBoxPipeForGrep->SetValue(m_data.GetFlags() & wxFRD_ENABLE_PIPE_SUPPORT);
     // Set encoding
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
@@ -222,7 +222,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
     data.SetSkipComments(flags & wxFRD_SKIP_COMMENTS);
     data.SetSkipStrings(flags & wxFRD_SKIP_STRINGS);
     data.SetColourComments(flags & wxFRD_COLOUR_COMMENTS);
-
+    data.SetEnablePipeSupport(flags & wxFRD_ENABLE_PIPE_SUPPORT);
     wxArrayString searchWhere = m_listPaths->GetStrings();
     wxArrayString files;
     wxArrayString rootDirs;
@@ -372,6 +372,7 @@ size_t FindInFilesDialog::GetSearchFlags()
     if(m_matchWholeWord->IsChecked()) flags |= wxFRD_MATCHWHOLEWORD;
     if(m_regualrExpression->IsChecked()) flags |= wxFRD_REGULAREXPRESSION;
     if(m_checkBoxSaveFilesBeforeSearching->IsChecked()) flags |= wxFRD_SAVE_BEFORE_SEARCH;
+    if(m_checkBoxPipeForGrep->IsChecked()) flags |= wxFRD_ENABLE_PIPE_SUPPORT;
     return flags;
 }
 

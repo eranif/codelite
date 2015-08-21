@@ -9,6 +9,7 @@
 #include "json_node.h"
 #include <wx/tokenzr.h>
 #include <set>
+#include <algorithm>
 
 CSSCodeCompletion::CSSCodeCompletion()
     : m_isEnabled(true)

@@ -3761,7 +3761,10 @@ void LEditor::DoHighlightWord()
             while(!GetLineVisible(line) && line < lastDocLine) {
                 ++line;
             }
-
+            
+            // EOF?
+            if(line >= lastDocLine) break;
+            
             while(GetLineVisible(line) && line <= lastDocLine) {
                 if(offset == -1) {
                     offset = PositionFromLine(line); // Get offset value the first time through

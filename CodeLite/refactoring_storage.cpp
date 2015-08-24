@@ -473,8 +473,9 @@ wxString RefactoringStorage::GetSchemaVersion()
         }
 
     } catch(wxSQLite3Exception& e) {
-        return wxEmptyString;
+        wxUnusedVar(e);
     }
+    return wxEmptyString;
 }
 
 wxLongLong RefactoringStorage::GetFileID(const wxFileName& filename) { return GetFileID(filename.GetFullPath()); }

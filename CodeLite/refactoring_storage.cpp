@@ -33,6 +33,7 @@
 #include "ctags_manager.h"
 #include "codelite_events.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 
 class CppTokenCacheMakerThread : public wxThread
 {
@@ -165,7 +166,7 @@ RefactoringStorage::~RefactoringStorage()
 
 void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::List_t& tokens, bool startTx)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return;
     }
 
@@ -279,6 +280,12 @@ void RefactoringStorage::OnWorkspaceLoaded(wxCommandEvent& e)
     if(m_workspaceFile.IsEmpty()) {
         return;
     }
+    
+    if(FileExtManager::GetType(m_workspaceFile) != FileExtManager::TypeWorkspace) {
+        m_workspaceFile.Clear();
+        return; // Not a C++ workspace, nothing to be done here
+    }
+    
     m_cacheStatus = CACHE_NOT_READY;
     Open(m_workspaceFile);
 }
@@ -307,7 +314,7 @@ void RefactoringStorage::DoDeleteFile(wxLongLong fileID)
 
 void RefactoringStorage::Match(const wxString& symname, const wxString& filename, CppTokensMap& matches)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return;
     }
 
@@ -363,7 +370,7 @@ void RefactoringStorage::InitializeCache(const wxFileList_t& files)
 
 wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return files;
     }
     wxFileList_t res;
@@ -378,7 +385,7 @@ wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
 
 CppToken::List_t RefactoringStorage::GetTokens(const wxString& symname, const wxFileList_t& filelist)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return CppToken::List_t();
     }
 

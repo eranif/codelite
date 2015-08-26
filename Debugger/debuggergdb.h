@@ -151,7 +151,7 @@ public:
     virtual void AssignValue(const wxString& expression, const wxString& newValue);
     virtual bool Jump(wxString filename, int line);
     virtual bool ListRegisters();
-
+    virtual bool UpdateWatch(const wxString& name);
     /**
      * @brief restart the debugger (execute 'run')
      * @return true on success, false otherwise

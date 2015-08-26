@@ -461,7 +461,7 @@ void Manager::AddToRecentlyOpenedWorkspaces(const wxString& fileName)
 
     // sync between the history object and the configuration file
     clConfig::Get().AddRecentWorkspace(fileName);
-    
+
     // The above call to AddFileToHistory() rewrote the Recent Workspaces menu
     // Unfortunately it rewrote it with path/to/foo.workspace, and we'd prefer
     // not to display the extension. So reload it again the way we like it :)
@@ -477,10 +477,7 @@ void Manager::ClearWorkspaceHistory()
     clConfig::Get().ClearRecentWorkspaces();
 }
 
-void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files)
-{
-    files = clConfig::Get().GetRecentWorkspaces();
-}
+void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files) { files = clConfig::Get().GetRecentWorkspaces(); }
 
 //--------------------------- Workspace Projects Mgmt -----------------------------
 
@@ -1851,9 +1848,7 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
         //--------------------------------------------------------------------
 
         if(curpage == pane->GetLocalsTable() || IsPaneVisible(wxGetTranslation(DebuggerPane::LOCALS))) {
-
             // update the locals tree
-            pane->GetLocalsTable()->UpdateVariableObjects();
             dbgr->QueryLocals();
             dbgr->ListRegisters();
         }
@@ -2492,7 +2487,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
         }
     }
-
+    
     switch(reason) {
     case DBG_RECV_SIGNAL_SIGTRAP:        // DebugBreak()
     case DBG_RECV_SIGNAL_EXC_BAD_ACCESS: // SIGSEGV on Mac
@@ -2532,15 +2527,9 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
         }
 
         // Print the stack trace
-        wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
         if(showDialog) {
             // select the "Call Stack" tab
             clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
-        }
-
-        if(info.IsShown()) {
-            // Refresh the view
-            CallAfter(&Manager::UpdateDebuggerPane);
         }
 
         if(!userTriggered) {

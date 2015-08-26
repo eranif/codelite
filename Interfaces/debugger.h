@@ -889,7 +889,12 @@ public:
      * @return
      */
     virtual bool UpdateVariableObject(const wxString& name, int userReason) = 0;
-
+    
+    /**
+     * @brief update watch 
+     */
+    virtual bool UpdateWatch(const wxString& name) = 0;
+    
     /**
      * @brief set next statement to run at given file and line
      */

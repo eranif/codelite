@@ -71,7 +71,8 @@ enum sci_annotation_styles { eAnnotationStyleError = 128, eAnnotationStyleWarnin
 * @class BPtoMarker
 * Holds which marker and mask are associated with each breakpoint type
 */
-typedef struct _BPtoMarker {
+typedef struct _BPtoMarker
+{
     enum BreakpointType bp_type; // An enum of possible break/watchpoint types. In debugger.h
     sci_marker_types marker;
     marker_mask_type mask;
@@ -104,7 +105,8 @@ extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
 class LEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
-    struct SelectionInfo {
+    struct SelectionInfo
+    {
         std::vector<std::pair<int, int> > selections;
 
         SelectionInfo() {}
@@ -149,7 +151,8 @@ private:
         void Sort();
     };
 
-    struct MarkWordInfo {
+    struct MarkWordInfo
+    {
     private:
         bool m_hasMarkers;
         int m_firstOffset;
@@ -275,12 +278,12 @@ public:
      * @brief print the editor content using the printing framework
      */
     void Print();
-    
+
     /**
      * @brief setup the print page
      */
     void PageSetup();
-    
+
     /**
      * @brief split the current selection into multiple carets.
      * i.e. place a caret at the end of each line in the selection
@@ -945,6 +948,7 @@ private:
     void OnMotion(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
+    void OnMouseWheel(wxMouseEvent& event);
     void OnFocusLost(wxFocusEvent& event);
     void OnFocus(wxFocusEvent& event);
     void OnLeftDClick(wxStyledTextEvent& event);

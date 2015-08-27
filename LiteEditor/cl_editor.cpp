@@ -136,6 +136,7 @@ EVT_KEY_UP(LEditor::OnKeyUp)
 EVT_LEFT_DOWN(LEditor::OnLeftDown)
 EVT_RIGHT_DOWN(LEditor::OnRightDown)
 EVT_MOTION(LEditor::OnMotion)
+EVT_MOUSEWHEEL(LEditor::OnMouseWheel)
 EVT_LEFT_UP(LEditor::OnLeftUp)
 EVT_LEAVE_WINDOW(LEditor::OnLeaveWindow)
 EVT_KILL_FOCUS(LEditor::OnFocusLost)
@@ -5283,6 +5284,15 @@ void LEditor::PageSetup()
     pageSetupDialog.ShowModal();
     (*g_printData) = pageSetupDialog.GetPageSetupData().GetPrintData();
     (*g_pageSetupData) = pageSetupDialog.GetPageSetupData();
+}
+
+void LEditor::OnMouseWheel(wxMouseEvent& event)
+{
+    event.Skip();
+    if(::wxGetKeyState(WXK_CONTROL) && !GetOptions()->IsMouseZoomEnabled()) {
+        event.Skip(false);
+        return;
+    }
 }
 
 // ----------------------------------

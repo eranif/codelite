@@ -148,6 +148,12 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropWrapBrackets = m_pgMgrEdit->AppendIn( m_pgProp16,  new wxBoolProperty( _("Wrap with brackets"), wxPG_LABEL, 1) );
     m_pgPropWrapBrackets->SetHelpString(_("When typing '(' or '[' on a selection, instead of replacing the selection with the character, wrap it with brackets"));
     
+    m_pgProp56 = m_pgMgrEdit->Append(  new wxPropertyCategory( _("Zoom") ) );
+    m_pgProp56->SetHelpString(wxT(""));
+    
+    m_pgPropZoomUsingCtrlScroll = m_pgMgrEdit->AppendIn( m_pgProp56,  new wxBoolProperty( _("Enable mouse zoom"), wxPG_LABEL, 1) );
+    m_pgPropZoomUsingCtrlScroll->SetHelpString(_("When holding Ctrl/CMD + scrolling with the mouse zoom the text"));
+    
     SetName(wxT("EditorOptionsGeneralEditBase"));
     SetSizeHints(500,300);
     if ( GetSizer() ) {

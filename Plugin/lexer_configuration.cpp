@@ -290,8 +290,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    ctrl->SetUseTabs(options->GetIndentUsesTabs());
-    ctrl->SetIndent(options->GetIndentWidth());
     bool tooltip(false);
 
     const StyleProperty::Map_t& styles = GetLexerProperties();
@@ -513,6 +511,11 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // Define the styles for the editing margin
     ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("FOREST GREEN")));
     ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
+    
+    // Indentation
+    ctrl->SetUseTabs(options->GetIndentUsesTabs());
+    ctrl->SetTabWidth(options->GetIndentWidth());
+    ctrl->SetIndent(options->GetIndentWidth());
 }
 
 const StyleProperty& LexerConf::GetProperty(int propertyId) const

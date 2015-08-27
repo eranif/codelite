@@ -52,7 +52,12 @@ public:
      * @brief connect to nodejs debugger on a given IP and port
      */
     void Connect(const wxString& ip, int port);
-
+    
+    /**
+     * @brief disconnect the debugger
+     */
+    void Shutdown();
+    
     const wxString& GetErrorString() const { return m_errorString; }
     
     size_t NextSequence() { return ++m_sequence; }

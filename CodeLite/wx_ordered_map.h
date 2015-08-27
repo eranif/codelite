@@ -129,6 +129,11 @@ public:
         m_map.erase(iter);
     }
     
+    /**
+     * @brief is empty?
+     */
+    bool IsEmpty() const { return m_list.empty(); }
+    
     // end()
     ConstIterator End() const {
         return m_list.end();

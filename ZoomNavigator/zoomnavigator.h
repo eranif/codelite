@@ -39,7 +39,7 @@
 #include <set>
 #include "cl_command_event.h"
 
-extern const char* ZOOM_PANE_TITLE;
+extern const wxString ZOOM_PANE_TITLE;
 
 class ZoomNavUpdateTimer;
 

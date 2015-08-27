@@ -32,6 +32,8 @@
 #include "refactorengine.h"
 #include "ctags_manager.h"
 #include "codelite_events.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
 
 class CppTokenCacheMakerThread : public wxThread
 {
@@ -164,7 +166,7 @@ RefactoringStorage::~RefactoringStorage()
 
 void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::List_t& tokens, bool startTx)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return;
     }
 
@@ -174,15 +176,18 @@ void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::L
         if(startTx) {
             Begin();
         }
-
-        DoDeleteFile(filename);
-
+        
+        wxLongLong fileId = GetFileID(filename);
+        if(fileId != wxNOT_FOUND) {
+            DoDeleteFile(fileId);
+        } 
+        
+        // Insert a match to the FILES table
+        fileId = DoUpdateFileTimestamp(filename);
         CppToken::List_t::const_iterator iter = tokens.begin();
         for(; iter != tokens.end(); ++iter) {
-            iter->store(&m_db);
+            iter->store(&m_db, fileId);
         }
-
-        DoUpdateFileTimestamp(filename);
 
         if(startTx) {
             Commit();
@@ -198,49 +203,61 @@ void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::L
 
 void RefactoringStorage::Open(const wxString& workspacePath)
 {
-    wxString cache_db;
     wxFileName fnWorkspace(workspacePath);
-    cache_db << fnWorkspace.GetPath() << "/.codelite";
-
-    {
-        wxLogNull nolog;
-        ::wxMkdir(cache_db);
-    }
-
-    cache_db << "/refactoring.db";
+    fnWorkspace.AppendDir(".codelite");
+    fnWorkspace.SetFullName("refactoring.db");
+    fnWorkspace.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     if(m_db.IsOpen()) {
         m_db.Close();
     }
 
-    m_db.Open(cache_db);
-    m_cacheDb = cache_db;
+    static const wxString CURR_SCHEMA = "1.0.0";
+    m_db.Open(fnWorkspace.GetFullPath());
+    if(GetSchemaVersion() != CURR_SCHEMA) {
+        // Drop the tables and recreate the schema
+        try {
+            m_db.ExecuteUpdate("drop table if exists REFACTORING_SCHEMA");
+            m_db.ExecuteUpdate("drop table if exists TOKENS_TABLE");
+            m_db.ExecuteUpdate("drop table if exists FILES");
+            m_db.ExecuteUpdate("drop index if exists TOKENS_TABLE_IDX1");
+            m_db.ExecuteUpdate("drop index if exists TOKENS_TABLE_IDX2");
+            m_db.ExecuteUpdate("drop index if exists FILES_IDX1");
+        } catch(wxSQLite3Exception& e) {
+            wxUnusedVar(e);
+        }
+    }
+
+    m_cacheDb = fnWorkspace.GetFullPath();
 
     // Create the schema
     try {
         m_db.ExecuteUpdate("PRAGMA journal_mode= OFF");
-
         m_db.ExecuteUpdate("PRAGMA synchronous = OFF");
 
         m_db.ExecuteUpdate("PRAGMA temp_store = MEMORY");
+        m_db.ExecuteUpdate("create table if not exists REFACTORING_SCHEMA (VERSION string primary key)");
 
         m_db.ExecuteUpdate("create table if not exists TOKENS_TABLE(ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                            "                                        NAME VARCHAR(128),"
                            "                                        OFFSET INTEGER,"
-                           "                                        FILE_NAME VARCHAR(256),"
+                           "                                        FILE_ID INTEGER,"
                            "                                        LINE_NUMBER INTEGER)");
         m_db.ExecuteUpdate("create index if not exists TOKENS_TABLE_IDX1 on TOKENS_TABLE(NAME)");
-        m_db.ExecuteUpdate("create index if not exists TOKENS_TABLE_IDX2 on TOKENS_TABLE(FILE_NAME)");
+        m_db.ExecuteUpdate("create index if not exists TOKENS_TABLE_IDX2 on TOKENS_TABLE(FILE_ID)");
 
         m_db.ExecuteUpdate("create table if not exists FILES (ID INTEGER PRIMARY KEY AUTOINCREMENT, FILE_NAME "
                            "VARCHAR(256), LAST_UPDATED INTEGER)");
         m_db.ExecuteUpdate("create unique index if not exists FILES_IDX1 on FILES(FILE_NAME)");
+        // set the schema version
+        wxString sql = wxString(wxT("replace into REFACTORING_SCHEMA values ('")) << CURR_SCHEMA << wxT("')");
+        m_db.ExecuteUpdate(sql);
 
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
 }
 
-void RefactoringStorage::DoUpdateFileTimestamp(const wxString& filename)
+wxLongLong RefactoringStorage::DoUpdateFileTimestamp(const wxString& filename)
 {
     try {
         wxSQLite3Statement st =
@@ -248,10 +265,12 @@ void RefactoringStorage::DoUpdateFileTimestamp(const wxString& filename)
         st.Bind(1, filename);
         st.Bind(2, (int)time(NULL));
         st.ExecuteUpdate();
-
+        return m_db.GetLastRowId();
+        
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
+    return wxNOT_FOUND;
 }
 
 void RefactoringStorage::OnWorkspaceLoaded(wxCommandEvent& e)
@@ -261,24 +280,33 @@ void RefactoringStorage::OnWorkspaceLoaded(wxCommandEvent& e)
     if(m_workspaceFile.IsEmpty()) {
         return;
     }
+    
+    if(FileExtManager::GetType(m_workspaceFile) != FileExtManager::TypeWorkspace) {
+        m_workspaceFile.Clear();
+        return; // Not a C++ workspace, nothing to be done here
+    }
+    
     m_cacheStatus = CACHE_NOT_READY;
     Open(m_workspaceFile);
 }
 
-void RefactoringStorage::DoDeleteFile(const wxString& filename)
+void RefactoringStorage::DoDeleteFile(wxLongLong fileID)
 {
     try {
 
         // delete fhe file entry
-        wxSQLite3Statement st = m_db.PrepareStatement("DELETE FROM FILES WHERE FILE_NAME=?");
-        st.Bind(1, filename);
-        st.ExecuteUpdate();
+        {
+            wxSQLite3Statement st = m_db.PrepareStatement("DELETE FROM FILES WHERE ID=?");
+            st.Bind(1, fileID);
+            st.ExecuteUpdate();
+        }
 
-        // remove all tokens
-        wxSQLite3Statement st3 = m_db.PrepareStatement("delete from TOKENS_TABLE where FILE_NAME=?");
-        st3.Bind(1, filename);
-        st3.ExecuteUpdate();
-
+        // remove all tokens for the given file
+        {
+            wxSQLite3Statement st = m_db.PrepareStatement("delete from TOKENS_TABLE where FILE_ID=?");
+            st.Bind(1, fileID);
+            st.ExecuteUpdate();
+        }
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
@@ -286,7 +314,7 @@ void RefactoringStorage::DoDeleteFile(const wxString& filename)
 
 void RefactoringStorage::Match(const wxString& symname, const wxString& filename, CppTokensMap& matches)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return;
     }
 
@@ -296,8 +324,10 @@ void RefactoringStorage::Match(const wxString& symname, const wxString& filename
         CppToken::List_t tokens_list = tmpScanner.tokenize();
         StoreTokens(filename, tokens_list, true);
     }
-
-    CppToken::List_t list = CppToken::loadByNameAndFile(&m_db, symname, filename);
+    
+    wxLongLong fileID = GetFileID(filename);
+    if(fileID == wxNOT_FOUND) return;
+    CppToken::List_t list = CppToken::loadByNameAndFile(&m_db, symname, fileID);
     matches.addToken(symname, list);
 }
 
@@ -340,7 +370,7 @@ void RefactoringStorage::InitializeCache(const wxFileList_t& files)
 
 wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return files;
     }
     wxFileList_t res;
@@ -355,7 +385,7 @@ wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
 
 CppToken::List_t RefactoringStorage::GetTokens(const wxString& symname, const wxFileList_t& filelist)
 {
-    if(!IsCacheReady()) {
+    if(!IsCacheReady() || !m_db.IsOpen()) {
         return CppToken::List_t();
     }
 
@@ -436,5 +466,40 @@ void RefactoringStorage::JoinWorkerThread()
     if(m_thread) {
         m_thread->Stop();
         m_thread = NULL;
+    }
+}
+
+wxString RefactoringStorage::GetSchemaVersion()
+{
+    try {
+        wxString sql("SELECT VERSION from REFACTORING_SCHEMA");
+        wxSQLite3Statement st = m_db.PrepareStatement(sql);
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        if(res.NextRow()) {
+            return res.GetString(0);
+        }
+
+    } catch(wxSQLite3Exception& e) {
+        wxUnusedVar(e);
+    }
+    return wxEmptyString;
+}
+
+wxLongLong RefactoringStorage::GetFileID(const wxFileName& filename) { return GetFileID(filename.GetFullPath()); }
+
+wxLongLong RefactoringStorage::GetFileID(const wxString& filename) 
+{
+    try {
+        wxLongLong fileId = wxNOT_FOUND;
+        wxSQLite3Statement st = m_db.PrepareStatement("SELECT ID FROM FILES WHERE FILE_NAME=? LIMIT 1");
+        st.Bind(1, filename);
+        wxSQLite3ResultSet res = st.ExecuteQuery();
+        if(res.NextRow()) {
+            fileId = res.GetInt64(0);
+        }
+        return fileId;
+    } catch(wxSQLite3Exception& e) {
+        CL_ERROR("RefactoringStorage::GetFileID: %s", e.GetMessage());
+        return wxNOT_FOUND;
     }
 }

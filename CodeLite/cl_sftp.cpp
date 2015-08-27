@@ -94,11 +94,11 @@ void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath) thro
         throw clException(wxString() << "scp::Write could not open file '" << localFile.GetFullPath() << "'. "
                                      << ::strerror(errno));
     }
-    
-    char buffer[1024];
+
+    char buffer[4096];
     wxMemoryBuffer memBuffer;
     size_t nbytes(0);
-    while( !fp.Eof() ) {
+    while(!fp.Eof()) {
         nbytes = fp.Read(buffer, sizeof(buffer));
         if(nbytes == 0) break;
         memBuffer.AppendData(buffer, nbytes);
@@ -115,21 +115,57 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
 
     int access_type = O_WRONLY | O_CREAT | O_TRUNC;
     sftp_file file;
-    file = sftp_open(m_sftp, remotePath.mb_str(wxConvUTF8).data(), access_type, 0644);
+    wxString tmpRemoteFile = remotePath;
+    tmpRemoteFile << ".codelitesftp";
+
+    file = sftp_open(m_sftp, tmpRemoteFile.mb_str(wxConvUTF8).data(), access_type, 0644);
     if(file == NULL) {
-        throw clException(wxString() << _("Can't open file: ") << remotePath << ". "
+        throw clException(wxString() << _("Can't open file: ") << tmpRemoteFile << ". "
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
     }
 
-    size_t nbytes = sftp_write(file, fileContent.GetData(), fileContent.GetDataLen());
-    if(nbytes != fileContent.GetDataLen()) {
-        sftp_close(file);
-        throw clException(wxString() << _("Can't write data to file: ") << remotePath << ". "
+    char* p = (char*)fileContent.GetData();
+    const int maxChunkSize = 65536;
+    wxInt64 bytesLeft = fileContent.GetDataLen();
+
+    while(bytesLeft > 0) {
+        wxInt64 chunkSize = bytesLeft > maxChunkSize ? maxChunkSize : bytesLeft;
+        wxInt64 bytesWritten = sftp_write(file, p, chunkSize);
+        if(bytesWritten < 0) {
+            sftp_close(file);
+            throw clException(wxString() << _("Can't write data to file: ") << tmpRemoteFile << ". "
+                                         << ssh_get_error(m_ssh->GetSession()),
+                              sftp_get_error(m_sftp));
+        }
+        bytesLeft -= bytesWritten;
+        p += bytesWritten;
+    }
+    sftp_close(file);
+
+    // Unlink the original file if it exists
+    bool needUnlink = false;
+    {
+        // Check if the file exists
+        sftp_attributes attr = sftp_stat(m_sftp, remotePath.mb_str(wxConvISO8859_1).data());
+        if(attr) {
+            needUnlink = true;
+            sftp_attributes_free(attr);
+        }
+    }
+
+    if(needUnlink && sftp_unlink(m_sftp, remotePath.mb_str(wxConvUTF8).data()) < 0) {
+        throw clException(wxString() << _("Failed to unlink file: ") << remotePath << ". "
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
     }
-    sftp_close(file);
+
+    // Rename the file
+    if(sftp_rename(m_sftp, tmpRemoteFile.mb_str(wxConvUTF8).data(), remotePath.mb_str(wxConvUTF8).data()) < 0) {
+        throw clException(wxString() << _("Failed to rename file: ") << tmpRemoteFile << " -> " << remotePath << ". "
+                                     << ssh_get_error(m_ssh->GetSession()),
+                          sftp_get_error(m_sftp));
+    }
 }
 
 SFTPAttribute::List_t clSFTP::List(const wxString& folder, size_t flags, const wxString& filter) throw(clException)
@@ -206,20 +242,32 @@ void clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& buffer) throw(clEx
                           sftp_get_error(m_sftp));
     }
 
-    wxString content;
-    char bytes[1024];
-    int nbytes = 0;
-    memset(bytes, 0, sizeof(bytes));
-    nbytes = sftp_read(file, bytes, sizeof(bytes));
-    while(nbytes > 0) {
-        buffer.AppendData((const void*)bytes, nbytes);
-        memset(bytes, 0, sizeof(bytes));
-        nbytes = sftp_read(file, bytes, sizeof(bytes));
+    SFTPAttribute::Ptr_t fileAttr = Stat(remotePath);
+    if(!fileAttr) {
+        throw clException(wxString() << _("Could not stat file:") << remotePath << ". "
+                                     << ssh_get_error(m_ssh->GetSession()),
+                          sftp_get_error(m_sftp));
+    }
+    wxInt64 fileSize = fileAttr->GetSize();
+    if(fileSize == 0) return;
+
+    // Allocate buffer for the file content
+    char pBuffer[65536]; // buffer
+
+    // Read the entire file content
+    wxInt64 bytesLeft = fileSize;
+    wxInt64 bytesRead = 0;
+    while(bytesLeft > 0) {
+        wxInt64 nbytes = sftp_read(file, pBuffer, sizeof(pBuffer));
+        bytesRead += nbytes;
+        bytesLeft -= nbytes;
+        buffer.AppendData(pBuffer, nbytes);
     }
 
-    if(nbytes < 0) {
+    if(bytesRead != fileSize) {
         sftp_close(file);
-        throw clException(wxString() << _("Failed to read remote file: ") << remotePath << ". "
+        buffer.Clear();
+        throw clException(wxString() << _("Could not read file:") << remotePath << ". "
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
     }

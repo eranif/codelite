@@ -224,8 +224,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_remove_file"), _("Delete"));
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
-                menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
+                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
+                menu.Append(XRCID("php_open_shell"), _("Open Shell"));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_with_default_app"), _("Open with Default Application"));
 
@@ -253,8 +253,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("rename_php_workspace"), _("Rename"));
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
-                menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
+                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
+                menu.Append(XRCID("php_open_shell"), _("Open Shell"));
                 menu.AppendSeparator();
                 menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
                 menuItem->SetBitmap(bmpFiF);
@@ -275,8 +275,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menuItem->SetBitmap(bmpFiF);
                 menu.Append(menuItem);
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
-                menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
+                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
+                menu.Append(XRCID("php_open_shell"), _("Open Shell"));
                 menu.AppendSeparator();
 
                 menuItem =
@@ -304,8 +304,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_remove_file"), _("Delete"));
                 menu.AppendSeparator();
-                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open in File Explorer"));
-                menu.Append(XRCID("php_open_shell"), _("Open Shell Here"));
+                menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
+                menu.Append(XRCID("php_open_shell"), _("Open Shell"));
                 menu.AppendSeparator();
                 menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
                 menuItem->SetBitmap(bmpFiF);

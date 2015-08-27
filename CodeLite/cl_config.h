@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include "json_node.h"
+#include <map>
 
 ////////////////////////////////////////////////////////
 
@@ -80,10 +81,15 @@ class WXDLLIMPEXP_CL clConfig
 protected:
     wxFileName m_filename;
     JSONRoot* m_root;
-
+    std::map<wxString, wxArrayString> m_cacheRecentItems;
+    
 protected:
     void DoDeleteProperty(const wxString& property);
     JSONElement GetGeneralSetting();
+
+    void DoAddRecentItem(const wxString& propName, const wxString& filename);
+    wxArrayString DoGetRecentItems(const wxString& propName) const;
+    void DoClearRecentItems(const wxString& propName);
 
 public:
     // We provide a global configuration
@@ -106,17 +112,26 @@ public:
     wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const;
     JSONElement::wxStringMap_t MergeStringMaps(const JSONElement::wxStringMap_t& map1,
                                                const JSONElement::wxStringMap_t& map2) const;
+    // Workspace history
+    void AddRecentWorkspace(const wxString& filename) { DoAddRecentItem("RecentWorkspaces", filename); }
+    wxArrayString GetRecentWorkspaces() const { return DoGetRecentItems("RecentWorkspaces"); }
+    void ClearRecentWorkspaces() { DoClearRecentItems("RecentWorkspaces"); }
+
+    // File history
+    void AddRecentFile(const wxString& filename) { DoAddRecentItem("RecentFiles", filename); }
+    wxArrayString GetRecentFiles() const { return DoGetRecentItems("RecentFiles"); }
+    void ClearRecentFiles() { DoClearRecentItems("RecentFiles"); }
 
     // Workspace tab order
     //------------------------------
     void SetWorkspaceTabOrder(const wxArrayString& tabs, int selected);
     bool GetWorkspaceTabOrder(wxArrayString& tabs, int& selected);
-    
+
     // Output tab order
     //------------------------------
     void SetOutputTabOrder(const wxArrayString& tabs, int selected);
     bool GetOutputTabOrder(wxArrayString& tabs, int& selected);
-    
+
     // General objects
     // -----------------------------
     bool ReadItem(clConfigItem* item, const wxString& differentName = wxEmptyString);
@@ -130,7 +145,7 @@ public:
     // wxString
     wxString Read(const wxString& name, const wxString& defaultValue);
     void Write(const wxString& name, const wxString& value);
-    
+
     // wxArrayString
     wxArrayString Read(const wxString& name, const wxArrayString& defaultValue);
     void Write(const wxString& name, const wxArrayString& value);

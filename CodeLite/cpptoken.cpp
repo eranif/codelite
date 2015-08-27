@@ -24,15 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "cpptoken.h"
 #include <wx/crt.h>
+#include <map>
 
-CppToken::CppToken()
-{
-    reset();
-}
+CppToken::CppToken() { reset(); }
 
-CppToken::~CppToken()
-{
-}
+CppToken::~CppToken() {}
 
 void CppToken::reset()
 {
@@ -43,76 +39,84 @@ void CppToken::reset()
     filename.clear();
 }
 
-void CppToken::append(wxChar ch)
-{
-    name << ch;
-}
+void CppToken::append(wxChar ch) { name << ch; }
 
-void CppToken::print()
-{
-    wxPrintf(wxT("%s | %ld\n"), name.c_str(), offset);
-}
+void CppToken::print() { wxPrintf(wxT("%s | %ld\n"), name.c_str(), offset); }
 
-int CppToken::store(wxSQLite3Database* db) const
+int CppToken::store(wxSQLite3Database* db, wxLongLong fileID) const
 {
     try {
-        
-        wxSQLite3Statement st = db->PrepareStatement("REPLACE INTO TOKENS_TABLE (ID, NAME, OFFSET, FILE_NAME, LINE_NUMBER) VALUES(NULL, ?, ?, ?, ?)");
+
+        wxSQLite3Statement st = db->PrepareStatement(
+            "REPLACE INTO TOKENS_TABLE (ID, NAME, OFFSET, FILE_ID, LINE_NUMBER) VALUES(NULL, ?, ?, ?, ?)");
         st.Bind(1, getName());
         st.Bind(2, (int)getOffset());
-        st.Bind(3, getFilename());
+        st.Bind(3, fileID);
         st.Bind(4, (int)getLineNumber());
         st.ExecuteUpdate();
         return db->GetLastRowId().ToLong();
 
-    } catch (wxSQLite3Exception &e) {
-        wxUnusedVar( e );
+    } catch(wxSQLite3Exception& e) {
+        wxUnusedVar(e);
     }
     return wxNOT_FOUND;
 }
 
-CppToken::List_t CppToken::loadByNameAndFile(wxSQLite3Database* db, const wxString& name, const wxString& filename)
+CppToken::List_t CppToken::loadByNameAndFile(wxSQLite3Database* db, const wxString& name, wxLongLong fileID)
 {
     CppToken::List_t matches;
     try {
-        wxSQLite3Statement st = db->PrepareStatement("select * from TOKENS_TABLE where FILE_NAME=? AND NAME=?");
-        st.Bind(1, filename);
+        wxSQLite3Statement st = db->PrepareStatement("select * from TOKENS_TABLE where FILE_ID=? AND NAME=?");
+        st.Bind(1, fileID);
         st.Bind(2, name);
         wxSQLite3ResultSet res = st.ExecuteQuery();
-        while ( res.NextRow() ) {
+        while(res.NextRow()) {
             CppToken token(res);
-            matches.push_back( token );
+            matches.push_back(token);
         }
-        
-    } catch (wxSQLite3Exception &e) {
-        wxUnusedVar( e );
+
+    } catch(wxSQLite3Exception& e) {
+        wxUnusedVar(e);
     }
     return matches;
 }
 
 CppToken::CppToken(wxSQLite3ResultSet& res)
 {
-    setId( res.GetInt(0) );
-    setName( res.GetString(1) );
-    setOffset( res.GetInt(2) );
-    setFilename( res.GetString(3) );
-    setLineNumber( res.GetInt(4) );
+    setId(res.GetInt(0));
+    setName(res.GetString(1));
+    setOffset(res.GetInt(2));
+    setLineNumber(res.GetInt(4));
 }
 
 CppToken::List_t CppToken::loadByName(wxSQLite3Database* db, const wxString& name)
 {
     CppToken::List_t matches;
+    std::map<wxLongLong, wxString> fileIdToFile;
     try {
         wxSQLite3Statement st = db->PrepareStatement("select * from TOKENS_TABLE where NAME=?");
         st.Bind(1, name);
         wxSQLite3ResultSet res = st.ExecuteQuery();
-        while ( res.NextRow() ) {
+        while(res.NextRow()) {
             CppToken token(res);
-            matches.push_back( token );
+            wxLongLong fileID = res.GetInt64(3);
+            if(fileIdToFile.count(fileID)) {
+                token.setFilename(fileIdToFile.find(fileID)->second);
+            } else {
+                // load from the db
+                wxSQLite3Statement st1 = db->PrepareStatement("SELECT FILE_NAME FROM FILES WHERE ID=? LIMIT 1");
+                st1.Bind(1, fileID);
+                wxSQLite3ResultSet res1 = st1.ExecuteQuery();
+                if(res1.NextRow()) {
+                    token.setFilename(res1.GetString(0));
+                    fileIdToFile.insert(std::make_pair(fileID, token.getFilename()));
+                }
+            }
+            matches.push_back(token);
         }
-        
-    } catch (wxSQLite3Exception &e) {
-        wxUnusedVar( e );
+
+    } catch(wxSQLite3Exception& e) {
+        wxUnusedVar(e);
     }
     return matches;
 }
@@ -120,26 +124,21 @@ CppToken::List_t CppToken::loadByName(wxSQLite3Database* db, const wxString& nam
 //-----------------------------------------------------------------
 // CppTokensMap
 //-----------------------------------------------------------------
-CppTokensMap::CppTokensMap()
-{
-}
+CppTokensMap::CppTokensMap() {}
 
-CppTokensMap::~CppTokensMap()
-{
-    clear();
-}
+CppTokensMap::~CppTokensMap() { clear(); }
 
-void CppTokensMap::addToken(const wxString& name, const CppToken::List_t &list)
+void CppTokensMap::addToken(const wxString& name, const CppToken::List_t& list)
 {
     // try to locate an entry with this name
-    std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find( name );
-    std::list<CppToken> *tokensList(NULL);
-    if (iter != m_tokens.end()) {
+    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(name);
+    std::list<CppToken>* tokensList(NULL);
+    if(iter != m_tokens.end()) {
         tokensList = iter->second;
     } else {
         // create new list and add it to the map
         tokensList = new std::list<CppToken>;
-        m_tokens.insert( std::make_pair(name, tokensList) );
+        m_tokens.insert(std::make_pair(name, tokensList));
     }
     tokensList->insert(tokensList->end(), list.begin(), list.end());
 }
@@ -147,42 +146,39 @@ void CppTokensMap::addToken(const wxString& name, const CppToken::List_t &list)
 void CppTokensMap::addToken(const CppToken& token)
 {
     // try to locate an entry with this name
-    std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find(token.getName());
-    std::list<CppToken> *tokensList(NULL);
-    if (iter != m_tokens.end()) {
+    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(token.getName());
+    std::list<CppToken>* tokensList(NULL);
+    if(iter != m_tokens.end()) {
         tokensList = iter->second;
     } else {
         // create new list and add it to the map
         tokensList = new std::list<CppToken>;
         m_tokens[token.getName()] = tokensList;
     }
-    tokensList->push_back( token );
+    tokensList->push_back(token);
 }
 
 bool CppTokensMap::contains(const wxString& name)
 {
-    std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find(name);
+    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(name);
     return iter != m_tokens.end();
 }
 
 void CppTokensMap::findTokens(const wxString& name, std::list<CppToken>& tokens)
 {
-    std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find(name);
-//	std::list<CppToken> *tokensList(NULL);
-    if (iter != m_tokens.end()) {
+    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(name);
+    //	std::list<CppToken> *tokensList(NULL);
+    if(iter != m_tokens.end()) {
         tokens = *(iter->second);
     }
 }
 void CppTokensMap::clear()
 {
-    std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.begin();
+    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.begin();
     for(; iter != m_tokens.end(); ++iter) {
         delete iter->second;
     }
     m_tokens.clear();
 }
 
-bool CppTokensMap::is_empty()
-{
-    return m_tokens.empty();
-}
+bool CppTokensMap::is_empty() { return m_tokens.empty(); }

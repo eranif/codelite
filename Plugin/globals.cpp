@@ -823,15 +823,18 @@ void WrapInShell(wxString& cmd)
 #ifdef __WXMSW__
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
     if(!shell) shell = (wxChar*)wxT("CMD.EXE");
-
     command << shell << wxT(" /C ");
-    if(EditorConfigST::Get()->GetOptions()->MSWIsWrapCmdWithDoubleQuotes()) {
-        command << "\"" << cmd << "\"";
+#if 0
+    command << "\"" << cmd << "\"";
+#else
+    if(cmd.StartsWith("\"")) {
+        command << "\"" << cmd << "\"\"";
     } else {
         command << cmd;
     }
-    cmd = command;
+#endif
 
+    cmd = command;
 #else
     command << wxT("/bin/sh -c '");
     // escape any single quoutes

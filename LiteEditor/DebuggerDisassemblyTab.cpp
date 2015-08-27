@@ -274,9 +274,15 @@ void DebuggerDisassemblyTab::OnRefreshView(clCommandEvent& e)
 {
     e.Skip();
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
+    DebuggerPane* debuggerPane = clMainFrame::Get()->GetDebuggerPane();
+
     if(debugger && debugger->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-        debugger->ListRegisters();
-        debugger->Disassemble("", -1);
+        // Only update disass view if the view is visible
+        if((debuggerPane && (debuggerPane->GetNotebook()->GetCurrentPage() == this)) ||
+           ManagerST::Get()->IsPaneVisible(DebuggerPane::DISASSEMBLY)) {
+            debugger->ListRegisters();
+            debugger->Disassemble("", -1);
+        }
     }
 }
 

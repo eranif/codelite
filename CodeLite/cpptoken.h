@@ -98,7 +98,13 @@ public:
     void reset();
     void append(wxChar ch);
     
-    int store(wxSQLite3Database* db) const;
+    /**
+     * @brief store the token into the datbase.
+     * @param db database pointer
+     * @param fileId the file ID for this token
+     */
+    int store(wxSQLite3Database* db, wxLongLong fileId) const;
+    
     /**
      * @brief load tokens from the cache by file/name
      * @param db
@@ -106,7 +112,7 @@ public:
      * @param file_name
      * @return 
      */
-    static CppToken::List_t loadByNameAndFile(wxSQLite3Database* db, const wxString& name, const wxString& filename);
+    static CppToken::List_t loadByNameAndFile(wxSQLite3Database* db, const wxString& name, wxLongLong fileID);
     /**
      * @brief 
      * @param db

@@ -98,7 +98,5 @@ wxString NodeJSDebuggerDlg::GetCommand()
     for(size_t i = 0; i < args.size(); ++i) {
         command << args.Item(i) << " ";
     }
-
-    ::WrapInShell(command);
     return command;
 }

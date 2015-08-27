@@ -108,8 +108,15 @@ void FileUtils::OpenTerminal(const wxString& path)
     cmd = GTKGetTerminal("");
 
 #elif defined(__WXMAC__)
+    strPath = path;
+    if(strPath.Contains(" ")) {
+        strPath.Prepend("\\\"").Append("\\\"");
+    }
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath << "\"'";
+    CL_DEBUG(cmd);
+    ::system(cmd.mb_str(wxConvUTF8).data());
+    return;
 #endif
     if(cmd.IsEmpty()) return;
     ::wxExecute(cmd);
@@ -159,13 +166,17 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
     tty.Clear();
     wxString command;
     wxString tmpfile;
+    wxString escapedPath = path;
+    if(escapedPath.Contains(" ")) {
+        escapedPath.Prepend("\"").Append("\"");
+    }
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
-    command << "osascript -e 'tell app \"Terminal\" to do script \"cd " << path << " && tty > " << tmpfile
+    command << "osascript -e 'tell app \"Terminal\" to do script \"tty > " << tmpfile
             << " && clear && sleep 12345\"'";
     CL_DEBUG("Executing: %s", command);
     long res = ::wxExecute(command);
     if(res == 0) {
-        CL_WARNING("Failed to execute command");
+        CL_WARNING("Failed to execute command:\n%s", command);
         return;
     }
 

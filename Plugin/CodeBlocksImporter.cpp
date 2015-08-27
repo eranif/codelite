@@ -146,6 +146,7 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                     wxFileName projectInfo(genericProjectData[wxT("projectFullPath")]);
                     GenericProjectPtr genericProject = std::make_shared<GenericProject>();
                     genericProject->path = projectInfo.GetPath();
+                    genericProject->createDefaultVirtualDir = true;
 
                     wxStringTokenizer deps(genericProjectData[wxT("projectDeps")], wxT(";"));
 
@@ -288,6 +289,32 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                                 }
 
                                                 extraCommandsChild = extraCommandsChild->GetNext();
+                                            }
+                                        }
+
+                                        if(targetChild->GetName() == wxT("MakeCommands")) {
+                                            wxXmlNode* makeCommandsChild = targetChild->GetChildren();
+
+                                            while(makeCommandsChild) {
+                                                if(makeCommandsChild->GetName() == wxT("Build") &&
+                                                   makeCommandsChild->HasAttribute(wxT("command"))) {
+                                                    wxString buildCommand = makeCommandsChild->GetAttribute(wxT("command"));
+
+                                                    if(!genericProjectCfg->enableCustomBuild)
+                                                        genericProjectCfg->enableCustomBuild = true;
+
+                                                    genericProjectCfg->customBuildCmd = buildCommand;
+                                                } else if(makeCommandsChild->GetName() == wxT("Clean") &&
+                                                          makeCommandsChild->HasAttribute(wxT("command"))) {
+                                                    wxString cleanCommand = makeCommandsChild->GetAttribute(wxT("command"));
+
+                                                    if(!genericProjectCfg->enableCustomBuild)
+                                                        genericProjectCfg->enableCustomBuild = true;
+
+                                                    genericProjectCfg->customCleanCmd = cleanCommand;
+                                                }
+
+                                                makeCommandsChild = makeCommandsChild->GetNext();
                                             }
                                         }
 

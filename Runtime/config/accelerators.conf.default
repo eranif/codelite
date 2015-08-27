@@ -6,6 +6,7 @@ save_file_as|File|Save As...|Ctrl-Shift-S
 save_all|File|Save all files|
 close_file|File|Close|Ctrl-W
 wxID_CLOSE_ALL|File|Close All|
+wxID_PRINT|File|Print...|Ctrl-P
 load_last_session|File|Load last session on restart|
 exit_app|File|Exit|Alt-X
 wxID_UNDO|Edit|Undo|Ctrl-Z

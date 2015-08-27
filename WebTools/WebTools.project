@@ -2,7 +2,7 @@
 <CodeLite_Project Name="WebTools">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0015Win_x86_Release000000000000]]>
+      <![CDATA[00020001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -86,6 +86,56 @@
   <Dependencies Name="Win_x64_Debug"/>
   <Dependencies Name="Win_x64_Release"/>
   <Dependencies Name="Win_x86_Release"/>
+  <VirtualDirectory Name="XML">
+    <File Name="XMLCodeCompletion.h"/>
+    <File Name="XMLCodeCompletion.cpp"/>
+    <File Name="XMLBuffer.h"/>
+    <File Name="XMLBuffer.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="NodeJS">
+    <File Name="NoteJSWorkspace.h"/>
+    <File Name="NoteJSWorkspace.cpp"/>
+    <File Name="NodeJSWorkspaceView.h"/>
+    <File Name="NodeJSWorkspaceView.cpp"/>
+    <File Name="NodeJSWorkspaceConfiguration.h"/>
+    <File Name="NodeJSWorkspaceConfiguration.cpp"/>
+    <VirtualDirectory Name="Debugger">
+      <File Name="NodeJSDebugger.h"/>
+      <File Name="NodeJSDebugger.cpp"/>
+      <File Name="NodeJSSocket.h"/>
+      <File Name="NodeJSSocket.cpp"/>
+      <File Name="NodeJSDebuggerDlg.h"/>
+      <File Name="NodeJSDebuggerDlg.cpp"/>
+      <File Name="NodeJSDebuggerBreakpoint.h"/>
+      <File Name="NodeJSDebuggerBreakpoint.cpp"/>
+      <File Name="NodeJSDebuggerBreakpointManager.h"/>
+      <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
+      <VirtualDirectory Name="Handlers">
+        <File Name="NodeJSSetBreakpointHandler.h"/>
+        <File Name="NodeJSSetBreakpointHandler.cpp"/>
+        <File Name="NodeJSHandlerBase.h"/>
+        <File Name="NodeJSHandlerBase.cpp"/>
+        <File Name="NodeJSContinueHandler.h"/>
+        <File Name="NodeJSContinueHandler.cpp"/>
+        <File Name="NodeJSCallstackHandler.h"/>
+        <File Name="NodeJSCallstackHandler.cpp"/>
+        <File Name="NodeJSSelectFrameHandler.h"/>
+        <File Name="NodeJSSelectFrameHandler.cpp"/>
+        <File Name="NodeJSGetScriptHandler.h"/>
+        <File Name="NodeJSGetScriptHandler.cpp"/>
+        <File Name="NodeJSEvaluateExprHandler.h"/>
+        <File Name="NodeJSEvaluateExprHandler.cpp"/>
+      </VirtualDirectory>
+      <File Name="NodeJSDebuggerPane.h"/>
+      <File Name="NodeJSDebuggerPane.cpp"/>
+    </VirtualDirectory>
+    <File Name="NodeJSWorkspaceUserConfiguration.h"/>
+    <File Name="NodeJSWorkspaceUserConfiguration.cpp"/>
+    <File Name="NodeJSEvents.h"/>
+    <File Name="NodeJSEvents.cpp"/>
+    <File Name="NodeJSNewWorkspaceDlg.h"/>
+    <File Name="NodeJSNewWorkspaceDlg.cpp"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -130,7 +180,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -179,7 +229,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -187,7 +237,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-Wall;-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no);-Winvalid-pch" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-Wall;-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no);-Winvalid-pch" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
@@ -230,7 +280,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -285,7 +335,7 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -293,54 +343,9 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="XML">
-    <File Name="XMLCodeCompletion.h"/>
-    <File Name="XMLCodeCompletion.cpp"/>
-    <File Name="XMLBuffer.h"/>
-    <File Name="XMLBuffer.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="NodeJS">
-    <File Name="NoteJSWorkspace.h"/>
-    <File Name="NoteJSWorkspace.cpp"/>
-    <File Name="NodeJSWorkspaceView.h"/>
-    <File Name="NodeJSWorkspaceView.cpp"/>
-    <File Name="NodeJSWorkspaceConfiguration.h"/>
-    <File Name="NodeJSWorkspaceConfiguration.cpp"/>
-    <VirtualDirectory Name="Debugger">
-      <File Name="NodeJSDebugger.h"/>
-      <File Name="NodeJSDebugger.cpp"/>
-      <File Name="NodeJSSocket.h"/>
-      <File Name="NodeJSSocket.cpp"/>
-      <File Name="NodeJSDebuggerDlg.h"/>
-      <File Name="NodeJSDebuggerDlg.cpp"/>
-      <File Name="NodeJSDebuggerBreakpoint.h"/>
-      <File Name="NodeJSDebuggerBreakpoint.cpp"/>
-      <File Name="NodeJSDebuggerBreakpointManager.h"/>
-      <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
-      <VirtualDirectory Name="Handlers">
-        <File Name="NodeJSSetBreakpointHandler.h"/>
-        <File Name="NodeJSSetBreakpointHandler.cpp"/>
-        <File Name="NodeJSHandlerBase.h"/>
-        <File Name="NodeJSHandlerBase.cpp"/>
-        <File Name="NodeJSContinueHandler.h"/>
-        <File Name="NodeJSContinueHandler.cpp"/>
-        <File Name="NodeJSCallstackHandler.h"/>
-        <File Name="NodeJSCallstackHandler.cpp"/>
-        <File Name="NodeJSSelectFrameHandler.h"/>
-        <File Name="NodeJSSelectFrameHandler.cpp"/>
-        <File Name="NodeJSGetScriptHandler.h"/>
-        <File Name="NodeJSGetScriptHandler.cpp"/>
-        <File Name="NodeJSEvaluateExprHandler.h"/>
-        <File Name="NodeJSEvaluateExprHandler.cpp"/>
-      </VirtualDirectory>
-      <File Name="NodeJSDebuggerPane.h"/>
-      <File Name="NodeJSDebuggerPane.cpp"/>
-    </VirtualDirectory>
-    <File Name="NodeJSWorkspaceUserConfiguration.h"/>
-    <File Name="NodeJSWorkspaceUserConfiguration.cpp"/>
-    <File Name="NodeJSEvents.h"/>
-    <File Name="NodeJSEvents.cpp"/>
-    <File Name="NodeJSNewWorkspaceDlg.h"/>
-    <File Name="NodeJSNewWorkspaceDlg.cpp"/>
+  <VirtualDirectory Name="CSS">
+    <File Name="CSSCodeCompletion.h"/>
+    <File Name="CSSCodeCompletion.cpp"/>
+    <File Name="css.json"/>
   </VirtualDirectory>
 </CodeLite_Project>

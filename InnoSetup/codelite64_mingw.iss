@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=8.1.0
+AppVersion=8.2.2
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-amd64-8.1
+OutputBaseFilename=codelite-amd64-8.2.2
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -26,7 +26,7 @@ PrivilegesRequired=none
 ;; 64 bit setup
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "D:\src\wxWidgets_x64"
+#define WXWIN "D:\src\wxWidgets"
 #define BINUTILS_DIR "D:\bin"
 
 

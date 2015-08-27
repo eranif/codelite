@@ -48,6 +48,13 @@
                 <label>Save tabs as group</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="wxID_PAGE_SETUP">
+                <label>Page Setup...</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_PRINT">
+                <label>Print...</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
             <object class="wxMenuItem" name="close_file">
                 <label>&amp;Close</label>
@@ -1004,7 +1011,7 @@
             <label>Reconcile Project</label>
         </object>
         <object class="wxMenuItem" name="set_as_active">
-            <label>Set As Active</label>
+            <label>Set As Active (double click)</label>
         </object>
         
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>

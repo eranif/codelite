@@ -28,7 +28,6 @@ NodeJSWorkspace::NodeJSWorkspace(bool dummy)
 NodeJSWorkspace::NodeJSWorkspace()
     : m_clangOldFlag(false)
     , m_showWelcomePage(false)
-    , m_process(NULL)
 {
     SetWorkspaceType("Node.js");
     m_debugger.Reset(new NodeJSDebugger());
@@ -44,8 +43,9 @@ NodeJSWorkspace::NodeJSWorkspace()
     EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &NodeJSWorkspace::OnExecute, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &NodeJSWorkspace::OnStopExecute, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &NodeJSWorkspace::OnIsExecuteInProgress, this);
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSWorkspace::OnProcessTerminated, this);
+
+    m_terminal.Bind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSWorkspace::OnProcessTerminated, this);
+    m_terminal.Bind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
 }
 
 NodeJSWorkspace::~NodeJSWorkspace()
@@ -60,8 +60,10 @@ NodeJSWorkspace::~NodeJSWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &NodeJSWorkspace::OnStopExecute, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &NodeJSWorkspace::OnIsExecuteInProgress, this);
         m_debugger.Reset(NULL);
-        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
-        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSWorkspace::OnProcessTerminated, this);
+        m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSWorkspace::OnProcessTerminated, this);
+        m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
+
+        m_terminal.Terminate();
     }
 }
 
@@ -112,7 +114,7 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 void NodeJSWorkspace::Close()
 {
     if(!IsOpen()) return;
-    
+
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
 
@@ -128,9 +130,9 @@ void NodeJSWorkspace::Close()
     // Notify workspace closed event
     wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
-    
+
     m_debugger.Reset(NULL);
-    
+
     // notify codelite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
     eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
@@ -168,17 +170,17 @@ void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
         // Create a new NodeJS workspace
         NodeJSNewWorkspaceDlg dlg(NULL);
         if(dlg.ShowModal() != wxID_OK) return;
-        
+
         wxFileName workspaceFile = dlg.GetWorkspaceFilename();
         if(!workspaceFile.GetDirCount()) {
             ::wxMessageBox(
                 _("Can not create workspace in the root folder"), _("New Workspace"), wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
-        
+
         // Ensure that the path the workspace exists
         workspaceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        
+
         if(!Create(workspaceFile)) {
             ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"),
                            _("New Workspace"),
@@ -201,7 +203,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     m_folders = conf.GetFolders();
     GetView()->Clear();
     GetView()->ShowHiddenFiles(conf.IsShowHiddenFiles());
-    
+
     const wxArrayString& folders = GetFolders();
     for(size_t i = 0; i < folders.size(); ++i) {
         GetView()->AddFolder(folders.Item(i));
@@ -227,7 +229,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
 
     // Load the workspace session (if any)
     CallAfter(&NodeJSWorkspace::RestoreSession);
-    
+
     // Create new debugger for this workspace
     m_debugger.Reset(new NodeJSDebugger());
     return true;
@@ -294,7 +296,7 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
 {
     event.Skip();
     if(IsOpen()) {
-        if(m_process) {
+        if(m_terminal.IsRunning()) {
             ::wxMessageBox(_("Another instance is already running. Please stop it before executing another one"),
                            "CodeLite",
                            wxICON_WARNING | wxCENTER | wxOK);
@@ -306,23 +308,27 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
             return;
         }
         wxString cmd = dlg.GetCommand();
-        m_process = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault | IProcessCreateConsole);
+        m_terminal.ExecuteConsole(cmd, "", true, cmd);
     }
 }
 
-void NodeJSWorkspace::OnProcessOutput(clProcessEvent& event)
+void NodeJSWorkspace::OnProcessOutput(clCommandEvent& event)
 {
-    clGetManager()->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
+    clGetManager()->AppendOutputTabText(kOutputTab_Output, event.GetString());
 }
 
-void NodeJSWorkspace::OnProcessTerminated(clProcessEvent& event) { wxDELETE(m_process); }
+void NodeJSWorkspace::OnProcessTerminated(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    EventNotifier::Get()->TopFrame()->Raise();
+}
 
 void NodeJSWorkspace::OnIsExecuteInProgress(clExecuteEvent& event)
 {
     event.Skip();
     if(IsOpen()) {
         event.Skip(false);
-        event.SetAnswer((m_process != NULL));
+        event.SetAnswer(m_terminal.IsRunning());
     }
 }
 
@@ -331,8 +337,6 @@ void NodeJSWorkspace::OnStopExecute(clExecuteEvent& event)
     event.Skip();
     if(IsOpen()) {
         event.Skip(false);
-        if(m_process) {
-            m_process->Terminate();
-        }
+        m_terminal.Terminate();
     }
 }

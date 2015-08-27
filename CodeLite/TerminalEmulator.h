@@ -11,14 +11,17 @@
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
 
+class MyProcess;
 class WXDLLIMPEXP_CL TerminalEmulator : public wxEvtHandler
 {
     IProcess* m_process;
-
+    long m_pid;
+    friend class MyProcess;
+    
 protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
-
+    
 public:
     TerminalEmulator();
     virtual ~TerminalEmulator();

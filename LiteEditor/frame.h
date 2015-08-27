@@ -50,6 +50,7 @@
 #include "macros.h"
 #include <wx/splash.h>
 #include "clStatusBar.h"
+#include <wx/cmndata.h>
 
 // forward decls
 class clSingleInstanceThread;
@@ -116,21 +117,24 @@ class clMainFrame : public wxFrame
     clStatusBar* m_statusBar;
     clSingleInstanceThread* m_singleInstanceThread;
     bool m_toggleToolBar;
-    
+
+    // Printing
+    wxPrintDialogData m_printDlgData;
+
 protected:
     bool IsEditorEvent(wxEvent& event);
     void DoCreateBuildDropDownMenu(wxMenu* menu);
     void DoShowToolbars(bool show);
-    
+
 public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
-    
+
     /**
      * @brief return the status bar
      */
     clStatusBar* GetStatusBar() { return m_statusBar; }
-    
+
     /**
      * @brief update the parser (code completion) search paths using the
      * default compiler as the input provider
@@ -311,10 +315,10 @@ private:
      */
     void DispatchCommandEvent(wxCommandEvent& event);
     void DispatchUpdateUIEvent(wxUpdateUIEvent& event);
-    
-    void OnSplitSelection(wxCommandEvent &event);
+
+    void OnSplitSelection(wxCommandEvent& event);
     void OnSplitSelectionUI(wxUpdateUIEvent& event);
-    
+
     /// Toolbar management
     void CreateToolbars24();
     void CreateToolbars16();
@@ -334,7 +338,7 @@ private:
      * @return true if a restart is needed
      */
     bool StartSetupWizard();
-    
+
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
@@ -345,7 +349,7 @@ protected:
     //----------------------------------------------------
     void OnDebugStarted(clDebugEvent& event);
     void OnDebugEnded(clDebugEvent& event);
-    
+
     void OnRestoreDefaultLayout(wxCommandEvent& e);
     void OnIdle(wxIdleEvent& e);
     void OnBuildEnded(clCommandEvent& event);
@@ -381,6 +385,9 @@ protected:
     void OnIncrementalSearchUI(wxUpdateUIEvent& event);
     void OnViewToolbar(wxCommandEvent& event);
     void OnViewToolbarUI(wxUpdateUIEvent& event);
+    void OnPrint(wxCommandEvent& event);
+    void OnPageSetup(wxCommandEvent& event);
+    void OnRecentWorkspaceUI(wxUpdateUIEvent& e);
 
     // View -> Workspace View -> ...
     void OnViewShowWorkspaceTab(wxCommandEvent& e);
@@ -523,7 +530,7 @@ protected:
     void OnViewWordWrap(wxCommandEvent& e);
     void OnViewWordWrapUI(wxUpdateUIEvent& e);
     void OnViewDisplayEOL_UI(wxUpdateUIEvent& e);
-    
+
     // Docking windows events
     void OnAuiManagerRender(wxAuiManagerEvent& e);
     void OnDockablePaneClosed(wxAuiManagerEvent& e);
@@ -570,7 +577,7 @@ protected:
     void OnShowBookmarkMenu(wxAuiToolBarEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
     void OnEditMenuOpened(wxMenuEvent& e);
-    void OnProjectRenamed(clCommandEvent &event);
+    void OnProjectRenamed(clCommandEvent& event);
     DECLARE_EVENT_TABLE()
 };
 

@@ -199,4 +199,5 @@ if(NOT APPLE)
 else() # !APPLE
     install(TARGETS codelite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS PERMISSIONS ${EXE_PERM})
     CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite)
+    install(FILES ${CL_SRC_ROOT}/Runtime/OpenTerm DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport PERMISSIONS ${EXE_PERM})
 endif()

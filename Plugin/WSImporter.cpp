@@ -5,6 +5,7 @@
 #include "CodeBlocksImporter.h"
 #include "EnvVarImporterDlg.h"
 #include "workspace.h"
+#include <wx/tokenzr.h>
 
 WSImporter::WSImporter()
 {
@@ -230,28 +231,35 @@ bool WSImporter::Import(wxString& errMsg)
                         }
 
                         le_conf->SetEnvvars(envVars);
-                        
+
                         BuildCommandList preBuildCommandList;
                         BuildCommandList postBuildCommandList;
-                        
-                        for (wxString preBuildCmd : cfg->preBuildCommands) {
+
+                        for(wxString preBuildCmd : cfg->preBuildCommands) {
                             BuildCommand preBuildCommand;
                             preBuildCommand.SetCommand(preBuildCmd);
                             preBuildCommand.SetEnabled(true);
-                            
+
                             preBuildCommandList.push_back(preBuildCommand);
                         }
-                        
-                        for (wxString postBuildCmd : cfg->postBuildCommands) {
+
+                        for(wxString postBuildCmd : cfg->postBuildCommands) {
                             BuildCommand postBuildCommand;
                             postBuildCommand.SetCommand(postBuildCmd);
                             postBuildCommand.SetEnabled(true);
-                        
+
                             postBuildCommandList.push_back(postBuildCommand);
                         }
-                        
+
                         le_conf->SetPreBuildCommands(preBuildCommandList);
                         le_conf->SetPostBuildCommands(postBuildCommandList);
+
+                        if(cfg->enableCustomBuild) {
+                            le_conf->EnableCustomBuild(cfg->enableCustomBuild);
+                            le_conf->SetCustomBuildCmd(cfg->customBuildCmd);
+                            le_conf->SetCustomCleanCmd(cfg->customCleanCmd);
+                            le_conf->SetCustomRebuildCmd(cfg->customRebuildCmd);
+                        }
 
                         le_settings->SetBuildConfiguration(le_conf);
 
@@ -268,37 +276,39 @@ bool WSImporter::Import(wxString& errMsg)
                     proj->DeleteVirtualDir("src");
 
                     for(GenericProjectFilePtr file : project->files) {
-                        wxString vpath;
+                        wxString vpath = GetVPath(file->name, file->vpath, project->createDefaultVirtualDir);
 
-                        if(file->vpath.IsEmpty()) {
-                            wxFileName fileInfo(file->name);
-                            wxString ext = fileInfo.GetExt().Lower();
-
-                            if(ext == wxT("h") || ext == wxT("hpp") || ext == wxT("hxx") || ext == wxT("hh") ||
-                               ext == wxT("inl") || ext == wxT("inc")) {
-                                vpath = wxT("include");
-                            } else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx") || ext == wxT("cc")) {
-                                vpath = wxT("src");
-                            } else if(ext == wxT("s") || ext == wxT("S") || ext == wxT("asm")) {
-                                vpath = wxT("src");
-                            } else {
-                                vpath = wxT("resource");
-                            }
-                        } else {
-                            vpath = file->vpath;
-
-                            if(file->vpath.Contains(wxT("\\"))) {
-                                vpath.Replace(wxT("\\"), wxT(":"));
-                            } else if(file->vpath.Contains(wxT("/"))) {
-                                vpath.Replace(wxT("/"), wxT(":"));
-                            }
+                        wxString vDir = wxT("");
+                        wxStringTokenizer vDirList(vpath, wxT(":"));
+                        while(vDirList.HasMoreTokens()) {
+                            wxString vdName = vDirList.NextToken();
+                            vDir += vdName;
+                            proj->CreateVirtualDir(vDir);
+                            vDir += wxT(":");
                         }
 
-                        proj->CreateVirtualDir(vpath);
                         proj->AddFile(file->name, vpath);
                     }
 
                     proj->CommitTranscation();
+
+                    for(GenericProjectCfgPtr cfg : project->cfgs) {
+                        for(GenericProjectFilePtr excludeFile : cfg->excludeFiles) {
+                            wxString vpath =
+                                GetVPath(excludeFile->name, excludeFile->vpath, project->createDefaultVirtualDir);
+
+                            wxFileName excludeFileNameInfo(project->path + wxFileName::GetPathSeparator() +
+                                                           excludeFile->name);
+                            wxString excludeFileName = excludeFileNameInfo.GetFullPath();
+                            wxArrayString configs = proj->GetExcludeConfigForFile(excludeFileName, vpath);
+
+                            int index = configs.Index(cfg->name);
+                            if(index == wxNOT_FOUND) {
+                                configs.Add(cfg->name);
+                                proj->SetExcludeConfigForFile(excludeFileName, vpath, configs);
+                            }
+                        }
+                    }
                 }
 
                 if(clWorkspace) {
@@ -354,13 +364,45 @@ std::set<wxString> WSImporter::GetListEnvVarName(std::vector<wxString> elems)
             app = true;
             pos++;
         } else if(data.GetChar(pos) == wxT(')')) {
-            list.insert(word);
-            word = wxT("");
-            app = false;
+            if(!word.IsEmpty()) {
+                list.insert(word);
+                word = wxT("");
+                app = false;
+            }
         } else if(app) {
             word += data.GetChar(pos);
         }
     }
 
     return list;
+}
+
+wxString WSImporter::GetVPath(const wxString& filename, const wxString& virtualPath, const bool& createDefaultVDir)
+{
+    wxString vpath;
+    if(virtualPath.IsEmpty() && createDefaultVDir) {
+        wxFileName fileInfo(filename);
+        wxString ext = fileInfo.GetExt().Lower();
+
+        if(ext == wxT("h") || ext == wxT("hpp") || ext == wxT("hxx") || ext == wxT("hh") || ext == wxT("inl") ||
+           ext == wxT("inc")) {
+            vpath = wxT("include");
+        } else if(ext == wxT("c") || ext == wxT("cpp") || ext == wxT("cxx") || ext == wxT("cc")) {
+            vpath = wxT("src");
+        } else if(ext == wxT("s") || ext == wxT("S") || ext == wxT("asm")) {
+            vpath = wxT("src");
+        } else {
+            vpath = wxT("resource");
+        }
+    } else {
+        vpath = virtualPath;
+
+        if(vpath.Contains(wxT("\\"))) {
+            vpath.Replace(wxT("\\"), wxT(":"));
+        } else if(vpath.Contains(wxT("/"))) {
+            vpath.Replace(wxT("/"), wxT(":"));
+        }
+    }
+
+    return vpath;
 }

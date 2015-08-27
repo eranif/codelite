@@ -6,12 +6,12 @@
 #include <wx/socket.h>
 #include "NodeJSSocket.h"
 #include "NodeJSDebuggerBreakpointManager.h"
+#include "TerminalEmulator.h"
 
-class IProcess;
 class NodeJSDebugger : public wxEvtHandler
 {
     NodeJSSocket::Ptr_t m_socket;
-    IProcess* m_node;
+    TerminalEmulator m_node;
     NodeJSBptManager m_bptManager;
     bool m_canInteract;
     wxStringSet_t m_tempFiles;
@@ -39,8 +39,8 @@ protected:
     void OnEditorChanged(wxCommandEvent& event);
 
     // Process event
-    void OnNodeTerminated(clProcessEvent& event);
-    void OnNodeOutput(clProcessEvent& event);
+    void OnNodeTerminated(clCommandEvent& event);
+    void OnNodeOutput(clCommandEvent& event);
     void OnHighlightLine(clDebugEvent& event);
     void OnEvalExpression(clDebugEvent& event);
 

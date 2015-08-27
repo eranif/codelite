@@ -637,7 +637,8 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
     }
 
     cmd << wxT(" --file-list=");
-    cmd << wxT("\"") << fileList << wxT("\"");
+    ::WrapWithQuotes(fileList);
+    cmd << fileList << " ";
     CL_DEBUG("cppcheck command: %s", cmd);
     ::WrapInShell(cmd);
     return cmd;

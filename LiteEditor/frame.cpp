@@ -215,6 +215,10 @@ EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, clMainFrame::OnR
 EVT_MENU_RANGE(RecentWorkspaceSubMenuID, RecentWorkspaceSubMenuID + 10, clMainFrame::OnRecentWorkspace)
 EVT_MENU_RANGE(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, clMainFrame::OnBuildCustomTarget)
 EVT_MENU(wxID_EXIT, clMainFrame::OnQuit)
+// print
+EVT_MENU(wxID_PRINT, clMainFrame::OnPrint)
+EVT_UPDATE_UI(wxID_PRINT, clMainFrame::OnFileExistUpdateUI)
+EVT_MENU(wxID_PAGE_SETUP, clMainFrame::OnPageSetup)
 
 EVT_UPDATE_UI(XRCID("refresh_file"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("save_file"), clMainFrame::OnFileSaveUI)
@@ -222,6 +226,7 @@ EVT_UPDATE_UI(XRCID("save_file_as"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("save_all"), clMainFrame::OnFileSaveAllUI)
 EVT_UPDATE_UI(XRCID("save_tab_group"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("close_file"), clMainFrame::OnFileCloseUI)
+EVT_UPDATE_UI(XRCID("recent_workspaces"), clMainFrame::OnRecentWorkspaceUI)
 
 //--------------------------------------------------
 // Edit menu
@@ -5107,15 +5112,9 @@ void clMainFrame::OnPreviousFiFMatch(wxCommandEvent& e)
     GetOutputPane()->GetFindResultsTab()->PrevMatch();
 }
 
-void clMainFrame::OnNextFiFMatchUI(wxUpdateUIEvent& e)
-{
-    CHECK_SHUTDOWN();
-}
+void clMainFrame::OnNextFiFMatchUI(wxUpdateUIEvent& e) { CHECK_SHUTDOWN(); }
 
-void clMainFrame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
-{
-    CHECK_SHUTDOWN();
-}
+void clMainFrame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e) { CHECK_SHUTDOWN(); }
 
 void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 {
@@ -6234,4 +6233,24 @@ void clMainFrame::OnDebugEnded(clDebugEvent& event)
         clGetManager()->ShowToolBar(false);
     }
     m_toggleToolBar = false;
+}
+
+void clMainFrame::OnPrint(wxCommandEvent& event)
+{
+    if(GetMainBook()->GetActiveEditor(true)) {
+        GetMainBook()->GetActiveEditor(true)->Print();
+    }
+}
+
+void clMainFrame::OnPageSetup(wxCommandEvent& event)
+{
+    if(GetMainBook()->GetActiveEditor(true)) {
+        GetMainBook()->GetActiveEditor(true)->PageSetup();
+    }
+}
+
+void clMainFrame::OnRecentWorkspaceUI(wxUpdateUIEvent& e)
+{
+    // We don't allow reloading of recent workspace while another is opened
+    e.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
 }

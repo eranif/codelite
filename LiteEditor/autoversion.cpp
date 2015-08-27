@@ -27,6 +27,5 @@
 #define CL_GIT_REVISION
 
 #include <wx/string.h>
-const wxChar* clGitRevision = wxT("8.1.0");
+const wxChar* clGitRevision = wxT("8.2.3");
 #endif
-

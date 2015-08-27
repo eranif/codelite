@@ -460,9 +460,7 @@ void Manager::AddToRecentlyOpenedWorkspaces(const wxString& fileName)
     m_recentWorkspaces.AddFileToHistory(fileName);
 
     // sync between the history object and the configuration file
-    wxArrayString files;
-    m_recentWorkspaces.GetFiles(files);
-    EditorConfigST::Get()->SetRecentItems(files, wxT("RecentWorkspaces"));
+    clConfig::Get().AddRecentWorkspace(fileName);
 
     // The above call to AddFileToHistory() rewrote the Recent Workspaces menu
     // Unfortunately it rewrote it with path/to/foo.workspace, and we'd prefer
@@ -476,14 +474,10 @@ void Manager::ClearWorkspaceHistory()
     for(size_t i = 0; i < count; i++) {
         m_recentWorkspaces.RemoveFileFromHistory(0);
     }
-    wxArrayString files;
-    EditorConfigST::Get()->SetRecentItems(files, wxT("RecentWorkspaces"));
+    clConfig::Get().ClearRecentWorkspaces();
 }
 
-void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files)
-{
-    EditorConfigST::Get()->GetRecentItems(files, wxT("RecentWorkspaces"));
-}
+void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files) { files = clConfig::Get().GetRecentWorkspaces(); }
 
 //--------------------------- Workspace Projects Mgmt -----------------------------
 
@@ -646,6 +640,8 @@ void Manager::ImportMSVSSolution(const wxString& path, const wxString& defaultCo
         // Retag workspace
         wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+    } else {
+        wxMessageBox(wxT("Solution/workspace unsupported"), wxMessageBoxCaptionStr, wxOK | wxCENTRE | wxSTAY_ON_TOP);
     }
 }
 
@@ -1852,9 +1848,7 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
         //--------------------------------------------------------------------
 
         if(curpage == pane->GetLocalsTable() || IsPaneVisible(wxGetTranslation(DebuggerPane::LOCALS))) {
-
             // update the locals tree
-            pane->GetLocalsTable()->UpdateVariableObjects();
             dbgr->QueryLocals();
             dbgr->ListRegisters();
         }
@@ -2493,7 +2487,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
         }
     }
-
+    
     switch(reason) {
     case DBG_RECV_SIGNAL_SIGTRAP:        // DebugBreak()
     case DBG_RECV_SIGNAL_EXC_BAD_ACCESS: // SIGSEGV on Mac
@@ -2533,15 +2527,9 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
         }
 
         // Print the stack trace
-        wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
         if(showDialog) {
             // select the "Call Stack" tab
             clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
-        }
-
-        if(info.IsShown()) {
-            // Refresh the view
-            CallAfter(&Manager::UpdateDebuggerPane);
         }
 
         if(!userTriggered) {

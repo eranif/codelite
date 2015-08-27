@@ -78,6 +78,10 @@
 #include <wx/dcmemory.h>
 #include <wx/dataobj.h>
 #include <wx/regex.h>
+#include "clPrintout.h"
+#include <wx/printdlg.h>
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 //#include "clFileOrFolderDropTarget.h"
 
 // fix bug in wxscintilla.h
@@ -155,6 +159,9 @@ bool LEditor::m_ccShowPrivateMembers = true;
 bool LEditor::m_ccShowItemsComments = true;
 bool LEditor::m_ccInitialized = false;
 
+wxPrintData* g_printData = NULL;
+wxPageSetupDialogData* g_pageSetupData = NULL;
+
 class clEditorDropTarget : public wxDropTarget
 {
     wxStyledTextCtrl* m_stc;
@@ -214,22 +221,22 @@ public:
         // insert the text
         int pos = m_stc->PositionFromPoint(wxPoint(x, y));
         if(pos == wxNOT_FOUND) return false;
-        
+
         // Don't allow dropping tabs on the editor
         static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}");
         if(re.Matches(text)) return false;
-        
+
         int selStart = m_stc->GetSelectionStart();
         int selEnd = m_stc->GetSelectionEnd();
 
         // No text dnd if the drop is on the selection
         if((pos >= selStart) && (pos <= selEnd)) return false;
         int length = (selEnd - selStart);
-        
+
         m_stc->BeginUndoAction();
         if(moving) {
             // Clear the selection
-            
+
             bool movingForward = (pos > selEnd);
             m_stc->InsertText(pos, text);
             if(movingForward) {
@@ -3754,7 +3761,10 @@ void LEditor::DoHighlightWord()
             while(!GetLineVisible(line) && line < lastDocLine) {
                 ++line;
             }
-
+            
+            // EOF?
+            if(line >= lastDocLine) break;
+            
             while(GetLineVisible(line) && line <= lastDocLine) {
                 if(offset == -1) {
                     offset = PositionFromLine(line); // Get offset value the first time through
@@ -4989,7 +4999,6 @@ void LEditor::SplitSelection()
     }
 }
 
-
 void LEditor::CenterLinePreserveSelection(int line)
 {
     int linesOnScreen = LinesOnScreen();
@@ -5233,6 +5242,48 @@ void LEditor::CenterLineIfNeeded(int line, bool force)
     }
 }
 
+void LEditor::Print()
+{
+    if(g_printData == NULL) {
+        g_printData = new wxPrintData();
+        g_pageSetupData = new wxPageSetupDialogData();
+        (*g_pageSetupData) = *g_printData;
+        PageSetup();
+    }
+    
+    // Black on White print mode
+    SetPrintColourMode(wxSTC_PRINT_BLACKONWHITE);
+    
+    // No magnifications
+    SetPrintMagnification(0);
+    
+    wxPrintDialogData printDialogData(*g_printData);
+    wxPrinter printer(&printDialogData);
+    clPrintout printout(this, GetFileName().GetFullPath());
+
+    if(!printer.Print(this, &printout, true /*prompt*/)) {
+        if(wxPrinter::GetLastError() == wxPRINTER_ERROR) {
+            wxLogError(wxT("There was a problem printing. Perhaps your current printer is not set correctly?"));
+        } else {
+            wxLogMessage(wxT("You canceled printing"));
+        }
+    } else {
+        (*g_printData) = printer.GetPrintDialogData().GetPrintData();
+    }
+}
+
+void LEditor::PageSetup()
+{
+    if(g_printData == NULL) {
+        g_printData = new wxPrintData();
+        g_pageSetupData = new wxPageSetupDialogData();
+        (*g_pageSetupData) = *g_printData;
+    }
+    wxPageSetupDialog pageSetupDialog(this, g_pageSetupData);
+    pageSetupDialog.ShowModal();
+    (*g_printData) = pageSetupDialog.GetPageSetupData().GetPrintData();
+    (*g_pageSetupData) = pageSetupDialog.GetPageSetupData();
+}
 
 // ----------------------------------
 // SelectionInfo

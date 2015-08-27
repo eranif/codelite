@@ -1787,7 +1787,7 @@ wxString BuilderGnuMake::GetBuildToolCommand(const wxString& project,
 
     } else {
         jobsCmd = wxEmptyString;
-        buildTool = wxT("$(MAKE)");
+        buildTool = wxT("\"$(MAKE)\"");
     }
 
     if(isCommandlineCommand) {

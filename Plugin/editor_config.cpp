@@ -81,7 +81,7 @@ bool EditorConfig::Load()
 {
     m_cacheLongValues.clear();
     m_cacheStringValues.clear();
-    
+
     // first try to load the user's settings
     m_fileName = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
     wxString localFileName = m_fileName.GetFullPath();
@@ -132,10 +132,7 @@ bool EditorConfig::Load()
     return true;
 }
 
-void EditorConfig::SaveLexers()
-{
-    ColoursAndFontsManager::Get().Save();
-}
+void EditorConfig::SaveLexers() { ColoursAndFontsManager::Get().Save(); }
 
 wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
 {
@@ -234,11 +231,24 @@ wxString EditorConfig::GetTagsDatabase() const
     }
 }
 
-void EditorConfig::GetRecentItems(wxArrayString& files, const wxString nodeName)
+int clSortStringsFunc(const wxString& first, const wxString& second) { 
+    wxFileName f1(first);
+    wxFileName f2(second);
+    return f2.GetFullName().CmpNoCase(f1.GetFullName()); 
+}
+
+void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName)
 {
     if(nodeName.IsEmpty()) {
         return;
     }
+
+    if(m_cacheRecentItems.count(nodeName)) {
+        files = m_cacheRecentItems.find(nodeName)->second;
+        //files.Sort(clSortStringsFunc);
+        return;
+    }
+
     // find the root node
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
     if(node) {
@@ -247,19 +257,20 @@ void EditorConfig::GetRecentItems(wxArrayString& files, const wxString nodeName)
             if(child->GetName() == wxT("File")) {
                 wxString fileName = XmlUtils::ReadString(child, wxT("Name"));
                 // wxXmlDocument Saves/Loads items in reverse order, so prepend, not add.
-                if(wxFileExists(fileName))
-                    files.Insert(fileName, 0);
+                if(wxFileExists(fileName)) files.Insert(fileName, 0);
             }
             child = child->GetNext();
         }
     }
+    //files.Sort(clSortStringsFunc);
 }
 
-void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString nodeName)
+void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& nodeName)
 {
     if(nodeName.IsEmpty()) {
         return;
     }
+
     // find the root node
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
     if(node) {
@@ -276,6 +287,12 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString nod
         node->AddChild(child);
     }
 
+    // Update the cache
+    if(m_cacheRecentItems.count(nodeName)) {
+        m_cacheRecentItems.erase(nodeName);
+    }
+    m_cacheRecentItems.insert(std::make_pair(nodeName, files));
+
     // save the data to disk
     DoSave();
     wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
@@ -285,8 +302,7 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString nod
 
 bool EditorConfig::WriteObject(const wxString& name, SerializedObject* obj)
 {
-    if(!XmlUtils::StaticWriteObject(m_doc->GetRoot(), name, obj))
-        return false;
+    if(!XmlUtils::StaticWriteObject(m_doc->GetRoot(), name, obj)) return false;
 
     // save the archive
     bool res = DoSave();
@@ -331,28 +347,28 @@ long EditorConfig::GetInteger(const wxString& name, long defaultValue)
     // Check the cache first
     std::map<wxString, long>::iterator iter = m_cacheLongValues.find(name);
     if(iter != m_cacheLongValues.end()) return iter->second;
-    
+
     SimpleLongValue data;
     if(!ReadObject(name, &data)) {
         return defaultValue;
     }
-    
+
     // update the cache
     m_cacheLongValues[name] = data.GetValue();
     return data.GetValue();
 }
 
-wxString EditorConfig::GetString(const wxString& key, const wxString &defaultValue)
+wxString EditorConfig::GetString(const wxString& key, const wxString& defaultValue)
 {
     // Check the cache first
     std::map<wxString, wxString>::iterator iter = m_cacheStringValues.find(key);
     if(iter != m_cacheStringValues.end()) return iter->second;
-    
+
     SimpleStringValue data;
     if(!ReadObject(key, &data)) {
         return defaultValue;
     }
-    
+
     m_cacheStringValues[key] = data.GetValue();
     return data.GetValue();
 }
@@ -379,7 +395,7 @@ bool EditorConfig::DoSave() const
     if(m_transcation) {
         return true;
     }
-    
+
     // Notify that the editor configuration was modified
     wxCommandEvent event(wxEVT_EDITOR_CONFIG_CHANGED);
     EventNotifier::Get()->AddPendingEvent(event);

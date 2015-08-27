@@ -703,7 +703,9 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
     clTabInfo::Ptr_t activeTab = GetActiveTabInfo();
     if(activeTab) {
         static_cast<Notebook*>(GetParent())->DoChangeSelection(activeTab->GetWindow());
+        activeTab->GetWindow()->CallAfter(&wxWindow::SetFocus);
     }
+    
     Refresh();
     return oldSelection;
 }

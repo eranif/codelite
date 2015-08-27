@@ -51,6 +51,12 @@ void CompileCommandsCreateor::Process(wxThread* thread)
     
     // Save the file
     wxFileName compileCommandsFile(m_filename.GetPath(), "compile_commands.json");
+    compileCommandsFile.AppendDir(".codelite");
+    
+    // Make sure that the folder exists
+    compileCommandsFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    
+    // Save the file
     json.save( compileCommandsFile );
     
     clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);

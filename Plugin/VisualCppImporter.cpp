@@ -2,7 +2,6 @@
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 #include <wx/tokenzr.h>
-#include <wx/xml/xml.h>
 
 bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -36,7 +35,7 @@ bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& 
 
 bool VisualCppImporter::isSupportedWorkspace()
 {
-    return version >= 6 && version <= 12;
+    return version >= 5 && version <= 12;
 }
 
 GenericWorkspacePtr VisualCppImporter::PerformImport()
@@ -46,6 +45,7 @@ GenericWorkspacePtr VisualCppImporter::PerformImport()
     genericWorkspace->path = wsInfo.GetPath();
 
     switch(version) {
+    case 5:
     case 6:
         GenerateFromVC6(genericWorkspace);
         break;
@@ -76,7 +76,6 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
             int end = line.Find(wxT("- Package Owner")) - 1;
             wxString value = line.SubString(index + 8, end).Trim().Trim(false);
             value.Replace(wxT("\""), wxT(""));
-            value.Replace(wxT(".\\"), wxT(""));
 
             wxStringTokenizer part(value, wxT("="));
 
@@ -129,7 +128,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
             genericProject->deps.Add(projectNameDep);
         }
 
-        std::map<wxString, GenericProjectCfgPtr> GenericProjectCfgMap;
+        std::map<wxString, GenericProjectCfgPtr> genericProjectCfgMap;
 
         wxTextInputStream projectTIS(projectFIS);
 
@@ -140,10 +139,11 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
             if(index != wxNOT_FOUND) {
                 index = line.find_last_of(wxT("\""));
                 wxString projectType = line.Mid(index + 1).Trim().Trim(false);
-                if(projectType == wxT("0x0104")) {
-                    genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
-                } else if(projectType == wxT("0x0102")) {
+
+                if(projectType == wxT("0x0102")) {
                     genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
+                } else if(projectType == wxT("0x0104")) {
+                    genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
                 } else {
                     genericProject->cfgType = GenericCfgType::EXECUTABLE;
                 }
@@ -163,10 +163,10 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                 genericProjectCfg->name = projectCfgName;
                 genericProjectCfg->type = genericProject->cfgType;
 
-                GenericProjectCfgMap[projectCfgName] = genericProjectCfg;
+                genericProjectCfgMap[projectCfgName] = genericProjectCfg;
             }
 
-            index = line.Find(wxT("# Begin Project"));
+            index = line.Find(wxT("Begin Project"));
             if(index != wxNOT_FOUND)
                 break;
         }
@@ -186,140 +186,196 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
                 projectCfgName.Replace(wxT("\""), wxT(""));
                 projectCfgName.Replace(wxT(" "), wxT("_"));
 
-                genericProjectCfg = GenericProjectCfgMap[projectCfgName];
+                genericProjectCfg = genericProjectCfgMap[projectCfgName];
             }
 
             if(genericProjectCfg) {
                 index = line.Find(wxT("PROP Intermediate_Dir"));
                 if(index != wxNOT_FOUND) {
                     wxString intermediateDirectory = line.Mid(index + 21).Trim().Trim(false);
+                    intermediateDirectory.Replace(wxT("\\"), wxT("/"));
                     intermediateDirectory.Replace(wxT("\""), wxT(""));
                     intermediateDirectory.Replace(wxT(" "), wxT("_"));
-                    intermediateDirectory.Replace(wxT(".\\"), wxT(""));
+                    
                     genericProjectCfg->intermediateDirectory = wxT("./") + intermediateDirectory;
                 }
 
                 index = line.Find(wxT("ADD CPP"));
                 if(index != wxNOT_FOUND) {
-                    wxString preprocessor = wxT(""), includePath = wxT(""), preCompiledHeader = wxT("");
-                    size_t pos = 0;
-
-                    while(pos < line.Length()) {
-                        if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('D')) {
-                            int count = 0;
-                            wxString word = wxT("");
-                            while(count < 2) {
-                                if(line.GetChar(pos) == wxT(' ')) {
-                                    count++;
-                                } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
-                                    word.Append(line.GetChar(pos));
-                                }
-
-                                pos++;
-                            }
-
-                            preprocessor += word + wxT(";");
-                        } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('I')) {
-                            int count = 0;
-                            wxString word = wxT("");
-                            while(count < 2) {
-                                if(line.GetChar(pos) == wxT(' ')) {
-                                    count++;
-                                } else if(count == 1 && line.GetChar(pos) != wxT('\"')) {
-                                    word.Append(line.GetChar(pos));
-                                }
-
-                                pos++;
-                            }
-
-                            includePath += word + wxT(";");
-                        } else if(line.GetChar(pos) == wxT('/') && line.GetChar(pos + 1) == wxT('Y') &&
-                                  line.GetChar(pos + 2) == wxT('u')) {
-                            int count = 0;
-                            wxString word = wxT("");
-                            while(count < 2) {
-                                if(line.GetChar(pos) == wxT('\"')) {
-                                    count++;
-                                } else if(count == 1) {
-                                    word.Append(line.GetChar(pos));
-                                }
-
-                                pos++;
-                            }
-
-                            preCompiledHeader = word;
-                        } else {
-                            pos++;
+                    line = line.Mid(index + 7).Trim().Trim(false);
+                    wxStringTokenizer options(line, wxT(" "));
+                    
+                    while(options.HasMoreTokens()) {
+                        wxString value = options.GetNextToken();
+                        
+                        if(value.Contains(wxT("/I"))) {
+                            wxString includePath = options.GetNextToken().Trim().Trim(false);
+                            includePath.Replace(wxT("\""), wxT(""));
+                            
+                            genericProjectCfg->includePath += includePath + wxT(";");
+                        } else if(value.Contains(wxT("/D"))) {
+                            wxString preprocessor = options.GetNextToken().Trim().Trim(false);
+                            preprocessor.Replace(wxT("\""), wxT(""));
+                            
+                            genericProjectCfg->preprocessor += preprocessor + wxT(";");
+                        } else if(value.Contains(wxT("/Yu"))) {
+                            wxString preCompiledHeader = value.Trim().Trim(false);
+                            preCompiledHeader.Replace(wxT("/Yu"), wxT(""));
+                            preCompiledHeader.Replace(wxT("\""), wxT(""));
+                            
+                            genericProjectCfg->preCompiledHeader += preCompiledHeader + wxT(";");
                         }
                     }
-
-                    genericProjectCfg->preprocessor = preprocessor;
-                    genericProjectCfg->includePath = includePath;
-                    genericProjectCfg->preCompiledHeader = preCompiledHeader;
                 }
-
+                
+                index = line.Find(wxT("ADD LIB32"));
+                if(index != wxNOT_FOUND) {
+                    line = line.Mid(index + 9).Trim().Trim(false);
+                    wxStringTokenizer options(line, wxT(" "));
+                    
+                    while(options.HasMoreTokens()) {
+                        wxString value = options.GetNextToken();
+                        
+                        if(value.Contains(wxT("/out:"))) {
+                            wxString outputFilename = value.Trim().Trim(false);
+                            outputFilename.Replace(wxT("/out:"), wxT(""));
+                            outputFilename.Replace(wxT("\""), wxT(""));
+                            genericProjectCfg->outputFilename = outputFilename;
+                            
+                            wxFileName outputFilenameInfo(outputFilename);
+                            genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
+                        }
+                    }
+                }
+                
                 index = line.Find(wxT("ADD LINK32"));
                 if(index != wxNOT_FOUND) {
-                    int begin = index + 10;
-                    int end = line.Find(wxT("/")) - 1;
-                    line = line.SubString(begin, end).Trim().Trim(false);
-
-                    wxString libraries = wxT("");
-                    wxString libPath = wxT("");
-                    wxStringTokenizer libs(line, wxT(" "));
-
-                    while(libs.HasMoreTokens()) {
-                        wxString lib = libs.GetNextToken();
-                        index = static_cast<int>(lib.find_last_of(wxT("\\")));
-                        if(index != wxNOT_FOUND) {
-                            wxString include = lib.SubString(0, index);
-                            lib = lib.Mid(index + 1);
-                            libPath += include + wxT(";");
-                            libraries += lib + wxT(";");
-                        } else {
-                            libraries += lib + wxT(";");
+                    line = line.Mid(index + 10).Trim().Trim(false);
+                    wxStringTokenizer options(line, wxT(" "));
+                    
+                    while(options.HasMoreTokens()) {
+                        wxString value = options.GetNextToken();
+                        
+                        if(value.Contains(wxT(".lib"))) {
+                            wxString lib = value.Trim().Trim(false);
+                            genericProjectCfg->libraries += lib + wxT(";");
+                        } else if(value.Contains(wxT("/libpath:"))) {
+                            wxString libPath = value.Trim().Trim(false);
+                            libPath.Replace(wxT("/libpath:"), wxT(""));
+                            libPath.Replace(wxT("\""), wxT(""));
+                            genericProjectCfg->libPath += libPath + wxT(";");
+                        } else if(value.Contains(wxT("/out:"))) {
+                            wxString outputFilename = value.Trim().Trim(false);
+                            outputFilename.Replace(wxT("/out:"), wxT(""));
+                            outputFilename.Replace(wxT("\""), wxT(""));
+                            genericProjectCfg->outputFilename = outputFilename;
+                            
+                            wxFileName outputFilenameInfo(outputFilename);
+                            genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
                         }
                     }
-
-                    genericProjectCfg->libraries = libraries;
-                    genericProjectCfg->libPath = libPath;
+                }
+                
+                index = line.Find(wxT("PROP Cmd_Line"));
+                if(index != wxNOT_FOUND) {
+                    wxString cmdLine = line.Mid(index + 13).Trim().Trim(false);
+                    cmdLine.Replace(wxT("\""), wxT(""));
+                    
+                    genericProjectCfg->enableCustomBuild = true;
+                    genericProjectCfg->customBuildCmd = cmdLine;
                 }
 
                 index = line.Find(wxT("Begin Group"));
                 if(index != wxNOT_FOUND) {
-                    virtualPath = line.Mid(index + 11).Trim().Trim(false);
-                    virtualPath.Replace(wxT("\""), wxT(""));
+                    wxString vpName = line.Mid(index + 11).Trim().Trim(false);
+                    vpName.Replace(wxT("\""), wxT(""));
+
+                    if(virtualPath.IsEmpty()) {
+                        virtualPath = vpName;
+                    } else {
+                        virtualPath += wxT("/") + vpName;
+                    }
                 }
 
-                index = line.Find(wxT("SOURCE="));
+                index = line.Find(wxT("End Group"));
                 if(index != wxNOT_FOUND) {
-                    wxString filename = line.Mid(index + 7).Trim().Trim(false);
-                    filename.Replace(wxT("\""), wxT(""));
-                    filename.Replace(wxT("\\"), wxT("/"));
+                    int posSeparator = virtualPath.Find(wxT("/"));
 
-                    GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
-                    genericProjectFile->name = filename;
-                    genericProjectFile->vpath = virtualPath;
-
-                    genericProject->files.push_back(genericProjectFile);
+                    if(posSeparator == wxNOT_FOUND) {
+                        virtualPath = wxT("");
+                    } else {
+                        virtualPath = virtualPath.Remove(posSeparator);
+                    }
                 }
 
-                index = line.Find(wxT("# Begin Custom Build"));
+                index = line.Find(wxT("Begin Source File"));
                 if(index != wxNOT_FOUND) {
+                    GenericProjectFilePtr genericProjectFile;
+                    
                     while(!projectFIS.Eof()) {
                         line = projectTIS.ReadLine();
-
-                        index = line.Find(wxT("\t"));
+                        
+                        int index = line.Find(wxT("\"$(CFG)\" == "));
                         if(index != wxNOT_FOUND) {
-                            wxString command = line;
-                            command.Replace(wxT("\t"), wxT(""));
-                            
-                            if (!command.IsEmpty()) {
-                                genericProjectCfg->preBuildCommands.push_back(command);
+                            wxString projectCfgName = line.Mid(index + 12).Trim().Trim(false);
+                            projectCfgName.Replace(genericProjectData[wxT("projectName")] + wxT(" - "), wxT(""));
+                            projectCfgName.Replace(wxT("\""), wxT(""));
+                            projectCfgName.Replace(wxT(" "), wxT("_"));
+
+                            genericProjectCfg = genericProjectCfgMap[projectCfgName];
+                        }
+                        
+                        index = line.Find(wxT("SOURCE="));
+                        if(index != wxNOT_FOUND) {
+                            wxString filename = line.Mid(index + 7).Trim().Trim(false);
+                            filename.Replace(wxT("\""), wxT(""));
+                            filename.Replace(wxT("\\"), wxT("/"));
+
+                            genericProjectFile = std::make_shared<GenericProjectFile>();
+                            genericProjectFile->name = filename;
+                            genericProjectFile->vpath = virtualPath;
+
+                            genericProject->files.push_back(genericProjectFile);
+                        }
+                        
+                        index = line.Find(wxT("PROP Exclude_From_Build"));
+                        if(index != wxNOT_FOUND) {
+                            wxString excludeValue = line.Mid(index + 23).Trim().Trim(false);
+                            if(genericProjectFile && excludeValue == wxT("1")) {
+                                genericProjectCfg->excludeFiles.push_back(genericProjectFile);
                             }
                         }
+                        
+                        index = line.Find(wxT("Begin Custom Build"));
+                        if(index != wxNOT_FOUND) {
+                            while(!projectFIS.Eof()) {
+                                line = projectTIS.ReadLine();
 
-                        index = line.Find(wxT("# End Custom Build"));
+                                index = line.Find(wxT("="));
+                                if(index != wxNOT_FOUND) {
+                                    wxStringTokenizer keyValue(line, wxT("="));
+                                    wxString key = keyValue.GetNextToken().Trim().Trim(false);
+                                    wxString value = keyValue.GetNextToken().Trim().Trim(false);
+                                    genericProjectCfg->envVars[key] = value;
+                                }
+
+                                index = line.Find(wxT("\t"));
+                                if(index != wxNOT_FOUND) {
+                                    wxString command = line;
+                                    command.Replace(wxT("\t"), wxT(""));
+
+                                    if(!command.IsEmpty()) {
+                                        genericProjectCfg->preBuildCommands.push_back(command);
+                                    }
+                                }
+
+                                index = line.Find(wxT("End Custom Build"));
+                                if(index != wxNOT_FOUND)
+                                    break;
+                            }
+                        }
+                        
+                        index = line.Find(wxT("End Source File"));
                         if(index != wxNOT_FOUND)
                             break;
                     }
@@ -327,7 +383,7 @@ void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorksp
             }
         }
 
-        for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : GenericProjectCfgMap) {
+        for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : genericProjectCfgMap) {
             if(genericProjectCfg.second) {
                 genericProject->cfgs.push_back(genericProjectCfg.second);
             }
@@ -443,6 +499,7 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
         wxXmlNode* root = projectDoc.GetRoot();
 
         wxXmlNode* vspChild = root->GetChildren();
+        std::map<wxString, GenericProjectCfgPtr> genericProjectCfgMap;
         while(vspChild) {
             if(vspChild->GetName() == wxT("Configurations")) {
                 wxXmlNode* confChild = vspChild->GetChildren();
@@ -565,21 +622,51 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
                                         genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
                                     }
                                 }
-                                
+
                                 if(toolChild->GetAttribute(wxT("Name")) == wxT("VCPreBuildEventTool")) {
                                     if(toolChild->HasAttribute(wxT("CommandLine"))) {
                                         wxString commandLine = toolChild->GetAttribute(wxT("CommandLine"));
-                                        if (!commandLine.IsEmpty()) {
+                                        if(!commandLine.IsEmpty()) {
                                             genericProjectCfg->preBuildCommands.push_back(commandLine);
                                         }
                                     }
                                 }
-                                
+
                                 if(toolChild->GetAttribute(wxT("Name")) == wxT("VCPostBuildEventTool")) {
                                     if(toolChild->HasAttribute(wxT("CommandLine"))) {
                                         wxString commandLine = toolChild->GetAttribute(wxT("CommandLine"));
-                                        if (!commandLine.IsEmpty()) {
+                                        if(!commandLine.IsEmpty()) {
                                             genericProjectCfg->postBuildCommands.push_back(commandLine);
+                                        }
+                                    }
+                                }
+                                
+                                if(toolChild->GetAttribute(wxT("Name")) == wxT("VCNMakeTool")) {
+                                    if(toolChild->HasAttribute(wxT("BuildCommandLine"))) {
+                                        wxString buildCommandLine = toolChild->GetAttribute(wxT("BuildCommandLine"));
+                                        if(!buildCommandLine.IsEmpty()) {
+                                            if(!genericProjectCfg->enableCustomBuild)
+                                                genericProjectCfg->enableCustomBuild = true;
+                                            
+                                            genericProjectCfg->customBuildCmd = buildCommandLine;
+                                        }
+                                    }
+                                    
+                                    if(toolChild->HasAttribute(wxT("ReBuildCommandLine"))) {
+                                        wxString reBuildCommandLine = toolChild->GetAttribute(wxT("ReBuildCommandLine"));
+                                        if(!reBuildCommandLine.IsEmpty()) {
+                                            if(!genericProjectCfg->enableCustomBuild)
+                                                genericProjectCfg->enableCustomBuild = true;
+                                            genericProjectCfg->customRebuildCmd = reBuildCommandLine;
+                                        }
+                                    }
+                                    
+                                    if(toolChild->HasAttribute(wxT("CleanCommandLine"))) {
+                                        wxString cleanCommandLine = toolChild->GetAttribute(wxT("CleanCommandLine"));
+                                        if(!cleanCommandLine.IsEmpty()) {
+                                            if(!genericProjectCfg->enableCustomBuild)
+                                                genericProjectCfg->enableCustomBuild = true;
+                                            genericProjectCfg->customCleanCmd = cleanCommandLine;
                                         }
                                     }
                                 }
@@ -591,6 +678,7 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
                         if(genericProject->cfgType != genericProjectCfg->type)
                             genericProject->cfgType = genericProjectCfg->type;
 
+                        genericProjectCfgMap[projectCfgName] = genericProjectCfg;
                         genericProject->cfgs.push_back(genericProjectCfg);
                     }
 
@@ -600,41 +688,7 @@ void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorksp
 
             if(vspChild->GetName() == wxT("Files")) {
                 wxXmlNode* filterChild = vspChild->GetChildren();
-
-                while(filterChild) {
-                    if(filterChild->GetName() == wxT("Filter")) {
-                        wxString virtualPath = filterChild->GetAttribute(wxT("Name"));
-
-                        wxXmlNode* fileChild = filterChild->GetChildren();
-
-                        while(fileChild) {
-                            if(fileChild->GetName() == wxT("File")) {
-                                wxString filename = fileChild->GetAttribute(wxT("RelativePath"));
-                                filename.Replace(wxT("\\"), wxT("/"));
-
-                                GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
-                                genericProjectFile->name = filename;
-                                genericProjectFile->vpath = virtualPath;
-
-                                genericProject->files.push_back(genericProjectFile);
-                            }
-
-                            fileChild = fileChild->GetNext();
-                        }
-                    }
-
-                    if(filterChild->GetName() == wxT("File")) {
-                        wxString filename = filterChild->GetAttribute(wxT("RelativePath"));
-                        filename.Replace(wxT("\\"), wxT("/"));
-
-                        GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
-                        genericProjectFile->name = filename;
-
-                        genericProject->files.push_back(genericProjectFile);
-                    }
-
-                    filterChild = filterChild->GetNext();
-                }
+                AddFilesVC7(filterChild, genericProject, genericProjectCfgMap, wxT(""));
             }
 
             vspChild = vspChild->GetNext();
@@ -661,12 +715,12 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
         genericProject->deps.Add(projectNameDep);
     }
 
+    std::map<wxString, GenericProjectCfgPtr> genericProjectCfgMap;
+
     wxXmlDocument projectDoc;
     if(projectDoc.Load(projectInfo.GetFullPath())) {
         wxXmlNode* root = projectDoc.GetRoot();
         wxXmlNode* projectChild = root->GetChildren();
-
-        std::map<wxString, GenericProjectCfgPtr> GenericProjectCfgMap;
 
         while(projectChild) {
             if(projectChild->GetName() == wxT("ItemGroup") && projectChild->HasAttribute(wxT("Label")) &&
@@ -700,9 +754,45 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                     genericProjectCfg->envVars[wxT("VS_ProjectName")] = genericProject->name;
                     genericProjectCfg->envVars[wxT("VS_ProjectDir")] = projectDir;
 
-                    GenericProjectCfgMap[projectCfgKey] = genericProjectCfg;
+                    genericProjectCfgMap[projectCfgKey] = genericProjectCfg;
 
                     projectConfiguration = projectConfiguration->GetNext();
+                }
+            }
+
+            if(projectChild->GetName() == wxT("ItemGroup")) {
+                wxXmlNode* itemGroupChild = projectChild->GetChildren();
+
+                while(itemGroupChild) {
+                    if(itemGroupChild->GetName() == wxT("CustomBuild")) {
+                        wxXmlNode* customBuildChild = itemGroupChild->GetChildren();
+
+                        while(customBuildChild) {
+                            if(customBuildChild->GetName() == wxT("Command") &&
+                               customBuildChild->HasAttribute("Condition")) {
+                                wxString elemCondition = customBuildChild->GetAttribute("Condition");
+                                wxString commandLine = customBuildChild->GetNodeContent();
+                                wxString projectCfgKey = ExtractProjectCfgName(wxT(""), elemCondition);
+
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+
+                                if(genericProjectCfg && !commandLine.IsEmpty()) {
+                                    genericProjectCfg->preBuildCommands.push_back(commandLine);
+                                }
+                            }
+
+                            customBuildChild = customBuildChild->GetNext();
+                        }
+                    }
+
+                    if(itemGroupChild->GetName() == wxT("ClInclude") || itemGroupChild->GetName() == wxT("ClCompile") ||
+                       itemGroupChild->GetName() == wxT("None") || itemGroupChild->GetName() == wxT("Text") ||
+                       itemGroupChild->GetName() == wxT("ResourceCompile") ||
+                       itemGroupChild->GetName() == wxT("Image") || itemGroupChild->GetName() == wxT("CustomBuild")) {
+                        AddFilesVC11(itemGroupChild, genericProject, genericProjectCfgMap);
+                    }
+
+                    itemGroupChild = itemGroupChild->GetNext();
                 }
             }
 
@@ -720,7 +810,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                         wxString outputFilename;
 
-                        GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
 
                         if(genericProjectCfg) {
                             if(configurationType == wxT("StaticLibrary")) {
@@ -744,7 +834,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                         intermediateDirectory.Replace(wxT("\\"), wxT("/"));
                         intermediateDirectory = ReplaceDefaultEnvVars(intermediateDirectory);
 
-                        GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                         if(genericProjectCfg) {
                             genericProjectCfg->intermediateDirectory =
                                 intermediateDirectory.SubString(0, intermediateDirectory.Length() - 1);
@@ -760,9 +850,57 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                         outDir.Replace(wxT("\\"), wxT("/"));
                         outDir = ReplaceDefaultEnvVars(outDir);
 
-                        GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                         if(genericProjectCfg) {
                             genericProjectCfg->envVars[wxT("VS_OutDir")] = outDir;
+                        }
+                    }
+                    
+                    if(propertyGroupChild->GetName() == wxT("NMakeBuildCommandLine")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString nMakeBuildCommandLine = propertyGroupChild->GetNodeContent();
+                        nMakeBuildCommandLine = ReplaceDefaultEnvVars(nMakeBuildCommandLine);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg && !nMakeBuildCommandLine.IsEmpty()) {
+                            if(!genericProjectCfg->enableCustomBuild)
+                                genericProjectCfg->enableCustomBuild = true;
+                            
+                            genericProjectCfg->customBuildCmd = nMakeBuildCommandLine;
+                        }
+                    }
+                    
+                    if(propertyGroupChild->GetName() == wxT("NMakeReBuildCommandLine")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString nMakeReBuildCommandLine = propertyGroupChild->GetNodeContent();
+                        nMakeReBuildCommandLine = ReplaceDefaultEnvVars(nMakeReBuildCommandLine);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg && !nMakeReBuildCommandLine.IsEmpty()) {
+                            if(!genericProjectCfg->enableCustomBuild)
+                                genericProjectCfg->enableCustomBuild = true;
+                            
+                            genericProjectCfg->customRebuildCmd = nMakeReBuildCommandLine;
+                        }
+                    }
+                    
+                    if(propertyGroupChild->GetName() == wxT("NMakeCleanCommandLine")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute("Condition");
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString nMakeCleanCommandLine = propertyGroupChild->GetNodeContent();
+                        nMakeCleanCommandLine = ReplaceDefaultEnvVars(nMakeCleanCommandLine);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg && !nMakeCleanCommandLine.IsEmpty()) {
+                            if(!genericProjectCfg->enableCustomBuild)
+                                genericProjectCfg->enableCustomBuild = true;
+                            
+                            genericProjectCfg->customCleanCmd = nMakeCleanCommandLine;
                         }
                     }
 
@@ -788,7 +926,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                                 preprocessorDefinitions.Replace(wxT("%(PreprocessorDefinitions)"), wxT(""));
                                 preprocessorDefinitions = ReplaceDefaultEnvVars(preprocessorDefinitions);
 
-                                GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {
                                     genericProjectCfg->preprocessor = preprocessorDefinitions;
                                 }
@@ -800,7 +938,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                                 wxString precompiledHeaderFile = clcompileChild->GetNodeContent();
 
-                                GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {
                                     genericProjectCfg->preCompiledHeader = precompiledHeaderFile;
                                 }
@@ -815,7 +953,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                                 additionalIncludeDirectories.Replace(wxT("\\"), wxT("/"));
                                 additionalIncludeDirectories = ReplaceDefaultEnvVars(additionalIncludeDirectories);
 
-                                GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {
                                     genericProjectCfg->includePath = additionalIncludeDirectories;
                                 }
@@ -837,7 +975,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                                 additionalDependencies.Replace(wxT("%(AdditionalDependencies)"), wxT(""));
                                 additionalDependencies = ReplaceDefaultEnvVars(additionalDependencies);
 
-                                GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {
                                     genericProjectCfg->libraries = additionalDependencies;
                                 }
@@ -851,7 +989,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                                 additionalLibraryDirectories.Replace(wxT("%(AdditionalLibraryDirectories)"), wxT(""));
                                 additionalLibraryDirectories = ReplaceDefaultEnvVars(additionalLibraryDirectories);
 
-                                GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {
                                     genericProjectCfg->libPath = additionalLibraryDirectories;
                                 }
@@ -868,7 +1006,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                                 wxFileName outputFilenameInfo(outputFile);
 
-                                GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {
                                     genericProjectCfg->outputFilename = outputFile;
                                     genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
@@ -894,7 +1032,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
 
                                 wxFileName outputFilenameInfo(outputFile);
 
-                                GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                 if(genericProjectCfg) {
                                     genericProjectCfg->outputFilename = outputFile;
                                     genericProjectCfg->command = wxT("./") + outputFilenameInfo.GetFullName();
@@ -904,7 +1042,7 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                             LibChild = LibChild->GetNext();
                         }
                     }
-                    
+
                     if(itemDefinitionGroupChild->GetName() == wxT("PreBuildEvent")) {
                         wxXmlNode* preBuildEventChild = itemDefinitionGroupChild->GetChildren();
 
@@ -912,20 +1050,20 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                             if(preBuildEventChild->GetName() == wxT("Command")) {
                                 wxString elemCondition = preBuildEventChild->GetAttribute("Condition");
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
-                                
+
                                 wxString command = preBuildEventChild->GetNodeContent();
-                                if (!command.IsEmpty()) {
-                                    GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                if(!command.IsEmpty()) {
+                                    GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                     if(genericProjectCfg) {
                                         genericProjectCfg->preBuildCommands.push_back(command);
                                     }
                                 }
                             }
-                            
+
                             preBuildEventChild = preBuildEventChild->GetNext();
                         }
                     }
-                    
+
                     if(itemDefinitionGroupChild->GetName() == wxT("PostBuildEvent")) {
                         wxXmlNode* postBuildEventChild = itemDefinitionGroupChild->GetChildren();
 
@@ -933,16 +1071,16 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                             if(postBuildEventChild->GetName() == wxT("Command")) {
                                 wxString elemCondition = postBuildEventChild->GetAttribute("Condition");
                                 wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
-                                
+
                                 wxString command = postBuildEventChild->GetNodeContent();
-                                if (!command.IsEmpty()) {
-                                    GenericProjectCfgPtr genericProjectCfg = GenericProjectCfgMap[projectCfgKey];
+                                if(!command.IsEmpty()) {
+                                    GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                                     if(genericProjectCfg) {
                                         genericProjectCfg->postBuildCommands.push_back(command);
                                     }
                                 }
                             }
-                            
+
                             postBuildEventChild = postBuildEventChild->GetNext();
                         }
                     }
@@ -951,35 +1089,10 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                 }
             }
 
-            if(!filterInfo.Exists()) {
-                if(projectChild->GetName() == wxT("ItemGroup")) {
-                    wxXmlNode* itemChild = projectChild->GetChildren();
-
-                    while(itemChild) {
-                        if(itemChild->GetName() == wxT("ClInclude") || itemChild->GetName() == wxT("ClCompile") ||
-                           itemChild->GetName() == wxT("None") || itemChild->GetName() == wxT("Text") ||
-                           itemChild->GetName() == wxT("ResourceCompile")) {
-
-                            wxString virtualPath = "";
-                            wxString filename = itemChild->GetAttribute("Include");
-                            filename.Replace(wxT("\\"), wxT("/"));
-
-                            GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
-                            genericProjectFile->name = filename;
-                            genericProjectFile->vpath = virtualPath;
-
-                            genericProject->files.push_back(genericProjectFile);
-                        }
-
-                        itemChild = itemChild->GetNext();
-                    }
-                }
-            }
-
             projectChild = projectChild->GetNext();
         }
 
-        for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : GenericProjectCfgMap) {
+        for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : genericProjectCfgMap) {
             if(genericProjectCfg.second) {
                 genericProject->cfgs.push_back(genericProjectCfg.second);
             }
@@ -989,40 +1102,25 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
     wxXmlDocument filterDoc;
     if(filterDoc.Load(filterInfo.GetFullPath())) {
         wxXmlNode* root = filterDoc.GetRoot();
-        wxXmlNode* itemGroupChild = root->GetChildren();
+        wxXmlNode* projectChild = root->GetChildren();
 
-        while(itemGroupChild) {
-            wxXmlNode* itemChild = itemGroupChild->GetChildren();
+        while(projectChild) {
+            if(projectChild->GetName() == wxT("ItemGroup")) {
+                wxXmlNode* itemGroupChild = projectChild->GetChildren();
 
-            while(itemChild) {
-                if(itemChild->GetName() == wxT("ClInclude") || itemChild->GetName() == wxT("ClCompile") ||
-                   itemChild->GetName() == wxT("None") || itemChild->GetName() == wxT("Text") ||
-                   itemChild->GetName() == wxT("ResourceCompile")) {
-                    wxString virtualPath = "";
-                    wxString filename = itemChild->GetAttribute("Include");
-                    filename.Replace(wxT("\\"), wxT("/"));
-
-                    wxXmlNode* filterChild = itemChild->GetChildren();
-                    if(filterChild) {
-                        if(filterChild->GetName() == wxT("Filter")) {
-                            wxString content = filterChild->GetNodeContent();
-                            if(!content.IsEmpty()) {
-                                virtualPath = content;
-                            }
-                        }
+                while(itemGroupChild) {
+                    if(itemGroupChild->GetName() == wxT("ClInclude") || itemGroupChild->GetName() == wxT("ClCompile") ||
+                       itemGroupChild->GetName() == wxT("None") || itemGroupChild->GetName() == wxT("Text") ||
+                       itemGroupChild->GetName() == wxT("ResourceCompile") ||
+                       itemGroupChild->GetName() == wxT("Image") || itemGroupChild->GetName() == wxT("CustomBuild")) {
+                        AddFilesVC11(itemGroupChild, genericProject, genericProjectCfgMap);
                     }
 
-                    GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
-                    genericProjectFile->name = filename;
-                    genericProjectFile->vpath = virtualPath;
-
-                    genericProject->files.push_back(genericProjectFile);
+                    itemGroupChild = itemGroupChild->GetNext();
                 }
-
-                itemChild = itemChild->GetNext();
             }
 
-            itemGroupChild = itemGroupChild->GetNext();
+            projectChild = projectChild->GetNext();
         }
     }
 
@@ -1051,4 +1149,124 @@ wxString VisualCppImporter::ReplaceDefaultEnvVars(const wxString& str)
     tmp.Replace(wxT("$(ProjectDir)"), wxT("$(VS_ProjectDir)"));
 
     return tmp;
+}
+
+void VisualCppImporter::AddFilesVC7(wxXmlNode* filterChild,
+                                    GenericProjectPtr genericProject,
+                                    std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap,
+                                    wxString preVirtualPath)
+{
+    while(filterChild) {
+        if(filterChild->GetName() == wxT("Filter")) {
+            wxString virtualPath = filterChild->GetAttribute(wxT("Name"));
+            wxXmlNode* fileChild = filterChild->GetChildren();
+
+            if(!preVirtualPath.IsEmpty()) {
+                virtualPath = preVirtualPath + wxT("/") + virtualPath;
+            }
+
+            AddFilesVC7(fileChild, genericProject, genericProjectCfgMap, virtualPath);
+        } else if(filterChild->GetName() == wxT("File")) {
+            wxString filename = filterChild->GetAttribute(wxT("RelativePath"));
+            filename.Replace(wxT("\\"), wxT("/"));
+
+            GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
+            genericProjectFile->name = filename;
+            genericProjectFile->vpath = preVirtualPath;
+
+            genericProject->files.push_back(genericProjectFile);
+
+            wxXmlNode* fileConfChild = filterChild->GetChildren();
+
+            while(fileConfChild) {
+                if(fileConfChild->GetName() == wxT("FileConfiguration")) {
+                    wxString name = fileConfChild->GetAttribute(wxT("Name"));
+                    wxString excludedFromBuild = fileConfChild->GetAttribute(wxT("ExcludedFromBuild"));
+                    wxString projectCfgName = name;
+                    projectCfgName.Replace(wxT("|"), wxT("_"));
+
+                    if(excludedFromBuild == wxT("true")) {
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgName];
+                        if(genericProjectCfg) {
+                            genericProjectCfg->excludeFiles.push_back(genericProjectFile);
+                        }
+                    }
+
+                    wxXmlNode* toolChild = fileConfChild->GetChildren();
+
+                    while(toolChild) {
+                        if(toolChild->GetName() == wxT("Tool")) {
+                            if(toolChild->GetAttribute(wxT("Name")) == wxT("VCCustomBuildTool")) {
+                                wxString commandLine = toolChild->GetAttribute(wxT("CommandLine"));
+
+                                GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgName];
+                                if(genericProjectCfg && !commandLine.IsEmpty()) {
+                                    genericProjectCfg->preBuildCommands.push_back(commandLine);
+                                }
+                            }
+                        }
+
+                        toolChild = toolChild->GetNext();
+                    }
+                }
+
+                fileConfChild = fileConfChild->GetNext();
+            }
+        }
+
+        filterChild = filterChild->GetNext();
+    }
+}
+
+void VisualCppImporter::AddFilesVC11(wxXmlNode* itemGroupChild,
+                                     GenericProjectPtr genericProject,
+                                     std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap)
+{
+    wxString filename = itemGroupChild->GetAttribute("Include");
+    filename.Replace(wxT("\\"), wxT("/"));
+
+    GenericProjectFilePtr genericProjectFile = FindProjectFileByName(genericProject, filename);
+
+    if(genericProjectFile) {
+        genericProjectFile->name = filename;
+    } else {
+        genericProjectFile = std::make_shared<GenericProjectFile>();
+        genericProjectFile->name = filename;
+
+        genericProject->files.push_back(genericProjectFile);
+    }
+
+    wxXmlNode* otherChild = itemGroupChild->GetChildren();
+    while(otherChild) {
+        if(otherChild->GetName() == wxT("Filter")) {
+            wxString content = otherChild->GetNodeContent();
+            if(!content.IsEmpty()) {
+                genericProjectFile->vpath = content;
+            }
+        }
+
+        if(otherChild->GetName() == wxT("ExcludedFromBuild")) {
+            wxString elemCondition = otherChild->GetAttribute("Condition");
+            wxString projectCfgKey = ExtractProjectCfgName(wxT(""), elemCondition);
+            wxString content = otherChild->GetNodeContent();
+
+            GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+
+            if(genericProjectCfg && content == wxT("true")) {
+                genericProjectCfg->excludeFiles.push_back(genericProjectFile);
+            }
+        }
+
+        otherChild = otherChild->GetNext();
+    }
+}
+
+GenericProjectFilePtr VisualCppImporter::FindProjectFileByName(GenericProjectPtr genericProject, wxString filename)
+{
+    for(GenericProjectFilePtr projectFile : genericProject->files) {
+        if(projectFile->name == filename)
+            return projectFile;
+    }
+
+    return nullptr;
 }

@@ -143,8 +143,18 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
     }
     sftp_close(file);
 
-    // Unlink the original file
-    if(sftp_unlink(m_sftp, remotePath.mb_str(wxConvUTF8).data()) < 0) {
+    // Unlink the original file if it exists
+    bool needUnlink = false;
+    {
+        // Check if the file exists
+        sftp_attributes attr = sftp_stat(m_sftp, remotePath.mb_str(wxConvISO8859_1).data());
+        if(attr) {
+            needUnlink = true;
+            sftp_attributes_free(attr);
+        }
+    }
+
+    if(needUnlink && sftp_unlink(m_sftp, remotePath.mb_str(wxConvUTF8).data()) < 0) {
         throw clException(wxString() << _("Failed to unlink file: ") << remotePath << ". "
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));

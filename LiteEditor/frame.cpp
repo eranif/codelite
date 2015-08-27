@@ -226,6 +226,7 @@ EVT_UPDATE_UI(XRCID("save_file_as"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("save_all"), clMainFrame::OnFileSaveAllUI)
 EVT_UPDATE_UI(XRCID("save_tab_group"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("close_file"), clMainFrame::OnFileCloseUI)
+EVT_UPDATE_UI(XRCID("recent_workspaces"), clMainFrame::OnRecentWorkspaceUI)
 
 //--------------------------------------------------
 // Edit menu
@@ -6246,4 +6247,10 @@ void clMainFrame::OnPageSetup(wxCommandEvent& event)
     if(GetMainBook()->GetActiveEditor(true)) {
         GetMainBook()->GetActiveEditor(true)->PageSetup();
     }
+}
+
+void clMainFrame::OnRecentWorkspaceUI(wxUpdateUIEvent& e)
+{
+    // We don't allow reloading of recent workspace while another is opened
+    e.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
 }

@@ -3485,8 +3485,8 @@ void clMainFrame::CreateRecentlyOpenedWorkspacesMenu()
     if(item && menu) {
         wxMenu* submenu = item->GetSubMenu();
         if(submenu) {
-            for(size_t i = 0; i < files.GetCount(); i++) {
-                hs.AddFileToHistory(files.Item(i));
+            for(size_t i = files.GetCount(); i > 0; --i) {
+                hs.AddFileToHistory(files.Item(i-1));
             }
             // set this menu as the recent file menu
             hs.SetBaseId(RecentWorkspaceSubMenuID + 1);

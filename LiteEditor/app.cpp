@@ -354,6 +354,11 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
+    wxString newDataDir(wxEmptyString);
+    if(parser.Found(wxT("d"), &newDataDir)) {
+        clStandardPaths::Get().SetUserDataDir(newDataDir);
+    }
+
     // check for single instance
     if(!IsSingleInstance(parser)) {
         return false;
@@ -400,11 +405,6 @@ bool CodeLiteApp::OnInit()
 #else
         wxLogDebug("Ignoring the Windows-only --basedir option as not running Windows");
 #endif
-    }
-
-    wxString newDataDir(wxEmptyString);
-    if(parser.Found(wxT("d"), &newDataDir)) {
-        clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
 
     // Set the log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging CodeLite

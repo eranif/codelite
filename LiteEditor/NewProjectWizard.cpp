@@ -130,7 +130,8 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
     // Populate the dataview model
     m_dataviewTemplatesModel->Clear();
     std::map<wxString, wxDataViewItem> categoryMap;
-
+    std::map<wxString, wxStringSet_t> projectsPerCategory;
+    
     // list of compilers
     wxArrayString compilerChoices;
 
@@ -159,9 +160,17 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
             }
             cols.push_back(DVTemplatesModel::CreateIconTextVariant(category, bmp));
             categoryMap[category] = m_dataviewTemplatesModel->AppendItem(wxDataViewItem(0), cols);
+            projectsPerCategory.insert(std::make_pair(category, wxStringSet_t()));
         }
 
         {
+            wxString name = newTemplate.m_template;
+            if(projectsPerCategory[category].count(name)) {
+                // already exists
+                continue;
+            }
+            projectsPerCategory[category].insert(name); // add it to the unique list
+            
             wxVector<wxVariant> cols;
             wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(newTemplate.m_templatePng);
             if(!bmp.IsOk()) {
@@ -192,12 +201,20 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Te
             v << ict;
             cols.push_back(v);
             categoryMap[internalType] = m_dataviewTemplatesModel->AppendItem(wxDataViewItem(0), cols);
+            projectsPerCategory.insert(std::make_pair(internalType, wxStringSet_t()));
         }
 
         wxString imgId = (*iter)->GetProjectIconName();
         wxBitmap bmp = images.Bitmap(imgId);
         // Allow the user to override it
-
+        
+        // Remove the entry
+        if(projectsPerCategory[internalType].count((*iter)->GetName())) {
+            // already exists
+            continue;
+        }
+        projectsPerCategory[internalType].insert((*iter)->GetName()); // add it to the unique list
+        
         cols.clear();
         wxIcon icn;
         icn.CopyFromBitmap(bmp);

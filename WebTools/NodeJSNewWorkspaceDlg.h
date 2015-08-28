@@ -5,6 +5,7 @@
 class NodeJSNewWorkspaceDlg : public NodeJSNewWorkspaceDlgBase
 {
 protected:
+    virtual void OnExistingFolderSelected(wxFileDirPickerEvent& event);
     virtual void OnCheckNewFolder(wxCommandEvent& event);
     void UpdatePreview();
 

@@ -489,27 +489,46 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer140 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer140);
     
+    m_staticText215 = new wxStaticText(this, wxID_ANY, _("Select the create method:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText215Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText215Font.SetWeight(wxFONTWEIGHT_BOLD);
+    m_staticText215->SetFont(m_staticText215Font);
+    
+    boxSizer140->Add(m_staticText215, 0, wxALL|wxALIGN_LEFT, 5);
+    
+    m_choicebook199 = new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_choicebook199->SetToolTip(_("Create the workspace create method"));
+    m_choicebook199->SetName(wxT("m_choicebook199"));
+    
+    boxSizer140->Add(m_choicebook199, 1, wxALL|wxEXPAND, 5);
+    
+    m_panel201 = new wxPanel(m_choicebook199, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_choicebook199->AddPage(m_panel201, _("Create an empty workspace"), true);
+    
+    wxStaticBoxSizer* staticBoxSizer216 = new wxStaticBoxSizer( new wxStaticBox(m_panel201, wxID_ANY, wxT("")), wxVERTICAL);
+    m_panel201->SetSizer(staticBoxSizer216);
+    
     wxFlexGridSizer* flexGridSizer148 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer148->SetFlexibleDirection( wxBOTH );
     flexGridSizer148->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer148->AddGrowableCol(1);
     
-    boxSizer140->Add(flexGridSizer148, 1, wxALL|wxEXPAND, 5);
+    staticBoxSizer216->Add(flexGridSizer148, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText150 = new wxStaticText(this, wxID_ANY, _("Workspace path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText150 = new wxStaticText(m_panel201, wxID_ANY, _("Workspace path:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer148->Add(m_staticText150, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_dirPickerFolder = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerFolder = new wxDirPickerCtrl(m_panel201, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPickerFolder->SetFocus();
     
     flexGridSizer148->Add(m_dirPickerFolder, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_staticText160 = new wxStaticText(this, wxID_ANY, _("Workspace name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText160 = new wxStaticText(m_panel201, wxID_ANY, _("Workspace name:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer148->Add(m_staticText160, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrllName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrllName = new wxTextCtrl(m_panel201, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrllName->SetHint(wxT(""));
     #endif
@@ -518,12 +537,34 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     
     flexGridSizer148->Add(0, 0, 1, wxALL, 5);
     
-    m_checkBoxNewFolder = new wxCheckBox(this, wxID_ANY, _("Create in a new folder"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxNewFolder = new wxCheckBox(m_panel201, wxID_ANY, _("Create in a new folder"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxNewFolder->SetValue(true);
     
     flexGridSizer148->Add(m_checkBoxNewFolder, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_staticTextPreview = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE|wxBORDER_STATIC);
+    m_panel203 = new wxPanel(m_choicebook199, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_choicebook199->AddPage(m_panel203, _("Create from existing files"), false);
+    
+    wxStaticBoxSizer* staticBoxSizer218 = new wxStaticBoxSizer( new wxStaticBox(m_panel203, wxID_ANY, wxT("")), wxVERTICAL);
+    m_panel203->SetSizer(staticBoxSizer218);
+    
+    wxFlexGridSizer* flexGridSizer221 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer221->SetFlexibleDirection( wxBOTH );
+    flexGridSizer221->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer221->AddGrowableCol(1);
+    
+    staticBoxSizer218->Add(flexGridSizer221, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText223 = new wxStaticText(m_panel203, wxID_ANY, _("Source files folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer221->Add(m_staticText223, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_dirPickerExistingDir = new wxDirPickerCtrl(m_panel203, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerExistingDir->SetFocus();
+    
+    flexGridSizer221->Add(m_dirPickerExistingDir, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticTextPreview = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE|wxBORDER_THEME);
     m_staticTextPreview->SetForegroundColour(wxColour(wxT("rgb(21,144,18)")));
     
     boxSizer140->Add(m_staticTextPreview, 0, wxALL|wxEXPAND, 5);
@@ -539,6 +580,15 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     m_button146 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer142->AddButton(m_button146);
     m_stdBtnSizer142->Realize();
+    
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_choicebook199)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_choicebook199);
+    } else {
+        wxPersistenceManager::Get().Restore(m_choicebook199);
+    }
+    #endif
     
     SetName(wxT("NodeJSNewWorkspaceDlgBase"));
     SetSizeHints(-1,-1);
@@ -557,6 +607,7 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     m_dirPickerFolder->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NodeJSNewWorkspaceDlgBase::OnFolderSelected), NULL, this);
     m_textCtrllName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnTextUpdate), NULL, this);
     m_checkBoxNewFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnCheckNewFolder), NULL, this);
+    m_dirPickerExistingDir->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NodeJSNewWorkspaceDlgBase::OnExistingFolderSelected), NULL, this);
     m_button144->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSNewWorkspaceDlgBase::OnOKUI), NULL, this);
     
 }
@@ -566,6 +617,7 @@ NodeJSNewWorkspaceDlgBase::~NodeJSNewWorkspaceDlgBase()
     m_dirPickerFolder->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NodeJSNewWorkspaceDlgBase::OnFolderSelected), NULL, this);
     m_textCtrllName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnTextUpdate), NULL, this);
     m_checkBoxNewFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnCheckNewFolder), NULL, this);
+    m_dirPickerExistingDir->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NodeJSNewWorkspaceDlgBase::OnExistingFolderSelected), NULL, this);
     m_button144->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSNewWorkspaceDlgBase::OnOKUI), NULL, this);
     
 }

@@ -1068,7 +1068,7 @@ static unsigned char xml_res_file_28[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
-47,47,119,119,119,46,119,120,119,105,110,100,111,119,115,46,111,114,103,
+47,47,119,119,119,46,119,120,119,105,100,103,101,116,115,46,111,114,103,
 47,119,120,120,114,99,34,62,10,32,32,60,111,98,106,101,99,116,32,99,108,
 97,115,115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,
 34,99,108,101,97,114,34,62,103,105,116,117,105,95,103,105,116,95,98,105,
@@ -1242,34 +1242,34 @@ void wxCrafterpca4kKInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_clear.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-add-file.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_apply-patch.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_arrow-up.png"), xml_res_file_5, xml_res_size_5, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-clone.png"), xml_res_file_6, xml_res_size_6, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-arrow-down.png"), xml_res_file_7, xml_res_size_7, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-commits.png"), xml_res_file_8, xml_res_size_8, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-diffs.png"), xml_res_file_9, xml_res_size_9, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-modified.png"), xml_res_file_10, xml_res_size_10, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch-new.png"), xml_res_file_11, xml_res_size_11, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_toolbars_16_standard_document-open.png"), xml_res_file_12, xml_res_size_12, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-pull.png"), xml_res_file_13, xml_res_size_13, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-push.png"), xml_res_file_14, xml_res_size_14, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-rebase.png"), xml_res_file_15, xml_res_size_15, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-refresh.png"), xml_res_file_16, xml_res_size_16, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset-repo.png"), xml_res_file_17, xml_res_size_17, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-settings.png"), xml_res_file_18, xml_res_size_18, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-start.png"), xml_res_file_19, xml_res_size_19, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_gitStash.png"), xml_res_file_20, xml_res_size_20, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_gitStashPop.png"), xml_res_file_21, xml_res_size_21, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch.png"), xml_res_file_22, xml_res_size_22, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch-remote.png"), xml_res_file_23, xml_res_size_23, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-trash.png"), xml_res_file_24, xml_res_size_24, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_msysgit.png"), xml_res_file_25, xml_res_size_25, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._LiteEditor_res_16_select-all.png"), xml_res_file_26, xml_res_size_26, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_subversion_16_stop.png"), xml_res_file_27, xml_res_size_27, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"), xml_res_file_28, xml_res_size_28, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$_home_eran_devl_codelite_git_gitui_git_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_clear.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-add-file.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_apply-patch.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_arrow-up.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-clone.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-arrow-down.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-commits.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-diffs.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-list-modified.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch-new.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_toolbars_16_standard_document-open.png"), xml_res_file_12, xml_res_size_12, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-pull.png"), xml_res_file_13, xml_res_size_13, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-push.png"), xml_res_file_14, xml_res_size_14, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-rebase.png"), xml_res_file_15, xml_res_size_15, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-refresh.png"), xml_res_file_16, xml_res_size_16, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-reset-repo.png"), xml_res_file_17, xml_res_size_17, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-settings.png"), xml_res_file_18, xml_res_size_18, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-start.png"), xml_res_file_19, xml_res_size_19, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_gitStash.png"), xml_res_file_20, xml_res_size_20, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_gitStashPop.png"), xml_res_file_21, xml_res_size_21, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch.png"), xml_res_file_22, xml_res_size_22, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch-remote.png"), xml_res_file_23, xml_res_size_23, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-trash.png"), xml_res_file_24, xml_res_size_24, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_msysgit.png"), xml_res_file_25, xml_res_size_25, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._LiteEditor_res_16_select-all.png"), xml_res_file_26, xml_res_size_26, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_subversion_16_stop.png"), xml_res_file_27, xml_res_size_27, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_git_gitui_git_bitmaps.xrc"), xml_res_file_28, xml_res_size_28, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_git_gitui_git_bitmaps.xrc"));
 }

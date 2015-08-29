@@ -687,7 +687,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     m_staticText68 = new wxStaticText(m_splitterPageFiles, wxID_ANY, _("Modified files:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer62->Add(m_staticText68, 0, wxALL|wxALIGN_BOTTOM, 5);
+    boxSizer62->Add(m_staticText68, 0, wxALL, 5);
     
     wxArrayString m_fileListBoxArr;
     m_fileListBox = new wxListBox(m_splitterPageFiles, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
@@ -702,7 +702,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     m_staticText66 = new wxStaticText(m_splitterPageDiff, wxID_ANY, _("Diff:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer64->Add(m_staticText66, 0, wxALL|wxALIGN_BOTTOM, 5);
+    boxSizer64->Add(m_staticText66, 0, wxALL, 5);
     
     m_editor = new GitCommitEditor( m_splitterPageDiff );
     boxSizer64->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);

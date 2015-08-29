@@ -6252,5 +6252,5 @@ void clMainFrame::OnPageSetup(wxCommandEvent& event)
 void clMainFrame::OnRecentWorkspaceUI(wxUpdateUIEvent& e)
 {
     // We don't allow reloading of recent workspace while another is opened
-    e.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
+    //e.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
 }

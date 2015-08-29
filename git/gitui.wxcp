@@ -3281,7 +3281,7 @@
               }, {
                "type": "choice",
                "m_label": "Wrap Text",
-               "m_selection": 0,
+               "m_selection": 1,
                "m_options": ["None", "Word", "Char"]
               }, {
                "type": "choice",

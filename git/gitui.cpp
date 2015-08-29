@@ -362,7 +362,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stcCommitMessage->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stcCommitMessage->StyleClearAll();
-    m_stcCommitMessage->SetWrapMode(0);
+    m_stcCommitMessage->SetWrapMode(1);
     m_stcCommitMessage->SetIndentationGuides(0);
     m_stcCommitMessage->SetKeyWords(0, wxT(""));
     m_stcCommitMessage->SetKeyWords(1, wxT(""));

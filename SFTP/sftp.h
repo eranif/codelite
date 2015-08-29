@@ -50,6 +50,7 @@ public:
     ~SFTP();
 
     void FileDownloadedSuccessfully(const wxString& localFileName);
+    void OpenWithDefaultApp(const wxString& localFileName);
     void AddRemoteFile(const RemoteFileInfo& remoteFile);
 
 protected:

@@ -329,6 +329,7 @@ void SFTP::DoSaveRemoteFile(const RemoteFileInfo& remoteFile)
 }
 
 void SFTP::FileDownloadedSuccessfully(const wxString& localFileName) { m_mgr->OpenFile(localFileName); }
+void SFTP::OpenWithDefaultApp(const wxString& localFileName) { ::wxLaunchDefaultApplication(localFileName); }
 
 void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
 {

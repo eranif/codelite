@@ -45,7 +45,7 @@ class SFTPTreeView : public SFTPTreeViewBase
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;
-    
+
 public:
     enum {
         ID_SFTP_BOOKMARK_FIRST = 13000,
@@ -81,7 +81,9 @@ protected:
     virtual void OnMenuRename(wxCommandEvent& event);
     virtual void OnMenuNewFile(wxCommandEvent& event);
     virtual void OnMenuOpenWithDefaultApplication(wxCommandEvent& event);
+    virtual void OnMenuOpenContainingFolder(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
+    void OnFileDropped(clCommandEvent& event);
     void OnShowSizeCol(wxCommandEvent& event);
     void OnShowTypeCol(wxCommandEvent& event);
 
@@ -98,12 +100,12 @@ protected:
     bool DoExpandItem(const wxTreeListItem& item);
     void DoBuildTree(const wxString& initialFolder);
     void ManageBookmarks();
-    
+
     int IsSizeColumnShown() const;
     int IsTypeColumnShown() const;
     int GetSizeColumnIndex() const;
     int GetTypeColumnIndex() const;
-    
+
     wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString& path);
     wxTreeListItem DoAddFile(const wxTreeListItem& parent, const wxString& path);
 
@@ -111,7 +113,7 @@ protected:
     MyClientDataVect_t GetSelectionsItemData();
     bool DoOpenFile(const wxTreeListItem& item);
     void DoDeleteColumn(int colIdx);
-    
+
 protected:
     virtual void OnItemActivated(wxTreeListEvent& event);
     virtual void OnItemExpanding(wxTreeListEvent& event);

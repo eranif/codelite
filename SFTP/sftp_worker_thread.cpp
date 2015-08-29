@@ -91,6 +91,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 DoReportStatusBarMessage("");
 
             } else if(req->GetDirection() == SFTPThreadRequet::kDownload ||
+                      req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenContainingFolder ||
                       req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenWithDefaultApp) {
                 DoReportStatusBarMessage(wxString() << _("Downloading file: ") << req->GetRemoteFile());
                 wxMemoryBuffer buffer;
@@ -108,6 +109,9 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 // We should also notify the parent window about download completed
                 if(req->GetDirection() == SFTPThreadRequet::kDownload) {
                     m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, req->GetLocalFile());
+
+                } else if(req->GetDirection() == SFTPThreadRequet::kDownloadAndOpenContainingFolder) {
+                    m_plugin->CallAfter(&SFTP::OpenContainingFolder, req->GetLocalFile());
 
                 } else {
                     m_plugin->CallAfter(&SFTP::OpenWithDefaultApp, req->GetLocalFile());

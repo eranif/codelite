@@ -46,6 +46,8 @@
 #include "fileutils.h"
 #include "cl_config.h"
 #include "SFTPSettingsDialog.h"
+#include "clFileOrFolderDropTarget.h"
+#include "SFTPUploadDialog.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -57,6 +59,7 @@ static const int ID_EXECUTE_COMMAND = ::wxNewId();
 static const int ID_SHOW_SIZE_COL = ::wxNewId();
 static const int ID_SHOW_TYPE_COL = ::wxNewId();
 static const int ID_OPEN_WITH_DEFAULT_APP = ::wxNewId();
+static const int ID_OPEN_CONTAINING_FOLDER = ::wxNewId();
 
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
@@ -88,6 +91,11 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
                             wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
                             NULL,
                             this);
+    m_treeListCtrl->Connect(ID_OPEN_CONTAINING_FOLDER,
+                            wxEVT_MENU,
+                            wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
+                            NULL,
+                            this);
     m_treeListCtrl->Connect(ID_DELETE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
     m_treeListCtrl->Connect(ID_NEW, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);
     m_treeListCtrl->Connect(ID_RENAME, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRename), NULL, this);
@@ -114,6 +122,8 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     if(!typeColVisible) {
         m_treeListCtrl->DeleteColumn(GetTypeColumnIndex());
     }
+    m_treeListCtrl->SetDropTarget(new clFileOrFolderDropTarget(this));
+    Bind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
 }
 
 SFTPTreeView::~SFTPTreeView()
@@ -137,6 +147,11 @@ SFTPTreeView::~SFTPTreeView()
                                wxCommandEventHandler(SFTPTreeView::OnMenuOpenWithDefaultApplication),
                                NULL,
                                this);
+    m_treeListCtrl->Disconnect(ID_OPEN_CONTAINING_FOLDER,
+                               wxEVT_MENU,
+                               wxCommandEventHandler(SFTPTreeView::OnMenuOpenContainingFolder),
+                               NULL,
+                               this);
 
     m_treeListCtrl->Disconnect(ID_DELETE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
     m_treeListCtrl->Disconnect(ID_NEW, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);
@@ -144,6 +159,7 @@ SFTPTreeView::~SFTPTreeView()
     m_treeListCtrl->Disconnect(ID_NEW_FILE, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuNewFile), NULL, this);
     m_treeListCtrl->Disconnect(
         ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder), NULL, this);
+    Unbind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
 }
 
 void SFTPTreeView::OnDisconnect(wxCommandEvent& event) { DoCloseSession(); }
@@ -351,6 +367,8 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
         if(!cd->IsFolder()) {
             menu.Append(ID_OPEN, _("Open"));
             menu.Append(ID_OPEN_WITH_DEFAULT_APP, _("Open with Default Application..."));
+            menu.AppendSeparator();
+            menu.Append(ID_OPEN_CONTAINING_FOLDER, _("Download and Open Containing Folder..."));
             menu.AppendSeparator();
 
         } else {
@@ -973,5 +991,61 @@ void SFTPTreeView::OnMenuOpenWithDefaultApplication(wxCommandEvent& event)
         SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
         req->SetDirection(SFTPThreadRequet::kDownloadAndOpenWithDefaultApp);
         SFTPWorkerThread::Instance()->Add(req);
+    }
+}
+
+void SFTPTreeView::OnMenuOpenContainingFolder(wxCommandEvent& event)
+{
+    wxTreeListItems items;
+    m_treeListCtrl->GetSelections(items);
+    if(items.empty()) return;
+
+    for(size_t i = 0; i < items.size(); ++i) {
+        MyClientData* cd = GetItemData(items.at(i));
+        if(!cd || cd->IsFolder()) {
+            continue;
+        }
+
+        RemoteFileInfo remoteFile;
+        remoteFile.SetAccount(m_account);
+        remoteFile.SetRemoteFile(cd->GetFullPath());
+
+        SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
+        req->SetDirection(SFTPThreadRequet::kDownloadAndOpenContainingFolder);
+        SFTPWorkerThread::Instance()->Add(req);
+    }
+}
+
+void SFTPTreeView::OnFileDropped(clCommandEvent& event)
+{
+    wxTreeListItems items;
+    m_treeListCtrl->GetSelections(items);
+    wxTreeListItem parenItem;
+    wxString defaultPath = m_textCtrlQuickJump->GetValue();
+    if(items.size() == 1) {
+        // Use the selected folder as the default path
+        MyClientData* cd = GetItemData(items.at(0));
+        if(cd && cd->IsFolder()) {
+            defaultPath = cd->GetFullPath();
+            parenItem = items.at(0);
+        }
+    }
+
+
+    SFTPUploadDialog dlg(EventNotifier::Get()->TopFrame());
+    dlg.GetTextCtrlRemoteFolder()->ChangeValue(defaultPath);
+    if(dlg.ShowModal() != wxID_OK) return;
+
+    const wxString targetFolder = dlg.GetTextCtrlRemoteFolder()->GetValue();
+    const wxArrayString& files = event.GetStrings();
+    for(size_t i = 0; i < files.size(); ++i) {
+        wxFileName localFile(files.Item(i));
+        wxString remotePath;
+        remotePath << targetFolder << "/" << localFile.GetFullName();
+        if(parenItem.IsOk()) {
+            wxTreeListItem fileItem = DoAddFile(parenItem, remotePath);
+            if(!fileItem.IsOk()) continue;
+        }
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(m_account, remotePath, localFile.GetFullPath()));
     }
 }

@@ -53,6 +53,8 @@
     <File Name="SFTPManageBookmarkDlg.cpp"/>
     <File Name="SFTPSettingsDialog.h"/>
     <File Name="SFTPSettingsDialog.cpp"/>
+    <File Name="SFTPUploadDialog.h"/>
+    <File Name="SFTPUploadDialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="UI.wxcp"/>

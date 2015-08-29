@@ -51,6 +51,7 @@ public:
 
     void FileDownloadedSuccessfully(const wxString& localFileName);
     void OpenWithDefaultApp(const wxString& localFileName);
+    void OpenContainingFolder(const wxString& localFileName);
     void AddRemoteFile(const RemoteFileInfo& remoteFile);
 
 protected:

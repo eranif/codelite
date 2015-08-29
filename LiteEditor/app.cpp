@@ -57,6 +57,7 @@
 #include <wx/persist.h>
 #include "singleinstancethreadjob.h"
 #include "SocketAPI/clSocketClient.h"
+#include <wx/imagjpeg.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -341,6 +342,7 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxICOHandler);
     wxImage::AddHandler(new wxXPMHandler);
     wxImage::AddHandler(new wxGIFHandler);
+    wxImage::AddHandler(new wxJPEGHandler);
     InitXmlResource();
 
     wxLog::EnableLogging(false);

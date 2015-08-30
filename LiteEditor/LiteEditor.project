@@ -156,8 +156,6 @@
       <File Name="simpletablebase.cpp"/>
       <File Name="listctrlpanelbase.h"/>
       <File Name="listctrlpanelbase.cpp"/>
-      <File Name="listctrlpanel.h"/>
-      <File Name="listctrlpanel.cpp"/>
       <File Name="close_all_dlg.cpp"/>
       <File Name="close_all_dlg.h"/>
       <File Name="free_text_dialog.h"/>
@@ -280,6 +278,8 @@
       <File Name="FilesModifiedDlg.cpp"/>
       <File Name="NewThemeDialog.cpp"/>
       <File Name="NewThemeDialog.h"/>
+      <File Name="DebuggerCallstackView.cpp"/>
+      <File Name="DebuggerCallstackView.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

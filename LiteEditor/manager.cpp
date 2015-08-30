@@ -80,7 +80,7 @@
 #include "threadlistpanel.h"
 #include "memoryview.h"
 #include "attachdbgprocdlg.h"
-#include "listctrlpanel.h"
+#include "DebuggerCallstackView.h"
 #include "cl_editor.h"
 #include "custombuildrequest.h"
 #include "compile_request.h"

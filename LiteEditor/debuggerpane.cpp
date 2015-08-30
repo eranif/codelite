@@ -33,7 +33,7 @@
 #include "shelltab.h"
 #include "debuggerpane.h"
 #include "simpletable.h"
-#include "listctrlpanel.h"
+#include "DebuggerCallstackView.h"
 #include "wx/xrc/xmlres.h"
 #include "manager.h"
 #include "breakpointdlg.h"

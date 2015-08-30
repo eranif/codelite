@@ -101,6 +101,7 @@ struct StackEntry {
     wxString function;
     wxString file;
     wxString line;
+    bool active;
 };
 
 struct ThreadEntry {

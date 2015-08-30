@@ -278,8 +278,7 @@ void DebuggerDisassemblyTab::OnRefreshView(clCommandEvent& e)
 
     if(debugger && debugger->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         // Only update disass view if the view is visible
-        if((debuggerPane && (debuggerPane->GetNotebook()->GetCurrentPage() == this)) ||
-           ManagerST::Get()->IsPaneVisible(DebuggerPane::DISASSEMBLY)) {
+        if(ManagerST::Get()->IsDebuggerViewVisible(DebuggerPane::DISASSEMBLY)) {
             debugger->ListRegisters();
             debugger->Disassemble("", -1);
         }

@@ -2447,7 +2447,9 @@ void Manager::UpdateFileLine(const wxString& filename, int lineno, bool repositi
         m_frameLineno = wxNOT_FOUND;
     }
 
-    if(repositionEditor) DbgMarkDebuggerLine(fileName, lineNumber);
+    if(repositionEditor) {
+        DbgMarkDebuggerLine(fileName, lineNumber);
+    }
 
     UpdateDebuggerPane();
 }
@@ -2487,7 +2489,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
         }
     }
-    
+
     switch(reason) {
     case DBG_RECV_SIGNAL_SIGTRAP:        // DebugBreak()
     case DBG_RECV_SIGNAL_EXC_BAD_ACCESS: // SIGSEGV on Mac
@@ -3719,4 +3721,20 @@ void Manager::OnCmdRestart(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     DoRestartCodeLite();
+}
+
+bool Manager::IsDebuggerViewVisible(const wxString& name)
+{
+    DebuggerPane* debuggerPane = clMainFrame::Get()->GetDebuggerPane();
+    if(debuggerPane) {
+        int sel = debuggerPane->GetNotebook()->GetSelection();
+        if(sel != wxNOT_FOUND) {
+            if(debuggerPane->GetNotebook()->GetPageText(sel) == name) {
+                return true;
+            }
+        }
+    }
+    
+    // Also test if the pane is detached
+    return IsPaneVisible(name);
 }

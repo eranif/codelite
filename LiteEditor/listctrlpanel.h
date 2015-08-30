@@ -36,12 +36,14 @@ protected:
     // Handlers for ListCtrlPanelBase events.
     void OnCopyBacktrace(wxCommandEvent &event);
     void OnUpdateBacktrace(clCommandEvent &e);
+    void OnFrameSelected(clCommandEvent &e);
     
 public:
     virtual void OnMenu(wxDataViewEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
-    /** Constructor */
+    
     DebuggerCallstackView( wxWindow* parent );
+    virtual ~DebuggerCallstackView();
     void Update(const StackEntryArray &stackArr);
     void SetCurrentLevel(const int level);
     void Clear();

@@ -27,6 +27,18 @@
 #include "manager.h"
 #include <wx/wupdlock.h>
 
+class ThreadListClientData : public wxClientData
+{
+    ThreadEntry m_threadEntry;
+
+public:
+    ThreadListClientData(const ThreadEntry& te) { m_threadEntry = te; }
+
+    virtual ~ThreadListClientData() {}
+    const ThreadEntry& GetThreadEntry() const { return m_threadEntry; }
+    ThreadEntry& GetThreadEntry() { return m_threadEntry; }
+};
+
 ThreadListPanel::ThreadListPanel(wxWindow* parent)
     : ThreadListBasePanel(parent)
 {
@@ -53,28 +65,42 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
     // Check if the new thread list is the same as the current one
     if(IsTheSame(m_threads, threads)) {
         // No need to repopulate the list, just set the active thread indicator
-        for(size_t i = 0; i < m_threads.size(); ++i) {
-            if(m_threads.at(i).active) {
-                wxVariant v = "NO";
-                m_dvListCtrl->SetValue(v, i, 1);
-            }
+
+        // Loop over the table and set all threads to "NO"
+        for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+            ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+            d->GetThreadEntry().active = false;
+            wxVariant v = "NO";
+            m_dvListCtrl->SetValue(v, i, 1);
         }
 
         // Replace the current thread stack with the new one
         m_threads.clear();
         m_threads.insert(m_threads.end(), threads.begin(), threads.end());
 
-        // Update the new active thread
+        long threadID = wxNOT_FOUND;
         for(size_t i = 0; i < m_threads.size(); ++i) {
             if(m_threads.at(i).active) {
-                wxVariant v = "YES";
-                m_dvListCtrl->SetValue(v, i, 1);
+                threadID = m_threads.at(i).dbgid;
+                break;
+            }
+        }
+
+        if(threadID != wxNOT_FOUND) {
+            // Update the new active thread
+            for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+                ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+                if(d->GetThreadEntry().dbgid == threadID) {
+                    d->GetThreadEntry().active = true;
+                    wxVariant v = "YES";
+                    m_dvListCtrl->SetValue(v, i, 1);
+                }
             }
         }
 
     } else {
         wxWindowUpdateLocker locker(m_dvListCtrl);
-        m_dvListCtrl->DeleteAllItems();
+        Clear();
 
         // Replace the thread list
         m_threads.clear();
@@ -83,7 +109,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
         int sel = wxNOT_FOUND;
         if(m_threads.empty()) return;
 
-        for(size_t i = (m_threads.size() - 1); i >= 0; --i) {
+        for(int i = (int)(m_threads.size() - 1); i >= 0; --i) {
             const ThreadEntry& entry = m_threads.at(i);
 
             wxString str_id;
@@ -101,7 +127,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
             cols.push_back(entry.function);
             cols.push_back(entry.file);
             cols.push_back(entry.line);
-            m_dvListCtrl->AppendItem(cols);
+            m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new ThreadListClientData(entry));
         }
 
         // Ensure that the active thread is visible
@@ -112,7 +138,14 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
     }
 }
 
-void ThreadListPanel::Clear() { m_dvListCtrl->DeleteAllItems(); }
+void ThreadListPanel::Clear()
+{
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
+        delete d;
+    }
+    m_dvListCtrl->DeleteAllItems();
+}
 
 bool ThreadListPanel::IsTheSame(const ThreadEntryArray& threads1, const ThreadEntryArray& threads2)
 {

@@ -659,8 +659,6 @@
     <File Name="openwindowspanel.h"/>
     <File Name="openwindowspanelbase.cpp"/>
     <File Name="threadlistpanel.h"/>
-    <File Name="threadlistbasepanel.cpp"/>
-    <File Name="threadlistbasepanel.h"/>
     <File Name="threadlistpanel.cpp"/>
     <File Name="outputtabwindow.cpp"/>
     <File Name="outputtabwindow.h"/>
@@ -755,6 +753,7 @@
     <File Name="DebuggerDisassemblyTab.cpp"/>
     <File Name="memoryviewbase.wxcp"/>
     <File Name="../formbuilder/quickdebug.wxcp"/>
+    <File Name="ThreadListPanelBase.wxcp"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="UnixCodeLite">
@@ -897,6 +896,8 @@
       <File Name="CompilersFoundDlgBase.cpp"/>
       <File Name="CodeLiteUpgradeFrameBase.h"/>
       <File Name="CodeLiteUpgradeFrameBase.cpp"/>
+      <File Name="ThreadListPanelBase.h"/>
+      <File Name="ThreadListPanelBase.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -936,6 +937,7 @@
       <File Name="CodeLiteUpgradeFrame_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_comments_base_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_folding_liteeditor_bitmaps.cpp"/>
+      <File Name="ThreadListPanelBase_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

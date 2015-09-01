@@ -1392,11 +1392,11 @@ wxString Manager::GetProjectNameByFile(const wxString& fullPathFileName, bool ca
             wxString fdest = CLRealPath(f);
             if(fdest != f) {
                 if(caseSensitive) {
-                    if(f.Cmp(fullPathFileName) == 0 || f.Cmp(linkDestination) == 0) {
+                    if(fdest.Cmp(fullPathFileName) == 0 || fdest.Cmp(linkDestination) == 0) {
                         return proj->GetName();
                     }
                 } else {
-                    if(f.CmpNoCase(fullPathFileName) == 0 || f.CmpNoCase(linkDestination) == 0) {
+                    if(fdest.CmpNoCase(fullPathFileName) == 0 || fdest.CmpNoCase(linkDestination) == 0) {
                         return proj->GetName();
                     }
                 }

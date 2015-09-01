@@ -1584,6 +1584,10 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
 
     if(!ItemHasChildren(parent)) return wxTreeItemId();
 
+#if defined(__WXGTK__)
+	wxString realpathItem = CLRealPath(fileName);
+#endif
+
     wxTreeItemIdValue cookie;
     wxTreeItemId child = GetFirstChild(parent, cookie);
     while(child.IsOk()) {
@@ -1592,7 +1596,15 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId& parent, const wxString& 
         fn.MakeAbsolute(projectPath);
         if(fn.GetFullPath().CmpNoCase(fileName) == 0) {
             return child;
-        }
+        } 
+#if defined(__WXGTK__)
+		  else { // Try again, dereferencing fn
+			wxString fdest = CLRealPath(fn.GetFullPath());
+			if(fdest.CmpNoCase(realpathItem) == 0) {
+				return child;
+			}
+		}
+#endif
 
         if(ItemHasChildren(child)) {
             wxTreeItemId res = FindItemByPath(child, projectPath, fileName);

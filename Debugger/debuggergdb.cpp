@@ -452,7 +452,7 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
     return WriteCommand(gdbCommand, dbgCommandHandler);
 }
 
-bool DbgGdb::SetIgnoreLevel(const int bid, const int ignorecount)
+bool DbgGdb::SetIgnoreLevel(double bid, const int ignorecount)
 {
     if(bid == -1) { // Sanity check
         return false;
@@ -463,7 +463,7 @@ bool DbgGdb::SetIgnoreLevel(const int bid, const int ignorecount)
     return WriteCommand(command, NULL);
 }
 
-bool DbgGdb::SetEnabledState(const int bid, const bool enable)
+bool DbgGdb::SetEnabledState(double bid, const bool enable)
 {
     if(bid == -1) { // Sanity check
         return false;
@@ -580,7 +580,7 @@ bool DbgGdb::ExecuteCmd(const wxString& cmd)
 
 bool DbgGdb::RemoveAllBreaks() { return ExecuteCmd(wxT("delete")); }
 
-bool DbgGdb::RemoveBreak(int bid)
+bool DbgGdb::RemoveBreak(double bid)
 {
     wxString command;
     command << wxT("-break-delete ") << bid;

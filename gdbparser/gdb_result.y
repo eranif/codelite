@@ -90,7 +90,7 @@ parse: children_list
 
 children_list:    { cleanup(); } child_pattern
                 |  error {
-                //printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
+                printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
                 }
             ;
 has_more_attr : /* empty */
@@ -201,13 +201,16 @@ bpt_table_description_attr  : GDB_IDENTIFIER '=' GDB_STRING
                             ;
 
 /* body=[bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x77c35571",at="<msvcrt!_assert+11>",times="0",original-location="assert"},bkpt={number="2",type="breakpoint",disp="keep",enabled="y",addr="0x004014d4",func="main",file="C:/TestArea/WxConsole/consoleproj.cpp",fullname="C:/TestArea/WxConsole/consoleproj.cpp",line="63",times="0",original-location="main"},bkpt={number="3",type="breakpoint",disp="keep",enabled="y",addr="0x004014bb",func="main",file="C:/TestArea/WxConsole/consoleproj.cpp",fullname="C:/TestArea/WxConsole/consoleproj.cpp",line="61",times="1",original-location="*4199611"}]*/
-bpt_table_body : ',' GDB_BODY '=' list_open breakpoints list_close
+bpt_table_body : ',' GDB_BODY '=' '[' breakpoints ']'
                | ',' breakpoints
                ;
 
-breakpoints : GDB_BKPT '=' list_open child_attributes list_close { sg_children.push_back( sg_attributes ); sg_attributes.clear();}
-                       | GDB_BKPT '=' list_open child_attributes list_close  { sg_children.push_back( sg_attributes ); sg_attributes.clear();} ',' breakpoints
-                       ;
+bp_internal: '{' child_attributes '}' { sg_children.push_back( sg_attributes ); sg_attributes.clear();}
+;
+
+breakpoints : bp_internal
+            | bp_internal ',' breakpoints
+            ;
 /**
  * Locals parsing
  */
@@ -242,6 +245,10 @@ children     : GDB_CHILD '=' '{' child_attributes '}' {
              | children ',' GDB_CHILD '=' '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); }
              ;
 
+string_list: GDB_STRING
+    | GDB_STRING ',' string_list
+    ;
+
 child_attributes : child_key '=' GDB_STRING {
                         if ( $1 == "has_more" || $1 == "dynamic" ) {
                            sg_children.has_more = ($3 == "\"1\"");
@@ -253,7 +260,9 @@ child_attributes : child_key '=' GDB_STRING {
                     }
                  | child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
                  | GDB_NEW_CHILDREN '=' '[' { gdbConsumeList(); }
-                 | GDB_THREAD_GROUPS '=' '[' { gdbConsumeList(); } ',' child_attributes
+                 | GDB_NEW_CHILDREN '=' '[' { gdbConsumeList(); } ',' child_attributes
+                 | GDB_THREAD_GROUPS '=' '[' string_list ']'
+                 | GDB_THREAD_GROUPS '=' '[' string_list ']' ',' child_attributes
                  | GDB_TIME '=' '{' child_attributes '}'
                  ;
 
@@ -295,6 +304,7 @@ void cleanup()
 
 void gdbConsumeList()
 {
+    printf("Consume List is called\n");
     int depth = 1;
     while(depth > 0) {
         int ch = gdb_result_lex();
@@ -303,9 +313,8 @@ void gdbConsumeList()
         }
         if(ch == ']') {
             depth--;
-            continue;
-        } else if(ch == ']') {
-            depth ++ ;
+        } else if(ch == '[') {
+            depth++;
             continue;
         }
     }

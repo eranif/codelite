@@ -334,17 +334,15 @@ void clConfig::AddQuickFindSearchItem(const wxString& str)
     int where = items.Index(str);
     if(where != wxNOT_FOUND) {
         items.RemoveAt(where);
-        items.Insert(str, 0);
-
-    } else {
-        // remove overflow items if needed
-        if(items.GetCount() > 20) {
-            // remove last item
-            items.RemoveAt(items.GetCount() - 1);
-        }
-        items.Insert(str, 0);
     }
+    items.Insert(str, 0);
 
+    // Reudce to size to max of 20
+    while(items.size() > 20) {
+        items.RemoveAt(items.size() - 1);
+    }
+    
+    // Update the array
     quickFindBar.removeProperty("SearchHistory");
     quickFindBar.addProperty("SearchHistory", items);
     Save();
@@ -400,7 +398,7 @@ void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filenam
     while(recentItems.size() >= 15) {
         recentItems.RemoveAt(recentItems.size() - 1);
     }
-    
+
     // Remove old node if exists
     JSONElement e = m_root->toElement();
     if(e.hasNamedObject(propName)) {

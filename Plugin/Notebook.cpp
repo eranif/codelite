@@ -326,7 +326,7 @@ void clTabInfo::CalculateOffsets(size_t style)
 
     // x button
     if((style & kNotebook_CloseButtonOnActiveTab)) {
-        m_width += X_SPACER;
+        m_width += (2 * X_SPACER);
         m_bmpCloseX = m_width;
         m_bmpCloseY = ((m_height - 12) / 2);
         m_width += 12; // X button is 10 pixels in size

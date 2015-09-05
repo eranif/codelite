@@ -16,7 +16,7 @@ NodeJSSocket::NodeJSSocket(NodeJSDebugger* debugger)
     Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &NodeJSSocket::OnSocketConnectionLost, this);
     Bind(wxEVT_ASYNC_SOCKET_INPUT, &NodeJSSocket::OnSocketInput, this);
     Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &NodeJSSocket::OnSocketConnectError, this);
-    
+
     // set of commands that we don't ask for backtrace
     // from Node.js after their execution
     m_noBacktraceCommands.insert("backtrace");
@@ -115,7 +115,7 @@ void NodeJSSocket::ProcessInputBuffer()
                     handler->Process(m_debugger, buffer);
                     m_handlers.erase(iter);
                 }
-                
+
                 if(json.hasNamedObject("running") && !json.namedObject("running").toBool()) {
                     wxString responseCommand = json.namedObject("command").toString();
                     m_debugger->GotControl((m_noBacktraceCommands.count(responseCommand) == 0));
@@ -167,20 +167,40 @@ void NodeJSSocket::WriteRequest(JSONElement& request, NodeJSHandlerBase::Ptr_t h
 
 wxString NodeJSSocket::GetResponse()
 {
-    wxRegEx re("Content-Length:[ ]*([0-9]+)");
+    wxRegEx re("Content-Length:[ ]*([0-9]+)", wxRE_ADVANCED);
     if(re.Matches(m_inBuffer)) {
-        wxString wholeLine = re.GetMatch(m_inBuffer, 0);
-        long len;
-        re.GetMatch(m_inBuffer, 1).ToCLong(&len);
+        size_t start, wholeline_len;
+        if(!re.GetMatch(&start, &wholeline_len, 0)) {
+            return "";
+        }
+        
+        // Remove anything before the 'start' position
+        m_inBuffer = m_inBuffer.Mid(start);
+        
+        // At this point, start = 0
+        start = 0;
+        wxString wholine = m_inBuffer.Mid(start, wholeline_len);
+        
+        // wholine should now contains a string like:
+        // Content-Length: 1234
+        // Extract the message length
+        wxRegEx reContentLen("[0-9]+");
+        if(!reContentLen.Matches(wholine)) return ""; // Can't happen...
+        long messageLength;
+        if(!reContentLen.GetMatch(wholine).ToCLong(&messageLength)) {
+            // just to be safe
+            return "";
+        }
 
         // Remove the "Content-Length: NN\r\n\r\n"
-        size_t headerLen = wholeLine.length() + 4;
+        size_t headerLen = wholeline_len + 4;
 
         // Did we read enough from the socket to process?
-        if(m_inBuffer.length() >= (len + headerLen)) {
-            m_inBuffer = m_inBuffer.Mid(wholeLine.length() + 4);
-            wxString response = m_inBuffer.Mid(0, len);
-            m_inBuffer = m_inBuffer.Mid(len);
+        if(m_inBuffer.length() >= (messageLength + headerLen)) {
+            m_inBuffer = m_inBuffer.Mid(headerLen);
+            wxString response = m_inBuffer.Mid(0, messageLength);
+            // Remove this message from the input buffer
+            m_inBuffer = m_inBuffer.Mid(messageLength);
             return response;
 
         } else {
@@ -190,7 +210,4 @@ wxString NodeJSSocket::GetResponse()
     return "";
 }
 
-void NodeJSSocket::Shutdown()
-{
-    m_socket.Disconnect();
-}
+void NodeJSSocket::Shutdown() { m_socket.Disconnect(); }

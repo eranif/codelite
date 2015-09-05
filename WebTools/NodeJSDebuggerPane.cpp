@@ -145,8 +145,10 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
 void NodeJSDebuggerPane::OnLostControl(clDebugEvent& event)
 {
     event.Skip();
+#ifndef __WXGTK__
     m_dataviewLocals->Enable(false);
     m_dvListCtrlCallstack->Enable(false);
+#endif
 }
 
 void NodeJSDebuggerPane::OnConsoleLog(clDebugEvent& event)

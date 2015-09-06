@@ -24,7 +24,7 @@ EditDlgBase::EditDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
         bBitmapLoaded = true;
     }
     
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_stc10 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -66,7 +66,7 @@ EditDlgBase::EditDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
     
     boxSizer2->Add(m_stc10, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -108,7 +108,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    boxSizer13 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer13 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer13);
     
     m_ribbonBar = new wxRibbonBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxRIBBON_BAR_DEFAULT_STYLE);
@@ -164,10 +164,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     m_splitterPageLeft = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer111 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer111 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer111);
     
-    m_filePickerLeft = new wxFilePickerCtrl(m_splitterPageLeft, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerLeft = new wxFilePickerCtrl(m_splitterPageLeft, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     
     boxSizer111->Add(m_filePickerLeft, 0, wxALL|wxEXPAND, 2);
     
@@ -220,10 +220,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_splitterPageRight = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
     
-    boxSizer113 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer113 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer113);
     
-    m_filePickerRight = new wxFilePickerCtrl(m_splitterPageRight, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+    m_filePickerRight = new wxFilePickerCtrl(m_splitterPageRight, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     
     boxSizer113->Add(m_filePickerRight, 0, wxALL|wxEXPAND, 2);
     
@@ -353,14 +353,14 @@ clGetTextFromUserBaseDialog::clGetTextFromUserBaseDialog(wxWindow* parent, wxWin
         bBitmapLoaded = true;
     }
     
-    boxSizer135 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer135 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer135);
     
     m_staticTextCaption = new wxStaticText(this, wxID_ANY, _("Caption"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer135->Add(m_staticTextCaption, 0, wxALL, 5);
     
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,-1), 0);
     m_textCtrl->SetFocus();
     #if wxVERSION_NUMBER >= 3000
     m_textCtrl->SetHint(wxT(""));
@@ -411,7 +411,7 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
         bBitmapLoaded = true;
     }
     
-    boxSizer151 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer151);
     
     m_treeCtrl = new clFileViewerTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxBORDER_STATIC);
@@ -449,14 +449,14 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    boxSizer157 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer157 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer157);
     
     m_panel161 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxWANTS_CHARS|wxTAB_TRAVERSAL);
     
     boxSizer157->Add(m_panel161, 1, wxEXPAND, 5);
     
-    boxSizer163 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
     m_panel161->SetSizer(boxSizer163);
     
     m_dvListCtrl = new wxDataViewListCtrl(m_panel161, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE|wxWANTS_CHARS|wxTAB_TRAVERSAL|wxBORDER_STATIC);
@@ -508,7 +508,7 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
         bBitmapLoaded = true;
     }
     
-    boxSizer167 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer167 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer167);
     
     m_panel169 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_STATIC);
@@ -516,7 +516,7 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
     
     boxSizer167->Add(m_panel169, 1, wxALL|wxEXPAND, 0);
     
-    boxSizer171 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer171 = new wxBoxSizer(wxVERTICAL);
     m_panel169->SetSizer(boxSizer171);
     
     boxSizer171->Add(0, 0, 1, wxALL, 5);
@@ -558,7 +558,7 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
     
-    boxSizer181 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer181 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer181);
     
     wxArrayString m_listBoxArr;
@@ -612,7 +612,7 @@ clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPo
         bBitmapLoaded = true;
     }
     
-    boxSizer194 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer194);
     
     m_scrollWin196 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME|wxHSCROLL|wxVSCROLL);
@@ -620,7 +620,7 @@ clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPo
     
     boxSizer194->Add(m_scrollWin196, 1, wxEXPAND, 2);
     
-    boxSizer198 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer198 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin196->SetSizer(boxSizer198);
     
     boxSizer198->Add(0, 0, 1, wxALL, 5);

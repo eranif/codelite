@@ -223,7 +223,8 @@ static wxString MacGetInstallPath()
 #include <dirent.h>
 #endif
 
-struct ProjListCompartor {
+struct ProjListCompartor
+{
     bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
 };
 
@@ -1296,10 +1297,10 @@ wxFontEncoding BOM::Encoding(const char* buff)
     wxFontEncoding encoding = wxFONTENCODING_SYSTEM; /* -1 */
 
     static const char UTF32be[] = { 0x00, 0x00, (char)0xfe, (char)0xff };
-    static const char UTF32le[] = { (char)0xff, (char)0xfe, 0x00, 0x00 };
-    static const char UTF16be[] = { (char)0xfe, (char)0xff };
-    static const char UTF16le[] = { (char)0xff, (char)0xfe };
-    static const char UTF8[] = { (char)0xef, (char)0xbb, (char)0xbf };
+    static const char UTF32le[] = {(char)0xff, (char)0xfe, 0x00, 0x00 };
+    static const char UTF16be[] = {(char)0xfe, (char)0xff };
+    static const char UTF16le[] = {(char)0xff, (char)0xfe };
+    static const char UTF8[] = {(char)0xef, (char)0xbb, (char)0xbf };
 
     if(memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
         encoding = wxFONTENCODING_UTF32BE;
@@ -2106,13 +2107,11 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
         ctrl->SetScrollWidth(maxPixel);
     }
 }
-wxString clGetTextFromUser(const wxString& title,
-                           const wxString& message,
-                           const wxString& initialValue,
-                           int charsToSelect,
-                           wxWindow* parent)
+wxString clGetTextFromUser(
+    const wxString& title, const wxString& message, const wxString& initialValue, int charsToSelect, wxWindow* parent)
 {
-    clGetTextFromUserDialog dialog(parent, title, message, initialValue, charsToSelect);
+    clGetTextFromUserDialog dialog(
+        parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
     if(dialog.ShowModal() == wxID_OK) {
         return dialog.GetValue();
     }

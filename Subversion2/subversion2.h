@@ -54,6 +54,7 @@ private:
     bool m_skipRemoveFilesDlg;
     int m_clientVersion;
     wxString m_selectedFolder; // In the explorer view
+    wxFileName m_selectedFile; // In the explorer view
     wxBitmap m_svnBitmap;
     
 protected:
@@ -77,9 +78,9 @@ protected:
     void OnUpdate(wxCommandEvent& event);
     void OnFolderAdd(wxCommandEvent& event);
     void OnDeleteFolder(wxCommandEvent& event);
-    void OnRevertFolder(wxCommandEvent& event);
+    void OnFileExplorerRevertItem(wxCommandEvent& event);
     void OnRevertToRevision(wxCommandEvent& event);
-    void OnFolderDiff(wxCommandEvent& event);
+    void OnFileExplorerDiff(wxCommandEvent& event);
     void OnPatch(wxCommandEvent& event);
     void OnLog(wxCommandEvent& event);
     void OnBlame(wxCommandEvent& event);
@@ -89,7 +90,7 @@ protected:
     void OnSwitchURL(wxCommandEvent& event);
     void OnLockFile(wxCommandEvent& event);
     void OnUnLockFile(wxCommandEvent& event);
-    void OnRenameFolder(wxCommandEvent& event);
+    void OnFileExplorerRenameItem(wxCommandEvent& event);
     void OnSync(wxCommandEvent& event);
 
     ///////////////////////////////////////////////////////////
@@ -99,8 +100,9 @@ protected:
     void OnWorkspaceConfigChanged(wxCommandEvent& event);
     void OnFileRemoved(clCommandEvent& event);
     void OnFolderContextMenu(clContextMenuEvent& event);
+    void OnFileContextMenu(clContextMenuEvent& event);
 
-    wxMenu* CreateFileExplorerPopMenu();
+    wxMenu* CreateFileExplorerPopMenu(bool isFile);
     bool IsSubversionViewDetached();
     wxMenu* CreateProjectPopMenu();
 

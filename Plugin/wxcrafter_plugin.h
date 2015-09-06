@@ -43,9 +43,7 @@
 class WXDLLIMPEXP_SDK EditDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer2;
     wxStyledTextCtrl* m_stc10;
-    wxBoxSizer* boxSizer4;
     wxButton* m_button6;
     wxButton* m_button8;
 
@@ -74,7 +72,6 @@ public:
         ID_VIEW_VRTICAL = 1008,
     };
 protected:
-    wxBoxSizer* boxSizer13;
     wxRibbonBar* m_ribbonBar;
     wxRibbonPage* m_ribbonPage43;
     wxRibbonPanel* m_ribbonPanel47;
@@ -85,12 +82,10 @@ protected:
     wxRibbonButtonBar* m_ribbonButtonBar123;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
-    wxBoxSizer* boxSizer111;
     wxFilePickerCtrl* m_filePickerLeft;
     wxStyledTextCtrl* m_stcLeft;
     wxStaticText* m_staticTextLeft;
     wxPanel* m_splitterPageRight;
-    wxBoxSizer* boxSizer113;
     wxFilePickerCtrl* m_filePickerRight;
     wxStyledTextCtrl* m_stcRight;
     wxStaticText* m_staticTextRight;
@@ -142,7 +137,6 @@ public:
 class WXDLLIMPEXP_SDK clGetTextFromUserBaseDialog : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer135;
     wxStaticText* m_staticTextCaption;
     wxTextCtrl* m_textCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer137;
@@ -162,7 +156,6 @@ public:
 class WXDLLIMPEXP_SDK clTreeCtrlPanelBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer151;
     clFileViewerTreeCtrl* m_treeCtrl;
 
 protected:
@@ -180,9 +173,7 @@ public:
 class NotebookNavigationDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer157;
     wxPanel* m_panel161;
-    wxBoxSizer* boxSizer163;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
@@ -201,9 +192,7 @@ public:
 class clTreeCtrlPanelDefaultPageBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer167;
     wxPanel* m_panel169;
-    wxBoxSizer* boxSizer171;
     wxStaticText* m_staticText177;
 
 protected:
@@ -220,7 +209,6 @@ public:
 class clSingleChoiceDialogBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer181;
     wxListBox* m_listBox;
     wxStdDialogButtonSizer* m_stdBtnSizer183;
     wxButton* m_button185;
@@ -239,9 +227,7 @@ public:
 class WXDLLIMPEXP_SDK clImageViewerBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer194;
     wxScrolledWindow* m_scrollWin196;
-    wxBoxSizer* boxSizer198;
     wxStaticBitmap* m_staticBitmap;
 
 protected:

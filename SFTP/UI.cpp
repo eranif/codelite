@@ -191,8 +191,6 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer16->Add(m_treeListCtrl, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 2);
     
     m_treeListCtrl->AppendColumn(_("Name"), 400, wxALIGN_LEFT, wxCOL_RESIZABLE|wxCOL_SORTABLE);
-    m_treeListCtrl->AppendColumn(_("Type"), 100, wxALIGN_LEFT, wxCOL_RESIZABLE);
-    m_treeListCtrl->AppendColumn(_("Size"), 50, wxALIGN_LEFT, wxCOL_RESIZABLE);
     
     SetName(wxT("SFTPTreeViewBase"));
     SetSizeHints(-1,-1);

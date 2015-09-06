@@ -84,8 +84,6 @@ protected:
     virtual void OnMenuOpenContainingFolder(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
     void OnFileDropped(clCommandEvent& event);
-    void OnShowSizeCol(wxCommandEvent& event);
-    void OnShowTypeCol(wxCommandEvent& event);
 
     // Edit events
     void OnCopy(wxCommandEvent& event);
@@ -100,11 +98,6 @@ protected:
     bool DoExpandItem(const wxTreeListItem& item);
     void DoBuildTree(const wxString& initialFolder);
     void ManageBookmarks();
-
-    int IsSizeColumnShown() const;
-    int IsTypeColumnShown() const;
-    int GetSizeColumnIndex() const;
-    int GetTypeColumnIndex() const;
 
     wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString& path);
     wxTreeListItem DoAddFile(const wxTreeListItem& parent, const wxString& path);

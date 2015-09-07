@@ -158,7 +158,7 @@ wxString PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t 
 
     if(proj) {
         const PHPProjectSettingsData& data = proj->GetSettings();
-        args = ::wxStringTokenize(data.GetArgs(), wxT("\r"), wxTOKEN_STRTOK);
+        args = ::wxStringTokenize(data.GetArgs(), wxT("\n\r"), wxTOKEN_STRTOK);
         includePath = data.GetIncludePathAsArray();
         php = data.GetPhpExe();
         index = script;

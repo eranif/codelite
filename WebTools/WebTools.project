@@ -125,6 +125,8 @@
         <File Name="NodeJSGetScriptHandler.cpp"/>
         <File Name="NodeJSEvaluateExprHandler.h"/>
         <File Name="NodeJSEvaluateExprHandler.cpp"/>
+        <File Name="NodeJSLookupHandler.h"/>
+        <File Name="NodeJSLookupHandler.cpp"/>
       </VirtualDirectory>
       <File Name="NodeJSDebuggerPane.h"/>
       <File Name="NodeJSDebuggerPane.cpp"/>

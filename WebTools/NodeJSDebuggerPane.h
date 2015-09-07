@@ -20,24 +20,35 @@ class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
         }
     };
 
+public:
     struct Handle {
         wxString name;
         wxString value;
         wxString type;
-        std::map<int, wxString> properties;
+        std::map<int, wxString> properties; // ref:name
     };
-
+    
+    struct PendingLookup {
+        wxDataViewItem item;
+        int refID;
+        wxString name;
+    };
     std::map<int, Handle> m_handles;
+    std::vector<PendingLookup> m_pendingLookupRefs;
 
 protected:
+    virtual void OnLocalExpanding(wxDataViewEvent& event);
     virtual void OnEvaluateExpression(wxCommandEvent& event);
     virtual void OnBreakpointSelected(wxDataViewEvent& event);
     void ClearCallstack();
     void BuildLocals(const JSONElement& json);
     void BuildArguments(const JSONElement& json);
-    void AddLocal(wxDataViewItem& parent, const wxString& name, int refId, int depth);
+    wxDataViewItem AddLocal(const wxDataViewItem& parent, const wxString& name, int refId);
     void ParseRefsArray(const JSONElement& refs);
     void DoOpenFile(const wxString& filename, int line);
+    void DoDeleteLocalItemAfter(const wxDataViewItem& item);
+    void DoAddKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent);
+    void DoAddUnKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent);
 
 protected:
     void OnItemActivated(wxDataViewEvent& event);
@@ -46,6 +57,7 @@ protected:
     void OnLostControl(clDebugEvent& event);
     void OnConsoleLog(clDebugEvent& event);
     void OnSessionStarted(clDebugEvent& event);
+    void OnSessionStopped(clDebugEvent& event);
     void OnExceptionThrown(clDebugEvent& event);
     void OnUpdateDebuggerView(clDebugEvent& event);
     void OnFrameSelected(clDebugEvent& event);

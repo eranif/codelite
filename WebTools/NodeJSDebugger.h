@@ -105,7 +105,12 @@ public:
      * @brief load the content of a given file name
      */
     void GetCurrentFrameSource(const wxString& filename, int line);
-
+    
+    /**
+     * @brief The request lookup is used to lookup objects based on their handle
+     */
+    void Lookup(const std::vector<int>& handles);
+    
     //--------------------------------------------------
     // API END
     //--------------------------------------------------

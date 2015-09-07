@@ -143,6 +143,7 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
+    virtual void OnLocalExpanding(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnEvaluateExpression(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBreakpointSelected(wxDataViewEvent& event) { event.Skip(); }

@@ -22,6 +22,7 @@
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include <wx/log.h>
 #include "NodeJSEvaluateExprHandler.h"
+#include "NodeJSLookupHandler.h"
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return
@@ -583,4 +584,24 @@ void NodeJSDebugger::OnEvalExpression(clDebugEvent& event)
     // Write the command
     m_socket->WriteRequest(
         request, new NodeJSEvaluateExprHandler(event.GetString(), NodeJSEvaluateExprHandler::kContextConsole));
+}
+
+void NodeJSDebugger::Lookup(const std::vector<int>& handles)
+{
+    JSONElement request = JSONElement::createObject();
+    request.addProperty("type", "request");
+    request.addProperty("command", "lookup");
+
+    JSONElement args = JSONElement::createObject("arguments");
+    request.append(args);
+
+    JSONElement arrHandles = JSONElement::createArray("handles");
+    args.append(arrHandles);
+
+    for(size_t i = 0; i < handles.size(); ++i) {
+        arrHandles.arrayAppend(JSONElement("", handles.at(i), cJSON_Number));
+    }
+
+    // Write the command
+    m_socket->WriteRequest(request, new NodeJSLookupHandler());
 }

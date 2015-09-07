@@ -357,7 +357,7 @@ if ( MAKE_DEB )
 
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "CodeLite")
-    set(CPACK_PACKAGE_VERSION             "8.2.3")
+    set(CPACK_PACKAGE_VERSION             "8.2.4")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>") #required
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "An open source, cross platform C/C++/PHP and Node.js IDE")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")

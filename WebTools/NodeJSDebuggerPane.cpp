@@ -231,9 +231,9 @@ wxDataViewItem NodeJSDebuggerPane::AddLocal(const wxDataViewItem& parent, const 
 
         if(!h.properties.empty()) {
             cols.clear();
-            cols.push_back("<dummy>");
-            cols.push_back("<dummy>");
-            cols.push_back("<dummy>");
+            cols.push_back("Loading...");
+            cols.push_back("?");
+            cols.push_back("?");
             m_dataviewLocalsModel->AppendItem(child, cols);
         }
         return child;

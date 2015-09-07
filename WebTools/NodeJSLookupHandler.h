@@ -10,8 +10,7 @@ public:
     virtual ~NodeJSLookupHandler();
 
 public:
-    virtual
-void Process(NodeJSDebugger* debugger, const wxString& output);
+    virtual void Process(NodeJSDebugger* debugger, const wxString& output);
 };
 
 #endif // NODEJSLOOKUPHANDLER_H

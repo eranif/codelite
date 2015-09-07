@@ -24,6 +24,7 @@ NodeJSSocket::NodeJSSocket(NodeJSDebugger* debugger)
     m_noBacktraceCommands.insert("frame");
     m_noBacktraceCommands.insert("source");
     m_noBacktraceCommands.insert("evaluate");
+    m_noBacktraceCommands.insert("lookup");
 }
 
 NodeJSSocket::~NodeJSSocket() { Destroy(); }

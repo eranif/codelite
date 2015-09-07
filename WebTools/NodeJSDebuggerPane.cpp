@@ -35,6 +35,7 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
         wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOOKUP, &NodeJSDebuggerPane::OnLookup, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeJSDebuggerPane::OnSessionStopped, this);
@@ -73,36 +74,44 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
 
     ClearCallstack();
 }
+
+NodeJSDebuggerPane::Handle NodeJSDebuggerPane::ParseRef(const JSONElement& ref)
+{
+    int handleId = ref.namedObject("handle").toInt();
+    Handle h;
+    h.handleID = handleId;
+    h.type = ref.namedObject("type").toString();
+    if(h.type == "undefined") {
+        h.value = "undefined";
+    } else if(h.type == "number" || h.type == "boolean") {
+        h.value = ref.namedObject("text").toString();
+    } else if(h.type == "string") {
+        h.value << "\"" << ref.namedObject("text").toString() << "\"";
+    } else if(h.type == "script" || h.type == "function") {
+        h.value = ref.namedObject("name").toString();
+    } else if(h.type == "null") {
+        h.value = "null";
+    } else if(h.type == "object") {
+        h.value = "{...}";
+        JSONElement props = ref.namedObject("properties");
+        int propsCount = props.arraySize();
+        for(int n = 0; n < propsCount; ++n) {
+            JSONElement prop = props.arrayItem(n);
+            wxString propName = prop.namedObject("name").toString();
+            int propId = prop.namedObject("ref").toInt();
+            h.properties.insert(std::make_pair(propId, propName));
+        }
+    }
+    m_handles.insert(std::make_pair(handleId, h));
+    return h;
+}
+
 void NodeJSDebuggerPane::ParseRefsArray(const JSONElement& refs)
 {
     int refsCount = refs.arraySize();
     for(int i = 0; i < refsCount; ++i) {
         JSONElement ref = refs.arrayItem(i);
-        int handleId = ref.namedObject("handle").toInt();
-        Handle h;
-        h.type = ref.namedObject("type").toString();
-        if(h.type == "undefined") {
-            h.value = "undefined";
-        } else if(h.type == "number" || h.type == "boolean") {
-            h.value = ref.namedObject("text").toString();
-        } else if(h.type == "string") {
-            h.value << "\"" << ref.namedObject("text").toString() << "\"";
-        } else if(h.type == "script" || h.type == "function") {
-            h.value = ref.namedObject("name").toString();
-        } else if(h.type == "null") {
-            h.value = "null";
-        } else if(h.type == "object") {
-            h.value = "{...}";
-            JSONElement props = ref.namedObject("properties");
-            int propsCount = props.arraySize();
-            for(int n = 0; n < propsCount; ++n) {
-                JSONElement prop = props.arrayItem(n);
-                wxString propName = prop.namedObject("name").toString();
-                int propId = prop.namedObject("ref").toInt();
-                h.properties.insert(std::make_pair(propId, propName));
-            }
-        }
-        m_handles.insert(std::make_pair(handleId, h));
+        ParseRef(ref);
     }
 }
 
@@ -110,7 +119,7 @@ void NodeJSDebuggerPane::OnUpdateCallstack(clDebugEvent& event)
 {
     event.Skip();
     wxWindowUpdateLocker locker(m_dataviewLocals);
-    ClearCallstack();
+    Clear();
 
     JSONRoot root(event.GetString());
     JSONElement frames = root.toElement().namedObject("body").namedObject("frames");
@@ -443,14 +452,8 @@ void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::map<int, wxString>& refs, c
 
     std::vector<int> handles;
     std::for_each(refs.begin(), refs.end(), [&](const std::pair<int, wxString>& p) {
-        wxVector<wxVariant> cols;
-        cols.push_back(p.second);
-        cols.push_back("?");
-        cols.push_back("?");
-        wxDataViewItem child = m_dataviewLocalsModel->AppendItem(parent, cols);
-        // TODO: add a dummy child to this item, incase it has children as well
         PendingLookup pl;
-        pl.item = child;
+        pl.parent = parent;
         pl.name = p.second;
         pl.refID = p.first;
         m_pendingLookupRefs.push_back(pl);
@@ -462,8 +465,49 @@ void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::map<int, wxString>& refs, c
 void NodeJSDebuggerPane::OnSessionStopped(clDebugEvent& event)
 {
     event.Skip();
+    Clear();
+}
+
+void NodeJSDebuggerPane::Clear()
+{
     ClearCallstack();
     m_dataviewLocalsModel->Clear();
     m_pendingLookupRefs.clear();
     m_handles.clear();
+}
+
+void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
+{
+    JSONRoot root(event.GetString());
+    JSONElement body = root.toElement().namedObject("body");
+    std::vector<PendingLookup> unresolved;
+
+    wxDataViewItem parent;
+    for(size_t i = 0; i < m_pendingLookupRefs.size(); ++i) {
+        const PendingLookup& pl = m_pendingLookupRefs.at(i);
+        if(!parent.IsOk()) {
+            parent = pl.parent;
+        }
+        wxString nameID;
+        nameID << pl.refID;
+
+        if(!body.hasNamedObject(nameID)) {
+            unresolved.push_back(pl);
+            continue;
+        }
+
+        // Parse and add this ref to the global m_handles map
+        JSONElement ref = body.namedObject(nameID);
+        Handle h = ParseRef(ref);
+        h.name = pl.name;
+        if(!h.IsOk()) continue;
+
+        // Add the local
+        AddLocal(pl.parent, pl.name, pl.refID);
+    }
+
+    if(parent.IsOk() && m_dataviewLocalsModel->HasChildren(parent) && !m_dataviewLocals->IsExpanded(parent)) {
+        m_dataviewLocals->Expand(parent);
+    }
+    m_pendingLookupRefs.clear();
 }

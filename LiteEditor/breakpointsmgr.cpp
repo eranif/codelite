@@ -365,7 +365,7 @@ bool BreakptMgr::DelBreakpoint(double id)
             if(dbgr->RemoveBreak(id)) {
                 // Strangely, -break-delete doesn't output any confirmation except for ^done. So do it here
                 wxString msg = ((m_bps.at(index).bp_type == BP_type_watchpt) ? _("Watchpoint ") : _("Breakpoint "));
-                ManagerST::Get()->UpdateAddLine(msg + wxString::Format(_("%u deleted"), id));
+                ManagerST::Get()->UpdateAddLine(msg + wxString::Format(_("%i deleted"), (int)id));
             }
             if(contIsNeeded) {
                 dbgr->Continue();

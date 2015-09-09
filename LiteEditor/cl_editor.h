@@ -71,8 +71,7 @@ enum sci_annotation_styles { eAnnotationStyleError = 128, eAnnotationStyleWarnin
 * @class BPtoMarker
 * Holds which marker and mask are associated with each breakpoint type
 */
-typedef struct _BPtoMarker
-{
+typedef struct _BPtoMarker {
     enum BreakpointType bp_type; // An enum of possible break/watchpoint types. In debugger.h
     sci_marker_types marker;
     marker_mask_type mask;
@@ -105,8 +104,7 @@ extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
 class LEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
-    struct SelectionInfo
-    {
+    struct SelectionInfo {
         std::vector<std::pair<int, int> > selections;
 
         SelectionInfo() {}
@@ -151,8 +149,7 @@ private:
         void Sort();
     };
 
-    struct MarkWordInfo
-    {
+    struct MarkWordInfo {
     private:
         bool m_hasMarkers;
         int m_firstOffset;
@@ -244,7 +241,13 @@ public:
     typedef std::vector<LEditor*> Vec_t;
 
     IManager* GetManager() { return m_mgr; }
-
+    
+    /**
+     * @brief are the CC annotations visible?
+     */
+    bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
+    void ClearCCAnnotations();
+    
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 

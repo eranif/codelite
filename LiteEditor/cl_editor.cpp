@@ -421,13 +421,14 @@ void LEditor::SetSyntaxHighlight(bool bUpdateColors)
     ClearDocumentStyle();
     m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
 
-    SetProperties();
-
     m_context->SetActive();
     m_context->ApplySettings();
     if(bUpdateColors) {
         UpdateColours();
     }
+
+    // It's now safe to call this: m_context->ApplySettings() would have clobbered local workspace/project settings
+    SetProperties();
 }
 
 // Fills the struct array that marries breakpoint type to marker and mask
@@ -2916,11 +2917,13 @@ void LEditor::Create(const wxString& project, const wxFileName& fileName)
     SetFileName(fileName);
     // set the project name
     SetProject(project);
+    // With the project set, DoUpdateOptions() works properly (it didn't in the ctor)
+    DoUpdateOptions();
     // let the editor choose the syntax highlight to use according to file extension
     // and set the editor properties to default
     SetSyntaxHighlight(false); // Dont call 'UpdateColors' it is called in 'ReloadFile'
     // reload the file from disk
-    ReloadFile();
+    ReloadFile();    
 }
 
 void LEditor::InsertTextWithIndentation(const wxString& text, int lineno)

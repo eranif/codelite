@@ -610,7 +610,14 @@ void FileViewTree::DoItemActivated(wxTreeItemId& item, wxEvent& event)
     if(itemData->GetData().GetKind() == ProjectItem::TypeFile) {
 
         wxString filename = itemData->GetData().GetFile();
-        wxString project = itemData->GetData().Key().BeforeFirst(wxT(':'));
+        wxString key = itemData->GetData().Key();
+        wxString project;
+        if (key.GetChar(0) == ':') {
+            // All the entries I've tested have started with a : so exclude this one, otherwise the project is always ""
+            project = key.AfterFirst(':').BeforeFirst(wxT(':'));
+        } else {
+            project = key.BeforeFirst(wxT(':'));
+        }
 
         // Convert the file name to be in absolute path
         wxFileName fn(filename);

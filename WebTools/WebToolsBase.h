@@ -35,6 +35,8 @@
 #include <wx/bitmap.h>
 #include <map>
 #include <wx/icon.h>
+#include <wx/popupwin.h>
+#include <wx/treectrl.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -229,6 +231,23 @@ public:
         return m_bitmaps.find(name)->second;
     }
     virtual ~WebToolsImages();
+};
+
+
+class NodeJSDebuggerTooltipBase : public wxPopupWindow
+{
+protected:
+    wxPanel* m_panel229;
+    wxTreeCtrl* m_treeCtrl;
+
+protected:
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+
+public:
+    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    wxPanel* GetPanel229() { return m_panel229; }
+    NodeJSDebuggerTooltipBase(wxWindow* parent, long style = wxBORDER_NONE);
+    virtual ~NodeJSDebuggerTooltipBase();
 };
 
 #endif

@@ -137,6 +137,8 @@
     <File Name="NodeJSEvents.cpp"/>
     <File Name="NodeJSNewWorkspaceDlg.h"/>
     <File Name="NodeJSNewWorkspaceDlg.cpp"/>
+    <File Name="NodeJSDebuggerTooltip.h"/>
+    <File Name="NodeJSDebuggerTooltip.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

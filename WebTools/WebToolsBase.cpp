@@ -648,3 +648,44 @@ WebToolsImages::WebToolsImages()
 WebToolsImages::~WebToolsImages()
 {
 }
+
+NodeJSDebuggerTooltipBase::NodeJSDebuggerTooltipBase(wxWindow* parent,long style)
+    : wxPopupWindow(parent, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCD9C6InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer227 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer227);
+    
+    m_panel229 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    boxSizer227->Add(m_panel229, 1, wxALL|wxEXPAND, 0);
+    
+    wxBoxSizer* boxSizer231 = new wxBoxSizer(wxVERTICAL);
+    m_panel229->SetSizer(boxSizer231);
+    
+    m_treeCtrl = new wxTreeCtrl(m_panel229, wxID_ANY, wxDefaultPosition, wxSize(400,300), wxTR_DEFAULT_STYLE);
+    
+    boxSizer231->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 1);
+    
+    SetName(wxT("NodeJSDebuggerTooltipBase"));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+    // Connect events
+    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(NodeJSDebuggerTooltipBase::OnItemExpanding), NULL, this);
+    
+}
+
+NodeJSDebuggerTooltipBase::~NodeJSDebuggerTooltipBase()
+{
+    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(NodeJSDebuggerTooltipBase::OnItemExpanding), NULL, this);
+    
+}

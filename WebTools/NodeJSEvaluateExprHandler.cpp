@@ -26,12 +26,11 @@ void NodeJSEvaluateExprHandler::Process(NodeJSDebugger* debugger, const wxString
         wxString content = json.namedObject("body").namedObject("text").toString();
         wxString type = json.namedObject("body").namedObject("type").toString();
 
-        wxString expression = clGetManager()->GetActiveEditor()->GetWordAtCaret();
         if(type == "string") {
             content.Prepend("\"").Append("\"");
         }
         if(m_context == kNodeJSContextTooltip) {
-            debugger->ShowTooltip(expression, output);
+            debugger->ShowTooltip(m_expression, output);
             
         } else {
             clDebugEvent event(wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED);

@@ -681,7 +681,7 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
     m_staticText236 = new wxStaticText(m_panelStatus, wxID_ANY, _("Use the mouse to resize the tip window"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_staticText236->SetForegroundColour(wxColour(wxT("rgb(144,144,144)")));
     
-    boxSizer234->Add(m_staticText236, 0, wxALL|wxALIGN_RIGHT, 5);
+    boxSizer234->Add(m_staticText236, 0, wxALL|wxALIGN_LEFT, 5);
     
     m_timerCheckMousePos = new wxTimer;
     m_timerCheckMousePos->Start(25, false);

@@ -3074,17 +3074,23 @@ void LEditor::OnKeyDown(wxKeyEvent& event)
     if(keyIsControl) {
         // Debugger tooltip is shown when clicking 'Control/CMD'
         // while the mouse is over a word
-        clDebugEvent event(wxEVT_DBG_EXPR_TOOLTIP);
-
-        wxString wordAtMouse;
-        wxRect rect;
-        GetWordAtMousePointer(wordAtMouse, rect);
-        event.SetString(wordAtMouse);
-        if(EventNotifier::Get()->ProcessEvent(event)) {
-            return;
+        wxPoint pt = ScreenToClient(wxGetMousePosition());
+        int pos = PositionFromPointClose(pt.x, pt.y);
+        if(pos != wxNOT_FOUND) {
+            int wordStart = WordStartPos(pos, true);
+            int wordEnd = WordEndPos(pos, true);
+            wxString wordAtMouse = GetTextRange(wordStart, wordEnd);
+            if(!wordAtMouse.IsEmpty()) {
+                //wxLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
+                clDebugEvent tipEvent(wxEVT_DBG_EXPR_TOOLTIP);
+                tipEvent.SetString(wordAtMouse);
+                if(EventNotifier::Get()->ProcessEvent(tipEvent)) {
+                    return;
+                }
+            }
         }
     }
-
+    
     if(dbgTipIsShown && !keyIsControl) {
 
         // If any key is pressed, but the CONTROL key hide the
@@ -3285,7 +3291,8 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
         menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
         menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
         // On MSWin it often crashes the debugger to try to load-then-disable a bp
-        // so don't show the menu item unless the debugger is running *** Hmm, that was written about 4 years ago. Let's
+        // so don't show the menu item unless the debugger is running *** Hmm, that was written about 4 years ago.
+        // Let's
         // try it again...
         menu.Append(XRCID("toggle_breakpoint_enabled_status"),
                     bp.is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
@@ -3677,7 +3684,8 @@ void LEditor::OnDragStart(wxStyledTextEvent& e)
 void LEditor::OnDragEnd(wxStyledTextEvent& e)
 {
     // For future reference, this will only be called when D'n'D ends successfully with a drop.
-    // Unfortunately scintilla doesn't seem to provide any notification when ESC is pressed, or the drop-zone is invalid
+    // Unfortunately scintilla doesn't seem to provide any notification when ESC is pressed, or the drop-zone is
+    // invalid
     m_isDragging = false; // Turn on calltips again
 
     e.Skip();
@@ -3762,10 +3770,10 @@ void LEditor::DoHighlightWord()
             while(!GetLineVisible(line) && line < lastDocLine) {
                 ++line;
             }
-            
+
             // EOF?
             if(line >= lastDocLine) break;
-            
+
             while(GetLineVisible(line) && line <= lastDocLine) {
                 if(offset == -1) {
                     offset = PositionFromLine(line); // Get offset value the first time through
@@ -4278,7 +4286,8 @@ void LEditor::OnChange(wxStyledTextEvent& event)
             if(!currentOpen) {
                 GetCommandsProcessor().StartNewTextCommand(isInsert ? CLC_insert : CLC_delete);
             }
-            // We need to cope with a selection being deleted by typing; this results in 0x2012 followed immediately by
+            // We need to cope with a selection being deleted by typing; this results in 0x2012 followed immediately
+            // by
             // 0x11 i.e. with no intervening wxSTC_STARTACTION
             else if(isInsert && currentOpen->GetCommandType() != CLC_insert) {
                 GetCommandsProcessor().ProcessOpenCommand();
@@ -5251,13 +5260,13 @@ void LEditor::Print()
         (*g_pageSetupData) = *g_printData;
         PageSetup();
     }
-    
+
     // Black on White print mode
     SetPrintColourMode(wxSTC_PRINT_BLACKONWHITE);
-    
+
     // No magnifications
     SetPrintMagnification(0);
-    
+
     wxPrintDialogData printDialogData(*g_printData);
     wxPrinter printer(&printDialogData);
     clPrintout printout(this, GetFileName().GetFullPath());

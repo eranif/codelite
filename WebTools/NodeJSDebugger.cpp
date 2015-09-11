@@ -262,9 +262,7 @@ void NodeJSDebugger::OnTooltip(clDebugEvent& event)
 
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
-    wxString selection;
-    wxRect rect;
-    clGetManager()->GetActiveEditor()->GetWordAtMousePointer(selection, rect);
+    wxString selection = event.GetString();
     CHECK_COND_RET(!selection.IsEmpty());
 
     // Build the request

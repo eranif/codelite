@@ -1,3 +1,4 @@
+#include <algorithm> 
 #include "NodeJSDebuggerTooltip.h"
 #include "json_node.h"
 #include "NodeJSOuptutParser.h"

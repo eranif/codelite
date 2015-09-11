@@ -32,6 +32,8 @@
 #include <wx/listbox.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
+#include <wx/popupwin.h>
+#include <wx/timer.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -237,6 +239,36 @@ public:
     wxScrolledWindow* GetScrollWin196() { return m_scrollWin196; }
     clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~clImageViewerBase();
+};
+
+
+class WXDLLIMPEXP_SDK clResizableTooltipBase : public wxPopupWindow
+{
+protected:
+    wxPanel* m_mainPanel;
+    wxTreeCtrl* m_treeCtrl;
+    wxPanel* m_panelStatus;
+    wxStaticText* m_staticText236;
+    wxTimer* m_timerCheckMousePos;
+
+protected:
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnStatusEnterWindow(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusLeaveWindow(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarMotion(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarLeftUp(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarLeftDown(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnCaptureLost(wxMouseCaptureLostEvent& event) { event.Skip(); }
+    virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
+
+public:
+    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    wxPanel* GetMainPanel() { return m_mainPanel; }
+    wxStaticText* GetStaticText236() { return m_staticText236; }
+    wxPanel* GetPanelStatus() { return m_panelStatus; }
+    wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
+    clResizableTooltipBase(wxWindow* parent, long style = wxBORDER_STATIC);
+    virtual ~clResizableTooltipBase();
 };
 
 #endif

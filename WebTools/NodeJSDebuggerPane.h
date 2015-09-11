@@ -5,6 +5,7 @@
 #include "NodeJSEvents.h"
 #include <map>
 #include "json_node.h"
+#include "NodeJSOuptutParser.h"
 
 class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
 {
@@ -22,29 +23,8 @@ class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
     };
 
 public:
-    struct Handle
-    {
-        int handleID;
-        wxString name;
-        wxString value;
-        wxString type;
-        std::map<int, wxString> properties; // ref:name
-        Handle()
-            : handleID(wxNOT_FOUND)
-        {
-        }
-
-        bool IsOk() const { return handleID != wxNOT_FOUND; }
-    };
-
-    struct PendingLookup
-    {
-        wxDataViewItem parent;
-        int refID;
-        wxString name;
-    };
-    std::map<int, Handle> m_handles;
-    std::vector<PendingLookup> m_pendingLookupRefs;
+    std::map<int, NodeJSHandle> m_handles;
+    std::vector<PendingLookupDV> m_pendingLookupRefs;
 
 protected:
     virtual void OnLocalExpanding(wxDataViewEvent& event);
@@ -55,7 +35,7 @@ protected:
     void BuildArguments(const JSONElement& json);
     wxDataViewItem AddLocal(const wxDataViewItem& parent, const wxString& name, int refId);
     void ParseRefsArray(const JSONElement& refs);
-    NodeJSDebuggerPane::Handle ParseRef(const JSONElement& ref);
+    NodeJSHandle ParseRef(const JSONElement& ref);
     void DoOpenFile(const wxString& filename, int line);
     void DoDeleteLocalItemAfter(const wxDataViewItem& item);
     void DoAddKnownRefs(const std::map<int, wxString>& refs, const wxDataViewItem& parent);

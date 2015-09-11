@@ -7,8 +7,9 @@
 #include "NodeJSEvents.h"
 #include "event_notifier.h"
 #include "cl_command_event.h"
+#include "NodeJSDebugger.h"
 
-NodeJSEvaluateExprHandler::NodeJSEvaluateExprHandler(const wxString& expression, int context)
+NodeJSEvaluateExprHandler::NodeJSEvaluateExprHandler(const wxString& expression, eNodeJSContext context)
     : m_expression(expression)
     , m_context(context)
 {
@@ -29,8 +30,8 @@ void NodeJSEvaluateExprHandler::Process(NodeJSDebugger* debugger, const wxString
         if(type == "string") {
             content.Prepend("\"").Append("\"");
         }
-        if(m_context == kContextTooltip) {
-            clGetManager()->GetActiveEditor()->ShowRichTooltip(content, title);
+        if(m_context == kNodeJSContextTooltip) {
+            debugger->ShowTooltip(expression, output);
             
         } else {
             clDebugEvent event(wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED);

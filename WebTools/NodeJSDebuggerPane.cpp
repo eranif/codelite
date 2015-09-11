@@ -10,20 +10,21 @@
 #include "NodeJSDebugger.h"
 #include "NoteJSWorkspace.h"
 #include "imanager.h"
+#include "NodeJSOuptutParser.h"
 
 class NodeJSLocalClientData : public wxClientData
 {
-    NodeJSDebuggerPane::Handle m_handle;
+    NodeJSHandle m_handle;
     bool m_expanded;
 
 public:
-    NodeJSLocalClientData(const NodeJSDebuggerPane::Handle& h)
+    NodeJSLocalClientData(const NodeJSHandle& h)
         : m_handle(h)
         , m_expanded(false)
     {
     }
-    void SetHandle(const NodeJSDebuggerPane::Handle& handle) { this->m_handle = handle; }
-    const NodeJSDebuggerPane::Handle& GetHandle() const { return m_handle; }
+    void SetHandle(const NodeJSHandle& handle) { this->m_handle = handle; }
+    const NodeJSHandle& GetHandle() const { return m_handle; }
     void SetExpanded(bool expanded) { this->m_expanded = expanded; }
     bool IsExpanded() const { return m_expanded; }
 };
@@ -35,7 +36,7 @@ NodeJSDebuggerPane::NodeJSDebuggerPane(wxWindow* parent)
         wxEVT_NODEJS_DEBUGGER_EXPRESSION_EVALUATED, &NodeJSDebuggerPane::OnExpressionEvaluated, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeJSDebuggerPane::OnUpdateCallstack, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOST_INTERACT, &NodeJSDebuggerPane::OnLostControl, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOOKUP, &NodeJSDebuggerPane::OnLookup, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOCALS_LOOKUP, &NodeJSDebuggerPane::OnLookup, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, &NodeJSDebuggerPane::OnConsoleLog, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeJSDebuggerPane::OnSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeJSDebuggerPane::OnSessionStopped, this);
@@ -75,35 +76,10 @@ NodeJSDebuggerPane::~NodeJSDebuggerPane()
     ClearCallstack();
 }
 
-NodeJSDebuggerPane::Handle NodeJSDebuggerPane::ParseRef(const JSONElement& ref)
+NodeJSHandle NodeJSDebuggerPane::ParseRef(const JSONElement& ref)
 {
-    int handleId = ref.namedObject("handle").toInt();
-    Handle h;
-    h.handleID = handleId;
-    h.type = ref.namedObject("type").toString();
-    if(h.type == "undefined") {
-        h.value = "undefined";
-    } else if(h.type == "number" || h.type == "boolean") {
-        h.value = ref.namedObject("text").toString();
-    } else if(h.type == "string") {
-        h.value << "\"" << ref.namedObject("text").toString() << "\"";
-    } else if(h.type == "script" || h.type == "function") {
-        h.value = ref.namedObject("name").toString();
-    } else if(h.type == "null") {
-        h.value = "null";
-    } else if(h.type == "object") {
-        h.value = "{...}";
-        JSONElement props = ref.namedObject("properties");
-        int propsCount = props.arraySize();
-        for(int n = 0; n < propsCount; ++n) {
-            JSONElement prop = props.arrayItem(n);
-            wxString propName = prop.namedObject("name").toString();
-            int propId = prop.namedObject("ref").toInt();
-            h.properties.insert(std::make_pair(propId, propName));
-        }
-    }
-    m_handles.insert(std::make_pair(handleId, h));
-    return h;
+    NodeJSOuptutParser p;
+    return p.ParseRef(ref, m_handles);
 }
 
 void NodeJSDebuggerPane::ParseRefsArray(const JSONElement& refs)
@@ -223,7 +199,7 @@ wxDataViewItem NodeJSDebuggerPane::AddLocal(const wxDataViewItem& parent, const 
     // extract the value
     if(m_handles.count(refId)) {
         wxVector<wxVariant> cols;
-        Handle h = m_handles.find(refId)->second;
+        NodeJSHandle h = m_handles.find(refId)->second;
         cols.push_back(name);
         cols.push_back(h.type);
         cols.push_back(h.value);
@@ -424,7 +400,7 @@ void NodeJSDebuggerPane::OnLocalExpanding(wxDataViewEvent& event)
     // Prepare list of refs that we don't have
     std::map<int, wxString> unknownRefs;
     std::map<int, wxString> knownRefs;
-    const Handle& h = d->GetHandle();
+    const NodeJSHandle& h = d->GetHandle();
     std::for_each(h.properties.begin(), h.properties.end(), [&](const std::pair<int, wxString>& p) {
         if(m_handles.count(p.first) == 0) {
             unknownRefs.insert(p);
@@ -452,14 +428,14 @@ void NodeJSDebuggerPane::DoAddUnKnownRefs(const std::map<int, wxString>& refs, c
 
     std::vector<int> handles;
     std::for_each(refs.begin(), refs.end(), [&](const std::pair<int, wxString>& p) {
-        PendingLookup pl;
+        PendingLookupDV pl;
         pl.parent = parent;
         pl.name = p.second;
         pl.refID = p.first;
         m_pendingLookupRefs.push_back(pl);
         handles.push_back(p.first);
     });
-    NodeJSWorkspace::Get()->GetDebugger()->Lookup(handles);
+    NodeJSWorkspace::Get()->GetDebugger()->Lookup(handles, kNodeJSContextLocals);
 }
 
 void NodeJSDebuggerPane::OnSessionStopped(clDebugEvent& event)
@@ -480,11 +456,11 @@ void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
 {
     JSONRoot root(event.GetString());
     JSONElement body = root.toElement().namedObject("body");
-    std::vector<PendingLookup> unresolved;
+    std::vector<PendingLookupDV> unresolved;
 
     wxDataViewItem parent;
     for(size_t i = 0; i < m_pendingLookupRefs.size(); ++i) {
-        const PendingLookup& pl = m_pendingLookupRefs.at(i);
+        const PendingLookupDV& pl = m_pendingLookupRefs.at(i);
         if(!parent.IsOk()) {
             parent = pl.parent;
         }
@@ -498,7 +474,7 @@ void NodeJSDebuggerPane::OnLookup(clDebugEvent& event)
 
         // Parse and add this ref to the global m_handles map
         JSONElement ref = body.namedObject(nameID);
-        Handle h = ParseRef(ref);
+        NodeJSHandle h = ParseRef(ref);
         h.name = pl.name;
         if(!h.IsOk()) continue;
 

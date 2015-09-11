@@ -642,3 +642,80 @@ clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPo
 clImageViewerBase::~clImageViewerBase()
 {
 }
+
+clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent,long style)
+    : wxPopupWindow(parent, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9D6CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer222 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer222);
+    
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(300,250), wxTAB_TRAVERSAL);
+    m_mainPanel->SetBackgroundColour(wxColour(wxT("rgb(251,234,160)")));
+    
+    boxSizer222->Add(m_mainPanel, 1, wxALL|wxEXPAND, 0);
+    
+    wxBoxSizer* boxSizer230 = new wxBoxSizer(wxVERTICAL);
+    m_mainPanel->SetSizer(boxSizer230);
+    
+    m_treeCtrl = new wxTreeCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE);
+    m_treeCtrl->SetBackgroundColour(wxColour(wxT("rgb(251,234,160)")));
+    m_treeCtrl->SetForegroundColour(wxColour(wxT("rgb(16,16,16)")));
+    
+    boxSizer230->Add(m_treeCtrl, 1, wxEXPAND, 0);
+    m_mainPanel->SetMinSize(wxSize(300,250));
+    
+    m_panelStatus = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    boxSizer222->Add(m_panelStatus, 0, wxALL|wxEXPAND, 0);
+    
+    wxBoxSizer* boxSizer234 = new wxBoxSizer(wxVERTICAL);
+    m_panelStatus->SetSizer(boxSizer234);
+    
+    m_staticText236 = new wxStaticText(m_panelStatus, wxID_ANY, _("Use the mouse to resize the tip window"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText236->SetForegroundColour(wxColour(wxT("rgb(144,144,144)")));
+    
+    boxSizer234->Add(m_staticText236, 0, wxALL|wxALIGN_RIGHT, 5);
+    
+    m_timerCheckMousePos = new wxTimer;
+    m_timerCheckMousePos->Start(25, false);
+    
+    SetName(wxT("clResizableTooltipBase"));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    CentreOnParent(wxBOTH);
+    // Connect events
+    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clResizableTooltipBase::OnItemExpanding), NULL, this);
+    m_panelStatus->Connect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(clResizableTooltipBase::OnStatusEnterWindow), NULL, this);
+    m_panelStatus->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(clResizableTooltipBase::OnStatusLeaveWindow), NULL, this);
+    m_panelStatus->Connect(wxEVT_MOTION, wxMouseEventHandler(clResizableTooltipBase::OnStatusBarMotion), NULL, this);
+    m_panelStatus->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(clResizableTooltipBase::OnStatusBarLeftUp), NULL, this);
+    m_panelStatus->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clResizableTooltipBase::OnStatusBarLeftDown), NULL, this);
+    m_panelStatus->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(clResizableTooltipBase::OnCaptureLost), NULL, this);
+    m_timerCheckMousePos->Connect(wxEVT_TIMER, wxTimerEventHandler(clResizableTooltipBase::OnCheckMousePosition), NULL, this);
+    
+}
+
+clResizableTooltipBase::~clResizableTooltipBase()
+{
+    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clResizableTooltipBase::OnItemExpanding), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(clResizableTooltipBase::OnStatusEnterWindow), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(clResizableTooltipBase::OnStatusLeaveWindow), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_MOTION, wxMouseEventHandler(clResizableTooltipBase::OnStatusBarMotion), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(clResizableTooltipBase::OnStatusBarLeftUp), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clResizableTooltipBase::OnStatusBarLeftDown), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(clResizableTooltipBase::OnCaptureLost), NULL, this);
+    m_timerCheckMousePos->Disconnect(wxEVT_TIMER, wxTimerEventHandler(clResizableTooltipBase::OnCheckMousePosition), NULL, this);
+    
+    m_timerCheckMousePos->Stop();
+    wxDELETE( m_timerCheckMousePos );
+
+}

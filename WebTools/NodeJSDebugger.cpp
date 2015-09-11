@@ -23,12 +23,14 @@
 #include <wx/log.h>
 #include "NodeJSEvaluateExprHandler.h"
 #include "NodeJSLookupHandler.h"
+#include "NodeJSDebuggerTooltip.h"
 
 #define CHECK_RUNNING() \
     if(!IsConnected()) return
 
 NodeJSDebugger::NodeJSDebugger()
     : m_canInteract(false)
+    , m_tooltip(NULL)
 {
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeJSDebugger::OnDebugStart, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeJSDebugger::OnDebugContinue, this);
@@ -47,7 +49,8 @@ NodeJSDebugger::NodeJSDebugger()
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_EXPRESSION, &NodeJSDebugger::OnEvalExpression, this);
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSDebugger::OnEditorChanged, this);
-
+    
+    Bind(wxEVT_TOOLTIP_DESTROY, &NodeJSDebugger::OnDestroyTip, this);
     m_node.Bind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSDebugger::OnNodeTerminated, this);
     m_node.Bind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
 }
@@ -74,12 +77,19 @@ NodeJSDebugger::~NodeJSDebugger()
 
     m_node.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSDebugger::OnNodeTerminated, this);
     m_node.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSDebugger::OnNodeOutput, this);
+    Unbind(wxEVT_TOOLTIP_DESTROY, &NodeJSDebugger::OnDestroyTip, this);
+    
     m_node.Terminate();
 
     m_bptManager.Save();
     DoDeleteTempFiles(m_tempFiles);
     m_tempFiles.clear();
-
+    
+    if(m_tooltip) {
+        m_tooltip->Destroy();
+        m_tooltip = NULL;
+    }
+    
     // fire stop event (needed to reload the normal layout)
     clDebugEvent event(wxEVT_NODEJS_DEBUGGER_STOPPED);
     EventNotifier::Get()->AddPendingEvent(event);
@@ -583,10 +593,10 @@ void NodeJSDebugger::OnEvalExpression(clDebugEvent& event)
 
     // Write the command
     m_socket->WriteRequest(
-        request, new NodeJSEvaluateExprHandler(event.GetString(), NodeJSEvaluateExprHandler::kContextConsole));
+        request, new NodeJSEvaluateExprHandler(event.GetString(), kNodeJSContextConsole));
 }
 
-void NodeJSDebugger::Lookup(const std::vector<int>& handles)
+void NodeJSDebugger::Lookup(const std::vector<int>& handles, eNodeJSContext context)
 {
     JSONElement request = JSONElement::createObject();
     request.addProperty("type", "request");
@@ -603,5 +613,24 @@ void NodeJSDebugger::Lookup(const std::vector<int>& handles)
     }
 
     // Write the command
-    m_socket->WriteRequest(request, new NodeJSLookupHandler());
+    m_socket->WriteRequest(request, new NodeJSLookupHandler(context));
+}
+
+void NodeJSDebugger::ShowTooltip(const wxString& expression, const wxString& jsonOutput)
+{
+    if(m_tooltip) {
+        m_tooltip->Destroy();
+        m_tooltip = NULL;
+    }
+    
+    m_tooltip = new NodeJSDebuggerTooltip(this, expression);
+    m_tooltip->ShowTip(jsonOutput);
+}
+
+void NodeJSDebugger::OnDestroyTip(clCommandEvent& event)
+{
+    if(m_tooltip) {
+        m_tooltip->Destroy();
+        m_tooltip = NULL;
+    }
 }

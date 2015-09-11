@@ -216,7 +216,7 @@ void NodeJSDebugger::OnStopDebugger(clDebugEvent& event)
 
     event.Skip(false);
     m_node.Terminate();
-#ifdef __WXGTK__
+#if defined(__WXGTK__)||defined(__WXOSX__)
     ConnectionLost("Debug session stopped");
 #endif
 }

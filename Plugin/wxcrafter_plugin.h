@@ -117,6 +117,7 @@ protected:
     virtual void OnSingleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
     virtual void OnRightPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 

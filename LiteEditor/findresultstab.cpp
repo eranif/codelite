@@ -47,6 +47,8 @@
 #include "attribute_style.h"
 #include <algorithm>
 #include "cl_aui_tool_stickness.h"
+#include "optionsconfig.h"
+#include "editor_config.h"
 
 // Custom styles
 #define LEX_FIF_DEFAULT 0
@@ -188,6 +190,13 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
     sci->SetMarginWidth(4, 0);
     sci->SetMarginSensitive(1, true);
     sci->HideSelection(true);
+    
+    // Indentation
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    sci->SetUseTabs(options->GetIndentUsesTabs());
+    sci->SetTabWidth(options->GetIndentWidth());
+    sci->SetIndent(options->GetIndentWidth());
+    
     sci->Refresh();
 }
 

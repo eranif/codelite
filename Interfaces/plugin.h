@@ -151,7 +151,8 @@ public:
     {
         wxBitmap bmp;
 #ifdef __WXGTK__
-        wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
+        // /usr/share/codelite
+        wxString pluginsDir = clStandardPaths::Get().GetDataDir();
 #else
 #ifdef USE_POSIX_LAYOUT
         wxString pluginsDir(clStandardPaths::Get().GetDataDir() + wxT(PLUGINS_DIR));

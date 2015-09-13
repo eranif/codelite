@@ -1556,6 +1556,7 @@ resources.cpp: resources.xrc
         <IncludePath Value="../Interfaces"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="__WXGTK__"/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --libs std,stc --unicode=yes --debug=no);$(shell pkg-config --libs gtk+-2.0)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>

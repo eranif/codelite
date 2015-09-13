@@ -16,7 +16,6 @@ include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/includ
 
 ## On UNIX we require GTK
 if (UNIX AND NOT APPLE)
-
     if (GTK_VERSION EQUAL 3)
         set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
         set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -138,15 +137,7 @@ if(NOT APPLE)
         # Clear the icon cache if exists
         install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )
-
-    install(
-        DIRECTORY ${CL_SRC_ROOT}/Runtime/plugins/resources
-        DESTINATION ${PLUGINS_DIR}
-        USE_SOURCE_PERMISSIONS
-        PATTERN ".svn" EXCLUDE
-        PATTERN ".git" EXCLUDE
-    ) 
-
+    
     install(
         DIRECTORY ${CL_SRC_ROOT}/Runtime/images 
                   ${CL_SRC_ROOT}/Runtime/gdb_printers 
@@ -154,6 +145,7 @@ if(NOT APPLE)
                   ${CL_SRC_ROOT}/Runtime/lexers 
                   ${CL_SRC_ROOT}/Runtime/templates 
                   ${CL_SRC_ROOT}/Runtime/rc
+                  ${CL_SRC_ROOT}/Runtime/plugins/resources
         DESTINATION ${CL_PREFIX}/share/codelite
         USE_SOURCE_PERMISSIONS
         PATTERN ".svn" EXCLUDE

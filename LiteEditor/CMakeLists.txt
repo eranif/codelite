@@ -99,8 +99,6 @@ if(NOT APPLE)
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite_fix_files DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite_kill_children DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite_xterm DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-        install(FILES ${CL_SRC_ROOT}/Runtime/clg++ DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
-        install(FILES ${CL_SRC_ROOT}/Runtime/clgcc DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
     endif (UNIX)
 
     ## codelite icons
@@ -162,6 +160,7 @@ if(NOT APPLE)
     if (UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
         # We need to deduce the location of the wx libs to be installed
         execute_process(COMMAND ${WX_TOOL} --libs OUTPUT_VARIABLE WX_LIBSOUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+        
         if (${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with -L/foo/bar
             string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" WX_LIBS_DIR ${WX_LIBSOUTPUT})
         else()
@@ -183,7 +182,7 @@ if(NOT APPLE)
             endif()
         endforeach()
 
-        file(GLOB wxfilepaths ${WX_LIBS_ALL})	
+        file(GLOB wxfilepaths ${WX_LIBS_ALL})
         install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
     endif()
 

@@ -35,6 +35,7 @@ class FindInFilesDialog : public FindInFilesDialogBase
     wxArrayString m_pluginFileMask;
 
 protected:
+    virtual void OnReplaceUI(wxUpdateUIEvent& event);
     virtual void OnClearSelectedPathUI(wxUpdateUIEvent& event);
     virtual void OnClearSelectedPath(wxCommandEvent& event);
     virtual void OnButtonClose(wxCommandEvent& event);

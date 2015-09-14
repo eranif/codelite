@@ -34,6 +34,7 @@
 #include "replaceinfilespanel.h"
 #include "clFileSystemEvent.h"
 #include "event_notifier.h"
+#include "macros.h"
 
 BEGIN_EVENT_TABLE(ReplaceInFilesPanel, FindResultsTab)
 EVT_BUTTON(XRCID("unmark_all"), ReplaceInFilesPanel::OnUnmarkAll)
@@ -123,8 +124,17 @@ void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)
 
 void ReplaceInFilesPanel::OnSearchEnded(wxCommandEvent& e)
 {
+    SearchSummary* summary = (SearchSummary*)e.GetClientData();
+    CHECK_PTR_RET(summary);
+    
+    // set the "Replace With" field with the user value
+    m_replaceWith->ChangeValue(summary->GetReplaceWith());
+    
     FindResultsTab::OnSearchEnded(e);
     OnMarkAll(e);
+    
+    // Set the focus to the "Replace With" field
+    m_replaceWith->CallAfter(&wxComboBox::SetFocus);
 }
 
 void ReplaceInFilesPanel::OnMarginClick(wxStyledTextEvent& e)

@@ -249,7 +249,7 @@ protected:
     wxPanel* m_mainPanel;
     wxTreeCtrl* m_treeCtrl;
     wxPanel* m_panelStatus;
-    wxStaticText* m_staticText236;
+    wxStaticBitmap* m_staticBitmap240;
     wxTimer* m_timerCheckMousePos;
 
 protected:
@@ -265,10 +265,10 @@ protected:
 public:
     wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
-    wxStaticText* GetStaticText236() { return m_staticText236; }
+    wxStaticBitmap* GetStaticBitmap240() { return m_staticBitmap240; }
     wxPanel* GetPanelStatus() { return m_panelStatus; }
     wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
-    clResizableTooltipBase(wxWindow* parent, long style = wxBORDER_STATIC);
+    clResizableTooltipBase(wxWindow* parent, long style = wxBORDER_SIMPLE);
     virtual ~clResizableTooltipBase();
 };
 

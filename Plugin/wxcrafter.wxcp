@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 236,
+  "m_objCounter": 240,
   "m_includeFiles": ["codelite_exports.h"],
   "m_bitmapFunction": "wxC9D6CInitBitmapResources",
   "m_bitmapsFile": "wxcrafter_plugin_bitmaps.cpp",
@@ -5154,7 +5154,7 @@
    "border": 5,
    "gbSpan": "1,1",
    "gbPosition": "0,0",
-   "m_styles": ["wxBORDER_STATIC"],
+   "m_styles": ["wxBORDER_SIMPLE"],
    "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
    "m_properties": [{
      "type": "string",
@@ -5361,7 +5361,7 @@
            "border": 0,
            "gbSpan": "1,1",
            "gbPosition": "0,0",
-           "m_styles": ["wxTR_DEFAULT_STYLE"],
+           "m_styles": ["wxTR_DEFAULT_STYLE", "wxBORDER_NONE"],
            "m_sizerFlags": ["wxEXPAND"],
            "m_properties": [{
              "type": "winid",
@@ -5386,11 +5386,11 @@
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
-             "colour": "(251,234,160)"
+             "colour": "Tooltip"
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",
-             "colour": "(16,16,16)"
+             "colour": "TooltipText"
             }, {
              "type": "font",
              "m_label": "Font:",
@@ -5462,7 +5462,7 @@
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
-         "colour": "<Default>"
+         "colour": "Tooltip"
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",
@@ -5562,18 +5562,37 @@
           }, {
            "type": "choice",
            "m_label": "Orientation:",
-           "m_selection": 0,
+           "m_selection": 1,
            "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
           }],
          "m_events": [],
          "m_children": [{
-           "m_type": 4405,
+           "m_type": 4454,
+           "proportion": 1,
+           "border": 5,
+           "gbSpan": "1,1",
+           "gbPosition": "0,0",
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+           "m_properties": [{
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "Spacer238"
+            }, {
+             "type": "string",
+             "m_label": "Size:",
+             "m_value": "0,0"
+            }],
+           "m_events": [],
+           "m_children": []
+          }, {
+           "m_type": 4409,
            "proportion": 0,
            "border": 5,
            "gbSpan": "1,1",
            "gbPosition": "0,0",
            "m_styles": [],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_LEFT"],
+           "m_sizerFlags": ["wxALIGN_CENTER_VERTICAL"],
            "m_properties": [{
              "type": "winid",
              "m_label": "ID:",
@@ -5589,7 +5608,7 @@
             }, {
              "type": "string",
              "m_label": "Name:",
-             "m_value": "m_staticText236"
+             "m_value": "m_staticBitmap240"
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",
@@ -5601,7 +5620,7 @@
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",
-             "colour": "(144,144,144)"
+             "colour": "<Default>"
             }, {
              "type": "font",
              "m_label": "Font:",
@@ -5631,15 +5650,53 @@
              "m_label": "Style:",
              "m_value": ""
             }, {
-             "type": "multi-string",
-             "m_label": "Label:",
-             "m_value": "Use the mouse to resize the tip window"
-            }, {
-             "type": "string",
-             "m_label": "Wrap:",
-             "m_value": "-1"
+             "type": "bitmapPicker",
+             "m_label": "Bitmap File:",
+             "m_path": "../icons/resize.png"
             }],
-           "m_events": [],
+           "m_events": [{
+             "m_eventName": "wxEVT_LEFT_DOWN",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusBarLeftDown(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_LEFT_UP",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusBarLeftUp(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_LEFT_UP event.",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_MOTION",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusBarMotion(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_MOTION event",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_LEAVE_WINDOW",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusLeaveWindow(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_LEAVE_WINDOW event.",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_ENTER_WINDOW",
+             "m_eventClass": "wxMouseEvent",
+             "m_eventHandler": "wxMouseEventHandler",
+             "m_functionNameAndSignature": "OnStatusEnterWindow(wxMouseEvent& event)",
+             "m_description": "Process a wxEVT_ENTER_WINDOW event",
+             "m_noBody": false
+            }, {
+             "m_eventName": "wxEVT_MOUSE_CAPTURE_LOST",
+             "m_eventClass": "wxMouseCaptureLostEvent",
+             "m_eventHandler": "wxMouseCaptureLostEventHandler",
+             "m_functionNameAndSignature": "OnCaptureLost(wxMouseCaptureLostEvent& event)",
+             "m_description": "A mouse capture lost event is sent to a window that had obtained mouse capture, which was subsequently lost due to an \"external\" event (for example, when a dialog box is shown or if another application captures the mouse)",
+             "m_noBody": false
+            }],
            "m_children": []
           }]
         }]

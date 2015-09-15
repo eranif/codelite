@@ -804,10 +804,19 @@ void LEditor::SetProperties()
         CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDLEFT);
         CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_WORDRIGHT);
     }
-
+    
+    
 #ifdef __WXOSX__
     CmdKeyAssign(wxSTC_KEY_DOWN, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTEND);
     CmdKeyAssign(wxSTC_KEY_UP, wxSTC_SCMOD_CTRL, wxSTC_CMD_DOCUMENTSTART);
+    
+    // OSX: wxSTC_SCMOD_CTRL => CMD key
+    CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL, wxSTC_CMD_LINEEND);
+    CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_CTRL, wxSTC_CMD_HOME);
+    
+    // OSX: wxSTC_SCMOD_META => CONTROL key
+    CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_SCMOD_META, wxSTC_CMD_WORDPARTLEFT);
+    CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_META, wxSTC_CMD_WORDPARTRIGHT);
 #endif
 }
 

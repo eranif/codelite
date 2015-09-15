@@ -28,26 +28,26 @@
 FilesModifiedDlg::FilesModifiedDlg(wxWindow* parent)
     : FilesModifiedDlgBase(parent)
 {
+    GetSizer()->Fit(this);
+    CentreOnParent();
 }
 
-FilesModifiedDlg::~FilesModifiedDlg()
-{
-}
+FilesModifiedDlg::~FilesModifiedDlg() {}
 
 void FilesModifiedDlg::OnChoose(wxCommandEvent& event)
 {
     event.StopPropagation();
-    CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_CHOOSE );
+    CallAfter(&FilesModifiedDlg::EndModal, ID_BUTTON_CHOOSE);
 }
 
 void FilesModifiedDlg::OnLoad(wxCommandEvent& event)
 {
     event.StopPropagation();
-    CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_LOAD );
+    CallAfter(&FilesModifiedDlg::EndModal, ID_BUTTON_LOAD);
 }
 
 void FilesModifiedDlg::OnIgnore(wxCommandEvent& event)
 {
     event.StopPropagation();
-    CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_IGNORE );
+    CallAfter(&FilesModifiedDlg::EndModal, ID_BUTTON_IGNORE);
 }

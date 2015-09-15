@@ -972,7 +972,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
             wxString restOfLine = GetTextRange(pos, lineEndPos);
             wxString restOfLineTrimmed = restOfLine;
             restOfLineTrimmed.Trim().Trim(false);
-            bool shiftCode = !restOfLineTrimmed.StartsWith(")");
+            bool shiftCode = (!restOfLineTrimmed.StartsWith(")")) && (!restOfLineTrimmed.IsEmpty());
 
             if(shiftCode) {
                 SetSelection(pos, lineEndPos);

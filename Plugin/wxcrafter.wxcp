@@ -2439,7 +2439,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
+             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -2828,7 +2828,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
+             "m_styles": ["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -5293,11 +5293,11 @@
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
-         "colour": "(251,234,160)"
+         "colour": "Tooltip"
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",
-         "colour": "<Default>"
+         "colour": "TooltipText"
         }, {
          "type": "font",
          "m_label": "Font:",
@@ -5466,7 +5466,7 @@
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",
-         "colour": "<Default>"
+         "colour": "TooltipText"
         }, {
          "type": "font",
          "m_label": "Font:",
@@ -5616,7 +5616,7 @@
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
-             "colour": "<Default>"
+             "colour": "Tooltip"
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",

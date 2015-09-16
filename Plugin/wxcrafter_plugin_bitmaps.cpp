@@ -397,18 +397,18 @@ void wxC9D6CInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-file-left-to-right.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-file-right-to-left.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-left-to-right.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-right-to-left.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-next.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-prev.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-refresh.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-save.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._icons_resize.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_horizontal.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_single.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_vertical.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$C__src_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"), xml_res_file_12, xml_res_size_12, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_plugin_bitmaps.cpp$C__src_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-file-left-to-right.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-file-right-to-left.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-left-to-right.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-copy-right-to-left.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-next.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-prev.png"), xml_res_file_5, xml_res_size_5, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-refresh.png"), xml_res_file_6, xml_res_size_6, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_diff-save.png"), xml_res_file_7, xml_res_size_7, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$.._icons_resize.png"), xml_res_file_8, xml_res_size_8, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_horizontal.png"), xml_res_file_9, xml_res_size_9, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_single.png"), xml_res_file_10, xml_res_size_10, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$resources_tile_vertical.png"), xml_res_file_11, xml_res_size_11, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$_home_eran_devl_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"), xml_res_file_12, xml_res_size_12, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_plugin_bitmaps.cpp$_home_eran_devl_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"));
 }

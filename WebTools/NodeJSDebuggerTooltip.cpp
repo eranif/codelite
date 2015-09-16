@@ -61,7 +61,14 @@ void NodeJSDebuggerTooltip::ShowTip(const wxString& jsonOutput)
 
     NodeJSOuptutParser p;
     NodeJSHandle h = p.ParseRef(body, m_handles);
-    wxTreeItemId rootItem = m_treeCtrl->AddRoot(m_expression, -1, -1, new ClientData(h));
+    
+    wxString rootText;
+    rootText << m_expression;
+    if(!h.value.IsEmpty()) {
+        rootText << " = " << h.value;
+    }
+    
+    wxTreeItemId rootItem = m_treeCtrl->AddRoot(rootText, -1, -1, new ClientData(h));
     if(!h.properties.empty()) {
         m_treeCtrl->AppendItem(rootItem, "Loading...");
     }

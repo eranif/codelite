@@ -310,6 +310,12 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
                 menuItem->SetBitmap(bmpFiF);
                 menu.Append(menuItem);
+                
+                clContextMenuEvent folderMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
+                folderMenuEvent.SetMenu(&menu);
+                folderMenuEvent.SetPath(wxFileName(data->GetFile()).GetPath());
+                EventNotifier::Get()->ProcessEvent(folderMenuEvent);
+                
                 m_treeCtrlView->PopupMenu(&menu);
             } break;
             default:

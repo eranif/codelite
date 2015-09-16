@@ -21,12 +21,23 @@ NodeJSHandle NodeJSOuptutParser::ParseRef(const JSONElement& ref, std::map<int, 
     } else if(h.type == "null") {
         h.value = "null";
     } else if(h.type == "object") {
-        h.value = "{...}";
+        if(ref.hasNamedObject("className") && ref.namedObject("className").toString() == "Array") {
+            h.type = "Array"; 
+            h.value = "[]";
+        } else {
+            h.value = "{...}";
+        }
         JSONElement props = ref.namedObject("properties");
         int propsCount = props.arraySize();
         for(int n = 0; n < propsCount; ++n) {
             JSONElement prop = props.arrayItem(n);
-            wxString propName = prop.namedObject("name").toString();
+            wxString propName;
+            if(prop.namedObject("name").isString()) {
+                propName = prop.namedObject("name").toString();
+            } else if(prop.namedObject("name").isNumber()) {
+                propName << "[" << prop.namedObject("name").toInt() << "]";
+            }
+            
             int propId = prop.namedObject("ref").toInt();
             h.properties.insert(std::make_pair(propId, propName));
         }

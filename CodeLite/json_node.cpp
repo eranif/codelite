@@ -595,3 +595,19 @@ wxFont JSONElement::toFont(const wxFont& defaultFont) const
     wxFont f = clFontHelper::FromString(str);
     return f;
 }
+
+bool JSONElement::isArray() const
+{
+    if(!_json) {
+        return false;
+    }
+    return _json->type == cJSON_Array;
+}
+
+bool JSONElement::isNumber() const
+{
+    if(!_json) {
+        return false;
+    }
+    return _json->type == cJSON_Number;
+}

@@ -81,9 +81,14 @@ public:
     wxString toString(const wxString& defaultValue = wxEmptyString) const;
     wxArrayString toArrayString(const wxArrayString& defaultValue = wxArrayString()) const;
     JSONElement arrayItem(int pos) const;
+    
+    // Retuen the object type
     bool isNull() const;
     bool isBool() const;
     bool isString() const;
+    bool isNumber() const;
+    bool isArray() const;
+    
     wxString format() const;
     /**
      * @brief format the JSON into a raw c string
